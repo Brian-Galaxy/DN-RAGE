@@ -1,4 +1,5 @@
 //import enums from './enums';
+import weapons from "./weapons";
 
 try {
     mp.gui.chat.show(false); //Disables default RageMP Chat

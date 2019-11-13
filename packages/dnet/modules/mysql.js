@@ -15,20 +15,21 @@ const pool = mysql.createPool({
 });
 
 pool.on('connection', function (connection) {
-    //console.log('New MySQL connection id: ' + connection.threadId)
+    console.log('New MySQL connection id: ' + connection.threadId);
 });
 
 pool.on('enqueue', function (connection) {
-    //console.log('Waiting for available connection slot');
+    console.log('Waiting for available connection slot, waiting count: ' + pool._connectionQueue.length);
 });
 
 pool.on('release', function (connection) {
-    //console.log('Connection %d released', connection.threadId);
+    console.log('Connection %d released', connection.threadId);
 });
 
 pool.on('acquire', function (connection) {
-    //console.log('Connection %d acquired', connection.threadId);
+    console.log('Connection %d acquired', connection.threadId);
 });
+
 
 
 /*mysql.stressTest = async function() {
@@ -46,23 +47,26 @@ setTimeout(function() {
 }, 3000);*/
 
 mysql.executeQuery = async function (query, values, callback) {
-    //console.log(query);
+    console.log('SQL Query: ' + query);
     const preQuery = new Date().getTime();
     try {
         pool.getConnection(function (err, connection) {
             if(!err) {
-                connection.query(query, values, function (err, rows, fields) {
+                connection.query({
+                    sql: query,
+                    timeout: 60000,
+                }, values, function (err, rows, fields) {
                     if (!err) {
                         callback(null, rows, fields);
                     } else {
                         console.log("[DATABASE ERROR] " + query + " | Error: " + err);
                         callback(err);
                     }
+                    const postQuery = new Date().getTime();
+                    console.log(`SQL query done in: ${postQuery - preQuery}ms`);
                     connection.release();
                 });
             } else { console.log(err)}
-            const postQuery = new Date().getTime();
-            //console.log(`executeQuery: ${postQuery - preQuery}ms`);
         });
     } catch (e) {
         console.log(e);
@@ -73,8 +77,7 @@ mysql.executeQuery = async function (query, values, callback) {
 setInterval(function () {
     mysql.executeQuery('SELECT * FROM accounts', function (err, rows, fields) {
         rows.forEach(function (item) {
-            //console.log(item.username);
+            console.log(item.username);
         })
     });
-    //console.log(pool._connectionQueue.length)
-}, 10);
+}, 1000);

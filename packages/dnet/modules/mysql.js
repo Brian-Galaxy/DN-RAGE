@@ -62,11 +62,11 @@ mysql.executeQuery = async function (query, values, callback) {
                         console.log("[DATABASE ERROR] " + query + " | Error: " + err);
                         callback(err);
                     }
-                    const postQuery = new Date().getTime();
-                    console.log(`SQL query done in: ${postQuery - preQuery}ms`);
-                    connection.release();
                 });
             } else { console.log(err)}
+            const postQuery = new Date().getTime();
+            console.log(`SQL query done in: ${postQuery - preQuery}ms`);
+            connection.release();
         });
     } catch (e) {
         console.log(e);

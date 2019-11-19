@@ -1,8 +1,9 @@
 //import enums from './enums';
 import weapons from "./weapons";
+import ui from "./modules/ui";
 
 try {
-    mp.gui.chat.show(false); //Disables default RageMP Chat
+    //mp.gui.chat.show(false); //Disables default RageMP Chat
 
     //TODO Сделать нормальное шифрование
     for (let i = 0; i < weapons.hashesMap.length; i++)
@@ -16,10 +17,11 @@ try {
     mp.game.player.setMeleeWeaponDefenseModifier(1.5);
     mp.game.player.setWeaponDefenseModifier(1.5);
 
+    mp.events.add('guiReady', () => {
+        ui.create();
+    });
 }
 catch (e) {
-    /*methods.debug('Exception: index');
-    methods.debug(e);*/
 }
 
 /*mp.events.add('guiReady', () => {

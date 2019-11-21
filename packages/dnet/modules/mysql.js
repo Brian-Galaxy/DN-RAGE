@@ -3,7 +3,7 @@ var mysql = require('mysql');
 
 const pool = mysql.createPool({
     host: '173.249.7.147', // Тестовый сервак Debian 10
-    socketPath: '/var/run/mysqld/mysqld.sock',
+    //socketPath: '/var/run/mysqld/mysqld.sock', // Коммент для тестов
     user: 'admin',
     password: 'PO~w~^vI2*m?:JZQ&`$0',
     database: 'dNet_haskell',
@@ -74,10 +74,10 @@ mysql.executeQuery = async function (query, values, callback) {
 };
 
 
-setInterval(function () {
+/*setInterval(function () {
     mysql.executeQuery('SELECT * FROM accounts', function (err, rows, fields) {
         rows.forEach(function (item) {
             console.log(item.username);
         })
     });
-}, 1000);
+}, 1000);*/

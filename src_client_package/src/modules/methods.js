@@ -3,7 +3,10 @@
 let methods = {};
 
 methods.debug = function (message) {
-    mp.events.callRemote('clientDebug', message)
+    try {
+        mp.events.callRemote('server:clientDebug', `${message}`)
+    } catch (e) {
+    }
 };
 
 methods.isValidJSON = function(value){

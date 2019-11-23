@@ -10,7 +10,7 @@ ui.create = function() {
 };
 
 // Передача на cef с сервера
-mp.events.add('client:callCef', (event, value) => {
+mp.events.add('client:ui:callCef', (event, value) => {
     ui.callCef(event, value);
 });
 
@@ -28,7 +28,7 @@ mp.keys.bind(0x71, true, () => {
 
 // F11 - для тестов
 mp.keys.bind(0x7A, true, () => {
-    ui.callCef('authMain','{"type": "show"}');
+    ui.callCef('authMain','{"type": "show"}'); // Работает
 });
 
 export default ui;

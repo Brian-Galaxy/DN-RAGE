@@ -1,9 +1,13 @@
 "use strict";
 
-let methods = {};
+let methods = exports;
 
 methods.debug = function (message) {
-    console.log(`[DEBUG-SERVER]: ${message}`)
+    try {
+        console.log(`[DEBUG-SERVER]: ${message}`)
+    } catch (e) {
+        console.log(e)
+    }
 };
 
 methods.isValidJSON = function(value){
@@ -16,5 +20,3 @@ methods.isValidJSON = function(value){
         return false;
     }
 };
-
-export default methods;

@@ -1,4 +1,5 @@
-//import enums from './enums';
+import './modules/events';
+import './betternotifs';
 import weapons from "./weapons";
 import ui from "./modules/ui";
 

@@ -1,9 +1,9 @@
 "use strict";
-var mysql2 = require('mysql');
+var mysql = require('mysql');
 
-const pool = mysql2.createPool({
+const pool = mysql.createPool({
     host: '173.249.7.147', // Тестовый сервак Debian 10
-    //socketPath: '/var/run/mysqld/mysqld.sock', // Коммент для тестов
+    //socketPath: '/var/run/mysqld/mysqld.sock',
     user: 'admin',
     password: 'PO~w~^vI2*m?:JZQ&`$0',
     database: 'dNet_haskell',
@@ -13,8 +13,6 @@ const pool = mysql2.createPool({
     queueLimit: 0,
     timeout: 300000
 });
-
-let mysql = exports;
 
 pool.on('connection', function (connection) {
     console.log('New MySQL connection id: ' + connection.threadId);
@@ -82,4 +80,5 @@ mysql.executeQuery = async function (query, values, callback) {
             console.log(item.username);
         })
     });
-}, 1000);*/
+}, 1000);
+*/

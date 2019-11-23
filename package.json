@@ -4,11 +4,9 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
-    "mysql": "^2.17.1"
-  },
-  "devDependencies": {
-    "@types/ragemp-c": "github:CocaColaBear/types-ragemp-c#master",
-    "@types/ragemp-s": "github:CocaColaBear/types-ragemp-s#master"
+    "mysql": "^2.17.1",
+    "watch": "^1.0.2",
+    "webpack": "^4.41.2"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -22,5 +20,9 @@
   "bugs": {
     "url": "https://github.com/AppiChudilko/DN-RAGE/issues"
   },
-  "homepage": "https://github.com/AppiChudilko/DN-RAGE#readme"
+  "homepage": "https://github.com/AppiChudilko/DN-RAGE#readme",
+  "devDependencies": {
+    "@types/ragemp-c": "https://github.com/CocaColaBear/types-ragemp-c/tarball/master",
+    "@types/ragemp-s": "https://github.com/CocaColaBear/types-ragemp-s/tarball/master"
+  }
 }

@@ -1,12 +1,21 @@
 "use strict";
 var mysql = require('mysql');
 
+let host = '54.37.128.202';
+//let host = '173.249.7.147';
+let dbuser = 'admin_rage';
+//let dbuser = 'user';
+let password = 'b3282a2f2a28757b3a18ab833de16a9c54518c0b0cf493e3f0a7cf09386f326a';
+//let password = 'PO~w~^vI2*m?:JZQ&`$0';
+let database = 'admin_rage';
+//let database = 'dNet_haskell';
+
 const pool = mysql.createPool({
-    host: '173.249.7.147', // Тестовый сервак Debian 10
+    host: host,
     //socketPath: '/var/run/mysqld/mysqld.sock',
-    user: 'admin',
-    password: 'PO~w~^vI2*m?:JZQ&`$0',
-    database: 'dNet_haskell',
+    user: dbuser,
+    password: password,
+    database: database,
     port: 3306,
     waitForConnections: true,
     connectionLimit: 500,

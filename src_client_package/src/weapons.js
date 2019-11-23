@@ -172,6 +172,6 @@ weapons.hashes = {
     CarbineRifleMk2 : 4208062921,
     Parachute : 4222310262,
     SmokeGrenade : 4256991824,
-}
+};
 
 export default weapons;

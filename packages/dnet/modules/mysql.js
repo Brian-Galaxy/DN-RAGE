@@ -1,5 +1,9 @@
 "use strict";
-var mysql = require('mysql');
+
+var mysql2 = require('mysql');
+let methods = require('./methods');
+
+let mysql = exports;
 
 let host = '54.37.128.202';
 //let host = '173.249.7.147';
@@ -10,7 +14,7 @@ let password = 'b3282a2f2a28757b3a18ab833de16a9c54518c0b0cf493e3f0a7cf09386f326a
 let database = 'admin_rage';
 //let database = 'dNet_haskell';
 
-const pool = mysql.createPool({
+const pool = mysql2.createPool({
     host: host,
     //socketPath: '/var/run/mysqld/mysqld.sock',
     user: dbuser,
@@ -82,6 +86,22 @@ mysql.executeQuery = async function (query, values, callback) {
     }
 };
 
+mysql.executeQueryOld = function(query, values, callback) {
+    methods.debug(query);
+    const start = new Date().getTime();
+    pool.query(query, values, function(err, rows, fields) {
+        if (!err) {
+            callback(null, rows, fields);
+        } else {
+            console.log("[DATABASE | ERROR | " + mysql.getTime() + "]");
+            console.log(query);
+            console.log(err);
+            callback(err);
+        }
+    });
+    const end = new Date().getTime();
+    methods.debug(`executeQuery: ${end - start}ms`);
+};
 
 /*setInterval(function () {
     mysql.executeQuery('SELECT * FROM accounts', function (err, rows, fields) {

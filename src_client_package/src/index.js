@@ -1,7 +1,9 @@
+import './modules/data';
 import './modules/events';
 import './betternotifs';
 import weapons from "./weapons";
 import ui from "./modules/ui";
+import user from "./user";
 
 try {
     //mp.gui.chat.show(false); //Disables default RageMP Chat
@@ -17,6 +19,8 @@ try {
     mp.game.ped.setAiMeleeWeaponDamageModifier(1.5);
     mp.game.player.setMeleeWeaponDefenseModifier(1.5);
     mp.game.player.setWeaponDefenseModifier(1.5);
+
+    mp.gui.cursor.show(true, true);
 
     mp.events.add('guiReady', () => {
         ui.create();

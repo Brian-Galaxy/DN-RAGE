@@ -7,9 +7,9 @@ let mysql = exports;
 
 let host = '54.37.128.202';
 //let host = '173.249.7.147';
-let dbuser = 'admin_rage';
+let dbuser = 'admin';
 //let dbuser = 'user';
-let password = 'b3282a2f2a28757b3a18ab833de16a9c54518c0b0cf493e3f0a7cf09386f326a';
+let password = 'mtWkh03ur0ywxwXj';
 //let password = 'PO~w~^vI2*m?:JZQ&`$0';
 let database = 'admin_rage';
 //let database = 'dNet_haskell';
@@ -36,18 +36,18 @@ pool.on('enqueue', function (connection) {
 });
 
 pool.on('release', function (connection) {
-    console.log('Connection %d released', connection.threadId);
+    //console.log('Connection %d released', connection.threadId);
 });
 
 pool.on('acquire', function (connection) {
-    console.log('Connection %d acquired', connection.threadId);
+    //console.log('Connection %d acquired', connection.threadId);
 });
 
 
 
-/*mysql.stressTest = async function() {
+mysql.stressTest = async function() {
     let i = 0;
-    while (i < 50000) {
+    while (i < 5) {
         mysql.executeQuery(`SELECT * FROM accounts`, function (err, rows, fields) {
             console.log(err.code)
         });
@@ -55,9 +55,14 @@ pool.on('acquire', function (connection) {
     }
 };
 
-setTimeout(function() {
-    mysql.stressTest();
-}, 3000);*/
+setInterval(function() {
+    mysql.executeQueryOld(`SELECT * FROM accounts`);
+}, 5000);
+
+mysql.getTime = function() {
+    let dateTime = new Date();
+    return `${methods.digitFormat(dateTime.getHours())}:${methods.digitFormat(dateTime.getMinutes())}:${methods.digitFormat(dateTime.getSeconds())}`;
+};
 
 mysql.executeQuery = async function (query, values, callback) {
     console.log('SQL Query: ' + query);

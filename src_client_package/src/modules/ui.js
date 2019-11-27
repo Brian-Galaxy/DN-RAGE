@@ -48,14 +48,19 @@ ui.callCef = function(event, value) {
 };
 
 // F11 - курсор
-mp.keys.bind(0x7A, true, () => {
+/*mp.keys.bind(0x7A, true, () => {
     let state = !mp.gui.cursor.visible;
     mp.gui.cursor.show(state, state)
-});
+});*/
 /*
 // F11 - для тестов
 mp.keys.bind(0x7A, true, () => {
     ui.callCef('authMain','{"type": "show"}');
 });*/
+
+// F11 - для тестов
+mp.keys.bind(0x7A, true, () => {
+    ui.callCef('authMain','{"type": "redirectToPlayer"}');
+});
 
 export default ui;

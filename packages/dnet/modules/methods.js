@@ -42,9 +42,48 @@ methods.getTimeStamp = function () {
     return Date.now() / 1000 | 0;
 };
 
-methods.debug = function (message) {
+methods.getTimeWithoutSec = function() {
+    let dateTime = new Date();
+    return `${methods.digitFormat(dateTime.getHours())}:${methods.digitFormat(dateTime.getMinutes())}`;
+};
+
+methods.getTime = function() {
+    let dateTime = new Date();
+    return `${methods.digitFormat(dateTime.getHours())}:${methods.digitFormat(dateTime.getMinutes())}:${methods.digitFormat(dateTime.getSeconds())}`;
+};
+
+methods.getDate = function() {
+    let dateTime = new Date();
+    return `${methods.digitFormat(dateTime.getDate())}/${methods.digitFormat(dateTime.getMonth() + 1)}/${methods.digitFormat(dateTime.getFullYear())}`;
+};
+
+methods.distanceToPos = function (v1, v2) {
+    return Math.abs(Math.sqrt(Math.pow((v2.x - v1.x),2) +
+        Math.pow((v2.y - v1.y),2)+
+        Math.pow((v2.z - v1.z),2)));
+};
+
+methods.distanceToPos2D = function (v1, v2) {
+    return Math.abs(Math.sqrt(Math.pow((v2.x - v1.x),2) +
+        Math.pow((v2.y - v1.y),2)));
+};
+
+methods.removeQuotes = function (str) {
+    //TODO RemoveSlash
+    return str.replace('\'', '');
+};
+
+methods.escapeRegExp = function(str) {
+    return str.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
+};
+
+methods.replaceAll = function(str, find, replace) {
+    return str.replace(new RegExp(methods.escapeRegExp(find), 'g'), replace);
+};
+
+methods.debug = function (message, ...args) {
     try {
-        console.log(`[DEBUG-SERVER]: ${message}`)
+        console.log(`[DEBUG-SERVER] [${methods.getTime()}]: ${message}`, args)
     } catch (e) {
         console.log(e)
     }

@@ -20,10 +20,10 @@ try {
     mp.game.player.setMeleeWeaponDefenseModifier(1.5);
     mp.game.player.setWeaponDefenseModifier(1.5);
 
-    mp.gui.cursor.show(true, true);
+    //mp.gui.cursor.show(true, true);
 
     mp.events.add('guiReady', () => {
-        ui.create();
+        //ui.create();
     });
 }
 catch (e) {

@@ -2,6 +2,7 @@
 
 import methods from './methods';
 import user from '../user';
+import menuList from '../menuList';
 
 mp.events.add('client:cefDebug', function (message) {
     try {
@@ -65,6 +66,13 @@ mp.events.add('client:user:auth:login', function(login, password) {
     mp.game.ui.notifications.show('~b~Пожалуйста подождите...');
     //methods.storage.set('login', login);
     mp.events.callRemote('server:user:login', login, password, usingEmail);
+});
+
+//KEYS
+
+// ~ Key Code
+mp.keys.bind(0xC0, true, function() {
+    menuList.showAuthMenu();
 });
 
 // Commands in 2019......

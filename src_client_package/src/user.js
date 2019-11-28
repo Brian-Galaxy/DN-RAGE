@@ -131,6 +131,18 @@ user.notify = function (message) {
     }
 };
 
+user.setVariable = function(key, value) {
+    mp.events.callRemote('server:user:serVariable', key, value); //TODO
+};
+
+user.setVirtualWorld = function(worldId) {
+    mp.events.callRemote('server:user:setVirtualWorld', worldId); //TODO
+};
+
+user.setPlayerModel = function(model) {
+    mp.events.callRemote('server:user:setPlayerModel', model); //TODO
+};
+
 user.isLogin = function(){
     return _isLogin;
 };

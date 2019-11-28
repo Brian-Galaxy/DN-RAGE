@@ -73,6 +73,10 @@ methods.parseInt = function (str) {
     return parseInt(str) || 0;
 };
 
+methods.disableAllControls = function(disable) {
+    mp.events.call('modules:client:player:DisableAllControls', disable); //TODO
+};
+
 methods.isValidJSON = function(value){
     try{
         JSON.parse(value);

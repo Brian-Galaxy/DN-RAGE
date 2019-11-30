@@ -6,7 +6,7 @@ import ui from "./modules/ui";
 import user from "./user";
 
 try {
-    //mp.gui.chat.show(false); //Disables default RageMP Chat
+    mp.gui.chat.show(false); //Disables default RageMP Chat
 
     //TODO Сделать нормальное шифрование
     for (let i = 0; i < weapons.hashesMap.length; i++)
@@ -20,10 +20,12 @@ try {
     mp.game.player.setMeleeWeaponDefenseModifier(1.5);
     mp.game.player.setWeaponDefenseModifier(1.5);
 
-    //mp.gui.cursor.show(true, true);
+    mp.gui.cursor.show(true, true);
+
+    user.init();
 
     mp.events.add('guiReady', () => {
-        //ui.create();
+        ui.create();
     });
 }
 catch (e) {

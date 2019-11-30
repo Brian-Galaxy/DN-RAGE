@@ -3,6 +3,7 @@
 import methods from './methods';
 import user from '../user';
 import menuList from '../menuList';
+import ui from "./ui";
 
 mp.events.add('client:cefDebug', function (message) {
     try {
@@ -65,7 +66,31 @@ mp.events.add('client:user:auth:login', function(login, password) {
     }
     mp.game.ui.notifications.show('~b~Пожалуйста подождите...');
     //methods.storage.set('login', login);
-    mp.events.callRemote('server:user:login', login, password, usingEmail);
+    mp.events.callRemote('server:user:loginAccount', login, password, usingEmail);
+});
+
+mp.events.add('client:events:loginAccount:success', function() {
+    ui.callCef('authMain','{"type": "showCreatePage"}');
+    //ui.callCef('ChangePlayer','{"type": "show"}');
+});
+
+mp.events.add('client:events:createNewPlayer', function() {
+    ui.callCef('authMain','{"type": "hide"}');
+    ui.callCef('customization','{"type": "show"}');
+    methods.debug('CUSTOM');
+    //ui.callCef('ChangePlayer','{"type": "show"}');
+});
+
+mp.events.add('client:events:selectPlayer', function(name) {
+    ui.callCef('authMain','{"type": "hide"}');
+    mp.gui.cursor.show(false, false);
+    methods.debug(name);
+    //ui.callCef('ChangePlayer','{"type": "show"}');
+});
+
+mp.events.add('client:events:debug', function(val) {
+    methods.debug(val);
+    //ui.callCef('ChangePlayer','{"type": "show"}');
 });
 
 //KEYS

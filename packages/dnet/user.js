@@ -32,6 +32,10 @@ user.createAccount = function(player, login, pass, email) {
         let sql = "INSERT INTO accounts (login, email, social, serial, password, reg_ip, reg_timestamp) VALUES ('" + login +
             "', '" + email + "', '" + player.socialClub + "', '" + player.serial + "', '" + pass + "', '" + player.ip + "', '" + methods.getTimeStamp() + "')";
         mysql.executeQuery(sql);
+
+        setTimeout(function () {
+            user.loginAccount(player, login, pass);
+        }, 1000)
     });
 };
 

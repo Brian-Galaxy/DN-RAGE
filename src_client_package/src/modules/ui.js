@@ -7,6 +7,7 @@ let uiBrowser = null;
 
 ui.create = function() {
     uiBrowser = mp.browsers.new("package://cef/index.html");
+    //ui.callCef('authMain','{"type": "show"}');
 };
 
 ui.notify = function(text) {

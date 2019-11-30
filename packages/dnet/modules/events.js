@@ -18,6 +18,14 @@ mp.events.add('server:user:createAccount', (player, login, password, email) => {
     }
 });
 
+mp.events.add('server:user:loginAccount', (player, login, password) => {
+    try {
+        user.loginAccount(player, login, password);
+    } catch (e) {
+        console.log(e);
+    }
+});
+
 process.on('exit', (code) => {
     methods.debug(code);
 });

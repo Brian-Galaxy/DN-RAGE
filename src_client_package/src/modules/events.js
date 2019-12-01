@@ -88,6 +88,100 @@ mp.events.add('client:events:selectPlayer', function(name) {
     //ui.callCef('ChangePlayer','{"type": "show"}');
 });
 
+mp.events.add('client:events:custom:updateAge', function(age) {
+    methods.debug(age);
+    if (age> 72)
+        mp.players.local.setHeadOverlay(3, 14, 1, 1, 1);
+    else if (age> 69)
+        mp.players.local.setHeadOverlay(3, 14, 0.7, 1, 1);
+    else if (age> 66)
+        mp.players.local.setHeadOverlay(3, 12, 1, 1, 1);
+    else if (age> 63)
+        mp.players.local.setHeadOverlay(3, 11, 0.9, 1, 1);
+    else if (age> 60)
+        mp.players.local.setHeadOverlay(3, 10, 0.9, 1, 1);
+    else if (age> 57)
+        mp.players.local.setHeadOverlay(3, 9, 0.9, 1, 1);
+    else if (age> 54)
+        mp.players.local.setHeadOverlay(3, 8, 0.8, 1, 1);
+    else if (age> 51)
+        mp.players.local.setHeadOverlay(3, 7, 0.7, 1, 1);
+    else if (age> 48)
+        mp.players.local.setHeadOverlay(3, 6, 0.6, 1, 1);
+    else if (age> 45)
+        mp.players.local.setHeadOverlay(3, 5, 0.5, 1, 1);
+    else if (age> 42)
+        mp.players.local.setHeadOverlay(3, 4, 0.4, 1, 1);
+    else if (age> 39)
+        mp.players.local.setHeadOverlay(3, 4, 0.4, 1, 1);
+    else if (age> 36)
+        mp.players.local.setHeadOverlay(3, 3, 0.3, 1, 1);
+    else if (age> 33)
+        mp.players.local.setHeadOverlay(3, 1, 0.2, 1, 1);
+    else if (age> 30)
+        mp.players.local.setHeadOverlay(3, 0, 0.1, 1, 1);
+    else
+        mp.players.local.setHeadOverlay(3, 0, 0.0, 1, 1);
+});
+
+mp.events.add('client:events:custom:set', function(stats, input_editor_face, input_editor_nose, input_editor_eyes_lips, input_editor_face_last, cheked_sex, mother, father, mix1, mix2) {
+    methods.debug('CUSTOM', stats, input_editor_face, input_editor_nose, input_editor_eyes_lips, input_editor_face_last, cheked_sex, mother, father, mix1, mix2);
+
+    methods.debug('' + cheked_sex);
+    methods.debug('' + user.getSex());
+
+    if (cheked_sex && user.getSex() == 0) {
+        user.showLoadDisplay();
+        setTimeout(function () {
+            user.setCache('SKIN_SEX', 1);
+            user.setPlayerModel(mp.game.joaat('mp_f_freemode_01'));
+            setTimeout(function () {
+                user.hideLoadDisplay();
+            }, 500)
+        }, 500);
+    }
+    if (cheked_sex === false && user.getSex() == 1) {
+        user.showLoadDisplay();
+        setTimeout(function () {
+            user.setCache('SKIN_SEX', 0);
+            user.setPlayerModel(mp.game.joaat('mp_m_freemode_01'));
+            setTimeout(function () {
+                user.hideLoadDisplay();
+            }, 500)
+        }, 500);
+    }
+
+});
+
+mp.events.add('client:events:custom:register', function(name, surname, age) {
+    if (age < 18) {
+        ui.notify('Возраст не может быть меньше 18 лет', 1);
+        return;
+    }
+    else if (age > 60) {
+        ui.notify('Возраст не может быть больше 60 лет', 1);
+        return;
+    }
+    //TODO национальность
+    mp.events.callRemote('server:user:createUser', name, surname, age);
+});
+
+mp.events.add('client:events:loginUser:finalCreate', function() {
+    user.setLogin(true);
+    ui.callCef('customization','{"type": "showFamilyPage"}');
+});
+
+mp.events.add('client:user:updateCache', (data) => {
+    try {
+        methods.debug('Event: client:user:updateCache');
+        user.setCacheData(new Map(data));
+    }
+    catch (e) {
+        methods.debug('Exception: events:client:user:updateCache');
+        methods.debug(e);
+    }
+});
+
 mp.events.add('client:events:debug', function(val) {
     methods.debug(val);
     //ui.callCef('ChangePlayer','{"type": "show"}');

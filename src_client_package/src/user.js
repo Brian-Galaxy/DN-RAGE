@@ -9,6 +9,12 @@ let user = {};
 
 let _isLogin = false;
 
+let userData = new Map();
+
+user.godmode = false;
+user.isTeleport = false;
+user.currentId = 0;
+
 user.removeAllWeapons = function() {
     mp.players.local.removeAllWeapons();
 
@@ -172,7 +178,39 @@ user.setPlayerModel = function(model) {
     mp.events.callRemote('server:user:setPlayerModel', model); //TODO
 };
 
+user.getCache = function(item) {
+    try {
+        if (userData.has(item))
+            return userData.get(item);
+        return undefined;
+    }
+    catch (e) {
+        methods.debug('Exception: user.get');
+        methods.debug(e);
+        userData = new Map();
+        return undefined;
+    }
+};
+
+user.hasCache = function(item) {
+    return userData.has(item);
+};
+
+user.setCache = function(key, value) {
+    userData.set(key, value);
+};
+
+user.setCacheData = function(data) {
+    userData = data;
+    user.currentId = data.get('id') + 1000000;
+};
+
+user.getCacheData = function() {
+    return userData;
+};
+
 let skin = {
+    SKIN_SEX: 0,
     SKIN_MOTHER_FACE: 0,
     SKIN_FATHER_FACE: 0,
     SKIN_MOTHER_SKIN: 0,
@@ -184,24 +222,45 @@ let skin = {
     SKIN_EYE_COLOR: 0,
     SKIN_EYEBROWS: 0,
     SKIN_EYEBROWS_COLOR: 0,
+    SKIN_OVERLAY_1: -1,
+    SKIN_OVERLAY_COLOR_1: -1,
+    SKIN_OVERLAY_2: -1,
+    SKIN_OVERLAY_COLOR_2: -1,
+    SKIN_OVERLAY_3: -1,
+    SKIN_OVERLAY_COLOR_3: -1,
+    SKIN_OVERLAY_4: -1,
+    SKIN_OVERLAY_COLOR_4: -1,
+    SKIN_OVERLAY_5: -1,
+    SKIN_OVERLAY_COLOR_5: -1,
+    SKIN_OVERLAY_6: -1,
+    SKIN_OVERLAY_COLOR_6: -1,
+    SKIN_OVERLAY_7: -1,
+    SKIN_OVERLAY_COLOR_7: -1,
+    SKIN_OVERLAY_8: -1,
+    SKIN_OVERLAY_COLOR_8: -1,
+    SKIN_OVERLAY_9: -1,
+    SKIN_OVERLAY_COLOR_9: -1,
+    SKIN_OVERLAY_10: -1,
+    SKIN_OVERLAY_COLOR_10: -1,
+    SKIN_OVERLAY_11: -1,
+    SKIN_OVERLAY_COLOR_11: 0,
+    SKIN_OVERLAY_12: -1,
+    SKIN_OVERLAY_COLOR_12: -1,
     SKIN_SPECIFICATIONS: [],
 };
 
-/*
-0               Blemishes             0 - 23, 255
-1               Facial Hair           0 - 28, 255
-2               Eyebrows              0 - 33, 255
-3               Ageing                0 - 14, 255
-4               Makeup                0 - 74, 255
-5               Blush                 0 - 6, 255
-6               Complexion            0 - 11, 255
-7               Sun Damage            0 - 10, 255
-8               Lipstick              0 - 9, 255
-9               Moles/Freckles        0 - 17, 255
-10              Chest Hair            0 - 16, 255
-11              Body Blemishes        0 - 11, 255
-12              Add Body Blemishes    0 - 1, 255
-* */
+user.getSex = function() {
+    if (mp.players.local.model === mp.game.joaat('mp_f_freemode_01'))
+        return 1;
+    else if (mp.players.local.model === mp.game.joaat('mp_m_freemode_01'))
+        return 0;
+    else if (user.isLogin()) {
+        let skin = JSON.parse(user.getCache('skin'));
+        return skin['SKIN_SEX'];
+    }
+    else
+        return 0;
+};
 
 user.updateCharacterFace = function(isLocal = false) {
     try {
@@ -234,23 +293,54 @@ user.updateCharacterFace = function(isLocal = false) {
                 }
             }
 
-            mp.players.local.setComponentVariation(2, user.get('GTAO_HAIR'), 0, 2);
-            mp.players.local.setHeadOverlay(2, user.get('GTAO_EYEBROWS'), 1.0, user.get('GTAO_EYEBROWS_COLOR'), 0);
+            mp.players.local.setComponentVariation(2, user.get('SKIN_HAIR'), 0, 2);
+            mp.players.local.setHeadOverlay(2, user.get('SKIN_EYEBROWS'), 1.0, user.get('SKIN_EYEBROWS_COLOR'), 0);
 
-            mp.players.local.setHairColor(user.get('GTAO_HAIR_COLOR'), 0);
-            mp.players.local.setEyeColor(user.get('GTAO_EYE_COLOR'));
-            mp.players.local.setHeadOverlayColor(2, 1, user.get('GTAO_EYEBROWS_COLOR'), 0);
+            mp.players.local.setHairColor(user.get('SKIN_HAIR_COLOR'), 0);
+            mp.players.local.setEyeColor(user.get('SKIN_EYE_COLOR'));
+            mp.players.local.setHeadOverlayColor(2, 1, user.get('SKIN_EYEBROWS_COLOR'), 0);
 
-            mp.players.local.setHeadOverlay(9, user.get('GTAO_OVERLAY9'), 1.0, user.get('GTAO_OVERLAY9_COLOR'), 0);
+            mp.players.local.setHeadOverlay(9, user.get('SKIN_OVERLAY_9'), 1.0, user.get('SKIN_OVERLAY_9_COLOR'), 0);
+
+            /*if (user.get(player, 'age') > 72)
+                player.setHeadOverlay(3, [14, 1, 1, 1]);
+            else if (user.get(player, 'age') > 69)
+                player.setHeadOverlay(3, [14, 0.7, 1, 1]);
+            else if (user.get(player, 'age') > 66)
+                player.setHeadOverlay(3, [12, 1, 1, 1]);
+            else if (user.get(player, 'age') > 63)
+                player.setHeadOverlay(3, [11, 0.9, 1, 1]);
+            else if (user.get(player, 'age') > 60)
+                player.setHeadOverlay(3, [10, 0.9, 1, 1]);
+            else if (user.get(player, 'age') > 57)
+                player.setHeadOverlay(3, [9, 0.9, 1, 1]);
+            else if (user.get(player, 'age') > 54)
+                player.setHeadOverlay(3, [8, 0.8, 1, 1]);
+            else if (user.get(player, 'age') > 51)
+                player.setHeadOverlay(3, [7, 0.7, 1, 1]);
+            else if (user.get(player, 'age') > 48)
+                player.setHeadOverlay(3, [6, 0.6, 1, 1]);
+            else if (user.get(player, 'age') > 45)
+                player.setHeadOverlay(3, [5, 0.5, 1, 1]);
+            else if (user.get(player, 'age') > 42)
+                player.setHeadOverlay(3, [4, 0.4, 1, 1]);
+            else if (user.get(player, 'age') > 39)
+                player.setHeadOverlay(3, [4, 0.4, 1, 1]);
+            else if (user.get(player, 'age') > 36)
+                player.setHeadOverlay(3, [3, 0.3, 1, 1]);
+            else if (user.get(player, 'age') > 33)
+                player.setHeadOverlay(3, [1, 0.2, 1, 1]);
+            else if (user.get(player, 'age') > 30)
+                player.setHeadOverlay(3, [0, 0.1, 1, 1]);*/
 
             if (user.getSex() == 0) {
-                mp.players.local.setHeadOverlay(10, user.get('GTAO_OVERLAY10'), 1.0, user.get('GTAO_OVERLAY10_COLOR'), 0);
-                mp.players.local.setHeadOverlay(1, user.get('GTAO_OVERLAY'), 1.0, user.get('GTAO_OVERLAY_COLOR'), 0);
+                mp.players.local.setHeadOverlay(10, user.get('SKIN_OVERLAY_10'), 1.0, user.get('SKIN_OVERLAY_10_COLOR'), 0);
+                mp.players.local.setHeadOverlay(1, user.get('SKIN_OVERLAY_1'), 1.0, user.get('SKIN_OVERLAY_1_COLOR'), 0);
             }
             else if (user.getSex() == 1) {
-                mp.players.local.setHeadOverlay(4, user.get('GTAO_OVERLAY4'), 1.0, user.get('GTAO_OVERLAY4_COLOR'), 0);
-                mp.players.local.setHeadOverlay(5, user.get('GTAO_OVERLAY5'), 1.0, user.get('GTAO_OVERLAY5_COLOR'), 0);
-                mp.players.local.setHeadOverlay(8, user.get('GTAO_OVERLAY8'), 1.0, user.get('GTAO_OVERLAY8_COLOR'), 0);
+                mp.players.local.setHeadOverlay(4, user.get('SKIN_OVERLAY_4'), 1.0, user.get('SKIN_OVERLAY_4_COLOR'), 0);
+                mp.players.local.setHeadOverlay(5, user.get('SKIN_OVERLAY_5'), 1.0, user.get('SKIN_OVERLAY_5_COLOR'), 0);
+                mp.players.local.setHeadOverlay(8, user.get('SKIN_OVERLAY_8'), 1.0, user.get('SKIN_OVERLAY_8_COLOR'), 0);
             }
         }
     } catch(e) {

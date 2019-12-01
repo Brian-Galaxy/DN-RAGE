@@ -18,9 +18,26 @@ mp.events.add('server:user:createAccount', (player, login, password, email) => {
     }
 });
 
+mp.events.add('server:user:createUser', (player, name, surname, age) => {
+    try {
+        user.createUser(player, name, surname, age);
+    } catch (e) {
+        console.log(e);
+    }
+});
+
 mp.events.add('server:user:loginAccount', (player, login, password) => {
     try {
         user.loginAccount(player, login, password);
+    } catch (e) {
+        console.log(e);
+    }
+});
+
+mp.events.add('server:user:setPlayerModel', (player, model) => {
+    try {
+        if (mp.players.exists(player))
+            player.model = model;
     } catch (e) {
         console.log(e);
     }

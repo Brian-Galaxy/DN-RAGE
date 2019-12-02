@@ -152,6 +152,92 @@ user.loginUser = function(player, name, isCreate = false) {
     });
 };
 
+user.save = function(player, withReset = false) {
+    return new Promise(resolve => {
+        methods.debug('user.saveAccount');
+
+        if (!mp.players.exists(player)) {
+            resolve(false);
+            return;
+        }
+
+        if (!user.isLogin(player)) {
+            resolve(false);
+            return;
+        }
+
+        let sql = "UPDATE users SET social = '" + player.socialClub + "'";
+
+        let skin = {};
+        skin.SKIN_MOTHER_FACE = methods.parseInt(user.get(player, "SKIN_MOTHER_FACE"));
+        skin.SKIN_FATHER_FACE = methods.parseInt(user.get(player, "SKIN_FATHER_FACE"));
+        skin.SKIN_MOTHER_SKIN = methods.parseInt(user.get(player, "SKIN_MOTHER_SKIN"));
+        skin.SKIN_FATHER_SKIN = methods.parseInt(user.get(player, "SKIN_FATHER_SKIN"));
+        skin.SKIN_PARENT_FACE_MIX = user.get(player, "SKIN_PARENT_FACE_MIX");
+        skin.SKIN_PARENT_SKIN_MIX = user.get(player, "SKIN_PARENT_SKIN_MIX");
+        skin.SKIN_HAIR = methods.parseInt(user.get(player, "SKIN_HAIR"));
+        skin.SKIN_HAIR_COLOR = methods.parseInt(user.get(player, "SKIN_HAIR_COLOR"));
+        skin.SKIN_EYE_COLOR = methods.parseInt(user.get(player, "SKIN_EYE_COLOR"));
+        skin.SKIN_EYEBROWS = methods.parseInt(user.get(player, "SKIN_EYEBROWS"));
+        skin.SKIN_EYEBROWS_COLOR = methods.parseInt(user.get(player, "SKIN_EYEBROWS_COLOR"));
+        skin.SKIN_OVERLAY_1 = methods.parseInt(user.get(player, "SKIN_OVERLAY_1"));
+        skin.SKIN_OVERLAY_COLOR_1 = methods.parseInt(user.get(player, "SKIN_OVERLAY_COLOR_1"));
+        skin.SKIN_OVERLAY_2 = methods.parseInt(user.get(player, "SKIN_OVERLAY_2"));
+        skin.SKIN_OVERLAY_COLOR_2 = methods.parseInt(user.get(player, "SKIN_OVERLAY_COLOR_2"));
+        skin.SKIN_OVERLAY_3 = methods.parseInt(user.get(player, "SKIN_OVERLAY_3"));
+        skin.SKIN_OVERLAY_COLOR_3 = methods.parseInt(user.get(player, "SKIN_OVERLAY_COLOR_3"));
+        skin.SKIN_OVERLAY_4 = methods.parseInt(user.get(player, "SKIN_OVERLAY_4"));
+        skin.SKIN_OVERLAY_COLOR_4 = methods.parseInt(user.get(player, "SKIN_OVERLAY_COLOR_4"));
+        skin.SKIN_OVERLAY_5 = methods.parseInt(user.get(player, "SKIN_OVERLAY_5"));
+        skin.SKIN_OVERLAY_COLOR_5 = methods.parseInt(user.get(player, "SKIN_OVERLAY_COLOR_5"));
+        skin.SKIN_OVERLAY_6 = methods.parseInt(user.get(player, "SKIN_OVERLAY_6"));
+        skin.SKIN_OVERLAY_COLOR_6 = methods.parseInt(user.get(player, "SKIN_OVERLAY_COLOR_6"));
+        skin.SKIN_OVERLAY_7 = methods.parseInt(user.get(player, "SKIN_OVERLAY_7"));
+        skin.SKIN_OVERLAY_COLOR_7 = methods.parseInt(user.get(player, "SKIN_OVERLAY_COLOR_7"));
+        skin.SKIN_OVERLAY_8 = methods.parseInt(user.get(player, "SKIN_OVERLAY_8"));
+        skin.SKIN_OVERLAY_COLOR_8 = methods.parseInt(user.get(player, "SKIN_OVERLAY_COLOR_8"));
+        skin.SKIN_OVERLAY_9 = methods.parseInt(user.get(player, "SKIN_OVERLAY_9"));
+        skin.SKIN_OVERLAY_COLOR_9 = methods.parseInt(user.get(player, "SKIN_OVERLAY_COLOR_9"));
+        skin.SKIN_OVERLAY_10 = methods.parseInt(user.get(player, "SKIN_OVERLAY_10"));
+        skin.SKIN_OVERLAY_COLOR_10 = methods.parseInt(user.get(player, "SKIN_OVERLAY_COLOR_10"));
+        skin.SKIN_OVERLAY_11 = methods.parseInt(user.get(player, "SKIN_OVERLAY_11"));
+        skin.SKIN_OVERLAY_COLOR_11 = methods.parseInt(user.get(player, "SKIN_OVERLAY_COLOR_11"));
+        skin.SKIN_OVERLAY_12 = methods.parseInt(user.get(player, "SKIN_OVERLAY_12"));
+        skin.SKIN_OVERLAY_COLOR_12 = methods.parseInt(user.get(player, "SKIN_OVERLAY_COLOR_12"));
+        skin.SKIN_SPECIFICATIONS = user.get(player, "GTAO_FACE_SPECIFICATIONS");
+        skin.SKIN_SEX = user.get(player, "SKIN_SEX");
+
+        user.set(player, 'skin', JSON.stringify(skin));
+
+        enums.userData.forEach(function(element) {
+            if (element === 'id') return;
+            else if (element === 'name') return;
+            else if (element === 'is_online') return;
+
+            if (user.has(player, element)) {
+                if (typeof user.get(player, element) == 'boolean')
+                    sql += `, ${element} = '${user.get(player, element) === true ? 1 : 0}'`;
+                else if (typeof user.get(player, element) != 'object' && typeof user.get(player, element) != 'undefined') {
+                    if (typeof(user.get(player, element)) == 'number' && isNaN(user.get(player, element))) return;
+                    sql += `, ${element} = '${user.get(player, element)}'`;
+                }
+            }
+        });
+
+        sql = sql + " where id = '" + user.get(player, "id") + "'";
+        mysql.executeQuery(sql);
+
+        if (withReset === true) {
+
+        }
+        else
+            user.updateClientCache(player);
+        resolve(true);
+        return;
+    });
+
+};
+
 user.loadUser = function(player, name, isCreate = false) {
 
     methods.debug('user.loadAccount');
@@ -622,6 +708,23 @@ user.doesExistAccount = function(login, email, social, callback) {
         return callback(1);
     });
 };
+
+
+user.clearDecorations = function(player) {
+    methods.debug('user.clearDecorations');
+    if (!mp.players.exists(player))
+        return false;
+    player.clearDecorations();
+
+};
+
+user.setDecoration = function(player, slot, overlay) {
+    methods.debug('user.setDecoration');
+    if (!mp.players.exists(player))
+        return false;
+    player.setDecoration(mp.joaat(slot), mp.joaat(overlay));
+};
+
 
 user.isLogin = function(player) {
     if (!mp.players.exists(player))

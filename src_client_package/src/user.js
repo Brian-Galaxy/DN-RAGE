@@ -4,6 +4,7 @@ import Container from './modules/data';
 import methods from './modules/methods';
 import ui from "./modules/ui";
 import weapons from "./weapons";
+import enums from "./enums";
 
 let user = {};
 
@@ -14,6 +15,11 @@ let userData = new Map();
 user.godmode = false;
 user.isTeleport = false;
 user.currentId = 0;
+
+let currentCamDist = 0.2;
+let currentCamRot = -2;
+
+let cam = null;
 
 user.removeAllWeapons = function() {
     mp.players.local.removeAllWeapons();
@@ -137,17 +143,20 @@ user.notify = function (message) {
     }
 };
 
-let cam = null;
-
 user.init = function() {
+
+    user.hideLoadDisplay();
 
     cam = mp.cameras.new('customization', new mp.Vector3(8.243752, 527.4373, 171.6173), new mp.Vector3(0, 0, 0), 20);
     cam.pointAtCoord(9.66692, 528.34783, 171.2);
     cam.setActive(true);
     mp.game.cam.renderScriptCams(true, false, 0, false, false);
 
+    let currentCamDist = 0.2;
+    let currentCamRot = -2;
+
     user.setVirtualWorld(mp.players.local.remoteId + 1);
-    mp.players.local.position = new mp.Vector3(9.66692, 528.34783, 170.63504);
+    mp.players.local.position = new mp.Vector3(9.66692, 528.34783, 170.63504 + 10);
     mp.players.local.setRotation(0, 0, 123.53768, 0, true);
     mp.players.local.freezePosition(true);
     mp.players.local.setVisible(true, false);
@@ -166,16 +175,52 @@ user.destroyCam = function() {
     }
 };
 
+user.getCam = function() {
+    return cam;
+};
+
+user.camSetRot = function(idx) {
+    let coords = new mp.Vector3(9.66692, 528.34783, 171.3);
+    currentCamRot = (idx / 180) * -2;
+    let newCoords = new mp.Vector3((1 + currentCamDist) * Math.sin(currentCamRot) + coords.x, (1 + currentCamDist) * Math.cos(currentCamRot) + coords.y, coords.z);
+    cam.setCoord(newCoords.x, newCoords.y, newCoords.z);
+};
+
+user.camSetDist = function(idx) {
+    currentCamDist = idx;
+    let coords = new mp.Vector3(9.66692, 528.34783, 171.3);
+    let newCoords = new mp.Vector3((1 + currentCamDist) * Math.sin(currentCamRot) + coords.x, (1 + currentCamDist) * Math.cos(currentCamRot) + coords.y, coords.z);
+    cam.setCoord(newCoords.x, newCoords.y, newCoords.z);
+};
+
 user.setVariable = function(key, value) {
-    mp.events.callRemote('server:user:serVariable', key, value); //TODO
+    mp.events.callRemote('server:user:serVariable', key, value);
 };
 
 user.setVirtualWorld = function(worldId) {
-    mp.events.callRemote('server:user:setVirtualWorld', worldId); //TODO
+    mp.events.callRemote('server:user:setVirtualWorld', worldId);
 };
 
 user.setPlayerModel = function(model) {
-    mp.events.callRemote('server:user:setPlayerModel', model); //TODO
+    mp.events.callRemote('server:user:setPlayerModel', model);
+};
+
+user.setDecoration = function(slot, type, isLocal = false) {
+    if (!isLocal)
+        mp.events.callRemote('server:user:setDecoration', slot, type);
+    else
+        mp.players.local.setDecoration(mp.game.joaat(slot), mp.game.joaat(type));
+};
+
+user.clearDecorations = function(isLocal = false) {
+    if (!isLocal)
+        mp.events.callRemote('server:user:clearDecorations');
+    else
+        mp.players.local.clearDecorations();
+};
+
+user.save = function() {
+    mp.events.callRemote('server:user:save');
 };
 
 user.getCache = function(item) {
@@ -200,6 +245,28 @@ user.setCache = function(key, value) {
     userData.set(key, value);
 };
 
+user.set = function(key, val) {
+    user.setCache(key, val);
+    Container.Data.Set(mp.players.local.id, key, val);
+};
+
+user.reset = function(key) {
+    user.setCache(key, null);
+    Container.Data.Reset(mp.players.local.id, key);
+};
+
+user.get = async function(key) {
+    try {
+        return await Container.Data.Get(mp.players.local.id, key);
+    } catch (e) {
+        methods.debug(e);
+    }
+    return null;
+};
+
+user.has = async function(key) {
+    return await Container.Data.Has(mp.players.local.id, key);
+};
 user.setCacheData = function(data) {
     userData = data;
     user.currentId = data.get('id') + 1000000;
@@ -269,19 +336,19 @@ user.updateCharacterFace = function(isLocal = false) {
         else {
 
             mp.players.local.setHeadBlendData(
-                user.get('SKIN_MOTHER_FACE'),
-                user.get('SKIN_FATHER_FACE'),
+                user.getCache('SKIN_MOTHER_FACE'),
+                user.getCache('SKIN_FATHER_FACE'),
                 0,
-                user.get('SKIN_MOTHER_SKIN'),
-                user.get('SKIN_FATHER_SKIN'),
+                user.getCache('SKIN_MOTHER_SKIN'),
+                user.getCache('SKIN_FATHER_SKIN'),
                 0,
-                user.get('SKIN_PARENT_FACE_MIX'),
-                user.get('SKIN_PARENT_SKIN_MIX'),
+                user.getCache('SKIN_PARENT_FACE_MIX'),
+                user.getCache('SKIN_PARENT_SKIN_MIX'),
                 0,
                 true
             );
 
-            let specifications = user.get('SKIN_FACE_SPECIFICATIONS');
+            let specifications = user.getCache('SKIN_FACE_SPECIFICATIONS');
             if (specifications) {
                 try {
                     JSON.parse(specifications).forEach((item, i) => {
@@ -293,54 +360,41 @@ user.updateCharacterFace = function(isLocal = false) {
                 }
             }
 
-            mp.players.local.setComponentVariation(2, user.get('SKIN_HAIR'), 0, 2);
-            mp.players.local.setHeadOverlay(2, user.get('SKIN_EYEBROWS'), 1.0, user.get('SKIN_EYEBROWS_COLOR'), 0);
+            mp.players.local.setComponentVariation(2, user.getCache('SKIN_HAIR'), 0, 2);
+            mp.players.local.setHeadOverlay(2, user.getCache('SKIN_EYEBROWS'), 1.0, user.getCache('SKIN_EYEBROWS_COLOR'), 0);
 
-            mp.players.local.setHairColor(user.get('SKIN_HAIR_COLOR'), 0);
-            mp.players.local.setEyeColor(user.get('SKIN_EYE_COLOR'));
-            mp.players.local.setHeadOverlayColor(2, 1, user.get('SKIN_EYEBROWS_COLOR'), 0);
+            mp.players.local.setHairColor(user.getCache('SKIN_HAIR_COLOR'), 0);
+            mp.players.local.setEyeColor(user.getCache('SKIN_EYE_COLOR'));
+            mp.players.local.setHeadOverlayColor(2, 1, user.getCache('SKIN_EYEBROWS_COLOR'), 0);
 
-            mp.players.local.setHeadOverlay(9, user.get('SKIN_OVERLAY_9'), 1.0, user.get('SKIN_OVERLAY_9_COLOR'), 0);
+            mp.players.local.setHeadOverlay(9, user.getCache('SKIN_OVERLAY_9'), 1.0, user.getCache('SKIN_OVERLAY_9_COLOR'), 0);
 
-            /*if (user.get(player, 'age') > 72)
-                player.setHeadOverlay(3, [14, 1, 1, 1]);
-            else if (user.get(player, 'age') > 69)
-                player.setHeadOverlay(3, [14, 0.7, 1, 1]);
-            else if (user.get(player, 'age') > 66)
-                player.setHeadOverlay(3, [12, 1, 1, 1]);
-            else if (user.get(player, 'age') > 63)
-                player.setHeadOverlay(3, [11, 0.9, 1, 1]);
-            else if (user.get(player, 'age') > 60)
-                player.setHeadOverlay(3, [10, 0.9, 1, 1]);
-            else if (user.get(player, 'age') > 57)
-                player.setHeadOverlay(3, [9, 0.9, 1, 1]);
-            else if (user.get(player, 'age') > 54)
-                player.setHeadOverlay(3, [8, 0.8, 1, 1]);
-            else if (user.get(player, 'age') > 51)
-                player.setHeadOverlay(3, [7, 0.7, 1, 1]);
-            else if (user.get(player, 'age') > 48)
-                player.setHeadOverlay(3, [6, 0.6, 1, 1]);
-            else if (user.get(player, 'age') > 45)
-                player.setHeadOverlay(3, [5, 0.5, 1, 1]);
-            else if (user.get(player, 'age') > 42)
-                player.setHeadOverlay(3, [4, 0.4, 1, 1]);
-            else if (user.get(player, 'age') > 39)
-                player.setHeadOverlay(3, [4, 0.4, 1, 1]);
-            else if (user.get(player, 'age') > 36)
-                player.setHeadOverlay(3, [3, 0.3, 1, 1]);
-            else if (user.get(player, 'age') > 33)
-                player.setHeadOverlay(3, [1, 0.2, 1, 1]);
-            else if (user.get(player, 'age') > 30)
-                player.setHeadOverlay(3, [0, 0.1, 1, 1]);*/
-
-            if (user.getSex() == 0) {
-                mp.players.local.setHeadOverlay(10, user.get('SKIN_OVERLAY_10'), 1.0, user.get('SKIN_OVERLAY_10_COLOR'), 0);
-                mp.players.local.setHeadOverlay(1, user.get('SKIN_OVERLAY_1'), 1.0, user.get('SKIN_OVERLAY_1_COLOR'), 0);
+            try {
+                if (user.getSex() == 0) {
+                    mp.players.local.setHeadOverlay(10, user.getCache('SKIN_OVERLAY_10'), 1.0, user.getCache('SKIN_OVERLAY_10_COLOR'), 0);
+                    mp.players.local.setHeadOverlay(1, user.getCache('SKIN_OVERLAY_1'), 1.0, user.getCache('SKIN_OVERLAY_1_COLOR'), 0);
+                }
+                else if (user.getSex() == 1) {
+                    mp.players.local.setHeadOverlay(4, user.getCache('SKIN_OVERLAY_4'), 1.0, user.getCache('SKIN_OVERLAY_4_COLOR'), 0);
+                    mp.players.local.setHeadOverlay(5, user.getCache('SKIN_OVERLAY_5'), 1.0, user.getCache('SKIN_OVERLAY_5_COLOR'), 0);
+                    mp.players.local.setHeadOverlay(8, user.getCache('SKIN_OVERLAY_8'), 1.0, user.getCache('SKIN_OVERLAY_8_COLOR'), 0);
+                }
             }
-            else if (user.getSex() == 1) {
-                mp.players.local.setHeadOverlay(4, user.get('SKIN_OVERLAY_4'), 1.0, user.get('SKIN_OVERLAY_4_COLOR'), 0);
-                mp.players.local.setHeadOverlay(5, user.get('SKIN_OVERLAY_5'), 1.0, user.get('SKIN_OVERLAY_5_COLOR'), 0);
-                mp.players.local.setHeadOverlay(8, user.get('SKIN_OVERLAY_8'), 1.0, user.get('SKIN_OVERLAY_8_COLOR'), 0);
+            catch (e) {
+                methods.debug(e);
+            }
+
+            try {
+                let data = JSON.parse(enums.get('overlays'))[user.getSex()][user.getCache('SKIN_HAIR')];
+
+                methods.debug(data[0]);
+                methods.debug(data[1]);
+
+                user.clearDecorations(true);
+                user.setDecoration(data[0], data[1], true);
+            }
+            catch (e) {
+                methods.debug(e);
             }
         }
     } catch(e) {

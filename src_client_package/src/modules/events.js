@@ -71,6 +71,8 @@ mp.events.add('client:user:auth:login', function(login, password) {
 
 mp.events.add('client:events:loginAccount:success', function() {
     ui.callCef('authMain','{"type": "showCreatePage"}');
+    mp.players.local.position = new mp.Vector3(9.66692, 528.34783, 170.63504);
+    mp.players.local.setRotation(0, 0, 123.53768, 0, true);
     //ui.callCef('ChangePlayer','{"type": "show"}');
 });
 
@@ -124,33 +126,113 @@ mp.events.add('client:events:custom:updateAge', function(age) {
         mp.players.local.setHeadOverlay(3, 0, 0.0, 1, 1);
 });
 
-mp.events.add('client:events:custom:set', function(stats, input_editor_face, input_editor_nose, input_editor_eyes_lips, input_editor_face_last, cheked_sex, mother, father, mix1, mix2) {
-    methods.debug('CUSTOM', stats, input_editor_face, input_editor_nose, input_editor_eyes_lips, input_editor_face_last, cheked_sex, mother, father, mix1, mix2);
+mp.events.add('client:events:custom:set', function(input_editor_face, input_editor_nose, input_editor_eyes_lips, input_editor_face_last, cheked_sex, mother, father, mix1, mix2) {
+    methods.debug('CUSTOM');
 
-    methods.debug('' + cheked_sex);
-    methods.debug('' + user.getSex());
+    let faceEditor = JSON.parse(input_editor_face);
+    let noseEditor = JSON.parse(input_editor_nose);
+    let eyeEditor = JSON.parse(input_editor_eyes_lips);
+    let faceLastEditor = JSON.parse(input_editor_face_last);
 
-    if (cheked_sex && user.getSex() == 0) {
+    if (user.getCache('SKIN_FACE_SPECIFICATIONS')) {
+        if(JSON.parse(user.getCache('SKIN_FACE_SPECIFICATIONS')).length < 20) {
+            user.set('SKIN_FACE_SPECIFICATIONS', JSON.stringify([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]));
+        }
+    }
+    else {
+        user.set('SKIN_FACE_SPECIFICATIONS', JSON.stringify([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]));
+    }
+
+    let skinSpec = JSON.parse(user.getCache('SKIN_FACE_SPECIFICATIONS'));
+
+    skinSpec[11] = eyeEditor[0].value / 100;
+    skinSpec[12] = eyeEditor[1].value / 100;
+
+    skinSpec[0] = noseEditor[0].value / 100;
+    skinSpec[1] = noseEditor[1].value / 100;
+    skinSpec[2] = noseEditor[2].value / 100;
+    skinSpec[4] = noseEditor[3].value / 100;
+    skinSpec[3] = noseEditor[4].value / 100;
+    skinSpec[5] = noseEditor[5].value / 100;
+
+    skinSpec[6] = faceEditor[0].value / 100;
+    skinSpec[7] = faceEditor[1].value / 100;
+    skinSpec[8] = faceEditor[2].value / 100;
+    skinSpec[9] = faceEditor[3].value / 100;
+    skinSpec[10] = faceEditor[4].value / 100;
+    skinSpec[13] = faceEditor[5].value / 100;
+    skinSpec[14] = faceEditor[6].value / 100;
+    skinSpec[15] = faceEditor[7].value / 100;
+    skinSpec[17] = faceEditor[8].value / 100;
+    skinSpec[16] = faceEditor[9].value / 100;
+    skinSpec[18] = faceEditor[10].value / 100;
+    skinSpec[19] = faceEditor[11].value / 100;
+
+    user.set('SKIN_FACE_SPECIFICATIONS', JSON.stringify(skinSpec));
+
+    let fatherList = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 42, 43, 44];
+    let motherList = [21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 45];
+
+    user.set('SKIN_MOTHER_FACE', motherList[mother]);
+    user.set('SKIN_MOTHER_SKIN', mother);
+    user.set('SKIN_FATHER_FACE', fatherList[father]);
+    user.set('SKIN_FATHER_SKIN', father);
+
+    user.set('SKIN_PARENT_FACE_MIX', mix1 / 20);
+    user.set('SKIN_PARENT_SKIN_MIX', mix2 / 20);
+
+    user.set('SKIN_HAIR', faceLastEditor[0].index_help);
+    user.set('SKIN_HAIR_COLOR', faceLastEditor[1].index_help);
+    user.set('SKIN_EYEBROWS', faceLastEditor[2].index_help);
+    user.set('SKIN_EYEBROWS_COLOR', faceLastEditor[3].index_help);
+    user.set('SKIN_EYE_COLOR', faceLastEditor[4].index_help);
+    user.set('SKIN_OVERLAY_9', faceLastEditor[5].index_help - 1);
+    user.set('SKIN_OVERLAY_9_COLOR', faceLastEditor[6].index_help);
+
+    user.set('SKIN_OVERLAY_1', faceLastEditor[7].index_help - 1);
+    user.set('SKIN_OVERLAY_1_COLOR', faceLastEditor[8].index_help);
+
+    user.updateCharacterFace(true);
+});
+
+mp.events.add('client:events:custom:setSex', function(sex) {
+
+    if (sex === false) {
         user.showLoadDisplay();
         setTimeout(function () {
-            user.setCache('SKIN_SEX', 1);
-            user.setPlayerModel(mp.game.joaat('mp_f_freemode_01'));
+            user.set('SKIN_SEX', 1);
+            user.setPlayerModel('mp_f_freemode_01');
             setTimeout(function () {
+                user.updateCharacterFace(true);
                 user.hideLoadDisplay();
             }, 500)
         }, 500);
     }
-    if (cheked_sex === false && user.getSex() == 1) {
+    else {
         user.showLoadDisplay();
         setTimeout(function () {
-            user.setCache('SKIN_SEX', 0);
-            user.setPlayerModel(mp.game.joaat('mp_m_freemode_01'));
+            user.set('SKIN_SEX', 0);
+            user.setPlayerModel('mp_m_freemode_01');
             setTimeout(function () {
+                user.updateCharacterFace(true);
                 user.hideLoadDisplay();
             }, 500)
         }, 500);
     }
 
+});
+
+mp.events.add('client:events:custom:save', function() {
+    user.save();
+});
+
+mp.events.add('client:events:custom:camera', function(rot, range, height) {
+
+    height = height - 50;
+
+    user.getCam().pointAtCoord(9.66692, 528.34783, 171.2 + (height / 100));
+    user.camSetDist(range / 100);
+    user.camSetRot(rot);
 });
 
 mp.events.add('client:events:custom:register', function(name, surname, age) {

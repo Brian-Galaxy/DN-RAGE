@@ -4,6 +4,8 @@ import './betternotifs';
 import weapons from "./weapons";
 import ui from "./modules/ui";
 import user from "./user";
+import enums from "./enums";
+import methods from "./modules/methods";
 
 try {
     mp.gui.chat.show(false); //Disables default RageMP Chat
@@ -23,6 +25,13 @@ try {
     mp.gui.cursor.show(true, true);
 
     user.init();
+
+    try {
+        enums.loadCloth();
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 
     mp.events.add('guiReady', () => {
         ui.create();

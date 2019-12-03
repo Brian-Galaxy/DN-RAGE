@@ -223,6 +223,10 @@ user.save = function() {
     mp.events.callRemote('server:user:save');
 };
 
+user.login = function(name, spawnName) {
+    mp.events.callRemote('server:user:loginUser', name, spawnName);
+};
+
 user.getCache = function(item) {
     try {
         if (userData.has(item))
@@ -247,17 +251,17 @@ user.setCache = function(key, value) {
 
 user.set = function(key, val) {
     user.setCache(key, val);
-    Container.Data.Set(mp.players.local.id, key, val);
+    Container.Data.Set(mp.players.local.remoteId, key, val);
 };
 
 user.reset = function(key) {
     user.setCache(key, null);
-    Container.Data.Reset(mp.players.local.id, key);
+    Container.Data.Reset(mp.players.local.remoteId, key);
 };
 
 user.get = async function(key) {
     try {
-        return await Container.Data.Get(mp.players.local.id, key);
+        return await Container.Data.Get(mp.players.local.remoteId, key);
     } catch (e) {
         methods.debug(e);
     }
@@ -265,7 +269,7 @@ user.get = async function(key) {
 };
 
 user.has = async function(key) {
-    return await Container.Data.Has(mp.players.local.id, key);
+    return await Container.Data.Has(mp.players.local.remoteId, key);
 };
 user.setCacheData = function(data) {
     userData = data;
@@ -370,6 +374,7 @@ user.updateCharacterFace = function(isLocal = false) {
             mp.players.local.setHeadOverlay(9, user.getCache('SKIN_OVERLAY_9'), 1.0, user.getCache('SKIN_OVERLAY_9_COLOR'), 0);
 
             try {
+                //TODO Exepted Number
                 if (user.getSex() == 0) {
                     mp.players.local.setHeadOverlay(10, user.getCache('SKIN_OVERLAY_10'), 1.0, user.getCache('SKIN_OVERLAY_10_COLOR'), 0);
                     mp.players.local.setHeadOverlay(1, user.getCache('SKIN_OVERLAY_1'), 1.0, user.getCache('SKIN_OVERLAY_1_COLOR'), 0);
@@ -386,9 +391,6 @@ user.updateCharacterFace = function(isLocal = false) {
 
             try {
                 let data = JSON.parse(enums.get('overlays'))[user.getSex()][user.getCache('SKIN_HAIR')];
-
-                methods.debug(data[0]);
-                methods.debug(data[1]);
 
                 user.clearDecorations(true);
                 user.setDecoration(data[0], data[1], true);

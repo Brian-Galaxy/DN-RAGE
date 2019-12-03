@@ -28,6 +28,11 @@ methods.unixTimeStampToDateTimeShort = function (timestamp) {
     return `${methods.digitFormat(dateTime.getDate())}/${methods.digitFormat(dateTime.getMonth()+1)} ${methods.digitFormat(dateTime.getHours())}:${methods.digitFormat(dateTime.getMinutes())}`
 };
 
+methods.unixTimeStampToDate = function (timestamp) {
+    let dateTime = new Date(timestamp * 1000);
+    return `${methods.digitFormat(dateTime.getDate())}/${methods.digitFormat(dateTime.getMonth()+1)}/${dateTime.getFullYear()}`
+};
+
 methods.digitFormat = function(number) {
     return ("0" + number).slice(-2);
 };
@@ -36,6 +41,10 @@ methods.numberFormat = function (currentMoney) {
     return currentMoney.toString().replace(/.+?(?=\D|$)/, function(f) {
         return f.replace(/(\d)(?=(?:\d\d\d)+$)/g, "$1,");
     });
+};
+
+methods.moneyFormat = function (currentMoney) {
+    return new Intl.NumberFormat('de-DE').format(currentMoney.toFixed(2));
 };
 
 methods.getTimeStamp = function () {

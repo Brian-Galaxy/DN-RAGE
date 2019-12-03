@@ -2,6 +2,7 @@
 
 let user = require('../user');
 let enums = require('../enums');
+let Container = require('./data');
 
 mp.events.addRemoteCounted = (eventName, handler) =>
 {
@@ -47,6 +48,50 @@ mp.events.addRemoteCounted = (eventName, handler) =>
     });
 };
 
+
+mp.events.add('modules:server:data:Set', (player, id, key, value) => {
+    Container.Data.SetClient(id, key, value);
+});
+
+mp.events.addRemoteCounted('modules:server:data:Reset', (player, id, key) => {
+    Container.Data.Reset(id, key);
+});
+
+mp.events.addRemoteCounted('modules:server:data:ResetAll', (player, id) => {
+    Container.Data.ResetAll(id);
+});
+
+mp.events.addRemoteCounted('modules:server:data:Get', (player, promiseId, id, key) => {
+    try {
+        Container.Data.GetClient(player, promiseId, id, key);
+    }
+    catch (e) {
+        methods.debug('modules:server:data:Get');
+        methods.debug(e);
+    }
+});
+
+mp.events.addRemoteCounted('modules:server:data:GetAll', (player, promiseId, id) => {
+    try {
+        Container.Data.GetAllClient(player, promiseId, id);
+    }
+    catch (e) {
+        methods.debug('modules:server:data:GetAll');
+        methods.debug(e);
+    }
+});
+
+mp.events.addRemoteCounted('modules:server:data:Has', (player, promiseId, id, key) => {
+    try {
+        Container.Data.HasClient(player, promiseId, id, key);
+    }
+    catch (e) {
+        methods.debug('modules:server:data:Has');
+        methods.debug(e);
+    }
+});
+
+
 mp.events.add('server:clientDebug', (player, message) => {
     try {
         console.log(`[DEBUG-CLIENT][${player.socialClub}]: ${message}`)
@@ -63,9 +108,9 @@ mp.events.add('server:user:createAccount', (player, login, password, email) => {
     }
 });
 
-mp.events.add('server:user:createUser', (player, name, surname, age) => {
+mp.events.add('server:user:createUser', (player, name, surname, age, national) => {
     try {
-        user.createUser(player, name, surname, age);
+        user.createUser(player, name, surname, age, national);
     } catch (e) {
         console.log(e);
     }
@@ -74,6 +119,14 @@ mp.events.add('server:user:createUser', (player, name, surname, age) => {
 mp.events.add('server:user:loginAccount', (player, login, password) => {
     try {
         user.loginAccount(player, login, password);
+    } catch (e) {
+        console.log(e);
+    }
+});
+
+mp.events.add('server:user:loginUser', (player, login, spawnName) => {
+    try {
+        user.loginUser(player, login, spawnName);
     } catch (e) {
         console.log(e);
     }

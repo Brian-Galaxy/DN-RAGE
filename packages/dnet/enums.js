@@ -2,15 +2,28 @@ let enums = exports;
 
 
 enums.userData = [
+    "id",
     "social",
     "name",
     "age",
+    "national",
+    "money",
     "lvl",
     "exp",
     "skin",
     "login_date",
     "reg_timestamp",
     "reg_ip",
+    "role",
+    "stats_strength",
+    "stats_shooting",
+    "stats_endurance",
+    "stats_flying",
+    "stats_driving",
+    "stats_psychics",
+    "stats_lucky",
+    "is_custom",
+    "is_online",
 ];
 
 

@@ -80,16 +80,14 @@ let skin = {
     SKIN_SPECIFICATIONS: [],
 };
 
-user.createUser = function(player, name, surname, age) {
+user.createUser = function(player, name, surname, age, national) {
 
-    methods.debug('user.createAccount');
+    methods.debug('user.createUser');
 
     if (!mp.players.exists(player))
         return;
 
     user.doesExistUser(name + ' ' + surname, function (cb) {
-
-        methods.debug(cb);
 
         if (cb == true) {
             user.showCustomNotify(player, 'Имя и Фамилия уже занята другим пользователем, попробуйте другое', 4);
@@ -100,12 +98,12 @@ user.createUser = function(player, name, surname, age) {
 
         let newAge = '01.01.' + (2010 - age); //TODO
 
-        let sql = "INSERT INTO users (name, age, social, skin, reg_ip, reg_timestamp) VALUES ('" + name + ' ' + surname +
-            "', '" + newAge + "', '" + player.socialClub + "', '" + JSON.stringify(skin) + "', '" + player.ip + "', '" + methods.getTimeStamp() + "')";
+        let sql = "INSERT INTO users (name, age, social, national, skin, login_ip, login_date, reg_ip, reg_timestamp) VALUES ('" + name + ' ' + surname +
+            "', '" + newAge + "', '" + player.socialClub + "', '" + national + "', '" + JSON.stringify(skin) + "', '" + player.ip + "', '" + methods.getTimeStamp() + "', '" + player.ip + "', '" + methods.getTimeStamp() + "')";
         mysql.executeQuery(sql);
 
         setTimeout(function () {
-            user.loginUser(player, name + ' ' + surname, true);
+            user.loginUser(player, name + ' ' + surname);
         }, 1000)
     });
 };
@@ -125,14 +123,33 @@ user.loginAccount = function(player, login, pass) {
         }
 
         if (mp.players.exists(player))
-            player.call('client:events:loginAccount:success');
+        {
+            let players = [];
+
+            mysql.executeQuery(`SELECT * FROM users WHERE social = ? LIMIT 3`, player.socialClub, function (err, rows, fields) {
+                if (!mp.players.exists(player))
+                    return;
+                if (err) {
+                    player.call('client:events:loginAccount:success', [JSON.stringify(players)]);
+                }
+                else {
+                    rows.forEach(row => {
+                        let sex = JSON.parse(row['skin'])['SKIN_SEX'] == 0 ? "m" : "w";
+                        methods.debug(sex);
+                        players.push({name: row['name'], age: row['lvl'], money: row['money'], sex: sex, spawnList: ['Стандарт', 'Стандарт2'], lastLogin: methods.unixTimeStampToDate(row['login_date'])})
+                    });
+
+                    player.call('client:events:loginAccount:success', [JSON.stringify(players)]);
+                }
+            });
+        }
         else
             user.showCustomNotify(player, 'Произошла неизвестная ошибка. Код ошибки #9999', 4);
         //player.notify('~b~Входим в аккаунт...');
     });
 };
 
-user.loginUser = function(player, name, isCreate = false) {
+user.loginUser = function(player, name, spawn = 'Стандарт') {
 
     methods.debug('user.loginAccount');
     if (!mp.players.exists(player))
@@ -145,7 +162,7 @@ user.loginUser = function(player, name, isCreate = false) {
         }
 
         if (mp.players.exists(player))
-            user.loadUser(player, name, isCreate);
+            user.loadUser(player, name, spawn);
         else
             user.showCustomNotify(player, 'Произошла неизвестная ошибка. Код ошибки #9999', 4);
         //player.notify('~b~Входим в аккаунт...');
@@ -238,7 +255,7 @@ user.save = function(player, withReset = false) {
 
 };
 
-user.loadUser = function(player, name, isCreate = false) {
+user.loadUser = function(player, name, spawn = 'Стандарт') {
 
     methods.debug('user.loadAccount');
     if (!mp.players.exists(player))
@@ -252,11 +269,7 @@ user.loadUser = function(player, name, isCreate = false) {
     if (user.isLogin(player))
         userId = user.getId(player);
 
-    methods.debug(name, isCreate);
-
     mysql.executeQuery(`SELECT ${selectSql} FROM users WHERE name = ? LIMIT 1`, name, function (err, rows, fields) {
-
-        console.log('DB ERR', err)
 
         enums.userData.forEach(function(element) {
             user.set(player, element, rows[0][element]);
@@ -294,9 +307,6 @@ user.loadUser = function(player, name, isCreate = false) {
                 methods.debug(e);
             }
 
-            if (!isCreate)
-                user.showLoadDisplay(player);
-
             setTimeout(function () {
                 if (userId > 0)
                     mysql.executeQuery('UPDATE users SET is_online=\'0\' WHERE id = \'' + userId + '\'');
@@ -327,11 +337,11 @@ user.loadUser = function(player, name, isCreate = false) {
 
                 mysql.executeQuery('UPDATE users SET is_online=\'1\' WHERE id = \'' + user.getId(player) + '\'');
 
-                if (isCreate) {
+                if (!user.get(player, 'is_custom'))
                     player.call('client:events:loginUser:finalCreate');
-                }
                 else {
-
+                    user.showLoadDisplay(player);
+                    methods.debug(spawn, name)
                 }
                 //user.setOnlineStatus(player, 1);
             }, 600);
@@ -345,11 +355,11 @@ user.loadUser = function(player, name, isCreate = false) {
 
 
 user.updateClientCache = function(player) {
-    methods.debug('user.updateClientCache');
     if (!mp.players.exists(player))
         return;
     try {
         let skin = {};
+
         skin.SKIN_MOTHER_FACE = methods.parseInt(user.get(player, "SKIN_MOTHER_FACE"));
         skin.SKIN_FATHER_FACE = methods.parseInt(user.get(player, "SKIN_FATHER_FACE"));
         skin.SKIN_MOTHER_SKIN = methods.parseInt(user.get(player, "SKIN_MOTHER_SKIN"));
@@ -391,6 +401,7 @@ user.updateClientCache = function(player) {
         user.set(player, 'skin', JSON.stringify(skin));
 
         player.call('client:user:updateCache', [Array.from(Container.Data.GetAll(player.id))]);
+        methods.debug('user.updateClientCache', Array.from(Container.Data.GetAll(player.id)));
     }
     catch (e) {
         methods.debug(e);
@@ -676,14 +687,13 @@ user.validateAccount = function(login, pass, callback) {
             return callback(false);
         }
 
+        if (rows.length === 0)
+            return callback(false);
         rows.forEach(function(item) {
             if (item.password !== methods.sha256(pass))
                 return callback(false);
             return callback(true);
         });
-
-        if (rows.length === 0)
-            return callback(false);
     });
 };
 
@@ -725,6 +735,41 @@ user.setDecoration = function(player, slot, overlay) {
     player.setDecoration(mp.joaat(slot), mp.joaat(overlay));
 };
 
+
+user.hideLoadDisplay = function(player) {
+    methods.debug('user.hideLoadDisplay');
+    if (!mp.players.exists(player))
+        return false;
+    player.call('client:user:hideLoadDisplay');
+};
+
+user.showLoadDisplay = function(player) {
+    methods.debug('user.showLoadDisplay');
+    if (!mp.players.exists(player))
+        return false;
+    player.call('client:user:showLoadDisplay');
+};
+
+user.removeWaypoint = function(player) {
+    methods.debug('user.removeWaypoint');
+    if (!mp.players.exists(player))
+        return false;
+    user.setWaypoint(player.position.x, player.position.y);
+};
+
+user.setWaypoint = function(player, x, y) {
+    methods.debug('user.setWaypoint');
+    if (!mp.players.exists(player))
+        return false;
+    player.call('client:user:setWaypoint', [x, y]);
+};
+
+user.callCef = function(player, name, params) {
+    methods.debug('user.callCef');
+    if (!mp.players.exists(player))
+        return false;
+    player.call('client:user:callCef', [name, params]);
+};
 
 user.isLogin = function(player) {
     if (!mp.players.exists(player))

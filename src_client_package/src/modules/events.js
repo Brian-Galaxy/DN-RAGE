@@ -20,6 +20,7 @@ mp.events.add('client:user:auth:register', function(mail, login, passwordReg, pa
         return;
     }
     mail = mail.toLowerCase();
+    login = login.toLowerCase();
     login = login.replace(/[^a-zA-Z0-9\s]/ig, '');
     if (login === "") {
         mp.game.ui.notifications.show('~r~Логин - поле не заполнено');
@@ -52,10 +53,10 @@ mp.events.add('client:user:auth:login', function(login, password) {
             return;
         }
         usingEmail = true;
-        login = login.toLowerCase();
     } else {
-        login = login.replace(/[^a-zA-Z\s]/ig, '');
+        login = login.replace(/[^a-zA-Z0-9\s]/ig, '');
     }
+    login = login.toLowerCase();
     if (login === "") {
         mp.game.ui.notifications.show('~r~Логин - поле не заполнено');
         return;
@@ -69,8 +70,65 @@ mp.events.add('client:user:auth:login', function(login, password) {
     mp.events.callRemote('server:user:loginAccount', login, password, usingEmail);
 });
 
-mp.events.add('client:events:loginAccount:success', function() {
+mp.events.add('client:events:loginAccount:success', function(data) {
     ui.callCef('authMain','{"type": "showCreatePage"}');
+
+    methods.debug(data);
+
+    let playerList = JSON.parse(data);
+
+    let isShow1 = false;
+    let isShow2 = false;
+    let isShow3 = false;
+
+    let players = [];
+
+    if (playerList.length >= 1) {
+        isShow1 = true;
+        players.push({
+            player: {
+                name: playerList[0].name,
+                old: playerList[0].age,
+                money: methods.moneyFormat(playerList[0].money),
+                date: playerList[0].lastLogin,
+                sex: playerList[0].sex,
+                spawn: playerList[0].spawnList,
+                index_spawn: 0
+            }
+        });
+    }
+
+    if (playerList.length >= 2) {
+        isShow2 = true;
+        players.push({
+            player: {
+                name: playerList[1].name,
+                old: playerList[1].age,
+                money: methods.moneyFormat(playerList[1].money),
+                date: playerList[1].lastLogin,
+                sex: playerList[1].sex,
+                spawn: playerList[1].spawnList,
+                index_spawn: 0
+            }
+        });
+    }
+    if (playerList.length >= 3) {
+        isShow3 = true;
+        players.push({
+            player: {
+                name: playerList[2].name,
+                old: playerList[2].age,
+                money: methods.moneyFormat(playerList[2].money),
+                date: playerList[2].lastLogin,
+                sex: playerList[2].sex,
+                spawn: playerList[2].spawnList,
+                index_spawn: 0
+            }
+        });
+    }
+
+    ui.callCef('ChangePlayer','{"type": "updatePlayers", "isShow1": ' + isShow1 + ', "isShow2": ' +  isShow2 + ', "isShow3": ' + isShow3 + ', "players": ' + JSON.stringify(players) + '}');
+
     mp.players.local.position = new mp.Vector3(9.66692, 528.34783, 170.63504);
     mp.players.local.setRotation(0, 0, 123.53768, 0, true);
     //ui.callCef('ChangePlayer','{"type": "show"}');
@@ -83,11 +141,8 @@ mp.events.add('client:events:createNewPlayer', function() {
     //ui.callCef('ChangePlayer','{"type": "show"}');
 });
 
-mp.events.add('client:events:selectPlayer', function(name) {
-    ui.callCef('authMain','{"type": "hide"}');
-    mp.gui.cursor.show(false, false);
-    methods.debug(name);
-    //ui.callCef('ChangePlayer','{"type": "show"}');
+mp.events.add('client:events:selectPlayer', function(name, spawnName) {
+    user.login(name, spawnName);
 });
 
 mp.events.add('client:events:custom:updateAge', function(age) {
@@ -222,7 +277,26 @@ mp.events.add('client:events:custom:setSex', function(sex) {
 
 });
 
-mp.events.add('client:events:custom:save', function() {
+mp.events.add('client:events:custom:save', function(endurance, driving, flying, psychics, shooting, stealth, strength) {
+    let data = {
+        endurance: endurance,
+        driving: driving,
+        flying: flying,
+        psychics: psychics,
+        shooting: shooting,
+        stealth: stealth,
+        strength: strength,
+    };
+
+    user.set('stats_strength', data.strength);
+    user.set('stats_endurance', data.endurance);
+    user.set('stats_shooting', data.shooting);
+    user.set('stats_flying', data.flying);
+    user.set('stats_driving', data.driving);
+    user.set('stats_psychics', data.psychics);
+    user.set('stats_lucky', data.stealth);
+    user.set('is_custom', true);
+
     user.save();
 });
 
@@ -235,7 +309,7 @@ mp.events.add('client:events:custom:camera', function(rot, range, height) {
     user.camSetRot(rot);
 });
 
-mp.events.add('client:events:custom:register', function(name, surname, age) {
+mp.events.add('client:events:custom:register', function(name, surname, age, national) {
     if (age < 18) {
         ui.notify('Возраст не может быть меньше 18 лет', 1);
         return;
@@ -244,12 +318,13 @@ mp.events.add('client:events:custom:register', function(name, surname, age) {
         ui.notify('Возраст не может быть больше 60 лет', 1);
         return;
     }
-    //TODO национальность
-    mp.events.callRemote('server:user:createUser', name, surname, age);
+    mp.events.callRemote('server:user:createUser', name, surname, age, national);
 });
 
 mp.events.add('client:events:loginUser:finalCreate', function() {
     user.setLogin(true);
+    ui.callCef('authMain','{"type": "hide"}');
+    ui.callCef('customization','{"type": "show"}');
     ui.callCef('customization','{"type": "showFamilyPage"}');
 });
 
@@ -263,6 +338,28 @@ mp.events.add('client:user:updateCache', (data) => {
         methods.debug(e);
     }
 });
+
+
+mp.events.add('client:user:callCef', (name, params) => {
+    methods.debug('Event: client:user:callCef');
+    ui.callCef(name, params)
+});
+
+mp.events.add('client:user:setWaypoint', (x, y) => {
+    methods.debug('Event: client:user:setWaypoint');
+    user.setWaypoint(x, y);
+});
+
+mp.events.add('client:user:hideLoadDisplay', () => {
+    methods.debug('Event: client:user:hideLoadDisplay');
+    user.hideLoadDisplay();
+});
+
+mp.events.add('client:user:showLoadDisplay', () => {
+    methods.debug('Event: client:user:showLoadDisplay');
+    user.showLoadDisplay();
+});
+
 
 mp.events.add('client:events:debug', function(val) {
     methods.debug(val);

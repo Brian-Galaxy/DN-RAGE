@@ -103,6 +103,10 @@ methods.numerToK = function (num) {
     return Math.abs(num) > 999 ? Math.sign(num)*((Math.abs(num)/1000).toFixed(1)) + 'k' : Math.sign(num)*Math.abs(num)
 };
 
+methods.moneyFormat = function (currentMoney) {
+    return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'USD' }).format(currentMoney.toFixed(2));
+};
+
 methods.getCurrentSpeed = function () {
     const player = mp.players.local;
     let speed = 0;

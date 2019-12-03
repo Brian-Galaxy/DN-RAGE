@@ -92,7 +92,7 @@ mysql.executeQuery = async function (query, values, callback) {
 };
 
 mysql.executeQueryOld = function(query, values, callback) {
-    methods.debug(query);
+    //methods.debug(query);
     const start = new Date().getTime();
     pool.query(query, values, function(err, rows, fields) {
         if (!err) {
@@ -105,7 +105,7 @@ mysql.executeQueryOld = function(query, values, callback) {
         }
     });
     const end = new Date().getTime();
-    methods.debug(`executeQuery: ${end - start}ms`);
+    //methods.debug(`${query}`, `Time: ${end - start}ms`);
 };
 
 /*setInterval(function () {

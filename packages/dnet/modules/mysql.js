@@ -64,6 +64,10 @@ mysql.getTime = function() {
     return `${methods.digitFormat(dateTime.getHours())}:${methods.digitFormat(dateTime.getMinutes())}:${methods.digitFormat(dateTime.getSeconds())}`;
 };
 
+mysql.isConnected = function () {
+    return isConnected;
+};
+
 mysql.executeQuery = async function (query, values, callback) {
     console.log('SQL Query: ' + query);
     const preQuery = new Date().getTime();

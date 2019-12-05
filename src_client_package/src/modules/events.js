@@ -4,6 +4,29 @@ import methods from './methods';
 import user from '../user';
 import menuList from '../menuList';
 import ui from "./ui";
+import checkpoint from "../manager/checkpoint";
+
+mp.gui.chat.enabled = false;
+
+mp.gui.execute("const _enableChatInput = enableChatInput;enableChatInput = (enable) => { mp.trigger('chatEnabled', enable); _enableChatInput(enable) };");
+
+mp.events.add('chatEnabled', (isEnabled) => {
+    mp.gui.chat.enabled = isEnabled;
+    methods.disableAllControls(isEnabled);
+});
+
+let money = "0.00 $";
+let moneyBank = "0.00 $";
+
+let timerId = setTimeout(function updateMoney() {
+    if(user.isLogin()) {
+        //money = '$' + methods.numberFormat(parseInt(user.get('money')));
+        //moneyBank = '$' + methods.numberFormat(parseInt(user.get('money_bank')));
+        ui.updateZoneAndStreet();
+        ui.updateDirectionText();
+    }
+    timerId = setTimeout(updateMoney, 200);
+}, 200);
 
 mp.events.add('client:cefDebug', function (message) {
     try {
@@ -184,70 +207,80 @@ mp.events.add('client:events:custom:updateAge', function(age) {
 mp.events.add('client:events:custom:set', function(input_editor_face, input_editor_nose, input_editor_eyes_lips, input_editor_face_last, cheked_sex, mother, father, mix1, mix2) {
     methods.debug('CUSTOM');
 
-    let faceEditor = JSON.parse(input_editor_face);
-    let noseEditor = JSON.parse(input_editor_nose);
-    let eyeEditor = JSON.parse(input_editor_eyes_lips);
-    let faceLastEditor = JSON.parse(input_editor_face_last);
+    try {
+        let faceEditor = JSON.parse(input_editor_face);
+        let noseEditor = JSON.parse(input_editor_nose);
+        let eyeEditor = JSON.parse(input_editor_eyes_lips);
+        let faceLastEditor = JSON.parse(input_editor_face_last);
 
-    if (user.getCache('SKIN_FACE_SPECIFICATIONS')) {
-        if(JSON.parse(user.getCache('SKIN_FACE_SPECIFICATIONS')).length < 20) {
+        try {
+            if (user.getCache('SKIN_FACE_SPECIFICATIONS')) {
+                if(JSON.parse(user.getCache('SKIN_FACE_SPECIFICATIONS')).length < 20) {
+                    user.set('SKIN_FACE_SPECIFICATIONS', JSON.stringify([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]));
+                }
+            }
+            else {
+                user.set('SKIN_FACE_SPECIFICATIONS', JSON.stringify([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]));
+            }
+        }
+        catch (e) {
             user.set('SKIN_FACE_SPECIFICATIONS', JSON.stringify([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]));
         }
+
+        let skinSpec = JSON.parse(user.getCache('SKIN_FACE_SPECIFICATIONS'));
+
+        skinSpec[11] = eyeEditor[0].value / 100;
+        skinSpec[12] = eyeEditor[1].value / 100;
+
+        skinSpec[0] = noseEditor[0].value / 100;
+        skinSpec[1] = noseEditor[1].value / 100;
+        skinSpec[2] = noseEditor[2].value / 100;
+        skinSpec[4] = noseEditor[3].value / 100;
+        skinSpec[3] = noseEditor[4].value / 100;
+        skinSpec[5] = noseEditor[5].value / 100;
+
+        skinSpec[6] = faceEditor[0].value / 100;
+        skinSpec[7] = faceEditor[1].value / 100;
+        skinSpec[8] = faceEditor[2].value / 100;
+        skinSpec[9] = faceEditor[3].value / 100;
+        skinSpec[10] = faceEditor[4].value / 100;
+        skinSpec[13] = faceEditor[5].value / 100;
+        skinSpec[14] = faceEditor[6].value / 100;
+        skinSpec[15] = faceEditor[7].value / 100;
+        skinSpec[17] = faceEditor[8].value / 100;
+        skinSpec[16] = faceEditor[9].value / 100;
+        skinSpec[18] = faceEditor[10].value / 100;
+        skinSpec[19] = faceEditor[11].value / 100;
+
+        user.set('SKIN_FACE_SPECIFICATIONS', JSON.stringify(skinSpec));
+
+        let fatherList = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 42, 43, 44];
+        let motherList = [21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 45];
+
+        user.set('SKIN_MOTHER_FACE', motherList[mother]);
+        user.set('SKIN_MOTHER_SKIN', mother);
+        user.set('SKIN_FATHER_FACE', fatherList[father]);
+        user.set('SKIN_FATHER_SKIN', father);
+
+        user.set('SKIN_PARENT_FACE_MIX', mix1 / 20);
+        user.set('SKIN_PARENT_SKIN_MIX', mix2 / 20);
+
+        user.set('SKIN_HAIR', faceLastEditor[0].index_help);
+        user.set('SKIN_HAIR_COLOR', faceLastEditor[1].index_help);
+        user.set('SKIN_EYEBROWS', faceLastEditor[2].index_help);
+        user.set('SKIN_EYEBROWS_COLOR', faceLastEditor[3].index_help);
+        user.set('SKIN_EYE_COLOR', faceLastEditor[4].index_help);
+        user.set('SKIN_OVERLAY_9', faceLastEditor[5].index_help - 1);
+        user.set('SKIN_OVERLAY_9_COLOR', faceLastEditor[6].index_help);
+
+        user.set('SKIN_OVERLAY_1', faceLastEditor[7].index_help - 1);
+        user.set('SKIN_OVERLAY_1_COLOR', faceLastEditor[8].index_help);
+
+        user.updateCharacterFace(true);
     }
-    else {
-        user.set('SKIN_FACE_SPECIFICATIONS', JSON.stringify([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]));
+    catch (e) {
+        methods.debug(e);
     }
-
-    let skinSpec = JSON.parse(user.getCache('SKIN_FACE_SPECIFICATIONS'));
-
-    skinSpec[11] = eyeEditor[0].value / 100;
-    skinSpec[12] = eyeEditor[1].value / 100;
-
-    skinSpec[0] = noseEditor[0].value / 100;
-    skinSpec[1] = noseEditor[1].value / 100;
-    skinSpec[2] = noseEditor[2].value / 100;
-    skinSpec[4] = noseEditor[3].value / 100;
-    skinSpec[3] = noseEditor[4].value / 100;
-    skinSpec[5] = noseEditor[5].value / 100;
-
-    skinSpec[6] = faceEditor[0].value / 100;
-    skinSpec[7] = faceEditor[1].value / 100;
-    skinSpec[8] = faceEditor[2].value / 100;
-    skinSpec[9] = faceEditor[3].value / 100;
-    skinSpec[10] = faceEditor[4].value / 100;
-    skinSpec[13] = faceEditor[5].value / 100;
-    skinSpec[14] = faceEditor[6].value / 100;
-    skinSpec[15] = faceEditor[7].value / 100;
-    skinSpec[17] = faceEditor[8].value / 100;
-    skinSpec[16] = faceEditor[9].value / 100;
-    skinSpec[18] = faceEditor[10].value / 100;
-    skinSpec[19] = faceEditor[11].value / 100;
-
-    user.set('SKIN_FACE_SPECIFICATIONS', JSON.stringify(skinSpec));
-
-    let fatherList = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 42, 43, 44];
-    let motherList = [21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 45];
-
-    user.set('SKIN_MOTHER_FACE', motherList[mother]);
-    user.set('SKIN_MOTHER_SKIN', mother);
-    user.set('SKIN_FATHER_FACE', fatherList[father]);
-    user.set('SKIN_FATHER_SKIN', father);
-
-    user.set('SKIN_PARENT_FACE_MIX', mix1 / 20);
-    user.set('SKIN_PARENT_SKIN_MIX', mix2 / 20);
-
-    user.set('SKIN_HAIR', faceLastEditor[0].index_help);
-    user.set('SKIN_HAIR_COLOR', faceLastEditor[1].index_help);
-    user.set('SKIN_EYEBROWS', faceLastEditor[2].index_help);
-    user.set('SKIN_EYEBROWS_COLOR', faceLastEditor[3].index_help);
-    user.set('SKIN_EYE_COLOR', faceLastEditor[4].index_help);
-    user.set('SKIN_OVERLAY_9', faceLastEditor[5].index_help - 1);
-    user.set('SKIN_OVERLAY_9_COLOR', faceLastEditor[6].index_help);
-
-    user.set('SKIN_OVERLAY_1', faceLastEditor[7].index_help - 1);
-    user.set('SKIN_OVERLAY_1_COLOR', faceLastEditor[8].index_help);
-
-    user.updateCharacterFace(true);
 });
 
 mp.events.add('client:events:custom:setSex', function(sex) {
@@ -278,26 +311,54 @@ mp.events.add('client:events:custom:setSex', function(sex) {
 });
 
 mp.events.add('client:events:custom:save', function(endurance, driving, flying, psychics, shooting, stealth, strength) {
-    let data = {
-        endurance: endurance,
-        driving: driving,
-        flying: flying,
-        psychics: psychics,
-        shooting: shooting,
-        stealth: stealth,
-        strength: strength,
-    };
-
-    user.set('stats_strength', data.strength);
-    user.set('stats_endurance', data.endurance);
-    user.set('stats_shooting', data.shooting);
-    user.set('stats_flying', data.flying);
-    user.set('stats_driving', data.driving);
-    user.set('stats_psychics', data.psychics);
-    user.set('stats_lucky', data.stealth);
+    user.set('stats_strength', strength);
+    user.set('stats_endurance', endurance);
+    user.set('stats_shooting', shooting);
+    user.set('stats_flying', flying);
+    user.set('stats_driving', driving);
+    user.set('stats_psychics', psychics);
+    user.set('stats_lucky', stealth);
     user.set('is_custom', true);
 
     user.save();
+});
+
+mp.events.add('client:events:custom:choiceRole', function(roleIndex) {
+
+    user.showLoadDisplay();
+
+    setTimeout(function () {
+        ui.callCef('authMain','{"type": "hide"}');
+        ui.callCef('customization','{"type": "hide"}');
+        user.destroyCam();
+
+        mp.players.local.freezePosition(false);
+        mp.players.local.setCollision(true, true);
+        mp.gui.cursor.show(false, false);
+        mp.gui.chat.show(true);
+        mp.gui.chat.activate(true);
+        mp.game.ui.displayRadar(true);
+
+        user.setLogin(true);
+
+        if (user.getCache('role') > 0) {
+            user.set('is_custom', true);
+            user.save();
+            ui.notify('Вы уже выбрали роль');
+            return;
+        }
+
+
+        /*switch (roleIndex) {
+
+        }
+        user.teleport()*/
+
+
+        user.set('role', roleIndex + 1);
+        user.set('is_custom', true);
+        user.save();
+    }, 500);
 });
 
 mp.events.add('client:events:custom:camera', function(rot, range, height) {
@@ -360,6 +421,57 @@ mp.events.add('client:user:showLoadDisplay', () => {
     user.showLoadDisplay();
 });
 
+mp.events.add('client:updateCheckpointList', (data) => {
+    methods.debug('Event: client:updateCheckpointList');
+    checkpoint.updateCheckpointList(data);
+});
+
+mp.events.add('client:showHouseOutMenu', (item) => {
+    try {
+        methods.debug('Event: client:menuList:showHouseOutMenu');
+        menuList.showHouseOutMenu(new Map(item)).then();
+    }
+    catch (e) {
+        methods.debug('Exception: events:client:showHouseOutMenu');
+        methods.debug(e);
+    }
+});
+
+mp.events.add('client:showHouseBuyMenu', (item) => {
+    try {
+        methods.debug('Event: client:menuList:showHouseBuyMenu');
+        menuList.showHouseBuyMenu(new Map(item)).then();
+    }
+    catch (e) {
+        methods.debug('Exception: events:client:showHouseBuyMenu');
+        methods.debug(e);
+    }
+});
+
+mp.events.add('client:showHouseInMenu', (item) => {
+    try {
+        methods.debug('Event: client:menuList:showHouseInMenu');
+        menuList.showHouseInMenu(new Map(item));
+    }
+    catch (e) {
+        methods.debug('Exception: events:client:showHouseInMenu');
+        methods.debug(e);
+    }
+});
+
+mp.events.add('client:clearChat', () => {
+    user.clearChat();
+});
+
+mp.events.add('client:teleport', (x, y, z, rot) => {
+    methods.debug('Event: client:teleport', x, y, z, rot);
+    user.teleport(x, y, z, rot);
+});
+
+mp.events.add('client:teleportVeh', (x, y, z, rot) => {
+    methods.debug('Event: client:teleportVeh', x, y, z, rot);
+    user.teleportVeh(x, y, z, rot);
+});
 
 mp.events.add('client:events:debug', function(val) {
     methods.debug(val);
@@ -373,11 +485,35 @@ mp.keys.bind(0xC0, true, function() {
     menuList.showAuthMenu();
 });
 
+mp.keys.bind(0x38, true, function() {
+    //if (!user.isLogin() || !user.isAdmin())
+    //    return;
+    if (!methods.isBlockKeys())
+        menuList.showAdminMenu();
+});
+
+//E
+mp.keys.bind(0x45, true, function() {
+    try {
+        methods.debug(user.isLogin());
+        methods.debug(methods.isBlockKeys());
+        mp.events.callRemote('onKeyPress:E');
+        if (!user.isLogin())
+            return;
+        if (!methods.isBlockKeys()) {
+            //methods.pressEToPayRespect();
+            mp.events.callRemote('onKeyPress:E');
+        }
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
 // Commands in 2019......
 mp.events.add("playerCommand", async (command) => {
     if (command.toLowerCase().slice(0, 2) === "tp") {
-        if (!user.isLogin() || !user.isAdmin())
-            return;
+
         let args = command.toLowerCase().split(' ');
         user.teleport(parseFloat(args[1]), parseFloat(args[2]), parseFloat(args[3]));
     }
@@ -386,6 +522,18 @@ mp.events.add("playerCommand", async (command) => {
             return;
         let args = command.toLowerCase().split(' ');
         user.playAnimation(args[1], args[2], args[2]);
+    }
+    else if (command.toLowerCase().slice(0, 1) === "m") {
+        menuList.showAdminMenu();
+    }
+    else if (command.toLowerCase().slice(0, 2) === "h ") {
+        let args = command.split(' ');
+        if (args.length != 4) {
+            mp.gui.chat.push(`Не верно введено кол-во параметров `);
+            mp.gui.chat.push(`/h [ID Интерьера] [№ Дома] [Цена] `);
+            return;
+        }
+        mp.events.callRemote('server:houses:insert', args[1], args[2], args[3], ui.getCurrentZone(), ui.getCurrentStreet())
     }
     else if (command.slice(0, 5) === "eval ") {
         if (!user.isLogin() || !user.isAdmin(5))
@@ -402,4 +550,194 @@ mp.events.add("playerCommand", async (command) => {
             mp.gui.chat.push(`Result ${result}`);
         }
     }
+});
+
+
+/*
+*
+* RENDER
+*
+* */
+
+
+mp.events.add('render', () => {
+    mp.game.controls.disableControlAction(0,243,true);
+
+    //TODO DELUXO FIX
+    mp.game.controls.disableControlAction(0,357,true);
+
+    /*if(_playerDisableAllControls || phone.ingameBrowser || characterCreator) {
+        mp.game.controls.disableAllControlActions(0);
+        mp.game.controls.disableAllControlActions(1);
+        mp.game.controls.disableAllControlActions(2);
+        mp.game.controls.enableControlAction(2, 172, true);
+        mp.game.controls.enableControlAction(2, 173, true);
+        mp.game.controls.enableControlAction(2, 174, true);
+        mp.game.controls.enableControlAction(2, 175, true);
+        mp.game.controls.enableControlAction(2, 201, true);
+        mp.game.controls.enableControlAction(2, 177, true);
+    }
+    if(_playerDisableDefaultControls) {
+        mp.game.controls.disableControlAction(0,21,true) // disable sprint
+        mp.game.controls.disableControlAction(0,24,true) // disable attack
+        mp.game.controls.disableControlAction(0,25,true) // disable aim
+        //--mp.game.controls.disableControlAction(0,47,true) // disable weapon
+        mp.game.controls.disableControlAction(0,58,true) // disable weapon
+        mp.game.controls.disableControlAction(0,263,true) // disable melee
+        mp.game.controls.disableControlAction(0,264,true) // disable melee
+        mp.game.controls.disableControlAction(0,257,true) // disable melee
+        mp.game.controls.disableControlAction(0,140,true) // disable melee
+        mp.game.controls.disableControlAction(0,141,true) // disable melee
+        mp.game.controls.disableControlAction(0,142,true) // disable melee
+        mp.game.controls.disableControlAction(0,143,true) // disable melee
+        mp.game.controls.disableControlAction(0,75,true) // disable exit vehicle
+        mp.game.controls.disableControlAction(27,75,true) // disable exit vehicle
+        mp.game.controls.disableControlAction(0,23,true) // disable enter vehicle
+        mp.game.controls.disableControlAction(27,23,true) // disable enter vehicle
+        mp.game.controls.disableControlAction(0,22,true) // disable jump
+        mp.game.controls.disableControlAction(0,32,true) // disable move up
+        mp.game.controls.disableControlAction(0,268,true)
+        mp.game.controls.disableControlAction(0,33,true) // disable move down
+        mp.game.controls.disableControlAction(0,269,true)
+        mp.game.controls.disableControlAction(0,34,true) // disable move left
+        mp.game.controls.disableControlAction(0,270,true)
+        mp.game.controls.disableControlAction(0,35,true) // disable move right
+        mp.game.controls.disableControlAction(0,271,true)
+    }
+    if(ui.DisableMouseControl || ui.isShowMenu()) {
+        mp.game.controls.disableControlAction(0,12,true); // disable sprint
+        mp.game.controls.disableControlAction(0,13,true); // disable sprint
+        mp.game.controls.disableControlAction(0,14,true); // disable sprint
+        mp.game.controls.disableControlAction(0,15,true); // disable sprint
+        mp.game.controls.disableControlAction(0,17,true); // disable sprint
+        mp.game.controls.disableControlAction(0,18,true); // disable sprint
+        mp.game.controls.disableControlAction(0,24,true); // disable sprint
+        mp.game.controls.disableControlAction(0,25,true); // disable sprint
+
+        //Disable Cam
+        mp.game.controls.disableControlAction(0, 1, true);
+        mp.game.controls.disableControlAction(0, 2, true);
+        mp.game.controls.disableControlAction(0, 3, true);
+        mp.game.controls.disableControlAction(0, 4, true);
+        mp.game.controls.disableControlAction(0, 5, true);
+        mp.game.controls.disableControlAction(0, 6, true);
+    }
+    if ((characterCreator || authBrowser) && !mp.gui.cursor.visible)
+        mp.gui.cursor.show(true, true);*/
+});
+
+mp.events.add('render', () => {
+    let veh = mp.players.local.vehicle;
+    if (veh && veh.getClass() != 8) {
+        if (veh.getPedInSeat(-1) == mp.players.local.handle) {
+            if (user.get('stats_shooting') < 99 && !user.isPolice()) {
+                mp.game.controls.disableControlAction(2, 24, true);
+                mp.game.controls.disableControlAction(2, 25, true);
+                mp.game.controls.disableControlAction(2, 66, true);
+                mp.game.controls.disableControlAction(2, 67, true);
+                mp.game.controls.disableControlAction(2, 69, true);
+                mp.game.controls.disableControlAction(2, 70, true);
+                mp.game.controls.disableControlAction(2, 140, true);
+                mp.game.controls.disableControlAction(2, 141, true);
+                mp.game.controls.disableControlAction(2, 143, true);
+                mp.game.controls.disableControlAction(2, 263, true);
+            }
+        }
+    }
+});
+
+mp.events.add('render', () => {
+    let veh = mp.players.local.vehicle;
+    if (veh && veh.getClass() == 8 && methods.getCurrentSpeed() > 50) {
+        mp.game.controls.disableControlAction(2, 24, true);
+        mp.game.controls.disableControlAction(2, 25, true);
+        mp.game.controls.disableControlAction(2, 66, true);
+        mp.game.controls.disableControlAction(2, 67, true);
+        mp.game.controls.disableControlAction(2, 69, true);
+        mp.game.controls.disableControlAction(2, 70, true);
+        mp.game.controls.disableControlAction(2, 140, true);
+        mp.game.controls.disableControlAction(2, 141, true);
+        mp.game.controls.disableControlAction(2, 143, true);
+        mp.game.controls.disableControlAction(2, 263, true);
+    }
+});
+
+mp.events.add('render', () => {
+    /*if (user.get('med_time') > 0) {
+        mp.game.controls.disableControlAction(2, 24, true);
+        mp.game.controls.disableControlAction(2, 25, true);
+        mp.game.controls.disableControlAction(2, 66, true);
+        mp.game.controls.disableControlAction(2, 67, true);
+        mp.game.controls.disableControlAction(2, 69, true);
+        mp.game.controls.disableControlAction(2, 70, true);
+        mp.game.controls.disableControlAction(2, 140, true);
+        mp.game.controls.disableControlAction(2, 141, true);
+        mp.game.controls.disableControlAction(2, 143, true);
+        mp.game.controls.disableControlAction(2, 263, true);
+    }*/
+});
+
+mp.events.add('render', () => {
+    let plPos = mp.players.local.position;
+    if (mp.game.interior.getInteriorAtCoords(plPos.x, plPos.y, plPos.z) != 0)
+    {
+        mp.game.graphics.drawLightWithRange(291.9079, -1348.883, 27.03455, 255, 255, 255, 20.0, 0.5);
+        mp.game.graphics.drawLightWithRange(279.4622, -1337.024, 27.03455, 255, 255, 255, 20.0, 0.5);
+        mp.game.graphics.drawLightWithRange(272.779, -1341.37, 27.03455, 255, 255, 255, 20.0, 0.5);
+        mp.game.graphics.drawLightWithRange(264.4822, -1360.97, 27.03455, 255, 255, 255, 20.0, 0.5);
+        mp.game.graphics.drawLightWithRange(253.408, -1364.389, 27.03455, 255, 255, 255, 20.0, 0.5);
+        mp.game.graphics.drawLightWithRange(254.8074, -1349.439, 27.03455, 255, 255, 255, 20.0, 0.5);
+        mp.game.graphics.drawLightWithRange(240.4855, -1368.784, 32.28351, 255, 255, 255, 20.0, 0.5);
+        mp.game.graphics.drawLightWithRange(247.7051, -1366.653, 32.34088, 255, 255, 255, 20.0, 0.5);
+        mp.game.graphics.drawLightWithRange(257.9836, -1358.863, 41.80476, 255, 255, 255, 20.0, 0.5);
+        mp.game.graphics.drawLightWithRange(255.0098, -1383.685, 42.01367, 255, 255, 255, 20.0, 0.5);
+        mp.game.graphics.drawLightWithRange(230.9255, -1367.348, 42.03852, 255, 255, 255, 20.0, 0.5);
+        mp.game.graphics.drawLightWithRange(243.6069, -1366.777, 26.78872, 255, 255, 255, 20.0, 0.5);
+    }
+});
+
+mp.events.add('render', () => {
+    mp.game.ui.hideHudComponentThisFrame(1); // Wanted Stars
+    mp.game.ui.hideHudComponentThisFrame(2); // Weapon Icon
+    mp.game.ui.hideHudComponentThisFrame(3); // Cash
+    mp.game.ui.hideHudComponentThisFrame(4); // MP Cash
+    mp.game.ui.hideHudComponentThisFrame(6); // Vehicle Name
+    mp.game.ui.hideHudComponentThisFrame(7); // Area Name
+    mp.game.ui.hideHudComponentThisFrame(8);// Vehicle Class
+    mp.game.ui.hideHudComponentThisFrame(9); // Street Name
+    mp.game.ui.hideHudComponentThisFrame(13); // Cash Change
+    mp.game.ui.hideHudComponentThisFrame(17); // Save Game
+    mp.game.ui.hideHudComponentThisFrame(20); // Weapon Stats
+
+    /*mp.game.controls.mp.game.controls.disableControlAction(0, 157, true);
+    mp.game.controls.mp.game.controls.disableControlAction(0, 158, true);
+    mp.game.controls.mp.game.controls.disableControlAction(0, 160, true);
+    mp.game.controls.mp.game.controls.disableControlAction(0, 164, true);*/
+
+    //TODO
+    //if (user.isLogin() && user.get('mp0_shooting_ability') < 70)
+    //    mp.game.ui.hideHudComponentThisFrame(14);
+});
+
+let maxSpeed = 500;
+mp.events.add('render', () => {
+    let vehicle = mp.players.local.vehicle;
+    if (vehicle && mp.players.local.isInAnyVehicle(false)) {
+        // And fix max speed
+        vehicle.setMaxSpeed(maxSpeed / 3.6); // fix max speed
+        if (vehicle.getVariable('boost') > 0) {
+            vehicle.setEngineTorqueMultiplier(vehicle.getVariable('boost'));
+        }
+        else
+            vehicle.setEngineTorqueMultiplier(1.3);
+    }
+});
+
+mp.events.add('render', () => {
+    if (mp.players.local.isBeingStunned(0))
+        mp.players.local.setMinGroundTimeForStungun(30000);
+});
+
+mp.events.add('render', () => {
+    mp.game.player.setHealthRechargeMultiplier(0.0);
 });

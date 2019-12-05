@@ -6,9 +6,11 @@ import ui from "./modules/ui";
 import user from "./user";
 import enums from "./enums";
 import methods from "./modules/methods";
+import checkpoint from "./manager/checkpoint";
 
 try {
-    mp.gui.chat.show(false); //Disables default RageMP Chat
+    mp.gui.chat.show(false);
+    mp.gui.chat.activate(false);
 
     //TODO Сделать нормальное шифрование
     for (let i = 0; i < weapons.hashesMap.length; i++)
@@ -24,9 +26,9 @@ try {
 
     mp.gui.cursor.show(true, true);
 
-    user.init();
-
     try {
+        user.init();
+        checkpoint.checkPosition();
         enums.loadCloth();
     }
     catch (e) {

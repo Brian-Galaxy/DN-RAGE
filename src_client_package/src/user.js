@@ -53,7 +53,7 @@ user.giveWeapon = function(model, pt) {
     });
 };
 
-user.teleportv = function(pos) {
+user.teleportv = function(pos, rot) {
     user.isTeleport = true;
     mp.game.streaming.requestCollisionAtCoord(pos.x, pos.y, pos.z);
     user.showLoadDisplay(500);
@@ -72,7 +72,7 @@ user.teleportv = function(pos) {
     }, 500);
 };
 
-user.teleportVehV = function(pos) {
+user.teleportVehV = function(pos, rot) {
     user.isTeleport = true;
     mp.game.streaming.requestCollisionAtCoord(pos.x, pos.y, pos.z);
     user.showLoadDisplay(500);
@@ -92,12 +92,17 @@ user.teleportVehV = function(pos) {
     }, 500);
 };
 
-user.teleport = function(x, y, z) {
-    user.teleportv(new mp.Vector3(x, y, z));
+user.teleport = function(x, y, z, rot) {
+    user.teleportv(new mp.Vector3(x, y, z), rot);
 };
 
-user.teleportVeh = function(x, y, z) {
-    user.teleportVehV(new mp.Vector3(x, y, z));
+user.teleportVeh = function(x, y, z, rot) {
+    user.teleportVehV(new mp.Vector3(x, y, z), rot);
+};
+
+user.clearChat = function() {
+    for (let i = 0; i < 100; i++)
+        mp.gui.chat.push('');
 };
 
 user.tpToWaypoint = function() {
@@ -146,14 +151,12 @@ user.notify = function (message) {
 user.init = function() {
 
     user.hideLoadDisplay();
+    user.clearChat();
 
     cam = mp.cameras.new('customization', new mp.Vector3(8.243752, 527.4373, 171.6173), new mp.Vector3(0, 0, 0), 20);
     cam.pointAtCoord(9.66692, 528.34783, 171.2);
     cam.setActive(true);
     mp.game.cam.renderScriptCams(true, false, 0, false, false);
-
-    let currentCamDist = 0.2;
-    let currentCamRot = -2;
 
     user.setVirtualWorld(mp.players.local.remoteId + 1);
     mp.players.local.position = new mp.Vector3(9.66692, 528.34783, 170.63504 + 10);
@@ -224,7 +227,23 @@ user.save = function() {
 };
 
 user.login = function(name, spawnName) {
-    mp.events.callRemote('server:user:loginUser', name, spawnName);
+    user.showLoadDisplay();
+
+    setTimeout(function () {
+        ui.callCef('authMain','{"type": "hide"}');
+        ui.callCef('customization','{"type": "hide"}');
+        user.destroyCam();
+
+        user.setLogin(true);
+
+        mp.players.local.freezePosition(false);
+        mp.players.local.setCollision(true, true);
+        mp.gui.cursor.show(false, false);
+        mp.gui.chat.show(true);
+        mp.gui.chat.activate(true);
+        mp.game.ui.displayRadar(true);
+        mp.events.callRemote('server:user:loginUser', name, spawnName);
+    }, 500);
 };
 
 user.getCache = function(item) {
@@ -317,7 +336,7 @@ let skin = {
     SKIN_OVERLAY_COLOR_11: 0,
     SKIN_OVERLAY_12: -1,
     SKIN_OVERLAY_COLOR_12: -1,
-    SKIN_SPECIFICATIONS: [],
+    SKIN_FACE_SPECIFICATIONS: [],
 };
 
 user.getSex = function() {

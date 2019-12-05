@@ -2,6 +2,7 @@
 
 import methods from './methods';
 import user from '../user';
+
 let NativeUI = eval('require(\'nativeui\')');
 const NMenu = NativeUI.Menu;
 const MenuItem = NativeUI.UIMenuItem;
@@ -28,7 +29,7 @@ class Menu {
                 //mp.events.call('modules:client:player:DisableAllControls', true);
             }
 
-            menuItem = new NMenu(title, subtitle, new Point(this.GetScreenResolutionMantainRatio().Width - 450, 180), spriteLib, spriteName);
+            menuItem = new NMenu(title.toUpperCase(), subtitle, new Point(this.GetScreenResolutionMantainRatio().Width - 450, 180), spriteLib, spriteName);
 
             if (isDisableAllControls && !DisableAllControlsOnClose) {
                 menuItem.MenuClose.on( () => {

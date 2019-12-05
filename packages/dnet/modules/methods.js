@@ -1,6 +1,9 @@
 "use strict";
 
 const crypto = require('crypto');
+let Container = require('./data');
+
+let checkPointStaticList = [];
 
 let methods = exports;
 
@@ -44,7 +47,12 @@ methods.numberFormat = function (currentMoney) {
 };
 
 methods.moneyFormat = function (currentMoney) {
-    return new Intl.NumberFormat('de-DE').format(currentMoney.toFixed(2));
+    currentMoney = methods.parseFloat(currentMoney);
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(currentMoney.toFixed(2));
+};
+
+methods.boolToInt = function (boolean) {
+    return boolean ? 1 : 0;
 };
 
 methods.getTimeStamp = function () {
@@ -111,4 +119,76 @@ methods.isValidJSON = function(value){
 
 methods.parseInt = function (str) {
     return parseInt(str) || 0;
+};
+
+methods.parseFloat = function (str) {
+    return parseFloat(str) || 0;
+};
+
+methods.saveLog = function (name, log) {
+    //TODO
+};
+
+methods.createBlip = function (pos, sprite, color, scale, name, dimension) {
+    if (scale == undefined)
+        scale = 0.8;
+    if (dimension == undefined)
+        dimension = -1;
+    if (name == undefined)
+        return mp.blips.new(sprite, pos,
+            {
+                color: color,
+                scale: scale,
+                shortRange: true,
+                dimension: dimension
+            });
+    return mp.blips.new(sprite, pos,
+        {
+            name: name,
+            color: color,
+            scale: scale,
+            shortRange: true,
+            dimension: dimension
+        });
+};
+
+methods.createStaticCheckpointV = function (pos, message, scale, dimension, color, height) {
+    return methods.createStaticCheckpoint(pos.x, pos.y, pos.z, message, scale, dimension, color, height);
+};
+
+methods.createStaticCheckpoint = function (x, y, z, message, scale, dimension, color, height) {
+
+    if (scale == undefined)
+        scale = 1;
+    if (color == undefined)
+        color = [33, 150, 243, 100];
+    if (height == undefined)
+        height = scale;
+
+    if (dimension == undefined)
+        dimension = -1;
+    else
+        dimension = methods.parseInt(dimension);
+
+    let checkpointID = checkPointStaticList.length;
+    checkPointStaticList.push({x: parseFloat(x), y: parseFloat(y), z: parseFloat(z), color: color, scale: scale, height: height});
+    if (message != undefined)
+        Container.Data.Set(999999, 'checkpointStaticLabel' + checkpointID, message);
+    return checkpointID;
+};
+
+methods.getCheckPointStaticList = function () {
+    return checkPointStaticList;
+};
+
+methods.updateCheckpointList = function (player) {
+    if(!mp.players.exists(player))
+        return;
+    try {
+        for (let i = 0; i < methods.parseInt(methods.getCheckPointStaticList().length / 500) + 1; i++)
+            player.call('client:updateCheckpointList', [methods.getCheckPointStaticList().slice(i * 500, i * 500 + 499)]);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 };

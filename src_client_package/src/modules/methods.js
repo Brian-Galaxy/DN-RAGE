@@ -2,6 +2,8 @@
 
 let methods = {};
 
+import Menu from "./menu";
+
 methods.GIVE_WEAPON_TO_PED = '0xBF0FD6E56C964FCB';
 methods.REMOVE_WEAPON_FROM_PED = '0x4899CB088EDF59B8';
 methods.HAS_PED_GOT_WEAPON = '0x8DECB02F88F428BC';
@@ -73,6 +75,10 @@ methods.parseInt = function (str) {
     return parseInt(str) || 0;
 };
 
+methods.parseFloat = function (str) {
+    return parseFloat(str) || 0;
+};
+
 methods.disableAllControls = function(disable) {
     mp.events.call('modules:client:player:DisableAllControls', disable); //TODO
 };
@@ -86,6 +92,25 @@ methods.isValidJSON = function(value){
         methods.debug(`Invalid JSON string\n${error}`);
         return false;
     }
+};
+
+methods.isBlockKeys = function() {
+    return Menu.Menu.IsShowInput() /*|| user.isCuff() || user.isTie() || user.isDead()*/;
+};
+
+methods.distanceToPos = function (v1, v2) {
+    return Math.abs(Math.sqrt(Math.pow((v2.x - v1.x),2) +
+        Math.pow((v2.y - v1.y),2)+
+        Math.pow((v2.z - v1.z),2)));
+};
+
+methods.distanceToPos2D = function (v1, v2) {
+    return Math.abs(Math.sqrt(Math.pow((v2.x - v1.x),2) +
+        Math.pow((v2.y - v1.y),2)));
+};
+
+methods.saveLog = function(file, log){
+
 };
 
 methods.getWaypointPosition = function () {
@@ -104,7 +129,8 @@ methods.numerToK = function (num) {
 };
 
 methods.moneyFormat = function (currentMoney) {
-    return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'USD' }).format(currentMoney.toFixed(2));
+    currentMoney = methods.parseFloat(currentMoney);
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(currentMoney.toFixed(2));
 };
 
 methods.getCurrentSpeed = function () {

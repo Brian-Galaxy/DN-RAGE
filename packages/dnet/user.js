@@ -77,7 +77,7 @@ let skin = {
     SKIN_OVERLAY_COLOR_11: 0,
     SKIN_OVERLAY_12: -1,
     SKIN_OVERLAY_COLOR_12: -1,
-    SKIN_SPECIFICATIONS: [],
+    SKIN_FACE_SPECIFICATIONS: [],
 };
 
 user.createUser = function(player, name, surname, age, national) {
@@ -221,7 +221,7 @@ user.save = function(player, withReset = false) {
         skin.SKIN_OVERLAY_COLOR_11 = methods.parseInt(user.get(player, "SKIN_OVERLAY_COLOR_11"));
         skin.SKIN_OVERLAY_12 = methods.parseInt(user.get(player, "SKIN_OVERLAY_12"));
         skin.SKIN_OVERLAY_COLOR_12 = methods.parseInt(user.get(player, "SKIN_OVERLAY_COLOR_12"));
-        skin.SKIN_SPECIFICATIONS = user.get(player, "GTAO_FACE_SPECIFICATIONS");
+        skin.SKIN_FACE_SPECIFICATIONS = user.get(player, "SKIN_FACE_SPECIFICATIONS");
         skin.SKIN_SEX = user.get(player, "SKIN_SEX");
 
         user.set(player, 'skin', JSON.stringify(skin));
@@ -314,10 +314,10 @@ user.loadUser = function(player, name, spawn = 'Стандарт') {
                 if (!mp.players.exists(player))
                     return false;
 
-                /*user.updateCharacterFace(player);
+                user.updateCharacterFace(player);
                 setTimeout(function () {
                     user.updateCharacterCloth(player);
-                }, 200);*/
+                }, 200);
                 user.updateClientCache(player);
 
                 player.setVariable('idLabel', user.get(player, 'id'));
@@ -340,8 +340,10 @@ user.loadUser = function(player, name, spawn = 'Стандарт') {
                 if (!user.get(player, 'is_custom'))
                     player.call('client:events:loginUser:finalCreate');
                 else {
-                    user.showLoadDisplay(player);
+                    user.hideLoadDisplay(player);
                     methods.debug(spawn, name)
+
+                    //TODO Точки спавна
                 }
                 //user.setOnlineStatus(player, 1);
             }, 600);
@@ -395,7 +397,7 @@ user.updateClientCache = function(player) {
         skin.SKIN_OVERLAY_COLOR_11 = methods.parseInt(user.get(player, "SKIN_OVERLAY_COLOR_11"));
         skin.SKIN_OVERLAY_12 = methods.parseInt(user.get(player, "SKIN_OVERLAY_12"));
         skin.SKIN_OVERLAY_COLOR_12 = methods.parseInt(user.get(player, "SKIN_OVERLAY_COLOR_12"));
-        skin.SKIN_SPECIFICATIONS = user.get(player, "GTAO_FACE_SPECIFICATIONS");
+        skin.SKIN_FACE_SPECIFICATIONS = user.get(player, "SKIN_FACE_SPECIFICATIONS");
         skin.SKIN_SEX = user.get(player, "SKIN_SEX");
 
         user.set(player, 'skin', JSON.stringify(skin));
@@ -411,8 +413,6 @@ user.updateClientCache = function(player) {
 
 user.updateCharacterFace = function(player) {
 
-    return;
-
     methods.debug('user.updateCharacterFace');
     if (!mp.players.exists(player))
         return;
@@ -420,41 +420,66 @@ user.updateCharacterFace = function(player) {
         let health = player.health;
         let skin = {};
 
-        skin.GTAO_SHAPE_FIRST_ID = methods.parseInt(user.get(player, "GTAO_SHAPE_FIRST_ID"));
-        skin.GTAO_SHAPE_SECOND_ID = methods.parseInt(user.get(player, "GTAO_SHAPE_SECOND_ID"));
-        skin.GTAO_SHAPE_THRID_ID = methods.parseInt(user.get(player, "GTAO_SHAPE_THRID_ID"));
-        skin.GTAO_SKIN_FIRST_ID = methods.parseInt(user.get(player, "GTAO_SKIN_FIRST_ID"));
-        skin.GTAO_SKIN_SECOND_ID = methods.parseInt(user.get(player, "GTAO_SKIN_SECOND_ID"));
-        skin.GTAO_SKIN_THRID_ID = methods.parseInt(user.get(player, "GTAO_SKIN_THRID_ID"));
-        skin.GTAO_SHAPE_MIX = parseFloat(user.get(player, "GTAO_SHAPE_MIX"));
-        skin.GTAO_SKIN_MIX = parseFloat(user.get(player, "GTAO_SKIN_MIX"));
-        skin.GTAO_THRID_MIX = parseFloat(user.get(player, "GTAO_THRID_MIX"));
-        skin.GTAO_HAIR = methods.parseInt(user.get(player, "GTAO_HAIR"));
-        skin.GTAO_HAIR_COLOR = methods.parseInt(user.get(player, "GTAO_HAIR_COLOR"));
-        skin.GTAO_HAIR_COLOR2 = methods.parseInt(user.get(player, "GTAO_HAIR_COLOR2"));
-        skin.GTAO_EYE_COLOR = methods.parseInt(user.get(player, "GTAO_EYE_COLOR"));
-        skin.GTAO_EYEBROWS = methods.parseInt(user.get(player, "GTAO_EYEBROWS"));
-        skin.GTAO_EYEBROWS_COLOR = methods.parseInt(user.get(player, "GTAO_EYEBROWS_COLOR"));
-        skin.GTAO_OVERLAY = methods.parseInt(user.get(player, "GTAO_OVERLAY"));
-        skin.GTAO_OVERLAY_COLOR = methods.parseInt(user.get(player, "GTAO_OVERLAY_COLOR"));
-        skin.GTAO_OVERLAY4 = methods.parseInt(user.get(player, "GTAO_OVERLAY4"));
-        skin.GTAO_OVERLAY4_COLOR = methods.parseInt(user.get(player, "GTAO_OVERLAY4_COLOR"));
-        skin.GTAO_OVERLAY5 = methods.parseInt(user.get(player, "GTAO_OVERLAY5"));
-        skin.GTAO_OVERLAY5_COLOR = methods.parseInt(user.get(player, "GTAO_OVERLAY5_COLOR"));
-        skin.GTAO_OVERLAY6 = methods.parseInt(user.get(player, "GTAO_OVERLAY6"));
-        skin.GTAO_OVERLAY6_COLOR = methods.parseInt(user.get(player, "GTAO_OVERLAY6_COLOR"));
-        skin.GTAO_OVERLAY7 = methods.parseInt(user.get(player, "GTAO_OVERLAY7"));
-        skin.GTAO_OVERLAY7_COLOR = methods.parseInt(user.get(player, "GTAO_OVERLAY7_COLOR"));
-        skin.GTAO_OVERLAY8 = methods.parseInt(user.get(player, "GTAO_OVERLAY8"));
-        skin.GTAO_OVERLAY8_COLOR = methods.parseInt(user.get(player, "GTAO_OVERLAY8_COLOR"));
-        skin.GTAO_OVERLAY9 = methods.parseInt(user.get(player, "GTAO_OVERLAY9"));
-        skin.GTAO_OVERLAY9_COLOR = methods.parseInt(user.get(player, "GTAO_OVERLAY9_COLOR"));
-        skin.GTAO_OVERLAY10 = methods.parseInt(user.get(player, "GTAO_OVERLAY10"));
-        skin.GTAO_OVERLAY10_COLOR = methods.parseInt(user.get(player, "GTAO_OVERLAY10_COLOR"));
-        skin.GTAO_FACE_SPECIFICATIONS = user.get(player, "GTAO_FACE_SPECIFICATIONS");
-        skin.SEX = methods.parseInt(user.get(player, "SEX"));
+        skin.SKIN_MOTHER_FACE = methods.parseInt(user.get(player, "SKIN_MOTHER_FACE"));
+        skin.SKIN_FATHER_FACE = methods.parseInt(user.get(player, "SKIN_FATHER_FACE"));
+        skin.SKIN_MOTHER_SKIN = methods.parseInt(user.get(player, "SKIN_MOTHER_SKIN"));
+        skin.SKIN_FATHER_SKIN = methods.parseInt(user.get(player, "SKIN_FATHER_SKIN"));
+        skin.SKIN_PARENT_FACE_MIX = user.get(player, "SKIN_PARENT_FACE_MIX");
+        skin.SKIN_PARENT_SKIN_MIX = user.get(player, "SKIN_PARENT_SKIN_MIX");
+        skin.SKIN_HAIR = methods.parseInt(user.get(player, "SKIN_HAIR"));
+        skin.SKIN_HAIR_COLOR = methods.parseInt(user.get(player, "SKIN_HAIR_COLOR"));
+        skin.SKIN_EYE_COLOR = methods.parseInt(user.get(player, "SKIN_EYE_COLOR"));
+        skin.SKIN_EYEBROWS = methods.parseInt(user.get(player, "SKIN_EYEBROWS"));
+        skin.SKIN_EYEBROWS_COLOR = methods.parseInt(user.get(player, "SKIN_EYEBROWS_COLOR"));
+        skin.SKIN_OVERLAY_1 = methods.parseInt(user.get(player, "SKIN_OVERLAY_1"));
+        skin.SKIN_OVERLAY_COLOR_1 = methods.parseInt(user.get(player, "SKIN_OVERLAY_COLOR_1"));
+        skin.SKIN_OVERLAY_2 = methods.parseInt(user.get(player, "SKIN_OVERLAY_2"));
+        skin.SKIN_OVERLAY_COLOR_2 = methods.parseInt(user.get(player, "SKIN_OVERLAY_COLOR_2"));
+        skin.SKIN_OVERLAY_3 = methods.parseInt(user.get(player, "SKIN_OVERLAY_3"));
+        skin.SKIN_OVERLAY_COLOR_3 = methods.parseInt(user.get(player, "SKIN_OVERLAY_COLOR_3"));
+        skin.SKIN_OVERLAY_4 = methods.parseInt(user.get(player, "SKIN_OVERLAY_4"));
+        skin.SKIN_OVERLAY_COLOR_4 = methods.parseInt(user.get(player, "SKIN_OVERLAY_COLOR_4"));
+        skin.SKIN_OVERLAY_5 = methods.parseInt(user.get(player, "SKIN_OVERLAY_5"));
+        skin.SKIN_OVERLAY_COLOR_5 = methods.parseInt(user.get(player, "SKIN_OVERLAY_COLOR_5"));
+        skin.SKIN_OVERLAY_6 = methods.parseInt(user.get(player, "SKIN_OVERLAY_6"));
+        skin.SKIN_OVERLAY_COLOR_6 = methods.parseInt(user.get(player, "SKIN_OVERLAY_COLOR_6"));
+        skin.SKIN_OVERLAY_7 = methods.parseInt(user.get(player, "SKIN_OVERLAY_7"));
+        skin.SKIN_OVERLAY_COLOR_7 = methods.parseInt(user.get(player, "SKIN_OVERLAY_COLOR_7"));
+        skin.SKIN_OVERLAY_8 = methods.parseInt(user.get(player, "SKIN_OVERLAY_8"));
+        skin.SKIN_OVERLAY_COLOR_8 = methods.parseInt(user.get(player, "SKIN_OVERLAY_COLOR_8"));
+        skin.SKIN_OVERLAY_9 = methods.parseInt(user.get(player, "SKIN_OVERLAY_9"));
+        skin.SKIN_OVERLAY_COLOR_9 = methods.parseInt(user.get(player, "SKIN_OVERLAY_COLOR_9"));
+        skin.SKIN_OVERLAY_10 = methods.parseInt(user.get(player, "SKIN_OVERLAY_10"));
+        skin.SKIN_OVERLAY_COLOR_10 = methods.parseInt(user.get(player, "SKIN_OVERLAY_COLOR_10"));
+        skin.SKIN_OVERLAY_11 = methods.parseInt(user.get(player, "SKIN_OVERLAY_11"));
+        skin.SKIN_OVERLAY_COLOR_11 = methods.parseInt(user.get(player, "SKIN_OVERLAY_COLOR_11"));
+        skin.SKIN_OVERLAY_12 = methods.parseInt(user.get(player, "SKIN_OVERLAY_12"));
+        skin.SKIN_OVERLAY_COLOR_12 = methods.parseInt(user.get(player, "SKIN_OVERLAY_COLOR_12"));
+        skin.SKIN_FACE_SPECIFICATIONS = user.get(player, "SKIN_FACE_SPECIFICATIONS");
+        skin.SKIN_SEX = user.get(player, "SKIN_SEX");
 
-        player.setCustomization(
+        //if (skin.SKIN_SEX == 0 )
+
+        if (user.getSex(player) != skin.SKIN_SEX) {
+            if (skin.SKIN_SEX == 1)
+                player.model =  mp.joaat('mp_f_freemode_01');
+            else
+                player.model =  mp.joaat('mp_m_freemode_01');
+        }
+
+        player.setHeadBlend(
+            skin.SKIN_MOTHER_FACE,
+            skin.SKIN_FATHER_FACE,
+            0,
+            skin.SKIN_MOTHER_SKIN,
+            skin.SKIN_FATHER_SKIN,
+            0,
+            skin.SKIN_PARENT_FACE_MIX,
+            skin.SKIN_PARENT_SKIN_MIX,
+            0
+        );
+
+        /*player.setCustomization(
             skin.SEX==0,
             skin.GTAO_SHAPE_THRID_ID,
             skin.GTAO_SHAPE_SECOND_ID,
@@ -471,13 +496,14 @@ user.updateCharacterFace = function(player) {
             [
                 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
             ]
-        );
-        player.setClothes(2, skin.GTAO_HAIR, 0, 0);
-        player.setHeadOverlay(2, [skin.GTAO_EYEBROWS, 1, skin.GTAO_EYEBROWS_COLOR, 0]);
+        );*/
 
-        if (skin.GTAO_FACE_SPECIFICATIONS) {
+        player.setClothes(2, skin.SKIN_HAIR, 0, 0);
+        player.setHeadOverlay(2, [skin.SKIN_EYEBROWS, 1, skin.SKIN_EYEBROWS_COLOR, 0]);
+
+        if (skin.SKIN_FACE_SPECIFICATIONS) {
             try {
-                JSON.parse(skin.GTAO_FACE_SPECIFICATIONS).forEach((item, i) => {
+                JSON.parse(skin.SKIN_FACE_SPECIFICATIONS).forEach((item, i) => {
                     try {
                         player.setFaceFeature(methods.parseInt(i), parseFloat(item));
                     }
@@ -487,11 +513,11 @@ user.updateCharacterFace = function(player) {
                 })
             } catch(e) {
                 methods.debug(e);
-                methods.debug(skin.GTAO_FACE_SPECIFICATIONS);
+                methods.debug(skin.SKIN_FACE_SPECIFICATIONS);
             }
         }
 
-        user.updateTattoo(player);
+        //user.updateTattoo(player);
 
         if (user.get(player, 'age') > 72)
             player.setHeadOverlay(3, [14, 1, 1, 1]);
@@ -524,22 +550,22 @@ user.updateCharacterFace = function(player) {
         else if (user.get(player, 'age') > 30)
             player.setHeadOverlay(3, [0, 0.1, 1, 1]);
 
-        if (skin.GTAO_OVERLAY9 != -1 && skin.GTAO_OVERLAY9 != undefined)
-            player.setHeadOverlay(9, [skin.GTAO_OVERLAY9, 1, skin.GTAO_OVERLAY9_COLOR, skin.GTAO_OVERLAY9_COLOR]);
+        if (skin.SKIN_OVERLAY_9 != -1 && skin.SKIN_OVERLAY_9 != undefined)
+            player.setHeadOverlay(9, [skin.SKIN_OVERLAY_9, 1, skin.SKIN_OVERLAY_COLOR_9, skin.SKIN_OVERLAY_COLOR_9]);
 
-        if (skin.SEX == 0) {
-            if (skin.GTAO_OVERLAY10 != undefined)
-                player.setHeadOverlay(10, [skin.GTAO_OVERLAY10, 1, skin.GTAO_OVERLAY10_COLOR, skin.GTAO_OVERLAY10_COLOR]);
-            if (skin.GTAO_OVERLAY != undefined)
-                player.setHeadOverlay(1, [skin.GTAO_OVERLAY, 1, skin.GTAO_OVERLAY_COLOR, 0]);
+        if (skin.SKIN_SEX == 0) {
+            if (skin.SKIN_OVERLAY_10 != undefined)
+                player.setHeadOverlay(10, [skin.SKIN_OVERLAY_10, 1, skin.SKIN_OVERLAY_COLOR_10, skin.SKIN_OVERLAY_COLOR_10]);
+            if (skin.SKIN_OVERLAY_1 != undefined)
+                player.setHeadOverlay(1, [skin.SKIN_OVERLAY_1, 1, skin.SKIN_OVERLAY_COLOR_1, 0]);
         }
-        else if (skin.SEX == 1) {
-            if (skin.GTAO_OVERLAY4 != undefined)
-                player.setHeadOverlay(4, [skin.GTAO_OVERLAY4, 1, skin.GTAO_OVERLAY4_COLOR, skin.GTAO_OVERLAY4_COLOR]);
-            if (skin.GTAO_OVERLAY5 != undefined)
-                player.setHeadOverlay(5, [skin.GTAO_OVERLAY5, 1, skin.GTAO_OVERLAY5_COLOR, skin.GTAO_OVERLAY5_COLOR]);
-            if (skin.GTAO_OVERLAY8 != undefined)
-                player.setHeadOverlay(8, [skin.GTAO_OVERLAY8, 1, skin.GTAO_OVERLAY8_COLOR, skin.GTAO_OVERLAY8_COLOR]);
+        else if (skin.SKIN_SEX == 1) {
+            if (skin.SKIN_OVERLAY_4 != undefined)
+                player.setHeadOverlay(4, [skin.SKIN_OVERLAY_4, 1, skin.SKIN_OVERLAY_COLOR_4, skin.SKIN_OVERLAY_COLOR_4]);
+            if (skin.SKIN_OVERLAY_5 != undefined)
+                player.setHeadOverlay(5, [skin.SKIN_OVERLAY_5, 1, skin.SKIN_OVERLAY_COLOR_5, skin.SKIN_OVERLAY_COLOR_5]);
+            if (skin.SKIN_OVERLAY_8 != undefined)
+                player.setHeadOverlay(8, [skin.SKIN_OVERLAY_8, 1, skin.SKIN_OVERLAY_COLOR_8, skin.SKIN_OVERLAY_COLOR_8]);
         }
 
         player.health = health;
@@ -552,6 +578,16 @@ user.updateCharacterFace = function(player) {
         }, 2500);
     }
 };
+
+user.getSex = function(player) {
+    if (!mp.players.exists(player))
+        return 0;
+    if (player.model === mp.joaat('mp_f_freemode_01'))
+        return 1;
+    else
+        return 0;
+};
+
 
 user.updateCharacterCloth = function(player) {
 
@@ -851,6 +887,15 @@ user.getId = function(player) {
     return -1;
 };
 
+user.getRpName = function(player) {
+    methods.debug('user.getRpName');
+    if (!mp.players.exists(player))
+        return 'NO_NAME';
+    if (user.has(player, 'name'))
+        return user.get(player, 'name');
+    return player.socialClub;
+};
+
 user.getPlayerById = function(id) {
     let player = null;
     mp.players.forEach(pl => {
@@ -869,4 +914,107 @@ user.getVehicleDriver = function(vehicle) {
             driver = p;
     });
     return driver;
+};
+
+user.addMoney = function(player, money) {
+    user.addCashMoney(player, money);
+};
+
+user.removeMoney = function(player, money) {
+    user.removeCashMoney(player, money);
+};
+
+user.setMoney = function(player, money) {
+    user.setCashMoney(player, money);
+};
+
+user.getMoney = function(player) {
+    return user.getCashMoney(player);
+};
+
+user.addCashMoney = function(player, money) {
+    methods.saveLog('Money', `[ADD_CASH] ${user.getRpName(player)} (${user.getId(player)}) ${user.getCashMoney(player)} - ${money}`);
+    user.setCashMoney(player, user.getCashMoney(player) + methods.parseFloat(money));
+};
+
+user.removeCashMoney = function(player, money) {
+    methods.saveLog('Money', `[REMOVE_CASH] ${user.getRpName(player)} (${user.getId(player)}) ${user.getCashMoney(player)} + ${money}`);
+    user.setCashMoney(player, user.getCashMoney(player) - methods.parseFloat(money));
+};
+
+user.setCashMoney = function(player, money) {
+    user.set(player, 'money', methods.parseFloat(money));
+    user.updateClientCache(player);
+};
+
+user.getCashMoney = function(player) {
+    if (user.has(player, 'money'))
+        return methods.parseFloat(user.get(player, 'money'));
+    return 0;
+};
+
+user.addBankMoney = function(player, money) {
+    methods.saveLog('Money', `[ADD_BANK] ${user.getRpName(player)} (${user.getId(player)}) ${user.getBankMoney(player)} - ${money}`);
+    user.setBankMoney(player, user.getBankMoney(player) + methods.parseFloat(money));
+};
+
+user.removeBankMoney = function(player, money) {
+    methods.saveLog('Money', `[REMOVE_BANK] ${user.getRpName(player)} (${user.getId(player)}) ${user.getBankMoney(player)} + ${money}`);
+    user.setBankMoney(player, user.getBankMoney(player) - methods.parseFloat(money));
+};
+
+user.setBankMoney = function(player, money) {
+    user.set(player, 'money_bank', methods.parseFloat(money));
+    user.updateClientCache(player);
+};
+
+user.getBankMoney = function(player) {
+    if (user.has(player, 'money_bank'))
+        return methods.parseFloat(user.get(player, 'money_bank'));
+    return 0;
+};
+
+user.addHistory = function(player, type, reason) {
+    return; //TODO
+    if (!user.isLogin(player))
+        return;
+
+    let time = methods.getTimeWithoutSec();
+    let date = methods.getDate();
+    //let rpDateTime = weather.getRpDateTime();
+    let dateTime = time + ' ' + date;
+    let rpDateTime = dateTime;
+
+    mysql.executeQuery(`INSERT INTO log_player (user_id, datetime, type, do) VALUES ('${user.getId(player)}', '${rpDateTime} (( ${dateTime} ))', '${type}', '${reason}')`);
+};
+
+user.clearChat = function(player) {
+    if (!mp.players.exists(player))
+        return false;
+    player.call('client:clearChat');
+};
+
+user.teleport = function(player, x, y, z, rot = 0.1) {
+    methods.debug('user.teleport');
+    if (!mp.players.exists(player))
+        return false;
+    if (rot == 0.1)
+        rot = player.heading;
+    player.call('client:teleport', [x, y, z, rot]);
+};
+
+user.teleportVeh = function(player, x, y, z, rot = 0.1) {
+    methods.debug('user.teleportVeh');
+    if (!mp.players.exists(player))
+        return false;
+    if (rot == 0.1 && player.vehicle)
+        rot = player.vehicle.heading;
+    player.call('client:teleportVeh', [x, y, z, rot]);
+};
+
+user.setWaypoint = function(player, x, y) {
+    methods.debug('user.setWaypoint');
+    if (!mp.players.exists(player))
+        return false;
+    player.call('client:user:setWaypoint', [x, y]);
 };

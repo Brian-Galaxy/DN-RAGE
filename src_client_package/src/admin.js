@@ -48,10 +48,14 @@ mp.events.add('render', () => {
         mp.game.controls.disableControlAction(0, 20, true);
         mp.game.controls.disableControlAction(0, 47, true);
 
+        for(let i = 26; i < 272; i++) {
+            mp.game.controls.disableControlAction(0,i,true)
+        }
+
         let yoff = 0.0;
         let zoff = 0.0;
 
-        if (mp.game.controls.isControlJustPressed(0, 22)) {
+        if (mp.game.controls.isDisabledControlJustPressed(0, 22)) {
             noClipSpeed++;
             if (noClipSpeed >= noClipSpeedNames.length)
                 noClipSpeed = 0;

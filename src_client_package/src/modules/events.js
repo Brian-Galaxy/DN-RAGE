@@ -5,6 +5,7 @@ import user from '../user';
 import menuList from '../menuList';
 import ui from "./ui";
 import checkpoint from "../manager/checkpoint";
+import enums from "../enums";
 
 mp.gui.chat.enabled = false;
 
@@ -345,19 +346,17 @@ mp.events.add('client:events:custom:choiceRole', function(roleIndex) {
             user.set('is_custom', true);
             user.save();
             ui.notify('Вы уже выбрали роль');
+
+            let roleIdx = user.getCache('role') - 1;
+            user.teleport(enums.spawnByRole[roleIdx][0], enums.spawnByRole[roleIdx][1], enums.spawnByRole[roleIdx][2], enums.spawnByRole[roleIdx][3]);
             return;
         }
-
-
-        /*switch (roleIndex) {
-
-        }
-        user.teleport()*/
-
 
         user.set('role', roleIndex + 1);
         user.set('is_custom', true);
         user.save();
+
+        user.teleport(enums.spawnByRole[roleIndex][0], enums.spawnByRole[roleIndex][1], enums.spawnByRole[roleIndex][2], enums.spawnByRole[roleIndex][3]);
     }, 500);
 });
 
@@ -495,9 +494,6 @@ mp.keys.bind(0x38, true, function() {
 //E
 mp.keys.bind(0x45, true, function() {
     try {
-        methods.debug(user.isLogin());
-        methods.debug(methods.isBlockKeys());
-        mp.events.callRemote('onKeyPress:E');
         if (!user.isLogin())
             return;
         if (!methods.isBlockKeys()) {

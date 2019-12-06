@@ -1,5 +1,6 @@
 import methods from '../modules/methods';
 import user from '../user';
+import UIMenu from '../modules/menu';
 
 let itemList = [];
 let entityList = new Map();
@@ -21,6 +22,7 @@ checkpoint.checkPosition = function() {
             else {
                 if (entityList.has(idx)) {
                     entityList.delete(idx);
+                    UIMenu.Menu.HideMenu();
                     //mp.events.callRemote('client:exitStaticCheckpoint', idx);
                 }
             }
@@ -66,7 +68,7 @@ mp.events.add('render', () => {
 
     if (itemList.length > 0) {
         itemList.forEach(function (item, idx) {
-            if (methods.distanceToPos(playerPos, new mp.Vector3(item.x, item.y, item.z)) <= 200) {
+            if (methods.distanceToPos(playerPos, new mp.Vector3(item.x, item.y, item.z)) <= 100) {
                 mp.game.graphics.drawMarker(
                     1,
                     item.x, item.y, item.z,

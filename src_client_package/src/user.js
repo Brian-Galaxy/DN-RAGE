@@ -150,6 +150,7 @@ user.notify = function (message) {
 
 user.init = function() {
 
+    user.stopAllScreenEffect();
     user.hideLoadDisplay();
     user.clearChat();
 
@@ -163,7 +164,7 @@ user.init = function() {
     mp.players.local.setRotation(0, 0, 123.53768, 0, true);
     mp.players.local.freezePosition(true);
     mp.players.local.setVisible(true, false);
-    mp.players.local.setCollision(true, false);
+    mp.players.local.setCollision(false, false);
 
     mp.game.ui.displayRadar(false);
     mp.gui.chat.activate(false);
@@ -421,6 +422,10 @@ user.updateCharacterFace = function(isLocal = false) {
     } catch(e) {
         console.log('updateCharacterFace', e);
     }
+};
+
+user.stopAllScreenEffect = function() {
+    mp.game.invoke(methods.STOP_ALL_SCREEN_EFFECTS);
 };
 
 user.isLogin = function(){

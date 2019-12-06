@@ -2,6 +2,7 @@
 
 const crypto = require('crypto');
 let Container = require('./data');
+let enums = require('../enums');
 
 let checkPointStaticList = [];
 
@@ -12,6 +13,16 @@ methods.sha256 = function (text) {
 };
 
 methods.sleep = ms => new Promise(res => setTimeout(res, ms));
+
+methods.getVehicleInfo = function (model) {
+    let vehInfo = enums.vehicleInfo;
+    for (let item in vehInfo) {
+        let vItem = vehInfo[item];
+        if (vItem.hash == model || vItem.display_name == model || mp.joaat(vItem.display_name.toString().toLowerCase()) == model)
+            return vItem;
+    }
+    return {id: 0, hash: model, display_name: 'Unknown', class_name: 'Unknown', stock: 378000, stock_full: 205000, fuel_full: 75, fuel_min: 8};
+};
 
 methods.getRandomInt = function (min, max) {
     return Math.floor(Math.random() * (max - min)) + min;

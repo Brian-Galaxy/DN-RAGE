@@ -9,13 +9,21 @@ let hBlips = new Map();
 let count = 0;
 
 houses.interiorList = [
-    [-1150.642,-1520.649,9.63273], //0
-    [346.6588,-1012.286,-100.19624], //1
-    [-110.2899,-14.17893,69.51956], //2
-    [1274.026,-1719.583,53.77145], //3
-    [-1908.66,-572.692,18.09722], //4
-    [265.9925,-1007.13,-101.9903], //5
-    [151.2914,-1007.358,-100], //6
+    [1973.087, 3816.231, 32.42871, 32.09988], //0
+    [1973.087, 3816.231, 32.42871, 32.09988], //1
+    [151.3607, -1007.641, -97.99998, -0.800103], //2
+    [-1908.757, -572.6663, 18.10679, -123.2994], //3
+    [265.1601, -1000.999, -98.00862, 11.40028], //4
+    [-1150.627, -1520.831, 9.63272, 42.19985], //5
+    [346.5463, -1002.454, -98.19622, 1.699997], //6
+    [-14.2267, -1440.357, 30.10154, 6.423715], //7
+    [7.74072, 538.5586, 175.0281, 158.1992], //8
+    [-815.6338, 178.5606, 71.15309, -62.49992], //9
+    [-610.8563, 58.96071, 97.20045, 94.49925], //10
+    [-758.4859, 619.0757, 143.148, 115.5004], //11
+    [-859.9163, 691.0403, 151.8658, -167.699], //12
+    [-781.774, 318.2554, 186.914, 354.9092], //13
+    [-601.8134, 42.28962, 92.62612, 269.4444], //14
 ];
 
 houses.loadAll = function() {
@@ -39,6 +47,7 @@ houses.loadAll = function() {
             Container.Data.Set(100000 + methods.parseInt(item['id']), 'x', item['x']);
             Container.Data.Set(100000 + methods.parseInt(item['id']), 'y', item['y']);
             Container.Data.Set(100000 + methods.parseInt(item['id']), 'z', item['z']);
+            Container.Data.Set(100000 + methods.parseInt(item['id']), 'rot', item['rot']);
             Container.Data.Set(100000 + methods.parseInt(item['id']), 'tax_money', item['tax_money']);
             Container.Data.Set(100000 + methods.parseInt(item['id']), 'tax_score', item['tax_score']);
 
@@ -90,6 +99,8 @@ houses.loadLast = function() {
             methods.createStaticCheckpoint(hBlip.position.x, hBlip.position.y, hBlip.position.z, "Нажмите ~g~Е~s~ чтобы открыть меню");
             //methods.createStaticCheckpoint(parseFloat(item['int_x']), parseFloat(item['int_y']), parseFloat(item['int_z']) - 1, "Нажмите ~g~Е~s~ чтобы открыть меню", 1, methods.parseInt(item['id']));
 
+            mp.players.broadcast(`Дом добавлен. ID: ${item['id']}. Name: ${item['number']}. Int: ${item['interior']}. Price: ${methods.moneyFormat(item['price'])}`);
+
             mp.players.forEach(p => {
                 methods.updateCheckpointList(p);
             });
@@ -101,12 +112,10 @@ houses.loadLast = function() {
     });
 };
 
-houses.insert = function(player, number, street, zone, x, y, z, interior, price) {
+houses.insert = function(player, number, street, zone, x, y, z, rot, interior, price) {
     methods.debug('houses.insert');
 
-    player.outputChatBox(`Дом добавлен. Int: ${interior}. Price: ${methods.moneyFormat(price)}`);
-
-    mysql.executeQuery(`INSERT INTO houses (number, street, address, x, y, z, interior, price) VALUES ('${number}', '${street}', '${zone}', '${x}', '${y}', '${z - 1}', '${interior}', '${price}')`);
+    mysql.executeQuery(`INSERT INTO houses (number, street, address, rot, x, y, z, interior, price) VALUES ('${number}', '${street}', '${zone}', '${rot}', '${x}', '${y}', '${z - 1}', '${interior}', '${price}')`);
     setTimeout(houses.loadLast, 1000);
 };
 
@@ -257,5 +266,5 @@ houses.enter = function (player, id) {
     let hInfo = houses.getHouseData(id);
     player.dimension = id;
     let intId = hInfo.get('interior');
-    user.teleport(player, houses.interiorList[intId][0], houses.interiorList[intId][1], houses.interiorList[intId][2]);
+    user.teleport(player, houses.interiorList[intId][0], houses.interiorList[intId][1], houses.interiorList[intId][2] + 1);
 };

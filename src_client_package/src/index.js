@@ -28,6 +28,7 @@ try {
 
     try {
         user.init();
+        methods.requestIpls();
         checkpoint.checkPosition();
         enums.loadCloth();
     }

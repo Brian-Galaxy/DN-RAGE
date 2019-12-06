@@ -334,6 +334,22 @@ menuList.showAdminColorVehMenu = function() {
     });
 };
 
+menuList.showAdminDebugMenu = function() {
+    let menu = UIMenu.Menu.Create(`Admin`, `~b~Debug`);
+
+    let list1Item = UIMenu.Menu.AddMenuItemList("Effect", enums.screenEffectList);
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+
+    menu.ListChange.on((item, index) => {
+        user.stopAllScreenEffect();
+        mp.game.graphics.startScreenEffect(enums.screenEffectList[index], 0, false);
+    });
+
+    menu.ItemSelect.on(item => {
+        UIMenu.Menu.HideMenu();
+    });
+};
+
 menuList.showAdminClothMenu = function() {
     let menu = UIMenu.Menu.Create(`Admin`, `~b~Одежда`);
 

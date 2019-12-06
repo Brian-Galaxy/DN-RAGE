@@ -10,7 +10,7 @@ houses.enter = function (id) {
 
 houses.exit = function (x, y, z) {
     user.setVirtualWorld(0);
-    user.teleport(x, y, z);
+    user.teleport(x, y, z + 1);
 };
 
 houses.getData = async function(id) {

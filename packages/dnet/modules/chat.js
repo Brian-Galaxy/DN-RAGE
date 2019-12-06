@@ -13,28 +13,28 @@ chat.clBlack = '#000000';
 
 chat.sendBCommand = function(player, text) {
     if (user.isLogin(player)) {
-        mp.players.broadcastInRange(player.position, range, `[${chat.getTime()}] !{2196F3} Игрок (${user.getId(player)}): !{FFFFFF}(( ${text} )) `);
+        mp.players.broadcastInRange(player.position, range, `[${chat.getTime()}] !{2196F3} Игрок (${user.getSvId(player)}): !{FFFFFF}(( ${text} )) `);
         methods.saveLog('ChatCmd', `/b ${user.getRpName(player)} (${user.getId(player)}): ${text}`);
     }
 };
 
 chat.sendTryCommand = function(player, text) {
     if (user.isLogin(player)) {
-        mp.players.broadcastInRange(player.position, range, `[${chat.getTime()}] !{C2A2DA} ${methods.getRandomInt(0, 2) == 0 ? 'Не удачно' : 'Удачно'} ${user.getId(player)} ${text}`);
+        mp.players.broadcastInRange(player.position, range, `[${chat.getTime()}] !{C2A2DA} ${methods.getRandomInt(0, 2) == 0 ? 'Не удачно' : 'Удачно'} ${user.getSvId(player)} ${text}`);
         methods.saveLog('ChatCmd', `/try ${user.getRpName(player)} (${user.getId(player)}): ${text}`);
     }
 };
 
 chat.sendDoCommand = function(player, text) {
     if (user.isLogin(player)) {
-        mp.players.broadcastInRange(player.position, range, `[${chat.getTime()}] !{C2A2DA} (( ${text} )) ${user.getId(player)}`);
+        mp.players.broadcastInRange(player.position, range, `[${chat.getTime()}] !{C2A2DA} (( ${text} )) ${user.getSvId(player)}`);
         methods.saveLog('ChatCmd', `/do ${user.getRpName(player)} (${user.getId(player)}): ${text}`);
     }
 };
 
 chat.sendMeCommand = function(player, text) {
     if (user.isLogin(player)) {
-        mp.players.broadcastInRange(player.position, range, `[${chat.getTime()}] !{C2A2DA}${user.getId(player)} ${text}`);
+        mp.players.broadcastInRange(player.position, range, `[${chat.getTime()}] !{C2A2DA}${user.getSvId(player)} ${text}`);
         methods.saveLog('ChatCmd', `/me ${user.getRpName(player)} (${user.getId(player)}): ${text}`);
     }
 };
@@ -42,14 +42,14 @@ chat.sendMeCommand = function(player, text) {
 chat.sendDiceCommand = function(player) {
     if (user.isLogin(player)) {
         let dice = methods.getRandomInt(1, 6);
-        mp.players.broadcastInRange(player.position, range, `[${chat.getTime()}] !{C2A2DA}${user.getId(player)} бросил кости !{FF9800}(( Выпало ${dice} ))`);
+        mp.players.broadcastInRange(player.position, range, `[${chat.getTime()}] !{C2A2DA}${user.getSvId(player)} бросил кости !{FF9800}(( Выпало ${dice} ))`);
         methods.saveLog('Dice', `${user.getRpName(player)} (${user.getId(player)}): ${dice}`);
     }
 };
 
 chat.send = function(player, text) {
     if (user.isLogin(player)) {
-        mp.players.broadcastInRange(player.position, range, `[${chat.getTime()}] !{2196F3}Игрок (${user.getId(player)}) говорит:!{FFFFFF} ${text}`);
+        mp.players.broadcastInRange(player.position, range, `[${chat.getTime()}] !{2196F3}Игрок (${user.getSvId(player)}) говорит:!{FFFFFF} ${text}`);
         methods.saveLog('Chat', `${user.getRpName(player)} (${user.getId(player)}): ${text}`);
     }
 };
@@ -118,9 +118,6 @@ mp.events.add('playerCommand', (player, command) => {
             player.notify("~g~Ping: " + player.ping + "ms");
             player.notify("~g~PacketLoss: " + player.packetLoss + "ms");
         }
-        else if (command.toLowerCase().slice(0, 3) === "he ") {
-
-        }
         else if (command.slice(0, 6) === "seval ") {
             if (!user.isLogin(player))
                 return;
@@ -137,7 +134,7 @@ mp.events.add('playerCommand', (player, command) => {
             }
         }
         else {
-            player.outputChatBox(`!{FFC107}На сервере нет команд, кроме: /me, /do, /try, /b. Используйте меню на кнопку M`);
+            // TODO player.outputChatBox(`!{FFC107}На сервере нет команд, кроме: /me, /do, /try, /b. Используйте меню на кнопку M`);
         }
     }
     catch (e) {

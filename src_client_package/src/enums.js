@@ -30,10 +30,10 @@ let currentRequestID = 0;
 let pendingRequests = {};
 
 // должно быть тут, иначе никак
-mp.events.add('client:enums:updateCloth', (requestID, overlays) => {
+mp.events.add('client:enums:updateCloth', (requestID, overlays, clothM, clothF, propM, propF) => {
     try {
         if (pendingRequests[requestID]) {
-            pendingRequests[requestID]([overlays]);
+            pendingRequests[requestID]([overlays, clothM, clothF, propM, propF]);
         }
     } catch (e) {
         console.log(e);
@@ -84,6 +84,16 @@ enums.updateVehicleInfo = function(data) {
 
 enums.kitchenIntData = [[349.8293,-932.1685,45.36568,20000],[-1909.91,-575.0604,18.09722,20000],[-1282.89,446.3326,96.89471,20000],[-1153.151,-1521.806,9.642298,20000],[-897.9225,-441.7401,93.05853,20000],[-852.9263,688.3412,151.8529,20000],[-782.1923,330.5791,186.3132,20000],[-758.5352,610.5003,143.1406,20000],[-674.4797,595.6437,144.3797,20000],[-618.301,42.6407,96.60004,20000],[-566.1242,656.9935,144.832,20000],[-111.3519,-6.549356,69.51958,20000],[-10.52031,-1428.414,30.10148,20000],[124.1809,557.1547,183.2971,20000],[265.3231,-995.9853,-100.0086,20000],[343.0825,429.4016,148.3808,20000],[343.7529,-1002.998,-100.1962,20000],[379.4201,418.8586,144.9001,20000],[1395.23,1145.007,113.3336,20000],[1975.355,3818.645,32.43632,20000],[-9.682148,520.001,173.628,30000],[-797.776,187.5312,71.60544,30000],[-1440.387,6759.043,7.98046,30000],[-769.8837,340.0439,210.397,20000],[-787.7949,330.3934,157.599,20000],[-782.215,329.8719,216.0382,20000],[-778.6613,327.9729,195.086,20000],[-1459.873,-534.1923,54.52639,20000],[-1473.994,-537.3419,72.44417,20000],[-31.02146,-587.9935,87.71225,20000],[-11.44843,-584.9959,78.43073,20000],[-896.725,-446.5864,124.1319,20000],[-912.0232,-371.7621,83.07791,20000],[-917.9376,-379.2882,107.0377,20000],[-918.7728,-386.1582,112.6746,20000],[-468.6447,-695.6874,74.68432,20000],[120.4625,-884.7316,123.2703,20000],[-674.1874,-858.9833,40.64307,20000],[-440.8985,6274.877,10.75166,20000],[-57.75088,-620.3068,75.99939,20000],[930.5132,-548.4226,42.63166,20000]];
 enums.dispatchItemList = [];
+
+enums.spawnByRole = [
+    [-332.417, -2792.682, 4.000233, 91.04308],
+    [-1042.025, -2744.718, 20.3594, 327.3454],
+    [2046.785, 3566.849, 39.19671, 243.1456],
+];
+
+enums.screenEffectList = [
+    'BeastIntroScene','BeastLaunch','BeastTransition','BikerFilter','BikerFilterOut','BikerFormation','BikerFormationOut','CamPushInFranklin','CamPushInMichael','CamPushInNeutral','CamPushInTrevor','ChopVision','CrossLine','CrossLineOut','DeadlineNeon','DeathFailFranklinIn','DeathFailMichaelIn','DeathFailMPDark','DeathFailMPIn','DeathFailNeutralIn','DeathFailOut','DeathFailTrevorIn','DefaultFlash','DMT_flight','DMT_flight_intro','Dont_tazeme_bro','DrugsDrivingIn','DrugsDrivingOut','DrugsMichaelAliensFight','DrugsMichaelAliensFightIn','DrugsMichaelAliensFightOut','DrugsTrevorClownsFight','DrugsTrevorClownsFightIn','DrugsTrevorClownsFightOut','ExplosionJosh3','FocusIn','FocusOut','HeistCelebEnd','HeistCelebPass','HeistCelebPassBW','HeistCelebToast','HeistLocate','HeistTripSkipFade','InchOrange','InchOrangeOut','InchPickup','InchPickupOut','InchPurple','InchPurpleOut','LostTimeDay','LostTimeNight','MenuMGHeistIn','MenuMGHeistIntro','MenuMGHeistOut','MenuMGHeistTint','MenuMGIn','MenuMGSelectionIn','MenuMGSelectionTint','MenuMGTournamentIn','MenuMGTournamentTint','MinigameEndFranklin','MinigameEndMichael','MinigameEndNeutral','MinigameEndTrevor','MinigameTransitionIn','MinigameTransitionOut','MP_Bull_tost','MP_Bull_tost_Out','MP_Celeb_Lose','MP_Celeb_Lose_Out','MP_Celeb_Preload','MP_Celeb_Preload_Fade','MP_Celeb_Win','MP_Celeb_Win_Out','MP_corona_switch','MP_intro_logo','MP_job_load','MP_Killstreak','MP_Killstreak_Out','MP_Loser_Streak_Out','MP_OrbitalCannon','MP_Powerplay','MP_Powerplay_Out','MP_race_crash','MP_SmugglerCheckpoint','MP_TransformRaceFlash','MP_WarpCheckpoint','PauseMenuOut','pennedIn','PennedInOut','PeyoteEndIn','PeyoteEndOut','PeyoteIn','PeyoteOut','PPFilter','PPFilterOut','PPGreen','PPGreenOut','PPOrange','PPOrangeOut','PPPink','PPPinkOut','PPPurple','PPPurpleOut','RaceTurbo','Rampage','RampageOut','SniperOverlay','SuccessFranklin','SuccessMichael','SuccessNeutral','SuccessTrevor','switch_cam_1','switch_cam_2','SwitchHUDFranklinIn','SwitchHUDFranklinOut','SwitchHUDIn','SwitchHUDMichaelIn','SwitchHUDMichaelOut','SwitchHUDOut','SwitchHUDTrevorIn','SwitchHUDTrevorOut','SwitchOpenFranklin','SwitchOpenFranklinIn','SwitchOpenFranklinOut','SwitchOpenMichaelIn','SwitchOpenMichaelMid','SwitchOpenMichaelOut','SwitchOpenNeutralFIB5','SwitchOpenNeutralOutHeist','SwitchOpenTrevorIn','SwitchOpenTrevorOut','SwitchSceneFranklin','SwitchSceneMichael','SwitchSceneNeutral','SwitchSceneTrevor','SwitchShortFranklinIn','SwitchShortFranklinMid','SwitchShortMichaelIn','SwitchShortMichaelMid','SwitchShortNeutralIn','SwitchShortNeutralMid','SwitchShortTrevorIn','SwitchShortTrevorMid','TinyRacerGreen','TinyRacerGreenOut','TinyRacerIntroCam','TinyRacerPink','TinyRacerPinkOut','WeaponUpgrade'
+];
 
 enums.lscClassPrice = [
     ['Commercials', 1.2],
@@ -602,6 +612,10 @@ enums.loadCloth = function () {
     updateCloth().then( (returnCloth) => {
         try {
             _overlays = returnCloth[0];
+            _clothM = returnCloth[1];
+            _clothF = returnCloth[2];
+            _propM = returnCloth[3];
+            _propF = returnCloth[4];
         } catch (e) {
             console.log(e);
             throw e;

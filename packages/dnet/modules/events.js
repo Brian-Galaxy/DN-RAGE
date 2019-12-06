@@ -171,7 +171,7 @@ mp.events.add('server:user:clearDecorations', (player) => {
 
 mp.events.addRemoteCounted('server:enums:getCloth', (player, requestID) => {
     try {
-        player.call('client:enums:updateCloth', [requestID, JSON.stringify(enums.hairOverlays)]);
+        player.call('client:enums:updateCloth', [requestID, JSON.stringify(enums.hairOverlays), JSON.stringify(enums.clothM), JSON.stringify(enums.clothF), JSON.stringify(enums.propM), JSON.stringify(enums.propF)]);
     } catch (e) {
         methods.debug(e);
     }
@@ -182,7 +182,7 @@ mp.events.add('server:user:save', (player) => {
 });
 
 mp.events.add('server:houses:insert', (player, interior, number, price, zone, street) => {
-    houses.insert(player, number, street, zone, player.position.x, player.position.y, player.position.z, interior, price);
+    houses.insert(player, number, street, zone, player.position.x, player.position.y, player.position.z, player.heading, interior, price);
 });
 
 mp.events.addRemoteCounted("onKeyPress:E", (player) => {

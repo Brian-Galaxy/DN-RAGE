@@ -458,6 +458,16 @@ mp.events.add('client:showHouseInMenu', (item) => {
     }
 });
 
+mp.events.add('client:menuList:showShopClothMenu', (component, clothColor, ClothData) => {
+    methods.debug('Event: client:menuList:showShopClothMenu');
+    menuList.showShopClothMenu(component, clothColor, ClothData);
+});
+
+mp.events.add('client:menuList:showShopMaskMenu', (shopId) => {
+    methods.debug('Event: client:menuList:showShopMaskMenu');
+    //menuList.showShopMaskMenu(shopId);
+});
+
 mp.events.add('client:clearChat', () => {
     user.clearChat();
 });

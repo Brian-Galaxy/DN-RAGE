@@ -5,6 +5,8 @@ let enums = require('../enums');
 let Container = require('./data');
 let methods = require('./methods');
 let houses = require('../property/houses');
+let cloth = require('../business/cloth');
+let pickups = require('../managers/pickups');
 
 mp.events.addRemoteCounted = (eventName, handler) =>
 {
@@ -169,12 +171,68 @@ mp.events.add('server:user:clearDecorations', (player) => {
     user.clearDecorations(player);
 });
 
+mp.events.add('server:user:updateCharacterCloth', (player) => {
+    user.updateCharacterCloth(player);
+});
+
+mp.events.add('server:user:updateCharacterFace', (player) => {
+    user.updateCharacterFace(player);
+});
+
+mp.events.add('server:user:setComponentVariation', (player, component, drawableId, textureId) => {
+    user.setComponentVariation(player, component, drawableId, textureId);
+});
+
+mp.events.add('server:user:setProp', (player, slot, type, color) => {
+    user.setProp(player, slot, type, color);
+});
+
+mp.events.add('server:user:clearAllProp', (player) => {
+    user.clearAllProp(player);
+});
+
 mp.events.addRemoteCounted('server:enums:getCloth', (player, requestID) => {
     try {
         player.call('client:enums:updateCloth', [requestID, JSON.stringify(enums.hairOverlays), JSON.stringify(enums.clothM), JSON.stringify(enums.clothF), JSON.stringify(enums.propM), JSON.stringify(enums.propF)]);
     } catch (e) {
         methods.debug(e);
     }
+});
+
+mp.events.addRemoteCounted('server:business:cloth:change', (player, body, clothId, color, torso, torsoColor, parachute, parachuteColor) => {
+    if (!user.isLogin(player))
+        return;
+    cloth.change(player, body, clothId, color, torso, torsoColor, parachute, parachuteColor);
+});
+
+mp.events.addRemoteCounted('server:business:cloth:buy', (player, price, body, clothId, color, torso, torsoColor, parachute, parachuteColor, shopId, isFree) => {
+    if (!user.isLogin(player))
+        return;
+    cloth.buy(player, price, body, clothId, color, torso, torsoColor, parachute, parachuteColor, shopId, isFree);
+});
+
+mp.events.addRemoteCounted('server:business:cloth:changeMask', (player, clothId, color) => {
+    if (!user.isLogin(player))
+        return;
+    cloth.changeMask(player, clothId, color);
+});
+
+mp.events.addRemoteCounted('server:business:cloth:buyMask', (player, price, clothId, color, shopId) => {
+    if (!user.isLogin(player))
+        return;
+    cloth.buyMask(player, price, clothId, color, shopId);
+});
+
+mp.events.addRemoteCounted('server:business:cloth:changeProp', (player, body, clothId, color) => {
+    if (!user.isLogin(player))
+        return;
+    cloth.changeProp(player, body, clothId, color);
+});
+
+mp.events.addRemoteCounted('server:business:cloth:buyProp', (player, price, body, clothId, color, shopId, isFree) => {
+    if (!user.isLogin(player))
+        return;
+    cloth.buyProp(player, price, body, clothId, color, shopId, isFree);
 });
 
 mp.events.add('server:user:save', (player) => {
@@ -187,10 +245,10 @@ mp.events.add('server:houses:insert', (player, interior, number, price, zone, st
 
 mp.events.addRemoteCounted("onKeyPress:E", (player) => {
 
-    methods.debug('PressE');
-
     if (!user.isLogin(player))
         return;
+
+    pickups.checkPressE(player);
 
     houses.getAllHouses().forEach((val, key, object) => {
         if (methods.distanceToPos(player.position, val.position) < 1.5) {

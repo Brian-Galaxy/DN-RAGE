@@ -424,6 +424,31 @@ user.updateCharacterFace = function(isLocal = false) {
     }
 };
 
+user.updateCharacterCloth = function() {
+    mp.events.callRemote('server:user:updateCharacterCloth');
+};
+
+user.setComponentVariation = function(component, drawableId, textureId) {
+    component = methods.parseInt(component);
+    drawableId = methods.parseInt(drawableId);
+    textureId = methods.parseInt(textureId);
+    mp.events.callRemote('server:user:setComponentVariation', component, drawableId, textureId);
+};
+
+user.setProp = function(slot, type, color) {
+    methods.debug('user.setProp');
+
+    slot = methods.parseInt(slot);
+    type = methods.parseInt(type);
+    color = methods.parseInt(color);
+
+    mp.events.callRemote('server:user:setProp', slot, type, color);
+};
+
+user.clearAllProp = function() {
+    mp.events.callRemote('server:user:clearAllProp');
+};
+
 user.stopAllScreenEffect = function() {
     mp.game.invoke(methods.STOP_ALL_SCREEN_EFFECTS);
 };

@@ -3,6 +3,7 @@
 const crypto = require('crypto');
 let Container = require('./data');
 let enums = require('../enums');
+let user = require('../user');
 
 let checkPointStaticList = [];
 
@@ -13,6 +14,34 @@ methods.sha256 = function (text) {
 };
 
 methods.sleep = ms => new Promise(res => setTimeout(res, ms));
+
+methods.checkTeleport = function(player, pos1, pos2) {
+    try {
+        let distanceCheck = 1.4;
+        let playerPos = player.position;
+        if (methods.distanceToPos(pos1, playerPos) < distanceCheck)
+            user.teleport(player, pos2.x, pos2.y, pos2.z + 1);
+        if (methods.distanceToPos(pos2, playerPos) < distanceCheck)
+            user.teleport(player, pos1.x, pos1.y, pos1.z + 1);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+};
+
+methods.checkTeleportVeh = function(player, pos1, pos2) {
+    try {
+        let distanceCheck = 1.4;
+        let playerPos = player.position;
+        if (methods.distanceToPos(pos1, playerPos) < distanceCheck)
+            user.teleportVeh(player, pos2.x, pos2.y, pos2.z);
+        if (methods.distanceToPos(pos2, playerPos) < distanceCheck)
+            user.teleportVeh(player, pos1.x, pos1.y, pos1.z);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+};
 
 methods.getVehicleInfo = function (model) {
     let vehInfo = enums.vehicleInfo;

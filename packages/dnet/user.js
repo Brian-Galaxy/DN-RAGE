@@ -3,6 +3,7 @@ let methods = require('./modules/methods');
 let Container = require('./modules/data');
 let enums = require('./enums');
 let coffer = require('./coffer');
+let chat = require('./modules/chat');
 
 let user = exports;
 
@@ -1150,6 +1151,26 @@ user.sendSmsBankOperation = function(player, text, title = 'Операция с�
     }
 };
 
+user.kick = function(player, reason, title = 'Вы были кикнуты.') {
+    if (!mp.players.exists(player))
+        return;
+    methods.debug('user.kick ' + player.socialClub + ' ' + reason);
+    player.outputChatBox('!{f44336}' + title);
+    player.outputChatBox('!{f44336}Причина: !{FFFFFF}' + reason);
+    player.kick(reason);
+};
+
+user.kickAntiCheat = function(player, reason, title = 'Вы были кикнуты.') {
+    /*if (!user.isLogin(player))
+        return;*/
+    methods.debug('user.kickAntiCheat');
+    user.kick(player, reason, title);
+    if (user.isLogin(player)) {
+        methods.saveLog('AntiCheat', `${user.getRpName(player)} (${user.getId(player)}) - ${reason}`);
+        chat.sendToAll('Anti-Cheat System', `${user.getRpName(player)} (${user.getId(player)})!{${chat.clRed}} был кикнут с причиной!{${chat.clWhite}} ${reason}`, chat.clRed);
+    }
+};
+
 user.payDay = async function (player) {
     if (!user.isLogin(player))
         return false;
@@ -1166,6 +1187,9 @@ user.payDay = async function (player) {
     if (user.getVipStatus() == "YouTube")
         user.set(player, 'exp_age', user.get(player, 'exp_age') + 1);*/
 
+    if (user.get(player, 'reg_time') > 0)
+        user.set(player, 'reg_time', user.get(player, 'reg_time') - 1);
+
     if (user.get(player, 'reg_time') == 0 && user.get(player, 'reg_status') == 1)
         user.set(player, 'reg_status', 0);
 
@@ -1173,9 +1197,6 @@ user.payDay = async function (player) {
         user.set(player, 'reg_status', 3);
         player.notifyWithPicture("323-555-0001", 'Адвокат', "Поздравляю, Вы получили гражданство США.", 'CHAR_BARRY', 2); //TODO
     }
-
-    if (user.get(player, 'reg_time') > 0)
-        user.set(player, 'reg_time', user.get(player, 'reg_time') - 1);
 
     if (user.get(player, 'online_time') == 372) {
 
@@ -1202,7 +1223,16 @@ user.payDay = async function (player) {
         else {
             let money = methods.getFractionPayDay(user.get(player, 'fraction_id'), user.get(player, 'rank'), user.get(player, 'rank_type'));
             let nalog = money * (100 - coffer.getTaxIntermediate()) / 100;
-            user.addPayDayMoney(player, nalog);
+
+            let currentCofferMoney = coffer.getMoney(coffer.getIdByFraction(user.get(player, 'fraction_id')));
+
+            if (currentCofferMoney < nalog) {
+                player.notify('~r~В бюджете организации не достаточно средств для выплаты ЗП');
+            }
+            else {
+                user.sendSmsBankOperation(player, `Зачисление: ~g~${methods.moneyFormat(nalog)}`);
+                user.addPayDayMoney(player, nalog);
+            }
         }
 
         /*if (user.getPayDayMoney(player) > 0) { //TODO
@@ -1214,8 +1244,17 @@ user.payDay = async function (player) {
         }*/
 
         if (user.get(player, 'job') == 0) {
-            user.addPayDayMoney(player, coffer.getBenefit());
-            player.notify(`~b~Пособие: ~s~$${coffer.getBenefit()}`);
+
+            let currentCofferMoney = coffer.getMoney(1);
+            let sum = coffer.getBenefit();
+
+            if (currentCofferMoney < sum) {
+                player.notify('~r~В бюджете организации не достаточно средств для выплаты ЗП');
+            }
+            else {
+                user.sendSmsBankOperation(player, `Зачисление пособия: ~g~${methods.moneyFormat(sum)}`);
+                user.addPayDayMoney(player, sum);
+            }
         }
     }
     else {

@@ -14,6 +14,8 @@ let tattoo = require('./business/tattoo');
 let houses = require('./property/houses');
 let business = require('./property/business');
 
+let weather = require('./managers/weather');
+
 let coffer = require('./coffer');
 
 function init() {
@@ -22,6 +24,8 @@ function init() {
 
         houses.loadAll();
         business.loadAll();
+
+        weather.loadAll();
 
         cloth.loadAll();
         tattoo.loadAll();

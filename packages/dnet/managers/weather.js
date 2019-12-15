@@ -1,6 +1,5 @@
 let mysql = require('../modules/mysql');
 let methods = require('../modules/methods');
-let bank = require('../business/bank');
 let user = require('../user');
 
 let weather = exports;
@@ -13,8 +12,6 @@ let _minute = 0;
 let _tempNew = 27;
 let _weatherType = 0;
 let _weather = "";
-let isVip = 0;
-let isUsmc = false;
 
 weather.loadAll = function() {
     methods.debug('weather.loadAll');
@@ -25,6 +22,8 @@ weather.loadAll = function() {
         _day = rows[0]["day"];
         _hour = rows[0]["hour"];
         _minute = rows[0]["minute"];
+
+        methods.debug('WEATHER', rows[0]);
 
         weather.load();
     });
@@ -154,7 +153,7 @@ weather.timeSyncTimer = function() {
         mp.players.call("client:managers:weather:syncWeatherTemp", [Math.round(_tempNew)]);
         mp.players.call("client:managers:weather:syncRealFullDateTime", [`${methods.digitFormat(dateTime.getDate())}/${methods.digitFormat(dateTime.getMonth()+1)} ${methods.digitFormat(dateTime.getHours())}:${methods.digitFormat(dateTime.getMinutes())}`]);
 
-        if (dateTime.getHours() == 18 && dateTime.getMinutes() == 1) {
+        /*if (dateTime.getHours() == 18 && dateTime.getMinutes() == 1) { //TODO
             if (isVip < 1) {
                 let playerRandomList = [];
                 mp.players.forEach(p => {
@@ -175,32 +174,7 @@ weather.timeSyncTimer = function() {
                     methods.debug(e);
                 }
             }
-        }
-
-        if (dateTime.getHours() == 20 && dateTime.getMinutes() == 1) {
-            if (dateTime.getDate() % 2 == 0) {
-
-                if (!isUsmc) {
-                    isUsmc = true;
-                    let count = bank.grabPos[5][3];
-                    let money = count * 20;
-
-                    if (count > 50) {
-
-                        mp.players.forEach(function (p) {
-                            if (user.isLogin(p) && user.isUsmc(p)) {
-                                user.addBankMoney(p, money);
-                            }
-                        });
-
-                        methods.notifyWithPictureToFraction('Новости', `USMC`, `Вы отстояли хранилище.\nПремия: $${methods.numberFormat(money)}`, 'DIA_ARMY', 4);
-                    }
-                    else {
-                        methods.notifyWithPictureToFraction('Новости', `USMC`, `Вам не удалось отстоять хранилище`, 'CHAR_DEFAULT', 4);
-                    }
-                }
-            }
-        }
+        }*/
 
         if (dateTime.getHours() == 4 && dateTime.getMinutes() == 50)
             methods.notifyToAll('Рестарт сервера через 15 минут');

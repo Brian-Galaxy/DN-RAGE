@@ -5,6 +5,7 @@ import user from '../user';
 import menuList from '../menuList';
 import ui from "./ui";
 import checkpoint from "../manager/checkpoint";
+import weather from "../manager/weather";
 import enums from "../enums";
 
 mp.gui.chat.enabled = false;
@@ -490,6 +491,36 @@ mp.events.add('client:teleport', (x, y, z, rot) => {
 mp.events.add('client:teleportVeh', (x, y, z, rot) => {
     methods.debug('Event: client:teleportVeh', x, y, z, rot);
     user.teleportVeh(x, y, z, rot);
+});
+
+mp.events.add('client:managers:weather:nextWeather', (weatherName, delay) => {
+    methods.debug('Event: client:user:nextWeather');
+    weather.nextWeather(weatherName, delay);
+});
+
+mp.events.add('client:managers:weather:setCurrentWeather', (weatherName) => {
+    methods.debug('Event: client:user:setCurrentWeather');
+    weather.nextWeather(weatherName, 1);
+});
+
+mp.events.add('client:managers:weather:syncDateTime', (min, hour, day, month, year) => {
+    //methods.debug('Event: client:user:syncDateTime', min, hour, day, month, year);
+    weather.syncDateTime(min, hour, day, month, year);
+});
+
+mp.events.add('client:managers:weather:syncRealTime', (hour) => {
+    //methods.debug('Event: client:user:syncRealTime', hour);
+    weather.syncRealTime(hour);
+});
+
+mp.events.add('client:managers:weather:syncWeatherTemp', (temp) => {
+    //methods.debug('Event: client:user:syncWeatherTemp', temp);
+    weather.syncWeatherTemp(temp);
+});
+
+mp.events.add('client:managers:weather:syncRealFullDateTime', (dateTime) => {
+    //methods.debug('Event: client:user:syncRealFullDateTime', dateTime);
+    weather.syncRealFullDateTime(dateTime);
 });
 
 mp.events.add('client:events:debug', function(val) {

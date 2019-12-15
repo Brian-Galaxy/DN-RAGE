@@ -399,8 +399,223 @@ menuList.showShopPropMenu = function (shopId, type, menuType) {
     });
 };
 
+menuList.showTattooShopMenu = function(title1, title2, shopId)
+{
+    UIMenu.Menu.HideMenu();
+    let menu = UIMenu.Menu.Create(" ", "~b~Тату салон", false, false, false, title1, title2);
+    //TODO BLACKOUT
+
+    UIMenu.Menu.AddMenuItem("Голова").zone = "ZONE_HEAD";
+    UIMenu.Menu.AddMenuItem("Торс").zone = "ZONE_TORSO";
+    UIMenu.Menu.AddMenuItem("Левая рука").zone = "ZONE_LEFT_ARM";
+    UIMenu.Menu.AddMenuItem("Правая рука").zone = "ZONE_RIGHT_ARM";
+    UIMenu.Menu.AddMenuItem("Левая нога").zone = "ZONE_LEFT_LEG";
+    UIMenu.Menu.AddMenuItem("Правая нога").zone = "ZONE_RIGHT_LEG";
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = "closeButton";
+    menu.ItemSelect.on((item, index) => {
+        UIMenu.Menu.HideMenu();
+        if (item.zone)
+            menuList.showTattooShopShortMenu(title1, title2, item.zone, shopId);
+    });
+};
+
+menuList.showTattooShopShortMenu = function(title1, title2, zone, shopId)
+{
+    UIMenu.Menu.HideMenu();
+    let menu = UIMenu.Menu.Create(" ", "~b~Тату салон", false, false, false, title1, title2);
+    //TODO BLACKOUT
+
+    let list = [];
+
+    let tattooList = JSON.parse(enums.get('tattooList'));
+
+    for (let i = 0; i < tattooList.length; i++) {
+
+        if (tattooList[i][4] != zone)
+            continue;
+
+        if ((
+            tattooList[i][1] == "mpbeach_overlays" ||
+            tattooList[i][1] == "mpbiker_overlays" ||
+            tattooList[i][1] == "mpchristmas2_overlays" ||
+            tattooList[i][1] == "mpgunrunning_overlays" ||
+            tattooList[i][1] == "mphipster_overlays" ||
+            tattooList[i][1] == "mplowrider_overlays" ||
+            tattooList[i][1] == "mplowrider2_overlays" ||
+            tattooList[i][1] == "mpluxe_overlays" ||
+            tattooList[i][1] == "mpluxe2_overlays" ||
+            tattooList[i][1] == "mpsmuggler_overlays" ||
+            tattooList[i][1] == "mpchristmas2017_overlays" ||
+            tattooList[i][1] == "mpstunt_overlays"
+        ) && title1 == "shopui_title_tattoos")
+            continue;
+
+        if ((
+            tattooList[i][1] == "mpairraces_overlays" ||
+            tattooList[i][1] == "mpbeach_overlays" ||
+            tattooList[i][1] == "mpbusiness_overlays" ||
+            tattooList[i][1] == "mpchristmas2_overlays" ||
+            tattooList[i][1] == "mpgunrunning_overlays" ||
+            tattooList[i][1] == "mphipster_overlays" ||
+            tattooList[i][1] == "mpimportexport_overlays" ||
+            tattooList[i][1] == "mpluxe_overlays" ||
+            tattooList[i][1] == "mpluxe2_overlays" ||
+            tattooList[i][1] == "mpsmuggler_overlays" ||
+            tattooList[i][1] == "mpchristmas2017_overlays" ||
+            tattooList[i][1] == "mpstunt_overlays" ||
+            tattooList[i][1] == "multiplayer_overlays"
+        ) && title1 == "shopui_title_tattoos2")
+            continue;
+
+        if ((
+            tattooList[i][1] == "mpairraces_overlays" ||
+            tattooList[i][1] == "mpbeach_overlays" ||
+            tattooList[i][1] == "mpbiker_overlays" ||
+            tattooList[i][1] == "mpbusiness_overlays" ||
+            tattooList[i][1] == "mpchristmas2_overlays" ||
+            tattooList[i][1] == "mpgunrunning_overlays" ||
+            tattooList[i][1] == "mpimportexport_overlays" ||
+            tattooList[i][1] == "mplowrider_overlays" ||
+            tattooList[i][1] == "mplowrider2_overlays" ||
+            tattooList[i][1] == "mpsmuggler_overlays" ||
+            tattooList[i][1] == "mpchristmas2017_overlays" ||
+            tattooList[i][1] == "mpstunt_overlays" ||
+            tattooList[i][1] == "multiplayer_overlays"
+        ) && title1 == "shopui_title_tattoos3")
+            continue;
+
+        if ((
+            tattooList[i][1] == "mpairraces_overlays" ||
+            tattooList[i][1] == "mpbeach_overlays" ||
+            tattooList[i][1] == "mpbiker_overlays" ||
+            tattooList[i][1] == "mpbusiness_overlays" ||
+            tattooList[i][1] == "mpchristmas2_overlays" ||
+            tattooList[i][1] == "mpgunrunning_overlays" ||
+            tattooList[i][1] == "mphipster_overlays" ||
+            tattooList[i][1] == "mpimportexport_overlays" ||
+            tattooList[i][1] == "mplowrider_overlays" ||
+            tattooList[i][1] == "mplowrider2_overlays" ||
+            tattooList[i][1] == "mpluxe_overlays" ||
+            tattooList[i][1] == "mpluxe2_overlays" ||
+            tattooList[i][1] == "multiplayer_overlays"
+        ) && title1 == "shopui_title_tattoos4")
+            continue;
+
+        if ((
+            tattooList[i][1] == "mpairraces_overlays" ||
+            tattooList[i][1] == "mpbiker_overlays" ||
+            tattooList[i][1] == "mpbusiness_overlays" ||
+            tattooList[i][1] == "mphipster_overlays" ||
+            tattooList[i][1] == "mpimportexport_overlays" ||
+            tattooList[i][1] == "mplowrider_overlays" ||
+            tattooList[i][1] == "mplowrider2_overlays" ||
+            tattooList[i][1] == "mpluxe_overlays" ||
+            tattooList[i][1] == "mpluxe2_overlays" ||
+            tattooList[i][1] == "mpsmuggler_overlays" ||
+            tattooList[i][1] == "mpchristmas2017_overlays" ||
+            tattooList[i][1] == "mpstunt_overlays" ||
+            tattooList[i][1] == "multiplayer_overlays"
+        ) && title1 == "shopui_title_tattoos5")
+            continue;
+
+        let price = methods.parseFloat(methods.parseFloat(tattooList[i][5]) / 8);
+        if (user.getSex() == 1 && tattooList[i][3] != "") {
+
+            let array = [tattooList[i][1], tattooList[i][3]];
+            let prizes = [];
+
+            try {
+                prizes = JSON.parse(user.getCache('tattoo'))
+            }
+            catch (e) {
+                methods.debug(e);
+            }
+
+            if (prizes.some(a => array.every((v, i) => v === a[i]))) {
+
+                let menuListItem = UIMenu.Menu.AddMenuItem(tattooList[i][0], `Свести тату\nЦена: ~g~$${methods.moneyFormat(price / 2)}`);
+                menuListItem.doName = 'destroy';
+                menuListItem.price = price / 2;
+                menuListItem.tatto0 = tattooList[i][0];
+                menuListItem.tatto1 = tattooList[i][1];
+                menuListItem.tatto2 = tattooList[i][3];
+                menuListItem.tatto3 = tattooList[i][4];
+                menuListItem.SetRightLabel('~g~Куплено');
+                list.push(menuListItem);
+            }
+            else {
+                let menuListItem = UIMenu.Menu.AddMenuItem(tattooList[i][0], `Цена: ~g~$${methods.moneyFormat(price)}`);
+                menuListItem.doName = 'show';
+                menuListItem.price = price;
+                menuListItem.tatto0 = tattooList[i][0];
+                menuListItem.tatto1 = tattooList[i][1];
+                menuListItem.tatto2 = tattooList[i][3];
+                menuListItem.tatto3 = tattooList[i][4];
+
+                list.push(menuListItem);
+            }
+        }
+        else if (user.getSex() == 0 && tattooList[i][2] != "") {
+
+            let array = [tattooList[i][1], tattooList[i][2]];
+            let prizes = [];
+
+            try {
+                prizes = JSON.parse(user.getCache('tattoo'))
+            }
+            catch (e) {
+                methods.debug(e);
+            }
+
+            if (prizes.some(a => array.every((v, i) => v === a[i]))) {
+                let menuListItem = UIMenu.Menu.AddMenuItem(tattooList[i][0], `Свести тату\nЦена: ~g~${methods.moneyFormat(price / 2)}`);
+                menuListItem.doName = 'destroy';
+                menuListItem.price = price / 2;
+                menuListItem.tatto1 = tattooList[i][1];
+                menuListItem.tatto2 = tattooList[i][2];
+                menuListItem.tatto3 = tattooList[i][4];
+                menuListItem.SetRightLabel('~g~Куплено');
+                list.push(menuListItem);
+            }
+            else {
+                let menuListItem = UIMenu.Menu.AddMenuItem(tattooList[i][0], `Цена: ~g~${methods.moneyFormat(price)}`);
+                menuListItem.doName = 'show';
+                menuListItem.price = price;
+                menuListItem.tatto1 = tattooList[i][1];
+                menuListItem.tatto2 = tattooList[i][2];
+                menuListItem.tatto3 = tattooList[i][4];
+
+                list.push(menuListItem);
+            }
+        }
+    }
+
+    //UIMenu.Menu.AddMenuItem("~y~Свести всё тату", "Цена: ~g~$1999.99").doName = "clearTattoo";
+    UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = "closeButton";
+
+    menu.IndexChange.on((index) => {
+        if (index >= list.length)
+            return;
+        user.clearDecorations();
+        user.setDecoration(list[index].tatto1, list[index].tatto2);
+    });
+
+    menu.MenuClose.on(() => {
+        user.updateTattoo();
+    });
+
+    menu.ItemSelect.on((item, index) => {
+        UIMenu.Menu.HideMenu();
+        if(item.doName == 'show')
+            mp.events.callRemote('server:tattoo:buy', item.tatto1, item.tatto2, zone, item.price, shopId);
+        if(item.doName == 'destroy')
+            mp.events.callRemote('server:tattoo:destroy', item.tatto1, item.tatto2, zone, item.price, shopId);
+    });
+};
+
 menuList.showAdminMenu = function() {
-    let menu = UIMenu.Menu.Create(`Admin`, `~b~Админ меню`);
+    let menu = UIMenu.Menu.Create(` `, `~b~Админ меню`, false, false, false, "emailads_dynasty8", "emailads_dynasty8");
 
     if (user.isAdmin() && mp.players.local.getVariable('enableAdmin') === true) {
         UIMenu.Menu.AddMenuItem("Спавн ТС").doName = 'spawnVeh';
@@ -425,6 +640,7 @@ menuList.showAdminMenu = function() {
         if (user.isAdmin(5)) {
             UIMenu.Menu.AddMenuItem("Коорды").doName = 'server:user:getPlayerPos';
             UIMenu.Menu.AddMenuItem("Debug").doName = 'debug';
+            UIMenu.Menu.AddMenuItem("Debug2").doName = 'debug2';
         }
         UIMenu.Menu.AddMenuItem("~y~Выключить админку").doName = 'disableAdmin';
     }
@@ -487,6 +703,9 @@ menuList.showAdminMenu = function() {
         if (item.doName == 'debug') {
 
             menuList.showAdminDebugMenu();
+        }
+        if (item.doName == 'debug2') {
+            methods.debug(methods.isInPoint(new mp.Vector3(127.1338, -990.3669, 28.27379), new mp.Vector3(187.1756, -841.2456, 29.98764), new mp.Vector3(264.9635, -870.636, 28.17656), new mp.Vector3(209.8404, -1024.132, 28.40043), mp.players.local.position))
         }
         if (item.doName == 'teleportToWaypoint')
             user.tpToWaypoint();

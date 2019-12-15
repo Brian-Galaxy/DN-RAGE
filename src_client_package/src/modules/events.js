@@ -161,7 +161,9 @@ mp.events.add('client:events:loginAccount:success', function(data) {
 mp.events.add('client:events:createNewPlayer', function() {
     ui.callCef('authMain','{"type": "hide"}');
     ui.callCef('customization','{"type": "show"}');
-    methods.debug('CUSTOM');
+
+    user.set('SKIN_SEX', 0);
+    user.setPlayerModel('mp_m_freemode_01');
     //ui.callCef('ChangePlayer','{"type": "show"}');
 });
 
@@ -386,6 +388,9 @@ mp.events.add('client:events:loginUser:finalCreate', function() {
     ui.callCef('authMain','{"type": "hide"}');
     ui.callCef('customization','{"type": "show"}');
     ui.callCef('customization','{"type": "showFamilyPage"}');
+
+    user.set('SKIN_SEX', 0);
+    user.setPlayerModel('mp_m_freemode_01');
 });
 
 mp.events.add('client:user:updateCache', (data) => {
@@ -461,6 +466,11 @@ mp.events.add('client:showHouseInMenu', (item) => {
 mp.events.add('client:menuList:showShopClothMenu', (component, clothColor, ClothData) => {
     methods.debug('Event: client:menuList:showShopClothMenu');
     menuList.showShopClothMenu(component, clothColor, ClothData);
+});
+
+mp.events.add('client:menuList:showTattooShopMenu', (title1, title2, shopId) => {
+    methods.debug('Event: client:menuList:showTattooShopMenu');
+    menuList.showTattooShopMenu(title1, title2, shopId);
 });
 
 mp.events.add('client:menuList:showShopMaskMenu', (shopId) => {

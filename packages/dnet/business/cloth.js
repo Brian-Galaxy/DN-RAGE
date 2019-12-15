@@ -11,7 +11,7 @@ cloth.maskShop = new mp.Vector3(-1337.255, -1277.948, 3.872962);
 cloth.loadAll = function(){
     methods.debug('barberShop.loadAll');
 
-    methods.createBlip(cloth.maskShop, 362, 0, 0.8, 'Магазин масок');
+    methods.createBlip(cloth.maskShop, 437, 0, 0.8, 'Магазин масок');
     methods.createStaticCheckpoint(cloth.maskShop.x, cloth.maskShop.y, cloth.maskShop.z, "Нажмите ~g~E~s~ чтобы открыть меню магазина", 0.8, -1, [33, 150, 243, 100], 0.3);
 
     try {
@@ -24,22 +24,22 @@ cloth.loadAll = function(){
             if (type == 0) {
                 switch (shopType) {
                     case 0:
-                        methods.createBlip(pos, 73, 68, 0.8, 'Магазин одежды "Discount Store"');
+                        methods.createBlip(pos, 73, 68, 0.8, 'Discount Store');
                         break;
                     case 1:
-                        methods.createBlip(pos, 73, 0, 0.8, 'Магазин одежды "Suburban"');
+                        methods.createBlip(pos, 73, 0, 0.8, 'Suburban');
                         break;
                     case 2:
-                        methods.createBlip(pos, 73, 21, 0.8, 'Магазин одежды "Ponsonbys"');
+                        methods.createBlip(pos, 73, 21, 0.8, 'Ponsonbys');
                         break;
                     case 3:
-                        methods.createBlip(pos, 73, 73, 0.8, 'Магазин одежды "AmmoNation"');
+                        methods.createBlip(pos, 73, 73, 0.8, 'AmmoNation');
                         break;
                     case 4:
                         methods.createBlip(pos, 617, 0, 0.8, 'Ювелирный магазин');
                         break;
                     case 5:
-                        methods.createBlip(pos, 73, 81, 0.8, 'Магазин одежды "Binco"');
+                        methods.createBlip(pos, 73, 81, 0.8, 'Binco');
                         break;
                 }
             }

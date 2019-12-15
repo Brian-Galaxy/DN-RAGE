@@ -9,8 +9,22 @@ enums.userData = [
     "age",
     "national",
     "money",
-    "lvl",
-    "exp",
+    "money_bank",
+    "money_crypto",
+    "money_payday",
+    "bank_card",
+    "crypto_card",
+
+    "fraction_id",
+    "rank",
+    "rank_type",
+    "is_leader",
+    "is_sub_leader",
+    "job",
+
+    "online_time",
+    "reg_status",
+    "reg_time",
     "skin",
     "login_date",
     "reg_timestamp",
@@ -39,6 +53,7 @@ enums.userData = [
     "stats_driving",
     "stats_psychics",
     "stats_lucky",
+    "rep",
 
     "mask", //1
     "mask_color",
@@ -72,9 +87,157 @@ enums.userData = [
     "bracelet", //7
     "bracelet_color",
 
+    "tattoo",
+
     "is_custom",
     "is_online",
 ];
+
+enums.fractionList = {
+    gov: {
+        fractionName: "Правительство",
+        fractionNameShort: "Правительство",
+        leaderName: "Губернатор",
+        subLeaderName: "Вице-губернатор",
+        departmentList: ["Отдел кадров", "Исполнительный аппарат", "Отдел юрисдикции", "Инспекция", "Генеральный совет", "Служба безопастности"],
+        departmentPayDay: [40, 90, 220, 200, 220, 210],
+        leaderPayDay: 4500,
+        subLeaderPayDay: 3700,
+        rankList: [
+            ["Директор", "Зам. директора", "Старший стажер", "Стажер"], //0
+            ["Окружной мэр", "Заместитель мэра", "Пресс-секретарь"], //1
+            ["Окружной судья", "Окружной прокурор", "Помощник прокурора", "Юрист", "Помощник юриста"], //2
+            ["Инспектор", "Помощник инспектора"], //3
+            ["Председатель ген. совета", "Зам. председателя", "Член генерального совета"], //4
+            ["Директор", "Зам. директора", "Старший агент", "Агент", "Младший агент"], //5
+        ]
+    },
+    sapd: {
+        fractionName: "Полицейский департамент",
+        fractionNameShort: "LSPD",
+        leaderName: "Chief of Police",
+        subLeaderName: "Deputy Chief of Police",
+        departmentList: ["Police Academy", "Regular", "Detective Bureau", "AirSupport Division", "Tactical Division", "CyberSecurity Division"],
+        departmentPayDay: [40, 90, 180, 160, 180, 170],
+        leaderPayDay: 3400,
+        subLeaderPayDay: 2800,
+        rankList: [
+            ["Captain", "Deputy Captain", "Senior Cadet", "Cadet"], //0
+            ["Captain", "Deputy Captain", "Lieutenant II", "Lieutenant I", "Sergeant II", "Sergeant I", "Police Officier III+1", "Police Officier III", "Police Officier II", "Police Officier I"], //1
+            ["Captain", "Deputy Captain", "Lieutenant II", "Lieutenant I", "Sergeant II", "Sergeant I"], //2
+            ["Captain", "Deputy Captain", "Lieutenant II", "Lieutenant I", "Sergeant II", "Sergeant I"], //3
+            ["Commander", "Deputy Commander", "Captain", "Lieutenant II", "Lieutenant I", "Sergeant II", "Sergeant I"], //4
+            ["Captain", "Deputy Captain", "Lieutenant II", "Lieutenant I", "Sergeant II", "Sergeant I"], //5
+        ]
+    },
+    sheriff: {
+        fractionName: "Департамент шерифа",
+        fractionNameShort: "BCSD",
+        leaderName: "Sheriff",
+        subLeaderName: "Deputy Sheriff",
+        departmentList: ["Sheriff Academy", "Regular", "HighWay Patrol", "Detective Bureau", "AirSupport Division", "Tactical Division"],
+        departmentPayDay: [40, 90, 100, 180, 170, 180],
+        leaderPayDay: 3300,
+        subLeaderPayDay: 2700,
+        rankList: [
+            ["Captain", "Deputy Captain", "Senior Cadet", "Cadet"], //0
+            ["Captain", "Deputy Captain", "Lieutenant II", "Lieutenant I", "Sergeant II", "Sergeant I", "Corporal", "1st Private", "Private"], //1
+            ["Captain", "Deputy Captain", "Lieutenant II", "Lieutenant I", "Sergeant II", "Sergeant I", "Corporal", "1st Private", "Private"], //2
+            ["Captain", "Deputy Captain", "Lieutenant II", "Lieutenant I", "Sergeant II", "Sergeant I"], //3
+            ["Captain", "Deputy Captain", "Lieutenant II", "Lieutenant I", "Sergeant II", "Sergeant I"], //4
+            ["Commander", "Deputy Commander", "Captain", "Lieutenant II", "Lieutenant I", "Sergeant II", "Sergeant I"], //5
+        ]
+    },
+    usmc: {
+        fractionName: "Корпус морской пехоты США",
+        fractionNameShort: "USMC",
+        leaderName: "General",
+        subLeaderName: "Colonel",
+        departmentList: ["USMC Academy", "Regular", "Sea Division", "AirSupport Division", "Special Forces"],
+        departmentPayDay: [40, 45, 45, 100, 150],
+        leaderPayDay: 3000,
+        subLeaderPayDay: 2500,
+        rankList: [
+            ["Captain", "Deputy Captain", "Senior Cadet", "Cadet"], //0
+            ["Captain", "Deputy Captain", "Lieutenant I", "Lieutenant II", "Master Sergeant", "Staff Sergeant", "Sergeant", "Corporal", "1st Private", "Private"], //1
+            ["Captain", "Deputy Captain", "Lieutenant I", "Lieutenant II", "Master Sergeant", "Staff Sergeant", "Sergeant", "Corporal", "1st Private", "Private"], //2
+            ["Captain", "Deputy Captain", "Lieutenant I", "Lieutenant II", "Master Sergeant", "Staff Sergeant", "Sergeant"], //3
+            ["Commander", "Deputy Commander", "Captain", "Lieutenant II", "Lieutenant I", "Sergeant II", "Sergeant I"], //4
+        ]
+    },
+    ems: {
+        fractionName: "Служба спасения",
+        fractionNameShort: "EMS",
+        leaderName: "Глава департамента",
+        subLeaderName: "Зам. главы департамента",
+        departmentList: ["Отдел кадров", "Регулярная группа", "Наземная группа", "Воздушная группа", "Спасательная группа"],
+        departmentPayDay: [80, 150, 200, 200, 250],
+        leaderPayDay: 3350,
+        subLeaderPayDay: 2750,
+        rankList: [
+            ["Директор", "Зам. директора", "Старший стажер", "Стажер"], //0
+            ["Директор", "Зам. директора", "Старший специалист", "Младший специалист", "Интерн"], //1
+            ["Директор", "Зам. директора", "Старший специалист", "Младший специалист"], //2
+            ["Директор", "Зам. директора", "Старший специалист", "Младший специалист"], //3
+            ["Директор", "Зам. директора", "Старший офицер", "Младший офицер"], //4
+        ]
+    },
+    fib: {
+        fractionName: "Федеральное бюро расследований",
+        fractionNameShort: "FIB",
+        leaderName: "Глава департамента",
+        subLeaderName: "Зам. главы департамента",
+        departmentList: ["Отдел кадров", "Регулярная группа", "Наземная группа", "Воздушная группа", "Спасательная группа"],
+        departmentPayDay: [80, 150, 200, 200, 250],
+        leaderPayDay: 3350,
+        subLeaderPayDay: 2750,
+        rankList: [
+            ["Директор", "Зам. директора", "Старший стажер", "Стажер"], //0
+            ["Директор", "Зам. директора", "Старший специалист", "Младший специалист", "Интерн"], //1
+            ["Директор", "Зам. директора", "Старший специалист", "Младший специалист"], //2
+            ["Директор", "Зам. директора", "Старший специалист", "Младший специалист"], //3
+            ["Директор", "Зам. директора", "Старший офицер", "Младший офицер"], //4
+        ]
+    },
+    invader: {
+        fractionName: "Служба новостей",
+        fractionNameShort: "Life Invader",
+        leaderName: "Генеральный Директор",
+        subLeaderName: "Заместитель Директора",
+        departmentList: ["Отдел кадров", "Отдел объявлений", "Отдел новостей", "Отдел радио"],
+        departmentPayDay: [80, 200, 200, 200],
+        leaderPayDay: 2500,
+        subLeaderPayDay: 2000,
+        rankList: [
+            ["Директор", "Зам. директора", "Старший стажер", "Стажер"], //0
+            ["Директор", "Зам. директора", "Старший редактор", "Редактор", "Младший редактор"], //1
+            ["Директор", "Зам. директора", "Старший редактор", "Редактор", "Младший редактор"], //2
+            ["Директор", "Зам. директора", "Старший ведущий", "Ведущий", "Младший ведущий"], //3
+        ]
+    },
+};
+
+enums.fractionListId = [
+    {}, //0
+    enums.fractionList.gov, //1
+    enums.fractionList.sapd, //2
+    enums.fractionList.fib, //3
+    enums.fractionList.usmc, //4
+    enums.fractionList.sheriff, //5
+    enums.fractionList.ems, //6
+    enums.fractionList.invader, //7
+];
+
+/*
+enums.fractionRankList = [
+    ["Секретарь","Помощник инспектора","Агент S.S.S.A.","Адвокат","Начальник S.S.S.A.","Инспектор","Директор S.S.S.A.","Заместитель Мэра","Мэр","Вице-губернатор","","","","Губернатор"],
+    ["Cadet PA","Police Officier I","Police Officier II","Police Officier III","Police Officier III+1","Sergeant I","Sergeant II","Lieutenant I","Lieutenant II","Captain I","Captain II","Commander","Assistant Chief of Police","Chief of Police"],
+    ["Стажер","Дежурный","Младший Агент","Агент","Глава отдела","Инспектор","Зам. директора FIB","","","","","","","Директор FIB"],
+    ["Рядовой-рекрут","Рядовой 1 класса","Младший капрал","Капрал","Сержант","Первый Сержант","Уорент-Офицер","Второй Лейтенант","Первый Лейтенант","Капитан","Майор","Подполковник","Полковник","Генерал"],
+    ["Deputy Sheriff Trainee","Deputy Sheriff I","Corporal I","Corporal II","Sergeant I","Sergeant II","Lieutenant I","Lieutenant II","Captain I","Captain II","Major","Assistant Sheriff","Undersheriff","Sheriff"],
+    ["Студент","Интерн","Младший специалист ","Старший специалист","Главный специалист","Спасательный пожарный","Начальник пожарного батальона","Лётный офицер","Врач","Лидер эскадрильи","Зам. главы департамента.","Глава департамента","Зам. дир. EMS","Директор EMS"],
+    ["Стажёр","Редактор","Журналист","Ведущий","Маркетолог","Главный Редактор","Заместитель Директора","","","","","","","Генеральный Директор"]
+];*/
 
 enums.spawnByRole = [
     [-332.417, -2792.682, 4.000233, 91.04308],

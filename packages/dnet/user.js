@@ -2,6 +2,7 @@ let mysql = require('./modules/mysql');
 let methods = require('./modules/methods');
 let Container = require('./modules/data');
 let enums = require('./enums');
+let coffer = require('./coffer');
 
 let user = exports;
 
@@ -536,7 +537,7 @@ user.updateCharacterFace = function(player) {
             }
         }
 
-        //user.updateTattoo(player);
+        user.updateTattoo(player);
 
         if (user.get(player, 'age') > 72)
             player.setHeadOverlay(3, [14, 1, 1, 1]);
@@ -614,7 +615,7 @@ user.updateCharacterCloth = function(player) {
         return;
     try {
 
-        //user.updateTattoo(player);
+        user.updateTattoo(player);
         user.clearAllProp(player);
 
         let cloth_data = {};
@@ -687,6 +688,32 @@ user.updateCharacterCloth = function(player) {
     } catch (e) {
         methods.debug(e);
     }
+};
+
+user.updateTattoo = function(player) {
+    methods.debug('user.updateTAttoo');
+    if (!user.isLogin(player))
+        return;
+
+    user.clearDecorations(player);
+    let tattooList = JSON.parse(user.get(player, 'tattoo'));
+
+    console.log(tattooList);
+    console.log(user.get(player, 'tattoo'));
+
+    if (tattooList != null) {
+        try {
+            tattooList.forEach(function (item) {
+                user.setDecoration(player, item[0], item[1]);
+            });
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    }
+
+    let data = enums.hairOverlays[methods.parseInt(user.get(player, "SKIN_SEX"))][user.get(player, "SKIN_HAIR")];
+    user.setDecoration(player, data[0], data[1]);
 };
 
 
@@ -1034,6 +1061,24 @@ user.getBankMoney = function(player) {
     return 0;
 };
 
+user.addPayDayMoney = function(player, money) {
+    user.setPayDayMoney(player, user.getPayDayMoney(player) + methods.parseInt(money));
+};
+
+user.removePayDayMoney = function(player, money) {
+    user.setPayDayMoney(player, user.getPayDayMoney(player) - methods.parseInt(money));
+};
+
+user.setPayDayMoney = function(player, money) {
+    user.set(player, 'money_payday', methods.parseInt(money));
+};
+
+user.getPayDayMoney = function(player) {
+    if (user.has(player, 'money_payday'))
+        return methods.parseInt(user.get(player, 'money_payday'));
+    return 0;
+};
+
 user.addHistory = function(player, type, reason) {
     return; //TODO
     if (!user.isLogin(player))
@@ -1077,4 +1122,104 @@ user.setWaypoint = function(player, x, y) {
     if (!mp.players.exists(player))
         return false;
     player.call('client:user:setWaypoint', [x, y]);
+};
+
+user.sendSmsBankOperation = function(player, text, title = 'Операция со счётом') {
+    methods.debug('bank.sendSmsBankOperation');
+    if (!user.isLogin(player))
+        return;
+
+    try {
+        switch (user.get(player, 'bank_prefix')) {
+            case 1111:
+                player.notifyWithPicture(title, '~r~Maze~s~ Bank', text, 'CHAR_BANK_MAZE', 2);
+                break;
+            case 2222:
+                player.notifyWithPicture(title, '~g~Fleeca~s~ Bank', text, 'CHAR_BANK_FLEECA', 2);
+                break;
+            case 3333:
+                player.notifyWithPicture(title, '~b~Blaine~s~ Bank', text, 'DIA_CUSTOMER', 2);
+                break;
+            case 4444:
+                player.notifyWithPicture(title, '~o~Pacific~s~ Bank', text, 'WEB_SIXFIGURETEMPS', 2);
+                break;
+        }
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+};
+
+user.payDay = async function (player) {
+    if (!user.isLogin(player))
+        return false;
+    methods.debug('user.payDay', user.getRpName(player));
+
+    user.set(player, 'online_time', user.get(player, 'online_time') + 1);
+
+    /*if (user.getVipStatus() != "YouTube" && user.getVipStatus() != "Turbo" && user.getVipStatus() != "none" && user.get(player, 'exp_age') % 4 == 0)
+        user.set(player, 'exp_age', user.get(player, 'exp_age') + 1);
+
+    if (user.getVipStatus() == "Turbo" && user.get(player, 'exp_age') % 2 == 0)
+        user.set(player, 'exp_age', user.get(player, 'exp_age') + 1);
+
+    if (user.getVipStatus() == "YouTube")
+        user.set(player, 'exp_age', user.get(player, 'exp_age') + 1);*/
+
+    if (user.get(player, 'reg_time') == 0 && user.get(player, 'reg_status') == 1)
+        user.set(player, 'reg_status', 0);
+
+    if (user.get(player, 'reg_time') == 0 && user.get(player, 'reg_status') == 2) {
+        user.set(player, 'reg_status', 3);
+        player.notifyWithPicture("323-555-0001", 'Адвокат', "Поздравляю, Вы получили гражданство США.", 'CHAR_BARRY', 2); //TODO
+    }
+
+    if (user.get(player, 'reg_time') > 0)
+        user.set(player, 'reg_time', user.get(player, 'reg_time') - 1);
+
+    if (user.get(player, 'online_time') == 372) {
+
+        /*if (user.get(player, 'age') == 19 && user.get(player, 'referer') != "") { //TODO
+            user.addCashMoney(player, 25000);
+            player.notify(`~g~Вы получили $25,000 по реферальной системе`);
+            player.notify(`~g~Пригласивший ${user.get(player, 'referer')} получил 200ac на личный счёт`);
+            mysql.executeQuery(`UPDATE users SET money_donate = money_donate + '200' WHERE name ='${user.get(player, 'referer')}'`);
+            mysql.executeQuery(`INSERT INTO log_referrer (name, referrer, money, timestamp) VALUES ('${user.getRpName(player)}', '${user.get(player, 'referer')}', '200', '${methods.getTimeStamp()}')`);
+        }
+
+        if (user.get(player, 'age') == 19 && user.get(player, 'promocode') != "") {
+            player.notify(`~g~Вы получили ~s~$25000 ~g~по промокоду ~s~${user.get(player, 'promocode')}`);
+            user.addCashMoney(player, 25000);
+            mysql.executeQuery(`UPDATE users SET money_donate = money_donate + '50' WHERE parthner_promocode = '${user.get(player, 'promocode')}'`);
+        }*/
+    }
+
+    if (user.get(player, 'bank_card') > 0 && user.get(player, 'fraction_id') > 0) {
+
+        if (player.getVariable('isAfk') === true) {
+            player.notify('~r~Зарплату вы не получили, связи с тем, что вы AFK');
+        }
+        else {
+            let money = methods.getFractionPayDay(user.get(player, 'fraction_id'), user.get(player, 'rank'), user.get(player, 'rank_type'));
+            let nalog = money * (100 - coffer.getTaxIntermediate()) / 100;
+            user.addPayDayMoney(player, nalog);
+        }
+
+        /*if (user.getPayDayMoney(player) > 0) { //TODO
+            let nalog = methods.parseInt(user.getPayDayMoney(player) * (100 - coffer.getTaxIntermediate()) / 100);
+            fullMoney += nalog;
+            user.sendSmsBankOperation(player, `~b~Сумма: ~s~$${nalog}`, "Зачисление средств");
+            player.notify(`~y~Налог: ~s~${coffer.getTaxIntermediate()}%`);
+            user.setPayDayMoney(player, 0);
+        }*/
+
+        if (user.get(player, 'job') == 0) {
+            user.addPayDayMoney(player, coffer.getBenefit());
+            player.notify(`~b~Пособие: ~s~$${coffer.getBenefit()}`);
+        }
+    }
+    else {
+        player.notify(`~y~Оформите банковскую карту`);
+    }
+    return true;
 };

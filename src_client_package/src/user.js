@@ -428,6 +428,10 @@ user.updateCharacterCloth = function() {
     mp.events.callRemote('server:user:updateCharacterCloth');
 };
 
+user.updateTattoo = function() {
+    mp.events.callRemote('server:user:updateTattoo');
+};
+
 user.setComponentVariation = function(component, drawableId, textureId) {
     component = methods.parseInt(component);
     drawableId = methods.parseInt(drawableId);

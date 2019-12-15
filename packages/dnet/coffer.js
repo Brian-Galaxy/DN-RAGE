@@ -7,67 +7,125 @@ let containerId = 99999;
 
 coffer.load = function() {
     methods.debug('coffer.load');
-    mysql.executeQuery(`SELECT * FROM coffers WHERE id = 1`, function (err, rows, fields) {
-        Container.Data.Set(containerId, 'cofferMoney', rows[0]['money']);
-        Container.Data.Set(containerId, 'cofferMoneyBomj', rows[0]['moneyBomj']);
-        Container.Data.Set(containerId, 'cofferNalog', rows[0]['nalog']);
-        Container.Data.Set(containerId, 'cofferNalogBizz', rows[0]['nalog_bizz']);
-        Container.Data.Set(containerId, 'cofferMoneyLimit', rows[0]['moneyLimit']);
-        Container.Data.Set(containerId, 'cofferMoneyOld', rows[0]['moneyOld']);
+    mysql.executeQuery(`SELECT * FROM official_bank`, function (err, rows, fields) {
 
-        methods.debug('Coffer loaded: ' + rows[0]['money']);
+        rows.forEach(function(item) {
+
+            Container.Data.Set(containerId + item['id'], 'cofferMoney', item['money']);
+            Container.Data.Set(containerId + item['id'], 'cofferScore', item['score']);
+            Container.Data.Set(containerId + item['id'], 'cofferName', item['name']);
+            Container.Data.Set(containerId + item['id'], 'cofferTaxPayDay', item['tax_pay_day']);
+            Container.Data.Set(containerId + item['id'], 'cofferTaxBusiness', item['tax_business']);
+            Container.Data.Set(containerId + item['id'], 'cofferTaxProperty', item['tax_property']);
+            Container.Data.Set(containerId + item['id'], 'cofferTaxIntermediate', item['tax_intermediate']);
+            Container.Data.Set(containerId + item['id'], 'cofferBenefit', item['benefit']);
+
+            methods.debug(`Coffer loaded: ${methods.moneyFormat(item['money'])} | ${item['name']} | ${item['score']}`);
+        });
     });
 };
 
-coffer.save = function() {
-    methods.debug('coffer.save');
-    let Money = Container.Data.Get(containerId, 'cofferMoney');
-    let MoneyBomj = Container.Data.Get(containerId, 'cofferMoneyBomj');
-    let Nalog = Container.Data.Get(containerId, 'cofferNalog');
-    let BizzNalog = Container.Data.Get(containerId, 'cofferNalogBizz');
-    let MoneyOld = Container.Data.Get(containerId, 'cofferMoneyLimit');
-    let MoneyLimit = Container.Data.Get(containerId, 'cofferMoneyOld');
+coffer.save = function (id) {
 
-    mysql.executeQuery("UPDATE coffers SET  money = '" + Money + "', moneyBomj = '" +
-        MoneyBomj + "', nalog = '" + Nalog + "', nalog_bizz = '" + BizzNalog + "', moneyOld = '" + MoneyOld + "', moneyLimit = '" + MoneyLimit + "' WHERE id = '1'");
+    methods.debug('coffer.save', id);
+
+    id = methods.parseInt(id);
+
+    let cofferMoney = coffer.getMoney(id);
+    let cofferTaxPayDay = coffer.getTaxPayDay(id);
+    let cofferTaxBusiness = coffer.getTaxBusiness(id);
+    let cofferTaxProperty = coffer.getTaxProperty(id);
+    let cofferIntermediate = coffer.getTaxIntermediate(id);
+    let cofferBenefit = coffer.getBenefit(id);
+
+    mysql.executeQuery("UPDATE official_bank SET  money = '" + cofferMoney + "', tax_pay_day = '" +
+        cofferTaxPayDay + "', tax_business = '" + cofferTaxBusiness + "', tax_property = '" + cofferTaxProperty + "', tax_intermediate = '" + cofferIntermediate + "', benefit = '" + cofferBenefit + "' WHERE id = '" + id + "'");
 };
 
-coffer.get = function(key) {
-    return Container.Data.Get(containerId, key);
+coffer.get = function(id, key) {
+    return Container.Data.Get(containerId + id, key);
 };
 
-coffer.addMoney = function(money) {
-    coffer.setMoney(coffer.getMoney() + methods.parseInt(money));
+coffer.addMoney = function(id, money) {
+    coffer.setMoney(id, coffer.getMoney(id) + methods.parseFloat(money));
 };
 
-coffer.removeMoney = function(money) {
-    coffer.setMoney(coffer.getMoney() - methods.parseInt(money));
+coffer.removeMoney = function(id, money) {
+    coffer.setMoney(id, coffer.getMoney(id) - methods.parseFloat(money));
 };
 
-coffer.setMoney = function(money) {
-    Container.Data.Set(containerId, 'cofferMoney', methods.parseInt(money));
+coffer.setMoney = function(id, money) {
+    Container.Data.Set(containerId + id, 'cofferMoney', methods.parseFloat(money));
 };
 
-coffer.getMoney = function() {
-    if (Container.Data.Has(containerId, 'cofferMoney'))
-        return methods.parseInt(Container.Data.Get(containerId, 'cofferMoney'));
+coffer.getMoney = function(id = 1) {
+    if (Container.Data.Has(containerId + id, 'cofferMoney'))
+        return methods.parseFloat(Container.Data.Get(containerId + id, 'cofferMoney'));
     return 0;
 };
 
-coffer.getMoneyOld = function() {
-    if (Container.Data.Has(containerId, 'cofferMoneyOld'))
-        return methods.parseInt(Container.Data.Get(containerId, 'cofferMoneyOld'));
-    return 50;
+coffer.getScore = function(id = 1) {
+    if (Container.Data.Has(containerId + id, 'cofferScore'))
+        return methods.parseInt(Container.Data.Get(containerId + id, 'cofferScore'));
+    return 0;
 };
 
-coffer.getPosob = function() {
-    if (Container.Data.Has(containerId, 'cofferMoneyBomj'))
-        return methods.parseInt(Container.Data.Get(containerId, 'cofferMoneyBomj'));
-    return 50;
-};
-
-coffer.getNalog = function() {
-    if (Container.Data.Has(containerId, 'cofferNalog'))
-        return methods.parseInt(Container.Data.Get(containerId, 'cofferNalog'));
+coffer.getTaxProperty = function(id = 1) {
+    if (Container.Data.Has(containerId + id, 'cofferTaxProperty'))
+        return methods.parseInt(Container.Data.Get(containerId + id, 'cofferTaxProperty'));
     return 5;
+};
+
+coffer.getTaxPayDay = function(id = 1) {
+    if (Container.Data.Has(containerId + id, 'cofferTaxPayDay'))
+        return methods.parseInt(Container.Data.Get(containerId + id, 'cofferTaxPayDay'));
+    return 5;
+};
+
+coffer.getTaxBusiness = function(id = 1) {
+    if (Container.Data.Has(containerId + id, 'cofferTaxBusiness'))
+        return methods.parseInt(Container.Data.Get(containerId + id, 'cofferTaxBusiness'));
+    return 5;
+};
+
+coffer.getTaxIntermediate = function(id = 1) {
+    if (Container.Data.Has(containerId + id, 'cofferTaxIntermediate'))
+        return methods.parseInt(Container.Data.Get(containerId + id, 'cofferTaxIntermediate'));
+    return 5;
+};
+
+coffer.getBenefit = function(id = 1) {
+    if (Container.Data.Has(containerId + id, 'cofferBenefit'))
+        return methods.parseFloat(Container.Data.Get(containerId + id, 'cofferBenefit'));
+    return 5;
+};
+
+/*
+enums.fractionList.gov, //1
+    enums.fractionList.sapd, //2
+    enums.fractionList.fib, //3
+    enums.fractionList.usmc, //4
+    enums.fractionList.sheriff, //5
+    enums.fractionList.ems, //6
+    enums.fractionList.invader, //7
+* */
+
+coffer.getIdByFraction = function(fractionId) {
+    switch (fractionId) {
+        case 1:
+            return 2;
+        case 2:
+            return 3;
+        case 3:
+            return 5;
+        case 4:
+            return 7;
+        case 5:
+            return 4;
+        case 6:
+            return 6;
+        case 7:
+            return 8;
+    }
+    return 1;
 };

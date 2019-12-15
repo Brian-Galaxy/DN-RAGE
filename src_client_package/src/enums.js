@@ -622,7 +622,7 @@ enums.loadCloth = function () {
         }
     });
 
-    /*updateTattoo().then( (returnCloth) => {
+    updateTattoo().then( (returnCloth) => {
         try {
             _tattooList = returnCloth[0];
             _tprint = returnCloth[1];
@@ -630,7 +630,7 @@ enums.loadCloth = function () {
             console.log(e);
             throw e;
         }
-    });*/
+    });
 };
 
 export default enums;

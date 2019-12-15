@@ -2,6 +2,7 @@ let methods = require('../modules/methods');
 let enums = require('../enums');
 let user = require('../user');
 let cloth = require('../business/cloth');
+let tattoo = require('../business/tattoo');
 
 let pickups = exports;
 let distanceCheck = 1.4;
@@ -325,6 +326,7 @@ pickups.checkPressE = function(player) {
     }*/
 
     cloth.checkPosForOpenMenu(player);
+    tattoo.checkPosForOpenMenu(player);
 
     if (methods.distanceToPos(pickups.LifeInvaderShopPos, playerPos) < distanceCheck)
         player.call('client:menuList:showInvaderShopMenu');
@@ -387,10 +389,10 @@ pickups.checkPressE = function(player) {
     else if (methods.distanceToPos(pickups.Usmc2KeyPos, playerPos) < distanceCheck && user.isUsmc(player))
         player.call('client:menuList:showFractionKeyMenu', [methods.getFractionAllowCarList(104)]);
 
-    if (player.dimension > 0) {
+    /*if (player.dimension > 0) {
         if (methods.distanceToPos(business.BusinessBotPos, playerPos) < distanceCheck)
             player.call('client:menuList:showBusinessMenu', [Array.from(business.getData(player.dimension))]);
-    }
+    }*/
     /*if (user.isGov(player)) {
         if (methods.distanceToPos(pickups.MeriaGarderobPos, playerPos) < distanceCheck)
             player.call('client:menuList:showGovGarderobMenu');
@@ -659,12 +661,12 @@ pickups.createPickups = function() {
     methods.createStaticCheckpointV(pickups.WzlOutPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
 
     //Business
-    methods.createStaticCheckpointV(business.BusinessOfficePos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
+    /*methods.createStaticCheckpointV(business.BusinessOfficePos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
     methods.createStaticCheckpointV(business.BusinessStreetPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
     methods.createStaticCheckpointV(business.BusinessMotorPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
     methods.createStaticCheckpointV(business.BusinessRoofPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
     methods.createStaticCheckpointV(business.BusinessGaragePos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-    methods.createStaticCheckpointV(business.BusinessBotPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
+    methods.createStaticCheckpointV(business.BusinessBotPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);*/
 
     //Lic
     methods.createStaticCheckpointV(pickups.LicUpPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);

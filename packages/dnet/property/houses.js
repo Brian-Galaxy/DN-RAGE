@@ -190,7 +190,7 @@ houses.sell = function (player) {
         return;
     }
 
-    let nalog = methods.parseInt(hInfo.get('price') * (100 - coffer.get('cofferNalog')) / 100);
+    let nalog = methods.parseInt(hInfo.get('price') * (100 - coffer.getTaxIntermediate()) / 100);
 
     user.set(player, 'house_id', 0);
 
@@ -202,7 +202,7 @@ houses.sell = function (player) {
 
     houses.updateOwnerInfo(hInfo.get('id'), 0, '');
 
-    coffer.removeMoney(nalog);
+    coffer.removeMoney(1, nalog);
     user.addMoney(player, nalog);
 
     setTimeout(function () {
@@ -210,7 +210,7 @@ houses.sell = function (player) {
             return;
         user.addHistory(player, 3, 'Продал дом ' + hInfo.get('address') + ' №' + hInfo.get('id') + '. Цена: $' + methods.numberFormat(nalog));
         player.notify('~g~Вы продали недвижимость');
-        player.notify(`~g~Налог:~s~ ${coffer.get('cofferNalog')}%\n~g~Получено:~s~ $${methods.numberFormat(nalog)}`);
+        player.notify(`~g~Налог:~s~ ${coffer.getTaxIntermediate()}%\n~g~Получено:~s~ $${methods.numberFormat(nalog)}`);
         user.save(player);
     }, 1000);
 };
@@ -244,7 +244,7 @@ houses.buy = function (player, id) {
 
     houses.updateOwnerInfo(id, user.get(player, 'id'), user.get(player, 'name'));
 
-    coffer.addMoney(hInfo.get('price'));
+    coffer.addMoney(1, hInfo.get('price'));
     user.removeMoney(player, hInfo.get('price'));
     setTimeout(function () {
         if (!user.isLogin(player))

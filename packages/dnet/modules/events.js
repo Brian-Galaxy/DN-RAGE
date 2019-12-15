@@ -6,6 +6,7 @@ let Container = require('./data');
 let methods = require('./methods');
 let houses = require('../property/houses');
 let cloth = require('../business/cloth');
+let tattoo = require('../business/tattoo');
 let pickups = require('../managers/pickups');
 
 mp.events.addRemoteCounted = (eventName, handler) =>
@@ -199,6 +200,38 @@ mp.events.addRemoteCounted('server:enums:getCloth', (player, requestID) => {
     }
 });
 
+mp.events.addRemoteCounted('server:enums:getCloth1', (player, requestID) => {
+    try {
+        player.call('client:enums:updateCloth1', [requestID, JSON.stringify(enums.tattooList), JSON.stringify(enums.printList)]);
+    } catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.addRemoteCounted('server:players:notifyWithPictureToAll', (player, title, sender, message, notifPic, icon, flashing, textColor, bgColor, flashColor) => {
+    methods.notifyWithPictureToAll(title, sender, message, notifPic, icon, flashing, textColor, bgColor, flashColor);
+});
+
+mp.events.addRemoteCounted('server:players:notifyWithPictureToFraction', (player, title, sender, message, notifPic, fractionId, icon, flashing, textColor, bgColor, flashColor) => {
+    methods.notifyWithPictureToFraction(title, sender, message, notifPic, fractionId, icon, flashing, textColor, bgColor, flashColor);
+});
+
+mp.events.addRemoteCounted('server:players:notifyWithPictureToFraction2', (player, title, sender, message, notifPic, fractionId, icon, flashing, textColor, bgColor, flashColor) => {
+    methods.notifyWithPictureToFraction2(title, sender, message, notifPic, fractionId, icon, flashing, textColor, bgColor, flashColor);
+});
+
+mp.events.addRemoteCounted('server:players:notifyToFraction', (player, message, fractionId) => {
+    methods.notifyToFraction(message, fractionId);
+});
+
+mp.events.addRemoteCounted('server:players:notifyToAll', (player, message) => {
+    methods.notifyToAll(message);
+});
+
+mp.events.addRemoteCounted('server:user:setComponentVariation', (player, component, drawableId, textureId) => {
+    user.setComponentVariation(player, component, drawableId, textureId);
+});
+
 mp.events.addRemoteCounted('server:business:cloth:change', (player, body, clothId, color, torso, torsoColor, parachute, parachuteColor) => {
     if (!user.isLogin(player))
         return;
@@ -235,12 +268,28 @@ mp.events.addRemoteCounted('server:business:cloth:buyProp', (player, price, body
     cloth.buyProp(player, price, body, clothId, color, shopId, isFree);
 });
 
+mp.events.addRemoteCounted('server:tattoo:buy', (player, slot, type, zone, price, shopId) => {
+    if (!user.isLogin(player))
+        return;
+    tattoo.buy(player, slot, type, zone, price, shopId);
+});
+
+mp.events.addRemoteCounted('server:tattoo:destroy', (player, slot, type, zone, price, shopId) => {
+    if (!user.isLogin(player))
+        return;
+    tattoo.destroy(player, slot, type, zone, price, shopId);
+});
+
 mp.events.add('server:user:save', (player) => {
     user.save(player);
 });
 
 mp.events.add('server:houses:insert', (player, interior, number, price, zone, street) => {
     houses.insert(player, number, street, zone, player.position.x, player.position.y, player.position.z, player.heading, interior, price);
+});
+
+mp.events.add('server:user:getPlayerPos', (player) => {
+    console.log(`PlayerPos: ${player.position.x}, ${player.position.y}, ${player.position.z}, ${player.heading}`)
 });
 
 mp.events.addRemoteCounted("onKeyPress:E", (player) => {

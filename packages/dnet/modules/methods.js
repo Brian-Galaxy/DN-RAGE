@@ -4,6 +4,7 @@ const crypto = require('crypto');
 let Container = require('./data');
 let enums = require('../enums');
 let user = require('../user');
+let coffer = require('../coffer');
 
 let checkPointStaticList = [];
 
@@ -50,7 +51,7 @@ methods.getVehicleInfo = function (model) {
         if (vItem.hash == model || vItem.display_name == model || mp.joaat(vItem.display_name.toString().toLowerCase()) == model)
             return vItem;
     }
-    return {id: 0, hash: model, display_name: 'Unknown', class_name: 'Unknown', stock: 378000, stock_full: 205000, fuel_full: 75, fuel_min: 8};
+    return {id: 0, hash: model, display_name: 'Unknown', class_name: 'Unknown', stock: 378000, stock_full: 205000, fuel_full: 75, fuel_min: 8, fuel_type: 0};
 };
 
 methods.getRandomInt = function (min, max) {
@@ -166,6 +167,7 @@ methods.parseFloat = function (str) {
 };
 
 methods.saveLog = function (name, log) {
+    methods.debug(name, log);
     //TODO
 };
 
@@ -231,4 +233,116 @@ methods.updateCheckpointList = function (player) {
     catch (e) {
         methods.debug(e);
     }
+};
+
+methods.notifyWithPictureToAll = function(title, sender, message, notifPic, icon = 0, flashing = false, textColor = -1, bgColor = -1, flashColor = [77, 77, 77, 200]) {
+    mp.players.call("BN_ShowWithPicture", [title, sender, message, notifPic, icon, flashing, textColor, bgColor, flashColor]);
+};
+
+methods.notifyWithPictureToFraction = function(title, sender, message, notifPic, fractionId = 0, icon = 0, flashing = false, textColor = -1, bgColor = -1, flashColor = [77, 77, 77, 200]) {
+    mp.players.forEach(function (p) {
+        if (user.isLogin(p) && user.get(p, 'fraction_id') == fractionId) {
+            try {
+                p.notifyWithPicture(title, sender, message, notifPic, icon, flashing, textColor, bgColor, flashColor);
+            }
+            catch (e) {
+
+            }
+        }
+    });
+};
+
+methods.notifyWithPictureToFraction2 = function(title, sender, message, notifPic, fractionId = 0, icon = 0, flashing = false, textColor = -1, bgColor = -1, flashColor = [77, 77, 77, 200]) {
+    mp.players.forEach(function (p) {
+        if (user.isLogin(p) && user.get(p, 'fraction_id2') == fractionId) {
+            try {
+                p.notifyWithPicture(title, sender, message, notifPic, icon, flashing, textColor, bgColor, flashColor);
+            }
+            catch (e) {
+
+            }
+        }
+    });
+};
+
+methods.notifyWithPictureToJob = function(title, sender, message, notifPic, job, icon = 0, flashing = false, textColor = -1, bgColor = -1, flashColor = [77, 77, 77, 200]) {
+    mp.players.forEach(function (p) {
+        if (user.isLogin(p) && user.get(p, 'job') == job) {
+            try {
+                p.notifyWithPicture(title, sender, message, notifPic, icon, flashing, textColor, bgColor, flashColor);
+            }
+            catch (e) {
+
+            }
+        }
+    });
+};
+
+methods.notifyWithPictureToPlayer = function(p, title, sender, message, notifPic, icon = 0, flashing = false, textColor = -1, bgColor = -1, flashColor = [77, 77, 77, 200]) {
+    if (mp.players.exists(p))
+        p.notifyWithPicture(title, sender, message, notifPic, icon, flashing, textColor, bgColor, flashColor);
+};
+
+methods.notifyToFraction = function(message, fractionId = 0) {
+    mp.players.forEach(function (p) {
+        if (user.isLogin(p) && user.get(p, 'fraction_id') == fractionId)
+            p.notify(message);
+    });
+};
+
+methods.notifyToAll = function(message) {
+    mp.players.forEach(function (p) {
+        if (user.isLogin(p))
+            p.notify(message);
+    });
+};
+
+methods.isInPoint = function (p1, p2, p3, p4, p5) {
+    return Math.min(p1.x, p2.x) < p5.x && Math.max(p3.x, p4.x) > p5.x && Math.min(p1.y, p4.y) < p5.y && Math.max(p2.y, p3.y) > p5.y;
+};
+
+methods.getFractionById = function (fractionId) {
+    return enums.fractionListId[fractionId];
+};
+
+
+methods.getFractionCountRank = function (fractionId, rankType = 0) {
+    return methods.getFractionById(fractionId).rankList[rankType].length;
+};
+
+methods.getFractionPayDay = function (fractionId, rank, rankType) {
+    let frItem = methods.getFractionById(fractionId);
+    let currentPayDay = frItem.departmentPayDay[rankType];
+    let money = currentPayDay * (methods.getFractionCountRank(fractionId, rankType) - (rank - 1)) + coffer.getBenefit(coffer.getIdByFraction(fractionId));
+    if (rank == 1 || rank == 2) {
+        if (rankType == 0)
+            money = money * 2;
+        else
+            money = money * 1.5;
+    }
+    return money;
+};
+
+methods.loadAllBlips = function () {
+
+    methods.createBlip(new mp.Vector3(-66.66476, -802.0474, 44.22729), 374, 59, 0.8, 'Maze Bank');
+
+    methods.createBlip(new mp.Vector3(536.4715576171875, -3126.484375, 5.073556900024414), 598, 0, 0.8, 'United States Marine Corps');
+    methods.createBlip(new mp.Vector3(450.0621337890625, -984.3471069335938, 43.69164276123047), 60, 0, 0.8, 'Police Department');
+    methods.createBlip(new mp.Vector3(-448.6859, 6012.703, 30.71638), 60, 16, 0.8, 'Sheriff Department');
+    methods.createBlip(new mp.Vector3(1853.22, 3686.6796875, 33.2670), 60, 16, 0.8, 'Sheriff Department');
+    methods.createBlip(new mp.Vector3(-158.44952392578125, -605.221923828125, 48.23460388183594), 535, 67, 0.8, 'Arcadius - Бизнес Центр');
+    methods.createBlip(new mp.Vector3(111.5687, -749.9395, 30.69), 498, 0, 0.8, 'Офис FIB');
+    methods.createBlip(new mp.Vector3(1830.489, 2603.093, 45.8891), 238, 0, 0.8, 'Федеральная тюрьма');
+    methods.createBlip(new mp.Vector3(-1379.659, -499.748, 33.15739), 419, 0, 0.8, 'Здание правительства');
+    methods.createBlip(new mp.Vector3(311.9224853515625, -583.9681396484375, 44.299190521240234), 489, 59, 0.8, 'Здание больницы');
+    methods.createBlip(new mp.Vector3(-253.9735565185547, 6320.83935546875, 37.61736297607422), 489, 59, 0.8, 'Здание больницы');
+    //methods.createBlip(new mp.Vector3(210.0973, -1649.418, 29.8032), 436, 60, 0.8, 'Здание Fire Department');
+    //methods.createBlip(new mp.Vector3(-1581.689, -557.913, 34.95288), 545, 0, 0.8, 'Здание автошколы');
+
+    //methods.createBlip(new mp.Vector3(46.947, -1753.859, 46.508), 78, 68, 0.4, 'Торговый центр MegaMoll');
+
+    //methods.createBlip(new mp.Vector3(-3544, 6135, 0), 68, 59, 0.8, 'Рыбалка запрещена');
+    //methods.createBlip(new mp.Vector3(4989, 1712, 0), 68, 59, 0.8, 'Рыбалка запрещена');
+    //methods.createBlip(new mp.Vector3(-1337.255, -1277.948, 3.872962), 362, 0, 0.8, 'Магазин масок');
 };

@@ -4,6 +4,8 @@ let methods = {};
 
 import Menu from "./menu";
 
+//mp.game.invoke('0xBF0FD6E56C964FCB', mp.players.local.handle, mp.game.joaat('weapon_pistol'), 100, true, false);
+
 methods.GIVE_WEAPON_TO_PED = '0xBF0FD6E56C964FCB';
 methods.REMOVE_WEAPON_FROM_PED = '0x4899CB088EDF59B8';
 methods.HAS_PED_GOT_WEAPON = '0x8DECB02F88F428BC';
@@ -446,7 +448,24 @@ methods.requestIpls = function () {
     mp.game.streaming.requestIpl("CS3_07_MPGates");
 
     //Pillbox hospital:
-    mp.game.streaming.requestIpl("rc12b_default");
+    mp.game.streaming.removeIpl("rc12b_default");
+
+    mp.game.streaming.requestIpl("gabz_pillbox_milo_");
+    let hospIntId = mp.game.interior.getInteriorAtCoords(311.2546, -592.4204, 42.32737);
+    let hospPropList = [
+        "rc12b_fixed",
+        "rc12b_destroyed",
+        "rc12b_default",
+        "rc12b_hospitalinterior_lod",
+        "rc12b_hospitalinterior"
+    ];
+
+    for (const propName of hospPropList) {
+        mp.game.interior.enableInteriorProp(hospIntId, propName);
+        mp.game.invoke(methods.SET_INTERIOR_PROP_COLOR, hospIntId, propName, 1);
+    }
+
+    mp.game.interior.refreshInterior(hospIntId);
 
     //mp.game.streaming.removeIpl("rc12b_default");
     //mp.game.streaming.requestIpl("rc12b_hospitalinterior");
@@ -515,6 +534,30 @@ methods.requestIpls = function () {
 methods.isPlayerInOcean = function() {
     let pos = mp.players.local.position;
     return (mp.game.zone.getNameOfZone(pos.x, pos.y, pos.z) === "OCEANA");
+};
+
+methods.notifyWithPictureToAll = function (title, sender, message, notifPic, icon = 0, flashing = false, textColor = -1, bgColor = -1, flashColor = [77, 77, 77, 200]) {
+    mp.events.callRemote('server:players:notifyWithPictureToAll', title, sender, message, notifPic, icon, flashing, textColor, bgColor, flashColor);
+};
+
+methods.notifyWithPictureToFraction = function (title, sender, message, notifPic, fractionId = 0, icon = 0, flashing = false, textColor = -1, bgColor = -1, flashColor = [77, 77, 77, 200]) {
+    mp.events.callRemote('server:players:notifyWithPictureToFraction', title, sender, message, notifPic, fractionId, icon, flashing, textColor, bgColor, flashColor);
+};
+
+methods.notifyWithPictureToFraction2 = function (title, sender, message, notifPic, fractionId = 0, icon = 0, flashing = false, textColor = -1, bgColor = -1, flashColor = [77, 77, 77, 200]) {
+    mp.events.callRemote('server:players:notifyWithPictureToFraction2', title, sender, message, notifPic, fractionId, icon, flashing, textColor, bgColor, flashColor);
+};
+
+methods.notifyToFraction = function (message, fractionId = 0) {
+    mp.events.callRemote('server:players:notifyToFraction', message, fractionId);
+};
+
+methods.notifyToAll = function (message) {
+    mp.events.callRemote('server:players:notifyToAll', message);
+};
+
+methods.isInPoint = function (p1, p2, p3, p4, p5) {
+    return Math.min(p1.x, p2.x) < p5.x && Math.max(p3.x, p4.x) > p5.x && Math.min(p1.y, p4.y) < p5.y && Math.max(p2.y, p3.y) > p5.y;
 };
 
 export default methods;

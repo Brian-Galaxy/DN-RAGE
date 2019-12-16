@@ -1,7 +1,7 @@
 let enums = require('../enums');
 let methods = require('../modules/methods');
 let user = require('../user');
-//let business = require('../business');
+let business = require('../property/business');
 let shopList = enums.shopList;
 
 let cloth = exports;
@@ -84,7 +84,7 @@ cloth.changeProp = function (player, body, clothId, color) {
     }
 };
 
-cloth.buyProp = function (player, price, body, clothId, color, shopId, isFree) {
+cloth.buyProp = function (player, price, body, clothId, color, itemName, shopId, isFree) {
     methods.debug('barberShop.buyProp');
 
     if (price < 1)
@@ -124,7 +124,7 @@ cloth.buyProp = function (player, price, body, clothId, color, shopId, isFree) {
 
     if (!isFree) {
         user.removeCashMoney(player, price);
-        //business.addMoney(shopId, price);
+        business.addMoney(shopId, price, itemName);
         player.notify("~g~Вы купили аксессуар");
     }
 
@@ -148,7 +148,7 @@ cloth.change = function (player, body, cloth, color, torso, torsoColor, parachut
     user.setComponentVariation(player, body, cloth, color);
 };
 
-cloth.buy = function (player, price, body, cloth, color, torso, torsoColor, parachute, parachuteColor, shopId = 0, isFree = false) {
+cloth.buy = function (player, price, body, cloth, color, torso, torsoColor, parachute, parachuteColor, itemName = "Операция", shopId = 0, isFree = false) {
     methods.debug('barberShop.buy');
     if (!user.isLogin(player))
         return;
@@ -211,7 +211,7 @@ cloth.buy = function (player, price, body, cloth, color, torso, torsoColor, para
 
     if (!isFree) {
         user.removeCashMoney(player, price);
-        //business.addMoney(shopId, price);
+        business.addMoney(shopId, price, itemName);
         player.notify("~g~Вы купили одежду");
     }
 
@@ -227,7 +227,7 @@ cloth.changeMask = function (player, clothId, color) {
     user.setComponentVariation(player, 1, clothId, color);
 };
 
-cloth.buyMask = function (player, price, clothId, color, shopId) {
+cloth.buyMask = function (player, price, clothId, color, itemName, shopId) {
     methods.debug('barberShop.buy');
     if (!user.isLogin(player))
         return;
@@ -252,7 +252,7 @@ cloth.buyMask = function (player, price, clothId, color, shopId) {
     if (shopId == 0)
         return;
     user.removeCashMoney(player, price);
-    //business.addMoney(shopId, price);
+    business.addMoney(shopId, price, itemName);
     player.notify("~g~Вы купили маску");
     user.save(player);
 };

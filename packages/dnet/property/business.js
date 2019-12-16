@@ -3,6 +3,7 @@ let mysql = require('../modules/mysql');
 let methods = require('../modules/methods');
 let user = require('../user');
 let coffer = require('../coffer');
+let weather = require('../managers/weather');
 let business = exports;
 
 business.BusinessOfficePos = new mp.Vector3(-140.7121, -617.3683, 167.8204);
@@ -116,10 +117,10 @@ business.addHistory = function(id, name, price) {
     name = methods.removeQuotes(name);
     price = methods.parseFloat(price);
 
-    let rpDateTime = weather.getRpDateTime(); //TODO
+    let rpDateTime = weather.getRpDateTime();
     let timestamp = methods.getTimeStamp();
 
-    mysql.executeQuery(`INSERT INTO log_business (business_id, product, price, timestamp, rp_datetime) VALUES ('${id}', '${name} (( ${timestamp} ))', '${price}', '${timestamp}', '${rpDateTime}')`);
+    mysql.executeQuery(`INSERT INTO log_business (business_id, product, price, timestamp, rp_datetime) VALUES ('${id}', '${name}', '${price}', '${timestamp}', '${rpDateTime}')`);
 };
 
 business.updateOwnerInfo = function (bId, userId, userName) {

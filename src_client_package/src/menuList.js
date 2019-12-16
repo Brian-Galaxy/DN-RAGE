@@ -208,6 +208,7 @@ menuList.showShopClothMenu = function (shopId, type, menuType) {
                 menuListItem.id6 = cloth[id][6];
                 menuListItem.id7 = cloth[id][7];
                 menuListItem.id8 = cloth[id][8];
+                menuListItem.itemName = cloth[id][9].toString();
             }
         }
 
@@ -240,7 +241,7 @@ menuList.showShopClothMenu = function (shopId, type, menuType) {
         menu.ItemSelect.on(async (item, index) => {
             try {
                 if (item == currentListChangeItem) {
-                    cloth.buy(item.id8, item.id1, item.id2, currentListChangeItemIndex, item.id4, item.id5, item.id6, item.id7, shopId);
+                    cloth.buy(item.id8, item.id1, item.id2, currentListChangeItemIndex, item.id4, item.id5, item.id6, item.id7, item.itemName, shopId);
                 }
                 if (item.doName == "grab") {
                     UIMenu.Menu.HideMenu();
@@ -248,7 +249,7 @@ menuList.showShopClothMenu = function (shopId, type, menuType) {
                 }
                 if (item.doName == "takeOff") {
                     UIMenu.Menu.HideMenu();
-                    cloth.buy(10, menuType, 0, 0, -1, -1, -1, -1, shopId, true);
+                    cloth.buy(10, menuType, 0, 0, -1, -1, -1, -1, "Операция", shopId, true);
                 }
                 if (item.doName == "closeButton") {
                     UIMenu.Menu.HideMenu();
@@ -358,6 +359,7 @@ menuList.showShopPropMenu = function (shopId, type, menuType) {
         menuListItem.id1 = clothList[id][1];
         menuListItem.id2 = clothList[id][2];
         menuListItem.id4 = clothList[id][4];
+        menuListItem.itemName = clothList[id][5].toString();
     }
 
     UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = "closeButton";
@@ -379,7 +381,7 @@ menuList.showShopPropMenu = function (shopId, type, menuType) {
     menu.ItemSelect.on((item, index) => {
         try {
             if (item == currentListChangeItem) {
-                cloth.buyProp(item.id4, item.id1, item.id2, currentListChangeItemIndex, shopId);
+                cloth.buyProp(item.id4, item.id1, item.id2, item.itemName, currentListChangeItemIndex, shopId);
             }
             if (item.doName == "closeButton") {
                 UIMenu.Menu.HideMenu();
@@ -388,7 +390,7 @@ menuList.showShopPropMenu = function (shopId, type, menuType) {
             if (item.doName == "takeOff")
             {
                 UIMenu.Menu.HideMenu();
-                cloth.buyProp(0, menuType, -1, -1, shopId, true);
+                cloth.buyProp(0, menuType, -1, -1, "", shopId, true);
             }
         }
         catch (e) {
@@ -572,6 +574,7 @@ menuList.showTattooShopShortMenu = function(title1, title2, zone, shopId)
                 let menuListItem = UIMenu.Menu.AddMenuItem(tattooList[i][0], `Свести тату\nЦена: ~g~${methods.moneyFormat(price / 2)}`);
                 menuListItem.doName = 'destroy';
                 menuListItem.price = price / 2;
+                menuListItem.tatto0 = tattooList[i][0];
                 menuListItem.tatto1 = tattooList[i][1];
                 menuListItem.tatto2 = tattooList[i][2];
                 menuListItem.tatto3 = tattooList[i][4];
@@ -582,6 +585,7 @@ menuList.showTattooShopShortMenu = function(title1, title2, zone, shopId)
                 let menuListItem = UIMenu.Menu.AddMenuItem(tattooList[i][0], `Цена: ~g~${methods.moneyFormat(price)}`);
                 menuListItem.doName = 'show';
                 menuListItem.price = price;
+                menuListItem.tatto0 = tattooList[i][0];
                 menuListItem.tatto1 = tattooList[i][1];
                 menuListItem.tatto2 = tattooList[i][2];
                 menuListItem.tatto3 = tattooList[i][4];
@@ -608,9 +612,9 @@ menuList.showTattooShopShortMenu = function(title1, title2, zone, shopId)
     menu.ItemSelect.on((item, index) => {
         UIMenu.Menu.HideMenu();
         if(item.doName == 'show')
-            mp.events.callRemote('server:tattoo:buy', item.tatto1, item.tatto2, zone, item.price, shopId);
+            mp.events.callRemote('server:tattoo:buy', item.tatto1, item.tatto2, zone, item.price, item.tatto0, shopId);
         if(item.doName == 'destroy')
-            mp.events.callRemote('server:tattoo:destroy', item.tatto1, item.tatto2, zone, item.price, shopId);
+            mp.events.callRemote('server:tattoo:destroy', item.tatto1, item.tatto2, zone, item.price, 'Лазерная коррекция', shopId);
     });
 };
 

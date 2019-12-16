@@ -430,6 +430,6 @@ weather.nextRandomWeatherByType = function(weatherType) {
         }
     }
 
-    methods.notifyWithPictureToAll(`Life Invader [${weather.getFullRpTime()}]`, "~y~Новости погоды", `${weather.getWeatherName(weather.getWeather())}\nТемпература воздуха: ~y~${Math.round(_tempNew)}°C`, "CHAR_LIFEINVADER", 1);
+    methods.notifyWithPictureToAll(`Life Invader [${weather.getFullRpTime()}]`, "~y~Новости погоды", `~y~${weather.getWeatherName(weather.getWeather())}~s~\nТемпература воздуха: ~y~${Math.round(_tempNew)}°C`, "CHAR_LIFEINVADER", 1);
     mp.players.call('client:managers:weather:nextWeather', [weather.getWeather(), methods.getRandomInt(100, 240)]);
 };

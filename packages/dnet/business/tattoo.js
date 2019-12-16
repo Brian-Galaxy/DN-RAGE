@@ -1,5 +1,5 @@
 let methods = require('../modules/methods');
-//let business = require('../business');
+let business = require('../property/business');
 let user = require('../user');
 
 let tattoo = exports;
@@ -69,7 +69,7 @@ tattoo.findNearest = function(pos) {
     return prevPos;
 };
 
-tattoo.buy = function(player, collection, overlay, zone, price, shopId) {
+tattoo.buy = function(player, collection, overlay, zone, price, itemName, shopId) {
     if (!user.isLogin(player))
         return;
 
@@ -97,13 +97,13 @@ tattoo.buy = function(player, collection, overlay, zone, price, shopId) {
     user.set(player, 'tattoo', JSON.stringify(tattooList));
 
     user.removeMoney(player, price);
-    //business.addMoney(shopId, price);
+    business.addMoney(shopId, price, itemName);
     player.notify('~g~Вы набили татуировку');
     user.updateTattoo(player);
     user.save(player);
 };
 
-tattoo.destroy = function(player, collection, overlay, zone, price, shopId) {
+tattoo.destroy = function(player, collection, overlay, zone, price, itemName, shopId) {
     if (!user.isLogin(player))
         return;
 
@@ -127,7 +127,7 @@ tattoo.destroy = function(player, collection, overlay, zone, price, shopId) {
     user.set(player, 'tattoo', JSON.stringify(tattooList));
 
     user.removeMoney(player, price);
-    //business.addMoney(shopId, price);
+    business.addMoney(shopId, price, itemName);
     player.notify('~g~Вы набили татуировку');
     user.updateTattoo(player);
     user.save(player);

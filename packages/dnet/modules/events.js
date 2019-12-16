@@ -238,10 +238,10 @@ mp.events.addRemoteCounted('server:business:cloth:change', (player, body, clothI
     cloth.change(player, body, clothId, color, torso, torsoColor, parachute, parachuteColor);
 });
 
-mp.events.addRemoteCounted('server:business:cloth:buy', (player, price, body, clothId, color, torso, torsoColor, parachute, parachuteColor, shopId, isFree) => {
+mp.events.addRemoteCounted('server:business:cloth:buy', (player, price, body, clothId, color, torso, torsoColor, parachute, parachuteColor, itemName, shopId, isFree) => {
     if (!user.isLogin(player))
         return;
-    cloth.buy(player, price, body, clothId, color, torso, torsoColor, parachute, parachuteColor, shopId, isFree);
+    cloth.buy(player, price, body, clothId, color, torso, torsoColor, parachute, parachuteColor, itemName, shopId, isFree);
 });
 
 mp.events.addRemoteCounted('server:business:cloth:changeMask', (player, clothId, color) => {
@@ -250,10 +250,10 @@ mp.events.addRemoteCounted('server:business:cloth:changeMask', (player, clothId,
     cloth.changeMask(player, clothId, color);
 });
 
-mp.events.addRemoteCounted('server:business:cloth:buyMask', (player, price, clothId, color, shopId) => {
+mp.events.addRemoteCounted('server:business:cloth:buyMask', (player, price, clothId, color, itemName, shopId) => {
     if (!user.isLogin(player))
         return;
-    cloth.buyMask(player, price, clothId, color, shopId);
+    cloth.buyMask(player, price, clothId, color, itemName, shopId);
 });
 
 mp.events.addRemoteCounted('server:business:cloth:changeProp', (player, body, clothId, color) => {
@@ -262,22 +262,22 @@ mp.events.addRemoteCounted('server:business:cloth:changeProp', (player, body, cl
     cloth.changeProp(player, body, clothId, color);
 });
 
-mp.events.addRemoteCounted('server:business:cloth:buyProp', (player, price, body, clothId, color, shopId, isFree) => {
+mp.events.addRemoteCounted('server:business:cloth:buyProp', (player, price, body, clothId, color, itemName, shopId, isFree) => {
     if (!user.isLogin(player))
         return;
-    cloth.buyProp(player, price, body, clothId, color, shopId, isFree);
+    cloth.buyProp(player, price, body, clothId, color, itemName, shopId, isFree);
 });
 
-mp.events.addRemoteCounted('server:tattoo:buy', (player, slot, type, zone, price, shopId) => {
+mp.events.addRemoteCounted('server:tattoo:buy', (player, slot, type, zone, price, itemName, shopId) => {
     if (!user.isLogin(player))
         return;
-    tattoo.buy(player, slot, type, zone, price, shopId);
+    tattoo.buy(player, slot, type, zone, price, itemName, shopId);
 });
 
-mp.events.addRemoteCounted('server:tattoo:destroy', (player, slot, type, zone, price, shopId) => {
+mp.events.addRemoteCounted('server:tattoo:destroy', (player, slot, type, zone, price, itemName, shopId) => {
     if (!user.isLogin(player))
         return;
-    tattoo.destroy(player, slot, type, zone, price, shopId);
+    tattoo.destroy(player, slot, type, zone, price, itemName, shopId);
 });
 
 mp.events.add('server:user:save', (player) => {

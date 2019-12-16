@@ -1130,19 +1130,21 @@ user.sendSmsBankOperation = function(player, text, title = 'Операция с�
     if (!user.isLogin(player))
         return;
 
+    let prefix = methods.parseInt(user.get(player, 'bank_card').toString().substring(0, 4));
+
     try {
-        switch (user.get(player, 'bank_prefix')) {
-            case 1111:
-                player.notifyWithPicture(title, '~r~Maze~s~ Bank', text, 'CHAR_BANK_MAZE', 2);
+        switch (prefix) {
+            case 6000:
+                player.notifyWithPicture('~r~Maze Bank', '~g~' + title, text, 'CHAR_BANK_MAZE', 2);
                 break;
-            case 2222:
-                player.notifyWithPicture(title, '~g~Fleeca~s~ Bank', text, 'CHAR_BANK_FLEECA', 2);
+            case 7000:
+                player.notifyWithPicture('~g~Fleeca Bank', '~g~' + title, text, 'CHAR_BANK_FLEECA', 2);
                 break;
-            case 3333:
-                player.notifyWithPicture(title, '~b~Blaine~s~ Bank', text, 'DIA_CUSTOMER', 2);
+            case 8000:
+                player.notifyWithPicture('~b~Blaine Bank', '~g~' + title, text, 'DIA_CUSTOMER', 2);
                 break;
-            case 4444:
-                player.notifyWithPicture(title, '~o~Pacific~s~ Bank', text, 'WEB_SIXFIGURETEMPS', 2);
+            case 9000:
+                player.notifyWithPicture('~o~Pacific Bank', '~g~' + title, text, 'WEB_SIXFIGURETEMPS', 2);
                 break;
         }
     }
@@ -1215,12 +1217,13 @@ user.payDay = async function (player) {
         }*/
     }
 
-    if (user.get(player, 'bank_card') > 0 && user.get(player, 'fraction_id') > 0) {
+    if (user.get(player, 'bank_card') > 0) {
 
         if (player.getVariable('isAfk') === true) {
             player.notify('~r~Зарплату вы не получили, связи с тем, что вы AFK');
         }
-        else {
+        else if (user.get(player, 'fraction_id') > 0) {
+
             let money = methods.getFractionPayDay(user.get(player, 'fraction_id'), user.get(player, 'rank'), user.get(player, 'rank_type'));
             let nalog = money * (100 - coffer.getTaxIntermediate()) / 100;
 
@@ -1230,8 +1233,21 @@ user.payDay = async function (player) {
                 player.notify('~r~В бюджете организации не достаточно средств для выплаты ЗП');
             }
             else {
-                user.sendSmsBankOperation(player, `Зачисление: ~g~${methods.moneyFormat(nalog)}`);
+                user.sendSmsBankOperation(player, `Зачисление: ~g~${methods.moneyFormat(nalog)}`, 'Зарплата');
                 user.addPayDayMoney(player, nalog);
+            }
+        }
+        else if (user.get(player, 'job') == 0) {
+
+            let currentCofferMoney = coffer.getMoney(1);
+            let sum = coffer.getBenefit();
+
+            if (currentCofferMoney < sum) {
+                player.notify('~r~В бюджете организации не достаточно средств для выплаты ЗП');
+            }
+            else {
+                user.sendSmsBankOperation(player, `Зачисление: ~g~${methods.moneyFormat(sum)}`, 'Пособие');
+                user.addPayDayMoney(player, sum);
             }
         }
 
@@ -1242,20 +1258,6 @@ user.payDay = async function (player) {
             player.notify(`~y~Налог: ~s~${coffer.getTaxIntermediate()}%`);
             user.setPayDayMoney(player, 0);
         }*/
-
-        if (user.get(player, 'job') == 0) {
-
-            let currentCofferMoney = coffer.getMoney(1);
-            let sum = coffer.getBenefit();
-
-            if (currentCofferMoney < sum) {
-                player.notify('~r~В бюджете организации не достаточно средств для выплаты ЗП');
-            }
-            else {
-                user.sendSmsBankOperation(player, `Зачисление пособия: ~g~${methods.moneyFormat(sum)}`);
-                user.addPayDayMoney(player, sum);
-            }
-        }
     }
     else {
         player.notify(`~y~Оформите банковскую карту`);

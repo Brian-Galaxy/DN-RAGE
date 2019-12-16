@@ -48,10 +48,10 @@ cloth.findNearest = function (pos) {
     return shopPosPrew;
 };
 
-cloth.buy = function(price, body, cloth, color, torso, torsoColor, parachute, parachuteColor, shopId = 0, isFree = false){
+cloth.buy = function(price, body, cloth, color, torso, torsoColor, parachute, parachuteColor, itemName = "Операция", shopId = 0, isFree = false){
     checkInit();
     methods.debug('cloth', price, body, cloth, color, torso, torsoColor, parachute, parachuteColor);
-    mp.events.callRemote('server:business:cloth:buy', price, body, cloth, color, torso, torsoColor, parachute, parachuteColor, shopId, isFree);
+    mp.events.callRemote('server:business:cloth:buy', price, body, cloth, color, torso, torsoColor, parachute, parachuteColor, itemName, shopId, isFree);
 };
 
 cloth.changeMask = function(cloth, color){
@@ -59,9 +59,9 @@ cloth.changeMask = function(cloth, color){
     mp.events.callRemote('server:business:cloth:changeMask', cloth, color);
 };
 
-cloth.buyMask = function(price, cloth, color, shopId = 0){
+cloth.buyMask = function(price, cloth, color, itemName = "Операция", shopId = 0){
     checkInit();
-    mp.events.callRemote('server:business:cloth:buyMask', price, cloth, color, shopId);
+    mp.events.callRemote('server:business:cloth:buyMask', price, cloth, color, itemName, shopId);
 };
 
 cloth.change = function(body, cloth, color, torso, torsoColor, parachute, parachuteColor) {
@@ -69,9 +69,9 @@ cloth.change = function(body, cloth, color, torso, torsoColor, parachute, parach
     mp.events.callRemote('server:business:cloth:change', body, cloth, color, torso, torsoColor, parachute, parachuteColor);
 };
 
-cloth.buyProp = function(price, body, cloth, color, shopId = 0, isFree = false){
+cloth.buyProp = function(price, body, cloth, color, itemName = "Операция", shopId = 0, isFree = false){
     checkInit();
-    mp.events.callRemote('server:business:cloth:buyProp', price, body, cloth, color, shopId, isFree);
+    mp.events.callRemote('server:business:cloth:buyProp', price, body, cloth, color, itemName, shopId, isFree);
 };
 
 cloth.changeProp = function(body, cloth, color){

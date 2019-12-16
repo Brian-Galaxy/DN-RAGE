@@ -22,12 +22,16 @@ business.loadAll = function() {
             business.set(item['id'], 'price', item['price']);
             business.set(item['id'], 'bank', item['bank']);
             business.set(item['id'], 'bank_score', item['bank_score']);
+            business.set(item['id'], 'bank_id', item['bank_id']);
             business.set(item['id'], 'user_name', item['user_name']);
             business.set(item['id'], 'user_id', item['user_id']);
             business.set(item['id'], 'fraction_type', item['fraction_type']);
             business.set(item['id'], 'type', item['type']);
             business.set(item['id'], 'price_product', item['price_product']);
             business.set(item['id'], 'interior', item['interior']);
+            business.set(item['id'], 'sc_font', item['sc_font']);
+            business.set(item['id'], 'sc_color', item['sc_color']);
+            business.set(item['id'], 'sc_alpha', item['sc_alpha']);
             business.set(item['id'], 'tax_score', item['tax_score']);
             business.set(item['id'], 'tax_money', item['tax_money']);
         });
@@ -49,17 +53,22 @@ business.save = function(id) {
     let sql = "UPDATE business SET";
 
     sql = sql + " name = '" + methods.removeQuotes(business.get(id, "name")) + "'";
-    sql = sql + ", fraction_type = '" + methods.removeQuotes(business.get(id, "fraction_type")) + "'";
+    sql = sql + ", fraction_type = '" + methods.parseInt(business.get(id, "fraction_type")) + "'";
     //sql = sql + ", price = '" + business.get(id, "price") + "'";
     sql = sql + ", user_name = '" + business.get(id, "user_name") + "'";
     sql = sql + ", user_id = '" + business.get(id, "user_id") + "'";
     sql = sql + ", bank = '" + bBank + "'";
+    sql = sql + ", bank_id = '" + methods.parseInt(business.get(id, "bank_id")) + "'";
+    sql = sql + ", bank_score = '" + methods.parseInt(business.get(id, "bank_score")) + "'";
+    sql = sql + ", sc_font = '" + methods.parseInt(business.get(id, "sc_font")) + "'";
+    sql = sql + ", sc_color = '" + methods.parseInt(business.get(id, "sc_color")) + "'";
+    sql = sql + ", sc_alpha = '" + methods.parseInt(business.get(id, "sc_alpha")) + "'";
     //sql = sql + ", type = '" + business.get(id, "type") + "'";
-    sql = sql + ", price_product = '" + business.get(id, "price_product") + "'";
-    sql = sql + ", tarif = '" + business.get(id, "tarif") + "'";
-    sql = sql + ", interior = '" + business.get(id, "interior") + "'";
+    sql = sql + ", price_product = '" + methods.parseInt(business.get(id, "price_product")) + "'";
+    sql = sql + ", interior = '" + methods.parseInt(business.get(id, "interior")) + "'";
 
     sql = sql + " where id = '" + business.get(id, "id") + "'";
+
     mysql.executeQuery(sql);
 };
 
@@ -89,13 +98,13 @@ business.getData = function(id) {
     return Container.Data.GetAll(-20000 + methods.parseInt(id));
 };
 
-business.addMoney = function(id, money, name = "Операция") {
+business.addMoney = function(id, money, name = "Операция со счетом") {
     business.addHistory(id, name, money);
     business.setMoney(id, business.getMoney(id) + methods.parseFloat(money));
 };
 
-business.removeMoney = function(id, money, name = "Операция") {
-    business.addHistory(id, name, money);
+business.removeMoney = function(id, money, name = "Операция со счетом") {
+    business.addHistory(id, name, money * -1);
     business.setMoney(id, business.getMoney(id) - methods.parseFloat(money));
 };
 

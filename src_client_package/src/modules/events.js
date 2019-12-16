@@ -523,6 +523,32 @@ mp.events.add('client:managers:weather:syncRealFullDateTime', (dateTime) => {
     weather.syncRealFullDateTime(dateTime);
 });
 
+mp.events.add('client:menuList:showBusinessTeleportMenu', () => {
+    methods.debug('Event: client:menuList:showBusinessTeleportMenu');
+    menuList.showBusinessTeleportMenu();
+});
+
+mp.events.add('client:showBusinessTypeListMenu', (data1, data2, data3) => {
+    methods.debug('Event: client:showBusinessTypeListMenu');
+    menuList.showBusinessTypeListMenu(data1, data2, data3);
+});
+
+mp.events.add('client:showBusinessLogMenu', (data) => {
+    methods.debug('Event: client:showBusinessLogMenu');
+    menuList.showBusinessLogMenu(data);
+});
+
+mp.events.add('client:menuList:showBusinessMenu', (data) => {
+    try {
+        methods.debug('Event: client:menuList:showBusinessMenu');
+        menuList.showBusinessMenu(new Map(data));
+    }
+    catch (e) {
+        methods.debug('Exception: events:client:showBusinessMenu');
+        methods.debug(e);
+    }
+});
+
 mp.events.add('client:events:debug', function(val) {
     methods.debug(val);
     //ui.callCef('ChangePlayer','{"type": "show"}');
@@ -557,7 +583,7 @@ mp.keys.bind(0x45, true, function() {
     }
 });
 
-// Commands in 2019......
+// Commands in 2020......
 mp.events.add("playerCommand", async (command) => {
     if (command.toLowerCase().slice(0, 2) === "tp") {
 

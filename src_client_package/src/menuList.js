@@ -2,10 +2,15 @@ import Container from './modules/data';
 import UIMenu from './modules/menu';
 import methods from './modules/methods';
 import ui from './modules/ui';
+
 import user from './user';
 import admin from './admin';
-import houses from './property/houses';
 import enums from './enums';
+import coffer from './coffer';
+
+import houses from './property/houses';
+import business from './property/business';
+
 import cloth from './business/cloth';
 
 let menuList = {};
@@ -618,8 +623,380 @@ menuList.showTattooShopShortMenu = function(title1, title2, zone, shopId)
     });
 };
 
+menuList.showBusinessTeleportMenu = function() {
+    //TODO BLACKOUT
+    let menu = UIMenu.Menu.Create(`Arcadius`, `~b~Бизнес центр`);
+
+    business.typeList.forEach(function (item, i, arr) {
+        UIMenu.Menu.AddMenuItem(`${item}`).typeId = i;
+    });
+
+    UIMenu.Menu.AddMenuItem("~b~Arcadius Motors").teleportPos = business.BusinessMotorPos;
+    UIMenu.Menu.AddMenuItem("~g~Улица").teleportPos = business.BusinessStreetPos;
+    UIMenu.Menu.AddMenuItem("~g~Крыша").teleportPos = business.BusinessRoofPos;
+    UIMenu.Menu.AddMenuItem("~g~Гараж").teleportPos = business.BusinessGaragePos;
+
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+    menu.ItemSelect.on((item, index) => {
+        UIMenu.Menu.HideMenu();
+        if (item == closeItem)
+            return;
+        if (item.typeId != undefined) {
+            mp.events.callRemote('server:events:showTypeListMenu', methods.parseInt(item.typeId));
+        }
+        else {
+            user.setVirtualWorld(0);
+            user.teleportv(item.teleportPos);
+        }
+    });
+};
+
+menuList.showBusinessTypeListMenu = function(data1, data2, data3) {
+    let menu = UIMenu.Menu.Create(`Arcadius`, `~b~Бизнес центр`);
+
+    data1.forEach(function (item, i, arr) {
+        let ownerName = item[1] == '' ? 'Государство' : item[1];
+        let menuItem = UIMenu.Menu.AddMenuItem(`${data2[i][1]}`, `~b~Владелец: ~s~${ownerName}`);
+        menuItem.bId = item[0];
+        menuItem.interiorId = data3[i][1][0];
+        menuItem.scFont = data3[i][1][1];
+        menuItem.scColor = data3[i][1][2];
+        menuItem.scAlpha = data3[i][1][3];
+        menuItem.bName = data2[i][1];
+    });
+
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+    menu.ItemSelect.on((item, index) => {
+        UIMenu.Menu.HideMenu();
+        if (item == closeItem)
+            return;
+        business.setScaleformName(item.bName);
+        business.setScaleformParams(item.scFont, item.scColor, item.scAlpha);
+        business.loadInterior(item.interiorId, 500);
+        user.setVirtualWorld(methods.parseInt(item.bId));
+        user.teleport(business.BusinessOfficePos.x, business.BusinessOfficePos.y, business.BusinessOfficePos.z + 1);
+    });
+};
+
+menuList.showBusinessLogMenu = function(data) {
+    let menu = UIMenu.Menu.Create(`Arcadius`, `~b~Список транзакций`);
+
+    JSON.parse(data).forEach(function (item, i, arr) {
+        UIMenu.Menu.AddMenuItem(`~b~#${item.id}. ~s~${item.product}`, `~b~Дата:~s~ ${item.rp_datetime}\n~b~OOC: ~s~${methods.unixTimeStampToDateTimeShort(item.timestamp)}`).SetRightLabel(`${item.price}`);
+    });
+
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+    menu.ItemSelect.on((item, index) => {
+        UIMenu.Menu.HideMenu();
+        if (item == closeItem)
+            return;
+    });
+};
+
+menuList.showBusinessMenu = async function(data) {
+
+    let bankTarif = 0;
+    if (data.get('bank_id') > 0)
+        bankTarif = await business.getPrice(data.get('bank_id'));
+
+    let nalog = await coffer.getTaxBusiness();
+
+    let menu = UIMenu.Menu.Create(`Arcadius`, `~b~Владелец: ~s~${(data.get('user_id') == 0 ? "Государство" : data.get('user_name'))}`);
+
+    let nalogOffset = bankTarif;
+    if (data.get('type') == 1 || data.get('type') == 11) //TODO
+        nalogOffset += 30;
+
+    nalog = nalog + nalogOffset;
+
+    UIMenu.Menu.AddMenuItem("~b~Название: ~s~").SetRightLabel(data.get('name'));
+    UIMenu.Menu.AddMenuItem("~b~Налог на прибыль: ~s~").SetRightLabel(`${nalog}%`);
+
+    if (user.getCache('id') == data.get('user_id')) {
+
+        UIMenu.Menu.AddMenuItem("~b~Банк: ~s~").SetRightLabel(`~g~${methods.moneyFormat(data.get('bank'))}`);
+        UIMenu.Menu.AddMenuItem("Настройка бизнеса").doName = 'settings';
+        UIMenu.Menu.AddMenuItem("Список транзакций").doName = 'log';
+        UIMenu.Menu.AddMenuItem("Положить средства").doName = 'addMoney';
+        UIMenu.Menu.AddMenuItem("Снять средства").doName = 'removeMoney';
+    }
+    else if (data.get('user_id') == 0) {
+        if (data.get('price') == 0)
+            UIMenu.Menu.AddMenuItem("~y~На реконструкции, скоро будет доступен");
+        else
+            UIMenu.Menu.AddMenuItem("~g~Купить", `Цена: ~g~$${methods.numberFormat(data.get('price'))}`).doName = 'buy';
+    }
+
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+
+    menu.ItemSelect.on(async (item, index) => {
+        UIMenu.Menu.HideMenu();
+        if (item == closeItem)
+            return;
+        if (item.doName == 'buy') {
+            mp.events.callRemote('server:business:buy', data.get('id'));
+        }
+        if (item.doName == 'settings') {
+            menuList.showBusinessSettingsMenu(data);
+        }
+        if (item.doName == 'buy') {
+            mp.events.callRemote('server:business:buy', data.get('id'));
+        }
+        if (item.doName == 'log') {
+            mp.events.callRemote('server:business:log', data.get('id'));
+        }
+        if (item.doName == 'addMoney') {
+            try {
+                let money = await UIMenu.Menu.GetUserInput("Сумма", "", 8);
+                money = methods.parseFloat(money);
+                if (money > user.getCashMoney()) {
+                    mp.game.ui.notifications.show(`~r~У Вас нет столько денег на руках`);
+                    return;
+                }
+                if (money < 1) {
+                    mp.game.ui.notifications.show(`~r~Нельзя положить меньше 1$`);
+                    return;
+                }
+                business.addMoney(data.get('id'), money, 'Операция со счётом');
+                user.removeCashMoney(money);
+                business.save(data.get('id'));
+                mp.game.ui.notifications.show(`~b~Вы положили деньги на счет бизнеса`);
+            }
+            catch (e) {
+                methods.debug(e);
+            }
+        }
+        if (item.doName == 'removeMoney') {
+
+            if (data.get('bank_id') == 0) {
+                mp.game.ui.notifications.show(`~r~Вы не привязаны ни к какому банку`);
+                return;
+            }
+
+            let money = await UIMenu.Menu.GetUserInput("Сумма", "", 8);
+            money = methods.parseFloat(money);
+            if (money > data.get('bank')) {
+                mp.game.ui.notifications.show(`~r~На счету бизнеса нет столько денег`);
+                return;
+            }
+            if (money < 1) {
+                mp.game.ui.notifications.show(`~r~Нельзя взять меньше 1$`);
+                return;
+            }
+
+            business.addMoney(data.get('bank_id'), money * (bankTarif / 100));
+
+            business.removeMoney(data.get('id'), money, 'Операция со счётом');
+            business.save(data.get('id'));
+            user.addCashMoney(money * (100 - nalog - bankTarif) / 100);
+            coffer.addMoney(1, money * nalog / 100);
+            mp.game.ui.notifications.show(`~b~Вы сняли ~s~$${methods.numberFormat(money * (100 - nalog + bankTarif) / 100)} ~b~со счёта с учётом налога`);
+            mp.game.ui.notifications.show(`~b~${bankTarif}% от суммы отправлен банку который вас обслуживает`);
+        }
+    });
+};
+
+menuList.showBusinessSettingsMenu = async function(data) {
+
+    let tarif1 = await business.getPrice(1);
+    let tarif2 = await business.getPrice(2);
+    let tarif3 = await business.getPrice(3);
+    let tarif4 = await business.getPrice(4);
+
+    let priceList = ["Очень низкая", "Низкая", "Нормальная", "Высокая", "Очень высокая"];
+    let bankList = ["~r~Нет банка", `Maze Bank (${tarif1}%)`, `Pacific Bank (${tarif2}%)`, `Fleeca Bank (${tarif3}%)`, `Blaine Bank (${tarif4}%)`];
+
+    if (data.get('bank_score') > 0)
+        bankList = [`Maze Bank (${tarif1}%)`, `Pacific Bank (${tarif2}%)`, `Fleeca Bank (${tarif3}%)`, `Blaine Bank (${tarif4}%)`];
+
+    let fontList = ["ChaletLondon", "HouseScript", "Monospace", "CharletComprime", "Pricedown"];
+    let colorList = ["Black", "Red", "Pink", "Purple", "Deep Purple", "Indigo", "Blue", "Light Blue", "Cyan", "Teal", "Green", "Light Green", "Amber", "Orange", "Deep Orange", "Brown", "Blue Grey", "Grey"];
+    let interiorList = ["Executive Rich", "Executive Cool", "Executive Contrast", "Old Spice Classical", "Old Spice Vintage", "Old Spice Warms", "Power Broker Conservative", "Power Broker Polished", "Power Broker Ice"];
+
+    let nalog = await coffer.getTaxBusiness();
+
+    let menu = UIMenu.Menu.Create(`Arcadius`, `~b~Панель вашего бизнеса`);
+
+    let nalogOffset = 0;
+    if (data.get('type') == 3) //TODO
+        nalogOffset += 35;
+    if (data.get('type') == 11)
+        nalogOffset += 20;
+
+    nalog = nalog + nalogOffset;
+
+    let bankNumberStr = (data.get('bank_score') == 0 ? '~r~Отсуствует' : methods.bankFormat(data.get('bank_score')));
+
+    UIMenu.Menu.AddMenuItem("~b~Название ~s~").SetRightLabel(data.get('name'));
+    UIMenu.Menu.AddMenuItem("~b~Налог на прибыль ~s~").SetRightLabel(`${nalog}%`);
+    UIMenu.Menu.AddMenuItem("~b~Ваш счёт ~s~").SetRightLabel(`${bankNumberStr}`);
+
+    let bankItem = UIMenu.Menu.AddMenuItemList("~b~Ваш банк~s~", bankList, 'Стоимость перехода: ~g~$4,990');
+    bankItem.doName = 'setBank';
+    if (data.get('bank_id') > 0)
+        bankItem.Index = data.get('bank_id') - 1;
+    else
+        bankItem.Index = data.get('bank_id');
+
+    let fontItem = UIMenu.Menu.AddMenuItemList("~b~Шрифт на табличке~s~", fontList, 'Стоимость: ~g~$9,990\n~s~Нажмите ~g~Enter~s~ чтобы купить');
+    fontItem.doName = 'setFont';
+    fontItem.Index = data.get('sc_font');
+
+    let colorItem = UIMenu.Menu.AddMenuItemList("~b~Цвет на табличке~s~", colorList, 'Стоимость: ~g~$1,990\n~s~Нажмите ~g~Enter~s~ чтобы купить');
+    colorItem.doName = 'setColor';
+    colorItem.Index = data.get('sc_color');
+
+    let alphaItem = UIMenu.Menu.AddMenuItemList("~b~Прозрачность~s~", ['Нет', 'Да'], 'Стоимость: ~g~$990\n~s~Нажмите ~g~Enter~s~ чтобы купить');
+    alphaItem.doName = 'setAlpha';
+    alphaItem.Index = data.get('sc_alpha');
+
+    let interiorItem = UIMenu.Menu.AddMenuItemList("~b~Интерьер~s~", interiorList, 'Стоимость: ~g~$100,000\n~s~Нажмите ~g~Enter~s~ чтобы купить');
+    interiorItem.doName = 'setInterior';
+    interiorItem.Index = data.get('interior');
+
+    let priceItem = UIMenu.Menu.AddMenuItemList("~b~Цены на весь товар~s~", priceList);
+    priceItem.doName = 'setPrice';
+    priceItem.Index = data.get('price_product') - 1;
+
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+
+    let bankIndex = data.get('bank_id');
+    if (data.get('bank_id') > 0)
+        bankIndex--;
+    let colorIndex = data.get('sc_color');
+    let fontIndex = data.get('sc_font');
+    let alphaIndex = data.get('sc_alpha');
+    let intIndex = data.get('interior');
+
+    menu.ListChange.on((item, index) => {
+        if (item.doName == 'setPrice') {
+            let price = index + 1;
+            business.setPrice(data.get('id'), price);
+            mp.game.ui.notifications.show(`~b~Цена на все товары равна: ~s~${priceList[index]}`);
+            return;
+        }
+        else if (item.doName == 'setBank') {
+            bankIndex = index;
+        }
+        else if (item.doName == 'setFont') {
+            fontIndex = index;
+            business.setScaleformParams(index, colorIndex, alphaIndex);
+        }
+        else if (item.doName == 'setColor') {
+            colorIndex = index;
+            business.setScaleformParams(fontIndex, index, alphaIndex);
+        }
+        else if (item.doName == 'setAlpha') {
+            alphaIndex = index;
+            business.setScaleformParams(fontIndex, colorIndex, index);
+        }
+        else if (item.doName == 'setInterior') {
+            intIndex = index;
+            business.loadInterior(index);
+        }
+    });
+
+    menu.ItemSelect.on(async (item, index) => {
+        UIMenu.Menu.HideMenu();
+        if (item == closeItem)
+            return;
+
+        if (item.doName == 'setBank') {
+
+            let price = 4990;
+            if (price > data.get('bank')) {
+                mp.game.ui.notifications.show(`~r~На счету бизнеса нет столько денег`);
+                return;
+            }
+
+            mp.game.ui.notifications.show(`~b~Ваш новый банк: ~s~${bankList[bankIndex]}`);
+
+            business.set(data.get('id'), 'bank_score', methods.getRandomBankCard(2222));
+            if (data.get('bank_id') == 0) {
+                business.addMoney(bankIndex, price, 'Новый клиент: ' + data.get('name'));
+                business.set(data.get('id'), 'bank_id', bankIndex);
+            }
+            else {
+                business.addMoney(bankIndex, price, 'Новый клиент: ' + data.get('name'));
+                business.set(data.get('id'), 'bank_id', ++bankIndex);
+            }
+            business.removeMoney(data.get('id'), price, 'Открытие счёта');
+            business.save(data.get('id'));
+        }
+        else if (item.doName == 'setFont') {
+
+            let price = 9990;
+            if (price > data.get('bank')) {
+                business.setScaleformParams(data.get('sc_font'), data.get('sc_color'), data.get('sc_alpha'));
+                mp.game.ui.notifications.show(`~r~На счету бизнеса нет столько денег`);
+                return;
+            }
+
+            business.set(data.get('id'), 'sc_font', fontIndex);
+            coffer.addMoney(1, price);
+            business.removeMoney(data.get('id'), price, 'Установка таблички');
+            business.save(data.get('id'));
+
+            business.setScaleformParams(fontIndex, colorIndex, alphaIndex);
+            mp.game.ui.notifications.show(`~b~Ваш новый шрифт: ~s~${fontList[fontIndex]}`);
+        }
+        else if (item.doName == 'setColor') {
+
+            let price = 1990;
+            if (price > data.get('bank')) {
+                business.setScaleformParams(data.get('sc_font'), data.get('sc_color'), data.get('sc_alpha'));
+                mp.game.ui.notifications.show(`~r~На счету бизнеса нет столько денег`);
+                return;
+            }
+
+            business.set(data.get('id'), 'sc_color', colorIndex);
+            coffer.addMoney(1, price);
+            business.removeMoney(data.get('id'), price, 'Установка цвета таблички');
+            business.save(data.get('id'));
+
+            business.setScaleformParams(fontIndex, colorIndex, alphaIndex);
+            mp.game.ui.notifications.show(`~b~Ваш новый цвет: ~s~${colorList[colorIndex]}`);
+        }
+        else if (item.doName == 'setAlpha') {
+
+            let price = 990;
+            if (price > data.get('bank')) {
+                business.setScaleformParams(data.get('sc_font'), data.get('sc_color'), data.get('sc_alpha'));
+                mp.game.ui.notifications.show(`~r~На счету бизнеса нет столько денег`);
+                return;
+            }
+
+            business.set(data.get('id'), 'sc_alpha', alphaIndex);
+            coffer.addMoney(1, price);
+            business.removeMoney(data.get('id'), price, 'Прозрачность таблички');
+            business.save(data.get('id'));
+
+            business.setScaleformParams(fontIndex, colorIndex, alphaIndex);
+            mp.game.ui.notifications.show(`~b~Шрифт обновлён`);
+        }
+        else if (item.doName == 'setInterior') {
+
+            let price = 100000;
+            if (price > data.get('bank')) {
+                business.loadInterior(data.get('interior'));
+                mp.game.ui.notifications.show(`~r~На счету бизнеса нет столько денег`);
+                return;
+            }
+
+            business.set(data.get('id'), 'interior', alphaIndex);
+            coffer.addMoney(1, price);
+            business.removeMoney(data.get('id'), price, 'Обновление интерьера');
+            business.save(data.get('id'));
+
+            business.loadInterior(intIndex);
+            mp.game.ui.notifications.show(`~b~Ваш новый интерьер: ~s~${interiorList[intIndex]}`);
+        }
+    });
+};
+
+
 menuList.showAdminMenu = function() {
-    let menu = UIMenu.Menu.Create(` `, `~b~Админ меню`, false, false, false, "emailads_dynasty8", "emailads_dynasty8");
+    let menu = UIMenu.Menu.Create(`ADMIN`, `~b~Админ меню`);
 
     if (user.isAdmin() && mp.players.local.getVariable('enableAdmin') === true) {
         UIMenu.Menu.AddMenuItem("Спавн ТС").doName = 'spawnVeh';

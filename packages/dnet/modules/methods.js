@@ -62,6 +62,17 @@ methods.getRandomFloat = function () {
     return methods.getRandomInt(0, 10000) / 10000;
 };
 
+methods.getRandomBankCard = function (prefix = 0) {
+    if (prefix == 0)
+        prefix = methods.getRandomInt(1000, 9999);
+
+    let num1 = methods.getRandomInt(1000, 9999);
+    let num2 = methods.getRandomInt(1000, 9999);
+    let num3 = methods.getRandomInt(1000, 9999);
+
+    return methods.parseInt(`${prefix}${num1}${num2}${num3}`);
+};
+
 methods.unixTimeStampToDateTime = function (timestamp) {
     let dateTime = new Date(timestamp * 1000);
     return `${methods.digitFormat(dateTime.getDate())}/${methods.digitFormat(dateTime.getMonth()+1)}/${dateTime.getFullYear()} ${methods.digitFormat(dateTime.getHours())}:${methods.digitFormat(dateTime.getMinutes())}`
@@ -84,6 +95,12 @@ methods.digitFormat = function(number) {
 methods.numberFormat = function (currentMoney) {
     return currentMoney.toString().replace(/.+?(?=\D|$)/, function(f) {
         return f.replace(/(\d)(?=(?:\d\d\d)+$)/g, "$1,");
+    });
+};
+
+methods.bankFormat = function (currentMoney) {
+    return currentMoney.toString().replace(/.+?(?=\D|$)/, function(f) {
+        return f.replace(/(\d)(?=(?:\d\d\d\d)+$)/g, "$1 ");
     });
 };
 
@@ -129,6 +146,10 @@ methods.distanceToPos2D = function (v1, v2) {
 methods.removeQuotes = function (str) {
     //TODO RemoveSlash
     return str.replace('\'', '');
+};
+
+methods.removeQuotes2 = function(text) {
+    return text.replace('"', '');
 };
 
 methods.escapeRegExp = function(str) {

@@ -73,22 +73,27 @@ mysql.executeQuery = async function (query, values, callback) {
     const preQuery = new Date().getTime();
     try {
         pool.getConnection(function (err, connection) {
-            if(!err) {
-                connection.query({
-                    sql: query,
-                    timeout: 60000,
-                }, values, function (err, rows, fields) {
-                    if (!err) {
-                        callback(null, rows, fields);
-                    } else {
-                        console.log("[DATABASE ERROR] " + query + " | Error: " + err);
-                        callback(err);
-                    }
-                });
-            } else { console.log(err)}
-            const postQuery = new Date().getTime();
-            console.log(`SQL query done in: ${postQuery - preQuery}ms`);
-            connection.release();
+            try {
+                if(!err) {
+                    connection.query({
+                        sql: query,
+                        timeout: 60000,
+                    }, values, function (err, rows, fields) {
+                        if (!err) {
+                            callback(null, rows, fields);
+                        } else {
+                            console.log("[DATABASE ERROR] " + query + " | Error: " + err);
+                            callback(err);
+                        }
+                    });
+                } else { console.log(err)}
+                const postQuery = new Date().getTime();
+                console.log(`SQL query done in: ${postQuery - preQuery}ms`);
+                connection.release();
+            }
+            catch (e) {
+                console.log(e);
+            }
         });
     } catch (e) {
         console.log(e);

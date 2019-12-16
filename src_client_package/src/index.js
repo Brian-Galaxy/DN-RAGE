@@ -1,12 +1,17 @@
 import './modules/data';
 import './modules/events';
 import './betternotifs';
-import weapons from "./weapons";
+
+import business from "./property/business";
+
 import ui from "./modules/ui";
+import methods from "./modules/methods";
+
+import checkpoint from "./manager/checkpoint";
+
 import user from "./user";
 import enums from "./enums";
-import methods from "./modules/methods";
-import checkpoint from "./manager/checkpoint";
+import weapons from "./weapons";
 
 try {
     mp.gui.chat.show(false);
@@ -31,6 +36,7 @@ try {
         methods.requestIpls();
         checkpoint.checkPosition();
         enums.loadCloth();
+        business.loadScaleform();
     }
     catch (e) {
         methods.debug(e);

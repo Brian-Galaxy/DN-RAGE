@@ -66,6 +66,10 @@ mp.events.add({
     }
 });
 
+methods.sleep = function(ms) {
+    return new Promise(res => setTimeout(res, ms));
+};
+
 methods.debug = function (message) {
     try {
         mp.events.callRemote('server:clientDebug', `${message}`)
@@ -79,6 +83,40 @@ methods.parseInt = function (str) {
 
 methods.parseFloat = function (str) {
     return parseFloat(str) || 0;
+};
+
+methods.getRandomInt = function (min, max) {
+    return Math.floor(Math.random() * (max - min)) + min;
+};
+
+methods.getRandomFloat = function () {
+    return methods.getRandomInt(0, 10000) / 10000;
+};
+
+methods.getRandomBankCard = function (prefix = 0) {
+    if (prefix == 0)
+        prefix = methods.getRandomInt(1000, 9999);
+
+    let num1 = methods.getRandomInt(1000, 9999);
+    let num2 = methods.getRandomInt(1000, 9999);
+    let num3 = methods.getRandomInt(1000, 9999);
+
+    return methods.parseInt(`${prefix}${num1}${num2}${num3}`);
+};
+
+methods.unixTimeStampToDateTime = function (timestamp) {
+    let dateTime = new Date(timestamp * 1000);
+    return `${methods.digitFormat(dateTime.getDate())}/${methods.digitFormat(dateTime.getMonth()+1)}/${dateTime.getFullYear()} ${methods.digitFormat(dateTime.getHours())}:${methods.digitFormat(dateTime.getMinutes())}`
+};
+
+methods.unixTimeStampToDateTimeShort = function (timestamp) {
+    let dateTime = new Date(timestamp * 1000);
+    return `${methods.digitFormat(dateTime.getDate())}/${methods.digitFormat(dateTime.getMonth()+1)} ${methods.digitFormat(dateTime.getHours())}:${methods.digitFormat(dateTime.getMinutes())}`
+};
+
+methods.unixTimeStampToDate = function (timestamp) {
+    let dateTime = new Date(timestamp * 1000);
+    return `${methods.digitFormat(dateTime.getDate())}/${methods.digitFormat(dateTime.getMonth()+1)}/${dateTime.getFullYear()}`
 };
 
 methods.disableAllControls = function(disable) {
@@ -130,9 +168,25 @@ methods.numerToK = function (num) {
     return Math.abs(num) > 999 ? Math.sign(num)*((Math.abs(num)/1000).toFixed(1)) + 'k' : Math.sign(num)*Math.abs(num)
 };
 
+methods.digitFormat = function(number) {
+    return ("0" + number).slice(-2);
+};
+
+methods.numberFormat = function (currentMoney) {
+    return currentMoney.toString().replace(/.+?(?=\D|$)/, function(f) {
+        return f.replace(/(\d)(?=(?:\d\d\d)+$)/g, "$1,");
+    });
+};
+
 methods.moneyFormat = function (currentMoney) {
     currentMoney = methods.parseFloat(currentMoney);
     return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(currentMoney.toFixed(2));
+};
+
+methods.bankFormat = function (currentMoney) {
+    return currentMoney.toString().replace(/.+?(?=\D|$)/, function(f) {
+        return f.replace(/(\d)(?=(?:\d\d\d\d)+$)/g, "$1 ");
+    });
 };
 
 methods.getCurrentSpeed = function () {

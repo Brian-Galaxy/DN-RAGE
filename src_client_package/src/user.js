@@ -457,6 +457,91 @@ user.stopAllScreenEffect = function() {
     mp.game.invoke(methods.STOP_ALL_SCREEN_EFFECTS);
 };
 
+user.addMoney = function(money) {
+    mp.events.callRemote('server:user:addMoney', money);
+};
+
+user.removeMoney = function(money) {
+    mp.events.callRemote('server:user:removeMoney', money);
+};
+
+user.setMoney = function(money) {
+    mp.events.callRemote('server:user:setMoney', money);
+};
+
+user.getMoney = function() {
+    return user.getCashMoney();
+};
+
+user.addBankMoney = function(money) {
+    mp.events.callRemote('server:user:addBankMoney', money);
+};
+
+user.removeBankMoney = function(money) {
+    mp.events.callRemote('server:user:removeBankMoney', money);
+};
+
+user.setBankMoney = function(money) {
+    mp.events.callRemote('server:user:setBankMoney', money);
+};
+
+user.getBankMoney = function() {
+    return methods.parseFloat(user.getCache('money_bank'));
+};
+
+user.addCashMoney = function(money) {
+    mp.events.callRemote('server:user:addCashMoney', money);
+};
+
+user.removeCashMoney = function(money) {
+    mp.events.callRemote('server:user:removeCashMoney', money);
+};
+
+user.setCashMoney = function(money) {
+    mp.events.callRemote('server:user:setCashMoney', money);
+};
+
+user.getCashMoney = function() {
+    return methods.parseFloat(user.getCache('money'));
+};
+
+user.addGrabMoney = function(money) {
+    user.setGrabMoney(user.getGrabMoney() + money);
+};
+
+user.removeGrabMoney = function(money) {
+    user.setGrabMoney(user.getGrabMoney() - money);
+};
+
+user.setGrabMoney = function(money) {
+    if (money > 0)
+        user.setComponentVariation(5, 45, 0);
+    else
+        user.setComponentVariation(5, 0, 0);
+
+    Container.Data.SetLocally(0, 'GrabMoney', money);
+};
+
+user.getGrabMoney = function() {
+    return methods.parseFloat(Container.Data.GetLocally(0, 'GrabMoney'));
+};
+
+user.addDrugLevel = function(type, level) {
+    user.setDrugLevel(type, user.getDrugLevel(type) + level);
+};
+
+user.removeDrugLevel = function(type, level) {
+    user.setDrugLevel(type, user.getDrugLevel(type) - level);
+};
+
+user.setDrugLevel = function(type, level) {
+    Container.Data.SetLocally(0, 'DrugLevel' + type, level);
+};
+
+user.getDrugLevel = function(type) {
+    return methods.parseInt(Container.Data.GetLocally(0, 'DrugLevel' + type));
+};
+
 user.isLogin = function(){
     return _isLogin;
 };

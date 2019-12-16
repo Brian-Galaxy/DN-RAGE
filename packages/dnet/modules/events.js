@@ -2,11 +2,18 @@
 
 let user = require('../user');
 let enums = require('../enums');
+let coffer = require('../coffer');
+
 let Container = require('./data');
 let methods = require('./methods');
+let mysql = require('./mysql');
+
 let houses = require('../property/houses');
+let business = require('../property/business');
+
 let cloth = require('../business/cloth');
 let tattoo = require('../business/tattoo');
+
 let pickups = require('../managers/pickups');
 
 mp.events.addRemoteCounted = (eventName, handler) =>
@@ -290,6 +297,127 @@ mp.events.add('server:houses:insert', (player, interior, number, price, zone, st
 
 mp.events.add('server:user:getPlayerPos', (player) => {
     console.log(`PlayerPos: ${player.position.x}, ${player.position.y}, ${player.position.z}, ${player.heading}`)
+});
+
+mp.events.addRemoteCounted('server:business:buy', (player, id) => {
+    if (!user.isLogin(player))
+        return;
+    business.buy(player, id);
+});
+
+mp.events.addRemoteCounted('server:business:sell', (player) => {
+    if (!user.isLogin(player))
+        return;
+    business.sell(player);
+});
+
+mp.events.addRemoteCounted('server:business:log', (player, id) => {
+    if (!user.isLogin(player))
+        return;
+    mysql.executeQuery(`SELECT * FROM log_business WHERE business_id = ${methods.parseInt(id)} ORDER BY id DESC`, function (err, rows, fields) {
+        try {
+            let list = [];
+            rows.forEach(function(item) {
+
+                let price = item['price'];
+                if (item['price'] < 0)
+                    price = '~r~' + methods.moneyFormat(item['price']);
+                else
+                    price = '~g~' + methods.moneyFormat(item['price']);
+
+                list.push({id: item['id'], product: item['product'], price: price, timestamp: item['timestamp'], rp_datetime: item['rp_datetime']});
+            });
+            player.call('client:showBusinessLogMenu', [JSON.stringify(list)]);
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    });
+});
+
+mp.events.addRemoteCounted('server:events:showTypeListMenu', (player, type) => {
+    if (!user.isLogin(player))
+        return;
+    mysql.executeQuery(`SELECT name, user_name, id, sc_alpha, sc_color, sc_font, interior FROM business WHERE type = ${type}`, function (err, rows, fields) {
+        try {
+            let resultData1 = new Map();
+            let resultData2 = new Map();
+            let resultData3 = new Map();
+            rows.forEach(function(item) {
+                resultData1.set(methods.parseInt(item['id']), item['user_name']);
+                resultData2.set(methods.parseInt(item['id']), item['name']);
+                resultData3.set(methods.parseInt(item['id']), [item['interior'], item['sc_font'], item['sc_color'], item['sc_alpha']]);
+            });
+            player.call('client:showBusinessTypeListMenu', [Array.from(resultData1), Array.from(resultData2), Array.from(resultData3)]);
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    });
+});
+
+mp.events.addRemoteCounted('server:coffer:addMoney', (player, id, money) => {
+    coffer.addMoney(id, money);
+});
+
+mp.events.addRemoteCounted('server:coffer:removeMoney', (player, id, money) => {
+    coffer.removeMoney(id, money);
+});
+
+mp.events.addRemoteCounted('server:coffer:setMoney', (player, id, money) => {
+    coffer.setMoney(id, money);
+});
+
+mp.events.addRemoteCounted('server:business:addMoney', (player, id, money, itemName) => {
+    business.addMoney(id, money, itemName);
+});
+
+mp.events.addRemoteCounted('server:business:removeMoney', (player, id, money, itemName) => {
+    business.removeMoney(id, money, itemName);
+});
+
+mp.events.addRemoteCounted('server:user:addMoney', (player, money) => {
+    user.addMoney(player, money);
+});
+
+mp.events.addRemoteCounted('server:user:removeMoney', (player, money) => {
+    user.removeMoney(player, money);
+});
+
+mp.events.addRemoteCounted('server:user:setMoney', (player, money) => {
+    user.setMoney(player, money);
+});
+
+mp.events.addRemoteCounted('server:user:addBankMoney', (player, money) => {
+    user.addBankMoney(player, money);
+});
+
+mp.events.addRemoteCounted('server:user:removeBankMoney', (player, money) => {
+    user.removeBankMoney(player, money);
+});
+
+mp.events.addRemoteCounted('server:user:setBankMoney', (player, money) => {
+    user.setBankMoney(player, money);
+});
+
+mp.events.addRemoteCounted('server:user:addCashMoney', (player, money) => {
+    user.addCashMoney(player, money);
+});
+
+mp.events.addRemoteCounted('server:user:removeCashMoney', (player, money) => {
+    user.removeCashMoney(player, money);
+});
+
+mp.events.addRemoteCounted('server:user:setCashMoney', (player, money) => {
+    user.setCashMoney(player, money);
+});
+
+mp.events.addRemoteCounted('server:business:setMoney', (player, id, money) => {
+    business.setMoney(id, money);
+});
+
+mp.events.addRemoteCounted('server:business:save', (player, id) => {
+    business.save(id);
 });
 
 mp.events.addRemoteCounted("onKeyPress:E", (player) => {

@@ -12,6 +12,7 @@ let cloth = require('./business/cloth');
 let tattoo = require('./business/tattoo');
 
 let houses = require('./property/houses');
+let condos = require('./property/condos');
 let business = require('./property/business');
 
 let weather = require('./managers/weather');
@@ -23,6 +24,8 @@ function init() {
         methods.debug('INIT GAMEMODE');
 
         houses.loadAll();
+        condos.loadAll();
+        condos.loadBigAll();
         business.loadAll();
 
         weather.loadAll();

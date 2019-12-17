@@ -9,6 +9,7 @@ let methods = require('./methods');
 let mysql = require('./mysql');
 
 let houses = require('../property/houses');
+let condos = require('../property/condos');
 let business = require('../property/business');
 
 let cloth = require('../business/cloth');
@@ -295,6 +296,14 @@ mp.events.add('server:houses:insert', (player, interior, number, price, zone, st
     houses.insert(player, number, street, zone, player.position.x, player.position.y, player.position.z, player.heading, interior, price);
 });
 
+mp.events.add('server:condo:insert', (player, numberBig, number, price, interior, zone, street) => {
+    condos.insert(player, number, numberBig, street, zone, player.position.x, player.position.y, player.position.z, player.heading, interior, price);
+});
+
+mp.events.add('server:condo:insertBig', (player, number, zone, street) => {
+    condos.insertBig(player, number, street, zone, player.position.x, player.position.y, player.position.z);
+});
+
 mp.events.add('server:user:getPlayerPos', (player) => {
     console.log(`PlayerPos: ${player.position.x}, ${player.position.y}, ${player.position.z}, ${player.heading}`)
 });
@@ -438,7 +447,38 @@ mp.events.addRemoteCounted("onKeyPress:E", (player) => {
         }
     });
 
-    if (player.dimension > 0) {
+    condos.getAll().forEach((val, key, object) => {
+        if (methods.distanceToPos(player.position, val.position) < 1.5) {
+            let houseData = condos.getHouseData(key);
+            if (houseData.get('user_id') == 0)
+                player.call('client:showCondoBuyMenu', [Array.from(houseData)]);
+            else {
+                player.call('client:showCondoOutMenu', [Array.from(houseData)]);
+            }
+        }
+    });
+
+    if (player.dimension >= enums.offsets.condo && player.dimension < enums.offsets.condoBig) {
+
+        houses.interiorList.forEach(function(item) {
+            let x = item[0];
+            let y = item[1];
+            let z = item[2];
+
+            if (methods.distanceToPos(player.position, new mp.Vector3(x, y, z)) < 1.5) {
+                let houseData = condos.getHouseData(player.dimension - enums.offsets.condo);
+                player.call('client:showCondoInMenu', [Array.from(houseData)]);
+            }
+        });
+
+        /*enums.kitchenIntData.forEach(function(item, i, arr) {
+            let pos = new mp.Vector3(item[0], item[1], item[2]);
+            if (methods.distanceToPos(player.position, pos) < 1.5) {
+                player.call('client:showKitchenMenu');
+            }
+        });*/
+    }
+    else if (player.dimension > 0) {
 
         houses.interiorList.forEach(function(item) {
             let x = item[0];
@@ -449,8 +489,6 @@ mp.events.addRemoteCounted("onKeyPress:E", (player) => {
                 let houseData = houses.getHouseData(player.dimension);
                 player.call('client:showHouseInMenu', [Array.from(houseData)]);
             }
-
-            methods.createStaticCheckpoint(x, y, z, "Нажмите ~g~Е~s~ чтобы открыть меню");
         });
 
         /*let houseData = houses.getHouseData(player.dimension);
@@ -490,6 +528,32 @@ mp.events.addRemoteCounted("server:houses:lockStatus", (player, id, lockStatus) 
     if (!user.isLogin(player))
         return;
     houses.lockStatus(id, lockStatus);
+});
+
+//Condos
+mp.events.addRemoteCounted("server:condos:enter", (player, id) => {
+    if (!user.isLogin(player))
+        return;
+    condos.enter(player, id);
+});
+
+mp.events.addRemoteCounted("server:condos:buy", (player, id) => {
+    if (!user.isLogin(player))
+        return;
+    condos.buy(player, id);
+});
+
+mp.events.addRemoteCounted("server:condos:updatePin", (player, id, pin) => {
+    if (!user.isLogin(player))
+        return;
+    condos.updatePin(id, pin);
+});
+
+
+mp.events.addRemoteCounted("server:condos:lockStatus", (player, id, lockStatus) => {
+    if (!user.isLogin(player))
+        return;
+    condos.lockStatus(id, lockStatus);
 });
 
 

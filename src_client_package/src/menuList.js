@@ -9,6 +9,7 @@ import enums from './enums';
 import coffer from './coffer';
 
 import houses from './property/houses';
+import condos from './property/condos';
 import business from './property/business';
 
 import cloth from './business/cloth';
@@ -126,6 +127,125 @@ menuList.showHouseOutMenu = async function(h) {
                     mp.game.ui.notifications.show('~r~Дверь закрыта, ее можно взломать отмычкой');
                 else
                     houses.enter(h.get('id'));
+            }
+            catch (e) {
+                methods.debug(e);
+            }
+        }
+    });
+};
+
+menuList.showCondoBuyMenu = async function(h) {
+
+    let menu = UIMenu.Menu.Create(`№${h.get('id')}`, `~b~Адрес: ~s~${h.get('address')} ${h.get('number')}`);
+
+    let buyHouseItem = UIMenu.Menu.AddMenuItem(`Купить квартиру за ~g~${methods.moneyFormat(h.get('price'))}`);
+    let enterHouseItem = null;
+
+    enterHouseItem = UIMenu.Menu.AddMenuItem("~g~Осмотреть квартиру");
+
+    /*if (user.getCache('job') == 'mail' || user.getCache('job') == 'mail2') {
+        if (!await Container.Data.Has(h.get('id'), 'isMail'))
+            UIMenu.Menu.AddMenuItem("~g~Положить почту").doName = h.get('id');
+        else
+            UIMenu.Menu.AddMenuItem("~o~Дом уже обслуживался");
+    }*/
+
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+
+    menu.ItemSelect.on(async item => {
+        UIMenu.Menu.HideMenu();
+        if (item == enterHouseItem) {
+            condos.enter(h.get('id'));
+        }
+        else if (item == buyHouseItem) {
+            condos.buy(h.get('id'));
+        }
+    });
+};
+
+menuList.showCondoInMenu = function(h) {
+
+    let menu = UIMenu.Menu.Create(`№${h.get('id')}`, `~b~Адрес: ~s~${h.get('address')} ${h.get('number')}`);
+
+    if (h.get('user_id') == user.getCache('id')) {
+        if (h.get('pin') > 0)
+            UIMenu.Menu.AddMenuItem("~y~Сменить пинкод").doName = 'setPin';
+        else {
+            let lockItem = UIMenu.Menu.AddMenuItemList("Дверь", ['~g~Открыто', '~r~Закрыто']);
+            lockItem.doName = 'setLock';
+            lockItem.Index = h.get('is_lock') ? 1 : 0;
+        }
+        //if (h.get('is_sec'))
+        //    UIMenu.Menu.AddMenuItem("~y~Подключиться к камере").doName = 'sec';
+
+    }
+
+    let exitHouseItem = UIMenu.Menu.AddMenuItem("~g~Выйти из квартиры");
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+
+    menu.ListChange.on((item, index) => {
+        if (item.doName == 'setLock') {
+            if (index == 1) {
+                mp.game.ui.notifications.show('Дверь ~r~закрыта');
+                condos.lockStatus(h.get('id'), true);
+            }
+            else {
+                mp.game.ui.notifications.show('Дверь ~g~открыта');
+                condos.lockStatus(h.get('id'), false);
+            }
+        }
+    });
+
+    menu.ItemSelect.on(async item => {
+        UIMenu.Menu.HideMenu();
+        if (item == exitHouseItem) {
+            condos.exit(h.get('x'), h.get('y'), h.get('z'));
+        }
+        if (item.doName == 'setPin') {
+            let pass = methods.parseInt(await UIMenu.Menu.GetUserInput("Пароль", "", 5));
+            if (pass < 1) {
+                mp.game.ui.notifications.show('~r~Пароль должен быть больше нуля');
+                return false;
+            }
+            mp.game.ui.notifications.show('~g~Ваш новый пароль: ~s~' + pass);
+            condos.updatePin(h.get('id'), pass);
+        }
+    });
+};
+
+menuList.showCondoOutMenu = async function(h) {
+
+    let menu = UIMenu.Menu.Create(`№${h.get('id')}`, `~b~Адрес: ~s~${h.get('address')} ${h.get('number')}`);
+    let infoItem = UIMenu.Menu.AddMenuItem(`~b~Владелец:~s~ ${h.get('user_name')}`);
+
+    let enterHouseItem = UIMenu.Menu.AddMenuItem("~g~Войти");
+
+    /*if (user.getCache('job') == 'mail' || user.getCache('job') == 'mail2') {
+        if (!await Container.Data.Has(h.get('id'), 'isMail'))
+            UIMenu.Menu.AddMenuItem("~g~Положить почту").doName = h.get('id');
+        else
+            UIMenu.Menu.AddMenuItem("~o~Дом уже обслуживался");
+    }*/
+
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+
+    menu.ItemSelect.on(async item => {
+        UIMenu.Menu.HideMenu();
+        if (item == enterHouseItem) {
+            try {
+                if (h.get('pin') > 0 && user.getCache('id') != h.get('user_id')) {
+                    mp.game.ui.notifications.show('~r~Введите пинкод');
+                    let pass = methods.parseInt(await UIMenu.Menu.GetUserInput("Пароль", "", 5));
+                    if (pass == h.get('pin'))
+                        condos.enter(h.get('id'));
+                    else
+                        mp.game.ui.notifications.show('~r~Вы ввели не правильный пинкод');
+                }
+                else if (h.get('is_lock') && h.get('user_id') != user.getCache('id'))
+                    mp.game.ui.notifications.show('~r~Дверь закрыта, ее можно взломать отмычкой');
+                else
+                    condos.enter(h.get('id'));
             }
             catch (e) {
                 methods.debug(e);

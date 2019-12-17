@@ -464,6 +464,40 @@ mp.events.add('client:showHouseInMenu', (item) => {
     }
 });
 
+
+mp.events.add('client:showCondoOutMenu', (item) => {
+    try {
+        methods.debug('Event: client:menuList:showCondoOutMenu');
+        menuList.showCondoOutMenu(new Map(item)).then();
+    }
+    catch (e) {
+        methods.debug('Exception: events:client:showCondoOutMenu');
+        methods.debug(e);
+    }
+});
+
+mp.events.add('client:showCondoBuyMenu', (item) => {
+    try {
+        methods.debug('Event: client:menuList:showCondoBuyMenu');
+        menuList.showCondoBuyMenu(new Map(item)).then();
+    }
+    catch (e) {
+        methods.debug('Exception: events:client:showCondoBuyMenu');
+        methods.debug(e);
+    }
+});
+
+mp.events.add('client:showCondoInMenu', (item) => {
+    try {
+        methods.debug('Event: client:menuList:showCondoInMenu');
+        menuList.showCondoInMenu(new Map(item));
+    }
+    catch (e) {
+        methods.debug('Exception: events:client:showCondoInMenu');
+        methods.debug(e);
+    }
+});
+
 mp.events.add('client:menuList:showShopClothMenu', (component, clothColor, ClothData) => {
     methods.debug('Event: client:menuList:showShopClothMenu');
     menuList.showShopClothMenu(component, clothColor, ClothData);
@@ -607,6 +641,24 @@ mp.events.add("playerCommand", async (command) => {
             return;
         }
         mp.events.callRemote('server:houses:insert', args[1], args[2], args[3], ui.getCurrentZone(), ui.getCurrentStreet())
+    }
+    else if (command.toLowerCase().slice(0, 2) === "c ") {
+        let args = command.split(' ');
+        if (args.length != 5) {
+            mp.gui.chat.push(`Не верно введено кол-во параметров `);
+            mp.gui.chat.push(`/c [ID Дома] [№ Кв] [Цена] [ID Интерьера]`);
+            return;
+        }
+        mp.events.callRemote('server:condo:insert', args[1], args[2], args[3], args[4], ui.getCurrentZone(), ui.getCurrentStreet())
+    }
+    else if (command.toLowerCase().slice(0, 3) === "cb ") {
+        let args = command.split(' ');
+        if (args.length != 2) {
+            mp.gui.chat.push(`Не верно введено кол-во параметров `);
+            mp.gui.chat.push(`/cb [№ Дома]`);
+            return;
+        }
+        mp.events.callRemote('server:condo:insertBig', args[1], ui.getCurrentZone(), ui.getCurrentStreet())
     }
     else if (command.slice(0, 5) === "eval ") {
         if (!user.isLogin() || !user.isAdmin(5))

@@ -2,6 +2,16 @@ let enums = exports;
 
 enums.vehicleInfo = [];
 
+enums.offsets = { //TODO
+    house: 100000,
+    condo: 200000,
+    condoBig: 290000,
+    apartment: 300000,
+    vehicle: 400000,
+    yacht: 500000,
+    business: 600000
+};
+
 enums.userData = [
     "id",
     "social",

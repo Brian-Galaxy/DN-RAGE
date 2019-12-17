@@ -32,24 +32,24 @@ houses.loadAll = function() {
     mysql.executeQuery(`SELECT * FROM houses`, function (err, rows, fields) {
         rows.forEach(function(item) {
 
-            Container.Data.Set(100000 + methods.parseInt(item['id']), 'id', item['id']);
-            Container.Data.Set(100000 + methods.parseInt(item['id']), 'number', item['number']);
-            Container.Data.Set(100000 + methods.parseInt(item['id']), 'address', item['address']);
-            Container.Data.Set(100000 + methods.parseInt(item['id']), 'street', item['street']);
-            Container.Data.Set(100000 + methods.parseInt(item['id']), 'price', item['price']);
-            Container.Data.Set(100000 + methods.parseInt(item['id']), 'user_id', item['user_id']);
-            Container.Data.Set(100000 + methods.parseInt(item['id']), 'user_name', item['user_name']);
-            Container.Data.Set(100000 + methods.parseInt(item['id']), 'pin', item['user_name']);
-            Container.Data.Set(100000 + methods.parseInt(item['id']), 'is_safe', item['is_safe']);
-            Container.Data.Set(100000 + methods.parseInt(item['id']), 'is_sec', item['is_sec']);
-            Container.Data.Set(100000 + methods.parseInt(item['id']), 'is_lock', item['is_lock']);
-            Container.Data.Set(100000 + methods.parseInt(item['id']), 'interior', item['interior']);
-            Container.Data.Set(100000 + methods.parseInt(item['id']), 'x', item['x']);
-            Container.Data.Set(100000 + methods.parseInt(item['id']), 'y', item['y']);
-            Container.Data.Set(100000 + methods.parseInt(item['id']), 'z', item['z']);
-            Container.Data.Set(100000 + methods.parseInt(item['id']), 'rot', item['rot']);
-            Container.Data.Set(100000 + methods.parseInt(item['id']), 'tax_money', item['tax_money']);
-            Container.Data.Set(100000 + methods.parseInt(item['id']), 'tax_score', item['tax_score']);
+            houses.set(item['id'], 'id', item['id']);
+            houses.set(item['id'], 'number', item['number']);
+            houses.set(item['id'], 'address', item['address']);
+            houses.set(item['id'], 'street', item['street']);
+            houses.set(item['id'], 'price', item['price']);
+            houses.set(item['id'], 'user_id', item['user_id']);
+            houses.set(item['id'], 'user_name', item['user_name']);
+            houses.set(item['id'], 'pin', item['user_name']);
+            houses.set(item['id'], 'is_safe', item['is_safe']);
+            houses.set(item['id'], 'is_sec', item['is_sec']);
+            houses.set(item['id'], 'is_lock', item['is_lock']);
+            houses.set(item['id'], 'interior', item['interior']);
+            houses.set(item['id'], 'x', item['x']);
+            houses.set(item['id'], 'y', item['y']);
+            houses.set(item['id'], 'z', item['z']);
+            houses.set(item['id'], 'rot', item['rot']);
+            houses.set(item['id'], 'tax_money', item['tax_money']);
+            houses.set(item['id'], 'tax_score', item['tax_score']);
 
             let hBlip = methods.createBlip(new mp.Vector3(parseFloat(item['x']), parseFloat(item['y']), parseFloat(item['z'])), 40, item['user_id'] > 0 ? 59 : 69, 0.4);
             methods.createStaticCheckpoint(hBlip.position.x, hBlip.position.y, hBlip.position.z, "Нажмите ~g~Е~s~ чтобы открыть меню");
@@ -77,23 +77,23 @@ houses.loadLast = function() {
 
         rows.forEach(function(item) {
 
-            Container.Data.Set(100000 + methods.parseInt(item['id']), 'id', item['id']);
-            Container.Data.Set(100000 + methods.parseInt(item['id']), 'number', item['number']);
-            Container.Data.Set(100000 + methods.parseInt(item['id']), 'address', item['address']);
-            Container.Data.Set(100000 + methods.parseInt(item['id']), 'street', item['street']);
-            Container.Data.Set(100000 + methods.parseInt(item['id']), 'price', item['price']);
-            Container.Data.Set(100000 + methods.parseInt(item['id']), 'user_id', item['user_id']);
-            Container.Data.Set(100000 + methods.parseInt(item['id']), 'user_name', item['user_name']);
-            Container.Data.Set(100000 + methods.parseInt(item['id']), 'pin', item['user_name']);
-            Container.Data.Set(100000 + methods.parseInt(item['id']), 'is_safe', item['is_safe']);
-            Container.Data.Set(100000 + methods.parseInt(item['id']), 'is_sec', item['is_sec']);
-            Container.Data.Set(100000 + methods.parseInt(item['id']), 'is_lock', item['is_lock']);
-            Container.Data.Set(100000 + methods.parseInt(item['id']), 'interior', item['interior']);
-            Container.Data.Set(100000 + methods.parseInt(item['id']), 'x', item['x']);
-            Container.Data.Set(100000 + methods.parseInt(item['id']), 'y', item['y']);
-            Container.Data.Set(100000 + methods.parseInt(item['id']), 'z', item['z']);
-            Container.Data.Set(100000 + methods.parseInt(item['id']), 'tax_money', item['tax_money']);
-            Container.Data.Set(100000 + methods.parseInt(item['id']), 'tax_score', item['tax_score']);
+            houses.set(item['id'], 'id', item['id']);
+            houses.set(item['id'], 'number', item['number']);
+            houses.set(item['id'], 'address', item['address']);
+            houses.set(item['id'], 'street', item['street']);
+            houses.set(item['id'], 'price', item['price']);
+            houses.set(item['id'], 'user_id', item['user_id']);
+            houses.set(item['id'], 'user_name', item['user_name']);
+            houses.set(item['id'], 'pin', item['user_name']);
+            houses.set(item['id'], 'is_safe', item['is_safe']);
+            houses.set(item['id'], 'is_sec', item['is_sec']);
+            houses.set(item['id'], 'is_lock', item['is_lock']);
+            houses.set(item['id'], 'interior', item['interior']);
+            houses.set(item['id'], 'x', item['x']);
+            houses.set(item['id'], 'y', item['y']);
+            houses.set(item['id'], 'z', item['z']);
+            houses.set(item['id'], 'tax_money', item['tax_money']);
+            houses.set(item['id'], 'tax_score', item['tax_score']);
 
             let hBlip = methods.createBlip(new mp.Vector3(parseFloat(item['x']), parseFloat(item['y']), parseFloat(item['z'])), 40, item['user_id'] > 0 ? 59 : 69, 0.4);
             methods.createStaticCheckpoint(hBlip.position.x, hBlip.position.y, hBlip.position.z, "Нажмите ~g~Е~s~ чтобы открыть меню");
@@ -127,6 +127,10 @@ houses.get = function(id, key) {
     return Container.Data.Get(100000 + methods.parseInt(id), key);
 };
 
+houses.set = function(id, key, val) {
+    Container.Data.Set(100000 + methods.parseInt(id), key, val);
+};
+
 houses.getCountLiveUser = function(id, cb) {
     id = methods.parseInt(id);
     mysql.executeQuery(`SELECT id FROM users WHERE house_id = ${id}`, function (err, rows, fields) {
@@ -144,8 +148,8 @@ houses.updateOwnerInfo = function (id, userId, userName) {
     id = methods.parseInt(id);
     userId = methods.parseInt(userId);
 
-    Container.Data.Set(100000 + id, "user_name", userName);
-    Container.Data.Set(100000 + id, "user_id", userId);
+    houses.set(id, "user_name", userName);
+    houses.set(id, "user_id", userId);
 
     hBlips.get(id).color = userId > 0 ? 59 : 69;
 
@@ -161,15 +165,14 @@ houses.updatePin = function (id, pin) {
     methods.debug('houses.updatePin');
     id = methods.parseInt(id);
     pin = methods.parseInt(pin);
-    Container.Data.Set(100000 + id, 'pin', pin);
+    houses.set(id, 'pin', pin);
     mysql.executeQuery("UPDATE houses SET pin = '" + pin + "' where id = '" + id + "'");
 };
-
 
 houses.lockStatus = function (id, lockStatus) {
     methods.debug('houses.lockStatus');
     id = methods.parseInt(id);
-    Container.Data.Set(100000 + id, 'is_lock', lockStatus);
+    houses.set(id, 'is_lock', lockStatus);
     mysql.executeQuery("UPDATE houses SET is_lock = '" + methods.boolToInt(lockStatus) + "' where id = '" + id + "'");
 };
 
@@ -194,11 +197,11 @@ houses.sell = function (player) {
 
     user.set(player, 'house_id', 0);
 
-    /*if (user.get(player, 'reg_status') != 3) //TODO
+    if (user.get(player, 'reg_status') != 3)
     {
         user.set(player, "reg_time", 28);
         user.set(player, "reg_status", 1);
-    }*/
+    }
 
     houses.updateOwnerInfo(hInfo.get('id'), 0, '');
 
@@ -237,10 +240,10 @@ houses.buy = function (player, id) {
 
     user.set(player, 'house_id', id);
 
-    /*if (user.get(player, 'reg_status') != 3) { //TODO
+    if (user.get(player, 'reg_status') != 3) {
         user.set(player, 'reg_time', 372);
         user.set(player, 'reg_status', 2);
-    }*/
+    }
 
     houses.updateOwnerInfo(id, user.get(player, 'id'), user.get(player, 'name'));
 

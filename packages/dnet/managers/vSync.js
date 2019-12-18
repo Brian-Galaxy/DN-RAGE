@@ -187,6 +187,7 @@ vSync.setEngineState = function(v, status) {
     /*let data = vSync.getVehicleSyncData(v);
     data.Engine = status;
     vSync.updateVehicleSyncData(v, data);*/
+    methods.debug('ENGINE', status);
     v.engine = status;
     //mp.players.callInRange(v.position, streamDist, "vSync:setEngineState", [v.id, status]);
 };
@@ -258,16 +259,17 @@ mp.events.add('s:vSync:setDirtLevel', (player, vId, level) => {
 });
 
 mp.events.add('s:vSync:setEngineStatus', (player, vId, status) => {
+    methods.debug('setEngineStatus', status);
     let veh = mp.vehicles.at(vId);
     if (mp.players.exists(player) && vehicles.exists(veh))
         vSync.setEngineState(player.vehicle, status);
 });
 
-mp.events.add('s:vSync:updateValues', (player, vId, status) => {
+/*mp.events.add('s:vSync:updateValues', (player, vId, status) => {
     let veh = mp.vehicles.at(vId);
     if (mp.players.exists(player) && vehicles.exists(veh))
         vSync.setEngineState(player.vehicle, status);
-});
+});*/
 
 mp.events.add('s:vSync:setInteriorLightState', (player, vId, status) => {
     let veh = mp.vehicles.at(vId);

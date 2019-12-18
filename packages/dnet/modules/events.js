@@ -18,6 +18,25 @@ let tattoo = require('../business/tattoo');
 
 let pickups = require('../managers/pickups');
 
+mp.events.__add__ = mp.events.add;
+
+mp.events.add = (eventName, eventCallback) => {
+    const proxy = new Proxy(eventCallback, {
+        apply: (target, thisArg, argumentsList) => {
+            const entity = argumentsList[0];
+            const entityType = entity ? entity.type : null;
+            const entityName = entityType !== null ? entityType === 'player' ? entity.socialClub : `${entity.type}(${entity.id})` : null;
+
+            const callText = entityName !== null ? `${entityName} call event ${eventName}` : `Event ${eventName} called`;
+
+            target.apply(thisArg, argumentsList);
+            return;
+        }
+    });
+
+    mp.events.__add__(eventName, proxy);
+};
+
 mp.events.addRemoteCounted = (eventName, handler) =>
 {
     mp.events.add(eventName, function()
@@ -589,6 +608,179 @@ mp.events.add("client:enterStaticCheckpoint", (player, checkpointId) => {
 
 mp.events.addRemoteCounted('server:fixCheckpointList', (player) => {
     methods.updateCheckpointList(player);
+});
+
+mp.events.addRemoteCounted('server:user:fixNearestVehicle', (player) => {
+    if (!user.isLogin(player))
+        return;
+    let veh = methods.getNearestVehicleWithCoords(player.position, 10.0);
+    if (vehicles.exists(veh))
+        veh.repair();
+});
+
+mp.events.addRemoteCounted('server:deleteNearstVehicle', (player) => {
+    if (!user.isLogin(player))
+        return;
+    let vehicle = methods.getNearestVehicleWithCoords(player.position, 5);
+    if (vehicles.exists(vehicle))
+        vehicle.destroy();
+});
+
+mp.events.addRemoteCounted('server:respawnNearstVehicle', (player) => {
+    if (!user.isLogin(player))
+        return;
+    let vehicle = methods.getNearestVehicleWithCoords(player.position, 5);
+    if (vehicles.exists(vehicle))
+        vehicles.respawn(vehicle);
+});
+
+mp.events.addRemoteCounted('server:flipNearstVehicle', (player) => {
+    if (!user.isLogin(player))
+        return;
+    let vehicle = methods.getNearestVehicleWithCoords(player.position, 5);
+    if (vehicles.exists(vehicle))
+        vehicle.rotation = new mp.Vector3(0, 0, vehicle.heading);
+});
+
+mp.events.addRemoteCounted('server:vehicle:engineStatus', (player) => {
+    if (!user.isLogin(player))
+        return;
+    try {
+        if (player.vehicle && player.seat == -1) {
+            vehicles.engineStatus(player, player.vehicle);
+        }
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.addRemoteCounted('server:vehicle:lockStatus', (player) => {
+    if (!user.isLogin(player))
+        return;
+    try {
+        if (player.vehicle && player.seat == -1) {
+            vehicles.lockStatus(player, player.vehicle);
+            return;
+        }
+
+        let vehicle = methods.getNearestVehicleWithCoords(player.position, 5);
+        if (vehicles.exists(vehicle)) {
+            let data = vehicles.getData(vehicle.getVariable('container'));
+            if (data.has('fraction_id')) {
+                if (data.get('fraction_id') == user.get(player, 'fraction_id'))
+                    vehicles.lockStatus(player, vehicle);
+                else
+                    player.notify('~r~У Вас нет ключей от транспорта');
+            } else if (data.has('owner_id')) {
+                if (data.get('owner_id') == user.getId(player))
+                    vehicles.lockStatus(player, vehicle);
+                else
+                    player.notify('~r~У Вас нет ключей от транспорта');
+            } else if (data.has('rentOwner')) {
+                if (data.get('rentOwner') == user.getId(player))
+                    vehicles.lockStatus(player, vehicle);
+                else
+                    player.notify('~r~У Вас нет ключей от транспорта');
+            } else if (data.has('id_user')) {
+                if (data.get('id_user') == user.getId(player))
+                    vehicles.lockStatus(player, vehicle);
+                else
+                    player.notify('~r~У Вас нет ключей от транспорта');
+            } else
+                vehicles.lockStatus(player, vehicle);
+        }
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.addRemoteCounted('server:vehicle:neonStatus', (player) => {
+    if (!user.isLogin(player))
+        return;
+    try {
+        if (player.vehicle && player.seat == -1) {
+            vehicles.neonStatus(player, player.vehicle);
+        }
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.addRemoteCounted('server:vehicle:setColor', (player, color1, color2) => {
+    if (!user.isLogin(player))
+        return;
+    try {
+        if (player.vehicle && player.seat == -1) {
+            player.vehicle.setColor(color1, color2);
+        }
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.addRemoteCounted('server:vehicle:setLivery', (player, liv) => {
+    if (!user.isLogin(player))
+        return;
+    try {
+        if (player.vehicle && player.seat == -1) {
+            player.vehicle.livery = liv;
+        }
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.addRemoteCounted('server:vehicle:occ', (player) => {
+    if (!user.isLogin(player))
+        return;
+    try {
+        if (player.vehicle && player.seat == -1) {
+
+            player.vehicle.getOccupants().forEach(function (pl) {
+                console.log(user.getRpName(pl));
+            })
+        }
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.addRemoteCounted('server:vehicle:park', (player) => {
+    if (!user.isLogin(player))
+        return;
+    try {
+        let veh = player.vehicle;
+        if (veh) {
+            let pos = veh.position;
+            vehicles.park(veh.getVariable('container'), pos.x, pos.y, pos.z, veh.heading);
+            player.notify('~b~Вы припарковали свой транспорт');
+        }
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.addRemoteCounted('server:vehicle:setNeonColor', (player, r, g, b) => {
+    if (!user.isLogin(player))
+        return;
+    try {
+        if (player.vehicle && player.seat == -1) {
+            player.vehicle.setNeonColor(r, g, b);
+            vehicles.set(player.vehicle.getVariable('container'), 'neon_r', r);
+            vehicles.set(player.vehicle.getVariable('container'), 'neon_g', g);
+            vehicles.set(player.vehicle.getVariable('container'), 'neon_b', b);
+        }
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 });
 
 mp.events.add('playerJoin', player => {

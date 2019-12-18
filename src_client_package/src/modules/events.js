@@ -7,6 +7,7 @@ import ui from "./ui";
 import checkpoint from "../manager/checkpoint";
 import weather from "../manager/weather";
 import enums from "../enums";
+import vehicles from "../property/vehicles";
 
 mp.gui.chat.enabled = false;
 
@@ -615,6 +616,22 @@ mp.keys.bind(0x45, true, function() {
     catch (e) {
         methods.debug(e);
     }
+});
+
+//B
+mp.keys.bind(0x42, true, function() {
+    if (!user.isLogin())
+        return;
+    if (!methods.isBlockKeys())
+        vehicles.engineVehicle();
+});
+
+//CTRL
+mp.keys.bind(0xA2, true, function() {
+    if (!user.isLogin())
+        return;
+    if (!methods.isBlockKeys())
+        vehicles.engineVehicle();
 });
 
 // Commands in 2020......

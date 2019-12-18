@@ -77,83 +77,15 @@ vSync.updateValues = function(entity) {
             entity.setInteriorlight(actualData.InteriorLight);
             entity.setTaxiLights(actualData.TaxiLight);
 
-            /*for (x = 0; x < 8; x++) {
-                if (actualData.Door[x] === 1)
-                    entity.setDoorOpen(x, false, false);
-                else if (actualData.Door[x] === 0)
-                    entity.setDoorShut(x, true);
-                else
-                    entity.setDoorBroken(x, true);
-            }
 
-            for (x = 0; x < 4; x++) {
-                if (actualData.Window[x] === 0) {
-                    entity.fixWindow(x);
-                }
-                else if (actualData.Window[x] === 1) {
-                    entity.rollDownWindow(x);
-                }
-                else {
-                    entity.smashWindow(x);
-                }
-            }
-
-            for (x = 0; x < 8; x++) {
-                if (actualData.Wheel[x] === 0) {
-                    entity.setTyreFixed(x);
-                }
-                else if (actualData.Wheel[x] === 1) {
-                    entity.setTyreBurst(x, false, 0);
-                }
-                else {
-                    entity.setTyreBurst(x, true, 1000);
-                }
-            }
-
-            //For trailer mid wheels
-            if (actualData.Wheel[8] === 0) {
-                entity.setTyreFixed(45);
-            }
-            else if (actualData.Wheel[8] === 1) {
-                entity.setTyreBurst(45, false, 0);
-            }
-            else {
-                entity.setTyreBurst(45, true, 1000);
-            }
-
-            if (actualData.Wheel[9] === 0) {
-                entity.setTyreFixed(47);
-            }
-            else if (actualData.Wheel[9] === 1) {
-                entity.setTyreBurst(47, false, 0);
-            }
-            else {
-                entity.setTyreBurst(47, true, 1000);
-            }*/
         }
         else {
 
             setTimeout(function () {
-                mp.events.callRemote("s:vSync:setEngineStatus", entity, false);
-                vSync.updateValues(entity);
+                //mp.events.callRemote("s:vSync:setEngineStatus", entity, false); //TODO
+                //vSync.updateValues(entity);
             }, 2000);
         }
-
-        //Make doors breakable again
-        /*setTimeout(() => {
-            try {
-                if (!mp.vehicles.exists(entity))
-                    return;
-
-                for (x = 0; x < 8; x++) {
-                    entity.setDoorBreakable(x, true);
-                }
-            }
-            catch (e) {
-                methods.debug(e);
-            }
-        }, 1500);*/
-
     }
 };
 
@@ -223,184 +155,9 @@ vSync.syncToServer = function(entity) {
         }
 
         if (typeor !== 'undefined') {
-
-            /*var Status = [];
-            let y = 0;
-            for (y = 0; y < 8; y++) {
-                if (entity.isDoorDamaged(y)) {
-                    Status.push(2);
-                }
-                else if (entity.getDoorAngleRatio(y) > 0.15) {
-                    Status.push(1);
-                }
-                else {
-                    Status.push(0);
-                }
-            }
-
-            if (actualData.Door[0] != Status[0] || actualData.Door[1] != Status[1] || actualData.Door[2] != Status[2] || actualData.Door[3] != Status[3] || actualData.Door[4] != Status[4] || actualData.Door[5] != Status[5] || actualData.Door[6] != Status[6] || actualData.Door[7] != Status[7])
-                mp.events.callRemote("s:vSync:setDoorData", entity, Status[0], Status[1], Status[2], Status[3], Status[4], Status[5], Status[6], Status[7]);*/
-
-            var Status = [];
-            /*if (entity.isWindowIntact(0)) {
-                if (entity.getBoneIndexByName("window_rf") === -1) {
-                    Status.push(1);
-                }
-                else {
-                    Status.push(0);
-                }
-            }
-            else {
-                Status.push(2);
-            }
-            if (entity.isWindowIntact(1)) {
-                if (entity.getBoneIndexByName("window_lf") === -1) {
-                    Status.push(1);
-                }
-                else {
-                    Status.push(0);
-                }
-            }
-            else {
-                Status.push(2);
-            }
-            if (entity.isWindowIntact(2)) {
-                if (entity.getBoneIndexByName("window_rr") === -1) {
-                    Status.push(1);
-                }
-                else {
-                    Status.push(0);
-                }
-            }
-            else {
-                Status.push(2);
-            }
-            if (entity.isWindowIntact(3)) {
-                if (entity.getBoneIndexByName("window_lr") === -1) {
-                    Status.push(1);
-                }
-                else {
-                    Status.push(0);
-                }
-            }
-            else {
-                Status.push(2);
-            }
-
-            if (actualData.Window[0] != Status[0] || actualData.Window[1] != Status[1] || actualData.Window[2] != Status[2] || actualData.Window[3] != Status[3])
-                mp.events.callRemote("s:vSync:setWindowData", entity.remoteId, Status[0], Status[1], Status[2], Status[3]);
-
-            Status = [];
-            if (!entity.isTyreBurst(0, false)) {
-                Status.push(0);
-            }
-            else if (entity.isTyreBurst(0, false)) {
-                Status.push(1);
-            }
-            else {
-                Status.push(2);
-            }
-
-            if (!entity.isTyreBurst(1, false)) {
-                Status.push(0);
-            }
-            else if (entity.isTyreBurst(1, false)) {
-                Status.push(1);
-            }
-            else {
-                Status.push(2);
-            }
-
-            if (!entity.isTyreBurst(2, false)) {
-                Status.push(0);
-            }
-            else if (entity.isTyreBurst(2, false)) {
-                Status.push(1);
-            }
-            else {
-                Status.push(2);
-            }
-
-            if (!entity.isTyreBurst(3, false)) {
-                Status.push(0);
-            }
-            else if (entity.isTyreBurst(3, false)) {
-                Status.push(1);
-            }
-            else {
-                Status.push(2);
-            }
-
-            if (!entity.isTyreBurst(4, false)) {
-                Status.push(0);
-            }
-            else if (entity.isTyreBurst(4, false)) {
-                Status.push(1);
-            }
-            else {
-                Status.push(2);
-            }
-
-            if (!entity.isTyreBurst(5, false)) {
-                Status.push(0);
-            }
-            else if (entity.isTyreBurst(5, false)) {
-                Status.push(1);
-            }
-            else {
-                Status.push(2);
-            }
-
-            if (!entity.isTyreBurst(6, false)) {
-                Status.push(0);
-            }
-            else if (entity.isTyreBurst(6, false)) {
-                Status.push(1);
-            }
-            else {
-                Status.push(2);
-            }
-
-            if (!entity.isTyreBurst(7, false)) {
-                Status.push(0);
-            }
-            else if (entity.isTyreBurst(7, false)) {
-                Status.push(1);
-            }
-            else {
-                Status.push(2);
-            }
-
-            if (!entity.isTyreBurst(45, false)) {
-                Status.push(0);
-            }
-            else if (entity.isTyreBurst(45, false)) {
-                Status.push(1);
-            }
-            else {
-                Status.push(2);
-            }
-
-            if (!entity.isTyreBurst(47, false)) {
-                Status.push(0);
-            }
-            else if (entity.isTyreBurst(47, false)) {
-                Status.push(1);
-            }
-            else {
-                Status.push(2);
-            }
-
-            if (actualData.Wheel[0] != Status[0] || actualData.Wheel[1] != Status[1] || actualData.Wheel[2] != Status[2] || actualData.Wheel[3] != Status[3] || actualData.Wheel[4] != Status[4] || actualData.Wheel[5] != Status[5] || actualData.Wheel[6] != Status[6] || actualData.Wheel[7] != Status[7] || actualData.Wheel[8] != Status[8] || actualData.Wheel[9] != Status[9])
-                mp.events.callRemote("s:vSync:setWheelData", entity, Status[0], Status[1], Status[2], Status[3], Status[4], Status[5], Status[6], Status[7], Status[8], Status[9]);*/
-
             let dirtLevel = entity.getDirtLevel();
             if (methods.parseInt(actualData.Dirt) != methods.parseInt(dirtLevel))
                 mp.events.callRemote("s:vSync:setDirtLevel", entity, dirtLevel);
-
-            /*let engineStatus = entity.getIsEngineRunning() == 1;
-            if (actualData.Engine != engineStatus)
-                mp.events.callRemote("s:vSync:setEngineStatus", entity, engineStatus);*/
         }
     }
     catch (e) {
@@ -807,6 +564,14 @@ mp.events.add("entityStreamIn", (entity) => {
 
             mp.game.invoke(methods.SET_VEHICLE_UNDRIVEABLE, entity.handle, true);
             vSync.updateValues(entity);
+
+            if (entity.getVariable('useless') === true) {
+                entity.setCanBeDamaged(false);
+                entity.setInvincible(true);
+                setTimeout(function () {
+                    entity.freezePosition(true);
+                }, 5000);
+            }
 
             //Set doors unbreakable for a moment
             /*let x = 0;

@@ -608,6 +608,14 @@ enums.animRemain = [
     ["Высматривать", "CODE_HUMAN_MEDIC_KNEEL"]
 ];*/
 
+enums.resetVehicleInfo = function() {
+    _vehicleInfo = [];
+};
+
+enums.updateVehicleInfo = function(data) {
+    _vehicleInfo = _vehicleInfo.concat(data);
+};
+
 enums.loadCloth = function () {
     updateCloth().then( (returnCloth) => {
         try {

@@ -983,4 +983,9 @@ vehicles.findVehicleByNumber = (number) => {
     return returnVehicle;
 };
 
+vehicles.engineVehicle = function() {
+    if (mp.players.local.vehicle) //TODO
+        mp.events.callRemote('server:vehicle:engineStatus');
+};
+
 export default vehicles;

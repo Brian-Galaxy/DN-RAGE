@@ -137,7 +137,7 @@ user.loginAccount = function(player, login, pass) {
                     rows.forEach(row => {
                         let sex = JSON.parse(row['skin'])['SKIN_SEX'] == 0 ? "m" : "w";
                         methods.debug(sex);
-                        players.push({name: row['name'], age: row['lvl'], money: row['money'], sex: sex, spawnList: ['Стандарт', 'Стандарт2'], lastLogin: methods.unixTimeStampToDate(row['login_date'])})
+                        players.push({name: row['name'], age: row['social'], money: row['money'], sex: sex, spawnList: ['Стандарт', 'Стандарт2'], lastLogin: methods.unixTimeStampToDate(row['login_date'])})
                     });
 
                     player.call('client:events:loginAccount:success', [JSON.stringify(players)]);

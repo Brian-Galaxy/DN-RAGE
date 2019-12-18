@@ -3,6 +3,7 @@
 let methods = {};
 
 import Menu from "./menu";
+import enums from "../enums";
 
 //mp.game.invoke('0xBF0FD6E56C964FCB', mp.players.local.handle, mp.game.joaat('weapon_pistol'), 100, true, false);
 
@@ -75,6 +76,21 @@ methods.debug = function (message, ...args) {
         mp.events.callRemote('server:clientDebug', `${message} | ${JSON.stringify(args)} | ${args.length}`)
     } catch (e) {
     }
+};
+
+methods.getVehicleInfo = function (model) {
+    let vehInfo = enums.get('vehicleInfo');
+    for (let item in vehInfo) {
+        let vItem = vehInfo[item];
+        if (vItem.hash == model || vItem.display_name == model || mp.game.joaat(vItem.display_name.toString().toLowerCase()) == model)
+            return vItem;
+    }
+
+    if (vehInfo.length < 500) {
+        enums.resetVehicleInfo();
+        mp.events.callRemote('server:updateVehicleInfo');
+    }
+    return {id: 0, hash: model, display_name: 'Unknown', class_name: 'Unknown', stock: 378000, stock_full: 205000, fuel_full: 75, fuel_min: 8};
 };
 
 methods.parseInt = function (str) {

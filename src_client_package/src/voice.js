@@ -149,10 +149,6 @@ mp.events.add('browserDomReady', (browser) => {
             return false;
         }
 
-        setTimeout(function () {
-            mp.gui.cursor.show(false, false);
-        }, 5000);
-
         emit('init', `${localPlayer.remoteId}${__CONFIG__.prefixId}`, __CONFIG__.token, 'default', 1, false, false);
     }
 });

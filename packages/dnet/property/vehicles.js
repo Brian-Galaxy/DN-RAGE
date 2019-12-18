@@ -39,6 +39,7 @@ vehicles.processVehicleManager = () =>
     {
         try {
             let vehicle = mp.vehicles.new.apply(mp.vehicles, creation.args);
+            methods.debug('processVehicleManager');
             vSync.setEngineState(vehicle, false);
             cbs.push([vehicle, creation.cb]);
         }
@@ -85,7 +86,11 @@ vehicles.loadAllShop = () => {
 
 vehicles.loadAllShopVehicles = () => {
     enums.carShopVehicleList.forEach(item => {
-        vehicles.spawnCar(new mp.Vector3(item[1], item[2], item[3]), item[4], item[0]);
+        vehicles.spawnCarCb(veh => {
+            veh.locked = true;
+            veh.engine = false;
+            veh.setVariable('useless', true);
+        }, new mp.Vector3(item[1], item[2], item[3]), item[4], item[0]);
         methods.createStaticCheckpoint(item[1], item[2], item[3], `~b~Название ТС:~s~ ${item[0]}\n~b~Цена: ~g~Скоро будет ;)`, 5, -1, [0, 0, 0, 0]);
     });
 };
@@ -99,62 +104,62 @@ vehicles.loadPlayerVehicle = (player) => {
         mysql.executeQuery(`SELECT * FROM cars WHERE id_user = ${playerId}`, function (err, rows, fields) {
             console.time('loadCarsForPlayer');
             rows.forEach(function (item) {
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'id', item['id']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'id_user', item['id_user']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'user_name', item['user_name']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'name', item['name']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'class_type', item['class_type']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'hash', item['hash']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'price', item['price']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'stock', item['stock']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'stock_full', item['stock_full']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'stock_item', item['stock_item']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'fuel', item['fuel']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'full_fuel', item['full_fuel']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'fuel_minute', item['fuel_minute']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'color1', item['color1']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'color2', item['color2']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'neon_type', item['neon_type']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'neon_r', item['neon_r']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'neon_g', item['neon_g']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'neon_b', item['neon_b']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'number', item['number']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'wanted_level', item['wanted_level']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'lock_status', item['lock_status']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 's_mp', item['s_mp']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 's_wh_bk_l', item['s_wh_bk_l']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 's_wh_b_l', item['s_wh_b_l']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 's_wh_bk_r', item['s_wh_bk_r']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 's_wh_b_r', item['s_wh_b_r']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 's_engine', item['s_engine']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 's_suspension', item['s_suspension']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 's_body', item['s_body']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 's_candle', item['s_candle']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 's_oil', item['s_oil']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'livery', item['livery']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'is_visible', item['is_visible']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'x', item['x']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'y', item['y']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'z', item['z']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'rot', item['rot']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'x_park', item['x_park']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'y_park', item['y_park']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'z_park', item['z_park']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'rot_park', item['rot_park']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'upgrade', item['upgrade']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'money_tax', item['money_tax']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'score_tax', item['score_tax']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'cop_park_name', item['cop_park_name']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'is_cop_park', item['is_cop_park']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'sell_price', item['sell_price']);
+                vehicles.set(item['id'], 'id', item['id']);
+                vehicles.set(item['id'], 'id_user', item['id_user']);
+                vehicles.set(item['id'], 'user_name', item['user_name']);
+                vehicles.set(item['id'], 'name', item['name']);
+                vehicles.set(item['id'], 'class_type', item['class_type']);
+                vehicles.set(item['id'], 'hash', item['hash']);
+                vehicles.set(item['id'], 'price', item['price']);
+                vehicles.set(item['id'], 'stock', item['stock']);
+                vehicles.set(item['id'], 'stock_full', item['stock_full']);
+                vehicles.set(item['id'], 'stock_item', item['stock_item']);
+                vehicles.set(item['id'], 'fuel', item['fuel']);
+                vehicles.set(item['id'], 'full_fuel', item['full_fuel']);
+                vehicles.set(item['id'], 'fuel_minute', item['fuel_minute']);
+                vehicles.set(item['id'], 'color1', item['color1']);
+                vehicles.set(item['id'], 'color2', item['color2']);
+                vehicles.set(item['id'], 'neon_type', item['neon_type']);
+                vehicles.set(item['id'], 'neon_r', item['neon_r']);
+                vehicles.set(item['id'], 'neon_g', item['neon_g']);
+                vehicles.set(item['id'], 'neon_b', item['neon_b']);
+                vehicles.set(item['id'], 'number', item['number']);
+                vehicles.set(item['id'], 'wanted_level', item['wanted_level']);
+                vehicles.set(item['id'], 'lock_status', item['lock_status']);
+                vehicles.set(item['id'], 's_mp', item['s_mp']);
+                vehicles.set(item['id'], 's_wh_bk_l', item['s_wh_bk_l']);
+                vehicles.set(item['id'], 's_wh_b_l', item['s_wh_b_l']);
+                vehicles.set(item['id'], 's_wh_bk_r', item['s_wh_bk_r']);
+                vehicles.set(item['id'], 's_wh_b_r', item['s_wh_b_r']);
+                vehicles.set(item['id'], 's_engine', item['s_engine']);
+                vehicles.set(item['id'], 's_suspension', item['s_suspension']);
+                vehicles.set(item['id'], 's_body', item['s_body']);
+                vehicles.set(item['id'], 's_candle', item['s_candle']);
+                vehicles.set(item['id'], 's_oil', item['s_oil']);
+                vehicles.set(item['id'], 'livery', item['livery']);
+                vehicles.set(item['id'], 'is_visible', item['is_visible']);
+                vehicles.set(item['id'], 'x', item['x']);
+                vehicles.set(item['id'], 'y', item['y']);
+                vehicles.set(item['id'], 'z', item['z']);
+                vehicles.set(item['id'], 'rot', item['rot']);
+                vehicles.set(item['id'], 'x_park', item['x_park']);
+                vehicles.set(item['id'], 'y_park', item['y_park']);
+                vehicles.set(item['id'], 'z_park', item['z_park']);
+                vehicles.set(item['id'], 'rot_park', item['rot_park']);
+                vehicles.set(item['id'], 'upgrade', item['upgrade']);
+                vehicles.set(item['id'], 'money_tax', item['money_tax']);
+                vehicles.set(item['id'], 'score_tax', item['score_tax']);
+                vehicles.set(item['id'], 'cop_park_name', item['cop_park_name']);
+                vehicles.set(item['id'], 'is_cop_park', item['is_cop_park']);
+                vehicles.set(item['id'], 'sell_price', item['sell_price']);
 
                 if (item['sell_price'] > 0) {
                     return;
                 }
 
                 //if (item['name'] == 'Camper' || item['name'] == 'Journey')
-                if (item['x_park'] != 0)
-                    vehicles.spawnPlayerCar(parseInt(item['id']));
+                //if (item['x_park'] != 0)
+                //    vehicles.spawnPlayerCar(parseInt(item['id']));
             });
             console.timeEnd('loadCarsForPlayer');
             console.log(`All vehicles loaded for player ${playerId} (${rows.length})`);
@@ -170,54 +175,54 @@ vehicles.loadPlayerVehicleByPlayerId = (playerId, dim = 0) => {
         mysql.executeQuery(`SELECT * FROM cars WHERE id_user = ${playerId}`, function (err, rows, fields) {
             console.time('loadCarsForPlayer');
             rows.forEach(function (item) {
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'id', item['id']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'id_user', item['id_user']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'user_name', item['user_name']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'name', item['name']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'class_type', item['class_type']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'hash', item['hash']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'price', item['price']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'stock', item['stock']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'stock_full', item['stock_full']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'stock_item', item['stock_item']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'fuel', item['fuel']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'full_fuel', item['full_fuel']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'fuel_minute', item['fuel_minute']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'color1', item['color1']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'color2', item['color2']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'neon_type', item['neon_type']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'neon_r', item['neon_r']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'neon_g', item['neon_g']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'neon_b', item['neon_b']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'number', item['number']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'wanted_level', item['wanted_level']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'lock_status', item['lock_status']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 's_mp', item['s_mp']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 's_wh_bk_l', item['s_wh_bk_l']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 's_wh_b_l', item['s_wh_b_l']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 's_wh_bk_r', item['s_wh_bk_r']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 's_wh_b_r', item['s_wh_b_r']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 's_engine', item['s_engine']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 's_suspension', item['s_suspension']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 's_body', item['s_body']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 's_candle', item['s_candle']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 's_oil', item['s_oil']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'livery', item['livery']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'is_visible', item['is_visible']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'x', item['x']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'y', item['y']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'z', item['z']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'rot', item['rot']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'x_park', item['x_park']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'y_park', item['y_park']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'z_park', item['z_park']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'rot_park', item['rot_park']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'upgrade', item['upgrade']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'money_tax', item['money_tax']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'score_tax', item['score_tax']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'cop_park_name', item['cop_park_name']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'is_cop_park', item['is_cop_park']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'sell_price', item['sell_price']);
+                vehicles.set(item['id'], 'id', item['id']);
+                vehicles.set(item['id'], 'id_user', item['id_user']);
+                vehicles.set(item['id'], 'user_name', item['user_name']);
+                vehicles.set(item['id'], 'name', item['name']);
+                vehicles.set(item['id'], 'class_type', item['class_type']);
+                vehicles.set(item['id'], 'hash', item['hash']);
+                vehicles.set(item['id'], 'price', item['price']);
+                vehicles.set(item['id'], 'stock', item['stock']);
+                vehicles.set(item['id'], 'stock_full', item['stock_full']);
+                vehicles.set(item['id'], 'stock_item', item['stock_item']);
+                vehicles.set(item['id'], 'fuel', item['fuel']);
+                vehicles.set(item['id'], 'full_fuel', item['full_fuel']);
+                vehicles.set(item['id'], 'fuel_minute', item['fuel_minute']);
+                vehicles.set(item['id'], 'color1', item['color1']);
+                vehicles.set(item['id'], 'color2', item['color2']);
+                vehicles.set(item['id'], 'neon_type', item['neon_type']);
+                vehicles.set(item['id'], 'neon_r', item['neon_r']);
+                vehicles.set(item['id'], 'neon_g', item['neon_g']);
+                vehicles.set(item['id'], 'neon_b', item['neon_b']);
+                vehicles.set(item['id'], 'number', item['number']);
+                vehicles.set(item['id'], 'wanted_level', item['wanted_level']);
+                vehicles.set(item['id'], 'lock_status', item['lock_status']);
+                vehicles.set(item['id'], 's_mp', item['s_mp']);
+                vehicles.set(item['id'], 's_wh_bk_l', item['s_wh_bk_l']);
+                vehicles.set(item['id'], 's_wh_b_l', item['s_wh_b_l']);
+                vehicles.set(item['id'], 's_wh_bk_r', item['s_wh_bk_r']);
+                vehicles.set(item['id'], 's_wh_b_r', item['s_wh_b_r']);
+                vehicles.set(item['id'], 's_engine', item['s_engine']);
+                vehicles.set(item['id'], 's_suspension', item['s_suspension']);
+                vehicles.set(item['id'], 's_body', item['s_body']);
+                vehicles.set(item['id'], 's_candle', item['s_candle']);
+                vehicles.set(item['id'], 's_oil', item['s_oil']);
+                vehicles.set(item['id'], 'livery', item['livery']);
+                vehicles.set(item['id'], 'is_visible', item['is_visible']);
+                vehicles.set(item['id'], 'x', item['x']);
+                vehicles.set(item['id'], 'y', item['y']);
+                vehicles.set(item['id'], 'z', item['z']);
+                vehicles.set(item['id'], 'rot', item['rot']);
+                vehicles.set(item['id'], 'x_park', item['x_park']);
+                vehicles.set(item['id'], 'y_park', item['y_park']);
+                vehicles.set(item['id'], 'z_park', item['z_park']);
+                vehicles.set(item['id'], 'rot_park', item['rot_park']);
+                vehicles.set(item['id'], 'upgrade', item['upgrade']);
+                vehicles.set(item['id'], 'money_tax', item['money_tax']);
+                vehicles.set(item['id'], 'score_tax', item['score_tax']);
+                vehicles.set(item['id'], 'cop_park_name', item['cop_park_name']);
+                vehicles.set(item['id'], 'is_cop_park', item['is_cop_park']);
+                vehicles.set(item['id'], 'sell_price', item['sell_price']);
 
                 if (item['sell_price'] > 0) {
                     return;
@@ -244,61 +249,61 @@ vehicles.loadPlayerVehicleById = (player, id) => {
             rows.forEach(function (item) {
                 //if (Container.Data.Has(offset + methods.parseInt(item['id']), 'id'))
                 //    return;
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'id', item['id']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'id_user', item['id_user']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'user_name', item['user_name']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'name', item['name']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'class_type', item['class_type']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'hash', item['hash']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'price', item['price']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'stock', item['stock']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'stock_full', item['stock_full']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'stock_item', item['stock_item']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'fuel', item['fuel']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'full_fuel', item['full_fuel']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'fuel_minute', item['fuel_minute']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'color1', item['color1']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'color2', item['color2']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'neon_type', item['neon_type']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'neon_r', item['neon_r']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'neon_g', item['neon_g']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'neon_b', item['neon_b']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'number', item['number']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'wanted_level', item['wanted_level']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'lock_status', item['lock_status']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 's_mp', item['s_mp']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 's_wh_bk_l', item['s_wh_bk_l']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 's_wh_b_l', item['s_wh_b_l']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 's_wh_bk_r', item['s_wh_bk_r']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 's_wh_b_r', item['s_wh_b_r']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 's_engine', item['s_engine']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 's_suspension', item['s_suspension']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 's_body', item['s_body']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 's_candle', item['s_candle']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 's_oil', item['s_oil']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'livery', item['livery']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'is_visible', item['is_visible']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'x', item['x']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'y', item['y']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'z', item['z']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'rot', item['rot']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'x_park', item['x_park']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'y_park', item['y_park']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'z_park', item['z_park']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'rot_park', item['rot_park']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'upgrade', item['upgrade']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'money_tax', item['money_tax']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'score_tax', item['score_tax']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'cop_park_name', item['cop_park_name']);
-                Container.Data.Set(offset + methods.parseInt(item['id']), 'is_cop_park', item['is_cop_park']);
+                vehicles.set(item['id'], 'id', item['id']);
+                vehicles.set(item['id'], 'id_user', item['id_user']);
+                vehicles.set(item['id'], 'user_name', item['user_name']);
+                vehicles.set(item['id'], 'name', item['name']);
+                vehicles.set(item['id'], 'class_type', item['class_type']);
+                vehicles.set(item['id'], 'hash', item['hash']);
+                vehicles.set(item['id'], 'price', item['price']);
+                vehicles.set(item['id'], 'stock', item['stock']);
+                vehicles.set(item['id'], 'stock_full', item['stock_full']);
+                vehicles.set(item['id'], 'stock_item', item['stock_item']);
+                vehicles.set(item['id'], 'fuel', item['fuel']);
+                vehicles.set(item['id'], 'full_fuel', item['full_fuel']);
+                vehicles.set(item['id'], 'fuel_minute', item['fuel_minute']);
+                vehicles.set(item['id'], 'color1', item['color1']);
+                vehicles.set(item['id'], 'color2', item['color2']);
+                vehicles.set(item['id'], 'neon_type', item['neon_type']);
+                vehicles.set(item['id'], 'neon_r', item['neon_r']);
+                vehicles.set(item['id'], 'neon_g', item['neon_g']);
+                vehicles.set(item['id'], 'neon_b', item['neon_b']);
+                vehicles.set(item['id'], 'number', item['number']);
+                vehicles.set(item['id'], 'wanted_level', item['wanted_level']);
+                vehicles.set(item['id'], 'lock_status', item['lock_status']);
+                vehicles.set(item['id'], 's_mp', item['s_mp']);
+                vehicles.set(item['id'], 's_wh_bk_l', item['s_wh_bk_l']);
+                vehicles.set(item['id'], 's_wh_b_l', item['s_wh_b_l']);
+                vehicles.set(item['id'], 's_wh_bk_r', item['s_wh_bk_r']);
+                vehicles.set(item['id'], 's_wh_b_r', item['s_wh_b_r']);
+                vehicles.set(item['id'], 's_engine', item['s_engine']);
+                vehicles.set(item['id'], 's_suspension', item['s_suspension']);
+                vehicles.set(item['id'], 's_body', item['s_body']);
+                vehicles.set(item['id'], 's_candle', item['s_candle']);
+                vehicles.set(item['id'], 's_oil', item['s_oil']);
+                vehicles.set(item['id'], 'livery', item['livery']);
+                vehicles.set(item['id'], 'is_visible', item['is_visible']);
+                vehicles.set(item['id'], 'x', item['x']);
+                vehicles.set(item['id'], 'y', item['y']);
+                vehicles.set(item['id'], 'z', item['z']);
+                vehicles.set(item['id'], 'rot', item['rot']);
+                vehicles.set(item['id'], 'x_park', item['x_park']);
+                vehicles.set(item['id'], 'y_park', item['y_park']);
+                vehicles.set(item['id'], 'z_park', item['z_park']);
+                vehicles.set(item['id'], 'rot_park', item['rot_park']);
+                vehicles.set(item['id'], 'upgrade', item['upgrade']);
+                vehicles.set(item['id'], 'money_tax', item['money_tax']);
+                vehicles.set(item['id'], 'score_tax', item['score_tax']);
+                vehicles.set(item['id'], 'cop_park_name', item['cop_park_name']);
+                vehicles.set(item['id'], 'is_cop_park', item['is_cop_park']);
 
                 if (item['sell_price'] > 0) {
                     return;
                 }
 
                 //if (item['name'] == 'Camper' || item['name'] == 'Journey')
-                if (item['x_park'] != 0)
-                    vehicles.spawnPlayerCar(parseInt(item['id']));
+                //if (item['x_park'] != 0)
+                //    vehicles.spawnPlayerCar(parseInt(item['id']));
             });
             console.timeEnd('loadCarsForPlayer');
             console.log(`All vehicles loaded for player ${playerId} (${rows.length})`);
@@ -356,68 +361,6 @@ vehicles.save = (id) => {
     });
 };
 
-vehicles.loadAll = (dim = 0) => {
-
-    methods.debug('vehicles.loadAll');
-    mysql.executeQuery(`SELECT * FROM cars`, function (err, rows, fields) {
-        console.time('loadCars');
-        rows.forEach(function (item) {
-            if (Container.Data.Has(offset + methods.parseInt(item['id']), 'id'))
-                return;
-            Container.Data.Set(offset + methods.parseInt(item['id']), 'id', item['id']);
-            Container.Data.Set(offset + methods.parseInt(item['id']), 'id_user', item['id_user']);
-            Container.Data.Set(offset + methods.parseInt(item['id']), 'user_name', item['user_name']);
-            Container.Data.Set(offset + methods.parseInt(item['id']), 'name', item['name']);
-            Container.Data.Set(offset + methods.parseInt(item['id']), 'class_type', item['class_type']);
-            Container.Data.Set(offset + methods.parseInt(item['id']), 'hash', item['hash']);
-            Container.Data.Set(offset + methods.parseInt(item['id']), 'price', item['price']);
-            Container.Data.Set(offset + methods.parseInt(item['id']), 'stock', item['stock']);
-            Container.Data.Set(offset + methods.parseInt(item['id']), 'stock_full', item['stock_full']);
-            Container.Data.Set(offset + methods.parseInt(item['id']), 'stock_item', item['stock_item']);
-            Container.Data.Set(offset + methods.parseInt(item['id']), 'fuel', item['fuel']);
-            Container.Data.Set(offset + methods.parseInt(item['id']), 'full_fuel', item['full_fuel']);
-            Container.Data.Set(offset + methods.parseInt(item['id']), 'fuel_minute', item['fuel_minute']);
-            Container.Data.Set(offset + methods.parseInt(item['id']), 'color1', item['color1']);
-            Container.Data.Set(offset + methods.parseInt(item['id']), 'color2', item['color2']);
-            Container.Data.Set(offset + methods.parseInt(item['id']), 'neon_type', item['neon_type']);
-            Container.Data.Set(offset + methods.parseInt(item['id']), 'neon_r', item['neon_r']);
-            Container.Data.Set(offset + methods.parseInt(item['id']), 'neon_g', item['neon_g']);
-            Container.Data.Set(offset + methods.parseInt(item['id']), 'neon_b', item['neon_b']);
-            Container.Data.Set(offset + methods.parseInt(item['id']), 'number', item['number']);
-            Container.Data.Set(offset + methods.parseInt(item['id']), 'wanted_level', item['wanted_level']);
-            Container.Data.Set(offset + methods.parseInt(item['id']), 'lock_status', item['lock_status']);
-            Container.Data.Set(offset + methods.parseInt(item['id']), 's_mp', item['s_mp']);
-            Container.Data.Set(offset + methods.parseInt(item['id']), 's_wh_bk_l', item['s_wh_bk_l']);
-            Container.Data.Set(offset + methods.parseInt(item['id']), 's_wh_b_l', item['s_wh_b_l']);
-            Container.Data.Set(offset + methods.parseInt(item['id']), 's_wh_bk_r', item['s_wh_bk_r']);
-            Container.Data.Set(offset + methods.parseInt(item['id']), 's_wh_b_r', item['s_wh_b_r']);
-            Container.Data.Set(offset + methods.parseInt(item['id']), 's_engine', item['s_engine']);
-            Container.Data.Set(offset + methods.parseInt(item['id']), 's_suspension', item['s_suspension']);
-            Container.Data.Set(offset + methods.parseInt(item['id']), 's_body', item['s_body']);
-            Container.Data.Set(offset + methods.parseInt(item['id']), 's_candle', item['s_candle']);
-            Container.Data.Set(offset + methods.parseInt(item['id']), 's_oil', item['s_oil']);
-            Container.Data.Set(offset + methods.parseInt(item['id']), 'livery', item['livery']);
-            Container.Data.Set(offset + methods.parseInt(item['id']), 'is_visible', item['is_visible']);
-            Container.Data.Set(offset + methods.parseInt(item['id']), 'x', item['x']);
-            Container.Data.Set(offset + methods.parseInt(item['id']), 'y', item['y']);
-            Container.Data.Set(offset + methods.parseInt(item['id']), 'z', item['z']);
-            Container.Data.Set(offset + methods.parseInt(item['id']), 'rot', item['rot']);
-            Container.Data.Set(offset + methods.parseInt(item['id']), 'x_park', item['x_park']);
-            Container.Data.Set(offset + methods.parseInt(item['id']), 'y_park', item['y_park']);
-            Container.Data.Set(offset + methods.parseInt(item['id']), 'z_park', item['z_park']);
-            Container.Data.Set(offset + methods.parseInt(item['id']), 'rot_park', item['rot_park']);
-            Container.Data.Set(offset + methods.parseInt(item['id']), 'upgrade', item['upgrade']);
-            Container.Data.Set(offset + methods.parseInt(item['id']), 'money_tax', item['money_tax']);
-            Container.Data.Set(offset + methods.parseInt(item['id']), 'score_tax', item['score_tax']);
-            Container.Data.Set(offset + methods.parseInt(item['id']), 'cop_park_name', item['cop_park_name']);
-            Container.Data.Set(offset + methods.parseInt(item['id']), 'is_cop_park', item['is_cop_park']);
-
-            vehicles.spawnPlayerCar(parseInt(item['id']), false, dim);
-        });
-        console.timeEnd('loadCars');
-    });
-};
-
 vehicles.set = function(id, key, val) {
     //methods.debug(`vehicles.set ${id} ${key} ${val} | `);
     Container.Data.Set(offset + methods.parseInt(id), key, val);
@@ -449,9 +392,9 @@ vehicles.respawn = (vehicle) => {
 
     try {
         methods.debug('vehicles.respawn');
-        let containerId = vehicle.getVariable('container');
-        if (containerId != undefined && vehicle.getVariable('id_user') > 0)
-            vehicles.spawnPlayerCar(containerId, true);
+        //let containerId = vehicle.getVariable('container');
+        //if (containerId != undefined && vehicle.getVariable('id_user') > 0)
+        //    vehicles.spawnPlayerCar(containerId, true);
         vehicle.destroy();
     }
     catch (e) {
@@ -519,6 +462,7 @@ vehicles.checkVehiclesFuel = () => {
         if (fuel <= 0) {
             vehicles.setFuel(veh, 0);
             //veh.engine = false;
+            methods.debug('checkVehiclesFuel');
             vSync.setEngineState(veh, false);
             return;
         }
@@ -668,91 +612,6 @@ vehicles.setTunning = (veh) => {
     }, 10000);
 };
 
-vehicles.spawnPlayerCar = (id, isRespawn = false, dim = 0) => {
-    methods.debug('vehicles.spawnPlayerCar');
-    try {
-        let car = vehicles.getData(id);
-        let position = new mp.Vector3(car.get('x'), car.get('y'), car.get('z'));
-        let rot = parseFloat(car.get('rot'));
-
-        if (car.get('x_park') != 0) {
-            position = new mp.Vector3(car.get('x_park'), car.get('y_park'), car.get('z_park'));
-            rot =  methods.parseInt(car.get('rot_park'));
-        }
-
-        //let veh = mp.vehicles.new(car.get('hash'), position, { heading: parseFloat(car.get('rot_park') - 180) });
-        vehicles.newOrdered(veh => {
-            if (!vehicles.exists(veh))
-                return;
-            if (isRespawn) {
-                veh.numberPlate = car.get('number').toString();
-                veh.locked = true;
-                //veh.engine = false;
-                vSync.setEngineState(veh, false);
-                veh.setColor(car.get('color1'), car.get('color2'));
-
-                let numberStyle = 0;
-
-                if (car.get('id') % 3)
-                    numberStyle = 1;
-                else if (car.get('id') % 4)
-                    numberStyle = 2;
-                else if (car.get('id') % 5)
-                    numberStyle = 3;
-
-                veh.numberPlateType = numberStyle;
-
-                veh.setVariable('id_user', methods.parseInt(car.get('id_user')));
-                veh.setVariable('container', id);
-                veh.setVariable('fuel', car.get('fuel'));
-                veh.setVariable('price', car.get('price'));
-
-                vehicles.setTunning(veh);
-
-                methods.debug(`[${car.get('id')}] Spawned ${car.get('name')} at ${position.x}, ${position.y}, ${position.z}`);
-            }
-            else {
-                setTimeout(function () {
-
-                    if (!vehicles.exists(veh))
-                        return;
-
-                    veh.numberPlate = car.get('number').toString();
-                    veh.locked = true;
-                    //veh.engine = false;
-                    vSync.setEngineState(veh, false);
-                    veh.livery = car.get('livery');
-                    veh.setColor(car.get('color1'), car.get('color2'));
-
-                    let numberStyle = 0;
-
-                    if (car.get('id') % 3)
-                        numberStyle = 1;
-                    else if (car.get('id') % 4)
-                        numberStyle = 2;
-                    else if (car.get('id') % 5)
-                        numberStyle = 3;
-
-                    veh.numberPlateType = numberStyle;
-
-                    veh.setVariable('id_user', methods.parseInt(car.get('id_user')));
-                    veh.setVariable('container', id);
-                    veh.setVariable('fuel', car.get('fuel'));
-                    veh.setVariable('price', car.get('price'));
-
-                    vehicles.setTunning(veh);
-
-                    methods.debug(`[${car.get('id')}] Spawned ${car.get('name')} at ${position.x}, ${position.y}, ${position.z} | ${veh.dimension}`);
-                }, 5000);
-            }
-        }, [car.get('hash'), position, {heading: rot, numberPlate: 'SA', engine: false, dimension: dim}]);
-
-    }
-    catch (e) {
-        console.log(e);
-    }
-};
-
 let CountAllCars = 0;
 vehicles.spawnCar = (position, heading, nameOrModel, number = undefined) => {
     methods.debug('vehicles.spawnCar ' + nameOrModel);
@@ -772,6 +631,7 @@ vehicles.spawnCar = (position, heading, nameOrModel, number = undefined) => {
 
     veh.numberPlate = number;
     //veh.engine = false;
+    methods.debug('spawnCar');
     vSync.setEngineState(veh, false);
     veh.locked = false;
     veh.setColor(color1, color2);
@@ -786,7 +646,7 @@ vehicles.spawnCar = (position, heading, nameOrModel, number = undefined) => {
     return veh;
 };
 
-vehicles.spawnCar2 = (cb, position, heading, nameOrModel, color1 = -1, color2 = -1, liv = -1, number = undefined) => {
+vehicles.spawnCarCb = (cb, position, heading, nameOrModel, color1 = -1, color2 = -1, liv = -1, number = undefined) => {
     methods.debug('vehicles.spawnCar2 ' + nameOrModel);
     if (typeof nameOrModel == 'string')
         nameOrModel = mp.joaat(nameOrModel.toLowerCase());
@@ -811,6 +671,7 @@ vehicles.spawnCar2 = (cb, position, heading, nameOrModel, color1 = -1, color2 = 
 
         veh.numberPlate = number;
         //veh.engine = false;
+        methods.debug('spawnCarCb');
         vSync.setEngineState(veh, false);
         veh.locked = false;
         if (liv >= 0)
@@ -862,6 +723,7 @@ vehicles.engineStatus = (player, vehicle) => {
             player.notify('~b~Метка на заправку установлена');
             /*let pos = fuel.findNearest(player.position); //TODO
             user.setWaypoint(player, pos.x, pos.y);*/
+            methods.debug('engineStatus');
             vSync.setEngineState(vehicle, false);
             return;
         }

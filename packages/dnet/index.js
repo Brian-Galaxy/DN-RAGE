@@ -5,6 +5,7 @@ require('./modules/data');
 require('./modules/events');
 require('./modules/chat');
 require('./voice/voice');
+require('./managers/vSync');
 
 let mysql = require('./modules/mysql');
 let methods = require('./modules/methods');
@@ -32,6 +33,7 @@ function init() {
         business.loadAll();
         vehicles.loadAllShop();
         vehicles.loadAllShopVehicles();
+        vehicles.loadAllTimers();
 
         weather.loadAll();
 

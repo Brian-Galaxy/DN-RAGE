@@ -85,6 +85,9 @@ vehicles.loadAllShop = () => {
 };
 
 vehicles.loadAllShopVehicles = () => {
+
+    vehicles.loadAllTestVehicles();
+
     enums.carShopVehicleList.forEach(item => {
         vehicles.spawnCarCb(veh => {
             veh.locked = true;
@@ -92,6 +95,32 @@ vehicles.loadAllShopVehicles = () => {
             veh.setVariable('useless', true);
         }, new mp.Vector3(item[1], item[2], item[3]), item[4], item[0]);
         methods.createStaticCheckpoint(item[1], item[2], item[3], `~b~Название ТС:~s~ ${item[0]}\n~b~Цена: ~g~Скоро будет ;)`, 5, -1, [0, 0, 0, 0]);
+    });
+};
+
+vehicles.loadAllTestVehicles = () => {
+    enums.randomSpawnVeh.forEach(item => {
+        vehicles.spawnCarCb(veh => {
+            veh.setVariable('useless', true);
+        }, new mp.Vector3(item[0], item[1], item[2]), item[3], 'elegy');
+    });
+
+    enums.randomSpawnBoat.forEach(item => {
+        vehicles.spawnCarCb(veh => {
+            veh.setVariable('useless', true);
+        }, new mp.Vector3(item[0], item[1], item[2]), item[3], 'jetmax');
+    });
+
+    enums.randomSpawnHeli.forEach(item => {
+        vehicles.spawnCarCb(veh => {
+            veh.setVariable('useless', true);
+        }, new mp.Vector3(item[0], item[1], item[2]), item[3], 'buzzard');
+    });
+
+    enums.randomSpawnPlanes.forEach(item => {
+        vehicles.spawnCarCb(veh => {
+            veh.setVariable('useless', true);
+        }, new mp.Vector3(item[0], item[1], item[2]), item[3], 'dodo');
     });
 };
 
@@ -142,10 +171,6 @@ vehicles.loadPlayerVehicle = (player) => {
                 vehicles.set(item['id'], 'y', item['y']);
                 vehicles.set(item['id'], 'z', item['z']);
                 vehicles.set(item['id'], 'rot', item['rot']);
-                vehicles.set(item['id'], 'x_park', item['x_park']);
-                vehicles.set(item['id'], 'y_park', item['y_park']);
-                vehicles.set(item['id'], 'z_park', item['z_park']);
-                vehicles.set(item['id'], 'rot_park', item['rot_park']);
                 vehicles.set(item['id'], 'upgrade', item['upgrade']);
                 vehicles.set(item['id'], 'money_tax', item['money_tax']);
                 vehicles.set(item['id'], 'score_tax', item['score_tax']);
@@ -158,7 +183,7 @@ vehicles.loadPlayerVehicle = (player) => {
                 }
 
                 //if (item['name'] == 'Camper' || item['name'] == 'Journey')
-                //if (item['x_park'] != 0)
+                //if (item['x'] != 0)
                 //    vehicles.spawnPlayerCar(parseInt(item['id']));
             });
             console.timeEnd('loadCarsForPlayer');
@@ -213,10 +238,6 @@ vehicles.loadPlayerVehicleByPlayerId = (playerId, dim = 0) => {
                 vehicles.set(item['id'], 'y', item['y']);
                 vehicles.set(item['id'], 'z', item['z']);
                 vehicles.set(item['id'], 'rot', item['rot']);
-                vehicles.set(item['id'], 'x_park', item['x_park']);
-                vehicles.set(item['id'], 'y_park', item['y_park']);
-                vehicles.set(item['id'], 'z_park', item['z_park']);
-                vehicles.set(item['id'], 'rot_park', item['rot_park']);
                 vehicles.set(item['id'], 'upgrade', item['upgrade']);
                 vehicles.set(item['id'], 'money_tax', item['money_tax']);
                 vehicles.set(item['id'], 'score_tax', item['score_tax']);
@@ -229,8 +250,8 @@ vehicles.loadPlayerVehicleByPlayerId = (playerId, dim = 0) => {
                 }
 
                 //if (item['name'] == 'Camper' || item['name'] == 'Journey')
-                if (item['x_park'] != 0)
-                    vehicles.spawnPlayerCar(parseInt(item['id']), false, dim);
+                //if (item['x'] != 0)
+                //    vehicles.spawnPlayerCar(parseInt(item['id']), false, dim);
             });
             console.timeEnd('loadCarsForPlayer');
             console.log(`All vehicles loaded for player ${playerId} (${rows.length})`);
@@ -287,10 +308,6 @@ vehicles.loadPlayerVehicleById = (player, id) => {
                 vehicles.set(item['id'], 'y', item['y']);
                 vehicles.set(item['id'], 'z', item['z']);
                 vehicles.set(item['id'], 'rot', item['rot']);
-                vehicles.set(item['id'], 'x_park', item['x_park']);
-                vehicles.set(item['id'], 'y_park', item['y_park']);
-                vehicles.set(item['id'], 'z_park', item['z_park']);
-                vehicles.set(item['id'], 'rot_park', item['rot_park']);
                 vehicles.set(item['id'], 'upgrade', item['upgrade']);
                 vehicles.set(item['id'], 'money_tax', item['money_tax']);
                 vehicles.set(item['id'], 'score_tax', item['score_tax']);
@@ -302,7 +319,7 @@ vehicles.loadPlayerVehicleById = (player, id) => {
                 }
 
                 //if (item['name'] == 'Camper' || item['name'] == 'Journey')
-                //if (item['x_park'] != 0)
+                //if (item['x'] != 0)
                 //    vehicles.spawnPlayerCar(parseInt(item['id']));
             });
             console.timeEnd('loadCarsForPlayer');
@@ -348,10 +365,10 @@ vehicles.save = (id) => {
         sql = sql + ", wanted_level = '" + methods.parseInt(Container.Data.Get(id, "wanted_level")) + "'";
         sql = sql + ", lock_status = '" + methods.parseInt(Container.Data.Get(id, "lock_status")) + "'";
         sql = sql + ", livery = '" + methods.parseInt(Container.Data.Get(id, "livery")) + "'";
-        sql = sql + ", x_park = '" + parseFloat(Container.Data.Get(id, "x_park")) + "'";
-        sql = sql + ", y_park = '" + parseFloat(Container.Data.Get(id, "y_park")) + "'";
-        sql = sql + ", z_park = '" + parseFloat(Container.Data.Get(id, "z_park")) + "'";
-        sql = sql + ", rot_park = '" + parseFloat(Container.Data.Get(id, "rot_park")) + "'";
+        sql = sql + ", x = '" + parseFloat(Container.Data.Get(id, "x")) + "'";
+        sql = sql + ", y = '" + parseFloat(Container.Data.Get(id, "y")) + "'";
+        sql = sql + ", z = '" + parseFloat(Container.Data.Get(id, "z")) + "'";
+        sql = sql + ", rot = '" + parseFloat(Container.Data.Get(id, "rot")) + "'";
         sql = sql + ", upgrade = '" + Container.Data.Get(id, "upgrade") + "'";
 
         sql = sql + " where id = '" + methods.parseInt(Container.Data.Get(id, "id")) + "'";
@@ -379,11 +396,11 @@ vehicles.getData = function(id) {
 vehicles.park = function(id, x, y, z, rot) {
     methods.debug('vehicles.park');
     rot = methods.parseInt(rot);
-    vehicles.set(id, 'x_park', methods.parseInt(x));
-    vehicles.set(id, 'y_park', methods.parseInt(y));
-    vehicles.set(id, 'z_park', methods.parseInt(z));
-    vehicles.set(id, 'rot_park', methods.parseInt(rot));
-    mysql.executeQuery("UPDATE cars SET x_park = '" + methods.parseInt(x) + "', y_park = '" + methods.parseInt(y) + "', z_park = '" + methods.parseInt(z) + "', rot_park = '" + methods.parseInt(rot) + "' where id = '" + methods.parseInt(id) + "'");
+    vehicles.set(id, 'x', methods.parseFloat(x));
+    vehicles.set(id, 'y', methods.parseFloat(y));
+    vehicles.set(id, 'z', methods.parseFloat(z));
+    vehicles.set(id, 'rot', methods.parseFloat(rot));
+    mysql.executeQuery("UPDATE cars SET x = '" + methods.parseFloat(x) + "', y = '" + methods.parseFloat(y) + "', z = '" + methods.parseFloat(z) + "', rot = '" + methods.parseFloat(rot) + "' where id = '" + methods.parseInt(id) + "'");
 };
 
 vehicles.respawn = (vehicle) => {

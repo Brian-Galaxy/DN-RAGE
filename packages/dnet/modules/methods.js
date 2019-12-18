@@ -193,7 +193,7 @@ methods.saveLog = function (name, log) {
 };
 
 methods.saveFile = function (name, log) {
-    fs.appendFile("" + name + ".log", `[${methods.getDate()}] [${methods.getTime()}] ${log}\n`, function (err) {
+    fs.appendFile("" + name + ".log", `${log}\n`, function (err) {
         if(err) {
             methods.createFile(name);
             return methods.debug(err);
@@ -250,7 +250,7 @@ methods.createStaticCheckpoint = function (x, y, z, message, scale, dimension, c
     if (color == undefined)
         color = [33, 150, 243, 100];
     if (height == undefined)
-        height = scale;
+        height = scale / 2;
 
     if (dimension == undefined)
         dimension = -1;

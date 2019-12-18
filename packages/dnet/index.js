@@ -20,6 +20,7 @@ let business = require('./property/business');
 let vehicles = require('./property/vehicles');
 
 let weather = require('./managers/weather');
+let pickups = require('./managers/pickups');
 
 let coffer = require('./coffer');
 
@@ -39,6 +40,8 @@ function init() {
 
         cloth.loadAll();
         tattoo.loadAll();
+
+        pickups.createPickups();
 
         coffer.load();
 

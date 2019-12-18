@@ -1,4 +1,4 @@
-let vehicles = require('../vehicles');
+let vehicles = require('../property/vehicles');
 let Container = require('../modules/data');
 let methods = require('../modules/methods');
 
@@ -21,51 +21,6 @@ vSync.SirenState =
         EnableWithSoundFast: 4
     };
 
-vSync.WindowState =
-    {
-        WindowFixed: 0,
-        WindowDown: 1,
-        WindowBroken: 2
-    };
-
-vSync.DoorID =
-    {
-        DoorFrontLeft: 0,
-        DoorFrontRight: 1,
-        DoorRearLeft: 2,
-        DoorRearRight: 3,
-        DoorHood: 4,
-        DoorTrunk: 5
-    };
-
-vSync.DoorState =
-    {
-        DoorClosed: 0,
-        DoorOpen: 1,
-        DoorBroken: 2,
-    };
-
-vSync.WheelID =
-    {
-        Wheel0: 0,
-        Wheel1: 1,
-        Wheel2: 2,
-        Wheel3: 3,
-        Wheel4: 4,
-        Wheel5: 5,
-        Wheel6: 6,
-        Wheel7: 7,
-        Wheel8: 8,
-        Wheel9: 9
-    };
-
-vSync.WheelState =
-    {
-        WheelFixed: 0,
-        WheelBurst: 1,
-        WheelOnRim: 2,
-    };
-
 vSync.VehicleSyncData = {
     //Basics
     Dirt: 0,
@@ -78,17 +33,6 @@ vSync.VehicleSyncData = {
     IndicatorRightToggle: false,
     InteriorLight: false,
     TaxiLight: false,
-    ModWheelSpecial: false,
-    ModWheel: 0,
-
-    //Doors 0-7 (0 = closed, 1 = open, 2 = broken) (This uses enums so don't worry about it)
-    Door: [0, 0, 0, 0, 0, 0, 0, 0],
-
-    //Windows (0 = up, 1 = down, 2 = smashed) (This uses enums so don't worry about it)
-    Window: [0, 0, 0, 0],
-
-    //Wheels 0-7, 45/47 (0 = fixed, 1 = flat, 2 = missing) (This uses enums so don't worry about it)
-    Wheel: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 };
 
 let streamDist = 250;
@@ -240,9 +184,9 @@ vSync.getIndicatorRightToggle = function(v) {
 vSync.setEngineState = function(v, status) {
     if (!vehicles.exists(v))
         return;
-    let data = vSync.getVehicleSyncData(v);
+    /*let data = vSync.getVehicleSyncData(v);
     data.Engine = status;
-    vSync.updateVehicleSyncData(v, data);
+    vSync.updateVehicleSyncData(v, data);*/
     v.engine = status;
     //mp.players.callInRange(v.position, streamDist, "vSync:setEngineState", [v.id, status]);
 };

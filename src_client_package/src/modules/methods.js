@@ -70,9 +70,9 @@ methods.sleep = function(ms) {
     return new Promise(res => setTimeout(res, ms));
 };
 
-methods.debug = function (message) {
+methods.debug = function (message, ...args) {
     try {
-        mp.events.callRemote('server:clientDebug', `${message}`)
+        mp.events.callRemote('server:clientDebug', `${message} | ${JSON.stringify(args)} | ${args.length}`)
     } catch (e) {
     }
 };

@@ -155,6 +155,7 @@ class Data {
             return new Promise((resolve, reject) => {
                 const promiseId = createId();
                 promises.set(promiseId, {resolve, reject});
+                methods.debug(`CLNT: [GET]`, id, key);
                 mp.events.callRemote('modules:server:data:Get', promiseId, id, key);
             });
         } catch (e) {

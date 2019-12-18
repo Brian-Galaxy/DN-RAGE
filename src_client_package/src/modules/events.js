@@ -755,7 +755,7 @@ mp.events.add('render', () => {
     let veh = mp.players.local.vehicle;
     if (veh && veh.getClass() != 8) {
         if (veh.getPedInSeat(-1) == mp.players.local.handle) {
-            if (user.get('stats_shooting') < 99 && !user.isPolice()) {
+            if (user.getCache('stats_shooting') < 99/* && !user.isPolice()*/) { //TODO
                 mp.game.controls.disableControlAction(2, 24, true);
                 mp.game.controls.disableControlAction(2, 25, true);
                 mp.game.controls.disableControlAction(2, 66, true);

@@ -73,6 +73,23 @@ vehicles.loadAllTimers = () => {
     setInterval(vehicles.processVehicleManager, 600);
 };
 
+vehicles.loadAllShop = () => {
+    enums.carShopList.forEach(item => {
+        if (item.id == 0)
+            return;
+
+        let blip = methods.createBlip(new mp.Vector3(item.buyPos[0], item.buyPos[1], item.buyPos[2]), item.blipId, item.blipColor, 0.8, item.name);
+        methods.createStaticCheckpoint(blip.position.x, blip.position.y, blip.position.z - 1, "Нажмите ~g~Е~s~ чтобы открыть меню");
+    });
+};
+
+vehicles.loadAllShopVehicles = () => {
+    enums.carShopVehicleList.forEach(item => {
+        vehicles.spawnCar(new mp.Vector3(item[1], item[2], item[3]), item[4], item[0]);
+        methods.createStaticCheckpoint(item[1], item[2], item[3], `~b~Название ТС:~s~ ${item[0]}\n~b~Цена: ~g~Скоро будет ;)`, 5, -1, [0, 0, 0, 0]);
+    });
+};
+
 vehicles.loadPlayerVehicle = (player) => {
 
     methods.debug('vehicles.loadPlayerVehicle');

@@ -11,6 +11,7 @@ let mysql = require('./mysql');
 let houses = require('../property/houses');
 let condos = require('../property/condos');
 let business = require('../property/business');
+let vehicles = require('../property/vehicles');
 
 let cloth = require('../business/cloth');
 let tattoo = require('../business/tattoo');
@@ -306,6 +307,21 @@ mp.events.add('server:condo:insertBig', (player, number, zone, street) => {
 
 mp.events.add('server:user:getPlayerPos', (player) => {
     console.log(`PlayerPos: ${player.position.x}, ${player.position.y}, ${player.position.z}, ${player.heading}`)
+});
+
+mp.events.add('server:user:getVehPos', (player) => {
+    if (player.vehicle)
+        methods.saveFile('vehPos', `["${methods.getVehicleInfo(player.vehicle.model).display_name}", ${player.vehicle.position.x}, ${player.vehicle.position.y}, ${player.vehicle.position.z}, ${player.vehicle.heading}],`)
+});
+
+mp.events.addRemoteCounted('server:admin:spawnVeh', (player, vName) => {
+    try {
+        let v = vehicles.spawnCar(player.position, player.heading, vName);
+        player.putIntoVehicle(v, -1);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 });
 
 mp.events.addRemoteCounted('server:business:buy', (player, id) => {

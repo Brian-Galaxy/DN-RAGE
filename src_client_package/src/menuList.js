@@ -1140,6 +1140,7 @@ menuList.showAdminMenu = function() {
 
         if (user.isAdmin(5)) {
             UIMenu.Menu.AddMenuItem("Коорды").doName = 'server:user:getPlayerPos';
+            UIMenu.Menu.AddMenuItem("КоордыVeh").doName = 'server:user:getVehPos';
             UIMenu.Menu.AddMenuItem("Debug").doName = 'debug';
             UIMenu.Menu.AddMenuItem("Debug2").doName = 'debug2';
         }
@@ -1274,6 +1275,9 @@ menuList.showAdminMenu = function() {
         }
         if (item.doName == 'server:user:getPlayerPos') {
             mp.events.callRemote('server:user:getPlayerPos');
+        }
+        if (item.doName == 'server:user:getVehPos') {
+            mp.events.callRemote('server:user:getVehPos');
         }
         if (item.eventName == 'server:user:adrenaline') {
             let id = await UIMenu.Menu.GetUserInput("ID Игрока", "", 10);

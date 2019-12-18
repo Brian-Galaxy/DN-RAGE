@@ -192,6 +192,30 @@ methods.saveLog = function (name, log) {
     //TODO
 };
 
+methods.saveFile = function (name, log) {
+    fs.appendFile("" + name + ".log", `[${methods.getDate()}] [${methods.getTime()}] ${log}\n`, function (err) {
+        if(err) {
+            methods.createFile(name);
+            return methods.debug(err);
+        }
+    });
+};
+
+methods.createFile = function (filename) {
+    fs.open(filename, 'r', function(err, fd) {
+        if (err) {
+            fs.writeFile(filename, '', function(err) {
+                if(err)
+                    methods.debug(err);
+                else
+                    methods.debug("The file was saved!");
+            });
+        } else {
+            methods.debug("The file exists!");
+        }
+    });
+};
+
 methods.createBlip = function (pos, sprite, color, scale, name, dimension) {
     if (scale == undefined)
         scale = 0.8;

@@ -1,6 +1,8 @@
 import './modules/data';
 import './modules/events';
+import './manager/vSync';
 import './betternotifs';
+import './voice';
 
 import business from "./property/business";
 

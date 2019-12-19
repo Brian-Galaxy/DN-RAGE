@@ -325,7 +325,7 @@ mp.events.add('server:condo:insertBig', (player, number, zone, street) => {
 });
 
 mp.events.add('server:user:getPlayerPos', (player) => {
-    console.log(`PlayerPos: ${player.position.x}, ${player.position.y}, ${player.position.z}, ${player.heading}`)
+    console.log(`PlayerPos: ${player.position.x}, ${player.position.y}, ${player.position.z - 1}, ${player.heading}`)
 });
 
 mp.events.add('server:user:getVehPos', (player) => {
@@ -462,6 +462,162 @@ mp.events.addRemoteCounted('server:business:setMoney', (player, id, money) => {
 
 mp.events.addRemoteCounted('server:business:save', (player, id) => {
     business.save(id);
+});
+
+mp.events.addRemoteCounted('server:uniform:gr6', (player) => {
+    if (user.getSex(player) == 1) {
+        user.setComponentVariation(player, 3, 14, 0);
+        user.setComponentVariation(player, 4, 34, 0);
+        user.setComponentVariation(player, 5, 0, 0);
+        user.setComponentVariation(player, 6, 25, 0);
+        user.setComponentVariation(player, 7, 0, 0);
+        user.setComponentVariation(player, 8, 152, 0);
+        user.setComponentVariation(player, 9, 6, 1);
+        user.setComponentVariation(player, 10, 0, 0);
+        user.setComponentVariation(player, 11, 85, 0);
+    }
+    else {
+        user.setComponentVariation(player, 3, 11, 0);
+        user.setComponentVariation(player, 4, 13, 0);
+        user.setComponentVariation(player, 5, 0, 0);
+        user.setComponentVariation(player, 6, 25, 0);
+        user.setComponentVariation(player, 7, 0, 0);
+        user.setComponentVariation(player, 8, 122, 0);
+        user.setComponentVariation(player, 9, 4, 1);
+        user.setComponentVariation(player, 10, 0, 0);
+        user.setComponentVariation(player, 11, 26, 1);
+    }
+});
+
+mp.events.addRemoteCounted('server:gr6:findPickup', (player, x, y, z) => {
+    if (!user.isLogin(player))
+        return;
+    try {
+
+        if (player.vehicle && player.seat == -1) {
+
+            if (player.vehicle.getOccupants().length == 1) {
+                player.notify('~b~Работать можно только с напарниками!');
+            }
+            else {
+                let isStart = false;
+                player.vehicle.getOccupants().forEach(function (p) {
+                    if (!user.isLogin(p))
+                        return;
+                    if (user.get(p, 'job') == 8) {
+                        user.setWaypoint(p, x, y);
+                        Container.Data.Set(player.vehicle.id, 'validWorker' + user.getId(p), true);
+                        if (user.getRpName(p) == user.getRpName(player))
+                            return;
+                        p.notify('~b~Вы получили задание');
+                        player.notify('~b~Напарник: ~s~' + user.getRpName(p));
+
+                        if (isStart)
+                            return;
+                        p.call('client:createGr6Checkpoint', [x, y, z]);
+                        isStart = true;
+                    }
+                })
+            }
+        }
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.addRemoteCounted('server:gr6:dropCar', (player, money, vId) => {
+    if (!user.isLogin(player))
+        return;
+    mp.vehicles.forEach(function (v) {
+        if (vehicles.exists(v) && v.id == vId)
+            v.setVariable('gr6Money', methods.parseFloat(v.getVariable('gr6Money') + money));
+    });
+});
+
+mp.events.addRemoteCounted('server:gr6:unload', (player, vId) => {
+    if (!user.isLogin(player))
+        return;
+
+    if (player.vehicle && player.seat == -1) {
+        mp.vehicles.forEach(function (v) {
+            if (vehicles.exists(v) && v.id == vId) {
+                let money = methods.parseFloat(v.getVariable('gr6Money') / 100);
+
+                let countOcc = v.getOccupants().length;
+
+                v.getOccupants().forEach(function (p) {
+                    if (!user.isLogin(p) || user.get(p, 'job') != 8)
+                        return;
+
+                    if (Container.Data.Has(v.id, 'validWorker' + user.getId(p))) {
+
+                        let currentMoney = methods.parseFloat(money / countOcc);
+                        if (user.get(p, 'skill_gr6') >= 500)
+                            currentMoney = methods.parseFloat(money * 1.5);
+
+                        user.addCashMoney(p, currentMoney);
+                        business.addMoney(162, methods.parseFloat(currentMoney / 10));
+                        coffer.removeMoney(currentMoney + methods.parseFloat(currentMoney / 10));
+                        p.notify('~g~Вы заработали: ~s~' + methods.moneyFormat(currentMoney));
+                        Container.Data.Reset(v.id, 'validWorker' + user.getId(p));
+                        user.giveJobSkill(p);
+                    }
+                    else {
+                        p.notify('~r~Вы не являетесь напарником ' + user.getRpName(player));
+                        p.notify('~r~Зарплату вы не получили');
+                    }
+                });
+                v.setVariable('gr6Money', 0);
+            }
+        });
+    }
+});
+
+mp.events.addRemoteCounted('server:gr6:delete', (player) => {
+    if (!user.isLogin(player))
+        return;
+    let veh = player.vehicle;
+    if (veh && player.seat == -1) {
+        if (veh.getVariable('owner_id') == user.getId(player)) {
+            user.showLoadDisplay(player);
+            setTimeout(function () {
+                vehicles.respawn(veh);
+                setTimeout(function () {
+                    if (user.isLogin(player)) {
+                        user.hideLoadDisplay(player);
+                        user.addCashMoney(player, 4500);
+                        player.notify('~b~Вы вернули транспорт в гараж');
+                    }
+                }, 500);
+            }, 700);
+        }
+        else {
+            player.notify('~r~Не вы арендовали, не вам сдавать.');
+        }
+    }
+});
+
+mp.events.addRemoteCounted('server:gr6:grab', (player) => {
+    if (!user.isLogin(player))
+        return;
+    if (player.vehicle && player.seat == -1) {
+        if (player.vehicle.getVariable('job') == 8) {
+            user.showLoadDisplay(player);
+            let money = methods.parseFloat(player.vehicle.getVariable('gr6Money') / 90);
+            setTimeout(function () {
+                vehicles.respawn(player.vehicle);
+                setTimeout(function () {
+                    user.hideLoadDisplay(player);
+                    user.addCashMoney(player, money);
+                    player.notify('~b~Вы ограбили транспорт на сумму: ~s~$' + methods.numberFormat(money));
+                }, 500);
+            }, 700);
+        }
+        else {
+            player.notify('~r~Это не инкассаторская машина');
+        }
+    }
 });
 
 mp.events.addRemoteCounted("onKeyPress:E", (player) => {

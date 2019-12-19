@@ -890,7 +890,7 @@ vehicles.spawnCar = (position, heading, nameOrModel, number = undefined) => {
 
     veh.setVariable('container', CountAllCars + offsetAll);
     veh.setVariable('fuel', vInfo.fuel_full);
-    veh.setVariable('id', CountAllCars);
+    veh.setVariable('vid', CountAllCars);
 
     vehicles.set(CountAllCars + offsetAll, 'fuel', vInfo.fuel_full);
     vehicles.set(CountAllCars + offsetAll, 'hash', model);
@@ -931,15 +931,90 @@ vehicles.spawnCarCb = (cb, position, heading, nameOrModel, color1 = -1, color2 =
 
         veh.setVariable('container', CountAllCars + offsetAll);
         veh.setVariable('fuel', vInfo.fuel_full);
-        veh.setVariable('id', CountAllCars);
+        veh.setVariable('vid', CountAllCars);
 
         vehicles.set(CountAllCars + offsetAll, 'fuel', vInfo.fuel_full);
         vehicles.set(CountAllCars + offsetAll, 'hash', model);
+        vehicles.setFuel(vInfo.fuel_full);
 
         cb(veh);
     }, [model, position, {heading: parseFloat(heading), numberPlate: number, engine: false, dimension: 0}]);
 
     //return veh;
+};
+
+vehicles.spawnJobCar = (cb2, nameOrModel, position, heading, jobId = 0) => {
+    methods.debug('vehicles.spawnFractionCar ');
+    vehicles.spawnCarCb(veh => {
+
+        switch (jobId) {
+            case 1: {
+                veh.numberPlate = 'CNR' + jobId + veh.getVariable('id');
+                veh.setColor(111, 0);
+                break;
+            }
+            case 2: {
+                veh.numberPlate = 'MGO' + jobId + veh.getVariable('id');
+                veh.setColor(111, 111);
+                break;
+            }
+            case 3: {
+                veh.numberPlate = 'WZN' + jobId + veh.getVariable('id');
+                veh.setColor(111, 111);
+                break;
+            }
+            case 4: {
+                veh.numberPlate = 'GOP' + jobId + veh.getVariable('id');
+
+                if (nameOrModel == 'pony') {
+                    veh.setColor(111, 111);
+                    veh.livery = 1;
+                }
+                else {
+                    switch (methods.getRandomInt(0, 4)) {
+                        case 0:
+                            veh.setColor(111, 28);
+                            break;
+                        case 1:
+                            veh.setColor(111, 0);
+                            break;
+                        case 2:
+                            veh.setColor(111, 83);
+                            break;
+                        case 3:
+                            veh.setColor(111, 111);
+                            break;
+                    }
+                }
+                break;
+            }
+            case 5: {
+                veh.numberPlate = 'PLJ' + jobId + veh.getVariable('id');
+                break;
+            }
+            case 6: {
+                veh.numberPlate = 'TXI' + jobId + veh.getVariable('id');
+                veh.setColor(42, 42);
+                break;
+            }
+            case 7: {
+                veh.numberPlate = 'BUS' + jobId + veh.getVariable('id');
+                if (nameOrModel == 'bus')
+                    veh.setColor(70, 0);
+                break;
+            }
+            case 8: {
+                veh.numberPlate = 'GRP' + jobId + veh.getVariable('id');
+                veh.setColor(111, 0);
+                break;
+            }
+        }
+
+        veh.locked = true;
+        veh.setVariable('jobId', jobId);
+        cb2(veh);
+
+    }, position, heading, nameOrModel);
 };
 
 vehicles.lockStatus = (player, vehicle) => {

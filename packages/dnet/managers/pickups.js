@@ -202,6 +202,9 @@ pickups.StartHelpPos = new mp.Vector3(-1033.243, -2735.249, 19.16927);
 /*Grab*/
 pickups.GrabPos = new mp.Vector3(973.4865, -2190.531, 29.55157);
 
+/*Jobs*/
+pickups.Gr6Pos = new mp.Vector3(484.4730224609375, -1094.7589111328125, 28.202163696289062);
+
 pickups.checkPressLAlt = function(player) {
 
     methods.debug('pickups.checkPressLAlt');
@@ -585,4 +588,7 @@ pickups.createPickups = function() {
 
     methods.createStaticCheckpointV(pickups.InvaderPos1, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
     methods.createStaticCheckpointV(pickups.InvaderPos2, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
+
+    //JOBS
+    methods.createStaticCheckpointV(pickups.Gr6Pos, 'Нажмите ~g~E~s~ чтобы открыть меню инкассатора', 1, -1, pickups.Blue);
 };

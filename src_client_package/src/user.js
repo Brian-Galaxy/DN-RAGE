@@ -550,6 +550,29 @@ user.setLogin = function(value){
     _isLogin = value;
 };
 
+user.giveWanted = function(level, reason) {
+    mp.events.callRemote('server:user:giveMeWanted', level, reason);
+};
+
+user.giveJobSkill = function() {
+    mp.events.callRemote('server:user:giveJobSkill');
+};
+
+user.giveJobMoney = function(money) {
+
+    //if (user.get('skill_' + user.get('job')) >= 500)
+    //    money = methods.parseInt(money * 1.5);
+
+    if (user.get('bank_card') == 0) {
+        user.addCashMoney(money);
+        mp.game.ui.notifications.show('~y~Оформите банковскую карту');
+    }
+    else {
+        user.addBankMoney(money);
+        user.sendSmsBankOperation(`Зачисление средств: ~g~${methods.moneyFormat(money)}`);
+    }
+};
+
 user.isAdmin = function(){
     return true; //TODO
 };

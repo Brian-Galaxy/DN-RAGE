@@ -1173,6 +1173,49 @@ user.kickAntiCheat = function(player, reason, title = 'Вы были кикну�
     }
 };
 
+user.giveJobSkill = function(player) {
+    return;
+    if (user.isLogin(player)) {
+        let job = user.get(player, 'job');
+        let skillCount = 500;
+
+        switch (job) {
+            case 'mail':
+            case 'mail2':
+                skillCount = 1000;
+                break;
+            case 'taxi1':
+            case 'taxi2':
+                skillCount = 400;
+                job = 'taxi';
+                break;
+            case 'trucker1':
+            case 'trucker2':
+            case 'trucker3':
+                job = 'trucker';
+                skillCount = 1500;
+                break;
+        }
+
+        if (user.has(player, 'skill_' + job)) {
+            let currentSkill = user.get(player, 'skill_' + job);
+            if (currentSkill >= skillCount)
+                return;
+
+            if (currentSkill == skillCount - 1) {
+                user.set(player, 'skill_' + job, skillCount);
+                chat.sendToAll('Конкурс', `${user.getRpName(player)} !{${chat.clBlue}} стал одним из лучших работников штата San Andreas, получив вознаграждение $10,000`, chat.clBlue);
+                user.addMoney(player, 10000);
+                user.save(player);
+            }
+            else {
+                user.set(player, 'skill_' + job, currentSkill + 1);
+                player.notify('~g~Навык вашей профессии был повышен');
+            }
+        }
+    }
+};
+
 user.payDay = async function (player) {
     if (!user.isLogin(player))
         return false;

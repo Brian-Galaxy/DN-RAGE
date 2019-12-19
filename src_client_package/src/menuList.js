@@ -1114,6 +1114,45 @@ menuList.showBusinessSettingsMenu = async function(data) {
     });
 };
 
+menuList.showMainMenu = function() {
+
+    let menu = UIMenu.Menu.Create(`Меню`, `~b~Главное меню`);
+
+    UIMenu.Menu.AddMenuItem("Персонаж").doName = 'showPlayerMenu';
+    UIMenu.Menu.AddMenuItem("Транспорт").eventName = 'onKeyPress:2';
+
+    if (user.get('fraction_id') > 0)
+        UIMenu.Menu.AddMenuItem("Организация").doName = 'showFractionMenu';
+    if (user.get('fraction_id2') > 0)
+        UIMenu.Menu.AddMenuItem("Неоф. Организация").doName = 'showFraction2Menu';
+
+    UIMenu.Menu.AddMenuItem("Помощь").doName = 'showHelpMenu';
+    UIMenu.Menu.AddMenuItem("Настройки").doName = 'showSettingsMenu';
+
+    UIMenu.Menu.AddMenuItem("~y~Задать вопрос").eventName = 'server:sendAsk';
+    UIMenu.Menu.AddMenuItem("~r~Жалоба").eventName = 'server:sendReport';
+
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+    menu.ItemSelect.on(async (item, index) => {
+        UIMenu.Menu.HideMenu();
+        if (item.doName == 'showFractionMenu')
+            menuList.showFractionMenu();
+    });
+};
+
+menuList.showFractionMenu = function() {
+
+    let menu = UIMenu.Menu.Create(`Организация`, `~b~Меню вашей организации`);
+
+    UIMenu.Menu.AddMenuItem("Диспетчерская").eventName = '';
+    UIMenu.Menu.AddMenuItem("Список членов организации").eventName = '';
+
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+    menu.ItemSelect.on(async (item, index) => {
+        UIMenu.Menu.HideMenu();
+
+    });
+};
 
 menuList.showAdminMenu = function() {
     let menu = UIMenu.Menu.Create(`ADMIN`, `~b~Админ меню`);

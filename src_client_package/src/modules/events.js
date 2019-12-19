@@ -3,10 +3,14 @@
 import methods from './methods';
 import user from '../user';
 import menuList from '../menuList';
+import voice from "../voice";
+import enums from "../enums";
+
 import ui from "./ui";
+
 import checkpoint from "../manager/checkpoint";
 import weather from "../manager/weather";
-import enums from "../enums";
+
 import vehicles from "../property/vehicles";
 
 mp.gui.chat.enabled = false;
@@ -632,6 +636,62 @@ mp.keys.bind(0xA2, true, function() {
         return;
     if (!methods.isBlockKeys())
         vehicles.engineVehicle();
+});
+
+let loadIndicatorDist = 15;
+let showIds = true;
+
+mp.events.add('render', () => {
+    if (user.isLogin() && showIds) {
+        let localPlayer = mp.players.local;
+        let __localPlayerPosition__ = mp.players.local.position;
+
+        methods.getStreamPlayerList().forEach(player => {
+            if (/*player === localPlayer || */!mp.players.exists(player)) {
+                return false;
+            }
+
+            const __playerPosition__ = player.position;
+            const distance = methods.distanceToPos(__localPlayerPosition__, __playerPosition__);
+
+            if (distance <= loadIndicatorDist && player.dimension == localPlayer.dimension) {
+                const isConnected = voice.getVoiceInfo(player, 'stateConnection') === 'connected';
+                const isEnable = voice.getVoiceInfo(player, 'enabled');
+                let indicatorColor = '~r~•';
+                if (isConnected && !isEnable)
+                    indicatorColor = '~m~•';
+                else if (isConnected && isEnable)
+                    indicatorColor = '~w~•';
+                const headPosition = player.getBoneCoords(12844, 0, 0, 0);
+
+                let typingLabel = '';
+                if (player.getVariable('enableAdmin'))
+                    typingLabel += '\n~r~ADMIN MOD';
+                if (player.getVariable('hiddenId'))
+                    typingLabel += '\n~m~HIDDEN ID';
+                if (player.getVariable('isTyping'))
+                    typingLabel += '\n~b~Печатает...';
+                if (player.getVariable('isAfk'))
+                    typingLabel += '\n~r~AFK...';
+
+                //let name = '';
+                //if (user.hasDating(player.getVariable('id')))
+                //    name = user.getDating(player.getVariable('id')) + ' | ';
+                if(localPlayer.getVariable('enableAdmin') || !player.getVariable('hiddenId'))
+                {
+                    ui.drawText3D(player.id + ' ' +  indicatorColor + typingLabel, headPosition.x, headPosition.y, headPosition.z + 0.1);
+                }
+            }
+        });
+    }
+});
+
+//M
+mp.keys.bind(0x4D, true, function() {
+    if (!user.isLogin())
+        return;
+    if (!methods.isBlockKeys())
+        menuList.showMainMenu();
 });
 
 // Commands in 2020......

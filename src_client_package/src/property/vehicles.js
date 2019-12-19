@@ -255,7 +255,7 @@ vehicles.getSpeedBoost = (model) => {
         case 'Bagger': return 8;
         case 'Bati': return 35;
         case 'Bati2': return 35;
-        case 'Bullet': return 20;
+        case 'Bullet': return 40;
         case 'Cheetah': return 40;
         case 'Cheetah2': return 23;
         case 'Cyclone': return 40;

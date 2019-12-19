@@ -67,6 +67,10 @@ mp.events.add({
     }
 });
 
+methods.getStreamPlayerList = function() {
+    return streamedPlayers;
+};
+
 methods.sleep = function(ms) {
     return new Promise(res => setTimeout(res, ms));
 };

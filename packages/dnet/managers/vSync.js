@@ -187,7 +187,6 @@ vSync.setEngineState = function(v, status) {
     /*let data = vSync.getVehicleSyncData(v);
     data.Engine = status;
     vSync.updateVehicleSyncData(v, data);*/
-    methods.debug('ENGINE', status);
     v.engine = status;
     //mp.players.callInRange(v.position, streamDist, "vSync:setEngineState", [v.id, status]);
 };

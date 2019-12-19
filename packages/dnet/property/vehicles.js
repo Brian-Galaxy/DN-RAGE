@@ -98,6 +98,241 @@ vehicles.loadAllShopVehicles = () => {
     });
 };
 
+vehicles.fractionList = [];
+
+vehicles.loadAllFractionVehicles = () => {
+    mysql.executeQuery(`SELECT * FROM cars_fraction WHERE is_buy = 1`, function (err, rows, fields) {
+        rows.forEach(function (item) {
+
+            let v = { id: item['id'], x: item['x'], y: item['y'], z: item['z'], rot: item['rot'], is_default: item['is_default'], rank_type: item['rank_type'], rank: item['rank'], fraction_id: item['fraction_id'] };
+            vehicles.fractionList.push(v);
+
+            if (item['is_default'] == 1) {
+
+                let color1 = methods.getRandomInt(0, 156);
+                let color2 = methods.getRandomInt(0, 156);
+                let number = 'SA';
+                let numberStyle = 0;
+                let fractionId = item['fraction_id'];
+                let id = item['id'];
+                let livery = 0;
+                let model = item['hash'];
+
+                switch (fractionId) {
+                    case 1:
+                        color1 = 146;
+                        color2 = 146;
+                        number = "GOV" + id;
+                        numberStyle = 4;
+                        break;
+                    case 2:
+                        color1 = 111;
+                        color2 = 0;
+                        number = "LSPD" + id;
+                        livery = methods.getRandomInt(0, 6);
+                        numberStyle = 4;
+
+                        switch (model)
+                        {
+                            case -590854301:
+                            case 1982188179:
+                            case -1286617882:
+                            case -118239187:
+                            case 376094636:
+                            {
+                                livery = methods.getRandomInt(3, 6);
+                                break;
+                            }
+                            case 353883353: {
+                                livery = 0;
+                                break;
+                            }
+                            case -561505450:
+                            case -271532569:
+                            case -660061144:
+                            {
+                                livery = methods.getRandomInt(2, 4);
+                                break;
+                            }
+                            case 1162796823:
+                            case -595004596:
+                            case -1973172295:
+                            {
+                                let colors = [0, 2, 141, 7, 34, 134, 146];
+
+                                color1 = colors[methods.getRandomInt(0, 6)];
+                                color2 = color1;
+                                break;
+                            }
+                            case 1127131465:
+                            {
+                                let colors = [0, 3, 6, 131, 134];
+                                color1 = colors[methods.getRandomInt(0, 4)];
+                                color2 = color1;
+                                break;
+                            }
+                            case -1647941228:
+                                color1 = 112;
+                                color2 = 112;
+                                break;
+                            case 837858166:
+                            case 745926877:
+                                color1 = 0;
+                                color2 = 0;
+                                break;
+                            case 2071877360:
+                                color1 = 3;
+                                color2 = 3;
+                                break;
+                        }
+                        break;
+                    case 5:
+                        color1 = 111;
+                        color2 = 0;
+                        number = "SHRF" + id;
+                        livery = methods.getRandomInt(0, 6);
+                        numberStyle = 4;
+
+                        switch (model)
+                        {
+                            case -590854301:
+                            case 1982188179:
+                            case -1286617882:
+                            case -118239187:
+                            case 376094636:
+                            {
+                                livery = methods.getRandomInt(3, 6);
+                                break;
+                            }
+                            case -561505450:
+                            case -271532569:
+                            case -660061144:
+                            {
+                                livery = methods.getRandomInt(2, 4);
+                                break;
+                            }
+                            case 1162796823:
+                            case -595004596:
+                            case -1973172295:
+                            {
+                                let colors = [0, 2, 141, 7, 34, 134, 146];
+
+                                color1 = colors[methods.getRandomInt(0, 6)];
+                                color2 = color1;
+                                break;
+                            }
+                            case 1127131465:
+                            {
+                                let colors = [0, 3, 6, 131, 134];
+                                color1 = colors[methods.getRandomInt(0, 4)];
+                                color2 = color1;
+                                break;
+                            }
+                            case -1647941228:
+                                color1 = 112;
+                                color2 = 112;
+                                break;
+                            case 837858166:
+                            case 745926877:
+                                color1 = 0;
+                                color2 = 0;
+                                break;
+                            case 2071877360:
+                                color1 = 152;
+                                color2 = 152;
+                                break;
+                        }
+                        break;
+                    case 3:
+                    {
+                        color1 = 0;
+                        color2 = 0;
+                        number = "FIB" + id;
+                        numberStyle = 4;
+                        break;
+                    }
+                    case 4:
+                    {
+                        color1 = 154;
+                        color2 = 154;
+
+                        if (model == -823509173 || model == 321739290 || model == 1074326203 || model == 630371791)
+                        {
+                            color1 = 111;
+                            color2 = 111;
+                        }
+                        number = "USMC" + id;
+                        break;
+                    }
+                    case 6:
+                    {
+                        color1 = 27;
+                        color2 = 27;
+                        number = "EMS" + id;
+                        numberStyle = 4;
+
+                        if (model == 1938952078)
+                        {
+                            color1 = 111;
+                            color2 = 111;
+                        }
+                        else if (model == 353883353)
+                            livery = 1;
+                        break;
+                    }
+                    case 7:
+                    {
+                        color1 = 149;
+                        color2 = 149;
+                        number = "LIFE" + id;
+                        numberStyle = 0;
+                        break;
+                    }
+                }
+
+                vehicles.spawnCarCb(veh => {
+
+                    veh.numberPlate = number;
+                    veh.numberPlateType = numberStyle;
+                    veh.livery = livery;
+                    veh.setColor(color1, color2);
+                    vSync.setEngineState(veh, false);
+                    veh.locked = true;
+                    veh.setVariable('fraction_id', item['fraction_id']);
+                    veh.setVariable('rank', item['rank']);
+                    veh.setVariable('rank_type', item['rank_type']);
+                    veh.setVariable('veh_id', item['id']);
+                    vehicles.setFuel(veh, item['fuel']);
+
+                    if (fractionId == 1) {
+                        veh.windowTint = 1;
+                    }
+
+                    if (fractionId < 7) {
+                        try {
+                            veh.setMod(11, 2);
+                            veh.setMod(12, 2);
+                            veh.setMod(13, 3);
+                            veh.setMod(18, 0);
+                            veh.setMod(16, 2);
+                            veh.setVariable('boost', 1.79);
+                        }
+                        catch (e) {
+                            methods.debug(e);
+                        }
+                    }
+
+                    if (fractionId == 4 && model == -808457413)
+                        veh.setMod(48, methods.getRandomInt(0, 2) == 0 ? 8 : 18);
+                    if (fractionId == 4 && model == -121446169)
+                        veh.setMod(48, 4);
+
+                }, new mp.Vector3(item['x'], item['y'], item['z']), item['rot'], item['name']);
+            }
+        });
+    });
+};
+
 vehicles.loadAllTestVehicles = () => {
     enums.randomSpawnVeh.forEach(item => {
         vehicles.spawnCarCb(veh => {
@@ -664,7 +899,7 @@ vehicles.spawnCar = (position, heading, nameOrModel, number = undefined) => {
 };
 
 vehicles.spawnCarCb = (cb, position, heading, nameOrModel, color1 = -1, color2 = -1, liv = -1, number = undefined) => {
-    methods.debug('vehicles.spawnCar2 ' + nameOrModel);
+    methods.debug('vehicles.spawnCarCb ' + nameOrModel);
     if (typeof nameOrModel == 'string')
         nameOrModel = mp.joaat(nameOrModel.toLowerCase());
 
@@ -688,7 +923,6 @@ vehicles.spawnCarCb = (cb, position, heading, nameOrModel, color1 = -1, color2 =
 
         veh.numberPlate = number;
         //veh.engine = false;
-        methods.debug('spawnCarCb');
         vSync.setEngineState(veh, false);
         veh.locked = false;
         if (liv >= 0)

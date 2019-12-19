@@ -58,16 +58,16 @@ pickups.SapdToInterrogationPos = new mp.Vector3(404.0302, -997.302, -100.004);
 pickups.SapdFromInterrogationPos = new mp.Vector3(446.7996, -985.8127, 25.67422);
 
 pickups.SheriffGarderobPos = new mp.Vector3(-452.945, 6013.818, 30.716);
-pickups.SheriffGarderobPos2 = new mp.Vector3(1848.908, 3689.9604, 33.2670);
+pickups.SheriffGarderobPos2 = new mp.Vector3(1849.775390625, 3695.501953125, 33.26706314086914);
 pickups.SheriffArsenalPos = new mp.Vector3(-437.330, 6001.264, 30.716);
-pickups.SheriffArsenalPos2 = new mp.Vector3(1857.1979, 3689.1872, 33.26704);
+pickups.SheriffArsenalPos2 = new mp.Vector3(1845.992431640625, 3692.927734375, 33.26704406738281);
 pickups.SheriffClearPos = new mp.Vector3(-448.6859, 6012.703, 30.71638);
 pickups.SheriffArrestPos = new mp.Vector3(-441.605, 6012.786, 26.985);
+pickups.SheriffArrestPos2 = new mp.Vector3(1856.632080078125, 3685.5849609375, 29.259225845336914);
 
 pickups.PrisonArrestPos = new mp.Vector3(1690.606, 2591.926, 44.83793);
 pickups.PrisonPos1 = new mp.Vector3(1846.5198, 2585.9008, 44.6720);
 pickups.PrisonPos2 = new mp.Vector3(1774.8231, 2552.00925, 44.5649);
-pickups.PrisonArsenalPos = new mp.Vector3( 1753.23022, 2591.45166, 44.5649);
 
 pickups.UsmcPos1 = new mp.Vector3(556.8799, -3119.107, 17.76859);
 pickups.UsmcPos2 = new mp.Vector3(556.9783, -3120.458, 17.76858);
@@ -92,12 +92,11 @@ pickups.LicGaragePos = new mp.Vector3(-1540.117, -576.3737, 24.70784);
 pickups.LicBuyPos = new mp.Vector3(-1576.237, -579.495, 107.523);
 
 /*Keys*/
-pickups.GovKeyPos = new mp.Vector3(-1366.483, -480.0415, 30.59574);
+pickups.GovKeyPos = new mp.Vector3(-1397.35693359375, -464.54345703125, 33.4775505065918);
 pickups.SapdKeyPos = new mp.Vector3(458.65, -1007.944, 27.27073);
 pickups.FibKeyPos = new mp.Vector3(138.4407, -702.3063, 32.12376);
-pickups.SheriffKeyPos = new mp.Vector3(-452.0805, 6005.747, 30.84093);
-pickups.Sheriff2KeyPos = new mp.Vector3(1854.3275, 3700.8959, 33.2657);
-pickups.PrisonKeyPos = new mp.Vector3(1840.7513, 2529.2451, 44.67202);
+pickups.SheriffKeyPos = new mp.Vector3(-453.48065185546875, 6031.2314453125, 30.340538024902344);
+pickups.InvaderKeyPos = new mp.Vector3(-1095.8746337890625, -254.6504669189453, 36.68137741088867);
 pickups.TrashKeyPos = new mp.Vector3(1569.828, -2130.211, 77.33018);
 pickups.BusKeyPos = new mp.Vector3(-675.2166, -2166.933, 4.992994);
 pickups.Taxi1KeyPos = new mp.Vector3(895.4368, -179.3315, 73.70035);
@@ -218,14 +217,6 @@ pickups.SpawnHelpPos = new mp.Vector3(-1026.957, -2734.395, 13.75665);
 pickups.InvaderPos1 = new mp.Vector3(-1078.19, -254.3557, 43.02112);
 pickups.InvaderPos2 = new mp.Vector3(-1072.305, -246.3927, 53.00602);
 
-/*HouseTeleport*/
-pickups.House253Pos1 = new mp.Vector3(-1788.01, 425.4173, 121.6412);
-pickups.House253Pos2 = new mp.Vector3(-1787.942, 419.7598, 131.3078);
-pickups.House253Pos11 = new mp.Vector3(-1798.054, 409.0267, 112.4533);
-pickups.House253Pos22 = new mp.Vector3(-1799.5, 414.1857, 127.3076);
-pickups.House253Pos111 = new mp.Vector3(-1838.613, 437.3826, 125.1088);
-pickups.House253Pos222 = new mp.Vector3(-1843.037, 438.5938, 128.7066);
-
 /*NPC*/
 pickups.StartHelpPos = new mp.Vector3(-1033.243, -2735.249, 19.16927);
 
@@ -296,9 +287,6 @@ pickups.checkPressLAlt = function(player) {
     methods.checkTeleport(player, pickups.LicDownPos, pickups.LicUpPos);
     methods.checkTeleport(player, pickups.BuilderDownPos, pickups.BuilderUpPos);
     methods.checkTeleport(player, pickups.InvaderPos2, pickups.InvaderPos1);
-    methods.checkTeleport(player, pickups.House253Pos1, pickups.House253Pos2);
-    methods.checkTeleport(player, pickups.House253Pos11, pickups.House253Pos22);
-    methods.checkTeleport(player, pickups.House253Pos111, pickups.House253Pos222);
 
     //gr6
     methods.checkTeleport(player, new mp.Vector3(486.0731, -1075.497, 28.00087), new mp.Vector3(486.0519, -1078.475, 28.19953));
@@ -377,9 +365,7 @@ pickups.checkPressE = function(player) {
         player.call('client:menuList:showFractionKeyMenu', [methods.getFractionAllowCarList(3)]);
     else if (methods.distanceToPos(pickups.SheriffKeyPos, playerPos) < distanceCheck && user.isSheriff(player))
         player.call('client:menuList:showFractionKeyMenu', [methods.getFractionAllowCarList(7)]);
-    else if (methods.distanceToPos(pickups.Sheriff2KeyPos, playerPos) < distanceCheck && user.isSheriff(player))
-        player.call('client:menuList:showFractionKeyMenu', [methods.getFractionAllowCarList(7 + 100)]);
-    else if (methods.distanceToPos(pickups.PrisonKeyPos, playerPos) < distanceCheck && user.isPrison(player))
+    else if (methods.distanceToPos(pickups.InvaderKeyPos, playerPos) < distanceCheck && user.isPrison(player))
         player.call('client:menuList:showFractionKeyMenu', [methods.getFractionAllowCarList(5)]);
     else if (methods.distanceToPos(pickups.Ems1KeyPos, playerPos) < distanceCheck && user.isEms(player))
         player.call('client:menuList:showFractionKeyMenu', [methods.getFractionAllowCarList(16)]);
@@ -429,6 +415,8 @@ pickups.checkPressE = function(player) {
             player.call('client:menuList:showSapdClearMenu');
         if (methods.distanceToPos(pickups.SheriffArrestPos, playerPos) < distanceCheck)
             player.call('client:menuList:showSapdArrestMenu');
+        if (methods.distanceToPos(pickups.SheriffArrestPos2, playerPos) < distanceCheck)
+            player.call('client:menuList:showSapdArrestMenu');
     }
     if (user.isSheriff(player) || user.isFib(player) || user.isSapd(player)) {
         if (methods.distanceToPos(pickups.PrisonArrestPos, playerPos) < distanceCheck)
@@ -437,10 +425,6 @@ pickups.checkPressE = function(player) {
     if (user.isFib(player)) {
         if (methods.distanceToPos(pickups.FibArsenalPos, playerPos) < distanceCheck)
             player.call('client:menuList:showFibArsenalMenu');
-    }
-    if (user.isPrison(player)) {
-        if (methods.distanceToPos(pickups.PrisonArsenalPos, playerPos) < distanceCheck)
-            player.call('client:menuList:showPrisonArsenalMenu');
     }
     if (user.isUsmc(player)) {
         if (methods.distanceToPos(pickups.UsmcArsenal1Pos, playerPos) < distanceCheck)
@@ -515,7 +499,7 @@ pickups.createPickups = function() {
     methods.createStaticCheckpointV(pickups.Mail2KeyPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
     methods.createStaticCheckpointV(pickups.Gr6KeyPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
 
-    methods.createBlip(pickups.TrashKeyPos, 50, 59, 0.4, 'Гараж рабочего транспорта');
+    /*methods.createBlip(pickups.TrashKeyPos, 50, 59, 0.4, 'Гараж рабочего транспорта');
     methods.createBlip(pickups.BusKeyPos, 50, 59, 0.4, 'Гараж рабочего транспорта');
     methods.createBlip(pickups.Taxi1KeyPos, 50, 59, 0.4, 'Гараж рабочего транспорта');
     methods.createBlip(pickups.Taxi2KeyPos, 50, 59, 0.4, 'Гараж рабочего транспорта');
@@ -532,7 +516,7 @@ pickups.createPickups = function() {
     methods.createBlip(pickups.Trucker23KeyPos3, 50, 59, 0.4, 'Гараж рабочего транспорта');
     methods.createBlip(pickups.Mail1KeyPos, 50, 59, 0.4, 'Гараж рабочего транспорта');
     methods.createBlip(pickups.Mail2KeyPos, 50, 59, 0.4, 'Гараж рабочего транспорта');
-    methods.createBlip(pickups.Gr6KeyPos, 50, 59, 0.4, 'Гараж рабочего транспорта');
+    methods.createBlip(pickups.Gr6KeyPos, 50, 59, 0.4, 'Гараж рабочего транспорта');*/
 
     //Hackerspace
     methods.createStaticCheckpointV(pickups.HackerSpaceShopPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
@@ -598,12 +582,12 @@ pickups.createPickups = function() {
     methods.createStaticCheckpointV(pickups.SapdKeyPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
 
     methods.createStaticCheckpointV(pickups.SheriffKeyPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
-    methods.createStaticCheckpointV(pickups.Sheriff2KeyPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
-    methods.createStaticCheckpointV(pickups.PrisonKeyPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
+    methods.createStaticCheckpointV(pickups.InvaderKeyPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
     methods.createStaticCheckpointV(pickups.SheriffClearPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
     methods.createStaticCheckpointV(pickups.SheriffGarderobPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
     methods.createStaticCheckpointV(pickups.SheriffGarderobPos2, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
     methods.createStaticCheckpointV(pickups.SheriffArrestPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
+    methods.createStaticCheckpointV(pickups.SheriffArrestPos2, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
     methods.createStaticCheckpointV(pickups.SheriffArsenalPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
     methods.createStaticCheckpointV(pickups.SheriffArsenalPos2, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
 
@@ -611,7 +595,6 @@ pickups.createPickups = function() {
 
     //FIB
     //methods.createStaticCheckpointV(pickups.FibDutyPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
-    methods.createStaticCheckpointV(pickups.PrisonArsenalPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
 
     methods.createStaticCheckpointV(pickups.UsmcArsenal1Pos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
     methods.createStaticCheckpointV(pickups.UsmcArsenal2Pos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);

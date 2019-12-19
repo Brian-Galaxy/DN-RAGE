@@ -35,6 +35,7 @@ function init() {
         vehicles.loadAllShop();
         vehicles.loadAllShopVehicles();
         vehicles.loadAllTimers();
+        vehicles.loadAllFractionVehicles();
 
         weather.loadAll();
 

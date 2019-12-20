@@ -25,12 +25,12 @@ menuList.showHouseBuyMenu = async function(h) {
 
     enterHouseItem = UIMenu.Menu.AddMenuItem("~g~Осмотреть дом");
 
-    /*if (user.getCache('job') == 'mail' || user.getCache('job') == 'mail2') {
+    if (user.getCache('job') == 4) {
         if (!await Container.Data.Has(h.get('id'), 'isMail'))
             UIMenu.Menu.AddMenuItem("~g~Положить почту").doName = h.get('id');
         else
             UIMenu.Menu.AddMenuItem("~o~Дом уже обслуживался");
-    }*/
+    }
 
     let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
 
@@ -102,12 +102,12 @@ menuList.showHouseOutMenu = async function(h) {
 
     let enterHouseItem = UIMenu.Menu.AddMenuItem("~g~Войти");
 
-    /*if (user.getCache('job') == 'mail' || user.getCache('job') == 'mail2') {
+    if (user.getCache('job') == 4) {
         if (!await Container.Data.Has(h.get('id'), 'isMail'))
             UIMenu.Menu.AddMenuItem("~g~Положить почту").doName = h.get('id');
         else
             UIMenu.Menu.AddMenuItem("~o~Дом уже обслуживался");
-    }*/
+    }
 
     let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
 
@@ -144,12 +144,12 @@ menuList.showCondoBuyMenu = async function(h) {
 
     enterHouseItem = UIMenu.Menu.AddMenuItem("~g~Осмотреть квартиру");
 
-    /*if (user.getCache('job') == 'mail' || user.getCache('job') == 'mail2') {
+    if (user.getCache('job') == 4) {
         if (!await Container.Data.Has(h.get('id'), 'isMail'))
             UIMenu.Menu.AddMenuItem("~g~Положить почту").doName = h.get('id');
         else
             UIMenu.Menu.AddMenuItem("~o~Дом уже обслуживался");
-    }*/
+    }
 
     let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
 
@@ -221,12 +221,12 @@ menuList.showCondoOutMenu = async function(h) {
 
     let enterHouseItem = UIMenu.Menu.AddMenuItem("~g~Войти");
 
-    /*if (user.getCache('job') == 'mail' || user.getCache('job') == 'mail2') {
+    if (user.getCache('job') == 4) {
         if (!await Container.Data.Has(h.get('id'), 'isMail'))
             UIMenu.Menu.AddMenuItem("~g~Положить почту").doName = h.get('id');
         else
             UIMenu.Menu.AddMenuItem("~o~Дом уже обслуживался");
-    }*/
+    }
 
     let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
 

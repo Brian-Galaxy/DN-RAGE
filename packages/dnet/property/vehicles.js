@@ -86,10 +86,10 @@ vehicles.loadAllShop = () => {
 
 vehicles.loadAllShopVehicles = () => {
 
-    vehicles.loadAllTestVehicles();
-
     enums.carShopVehicleList.forEach(item => {
         vehicles.spawnCarCb(veh => {
+            if (!vehicles.exists(veh))
+                return;
             veh.locked = true;
             veh.engine = false;
             veh.setVariable('useless', true);
@@ -101,12 +101,13 @@ vehicles.loadAllShopVehicles = () => {
 vehicles.fractionList = [];
 
 vehicles.loadAllFractionVehicles = () => {
-    mysql.executeQuery(`SELECT * FROM cars_fraction WHERE is_buy = 1`, function (err, rows, fields) {
+    //return; //TODO Падает сервер
+    mysql.executeQuery(`SELECT * FROM cars_fraction WHERE is_buy = '1'`, function (err, rows, fields) {
         rows.forEach(function (item) {
 
             let v = { id: item['id'], x: item['x'], y: item['y'], z: item['z'], rot: item['rot'], is_default: item['is_default'], rank_type: item['rank_type'], rank: item['rank'], fraction_id: item['fraction_id'] };
             vehicles.fractionList.push(v);
-
+            return;
             if (item['is_default'] == 1) {
 
                 let color1 = methods.getRandomInt(0, 156);
@@ -291,6 +292,9 @@ vehicles.loadAllFractionVehicles = () => {
                 }
 
                 vehicles.spawnCarCb(veh => {
+
+                    if (!vehicles.exists(veh))
+                        return;
 
                     veh.numberPlate = number;
                     veh.numberPlateType = numberStyle;
@@ -946,6 +950,9 @@ vehicles.spawnCarCb = (cb, position, heading, nameOrModel, color1 = -1, color2 =
 vehicles.spawnJobCar = (cb2, nameOrModel, position, heading, jobId = 0) => {
     methods.debug('vehicles.spawnFractionCar ');
     vehicles.spawnCarCb(veh => {
+
+        if (!vehicles.exists(veh))
+            return;
 
         switch (jobId) {
             case 1: {

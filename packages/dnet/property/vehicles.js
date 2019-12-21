@@ -39,7 +39,7 @@ vehicles.processVehicleManager = () =>
     {
         try {
             let vehicle = mp.vehicles.new.apply(mp.vehicles, creation.args);
-            methods.debug('processVehicleManager');
+            methods.debug('processVehicleManager', creation.args);
             vSync.setEngineState(vehicle, false);
             cbs.push([vehicle, creation.cb]);
         }
@@ -65,7 +65,12 @@ vehicles.processVehicleManager = () =>
 
     for(let cb of cbs)
     {
-        cb[1](cb[0]);
+        try {
+            cb[1](cb[0]);
+        }
+        catch (e) {
+            methods.debug(e);
+        }
     }
 };
 
@@ -107,7 +112,7 @@ vehicles.loadAllFractionVehicles = () => {
 
             let v = { id: item['id'], x: item['x'], y: item['y'], z: item['z'], rot: item['rot'], is_default: item['is_default'], rank_type: item['rank_type'], rank: item['rank'], fraction_id: item['fraction_id'] };
             vehicles.fractionList.push(v);
-            return;
+
             if (item['is_default'] == 1) {
 
                 let color1 = methods.getRandomInt(0, 156);
@@ -331,7 +336,7 @@ vehicles.loadAllFractionVehicles = () => {
                     if (fractionId == 4 && model == -121446169)
                         veh.setMod(48, 4);
 
-                }, new mp.Vector3(item['x'], item['y'], item['z']), item['rot'], item['name']);
+                }, new mp.Vector3(methods.parseFloat(item['x']), methods.parseFloat(item['y']), methods.parseFloat(item['z'])), methods.parseFloat(item['rot']), item['name']);
             }
         });
     });
@@ -674,15 +679,20 @@ vehicles.setFuel = (veh, fuel) => {
     if (!vehicles.exists(veh))
         return;
 
-    let vInfo = methods.getVehicleInfo(veh.model);
+    /*let vInfo = methods.getVehicleInfo(veh.model);
     if (vInfo.fuel_full == 1)
         return;
 
     if (vInfo.fuel_full < fuel)
-        fuel = vInfo.fuel_full;
+        fuel = vInfo.fuel_full;*/
 
-    vehicles.set(veh.getVariable('container'), 'fuel', fuel);
-    veh.setVariable('fuel', fuel);
+    try {
+        vehicles.set(veh.getVariable('container'), 'fuel', fuel);
+        veh.setVariable('fuel', fuel);
+    }
+    catch (e) {
+        methods.debug('SetFUEL', e);
+    }
 };
 
 vehicles.getFuel = (veh) => {
@@ -1097,5 +1107,5 @@ vehicles.neonStatus = (player, vehicle) => {
 
 vehicles.exists = (vehicle) => {
     //methods.debug('vehicles.exists');
-    return vehicle && mp.vehicles.exists(vehicle);
+    return vehicle && mp.vehicles.exists(vehicle) && vehicle.id;
 };

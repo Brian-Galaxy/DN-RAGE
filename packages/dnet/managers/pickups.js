@@ -384,7 +384,6 @@ pickups.checkPressE = function(player) {
         if (methods.distanceToPos(pickups.UsmcArsenal2Pos, playerPos) < distanceCheck)
             player.call('client:menuList:showUsmcArsenalMenu');
     }*/
-    //mp.events.add('client:menuList:showSpawnJobCarMenu', (price, x, y, z, heading, name, job)
 
     try {
         if (user.isJobMail(player) && methods.distanceToPos(pickups.MailPos, playerPos) < distanceCheck)

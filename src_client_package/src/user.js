@@ -550,6 +550,14 @@ user.setLogin = function(value){
     _isLogin = value;
 };
 
+user.isJobMail = function() {
+    return user.isLogin() && user.getCache('job') == 4;
+};
+
+user.isJobGr6 = function() {
+    return user.isLogin() && user.getCache('job') == 8;
+};
+
 user.giveWanted = function(level, reason) {
     mp.events.callRemote('server:user:giveMeWanted', level, reason);
 };
@@ -563,7 +571,7 @@ user.giveJobMoney = function(money) {
     //if (user.get('skill_' + user.get('job')) >= 500)
     //    money = methods.parseInt(money * 1.5);
 
-    if (user.get('bank_card') == 0) {
+    if (user.getCache('bank_card') == 0) {
         user.addCashMoney(money);
         mp.game.ui.notifications.show('~y~Оформите банковскую карту');
     }

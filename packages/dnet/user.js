@@ -1217,11 +1217,11 @@ user.giveJobSkill = function(player) {
 };
 
 user.isJobMail = function(player) {
-    return true; //TODO
+    return user.isLogin(player) && user.get(player, 'job') == 4;
 };
 
 user.isJobGr6 = function(player) {
-    return true; //TODO
+    return user.isLogin(player) && user.get(player, 'job') == 8;
 };
 
 user.payDay = async function (player) {

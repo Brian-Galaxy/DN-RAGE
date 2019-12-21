@@ -27,15 +27,12 @@ let coffer = require('./coffer');
 function init() {
     try {
         methods.debug('INIT GAMEMODE');
+        vehicleInfo.loadAll();
 
         houses.loadAll();
         condos.loadAll();
         condos.loadBigAll();
         business.loadAll();
-        vehicles.loadAllShop();
-        vehicles.loadAllShopVehicles();
-        vehicles.loadAllTimers();
-        vehicles.loadAllFractionVehicles();
 
         weather.loadAll();
 
@@ -47,7 +44,13 @@ function init() {
         coffer.load();
 
         methods.loadAllBlips();
-        vehicleInfo.loadAll();
+
+        setTimeout(function () {
+            vehicles.loadAllShop();
+            vehicles.loadAllShopVehicles();
+            vehicles.loadAllTimers();
+            vehicles.loadAllFractionVehicles();
+        }, 10000);
     }
     catch (e) {
         methods.debug('ERROR INIT', e);

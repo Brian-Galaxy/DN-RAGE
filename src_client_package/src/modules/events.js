@@ -588,6 +588,28 @@ mp.events.add('client:menuList:showBusinessMenu', (data) => {
     }
 });
 
+mp.events.add('client:menuList:showSpawnJobCarMenu', (price, x, y, z, heading, name, job) => {
+    try {
+        methods.debug('Event: client:menuList:showSpawnJobCarMenu');
+        menuList.showSpawnJobCarMenu(price, x, y, z, heading, name, job);
+    }
+    catch (e) {
+        methods.debug('Exception: events:client:showSpawnJobCarMenu');
+        methods.debug(e);
+    }
+});
+
+mp.events.add('client:menuList:showSpawnJobCarMailMenu', () => {
+    try {
+        methods.debug('Event: client:menuList:showSpawnJobCarMenu');
+        menuList.showSpawnJobCarMailMenu();
+    }
+    catch (e) {
+        methods.debug('Exception: events:client:showSpawnJobCarMenu');
+        methods.debug(e);
+    }
+});
+
 mp.events.add('client:events:debug', function(val) {
     methods.debug(val);
     //ui.callCef('ChangePlayer','{"type": "show"}');

@@ -947,8 +947,12 @@ vehicles.spawnCarCb = (cb, position, heading, nameOrModel, color1 = -1, color2 =
     //return veh;
 };
 
-vehicles.spawnJobCar = (cb2, nameOrModel, position, heading, jobId = 0) => {
-    methods.debug('vehicles.spawnFractionCar ');
+vehicles.spawnJobCar = (cb2, position, heading, nameOrModel, jobId = 0) => {
+    methods.debug('vehicles.spawnJobCar', nameOrModel, jobId);
+
+    if (typeof nameOrModel == "string")
+        nameOrModel = nameOrModel.toLowerCase();
+
     vehicles.spawnCarCb(veh => {
 
         if (!vehicles.exists(veh))
@@ -956,22 +960,22 @@ vehicles.spawnJobCar = (cb2, nameOrModel, position, heading, jobId = 0) => {
 
         switch (jobId) {
             case 1: {
-                veh.numberPlate = 'CNR' + jobId + veh.getVariable('id');
+                veh.numberPlate = 'CNR' + jobId + veh.getVariable('vid');
                 veh.setColor(111, 0);
                 break;
             }
             case 2: {
-                veh.numberPlate = 'MGO' + jobId + veh.getVariable('id');
+                veh.numberPlate = 'MGO' + jobId + veh.getVariable('vid');
                 veh.setColor(111, 111);
                 break;
             }
             case 3: {
-                veh.numberPlate = 'WZN' + jobId + veh.getVariable('id');
+                veh.numberPlate = 'WZN' + jobId + veh.getVariable('vid');
                 veh.setColor(111, 111);
                 break;
             }
             case 4: {
-                veh.numberPlate = 'GOP' + jobId + veh.getVariable('id');
+                veh.numberPlate = 'GOP' + jobId + veh.getVariable('vid');
 
                 if (nameOrModel == 'pony') {
                     veh.setColor(111, 111);
@@ -996,22 +1000,22 @@ vehicles.spawnJobCar = (cb2, nameOrModel, position, heading, jobId = 0) => {
                 break;
             }
             case 5: {
-                veh.numberPlate = 'PLJ' + jobId + veh.getVariable('id');
+                veh.numberPlate = 'PLJ' + jobId + veh.getVariable('vid');
                 break;
             }
             case 6: {
-                veh.numberPlate = 'TXI' + jobId + veh.getVariable('id');
+                veh.numberPlate = 'TXI' + jobId + veh.getVariable('vid');
                 veh.setColor(42, 42);
                 break;
             }
             case 7: {
-                veh.numberPlate = 'BUS' + jobId + veh.getVariable('id');
+                veh.numberPlate = 'BUS' + jobId + veh.getVariable('vid');
                 if (nameOrModel == 'bus')
                     veh.setColor(70, 0);
                 break;
             }
             case 8: {
-                veh.numberPlate = 'GRP' + jobId + veh.getVariable('id');
+                veh.numberPlate = 'GRP' + jobId + veh.getVariable('vid');
                 veh.setColor(111, 0);
                 break;
             }

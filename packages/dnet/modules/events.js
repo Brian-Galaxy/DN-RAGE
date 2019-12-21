@@ -620,6 +620,31 @@ mp.events.addRemoteCounted('server:gr6:grab', (player) => {
     }
 });
 
+mp.events.addRemoteCounted('server:vehicles:spawnJobCar', (player, x, y, z, heading, name, job) => {
+
+    user.showLoadDisplay(player);
+    setTimeout(function () {
+
+        try {
+            vehicles.spawnJobCar(veh => {
+                if (!vehicles.exists(veh))
+                    return;
+                player.putIntoVehicle(veh, -1);
+                vehicles.set(veh.getVariable('container'), 'owner_id', user.getId(player));
+                veh.setVariable('owner_id', user.getId(player));
+            }, new mp.Vector3(x, y, z), heading, name, job);
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+
+        setTimeout(function () {
+            user.hideLoadDisplay(player);
+        }, 500);
+
+    }, 500);
+});
+
 mp.events.addRemoteCounted("onKeyPress:E", (player) => {
 
     if (!user.isLogin(player))

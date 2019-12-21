@@ -204,6 +204,7 @@ pickups.GrabPos = new mp.Vector3(973.4865, -2190.531, 29.55157);
 
 /*Jobs*/
 pickups.Gr6Pos = new mp.Vector3(484.4730224609375, -1094.7589111328125, 28.202163696289062);
+pickups.MailPos = new mp.Vector3(78.78807067871094, 111.90670013427734, 80.16815948486328);
 
 pickups.checkPressLAlt = function(player) {
 
@@ -383,6 +384,18 @@ pickups.checkPressE = function(player) {
         if (methods.distanceToPos(pickups.UsmcArsenal2Pos, playerPos) < distanceCheck)
             player.call('client:menuList:showUsmcArsenalMenu');
     }*/
+    //mp.events.add('client:menuList:showSpawnJobCarMenu', (price, x, y, z, heading, name, job)
+
+    try {
+        if (user.isJobMail(player) && methods.distanceToPos(pickups.MailPos, playerPos) < distanceCheck)
+            player.call('client:menuList:showSpawnJobCarMailMenu');
+        if (user.isJobGr6(player) && methods.distanceToPos(pickups.Gr6Pos, playerPos) < distanceCheck)
+            player.call('client:menuList:showSpawnJobCarMenu', [500, 484.1923522949219, -1103.3271484375, 28.807828903198242, 128.7122802734375, 'Stockade', 8]);
+    }
+    catch (e) {
+        methods.debug('TEST', e);
+    }
+
 };
 
 pickups.createPickups = function() {
@@ -591,4 +604,5 @@ pickups.createPickups = function() {
 
     //JOBS
     methods.createStaticCheckpointV(pickups.Gr6Pos, 'Нажмите ~g~E~s~ чтобы открыть меню инкассатора', 1, -1, pickups.Blue);
+    methods.createStaticCheckpointV(pickups.MailPos, 'Нажмите ~g~E~s~ чтобы открыть меню почтальона', 1, -1, pickups.Blue);
 };

@@ -1216,6 +1216,14 @@ user.giveJobSkill = function(player) {
     }
 };
 
+user.isJobMail = function(player) {
+    return true; //TODO
+};
+
+user.isJobGr6 = function(player) {
+    return true; //TODO
+};
+
 user.payDay = async function (player) {
     if (!user.isLogin(player))
         return false;

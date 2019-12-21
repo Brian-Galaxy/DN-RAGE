@@ -13,6 +13,7 @@ import condos from './property/condos';
 import business from './property/business';
 
 import cloth from './business/cloth';
+import vehicles from "./property/vehicles";
 
 let menuList = {};
 
@@ -1151,6 +1152,56 @@ menuList.showFractionMenu = function() {
     menu.ItemSelect.on(async (item, index) => {
         UIMenu.Menu.HideMenu();
 
+    });
+};
+
+menuList.showSpawnJobCarMenu = function(price, x, y, z, heading, name, job) {
+
+    let menu = UIMenu.Menu.Create(`Работа`, `~b~Меню рабочего ТС`);
+
+    UIMenu.Menu.AddMenuItem("Арендовать рабочий транспорт", "Стоимость: ~g~" + methods.moneyFormat(price)).doName = 'spawnCar';
+
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+    menu.ItemSelect.on(async (item, index) => {
+        UIMenu.Menu.HideMenu();
+        if (item.doName == 'spawnCar') {
+
+            if (user.getMoney() < price) {
+                mp.game.ui.notifications.show(`~r~У Вас недостаточно средств`);
+                return;
+            }
+
+            vehicles.spawnJobCar(x, y, z, heading, name, job);
+        }
+    });
+};
+
+menuList.showSpawnJobCarMailMenu = function() {
+
+    let menu = UIMenu.Menu.Create(`Работа`, `~b~Меню рабочего ТС`);
+
+    UIMenu.Menu.AddMenuItem("Boxville", "Стоимость: ~g~" + methods.moneyFormat(100)).doName = 'spawnCar1';
+    UIMenu.Menu.AddMenuItem("Pony", "Стоимость: ~g~" + methods.moneyFormat(500)).doName = 'spawnCar2';
+
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+    menu.ItemSelect.on(async (item, index) => {
+        UIMenu.Menu.HideMenu();
+        if (item.doName == 'spawnCar1') {
+
+            if (user.getMoney() < 100) {
+                mp.game.ui.notifications.show(`~r~У Вас недостаточно средств`);
+                return;
+            }
+            vehicles.spawnJobCar(70.36360168457031, 121.7760009765625, 79.07405090332031, 159.3450927734375, "Boxville2", 4);
+        }
+        if (item.doName == 'spawnCar2') {
+
+            if (user.getMoney() < 500) {
+                mp.game.ui.notifications.show(`~r~У Вас недостаточно средств`);
+                return;
+            }
+            vehicles.spawnJobCar(61.768699645996094, 125.43084716796875, 78.99858856201172, 158.8726806640625, "Pony", 4);
+        }
     });
 };
 

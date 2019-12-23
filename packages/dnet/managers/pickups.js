@@ -263,7 +263,7 @@ pickups.checkPressLAlt = function(player) {
     //methods.checkTeleport(player, pickups.SapdToBalconPos, pickups.SapdFromBalconPos);
     //methods.checkTeleport(player, pickups.SapdToBalcon2Pos, pickups.SapdFromBalcon2Pos);
     //methods.checkTeleport(player, pickups.SapdToInterrogationPos, pickups.SapdFromInterrogationPos);
-    methods.checkTeleport(player, pickups.ComedyInPos, pickups.ComedyOutPos);
+    //methods.checkTeleport(player, pickups.ComedyInPos, pickups.ComedyOutPos);
     methods.checkTeleport(player, pickups.ClubGalaxyUserPos1, pickups.ClubGalaxyUserPos2);
     methods.checkTeleport(player, pickups.Ems1OutPos, pickups.Ems1InPos);
     methods.checkTeleport(player, pickups.WzlInPos, pickups.WzlOutPos);
@@ -536,8 +536,8 @@ pickups.createPickups = function() {
     methods.createStaticCheckpointV(pickups.BannanaOutPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
     Checkpoint.Create(BannanaOutPos, 1.4, "pickup:teleport:menu");*/
 
-    methods.createStaticCheckpointV(pickups.ComedyInPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-    methods.createStaticCheckpointV(pickups.ComedyOutPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
+    /*methods.createStaticCheckpointV(pickups.ComedyInPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
+    methods.createStaticCheckpointV(pickups.ComedyOutPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);*/
 
     //methods.createStaticCheckpointV(pickups.AutoRepairsPos1, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
     //methods.createStaticCheckpointV(pickups.AutoRepairsPos2, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);

@@ -629,6 +629,13 @@ mp.keys.bind(0x38, true, function() {
         menuList.showAdminMenu();
 });
 
+mp.keys.bind(0x12, true, function() {
+    if (!user.isLogin())
+        return;
+    if (!methods.isBlockKeys())
+        mp.events.callRemote('onKeyPress:LAlt');
+});
+
 //E
 mp.keys.bind(0x45, true, function() {
     try {

@@ -645,6 +645,12 @@ mp.events.addRemoteCounted('server:vehicles:spawnJobCar', (player, x, y, z, head
     }, 500);
 });
 
+mp.events.addRemoteCounted("onKeyPress:LAlt", (player) => {
+    if (!user.isLogin(player))
+        return;
+    pickups.checkPressLAlt(player);
+});
+
 mp.events.addRemoteCounted("onKeyPress:E", (player) => {
 
     if (!user.isLogin(player))

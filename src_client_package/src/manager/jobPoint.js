@@ -8,7 +8,7 @@ let _marker = null;
 let _blip = null;
 let _lastPos = new mp.Vector3(0, 0, 0);
 
-jobPoint.create = function(pickupPos, route = false, radius = 1) {
+jobPoint.create = function(pickupPos, route = false, radius = 1, color = ui.MarkerRed) {
 
     jobPoint.delete();
 
@@ -16,7 +16,7 @@ jobPoint.create = function(pickupPos, route = false, radius = 1) {
 
     _marker = mp.markers.new(1, pickupPos, radius,
         {
-            color: ui.MarkerRed,
+            color: color,
             dimension: -1
         });
 

@@ -20,6 +20,7 @@ ui.ColorDeepOrange = [255,87,34,255];
 ui.MarkerRed = [244, 67, 54, 100];
 ui.MarkerGreen = [139, 195, 74, 100];
 ui.MarkerBlue = [33, 150, 243, 100];
+ui.MarkerOrange = [255, 152, 0, 100];
 ui.MarkerYellow = [255, 235, 59, 100];
 ui.MarkerBlue100 = [187, 222, 251, 100];
 ui.MarkerWhite = [255, 255, 255, 100];

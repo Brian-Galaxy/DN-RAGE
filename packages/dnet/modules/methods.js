@@ -368,6 +368,85 @@ methods.getFractionPayDay = function (fractionId, rank, rankType) {
     return money;
 };
 
+methods.getNearestVehicleWithCoords = function(pos, r) {
+    let nearest = undefined, dist;
+    let min = r;
+    methods.getListOfVehicleInRadius(pos, r).forEach(vehicle => {
+        dist = methods.distanceToPos(pos, vehicle.position);
+        if (dist < min) {
+            nearest = vehicle;
+            min = dist;
+        }
+    });
+    return nearest;
+};
+
+methods.getListOfVehicleInRadius = function(pos, r) {
+    let returnVehicles = [];
+    mp.vehicles.forEachInRange(pos, r,
+        (vehicle) => {
+            if (!vehicles.exists(vehicle))
+                return;
+            returnVehicles.push(vehicle);
+        }
+    );
+    return returnVehicles;
+};
+
+methods.getListOfVehicleNumberInRadius = function(pos, r) {
+    let returnVehicles = [];
+    mp.vehicles.forEachInRange(pos, r,
+        (vehicle) => {
+            if (!vehicles.exists(vehicle))
+                return;
+            returnVehicles.push(vehicle.numberPlate);
+        }
+    );
+    return returnVehicles;
+};
+
+methods.getNearestPlayerWithCoords = function(pos, r) {
+    let nearest = undefined, dist;
+    let min = r;
+    methods.getListOfPlayerInRadius(pos, r).forEach(player => {
+        if (!user.isLogin(player)) return;
+        dist = methods.distanceToPos(pos, player.position);
+        if (dist < min) {
+            nearest = player;
+            min = dist;
+        }
+    });
+    return nearest;
+};
+
+methods.getNearestPlayerWithPlayer = function(pl, r) {
+    let nearest = undefined, dist;
+    let min = r;
+    let pos = pl.position;
+    methods.getListOfPlayerInRadius(pos, r).forEach(player => {
+        if (!user.isLogin(player)) return;
+        if (pl == player) return;
+        if (pl.dimension != player.dimension) return;
+        dist = methods.distanceToPos(pos, player.position);
+        if (dist < min) {
+            nearest = player;
+            min = dist;
+        }
+    });
+    return nearest;
+};
+
+methods.getListOfPlayerInRadius = function(pos, r) {
+    let returnPlayers = [];
+    mp.players.forEachInRange(pos, r,
+        (player) => {
+            if (!user.isLogin(player)) return;
+            returnPlayers.push(player);
+        }
+    );
+    return returnPlayers;
+};
+
 methods.loadAllBlips = function () {
 
     methods.createBlip(new mp.Vector3(-66.66476, -802.0474, 44.22729), 374, 59, 0.8, 'Maze Bank');

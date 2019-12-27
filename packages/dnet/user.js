@@ -1173,6 +1173,23 @@ user.kickAntiCheat = function(player, reason, title = 'Вы были кикну�
     }
 };
 
+user.playAnimation = function(player, dict, anim, flag = 49) {
+    methods.debug('user.playAnimation');
+    if (!mp.players.exists(player))
+        return false;
+    let pos = player.position;
+    mp.players.forEach((p) => {
+        try {
+            if (methods.distanceToPos(pos, p.position) < 300)
+                p.call('client:syncAnimation', [player.id, dict, anim, flag])
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    });
+};
+
+
 user.giveJobSkill = function(player) {
     return;
     if (user.isLogin(player)) {

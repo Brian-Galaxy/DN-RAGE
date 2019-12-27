@@ -177,6 +177,7 @@ mp.events.add('client:ui:callCef', (event, value) => {
 
 // Эвенты на cef только через эту функцию
 ui.callCef = function(event, value) {
+    methods.debug(event, value);
     if(methods.isValidJSON(value))
         uiBrowser.execute(`trigger('${event}', '${value}')`);
 };

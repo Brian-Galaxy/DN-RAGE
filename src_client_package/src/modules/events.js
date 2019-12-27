@@ -5,6 +5,7 @@ import user from '../user';
 import menuList from '../menuList';
 import voice from "../voice";
 import enums from "../enums";
+import inventory from "../inventory";
 
 import ui from "./ui";
 
@@ -518,6 +519,16 @@ mp.events.add('client:menuList:showShopMaskMenu', (shopId) => {
     //menuList.showShopMaskMenu(shopId);
 });
 
+mp.events.add('client:showToPlayerItemListMenu', (data, ownerType, ownerId) => {
+    methods.debug('Event: client:showToPlayerItemListMenu');
+    menuList.showToPlayerItemListMenu(data, ownerType, ownerId).then();
+});
+
+mp.events.add('client:showToPlayerWorldListMenu', (data) => {
+    methods.debug('Event: client:showToPlayerWorldListMenu');
+    menuList.showToPlayerWorldListMenu(data);
+});
+
 mp.events.add('client:clearChat', () => {
     user.clearChat();
 });
@@ -615,6 +626,16 @@ mp.events.add('client:events:debug', function(val) {
     //ui.callCef('ChangePlayer','{"type": "show"}');
 });
 
+mp.events.add('client:inventory:status', function(status) {
+
+    methods.debug(status);
+
+    if (status)
+        inventory.show();
+    else
+        inventory.hide();
+});
+
 //KEYS
 
 // ~ Key Code
@@ -644,6 +665,21 @@ mp.keys.bind(0x45, true, function() {
         if (!methods.isBlockKeys()) {
             //methods.pressEToPayRespect();
             mp.events.callRemote('onKeyPress:E');
+        }
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+//I
+mp.keys.bind(0x49, true, function() {
+    try {
+        if (!user.isLogin())
+            return;
+        if (!methods.isBlockKeys()) {
+            //methods.pressEToPayRespect();
+            ui.callCef('inventory', '{"type": "showOrHide"}')
         }
     }
     catch (e) {
@@ -834,8 +870,8 @@ mp.events.add('render', () => {
         mp.game.controls.disableControlAction(0,270,true)
         mp.game.controls.disableControlAction(0,35,true) // disable move right
         mp.game.controls.disableControlAction(0,271,true)
-    }
-    if(ui.DisableMouseControl || ui.isShowMenu()) {
+    }*/
+    if(ui.DisableMouseControl /*|| ui.isShowMenu()*/) {
         mp.game.controls.disableControlAction(0,12,true); // disable sprint
         mp.game.controls.disableControlAction(0,13,true); // disable sprint
         mp.game.controls.disableControlAction(0,14,true); // disable sprint
@@ -853,8 +889,8 @@ mp.events.add('render', () => {
         mp.game.controls.disableControlAction(0, 5, true);
         mp.game.controls.disableControlAction(0, 6, true);
     }
-    if ((characterCreator || authBrowser) && !mp.gui.cursor.visible)
-        mp.gui.cursor.show(true, true);*/
+    if (!user.isLogin() && !mp.gui.cursor.visible)
+        mp.gui.cursor.show(true, true);
 });
 
 mp.events.add('render', () => {

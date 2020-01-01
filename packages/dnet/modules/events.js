@@ -3,6 +3,7 @@
 let user = require('../user');
 let enums = require('../enums');
 let coffer = require('../coffer');
+let inventory = require('../inventory');
 
 let Container = require('./data');
 let methods = require('./methods');
@@ -643,6 +644,12 @@ mp.events.addRemoteCounted('server:vehicles:spawnJobCar', (player, x, y, z, head
         }, 500);
 
     }, 500);
+});
+
+mp.events.addRemoteCounted('server:inventory:getItemList', (player, ownerType, ownerId) => {
+    if (!user.isLogin(player))
+        return;
+    inventory.getItemList(player, ownerType, ownerId);
 });
 
 mp.events.addRemoteCounted("onKeyPress:LAlt", (player) => {

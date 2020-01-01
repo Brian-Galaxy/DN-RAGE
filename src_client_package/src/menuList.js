@@ -7,6 +7,8 @@ import user from './user';
 import admin from './admin';
 import enums from './enums';
 import coffer from './coffer';
+import items from './items';
+import inventory from './inventory';
 
 import houses from './property/houses';
 import condos from './property/condos';
@@ -1207,190 +1209,76 @@ menuList.showSpawnJobCarMailMenu = function() {
 
 menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId) {
 
-    if (user.isDead())
-        return;
+    //{ id: 28, item_id: 101, name: "Кепка", volume: 15, desc: "", params: "{}" },
 
-    UIMenu.Menu.HideMenu();
-    let invAmountMax = await inventory.getInvAmountMax(ownerId, ownerType);
-    let sum = 0;
+    //if (user.isDead()) //TODO
+    //    return;
 
-    inventory.clearItems();
-    inventory.updateEquipWeapon();
-    inventory.updateEquip();
+    try {
+        //let invAmountMax = await inventory.getInvAmountMax(ownerId, ownerType);
+        let sum = 0;
 
-    data.forEach((item, idx) => {
-        try {
-            sum = sum + items.getItemAmountById(item.item_id);
-            //menuType, id, itemId, count, key, prefix, number, kg, wg
+        //inventory.clearItems();
+        //inventory.updateEquipWeapon();
+        inventory.updateEquip();
 
-            let itemName = items.getItemNameById(item.item_id);
-            if (item.item_id >= 265 && item.item_id <= 273 && item.label.toString() != "")
-                itemName = item.label;
-            else if (item.label.toString() != "")
-                itemName += " " + item.label;
+        let currentItems = [];
 
-            if (item.item_id == 277) {
-                itemName = items.getItemNameById(item.item_id);
-                if(item.key_id == -1)
-                    itemName += " (Использован)";
-                else if(item.key_id == 0)
-                    itemName += " (Ожидает розыгрыша)";
-                else if(item.key_id == 1)
-                    itemName += " (ПОБЕДА!)";
+        data.forEach((item, idx) => {
+            try {
+                let params = "{}";
+
+                methods.debug(typeof item.params);
+
+                try {
+                    params = JSON.parse(item.params);
+                }
+                catch (e) {
+                    methods.debug(e);
+                }
+
+                sum = sum + items.getItemAmountById(item.item_id);
+                let itemName = items.getItemNameById(item.item_id);
+                let desc = "";
+
+                if (item.item_id >= 265 && item.item_id <= 273 && item.label.toString() != "")
+                    itemName = item.label;
+                else if (item.label.toString() != "")
+                    desc += item.label;
+
+                if (item.item_id == 277) {
+                    itemName = items.getItemNameById(item.item_id);
+                    if(params.state == -1)
+                        desc = "Использован";
+                    else if(params.state == 0)
+                        desc = "Ожидает розыгрыша";
+                    else if(params.state == 1)
+                        desc = "ПОБЕДА";
+                }
+
+                currentItems.push({ id: item.id, item_id: item.item_id, name: itemName, volume: items.getItemAmountById(item.item_id), desc: desc, params: "{}" }); //TODO
+            } catch (e) {
+                methods.debug(e);
             }
+        });
 
-            let itemId = item.item_id;
-            let countItems = item.count;
-            let menuType = "";
+        let dataSend = {
+            type: 'updateItems',
+            items: currentItems,
+            ownerId: ownerId,
+            ownerType: ownerType,
+            sum: sum,
+        };
 
-            if (ownerType == inventory.types.Player && ownerId == user.get('id')) {
-
-                menuType += " transferPlayerItemButton";
-
-                if (items.canEquipById(itemId)) {
-                    if (itemId == 7 || itemId == 63) {
-                        menuType += " usePlayerItemButton";
-                    }
-                    menuType += " equipItemButton";
-                } else {
-                    if (itemId == 142 || itemId == 143 || itemId == 144 || itemId == 145 ||
-                        itemId == 163 || itemId == 164 || itemId == 165 || itemId == 166 ||
-                        itemId == 167 || itemId == 168 || itemId == 169 || itemId == 170 ||
-                        itemId == 171 || itemId == 172 || itemId == 173 || itemId == 174 ||
-                        itemId == 175 || itemId == 176 || itemId == 177 || itemId == 178 ||
-                        itemId == 154 || itemId == 155 || itemId == 156 || itemId == 157 || itemId == 179 || itemId == 180) {
-                        menuType += " takeOneGrammPlayerItemButton";
-                        if (itemId == 142 || itemId == 143 || itemId == 144 || itemId == 145 ||
-                            itemId == 163 || itemId == 164 || itemId == 165 || itemId == 166 ||
-                            itemId == 167 || itemId == 168 || itemId == 169 || itemId == 170) {
-                            if (countItems >= 10) {
-                                menuType += " takeTenGrammPlayerItemButton";
-                            }
-                            if (countItems >= 50) {
-                                menuType += " takeFiftyGrammPlayerItemButton";
-                            }
-                        }
-                        menuType += " weighPlayerItemButton";
-                    } else {
-                        if (itemId != 275 && itemId != 276 && itemId != 277)
-                            menuType += " usePlayerItemButton";
-                        if (itemId == 277) {
-                            menuType += " transferLotoItemButton";
-                            menuType += " infoLotoItemButton";
-                        }
-                    }
-                }
-                if (itemId == 275 || itemId == 276) {
-                    menuType += " takeOneItemPlayerItemButton";
-                    menuType += " countPlayerItemButton";
-                }
-                if (itemId == 140 || itemId == 141) {
-                    menuType += " countMoneyPlayerItemButton";
-                }
-                if ((itemId >= 146 && itemId <= 153) || (itemId >= 27 && itemId <= 30)) {
-                    menuType += " countBulletsPlayerItemButton";
-                }
-                if (ownerType !== inventory.types.Fridge)
-                    menuType += " transferToVehiclePlayerItemButton";
-
-                //kitchenId = mp.players.local.dimension; // Main.GetKitchenId();
-                if (mp.players.local.dimension !== 0 && ownerType !== inventory.types.Fridge) {
-                    // Kitchen
-                    enums.kitchenIntData.forEach(function(item, i, arr) {
-                        let pos = new mp.Vector3(item[0], item[1], item[2]);
-                        if (methods.distanceToPos(mp.players.local.position, pos) < 2) {
-                            menuType += " transferToFridgePlayerItemButton";
-                        }
-                    });
-                }
-                if (mp.players.local.dimension >= 5100000 && methods.distanceToPos(mp.players.local.position, stock.stockPos) < 2) {
-                    menuType += " transferToStockPlayerItemButton";
-                }
-                if (user.isGos() && methods.distanceToPos(mp.players.local.position, new mp.Vector3(452.057, -980.2347, 29.6896)) < 2) {
-                    menuType += " transferToStockGosItemButton";
-                }
-                if (user.isGos() && methods.distanceToPos(mp.players.local.position, new mp.Vector3(-437.330, 6001.264, 30.716)) < 2) {
-                    menuType += " transferToStockGosItemButton";
-                }
-                if (user.isGos() && methods.distanceToPos(mp.players.local.position, new mp.Vector3(1857.1979, 3689.1872, 33.26704)) < 2) {
-                    menuType += " transferToStockGosItemButton";
-                }
-                if (user.isGos() && methods.distanceToPos(mp.players.local.position, new mp.Vector3(129.3821, -730.57, 257.1521)) < 2) {
-                    menuType += " transferToStockGosItemButton";
-                }
-                if (user.isGos() && methods.distanceToPos(mp.players.local.position, new mp.Vector3(1753.23022, 2591.45166, 44.5649)) < 2) {
-                    menuType += " transferToStockGosItemButton";
-                }
-                if (mp.players.local.dimension === 0) {
-                    menuType += " throwToGroundPlayerItemButton";
-                }
-            } else {
-                if (!user.isGos() && (itemId > 203 || itemId < 194))
-                    menuType += " takeItemButton";
-                else if (user.isGos())
-                    menuType += " takeItemButton";
-
-                if (itemId == 142 || itemId == 143 || itemId == 144 || itemId == 145 ||
-                    itemId == 163 || itemId == 164 || itemId == 165 || itemId == 166 ||
-                    itemId == 167 || itemId == 168 || itemId == 169 || itemId == 170 ||
-                    itemId == 171 || itemId == 172 || itemId == 173 || itemId == 174 ||
-                    itemId == 175 || itemId == 176 || itemId == 177 || itemId == 178 ||
-                    itemId == 154 || itemId == 155 || itemId == 156 || itemId == 157 ||
-                    itemId == 179 || itemId == 180) {
-                    menuType += " takeOneGrammItemButton";
-                    if (itemId == 142 || itemId == 143 || itemId == 144 || itemId == 145 ||
-                        itemId == 163 || itemId == 164 || itemId == 165 || itemId == 166 ||
-                        itemId == 167 || itemId == 168 || itemId == 169 || itemId == 170) {
-                        if (countItems >= 10) {
-                            menuType += "takeTenGrammItemButton";
-                        }
-                        if (countItems >= 50) {
-                            menuType += "takeFiftyGrammItemButton";
-                        }
-                    }
-                    menuType += " weighPlayerItemButton";
-                }
-                if (ownerType !== inventory.types.Fridge && ownerType !== inventory.types.Vehicle)
-                    menuType += " transferToVehiclePlayerItemButton";
-
-                //kitchenId = mp.players.local.dimension; // Main.GetKitchenId();
-                if (mp.players.local.dimension !== 0 && ownerType !== inventory.types.Fridge) {
-                    // Kitchen
-                    enums.kitchenIntData.forEach(function(item, i, arr) {
-                        let pos = new mp.Vector3(item[0], item[1], item[2]);
-                        if (methods.distanceToPos(mp.players.local.position, pos) < 2) {
-                            menuType += " transferToFridgePlayerItemButton";
-                        }
-                    });
-                }
-                if (mp.players.local.dimension >= 5100000 && methods.distanceToPos(mp.players.local.position, stock.stockPos) < 2) {
-                    menuType += " transferToStockPlayerItemButton";
-                }
-                if (itemId == 140 || itemId == 141) {
-                    menuType += " countMoneyPlayerItemButton";
-                }
-                if ((itemId >= 146 && itemId <= 153) || (itemId >= 27 && itemId <= 30)) {
-                    menuType += " countBulletsPlayerItemButton";
-                }
-                if (mp.players.local.dimension === 0 && ownerType !== inventory.types.World) {
-                    if (!user.isGos() && (itemId > 203 || itemId < 194))
-                        menuType += " throwToGroundPlayerItemButton";
-                    else if (user.isGos())
-                        menuType += " throwToGroundPlayerItemButton";
-                }
-            }
-
-            inventory.addInvItem(menuType, ownerType, ownerId, item.id, itemName, item.item_id, item.count, item.key_id, item.prefix, item.number, items.getItemWeightById(item.item_id), items.getItemAmountById(item.item_id));
-        } catch (e) {
-            methods.debug(e);
-        }
-    });
-
-    inventory.setInvAmount(ownerId, ownerType, sum);
-
-    let name = "Предметы";
-    inventory.updateLabel(invAmountMax != -1 ? `${methods.numerToK(sum)}/${methods.numerToK(invAmountMax)}см³ (${data.length}шт.)` : "Инвентарь");
-    inventory.show();
+        ui.callCef('inventory', JSON.stringify(dataSend));
+        inventory.setInvAmount(ownerId, ownerType, sum);
+    }
+    catch (e) {
+       methods.debug(e);
+    }
+    //let name = "Предметы";
+    //inventory.updateLabel(invAmountMax != -1 ? `${methods.numerToK(sum)}/${methods.numerToK(invAmountMax)}см³ (${data.length}шт.)` : "Инвентарь");
+    //inventory.show();
 };
 
 menuList.showToPlayerWorldListMenu = function(data) {

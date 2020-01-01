@@ -22,10 +22,13 @@ let hidden = true;
 inventory.show = function() {
     //mp.gui.chat.activate(false);
     mp.gui.cursor.show(false, true);
-    mp.game.ui.notifications.show("~b~Скрыть ивентарь на кнопку ~s~I~b~ или ~s~Backspace");
+    mp.game.ui.notifications.show("~b~Скрыть ивентарь на ~s~I~");
     ui.DisableMouseControl = true;
     hidden = false;
     ui.hideHud();
+
+    inventory.updateEquip();
+    inventory.getItemList(inventory.types.Player, user.getCache('id'))
 };
 
 inventory.hide = function() {
@@ -44,21 +47,29 @@ inventory.updateEquip = function() {
 
     let data = {
         type : 'updateEquip',
-        phone : user.get("phone_code") > 0,
-        bankcard : user.get("bank_prefix") > 0,
-        clock : user.get("item_clock"),
-        bracelet : user.get("bracelet") >= 0,
-        watch : user.get("watch") >= 0,
-        ear : user.get("ear") >= 0,
-        glasses : user.get("glasses") >= 0,
-        hat : user.get("hat") >= 0,
-        accessorie : user.get("accessorie") > 0,
-        foot : user.getSex() == 0 ? user.get("foot") != 34 : user.get("foot") != 35,
-        leg : user.getSex() == 0 ? user.get("leg") != 61 : user.get("leg") != 15,
-        torso : user.get("torso") != 15,
-        mask : user.get("mask") != 0,
+        outfit: [
+            [
+                { slot: "outf-cap", equipped: user.getCache("hat") >= 0, type: 'cap' },
+                { slot: "outf-glasses", equipped: user.getCache("glasses") >= 0, type: 'glasses' },
+                { slot: "outf-mask", equipped: user.getCache("mask") != 0, type: 'mask' },
+                { slot: "outf-shirt", equipped: user.getCache("torso") != 15, type: 'shirt' },
+                { slot: "outf-jewerly", equipped: user.getCache("accessorie") >= 0, type: 'jewerly' },
+                { slot: "outf-earrings", equipped: user.getCache("ear") >= 0, type: 'earrings' },
+                { slot: "outf-jeans", equipped: user.getSex() == 0 ? user.getCache("leg") != 61 : user.getCache("leg") != 15, type: 'jeans' },
+                { slot: "outf-watch", equipped: user.getCache("watch") >= 0, type: 'watch' },
+                { slot: "outf-bracelet", equipped: user.getCache("bracelet") >= 0, type: 'bracelet' },
+                { slot: "outf-boot", equipped: user.getSex() == 0 ? user.getCache("foot") != 34 : user.getCache("foot") != 35, type: 'boot' },
+            ],
+            [
+                { slot: "outf-clock", equipped: false, type: 'clock' },
+                { slot: "outf-phone", equipped: false, type: 'phone' },
+                { slot: "outf-money", equipped: false, type: 'money' }, //TODO
+                { slot: "outf-card", equipped: user.getCache("bank_card") > 0, type: 'card' },
+            ],
+        ],
     };
-    inventory.browser.execute(`eventSend(${JSON.stringify(data)});`);
+
+    ui.callCef('inventory', JSON.stringify(data));
 };
 
 inventory.updateEquipWeapon = function() {

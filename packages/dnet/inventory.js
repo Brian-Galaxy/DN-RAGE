@@ -2,13 +2,13 @@ let Container = require('./modules/data');
 let mysql = require('./modules/mysql');
 let methods = require('./modules/methods');
 let weather = require('./managers/weather');
-let dispatcher = require('./managers/dispatcher');
+//let dispatcher = require('./managers/dispatcher');
 let chat = require('./modules/chat');
 let user = require('./user');
 let enums = require('./enums');
 let items = require('./items');
-let vehicles = require('./vehicles');
-let bank = require('./business/bank');
+let vehicles = require('./property/vehicles');
+//let bank = require('./business/bank');
 let inventory = exports;
 let props = new Map();
 

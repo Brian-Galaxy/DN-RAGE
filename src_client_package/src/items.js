@@ -1,6 +1,6 @@
-let items_old = {};
+let items = {};
 
-items_old.defaultModelHash = 1108364521;
+items.defaultModelHash = 1108364521;
 
 let ItemList = [
     /*Имя, хеш объекта, может экипировать, вес, объем (ширина * на длинну * на высоту) */
@@ -317,11 +317,11 @@ let ItemList = [
     ["Коробка отмычек", "", false, 1267833770, 500, 60], //275
     ["Коробка спец. отмычек", "", false, 1267833770, 1500, 180], //276
 
-    ["Лот. билет", "", false, 406712611, 80, 410], //277
+    ["Лотерейный билет", "", false, 406712611, 80, 410], //277
     ["Спец. Аптечка", "", false, 678958360, 500, 880], //278
 ];
 
-items_old.canEquipById = function(id)
+items.canEquipById = function(id)
 {
     try
     {
@@ -333,7 +333,7 @@ items_old.canEquipById = function(id)
     }
 };
 
-items_old.getItemNameById = function(id)
+items.getItemNameById = function(id)
 {
     try
     {
@@ -345,7 +345,7 @@ items_old.getItemNameById = function(id)
     }
 };
 
-items_old.getItemNameHashById = function(id)
+items.getItemNameHashById = function(id)
 {
     try
     {
@@ -357,7 +357,7 @@ items_old.getItemNameHashById = function(id)
     }
 };
 
-items_old.getItemHashById = function(id)
+items.getItemHashById = function(id)
 {
     try
     {
@@ -369,7 +369,7 @@ items_old.getItemHashById = function(id)
     }
 };
 
-items_old.getItemWeightById = function(id)
+items.getItemWeightById = function(id)
 {
     try
     {
@@ -381,7 +381,7 @@ items_old.getItemWeightById = function(id)
     }
 };
 
-items_old.getItemWeightKgById = function(id)
+items.getItemWeightKgById = function(id)
 {
     try
     {
@@ -393,7 +393,7 @@ items_old.getItemWeightKgById = function(id)
     }
 };
 
-items_old.getItemAmountById = function(id)
+items.getItemAmountById = function(id)
 {
     try
     {
@@ -405,4 +405,4 @@ items_old.getItemAmountById = function(id)
     }
 };
 
-export default items_old;
+export default items;

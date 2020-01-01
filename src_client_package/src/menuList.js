@@ -1249,11 +1249,11 @@ menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId) {
                 if (item.item_id == 277) {
                     itemName = items.getItemNameById(item.item_id);
                     if(params.state == -1)
-                        desc = "Использован";
+                        desc = "Статус: Использован";
                     else if(params.state == 0)
-                        desc = "Ожидает розыгрыша";
+                        desc = "Статус: Ожидает розыгрыша";
                     else if(params.state == 1)
-                        desc = "ПОБЕДА";
+                        desc = "Статус: Заберите выигрыш";
                 }
 
                 currentItems.push({ id: item.id, item_id: item.item_id, name: itemName, volume: items.getItemAmountById(item.item_id), desc: desc, params: "{}" }); //TODO

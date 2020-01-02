@@ -652,6 +652,14 @@ mp.events.addRemoteCounted('server:inventory:getItemList', (player, ownerType, o
     inventory.getItemList(player, ownerType, ownerId);
 });
 
+mp.events.addRemoteCounted('server:inventory:updateEquipStatus', (player, id, status) => {
+    inventory.updateEquipStatus(id, status);
+});
+
+mp.events.addRemoteCounted('server:inventory:updateItemCount', (player, id, count) => {
+    inventory.updateItemCount(id, count);
+});
+
 mp.events.addRemoteCounted("onKeyPress:LAlt", (player) => {
     if (!user.isLogin(player))
         return;

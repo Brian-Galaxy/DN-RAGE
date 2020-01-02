@@ -636,6 +636,41 @@ mp.events.add('client:inventory:status', function(status) {
         inventory.hide();
 });
 
+mp.events.add('client:inventory:unEquip', function(id, itemId) {
+    methods.debug(id);
+    if (itemId == 50) {
+        let money = user.getBankMoney();
+        user.set('bank_card', 0);
+        user.setBankMoney(0);
+        inventory.updateItemCount(id, money);
+    }
+    inventory.updateEquipStatus(id, false);
+});
+
+mp.events.add('client:inventory:equip', function(id, itemId, count, aparams) {
+    methods.debug(id);
+
+    let params = {};
+
+    try {
+        params = JSON.parse(aparams);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+
+    if (itemId == 50 && user.getCache('bank_card') == 0) {
+        user.set('bank_card', methods.parseInt(params.number));
+        user.setBankMoney(count);
+    }
+    else {
+        mp.game.ui.notifications.show("~r~Нельзя экипировать карту");
+        return;
+    }
+
+    inventory.updateEquipStatus(id, true);
+});
+
 //KEYS
 
 // ~ Key Code
@@ -889,6 +924,32 @@ mp.events.add('render', () => {
         mp.game.controls.disableControlAction(0, 5, true);
         mp.game.controls.disableControlAction(0, 6, true);
     }
+
+    //Колесо оружия
+    mp.game.controls.disableControlAction(0, 12, true);
+    mp.game.controls.disableControlAction(0, 14, true);
+    mp.game.controls.disableControlAction(0, 15, true);
+    mp.game.controls.disableControlAction(0, 16, true);
+    mp.game.controls.disableControlAction(0, 17, true);
+    mp.game.controls.disableControlAction(0, 37, true);
+    mp.game.controls.disableControlAction(0, 53, true);
+    mp.game.controls.disableControlAction(0, 54, true);
+    mp.game.controls.disableControlAction(0, 56, true);
+    mp.game.controls.disableControlAction(0, 99, true);
+    mp.game.controls.disableControlAction(0, 115, true); //FLY WEAP
+    mp.game.controls.disableControlAction(0, 116, true); //FLY WEAP
+    mp.game.controls.disableControlAction(0, 157, true);
+    mp.game.controls.disableControlAction(0, 158, true);
+    mp.game.controls.disableControlAction(0, 159, true);
+    mp.game.controls.disableControlAction(0, 160, true);
+    mp.game.controls.disableControlAction(0, 161, true);
+    mp.game.controls.disableControlAction(0, 162, true);
+    mp.game.controls.disableControlAction(0, 163, true);
+    mp.game.controls.disableControlAction(0, 164, true);
+    mp.game.controls.disableControlAction(0, 165, true);
+    mp.game.controls.disableControlAction(0, 261, true);
+    mp.game.controls.disableControlAction(0, 262, true);
+
     if (!user.isLogin() && !mp.gui.cursor.visible)
         mp.gui.cursor.show(true, true);
 });

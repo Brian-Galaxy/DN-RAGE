@@ -76,7 +76,7 @@ inventory.getItemList = function(player, ownerType, ownerId) {
                     }
                 }
 
-                data.push({id: row['id'], label: label, item_id: row['item_id'], count: row['count'], params: row['params']});
+                data.push({id: row['id'], label: label, item_id: row['item_id'], count: row['count'], is_equip: row['is_equip'], params: row['params']});
             });
 
             //id, itemId, ownerType, ownerId, countItems, prefix, number, keyId
@@ -84,6 +84,18 @@ inventory.getItemList = function(player, ownerType, ownerId) {
         });
     } catch(e) {
         methods.debug(e);
+    }
+};
+
+inventory.updateEquipStatus = function(id, status) {
+    try {
+        let newStatus = 0;
+        if (status == true)
+            newStatus = 1;
+        mysql.executeQuery(`UPDATE items SET is_equip = '${newStatus}'  WHERE id = '${methods.parseInt(id)}'`);
+    }
+    catch (e) {
+        methods.debug('inventory.updateEquipStatus', e);
     }
 };
 

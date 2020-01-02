@@ -115,7 +115,7 @@ weather.weatherTimer = function() {
 };
 
 weather.timeSyncTimer = function() {
-    methods.debug('weather.timeSyncTimer');
+    //methods.debug('weather.timeSyncTimer');
 
     try {
         _minute++;

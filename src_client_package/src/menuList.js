@@ -1220,15 +1220,15 @@ menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId) {
 
         //inventory.clearItems();
         //inventory.updateEquipWeapon();
-        inventory.updateEquip();
+        //inventory.updateEquip();
 
         let currentItems = [];
+        let equipItems = [];
+        let equipWeapons = [];
 
         data.forEach((item, idx) => {
             try {
                 let params = "{}";
-
-                methods.debug(typeof item.params);
 
                 try {
                     params = JSON.parse(item.params);
@@ -1237,7 +1237,9 @@ menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId) {
                     methods.debug(e);
                 }
 
-                sum = sum + items.getItemAmountById(item.item_id);
+                if (item.is_equip == 0)
+                    sum = sum + items.getItemAmountById(item.item_id);
+
                 let itemName = items.getItemNameById(item.item_id);
                 let desc = "";
 
@@ -1255,8 +1257,25 @@ menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId) {
                     else if(params.state == 1)
                         desc = "Статус: Заберите выигрыш";
                 }
+                if (item.item_id == 50) {
+                    itemName = items.getItemNameById(item.item_id);
+                    desc = methods.bankFormat(params.number);
+                }
 
-                currentItems.push({ id: item.id, item_id: item.item_id, name: itemName, volume: items.getItemAmountById(item.item_id), desc: desc, params: "{}" }); //TODO
+                if (item.is_equip == 1) {
+
+                    if (item.item_id == 50) {
+                        if (params.number != user.getCache('bank_card')) {
+                            inventory.updateEquipStatus(item.id, false);
+                            return;
+                        }
+
+                    }
+
+                    equipItems.push({ id: item.id, item_id: item.item_id, name: itemName, count: item.count, volume: items.getItemAmountById(item.item_id), desc: desc, params: "{}" }); //TODO
+                }
+                else
+                    currentItems.push({ id: item.id, item_id: item.item_id, name: itemName, count: item.count, volume: items.getItemAmountById(item.item_id), desc: desc, params: "{}" }); //TODO
             } catch (e) {
                 methods.debug(e);
             }
@@ -1270,7 +1289,13 @@ menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId) {
             sum: sum,
         };
 
+        let dataSend2 = {
+            type: 'updateEquipItems',
+            items: equipItems
+        };
+
         ui.callCef('inventory', JSON.stringify(dataSend));
+        ui.callCef('inventory', JSON.stringify(dataSend2));
         inventory.setInvAmount(ownerId, ownerType, sum);
     }
     catch (e) {

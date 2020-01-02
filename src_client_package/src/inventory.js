@@ -45,7 +45,7 @@ inventory.isHide = function() {
 
 inventory.updateEquip = function() {
 
-    let data = {
+    /*let data = {
         type : 'updateEquip',
         outfit: [
             [
@@ -67,13 +67,23 @@ inventory.updateEquip = function() {
                 { slot: "outf-card", equipped: user.getCache("bank_card") > 0, type: 'card' },
             ],
         ],
-    };
+    };*/
 
-    ui.callCef('inventory', JSON.stringify(data));
+    //ui.callCef('inventory', JSON.stringify(data));
+};
+
+inventory.updateEquipStatus = function(id, status) { //TODO, подумать как можно рессетнуть значения, чтобы не дюпали и не пропадли деньги
+    mp.events.callRemote('server:inventory:updateEquipStatus', id, status);
+};
+
+inventory.updateItemCount = function(id, count) { //TODO, подумать как можно рессетнуть значения, чтобы не дюпали и не пропадли деньги
+    mp.events.callRemote('server:inventory:updateItemCount', id, count);
 };
 
 inventory.updateEquipWeapon = function() {
-    inventory.clearWeapons();
+    //inventory.clearWeapons();
+
+    let currentItems = [];
 
     for (let n = 54; n < 138; n++)
     {
@@ -84,10 +94,21 @@ inventory.updateEquipWeapon = function() {
 
             let ammoItem = inventory.ammoTypeToAmmo(mp.game.invoke(methods.GET_PED_AMMO_TYPE_FROM_WEAPON, mp.players.local.handle, hash));
             let ammoCount = mp.game.invoke(methods.GET_AMMO_IN_PED_WEAPON, mp.players.local.handle, hash);
+            let itemName = items.getItemNameById(n);
+            let itemId = n;
+            let desc = 'Serial ID: L1654564';
 
-            inventory.addWeaponItem(items.getItemNameById(n), n, ammoItem, ammoCount);
+
+            currentItems.push({ id: -1, item_id: itemId, name: itemName, volume: items.getItemAmountById(item.item_id), desc: desc, params: "{}" }); //TODO
         });
     }
+
+    let dataSend = {
+        type: 'updateWeapons',
+        items: currentItems,
+    };
+
+    ui.callCef('inventory', JSON.stringify(dataSend));
 };
 
 inventory.addInvItem = function(menuType, ownerType, ownerId, id, label, itemId, count, key, prefix, number, kg, wg) {

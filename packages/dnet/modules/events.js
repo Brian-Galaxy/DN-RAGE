@@ -83,8 +83,8 @@ mp.events.addRemoteCounted = (eventName, handler) =>
 };
 
 
-mp.events.add('modules:server:data:Set', (player, id, key, value) => {
-    Container.Data.SetClient(id, key, value);
+mp.events.add('modules:server:data:Set', (player, id, key, value, isInt) => {
+    Container.Data.SetClient(id, key, value, isInt);
 });
 
 mp.events.addRemoteCounted('modules:server:data:Reset', (player, id, key) => {
@@ -654,6 +654,10 @@ mp.events.addRemoteCounted('server:inventory:getItemList', (player, ownerType, o
 
 mp.events.addRemoteCounted('server:inventory:updateEquipStatus', (player, id, status) => {
     inventory.updateEquipStatus(id, status);
+});
+
+mp.events.addRemoteCounted('server:inventory:updateItemsEquipByItemId', (player, itemId, ownerId, ownerType, equip) => {
+    inventory.updateItemsEquipByItemId(itemId, ownerId, ownerType, equip);
 });
 
 mp.events.addRemoteCounted('server:inventory:updateItemCount', (player, id, count) => {

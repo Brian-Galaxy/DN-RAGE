@@ -1,6 +1,7 @@
 let enums = require('../enums');
 let methods = require('../modules/methods');
 let user = require('../user');
+let inventory = require('../inventory');
 let business = require('../property/business');
 let shopList = enums.shopList;
 
@@ -99,26 +100,53 @@ cloth.buyProp = function (player, price, body, clothId, color, itemName, shopId,
         return;
     }
 
+    let params = `{"name": "${itemName}"}`;
+
     switch (body) {
         case 0:
+            inventory.updateItemsEquipByItemId(269, inventory.types.Player, user.getId(player), 0);
+
             user.set(player, 'hat', clothId);
             user.set(player, 'hat_color', color);
+
+            params = `{"name": "${itemName}", "hat": ${clothId}, "hat_color": ${color}}`;
+            inventory.addItem(269, 1, inventory.types.Player, user.getId(player), 1, 1, params, 100);
             break;
         case 1:
+            inventory.updateItemsEquipByItemId(270, inventory.types.Player, user.getId(player), 0);
+
             user.set(player, 'glasses', clothId);
             user.set(player, 'glasses_color', color);
+
+            params = `{"name": "${itemName}", "glasses": ${clothId}, "glasses_color": ${color}}`;
+            inventory.addItem(270, 1, inventory.types.Player, user.getId(player), 1, 1, params, 100);
             break;
         case 2:
+            inventory.updateItemsEquipByItemId(271, inventory.types.Player, user.getId(player), 0);
+
             user.set(player, 'ear', clothId);
             user.set(player, 'ear_color', color);
+
+            params = `{"name": "${itemName}", "ear": ${clothId}, "ear_color": ${color}}`;
+            inventory.addItem(271, 1, inventory.types.Player, user.getId(player), 1, 1, params, 100);
             break;
         case 6:
+            inventory.updateItemsEquipByItemId(272, inventory.types.Player, user.getId(player), 0);
+
             user.set(player, 'watch', clothId);
             user.set(player, 'watch_color', color);
+
+            params = `{"name": "${itemName}", "watch": ${clothId}, "watch_color": ${color}}`;
+            inventory.addItem(272, 1, inventory.types.Player, user.getId(player), 1, 1, params, 100);
             break;
         case 7:
+            inventory.updateItemsEquipByItemId(273, inventory.types.Player, user.getId(player), 0);
+
             user.set(player, 'bracelet', clothId);
             user.set(player, 'bracelet_color', color);
+
+            params = `{"name": "${itemName}", "bracelet": ${clothId}, "bracelet_color": ${color}}`;
+            inventory.addItem(273, 1, inventory.types.Player, user.getId(player), 1, 1, params, 100);
             break;
     }
 
@@ -148,7 +176,7 @@ cloth.change = function (player, body, cloth, color, torso, torsoColor, parachut
     user.setComponentVariation(player, body, cloth, color);
 };
 
-cloth.buy = function (player, price, body, cloth, color, torso, torsoColor, parachute, parachuteColor, itemName = "Операция", shopId = 0, isFree = false) {
+cloth.buy = function (player, price, body, cloth, color, torso, torsoColor, parachute, parachuteColor, itemName = "Одежда", shopId = 0, isFree = false) {
     methods.debug('barberShop.buy');
     if (!user.isLogin(player))
         return;
@@ -161,32 +189,56 @@ cloth.buy = function (player, price, body, cloth, color, torso, torsoColor, para
     if (price < 1)
         return;
 
+    let params = `{"name": "${itemName}"}`;
+
     switch (body) {
         case 1:
+            inventory.updateItemsEquipByItemId(274, inventory.types.Player, user.getId(player), 0);
+
             user.set(player, 'mask', cloth);
             user.set(player, 'mask_color', color);
+
+            params = `{"name": "${itemName}", "mask": ${cloth}, "mask_color": ${color}}`;
+            inventory.addItem(274, 1, inventory.types.Player, user.getId(player), 1, 1, params, 100);
             break;
         case 4:
+            inventory.updateItemsEquipByItemId(266, inventory.types.Player, user.getId(player), 0);
+
             user.set(player, 'leg', cloth);
             user.set(player, 'leg_color', color);
+
+            params = `{"name": "${itemName}", "leg": ${cloth}, "leg_color": ${color}}`;
+            inventory.addItem(266, 1, inventory.types.Player, user.getId(player), 1, 1, params, 100);
             break;
         case 5:
             user.set(player, 'hand', cloth);
             user.set(player, 'hand_color', color);
             break;
         case 6:
+            inventory.updateItemsEquipByItemId(267, inventory.types.Player, user.getId(player), 0);
+
             user.set(player, 'foot', cloth);
             user.set(player, 'foot_color', color);
+
+            params = `{"name": "${itemName}", "foot": ${cloth}, "foot_color": ${color}}`;
+            inventory.addItem(267, 1, inventory.types.Player, user.getId(player), 1, 1, params, 100);
             break;
         case 7:
+            inventory.updateItemsEquipByItemId(268, inventory.types.Player, user.getId(player), 0);
+
             user.set(player, 'accessorie', cloth);
             user.set(player, 'accessorie_color', color);
+
+            params = `{"name": "${itemName}", "accessorie": ${cloth}, "accessorie_color": ${color}}`;
+            inventory.addItem(268, 1, inventory.types.Player, user.getId(player), 1, 1, params, 100);
             break;
         case 10:
             user.set(player, 'decal', cloth);
             user.set(player, 'decal_color', color);
             break;
         case 11:
+
+            inventory.updateItemsEquipByItemId(265, inventory.types.Player, user.getId(player), 0);
 
             if (torso == -1) torso = 0;
             if (torsoColor == -1) torsoColor = 0;
@@ -206,13 +258,16 @@ cloth.buy = function (player, price, body, cloth, color, torso, torsoColor, para
             user.set(player, 'tprint_c', '');
             user.set(player, 'tprint_o', '');
             user.setComponentVariation(player, 8, parachute, parachuteColor);
+
+            params = `{"name": "${itemName}", "body": ${cloth}, "body_color": ${color}, "torso": ${torso}, "torso_color": ${torsoColor}, "parachute": ${parachute}, "parachute_color": ${parachuteColor}, "tprint_c": "", "tprint_o": ""}`;
+            inventory.addItem(265, 1, inventory.types.Player, user.getId(player), 1, 1, params, 100);
             break;
     }
 
     if (!isFree) {
         user.removeCashMoney(player, price);
         business.addMoney(shopId, price, itemName);
-        player.notify("~g~Вы купили одежду");
+        player.notify("~g~Вы купили одежду, она находится в инвентаре");
     }
 
     user.updateCharacterCloth(player);
@@ -242,9 +297,13 @@ cloth.buyMask = function (player, price, clothId, color, itemName, shopId) {
 
     if (price < 1)
         return;
+    inventory.updateItemsEquipByItemId(274, inventory.types.Player, user.getId(player), 0);
 
     user.set(player, 'mask', clothId);
     user.set(player, 'mask_color', color);
+
+    let params = `{"name": "${itemName}", "mask": ${clothId}, "mask_color": ${color}}`;
+    inventory.addItem(274, 1, inventory.types.Player, user.getId(player), 1, 1, params, 100);
 
     user.updateCharacterCloth(player);
     user.setComponentVariation(player, 1, clothId, color);

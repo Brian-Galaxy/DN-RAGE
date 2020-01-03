@@ -80,6 +80,10 @@ inventory.updateItemCount = function(id, count) { //TODO, подумать ка�
     mp.events.callRemote('server:inventory:updateItemCount', id, count);
 };
 
+inventory.updateItemsEquipByItemId = function(itemId, ownerId, ownerType, equip) {
+    mp.events.callRemote('server:inventory:updateItemsEquipByItemId', itemId, ownerId, ownerType, equip);
+};
+
 inventory.updateEquipWeapon = function() {
     //inventory.clearWeapons();
 

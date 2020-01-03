@@ -133,7 +133,12 @@ class Data {
             if (Debug) {
                 methods.debug(`CLNT: [SET] ID: ${id}, KEY: ${key}, OBJECT: ${value}`);
             }
-            mp.events.callRemote('modules:server:data:Set', id, key, value);
+            let isInt = false;
+            if (typeof value == "number") {
+                isInt = true;
+                value = value.toString();
+            }
+            mp.events.callRemote('modules:server:data:Set', id, key, value, isInt);
         } catch (e) {
             methods.debug(`CLNT: [SET] ERR: ${e}`);
         }

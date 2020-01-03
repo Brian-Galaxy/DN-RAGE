@@ -137,7 +137,7 @@ user.loginAccount = function(player, login, pass) {
                     rows.forEach(row => {
                         let sex = JSON.parse(row['skin'])['SKIN_SEX'] == 0 ? "m" : "w";
                         methods.debug(sex);
-                        players.push({name: row['name'], age: row['social'], money: row['money'], sex: sex, spawnList: ['Стандарт', 'Стандарт2'], lastLogin: methods.unixTimeStampToDate(row['login_date'])})
+                        players.push({name: row['name'], age: row['id'], money: row['money'], sex: sex, spawnList: ['Стандарт', 'Стандарт2'], lastLogin: methods.unixTimeStampToDate(row['login_date'])})
                     });
 
                     player.call('client:events:loginAccount:success', [JSON.stringify(players)]);
@@ -617,7 +617,7 @@ user.updateCharacterCloth = function(player) {
     try {
 
         user.updateTattoo(player);
-        user.clearAllProp(player);
+        user.clearAllProp(player); //TODO переделать
 
         let cloth_data = {};
 
@@ -685,7 +685,7 @@ user.updateCharacterCloth = function(player) {
             if (cloth_data['bracelet'] >= 0) {
                 user.setProp(player, 7, cloth_data['bracelet'], cloth_data['bracelet_color']);
             }
-        }, 100);
+        }, 10); //TODO
     } catch (e) {
         methods.debug(e);
     }

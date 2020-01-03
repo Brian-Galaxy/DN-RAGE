@@ -311,9 +311,9 @@ menuList.showShopClothMenu = function (shopId, type, menuType) {
             UIMenu.Menu.AddMenuItem("Ноги").doName = "legs";
             UIMenu.Menu.AddMenuItem("Обувь").doName = "shoes";
         } else {
-            if (menuType == 7) {
+            /*if (menuType == 7) {
                 UIMenu.Menu.AddMenuItem("~y~Снять").doName = "takeOff";
-            }
+            }*/
             let skin = JSON.parse(user.getCache('skin'));
             let cloth = skin.SKIN_SEX == 1 ? JSON.parse(enums.get('clothF')) : JSON.parse(enums.get('clothM'));
             for (let i = 0; i < cloth.length; i++) {
@@ -344,6 +344,7 @@ menuList.showShopClothMenu = function (shopId, type, menuType) {
             let menuItem = UIMenu.Menu.AddMenuItem("Бита", `Цена: ~g~$349.99`);
             menuItem.price = 349.99;
             menuItem.itemId = 55;
+            menuItem.itemName = "Бита";
         }
 
         UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = "closeButton";
@@ -465,7 +466,7 @@ menuList.showShopPropMenu = function (shopId, type, menuType) {
 
     let menu = UIMenu.Menu.Create(title1 != "commonmenu" ? " " : "Vangelico", "~b~Магазин", true, false, false, title1, title2);
 
-    UIMenu.Menu.AddMenuItem( "~y~Снять").doName = "takeOff";
+    //UIMenu.Menu.AddMenuItem( "~y~Снять").doName = "takeOff";
 
     let skin = JSON.parse(user.getCache('skin'));
     let clothList = skin.SKIN_SEX == 1 ? JSON.parse(enums.get('propF')) : JSON.parse(enums.get('propM'));
@@ -482,7 +483,7 @@ menuList.showShopPropMenu = function (shopId, type, menuType) {
             list.push(j + '');
         }
 
-        let menuListItem = UIMenu.Menu.AddMenuItemList(clothList[i][5].toString(), list, `Цена: ~g~$${methods.numberFormat(clothList[i][4])}`);
+        let menuListItem = UIMenu.Menu.AddMenuItemList(clothList[i][5].toString(), list, `Цена: ~g~${methods.moneyFormat(clothList[i][4])}`);
 
         menuListItem.id1 = clothList[id][1];
         menuListItem.id2 = clothList[id][2];
@@ -509,7 +510,7 @@ menuList.showShopPropMenu = function (shopId, type, menuType) {
     menu.ItemSelect.on((item, index) => {
         try {
             if (item == currentListChangeItem) {
-                cloth.buyProp(item.id4, item.id1, item.id2, item.itemName, currentListChangeItemIndex, shopId);
+                cloth.buyProp(item.id4, item.id1, item.id2, currentListChangeItemIndex, item.itemName, shopId);
             }
             if (item.doName == "closeButton") {
                 UIMenu.Menu.HideMenu();
@@ -1228,7 +1229,7 @@ menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId) {
 
         data.forEach((item, idx) => {
             try {
-                let params = "{}";
+                let params = {};
 
                 try {
                     params = JSON.parse(item.params);
@@ -1257,7 +1258,10 @@ menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId) {
                     else if(params.state == 1)
                         desc = "Статус: Заберите выигрыш";
                 }
-                if (item.item_id == 50) {
+                else if (item.item_id <= 274 && item.item_id >= 264) {
+                    itemName = params.name;
+                }
+                else if (item.item_id == 50) {
                     itemName = items.getItemNameById(item.item_id);
                     desc = methods.bankFormat(params.number);
                 }
@@ -1269,13 +1273,12 @@ menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId) {
                             inventory.updateEquipStatus(item.id, false);
                             return;
                         }
-
                     }
 
-                    equipItems.push({ id: item.id, item_id: item.item_id, name: itemName, count: item.count, volume: items.getItemAmountById(item.item_id), desc: desc, params: "{}" }); //TODO
+                    equipItems.push({ id: item.id, item_id: item.item_id, name: itemName, counti: item.count, volume: items.getItemAmountById(item.item_id), desc: desc, params: params }); //TODO
                 }
                 else
-                    currentItems.push({ id: item.id, item_id: item.item_id, name: itemName, count: item.count, volume: items.getItemAmountById(item.item_id), desc: desc, params: "{}" }); //TODO
+                    currentItems.push({ id: item.id, item_id: item.item_id, name: itemName, counti: item.count, volume: items.getItemAmountById(item.item_id), desc: desc, params: params }); //TODO
             } catch (e) {
                 methods.debug(e);
             }

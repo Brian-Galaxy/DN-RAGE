@@ -104,8 +104,6 @@ mp.events.add('client:user:auth:login', function(login, password) {
 mp.events.add('client:events:loginAccount:success', function(data) {
     ui.callCef('authMain','{"type": "showCreatePage"}');
 
-    methods.debug(data);
-
     let playerList = JSON.parse(data);
 
     let isShow1 = false;
@@ -627,9 +625,6 @@ mp.events.add('client:events:debug', function(val) {
 });
 
 mp.events.add('client:inventory:status', function(status) {
-
-    methods.debug(status);
-
     if (status)
         inventory.show();
     else
@@ -643,12 +638,106 @@ mp.events.add('client:inventory:unEquip', function(id, itemId) {
         user.set('bank_card', 0);
         user.setBankMoney(0);
         inventory.updateItemCount(id, money);
+        user.save();
     }
-    inventory.updateEquipStatus(id, false);
+    else if (itemId == 265) {
+        if (user.getSex() == 0)
+        {
+            user.set("torso", 15);
+            user.set("torso_color", 0);
+            user.set("body", 0);
+            user.set("body_color", 240);
+            user.set("parachute", 0);
+            user.set("parachute_color", 240);
+            user.set("decal", 0);
+            user.set("decal_color", 0);
+            user.set("tprint_o", '');
+            user.set("tprint_c", '');
+            user.updateCharacterCloth();
+        }
+        else
+        {
+            user.set("torso", 15);
+            user.set("torso_color", 0);
+            user.set("body", 15);
+            user.set("body_color", 0);
+            user.set("parachute", 0);
+            user.set("parachute_color", 240);
+            user.set("decal", 0);
+            user.set("decal_color", 0);
+            user.set("tprint_o", '');
+            user.set("tprint_c", '');
+            user.updateCharacterCloth();
+        }
+    }
+    else if (itemId == 266) {
+        if (user.getSex() == 0)
+        {
+            user.set("leg", 61);
+            user.set("leg_color", 13);
+            user.updateCharacterCloth();
+        }
+        else
+        {
+            user.set("leg", 15);
+            user.set("leg_color", 0);
+            user.updateCharacterCloth();
+        }
+    }
+    else if (itemId == 267) {
+        if (user.getSex() == 0)
+        {
+            user.set("foot", 34);
+            user.set("foot_color", 0);
+            user.updateCharacterCloth();
+        }
+        else
+        {
+            user.set("foot", 35);
+            user.set("foot_color", 0);
+            user.updateCharacterCloth();
+        }
+    }
+    else if (itemId == 268) {
+        user.set("accessorie", 0);
+        user.set("accessorie_color", 0);
+        user.updateCharacterCloth();
+    }
+    else if (itemId == 269) {
+        user.set("hat", -1);
+        user.set("hat_color", -1);
+        user.updateCharacterCloth();
+    }
+    else if (itemId == 270) {
+        user.set("glasses", -1);
+        user.set("glasses_color", -1);
+        user.updateCharacterCloth();
+    }
+    else if (itemId == 271) {
+        user.set("ear", -1);
+        user.set("ear_color", -1);
+        user.updateCharacterCloth();
+    }
+    else if (itemId == 272) {
+        user.set("watch", -1);
+        user.set("watch_color", -1);
+        user.updateCharacterCloth();
+    }
+    else if (itemId == 273) {
+        user.set("bracelet", -1);
+        user.set("bracelet_color", -1);
+        user.updateCharacterCloth();
+    }
+    else if (itemId == 274) {
+        user.set("mask", 0);
+        user.set("mask_color", 0);
+        user.updateCharacterCloth();
+    }
+    //inventory.updateEquipStatus(id, false);
+    inventory.updateItemsEquipByItemId(itemId, inventory.types.Player, user.getCache('id'), 0);
 });
 
 mp.events.add('client:inventory:equip', function(id, itemId, count, aparams) {
-    methods.debug(id);
 
     let params = {};
 
@@ -659,12 +748,136 @@ mp.events.add('client:inventory:equip', function(id, itemId, count, aparams) {
         methods.debug(e);
     }
 
-    if (itemId == 50 && user.getCache('bank_card') == 0) {
-        user.set('bank_card', methods.parseInt(params.number));
-        user.setBankMoney(count);
+    if (itemId == 50) {
+        if (user.getCache('bank_card') == 0) {
+            user.set('bank_card', methods.parseInt(params.number));
+            user.setBankMoney(count);
+            user.save();
+        }
+        else {
+            mp.game.ui.notifications.show("~r~Карта уже экипирована, для начала снимите текущую");
+            return;
+        }
+    }
+    else if (itemId == 265) {
+        if (user.getCache('torso') == 15) {
+            user.set("torso", params.torso);
+            user.set("torso_color", params.torso_color);
+            user.set("body", params.body);
+            user.set("body_color", params.body_color);
+            user.set("parachute", params.parachute);
+            user.set("parachute_color", params.parachute_color);
+            user.set("decal", 0);
+            user.set("decal_color", 0);
+            user.set("tprint_o", params.tprint_o);
+            user.set("tprint_c", params.tprint_c);
+            user.updateCharacterCloth();
+        }
+        else {
+            mp.game.ui.notifications.show("~r~Одежда уже экипирована, для начала снимите текущую");
+            return;
+        }
+    }
+    else if (itemId == 266) {
+        if (user.getCache('leg') == 61 && user.getSex() == 0 || user.getCache('leg') == 15 && user.getSex() == 1) {
+            user.set("leg", params.leg);
+            user.set("leg_color", params.leg_color);
+            user.updateCharacterCloth();
+        }
+        else {
+            mp.game.ui.notifications.show("~r~Одежда уже экипирована, для начала снимите текущую");
+            return;
+        }
+    }
+    else if (itemId == 267) {
+        if (user.getCache('foot') == 34 && user.getSex() == 0 || user.getCache('leg') == 35 && user.getSex() == 1) {
+            user.set("foot", params.foot);
+            user.set("foot_color", params.foot_color);
+            user.updateCharacterCloth();
+        }
+        else {
+            mp.game.ui.notifications.show("~r~Одежда уже экипирована, для начала снимите текущую");
+            return;
+        }
+    }
+    else if (itemId == 268) {
+        if (user.getCache('accessorie') == 0) {
+            user.set("accessorie", params.accessorie);
+            user.set("accessorie_color", params.accessorie_color);
+            user.updateCharacterCloth();
+        }
+        else {
+            mp.game.ui.notifications.show("~r~Одежда уже экипирована, для начала снимите текущую");
+            return;
+        }
+    }
+    else if (itemId == 269) {
+        if (user.getCache('hat') == -1) {
+            user.set("hat", params.hat);
+            user.set("hat_color", params.hat_color);
+            user.updateCharacterCloth();
+        }
+        else {
+            mp.game.ui.notifications.show("~r~Одежда уже экипирована, для начала снимите текущую");
+            return;
+        }
+    }
+    else if (itemId == 270) {
+        if (user.getCache('glasses') == -1) {
+            user.set("glasses", params.glasses);
+            user.set("glasses_color", params.glasses_color);
+            user.updateCharacterCloth();
+        }
+        else {
+            mp.game.ui.notifications.show("~r~Одежда уже экипирована, для начала снимите текущую");
+            return;
+        }
+    }
+    else if (itemId == 271) {
+        if (user.getCache('ear') == -1) {
+            user.set("ear", params.ear);
+            user.set("ear_color", params.ear_color);
+            user.updateCharacterCloth();
+        }
+        else {
+            mp.game.ui.notifications.show("~r~Одежда уже экипирована, для начала снимите текущую");
+            return;
+        }
+    }
+    else if (itemId == 272) {
+        if (user.getCache('watch') == -1) {
+            user.set("watch", params.watch);
+            user.set("watch_color", params.watch_color);
+            user.updateCharacterCloth();
+        }
+        else {
+            mp.game.ui.notifications.show("~r~Одежда уже экипирована, для начала снимите текущую");
+            return;
+        }
+    }
+    else if (itemId == 273) {
+        if (user.getCache('bracelet') == -1) {
+            user.set("bracelet", params.bracelet);
+            user.set("bracelet_color", params.bracelet_color);
+            user.updateCharacterCloth();
+        }
+        else {
+            mp.game.ui.notifications.show("~r~Одежда уже экипирована, для начала снимите текущую");
+            return;
+        }
+    }
+    else if (itemId == 274) {
+        if (user.getCache('mask') == -1) {
+            user.set("mask", params.bracelet);
+            user.set("mask_color", params.bracelet_color);
+            user.updateCharacterCloth();
+        }
+        else {
+            mp.game.ui.notifications.show("~r~Одежда уже экипирована, для начала снимите текущую");
+            return;
+        }
     }
     else {
-        mp.game.ui.notifications.show("~r~Нельзя экипировать карту");
         return;
     }
 
@@ -836,6 +1049,15 @@ mp.events.add("playerCommand", async (command) => {
             return;
         }
         mp.events.callRemote('server:condo:insertBig', args[1], ui.getCurrentZone(), ui.getCurrentStreet())
+    }
+    else if (command.toLowerCase().slice(0, 4) === "get ") {
+        let args = command.split(' ');
+        if (args.length != 2) {
+            mp.gui.chat.push(`Не верно введено кол-во параметров `);
+            mp.gui.chat.push(`/get [name]`);
+            return;
+        }
+        methods.debug(user.getCache(args[1]));
     }
     else if (command.slice(0, 5) === "eval ") {
         if (!user.isLogin() || !user.isAdmin(5))

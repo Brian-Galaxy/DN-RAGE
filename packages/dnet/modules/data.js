@@ -4,9 +4,13 @@ let Debug = false;
 let methods = require('./methods');
 
 class Container {
-    static SetClient(id, key, value) {
+    static SetClient(id, key, value, isInt = false) {
         //methods.debug('Container.SetClient');
         try {
+
+            if (isInt)
+                value = methods.parseFloat(value);
+
             if (Debug) {
                 methods.debug(`SRV: [SET-CLIENT-SRV] ID: ${id}, KEY: ${key}, OBJECT: ${value}`);
                 mp.players.broadcast(`SRV: [SET-CLIENT-SRV] ID: ${id}, KEY: ${key}, OBJECT: ${value}`);

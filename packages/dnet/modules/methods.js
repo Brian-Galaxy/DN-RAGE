@@ -145,19 +145,19 @@ methods.distanceToPos2D = function (v1, v2) {
 
 methods.removeQuotes = function (str) {
     //TODO RemoveSlash
-    return str.replace('\'', '');
+    return str.toString().replace('\'', '');
 };
 
 methods.removeQuotes2 = function(text) {
-    return text.replace('"', '');
+    return text.toString().replace('"', '');
 };
 
 methods.escapeRegExp = function(str) {
-    return str.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
+    return str.toString().replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
 };
 
 methods.replaceAll = function(str, find, replace) {
-    return str.replace(new RegExp(methods.escapeRegExp(find), 'g'), replace);
+    return str.toString().replace(new RegExp(methods.escapeRegExp(find), 'g'), replace);
 };
 
 methods.debug = function (message, ...args) {

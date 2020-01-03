@@ -99,6 +99,14 @@ inventory.updateEquipStatus = function(id, status) {
     }
 };
 
+inventory.updateItemsEquipByItemId = function(itemId, ownerId, ownerType, equip) {
+    try {
+        mysql.executeQuery(`UPDATE items SET is_equip = '${equip}', owner_type = '${ownerType}', owner_id = '${ownerId}' where item_id = '${itemId}'`);
+    } catch(e) {
+        methods.debug(e);
+    }
+};
+
 inventory.getItemListInRadius = function(player, posX, posY) {
 
     if (!user.isLogin(player))
@@ -275,14 +283,17 @@ inventory.deleteItem = function(id) {
     }
 };
 
-inventory.addItem = function(player, itemId, count, ownerType, ownerId, countItems, prefix, number, keyId) {
-    try {
-        for (let i = 0; i < count; i++) {
-            mysql.executeQuery(`INSERT INTO items (item_id, owner_type, owner_id, count, prefix, number, key_id, timestamp_update) VALUES ('${itemId}', '${ownerType}', '${ownerId}', '${countItems}', '${prefix}', '${number}', '${keyId}', '${methods.getTimeStamp()}')`);
+inventory.addItem = function(itemId, count, ownerType, ownerId, countItems, isEquip, params, timeout = 1) {
+
+    setTimeout(function () {
+        try {
+            for (let i = 0; i < count; i++) {
+                mysql.executeQuery(`INSERT INTO items (item_id, owner_type, owner_id, count, is_equip, params, timestamp_update) VALUES ('${itemId}', '${ownerType}', '${ownerId}', '${countItems}', '${isEquip}', '${params}', '${methods.getTimeStamp()}')`);
+            }
+        } catch(e) {
+            methods.debug(e);
         }
-    } catch(e) {
-        methods.debug(e);
-    }
+    }, timeout);
 };
 
 inventory.addWorldItem = function(player, itemId, count, ownerType, ownerId, posX, posY, posZ, rotX, rotY, rotZ, model, countItems, prefix, number, keyId) {

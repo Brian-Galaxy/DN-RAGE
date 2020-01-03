@@ -699,9 +699,6 @@ user.updateTattoo = function(player) {
     user.clearDecorations(player);
     let tattooList = JSON.parse(user.get(player, 'tattoo'));
 
-    console.log(tattooList);
-    console.log(user.get(player, 'tattoo'));
-
     if (tattooList != null) {
         try {
             tattooList.forEach(function (item) {
@@ -715,6 +712,9 @@ user.updateTattoo = function(player) {
 
     let data = enums.hairOverlays[methods.parseInt(user.get(player, "SKIN_SEX"))][user.get(player, "SKIN_HAIR")];
     user.setDecoration(player, data[0], data[1]);
+
+    if (user.get(player, 'tprint_c') != "" && user.get(player, 'tprint_o') != "")
+        user.setDecoration(player, user.get(player, 'tprint_c'), user.get(player, 'tprint_o'));
 };
 
 

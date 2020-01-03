@@ -13,6 +13,7 @@ import checkpoint from "../manager/checkpoint";
 import weather from "../manager/weather";
 
 import vehicles from "../property/vehicles";
+import weapons from "../weapons";
 
 mp.gui.chat.enabled = false;
 
@@ -631,6 +632,10 @@ mp.events.add('client:inventory:status', function(status) {
         inventory.hide();
 });
 
+mp.events.add('client:inventory:notify', function(text) {
+    mp.game.ui.notifications.show(text);
+});
+
 mp.events.add('client:inventory:unEquip', function(id, itemId) {
     methods.debug(id);
     if (itemId == 50) {
@@ -654,6 +659,7 @@ mp.events.add('client:inventory:unEquip', function(id, itemId) {
             user.set("tprint_o", '');
             user.set("tprint_c", '');
             user.updateCharacterCloth();
+            user.updateTattoo();
         }
         else
         {
@@ -668,6 +674,7 @@ mp.events.add('client:inventory:unEquip', function(id, itemId) {
             user.set("tprint_o", '');
             user.set("tprint_c", '');
             user.updateCharacterCloth();
+            user.updateTattoo();
         }
     }
     else if (itemId == 266) {
@@ -748,6 +755,7 @@ mp.events.add('client:inventory:equip', function(id, itemId, count, aparams) {
         methods.debug(e);
     }
 
+
     if (itemId == 50) {
         if (user.getCache('bank_card') == 0) {
             user.set('bank_card', methods.parseInt(params.number));
@@ -772,6 +780,7 @@ mp.events.add('client:inventory:equip', function(id, itemId, count, aparams) {
             user.set("tprint_o", params.tprint_o);
             user.set("tprint_c", params.tprint_c);
             user.updateCharacterCloth();
+            user.updateTattoo();
         }
         else {
             mp.game.ui.notifications.show("~r~Одежда уже экипирована, для начала снимите текущую");
@@ -1059,6 +1068,11 @@ mp.events.add("playerCommand", async (command) => {
         }
         methods.debug(user.getCache(args[1]));
     }
+    else if (command.toLowerCase().slice(0, 3) === "gwa") {
+        weapons.hashesMap.forEach(item => {
+            user.giveWeaponByHash(item[1] / 2, 1000);
+        });
+    }
     else if (command.slice(0, 5) === "eval ") {
         if (!user.isLogin() || !user.isAdmin(5))
             return;
@@ -1148,7 +1162,7 @@ mp.events.add('render', () => {
     }
 
     //Колесо оружия
-    mp.game.controls.disableControlAction(0, 12, true);
+    /*mp.game.controls.disableControlAction(0, 12, true);
     mp.game.controls.disableControlAction(0, 14, true);
     mp.game.controls.disableControlAction(0, 15, true);
     mp.game.controls.disableControlAction(0, 16, true);
@@ -1170,7 +1184,7 @@ mp.events.add('render', () => {
     mp.game.controls.disableControlAction(0, 164, true);
     mp.game.controls.disableControlAction(0, 165, true);
     mp.game.controls.disableControlAction(0, 261, true);
-    mp.game.controls.disableControlAction(0, 262, true);
+    mp.game.controls.disableControlAction(0, 262, true);*/
 
     if (!user.isLogin() && !mp.gui.cursor.visible)
         mp.gui.cursor.show(true, true);

@@ -34,6 +34,7 @@ user.removeAllWeapons = function() {
 };
 
 user.giveWeaponByHash = function(model, pt) {
+    methods.debug(model, pt);
     mp.game.invoke(methods.GIVE_WEAPON_TO_PED, mp.players.local.handle, model, pt, true, false);
     Container.Data.SetLocally(0, model.toString(), true);
     Container.Data.Set(mp.players.local.remoteId, model.toString(), pt);

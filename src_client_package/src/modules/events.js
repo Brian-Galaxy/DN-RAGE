@@ -636,6 +636,17 @@ mp.events.add('client:inventory:notify', function(text) {
     mp.game.ui.notifications.show(text);
 });
 
+mp.events.add('client:inventory:giveItemMenu', function() {
+    let playerList = methods.getListOfPlayerInRadius(mp.players.local.position, 2);
+    let tradeArray = [mp.players.local.remoteId];
+
+    playerList.forEach(p => {
+        tradeArray.push(p.remoteId);
+    });
+
+    ui.callCef('inventory', JSON.stringify({type: "updateTrade", idList: tradeArray}));
+});
+
 mp.events.add('client:inventory:unEquip', function(id, itemId) {
     methods.debug(id);
     if (itemId == 50) {

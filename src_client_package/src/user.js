@@ -5,6 +5,7 @@ import methods from './modules/methods';
 import ui from "./modules/ui";
 import weapons from "./weapons";
 import enums from "./enums";
+import inventory from "./inventory";
 
 let user = {};
 
@@ -51,6 +52,13 @@ user.giveWeapon = function(model, pt) {
             isGive = true;
             return true;
         }
+    });
+};
+
+user.addAmmo = function(name, count) {
+    weapons.hashesMap.forEach(item => {
+        if ("WEAPON_" + item[0].toUpperCase() == model.toUpperCase())
+            mp.game.invoke(methods.ADD_AMMO_TO_PED, mp.players.local.handle, item[1] / 2, count);
     });
 };
 

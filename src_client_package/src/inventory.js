@@ -27,7 +27,11 @@ inventory.show = function() {
     hidden = false;
     ui.hideHud();
 
-    inventory.updateEquip();
+    let data = {type: "updateLabel", uid: `${mp.players.local.remoteId} (${user.getCache('id')})`, uname: user.getCache('name')};
+    ui.callCef('inventory', JSON.stringify(data));
+
+    ui.callCef('inventory', JSON.stringify({type: "updateMaxW", val: 50000}));
+
     inventory.getItemList(inventory.types.Player, user.getCache('id'))
 };
 

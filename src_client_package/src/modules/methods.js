@@ -169,6 +169,60 @@ methods.distanceToPos2D = function (v1, v2) {
         Math.pow((v2.y - v1.y),2)));
 };
 
+methods.getNearestPlayerWithCoords = function(pos, r) {
+    let nearest, dist;
+    let min = r;
+    methods.getListOfPlayersInStream().forEach(player => {
+        dist = methods.distanceToPos(pos, player.position);
+        if (dist < min) {
+            nearest = player;
+            min = dist;
+        }
+    });
+    return nearest;
+};
+
+methods.getListOfPlayersInStream = function() {
+    let returnPlayers = [];
+    mp.players.forEachInStreamRange(player => {
+            if (mp.players.local !== player) {
+                returnPlayers.push(player);
+            }
+        }
+    );
+    return returnPlayers;
+};
+
+methods.getNearestVehicleWithCoords = function(pos, r) {
+    let nearest = undefined, dist;
+    let min = r;
+    methods.getListOfVehicleInStream().forEach(vehicle => {
+        dist = methods.distanceToPos(pos, vehicle.position);
+        if (dist < min) {
+            nearest = vehicle;
+            min = dist;
+        }
+    });
+    return nearest;
+};
+
+methods.getListOfVehicleInStream = function() {
+    let returnVehicles = [];
+    mp.vehicles.forEachInStreamRange(vehicle => {
+        returnVehicles.push(vehicle);
+    });
+    return returnVehicles;
+};
+
+methods.getListOfPlayerInRadius = function(pos, r) {
+    let returnPlayers = [];
+    methods.getListOfPlayersInStream().forEach(player => {
+        if (methods.distanceToPos(pos, player.position) < r)
+            returnPlayers.push(player);
+    });
+    return returnPlayers;
+};
+
 methods.saveLog = function(file, log){
 
 };

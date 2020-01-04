@@ -100,7 +100,16 @@ enums.userData = [
     "tprint_с",
 
     "tattoo",
-    "weapons",
+    "weapon_1",
+    "weapon_1_ammo",
+    "weapon_2",
+    "weapon_2_ammo",
+    "weapon_3",
+    "weapon_3_ammo",
+    "weapon_4",
+    "weapon_4_ammo",
+    "weapon_5",
+    "weapon_5_ammo",
 
     "is_custom",
     "is_online",

@@ -44,7 +44,7 @@ user.giveWeaponByHash = function(model, pt) {
 user.giveWeapon = function(model, pt) {
     let isGive = false;
     weapons.hashesMap.forEach(item => {
-        if ("WEAPON_" + item[0].toUpperCase() == model.toUpperCase()) {
+        if (item[0].toUpperCase() == model.toUpperCase()) {
             let hash = item[1] / 2;
             mp.game.invoke(methods.GIVE_WEAPON_TO_PED, mp.players.local.handle, hash, pt, true, false);
             Container.Data.SetLocally(0, hash.toString(), true);

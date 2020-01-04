@@ -9,6 +9,7 @@ import enums from './enums';
 import coffer from './coffer';
 import items from './items';
 import inventory from './inventory';
+import weapons from './weapons';
 
 import houses from './property/houses';
 import condos from './property/condos';
@@ -1258,6 +1259,10 @@ menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId) {
                     else if(params.state == 1)
                         desc = "Статус: Заберите выигрыш";
                 }
+                else if (item.item_id <= 137 && item.item_id >= 54) {
+                    itemName = items.getItemNameById(item.item_id);
+                    desc = params.serial;
+                }
                 else if (item.item_id <= 274 && item.item_id >= 264) {
                     itemName = params.name;
                 }
@@ -1268,17 +1273,80 @@ menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId) {
 
                 if (item.is_equip == 1) {
 
+                    let success = true;
+
                     if (item.item_id == 50) {
                         if (params.number != user.getCache('bank_card')) {
                             inventory.updateEquipStatus(item.id, false);
-                            return;
+                            success = false;
                         }
                     }
 
-                    equipItems.push({ id: item.id, item_id: item.item_id, name: itemName, counti: item.count, volume: items.getItemAmountById(item.item_id), desc: desc, params: params }); //TODO
+                    if (item.item_id <= 137 && item.item_id >= 54) {
+
+                        let slot = weapons.getGunSlotIdByItem(item.item_id);
+
+                        if (params.serial != user.getCache('weapon_' + slot)) {
+                            inventory.updateEquipStatus(item.id, false);
+
+                            currentItems.push({
+                                id: item.id,
+                                item_id: item.item_id,
+                                name: itemName,
+                                counti: item.count,
+                                volume: items.getItemAmountById(item.item_id),
+                                desc: desc,
+                                params: params
+                            });
+                            return;
+                        }
+
+                        equipWeapons.push({
+                            id: item.id,
+                            item_id: item.item_id,
+                            name: itemName,
+                            counti: 0,
+                            volume: items.getItemAmountById(item.item_id),
+                            desc: desc,
+                            params: params
+                        });
+                        return;
+                    }
+
+                    if (success) {
+                        equipItems.push({
+                            id: item.id,
+                            item_id: item.item_id,
+                            name: itemName,
+                            counti: item.count,
+                            volume: items.getItemAmountById(item.item_id),
+                            desc: desc,
+                            params: params
+                        });
+                    }
+                    else {
+                        currentItems.push({
+                            id: item.id,
+                            item_id: item.item_id,
+                            name: itemName,
+                            counti: item.count,
+                            volume: items.getItemAmountById(item.item_id),
+                            desc: desc,
+                            params: params
+                        });
+                    }
                 }
-                else
-                    currentItems.push({ id: item.id, item_id: item.item_id, name: itemName, counti: item.count, volume: items.getItemAmountById(item.item_id), desc: desc, params: params }); //TODO
+                else {
+                    currentItems.push({
+                        id: item.id,
+                        item_id: item.item_id,
+                        name: itemName,
+                        counti: item.count,
+                        volume: items.getItemAmountById(item.item_id),
+                        desc: desc,
+                        params: params
+                    });
+                }
             } catch (e) {
                 methods.debug(e);
             }
@@ -1297,8 +1365,14 @@ menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId) {
             items: equipItems
         };
 
+        let dataSend3 = {
+            type: 'updateWeaponItems',
+            items: equipWeapons
+        };
+
         ui.callCef('inventory', JSON.stringify(dataSend));
         ui.callCef('inventory', JSON.stringify(dataSend2));
+        ui.callCef('inventory', JSON.stringify(dataSend3));
         inventory.setInvAmount(ownerId, ownerType, sum);
     }
     catch (e) {

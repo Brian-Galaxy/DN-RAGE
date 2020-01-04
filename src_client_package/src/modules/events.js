@@ -778,6 +778,18 @@ mp.events.add('client:inventory:equip', function(id, itemId, count, aparams) {
             return;
         }
     }
+    else if (itemId >= 54 && itemId <= 137) {
+
+        let slot = weapons.getGunSlotIdByItem(itemId);
+        if (user.getCache('weapon_' + slot) == '') {
+
+        }
+        else {
+            ui.callCef('inventory', JSON.stringify({type: "weaponToInventory", itemId: id}));
+            mp.game.ui.notifications.show("~r~Слот под оружие уже занят");
+            return;
+        }
+    }
     else if (itemId == 265) {
         if (user.getCache('torso') == 15) {
             user.set("torso", params.torso);

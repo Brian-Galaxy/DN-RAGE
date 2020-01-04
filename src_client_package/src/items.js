@@ -61,98 +61,98 @@ let ItemList = [
     ["Лицензия", "", false, -925658112, 30, 116], // 52
     ["Удостоверение", "", false, -1595369626, 15, 8], // 53
 
-    ["Кавалерийский кинжал", "Dagger", true, 1725061196, 400, 450,], // 54
-    ["Бейсбольная бита", "Bat", true, 1742452667, 1500, 2000], // 55
-    ["Боевой топор", "BattleAxe", true, 2133533553, 2200, 2400], // 56
-    ["Розочка", "Bottle", true, -789123952, 110, 540], // 57
-    ["Лом", "Crowbar", true, 1862268168, 3200, 1050], // 58
-    ["Фонарик", "Flashlight", true, 211760048, 340, 400], // 59
-    ["Клюшка для гольфа", "GolfClub", true, -580196246, 2900, 1150], // 60
-    ["Молоток", "Hammer", true, 64104227, 860, 430], // 61
-    ["Топорик", "Hatchet", true, 1653948529, 930, 860], // 62
-    ["Нож", "Knife", true, -1982443329, 560, 520], // 63
-    ["Кастет", "KnuckleDuster", true, -1803909274, 450, 80], // 64
-    ["Мачете", "Machete", true, -2055486531, 1120, 525], // 65
-    ["Полицейская дубинка", "Nightstick", true, -1634978236, 880, 970], // 66
-    ["Разводной ключ", "Wrench", true, 10555072, 1760, 1490], // 67
-    ["Бильярдный кий", "PoolCue", true, -1982443329, 470, 160], // 68
-    ["Выкидной нож", "SwitchBlade", true, 1653948529, 130, 60], // 69
+    ["Кавалерийский кинжал", "weapon_dagger", true, 1725061196, 400, 450,], // 54
+    ["Бейсбольная бита", "weapon_bat", true, 1742452667, 1500, 2000], // 55
+    ["Боевой топор", "weapon_battleaxe", true, 2133533553, 2200, 2400], // 56
+    ["Розочка", "weapon_bottle", true, -789123952, 110, 540], // 57
+    ["Лом", "weapon_crowbar", true, 1862268168, 3200, 1050], // 58
+    ["Фонарик", "weapon_flashlight", true, 211760048, 340, 400], // 59
+    ["Клюшка для гольфа", "weapon_golfclub", true, -580196246, 2900, 1150], // 60
+    ["Молоток", "weapon_hammer", true, 64104227, 860, 430], // 61
+    ["Топорик", "weapon_hatchet", true, 1653948529, 930, 860], // 62
+    ["Нож", "weapon_knife", true, -1982443329, 560, 520], // 63
+    ["Кастет", "weapon_knuckle", true, -1803909274, 450, 80], // 64
+    ["Мачете", "weapon_machete", true, -2055486531, 1120, 525], // 65
+    ["Полицейская дубинка", "weapon_nightstick", true, -1634978236, 880, 970], // 66
+    ["Разводной ключ", "weapon_wrench", true, 10555072, 1760, 1490], // 67
+    ["Бильярдный кий", "weapon_poolcue", true, -1982443329, 470, 160], // 68
+    ["Выкидной нож", "weapon_switchblade", true, 1653948529, 130, 60], // 69
 
-    ["Сolt SCAMP", "APPistol", true, 905830540, 1500, 950], // 70
-    ["P99", "CombatPistol", true, 403140669, 800, 660], // 71
-    ["Сигнальный пистолет", "FlareGun", true, 1349014803, 440, 270], // 72
-    ["Enterprise Wide Body 1911", "HeavyPistol", true, 1927398017, 1120, 850], // 73
-    ["Raging Bull", "Revolver", true, 1430410579, 1440, 1080], // 74
-    ["Raging Bull Mk II", "Revolver_Mk2", true, 1430410579, 1990, 1080], // 75
-    ["Contender G2", "MarksmanPistol", true, 1430410579, 1360, 1800], // 76
-    ["Taurus PT92", "Pistol", true, 1467525553, 950, 1230], // 77
-    ["Beretta 90Two", "PistolMk2", true, 1430410579, 920, 1050], // 78
-    ["Desert Eagle", "Pistol50", true, -178484015, 1700, 1720], // 79
-    ["HK P7M10", "SNSPistol", true, 339962010, 785, 660], // 80
-    ["Colt Junior", "SNSPistol_Mk2", true, 1430410579, 365, 310], // 81
-    ["Шокер", "StunGun", true, 1609356763, 760, 680], // 82
-    ["FN Model 1922", "VintagePistol", true, -1124046276, 700, 720], // 83
-    ["Colt New Service", "DoubleAction", true, 1430410579, 1450, 1170], // 84
+    ["Сolt SCAMP", "weapon_appistol", true, 905830540, 1500, 950], // 70
+    ["P99", "weapon_combatpistol", true, 403140669, 800, 660], // 71
+    ["Сигнальный пистолет", "weapon_flaregun", true, 1349014803, 440, 270], // 72
+    ["Remington 1911", "weapon_heavypistol", true, 1927398017, 1120, 850], // 73
+    ["Raging Bull", "weapon_revolver", true, 1430410579, 1440, 1080], // 74
+    ["Raging Bull Mk II", "weapon_revolver_mk2", true, 1430410579, 1990, 1080], // 75
+    ["Contender G2", "weapon_marksmanpistol", true, 1430410579, 1360, 1800], // 76
+    ["Taurus PT92", "weapon_pistol", true, 1467525553, 950, 1230], // 77
+    ["Beretta 90Two", "weapon_pistol_mk2", true, 1430410579, 920, 1050], // 78
+    ["Desert Eagle", "weapon_pistol50", true, -178484015, 1700, 1720], // 79
+    ["HK P7M10", "weapon_snspistol", true, 339962010, 785, 660], // 80
+    ["Colt Junior", "weapon_snspistol_mk2", true, 1430410579, 365, 310], // 81
+    ["Шокер", "weapon_stungun", true, 1609356763, 760, 680], // 82
+    ["FN Model 1922", "weapon_vintagepistol", true, -1124046276, 700, 720], // 83
+    ["Colt New Service", "weapon_doubleaction", true, 1430410579, 1450, 1170], // 84
 
-    ["UTS-15", "AssaultShotgun", true, 1255410010, 2800, 11500], // 85
-    ["KSG 12", "BullpupShotgun", true, -1598212834, 3100, 9500], // 86
-    ["Обрез", "DoubleBarrelShotgun", true, -1920611843, 1410, 1800], // 87
-    ["Сайга-12К", "HeavyShotgun", true, -1209868881, 3500, 10900], // 88
-    ["Land Pattern Musket", "Musket", true, 1652015642, 4300, 14400], // 89
-    ["Benelli M3", "PumpShotgun", true, 689760839, 4500, 16100], // 90
-    ["Benelli M4", "PumpShotgun_Mk2", true, 798951501, 3500, 17600], // 91
-    ["Mossberg 500", "SawnOffShotgun", true, -675841386, 2100, 3800], // 92
-    ["Protecta", "SweeperShotgun", true, -1920611843, 2900, 6800], // 93
+    ["UTS-15", "weapon_assaultshotgun", true, 1255410010, 2800, 11500], // 85
+    ["KSG 12", "weapon_bullpupshotgun", true, -1598212834, 3100, 9500], // 86
+    ["Обрез", "weapon_dbshotgun", true, -1920611843, 1410, 1800], // 87
+    ["Сайга-12К", "weapon_heavyshotgun", true, -1209868881, 3500, 10900], // 88
+    ["Land Pattern Musket", "weapon_musket", true, 1652015642, 4300, 14400], // 89
+    ["Benelli M3", "weapon_pumpshotgun", true, 689760839, 4500, 16100], // 90
+    ["Benelli M4", "weapon_pumpshotgun_mk2", true, 798951501, 3500, 17600], // 91
+    ["Mossberg 500", "weapon_sawnoffshotgun", true, -675841386, 2100, 3800], // 92
+    ["Protecta", "weapon_autoshotgun", true, -1920611843, 2900, 6800], // 93
 
-    ["P-90", "AssaultSMG", true, -473574177, 2800, 8800], // 94
-    ["Mk 48", "CombatMG", true, -739394447, 8000, 16000], // 95
-    ["HK MG4", "CombatMG_Mk2", true, 798951501, 8150, 17600], // 96
-    ["SIG MPX-SD", "CombatPDW", true, -1393014804, 2700, 5000], // 97
-    ["Thompson M1918A1", "Gusenberg", true, 574348740, 8400, 18400], // 98
-    ["Intratec TEC-9", "MachinePistol", true, 1430410579, 1500, 1660], // 99
-    ["ПКП «Печенег»", "MG", true,-2056364402, 8200, 17250], // 100
-    ["Mini Uzi", "MicroSMG", true, -1056713654, 2650, 2500], // 101
-    ["Scorpion vz.61", "MiniSMG", true, 1430410579, 2000, 1900], // 102
-    ["MP5A3", "SMG", true, -500057996, 3200, 7800], // 103
-    ["MP5K", "SMG_Mk2", true, -1920611843, 3350, 8100], // 104
+    ["P-90", "weapon_assaultsmg", true, -473574177, 2800, 8800], // 94
+    ["Mk 48", "weapon_combatmg", true, -739394447, 8000, 16000], // 95
+    ["HK MG4", "weapon_combatmg_mk2", true, 798951501, 8150, 17600], // 96
+    ["SIG MPX-SD", "weapon_combatpdw", true, -1393014804, 2700, 5000], // 97
+    ["Thompson M1918A1", "weapon_gusenberg", true, 574348740, 8400, 18400], // 98
+    ["Intratec TEC-9", "weapon_machinepistol", true, 1430410579, 1500, 1660], // 99
+    ["ПКП «Печенег»", "weapon_mg", true,-2056364402, 8200, 17250], // 100
+    ["Mini Uzi", "weapon_microsmg", true, -1056713654, 2650, 2500], // 101
+    ["Scorpion vz.61", "weapon_minismg", true, 1430410579, 2000, 1900], // 102
+    ["MP5A3", "weapon_smg", true, -500057996, 3200, 7800], // 103
+    ["MP5K", "weapon_smg_mk2", true, -1920611843, 3350, 8100], // 104
 
-    ["Tavor CTar-21", "AdvancedRifle", true, -1707584974, 3270, 12400], // 105
-    ["AK-102", "AssaultRifle", true, 273925117, 3200, 14700], // 106
-    ["AK-103", "AssaultRifle_Mk2", true, 798951501, 3600, 16200], // 107
-    ["QBZ-97", "BullpupRifle", true, -1288559573, 3250, 13500], // 108
-    ["QBZ-95", "BullpupRifle_Mk2", true, 798951501, 3350, 13900], // 109
-    ["HK-416", "CarbineRifle", true, 1026431720, 3490, 14200], // 110
-    ["HK-416A5", "CarbineRifle_Mk2", true, 798951501, 3560, 14900], // 111
-    ["AKS-47u", "CompactRifle", true, -1920611843, 2400, 5700], // 112
-    ["G36C", "SpecialCarbine", true, -1745643757, 2980, 12000], // 113
-    ["G36KV", "SpecialCarbine_Mk2", true, 798951501, 3370, 13900], // 114
+    ["TAR-21", "weapon_advancedrifle", true, -1707584974, 3270, 12400], // 105
+    ["AK-102", "weapon_assaultrifle", true, 273925117, 3200, 14700], // 106
+    ["AK-103", "weapon_assaultrifle_mk2", true, 798951501, 3600, 16200], // 107
+    ["QBZ-97", "weapon_bullpuprifle", true, -1288559573, 3250, 13500], // 108
+    ["QBZ-95", "weapon_bullpuprifle_mk2", true, 798951501, 3350, 13900], // 109
+    ["HK-416", "weapon_carbinerifle", true, 1026431720, 3490, 14200], // 110
+    ["HK-416A5", "weapon_carbinerifle_mk2", true, 798951501, 3560, 14900], // 111
+    ["AKS-74u", "weapon_compactrifle", true, -1920611843, 2400, 5700], // 112
+    ["G36C", "weapon_specialcarbine", true, -1745643757, 2980, 12000], // 113
+    ["G36KV", "weapon_specialcarbine_mk2", true, 798951501, 3370, 13900], // 114
 
-    ["M107", "HeavySniper", true, -746966080, 13500, 21000], // 115
-    ["XM109", "HeavySniper_Mk2", true, 798951501, 14000, 24500], // 116
-    ["M14 EBR", "MarksmanRifle", true, -1711248638, 5100, 17800], // 117
-    ["SOCOM 16", "MarksmanRifle_Mk2", true, 798951501, 5900, 18200], // 118
-    ["L115A3", "SniperRifle", true, 346403307, 6600, 14400], // 119
+    ["M107", "weapon_heavysniper", true, -746966080, 13500, 21000], // 115
+    ["XM109", "weapon_heavysniper_mk2", true, 798951501, 14000, 24500], // 116
+    ["M14 EBR", "weapon_marksmanrifle", true, -1711248638, 5100, 17800], // 117
+    ["SOCOM 16", "weapon_marksmanrifle_mk2", true, 798951501, 5900, 18200], // 118
+    ["L115A3", "weapon_sniperrifle", true, 346403307, 6600, 14400], // 119
 
-    ["M79", "CompactGrenadeLauncher", true, -1920611843, 50, 2050], // 120
-    ["Пиротехническая установка", "Firework", true, 491091384, 8500, 29000], // 121
-    ["M32 MGL", "GrenadeLauncher", true, -606683246, 5300, 19500], // 122
-    ["FIM 92 Stinger", "HomingLauncher", true, 1901887007, 13500, 29000], // 123
-    ["M134", "Minigun", true, 422658457, 30000, 50000], // 124
-    ["Рельсовое оружие", "Railgun", true, -1876506235, 14900, 22500], // 125
-    ["РПГ-7", "RPG", true, -218858073, 6000, 46000], // 126
+    ["M79", "weapon_compactlauncher", true, -1920611843, 50, 2050], // 120
+    ["Пиротехническая установка", "weapon_firework", true, 491091384, 8500, 29000], // 121
+    ["M32 MGL", "weapon_grenadelauncher", true, -606683246, 5300, 19500], // 122
+    ["FIM 92 Stinger", "weapon_hominglauncher", true, 1901887007, 13500, 29000], // 123
+    ["M134", "weapon_minigun", true, 422658457, 30000, 50000], // 124
+    ["Рельсовое оружие", "weapon_railgun", true, -1876506235, 14900, 22500], // 125
+    ["РПГ-7", "weapon_rpg", true, -218858073, 6000, 46000], // 126
 
-    ["Мяч", "Ball", true, -383950123, 250, 310], // 127
-    ["Дымовая гранта", "SmokeGrenade", true, -1936212109, 690, 485], // 128
-    ["Сигнальный огонь", "Flare", true, -1564193152, 250, 180], // 129
-    ["Граната", "Grenade", true, 290600267, 890, 410], // 130
-    ["Коктейль Молотова", "Molotov", true, -880609331, 660, 720], // 131
-    ["Неконтактная мина", "ProximityMine", true, 1876445962, 850, 1200], // 132
-    ["Самодельная бомба", "PipeBomb", true, 848107085, 430, 180], // 133
-    ["Снежок", "Snowball", true, 1297482736, 250, 310], // 134
-    ["Бомба-липучка", "StickyBomb", true, -1110203649, 750, 1200], // 135
-    ["Слезоточивый газ", "BZGas", true, 1591549914, 690, 485], // 136
+    ["Мяч", "weapon_ball", true, -383950123, 250, 310], // 127
+    ["Дымовая гранта", "weapon_smokegrenade", true, -1936212109, 690, 485], // 128
+    ["Сигнальный огонь", "weapon_flare", true, -1564193152, 250, 180], // 129
+    ["Граната", "weapon_grenade", true, 290600267, 890, 410], // 130
+    ["Коктейль Молотова", "weapon_molotov", true, -880609331, 660, 720], // 131
+    ["Неконтактная мина", "weapon_proxmine", true, 1876445962, 850, 1200], // 132
+    ["Самодельная бомба", "weapon_pipebomb", true, 848107085, 430, 180], // 133
+    ["Снежок", "weapon_snowball", true, 1297482736, 250, 310], // 134
+    ["Бомба-липучка", "weapon_stickybomb", true, -1110203649, 750, 1200], // 135
+    ["Слезоточивый газ", "weapon_bzgas", true, 1591549914, 690, 485], // 136
 
-    ["Парашют", "Parachute", true, -1679378668, 3200, 7500], // 137
+    ["Парашют", "gadget_parachute", true, -1679378668, 3200, 7500], // 137
 
     ["Купюра 1$", "", true, 1814532926, 1, 1], // 138
     ["Купюра 100$", "", true, 1597489407, 1, 1], // 139
@@ -319,6 +319,22 @@ let ItemList = [
 
     ["Лотерейный билет", "", false, 406712611, 80, 410], //277
     ["Спец. Аптечка", "", false, 678958360, 500, 880], //278
+
+    ["Коробка патронов", "", true, 1843823183, 3800, 1568], //279 / 10
+    ["Коробка патронов 9mm", "", true, 190687980, 1140, 432], //280 / 140
+    ["Коробка патронов 12 калибра", "", true, 1560006187, 2420, 1024], //281 / 120
+    ["Коробка патронов 7.62mm", "", true, 669213687, 2580, 686], //282 / 130
+    ["Коробка патронов 5.45mm", "", true, 1843823183, 3620, 1568], //283 / 260
+    ["Коробка патронов 5.56mm", "", true, 1843823183, 3620, 1568], //284 / 260
+    ["Коробка патронов 12.7mm", "", true, 1843823183, 8900, 1568], //285 / 60
+    ["Коробка патронов .45 ACP", "", true, 1843823183, 8900, 1568], //286 / 60
+    ["Коробка патронов .44 Magnum", "", true, 1843823183, 8900, 1568], //287 / 60
+
+    ["Коробка патронов сингального пистолета", "", true, 1843823183, 1600, 1568], //288 / 10
+    ["Коробка патронов феерверка", "", true, 1843823183, 1600, 1568], //289 / 1
+    ["Коробка подствольных гранат", "", true, 1843823183, 3800, 1568], //290 / 10
+    ["Коробка патронов RPG", "", true, 1843823183, 2200, 1568], //291 / 1
+    ["Коробка патронов Stinger", "", true, 1843823183, 1500, 1568], //292 / 1
 ];
 
 items.canEquipById = function(id)

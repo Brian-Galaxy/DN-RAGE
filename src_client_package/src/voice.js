@@ -624,11 +624,11 @@ const generateVolume = (localPlayerPosition, targetPlayer, voiceDistance, distan
 
             if (v1 !== v2) {
                 if (isAllUp1) {
-                    volume = volume / 5;
+                    volume = volume / 7;
                 }
 
                 if (isAllUp2) {
-                    volume = volume / 5;
+                    volume = volume / 7;
                 }
             }
         } else if (localPlayer.vehicle) {
@@ -655,7 +655,7 @@ const generateVolume = (localPlayerPosition, targetPlayer, voiceDistance, distan
             );
 
             if (isAllUp1) {
-                volume = volume / 6;
+                volume = volume / 7;
             }
         } else if (targetPlayer.vehicle) {
             const v1 = targetPlayer.vehicle;
@@ -681,7 +681,7 @@ const generateVolume = (localPlayerPosition, targetPlayer, voiceDistance, distan
             );
 
             if (isAllUp1) {
-                volume = volume / 6;
+                volume = volume / 7;
             }
         }
     }

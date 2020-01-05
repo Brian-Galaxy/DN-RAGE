@@ -32,7 +32,7 @@ inventory.show = function() {
 
     ui.callCef('inventory', JSON.stringify({type: "updateMaxW", val: 50000}));
 
-    inventory.getItemList(inventory.types.Player, user.getCache('id'))
+    inventory.getItemList(inventory.types.Player, user.getCache('id'));
 };
 
 inventory.hide = function() {

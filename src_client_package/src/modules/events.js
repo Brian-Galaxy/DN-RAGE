@@ -400,6 +400,11 @@ mp.events.add('client:events:loginUser:finalCreate', function() {
     user.setPlayerModel('mp_m_freemode_01');
 });
 
+mp.events.add('client:events:loginUser:success', function() {
+    user.setLogin(true);
+    inventory.getItemList(inventory.types.Player, user.getCache('id'));
+});
+
 mp.events.add('client:user:updateCache', (data) => {
     try {
         methods.debug('Event: client:user:updateCache');
@@ -1086,6 +1091,11 @@ mp.events.add("playerCommand", async (command) => {
             return;
         let args = command.toLowerCase().split(' ');
         user.playAnimation(args[1], args[2], args[2]);
+    }
+    else if (command.toLowerCase().slice(0, 1) === "t") {
+        if (!user.isLogin() || !user.isAdmin())
+            return;
+        user.getTargetEntity();
     }
     else if (command.toLowerCase().slice(0, 1) === "m") {
         menuList.showAdminMenu();

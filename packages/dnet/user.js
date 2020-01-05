@@ -343,6 +343,8 @@ user.loadUser = function(player, name, spawn = 'Стандарт') {
                 else {
                     user.spawnByName(player, spawn);
                 }
+
+                player.call('client:events:loginUser:success');
                 //user.setOnlineStatus(player, 1);
             }, 600);
 

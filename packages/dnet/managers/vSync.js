@@ -5,21 +5,21 @@ let methods = require('../modules/methods');
 let vSync = exports;
 
 vSync.WindowID =
-    {
-        WindowFrontRight: 0,
-        WindowFrontLeft: 1,
-        WindowRearRight: 2,
-        WindowRearLeft: 3
-    };
+{
+    WindowFrontRight: 0,
+    WindowFrontLeft: 1,
+    WindowRearRight: 2,
+    WindowRearLeft: 3
+};
 
 vSync.SirenState =
-    {
-        Disable: 0,
-        EnableWithoutSound: 1,
-        EnableWithSoundSlow: 2,
-        EnableWithSoundNormal: 3,
-        EnableWithSoundFast: 4
-    };
+{
+    Disable: 0,
+    EnableWithoutSound: 1,
+    EnableWithSoundSlow: 2,
+    EnableWithSoundNormal: 3,
+    EnableWithSoundFast: 4
+};
 
 vSync.VehicleSyncData = {
     //Basics
@@ -27,6 +27,8 @@ vSync.VehicleSyncData = {
     Siren: 0,
     RadioState: 0,
     Engine: false,
+    Hood: false,
+    Trunk: false,
 
     //(Not synced)
     IndicatorLeftToggle: false,
@@ -197,6 +199,36 @@ vSync.getEngineState = function(v) {
     return v.engine;
 };
 
+vSync.setHoodState = function(v, status) {
+    if (!vehicles.exists(v))
+        return;
+    let data = vSync.getVehicleSyncData(v);
+    data.Hood = status;
+    vSync.updateVehicleSyncData(v, data);
+    mp.players.callInRange(v.position, streamDist, "vSync:setHoodState", [v.id, status]);
+};
+
+vSync.getHoodState = function(v) {
+    if (!vehicles.exists(v))
+        return false;
+    return vSync.getVehicleSyncData(v).Hood;
+};
+
+vSync.setTrunkState = function(v, status) {
+    if (!vehicles.exists(v))
+        return;
+    let data = vSync.getVehicleSyncData(v);
+    data.Trunk = status;
+    vSync.updateVehicleSyncData(v, data);
+    mp.players.callInRange(v.position, streamDist, "vSync:setTrunkState", [v.id, status]);
+};
+
+vSync.getTrunkState = function(v) {
+    if (!vehicles.exists(v))
+        return false;
+    return vSync.getVehicleSyncData(v).Trunk;
+};
+
 vSync.setInteriorLightState = function(v, status) {
     if (!vehicles.exists(v))
         return;
@@ -292,6 +324,18 @@ mp.events.add('s:vSync:setIndicatorRightState', (player, vId, status) => {
     let veh = mp.vehicles.at(vId);
     if (mp.players.exists(player) && vehicles.exists(veh))
         vSync.setIndicatorRightToggle(player.vehicle, status);
+});
+
+mp.events.add('s:vSync:setTrunkState', (player, vId, status) => {
+    let veh = mp.vehicles.at(vId);
+    if (mp.players.exists(player) && vehicles.exists(veh))
+        vSync.setTrunkState(player.vehicle, status);
+});
+
+mp.events.add('s:vSync:setHoodState', (player, vId, status) => {
+    let veh = mp.vehicles.at(vId);
+    if (mp.players.exists(player) && vehicles.exists(veh))
+        vSync.setHoodState(player.vehicle, status);
 });
 
 mp.events.add('s:vSync:setDoorData', (player, vId, doorState1, doorState2, doorState3, doorState4, doorState5, doorState6, doorState7, doorState8) => {

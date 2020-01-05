@@ -3,9 +3,9 @@ import user from '../user';
 
 let weather = {};
 
-let Day = 0;
-let Month = 0;
-let Year = 0;
+let Day = 1;
+let Month = 1;
+let Year = 2010;
 let Hour = 0;
 let Min = 0;
 let Sec = 0;

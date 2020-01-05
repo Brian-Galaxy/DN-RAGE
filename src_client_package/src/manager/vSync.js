@@ -77,7 +77,15 @@ vSync.updateValues = function(entity) {
             entity.setInteriorlight(actualData.InteriorLight);
             entity.setTaxiLights(actualData.TaxiLight);
 
+            if (actualData.Trunk)
+                entity.setDoorOpen(5, false, false);
+            else
+                entity.setDoorShut(5, false);
 
+            if (actualData.Hood)
+                entity.setDoorOpen(4, false, false);
+            else
+                entity.setDoorShut(4, false);
         }
         else {
 
@@ -352,6 +360,34 @@ mp.events.add("vSync:setIndicatorRightToggle", (vehId, status) => {
         let veh = mp.vehicles.atRemoteId(vehId);
         if (veh !== undefined && mp.vehicles.exists(veh)) {
             veh.setIndicatorLights(0, status);
+        }
+    } catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.add("vSync:setTrunkState", (vehId, status) => {
+    try {
+        let veh = mp.vehicles.atRemoteId(vehId);
+        if (veh !== undefined && mp.vehicles.exists(veh)) {
+            if (status)
+                veh.setDoorOpen(5, false, false);
+            else
+                veh.setDoorShut(5, false);
+        }
+    } catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.add("vSync:setHoodState", (vehId, status) => {
+    try {
+        let veh = mp.vehicles.atRemoteId(vehId);
+        if (veh !== undefined && mp.vehicles.exists(veh)) {
+            if (status)
+                veh.setDoorOpen(4, false, false);
+            else
+                veh.setDoorShut(4, false);
         }
     } catch (e) {
         methods.debug(e);

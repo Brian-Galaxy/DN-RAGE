@@ -1211,18 +1211,12 @@ menuList.showSpawnJobCarMailMenu = function() {
 
 menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId) {
 
-    //{ id: 28, item_id: 101, name: "Кепка", volume: 15, desc: "", params: "{}" },
-
     //if (user.isDead()) //TODO
     //    return;
 
     try {
         //let invAmountMax = await inventory.getInvAmountMax(ownerId, ownerType);
         let sum = 0;
-
-        //inventory.clearItems();
-        //inventory.updateEquipWeapon();
-        //inventory.updateEquip();
 
         let currentItems = [];
         let equipItems = [];
@@ -1378,6 +1372,21 @@ menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId) {
             items: equipWeapons
         };
 
+        let slotUse = [];
+        equipWeapons.forEach(item => {
+            let slot = weapons.getGunSlotIdByItem(item.item_id);
+            if (item.params.serial == user.getCache('weapon_' + slot))
+                slotUse.push(slot);
+        });
+
+
+        for (let i = 1; i < 6; i++) {
+            if (!slotUse.includes(i)) {
+                user.set('weapon_' + i, '');
+                user.set('weapon_' + i + '_ammo', 0);
+            }
+        }
+
         ui.callCef('inventory', JSON.stringify(dataSend));
         ui.callCef('inventory', JSON.stringify(dataSend2));
         ui.callCef('inventory', JSON.stringify(dataSend3));
@@ -1386,9 +1395,6 @@ menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId) {
     catch (e) {
        methods.debug(e);
     }
-    //let name = "Предметы";
-    //inventory.updateLabel(invAmountMax != -1 ? `${methods.numerToK(sum)}/${methods.numerToK(invAmountMax)}см³ (${data.length}шт.)` : "Инвентарь");
-    //inventory.show();
 };
 
 menuList.showToPlayerWorldListMenu = function(data) {

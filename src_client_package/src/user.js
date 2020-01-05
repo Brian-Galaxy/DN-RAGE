@@ -16,11 +16,55 @@ let userData = new Map();
 user.godmode = false;
 user.isTeleport = false;
 user.currentId = 0;
+user.targetEntity = undefined;
 
 let currentCamDist = 0.2;
 let currentCamRot = -2;
 
 let cam = null;
+
+/*
+0 - Third Person Close
+1 - Third Person Mid
+2 - Third Person Far
+4 - First Person
+* */
+
+mp.events.add('render', () => {
+    if (!user.isLogin())
+        return;
+    switch (mp.game.invoke(methods.GET_FOLLOW_PED_CAM_VIEW_MODE)) {
+        case 4:
+            user.targetEntity = user.pointingAt(2);
+            break;
+        case 1:
+            user.targetEntity = user.pointingAt(6.8);
+            break;
+        case 2:
+            user.targetEntity = user.pointingAt(9);
+            break;
+        default:
+            user.targetEntity = user.pointingAt(5);
+            break;
+    }
+    try {
+        if (
+            user.targetEntity &&
+            user.targetEntity.entity &&
+            user.targetEntity.entity.getType() != 3 &&
+            user.targetEntity.entity.handle != mp.players.local.handle
+        ) {
+            ui.drawText(`•`, 0.5, 0.5, 0.3, 255, 255, 255, 180, 0, 1, false, true);
+        }
+    }
+    catch (e) {
+
+    }
+});
+
+user.getTargetEntity = function() {
+    return user.targetEntity.entity;
+};
 
 user.removeAllWeapons = function() {
     mp.players.local.removeAllWeapons();
@@ -229,6 +273,23 @@ user.clearDecorations = function(isLocal = false) {
         mp.events.callRemote('server:user:clearDecorations');
     else
         mp.players.local.clearDecorations();
+};
+
+user.pointingAt = function(distance) {
+    const camera = mp.cameras.new("gameplay"); // gets the current gameplay camera
+    let position = camera.getCoord();
+    let direction = camera.getDirection();
+    let farAway = new mp.Vector3((direction.x * distance) + (position.x), (direction.y * distance) + (position.y), (direction.z * distance) + (position.z));
+
+    //let result = mp.raycasting.testPointToPoint(position, farAway);
+
+    /*if (!result) {
+        mp.game.graphics.drawLine(position.x, position.y, position.z, farAway.x, farAway.y, farAway.z, 255, 255, 255, 255);
+    } else {
+        mp.game.graphics.drawLine(position.x, position.y, position.z, farAway.x, farAway.y, farAway.z, 255, 0, 0, 255);
+    }*/
+
+    return mp.raycasting.testPointToPoint(position, farAway);
 };
 
 user.save = function() {

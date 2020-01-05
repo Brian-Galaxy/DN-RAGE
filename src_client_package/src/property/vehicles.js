@@ -67,6 +67,16 @@ vehicles.setIndicatorRightState = function(state) {
         mp.events.callRemote('s:vSync:setIndicatorRightState', mp.players.local.vehicle, state);
 };
 
+vehicles.setTrunkState = function(state) {
+    if (mp.players.local.vehicle)
+        mp.events.callRemote('s:vSync:setTrunkState', mp.players.local.vehicle, state);
+};
+
+vehicles.setHoodState = function(state) {
+    if (mp.players.local.vehicle)
+        mp.events.callRemote('s:vSync:setHoodState', mp.players.local.vehicle, state);
+};
+
 vehicles.checkerControl = function() {
     let veh = mp.players.local.vehicle;
     if (veh) {

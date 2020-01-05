@@ -6,6 +6,7 @@ import menuList from '../menuList';
 import voice from "../voice";
 import enums from "../enums";
 import inventory from "../inventory";
+import items from "../items";
 
 import ui from "./ui";
 
@@ -647,6 +648,22 @@ mp.events.add('client:inventory:giveItemMenu', function() {
     ui.callCef('inventory', JSON.stringify({type: "updateTrade", idList: tradeArray}));
 });
 
+mp.events.add('client:inventory:selectWeapon', function(id, itemId, serial) {
+
+    let wpName = items.getItemNameHashById(itemId);
+    let wpHash = weapons.getHashByName(wpName);
+    let slot = weapons.getGunSlotIdByItem(itemId);
+
+    if (user.getCache('weapon_' + slot) != serial) {
+        inventory.updateItemsEquipByItemId(itemId, inventory.types.Player, user.getCache('id'), 0);
+        user.set('weapon_' + slot, '');
+        user.set('weapon_' + slot + '_ammo', 0);
+        return;
+    }
+
+    mp.game.invoke(methods.SET_CURRENT_PED_WEAPON, mp.players.local.handle, wpHash, true);
+});
+
 mp.events.add('client:inventory:unEquip', function(id, itemId) {
     methods.debug(id);
     if (itemId == 50) {
@@ -654,6 +671,20 @@ mp.events.add('client:inventory:unEquip', function(id, itemId) {
         user.set('bank_card', 0);
         user.setBankMoney(0);
         inventory.updateItemCount(id, money);
+        user.save();
+    }
+    else if (itemId >= 54 && itemId <= 137) {
+
+        let wpName = items.getItemNameHashById(itemId);
+        let wpHash = weapons.getHashByName(wpName);
+        let slot = weapons.getGunSlotIdByItem(itemId);
+
+        user.setAmmo(wpName, 0);
+        mp.game.invoke(methods.REMOVE_WEAPON_FROM_PED, mp.players.local.handle, wpHash);
+
+        user.set('weapon_' + slot, '');
+        user.set('weapon_' + slot + '_ammo', 0);
+
         user.save();
     }
     else if (itemId == 265) {
@@ -782,7 +813,11 @@ mp.events.add('client:inventory:equip', function(id, itemId, count, aparams) {
 
         let slot = weapons.getGunSlotIdByItem(itemId);
         if (user.getCache('weapon_' + slot) == '') {
-
+            user.set('weapon_' + slot, params.serial);
+            user.set('weapon_' + slot + '_ammo', 0);
+            user.giveWeapon(items.getItemNameHashById(itemId), 0);
+            ui.callCef('inventory', JSON.stringify({type: "updateSelectWeapon", selectId: id}));
+            user.save();
         }
         else {
             ui.callCef('inventory', JSON.stringify({type: "weaponToInventory", itemId: id}));
@@ -1175,6 +1210,27 @@ mp.events.add('render', () => {
         mp.game.controls.disableControlAction(0,24,true); // disable sprint
         mp.game.controls.disableControlAction(0,25,true); // disable sprint
 
+        mp.game.controls.disableControlAction(0,24,true); // Attack
+        mp.game.controls.disableControlAction(0,69,true); // Attack
+        mp.game.controls.disableControlAction(0,70,true); // Attack
+        mp.game.controls.disableControlAction(0,68,true); // Attack
+        mp.game.controls.disableControlAction(0,106,true); // Attack
+        mp.game.controls.disableControlAction(0,114,true); // Attack
+        mp.game.controls.disableControlAction(0,122,true); // Attack
+        mp.game.controls.disableControlAction(0,135,true); // Attack
+        mp.game.controls.disableControlAction(0,142,true); // Attack
+        mp.game.controls.disableControlAction(0,144,true); // Attack
+        mp.game.controls.disableControlAction(0,222,true); // Attack
+        mp.game.controls.disableControlAction(0,223,true); // Attack
+        mp.game.controls.disableControlAction(0,225,true); // Attack
+        mp.game.controls.disableControlAction(0,229,true); // Attack
+        mp.game.controls.disableControlAction(0,257,true); // Attack
+        mp.game.controls.disableControlAction(0,329,true); // Attack
+        mp.game.controls.disableControlAction(0,330,true); // Attack
+        mp.game.controls.disableControlAction(0,331,true); // Attack
+        mp.game.controls.disableControlAction(0,346,true); // Attack
+        mp.game.controls.disableControlAction(0,347,true); // Attack
+
         //Disable Cam
         mp.game.controls.disableControlAction(0, 1, true);
         mp.game.controls.disableControlAction(0, 2, true);
@@ -1185,7 +1241,7 @@ mp.events.add('render', () => {
     }
 
     //Колесо оружия
-    /*mp.game.controls.disableControlAction(0, 12, true);
+    mp.game.controls.disableControlAction(0, 12, true);
     mp.game.controls.disableControlAction(0, 14, true);
     mp.game.controls.disableControlAction(0, 15, true);
     mp.game.controls.disableControlAction(0, 16, true);
@@ -1207,7 +1263,7 @@ mp.events.add('render', () => {
     mp.game.controls.disableControlAction(0, 164, true);
     mp.game.controls.disableControlAction(0, 165, true);
     mp.game.controls.disableControlAction(0, 261, true);
-    mp.game.controls.disableControlAction(0, 262, true);*/
+    mp.game.controls.disableControlAction(0, 262, true);
 
     if (!user.isLogin() && !mp.gui.cursor.visible)
         mp.gui.cursor.show(true, true);

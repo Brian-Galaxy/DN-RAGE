@@ -35,31 +35,30 @@ user.removeAllWeapons = function() {
 };
 
 user.giveWeaponByHash = function(model, pt) {
-    methods.debug(model, pt);
-    mp.game.invoke(methods.GIVE_WEAPON_TO_PED, mp.players.local.handle, model, pt, true, false);
+
+    mp.game.invoke(methods.GIVE_WEAPON_TO_PED, mp.players.local.handle, model, pt, false, true);
     Container.Data.SetLocally(0, model.toString(), true);
     Container.Data.Set(mp.players.local.remoteId, model.toString(), pt);
 };
 
 user.giveWeapon = function(model, pt) {
-    let isGive = false;
-    weapons.hashesMap.forEach(item => {
-        if (item[0].toUpperCase() == model.toUpperCase()) {
-            let hash = item[1] / 2;
-            mp.game.invoke(methods.GIVE_WEAPON_TO_PED, mp.players.local.handle, hash, pt, true, false);
-            Container.Data.SetLocally(0, hash.toString(), true);
-            Container.Data.Set(mp.players.local.remoteId, hash.toString(), pt);
-            isGive = true;
-            return true;
-        }
-    });
+    user.giveWeaponByHash(weapons.getHashByName(model), pt);
 };
 
 user.addAmmo = function(name, count) {
-    weapons.hashesMap.forEach(item => {
-        if ("WEAPON_" + item[0].toUpperCase() == model.toUpperCase())
-            mp.game.invoke(methods.ADD_AMMO_TO_PED, mp.players.local.handle, item[1] / 2, count);
-    });
+    user.addAmmoByHash(weapons.getHashByName(name), count);
+};
+
+user.addAmmoByHash = function(name, count) {
+    mp.game.invoke(methods.ADD_AMMO_TO_PED, mp.players.local.handle, weapons.getHashByName(name), count);
+};
+
+user.setAmmo = function(name, count) {
+    user.setAmmoByHash(weapons.getHashByName(name), count);
+};
+
+user.setAmmoByHash = function(name, count) {
+    mp.game.invoke(methods.SET_PED_AMMO, mp.players.local.handle, name, count);
 };
 
 user.teleportv = function(pos, rot) {

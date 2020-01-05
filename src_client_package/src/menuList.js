@@ -1301,6 +1301,14 @@ menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId) {
                             return;
                         }
 
+                        let wpName = items.getItemNameHashById(item.item_id);
+                        let wpHash = weapons.getHashByName(wpName);
+                        if (!mp.game.invoke(methods.HAS_PED_GOT_WEAPON, mp.players.local.handle, wpHash, false)) {
+                            user.giveWeapon(wpName, 0);
+                            user.setAmmo(wpName, user.getCache('weapon_' + slot + '_ammo'));
+                            ui.callCef('inventory', JSON.stringify({type: "updateSelectWeapon", selectId: item.id}));
+                        }
+
                         equipWeapons.push({
                             id: item.id,
                             item_id: item.item_id,

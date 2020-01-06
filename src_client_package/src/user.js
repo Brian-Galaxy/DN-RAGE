@@ -35,14 +35,8 @@ mp.events.add('render', () => {
     if (!user.isLogin())
         return;
     try {
-        if (
-            user.targetEntity &&
-            user.targetEntity.entity &&
-            user.targetEntity.entity.getType() != 3 &&
-            user.targetEntity.entity.handle != mp.players.local.handle
-        ) {
+        if (user.getTargetEntityValidate())
             ui.drawText(`•`, 0.5, 0.5, 0.3, 255, 255, 255, 180, 0, 1, false, true);
-        }
     }
     catch (e) {
 
@@ -53,15 +47,23 @@ user.timer20ms = function() {
     switch (mp.game.invoke(methods.GET_FOLLOW_PED_CAM_VIEW_MODE)) {
         case 4:
             user.targetEntity = user.pointingAt(2);
+            if (user.getTargetEntityValidate() === undefined)
+                user.targetEntity = user.pointingAtRadius(2);
             break;
         case 1:
             user.targetEntity = user.pointingAt(6.8);
+            if (user.getTargetEntityValidate() === undefined)
+                user.targetEntity = user.pointingAtRadius(6.8);
             break;
         case 2:
             user.targetEntity = user.pointingAt(9);
+            if (user.getTargetEntityValidate() === undefined)
+                user.targetEntity = user.pointingAtRadius(9);
             break;
         default:
             user.targetEntity = user.pointingAt(5);
+            if (user.getTargetEntityValidate() === undefined)
+                user.targetEntity = user.pointingAtRadius(5);
             break;
     }
 
@@ -69,6 +71,7 @@ user.timer20ms = function() {
     if (target && target != targetEntityPrev) {
         mp.game.ui.notifications.show('Нажмите ~g~E~s~ для взаимодействия');
     }
+
     targetEntityPrev = target;
 
     setTimeout(user.timer20ms, 20);
@@ -87,9 +90,53 @@ user.getTargetEntityValidate = function() {
             user.targetEntity.entity.handle != mp.players.local.handle
         )
             return user.targetEntity.entity;
+        else if (
+            user.targetEntity &&
+            user.targetEntity.entity &&
+            user.targetEntity.entity.getType() == 3 &&
+            user.targetEntity.entity.getVariable('isDrop')
+        )
+            return user.targetEntity.entity;
     }
     catch (e) {
 
+    }
+    return undefined;
+};
+
+user.pointingAt = function(distance) {
+    try {
+        const camera = mp.cameras.new("gameplay"); // gets the current gameplay camera
+        let position = camera.getCoord();
+        let direction = camera.getDirection();
+        let farAway = new mp.Vector3((direction.x * distance) + (position.x), (direction.y * distance) + (position.y), (direction.z * distance) + (position.z));
+
+        /*if (!result) {
+            mp.game.graphics.drawLine(position.x, position.y, position.z, farAway.x, farAway.y, farAway.z, 255, 255, 255, 255);
+        } else {
+            mp.game.graphics.drawLine(position.x, position.y, position.z, farAway.x, farAway.y, farAway.z, 255, 0, 0, 255);
+        }*/
+
+        return mp.raycasting.testPointToPoint(position, farAway, mp.players.local, (2 | 4 | 8 | 16));
+    }
+    catch (e) {
+
+    }
+    return undefined;
+};
+
+user.pointingAtRadius = function(distance, radius = 0.2) {
+    try {
+        const camera = mp.cameras.new("gameplay"); // gets the current gameplay camera
+        let position = camera.getCoord();
+        let direction = camera.getDirection();
+        let farAway = new mp.Vector3((direction.x * distance) + (position.x), (direction.y * distance) + (position.y), (direction.z * distance) + (position.z));
+        let result = mp.raycasting.testCapsule(position, farAway, radius, mp.players.local);
+
+        if (result.entity.getVariable('isDrop'))
+            return result;
+    }
+    catch (e) {
     }
     return undefined;
 };
@@ -303,21 +350,6 @@ user.clearDecorations = function(isLocal = false) {
         mp.events.callRemote('server:user:clearDecorations');
     else
         mp.players.local.clearDecorations();
-};
-
-user.pointingAt = function(distance) {
-    const camera = mp.cameras.new("gameplay"); // gets the current gameplay camera
-    let position = camera.getCoord();
-    let direction = camera.getDirection();
-    let farAway = new mp.Vector3((direction.x * distance) + (position.x), (direction.y * distance) + (position.y), (direction.z * distance) + (position.z));
-
-    /*if (!result) {
-        mp.game.graphics.drawLine(position.x, position.y, position.z, farAway.x, farAway.y, farAway.z, 255, 255, 255, 255);
-    } else {
-        mp.game.graphics.drawLine(position.x, position.y, position.z, farAway.x, farAway.y, farAway.z, 255, 0, 0, 255);
-    }*/
-
-    return mp.raycasting.testPointToPoint(position, farAway);
 };
 
 user.save = function() {
@@ -676,6 +708,21 @@ user.giveJobMoney = function(money) {
         user.addBankMoney(money);
         user.sendSmsBankOperation(`Зачисление средств: ~g~${methods.moneyFormat(money)}`);
     }
+};
+
+user.playAnimation = function(dict, anim, flag = 49, sendEventToServer = true) {
+    if (mp.players.local.getVariable("isBlockAnimation") || mp.players.local.isInAnyVehicle(false) || user.isDead()) return;
+    mp.events.callRemote('server:playAnimation', dict, anim, methods.parseInt(flag));
+    /*
+        8 = нормально играть
+        9 = цикл
+        48 = нормально играть только верхнюю часть тела
+        49 = цикл только верхняя часть тела
+    */
+};
+
+user.isDead = function() {
+    return mp.players.local.getHealth() <= 0;
 };
 
 user.isAdmin = function(){

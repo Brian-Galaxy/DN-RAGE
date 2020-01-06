@@ -905,6 +905,7 @@ vehicles.spawnCar = (position, heading, nameOrModel, number = undefined) => {
     veh.setVariable('container', CountAllCars + offsetAll);
     veh.setVariable('fuel', vInfo.fuel_full);
     veh.setVariable('vid', CountAllCars);
+    veh.setVariable('invId', mp.joaat(number));
 
     vehicles.set(CountAllCars + offsetAll, 'fuel', vInfo.fuel_full);
     vehicles.set(CountAllCars + offsetAll, 'hash', model);
@@ -946,6 +947,7 @@ vehicles.spawnCarCb = (cb, position, heading, nameOrModel, color1 = -1, color2 =
         veh.setVariable('container', CountAllCars + offsetAll);
         veh.setVariable('fuel', vInfo.fuel_full);
         veh.setVariable('vid', CountAllCars);
+        veh.setVariable('invId', mp.joaat(number));
 
         vehicles.set(CountAllCars + offsetAll, 'fuel', vInfo.fuel_full);
         vehicles.set(CountAllCars + offsetAll, 'hash', model);

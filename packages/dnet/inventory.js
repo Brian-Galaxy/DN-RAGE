@@ -17,7 +17,7 @@ inventory.loadAll = function() {
     mysql.executeQuery("DELETE FROM items WHERE owner_type = 0");
     mysql.executeQuery("DELETE FROM items WHERE owner_type = 9 AND owner_id = 2 AND timestamp_update < '" + (methods.getTimeStamp() - (60 * 60 * 24 * 7)) + "'");
 
-    /*mysql.executeQuery(`SELECT * FROM items WHERE owner_type = 0 ORDER BY id DESC`, function (err, rows, fields) {
+    mysql.executeQuery(`SELECT * FROM items WHERE owner_type = 0 ORDER BY id DESC`, function (err, rows, fields) {
         rows.forEach(row => {
 
             let obj = mp.objects.new(items.getItemHashById(row['item_id']), new mp.Vector3(row['pos_x'], row['pos_y'], row['pos_z']),
@@ -27,9 +27,11 @@ inventory.loadAll = function() {
                 dimension: 0
             });
 
+            obj.setVariable('isDrop', row['id']);
+            obj.setVariable('itemId', row['item_id']);
             props.set(row['id'].toString(), obj);
         });
-    });*/
+    });
 };
 
 inventory.deleteWorldItems = function() {
@@ -43,8 +45,7 @@ inventory.deleteWorldItems = function() {
 
 inventory.getItemList = function(player, ownerType, ownerId) {
 
-    if (typeof ownerId == "string")
-        ownerId = methods.parseInt(ownerId);
+    ownerId = methods.parseInt(ownerId);
 
     if (!user.isLogin(player))
         return;
@@ -52,7 +53,7 @@ inventory.getItemList = function(player, ownerType, ownerId) {
 
         let data = [];
         //let data2 = new Map();
-        mysql.executeQuery(`SELECT * FROM items WHERE owner_id = ${ownerId} AND owner_type = ${ownerType} ORDER BY item_id DESC`, function (err, rows, fields) {
+        mysql.executeQuery(`SELECT * FROM items WHERE owner_id = '${ownerId}' AND owner_type = '${ownerType}' ORDER BY item_id DESC`, function (err, rows, fields) {
             rows.forEach(row => {
 
                 let label = "";
@@ -83,7 +84,7 @@ inventory.getItemList = function(player, ownerType, ownerId) {
             });
 
             //id, itemId, ownerType, ownerId, countItems, prefix, number, keyId
-            player.call('client:showToPlayerItemListMenu', [data, ownerType, ownerId]);
+            player.call('client:showToPlayerItemListMenu', [data, ownerType, ownerId.toString()]);
         });
     } catch(e) {
         methods.debug(e);
@@ -104,8 +105,6 @@ inventory.updateEquipStatus = function(id, status) {
 
 inventory.updateItemsEquipByItemId = function(itemId, ownerId, ownerType, equip) {
     try {
-        if (typeof ownerId == "string")
-            ownerId = methods.parseInt(ownerId);
         mysql.executeQuery(`UPDATE items SET is_equip = '${equip}' where item_id = '${itemId}' AND owner_type = '${ownerType}' AND owner_id = '${ownerId}'`);
     } catch(e) {
         methods.debug(e);
@@ -114,134 +113,11 @@ inventory.updateItemsEquipByItemId = function(itemId, ownerId, ownerType, equip)
 
 inventory.updateOwnerId = function(id, ownerId, ownerType) {
     try {
+        methods.debug(typeof ownerId);
+        methods.debug(typeof ownerId);
+        methods.debug(typeof ownerId);
+        ownerId = methods.parseInt(ownerId);
         mysql.executeQuery(`UPDATE items SET owner_type = '${ownerType}', owner_id = '${ownerId}' where id = '${id}'`);
-    } catch(e) {
-        methods.debug(e);
-    }
-};
-
-inventory.getItemListInRadius = function(player, posX, posY) {
-
-    if (!user.isLogin(player))
-        return;
-    try {
-
-        let data = [];
-        //let data2 = new Map();
-        mysql.executeQuery(`SELECT * FROM items WHERE DISTANCE(POINT(pos_x, pos_y), POINT(${posX}, ${posY})) < 2 AND owner_type = 0 ORDER BY item_id DESC`, function (err, rows, fields) {
-            rows.forEach(row => {
-                let label = "";
-
-                if (row['prefix'] > 0 && row['number'] > 0 && row['key_id'] <= 0) {
-                    label = row['prefix'] + "-" + row['number'];
-                } else if (row['key_id'] > 0) {
-
-                    if (row['item_id'] >= 265 && row['item_id'] <= 268) {
-
-                        if (row['prefix'] == 1)
-                            label = enums.clothF[row['key_id']][9];
-                        else
-                            label = enums.clothM[row['key_id']][9];
-                    }
-                    else if (row['item_id'] >= 269 && row['item_id'] <= 273) {
-                        if (row['prefix'] == 1)
-                            label = enums.propF[row['key_id']][5];
-                        else
-                            label = enums.propM[row['key_id']][5];
-                    }
-                    else {
-                        label = "#" + row['key_id'];
-                    }
-                }
-
-                data.push({id: row['id'], label: label, item_id: row['item_id'], count: row['count'], params: row['params']});
-            });
-            player.call('client:showToPlayerWorldListMenu', [Array.from(data)]);
-        });
-    } catch(e) {
-        methods.debug(e);
-    }
-};
-
-inventory.getInfoItem = function(player, id) {
-    if (!user.isLogin(player))
-        return;
-    try {
-
-        mysql.executeQuery(`SELECT * FROM items WHERE id = ${id} ORDER BY item_id DESC`, function (err, rows, fields) {
-            rows.forEach(row => {
-                player.call('client:showToPlayerInfoItemMenu', [row['id'], row['item_id'], row['owner_type'], row['owner_id'], row['count'], row['params']]);
-                return;
-            });
-        });
-    } catch(e) {
-        methods.debug(e);
-    }
-};
-
-inventory.dropItem = function(player, id, itemId, posX, posY, posZ, rotX, rotY, rotZ, model, ownerType, ownerId) {
-    //let obj = mp.objects.new(model, new mp.Vector3(posX, posY, posZ-0.98));
-    if (!user.isLogin(player))
-        return;
-    try {
-
-        if (vehicles.exists(player.vehicle)) {
-            player.notify('~r~Вы находитесь в транспорте');
-            return;
-        }
-        if (player.isJumping) {
-            player.notify('~r~Вы не должны прыгать');
-            return;
-        }
-
-        mysql.executeQuery(`SELECT * FROM items WHERE id = ${id}`, function (err, rows, fields) {
-            if (!user.isLogin(player))
-                return;
-            if (rows.length == 0) {
-                //...
-            }
-            else {
-                let heading = player.heading;
-                let rot = new mp.Vector3(0, 0, heading);
-
-                switch (itemId) {
-                    case 8:
-                    case 251:
-                        rot = new mp.Vector3(-90, 0, heading);
-                        break;
-                }
-
-                if(itemId >= 54 && itemId <= 126)
-                    rot = new mp.Vector3(-90, 0, heading);
-
-                let obj = mp.objects.new(model, new mp.Vector3(posX + (methods.getRandomInt(-100, 100) / 300), posY + (methods.getRandomInt(-100, 100) / 400), posZ-0.98),
-                    {
-                        rotation: rot,
-                        alpha: 255,
-                        dimension: 0
-                    });
-
-                posX = obj.position.x;
-                posY = obj.position.y;
-                posZ = obj.position.z;
-
-                rotX = rot.x;
-                rotY = rot.y;
-                rotZ = rot.z;
-
-                props.set(id.toString(), obj);
-                mysql.executeQuery(`UPDATE items SET item_id = ${itemId}, owner_type = ${ownerType}, owner_id = ${ownerId}, pos_x = ${posX}, pos_y = ${posY}, pos_z = ${posZ}, rot_x = ${rotX}, rot_y = ${rotY}, rot_z = ${rotZ}, timestamp_update = ${methods.getTimeStamp()} where id = ${id}`);
-            }
-        });
-
-    } catch(e) {
-        methods.debug(e);
-    }
-};
-
-inventory.updateItemOwner = function(player, id, ownerType, ownerId) {
-    try {
-        mysql.executeQuery(`UPDATE items SET owner_type = '${ownerType}', owner_id = '${ownerId}', timestamp_update = '${methods.getTimeStamp()}' where id = '${id}'`);
     } catch(e) {
         methods.debug(e);
     }
@@ -259,7 +135,7 @@ inventory.updateAmount = function(player, ownerId, ownerType) { // Фикс ху
 
     if (!user.isLogin(player))
         return;
-
+    ownerId = methods.parseInt(ownerId);
     let data = new Map();
     //console.log(ownerId, ownerType, "update <");
     mysql.executeQuery(`SELECT * FROM items WHERE owner_id = '${ownerId}' AND owner_type = '${ownerType}' ORDER BY id DESC`, function (err, rows, fields) {
@@ -275,6 +151,75 @@ inventory.updateAmount = function(player, ownerId, ownerType) { // Фикс ху
             methods.debug(e);
         }
     });
+};
+
+inventory.dropItem = function(player, id, itemId, posX, posY, posZ, rotX, rotY, rotZ) {
+    if (!user.isLogin(player))
+        return;
+    try {
+
+        if (vehicles.exists(player.vehicle)) {
+            player.notify('~r~Вы находитесь в транспорте');
+            return;
+        }
+        if (player.isJumping) {
+            player.notify('~r~Вы не должны прыгать');
+            return;
+        }
+
+        let heading = player.heading;
+        let rot = new mp.Vector3(0, 0, heading);
+
+        switch (itemId) {
+            case 1:
+            case 2:
+            case 8:
+            case 50:
+            case 154:
+            case 156:
+            case 158:
+            case 159:
+            case 160:
+            case 171:
+            case 172:
+            case 173:
+            case 176:
+            case 177:
+            case 178:
+            case 251:
+                rot = new mp.Vector3(-90, 0, heading);
+                break;
+        }
+
+        if(itemId >= 54 && itemId <= 126)
+            rot = new mp.Vector3(-90, 0, heading);
+
+        let obj = mp.objects.new(
+            items.getItemHashById(itemId),
+            new mp.Vector3(posX + (methods.getRandomInt(-100, 100) / 300), posY + (methods.getRandomInt(-100, 100) / 400), posZ-0.98),
+            {
+                rotation: rot,
+                alpha: 255,
+                dimension: 0
+            });
+
+        obj.setVariable('isDrop', id);
+        obj.setVariable('itemId', itemId);
+
+        posX = obj.position.x;
+        posY = obj.position.y;
+        posZ = obj.position.z;
+
+        rotX = rot.x;
+        rotY = rot.y;
+        rotZ = rot.z;
+
+        props.set(id.toString(), obj);
+        mysql.executeQuery(`UPDATE items SET item_id = ${itemId}, owner_type = 0, owner_id = 0, pos_x = ${posX}, pos_y = ${posY}, pos_z = ${posZ}, rot_x = ${rotX}, rot_y = ${rotY}, rot_z = ${rotZ}, timestamp_update = ${methods.getTimeStamp()} where id = ${id}`);
+
+    } catch(e) {
+        methods.debug(e);
+    }
 };
 
 inventory.deleteDropItem = function(id) {
@@ -307,65 +252,6 @@ inventory.addItem = function(itemId, count, ownerType, ownerId, countItems, isEq
             methods.debug(e);
         }
     }, timeout);
-};
-
-inventory.addWorldItem = function(player, itemId, count, ownerType, ownerId, posX, posY, posZ, rotX, rotY, rotZ, model, countItems, prefix, number, keyId) {
-    if (!user.isLogin(player))
-        return;
-    try {
-        for (let i = 0; i < count; i++) {
-
-            let currentTimestamp = methods.getTimeStamp();
-
-            mysql.executeQuery(`INSERT INTO items (item_id, owner_type, owner_id, pos_x, pos_y, pos_z, rot_x, rot_y, rot_z, count, prefix, number, key_id, timestamp_update) VALUES ('${itemId}', '${ownerType}', '${ownerId}', '${posX}', '${posY}', '${posZ}', '${rotX}', '${rotY}', '${rotZ}', '${countItems}', '${prefix}', '${number}', '${keyId}', '${currentTimestamp}')`);
-
-            setTimeout(function () {
-                mysql.executeQuery(`SELECT id FROM items WHERE owner_type = '0' AND owner_id = '0' AND item_id = '${itemId}' AND timestamp_update = '${currentTimestamp}' ORDER BY item_id DESC`, function (err, rows, fields) {
-                    rows.forEach(row => {
-                        if (row['id']) {
-
-                            posX = posX+methods.getRandomInt(-1,1);
-                            posY = posY+methods.getRandomInt(-1,1);
-                            posZ = posZ+0.1;
-
-                            let heading = player.heading;
-                            let rot = new mp.Vector3(0, 0, heading);
-
-                            switch (itemId) {
-                                case 8:
-                                case 251:
-                                    rot = new mp.Vector3(-90, 0, heading);
-                                    break;
-                            }
-
-                            if(itemId >= 54 && itemId <= 126)
-                                rot = new mp.Vector3(-90, 0, heading);
-
-                            let obj = mp.objects.new(model, new mp.Vector3(posX + (methods.getRandomInt(-100, 100) / 300), posY + (methods.getRandomInt(-100, 100) / 400), posZ-0.98),
-                                {
-                                    rotation: rot,
-                                    alpha: 255,
-                                    dimension: 0
-                                });
-
-                            posX = obj.position.x;
-                            posY = obj.position.y;
-                            posZ = obj.position.z;
-
-                            rotX = rot.x;
-                            rotY = rot.y;
-                            rotZ = rot.z;
-
-                            props.set(row['id'].toString(), obj);
-                            return;
-                        }
-                    });
-                });
-            }, 2500);
-        }
-    } catch(e) {
-        methods.debug(e);
-    }
 };
 
 inventory.getInvAmount = function(player, id, type) {

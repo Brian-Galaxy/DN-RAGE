@@ -23,6 +23,7 @@ let weather = require('./managers/weather');
 let pickups = require('./managers/pickups');
 
 let coffer = require('./coffer');
+let inventory = require('./inventory');
 
 function init() {
     try {
@@ -44,6 +45,8 @@ function init() {
         coffer.load();
 
         methods.loadAllBlips();
+
+        inventory.loadAll();
 
         setTimeout(function () {
             vehicles.loadAllShop();

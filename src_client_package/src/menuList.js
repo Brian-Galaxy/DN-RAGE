@@ -1211,8 +1211,23 @@ menuList.showSpawnJobCarMailMenu = function() {
 
 menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId) {
 
-    //if (user.isDead()) //TODO
-    //    return;
+    if (user.isDead()) {
+        mp.game.ui.notifications.show("~r~Нельзя использовать инвентарь будучи мёртвым");
+        return;
+    }
+
+    /*if (user.getCache('jail_time') > 0) { //TODO
+        mp.game.ui.notifications.show("~r~В тюрьме нельзя этим пользоваться");
+        return;
+    }
+   */
+
+    ownerId = methods.parseInt(ownerId);
+
+    methods.debug(ownerType);
+    methods.debug(ownerId);
+    methods.debug(ownerId);
+    methods.debug(ownerId);
 
     try {
         //let invAmountMax = await inventory.getInvAmountMax(ownerId, ownerType);
@@ -1408,93 +1423,6 @@ menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId) {
     catch (e) {
        methods.debug(e);
     }
-};
-
-menuList.showToPlayerWorldListMenu = function(data) {
-
-    if (user.get('jail_time') > 0) {
-        mp.game.ui.notifications.show("~r~В тюрьме нельзя этим пользоваться");
-        return;
-    }
-    if (user.isDead()) {
-        mp.game.ui.notifications.show("~r~Нельзя использовать инвентарь будучи мёртвым");
-        return;
-    }
-
-    inventory.clearItems();
-    inventory.updateEquipWeapon();
-    inventory.updateEquip();
-
-    data.forEach((item, idx) => {
-        try {
-            //menuType, id, itemId, count, key, prefix, number, kg, wg
-
-            let itemName = items.getItemNameById(item.item_id);
-            if (item.item_id >= 265 && item.item_id <= 273 && item.label.toString() != "")
-                itemName = item.label;
-            else if (item.label.toString() != "")
-                itemName += " " + item.label;
-
-            let itemId = item.item_id;
-            let countItems = item.count;
-            let menuType = "";
-
-            if (!user.isGos() && (itemId > 203 || itemId < 194))
-                menuType += " takeItemButton";
-            else if (user.isGos())
-                menuType += " takeItemButton";
-
-            if (itemId == 142 || itemId == 143 || itemId == 144 || itemId == 145 ||
-                itemId == 163 || itemId == 164 || itemId == 165 || itemId == 166 ||
-                itemId == 167 || itemId == 168 || itemId == 169 || itemId == 170 ||
-                itemId == 171 || itemId == 172 || itemId == 173 || itemId == 174 ||
-                itemId == 175 || itemId == 176 || itemId == 177 || itemId == 178 ||
-                itemId == 154 || itemId == 155 || itemId == 156 || itemId == 157 ||
-                itemId == 179 || itemId == 180) {
-                menuType += " takeOneGrammItemButton";
-                if (itemId == 142 || itemId == 143 || itemId == 144 || itemId == 145 ||
-                    itemId == 163 || itemId == 164 || itemId == 165 || itemId == 166 ||
-                    itemId == 167 || itemId == 168 || itemId == 169 || itemId == 170) {
-                    if (countItems >= 10) {
-                        menuType += "takeTenGrammItemButton";
-                    }
-                    if (countItems >= 50) {
-                        menuType += "takeFiftyGrammItemButton";
-                    }
-                }
-                menuType += " takeItemButton";
-            }
-            if (0 !== inventory.types.Fridge && 0 !== inventory.types.Vehicle)
-                menuType += " transferToVehiclePlayerItemButton";
-
-            //kitchenId = mp.players.local.dimension; // Main.GetKitchenId();
-            if (mp.players.local.dimension !== 0 && 0 !== inventory.types.Fridge) {
-                // Kitchen
-                enums.kitchenIntData.forEach(function(item, i, arr) {
-                    let pos = new mp.Vector3(item[0], item[1], item[2]);
-                    if (methods.distanceToPos(mp.players.local.position, pos) < 2) {
-                        menuType += " transferToFridgePlayerItemButton";
-                    }
-                });
-            }
-            if (mp.players.local.dimension >= 5100000 && methods.distanceToPos(mp.players.local.position, stock.stockPos) < 2) {
-                menuType += " transferToStockPlayerItemButton";
-            }
-            if (itemId == 140 || itemId == 141) {
-                menuType += " countMoneyPlayerItemButton";
-            }
-            if ((itemId >= 146 && itemId <= 153) || (itemId >= 27 && itemId <= 30)) {
-                menuType += " countBulletsPlayerItemButton";
-            }
-
-            inventory.addInvItem(menuType, 0, 0, item.id, itemName, item.item_id, item.count, item.key_id, item.prefix, item.number, items.getItemWeightById(item.item_id), items.getItemAmountById(item.item_id));
-        } catch (e) {
-            methods.debug(e);
-        }
-    });
-
-    inventory.updateLabel("Список предметов");
-    inventory.show();
 };
 
 menuList.showAdminMenu = function() {

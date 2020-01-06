@@ -658,11 +658,20 @@ mp.events.add('client:inventory:giveItemMenu', function() {
 });
 
 mp.events.add('client:inventory:moveTo', function(id, ownerId, ownerType) {
+    ownerId = methods.parseInt(ownerId);
     inventory.updateOwnerId(id, ownerId, ownerType);
 });
 
 mp.events.add('client:inventory:moveFrom', function(id) {
     inventory.updateOwnerId(id, user.getCache('id'), inventory.types.Player);
+});
+
+mp.events.add('client:inventory:drop', function(id, itemId) {
+    if (mp.players.local.dimension > 0) {
+        mp.game.ui.notifications.show("~r~Нельзя выкидывать предметы в интерьере");
+        return;
+    }
+    inventory.dropItem(id, itemId, mp.players.local.position, mp.players.local.getRotation(0));
 });
 
 mp.events.add('client:inventory:selectWeapon', function(id, itemId, serial) {

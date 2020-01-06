@@ -668,6 +668,14 @@ mp.events.addRemoteCounted('server:inventory:updateItemCount', (player, id, coun
     inventory.updateItemCount(id, count);
 });
 
+mp.events.addRemoteCounted('server:inventory:dropItem', (player, id, itemId, posX, posY, posZ, rotX, rotY, rotZ) => {
+    inventory.dropItem(player, id, itemId, posX, posY, posZ, rotX, rotY, rotZ);
+});
+
+mp.events.addRemoteCounted('server:inventory:deleteDropItem', (player, id) => {
+    inventory.deleteDropItem(id);
+});
+
 mp.events.addRemoteCounted("onKeyPress:LAlt", (player) => {
     if (!user.isLogin(player))
         return;

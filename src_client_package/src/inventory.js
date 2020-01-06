@@ -51,35 +51,6 @@ inventory.isHide = function() {
     return hidden;
 };
 
-inventory.updateEquip = function() {
-
-    /*let data = {
-        type : 'updateEquip',
-        outfit: [
-            [
-                { slot: "outf-cap", equipped: user.getCache("hat") >= 0, type: 'cap' },
-                { slot: "outf-glasses", equipped: user.getCache("glasses") >= 0, type: 'glasses' },
-                { slot: "outf-mask", equipped: user.getCache("mask") != 0, type: 'mask' },
-                { slot: "outf-shirt", equipped: user.getCache("torso") != 15, type: 'shirt' },
-                { slot: "outf-jewerly", equipped: user.getCache("accessorie") >= 0, type: 'jewerly' },
-                { slot: "outf-earrings", equipped: user.getCache("ear") >= 0, type: 'earrings' },
-                { slot: "outf-jeans", equipped: user.getSex() == 0 ? user.getCache("leg") != 61 : user.getCache("leg") != 15, type: 'jeans' },
-                { slot: "outf-watch", equipped: user.getCache("watch") >= 0, type: 'watch' },
-                { slot: "outf-bracelet", equipped: user.getCache("bracelet") >= 0, type: 'bracelet' },
-                { slot: "outf-boot", equipped: user.getSex() == 0 ? user.getCache("foot") != 34 : user.getCache("foot") != 35, type: 'boot' },
-            ],
-            [
-                { slot: "outf-clock", equipped: false, type: 'clock' },
-                { slot: "outf-phone", equipped: false, type: 'phone' },
-                { slot: "outf-money", equipped: false, type: 'money' }, //TODO
-                { slot: "outf-card", equipped: user.getCache("bank_card") > 0, type: 'card' },
-            ],
-        ],
-    };*/
-
-    //ui.callCef('inventory', JSON.stringify(data));
-};
-
 inventory.updateEquipStatus = function(id, status) { //TODO, подумать как можно рессетнуть значения, чтобы не дюпали и не пропадли деньги
     mp.events.callRemote('server:inventory:updateEquipStatus', id, status);
 };
@@ -93,117 +64,21 @@ inventory.updateItemsEquipByItemId = function(itemId, ownerId, ownerType, equip)
 };
 
 inventory.updateOwnerId = function(id, ownerId, ownerType) {
+    methods.debug(ownerId);
+    methods.debug(ownerId);
+    methods.debug(ownerId);
     ownerId = ownerId.toString();
     mp.events.callRemote('server:inventory:updateOwnerId', id, ownerId, ownerType);
-};
-
-inventory.updateEquipWeapon = function() {
-    //inventory.clearWeapons();
-
-    let currentItems = [];
-
-    for (let n = 54; n < 138; n++)
-    {
-        weapons.hashesMap.forEach(item => {
-            if (item[0] !== items.getItemNameHashById(n)) return;
-            let hash = item[1] / 2;
-            if (!mp.game.invoke(methods.HAS_PED_GOT_WEAPON, mp.players.local.handle, hash, false)) return;
-
-            let ammoItem = inventory.ammoTypeToAmmo(mp.game.invoke(methods.GET_PED_AMMO_TYPE_FROM_WEAPON, mp.players.local.handle, hash));
-            let ammoCount = mp.game.invoke(methods.GET_AMMO_IN_PED_WEAPON, mp.players.local.handle, hash);
-            let itemName = items.getItemNameById(n);
-            let itemId = n;
-            let desc = 'Serial ID: L1654564';
-
-
-            currentItems.push({ id: -1, item_id: itemId, name: itemName, volume: items.getItemAmountById(item.item_id), desc: desc, params: "{}" }); //TODO
-        });
-    }
-
-    let dataSend = {
-        type: 'updateWeapons',
-        items: currentItems,
-    };
-
-    ui.callCef('inventory', JSON.stringify(dataSend));
-};
-
-inventory.addInvItem = function(menuType, ownerType, ownerId, id, label, itemId, count, key, prefix, number, kg, wg) {
-    let data = {
-        type : 'addItem',
-        menuType : menuType,
-        id : id,
-        ownerType : ownerType,
-        ownerId : ownerId,
-        label : label,
-        itemId : itemId,
-        count : count,
-        key : key,
-        prefix : prefix,
-        number : number,
-        kg : kg,
-        wg : wg,
-    };
-    inventory.browser.execute(`eventSend(${JSON.stringify(data)});`);
-};
-
-inventory.addWeaponItem = function(label, itemId, ammoItem, ammoCount) {
-    let data = {
-        type : 'addWeaponItem',
-        label : label,
-        itemId : itemId,
-        ammoItem : ammoItem,
-        ammoCount : ammoCount
-    };
-    inventory.browser.execute(`eventSend(${JSON.stringify(data)});`);
-};
-
-inventory.updateInfo = function(name, age, month) {
-    let data = {
-        type : 'updateInfo',
-        name : name,
-        age : age,
-        month : month,
-    };
-    inventory.browser.execute(`eventSend(${JSON.stringify(data)});`);
-};
-
-inventory.updateLabel = function(text = 'Инвентарь') {
-    let data = {
-        type : 'updateLabel',
-        text : text
-    };
-    inventory.browser.execute(`eventSend(${JSON.stringify(data)});`);
-};
-
-inventory.clearItems = function() {
-    let data = {
-        type : 'clearItems'
-    };
-    inventory.browser.execute(`eventSend(${JSON.stringify(data)});`);
-};
-
-inventory.clearWeapons = function() {
-    let data = {
-        type : 'clearWeapons'
-    };
-    inventory.browser.execute(`eventSend(${JSON.stringify(data)});`);
-};
-
-inventory.closeItemMenu = function(id) {
-    if (id != inventory.currentItem) return;
-    UIMenu.Menu.HideMenu();
-    inventory.currentItem = -1;
 };
 
 inventory.openInventoryByEntity = function(entity) {
 
     if (entity.getType() == 2) {
-        inventory.getItemList(inventory.types.Vehicle, mp.game.joaat(entity.getNumberPlateText().toLowerCase()).toString());
+        inventory.getItemList(inventory.types.Vehicle, entity.getVariable('invId'));
         vehicles.setTrunkStateById(entity.remoteId, true);
     }
-    else if (entity.getType() == 4) {
-
+    else if (entity.getType() == 3) {
+        inventory.takeItem(entity.getVariable('isDrop'), entity.getVariable('itemId'));
     }
 };
 
@@ -211,12 +86,8 @@ inventory.useItem = function(id, itemId)    {
     mp.events.callRemote('server:inventory:useItem', id, itemId);
 };
 
-inventory.dropItem = function(id, itemId, pos, rot, model, ownerType, ownerId) {
-    mp.events.callRemote('server:inventory:dropItem', id, itemId, pos.x, pos.y, pos.z, rot.x, rot.y, rot.z, model, ownerType, ownerId);
-};
-
-inventory.addWorldItem = function(itemId, count, ownerType, ownerId, pos, rot, model, countItems, prefix, number, keyId) {
-    mp.events.callRemote('server:inventory:addWorldItem', itemId, count, ownerType, ownerId, pos.x, pos.y, pos.z, rot.x, rot.y, rot.z, model, countItems, prefix, number, keyId);
+inventory.dropItem = function(id, itemId, pos, rot) {
+    mp.events.callRemote('server:inventory:dropItem', id, itemId, pos.x, pos.y, pos.z, rot.x, rot.y, rot.z);
 };
 
 inventory.deleteItemProp = function(id) {
@@ -237,7 +108,7 @@ inventory.takeNewItem = async function(itemId, count = 1) {
     chat.sendMeCommand(`взял \"${items.getItemNameById(itemId)}\"`);
 };
 
-inventory.takeItem = async function(id, itemId, ownerType, notify = true) {
+inventory.takeItem = async function(id, itemId, notify = true) {
     let user_id = user.get('id');
     let amount = await inventory.getInvAmount(user_id, inventory.types.Player);
     let amountMax = await inventory.getInvAmountMax(user_id, inventory.types.Player);
@@ -247,19 +118,9 @@ inventory.takeItem = async function(id, itemId, ownerType, notify = true) {
         return;
     }
 
-    mp.events.callRemote("server:inventory:closeItemMenu", id);
-
-    if (ownerType == inventory.types.World)
-    {
-        //Shared.TriggerEventToAllPlayers("ARP:OnTakeItem", id);
-        user.playAnimation("pickup_object","pickup_low", 8);
-    }
-    if (ownerType >= 11 && ownerType <= 22)
-        stock.addLog(user.get('rp_name'), `TAKE: ${items.getItemNameById(itemId)}`, mp.players.local.dimension - 5100000);
-    inventory.updateItemOwnerServer(id, inventory.types.Player, user_id);
-    inventory.updateAmount(user_id, inventory.types.Player);
-    if (ownerType == inventory.types.World)
-        inventory.deleteItemProp(id);
+    inventory.updateOwnerId(id, user.getCache('id'), inventory.types.Player)
+    user.playAnimation("pickup_object","pickup_low", 8);
+    inventory.deleteItemProp(id);
     if (!notify) return;
     mp.game.ui.notifications.show(`~g~Вы взяли \"${items.getItemNameById(itemId)}\"`);
     chat.sendMeCommand(`взял \"${items.getItemNameById(itemId)}\"`);
@@ -934,11 +795,12 @@ inventory.getInfoItem = function(id) {
 };
 
 inventory.getItemList = function(ownerType, ownerId) {
-    mp.events.callRemote('server:inventory:getItemList', ownerType, ownerId);
-};
-
-inventory.getItemListInRadius = function(pos) {
-    mp.events.callRemote('server:inventory:getItemListInRadius', pos.x, pos.y);
+    methods.debug(ownerId);
+    methods.debug(ownerId);
+    methods.debug(ownerId);
+    methods.debug(ownerId);
+    methods.debug(ownerId);
+    mp.events.callRemote('server:inventory:getItemList', ownerType, ownerId.toString());
 };
 
 inventory.cookFood = function(ownerId) {

@@ -77,6 +77,14 @@ vehicles.setHoodState = function(state) {
         mp.events.callRemote('s:vSync:setHoodState', mp.players.local.vehicle, state);
 };
 
+vehicles.setTrunkStateById = function(id, state) {
+    mp.events.callRemote('s:vSync:setTrunkState', id, state);
+};
+
+vehicles.setHoodStateById = function(id, state) {
+    mp.events.callRemote('s:vSync:setHoodState', id, state);
+};
+
 vehicles.checkerControl = function() {
     let veh = mp.players.local.vehicle;
     if (veh) {

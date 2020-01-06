@@ -104,7 +104,17 @@ inventory.updateEquipStatus = function(id, status) {
 
 inventory.updateItemsEquipByItemId = function(itemId, ownerId, ownerType, equip) {
     try {
-        mysql.executeQuery(`UPDATE items SET is_equip = '${equip}', owner_type = '${ownerType}', owner_id = '${ownerId}' where item_id = '${itemId}'`);
+        if (typeof ownerId == "string")
+            ownerId = methods.parseInt(ownerId);
+        mysql.executeQuery(`UPDATE items SET is_equip = '${equip}' where item_id = '${itemId}' AND owner_type = '${ownerType}' AND owner_id = '${ownerId}'`);
+    } catch(e) {
+        methods.debug(e);
+    }
+};
+
+inventory.updateOwnerId = function(id, ownerId, ownerType) {
+    try {
+        mysql.executeQuery(`UPDATE items SET owner_type = '${ownerType}', owner_id = '${ownerId}' where id = '${id}'`);
     } catch(e) {
         methods.debug(e);
     }

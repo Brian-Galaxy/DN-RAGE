@@ -286,14 +286,14 @@ mp.events.add("playerExitVehicle", function (player, vehicle) {
 mp.events.add('s:vSync:setDirtLevel', (player, vId, level) => {
     let veh = mp.vehicles.at(vId);
     if (mp.players.exists(player) && vehicles.exists(veh))
-        vSync.setVehicleDirt(player.vehicle, level);
+        vSync.setVehicleDirt(veh, level);
 });
 
 mp.events.add('s:vSync:setEngineStatus', (player, vId, status) => {
     methods.debug('setEngineStatus', status);
     let veh = mp.vehicles.at(vId);
     if (mp.players.exists(player) && vehicles.exists(veh))
-        vSync.setEngineState(player.vehicle, status);
+        vSync.setEngineState(veh, status);
 });
 
 /*mp.events.add('s:vSync:updateValues', (player, vId, status) => {
@@ -305,60 +305,60 @@ mp.events.add('s:vSync:setEngineStatus', (player, vId, status) => {
 mp.events.add('s:vSync:setInteriorLightState', (player, vId, status) => {
     let veh = mp.vehicles.at(vId);
     if (mp.players.exists(player) && vehicles.exists(veh))
-        vSync.setInteriorLightState(player.vehicle, status);
+        vSync.setInteriorLightState(veh, status);
 });
 
 mp.events.add('s:vSync:setTaxiLightState', (player, vId, status) => {
     let veh = mp.vehicles.at(vId);
     if (mp.players.exists(player) && vehicles.exists(veh))
-        vSync.setTaxiLightState(player.vehicle, status);
+        vSync.setTaxiLightState(veh, status);
 });
 
 mp.events.add('s:vSync:setIndicatorLeftState', (player, vId, status) => {
     let veh = mp.vehicles.at(vId);
     if (mp.players.exists(player) && vehicles.exists(veh))
-        vSync.setIndicatorLeftToggle(player.vehicle, status);
+        vSync.setIndicatorLeftToggle(veh, status);
 });
 
 mp.events.add('s:vSync:setIndicatorRightState', (player, vId, status) => {
     let veh = mp.vehicles.at(vId);
     if (mp.players.exists(player) && vehicles.exists(veh))
-        vSync.setIndicatorRightToggle(player.vehicle, status);
+        vSync.setIndicatorRightToggle(veh, status);
 });
 
 mp.events.add('s:vSync:setTrunkState', (player, vId, status) => {
     let veh = mp.vehicles.at(vId);
     if (mp.players.exists(player) && vehicles.exists(veh))
-        vSync.setTrunkState(player.vehicle, status);
+        vSync.setTrunkState(veh, status);
 });
 
 mp.events.add('s:vSync:setHoodState', (player, vId, status) => {
     let veh = mp.vehicles.at(vId);
     if (mp.players.exists(player) && vehicles.exists(veh))
-        vSync.setHoodState(player.vehicle, status);
+        vSync.setHoodState(veh, status);
 });
 
 mp.events.add('s:vSync:setDoorData', (player, vId, doorState1, doorState2, doorState3, doorState4, doorState5, doorState6, doorState7, doorState8) => {
     let veh = mp.vehicles.at(vId);
     if (mp.players.exists(player) && vehicles.exists(veh)) {
-        vSync.setVehicleDoorState(player.vehicle, 0, doorState1);
-        vSync.setVehicleDoorState(player.vehicle, 1, doorState2);
-        vSync.setVehicleDoorState(player.vehicle, 2, doorState3);
-        vSync.setVehicleDoorState(player.vehicle, 3, doorState4);
-        vSync.setVehicleDoorState(player.vehicle, 4, doorState5);
-        vSync.setVehicleDoorState(player.vehicle, 5, doorState6);
-        vSync.setVehicleDoorState(player.vehicle, 6, doorState7);
-        vSync.setVehicleDoorState(player.vehicle, 7, doorState8);
+        vSync.setVehicleDoorState(veh, 0, doorState1);
+        vSync.setVehicleDoorState(veh, 1, doorState2);
+        vSync.setVehicleDoorState(veh, 2, doorState3);
+        vSync.setVehicleDoorState(veh, 3, doorState4);
+        vSync.setVehicleDoorState(veh, 4, doorState5);
+        vSync.setVehicleDoorState(veh, 5, doorState6);
+        vSync.setVehicleDoorState(veh, 6, doorState7);
+        vSync.setVehicleDoorState(veh, 7, doorState8);
     }
 });
 
 mp.events.add('s:vSync:setWindowData', (player, vId, w1, w2, w3, w4) => {
     let veh = mp.vehicles.at(vId);
     if (mp.players.exists(player) && vehicles.exists(veh)) {
-        vSync.setVehicleWindowState(player.vehicle, 0, w1);
-        vSync.setVehicleWindowState(player.vehicle, 1, w2);
-        vSync.setVehicleWindowState(player.vehicle, 2, w3);
-        vSync.setVehicleWindowState(player.vehicle, 3, w4);
+        vSync.setVehicleWindowState(veh, 0, w1);
+        vSync.setVehicleWindowState(veh, 1, w2);
+        vSync.setVehicleWindowState(veh, 2, w3);
+        vSync.setVehicleWindowState(veh, 3, w4);
     }
 });
 

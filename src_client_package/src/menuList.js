@@ -1221,9 +1221,6 @@ menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId) {
         let equipItems = [];
         let equipWeapons = [];
 
-        methods.debug(ownerType);
-        methods.debug(ownerId);
-
         data.forEach((item, idx) => {
             try {
                 let params = {};
@@ -1403,6 +1400,7 @@ menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId) {
             };
             ui.callCef('inventory', JSON.stringify(dataSend));
             inventory.show();
+            mp.gui.cursor.show(true, true);
         }
 
         inventory.setInvAmount(ownerId, ownerType, sum);

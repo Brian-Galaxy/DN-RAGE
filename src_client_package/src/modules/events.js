@@ -638,6 +638,10 @@ mp.events.add('client:inventory:status', function(status) {
         inventory.hide();
 });
 
+mp.events.add('client:inventory:statusSecondary', function(status) {
+    mp.gui.cursor.show(false, true);
+});
+
 mp.events.add('client:inventory:notify', function(text) {
     mp.game.ui.notifications.show(text);
 });
@@ -651,6 +655,14 @@ mp.events.add('client:inventory:giveItemMenu', function() {
     });
 
     ui.callCef('inventory', JSON.stringify({type: "updateTrade", idList: tradeArray}));
+});
+
+mp.events.add('client:inventory:moveTo', function(id, ownerId, ownerType) {
+    inventory.updateOwnerId(id, ownerId, ownerType);
+});
+
+mp.events.add('client:inventory:moveFrom', function(id) {
+    inventory.updateOwnerId(id, user.getCache('id'), inventory.types.Player);
 });
 
 mp.events.add('client:inventory:selectWeapon', function(id, itemId, serial) {

@@ -9,6 +9,7 @@ import enums from './enums';
 import ui from "./modules/ui";
 import cloth from "./business/cloth";
 import menuList from "./menuList";
+import vehicles from "./property/vehicles";
 
 let inventory = {};
 
@@ -89,6 +90,11 @@ inventory.updateItemCount = function(id, count) { //TODO, подумать ка�
 
 inventory.updateItemsEquipByItemId = function(itemId, ownerId, ownerType, equip) {
     mp.events.callRemote('server:inventory:updateItemsEquipByItemId', itemId, ownerId, ownerType, equip);
+};
+
+inventory.updateOwnerId = function(id, ownerId, ownerType) {
+    ownerId = ownerId.toString();
+    mp.events.callRemote('server:inventory:updateOwnerId', id, ownerId, ownerType);
 };
 
 inventory.updateEquipWeapon = function() {
@@ -194,6 +200,7 @@ inventory.openInventoryByEntity = function(entity) {
 
     if (entity.getType() == 2) {
         inventory.getItemList(inventory.types.Vehicle, mp.game.joaat(entity.getNumberPlateText().toLowerCase()).toString());
+        vehicles.setTrunkStateById(entity.remoteId, true);
     }
     else if (entity.getType() == 4) {
 

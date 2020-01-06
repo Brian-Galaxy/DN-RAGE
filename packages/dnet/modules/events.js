@@ -660,6 +660,10 @@ mp.events.addRemoteCounted('server:inventory:updateItemsEquipByItemId', (player,
     inventory.updateItemsEquipByItemId(itemId, ownerId, ownerType, equip);
 });
 
+mp.events.addRemoteCounted('server:inventory:updateOwnerId', (player, id, ownerId, ownerType) => {
+    inventory.updateOwnerId(id, ownerId, ownerType);
+});
+
 mp.events.addRemoteCounted('server:inventory:updateItemCount', (player, id, count) => {
     inventory.updateItemCount(id, count);
 });

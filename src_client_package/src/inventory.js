@@ -91,6 +91,10 @@ inventory.deleteItemProp = function(id) {
     mp.events.callRemote('server:inventory:deleteDropItem', id);
 };
 
+inventory.deleteItem = function(id) {
+    mp.events.callRemote('server:inventory:deleteItem', id);
+};
+
 inventory.takeNewItem = async function(itemId, count = 1) {
     let user_id = user.get('id');
     let amount = await inventory.getInvAmount(user_id, inventory.types.Player);
@@ -758,8 +762,8 @@ inventory.updateAmount = function(id, type) {
     mp.events.callRemote('server:inventory:updateAmount', id, type);
 };
 
-inventory.addItemServer = function(itemId, count, ownerType, ownerId, countItems, prefix, number, keyId) {
-    mp.events.callRemote('server:inventory:addItem', itemId, count, ownerType, ownerId, countItems, prefix, number, keyId);
+inventory.addItem = function(itemId, count, ownerType, ownerId, countItems, isEquip = 0, params = "{}", timeout = 10) {
+    mp.events.callRemote('server:inventory:addItem', itemId, count, ownerType, ownerId, countItems, isEquip, params, timeout);
 };
 
 inventory.updateItemServer = function(itemId, count, ownerType, ownerId, countItems, prefix, number, keyId) {
@@ -780,10 +784,6 @@ inventory.addItemPosServer = function(itemId, pos, rot, count, ownerType, ownerI
 
 inventory.updateItemPosServer = function(id, itemId, pos, rot, ownerType, ownerId) {
     //TriggerServerEvent("ARP:Inventory:UpdateItemPos", id, itemId, pos.X, pos.Y, pos.Z, rot.X, rot.Y, rot.Z, ownerType, ownerId);
-};
-
-inventory.deleteItemServer = function(id) {
-    mp.events.callRemote('server:inventory:deleteItem', id);
 };
 
 inventory.getInfoItem = function(id) {

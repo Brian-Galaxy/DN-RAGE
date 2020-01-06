@@ -6,6 +6,7 @@ import ui from "./modules/ui";
 import weapons from "./weapons";
 import enums from "./enums";
 import inventory from "./inventory";
+import items from "./items";
 
 let user = {};
 
@@ -32,9 +33,9 @@ let cam = null;
 * */
 
 mp.events.add('render', () => {
-    if (!user.isLogin())
-        return;
     try {
+        if (!user.isLogin())
+            return;
         if (user.getTargetEntityValidate())
             ui.drawText(`•`, 0.5, 0.5, 0.3, 255, 255, 255, 180, 0, 1, false, true);
     }
@@ -44,37 +45,63 @@ mp.events.add('render', () => {
 });
 
 user.timer20ms = function() {
-    switch (mp.game.invoke(methods.GET_FOLLOW_PED_CAM_VIEW_MODE)) {
-        case 4:
-            user.targetEntity = user.pointingAt(2);
-            if (user.getTargetEntityValidate() === undefined)
-                user.targetEntity = user.pointingAtRadius(2);
-            break;
-        case 1:
-            user.targetEntity = user.pointingAt(6.8);
-            if (user.getTargetEntityValidate() === undefined)
-                user.targetEntity = user.pointingAtRadius(6.8);
-            break;
-        case 2:
-            user.targetEntity = user.pointingAt(9);
-            if (user.getTargetEntityValidate() === undefined)
-                user.targetEntity = user.pointingAtRadius(9);
-            break;
-        default:
-            user.targetEntity = user.pointingAt(5);
-            if (user.getTargetEntityValidate() === undefined)
-                user.targetEntity = user.pointingAtRadius(5);
-            break;
-    }
+    try {
+        switch (mp.game.invoke(methods.GET_FOLLOW_PED_CAM_VIEW_MODE)) {
+            case 4:
+                user.targetEntity = user.pointingAt(2);
+                if (user.getTargetEntityValidate() === undefined)
+                    user.targetEntity = user.pointingAtRadius(2);
+                break;
+            case 1:
+                user.targetEntity = user.pointingAt(6.8);
+                if (user.getTargetEntityValidate() === undefined)
+                    user.targetEntity = user.pointingAtRadius(6.8);
+                break;
+            case 2:
+                user.targetEntity = user.pointingAt(9);
+                if (user.getTargetEntityValidate() === undefined)
+                    user.targetEntity = user.pointingAtRadius(9);
+                break;
+            default:
+                user.targetEntity = user.pointingAt(5);
+                if (user.getTargetEntityValidate() === undefined)
+                    user.targetEntity = user.pointingAtRadius(5);
+                break;
+        }
 
-    let target = user.getTargetEntityValidate();
-    if (target && target != targetEntityPrev) {
-        mp.game.ui.notifications.show('Нажмите ~g~E~s~ для взаимодействия');
-    }
+        let target = user.getTargetEntityValidate();
+        if (target && target != targetEntityPrev) {
+            mp.game.ui.notifications.show('Нажмите ~g~E~s~ для взаимодействия');
+        }
 
-    targetEntityPrev = target;
+        targetEntityPrev = target;
+    }
+    catch (e) {
+
+    }
 
     setTimeout(user.timer20ms, 20);
+};
+
+user.timer1sec = function() {
+
+    for (let n = 54; n < 138; n++)
+    {
+        weapons.hashesMap.forEach(item => {
+            if (item[0] !== items.getItemNameHashById(n)) return;
+            let hash = item[1] / 2;
+            if (!mp.game.invoke(methods.HAS_PED_GOT_WEAPON, mp.players.local.handle, hash, false)) return;
+
+            let ammoCount = mp.game.invoke(methods.GET_AMMO_IN_PED_WEAPON, mp.players.local.handle, hash);
+            let slot = weapons.getGunSlotIdByItem(n);
+
+            if (methods.parseInt(user.set('weapon_' + slot + '_ammo')) != methods.parseInt(ammoCount)) {
+                user.set('weapon_' + slot + '_ammo', ammoCount);
+            }
+        });
+    }
+
+    setTimeout(user.timer1sec, 1000);
 };
 
 user.getTargetEntity = function() {
@@ -279,6 +306,7 @@ user.init = function() {
 
     mp.game.graphics.transitionFromBlurred(false);
     user.timer20ms();
+    user.timer1sec();
     user.stopAllScreenEffect();
     user.hideLoadDisplay();
     user.clearChat();

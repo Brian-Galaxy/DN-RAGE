@@ -688,7 +688,11 @@ weapons.getGunSlotIdByItem = function(itemId) {
     return weapons.getGunSlotId(items.getItemNameHashById(itemId));
 };
 
-weapons.getGunAmmoName = function(name) {
+weapons.getGunAmmoNameByItemId = function(itemId) {
+    return weapons.getGunAmmoId(items.getItemNameHashById(itemId));
+};
+
+weapons.getGunAmmoId = function(name) {
     switch (name) {
         case 'weapon_appistol':
         case 'weapon_assaultsmg':

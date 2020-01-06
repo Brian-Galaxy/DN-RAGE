@@ -1266,6 +1266,10 @@ menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId) {
                     itemName = items.getItemNameById(item.item_id);
                     desc = params.serial;
                 }
+                else if (item.item_id <= 292 && item.item_id >= 279) {
+                    if (methods.parseInt(item.count) == 0)
+                        desc = "Пустая";
+                }
                 else if (item.item_id <= 274 && item.item_id >= 264) {
                     itemName = params.name;
                 }
@@ -1392,7 +1396,7 @@ menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId) {
             for (let i = 1; i < 6; i++) {
                 if (!slotUse.includes(i)) {
                     user.set('weapon_' + i, '');
-                    user.set('weapon_' + i + '_ammo', 0);
+                    user.set('weapon_' + i + '_ammo', -1);
                 }
             }
 

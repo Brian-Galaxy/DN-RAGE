@@ -682,15 +682,51 @@ mp.events.add('client:inventory:selectWeapon', function(id, itemId, serial) {
     if (user.getCache('weapon_' + slot) != serial) {
         inventory.updateItemsEquipByItemId(itemId, inventory.types.Player, user.getCache('id'), 0);
         user.set('weapon_' + slot, '');
-        user.set('weapon_' + slot + '_ammo', 0);
+        user.set('weapon_' + slot + '_ammo', -1);
         return;
     }
 
     mp.game.invoke(methods.SET_CURRENT_PED_WEAPON, mp.players.local.handle, wpHash, true);
 });
 
+mp.events.add('client:inventory:unloadW', function(itemId) {
+
+    let wpName = items.getItemNameHashById(itemId);
+    let wpHash = weapons.getHashByName(wpName);
+    let slot = weapons.getGunSlotIdByItem(itemId);
+
+    if (user.getCache('weapon_' + slot + '_ammo') >= 0) {
+        let ammoCount = mp.game.invoke(methods.GET_AMMO_IN_PED_WEAPON, mp.players.local.handle, wpHash);
+        inventory.addItem(weapons.getGunAmmoNameByItemId(itemId), 1, inventory.types.Player, user.getCache('id'), ammoCount);
+    }
+
+    user.setAmmo(wpName, 0);
+    user.set('weapon_' + slot + '_ammo', -1);
+});
+
+mp.events.add('client:inventory:loadWeapon', function(id, itemId, loadItemId, count) {
+    let wpName = items.getItemNameHashById(loadItemId);
+    let wpHash = weapons.getHashByName(wpName);
+    let slot = weapons.getGunSlotIdByItem(loadItemId);
+
+    let currentAmmoId = weapons.getGunAmmoNameByItemId(loadItemId);
+
+    if (currentAmmoId != itemId) {
+        mp.game.ui.notifications.show(`~r~Оружие использует патроны "${items.getItemNameById(currentAmmoId)}"`);
+        return;
+    }
+
+    if (user.getCache('weapon_' + slot + '_ammo') >= 0)
+        user.setAmmoByHash(wpHash, user.getCache('weapon_' + slot + '_ammo') + count);
+    else
+        user.setAmmoByHash(wpHash, count);
+
+    inventory.deleteItem(id);
+    ui.callCef('inventory', JSON.stringify({ type: 'removeItemId', itemId: id }));
+});
+
 mp.events.add('client:inventory:unEquip', function(id, itemId) {
-    methods.debug(id);
+
     if (itemId == 50) {
         let money = user.getBankMoney();
         user.set('bank_card', 0);
@@ -704,11 +740,16 @@ mp.events.add('client:inventory:unEquip', function(id, itemId) {
         let wpHash = weapons.getHashByName(wpName);
         let slot = weapons.getGunSlotIdByItem(itemId);
 
+        if (user.getCache('weapon_' + slot + '_ammo') >= 0) {
+            let ammoCount = mp.game.invoke(methods.GET_AMMO_IN_PED_WEAPON, mp.players.local.handle, wpHash);
+            inventory.addItem(weapons.getGunAmmoNameByItemId(itemId), 1, inventory.types.Player, user.getCache('id'), ammoCount);
+        }
+
         user.setAmmo(wpName, 0);
         mp.game.invoke(methods.REMOVE_WEAPON_FROM_PED, mp.players.local.handle, wpHash);
 
         user.set('weapon_' + slot, '');
-        user.set('weapon_' + slot + '_ammo', 0);
+        user.set('weapon_' + slot + '_ammo', -1);
 
         user.save();
     }
@@ -839,7 +880,7 @@ mp.events.add('client:inventory:equip', function(id, itemId, count, aparams) {
         let slot = weapons.getGunSlotIdByItem(itemId);
         if (user.getCache('weapon_' + slot) == '') {
             user.set('weapon_' + slot, params.serial);
-            user.set('weapon_' + slot + '_ammo', 0);
+            user.set('weapon_' + slot + '_ammo', -1);
             user.giveWeapon(items.getItemNameHashById(itemId), 0);
             ui.callCef('inventory', JSON.stringify({type: "updateSelectWeapon", selectId: id}));
             user.save();

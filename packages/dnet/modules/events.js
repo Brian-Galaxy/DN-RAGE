@@ -668,12 +668,22 @@ mp.events.addRemoteCounted('server:inventory:updateItemCount', (player, id, coun
     inventory.updateItemCount(id, count);
 });
 
+mp.events.addRemoteCounted('server:inventory:addItem', (player, itemId, count, ownerType, ownerId, countItems, isEquip, params, timeout) => {
+    if (!user.isLogin(player))
+        return;
+    inventory.addItem(itemId, count, ownerType, ownerId, countItems, isEquip, params, timeout);
+});
+
 mp.events.addRemoteCounted('server:inventory:dropItem', (player, id, itemId, posX, posY, posZ, rotX, rotY, rotZ) => {
     inventory.dropItem(player, id, itemId, posX, posY, posZ, rotX, rotY, rotZ);
 });
 
 mp.events.addRemoteCounted('server:inventory:deleteDropItem', (player, id) => {
     inventory.deleteDropItem(id);
+});
+
+mp.events.addRemoteCounted('server:inventory:deleteItem', (player, id) => {
+    inventory.deleteItem(id);
 });
 
 mp.events.addRemoteCounted("onKeyPress:LAlt", (player) => {

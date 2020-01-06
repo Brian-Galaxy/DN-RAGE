@@ -1224,11 +1224,6 @@ menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId) {
 
     ownerId = methods.parseInt(ownerId);
 
-    methods.debug(ownerType);
-    methods.debug(ownerId);
-    methods.debug(ownerId);
-    methods.debug(ownerId);
-
     try {
         //let invAmountMax = await inventory.getInvAmountMax(ownerId, ownerType);
         let sum = 0;

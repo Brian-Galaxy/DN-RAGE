@@ -113,11 +113,7 @@ inventory.updateItemsEquipByItemId = function(itemId, ownerId, ownerType, equip)
 
 inventory.updateOwnerId = function(id, ownerId, ownerType) {
     try {
-        methods.debug(typeof ownerId);
-        methods.debug(typeof ownerId);
-        methods.debug(typeof ownerId);
-        ownerId = methods.parseInt(ownerId);
-        mysql.executeQuery(`UPDATE items SET owner_type = '${ownerType}', owner_id = '${ownerId}' where id = '${id}'`);
+        mysql.executeQuery(`UPDATE items SET owner_type = '${ownerType}', owner_id = '${methods.parseInt(ownerId)}' where id = '${id}'`);
     } catch(e) {
         methods.debug(e);
     }

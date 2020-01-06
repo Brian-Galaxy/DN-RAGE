@@ -658,8 +658,7 @@ mp.events.add('client:inventory:giveItemMenu', function() {
 });
 
 mp.events.add('client:inventory:moveTo', function(id, ownerId, ownerType) {
-    ownerId = methods.parseInt(ownerId);
-    inventory.updateOwnerId(id, ownerId, ownerType);
+    inventory.updateOwnerId(id, methods.parseInt(ownerId), ownerType);
 });
 
 mp.events.add('client:inventory:moveFrom', function(id) {

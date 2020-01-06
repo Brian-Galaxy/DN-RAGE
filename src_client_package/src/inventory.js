@@ -64,9 +64,6 @@ inventory.updateItemsEquipByItemId = function(itemId, ownerId, ownerType, equip)
 };
 
 inventory.updateOwnerId = function(id, ownerId, ownerType) {
-    methods.debug(ownerId);
-    methods.debug(ownerId);
-    methods.debug(ownerId);
     ownerId = ownerId.toString();
     mp.events.callRemote('server:inventory:updateOwnerId', id, ownerId, ownerType);
 };
@@ -795,11 +792,6 @@ inventory.getInfoItem = function(id) {
 };
 
 inventory.getItemList = function(ownerType, ownerId) {
-    methods.debug(ownerId);
-    methods.debug(ownerId);
-    methods.debug(ownerId);
-    methods.debug(ownerId);
-    methods.debug(ownerId);
     mp.events.callRemote('server:inventory:getItemList', ownerType, ownerId.toString());
 };
 

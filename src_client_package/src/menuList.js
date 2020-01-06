@@ -1273,6 +1273,9 @@ menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId) {
                 else if (item.item_id <= 274 && item.item_id >= 264) {
                     itemName = params.name;
                 }
+                else if (item.item_id <= 473 && item.item_id >= 293) {
+                    desc = 'Используется для: ' + items.getWeaponNameByName(items.getItemNameHashById(item.item_id));
+                }
                 else if (item.item_id == 50) {
                     itemName = items.getItemNameById(item.item_id);
                     desc = methods.bankFormat(params.number);
@@ -1313,6 +1316,14 @@ menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId) {
                         if (!mp.game.invoke(methods.HAS_PED_GOT_WEAPON, mp.players.local.handle, wpHash, false)) {
                             user.giveWeapon(wpName, 0);
                             user.setAmmo(wpName, user.getCache('weapon_' + slot + '_ammo'));
+                            if (params.slot1)
+                                user.giveWeaponComponentByHash(wpHash, params.slot1hash);
+                            if (params.slot2)
+                                user.giveWeaponComponentByHash(wpHash, params.slot2hash);
+                            if (params.slot3)
+                                user.giveWeaponComponentByHash(wpHash, params.slot3hash);
+                            if (params.slot4)
+                                user.giveWeaponComponentByHash(wpHash, params.slot4hash);
                         }
 
                         equipWeapons.push({

@@ -725,6 +725,71 @@ mp.events.add('client:inventory:loadWeapon', function(id, itemId, loadItemId, co
     ui.callCef('inventory', JSON.stringify({ type: 'removeItemId', itemId: id }));
 });
 
+mp.events.add('client:inventory:upgradeWeapon', function(id, itemId, weaponStr) {
+
+    methods.debug(weaponStr);
+
+    let weapon = JSON.parse(weaponStr);
+
+    let wpName = items.getItemNameHashById(weapon.item_id);
+    let wpHash = weapons.getHashByName(wpName);
+
+    let wpModifer = items.getItemNameHashById(itemId);
+    let hashModifer = items.getItemHashModiferById(itemId);
+
+    if (wpModifer != wpName) {
+        mp.game.ui.notifications.show(`~r~Данная модификация не подходит к этому оружию`);
+        return;
+    }
+
+    let wpSlot = weapons.getUpgradeSlot(wpName, hashModifer);
+
+    if (wpSlot == 1) {
+        if (weapon.params.slot1) {
+            mp.game.ui.notifications.show(`~r~Слот уже занят`);
+            return;
+        }
+        weapon.params.slot1 = true;
+        weapon.params.slot1hash = hashModifer;
+    }
+    if (wpSlot == 2) {
+        if (weapon.params.slot2) {
+            mp.game.ui.notifications.show(`~r~Слот уже занят`);
+            return;
+        }
+        weapon.params.slot2 = true;
+        weapon.params.slot2hash = hashModifer;
+    }
+    if (wpSlot == 3) {
+        if (weapon.params.slot3) {
+            mp.game.ui.notifications.show(`~r~Слот уже занят`);
+            return;
+        }
+        weapon.params.slot3 = true;
+        weapon.params.slot3hash = hashModifer;
+    }
+    if (wpSlot == 4) {
+        if (weapon.params.slot4) {
+            mp.game.ui.notifications.show(`~r~Слот уже занят`);
+            return;
+        }
+        weapon.params.slot4 = true;
+        weapon.params.slot4hash = hashModifer;
+    }
+
+    if (wpSlot == -1) {
+        mp.game.ui.notifications.show(`~r~Произошла неизвестная ошибка #weapon`);
+        return;
+    }
+
+    user.giveWeaponComponentByHash(wpHash, hashModifer);
+
+    inventory.updateItemParams(weapon.id, JSON.stringify(weapon.params));
+    inventory.deleteItem(id);
+    ui.callCef('inventory', JSON.stringify({ type: 'removeItemId', itemId: id }));
+    ui.callCef('inventory', JSON.stringify({ type: 'updateWeaponParams', itemId: id, params: weapon.params }));
+});
+
 mp.events.add('client:inventory:unEquip', function(id, itemId) {
 
     if (itemId == 50) {
@@ -883,6 +948,18 @@ mp.events.add('client:inventory:equip', function(id, itemId, count, aparams) {
             user.set('weapon_' + slot + '_ammo', -1);
             user.giveWeapon(items.getItemNameHashById(itemId), 0);
             ui.callCef('inventory', JSON.stringify({type: "updateSelectWeapon", selectId: id}));
+
+            let wpHash = weapons.getHashByName(items.getItemNameHashById(itemId));
+
+            if (params.slot1)
+                user.giveWeaponComponentByHash(wpHash, params.slot1hash);
+            if (params.slot2)
+                user.giveWeaponComponentByHash(wpHash, params.slot2hash);
+            if (params.slot3)
+                user.giveWeaponComponentByHash(wpHash, params.slot3hash);
+            if (params.slot4)
+                user.giveWeaponComponentByHash(wpHash, params.slot4hash);
+
             user.save();
         }
         else {
@@ -890,6 +967,10 @@ mp.events.add('client:inventory:equip', function(id, itemId, count, aparams) {
             mp.game.ui.notifications.show("~r~Слот под оружие уже занят");
             return;
         }
+    }
+    else if (itemId <= 471 && itemId >= 293) {
+        let useItemId = items.getWeaponIdByName(items.getItemNameHashById(itemId));
+        let slot = weapons.getGunSlotIdByItem(useItemId);
     }
     else if (itemId == 265) {
         if (user.getCache('torso') == 15) {
@@ -1236,6 +1317,9 @@ mp.events.add("playerCommand", async (command) => {
 
 mp.events.add('render', () => {
     mp.game.controls.disableControlAction(0,243,true);
+
+    mp.game.controls.disableControlAction(0,53,true); //Фонарик на оружие
+    mp.game.controls.disableControlAction(0,54,true);
 
     //TODO DELUXO FIX
     mp.game.controls.disableControlAction(0,357,true);

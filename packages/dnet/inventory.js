@@ -119,6 +119,14 @@ inventory.updateOwnerId = function(id, ownerId, ownerType) {
     }
 };
 
+inventory.updateItemParams = function(id, params) {
+    try {
+        mysql.executeQuery(`UPDATE items SET params = '${params}' where id = '${id}'`);
+    } catch(e) {
+        methods.debug(e);
+    }
+};
+
 inventory.updateItemCount = function(id, count) {
     try {
         mysql.executeQuery(`UPDATE items SET count = '${count}', timestamp_update = '${methods.getTimeStamp()}' where id = '${id}'`);

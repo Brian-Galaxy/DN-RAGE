@@ -44,7 +44,7 @@ mp.events.add('render', () => {
     }
 });
 
-user.timer20ms = function() {
+user.timer50ms = function() {
     try {
         switch (mp.game.invoke(methods.GET_FOLLOW_PED_CAM_VIEW_MODE)) {
             case 4:
@@ -80,7 +80,7 @@ user.timer20ms = function() {
 
     }
 
-    setTimeout(user.timer20ms, 20);
+    setTimeout(user.timer50ms, 50);
 };
 
 user.timer1sec = function() {
@@ -185,6 +185,15 @@ user.giveWeaponByHash = function(model, pt) {
     mp.game.invoke(methods.GIVE_WEAPON_TO_PED, mp.players.local.handle, model, pt, false, true);
     Container.Data.SetLocally(0, model.toString(), true);
     Container.Data.Set(mp.players.local.remoteId, model.toString(), pt);
+};
+
+user.giveWeaponComponentByHash = function(model, component) {
+    //mp.game.invoke(methods.GIVE_WEAPON_COMPONENT_TO_PED, mp.players.local.handle, model, component);
+    mp.events.callRemote('server:user:giveWeaponComponent', model.toString(), component.toString());
+};
+
+user.giveWeaponComponent = function(model, component) {
+    user.giveWeaponComponentByHash(weapons.getHashByName(model), component);
 };
 
 user.giveWeapon = function(model, pt) {
@@ -305,7 +314,7 @@ user.notify = function (message) {
 user.init = function() {
 
     mp.game.graphics.transitionFromBlurred(false);
-    user.timer20ms();
+    user.timer50ms();
     user.timer1sec();
     user.stopAllScreenEffect();
     user.hideLoadDisplay();
@@ -611,7 +620,7 @@ user.clearAllProp = function() {
 };
 
 user.stopAllScreenEffect = function() {
-    mp.game.invoke(methods.STOP_ALL_SCREEN_EFFECTS);
+    mp.game.invoke(methods.ANIMPOSTFX_STOP_ALL);
 };
 
 user.addMoney = function(money) {

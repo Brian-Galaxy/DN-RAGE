@@ -3,6 +3,7 @@ import './modules/events';
 import './manager/vSync';
 import './betternotifs';
 import './voice';
+import './manager/wcSync';
 
 import business from "./property/business";
 

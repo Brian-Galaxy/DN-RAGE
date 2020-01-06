@@ -664,6 +664,10 @@ mp.events.addRemoteCounted('server:inventory:updateOwnerId', (player, id, ownerI
     inventory.updateOwnerId(id, ownerId, ownerType);
 });
 
+mp.events.addRemoteCounted('server:inventory:updateItemParams', (player, id, params) => {
+    inventory.updateItemParams(id, params);
+});
+
 mp.events.addRemoteCounted('server:inventory:updateItemCount', (player, id, count) => {
     inventory.updateItemCount(id, count);
 });
@@ -844,6 +848,12 @@ mp.events.addRemoteCounted('server:user:fixNearestVehicle', (player) => {
     let veh = methods.getNearestVehicleWithCoords(player.position, 10.0);
     if (vehicles.exists(veh))
         veh.repair();
+});
+
+mp.events.addRemoteCounted('server:user:giveWeaponComponent', (player, weapon, component) => {
+    if (!user.isLogin(player))
+        return;
+    user.giveWeaponComponent(player, methods.parseInt(weapon), methods.parseInt(component));
 });
 
 mp.events.addRemoteCounted('server:deleteNearstVehicle', (player) => {

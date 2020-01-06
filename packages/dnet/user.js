@@ -4,6 +4,7 @@ let Container = require('./modules/data');
 let enums = require('./enums');
 let coffer = require('./coffer');
 let chat = require('./modules/chat');
+let wpSync = require('./managers/wpSync');;
 
 let user = exports;
 
@@ -1189,6 +1190,13 @@ user.playAnimation = function(player, dict, anim, flag = 49) {
             methods.debug(e);
         }
     });
+};
+
+user.giveWeaponComponent = function(player, weapon, component) {
+    methods.debug('user.giveWeaponComponent');
+    if (!mp.players.exists(player))
+        return false;
+    player.giveWeaponComponent(weapon, component);
 };
 
 

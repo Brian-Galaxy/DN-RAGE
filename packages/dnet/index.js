@@ -6,6 +6,7 @@ require('./modules/events');
 require('./modules/chat');
 require('./voice/voice');
 require('./managers/vSync');
+require('./managers/wpSync');
 
 let mysql = require('./modules/mysql');
 let methods = require('./modules/methods');

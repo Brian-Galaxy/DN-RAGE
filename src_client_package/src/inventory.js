@@ -68,6 +68,12 @@ inventory.updateOwnerId = function(id, ownerId, ownerType) {
     mp.events.callRemote('server:inventory:updateOwnerId', id, ownerId, ownerType);
 };
 
+inventory.updateItemParams = function(id, params) {
+    if (typeof params != "string")
+        params = JSON.stringify(params);
+    mp.events.callRemote('server:inventory:updateItemParams', id, params);
+};
+
 inventory.openInventoryByEntity = function(entity) {
 
     if (entity.getType() == 2) {

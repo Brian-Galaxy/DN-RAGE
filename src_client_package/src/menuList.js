@@ -1217,10 +1217,12 @@ menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId) {
     try {
         //let invAmountMax = await inventory.getInvAmountMax(ownerId, ownerType);
         let sum = 0;
-
         let currentItems = [];
         let equipItems = [];
         let equipWeapons = [];
+
+        methods.debug(ownerType);
+        methods.debug(ownerId);
 
         data.forEach((item, idx) => {
             try {
@@ -1300,7 +1302,6 @@ menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId) {
                         if (!mp.game.invoke(methods.HAS_PED_GOT_WEAPON, mp.players.local.handle, wpHash, false)) {
                             user.giveWeapon(wpName, 0);
                             user.setAmmo(wpName, user.getCache('weapon_' + slot + '_ammo'));
-                            ui.callCef('inventory', JSON.stringify({type: "updateSelectWeapon", selectId: item.id}));
                         }
 
                         equipWeapons.push({
@@ -1354,42 +1355,56 @@ menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId) {
             }
         });
 
-        let dataSend = {
-            type: 'updateItems',
-            items: currentItems,
-            ownerId: ownerId,
-            ownerType: ownerType,
-            sum: sum,
-        };
+        if (ownerType == inventory.types.Player && user.getCache('id') == ownerId) {
+            let dataSend = {
+                type: 'updateItems',
+                items: currentItems,
+                ownerId: ownerId,
+                ownerType: ownerType,
+                sum: sum,
+            };
 
-        let dataSend2 = {
-            type: 'updateEquipItems',
-            items: equipItems
-        };
+            let dataSend2 = {
+                type: 'updateEquipItems',
+                items: equipItems
+            };
 
-        let dataSend3 = {
-            type: 'updateWeaponItems',
-            items: equipWeapons
-        };
+            let dataSend3 = {
+                type: 'updateWeaponItems',
+                items: equipWeapons
+            };
 
-        let slotUse = [];
-        equipWeapons.forEach(item => {
-            let slot = weapons.getGunSlotIdByItem(item.item_id);
-            if (item.params.serial == user.getCache('weapon_' + slot))
-                slotUse.push(slot);
-        });
+            let slotUse = [];
+            equipWeapons.forEach(item => {
+                let slot = weapons.getGunSlotIdByItem(item.item_id);
+                if (item.params.serial == user.getCache('weapon_' + slot))
+                    slotUse.push(slot);
+            });
 
 
-        for (let i = 1; i < 6; i++) {
-            if (!slotUse.includes(i)) {
-                user.set('weapon_' + i, '');
-                user.set('weapon_' + i + '_ammo', 0);
+            for (let i = 1; i < 6; i++) {
+                if (!slotUse.includes(i)) {
+                    user.set('weapon_' + i, '');
+                    user.set('weapon_' + i + '_ammo', 0);
+                }
             }
+
+            ui.callCef('inventory', JSON.stringify(dataSend));
+            ui.callCef('inventory', JSON.stringify(dataSend2));
+            ui.callCef('inventory', JSON.stringify(dataSend3));
+        }
+        else {
+            let dataSend = {
+                type: 'updateSubItems',
+                items: currentItems,
+                ownerId: ownerId,
+                ownerType: ownerType,
+                sum: sum,
+            };
+            ui.callCef('inventory', JSON.stringify(dataSend));
+            inventory.show();
         }
 
-        ui.callCef('inventory', JSON.stringify(dataSend));
-        ui.callCef('inventory', JSON.stringify(dataSend2));
-        ui.callCef('inventory', JSON.stringify(dataSend3));
         inventory.setInvAmount(ownerId, ownerType, sum);
     }
     catch (e) {

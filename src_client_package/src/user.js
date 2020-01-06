@@ -20,6 +20,7 @@ user.targetEntity = undefined;
 
 let currentCamDist = 0.2;
 let currentCamRot = -2;
+let targetEntityPrev = undefined;
 
 let cam = null;
 
@@ -33,20 +34,6 @@ let cam = null;
 mp.events.add('render', () => {
     if (!user.isLogin())
         return;
-    switch (mp.game.invoke(methods.GET_FOLLOW_PED_CAM_VIEW_MODE)) {
-        case 4:
-            user.targetEntity = user.pointingAt(2);
-            break;
-        case 1:
-            user.targetEntity = user.pointingAt(6.8);
-            break;
-        case 2:
-            user.targetEntity = user.pointingAt(9);
-            break;
-        default:
-            user.targetEntity = user.pointingAt(5);
-            break;
-    }
     try {
         if (
             user.targetEntity &&
@@ -62,8 +49,49 @@ mp.events.add('render', () => {
     }
 });
 
+user.timer20ms = function() {
+    switch (mp.game.invoke(methods.GET_FOLLOW_PED_CAM_VIEW_MODE)) {
+        case 4:
+            user.targetEntity = user.pointingAt(2);
+            break;
+        case 1:
+            user.targetEntity = user.pointingAt(6.8);
+            break;
+        case 2:
+            user.targetEntity = user.pointingAt(9);
+            break;
+        default:
+            user.targetEntity = user.pointingAt(5);
+            break;
+    }
+
+    let target = user.getTargetEntityValidate();
+    if (target && target != targetEntityPrev) {
+        mp.game.ui.notifications.show('Нажмите ~g~E~s~ для взаимодействия');
+    }
+    targetEntityPrev = target;
+
+    setTimeout(user.timer20ms, 20);
+};
+
 user.getTargetEntity = function() {
     return user.targetEntity.entity;
+};
+
+user.getTargetEntityValidate = function() {
+    try {
+        if (
+            user.targetEntity &&
+            user.targetEntity.entity &&
+            user.targetEntity.entity.getType() != 3 &&
+            user.targetEntity.entity.handle != mp.players.local.handle
+        )
+            return user.targetEntity.entity;
+    }
+    catch (e) {
+
+    }
+    return undefined;
 };
 
 user.removeAllWeapons = function() {
@@ -202,6 +230,8 @@ user.notify = function (message) {
 
 user.init = function() {
 
+    mp.game.graphics.transitionFromBlurred(false);
+    user.timer20ms();
     user.stopAllScreenEffect();
     user.hideLoadDisplay();
     user.clearChat();
@@ -280,8 +310,6 @@ user.pointingAt = function(distance) {
     let position = camera.getCoord();
     let direction = camera.getDirection();
     let farAway = new mp.Vector3((direction.x * distance) + (position.x), (direction.y * distance) + (position.y), (direction.z * distance) + (position.z));
-
-    //let result = mp.raycasting.testPointToPoint(position, farAway);
 
     /*if (!result) {
         mp.game.graphics.drawLine(position.x, position.y, position.z, farAway.x, farAway.y, farAway.z, 255, 255, 255, 255);

@@ -43,6 +43,9 @@ inventory.deleteWorldItems = function() {
 
 inventory.getItemList = function(player, ownerType, ownerId) {
 
+    if (typeof ownerId == "string")
+        ownerId = methods.parseInt(ownerId);
+
     if (!user.isLogin(player))
         return;
     try {

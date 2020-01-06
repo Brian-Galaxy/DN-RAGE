@@ -44,6 +44,7 @@ ui.hideHud = function() {
     if (uiBrowser) {
         try {
             //TODO
+            mp.game.ui.displayRadar(false);
         }
         catch (e) {
             methods.debug(e);
@@ -55,6 +56,7 @@ ui.showHud = function() {
     if (uiBrowser) {
         try {
             //TODO
+            mp.game.ui.displayRadar(true);
         }
         catch (e) {
             methods.debug(e);

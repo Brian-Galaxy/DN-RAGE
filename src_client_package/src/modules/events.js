@@ -983,8 +983,15 @@ mp.keys.bind(0x45, true, function() {
         if (!user.isLogin())
             return;
         if (!methods.isBlockKeys()) {
+
+            let targetEntity = user.getTargetEntityValidate();
+            if (targetEntity) {
+                inventory.openInventoryByEntity(targetEntity);
+            }
+            else
+                mp.events.callRemote('onKeyPress:E');
+
             //methods.pressEToPayRespect();
-            mp.events.callRemote('onKeyPress:E');
         }
     }
     catch (e) {

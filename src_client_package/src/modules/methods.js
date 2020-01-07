@@ -85,16 +85,21 @@ methods.debug = function (message, ...args) {
 };
 
 methods.getVehicleInfo = function (model) {
-    let vehInfo = enums.get('vehicleInfo');
-    for (let item in vehInfo) {
-        let vItem = vehInfo[item];
-        if (vItem.hash == model || vItem.display_name == model || mp.game.joaat(vItem.display_name.toString().toLowerCase()) == model)
-            return vItem;
-    }
+    try {
+        let vehInfo = enums.get('vehicleInfo');
+        for (let item in vehInfo) {
+            let vItem = vehInfo[item];
+            if (vItem.hash == model || vItem.display_name == model || mp.game.joaat(vItem.display_name.toString().toLowerCase()) == model)
+                return vItem;
+        }
 
-    if (vehInfo.length < 500) {
-        enums.resetVehicleInfo();
-        mp.events.callRemote('server:updateVehicleInfo');
+        if (vehInfo.length < 500) {
+            enums.resetVehicleInfo();
+            mp.events.callRemote('server:updateVehicleInfo');
+        }
+    }
+    catch (e) {
+        
     }
     return {id: 0, hash: model, display_name: 'Unknown', class_name: 'Unknown', stock: 378000, stock_full: 205000, fuel_full: 75, fuel_min: 8};
 };
@@ -156,7 +161,7 @@ methods.isValidJSON = function(value){
     }
 };
 
-methods.isBlockKeys = function() {
+methods.isBlockKeys = function() { //TODO
     return Menu.Menu.IsShowInput() /*|| user.isCuff() || user.isTie() || user.isDead()*/;
 };
 

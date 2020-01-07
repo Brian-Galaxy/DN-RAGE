@@ -31,7 +31,7 @@ let maxSpeed = 500;
 
 let timerId = setTimeout(function updateMoney() {
     if(user.isLogin()) {
-        //money = '$' + methods.numberFormat(parseInt(user.get('money')));
+        //money = '$' + methods.numberFormat(parseInt(user.get('money'))); //TODO
         //moneyBank = '$' + methods.numberFormat(parseInt(user.get('money_bank')));
         ui.updateZoneAndStreet();
         ui.updateDirectionText();
@@ -420,7 +420,7 @@ mp.events.add('client:user:updateCache', (data) => {
 
 mp.events.add('client:user:callCef', (name, params) => {
     methods.debug('Event: client:user:callCef');
-    ui.callCef(name, params)
+    ui.callCef(name, params);
 });
 
 mp.events.add('client:user:setWaypoint', (x, y) => {
@@ -546,11 +546,6 @@ mp.events.add('client:menuList:showShopMaskMenu', (shopId) => {
 mp.events.add('client:showToPlayerItemListMenu', (data, ownerType, ownerId) => {
     methods.debug('Event: client:showToPlayerItemListMenu');
     menuList.showToPlayerItemListMenu(data, ownerType, ownerId).then();
-});
-
-mp.events.add('client:showToPlayerWorldListMenu', (data) => {
-    methods.debug('Event: client:showToPlayerWorldListMenu');
-    menuList.showToPlayerWorldListMenu(data);
 });
 
 mp.events.add('client:clearChat', () => {
@@ -756,8 +751,6 @@ mp.events.add('client:inventory:loadWeapon', function(id, itemId, loadItemId, co
 });
 
 mp.events.add('client:inventory:upgradeWeapon', function(id, itemId, weaponStr) {
-
-    methods.debug(weaponStr);
 
     let weapon = JSON.parse(weaponStr);
 
@@ -1130,24 +1123,29 @@ mp.events.add('client:inventory:equip', function(id, itemId, count, aparams) {
 
 mp.events.add("playerEnterVehicle", async function (vehicle, seat) {
 
-    let boost = 0;
-    if (vehicle.getMod(18) == 1)
-        boost = 5;
+    try {
+        let boost = 0;
+        if (vehicle.getMod(18) == 1)
+            boost = 5;
 
-    let vehInfo = methods.getVehicleInfo(vehicle.model);
-    if (vehInfo.class_name == 'Emergency')
-        boost = boost + 10;
+        let vehInfo = methods.getVehicleInfo(vehicle.model);
+        if (vehInfo.class_name == 'Emergency')
+            boost = boost + 10;
 
-    boost = boost + vehicles.getSpeedBoost(vehicle.model);
+        boost = boost + vehicles.getSpeedBoost(vehicle.model);
 
-    maxSpeed = vehicles.getSpeedMax(vehicle.model);
-    if (maxSpeed == 1)
-        maxSpeed = 350;
+        maxSpeed = vehicles.getSpeedMax(vehicle.model);
+        if (maxSpeed == 1)
+            maxSpeed = 350;
 
-    if (vehicle.getVariable('boost') > 0)
-        vehicle.setEnginePowerMultiplier(vehicle.getVariable('boost') + boost);
-    else if (boost > 1)
-        vehicle.setEnginePowerMultiplier(boost);
+        if (vehicle.getVariable('boost') > 0)
+            vehicle.setEnginePowerMultiplier(vehicle.getVariable('boost') + boost);
+        else if (boost > 1)
+            vehicle.setEnginePowerMultiplier(boost);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 });
 
 //KEYS
@@ -1268,37 +1266,42 @@ mp.events.add('render', () => {
         let __localPlayerPosition__ = mp.players.local.position;
 
         methods.getStreamPlayerList().forEach((player, i) => {
-            if (/*player === localPlayer || */!mp.players.exists(player) || i > 50) {
+            if (player === localPlayer || !mp.players.exists(player) || i > 50) {
                 return false;
             }
 
-            const loadIndicatorDistTemp = (i > 25) ? 5 : loadIndicatorDist;
-            const __playerPosition__ = player.position;
-            const distance = methods.distanceToPos(__localPlayerPosition__, __playerPosition__);
+            try {
+                const loadIndicatorDistTemp = (i > 25) ? 5 : loadIndicatorDist;
+                const __playerPosition__ = player.position;
+                const distance = methods.distanceToPos(__localPlayerPosition__, __playerPosition__);
 
-            if (distance <= loadIndicatorDistTemp && player.dimension == localPlayer.dimension) {
-                const isConnected = voice.getVoiceInfo(player, 'stateConnection') === 'connected';
-                const isEnable = voice.getVoiceInfo(player, 'enabled');
-                let indicatorColor = '~r~•';
-                if (isConnected && !isEnable)
-                    indicatorColor = '~m~•';
-                else if (isConnected && isEnable)
-                    indicatorColor = '~w~•';
-                const headPosition = player.getBoneCoords(12844, 0, 0, 0);
+                if (distance <= loadIndicatorDistTemp && player.dimension == localPlayer.dimension) {
+                    const isConnected = voice.getVoiceInfo(player, 'stateConnection') === 'connected';
+                    const isEnable = voice.getVoiceInfo(player, 'enabled');
+                    let indicatorColor = '~r~•';
+                    if (isConnected && !isEnable)
+                        indicatorColor = '~m~•';
+                    else if (isConnected && isEnable)
+                        indicatorColor = '~w~•';
+                    const headPosition = player.getBoneCoords(12844, 0, 0, 0);
 
-                let typingLabel = '';
-                if (player.getVariable('enableAdmin'))
-                    typingLabel += '\n~r~ADMIN MOD';
-                if (player.getVariable('isTyping'))
-                    typingLabel += '\n~b~Печатает...';
-                if (player.getVariable('isAfk'))
-                    typingLabel += '\n~r~AFK...';
+                    let typingLabel = '';
+                    if (player.getVariable('enableAdmin'))
+                        typingLabel += '\n~r~ADMIN MOD';
+                    if (player.getVariable('isTyping'))
+                        typingLabel += '\n~b~Печатает...';
+                    if (player.getVariable('isAfk'))
+                        typingLabel += '\n~r~AFK...';
 
-                //let name = '';
-                //if (user.hasDating(player.getVariable('id')))
-                //    name = user.getDating(player.getVariable('id')) + ' | ';
-                if(player.getVariable('enableAdmin') && !player.getVariable('hiddenId'))
-                    ui.drawText3D(player.id + ' ' +  indicatorColor + typingLabel, headPosition.x, headPosition.y, headPosition.z + 0.1);
+                    //let name = '';
+                    //if (user.hasDating(player.getVariable('id')))
+                    //    name = user.getDating(player.getVariable('id')) + ' | ';
+                    if(player.getVariable('enableAdmin') && !player.getVariable('hiddenId'))
+                        ui.drawText3D(player.id + ' ' +  indicatorColor + typingLabel, headPosition.x, headPosition.y, headPosition.z + 0.1);
+                }
+            }
+            catch (e) {
+                
             }
         });
     }
@@ -1412,161 +1415,176 @@ mp.events.add("playerCommand", async (command) => {
 
 
 mp.events.add('render', () => {
-    mp.game.controls.disableControlAction(0,243,true);
+    try {
+        mp.game.controls.disableControlAction(0,243,true);
 
-    mp.game.controls.disableControlAction(0,53,true); //Фонарик на оружие
-    mp.game.controls.disableControlAction(0,54,true);
+        mp.game.controls.disableControlAction(0,53,true); //Фонарик на оружие
+        mp.game.controls.disableControlAction(0,54,true);
 
-    //TODO DELUXO FIX
-    mp.game.controls.disableControlAction(0,357,true);
+        //TODO DELUXO FIX
+        mp.game.controls.disableControlAction(0,357,true);
 
-    /*if(_playerDisableAllControls || phone.ingameBrowser || characterCreator) {
-        mp.game.controls.disableAllControlActions(0);
-        mp.game.controls.disableAllControlActions(1);
-        mp.game.controls.disableAllControlActions(2);
-        mp.game.controls.enableControlAction(2, 172, true);
-        mp.game.controls.enableControlAction(2, 173, true);
-        mp.game.controls.enableControlAction(2, 174, true);
-        mp.game.controls.enableControlAction(2, 175, true);
-        mp.game.controls.enableControlAction(2, 201, true);
-        mp.game.controls.enableControlAction(2, 177, true);
+        /*if(_playerDisableAllControls || phone.ingameBrowser || characterCreator) {
+            mp.game.controls.disableAllControlActions(0);
+            mp.game.controls.disableAllControlActions(1);
+            mp.game.controls.disableAllControlActions(2);
+            mp.game.controls.enableControlAction(2, 172, true);
+            mp.game.controls.enableControlAction(2, 173, true);
+            mp.game.controls.enableControlAction(2, 174, true);
+            mp.game.controls.enableControlAction(2, 175, true);
+            mp.game.controls.enableControlAction(2, 201, true);
+            mp.game.controls.enableControlAction(2, 177, true);
+        }
+        if(_playerDisableDefaultControls) {
+            mp.game.controls.disableControlAction(0,21,true) // disable sprint
+            mp.game.controls.disableControlAction(0,24,true) // disable attack
+            mp.game.controls.disableControlAction(0,25,true) // disable aim
+            //--mp.game.controls.disableControlAction(0,47,true) // disable weapon
+            mp.game.controls.disableControlAction(0,58,true) // disable weapon
+            mp.game.controls.disableControlAction(0,263,true) // disable melee
+            mp.game.controls.disableControlAction(0,264,true) // disable melee
+            mp.game.controls.disableControlAction(0,257,true) // disable melee
+            mp.game.controls.disableControlAction(0,140,true) // disable melee
+            mp.game.controls.disableControlAction(0,141,true) // disable melee
+            mp.game.controls.disableControlAction(0,142,true) // disable melee
+            mp.game.controls.disableControlAction(0,143,true) // disable melee
+            mp.game.controls.disableControlAction(0,75,true) // disable exit vehicle
+            mp.game.controls.disableControlAction(27,75,true) // disable exit vehicle
+            mp.game.controls.disableControlAction(0,23,true) // disable enter vehicle
+            mp.game.controls.disableControlAction(27,23,true) // disable enter vehicle
+            mp.game.controls.disableControlAction(0,22,true) // disable jump
+            mp.game.controls.disableControlAction(0,32,true) // disable move up
+            mp.game.controls.disableControlAction(0,268,true)
+            mp.game.controls.disableControlAction(0,33,true) // disable move down
+            mp.game.controls.disableControlAction(0,269,true)
+            mp.game.controls.disableControlAction(0,34,true) // disable move left
+            mp.game.controls.disableControlAction(0,270,true)
+            mp.game.controls.disableControlAction(0,35,true) // disable move right
+            mp.game.controls.disableControlAction(0,271,true)
+        }*/
+        if(ui.DisableMouseControl /*|| ui.isShowMenu()*/) {
+            mp.game.controls.disableControlAction(0,12,true); // disable sprint
+            mp.game.controls.disableControlAction(0,13,true); // disable sprint
+            mp.game.controls.disableControlAction(0,14,true); // disable sprint
+            mp.game.controls.disableControlAction(0,15,true); // disable sprint
+            mp.game.controls.disableControlAction(0,17,true); // disable sprint
+            mp.game.controls.disableControlAction(0,18,true); // disable sprint
+            mp.game.controls.disableControlAction(0,24,true); // disable sprint
+            mp.game.controls.disableControlAction(0,25,true); // disable sprint
+
+            mp.game.controls.disableControlAction(0,24,true); // Attack
+            mp.game.controls.disableControlAction(0,69,true); // Attack
+            mp.game.controls.disableControlAction(0,70,true); // Attack
+            mp.game.controls.disableControlAction(0,68,true); // Attack
+            mp.game.controls.disableControlAction(0,106,true); // Attack
+            mp.game.controls.disableControlAction(0,114,true); // Attack
+            mp.game.controls.disableControlAction(0,122,true); // Attack
+            mp.game.controls.disableControlAction(0,135,true); // Attack
+            mp.game.controls.disableControlAction(0,142,true); // Attack
+            mp.game.controls.disableControlAction(0,144,true); // Attack
+            mp.game.controls.disableControlAction(0,222,true); // Attack
+            mp.game.controls.disableControlAction(0,223,true); // Attack
+            mp.game.controls.disableControlAction(0,225,true); // Attack
+            mp.game.controls.disableControlAction(0,229,true); // Attack
+            mp.game.controls.disableControlAction(0,257,true); // Attack
+            mp.game.controls.disableControlAction(0,329,true); // Attack
+            mp.game.controls.disableControlAction(0,330,true); // Attack
+            mp.game.controls.disableControlAction(0,331,true); // Attack
+            mp.game.controls.disableControlAction(0,346,true); // Attack
+            mp.game.controls.disableControlAction(0,347,true); // Attack
+
+            //Disable Cam
+            mp.game.controls.disableControlAction(0, 1, true);
+            mp.game.controls.disableControlAction(0, 2, true);
+            mp.game.controls.disableControlAction(0, 3, true);
+            mp.game.controls.disableControlAction(0, 4, true);
+            mp.game.controls.disableControlAction(0, 5, true);
+            mp.game.controls.disableControlAction(0, 6, true);
+        }
+
+        //Колесо оружия
+        mp.game.controls.disableControlAction(0, 12, true);
+        mp.game.controls.disableControlAction(0, 14, true);
+        mp.game.controls.disableControlAction(0, 15, true);
+        mp.game.controls.disableControlAction(0, 16, true);
+        mp.game.controls.disableControlAction(0, 17, true);
+        mp.game.controls.disableControlAction(0, 37, true);
+        mp.game.controls.disableControlAction(0, 53, true);
+        mp.game.controls.disableControlAction(0, 54, true);
+        mp.game.controls.disableControlAction(0, 56, true);
+        mp.game.controls.disableControlAction(0, 99, true);
+        mp.game.controls.disableControlAction(0, 115, true); //FLY WEAP
+        mp.game.controls.disableControlAction(0, 116, true); //FLY WEAP
+        mp.game.controls.disableControlAction(0, 157, true);
+        mp.game.controls.disableControlAction(0, 158, true);
+        mp.game.controls.disableControlAction(0, 159, true);
+        mp.game.controls.disableControlAction(0, 160, true);
+        mp.game.controls.disableControlAction(0, 161, true);
+        mp.game.controls.disableControlAction(0, 162, true);
+        mp.game.controls.disableControlAction(0, 163, true);
+        mp.game.controls.disableControlAction(0, 164, true);
+        mp.game.controls.disableControlAction(0, 165, true);
+        mp.game.controls.disableControlAction(0, 261, true);
+        mp.game.controls.disableControlAction(0, 262, true);
+        mp.game.controls.disableControlAction(0, 99, true);
+        mp.game.controls.disableControlAction(0, 100, true);
+
+        if (!user.isLogin() && !mp.gui.cursor.visible)
+            mp.gui.cursor.show(true, true);
     }
-    if(_playerDisableDefaultControls) {
-        mp.game.controls.disableControlAction(0,21,true) // disable sprint
-        mp.game.controls.disableControlAction(0,24,true) // disable attack
-        mp.game.controls.disableControlAction(0,25,true) // disable aim
-        //--mp.game.controls.disableControlAction(0,47,true) // disable weapon
-        mp.game.controls.disableControlAction(0,58,true) // disable weapon
-        mp.game.controls.disableControlAction(0,263,true) // disable melee
-        mp.game.controls.disableControlAction(0,264,true) // disable melee
-        mp.game.controls.disableControlAction(0,257,true) // disable melee
-        mp.game.controls.disableControlAction(0,140,true) // disable melee
-        mp.game.controls.disableControlAction(0,141,true) // disable melee
-        mp.game.controls.disableControlAction(0,142,true) // disable melee
-        mp.game.controls.disableControlAction(0,143,true) // disable melee
-        mp.game.controls.disableControlAction(0,75,true) // disable exit vehicle
-        mp.game.controls.disableControlAction(27,75,true) // disable exit vehicle
-        mp.game.controls.disableControlAction(0,23,true) // disable enter vehicle
-        mp.game.controls.disableControlAction(27,23,true) // disable enter vehicle
-        mp.game.controls.disableControlAction(0,22,true) // disable jump
-        mp.game.controls.disableControlAction(0,32,true) // disable move up
-        mp.game.controls.disableControlAction(0,268,true)
-        mp.game.controls.disableControlAction(0,33,true) // disable move down
-        mp.game.controls.disableControlAction(0,269,true)
-        mp.game.controls.disableControlAction(0,34,true) // disable move left
-        mp.game.controls.disableControlAction(0,270,true)
-        mp.game.controls.disableControlAction(0,35,true) // disable move right
-        mp.game.controls.disableControlAction(0,271,true)
-    }*/
-    if(ui.DisableMouseControl /*|| ui.isShowMenu()*/) {
-        mp.game.controls.disableControlAction(0,12,true); // disable sprint
-        mp.game.controls.disableControlAction(0,13,true); // disable sprint
-        mp.game.controls.disableControlAction(0,14,true); // disable sprint
-        mp.game.controls.disableControlAction(0,15,true); // disable sprint
-        mp.game.controls.disableControlAction(0,17,true); // disable sprint
-        mp.game.controls.disableControlAction(0,18,true); // disable sprint
-        mp.game.controls.disableControlAction(0,24,true); // disable sprint
-        mp.game.controls.disableControlAction(0,25,true); // disable sprint
-
-        mp.game.controls.disableControlAction(0,24,true); // Attack
-        mp.game.controls.disableControlAction(0,69,true); // Attack
-        mp.game.controls.disableControlAction(0,70,true); // Attack
-        mp.game.controls.disableControlAction(0,68,true); // Attack
-        mp.game.controls.disableControlAction(0,106,true); // Attack
-        mp.game.controls.disableControlAction(0,114,true); // Attack
-        mp.game.controls.disableControlAction(0,122,true); // Attack
-        mp.game.controls.disableControlAction(0,135,true); // Attack
-        mp.game.controls.disableControlAction(0,142,true); // Attack
-        mp.game.controls.disableControlAction(0,144,true); // Attack
-        mp.game.controls.disableControlAction(0,222,true); // Attack
-        mp.game.controls.disableControlAction(0,223,true); // Attack
-        mp.game.controls.disableControlAction(0,225,true); // Attack
-        mp.game.controls.disableControlAction(0,229,true); // Attack
-        mp.game.controls.disableControlAction(0,257,true); // Attack
-        mp.game.controls.disableControlAction(0,329,true); // Attack
-        mp.game.controls.disableControlAction(0,330,true); // Attack
-        mp.game.controls.disableControlAction(0,331,true); // Attack
-        mp.game.controls.disableControlAction(0,346,true); // Attack
-        mp.game.controls.disableControlAction(0,347,true); // Attack
-
-        //Disable Cam
-        mp.game.controls.disableControlAction(0, 1, true);
-        mp.game.controls.disableControlAction(0, 2, true);
-        mp.game.controls.disableControlAction(0, 3, true);
-        mp.game.controls.disableControlAction(0, 4, true);
-        mp.game.controls.disableControlAction(0, 5, true);
-        mp.game.controls.disableControlAction(0, 6, true);
+    catch (e) {
+        
     }
-
-    //Колесо оружия
-    mp.game.controls.disableControlAction(0, 12, true);
-    mp.game.controls.disableControlAction(0, 14, true);
-    mp.game.controls.disableControlAction(0, 15, true);
-    mp.game.controls.disableControlAction(0, 16, true);
-    mp.game.controls.disableControlAction(0, 17, true);
-    mp.game.controls.disableControlAction(0, 37, true);
-    mp.game.controls.disableControlAction(0, 53, true);
-    mp.game.controls.disableControlAction(0, 54, true);
-    mp.game.controls.disableControlAction(0, 56, true);
-    mp.game.controls.disableControlAction(0, 99, true);
-    mp.game.controls.disableControlAction(0, 115, true); //FLY WEAP
-    mp.game.controls.disableControlAction(0, 116, true); //FLY WEAP
-    mp.game.controls.disableControlAction(0, 157, true);
-    mp.game.controls.disableControlAction(0, 158, true);
-    mp.game.controls.disableControlAction(0, 159, true);
-    mp.game.controls.disableControlAction(0, 160, true);
-    mp.game.controls.disableControlAction(0, 161, true);
-    mp.game.controls.disableControlAction(0, 162, true);
-    mp.game.controls.disableControlAction(0, 163, true);
-    mp.game.controls.disableControlAction(0, 164, true);
-    mp.game.controls.disableControlAction(0, 165, true);
-    mp.game.controls.disableControlAction(0, 261, true);
-    mp.game.controls.disableControlAction(0, 262, true);
-    mp.game.controls.disableControlAction(0, 99, true);
-    mp.game.controls.disableControlAction(0, 100, true);
-
-    if (!user.isLogin() && !mp.gui.cursor.visible)
-        mp.gui.cursor.show(true, true);
 });
 
 mp.events.add('render', () => {
-    let veh = mp.players.local.vehicle;
-    if (veh && veh.getClass() != 8) {
-        if (veh.getPedInSeat(-1) == mp.players.local.handle) {
-            if (user.getCache('stats_shooting') < 99/* && !user.isPolice()*/) { //TODO
-                mp.game.controls.disableControlAction(2, 24, true);
-                mp.game.controls.disableControlAction(2, 25, true);
-                mp.game.controls.disableControlAction(2, 66, true);
-                mp.game.controls.disableControlAction(2, 67, true);
-                mp.game.controls.disableControlAction(2, 69, true);
-                mp.game.controls.disableControlAction(2, 70, true);
-                mp.game.controls.disableControlAction(2, 140, true);
-                mp.game.controls.disableControlAction(2, 141, true);
-                mp.game.controls.disableControlAction(2, 143, true);
-                mp.game.controls.disableControlAction(2, 263, true);
+    try {
+        let veh = mp.players.local.vehicle;
+        if (veh && veh.getClass() != 8) {
+            if (veh.getPedInSeat(-1) == mp.players.local.handle) {
+                if (user.getCache('stats_shooting') < 99/* && !user.isPolice()*/) { //TODO
+                    mp.game.controls.disableControlAction(2, 24, true);
+                    mp.game.controls.disableControlAction(2, 25, true);
+                    mp.game.controls.disableControlAction(2, 66, true);
+                    mp.game.controls.disableControlAction(2, 67, true);
+                    mp.game.controls.disableControlAction(2, 69, true);
+                    mp.game.controls.disableControlAction(2, 70, true);
+                    mp.game.controls.disableControlAction(2, 140, true);
+                    mp.game.controls.disableControlAction(2, 141, true);
+                    mp.game.controls.disableControlAction(2, 143, true);
+                    mp.game.controls.disableControlAction(2, 263, true);
+                }
             }
         }
     }
-});
-
-mp.events.add('render', () => {
-    let veh = mp.players.local.vehicle;
-    if (veh && veh.getClass() == 8 && methods.getCurrentSpeed() > 50) {
-        mp.game.controls.disableControlAction(2, 24, true);
-        mp.game.controls.disableControlAction(2, 25, true);
-        mp.game.controls.disableControlAction(2, 66, true);
-        mp.game.controls.disableControlAction(2, 67, true);
-        mp.game.controls.disableControlAction(2, 69, true);
-        mp.game.controls.disableControlAction(2, 70, true);
-        mp.game.controls.disableControlAction(2, 140, true);
-        mp.game.controls.disableControlAction(2, 141, true);
-        mp.game.controls.disableControlAction(2, 143, true);
-        mp.game.controls.disableControlAction(2, 263, true);
+    catch (e) {
+        
     }
 });
 
 mp.events.add('render', () => {
-    /*if (user.get('med_time') > 0) {
+    try {
+        let veh = mp.players.local.vehicle;
+        if (veh && veh.getClass() == 8 && methods.getCurrentSpeed() > 50) {
+            mp.game.controls.disableControlAction(2, 24, true);
+            mp.game.controls.disableControlAction(2, 25, true);
+            mp.game.controls.disableControlAction(2, 66, true);
+            mp.game.controls.disableControlAction(2, 67, true);
+            mp.game.controls.disableControlAction(2, 69, true);
+            mp.game.controls.disableControlAction(2, 70, true);
+            mp.game.controls.disableControlAction(2, 140, true);
+            mp.game.controls.disableControlAction(2, 141, true);
+            mp.game.controls.disableControlAction(2, 143, true);
+            mp.game.controls.disableControlAction(2, 263, true);
+        }
+    }
+    catch (e) {
+        
+    }
+});
+
+mp.events.add('render', () => {
+    /*if (user.getCache('med_time') > 0) {
         mp.game.controls.disableControlAction(2, 24, true);
         mp.game.controls.disableControlAction(2, 25, true);
         mp.game.controls.disableControlAction(2, 66, true);
@@ -1580,7 +1598,7 @@ mp.events.add('render', () => {
     }*/
 });
 
-mp.events.add('render', () => {
+/*mp.events.add('render', () => { //Включить свет в больке старой
     let plPos = mp.players.local.position;
     if (mp.game.interior.getInteriorAtCoords(plPos.x, plPos.y, plPos.z) != 0)
     {
@@ -1597,20 +1615,25 @@ mp.events.add('render', () => {
         mp.game.graphics.drawLightWithRange(230.9255, -1367.348, 42.03852, 255, 255, 255, 20.0, 0.5);
         mp.game.graphics.drawLightWithRange(243.6069, -1366.777, 26.78872, 255, 255, 255, 20.0, 0.5);
     }
-});
+});*/
 
 mp.events.add('render', () => {
-    mp.game.ui.hideHudComponentThisFrame(1); // Wanted Stars
-    mp.game.ui.hideHudComponentThisFrame(2); // Weapon Icon
-    mp.game.ui.hideHudComponentThisFrame(3); // Cash
-    mp.game.ui.hideHudComponentThisFrame(4); // MP Cash
-    mp.game.ui.hideHudComponentThisFrame(6); // Vehicle Name
-    mp.game.ui.hideHudComponentThisFrame(7); // Area Name
-    mp.game.ui.hideHudComponentThisFrame(8);// Vehicle Class
-    mp.game.ui.hideHudComponentThisFrame(9); // Street Name
-    mp.game.ui.hideHudComponentThisFrame(13); // Cash Change
-    mp.game.ui.hideHudComponentThisFrame(17); // Save Game
-    mp.game.ui.hideHudComponentThisFrame(20); // Weapon Stats
+    try {
+        mp.game.ui.hideHudComponentThisFrame(1); // Wanted Stars
+        mp.game.ui.hideHudComponentThisFrame(2); // Weapon Icon
+        mp.game.ui.hideHudComponentThisFrame(3); // Cash
+        mp.game.ui.hideHudComponentThisFrame(4); // MP Cash
+        mp.game.ui.hideHudComponentThisFrame(6); // Vehicle Name
+        mp.game.ui.hideHudComponentThisFrame(7); // Area Name
+        mp.game.ui.hideHudComponentThisFrame(8);// Vehicle Class
+        mp.game.ui.hideHudComponentThisFrame(9); // Street Name
+        mp.game.ui.hideHudComponentThisFrame(13); // Cash Change
+        mp.game.ui.hideHudComponentThisFrame(17); // Save Game
+        mp.game.ui.hideHudComponentThisFrame(20); // Weapon Stats
+    }
+    catch (e) {
+
+    }
 
     /*mp.game.controls.mp.game.controls.disableControlAction(0, 157, true);
     mp.game.controls.mp.game.controls.disableControlAction(0, 158, true);
@@ -1618,28 +1641,43 @@ mp.events.add('render', () => {
     mp.game.controls.mp.game.controls.disableControlAction(0, 164, true);*/
 
     //TODO
-    //if (user.isLogin() && user.get('mp0_shooting_ability') < 70)
+    //if (user.isLogin() && user.getCache('mp0_shooting_ability') < 70)
     //    mp.game.ui.hideHudComponentThisFrame(14);
 });
 
 mp.events.add('render', () => {
-    let vehicle = mp.players.local.vehicle;
-    if (vehicle && mp.players.local.isInAnyVehicle(false)) {
-        // And fix max speed
-        vehicle.setMaxSpeed(maxSpeed / 3.6); // fix max speed
-        if (vehicle.getVariable('boost') > 0) {
-            vehicle.setEngineTorqueMultiplier(vehicle.getVariable('boost'));
+    try {
+        let vehicle = mp.players.local.vehicle;
+        if (vehicle && mp.players.local.isInAnyVehicle(false)) {
+            // And fix max speed
+            vehicle.setMaxSpeed(maxSpeed / 3.6); // fix max speed
+            if (vehicle.getVariable('boost') > 0) {
+                vehicle.setEngineTorqueMultiplier(vehicle.getVariable('boost'));
+            }
+            else
+                vehicle.setEngineTorqueMultiplier(1.3);
         }
-        else
-            vehicle.setEngineTorqueMultiplier(1.3);
+    }
+    catch (e) {
+
     }
 });
 
 mp.events.add('render', () => {
-    if (mp.players.local.isBeingStunned(0))
-        mp.players.local.setMinGroundTimeForStungun(30000);
+    try {
+        if (mp.players.local.isBeingStunned(0))
+            mp.players.local.setMinGroundTimeForStungun(30000);
+    }
+    catch (e) {
+        
+    }
 });
 
 mp.events.add('render', () => {
-    mp.game.player.setHealthRechargeMultiplier(0.0);
+    try {
+        mp.game.player.setHealthRechargeMultiplier(0.0);
+    }
+    catch (e) {
+        
+    }
 });

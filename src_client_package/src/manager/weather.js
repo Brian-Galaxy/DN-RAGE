@@ -169,7 +169,7 @@ weather.getRealFullDateTime = function() {
 };
 
 weather.getRealFullDateTimeWithOnline = function() {
-    return FullRealDateTime + ' | Игроков: ' + Players + ' /1000 | ID: ' + user.get('id');
+    return FullRealDateTime + ' | Игроков: ' + Players + ' /1000 | ID: ' + user.getCache('id');
 };
 
 weather.syncWeatherTemp = function(temp) {

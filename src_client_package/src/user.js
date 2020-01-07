@@ -80,28 +80,33 @@ user.timer50ms = function() {
 
     }
 
-    setTimeout(user.timer50ms, 50);
+    setTimeout(user.timer50ms, 100);
 };
 
 user.timer1sec = function() {
 
-    for (let n = 54; n < 138; n++)
-    {
-        weapons.getMapList().forEach(item => {
-            if (item[0] !== items.getItemNameHashById(n)) return;
-            let hash = item[1] / 2;
-            if (!mp.game.invoke(methods.HAS_PED_GOT_WEAPON, mp.players.local.handle, hash, false)) return;
+    try {
+        for (let n = 54; n < 138; n++)
+        {
+            weapons.getMapList().forEach(item => {
+                if (item[0] !== items.getItemNameHashById(n)) return;
+                let hash = item[1] / 2;
+                if (!mp.game.invoke(methods.HAS_PED_GOT_WEAPON, mp.players.local.handle, hash, false)) return;
 
-            let ammoCount = mp.game.invoke(methods.GET_AMMO_IN_PED_WEAPON, mp.players.local.handle, hash);
-            let slot = weapons.getGunSlotIdByItem(n);
+                let ammoCount = mp.game.invoke(methods.GET_AMMO_IN_PED_WEAPON, mp.players.local.handle, hash);
+                let slot = weapons.getGunSlotIdByItem(n);
 
-            if (user.set('weapon_' + slot + '_ammo') == -1)
-                return;
+                if (user.set('weapon_' + slot + '_ammo') == -1)
+                    return;
 
-            if (methods.parseInt(user.set('weapon_' + slot + '_ammo')) != methods.parseInt(ammoCount)) {
-                user.set('weapon_' + slot + '_ammo', ammoCount);
-            }
-        });
+                if (methods.parseInt(user.set('weapon_' + slot + '_ammo')) != methods.parseInt(ammoCount)) {
+                    user.set('weapon_' + slot + '_ammo', ammoCount);
+                }
+            });
+        }
+    }
+    catch (e) {
+        methods.debug(e);
     }
 
     setTimeout(user.timer1sec, 1000);
@@ -184,7 +189,6 @@ user.removeAllWeapons = function() {
 };
 
 user.giveWeaponByHash = function(model, pt) {
-
     mp.game.invoke(methods.GIVE_WEAPON_TO_PED, mp.players.local.handle, model, pt, false, true);
     Container.Data.SetLocally(0, model.toString(), true);
     Container.Data.Set(mp.players.local.remoteId, model.toString(), pt);
@@ -741,7 +745,7 @@ user.giveJobSkill = function() {
 
 user.giveJobMoney = function(money) {
 
-    //if (user.get('skill_' + user.get('job')) >= 500)
+    //if (user.getCache('skill_' + user.getCache('job')) >= 500)
     //    money = methods.parseInt(money * 1.5);
 
     if (user.getCache('bank_card') == 0) {

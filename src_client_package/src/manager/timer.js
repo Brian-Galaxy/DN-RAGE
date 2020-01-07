@@ -107,7 +107,7 @@ timer.twoMinTimer = function() {
 
     return;
 
-    if (user.isLogin() && user.getCache('jail_time') < 1) {
+    /*if (user.isLogin() && user.getCache('jail_time') < 1) {
 
         if (mp.players.local.vehicle)
         {
@@ -116,23 +116,28 @@ timer.twoMinTimer = function() {
         }
         else if (mp.players.local.dimension == 0 && mp.game.interior.getInteriorAtCoords(mp.players.local.position.x, mp.players.local.position.y, mp.players.local.position.z) == 0)
             timer.updateTempLevel();
-    }
+    }*/
 };
 
 timer.oneMinTimer = function() {
 
-    if (methods.distanceToPos(afkLastPos, mp.players.local.position) < 1) {
-        afkTimer++;
-        if (afkTimer > 10)
-            user.setVariable('isAfk', true);
-    }
-    else {
-        if (mp.players.local.getVariable('isAfk') === true)
-            user.setVariable('isAfk', false);
-        afkTimer = 0;
-    }
+    try {
+        if (methods.distanceToPos(afkLastPos, mp.players.local.position) < 1) {
+            afkTimer++;
+            if (afkTimer > 10)
+                user.setVariable('isAfk', true);
+        }
+        else {
+            if (mp.players.local.getVariable('isAfk') === true)
+                user.setVariable('isAfk', false);
+            afkTimer = 0;
+        }
 
-    afkLastPos = mp.players.local.position;
+        afkLastPos = mp.players.local.position;
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 
     setTimeout(timer.oneMinTimer, 1000 * 60);
 };
@@ -156,20 +161,25 @@ timer.ms50Timer = function() {
 
 timer.twoSecTimer = function() {
 
-    let plPos = mp.players.local.position;
+    try {
+        let plPos = mp.players.local.position;
 
-    EntityFleeca = mp.game.object.getClosestObjectOfType(plPos.x, plPos.y, plPos.z, 0.68, 506770882, false, false, false);
-    EntityOther1 = mp.game.object.getClosestObjectOfType(plPos.x, plPos.y, plPos.z, 0.68, -1126237515, false, false, false);
-    EntityOther2 = mp.game.object.getClosestObjectOfType(plPos.x, plPos.y, plPos.z, 0.68, -1364697528, false, false, false);
-    EntityOther3 = mp.game.object.getClosestObjectOfType(plPos.x, plPos.y, plPos.z, 0.68, -870868698, false, false, false);
+        EntityFleeca = mp.game.object.getClosestObjectOfType(plPos.x, plPos.y, plPos.z, 0.68, 506770882, false, false, false);
+        EntityOther1 = mp.game.object.getClosestObjectOfType(plPos.x, plPos.y, plPos.z, 0.68, -1126237515, false, false, false);
+        EntityOther2 = mp.game.object.getClosestObjectOfType(plPos.x, plPos.y, plPos.z, 0.68, -1364697528, false, false, false);
+        EntityOther3 = mp.game.object.getClosestObjectOfType(plPos.x, plPos.y, plPos.z, 0.68, -870868698, false, false, false);
 
-    if (EntityFleeca != 0 || EntityOther1 != 0 || EntityOther2 != 0 || EntityOther3 != 0)
-        mp.game.ui.notifications.show("Нажмите ~g~E~s~ чтобы открыть меню банкомата");
+        if (EntityFleeca != 0 || EntityOther1 != 0 || EntityOther2 != 0 || EntityOther3 != 0)
+            mp.game.ui.notifications.show("Нажмите ~g~E~s~ чтобы открыть меню банкомата");
 
-    if (user.isLogin() && !user.isAdmin()) {
-        if (mp.game.player.getInvincible() || mp.players.local.getMaxHealth() >= 1000 || mp.players.local.health >= 1000) {
-            user.kickAntiCheat('GodMode');
+        if (user.isLogin() && !user.isAdmin()) {
+            if (mp.game.player.getInvincible() || mp.players.local.getMaxHealth() >= 1000 || mp.players.local.health >= 1000) {
+                user.kickAntiCheat('GodMode');
+            }
         }
+    }
+    catch (e) {
+        methods.debug(e);
     }
 
     setTimeout(timer.twoSecTimer, 2000);
@@ -218,7 +228,7 @@ timer.tenSecTimer = function() {
         }
     }
 
-    weapons.hashesMap.forEach(item => {
+    weapons.getMapList().forEach(item => {
         let hash = item[1] / 2;
         if (!mp.game.invoke(methods.HAS_PED_GOT_WEAPON, mp.players.local.handle, hash, false)) {
             if (Container.Data.HasLocally(0, hash.toString())) {
@@ -354,7 +364,7 @@ timer.secTimer = function() {
 
         if (user.getDrugLevel(drugId) > 1000) {
             mp.gui.chat.push(`!{03A9F4}Вы в коме от передозировки`);
-            user.setHeal(0);
+            //user.setHeal(0); //TODO
         }
 
         if (!mp.game.graphics.getScreenEffectIsActive("DMT_flight"))
@@ -409,7 +419,7 @@ timer.secTimer = function() {
 
         if (user.getDrugLevel(drugId) > 1000) {
             mp.gui.chat.push(`!{03A9F4}Вы в коме от передозировки`);
-            user.setHeal(0);
+            //user.setHeal(0); //TODO
         }
 
         if (!mp.game.graphics.getScreenEffectIsActive("PeyoteEndIn"))
@@ -447,12 +457,15 @@ timer.secTimer = function() {
         return;
     }
 
+    let isKick = false;
     weapons.getMapList().forEach(item => {
         if (mp.game.invoke(methods.HAS_PED_GOT_WEAPON, mp.players.local.handle, (item[1] / 2), false)) {
+            if (isKick)
+                return;
             if (!Container.Data.HasLocally(0, (item[1] / 2).toString()) && item[0] != 'weapon_unarmed') {
                 user.kickAntiCheat(`Try Gun ${item[0]}`);
                 methods.saveLog('Cheater', `${user.getCache('name')} (${user.getCache('id')}) gun: ${item[0]}`);
-                return;
+                isKick = true;
             }
         }
     });
@@ -484,7 +497,6 @@ timer.loadAll = function () {
     timer.twoSecTimer();
     timer.tenSecTimer();
     timer.secTimer();
-    timer.ms50Timer();
 };
 
 timer.isFleecaAtm = function () {

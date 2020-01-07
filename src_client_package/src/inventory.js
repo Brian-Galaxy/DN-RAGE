@@ -119,8 +119,8 @@ inventory.deleteItem = function(id) {
     mp.events.callRemote('server:inventory:deleteItem', id);
 };
 
-inventory.takeNewItem = async function(itemId, count = 1) {
-    let user_id = user.get('id');
+inventory.takeNewItem = async function(itemId, count = 1) { //TODO
+    let user_id = user.getCache('id');
     let amount = await inventory.getInvAmount(user_id, inventory.types.Player);
     let amountMax = await inventory.getInvAmountMax(user_id, inventory.types.Player);
     if (items.getItemAmountById(itemId) + amount > amountMax) {
@@ -134,7 +134,7 @@ inventory.takeNewItem = async function(itemId, count = 1) {
 };
 
 inventory.takeItem = async function(id, itemId, notify = true) {
-    let user_id = user.get('id');
+    let user_id = user.getCache('id');
     let amount = await inventory.getInvAmount(user_id, inventory.types.Player);
     let amountMax = await inventory.getInvAmountMax(user_id, inventory.types.Player);
     //console.log(amount, amountMax, "amounts");
@@ -152,7 +152,7 @@ inventory.takeItem = async function(id, itemId, notify = true) {
 };
 
 inventory.giveItem = async function(id, itemId, playerId, notify = true) {
-    let user_id = user.get('id');
+    let user_id = user.getCache('id');
     let amount = await inventory.getInvAmount(playerId, inventory.types.Player);
     let amountMax = await inventory.getInvAmountMax(playerId, inventory.types.Player);
     if (items.getItemAmountById(itemId) + amount > amountMax) {
@@ -172,87 +172,10 @@ inventory.giveItem = async function(id, itemId, playerId, notify = true) {
     chat.sendMeCommand(`передал \"${items.getItemNameById(itemId)}\" человеку рядом`);
 };
 
-inventory.dropItemToVehicle = async function(id, itemId, number, notify = true) {
-    let vId = inventory.convertNumberToHash(number);
-    let user_id = user.get('id');
-    let amount = await inventory.getInvAmount(vId, inventory.types.Vehicle);
-    let amountMax = await inventory.getInvAmountMax(vId, inventory.types.Vehicle);
-    if (items.getItemAmountById(itemId) + amount > amountMax) {
-        mp.game.ui.notifications.show("~r~В багажнике нет места");
-        return;
-    }
-    inventory.updateItemOwnerServer(id, inventory.types.Vehicle, vId);
-    inventory.updateAmount(vId, inventory.types.Vehicle);
-    inventory.updateAmount(user_id, inventory.types.Player);
-
-    if (!notify) return;
-    mp.game.ui.notifications.show(`~g~Вы положили \"${items.getItemNameById(itemId)}\" в багажник`);
-    chat.sendMeCommand(`положил \"${items.getItemNameById(itemId)}\" в багажник`);
-};
-
-inventory.dropItemToStockGang = async function(id, itemId, ownerId, notify = true) {
-    let user_id = user.get('id');
-    let amount = await inventory.getInvAmount(ownerId, inventory.types.StockGang);
-    let amountMax = await inventory.getInvAmountMax(ownerId, inventory.types.StockGang);
-    if (items.getItemAmountById(itemId) + amount > amountMax) {
-        mp.game.ui.notifications.show("~r~На складе нет места");
-        return;
-    }
-    methods.addFractionGunLog(User.Data.rp_name, `DROP: ${items.getItemNameById(itemId)}`, User.Data.fraction_id);
-
-    inventory.updateItemOwnerServer(id, inventory.types.StockGang, ownerId);
-    inventory.updateAmount(ownerId, inventory.types.StockGang);
-    inventory.updateAmount(user_id, inventory.types.Player);
-
-    if (!notify) return;
-    mp.game.ui.notifications.show(`~g~Вы положили \"${items.getItemNameById(itemId)}\" на склад`);
-    chat.sendMeCommand(`положил \"${items.getItemNameById(itemId)}\" на склад`);
-};
-
-inventory.dropItemToFridge = async function(id, itemId, ownerId, notify = true) {
-    let user_id = user.get('id');
-    let amount = await inventory.getInvAmount(ownerId, inventory.types.Fridge);
-    let amountMax = await inventory.getInvAmountMax(ownerId, inventory.types.Fridge);
-    if (items.getItemAmountById(itemId) + amount > amountMax) {
-        mp.game.ui.notifications.show("~r~В холодильнике нет места");
-        return;
-    }
-
-    inventory.updateItemOwnerServer(id, inventory.types.Fridge, ownerId);
-    inventory.updateAmount(ownerId, inventory.types.Fridge);
-    //inventory.updateAmount(user_id, inventory.types.Player);
-
-    if (!notify) return;
-    mp.game.ui.notifications.show(`~g~Вы положили \"${items.getItemNameById(itemId)}\" в холодильник`);
-    chat.sendMeCommand(`положил \"${items.getItemNameById(itemId)}\" в холодильник`);
-};
-
-inventory.dropItemToUserStock = async function(id, itemId, ownerId, notify = true) {
-    let user_id = user.get('id');
-    let amount = await inventory.getInvAmount(ownerId, inventory.types.UserStock);
-    let amountMax = await inventory.getInvAmountMax(ownerId, inventory.types.UserStock);
-    if (items.getItemAmountById(itemId) + amount > amountMax) {
-        mp.game.ui.notifications.show("~r~На складе нет места");
-        return;
-    }
-    let ownId = mp.players.local.dimension - 5100000;
-
-    stock.addLog(user.get('rp_name'), `DROP: ${items.getItemNameById(itemId)}`, ownId);
-
-    inventory.updateItemOwnerServer(id, inventory.types.UserStock + ownerId, ownId);
-    inventory.updateAmount(ownerId, inventory.types.UserStock);
-    //inventory.updateAmount(user_id, inventory.types.Player);
-
-    if (!notify) return;
-    mp.game.ui.notifications.show(`~g~Вы положили \"${items.getItemNameById(itemId)}\" на склад`);
-    chat.sendMeCommand(`положил \"${items.getItemNameById(itemId)}\" на склад`);
-};
-
-
 inventory.takeDrugItem = async function(id, itemId, countItems, notify = true, takeCount = 1) {
     countItems = countItems - takeCount;
 
-    let user_id = user.get('id');
+    let user_id = user.getCache('id');
     let amount = await inventory.getInvAmount(user_id, inventory.types.Player);
     let amountMax = await inventory.getInvAmountMax(user_id, inventory.types.Player);
 
@@ -363,7 +286,7 @@ inventory.takeDrugItem = async function(id, itemId, countItems, notify = true, t
 inventory.takeCountItem = async function(id, itemId, countItems, notify = true, takeCount = 1) {
     countItems = countItems - takeCount;
 
-    let user_id = user.get('id');
+    let user_id = user.getCache('id');
     let amount = await inventory.getInvAmount(user_id, inventory.types.Player);
     let amountMax = await inventory.getInvAmountMax(user_id, inventory.types.Player);
 
@@ -438,7 +361,7 @@ inventory.setInvAmountMax = function(id, type, data) {
 };
 
 inventory.calculatePlayerInvAmountMax = function() {
-    return 45100+(user.get('mp0_strength')*100);
+    return 45100 + (user.getCache('mp0_strength') * 100);
 };
 
 inventory.startFishing = function() {
@@ -503,128 +426,9 @@ inventory.continueFishing = function() {
     user.stopAllAnimation();
 };
 
-
-inventory.ammoTypeToAmmo = function(type) {
-    switch (type)
-    {
-        /*
-        case 3125143736: //... / PipeBomb
-            return -1;
-        case 2481070269: //... / Grenade
-            return -1;
-        case 4256991824: //... / SmokeGrenade
-            return -1;
-        case 2874559379: //... / ProximityMine
-            return -1;
-        case 2694266206: //... / BZGas
-            return -1;
-        case 101631238: //... / FireExtinguisher
-            return -1;
-        case 741814745: //... / StickyBomb
-            return -1;
-        case 615608432: //... / Molotov
-            return -1;
-        case 883325847: //... / PetrolCan
-            return -1;
-        case 600439132: //... / Ball
-            return -1;
-        case 126349499: //... / Snowball
-            return -1;
-        case 1233104067: //... / Flare
-            return -1;
-        case 1173416293: //... / FlareGun
-        */
-        case 357983224: //... / PipeBomb
-            return -1;
-        case 1003688881: //... / Grenade
-            return -1;
-        case -435287898: //... / SmokeGrenade
-            return -1;
-        case -1356724057: //... / ProximityMine
-            return -1;
-        case -1686864220: //... / BZGas
-            return -1;
-        case 1359393852: //... / FireExtinguisher
-            return -1;
-        case 1411692055: //... / StickyBomb
-            return -1;
-        case 1446246869: //... / Molotov
-            return -1;
-        case -899475295: //... / PetrolCan
-            return -1;
-        case -6986138: //... / Ball
-            return -1;
-        case -2112339603: //... / Snowball
-            return -1;
-        case 1808594799: //... / Flare
-            return -1;
-        case 1173416293: //... / FlareGun
-            return 147;
-        case -1339118112: //... / StunGun
-            return -1;
-        case -1356599793: //... / Firework
-            return 148;
-        case 1742569970: //... / RPG
-            return 149;
-        case 2034517757: //... / Railgun
-            return 150;
-        case -1726673363: //... / HomingLauncher
-            return 152;
-        case 1003267566: //... / CompactGrenadeLauncher
-            return 151;
-        case 1285032059: //12.7mm / SniperGun
-            return 146;
-        case -1878508229: //18.5mm / Shotguns
-            return 28;
-        case 218444191: //5.56mm / AssaultRifles
-            return 30;
-        case 1950175060: //9mm / Handguns
-            return 27;
-        case 1820140472: //9mm / MiniMG
-            return 153;
-        case 1788949567: //7.62mm / MG
-        case -1614428030: //7.62mm / MiniGun
-            return 29;
-        default:
-            return -1;
-    }
-};
-
-inventory.ammoItemIdToMaxCount = function(type) {
-    switch (type)
-    {
-        case 147:
-            return 10;
-        case 148: //... / Firework
-            return 1;
-        case 149: //... / RPG
-            return 1;
-        case 150: //... / Railgun
-            return 10;
-        case -152: //... / HomingLauncher
-            return 1;
-        case 151: //... / CompactGrenadeLauncher
-            return 10;
-        case 146: //12.7mm / SniperGun
-            return 60;
-        case 28: //18.5mm
-            return 120;
-        case 30: //5.56mm
-            return 260;
-        case 27: //9mm
-            return 140;
-        case 153: //9mm
-            return 140;
-        case 29: //7.62mm
-            return 130;
-        default:
-            return 1;
-    }
-};
-
 inventory.addAmmoServer = function(name, count) {
     //let ammo = mp.game.invoke('8F62F4EC66847EC2', mp.players.local.handle, hash);
-    weapons.hashesMap.forEach(item => {
+    weapons.getMapList().forEach(item => {
         if (item[0] == name)
             mp.game.invoke(methods.ADD_AMMO_TO_PED, mp.players.local.handle, item[1] / 2, count);
         return
@@ -633,99 +437,11 @@ inventory.addAmmoServer = function(name, count) {
 };
 
 inventory.setWeaponAmmo = function(name, count) {
-    weapons.hashesMap.forEach(item => {
+    weapons.getMapList().forEach(item => {
         if (item[0] == name)
             mp.game.invoke(methods.SET_PED_AMMO, mp.players.local.handle, item[1] / 2, count);
         return
     });
-};
-
-inventory.addAmmo = function(type, count) {
-    switch (type)
-    {
-        case 147:
-            inventory.addAmmoServer("FlareGun", count);
-            return;
-        case 148: //... / Firework
-            inventory.addAmmoServer("Firework", count);
-            return;
-        case 149: //... / RPG
-            inventory.addAmmoServer("RPG", count);
-            return;
-        case 150: //... / Railgun
-            inventory.addAmmoServer("Railgun", count);
-            return;
-        case -152: //... / HomingLauncher
-            inventory.addAmmoServer("HomingLauncher", count);
-            return;
-        case 151: //... / CompactGrenadeLauncher
-            inventory.addAmmoServer("CompactGrenadeLauncher", count);
-            return;
-        case 146: //12.7mm / SniperGun
-            inventory.addAmmoServer("MarksmanRifle", count);
-            return;
-        case 28: //18.5mm
-            inventory.addAmmoServer("AssaultShotgun", count);
-            return;
-        case 30: //5.56mm
-            inventory.addAmmoServer("AssaultRifle", count);
-            return;
-        case 27: //9mm
-            inventory.addAmmoServer("Pistol", count);
-            return;
-        case 153: //9mm
-            inventory.addAmmoServer("SMG", count);
-            return;
-        case 29: //7.62mm
-            inventory.addAmmoServer("MG", count);
-            return;
-    }
-};
-
-inventory.removeAllAmmo = function(type) {
-    switch (type)
-    {
-        case 147:
-            inventory.setWeaponAmmo("FlareGun", 0);
-            return;
-        case 148: //... / Firework
-            inventory.setWeaponAmmo("Firework", 0);
-            return;
-        case 149: //... / RPG
-            inventory.setWeaponAmmo("RPG", 0);
-            return;
-        case 150: //... / Railgun
-            inventory.setWeaponAmmo("Railgun", 0);
-            return;
-        case -152: //... / HomingLauncher
-            inventory.setWeaponAmmo("HomingLauncher", 0);
-            return;
-        case 151: //... / CompactGrenadeLauncher
-            inventory.setWeaponAmmo("CompactGrenadeLauncher", 0);
-            return;
-        case 146: //12.7mm / SniperGun
-            inventory.setWeaponAmmo("MarksmanRifle", 0);
-            return;
-        case 28: //18.5mm
-            inventory.setWeaponAmmo("AssaultShotgun", 0);
-            return;
-        case 30: //5.56mm
-            inventory.setWeaponAmmo("AssaultRifle", 0);
-            return;
-        case 27: //9mm
-            inventory.setWeaponAmmo("Pistol", 0);
-            return;
-        case 153: //9mm
-            inventory.setWeaponAmmo("SMG", 0);
-            return;
-        case 29: //7.62mm
-            inventory.setWeaponAmmo("MG", 0);
-            return;
-    }
-};
-
-inventory.convertNumberToHash = function(number) {
-    return mp.game.joaat(number.toString().toUpperCase()).toString();
 };
 
 inventory.updateAmountMax = function(id, type) {
@@ -808,11 +524,6 @@ inventory.addItemPosServer = function(itemId, pos, rot, count, ownerType, ownerI
 
 inventory.updateItemPosServer = function(id, itemId, pos, rot, ownerType, ownerId) {
     //TriggerServerEvent("ARP:Inventory:UpdateItemPos", id, itemId, pos.X, pos.Y, pos.Z, rot.X, rot.Y, rot.Z, ownerType, ownerId);
-};
-
-inventory.getInfoItem = function(id) {
-    return;
-    mp.events.callRemote('server:inventory:getInfoItem', id);
 };
 
 inventory.getItemList = function(ownerType, ownerId) {

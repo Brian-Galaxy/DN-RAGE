@@ -1165,7 +1165,7 @@ menuList.showVehicleMenu = function(data) {
     if (vInfo.class_name != 'Cycles' || vInfo.class_name != 'Planes' || vInfo.class_name != 'Helicopters' || vInfo.class_name != 'Boats')
         UIMenu.Menu.AddMenuItem("Управление транспортом").doName = 'showVehicleDoMenu';
 
-    if (data.get('id_user') > 0 && user.get('id') == data.get('id_user')) {
+    if (data.get('user_id') > 0 && user.getCache('id') == data.get('user_id')) {
         UIMenu.Menu.AddMenuItem("~g~Открыть~s~ / ~r~Закрыть~s~").eventName = 'server:vehicle:lockStatus';
         UIMenu.Menu.AddMenuItem("Припарковать", "Транспорт будет спавниться на месте парковки").eventName = 'server:vehicle:park';
     }
@@ -1317,7 +1317,7 @@ menuList.showVehicleMenu = function(data) {
         else if (item.doName == 'gr6:grab')
             gr6.grab();
         else if (item.doName == 'gr6:getHelp') {
-            dispatcher.send(`Код 0`, `${user.get('rp_name')} - инкассация требует поддержки`);
+            dispatcher.send(`Код 0`, `${user.getCache('rp_name')} - инкассация требует поддержки`);
             mp.game.ui.notifications.show('~b~Вызов был отправлен');
         }
         else if (item.doName == 'photo:find')
@@ -1344,7 +1344,7 @@ menuList.showVehicleMenu = function(data) {
             mp.events.callRemote(item.eventName);
         else if (item.eventName == 'server:vehicle:lockStatus') {
             if (data.get('fraction_id') > 0) {
-                if (data.get('fraction_id') == user.get('fraction_id'))
+                if (data.get('fraction_id') == user.getCache('fraction_id'))
                     mp.events.callRemote(item.eventName);
                 else
                     mp.game.ui.notifications.show('~r~У Вас нет ключей от транспорта');

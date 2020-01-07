@@ -795,7 +795,7 @@ mp.events.add('render', () => {
 
 mp.events.add("voice:toogleRadioMic", async (player, isEnabled) => {
     if (player && mp.players.exists(player)) {
-        if (user.get('walkietalkie_num') != "0" && user.get('jail_time') == 0) {
+        if (user.getCache('walkietalkie_num') != "0" && user.getCache('jail_time') == 0) {
 
             /*mp.game.streaming.requestAnimDict("mp_facial");
             while (!mp.game.streaming.hasAnimDictLoaded("mp_facial"))
@@ -963,7 +963,7 @@ const enableMicrophoneRadio = () => {
         if (user.isCuff() || user.isDead())
             return;
 
-        if (user.get('walkietalkie_num') != "0" && user.get('jail_time') == 0) {
+        if (user.getCache('walkietalkie_num') != "0" && user.getCache('jail_time') == 0) {
             ui.radioSoundOn();
             enableMicrophone();
             mp.events.callRemote("voice.server.enableMic");
@@ -982,7 +982,7 @@ const disableMicrophoneRadio = () => {
         if (user.isCuff())
             return;
 
-        if (user.get('walkietalkie_num') != "0" && user.get('jail_time') == 0) {
+        if (user.getCache('walkietalkie_num') != "0" && user.getCache('jail_time') == 0) {
             ui.radioSoundOff();
             disableMicrophone();
             mp.events.callRemote("voice.server.disableMic");

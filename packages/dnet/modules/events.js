@@ -467,6 +467,19 @@ mp.events.addRemoteCounted('server:business:save', (player, id) => {
     business.save(id);
 });
 
+mp.events.addRemoteCounted('server:changeWaypointPos', (player, x, y) => {
+    if (!user.isLogin(player))
+        return;
+    if (!vehicles.exists(player.vehicle))
+        return;
+
+    player.vehicle.getOccupants().forEach((p) => {
+        if (!user.isLogin(p))
+            return;
+        user.setWaypoint(p, x, y);
+    });
+});
+
 mp.events.addRemoteCounted('server:uniform:gr6', (player) => {
     if (user.getSex(player) == 1) {
         user.setComponentVariation(player, 3, 14, 0);

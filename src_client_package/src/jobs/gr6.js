@@ -151,7 +151,7 @@ mp.events.add("client:createGr6Checkpoint", (x, y, z) => {
 });
 
 mp.events.add("playerEnterVehicle", function (vehicle, seat) {
-    if (user.get('job') != 8)
+    if (user.getCache('job') != 8)
         return;
     if (vehicle.getVariable('job') == 8 && Container.Data.HasLocally(0, 'gr6Money') && Container.Data.HasLocally(0, 'gr6MoneyBag')) {
         let money = Container.Data.GetLocally(0, 'gr6Money');

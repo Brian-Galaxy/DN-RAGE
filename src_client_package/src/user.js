@@ -95,6 +95,9 @@ user.timer1sec = function() {
             let ammoCount = mp.game.invoke(methods.GET_AMMO_IN_PED_WEAPON, mp.players.local.handle, hash);
             let slot = weapons.getGunSlotIdByItem(n);
 
+            if (user.set('weapon_' + slot + '_ammo') == -1)
+                return;
+
             if (methods.parseInt(user.set('weapon_' + slot + '_ammo')) != methods.parseInt(ammoCount)) {
                 user.set('weapon_' + slot + '_ammo', ammoCount);
             }

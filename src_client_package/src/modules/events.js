@@ -1290,6 +1290,18 @@ mp.events.add("playerCommand", async (command) => {
             user.giveWeaponByHash(item[1] / 2, 1000);
         });
     }
+    else if (command.toLowerCase().slice(0, 3) === "qwe") {
+        /*let player = mp.players.local; //TODO Спавн объектов оружия и обвесов на них
+        let pos = player.position;
+        let object = mp.game.weapon.createWeaponObject(-86904375, 1000, pos.x + 2, pos.y + 2, pos.z, true, player.heading, 0);
+
+        mp.game.weapon.giveWeaponComponentToWeaponObject(object, -1654288262);
+        mp.game.weapon.giveWeaponComponentToWeaponObject(object, -2089531990);
+        mp.game.weapon.giveWeaponComponentToWeaponObject(object, 77277509);
+        mp.game.weapon.giveWeaponComponentToWeaponObject(object, -746774737);
+        mp.game.weapon.giveWeaponComponentToWeaponObject(object, 2076495324);
+        mp.game.weapon.giveWeaponComponentToWeaponObject(object, -966040254);*/
+    }
     else if (command.slice(0, 5) === "eval ") {
         if (!user.isLogin() || !user.isAdmin(5))
             return;

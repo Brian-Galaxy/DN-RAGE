@@ -219,6 +219,10 @@ user.setAmmoByHash = function(name, count) {
     mp.game.invoke(methods.SET_PED_AMMO, mp.players.local.handle, name, count);
 };
 
+user.kickAntiCheat = function(reason, title = 'Вы были кикнуты.') {
+    methods.debug(reason, title);
+};
+
 user.teleportv = function(pos, rot) {
     user.isTeleport = true;
     mp.game.streaming.requestCollisionAtCoord(pos.x, pos.y, pos.z);

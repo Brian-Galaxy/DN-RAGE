@@ -1,10 +1,13 @@
 let mysql = require('./modules/mysql');
 let methods = require('./modules/methods');
 let Container = require('./modules/data');
+let chat = require('./modules/chat');
+
 let enums = require('./enums');
 let coffer = require('./coffer');
-let chat = require('./modules/chat');
-let wpSync = require('./managers/wpSync');;
+
+let wpSync = require('./managers/wpSync');
+let weather = require('./managers/weather');
 
 let user = exports;
 
@@ -896,6 +899,23 @@ user.isLogin = function(player) {
     if (!mp.players.exists(player))
         return false;
     return user.has(player, 'id');
+};
+
+user.ready = function(player) {
+    if (!mp.players.exists(player))
+        return false;
+
+    weather.setPlayerCurrentWeather(player);
+    for (let i = 0; i < methods.parseInt(enums.vehicleInfo.length / 250) + 1; i++)
+        player.call('client:updateVehicleInfo', [enums.vehicleInfo.slice(i * 250, i * 250 + 249)]);
+
+    player.dimension = player.id + 1;
+    try {
+        Container.Data.ResetAll(player.id);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 };
 
 /*

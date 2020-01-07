@@ -692,6 +692,15 @@ mp.events.addRemoteCounted('server:inventory:deleteItem', (player, id) => {
     inventory.deleteItem(id);
 });
 
+mp.events.addRemoteCounted("onKeyPress:2", (player) => {
+    if (!user.isLogin(player))
+        return;
+    if (player.vehicle && player.seat == -1)
+        player.call('client:menuList:showVehicleMenu', [Array.from(vehicles.getData(player.vehicle.getVariable('container')))]);
+    else
+        player.notify('~r~Вы должны находиться в транспорте');
+});
+
 mp.events.addRemoteCounted("onKeyPress:LAlt", (player) => {
     if (!user.isLogin(player))
         return;
@@ -843,6 +852,16 @@ mp.events.add("client:enterStaticCheckpoint", (player, checkpointId) => {
 mp.events.addRemoteCounted('server:fixCheckpointList', (player) => {
     methods.updateCheckpointList(player);
     player.call('client:updateItemList', [JSON.stringify(weapons.hashesMap), JSON.stringify(weapons.components), JSON.stringify(items.itemList)]);
+});
+
+mp.events.addRemoteCounted('server:updateVehicleInfo', player => {
+    try {
+        for (let i = 0; i < methods.parseInt(enums.vehicleInfo.length / 250) + 1; i++)
+            player.call('client:updateVehicleInfo', [enums.vehicleInfo.slice(i * 250, i * 250 + 249)]);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 });
 
 mp.events.addRemoteCounted('server:user:fixNearestVehicle', (player) => {
@@ -1032,6 +1051,9 @@ mp.events.add('playerJoin', player => {
 });
 
 mp.events.add('playerReady', player => {
+
+    user.ready(player);
+
     player.spawn(new mp.Vector3(8.243752, 527.4373, 171.6173));
 
     player.notify = function(message, flashing = false, textColor = -1, bgColor = -1, flashColor = [77, 77, 77, 200]) {
@@ -1051,14 +1073,6 @@ mp.events.add('playerReady', player => {
             methods.debug(e);
         }
     };
-
-    player.dimension = player.id + 1;
-    try {
-        Container.Data.ResetAll(player.id);
-    }
-    catch (e) {
-        methods.debug(e);
-    }
 });
 
 process.on('exit', (code) => {

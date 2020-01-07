@@ -442,6 +442,11 @@ mp.events.add('client:updateCheckpointList', (data) => {
     checkpoint.updateCheckpointList(data);
 });
 
+mp.events.add('client:updateVehicleInfo', (data) => {
+    methods.debug('Event: client:updateVehicleInfo');
+    enums.updateVehicleInfo(data);
+});
+
 mp.events.add('client:updateItemList', (weaponList, componentList, itemList) => {
     methods.debug('Event: client:updateItemList');
 
@@ -635,6 +640,17 @@ mp.events.add('client:menuList:showSpawnJobCarMailMenu', () => {
     }
     catch (e) {
         methods.debug('Exception: events:client:showSpawnJobCarMenu');
+        methods.debug(e);
+    }
+});
+
+mp.events.add('client:menuList:showVehicleMenu', (data) => {
+    try {
+        methods.debug('Event: client:menuList:showVehicleMenu');
+        menuList.showVehicleMenu(new Map(data));
+    }
+    catch (e) {
+        methods.debug('Exception: events:client:showVehicleMenu');
         methods.debug(e);
     }
 });

@@ -49,32 +49,32 @@ vehicles.disableAutopilot = function() {
 
 vehicles.setInteriorLightState = function(state) {
     if (mp.players.local.vehicle)
-        mp.events.callRemote('s:vSync:setInteriorLightState', mp.players.local.vehicle, state);
+        mp.events.callRemote('s:vSync:setInteriorLightState', mp.players.local.vehicle.remoteId, state);
 };
 
 vehicles.setTaxiLightState = function(state) {
     if (mp.players.local.vehicle)
-        mp.events.callRemote('s:vSync:setTaxiLightState', mp.players.local.vehicle, state);
+        mp.events.callRemote('s:vSync:setTaxiLightState', mp.players.local.vehicle.remoteId, state);
 };
 
 vehicles.setIndicatorLeftState = function(state) {
     if (mp.players.local.vehicle)
-        mp.events.callRemote('s:vSync:setIndicatorLeftState', mp.players.local.vehicle, state);
+        mp.events.callRemote('s:vSync:setIndicatorLeftState', mp.players.local.vehicle.remoteId, state);
 };
 
 vehicles.setIndicatorRightState = function(state) {
     if (mp.players.local.vehicle)
-        mp.events.callRemote('s:vSync:setIndicatorRightState', mp.players.local.vehicle, state);
+        mp.events.callRemote('s:vSync:setIndicatorRightState', mp.players.local.vehicle.remoteId, state);
 };
 
 vehicles.setTrunkState = function(state) {
     if (mp.players.local.vehicle)
-        mp.events.callRemote('s:vSync:setTrunkState', mp.players.local.vehicle, state);
+        mp.events.callRemote('s:vSync:setTrunkState', mp.players.local.vehicle.remoteId, state);
 };
 
 vehicles.setHoodState = function(state) {
     if (mp.players.local.vehicle)
-        mp.events.callRemote('s:vSync:setHoodState', mp.players.local.vehicle, state);
+        mp.events.callRemote('s:vSync:setHoodState', mp.players.local.vehicle.remoteId, state);
 };
 
 vehicles.setTrunkStateById = function(id, state) {

@@ -11,12 +11,14 @@ import ui from "./modules/ui";
 import methods from "./modules/methods";
 
 import checkpoint from "./manager/checkpoint";
+import timer from "./manager/timer";
+import vBreakLight from "./manager/vBreakLight";
 
 import user from "./user";
 import enums from "./enums";
-import weapons from "./weapons";
 
 try {
+
     mp.gui.chat.show(false);
     mp.gui.chat.activate(false);
 
@@ -36,9 +38,16 @@ try {
         checkpoint.checkPosition();
         enums.loadCloth();
         business.loadScaleform();
+
+        timer.loadAll();
+        vBreakLight.timer();
     }
     catch (e) {
+        methods.debug('ERROR INIT CLIENT', e);
+        methods.debug('ERROR INIT CLIENT', e);
         methods.debug(e);
+        methods.debug('ERROR INIT CLIENT', e);
+        methods.debug('ERROR INIT CLIENT', e);
     }
 
     mp.events.add('guiReady', () => {

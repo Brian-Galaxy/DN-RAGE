@@ -1126,9 +1126,9 @@ menuList.showMainMenu = function() {
     UIMenu.Menu.AddMenuItem("Персонаж").doName = 'showPlayerMenu';
     UIMenu.Menu.AddMenuItem("Транспорт").eventName = 'onKeyPress:2';
 
-    if (user.get('fraction_id') > 0)
+    if (user.getCache('fraction_id') > 0)
         UIMenu.Menu.AddMenuItem("Организация").doName = 'showFractionMenu';
-    if (user.get('fraction_id2') > 0)
+    if (user.getCache('fraction_id2') > 0)
         UIMenu.Menu.AddMenuItem("Неоф. Организация").doName = 'showFraction2Menu';
 
     UIMenu.Menu.AddMenuItem("Помощь").doName = 'showHelpMenu';
@@ -1142,8 +1142,371 @@ menuList.showMainMenu = function() {
         UIMenu.Menu.HideMenu();
         if (item.doName == 'showFractionMenu')
             menuList.showFractionMenu();
+        if (item.eventName)
+            mp.events.callRemote(item.eventName);
     });
 };
+
+menuList.showVehicleMenu = function(data) {
+
+    let vInfo = methods.getVehicleInfo(mp.players.local.vehicle.model);
+
+    let ownerName = mp.players.local.vehicle.getNumberPlateText();
+
+    let menu = UIMenu.Menu.Create(`Транспорт`, `~b~Номер ТС: ~s~${ownerName}`);
+
+    if (vInfo.class_name != 'Cycles')
+        UIMenu.Menu.AddMenuItem("~g~Вкл~s~ / ~r~выкл~s~ двигатель").eventName = 'server:vehicle:engineStatus';
+    if (vInfo.class_name == 'Boats')
+        UIMenu.Menu.AddMenuItem("~g~Вкл~s~ / ~r~выкл~s~ якорь").eventName = 'server:vehicleFreeze';
+    if (vInfo.fuel_min > 0) //TODO
+        UIMenu.Menu.AddMenuItem("Топливо", `Топливо: ~g~${Math.round(data.get('fuel'))}~s~л.`);
+
+    if (vInfo.class_name != 'Cycles' || vInfo.class_name != 'Planes' || vInfo.class_name != 'Helicopters' || vInfo.class_name != 'Boats')
+        UIMenu.Menu.AddMenuItem("Управление транспортом").doName = 'showVehicleDoMenu';
+
+    if (data.get('id_user') > 0 && user.get('id') == data.get('id_user')) {
+        UIMenu.Menu.AddMenuItem("~g~Открыть~s~ / ~r~Закрыть~s~").eventName = 'server:vehicle:lockStatus';
+        UIMenu.Menu.AddMenuItem("Припарковать", "Транспорт будет спавниться на месте парковки").eventName = 'server:vehicle:park';
+    }
+
+    //UIMenu.Menu.AddMenuItem("~y~Выкинуть из транспорта").eventName = 'server:vehicle:engineStatus';
+    UIMenu.Menu.AddMenuItem("Характеристики").doName = 'showVehicleStatsMenu';
+    //UIMenu.Menu.AddMenuItem("Управление транспортом").eventName = 'server:vehicle:engineStatus';
+
+    if (!data.get('job')) {
+        switch (user.getCache('job')) {
+            case 'trucker1':
+                if (vInfo.class_name == 'Vans') {
+                    UIMenu.Menu.AddMenuItem("~g~Список заказов").doName = 'trucker:getList';
+                    UIMenu.Menu.AddMenuItem("~b~Частота рации:~s~ ").SetRightLabel('444.001');
+                    if (trucker.isProcess())
+                        UIMenu.Menu.AddMenuItem("~r~Завершить досрочно рейс", 'Штраф ~r~$500').doName = 'trucker:stop';
+                }
+                break;
+            case 'trucker2':
+                if (vInfo.display_name == 'Benson' || vInfo.display_name == 'Mule' || vInfo.display_name == 'Mule2' || vInfo.display_name == 'Mule3' || vInfo.display_name == 'Pounder') {
+                    UIMenu.Menu.AddMenuItem("~g~Список заказов").doName = 'trucker:getList';
+                    UIMenu.Menu.AddMenuItem("~b~Частота рации:~s~ ").SetRightLabel('444.002');
+                    if (trucker.isProcess())
+                        UIMenu.Menu.AddMenuItem("~r~Завершить досрочно рейс", 'Штраф ~r~$500').doName = 'trucker:stop';
+                }
+                break;
+            case 'trucker3':
+                if (vInfo.display_name == 'Hauler' || vInfo.display_name == 'Packer' || vInfo.display_name == 'Phantom') {
+                    UIMenu.Menu.AddMenuItem("~g~Список заказов").doName = 'trucker:getList';
+                    UIMenu.Menu.AddMenuItem("~b~Частота рации:~s~ ").SetRightLabel('444.003');
+                    if (trucker.isProcess())
+                        UIMenu.Menu.AddMenuItem("~r~Завершить досрочно рейс", 'Штраф ~r~$500').doName = 'trucker:stop';
+                }
+                break;
+        }
+    }
+
+    if (user.getCache('job') == data.get('job')) {
+        UIMenu.Menu.AddMenuItem("~g~Открыть~s~ / ~r~Закрыть~s~").eventName = 'server:vehicle:lockStatus';
+        switch (data.get('job')) {
+            case 'bshot':
+                UIMenu.Menu.AddMenuItem("~g~Получить задание").doName = 'bshot:find';
+                UIMenu.Menu.AddMenuItem("~g~Взять заказ").doName = 'takeTool';
+                UIMenu.Menu.AddMenuItem("~b~Справка").sendChatMessage = 'Данная работа служит для того, чтобы вы привыкли к управлению и динамике сервера, дальше будет интересней.';
+                break;
+            case 'bgstar':
+                UIMenu.Menu.AddMenuItem("~g~Получить задание").doName = 'bugstar:find';
+                UIMenu.Menu.AddMenuItem("~g~Взять инструменты").doName = 'takeTool';
+                UIMenu.Menu.AddMenuItem("~b~Справка").sendChatMessage = 'Данная работа служит для того, чтобы вы привыкли к управлению и динамике сервера, дальше будет интересней.';
+                break;
+            case 'sunb':
+                UIMenu.Menu.AddMenuItem("~g~Получить задание").doName = 'sunb:find';
+                UIMenu.Menu.AddMenuItem("~g~Взять инструменты").doName = 'takeTool';
+                UIMenu.Menu.AddMenuItem("~b~Справка").sendChatMessage = 'Данная работа служит для того, чтобы вы привыкли к управлению и динамике сервера, дальше будет интересней.';
+                break;
+            case 'water':
+                UIMenu.Menu.AddMenuItem("~g~Получить задание").doName = 'water:find';
+                UIMenu.Menu.AddMenuItem("~b~Справка").sendChatMessage = 'Данная работа служит для того, чтобы вы привыкли к управлению и динамике сервера, дальше будет интересней.';
+                break;
+            case 'photo':
+                UIMenu.Menu.AddMenuItem("~g~Получить задание").doName = 'photo:find';
+                UIMenu.Menu.AddMenuItem("~b~Справка").sendChatMessage = 'Получайте и выполняйте задания от начальника';
+                break;
+            case 'three':
+                UIMenu.Menu.AddMenuItem("~g~Получить задание").doName = 'three:find';
+                UIMenu.Menu.AddMenuItem("~b~Справка").sendChatMessage = 'Получайте и выполняйте задания от начальника';
+                break;
+            case 'bus1':
+                UIMenu.Menu.AddMenuItem("~g~Начать рейс").doName = 'bus:start1';
+                UIMenu.Menu.AddMenuItem("~y~Завершить рейс", "Завершение рейса досрочно").doName = 'bus:stop';
+                UIMenu.Menu.AddMenuItem("~b~Справка").sendChatMessage = 'Начните рейс и вперед зарабатывать!';
+                break;
+            case 'bus2':
+                UIMenu.Menu.AddMenuItem("~g~Начать рейс").doName = 'bus:start2';
+                UIMenu.Menu.AddMenuItem("~y~Завершить рейс", "Завершение рейса досрочно").doName = 'bus:stop';
+                UIMenu.Menu.AddMenuItem("~b~Справка").sendChatMessage = 'Начните рейс и вперед зарабатывать!';
+                break;
+            case 'bus3':
+                UIMenu.Menu.AddMenuItem("~g~Начать рейс").doName = 'bus:start3';
+                UIMenu.Menu.AddMenuItem("~y~Завершить рейс", "Завершение рейса досрочно").doName = 'bus:stop';
+                UIMenu.Menu.AddMenuItem("~b~Справка").sendChatMessage = 'Начните рейс и вперед зарабатывать!';
+                break;
+            case 'gr6':
+                UIMenu.Menu.AddMenuItem("~g~Получить задание").doName = 'gr6:start';
+                UIMenu.Menu.AddMenuItem("Разгрузить транспорт").doName = 'gr6:unload';
+                UIMenu.Menu.AddMenuItem("Вернуть транспорт в гараж", 'Залог в $4500 вернется вам на руки').doName = 'gr6:delete';
+                UIMenu.Menu.AddMenuItem("~y~Вызвать подмогу", 'Вызывает сотрудников SAPD и SHERIFF').doName = 'gr6:getHelp';
+                UIMenu.Menu.AddMenuItem("~b~Справка").sendChatMessage = 'Катайтесь по заданиям, собирайте деньги с магазинов и везите их в хранилище. Есть возможность работать с напарником, до 4 человек.';
+                break;
+            case 'mail':
+            case 'mail2':
+                UIMenu.Menu.AddMenuItem("~g~Взять почту из транспорта").doName = 'mail:take';
+                UIMenu.Menu.AddMenuItem("~b~Справка").sendChatMessage = 'Возьмите почту из транспорта, далее езжай к любым жилым домам, подходи к дому нажимай E и клади туда почту.';
+                break;
+            case 'taxi1':
+            case 'taxi2':
+                UIMenu.Menu.AddMenuItem("~g~Диспетчерская таксопарка").doName = 'taxi:dispatch';
+                UIMenu.Menu.AddMenuItem("~g~Получить задание").doName = 'taxi:start';
+                break;
+        }
+    }
+
+    if (data.get('job') == 'gr6') {
+        UIMenu.Menu.AddMenuItem("Денег в транспорте: ~g~$" + methods.numberFormat(mp.players.local.vehicle.getVariable('gr6Money'))).doName = 'close';
+        UIMenu.Menu.AddMenuItem("~y~Ограбить транспорт").doName = 'gr6:grab';
+    }
+
+    if (data.get('neon_type') > 0) {
+        UIMenu.Menu.AddMenuItem("~g~Вкл~s~ / ~r~выкл~s~ неон").eventName = 'server:vehicle:neonStatus';
+        if (data.get('neon_type') > 1)
+            UIMenu.Menu.AddMenuItem("~b~Цвет неона").eventName = 'server:vehicle:setNeonColor';
+    }
+
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+    menu.ItemSelect.on(async (item, index) => {
+
+        if (item == closeItem) {
+            UIMenu.Menu.HideMenu();
+            return;
+        }
+        else if (item.sendChatMessage)
+            mp.gui.chat.push(`${item.sendChatMessage}`);
+        else if (item.doName == 'taxi:dispatch')
+            menuList.showDispatchTaxiMenu();
+        else if (item.doName == 'mail:take')
+            mail.takeMail();
+        else if (item.doName == 'taxi:start')
+            taxi.start();
+        else if (item.doName == 'bus:start1')
+            bus.start(1);
+        else if (item.doName == 'bus:start2')
+            bus.start(2);
+        else if (item.doName == 'bus:start3')
+            bus.start(3);
+        else if (item.doName == 'bus:stop')
+            bus.stop();
+        else if (item.doName == 'three:find')
+            gardener.start();
+        else if (item.doName == 'gr6:start')
+            gr6.start();
+        else if (item.doName == 'gr6:unload') {
+            UIMenu.Menu.HideMenu();
+            gr6.unload();
+        }
+        else if (item.doName == 'gr6:delete') {
+            UIMenu.Menu.HideMenu();
+            gr6.deleteVeh();
+        }
+        else if (item.doName == 'gr6:grab')
+            gr6.grab();
+        else if (item.doName == 'gr6:getHelp') {
+            dispatcher.send(`Код 0`, `${user.get('rp_name')} - инкассация требует поддержки`);
+            mp.game.ui.notifications.show('~b~Вызов был отправлен');
+        }
+        else if (item.doName == 'photo:find')
+            photo.start();
+        else if (item.doName == 'bshot:find')
+            burgershot.findHouse();
+        else if (item.doName == 'bugstar:find')
+            bugstars.findHouse();
+        else if (item.doName == 'sunb:find')
+            sunBleach.findHouse();
+        else if (item.doName == 'water:find')
+            waterPower.findHouse();
+        else if (item.doName == 'trucker:getList')
+            mp.events.callRemote('server:trucker:showMenu');
+        else if (item.doName == 'trucker:stop')
+            trucker.stop();
+        else if (item.doName == 'takeTool')
+            user.takeTool();
+        else if (item.doName == 'showVehicleAutopilotMenu')
+            menuList.showVehicleAutopilotMenu();
+        else if (item.doName == 'showVehicleStatsMenu')
+            menuList.showVehicleStatsMenu();
+        else if (item.eventName == 'server:vehicle:neonStatus')
+            mp.events.callRemote(item.eventName);
+        else if (item.eventName == 'server:vehicle:lockStatus') {
+            if (data.get('fraction_id') > 0) {
+                if (data.get('fraction_id') == user.get('fraction_id'))
+                    mp.events.callRemote(item.eventName);
+                else
+                    mp.game.ui.notifications.show('~r~У Вас нет ключей от транспорта');
+            }
+            else
+                mp.events.callRemote(item.eventName);
+        }
+        else if (item.eventName == 'server:vehicle:engineStatus') {
+            user.engineVehicle();
+        }
+        else if (item.doName == 'showVehicleDoMenu') {
+            menuList.showVehicleDoMenu();
+        }
+        else if (item.eventName == 'server:vehicleFreeze') {
+            if (methods.getCurrentSpeed() > 4) {
+                mp.game.ui.notifications.show('~r~Скорость должна быть меньше 5 км в час');
+                return;
+            }
+
+            let isFreeze = !(Container.Data.GetLocally(0, 'boatFreeze') == true);
+            Container.Data.SetLocally(0, 'boatFreeze', isFreeze);
+            mp.players.local.vehicle.freezePosition(isFreeze);
+
+            if (isFreeze === true)
+                mp.game.ui.notifications.show('~g~Вы поставили якорь');
+            else
+                mp.game.ui.notifications.show('~y~Вы сняли якорь');
+        }
+        else if (item.eventName == 'server:vehicle:park') {
+            UIMenu.Menu.HideMenu();
+            mp.events.callRemote(item.eventName);
+        }
+        else if (item.eventName == 'server:vehicle:setNeonColor') {
+            UIMenu.Menu.HideMenu();
+            mp.game.ui.notifications.show('Введите цвет ~r~R~g~G~b~B');
+            let r = await UIMenu.Menu.GetUserInput("R", "", 3);
+            let g = await UIMenu.Menu.GetUserInput("G", "", 3);
+            let b = await UIMenu.Menu.GetUserInput("B", "", 3);
+            if (r > 255)
+                r = 255;
+            if (g > 255)
+                g = 255;
+            if (b > 255)
+                b = 255;
+            mp.events.callRemote(item.eventName, methods.parseInt(r), methods.parseInt(g), methods.parseInt(b));
+        }
+    });
+};
+
+menuList.showVehicleAutopilotMenu = function() {
+
+    let menu = UIMenu.Menu.Create(`Транспорт`, `~b~Меню автопилота`);
+
+    UIMenu.Menu.AddMenuItem("~g~Включить").doName = 'enable';
+    UIMenu.Menu.AddMenuItem("~y~Выключить").doName = 'disable';
+
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+    menu.ItemSelect.on((item, index) => {
+        if (item == closeItem)
+            UIMenu.Menu.HideMenu();
+        if (item.doName == 'enable') {
+            vehicles.enableAutopilot();
+        }
+        else if (item.doName == 'disable') {
+            vehicles.disableAutopilot();
+        }
+    });
+};
+
+menuList.showVehicleDoMenu = function() {
+
+    try {
+        let menu = UIMenu.Menu.Create(`Транспорт`, `~b~Нажмите Enter чтобы применить`);
+
+        let listEn = ["Выкл", "Вкл"];
+        let listOp = ["Закрыт", "Открыт"];
+
+        let actualData = mp.players.local.vehicle.getVariable('vehicleSyncData');
+
+        let listItem = UIMenu.Menu.AddMenuItemList("Аварийка", listEn, "Поворотники включаются на [ и ]");
+        listItem.doName = 'twoIndicator';
+        listItem.Index = actualData.IndicatorRightToggle === true && actualData.IndicatorLeftToggle === true ? 1 : 0;
+
+        listItem = UIMenu.Menu.AddMenuItemList("Свет в салоне", listEn, "Днём очень плохо видно");
+        listItem.doName = 'light';
+        listItem.Index = actualData.InteriorLight === true ? 1 : 0;
+
+        listItem = UIMenu.Menu.AddMenuItemList("Капот", listOp);
+        listItem.doName = 'hood';
+        listItem.Index = actualData.Hood === true ? 1 : 0;
+
+        listItem = UIMenu.Menu.AddMenuItemList("Багажник", listOp);
+        listItem.doName = 'trunk';
+        listItem.Index = actualData.Trunk === true ? 1 : 0;
+
+        /*if (methods.getVehicleInfo(mp.players.local.vehicle.model).display_name == 'Taxi') {
+            listItem = UIMenu.Menu.AddMenuItemList("Свет на шашке", listEn);
+            listItem.doName = 'lightTaxi';
+            listItem.Index = actualData.TaxiLight === true ? 1 : 0;
+        }*/
+
+        let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+
+        let listIndex = 0;
+        menu.ListChange.on((item, index) => {
+            listIndex = index;
+        });
+
+        menu.ItemSelect.on((item, index) => {
+            if (item == closeItem)
+                UIMenu.Menu.HideMenu();
+
+            if (item.doName == 'light') {
+                vehicles.setInteriorLightState(listIndex == 1);
+            }
+            if (item.doName == 'hood') {
+                vehicles.setHoodState(listIndex == 1);
+            }
+            if (item.doName == 'trunk') {
+                vehicles.setTrunkState(listIndex == 1);
+            }
+            if (item.doName == 'lightTaxi') {
+                vehicles.setTaxiLightState(listIndex == 1);
+            }
+            if (item.doName == 'twoIndicator') {
+                vehicles.setIndicatorLeftState(listIndex == 1);
+                vehicles.setIndicatorRightState(listIndex == 1);
+            }
+        });
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+};
+
+menuList.showVehicleStatsMenu = function() {
+
+    let vInfo = methods.getVehicleInfo(mp.players.local.vehicle.model);
+    let menu = UIMenu.Menu.Create(`Транспорт`, `~b~Характеристики транспорта`);
+
+    UIMenu.Menu.AddMenuItem("~b~Класс: ~s~").SetRightLabel(`${vInfo.class_name}`);
+    UIMenu.Menu.AddMenuItem("~b~Модель: ~s~").SetRightLabel(`${vInfo.display_name}`);
+    if (vInfo.fuel_min > 0) {
+        UIMenu.Menu.AddMenuItem("~b~Вместимость бака: ~s~").SetRightLabel(`${vInfo.fuel_full}л.`);
+        UIMenu.Menu.AddMenuItem("~b~Расход топлива: ~s~").SetRightLabel(`${vInfo.fuel_min}л.`);
+    }
+    else
+        UIMenu.Menu.AddMenuItem("~b~Расход топлива: ~s~").SetRightLabel(`Электрокар`);
+
+    UIMenu.Menu.AddMenuItem("~b~Объем багажника: ~s~").SetRightLabel(`${vInfo.stock}см³`);
+    let stockFull = vInfo.stock_full;
+    if (vInfo.stock_full > 0)
+        stockFull = stockFull / 1000;
+    UIMenu.Menu.AddMenuItem("~b~Допустимый вес: ~s~").SetRightLabel(`${stockFull}кг.`);
+
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+    menu.ItemSelect.on((item, index) => {
+        if (item == closeItem)
+            UIMenu.Menu.HideMenu();
+    });
+};
+
 
 menuList.showFractionMenu = function() {
 
@@ -1373,7 +1736,7 @@ menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId) {
                     });
                 }
             } catch (e) {
-                methods.debug(e);
+                methods.debug('menuList.showToPlayerItemListMenu2', e);
             }
         });
 
@@ -1426,12 +1789,14 @@ menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId) {
             ui.callCef('inventory', JSON.stringify(dataSend));
             inventory.show();
             mp.gui.cursor.show(true, true);
+
+            ui.callCef('inventory', JSON.stringify({type: "updateSubMax", maxSum: await inventory.getInvAmountMax(ownerId, ownerType)}));
         }
 
         inventory.setInvAmount(ownerId, ownerType, sum);
     }
     catch (e) {
-       methods.debug(e);
+       methods.debug('menuList.showToPlayerItemListMenu', e);
     }
 };
 

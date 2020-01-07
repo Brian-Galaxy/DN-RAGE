@@ -186,9 +186,9 @@ vSync.getIndicatorRightToggle = function(v) {
 vSync.setEngineState = function(v, status) {
     if (!vehicles.exists(v))
         return;
-    /*let data = vSync.getVehicleSyncData(v);
+    let data = vSync.getVehicleSyncData(v);
     data.Engine = status;
-    vSync.updateVehicleSyncData(v, data);*/
+    vSync.updateVehicleSyncData(v, data);
     v.engine = status;
     //mp.players.callInRange(v.position, streamDist, "vSync:setEngineState", [v.id, status]);
 };

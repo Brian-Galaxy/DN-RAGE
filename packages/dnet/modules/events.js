@@ -701,6 +701,42 @@ mp.events.addRemoteCounted("onKeyPress:2", (player) => {
         player.notify('~r~Вы должны находиться в транспорте');
 });
 
+mp.events.addRemoteCounted("onKeyPress:L", (player) => {
+    if (!user.isLogin(player))
+        return;
+
+    let vehicle = methods.getNearestVehicleWithCoords(player.position, 5);
+    if (vehicles.exists(vehicle)) {
+        let data = vehicles.getData(vehicle.getVariable('container'));
+        if (data.has('fraction_id')) {
+            if (data.get('fraction_id') == user.get(player, 'fraction_id'))
+                vehicles.lockStatus(player, vehicle);
+            else
+                player.notify('~r~У Вас нет ключей от транспорта');
+        }
+        else if (data.has('owner_id')) {
+            if (data.get('owner_id') == user.getId(player))
+                vehicles.lockStatus(player, vehicle);
+            else
+                player.notify('~r~У Вас нет ключей от транспорта');
+        }
+        else if (data.has('rentOwner')) {
+            if (data.get('rentOwner') == user.getId(player))
+                vehicles.lockStatus(player, vehicle);
+            else
+                player.notify('~r~У Вас нет ключей от транспорта');
+        }
+        else if (data.has('user_id')) {
+            if (data.get('user_id') == user.getId(player))
+                vehicles.lockStatus(player, vehicle);
+            else
+                player.notify('~r~У Вас нет ключей от транспорта');
+        }
+        else
+            vehicles.lockStatus(player, vehicle);
+    }
+});
+
 mp.events.addRemoteCounted("onKeyPress:LAlt", (player) => {
     if (!user.isLogin(player))
         return;

@@ -69,6 +69,7 @@ mp.events.add({
 });
 
 methods.getStreamPlayerList = function() {
+    //return [mp.players.local].concat(streamedPlayers);
     return streamedPlayers;
 };
 

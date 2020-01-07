@@ -27,6 +27,7 @@ mp.events.add('chatEnabled', (isEnabled) => {
 
 let money = "0.00 $";
 let moneyBank = "0.00 $";
+let maxSpeed = 500;
 
 let timerId = setTimeout(function updateMoney() {
     if(user.isLogin()) {
@@ -1127,11 +1128,60 @@ mp.events.add('client:inventory:equip', function(id, itemId, count, aparams) {
     inventory.updateEquipStatus(id, true);
 });
 
+mp.events.add("playerEnterVehicle", async function (vehicle, seat) {
+
+    let boost = 0;
+    if (vehicle.getMod(18) == 1)
+        boost = 5;
+
+    let vehInfo = methods.getVehicleInfo(vehicle.model);
+    if (vehInfo.class_name == 'Emergency')
+        boost = boost + 10;
+
+    boost = boost + vehicles.getSpeedBoost(vehicle.model);
+
+    maxSpeed = vehicles.getSpeedMax(vehicle.model);
+    if (maxSpeed == 1)
+        maxSpeed = 350;
+
+    if (vehicle.getVariable('boost') > 0)
+        vehicle.setEnginePowerMultiplier(vehicle.getVariable('boost') + boost);
+    else if (boost > 1)
+        vehicle.setEnginePowerMultiplier(boost);
+});
+
 //KEYS
+
+// AllKeys
+/*for (let i = 0; i < 255; i++) { //TODO
+    mp.keys.bind(i, true, function() {
+        methods.debug(`KeyPress:${i}:${String.fromCharCode(i)}`);
+    });
+}*/
+
+mp.keys.bind(0xDB, true, function() {
+    if (!user.isLogin())
+        return;
+    if (!methods.isBlockKeys() && mp.players.local.vehicle) {
+        let actualData = mp.players.local.vehicle.getVariable('vehicleSyncData');
+        vehicles.setIndicatorLeftState(!actualData.IndicatorLeftToggle);
+        vehicles.setIndicatorRightState(false);
+    }
+});
+
+mp.keys.bind(0xDD, true, function() {
+    if (!user.isLogin())
+        return;
+    if (!methods.isBlockKeys() && mp.players.local.vehicle) {
+        let actualData = mp.players.local.vehicle.getVariable('vehicleSyncData');
+        vehicles.setIndicatorRightState(!actualData.IndicatorRightToggle);
+        vehicles.setIndicatorLeftState(false);
+    }
+});
 
 // ~ Key Code
 mp.keys.bind(0xC0, true, function() {
-    menuList.showAuthMenu();
+    //menuList.showAuthMenu();
 });
 
 mp.keys.bind(0x38, true, function() {
@@ -1146,6 +1196,14 @@ mp.keys.bind(0x12, true, function() {
         return;
     if (!methods.isBlockKeys())
         mp.events.callRemote('onKeyPress:LAlt');
+});
+
+//L
+mp.keys.bind(0x4C, true, function() {
+    if (!user.isLogin())
+        return;
+    if (!methods.isBlockKeys())
+        mp.events.callRemote('onKeyPress:L');
 });
 
 //E
@@ -1209,15 +1267,16 @@ mp.events.add('render', () => {
         let localPlayer = mp.players.local;
         let __localPlayerPosition__ = mp.players.local.position;
 
-        methods.getStreamPlayerList().forEach(player => {
-            if (player === localPlayer || !mp.players.exists(player)) {
+        methods.getStreamPlayerList().forEach((player, i) => {
+            if (/*player === localPlayer || */!mp.players.exists(player) || i > 50) {
                 return false;
             }
 
+            const loadIndicatorDistTemp = (i > 25) ? 5 : loadIndicatorDist;
             const __playerPosition__ = player.position;
             const distance = methods.distanceToPos(__localPlayerPosition__, __playerPosition__);
 
-            if (distance <= loadIndicatorDist && player.dimension == localPlayer.dimension) {
+            if (distance <= loadIndicatorDistTemp && player.dimension == localPlayer.dimension) {
                 const isConnected = voice.getVoiceInfo(player, 'stateConnection') === 'connected';
                 const isEnable = voice.getVoiceInfo(player, 'enabled');
                 let indicatorColor = '~r~•';
@@ -1230,8 +1289,6 @@ mp.events.add('render', () => {
                 let typingLabel = '';
                 if (player.getVariable('enableAdmin'))
                     typingLabel += '\n~r~ADMIN MOD';
-                if (player.getVariable('hiddenId'))
-                    typingLabel += '\n~m~HIDDEN ID';
                 if (player.getVariable('isTyping'))
                     typingLabel += '\n~b~Печатает...';
                 if (player.getVariable('isAfk'))
@@ -1240,10 +1297,8 @@ mp.events.add('render', () => {
                 //let name = '';
                 //if (user.hasDating(player.getVariable('id')))
                 //    name = user.getDating(player.getVariable('id')) + ' | ';
-                if(localPlayer.getVariable('enableAdmin') || !player.getVariable('hiddenId'))
-                {
+                if(player.getVariable('enableAdmin') && !player.getVariable('hiddenId'))
                     ui.drawText3D(player.id + ' ' +  indicatorColor + typingLabel, headPosition.x, headPosition.y, headPosition.z + 0.1);
-                }
             }
         });
     }
@@ -1467,6 +1522,8 @@ mp.events.add('render', () => {
     mp.game.controls.disableControlAction(0, 165, true);
     mp.game.controls.disableControlAction(0, 261, true);
     mp.game.controls.disableControlAction(0, 262, true);
+    mp.game.controls.disableControlAction(0, 99, true);
+    mp.game.controls.disableControlAction(0, 100, true);
 
     if (!user.isLogin() && !mp.gui.cursor.visible)
         mp.gui.cursor.show(true, true);
@@ -1565,7 +1622,6 @@ mp.events.add('render', () => {
     //    mp.game.ui.hideHudComponentThisFrame(14);
 });
 
-let maxSpeed = 500;
 mp.events.add('render', () => {
     let vehicle = mp.players.local.vehicle;
     if (vehicle && mp.players.local.isInAnyVehicle(false)) {

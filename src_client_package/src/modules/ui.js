@@ -142,6 +142,7 @@ ui.drawText3D = function(caption, x, y, z) {
         return false;
 
     z = z + 0.5;
+
     mp.game.graphics.setDrawOrigin(x, y, z, 0);
     //let camPos = mp.game.invoke('0x14D6F5678D8F1B37');
     /*let camPos = mp.players.local.position;
@@ -168,6 +169,48 @@ ui.drawText3D = function(caption, x, y, z) {
     mp.game.ui.addTextComponentSubstringPlayerName(caption);
     mp.game.ui.drawText(0, 0);
     mp.game.invoke('0xFF0B610F6BE0D7AF');
+};
+
+ui.drawText3DEntity = function(entity, caption, x, y, z) {
+
+    if (!mp.game.ui.isHudComponentActive(0))
+        return false;
+
+    z = z + 0.5;
+
+    try {
+        let vector = (entity.isInAnyVehicle(false)) ? entity.vehicle.getVelocity() : entity.getVelocity();
+        let frameTime = mp.game.invoke('0x15C40837039FFAF7'); //GET_FRAME_TIME
+        mp.game.graphics.setDrawOrigin(x + (vector.x * frameTime), y + (vector.y * frameTime), z + (vector.z * frameTime), 0);
+
+        //let camPos = mp.game.invoke('0x14D6F5678D8F1B37');
+        /*let camPos = mp.players.local.position;
+        let dist = methods.distanceToPos(camPos, new mp.Vector3(x, y, z));
+        let scale = 1 / dist * 2;
+        let fov = 1 / mp.game.invoke('0x65019750A0324133') * 100;
+        scale = fov * scale;
+        if (scale < 0.5)
+            scale = 0.5;
+        if (scale > 0.8)
+            scale = 0.8;*/
+        //scale = 1 - scale;
+        let scale = 0.5;
+
+        mp.game.ui.setTextFont(0);
+        mp.game.ui.setTextScale(0.1 * scale, 0.55 * scale);
+        mp.game.ui.setTextColour(255, 255, 255, 255);
+        mp.game.ui.setTextProportional(true);
+        mp.game.ui.setTextDropshadow(0, 0, 0, 0, 255);
+        mp.game.ui.setTextEdge(2, 0, 0, 0, 150);
+        mp.game.invoke('0x2513DFB0FB8400FE');
+        mp.game.ui.setTextEntry('STRING');
+        mp.game.ui.setTextCentre(true);
+        mp.game.ui.addTextComponentSubstringPlayerName(caption);
+        mp.game.ui.drawText(0, 0);
+        mp.game.invoke('0xFF0B610F6BE0D7AF');
+    }
+    catch (e) {
+    }
 };
 
 

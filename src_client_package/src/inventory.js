@@ -77,8 +77,26 @@ inventory.updateItemParams = function(id, params) {
 inventory.openInventoryByEntity = function(entity) {
 
     if (entity.getType() == 2) {
-        inventory.getItemList(inventory.types.Vehicle, entity.getVariable('invId'));
-        vehicles.setTrunkStateById(entity.remoteId, true);
+
+        try {
+            if (entity.isDead()) {
+                mp.game.ui.notifications.show("~r~Транспорт уничтожен");
+            } else if (entity.getDoorLockStatus() !== 1) {
+                mp.game.ui.notifications.show("~r~Транспорт закрыт");
+            } else if (mp.players.local.isInAnyVehicle(false)) {
+                mp.game.ui.notifications.show("~g~Вы должны находиться около багажника");
+            } else if (methods.getVehicleInfo(entity.model).stock == 0) {
+                mp.game.ui.notifications.show("~r~Багажник отсутсвует у этого ТС");
+            }
+            else {
+                inventory.getItemList(inventory.types.Vehicle, entity.getVariable('invId'));
+                vehicles.setTrunkStateById(entity.remoteId, true);
+            }
+        }
+        catch (e) {
+            methods.debug(e);
+            mp.game.ui.notifications.show("~r~Произошла неизвестная ошибка #9998");
+        }
     }
     else if (entity.getType() == 3) {
         inventory.takeItem(entity.getVariable('isDrop'), entity.getVariable('itemId'));

@@ -1,10 +1,14 @@
 "use strict";
 
 const crypto = require('crypto');
+
 let Container = require('./data');
+
 let enums = require('../enums');
 let user = require('../user');
 let coffer = require('../coffer');
+
+let vehicles = require('../property/vehicles');
 
 let checkPointStaticList = [];
 

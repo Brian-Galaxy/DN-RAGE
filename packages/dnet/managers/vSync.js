@@ -278,8 +278,8 @@ mp.events.add("playerEnterVehicle", function (player, vehicle) {
 
 mp.events.add("playerExitVehicle", function (player, vehicle) {
     //setTimeout(function () {
-    if (vehicles.exists(vehicle))
-        vSync.setEngineState(vehicle, vSync.getEngineState(vehicle));
+    //if (vehicles.exists(vehicle))
+    //    vSync.setEngineState(vehicle, vSync.getEngineState(vehicle));
     //}, 1000);
 });
 

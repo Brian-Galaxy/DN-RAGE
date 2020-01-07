@@ -1086,20 +1086,20 @@ user.getBankMoney = function(player) {
 };
 
 user.addPayDayMoney = function(player, money) {
-    user.setPayDayMoney(player, user.getPayDayMoney(player) + methods.parseInt(money));
+    user.setPayDayMoney(player, user.getPayDayMoney(player) + methods.parseFloat(money));
 };
 
 user.removePayDayMoney = function(player, money) {
-    user.setPayDayMoney(player, user.getPayDayMoney(player) - methods.parseInt(money));
+    user.setPayDayMoney(player, user.getPayDayMoney(player) - methods.parseFloat(money));
 };
 
 user.setPayDayMoney = function(player, money) {
-    user.set(player, 'money_payday', methods.parseInt(money));
+    user.set(player, 'money_payday', methods.parseFloat(money));
 };
 
 user.getPayDayMoney = function(player) {
     if (user.has(player, 'money_payday'))
-        return methods.parseInt(user.get(player, 'money_payday'));
+        return methods.parseFloat(user.get(player, 'money_payday'));
     return 0;
 };
 

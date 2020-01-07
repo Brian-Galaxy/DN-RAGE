@@ -1419,12 +1419,12 @@ menuList.showVehicleDoMenu = function() {
     try {
         let menu = UIMenu.Menu.Create(`Транспорт`, `~b~Нажмите Enter чтобы применить`);
 
-        let listEn = ["Выкл", "Вкл"];
-        let listOp = ["Закрыт", "Открыт"];
+        let listEn = ["~r~Выкл", "~g~Вкл"];
+        let listOp = ["~r~Закрыт~r~", "~g~Открыт~g~"];
 
         let actualData = mp.players.local.vehicle.getVariable('vehicleSyncData');
 
-        let listItem = UIMenu.Menu.AddMenuItemList("Аварийка", listEn, "Поворотники включаются на [ и ]");
+        let listItem = UIMenu.Menu.AddMenuItemList("Аварийка", listEn, "Поворотники включаются на ~b~[~s~ и ~b~]");
         listItem.doName = 'twoIndicator';
         listItem.Index = actualData.IndicatorRightToggle === true && actualData.IndicatorLeftToggle === true ? 1 : 0;
 
@@ -1451,11 +1451,6 @@ menuList.showVehicleDoMenu = function() {
         let listIndex = 0;
         menu.ListChange.on((item, index) => {
             listIndex = index;
-        });
-
-        menu.ItemSelect.on((item, index) => {
-            if (item == closeItem)
-                UIMenu.Menu.HideMenu();
 
             if (item.doName == 'light') {
                 vehicles.setInteriorLightState(listIndex == 1);
@@ -1474,6 +1469,11 @@ menuList.showVehicleDoMenu = function() {
                 vehicles.setIndicatorRightState(listIndex == 1);
             }
         });
+
+        menu.ItemSelect.on((item, index) => {
+            if (item == closeItem)
+                UIMenu.Menu.HideMenu();
+        });
     }
     catch (e) {
         methods.debug(e);
@@ -1485,6 +1485,7 @@ menuList.showVehicleStatsMenu = function() {
     let vInfo = methods.getVehicleInfo(mp.players.local.vehicle.model);
     let menu = UIMenu.Menu.Create(`Транспорт`, `~b~Характеристики транспорта`);
 
+    UIMenu.Menu.AddMenuItem("~b~Номер: ~s~").SetRightLabel(`${mp.players.local.vehicle.getNumberPlateText()}`);
     UIMenu.Menu.AddMenuItem("~b~Класс: ~s~").SetRightLabel(`${vInfo.class_name}`);
     UIMenu.Menu.AddMenuItem("~b~Модель: ~s~").SetRightLabel(`${vInfo.display_name}`);
     if (vInfo.fuel_min > 0) {

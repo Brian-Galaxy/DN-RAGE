@@ -1801,6 +1801,297 @@ menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId) {
     }
 };
 
+menuList.showLscMenu = function(shopId, price = 1)
+{
+    let veh = mp.players.local.vehicle;
+    if (!veh) {
+        mp.game.ui.notifications.show(`~r~Необходимо находиться в транспорте`);
+        return;
+    }
+
+    //TODO BLACKOUT
+
+    let lscBanner1 = 'shopui_title_ie_modgarage';
+    let lscBanner2 = 'shopui_title_ie_modgarage';
+
+    switch (shopId) {
+        case 14:
+        case 54:
+        case 55:
+        case 57:
+            lscBanner1 = 'shopui_title_carmod';
+            lscBanner2 = 'shopui_title_carmod';
+            break;
+        case 71:
+            lscBanner1 = 'shopui_title_carmod2';
+            lscBanner2 = 'shopui_title_carmod2';
+            break;
+        case 56:
+            lscBanner1 = 'shopui_title_supermod';
+            lscBanner2 = 'shopui_title_supermod';
+            break;
+    }
+
+    let menu = UIMenu.Menu.Create(" ", "~b~Автомастерская", false, false, false, lscBanner1, lscBanner2);
+
+    let itemPrice = 400 * price;
+    let menuItem = UIMenu.Menu.AddMenuItem("Ремонт", `Цена: ~g~$${methods.numberFormat(itemPrice)}`);
+    menuItem.price = itemPrice;
+    menuItem.doName = 'repair';
+
+    menuItem = UIMenu.Menu.AddMenuItem("Тюнинг");
+    menuItem.doName = 'setTunning';
+
+    menuItem = UIMenu.Menu.AddMenuItem("Установка модулей");
+    menuItem.doName = 'setSTunning';
+
+    itemPrice = 40000;
+    menuItem = UIMenu.Menu.AddMenuItem("Сменить номер", `Цена: ~g~$${methods.numberFormat(itemPrice)}\n~s~Менее 4 символов от ~g~$100.000`);
+    menuItem.price = itemPrice;
+    menuItem.doName = 'setNumber';
+
+    /*itemPrice = 150000;
+    menuItem = UIMenu.Menu.AddMenuItem("Неон", `Цена: ~g~$${methods.numberFormat(itemPrice)}`);
+    menuItem.price = itemPrice;
+    menuItem.doName = 'setNeon';*/
+
+    menuItem = UIMenu.Menu.AddMenuItem("Цвет");
+    menuItem.doName = 'setColor';
+
+    menuItem = UIMenu.Menu.AddMenuItem("~y~Сбыт угнанного ТС");
+    menuItem.doName = 'sellCar';
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = "closeButton";
+    menu.ItemSelect.on((item, index) => {
+        UIMenu.Menu.HideMenu();
+        try {
+            if (item.doName == 'setTunning')
+                menuList.showLscTunningMenu(shopId, price, lscBanner1);
+            if (item.doName == 'setSTunning')
+                menuList.showLscSTunningMenu(shopId, price, lscBanner1);
+            if (item.doName == 'setColor')
+                menuList.showLscColorMenu(shopId, price, lscBanner1);
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    });
+};
+
+menuList.showLscColorMenu = function(shopId, price, lscBanner1) {
+
+    let veh = mp.players.local.vehicle;
+
+    if (!veh) {
+        mp.game.ui.notifications.show(`~r~Необходимо находиться в личном транспорте`);
+        return;
+    }
+
+    let menu = UIMenu.Menu.Create(` `, `~b~Выбор цвета`, false, false, false, lscBanner1, lscBanner1);
+
+    let list = [];
+    for (let i = 0; i < 156; i++)
+        list.push(i + '');
+    let color1Item = UIMenu.Menu.AddMenuItemList("Цвет-1", list, 'Цена: ~g~$' + (5000 * price));
+
+    list = [];
+    for (let i = 0; i < 156; i++)
+        list.push(i + '');
+    let color2Item = UIMenu.Menu.AddMenuItemList("Цвет-2", list, 'Цена: ~g~$' + (3000 * price));
+
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+
+    let currentListChangeItem = null;
+    let currentListChangeItemIndex = null;
+
+    menu.ListChange.on((item, index) => {
+        currentListChangeItem = item;
+        currentListChangeItemIndex = index;
+
+        if (item == color1Item)
+            mp.events.callRemote('server:lsc:showColor1', index);
+        if (item == color2Item)
+            mp.events.callRemote('server:lsc:showColor2', index);
+    });
+    menu.ItemSelect.on(item => {
+        UIMenu.Menu.HideMenu();
+        if (item == color1Item)
+            mp.events.callRemote('server:lsc:buyColor1', currentListChangeItemIndex, 5000 * price, shopId);
+        else if (item == color2Item)
+            mp.events.callRemote('server:lsc:buyColor2', currentListChangeItemIndex, 3000 * price, shopId);
+    });
+};
+
+menuList.showLscSTunningMenu = function(shopId, price, lscBanner1) {
+
+    let veh = mp.players.local.vehicle;
+
+    if (!veh) {
+        mp.game.ui.notifications.show(`~r~Необходимо находиться в личном транспорте`);
+        return;
+    }
+
+    let vehInfo = methods.getVehicleInfo(veh.model);
+
+    let menu = UIMenu.Menu.Create(` `, `~b~Установка модулей`, false, false, false, lscBanner1, lscBanner1);
+
+    let itemPrice = 150000;
+    let menuItem = UIMenu.Menu.AddMenuItem("Неон", `Цена: ~g~$${methods.numberFormat(itemPrice)}`);
+    menuItem.price = itemPrice;
+    menuItem.doName = 'setNeon';
+
+    itemPrice = 50000;
+    menuItem = UIMenu.Menu.AddMenuItem("Дистанционное управление", `Цена: ~g~$${methods.numberFormat(itemPrice)}`);
+    menuItem.price = itemPrice;
+    menuItem.doName = 'setSpecial';
+
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+    menu.ItemSelect.on(item => {
+        UIMenu.Menu.HideMenu();
+        if (closeItem == item)
+            return;
+    });
+};
+
+menuList.showLscTunningMenu = function(shopId, price, lscBanner1) {
+
+    let veh = mp.players.local.vehicle;
+
+    if (!veh) {
+        mp.game.ui.notifications.show(`~r~Необходимо находиться в личном транспорте`);
+        return;
+    }
+
+    let vehInfo = methods.getVehicleInfo(veh.model);
+
+    let menu = UIMenu.Menu.Create(` `, `~b~${vehInfo.display_name}`, false, false, false, lscBanner1, lscBanner1);
+
+    for (let i = 0; i < 100; i++) {
+        try {
+            if (veh.getNumMods(i) == 0) continue;
+            if (veh.getNumMods(i) > 0 && enums.lscNames[i][1] > 0) {
+                let label = mp.game.ui.getLabelText(veh.getModSlotName(i));
+                if (label == "NULL" || label == "")
+                    label = `${enums.lscNames[i][0]}`;
+                UIMenu.Menu.AddMenuItem(`${label}`,`Нажмите ~g~Enter~s~, чтобы посмотреть`).modType = i;
+            }
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    }
+
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+    menu.ItemSelect.on(item => {
+        UIMenu.Menu.HideMenu();
+        if (closeItem == item)
+            return;
+        menuList.showLscTunningListMenu(methods.parseInt(item.modType), shopId, price, lscBanner1);
+    });
+};
+
+menuList.showLscTunningListMenu = function(modType, shopId, price, lscBanner1) {
+
+    modType = methods.parseInt(modType);
+
+    try {
+
+        let veh = mp.players.local.vehicle;
+
+        if (!veh) {
+            mp.game.ui.notifications.show(`~r~Необходимо находиться в личном транспорте`);
+            return;
+        }
+
+        price = 1.1;
+        let list = [];
+        let vehInfo = methods.getVehicleInfo(veh.model);
+
+        if (veh.getVariable('price') >= 8000 && veh.getVariable('price') < 15000)
+            price = 1.2;
+        else if (veh.getVariable('price') >= 15000 && veh.getVariable('price') < 30000)
+            price = 1.4;
+        else if (veh.getVariable('price') >= 30000 && veh.getVariable('price') < 45000)
+            price = 1.6;
+        else if (veh.getVariable('price') >= 45000 && veh.getVariable('price') < 60000)
+            price = 1.8;
+        else if (veh.getVariable('price') >= 60000 && veh.getVariable('price') < 75000)
+            price = 2;
+        else if (veh.getVariable('price') >= 90000 && veh.getVariable('price') < 105000)
+            price = 2.2;
+        else if (veh.getVariable('price') >= 105000 && veh.getVariable('price') < 120000)
+            price = 2.4;
+        else if (veh.getVariable('price') >= 120000 && veh.getVariable('price') < 135000)
+            price = 2.6;
+        else if (veh.getVariable('price') >= 135000 && veh.getVariable('price') < 150000)
+            price = 2.8;
+        else if (veh.getVariable('price') >= 150000 && veh.getVariable('price') < 200000)
+            price = 3;
+        else if (veh.getVariable('price') >= 200000 && veh.getVariable('price') < 240000)
+            price = 3.3;
+        else if (veh.getVariable('price') >= 240000 && veh.getVariable('price') < 280000)
+            price = 3.6;
+        else if (veh.getVariable('price') >= 280000 && veh.getVariable('price') < 320000)
+            price = 4;
+        else if (veh.getVariable('price') >= 320000 && veh.getVariable('price') < 380000)
+            price = 4.4;
+        else if (veh.getVariable('price') >= 380000 && veh.getVariable('price') < 500000)
+            price = 5;
+        else if (veh.getVariable('price') >= 500000 && veh.getVariable('price') < 600000)
+            price = 5.5;
+        else if (veh.getVariable('price') >= 600000 && veh.getVariable('price') < 700000)
+            price = 6;
+        else if (veh.getVariable('price') >= 700000 && veh.getVariable('price') < 800000)
+            price = 6.5;
+        else if (veh.getVariable('price') >= 800000)
+            price = 7;
+
+        let menu = UIMenu.Menu.Create(` `, `~b~${enums.lscNames[modType][0]}`, false, false, false, lscBanner1, lscBanner1);
+
+        veh.setMod(modType, 0);
+
+        for (let i = 0; i < veh.getNumMods(modType); i++) {
+            try {
+                let itemPrice = enums.lscNames[modType][1] * (i / 20 + price);
+                let label = mp.game.ui.getLabelText(veh.getModTextLabel(modType, i));
+                if (label == "NULL")
+                    label = `${enums.lscNames[modType][0]} #${(i + 1)}`;
+                let listItem = UIMenu.Menu.AddMenuItem(`${label}`,`Цена: ~g~${methods.moneyFormat(itemPrice)}`);
+                listItem.modType = i;
+                listItem.price = itemPrice;
+                list.push(listItem);
+            }
+            catch (e) {
+                methods.debug(e);
+            }
+        }
+
+        let removePrice = (enums.lscNames[modType][1] * price) / 2;
+        let removeItem = UIMenu.Menu.AddMenuItem("~y~Снять деталь", `Цена: ~g~${methods.moneyFormat(removePrice)}`);
+        let backItem = UIMenu.Menu.AddMenuItem("~g~Назад");
+        let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+
+        menu.IndexChange.on((index) => {
+            if (index == list.length) {
+                veh.removeMod(modType);
+                return;
+            }
+            if (index >= list.length)
+                return;
+            veh.setMod(modType, list[index].modType);
+        });
+
+        menu.ItemSelect.on(item => {
+            UIMenu.Menu.HideMenu();
+            if (item == backItem)
+                menuList.showLscTunningMenu(shopId, price, lscBanner1);
+        });
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+};
+
 menuList.showAdminMenu = function() {
     let menu = UIMenu.Menu.Create(`ADMIN`, `~b~Админ меню`);
 
@@ -2029,130 +2320,6 @@ menuList.showAdminDebugMenu = function() {
     menu.ItemSelect.on(item => {
         UIMenu.Menu.HideMenu();
     });
-};
-
-menuList.showAdminDebug2Menu = function() {
-
-    let veh = mp.players.local.vehicle;
-    let vehInfo = methods.getVehicleInfo(veh.model);
-
-    let menu = UIMenu.Menu.Create(`${vehInfo.display_name}`, `~b~Тюнинг`);
-
-    for (let i = 0; i < 100; i++) {
-        try {
-            if (veh.getNumMods(i) == 0) continue;
-            if (veh.getNumMods(i) > 0 && enums.lscNames[i][1] > 0) {
-                let label = mp.game.ui.getLabelText(veh.getModSlotName(i));
-                if (label == "NULL")
-                    label = `${enums.lscNames[i][0]}`;
-                UIMenu.Menu.AddMenuItem(`${label}`,`Нажмите ~g~Enter~s~, чтобы посмотреть`).modType = i;
-            }
-        }
-        catch (e) {
-            methods.debug(e);
-        }
-    }
-
-    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
-    menu.ItemSelect.on(item => {
-        UIMenu.Menu.HideMenu();
-        if (closeItem == item)
-            return;
-        menuList.showAdminDebug3Menu(methods.parseInt(item.modType));
-    });
-};
-
-menuList.showAdminDebug3Menu = function(modType) {
-
-    modType = methods.parseInt(modType);
-
-    try {
-
-        let veh = mp.players.local.vehicle;
-        let price = 1.1;
-        let list = [];
-        let vehInfo = methods.getVehicleInfo(veh.model);
-
-        if (veh.getVariable('price') >= 8000 && veh.getVariable('price') < 15000)
-            price = 1.2;
-        else if (veh.getVariable('price') >= 15000 && veh.getVariable('price') < 30000)
-            price = 1.4;
-        else if (veh.getVariable('price') >= 30000 && veh.getVariable('price') < 45000)
-            price = 1.6;
-        else if (veh.getVariable('price') >= 45000 && veh.getVariable('price') < 60000)
-            price = 1.8;
-        else if (veh.getVariable('price') >= 60000 && veh.getVariable('price') < 75000)
-            price = 2;
-        else if (veh.getVariable('price') >= 90000 && veh.getVariable('price') < 105000)
-            price = 2.2;
-        else if (veh.getVariable('price') >= 105000 && veh.getVariable('price') < 120000)
-            price = 2.4;
-        else if (veh.getVariable('price') >= 120000 && veh.getVariable('price') < 135000)
-            price = 2.6;
-        else if (veh.getVariable('price') >= 135000 && veh.getVariable('price') < 150000)
-            price = 2.8;
-        else if (veh.getVariable('price') >= 150000 && veh.getVariable('price') < 200000)
-            price = 3;
-        else if (veh.getVariable('price') >= 200000 && veh.getVariable('price') < 240000)
-            price = 3.3;
-        else if (veh.getVariable('price') >= 240000 && veh.getVariable('price') < 280000)
-            price = 3.6;
-        else if (veh.getVariable('price') >= 280000 && veh.getVariable('price') < 320000)
-            price = 4;
-        else if (veh.getVariable('price') >= 320000 && veh.getVariable('price') < 380000)
-            price = 4.4;
-        else if (veh.getVariable('price') >= 380000 && veh.getVariable('price') < 500000)
-            price = 5;
-        else if (veh.getVariable('price') >= 500000 && veh.getVariable('price') < 600000)
-            price = 5.5;
-        else if (veh.getVariable('price') >= 600000 && veh.getVariable('price') < 700000)
-            price = 6;
-        else if (veh.getVariable('price') >= 700000 && veh.getVariable('price') < 800000)
-            price = 6.5;
-        else if (veh.getVariable('price') >= 800000)
-            price = 7;
-
-        let menu = UIMenu.Menu.Create(`${vehInfo.display_name}`, `~b~${enums.lscNames[modType][0]}`);
-
-        veh.setMod(modType, 0);
-
-        for (let i = 0; i < veh.getNumMods(modType); i++) {
-            try {
-                let itemPrice = enums.lscNames[modType][1] * (i / 20 + price);
-                let label = mp.game.ui.getLabelText(veh.getModTextLabel(modType, i));
-                if (label == "NULL")
-                    label = `${enums.lscNames[modType][0]} #${(i + 1)}`;
-                let listItem = UIMenu.Menu.AddMenuItem(`${label}`,`Цена: ~g~${methods.moneyFormat(itemPrice)}`);
-                listItem.modType = i;
-                listItem.price = itemPrice;
-                list.push(listItem);
-            }
-            catch (e) {
-                methods.debug(e);
-            }
-        }
-
-        let removePrice = (enums.lscNames[modType][1] * price) / 2;
-        let removeItem = UIMenu.Menu.AddMenuItem("~y~Снять деталь", `Цена: ~g~${methods.moneyFormat(removePrice)}`);
-        let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
-
-        menu.IndexChange.on((index) => {
-            if (index == list.length) {
-                veh.removeMod(modType);
-                return;
-            }
-            if (index >= list.length)
-                return;
-            veh.setMod(modType, list[index].modType);
-        });
-
-        menu.ItemSelect.on(item => {
-            UIMenu.Menu.HideMenu();
-        });
-    }
-    catch (e) {
-        methods.debug(e);
-    }
 };
 
 menuList.showAdminClothMenu = function() {

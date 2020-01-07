@@ -1,5 +1,6 @@
 let methods = require('../modules/methods');
 let mysql = require('../modules/mysql');
+let Container = require('../modules/data');
 
 let user = require('../user');
 
@@ -22,7 +23,9 @@ lsc.loadAll = function() {
 
     lsc.carPos.forEach(function (item) {
         let shopPos = new mp.Vector3(item[0], item[1], item[2]);
-        methods.createStaticCheckpoint(shopPos.x, shopPos.y, shopPos.z, "~b~Место тюнинга ТС", 4, -1, [33, 150, 243, 100], 0.3);
+        let cId = methods.createStaticCheckpoint(shopPos.x, shopPos.y, shopPos.z, "~b~Нажмите ~s~L.ALT~b~ чтобы открыть меню тюнинга", 4, -1, [33, 150, 243, 100], 0.3);
+
+        Container.Data.Set(999999, 'resetTunning' + cId, true);
     });
 };
 
@@ -42,10 +45,10 @@ lsc.checkPosForOpenMenu = function(player) {
     try {
         let playerPos = player.position;
         let shopId = -1;
-        lsc.list.forEach(function (item) {
+        lsc.carPos.forEach(function (item, i) {
             let shopPos = new mp.Vector3(item[0], item[1], item[2]);
             if (methods.distanceToPos(playerPos, shopPos) < 2) {
-                shopId = methods.parseInt(item[3]);
+                shopId = methods.parseInt(lsc.list[i][3]);
 
                 try {
                     player.call('client:menuList:showLscMenu', [shopId, business.getPrice(shopId)]);

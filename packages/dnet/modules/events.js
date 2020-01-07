@@ -898,6 +898,14 @@ mp.events.add("client:enterStaticCheckpoint", (player, checkpointId) => {
         player.notify(Container.Data.Get(999999, 'checkpointStaticLabel' + checkpointId).toString());
 });
 
+mp.events.add("client:exitStaticCheckpoint", (player, checkpointId) => {
+    if (!user.isLogin(player))
+        return;
+    if (Container.Data.Has(999999, 'resetTunning' + checkpointId)) {
+        //todo
+    }
+});
+
 mp.events.addRemoteCounted('server:fixCheckpointList', (player) => {
     methods.updateCheckpointList(player);
     player.call('client:updateItemList', [JSON.stringify(weapons.hashesMap), JSON.stringify(weapons.components), JSON.stringify(items.itemList)]);

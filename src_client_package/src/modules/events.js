@@ -543,6 +543,11 @@ mp.events.add('client:menuList:showShopMaskMenu', (shopId) => {
     //menuList.showShopMaskMenu(shopId);
 });
 
+mp.events.add('client:menuList:showLscMenu', (shopId, price) => {
+    methods.debug('Event: client:menuList:showLscMenu');
+    menuList.showLscMenu(shopId, price);
+});
+
 mp.events.add('client:showToPlayerItemListMenu', (data, ownerType, ownerId) => {
     methods.debug('Event: client:showToPlayerItemListMenu');
     menuList.showToPlayerItemListMenu(data, ownerType, ownerId).then();

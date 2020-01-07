@@ -14,6 +14,7 @@ let vehicleInfo = require('./modules/vehicleInfo');
 
 let cloth = require('./business/cloth');
 let tattoo = require('./business/tattoo');
+let lsc = require('./business/lsc');
 
 let houses = require('./property/houses');
 let condos = require('./property/condos');
@@ -45,6 +46,7 @@ function init() {
 
         cloth.loadAll();
         tattoo.loadAll();
+        lsc.loadAll();
 
         pickups.createPickups();
 

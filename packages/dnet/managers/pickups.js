@@ -215,6 +215,8 @@ pickups.checkPressLAlt = function(player) {
         return;
     let playerPos = player.position;
 
+    lsc.checkPosForOpenMenu(player);
+
     if (methods.distanceToPos(business.BusinessStreetPos, playerPos) < distanceCheck ||
         methods.distanceToPos(business.BusinessMotorPos, playerPos) < distanceCheck ||
         methods.distanceToPos(business.BusinessRoofPos, playerPos) < distanceCheck ||
@@ -300,7 +302,6 @@ pickups.checkPressE = function(player) {
 
     cloth.checkPosForOpenMenu(player);
     tattoo.checkPosForOpenMenu(player);
-    lsc.checkPosForOpenMenu(player);
 
     if (methods.distanceToPos(pickups.LifeInvaderShopPos, playerPos) < distanceCheck)
         player.call('client:menuList:showInvaderShopMenu');

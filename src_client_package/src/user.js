@@ -87,7 +87,7 @@ user.timer1sec = function() {
 
     for (let n = 54; n < 138; n++)
     {
-        weapons.hashesMap.forEach(item => {
+        weapons.getMapList().forEach(item => {
             if (item[0] !== items.getItemNameHashById(n)) return;
             let hash = item[1] / 2;
             if (!mp.game.invoke(methods.HAS_PED_GOT_WEAPON, mp.players.local.handle, hash, false)) return;
@@ -174,7 +174,7 @@ user.pointingAtRadius = function(distance, radius = 0.2) {
 user.removeAllWeapons = function() {
     mp.players.local.removeAllWeapons();
 
-    weapons.hashesMap.forEach(item => {
+    weapons.getMapList().forEach(item => {
         let hash = item[1] / 2;
         if (Container.Data.HasLocally(0, hash.toString())) {
             Container.Data.ResetLocally(0, hash.toString());

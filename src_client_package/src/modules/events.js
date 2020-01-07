@@ -442,6 +442,19 @@ mp.events.add('client:updateCheckpointList', (data) => {
     checkpoint.updateCheckpointList(data);
 });
 
+mp.events.add('client:updateItemList', (weaponList, componentList, itemList) => {
+    methods.debug('Event: client:updateItemList');
+
+    try {
+        items.updateItems(JSON.parse(itemList));
+        weapons.setComponentList(JSON.parse(componentList));
+        weapons.setMapList(JSON.parse(weaponList));
+    }
+    catch (e) {
+        methods.debug('client:updateItemList', e);
+    }
+});
+
 mp.events.add('client:showHouseOutMenu', (item) => {
     try {
         methods.debug('Event: client:menuList:showHouseOutMenu');
@@ -1181,7 +1194,7 @@ mp.events.add('render', () => {
         let __localPlayerPosition__ = mp.players.local.position;
 
         methods.getStreamPlayerList().forEach(player => {
-            if (/*player === localPlayer || */!mp.players.exists(player)) {
+            if (player === localPlayer || !mp.players.exists(player)) {
                 return false;
             }
 
@@ -1286,7 +1299,7 @@ mp.events.add("playerCommand", async (command) => {
         methods.debug(user.getCache(args[1]));
     }
     else if (command.toLowerCase().slice(0, 3) === "gwa") {
-        weapons.hashesMap.forEach(item => {
+        weapons.getMapList().forEach(item => {
             user.giveWeaponByHash(item[1] / 2, 1000);
         });
     }

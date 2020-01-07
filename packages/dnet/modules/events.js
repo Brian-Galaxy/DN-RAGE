@@ -4,6 +4,8 @@ let user = require('../user');
 let enums = require('../enums');
 let coffer = require('../coffer');
 let inventory = require('../inventory');
+let weapons = require('../weapons');
+let items = require('../items');
 
 let Container = require('./data');
 let methods = require('./methods');
@@ -840,6 +842,7 @@ mp.events.add("client:enterStaticCheckpoint", (player, checkpointId) => {
 
 mp.events.addRemoteCounted('server:fixCheckpointList', (player) => {
     methods.updateCheckpointList(player);
+    player.call('client:updateItemList', [JSON.stringify(weapons.hashesMap), JSON.stringify(weapons.components), JSON.stringify(items.itemList)]);
 });
 
 mp.events.addRemoteCounted('server:user:fixNearestVehicle', (player) => {

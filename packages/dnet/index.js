@@ -25,10 +25,15 @@ let pickups = require('./managers/pickups');
 
 let coffer = require('./coffer');
 let inventory = require('./inventory');
+let weapons = require('./weapons');
 
 function init() {
     try {
         methods.debug('INIT GAMEMODE');
+
+        for (let i = 0; i < weapons.hashesMap.length; i++)
+            weapons.hashesMap[i][1] *= 2;
+
         vehicleInfo.loadAll();
 
         houses.loadAll();

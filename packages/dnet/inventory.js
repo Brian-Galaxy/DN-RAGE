@@ -14,7 +14,7 @@ let props = new Map();
 
 inventory.loadAll = function() {
 
-    mysql.executeQuery("DELETE FROM items WHERE owner_type = 0");
+    //mysql.executeQuery("DELETE FROM items WHERE owner_type = 0");
     mysql.executeQuery("DELETE FROM items WHERE owner_type = 9 AND owner_id = 2 AND timestamp_update < '" + (methods.getTimeStamp() - (60 * 60 * 24 * 7)) + "'");
 
     mysql.executeQuery(`SELECT * FROM items WHERE owner_type = 0 ORDER BY id DESC`, function (err, rows, fields) {

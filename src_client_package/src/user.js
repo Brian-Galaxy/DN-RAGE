@@ -121,14 +121,12 @@ user.getTargetEntityValidate = function() {
         if (
             user.targetEntity &&
             user.targetEntity.entity &&
-            user.targetEntity.entity.getType() != 3 &&
-            user.targetEntity.entity.handle != mp.players.local.handle
+            user.targetEntity.entity.getType() != 3
         )
             return user.targetEntity.entity;
         else if (
             user.targetEntity &&
             user.targetEntity.entity &&
-            user.targetEntity.entity.getType() == 3 &&
             user.targetEntity.entity.getVariable('isDrop')
         )
             return user.targetEntity.entity;
@@ -141,17 +139,10 @@ user.getTargetEntityValidate = function() {
 
 user.pointingAt = function(distance) {
     try {
-        const camera = mp.cameras.new("gameplay"); // gets the current gameplay camera
+        const camera = mp.cameras.new("gameplay");
         let position = camera.getCoord();
         let direction = camera.getDirection();
         let farAway = new mp.Vector3((direction.x * distance) + (position.x), (direction.y * distance) + (position.y), (direction.z * distance) + (position.z));
-
-        /*if (!result) {
-            mp.game.graphics.drawLine(position.x, position.y, position.z, farAway.x, farAway.y, farAway.z, 255, 255, 255, 255);
-        } else {
-            mp.game.graphics.drawLine(position.x, position.y, position.z, farAway.x, farAway.y, farAway.z, 255, 0, 0, 255);
-        }*/
-
         return mp.raycasting.testPointToPoint(position, farAway, mp.players.local, (2 | 4 | 8 | 16));
     }
     catch (e) {
@@ -162,12 +153,11 @@ user.pointingAt = function(distance) {
 
 user.pointingAtRadius = function(distance, radius = 0.2) {
     try {
-        const camera = mp.cameras.new("gameplay"); // gets the current gameplay camera
+        const camera = mp.cameras.new("gameplay");
         let position = camera.getCoord();
         let direction = camera.getDirection();
         let farAway = new mp.Vector3((direction.x * distance) + (position.x), (direction.y * distance) + (position.y), (direction.z * distance) + (position.z));
         let result = mp.raycasting.testCapsule(position, farAway, radius, mp.players.local);
-
         if (result.entity.getVariable('isDrop'))
             return result;
     }

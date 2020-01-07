@@ -3,6 +3,7 @@ let enums = require('../enums');
 let user = require('../user');
 let cloth = require('../business/cloth');
 let tattoo = require('../business/tattoo');
+let lsc = require('../business/lsc');
 let business = require('../property/business');
 
 let pickups = exports;
@@ -299,6 +300,7 @@ pickups.checkPressE = function(player) {
 
     cloth.checkPosForOpenMenu(player);
     tattoo.checkPosForOpenMenu(player);
+    lsc.checkPosForOpenMenu(player);
 
     if (methods.distanceToPos(pickups.LifeInvaderShopPos, playerPos) < distanceCheck)
         player.call('client:menuList:showInvaderShopMenu');

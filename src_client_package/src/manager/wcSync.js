@@ -3,7 +3,8 @@ import methods from "../modules/methods";
 const Natives = {
     GIVE_WEAPON_COMPONENT_TO_PED: "0xD966D51AA5B28BB9",
     REMOVE_WEAPON_COMPONENT_FROM_PED: "0x1E8BE90C74FB4C09",
-    SET_CURRENT_PED_WEAPON: "0xADF692B254977C0C"
+    SET_CURRENT_PED_WEAPON: "0xADF692B254977C0C",
+    SET_PED_WEAPON_TINT_INDEX: "0x50969B9B89ED5738"
 };
 
 let wcSync = {};
@@ -69,6 +70,17 @@ mp.events.add("entityStreamIn", (entity) => {
             for (let component of componentsArray) addComponentToPlayer(entity, weaponHash, component);
             mp.game.invoke(Natives.SET_CURRENT_PED_WEAPON, entity.handle, weaponHash, true);
         }
+
+        let data2 = entity.getVariable("currentWeaponTint");
+
+        if (data2) {
+            let [weaponHash, tintIndex] = data2.split("|");
+            weaponHash = parseInt(weaponHash, 36);
+
+            entity.giveWeapon(weaponHash, -1, true);
+            mp.game.invoke(Natives.SET_PED_WEAPON_TINT_INDEX, entity.handle, weaponHash, tintIndex);
+            mp.game.invoke(Natives.SET_CURRENT_PED_WEAPON, entity.handle, weaponHash, tintIndex);
+        }
     }
 });
 
@@ -96,6 +108,15 @@ mp.events.addDataHandler("currentWeaponComponents", (entity, value) => {
         mp.game.invoke(Natives.SET_CURRENT_PED_WEAPON, entity.handle, weaponHash, true);
 
         entity.__weaponComponentData[weaponHash] = new Set(newComponents);
+    }
+});
+
+mp.events.addDataHandler("currentWeaponTint", (entity, value) => {
+    if (entity.type === "player" && entity.handle !== 0) {
+        let [weaponHash, tintIndex] = value.split("|");
+        weaponHash = parseInt(weaponHash, 36);
+
+        mp.game.invoke(Natives.SET_PED_WEAPON_TINT_INDEX, entity.handle, weaponHash >> 0, tintIndex >> 0);
     }
 });
 

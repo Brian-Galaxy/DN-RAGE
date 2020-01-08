@@ -496,6 +496,7 @@ timer.loadAll = function () {
     timer.oneMinTimer();
     timer.twoSecTimer();
     timer.tenSecTimer();
+    timer.ms50Timer();
     timer.secTimer();
 };
 

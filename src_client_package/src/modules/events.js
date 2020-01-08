@@ -1612,7 +1612,7 @@ mp.events.add('render', async () => {
             isShootingActive = true;
             mp.game.cam.shakeGameplayCam("ROAD_VIBRATION_SHAKE", 1);
 
-            /*
+            /*  //TODO
             if (user.getCache('mp0_shooting_ability') < 20)
                 mp.game.cam.shakeGameplayCam("ROAD_VIBRATION_SHAKE", 1);
             else if (user.getCache('mp0_shooting_ability') < 40)

@@ -41,24 +41,24 @@ user.timerRayCast = function() {
     try {
         switch (mp.game.invoke(methods.GET_FOLLOW_PED_CAM_VIEW_MODE)) {
             case 4:
-                user.targetEntity = user.pointingAt(2);
-                if (user.getTargetEntityValidate() === undefined)
-                    user.targetEntity = user.pointingAtRadius(2);
+                user.targetEntity = user.pointingAtRadius(2);
+                //if (user.getTargetEntityValidate() === undefined)
+                //    user.targetEntity = user.pointingAtRadius(2);
                 break;
             case 1:
-                user.targetEntity = user.pointingAt(6.8);
-                if (user.getTargetEntityValidate() === undefined)
-                    user.targetEntity = user.pointingAtRadius(6.8);
+                user.targetEntity = user.pointingAtRadius(6.8);
+                //if (user.getTargetEntityValidate() === undefined)
+                //    user.targetEntity = user.pointingAtRadius(6.8);
                 break;
             case 2:
-                user.targetEntity = user.pointingAt(9);
-                if (user.getTargetEntityValidate() === undefined)
-                    user.targetEntity = user.pointingAtRadius(9);
+                user.targetEntity = user.pointingAtRadius(9);
+                //if (user.getTargetEntityValidate() === undefined)
+                //    user.targetEntity = user.pointingAtRadius(9);
                 break;
             default:
-                user.targetEntity = user.pointingAt(5);
-                if (user.getTargetEntityValidate() === undefined)
-                    user.targetEntity = user.pointingAtRadius(5);
+                user.targetEntity = user.pointingAtRadius(5);
+                //if (user.getTargetEntityValidate() === undefined)
+                //    user.targetEntity = user.pointingAtRadius(5);
                 break;
         }
 
@@ -73,7 +73,7 @@ user.timerRayCast = function() {
 
     }
 
-    setTimeout(user.timerRayCast, 1000);
+    setTimeout(user.timerRayCast, 200);
 };
 
 user.timer1sec = function() {
@@ -150,9 +150,7 @@ user.pointingAtRadius = function(distance, radius = 0.2) {
         let position = camera.getCoord();
         let direction = camera.getDirection();
         let farAway = new mp.Vector3((direction.x * distance) + (position.x), (direction.y * distance) + (position.y), (direction.z * distance) + (position.z));
-        let result = mp.raycasting.testCapsule(position, farAway, radius, mp.players.local);
-        if (result.entity.getVariable('isDrop'))
-            return result;
+        return mp.raycasting.testCapsule(position, farAway, radius, mp.players.local);
     }
     catch (e) {
     }

@@ -86,11 +86,16 @@ vehicles.setHoodStateById = function(id, state) {
 };
 
 vehicles.checkerControl = function() {
-    let veh = mp.players.local.vehicle;
-    if (veh) {
-        let vInfo = methods.getVehicleInfo(veh.model);
-        if (vInfo.class_name == "Helicopters" || vInfo.class_name == "Planes" || vInfo.class_name == "Boats" || vInfo.class_name == "Motorcycles" || vInfo.class_name == "Cycles") return false;
-        return veh.getRotation(0).x > 90 || veh.getRotation(0).x < -90 || veh.getRotation(0).y > 90 || veh.getRotation(0).y < -90 || veh.isInAir();
+    try {
+        let veh = mp.players.local.vehicle;
+        if (veh) {
+            let vInfo = methods.getVehicleInfo(veh.model);
+            if (vInfo.class_name == "Helicopters" || vInfo.class_name == "Planes" || vInfo.class_name == "Boats" || vInfo.class_name == "Motorcycles" || vInfo.class_name == "Cycles") return false;
+            return veh.getRotation(0).x > 90 || veh.getRotation(0).x < -90 || veh.getRotation(0).y > 90 || veh.getRotation(0).y < -90 || veh.isInAir();
+        }
+    }
+    catch (e) {
+        
     }
     return false;
 };

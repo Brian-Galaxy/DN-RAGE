@@ -141,8 +141,5 @@ mp.events.add("playerJoin", (player) => {
 
 mp.events.add("playerWeaponChange", (player, oldWeapon, newWeapon) => {
     player.setVariable("currentWeaponComponents", newWeapon.toString(36) + "." + (player.__weaponComponents.hasOwnProperty(newWeapon) ? serializeComponentSet(player.__weaponComponents[newWeapon]) : ""));
-});
-
-mp.events.add("playerWeaponChange", (player, oldWeapon, newWeapon) => {
     player.setVariable("currentWeaponTint", `${newWeapon.toString(36)}|${player.__weaponTints.hasOwnProperty(newWeapon) ? player.__weaponTints[newWeapon] : 0}`);
 });

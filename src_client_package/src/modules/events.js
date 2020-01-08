@@ -1603,6 +1603,38 @@ mp.events.add('render', () => {
     }*/
 });
 
+let isShootingActive = false;
+mp.events.add('render', async () => {
+
+    try {
+        if (mp.players.local.isShooting() && !isShootingActive) {
+
+            isShootingActive = true;
+            mp.game.cam.shakeGameplayCam("ROAD_VIBRATION_SHAKE", 1);
+
+            /*
+            if (user.getCache('mp0_shooting_ability') < 20)
+                mp.game.cam.shakeGameplayCam("ROAD_VIBRATION_SHAKE", 1);
+            else if (user.getCache('mp0_shooting_ability') < 40)
+                mp.game.cam.shakeGameplayCam("ROAD_VIBRATION_SHAKE", 0.7);
+            else if (user.getCache('mp0_shooting_ability') < 70)
+                mp.game.cam.shakeGameplayCam("ROAD_VIBRATION_SHAKE", 0.5);
+            else
+                mp.game.cam.shakeGameplayCam("ROAD_VIBRATION_SHAKE", 0.2);
+            */
+        }
+        else if (isShootingActive) {
+            await methods.sleep(5000);
+            isShootingActive = false;
+            if (!mp.players.local.isShooting())
+                mp.game.cam.stopGameplayCamShaking(false);
+        }
+    }
+    catch (e) {
+
+    }
+});
+
 /*mp.events.add('render', () => { //Включить свет в больке старой
     let plPos = mp.players.local.position;
     if (mp.game.interior.getInteriorAtCoords(plPos.x, plPos.y, plPos.z) != 0)

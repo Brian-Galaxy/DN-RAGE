@@ -33,18 +33,11 @@ let cam = null;
 * */
 
 mp.events.add('render', () => {
-    try {
-        if (!user.isLogin())
-            return;
-        if (user.getTargetEntityValidate())
-            ui.drawText(`•`, 0.5, 0.5, 0.3, 255, 255, 255, 180, 0, 1, false, true);
-    }
-    catch (e) {
-
-    }
+    if (user.isLogin() && user.getTargetEntityValidate())
+        ui.drawText(`•`, 0.5, 0.5, 0.3, 255, 255, 255, 180, 0, 1, false, true);
 });
 
-user.timer50ms = function() {
+user.timerRayCast = function() {
     try {
         switch (mp.game.invoke(methods.GET_FOLLOW_PED_CAM_VIEW_MODE)) {
             case 4:
@@ -80,7 +73,7 @@ user.timer50ms = function() {
 
     }
 
-    setTimeout(user.timer50ms, 100);
+    setTimeout(user.timerRayCast, 1000);
 };
 
 user.timer1sec = function() {
@@ -315,7 +308,7 @@ user.notify = function (message) {
 user.init = function() {
 
     mp.game.graphics.transitionFromBlurred(false);
-    user.timer50ms();
+    user.timerRayCast();
     user.timer1sec();
     user.stopAllScreenEffect();
     user.hideLoadDisplay();

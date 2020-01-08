@@ -1,9 +1,10 @@
 import './modules/data';
 import './modules/events';
 import './manager/vSync';
+import './manager/wcSync';
+import './manager/shoot';
 import './betternotifs';
 import './voice';
-import './manager/wcSync';
 
 import business from "./property/business";
 

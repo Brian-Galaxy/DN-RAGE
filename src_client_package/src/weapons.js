@@ -185,6 +185,8 @@ weapons.getGunAmmoId = function(name) {
         case 'weapon_assaultrifle':
         case 'weapon_specialcarbine':
         case 'weapon_specialcarbine_mk2':
+        case 'weapon_carbinerifle':
+        case 'weapon_carbinerifle_mk2':
             return 284; //5.56mm
 
         case 'weapon_compactrifle':

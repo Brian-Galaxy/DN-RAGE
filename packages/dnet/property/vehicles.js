@@ -760,14 +760,14 @@ vehicles.setTunning = (veh) => {
                 let vid = veh.getVariable('vid');
                 let car = vehicles.getData(vid);
 
+                veh.neonEnabled = false;
+                veh.windowTint = 0;
+
                 for (let i = 0; i < 80; i++)
                     veh.setMod(i, -1);
 
                 if (!car.has('color1'))
                     return;
-
-                veh.neonEnabled = false;
-                veh.windowTint = 0;
 
                 let numberStyle = 0;
                 if (vid % 3)

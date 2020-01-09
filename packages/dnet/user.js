@@ -344,7 +344,7 @@ user.loadUser = function(player, name, spawn = 'Стандарт') {
 
                 mysql.executeQuery('UPDATE users SET is_online=\'1\' WHERE id = \'' + user.getId(player) + '\'');
 
-                vehicles.loadUserById(userId);
+                vehicles.loadAllUserVehicles(userId);
 
                 if (!user.get(player, 'is_custom'))
                     player.call('client:events:loginUser:finalCreate');

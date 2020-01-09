@@ -2070,10 +2070,31 @@ menuList.showLscSTunningMenu = function(shopId, price, lscBanner1) {
         UIMenu.Menu.HideMenu();
         if (closeItem == item)
             return;
-        if (item.doName == 'setNeon')
+        if (item.doName == 'setNeon') {
+            if (
+                vehInfo.class_name == 'Helicopters' ||
+                vehInfo.class_name == 'Planes' ||
+                vehInfo.class_name == 'Cycles' ||
+                vehInfo.class_name == 'Vans' ||
+                vehInfo.class_name == 'Commercials' ||
+                vehInfo.class_name == 'Industrial' ||
+                vehInfo.class_name == 'Motorcycles' ||
+                vehInfo.class_name == 'Utility' ||
+                vehInfo.class_name == 'Boats'
+            ) {
+                mp.game.ui.notifications.show(`~r~Данный класс транспорта нельзя ставить неон`);
+                return;
+            }
+
             mp.events.callRemote('server:lsc:buyNeon', shopId, methods.parseInt(item.price));
-        if (item.doName == 'setSpecial')
+        }
+        if (item.doName == 'setSpecial') {
+            if (vehInfo.class_name == 'Cycles') {
+                mp.game.ui.notifications.show(`~r~Данный класс транспорта нельзя ставить модификацию`);
+                return;
+            }
             mp.events.callRemote('server:lsc:buySpecial', shopId, methods.parseInt(item.price));
+        }
     });
 };
 
@@ -2091,6 +2112,8 @@ menuList.showLscTunningMenu = function(shopId, price, lscBanner1) {
     let menu = UIMenu.Menu.Create(` `, `~b~${vehInfo.display_name}`, false, false, false, lscBanner1, lscBanner1);
 
     for (let i = 0; i < 100; i++) {
+        if (i == 69 || i == 76 || i == 78)
+            continue;
         try {
             if (veh.getNumMods(i) == 0) continue;
             if (veh.getNumMods(i) > 0 && enums.lscNames[i][1] > 0) {
@@ -2105,11 +2128,17 @@ menuList.showLscTunningMenu = function(shopId, price, lscBanner1) {
         }
     }
 
+
+    UIMenu.Menu.AddMenuItem(`Тонировка`,`Нажмите ~g~Enter~s~, чтобы посмотреть`).modType = 69;
+    if (veh.getLiveryCount() > 1)
+        UIMenu.Menu.AddMenuItem(`Специальная окраска`,`Нажмите ~g~Enter~s~, чтобы посмотреть`).modType = 76;
+    UIMenu.Menu.AddMenuItem(`Тип колёс`,`Нажмите ~g~Enter~s~, чтобы посмотреть`).modType = 78;
+
     let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
     menu.ItemSelect.on(item => {
         UIMenu.Menu.HideMenu();
         if (closeItem == item)
-            return;
+            return
         menuList.showLscTunningListMenu(methods.parseInt(item.modType), shopId, price, lscBanner1);
     });
 };
@@ -2133,6 +2162,20 @@ menuList.showLscTunningListMenu = async function(modType, shopId, price, lscBann
         price = 1.1;
         let list = [];
         let vehInfo = methods.getVehicleInfo(veh.model);
+
+        if (
+            vehInfo.class_name == 'Helicopters' ||
+            vehInfo.class_name == 'Planes' ||
+            vehInfo.class_name == 'Cycles' ||
+            vehInfo.class_name == 'Vans' ||
+            vehInfo.class_name == 'Commercials' ||
+            vehInfo.class_name == 'Industrial' ||
+            vehInfo.class_name == 'Utility' ||
+            vehInfo.class_name == 'Boats'
+        ) {
+            mp.game.ui.notifications.show(`~r~Данный класс транспорта нельзя тюнинговать`);
+            return;
+        }
 
         if (veh.getVariable('price') >= 8000 && veh.getVariable('price') < 15000)
             price = 1.2;
@@ -2175,40 +2218,133 @@ menuList.showLscTunningListMenu = async function(modType, shopId, price, lscBann
 
         let menu = UIMenu.Menu.Create(` `, `~b~${enums.lscNames[modType][0]}`, false, false, false, lscBanner1, lscBanner1);
 
-        for (let i = 0; i < veh.getNumMods(modType); i++) {
-            try {
-                let itemPrice = enums.lscNames[modType][1] * (i / 20 + price);
-                let label = mp.game.ui.getLabelText(veh.getModTextLabel(modType, i));
-                if (label == "NULL")
-                    label = `${enums.lscNames[modType][0]} #${(i + 1)}`;
-                let listItem = UIMenu.Menu.AddMenuItem(`${label}`,`Цена: ~g~${methods.moneyFormat(itemPrice)}`);
+        let removePrice = (enums.lscNames[modType][1] * price) / 2;
+        let removeItem = UIMenu.Menu.AddMenuItem("~y~Стандартная деталь", `Цена: ~g~${methods.moneyFormat(removePrice)}`);
+        list.push(removeItem);
 
+        if (modType == 69) {
+            for (let i = 0; i < 7; i++) {
                 try {
-                    if (upgradeList[modType.toString()] == i)
-                        listItem.SetRightBadge(12);
+                    let itemPrice = enums.lscNames[modType][1] * (i / 20 + price);
+                    let label = `${enums.lscNames[modType][0]} #${(i + 1)}`;
+                    let listItem = UIMenu.Menu.AddMenuItem(`${label}`,`Цена: ~g~${methods.moneyFormat(itemPrice)}`);
+
+                    try {
+                        if (upgradeList[modType.toString()] == i)
+                            listItem.SetRightBadge(12);
+                    }
+                    catch (e) {
+
+                    }
+
+                    listItem.modType = i;
+                    listItem.price = itemPrice + 0.001;
+                    listItem.itemName = label;
+                    list.push(listItem);
                 }
                 catch (e) {
-
+                    methods.debug(e);
                 }
-
-                listItem.modType = i;
-                listItem.price = itemPrice + 0.001;
-                listItem.itemName = label;
-                list.push(listItem);
             }
-            catch (e) {
-                methods.debug(e);
+        }
+        else if (modType == 76) {
+            for (let i = 0; i < veh.getLiveryCount(); i++) {
+                try {
+                    let itemPrice = enums.lscNames[modType][1] * (i / 20 + price);
+                    let label = `${enums.lscNames[modType][0]} #${(i + 1)}`;
+                    let listItem = UIMenu.Menu.AddMenuItem(`${label}`,`Цена: ~g~${methods.moneyFormat(itemPrice)}`);
+
+                    try {
+                        if (car.get('livery') == i)
+                            listItem.SetRightBadge(12);
+                    }
+                    catch (e) {
+
+                    }
+
+                    listItem.modType = i;
+                    listItem.price = itemPrice + 0.001;
+                    listItem.itemName = label;
+                    list.push(listItem);
+                }
+                catch (e) {
+                    methods.debug(e);
+                }
+            }
+        }
+        else if (modType == 78) {
+            let wheelList = ['Спорт', 'Массл', 'Лоурайдер', 'Кроссовер', 'Внедорожник', 'Специальные', 'Мото', 'Уникальные'];
+            for (let i = 0; i < wheelList.length; i++) {
+                try {
+                    let itemPrice = enums.lscNames[modType][1] * (i / 20 + price);
+                    let label = `${wheelList[i]}`;
+                    let listItem = UIMenu.Menu.AddMenuItem(`${label}`,`Цена: ~g~${methods.moneyFormat(itemPrice)}`);
+
+                    try {
+                        if (upgradeList[modType.toString()] == i)
+                            listItem.SetRightBadge(12);
+                    }
+                    catch (e) {
+
+                    }
+
+                    listItem.modType = i;
+                    listItem.price = itemPrice + 0.001;
+                    listItem.itemName = label;
+                    list.push(listItem);
+                }
+                catch (e) {
+                    methods.debug(e);
+                }
+            }
+        }
+        else {
+            for (let i = 0; i < veh.getNumMods(modType); i++) {
+                try {
+
+                    if (i == 1 || i == 10) {
+                        if (vehInfo.display_name == 'Havok' ||
+                            vehInfo.display_name == 'Microlight' ||
+                            vehInfo.display_name == 'Seasparrow' ||
+                            vehInfo.display_name == 'Revolter' ||
+                            vehInfo.display_name == 'Viseris' ||
+                            vehInfo.display_name == 'Savestra' ||
+                            vehInfo.display_name == 'Deluxo' ||
+                            vehInfo.display_name == 'Comet4')
+                            continue;
+                    }
+
+                    let itemPrice = enums.lscNames[modType][1] * (i / 20 + price);
+                    let label = mp.game.ui.getLabelText(veh.getModTextLabel(modType, i));
+                    if (label == "NULL")
+                        label = `${enums.lscNames[modType][0]} #${(i + 1)}`;
+                    let listItem = UIMenu.Menu.AddMenuItem(`${label}`,`Цена: ~g~${methods.moneyFormat(itemPrice)}`);
+
+                    try {
+                        if (upgradeList[modType.toString()] == i)
+                            listItem.SetRightBadge(12);
+                    }
+                    catch (e) {
+
+                    }
+
+                    listItem.modType = i;
+                    listItem.price = itemPrice + 0.001;
+                    listItem.itemName = label;
+                    list.push(listItem);
+                }
+                catch (e) {
+                    methods.debug(e);
+                }
             }
         }
 
-        let removePrice = (enums.lscNames[modType][1] * price) / 2;
-        let removeItem = UIMenu.Menu.AddMenuItem("~y~Стандартная деталь", `Цена: ~g~${methods.moneyFormat(removePrice)}`);
         let backItem = UIMenu.Menu.AddMenuItem("~g~Назад");
         let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
 
         let modIndex = -1;
         menu.IndexChange.on((index) => {
-            if (index == list.length) {
+            if (index == 0) {
                 mp.events.callRemote('server:lsc:showTun', modType, -1);
                 modIndex = -1;
                 return;

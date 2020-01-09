@@ -309,8 +309,10 @@ lsc.showTun = function(player, modType, idx) {
         return;
     if (modType == 69)
         veh.windowTint = idx;
-    else if (modType == 77)
+    else if (modType == 76)
         veh.livery = idx;
+    else if (modType == 78)
+        veh.wheelType = idx;
     else
         veh.setMod(modType, idx);
 };
@@ -342,7 +344,7 @@ lsc.buyTun = function(player, modType, idx, price, shopId, itemName) {
         return;
     }
 
-    if (modType == 77) {
+    if (modType == 76) {
         vehicles.set(veh.getVariable('container'), 'livery', idx);
     }
     else {
@@ -357,7 +359,7 @@ lsc.buyTun = function(player, modType, idx, price, shopId, itemName) {
 
     player.notify('~g~Вы установили деталь, цена: ~s~$' + methods.numberFormat(price));
 
-    vehicles.setTunning(veh);
+    //vehicles.setTunning(veh);
     vehicles.save(veh.getVariable('container'));
 };
 

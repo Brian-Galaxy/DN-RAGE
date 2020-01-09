@@ -95,7 +95,7 @@ vehicles.checkerControl = function() {
         }
     }
     catch (e) {
-        
+
     }
     return false;
 };

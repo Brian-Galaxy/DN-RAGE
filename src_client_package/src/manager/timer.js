@@ -501,7 +501,8 @@ timer.loadAll = function () {
 };
 
 timer.isFleecaAtm = function () {
-    return user.getCache('bank_card') == 2222 && EntityFleeca != 0;
+    return user.getCache('bank_card') > 0 && EntityFleeca != 0;
+    //return user.getCache('bank_card') == 2222 && EntityFleeca != 0;
 };
 
 timer.isOtherAtm = function () {

@@ -13,6 +13,11 @@ admin.noClip = function(enable) {
         if (noClipEnabled)
             mp.game.ui.notifications.show(`~b~Нажмите ~s~H~b~ чтобы выключить No Clip`);
 
+        if (!noClipEnabled) {
+            let plPos = mp.players.local.position;
+            mp.players.local.position = new mp.Vector3(plPos.x, plPos.y, plPos.z - mp.players.local.getHeightAboveGround() + 1);
+        }
+
     } catch (e) {
         methods.debug('Exception: admin.noClip');
         methods.debug(e);
@@ -87,7 +92,7 @@ mp.events.add('render', () => {
 
         if (mp.game.controls.isDisabledControlPressed(0, 74)) {
             if(!noClipEntity.getVariable('isTyping')) {
-                noClipEnabled = false;
+                admin.noClip(false);
             }
         }
 

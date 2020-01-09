@@ -261,17 +261,15 @@ user.clearChat = function() {
 };
 
 user.tpToWaypoint = function() {
-
-    // find GPS blip
-
     try {
-
         let pos = methods.getWaypointPosition();
-        if (pos.x != 0) {
-            user.teleport(pos.x, pos.y, pos.z);
-        }
+        mp.players.local.position = new mp.Vector3(pos.x, pos.y, pos.z + 100);
+        setTimeout(function () {
+            let zPos = mp.game.gameplay.getGroundZFor3dCoord(mp.players.local.position.x, mp.players.local.position.y, mp.players.local.position.z, 0, false);
+            mp.players.local.position = new mp.Vector3(pos.x, pos.y, zPos + 1);
+        }, 100);
     } catch(e) {
-        console.log(e);
+        methods.debug(e);
     }
 };
 

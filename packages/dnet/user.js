@@ -9,6 +9,8 @@ let coffer = require('./coffer');
 let wpSync = require('./managers/wpSync');
 let weather = require('./managers/weather');
 
+let vehicles = require('./property/vehicles');
+
 let user = exports;
 
 user.createAccount = function(player, login, pass, email) {
@@ -341,6 +343,8 @@ user.loadUser = function(player, name, spawn = 'Стандарт') {
                 });*/
 
                 mysql.executeQuery('UPDATE users SET is_online=\'1\' WHERE id = \'' + user.getId(player) + '\'');
+
+                vehicles.loadUserById(userId);
 
                 if (!user.get(player, 'is_custom'))
                     player.call('client:events:loginUser:finalCreate');

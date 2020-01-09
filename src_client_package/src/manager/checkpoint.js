@@ -23,7 +23,7 @@ checkpoint.checkPosition = function() {
                 if (entityList.has(idx)) {
                     entityList.delete(idx);
                     UIMenu.Menu.HideMenu();
-                    //mp.events.callRemote('client:exitStaticCheckpoint', idx);
+                    mp.events.callRemote('client:exitStaticCheckpoint', idx);
                 }
             }
         } catch (e) {

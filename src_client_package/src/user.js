@@ -260,14 +260,23 @@ user.clearChat = function() {
         mp.gui.chat.push('');
 };
 
-user.tpToWaypoint = function() {
+user.tpToWaypoint = function() { //TODO машина
     try {
         let pos = methods.getWaypointPosition();
-        mp.players.local.position = new mp.Vector3(pos.x, pos.y, pos.z + 100);
-        setTimeout(function () {
-            let zPos = mp.game.gameplay.getGroundZFor3dCoord(mp.players.local.position.x, mp.players.local.position.y, mp.players.local.position.z, 0, false);
-            mp.players.local.position = new mp.Vector3(pos.x, pos.y, zPos + 1);
-        }, 100);
+        if (mp.players.local.vehicle) {
+            mp.players.local.vehicle.position = new mp.Vector3(pos.x, pos.y, pos.z + 100);
+            setTimeout(function () {
+                let zPos = mp.game.gameplay.getGroundZFor3dCoord(mp.players.local.position.x, mp.players.local.position.y, mp.players.local.position.z, 0, false);
+                mp.players.local.vehicle.position = new mp.Vector3(pos.x, pos.y, zPos + 1);
+            }, 100);
+        }
+        else {
+            mp.players.local.position = new mp.Vector3(pos.x, pos.y, pos.z + 100);
+            setTimeout(function () {
+                let zPos = mp.game.gameplay.getGroundZFor3dCoord(mp.players.local.position.x, mp.players.local.position.y, mp.players.local.position.z, 0, false);
+                mp.players.local.position = new mp.Vector3(pos.x, pos.y, zPos + 1);
+            }, 100);
+        }
     } catch(e) {
         methods.debug(e);
     }

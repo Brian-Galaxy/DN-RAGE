@@ -14,8 +14,14 @@ admin.noClip = function(enable) {
             mp.game.ui.notifications.show(`~b~Нажмите ~s~H~b~ чтобы выключить No Clip`);
 
         if (!noClipEnabled) {
-            let plPos = mp.players.local.position;
-            mp.players.local.position = new mp.Vector3(plPos.x, plPos.y, plPos.z - mp.players.local.getHeightAboveGround() + 1);
+            if (mp.players.local.vehicle) {
+                let plPos = mp.players.local.vehicle.position;
+                mp.players.local.vehicle.position = new mp.Vector3(plPos.x, plPos.y, plPos.z - mp.players.local.getHeightAboveGround() + 1);
+            }
+            else {
+                let plPos = mp.players.local.position;
+                mp.players.local.position = new mp.Vector3(plPos.x, plPos.y, plPos.z - mp.players.local.getHeightAboveGround() + 1);
+            }
         }
 
     } catch (e) {

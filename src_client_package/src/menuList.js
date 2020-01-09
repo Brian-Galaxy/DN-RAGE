@@ -1165,10 +1165,8 @@ menuList.showVehicleMenu = function(data) {
     if (vInfo.class_name != 'Cycles' || vInfo.class_name != 'Planes' || vInfo.class_name != 'Helicopters' || vInfo.class_name != 'Boats')
         UIMenu.Menu.AddMenuItem("Управление транспортом").doName = 'showVehicleDoMenu';
 
-    if (data.get('user_id') > 0 && user.getCache('id') == data.get('user_id')) {
-        UIMenu.Menu.AddMenuItem("~g~Открыть~s~ / ~r~Закрыть~s~").eventName = 'server:vehicle:lockStatus';
-        UIMenu.Menu.AddMenuItem("Припарковать", "Транспорт будет спавниться на месте парковки").eventName = 'server:vehicle:park';
-    }
+    if (data.get('user_id') > 0 && user.getCache('id') == data.get('user_id'))
+        UIMenu.Menu.AddMenuItem("Припарковать", "ТС будет спавниться на месте парковки").eventName = 'server:vehicle:park';
 
     //UIMenu.Menu.AddMenuItem("~y~Выкинуть из транспорта").eventName = 'server:vehicle:engineStatus';
     UIMenu.Menu.AddMenuItem("Характеристики").doName = 'showVehicleStatsMenu';
@@ -1273,10 +1271,9 @@ menuList.showVehicleMenu = function(data) {
         UIMenu.Menu.AddMenuItem("~y~Ограбить транспорт").doName = 'gr6:grab';
     }
 
-    if (data.get('neon_type') > 0) {
+    if (data.get('neon_r') > 0) {
         UIMenu.Menu.AddMenuItem("~g~Вкл~s~ / ~r~выкл~s~ неон").eventName = 'server:vehicle:neonStatus';
-        if (data.get('neon_type') > 1)
-            UIMenu.Menu.AddMenuItem("~b~Цвет неона").eventName = 'server:vehicle:setNeonColor';
+        UIMenu.Menu.AddMenuItem("~b~Цвет неона").eventName = 'server:vehicle:setNeonColor';
     }
 
     let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
@@ -1389,6 +1386,11 @@ menuList.showVehicleMenu = function(data) {
                 g = 255;
             if (b > 255)
                 b = 255;
+
+            if (r < 1 || g < 1 || b < 1) {
+                mp.game.ui.notifications.show('~r~Цвет не должен быть меньше 1');
+                return;
+            }
             mp.events.callRemote(item.eventName, methods.parseInt(r), methods.parseInt(g), methods.parseInt(b));
         }
     });
@@ -1834,7 +1836,7 @@ menuList.showLscMenu = function(shopId, price = 1)
 
     let menu = UIMenu.Menu.Create(" ", "~b~Автомастерская", false, false, false, lscBanner1, lscBanner2);
 
-    let itemPrice = 400 * price;
+    let itemPrice = 500 * price;
     let menuItem = UIMenu.Menu.AddMenuItem("Ремонт", `Цена: ~g~$${methods.numberFormat(itemPrice)}`);
     menuItem.price = itemPrice;
     menuItem.doName = 'repair';
@@ -1850,11 +1852,6 @@ menuList.showLscMenu = function(shopId, price = 1)
     menuItem.price = itemPrice;
     menuItem.doName = 'setNumber';
 
-    /*itemPrice = 150000;
-    menuItem = UIMenu.Menu.AddMenuItem("Неон", `Цена: ~g~$${methods.numberFormat(itemPrice)}`);
-    menuItem.price = itemPrice;
-    menuItem.doName = 'setNeon';*/
-
     menuItem = UIMenu.Menu.AddMenuItem("Цвет");
     menuItem.doName = 'setColor';
 
@@ -1862,15 +1859,33 @@ menuList.showLscMenu = function(shopId, price = 1)
     menuItem.doName = 'sellCar';
 
     UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = "closeButton";
-    menu.ItemSelect.on((item, index) => {
+    menu.ItemSelect.on(async (item, index) => {
         UIMenu.Menu.HideMenu();
         try {
-            if (item.doName == 'setTunning')
-                menuList.showLscTunningMenu(shopId, price, lscBanner1);
-            if (item.doName == 'setSTunning')
-                menuList.showLscSTunningMenu(shopId, price, lscBanner1);
-            if (item.doName == 'setColor')
-                menuList.showLscColorMenu(shopId, price, lscBanner1);
+            if (item.doName == 'closeButton')
+                return;
+
+            if (item.doName == 'repair')
+                mp.events.callRemote('server:lsc:repair', shopId, item.price);
+            if (item.doName == 'sellCar')
+                mp.events.callRemote('server:lsc:sellCar');
+
+            if (veh.getVariable('user_id') > 0) {
+                if (item.doName == 'setTunning')
+                    menuList.showLscTunningMenu(shopId, price, lscBanner1);
+                if (item.doName == 'setSTunning')
+                    menuList.showLscSTunningMenu(shopId, price, lscBanner1);
+                if (item.doName == 'setColor')
+                    menuList.showLscColorMenu(shopId, price, lscBanner1);
+                if (item.doName == 'setNumber')
+                {
+                    let number = await UIMenu.Menu.GetUserInput("Номер", "", 8);
+                    mp.events.callRemote('server:lsc:buyNumber', shopId, number.toUpperCase());
+                }
+            }
+            else {
+                mp.game.ui.notifications.show(`~r~Необходимо находиться в личном транспорте`);
+            }
         }
         catch (e) {
             methods.debug(e);
@@ -1889,36 +1904,141 @@ menuList.showLscColorMenu = function(shopId, price, lscBanner1) {
 
     let menu = UIMenu.Menu.Create(` `, `~b~Выбор цвета`, false, false, false, lscBanner1, lscBanner1);
 
-    let list = [];
-    for (let i = 0; i < 156; i++)
-        list.push(i + '');
-    let color1Item = UIMenu.Menu.AddMenuItemList("Цвет-1", list, 'Цена: ~g~$' + (5000 * price));
 
-    list = [];
-    for (let i = 0; i < 156; i++)
-        list.push(i + '');
-    let color2Item = UIMenu.Menu.AddMenuItemList("Цвет-2", list, 'Цена: ~g~$' + (3000 * price));
-
+    let color1Item = UIMenu.Menu.AddMenuItem("Основной цвет", 'Цена: ~g~$' + (5000));
+    let color2Item = UIMenu.Menu.AddMenuItem("Дополнительный цвет", 'Цена: ~g~$' + (3000));
     let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
 
-    let currentListChangeItem = null;
-    let currentListChangeItemIndex = null;
-
-    menu.ListChange.on((item, index) => {
-        currentListChangeItem = item;
-        currentListChangeItemIndex = index;
-
-        if (item == color1Item)
-            mp.events.callRemote('server:lsc:showColor1', index);
-        if (item == color2Item)
-            mp.events.callRemote('server:lsc:showColor2', index);
-    });
     menu.ItemSelect.on(item => {
         UIMenu.Menu.HideMenu();
         if (item == color1Item)
-            mp.events.callRemote('server:lsc:buyColor1', currentListChangeItemIndex, 5000 * price, shopId);
+            menuList.showLscColor1Menu(shopId, price, lscBanner1);
         else if (item == color2Item)
-            mp.events.callRemote('server:lsc:buyColor2', currentListChangeItemIndex, 3000 * price, shopId);
+            menuList.showLscColor2Menu(shopId, price, lscBanner1);
+    });
+};
+
+menuList.showLscColor1Menu = async function(shopId, price, lscBanner1) {
+    try {
+        let veh = mp.players.local.vehicle;
+
+        if (!veh) {
+            mp.game.ui.notifications.show(`~r~Необходимо находиться в личном транспорте`);
+            return;
+        }
+
+        let car = await vehicles.getData(veh.getVariable('container'));
+        let list = [];
+
+        let menu = UIMenu.Menu.Create(` `, `~b~Выбор основного цвета`, false, false, false, lscBanner1, lscBanner1);
+
+        for (let i = 0; i < 156; i++) {
+            try {
+                let label = enums.lscColors[i];
+                let listItem = UIMenu.Menu.AddMenuItem(`${label}`,`Цена: ~g~${methods.moneyFormat(5000)}`);
+
+                try {
+                    if (car.get('color1') == i)
+                        listItem.SetRightBadge(12);
+                }
+                catch (e) {
+
+                }
+
+                listItem.modType = i;
+                listItem.price = 5000.001;
+                listItem.itemName = label;
+                list.push(listItem);
+            }
+            catch (e) {
+                methods.debug(e);
+            }
+        }
+
+        let backItem = UIMenu.Menu.AddMenuItem("~g~Назад");
+        let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+
+        menu.IndexChange.on((index) => {
+            if (index >= list.length)
+                return;
+            mp.events.callRemote('server:lsc:showColor1', index);
+        });
+
+        menu.ItemSelect.on(item => {
+            UIMenu.Menu.HideMenu();
+            if (backItem == item) {
+                menuList.showLscColorMenu(shopId, price, lscBanner1);
+                return;
+            }
+            if (closeItem == item) {
+                return;
+            }
+            menuList.showLscMenu(shopId, price);
+            mp.events.callRemote('server:lsc:buyColor1', item.modType, 5000.001, shopId, `Цвет: ${item.itemName}`);
+        });
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+};
+
+menuList.showLscColor2Menu = async function(shopId, price, lscBanner1) {
+
+    let veh = mp.players.local.vehicle;
+
+    if (!veh) {
+        mp.game.ui.notifications.show(`~r~Необходимо находиться в личном транспорте`);
+        return;
+    }
+
+    let car = await vehicles.getData(veh.getVariable('container'));
+    let list = [];
+
+    let menu = UIMenu.Menu.Create(` `, `~b~Выбор доп. цвета`, false, false, false, lscBanner1, lscBanner1);
+
+    for (let i = 0; i < 156; i++) {
+        try {
+            let label = enums.lscColors[i];
+            let listItem = UIMenu.Menu.AddMenuItem(`${label}`,`Цена: ~g~${methods.moneyFormat(3000)}`);
+
+            try {
+                if (car.get('color2') == i)
+                    listItem.SetRightBadge(12);
+            }
+            catch (e) {
+
+            }
+
+            listItem.modType = i;
+            listItem.price = 3000.001;
+            listItem.itemName = label;
+            list.push(listItem);
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    }
+
+    let backItem = UIMenu.Menu.AddMenuItem("~g~Назад");
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+
+    menu.IndexChange.on((index) => {
+        if (index >= list.length)
+            return;
+        mp.events.callRemote('server:lsc:showColor2', index);
+    });
+
+    menu.ItemSelect.on(item => {
+        UIMenu.Menu.HideMenu();
+        if (backItem == item) {
+            menuList.showLscColorMenu(shopId, price, lscBanner1);
+            return;
+        }
+        if (closeItem == item) {
+            return;
+        }
+        menuList.showLscMenu(shopId, price);
+        mp.events.callRemote('server:lsc:buyColor2', item.modType, 3000.001, shopId, `Цвет: ${item.itemName}`);
     });
 };
 
@@ -1935,13 +2055,13 @@ menuList.showLscSTunningMenu = function(shopId, price, lscBanner1) {
 
     let menu = UIMenu.Menu.Create(` `, `~b~Установка модулей`, false, false, false, lscBanner1, lscBanner1);
 
-    let itemPrice = 150000;
-    let menuItem = UIMenu.Menu.AddMenuItem("Неон", `Цена: ~g~$${methods.numberFormat(itemPrice)}`);
+    let itemPrice = 150000.01;
+    let menuItem = UIMenu.Menu.AddMenuItem("Неоновая подсветка", `Цена: ~g~$${methods.numberFormat(methods.parseInt(itemPrice))}`);
     menuItem.price = itemPrice;
     menuItem.doName = 'setNeon';
 
-    itemPrice = 50000;
-    menuItem = UIMenu.Menu.AddMenuItem("Дистанционное управление", `Цена: ~g~$${methods.numberFormat(itemPrice)}`);
+    itemPrice = 10000.01;
+    menuItem = UIMenu.Menu.AddMenuItem("Дистанционное управление", `Цена: ~g~$${methods.numberFormat(methods.parseInt(itemPrice))}`);
     menuItem.price = itemPrice;
     menuItem.doName = 'setSpecial';
 
@@ -1950,6 +2070,10 @@ menuList.showLscSTunningMenu = function(shopId, price, lscBanner1) {
         UIMenu.Menu.HideMenu();
         if (closeItem == item)
             return;
+        if (item.doName == 'setNeon')
+            mp.events.callRemote('server:lsc:buyNeon', shopId, methods.parseInt(item.price));
+        if (item.doName == 'setSpecial')
+            mp.events.callRemote('server:lsc:buySpecial', shopId, methods.parseInt(item.price));
     });
 };
 
@@ -1990,7 +2114,7 @@ menuList.showLscTunningMenu = function(shopId, price, lscBanner1) {
     });
 };
 
-menuList.showLscTunningListMenu = function(modType, shopId, price, lscBanner1) {
+menuList.showLscTunningListMenu = async function(modType, shopId, price, lscBanner1) {
 
     modType = methods.parseInt(modType);
 
@@ -2002,6 +2126,9 @@ menuList.showLscTunningListMenu = function(modType, shopId, price, lscBanner1) {
             mp.game.ui.notifications.show(`~r~Необходимо находиться в личном транспорте`);
             return;
         }
+
+        let car = await vehicles.getData(veh.getVariable('container'));
+        let upgradeList = JSON.parse(car.get('upgrade'));
 
         price = 1.1;
         let list = [];
@@ -2048,8 +2175,6 @@ menuList.showLscTunningListMenu = function(modType, shopId, price, lscBanner1) {
 
         let menu = UIMenu.Menu.Create(` `, `~b~${enums.lscNames[modType][0]}`, false, false, false, lscBanner1, lscBanner1);
 
-        veh.setMod(modType, 0);
-
         for (let i = 0; i < veh.getNumMods(modType); i++) {
             try {
                 let itemPrice = enums.lscNames[modType][1] * (i / 20 + price);
@@ -2057,8 +2182,18 @@ menuList.showLscTunningListMenu = function(modType, shopId, price, lscBanner1) {
                 if (label == "NULL")
                     label = `${enums.lscNames[modType][0]} #${(i + 1)}`;
                 let listItem = UIMenu.Menu.AddMenuItem(`${label}`,`Цена: ~g~${methods.moneyFormat(itemPrice)}`);
+
+                try {
+                    if (upgradeList[modType.toString()] == i)
+                        listItem.SetRightBadge(12);
+                }
+                catch (e) {
+
+                }
+
                 listItem.modType = i;
-                listItem.price = itemPrice;
+                listItem.price = itemPrice + 0.001;
+                listItem.itemName = label;
                 list.push(listItem);
             }
             catch (e) {
@@ -2067,24 +2202,36 @@ menuList.showLscTunningListMenu = function(modType, shopId, price, lscBanner1) {
         }
 
         let removePrice = (enums.lscNames[modType][1] * price) / 2;
-        let removeItem = UIMenu.Menu.AddMenuItem("~y~Снять деталь", `Цена: ~g~${methods.moneyFormat(removePrice)}`);
+        let removeItem = UIMenu.Menu.AddMenuItem("~y~Стандартная деталь", `Цена: ~g~${methods.moneyFormat(removePrice)}`);
         let backItem = UIMenu.Menu.AddMenuItem("~g~Назад");
         let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
 
+        let modIndex = -1;
         menu.IndexChange.on((index) => {
             if (index == list.length) {
-                veh.removeMod(modType);
+                mp.events.callRemote('server:lsc:showTun', modType, -1);
+                modIndex = -1;
                 return;
             }
             if (index >= list.length)
                 return;
-            veh.setMod(modType, list[index].modType);
+            mp.events.callRemote('server:lsc:showTun', modType, list[index].modType);
         });
 
         menu.ItemSelect.on(item => {
             UIMenu.Menu.HideMenu();
             if (item == backItem)
                 menuList.showLscTunningMenu(shopId, price, lscBanner1);
+
+            if (item == removeItem) {
+                mp.events.callRemote('server:lsc:buyTun', modType, -1, removePrice, shopId, 'Стандартная деталь');
+                menuList.showLscTunningMenu(shopId, price, lscBanner1);
+            }
+
+            if (item.modType) {
+                mp.events.callRemote('server:lsc:buyTun', modType, item.modType, methods.parseInt(item.price), shopId, item.itemName);
+                menuList.showLscTunningMenu(shopId, price, lscBanner1);
+            }
         });
     }
     catch (e) {

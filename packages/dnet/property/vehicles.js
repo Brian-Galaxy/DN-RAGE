@@ -105,6 +105,127 @@ vehicles.loadAllShopVehicles = () => {
 
 vehicles.fractionList = [];
 
+vehicles.loadAllUserVehicles = (userId) => {
+    mysql.executeQuery(`SELECT * FROM cars WHERE user_id = '${methods.parseInt(userId)}'`, function (err, rows, fields) {
+        rows.forEach((item) => {
+            try {
+                vehicles.loadUserVehicleByRow(item);
+            }
+            catch (e) {
+                methods.debug('vehicles.loadUserById', e)
+            }
+        });
+    });
+};
+
+vehicles.loadUserById = (id) => {
+    mysql.executeQuery(`SELECT * FROM cars WHERE id = '${methods.parseInt(id)}'`, function (err, rows, fields) {
+        rows.forEach((item) => {
+            try {
+                vehicles.loadUserVehicleByRow(item);
+            }
+            catch (e) {
+                methods.debug('vehicles.loadUserById', e)
+            }
+        });
+    });
+};
+
+vehicles.loadUserVehicleByRow = (row) => {
+    let parkPos = new mp.Vector3(row['x'], row['y'], row['z']);
+    let parkRot = row['rot'];
+    if (parkPos.x == 0) {
+        let pos = vehicles.getParkPosition(row['class']);
+        parkPos = pos.pos;
+        parkRot = pos.rot;
+        vehicles.park(row['id'], parkPos.x, parkPos.y, parkPos.z, parkRot);
+    }
+
+    vehicles.set(row['id'], 'id', row['id']);
+    vehicles.set(row['id'], 'user_id', row['user_id']);
+    vehicles.set(row['id'], 'user_name', row['user_name']);
+    vehicles.set(row['id'], 'name', row['name']);
+    vehicles.set(row['id'], 'class', row['class']);
+    vehicles.set(row['id'], 'price', row['price']);
+    vehicles.set(row['id'], 'fuel', row['fuel']);
+    vehicles.set(row['id'], 'color1', row['color1']);
+    vehicles.set(row['id'], 'color2', row['color2']);
+    vehicles.set(row['id'], 'livery', row['livery']);
+    vehicles.set(row['id'], 'neon_r', row['neon_r']);
+    vehicles.set(row['id'], 'neon_g', row['neon_g']);
+    vehicles.set(row['id'], 'neon_b', row['neon_b']);
+    vehicles.set(row['id'], 'number', row['number']);
+    vehicles.set(row['id'], 'is_special', row['is_special']);
+    vehicles.set(row['id'], 's_mp', row['s_mp']);
+    vehicles.set(row['id'], 'x', parkPos.x);
+    vehicles.set(row['id'], 'y', parkPos.y);
+    vehicles.set(row['id'], 'z', parkPos.z);
+    vehicles.set(row['id'], 'rot', parkRot);
+    vehicles.set(row['id'], 'upgrade', row['upgrade']);
+    vehicles.set(row['id'], 'is_cop_park', row['is_cop_park']);
+    vehicles.set(row['id'], 'cop_park_name', row['cop_park_name']);
+
+    vehicles.spawnPlayerCar(row['id']);
+};
+
+vehicles.spawnPlayerCar = (id) => {
+    vehicles.spawnCarCb(veh => {
+
+        if (!vehicles.exists(veh))
+            return;
+
+        try {
+            let numberStyle = 0;
+            if (id % 3)
+                numberStyle = 1;
+            else if (id % 4)
+                numberStyle = 2;
+            else if (id % 5)
+                numberStyle = 3;
+
+            veh.numberPlate = vehicles.get(id, 'number').toString();
+            veh.numberPlateType = numberStyle;
+            veh.locked = true;
+
+            veh.setColor(vehicles.get(id, 'color1'), vehicles.get(id, 'color2'));
+            vSync.setEngineState(veh, false);
+
+            veh.setVariable('user_id', vehicles.get(id, 'user_id'));
+            veh.setVariable('user_name', vehicles.get(id, 'user_name'));
+            veh.setVariable('container', id);
+            veh.setVariable('vid', id);
+            veh.setVariable('price', vehicles.get(id, 'price'));
+
+            vehicles.setFuel(veh, vehicles.get(id, 'fuel'));
+            vehicles.setTunning(veh);
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+
+    }, new mp.Vector3(vehicles.get(id, 'x'), vehicles.get(id, 'y'), vehicles.get(id, 'z')), vehicles.get(id, 'rot'), vehicles.get(id, 'name'));
+};
+
+vehicles.getParkPosition = (className) => {
+    let array = [];
+    switch (className) {
+        case 'Helicopters':
+            array = enums.randomSpawnHeli;
+            break;
+        case 'Planes':
+            array = enums.randomSpawnPlanes;
+            break;
+        case 'Boats':
+            array = enums.randomSpawnBoat;
+            break;
+        default:
+            array = enums.randomSpawnVeh;
+            break;
+    }
+    let randomVal = methods.getRandomInt(0, array.length - 1);
+    return { pos: new mp.Vector3(array[randomVal][0], array[randomVal][1], array[randomVal][2]), rot: array[randomVal][3] };
+};
+
 vehicles.loadAllFractionVehicles = () => {
     //return; //TODO Падает сервер
     mysql.executeQuery(`SELECT * FROM cars_fraction WHERE is_buy = '1'`, function (err, rows, fields) {
@@ -368,213 +489,9 @@ vehicles.loadAllTestVehicles = () => {
     });
 };
 
-vehicles.loadPlayerVehicle = (player) => {
-
-    methods.debug('vehicles.loadPlayerVehicle');
-
-    const playerId = user.getId(player);
-    if (playerId && playerId > 0) {
-        mysql.executeQuery(`SELECT * FROM cars WHERE id_user = ${playerId}`, function (err, rows, fields) {
-            console.time('loadCarsForPlayer');
-            rows.forEach(function (item) {
-                vehicles.set(item['id'], 'id', item['id']);
-                vehicles.set(item['id'], 'id_user', item['id_user']);
-                vehicles.set(item['id'], 'user_name', item['user_name']);
-                vehicles.set(item['id'], 'name', item['name']);
-                vehicles.set(item['id'], 'class_type', item['class_type']);
-                vehicles.set(item['id'], 'hash', item['hash']);
-                vehicles.set(item['id'], 'price', item['price']);
-                vehicles.set(item['id'], 'stock', item['stock']);
-                vehicles.set(item['id'], 'stock_full', item['stock_full']);
-                vehicles.set(item['id'], 'stock_item', item['stock_item']);
-                vehicles.set(item['id'], 'fuel', item['fuel']);
-                vehicles.set(item['id'], 'full_fuel', item['full_fuel']);
-                vehicles.set(item['id'], 'fuel_minute', item['fuel_minute']);
-                vehicles.set(item['id'], 'color1', item['color1']);
-                vehicles.set(item['id'], 'color2', item['color2']);
-                vehicles.set(item['id'], 'neon_type', item['neon_type']);
-                vehicles.set(item['id'], 'neon_r', item['neon_r']);
-                vehicles.set(item['id'], 'neon_g', item['neon_g']);
-                vehicles.set(item['id'], 'neon_b', item['neon_b']);
-                vehicles.set(item['id'], 'number', item['number']);
-                vehicles.set(item['id'], 'wanted_level', item['wanted_level']);
-                vehicles.set(item['id'], 'lock_status', item['lock_status']);
-                vehicles.set(item['id'], 's_mp', item['s_mp']);
-                vehicles.set(item['id'], 's_wh_bk_l', item['s_wh_bk_l']);
-                vehicles.set(item['id'], 's_wh_b_l', item['s_wh_b_l']);
-                vehicles.set(item['id'], 's_wh_bk_r', item['s_wh_bk_r']);
-                vehicles.set(item['id'], 's_wh_b_r', item['s_wh_b_r']);
-                vehicles.set(item['id'], 's_engine', item['s_engine']);
-                vehicles.set(item['id'], 's_suspension', item['s_suspension']);
-                vehicles.set(item['id'], 's_body', item['s_body']);
-                vehicles.set(item['id'], 's_candle', item['s_candle']);
-                vehicles.set(item['id'], 's_oil', item['s_oil']);
-                vehicles.set(item['id'], 'livery', item['livery']);
-                vehicles.set(item['id'], 'is_visible', item['is_visible']);
-                vehicles.set(item['id'], 'x', item['x']);
-                vehicles.set(item['id'], 'y', item['y']);
-                vehicles.set(item['id'], 'z', item['z']);
-                vehicles.set(item['id'], 'rot', item['rot']);
-                vehicles.set(item['id'], 'upgrade', item['upgrade']);
-                vehicles.set(item['id'], 'money_tax', item['money_tax']);
-                vehicles.set(item['id'], 'score_tax', item['score_tax']);
-                vehicles.set(item['id'], 'cop_park_name', item['cop_park_name']);
-                vehicles.set(item['id'], 'is_cop_park', item['is_cop_park']);
-                vehicles.set(item['id'], 'sell_price', item['sell_price']);
-
-                if (item['sell_price'] > 0) {
-                    return;
-                }
-
-                //if (item['name'] == 'Camper' || item['name'] == 'Journey')
-                //if (item['x'] != 0)
-                //    vehicles.spawnPlayerCar(parseInt(item['id']));
-            });
-            console.timeEnd('loadCarsForPlayer');
-            console.log(`All vehicles loaded for player ${playerId} (${rows.length})`);
-        });
-    }
-};
-
-vehicles.loadPlayerVehicleByPlayerId = (playerId, dim = 0) => {
-
-    methods.debug('vehicles.loadPlayerVehicle');
-
-    if (playerId && playerId > 0) {
-        mysql.executeQuery(`SELECT * FROM cars WHERE id_user = ${playerId}`, function (err, rows, fields) {
-            console.time('loadCarsForPlayer');
-            rows.forEach(function (item) {
-                vehicles.set(item['id'], 'id', item['id']);
-                vehicles.set(item['id'], 'id_user', item['id_user']);
-                vehicles.set(item['id'], 'user_name', item['user_name']);
-                vehicles.set(item['id'], 'name', item['name']);
-                vehicles.set(item['id'], 'class_type', item['class_type']);
-                vehicles.set(item['id'], 'hash', item['hash']);
-                vehicles.set(item['id'], 'price', item['price']);
-                vehicles.set(item['id'], 'stock', item['stock']);
-                vehicles.set(item['id'], 'stock_full', item['stock_full']);
-                vehicles.set(item['id'], 'stock_item', item['stock_item']);
-                vehicles.set(item['id'], 'fuel', item['fuel']);
-                vehicles.set(item['id'], 'full_fuel', item['full_fuel']);
-                vehicles.set(item['id'], 'fuel_minute', item['fuel_minute']);
-                vehicles.set(item['id'], 'color1', item['color1']);
-                vehicles.set(item['id'], 'color2', item['color2']);
-                vehicles.set(item['id'], 'neon_type', item['neon_type']);
-                vehicles.set(item['id'], 'neon_r', item['neon_r']);
-                vehicles.set(item['id'], 'neon_g', item['neon_g']);
-                vehicles.set(item['id'], 'neon_b', item['neon_b']);
-                vehicles.set(item['id'], 'number', item['number']);
-                vehicles.set(item['id'], 'wanted_level', item['wanted_level']);
-                vehicles.set(item['id'], 'lock_status', item['lock_status']);
-                vehicles.set(item['id'], 's_mp', item['s_mp']);
-                vehicles.set(item['id'], 's_wh_bk_l', item['s_wh_bk_l']);
-                vehicles.set(item['id'], 's_wh_b_l', item['s_wh_b_l']);
-                vehicles.set(item['id'], 's_wh_bk_r', item['s_wh_bk_r']);
-                vehicles.set(item['id'], 's_wh_b_r', item['s_wh_b_r']);
-                vehicles.set(item['id'], 's_engine', item['s_engine']);
-                vehicles.set(item['id'], 's_suspension', item['s_suspension']);
-                vehicles.set(item['id'], 's_body', item['s_body']);
-                vehicles.set(item['id'], 's_candle', item['s_candle']);
-                vehicles.set(item['id'], 's_oil', item['s_oil']);
-                vehicles.set(item['id'], 'livery', item['livery']);
-                vehicles.set(item['id'], 'is_visible', item['is_visible']);
-                vehicles.set(item['id'], 'x', item['x']);
-                vehicles.set(item['id'], 'y', item['y']);
-                vehicles.set(item['id'], 'z', item['z']);
-                vehicles.set(item['id'], 'rot', item['rot']);
-                vehicles.set(item['id'], 'upgrade', item['upgrade']);
-                vehicles.set(item['id'], 'money_tax', item['money_tax']);
-                vehicles.set(item['id'], 'score_tax', item['score_tax']);
-                vehicles.set(item['id'], 'cop_park_name', item['cop_park_name']);
-                vehicles.set(item['id'], 'is_cop_park', item['is_cop_park']);
-                vehicles.set(item['id'], 'sell_price', item['sell_price']);
-
-                if (item['sell_price'] > 0) {
-                    return;
-                }
-
-                //if (item['name'] == 'Camper' || item['name'] == 'Journey')
-                //if (item['x'] != 0)
-                //    vehicles.spawnPlayerCar(parseInt(item['id']), false, dim);
-            });
-            console.timeEnd('loadCarsForPlayer');
-            console.log(`All vehicles loaded for player ${playerId} (${rows.length})`);
-        });
-    }
-};
-
-vehicles.loadPlayerVehicleById = (player, id) => {
-
-    methods.debug('vehicles.loadPlayerVehicleById');
-
-    const playerId = user.getId(player);
-    if (playerId && playerId > 0) {
-        mysql.executeQuery(`SELECT * FROM cars WHERE id_user = ${playerId} AND id = ${id}`, function (err, rows, fields) {
-            console.time('loadCarsForPlayer');
-            rows.forEach(function (item) {
-                //if (Container.Data.Has(offset + methods.parseInt(item['id']), 'id'))
-                //    return;
-                vehicles.set(item['id'], 'id', item['id']);
-                vehicles.set(item['id'], 'id_user', item['id_user']);
-                vehicles.set(item['id'], 'user_name', item['user_name']);
-                vehicles.set(item['id'], 'name', item['name']);
-                vehicles.set(item['id'], 'class_type', item['class_type']);
-                vehicles.set(item['id'], 'hash', item['hash']);
-                vehicles.set(item['id'], 'price', item['price']);
-                vehicles.set(item['id'], 'stock', item['stock']);
-                vehicles.set(item['id'], 'stock_full', item['stock_full']);
-                vehicles.set(item['id'], 'stock_item', item['stock_item']);
-                vehicles.set(item['id'], 'fuel', item['fuel']);
-                vehicles.set(item['id'], 'full_fuel', item['full_fuel']);
-                vehicles.set(item['id'], 'fuel_minute', item['fuel_minute']);
-                vehicles.set(item['id'], 'color1', item['color1']);
-                vehicles.set(item['id'], 'color2', item['color2']);
-                vehicles.set(item['id'], 'neon_type', item['neon_type']);
-                vehicles.set(item['id'], 'neon_r', item['neon_r']);
-                vehicles.set(item['id'], 'neon_g', item['neon_g']);
-                vehicles.set(item['id'], 'neon_b', item['neon_b']);
-                vehicles.set(item['id'], 'number', item['number']);
-                vehicles.set(item['id'], 'wanted_level', item['wanted_level']);
-                vehicles.set(item['id'], 'lock_status', item['lock_status']);
-                vehicles.set(item['id'], 's_mp', item['s_mp']);
-                vehicles.set(item['id'], 's_wh_bk_l', item['s_wh_bk_l']);
-                vehicles.set(item['id'], 's_wh_b_l', item['s_wh_b_l']);
-                vehicles.set(item['id'], 's_wh_bk_r', item['s_wh_bk_r']);
-                vehicles.set(item['id'], 's_wh_b_r', item['s_wh_b_r']);
-                vehicles.set(item['id'], 's_engine', item['s_engine']);
-                vehicles.set(item['id'], 's_suspension', item['s_suspension']);
-                vehicles.set(item['id'], 's_body', item['s_body']);
-                vehicles.set(item['id'], 's_candle', item['s_candle']);
-                vehicles.set(item['id'], 's_oil', item['s_oil']);
-                vehicles.set(item['id'], 'livery', item['livery']);
-                vehicles.set(item['id'], 'is_visible', item['is_visible']);
-                vehicles.set(item['id'], 'x', item['x']);
-                vehicles.set(item['id'], 'y', item['y']);
-                vehicles.set(item['id'], 'z', item['z']);
-                vehicles.set(item['id'], 'rot', item['rot']);
-                vehicles.set(item['id'], 'upgrade', item['upgrade']);
-                vehicles.set(item['id'], 'money_tax', item['money_tax']);
-                vehicles.set(item['id'], 'score_tax', item['score_tax']);
-                vehicles.set(item['id'], 'cop_park_name', item['cop_park_name']);
-                vehicles.set(item['id'], 'is_cop_park', item['is_cop_park']);
-
-                if (item['sell_price'] > 0) {
-                    return;
-                }
-
-                //if (item['name'] == 'Camper' || item['name'] == 'Journey')
-                //if (item['x'] != 0)
-                //    vehicles.spawnPlayerCar(parseInt(item['id']));
-            });
-            console.timeEnd('loadCarsForPlayer');
-            console.log(`All vehicles loaded for player ${playerId} (${rows.length})`);
-        });
-    }
-};
-
 vehicles.removePlayerVehicle = (userId) => {
     mp.vehicles.forEach(function (v) {
-        if (vehicles.exists(v) && v.getVariable('id_user') == userId) {
+        if (vehicles.exists(v) && v.getVariable('user_id') == userId) {
             vehicles.save(v.getVariable('container'));
             v.destroy();
         }
@@ -586,36 +503,36 @@ vehicles.save = (id) => {
     return new Promise((resolve) => {
         methods.debug('vehicles.save');
 
-        id = offset + id;
-        if (!Container.Data.Has(id, "id")) {
+        if (!vehicles.has(id, "id")) {
             resolve();
             return;
         }
-        if (!Container.Data.Has(id, "id_user")) {
+        if (!vehicles.has(id, "user_id")) {
             resolve();
             return;
         }
 
         let sql = "UPDATE cars SET";
 
-        sql = sql + " fuel = '" + parseFloat(Container.Data.Get(id, "fuel")) + "'";
-        sql = sql + ", color1 = '" + methods.parseInt(Container.Data.Get(id, "color1")) + "'";
-        sql = sql + ", color2 = '" + methods.parseInt(Container.Data.Get(id, "color2")) + "'";
-        sql = sql + ", neon_type = '" + methods.parseInt(Container.Data.Get(id, "neon_type")) + "'";
-        sql = sql + ", neon_r = '" + methods.parseInt(Container.Data.Get(id, "neon_r")) + "'";
-        sql = sql + ", neon_g = '" + methods.parseInt(Container.Data.Get(id, "neon_g")) + "'";
-        sql = sql + ", neon_b = '" + methods.parseInt(Container.Data.Get(id, "neon_b")) + "'";
-        sql = sql + ", number = '" + methods.removeQuotes(Container.Data.Get(id, "number")) + "'";
-        sql = sql + ", wanted_level = '" + methods.parseInt(Container.Data.Get(id, "wanted_level")) + "'";
-        sql = sql + ", lock_status = '" + methods.parseInt(Container.Data.Get(id, "lock_status")) + "'";
-        sql = sql + ", livery = '" + methods.parseInt(Container.Data.Get(id, "livery")) + "'";
-        sql = sql + ", x = '" + parseFloat(Container.Data.Get(id, "x")) + "'";
-        sql = sql + ", y = '" + parseFloat(Container.Data.Get(id, "y")) + "'";
-        sql = sql + ", z = '" + parseFloat(Container.Data.Get(id, "z")) + "'";
-        sql = sql + ", rot = '" + parseFloat(Container.Data.Get(id, "rot")) + "'";
-        sql = sql + ", upgrade = '" + Container.Data.Get(id, "upgrade") + "'";
+        sql = sql + " fuel = '" + methods.parseFloat(vehicles.get(id, "fuel")) + "'";
+        sql = sql + ", color1 = '" + methods.parseInt(vehicles.get(id, "color1")) + "'";
+        sql = sql + ", color2 = '" + methods.parseInt(vehicles.get(id, "color2")) + "'";
+        sql = sql + ", is_special = '" + methods.parseInt(vehicles.get(id, "is_special")) + "'";
+        sql = sql + ", neon_r = '" + methods.parseInt(vehicles.get(id, "neon_r")) + "'";
+        sql = sql + ", neon_g = '" + methods.parseInt(vehicles.get(id, "neon_g")) + "'";
+        sql = sql + ", neon_b = '" + methods.parseInt(vehicles.get(id, "neon_b")) + "'";
+        sql = sql + ", number = '" + methods.removeQuotes(vehicles.get(id, "number")) + "'";
+        sql = sql + ", is_cop_park = '" + methods.parseInt(vehicles.get(id, "is_cop_park")) + "'";
+        sql = sql + ", cop_park_name = '" + vehicles.get(id, "cop_park_name") + "'";
+        sql = sql + ", s_mp = '" + methods.parseFloat(vehicles.get(id, "s_mp")) + "'";
+        sql = sql + ", livery = '" + methods.parseInt(vehicles.get(id, "livery")) + "'";
+        sql = sql + ", x = '" + methods.parseFloat(vehicles.get(id, "x")) + "'";
+        sql = sql + ", y = '" + methods.parseFloat(vehicles.get(id, "y")) + "'";
+        sql = sql + ", z = '" + methods.parseFloat(vehicles.get(id, "z")) + "'";
+        sql = sql + ", rot = '" + methods.parseFloat(vehicles.get(id, "rot")) + "'";
+        sql = sql + ", upgrade = '" + vehicles.get(id, "upgrade") + "'";
 
-        sql = sql + " where id = '" + methods.parseInt(Container.Data.Get(id, "id")) + "'";
+        sql = sql + " where id = '" + methods.parseInt(vehicles.get(id, "id")) + "'";
         mysql.executeQuery(sql, undefined, function () {
             resolve();
         });
@@ -630,6 +547,11 @@ vehicles.set = function(id, key, val) {
 vehicles.get = function(id, key) {
     //methods.debug('vehicles.get');
     return Container.Data.Get(offset + methods.parseInt(id), key);
+};
+
+vehicles.has = function(id, key) {
+    //methods.debug('vehicles.get');
+    return Container.Data.Has(offset + methods.parseInt(id), key);
 };
 
 vehicles.getData = function(id) {
@@ -833,14 +755,33 @@ vehicles.setTunning = (veh) => {
     setTimeout(function () {
         if (vehicles.exists(veh)) {
 
+
             try {
-                let car = vehicles.getData(veh.getVariable('container'));
+                let vid = veh.getVariable('vid');
+                let car = vehicles.getData(vid);
+
+                for (let i = 0; i < 80; i++)
+                    veh.setMod(i, -1);
+
                 if (!car.has('color1'))
                     return;
 
+                veh.neonEnabled = false;
+                veh.windowTint = 0;
+
+                let numberStyle = 0;
+                if (vid % 3)
+                    numberStyle = 1;
+                else if (vid % 4)
+                    numberStyle = 2;
+                else if (vid % 5)
+                    numberStyle = 3;
+
+                veh.numberPlateType = numberStyle;
+
                 veh.setColor(car.get('color1'), car.get('color2'));
 
-                if (car.get('neon_type') > 0)
+                if (car.get('neon_r') > 0)
                     veh.setNeonColor(car.get('neon_r'), car.get('neon_g'), car.get('neon_b'));
 
                 veh.livery = car.get('livery');
@@ -866,13 +807,13 @@ vehicles.setTunning = (veh) => {
                             }
                         }
                         catch (e) {
-                            console.log(e);
+                            methods.debug('vehicles.setTunning1', e);
                         }
                     }, 500);
                 }
             }
             catch (e) {
-                console.log(e);
+                methods.debug('vehicles.setTunning2', e);
             }
         }
     }, 10000);

@@ -75,10 +75,12 @@ lsc.findNearest = function(pos) {
     return prevPos;
 };
 
-lsc.buy = function(player, number, price, shopId, action, newNumber) {
-
-    methods.debug('lsc.buy');
+lsc.repair = function(player, price, shopId) {
+    methods.debug('lsc.repair');
     if (!user.isLogin(player))
+        return;
+    let veh = player.vehicle;
+    if (!vehicles.exists(veh))
         return;
 
     if (user.getMoney(player) < price) {
@@ -89,178 +91,231 @@ lsc.buy = function(player, number, price, shopId, action, newNumber) {
     if (price < 1)
         return;
 
-    let veh = vehicles.findVehicleByNumber(number);
+    veh.repair();
+    user.removeMoney(player, price);
+    business.addMoney(shopId, price);
 
+    player.notify('~g~Вы отремонтировали трансопрт');
+
+};
+
+lsc.buyNeon = function(player, price, shopId) {
+    methods.debug('lsc.buyNeon');
+    if (!user.isLogin(player))
+        return;
+    let veh = player.vehicle;
     if (!vehicles.exists(veh))
         return;
 
-    switch (action) {
-        case 'setNeon': {
-            if (veh.getVariable('user_id') < 1) {
-                player.notify('~r~Транспорт должен быть личный');
-                return;
-            }
-            if (veh.getVariable('user_id') != user.getId(player)) {
-                player.notify('~r~Это должен быть ваш транспорт');
-                return;
-            }
-            if (vehicles.get(veh.getVariable('container'), 'neon_type') > 1) {
-                player.notify('~r~На транспорте уже установлен неон');
-                return;
-            }
-
-            vehicles.set(veh.getVariable('container'), 'neon_type', 2);
-            vehicles.set(veh.getVariable('container'), 'neon_r', 255);
-            vehicles.set(veh.getVariable('container'), 'neon_g', 255);
-            vehicles.set(veh.getVariable('container'), 'neon_b', 255);
-            vehicles.neonStatus(player, veh);
-            user.removeMoney(player, price);
-            business.addMoney(shopId, price);
-
-            player.notify('~g~Вы установили неон');
-
-            user.saveAccount(player);
-            vehicles.save(veh.getVariable('container'));
-            break;
-        }
-        case 'repair': {
-
-            veh.repair();
-            user.removeMoney(player, price);
-            business.addMoney(shopId, price);
-
-            player.notify('~g~Вы отремонтировали трансопрт');
-            break;
-        }
-        case 'setNumber': {
-            if (veh.getVariable('user_id') < 1) {
-                player.notify('~r~Транспорт должен быть личный');
-                return;
-            }
-            if (veh.getVariable('user_id') != user.getId(player)) {
-                player.notify('~r~Это должен быть ваш транспорт');
-                return;
-            }
-            if (newNumber.length < 1) {
-                player.notify('~r~Минимум 1 символ');
-                return;
-            }
-
-            if (!lsc.checkValidNumber(newNumber)) {
-                player.notify('~r~Вы не правильно ввели номер');
-                player.notify('~r~Только цифры (0-9) и буквы на англ. (A-Z)');
-                return;
-            }
-
-            if (newNumber.length == 1 && user.getMoney(player) < 1000000) {
-                player.notify('~r~Номер из 1 символа стоит $1.000.000');
-                return;
-            }
-
-            if (newNumber.length == 2 && user.getMoney(player) < 500000) {
-                player.notify('~r~Номер из 2 символов стоит $500.000');
-                return;
-            }
-
-            if (newNumber.length == 3 && user.getMoney(player) < 250000) {
-                player.notify('~r~Номер из 3 символов стоит $250.000');
-                return;
-            }
-
-            if (newNumber.length == 4 && user.getMoney(player) < 100000) {
-                player.notify('~r~Номер из 4 символов стоит $100.000');
-                return;
-            }
-
-            mysql.executeQuery(`SELECT id FROM cars WHERE number = ? LIMIT 1`, newNumber, function (err, rows, fields) {
-                if (rows.length === 0) {
-
-                    let valid = true;
-                    mp.vehicles.forEach(function (v) {
-                        if (!vehicles.exists(v))
-                            return;
-                        if (v.numberPlate == newNumber)
-                            valid = false;
-                    });
-
-                    if (valid) {
-
-                        vehicles.set(veh.getVariable('container'), 'number', newNumber);
-                        veh.numberPlate = newNumber;
-
-                        if (newNumber.length == 1) {
-                            user.removeMoney(player, 1000000);
-                            business.addMoney(shopId, 500000);
-                        }
-                        else if (newNumber.length == 2) {
-                            user.removeMoney(player, 500000);
-                            business.addMoney(shopId, 200000);
-                        }
-                        else if (newNumber.length == 3) {
-                            user.removeMoney(player, 250000);
-                            business.addMoney(shopId, 100000);
-                        }
-                        else if (newNumber.length == 4) {
-                            user.removeMoney(player, 100000);
-                            business.addMoney(shopId, 50000);
-                        }
-                        else {
-                            user.removeMoney(player, price);
-                            business.addMoney(shopId, price);
-                        }
-
-                        user.save(player);
-                        vehicles.save(veh.getVariable('container'));
-
-                        mysql.executeQuery(`UPDATE items SET owner_id = '${mp.joaat(newNumber)}' where owner_id = '${mp.joaat(veh.numberPlate)}' and (owner_type = '2' or owner_type = '3' or owner_type = '4')`);
-
-                        player.notify('~g~Вы изменили номер');
-                        return;
-                    }
-                }
-                player.notify('~r~Номер уже занят');
-            });
-            break;
-        }
+    if (user.getMoney(player) < price) {
+        player.notify('~r~У вас недостаточно средств');
+        return;
     }
+
+    if (price < 1)
+        return;
+
+    if (veh.getVariable('user_id') < 1) {
+        player.notify('~r~Транспорт должен быть личный');
+        return;
+    }
+    if (veh.getVariable('user_id') != user.getId(player)) {
+        player.notify('~r~Это должен быть ваш транспорт');
+        return;
+    }
+
+    if (veh.getVariable('user_id') < 1) {
+        player.notify('~r~Транспорт должен быть личный');
+        return;
+    }
+    if (veh.getVariable('user_id') != user.getId(player)) {
+        player.notify('~r~Это должен быть ваш транспорт');
+        return;
+    }
+    if (vehicles.get(veh.getVariable('container'), 'neon_r') > 0) {
+        player.notify('~r~На транспорте уже установлен неон');
+        return;
+    }
+
+    vehicles.set(veh.getVariable('container'), 'neon_r', 255);
+    vehicles.set(veh.getVariable('container'), 'neon_g', 255);
+    vehicles.set(veh.getVariable('container'), 'neon_b', 255);
+
+    vehicles.neonStatus(player, veh);
+    veh.neonEnabled = true;
+
+    user.removeMoney(player, price);
+    business.addMoney(shopId, price, 'Неоновая подсветка');
+
+    player.notify('~g~Вы установили неон');
+
+    user.save(player);
+    vehicles.save(veh.getVariable('container'));
 };
 
-lsc.showTun = function(player, vehNumber, modType, idx) {
+lsc.buySpecial = function(player, price, shopId) {
+    methods.debug('lsc.buyNeon');
+    if (!user.isLogin(player))
+        return;
+    let veh = player.vehicle;
+    if (!vehicles.exists(veh))
+        return;
+
+    if (user.getMoney(player) < price) {
+        player.notify('~r~У вас недостаточно средств');
+        return;
+    }
+
+    if (price < 1)
+        return;
+
+    if (veh.getVariable('user_id') < 1) {
+        player.notify('~r~Транспорт должен быть личный');
+        return;
+    }
+    if (veh.getVariable('user_id') != user.getId(player)) {
+        player.notify('~r~Это должен быть ваш транспорт');
+        return;
+    }
+
+    if (veh.getVariable('user_id') < 1) {
+        player.notify('~r~Транспорт должен быть личный');
+        return;
+    }
+    if (veh.getVariable('user_id') != user.getId(player)) {
+        player.notify('~r~Это должен быть ваш транспорт');
+        return;
+    }
+    if (vehicles.get(veh.getVariable('container'), 'is_special') > 0) {
+        player.notify('~r~На транспорте уже установлена модификация');
+        return;
+    }
+
+    vehicles.set(veh.getVariable('container'), 'is_special', 1);
+    vehicles.neonStatus(player, veh);
+    user.removeMoney(player, price);
+    business.addMoney(shopId, price, 'Дистанционное управление');
+
+    player.notify('~g~Вы установили модификацию');
+
+    user.save(player);
+    vehicles.save(veh.getVariable('container'));
+};
+
+lsc.buyNumber = function(player, shopId, newNumber) {
+    methods.debug('lsc.buyNumber');
+    if (!user.isLogin(player))
+        return;
+    let veh = player.vehicle;
+    if (!vehicles.exists(veh))
+        return;
+
+    if (veh.getVariable('user_id') < 1) {
+        player.notify('~r~Транспорт должен быть личный');
+        return;
+    }
+    if (veh.getVariable('user_id') != user.getId(player)) {
+        player.notify('~r~Это должен быть ваш транспорт');
+        return;
+    }
+    if (newNumber.length < 1) {
+        player.notify('~r~Минимум 1 символ');
+        return;
+    }
+
+    if (!lsc.checkValidNumber(newNumber)) {
+        player.notify('~r~Вы не правильно ввели номер');
+        player.notify('~r~Только цифры (0-9) и буквы на англ. (A-Z)');
+        return;
+    }
+
+    if (newNumber.length == 1 && user.getMoney(player) < 1000000) {
+        player.notify('~r~Номер из 1 символа стоит $1.000.000');
+        return;
+    }
+    else if (newNumber.length == 2 && user.getMoney(player) < 500000) {
+        player.notify('~r~Номер из 2 символов стоит $500.000');
+        return;
+    }
+    else if (newNumber.length == 3 && user.getMoney(player) < 250000) {
+        player.notify('~r~Номер из 3 символов стоит $250.000');
+        return;
+    }
+    else if (newNumber.length == 4 && user.getMoney(player) < 100000) {
+        player.notify('~r~Номер из 4 символов стоит $100.000');
+        return;
+    }
+    else if(user.getMoney(player) < 40000) {
+        player.notify('~r~Номер сстоит $40.000');
+        return;
+    }
+
+    mysql.executeQuery(`SELECT id FROM cars WHERE number = ? LIMIT 1`, newNumber, function (err, rows, fields) {
+        if (rows.length === 0) {
+
+            let valid = true;
+            mp.vehicles.forEach(function (v) {
+                if (!vehicles.exists(v))
+                    return;
+                if (v.numberPlate == newNumber)
+                    valid = false;
+            });
+
+            if (valid) {
+
+                if (newNumber.length == 1) {
+                    user.removeMoney(player, 1000000);
+                    business.addMoney(shopId, 500000);
+                }
+                else if (newNumber.length == 2) {
+                    user.removeMoney(player, 500000);
+                    business.addMoney(shopId, 200000);
+                }
+                else if (newNumber.length == 3) {
+                    user.removeMoney(player, 250000);
+                    business.addMoney(shopId, 100000);
+                }
+                else if (newNumber.length == 4) {
+                    user.removeMoney(player, 100000);
+                    business.addMoney(shopId, 50000);
+                }
+                else {
+                    user.removeMoney(player, 40000);
+                    business.addMoney(shopId, 40000);
+                }
+
+                mysql.executeQuery(`UPDATE items SET owner_id = '${mp.joaat(newNumber)}' where owner_id = '${mp.joaat(veh.numberPlate)}' and (owner_type = '2' or owner_type = '3' or owner_type = '4')`);
+
+                vehicles.set(veh.getVariable('container'), 'number', newNumber);
+                veh.numberPlate = newNumber;
+
+                user.save(player);
+                vehicles.save(veh.getVariable('container'));
+
+                player.notify('~g~Вы изменили номер');
+                return;
+            }
+        }
+        player.notify('~r~Номер уже занят');
+    });
+};
+
+lsc.showTun = function(player, modType, idx) {
     methods.debug('lsc.showTun');
-    let veh = vehicles.findVehicleByNumber(vehNumber);
+    if (!user.isLogin(player))
+        return;
+    let veh = player.vehicle;
     if (!vehicles.exists(veh))
         return;
     if (modType == 69)
         veh.windowTint = idx;
+    else if (modType == 77)
+        veh.livery = idx;
     else
         veh.setMod(modType, idx);
 };
 
-lsc.showColor1 = function(player, number, idx) {
-    methods.debug('lsc.showColor1');
-    let veh = vehicles.findVehicleByNumber(number);
-    if (!vehicles.exists(veh))
-        return;
-    if (veh.getVariable('user_id') < 1) {
-        player.notify('~r~Транспорт должен быть личный');
-        return;
-    }
-    veh.setColor(idx, veh.getColor(1));
-};
-
-lsc.showColor2 = function(player, number, idx) {
-    methods.debug('lsc.showColor2');
-    let veh = vehicles.findVehicleByNumber(number);
-    if (!vehicles.exists(veh))
-        return;
-    if (veh.getVariable('user_id') < 1) {
-        player.notify('~r~Транспорт должен быть личный');
-        return;
-    }
-    veh.setColor(veh.getColor(0), idx);
-};
-
-lsc.buyTun = function(player, number, modType, idx, price, shopId) {
+lsc.buyTun = function(player, modType, idx, price, shopId, itemName) {
     methods.debug('lsc.buyTun');
     if (!user.isLogin(player))
         return;
@@ -273,7 +328,7 @@ lsc.buyTun = function(player, number, modType, idx, price, shopId) {
     if (price < 0)
         return;
 
-    let veh = vehicles.findVehicleByNumber(number);
+    let veh = player.vehicle;
 
     if (!vehicles.exists(veh))
         return;
@@ -298,104 +353,43 @@ lsc.buyTun = function(player, number, modType, idx, price, shopId) {
     }
 
     user.removeMoney(player, price);
-    business.addMoney(shopId, price);
+    business.addMoney(shopId, price, itemName);
 
     player.notify('~g~Вы установили деталь, цена: ~s~$' + methods.numberFormat(price));
 
-    lsc.resetMod(number);
+    vehicles.setTunning(veh);
     vehicles.save(veh.getVariable('container'));
 };
 
-lsc.buySTun = function(player, number, modType, idx, price, shopId) {
-    methods.debug('lsc.buyTun');
+lsc.showColor1 = function(player, idx) {
+    methods.debug('lsc.showColor1');
     if (!user.isLogin(player))
         return;
-
-    if (user.getMoney(player) < price) {
-        player.notify('~r~У вас недостаточно средств');
-        return;
-    }
-
-    if (price < 0)
-        return;
-
-    let veh = vehicles.findVehicleByNumber(number);
-
+    let veh = player.vehicle;
     if (!vehicles.exists(veh))
         return;
-
-    if (veh.getVariable('user_id') != user.getId(player)) {
-        player.notify('~r~Это должен быть ваш транспорт');
-        return;
-    }
-
     if (veh.getVariable('user_id') < 1) {
         player.notify('~r~Транспорт должен быть личный');
         return;
     }
-
-    modType = modType + 100;
-
-    if (modType == 0) {
-        switch (idx) {
-            case 0:
-                idx = -1;
-                break;
-            case 1:
-                idx = 0;
-                break;
-            case 2:
-                idx = 0.5;
-                break;
-            case 3:
-                idx = 1;
-                break;
-        }
-    }
-
-    let car = vehicles.getData(veh.getVariable('container'));
-    let upgrade = JSON.parse(car.get('upgrade'));
-    upgrade[modType.toString()] = idx;
-    vehicles.set(veh.getVariable('container'), 'upgrade', JSON.stringify(upgrade));
-
-    user.removeMoney(player, price);
-    business.addMoney(shopId, price);
-
-    player.notify('~g~Вы обновили ТС, цена: ~s~$' + methods.numberFormat(price));
-    vehicles.save(veh.getVariable('container'));
+    veh.setColor(idx, veh.getColor(1));
 };
 
-lsc.resetSTun = function(player, number, modType) {
-    methods.debug('lsc.resetSTun');
+lsc.showColor2 = function(player, idx) {
+    methods.debug('lsc.showColor2');
     if (!user.isLogin(player))
         return;
-
-    let veh = vehicles.findVehicleByNumber(number);
-
+    let veh = player.vehicle;
     if (!vehicles.exists(veh))
         return;
-
     if (veh.getVariable('user_id') < 1) {
         player.notify('~r~Транспорт должен быть личный');
         return;
     }
-    if (veh.getVariable('user_id') != user.getId(player)) {
-        player.notify('~r~Это должен быть ваш транспорт');
-        return;
-    }
-
-    modType = modType + 100;
-
-    let car = vehicles.getData(veh.getVariable('container'));
-    let upgrade = JSON.parse(car.get('upgrade'));
-    upgrade[modType.toString()] = -1;
-    vehicles.set(veh.getVariable('container'), 'upgrade', JSON.stringify(upgrade));
-
-    player.notify('~g~Вы обновили ТС, на стандартные настройки');
-    vehicles.save(veh.getVariable('container'));
+    veh.setColor(veh.getColor(0), idx);
 };
 
-lsc.buyColor1 = function(player, number, idx, price, shopId) {
+lsc.buyColor1 = function(player, idx, price, shopId, itemName) {
     methods.debug('lsc.buyColor1');
     if (!user.isLogin(player))
         return;
@@ -408,7 +402,7 @@ lsc.buyColor1 = function(player, number, idx, price, shopId) {
     if (price < 1)
         return;
 
-    let veh = vehicles.findVehicleByNumber(number);
+    let veh = player.vehicle;
 
     if (!vehicles.exists(veh))
         return;
@@ -422,15 +416,15 @@ lsc.buyColor1 = function(player, number, idx, price, shopId) {
     vehicles.set(veh.getVariable('container'), 'color1', idx);
 
     user.removeMoney(player, price);
-    business.addMoney(shopId, price);
+    business.addMoney(shopId, price, itemName);
 
     player.notify('~g~Вы изменили цвет транспорта');
 
-    lsc.resetMod(number);
+    vehicles.setTunning(veh);
     vehicles.save(veh.getVariable('container'));
 };
 
-lsc.buyColor2 = function(player, number, idx, price, shopId) {
+lsc.buyColor2 = function(player, idx, price, shopId, itemName) {
     methods.debug('lsc.buyColor2');
     if (!user.isLogin(player))
         return;
@@ -442,7 +436,7 @@ lsc.buyColor2 = function(player, number, idx, price, shopId) {
     if (price < 1)
         return;
 
-    let veh = vehicles.findVehicleByNumber(number);
+    let veh = player.vehicle;
 
     if (!vehicles.exists(veh))
         return;
@@ -456,51 +450,12 @@ lsc.buyColor2 = function(player, number, idx, price, shopId) {
     vehicles.set(veh.getVariable('container'), 'color2', idx);
 
     user.removeMoney(player, price);
-    business.addMoney(shopId, price);
+    business.addMoney(shopId, price, itemName);
 
     player.notify('~g~Вы изменили цвет транспорта');
 
-    lsc.resetMod(number);
+    vehicles.setTunning(veh);
     vehicles.save(veh.getVariable('container'));
-};
-
-lsc.resetMod = function(number) {
-    methods.debug('lsc.resetMod');
-    try {
-        let veh = vehicles.findVehicleByNumber(number);
-
-        if (!vehicles.exists(veh))
-            return;
-
-        let car = vehicles.getData(veh.getVariable('container'));
-
-        veh.setColor(car.get('color1'), car.get('color2'));
-
-        if (car.get('neon_type') > 0)
-            veh.setNeonColor(car.get('neon_r'), car.get('neon_g'), car.get('neon_b'));
-
-        for (let i = 0; i < 80; i++)
-            veh.setMod(0, 0);
-
-        veh.livery = car.get('livery');
-
-        if (car.has('upgrade')) {
-            let upgrade = JSON.parse(car.get('upgrade'));
-            for (let tune in upgrade) {
-                if (methods.parseInt(tune) >= 100)
-                    continue;
-                if (methods.parseInt(tune) === 69)
-                    veh.windowTint = methods.parseInt(upgrade[tune]);
-                else if (methods.parseInt(tune) === 78)
-                    veh.wheelType = methods.parseInt(upgrade[tune]);
-                else
-                    veh.setMod(methods.parseInt(tune), methods.parseInt(upgrade[tune]));
-            }
-        }
-    }
-    catch (e) {
-        console.log(e);
-    }
 };
 
 lsc.checkValidNumber = function(number) {

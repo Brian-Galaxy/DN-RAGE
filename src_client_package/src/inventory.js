@@ -87,6 +87,8 @@ inventory.openInventoryByEntity = function(entity) {
                 mp.game.ui.notifications.show("~g~Вы должны находиться около багажника");
             } else if (methods.getVehicleInfo(entity.model).stock == 0) {
                 mp.game.ui.notifications.show("~r~Багажник отсутсвует у этого ТС");
+            } else if (entity.getVariable('useless') === true) {
+                mp.game.ui.notifications.show("~r~Данный транспорт не доступен");
             }
             else {
                 inventory.getItemList(inventory.types.Vehicle, entity.getVariable('invId'));

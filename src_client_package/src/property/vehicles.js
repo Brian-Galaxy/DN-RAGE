@@ -27,6 +27,25 @@ vehicles.has = function(id, key) {
     return Container.Data.HasLocally(offset + id, key);
 };
 
+/*
+vehicles.setData = function(id, key, val) {
+    Container.Data.Set(offset + id, key, val);
+};
+
+vehicles.resetData = function(id, key) {
+    Container.Data.Reset(offset + id, key);
+};
+
+vehicles.getData = async function(id, key) {
+    if (vehicles.has(id, key))
+        return await Container.Data.Get(offset + id, key);
+    return undefined;
+};
+
+vehicles.hasData = async function(id, key) {
+    return await Container.Data.Has(offset + id, key);
+};*/
+
 vehicles.enableAutopilot = function() {
     if (mp.game.invoke(methods.IS_WAYPOINT_ACTIVE)) {
         let pos = methods.getWaypointPosition();

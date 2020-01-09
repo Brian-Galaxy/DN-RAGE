@@ -18,6 +18,7 @@ let vehicles = require('../property/vehicles');
 
 let cloth = require('../business/cloth');
 let tattoo = require('../business/tattoo');
+let lsc = require('../business/lsc');
 
 let pickups = require('../managers/pickups');
 
@@ -902,7 +903,8 @@ mp.events.add("client:exitStaticCheckpoint", (player, checkpointId) => {
     if (!user.isLogin(player))
         return;
     if (Container.Data.Has(999999, 'resetTunning' + checkpointId)) {
-        //todo
+        if (player.vehicle && player.vehicle.getVariable('user_id') > 0)
+            vehicles.setTunning(player.vehicle);
     }
 });
 
@@ -976,6 +978,8 @@ mp.events.addRemoteCounted('server:vehicle:lockStatus', (player) => {
     if (!user.isLogin(player))
         return;
     try {
+
+
         if (player.vehicle && player.seat == -1) {
             vehicles.lockStatus(player, player.vehicle);
             return;
@@ -984,6 +988,12 @@ mp.events.addRemoteCounted('server:vehicle:lockStatus', (player) => {
         let vehicle = methods.getNearestVehicleWithCoords(player.position, 5);
         if (vehicles.exists(vehicle)) {
             let data = vehicles.getData(vehicle.getVariable('container'));
+
+            if (vehicle.getVariable('useless') === true) {
+                player.notify('~r~Простите, транспорт закрыт');
+                return;
+            }
+
             if (data.has('fraction_id')) {
                 if (data.get('fraction_id') == user.get(player, 'fraction_id'))
                     vehicles.lockStatus(player, vehicle);
@@ -1050,6 +1060,123 @@ mp.events.addRemoteCounted('server:vehicle:setLivery', (player, liv) => {
     catch (e) {
         methods.debug(e);
     }
+});
+
+mp.events.addRemoteCounted('server:lsc:showTun', (player, modType, idx) => {
+    if (!user.isLogin(player))
+        return;
+    lsc.showTun(player, modType, idx);
+});
+
+mp.events.addRemoteCounted('server:lsc:buyTun', (player, modType, idx, price, shopId, itemName) => {
+    if (!user.isLogin(player))
+        return;
+    lsc.buyTun(player, modType, idx, price, shopId, itemName);
+});
+
+mp.events.addRemoteCounted('server:lsc:showColor1', (player, idx) => {
+    if (!user.isLogin(player))
+        return;
+    lsc.showColor1(player, idx);
+});
+
+mp.events.addRemoteCounted('server:lsc:showColor2', (player, idx) => {
+    if (!user.isLogin(player))
+        return;
+    lsc.showColor2(player, idx);
+});
+
+mp.events.addRemoteCounted('server:lsc:buyColor1', (player, idx, price, shopId, itemName) => {
+    if (!user.isLogin(player))
+        return;
+    lsc.buyColor1(player, idx, methods.parseInt(price), shopId, itemName);
+});
+
+mp.events.addRemoteCounted('server:lsc:buyColor2', (player, idx, price, shopId, itemName) => {
+    if (!user.isLogin(player))
+        return;
+    lsc.buyColor2(player, idx, methods.parseInt(price), shopId, itemName);
+});
+
+mp.events.addRemoteCounted('server:lsc:buyNumber', (player, shopId, newNumber) => {
+    if (!user.isLogin(player))
+        return;
+    lsc.buyNumber(player, shopId, newNumber);
+});
+
+mp.events.addRemoteCounted('server:lsc:repair', (player, shopId, price) => {
+    if (!user.isLogin(player))
+        return;
+    lsc.repair(player, price, shopId);
+});
+
+mp.events.addRemoteCounted('server:lsc:buyNeon', (player, shopId, price) => {
+    if (!user.isLogin(player))
+        return;
+    lsc.buyNeon(player, price, shopId);
+});
+
+mp.events.addRemoteCounted('server:lsc:buySpecial', (player, shopId, price) => {
+    if (!user.isLogin(player))
+        return;
+    lsc.buySpecial(player, price, shopId);
+});
+
+mp.events.addRemoteCounted('server:lsc:sellCar', (player) => {
+    if (!user.isLogin(player))
+        return;
+    let veh = player.vehicle;
+    if (!vehicles.exists(veh))
+        return;
+
+    if (weather.getHour() < 22 && weather.getHour() > 4) {
+        player.notify('~r~Доступно только с 22 до 4 утра игрового времени');
+        return;
+    }
+
+    if (user.has(player, 'grabVeh')) {
+        player.notify('~r~Вы не можете сейчас сбыть транспорт');
+        return;
+    }
+
+    let money = 100;
+
+    let vInfo = methods.getVehicleInfo(veh.model);
+
+    switch (vInfo.class_name) {
+        case "Emergency":
+        case "Boats":
+        case "Helicopters":
+        case "Planes":
+            player.notify("~r~Мы такое не принимаем");
+            return;
+        case "Sports Classics":
+            money += 350;
+            break;
+        case "Sports":
+        case "Super":
+            money += 220;
+            break;
+        case "SUVs":
+        case "Muscle":
+        case "Off-Road":
+            money += 90;
+            break;
+    }
+    user.showLoadDisplay(player);
+
+    user.addCashMoney(player, money);
+    user.set(player, 'grabVeh', true);
+
+    setTimeout(function () {
+        if (!user.isLogin(player))
+            return;
+        user.hideLoadDisplay(player);
+        player.notify('~g~Вы заработали: ~s~$' + money);
+        if (!vehicles.exists(veh))
+            return;
+        vehicles.respawn(veh);
+    }, 1000);
 });
 
 mp.events.addRemoteCounted('server:vehicle:occ', (player) => {

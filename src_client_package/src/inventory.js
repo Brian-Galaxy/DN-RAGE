@@ -463,7 +463,7 @@ inventory.updateAmountMax = function(id, type) {
     {
         let invAmountMax = inventory.calculatePlayerInvAmountMax();
         if (type == inventory.types.World)
-            invAmountMax = -1;
+            invAmountMax = 999999999;
         else if (type == inventory.types.Apartment)
             invAmountMax = 200000;
         else if (type == inventory.types.House)

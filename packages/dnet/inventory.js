@@ -53,7 +53,12 @@ inventory.getItemList = function(player, ownerType, ownerId) {
 
         let data = [];
         //let data2 = new Map();
-        mysql.executeQuery(`SELECT * FROM items WHERE owner_id = '${ownerId}' AND owner_type = '${ownerType}' ORDER BY item_id DESC`, function (err, rows, fields) {
+
+        let sql = `SELECT * FROM items WHERE owner_id = '${ownerId}' AND owner_type = '${ownerType}' ORDER BY item_id DESC`;
+        if (ownerId == 0 && ownerType == 0)
+            sql = `SELECT * FROM items WHERE DISTANCE(POINT(pos_x, pos_y), POINT(${player.position.x}, ${player.position.y})) < 2 AND owner_type = 0 ORDER BY item_id DESC`;
+
+        mysql.executeQuery(sql, function (err, rows, fields) {
             rows.forEach(row => {
 
                 let label = "";

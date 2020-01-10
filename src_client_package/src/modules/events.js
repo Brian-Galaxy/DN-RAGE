@@ -1184,7 +1184,7 @@ mp.keys.bind(0xDD, true, function() {
 
 // ~ Key Code
 mp.keys.bind(0xC0, true, function() {
-    //menuList.showAuthMenu();
+    inventory.getItemList(0, 0);
 });
 
 mp.keys.bind(0x38, true, function() {

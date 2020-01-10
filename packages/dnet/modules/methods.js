@@ -3,12 +3,15 @@
 const crypto = require('crypto');
 
 let Container = require('./data');
+let mysql = require('./mysql');
 
 let enums = require('../enums');
 let user = require('../user');
 let coffer = require('../coffer');
 
 let vehicles = require('../property/vehicles');
+
+let weather = require('../managers/weather');
 
 let checkPointStaticList = [];
 
@@ -121,6 +124,10 @@ methods.getTimeStamp = function () {
     return Date.now() / 1000 | 0;
 };
 
+methods.getTimeStampFull = function () {
+    return Date.now();
+};
+
 methods.getTimeWithoutSec = function() {
     let dateTime = new Date();
     return `${methods.digitFormat(dateTime.getHours())}:${methods.digitFormat(dateTime.getMinutes())}`;
@@ -134,6 +141,10 @@ methods.getTime = function() {
 methods.getDate = function() {
     let dateTime = new Date();
     return `${methods.digitFormat(dateTime.getDate())}/${methods.digitFormat(dateTime.getMonth() + 1)}/${methods.digitFormat(dateTime.getFullYear())}`;
+};
+
+methods.daysInMonth = function (month, year) {
+    return new Date(year, month, 0).getDate();
 };
 
 methods.distanceToPos = function (v1, v2) {
@@ -194,6 +205,13 @@ methods.parseFloat = function (str) {
 methods.saveLog = function (name, log) {
     methods.debug(name, log);
     //TODO
+};
+
+methods.saveFractionLog = function (name, doName, text, fractionId) {
+    doName = methods.removeQuotes(doName);
+    text = methods.removeQuotes(text);
+    name = methods.removeQuotes(name);
+    mysql.executeQuery(`INSERT INTO log_fraction (name, text, text2, fraction_id, timestamp, rp_datetime) VALUES ('${name}', '${doName}', '${text}', '${fractionId}', '${methods.getTimeStamp()}', '${weather.getRpDateTime()}')`);
 };
 
 methods.saveFile = function (name, log) {

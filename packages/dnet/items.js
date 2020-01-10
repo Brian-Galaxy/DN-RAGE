@@ -559,6 +559,41 @@ items.itemList = [
     ["Прицел", "weapon_grenadelauncher", -1439939148, 999, 999, 999], //473
 ];
 
+items.isWeapon = function(itemId) {
+    return itemId >= 54 && itemId <= 138;
+};
+
+items.isAmmo = function(itemId) {
+    return itemId >= 279 && itemId <= 292;
+};
+
+items.getAmmoCount = function(itemId) {
+    switch (itemId) {
+        case 279:
+        case 288:
+        case 290:
+            return 10;
+        case 280:
+            return 140;
+        case 281:
+            return 120;
+        case 282:
+            return 130;
+        case 283:
+        case 284:
+            return 260;
+        case 285:
+        case 286:
+        case 287:
+            return 60;
+        case 289:
+        case 291:
+        case 292:
+            return 1;
+    }
+    return 10;
+};
+
 items.canEquipById = function(id)
 {
     try

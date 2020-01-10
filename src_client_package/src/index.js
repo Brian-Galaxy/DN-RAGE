@@ -1,8 +1,11 @@
 import './modules/data';
 import './modules/events';
+
 import './manager/vSync';
+import './manager/pSync';
 import './manager/wcSync';
 import './manager/shoot';
+
 import './betternotifs';
 import './voice';
 

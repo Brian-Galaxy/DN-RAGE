@@ -70,16 +70,16 @@ pickups.PrisonArrestPos = new mp.Vector3(1690.606, 2591.926, 44.83793);
 pickups.PrisonPos1 = new mp.Vector3(1846.5198, 2585.9008, 44.6720);
 pickups.PrisonPos2 = new mp.Vector3(1774.8231, 2552.00925, 44.5649);
 
-pickups.UsmcPos1 = new mp.Vector3(556.8799, -3119.107, 17.76859);
+/*pickups.UsmcPos1 = new mp.Vector3(556.8799, -3119.107, 17.76859);
 pickups.UsmcPos2 = new mp.Vector3(556.9783, -3120.458, 17.76858);
 pickups.UsmcPos11 = new mp.Vector3(581.3184, -3119.271, 17.76858);
 pickups.UsmcPos22 = new mp.Vector3(581.518, -3120.49, 17.76858);
 
 pickups.UsmcArsenal1Pos = new mp.Vector3(467.5390319824219, -3212.447509765625, 6.056999683380127);
-pickups.UsmcArsenal2Pos = new mp.Vector3(3095.916259765625, -4707.67138671875, 11.24404525756836);
+pickups.UsmcArsenal2Pos = new mp.Vector3(3095.916259765625, -4707.67138671875, 11.24404525756836);*/
 
-pickups.FibDutyPos = new mp.Vector3(131.0169, -729.158, 257.1521);
-pickups.FibArsenalPos = new mp.Vector3(129.3821, -730.57, 257.1521);
+//pickups.FibDutyPos = new mp.Vector3(131.0169, -729.158, 257.1521);
+//pickups.FibArsenalPos = new mp.Vector3(129.3821, -730.57, 257.1521);
 pickups.FibLift0StationPos = new mp.Vector3(122.9873, -741.1865, 32.13323);
 pickups.FibLift1StationPos = new mp.Vector3(136.2213, -761.6816, 44.75201);
 pickups.FibLift2StationPos = new mp.Vector3(136.2213, -761.6816, 241.152);
@@ -258,8 +258,8 @@ pickups.checkPressLAlt = function(player) {
     //methods.checkTeleport(player, pickups.TheLostPos1, pickups.TheLostPos2);
     //methods.checkTeleport(player, pickups.AptekaEnterPos1, pickups.AptekaEnterPos2);
     methods.checkTeleport(player, pickups.AptekaEnterPos11, pickups.AptekaEnterPos22);
-    methods.checkTeleport(player, pickups.UsmcPos1, pickups.UsmcPos2);
-    methods.checkTeleport(player, pickups.UsmcPos11, pickups.UsmcPos22);
+    /*methods.checkTeleport(player, pickups.UsmcPos1, pickups.UsmcPos2);
+    methods.checkTeleport(player, pickups.UsmcPos11, pickups.UsmcPos22);*/
     methods.checkTeleport(player, pickups.EmsInPos, pickups.EmsOutPos);
     methods.checkTeleport(player, pickups.EmsIn1Pos, pickups.EmsOut1Pos);
     //methods.checkTeleport(player, pickups.SapdFromBalconPos, pickups.SapdToCyberRoomPos);
@@ -335,7 +335,7 @@ pickups.checkPressE = function(player) {
         if (methods.distanceToPos(business.BusinessBotPos, playerPos) < distanceCheck)
             player.call('client:menuList:showBusinessMenu', [Array.from(business.getData(player.dimension))]);
     }
-    /*if (user.isGov(player)) {
+    if (user.isGov(player)) {
         if (methods.distanceToPos(pickups.MeriaGarderobPos, playerPos) < distanceCheck)
             player.call('client:menuList:showGovGarderobMenu');
     }
@@ -350,10 +350,10 @@ pickups.checkPressE = function(player) {
             player.call('client:menuList:showSapdArsenalMenu');
     }
     if (user.isEms(player)) {
-        if (methods.distanceToPos(pickups.EmsGarderobPos, playerPos) < distanceCheck)
+        if (methods.distanceToPos(pickups.EmsGarderobPos1, playerPos) < distanceCheck)
             player.call('client:menuList:showEmsGarderobMenu');
-        if (methods.distanceToPos(pickups.EmsFireGarderobPos, playerPos) < distanceCheck)
-            player.call('client:menuList:showEmsFireGarderobMenu');
+        if (methods.distanceToPos(pickups.EmsGarderobPos2, playerPos) < distanceCheck)
+            player.call('client:menuList:showEmsGarderobMenu');
     }
     if (user.isSheriff(player)) {
         if (methods.distanceToPos(pickups.SheriffGarderobPos, playerPos) < distanceCheck)
@@ -377,7 +377,7 @@ pickups.checkPressE = function(player) {
         if (methods.distanceToPos(pickups.PrisonArrestPos, playerPos) < distanceCheck)
             player.call('client:menuList:showSapdArrestMenu');
     }
-    if (user.isFib(player)) {
+    /*if (user.isFib(player)) {
         if (methods.distanceToPos(pickups.FibArsenalPos, playerPos) < distanceCheck)
             player.call('client:menuList:showFibArsenalMenu');
     }
@@ -432,17 +432,17 @@ pickups.createPickups = function() {
     methods.createStaticCheckpointV(pickups.AptekaEnterPos2, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
     methods.createStaticCheckpointV(pickups.AptekaEnterPos22, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
 
-    methods.createStaticCheckpointV(pickups.UsmcPos1, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
+    /*methods.createStaticCheckpointV(pickups.UsmcPos1, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
     methods.createStaticCheckpointV(pickups.UsmcPos2, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
     methods.createStaticCheckpointV(pickups.UsmcPos11, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-    methods.createStaticCheckpointV(pickups.UsmcPos22, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
+    methods.createStaticCheckpointV(pickups.UsmcPos22, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);*/
 
     //Keys
     methods.createStaticCheckpointV(pickups.Ems1KeyPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
-    methods.createStaticCheckpointV(pickups.Usmc1KeyPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
-    methods.createStaticCheckpointV(pickups.Usmc2KeyPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
+    //methods.createStaticCheckpointV(pickups.Usmc1KeyPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
+    //methods.createStaticCheckpointV(pickups.Usmc2KeyPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
     methods.createStaticCheckpointV(pickups.GovKeyPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
-    methods.createStaticCheckpointV(pickups.FibKeyPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
+    //methods.createStaticCheckpointV(pickups.FibKeyPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
 
     //Hackerspace
     methods.createStaticCheckpointV(pickups.HackerSpaceShopPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
@@ -522,10 +522,10 @@ pickups.createPickups = function() {
     //FIB
     //methods.createStaticCheckpointV(pickups.FibDutyPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
 
-    methods.createStaticCheckpointV(pickups.UsmcArsenal1Pos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
+   /* methods.createStaticCheckpointV(pickups.UsmcArsenal1Pos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
     methods.createStaticCheckpointV(pickups.UsmcArsenal2Pos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
 
-    methods.createStaticCheckpointV(pickups.FibArsenalPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
+    methods.createStaticCheckpointV(pickups.FibArsenalPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);*/
     methods.createStaticCheckpointV(pickups.FibLift0StationPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
     methods.createStaticCheckpointV(pickups.FibLift1StationPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
     methods.createStaticCheckpointV(pickups.FibLift2StationPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);

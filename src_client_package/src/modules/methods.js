@@ -230,8 +230,11 @@ methods.getListOfPlayerInRadius = function(pos, r) {
     return returnPlayers;
 };
 
-methods.saveLog = function(file, log){
+methods.saveLog = function(file, log){//TODO
+};
 
+methods.saveFractionLog = function(name, doName, text, fractionId = 0) {
+    mp.events.callRemote('server:addFractionLog', name, doName, text, fractionId);
 };
 
 methods.getWaypointPosition = function () {

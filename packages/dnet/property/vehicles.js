@@ -1020,7 +1020,7 @@ vehicles.engineStatus = (player, vehicle) => {
         let eStatus = !vSync.getEngineState(vehicle);
         vSync.setEngineState(vehicle, eStatus);
         if (eStatus)
-            player.notify('Вы ~g~завели~s~ двигатель');
+            player.notify('Вы ~g~запустили~s~ двигатель');
         else
             player.notify('Вы ~r~заглушили~s~ двигатель');
     }

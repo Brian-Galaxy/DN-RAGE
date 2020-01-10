@@ -762,7 +762,60 @@ user.isDead = function() {
 };
 
 user.isAdmin = function(){
-    return true; //TODO
+    return user.getCache('admin_level') > 0;
+};
+
+user.isHelper = function(){
+    return user.getCache('helper_level') > 0;
+};
+
+user.isGos = function() {
+    methods.debug('user.isGos');
+    return user.isLogin() && (user.isSapd() || user.isFib() || user.isUsmc() || user.isGov() || user.isEms() || user.isSheriff());
+};
+
+user.isGov = function() {
+    methods.debug('user.isGov');
+    return user.isLogin() && user.getCache('fraction_id') == 1;
+};
+
+user.isSapd = function() {
+    methods.debug('user.isSapd');
+    return user.isLogin() && user.getCache('fraction_id') == 2;
+};
+
+user.isFib = function() {
+    methods.debug('user.isFib');
+    return user.isLogin() && user.getCache('fraction_id') == 3;
+};
+
+user.isUsmc = function() {
+    methods.debug('user.isUsmc');
+    return user.isLogin() && user.getCache('fraction_id') == 4;
+};
+
+user.isSheriff = function() {
+    methods.debug('user.isSheriff');
+    return user.isLogin() && user.getCache('fraction_id') == 5;
+};
+
+user.isEms = function() {
+    methods.debug('user.isEms');
+    return user.isLogin() && user.getCache('fraction_id') == 6;
+};
+user.isNews = function() {
+    methods.debug('user.isNews');
+    return user.isLogin() && user.getCache('fraction_id') == 7;
+};
+
+user.isLeader = function() {
+    methods.debug('user.isLeader');
+    return user.isLogin() && user.getCache('is_leader');
+};
+
+user.isSubLeader = function() {
+    methods.debug('user.isSubLeader');
+    return user.isLogin() && user.getCache('is_sub_leader');
 };
 
 export default user;

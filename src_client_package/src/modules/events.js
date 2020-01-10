@@ -623,6 +623,57 @@ mp.events.add('client:menuList:showBusinessMenu', (data) => {
     }
 });
 
+mp.events.add('client:menuList:showGovGarderobMenu', () => {
+    methods.debug('Event: client:menuList:showGovGarderobMenu');
+    menuList.showGovGarderobMenu();
+});
+
+mp.events.add('client:menuList:showSapdArsenalMenu', () => {
+    methods.debug('Event: client:menuList:showSapdArsenalMenu');
+    menuList.showSapdArsenalMenu();
+});
+
+mp.events.add('client:menuList:showSapdGarderobMenu', () => {
+    methods.debug('Event: client:menuList:showSapdGarderobMenu');
+    menuList.showSapdGarderobMenu();
+});
+
+mp.events.add('client:menuList:showSapdArrestMenu', () => {
+    methods.debug('Event: client:menuList:showSapdArrestMenu');
+    menuList.showSapdArrestMenu();
+});
+
+mp.events.add('client:menuList:showSapdClearMenu', () => {
+    methods.debug('Event: client:menuList:showSapdClearMenu');
+    menuList.showSapdClearMenu();
+});
+
+mp.events.add('client:menuList:showEmsGarderobMenu', () => {
+    methods.debug('Event: client:menuList:showEmsGarderobMenu');
+    menuList.showEmsGarderobMenu();
+});
+
+mp.events.add('client:menuList:showSheriffGarderobMenu', () => {
+    methods.debug('Event: client:menuList:showSheriffGarderobMenu');
+    menuList.showSheriffGarderobMenu();
+});
+
+mp.events.add('client:menuList:showSheriffArsenalMenu', () => {
+    methods.debug('Event: client:menuList:showSheriffArsenalMenu');
+    menuList.showSheriffArsenalMenu();
+});
+
+/*mp.events.add('client:menuList:showFibArsenalMenu', () => {
+    methods.debug('Event: client:menuList:showFibArsenalMenu');
+    menuList.showFibArsenalMenu();
+});
+
+mp.events.add('client:menuList:showUsmcArsenalMenu', () => {
+    methods.debug('Event: client:menuList:showPrisonArsenalMenu');
+    menuList.showUsmcArsenalMenu();
+});*/
+
+
 mp.events.add('client:menuList:showSpawnJobCarMenu', (price, x, y, z, heading, name, job) => {
     try {
         methods.debug('Event: client:menuList:showSpawnJobCarMenu');

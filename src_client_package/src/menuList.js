@@ -2400,6 +2400,572 @@ menuList.showLscTunningListMenu = async function(modType, shopId, price, lscBann
     }
 };
 
+menuList.showGovGarderobMenu = function() {
+    let menu = UIMenu.Menu.Create(`Гардероб`, `~b~Гардероб`);
+
+    UIMenu.Menu.AddMenuItem("Сухпаёк").itemId = 32;
+
+    if (user.getCache('rank_type') == 5) {
+        UIMenu.Menu.AddMenuItem("Наручники").itemId = 40;
+        UIMenu.Menu.AddMenuItem("Фонарик").itemId = 59;
+        UIMenu.Menu.AddMenuItem("Полицейская дубинка").itemId = 66;
+        UIMenu.Menu.AddMenuItem("Электрошокер").itemId = 82;
+        UIMenu.Menu.AddMenuItem(" ");
+        UIMenu.Menu.AddMenuItem("Beretta 90Two").itemId = 78;
+        UIMenu.Menu.AddMenuItem("Фонарик Beretta 90Two").itemId = 311;
+        UIMenu.Menu.AddMenuItem("Оптический прицел Beretta 90Two").itemId = 312;
+        UIMenu.Menu.AddMenuItem("Глушитель Beretta 90Two").itemId = 313;
+        UIMenu.Menu.AddMenuItem("Компенсатор Beretta 90Two").itemId = 314;
+        UIMenu.Menu.AddMenuItem(" ");
+        UIMenu.Menu.AddMenuItem("SIG MPX-SD").itemId = 97;
+        UIMenu.Menu.AddMenuItem("Фонарик SIG MPX-SD").itemId = 338;
+        UIMenu.Menu.AddMenuItem("Рукоятка SIG MPX-SD").itemId = 339;
+        UIMenu.Menu.AddMenuItem("Прицел SIG MPX-SD").itemId = 340;
+        UIMenu.Menu.AddMenuItem(" ");
+        UIMenu.Menu.AddMenuItem("Коробка патронов 9mm").itemId = 280;
+    }
+
+    UIMenu.Menu.AddMenuItem("Бронежилет").armor = 100;
+
+    let list = ["Default", "Type #1", "Type #2"];
+    let listItem = UIMenu.Menu.AddMenuItemList("Галстук", list);
+
+    menu.ListChange.on((item, index) => {
+        if (index == 0) {
+            user.updateCharacterCloth();
+        }
+        else if (index == 1) {
+            if (user.getSex() == 1)
+                user.setComponentVariation(7, 86, 1);
+            else
+                user.setComponentVariation(7, 115, 1);
+        }
+        else if (index == 2) {
+            if (user.getSex() == 1)
+                user.setComponentVariation(7, 86, 0);
+            else
+                user.setComponentVariation(7, 115, 0);
+        }
+    });
+
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+
+    menu.ItemSelect.on(async item => {
+        UIMenu.Menu.HideMenu();
+        if (item.armor) {
+            mp.players.local.setArmour(100);
+            mp.game.ui.notifications.show("~b~Вы взяли броню");
+        }
+        if (item.itemId) {
+            let moneyFraction = await coffer.getMoney(coffer.getIdByFraction(user.getCache('fraction_id')));
+            let itemPrice = items.getItemPrice(item.itemId);
+
+            if (moneyFraction < itemPrice) {
+                mp.game.ui.notifications.show(`~r~В бюджете организации не достаточно средств`);
+                return;
+            }
+
+            inventory.takeNewItem(item.itemId, `{"owner": "Правительство", "userName": "${user.getCache('name')}"}`).then();
+            methods.saveFractionLog(
+                user.getCache('name'),
+                `Взял ${items.getItemNameById(item.itemId)}`,
+                `Потрачено из бюджета: ${methods.moneyFormat(itemPrice)}`,
+                user.getCache('fraction_id')
+            );
+        }
+    });
+};
+
+menuList.showEmsGarderobMenu = function() {
+
+    let menu = UIMenu.Menu.Create(`Гардероб`, `~b~Гардероб EMS`);
+
+    let listGarderob = ["Повседневная одежда", "Форма парамедика #1", "Форма парамедика #2", "Зимняя форма парамедика #1", "Зимняя форма парамедика #2", "Форма врача"];
+
+    for (let i = 0; i < listGarderob.length; i++) {
+        try {
+            UIMenu.Menu.AddMenuItem(`${listGarderob[i]}`);
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    }
+
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+
+    menu.IndexChange.on((index) => {
+        if (index >= listGarderob.length)
+            return;
+        mp.events.callRemote('server:uniform:ems', index);
+    });
+    menu.ItemSelect.on(item => {
+        UIMenu.Menu.HideMenu();
+    });
+};
+
+menuList.showSheriffGarderobMenu = function() {
+
+    let menu = UIMenu.Menu.Create(`Гардероб`, `~b~Гардероб SHERIFF`);
+
+    let listGarderob = ["Повседневная одежда", "Кадетская форма", "Офицерская форма", "Форма HighWay патрулей", "Air Support Division", "Tactical Division", "Представительская форма"];
+
+    for (let i = 0; i < listGarderob.length; i++) {
+        try {
+            UIMenu.Menu.AddMenuItem(`${listGarderob[i]}`);
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    }
+
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+
+    menu.IndexChange.on((index) => {
+        if (index >= listGarderob.length)
+            return;
+        mp.events.callRemote('server:uniform:sheriff', index);
+    });
+    menu.ItemSelect.on(item => {
+        UIMenu.Menu.HideMenu();
+    });
+};
+
+menuList.showSheriffArsenalMenu = function() {
+    let menu = UIMenu.Menu.Create(`Арсенал`, `~b~Арсенал`);
+
+    UIMenu.Menu.AddMenuItem("Сухпаёк").itemId = 32;
+    UIMenu.Menu.AddMenuItem("Спец. Аптечка").itemId = 278;
+    UIMenu.Menu.AddMenuItem("Полицейское огорождение").itemId = 199;
+    UIMenu.Menu.AddMenuItem("Полосатый конус").itemId = 201;
+    UIMenu.Menu.AddMenuItem("Красный конус").itemId = 202;
+
+    UIMenu.Menu.AddMenuItem("~b~Оружие").showGun = true;
+    UIMenu.Menu.AddMenuItem("~b~Модули на оружие").showGunMod = true;
+
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+
+    menu.ItemSelect.on(async item => {
+        UIMenu.Menu.HideMenu();
+
+        if (item.showGun) {
+            menuList.showSheriffArsenalGunMenu();
+        }
+        if (item.showGunMod) {
+            menuList.showSheriffArsenalGunModMenu();
+        }
+        if (item.itemId) {
+            let moneyFraction = await coffer.getMoney(coffer.getIdByFraction(user.getCache('fraction_id')));
+            let itemPrice = items.getItemPrice(item.itemId);
+
+            if (moneyFraction < itemPrice) {
+                mp.game.ui.notifications.show(`~r~В бюджете организации не достаточно средств`);
+                return;
+            }
+
+            inventory.takeNewItem(item.itemId, `{"owner": "BCSD", "userName": "${user.getCache('name')}"}`).then();
+            methods.saveFractionLog(
+                user.getCache('name'),
+                `Взял ${items.getItemNameById(item.itemId)}`,
+                `Потрачено из бюджета: ${methods.moneyFormat(itemPrice)}`,
+                user.getCache('fraction_id')
+            );
+        }
+    });
+};
+
+menuList.showSheriffArsenalGunMenu = function() {
+    let menu = UIMenu.Menu.Create(`Арсенал`, `~b~Оружие`);
+
+    UIMenu.Menu.AddMenuItem("Наручники").itemId = 40;
+    UIMenu.Menu.AddMenuItem("Фонарик").itemId = 59;
+    UIMenu.Menu.AddMenuItem("Полицейская дубинка").itemId = 66;
+    UIMenu.Menu.AddMenuItem("Электрошокер").itemId = 82;
+
+    if (user.getCache('rank_type') == 1 || user.getCache('rank_type') == 2 || user.getCache('rank_type') == 3) {
+        UIMenu.Menu.AddMenuItem("Beretta 90Two").itemId = 78;
+        UIMenu.Menu.AddMenuItem("Benelli M3").itemId = 90;
+        UIMenu.Menu.AddMenuItem("Benelli M4").itemId = 91;
+        UIMenu.Menu.AddMenuItem("HK-416").itemId = 110;
+
+        UIMenu.Menu.AddMenuItem("Коробка патронов 9mm").itemId = 280;
+        UIMenu.Menu.AddMenuItem("Коробка патронов 12 калибра").itemId = 281;
+        UIMenu.Menu.AddMenuItem("Коробка патронов 5.56mm").itemId = 284;
+    }
+    if (user.getCache('rank_type') == 4) {
+        UIMenu.Menu.AddMenuItem("Beretta 90Two").itemId = 78;
+        UIMenu.Menu.AddMenuItem("MP5A3").itemId = 103;
+
+        UIMenu.Menu.AddMenuItem("Коробка патронов 9mm").itemId = 280;
+    }
+    if (user.getCache('rank_type') == 5) {
+        UIMenu.Menu.AddMenuItem("Beretta 90Two").itemId = 78;
+        UIMenu.Menu.AddMenuItem("Benelli M3").itemId = 90;
+        UIMenu.Menu.AddMenuItem("Benelli M4").itemId = 91;
+        UIMenu.Menu.AddMenuItem("HK-416").itemId = 110;
+        UIMenu.Menu.AddMenuItem("HK-416A5").itemId = 111;
+
+        UIMenu.Menu.AddMenuItem("Коробка патронов 9mm").itemId = 280;
+        UIMenu.Menu.AddMenuItem("Коробка патронов 12 калибра").itemId = 281;
+        UIMenu.Menu.AddMenuItem("Коробка патронов 5.56mm").itemId = 284;
+    }
+
+    UIMenu.Menu.AddMenuItem("Бронежилет").armor = 100;
+
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+
+    menu.ItemSelect.on(async item => {
+        UIMenu.Menu.HideMenu();
+        if (item.armor) {
+            mp.players.local.setArmour(100);
+            mp.game.ui.notifications.show("~b~Вы взяли броню");
+        }
+        if (item.itemId) {
+            let moneyFraction = await coffer.getMoney(coffer.getIdByFraction(user.getCache('fraction_id')));
+            let itemPrice = items.getItemPrice(item.itemId);
+
+            if (moneyFraction < itemPrice) {
+                mp.game.ui.notifications.show(`~r~В бюджете организации не достаточно средств`);
+                return;
+            }
+
+            inventory.takeNewItem(item.itemId, `{"owner": "BCSD", "userName": "${user.getCache('name')}"}`).then();
+            methods.saveFractionLog(
+                user.getCache('name'),
+                `Взял ${items.getItemNameById(item.itemId)}`,
+                `Потрачено из бюджета: ${methods.moneyFormat(itemPrice)}`,
+                user.getCache('fraction_id')
+            );
+        }
+    });
+};
+
+menuList.showSheriffArsenalGunModMenu = function() {
+    let menu = UIMenu.Menu.Create(`Арсенал`, `~b~Модули на оружие`);
+
+    if (user.getCache('rank_type') == 1 || user.getCache('rank_type') == 2 || user.getCache('rank_type') == 3) {
+        UIMenu.Menu.AddMenuItem("Фонарик Beretta 90Two").itemId = 311;
+        UIMenu.Menu.AddMenuItem("Оптический прицел Beretta 90Two").itemId = 312;
+        UIMenu.Menu.AddMenuItem("Глушитель Beretta 90Two").itemId = 313;
+        UIMenu.Menu.AddMenuItem("Компенсатор Beretta 90Two").itemId = 314;
+
+        UIMenu.Menu.AddMenuItem(" ");
+        UIMenu.Menu.AddMenuItem("Фонарик Benelli M3").itemId = 341;
+        UIMenu.Menu.AddMenuItem("Глушитель Benelli M3").itemId = 342;
+
+        UIMenu.Menu.AddMenuItem(" ");
+        UIMenu.Menu.AddMenuItem("Голографический прицел Benelli M4").itemId = 349;
+        UIMenu.Menu.AddMenuItem("Прицел малой кратности Benelli M4").itemId = 350;
+        UIMenu.Menu.AddMenuItem("Прицел средней кратности Benelli M4").itemId = 351;
+        UIMenu.Menu.AddMenuItem("Фонарик Benelli M4").itemId = 352;
+        UIMenu.Menu.AddMenuItem("Глушитель Benelli M4").itemId = 353;
+        UIMenu.Menu.AddMenuItem("Дульный тормоз Benelli M4").itemId = 354;
+
+        UIMenu.Menu.AddMenuItem(" ");
+        UIMenu.Menu.AddMenuItem("Фонарик HK-416").itemId = 362;
+        UIMenu.Menu.AddMenuItem("Рукоятка HK-416").itemId = 363;
+        UIMenu.Menu.AddMenuItem("Глушитель HK-416").itemId = 364;
+        UIMenu.Menu.AddMenuItem("Прицел HK-416").itemId = 365;
+    }
+    else if (user.getCache('rank_type') == 4) {
+        UIMenu.Menu.AddMenuItem("Фонарик Beretta 90Two").itemId = 311;
+        UIMenu.Menu.AddMenuItem("Оптический прицел Beretta 90Two").itemId = 312;
+        UIMenu.Menu.AddMenuItem("Глушитель Beretta 90Two").itemId = 313;
+        UIMenu.Menu.AddMenuItem("Компенсатор Beretta 90Two").itemId = 314;
+
+        UIMenu.Menu.AddMenuItem(" ");
+        UIMenu.Menu.AddMenuItem("MP5A3").itemId = 103;
+    }
+    else if (user.getCache('rank_type') == 5) {
+        UIMenu.Menu.AddMenuItem("Фонарик Beretta 90Two").itemId = 311;
+        UIMenu.Menu.AddMenuItem("Оптический прицел Beretta 90Two").itemId = 312;
+        UIMenu.Menu.AddMenuItem("Глушитель Beretta 90Two").itemId = 313;
+        UIMenu.Menu.AddMenuItem("Компенсатор Beretta 90Two").itemId = 314;
+
+        UIMenu.Menu.AddMenuItem(" ");
+        UIMenu.Menu.AddMenuItem("Фонарик Benelli M3").itemId = 341;
+        UIMenu.Menu.AddMenuItem("Глушитель Benelli M3").itemId = 342;
+
+        UIMenu.Menu.AddMenuItem(" ");
+        UIMenu.Menu.AddMenuItem("Голографический прицел Benelli M4").itemId = 349;
+        UIMenu.Menu.AddMenuItem("Прицел малой кратности Benelli M4").itemId = 350;
+        UIMenu.Menu.AddMenuItem("Прицел средней кратности Benelli M4").itemId = 351;
+        UIMenu.Menu.AddMenuItem("Фонарик Benelli M4").itemId = 352;
+        UIMenu.Menu.AddMenuItem("Глушитель Benelli M4").itemId = 353;
+        UIMenu.Menu.AddMenuItem("Дульный тормоз Benelli M4").itemId = 354;
+
+        UIMenu.Menu.AddMenuItem(" ");
+        UIMenu.Menu.AddMenuItem("Фонарик HK-416").itemId = 362;
+        UIMenu.Menu.AddMenuItem("Рукоятка HK-416").itemId = 363;
+        UIMenu.Menu.AddMenuItem("Глушитель HK-416").itemId = 364;
+        UIMenu.Menu.AddMenuItem("Прицел HK-416").itemId = 365;
+
+        UIMenu.Menu.AddMenuItem(" ");
+        UIMenu.Menu.AddMenuItem("Фонарик HK-416A5").itemId = 416;
+        UIMenu.Menu.AddMenuItem("Голографический прицел HK-416A5").itemId = 417;
+        UIMenu.Menu.AddMenuItem("Прицел малой кратности HK-416A5").itemId = 418;
+        UIMenu.Menu.AddMenuItem("Прицел большой кратности HK-416A5").itemId = 419;
+        UIMenu.Menu.AddMenuItem("Глушитель HK-416A5").itemId = 420;
+        UIMenu.Menu.AddMenuItem("Тактический дульный тормоз HK-416A5").itemId = 422;
+        UIMenu.Menu.AddMenuItem("Рукоятка HK-416A5").itemId = 428;
+    }
+
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+
+    menu.ItemSelect.on(async item => {
+        UIMenu.Menu.HideMenu();
+        if (item.itemId) {
+            let moneyFraction = await coffer.getMoney(coffer.getIdByFraction(user.getCache('fraction_id')));
+            let itemPrice = items.getItemPrice(item.itemId);
+
+            if (moneyFraction < itemPrice) {
+                mp.game.ui.notifications.show(`~r~В бюджете организации не достаточно средств`);
+                return;
+            }
+
+            inventory.takeNewItem(item.itemId, `{"owner": "BCSD", "userName": "${user.getCache('name')}"}`).then();
+            methods.saveFractionLog(
+                user.getCache('name'),
+                `Взял ${items.getItemNameById(item.itemId)}`,
+                `Потрачено из бюджета: ${methods.moneyFormat(itemPrice)}`,
+                user.getCache('fraction_id')
+            );
+        }
+    });
+};
+
+menuList.showSapdGarderobMenu = function() {
+
+    let menu = UIMenu.Menu.Create(`Гардероб`, `~b~Гардероб LSPD`);
+
+    let listGarderob = ["Повседневная одежда", "Кадетская форма", "Офицерская форма", "Air Support Division", "NOOSE Black", "NOOSE Red", "NOOSE Standard", "Детективная форма", "Представительская форма"];
+
+    for (let i = 0; i < listGarderob.length; i++) {
+        try {
+            UIMenu.Menu.AddMenuItem(`${listGarderob[i]}`);
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    }
+
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+
+    menu.IndexChange.on((index) => {
+        if (index >= listGarderob.length)
+            return;
+        mp.events.callRemote('server:uniform:sapd', index);
+    });
+    menu.ItemSelect.on(item => {
+        UIMenu.Menu.HideMenu();
+    });
+};
+
+menuList.showSapdArsenalMenu = function() {
+    let menu = UIMenu.Menu.Create(`Арсенал`, `~b~Арсенал`);
+
+    UIMenu.Menu.AddMenuItem("Сухпаёк").itemId = 32;
+    UIMenu.Menu.AddMenuItem("Спец. Аптечка").itemId = 278;
+    UIMenu.Menu.AddMenuItem("Полицейское огорождение").itemId = 199;
+    UIMenu.Menu.AddMenuItem("Полосатый конус").itemId = 201;
+    UIMenu.Menu.AddMenuItem("Красный конус").itemId = 202;
+
+    UIMenu.Menu.AddMenuItem("~b~Оружие").showGun = true;
+    UIMenu.Menu.AddMenuItem("~b~Модули на оружие").showGunMod = true;
+
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+
+    menu.ItemSelect.on(async item => {
+        UIMenu.Menu.HideMenu();
+        if (item.armor) {
+            mp.players.local.setArmour(100);
+            mp.game.ui.notifications.show("~b~Вы взяли броню");
+        }
+        if (item.showGun) {
+            menuList.showSapdArsenalGunMenu();
+        }
+        if (item.showGunMod) {
+            menuList.showSapdArsenalGunModMenu();
+        }
+        if (item.itemId) {
+            let moneyFraction = await coffer.getMoney(coffer.getIdByFraction(user.getCache('fraction_id')));
+            let itemPrice = items.getItemPrice(item.itemId);
+
+            if (moneyFraction < itemPrice) {
+                mp.game.ui.notifications.show(`~r~В бюджете организации не достаточно средств`);
+                return;
+            }
+
+            inventory.takeNewItem(item.itemId, `{"owner": "LSPD", "userName": "${user.getCache('name')}"}`).then();
+            methods.saveFractionLog(
+                user.getCache('name'),
+                `Взял ${items.getItemNameById(item.itemId)}`,
+                `Потрачено из бюджета: ${methods.moneyFormat(itemPrice)}`,
+                user.getCache('fraction_id')
+            );
+        }
+    });
+};
+
+menuList.showSapdArsenalGunMenu = function() {
+    let menu = UIMenu.Menu.Create(`Арсенал`, `~b~Оружие`);
+
+    UIMenu.Menu.AddMenuItem("Наручники").itemId = 40;
+    UIMenu.Menu.AddMenuItem("Фонарик").itemId = 59;
+    UIMenu.Menu.AddMenuItem("Полицейская дубинка").itemId = 66;
+    UIMenu.Menu.AddMenuItem("Электрошокер").itemId = 82;
+
+    if (user.getCache('rank_type') == 1 || user.getCache('rank_type') == 2) {
+        UIMenu.Menu.AddMenuItem("Beretta 90Two").itemId = 78;
+        UIMenu.Menu.AddMenuItem("Benelli M3").itemId = 90;
+        UIMenu.Menu.AddMenuItem("Benelli M4").itemId = 91;
+        UIMenu.Menu.AddMenuItem("HK-416").itemId = 110;
+
+        UIMenu.Menu.AddMenuItem("Коробка патронов 9mm").itemId = 280;
+        UIMenu.Menu.AddMenuItem("Коробка патронов 12 калибра").itemId = 281;
+        UIMenu.Menu.AddMenuItem("Коробка патронов 5.56mm").itemId = 284;
+    }
+    if (user.getCache('rank_type') == 3 || user.getCache('rank_type') == 5) {
+        UIMenu.Menu.AddMenuItem("Beretta 90Two").itemId = 78;
+        UIMenu.Menu.AddMenuItem("MP5A3").itemId = 103;
+
+        UIMenu.Menu.AddMenuItem("Коробка патронов 9mm").itemId = 280;
+    }
+    if (user.getCache('rank_type') == 4) {
+        UIMenu.Menu.AddMenuItem("Beretta 90Two").itemId = 78;
+        UIMenu.Menu.AddMenuItem("Benelli M3").itemId = 90;
+        UIMenu.Menu.AddMenuItem("Benelli M4").itemId = 91;
+        UIMenu.Menu.AddMenuItem("HK-416").itemId = 110;
+        UIMenu.Menu.AddMenuItem("HK-416A5").itemId = 111;
+
+        UIMenu.Menu.AddMenuItem("Коробка патронов 9mm").itemId = 280;
+        UIMenu.Menu.AddMenuItem("Коробка патронов 12 калибра").itemId = 281;
+        UIMenu.Menu.AddMenuItem("Коробка патронов 5.56mm").itemId = 284;
+    }
+
+    UIMenu.Menu.AddMenuItem("Бронежилет").armor = 100;
+
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+
+    menu.ItemSelect.on(async item => {
+        UIMenu.Menu.HideMenu();
+        if (item.armor) {
+            mp.players.local.setArmour(100);
+            mp.game.ui.notifications.show("~b~Вы взяли броню");
+        }
+        if (item.itemId) {
+            let moneyFraction = await coffer.getMoney(coffer.getIdByFraction(user.getCache('fraction_id')));
+            let itemPrice = items.getItemPrice(item.itemId);
+
+            if (moneyFraction < itemPrice) {
+                mp.game.ui.notifications.show(`~r~В бюджете организации не достаточно средств`);
+                return;
+            }
+
+            inventory.takeNewItem(item.itemId, `{"owner": "LSPD", "userName": "${user.getCache('name')}"}`).then();
+            methods.saveFractionLog(
+                user.getCache('name'),
+                `Взял ${items.getItemNameById(item.itemId)}`,
+                `Потрачено из бюджета: ${methods.moneyFormat(itemPrice)}`,
+                user.getCache('fraction_id')
+            );
+        }
+    });
+};
+
+menuList.showSapdArsenalGunModMenu = function() {
+    let menu = UIMenu.Menu.Create(`Арсенал`, `~b~Модули на оружие`);
+
+    if (user.getCache('rank_type') == 1 || user.getCache('rank_type') == 2) {
+        UIMenu.Menu.AddMenuItem("Фонарик Beretta 90Two").itemId = 311;
+        UIMenu.Menu.AddMenuItem("Оптический прицел Beretta 90Two").itemId = 312;
+        UIMenu.Menu.AddMenuItem("Глушитель Beretta 90Two").itemId = 313;
+        UIMenu.Menu.AddMenuItem("Компенсатор Beretta 90Two").itemId = 314;
+
+        UIMenu.Menu.AddMenuItem(" ");
+        UIMenu.Menu.AddMenuItem("Фонарик Benelli M3").itemId = 341;
+        UIMenu.Menu.AddMenuItem("Глушитель Benelli M3").itemId = 342;
+
+        UIMenu.Menu.AddMenuItem(" ");
+        UIMenu.Menu.AddMenuItem("Голографический прицел Benelli M4").itemId = 349;
+        UIMenu.Menu.AddMenuItem("Прицел малой кратности Benelli M4").itemId = 350;
+        UIMenu.Menu.AddMenuItem("Прицел средней кратности Benelli M4").itemId = 351;
+        UIMenu.Menu.AddMenuItem("Фонарик Benelli M4").itemId = 352;
+        UIMenu.Menu.AddMenuItem("Глушитель Benelli M4").itemId = 353;
+        UIMenu.Menu.AddMenuItem("Дульный тормоз Benelli M4").itemId = 354;
+
+        UIMenu.Menu.AddMenuItem(" ");
+        UIMenu.Menu.AddMenuItem("Фонарик HK-416").itemId = 362;
+        UIMenu.Menu.AddMenuItem("Рукоятка HK-416").itemId = 363;
+        UIMenu.Menu.AddMenuItem("Глушитель HK-416").itemId = 364;
+        UIMenu.Menu.AddMenuItem("Прицел HK-416").itemId = 365;
+    }
+    else if (user.getCache('rank_type') == 3 || user.getCache('rank_type') == 5) {
+        UIMenu.Menu.AddMenuItem("Фонарик Beretta 90Two").itemId = 311;
+        UIMenu.Menu.AddMenuItem("Оптический прицел Beretta 90Two").itemId = 312;
+        UIMenu.Menu.AddMenuItem("Глушитель Beretta 90Two").itemId = 313;
+        UIMenu.Menu.AddMenuItem("Компенсатор Beretta 90Two").itemId = 314;
+
+        UIMenu.Menu.AddMenuItem(" ");
+        UIMenu.Menu.AddMenuItem("MP5A3").itemId = 103;
+    }
+    else if (user.getCache('rank_type') == 4) {
+        UIMenu.Menu.AddMenuItem("Фонарик Beretta 90Two").itemId = 311;
+        UIMenu.Menu.AddMenuItem("Оптический прицел Beretta 90Two").itemId = 312;
+        UIMenu.Menu.AddMenuItem("Глушитель Beretta 90Two").itemId = 313;
+        UIMenu.Menu.AddMenuItem("Компенсатор Beretta 90Two").itemId = 314;
+
+        UIMenu.Menu.AddMenuItem(" ");
+        UIMenu.Menu.AddMenuItem("Фонарик Benelli M3").itemId = 341;
+        UIMenu.Menu.AddMenuItem("Глушитель Benelli M3").itemId = 342;
+
+        UIMenu.Menu.AddMenuItem(" ");
+        UIMenu.Menu.AddMenuItem("Голографический прицел Benelli M4").itemId = 349;
+        UIMenu.Menu.AddMenuItem("Прицел малой кратности Benelli M4").itemId = 350;
+        UIMenu.Menu.AddMenuItem("Прицел средней кратности Benelli M4").itemId = 351;
+        UIMenu.Menu.AddMenuItem("Фонарик Benelli M4").itemId = 352;
+        UIMenu.Menu.AddMenuItem("Глушитель Benelli M4").itemId = 353;
+        UIMenu.Menu.AddMenuItem("Дульный тормоз Benelli M4").itemId = 354;
+
+        UIMenu.Menu.AddMenuItem(" ");
+        UIMenu.Menu.AddMenuItem("Фонарик HK-416").itemId = 362;
+        UIMenu.Menu.AddMenuItem("Рукоятка HK-416").itemId = 363;
+        UIMenu.Menu.AddMenuItem("Глушитель HK-416").itemId = 364;
+        UIMenu.Menu.AddMenuItem("Прицел HK-416").itemId = 365;
+
+        UIMenu.Menu.AddMenuItem(" ");
+        UIMenu.Menu.AddMenuItem("Фонарик HK-416A5").itemId = 416;
+        UIMenu.Menu.AddMenuItem("Голографический прицел HK-416A5").itemId = 417;
+        UIMenu.Menu.AddMenuItem("Прицел малой кратности HK-416A5").itemId = 418;
+        UIMenu.Menu.AddMenuItem("Прицел большой кратности HK-416A5").itemId = 419;
+        UIMenu.Menu.AddMenuItem("Глушитель HK-416A5").itemId = 420;
+        UIMenu.Menu.AddMenuItem("Тактический дульный тормоз HK-416A5").itemId = 422;
+        UIMenu.Menu.AddMenuItem("Рукоятка HK-416A5").itemId = 428;
+    }
+
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+
+    menu.ItemSelect.on(async item => {
+        UIMenu.Menu.HideMenu();
+        if (item.itemId) {
+            let moneyFraction = await coffer.getMoney(coffer.getIdByFraction(user.getCache('fraction_id')));
+            let itemPrice = items.getItemPrice(item.itemId);
+
+            if (moneyFraction < itemPrice) {
+                mp.game.ui.notifications.show(`~r~В бюджете организации не достаточно средств`);
+                return;
+            }
+
+            inventory.takeNewItem(item.itemId, `{"owner": "LSPD", "userName": "${user.getCache('name')}"}`).then();
+            methods.saveFractionLog(
+                user.getCache('name'),
+                `Взял ${items.getItemNameById(item.itemId)}`,
+                `Потрачено из бюджета: ${methods.moneyFormat(itemPrice)}`,
+                user.getCache('fraction_id')
+            );
+        }
+    });
+};
+
 menuList.showAdminMenu = function() {
     let menu = UIMenu.Menu.Create(`ADMIN`, `~b~Админ меню`);
 

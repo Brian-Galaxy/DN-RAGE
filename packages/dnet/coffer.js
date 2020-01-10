@@ -100,16 +100,6 @@ coffer.getBenefit = function(id = 1) {
     return 5;
 };
 
-/*
-enums.fractionList.gov, //1
-    enums.fractionList.sapd, //2
-    enums.fractionList.fib, //3
-    enums.fractionList.usmc, //4
-    enums.fractionList.sheriff, //5
-    enums.fractionList.ems, //6
-    enums.fractionList.invader, //7
-* */
-
 coffer.getIdByFraction = function(fractionId) {
     switch (fractionId) {
         case 1:

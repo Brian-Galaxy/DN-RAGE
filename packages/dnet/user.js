@@ -489,8 +489,6 @@ user.updateCharacterFace = function(player) {
         skin.SKIN_FACE_SPECIFICATIONS = user.get(player, "SKIN_FACE_SPECIFICATIONS");
         skin.SKIN_SEX = user.get(player, "SKIN_SEX");
 
-        //if (skin.SKIN_SEX == 0 )
-
         if (user.getSex(player) != skin.SKIN_SEX) {
             if (skin.SKIN_SEX == 1)
                 player.model =  mp.joaat('mp_f_freemode_01');
@@ -498,36 +496,20 @@ user.updateCharacterFace = function(player) {
                 player.model =  mp.joaat('mp_m_freemode_01');
         }
 
-        player.setHeadBlend(
-            skin.SKIN_MOTHER_FACE,
-            skin.SKIN_FATHER_FACE,
-            0,
-            skin.SKIN_MOTHER_SKIN,
-            skin.SKIN_FATHER_SKIN,
-            0,
-            skin.SKIN_PARENT_FACE_MIX,
-            skin.SKIN_PARENT_SKIN_MIX,
-            0
-        );
+        if (!user.has(player, 'hasMask')) {
 
-        /*player.setCustomization(
-            skin.SEX==0,
-            skin.GTAO_SHAPE_THRID_ID,
-            skin.GTAO_SHAPE_SECOND_ID,
-            skin.GTAO_SHAPE_FIRST_ID,
-            skin.GTAO_SKIN_THRID_ID,
-            skin.GTAO_SKIN_SECOND_ID,
-            skin.GTAO_SKIN_FIRST_ID,
-            skin.GTAO_SHAPE_MIX,
-            skin.GTAO_SKIN_MIX,
-            skin.GTAO_THRID_MIX,
-            skin.GTAO_EYE_COLOR,
-            skin.GTAO_HAIR_COLOR,
-            skin.GTAO_HAIR_COLOR2,
-            [
-                0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
-            ]
-        );*/
+            player.setHeadBlend(
+                skin.SKIN_MOTHER_FACE,
+                skin.SKIN_FATHER_FACE,
+                0,
+                skin.SKIN_MOTHER_SKIN,
+                skin.SKIN_FATHER_SKIN,
+                0,
+                skin.SKIN_PARENT_FACE_MIX,
+                skin.SKIN_PARENT_SKIN_MIX,
+                0
+            );
+        }
 
         player.setClothes(2, skin.SKIN_HAIR, 0, 0);
         player.setHeadOverlay(2, [skin.SKIN_EYEBROWS, 1, skin.SKIN_EYEBROWS_COLOR, 0]);
@@ -829,7 +811,20 @@ user.setComponentVariation = function(player, component, drawableId, textureId) 
         drawableId = 0;
     }
 
-    player.setClothes(component, drawableId, textureId, 2);
+    if (component == 11) {
+        let pos = player.position;
+        mp.players.forEach((p) => {
+            try {
+                if (methods.distanceToPos(pos, p.position) < 300)
+                    p.call('client:syncComponentVariation', [player.id, component, drawableId, textureId])
+            }
+            catch (e) {
+                methods.debug(e);
+            }
+        });
+    }
+    else
+        player.setClothes(component, drawableId, textureId, 2);
     //player.call('client:user:setComponentVariation', [component, drawableId, textureId]);
 };
 
@@ -1329,14 +1324,16 @@ user.payDay = async function (player) {
             let money = methods.getFractionPayDay(user.get(player, 'fraction_id'), user.get(player, 'rank'), user.get(player, 'rank_type'));
             let nalog = money * (100 - coffer.getTaxIntermediate()) / 100;
 
-            let currentCofferMoney = coffer.getMoney(coffer.getIdByFraction(user.get(player, 'fraction_id')));
+            let frId = coffer.getIdByFraction(user.get(player, 'fraction_id'));
+            let currentCofferMoney = coffer.getMoney(frId);
 
             if (currentCofferMoney < nalog) {
-                player.notify('~r~В бюджете организации не достаточно средств для выплаты ЗП');
+                user.sendSmsBankOperation(player, `~r~В бюджете организации не достаточно средств для выплаты зарплаты`, 'Пособие');
             }
             else {
                 user.sendSmsBankOperation(player, `Зачисление: ~g~${methods.moneyFormat(nalog)}`, 'Зарплата');
                 user.addPayDayMoney(player, nalog);
+                coffer.removeMoney(frId, nalog)
             }
         }
         else if (user.get(player, 'job') == 0) {
@@ -1345,24 +1342,69 @@ user.payDay = async function (player) {
             let sum = coffer.getBenefit();
 
             if (currentCofferMoney < sum) {
-                player.notify('~r~В бюджете организации не достаточно средств для выплаты ЗП');
+                player.notify('~r~В бюджете штата не достаточно средств для выплаты пособия');
+                user.sendSmsBankOperation(player, `~r~В бюджете штата не достаточно средств для выплаты пособия`, 'Пособие');
             }
             else {
                 user.sendSmsBankOperation(player, `Зачисление: ~g~${methods.moneyFormat(sum)}`, 'Пособие');
-                user.addPayDayMoney(player, sum);
+                user.addBankMoney(player, sum);
+                coffer.removeMoney(1, sum);
             }
         }
-
-        /*if (user.getPayDayMoney(player) > 0) { //TODO
-            let nalog = methods.parseInt(user.getPayDayMoney(player) * (100 - coffer.getTaxIntermediate()) / 100);
-            fullMoney += nalog;
-            user.sendSmsBankOperation(player, `~b~Сумма: ~s~$${nalog}`, "Зачисление средств");
-            player.notify(`~y~Налог: ~s~${coffer.getTaxIntermediate()}%`);
-            user.setPayDayMoney(player, 0);
-        }*/
     }
     else {
         player.notify(`~y~Оформите банковскую карту`);
     }
     return true;
+};
+
+
+user.isGos = function(player) {
+    methods.debug('user.isGos');
+    return user.isLogin(player) && (user.isSapd(player) || user.isFib(player) || user.isUsmc(player) || user.isGov(player) || user.isEms(player) || user.isSheriff(player));
+};
+
+user.isGov = function(player) {
+    methods.debug('user.isGov');
+    return user.isLogin(player) && user.get(player, 'fraction_id') == 1;
+};
+
+user.isSapd = function(player) {
+    methods.debug('user.isSapd');
+    return user.isLogin(player) && user.get(player, 'fraction_id') == 2;
+};
+
+user.isFib = function(player) {
+    methods.debug('user.isFib');
+    return user.isLogin(player) && user.get(player, 'fraction_id') == 3;
+};
+
+user.isUsmc = function(player) {
+    methods.debug('user.isUsmc');
+    return user.isLogin(player) && user.get(player, 'fraction_id') == 4;
+};
+
+user.isSheriff = function(player) {
+    methods.debug('user.isSheriff');
+    return user.isLogin(player) && user.get(player, 'fraction_id') == 5;
+};
+
+user.isEms = function(player) {
+    methods.debug('user.isEms');
+    return user.isLogin(player) && user.get(player, 'fraction_id') == 6;
+};
+
+user.isNews = function(player) {
+    methods.debug('user.isNews');
+    return user.isLogin(player) && user.get(player, 'fraction_id') == 7;
+};
+
+user.isLeader = function(player) {
+    methods.debug('user.isLeader');
+    return user.isLogin(player) && user.get(player, 'is_leader');
+};
+
+user.isSubLeader = function(player) {
+    methods.debug('user.isSubLeader');
+    return user.isLogin(player) && user.get(player, 'is_sub_leader');
 };

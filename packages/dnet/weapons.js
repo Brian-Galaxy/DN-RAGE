@@ -1,4 +1,7 @@
 let methods = require('./modules/methods');
+
+let weather = require('./managers/weather');
+
 let items = require('./items');
 
 let weapons = exports;
@@ -586,17 +589,11 @@ weapons.getHashByName = function(name) {
 
 weapons.getUpgradeSlot = function(weaponName, hash) {
 
-    methods.debug(weaponName, hash);
-    methods.debug(weaponName, hash);
-
     let result = -1;
     weapons.components.forEach(item => {
         if (item[0] == weaponName && hash == item[2])
             result = item[3];
     });
-
-    methods.debug(result);
-    methods.debug(result);
 
     switch (result) {
         case 1:
@@ -725,6 +722,33 @@ weapons.getGunSlotIdByItem = function(itemId) {
 
 weapons.getGunAmmoNameByItemId = function(itemId) {
     return weapons.getGunAmmoId(items.getItemNameHashById(itemId));
+};
+
+weapons.getWeaponSerial = function(itemId) {
+    let slot = weapons.getGunSlotIdByItem(itemId);
+    let prefix = 'UN';
+
+    switch (slot) {
+        case 1:
+            prefix = 'RL';
+            break;
+        case 2:
+            prefix = 'SG';
+            break;
+        case 3:
+            prefix = 'HG';
+            break;
+        case 4:
+            prefix = 'SM';
+            break;
+        case 5:
+            prefix = 'HD';
+            break;
+    }
+
+    prefix = prefix + weather.getYear();
+    let number = methods.getTimeStampFull().toString().substr(2);
+    return `${prefix}-${number}`;
 };
 
 weapons.getGunAmmoId = function(name) {

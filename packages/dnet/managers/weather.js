@@ -247,6 +247,16 @@ weather.getMonth = function() {
     return _month;
 };
 
+weather.getYear = function() {
+    methods.debug('weather.getYear');
+    return _year - 2000;
+};
+
+weather.getFullYear = function() {
+    methods.debug('weather.getFullYear');
+    return _year;
+};
+
 weather.nextRandomWeather = function() {
     methods.debug('weather.nextRandomWeather');
     weather.nextRandomWeatherByType(weather.getWeatherType());

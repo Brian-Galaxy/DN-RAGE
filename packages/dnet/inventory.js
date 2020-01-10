@@ -1,13 +1,18 @@
 let Container = require('./modules/data');
 let mysql = require('./modules/mysql');
+
 let methods = require('./modules/methods');
 let weather = require('./managers/weather');
 //let dispatcher = require('./managers/dispatcher');
 let chat = require('./modules/chat');
+
 let user = require('./user');
 let enums = require('./enums');
 let items = require('./items');
+let weapons = require('./weapons');
+
 let vehicles = require('./property/vehicles');
+
 //let bank = require('./business/bank');
 let inventory = exports;
 let props = new Map();
@@ -251,6 +256,26 @@ inventory.deleteItem = function(id) {
 };
 
 inventory.addItem = function(itemId, count, ownerType, ownerId, countItems, isEquip, params, timeout = 1) {
+    if (items.isWeapon(itemId))
+        inventory.addWeaponItem(itemId, count, ownerType, ownerId, countItems, isEquip, params, timeout);
+    else if (items.isAmmo(itemId))
+        inventory.addAmmoItem(itemId, count, ownerType, ownerId, countItems, isEquip, params, timeout);
+    else
+        inventory.addItemSql(itemId, count, ownerType, ownerId, countItems, isEquip, params, timeout);
+};
+
+inventory.addWeaponItem = function(itemId, count, ownerType, ownerId, countItems, isEquip, params, timeout = 1) {
+    let serial = weapons.getWeaponSerial(itemId);
+    let paramsObject = JSON.parse(params);
+    paramsObject.serial = serial;
+    inventory.addItemSql(itemId, count, ownerType, ownerId, countItems, isEquip, JSON.stringify(paramsObject), timeout);
+};
+
+inventory.addAmmoItem = function(itemId, count, ownerType, ownerId, countItems, isEquip, params, timeout = 1) {
+    inventory.addItemSql(itemId, count, ownerType, ownerId, items.getAmmoCount(itemId), isEquip, params, timeout);
+};
+
+inventory.addItemSql = function(itemId, count, ownerType, ownerId, countItems, isEquip, params, timeout = 1) {
 
     setTimeout(function () {
         try {
@@ -269,32 +294,9 @@ inventory.getInvAmount = function(player, id, type) {
             return;
         if (Container.Data.Has(id, "invAmount:" + type))
             return Container.Data.Get(id, "invAmount:" + type);
-
         inventory.updateAmount(player, id, type);
-        //console.log(Container.Data.Get(id, "invAmount:" + type), "< container");
         return Container.Data.Get(id, "invAmount:" + type);
     } catch(e) {
-        methods.debug(e);
-    }
-};
-
-inventory.getListOfEquipWeapons = function(player) {
-    if (!user.isLogin(player))
-        return;
-    try {
-        let table = new Map();
-        for (let n = 54; n < 138; n++)
-        {
-            weapons.hashes.forEach((item) => {
-                if (item[0] !== items.getItemNameHashById(n)) return;
-                let ammo = player.getWeaponAmmo(item[1]);
-                if (!ammo) return;
-
-                table.set(n, [item[0], ammo]);
-            });
-        }
-        player.call('client:showWeaponsInMenu', [Array.from(table)]);
-    } catch (e) {
         methods.debug(e);
     }
 };

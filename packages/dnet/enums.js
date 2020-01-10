@@ -25,6 +25,9 @@ enums.userData = [
     "bank_card",
     "crypto_card",
 
+    "admin_level",
+    "helper_level",
+
     "fraction_id",
     "rank",
     "rank_type",

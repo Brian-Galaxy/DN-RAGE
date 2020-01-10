@@ -265,6 +265,11 @@ menuList.showShopClothMenu = function (shopId, type, menuType) {
         //if (menuType == 11)
         //    inventory.unEquipItem(265, 0, 1, 0, false);
 
+        if (methods.isBlackout()) {
+            mp.game.ui.notifications.show(`~r~В городе отсутствует свет`);
+            return;
+        }
+
         let title1 = "commonmenu";
         let title2 = "interaction_bgd";
 
@@ -534,8 +539,13 @@ menuList.showShopPropMenu = function (shopId, type, menuType) {
 menuList.showTattooShopMenu = function(title1, title2, shopId)
 {
     UIMenu.Menu.HideMenu();
+
+    if (methods.isBlackout()) {
+        mp.game.ui.notifications.show(`~r~В городе отсутствует свет`);
+        return;
+    }
+
     let menu = UIMenu.Menu.Create(" ", "~b~Тату салон", false, false, false, title1, title2);
-    //TODO BLACKOUT
 
     UIMenu.Menu.AddMenuItem("Голова").zone = "ZONE_HEAD";
     UIMenu.Menu.AddMenuItem("Торс").zone = "ZONE_TORSO";
@@ -555,8 +565,13 @@ menuList.showTattooShopMenu = function(title1, title2, shopId)
 menuList.showTattooShopShortMenu = function(title1, title2, zone, shopId)
 {
     UIMenu.Menu.HideMenu();
+
+    if (methods.isBlackout()) {
+        mp.game.ui.notifications.show(`~r~В городе отсутствует свет`);
+        return;
+    }
+
     let menu = UIMenu.Menu.Create(" ", "~b~Тату салон", false, false, false, title1, title2);
-    //TODO BLACKOUT
 
     let list = [];
 
@@ -749,7 +764,12 @@ menuList.showTattooShopShortMenu = function(title1, title2, zone, shopId)
 };
 
 menuList.showBusinessTeleportMenu = function() {
-    //TODO BLACKOUT
+
+    if (methods.isBlackout()) {
+        mp.game.ui.notifications.show(`~r~В городе отсутствует свет`);
+        return;
+    }
+
     let menu = UIMenu.Menu.Create(`Arcadius`, `~b~Бизнес центр`);
 
     business.typeList.forEach(function (item, i, arr) {
@@ -1811,7 +1831,10 @@ menuList.showLscMenu = function(shopId, price = 1)
         return;
     }
 
-    //TODO BLACKOUT
+    if (methods.isBlackout()) {
+        mp.game.ui.notifications.show(`~r~В городе отсутствует свет`);
+        return;
+    }
 
     let lscBanner1 = 'shopui_title_ie_modgarage';
     let lscBanner2 = 'shopui_title_ie_modgarage';

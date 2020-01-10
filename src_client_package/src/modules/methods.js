@@ -695,4 +695,15 @@ methods.isInPoint = function (p1, p2, p3, p4, p5) {
     return Math.min(p1.x, p2.x) < p5.x && Math.max(p3.x, p4.x) > p5.x && Math.min(p1.y, p4.y) < p5.y && Math.max(p2.y, p3.y) > p5.y;
 };
 
+let isBlackout = false;
+methods.setBlackout = function (enable) {
+    for (let i = 0; i <= 16; i++)
+        mp.game.graphics.setLightsState(i, enable);
+    isBlackout = enable;
+};
+
+methods.isBlackout = function () {
+    return isBlackout;
+};
+
 export default methods;

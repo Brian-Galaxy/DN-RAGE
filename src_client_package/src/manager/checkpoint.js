@@ -32,7 +32,7 @@ checkpoint.checkPosition = function() {
         }
     });
 
-    if (itemList.length < 1) { //TODO
+    if (itemList.length < 1000) { //TODO
         checkpoint.fixCheckpointList();
         setTimeout(checkpoint.checkPosition, 10000);
     }

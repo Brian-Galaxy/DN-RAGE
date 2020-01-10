@@ -575,9 +575,9 @@ vehicles.respawn = (vehicle) => {
 
     try {
         methods.debug('vehicles.respawn');
-        //let containerId = vehicle.getVariable('container');
-        //if (containerId != undefined && vehicle.getVariable('id_user') > 0)
-        //    vehicles.spawnPlayerCar(containerId, true);
+        let containerId = vehicle.getVariable('container');
+        if (containerId != undefined && vehicle.getVariable('user_id') > 0)
+            vehicles.spawnPlayerCar(containerId);
         vehicle.destroy();
     }
     catch (e) {
@@ -1013,7 +1013,6 @@ vehicles.engineStatus = (player, vehicle) => {
             player.notify('~b~Метка на заправку установлена');
             /*let pos = fuel.findNearest(player.position); //TODO
             user.setWaypoint(player, pos.x, pos.y);*/
-            methods.debug('engineStatus');
             vSync.setEngineState(vehicle, false);
             return;
         }

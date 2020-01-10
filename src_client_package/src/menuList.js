@@ -2219,7 +2219,7 @@ menuList.showLscTunningListMenu = async function(modType, shopId, price, lscBann
         let menu = UIMenu.Menu.Create(` `, `~b~${enums.lscNames[modType][0]}`, false, false, false, lscBanner1, lscBanner1);
 
         let removePrice = (enums.lscNames[modType][1] * price) / 2;
-        let removeItem = UIMenu.Menu.AddMenuItem("~y~Стандартная деталь", `Цена: ~g~${methods.moneyFormat(removePrice)}`);
+        let removeItem = UIMenu.Menu.AddMenuItem("Стандартная деталь", `Цена: ~g~${methods.moneyFormat(removePrice)}`);
         list.push(removeItem);
 
         if (modType == 69) {
@@ -2273,7 +2273,7 @@ menuList.showLscTunningListMenu = async function(modType, shopId, price, lscBann
             }
         }
         else if (modType == 78) {
-            let wheelList = ['Спорт', 'Массл', 'Лоурайдер', 'Кроссовер', 'Внедорожник', 'Специальные', 'Мото', 'Уникальные'];
+            let wheelList = ['Спорт', 'Массл', 'Лоурайдер', 'Кроссовер', 'Внедорожник', 'Специальные', 'Мото', 'Уникальные', 'Benny\'s Original', 'Benny\'s Bespoke'];
             for (let i = 0; i < wheelList.length; i++) {
                 try {
                     let itemPrice = enums.lscNames[modType][1] * (i / 20 + price);
@@ -2366,6 +2366,8 @@ menuList.showLscTunningListMenu = async function(modType, shopId, price, lscBann
 
             if (item.modType) {
                 mp.events.callRemote('server:lsc:buyTun', modType, item.modType, methods.parseInt(item.price), shopId, item.itemName);
+                if (modType == 78)
+                    mp.events.callRemote('server:lsc:buyTun', 23, -1, 1, shopId, item.itemName);
                 menuList.showLscTunningMenu(shopId, price, lscBanner1);
             }
         });

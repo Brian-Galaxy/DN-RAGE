@@ -355,9 +355,11 @@ lsc.buyTun = function(player, modType, idx, price, shopId, itemName) {
     }
 
     user.removeMoney(player, price);
-    business.addMoney(shopId, price, itemName);
-
-    player.notify('~g~Вы установили деталь, цена: ~s~$' + methods.numberFormat(price));
+    if (price > 5) {
+        business.addMoney(shopId, price, itemName);
+        player.notify('~g~Вы установили деталь, цена: ~s~$' + methods.numberFormat(price));
+        veh.setMod(modType, -1);
+    }
 
     //vehicles.setTunning(veh);
     vehicles.save(veh.getVariable('container'));

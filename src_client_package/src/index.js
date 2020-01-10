@@ -14,6 +14,8 @@ import methods from "./modules/methods";
 import checkpoint from "./manager/checkpoint";
 import timer from "./manager/timer";
 import vBreakLight from "./manager/vBreakLight";
+import object from "./manager/object";
+import npc from "./manager/npc";
 
 import user from "./user";
 import enums from "./enums";
@@ -39,6 +41,9 @@ try {
         checkpoint.checkPosition();
         enums.loadCloth();
         business.loadScaleform();
+
+        object.load();
+        npc.loadAll();
 
         timer.loadAll();
         vBreakLight.timer();

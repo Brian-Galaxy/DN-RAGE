@@ -20,6 +20,7 @@ import cloth from './business/cloth';
 
 import bus from "./jobs/bus";
 import gr6 from "./jobs/gr6";
+import mail from "./jobs/mail";
 
 let menuList = {};
 
@@ -48,6 +49,9 @@ menuList.showHouseBuyMenu = async function(h) {
         }
         else if (item == buyHouseItem) {
             houses.buy(h.get('id'));
+        }
+        else if (item.doName) {
+            mail.sendMail(item.doName)
         }
     });
 };
@@ -139,6 +143,9 @@ menuList.showHouseOutMenu = async function(h) {
                 methods.debug(e);
             }
         }
+        else if (item.doName) {
+            mail.sendMail(item.doName)
+        }
     });
 };
 
@@ -167,6 +174,9 @@ menuList.showCondoBuyMenu = async function(h) {
         }
         else if (item == buyHouseItem) {
             condos.buy(h.get('id'));
+        }
+        else if (item.doName) {
+            mail.sendMail2(item.doName)
         }
     });
 };
@@ -257,6 +267,9 @@ menuList.showCondoOutMenu = async function(h) {
             catch (e) {
                 methods.debug(e);
             }
+        }
+        else if (item.doName) {
+            mail.sendMail2(item.doName)
         }
     });
 };
@@ -1256,7 +1269,7 @@ menuList.showVehicleMenu = function(data) {
                 break;
             case 4:
                 UIMenu.Menu.AddMenuItem("~g~Взять почту из транспорта").doName = 'mail:take';
-                UIMenu.Menu.AddMenuItem("~b~Справка").sendChatMessage = 'Возьмите почту из транспорта, далее езжай к любым жилым домам, подходи к дому нажимай E и клади туда почту.';
+                UIMenu.Menu.AddMenuItem("~b~Справка").sendChatMessage = 'Возьмите почту из транспорта, далее езжай к любым жилым домам, подходи к дому нажимай E и кладите туда почту.';
                 break;
             case 9:
                 UIMenu.Menu.AddMenuItem("~g~Диспетчерская таксопарка").doName = 'taxi:dispatch';

@@ -16,6 +16,7 @@ let cloth = require('./business/cloth');
 let tattoo = require('./business/tattoo');
 let lsc = require('./business/lsc');
 let gun = require('./business/gun');
+let vShop = require('./business/vShop');
 
 let houses = require('./property/houses');
 let condos = require('./property/condos');
@@ -58,9 +59,10 @@ function init() {
 
         inventory.loadAll();
 
+        vShop.loadAllShop();
+
         setTimeout(function () {
-            vehicles.loadAllShop();
-            vehicles.loadAllShopVehicles();
+            vShop.loadAllShopVehicles();
             vehicles.loadAllTimers();
             vehicles.loadAllFractionVehicles();
         }, 10000);

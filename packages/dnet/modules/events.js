@@ -334,6 +334,11 @@ mp.events.add('server:user:getPlayerPos', (player) => {
     methods.saveFile('plPos', `[${player.position.x}, ${player.position.y}, ${player.position.z - 1}, ${player.heading}],`);
 });
 
+mp.events.add('server:user:getPlayerPos2', (player, pos) => {
+    console.log(`PlayerPos: ${player.position.x}, ${player.position.y}, ${player.position.z - 1}, ${player.heading}`);
+    methods.saveFile('plPos', `${pos}, ${player.position.x}, ${player.position.y}, ${player.position.z - 1}, ${player.heading}`);
+});
+
 mp.events.add('server:user:getVehPos', (player) => {
     if (player.vehicle)
         methods.saveFile('vehPos', `["${methods.getVehicleInfo(player.vehicle.model).display_name}", ${player.vehicle.position.x}, ${player.vehicle.position.y}, ${player.vehicle.position.z}, ${player.vehicle.heading}],`)
@@ -629,7 +634,7 @@ mp.events.addRemoteCounted('server:gr6:grab', (player) => {
                 setTimeout(function () {
                     user.hideLoadDisplay(player);
                     user.addCashMoney(player, money);
-                    player.notify('~b~Вы ограбили транспорт на сумму: ~s~$' + methods.numberFormat(money));
+                    player.notify('~b~Вы ограбили транспорт на сумму: ~s~' + methods.moneyFormat(money));
                 }, 500);
             }, 700);
         }

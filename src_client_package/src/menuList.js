@@ -886,7 +886,7 @@ menuList.showBusinessMenu = async function(data) {
         if (data.get('price') == 0)
             UIMenu.Menu.AddMenuItem("~y~На реконструкции, скоро будет доступен");
         else
-            UIMenu.Menu.AddMenuItem("~g~Купить", `Цена: ~g~$${methods.numberFormat(data.get('price'))}`).doName = 'buy';
+            UIMenu.Menu.AddMenuItem("~g~Купить", `Цена: ~g~${methods.moneyFormat(data.get('price'))}`).doName = 'buy';
     }
 
     let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
@@ -952,7 +952,7 @@ menuList.showBusinessMenu = async function(data) {
             business.save(data.get('id'));
             user.addCashMoney(money * (100 - nalog - bankTarif) / 100);
             coffer.addMoney(1, money * nalog / 100);
-            mp.game.ui.notifications.show(`~b~Вы сняли ~s~$${methods.numberFormat(money * (100 - nalog + bankTarif) / 100)} ~b~со счёта с учётом налога`);
+            mp.game.ui.notifications.show(`~b~Вы сняли ~s~${methods.moneyFormat(money * (100 - nalog + bankTarif) / 100)} ~b~со счёта с учётом налога`);
             mp.game.ui.notifications.show(`~b~${bankTarif}% от суммы отправлен банку который вас обслуживает`);
         }
     });
@@ -1281,7 +1281,7 @@ menuList.showVehicleMenu = function(data) {
     }
 
     if (data.get('job') == 'gr6') {
-        UIMenu.Menu.AddMenuItem("Денег в транспорте: ~g~$" + methods.numberFormat(mp.players.local.vehicle.getVariable('gr6Money'))).doName = 'close';
+        UIMenu.Menu.AddMenuItem("Денег в транспорте: ~g~" + methods.moneyFormat(mp.players.local.vehicle.getVariable('gr6Money'))).doName = 'close';
         UIMenu.Menu.AddMenuItem("~y~Ограбить транспорт").doName = 'gr6:grab';
     }
 
@@ -1891,7 +1891,7 @@ menuList.showLscMenu = function(shopId, price = 1)
     let menu = UIMenu.Menu.Create(" ", "~b~Автомастерская", false, false, false, lscBanner1, lscBanner2);
 
     let itemPrice = 500 * price;
-    let menuItem = UIMenu.Menu.AddMenuItem("Ремонт", `Цена: ~g~$${methods.numberFormat(itemPrice)}`);
+    let menuItem = UIMenu.Menu.AddMenuItem("Ремонт", `Цена: ~g~${methods.moneyFormat(itemPrice)}`);
     menuItem.price = itemPrice;
     menuItem.doName = 'repair';
 
@@ -1902,7 +1902,7 @@ menuList.showLscMenu = function(shopId, price = 1)
     menuItem.doName = 'setSTunning';
 
     itemPrice = 40000;
-    menuItem = UIMenu.Menu.AddMenuItem("Сменить номер", `Цена: ~g~$${methods.numberFormat(itemPrice)}\n~s~Менее 4 символов от ~g~$100.000`);
+    menuItem = UIMenu.Menu.AddMenuItem("Сменить номер", `Цена: ~g~${methods.moneyFormat(itemPrice)}\n~s~Менее 4 символов от ~g~$100.000`);
     menuItem.price = itemPrice;
     menuItem.doName = 'setNumber';
 
@@ -2110,12 +2110,12 @@ menuList.showLscSTunningMenu = function(shopId, price, lscBanner1) {
     let menu = UIMenu.Menu.Create(` `, `~b~Установка модулей`, false, false, false, lscBanner1, lscBanner1);
 
     let itemPrice = 150000.01;
-    let menuItem = UIMenu.Menu.AddMenuItem("Неоновая подсветка", `Цена: ~g~$${methods.numberFormat(methods.parseInt(itemPrice))}`);
+    let menuItem = UIMenu.Menu.AddMenuItem("Неоновая подсветка", `Цена: ~g~${methods.moneyFormat(methods.parseInt(itemPrice))}`);
     menuItem.price = itemPrice;
     menuItem.doName = 'setNeon';
 
     itemPrice = 10000.01;
-    menuItem = UIMenu.Menu.AddMenuItem("Дистанционное управление", `Цена: ~g~$${methods.numberFormat(methods.parseInt(itemPrice))}`);
+    menuItem = UIMenu.Menu.AddMenuItem("Дистанционное управление", `Цена: ~g~${methods.moneyFormat(methods.parseInt(itemPrice))}`);
     menuItem.price = itemPrice;
     menuItem.doName = 'setSpecial';
 
@@ -2466,19 +2466,19 @@ menuList.showGunShopMenu = function(shopId, price = 1)
     });
 
     let itemPrice = 200 * price;
-    let menuItem = UIMenu.Menu.AddMenuItem("Лёгкий бронежилет", `Цена: ~g~$${methods.numberFormat(itemPrice)}`);
+    let menuItem = UIMenu.Menu.AddMenuItem("Лёгкий бронежилет", `Цена: ~g~${methods.moneyFormat(itemPrice)}`);
     menuItem.SetLeftBadge(7);
     menuItem.price = itemPrice;
     menuItem.armor = 25;
 
     itemPrice = 500 * price;
-    menuItem = UIMenu.Menu.AddMenuItem("Средний бронежилет", `Цена: ~g~$${methods.numberFormat(itemPrice)}`);
+    menuItem = UIMenu.Menu.AddMenuItem("Средний бронежилет", `Цена: ~g~${methods.moneyFormat(itemPrice)}`);
     menuItem.SetLeftBadge(7);
     menuItem.price = itemPrice;
     menuItem.armor = 65;
 
     /*itemPrice = 320 * price;
-    menuItem = UIMenu.Menu.AddMenuItem("Тяжелый бронежилет", `Цена: ~g~$${methods.numberFormat(itemPrice)}`);
+    menuItem = UIMenu.Menu.AddMenuItem("Тяжелый бронежилет", `Цена: ~g~${methods.moneyFormat(itemPrice)}`);
     menuItem.price = itemPrice;
     menuItem.armor = 100;*/
 
@@ -3233,10 +3233,11 @@ menuList.showAdminMenu = function() {
         UIMenu.Menu.AddMenuItem("Перевернуть ближайший ТС").doName = 'flipVehicle';
 
         if (user.isAdmin(5)) {
-            UIMenu.Menu.AddMenuItem("Коорды").doName = 'server:user:getPlayerPos';
-            UIMenu.Menu.AddMenuItem("КоордыVeh").doName = 'server:user:getVehPos';
             UIMenu.Menu.AddMenuItem("Debug").doName = 'debug';
             UIMenu.Menu.AddMenuItem("Debug2").doName = 'debug2';
+            UIMenu.Menu.AddMenuItem("КоордыVeh").doName = 'server:user:getVehPos';
+            UIMenu.Menu.AddMenuItem("Коорды").doName = 'server:user:getPlayerPos';
+            UIMenu.Menu.AddMenuItem("Коорды2").doName = 'server:user:getPlayerPos2';
         }
         UIMenu.Menu.AddMenuItem("~y~Выключить админку").doName = 'disableAdmin';
     }
@@ -3368,6 +3369,10 @@ menuList.showAdminMenu = function() {
         }
         if (item.doName == 'server:user:getPlayerPos') {
             mp.events.callRemote('server:user:getPlayerPos');
+        }
+        if (item.doName == 'server:user:getPlayerPos2') {
+            let str = await UIMenu.Menu.GetUserInput("Коорды", "", 10);
+            mp.events.callRemote('server:user:getPlayerPos2', str);
         }
         if (item.doName == 'server:user:getVehPos') {
             mp.events.callRemote('server:user:getVehPos');

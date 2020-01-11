@@ -164,9 +164,9 @@ business.sell = function (player) {
         if (!user.isLogin(player))
             return;
 
-        user.addHistory(player, 3, 'Продал бизнес ' + hInfo.get('name') + ' №' + hInfo.get('id') + '. Цена: $' + methods.numberFormat(nalog));
+        user.addHistory(player, 3, 'Продал бизнес ' + hInfo.get('name') + ' №' + hInfo.get('id') + '. Цена: ' + methods.moneyFormat(nalog));
         player.notify('~g~Вы продали бизнес');
-        player.notify(`~g~Налог:~s~ ${coffer.getTaxIntermediate()}%\n~g~Получено:~s~ $${methods.numberFormat(nalog)}`);
+        player.notify(`~g~Налог:~s~ ${coffer.getTaxIntermediate()}%\n~g~Получено:~s~ ${methods.moneyFormat(nalog)}`);
         user.save(player);
         user.updateClientCache(player);
         business.save(hInfo.get('id'));
@@ -224,7 +224,7 @@ business.buy = function (player, id) {
     setTimeout(function () {
         if (!user.isLogin(player))
             return;
-        user.addHistory(player, 3, 'Купил бизнес ' + hInfo.get('name') + ' №' + hInfo.get('id') + '. Цена: $' + methods.numberFormat(hInfo.get('price')));
+        user.addHistory(player, 3, 'Купил бизнес ' + hInfo.get('name') + ' №' + hInfo.get('id') + '. Цена: ' + methods.moneyFormat(hInfo.get('price')));
         user.save(player);
         player.notify('~g~Поздравляем с покупкой бизнеса!');
         user.updateClientCache(player);

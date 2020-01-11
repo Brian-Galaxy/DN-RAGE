@@ -79,30 +79,6 @@ vehicles.loadAllTimers = () => {
     setInterval(vehicles.processVehicleManager, 600);
 };
 
-vehicles.loadAllShop = () => {
-    enums.carShopList.forEach(item => {
-        if (item.id == 0)
-            return;
-
-        let blip = methods.createBlip(new mp.Vector3(item.buyPos[0], item.buyPos[1], item.buyPos[2]), item.blipId, item.blipColor, 0.8, item.name);
-        methods.createStaticCheckpoint(blip.position.x, blip.position.y, blip.position.z - 1, "Нажмите ~g~Е~s~ чтобы открыть меню");
-    });
-};
-
-vehicles.loadAllShopVehicles = () => {
-
-    enums.carShopVehicleList.forEach(item => {
-        vehicles.spawnCarCb(veh => {
-            if (!vehicles.exists(veh))
-                return;
-            veh.locked = true;
-            veh.engine = false;
-            veh.setVariable('useless', true);
-        }, new mp.Vector3(item[1], item[2], item[3]), item[4], item[0]);
-        methods.createStaticCheckpoint(item[1], item[2], item[3], `~b~Название ТС:~s~ ${item[0]}\n~b~Цена: ~g~Скоро будет ;)`, 5, -1, [0, 0, 0, 0]);
-    });
-};
-
 vehicles.fractionList = [];
 
 vehicles.loadAllUserVehicles = (userId) => {
@@ -739,9 +715,9 @@ vehicles.sell = function (player, slot) {
                 if (!user.isLogin(player))
                     return;
 
-                user.addHistory(player, 3, 'Продал транспорт ' + vInfo.get('name') + '. Цена: $' + methods.numberFormat(nalog));
+                user.addHistory(player, 3, 'Продал транспорт ' + vInfo.get('name') + '. Цена: ' + methods.moneyFormat(nalog));
                 player.notify('~g~Вы продали транспорт');
-                player.notify(`~g~Налог:~s~ ${(coffer.get('cofferNalog') + 20)}\n~g~Получено:~s~ $${methods.numberFormat(nalog)}`);
+                player.notify(`~g~Налог:~s~ ${(coffer.get('cofferNalog') + 20)}\n~g~Получено:~s~ ${methods.moneyFormat(nalog)}`);
                 user.save(player);
             }, 1000);
         }

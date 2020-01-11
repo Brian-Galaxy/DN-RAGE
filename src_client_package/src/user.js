@@ -114,7 +114,8 @@ user.getTargetEntityValidate = function() {
         if (
             user.targetEntity &&
             user.targetEntity.entity &&
-            user.targetEntity.entity.getType() != 3
+            user.targetEntity.entity.getType() != 3 &&
+            !user.targetEntity.entity.getVariable('useless')
         )
             return user.targetEntity.entity;
         else if (

@@ -211,9 +211,9 @@ houses.sell = function (player) {
     setTimeout(function () {
         if (!user.isLogin(player))
             return;
-        user.addHistory(player, 3, 'Продал дом ' + hInfo.get('address') + ' №' + hInfo.get('id') + '. Цена: $' + methods.numberFormat(nalog));
+        user.addHistory(player, 3, 'Продал дом ' + hInfo.get('address') + ' №' + hInfo.get('id') + '. Цена: ' + methods.moneyFormat(nalog));
         player.notify('~g~Вы продали недвижимость');
-        player.notify(`~g~Налог:~s~ ${coffer.getTaxIntermediate()}%\n~g~Получено:~s~ $${methods.numberFormat(nalog)}`);
+        player.notify(`~g~Налог:~s~ ${coffer.getTaxIntermediate()}%\n~g~Получено:~s~ ${methods.moneyFormat(nalog)}`);
         user.save(player);
     }, 1000);
 };
@@ -252,7 +252,7 @@ houses.buy = function (player, id) {
     setTimeout(function () {
         if (!user.isLogin(player))
             return;
-        user.addHistory(player, 3, 'Купил дом ' + hInfo.get('address') + ' №' + hInfo.get('id') + '. Цена: $' + methods.numberFormat(hInfo.get('price')));
+        user.addHistory(player, 3, 'Купил дом ' + hInfo.get('address') + ' №' + hInfo.get('id') + '. Цена: ' + methods.moneyFormat(hInfo.get('price')));
         user.save(player);
         player.notify('~g~Поздравляем с покупкой недвижимости!');
     }, 500);

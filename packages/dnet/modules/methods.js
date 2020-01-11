@@ -58,7 +58,7 @@ methods.getVehicleInfo = function (model) {
         if (vItem.hash == model || vItem.display_name == model || mp.joaat(vItem.display_name.toString().toLowerCase()) == model)
             return vItem;
     }
-    return {id: 0, hash: model, display_name: 'Unknown', class_name: 'Unknown', stock: 378000, stock_full: 205000, fuel_full: 75, fuel_min: 8, fuel_type: 0};
+    return {id: 0, hash: model, display_name: 'Unknown', class_name: 'Unknown', stock: 378000, stock_full: 205000, price: 50000, fuel_full: 75, fuel_min: 8, fuel_type: 0};
 };
 
 methods.getRandomInt = function (min, max) {
@@ -111,9 +111,11 @@ methods.bankFormat = function (currentMoney) {
     });
 };
 
-methods.moneyFormat = function (currentMoney) {
+methods.moneyFormat = function (currentMoney, maxCentValue = 5000) {
     currentMoney = methods.parseFloat(currentMoney);
-    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(currentMoney.toFixed(2));
+    if (currentMoney < maxCentValue)
+        return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(currentMoney.toFixed(2));
+    return '$' + methods.numberFormat(currentMoney.toFixed(0));
 };
 
 methods.boolToInt = function (boolean) {
@@ -280,7 +282,7 @@ methods.createStaticCheckpoint = function (x, y, z, message, scale, dimension, c
         dimension = methods.parseInt(dimension);
 
     let checkpointID = checkPointStaticList.length;
-    checkPointStaticList.push({x: parseFloat(x), y: parseFloat(y), z: parseFloat(z), color: color, scale: scale, height: height});
+    checkPointStaticList.push({id: checkpointID, x: parseFloat(x), y: parseFloat(y), z: parseFloat(z), color: color, scale: scale, height: height});
     if (message != undefined)
         Container.Data.Set(999999, 'checkpointStaticLabel' + checkpointID, message);
     return checkpointID;
@@ -300,6 +302,12 @@ methods.updateCheckpointList = function (player) {
     catch (e) {
         methods.debug(e);
     }
+};
+
+methods.fixCheckpointList = function (player) {
+    if(!mp.players.exists(player))
+        return;
+    player.call('client:fixCheckpointList');
 };
 
 methods.notifyWithPictureToAll = function(title, sender, message, notifPic, icon = 0, flashing = false, textColor = -1, bgColor = -1, flashColor = [77, 77, 77, 200]) {

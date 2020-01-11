@@ -101,7 +101,7 @@ methods.getVehicleInfo = function (model) {
     catch (e) {
         
     }
-    return {id: 0, hash: model, display_name: 'Unknown', class_name: 'Unknown', stock: 378000, stock_full: 205000, fuel_full: 75, fuel_min: 8};
+    return {id: 0, hash: model, display_name: 'Unknown', class_name: 'Unknown', stock: 378000, stock_full: 205000, price: 50000, fuel_full: 75, fuel_min: 8, fuel_type: 0};
 };
 
 methods.parseInt = function (str) {
@@ -147,7 +147,7 @@ methods.unixTimeStampToDate = function (timestamp) {
 };
 
 methods.disableAllControls = function(disable) {
-    mp.events.call('client:events:disableAllControls', disable); //TODO
+    mp.events.call('client:events:disableAllControls', disable);
 };
 
 methods.isValidJSON = function(value){
@@ -262,9 +262,11 @@ methods.numberFormat = function (currentMoney) {
     });
 };
 
-methods.moneyFormat = function (currentMoney) {
+methods.moneyFormat = function (currentMoney, maxCentValue = 5000) {
     currentMoney = methods.parseFloat(currentMoney);
-    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(currentMoney.toFixed(2));
+    if (currentMoney < maxCentValue)
+        return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(currentMoney.toFixed(2));
+    return '$' + methods.numberFormat(currentMoney.toFixed(0));
 };
 
 methods.bankFormat = function (currentMoney) {

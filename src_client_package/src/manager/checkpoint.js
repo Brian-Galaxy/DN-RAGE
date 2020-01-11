@@ -16,14 +16,14 @@ checkpoint.checkPosition = function() {
             if (methods.distanceToPos(playerPos, new mp.Vector3(item.x, item.y, item.z)) <= item.scale + 0.4) {
                 if (!entityList.has(idx)) {
                     entityList.set(idx, true);
-                    mp.events.callRemote('client:enterStaticCheckpoint', idx);
+                    mp.events.callRemote('client:enterStaticCheckpoint', item.id);
                 }
             }
             else {
                 if (entityList.has(idx)) {
                     entityList.delete(idx);
                     UIMenu.Menu.HideMenu();
-                    mp.events.callRemote('client:exitStaticCheckpoint', idx);
+                    mp.events.callRemote('client:exitStaticCheckpoint', item.id);
                 }
             }
         } catch (e) {
@@ -34,7 +34,7 @@ checkpoint.checkPosition = function() {
 
     if (itemList.length < 1000) { //TODO
         checkpoint.fixCheckpointList();
-        setTimeout(checkpoint.checkPosition, 10000);
+        setTimeout(checkpoint.checkPosition, 5000);
     }
     else
         setTimeout(checkpoint.checkPosition, 1000);

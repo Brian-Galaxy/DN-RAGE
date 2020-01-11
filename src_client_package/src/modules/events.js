@@ -448,6 +448,11 @@ mp.events.add('client:updateCheckpointList', (data) => {
     checkpoint.updateCheckpointList(data);
 });
 
+mp.events.add('client:fixCheckpointList', () => {
+    methods.debug('Event: client:fixCheckpointList');
+    checkpoint.fixCheckpointList();
+});
+
 mp.events.add('client:updateVehicleInfo', (data) => {
     methods.debug('Event: client:updateVehicleInfo');
     enums.updateVehicleInfo(data);

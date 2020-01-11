@@ -41,7 +41,7 @@ try {
     try {
         user.init();
         methods.requestIpls();
-        checkpoint.checkPosition();
+        setTimeout(checkpoint.checkPosition, 10000);
         enums.loadCloth();
         business.loadScaleform();
 

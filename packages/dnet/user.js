@@ -905,8 +905,8 @@ user.ready = function(player) {
         return false;
 
     weather.setPlayerCurrentWeather(player);
-    for (let i = 0; i < methods.parseInt(enums.vehicleInfo.length / 250) + 1; i++)
-        player.call('client:updateVehicleInfo', [enums.vehicleInfo.slice(i * 250, i * 250 + 249)]);
+
+    player.call('client:updateVehicleInfo', [JSON.stringify(enums.vehicleInfo)]);
 
     player.dimension = player.id + 1;
     try {

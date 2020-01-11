@@ -545,9 +545,6 @@ weapons.components = [
     ["weapon_heavysniper_mk2", "Advanced Scope", -1135289737, 3],
     ["weapon_heavysniper_mk2", "Suppressor", -1404903567, 1],
 
-    ["weapon_pumpshotgun_mk2", "Squared Muzzle Brake", 1602080333, 1],
-    ["weapon_pumpshotgun_mk2", "Bell-End Muzzle Brake", 1764221345, 1],
-
     ["weapon_heavysniper_mk2", "Digital Camo", -130843390, 0],
     ["weapon_heavysniper_mk2", "Brushstroke Camo", -977347227, 0],
     ["weapon_heavysniper_mk2", "Woodland Camo", -378461067, 0],

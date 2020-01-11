@@ -2400,6 +2400,173 @@ menuList.showLscTunningListMenu = async function(modType, shopId, price, lscBann
     }
 };
 
+
+menuList.showGunShopMenu = function(shopId, price = 1)
+{
+    if (methods.isBlackout()) {
+        mp.game.ui.notifications.show(`~r~В городе отсутствует свет`);
+        return;
+    }
+
+    let menu = UIMenu.Menu.Create(" ", "~b~Магазин оружия", false, false, false, "shopui_title_gunclub", "shopui_title_gunclub");
+
+    enums.gunShopItems.forEach(itemId => {
+        if (items.isWeapon(itemId)) {
+            let itemPrice = items.getItemPrice(itemId) * price;
+            let menuItem = UIMenu.Menu.AddMenuItem(items.getItemNameById(itemId), `Цена: ~g~${methods.moneyFormat(itemPrice)}`);
+            menuItem.SetRightLabel('>');
+            menuItem.SetLeftBadge(13);
+            menuItem.isWeapon = true;
+            menuItem.itemId = itemId;
+        }
+        else if(items.isAmmo(itemId)) {
+            let itemPrice = items.getItemPrice(itemId) * price;
+            let menuItem = UIMenu.Menu.AddMenuItem(items.getItemNameById(itemId), `Цена: ~g~${methods.moneyFormat(itemPrice)}`);
+            menuItem.SetLeftBadge(6);
+            menuItem.price = itemPrice;
+            menuItem.itemId = itemId;
+        }
+        else {
+            let itemPrice = items.getItemPrice(itemId) * price;
+            let menuItem = UIMenu.Menu.AddMenuItem(items.getItemNameById(itemId), `Цена: ~g~${methods.moneyFormat(itemPrice)}`);
+            menuItem.price = itemPrice;
+            menuItem.itemId = itemId;
+        }
+    });
+
+    let itemPrice = 200 * price;
+    let menuItem = UIMenu.Menu.AddMenuItem("Лёгкий бронежилет", `Цена: ~g~$${methods.numberFormat(itemPrice)}`);
+    menuItem.SetLeftBadge(7);
+    menuItem.price = itemPrice;
+    menuItem.armor = 25;
+
+    itemPrice = 500 * price;
+    menuItem = UIMenu.Menu.AddMenuItem("Средний бронежилет", `Цена: ~g~$${methods.numberFormat(itemPrice)}`);
+    menuItem.SetLeftBadge(7);
+    menuItem.price = itemPrice;
+    menuItem.armor = 65;
+
+    /*itemPrice = 320 * price;
+    menuItem = UIMenu.Menu.AddMenuItem("Тяжелый бронежилет", `Цена: ~g~$${methods.numberFormat(itemPrice)}`);
+    menuItem.price = itemPrice;
+    menuItem.armor = 100;*/
+
+    UIMenu.Menu.AddMenuItem("~y~Ограбить").doName = "grab";
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = "closeButton";
+    menu.ItemSelect.on((item, index) => {
+        UIMenu.Menu.HideMenu();
+        try {
+
+            if (item.armor) {
+                if (item.price > user.getCashMoney()) {
+                    mp.game.ui.notifications.show("~r~У вас недостаточно средств");
+                    return;
+                }
+                mp.players.local.setArmour(item.armor);
+                mp.game.ui.notifications.show("~b~Вы купили бронежилет");
+                user.removeCashMoney(item.price);
+                business.addMoney(shopId, item.price, 'Бронежилет');
+            }
+            else if (item.price > 0) {
+                if (!user.getCache('gun_lic')) {
+                    mp.game.ui.notifications.show("~r~У Вас нет лицензии на оружие");
+                    return;
+                }
+                mp.events.callRemote('server:gun:buy', item.itemId, item.price, 1, shopId);
+            }
+            else if (item.isWeapon) {
+                menuList.showGunShopWeaponMenu(shopId, item.itemId, price);
+            }
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    });
+};
+
+menuList.showGunShopWeaponMenu = function(shopId, itemId, price = 1)
+{
+    if (methods.isBlackout()) {
+        mp.game.ui.notifications.show(`~r~В городе отсутствует свет`);
+        return;
+    }
+
+    let menu = UIMenu.Menu.Create(" ", "~b~Магазин оружия", false, false, false, "shopui_title_gunclub", "shopui_title_gunclub");
+
+    let isLic = weapons.getGunSlotIdByItem(itemId) != 5;
+
+    if (isLic)
+        UIMenu.Menu.AddMenuItem('~r~Требуется лицензия на оружие');
+
+    let itemPrice = items.getItemPrice(itemId) * price;
+    let menuItem = UIMenu.Menu.AddMenuItem(items.getItemNameById(itemId), `Цена: ~g~${methods.moneyFormat(itemPrice)}`);
+    menuItem.price = itemPrice;
+    menuItem.itemId = itemId;
+
+    let ammoId = weapons.getGunAmmoNameByItemId(itemId);
+    if (ammoId > 0) {
+        itemPrice = items.getItemPrice(ammoId) * price;
+        menuItem = UIMenu.Menu.AddMenuItem(items.getItemNameById(ammoId), `Цена: ~g~${methods.moneyFormat(itemPrice)}`);
+        menuItem.price = itemPrice;
+        menuItem.itemId = ammoId;
+
+        let isFind = false;
+        let wpName = items.getItemNameHashById(itemId);
+        weapons.getComponentList().forEach(item => {
+            if (item[3] == 0) return;
+            if (item[3] == 4) return;
+            if (item[0] == wpName) {
+
+                if (!isFind)
+                    UIMenu.Menu.AddMenuItem('~b~Модификации к оружию:');
+
+                isFind = true;
+
+                let wpcId = items.getWeaponComponentIdByHash(item[2], wpName);
+                itemPrice = items.getItemPrice(wpcId) * price;
+                let itemName = items.getItemNameById(wpcId);
+                if (itemName == 'UNKNOWN') return;
+                menuItem = UIMenu.Menu.AddMenuItem(items.getItemNameById(wpcId), `Цена: ~g~${methods.moneyFormat(itemPrice)}`);
+                menuItem.price = itemPrice;
+                menuItem.itemId = wpcId;
+            }
+        });
+    }
+
+    UIMenu.Menu.AddMenuItem("~g~Назад").doName = "closeButton";
+    UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = "closeButton";
+    menu.ItemSelect.on((item, index) => {
+        UIMenu.Menu.HideMenu();
+        try {
+
+            if (item.armor) {
+                if (item.price > user.getCashMoney()) {
+                    mp.game.ui.notifications.show("~r~У вас недостаточно средств");
+                    return;
+                }
+                mp.players.local.setArmour(item.armor);
+                mp.game.ui.notifications.show("~b~Вы купили бронежилет");
+                user.removeCashMoney(item.price);
+                business.addMoney(shopId, item.price, 'Бронежилет');
+            }
+            else if (item.price > 0) {
+                if (isLic && !user.getCache('gun_lic')) {
+                    mp.game.ui.notifications.show("~r~У Вас нет лицензии на оружие");
+                    return;
+                }
+                mp.events.callRemote('server:gun:buy', item.itemId, item.price, 1, shopId);
+            }
+            else if (item.doName == 'closeButton') {
+                menuList.showGunShopMenu(shopId, price);
+            }
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    });
+};
+
 menuList.showGovGarderobMenu = function() {
     let menu = UIMenu.Menu.Create(`Гардероб`, `~b~Гардероб`);
 

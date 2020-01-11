@@ -106,6 +106,11 @@ enums.fractionArsenalItems = [
     [], //7 NEWS
 ];
 
+enums.gunShopItems = [
+    54, 63, 64, 65, 69, 77, 71, 87, 90, 91, 94, 103, 106, 113, 114, 112, 108,
+    280, 281, 282, 283, 284, 285, 286, 287,
+];
+
 enums.lscClassPrice = [
     ['Commercials', 1.2],
     ['Compacts', 1],

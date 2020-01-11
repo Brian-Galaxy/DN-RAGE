@@ -7,7 +7,9 @@ const Natives = {
     SET_PED_WEAPON_TINT_INDEX: "0x50969B9B89ED5738"
 };
 
-let wcSync = {};
+mp.game.invoke("0x50969B9B89ED5738", mp.players.local.handle, 1432025498, 2);
+
+let wpSync = {};
 
 function addComponentToPlayer(player, weaponHash, componentHash) {
     if (!player.hasOwnProperty("__weaponComponentData")) player.__weaponComponentData = {};
@@ -56,6 +58,19 @@ mp.events.add("nukePlayerWeaponComponents", (player) => {
     player.__weaponComponentData = {};
 });
 
+mp.events.add("updatePlayerWeaponTint", (entity, value) => {
+    try {
+        if (entity.type === "player" && entity.handle !== 0) {
+            let [weaponHash, tintIndex] = value.split("|");
+            weaponHash = parseInt(weaponHash, 36);
+            tintIndex = parseInt(tintIndex);
+            mp.game.invoke(Natives.SET_PED_WEAPON_TINT_INDEX, entity.handle, weaponHash, tintIndex);
+        }
+    }
+    catch (e) {
+    }
+});
+
 mp.events.add("entityStreamIn", (entity) => {
     if (entity.type === "player") {
         let data = entity.getVariable("currentWeaponComponents");
@@ -76,6 +91,7 @@ mp.events.add("entityStreamIn", (entity) => {
         if (data2) {
             let [weaponHash, tintIndex] = data2.split("|");
             weaponHash = parseInt(weaponHash, 36);
+            tintIndex = parseInt(tintIndex);
 
             entity.giveWeapon(weaponHash, -1, true);
             mp.game.invoke(Natives.SET_PED_WEAPON_TINT_INDEX, entity.handle, weaponHash, tintIndex);
@@ -89,35 +105,45 @@ mp.events.add("entityStreamOut", (entity) => {
 });
 
 mp.events.addDataHandler("currentWeaponComponents", (entity, value) => {
-    if (entity.type === "player" && entity.handle !== 0) {
-        if (!entity.hasOwnProperty("__weaponComponentData")) entity.__weaponComponentData = {};
+    try {
+        if (entity.type === "player" && entity.handle !== 0) {
+            if (!entity.hasOwnProperty("__weaponComponentData")) entity.__weaponComponentData = {};
 
-        let [weaponHash, components] = value.split(".");
-        weaponHash = parseInt(weaponHash, 36);
+            let [weaponHash, components] = value.split(".");
+            weaponHash = parseInt(weaponHash, 36);
 
-        if (!entity.__weaponComponentData.hasOwnProperty(weaponHash)) entity.__weaponComponentData[weaponHash] = new Set();
+            if (!entity.__weaponComponentData.hasOwnProperty(weaponHash)) entity.__weaponComponentData[weaponHash] = new Set();
 
-        let currentComponents = entity.__weaponComponentData[weaponHash];
-        let newComponents = (components && components.length > 0) ? components.split('|').map(hash => parseInt(hash, 36)) : [];
+            let currentComponents = entity.__weaponComponentData[weaponHash];
+            let newComponents = (components && components.length > 0) ? components.split('|').map(hash => parseInt(hash, 36)) : [];
 
-        for (let component of currentComponents) {
-            if (!newComponents.includes(component)) removeComponentFromPlayer(entity, weaponHash, component);
+            for (let component of currentComponents) {
+                if (!newComponents.includes(component)) removeComponentFromPlayer(entity, weaponHash, component);
+            }
+
+            for (let component of newComponents) addComponentToPlayer(entity, weaponHash, component);
+            mp.game.invoke(Natives.SET_CURRENT_PED_WEAPON, entity.handle, weaponHash, true);
+
+            entity.__weaponComponentData[weaponHash] = new Set(newComponents);
         }
-
-        for (let component of newComponents) addComponentToPlayer(entity, weaponHash, component);
-        mp.game.invoke(Natives.SET_CURRENT_PED_WEAPON, entity.handle, weaponHash, true);
-
-        entity.__weaponComponentData[weaponHash] = new Set(newComponents);
+    }
+    catch (e) {
+        
     }
 });
 
 mp.events.addDataHandler("currentWeaponTint", (entity, value) => {
-    if (entity.type === "player" && entity.handle !== 0) {
-        let [weaponHash, tintIndex] = value.split("|");
-        weaponHash = parseInt(weaponHash, 36);
-
-        mp.game.invoke(Natives.SET_PED_WEAPON_TINT_INDEX, entity.handle, weaponHash >> 0, tintIndex >> 0);
+    try {
+        if (entity.type === "player" && entity.handle !== 0) {
+            let [weaponHash, tintIndex] = value.split("|");
+            weaponHash = parseInt(weaponHash, 36);
+            tintIndex = parseInt(tintIndex);
+            mp.game.invoke(Natives.SET_PED_WEAPON_TINT_INDEX, entity.handle, weaponHash, tintIndex);
+        }
+    }
+    catch (e) {
+        
     }
 });
 
-export default wcSync;
+export default wpSync;

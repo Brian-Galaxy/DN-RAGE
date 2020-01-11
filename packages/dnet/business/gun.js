@@ -67,7 +67,7 @@ gun.findNearest = function(pos) {
     return prevPos;
 };
 
-gun.buy = function(player, itemId, price, count, shopId) {
+gun.buy = function(player, itemId, price, count, superTint, tint, shopId) {
     methods.debug('gun.buy');
 
     if (!user.isLogin(player))
@@ -87,8 +87,11 @@ gun.buy = function(player, itemId, price, count, shopId) {
         return;
     }
 
-    inventory.addItem(itemId, 1, 1, user.getId(player), 1, 1, `{"userName": "${user.getRpName(player)}"}`, 1);
-    player.notify('~g~Вы купили товар по цене: ~s~$' + price);
+    if (items.isWeapon(itemId))
+        inventory.addItem(itemId, 1, 1, user.getId(player), 1, 0, `{"userName": "${user.getRpName(player)}", "superTint": ${superTint}, "tint": ${tint}}`, 1);
+    else
+        inventory.addItem(itemId, 1, 1, user.getId(player), 1, 0, `{"userName": "${user.getRpName(player)}"}`, 1);
+    player.notify('~g~Вы купили ' + items.getItemNameById(itemId) +  ' по цене: ~s~' + methods.moneyFormat(price));
     user.removeMoney(player, price);
     business.addMoney(shopId, price, items.getItemNameById(itemId));
     inventory.updateAmount(player, user.getId(player), 1);

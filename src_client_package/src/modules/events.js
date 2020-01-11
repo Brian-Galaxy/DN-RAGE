@@ -1035,6 +1035,9 @@ mp.events.add('client:inventory:equip', function(id, itemId, count, aparams) {
 
             let wpHash = weapons.getHashByName(items.getItemNameHashById(itemId));
 
+            user.removeAllWeaponComponentsByHash(wpHash);
+            user.setWeaponTintByHash(wpHash, 0);
+
             if (params.slot1)
                 user.giveWeaponComponentByHash(wpHash, params.slot1hash);
             if (params.slot2)
@@ -1043,6 +1046,10 @@ mp.events.add('client:inventory:equip', function(id, itemId, count, aparams) {
                 user.giveWeaponComponentByHash(wpHash, params.slot3hash);
             if (params.slot4)
                 user.giveWeaponComponentByHash(wpHash, params.slot4hash);
+            if (params.superTint)
+                user.giveWeaponComponentByHash(wpHash, params.superTint);
+            if (params.tint)
+                user.setWeaponTintByHash(wpHash, params.tint);
 
             user.save();
         }
@@ -1441,14 +1448,7 @@ mp.events.add("playerCommand", async (command) => {
     else if (command.toLowerCase().slice(0, 3) === "qwe") {
         /*let player = mp.players.local; //TODO Спавн объектов оружия и обвесов на них
         let pos = player.position;
-        let object = mp.game.weapon.createWeaponObject(-86904375, 1000, pos.x + 2, pos.y + 2, pos.z, true, player.heading, 0);
-
-        mp.game.weapon.giveWeaponComponentToWeaponObject(object, -1654288262);
-        mp.game.weapon.giveWeaponComponentToWeaponObject(object, -2089531990);
-        mp.game.weapon.giveWeaponComponentToWeaponObject(object, 77277509);
-        mp.game.weapon.giveWeaponComponentToWeaponObject(object, -746774737);
-        mp.game.weapon.giveWeaponComponentToWeaponObject(object, 2076495324);
-        mp.game.weapon.giveWeaponComponentToWeaponObject(object, -966040254);*/
+        let object = mp.game.weapon.createWeaponObject(-86904375, 1000, pos.x + 2, pos.y + 2, pos.z, true, player.heading, 0);*/
     }
     else if (command.slice(0, 5) === "eval ") {
         if (!user.isLogin() || !user.isAdmin(5))

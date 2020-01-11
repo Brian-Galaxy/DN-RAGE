@@ -1212,12 +1212,25 @@ user.playAnimation = function(player, dict, anim, flag = 49) {
 };
 
 user.giveWeaponComponent = function(player, weapon, component) {
-    methods.debug('user.giveWeaponComponent');
     if (!mp.players.exists(player))
         return false;
+    methods.debug('user.giveWeaponComponent', weapon, component);
     player.giveWeaponComponent(weapon, component);
 };
 
+user.removeAllWeaponComponents = function(player, weapon) {
+    if (!mp.players.exists(player))
+        return false;
+    methods.debug('user.removeAllWeaponComponents', weapon);
+    player.removeAllWeaponComponents(weapon);
+};
+
+user.setWeaponTint = function(player, weapon, tint) {
+    if (!mp.players.exists(player))
+        return false;
+    methods.debug('user.setWeaponTint', weapon, tint);
+    player.setWeaponTint(weapon, tint);
+};
 
 user.giveJobSkill = function(player) {
     return;

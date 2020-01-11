@@ -184,6 +184,22 @@ user.giveWeaponComponent = function(model, component) {
     user.giveWeaponComponentByHash(weapons.getHashByName(model), component);
 };
 
+user.removeAllWeaponComponents = function(model) {
+    user.removeAllWeaponComponentsByHash(weapons.getHashByName(model));
+};
+
+user.removeAllWeaponComponentsByHash = function(model) {
+    mp.events.callRemote('server:user:removeAllWeaponComponents', model.toString());
+};
+
+user.setWeaponTintByHash = function(model, tint) {
+    mp.events.callRemote('server:user:setWeaponTint', model.toString(), tint);
+};
+
+user.setWeaponTint = function(model, tint) {
+    user.setWeaponTintByHash(weapons.getHashByName(model), tint);
+};
+
 user.giveWeapon = function(model, pt) {
     user.giveWeaponByHash(weapons.getHashByName(model), pt);
 };

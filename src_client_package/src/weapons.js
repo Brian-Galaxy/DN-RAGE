@@ -1,4 +1,6 @@
 import items from "./items";
+import UIMenu from "./modules/menu";
+import methods from "./modules/methods";
 
 let weapons = {};
 
@@ -22,6 +24,16 @@ weapons.getComponentList = function() {
 
 weapons.setComponentList = function(data) {
     components = data;
+};
+
+weapons.getWeaponComponentList = function(weaponName) {
+    let list = [];
+    weapons.getComponentList().forEach(item => {
+        if (item[0] == weaponName) {
+            list.push(item);
+        }
+    });
+    return list;
 };
 
 weapons.getHashByName = function(name) {

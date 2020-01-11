@@ -1702,6 +1702,10 @@ menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId) {
                         if (!mp.game.invoke(methods.HAS_PED_GOT_WEAPON, mp.players.local.handle, wpHash, false)) {
                             user.giveWeapon(wpName, 0);
                             user.setAmmo(wpName, user.getCache('weapon_' + slot + '_ammo'));
+
+                            user.removeAllWeaponComponentsByHash(wpHash);
+                            user.setWeaponTintByHash(wpHash, 0);
+
                             if (params.slot1)
                                 user.giveWeaponComponentByHash(wpHash, params.slot1hash);
                             if (params.slot2)
@@ -1710,6 +1714,10 @@ menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId) {
                                 user.giveWeaponComponentByHash(wpHash, params.slot3hash);
                             if (params.slot4)
                                 user.giveWeaponComponentByHash(wpHash, params.slot4hash);
+                            if (params.superTint)
+                                user.giveWeaponComponentByHash(wpHash, params.superTint);
+                            if (params.tint)
+                                user.setWeaponTintByHash(wpHash, params.tint);
                         }
 
                         equipWeapons.push({
@@ -2473,7 +2481,7 @@ menuList.showGunShopMenu = function(shopId, price = 1)
                     mp.game.ui.notifications.show("~r~У Вас нет лицензии на оружие");
                     return;
                 }
-                mp.events.callRemote('server:gun:buy', item.itemId, item.price, 1, shopId);
+                mp.events.callRemote('server:gun:buy', item.itemId, item.price, 1, 0, 0, shopId);
             }
             else if (item.isWeapon) {
                 menuList.showGunShopWeaponMenu(shopId, item.itemId, price);
@@ -2491,6 +2499,22 @@ menuList.showGunShopWeaponMenu = function(shopId, itemId, price = 1)
         mp.game.ui.notifications.show(`~r~В городе отсутствует свет`);
         return;
     }
+    let wpName = items.getItemNameHashById(itemId);
+
+    let componentList = weapons.getWeaponComponentList(wpName);
+    let countColorsComponent = 0;
+
+    componentList.forEach(item => {
+        if (item[3] == 0)
+            countColorsComponent++;
+    });
+
+    let tintList = ['Black', 'Green', 'Orange'];
+    let tintListId = [0, 1, 6];
+    if (wpName.indexOf('_mk2') >= 0) {
+        tintList = ['Black', 'Gray', 'Two-Tone', 'White', 'Earth', 'Brown & Black', 'Red', 'Blue', 'Orange'];
+        tintListId = [0, 1, 2, 3, 7, 8, 9, 10, 12];
+    }
 
     let menu = UIMenu.Menu.Create(" ", "~b~Магазин оружия", false, false, false, "shopui_title_gunclub", "shopui_title_gunclub");
 
@@ -2500,20 +2524,30 @@ menuList.showGunShopWeaponMenu = function(shopId, itemId, price = 1)
         UIMenu.Menu.AddMenuItem('~r~Требуется лицензия на оружие');
 
     let itemPrice = items.getItemPrice(itemId) * price;
-    let menuItem = UIMenu.Menu.AddMenuItem(items.getItemNameById(itemId), `Цена: ~g~${methods.moneyFormat(itemPrice)}`);
+    let menuItem = UIMenu.Menu.AddMenuItemList(items.getItemNameById(itemId), tintList, `Цена: ~g~${methods.moneyFormat(itemPrice)}`);
     menuItem.price = itemPrice;
     menuItem.itemId = itemId;
+    menuItem.superTint = 0;
+
+    componentList.forEach(item => {
+        if (item[3] == 0) {
+            let itemPrice = items.getItemPrice(itemId) * price;
+            let menuItem = UIMenu.Menu.AddMenuItemList(`${items.getItemNameById(itemId)} ${item[1]}`, tintList, `Цена: ~g~${methods.moneyFormat(itemPrice)}`);
+            menuItem.price = itemPrice;
+            menuItem.itemId = itemId;
+            menuItem.superTint = item[2].toString();
+        }
+    });
 
     let ammoId = weapons.getGunAmmoNameByItemId(itemId);
     if (ammoId > 0) {
-        itemPrice = items.getItemPrice(ammoId) * price;
-        menuItem = UIMenu.Menu.AddMenuItem(items.getItemNameById(ammoId), `Цена: ~g~${methods.moneyFormat(itemPrice)}`);
+        let itemPrice = items.getItemPrice(ammoId) * price;
+        let menuItem = UIMenu.Menu.AddMenuItem(items.getItemNameById(ammoId), `Цена: ~g~${methods.moneyFormat(itemPrice)}`);
         menuItem.price = itemPrice;
         menuItem.itemId = ammoId;
 
         let isFind = false;
-        let wpName = items.getItemNameHashById(itemId);
-        weapons.getComponentList().forEach(item => {
+        componentList.forEach(item => {
             if (item[3] == 0) return;
             if (item[3] == 4) return;
             if (item[0] == wpName) {
@@ -2536,6 +2570,12 @@ menuList.showGunShopWeaponMenu = function(shopId, itemId, price = 1)
 
     UIMenu.Menu.AddMenuItem("~g~Назад").doName = "closeButton";
     UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = "closeButton";
+
+    let listIndex = 0;
+    menu.ListChange.on((item, index) => {
+        listIndex = index;
+    });
+
     menu.ItemSelect.on((item, index) => {
         UIMenu.Menu.HideMenu();
         try {
@@ -2551,11 +2591,11 @@ menuList.showGunShopWeaponMenu = function(shopId, itemId, price = 1)
                 business.addMoney(shopId, item.price, 'Бронежилет');
             }
             else if (item.price > 0) {
-                if (isLic && !user.getCache('gun_lic')) {
+                /*if (isLic && !user.getCache('gun_lic')) {
                     mp.game.ui.notifications.show("~r~У Вас нет лицензии на оружие");
                     return;
-                }
-                mp.events.callRemote('server:gun:buy', item.itemId, item.price, 1, shopId);
+                }*/
+                mp.events.callRemote('server:gun:buy', item.itemId, item.price, 1, item.superTint, tintListId[listIndex], shopId);
             }
             else if (item.doName == 'closeButton') {
                 menuList.showGunShopMenu(shopId, price);
@@ -2729,7 +2769,7 @@ menuList.showSheriffArsenalMenu = function() {
                 return;
             }
 
-            inventory.takeNewItem(item.itemId, `{"owner": "BCSD", "userName": "${user.getCache('name')}"}`).then();
+            inventory.takeNewItem(item.itemId, `{"owner": "BCSD", "userName": "${user.getCache('name')}", "tint": 4}`).then();
             methods.saveFractionLog(
                 user.getCache('name'),
                 `Взял ${items.getItemNameById(item.itemId)}`,
@@ -2795,7 +2835,7 @@ menuList.showSheriffArsenalGunMenu = function() {
                 return;
             }
 
-            inventory.takeNewItem(item.itemId, `{"owner": "BCSD", "userName": "${user.getCache('name')}"}`).then();
+            inventory.takeNewItem(item.itemId, `{"owner": "BCSD", "userName": "${user.getCache('name')}, "tint": 4"}`).then();
             methods.saveFractionLog(
                 user.getCache('name'),
                 `Взял ${items.getItemNameById(item.itemId)}`,
@@ -2889,7 +2929,7 @@ menuList.showSheriffArsenalGunModMenu = function() {
                 return;
             }
 
-            inventory.takeNewItem(item.itemId, `{"owner": "BCSD", "userName": "${user.getCache('name')}"}`).then();
+            inventory.takeNewItem(item.itemId, `{"owner": "BCSD", "userName": "${user.getCache('name')}, "tint": 4"}`).then();
             methods.saveFractionLog(
                 user.getCache('name'),
                 `Взял ${items.getItemNameById(item.itemId)}`,
@@ -2962,7 +3002,7 @@ menuList.showSapdArsenalMenu = function() {
                 return;
             }
 
-            inventory.takeNewItem(item.itemId, `{"owner": "LSPD", "userName": "${user.getCache('name')}"}`).then();
+            inventory.takeNewItem(item.itemId, `{"owner": "LSPD", "userName": "${user.getCache('name')}, "tint": 5"}`).then();
             methods.saveFractionLog(
                 user.getCache('name'),
                 `Взял ${items.getItemNameById(item.itemId)}`,
@@ -3028,7 +3068,7 @@ menuList.showSapdArsenalGunMenu = function() {
                 return;
             }
 
-            inventory.takeNewItem(item.itemId, `{"owner": "LSPD", "userName": "${user.getCache('name')}"}`).then();
+            inventory.takeNewItem(item.itemId, `{"owner": "LSPD", "userName": "${user.getCache('name')}", "tint": 5}`).then();
             methods.saveFractionLog(
                 user.getCache('name'),
                 `Взял ${items.getItemNameById(item.itemId)}`,
@@ -3122,7 +3162,7 @@ menuList.showSapdArsenalGunModMenu = function() {
                 return;
             }
 
-            inventory.takeNewItem(item.itemId, `{"owner": "LSPD", "userName": "${user.getCache('name')}"}`).then();
+            inventory.takeNewItem(item.itemId, `{"owner": "LSPD", "userName": "${user.getCache('name')}", "tint": 5}`).then();
             methods.saveFractionLog(
                 user.getCache('name'),
                 `Взял ${items.getItemNameById(item.itemId)}`,

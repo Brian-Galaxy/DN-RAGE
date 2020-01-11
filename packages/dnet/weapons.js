@@ -105,7 +105,6 @@ weapons.hashesMap = [
 ];
 
 weapons.components = [
-    ["weapon_knuckle", "Base Model", -213504205, 0],
     ["weapon_knuckle", "The Pimp", -971770235, 0],
     ["weapon_knuckle", "The Ballas", -287703709, 0],
     ["weapon_knuckle", "The Hustler", 1351683121, 0],

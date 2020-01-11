@@ -19,6 +19,7 @@ let vehicles = require('../property/vehicles');
 let cloth = require('../business/cloth');
 let tattoo = require('../business/tattoo');
 let lsc = require('../business/lsc');
+let gun = require('../business/gun');
 
 let pickups = require('../managers/pickups');
 
@@ -937,6 +938,18 @@ mp.events.addRemoteCounted('server:user:giveWeaponComponent', (player, weapon, c
     user.giveWeaponComponent(player, methods.parseInt(weapon), methods.parseInt(component));
 });
 
+mp.events.addRemoteCounted('server:user:removeAllWeaponComponents', (player, weapon) => {
+    if (!user.isLogin(player))
+        return;
+    user.removeAllWeaponComponents(player, methods.parseInt(weapon));
+});
+
+mp.events.addRemoteCounted('server:user:setWeaponTint', (player, weapon, tint) => {
+    if (!user.isLogin(player))
+        return;
+    user.setWeaponTint(player, methods.parseInt(weapon), methods.parseInt(tint));
+});
+
 mp.events.addRemoteCounted('server:deleteNearstVehicle', (player) => {
     if (!user.isLogin(player))
         return;
@@ -1227,6 +1240,11 @@ mp.events.addRemoteCounted('server:vehicle:setNeonColor', (player, r, g, b) => {
     }
 });
 
+mp.events.addRemoteCounted('server:gun:buy', (player, itemId, price, count, superTint, tint, shopId) => {
+    if (!user.isLogin(player))
+        return;
+    gun.buy(player, itemId, price, count, superTint, tint, shopId);
+});
 
 mp.events.addRemoteCounted('server:uniform:sapd', (player, idx) => {
     try {

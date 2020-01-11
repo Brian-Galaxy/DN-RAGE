@@ -176,7 +176,7 @@ weather.timeSyncTimer = function() {
             }
         }*/
 
-        if (dateTime.getHours() == 4 && dateTime.getMinutes() == 50)
+        /*if (dateTime.getHours() == 4 && dateTime.getMinutes() == 50) //TODO
             methods.notifyToAll('Рестарт сервера через 15 минут');
         if (dateTime.getHours() == 4 && dateTime.getMinutes() == 59)
             methods.notifyToAll('Рестарт сервера через 5 минут');
@@ -188,7 +188,7 @@ weather.timeSyncTimer = function() {
                 if (mp.players.exists(p))
                     user.kick(p, 'Рестарт');
             })
-        }
+        }*/
     } catch (e) {
         methods.debug(e);
     }

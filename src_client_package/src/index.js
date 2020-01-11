@@ -3,7 +3,7 @@ import './modules/events';
 
 import './manager/vSync';
 import './manager/pSync';
-import './manager/wcSync';
+import './manager/wpSync';
 import './manager/shoot';
 
 import './betternotifs';

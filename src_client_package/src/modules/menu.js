@@ -26,7 +26,6 @@ class Menu {
             if (isDisableAllControls) {
                 mp.players.local.freezePosition(true);
                 methods.disableAllControls(true);
-                //mp.events.call('modules:client:player:DisableAllControls', true);
             }
 
             menuItem = new NMenu(title.toUpperCase(), subtitle, new Point(this.GetScreenResolutionMantainRatio().Width - 450, 180), spriteLib, spriteName);
@@ -35,7 +34,6 @@ class Menu {
                 menuItem.MenuClose.on( () => {
                     mp.players.local.freezePosition(false);
                     methods.disableAllControls(false);
-                    //mp.events.call('modules:client:player:DisableAllControls', false);
                     mp.gui.chat.activate(true);
                 });
             }

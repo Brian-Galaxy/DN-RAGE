@@ -147,7 +147,7 @@ methods.unixTimeStampToDate = function (timestamp) {
 };
 
 methods.disableAllControls = function(disable) {
-    mp.events.call('modules:client:player:DisableAllControls', disable); //TODO
+    mp.events.call('client:events:disableAllControls', disable); //TODO
 };
 
 methods.isValidJSON = function(value){

@@ -801,6 +801,25 @@ user.playAnimation = function(dict, anim, flag = 49, sendEventToServer = true) {
     */
 };
 
+user.playScenario = function(name) {
+    //mp.events.callRemote('server:playScenario', name);
+
+    let remotePlayer = mp.players.local;
+    remotePlayer.clearTasks();
+    if (name == 'PROP_HUMAN_SEAT_BENCH') {
+        let pos = remotePlayer.getOffsetFromInWorldCoords(0, -0.5, -0.5);
+        let heading = remotePlayer.getRotation(0).z;
+        remotePlayer.taskStartScenarioAtPosition(name, pos.x, pos.y, pos.z, heading, -1, true, false);
+    }
+    else {
+        remotePlayer.taskStartScenarioInPlace(name, 0, true);
+    }
+};
+
+user.stopScenario = function() {
+    mp.players.local.clearTasks();
+};
+
 user.isDead = function() {
     return mp.players.local.getHealth() <= 0;
 };

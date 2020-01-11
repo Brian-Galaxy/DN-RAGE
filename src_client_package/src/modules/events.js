@@ -28,6 +28,7 @@ mp.events.add('chatEnabled', (isEnabled) => {
 let money = "0.00 $";
 let moneyBank = "0.00 $";
 let maxSpeed = 500;
+let _playerDisableAllControls = false;
 
 let timerId = setTimeout(function updateMoney() {
     if(user.isLogin()) {
@@ -44,6 +45,10 @@ mp.events.add('client:cefDebug', function (message) {
         methods.debug(`[CEF] ${message}`);
     } catch (e) {
     }
+});
+
+mp.events.add('client:events:disableAllControls', function (disable) {
+    _playerDisableAllControls = disable;
 });
 
 mp.events.add('client:user:auth:register', function(mail, login, passwordReg, passwordRegCheck, acceptRules) {
@@ -551,6 +556,11 @@ mp.events.add('client:menuList:showGunShopMenu', (shopId, price) => {
 mp.events.add('client:menuList:showLscMenu', (shopId, price) => {
     methods.debug('Event: client:menuList:showLscMenu');
     menuList.showLscMenu(shopId, price);
+});
+
+mp.events.add('client:menuList:showInvaderShopMenu', () => {
+    methods.debug('Event: client:menuList:showInvaderShopMenu');
+    menuList.showInvaderShopMenu();
 });
 
 mp.events.add('client:showToPlayerItemListMenu', (data, ownerType, ownerId) => {
@@ -1485,7 +1495,7 @@ mp.events.add('render', () => {
         //TODO DELUXO FIX
         mp.game.controls.disableControlAction(0,357,true);
 
-        /*if(_playerDisableAllControls || phone.ingameBrowser || characterCreator) {
+        if(_playerDisableAllControls) {
             mp.game.controls.disableAllControlActions(0);
             mp.game.controls.disableAllControlActions(1);
             mp.game.controls.disableAllControlActions(2);
@@ -1496,7 +1506,7 @@ mp.events.add('render', () => {
             mp.game.controls.enableControlAction(2, 201, true);
             mp.game.controls.enableControlAction(2, 177, true);
         }
-        if(_playerDisableDefaultControls) {
+        /*if(_playerDisableDefaultControls) {
             mp.game.controls.disableControlAction(0,21,true) // disable sprint
             mp.game.controls.disableControlAction(0,24,true) // disable attack
             mp.game.controls.disableControlAction(0,25,true) // disable aim

@@ -21,6 +21,7 @@ import cloth from './business/cloth';
 import bus from "./jobs/bus";
 import gr6 from "./jobs/gr6";
 import mail from "./jobs/mail";
+import photo from "./jobs/photo";
 
 let menuList = {};
 
@@ -1246,7 +1247,8 @@ menuList.showVehicleMenu = function(data) {
                 break;
             case 3:
                 UIMenu.Menu.AddMenuItem("~g~Получить задание").doName = 'photo:find';
-                UIMenu.Menu.AddMenuItem("~b~Справка").sendChatMessage = 'Получайте и выполняйте задания от начальника';
+                UIMenu.Menu.AddMenuItem("~g~Напомнить задание").doName = 'photo:ask';
+                UIMenu.Menu.AddMenuItem("~b~Справка").sendChatMessage = 'Внимательно смотрите на задание вашего начальника и выставите позицию персонажа так, чтобы он смотрел в ту точку, которую необходимо сфотографировать, тогда вы получите премию';
                 break;
             case 6:
                 UIMenu.Menu.AddMenuItem("~g~Начать рейс").doName = 'bus:start1';
@@ -1331,6 +1333,8 @@ menuList.showVehicleMenu = function(data) {
         }
         else if (item.doName == 'photo:find')
             photo.start();
+        else if (item.doName == 'photo:ask')
+            photo.ask();
         else if (item.doName == 'bshot:find')
             burgershot.findHouse();
         else if (item.doName == 'bugstar:find')
@@ -1821,6 +1825,33 @@ menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId) {
     catch (e) {
        methods.debug('menuList.showToPlayerItemListMenu', e);
     }
+};
+
+menuList.showInvaderShopMenu = function() {
+
+    let menu = UIMenu.Menu.Create(`LifeInvader`, `~b~Меню LifeInvader`);
+
+    let price = 200;
+    UIMenu.Menu.AddMenuItem("Арендовать рабочий транспорт", "Стоимость: ~g~" + methods.moneyFormat(price)).doName = 'spawnCar';
+
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+    menu.ItemSelect.on(async (item, index) => {
+        UIMenu.Menu.HideMenu();
+        if (item.doName == 'spawnCar') {
+
+            if (user.getCache('job') != 3) {
+                mp.game.ui.notifications.show(`~r~Необходимо работать фотографом`);
+                return;
+            }
+
+            if (user.getMoney() < price) {
+                mp.game.ui.notifications.show(`~r~У Вас недостаточно средств`);
+                return;
+            }
+
+            vehicles.spawnJobCar(-1051.93359375, -249.95065307617188, 37.56923294067383, 203.91482543945312, 'Rebel2', 3);
+        }
+    });
 };
 
 menuList.showLscMenu = function(shopId, price = 1)

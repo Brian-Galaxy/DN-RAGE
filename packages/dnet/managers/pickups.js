@@ -210,6 +210,9 @@ pickups.GrabPos = new mp.Vector3(973.4865, -2190.531, 29.55157);
 /*Jobs*/
 pickups.Gr6Pos = new mp.Vector3(484.4730224609375, -1094.7589111328125, 28.202163696289062);
 pickups.MailPos = new mp.Vector3(78.78807067871094, 111.90670013427734, 80.16815948486328);
+pickups.Bus1Pos = new mp.Vector3(461.0713806152344, -573.357666015625, 27.499807357788086);
+pickups.Bus2Pos = new mp.Vector3(471.4545593261719, -576.7513427734375, 27.499744415283203);
+pickups.Bus3Pos = new mp.Vector3(466.4013671875, -576.0244140625, 27.499794006347656);
 
 pickups.checkPressLAlt = function(player) {
 
@@ -397,7 +400,13 @@ pickups.checkPressE = function(player) {
         if (user.isJobMail(player) && methods.distanceToPos(pickups.MailPos, playerPos) < distanceCheck)
             player.call('client:menuList:showSpawnJobCarMailMenu');
         if (user.isJobGr6(player) && methods.distanceToPos(pickups.Gr6Pos, playerPos) < distanceCheck)
-            player.call('client:menuList:showSpawnJobCarMenu', [500, 484.1923522949219, -1103.3271484375, 28.807828903198242, 128.7122802734375, 'Stockade', 8]);
+            player.call('client:menuList:showSpawnJobCarMenu', [500, 484.1923522949219, -1103.3271484375, 28.807828903198242, 128.7122802734375, 'Stockade', 10]);
+        if (user.isJobBus1(player) && methods.distanceToPos(pickups.Bus1Pos, playerPos) < distanceCheck)
+            player.call('client:menuList:showSpawnJobCarMenu', [150, 459.72247314453125, -582.0006103515625, 28.495769500732422, 170.3814697265625, 'Bus', 6]);
+        if (user.isJobBus2(player) && methods.distanceToPos(pickups.Bus2Pos, playerPos) < distanceCheck)
+            player.call('client:menuList:showSpawnJobCarMenu', [100, 471.0755920410156, -583.989501953125, 28.49574089050293, 173.3385009765625, 'Airbus', 7]);
+        if (user.isJobBus3(player) && methods.distanceToPos(pickups.Bus3Pos, playerPos) < distanceCheck)
+            player.call('client:menuList:showSpawnJobCarMenu', [200, 465.9425048828125, -582.1303100585938, 29.325841903686523, 173.46160888671875, 'Coach', 8]);
     }
     catch (e) {
         methods.debug('TEST', e);
@@ -612,4 +621,7 @@ pickups.createPickups = function() {
     //JOBS
     methods.createStaticCheckpointV(pickups.Gr6Pos, 'Нажмите ~g~E~s~ чтобы открыть меню инкассатора', 1, -1, pickups.Blue);
     methods.createStaticCheckpointV(pickups.MailPos, 'Нажмите ~g~E~s~ чтобы открыть меню почтальона', 1, -1, pickups.Blue);
+    methods.createStaticCheckpointV(pickups.Bus1Pos, 'Нажмите ~g~E~s~ чтобы открыть меню городского рейса', 1, -1, pickups.Blue);
+    methods.createStaticCheckpointV(pickups.Bus2Pos, 'Нажмите ~g~E~s~ чтобы открыть меню трансферного рейса', 1, -1, pickups.Blue);
+    methods.createStaticCheckpointV(pickups.Bus3Pos, 'Нажмите ~g~E~s~ чтобы открыть меню рейсового рейса', 1, -1, pickups.Blue);
 };

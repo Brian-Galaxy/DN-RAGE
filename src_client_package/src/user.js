@@ -762,6 +762,34 @@ user.giveJobMoney = function(money) {
     }
 };
 
+user.sendSmsBankOperation = function(text, title = 'Операция со счётом') {
+    methods.debug('bank.sendSmsBankOperation');
+    if (!user.isLogin())
+        return;
+
+    let prefix = methods.parseInt(user.getCache('bank_card').toString().substring(0, 4));
+
+    try {
+        switch (prefix) {
+            case 6000:
+                mp.game.ui.notifications.showWithPicture('~r~Maze Bank', '~g~' + title, text, 'CHAR_BANK_MAZE', 2);
+                break;
+            case 7000:
+                mp.game.ui.notifications.showWithPicture('~g~Fleeca Bank', '~g~' + title, text, 'CHAR_BANK_FLEECA', 2);
+                break;
+            case 8000:
+                mp.game.ui.notifications.showWithPicture('~b~Blaine Bank', '~g~' + title, text, 'DIA_CUSTOMER', 2);
+                break;
+            case 9000:
+                mp.game.ui.notifications.showWithPicture('~o~Pacific Bank', '~g~' + title, text, 'WEB_SIXFIGURETEMPS', 2);
+                break;
+        }
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+};
+
 user.playAnimation = function(dict, anim, flag = 49, sendEventToServer = true) {
     if (mp.players.local.getVariable("isBlockAnimation") || mp.players.local.isInAnyVehicle(false) || user.isDead()) return;
     mp.events.callRemote('server:playAnimation', dict, anim, methods.parseInt(flag));

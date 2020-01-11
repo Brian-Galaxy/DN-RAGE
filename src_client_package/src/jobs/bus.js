@@ -1,5 +1,7 @@
 import methods from '../modules/methods';
+
 import user from '../user';
+
 import jobPoint from '../manager/jobPoint';
 
 let bus = {};
@@ -149,27 +151,27 @@ bus.start = function(busType) {
                 if (_isBus1) break;
                 _isBus1 = true;
                 _currentId = 0;
-                _checkpointId = jobPoint.create(new mp.Vector3(bus.markers1[_currentId][0], bus.markers1[_currentId][1], bus.markers1[_currentId][2]), true, 3);
+                _checkpointId = jobPoint.create(new mp.Vector3(bus.markers1[_currentId][0], bus.markers1[_currentId][1], bus.markers1[_currentId][2] - 1), true, 3);
                 _currentId++;
-                mp.game.ui.notifications.show('~g~Вы начали рейс, не выходите из автобуса до конца поездки');
+                mp.game.ui.notifications.show('~g~Вы начали рейс, не выходите из ТС до конца поездки');
                 break;
             }
             case 2: {
                 if (_isBus2) break;
                 _isBus2 = true;
                 _currentId = 0;
-                _checkpointId = jobPoint.create(new mp.Vector3(bus.markers2[_currentId][0], bus.markers2[_currentId][1], bus.markers2[_currentId][2]), true, 3);
+                _checkpointId = jobPoint.create(new mp.Vector3(bus.markers2[_currentId][0], bus.markers2[_currentId][1], bus.markers2[_currentId][2] - 1), true, 3);
                 _currentId++;
-                mp.game.ui.notifications.show('~g~Вы начали рейс, не выходите из автобуса до конца поездки');
+                mp.game.ui.notifications.show('~g~Вы начали рейс, не выходите из ТС до конца поездки');
                 break;
             }
             case 3: {
                 if (_isBus3) break;
                 _isBus3 = true;
                 _currentId = 0;
-                _checkpointId = jobPoint.create(new mp.Vector3(bus.markers3[_currentId][0], bus.markers3[_currentId][1], bus.markers3[_currentId][2]), true, 3);
+                _checkpointId = jobPoint.create(new mp.Vector3(bus.markers3[_currentId][0], bus.markers3[_currentId][1], bus.markers3[_currentId][2] - 1), true, 3);
                 _currentId++;
-                mp.game.ui.notifications.show('~g~Вы начали рейс, не выходите из автобуса до конца поездки');
+                mp.game.ui.notifications.show('~g~Вы начали рейс, не выходите из ТС до конца поездки');
                 break;
             }
         }
@@ -183,9 +185,11 @@ bus.start = function(busType) {
 bus.nextCheckpoint = function() {
     jobPoint.delete();
 
-    if (bus.markers1[_currentId][3] == 1) {
+    let timeout = 1;
+    if (_isBus1 && bus.markers1[_currentId][3] == 1 || _isBus2 && bus.markers2[_currentId][3] == 1 || _isBus3 && bus.markers3[_currentId][3] == 1) {
         mp.game.ui.notifications.show('~g~Ожидайте 10 секунд');
         mp.players.local.freezePosition(true);
+        timeout = 10000;
     }
 
     setTimeout(function () {
@@ -200,8 +204,8 @@ bus.nextCheckpoint = function() {
                             break;
                         }
 
-                        if (_currentId > 10) {
-                            user.giveJobMoney(250);
+                        if (_currentId >= bus.markers1.length) {
+                            user.giveJobMoney(340);
                             user.giveJobSkill();
                             mp.game.ui.notifications.show('~g~Вы закончили свой рейс');
 
@@ -211,7 +215,7 @@ bus.nextCheckpoint = function() {
                             break;
                         }
 
-                        _checkpointId = jobPoint.create(new mp.Vector3(bus.markers1[_currentId][0], bus.markers1[_currentId][1], bus.markers1[_currentId][2]), true, 3);
+                        _checkpointId = jobPoint.create(new mp.Vector3(bus.markers1[_currentId][0], bus.markers1[_currentId][1], bus.markers1[_currentId][2] - 1), true, 3);
                         _currentId++;
                         mp.game.ui.notifications.show('~b~Двигайтесь к следующей остановке');
                         break;
@@ -222,8 +226,8 @@ bus.nextCheckpoint = function() {
                             break;
                         }
 
-                        if (_currentId > 1) {
-                            user.giveJobMoney(79);
+                        if (_currentId >= bus.markers2.length) {
+                            user.giveJobMoney(120);
                             user.giveJobSkill();
                             mp.game.ui.notifications.show('~g~Вы закончили свой рейс');
 
@@ -233,7 +237,7 @@ bus.nextCheckpoint = function() {
                             break;
                         }
 
-                        _checkpointId = jobPoint.create(new mp.Vector3(bus.markers2[_currentId][0], bus.markers2[_currentId][1], bus.markers2[_currentId][2]), true, 3);
+                        _checkpointId = jobPoint.create(new mp.Vector3(bus.markers2[_currentId][0], bus.markers2[_currentId][1], bus.markers2[_currentId][2] - 1), true, 3);
                         _currentId++;
                         mp.game.ui.notifications.show('~b~Двигайтесь к следующей остановке');
                         break;
@@ -244,8 +248,8 @@ bus.nextCheckpoint = function() {
                             break;
                         }
 
-                        if (_currentId > 4) {
-                            user.giveJobMoney(321);
+                        if (_currentId >= bus.markers3.length) {
+                            user.giveJobMoney(560);
                             user.giveJobSkill();
                             mp.game.ui.notifications.show('~g~Вы закончили свой рейс');
 
@@ -255,7 +259,7 @@ bus.nextCheckpoint = function() {
                             break;
                         }
 
-                        _checkpointId = jobPoint.create(new mp.Vector3(bus.markers3[_currentId][0], bus.markers3[_currentId][1], bus.markers3[_currentId][2]), true, 3);
+                        _checkpointId = jobPoint.create(new mp.Vector3(bus.markers3[_currentId][0], bus.markers3[_currentId][1], bus.markers3[_currentId][2] - 1), true, 3);
                         _currentId++;
                         mp.game.ui.notifications.show('~b~Двигайтесь к следующей остановке');
                         break;
@@ -268,13 +272,11 @@ bus.nextCheckpoint = function() {
             else
                 bus.stop();
 
-
-
         } catch (e) {
             methods.debug('Exception: bus.nextCheckpoint');
             methods.debug(e);
         }
-    }, 10000);
+    }, timeout);
 };
 
 bus.stop = function() {

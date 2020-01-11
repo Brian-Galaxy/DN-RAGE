@@ -330,7 +330,8 @@ mp.events.add('server:condo:insertBig', (player, number, zone, street) => {
 });
 
 mp.events.add('server:user:getPlayerPos', (player) => {
-    console.log(`PlayerPos: ${player.position.x}, ${player.position.y}, ${player.position.z - 1}, ${player.heading}`)
+    console.log(`PlayerPos: ${player.position.x}, ${player.position.y}, ${player.position.z - 1}, ${player.heading}`);
+    methods.saveFile('plPos', `[${player.position.x}, ${player.position.y}, ${player.position.z - 1}, ${player.heading}],`);
 });
 
 mp.events.add('server:user:getVehPos', (player) => {

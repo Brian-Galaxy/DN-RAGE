@@ -956,18 +956,22 @@ vehicles.spawnJobCar = (cb2, position, heading, nameOrModel, jobId = 0) => {
                 veh.numberPlate = 'PLJ' + jobId + veh.getVariable('vid');
                 break;
             }
-            case 6: {
-                veh.numberPlate = 'TXI' + jobId + veh.getVariable('vid');
+            case 6:
+            case 7:
+            case 8:
+            {
+                veh.numberPlate = 'LST' + jobId + veh.getVariable('vid');
+                if (nameOrModel == 'bus') {
+                    veh.setColor(methods.getRandomInt(122, 131), 0);
+                }
+                break;
+            }
+            case 9: {
+                veh.numberPlate = 'DTC' + jobId + veh.getVariable('vid');
                 veh.setColor(42, 42);
                 break;
             }
-            case 7: {
-                veh.numberPlate = 'BUS' + jobId + veh.getVariable('vid');
-                if (nameOrModel == 'bus')
-                    veh.setColor(70, 0);
-                break;
-            }
-            case 8: {
+            case 10: {
                 veh.numberPlate = 'GRP' + jobId + veh.getVariable('vid');
                 veh.setColor(111, 0);
                 break;

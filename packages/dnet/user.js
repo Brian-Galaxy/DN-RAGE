@@ -1275,14 +1275,6 @@ user.giveJobSkill = function(player) {
     }
 };
 
-user.isJobMail = function(player) {
-    return user.isLogin(player) && user.get(player, 'job') == 4;
-};
-
-user.isJobGr6 = function(player) {
-    return user.isLogin(player) && user.get(player, 'job') == 8;
-};
-
 user.payDay = async function (player) {
     if (!user.isLogin(player))
         return false;
@@ -1371,6 +1363,25 @@ user.payDay = async function (player) {
     return true;
 };
 
+user.isJobMail = function(player) {
+    return user.isLogin(player) && user.get(player, 'job') == 4;
+};
+
+user.isJobGr6 = function(player) {
+    return user.isLogin(player) && user.get(player, 'job') == 10;
+};
+
+user.isJobBus1 = function(player) {
+    return user.isLogin(player) && user.get(player, 'job') == 6;
+};
+
+user.isJobBus2 = function(player) {
+    return user.isLogin(player) && user.get(player, 'job') == 7;
+};
+
+user.isJobBus3 = function(player) {
+    return user.isLogin(player) && user.get(player, 'job') == 8;
+};
 
 user.isGos = function(player) {
     methods.debug('user.isGos');

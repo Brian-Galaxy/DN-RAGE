@@ -1002,9 +1002,7 @@ vehicles.getSpeedMax = (model) => {
 };
 
 vehicles.spawnJobCar = (x, y, z, heading, name, job) => {
-    user.setWaypoint(x, y);
-    mp.game.ui.notifications.show('Нажмите ~g~2~s~ рядом с ТС, чтобы его открыть');
-    mp.game.ui.notifications.show('Транспорт стоит на парковке');
+    mp.game.ui.notifications.show('Нажмите ~g~L~s~ чтобы открыть или закрыть ТС');
     mp.events.callRemote('server:vehicles:spawnJobCar', x, y, z, heading, name, job);
 };
 

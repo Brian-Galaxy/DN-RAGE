@@ -39,8 +39,9 @@ let __CONFIG__ = {
     defaultDistance: 25, // default proximity distance
     token: 'lol', // that is token from server
     isTokenSecurity: false, //
-    serverName: 'M83',
-    prefixId: `${this.serverName}_pl_`, // that prefix for voice id
+    serverName: 'Python',
+    //prefixId: `${this.serverName}_pl_`, // that prefix for voice id
+    prefixId: `Python_pl_`, // that prefix for voice id
     receivingTokenEventName: 'youToken', // the name of the event that receives the token
     sendDataProximityInterval: 500, // the interval between sending loudness data to ms
     debug: false, // debug mode

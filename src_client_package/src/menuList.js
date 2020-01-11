@@ -14,9 +14,12 @@ import weapons from './weapons';
 import houses from './property/houses';
 import condos from './property/condos';
 import business from './property/business';
+import vehicles from "./property/vehicles";
 
 import cloth from './business/cloth';
-import vehicles from "./property/vehicles";
+
+import bus from "./jobs/bus";
+import gr6 from "./jobs/gr6";
 
 let menuList = {};
 
@@ -1170,8 +1173,9 @@ menuList.showMainMenu = function() {
 menuList.showVehicleMenu = function(data) {
 
     let vInfo = methods.getVehicleInfo(mp.players.local.vehicle.model);
+    let veh = mp.players.local.vehicle;
 
-    let ownerName = mp.players.local.vehicle.getNumberPlateText();
+    let ownerName = veh.getNumberPlateText();
 
     let menu = UIMenu.Menu.Create(`Транспорт`, `~b~Номер ТС: ~s~${ownerName}`);
 
@@ -1192,7 +1196,7 @@ menuList.showVehicleMenu = function(data) {
     UIMenu.Menu.AddMenuItem("Характеристики").doName = 'showVehicleStatsMenu';
     //UIMenu.Menu.AddMenuItem("Управление транспортом").eventName = 'server:vehicle:engineStatus';
 
-    if (!data.get('job')) {
+    if (!veh.getVariable('jobId')) {
         switch (user.getCache('job')) {
             case 'trucker1':
                 if (vInfo.class_name == 'Vans') {
@@ -1221,65 +1225,40 @@ menuList.showVehicleMenu = function(data) {
         }
     }
 
-    if (user.getCache('job') == data.get('job')) {
-        UIMenu.Menu.AddMenuItem("~g~Открыть~s~ / ~r~Закрыть~s~").eventName = 'server:vehicle:lockStatus';
-        switch (data.get('job')) {
-            case 'bshot':
-                UIMenu.Menu.AddMenuItem("~g~Получить задание").doName = 'bshot:find';
-                UIMenu.Menu.AddMenuItem("~g~Взять заказ").doName = 'takeTool';
-                UIMenu.Menu.AddMenuItem("~b~Справка").sendChatMessage = 'Данная работа служит для того, чтобы вы привыкли к управлению и динамике сервера, дальше будет интересней.';
-                break;
-            case 'bgstar':
-                UIMenu.Menu.AddMenuItem("~g~Получить задание").doName = 'bugstar:find';
-                UIMenu.Menu.AddMenuItem("~g~Взять инструменты").doName = 'takeTool';
-                UIMenu.Menu.AddMenuItem("~b~Справка").sendChatMessage = 'Данная работа служит для того, чтобы вы привыкли к управлению и динамике сервера, дальше будет интересней.';
-                break;
-            case 'sunb':
-                UIMenu.Menu.AddMenuItem("~g~Получить задание").doName = 'sunb:find';
-                UIMenu.Menu.AddMenuItem("~g~Взять инструменты").doName = 'takeTool';
-                UIMenu.Menu.AddMenuItem("~b~Справка").sendChatMessage = 'Данная работа служит для того, чтобы вы привыкли к управлению и динамике сервера, дальше будет интересней.';
-                break;
-            case 'water':
-                UIMenu.Menu.AddMenuItem("~g~Получить задание").doName = 'water:find';
-                UIMenu.Menu.AddMenuItem("~b~Справка").sendChatMessage = 'Данная работа служит для того, чтобы вы привыкли к управлению и динамике сервера, дальше будет интересней.';
-                break;
-            case 'photo':
-                UIMenu.Menu.AddMenuItem("~g~Получить задание").doName = 'photo:find';
-                UIMenu.Menu.AddMenuItem("~b~Справка").sendChatMessage = 'Получайте и выполняйте задания от начальника';
-                break;
-            case 'three':
+    if (user.getCache('job') == veh.getVariable('jobId')) {
+        switch (veh.getVariable('jobId')) {
+            case 1:
                 UIMenu.Menu.AddMenuItem("~g~Получить задание").doName = 'three:find';
                 UIMenu.Menu.AddMenuItem("~b~Справка").sendChatMessage = 'Получайте и выполняйте задания от начальника';
                 break;
-            case 'bus1':
+            case 3:
+                UIMenu.Menu.AddMenuItem("~g~Получить задание").doName = 'photo:find';
+                UIMenu.Menu.AddMenuItem("~b~Справка").sendChatMessage = 'Получайте и выполняйте задания от начальника';
+                break;
+            case 6:
                 UIMenu.Menu.AddMenuItem("~g~Начать рейс").doName = 'bus:start1';
                 UIMenu.Menu.AddMenuItem("~y~Завершить рейс", "Завершение рейса досрочно").doName = 'bus:stop';
-                UIMenu.Menu.AddMenuItem("~b~Справка").sendChatMessage = 'Начните рейс и вперед зарабатывать!';
                 break;
-            case 'bus2':
+            case 7:
                 UIMenu.Menu.AddMenuItem("~g~Начать рейс").doName = 'bus:start2';
                 UIMenu.Menu.AddMenuItem("~y~Завершить рейс", "Завершение рейса досрочно").doName = 'bus:stop';
-                UIMenu.Menu.AddMenuItem("~b~Справка").sendChatMessage = 'Начните рейс и вперед зарабатывать!';
                 break;
-            case 'bus3':
+            case 8:
                 UIMenu.Menu.AddMenuItem("~g~Начать рейс").doName = 'bus:start3';
                 UIMenu.Menu.AddMenuItem("~y~Завершить рейс", "Завершение рейса досрочно").doName = 'bus:stop';
-                UIMenu.Menu.AddMenuItem("~b~Справка").sendChatMessage = 'Начните рейс и вперед зарабатывать!';
                 break;
-            case 'gr6':
+            case 10:
                 UIMenu.Menu.AddMenuItem("~g~Получить задание").doName = 'gr6:start';
                 UIMenu.Menu.AddMenuItem("Разгрузить транспорт").doName = 'gr6:unload';
                 UIMenu.Menu.AddMenuItem("Вернуть транспорт в гараж", 'Залог в $4500 вернется вам на руки').doName = 'gr6:delete';
-                UIMenu.Menu.AddMenuItem("~y~Вызвать подмогу", 'Вызывает сотрудников SAPD и SHERIFF').doName = 'gr6:getHelp';
+                UIMenu.Menu.AddMenuItem("~y~Вызвать подмогу", 'Вызывает сотрудников LSPD и BCSD').doName = 'gr6:getHelp';
                 UIMenu.Menu.AddMenuItem("~b~Справка").sendChatMessage = 'Катайтесь по заданиям, собирайте деньги с магазинов и везите их в хранилище. Есть возможность работать с напарником, до 4 человек.';
                 break;
-            case 'mail':
-            case 'mail2':
+            case 4:
                 UIMenu.Menu.AddMenuItem("~g~Взять почту из транспорта").doName = 'mail:take';
                 UIMenu.Menu.AddMenuItem("~b~Справка").sendChatMessage = 'Возьмите почту из транспорта, далее езжай к любым жилым домам, подходи к дому нажимай E и клади туда почту.';
                 break;
-            case 'taxi1':
-            case 'taxi2':
+            case 9:
                 UIMenu.Menu.AddMenuItem("~g~Диспетчерская таксопарка").doName = 'taxi:dispatch';
                 UIMenu.Menu.AddMenuItem("~g~Получить задание").doName = 'taxi:start';
                 break;
@@ -2568,7 +2547,7 @@ menuList.showGunShopWeaponMenu = function(shopId, itemId, price = 1)
         });
     }
 
-    UIMenu.Menu.AddMenuItem("~g~Назад").doName = "closeButton";
+    UIMenu.Menu.AddMenuItem("~g~Назад").doName = "backButton";
     UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = "closeButton";
 
     let listIndex = 0;
@@ -2577,7 +2556,6 @@ menuList.showGunShopWeaponMenu = function(shopId, itemId, price = 1)
     });
 
     menu.ItemSelect.on((item, index) => {
-        UIMenu.Menu.HideMenu();
         try {
 
             if (item.armor) {
@@ -2597,8 +2575,12 @@ menuList.showGunShopWeaponMenu = function(shopId, itemId, price = 1)
                 }*/
                 mp.events.callRemote('server:gun:buy', item.itemId, item.price, 1, item.superTint, tintListId[listIndex], shopId);
             }
-            else if (item.doName == 'closeButton') {
+            else if (item.doName == 'backButton') {
+                UIMenu.Menu.HideMenu();
                 menuList.showGunShopMenu(shopId, price);
+            }
+            else if (item.doName == 'closeButton') {
+                UIMenu.Menu.HideMenu();
             }
         }
         catch (e) {
@@ -2944,7 +2926,17 @@ menuList.showSapdGarderobMenu = function() {
 
     let menu = UIMenu.Menu.Create(`Гардероб`, `~b~Гардероб LSPD`);
 
-    let listGarderob = ["Повседневная одежда", "Кадетская форма", "Офицерская форма", "Air Support Division", "NOOSE Black", "NOOSE Red", "NOOSE Standard", "Детективная форма", "Представительская форма"];
+    let listGarderob = [
+        "Повседневная одежда",
+        "Кадетская форма",
+        "Офицерская форма",
+        "Air Support Division",
+        "Tactical Division Black",
+        "Tactical Division Red",
+        "Tactical Division Standard",
+        "Детективная форма",
+        "Представительская форма"
+    ];
 
     for (let i = 0; i < listGarderob.length; i++) {
         try {

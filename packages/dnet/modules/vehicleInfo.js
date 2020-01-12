@@ -6,7 +6,7 @@ let vehicleInfo = exports;
 
 vehicleInfo.loadAll = function() {
     methods.debug('vehicleInfo.loadAll');
-    mysql.executeQuery(`SELECT * FROM veh_info`, function (err, rows, fields) {
+    mysql.executeQuery(`SELECT * FROM veh_info ORDER BY display_name ASC`, function (err, rows, fields) {
         rows.forEach(function (item) {
             enums.vehicleInfo.push(item);
         });

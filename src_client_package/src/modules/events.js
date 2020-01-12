@@ -563,6 +563,11 @@ mp.events.add('client:menuList:showLscMenu', (shopId, price) => {
     menuList.showLscMenu(shopId, price);
 });
 
+mp.events.add('client:menuList:showVehShopMenu', (shopId) => {
+    methods.debug('Event: client:menuList:showVehShopMenu');
+    menuList.showVehShopMenu(shopId);
+});
+
 mp.events.add('client:menuList:showInvaderShopMenu', () => {
     methods.debug('Event: client:menuList:showInvaderShopMenu');
     menuList.showInvaderShopMenu();

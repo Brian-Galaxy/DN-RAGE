@@ -65,7 +65,7 @@ vShop.checkPosForOpenMenu = function(player) {
         let shopId = vShop.getInRadius(playerPos, 2);
         if (shopId == -1)
             return;
-        player.call('client:menuList:showVehShopMenu', [shopId, business.getPrice(shopId)]);
+        player.call('client:menuList:showVehShopMenu', [shopId]);
     }
     catch (e) {
         methods.debug(e);

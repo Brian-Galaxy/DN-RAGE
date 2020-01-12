@@ -17,6 +17,7 @@ import business from './property/business';
 import vehicles from "./property/vehicles";
 
 import cloth from './business/cloth';
+import vShop from "./business/vShop";
 
 import bus from "./jobs/bus";
 import gr6 from "./jobs/gr6";
@@ -272,511 +273,6 @@ menuList.showCondoOutMenu = async function(h) {
         else if (item.doName) {
             mail.sendMail2(item.doName)
         }
-    });
-};
-
-menuList.showShopClothMenu = function (shopId, type, menuType) {
-    try {
-        methods.debug('Execute: menuList.showShopClothMenu');
-
-        //if (menuType == 11)
-        //    inventory.unEquipItem(265, 0, 1, 0, false);
-
-        if (methods.isBlackout()) {
-            mp.game.ui.notifications.show(`~r~В городе отсутствует свет`);
-            return;
-        }
-
-        let title1 = "commonmenu";
-        let title2 = "interaction_bgd";
-
-        switch (type) {
-            case 0:
-                title1 = "shopui_title_lowendfashion";
-                title2 = "shopui_title_lowendfashion";
-                break;
-            case 1:
-                title1 = "shopui_title_midfashion";
-                title2 = "shopui_title_midfashion";
-                break;
-            case 2:
-                title1 = "shopui_title_highendfashion";
-                title2 = "shopui_title_highendfashion";
-                break;
-            case 3:
-                title1 = "shopui_title_gunclub";
-                title2 = "shopui_title_gunclub";
-                break;
-            case 5:
-                title1 = "shopui_title_lowendfashion2";
-                title2 = "shopui_title_lowendfashion2";
-                break;
-        }
-
-        let menu = UIMenu.Menu.Create(title1 != "commonmenu" ? " " : "Vangelico", "~b~Магазин", true, false, false, title1, title2);
-
-        /*if (menuType == 5) {
-            UIMenu.Menu.AddMenuItem("Бейсбольная бита", "Цена: ~g~$100").doName = "baseballBat";
-            UIMenu.Menu.AddMenuItem("Бейсбольный мяч", "Цена: ~g~$10").doName = "baseballBall";
-        }*/
-
-        if (menuType == 0) {
-            UIMenu.Menu.AddMenuItem("Головные уборы").doName = "head";
-            UIMenu.Menu.AddMenuItem("Очки").doName = "glasses";
-            UIMenu.Menu.AddMenuItem("Серьги").doName = "earring";
-            UIMenu.Menu.AddMenuItem("Левая рука").doName = "leftHand";
-            UIMenu.Menu.AddMenuItem("Правая рука").doName = "rightHand";
-            UIMenu.Menu.AddMenuItem("~y~Ограбить").doName = 'grab';
-        } else if (menuType == 1) {
-            UIMenu.Menu.AddMenuItem("Головные уборы").doName = "head";
-            UIMenu.Menu.AddMenuItem("Очки").doName = "glasses";
-            UIMenu.Menu.AddMenuItem("Торс").doName = "body";
-            UIMenu.Menu.AddMenuItem("Ноги").doName = "legs";
-            UIMenu.Menu.AddMenuItem("Обувь").doName = "shoes";
-        } else {
-            /*if (menuType == 7) {
-                UIMenu.Menu.AddMenuItem("~y~Снять").doName = "takeOff";
-            }*/
-            let skin = JSON.parse(user.getCache('skin'));
-            let cloth = skin.SKIN_SEX == 1 ? JSON.parse(enums.get('clothF')) : JSON.parse(enums.get('clothM'));
-            for (let i = 0; i < cloth.length; i++) {
-                let id = i;
-
-                if (cloth[id][1] != menuType) continue;
-                if (cloth[id][0] != type) continue;
-
-                let list = [];
-                for (let j = 0; j <= cloth[i][3] + 1; j++) {
-                    list.push(j + '');
-                }
-
-                let menuListItem = UIMenu.Menu.AddMenuItemList(cloth[i][9].toString(), list, `Цена: ~g~${(methods.moneyFormat(cloth[i][8]))} ${(cloth[i][10] > -99 ? `\n~s~Термостойкость до ~g~${cloth[i][10]}°` : "")}`);
-
-                menuListItem.id1 = cloth[id][1];
-                menuListItem.id2 = cloth[id][2];
-                menuListItem.id4 = cloth[id][4];
-                menuListItem.id5 = cloth[id][5];
-                menuListItem.id6 = cloth[id][6];
-                menuListItem.id7 = cloth[id][7];
-                menuListItem.id8 = cloth[id][8];
-                menuListItem.itemName = cloth[id][9].toString();
-            }
-        }
-
-        if (type == 5) {
-            let menuItem = UIMenu.Menu.AddMenuItem("Бита", `Цена: ~g~$349.99`);
-            menuItem.price = 349.99;
-            menuItem.itemId = 55;
-            menuItem.itemName = "Бита";
-        }
-
-        UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = "closeButton";
-
-        menu.MenuClose.on(() => {
-            try {
-                user.updateCharacterCloth();
-            } catch (e) {
-                methods.debug('Exception: menuList.showShopClothMenu menu.MenuClose');
-                methods.debug(e);
-            }
-        });
-
-        let currentListChangeItem = null;
-        let currentListChangeItemIndex = 0;
-
-        menu.ListChange.on((item, index) => {
-            currentListChangeItem = item;
-            currentListChangeItemIndex = index;
-            cloth.change(item.id1, item.id2, index, item.id4, item.id5, item.id6, item.id7);
-        });
-
-        menu.ItemSelect.on(async (item, index) => {
-            try {
-                if (item == currentListChangeItem) {
-                    cloth.buy(item.id8, item.id1, item.id2, currentListChangeItemIndex, item.id4, item.id5, item.id6, item.id7, item.itemName, shopId);
-                }
-                if (item.doName == "grab") {
-                    UIMenu.Menu.HideMenu();
-                    //user.grab(shopId);
-                }
-                if (item.doName == "takeOff") {
-                    UIMenu.Menu.HideMenu();
-                    cloth.buy(10, menuType, 0, 0, -1, -1, -1, -1, "Операция", shopId, true);
-                }
-                if (item.doName == "closeButton") {
-                    UIMenu.Menu.HideMenu();
-                    user.updateCharacterCloth();
-                }
-                if (item.price > 0)
-                    mp.events.callRemote('server:shop:buy', item.itemId, item.price, shopId);
-                if (item.doName == "head") {
-                    UIMenu.Menu.HideMenu();
-                    menuList.showShopPropMenu(shopId, type, 0);
-                }
-                if (item.doName == "glasses") {
-                    UIMenu.Menu.HideMenu();
-                    menuList.showShopPropMenu(shopId, type, 1);
-                }
-                if (item.doName == "earring") {
-                    UIMenu.Menu.HideMenu();
-                    menuList.showShopPropMenu(shopId, type, 2);
-                }
-                if (item.doName == "leftHand") {
-                    UIMenu.Menu.HideMenu();
-                    menuList.showShopPropMenu(shopId, type, 6);
-                }
-                if (item.doName == "rightHand") {
-                    UIMenu.Menu.HideMenu();
-                    menuList.showShopPropMenu(shopId, type, 7);
-                }
-                if (item.doName == "head") {
-                    UIMenu.Menu.HideMenu();
-                    menuList.showShopPropMenu(shopId, type, 0);
-                }
-                if (item.doName == "glasses") {
-                    UIMenu.Menu.HideMenu();
-                    menuList.showShopPropMenu(shopId, type, 1);
-                }
-                if (item.doName == "body") {
-                    UIMenu.Menu.HideMenu();
-                    menuList.showShopClothMenu(shopId, 3, 11);
-                }
-                if (item.doName == "legs") {
-                    UIMenu.Menu.HideMenu();
-                    menuList.showShopClothMenu(shopId, 3, 4);
-                }
-                if (item.doName == "shoes") {
-                    UIMenu.Menu.HideMenu();
-                    menuList.showShopClothMenu(shopId, 3, 6);
-                }
-            } catch (e) {
-                methods.debug('Exception: menuList.showShopClothMenu menu.ItemSelect');
-                methods.debug(e);
-            }
-        });
-    } catch (e) {
-        methods.debug('Exception: menuList.showShopClothMenu');
-        methods.debug(e);
-    }
-};
-
-menuList.showShopPropMenu = function (shopId, type, menuType) {
-    let title1 = "commonmenu";
-    let title2 = "interaction_bgd";
-
-    switch (type) {
-        case 0:
-            title1 = "shopui_title_lowendfashion";
-            title2 = "shopui_title_lowendfashion";
-            break;
-        case 1:
-            title1 = "shopui_title_midfashion";
-            title2 = "shopui_title_midfashion";
-            break;
-        case 2:
-            title1 = "shopui_title_highendfashion";
-            title2 = "shopui_title_highendfashion";
-            break;
-        case 3:
-            title1 = "shopui_title_gunclub";
-            title2 = "shopui_title_gunclub";
-            break;
-        case 5:
-            title1 = "shopui_title_lowendfashion2";
-            title2 = "shopui_title_lowendfashion2";
-            break;
-    }
-
-    let menu = UIMenu.Menu.Create(title1 != "commonmenu" ? " " : "Vangelico", "~b~Магазин", true, false, false, title1, title2);
-
-    //UIMenu.Menu.AddMenuItem( "~y~Снять").doName = "takeOff";
-
-    let skin = JSON.parse(user.getCache('skin'));
-    let clothList = skin.SKIN_SEX == 1 ? JSON.parse(enums.get('propF')) : JSON.parse(enums.get('propM'));
-
-    for (let i = 0; i < clothList.length; i++)
-    {
-        let id = i;
-
-        if (clothList[id][1] != menuType) continue;
-        if (clothList[id][0] != type) continue;
-
-        let list = [];
-        for (let j = 0; j <= clothList[i][3] + 1; j++) {
-            list.push(j + '');
-        }
-
-        let menuListItem = UIMenu.Menu.AddMenuItemList(clothList[i][5].toString(), list, `Цена: ~g~${methods.moneyFormat(clothList[i][4])}`);
-
-        menuListItem.id1 = clothList[id][1];
-        menuListItem.id2 = clothList[id][2];
-        menuListItem.id4 = clothList[id][4];
-        menuListItem.itemName = clothList[id][5].toString();
-    }
-
-    UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = "closeButton";
-
-    menu.MenuClose.on((sender) =>
-    {
-        user.updateCharacterCloth();
-    });
-
-    let currentListChangeItem = null;
-    let currentListChangeItemIndex = 0;
-
-    menu.ListChange.on((item, index) => {
-        currentListChangeItem = item;
-        currentListChangeItemIndex = index;
-        cloth.changeProp(item.id1, item.id2, index);
-    });
-
-    menu.ItemSelect.on((item, index) => {
-        try {
-            if (item == currentListChangeItem) {
-                cloth.buyProp(item.id4, item.id1, item.id2, currentListChangeItemIndex, item.itemName, shopId);
-            }
-            if (item.doName == "closeButton") {
-                UIMenu.Menu.HideMenu();
-                user.updateCharacterCloth();
-            }
-            if (item.doName == "takeOff")
-            {
-                UIMenu.Menu.HideMenu();
-                cloth.buyProp(0, menuType, -1, -1, "", shopId, true);
-            }
-        }
-        catch (e) {
-
-            methods.debug('Exception: menuList.showShopPropMenu menu.ItemSelect');
-            methods.debug(e);
-        }
-    });
-};
-
-menuList.showTattooShopMenu = function(title1, title2, shopId)
-{
-    UIMenu.Menu.HideMenu();
-
-    if (methods.isBlackout()) {
-        mp.game.ui.notifications.show(`~r~В городе отсутствует свет`);
-        return;
-    }
-
-    let menu = UIMenu.Menu.Create(" ", "~b~Тату салон", false, false, false, title1, title2);
-
-    UIMenu.Menu.AddMenuItem("Голова").zone = "ZONE_HEAD";
-    UIMenu.Menu.AddMenuItem("Торс").zone = "ZONE_TORSO";
-    UIMenu.Menu.AddMenuItem("Левая рука").zone = "ZONE_LEFT_ARM";
-    UIMenu.Menu.AddMenuItem("Правая рука").zone = "ZONE_RIGHT_ARM";
-    UIMenu.Menu.AddMenuItem("Левая нога").zone = "ZONE_LEFT_LEG";
-    UIMenu.Menu.AddMenuItem("Правая нога").zone = "ZONE_RIGHT_LEG";
-
-    UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = "closeButton";
-    menu.ItemSelect.on((item, index) => {
-        UIMenu.Menu.HideMenu();
-        if (item.zone)
-            menuList.showTattooShopShortMenu(title1, title2, item.zone, shopId);
-    });
-};
-
-menuList.showTattooShopShortMenu = function(title1, title2, zone, shopId)
-{
-    UIMenu.Menu.HideMenu();
-
-    if (methods.isBlackout()) {
-        mp.game.ui.notifications.show(`~r~В городе отсутствует свет`);
-        return;
-    }
-
-    let menu = UIMenu.Menu.Create(" ", "~b~Тату салон", false, false, false, title1, title2);
-
-    let list = [];
-
-    let tattooList = JSON.parse(enums.get('tattooList'));
-
-    for (let i = 0; i < tattooList.length; i++) {
-
-        if (tattooList[i][4] != zone)
-            continue;
-
-        if ((
-            tattooList[i][1] == "mpbeach_overlays" ||
-            tattooList[i][1] == "mpbiker_overlays" ||
-            tattooList[i][1] == "mpchristmas2_overlays" ||
-            tattooList[i][1] == "mpgunrunning_overlays" ||
-            tattooList[i][1] == "mphipster_overlays" ||
-            tattooList[i][1] == "mplowrider_overlays" ||
-            tattooList[i][1] == "mplowrider2_overlays" ||
-            tattooList[i][1] == "mpluxe_overlays" ||
-            tattooList[i][1] == "mpluxe2_overlays" ||
-            tattooList[i][1] == "mpsmuggler_overlays" ||
-            tattooList[i][1] == "mpchristmas2017_overlays" ||
-            tattooList[i][1] == "mpstunt_overlays"
-        ) && title1 == "shopui_title_tattoos")
-            continue;
-
-        if ((
-            tattooList[i][1] == "mpairraces_overlays" ||
-            tattooList[i][1] == "mpbeach_overlays" ||
-            tattooList[i][1] == "mpbusiness_overlays" ||
-            tattooList[i][1] == "mpchristmas2_overlays" ||
-            tattooList[i][1] == "mpgunrunning_overlays" ||
-            tattooList[i][1] == "mphipster_overlays" ||
-            tattooList[i][1] == "mpimportexport_overlays" ||
-            tattooList[i][1] == "mpluxe_overlays" ||
-            tattooList[i][1] == "mpluxe2_overlays" ||
-            tattooList[i][1] == "mpsmuggler_overlays" ||
-            tattooList[i][1] == "mpchristmas2017_overlays" ||
-            tattooList[i][1] == "mpstunt_overlays" ||
-            tattooList[i][1] == "multiplayer_overlays"
-        ) && title1 == "shopui_title_tattoos2")
-            continue;
-
-        if ((
-            tattooList[i][1] == "mpairraces_overlays" ||
-            tattooList[i][1] == "mpbeach_overlays" ||
-            tattooList[i][1] == "mpbiker_overlays" ||
-            tattooList[i][1] == "mpbusiness_overlays" ||
-            tattooList[i][1] == "mpchristmas2_overlays" ||
-            tattooList[i][1] == "mpgunrunning_overlays" ||
-            tattooList[i][1] == "mpimportexport_overlays" ||
-            tattooList[i][1] == "mplowrider_overlays" ||
-            tattooList[i][1] == "mplowrider2_overlays" ||
-            tattooList[i][1] == "mpsmuggler_overlays" ||
-            tattooList[i][1] == "mpchristmas2017_overlays" ||
-            tattooList[i][1] == "mpstunt_overlays" ||
-            tattooList[i][1] == "multiplayer_overlays"
-        ) && title1 == "shopui_title_tattoos3")
-            continue;
-
-        if ((
-            tattooList[i][1] == "mpairraces_overlays" ||
-            tattooList[i][1] == "mpbeach_overlays" ||
-            tattooList[i][1] == "mpbiker_overlays" ||
-            tattooList[i][1] == "mpbusiness_overlays" ||
-            tattooList[i][1] == "mpchristmas2_overlays" ||
-            tattooList[i][1] == "mpgunrunning_overlays" ||
-            tattooList[i][1] == "mphipster_overlays" ||
-            tattooList[i][1] == "mpimportexport_overlays" ||
-            tattooList[i][1] == "mplowrider_overlays" ||
-            tattooList[i][1] == "mplowrider2_overlays" ||
-            tattooList[i][1] == "mpluxe_overlays" ||
-            tattooList[i][1] == "mpluxe2_overlays" ||
-            tattooList[i][1] == "multiplayer_overlays"
-        ) && title1 == "shopui_title_tattoos4")
-            continue;
-
-        if ((
-            tattooList[i][1] == "mpairraces_overlays" ||
-            tattooList[i][1] == "mpbiker_overlays" ||
-            tattooList[i][1] == "mpbusiness_overlays" ||
-            tattooList[i][1] == "mphipster_overlays" ||
-            tattooList[i][1] == "mpimportexport_overlays" ||
-            tattooList[i][1] == "mplowrider_overlays" ||
-            tattooList[i][1] == "mplowrider2_overlays" ||
-            tattooList[i][1] == "mpluxe_overlays" ||
-            tattooList[i][1] == "mpluxe2_overlays" ||
-            tattooList[i][1] == "mpsmuggler_overlays" ||
-            tattooList[i][1] == "mpchristmas2017_overlays" ||
-            tattooList[i][1] == "mpstunt_overlays" ||
-            tattooList[i][1] == "multiplayer_overlays"
-        ) && title1 == "shopui_title_tattoos5")
-            continue;
-
-        let price = methods.parseFloat(methods.parseFloat(tattooList[i][5]) / 8);
-        if (user.getSex() == 1 && tattooList[i][3] != "") {
-
-            let array = [tattooList[i][1], tattooList[i][3]];
-            let prizes = [];
-
-            try {
-                prizes = JSON.parse(user.getCache('tattoo'))
-            }
-            catch (e) {
-                methods.debug(e);
-            }
-
-            if (prizes.some(a => array.every((v, i) => v === a[i]))) {
-
-                let menuListItem = UIMenu.Menu.AddMenuItem(tattooList[i][0], `Свести тату\nЦена: ~g~$${methods.moneyFormat(price / 2)}`);
-                menuListItem.doName = 'destroy';
-                menuListItem.price = price / 2;
-                menuListItem.tatto0 = tattooList[i][0];
-                menuListItem.tatto1 = tattooList[i][1];
-                menuListItem.tatto2 = tattooList[i][3];
-                menuListItem.tatto3 = tattooList[i][4];
-                menuListItem.SetRightLabel('~g~Куплено');
-                list.push(menuListItem);
-            }
-            else {
-                let menuListItem = UIMenu.Menu.AddMenuItem(tattooList[i][0], `Цена: ~g~$${methods.moneyFormat(price)}`);
-                menuListItem.doName = 'show';
-                menuListItem.price = price;
-                menuListItem.tatto0 = tattooList[i][0];
-                menuListItem.tatto1 = tattooList[i][1];
-                menuListItem.tatto2 = tattooList[i][3];
-                menuListItem.tatto3 = tattooList[i][4];
-
-                list.push(menuListItem);
-            }
-        }
-        else if (user.getSex() == 0 && tattooList[i][2] != "") {
-
-            let array = [tattooList[i][1], tattooList[i][2]];
-            let prizes = [];
-
-            try {
-                prizes = JSON.parse(user.getCache('tattoo'))
-            }
-            catch (e) {
-                methods.debug(e);
-            }
-
-            if (prizes.some(a => array.every((v, i) => v === a[i]))) {
-                let menuListItem = UIMenu.Menu.AddMenuItem(tattooList[i][0], `Свести тату\nЦена: ~g~${methods.moneyFormat(price / 2)}`);
-                menuListItem.doName = 'destroy';
-                menuListItem.price = price / 2;
-                menuListItem.tatto0 = tattooList[i][0];
-                menuListItem.tatto1 = tattooList[i][1];
-                menuListItem.tatto2 = tattooList[i][2];
-                menuListItem.tatto3 = tattooList[i][4];
-                menuListItem.SetRightLabel('~g~Куплено');
-                list.push(menuListItem);
-            }
-            else {
-                let menuListItem = UIMenu.Menu.AddMenuItem(tattooList[i][0], `Цена: ~g~${methods.moneyFormat(price)}`);
-                menuListItem.doName = 'show';
-                menuListItem.price = price;
-                menuListItem.tatto0 = tattooList[i][0];
-                menuListItem.tatto1 = tattooList[i][1];
-                menuListItem.tatto2 = tattooList[i][2];
-                menuListItem.tatto3 = tattooList[i][4];
-
-                list.push(menuListItem);
-            }
-        }
-    }
-
-    //UIMenu.Menu.AddMenuItem("~y~Свести всё тату", "Цена: ~g~$1999.99").doName = "clearTattoo";
-    UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = "closeButton";
-
-    menu.IndexChange.on((index) => {
-        if (index >= list.length)
-            return;
-        user.clearDecorations();
-        user.setDecoration(list[index].tatto1, list[index].tatto2);
-    });
-
-    menu.MenuClose.on(() => {
-        user.updateTattoo();
-    });
-
-    menu.ItemSelect.on((item, index) => {
-        UIMenu.Menu.HideMenu();
-        if(item.doName == 'show')
-            mp.events.callRemote('server:tattoo:buy', item.tatto1, item.tatto2, zone, item.price, item.tatto0, shopId);
-        if(item.doName == 'destroy')
-            mp.events.callRemote('server:tattoo:destroy', item.tatto1, item.tatto2, zone, item.price, 'Лазерная коррекция', shopId);
     });
 };
 
@@ -1506,18 +1002,25 @@ menuList.showVehicleStatsMenu = function() {
     UIMenu.Menu.AddMenuItem("~b~Номер: ~s~").SetRightLabel(`${mp.players.local.vehicle.getNumberPlateText()}`);
     UIMenu.Menu.AddMenuItem("~b~Класс: ~s~").SetRightLabel(`${vInfo.class_name}`);
     UIMenu.Menu.AddMenuItem("~b~Модель: ~s~").SetRightLabel(`${vInfo.display_name}`);
-    if (vInfo.fuel_min > 0) {
-        UIMenu.Menu.AddMenuItem("~b~Вместимость бака: ~s~").SetRightLabel(`${vInfo.fuel_full}л.`);
-        UIMenu.Menu.AddMenuItem("~b~Расход топлива: ~s~").SetRightLabel(`${vInfo.fuel_min}л.`);
+    UIMenu.Menu.AddMenuItem("~b~Гос. стоимость: ~s~").SetRightLabel(`~g~${methods.moneyFormat(vInfo.price)}`);
+    if (vInfo.fuel_type > 0) {
+        UIMenu.Menu.AddMenuItem("~b~Тип топлива: ~s~").SetRightLabel(`${vehicles.getFuelLabel(vInfo.fuel_type)}`);
+        UIMenu.Menu.AddMenuItem("~b~Вместимость бака: ~s~").SetRightLabel(`${vInfo.fuel_full}${vehicles.getFuelPostfix(vInfo.fuel_type)}`);
+        UIMenu.Menu.AddMenuItem("~b~Расход топлива: ~s~").SetRightLabel(`${vInfo.fuel_min}${vehicles.getFuelPostfix(vInfo.fuel_type)}`);
     }
     else
         UIMenu.Menu.AddMenuItem("~b~Расход топлива: ~s~").SetRightLabel(`Электрокар`);
 
-    UIMenu.Menu.AddMenuItem("~b~Объем багажника: ~s~").SetRightLabel(`${vInfo.stock}см³`);
-    let stockFull = vInfo.stock_full;
-    if (vInfo.stock_full > 0)
-        stockFull = stockFull / 1000;
-    UIMenu.Menu.AddMenuItem("~b~Допустимый вес: ~s~").SetRightLabel(`${stockFull}кг.`);
+    if (vInfo.stock > 0) {
+        UIMenu.Menu.AddMenuItem("~b~Объем багажника: ~s~").SetRightLabel(`${vInfo.stock}см³`);
+        let stockFull = vInfo.stock_full;
+        if (vInfo.stock_full > 0)
+            stockFull = stockFull / 1000;
+        UIMenu.Menu.AddMenuItem("~b~Допустимый вес: ~s~").SetRightLabel(`${stockFull}кг.`);
+    }
+    else {
+        UIMenu.Menu.AddMenuItem("~b~Багажник: ~s~").SetRightLabel(`~r~Отсутствует`);
+    }
 
     let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
     menu.ItemSelect.on((item, index) => {
@@ -1851,6 +1354,626 @@ menuList.showInvaderShopMenu = function() {
 
             vehicles.spawnJobCar(-1051.93359375, -249.95065307617188, 37.56923294067383, 203.91482543945312, 'Rebel2', 3);
         }
+    });
+};
+
+menuList.showShopClothMenu = function (shopId, type, menuType) {
+    try {
+        methods.debug('Execute: menuList.showShopClothMenu');
+
+        //if (menuType == 11)
+        //    inventory.unEquipItem(265, 0, 1, 0, false);
+
+        if (methods.isBlackout()) {
+            mp.game.ui.notifications.show(`~r~В городе отсутствует свет`);
+            return;
+        }
+
+        let title1 = "commonmenu";
+        let title2 = "interaction_bgd";
+
+        switch (type) {
+            case 0:
+                title1 = "shopui_title_lowendfashion";
+                title2 = "shopui_title_lowendfashion";
+                break;
+            case 1:
+                title1 = "shopui_title_midfashion";
+                title2 = "shopui_title_midfashion";
+                break;
+            case 2:
+                title1 = "shopui_title_highendfashion";
+                title2 = "shopui_title_highendfashion";
+                break;
+            case 3:
+                title1 = "shopui_title_gunclub";
+                title2 = "shopui_title_gunclub";
+                break;
+            case 5:
+                title1 = "shopui_title_lowendfashion2";
+                title2 = "shopui_title_lowendfashion2";
+                break;
+        }
+
+        let menu = UIMenu.Menu.Create(title1 != "commonmenu" ? " " : "Vangelico", "~b~Магазин", true, false, false, title1, title2);
+
+        /*if (menuType == 5) {
+            UIMenu.Menu.AddMenuItem("Бейсбольная бита", "Цена: ~g~$100").doName = "baseballBat";
+            UIMenu.Menu.AddMenuItem("Бейсбольный мяч", "Цена: ~g~$10").doName = "baseballBall";
+        }*/
+
+        if (menuType == 0) {
+            UIMenu.Menu.AddMenuItem("Головные уборы").doName = "head";
+            UIMenu.Menu.AddMenuItem("Очки").doName = "glasses";
+            UIMenu.Menu.AddMenuItem("Серьги").doName = "earring";
+            UIMenu.Menu.AddMenuItem("Левая рука").doName = "leftHand";
+            UIMenu.Menu.AddMenuItem("Правая рука").doName = "rightHand";
+            UIMenu.Menu.AddMenuItem("~y~Ограбить").doName = 'grab';
+        } else if (menuType == 1) {
+            UIMenu.Menu.AddMenuItem("Головные уборы").doName = "head";
+            UIMenu.Menu.AddMenuItem("Очки").doName = "glasses";
+            UIMenu.Menu.AddMenuItem("Торс").doName = "body";
+            UIMenu.Menu.AddMenuItem("Ноги").doName = "legs";
+            UIMenu.Menu.AddMenuItem("Обувь").doName = "shoes";
+        } else {
+            /*if (menuType == 7) {
+                UIMenu.Menu.AddMenuItem("~y~Снять").doName = "takeOff";
+            }*/
+            let skin = JSON.parse(user.getCache('skin'));
+            let cloth = skin.SKIN_SEX == 1 ? JSON.parse(enums.get('clothF')) : JSON.parse(enums.get('clothM'));
+            for (let i = 0; i < cloth.length; i++) {
+                let id = i;
+
+                if (cloth[id][1] != menuType) continue;
+                if (cloth[id][0] != type) continue;
+
+                let list = [];
+                for (let j = 0; j <= cloth[i][3] + 1; j++) {
+                    list.push(j + '');
+                }
+
+                let menuListItem = UIMenu.Menu.AddMenuItemList(cloth[i][9].toString(), list, `Цена: ~g~${(methods.moneyFormat(cloth[i][8]))} ${(cloth[i][10] > -99 ? `\n~s~Термостойкость до ~g~${cloth[i][10]}°` : "")}`);
+
+                menuListItem.id1 = cloth[id][1];
+                menuListItem.id2 = cloth[id][2];
+                menuListItem.id4 = cloth[id][4];
+                menuListItem.id5 = cloth[id][5];
+                menuListItem.id6 = cloth[id][6];
+                menuListItem.id7 = cloth[id][7];
+                menuListItem.id8 = cloth[id][8];
+                menuListItem.itemName = cloth[id][9].toString();
+            }
+        }
+
+        if (type == 5) {
+            let menuItem = UIMenu.Menu.AddMenuItem("Бита", `Цена: ~g~$349.99`);
+            menuItem.price = 349.99;
+            menuItem.itemId = 55;
+            menuItem.itemName = "Бита";
+        }
+
+        UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = "closeButton";
+
+        menu.MenuClose.on(() => {
+            try {
+                user.updateCharacterCloth();
+            } catch (e) {
+                methods.debug('Exception: menuList.showShopClothMenu menu.MenuClose');
+                methods.debug(e);
+            }
+        });
+
+        let currentListChangeItem = null;
+        let currentListChangeItemIndex = 0;
+
+        menu.ListChange.on((item, index) => {
+            currentListChangeItem = item;
+            currentListChangeItemIndex = index;
+            cloth.change(item.id1, item.id2, index, item.id4, item.id5, item.id6, item.id7);
+        });
+
+        menu.ItemSelect.on(async (item, index) => {
+            try {
+                if (item == currentListChangeItem) {
+                    cloth.buy(item.id8, item.id1, item.id2, currentListChangeItemIndex, item.id4, item.id5, item.id6, item.id7, item.itemName, shopId);
+                }
+                if (item.doName == "grab") {
+                    UIMenu.Menu.HideMenu();
+                    //user.grab(shopId);
+                }
+                if (item.doName == "takeOff") {
+                    UIMenu.Menu.HideMenu();
+                    cloth.buy(10, menuType, 0, 0, -1, -1, -1, -1, "Операция", shopId, true);
+                }
+                if (item.doName == "closeButton") {
+                    UIMenu.Menu.HideMenu();
+                    user.updateCharacterCloth();
+                }
+                if (item.price > 0)
+                    mp.events.callRemote('server:shop:buy', item.itemId, item.price, shopId);
+                if (item.doName == "head") {
+                    UIMenu.Menu.HideMenu();
+                    menuList.showShopPropMenu(shopId, type, 0);
+                }
+                if (item.doName == "glasses") {
+                    UIMenu.Menu.HideMenu();
+                    menuList.showShopPropMenu(shopId, type, 1);
+                }
+                if (item.doName == "earring") {
+                    UIMenu.Menu.HideMenu();
+                    menuList.showShopPropMenu(shopId, type, 2);
+                }
+                if (item.doName == "leftHand") {
+                    UIMenu.Menu.HideMenu();
+                    menuList.showShopPropMenu(shopId, type, 6);
+                }
+                if (item.doName == "rightHand") {
+                    UIMenu.Menu.HideMenu();
+                    menuList.showShopPropMenu(shopId, type, 7);
+                }
+                if (item.doName == "head") {
+                    UIMenu.Menu.HideMenu();
+                    menuList.showShopPropMenu(shopId, type, 0);
+                }
+                if (item.doName == "glasses") {
+                    UIMenu.Menu.HideMenu();
+                    menuList.showShopPropMenu(shopId, type, 1);
+                }
+                if (item.doName == "body") {
+                    UIMenu.Menu.HideMenu();
+                    menuList.showShopClothMenu(shopId, 3, 11);
+                }
+                if (item.doName == "legs") {
+                    UIMenu.Menu.HideMenu();
+                    menuList.showShopClothMenu(shopId, 3, 4);
+                }
+                if (item.doName == "shoes") {
+                    UIMenu.Menu.HideMenu();
+                    menuList.showShopClothMenu(shopId, 3, 6);
+                }
+            } catch (e) {
+                methods.debug('Exception: menuList.showShopClothMenu menu.ItemSelect');
+                methods.debug(e);
+            }
+        });
+    } catch (e) {
+        methods.debug('Exception: menuList.showShopClothMenu');
+        methods.debug(e);
+    }
+};
+
+menuList.showShopPropMenu = function (shopId, type, menuType) {
+    let title1 = "commonmenu";
+    let title2 = "interaction_bgd";
+
+    switch (type) {
+        case 0:
+            title1 = "shopui_title_lowendfashion";
+            title2 = "shopui_title_lowendfashion";
+            break;
+        case 1:
+            title1 = "shopui_title_midfashion";
+            title2 = "shopui_title_midfashion";
+            break;
+        case 2:
+            title1 = "shopui_title_highendfashion";
+            title2 = "shopui_title_highendfashion";
+            break;
+        case 3:
+            title1 = "shopui_title_gunclub";
+            title2 = "shopui_title_gunclub";
+            break;
+        case 5:
+            title1 = "shopui_title_lowendfashion2";
+            title2 = "shopui_title_lowendfashion2";
+            break;
+    }
+
+    let menu = UIMenu.Menu.Create(title1 != "commonmenu" ? " " : "Vangelico", "~b~Магазин", true, false, false, title1, title2);
+
+    //UIMenu.Menu.AddMenuItem( "~y~Снять").doName = "takeOff";
+
+    let skin = JSON.parse(user.getCache('skin'));
+    let clothList = skin.SKIN_SEX == 1 ? JSON.parse(enums.get('propF')) : JSON.parse(enums.get('propM'));
+
+    for (let i = 0; i < clothList.length; i++)
+    {
+        let id = i;
+
+        if (clothList[id][1] != menuType) continue;
+        if (clothList[id][0] != type) continue;
+
+        let list = [];
+        for (let j = 0; j <= clothList[i][3] + 1; j++) {
+            list.push(j + '');
+        }
+
+        let menuListItem = UIMenu.Menu.AddMenuItemList(clothList[i][5].toString(), list, `Цена: ~g~${methods.moneyFormat(clothList[i][4])}`);
+
+        menuListItem.id1 = clothList[id][1];
+        menuListItem.id2 = clothList[id][2];
+        menuListItem.id4 = clothList[id][4];
+        menuListItem.itemName = clothList[id][5].toString();
+    }
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = "closeButton";
+
+    menu.MenuClose.on((sender) =>
+    {
+        user.updateCharacterCloth();
+    });
+
+    let currentListChangeItem = null;
+    let currentListChangeItemIndex = 0;
+
+    menu.ListChange.on((item, index) => {
+        currentListChangeItem = item;
+        currentListChangeItemIndex = index;
+        cloth.changeProp(item.id1, item.id2, index);
+    });
+
+    menu.ItemSelect.on((item, index) => {
+        try {
+            if (item == currentListChangeItem) {
+                cloth.buyProp(item.id4, item.id1, item.id2, currentListChangeItemIndex, item.itemName, shopId);
+            }
+            if (item.doName == "closeButton") {
+                UIMenu.Menu.HideMenu();
+                user.updateCharacterCloth();
+            }
+            if (item.doName == "takeOff")
+            {
+                UIMenu.Menu.HideMenu();
+                cloth.buyProp(0, menuType, -1, -1, "", shopId, true);
+            }
+        }
+        catch (e) {
+
+            methods.debug('Exception: menuList.showShopPropMenu menu.ItemSelect');
+            methods.debug(e);
+        }
+    });
+};
+
+menuList.showTattooShopMenu = function(title1, title2, shopId)
+{
+    UIMenu.Menu.HideMenu();
+
+    if (methods.isBlackout()) {
+        mp.game.ui.notifications.show(`~r~В городе отсутствует свет`);
+        return;
+    }
+
+    let menu = UIMenu.Menu.Create(" ", "~b~Тату салон", false, false, false, title1, title2);
+
+    UIMenu.Menu.AddMenuItem("Голова").zone = "ZONE_HEAD";
+    UIMenu.Menu.AddMenuItem("Торс").zone = "ZONE_TORSO";
+    UIMenu.Menu.AddMenuItem("Левая рука").zone = "ZONE_LEFT_ARM";
+    UIMenu.Menu.AddMenuItem("Правая рука").zone = "ZONE_RIGHT_ARM";
+    UIMenu.Menu.AddMenuItem("Левая нога").zone = "ZONE_LEFT_LEG";
+    UIMenu.Menu.AddMenuItem("Правая нога").zone = "ZONE_RIGHT_LEG";
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = "closeButton";
+    menu.ItemSelect.on((item, index) => {
+        UIMenu.Menu.HideMenu();
+        if (item.zone)
+            menuList.showTattooShopShortMenu(title1, title2, item.zone, shopId);
+    });
+};
+
+menuList.showTattooShopShortMenu = function(title1, title2, zone, shopId)
+{
+    UIMenu.Menu.HideMenu();
+
+    if (methods.isBlackout()) {
+        mp.game.ui.notifications.show(`~r~В городе отсутствует свет`);
+        return;
+    }
+
+    let menu = UIMenu.Menu.Create(" ", "~b~Тату салон", false, false, false, title1, title2);
+
+    let list = [];
+
+    let tattooList = JSON.parse(enums.get('tattooList'));
+
+    for (let i = 0; i < tattooList.length; i++) {
+
+        if (tattooList[i][4] != zone)
+            continue;
+
+        if ((
+            tattooList[i][1] == "mpbeach_overlays" ||
+            tattooList[i][1] == "mpbiker_overlays" ||
+            tattooList[i][1] == "mpchristmas2_overlays" ||
+            tattooList[i][1] == "mpgunrunning_overlays" ||
+            tattooList[i][1] == "mphipster_overlays" ||
+            tattooList[i][1] == "mplowrider_overlays" ||
+            tattooList[i][1] == "mplowrider2_overlays" ||
+            tattooList[i][1] == "mpluxe_overlays" ||
+            tattooList[i][1] == "mpluxe2_overlays" ||
+            tattooList[i][1] == "mpsmuggler_overlays" ||
+            tattooList[i][1] == "mpchristmas2017_overlays" ||
+            tattooList[i][1] == "mpstunt_overlays"
+        ) && title1 == "shopui_title_tattoos")
+            continue;
+
+        if ((
+            tattooList[i][1] == "mpairraces_overlays" ||
+            tattooList[i][1] == "mpbeach_overlays" ||
+            tattooList[i][1] == "mpbusiness_overlays" ||
+            tattooList[i][1] == "mpchristmas2_overlays" ||
+            tattooList[i][1] == "mpgunrunning_overlays" ||
+            tattooList[i][1] == "mphipster_overlays" ||
+            tattooList[i][1] == "mpimportexport_overlays" ||
+            tattooList[i][1] == "mpluxe_overlays" ||
+            tattooList[i][1] == "mpluxe2_overlays" ||
+            tattooList[i][1] == "mpsmuggler_overlays" ||
+            tattooList[i][1] == "mpchristmas2017_overlays" ||
+            tattooList[i][1] == "mpstunt_overlays" ||
+            tattooList[i][1] == "multiplayer_overlays"
+        ) && title1 == "shopui_title_tattoos2")
+            continue;
+
+        if ((
+            tattooList[i][1] == "mpairraces_overlays" ||
+            tattooList[i][1] == "mpbeach_overlays" ||
+            tattooList[i][1] == "mpbiker_overlays" ||
+            tattooList[i][1] == "mpbusiness_overlays" ||
+            tattooList[i][1] == "mpchristmas2_overlays" ||
+            tattooList[i][1] == "mpgunrunning_overlays" ||
+            tattooList[i][1] == "mpimportexport_overlays" ||
+            tattooList[i][1] == "mplowrider_overlays" ||
+            tattooList[i][1] == "mplowrider2_overlays" ||
+            tattooList[i][1] == "mpsmuggler_overlays" ||
+            tattooList[i][1] == "mpchristmas2017_overlays" ||
+            tattooList[i][1] == "mpstunt_overlays" ||
+            tattooList[i][1] == "multiplayer_overlays"
+        ) && title1 == "shopui_title_tattoos3")
+            continue;
+
+        if ((
+            tattooList[i][1] == "mpairraces_overlays" ||
+            tattooList[i][1] == "mpbeach_overlays" ||
+            tattooList[i][1] == "mpbiker_overlays" ||
+            tattooList[i][1] == "mpbusiness_overlays" ||
+            tattooList[i][1] == "mpchristmas2_overlays" ||
+            tattooList[i][1] == "mpgunrunning_overlays" ||
+            tattooList[i][1] == "mphipster_overlays" ||
+            tattooList[i][1] == "mpimportexport_overlays" ||
+            tattooList[i][1] == "mplowrider_overlays" ||
+            tattooList[i][1] == "mplowrider2_overlays" ||
+            tattooList[i][1] == "mpluxe_overlays" ||
+            tattooList[i][1] == "mpluxe2_overlays" ||
+            tattooList[i][1] == "multiplayer_overlays"
+        ) && title1 == "shopui_title_tattoos4")
+            continue;
+
+        if ((
+            tattooList[i][1] == "mpairraces_overlays" ||
+            tattooList[i][1] == "mpbiker_overlays" ||
+            tattooList[i][1] == "mpbusiness_overlays" ||
+            tattooList[i][1] == "mphipster_overlays" ||
+            tattooList[i][1] == "mpimportexport_overlays" ||
+            tattooList[i][1] == "mplowrider_overlays" ||
+            tattooList[i][1] == "mplowrider2_overlays" ||
+            tattooList[i][1] == "mpluxe_overlays" ||
+            tattooList[i][1] == "mpluxe2_overlays" ||
+            tattooList[i][1] == "mpsmuggler_overlays" ||
+            tattooList[i][1] == "mpchristmas2017_overlays" ||
+            tattooList[i][1] == "mpstunt_overlays" ||
+            tattooList[i][1] == "multiplayer_overlays"
+        ) && title1 == "shopui_title_tattoos5")
+            continue;
+
+        let price = methods.parseFloat(methods.parseFloat(tattooList[i][5]) / 8);
+        if (user.getSex() == 1 && tattooList[i][3] != "") {
+
+            let array = [tattooList[i][1], tattooList[i][3]];
+            let prizes = [];
+
+            try {
+                prizes = JSON.parse(user.getCache('tattoo'))
+            }
+            catch (e) {
+                methods.debug(e);
+            }
+
+            if (prizes.some(a => array.every((v, i) => v === a[i]))) {
+
+                let menuListItem = UIMenu.Menu.AddMenuItem(tattooList[i][0], `Свести тату\nЦена: ~g~$${methods.moneyFormat(price / 2)}`);
+                menuListItem.doName = 'destroy';
+                menuListItem.price = price / 2;
+                menuListItem.tatto0 = tattooList[i][0];
+                menuListItem.tatto1 = tattooList[i][1];
+                menuListItem.tatto2 = tattooList[i][3];
+                menuListItem.tatto3 = tattooList[i][4];
+                menuListItem.SetRightLabel('~g~Куплено');
+                list.push(menuListItem);
+            }
+            else {
+                let menuListItem = UIMenu.Menu.AddMenuItem(tattooList[i][0], `Цена: ~g~$${methods.moneyFormat(price)}`);
+                menuListItem.doName = 'show';
+                menuListItem.price = price;
+                menuListItem.tatto0 = tattooList[i][0];
+                menuListItem.tatto1 = tattooList[i][1];
+                menuListItem.tatto2 = tattooList[i][3];
+                menuListItem.tatto3 = tattooList[i][4];
+
+                list.push(menuListItem);
+            }
+        }
+        else if (user.getSex() == 0 && tattooList[i][2] != "") {
+
+            let array = [tattooList[i][1], tattooList[i][2]];
+            let prizes = [];
+
+            try {
+                prizes = JSON.parse(user.getCache('tattoo'))
+            }
+            catch (e) {
+                methods.debug(e);
+            }
+
+            if (prizes.some(a => array.every((v, i) => v === a[i]))) {
+                let menuListItem = UIMenu.Menu.AddMenuItem(tattooList[i][0], `Свести тату\nЦена: ~g~${methods.moneyFormat(price / 2)}`);
+                menuListItem.doName = 'destroy';
+                menuListItem.price = price / 2;
+                menuListItem.tatto0 = tattooList[i][0];
+                menuListItem.tatto1 = tattooList[i][1];
+                menuListItem.tatto2 = tattooList[i][2];
+                menuListItem.tatto3 = tattooList[i][4];
+                menuListItem.SetRightLabel('~g~Куплено');
+                list.push(menuListItem);
+            }
+            else {
+                let menuListItem = UIMenu.Menu.AddMenuItem(tattooList[i][0], `Цена: ~g~${methods.moneyFormat(price)}`);
+                menuListItem.doName = 'show';
+                menuListItem.price = price;
+                menuListItem.tatto0 = tattooList[i][0];
+                menuListItem.tatto1 = tattooList[i][1];
+                menuListItem.tatto2 = tattooList[i][2];
+                menuListItem.tatto3 = tattooList[i][4];
+
+                list.push(menuListItem);
+            }
+        }
+    }
+
+    //UIMenu.Menu.AddMenuItem("~y~Свести всё тату", "Цена: ~g~$1999.99").doName = "clearTattoo";
+    UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = "closeButton";
+
+    menu.IndexChange.on((index) => {
+        if (index >= list.length)
+            return;
+        user.clearDecorations();
+        user.setDecoration(list[index].tatto1, list[index].tatto2);
+    });
+
+    menu.MenuClose.on(() => {
+        user.updateTattoo();
+    });
+
+    menu.ItemSelect.on((item, index) => {
+        UIMenu.Menu.HideMenu();
+        if(item.doName == 'show')
+            mp.events.callRemote('server:tattoo:buy', item.tatto1, item.tatto2, zone, item.price, item.tatto0, shopId);
+        if(item.doName == 'destroy')
+            mp.events.callRemote('server:tattoo:destroy', item.tatto1, item.tatto2, zone, item.price, 'Лазерная коррекция', shopId);
+    });
+};
+
+menuList.showVehShopMenu = function(shopId)
+{
+    UIMenu.Menu.HideMenu();
+
+    methods.getVehicleInfo(1);
+
+    vShop.goToInside(shopId, 0, 0, 0);
+
+    if (methods.isBlackout()) {
+        mp.game.ui.notifications.show(`~r~В городе отсутствует свет`);
+        return;
+    }
+
+    let menu = UIMenu.Menu.Create("Автосалон", "~b~Список транспорта");
+
+    let list = [];
+
+    let vehicleInfo = enums.get('vehicleInfo');
+
+    vehicleInfo.forEach(item => {
+        if (shopId != item.type)
+            return;
+        let menuItem = UIMenu.Menu.AddMenuItem(item.display_name, `~b~Тип топлива: ~s~${vehicles.getFuelLabel(item.fuel_type)}`);
+        menuItem.model = item.display_name;
+        menuItem.SetRightLabel(`~g~${methods.moneyFormat(item.price)} ~s~ >`);
+        list.push(menuItem);
+    });
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = "closeButton";
+
+    menu.IndexChange.on((index) => {
+        if (index >= list.length)
+            return;
+
+        vShop.createVehicle(list[index].model);
+        //menu.GoUp();
+    });
+
+    menu.MenuClose.on(() => {
+
+    });
+
+    menu.ItemSelect.on((item, index) => {
+        UIMenu.Menu.HideMenu();
+        if (item.model)
+            menuList.showVehShopModelInfoMenu(item.model);
+    });
+};
+
+menuList.showVehShopModelInfoMenu = function(model)
+{
+    UIMenu.Menu.HideMenu();
+
+    let vInfo = methods.getVehicleInfo(model);
+
+    let menu = UIMenu.Menu.Create(`${vInfo.display_name}`, "~b~Информация о ТС");
+
+    UIMenu.Menu.AddMenuItem("~b~Класс: ~s~").SetRightLabel(`${vInfo.class_name}`);
+    UIMenu.Menu.AddMenuItem("~b~Модель: ~s~").SetRightLabel(`${vInfo.display_name}`);
+    UIMenu.Menu.AddMenuItem("~b~Гос. стоимость: ~s~").SetRightLabel(`~g~${methods.moneyFormat(vInfo.price)}`);
+    if (vInfo.fuel_type > 0) {
+        UIMenu.Menu.AddMenuItem("~b~Тип топлива: ~s~").SetRightLabel(`${vehicles.getFuelLabel(vInfo.fuel_type)}`);
+        UIMenu.Menu.AddMenuItem("~b~Вместимость бака: ~s~").SetRightLabel(`${vInfo.fuel_full}${vehicles.getFuelPostfix(vInfo.fuel_type)}`);
+        UIMenu.Menu.AddMenuItem("~b~Расход топлива: ~s~").SetRightLabel(`${vInfo.fuel_min}${vehicles.getFuelPostfix(vInfo.fuel_type)}`);
+    }
+    else
+        UIMenu.Menu.AddMenuItem("~b~Расход топлива: ~s~").SetRightLabel(`Электрокар`);
+
+    if (vInfo.stock > 0) {
+        UIMenu.Menu.AddMenuItem("~b~Объем багажника: ~s~").SetRightLabel(`${vInfo.stock}см³`);
+        let stockFull = vInfo.stock_full;
+        if (vInfo.stock_full > 0)
+            stockFull = stockFull / 1000;
+        UIMenu.Menu.AddMenuItem("~b~Допустимый вес: ~s~").SetRightLabel(`${stockFull}кг.`);
+    }
+    else {
+        UIMenu.Menu.AddMenuItem("~b~Багажник: ~s~").SetRightLabel(`~r~Отсутствует`);
+    }
+
+    let listItem = UIMenu.Menu.AddMenuItemList(`~b~Цвет 1:`, enums.lscColors);
+    listItem.color1 = true;
+    listItem.Index = vShop.getColor1();
+
+    listItem = UIMenu.Menu.AddMenuItemList(`~b~Цвет 2:`, enums.lscColors);
+    listItem.color2 = true;
+    listItem.Index = vShop.getColor2();
+
+    listItem = UIMenu.Menu.AddMenuItemList(`~b~Двери:`, ['~r~Закрыто', '~g~Открыто']);
+    listItem.doorOpen = true;
+    listItem.Index = vShop.isOpenAllDoor() ? 1 : 0;
+
+    UIMenu.Menu.AddMenuItem(`~g~Купить за ${methods.moneyFormat(vInfo.price)}`);
+    UIMenu.Menu.AddMenuItem(`~g~Аренда за ${methods.moneyFormat(vInfo.price / 50)}`);
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = "closeButton";
+
+    menu.ListChange.on((item, index) => {
+        if (item.color1)
+            vShop.setColor1(index);
+        if (item.color2)
+            vShop.setColor2(index);
+        if (item.doorOpen) {
+            if (vShop.isOpenAllDoor())
+                vShop.closeAllDoor();
+            else
+                vShop.openAllDoor();
+        }
+    });
+
+    menu.ItemSelect.on((item, index) => {
+        UIMenu.Menu.HideMenu();
+
     });
 };
 
@@ -3240,6 +3363,7 @@ menuList.showAdminMenu = function() {
             UIMenu.Menu.AddMenuItem("Коорды2").doName = 'server:user:getPlayerPos2';
         }
         UIMenu.Menu.AddMenuItem("~y~Выключить админку").doName = 'disableAdmin';
+        UIMenu.Menu.AddMenuItem("Debug2").doName = 'debug2';
     }
     else {
         UIMenu.Menu.AddMenuItem("~y~Включить админку").doName = 'enableAdmin';
@@ -3301,7 +3425,7 @@ menuList.showAdminMenu = function() {
             menuList.showAdminDebugMenu();
         }
         if (item.doName == 'debug2') {
-            menuList.showAdminDebug2Menu();
+            menuList.showVehShopMenu(4);
         }
         if (item.doName == 'teleportToWaypoint')
             user.tpToWaypoint();

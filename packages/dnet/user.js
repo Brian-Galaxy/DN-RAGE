@@ -906,11 +906,24 @@ user.ready = function(player) {
 
     weather.setPlayerCurrentWeather(player);
 
-    player.call('client:updateVehicleInfo', [JSON.stringify(enums.vehicleInfo)]);
+    user.updateVehicleInfo(player);
 
     player.dimension = player.id + 1;
     try {
         Container.Data.ResetAll(player.id);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+};
+
+user.updateVehicleInfo = function(player) {
+    if (!mp.players.exists(player))
+        return false;
+
+    try {
+        for (let i = 0; i < methods.parseInt(enums.vehicleInfo.length / 250) + 1; i++)
+            player.call('client:updateVehicleInfo', [enums.vehicleInfo.slice(i * 250, i * 250 + 249)]);
     }
     catch (e) {
         methods.debug(e);

@@ -8,6 +8,7 @@ const NMenu = NativeUI.Menu;
 const MenuItem = NativeUI.UIMenuItem;
 const MenuCheckboxItem = NativeUI.UIMenuCheckboxItem;
 const MenuListItem = NativeUI.UIMenuListItem;
+const MenuSliderItem = NativeUI.UIMenuSliderItem;
 const Point = NativeUI.Point;
 const Size = NativeUI.Size;
 const ItemsCollection = NativeUI.ItemsCollection;
@@ -79,11 +80,11 @@ class Menu {
         return item;
     }
 
-    static AddMenuItemCheckbox(title, subtitle, isChecked) {
-        if (isChecked === undefined || isChecked == null)
-            isChecked = false;
+    static AddMenuItemCheckbox(title, items, subtitle, startIndex, divider) {
+        if (divider === undefined || divider == null)
+            divider = false;
 
-        let item = new MenuCheckboxItem(title, isChecked, subtitle);
+        let item = new MenuSliderItem(title, items, startIndex, subtitle, divider);
         menuItem.AddItem(item);
         return item;
     }

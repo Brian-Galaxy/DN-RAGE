@@ -141,6 +141,32 @@ vehicles.getData = async function(id) {
     return await Container.Data.GetAll(200000 + methods.parseInt(id));
 };
 
+vehicles.getFuelLabel = function(id) {
+    switch (id) {
+        case 1:
+            return 'Бензин';
+        case 2:
+            return 'Дизель';
+        case 3:
+            return 'Электричество';
+        case 4:
+            return 'Авиатопливо';
+    }
+    return 'Нет топлива';
+};
+
+vehicles.getFuelPostfix = function(id) {
+    switch (id) {
+        case 1:
+        case 2:
+        case 4:
+            return 'л.';
+        case 3:
+            return '%';
+    }
+    return 'Нет топлива';
+};
+
 vehicles.getSpecialModName = function(id) {
     if (id >= 100)
         id = id - 100;

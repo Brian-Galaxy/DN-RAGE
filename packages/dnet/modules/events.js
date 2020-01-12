@@ -921,13 +921,7 @@ mp.events.addRemoteCounted('server:fixCheckpointList', (player) => {
 });
 
 mp.events.addRemoteCounted('server:updateVehicleInfo', player => {
-    try {
-        for (let i = 0; i < methods.parseInt(enums.vehicleInfo.length / 250) + 1; i++)
-            player.call('client:updateVehicleInfo', [enums.vehicleInfo.slice(i * 250, i * 250 + 249)]);
-    }
-    catch (e) {
-        methods.debug(e);
-    }
+    user.updateVehicleInfo(player);
 });
 
 mp.events.addRemoteCounted('server:user:fixNearestVehicle', (player) => {

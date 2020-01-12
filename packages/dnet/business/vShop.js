@@ -53,7 +53,7 @@ vShop.getInRadius = function(pos, radius = 2) {
             return -1;
         let shopPos = new mp.Vector3(item.buyPos[0], item.buyPos[1], item.buyPos[2]);
         if (methods.distanceToPos(pos, shopPos) < radius)
-            shopId = item.id;
+            shopId = idx;
     });
     return shopId;
 };
@@ -65,7 +65,11 @@ vShop.checkPosForOpenMenu = function(player) {
         let shopId = vShop.getInRadius(playerPos, 2);
         if (shopId == -1)
             return;
-        player.call('client:menuList:showVehShopMenu', [shopId]);
+        player.call('client:menuList:showVehShopMenu', [
+            enums.carShopList[shopId].id,
+            JSON.stringify(enums.carShopList[shopId].carPos),
+            JSON.stringify(enums.carShopList[shopId].buyPos)
+        ]);
     }
     catch (e) {
         methods.debug(e);

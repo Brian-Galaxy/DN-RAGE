@@ -1,8 +1,7 @@
 import methods from '../modules/methods';
 
-import enums from '../enums';
-
 import user from '../user';
+import chat from "../chat";
 
 let vShop = {};
 
@@ -11,21 +10,43 @@ let vRot = 180;
 
 let vCurrent = null;
 
-let insidePos = new mp.Vector3(206.8355712890625, -999.1096801757812, -99.99992370605469);
-let exitPos = new mp.Vector3(0, 0, 0);
+let insidePos = new mp.Vector3(-1507.416259765625, -3005.405029296875, -82.55733489990234);
+let exitPos = new mp.Vector3(-1507.416259765625, -3005.405029296875, -82.55733489990234);
 let currentShop = 0;
 
 let color1 = 111;
 let color2 = 111;
 let openAllDoor = false;
 
-vShop.goToInside = function(shopId, x, y, z) {
-    user.setVirtualWorld(mp.players.local.remoteId + 1);
+vShop.goToInside = function(shopId, x, y, z, rot, bx, by, bz) {
+    try {
+        user.setVirtualWorld(mp.players.local.remoteId + 1);
+        vPos = new mp.Vector3(x, y, z);
+        exitPos = new mp.Vector3(bx, by, bz);
+        vRot = rot;
 
-    if (currentShop == 0) {
-        exitPos = new mp.Vector3(x, y, z);
-        user.teleportv(insidePos);
         currentShop = shopId;
+        user.teleportv(insidePos);
+
+        chat.sendLocal(`!{${chat.clBlue}}Подсказка`);
+        chat.sendLocal(`Если вы вдруг закрыли меню, то не переживайте, подойдите к транспорту, наведитесь и нажмите E`);
+        chat.sendLocal(`Чтобы выйти из автосалона, в самом низу есть пункт меню выхода`);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+};
+
+
+vShop.exit = function() {
+    try {
+        vShop.destroyVehicle();
+        user.setVirtualWorld(0);
+        currentShop = 0;
+        user.teleportv(exitPos);
+    }
+    catch (e) {
+        methods.debug(e);
     }
 };
 
@@ -35,8 +56,8 @@ vShop.createVehicle = function(model, c1 = 111, c2 = 111) {
     color1 = c1;
     color2 = c2;
 
-    vCurrent = mp.vehicles.new(mp.game.joaat(model), vPos, { heading: vRot, locked: true, numberPlate: "CAR SHOP", dimension: mp.players.local.remoteId + 1 });
-    vCurrent.setRotation(0, 0, 180, 0, true);
+    vCurrent = mp.vehicles.new(mp.game.joaat(model), vPos, { heading: vRot, engine: false, locked: true, numberPlate: "CAR SHOP", dimension: mp.players.local.remoteId + 1 });
+    vCurrent.setRotation(0, 0, vRot, 0, true);
     vCurrent.setCanBeDamaged(false);
     vCurrent.setInvincible(true);
     vCurrent.freezePosition(true);
@@ -63,6 +84,10 @@ vShop.setColor2 = function(color) {
 
 vShop.getColor2 = function() {
     return color2;
+};
+
+vShop.getShopId = function() {
+    return currentShop;
 };
 
 vShop.openAllDoor = function() {

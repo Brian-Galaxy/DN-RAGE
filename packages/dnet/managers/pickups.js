@@ -7,6 +7,7 @@ let cloth = require('../business/cloth');
 let tattoo = require('../business/tattoo');
 let lsc = require('../business/lsc');
 let gun = require('../business/gun');
+let vShop = require('../business/vShop');
 
 let business = require('../property/business');
 
@@ -21,7 +22,6 @@ pickups.Blue100 = [187, 222, 251, 100];
 pickups.White = [255, 255, 255, 100];
 
 pickups.PrintShopPos = new mp.Vector3(-1234.7786865234375, -1477.7230224609375, 3.324739933013916);
-pickups.VehShopExitPos = new mp.Vector3(206.8355712890625, -999.1096801757812, -99.99992370605469);
 
 pickups.StockSapdPos = new mp.Vector3(477.2227, -984.3262, 23.91476);
 
@@ -311,15 +311,13 @@ pickups.checkPressE = function(player) {
     cloth.checkPosForOpenMenu(player);
     tattoo.checkPosForOpenMenu(player);
     gun.checkPosForOpenMenu(player);
+    vShop.checkPosForOpenMenu(player);
 
     if (methods.distanceToPos(pickups.LifeInvaderShopPos, playerPos) < distanceCheck)
         player.call('client:menuList:showInvaderShopMenu');
 
     if (methods.distanceToPos(pickups.PrintShopPos, playerPos) < distanceCheck)
         player.call('client:menuList:showPrintShopMenu');
-
-    if (methods.distanceToPos(pickups.VehShopExitPos, playerPos) < distanceCheck)
-        player.call('client:menuList:showVehShopExitMenu');
 
     if (methods.distanceToPos(pickups.BankMazeOfficePos, playerPos) < distanceCheck)
         player.call('client:menuList:showMazeOfficeMenu');
@@ -466,7 +464,6 @@ pickups.createPickups = function() {
     methods.createStaticCheckpointV(pickups.HackerSpaceShopPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
     //Hackerspace
     methods.createStaticCheckpointV(pickups.PrintShopPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
-    methods.createStaticCheckpointV(pickups.VehShopExitPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
 
     //Invader
     methods.createStaticCheckpointV(pickups.LifeInvaderShopPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);

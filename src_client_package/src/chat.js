@@ -30,6 +30,10 @@ chat.send = function(text) {
     mp.events.callRemote('server:chat:send', text);
 };
 
+chat.sendLocal = function(text) {
+    mp.gui.chat.push(`${text}`);
+};
+
 chat.sendToAll = function(sender, text, color = '2196F3') {
     mp.events.callRemote('server:chat:sendToAll', sender, text, color);
 };

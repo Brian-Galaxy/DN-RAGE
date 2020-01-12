@@ -308,15 +308,15 @@ user.removeWaypoint = function() {
     user.setWaypoint(mp.players.local.position.x, mp.players.local.position.y);
 };
 
-user.hideLoadDisplay = function() {
-    mp.game.cam.doScreenFadeIn(500);
+user.hideLoadDisplay = function(dur = 500) {
+    mp.game.cam.doScreenFadeIn(dur);
     setTimeout(function () {
         ui.showHud();
-    }, 500);
+    }, dur);
 };
 
-user.showLoadDisplay = function() {
-    mp.game.cam.doScreenFadeOut(500);
+user.showLoadDisplay = function(dur = 500) {
+    mp.game.cam.doScreenFadeOut(dur);
     ui.hideHud();
 };
 

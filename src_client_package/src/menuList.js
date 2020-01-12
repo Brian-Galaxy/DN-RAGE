@@ -1002,7 +1002,8 @@ menuList.showVehicleStatsMenu = function() {
     UIMenu.Menu.AddMenuItem("~b~Номер: ~s~").SetRightLabel(`${mp.players.local.vehicle.getNumberPlateText()}`);
     UIMenu.Menu.AddMenuItem("~b~Класс: ~s~").SetRightLabel(`${vInfo.class_name}`);
     UIMenu.Menu.AddMenuItem("~b~Модель: ~s~").SetRightLabel(`${vInfo.display_name}`);
-    UIMenu.Menu.AddMenuItem("~b~Гос. стоимость: ~s~").SetRightLabel(`~g~${methods.moneyFormat(vInfo.price)}`);
+    if (vInfo.price > 0)
+        UIMenu.Menu.AddMenuItem("~b~Гос. стоимость: ~s~").SetRightLabel(`~g~${methods.moneyFormat(vInfo.price)}`);
     if (vInfo.fuel_type > 0) {
         UIMenu.Menu.AddMenuItem("~b~Тип топлива: ~s~").SetRightLabel(`${vehicles.getFuelLabel(vInfo.fuel_type)}`);
         UIMenu.Menu.AddMenuItem("~b~Вместимость бака: ~s~").SetRightLabel(`${vInfo.fuel_full}${vehicles.getFuelPostfix(vInfo.fuel_type)}`);
@@ -1862,14 +1863,39 @@ menuList.showTattooShopShortMenu = function(title1, title2, zone, shopId)
     });
 };
 
-menuList.showVehShopMenu = function(shopId)
+menuList.showVehShopMenu = function(shopId, carPos, buyPos)
 {
     UIMenu.Menu.HideMenu();
 
-    methods.getVehicleInfo(1);
+    methods.getVehicleInfo(shopId);
 
-    vShop.goToInside(shopId, 0, 0, 0);
+    if (methods.isBlackout()) {
+        mp.game.ui.notifications.show(`~r~В городе отсутствует свет`);
+        return;
+    }
 
+    let menu = UIMenu.Menu.Create("Автосалон", "~b~Посмотреть список транспорта");
+
+    UIMenu.Menu.AddMenuItem("~g~Войти в автосалон").enter = true;
+    UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = "closeButton";
+
+    menu.ItemSelect.on((item, index) => {
+        UIMenu.Menu.HideMenu();
+        if (item.enter)
+        {
+            vShop.goToInside(shopId, carPos[0], carPos[1], carPos[2], carPos[3], buyPos[0], buyPos[1], buyPos[2]);
+            setTimeout(function () {
+                menuList.showVehShopListMenu(shopId);
+            }, 2000);
+        }
+    });
+};
+
+menuList.showVehShopListMenu = function(shopId)
+{
+    UIMenu.Menu.HideMenu();
+
+    methods.getVehicleInfo(shopId);
     if (methods.isBlackout()) {
         mp.game.ui.notifications.show(`~r~В городе отсутствует свет`);
         return;
@@ -1886,10 +1912,11 @@ menuList.showVehShopMenu = function(shopId)
             return;
         let menuItem = UIMenu.Menu.AddMenuItem(item.display_name, `~b~Тип топлива: ~s~${vehicles.getFuelLabel(item.fuel_type)}`);
         menuItem.model = item.display_name;
-        menuItem.SetRightLabel(`~g~${methods.moneyFormat(item.price)} ~s~ >`);
+        menuItem.SetRightLabel(`~g~${methods.moneyFormat(item.price, 1)} ~s~ >`);
         list.push(menuItem);
     });
 
+    UIMenu.Menu.AddMenuItem("~y~Выйти из просмотра").exits = true;
     UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = "closeButton";
 
     menu.IndexChange.on((index) => {
@@ -1908,6 +1935,8 @@ menuList.showVehShopMenu = function(shopId)
         UIMenu.Menu.HideMenu();
         if (item.model)
             menuList.showVehShopModelInfoMenu(item.model);
+        if (item.exits)
+            vShop.exit();
     });
 };
 
@@ -1949,13 +1978,18 @@ menuList.showVehShopModelInfoMenu = function(model)
     listItem.color2 = true;
     listItem.Index = vShop.getColor2();
 
-    listItem = UIMenu.Menu.AddMenuItemList(`~b~Двери:`, ['~r~Закрыто', '~g~Открыто']);
-    listItem.doorOpen = true;
-    listItem.Index = vShop.isOpenAllDoor() ? 1 : 0;
+    if (vInfo.class_name != 'Cycles' && vInfo.class_name != 'Motocycles' && vInfo.class_name != 'Boats')
+    {
+        listItem = UIMenu.Menu.AddMenuItemList(`~b~Двери:`, ['~r~Закрыто', '~g~Открыто']);
+        listItem.doorOpen = true;
+        listItem.Index = vShop.isOpenAllDoor() ? 1 : 0;
+    }
 
-    UIMenu.Menu.AddMenuItem(`~g~Купить за ${methods.moneyFormat(vInfo.price)}`);
-    UIMenu.Menu.AddMenuItem(`~g~Аренда за ${methods.moneyFormat(vInfo.price / 50)}`);
+    UIMenu.Menu.AddMenuItem(`~g~Купить за ${methods.moneyFormat(vInfo.price, 1)}`);
+    UIMenu.Menu.AddMenuItem(`~g~Аренда за ${methods.moneyFormat(vInfo.price / 50, 1)}`);
 
+    UIMenu.Menu.AddMenuItem("~y~Выйти из просмотра").exits = true;
+    UIMenu.Menu.AddMenuItem("~y~Вернуться списку транспорта").toList = true;
     UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = "closeButton";
 
     menu.ListChange.on((item, index) => {
@@ -1973,7 +2007,10 @@ menuList.showVehShopModelInfoMenu = function(model)
 
     menu.ItemSelect.on((item, index) => {
         UIMenu.Menu.HideMenu();
-
+        if (item.toList)
+            menuList.showVehShopListMenu(vShop.getShopId());
+        if (item.exits)
+            vShop.exit();
     });
 };
 

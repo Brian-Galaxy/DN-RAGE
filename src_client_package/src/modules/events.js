@@ -563,9 +563,9 @@ mp.events.add('client:menuList:showLscMenu', (shopId, price) => {
     menuList.showLscMenu(shopId, price);
 });
 
-mp.events.add('client:menuList:showVehShopMenu', (shopId) => {
+mp.events.add('client:menuList:showVehShopMenu', (shopId, carPos, buyPos) => {
     methods.debug('Event: client:menuList:showVehShopMenu');
-    menuList.showVehShopMenu(shopId);
+    menuList.showVehShopMenu(shopId, JSON.parse(carPos), JSON.parse(buyPos));
 });
 
 mp.events.add('client:menuList:showInvaderShopMenu', () => {

@@ -1,4 +1,5 @@
 let methods = require('../modules/methods');
+let mysql = require('../modules/mysql');
 
 let business = require('../property/business');
 let vehicles = require('../property/vehicles');
@@ -65,11 +66,30 @@ vShop.checkPosForOpenMenu = function(player) {
         let shopId = vShop.getInRadius(playerPos, 2);
         if (shopId == -1)
             return;
-        player.call('client:menuList:showVehShopMenu', [
-            enums.carShopList[shopId].id,
-            JSON.stringify(enums.carShopList[shopId].carPos),
-            JSON.stringify(enums.carShopList[shopId].buyPos)
-        ]);
+
+        let vList = [];
+        let where = '';
+        enums.vehicleInfo.forEach(item => {
+            if (shopId != item.type)
+                return;
+            where += ` OR name = '${item.display_name}'`
+        });
+
+        let mapList = new Map();
+
+        mysql.executeQuery(`SELECT name, count(name) as n FROM cars WHERE user_id = '0' AND (name = ''${where}) GROUP BY name HAVING n <> 0 ORDER BY name ASC`, function (err, rows, fields) {
+
+            rows.forEach(row => {
+                mapList.set(row['name'], row['n']);
+            });
+
+            player.call('client:menuList:showVehShopMenu', [
+                enums.carShopList[shopId].id,
+                JSON.stringify(enums.carShopList[shopId].carPos),
+                JSON.stringify(enums.carShopList[shopId].buyPos),
+                Array.from(mapList),
+            ]);
+        });
     }
     catch (e) {
         methods.debug(e);

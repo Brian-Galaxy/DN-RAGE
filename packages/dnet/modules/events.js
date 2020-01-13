@@ -669,6 +669,13 @@ mp.events.addRemoteCounted('server:vehicles:spawnJobCar', (player, x, y, z, head
     }, 500);
 });
 
+mp.events.addRemoteCounted('server:vehicles:addNew', (player, model, count) => {
+    if (user.isAdmin()) {
+        vehicles.addNew(model, count);
+        player.notify('~g~Транспорт на авторынок был добавлен. Кол-во: ~s~' + count)
+    }
+});
+
 mp.events.addRemoteCounted('server:inventory:getItemList', (player, ownerType, ownerId) => {
     if (!user.isLogin(player))
         return;

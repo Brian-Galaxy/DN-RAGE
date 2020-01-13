@@ -2,7 +2,7 @@ import methods from "../modules/methods";
 
 const _SET_NOTIFICATION_COLOR_NEXT = "0x39BBF623FC803EAC";
 const _SET_NOTIFICATION_BACKGROUND_COLOR = "0x92F0DA1E27DB96DC";
-const maxStringLength = 99;
+const maxStringLength = 50;
 
 let sleep = function(ms) {
     return new Promise(res => setTimeout(res, ms));
@@ -15,7 +15,8 @@ mp.events.add("BN_Show", (message, flashing = false, textColor = -1, bgColor = -
         if (flashing) mp.game.ui.setNotificationFlashColor(flashColor[0], flashColor[1], flashColor[2], flashColor[3]);
 
         mp.game.ui.setNotificationTextEntry("CELL_EMAIL_BCON");
-        for (let i = 0, msgLen = message.length; i < msgLen; i += maxStringLength) mp.game.ui.addTextComponentSubstringPlayerName(message.substr(i, Math.min(maxStringLength, message.length - i)));
+        for (let i = 0, msgLen = message.length; i < msgLen; i += maxStringLength)
+            mp.game.ui.addTextComponentSubstringPlayerName(message.substr(i, Math.min(maxStringLength, message.length - i)));
         mp.game.ui.drawNotification(flashing, true);
     }
     catch (e) {
@@ -50,7 +51,8 @@ mp.events.add("BN_ShowWithPicture", async (title, sender, message, notifPic, ico
         if (flashing) mp.game.ui.setNotificationFlashColor(flashColor[0], flashColor[1], flashColor[2], flashColor[3]);
 
         mp.game.ui.setNotificationTextEntry("CELL_EMAIL_BCON");
-        for (let i = 0, msgLen = message.length; i < msgLen; i += maxStringLength) mp.game.ui.addTextComponentSubstringPlayerName(message.substr(i, Math.min(maxStringLength, message.length - i)));
+        for (let i = 0, msgLen = message.length; i < msgLen; i += maxStringLength)
+            mp.game.ui.addTextComponentSubstringPlayerName(message.substr(i, Math.min(maxStringLength, message.length - i)));
         mp.game.ui.setNotificationMessage(notifPic, notifPic, flashing, icon, title, sender);
         mp.game.ui.drawNotification(false, true);
     }

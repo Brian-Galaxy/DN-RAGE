@@ -922,13 +922,38 @@ user.updateVehicleInfo = function(player) {
         return false;
 
     try {
+        for (let i = 0; i < parseInt(enums.vehicleInfo.length / 250) + 1; i++) {
+            let from = i * 250 - 1;
+            let to = i * 250 + 249;
+            player.call('client:updateVehicleInfo', [i, enums.vehicleInfo.slice(from < 0 ? 0 : from, to)]);
+        }
+    } catch (e) {
+        methods.debug(e);
+    }
+
+    /*try {
         for (let i = 0; i < methods.parseInt(enums.vehicleInfo.length / 250) + 1; i++)
-            player.call('client:updateVehicleInfo', [enums.vehicleInfo.slice(i * 250, i * 250 + 249)]);
+            player.call('client:updateVehicleInfo', [i, enums.vehicleInfo.slice(i * 250, i * 250 + 249)]);
     }
     catch (e) {
         methods.debug(e);
-    }
+    }*/
 };
+
+/*user.updateVehicleInfo = function(player) {
+    if (!mp.players.exists(player))
+        return false;
+
+    try {
+        for (let i = 0; i < parseInt(enums.vehicleInfo.length / 250); i++) {
+            let from = i * 250 - 1;
+            let to = i * 250 + 249;
+            player.call('client:updateVehicleInfo', [i, enums.vehicleInfo.slice(from < 0 ? 0 : from, to)]);
+        }
+    } catch (e) {
+        methods.debug(e);
+    }
+};*/
 
 /*
 * StyleType = HEX
@@ -1444,4 +1469,12 @@ user.isLeader = function(player) {
 user.isSubLeader = function(player) {
     methods.debug('user.isSubLeader');
     return user.isLogin(player) && user.get(player, 'is_sub_leader');
+};
+
+user.isAdmin = function(player, level = 1) {
+    return user.isLogin(player) && user.get(player, 'admin_level') >= level;
+};
+
+user.isHelper = function(player, level = 1) {
+    return user.isLogin(player) && user.get(player, 'helper_level') >= level;
 };

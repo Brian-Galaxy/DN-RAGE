@@ -1,6 +1,11 @@
 "use strict";
 
 import methods from "./methods";
+import user from "../user";
+import voice from "../voice";
+
+import weather from "../manager/weather";
+import vehicles from "../property/vehicles";
 
 let ui = {};
 let uiBrowser = null;
@@ -44,6 +49,7 @@ ui.hideHud = function() {
     if (uiBrowser) {
         try {
             //TODO
+            ui.callCef('hud','{"type": "hide"}');
             mp.game.ui.displayRadar(false);
         }
         catch (e) {
@@ -56,7 +62,92 @@ ui.showHud = function() {
     if (uiBrowser) {
         try {
             //TODO
+            ui.callCef('hud','{"type": "show"}');
             mp.game.ui.displayRadar(true);
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    }
+};
+
+ui.updateValues = function() {
+    if (uiBrowser && user.isLogin()) {
+        try {
+            let data = {
+                type: 'updateValues',
+                isShow: user.getCache("is_clock"),
+                temp: weather.getWeatherTemp(),
+                date: weather.getFullRpDate(),
+                time: weather.getFullRpTime(),
+            };
+            ui.callCef('hudw', JSON.stringify(data));
+
+            data = {
+                type: 'updateValues',
+                isShow: user.getCache("is_clock"),
+                district: ui.getCurrentZone(),
+                street: ui.getCurrentStreet(),
+            };
+            ui.callCef('hudg', JSON.stringify(data));
+
+            data = {
+                type: 'updateValues',
+                microphone : voice.isEnabledMicrophone(),
+                drink: 100,
+                eat: 100,
+                wallet: methods.moneyFormat(user.getCashMoney(), 999999999999),
+                card: user.getCache('bank_card') > 0 ? methods.moneyFormat(user.getBankMoney(), 9999999999999) : 'Нет карты',
+            };
+            ui.callCef('hudp', JSON.stringify(data));
+
+            data = {
+                type: 'updateValues',
+                date: weather.getRealDate(),
+                time: weather.getRealTime(),
+                online: mp.players.length,
+                max_player: "1000",
+                id: mp.players.local.remoteId,
+            };
+            ui.callCef('hudl', JSON.stringify(data));
+
+            let fuelLevel = 0;
+            let fuelPostfix = '';
+            let fuelMax = 0;
+            let isShowSpeed = false;
+            let isShowLight = false;
+            let isShowEngine = false;
+            let isShowLock = false;
+
+            let veh = mp.players.local.vehicle;
+
+            if (veh) {
+                isShowSpeed = true;
+                isShowLight = veh.getLightsState(1,1).lightsOn || veh.getLightsState(1,1).highbeamsOn;
+                isShowEngine = veh.getIsEngineRunning();
+                isShowLock = veh.getDoorLockStatus() !== 1;
+                let vInfo = methods.getVehicleInfo(veh.model);
+                if (vInfo.fuel_type > 0) {
+                    fuelLevel = methods.parseInt(veh.getVariable('fuel'));
+                    fuelPostfix = vehicles.getFuelPostfix(vInfo.fuel_type);
+                    fuelMax = vInfo.fuel_full;
+                }
+            }
+
+            let vSpeed = methods.getCurrentSpeed();
+
+            data = {
+                type: 'updateValues',
+                isShow: isShowSpeed,
+                light: isShowLight,
+                door: isShowLock,
+                engine: isShowEngine,
+                fuel: fuelLevel,
+                fuelType: fuelPostfix,
+                max_fuel: fuelMax,
+                speed: vSpeed,
+            };
+            ui.callCef('hudc', JSON.stringify(data));
         }
         catch (e) {
             methods.debug(e);
@@ -137,28 +228,11 @@ ui.drawRect = function(xPos, yPos, wSize, hSize, r, g, b, a) {
 };
 
 ui.drawText3D = function(caption, x, y, z) {
-
     if (!mp.game.ui.isHudComponentActive(0))
         return false;
-
-    z = z + 0.5;
-
-    mp.game.graphics.setDrawOrigin(x, y, z, 0);
-    //let camPos = mp.game.invoke('0x14D6F5678D8F1B37');
-    /*let camPos = mp.players.local.position;
-    let dist = methods.distanceToPos(camPos, new mp.Vector3(x, y, z));
-    let scale = 1 / dist * 2;
-    let fov = 1 / mp.game.invoke('0x65019750A0324133') * 100;
-    scale = fov * scale;
-    if (scale < 0.5)
-        scale = 0.5;
-    if (scale > 0.8)
-        scale = 0.8;*/
-    //scale = 1 - scale;
-    let scale = 0.5;
-
+    mp.game.graphics.setDrawOrigin(x, y, z + 0.5, 0);
     mp.game.ui.setTextFont(0);
-    mp.game.ui.setTextScale(0.1 * scale, 0.55 * scale);
+    mp.game.ui.setTextScale(0.3, 0.3);
     mp.game.ui.setTextColour(255, 255, 255, 255);
     mp.game.ui.setTextProportional(true);
     mp.game.ui.setTextDropshadow(0, 0, 0, 0, 255);
@@ -171,49 +245,11 @@ ui.drawText3D = function(caption, x, y, z) {
     mp.game.invoke('0xFF0B610F6BE0D7AF');
 };
 
-ui.drawText3DEntity = function(entity, caption, x, y, z) {
-
+ui.drawText3DRage = function(caption, x, y, z) {
     if (!mp.game.ui.isHudComponentActive(0))
         return false;
-
-    z = z + 0.5;
-
-    try {
-        let vector = (entity.isInAnyVehicle(false)) ? entity.vehicle.getVelocity() : entity.getVelocity();
-        let frameTime = mp.game.invoke('0x15C40837039FFAF7'); //GET_FRAME_TIME
-        mp.game.graphics.setDrawOrigin(x + (vector.x * frameTime), y + (vector.y * frameTime), z + (vector.z * frameTime), 0);
-
-        //let camPos = mp.game.invoke('0x14D6F5678D8F1B37');
-        /*let camPos = mp.players.local.position;
-        let dist = methods.distanceToPos(camPos, new mp.Vector3(x, y, z));
-        let scale = 1 / dist * 2;
-        let fov = 1 / mp.game.invoke('0x65019750A0324133') * 100;
-        scale = fov * scale;
-        if (scale < 0.5)
-            scale = 0.5;
-        if (scale > 0.8)
-            scale = 0.8;*/
-        //scale = 1 - scale;
-        let scale = 0.5;
-
-        mp.game.ui.setTextFont(0);
-        mp.game.ui.setTextScale(0.1 * scale, 0.55 * scale);
-        mp.game.ui.setTextColour(255, 255, 255, 255);
-        mp.game.ui.setTextProportional(true);
-        mp.game.ui.setTextDropshadow(0, 0, 0, 0, 255);
-        mp.game.ui.setTextEdge(2, 0, 0, 0, 150);
-        mp.game.invoke('0x2513DFB0FB8400FE');
-        mp.game.ui.setTextEntry('STRING');
-        mp.game.ui.setTextCentre(true);
-        mp.game.ui.addTextComponentSubstringPlayerName(caption);
-        mp.game.ui.drawText(0, 0);
-        mp.game.invoke('0xFF0B610F6BE0D7AF');
-    }
-    catch (e) {
-    }
+    mp.game.graphics.drawText(caption, [x, y, z + 0.5], { font: 0, color: [255, 255, 255, 255], scale: [0.3, 0.3], outline: true, centre: true });
 };
-
-
 
 // Передача на cef с сервера
 mp.events.add('client:ui:callCef', (event, value) => {
@@ -222,9 +258,14 @@ mp.events.add('client:ui:callCef', (event, value) => {
 
 // Эвенты на cef только через эту функцию
 ui.callCef = function(event, value) {
-    methods.debug(event, value);
-    if(methods.isValidJSON(value))
-        uiBrowser.execute(`trigger('${event}', '${value}')`);
+    //methods.debug(event, value);
+    try {
+        if(uiBrowser && methods.isValidJSON(value))
+            uiBrowser.execute(`trigger('${event}', '${value}')`);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 };
 
 // F11 - курсор

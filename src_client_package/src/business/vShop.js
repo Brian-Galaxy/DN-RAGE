@@ -14,12 +14,17 @@ let insidePos = new mp.Vector3(-1507.416259765625, -3005.405029296875, -82.55733
 let exitPos = new mp.Vector3(-1507.416259765625, -3005.405029296875, -82.55733489990234);
 let currentShop = 0;
 
+let carList = new Map();
+
 let color1 = 111;
 let color2 = 111;
 let openAllDoor = false;
 
-vShop.goToInside = function(shopId, x, y, z, rot, bx, by, bz) {
+vShop.goToInside = function(shopId, x, y, z, rot, bx, by, bz, cars) {
     try {
+
+        carList = cars;
+
         user.setVirtualWorld(mp.players.local.remoteId + 1);
         vPos = new mp.Vector3(x, y, z);
         exitPos = new mp.Vector3(bx, by, bz);

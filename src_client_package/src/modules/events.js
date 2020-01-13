@@ -453,9 +453,9 @@ mp.events.add('client:fixCheckpointList', () => {
     checkpoint.fixCheckpointList();
 });
 
-mp.events.add('client:updateVehicleInfo', (data) => {
-    methods.debug('Event: client:updateVehicleInfo');
-    enums.updateVehicleInfo(data);
+mp.events.add('client:updateVehicleInfo', (idx, data) => {
+    methods.debug('Event: client:updateVehicleInfo', idx);
+    enums.updateVehicleInfo(idx, data);
 });
 
 mp.events.add('client:updateItemList', (weaponList, componentList, itemList) => {
@@ -563,9 +563,9 @@ mp.events.add('client:menuList:showLscMenu', (shopId, price) => {
     menuList.showLscMenu(shopId, price);
 });
 
-mp.events.add('client:menuList:showVehShopMenu', (shopId, carPos, buyPos) => {
+mp.events.add('client:menuList:showVehShopMenu', (shopId, carPos, buyPos, carList) => {
     methods.debug('Event: client:menuList:showVehShopMenu');
-    menuList.showVehShopMenu(shopId, JSON.parse(carPos), JSON.parse(buyPos));
+    menuList.showVehShopMenu(shopId, JSON.parse(carPos), JSON.parse(buyPos), new Map(carList));
 });
 
 mp.events.add('client:menuList:showInvaderShopMenu', () => {
@@ -609,7 +609,7 @@ mp.events.add('client:managers:weather:syncDateTime', (min, hour, day, month, ye
 
 mp.events.add('client:managers:weather:syncRealTime', (hour) => {
     //methods.debug('Event: client:user:syncRealTime', hour);
-    weather.syncRealTime(hour);
+    weather.syncRealHour(hour);
 });
 
 mp.events.add('client:managers:weather:syncWeatherTemp', (temp) => {
@@ -620,6 +620,16 @@ mp.events.add('client:managers:weather:syncWeatherTemp', (temp) => {
 mp.events.add('client:managers:weather:syncRealFullDateTime', (dateTime) => {
     //methods.debug('Event: client:user:syncRealFullDateTime', dateTime);
     weather.syncRealFullDateTime(dateTime);
+});
+
+mp.events.add('client:managers:weather:syncRealTime', (time) => {
+    //methods.debug('Event: client:user:syncRealFullDateTime', dateTime);
+    weather.syncRealTime(time);
+});
+
+mp.events.add('client:managers:weather:syncRealDate', (time) => {
+    //methods.debug('Event: client:user:syncRealFullDateTime', dateTime);
+    weather.syncRealDate(time);
 });
 
 mp.events.add('client:menuList:showBusinessTeleportMenu', () => {
@@ -822,13 +832,22 @@ mp.events.add('client:inventory:loadWeapon', function(id, itemId, loadItemId, co
         return;
     }
 
-    if (user.getCache('weapon_' + slot + '_ammo') >= 0)
-        user.setAmmoByHash(wpHash, user.getCache('weapon_' + slot + '_ammo') + count);
-    else
-        user.setAmmoByHash(wpHash, count);
+    if (items.getAmmoCount(currentAmmoId) <= user.getCache('weapon_' + slot + '_ammo')) {
+        mp.game.ui.notifications.show(`~r~Превышен максимальный запас патрон`);
+        return;
+    }
 
-    inventory.deleteItem(id);
-    ui.callCef('inventory', JSON.stringify({ type: 'removeItemId', itemId: id }));
+    if (user.getCache('weapon_' + slot + '_ammo') > 0) {
+        let newCount = items.getAmmoCount(currentAmmoId) - user.getCache('weapon_' + slot + '_ammo');
+        user.setAmmoByHash(wpHash, user.getCache('weapon_' + slot + '_ammo') + newCount);
+        inventory.updateItemCount(id, count - newCount);
+        ui.callCef('inventory', JSON.stringify({ type: 'updateItemIdCount', itemId: id, count: count - newCount }));
+    }
+    else {
+        user.setAmmoByHash(wpHash, count);
+        inventory.deleteItem(id);
+        ui.callCef('inventory', JSON.stringify({ type: 'removeItemId', itemId: id }));
+    }
 });
 
 mp.events.add('client:inventory:upgradeWeapon', function(id, itemId, weaponStr) {
@@ -1354,8 +1373,8 @@ mp.events.add('render', () => {
         let __localPlayerPosition__ = mp.players.local.position;
 
         methods.getStreamPlayerList().forEach((player, i) => {
-            if (player === localPlayer || !mp.players.exists(player) || i > 50) {
-                return false;
+            if (/*player === localPlayer || */!mp.players.exists(player)/* || i > 50*/) {
+                //return false;
             }
 
             try {
@@ -1384,8 +1403,8 @@ mp.events.add('render', () => {
                     //let name = '';
                     //if (user.hasDating(player.getVariable('id')))
                     //    name = user.getDating(player.getVariable('id')) + ' | ';
-                    if(player.getVariable('enableAdmin') && !player.getVariable('hiddenId'))
-                        ui.drawText3D(player.id + ' ' +  indicatorColor + typingLabel, headPosition.x, headPosition.y, headPosition.z + 0.1);
+                    //if(!player.getVariable('hiddenId'))
+                    ui.drawText3DRage( player.id + ' ' +  indicatorColor + typingLabel, headPosition.x, headPosition.y, headPosition.z + 0.1);
                 }
             }
             catch (e) {

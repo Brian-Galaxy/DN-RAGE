@@ -152,6 +152,8 @@ weather.timeSyncTimer = function() {
         mp.players.call("client:managers:weather:syncRealTime", [dateTime.getHours()]);
         mp.players.call("client:managers:weather:syncWeatherTemp", [Math.round(_tempNew)]);
         mp.players.call("client:managers:weather:syncRealFullDateTime", [`${methods.digitFormat(dateTime.getDate())}/${methods.digitFormat(dateTime.getMonth()+1)} ${methods.digitFormat(dateTime.getHours())}:${methods.digitFormat(dateTime.getMinutes())}`]);
+        mp.players.call("client:managers:weather:syncRealTime", [`${methods.digitFormat(dateTime.getHours())}:${methods.digitFormat(dateTime.getMinutes())}`]);
+        mp.players.call("client:managers:weather:syncRealDate", [`${methods.digitFormat(dateTime.getDate())}/${methods.digitFormat(dateTime.getMonth()+1)}`]);
 
         /*if (dateTime.getHours() == 18 && dateTime.getMinutes() == 1) { //TODO
             if (isVip < 1) {

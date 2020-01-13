@@ -13,6 +13,8 @@ let Temp = 27;
 let TempServer = 27;
 let DayName = "Понедельник";
 let RealHour = 0;
+let RealTime = "00:00";
+let RealDate = "01/01/1990";
 let Players = 0;
 let FullRealDateTime = "";
 let CurrentWeather = "CLEAR";
@@ -152,8 +154,24 @@ weather.getFullRpTime = function() {
     return `${methods.digitFormat(Hour)}:${methods.digitFormat(Min)}`;
 };
 
-weather.syncRealTime = function(hour) {
+weather.syncRealHour = function(hour) {
     RealHour = hour;
+};
+
+weather.syncRealTime = function(time) {
+    RealTime = time;
+};
+
+weather.syncRealDate = function(date) {
+    RealDate = date;
+};
+
+weather.getRealDate = function() {
+    return RealDate;
+};
+
+weather.getRealTime = function() {
+    return RealTime;
 };
 
 weather.getRealTime = function() {
@@ -166,10 +184,6 @@ weather.syncRealFullDateTime = function(dateTime) {
 
 weather.getRealFullDateTime = function() {
     return FullRealDateTime;
-};
-
-weather.getRealFullDateTimeWithOnline = function() {
-    return FullRealDateTime + ' | Игроков: ' + Players + ' /1000 | ID: ' + user.getCache('id');
 };
 
 weather.syncWeatherTemp = function(temp) {

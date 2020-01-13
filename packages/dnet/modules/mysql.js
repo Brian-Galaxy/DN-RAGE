@@ -28,6 +28,7 @@ const pool = mysql2.createPool({
 });
 
 pool.on('connection', function (connection) {
+    connection.query('SET SESSION sql_mode=\'\'');
     console.log('New MySQL connection id: ' + connection.threadId);
 });
 
@@ -42,8 +43,6 @@ pool.on('release', function (connection) {
 pool.on('acquire', function (connection) {
     //console.log('Connection %d acquired', connection.threadId);
 });
-
-
 
 mysql.stressTest = async function() {
     let i = 0;
@@ -77,7 +76,7 @@ mysql.executeQuery = async function (query, values, callback) {
                 if(!err) {
                     connection.query({
                         sql: query,
-                        timeout: 60000,
+                        timeout: 60000
                     }, values, function (err, rows, fields) {
                         if (!err) {
                             callback(null, rows, fields);

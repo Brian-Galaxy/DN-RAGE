@@ -39,6 +39,8 @@ try {
     mp.gui.cursor.show(true, true);
 
     try {
+        ui.create();
+
         user.init();
         methods.requestIpls();
         setTimeout(checkpoint.checkPosition, 10000);
@@ -59,9 +61,9 @@ try {
         methods.debug('ERROR INIT CLIENT', e);
     }
 
-    mp.events.add('guiReady', () => {
+    /*mp.events.add('guiReady', () => {
         ui.create();
-    });
+    });*/
 }
 catch (e) {
 }

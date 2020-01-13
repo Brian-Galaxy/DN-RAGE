@@ -210,7 +210,7 @@ user.addAmmo = function(name, count) {
 };
 
 user.addAmmoByHash = function(name, count) {
-    mp.game.invoke(methods.ADD_AMMO_TO_PED, mp.players.local.handle, weapons.getHashByName(name), count);
+    mp.game.invoke(methods.ADD_AMMO_TO_PED, mp.players.local.handle, name, count);
 };
 
 user.setAmmo = function(name, count) {
@@ -219,6 +219,18 @@ user.setAmmo = function(name, count) {
 
 user.setAmmoByHash = function(name, count) {
     mp.game.invoke(methods.SET_PED_AMMO, mp.players.local.handle, name, count);
+};
+
+user.setAmmoByHash = function(name, count) {
+    mp.game.invoke(methods.SET_PED_AMMO, mp.players.local.handle, name, count);
+};
+
+user.getAmmo = function(name) {
+    return user.getAmmoByHash(weapons.getHashByName(name));
+};
+
+user.getAmmoByHash = function(name) {
+    return mp.game.invoke(methods.GET_PED_AMMO_TYPE_FROM_WEAPON, mp.players.local.handle, name);
 };
 
 user.kickAntiCheat = function(reason, title = 'Вы были кикнуты.') {
@@ -825,12 +837,12 @@ user.isDead = function() {
     return mp.players.local.getHealth() <= 0;
 };
 
-user.isAdmin = function(){
-    return user.getCache('admin_level') > 0;
+user.isAdmin = function(level = 1) {
+    return user.getCache('admin_level') >= level;
 };
 
-user.isHelper = function(){
-    return user.getCache('helper_level') > 0;
+user.isHelper = function(level) {
+    return user.getCache('helper_level') >= level;
 };
 
 user.isGos = function() {

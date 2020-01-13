@@ -68,6 +68,8 @@ enums.userData = [
     "stats_lucky",
     "rep",
 
+    "is_clock",
+
     "mask", //1
     "mask_color",
     "torso", //3

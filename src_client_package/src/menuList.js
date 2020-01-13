@@ -1863,7 +1863,7 @@ menuList.showTattooShopShortMenu = function(title1, title2, zone, shopId)
     });
 };
 
-menuList.showVehShopMenu = function(shopId, carPos, buyPos)
+menuList.showVehShopMenu = function(shopId, carPos, buyPos, carList)
 {
     UIMenu.Menu.HideMenu();
 
@@ -1883,15 +1883,15 @@ menuList.showVehShopMenu = function(shopId, carPos, buyPos)
         UIMenu.Menu.HideMenu();
         if (item.enter)
         {
-            vShop.goToInside(shopId, carPos[0], carPos[1], carPos[2], carPos[3], buyPos[0], buyPos[1], buyPos[2]);
+            vShop.goToInside(shopId, carPos[0], carPos[1], carPos[2], carPos[3], buyPos[0], buyPos[1], buyPos[2], carList);
             setTimeout(function () {
-                menuList.showVehShopListMenu(shopId);
+                menuList.showVehShopListMenu(shopId, carList);
             }, 2000);
         }
     });
 };
 
-menuList.showVehShopListMenu = function(shopId)
+menuList.showVehShopListMenu = function(shopId, carList)
 {
     UIMenu.Menu.HideMenu();
 
@@ -1910,7 +1910,16 @@ menuList.showVehShopListMenu = function(shopId)
     vehicleInfo.forEach(item => {
         if (shopId != item.type)
             return;
-        let menuItem = UIMenu.Menu.AddMenuItem(item.display_name, `~b~Тип топлива: ~s~${vehicles.getFuelLabel(item.fuel_type)}`);
+
+        let label = `~c~${item.display_name} (0 шт.)`;
+        let subLabel = `\n~r~Доступно только для аренды`;
+
+        if (carList.has(item.display_name)) {
+            label = `${item.display_name} (${carList.get(item.display_name)} шт.)`;
+            subLabel = ``;
+        }
+
+        let menuItem = UIMenu.Menu.AddMenuItem(label, `~b~Тип топлива: ~s~${vehicles.getFuelLabel(item.fuel_type)}${subLabel}`);
         menuItem.model = item.display_name;
         menuItem.SetRightLabel(`~g~${methods.moneyFormat(item.price, 1)} ~s~ >`);
         list.push(menuItem);
@@ -1988,6 +1997,9 @@ menuList.showVehShopModelInfoMenu = function(model)
     UIMenu.Menu.AddMenuItem(`~g~Купить за ${methods.moneyFormat(vInfo.price, 1)}`);
     UIMenu.Menu.AddMenuItem(`~g~Аренда за ${methods.moneyFormat(vInfo.price / 50, 1)}`);
 
+    if (user.isAdmin(5))
+        UIMenu.Menu.AddMenuItem(`~b~Добавить на авторынок`).addAdmin = true;
+
     UIMenu.Menu.AddMenuItem("~y~Выйти из просмотра").exits = true;
     UIMenu.Menu.AddMenuItem("~y~Вернуться списку транспорта").toList = true;
     UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = "closeButton";
@@ -2005,10 +2017,14 @@ menuList.showVehShopModelInfoMenu = function(model)
         }
     });
 
-    menu.ItemSelect.on((item, index) => {
+    menu.ItemSelect.on(async (item, index) => {
         UIMenu.Menu.HideMenu();
         if (item.toList)
             menuList.showVehShopListMenu(vShop.getShopId());
+        if (item.addAdmin) {
+            let count = methods.parseInt(await UIMenu.Menu.GetUserInput("Кол-во", "", 8));
+            mp.events.callRemote('server:vehicles:addNew', vInfo.display_name, count);
+        }
         if (item.exits)
             vShop.exit();
     });

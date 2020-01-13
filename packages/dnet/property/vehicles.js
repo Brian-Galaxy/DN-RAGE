@@ -795,6 +795,13 @@ vehicles.setTunning = (veh) => {
     }, 10000);
 };
 
+vehicles.addNew = (model, count) => {
+    let vInfo = methods.getVehicleInfo(model);
+    for (let i = 0; i < count; i++) {
+        mysql.executeQuery(`INSERT INTO cars (name, class, price, fuel, number) VALUES ('${vInfo.display_name}', '${vInfo.class_name}', '${vInfo.price}', '${vInfo.fuel_full}', '${vehicles.generateNumber()}')`);
+    }
+};
+
 let CountAllCars = 0;
 vehicles.spawnCar = (position, heading, nameOrModel, number = undefined) => {
     methods.debug('vehicles.spawnCar ' + nameOrModel);

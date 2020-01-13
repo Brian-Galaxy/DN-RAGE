@@ -78,7 +78,9 @@ enums.resetVehicleInfo = function() {
     _vehicleInfo = [];
 };
 
-enums.updateVehicleInfo = function(data) {
+enums.updateVehicleInfo = function(idx, data) {
+    if (idx == 0)
+        _vehicleInfo = [];
     _vehicleInfo = _vehicleInfo.concat(data);
 };
 

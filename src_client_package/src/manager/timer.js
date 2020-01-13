@@ -149,7 +149,6 @@ timer.min15Timer = function() {
 
 timer.ms50Timer = function() {
     isDisableControl = vehicles.checkerControl();
-    //ui.updateValues(); //TODO
 
     if (Container.Data.HasLocally(0, 'hasSeat')) {
         mp.players.local.freezePosition(true);
@@ -245,6 +244,8 @@ let prevPos = new mp.Vector3(0, 0, 0);
 let prevWpPos = new mp.Vector3(0, 0, 0);
 
 timer.secTimer = function() {
+
+    //ui.updateValues(); //TODO ВАЖНО
 
     if (deathTimer > 0) {
         deathTimer--;

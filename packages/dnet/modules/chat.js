@@ -6,7 +6,7 @@ let chat = exports;
 let range = 15;
 
 chat.clRed = '#f44336';
-chat.clBlue = '#2196F3';
+chat.clBlue = '#03A9F4';
 chat.clOrange = '#FFC107';
 chat.clWhite = '#FFFFFF';
 chat.clBlack = '#000000';

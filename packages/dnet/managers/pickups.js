@@ -11,6 +11,7 @@ let vShop = require('../business/vShop');
 let carWash = require('../business/carWash');
 let rent = require('../business/rent');
 let bar = require('../business/bar');
+let barberShop = require('../business/barberShop');
 
 let business = require('../property/business');
 
@@ -310,6 +311,7 @@ pickups.checkPressE = function(player) {
     carWash.checkPosForOpenMenu(player);
     rent.checkPosForOpenMenu(player);
     bar.checkPosForOpenMenu(player);
+    barberShop.checkPosForOpenMenu(player);
 
     if (methods.distanceToPos(pickups.LifeInvaderShopPos, playerPos) < distanceCheck)
         player.call('client:menuList:showInvaderShopMenu');

@@ -1358,6 +1358,400 @@ menuList.showInvaderShopMenu = function() {
     });
 };
 
+menuList.showBarberShopMenu = function (shopId) {
+
+    if (methods.isBlackout()) {
+        mp.game.ui.notifications.show(`~r~В городе отсутствует свет`);
+        return;
+    }
+
+    let title1 = "commonmenu";
+    let title2 = "interaction_bgd";
+
+    switch (shopId) {
+        case 109:
+            title1 = "shopui_title_barber";
+            title2 = "shopui_title_barber";
+            break;
+        case 110:
+            title1 = "shopui_title_barber2";
+            title2 = "shopui_title_barber2";
+            break;
+        case 111:
+            title1 = "shopui_title_barber3";
+            title2 = "shopui_title_barber3";
+            break;
+        case 48:
+            title1 = "shopui_title_barber4";
+            title2 = "shopui_title_barber4";
+            break;
+        case 112:
+            title1 = "shopui_title_highendsalon";
+            title2 = "shopui_title_highendsalon";
+            break;
+    }
+
+
+    let skin = {};
+
+    skin.SKIN_HAIR = methods.parseInt(user.getCache('SKIN_HAIR'));
+    skin.SKIN_HAIR_COLOR = methods.parseInt(user.getCache('SKIN_HAIR_COLOR'));
+    skin.SKIN_HAIR_COLOR_2 = methods.parseInt(user.getCache('SKIN_HAIR_COLOR_2'));
+    skin.SKIN_EYE_COLOR = methods.parseInt(user.getCache('SKIN_EYE_COLOR'));
+    skin.SKIN_EYEBROWS = methods.parseInt(user.getCache('SKIN_EYEBROWS'));
+    skin.SKIN_EYEBROWS_COLOR = methods.parseInt(user.getCache('SKIN_EYEBROWS_COLOR'));
+    skin.SKIN_OVERLAY_9 = methods.parseInt(user.getCache('SKIN_OVERLAY_9'));
+    skin.SKIN_OVERLAY_COLOR_9 = methods.parseInt(user.getCache('SKIN_OVERLAY_COLOR_9'));
+    skin.SKIN_OVERLAY_1 = methods.parseInt(user.getCache('SKIN_OVERLAY_1'));
+    skin.SKIN_OVERLAY_COLOR_1 = methods.parseInt(user.getCache('SKIN_OVERLAY_COLOR_1'));
+    skin.SKIN_OVERLAY_4 = methods.parseInt(user.getCache('SKIN_OVERLAY_4'));
+    skin.SKIN_OVERLAY_COLOR_4 = methods.parseInt(user.getCache('SKIN_OVERLAY_COLOR_4'));
+    skin.SKIN_OVERLAY_5 = methods.parseInt(user.getCache('SKIN_OVERLAY_5'));
+    skin.SKIN_OVERLAY_COLOR_5 = methods.parseInt(user.getCache('SKIN_OVERLAY_COLOR_5'));
+    skin.SKIN_OVERLAY_8 = methods.parseInt(user.getCache('SKIN_OVERLAY_8'));
+    skin.SKIN_OVERLAY_COLOR_8 = methods.parseInt(user.getCache('SKIN_OVERLAY_COLOR_8'));
+    skin.SKIN_OVERLAY_10 = methods.parseInt(user.getCache('SKIN_OVERLAY_10'));
+    skin.SKIN_OVERLAY_COLOR_10 = methods.parseInt(user.getCache('SKIN_OVERLAY_COLOR_10'));
+
+    let menu = UIMenu.Menu.Create(" ", "~b~Влево/вправо менять внешность", false, false, false, title1, title2);
+
+    let list = [];
+
+    if (user.getSex() == 1) {
+        for (let j = 0; j < 77; j++) {
+            list.push(j + '');
+        }
+    }
+    else {
+        for (let j = 0; j < 72; j++) {
+            list.push(j + '');
+        }
+    }
+
+    let menuListItem = UIMenu.Menu.AddMenuItemList('Причёска', list, `Цена: ~g~$400`);
+    menuListItem.doName = 'SKIN_HAIR';
+    menuListItem.price = 400.01;
+    menuListItem.label = "Причёска";
+    menuListItem.Index = skin.SKIN_HAIR;
+
+    list = [];
+    for (let j = 0; j < 64; j++) {
+        list.push(j + '');
+    }
+    menuListItem = UIMenu.Menu.AddMenuItemList('Цвет волос', list, `Цена: ~g~$160`);
+    menuListItem.doName = 'SKIN_HAIR_COLOR';
+    menuListItem.price = 160.01;
+    menuListItem.label = "Цвет волос";
+    menuListItem.Index = skin.SKIN_HAIR_COLOR;
+
+    list = [];
+    for (let j = 0; j < 64; j++) {
+        list.push(j + '');
+    }
+    menuListItem = UIMenu.Menu.AddMenuItemList('Мелирование волос', list, `Цена: ~g~$160`);
+    menuListItem.doName = 'SKIN_HAIR_COLOR_2';
+    menuListItem.price = 160.01;
+    menuListItem.label = "Мелирование волос";
+    menuListItem.Index = skin.SKIN_HAIR_COLOR_2;
+
+    list = [];
+    for (let j = 0; j < 32; j++) {
+        list.push(j + '');
+    }
+    menuListItem = UIMenu.Menu.AddMenuItemList('Цвет глаз', list, `Цена: ~g~$120`);
+    menuListItem.doName = 'SKIN_EYE_COLOR';
+    menuListItem.price = 120.01;
+    menuListItem.label = "Цвет глаз";
+    menuListItem.Index = skin.SKIN_EYE_COLOR;
+
+    list = [];
+    for (let j = 0; j < 30; j++) {
+        list.push(j + '');
+    }
+    menuListItem = UIMenu.Menu.AddMenuItemList('Брови', list, `Цена: ~g~$70`);
+    menuListItem.doName = 'SKIN_EYEBROWS';
+    menuListItem.price = 70.01;
+    menuListItem.label = "Брови";
+    menuListItem.Index = skin.SKIN_EYEBROWS;
+
+    list = [];
+    for (let j = 0; j < 64; j++) {
+        list.push(j + '');
+    }
+    menuListItem = UIMenu.Menu.AddMenuItemList('Цвет бровей', list, `Цена: ~g~$60`);
+    menuListItem.doName = 'SKIN_EYEBROWS_COLOR';
+    menuListItem.price = 60.01;
+    menuListItem.Index = skin.SKIN_EYEBROWS_COLOR;
+
+    list = ['~r~Нет'];
+    for (let j = 0; j < 10; j++) {
+        list.push(j + '');
+    }
+    menuListItem = UIMenu.Menu.AddMenuItemList('Веснушки', list, `Цена: ~g~$250`);
+    menuListItem.doName = 'SKIN_OVERLAY_9';
+    menuListItem.price = 250.01;
+    menuListItem.label = "Веснушки";
+    menuListItem.Index = skin.SKIN_OVERLAY_9 + 1;
+
+    list = [];
+    for (let j = 0; j < 5; j++) {
+        list.push(j + '');
+    }
+    menuListItem = UIMenu.Menu.AddMenuItemList('Цвет веснушек', list, `Цена: ~g~$50`);
+    menuListItem.doName = 'SKIN_OVERLAY_COLOR_9';
+    menuListItem.price = 50.01;
+    menuListItem.label = "Цвет веснушек";
+    menuListItem.Index = skin.SKIN_OVERLAY_COLOR_9;
+
+    if (user.getSex() == 0) {
+        list = ['~r~Нет'];
+        for (let j = 0; j < 30; j++) {
+            list.push(j + '');
+        }
+        menuListItem = UIMenu.Menu.AddMenuItemList('Борода', list, `Цена: ~g~$250`);
+        menuListItem.doName = 'SKIN_OVERLAY_1';
+        menuListItem.price = 250.01;
+        menuListItem.label = "Борода";
+        menuListItem.Index = skin.SKIN_OVERLAY_1 + 1;
+
+        list = [];
+        for (let j = 0; j < 64; j++) {
+            list.push(j + '');
+        }
+        menuListItem = UIMenu.Menu.AddMenuItemList('Цвет бороды', list, `Цена: ~g~$120`);
+        menuListItem.doName = 'SKIN_OVERLAY_COLOR_1';
+        menuListItem.price = 120.01;
+        menuListItem.label = "Цвет бороды";
+        menuListItem.Index = skin.SKIN_OVERLAY_COLOR_1;
+
+        list = ['~r~Нет'];
+        for (let j = 0; j < mp.game.ped.getNumHeadOverlayValues(10) + 1; j++) {
+            list.push(j + '');
+        }
+        menuListItem = UIMenu.Menu.AddMenuItemList('Волосы на груди', list, `Цена: ~g~$250`);
+        menuListItem.doName = 'SKIN_OVERLAY_10';
+        menuListItem.price = 250.01;
+        menuListItem.label = "Волосы на груди";
+        menuListItem.Index = skin.SKIN_OVERLAY_10 + 1;
+
+        list = [];
+        for (let j = 0; j < 64; j++) {
+            list.push(j + '');
+        }
+        menuListItem = UIMenu.Menu.AddMenuItemList('Волосы на груди', list, `Цена: ~g~$600`);
+        menuListItem.doName = 'SKIN_OVERLAY_COLOR_10';
+        menuListItem.price = 600.01;
+        menuListItem.label = "Волосы на груди";
+        menuListItem.Index = skin.SKIN_OVERLAY_COLOR_10;
+    }
+    else {
+        list = ['~r~Нет'];
+        for (let j = 0; j < mp.game.ped.getNumHeadOverlayValues(8) + 1; j++) {
+            list.push(j + '');
+        }
+        menuListItem = UIMenu.Menu.AddMenuItemList('Помада', list, `Цена: ~g~$250`);
+        menuListItem.doName = 'SKIN_OVERLAY_8';
+        menuListItem.price = 250.01;
+        menuListItem.label = "Помада";
+        menuListItem.Index = skin.SKIN_OVERLAY_8 + 1;
+
+        list = [];
+        for (let j = 0; j < 60; j++) {
+            list.push(j + '');
+        }
+        menuListItem = UIMenu.Menu.AddMenuItemList('Цвет помады', list, `Цена: ~g~$110`);
+        menuListItem.doName = 'SKIN_OVERLAY_COLOR_8';
+        menuListItem.price = 110.01;
+        menuListItem.label = "Цвет помады";
+        menuListItem.Index = skin.SKIN_OVERLAY_COLOR_8;
+
+        list = ['~r~Нет'];
+        for (let j = 0; j < 7; j++) {
+            list.push(j + '');
+        }
+        menuListItem = UIMenu.Menu.AddMenuItemList('Румянец', list, `Цена: ~g~$250`);
+        menuListItem.doName = 'SKIN_OVERLAY_5';
+        menuListItem.price = 250.01;
+        menuListItem.label = "Румянец";
+        menuListItem.Index = skin.SKIN_OVERLAY_5 + 1;
+
+        list = [];
+        for (let j = 0; j < 60; j++) {
+            list.push(j + '');
+        }
+        menuListItem = UIMenu.Menu.AddMenuItemList('Цвет румянца', list, `Цена: ~g~$110`);
+        menuListItem.doName = 'SKIN_OVERLAY_COLOR_5';
+        menuListItem.price = 110.01;
+        menuListItem.label = "Цвет румянца";
+        menuListItem.Index = skin.SKIN_OVERLAY_COLOR_5;
+
+        list = ['~r~Нет'];
+        for (let j = 0; j < mp.game.ped.getNumHeadOverlayValues(8) + 1; j++) {
+            list.push(j + '');
+        }
+        menuListItem = UIMenu.Menu.AddMenuItemList('Макияж', list, `Цена: ~g~$300`);
+        menuListItem.doName = 'SKIN_OVERLAY_4';
+        menuListItem.price = 300.01;
+        menuListItem.label = "Макияж";
+        menuListItem.Index = skin.SKIN_OVERLAY_4 + 1;
+
+        list = [];
+        for (let j = 0; j < 10; j++) {
+            list.push(j + '');
+        }
+        menuListItem = UIMenu.Menu.AddMenuItemList('Цвет макияжа', list, `Цена: ~g~$150`);
+        menuListItem.doName = 'SKIN_OVERLAY_COLOR_4';
+        menuListItem.price = 150.01;
+        menuListItem.label = "Цвет макияжа";
+        menuListItem.Index = skin.SKIN_OVERLAY_COLOR_4;
+    }
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = "closeButton";
+
+    menu.MenuClose.on((sender) =>
+    {
+        user.updateCharacterFace();
+    });
+
+    let currentListChangeItem = null;
+    let currentListChangeItemIndex = 0;
+
+    menu.ListChange.on((item, index) => {
+        currentListChangeItem = item;
+        currentListChangeItemIndex = index;
+
+        switch (item.doName) {
+            case 'SKIN_HAIR':
+
+                if (index == 23 || index == 24)
+                    skin.SKIN_HAIR = 1;
+                else
+                    skin.SKIN_HAIR = index;
+                mp.players.local.setComponentVariation(2, skin.SKIN_HAIR, 0, 2);
+                mp.players.local.setHairColor(skin.SKIN_HAIR_COLOR, skin.SKIN_HAIR_COLOR_2);
+
+                user.updateTattoo(true);
+
+                let data = JSON.parse(enums.get('overlays'))[user.getSex()][skin.SKIN_HAIR];
+                user.setDecoration(data[0], data[1], true);
+                break;
+            case 'SKIN_HAIR_COLOR':
+                skin.SKIN_HAIR_COLOR = index;
+                mp.players.local.setHairColor(skin.SKIN_HAIR_COLOR, skin.SKIN_HAIR_COLOR_2);
+                break;
+            case 'SKIN_HAIR_COLOR_2':
+                skin.SKIN_HAIR_COLOR_2 = index;
+                mp.players.local.setHairColor(skin.SKIN_HAIR_COLOR, skin.SKIN_HAIR_COLOR_2);
+                break;
+            case 'SKIN_EYE_COLOR':
+                skin.SKIN_EYE_COLOR = index;
+                mp.players.local.setEyeColor(skin.SKIN_EYE_COLOR);
+                break;
+            case 'SKIN_EYEBROWS':
+                skin.SKIN_EYEBROWS = index;
+                mp.players.local.setHeadOverlay(2, skin.SKIN_EYEBROWS, 1.0, skin.SKIN_EYEBROWS_COLOR, 0);
+                break;
+            case 'SKIN_EYEBROWS_COLOR':
+                skin.SKIN_EYEBROWS_COLOR = index;
+                mp.players.local.setHeadOverlay(2, skin.SKIN_EYEBROWS, 1.0, skin.SKIN_EYEBROWS_COLOR, 0);
+                break;
+            case 'SKIN_OVERLAY_9':
+                skin.SKIN_OVERLAY_9 = index - 1;
+                mp.players.local.setHeadOverlay(9, skin.SKIN_OVERLAY_9, 1.0, skin.SKIN_OVERLAY_COLOR_9, 0);
+                break;
+            case 'SKIN_OVERLAY_COLOR_9':
+                skin.SKIN_OVERLAY_COLOR_9 = index;
+                mp.players.local.setHeadOverlay(9, skin.SKIN_OVERLAY_9, 1.0, skin.SKIN_OVERLAY_COLOR_9, 0);
+                break;
+            case 'SKIN_OVERLAY_1':
+                skin.SKIN_OVERLAY_1 = index - 1;
+                mp.players.local.setHeadOverlay(1, skin.SKIN_OVERLAY_1, 1.0, skin.SKIN_OVERLAY_COLOR_1, 0);
+                break;
+            case 'SKIN_OVERLAY_COLOR_1':
+                skin.SKIN_OVERLAY_COLOR_1 = index;
+                mp.players.local.setHeadOverlay(1, skin.SKIN_OVERLAY_1, 1.0, skin.SKIN_OVERLAY_COLOR_1, 0);
+                break;
+            case 'SKIN_OVERLAY_4':
+                skin.SKIN_OVERLAY_4 = index - 1;
+                mp.players.local.setHeadOverlay(4, skin.SKIN_OVERLAY_4, 1.0, skin.SKIN_OVERLAY_COLOR_4, 0);
+                break;
+            case 'SKIN_OVERLAY_COLOR_4':
+                skin.SKIN_OVERLAY_COLOR_4 = index;
+                mp.players.local.setHeadOverlay(4, skin.SKIN_OVERLAY_4, 1.0, skin.SKIN_OVERLAY_COLOR_4, 0);
+                break;
+            case 'SKIN_OVERLAY_5':
+                skin.SKIN_OVERLAY_5 = index - 1;
+                mp.players.local.setHeadOverlay(5, skin.SKIN_OVERLAY_5, 1.0, skin.SKIN_OVERLAY_COLOR_5, 0);
+                break;
+            case 'SKIN_OVERLAY_COLOR_5':
+                skin.SKIN_OVERLAY_COLOR_5 = index;
+                mp.players.local.setHeadOverlay(5, skin.SKIN_OVERLAY_5, 1.0, skin.SKIN_OVERLAY_COLOR_5, 0);
+                break;
+            case 'SKIN_OVERLAY_8':
+                skin.SKIN_OVERLAY_8 = index - 1;
+                mp.players.local.setHeadOverlay(8, skin.SKIN_OVERLAY_8, 1.0, skin.SKIN_OVERLAY_COLOR_8, 0);
+                break;
+            case 'SKIN_OVERLAY_COLOR_8':
+                skin.SKIN_OVERLAY_COLOR_8 = index;
+                mp.players.local.setHeadOverlay(8, skin.SKIN_OVERLAY_8, 1.0, skin.SKIN_OVERLAY_COLOR_8, 0);
+                break;
+            case 'SKIN_OVERLAY_10':
+                skin.SKIN_OVERLAY_10 = index - 1;
+                mp.players.local.setHeadOverlay(10, skin.SKIN_OVERLAY_10, 1.0, skin.SKIN_OVERLAY_COLOR_10, 0);
+                break;
+            case 'SKIN_OVERLAY_COLOR_10':
+                skin.SKIN_OVERLAY_COLOR_10 = index;
+                mp.players.local.setHeadOverlay(10, skin.SKIN_OVERLAY_10, 1.0, skin.SKIN_OVERLAY_COLOR_10, 0);
+                break;
+        }
+    });
+
+    menu.ItemSelect.on(async (item, index) => {
+        try {
+            UIMenu.Menu.HideMenu();
+            if (item == currentListChangeItem) {
+
+                switch (item.doName) {
+                    case 'SKIN_OVERLAY_1':
+                    case 'SKIN_OVERLAY_4':
+                    case 'SKIN_OVERLAY_5':
+                    case 'SKIN_OVERLAY_8':
+                    case 'SKIN_OVERLAY_9':
+                    case 'SKIN_OVERLAY_10':
+                        currentListChangeItemIndex = currentListChangeItemIndex - 1;
+                        break;
+                }
+
+                if (user.getMoney() < item.price) {
+                    mp.game.ui.notifications.show("~r~У Вас недостаточно денег");
+                    return;
+                }
+
+                if (item.price < 1)
+                    return;
+
+                user.removeMoney(methods.parseInt(item.price));
+                business.addMoney(shopId, methods.parseInt(item.price), item.label);
+                user.set(item.doName, currentListChangeItemIndex);
+                mp.game.ui.notifications.show("~g~Вы изменили внешность по цене: ~s~$" + methods.parseInt(item.price));
+                user.updateCharacterFace();
+                user.save();
+            }
+            if (item.doName == 'grab') {
+                user.grab(shopId);
+            }
+            if (item.doName == "closeButton") {
+                user.updateCharacterFace();
+            }
+        }
+        catch (e) {
+
+            methods.debug('Exception: menuList.showBarberShopMenu menu.ItemSelect');
+            methods.debug(e);
+        }
+    });
+};
+
 menuList.showBarMenu = function(shopId, price = 1)
 {
     if (methods.isBlackout()) {

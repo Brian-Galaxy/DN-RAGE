@@ -578,6 +578,11 @@ mp.events.add('client:menuList:showRentBikeMenu', (shopId, price) => {
     menuList.showRentBikeMenu(shopId, price);
 });
 
+mp.events.add('client:menuList:showBarberShopMenu', (shopId) => {
+    methods.debug('Event: client:menuList:showBarberShopMenu');
+    menuList.showBarberShopMenu(shopId);
+});
+
 mp.events.add('client:menuList:showBarMenu', (shopId, price) => {
     methods.debug('Event: client:menuList:showBarMenu');
     menuList.showBarMenu(shopId, price);

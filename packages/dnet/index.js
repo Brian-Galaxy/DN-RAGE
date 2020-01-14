@@ -20,6 +20,7 @@ let vShop = require('./business/vShop');
 let carWash = require('./business/carWash');
 let rent = require('./business/rent');
 let bar = require('./business/bar');
+let barberShop = require('./business/barberShop');
 
 let houses = require('./property/houses');
 let condos = require('./property/condos');
@@ -53,6 +54,7 @@ function init() {
         rent.loadAll();
         lsc.loadAll();
         bar.loadAll();
+        barberShop.loadAll();
         cloth.loadAll();
         tattoo.loadAll();
         gun.loadAll();

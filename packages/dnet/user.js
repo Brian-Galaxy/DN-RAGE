@@ -201,6 +201,7 @@ user.save = function(player, withReset = false) {
         skin.SKIN_PARENT_SKIN_MIX = user.get(player, "SKIN_PARENT_SKIN_MIX");
         skin.SKIN_HAIR = methods.parseInt(user.get(player, "SKIN_HAIR"));
         skin.SKIN_HAIR_COLOR = methods.parseInt(user.get(player, "SKIN_HAIR_COLOR"));
+        skin.SKIN_HAIR_COLOR_2 = methods.parseInt(user.get(player, "SKIN_HAIR_COLOR_2"));
         skin.SKIN_EYE_COLOR = methods.parseInt(user.get(player, "SKIN_EYE_COLOR"));
         skin.SKIN_EYEBROWS = methods.parseInt(user.get(player, "SKIN_EYEBROWS"));
         skin.SKIN_EYEBROWS_COLOR = methods.parseInt(user.get(player, "SKIN_EYEBROWS_COLOR"));
@@ -401,6 +402,7 @@ user.updateClientCache = function(player) {
         skin.SKIN_PARENT_SKIN_MIX = user.get(player, "SKIN_PARENT_SKIN_MIX");
         skin.SKIN_HAIR = methods.parseInt(user.get(player, "SKIN_HAIR"));
         skin.SKIN_HAIR_COLOR = methods.parseInt(user.get(player, "SKIN_HAIR_COLOR"));
+        skin.SKIN_HAIR_COLOR_2 = methods.parseInt(user.get(player, "SKIN_HAIR_COLOR_2"));
         skin.SKIN_EYE_COLOR = methods.parseInt(user.get(player, "SKIN_EYE_COLOR"));
         skin.SKIN_EYEBROWS = methods.parseInt(user.get(player, "SKIN_EYEBROWS"));
         skin.SKIN_EYEBROWS_COLOR = methods.parseInt(user.get(player, "SKIN_EYEBROWS_COLOR"));
@@ -459,6 +461,7 @@ user.updateCharacterFace = function(player) {
         skin.SKIN_PARENT_SKIN_MIX = user.get(player, "SKIN_PARENT_SKIN_MIX");
         skin.SKIN_HAIR = methods.parseInt(user.get(player, "SKIN_HAIR"));
         skin.SKIN_HAIR_COLOR = methods.parseInt(user.get(player, "SKIN_HAIR_COLOR"));
+        skin.SKIN_HAIR_COLOR_2 = methods.parseInt(user.get(player, "SKIN_HAIR_COLOR_2"));
         skin.SKIN_EYE_COLOR = methods.parseInt(user.get(player, "SKIN_EYE_COLOR"));
         skin.SKIN_EYEBROWS = methods.parseInt(user.get(player, "SKIN_EYEBROWS"));
         skin.SKIN_EYEBROWS_COLOR = methods.parseInt(user.get(player, "SKIN_EYEBROWS_COLOR"));
@@ -525,7 +528,7 @@ user.updateCharacterFace = function(player) {
                     }
                 })
             } catch(e) {
-                methods.debug(e);
+                methods.debug('skin.SKIN_FACE_SPECIFICATIONS', e);
                 methods.debug(skin.SKIN_FACE_SPECIFICATIONS);
             }
         }
@@ -684,31 +687,35 @@ user.updateCharacterCloth = function(player) {
 };
 
 user.updateTattoo = function(player) {
-    methods.debug('user.updateTAttoo');
+    methods.debug('user.updateTattoo');
     if (!user.isLogin(player))
         return;
 
-    user.clearDecorations(player);
-    let tattooList = JSON.parse(user.get(player, 'tattoo'));
+    try {
+        user.clearDecorations(player);
+        let tattooList = JSON.parse(user.get(player, 'tattoo'));
 
-    if (tattooList != null) {
-        try {
-            tattooList.forEach(function (item) {
-                user.setDecoration(player, item[0], item[1]);
-            });
+        if (tattooList != null) {
+            try {
+                tattooList.forEach(function (item) {
+                    user.setDecoration(player, item[0], item[1]);
+                });
+            }
+            catch (e) {
+                methods.debug(e);
+            }
         }
-        catch (e) {
-            methods.debug(e);
-        }
+
+        let data = enums.hairOverlays[methods.parseInt(user.get(player, "SKIN_SEX"))][user.get(player, "SKIN_HAIR")];
+        user.setDecoration(player, data[0], data[1]);
+
+        if (user.get(player, 'tprint_c') != "" && user.get(player, 'tprint_o') != "")
+            user.setDecoration(player, user.get(player, 'tprint_c'), user.get(player, 'tprint_o'));
     }
-
-    let data = enums.hairOverlays[methods.parseInt(user.get(player, "SKIN_SEX"))][user.get(player, "SKIN_HAIR")];
-    user.setDecoration(player, data[0], data[1]);
-
-    if (user.get(player, 'tprint_c') != "" && user.get(player, 'tprint_o') != "")
-        user.setDecoration(player, user.get(player, 'tprint_c'), user.get(player, 'tprint_o'));
+    catch (e) {
+        methods.debug('user.updateTattooServ', e);
+    }
 };
-
 
 user.validateUser = function(name, callback) {
     methods.debug('user.validateUser');

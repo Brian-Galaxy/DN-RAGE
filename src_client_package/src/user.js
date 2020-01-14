@@ -504,6 +504,7 @@ let skin = {
     SKIN_PARENT_SKIN_MIX: 0,
     SKIN_HAIR: 0,
     SKIN_HAIR_COLOR: 0,
+    SKIN_HAIR_COLOR_2: 0,
     SKIN_EYE_COLOR: 0,
     SKIN_EYEBROWS: 0,
     SKIN_EYEBROWS_COLOR: 0,
@@ -581,7 +582,7 @@ user.updateCharacterFace = function(isLocal = false) {
             mp.players.local.setComponentVariation(2, user.getCache('SKIN_HAIR'), 0, 2);
             mp.players.local.setHeadOverlay(2, user.getCache('SKIN_EYEBROWS'), 1.0, user.getCache('SKIN_EYEBROWS_COLOR'), 0);
 
-            mp.players.local.setHairColor(user.getCache('SKIN_HAIR_COLOR'), 0);
+            mp.players.local.setHairColor(user.getCache('SKIN_HAIR_COLOR'), user.getCache('SKIN_HAIR_COLOR_2'));
             mp.players.local.setEyeColor(user.getCache('SKIN_EYE_COLOR'));
             mp.players.local.setHeadOverlayColor(2, 1, user.getCache('SKIN_EYEBROWS_COLOR'), 0);
 
@@ -600,18 +601,10 @@ user.updateCharacterFace = function(isLocal = false) {
                 }
             }
             catch (e) {
-                methods.debug(e);
+                methods.debug('user.updateCharacterFaceLocal', e);
             }
 
-            try {
-                let data = JSON.parse(enums.get('overlays'))[user.getSex()][user.getCache('SKIN_HAIR')];
-
-                user.clearDecorations(true);
-                user.setDecoration(data[0], data[1], true);
-            }
-            catch (e) {
-                methods.debug(e);
-            }
+            user.updateTattoo(true);
         }
     } catch(e) {
         console.log('updateCharacterFace', e);
@@ -622,8 +615,35 @@ user.updateCharacterCloth = function() {
     mp.events.callRemote('server:user:updateCharacterCloth');
 };
 
-user.updateTattoo = function() {
-    mp.events.callRemote('server:user:updateTattoo');
+user.updateTattoo = function(isLocal = false) {
+    if (!isLocal)
+        mp.events.callRemote('server:user:updateTattoo');
+    else {
+        try {
+            user.clearDecorations(true);
+            let tattooList = JSON.parse(user.getCache( 'tattoo'));
+
+            if (tattooList != null) {
+                try {
+                    tattooList.forEach(function (item) {
+                        user.setDecoration(item[0], item[1], true);
+                    });
+                }
+                catch (e) {
+                    methods.debug(e);
+                }
+            }
+
+            let data = JSON.parse(enums.get('overlays'))[user.getSex()][user.getCache( "SKIN_HAIR")];
+            user.setDecoration(data[0], data[1], true);
+
+            if (user.getCache('tprint_c') != "" && user.getCache( 'tprint_o') != "")
+                user.setDecoration( user.getCache( 'tprint_c'), user.getCache( 'tprint_o'), true);
+        }
+        catch (e) {
+            methods.debug('user.updateTattoo', e);
+        }
+    }
 };
 
 user.setComponentVariation = function(component, drawableId, textureId) {

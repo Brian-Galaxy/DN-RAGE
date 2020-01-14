@@ -125,12 +125,6 @@ pickups.EmsElevatorPos = new mp.Vector3(247.0811, -1371.92, 23.53779);
 //Apteka
 pickups.AptekaPos = new mp.Vector3(318.3438, -1078.762, 18.68166);
 
-pickups.AptekaEnterPos1 = new mp.Vector3(326.5005, -1074.198, 28.47986);
-pickups.AptekaEnterPos2 = new mp.Vector3(325.4413, -1076.997, 18.68166);
-
-pickups.AptekaEnterPos11 = new mp.Vector3(307.633544921875, -734.6121826171875, 28.316791534423828);
-pickups.AptekaEnterPos22 = new mp.Vector3(305.29156494140625, -733.535888671875, 28.353723526000977);
-
 pickups.BahamaPos1 = new mp.Vector3(-1387.69, -588.719, 29.3198);
 pickups.BahamaPos2 = new mp.Vector3(-1388.88, -586.291, 29.2198);
 
@@ -264,8 +258,6 @@ pickups.checkPressLAlt = function(player) {
 
     methods.checkTeleport(player, pickups.BahamaPos1, pickups.BahamaPos2);
     //methods.checkTeleport(player, pickups.TheLostPos1, pickups.TheLostPos2);
-    //methods.checkTeleport(player, pickups.AptekaEnterPos1, pickups.AptekaEnterPos2);
-    methods.checkTeleport(player, pickups.AptekaEnterPos11, pickups.AptekaEnterPos22);
     /*methods.checkTeleport(player, pickups.UsmcPos1, pickups.UsmcPos2);
     methods.checkTeleport(player, pickups.UsmcPos11, pickups.UsmcPos22);*/
     methods.checkTeleport(player, pickups.EmsInPos, pickups.EmsOutPos);
@@ -444,9 +436,6 @@ pickups.createPickups = function() {
     methods.createStaticCheckpointV(pickups.PrisonPos1, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
     methods.createStaticCheckpointV(pickups.PrisonPos2, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
     //methods.createStaticCheckpointV(pickups.AptekaEnterPos1, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-    methods.createStaticCheckpointV(pickups.AptekaEnterPos11, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-    methods.createStaticCheckpointV(pickups.AptekaEnterPos2, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-    methods.createStaticCheckpointV(pickups.AptekaEnterPos22, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
 
     /*methods.createStaticCheckpointV(pickups.UsmcPos1, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
     methods.createStaticCheckpointV(pickups.UsmcPos2, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);

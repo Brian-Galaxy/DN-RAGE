@@ -160,7 +160,7 @@ vShop.buy = function(player, model, color1, color2, shopId) {
                     if (vInfo.fuel_type == 3)
                         vShop.sendNotify(player, shopId, 'Поздравляем', `Поздравляем с покупкой электрокара ~g~${vInfo.display_name}~s~.\n\nСпасибо за то, что сохраняете экологию ;)`);
                     else
-                        vShop.sendNotify(player, shopId, 'Поздравляем', `~g~Поздравляем с покупкой транспорта ~b~${vInfo.display_name}~s~.`);
+                        vShop.sendNotify(player, shopId, 'Поздравляем', `Поздравляем с покупкой транспорта ~b~${vInfo.display_name}~s~.`);
 
                     let serverId = vehicles.get(id, 'serverId');
                     let veh = mp.vehicles.at(serverId);
@@ -258,6 +258,8 @@ vShop.rent = function(player, model, color1, color2, shopId) {
         veh.setVariable('owner_id', user.getId(player));
 
         player.putIntoVehicle(veh, -1);
+
+        vShop.sendNotify(player, shopId, 'Аренда', `Вы арендовали транспорт ~b~${vInfo.display_name}~s~.`);
 
     }, new mp.Vector3(shopItem.spawnPos[0], shopItem.spawnPos[1], shopItem.spawnPos[2]), shopItem.spawnPos[3], model);
 };

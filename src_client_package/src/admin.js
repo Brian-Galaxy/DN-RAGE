@@ -45,23 +45,50 @@ mp.events.add('render', () => {
         noClipEntity.freezePosition(true);
         noClipEntity.setInvincible(true);
 
+        mp.game.controls.disableControlAction(0, 8, true);
+        mp.game.controls.disableControlAction(0, 9, true);
+        mp.game.controls.disableControlAction(0, 30, true);
         mp.game.controls.disableControlAction(0, 31, true);
         mp.game.controls.disableControlAction(0, 32, true);
         mp.game.controls.disableControlAction(0, 33, true);
         mp.game.controls.disableControlAction(0, 34, true);
         mp.game.controls.disableControlAction(0, 35, true);
         mp.game.controls.disableControlAction(0, 36, true);
+        mp.game.controls.disableControlAction(0, 63, true);
+        mp.game.controls.disableControlAction(0, 64, true);
+        mp.game.controls.disableControlAction(0, 71, true);
+        mp.game.controls.disableControlAction(0, 72, true);
+        mp.game.controls.disableControlAction(0, 77, true);
+        mp.game.controls.disableControlAction(0, 78, true);
+        mp.game.controls.disableControlAction(0, 78, true);
+        mp.game.controls.disableControlAction(0, 87, true);
+        mp.game.controls.disableControlAction(0, 88, true);
+        mp.game.controls.disableControlAction(0, 89, true);
+        mp.game.controls.disableControlAction(0, 90, true);
+        mp.game.controls.disableControlAction(0, 129, true);
+        mp.game.controls.disableControlAction(0, 130, true);
+        mp.game.controls.disableControlAction(0, 133, true);
+        mp.game.controls.disableControlAction(0, 134, true);
+        mp.game.controls.disableControlAction(0, 136, true);
+        mp.game.controls.disableControlAction(0, 139, true);
+        mp.game.controls.disableControlAction(0, 146, true);
+        mp.game.controls.disableControlAction(0, 147, true);
+        mp.game.controls.disableControlAction(0, 148, true);
+        mp.game.controls.disableControlAction(0, 149, true);
+        mp.game.controls.disableControlAction(0, 150, true);
+        mp.game.controls.disableControlAction(0, 151, true);
+        mp.game.controls.disableControlAction(0, 232, true);
         mp.game.controls.disableControlAction(0, 266, true);
         mp.game.controls.disableControlAction(0, 267, true);
         mp.game.controls.disableControlAction(0, 268, true);
         mp.game.controls.disableControlAction(0, 269, true);
+        mp.game.controls.disableControlAction(0, 278, true);
+        mp.game.controls.disableControlAction(0, 279, true);
+        mp.game.controls.disableControlAction(0, 338, true);
+        mp.game.controls.disableControlAction(0, 339, true);
         mp.game.controls.disableControlAction(0, 44, true);
         mp.game.controls.disableControlAction(0, 20, true);
         mp.game.controls.disableControlAction(0, 47, true);
-
-        for(let i = 26; i < 272; i++) {
-            mp.game.controls.disableControlAction(0,i,true)
-        }
 
         let yoff = 0.0;
         let zoff = 0.0;

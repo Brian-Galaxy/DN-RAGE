@@ -12,13 +12,12 @@ cloth.maskShop = new mp.Vector3(-1337.255, -1277.948, 3.872962);
 cloth.loadAll = function(){
     methods.debug('barberShop.loadAll');
 
-    methods.createBlip(cloth.maskShop, 437, 0, 0.8, 'Магазин масок');
+    methods.createBlip(cloth.maskShop, 437, 0, 0.8, 'Vespucci Movie Masks');
     methods.createStaticCheckpoint(cloth.maskShop.x, cloth.maskShop.y, cloth.maskShop.z, "Нажмите ~g~E~s~ чтобы открыть меню магазина", 0.8, -1, [33, 150, 243, 100], 0.3);
 
     try {
         for (var i = 0; i < shopList.length; i++) {
             var pos = new mp.Vector3(shopList[i][3], shopList[i][4], shopList[i][5]);
-            var shopId = shopList[i][1];
             var shopType = shopList[i][0];
             var type = shopList[i][2];
 
@@ -37,7 +36,7 @@ cloth.loadAll = function(){
                         methods.createBlip(pos, 73, 73, 0.8, 'AmmoNation');
                         break;
                     case 4:
-                        methods.createBlip(pos, 617, 0, 0.8, 'Ювелирный магазин');
+                        methods.createBlip(pos, 617, 0, 0.8, 'Vangelico');
                         break;
                     case 5:
                         methods.createBlip(pos, 73, 81, 0.8, 'Binco');

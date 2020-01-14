@@ -62,6 +62,7 @@ enums.userData = [
     "stats_strength",
     "stats_shooting",
     "stats_endurance",
+    "stats_lung_capacity",
     "stats_flying",
     "stats_driving",
     "stats_psychics",

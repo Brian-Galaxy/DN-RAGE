@@ -17,7 +17,7 @@ cloth.printShopPos = new mp.Vector3(-1234.7786865234375, -1477.7230224609375, 3.
 cloth.loadAll = function(){
     methods.debug('barberShop.loadAll');
 
-    methods.createBlip(cloth.printShopPos, 72, 0, 0.8, 'Print Shop');
+    methods.createBlip(cloth.printShopPos, 72, 0, 0.8, 'Vespucci Print Shop');
     methods.createStaticCheckpointV(cloth.printShopPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, [33, 150, 243, 100]);
 
     methods.createBlip(cloth.maskShop, 437, 0, 0.8, 'Vespucci Movie Masks');

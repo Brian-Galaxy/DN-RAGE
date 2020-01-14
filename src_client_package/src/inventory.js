@@ -368,7 +368,7 @@ inventory.setInvAmountMax = function(id, type, data) {
 };
 
 inventory.calculatePlayerInvAmountMax = function() {
-    return 45100 + (user.getCache('mp0_strength') * 100);
+    return 50000;
 };
 
 inventory.startFishing = function() {

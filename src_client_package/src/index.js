@@ -19,6 +19,7 @@ import timer from "./manager/timer";
 import vBreakLight from "./manager/vBreakLight";
 import object from "./manager/object";
 import npc from "./manager/npc";
+import skill from "./manager/skill";
 
 import user from "./user";
 import enums from "./enums";
@@ -49,6 +50,7 @@ try {
 
         object.load();
         npc.loadAll();
+        skill.loadAll();
 
         timer.loadAll();
         vBreakLight.timer();

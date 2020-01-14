@@ -252,6 +252,8 @@ npc.loadAll = function() {
     npc.create(mp.game.joaat("s_m_y_cop_01"), new mp.Vector3(448.1678, -988.1086, 30.68959), 20.97919, false, "WORLD_HUMAN_STAND_MOBILE");
     npc.create(mp.game.joaat("s_m_y_cop_01"), new mp.Vector3(426.3052, -992.8116, 35.68463), 90.84706, false, "WORLD_HUMAN_SMOKING");
 
+    npc.create(mp.game.joaat("ig_priest"), new mp.Vector3(-787.1298828125, -708.8898315429688, 30.32028579711914), 265.47149658203125);
+
     npc.timer();
     npc.timer500();
 };
@@ -320,7 +322,8 @@ npc.timer = function() {
                 mp.game.invoke(methods.DELETE_ENTITY, item.handle);
                 mp.game.invoke(methods.SET_MODEL_AS_NO_LONGER_NEEDED, item.model);*/
                 try {
-                    item.ped.destroy();
+                    if (mp.peds.exists(item.ped))
+                        item.ped.destroy();
                     item.ped = null;
                     item.handle = 0;
                     item.isCreate = false;
@@ -329,9 +332,14 @@ npc.timer = function() {
                     methods.debug(e);
                 }
 
-                if(item.didRequest === true) {
-                    item.didRequest = false;
-                    mp.game.streaming.setModelAsNoLongerNeeded(item.model);
+                try {
+                    if(item.didRequest === true) {
+                        item.didRequest = false;
+                        mp.game.streaming.setModelAsNoLongerNeeded(item.model);
+                    }
+                }
+                catch (e) {
+                    methods.debug(e);
                 }
             }
             catch (e) {
@@ -345,25 +353,35 @@ npc.timer = function() {
 
 npc.timer500 = function() {
 
-    let playerPos = mp.players.local.position;
+    try {
+        let playerPos = mp.players.local.position;
 
-    _npcList.forEach(async function(item) {
+        _npcList.forEach(async function(item) {
 
-        let dist = methods.distanceToPos(playerPos, item.pos);
+            try {
+                let dist = methods.distanceToPos(playerPos, item.pos);
 
-        if (dist <= item.speechRadius && item.isCreate && !item.isSpeech) {
-            if (item.speech1 != "")
-                mp.game.audio.playAmbientSpeechWithVoice(item.handle, item.speech1, '', 'SPEECH_PARAMS_FORCE_SHOUTED', false);
-            //mp.game.invoke(methods.PLAY_AMBIENT_SPEECH1, item.handle, item.speech1, 'SPEECH_PARAMS_FORCE');
-            item.isSpeech = true;
-        }
-        else if (dist > item.speechRadius && item.isCreate && item.isSpeech) {
-            if (item.speech2 != "")
-                mp.game.audio.playAmbientSpeechWithVoice(item.handle, item.speech2, '', 'SPEECH_PARAMS_FORCE_SHOUTED', false);
-            //mp.game.invoke(methods.PLAY_AMBIENT_SPEECH1, item.handle, item.speech2, 'SPEECH_PARAMS_FORCE');
-            item.isSpeech = false;
-        }
-    });
+                if (dist <= item.speechRadius && item.isCreate && !item.isSpeech) {
+                    if (item.speech1 != "")
+                        mp.game.audio.playAmbientSpeechWithVoice(item.handle, item.speech1, '', 'SPEECH_PARAMS_FORCE_SHOUTED', false);
+                    //mp.game.invoke(methods.PLAY_AMBIENT_SPEECH1, item.handle, item.speech1, 'SPEECH_PARAMS_FORCE');
+                    item.isSpeech = true;
+                }
+                else if (dist > item.speechRadius && item.isCreate && item.isSpeech) {
+                    if (item.speech2 != "")
+                        mp.game.audio.playAmbientSpeechWithVoice(item.handle, item.speech2, '', 'SPEECH_PARAMS_FORCE_SHOUTED', false);
+                    //mp.game.invoke(methods.PLAY_AMBIENT_SPEECH1, item.handle, item.speech2, 'SPEECH_PARAMS_FORCE');
+                    item.isSpeech = false;
+                }
+            }
+            catch (e) {
+                methods.debug(e);
+            }
+        });
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 
     setTimeout(npc.timer500, 500);
 };
@@ -377,10 +395,15 @@ npc.create = function(model, pos, heading, empty = false, scenario = "", animati
 };
 
 npc.createPedLocally = function(model, pos, heading) {
-    if (mp.game.streaming.isModelValid(model)) {
-        mp.game.streaming.requestModel(model);
-        if (mp.game.streaming.hasModelLoaded(model))
-            return mp.game.ped.createPed(26, model, pos.x, pos.y, pos.z, heading, false, false);
+    try {
+        if (mp.game.streaming.isModelValid(model)) {
+            mp.game.streaming.requestModel(model);
+            if (mp.game.streaming.hasModelLoaded(model))
+                return mp.game.ped.createPed(26, model, pos.x, pos.y, pos.z, heading, false, false);
+        }
+    }
+    catch (e) {
+        methods.debug(e);
     }
     return 0;
 };

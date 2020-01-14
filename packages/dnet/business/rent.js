@@ -93,7 +93,8 @@ rent.buy = function(player, hash, price, shopId) {
     if (price < 1)
         return;
 
-    let className =  methods.getVehicleInfo(hash).class_name;
+    let vInfo = methods.getVehicleInfo(hash);
+    let className =  vInfo.class_name;
 
     switch (className) {
         case 'Planes':
@@ -155,7 +156,7 @@ rent.buy = function(player, hash, price, shopId) {
     }
 
     user.removeMoney(player, price);
-    business.addMoney(shopId, price);
+    business.addMoney(shopId, price, 'Аренда ' + vInfo.display_name);
 
     player.notify('~g~Вы арендовали транспорт');
     player.notify('~g~Для того чтобы его закрыть, нажмите ~s~L');

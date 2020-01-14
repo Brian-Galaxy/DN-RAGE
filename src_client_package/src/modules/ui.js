@@ -46,11 +46,11 @@ ui.notify = function(text) {
 };
 
 ui.hideHud = function() {
+    mp.game.ui.displayRadar(false);
     if (uiBrowser) {
         try {
             //TODO
             ui.callCef('hud','{"type": "hide"}');
-            mp.game.ui.displayRadar(false);
         }
         catch (e) {
             methods.debug(e);
@@ -59,12 +59,12 @@ ui.hideHud = function() {
 };
 
 ui.showHud = function() {
+    mp.game.ui.displayRadar(true);
     return //TODO ВАЖНО
     if (uiBrowser) {
         try {
             //TODO
             ui.callCef('hud','{"type": "show"}');
-            mp.game.ui.displayRadar(true);
         }
         catch (e) {
             methods.debug(e);

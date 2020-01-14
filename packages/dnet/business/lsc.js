@@ -93,7 +93,7 @@ lsc.repair = function(player, price, shopId) {
 
     veh.repair();
     user.removeMoney(player, price);
-    business.addMoney(shopId, price);
+    business.addMoney(shopId, price, 'Ремонт транспорта');
 
     player.notify('~g~Вы отремонтировали трансопрт');
 
@@ -265,23 +265,23 @@ lsc.buyNumber = function(player, shopId, newNumber) {
 
                 if (newNumber.length == 1) {
                     user.removeMoney(player, 1000000);
-                    business.addMoney(shopId, 500000);
+                    business.addMoney(shopId, 500000, 'Смена номера');
                 }
                 else if (newNumber.length == 2) {
                     user.removeMoney(player, 500000);
-                    business.addMoney(shopId, 200000);
+                    business.addMoney(shopId, 200000, 'Смена номера');
                 }
                 else if (newNumber.length == 3) {
                     user.removeMoney(player, 250000);
-                    business.addMoney(shopId, 100000);
+                    business.addMoney(shopId, 100000, 'Смена номера');
                 }
                 else if (newNumber.length == 4) {
                     user.removeMoney(player, 100000);
-                    business.addMoney(shopId, 50000);
+                    business.addMoney(shopId, 50000, 'Смена номера');
                 }
                 else {
                     user.removeMoney(player, 40000);
-                    business.addMoney(shopId, 40000);
+                    business.addMoney(shopId, 40000, 'Смена номера');
                 }
 
                 mysql.executeQuery(`UPDATE items SET owner_id = '${mp.joaat(newNumber)}' where owner_id = '${mp.joaat(veh.numberPlate)}' and (owner_type = '2' or owner_type = '3' or owner_type = '4')`);

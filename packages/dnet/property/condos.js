@@ -61,7 +61,7 @@ condos.loadBigAll = function() {
             condos.set(item['id'] + 50000, 'y', item['y']);
             condos.set(item['id'] + 50000, 'z', item['z']);
 
-            methods.createBlip(new mp.Vector3(parseFloat(item['x']), parseFloat(item['y']), parseFloat(item['z'])), 40, 0, 0.5);
+            methods.createBlip(new mp.Vector3(parseFloat(item['x']), parseFloat(item['y']), parseFloat(item['z'])), 40, 0, 0.4);
         });
         count = rows.length;
         methods.debug('All Condos Big Loaded: ' + count);
@@ -124,7 +124,7 @@ condos.loadBigLast = function() {
             condos.set(item['id'] + 50000, 'y', item['y']);
             condos.set(item['id'] + 50000, 'z', item['z']);
 
-            methods.createBlip(new mp.Vector3(parseFloat(item['x']), parseFloat(item['y']), parseFloat(item['z'])), 40, 0, 0.5);
+            methods.createBlip(new mp.Vector3(parseFloat(item['x']), parseFloat(item['y']), parseFloat(item['z'])), 40, 0, 0.4);
 
             mp.players.broadcast(`Квартира загружена. ID: ${item['id']}. Name: ${item['number']}`);
         });

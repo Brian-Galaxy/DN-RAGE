@@ -19,6 +19,7 @@ let gun = require('./business/gun');
 let vShop = require('./business/vShop');
 let carWash = require('./business/carWash');
 let rent = require('./business/rent');
+let bar = require('./business/bar');
 
 let houses = require('./property/houses');
 let condos = require('./property/condos');
@@ -48,12 +49,13 @@ function init() {
 
         weather.loadAll();
 
-        cloth.loadAll();
-        tattoo.loadAll();
-        lsc.loadAll();
-        gun.loadAll();
         carWash.loadAll();
         rent.loadAll();
+        lsc.loadAll();
+        bar.loadAll();
+        cloth.loadAll();
+        tattoo.loadAll();
+        gun.loadAll();
 
         pickups.createPickups();
 

@@ -578,6 +578,16 @@ mp.events.add('client:menuList:showRentBikeMenu', (shopId, price) => {
     menuList.showRentBikeMenu(shopId, price);
 });
 
+mp.events.add('client:menuList:showBarMenu', (shopId, price) => {
+    methods.debug('Event: client:menuList:showBarMenu');
+    menuList.showBarMenu(shopId, price);
+});
+
+mp.events.add('client:menuList:showBarFreeMenu', () => {
+    methods.debug('Event: client:menuList:showBarFreeMenu');
+    menuList.showBarFreeMenu();
+});
+
 mp.events.add('client:showToPlayerItemListMenu', (data, ownerType, ownerId) => {
     methods.debug('Event: client:showToPlayerItemListMenu');
     menuList.showToPlayerItemListMenu(data, ownerType, ownerId).then();

@@ -1358,6 +1358,158 @@ menuList.showInvaderShopMenu = function() {
     });
 };
 
+menuList.showBarMenu = function(shopId, price = 1)
+{
+    if (methods.isBlackout()) {
+        mp.game.ui.notifications.show(`~r~В городе отсутствует свет`);
+        return;
+    }
+
+    let menu = UIMenu.Menu.Create("Бар", "~b~Меню бара");
+
+    let itemPrice = 0.50 * price;
+    let menuItem = UIMenu.Menu.AddMenuItem("Вода", `Цена: ~g~${methods.moneyFormat(itemPrice)}`);
+    menuItem.price = itemPrice;
+    menuItem.label = "воду";
+    menuItem.label2 = "Вода";
+
+    itemPrice = 0.90 * price;
+    menuItem = UIMenu.Menu.AddMenuItem("Лимонад", `Цена: ~g~${methods.moneyFormat(itemPrice)}`);
+    menuItem.price = itemPrice;
+    menuItem.label = "лимонад";
+    menuItem.label2 = "Лимонад";
+
+    itemPrice = 0.99 * price;
+    menuItem = UIMenu.Menu.AddMenuItem("Кола", `Цена: ~g~${methods.moneyFormat(itemPrice)}`);
+    menuItem.price = itemPrice;
+    menuItem.label = "колу";
+    menuItem.label2 = "Кола";
+
+    itemPrice = 6.70 * price;
+    menuItem = UIMenu.Menu.AddMenuItem("Пиво", `Цена: ~g~${methods.moneyFormat(itemPrice)}`);
+    menuItem.price = itemPrice;
+    menuItem.label = "пиво";
+    menuItem.label2 = "Пиво";
+    menuItem.drunkLevel = 100;
+
+    itemPrice = 9.99 * price;
+    menuItem = UIMenu.Menu.AddMenuItem("Водка", `Цена: ~g~${methods.moneyFormat(itemPrice)}`);
+    menuItem.price = itemPrice;
+    menuItem.label = "водку";
+    menuItem.label2 = "Водка";
+    menuItem.drunkLevel = 200;
+
+    itemPrice = 12 * price;
+    menuItem = UIMenu.Menu.AddMenuItem("Текила", `Цена: ~g~${methods.moneyFormat(itemPrice)}`);
+    menuItem.price = itemPrice;
+    menuItem.label = "текилу";
+    menuItem.label2 = "Текила";
+    menuItem.drunkLevel = 200;
+
+    itemPrice = 14 * price;
+    menuItem = UIMenu.Menu.AddMenuItem("Бурбон", `Цена: ~g~${methods.moneyFormat(itemPrice)}`);
+    menuItem.price = itemPrice;
+    menuItem.label = "бурбон";
+    menuItem.label2 = "Бурбон";
+    menuItem.drunkLevel = 200;
+
+    itemPrice = 25 * price;
+    menuItem = UIMenu.Menu.AddMenuItem("Виски", `Цена: ~g~${methods.moneyFormat(itemPrice)}`);
+    menuItem.price = itemPrice;
+    menuItem.label = "виски";
+    menuItem.label2 = "Виски";
+    menuItem.drunkLevel = 200;
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = "closeButton";
+    menu.ItemSelect.on(async (item, index) => {
+        UIMenu.Menu.HideMenu();
+        try {
+            if (item.price > 0) {
+                if (user.getMoney() < item.price) {
+                    mp.game.ui.notifications.show("~r~У Вас недостаточно средств");
+                    return;
+                }
+
+                business.addMoney(shopId, item.price, item.label2);
+                user.removeMoney(item.price);
+
+                if (mp.players.local.health < 90)
+                    mp.players.local.health += 5;
+
+                if (item.drunkLevel)
+                    user.addDrugLevel(99, item.drunkLevel);
+
+                chat.sendMeCommand(`выпил ${item.label}`);
+                user.playAnimation("mp_player_intdrink", "loop_bottle", 48);
+            }
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    });
+};
+
+menuList.showBarFreeMenu = function(price = 1)
+{
+    if (methods.isBlackout()) {
+        mp.game.ui.notifications.show(`~r~В городе отсутствует свет`);
+        return;
+    }
+
+    let menu = UIMenu.Menu.Create("Бар", "~b~Меню бара");
+
+    let menuItem = UIMenu.Menu.AddMenuItem("Вода");
+    menuItem.label = "воду";
+
+    menuItem = UIMenu.Menu.AddMenuItem("Лимонад");
+    menuItem.label = "лимонад";
+
+    menuItem = UIMenu.Menu.AddMenuItem("Кола");
+    menuItem.label = "колу";
+
+    menuItem = UIMenu.Menu.AddMenuItem("Пиво");
+    menuItem.label = "пиво";
+    menuItem.drunkLevel = 100;
+
+    menuItem = UIMenu.Menu.AddMenuItem("Водка");
+    menuItem.label = "водку";
+    menuItem.drunkLevel = 200;
+
+    menuItem = UIMenu.Menu.AddMenuItem("Текила");
+    menuItem.price = itemPrice;
+    menuItem.label = "текилу";
+    menuItem.drunkLevel = 200;
+
+    menuItem = UIMenu.Menu.AddMenuItem("Бурбон");
+    menuItem.label = "бурбон";
+    menuItem.drunkLevel = 200;
+
+    menuItem = UIMenu.Menu.AddMenuItem("Виски");
+    menuItem.label = "виски";
+    menuItem.drunkLevel = 200;
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = "closeButton";
+    menu.ItemSelect.on(async (item, index) => {
+        UIMenu.Menu.HideMenu();
+        try {
+            if (item.price > 0) {
+
+                if (mp.players.local.health < 90)
+                    mp.players.local.health += 5;
+
+                if (item.drunkLevel)
+                    user.addDrugLevel(99, item.drunkLevel);
+
+                chat.sendMeCommand(`выпил ${item.label}`);
+                user.playAnimation("mp_player_intdrink", "loop_bottle", 48);
+            }
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    });
+};
+
 menuList.showRentBikeMenu = function(shopId, price = 1)
 {
     UIMenu.Menu.HideMenu();

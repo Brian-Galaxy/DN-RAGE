@@ -101,8 +101,9 @@ enums.userData = [
     "watch_color",
     "bracelet", //7
     "bracelet_color",
+
     "tprint_o",
-    "tprint_с",
+    "tprint_c",
 
     "tattoo",
     "weapon_1",

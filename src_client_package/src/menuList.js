@@ -1630,7 +1630,7 @@ menuList.showBarberShopMenu = function (shopId) {
                 mp.players.local.setComponentVariation(2, skin.SKIN_HAIR, 0, 2);
                 mp.players.local.setHairColor(skin.SKIN_HAIR_COLOR, skin.SKIN_HAIR_COLOR_2);
 
-                user.updateTattoo(true);
+                user.updateTattoo(true, true, true, false);
 
                 let data = JSON.parse(enums.get('overlays'))[user.getSex()][skin.SKIN_HAIR];
                 user.setDecoration(data[0], data[1], true);
@@ -2040,9 +2040,10 @@ menuList.showShopClothMenu = function (shopId, type, menuType) {
             UIMenu.Menu.AddMenuItem("Ноги").doName = "legs";
             UIMenu.Menu.AddMenuItem("Обувь").doName = "shoes";
         } else {
-            /*if (menuType == 7) {
-                UIMenu.Menu.AddMenuItem("~y~Снять").doName = "takeOff";
-            }*/
+
+            if (type == 11)
+                user.updateTattoo(true, true, false, true);
+
             let skin = JSON.parse(user.getCache('skin'));
             let cloth = skin.SKIN_SEX == 1 ? JSON.parse(enums.get('clothF')) : JSON.parse(enums.get('clothM'));
             for (let i = 0; i < cloth.length; i++) {
@@ -2080,6 +2081,8 @@ menuList.showShopClothMenu = function (shopId, type, menuType) {
 
         menu.MenuClose.on(() => {
             try {
+                if (type == 11)
+                    user.updateTattoo();
                 user.updateCharacterCloth();
             } catch (e) {
                 methods.debug('Exception: menuList.showShopClothMenu menu.MenuClose');
@@ -2256,6 +2259,129 @@ menuList.showShopPropMenu = function (shopId, type, menuType) {
             methods.debug('Exception: menuList.showShopPropMenu menu.ItemSelect');
             methods.debug(e);
         }
+    });
+};
+
+menuList.showShopMaskMenu = function (shopId) {
+    try {
+        methods.debug('Execute: menuList.showShopMaskMenu');
+
+        let menu = UIMenu.Menu.Create("Маски", "~b~Магазин масок");
+
+        let maskIdx = 1;
+        for (let i = 1; i < 180; i++) {
+            let id = i;
+
+            let list = [];
+            for (let j = 0; j <= 30; j++) {
+                if (mp.players.local.isComponentVariationValid(1, id, j))
+                    list.push(j + '');
+            }
+
+            UIMenu.Menu.AddMenuItemList("Маска #" + maskIdx, list, `Цена: ~g~$900`).maskId = id;
+            maskIdx++;
+        }
+
+        UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = "closeButton";
+
+        menu.MenuClose.on(() => {
+            try {
+                user.updateCharacterCloth();
+            } catch (e) {
+                methods.debug('Exception: menuList.showShopClothMenu menu.MenuClose');
+                methods.debug(e);
+            }
+        });
+
+        let currentListChangeItem = null;
+        let currentListChangeItemIndex = 0;
+
+        menu.ListChange.on((item, index) => {
+            currentListChangeItem = item;
+            currentListChangeItemIndex = index;
+            cloth.changeMask(item.maskId, index);
+        });
+
+        menu.ItemSelect.on(async (item, index) => {
+            try {
+                if (item == currentListChangeItem) {
+                    cloth.buyMask(900, item.maskId, currentListChangeItemIndex, shopId);
+                }
+                if (item.doName == "closeButton") {
+                    UIMenu.Menu.HideMenu();
+                    user.updateCharacterCloth();
+                }
+            } catch (e) {
+                methods.debug('Exception: menuList.showShopClothMenu menu.ItemSelect');
+                methods.debug(e);
+            }
+        });
+    } catch (e) {
+        methods.debug('Exception: menuList.showShopMaskMenu');
+        methods.debug(e);
+    }
+};
+
+menuList.showPrintShopMenu = function()
+{
+    UIMenu.Menu.HideMenu();
+
+    if (user.get('torso') == 15)
+    {
+        mp.game.ui.notifications.show("~r~Вам необходимо купить вверхнюю одежду в магазине одежды, прежде чем пользоваться услугой наклейки принта");
+        return;
+    }
+
+    if (methods.isBlackout()) {
+        mp.game.ui.notifications.show(`~r~В городе отсутствует свет`);
+        return;
+    }
+    let menu = UIMenu.Menu.Create("Магазин", "~b~Магазин принтов");
+
+    let list = [];
+
+    let printList = JSON.parse(enums.get('printList'));
+
+    for (let i = 0; i < printList.length; i++) {
+
+        let price = 1999.90;
+        if (user.getSex() == 1 && printList[i][2] != "") {
+            let menuListItem = UIMenu.Menu.AddMenuItem('Принт #' + i, `Цена: ~g~${methods.moneyFormat(price)}`);
+            menuListItem.doName = 'show';
+            menuListItem.price = price;
+            menuListItem.tatto1 = printList[i][0];
+            menuListItem.tatto2 = printList[i][2];
+
+            list.push(menuListItem);
+        }
+        else if (user.getSex() == 0 && printList[i][1] != "") {
+            let menuListItem = UIMenu.Menu.AddMenuItem('Принт #' + i, `Цена: ~g~${methods.moneyFormat(price)}`);
+            menuListItem.doName = 'show';
+            menuListItem.price = price;
+            menuListItem.tatto1 = printList[i][0];
+            menuListItem.tatto2 = printList[i][1];
+
+            list.push(menuListItem);
+        }
+    }
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = "closeButton";
+
+    menu.IndexChange.on((index) => {
+        if (index >= list.length)
+            return;
+        user.updateTattoo(true, true, false, true);
+        user.setDecoration(list[index].tatto1, list[index].tatto2, true);
+    });
+
+    menu.MenuClose.on(() => {
+        user.updateTattoo();
+    });
+
+    menu.ItemSelect.on((item, index) => {
+        UIMenu.Menu.HideMenu();
+        if(item.doName == 'show')
+            mp.events.callRemote('server:print:buy', item.tatto1, item.tatto2, item.price);
     });
 };
 

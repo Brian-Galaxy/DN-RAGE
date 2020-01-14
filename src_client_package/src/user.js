@@ -615,30 +615,38 @@ user.updateCharacterCloth = function() {
     mp.events.callRemote('server:user:updateCharacterCloth');
 };
 
-user.updateTattoo = function(isLocal = false) {
+user.updateTattoo = function(isLocal = false, updateTattoo = true, updatePrint = true, updateHair = true) {
     if (!isLocal)
         mp.events.callRemote('server:user:updateTattoo');
     else {
         try {
             user.clearDecorations(true);
-            let tattooList = JSON.parse(user.getCache( 'tattoo'));
 
-            if (tattooList != null) {
-                try {
-                    tattooList.forEach(function (item) {
-                        user.setDecoration(item[0], item[1], true);
-                    });
-                }
-                catch (e) {
-                    methods.debug(e);
+            if (updateTattoo) {
+                let tattooList = JSON.parse(user.getCache( 'tattoo'));
+                if (tattooList != null) {
+                    try {
+                        tattooList.forEach(function (item) {
+                            if (user.getCache('tprint_c') != "" && item[2] == 'ZONE_TORSO')
+                                return;
+                            user.setDecoration(item[0], item[1], true);
+                        });
+                    }
+                    catch (e) {
+                        methods.debug(e);
+                    }
                 }
             }
 
-            let data = JSON.parse(enums.get('overlays'))[user.getSex()][user.getCache( "SKIN_HAIR")];
-            user.setDecoration(data[0], data[1], true);
+            if (updateHair) {
+                let data = JSON.parse(enums.get('overlays'))[user.getSex()][user.getCache( "SKIN_HAIR")];
+                user.setDecoration(data[0], data[1], true);
+            }
 
-            if (user.getCache('tprint_c') != "" && user.getCache( 'tprint_o') != "")
-                user.setDecoration( user.getCache( 'tprint_c'), user.getCache( 'tprint_o'), true);
+            if (updatePrint) {
+                if (user.getCache('tprint_c') != "" && user.getCache( 'tprint_o') != "")
+                    user.setDecoration( user.getCache( 'tprint_c'), user.getCache( 'tprint_o'), true);
+            }
         }
         catch (e) {
             methods.debug('user.updateTattoo', e);

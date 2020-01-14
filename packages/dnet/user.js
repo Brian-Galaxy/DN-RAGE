@@ -611,9 +611,6 @@ user.updateCharacterCloth = function(player) {
         return;
     try {
 
-        user.updateTattoo(player);
-        user.clearAllProp(player); //TODO переделать
-
         let cloth_data = {};
 
         cloth_data.torso = user.get(player, 'torso');
@@ -681,6 +678,9 @@ user.updateCharacterCloth = function(player) {
                 user.setProp(player, 7, cloth_data['bracelet'], cloth_data['bracelet_color']);
             }
         }, 10); //TODO
+
+        user.updateTattoo(player);
+        user.clearAllProp(player); //TODO переделать
     } catch (e) {
         methods.debug(e);
     }
@@ -698,6 +698,8 @@ user.updateTattoo = function(player) {
         if (tattooList != null) {
             try {
                 tattooList.forEach(function (item) {
+                    if (user.get(player, 'tprint_c') != "" && item[2] == 'ZONE_TORSO')
+                        return;
                     user.setDecoration(player, item[0], item[1]);
                 });
             }
@@ -709,8 +711,10 @@ user.updateTattoo = function(player) {
         let data = enums.hairOverlays[methods.parseInt(user.get(player, "SKIN_SEX"))][user.get(player, "SKIN_HAIR")];
         user.setDecoration(player, data[0], data[1]);
 
-        if (user.get(player, 'tprint_c') != "" && user.get(player, 'tprint_o') != "")
-            user.setDecoration(player, user.get(player, 'tprint_c'), user.get(player, 'tprint_o'));
+        if (user.get(player, 'body') == player.getVariable('topsDraw')) {
+            if (user.get(player, 'tprint_c') != "" && user.get(player, 'tprint_o') != "")
+                user.setDecoration(player, user.get(player, 'tprint_c'), user.get(player, 'tprint_o'));
+        }
     }
     catch (e) {
         methods.debug('user.updateTattooServ', e);
@@ -829,6 +833,8 @@ user.setComponentVariation = function(player, component, drawableId, textureId) 
                 methods.debug(e);
             }
         });
+        player.setVariable('topsDraw', drawableId);
+        player.setVariable('topsColor', textureId);
     }
     else
         player.setClothes(component, drawableId, textureId, 2);

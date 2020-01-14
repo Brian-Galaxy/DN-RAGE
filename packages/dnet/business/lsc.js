@@ -18,7 +18,7 @@ lsc.loadAll = function() {
     methods.debug('lsc.loadAll');
     lsc.list.forEach(function (item) {
         let shopPos = new mp.Vector3(item[0], item[1], item[2]);
-        methods.createBlip(shopPos, 446, 0, 0.8, 'Автомастерская');
+        methods.createBlip(shopPos, 446, 0, 0.6, 'Автомастерская');
     });
 
     lsc.carPos.forEach(function (item) {

@@ -550,7 +550,12 @@ mp.events.add('client:menuList:showTattooShopMenu', (title1, title2, shopId) => 
 
 mp.events.add('client:menuList:showShopMaskMenu', (shopId) => {
     methods.debug('Event: client:menuList:showShopMaskMenu');
-    //menuList.showShopMaskMenu(shopId);
+    menuList.showShopMaskMenu(shopId);
+});
+
+mp.events.add('client:menuList:showPrintShopMenu', () => {
+    methods.debug('Event: client:menuList:showPrintShopMenu');
+    menuList.showPrintShopMenu();
 });
 
 mp.events.add('client:menuList:showGunShopMenu', (shopId, price) => {
@@ -992,6 +997,7 @@ mp.events.add('client:inventory:unEquip', function(id, itemId) {
             user.updateCharacterCloth();
             user.updateTattoo();
         }
+        user.save();
     }
     else if (itemId == 266) {
         if (user.getSex() == 0)
@@ -1006,6 +1012,7 @@ mp.events.add('client:inventory:unEquip', function(id, itemId) {
             user.set("leg_color", 0);
             user.updateCharacterCloth();
         }
+        user.save();
     }
     else if (itemId == 267) {
         if (user.getSex() == 0)
@@ -1020,41 +1027,49 @@ mp.events.add('client:inventory:unEquip', function(id, itemId) {
             user.set("foot_color", 0);
             user.updateCharacterCloth();
         }
+        user.save();
     }
     else if (itemId == 268) {
         user.set("accessorie", 0);
         user.set("accessorie_color", 0);
         user.updateCharacterCloth();
+        user.save();
     }
     else if (itemId == 269) {
         user.set("hat", -1);
         user.set("hat_color", -1);
         user.updateCharacterCloth();
+        user.save();
     }
     else if (itemId == 270) {
         user.set("glasses", -1);
         user.set("glasses_color", -1);
         user.updateCharacterCloth();
+        user.save();
     }
     else if (itemId == 271) {
         user.set("ear", -1);
         user.set("ear_color", -1);
         user.updateCharacterCloth();
+        user.save();
     }
     else if (itemId == 272) {
         user.set("watch", -1);
         user.set("watch_color", -1);
         user.updateCharacterCloth();
+        user.save();
     }
     else if (itemId == 273) {
         user.set("bracelet", -1);
         user.set("bracelet_color", -1);
         user.updateCharacterCloth();
+        user.save();
     }
     else if (itemId == 274) {
         user.set("mask", 0);
         user.set("mask_color", 0);
         user.updateCharacterCloth();
+        user.save();
     }
     //inventory.updateEquipStatus(id, false);
     inventory.updateItemsEquipByItemId(itemId, inventory.types.Player, user.getCache('id'), 0);
@@ -1070,7 +1085,6 @@ mp.events.add('client:inventory:equip', function(id, itemId, count, aparams) {
     catch (e) {
         methods.debug(e);
     }
-
 
     if (itemId == 50) {
         if (user.getCache('bank_card') == 0) {

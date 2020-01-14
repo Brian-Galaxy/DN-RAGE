@@ -303,6 +303,12 @@ mp.events.addRemoteCounted('server:business:cloth:buyProp', (player, price, body
     cloth.buyProp(player, price, body, clothId, color, itemName, shopId, isFree);
 });
 
+mp.events.addRemoteCounted('server:print:buy', (player, slot, type, price) => {
+    if (!user.isLogin(player))
+        return;
+    cloth.buyPrint(player, slot, type, price);
+});
+
 mp.events.addRemoteCounted('server:tattoo:buy', (player, slot, type, zone, price, itemName, shopId) => {
     if (!user.isLogin(player))
         return;
@@ -1628,6 +1634,7 @@ mp.events.addRemoteCounted('server:uniform:sapd', (player, idx) => {
                 }
                 break;
         }
+        user.updateTattoo(player);
     }
     catch (e) {
         methods.debug(e);
@@ -1845,6 +1852,7 @@ mp.events.addRemoteCounted('server:uniform:sheriff', (player, idx) => {
                 }
                 break;
         }
+        user.updateTattoo(player);
     }
     catch (e) {
         methods.debug(e);
@@ -2007,6 +2015,7 @@ mp.events.addRemoteCounted('server:uniform:ems', (player, idx) => {
                 }
                 break;
         }
+        user.updateTattoo(player);
     }
     catch (e) {
         methods.debug(e);

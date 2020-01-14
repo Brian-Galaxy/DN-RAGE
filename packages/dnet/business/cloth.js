@@ -1,16 +1,24 @@
-let enums = require('../enums');
 let methods = require('../modules/methods');
+let mysql = require('../modules/mysql');
+
+let enums = require('../enums');
 let user = require('../user');
 let inventory = require('../inventory');
+
 let business = require('../property/business');
+
 let shopList = enums.shopList;
 
 let cloth = exports;
 
 cloth.maskShop = new mp.Vector3(-1337.255, -1277.948, 3.872962);
+cloth.printShopPos = new mp.Vector3(-1234.7786865234375, -1477.7230224609375, 3.324739933013916);
 
 cloth.loadAll = function(){
     methods.debug('barberShop.loadAll');
+
+    methods.createBlip(cloth.printShopPos, 72, 0, 0.8, 'Print Shop');
+    methods.createStaticCheckpointV(cloth.printShopPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, [33, 150, 243, 100]);
 
     methods.createBlip(cloth.maskShop, 437, 0, 0.8, 'Vespucci Movie Masks');
     methods.createStaticCheckpoint(cloth.maskShop.x, cloth.maskShop.y, cloth.maskShop.z, "Нажмите ~g~E~s~ чтобы открыть меню магазина", 0.8, -1, [33, 150, 243, 100], 0.3);
@@ -59,6 +67,11 @@ cloth.checkPosForOpenMenu = function (player) {
 
         if (methods.distanceToPos(cloth.maskShop, playerPos) < 2) {
             player.call('client:menuList:showShopMaskMenu', [74]);
+            return;
+        }
+
+        if (methods.distanceToPos(cloth.printShopPos, playerPos) < 2) {
+            player.call('client:menuList:showPrintShopMenu');
             return;
         }
 
@@ -258,7 +271,7 @@ cloth.buy = function (player, price, body, cloth, color, torso, torsoColor, para
             user.set(player, 'tprint_o', '');
             user.setComponentVariation(player, 8, parachute, parachuteColor);
 
-            params = `{"name": "${itemName}", "body": ${cloth}, "body_color": ${color}, "torso": ${torso}, "torso_color": ${torsoColor}, "parachute": ${parachute}, "parachute_color": ${parachuteColor}, "tprint_c": "", "tprint_o": ""}`;
+            params = `{"name": "${itemName}", "body": ${cloth}, "body_color": ${color}, "torso": ${torso}, "torso_color": ${torsoColor}, "parachute": ${parachute}, "parachute_color": ${parachuteColor}, "sex": ${user.getSex(player)}, "tprint_c": "", "tprint_o": ""}`;
             inventory.addItem(265, 1, inventory.types.Player, user.getId(player), 1, 1, params, 100);
             break;
     }
@@ -313,4 +326,47 @@ cloth.buyMask = function (player, price, clothId, color, itemName, shopId) {
     business.addMoney(shopId, price, itemName);
     player.notify("~g~Вы купили маску");
     user.save(player);
+};
+
+
+
+cloth.buyPrint = function(player, collection, overlay, price) {
+    if (!user.isLogin(player))
+        return;
+
+    if (user.getMoney(player) < price) {
+        player.notify('~r~У вас недостаточно средств');
+        return;
+    }
+
+    if (price < 1)
+        return;
+
+    if (user.get(player, 'tprint_c').toString().trim() != '') {
+        player.notify("~r~На данном предмете одежды уже есть принт");
+        user.updateTattoo(player);
+        return;
+    }
+
+    user.set(player, "tprint_c", collection);
+    user.set(player, "tprint_o", overlay);
+
+    user.removeMoney(player, price);
+    business.addMoney(166, price, 'Покупка принта'); //TODO BUSINESS
+    player.notify('~g~Вы купили принт');
+    user.updateTattoo(player);
+
+    mysql.executeQuery(`SELECT * FROM items WHERE owner_id = '${user.getId(player)}' AND owner_type = '1' AND item_id = '265' AND is_equip = '1' ORDER BY id DESC`, function (err, rows, fields) {
+        rows.forEach(row => {
+            try {
+                let params = JSON.parse(row['params']);
+                params.tprint_c = collection;
+                params.tprint_o = overlay;
+                inventory.updateItemParams(row['id'], JSON.stringify(params));
+            }
+            catch (e) {
+                methods.debug(e);
+            }
+        });
+    });
 };

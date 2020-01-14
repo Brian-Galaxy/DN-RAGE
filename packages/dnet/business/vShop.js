@@ -123,6 +123,51 @@ vShop.buy = function(player, model, color1, color2, shopId) {
         return;
     }
 
+    switch (vInfo.class_name) {
+        case 'Planes':
+        case 'Helicopters':
+            if (!user.get(player, 'air_lic')) {
+                player.notify('~r~У Вас нет лицензии пилота');
+                return;
+            }
+            break;
+        case 'Boats':
+            if (!user.get(player, 'ship_lic')) {
+                player.notify('~r~У Вас нет лицензии на водный транспорт');
+                return;
+            }
+            break;
+        case 'Commercials':
+        case 'Industrial':
+            if (!user.get(player, 'c_lic')) {
+                player.notify('~r~У Вас нет лицензии категории C');
+                return;
+            }
+            break;
+        case 'Compacts':
+        case 'Coupes':
+        case 'Muscle':
+        case 'Off-Road':
+        case 'Sedans':
+        case 'Sports':
+        case 'Sports Classics':
+        case 'Super':
+        case 'SUVs':
+        case 'Utility':
+        case 'Vans':
+            if (!user.get(player, 'b_lic')) {
+                player.notify('~r~У Вас нет лицензии категории B');
+                return;
+            }
+            break;
+        case 'Motorcycles':
+            if (!user.get(player, 'a_lic')) {
+                player.notify('~r~У Вас нет лицензии категории А');
+                return;
+            }
+            break;
+    }
+
     let freeSlot = 0;
 
     for (let i = 1; i <= 10; i++) {

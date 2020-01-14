@@ -92,7 +92,7 @@ tattoo.buy = function(player, collection, overlay, zone, price, itemName, shopId
         return;
     }
 
-    tattooList.push([collection, overlay]);
+    tattooList.push([collection, overlay, zone]);
 
     user.set(player, 'tattoo', JSON.stringify(tattooList));
 
@@ -116,46 +116,19 @@ tattoo.destroy = function(player, collection, overlay, zone, price, itemName, sh
         return;
 
     let tattooList = JSON.parse(user.get(player, 'tattoo'));
-    if (tattooList.length > 20) {
-        player.notify('~r~У Вас на теле слишком много тату, для начала надо свести старые');
-        user.updateTattoo(player);
-        return;
-    }
+    let newArray = [];
 
-    tattooList.push([collection, overlay]);
+    tattooList.forEach(item => {
+        if (collection == item[0] && overlay == item[1])
+            return;
+        newArray.push(item);
+    });
 
-    user.set(player, 'tattoo', JSON.stringify(tattooList));
+    user.set(player, 'tattoo', JSON.stringify(newArray));
 
     user.removeMoney(player, price);
     business.addMoney(shopId, price, itemName);
-    player.notify('~g~Вы набили татуировку');
+    player.notify('~g~Вы сделали лазерную коррецию');
     user.updateTattoo(player);
     user.save(player);
-};
-
-tattoo.buyPrint = function(player, collection, overlay, price) {
-    if (!user.isLogin(player))
-        return;
-
-    if (user.getMoney(player) < price) {
-        player.notify('~r~У вас недостаточно средств');
-        return;
-    }
-
-    if (price < 1)
-        return;
-
-    if (user.get(player, 'tprint_c') != '') {
-        player.notify("~r~На данном предмете одежды уже есть принт");
-        user.updateTattoo(player);
-        return;
-    }
-
-    user.set(player, "tprint_c", collection);
-    user.set(player, "tprint_o", overlay);
-
-    user.removeMoney(player, price);
-    //business.addMoney(166, price);
-    player.notify('~g~Вы купили принт');
-    user.updateTattoo(player);
 };

@@ -244,6 +244,20 @@ vShop.rent = function(player, model, color1, color2, shopId) {
             break;
     }
 
+    let countOwnerCars = 0;
+
+    mp.vehicles.forEach(function (v) {
+        if (!vehicles.exists(v))
+            return;
+        if (v.getVariable('rentOwner') == user.getId(player))
+            countOwnerCars++;
+    });
+
+    if (countOwnerCars > 10) {
+        player.notify('~r~Нельзя арендовывать более 10 ТС');
+        return;
+    }
+
     user.removeMoney(player, price);
     coffer.addMoney(1, price);
     vehicles.spawnCarCb(veh => {
@@ -256,9 +270,11 @@ vShop.rent = function(player, model, color1, color2, shopId) {
         vSync.setEngineState(veh, false);
         veh.locked = true;
         veh.setVariable('owner_id', user.getId(player));
+        veh.setVariable('rentOwner', user.getId(player));
 
+        if (!user.isLogin(player))
+            return;
         player.putIntoVehicle(veh, -1);
-
         vShop.sendNotify(player, shopId, 'Аренда', `Вы арендовали транспорт ~b~${vInfo.display_name}~s~.`);
 
     }, new mp.Vector3(shopItem.spawnPos[0], shopItem.spawnPos[1], shopItem.spawnPos[2]), shopItem.spawnPos[3], model);

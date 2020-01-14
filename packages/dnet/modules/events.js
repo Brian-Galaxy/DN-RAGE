@@ -21,6 +21,7 @@ let tattoo = require('../business/tattoo');
 let lsc = require('../business/lsc');
 let gun = require('../business/gun');
 let vShop = require('../business/vShop');
+let rent = require('../business/rent');
 
 let pickups = require('../managers/pickups');
 
@@ -312,6 +313,12 @@ mp.events.addRemoteCounted('server:tattoo:destroy', (player, slot, type, zone, p
     if (!user.isLogin(player))
         return;
     tattoo.destroy(player, slot, type, zone, price, itemName, shopId);
+});
+
+mp.events.addRemoteCounted('server:rent:buy', (player, hash, price, shopId) => {
+    if (!user.isLogin(player))
+        return;
+    rent.buy(player, hash, price, shopId);
 });
 
 mp.events.add('server:user:save', (player) => {

@@ -1358,6 +1358,83 @@ menuList.showInvaderShopMenu = function() {
     });
 };
 
+menuList.showRentBikeMenu = function(shopId, price = 1)
+{
+    UIMenu.Menu.HideMenu();
+
+    if (methods.isBlackout()) {
+        mp.game.ui.notifications.show(`~r~В городе отсутствует свет`);
+        return;
+    }
+
+    let menu = UIMenu.Menu.Create("Аренда", "~b~Аренда");
+
+    if (user.getCache('online_time') <= 370)
+        price = 1;
+
+    let itemPrice = 3 * price;
+    let menuItem = UIMenu.Menu.AddMenuItem("Cruiser", `Цена: ~g~${methods.moneyFormat(itemPrice)}`);
+    menuItem.price = itemPrice;
+    menuItem.hash = 448402357;
+
+    itemPrice = 5 * price;
+    menuItem = UIMenu.Menu.AddMenuItem("Bmx", `Цена: ~g~${methods.moneyFormat(itemPrice)}`);
+    menuItem.price = itemPrice;
+    menuItem.hash = 1131912276;
+
+    itemPrice = 10 * price;
+    menuItem = UIMenu.Menu.AddMenuItem("Fixter", `Цена: ~g~${methods.moneyFormat(itemPrice)}`);
+    menuItem.price = itemPrice;
+    menuItem.hash = -836512833;
+
+    itemPrice = 10 * price;
+    menuItem = UIMenu.Menu.AddMenuItem("Scorcher", `Цена: ~g~${methods.moneyFormat(itemPrice)}`);
+    menuItem.price = itemPrice;
+    menuItem.hash = -186537451;
+
+    itemPrice = 30 * price;
+    menuItem = UIMenu.Menu.AddMenuItem("TriBike", `Цена: ~g~${methods.moneyFormat(itemPrice)}`);
+    menuItem.price = itemPrice;
+    menuItem.hash = 1127861609;
+
+    itemPrice = 30 * price;
+    menuItem = UIMenu.Menu.AddMenuItem("TriBike2", `Цена: ~g~${methods.moneyFormat(itemPrice)}`);
+    menuItem.price = itemPrice;
+    menuItem.hash = -1233807380;
+
+    itemPrice = 30 * price;
+    menuItem = UIMenu.Menu.AddMenuItem("TriBike3", `Цена: ~g~${methods.moneyFormat(itemPrice)}`);
+    menuItem.price = itemPrice;
+    menuItem.hash = -400295096;
+
+    itemPrice = 60 * price;
+    menuItem = UIMenu.Menu.AddMenuItem("Faggio", `Цена: ~g~${methods.moneyFormat(itemPrice)}`);
+    menuItem.price = itemPrice;
+    menuItem.hash = -1842748181;
+
+    itemPrice = 55 * price;
+    menuItem = UIMenu.Menu.AddMenuItem("Faggio2", `Цена: ~g~${methods.moneyFormat(itemPrice)}`);
+    menuItem.price = itemPrice;
+    menuItem.hash = 55628203;
+
+    itemPrice = 50 * price;
+    menuItem = UIMenu.Menu.AddMenuItem("Faggio3", `Цена: ~g~${methods.moneyFormat(itemPrice)}`);
+    menuItem.price = itemPrice;
+    menuItem.hash = -1289178744;
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = "closeButton";
+    menu.ItemSelect.on((item, index) => {
+        UIMenu.Menu.HideMenu();
+        try {
+            if (item.price > 0)
+                mp.events.callRemote('server:rent:buy', item.hash, item.price, shopId);
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    });
+};
+
 menuList.showShopClothMenu = function (shopId, type, menuType) {
     try {
         methods.debug('Execute: menuList.showShopClothMenu');

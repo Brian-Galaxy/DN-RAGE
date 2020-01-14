@@ -17,6 +17,8 @@ let tattoo = require('./business/tattoo');
 let lsc = require('./business/lsc');
 let gun = require('./business/gun');
 let vShop = require('./business/vShop');
+let carWash = require('./business/carWash');
+let rent = require('./business/rent');
 
 let houses = require('./property/houses');
 let condos = require('./property/condos');
@@ -50,6 +52,8 @@ function init() {
         tattoo.loadAll();
         lsc.loadAll();
         gun.loadAll();
+        carWash.loadAll();
+        rent.loadAll();
 
         pickups.createPickups();
 

@@ -8,6 +8,8 @@ let tattoo = require('../business/tattoo');
 let lsc = require('../business/lsc');
 let gun = require('../business/gun');
 let vShop = require('../business/vShop');
+let carWash = require('../business/carWash');
+let rent = require('../business/rent');
 
 let business = require('../property/business');
 
@@ -304,6 +306,8 @@ pickups.checkPressE = function(player) {
     tattoo.checkPosForOpenMenu(player);
     gun.checkPosForOpenMenu(player);
     vShop.checkPosForOpenMenu(player);
+    carWash.checkPosForOpenMenu(player);
+    rent.checkPosForOpenMenu(player);
 
     if (methods.distanceToPos(pickups.LifeInvaderShopPos, playerPos) < distanceCheck)
         player.call('client:menuList:showInvaderShopMenu');

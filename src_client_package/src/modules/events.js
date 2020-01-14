@@ -573,6 +573,11 @@ mp.events.add('client:menuList:showInvaderShopMenu', () => {
     menuList.showInvaderShopMenu();
 });
 
+mp.events.add('client:menuList:showRentBikeMenu', (shopId, price) => {
+    methods.debug('Event: client:menuList:showRentBikeMenu');
+    menuList.showRentBikeMenu(shopId, price);
+});
+
 mp.events.add('client:showToPlayerItemListMenu', (data, ownerType, ownerId) => {
     methods.debug('Event: client:showToPlayerItemListMenu');
     menuList.showToPlayerItemListMenu(data, ownerType, ownerId).then();

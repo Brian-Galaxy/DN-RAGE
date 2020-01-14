@@ -150,6 +150,8 @@ timer.min15Timer = function() {
 timer.ms50Timer = function() {
     isDisableControl = vehicles.checkerControl();
 
+    ui.updateVehValues();
+
     if (Container.Data.HasLocally(0, 'hasSeat')) {
         mp.players.local.freezePosition(true);
         mp.players.local.setCollision(false, false);
@@ -205,6 +207,8 @@ timer.tenSecTimer = function() {
     if (user.isLogin())
         vSync.syncToServer();
 
+    mp.events.call('client:vehicle:checker');
+
     if (allModelLoader) {
         try {
             mp.game.invoke("0xBD6E84632DD4CB3F");
@@ -245,7 +249,7 @@ let prevWpPos = new mp.Vector3(0, 0, 0);
 
 timer.secTimer = function() {
 
-    //ui.updateValues(); //TODO ВАЖНО
+    ui.updateValues();
 
     if (deathTimer > 0) {
         deathTimer--;

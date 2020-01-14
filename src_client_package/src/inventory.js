@@ -96,7 +96,7 @@ inventory.openInventoryByEntity = function(entity) {
                 mp.game.ui.notifications.show("~r~Данный транспорт не доступен");
             }
             else {
-                inventory.getItemList(inventory.types.Vehicle, entity.getVariable('invId'));
+                inventory.getItemList(inventory.types.Vehicle, mp.game.joaat(entity.getNumberPlateText().trim()));
                 vehicles.setTrunkStateById(entity.remoteId, true);
             }
         }

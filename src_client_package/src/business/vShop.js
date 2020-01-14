@@ -22,7 +22,6 @@ let openAllDoor = false;
 
 vShop.goToInside = function(shopId, x, y, z, rot, bx, by, bz, cars) {
     try {
-
         carList = cars;
 
         user.setVirtualWorld(mp.players.local.remoteId + 1);
@@ -41,7 +40,6 @@ vShop.goToInside = function(shopId, x, y, z, rot, bx, by, bz, cars) {
         methods.debug(e);
     }
 };
-
 
 vShop.exit = function() {
     try {
@@ -91,10 +89,6 @@ vShop.getColor2 = function() {
     return color2;
 };
 
-vShop.getShopId = function() {
-    return currentShop;
-};
-
 vShop.openAllDoor = function() {
     if (vCurrent && mp.vehicles.exists(vCurrent)) {
         openAllDoor = true;
@@ -119,6 +113,14 @@ vShop.destroyVehicle = function() {
     if (vCurrent && mp.vehicles.exists(vCurrent))
         vCurrent.destroy();
     vCurrent = null;
+};
+
+vShop.getShopId = function() {
+    return currentShop;
+};
+
+vShop.getCarList = function() {
+    return carList;
 };
 
 export default vShop;

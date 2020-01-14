@@ -30,6 +30,7 @@ mp.events.add("BN_ShowWithPicture", async (title, sender, message, notifPic, ico
         switch (notifPic) {
             case 'WEB_SIXFIGURETEMPS':
             case 'WEB_LOSSANTOSPOLICEDEPT':
+            case 'WEB_PREMIUMDELUXEMOTORSPORT':
             case 'DIA_CUSTOMER':
             case 'DIA_TANNOY':
             case 'DIA_POLICE':

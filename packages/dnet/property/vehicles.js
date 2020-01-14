@@ -145,6 +145,10 @@ vehicles.loadUserVehicleByRow = (row) => {
 };
 
 vehicles.spawnPlayerCar = (id) => {
+
+    let spawnPos = new mp.Vector3(vehicles.get(id, 'x'), vehicles.get(id, 'y'), vehicles.get(id, 'z'));
+    let spawnRot = vehicles.get(id, 'rot');
+
     vehicles.spawnCarCb(veh => {
 
         if (!vehicles.exists(veh))
@@ -152,11 +156,11 @@ vehicles.spawnPlayerCar = (id) => {
 
         try {
             let numberStyle = 0;
-            if (id % 3)
+            if (id % 3 === 0)
                 numberStyle = 1;
-            else if (id % 4)
+            else if (id % 4 === 0)
                 numberStyle = 2;
-            else if (id % 5)
+            else if (id % 5 === 0)
                 numberStyle = 3;
 
             veh.numberPlate = vehicles.get(id, 'number').toString();
@@ -172,6 +176,7 @@ vehicles.spawnPlayerCar = (id) => {
             veh.setVariable('vid', id);
             veh.setVariable('price', vehicles.get(id, 'price'));
 
+            vehicles.set(id, 'serverId', veh.id);
             vehicles.setFuel(veh, vehicles.get(id, 'fuel'));
             vehicles.setTunning(veh);
         }
@@ -179,7 +184,7 @@ vehicles.spawnPlayerCar = (id) => {
             methods.debug(e);
         }
 
-    }, new mp.Vector3(vehicles.get(id, 'x'), vehicles.get(id, 'y'), vehicles.get(id, 'z')), vehicles.get(id, 'rot'), vehicles.get(id, 'name'));
+    }, spawnPos, spawnRot, vehicles.get(id, 'name'));
 };
 
 vehicles.getParkPosition = (className) => {
@@ -675,8 +680,7 @@ vehicles.updateOwnerInfo = function (id, userId, userName) {
 
     if (userId == 0) {
         vehicles.park(id, 0, 0, 0, 0);
-        mysql.executeQuery("UPDATE cars SET user_name = '" + userName + "', user_id = '" + userId + "', number = '" + vehicles.generateNumber() + "', tax_money = '0', s_oil = '0', s_candle = '0', s_body = '0', s_suspension = '0', s_engine = '0', s_wh_b_r = '0', s_wh_bk_r = '0', s_wh_b_l = '0', s_wh_bk_l = '0', s_mp = '0', wanted_level = '0', lock_status = '0', neon_type = '0', sell_price = '0', upgrade = '{\"18\":-1}' where id = '" + id + "'");
-        //Container.Data.ResetAll(id + offset);
+        mysql.executeQuery("UPDATE cars SET user_name = '" + userName + "', user_id = '" + userId + "', number = '" + vehicles.generateNumber() + "', tax_money = '0', s_mp = '0', neon_r = '0', neon_g = '0', neon_b = '0', upgrade = '{\"18\":-1}' where id = '" + id + "'");
     }
 };
 
@@ -746,11 +750,11 @@ vehicles.setTunning = (veh) => {
                     return;
 
                 let numberStyle = 0;
-                if (vid % 3)
+                if (vid % 3 === 0)
                     numberStyle = 1;
-                else if (vid % 4)
+                else if (vid % 4 === 0)
                     numberStyle = 2;
-                else if (vid % 5)
+                else if (vid % 5 === 0)
                     numberStyle = 3;
 
                 veh.numberPlateType = numberStyle;

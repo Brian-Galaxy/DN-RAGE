@@ -59,6 +59,7 @@ ui.hideHud = function() {
 };
 
 ui.showHud = function() {
+    return //TODO ВАЖНО
     if (uiBrowser) {
         try {
             //TODO
@@ -72,6 +73,7 @@ ui.showHud = function() {
 };
 
 ui.updateValues = function() {
+    return; //TODO ВАЖНО
     if (uiBrowser && user.isLogin()) {
         try {
             let data = {
@@ -110,6 +112,17 @@ ui.updateValues = function() {
                 id: mp.players.local.remoteId,
             };
             ui.callCef('hudl', JSON.stringify(data));
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    }
+};
+
+ui.updateVehValues = function() {
+    return; //TODO ВАЖНО
+    if (uiBrowser && user.isLogin()) {
+        try {
 
             let fuelLevel = 0;
             let fuelPostfix = '';
@@ -121,9 +134,9 @@ ui.updateValues = function() {
 
             let veh = mp.players.local.vehicle;
 
-            if (veh) {
+            if (veh && mp.vehicles.exists(veh)) {
                 isShowSpeed = true;
-                isShowLight = veh.getLightsState(1,1).lightsOn || veh.getLightsState(1,1).highbeamsOn;
+                isShowLight = veh.getLightsState(true,true).lightsOn || veh.getLightsState(true,true).highbeamsOn;
                 isShowEngine = veh.getIsEngineRunning();
                 isShowLock = veh.getDoorLockStatus() !== 1;
                 let vInfo = methods.getVehicleInfo(veh.model);
@@ -136,7 +149,7 @@ ui.updateValues = function() {
 
             let vSpeed = methods.getCurrentSpeed();
 
-            data = {
+            let data = {
                 type: 'updateValues',
                 isShow: isShowSpeed,
                 light: isShowLight,

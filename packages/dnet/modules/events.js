@@ -20,6 +20,7 @@ let cloth = require('../business/cloth');
 let tattoo = require('../business/tattoo');
 let lsc = require('../business/lsc');
 let gun = require('../business/gun');
+let vShop = require('../business/vShop');
 
 let pickups = require('../managers/pickups');
 
@@ -670,7 +671,7 @@ mp.events.addRemoteCounted('server:vehicles:spawnJobCar', (player, x, y, z, head
 });
 
 mp.events.addRemoteCounted('server:vehicles:addNew', (player, model, count) => {
-    if (user.isAdmin()) {
+    if (user.isAdmin(player)) {
         vehicles.addNew(model, count);
         player.notify('~g~Транспорт на авторынок был добавлен. Кол-во: ~s~' + count)
     }
@@ -891,13 +892,23 @@ mp.events.addRemoteCounted("server:condos:updatePin", (player, id, pin) => {
     condos.updatePin(id, pin);
 });
 
-
 mp.events.addRemoteCounted("server:condos:lockStatus", (player, id, lockStatus) => {
     if (!user.isLogin(player))
         return;
     condos.lockStatus(id, lockStatus);
 });
 
+mp.events.addRemoteCounted("server:vShop:buy", (player, name, color1, color2, shopId) => {
+    if (!user.isLogin(player))
+        return;
+    vShop.buy(player, name, color1, color2, shopId);
+});
+
+mp.events.addRemoteCounted("server:vShop:rent", (player, name, color1, color2, shopId) => {
+    if (!user.isLogin(player))
+        return;
+    vShop.rent(player, name, color1, color2, shopId);
+});
 
 mp.events.addRemoteCounted("playerEnterCheckpoint", (player, checkpoint) => {
     if (!user.isLogin(player))

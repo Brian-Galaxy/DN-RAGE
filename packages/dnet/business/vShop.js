@@ -1,11 +1,14 @@
 let methods = require('../modules/methods');
 let mysql = require('../modules/mysql');
 
+let vSync = require('../managers/vSync');
+
 let business = require('../property/business');
 let vehicles = require('../property/vehicles');
 
 let user = require('../user');
 let enums = require('../enums');
+let coffer = require('../coffer');
 
 let vShop = exports;
 
@@ -107,6 +110,154 @@ vShop.findNearest = function(pos) {
     return prevPos;
 };
 
-vShop.buy = function(player, itemId, price, count, superTint, tint, shopId) {
+vShop.buy = function(player, model, color1, color2, shopId) {
+    if (!user.isLogin(player))
+        return;
 
+    let vInfo = methods.getVehicleInfo(model);
+    let price = vInfo.price;
+
+    if (user.getMoney(player) < price)
+    {
+        player.notify('~r~У Вас недостаточно средств');
+        return;
+    }
+
+    let freeSlot = 0;
+
+    for (let i = 1; i <= 10; i++) {
+        if (user.get(player, 'car_id' + i) == 0 && freeSlot == 0) {
+            freeSlot = 1;
+            break;
+        }
+    }
+
+    if (freeSlot == 0) {
+        player.notify('~r~У Вас нет свободных слотов под транспорт');
+        return;
+    }
+
+    let shopItem = enums.carShopList[shopId];
+
+    mysql.executeQuery(`SELECT * FROM cars WHERE user_id = '0' AND name = '${vInfo.display_name}' ORDER BY rand() LIMIT 1`, function (err, rows, fields) {
+
+        rows.forEach(row => {
+            let id = row['id'];
+
+            row['user_id'] = user.getId(player);
+            row['user_name'] = user.getRpName(player);
+            row['color1'] = color1;
+            row['color2'] = color2;
+
+            vehicles.updateOwnerInfo(id, user.getId(player), user.getRpName(player));
+            vehicles.loadUserVehicleByRow(row);
+            user.set(player, 'car_id' + freeSlot);
+            user.save(player);
+            vehicles.save(id);
+
+            setTimeout(function () {
+                if (user.isLogin(player)) {
+                    if (vInfo.fuel_type == 3)
+                        vShop.sendNotify(player, shopId, 'Поздравляем', `Поздравляем с покупкой электрокара ~g~${vInfo.display_name}~s~.\n\nСпасибо за то, что сохраняете экологию ;)`);
+                    else
+                        vShop.sendNotify(player, shopId, 'Поздравляем', `~g~Поздравляем с покупкой транспорта ~b~${vInfo.display_name}~s~.`);
+
+                    let serverId = vehicles.get(id, 'serverId');
+                    let veh = mp.vehicles.at(serverId);
+                    if (vehicles.exists(veh)) {
+                        veh.position = new mp.Vector3(shopItem.spawnPos[0], shopItem.spawnPos[1], shopItem.spawnPos[2]);
+                        veh.heading = shopItem.spawnPos[3] - 180;
+                        player.putIntoVehicle(veh, -1);
+                    }
+                }
+            }, 2000);
+        });
+    });
+};
+
+vShop.sendNotify = function(player, shopId, title, text) {
+    if (user.isLogin(player)) {
+        let shopItem = enums.carShopList[shopId];
+        player.notifyWithPicture(`${shopItem.name}`, '~g~' + title, text, shopItem.notifyPic, 2);
+    }
+};
+
+vShop.rent = function(player, model, color1, color2, shopId) {
+
+    if (!user.isLogin(player))
+        return;
+
+    let vInfo = methods.getVehicleInfo(model);
+    let className =  vInfo.class_name;
+    let price = vInfo.price / 100 + 100;
+
+    if (user.getMoney(player) < price)
+    {
+        player.notify('~r~У вас недостаточно средств');
+        return;
+    }
+
+    let shopItem = enums.carShopList[shopId];
+
+    switch (className) {
+        case 'Planes':
+        case 'Helicopters':
+            if (!user.get(player, 'air_lic')) {
+                player.notify('~r~У Вас нет лицензии пилота');
+                return;
+            }
+            break;
+        case 'Boats':
+            if (!user.get(player, 'ship_lic')) {
+                player.notify('~r~У Вас нет лицензии на водный транспорт');
+                return;
+            }
+            break;
+        case 'Commercials':
+        case 'Industrial':
+            if (!user.get(player, 'c_lic')) {
+                player.notify('~r~У Вас нет лицензии категории C');
+                return;
+            }
+            break;
+        case 'Compacts':
+        case 'Coupes':
+        case 'Muscle':
+        case 'Off-Road':
+        case 'Sedans':
+        case 'Sports':
+        case 'Sports Classics':
+        case 'Super':
+        case 'SUVs':
+        case 'Utility':
+        case 'Vans':
+            if (!user.get(player, 'b_lic')) {
+                player.notify('~r~У Вас нет лицензии категории B');
+                return;
+            }
+            break;
+        case 'Motorcycles':
+            if (model != 'Faggio' && !user.get(player, 'a_lic')) {
+                player.notify('~r~У Вас нет лицензии категории А');
+                return;
+            }
+            break;
+    }
+
+    user.removeMoney(player, price);
+    coffer.addMoney(1, price);
+    vehicles.spawnCarCb(veh => {
+
+        if (!vehicles.exists(veh))
+            return;
+
+        veh.numberPlate = ('RENT' + veh.getVariable('vid')).toString().trim();
+        veh.setColor(color1, color2);
+        vSync.setEngineState(veh, false);
+        veh.locked = true;
+        veh.setVariable('owner_id', user.getId(player));
+
+        player.putIntoVehicle(veh, -1);
+
+    }, new mp.Vector3(shopItem.spawnPos[0], shopItem.spawnPos[1], shopItem.spawnPos[2]), shopItem.spawnPos[3], model);
 };

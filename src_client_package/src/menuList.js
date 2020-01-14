@@ -1928,16 +1928,14 @@ menuList.showVehShopListMenu = function(shopId, carList)
     UIMenu.Menu.AddMenuItem("~y~Выйти из просмотра").exits = true;
     UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = "closeButton";
 
+    vShop.createVehicle(list[0].model);
+
     menu.IndexChange.on((index) => {
         if (index >= list.length)
             return;
 
         vShop.createVehicle(list[index].model);
         //menu.GoUp();
-    });
-
-    menu.MenuClose.on(() => {
-
     });
 
     menu.ItemSelect.on((item, index) => {
@@ -1994,8 +1992,9 @@ menuList.showVehShopModelInfoMenu = function(model)
         listItem.Index = vShop.isOpenAllDoor() ? 1 : 0;
     }
 
-    UIMenu.Menu.AddMenuItem(`~g~Купить за ${methods.moneyFormat(vInfo.price, 1)}`);
-    UIMenu.Menu.AddMenuItem(`~g~Аренда за ${methods.moneyFormat(vInfo.price / 50, 1)}`);
+    let rentPrice = vInfo.price / 100 + 100.01;
+    UIMenu.Menu.AddMenuItem(`~g~Купить за ${methods.moneyFormat(vInfo.price, 1)}`).isBuy = true;
+    UIMenu.Menu.AddMenuItem(`~g~Аренда за ${methods.moneyFormat(rentPrice, 1)}`).isRent = true;
 
     if (user.isAdmin(5))
         UIMenu.Menu.AddMenuItem(`~b~Добавить на авторынок`).addAdmin = true;
@@ -2020,10 +2019,32 @@ menuList.showVehShopModelInfoMenu = function(model)
     menu.ItemSelect.on(async (item, index) => {
         UIMenu.Menu.HideMenu();
         if (item.toList)
-            menuList.showVehShopListMenu(vShop.getShopId());
+            menuList.showVehShopListMenu(vShop.getShopId(), vShop.getCarList());
         if (item.addAdmin) {
             let count = methods.parseInt(await UIMenu.Menu.GetUserInput("Кол-во", "", 8));
             mp.events.callRemote('server:vehicles:addNew', vInfo.display_name, count);
+        }
+        if (item.isBuy) {
+
+            let cl1 = vShop.getColor1();
+            let cl2 = vShop.getColor2();
+            let shopId = vShop.getShopId();
+
+            vShop.exit();
+            setTimeout(function () {
+                mp.events.callRemote('server:vShop:buy', vInfo.display_name, cl1 , cl2, shopId);
+            }, 1000);
+        }
+        if (item.isRent) {
+
+            let cl1 = vShop.getColor1();
+            let cl2 = vShop.getColor2();
+            let shopId = vShop.getShopId();
+
+            vShop.exit();
+            setTimeout(function () {
+                mp.events.callRemote('server:vShop:rent', vInfo.display_name, cl1 , cl2, shopId);
+            }, 1000);
         }
         if (item.exits)
             vShop.exit();
@@ -2789,10 +2810,10 @@ menuList.showGunShopWeaponMenu = function(shopId, itemId, price = 1)
                 business.addMoney(shopId, item.price, 'Бронежилет');
             }
             else if (item.price > 0) {
-                /*if (isLic && !user.getCache('gun_lic')) {
+                if (isLic && !user.getCache('gun_lic')) {
                     mp.game.ui.notifications.show("~r~У Вас нет лицензии на оружие");
                     return;
-                }*/
+                }
                 mp.events.callRemote('server:gun:buy', item.itemId, item.price, 1, item.superTint, tintListId[listIndex], shopId);
             }
             else if (item.doName == 'backButton') {
@@ -3548,7 +3569,7 @@ menuList.showAdminMenu = function() {
             mp.events.callRemote('server:user:getPlayerPos');
         }
         if (item.doName == 'server:user:getPlayerPos2') {
-            let str = await UIMenu.Menu.GetUserInput("Коорды", "", 10);
+            let str = await UIMenu.Menu.GetUserInput("Коорды", "", 200);
             mp.events.callRemote('server:user:getPlayerPos2', str);
         }
         if (item.doName == 'server:user:getVehPos') {

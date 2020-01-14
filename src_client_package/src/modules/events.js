@@ -1228,27 +1228,30 @@ mp.events.add('client:inventory:equip', function(id, itemId, count, aparams) {
     inventory.updateEquipStatus(id, true);
 });
 
-mp.events.add("playerEnterVehicle", async function (vehicle, seat) {
+mp.events.add("client:vehicle:checker", function (vehicle, seat) {
 
     try {
-        let boost = 0;
-        if (vehicle.getMod(18) == 1)
-            boost = 5;
+        let vehicle = mp.players.local.vehicle;
+        if (vehicle) {
+            let boost = 0;
+            if (vehicle.getMod(18) == 1)
+                boost = 5;
 
-        let vehInfo = methods.getVehicleInfo(vehicle.model);
-        if (vehInfo.class_name == 'Emergency')
-            boost = boost + 10;
+            let vehInfo = methods.getVehicleInfo(vehicle.model);
+            if (vehInfo.class_name == 'Emergency')
+                boost = boost + 10;
 
-        boost = boost + vehicles.getSpeedBoost(vehicle.model);
+            boost = boost + vehicles.getSpeedBoost(vehicle.model);
 
-        maxSpeed = vehicles.getSpeedMax(vehicle.model);
-        if (maxSpeed == 1)
-            maxSpeed = 350;
+            maxSpeed = vehicles.getSpeedMax(vehicle.model);
+            if (maxSpeed == 1)
+                maxSpeed = 350;
 
-        if (vehicle.getVariable('boost') > 0)
-            vehicle.setEnginePowerMultiplier(vehicle.getVariable('boost') + boost);
-        else if (boost > 1)
-            vehicle.setEnginePowerMultiplier(boost);
+            if (vehicle.getVariable('boost') > 0)
+                vehicle.setEnginePowerMultiplier(vehicle.getVariable('boost') + boost);
+            else if (boost > 1)
+                vehicle.setEnginePowerMultiplier(boost);
+        }
     }
     catch (e) {
         methods.debug(e);

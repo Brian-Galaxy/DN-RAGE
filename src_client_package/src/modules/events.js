@@ -1362,6 +1362,15 @@ mp.keys.bind(0x4C, true, function() {
         mp.events.callRemote('onKeyPress:L');
 });
 
+//9
+mp.keys.bind(0x39, true, function() {
+    if (!user.isLogin())
+        return;
+
+    if (!methods.isBlockKeys())
+        menuList.showAnimationTypeListMenu();
+});
+
 //E
 mp.keys.bind(0x45, true, function() {
     try {

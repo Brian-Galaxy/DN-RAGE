@@ -842,6 +842,26 @@ user.getBankCardPrefix = function(bankCard = 0) {
     return methods.parseInt(bankCard.toString().substring(0, 4));
 };
 
+user.stopAllAnimation = function() {
+    if (!mp.players.local.getVariable("isBlockAnimation")) {
+        //mp.players.local.clearTasks();
+        //mp.players.local.clearSecondaryTask();
+        if (Container.Data.HasLocally(0, 'hasSeat')) {
+            let plPos = mp.players.local.position;
+            mp.players.local.freezePosition(false);
+            mp.players.local.setCollision(true, true);
+            mp.players.local.position = new mp.Vector3(plPos.x, plPos.y, plPos.z + 0.95);
+            Container.Data.ResetLocally(0, 'hasSeat');
+        }
+        mp.events.callRemote('server:stopAllAnimation');
+    }
+};
+
+user.playAnimationWithUser = function(toId, animType) {
+    if (mp.players.local.getVariable("isBlockAnimation") || mp.players.local.isInAnyVehicle(false) || user.isDead()) return;
+    mp.events.callRemote('server:playAnimationWithUser', toId, animType);
+};
+
 user.playAnimation = function(dict, anim, flag = 49, sendEventToServer = true) {
     if (mp.players.local.getVariable("isBlockAnimation") || mp.players.local.isInAnyVehicle(false) || user.isDead()) return;
     mp.events.callRemote('server:playAnimation', dict, anim, methods.parseInt(flag));

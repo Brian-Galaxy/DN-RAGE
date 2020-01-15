@@ -3754,6 +3754,147 @@ menuList.showGunShopWeaponMenu = function(shopId, itemId, price = 1)
     });
 };
 
+menuList.showAnimationTypeListMenu = function() {
+
+    let menu = UIMenu.Menu.Create(`Анимации`, `~b~Меню анимаций`);
+
+    let animActionItem = UIMenu.Menu.AddMenuItem("Анимации действий");
+    let animPoseItem = UIMenu.Menu.AddMenuItem("Позирующие анимации");
+    let animPositiveItem = UIMenu.Menu.AddMenuItem("Положительные эмоции");
+    let animNegativeItem = UIMenu.Menu.AddMenuItem("Негативные эмоции");
+    let animDanceItem = UIMenu.Menu.AddMenuItem("Танцы");
+    let animOtherItem = UIMenu.Menu.AddMenuItem("Остальные анимации");
+    let animSyncItem = UIMenu.Menu.AddMenuItem("Взаимодействие");
+    let animStopItem = UIMenu.Menu.AddMenuItem("~y~Остановить анимацию");
+
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+    menu.ItemSelect.on((item, index) => {
+        UIMenu.Menu.HideMenu();
+        if (item == closeItem)
+            return;
+        else if (item == animStopItem)
+            user.stopAllAnimation();
+        else if (item == animOtherItem)
+            menuList.showAnimationOtherListMenu();
+        else if (item == animSyncItem)
+            menuList.showAnimationSyncListMenu();
+        else if (item == animActionItem)
+            menuList.showAnimationListMenu('Анимации действий', enums.animActions);
+        else if (item == animDanceItem)
+            menuList.showAnimationListMenu('Танцы', enums.animDance);
+        else if (item == animNegativeItem)
+            menuList.showAnimationListMenu('Негативные эмоции', enums.animNegative);
+        else if (item == animPositiveItem)
+            menuList.showAnimationListMenu('Положительные эмоции', enums.animPositive);
+        else if (item == animPoseItem)
+            menuList.showAnimationListMenu('Позирующие анимации', enums.animPose);
+
+    });
+};
+
+menuList.showAnimationListMenu = function(subtitle, array) {
+
+    let menu = UIMenu.Menu.Create(`Анимации`, `~b~${subtitle}`);
+
+    array.forEach(function (item, i, arr) {
+        let menuItem = UIMenu.Menu.AddMenuItem(`${item[0]}`);
+        menuItem.anim1 = item[1];
+        menuItem.anim2 = item[2];
+        menuItem.animFlag = item[3];
+    });
+
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+    menu.ItemSelect.on((item, index) => {
+        if (item == closeItem) {
+            UIMenu.Menu.HideMenu();
+            return;
+        }
+
+        /*
+        .addMenuItem("Сидеть-1", "", false, true, "callServerTrigger", "anim_user", "amb@prop_human_seat_chair@male@generic@base", "base", true)
+        .addMenuItem("Сидеть-2", "", false, true, "callServerTrigger", "anim_user", "amb@prop_human_seat_chair@male@elbows_on_knees@base", "base", true)
+        .addMenuItem("Сидеть-3", "", false, true, "callServerTrigger", "anim_user", "amb@prop_human_seat_chair@male@left_elbow_on_knee@base", "base", true)
+        .addMenuItem("Сидеть-4", "", false, true, "callServerTrigger", "anim_user", "amb@prop_human_seat_chair@male@right_foot_out@base", "base", true)
+        * */
+
+        let plPos = mp.players.local.position;
+
+        if (item.anim1 == 'amb@prop_human_seat_chair@male@generic@base' || item.anim1 == 'amb@prop_human_seat_chair@male@right_foot_out@base' || item.anim1 == 'amb@prop_human_seat_chair@male@left_elbow_on_knee@base' || item.anim1 == 'amb@prop_human_seat_chair@male@elbows_on_knees@base') {
+            mp.players.local.freezePosition(true);
+            mp.players.local.setCollision(false, false);
+            if (!Container.Data.HasLocally(0, 'hasSeat'))
+                mp.players.local.position = new mp.Vector3(plPos.x, plPos.y, plPos.z - 0.95);
+            Container.Data.SetLocally(0, 'hasSeat', true);
+        }
+        else if (Container.Data.HasLocally(0, 'hasSeat')) {
+            mp.players.local.freezePosition(false);
+            mp.players.local.setCollision(true, true);
+            mp.players.local.position = new mp.Vector3(plPos.x, plPos.y, plPos.z + 0.95);
+            Container.Data.ResetLocally(0, 'hasSeat');
+        }
+
+        mp.game.ui.notifications.show("~b~Нажмите ~s~F10~b~ чтобы отменить анимацию");
+        user.playAnimation(item.anim1, item.anim2, item.animFlag);
+    });
+};
+
+menuList.showAnimationOtherListMenu = function() {
+
+    let menu = UIMenu.Menu.Create(`Анимации`, `~b~Остальные анимации`);
+
+    /*enums.scenarios.forEach(function (item, i, arr) {
+        let menuItem = UIMenu.Menu.AddMenuItem(`${item[0]}`);
+        menuItem.scenario = item[1];
+    });*/
+
+    enums.animRemain.forEach(function (item, i, arr) {
+        let menuItem = UIMenu.Menu.AddMenuItem(`${item[0]}`);
+        menuItem.anim1 = item[1];
+        menuItem.anim2 = item[2];
+        menuItem.animFlag = item[3];
+    });
+
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+    menu.ItemSelect.on((item, index) => {
+        if (item == closeItem) {
+            UIMenu.Menu.HideMenu();
+            return;
+        }
+        mp.game.ui.notifications.show("~b~Нажмите ~s~F10~b~ чтобы отменить анимацию");
+        if (item.scenario != undefined)
+            user.playScenario(item.scenario);
+        else
+            user.playAnimation(item.anim1, item.anim2, item.animFlag);
+    });
+};
+
+menuList.showAnimationSyncListMenu = function() {
+
+    let menu = UIMenu.Menu.Create(`Анимации`, `~b~Взаимодействие`);
+
+    UIMenu.Menu.AddMenuItem(`Подзороваться 1`).animId = 0;
+    UIMenu.Menu.AddMenuItem(`Поздороваться 2`).animId = 2;
+    UIMenu.Menu.AddMenuItem(`Дать пять`).animId = 1;
+    UIMenu.Menu.AddMenuItem(`Поцелуй`).animId = 3;
+    //UIMenu.Menu.AddMenuItem(`Минет`).animId = 4;
+    //UIMenu.Menu.AddMenuItem(`Секс`).animId = 5;
+
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+    menu.ItemSelect.on(async (item, index) => {
+        if (item == closeItem) {
+            UIMenu.Menu.HideMenu();
+            return;
+        }
+
+        let playerId = methods.parseInt(await UIMenu.Menu.GetUserInput("ID Игрока", "", 9));
+        if (playerId < 0) {
+            mp.game.ui.notifications.show("~r~ID Игркоа не может быть меньше нуля");
+            return;
+        }
+        user.playAnimationWithUser(playerId, item.animId);
+    });
+};
+
 menuList.showGovGarderobMenu = function() {
     let menu = UIMenu.Menu.Create(`Гардероб`, `~b~Гардероб`);
 

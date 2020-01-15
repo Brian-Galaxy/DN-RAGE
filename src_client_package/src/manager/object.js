@@ -87,6 +87,10 @@ object.load = function () {
     object.delete(-328261803, -153.3487, -2416.379, 6.62532);
     object.delete(1152297372, -156.8004, -2416.041, 5.001884);
 
+    //Binco
+    //object.delete(868499217, -818.7643, -1079.545, 11.47806);
+    //object.delete(3146141106, -816.7932, -1078.406, 11.47806);
+
     const end = new Date().getTime();
     methods.debug('Count Objects Loaded: ' + objectList.length + '  | ' + (end - start) + 'ms');
     object.process();
@@ -110,18 +114,18 @@ object.delete = function (model, x, y, z) {
 
 object.process = function () {
 
-    object.openDoor(9467943, 630,4265, -238.4376, 38.2065);
-    object.openDoor(1425919976, 631,9554, -236.3333, 38.20653);
+    object.openDoor(9467943, 630,4265, -238.4376);
+    object.openDoor(1425919976, 631,9554, -236.3333);
     object.openDoor(2271212864, -447.7092, 6006.717, 31.86633);
     object.openDoor(2271212864, -449.5486, 6008.556, 31.86633);
     object.openDoor(2271212864, -440.9874, 6012.765, 31.86633);
     object.openDoor(2271212864, -442.8268, 6010.925, 31.86633);
 
     //Army
-    object.openDoor(1286392437, 492.2758, -3115.934, 5.162354),
-    object.openDoor(1286392437, 476.3276, -3115.925, 5.162354),
-    object.openDoor(110411286, 260.6432, 203.2052, 106.4049),
-    object.openDoor(110411286, 258.2022, 204.1005, 106.4049),
+    object.openDoor(1286392437, 492.2758, -3115.934, 5.162354);
+    object.openDoor(1286392437, 476.3276, -3115.925, 5.162354);
+    object.openDoor(110411286, 260.6432, 203.2052, 106.4049);
+    object.openDoor(110411286, 258.2022, 204.1005, 106.4049);
 
     //Other
     object.openDoor(1991494706, 523.8579, 167.7482, 100.5352);
@@ -227,8 +231,10 @@ object.process = function () {
     object.openDoor(1780022985, 127.8201, -211.8274, 55.22751);
     object.openDoor(868499217, 418.5713, -806.3979, 29.64108);
     object.openDoor(3146141106, 418.5713, -808.674, 29.64108);
+
     object.openDoor(868499217, -818.7643, -1079.545, 11.47806);
     object.openDoor(3146141106, -816.7932, -1078.406, 11.47806);
+
     object.openDoor(868499217, 82.38156, -1392.752, 29.52609);
     object.openDoor(3146141106, 82.38156, -1390.476, 29.52609);
     object.openDoor(868499217, -1096.661, 2705.446, 19.25781);
@@ -304,20 +310,30 @@ object.process = function () {
     let playerPos = mp.players.local.position;
 
     objectDelList.forEach(function(item) {
-        if (methods.distanceToPos(playerPos, new mp.Vector3(item.x, item.y, item.z)) < loadDist)
-            mp.game.entity.createModelHide(item.x, item.y, item.z, 2, item.model, true);
+        try {
+            if (methods.distanceToPos(playerPos, new mp.Vector3(item.x, item.y, item.z)) < loadDist)
+                mp.game.entity.createModelHide(item.x, item.y, item.z, 2, item.model, true);
+        }
+        catch (e) {
+            methods.debug(e);
+        }
     });
 
     iplList.forEach(item => {
-        let dist = methods.distanceToPos(playerPos, item.pos);
-        let radius = item.radius;
-        if (dist < radius && !item.isLoad) {
-            mp.game.streaming.requestIpl(item.ipl);
-            item.isLoad = true;
+        try {
+            let dist = methods.distanceToPos(playerPos, item.pos);
+            let radius = item.radius;
+            if (dist < radius && !item.isLoad) {
+                mp.game.streaming.requestIpl(item.ipl);
+                item.isLoad = true;
+            }
+            else if (dist > radius + 50 && item.isLoad) {
+                mp.game.streaming.removeIpl(item.ipl);
+                item.isLoad = false;
+            }
         }
-        else if (dist > radius + 50 && item.isLoad) {
-            mp.game.streaming.removeIpl(item.ipl);
-            item.isLoad = false;
+        catch (e) {
+            methods.debug(e);
         }
     });
 
@@ -386,12 +402,17 @@ object.process = function () {
 };
 
 object.openDoor = function (hash, x, y, z, isClose) {
-    if (isClose == undefined)
-        isClose = false;
-    if (methods.distanceToPos(mp.players.local.position, new mp.Vector3(x, y, z)) < loadDist) {
-        mp.game.object.doorControl(hash, x, y, z, isClose, 0.0, 50.0, 0);
-        if (isClose == true)
-            mp.game.invoke(methods.FREEZE_ENTITY_POSITION, mp.game.object.getClosestObjectOfType(x, y, z, 1, hash, false, false, false));
+    try {
+        if (isClose == undefined)
+            isClose = false;
+        if (methods.distanceToPos(mp.players.local.position, new mp.Vector3(x, y, z)) < loadDist) {
+            mp.game.object.doorControl(hash, x, y, z, isClose, 0.0, 50.0, 0);
+            if (isClose == true)
+                mp.game.invoke(methods.FREEZE_ENTITY_POSITION, mp.game.object.getClosestObjectOfType(x, y, z, 1, hash, false, false, false));
+        }
+    }
+    catch (e) {
+        methods.debug(e);
     }
 };
 

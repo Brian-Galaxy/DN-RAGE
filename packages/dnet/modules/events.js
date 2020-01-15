@@ -258,6 +258,15 @@ mp.events.addRemoteCounted('server:playAnimation', (player, name1, name2, flag) 
     //mp.players.call('client:syncAnimation', [player.id, name1, name2, flag]);
 });
 
+mp.events.addRemoteCounted('server:stopAllAnimation', (player) => {
+    try {
+        user.stopAnimation(player);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
 mp.events.addRemoteCounted('server:playAnimationWithUser', (player, userId, animId) => {
     if (!user.isLogin(player))
         return;
@@ -2172,8 +2181,6 @@ mp.events.add('playerJoin', player => {
     player.countedTriggersSwap = 0;
     //player.outputChatBox("RAGE_Multiplayer HAS BEEN STARTED.");
 });
-
-
 
 mp.events.add("playerDeath", (player, reason, killer) => {
 

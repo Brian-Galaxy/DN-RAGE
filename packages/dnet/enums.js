@@ -489,6 +489,15 @@ enums.spawnByRole = [
 
 enums.spawnNameList = ['Стандарт', 'Дом', 'Апартаменты', 'Квартира', 'Склад', 'Офис', 'Дом на колёсах', 'Яхта', 'Точка выхода'];
 
+enums.animTarget = [
+    ["Тест1", "mp_ped_interaction", "handshake_guy_a", '', "mp_ped_interaction", "handshake_guy_b", ''],
+    ["Тест2", "mp_ped_interaction", "highfive_guy_a", '', "mp_ped_interaction", "highfive_guy_b", ''],
+    ["Тест3", "mp_ped_interaction", "hugs_guy_a", '', "mp_ped_interaction", "hugs_guy_b", ''],
+    ["Поцелуй", "mp_ped_interaction", "kisses_guy_a", '', "mp_ped_interaction", "kisses_guy_b", ''],
+    ["Минет", "misscarsteal2pimpsex", "pimpsex_punter", '', "misscarsteal2pimpsex", "pimpsex_hooker", 'SEX_ORAL_FEM'],
+    ["Секс", "rcmpaparazzo_2", "shag_loop_a", '', "rcmpaparazzo_2", "shag_loop_poppy", 'SEX_GENERIC'],
+];
+
 enums.hairOverlays = [
     // Гендер
     [

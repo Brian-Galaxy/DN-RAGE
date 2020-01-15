@@ -244,6 +244,76 @@ mp.events.addRemoteCounted('server:enums:getCloth1', (player, requestID) => {
     }
 });
 
+mp.events.addRemoteCounted('server:playScenario', (player, name) => {
+    if (!user.isLogin(player))
+        return;
+    //player.playScenario(name);
+    user.playScenario(player, name);
+});
+
+mp.events.addRemoteCounted('server:playAnimation', (player, name1, name2, flag) => {
+    if (!user.isLogin(player))
+        return;
+    user.playAnimation(player, name1, name2, flag);
+    //mp.players.call('client:syncAnimation', [player.id, name1, name2, flag]);
+});
+
+mp.events.addRemoteCounted('server:playAnimationWithUser', (player, userId, animId) => {
+    if (!user.isLogin(player))
+        return;
+    let target = user.getPlayerById(userId);
+    if (user.isLogin(target)) {
+        if (methods.distanceToPos(target.position, player.position) > 3) {
+            player.notify('~r~Вы слишком далеко');
+            return;
+        }
+
+        if (animId != 0) {
+            if (user.has(player, 'useAnm')) {
+                player.notify('~r~Нельзя так часто использовать анимацию');
+                return;
+            }
+        }
+
+        user.headingToTarget(target, player.id);
+        user.headingToTarget(player, target.id);
+
+        setTimeout(function () {
+            user.playAnimation(player, enums.animTarget[animId][1], enums.animTarget[animId][2], 8);
+            user.playAnimation(target, enums.animTarget[animId][4], enums.animTarget[animId][5], 8);
+        }, 2100);
+
+        user.set(player, 'useAnm', true);
+        setTimeout(function () {
+            if (user.isLogin(player))
+                user.reset(player, 'useAnm');
+        }, 180000);
+    }
+    else
+        player.notify('~r~Вы слишком далеко');
+});
+
+mp.events.addRemoteCounted('playAnimationWithUserAsk', (player, userId, animId) => {
+    if (!user.isLogin(player))
+        return;
+    let target = user.getPlayerById(userId);
+    if (user.isLogin(target)) {
+        if (methods.distanceToPos(target.position, player.position) < 3) {
+            player.notify('~r~Вы слишком далеко');
+            return;
+        }
+    }
+    else
+        player.notify('~r~Вы слишком далеко');
+});
+
+mp.events.addRemoteCounted('server:playAnimationByPlayerId', (player, playerId, name1, name2, flag) => {
+    if (!user.isLogin(player))
+        return;
+    user.playAnimation(user.getPlayerById(playerId), name1, name2, flag);
+    //mp.players.call('client:syncAnimation', [player.id, name1, name2, flag]);
+});
+
 mp.events.addRemoteCounted('server:players:notifyWithPictureToAll', (player, title, sender, message, notifPic, icon, flashing, textColor, bgColor, flashColor) => {
     methods.notifyWithPictureToAll(title, sender, message, notifPic, icon, flashing, textColor, bgColor, flashColor);
 });
@@ -2101,6 +2171,70 @@ mp.events.add('playerJoin', player => {
     player.countedTriggers = 0;
     player.countedTriggersSwap = 0;
     //player.outputChatBox("RAGE_Multiplayer HAS BEEN STARTED.");
+});
+
+
+
+mp.events.add("playerDeath", (player, reason, killer) => {
+
+    if (user.isLogin(killer) && user.isLogin(player)) {
+        try {
+            let killerPos = killer.position;
+            methods.saveLog('PlayerDeath', `${user.getRpName(player)} (${user.getId(player)}) kill by ${user.getRpName(killer)} (${user.getId(killer)}) ${reason} [${killerPos.x}, ${killerPos.y}, ${killerPos.z}]`);
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    }
+
+    if (user.isLogin(player)) {
+        user.set(player, 'killerInJail', false);
+
+        try {
+            methods.saveLog('PlayerDeath', `${user.getRpName(player)} (${user.getId(player)}) ${reason}`);
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+
+        setTimeout(function () {
+            let rand = 'a';
+            switch (methods.getRandomInt(0, 10)) {
+                case 0:
+                    rand = 'b';
+                    break;
+                case 1:
+                    rand = 'c';
+                    break;
+                case 2:
+                    rand = 'd';
+                    break;
+                case 3:
+                    rand = 'e';
+                    break;
+                case 4:
+                    rand = 'f';
+                    break;
+                case 5:
+                    rand = 'g';
+                    break;
+                case 6:
+                    rand = 'h';
+                    break;
+            }
+            user.playAnimation(player, 'dead', 'dead_' + rand, 9);
+        }, 4000);
+    }
+
+    if (user.isLogin(killer)) {
+        weapons.hashesMap.forEach(function (item) {
+            if ((item[1] / 2) == reason) {
+                if (user.get(player, 'wanted_level') > 0) {
+                    user.set(player, 'killerInJail', true);
+                }
+            }
+        });
+    }
 });
 
 mp.events.add('playerReady', player => {

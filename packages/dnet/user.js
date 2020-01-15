@@ -1295,6 +1295,73 @@ user.kickAntiCheat = function(player, reason, title = 'Вы были кикну�
     }
 };
 
+user.getPlayerById = function(id) {
+    let player = null;
+    mp.players.forEach(pl => {
+        if (user.isLogin(pl) && user.getId(pl) == id)
+            player = pl;
+    });
+    return player;
+};
+
+user.getVehicleDriver = function(vehicle) {
+    let driver;
+    vehicle.getOccupants().forEach((p) => {
+        if (p.seat == -1) {
+            driver = p;
+        }
+    });
+    return driver;
+};
+
+user.headingToCoord = function(player, x, y, z) {
+    methods.debug('user.headingToCoord');
+    if (!mp.players.exists(player))
+        return false;
+    let pos = player.position;
+    mp.players.forEach((p) => {
+        try {
+            if (methods.distanceToPos(pos, p.position) < 300)
+                p.call('client:syncHeadingToCoord', [player.id, x, y, z])
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    });
+};
+
+user.headingToTarget = function(player, targetId) {
+    methods.debug('user.headingToCoord');
+    if (!mp.players.exists(player))
+        return false;
+    let pos = player.position;
+    mp.players.forEach((p) => {
+        try {
+            if (methods.distanceToPos(pos, p.position) < 300)
+                p.call('client:syncHeadingToTarget', [player.id, targetId])
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    });
+};
+
+user.playScenario = function(player, name) {
+    methods.debug('user.playScenario');
+    if (!mp.players.exists(player))
+        return false;
+    let pos = player.position;
+    mp.players.forEach((p) => {
+        try {
+            if (methods.distanceToPos(pos, p.position) < 300)
+                p.call('client:syncScenario', [player.id, name])
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    });
+};
+
 user.playAnimation = function(player, dict, anim, flag = 49) {
     methods.debug('user.playAnimation');
     if (!mp.players.exists(player))
@@ -1304,6 +1371,22 @@ user.playAnimation = function(player, dict, anim, flag = 49) {
         try {
             if (methods.distanceToPos(pos, p.position) < 300)
                 p.call('client:syncAnimation', [player.id, dict, anim, flag])
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    });
+};
+
+user.stopAnimation = function(player) {
+    methods.debug('user.stopSyncAnimation');
+    if (!mp.players.exists(player))
+        return false;
+    let pos = player.position;
+    mp.players.forEach((p) => {
+        try {
+            if (methods.distanceToPos(pos, p.position) < 300)
+                p.call('client:syncStopAnimation', [player.id])
         }
         catch (e) {
             methods.debug(e);

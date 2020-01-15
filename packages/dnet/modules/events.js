@@ -22,6 +22,7 @@ let lsc = require('../business/lsc');
 let gun = require('../business/gun');
 let vShop = require('../business/vShop');
 let rent = require('../business/rent');
+let bank = require('../business/bank');
 
 let pickups = require('../managers/pickups');
 
@@ -321,6 +322,75 @@ mp.events.addRemoteCounted('server:tattoo:destroy', (player, slot, type, zone, p
     tattoo.destroy(player, slot, type, zone, price, itemName, shopId);
 });
 
+mp.events.addRemoteCounted('server:bank:withdraw', (player, money, procent) => {
+    if (!user.isLogin(player))
+        return;
+    bank.withdraw(player, money, procent);
+});
+
+mp.events.addRemoteCounted('server:bank:deposit', (player, money, procent) => {
+    if (!user.isLogin(player))
+        return;
+    bank.deposit(player, money, procent);
+});
+
+mp.events.addRemoteCounted('server:bank:transferMoney', (player, bankNumber, money) => {
+    if (!user.isLogin(player))
+        return;
+    bank.transferMoney(player, bankNumber, money);
+});
+
+mp.events.addRemoteCounted('server:bank:changePin', (player, pin) => {
+    if (!user.isLogin(player))
+        return;
+    bank.changePin(player, pin);
+});
+
+mp.events.addRemoteCounted('server:bank:history', (player,) => {
+    if (!user.isLogin(player))
+        return;
+
+    mysql.executeQuery(`SELECT * FROM log_bank_user WHERE card = ${methods.parseInt(user.get(player, 'bank_card'))} ORDER BY id DESC LIMIT 200`, function (err, rows, fields) {
+        try {
+            let list = [];
+            rows.forEach(function(item) {
+
+                let price = item['price'];
+                if (item['price'] < 0)
+                    price = '~r~' + methods.moneyFormat(item['price']);
+                else if (item['price'] == 0)
+                    price = '';
+                else
+                    price = '~g~' + methods.moneyFormat(item['price']);
+
+                list.push({id: item['id'], text: item['text'], price: price, timestamp: item['timestamp'], rp_datetime: item['rp_datetime']});
+            });
+            player.call('client:showBankLogMenu', [JSON.stringify(list)]);
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    });
+});
+
+mp.events.addRemoteCounted('server:bank:changeCardNumber', (player, bankNumber) => {
+    if (!user.isLogin(player))
+        return;
+    //bank.changeCardNumber(player, bankNumber);
+});
+
+mp.events.addRemoteCounted('server:bank:closeCard', (player) => {
+    if (!user.isLogin(player))
+        return;
+    bank.closeCard(player);
+});
+
+mp.events.addRemoteCounted('server:bank:openCard', (player, bankId, priceCard) => {
+    if (!user.isLogin(player))
+        return;
+    bank.openCard(player, bankId, priceCard);
+});
+
 mp.events.addRemoteCounted('server:rent:buy', (player, hash, price, shopId) => {
     if (!user.isLogin(player))
         return;
@@ -383,7 +453,7 @@ mp.events.addRemoteCounted('server:business:sell', (player) => {
 mp.events.addRemoteCounted('server:business:log', (player, id) => {
     if (!user.isLogin(player))
         return;
-    mysql.executeQuery(`SELECT * FROM log_business WHERE business_id = ${methods.parseInt(id)} ORDER BY id DESC`, function (err, rows, fields) {
+    mysql.executeQuery(`SELECT * FROM log_business WHERE business_id = ${methods.parseInt(id)} ORDER BY id DESC LIMIT 200`, function (err, rows, fields) {
         try {
             let list = [];
             rows.forEach(function(item) {
@@ -445,36 +515,36 @@ mp.events.addRemoteCounted('server:business:removeMoney', (player, id, money, it
     business.removeMoney(id, money, itemName);
 });
 
-mp.events.addRemoteCounted('server:user:addMoney', (player, money) => {
-    user.addMoney(player, money);
+mp.events.addRemoteCounted('server:user:addMoney', (player, money, text) => {
+    user.addMoney(player, money, text);
 });
 
-mp.events.addRemoteCounted('server:user:removeMoney', (player, money) => {
-    user.removeMoney(player, money);
+mp.events.addRemoteCounted('server:user:removeMoney', (player, money, text) => {
+    user.removeMoney(player, money, text);
 });
 
 mp.events.addRemoteCounted('server:user:setMoney', (player, money) => {
     user.setMoney(player, money);
 });
 
-mp.events.addRemoteCounted('server:user:addBankMoney', (player, money) => {
-    user.addBankMoney(player, money);
+mp.events.addRemoteCounted('server:user:addBankMoney', (player, money, text) => {
+    user.addBankMoney(player, money, text);
 });
 
-mp.events.addRemoteCounted('server:user:removeBankMoney', (player, money) => {
-    user.removeBankMoney(player, money);
+mp.events.addRemoteCounted('server:user:removeBankMoney', (player, money, text) => {
+    user.removeBankMoney(player, money, text);
 });
 
 mp.events.addRemoteCounted('server:user:setBankMoney', (player, money) => {
     user.setBankMoney(player, money);
 });
 
-mp.events.addRemoteCounted('server:user:addCashMoney', (player, money) => {
-    user.addCashMoney(player, money);
+mp.events.addRemoteCounted('server:user:addCashMoney', (player, money, text) => {
+    user.addCashMoney(player, money, text);
 });
 
-mp.events.addRemoteCounted('server:user:removeCashMoney', (player, money) => {
-    user.removeCashMoney(player, money);
+mp.events.addRemoteCounted('server:user:removeCashMoney', (player, money, text) => {
+    user.removeCashMoney(player, money, text);
 });
 
 mp.events.addRemoteCounted('server:user:setCashMoney', (player, money) => {

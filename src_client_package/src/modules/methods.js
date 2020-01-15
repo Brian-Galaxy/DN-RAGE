@@ -4,6 +4,8 @@ let methods = {};
 
 import Menu from "./menu";
 import enums from "../enums";
+import menuList from "../menuList";
+import timer from "../manager/timer";
 
 methods.GIVE_WEAPON_TO_PED = '0xBF0FD6E56C964FCB';
 methods.REMOVE_WEAPON_FROM_PED = '0x4899CB088EDF59B8';
@@ -71,6 +73,11 @@ mp.events.add({
 methods.getStreamPlayerList = function() {
     //return [mp.players.local].concat(streamedPlayers);
     return streamedPlayers;
+};
+
+methods.pressEToPayRespect = function () {
+    if (timer.isFleecaAtm() || timer.isOtherAtm())
+        menuList.showAtmMenu();
 };
 
 methods.sleep = function(ms) {

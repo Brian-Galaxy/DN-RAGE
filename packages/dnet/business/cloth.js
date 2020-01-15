@@ -351,7 +351,7 @@ cloth.buyPrint = function(player, collection, overlay, price) {
     user.set(player, "tprint_c", collection);
     user.set(player, "tprint_o", overlay);
 
-    user.removeMoney(player, price);
+    user.removeMoney(player, price, 'Принт на одежду');
     business.addMoney(166, price, 'Покупка принта'); //TODO BUSINESS
     player.notify('~g~Вы купили принт');
     user.updateTattoo(player);

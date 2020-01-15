@@ -479,8 +479,6 @@ methods.getListOfPlayerInRadius = function(pos, r) {
 
 methods.loadAllBlips = function () {
 
-    methods.createBlip(new mp.Vector3(-66.66476, -802.0474, 44.22729), 374, 59, 0.8, 'Maze Bank');
-
     //methods.createBlip(new mp.Vector3(536.4715576171875, -3126.484375, 5.073556900024414), 598, 0, 0.8, 'United States Marine Corps');
     methods.createBlip(new mp.Vector3(450.0621337890625, -984.3471069335938, 43.69164276123047), 60, 0, 0.8, 'Police Department');
     methods.createBlip(new mp.Vector3(-448.6859, 6012.703, 30.71638), 60, 16, 0.8, 'Sheriff Department');
@@ -492,7 +490,7 @@ methods.loadAllBlips = function () {
     methods.createBlip(new mp.Vector3(311.9224853515625, -583.9681396484375, 44.299190521240234), 489, 59, 0.8, 'Здание больницы');
     methods.createBlip(new mp.Vector3(-253.9735565185547, 6320.83935546875, 37.61736297607422), 489, 59, 0.8, 'Здание больницы');
 
-    methods.createBlip(new mp.Vector3(-759.5448608398438, -709.0863037109375, 29.0616512298584), 153, 0, 0.8, 'Церковь');
+    methods.createBlip(new mp.Vector3(-759.5448608398438, -709.0863037109375, 29.0616512298584), 153, 60, 0.8, 'Церковь');
 
     methods.createBlip(new mp.Vector3(-1081.0628662109375, -251.57298278808594, 37.763275146484375), 744, 0, 0.8, 'Life Invader');
     //methods.createBlip(new mp.Vector3(210.0973, -1649.418, 29.8032), 436, 60, 0.8, 'Здание Fire Department');

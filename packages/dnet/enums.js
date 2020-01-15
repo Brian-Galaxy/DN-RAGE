@@ -23,6 +23,8 @@ enums.userData = [
     "money_crypto",
     "money_payday",
     "bank_card",
+    "bank_owner",
+    "bank_pin",
     "crypto_card",
 
     "admin_level",

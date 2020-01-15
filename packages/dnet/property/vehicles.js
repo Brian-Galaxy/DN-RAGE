@@ -710,7 +710,7 @@ vehicles.sell = function (player, slot) {
             vehicles.updateOwnerInfo(vInfo.get('id'), 0, '');
 
             coffer.removeMoney(nalog);
-            user.addMoney(player, nalog);
+            user.addMoney(player, nalog, 'Продажа транспорта ' + vInfo.get('name'));
 
             veh.destroy();
             isSpawn = true;

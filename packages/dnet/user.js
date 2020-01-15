@@ -1077,12 +1077,12 @@ user.getVehicleDriver = function(vehicle) {
     return driver;
 };
 
-user.addMoney = function(player, money) {
-    user.addCashMoney(player, money);
+user.addMoney = function(player, money, text = 'Финансовая операция') {
+    user.addCashMoney(player, money, text);
 };
 
-user.removeMoney = function(player, money) {
-    user.removeCashMoney(player, money);
+user.removeMoney = function(player, money, text = 'Финансовая операция') {
+    user.removeCashMoney(player, money, text);
 };
 
 user.setMoney = function(player, money) {
@@ -1093,13 +1093,15 @@ user.getMoney = function(player) {
     return user.getCashMoney(player);
 };
 
-user.addCashMoney = function(player, money) {
+user.addCashMoney = function(player, money, text = 'Финансовая операция') {
     methods.saveLog('Money', `[ADD_CASH] ${user.getRpName(player)} (${user.getId(player)}) ${user.getCashMoney(player)} - ${money}`);
+    user.addCashHistory(player, text, methods.parseFloat(money));
     user.setCashMoney(player, user.getCashMoney(player) + methods.parseFloat(money));
 };
 
-user.removeCashMoney = function(player, money) {
+user.removeCashMoney = function(player, money, text = 'Финансовая операция') {
     methods.saveLog('Money', `[REMOVE_CASH] ${user.getRpName(player)} (${user.getId(player)}) ${user.getCashMoney(player)} + ${money}`);
+    user.addCashHistory(player, text, methods.parseFloat(money) * -1);
     user.setCashMoney(player, user.getCashMoney(player) - methods.parseFloat(money));
 };
 
@@ -1114,13 +1116,15 @@ user.getCashMoney = function(player) {
     return 0;
 };
 
-user.addBankMoney = function(player, money) {
+user.addBankMoney = function(player, money, text = "Операция со счетом") {
     methods.saveLog('Money', `[ADD_BANK] ${user.getRpName(player)} (${user.getId(player)}) ${user.getBankMoney(player)} - ${money}`);
+    user.addBankHistory(player, text, methods.parseFloat(money));
     user.setBankMoney(player, user.getBankMoney(player) + methods.parseFloat(money));
 };
 
-user.removeBankMoney = function(player, money) {
+user.removeBankMoney = function(player, money, text = "Операция со счетом") {
     methods.saveLog('Money', `[REMOVE_BANK] ${user.getRpName(player)} (${user.getId(player)}) ${user.getBankMoney(player)} + ${money}`);
+    user.addBankHistory(player, text, methods.parseFloat(money) * -1);
     user.setBankMoney(player, user.getBankMoney(player) - methods.parseFloat(money));
 };
 
@@ -1151,6 +1155,51 @@ user.getPayDayMoney = function(player) {
     if (user.has(player, 'money_payday'))
         return methods.parseFloat(user.get(player, 'money_payday'));
     return 0;
+};
+
+user.getBankCardPrefix = function(player, bankCard = 0) {
+    methods.debug('bank.getBankCardPrefix');
+    if (!user.isLogin(player))
+        return;
+
+    if (bankCard == 0)
+        bankCard = user.get(player, 'bank_card');
+
+    return methods.parseInt(bankCard.toString().substring(0, 4));
+};
+
+user.addBankHistory = function(player, text, price) {
+    if (!user.isLogin(player))
+        return;
+
+    let userId = user.getId(player);
+    let card = user.get(player, 'bank_card');
+
+    if (card == 0)
+        return;
+
+    text = methods.removeQuotes(text);
+    price = methods.parseFloat(price);
+
+    let rpDateTime = weather.getRpDateTime();
+    let timestamp = methods.getTimeStamp();
+
+    mysql.executeQuery(`INSERT INTO log_bank_user (user_id, card, text, price, timestamp, rp_datetime) VALUES ('${userId}', '${card}', '${text}', '${price}', '${timestamp}', '${rpDateTime}')`);
+};
+
+user.addCashHistory = function(player, text, price) {
+    if (!user.isLogin(player))
+        return;
+
+    let userId = user.getId(player);
+
+    text = methods.removeQuotes(text);
+    price = methods.parseFloat(price);
+
+    let rpDateTime = weather.getRpDateTime();
+    let timestamp = methods.getTimeStamp();
+
+    mysql.executeQuery(`INSERT INTO log_cash_user (user_id, text, price, timestamp, rp_datetime) VALUES ('${userId}', '${text}', '${price}', '${timestamp}', '${rpDateTime}')`);
 };
 
 user.addHistory = function(player, type, reason) {
@@ -1211,13 +1260,13 @@ user.sendSmsBankOperation = function(player, text, title = 'Операция с�
                 player.notifyWithPicture('~r~Maze Bank', '~g~' + title, text, 'CHAR_BANK_MAZE', 2);
                 break;
             case 7000:
-                player.notifyWithPicture('~g~Fleeca Bank', '~g~' + title, text, 'CHAR_BANK_FLEECA', 2);
+                player.notifyWithPicture('~o~Pacific Bank', '~g~' + title, text, 'WEB_SIXFIGURETEMPS', 2);
                 break;
             case 8000:
-                player.notifyWithPicture('~b~Blaine Bank', '~g~' + title, text, 'DIA_CUSTOMER', 2);
+                player.notifyWithPicture('~g~Fleeca Bank', '~g~' + title, text, 'CHAR_BANK_FLEECA', 2);
                 break;
             case 9000:
-                player.notifyWithPicture('~o~Pacific Bank', '~g~' + title, text, 'WEB_SIXFIGURETEMPS', 2);
+                player.notifyWithPicture('~b~Blaine Bank', '~g~' + title, text, 'DIA_CUSTOMER', 2);
                 break;
         }
     }
@@ -1315,7 +1364,7 @@ user.giveJobSkill = function(player) {
             if (currentSkill == skillCount - 1) {
                 user.set(player, 'skill_' + job, skillCount);
                 chat.sendToAll('Конкурс', `${user.getRpName(player)} !{${chat.clBlue}} стал одним из лучших работников штата San Andreas, получив вознаграждение $10,000`, chat.clBlue);
-                user.addMoney(player, 10000);
+                user.addMoney(player, 10000, 'Лучший работник штата');
                 user.save(player);
             }
             else {
@@ -1403,7 +1452,7 @@ user.payDay = async function (player) {
             }
             else {
                 user.sendSmsBankOperation(player, `Зачисление: ~g~${methods.moneyFormat(sum)}`, 'Пособие');
-                user.addBankMoney(player, sum);
+                user.addBankMoney(player, sum, 'Пособие по безработицы');
                 coffer.removeMoney(1, sum);
             }
         }

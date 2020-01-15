@@ -18,7 +18,7 @@ import checkpoint from "./manager/checkpoint";
 import timer from "./manager/timer";
 import vBreakLight from "./manager/vBreakLight";
 import object from "./manager/object";
-import npc from "./manager/npc";
+//import npc from "./manager/npc";
 import skill from "./manager/skill";
 
 import user from "./user";
@@ -49,7 +49,7 @@ try {
         business.loadScaleform();
 
         object.load();
-        npc.loadAll();
+        //npc.loadAll();
         skill.loadAll();
 
         timer.loadAll();

@@ -155,7 +155,7 @@ rent.buy = function(player, hash, price, shopId) {
         return;
     }
 
-    user.removeMoney(player, price);
+    user.removeMoney(player, price, 'Аренда ТС ' + vInfo.display_name);
     business.addMoney(shopId, price, 'Аренда ' + vInfo.display_name);
 
     player.notify('~g~Вы арендовали транспорт');

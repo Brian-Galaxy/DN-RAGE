@@ -96,7 +96,7 @@ tattoo.buy = function(player, collection, overlay, zone, price, itemName, shopId
 
     user.set(player, 'tattoo', JSON.stringify(tattooList));
 
-    user.removeMoney(player, price);
+    user.removeMoney(player, price, 'Татуировка: ' + itemName);
     business.addMoney(shopId, price, itemName);
     player.notify('~g~Вы набили татуировку');
     user.updateTattoo(player);
@@ -126,7 +126,7 @@ tattoo.destroy = function(player, collection, overlay, zone, price, itemName, sh
 
     user.set(player, 'tattoo', JSON.stringify(newArray));
 
-    user.removeMoney(player, price);
+    user.removeMoney(player, price, 'Лазерная коррекция татуировки ' + itemName);
     business.addMoney(shopId, price, itemName);
     player.notify('~g~Вы сделали лазерную коррецию');
     user.updateTattoo(player);

@@ -157,7 +157,7 @@ business.sell = function (player) {
     business.set(hInfo.get('id'), 'user_name', '');
 
     coffer.removeMoney(1, nalog);
-    user.addMoney(player, nalog);
+    user.addMoney(player, nalog, 'Продажа бизнеса ' + hInfo.get('name'));
 
     setTimeout(function () {
 
@@ -219,7 +219,7 @@ business.buy = function (player, id) {
     business.set(hInfo.get('id'), 'user_name', user.getRpName(player));
 
     coffer.addMoney(1, hInfo.get('price'));
-    user.removeBankMoney(player, hInfo.get('price'));
+    user.removeBankMoney(player, hInfo.get('price'), 'Покупка бизнеса ' + hInfo.get('name'));
 
     setTimeout(function () {
         if (!user.isLogin(player))

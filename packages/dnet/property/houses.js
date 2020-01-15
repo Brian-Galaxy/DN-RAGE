@@ -206,12 +206,12 @@ houses.sell = function (player) {
     houses.updateOwnerInfo(hInfo.get('id'), 0, '');
 
     coffer.removeMoney(1, nalog);
-    user.addMoney(player, nalog);
+    user.addMoney(player, nalog, 'Продажа дома ' + hInfo.get('address') + ' №' + hInfo.get('number'));
 
     setTimeout(function () {
         if (!user.isLogin(player))
             return;
-        user.addHistory(player, 3, 'Продал дом ' + hInfo.get('address') + ' №' + hInfo.get('id') + '. Цена: ' + methods.moneyFormat(nalog));
+        user.addHistory(player, 3, 'Продал дом ' + hInfo.get('address') + ' №' + hInfo.get('number') + '. Цена: ' + methods.moneyFormat(nalog));
         player.notify('~g~Вы продали недвижимость');
         player.notify(`~g~Налог:~s~ ${coffer.getTaxIntermediate()}%\n~g~Получено:~s~ ${methods.moneyFormat(nalog)}`);
         user.save(player);
@@ -248,11 +248,11 @@ houses.buy = function (player, id) {
     houses.updateOwnerInfo(id, user.get(player, 'id'), user.get(player, 'name'));
 
     coffer.addMoney(1, hInfo.get('price'));
-    user.removeMoney(player, hInfo.get('price'));
+    user.removeMoney(player, hInfo.get('price'), 'Покупка дома ' + hInfo.get('address') + ' №' + hInfo.get('number'));
     setTimeout(function () {
         if (!user.isLogin(player))
             return;
-        user.addHistory(player, 3, 'Купил дом ' + hInfo.get('address') + ' №' + hInfo.get('id') + '. Цена: ' + methods.moneyFormat(hInfo.get('price')));
+        user.addHistory(player, 3, 'Купил дом ' + hInfo.get('address') + ' №' + hInfo.get('number') + '. Цена: ' + methods.moneyFormat(hInfo.get('price')));
         user.save(player);
         player.notify('~g~Поздравляем с покупкой недвижимости!');
     }, 500);

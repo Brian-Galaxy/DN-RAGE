@@ -588,6 +588,11 @@ mp.events.add('client:menuList:showBarberShopMenu', (shopId) => {
     menuList.showBarberShopMenu(shopId);
 });
 
+mp.events.add('client:menuList:showBankMenu', (bankId, price) => {
+    methods.debug('Event: client:menuList:showBankMenu');
+    menuList.showBankMenu(bankId, price);
+});
+
 mp.events.add('client:menuList:showBarMenu', (shopId, price) => {
     methods.debug('Event: client:menuList:showBarMenu');
     menuList.showBarMenu(shopId, price);
@@ -670,6 +675,11 @@ mp.events.add('client:showBusinessTypeListMenu', (data1, data2, data3) => {
 mp.events.add('client:showBusinessLogMenu', (data) => {
     methods.debug('Event: client:showBusinessLogMenu');
     menuList.showBusinessLogMenu(data);
+});
+
+mp.events.add('client:showBankLogMenu', (data) => {
+    methods.debug('Event: client:showBankLogMenu');
+    menuList.showBankLogMenu(data);
 });
 
 mp.events.add('client:menuList:showBusinessMenu', (data) => {
@@ -943,6 +953,8 @@ mp.events.add('client:inventory:unEquip', function(id, itemId) {
     if (itemId == 50) {
         let money = user.getBankMoney();
         user.set('bank_card', 0);
+        user.set('bank_owner', '');
+        user.set('bank_pin', 0);
         user.setBankMoney(0);
         inventory.updateItemCount(id, money);
         user.save();
@@ -1089,6 +1101,8 @@ mp.events.add('client:inventory:equip', function(id, itemId, count, aparams) {
     if (itemId == 50) {
         if (user.getCache('bank_card') == 0) {
             user.set('bank_card', methods.parseInt(params.number));
+            user.set('bank_owner', params.owner);
+            user.set('bank_pin', methods.parseInt(params.pin));
             user.setBankMoney(count);
             user.save();
         }
@@ -1359,10 +1373,10 @@ mp.keys.bind(0x45, true, function() {
             if (targetEntity) {
                 inventory.openInventoryByEntity(targetEntity);
             }
-            else
+            else {
                 mp.events.callRemote('onKeyPress:E');
-
-            //methods.pressEToPayRespect();
+                methods.pressEToPayRespect();
+            }
         }
     }
     catch (e) {

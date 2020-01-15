@@ -200,6 +200,10 @@ vShop.buy = function(player, model, color1, color2, shopId) {
             user.save(player);
             vehicles.save(id);
 
+            user.addHistory(player, 3, 'Покупка транспорта ' + model);
+            user.removeMoney(player, price, 'Покупка транспорта ' + model);
+            coffer.addMoney(1, price);
+
             setTimeout(function () {
                 if (user.isLogin(player)) {
                     if (vInfo.fuel_type == 3)
@@ -303,7 +307,7 @@ vShop.rent = function(player, model, color1, color2, shopId) {
         return;
     }
 
-    user.removeMoney(player, price);
+    user.removeMoney(player, price, 'Аренда транспорта ' + model);
     coffer.addMoney(1, price);
     vehicles.spawnCarCb(veh => {
 

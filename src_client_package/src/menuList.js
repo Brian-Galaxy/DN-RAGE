@@ -351,6 +351,27 @@ menuList.showBusinessLogMenu = function(data) {
     });
 };
 
+menuList.showBankLogMenu = function(data) {
+    let menu = UIMenu.Menu.Create(`Bank`, `~b~Список транзакций`);
+
+    JSON.parse(data).forEach(function (item, i, arr) {
+
+        if (item.price == '') {
+            UIMenu.Menu.AddMenuItem(`~b~#${item.id}. ~s~${item.text}`, `~b~Дата:~s~ ${item.rp_datetime}\n~b~OOC: ~s~${methods.unixTimeStampToDateTimeShort(item.timestamp)}`);
+        }
+        else {
+            UIMenu.Menu.AddMenuItem(`~b~#${item.id}. ~s~${item.text}`, `~b~Дата:~s~ ${item.rp_datetime}\n~b~OOC: ~s~${methods.unixTimeStampToDateTimeShort(item.timestamp)}`).SetRightLabel(`${item.price}`);
+        }
+    });
+
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+    menu.ItemSelect.on((item, index) => {
+        UIMenu.Menu.HideMenu();
+        if (item == closeItem)
+            return;
+    });
+};
+
 menuList.showBusinessMenu = async function(data) {
 
     let bankTarif = 0;
@@ -1358,6 +1379,151 @@ menuList.showInvaderShopMenu = function() {
     });
 };
 
+menuList.showBankMenu = async function(bankId, price) {
+
+    if (methods.isBlackout()) {
+        mp.game.ui.notifications.show(`~r~В городе отсутствует свет`);
+        return;
+    }
+
+
+    let getBankPrefix = user.getBankCardPrefix();
+
+    if (
+        bankId == 1 && getBankPrefix == 6000 ||
+        bankId == 2 && getBankPrefix == 7000 ||
+        bankId == 3 && getBankPrefix == 8000 ||
+        bankId == 4 && getBankPrefix == 9000
+    ) {
+
+        let pin = methods.parseInt(await UIMenu.Menu.GetUserInput("Введите пинкод", "", 4));
+
+        if (pin == user.getCache('bank_pin')) {
+            let menu = UIMenu.Menu.Create(`Банк`, `~b~Нажмите "~g~Enter~b~", чтобы выбрать пункт`);
+            UIMenu.Menu.AddMenuItem("~b~Баланс~s~").SetRightLabel('~g~' + methods.moneyFormat(user.getBankMoney(), 99999999999));
+            UIMenu.Menu.AddMenuItem("~b~Номер карты~s~").SetRightLabel(methods.bankFormat(user.getCache('bank_card')));
+            UIMenu.Menu.AddMenuItem("~b~Владелец карты~s~").SetRightLabel(methods.bankFormat(user.getCache('bank_owner')));
+
+            UIMenu.Menu.AddMenuItem("Снять средства").eventName = 'server:bank:withdraw';
+            UIMenu.Menu.AddMenuItem("Положить средства").eventName = 'server:bank:deposit';
+            UIMenu.Menu.AddMenuItem("Перевести на другой счет", '1% от суммы, при переводе').eventName = 'server:bank:transferMoney';
+
+            UIMenu.Menu.AddMenuItem("~b~История по счёту").eventName = 'server:bank:history';
+
+            UIMenu.Menu.AddMenuItem("~y~Сменить пинкод").eventName = 'server:bank:changePin';
+            UIMenu.Menu.AddMenuItem("~r~Закрыть счёт").eventName = 'server:bank:closeCard';
+            UIMenu.Menu.AddMenuItem("~r~Закрыть меню");
+
+            menu.ItemSelect.on(async (item, index) => {
+                UIMenu.Menu.HideMenu();
+                if (item.eventName == 'server:bank:withdraw') {
+                    let mStr = await UIMenu.Menu.GetUserInput("Сумма снятия", "", 9);
+                    if (mStr == '')
+                        return;
+                    let money = methods.parseFloat(mStr);
+                    mp.events.callRemote(item.eventName, money, 0);
+                }
+                else if (item.eventName == 'server:bank:deposit') {
+                    let mStr = await UIMenu.Menu.GetUserInput("Сумма внесения", "", 9);
+                    if (mStr == '')
+                        return;
+                    let money = methods.parseFloat(mStr);
+                    mp.events.callRemote(item.eventName, money, 0);
+                }
+                else if (item.eventName == 'server:bank:transferMoney') {
+                    let bankNumber = methods.parseInt(await UIMenu.Menu.GetUserInput("Номер карты", "", 16));
+                    let money = methods.parseFloat(await UIMenu.Menu.GetUserInput("Сумма перевода", "", 9));
+                    mp.events.callRemote(item.eventName, bankNumber, money);
+                }
+                else if (item.eventName == 'server:bank:changePin') {
+                    let pin1 = methods.parseInt(await UIMenu.Menu.GetUserInput("Введите пинкод", "", 4));
+                    let pin2 = methods.parseInt(await UIMenu.Menu.GetUserInput("Повторите пинкод", "", 4));
+                    if (pin1 == pin2)
+                        mp.events.callRemote(item.eventName, pin1);
+                    else
+                        mp.game.ui.notifications.show(`~r~Пинкоды не совпадают`);
+                }
+                else if (item.eventName == 'server:bank:history') {
+                    mp.events.callRemote(item.eventName);
+                }
+                else if (item.eventName == 'server:bank:changeCardNumber') {
+                    let bankNumber = methods.parseInt(await UIMenu.Menu.GetUserInput("Желаемый номер карты", "", 9));
+                    mp.events.callRemote(item.eventName, bankNumber);
+                }
+                else if (item.eventName == 'server:bank:closeCard') {
+                    mp.events.callRemote(item.eventName);
+                }
+            });
+        }
+        else {
+            mp.game.ui.notifications.show(`~r~Вы ввели не верный пинкод`);
+        }
+    }
+    else {
+        let menu = UIMenu.Menu.Create(`Банк`, `~b~Нажмите "~g~Enter~b~", чтобы выбрать пункт`);
+        UIMenu.Menu.AddMenuItem("Оформить карту банка", "Цена: ~g~$" + (price * 100)).eventName = 'server:bank:openCard';
+        UIMenu.Menu.AddMenuItem("~r~Закрыть");
+
+        menu.ItemSelect.on(async (item, index) => {
+            UIMenu.Menu.HideMenu();
+            if (item.eventName == 'server:bank:openCard') {
+                mp.events.callRemote(item.eventName, bankId, price * 100);
+            }
+        });
+    }
+};
+
+menuList.showAtmMenu = async function() {
+    if (methods.isBlackout()) {
+        mp.game.ui.notifications.show(`~r~В городе отсутствует свет`);
+        return;
+    }
+
+    if (user.get('bank_card') < 1) {
+        mp.game.ui.notifications.show("~r~У Вас нет банковской карты");
+        return;
+    }
+
+    let pin = methods.parseInt(await UIMenu.Menu.GetUserInput("Введите пинкод", "", 4));
+    if (pin != user.getCache('bank_pin')) {
+        mp.game.ui.notifications.show(`~r~Вы ввели не верный пинкод`);
+        return;
+    }
+
+    let menu = UIMenu.Menu.Create(`Банкомат`, `~b~Нажмите "~g~Enter~b~", чтобы выбрать пункт`);
+
+    UIMenu.Menu.AddMenuItem("~b~Баланс~s~").SetRightLabel('~g~' + methods.moneyFormat(user.getBankMoney(), 99999999999));
+    UIMenu.Menu.AddMenuItem("~b~Номер карты~s~").SetRightLabel(methods.bankFormat(user.getCache('bank_card')));
+    UIMenu.Menu.AddMenuItem("~b~Владелец карты~s~").SetRightLabel(methods.bankFormat(user.getCache('bank_owner')));
+
+    UIMenu.Menu.AddMenuItem("Снять средства", '~r~Комиссия~s~ 1%').eventName = 'server:bank:withdraw';
+    UIMenu.Menu.AddMenuItem("Положить средства", '~r~Комиссия~s~ 1%').eventName = 'server:bank:deposit';
+    UIMenu.Menu.AddMenuItem("Перевести на другой счет", '1% от суммы, при переводе').eventName = 'server:bank:transferMoney';
+
+    UIMenu.Menu.AddMenuItem("~b~История по счёту").eventName = 'server:bank:history';
+
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+    menu.ItemSelect.on(async (item, index) => {
+        UIMenu.Menu.HideMenu();
+        if (item.eventName == 'server:bank:withdraw') {
+            let money = methods.parseFloat(await UIMenu.Menu.GetUserInput("Сумма снятия", "", 11));
+            mp.events.callRemote(item.eventName, money, 1);
+        }
+        else if (item.eventName == 'server:bank:deposit') {
+            let money = methods.parseFloat(await UIMenu.Menu.GetUserInput("Сумма внесения", "", 11));
+            mp.events.callRemote(item.eventName, money, 1);
+        }
+        else if (item.eventName == 'server:bank:transferMoney') {
+            let bankNumber = methods.parseInt(await UIMenu.Menu.GetUserInput("Номер карты", "", 16));
+            let money = methods.parseFloat(await UIMenu.Menu.GetUserInput("Сумма перевода", "", 9));
+            mp.events.callRemote(item.eventName, bankNumber, money);
+        }
+        else if (item.eventName == 'server:bank:history') {
+            mp.events.callRemote(item.eventName);
+        }
+    });
+};
+
 menuList.showBarberShopMenu = function (shopId) {
 
     if (methods.isBlackout()) {
@@ -1730,7 +1896,7 @@ menuList.showBarberShopMenu = function (shopId) {
                 if (item.price < 1)
                     return;
 
-                user.removeMoney(methods.parseInt(item.price));
+                user.removeMoney(methods.parseInt(item.price), 'Услуги барбершопа ' + item.label);
                 business.addMoney(shopId, methods.parseInt(item.price), item.label);
                 user.set(item.doName, currentListChangeItemIndex);
                 mp.game.ui.notifications.show("~g~Вы изменили внешность по цене: ~s~$" + methods.parseInt(item.price));
@@ -1825,7 +1991,7 @@ menuList.showBarMenu = function(shopId, price = 1)
                 }
 
                 business.addMoney(shopId, item.price, item.label2);
-                user.removeMoney(item.price);
+                user.removeMoney(item.price, 'Выпил ' + item.label + ' в баре');
 
                 if (mp.players.local.health < 90)
                     mp.players.local.health += 5;

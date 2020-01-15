@@ -313,7 +313,7 @@ bank.withdraw = function(player, money, procent = 0) {
 
     if (procent == 0) {
         user.sendSmsBankOperation(player, 'Вывод: ~g~$' + methods.numberFormat(money));
-        user.addCashMoney(player, money);
+        user.addCashMoney(player, money, 'Вывод средств через отделение банка');
         user.removeBankMoney(player, money, 'Вывод средств через отделение банка');
     }
     else {
@@ -322,7 +322,7 @@ bank.withdraw = function(player, money, procent = 0) {
 
         user.sendSmsBankOperation(player, 'Вывод: ~g~$' + methods.numberFormat(sum));
         bank.addBusinessBankMoneyByCard(user.getBankCardPrefix(player), sumBank);
-        user.addCashMoney(player, sum);
+        user.addCashMoney(player, sum, 'Вывод средств через банкомат');
         user.removeBankMoney(player, money, 'Вывод средств через банкомат');
     }
     user.save(player);
@@ -348,7 +348,7 @@ bank.deposit = function(player, money, procent = 0) {
     if (procent == 0) {
         user.sendSmsBankOperation(player, 'Зачисление: ~g~$' + methods.numberFormat(money));
         user.addBankMoney(player, money, 'Зачисление в отделении банка');
-        user.removeCashMoney(player, money);
+        user.removeCashMoney(player, money, 'Зачисление в отделении банка');
     }
     else {
         let sum = methods.parseInt(money * ((100 - procent) / 100));
@@ -357,7 +357,7 @@ bank.deposit = function(player, money, procent = 0) {
         user.sendSmsBankOperation(player, 'Зачисление: ~g~$' + methods.numberFormat(sum));
         bank.addBusinessBankMoneyByCard(user.getBankCardPrefix(player), sumBank);
         user.addBankMoney(player, sum, 'Зачисление через банкомат');
-        user.removeCashMoney(player, money);
+        user.removeCashMoney(player, money, 'Зачисление через банкомат');
     }
     user.save(player);
 };
@@ -419,11 +419,11 @@ bank.openCard = function(player, bankId, price) {
 
     methods.saveLog('BuyCardNumber', `${user.getRpName(player)} (${user.getId(player)}): ${number}`);
 
-    user.removeCashMoney(player, price);
+    user.removeCashMoney(player, price, 'Смена номера карты');
     business.addMoney(bankId, price);
 
     bank.sendSmsBankOpenOperation(player);
-    bank.addBankHistory(user.getId(player), number, 'Открытие счёта', price * -1);
+    bank.addBankHistory(user.getId(player), number, 'Открытие счёта на имя ' + user.getRpName(player), price * -1);
 
     inventory.addItem(50, 1, user.getId(player), 1, 0, 0, `{"number": ${number}, "pin": 1234, "owner": "${user.getRpName(player)}"}`);
 

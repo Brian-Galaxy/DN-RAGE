@@ -163,7 +163,7 @@ cloth.buyProp = function (player, price, body, clothId, color, itemName, shopId,
     }
 
     if (!isFree) {
-        user.removeCashMoney(player, price);
+        user.removeCashMoney(player, price, 'Покупка аксессуара ' + itemName);
         business.addMoney(shopId, price, itemName);
         player.notify("~g~Вы купили аксессуар");
     }
@@ -277,7 +277,7 @@ cloth.buy = function (player, price, body, cloth, color, torso, torsoColor, para
     }
 
     if (!isFree) {
-        user.removeCashMoney(player, price);
+        user.removeCashMoney(player, price, 'Покупка одежды ' + itemName);
         business.addMoney(shopId, price, itemName);
         player.notify("~g~Вы купили одежду, она находится в инвентаре");
     }
@@ -322,13 +322,11 @@ cloth.buyMask = function (player, price, clothId, color, itemName, shopId) {
 
     if (shopId == 0)
         return;
-    user.removeCashMoney(player, price);
+    user.removeCashMoney(player, price, 'Покупка маски ' + itemName);
     business.addMoney(shopId, price, itemName);
     player.notify("~g~Вы купили маску");
     user.save(player);
 };
-
-
 
 cloth.buyPrint = function(player, collection, overlay, price) {
     if (!user.isLogin(player))

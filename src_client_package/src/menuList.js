@@ -426,9 +426,14 @@ menuList.showBusinessMenu = async function(data) {
         }
         if (item.doName == 'addMoney') {
             try {
+
+                if (user.get('bank_card') < 1) {
+                    mp.game.ui.notifications.show(`~r~У Вас нет банковской карты`);
+                    return;
+                }
                 let money = await UIMenu.Menu.GetUserInput("Сумма", "", 8);
                 money = methods.parseFloat(money);
-                if (money > user.getCashMoney()) {
+                if (money > user.getBankMoney()) {
                     mp.game.ui.notifications.show(`~r~У Вас нет столько денег на руках`);
                     return;
                 }
@@ -436,8 +441,8 @@ menuList.showBusinessMenu = async function(data) {
                     mp.game.ui.notifications.show(`~r~Нельзя положить меньше 1$`);
                     return;
                 }
-                business.addMoney(data.get('id'), money, 'Операция со счётом');
-                user.removeCashMoney(money);
+                business.addMoney(data.get('id'), money, 'Зачиление со счета ' + methods.bankFormat(user.get('bank_card')));
+                user.removeBankMoney(money, 'Зачиление на счет бизнеса ' + data.get('name'));
                 business.save(data.get('id'));
                 mp.game.ui.notifications.show(`~b~Вы положили деньги на счет бизнеса`);
             }
@@ -447,6 +452,10 @@ menuList.showBusinessMenu = async function(data) {
         }
         if (item.doName == 'removeMoney') {
 
+            if (user.get('bank_card') < 1) {
+                mp.game.ui.notifications.show(`~r~У Вас нет банковской карты`);
+                return;
+            }
             if (data.get('bank_id') == 0) {
                 mp.game.ui.notifications.show(`~r~Вы не привязаны ни к какому банку`);
                 return;
@@ -465,9 +474,9 @@ menuList.showBusinessMenu = async function(data) {
 
             business.addMoney(data.get('bank_id'), money * (bankTarif / 100));
 
-            business.removeMoney(data.get('id'), money, 'Операция со счётом');
+            business.removeMoney(data.get('id'), money, 'Вывод средств на карту ' + methods.bankFormat(user.get('bank_card')));
             business.save(data.get('id'));
-            user.addCashMoney(money * (100 - nalog - bankTarif) / 100);
+            user.addBankMoney(money * (100 - nalog - bankTarif) / 100, 'Вывод со счета бизнеса ' + data.get('name'));
             coffer.addMoney(1, money * nalog / 100);
             mp.game.ui.notifications.show(`~b~Вы сняли ~s~${methods.moneyFormat(money * (100 - nalog + bankTarif) / 100)} ~b~со счёта с учётом налога`);
             mp.game.ui.notifications.show(`~b~${bankTarif}% от суммы отправлен банку который вас обслуживает`);
@@ -3608,7 +3617,7 @@ menuList.showGunShopMenu = function(shopId, price = 1)
                 }
                 mp.players.local.setArmour(item.armor);
                 mp.game.ui.notifications.show("~b~Вы купили бронежилет");
-                user.removeCashMoney(item.price);
+                user.removeCashMoney(item.price, 'Покупка бронежилета');
                 business.addMoney(shopId, item.price, 'Бронежилет');
             }
             else if (item.price > 0) {
@@ -3721,7 +3730,7 @@ menuList.showGunShopWeaponMenu = function(shopId, itemId, price = 1)
                 }
                 mp.players.local.setArmour(item.armor);
                 mp.game.ui.notifications.show("~b~Вы купили бронежилет");
-                user.removeCashMoney(item.price);
+                user.removeCashMoney(item.price, 'Покупка бронежилета');
                 business.addMoney(shopId, item.price, 'Бронежилет');
             }
             else if (item.price > 0) {

@@ -794,7 +794,7 @@ user.giveJobMoney = function(money) {
     //    money = methods.parseInt(money * 1.5);
 
     if (user.getCache('bank_card') == 0) {
-        user.addCashMoney(money);
+        user.addCashMoney(money, 'Зарплата');
         mp.game.ui.notifications.show('~y~Оформите банковскую карту');
     }
     else {

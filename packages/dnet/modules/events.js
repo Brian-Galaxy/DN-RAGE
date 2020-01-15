@@ -664,7 +664,7 @@ mp.events.addRemoteCounted('server:gr6:unload', (player, vId) => {
                         if (user.get(p, 'skill_gr6') >= 500)
                             currentMoney = methods.parseFloat(money * 1.5);
 
-                        user.addCashMoney(p, currentMoney);
+                        user.addCashMoney(p, currentMoney, 'Зарплата инкассатора');
                         business.addMoney(162, methods.parseFloat(currentMoney / 10));
                         coffer.removeMoney(currentMoney + methods.parseFloat(currentMoney / 10));
                         p.notify('~g~Вы заработали: ~s~' + methods.moneyFormat(currentMoney));
@@ -694,7 +694,7 @@ mp.events.addRemoteCounted('server:gr6:delete', (player) => {
                 setTimeout(function () {
                     if (user.isLogin(player)) {
                         user.hideLoadDisplay(player);
-                        user.addCashMoney(player, 4500);
+                        user.addCashMoney(player, 4500, 'Возврат ТС инкассатора');
                         player.notify('~b~Вы вернули транспорт в гараж');
                     }
                 }, 500);
@@ -717,7 +717,7 @@ mp.events.addRemoteCounted('server:gr6:grab', (player) => {
                 vehicles.respawn(player.vehicle);
                 setTimeout(function () {
                     user.hideLoadDisplay(player);
-                    user.addCashMoney(player, money);
+                    user.addCashMoney(player, money, 'Ограбление');
                     player.notify('~b~Вы ограбили транспорт на сумму: ~s~' + methods.moneyFormat(money));
                 }, 500);
             }, 700);
@@ -1279,7 +1279,7 @@ mp.events.addRemoteCounted('server:lsc:sellCar', (player) => {
     }
     user.showLoadDisplay(player);
 
-    user.addCashMoney(player, money);
+    user.addCashMoney(player, money, 'Угон');
     user.set(player, 'grabVeh', true);
 
     setTimeout(function () {

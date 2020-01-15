@@ -35,14 +35,14 @@ carWash.checkPosForOpenMenu = function(player) {
         if (shopId == -1)
             return;
         if (player.vehicle) {
-            if (user.getCashMoney(player) < 100) {
+            if (user.getMoney(player) < 100) {
                 player.notify('~r~Необходимо иметь 100$ для того чтобы помыть транспорт');
                 return;
             }
             user.showLoadDisplay(player);
             setTimeout(function () {
 
-                user.removeCashMoney(player, 99.90);
+                user.removeMoney(player, 99.90, 'Услуги автомойки');
                 coffer.addMoney(1, 99);
 
                 vSync.setVehicleDirt(player.vehicle, 0);

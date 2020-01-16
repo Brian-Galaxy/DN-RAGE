@@ -84,7 +84,6 @@ mp.attachmentMngr =
 
         register: function(id, model, boneName, offset, rotation)
         {
-            return;
             try {
                 if(typeof(id) === 'string')
                 {
@@ -267,7 +266,7 @@ attach.init = function () {
                     let atts = data.split('|').map(att => parseInt(att, 36));
                     _player.__attachments = atts;
                     _player.__attachmentObjects = {};
-                }
+                    weapon_4_ammo   }
             }
             catch (e) {
                 methods.debug(e);

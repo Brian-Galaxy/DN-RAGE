@@ -1197,7 +1197,7 @@ menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId) {
                     if (methods.parseInt(item.count) == 0)
                         desc = "Пустая";
                 }
-                else if (item.item_id <= 274 && item.item_id >= 265) {
+                else if (item.item_id <= 274 && item.item_id >= 264) {
                     itemName = params.name;
                 }
                 else if (item.item_id <= 473 && item.item_id >= 293) {
@@ -2221,13 +2221,18 @@ menuList.showShopClothMenu = function (shopId, type, menuType) {
             UIMenu.Menu.AddMenuItem("Серьги").doName = "earring";
             UIMenu.Menu.AddMenuItem("Левая рука").doName = "leftHand";
             UIMenu.Menu.AddMenuItem("Правая рука").doName = "rightHand";
-            UIMenu.Menu.AddMenuItem("~y~Ограбить").doName = 'grab';
+            //UIMenu.Menu.AddMenuItem("~y~Ограбить").doName = 'grab';
+
+            UIMenu.Menu.AddMenuItem('~b~Сумки и рюкзаки').doName = 'openBag';
+
         } else if (menuType == 1) {
             UIMenu.Menu.AddMenuItem("Головные уборы").doName = "head";
             UIMenu.Menu.AddMenuItem("Очки").doName = "glasses";
             UIMenu.Menu.AddMenuItem("Торс").doName = "body";
             UIMenu.Menu.AddMenuItem("Ноги").doName = "legs";
             UIMenu.Menu.AddMenuItem("Обувь").doName = "shoes";
+
+            UIMenu.Menu.AddMenuItem('~b~Сумки и рюкзаки').doName = 'openBag';
         } else {
 
             if (type == 11)
@@ -2297,6 +2302,10 @@ menuList.showShopClothMenu = function (shopId, type, menuType) {
                     UIMenu.Menu.HideMenu();
                     //user.grab(shopId);
                 }
+                if (item.doName == "openBag") {
+                    UIMenu.Menu.HideMenu();
+                    menuList.showShopClothBagMenu(shopId, type, menuType);
+                }
                 if (item.doName == "takeOff") {
                     UIMenu.Menu.HideMenu();
                     cloth.buy(10, menuType, 0, 0, -1, -1, -1, -1, "Операция", shopId, true);
@@ -2347,6 +2356,191 @@ menuList.showShopClothMenu = function (shopId, type, menuType) {
                     UIMenu.Menu.HideMenu();
                     menuList.showShopClothMenu(shopId, 3, 6);
                 }
+            } catch (e) {
+                methods.debug('Exception: menuList.showShopClothMenu menu.ItemSelect');
+                methods.debug(e);
+            }
+        });
+    } catch (e) {
+        methods.debug('Exception: menuList.showShopClothMenu');
+        methods.debug(e);
+    }
+};
+
+menuList.showShopClothBagMenu = function (shopId, type, menuType) {
+    try {
+        methods.debug('Execute: menuList.showShopClothBagMenu');
+
+        if (methods.isBlackout()) {
+            mp.game.ui.notifications.show(`~r~В городе отсутствует свет`);
+            return;
+        }
+
+        let title1 = "commonmenu";
+        let title2 = "interaction_bgd";
+
+        switch (type) {
+            case 0:
+                title1 = "shopui_title_lowendfashion";
+                title2 = "shopui_title_lowendfashion";
+                break;
+            case 1:
+                title1 = "shopui_title_midfashion";
+                title2 = "shopui_title_midfashion";
+                break;
+            case 2:
+                title1 = "shopui_title_highendfashion";
+                title2 = "shopui_title_highendfashion";
+                break;
+            case 3:
+                title1 = "shopui_title_gunclub";
+                title2 = "shopui_title_gunclub";
+                break;
+            case 5:
+                title1 = "shopui_title_lowendfashion2";
+                title2 = "shopui_title_lowendfashion2";
+                break;
+        }
+
+        let menu = UIMenu.Menu.Create(title1 != "commonmenu" ? " " : "Vangelico", "~b~Магазин", true, false, false, title1, title2);
+
+        let list = ['Черная', 'Синяя', 'Желтая', 'Розовая', 'Зелёная', 'Оранжевая', 'Фиолетовая', 'Светло-розовая', 'Красно-синяя', 'Голубая', 'Цифра', 'Флора', 'Синяя флора', 'Узор', 'Пустынная', 'Камо', 'Белая'];
+        let menuListItem = UIMenu.Menu.AddMenuItemList('Спортивная сумка', list, `Цена: ~g~${(methods.moneyFormat(2000))}`);
+        menuListItem.id1 = 5;
+        menuListItem.id2 = 82;
+        menuListItem.id4 = 0;
+        menuListItem.id5 = 0;
+        menuListItem.id6 = 0;
+        menuListItem.id7 = 0;
+        menuListItem.id8 = 2000;
+        menuListItem.itemName = 'Спортивная сумка';
+
+        list = ['Обычная'];
+        menuListItem = UIMenu.Menu.AddMenuItemList('Спортивная сумка', list, `Цена: ~g~${(methods.moneyFormat(1500))}`);
+        menuListItem.id1 = 5;
+        menuListItem.id2 = 41;
+        menuListItem.id4 = 0;
+        menuListItem.id5 = 0;
+        menuListItem.id6 = 0;
+        menuListItem.id7 = 0;
+        menuListItem.id8 = 1500;
+        menuListItem.itemName = 'Спортивная сумка';
+
+        list = ['Обычная чёрная'];
+        menuListItem = UIMenu.Menu.AddMenuItemList('Спортивная сумка', list, `Цена: ~g~${(methods.moneyFormat(1500))}`);
+        menuListItem.id1 = 5;
+        menuListItem.id2 = 45;
+        menuListItem.id4 = 0;
+        menuListItem.id5 = 0;
+        menuListItem.id6 = 0;
+        menuListItem.id7 = 0;
+        menuListItem.id8 = 1500;
+        menuListItem.itemName = 'Спортивная сумка';
+
+        list = [];
+        for (let j = 0; j <= 0; j++) {
+            list.push(j + '');
+        }
+        menuListItem = UIMenu.Menu.AddMenuItemList('Рюкзак c узором', list, `Цена: ~g~${(methods.moneyFormat(500))}`);
+        menuListItem.id1 = 5;
+        menuListItem.id2 = 2;
+        menuListItem.id4 = 0;
+        menuListItem.id5 = 0;
+        menuListItem.id6 = 0;
+        menuListItem.id7 = 0;
+        menuListItem.id8 = 500;
+        menuListItem.itemName = 'Рюкзак c узором';
+
+        list = [];
+        for (let j = 0; j <= 25; j++) {
+            list.push(j + '');
+        }
+        menuListItem = UIMenu.Menu.AddMenuItemList('Рюкзак с флагом #1', list, `Цена: ~g~${(methods.moneyFormat(500))}`);
+        menuListItem.id1 = 5;
+        menuListItem.id2 = 11;
+        menuListItem.id4 = 0;
+        menuListItem.id5 = 0;
+        menuListItem.id6 = 0;
+        menuListItem.id7 = 0;
+        menuListItem.id8 = 500;
+        menuListItem.itemName = 'Рюкзак с флагом';
+
+        list = [];
+        for (let j = 0; j <= 25; j++) {
+            list.push(j + '');
+        }
+        menuListItem = UIMenu.Menu.AddMenuItemList('Рюкзак с флагом #2', list, `Цена: ~g~${(methods.moneyFormat(500))}`);
+        menuListItem.id1 = 5;
+        menuListItem.id2 = 22;
+        menuListItem.id4 = 0;
+        menuListItem.id5 = 0;
+        menuListItem.id6 = 0;
+        menuListItem.id7 = 0;
+        menuListItem.id8 = 500;
+        menuListItem.itemName = 'Рюкзак с флагом';
+
+        list = [];
+        for (let j = 0; j <= 4; j++) {
+            list.push(j + '');
+        }
+        menuListItem = UIMenu.Menu.AddMenuItemList('Рюкзак тактический', list, `Цена: ~g~${(methods.moneyFormat(500))}`);
+        menuListItem.id1 = 5;
+        menuListItem.id2 = 32;
+        menuListItem.id4 = 0;
+        menuListItem.id5 = 0;
+        menuListItem.id6 = 0;
+        menuListItem.id7 = 0;
+        menuListItem.id8 = 500;
+        menuListItem.itemName = 'Рюкзак тактический';
+
+        list = [];
+        for (let j = 0; j <= 9; j++) {
+            list.push(j + '');
+        }
+        menuListItem = UIMenu.Menu.AddMenuItemList('Рюкзак', list, `Цена: ~g~${(methods.moneyFormat(500))}`);
+        menuListItem.id1 = 5;
+        menuListItem.id2 = 53;
+        menuListItem.id4 = 0;
+        menuListItem.id5 = 0;
+        menuListItem.id6 = 0;
+        menuListItem.id7 = 0;
+        menuListItem.id8 = 500;
+        menuListItem.itemName = 'Рюкзак';
+
+        UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = "closeButton";
+
+        menu.MenuClose.on(() => {
+            try {
+                if (type == 11)
+                    user.updateTattoo();
+                user.updateCharacterCloth();
+            } catch (e) {
+                methods.debug('Exception: menuList.showShopClothMenu menu.MenuClose');
+                methods.debug(e);
+            }
+        });
+
+        let currentListChangeItem = null;
+        let currentListChangeItemIndex = 0;
+
+        menu.ListChange.on((item, index) => {
+            currentListChangeItem = item;
+            currentListChangeItemIndex = index;
+            cloth.change(item.id1, item.id2, index, item.id4, item.id5, item.id6, item.id7);
+        });
+
+        menu.ItemSelect.on(async (item, index) => {
+            try {
+                if (item == currentListChangeItem) {
+                    cloth.buy(item.id8, item.id1, item.id2, currentListChangeItemIndex, item.id4, item.id5, item.id6, item.id7, item.itemName, shopId);
+                }
+
+                if (item.doName == "closeButton") {
+                    UIMenu.Menu.HideMenu();
+                    user.updateCharacterCloth();
+                }
+                if (item.price > 0)
+                    mp.events.callRemote('server:shop:buy', item.itemId, item.price, shopId);
             } catch (e) {
                 methods.debug('Exception: menuList.showShopClothMenu menu.ItemSelect');
                 methods.debug(e);

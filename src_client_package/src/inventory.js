@@ -30,7 +30,7 @@ inventory.show = function() {
 
     let data = {type: "updateLabel", uid: `${mp.players.local.remoteId} (${user.getCache('id')})`, uname: user.getCache('name')};
     ui.callCef('inventory', JSON.stringify(data));
-    ui.callCef('inventory', JSON.stringify({type: "updateMaxW", val: 50000}));
+    ui.callCef('inventory', JSON.stringify({type: "updateMaxW", val: inventory.calculatePlayerInvAmountMax()}));
     ui.callCef('inventory', '{"type": "show"}');
 
     mp.game.graphics.transitionToBlurred(100);
@@ -368,7 +368,7 @@ inventory.setInvAmountMax = function(id, type, data) {
 };
 
 inventory.calculatePlayerInvAmountMax = function() {
-    return 50000;
+    return 30000;
 };
 
 inventory.startFishing = function() {
@@ -452,10 +452,7 @@ inventory.setWeaponAmmo = function(name, count) {
 };
 
 inventory.updateAmountMax = function(id, type) {
-    if (type == inventory.types.VehicleNpc ||
-        type == inventory.types.VehicleOwner ||
-        type == inventory.types.VehicleServer ||
-        type == inventory.types.Vehicle)
+    if (type == inventory.types.Vehicle)
     {
         let veh = methods.getNearestVehicleWithCoords(mp.players.local.position, 5.0);
         if (veh) {
@@ -476,7 +473,9 @@ inventory.updateAmountMax = function(id, type) {
         else if (type == inventory.types.Player)
             invAmountMax = inventory.calculatePlayerInvAmountMax();
         else if (type == inventory.types.Bag)
-            invAmountMax = 60000;
+            invAmountMax = 50000;
+        else if (type == inventory.types.BagSmall)
+            invAmountMax = 20000;
         else if (type == inventory.types.StockGang)
             invAmountMax = 21000000;
         else if (type == inventory.types.Fridge)
@@ -562,7 +561,7 @@ inventory.types = {
     Player : 1,
     VehicleOwner : 2,
     VehicleServer : 3,
-    VehicleNpc : 4,
+    BagSmall : 4,
     House : 5,
     Apartment : 6,
     Bag : 7,

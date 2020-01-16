@@ -841,8 +841,11 @@ mp.events.add('client:inventory:drop', function(id, itemId) {
     inventory.dropItem(id, itemId, mp.players.local.position, mp.players.local.getRotation(0));
 });
 
-mp.events.add('client:inventory:openBag', function(id) {
-    inventory.getItemList(inventory.types.Bag, id);
+mp.events.add('client:inventory:openBag', function(id, itemId) {
+    if (itemId == 263)
+        inventory.getItemList(inventory.types.BagSmall, id);
+    else
+        inventory.getItemList(inventory.types.Bag, id);
 });
 
 mp.events.add('client:inventory:selectWeapon', function(id, itemId, serial) {
@@ -1001,7 +1004,7 @@ mp.events.add('client:inventory:unEquip', function(id, itemId) {
 
         user.save();
     }
-    else if (itemId == 264) {
+    else if (itemId == 264 || itemId == 263) {
         user.set("hand", 0);
         user.set("hand_color", 0);
         user.updateCharacterCloth();
@@ -1182,9 +1185,9 @@ mp.events.add('client:inventory:equip', function(id, itemId, count, aparams) {
         let useItemId = items.getWeaponIdByName(items.getItemNameHashById(itemId));
         let slot = weapons.getGunSlotIdByItem(useItemId);
     }
-    else if (itemId == 264) {
-        user.set("hand", 82);
-        user.set("hand_color", 0);
+    else if (itemId == 264 || itemId == 263) {
+        user.set("hand", params.hand);
+        user.set("hand_color", params.hand_color);
         user.updateCharacterCloth();
         user.save();
     }
@@ -1583,9 +1586,10 @@ mp.events.add("playerCommand", async (command) => {
         });
     }
     else if (command.toLowerCase().slice(0, 3) === "qwe") {
-        let player = mp.players.local; //TODO Спавн объектов оружия и обвесов на них
-        /*let pos = player.position;
-        let object = mp.game.weapon.createWeaponObject(-86904375, 1000, pos.x + 2, pos.y + 2, pos.z, true, player.heading, 0);*/
+        /*let player = mp.players.local; //TODO Спавн объектов оружия и обвесов на них
+        let pos = player.position;
+        let object = mp.game.weapon.createWeaponObject(-86904375, 1000, pos.x + 2, pos.y + 2, pos.z, true, player.heading, 0);
+        mp.game.weapon.giveWeaponObjectToPed(object, mp.players.local.handle);*/
     }
     else if (command.slice(0, 5) === "eval ") {
         if (!user.isLogin() || !user.isAdmin(5))

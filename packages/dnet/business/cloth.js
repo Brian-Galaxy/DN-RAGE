@@ -188,8 +188,14 @@ cloth.change = function (player, body, cloth, color, torso, torsoColor, parachut
     user.setComponentVariation(player, body, cloth, color);
 };
 
+cloth.getClothBagName = function (idx) {
+    methods.debug('cloth.getClothBagName');
+    let names = ['Черная', 'Синяя', 'Желтая', 'Розовая', 'Зелёная', 'Оранжевая', 'Фиолетовая', 'Светло-розовая', 'Красно-синяя', 'Голубая', 'Цифра', 'Флора', 'Синяя флора', 'Узор', 'Пустынная', 'Камо', 'Белая'];
+    return names[idx];
+};
+
 cloth.buy = function (player, price, body, cloth, color, torso, torsoColor, parachute, parachuteColor, itemName = "Одежда", shopId = 0, isFree = false) {
-    methods.debug('barberShop.buy');
+    methods.debug('cloth.buy');
     if (!user.isLogin(player))
         return;
     if (user.getCashMoney(player) < price && !isFree) {
@@ -223,8 +229,22 @@ cloth.buy = function (player, price, body, cloth, color, torso, torsoColor, para
             inventory.addItem(266, 1, inventory.types.Player, user.getId(player), 1, 1, params, 100);
             break;
         case 5:
+            inventory.updateItemsEquipByItemId(264, inventory.types.Player, user.getId(player), 0);
+
             user.set(player, 'hand', cloth);
             user.set(player, 'hand_color', color);
+
+            params = `{"name": "${itemName}", "hand": ${cloth}, "hand_color": ${color}}`;
+            if (cloth == 82)
+            {
+                let names = ['Черная', 'Синяя', 'Желтая', 'Розовая', 'Зелёная', 'Оранжевая', 'Фиолетовая', 'Светло-розовая', 'Красно-синяя', 'Голубая', 'Цифра', 'Флора', 'Синяя флора', 'Узор', 'Пустынная', 'Камо', 'Белая'];
+                params = `{"name": "${itemName} (${names[color]})", "hand": ${cloth}, "hand_color": ${color}}`;
+            }
+
+            if (cloth == 41 || cloth == 45 || cloth == 82)
+                inventory.addItem(264, 1, inventory.types.Player, user.getId(player), 1, 1, params, 100);
+            else
+                inventory.addItem(263, 1, inventory.types.Player, user.getId(player), 1, 1, params, 100);
             break;
         case 6:
             inventory.updateItemsEquipByItemId(267, inventory.types.Player, user.getId(player), 0);

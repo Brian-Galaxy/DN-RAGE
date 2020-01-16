@@ -1403,7 +1403,7 @@ inventory.types = {
     Player : 1,
     VehicleOwner : 2,
     VehicleServer : 3,
-    VehicleNpc : 4,
+    BagSmall : 4,
     House : 5,
     Apartment : 6,
     Bag : 7,

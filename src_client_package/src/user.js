@@ -3,9 +3,9 @@
 import Container from './modules/data';
 import methods from './modules/methods';
 import ui from "./modules/ui";
+
 import weapons from "./weapons";
 import enums from "./enums";
-import inventory from "./inventory";
 import items from "./items";
 
 let user = {};
@@ -33,12 +33,22 @@ let cam = null;
 * */
 
 mp.events.add('render', () => {
-    if (user.isLogin() && user.getTargetEntityValidate())
-        ui.drawText(`•`, 0.5, 0.5, 0.3, 255, 255, 255, 180, 0, 1, false, true);
+    try {
+        if (user.isLogin() && user.getTargetEntityValidate())
+            ui.drawText(`•`, 0.5, 0.5, 0.3, 255, 255, 255, 180, 0, 1, false, true);
+    }
+    catch (e) {
+
+    }
 });
 
 user.timerRayCast = function() {
+
     try {
+
+        if (mp.players.local.vehicle)
+            return;
+
         switch (mp.game.invoke(methods.GET_FOLLOW_PED_CAM_VIEW_MODE)) {
             case 4:
                 user.targetEntity = user.pointingAtRadius(2);
@@ -77,6 +87,9 @@ user.timerRayCast = function() {
 };
 
 user.timer1sec = function() {
+
+    ui.updateZoneAndStreet();
+    ui.updateDirectionText();
 
     try {
         for (let n = 54; n < 138; n++)
@@ -162,18 +175,28 @@ user.removeAllWeapons = function() {
     mp.players.local.removeAllWeapons();
 
     weapons.getMapList().forEach(item => {
-        let hash = item[1] / 2;
-        if (Container.Data.HasLocally(0, hash.toString())) {
-            Container.Data.ResetLocally(0, hash.toString());
-            Container.Data.Reset(mp.players.local.remoteId, hash.toString());
+        try {
+            let hash = item[1] / 2;
+            if (Container.Data.HasLocally(0, hash.toString())) {
+                Container.Data.ResetLocally(0, hash.toString());
+                Container.Data.Reset(mp.players.local.remoteId, hash.toString());
+            }
+        }
+        catch (e) {
+            methods.debug(e);
         }
     });
 };
 
 user.giveWeaponByHash = function(model, pt) {
-    mp.game.invoke(methods.GIVE_WEAPON_TO_PED, mp.players.local.handle, model, pt, false, true);
-    Container.Data.SetLocally(0, model.toString(), true);
-    Container.Data.Set(mp.players.local.remoteId, model.toString(), pt);
+    try {
+        mp.game.invoke(methods.GIVE_WEAPON_TO_PED, mp.players.local.handle, model, methods.parseInt(pt), false, true);
+        Container.Data.SetLocally(0, model.toString(), true);
+        Container.Data.Set(mp.players.local.remoteId, model.toString(), methods.parseInt(pt));
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 };
 
 user.giveWeaponComponentByHash = function(model, component) {
@@ -198,11 +221,16 @@ user.setCurrentWeapon = function(model) {
 };
 
 user.setCurrentWeaponByHash = function(model) {
-    mp.game.invoke(methods.SET_CURRENT_PED_WEAPON, mp.players.local.handle, model, true);
+    try {
+        mp.game.invoke(methods.SET_CURRENT_PED_WEAPON, mp.players.local.handle, model, true);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 };
 
 user.setWeaponTintByHash = function(model, tint) {
-    mp.events.callRemote('server:user:setWeaponTint', model.toString(), tint);
+    mp.events.callRemote('server:user:setWeaponTint', model.toString(), methods.parseInt(tint));
 };
 
 user.setWeaponTint = function(model, tint) {
@@ -218,7 +246,12 @@ user.addAmmo = function(name, count) {
 };
 
 user.addAmmoByHash = function(name, count) {
-    mp.game.invoke(methods.ADD_AMMO_TO_PED, mp.players.local.handle, name, count);
+    try {
+        mp.game.invoke(methods.ADD_AMMO_TO_PED, mp.players.local.handle, name, methods.parseInt(count));
+    }
+    catch (e) {
+        methods.debug(e)
+    }
 };
 
 user.setAmmo = function(name, count) {
@@ -226,11 +259,12 @@ user.setAmmo = function(name, count) {
 };
 
 user.setAmmoByHash = function(name, count) {
-    mp.game.invoke(methods.SET_PED_AMMO, mp.players.local.handle, name, count);
-};
-
-user.setAmmoByHash = function(name, count) {
-    mp.game.invoke(methods.SET_PED_AMMO, mp.players.local.handle, name, count);
+    try {
+        mp.game.invoke(methods.SET_PED_AMMO, mp.players.local.handle, name, methods.parseInt(count));
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 };
 
 user.getAmmo = function(name) {
@@ -349,36 +383,46 @@ user.notify = function (message) {
 
 user.init = function() {
 
-    mp.game.graphics.transitionFromBlurred(false);
-    user.timerRayCast();
-    user.timer1sec();
-    user.stopAllScreenEffect();
-    user.hideLoadDisplay();
-    user.clearChat();
+    try {
+        mp.game.graphics.transitionFromBlurred(false);
+        user.timerRayCast();
+        user.timer1sec();
+        user.stopAllScreenEffect();
+        user.hideLoadDisplay();
+        user.clearChat();
 
-    cam = mp.cameras.new('customization', new mp.Vector3(8.243752, 527.4373, 171.6173), new mp.Vector3(0, 0, 0), 20);
-    cam.pointAtCoord(9.66692, 528.34783, 171.2);
-    cam.setActive(true);
-    mp.game.cam.renderScriptCams(true, false, 0, false, false);
+        cam = mp.cameras.new('customization', new mp.Vector3(8.243752, 527.4373, 171.6173), new mp.Vector3(0, 0, 0), 20);
+        cam.pointAtCoord(9.66692, 528.34783, 171.2);
+        cam.setActive(true);
+        mp.game.cam.renderScriptCams(true, false, 0, false, false);
 
-    user.setVirtualWorld(mp.players.local.remoteId + 1);
-    mp.players.local.position = new mp.Vector3(9.66692, 528.34783, 170.63504 + 10);
-    mp.players.local.setRotation(0, 0, 123.53768, 0, true);
-    mp.players.local.freezePosition(true);
-    mp.players.local.setVisible(true, false);
-    mp.players.local.setCollision(false, false);
+        user.setVirtualWorld(mp.players.local.remoteId + 1);
+        mp.players.local.position = new mp.Vector3(9.66692, 528.34783, 170.63504 + 10);
+        mp.players.local.setRotation(0, 0, 123.53768, 0, true);
+        mp.players.local.freezePosition(true);
+        mp.players.local.setVisible(true, false);
+        mp.players.local.setCollision(false, false);
 
-    mp.game.ui.displayRadar(false);
-    mp.gui.chat.activate(false);
+        mp.game.ui.displayRadar(false);
+        mp.gui.chat.activate(false);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 };
 
 user.destroyCam = function() {
-    if (cam) {
-        cam.destroy();
-        cam = null;
-
-        mp.game.cam.renderScriptCams(false, true, 500, true, true);
+    try {
+        if (cam) {
+            cam.destroy();
+            cam = null;
+        }
     }
+    catch (e) {
+        methods.debug(e);
+    }
+
+    mp.game.cam.renderScriptCams(false, true, 500, true, true);
 };
 
 user.getCam = function() {
@@ -386,17 +430,27 @@ user.getCam = function() {
 };
 
 user.camSetRot = function(idx) {
-    let coords = new mp.Vector3(9.66692, 528.34783, 171.3);
-    currentCamRot = (idx / 180) * -2;
-    let newCoords = new mp.Vector3((1 + currentCamDist) * Math.sin(currentCamRot) + coords.x, (1 + currentCamDist) * Math.cos(currentCamRot) + coords.y, coords.z);
-    cam.setCoord(newCoords.x, newCoords.y, newCoords.z);
+    try {
+        let coords = new mp.Vector3(9.66692, 528.34783, 171.3);
+        currentCamRot = (idx / 180) * -2;
+        let newCoords = new mp.Vector3((1 + currentCamDist) * Math.sin(currentCamRot) + coords.x, (1 + currentCamDist) * Math.cos(currentCamRot) + coords.y, coords.z);
+        cam.setCoord(newCoords.x, newCoords.y, newCoords.z);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 };
 
 user.camSetDist = function(idx) {
-    currentCamDist = idx;
-    let coords = new mp.Vector3(9.66692, 528.34783, 171.3);
-    let newCoords = new mp.Vector3((1 + currentCamDist) * Math.sin(currentCamRot) + coords.x, (1 + currentCamDist) * Math.cos(currentCamRot) + coords.y, coords.z);
-    cam.setCoord(newCoords.x, newCoords.y, newCoords.z);
+    try {
+        currentCamDist = idx;
+        let coords = new mp.Vector3(9.66692, 528.34783, 171.3);
+        let newCoords = new mp.Vector3((1 + currentCamDist) * Math.sin(currentCamRot) + coords.x, (1 + currentCamDist) * Math.cos(currentCamRot) + coords.y, coords.z);
+        cam.setCoord(newCoords.x, newCoords.y, newCoords.z);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 };
 
 user.setVariable = function(key, value) {
@@ -412,17 +466,27 @@ user.setPlayerModel = function(model) {
 };
 
 user.setDecoration = function(slot, type, isLocal = false) {
-    if (!isLocal)
-        mp.events.callRemote('server:user:setDecoration', slot, type);
-    else
-        mp.players.local.setDecoration(mp.game.joaat(slot), mp.game.joaat(type));
+    try {
+        if (!isLocal)
+            mp.events.callRemote('server:user:setDecoration', slot, type);
+        else
+            mp.players.local.setDecoration(mp.game.joaat(slot), mp.game.joaat(type));
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 };
 
 user.clearDecorations = function(isLocal = false) {
-    if (!isLocal)
-        mp.events.callRemote('server:user:clearDecorations');
-    else
-        mp.players.local.clearDecorations();
+    try {
+        if (!isLocal)
+            mp.events.callRemote('server:user:clearDecorations');
+        else
+            mp.players.local.clearDecorations();
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 };
 
 user.save = function() {
@@ -433,19 +497,24 @@ user.login = function(name, spawnName) {
     user.showLoadDisplay();
 
     setTimeout(function () {
-        ui.callCef('authMain','{"type": "hide"}');
-        ui.callCef('customization','{"type": "hide"}');
-        user.destroyCam();
+        try {
+            ui.callCef('authMain','{"type": "hide"}');
+            ui.callCef('customization','{"type": "hide"}');
+            user.destroyCam();
 
-        user.setLogin(true);
+            user.setLogin(true);
 
-        mp.players.local.freezePosition(false);
-        mp.players.local.setCollision(true, true);
-        mp.gui.cursor.show(false, false);
-        mp.gui.chat.show(true);
-        mp.gui.chat.activate(true);
-        mp.game.ui.displayRadar(true);
-        mp.events.callRemote('server:user:loginUser', name, spawnName);
+            mp.players.local.freezePosition(false);
+            mp.players.local.setCollision(true, true);
+            mp.gui.cursor.show(false, false);
+            mp.gui.chat.show(true);
+            mp.gui.chat.activate(true);
+            mp.game.ui.displayRadar(true);
+            mp.events.callRemote('server:user:loginUser', name, spawnName);
+        }
+        catch (e) {
+            methods.debug(e);
+        }
     }, 500);
 };
 
@@ -502,58 +571,22 @@ user.getCacheData = function() {
     return userData;
 };
 
-let skin = {
-    SKIN_SEX: 0,
-    SKIN_MOTHER_FACE: 0,
-    SKIN_FATHER_FACE: 0,
-    SKIN_MOTHER_SKIN: 0,
-    SKIN_FATHER_SKIN: 0,
-    SKIN_PARENT_FACE_MIX: 0,
-    SKIN_PARENT_SKIN_MIX: 0,
-    SKIN_HAIR: 0,
-    SKIN_HAIR_COLOR: 0,
-    SKIN_HAIR_COLOR_2: 0,
-    SKIN_EYE_COLOR: 0,
-    SKIN_EYEBROWS: 0,
-    SKIN_EYEBROWS_COLOR: 0,
-    SKIN_OVERLAY_1: -1,
-    SKIN_OVERLAY_COLOR_1: -1,
-    SKIN_OVERLAY_2: -1,
-    SKIN_OVERLAY_COLOR_2: -1,
-    SKIN_OVERLAY_3: -1,
-    SKIN_OVERLAY_COLOR_3: -1,
-    SKIN_OVERLAY_4: -1,
-    SKIN_OVERLAY_COLOR_4: -1,
-    SKIN_OVERLAY_5: -1,
-    SKIN_OVERLAY_COLOR_5: -1,
-    SKIN_OVERLAY_6: -1,
-    SKIN_OVERLAY_COLOR_6: -1,
-    SKIN_OVERLAY_7: -1,
-    SKIN_OVERLAY_COLOR_7: -1,
-    SKIN_OVERLAY_8: -1,
-    SKIN_OVERLAY_COLOR_8: -1,
-    SKIN_OVERLAY_9: -1,
-    SKIN_OVERLAY_COLOR_9: -1,
-    SKIN_OVERLAY_10: -1,
-    SKIN_OVERLAY_COLOR_10: -1,
-    SKIN_OVERLAY_11: -1,
-    SKIN_OVERLAY_COLOR_11: 0,
-    SKIN_OVERLAY_12: -1,
-    SKIN_OVERLAY_COLOR_12: -1,
-    SKIN_FACE_SPECIFICATIONS: [],
-};
-
 user.getSex = function() {
-    if (mp.players.local.model === mp.game.joaat('mp_f_freemode_01'))
-        return 1;
-    else if (mp.players.local.model === mp.game.joaat('mp_m_freemode_01'))
-        return 0;
-    else if (user.isLogin()) {
-        let skin = JSON.parse(user.getCache('skin'));
-        return skin['SKIN_SEX'];
+    try {
+        if (mp.players.local.model === mp.game.joaat('mp_f_freemode_01'))
+            return 1;
+        else if (mp.players.local.model === mp.game.joaat('mp_m_freemode_01'))
+            return 0;
+        else if (user.isLogin()) {
+            let skin = JSON.parse(user.getCache('skin'));
+            return skin['SKIN_SEX'];
+        }
     }
-    else
-        return 0;
+    catch (e) {
+        methods.debug(e);
+    }
+
+    return 0;
 };
 
 user.updateCharacterFace = function(isLocal = false) {
@@ -883,15 +916,20 @@ user.stopAllAnimation = function() {
 user.playScenario = function(name) {
     //mp.events.callRemote('server:playScenario', name);
 
-    let remotePlayer = mp.players.local;
-    remotePlayer.clearTasks();
-    if (name == 'PROP_HUMAN_SEAT_BENCH') {
-        let pos = remotePlayer.getOffsetFromInWorldCoords(0, -0.5, -0.5);
-        let heading = remotePlayer.getRotation(0).z;
-        remotePlayer.taskStartScenarioAtPosition(name, pos.x, pos.y, pos.z, heading, -1, true, false);
+    try {
+        let remotePlayer = mp.players.local;
+        remotePlayer.clearTasks();
+        if (name == 'PROP_HUMAN_SEAT_BENCH') {
+            let pos = remotePlayer.getOffsetFromInWorldCoords(0, -0.5, -0.5);
+            let heading = remotePlayer.getRotation(0).z;
+            remotePlayer.taskStartScenarioAtPosition(name, pos.x, pos.y, pos.z, heading, -1, true, false);
+        }
+        else {
+            remotePlayer.taskStartScenarioInPlace(name, 0, true);
+        }
     }
-    else {
-        remotePlayer.taskStartScenarioInPlace(name, 0, true);
+    catch (e) {
+        methods.debug(e);
     }
 };
 

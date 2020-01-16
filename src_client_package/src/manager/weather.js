@@ -105,21 +105,26 @@ weather.getWeatherId = function(weatherName) {
 
 weather.syncDateTime = function(min, hour, day, month, year) {
 
-    mp.discord.update('DEDNET | HASKELL', 'dednet.ru');
+    try {
+        mp.discord.update('DEDNET | HASKELL', 'dednet.ru');
 
-    DayName = DayNames[new Date(year, month, day).getDay()];
+        DayName = DayNames[new Date(year, month, day).getDay()];
 
-    Day = day;
-    Month = month;
-    Year = year;
-    Hour = hour;
-    Min = min;
-    Sec = 0;
+        Day = day;
+        Month = month;
+        Year = year;
+        Hour = hour;
+        Min = min;
+        Sec = 0;
 
-    Players = mp.players.length;
+        Players = mp.players.length;
 
-    mp.game.time.setClockDate(day, month, year);
-    mp.game.time.setClockTime(hour, min, Sec);
+        mp.game.time.setClockDate(day, month, year);
+        mp.game.time.setClockTime(hour, min, Sec);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 };
 
 weather.getCurrentDayName = function() {
@@ -200,10 +205,15 @@ weather.getWeatherTempServer = function() {
 };
 
 weather.secSyncTimer = function() {
-    Sec++;
-    if (Sec >= 59)
-        Sec = 59;
-    mp.game.time.setClockTime(Hour, Min, Sec);
+    try {
+        Sec++;
+        if (Sec >= 59)
+            Sec = 59;
+        mp.game.time.setClockTime(Hour, Min, Sec);
+    }
+    catch (e) {
+
+    }
     setTimeout(weather.secSyncTimer, 141);
 };
 

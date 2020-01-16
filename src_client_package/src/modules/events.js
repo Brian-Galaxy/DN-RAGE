@@ -18,6 +18,13 @@ import weapons from "../weapons";
 
 mp.gui.chat.enabled = false;
 
+mp.events.__add__ = mp.events.add;
+
+mp.events.add = (eventName, eventCallback) => {
+    methods.debug(`Event ${eventName} called`);
+    mp.events.__add__(eventName, eventCallback);
+};
+
 mp.gui.execute("const _enableChatInput = enableChatInput;enableChatInput = (enable) => { mp.trigger('chatEnabled', enable); _enableChatInput(enable) };");
 
 mp.events.add('chatEnabled', (isEnabled) => {
@@ -25,20 +32,8 @@ mp.events.add('chatEnabled', (isEnabled) => {
     methods.disableAllControls(isEnabled);
 });
 
-let money = "0.00 $";
-let moneyBank = "0.00 $";
 let maxSpeed = 500;
 let _playerDisableAllControls = false;
-
-let timerId = setTimeout(function updateMoney() {
-    if(user.isLogin()) {
-        //money = '$' + methods.numberFormat(parseInt(user.get('money'))); //TODO
-        //moneyBank = '$' + methods.numberFormat(parseInt(user.get('money_bank')));
-        ui.updateZoneAndStreet();
-        ui.updateDirectionText();
-    }
-    timerId = setTimeout(updateMoney, 200);
-}, 200);
 
 mp.events.add('client:cefDebug', function (message) {
     try {
@@ -53,171 +48,201 @@ mp.events.add('client:events:disableAllControls', function (disable) {
 
 mp.events.add('client:user:auth:register', function(mail, login, passwordReg, passwordRegCheck, acceptRules) {
     methods.debug(`'${mail} ${login} ${passwordReg} ${passwordRegCheck} ${acceptRules}'`);
-    var checkMail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    if(!checkMail.test(String(mail).toLowerCase())) {
-        mp.game.ui.notifications.show('~r~Email - не валидный адрес');
-        return;
+    try {
+        var checkMail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        if(!checkMail.test(String(mail).toLowerCase())) {
+            mp.game.ui.notifications.show('~r~Email - не валидный адрес');
+            return;
+        }
+        mail = mail.toLowerCase();
+        login = login.toLowerCase();
+        login = login.replace(/[^a-zA-Z0-9\s]/ig, '');
+        if (login === "") {
+            mp.game.ui.notifications.show('~r~Логин - поле не заполнено');
+            return;
+        }
+        if (passwordReg === "") {
+            mp.game.ui.notifications.show('~r~Пароль - поле не заполнено');
+            return;
+        }
+        if (passwordReg !== passwordRegCheck) {
+            mp.game.ui.notifications.show('~r~Пароли не совпадают');
+            return;
+        }
+        if (acceptRules === false) {
+            mp.game.ui.notifications.show('~r~Вы не согласились с правилами сервера');
+            return;
+        }
+        mp.game.ui.notifications.show('~b~Пожалуйста подождите...');
+        //methods.storage.set('login', login);
+        mp.events.callRemote('server:user:createAccount', login, passwordReg, mail);
     }
-    mail = mail.toLowerCase();
-    login = login.toLowerCase();
-    login = login.replace(/[^a-zA-Z0-9\s]/ig, '');
-    if (login === "") {
-        mp.game.ui.notifications.show('~r~Логин - поле не заполнено');
-        return;
+    catch (e) {
+        methods.debug(e);
     }
-    if (passwordReg === "") {
-        mp.game.ui.notifications.show('~r~Пароль - поле не заполнено');
-        return;
-    }
-    if (passwordReg !== passwordRegCheck) {
-        mp.game.ui.notifications.show('~r~Пароли не совпадают');
-        return;
-    }
-    if (acceptRules === false) {
-        mp.game.ui.notifications.show('~r~Вы не согласились с правилами сервера');
-        return;
-    }
-    mp.game.ui.notifications.show('~b~Пожалуйста подождите...');
-    //methods.storage.set('login', login);
-    mp.events.callRemote('server:user:createAccount', login, passwordReg, mail);
 });
 
 mp.events.add('client:user:auth:login', function(login, password) {
     methods.debug(`'${login} ${password}'`);
-    let usingEmail = false;
-    if(login.includes('@')) {
-        var checkMail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        if(!checkMail.test(String(login).toLowerCase())) {
-            mp.game.ui.notifications.show('~r~Не валидный E-Mail адрес');
+    try {
+        let usingEmail = false;
+        if(login.includes('@')) {
+            var checkMail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+            if(!checkMail.test(String(login).toLowerCase())) {
+                mp.game.ui.notifications.show('~r~Не валидный E-Mail адрес');
+                return;
+            }
+            usingEmail = true;
+        } else {
+            login = login.replace(/[^a-zA-Z0-9\s]/ig, '');
+        }
+        login = login.toLowerCase();
+        if (login === "") {
+            mp.game.ui.notifications.show('~r~Логин - поле не заполнено');
             return;
         }
-        usingEmail = true;
-    } else {
-        login = login.replace(/[^a-zA-Z0-9\s]/ig, '');
+        if (password === "") {
+            mp.game.ui.notifications.show('~r~Пароль - поле не заполнено');
+            return;
+        }
+        mp.game.ui.notifications.show('~b~Пожалуйста подождите...');
+        //methods.storage.set('login', login);
+        mp.events.callRemote('server:user:loginAccount', login, password, usingEmail);
     }
-    login = login.toLowerCase();
-    if (login === "") {
-        mp.game.ui.notifications.show('~r~Логин - поле не заполнено');
-        return;
+    catch (e) {
+        methods.debug(e);
     }
-    if (password === "") {
-        mp.game.ui.notifications.show('~r~Пароль - поле не заполнено');
-        return;
-    }
-    mp.game.ui.notifications.show('~b~Пожалуйста подождите...');
-    //methods.storage.set('login', login);
-    mp.events.callRemote('server:user:loginAccount', login, password, usingEmail);
 });
 
 mp.events.add('client:events:loginAccount:success', function(data) {
-    ui.callCef('authMain','{"type": "showCreatePage"}');
+    try {
+        ui.callCef('authMain','{"type": "showCreatePage"}');
 
-    let playerList = JSON.parse(data);
+        let playerList = JSON.parse(data);
 
-    let isShow1 = false;
-    let isShow2 = false;
-    let isShow3 = false;
+        let isShow1 = false;
+        let isShow2 = false;
+        let isShow3 = false;
 
-    let players = [];
+        let players = [];
 
-    if (playerList.length >= 1) {
-        isShow1 = true;
-        players.push({
-            player: {
-                name: playerList[0].name,
-                old: playerList[0].age,
-                money: methods.moneyFormat(playerList[0].money),
-                date: playerList[0].lastLogin,
-                sex: playerList[0].sex,
-                spawn: playerList[0].spawnList,
-                index_spawn: 0
-            }
-        });
+        if (playerList.length >= 1) {
+            isShow1 = true;
+            players.push({
+                player: {
+                    name: playerList[0].name,
+                    old: playerList[0].age,
+                    money: methods.moneyFormat(playerList[0].money),
+                    date: playerList[0].lastLogin,
+                    sex: playerList[0].sex,
+                    spawn: playerList[0].spawnList,
+                    index_spawn: 0
+                }
+            });
+        }
+
+        if (playerList.length >= 2) {
+            isShow2 = true;
+            players.push({
+                player: {
+                    name: playerList[1].name,
+                    old: playerList[1].age,
+                    money: methods.moneyFormat(playerList[1].money),
+                    date: playerList[1].lastLogin,
+                    sex: playerList[1].sex,
+                    spawn: playerList[1].spawnList,
+                    index_spawn: 0
+                }
+            });
+        }
+        if (playerList.length >= 3) {
+            isShow3 = true;
+            players.push({
+                player: {
+                    name: playerList[2].name,
+                    old: playerList[2].age,
+                    money: methods.moneyFormat(playerList[2].money),
+                    date: playerList[2].lastLogin,
+                    sex: playerList[2].sex,
+                    spawn: playerList[2].spawnList,
+                    index_spawn: 0
+                }
+            });
+        }
+
+        ui.callCef('ChangePlayer','{"type": "updatePlayers", "isShow1": ' + isShow1 + ', "isShow2": ' +  isShow2 + ', "isShow3": ' + isShow3 + ', "players": ' + JSON.stringify(players) + '}');
+
+        mp.players.local.position = new mp.Vector3(9.66692, 528.34783, 170.63504);
+        mp.players.local.setRotation(0, 0, 123.53768, 0, true);
     }
-
-    if (playerList.length >= 2) {
-        isShow2 = true;
-        players.push({
-            player: {
-                name: playerList[1].name,
-                old: playerList[1].age,
-                money: methods.moneyFormat(playerList[1].money),
-                date: playerList[1].lastLogin,
-                sex: playerList[1].sex,
-                spawn: playerList[1].spawnList,
-                index_spawn: 0
-            }
-        });
+    catch (e) {
+        methods.debug(e);
     }
-    if (playerList.length >= 3) {
-        isShow3 = true;
-        players.push({
-            player: {
-                name: playerList[2].name,
-                old: playerList[2].age,
-                money: methods.moneyFormat(playerList[2].money),
-                date: playerList[2].lastLogin,
-                sex: playerList[2].sex,
-                spawn: playerList[2].spawnList,
-                index_spawn: 0
-            }
-        });
-    }
-
-    ui.callCef('ChangePlayer','{"type": "updatePlayers", "isShow1": ' + isShow1 + ', "isShow2": ' +  isShow2 + ', "isShow3": ' + isShow3 + ', "players": ' + JSON.stringify(players) + '}');
-
-    mp.players.local.position = new mp.Vector3(9.66692, 528.34783, 170.63504);
-    mp.players.local.setRotation(0, 0, 123.53768, 0, true);
     //ui.callCef('ChangePlayer','{"type": "show"}');
 });
 
 mp.events.add('client:events:createNewPlayer', function() {
-    ui.callCef('authMain','{"type": "hide"}');
-    ui.callCef('customization','{"type": "show"}');
+    try {
+        ui.callCef('authMain','{"type": "hide"}');
+        ui.callCef('customization','{"type": "show"}');
 
-    user.set('SKIN_SEX', 0);
-    user.setPlayerModel('mp_m_freemode_01');
+        user.set('SKIN_SEX', 0);
+        user.setPlayerModel('mp_m_freemode_01');
+    }
+    catch (e) {
+        methods.debug(e);
+    }
     //ui.callCef('ChangePlayer','{"type": "show"}');
 });
 
 mp.events.add('client:events:selectPlayer', function(name, spawnName) {
-    user.login(name, spawnName);
+    try {
+        user.login(name, spawnName);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 });
 
 mp.events.add('client:events:custom:updateAge', function(age) {
     methods.debug(age);
-    if (age> 72)
-        mp.players.local.setHeadOverlay(3, 14, 1, 1, 1);
-    else if (age> 69)
-        mp.players.local.setHeadOverlay(3, 14, 0.7, 1, 1);
-    else if (age> 66)
-        mp.players.local.setHeadOverlay(3, 12, 1, 1, 1);
-    else if (age> 63)
-        mp.players.local.setHeadOverlay(3, 11, 0.9, 1, 1);
-    else if (age> 60)
-        mp.players.local.setHeadOverlay(3, 10, 0.9, 1, 1);
-    else if (age> 57)
-        mp.players.local.setHeadOverlay(3, 9, 0.9, 1, 1);
-    else if (age> 54)
-        mp.players.local.setHeadOverlay(3, 8, 0.8, 1, 1);
-    else if (age> 51)
-        mp.players.local.setHeadOverlay(3, 7, 0.7, 1, 1);
-    else if (age> 48)
-        mp.players.local.setHeadOverlay(3, 6, 0.6, 1, 1);
-    else if (age> 45)
-        mp.players.local.setHeadOverlay(3, 5, 0.5, 1, 1);
-    else if (age> 42)
-        mp.players.local.setHeadOverlay(3, 4, 0.4, 1, 1);
-    else if (age> 39)
-        mp.players.local.setHeadOverlay(3, 4, 0.4, 1, 1);
-    else if (age> 36)
-        mp.players.local.setHeadOverlay(3, 3, 0.3, 1, 1);
-    else if (age> 33)
-        mp.players.local.setHeadOverlay(3, 1, 0.2, 1, 1);
-    else if (age> 30)
-        mp.players.local.setHeadOverlay(3, 0, 0.1, 1, 1);
-    else
-        mp.players.local.setHeadOverlay(3, 0, 0.0, 1, 1);
+    try {
+        if (age> 72)
+            mp.players.local.setHeadOverlay(3, 14, 1, 1, 1);
+        else if (age> 69)
+            mp.players.local.setHeadOverlay(3, 14, 0.7, 1, 1);
+        else if (age> 66)
+            mp.players.local.setHeadOverlay(3, 12, 1, 1, 1);
+        else if (age> 63)
+            mp.players.local.setHeadOverlay(3, 11, 0.9, 1, 1);
+        else if (age> 60)
+            mp.players.local.setHeadOverlay(3, 10, 0.9, 1, 1);
+        else if (age> 57)
+            mp.players.local.setHeadOverlay(3, 9, 0.9, 1, 1);
+        else if (age> 54)
+            mp.players.local.setHeadOverlay(3, 8, 0.8, 1, 1);
+        else if (age> 51)
+            mp.players.local.setHeadOverlay(3, 7, 0.7, 1, 1);
+        else if (age> 48)
+            mp.players.local.setHeadOverlay(3, 6, 0.6, 1, 1);
+        else if (age> 45)
+            mp.players.local.setHeadOverlay(3, 5, 0.5, 1, 1);
+        else if (age> 42)
+            mp.players.local.setHeadOverlay(3, 4, 0.4, 1, 1);
+        else if (age> 39)
+            mp.players.local.setHeadOverlay(3, 4, 0.4, 1, 1);
+        else if (age> 36)
+            mp.players.local.setHeadOverlay(3, 3, 0.3, 1, 1);
+        else if (age> 33)
+            mp.players.local.setHeadOverlay(3, 1, 0.2, 1, 1);
+        else if (age> 30)
+            mp.players.local.setHeadOverlay(3, 0, 0.1, 1, 1);
+        else
+            mp.players.local.setHeadOverlay(3, 0, 0.0, 1, 1);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 });
 
 mp.events.add('client:events:custom:set', function(input_editor_face, input_editor_nose, input_editor_eyes_lips, input_editor_face_last, cheked_sex, mother, father, mix1, mix2) {
@@ -327,16 +352,21 @@ mp.events.add('client:events:custom:setSex', function(sex) {
 });
 
 mp.events.add('client:events:custom:save', function(endurance, driving, flying, psychics, shooting, stealth, strength) {
-    user.set('stats_strength', strength);
-    user.set('stats_endurance', endurance);
-    user.set('stats_shooting', shooting);
-    user.set('stats_flying', flying);
-    user.set('stats_driving', driving);
-    user.set('stats_psychics', psychics);
-    user.set('stats_lucky', stealth);
-    user.set('is_custom', true);
+    try {
+        user.set('stats_strength', strength);
+        user.set('stats_endurance', endurance);
+        user.set('stats_shooting', shooting);
+        user.set('stats_flying', flying);
+        user.set('stats_driving', driving);
+        user.set('stats_psychics', psychics);
+        user.set('stats_lucky', stealth);
+        user.set('is_custom', true);
 
-    user.save();
+        user.save();
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 });
 
 mp.events.add('client:events:custom:choiceRole', function(roleIndex) {
@@ -344,66 +374,87 @@ mp.events.add('client:events:custom:choiceRole', function(roleIndex) {
     user.showLoadDisplay();
 
     setTimeout(function () {
-        ui.callCef('authMain','{"type": "hide"}');
-        ui.callCef('customization','{"type": "hide"}');
-        user.destroyCam();
+        try {
+            ui.callCef('authMain','{"type": "hide"}');
+            ui.callCef('customization','{"type": "hide"}');
+            user.destroyCam();
 
-        mp.players.local.freezePosition(false);
-        mp.players.local.setCollision(true, true);
-        mp.gui.cursor.show(false, false);
-        mp.gui.chat.show(true);
-        mp.gui.chat.activate(true);
-        mp.game.ui.displayRadar(true);
+            mp.players.local.freezePosition(false);
+            mp.players.local.setCollision(true, true);
+            mp.gui.cursor.show(false, false);
+            mp.gui.chat.show(true);
+            mp.gui.chat.activate(true);
+            mp.game.ui.displayRadar(true);
 
-        user.setLogin(true);
+            user.setLogin(true);
 
-        if (user.getCache('role') > 0) {
+            if (user.getCache('role') > 0) {
+                user.set('is_custom', true);
+                user.save();
+                ui.notify('Вы уже выбрали роль');
+
+                let roleIdx = user.getCache('role') - 1;
+                user.teleport(enums.spawnByRole[roleIdx][0], enums.spawnByRole[roleIdx][1], enums.spawnByRole[roleIdx][2], enums.spawnByRole[roleIdx][3]);
+                return;
+            }
+
+            user.set('role', roleIndex + 1);
             user.set('is_custom', true);
             user.save();
-            ui.notify('Вы уже выбрали роль');
 
-            let roleIdx = user.getCache('role') - 1;
-            user.teleport(enums.spawnByRole[roleIdx][0], enums.spawnByRole[roleIdx][1], enums.spawnByRole[roleIdx][2], enums.spawnByRole[roleIdx][3]);
-            return;
+            user.teleport(enums.spawnByRole[roleIndex][0], enums.spawnByRole[roleIndex][1], enums.spawnByRole[roleIndex][2], enums.spawnByRole[roleIndex][3]);
+
+
         }
-
-        user.set('role', roleIndex + 1);
-        user.set('is_custom', true);
-        user.save();
-
-        user.teleport(enums.spawnByRole[roleIndex][0], enums.spawnByRole[roleIndex][1], enums.spawnByRole[roleIndex][2], enums.spawnByRole[roleIndex][3]);
+        catch (e) {
+            methods.debug(e);
+        }
     }, 500);
 });
 
 mp.events.add('client:events:custom:camera', function(rot, range, height) {
+    try {
+        height = height - 50;
 
-    height = height - 50;
-
-    user.getCam().pointAtCoord(9.66692, 528.34783, 171.2 + (height / 100));
-    user.camSetDist(range / 100);
-    user.camSetRot(rot);
+        user.getCam().pointAtCoord(9.66692, 528.34783, 171.2 + (height / 100));
+        user.camSetDist(range / 100);
+        user.camSetRot(rot);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 });
 
 mp.events.add('client:events:custom:register', function(name, surname, age, national) {
-    if (age < 18) {
-        ui.notify('Возраст не может быть меньше 18 лет', 1);
-        return;
+    try {
+        if (age < 18) {
+            ui.notify('Возраст не может быть меньше 18 лет', 1);
+            return;
+        }
+        else if (age > 60) {
+            ui.notify('Возраст не может быть больше 60 лет', 1);
+            return;
+        }
+        mp.events.callRemote('server:user:createUser', name, surname, age, national);
     }
-    else if (age > 60) {
-        ui.notify('Возраст не может быть больше 60 лет', 1);
-        return;
+    catch (e) {
+        methods.debug(e);
     }
-    mp.events.callRemote('server:user:createUser', name, surname, age, national);
 });
 
 mp.events.add('client:events:loginUser:finalCreate', function() {
-    user.setLogin(true);
-    ui.callCef('authMain','{"type": "hide"}');
-    ui.callCef('customization','{"type": "show"}');
-    ui.callCef('customization','{"type": "showFamilyPage"}');
+    try {
+        user.setLogin(true);
+        ui.callCef('authMain','{"type": "hide"}');
+        ui.callCef('customization','{"type": "show"}');
+        ui.callCef('customization','{"type": "showFamilyPage"}');
 
-    user.set('SKIN_SEX', 0);
-    user.setPlayerModel('mp_m_freemode_01');
+        user.set('SKIN_SEX', 0);
+        user.setPlayerModel('mp_m_freemode_01');
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 });
 
 mp.events.add('client:events:loginUser:success', function() {
@@ -446,18 +497,33 @@ mp.events.add('client:user:showLoadDisplay', () => {
 });
 
 mp.events.add('client:updateCheckpointList', (data) => {
-    methods.debug('Event: client:updateCheckpointList');
-    checkpoint.updateCheckpointList(data);
+    try {
+        methods.debug('Event: client:updateCheckpointList');
+        checkpoint.updateCheckpointList(data);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 });
 
 mp.events.add('client:fixCheckpointList', () => {
-    methods.debug('Event: client:fixCheckpointList');
-    checkpoint.fixCheckpointList();
+    try {
+        methods.debug('Event: client:fixCheckpointList');
+        checkpoint.fixCheckpointList();
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 });
 
 mp.events.add('client:updateVehicleInfo', (idx, data) => {
-    methods.debug('Event: client:updateVehicleInfo', idx);
-    enums.updateVehicleInfo(idx, data);
+    try {
+        methods.debug('Event: client:updateVehicleInfo', idx);
+        enums.updateVehicleInfo(idx, data);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 });
 
 mp.events.add('client:updateItemList', (weaponList, componentList, itemList) => {
@@ -541,73 +607,143 @@ mp.events.add('client:showCondoInMenu', (item) => {
 });
 
 mp.events.add('client:menuList:showShopClothMenu', (component, clothColor, ClothData) => {
-    methods.debug('Event: client:menuList:showShopClothMenu');
-    menuList.showShopClothMenu(component, clothColor, ClothData);
+    try {
+        methods.debug('Event: client:menuList:showShopClothMenu');
+        menuList.showShopClothMenu(component, clothColor, ClothData);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 });
 
 mp.events.add('client:menuList:showTattooShopMenu', (title1, title2, shopId) => {
-    methods.debug('Event: client:menuList:showTattooShopMenu');
-    menuList.showTattooShopMenu(title1, title2, shopId);
+    try {
+        methods.debug('Event: client:menuList:showTattooShopMenu');
+        menuList.showTattooShopMenu(title1, title2, shopId);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 });
 
 mp.events.add('client:menuList:showShopMaskMenu', (shopId) => {
-    methods.debug('Event: client:menuList:showShopMaskMenu');
-    menuList.showShopMaskMenu(shopId);
+    try {
+        methods.debug('Event: client:menuList:showShopMaskMenu');
+        menuList.showShopMaskMenu(shopId);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 });
 
 mp.events.add('client:menuList:showPrintShopMenu', () => {
-    methods.debug('Event: client:menuList:showPrintShopMenu');
-    menuList.showPrintShopMenu();
+    try {
+        methods.debug('Event: client:menuList:showPrintShopMenu');
+        menuList.showPrintShopMenu();
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 });
 
 mp.events.add('client:menuList:showGunShopMenu', (shopId, price) => {
-    methods.debug('Event: client:menuList:showGunShopMenu');
-    menuList.showGunShopMenu(shopId, price);
+    try {
+        methods.debug('Event: client:menuList:showGunShopMenu');
+        menuList.showGunShopMenu(shopId, price);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 });
 
 mp.events.add('client:menuList:showLscMenu', (shopId, price) => {
-    methods.debug('Event: client:menuList:showLscMenu');
-    menuList.showLscMenu(shopId, price);
+    try {
+        methods.debug('Event: client:menuList:showLscMenu');
+        menuList.showLscMenu(shopId, price);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 });
 
 mp.events.add('client:menuList:showVehShopMenu', (shopId, carPos, buyPos, carList) => {
-    methods.debug('Event: client:menuList:showVehShopMenu');
-    menuList.showVehShopMenu(shopId, JSON.parse(carPos), JSON.parse(buyPos), new Map(carList));
+    try {
+        methods.debug('Event: client:menuList:showVehShopMenu');
+        menuList.showVehShopMenu(shopId, JSON.parse(carPos), JSON.parse(buyPos), new Map(carList));
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 });
 
 mp.events.add('client:menuList:showInvaderShopMenu', () => {
-    methods.debug('Event: client:menuList:showInvaderShopMenu');
-    menuList.showInvaderShopMenu();
+    try {
+       methods.debug('Event: client:menuList:showInvaderShopMenu');
+       menuList.showInvaderShopMenu();
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 });
 
 mp.events.add('client:menuList:showRentBikeMenu', (shopId, price) => {
-    methods.debug('Event: client:menuList:showRentBikeMenu');
-    menuList.showRentBikeMenu(shopId, price);
+    try {
+        methods.debug('Event: client:menuList:showRentBikeMenu');
+        menuList.showRentBikeMenu(shopId, price);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 });
 
 mp.events.add('client:menuList:showBarberShopMenu', (shopId) => {
-    methods.debug('Event: client:menuList:showBarberShopMenu');
-    menuList.showBarberShopMenu(shopId);
+    try {
+        methods.debug('Event: client:menuList:showBarberShopMenu');
+        menuList.showBarberShopMenu(shopId);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 });
 
 mp.events.add('client:menuList:showBankMenu', (bankId, price) => {
-    methods.debug('Event: client:menuList:showBankMenu');
-    menuList.showBankMenu(bankId, price);
+    try {
+        methods.debug('Event: client:menuList:showBankMenu');
+        menuList.showBankMenu(bankId, price);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 });
 
 mp.events.add('client:menuList:showBarMenu', (shopId, price) => {
-    methods.debug('Event: client:menuList:showBarMenu');
-    menuList.showBarMenu(shopId, price);
+    try {
+        methods.debug('Event: client:menuList:showBarMenu');
+        menuList.showBarMenu(shopId, price);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 });
 
 mp.events.add('client:menuList:showBarFreeMenu', () => {
-    methods.debug('Event: client:menuList:showBarFreeMenu');
-    menuList.showBarFreeMenu();
+    try {
+        methods.debug('Event: client:menuList:showBarFreeMenu');
+        menuList.showBarFreeMenu();
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 });
 
 mp.events.add('client:showToPlayerItemListMenu', (data, ownerType, ownerId) => {
-    methods.debug('Event: client:showToPlayerItemListMenu');
-    menuList.showToPlayerItemListMenu(data, ownerType, ownerId).then();
+    try {
+        methods.debug('Event: client:showToPlayerItemListMenu');
+        menuList.showToPlayerItemListMenu(data, ownerType, ownerId).then();
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 });
 
 mp.events.add('client:clearChat', () => {
@@ -625,63 +761,123 @@ mp.events.add('client:teleportVeh', (x, y, z, rot) => {
 });
 
 mp.events.add('client:managers:weather:nextWeather', (weatherName, delay) => {
-    methods.debug('Event: client:user:nextWeather');
-    weather.nextWeather(weatherName, delay);
+    try {
+        methods.debug('Event: client:user:nextWeather');
+        weather.nextWeather(weatherName, delay);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 });
 
 mp.events.add('client:managers:weather:setCurrentWeather', (weatherName) => {
-    methods.debug('Event: client:user:setCurrentWeather');
-    weather.nextWeather(weatherName, 1);
+    try {
+        methods.debug('Event: client:user:setCurrentWeather');
+        weather.nextWeather(weatherName, 1);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 });
 
 mp.events.add('client:managers:weather:syncDateTime', (min, hour, day, month, year) => {
     //methods.debug('Event: client:user:syncDateTime', min, hour, day, month, year);
-    weather.syncDateTime(min, hour, day, month, year);
+    try {
+        weather.syncDateTime(min, hour, day, month, year);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 });
 
 mp.events.add('client:managers:weather:syncRealTime', (hour) => {
-    //methods.debug('Event: client:user:syncRealTime', hour);
-    weather.syncRealHour(hour);
+    try {
+        //methods.debug('Event: client:user:syncRealTime', hour);
+        weather.syncRealHour(hour);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 });
 
 mp.events.add('client:managers:weather:syncWeatherTemp', (temp) => {
-    //methods.debug('Event: client:user:syncWeatherTemp', temp);
-    weather.syncWeatherTemp(temp);
+    try {
+        //methods.debug('Event: client:user:syncWeatherTemp', temp);
+        weather.syncWeatherTemp(temp);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 });
 
 mp.events.add('client:managers:weather:syncRealFullDateTime', (dateTime) => {
-    //methods.debug('Event: client:user:syncRealFullDateTime', dateTime);
-    weather.syncRealFullDateTime(dateTime);
+    try {
+        //methods.debug('Event: client:user:syncRealFullDateTime', dateTime);
+        weather.syncRealFullDateTime(dateTime);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 });
 
 mp.events.add('client:managers:weather:syncRealTime', (time) => {
-    //methods.debug('Event: client:user:syncRealFullDateTime', dateTime);
-    weather.syncRealTime(time);
+    try {
+        //methods.debug('Event: client:user:syncRealFullDateTime', dateTime);
+        weather.syncRealTime(time);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 });
 
 mp.events.add('client:managers:weather:syncRealDate', (time) => {
-    //methods.debug('Event: client:user:syncRealFullDateTime', dateTime);
-    weather.syncRealDate(time);
+    try {
+        //methods.debug('Event: client:user:syncRealFullDateTime', dateTime);
+        weather.syncRealDate(time);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 });
 
 mp.events.add('client:menuList:showBusinessTeleportMenu', () => {
-    methods.debug('Event: client:menuList:showBusinessTeleportMenu');
-    menuList.showBusinessTeleportMenu();
+    try {
+        methods.debug('Event: client:menuList:showBusinessTeleportMenu');
+        menuList.showBusinessTeleportMenu();
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 });
 
 mp.events.add('client:showBusinessTypeListMenu', (data1, data2, data3) => {
-    methods.debug('Event: client:showBusinessTypeListMenu');
-    menuList.showBusinessTypeListMenu(data1, data2, data3);
+    try {
+        methods.debug('Event: client:showBusinessTypeListMenu');
+        menuList.showBusinessTypeListMenu(data1, data2, data3);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 });
 
 mp.events.add('client:showBusinessLogMenu', (data) => {
-    methods.debug('Event: client:showBusinessLogMenu');
-    menuList.showBusinessLogMenu(data);
+    try {
+        methods.debug('Event: client:showBusinessLogMenu');
+        menuList.showBusinessLogMenu(data);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 });
 
 mp.events.add('client:showBankLogMenu', (data) => {
-    methods.debug('Event: client:showBankLogMenu');
-    menuList.showBankLogMenu(data);
+    try {
+        methods.debug('Event: client:showBankLogMenu');
+        menuList.showBankLogMenu(data);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 });
 
 mp.events.add('client:menuList:showBusinessMenu', (data) => {
@@ -712,12 +908,12 @@ mp.events.add('client:menuList:showSapdGarderobMenu', () => {
 
 mp.events.add('client:menuList:showSapdArrestMenu', () => {
     methods.debug('Event: client:menuList:showSapdArrestMenu');
-    menuList.showSapdArrestMenu();
+    //menuList.showSapdArrestMenu();
 });
 
 mp.events.add('client:menuList:showSapdClearMenu', () => {
     methods.debug('Event: client:menuList:showSapdClearMenu');
-    menuList.showSapdClearMenu();
+    //menuList.showSapdClearMenu();
 });
 
 mp.events.add('client:menuList:showEmsGarderobMenu', () => {
@@ -800,18 +996,22 @@ mp.events.add('client:inventory:notify', function(text) {
 });
 
 mp.events.add('client:inventory:giveItemMenu', function() {
-    let playerList = methods.getListOfPlayerInRadius(mp.players.local.position, 2);
-    let tradeArray = [mp.players.local.remoteId];
+    try {
+        let playerList = methods.getListOfPlayerInRadius(mp.players.local.position, 2);
+        let tradeArray = [mp.players.local.remoteId];
 
-    playerList.forEach(p => {
-        tradeArray.push(p.remoteId);
-    });
+        playerList.forEach(p => {
+            tradeArray.push(p.remoteId);
+        });
 
-    ui.callCef('inventory', JSON.stringify({type: "updateTrade", idList: tradeArray}));
+        ui.callCef('inventory', JSON.stringify({type: "updateTrade", idList: tradeArray}));
+
+    }catch (e) {
+        methods.debug(e);
+    }
 });
 
 mp.events.add('client:inventory:moveTo', function(id, itemId, ownerId, ownerType) {
-
     if (ownerType == 0) {
         if (mp.players.local.dimension > 0) {
             mp.game.ui.notifications.show("~r~Нельзя выкидывать предметы в интерьере");

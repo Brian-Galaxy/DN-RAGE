@@ -10,6 +10,10 @@ var name = "Office";
 var font = 0;
 var color = [0, 0, 0, 255];
 
+let cityHall = new mp.Vector3(-1381.86328125, -478.4166564941406, 72.04215240478516);
+let mazeBank = new mp.Vector3(-72.04210662841797, -814.3770141601562, 243.38595581054688);
+let businessOffice = new mp.Vector3(-140.7121, -617.3683, 167.8204);
+
 business.typeList = [
     "Банки", //0
     "Автомастерские", //1
@@ -115,15 +119,20 @@ business.loadInterior = function(id, timeout = 0) {
 };
 
 business.loadScaleform = async function() {
-    scale = mp.game.graphics.requestScaleformMovie("ORGANISATION_NAME");
-    while(!mp.game.graphics.hasScaleformMovieLoaded(scale))
-       await methods.sleep(1);
+    try {
+        scale = mp.game.graphics.requestScaleformMovie("ORGANISATION_NAME");
+        while(!mp.game.graphics.hasScaleformMovieLoaded(scale))
+            await methods.sleep(1);
 
-    let id = business.createRenderTarget("prop_ex_office_text", "ex_prop_ex_office_text");
-    if(id != -1)
-        TargetsToRender.push(id);
-    else
-        methods.debug("Could not create render target.");
+        let id = business.createRenderTarget("prop_ex_office_text", "ex_prop_ex_office_text");
+        if(id != -1)
+            TargetsToRender.push(id);
+        else
+            methods.debug("Could not create render target.");
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 
     setInterval(business.updateTarget, 5000);
 };
@@ -216,13 +225,22 @@ business.setScaleformParams = function(scFont = 0, scColor = 0, scAlpha = 0) {
 
 business.updateTarget = function()
 {
-    if (methods.distanceToPos(mp.players.local.position, new mp.Vector3(-1381.86328125, -478.4166564941406, 72.04215240478516)) < 70) {
-        business.setScaleformName('City Hall');
-        business.setScaleformParams(2, 15, 1);
+    try {
+        if (methods.distanceToPos(mp.players.local.position, cityHall) < 50) {
+            business.setScaleformName('City Hall');
+            business.setScaleformParams(2, 15, 1);
+        }
+        else if (methods.distanceToPos(mp.players.local.position, mazeBank) < 70) {
+            business.setScaleformName('Maze Bank');
+            business.setScaleformParams(2, 17, 1);
+        }
+        else if (methods.distanceToPos(mp.players.local.position, businessOffice) < 50) {
+            business.setScaleformName('Maze Bank');
+            business.setScaleformParams(2, 17, 1);
+        }
     }
-    else if (methods.distanceToPos(mp.players.local.position, new mp.Vector3(-72.04210662841797, -814.3770141601562, 243.38595581054688)) < 70) {
-        business.setScaleformName('Maze Bank');
-        business.setScaleformParams(2, 17, 1);
+    catch (e) {
+        methods.debug(e);
     }
 };
 
@@ -239,17 +257,31 @@ business.createRenderTarget = function(name, model)
 
 business.renderThings = function(id)
 {
-    mp.game.ui.setTextRenderId(id);
-    mp.game.graphics.set2dLayer(4);
-    ui.drawText(name, 0.5, 0.3, 1, color[0], color[1], color[2], color[3], font, 1, color[3] == 255, false);
-    mp.game.graphics.drawScaleformMovie(scale, 0.5, 0.5, 1, 1, 255, 255,255, 255, 0);
-    mp.game.ui.setTextRenderId(1);
+    try {
+        mp.game.ui.setTextRenderId(id);
+        mp.game.graphics.set2dLayer(4);
+        ui.drawText(name, 0.5, 0.3, 1, color[0], color[1], color[2], color[3], font, 1, color[3] == 255, false);
+        mp.game.graphics.drawScaleformMovie(scale, 0.5, 0.5, 1, 1, 255, 255,255, 255, 0);
+        mp.game.ui.setTextRenderId(1);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 };
 
 mp.events.add("render", () =>
 {
-    for(let i = 0; i < TargetsToRender.length; i++)
-        business.renderThings(TargetsToRender[i]);
+    try {
+        if (methods.distanceToPos(mp.players.local.position, cityHall) < 50 ||
+            methods.distanceToPos(mp.players.local.position, mazeBank) < 50 ||
+            methods.distanceToPos(mp.players.local.position, businessOffice) < 50) {
+            for(let i = 0; i < TargetsToRender.length; i++)
+                business.renderThings(TargetsToRender[i]);
+        }
+    }
+    catch (e) {
+
+    }
 });
 
 export default business;

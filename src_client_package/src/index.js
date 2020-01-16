@@ -5,7 +5,6 @@ import './manager/vSync';
 import './manager/pSync';
 import './manager/wpSync';
 import './manager/shoot';
-import './manager/attach';
 import './manager/attachWeapons';
 
 import './betternotifs';
@@ -22,6 +21,7 @@ import vBreakLight from "./manager/vBreakLight";
 import object from "./manager/object";
 //import npc from "./manager/npc";
 import skill from "./manager/skill";
+import attach from "./manager/attach";
 import attachItems from "./manager/attachItems";
 
 import user from "./user";
@@ -42,37 +42,34 @@ try {
 
     mp.gui.cursor.show(true, true);
 
-    try {
-        ui.create();
+    ui.create();
 
-        user.init();
-        methods.requestIpls();
-        setTimeout(checkpoint.checkPosition, 10000);
-        enums.loadCloth();
-        business.loadScaleform();
+    user.init();
+    methods.requestIpls();
+    setTimeout(checkpoint.checkPosition, 10000);
+    enums.loadCloth();
+    business.loadScaleform();
 
-        object.load();
-        //npc.loadAll();
-        skill.loadAll();
+    object.load();
+    //npc.loadAll();
+    skill.loadAll();
 
-        attachItems.registerAttaches();
+    attach.init();
+    attachItems.registerAttaches();
 
-        timer.loadAll();
-        vBreakLight.timer();
-    }
-    catch (e) {
-        methods.debug('ERROR INIT CLIENT', e);
-        methods.debug('ERROR INIT CLIENT', e);
-        methods.debug(e);
-        methods.debug('ERROR INIT CLIENT', e);
-        methods.debug('ERROR INIT CLIENT', e);
-    }
+    timer.loadAll();
+    vBreakLight.timer();
 
     /*mp.events.add('guiReady', () => {
         ui.create();
     });*/
 }
 catch (e) {
+    methods.debug('ERROR INIT CLIENT', e);
+    methods.debug('ERROR INIT CLIENT', e);
+    methods.debug(e);
+    methods.debug('ERROR INIT CLIENT', e);
+    methods.debug('ERROR INIT CLIENT', e);
 }
 
 /*mp.events.add('guiReady', () => {

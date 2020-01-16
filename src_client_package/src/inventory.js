@@ -22,29 +22,39 @@ let hidden = true;
 
 inventory.show = function() {
     //mp.gui.chat.activate(false);
-    mp.gui.cursor.show(false, true);
-    mp.game.ui.notifications.show("~b~Скрыть ивентарь на ~s~I~");
-    ui.DisableMouseControl = true;
-    hidden = false;
-    ui.hideHud();
+    try {
+        mp.gui.cursor.show(false, true);
+        mp.game.ui.notifications.show("~b~Скрыть ивентарь на ~s~I~");
+        ui.DisableMouseControl = true;
+        hidden = false;
+        ui.hideHud();
 
-    let data = {type: "updateLabel", uid: `${mp.players.local.remoteId} (${user.getCache('id')})`, uname: user.getCache('name')};
-    ui.callCef('inventory', JSON.stringify(data));
-    ui.callCef('inventory', JSON.stringify({type: "updateMaxW", val: inventory.calculatePlayerInvAmountMax()}));
-    ui.callCef('inventory', '{"type": "show"}');
+        let data = {type: "updateLabel", uid: `${mp.players.local.remoteId} (${user.getCache('id')})`, uname: user.getCache('name')};
+        ui.callCef('inventory', JSON.stringify(data));
+        ui.callCef('inventory', JSON.stringify({type: "updateMaxW", val: inventory.calculatePlayerInvAmountMax()}));
+        ui.callCef('inventory', '{"type": "show"}');
 
-    mp.game.graphics.transitionToBlurred(100);
+        mp.game.graphics.transitionToBlurred(100);
 
-    inventory.getItemList(inventory.types.Player, user.getCache('id'));
+        inventory.getItemList(inventory.types.Player, user.getCache('id'));
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 };
 
 inventory.hide = function() {
     //mp.gui.chat.activate(true);
-    mp.gui.cursor.show(false, false);
-    ui.DisableMouseControl = false;
-    hidden = true;
-    ui.showHud();
-    mp.game.graphics.transitionFromBlurred(100);
+    try {
+        mp.gui.cursor.show(false, false);
+        ui.DisableMouseControl = false;
+        hidden = true;
+        ui.showHud();
+        mp.game.graphics.transitionFromBlurred(100);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 };
 
 inventory.isHide = function() {
@@ -69,9 +79,14 @@ inventory.updateOwnerId = function(id, ownerId, ownerType) {
 };
 
 inventory.updateItemParams = function(id, params) {
-    if (typeof params != "string")
-        params = JSON.stringify(params);
-    mp.events.callRemote('server:inventory:updateItemParams', id, params);
+    try {
+        if (typeof params != "string")
+            params = JSON.stringify(params);
+        mp.events.callRemote('server:inventory:updateItemParams', id, params);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 };
 
 inventory.openInventoryByEntity = function(entity) {
@@ -127,56 +142,71 @@ inventory.deleteItem = function(id) {
 };
 
 inventory.takeNewItem = async function(itemId, params, count = 1) { //TODO
-    let user_id = user.getCache('id');
-    let amount = await inventory.getInvAmount(user_id, inventory.types.Player);
-    let amountMax = await inventory.getInvAmountMax(user_id, inventory.types.Player);
-    if (items.getItemAmountById(itemId) + amount > amountMax) {
-        mp.game.ui.notifications.show("~r~Инвентарь заполнен");
-        return;
+    try {
+        let user_id = user.getCache('id');
+        let amount = await inventory.getInvAmount(user_id, inventory.types.Player);
+        let amountMax = await inventory.getInvAmountMax(user_id, inventory.types.Player);
+        if (items.getItemAmountById(itemId) + amount > amountMax) {
+            mp.game.ui.notifications.show("~r~Инвентарь заполнен");
+            return;
+        }
+        inventory.addItem(itemId, 1, inventory.types.Player, user_id, count, 0, params, 1);
+        inventory.updateAmount(user_id, inventory.types.Player);
+        mp.game.ui.notifications.show(`~b~Вы взяли \"${items.getItemNameById(itemId)}\"`);
+        chat.sendMeCommand(`взял \"${items.getItemNameById(itemId)}\"`);
     }
-    inventory.addItem(itemId, 1, inventory.types.Player, user_id, count, 0, params, 1);
-    inventory.updateAmount(user_id, inventory.types.Player);
-    mp.game.ui.notifications.show(`~b~Вы взяли \"${items.getItemNameById(itemId)}\"`);
-    chat.sendMeCommand(`взял \"${items.getItemNameById(itemId)}\"`);
+    catch (e) {
+        methods.debug(e);
+    }
 };
 
 inventory.takeItem = async function(id, itemId, notify = true) {
-    let user_id = user.getCache('id');
-    let amount = await inventory.getInvAmount(user_id, inventory.types.Player);
-    let amountMax = await inventory.getInvAmountMax(user_id, inventory.types.Player);
-    //console.log(amount, amountMax, "amounts");
-    if (items.getItemAmountById(itemId) + amount > amountMax) {
-        mp.game.ui.notifications.show("~r~Инвентарь заполнен");
-        return;
-    }
+    try {
+        let user_id = user.getCache('id');
+        let amount = await inventory.getInvAmount(user_id, inventory.types.Player);
+        let amountMax = await inventory.getInvAmountMax(user_id, inventory.types.Player);
+        //console.log(amount, amountMax, "amounts");
+        if (items.getItemAmountById(itemId) + amount > amountMax) {
+            mp.game.ui.notifications.show("~r~Инвентарь заполнен");
+            return;
+        }
 
-    inventory.updateOwnerId(id, user.getCache('id'), inventory.types.Player)
-    user.playAnimation("pickup_object","pickup_low", 8);
-    inventory.deleteItemProp(id);
-    if (!notify) return;
-    mp.game.ui.notifications.show(`~g~Вы взяли \"${items.getItemNameById(itemId)}\"`);
-    chat.sendMeCommand(`взял \"${items.getItemNameById(itemId)}\"`);
+        inventory.updateOwnerId(id, user.getCache('id'), inventory.types.Player)
+        user.playAnimation("pickup_object","pickup_low", 8);
+        inventory.deleteItemProp(id);
+        if (!notify) return;
+        mp.game.ui.notifications.show(`~g~Вы взяли \"${items.getItemNameById(itemId)}\"`);
+        chat.sendMeCommand(`взял \"${items.getItemNameById(itemId)}\"`);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 };
 
 inventory.giveItem = async function(id, itemId, playerId, notify = true) {
-    let user_id = user.getCache('id');
-    let amount = await inventory.getInvAmount(playerId, inventory.types.Player);
-    let amountMax = await inventory.getInvAmountMax(playerId, inventory.types.Player);
-    if (items.getItemAmountById(itemId) + amount > amountMax) {
-        mp.game.ui.notifications.show("~r~Инвентарь заполнен");
-        return;
+    try {
+        let user_id = user.getCache('id');
+        let amount = await inventory.getInvAmount(playerId, inventory.types.Player);
+        let amountMax = await inventory.getInvAmountMax(playerId, inventory.types.Player);
+        if (items.getItemAmountById(itemId) + amount > amountMax) {
+            mp.game.ui.notifications.show("~r~Инвентарь заполнен");
+            return;
+        }
+        //Shared.TriggerEventToAllPlayers("ARP:UserPlayAnimationToAll", playerId, "mp_common","givetake2_a", 8);
+        //mp.events.callRemote("server:playAnimationByPlayerId", playerId, "mp_common", "givetake2_a", 8);
+        user.playAnimation("mp_common","givetake1_a", 8);
+
+        inventory.updateItemOwnerServer(id, inventory.types.Player, playerId);
+        inventory.updateAmount(playerId, inventory.types.Player);
+        inventory.updateAmount(user_id, inventory.types.Player);
+
+        if (!notify) return;
+        mp.game.ui.notifications.show(`~g~Вы передали \"${items.getItemNameById(itemId)}\" игроку`);
+        chat.sendMeCommand(`передал \"${items.getItemNameById(itemId)}\" человеку рядом`);
     }
-    //Shared.TriggerEventToAllPlayers("ARP:UserPlayAnimationToAll", playerId, "mp_common","givetake2_a", 8);
-    //mp.events.callRemote("server:playAnimationByPlayerId", playerId, "mp_common", "givetake2_a", 8);
-    user.playAnimation("mp_common","givetake1_a", 8);
-
-    inventory.updateItemOwnerServer(id, inventory.types.Player, playerId);
-    inventory.updateAmount(playerId, inventory.types.Player);
-    inventory.updateAmount(user_id, inventory.types.Player);
-
-    if (!notify) return;
-    mp.game.ui.notifications.show(`~g~Вы передали \"${items.getItemNameById(itemId)}\" игроку`);
-    chat.sendMeCommand(`передал \"${items.getItemNameById(itemId)}\" человеку рядом`);
+    catch (e) {
+        methods.debug(e);
+    }
 };
 
 inventory.takeDrugItem = async function(id, itemId, countItems, notify = true, takeCount = 1) {
@@ -368,87 +398,7 @@ inventory.setInvAmountMax = function(id, type, data) {
 };
 
 inventory.calculatePlayerInvAmountMax = function() {
-    return 30000;
-};
-
-inventory.startFishing = function() {
-
-    if (!methods.isPlayerInOcean())
-    {
-        mp.game.ui.notifications.show("~r~Вы должны быть в океане");
-        return;
-    }
-    if (mp.players.local.isSwimming())
-    {
-        mp.game.ui.notifications.show("~r~Вы не должны быть в воде");
-        return;
-    }
-    if (mp.players.local.vehicle)
-    {
-        mp.game.ui.notifications.show("~r~Вы не должны быть в транспорте");
-        return;
-    }
-    if (container.Data.HasLocally(0, 'fish'))
-    {
-        mp.game.ui.notifications.show("~r~Вы уже рыбачите");
-        return;
-    }
-
-    container.Data.SetLocally(0, 'fish', true);
-    user.playScenario("WORLD_HUMAN_STAND_FISHING");
-    mp.events.callRemote('server:setTimeout', 30000, 'client:inventory:continueFishing');
-};
-
-// Изменю скоро
-mp.events.add('client:inventory:continueFishing', () => {
-    inventory.continueFishing();
-});
-
-inventory.continueFishing = function() {
-    if (methods.distanceToPos(mp.players.local.position, new mp.Vector3(-3544, 6135, 0)) < 200 || methods.distanceToPos(mp.players.local.position, new mp.Vector3(4989, 1712, 0)) < 200) {
-        if (methods.getRandomInt(0, 3) == 0)
-            inventory.takeNewItem(241);
-        else if (methods.getRandomInt(0, 3) == 0)
-            inventory.takeNewItem(243);
-        else if (methods.getRandomInt(0, 2) == 0)
-            inventory.takeNewItem(244);
-        else
-            inventory.takeNewItem(245);
-    }
-    else {
-        if (methods.getRandomInt(0, 2) == 0)
-        {
-            if (methods.getRandomInt(0, 3) == 0)
-                inventory.takeNewItem(243);
-            else if (methods.getRandomInt(0, 2) == 0)
-                inventory.takeNewItem(244);
-            else
-                inventory.takeNewItem(245);
-        }
-        else
-            inventory.takeNewItem(242);
-    }
-
-    container.Data.ResetLocally(0, 'fish');
-    user.stopAllAnimation();
-};
-
-inventory.addAmmoServer = function(name, count) {
-    //let ammo = mp.game.invoke('8F62F4EC66847EC2', mp.players.local.handle, hash);
-    weapons.getMapList().forEach(item => {
-        if (item[0] == name)
-            mp.game.invoke(methods.ADD_AMMO_TO_PED, mp.players.local.handle, item[1] / 2, count);
-        return
-    });
-    //inventory.setWeaponAmmo(hash, count+ammo);
-};
-
-inventory.setWeaponAmmo = function(name, count) {
-    weapons.getMapList().forEach(item => {
-        if (item[0] == name)
-            mp.game.invoke(methods.SET_PED_AMMO, mp.players.local.handle, item[1] / 2, count);
-        return
-    });
+    return 30001;
 };
 
 inventory.updateAmountMax = function(id, type) {
@@ -492,16 +442,16 @@ inventory.updateAmountMax = function(id, type) {
 };
 
 inventory.sendToPlayerItemListUpdateAmountMenu = function(data, ownerType, ownerId) {
-    let sum = 0;
-    //methods.debug("init");
-    //mp.events.callRemote("server:debug:print", "init");
-    data.forEach(property => {
-        //methods.debug(property[1]);
-        //mp.events.callRemote("server:debug:print", property[1]+" < count");
-        sum = sum + items.getItemAmountById(property[1]);
-    });
-    //mp.events.callRemote("server:debug:print", ownerId+" "+ownerType+" "+sum+" < lines");
-    inventory.setInvAmount(ownerId, ownerType, sum);
+    try {
+        let sum = 0;
+        data.forEach(property => {
+            sum = sum + items.getItemAmountById(property[1]);
+        });
+        inventory.setInvAmount(ownerId, ownerType, sum);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 };
 
 inventory.updateAmount = function(id, type) {
@@ -534,12 +484,6 @@ inventory.updateItemPosServer = function(id, itemId, pos, rot, ownerType, ownerI
 
 inventory.getItemList = function(ownerType, ownerId) {
     mp.events.callRemote('server:inventory:getItemList', ownerType, ownerId.toString());
-};
-
-inventory.cookFood = function(ownerId) {
-    //TriggerServerEvent("ARP:Inventory:CookFood", ownerId);
-    chat.sendMeCommand("готовит еду");
-    mp.game.ui.notifications.show("~g~Вы приготовили всю еду");
 };
 
 inventory.data = function(id, itemId, prop, model, pos, rot, ownerType, ownerId, count, isCreate, isDelete) {

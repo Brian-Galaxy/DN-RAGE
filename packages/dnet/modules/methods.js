@@ -185,6 +185,14 @@ methods.debug = function (message, ...args) {
     }
 };
 
+methods.error = function (message, ...args) {
+    try {
+        message = 'OMG! EXCEPTION: ' + message;
+        methods.debug(message, args);
+    } catch (e) {
+    }
+};
+
 methods.isValidJSON = function(value){
     try{
         JSON.parse(value);

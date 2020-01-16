@@ -169,28 +169,38 @@ ui.updateVehValues = function() {
 };
 
 ui.updateZoneAndStreet = function() {
-    const local = mp.players.local;
-    let getStreet = mp.game.pathfind.getStreetNameAtCoord(local.position.x, local.position.y, local.position.z, 0, 0);
-    _street = mp.game.ui.getStreetNameFromHashKey(getStreet.streetName); // Return string, if exist
-    _zone = mp.game.ui.getLabelText(mp.game.zone.getNameOfZone(local.position.x, local.position.y, local.position.z));
+    try {
+        const local = mp.players.local;
+        let getStreet = mp.game.pathfind.getStreetNameAtCoord(local.position.x, local.position.y, local.position.z, 0, 0);
+        _street = mp.game.ui.getStreetNameFromHashKey(getStreet.streetName); // Return string, if exist
+        _zone = mp.game.ui.getLabelText(mp.game.zone.getNameOfZone(local.position.x, local.position.y, local.position.z));
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 };
 
 ui.updateDirectionText = function() {
-    let dgr = mp.players.local.getRotation(0).z + 180;
-    if (dgr >= 22.5 && dgr < 67.5)
-        return "SE";
-    if (dgr >= 67.5 && dgr < 112.5)
-        return "E";
-    if (dgr >= 112.5 && dgr < 157.5)
-        return "NE";
-    if (dgr >= 157.5 && dgr < 202.5)
-        return "N";
-    if (dgr >= 202.53 && dgr < 247.5)
-        return "NW";
-    if (dgr >= 247.5 && dgr < 292.5)
-        return "W";
-    if (dgr >= 292.5 && dgr < 337.5)
-        return "SW";
+    try {
+        let dgr = mp.players.local.getRotation(0).z + 180;
+        if (dgr >= 22.5 && dgr < 67.5)
+            return "SE";
+        if (dgr >= 67.5 && dgr < 112.5)
+            return "E";
+        if (dgr >= 112.5 && dgr < 157.5)
+            return "NE";
+        if (dgr >= 157.5 && dgr < 202.5)
+            return "N";
+        if (dgr >= 202.53 && dgr < 247.5)
+            return "NW";
+        if (dgr >= 247.5 && dgr < 292.5)
+            return "W";
+        if (dgr >= 292.5 && dgr < 337.5)
+            return "SW";
+    }
+    catch (e) {
+        methods.debug(e);
+    }
     return "S";
 };
 
@@ -207,55 +217,70 @@ ui.drawText = function(caption, xPos, yPos, scale, r, g, b, a, font, justify, sh
     if (!mp.game.ui.isHudComponentActive(0))
         return false;
 
-    mp.game.ui.setTextFont(font);
-    mp.game.ui.setTextScale(1, scale);
-    mp.game.ui.setTextColour(r, g, b, a);
+    try {
+        mp.game.ui.setTextFont(font);
+        mp.game.ui.setTextScale(1, scale);
+        mp.game.ui.setTextColour(r, g, b, a);
 
-    if (shadow)
-        mp.game.invoke('0x1CA3E9EAC9D93E5E');
-    if (outline)
-        mp.game.invoke('0x2513DFB0FB8400FE');
+        if (shadow)
+            mp.game.invoke('0x1CA3E9EAC9D93E5E');
+        if (outline)
+            mp.game.invoke('0x2513DFB0FB8400FE');
 
-    switch (justify)
-    {
-        case 1:
-            mp.game.ui.setTextCentre(true);
-            break;
-        case 2:
-            mp.game.ui.setTextRightJustify(true);
-            mp.game.ui.setTextWrap(0, xPos);
-            break;
+        switch (justify)
+        {
+            case 1:
+                mp.game.ui.setTextCentre(true);
+                break;
+            case 2:
+                mp.game.ui.setTextRightJustify(true);
+                mp.game.ui.setTextWrap(0, xPos);
+                break;
+        }
+
+        mp.game.ui.setTextEntry('STRING');
+        mp.game.ui.addTextComponentSubstringPlayerName(caption);
+        mp.game.ui.drawText(xPos, yPos);
     }
-
-    mp.game.ui.setTextEntry('STRING');
-    mp.game.ui.addTextComponentSubstringPlayerName(caption);
-    mp.game.ui.drawText(xPos, yPos);
+    catch (e) {
+        
+    }
 };
 
 ui.drawRect = function(xPos, yPos, wSize, hSize, r, g, b, a) {
     if (!mp.game.ui.isHudComponentActive(0))
         return false;
-    let x = xPos + wSize * 0.5;
-    let y = yPos + hSize * 0.5;
-    mp.game.invoke('0x3A618A217E5154F0', x, y, wSize, hSize, r, g, b, a);
+    try {
+        let x = xPos + wSize * 0.5;
+        let y = yPos + hSize * 0.5;
+        mp.game.invoke('0x3A618A217E5154F0', x, y, wSize, hSize, r, g, b, a);
+    }
+    catch (e) {
+        
+    }
 };
 
 ui.drawText3D = function(caption, x, y, z) {
     if (!mp.game.ui.isHudComponentActive(0))
         return false;
-    mp.game.graphics.setDrawOrigin(x, y, z + 0.5, 0);
-    mp.game.ui.setTextFont(0);
-    mp.game.ui.setTextScale(0.3, 0.3);
-    mp.game.ui.setTextColour(255, 255, 255, 255);
-    mp.game.ui.setTextProportional(true);
-    mp.game.ui.setTextDropshadow(0, 0, 0, 0, 255);
-    mp.game.ui.setTextEdge(2, 0, 0, 0, 150);
-    mp.game.invoke('0x2513DFB0FB8400FE');
-    mp.game.ui.setTextEntry('STRING');
-    mp.game.ui.setTextCentre(true);
-    mp.game.ui.addTextComponentSubstringPlayerName(caption);
-    mp.game.ui.drawText(0, 0);
-    mp.game.invoke('0xFF0B610F6BE0D7AF');
+    try {
+        mp.game.graphics.setDrawOrigin(x, y, z + 0.5, 0);
+        mp.game.ui.setTextFont(0);
+        mp.game.ui.setTextScale(0.3, 0.3);
+        mp.game.ui.setTextColour(255, 255, 255, 255);
+        mp.game.ui.setTextProportional(true);
+        mp.game.ui.setTextDropshadow(0, 0, 0, 0, 255);
+        mp.game.ui.setTextEdge(2, 0, 0, 0, 150);
+        mp.game.invoke('0x2513DFB0FB8400FE');
+        mp.game.ui.setTextEntry('STRING');
+        mp.game.ui.setTextCentre(true);
+        mp.game.ui.addTextComponentSubstringPlayerName(caption);
+        mp.game.ui.drawText(0, 0);
+        mp.game.invoke('0xFF0B610F6BE0D7AF');
+    }
+    catch (e) {
+
+    }
 };
 
 ui.drawText3DRage = function(caption, x, y, z) {
@@ -280,21 +305,5 @@ ui.callCef = function(event, value) {
         methods.debug(e);
     }
 };
-
-// F11 - курсор
-/*mp.keys.bind(0x7A, true, () => {
-    let state = !mp.gui.cursor.visible;
-    mp.gui.cursor.show(state, state)
-});*/
-/*
-// F11 - для тестов
-mp.keys.bind(0x7A, true, () => {
-    ui.callCef('authMain','{"type": "show"}');
-});*/
-
-// F11 - для тестов
-mp.keys.bind(0x7A, true, () => {
-    ui.callCef('authMain','{"type": "redirectToPlayer"}');
-});
 
 export default ui;

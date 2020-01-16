@@ -167,7 +167,12 @@ mp.events.add('client:syncHeadingToCoord', (playerId, x, y, z) => {
             remotePlayer.taskTurnToFaceCoord(x, y, z, -1);
 
             setTimeout(function () {
-                remotePlayer.clearTasks();
+                try {
+                    remotePlayer.clearTasks();
+                }
+                catch (e) {
+                    methods.debug(e);
+                }
             }, 2000);
         }
     }
@@ -196,7 +201,12 @@ mp.events.add('client:syncHeadingToTarget', (playerId, targetId) => {
             remotePlayer.taskTurnToFace(targetPlayer.handle, -1);
 
             setTimeout(function () {
-                remotePlayer.clearTasks();
+                try {
+                    remotePlayer.clearTasks();
+                }
+                catch (e) {
+                    methods.debug(e);
+                }
             }, 2000);
         }
     }
@@ -241,49 +251,3 @@ local horizontalAnim = "cellphone_horizontal_base"
 mp.events.callRemote('server:playAnimation', "cellphone@female", "cellphone_call_listen_base", 49);
 
 * */
-
-let attachedObjects = {};
-
-mp.events.add('client:attachToPlayer', (playerId, model, bone, x, y, z, rX, rY, rZ) => {
-    //if (mp.players.local.remoteId == playerId || mp.players.local.id == playerId)
-    try {
-        let remotePlayer = mp.players.atRemoteId(playerId);
-        if (remotePlayer && mp.players.exists(remotePlayer)) {
-
-            //[bone, x, y, z, rX, rY, rZ] = [bone, x, y, z, rX, rY, rZ].map(a => methods.parseFloat(a));
-
-            if (attachedObjects[playerId])
-                attachedObjects[playerId].destroy();
-
-            model = methods.parseInt(model);
-
-            attachedObjects[playerId] = mp.objects.new(model, remotePlayer.position, {rotation: new mp.Vector3(0, 0, 30), dimension: -1, });
-            attachedObjects[playerId].attachTo(remotePlayer.handle, remotePlayer.getBoneIndex(bone), x, y, z, rX, rY, rZ,
-                false, false, false, false, 2, true);
-        }
-    }
-    catch (e) {
-        methods.debug('Exception: events:client:syncOpenPhone');
-        methods.debug(e);
-    }
-});
-
-mp.events.add('client:syncOpenPhone', (playerId, type) => {
-    //if (mp.players.local.remoteId == playerId || mp.players.local.id == playerId)
-    try {
-        let remotePlayer = mp.players.atRemoteId(playerId);
-        if (remotePlayer && mp.players.exists(remotePlayer)) {
-
-            if (remotePlayer === mp.players.local)
-                remotePlayer = mp.players.local;
-
-            methods.debug('Execute: events:client:syncOpenPhone');
-
-
-        }
-    }
-    catch (e) {
-        methods.debug('Exception: events:client:syncOpenPhone');
-        methods.debug(e);
-    }
-});

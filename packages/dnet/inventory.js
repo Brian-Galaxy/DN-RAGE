@@ -19,10 +19,10 @@ let props = new Map();
 
 inventory.loadAll = function() {
 
-    //mysql.executeQuery("DELETE FROM items WHERE owner_type = 0");
+    mysql.executeQuery("DELETE FROM items WHERE owner_type = 0");
     mysql.executeQuery("DELETE FROM items WHERE owner_type = 9 AND owner_id = 2 AND timestamp_update < '" + (methods.getTimeStamp() - (60 * 60 * 24 * 7)) + "'");
 
-    mysql.executeQuery(`SELECT * FROM items WHERE owner_type = 0 ORDER BY id DESC`, function (err, rows, fields) {
+    /*mysql.executeQuery(`SELECT * FROM items WHERE owner_type = 0 ORDER BY id DESC`, function (err, rows, fields) {
         rows.forEach(row => {
 
             let obj = mp.objects.new(items.getItemHashById(row['item_id']), new mp.Vector3(row['pos_x'], row['pos_y'], row['pos_z']),
@@ -36,7 +36,7 @@ inventory.loadAll = function() {
             obj.setVariable('itemId', row['item_id']);
             props.set(row['id'].toString(), obj);
         });
-    });
+    });*/
 };
 
 inventory.deleteWorldItems = function() {

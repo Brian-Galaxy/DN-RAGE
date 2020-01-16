@@ -1,4 +1,7 @@
 import methods from '../modules/methods';
+import attachItems from "./attachItems";
+
+let attach = {};
 
 mp.attachmentMngr =
     {
@@ -55,22 +58,33 @@ mp.attachmentMngr =
 
         initFor: function(entity)
         {
-            for(let attachment of entity.__attachments)
-            {
-                mp.attachmentMngr.addFor(entity, attachment);
+            try {
+                for(let attachment of entity.__attachments)
+                {
+                    mp.attachmentMngr.addFor(entity, attachment);
+                }
+            }
+            catch (e) {
+                methods.debug(e);
             }
         },
 
         shutdownFor: function(entity)
         {
-            for(let attachment in entity.__attachmentObjects)
-            {
-                mp.attachmentMngr.removeFor(entity, attachment);
+            try {
+                for(let attachment in entity.__attachmentObjects)
+                {
+                    mp.attachmentMngr.removeFor(entity, attachment);
+                }
+            }
+            catch (e) {
+                methods.debug(e);
             }
         },
 
         register: function(id, model, boneName, offset, rotation)
         {
+            return;
             try {
                 if(typeof(id) === 'string')
                 {
@@ -112,44 +126,59 @@ mp.attachmentMngr =
 
         unregister: function(id)
         {
-            if(typeof(id) === 'string')
-            {
-                id = mp.game.joaat(id);
-            }
+            try {
+                if(typeof(id) === 'string')
+                {
+                    id = mp.game.joaat(id);
+                }
 
-            if(this.attachments.hasOwnProperty(id))
-            {
-                this.attachments[id] = undefined;
+                if(this.attachments.hasOwnProperty(id))
+                {
+                    this.attachments[id] = undefined;
+                }
+            }
+            catch (e) {
+                methods.debug(e);
             }
         },
 
         addLocal: function(attachmentName)
         {
-            if(typeof(attachmentName) === 'string')
-            {
-                attachmentName = mp.game.joaat(attachmentName);
+            try {
+                if(typeof(attachmentName) === 'string')
+                {
+                    attachmentName = mp.game.joaat(attachmentName);
+                }
+
+                let entity = mp.players.local;
+
+                if(!entity.__attachments || entity.__attachments.indexOf(attachmentName) === -1)
+                {
+                    mp.events.callRemote("staticAttachments.Add", attachmentName.toString(36));
+                }
             }
-
-            let entity = mp.players.local;
-
-            if(!entity.__attachments || entity.__attachments.indexOf(attachmentName) === -1)
-            {
-                mp.events.callRemote("staticAttachments.Add", attachmentName.toString(36));
+            catch (e) {
+                methods.debug(e);
             }
         },
 
         removeLocal: function(attachmentName)
         {
-            if(typeof(attachmentName) === 'string')
-            {
-                attachmentName = mp.game.joaat(attachmentName);
+            try {
+                if(typeof(attachmentName) === 'string')
+                {
+                    attachmentName = mp.game.joaat(attachmentName);
+                }
+
+                let entity = mp.players.local;
+
+                if(entity.__attachments && entity.__attachments.indexOf(attachmentName) !== -1)
+                {
+                    mp.events.callRemote("staticAttachments.Remove", attachmentName.toString(36));
+                }
             }
-
-            let entity = mp.players.local;
-
-            if(entity.__attachments && entity.__attachments.indexOf(attachmentName) !== -1)
-            {
-                mp.events.callRemote("staticAttachments.Remove", attachmentName.toString(36));
+            catch (e) {
+                methods.debug(e);
             }
         },
 
@@ -161,69 +190,93 @@ mp.attachmentMngr =
 
 mp.events.add("entityStreamIn", (entity) =>
 {
-    if(entity.__attachments)
-    {
-        mp.attachmentMngr.initFor(entity);
+    try {
+        if(entity.__attachments)
+        {
+            mp.attachmentMngr.initFor(entity);
+        }
+    }
+    catch (e) {
+        methods.debug(e);
     }
 });
 
 mp.events.add("entityStreamOut", (entity) =>
 {
-    if(entity.__attachmentObjects)
-    {
-        mp.attachmentMngr.shutdownFor(entity);
+    try {
+        if(entity.__attachmentObjects)
+        {
+            mp.attachmentMngr.shutdownFor(entity);
+        }
+    }
+    catch (e) {
+        methods.debug(e);
     }
 });
 
 mp.events.addDataHandler("attachmentsData", (entity, data) =>
 {
-    let newAttachments = (data.length > 0) ? data.split('|').map(att => parseInt(att, 36)) : [];
+    try {
+        let newAttachments = (data.length > 0) ? data.split('|').map(att => parseInt(att, 36)) : [];
 
-    if(entity.handle !== 0)
-    {
-        let oldAttachments = entity.__attachments;
-
-        if(!oldAttachments)
+        if(entity.handle !== 0)
         {
-            oldAttachments = [];
-            entity.__attachmentObjects = {};
-        }
+            let oldAttachments = entity.__attachments;
 
-        // process outdated first
-        for(let attachment of oldAttachments)
-        {
-            if(newAttachments.indexOf(attachment) === -1)
+            if(!oldAttachments)
             {
-                mp.attachmentMngr.removeFor(entity, attachment);
+                oldAttachments = [];
+                entity.__attachmentObjects = {};
+            }
+
+            // process outdated first
+            for(let attachment of oldAttachments)
+            {
+                if(newAttachments.indexOf(attachment) === -1)
+                {
+                    mp.attachmentMngr.removeFor(entity, attachment);
+                }
+            }
+
+            // then new attachments
+            for(let attachment of newAttachments)
+            {
+                if(oldAttachments.indexOf(attachment) === -1)
+                {
+                    mp.attachmentMngr.addFor(entity, attachment);
+                }
             }
         }
 
-        // then new attachments
-        for(let attachment of newAttachments)
-        {
-            if(oldAttachments.indexOf(attachment) === -1)
-            {
-                mp.attachmentMngr.addFor(entity, attachment);
-            }
-        }
+        entity.__attachments = newAttachments;
     }
-
-    entity.__attachments = newAttachments;
+    catch (e) {
+        methods.debug(e);
+    }
 });
 
-function InitAttachmentsOnJoin()
-{
-    mp.players.forEach(_player =>
-    {
-        let data = _player.getVariable("attachmentsData");
-
-        if(data && data.length > 0)
+attach.init = function () {
+    try {
+        mp.players.forEach(_player =>
         {
-            let atts = data.split('|').map(att => parseInt(att, 36));
-            _player.__attachments = atts;
-            _player.__attachmentObjects = {};
-        }
-    });
-}
+            try {
+                let data = _player.getVariable("attachmentsData");
 
-InitAttachmentsOnJoin();
+                if(data && data.length > 0)
+                {
+                    let atts = data.split('|').map(att => parseInt(att, 36));
+                    _player.__attachments = atts;
+                    _player.__attachmentObjects = {};
+                }
+            }
+            catch (e) {
+                methods.debug(e);
+            }
+        });
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+};
+
+export default attach;

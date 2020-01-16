@@ -1,8 +1,6 @@
 import methods from "../modules/methods";
 import user from "../user";
 import vehicles from "../property/vehicles";
-import voice from "../voice";
-import ui from "../modules/ui";
 let vSync = {};
 //mp.game.vehicle.defaultEngineBehaviour = false;
 
@@ -12,26 +10,31 @@ let currentSound;
 
 vSync.radio = function(entity) {
     if (entity && mp.vehicles.exists(entity)) {
-        let localPlayer = mp.players.local;
-        if (localPlayer.vehicle == entity) {
-            let typeor = typeof entity.getVariable('vehicleSyncData');
-            let vehSyncData = entity.getVariable('vehicleSyncData');
+        try {
+            let localPlayer = mp.players.local;
+            if (localPlayer.vehicle == entity) {
+                let typeor = typeof entity.getVariable('vehicleSyncData');
+                let vehSyncData = entity.getVariable('vehicleSyncData');
 
-            if (typeor !== 'undefined') {
-                currentSound = mp.game.invoke(methods.GET_PLAYER_RADIO_STATION_INDEX);
-                if (entity.getPedInSeat(-1) == localPlayer.handle) {
-                    if (vehSyncData.RadioState != currentSound) mp.events.callRemote('s:vSync:radioChange', entity, currentSound);
-                } else {
-                    if (vehSyncData.RadioState == 255)
-                        mp.game.audio.setRadioToStationName("OFF");
-                    else {
-                        if (vehSyncData.RadioState != currentSound) {
-                            mp.game.invoke(methods.SET_FRONTEND_RADIO_ACTIVE, true);
-                            mp.game.invoke(methods.SET_RADIO_TO_STATION_INDEX, vehSyncData.RadioState);
+                if (typeor !== 'undefined') {
+                    currentSound = mp.game.invoke(methods.GET_PLAYER_RADIO_STATION_INDEX);
+                    if (entity.getPedInSeat(-1) == localPlayer.handle) {
+                        if (vehSyncData.RadioState != currentSound) mp.events.callRemote('s:vSync:radioChange', entity, currentSound);
+                    } else {
+                        if (vehSyncData.RadioState == 255)
+                            mp.game.audio.setRadioToStationName("OFF");
+                        else {
+                            if (vehSyncData.RadioState != currentSound) {
+                                mp.game.invoke(methods.SET_FRONTEND_RADIO_ACTIVE, true);
+                                mp.game.invoke(methods.SET_RADIO_TO_STATION_INDEX, vehSyncData.RadioState);
+                            }
                         }
                     }
                 }
             }
+        }
+        catch (e) {
+            methods.debug(e);
         }
     } else {
         if (radioInterval != null) {
@@ -47,45 +50,50 @@ vSync.updateValues = function(entity) {
         let actualData = entity.getVariable('vehicleSyncData');
         if (typeor !== 'undefined') {
 
-            if (vehicles.isVehicleSirenValid(entity.model)) {
-                entity.setSirenSound(true);
-                entity.setSiren(false);
-
-                let vehId = entity.remoteId;
-
-                if (actualData.SirenState == 0) {
+            try {
+                if (vehicles.isVehicleSirenValid(entity.model)) {
+                    entity.setSirenSound(true);
                     entity.setSiren(false);
-                    vSync.stopSound(vehId, 'srn');
+
+                    let vehId = entity.remoteId;
+
+                    if (actualData.SirenState == 0) {
+                        entity.setSiren(false);
+                        vSync.stopSound(vehId, 'srn');
+                    }
+                    else if (actualData.SirenState == 1) {
+                        entity.setSiren(true);
+                        vSync.stopSound(vehId, 'srn');
+                    }
+                    else if (actualData.SirenState > 1 && actualData.SirenState < 5) {
+                        entity.setSiren(true);
+                        vSync.playSound(vehId, 'srn', vehicles.getSirenSound(entity.model, actualData.SirenState));
+                    }
                 }
-                else if (actualData.SirenState == 1) {
-                    entity.setSiren(true);
-                    vSync.stopSound(vehId, 'srn');
-                }
-                else if (actualData.SirenState > 1 && actualData.SirenState < 5) {
-                    entity.setSiren(true);
-                    vSync.playSound(vehId, 'srn', vehicles.getSirenSound(entity.model, actualData.SirenState));
-                }
+
+                //ntity.setEngineOn(actualData.Engine, true, false);
+                mp.game.invoke(methods.SET_VEHICLE_UNDRIVEABLE, entity.handle, true);
+
+                entity.setDirtLevel(actualData.Dirt);
+                entity.setIndicatorLights(1, actualData.IndicatorLeftToggle);
+                entity.setIndicatorLights(0, actualData.IndicatorRightToggle);
+
+                entity.setInteriorlight(actualData.InteriorLight);
+                entity.setTaxiLights(actualData.TaxiLight);
+
+                if (actualData.Trunk)
+                    entity.setDoorOpen(5, false, false);
+                else
+                    entity.setDoorShut(5, false);
+
+                if (actualData.Hood)
+                    entity.setDoorOpen(4, false, false);
+                else
+                    entity.setDoorShut(4, false);
             }
-
-            //ntity.setEngineOn(actualData.Engine, true, false);
-            mp.game.invoke(methods.SET_VEHICLE_UNDRIVEABLE, entity.handle, true);
-
-            entity.setDirtLevel(actualData.Dirt);
-            entity.setIndicatorLights(1, actualData.IndicatorLeftToggle);
-            entity.setIndicatorLights(0, actualData.IndicatorRightToggle);
-
-            entity.setInteriorlight(actualData.InteriorLight);
-            entity.setTaxiLights(actualData.TaxiLight);
-
-            if (actualData.Trunk)
-                entity.setDoorOpen(5, false, false);
-            else
-                entity.setDoorShut(5, false);
-
-            if (actualData.Hood)
-                entity.setDoorOpen(4, false, false);
-            else
-                entity.setDoorShut(4, false);
+            catch (e) {
+                methods.debug(e);
+            }
         }
         else {
 
@@ -575,14 +583,19 @@ mp.keys.bind(0xBE, false, function() {
 });
 
 mp.events.add('render', () => {
-    let veh = mp.players.local.vehicle;
-    if (veh && veh.getClass() == 18) {
-        mp.game.controls.disableControlAction(0,86,true);
-        mp.game.controls.disableControlAction(0,81,true);
-        mp.game.controls.disableControlAction(0,82,true);
-        mp.game.controls.disableControlAction(0,85,true);
-        mp.game.controls.disableControlAction(0,80,true);
-        mp.game.controls.disableControlAction(0,19,true);
+    try {
+        let veh = mp.players.local.vehicle;
+        if (veh && veh.getClass() == 18) {
+            mp.game.controls.disableControlAction(0,86,true);
+            mp.game.controls.disableControlAction(0,81,true);
+            mp.game.controls.disableControlAction(0,82,true);
+            mp.game.controls.disableControlAction(0,85,true);
+            mp.game.controls.disableControlAction(0,80,true);
+            mp.game.controls.disableControlAction(0,19,true);
+
+        }
+    }
+    catch (e) {
 
     }
 });
@@ -595,18 +608,30 @@ mp.events.add("entityStreamIn", (entity) => {
             if (!mp.vehicles.exists(entity))
                 return;
 
-            entity.trackVisibility();
-            entity.setTyresCanBurst(true);
+            try {
+                entity.trackVisibility();
+                entity.setTyresCanBurst(true);
 
-            mp.game.invoke(methods.SET_VEHICLE_UNDRIVEABLE, entity.handle, true);
-            vSync.updateValues(entity);
+                mp.game.invoke(methods.SET_VEHICLE_UNDRIVEABLE, entity.handle, true);
+                vSync.updateValues(entity);
 
-            if (entity.getVariable('useless') === true) {
-                entity.setCanBeDamaged(false);
-                entity.setInvincible(true);
-                setTimeout(function () {
-                    entity.freezePosition(true);
-                }, 5000);
+                if (entity.getVariable('useless') === true) {
+                    entity.setCanBeDamaged(false);
+                    entity.setInvincible(true);
+                    setTimeout(function () {
+                        try {
+                            if (!mp.vehicles.exists(entity))
+                                return;
+                            entity.freezePosition(true);
+                        }
+                        catch (e) {
+                            methods.debug(e);
+                        }
+                    }, 5000);
+                }
+            }
+            catch (e) {
+                methods.debug(e);
             }
 
             //Set doors unbreakable for a moment

@@ -1037,10 +1037,15 @@ vehicles.findVehicleByNumber = (number) => {
     let returnVehicle = null;
     try {
         mp.vehicles.forEach((vehicle) => {
-            if (!vehicles.exists(vehicle))
-                return;
-            if (vehicle.numberPlate == number)
-                returnVehicle = vehicle;
+            try {
+                if (!vehicles.exists(vehicle))
+                    return;
+                if (vehicle.numberPlate.trim() == number.trim())
+                    returnVehicle = vehicle;
+            }
+            catch (e) {
+                methods.debug(e);
+            }
         });
     }
     catch (e) {

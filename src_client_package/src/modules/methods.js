@@ -87,8 +87,19 @@ methods.sleep = function(ms) {
 };
 
 methods.debug = function (message, ...args) {
+    let dateTime = new Date();
+    let dateResult = methods.digitFormat(dateTime.getHours()) + ':' + methods.digitFormat(dateTime.getMinutes())+ ':' + methods.digitFormat(dateTime.getSeconds());
+    mp.gui.chat.push(`!{03A9F4}[DEBUG | ${dateResult}]!{FFFFFF} ${message.toString().replace('Exception: ', '!{f44336}Exception: ')}`);
     try {
         mp.events.callRemote('server:clientDebug', `${message} | ${JSON.stringify(args)} | ${args.length}`)
+    } catch (e) {
+    }
+};
+
+methods.error = function (message, ...args) {
+    try {
+        message = 'OMG! EXCEPTION: ' + message;
+        methods.debug(message, args);
     } catch (e) {
     }
 };

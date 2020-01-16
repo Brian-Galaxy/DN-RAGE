@@ -1186,6 +1186,8 @@ menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId) {
                     try {
                         if (params.superTint && params.superTint != 0)
                             itemName = itemName + ' ' + weapons.getWeaponComponentName(wpName, params.superTint);
+                        else if (params.tint && params.tint != 0)
+                            itemName = itemName + ' ' + weapons.getTintName(wpName, params.tint);
                     }
                     catch (e) {
                         methods.debug(e);
@@ -1208,7 +1210,7 @@ menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId) {
                     desc = methods.bankFormat(params.number);
                 }
 
-                if (item.is_equip == 1) {
+                if (item.is_equip == 1 && ownerType == 1 && ownerId == user.getCache('id')) {
 
                     let success = true;
 

@@ -37,6 +37,9 @@ mp.events.add = (eventName, eventCallback) => {
 
             const callText = entityName !== null ? `${entityName} call event ${eventName}` : `Event ${eventName} called`;
 
+            if (eventName != 'server:clientDebug')
+                methods.debug(callText, argumentsList.slice(1));
+
             target.apply(thisArg, argumentsList);
             return;
         }
@@ -193,6 +196,7 @@ mp.events.add('server:user:setVirtualWorld', (player, vwId) => {
 
 mp.events.add('server:user:serVariable', (player, key, val) => {
     try {
+        methods.debug('server:user:serVariable', key, val);
         if (mp.players.exists(player))
             player.setVariable(key, val);
     } catch (e) {

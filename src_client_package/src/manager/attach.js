@@ -1,4 +1,3 @@
-
 import methods from '../modules/methods';
 
 mp.attachmentMngr =
@@ -7,40 +6,50 @@ mp.attachmentMngr =
 
         addFor: function(entity, id)
         {
-            if(this.attachments.hasOwnProperty(id))
-            {
-                if(!entity.__attachmentObjects.hasOwnProperty(id))
+            try {
+                if(this.attachments.hasOwnProperty(id))
                 {
-                    let attInfo = this.attachments[id];
+                    if(!entity.__attachmentObjects.hasOwnProperty(id))
+                    {
+                        let attInfo = this.attachments[id];
 
-                    let object = mp.objects.new(attInfo.model, entity.position);
+                        let object = mp.objects.new(attInfo.model, entity.position);
 
-                    object.attachTo(entity.handle,
-                        (typeof(attInfo.boneName) === 'string') ? entity.getBoneIndexByName(attInfo.boneName) : entity.getBoneIndex(attInfo.boneName),
-                        attInfo.offset.x, attInfo.offset.y, attInfo.offset.z,
-                        attInfo.rotation.x, attInfo.rotation.y, attInfo.rotation.z,
-                        false, false, false, false, 2, true);
+                        object.attachTo(entity.handle,
+                            (typeof(attInfo.boneName) === 'string') ? entity.getBoneIndexByName(attInfo.boneName) : entity.getBoneIndex(attInfo.boneName),
+                            attInfo.offset.x, attInfo.offset.y, attInfo.offset.z,
+                            attInfo.rotation.x, attInfo.rotation.y, attInfo.rotation.z,
+                            false, false, false, false, 2, true);
 
-                    entity.__attachmentObjects[id] = object;
+                        entity.__attachmentObjects[id] = object;
+                    }
+                }
+                else
+                {
+                    methods.debug(`Static Attachments Error: Unknown Attachment Used: ~w~0x${id.toString(16)}`);
                 }
             }
-            else
-            {
-                methods.debug(`Static Attachments Error: Unknown Attachment Used: ~w~0x${id.toString(16)}`);
+            catch (e) {
+                methods.debug(e);
             }
         },
 
         removeFor: function(entity, id)
         {
-            if(entity.__attachmentObjects.hasOwnProperty(id))
-            {
-                let obj = entity.__attachmentObjects[id];
-                delete entity.__attachmentObjects[id];
-
-                if(mp.objects.exists(obj))
+            try {
+                if(entity.__attachmentObjects.hasOwnProperty(id))
                 {
-                    obj.destroy();
+                    let obj = entity.__attachmentObjects[id];
+                    delete entity.__attachmentObjects[id];
+
+                    if(mp.objects.exists(obj))
+                    {
+                        obj.destroy();
+                    }
                 }
+            }
+            catch (e) {
+                methods.debug(e);
             }
         },
 
@@ -62,37 +71,42 @@ mp.attachmentMngr =
 
         register: function(id, model, boneName, offset, rotation)
         {
-            if(typeof(id) === 'string')
-            {
-                id = mp.game.joaat(id);
-            }
-
-            if(typeof(model) === 'string')
-            {
-                model = mp.game.joaat(model);
-            }
-
-            if(!this.attachments.hasOwnProperty(id))
-            {
-                if(mp.game.streaming.isModelInCdimage(model))
+            try {
+                if(typeof(id) === 'string')
                 {
-                    this.attachments[id] =
-                        {
-                            id: id,
-                            model: model,
-                            offset: offset,
-                            rotation: rotation,
-                            boneName: boneName
-                        };
+                    id = mp.game.joaat(id);
+                }
+
+                if(typeof(model) === 'string')
+                {
+                    model = mp.game.joaat(model);
+                }
+
+                if(!this.attachments.hasOwnProperty(id))
+                {
+                    if(mp.game.streaming.isModelInCdimage(model))
+                    {
+                        this.attachments[id] =
+                            {
+                                id: id,
+                                model: model,
+                                offset: offset,
+                                rotation: rotation,
+                                boneName: boneName
+                            };
+                    }
+                    else
+                    {
+                        methods.debug(`Static Attachments Error: Invalid Model (0x${model.toString(16)})`);
+                    }
                 }
                 else
                 {
-                    methods.debug(`Static Attachments Error: Invalid Model (0x${model.toString(16)})`);
+                    methods.debug("Static Attachments Error: Duplicate Entry");
                 }
             }
-            else
-            {
-                methods.debug("Static Attachments Error: Duplicate Entry");
+            catch (e) {
+                methods.debug(e);
             }
         },
 

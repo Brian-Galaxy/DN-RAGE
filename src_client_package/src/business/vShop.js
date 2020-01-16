@@ -59,18 +59,28 @@ vShop.createVehicle = function(model, c1 = 111, c2 = 111) {
     color1 = c1;
     color2 = c2;
 
-    vCurrent = mp.vehicles.new(mp.game.joaat(model), vPos, { heading: vRot, engine: false, locked: true, numberPlate: "CAR SHOP", dimension: mp.players.local.remoteId + 1 });
-    vCurrent.setRotation(0, 0, vRot, 0, true);
-    vCurrent.setCanBeDamaged(false);
-    vCurrent.setInvincible(true);
-    vCurrent.freezePosition(true);
-    vCurrent.setColours(color1, color2);
+    try {
+        vCurrent = mp.vehicles.new(mp.game.joaat(model), vPos, { heading: vRot, engine: false, locked: true, numberPlate: "CAR SHOP", dimension: mp.players.local.remoteId + 1 });
+        vCurrent.setRotation(0, 0, vRot, 0, true);
+        vCurrent.setCanBeDamaged(false);
+        vCurrent.setInvincible(true);
+        vCurrent.freezePosition(true);
+        vCurrent.setColours(color1, color2);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 };
 
 vShop.setColor1 = function(color) {
-    if (vCurrent && mp.vehicles.exists(vCurrent)) {
-        color1 = color;
-        vCurrent.setColours(color1, color2);
+    try {
+        if (vCurrent && mp.vehicles.exists(vCurrent)) {
+            color1 = color;
+            vCurrent.setColours(color1, color2);
+        }
+    }
+    catch (e) {
+        methods.debug(e);
     }
 };
 
@@ -79,9 +89,14 @@ vShop.getColor1 = function() {
 };
 
 vShop.setColor2 = function(color) {
-    if (vCurrent && mp.vehicles.exists(vCurrent)) {
-        color2 = color;
-        vCurrent.setColours(color1, color2);
+    try {
+        if (vCurrent && mp.vehicles.exists(vCurrent)) {
+            color2 = color;
+            vCurrent.setColours(color1, color2);
+        }
+    }
+    catch (e) {
+        methods.debug(e);
     }
 };
 
@@ -90,18 +105,28 @@ vShop.getColor2 = function() {
 };
 
 vShop.openAllDoor = function() {
-    if (vCurrent && mp.vehicles.exists(vCurrent)) {
-        openAllDoor = true;
-        for (let i = 0; i < 8; i++)
-            vCurrent.setDoorOpen(i, false, true);
+    try {
+        if (vCurrent && mp.vehicles.exists(vCurrent)) {
+            openAllDoor = true;
+            for (let i = 0; i < 8; i++)
+                vCurrent.setDoorOpen(i, false, true);
+        }
+    }
+    catch (e) {
+        methods.debug(e);
     }
 };
 
 vShop.closeAllDoor = function() {
-    if (vCurrent && mp.vehicles.exists(vCurrent)) {
-        openAllDoor = false;
-        for (let i = 0; i < 8; i++)
-            vCurrent.setDoorShut(i, true);
+    try {
+        if (vCurrent && mp.vehicles.exists(vCurrent)) {
+            openAllDoor = false;
+            for (let i = 0; i < 8; i++)
+                vCurrent.setDoorShut(i, true);
+        }
+    }
+    catch (e) {
+        methods.debug(e);
     }
 };
 
@@ -110,9 +135,14 @@ vShop.isOpenAllDoor = function() {
 };
 
 vShop.destroyVehicle = function() {
-    if (vCurrent && mp.vehicles.exists(vCurrent))
-        vCurrent.destroy();
-    vCurrent = null;
+    try {
+        if (vCurrent && mp.vehicles.exists(vCurrent))
+            vCurrent.destroy();
+        vCurrent = null;
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 };
 
 vShop.getShopId = function() {

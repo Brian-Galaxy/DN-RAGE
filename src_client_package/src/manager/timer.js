@@ -148,13 +148,19 @@ timer.min15Timer = function() {
 };
 
 timer.ms50Timer = function() {
-    isDisableControl = vehicles.checkerControl();
 
-    ui.updateVehValues();
+    try {
+        isDisableControl = vehicles.checkerControl();
 
-    if (Container.Data.HasLocally(0, 'hasSeat')) {
-        mp.players.local.freezePosition(true);
-        mp.players.local.setCollision(false, false);
+        ui.updateVehValues();
+
+        if (Container.Data.HasLocally(0, 'hasSeat')) {
+            mp.players.local.freezePosition(true);
+            mp.players.local.setCollision(false, false);
+        }
+    }
+    catch (e) {
+        methods.debug(e);
     }
 
     setTimeout(timer.ms50Timer, 50);
@@ -249,255 +255,260 @@ let prevWpPos = new mp.Vector3(0, 0, 0);
 
 timer.secTimer = function() {
 
-    if (user.isOpenPhone()) {
-        if (mp.players.local.isPlayingAnim("cellphone@in_car@ds@first_person", "cellphone_horizontal_base", 3) === 0 &&
-            mp.players.local.isPlayingAnim("cellphone@female", "cellphone_call_listen_base", 3) === 0 &&
-            mp.players.local.isPlayingAnim("cellphone@female", "cellphone_text_read_base", 3) === 0)
-            user.hidePhone();
-    }
-
-    ui.updateValues();
-
-    if (deathTimer > 0) {
-        deathTimer--;
-
-        //ui.updateDeathTimer(deathTimer); //TODO
-
-        if (deathTimer == 0) {
-            user.showLoadDisplay();
-
-            timer.setDeathTimer(0);
-
-            let hospPos = new mp.Vector3(294.3142, -1350.633, 23.53781);
-            //mp.players.local.resurrect();
-            mp.players.local.clearBloodDamage();
-            //mp.players.local.position = hospPos;
-            //mp.players.local.health = 100;
-            mp.players.local.freezePosition(false);
-
-            // Перестраховочка
-            /*if (!user.isGos())
-                user.removeAllWeapons();
-            else if ((weather.getHour() > 20 || weather.getHour() < 6) && user.isGos())
-                user.removeAllWeapons();
-
-            if (user.isSheriff())
-                user.respawn(-242.5556, 6326.2358, 31.4261);
-            else
-                user.respawn(288.61148, -1345.5358, 23.5378017);*/
-
-            user.setVirtualWorld(0);
-
-            mp.game.ui.displayRadar(true);
-            mp.game.ui.displayHud(true);
-            //mp.game.ui.setMinimapVisible(false);
-
-            /*if (user.getCache('jail_time') == 0) {  //TODO
-                if (!user.isSheriff() && !user.isAdmin()) {
-                    if (user.getCache('med_lic'))
-                        user.setData('med_time', 200);
-                    else
-                        user.setData('med_time', 500);
-                }
-            }*/
-
-            mp.events.callRemote('playerDeathDone');
-
-            user.setGrabMoney(0);
-            /*user.unCuff(); //TODO
-            user.unTie();*/
-
-            setTimeout(function () {
-                user.hideLoadDisplay();
-            }, 1000);
+    try {
+        if (user.isOpenPhone()) {
+            if (mp.players.local.isPlayingAnim("cellphone@in_car@ds@first_person", "cellphone_horizontal_base", 3) === 0 &&
+                mp.players.local.isPlayingAnim("cellphone@female", "cellphone_call_listen_base", 3) === 0 &&
+                mp.players.local.isPlayingAnim("cellphone@female", "cellphone_text_read_base", 3) === 0)
+                user.hidePhone();
         }
 
-        if (!user.isDead())
-            timer.setDeathTimer(0);
-    }
+        ui.updateValues();
 
-    /*
-        Drug Types
-        - Amf 0
-        - Coca 1
-        - Dmt 2
-        - Ket 3
-        - Lsd 4
-        - Mef 5
-        - Marg 6
-    */
+        if (deathTimer > 0) {
+            deathTimer--;
 
-    let drugId = 0;
+            //ui.updateDeathTimer(deathTimer); //TODO
 
-    if (user.getDrugLevel(drugId) > 0) {
-        user.removeDrugLevel(drugId, 1);
+            if (deathTimer == 0) {
+                user.showLoadDisplay();
 
-        if (user.getDrugLevel(drugId) > 1000) {
-            mp.gui.chat.push(`!{03A9F4}Вы в коме от передозировки`);
-            //user.setHeal(0); //TODO
+                timer.setDeathTimer(0);
+
+                let hospPos = new mp.Vector3(294.3142, -1350.633, 23.53781);
+                //mp.players.local.resurrect();
+                mp.players.local.clearBloodDamage();
+                //mp.players.local.position = hospPos;
+                //mp.players.local.health = 100;
+                mp.players.local.freezePosition(false);
+
+                // Перестраховочка
+                /*if (!user.isGos())
+                    user.removeAllWeapons();
+                else if ((weather.getHour() > 20 || weather.getHour() < 6) && user.isGos())
+                    user.removeAllWeapons();
+
+                if (user.isSheriff())
+                    user.respawn(-242.5556, 6326.2358, 31.4261);
+                else
+                    user.respawn(288.61148, -1345.5358, 23.5378017);*/
+
+                user.setVirtualWorld(0);
+
+                mp.game.ui.displayRadar(true);
+                mp.game.ui.displayHud(true);
+                //mp.game.ui.setMinimapVisible(false);
+
+                /*if (user.getCache('jail_time') == 0) {  //TODO
+                    if (!user.isSheriff() && !user.isAdmin()) {
+                        if (user.getCache('med_lic'))
+                            user.setData('med_time', 200);
+                        else
+                            user.setData('med_time', 500);
+                    }
+                }*/
+
+                mp.events.callRemote('playerDeathDone');
+
+                user.setGrabMoney(0);
+                /*user.unCuff(); //TODO
+                user.unTie();*/
+
+                setTimeout(function () {
+                    user.hideLoadDisplay();
+                }, 1000);
+            }
+
+            if (!user.isDead())
+                timer.setDeathTimer(0);
         }
 
-        if (!mp.game.graphics.getScreenEffectIsActive("DrugsMichaelAliensFightIn"))
-            mp.game.graphics.startScreenEffect("DrugsMichaelAliensFightIn", 0, true);
+        /*
+            Drug Types
+            - Amf 0
+            - Coca 1
+            - Dmt 2
+            - Ket 3
+            - Lsd 4
+            - Mef 5
+            - Marg 6
+        */
 
-        if (user.getDrugLevel(drugId) < 1) {
-            mp.game.graphics.stopScreenEffect("DrugsMichaelAliensFightIn");
-            mp.game.graphics.startScreenEffect("DrugsMichaelAliensFightOut", 0, false);
-            setTimeout(function () {
-                mp.game.graphics.stopScreenEffect("DrugsMichaelAliensFightOut");
-            }, 10000);
-        }
-    }
+        let drugId = 0;
 
-    drugId = 1;
-    if (user.getDrugLevel(drugId) > 0) {
-        user.removeDrugLevel(drugId, 1);
+        if (user.getDrugLevel(drugId) > 0) {
+            user.removeDrugLevel(drugId, 1);
 
-        if (user.getDrugLevel(drugId) > 1000) {
-            mp.gui.chat.push(`!{03A9F4}Вы в коме от передозировки`);
-            //user.setHeal(0); //TODO
-        }
+            if (user.getDrugLevel(drugId) > 1000) {
+                mp.gui.chat.push(`!{03A9F4}Вы в коме от передозировки`);
+                //user.setHeal(0); //TODO
+            }
 
-        if (!mp.game.graphics.getScreenEffectIsActive("DrugsTrevorClownsFightIn"))
-            mp.game.graphics.startScreenEffect("DrugsTrevorClownsFightIn", 0, true);
+            if (!mp.game.graphics.getScreenEffectIsActive("DrugsMichaelAliensFightIn"))
+                mp.game.graphics.startScreenEffect("DrugsMichaelAliensFightIn", 0, true);
 
-        if (user.getDrugLevel(drugId) < 1) {
-            mp.game.graphics.stopScreenEffect("DrugsTrevorClownsFightIn");
-            mp.game.graphics.startScreenEffect("DrugsTrevorClownsFightOut", 0, false);
-            setTimeout(function () {
-                mp.game.graphics.stopScreenEffect("DrugsTrevorClownsFightOut");
-            }, 10000);
-        }
-    }
-
-    drugId = 2;
-    if (user.getDrugLevel(drugId) > 0) {
-        user.removeDrugLevel(drugId, 1);
-
-        if (user.getDrugLevel(drugId) > 1000) {
-            mp.gui.chat.push(`!{03A9F4}Вы в коме от передозировки`);
-            //user.setHeal(0); //TODO
-        }
-
-        if (!mp.game.graphics.getScreenEffectIsActive("DMT_flight"))
-            mp.game.graphics.startScreenEffect("DMT_flight", 0, true);
-
-        if (user.getDrugLevel(drugId) < 1) {
-            mp.game.graphics.stopScreenEffect("DMT_flight");
-        }
-    }
-
-    drugId = 3;
-    if (user.getDrugLevel(drugId) > 0) {
-        user.removeDrugLevel(drugId, 1);
-
-        if (user.getDrugLevel(drugId) > 1000) {
-            mp.gui.chat.push(`!{03A9F4}Вы в коме от передозировки`);
-            //user.setHeal(0); //TODO
-        }
-
-        if (!mp.game.graphics.getScreenEffectIsActive("Rampage"))
-            mp.game.graphics.startScreenEffect("Rampage", 0, true);
-
-        if (user.getDrugLevel(drugId) < 1) {
-            mp.game.graphics.stopScreenEffect("Rampage");
-        }
-    }
-
-    drugId = 4;
-    if (user.getDrugLevel(drugId) > 0) {
-        user.removeDrugLevel(drugId, 1);
-
-        if (user.getDrugLevel(drugId) > 1000) {
-            mp.gui.chat.push(`!{03A9F4}Вы в коме от передозировки`);
-            //user.setHeal(0); //TODO
-        }
-
-        if (!mp.game.graphics.getScreenEffectIsActive("DrugsDrivingIn"))
-            mp.game.graphics.startScreenEffect("DrugsDrivingIn", 0, true);
-
-        if (user.getDrugLevel(drugId) < 1) {
-            mp.game.graphics.stopScreenEffect("DrugsDrivingIn");
-            mp.game.graphics.startScreenEffect("DrugsDrivingOut", 0, false);
-            setTimeout(function () {
-                mp.game.graphics.stopScreenEffect("DrugsDrivingOut");
-            }, 10000);
-        }
-    }
-
-    drugId = 5;
-    if (user.getDrugLevel(drugId) > 0) {
-        user.removeDrugLevel(drugId, 1);
-
-        if (user.getDrugLevel(drugId) > 1000) {
-            mp.gui.chat.push(`!{03A9F4}Вы в коме от передозировки`);
-            //user.setHeal(0); //TODO
-        }
-
-        if (!mp.game.graphics.getScreenEffectIsActive("PeyoteEndIn"))
-            mp.game.graphics.startScreenEffect("PeyoteEndIn", 0, true);
-
-        if (user.getDrugLevel(drugId) < 1) {
-            mp.game.graphics.stopScreenEffect("PeyoteEndIn");
-            mp.game.graphics.startScreenEffect("PeyoteEndOut", 0, false);
-            setTimeout(function () {
-                mp.game.graphics.stopScreenEffect("PeyoteEndOut");
-            }, 10000);
-        }
-    }
-
-    drugId = 99;
-    if (user.getDrugLevel(drugId) > 0) {
-        user.removeDrugLevel(drugId, 1);
-
-        if (user.getDrugLevel(drugId) > 1500) {
-            mp.gui.chat.push(`!{03A9F4}Вы в коме от передозировки`);
-            //user.setHeal(0); //TODO
-        }
-
-        if (!mp.game.graphics.getScreenEffectIsActive("ChopVision"))
-            mp.game.graphics.startScreenEffect("ChopVision", 0, true);
-
-        if (user.getDrugLevel(drugId) < 1) {
-            mp.game.graphics.stopScreenEffect("ChopVision");
-        }
-    }
-
-    if (user.getCashMoney() < -15000 || user.getBankMoney() < -15000) {
-        user.kick(`Anti-Cheat System: Пожалуйста, свяжитесь с администрацией`);
-        methods.saveLog('CheaterMoney', `${user.getCache('name')} (${user.getCache('id')})`);
-        return;
-    }
-
-    let isKick = false;
-    weapons.getMapList().forEach(item => {
-        if (mp.game.invoke(methods.HAS_PED_GOT_WEAPON, mp.players.local.handle, (item[1] / 2), false)) {
-            if (isKick)
-                return;
-            if (!Container.Data.HasLocally(0, (item[1] / 2).toString()) && item[0] != 'weapon_unarmed') {
-                user.kickAntiCheat(`Try Gun ${item[0]}`);
-                methods.saveLog('Cheater', `${user.getCache('name')} (${user.getCache('id')}) gun: ${item[0]}`);
-                isKick = true;
+            if (user.getDrugLevel(drugId) < 1) {
+                mp.game.graphics.stopScreenEffect("DrugsMichaelAliensFightIn");
+                mp.game.graphics.startScreenEffect("DrugsMichaelAliensFightOut", 0, false);
+                setTimeout(function () {
+                    mp.game.graphics.stopScreenEffect("DrugsMichaelAliensFightOut");
+                }, 10000);
             }
         }
-    });
 
-    let wpPos = methods.getWaypointPosition();
-    if (mp.players.local.vehicle && wpPos.x != 0 && wpPos.y != 0) {
-        if (prevWpPos.x != wpPos.x && prevWpPos.y != wpPos.y)
-            mp.events.callRemote('server:changeWaypointPos', wpPos.x, wpPos.y);
-    }
-    prevWpPos = wpPos;
+        drugId = 1;
+        if (user.getDrugLevel(drugId) > 0) {
+            user.removeDrugLevel(drugId, 1);
 
-    /*if (!user.isAdmin() && (user.getCache('age') == 18 && user.getCache('exp_age') > 5 || user.getCache('age') > 18)) {
-        let newPos = mp.players.local.position;
-        let dist = mp.players.local.vehicle ? methods.getCurrentSpeed() + 100 : 100;
-        if (methods.distanceToPos2D(prevPos, newPos) > dist && prevPos.x != 0) {
-            if (!user.isTeleport)
-                user.kickAntiCheat(`Teleport`);
+            if (user.getDrugLevel(drugId) > 1000) {
+                mp.gui.chat.push(`!{03A9F4}Вы в коме от передозировки`);
+                //user.setHeal(0); //TODO
+            }
+
+            if (!mp.game.graphics.getScreenEffectIsActive("DrugsTrevorClownsFightIn"))
+                mp.game.graphics.startScreenEffect("DrugsTrevorClownsFightIn", 0, true);
+
+            if (user.getDrugLevel(drugId) < 1) {
+                mp.game.graphics.stopScreenEffect("DrugsTrevorClownsFightIn");
+                mp.game.graphics.startScreenEffect("DrugsTrevorClownsFightOut", 0, false);
+                setTimeout(function () {
+                    mp.game.graphics.stopScreenEffect("DrugsTrevorClownsFightOut");
+                }, 10000);
+            }
         }
-        prevPos = newPos;
-    }*/
+
+        drugId = 2;
+        if (user.getDrugLevel(drugId) > 0) {
+            user.removeDrugLevel(drugId, 1);
+
+            if (user.getDrugLevel(drugId) > 1000) {
+                mp.gui.chat.push(`!{03A9F4}Вы в коме от передозировки`);
+                //user.setHeal(0); //TODO
+            }
+
+            if (!mp.game.graphics.getScreenEffectIsActive("DMT_flight"))
+                mp.game.graphics.startScreenEffect("DMT_flight", 0, true);
+
+            if (user.getDrugLevel(drugId) < 1) {
+                mp.game.graphics.stopScreenEffect("DMT_flight");
+            }
+        }
+
+        drugId = 3;
+        if (user.getDrugLevel(drugId) > 0) {
+            user.removeDrugLevel(drugId, 1);
+
+            if (user.getDrugLevel(drugId) > 1000) {
+                mp.gui.chat.push(`!{03A9F4}Вы в коме от передозировки`);
+                //user.setHeal(0); //TODO
+            }
+
+            if (!mp.game.graphics.getScreenEffectIsActive("Rampage"))
+                mp.game.graphics.startScreenEffect("Rampage", 0, true);
+
+            if (user.getDrugLevel(drugId) < 1) {
+                mp.game.graphics.stopScreenEffect("Rampage");
+            }
+        }
+
+        drugId = 4;
+        if (user.getDrugLevel(drugId) > 0) {
+            user.removeDrugLevel(drugId, 1);
+
+            if (user.getDrugLevel(drugId) > 1000) {
+                mp.gui.chat.push(`!{03A9F4}Вы в коме от передозировки`);
+                //user.setHeal(0); //TODO
+            }
+
+            if (!mp.game.graphics.getScreenEffectIsActive("DrugsDrivingIn"))
+                mp.game.graphics.startScreenEffect("DrugsDrivingIn", 0, true);
+
+            if (user.getDrugLevel(drugId) < 1) {
+                mp.game.graphics.stopScreenEffect("DrugsDrivingIn");
+                mp.game.graphics.startScreenEffect("DrugsDrivingOut", 0, false);
+                setTimeout(function () {
+                    mp.game.graphics.stopScreenEffect("DrugsDrivingOut");
+                }, 10000);
+            }
+        }
+
+        drugId = 5;
+        if (user.getDrugLevel(drugId) > 0) {
+            user.removeDrugLevel(drugId, 1);
+
+            if (user.getDrugLevel(drugId) > 1000) {
+                mp.gui.chat.push(`!{03A9F4}Вы в коме от передозировки`);
+                //user.setHeal(0); //TODO
+            }
+
+            if (!mp.game.graphics.getScreenEffectIsActive("PeyoteEndIn"))
+                mp.game.graphics.startScreenEffect("PeyoteEndIn", 0, true);
+
+            if (user.getDrugLevel(drugId) < 1) {
+                mp.game.graphics.stopScreenEffect("PeyoteEndIn");
+                mp.game.graphics.startScreenEffect("PeyoteEndOut", 0, false);
+                setTimeout(function () {
+                    mp.game.graphics.stopScreenEffect("PeyoteEndOut");
+                }, 10000);
+            }
+        }
+
+        drugId = 99;
+        if (user.getDrugLevel(drugId) > 0) {
+            user.removeDrugLevel(drugId, 1);
+
+            if (user.getDrugLevel(drugId) > 1500) {
+                mp.gui.chat.push(`!{03A9F4}Вы в коме от передозировки`);
+                //user.setHeal(0); //TODO
+            }
+
+            if (!mp.game.graphics.getScreenEffectIsActive("ChopVision"))
+                mp.game.graphics.startScreenEffect("ChopVision", 0, true);
+
+            if (user.getDrugLevel(drugId) < 1) {
+                mp.game.graphics.stopScreenEffect("ChopVision");
+            }
+        }
+
+        if (user.getCashMoney() < -15000 || user.getBankMoney() < -15000) {
+            user.kick(`Anti-Cheat System: Пожалуйста, свяжитесь с администрацией`);
+            methods.saveLog('CheaterMoney', `${user.getCache('name')} (${user.getCache('id')})`);
+            return;
+        }
+
+        let isKick = false;
+        weapons.getMapList().forEach(item => {
+            if (mp.game.invoke(methods.HAS_PED_GOT_WEAPON, mp.players.local.handle, (item[1] / 2), false)) {
+                if (isKick)
+                    return;
+                if (!Container.Data.HasLocally(0, (item[1] / 2).toString()) && item[0] != 'weapon_unarmed') {
+                    user.kickAntiCheat(`Try Gun ${item[0]}`);
+                    methods.saveLog('Cheater', `${user.getCache('name')} (${user.getCache('id')}) gun: ${item[0]}`);
+                    isKick = true;
+                }
+            }
+        });
+
+        let wpPos = methods.getWaypointPosition();
+        if (mp.players.local.vehicle && wpPos.x != 0 && wpPos.y != 0) {
+            if (prevWpPos.x != wpPos.x && prevWpPos.y != wpPos.y)
+                mp.events.callRemote('server:changeWaypointPos', wpPos.x, wpPos.y);
+        }
+        prevWpPos = wpPos;
+
+        /*if (!user.isAdmin() && (user.getCache('age') == 18 && user.getCache('exp_age') > 5 || user.getCache('age') > 18)) {
+            let newPos = mp.players.local.position;
+            let dist = mp.players.local.vehicle ? methods.getCurrentSpeed() + 100 : 100;
+            if (methods.distanceToPos2D(prevPos, newPos) > dist && prevPos.x != 0) {
+                if (!user.isTeleport)
+                    user.kickAntiCheat(`Teleport`);
+            }
+            prevPos = newPos;
+        }*/
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 
     setTimeout(timer.secTimer, 1000);
 };

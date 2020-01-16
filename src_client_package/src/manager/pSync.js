@@ -83,15 +83,12 @@ mp.events.add('client:syncAnimation', async (playerId, dict, anim, flag) => {
             remotePlayer.taskPlayAnim(dict, anim, 8, 0, -1, flag, 0.0, false, false, false);
 
             if (flag != 1 && flag != 9 && flag != 49) {
-                methods.debug('Execute: events:client:syncAnimation2:' + flag);
                 setTimeout(async function () {
                     try {
-                        methods.debug('Execute: events:client:syncAnimation3:' + flag);
                         while (mp.players.exists(remotePlayer) && remotePlayer.isPlayingAnim(dict, anim, 3) !== 0)
                             await methods.sleep(10);
                         if (remotePlayer.getHealth() > 0)
                             remotePlayer.clearTasksImmediately();
-                        methods.debug('Execute: events:client:syncAnimation4:' + flag);
                     }
                     catch (e) {
                         methods.debug(e);

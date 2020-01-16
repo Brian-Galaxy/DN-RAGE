@@ -57,6 +57,7 @@ let skin = {
     SKIN_PARENT_SKIN_MIX: 0,
     SKIN_HAIR: 0,
     SKIN_HAIR_COLOR: 0,
+    SKIN_HAIR_COLOR_2: 0,
     SKIN_EYE_COLOR: 0,
     SKIN_EYEBROWS: 0,
     SKIN_EYEBROWS_COLOR: 0,
@@ -514,7 +515,8 @@ user.updateCharacterFace = function(player) {
             );
         }
 
-        player.setClothes(2, skin.SKIN_HAIR, 0, 0);
+        player.setClothes(2, skin.SKIN_HAIR, skin.SKIN_HAIR_COLOR, 0);
+        player.setHairColor(skin.SKIN_HAIR_COLOR, skin.SKIN_HAIR_COLOR_2);
         player.setHeadOverlay(2, [skin.SKIN_EYEBROWS, 1, skin.SKIN_EYEBROWS_COLOR, 0]);
 
         if (skin.SKIN_FACE_SPECIFICATIONS) {

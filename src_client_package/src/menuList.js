@@ -1230,8 +1230,7 @@ menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId) {
                         let wpName = items.getItemNameHashById(item.item_id);
                         let wpHash = weapons.getHashByName(wpName);
                         if (!mp.game.invoke(methods.HAS_PED_GOT_WEAPON, mp.players.local.handle, wpHash, false)) {
-                            user.giveWeapon(wpName, 0);
-                            user.setAmmo(wpName, user.getCache('weapon_' + slot + '_ammo'));
+                            user.giveWeapon(wpName, user.getCache('weapon_' + slot + '_ammo'));
 
                             user.removeAllWeaponComponentsByHash(wpHash);
                             user.setWeaponTintByHash(wpHash, 0);
@@ -1248,6 +1247,10 @@ menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId) {
                                 user.giveWeaponComponentByHash(wpHash, params.superTint);
                             if (params.tint)
                                 user.setWeaponTintByHash(wpHash, params.tint);
+
+                            ui.callCef('inventory', JSON.stringify({type: "updateSelectWeapon", selectId: item.id}));
+
+                            mp.attachmentMngr.addLocal('WDSP_' + wpName.toUpperCase());
                         }
 
                         equipWeapons.push({
@@ -4564,7 +4567,7 @@ menuList.showAdminMenu = function() {
             menuList.showAdminDebugMenu();
         }
         if (item.doName == 'debug2') {
-            menuList.showVehShopMenu(4);
+            menuList.showAdminDebug2Menu();
         }
         if (item.doName == 'teleportToWaypoint')
             user.tpToWaypoint();
@@ -4706,6 +4709,115 @@ menuList.showAdminDebugMenu = function() {
         UIMenu.Menu.HideMenu();
     });
 };
+
+menuList.showAdminDebug2Menu = function() {
+    let menu = UIMenu.Menu.Create(`Admin`, `~b~Debug`);
+
+    UIMenu.Menu.AddMenuItem("openPhone").create = true;
+    UIMenu.Menu.AddMenuItem("rotatePhoneV").rotatePhoneV = true;
+    UIMenu.Menu.AddMenuItem("rotatePhoneH").rotatePhoneH = true;
+    UIMenu.Menu.AddMenuItem("callPhone").callPhone = true;
+    UIMenu.Menu.AddMenuItem("hidePhone").destroy = true;
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть");
+    menu.ItemSelect.on(async item => {
+        if (item.create)
+            user.openPhone(1);
+        if (item.rotatePhoneV)
+            user.rotatePhoneV();
+        if (item.rotatePhoneH)
+            user.rotatePhoneH();
+        if (item.callPhone)
+            user.callPhone();
+        if (item.destroy)
+            user.hidePhone();
+    });
+};
+
+/*let objAttach = null;
+let bone = 28422; //Hand
+let x = 0;
+let y = 0;
+let z = 0;
+let rx = 0;
+let ry = 0;
+let rz = 0;
+
+menuList.showAdminDebug2Menu = function() {
+    let menu = UIMenu.Menu.Create(`Admin`, `~b~Debug`);
+
+    UIMenu.Menu.AddMenuItem("Create Attach").create = true;
+
+    UIMenu.Menu.AddMenuItem("bone " + bone).bone = true;
+
+    UIMenu.Menu.AddMenuItem("x" + x).px = true;
+    UIMenu.Menu.AddMenuItem("y" + y).py = true;
+    UIMenu.Menu.AddMenuItem("z" + z).pz = true;
+    UIMenu.Menu.AddMenuItem("rx" + rx).rpx = true;
+    UIMenu.Menu.AddMenuItem("ry" + ry).rpy = true;
+    UIMenu.Menu.AddMenuItem("rz" + rz).rpz = true;
+
+    UIMenu.Menu.AddMenuItem("Destroy").destroy = true;
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть");
+    menu.ItemSelect.on(async item => {
+
+        if (item.create) {
+            if (objAttach) {
+                objAttach.destroy();
+                objAttach = null;
+            }
+
+            objAttach = mp.objects.new(-1038739674, mp.players.local.position,
+                {rotation: new mp.Vector3(0, 0, 30), dimension: -1, }
+            );
+
+            objAttach.attachTo(mp.players.local.handle, mp.players.local.getBoneIndex(bone), x, y, z, rx, ry, rz,
+                false, false, false, false, 2, true);
+        }
+        if (item.bone) {
+            bone = methods.parseInt(await UIMenu.Menu.GetUserInput("Bone", "", 10));
+            objAttach.attachTo(mp.players.local.handle, mp.players.local.getBoneIndex(bone), x, y, z, rx, ry, rz,
+                false, false, false, false, 2, true);
+        }
+        if (item.px) {
+            x = methods.parseFloat(await UIMenu.Menu.GetUserInput("x", "", 10));
+            objAttach.attachTo(mp.players.local.handle, mp.players.local.getBoneIndex(bone), x, y, z, rx, ry, rz,
+                false, false, false, false, 2, true);
+        }
+        if (item.py) {
+            y = methods.parseFloat(await UIMenu.Menu.GetUserInput("y", "", 10));
+            objAttach.attachTo(mp.players.local.handle, mp.players.local.getBoneIndex(bone), x, y, z, rx, ry, rz,
+                false, false, false, false, 2, true);
+        }
+        if (item.pz) {
+            z = methods.parseFloat(await UIMenu.Menu.GetUserInput("z", "", 10));
+            objAttach.attachTo(mp.players.local.handle, mp.players.local.getBoneIndex(bone), x, y, z, rx, ry, rz,
+                false, false, false, false, 2, true);
+        }
+        if (item.rpx) {
+            rx = methods.parseFloat(await UIMenu.Menu.GetUserInput("rx", "", 10));
+            objAttach.attachTo(mp.players.local.handle, mp.players.local.getBoneIndex(bone), x, y, z, rx, ry, rz,
+                false, false, false, false, 2, true);
+        }
+        if (item.rpy) {
+            ry = methods.parseFloat(await UIMenu.Menu.GetUserInput("ry", "", 10));
+            objAttach.attachTo(mp.players.local.handle, mp.players.local.getBoneIndex(bone), x, y, z, rx, ry, rz,
+                false, false, false, false, 2, true);
+        }
+        if (item.rpz) {
+            rz = methods.parseFloat(await UIMenu.Menu.GetUserInput("rz", "", 10));
+            objAttach.attachTo(mp.players.local.handle, mp.players.local.getBoneIndex(bone), x, y, z, rx, ry, rz,
+                false, false, false, false, 2, true);
+        }
+        if (item.destroy) {
+            if (objAttach) {
+                objAttach.destroy();
+                objAttach = null;
+            }
+        }
+    });
+};*/
 
 menuList.showAdminClothMenu = function() {
     let menu = UIMenu.Menu.Create(`Admin`, `~b~Одежда`);

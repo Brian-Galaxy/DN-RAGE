@@ -193,6 +193,14 @@ user.removeAllWeaponComponentsByHash = function(model) {
     mp.events.callRemote('server:user:removeAllWeaponComponents', model.toString());
 };
 
+user.setCurrentWeapon = function(model) {
+    user.setCurrentWeaponByHash(weapons.getHashByName(model));
+};
+
+user.setCurrentWeaponByHash = function(model) {
+    mp.game.invoke(methods.SET_CURRENT_PED_WEAPON, mp.players.local.handle, model, true);
+};
+
 user.setWeaponTintByHash = function(model, tint) {
     mp.events.callRemote('server:user:setWeaponTint', model.toString(), tint);
 };
@@ -841,22 +849,6 @@ user.getBankCardPrefix = function(bankCard = 0) {
 
     return methods.parseInt(bankCard.toString().substring(0, 4));
 };
-
-user.stopAllAnimation = function() {
-    if (!mp.players.local.getVariable("isBlockAnimation")) {
-        //mp.players.local.clearTasks();
-        //mp.players.local.clearSecondaryTask();
-        if (Container.Data.HasLocally(0, 'hasSeat')) {
-            let plPos = mp.players.local.position;
-            mp.players.local.freezePosition(false);
-            mp.players.local.setCollision(true, true);
-            mp.players.local.position = new mp.Vector3(plPos.x, plPos.y, plPos.z + 0.95);
-            Container.Data.ResetLocally(0, 'hasSeat');
-        }
-        mp.events.callRemote('server:stopAllAnimation');
-    }
-};
-
 user.playAnimationWithUser = function(toId, animType) {
     if (mp.players.local.getVariable("isBlockAnimation") || mp.players.local.isInAnyVehicle(false) || user.isDead()) return;
     mp.events.callRemote('server:playAnimationWithUser', toId, animType);
@@ -871,6 +863,21 @@ user.playAnimation = function(dict, anim, flag = 49, sendEventToServer = true) {
         48 = нормально играть только верхнюю часть тела
         49 = цикл только верхняя часть тела
     */
+};
+
+user.stopAllAnimation = function() {
+    if (!mp.players.local.getVariable("isBlockAnimation")) {
+        //mp.players.local.clearTasks();
+        //mp.players.local.clearSecondaryTask();
+        if (Container.Data.HasLocally(0, 'hasSeat')) {
+            let plPos = mp.players.local.position;
+            mp.players.local.freezePosition(false);
+            mp.players.local.setCollision(true, true);
+            mp.players.local.position = new mp.Vector3(plPos.x, plPos.y, plPos.z + 0.95);
+            Container.Data.ResetLocally(0, 'hasSeat');
+        }
+        mp.events.callRemote('server:stopAllAnimation');
+    }
 };
 
 user.playScenario = function(name) {
@@ -890,6 +897,39 @@ user.playScenario = function(name) {
 
 user.stopScenario = function() {
     mp.players.local.clearTasks();
+};
+
+let isOpenPhone = false;
+
+user.openPhone = function(type) {
+    user.playAnimation("cellphone@female", "cellphone_text_read_base", 49);
+    mp.attachmentMngr.addLocal('phone' + type);
+    isOpenPhone = true;
+    user.setCurrentWeapon('weapon_unarmed');
+};
+
+user.rotatePhoneV = function() {
+    user.playAnimation("cellphone@female", "cellphone_text_read_base", 49);
+};
+
+user.rotatePhoneH = function() {
+    user.playAnimation("cellphone@in_car@ds@first_person", "cellphone_horizontal_base", 49);
+};
+
+user.callPhone = function() {
+    user.playAnimation("cellphone@female", "cellphone_call_listen_base", 49);
+};
+
+user.isOpenPhone = function() {
+    return isOpenPhone;
+};
+
+user.hidePhone = function() {
+    mp.attachmentMngr.removeLocal('phone1');
+    mp.attachmentMngr.removeLocal('phone2');
+    mp.attachmentMngr.removeLocal('phone3');
+    user.stopAllAnimation();
+    isOpenPhone = false;
 };
 
 user.isDead = function() {

@@ -249,6 +249,13 @@ let prevWpPos = new mp.Vector3(0, 0, 0);
 
 timer.secTimer = function() {
 
+    if (user.isOpenPhone()) {
+        if (mp.players.local.isPlayingAnim("cellphone@in_car@ds@first_person", "cellphone_horizontal_base", 3) === 0 &&
+            mp.players.local.isPlayingAnim("cellphone@female", "cellphone_call_listen_base", 3) === 0 &&
+            mp.players.local.isPlayingAnim("cellphone@female", "cellphone_text_read_base", 3) === 0)
+            user.hidePhone();
+    }
+
     ui.updateValues();
 
     if (deathTimer > 0) {

@@ -408,7 +408,9 @@ mp.events.add('client:events:loginUser:finalCreate', function() {
 
 mp.events.add('client:events:loginUser:success', function() {
     user.setLogin(true);
-    inventory.getItemList(inventory.types.Player, user.getCache('id'));
+    setTimeout(function () {
+        inventory.getItemList(inventory.types.Player, user.getCache('id'));
+    }, 5000);
 });
 
 mp.events.add('client:user:updateCache', (data) => {
@@ -837,7 +839,7 @@ mp.events.add('client:inventory:selectWeapon', function(id, itemId, serial) {
         return;
     }
 
-    mp.game.invoke(methods.SET_CURRENT_PED_WEAPON, mp.players.local.handle, wpHash, true);
+    user.setCurrentWeaponByHash(wpHash);
 });
 
 mp.events.add('client:inventory:unloadW', function(itemId) {
@@ -975,6 +977,8 @@ mp.events.add('client:inventory:unEquip', function(id, itemId) {
 
         user.set('weapon_' + slot, '');
         user.set('weapon_' + slot + '_ammo', -1);
+
+        mp.attachmentMngr.removeLocal('WDSP_' + wpName.toUpperCase());
 
         user.save();
     }
@@ -1545,8 +1549,8 @@ mp.events.add("playerCommand", async (command) => {
         });
     }
     else if (command.toLowerCase().slice(0, 3) === "qwe") {
-        /*let player = mp.players.local; //TODO Спавн объектов оружия и обвесов на них
-        let pos = player.position;
+        let player = mp.players.local; //TODO Спавн объектов оружия и обвесов на них
+        /*let pos = player.position;
         let object = mp.game.weapon.createWeaponObject(-86904375, 1000, pos.x + 2, pos.y + 2, pos.z, true, player.heading, 0);*/
     }
     else if (command.slice(0, 5) === "eval ") {

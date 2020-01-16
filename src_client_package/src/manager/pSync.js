@@ -52,7 +52,7 @@ mp.events.add('client:syncAnimation', async (playerId, dict, anim, flag) => {
         let remotePlayer = mp.players.atRemoteId(playerId);
         if (remotePlayer && mp.players.exists(remotePlayer)) {
 
-            if (remotePlayer.vehicle)
+            if (remotePlayer.vehicle && dict != 'cellphone@female')
                 return;
 
             if (remotePlayer === mp.players.local)
@@ -80,20 +80,21 @@ mp.events.add('client:syncAnimation', async (playerId, dict, anim, flag) => {
                     await methods.sleep(10);
             }
 
-            //if (flag == 1) {
             remotePlayer.taskPlayAnim(dict, anim, 8, 0, -1, flag, 0.0, false, false, false);
 
-            setTimeout(async function () {
-                try {
-                    while (mp.players.exists(remotePlayer) && remotePlayer.isPlayingAnim(dict, anim, 3) !== 0)
-                        await methods.sleep(10);
-                    if (remotePlayer.health > 0)
-                        remotePlayer.clearTasksImmediately();
-                }
-                catch (e) {
-                    methods.debug(e);
-                }
-            }, 1000);
+            if (flag != 1 && flag != 9 && flag != 49) {
+                setTimeout(async function () {
+                    try {
+                        while (mp.players.exists(remotePlayer) && remotePlayer.isPlayingAnim(dict, anim, 3) !== 0)
+                            await methods.sleep(10);
+                        if (remotePlayer.health > 0)
+                            remotePlayer.clearTasksImmediately();
+                    }
+                    catch (e) {
+                        methods.debug(e);
+                    }
+                }, 1000);
+            }
         }
     }
     catch (e) {
@@ -109,7 +110,7 @@ mp.events.add('client:syncStopAnimation', (playerId) => {
         let remotePlayer = mp.players.atRemoteId(playerId);
         if (remotePlayer && mp.players.exists(remotePlayer)) {
             remotePlayer.clearTasks();
-            if (!remotePlayer.isInAir())
+            if (!remotePlayer.isInAir() && !remotePlayer.vehicle)
                 remotePlayer.clearTasksImmediately();
         }
     }
@@ -171,7 +172,7 @@ mp.events.add('client:syncHeadingToCoord', (playerId, x, y, z) => {
         }
     }
     catch (e) {
-        methods.debug('Exception: events:client:syncAnimation');
+        methods.debug('Exception: events:client:syncHeadingToCoord');
         methods.debug(e);
     }
 });
@@ -200,7 +201,89 @@ mp.events.add('client:syncHeadingToTarget', (playerId, targetId) => {
         }
     }
     catch (e) {
-        methods.debug('Exception: events:client:syncAnimation');
+        methods.debug('Exception: events:client:syncHeadingToTarget');
+        methods.debug(e);
+    }
+});
+
+/*
+
+cellphone@	f_cellphone_text_in
+cellphone@female	cellphone_call_to_text
+cellphone@first_person	cellphone_text_read_base
+cellphone@first_person@parachute	cellphone_text_in
+cellphone@first_person	cellphone_call_listen_base
+cellphone@in_car@ds	cellphone_text_read_base
+cellphone@in_car@ds@first_person	cellphone_horizontal_base
+cellphone@in_car@ds@first_person	cellphone_swipe_screen
+cellphone@in_car@low@ds	cellphone_text_out
+cellphone@in_car@ps	cellphone_horizontal_intro
+cellphone@self	selfie
+cellphone@self	selfie_in
+cellphone@self@franklin@	chest_bump
+cellphone@self@franklin@	peace
+cellphone@self@michael@	finger_point
+cellphone@self@trevor@	aggressive_finger
+cellphone@stealth	cellphone_text_read_base
+cellphone@str_female	cellphone_call_listen_yes_b
+cellphone@str	f_cellphone_call_listen_maybe_a
+
+
+cellphone@female cellphone_call_listen_base
+
+local inAnim = "cellphone_text_in"
+local outAnim = "cellphone_text_out"
+local callAnim = "cellphone_call_listen_base"
+local textAnim = "cellphone_text_read_base"
+local toTextAnim = "cellphone_call_to_text"
+local horizontalAnim = "cellphone_horizontal_base"
+
+mp.events.callRemote('server:playAnimation', "cellphone@female", "cellphone_call_listen_base", 49);
+
+* */
+
+let attachedObjects = {};
+
+mp.events.add('client:attachToPlayer', (playerId, model, bone, x, y, z, rX, rY, rZ) => {
+    //if (mp.players.local.remoteId == playerId || mp.players.local.id == playerId)
+    try {
+        let remotePlayer = mp.players.atRemoteId(playerId);
+        if (remotePlayer && mp.players.exists(remotePlayer)) {
+
+            //[bone, x, y, z, rX, rY, rZ] = [bone, x, y, z, rX, rY, rZ].map(a => methods.parseFloat(a));
+
+            if (attachedObjects[playerId])
+                attachedObjects[playerId].destroy();
+
+            model = methods.parseInt(model);
+
+            attachedObjects[playerId] = mp.objects.new(model, remotePlayer.position, {rotation: new mp.Vector3(0, 0, 30), dimension: -1, });
+            attachedObjects[playerId].attachTo(remotePlayer.handle, remotePlayer.getBoneIndex(bone), x, y, z, rX, rY, rZ,
+                false, false, false, false, 2, true);
+        }
+    }
+    catch (e) {
+        methods.debug('Exception: events:client:syncOpenPhone');
+        methods.debug(e);
+    }
+});
+
+mp.events.add('client:syncOpenPhone', (playerId, type) => {
+    //if (mp.players.local.remoteId == playerId || mp.players.local.id == playerId)
+    try {
+        let remotePlayer = mp.players.atRemoteId(playerId);
+        if (remotePlayer && mp.players.exists(remotePlayer)) {
+
+            if (remotePlayer === mp.players.local)
+                remotePlayer = mp.players.local;
+
+            methods.debug('Execute: events:client:syncOpenPhone');
+
+
+        }
+    }
+    catch (e) {
+        methods.debug('Exception: events:client:syncOpenPhone');
         methods.debug(e);
     }
 });

@@ -82,7 +82,8 @@ mp.events.add("entityStreamIn", (entity) => {
 
             // don't touch this or you will have a bad time
             entity.giveWeapon(weaponHash, -1, true);
-            for (let component of componentsArray) addComponentToPlayer(entity, weaponHash, component);
+            for (let component of componentsArray)
+                addComponentToPlayer(entity, weaponHash, component);
             mp.game.invoke(Natives.SET_CURRENT_PED_WEAPON, entity.handle, weaponHash, true);
         }
 

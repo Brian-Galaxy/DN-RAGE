@@ -5,6 +5,8 @@ import './manager/vSync';
 import './manager/pSync';
 import './manager/wpSync';
 import './manager/shoot';
+import './manager/attach';
+import './manager/attachWeapons';
 
 import './betternotifs';
 import './voice';
@@ -20,6 +22,7 @@ import vBreakLight from "./manager/vBreakLight";
 import object from "./manager/object";
 //import npc from "./manager/npc";
 import skill from "./manager/skill";
+import attachItems from "./manager/attachItems";
 
 import user from "./user";
 import enums from "./enums";
@@ -51,6 +54,8 @@ try {
         object.load();
         //npc.loadAll();
         skill.loadAll();
+
+        attachItems.registerAttaches();
 
         timer.loadAll();
         vBreakLight.timer();

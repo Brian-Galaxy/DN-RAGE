@@ -7,6 +7,8 @@ require('./modules/chat');
 require('./voice/voice');
 require('./managers/vSync');
 require('./managers/wpSync');
+require('./managers/attach');
+require('./managers/attachWeapons');
 
 let mysql = require('./modules/mysql');
 let methods = require('./modules/methods');

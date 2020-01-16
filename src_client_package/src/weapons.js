@@ -36,6 +36,16 @@ weapons.getWeaponComponentList = function(weaponName) {
     return list;
 };
 
+weapons.getWeaponComponentName = function(weaponName, hash) {
+    let component = '';
+    weapons.getComponentList().forEach(item => {
+        if (item[0] == weaponName && item[2] == hash) {
+            component = item[1];
+        }
+    });
+    return component;
+};
+
 weapons.getHashByName = function(name) {
     let hash = 0;
     weapons.getMapList().forEach(item => {

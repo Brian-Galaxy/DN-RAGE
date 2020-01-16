@@ -810,11 +810,26 @@ mp.events.add('client:inventory:giveItemMenu', function() {
     ui.callCef('inventory', JSON.stringify({type: "updateTrade", idList: tradeArray}));
 });
 
-mp.events.add('client:inventory:moveTo', function(id, ownerId, ownerType) {
-    inventory.updateOwnerId(id, methods.parseInt(ownerId), ownerType);
+mp.events.add('client:inventory:moveTo', function(id, itemId, ownerId, ownerType) {
+
+    if (ownerType == 0) {
+        if (mp.players.local.dimension > 0) {
+            mp.game.ui.notifications.show("~r~Нельзя выкидывать предметы в интерьере");
+            return;
+        }
+        inventory.dropItem(id, itemId, mp.players.local.position, mp.players.local.getRotation(0));
+    }
+    else
+        inventory.updateOwnerId(id, methods.parseInt(ownerId), ownerType);
 });
 
-mp.events.add('client:inventory:moveFrom', function(id) {
+mp.events.add('client:inventory:moveFrom', function(id, ownerType) {
+
+    if (ownerType == 0) {
+        inventory.deleteItemProp(id);
+        user.playAnimation("pickup_object","pickup_low", 8);
+    }
+
     inventory.updateOwnerId(id, user.getCache('id'), inventory.types.Player);
 });
 
@@ -824,6 +839,10 @@ mp.events.add('client:inventory:drop', function(id, itemId) {
         return;
     }
     inventory.dropItem(id, itemId, mp.players.local.position, mp.players.local.getRotation(0));
+});
+
+mp.events.add('client:inventory:openBag', function(id) {
+    inventory.getItemList(inventory.types.Bag, id);
 });
 
 mp.events.add('client:inventory:selectWeapon', function(id, itemId, serial) {
@@ -982,6 +1001,12 @@ mp.events.add('client:inventory:unEquip', function(id, itemId) {
 
         user.save();
     }
+    else if (itemId == 264) {
+        user.set("hand", 0);
+        user.set("hand_color", 0);
+        user.updateCharacterCloth();
+        user.save();
+    }
     else if (itemId == 265) {
         if (user.getSex() == 0)
         {
@@ -1093,6 +1118,9 @@ mp.events.add('client:inventory:unEquip', function(id, itemId) {
 
 mp.events.add('client:inventory:equip', function(id, itemId, count, aparams) {
 
+    inventory.deleteItemProp(id);
+    inventory.updateOwnerId(id, inventory.types.Player, user.getCache('id'));
+
     let params = {};
 
     try {
@@ -1153,6 +1181,12 @@ mp.events.add('client:inventory:equip', function(id, itemId, count, aparams) {
     else if (itemId <= 471 && itemId >= 293) {
         let useItemId = items.getWeaponIdByName(items.getItemNameHashById(itemId));
         let slot = weapons.getGunSlotIdByItem(useItemId);
+    }
+    else if (itemId == 264) {
+        user.set("hand", 82);
+        user.set("hand_color", 0);
+        user.updateCharacterCloth();
+        user.save();
     }
     else if (itemId == 265) {
         if (user.getCache('torso') == 15) {

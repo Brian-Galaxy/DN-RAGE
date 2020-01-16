@@ -1179,14 +1179,25 @@ menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId) {
                         desc = "Статус: Заберите выигрыш";
                 }
                 else if (item.item_id <= 137 && item.item_id >= 54) {
+
+                    let wpName = items.getItemNameHashById(item.item_id);
                     itemName = items.getItemNameById(item.item_id);
+
+                    try {
+                        if (params.superTint && params.superTint != 0)
+                            itemName = itemName + ' ' + weapons.getWeaponComponentName(wpName, params.superTint);
+                    }
+                    catch (e) {
+                        methods.debug(e);
+                    }
+
                     desc = params.serial;
                 }
                 else if (item.item_id <= 292 && item.item_id >= 279) {
                     if (methods.parseInt(item.count) == 0)
                         desc = "Пустая";
                 }
-                else if (item.item_id <= 274 && item.item_id >= 264) {
+                else if (item.item_id <= 274 && item.item_id >= 265) {
                     itemName = params.name;
                 }
                 else if (item.item_id <= 473 && item.item_id >= 293) {

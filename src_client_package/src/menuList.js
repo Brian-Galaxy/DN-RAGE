@@ -3,6 +3,8 @@ import UIMenu from './modules/menu';
 import methods from './modules/methods';
 import ui from './modules/ui';
 
+import weather from './manager/weather';
+
 import user from './user';
 import admin from './admin';
 import enums from './enums';
@@ -306,6 +308,118 @@ menuList.showBusinessTeleportMenu = function() {
             user.setVirtualWorld(0);
             user.teleportv(item.teleportPos);
         }
+    });
+};
+
+menuList.showMazeOfficeTeleportMenu = function() {
+
+    if (methods.isBlackout()) {
+        mp.game.ui.notifications.show(`~r~В городе отсутствует свет`);
+        return;
+    }
+
+    let menu = UIMenu.Menu.Create(`Maze`, `~b~Maze Bank Лифт`);
+
+    let BankMazeLiftOfficePos = new mp.Vector3(-77.77799, -829.6542, 242.3859);
+    let BankMazeLiftStreetPos = new mp.Vector3(-66.66476, -802.0474, 43.22729);
+    let BankMazeLiftRoofPos = new mp.Vector3(-67.13605, -821.9, 320.2874);
+    let BankMazeLiftGaragePos = new mp.Vector3(-84.9765, -818.7122, 35.02804);
+
+    UIMenu.Menu.AddMenuItem("Гараж").teleportPos = BankMazeLiftGaragePos;
+    UIMenu.Menu.AddMenuItem("Офис").teleportPos = BankMazeLiftOfficePos;
+    UIMenu.Menu.AddMenuItem("Улица").teleportPos = BankMazeLiftStreetPos;
+    UIMenu.Menu.AddMenuItem("Крыша").teleportPos = BankMazeLiftRoofPos;
+
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+    menu.ItemSelect.on((item, index) => {
+        UIMenu.Menu.HideMenu();
+        if (item == closeItem)
+            return;
+        user.teleportv(item.teleportPos);
+    });
+};
+
+menuList.showCasinoLiftTeleportMenu = function() {
+
+    if (methods.isBlackout()) {
+        mp.game.ui.notifications.show(`~r~В городе отсутствует свет`);
+        return;
+    }
+
+    let menu = UIMenu.Menu.Create(`Casino`, `~b~Лифт`);
+
+    let CasinoLiftStreetPos = new mp.Vector3(935.5374755859375, 46.44008255004883, 80.09577178955078);
+    let CasinoLiftBalconPos = new mp.Vector3(964.3539428710938, 58.81953048706055, 111.5530014038086);
+    let CasinoLiftRoofPos = new mp.Vector3(972.0299072265625, 52.14411163330078, 119.24087524414062);
+
+    UIMenu.Menu.AddMenuItem("Улица").teleportPos = CasinoLiftStreetPos;
+    UIMenu.Menu.AddMenuItem("Балкон").teleportPos = CasinoLiftBalconPos;
+    UIMenu.Menu.AddMenuItem("Крыша").teleportPos = CasinoLiftRoofPos;
+
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+    menu.ItemSelect.on((item, index) => {
+        UIMenu.Menu.HideMenu();
+        if (item == closeItem)
+            return;
+        user.teleportv(item.teleportPos);
+    });
+};
+
+menuList.showFibOfficeTeleportMenu = function() {
+
+    if (methods.isBlackout()) {
+        mp.game.ui.notifications.show(`~r~В городе отсутствует свет`);
+        return;
+    }
+
+    let menu = UIMenu.Menu.Create(`Fib`, `~b~Лифт`);
+
+    let FibLift0StationPos = new mp.Vector3(122.9873, -741.1865, 32.13323);
+    let FibLift1StationPos = new mp.Vector3(136.2213, -761.6816, 44.75201);
+    let FibLift2StationPos = new mp.Vector3(136.2213, -761.6816, 241.152);
+    let FibLift3StationPos = new mp.Vector3(114.9807, -741.8279, 257.1521);
+    let FibLift4StationPos = new mp.Vector3(141.4099, -735.3376, 261.8516);
+
+    UIMenu.Menu.AddMenuItem("Гараж").teleportPos = FibLift0StationPos;
+    UIMenu.Menu.AddMenuItem("1 этаж").teleportPos = FibLift1StationPos;
+    UIMenu.Menu.AddMenuItem("49 этаж").teleportPos = FibLift2StationPos;
+    UIMenu.Menu.AddMenuItem("52 этаж").teleportPos = FibLift3StationPos;
+    UIMenu.Menu.AddMenuItem("Крыша").teleportPos = FibLift4StationPos;
+
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+    menu.ItemSelect.on((item, index) => {
+        UIMenu.Menu.HideMenu();
+        if (item == closeItem)
+            return;
+        user.teleportv(item.teleportPos);
+    });
+};
+
+menuList.showGovOfficeTeleportMenu = function() {
+
+    if (methods.isBlackout()) {
+        mp.game.ui.notifications.show(`~r~В городе отсутствует свет`);
+        return;
+    }
+
+    let menu = UIMenu.Menu.Create(`Правительство`, `~b~Лифт`);
+
+    let MeriaUpPos = new mp.Vector3(-1395.997, -479.8439, 71.04215);
+    let MeriaDownPos = new mp.Vector3(-1379.659, -499.748, 32.15739);
+    let MeriaRoofPos = new mp.Vector3(-1369, -471.5994, 83.44699);
+    let MeriaGarPos = new mp.Vector3(-1360.679, -471.8841, 30.59572);
+
+    UIMenu.Menu.AddMenuItem("Гараж").teleportPos = MeriaGarPos;
+    UIMenu.Menu.AddMenuItem("Офис").teleportPos = MeriaUpPos;
+    UIMenu.Menu.AddMenuItem("Улица").teleportPos = MeriaDownPos;
+    UIMenu.Menu.AddMenuItem("Крыша").teleportPos = MeriaRoofPos;
+
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+    menu.ItemSelect.on((item, index) => {
+        UIMenu.Menu.HideMenu();
+        if (item == closeItem)
+            return;
+        user.teleportv(item.teleportPos);
     });
 };
 
@@ -678,6 +792,165 @@ menuList.showBusinessSettingsMenu = async function(data) {
 
             business.loadInterior(intIndex);
             mp.game.ui.notifications.show(`~b~Ваш новый интерьер: ~s~${interiorList[intIndex]}`);
+        }
+    });
+};
+
+menuList.showMeriaMainMenu = function() {
+
+    if (methods.isBlackout()) {
+        mp.game.ui.notifications.show(`~r~В городе отсутствует свет`);
+        return;
+    }
+
+    let menu = UIMenu.Menu.Create(`Секретарь`, `~b~Секретарь правительства`);
+
+    UIMenu.Menu.AddMenuItem("Оформить WorkID").doName = 'getWorkId';
+    UIMenu.Menu.AddMenuItem("Оформить регистрацию", 'Стоимость: ~g~1,000').doName = 'getRegister';
+    UIMenu.Menu.AddMenuItem("Оформить гражданство", 'Стоимость: ~g~10,000').doName = 'getFullRegister';
+
+    UIMenu.Menu.AddMenuItem("Трудовая биржа").doName = 'showMeriaJobListMenu';
+    UIMenu.Menu.AddMenuItem("Лицензионный центр").doName = 'showLicBuyMenu';
+
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+    menu.ItemSelect.on(async (item, index) => {
+        UIMenu.Menu.HideMenu();
+        if (item == closeItem)
+            return;
+        if (item.doName == 'showMeriaJobListMenu')
+            menuList.showMeriaJobListMenu();
+        if (item.doName == 'showLicBuyMenu')
+            menuList.showLicBuyMenu();
+        if (item.doName == 'getRegister') {
+            if (user.getBankMoney() < 1000) {
+                mp.game.ui.notifications.show("~r~У Вас недостаточно средств на банковском счету");
+                return;
+            }
+            if (user.getCache('work_lvl') < 2) {
+                mp.game.ui.notifications.show("~r~Рабочий стаж должен быть 2 уровня");
+                return;
+            }
+            if (user.getCache('reg_status') > 0) {
+                mp.game.ui.notifications.show("~r~Вам не нужна регистрация");
+                return;
+            }
+            user.set('reg_status', 1);
+            mp.game.ui.notifications.show("~g~Поздравялем, вы получили регистрацию!");
+            user.addHistory(0, 'Получил регистрацию');
+            user.save();
+        }
+        if (item.doName == 'getFullRegister') {
+            if (user.getBankMoney() < 10000) {
+                mp.game.ui.notifications.show("~r~У Вас недостаточно средств на банковском счету");
+                return;
+            }
+            if (user.getCache('work_lvl') < 4) {
+                mp.game.ui.notifications.show("~r~Рабочий стаж должен быть 4 уровня");
+                return;
+            }
+            if (user.getCache('reg_status') > 1) {
+                mp.game.ui.notifications.show("~r~Вам не нужно гражданство");
+                return;
+            }
+            user.set('reg_status', 2);
+            mp.game.ui.notifications.show("~g~Поздравялем, вы получили регистрацию!");
+            user.addHistory(0, 'Получил гражданство');
+            user.save();
+        }
+        if (item.doName == 'getWorkId') {
+
+            if (user.getCache('work_lic') != '') {
+                mp.game.ui.notifications.show("~r~У Вас уже есть WorkID");
+                return;
+            }
+            if (user.getCache('reg_status') == 0) {
+                mp.game.ui.notifications.show("~r~У Вас нет регистрации или гражданства");
+                return;
+            }
+            try {
+                user.set('work_lic', methods.generateWorkID());
+                user.set('work_date', weather.getFullRpDate());
+                mp.game.ui.notifications.show("~g~Поздравялем, вы получили WorkID!");
+                user.addHistory(0, 'Получил WorkID');
+                user.save();
+            }
+            catch (e) {
+                methods.error(e);
+            }
+        }
+    });
+};
+
+menuList.showLicBuyMenu = function()
+{
+    UIMenu.Menu.HideMenu();
+    let menu = UIMenu.Menu.Create("Правительство", "~b~Покупка лицензий");
+
+    UIMenu.Menu.AddMenuItem("Категория A", "Цена: ~g~$99.90").doName = "a_lic";
+    UIMenu.Menu.AddMenuItem("Категория B", "Цена: ~g~$300").doName = "b_lic";
+    UIMenu.Menu.AddMenuItem("Категория C", "Цена: ~g~$500").doName = "c_lic";
+    UIMenu.Menu.AddMenuItem("Водный транспорт", "Цена: ~g~$990").doName = "ship_lic";
+    UIMenu.Menu.AddMenuItem("Перевозка пассажиров", "Цена: ~g~$1500").doName = "taxi_lic";
+    UIMenu.Menu.AddMenuItem("Авиатранспорт", "Цена: ~g~$5000").doName = "air_lic";
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = "closeButton";
+
+    menu.ItemSelect.on((item, index) => {
+        UIMenu.Menu.HideMenu();
+        if (item.doName == "a_lic")
+            user.buyLicense('a_lic', 99.90);
+        else if (item.doName == "b_lic")
+            user.buyLicense('b_lic', 300);
+        else if (item.doName == "c_lic")
+            user.buyLicense('c_lic', 500);
+        else if (item.doName == "air_lic")
+            user.buyLicense('air_lic', 5000);
+        else if (item.doName == "ship_lic")
+            user.buyLicense('ship_lic', 990);
+        else if (item.doName == "taxi_lic")
+            user.buyLicense('taxi_lic', 1500);
+    });
+};
+
+menuList.showMeriaJobListMenu = function() {
+
+    let menu = UIMenu.Menu.Create(`Секретарь`, `~b~Трудовая биржа`);
+
+    UIMenu.Menu.AddMenuItem("Садовник", "Компания: ~y~O'Connor").jobName = 1;
+    UIMenu.Menu.AddMenuItem("Разнорабочий", "Компания: ~y~Bugstars").jobName = 2;
+
+    UIMenu.Menu.AddMenuItem("Фотограф", "Компания: ~y~LifeInvader").jobName = 3;
+
+    UIMenu.Menu.AddMenuItem("Почтальон", "Компания: ~y~PostOp").jobName = 4;
+
+    UIMenu.Menu.AddMenuItem("Водитель автобуса-1", "Городской автобус").jobName = 6;
+    UIMenu.Menu.AddMenuItem("Водитель автобуса-2", "Трансферный автобус").jobName = 7;
+    UIMenu.Menu.AddMenuItem("Водитель автобуса-3", "Рейсовый автобус").jobName = 8;
+
+    /*UIMenu.Menu.AddMenuItem("Таксист", "Компания: ~y~DownTown Cab Co.").jobName = 9;
+
+    UIMenu.Menu.AddMenuItem("Инкассатор", "Компания: ~y~Gruppe6").jobName = 10;
+    UIMenu.Menu.AddMenuItem("Грузоперевозки").jobName = 11;*/
+
+    UIMenu.Menu.AddMenuItem("~y~Уволиться с работы").doName = 'uninvite';
+
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+    menu.ItemSelect.on(async (item, index) => {
+        UIMenu.Menu.HideMenu();
+        if (item == closeItem)
+            return;
+        if (item.doName == 'uninvite') {
+            user.set('job', 0);
+            mp.game.ui.notifications.show("~y~Вы уволились с работы");
+        }
+        if (item.jobName) {
+            if (user.getCache('work_lic') != '') {
+                mp.game.ui.notifications.show("~r~Для начала оформите Work ID");
+                return;
+            }
+            user.set('job', item.jobName);
+            mp.game.ui.notifications.show("~g~Вы устроились на работу");
+            user.save();
         }
     });
 };

@@ -225,12 +225,6 @@ condos.sell = function (player) {
 
     user.set(player, 'condo_id', 0);
 
-    if (user.get(player, 'reg_status') != 3)
-    {
-        user.set(player, "reg_time", 28);
-        user.set(player, "reg_status", 1);
-    }
-
     condos.updateOwnerInfo(hInfo.get('id'), 0, '');
 
     coffer.removeMoney(1, nalog);
@@ -267,11 +261,6 @@ condos.buy = function (player, id) {
     }
 
     user.set(player, 'condo_id', id);
-
-    if (user.get(player, 'reg_status') != 3) {
-        user.set(player, 'reg_time', 372);
-        user.set(player, 'reg_status', 2);
-    }
 
     condos.updateOwnerInfo(id, user.get(player, 'id'), user.get(player, 'name'));
 

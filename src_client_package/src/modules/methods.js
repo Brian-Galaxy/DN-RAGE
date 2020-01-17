@@ -5,7 +5,9 @@ let methods = {};
 import Menu from "./menu";
 import enums from "../enums";
 import menuList from "../menuList";
+
 import timer from "../manager/timer";
+import weather from "../manager/weather";
 
 methods.GIVE_WEAPON_TO_PED = '0xBF0FD6E56C964FCB';
 methods.REMOVE_WEAPON_FROM_PED = '0x4899CB088EDF59B8';
@@ -102,6 +104,12 @@ methods.error = function (message, ...args) {
         methods.debug(message, args);
     } catch (e) {
     }
+};
+
+methods.generateWorkID = function() {
+    let prefix = 'WID' + weather.getYear();
+    let number = Date.now().toString().substr(2);
+    return `${prefix}-${number}`;
 };
 
 methods.getVehicleInfo = function (model) {

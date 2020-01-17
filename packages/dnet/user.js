@@ -1205,9 +1205,25 @@ user.addCashHistory = function(player, text, price) {
 };
 
 user.addHistory = function(player, type, reason) {
-    return; //TODO
+
     if (!user.isLogin(player))
         return;
+
+    let time = methods.getTimeWithoutSec();
+    let date = methods.getDate();
+    let rpDateTime = weather.getFullRpTime() + ' ' + weather.getFullRpDate();
+    let dateTime = time + ' ' + date;
+
+    mysql.executeQuery(`INSERT INTO log_player (user_id, datetime, type, do) VALUES ('${user.getId(player)}', '${rpDateTime} (( ${dateTime} ))', '${type}', '${reason}')`);
+};
+
+user.sendSms = function(player, sender, title, text, pic) {
+
+    if (!user.isLogin(player))
+        return;
+
+
+    player.notifyWithPicture(sender, title, text, pic, 2);
 
     let time = methods.getTimeWithoutSec();
     let date = methods.getDate();
@@ -1215,6 +1231,7 @@ user.addHistory = function(player, type, reason) {
     let dateTime = time + ' ' + date;
     let rpDateTime = dateTime;
 
+    return; //TODO
     mysql.executeQuery(`INSERT INTO log_player (user_id, datetime, type, do) VALUES ('${user.getId(player)}', '${rpDateTime} (( ${dateTime} ))', '${type}', '${reason}')`);
 };
 
@@ -1460,6 +1477,67 @@ user.giveJobSkill = function(player) {
     }
 };
 
+user.giveLic = function (player, lic, monthEnd = 6, desc = '') {
+    if (!user.isLogin(player))
+        return;
+
+    let licName = '';
+
+    let timestamp = weather.strDateToTime(weather.getFullRpDate());
+    let addTimestamp = monthEnd * 2629746; //1 month
+    let dateTimeStart = new Date(timestamp);
+    let dateTimeEnd = new Date(addTimestamp);
+    let dateTimeStartFormat = weather.getFullRpDateFormat(dateTimeStart.getDate(), dateTimeStart.getMonth(), dateTimeStart.getFullYear());
+    let dateTimeEndFormat = weather.getFullRpDateFormat(dateTimeEnd.getDate(), dateTimeEnd.getMonth(), dateTimeEnd.getFullYear());
+
+    user.set(player, lic, true);
+    user.set(player, lic + '_create', dateTimeStartFormat);
+    user.set(player, lic + '_end', dateTimeEndFormat);
+
+    user.save(player);
+
+    switch (lic) {
+        case 'a_lic':
+            licName = 'категории А';
+            break;
+        case 'b_lic':
+            licName = 'категории B';
+            break;
+        case 'c_lic':
+            licName = 'категории C';
+            break;
+        case 'air_lic':
+            licName = 'пилота';
+            break;
+        case 'ship_lic':
+            licName = 'на водный транспорт';
+            break;
+        case 'taxi_lic':
+            licName = 'на перевозку пассажиров';
+            break;
+        case 'law_lic':
+            licName = 'адвоката';
+            break;
+        case 'gun_lic':
+            licName = 'на оружие';
+            break;
+        case 'biz_lic':
+            licName = 'на бизнес';
+            break;
+        case 'fish_lic':
+            licName = 'на рыбалку';
+            break;
+    }
+
+    if (lic == 'med_lic') {
+        player.notify("~g~Вы получили ~s~медстраховку");
+        user.addHistory(player, 4, 'Получил медстраховку ' + desc);
+        return;
+    }
+    player.notify("~g~Вы получили лицензию ~s~" + licName);
+    user.addHistory(player, 4, 'Получил лицензию ' + licName + desc);
+};
+
 user.payDay = async function (player) {
     if (!user.isLogin(player))
         return false;
@@ -1476,16 +1554,6 @@ user.payDay = async function (player) {
     if (user.getVipStatus() == "YouTube")
         user.set(player, 'exp_age', user.get(player, 'exp_age') + 1);*/
 
-    if (user.get(player, 'reg_time') > 0)
-        user.set(player, 'reg_time', user.get(player, 'reg_time') - 1);
-
-    if (user.get(player, 'reg_time') == 0 && user.get(player, 'reg_status') == 1)
-        user.set(player, 'reg_status', 0);
-
-    if (user.get(player, 'reg_time') == 0 && user.get(player, 'reg_status') == 2) {
-        user.set(player, 'reg_status', 3);
-        player.notifyWithPicture("323-555-0001", 'Адвокат', "Поздравляю, Вы получили гражданство США.", 'CHAR_BARRY', 2); //TODO
-    }
 
     if (user.get(player, 'online_time') == 372) {
 

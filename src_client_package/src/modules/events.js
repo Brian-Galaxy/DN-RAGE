@@ -810,6 +810,16 @@ mp.events.add('client:managers:weather:syncWeatherTemp', (temp) => {
     }
 });
 
+mp.events.add('client:managers:weather:syncWeatherTemp', (windSpeed, windDir) => {
+    try {
+        //methods.debug('Event: client:user:syncWeatherTemp', temp);
+        weather.syncWeatherWind(windSpeed, windDir);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
 mp.events.add('client:managers:weather:syncRealFullDateTime', (dateTime) => {
     try {
         //methods.debug('Event: client:user:syncRealFullDateTime', dateTime);
@@ -838,6 +848,26 @@ mp.events.add('client:managers:weather:syncRealDate', (time) => {
     catch (e) {
         methods.debug(e);
     }
+});
+
+mp.events.add('client:menuList:showMazeOfficeTeleportMenu', () => {
+    methods.debug('Event: client:menuList:showMazeOfficeTeleportMenu');
+    menuList.showMazeOfficeTeleportMenu();
+});
+
+mp.events.add('client:menuList:showCasinoLiftTeleportMenu', () => {
+    methods.debug('Event: client:menuList:showCasinoLiftTeleportMenu');
+    menuList.showCasinoLiftTeleportMenu();
+});
+
+mp.events.add('client:menuList:showFibOfficeTeleportMenu', () => {
+    methods.debug('Event: client:menuList:showFibOfficeTeleportMenu');
+    menuList.showFibOfficeTeleportMenu();
+});
+
+mp.events.add('client:menuList:showGovOfficeTeleportMenu', () => {
+    methods.debug('Event: client:menuList:showGovOfficeTeleportMenu');
+    menuList.showGovOfficeTeleportMenu();
 });
 
 mp.events.add('client:menuList:showBusinessTeleportMenu', () => {
@@ -889,6 +919,16 @@ mp.events.add('client:menuList:showBusinessMenu', (data) => {
         methods.debug('Exception: events:client:showBusinessMenu');
         methods.debug(e);
     }
+});
+
+mp.events.add('client:menuList:showMeriaMainMenu', () => {
+    methods.debug('Event: client:menuList:showMeriaMainMenu');
+    menuList.showMeriaMainMenu();
+});
+
+mp.events.add('client:menuList:showMazeOfficeMenu', () => {
+    methods.debug('Event: client:menuList:showMazeOfficeMenu');
+    menuList.showMazeOfficeMenu();
 });
 
 mp.events.add('client:menuList:showGovGarderobMenu', () => {

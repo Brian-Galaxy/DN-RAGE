@@ -327,8 +327,7 @@ user.teleportVeh = function(x, y, z, rot) {
 };
 
 user.clearChat = function() {
-    for (let i = 0; i < 100; i++)
-        mp.gui.chat.push('');
+    for (let i = 0; i < 100; i++) mp.gui.chat.push('');
 };
 
 user.tpToWaypoint = function() { //TODO машина
@@ -720,6 +719,19 @@ user.stopAllScreenEffect = function() {
     mp.game.invoke(methods.ANIMPOSTFX_STOP_ALL);
 };
 
+user.buyLicense = function(type, price)
+{
+    mp.events.callRemote('server:user:buyLicense', type, price);
+};
+
+user.addHistory = function(type, reason) {
+    mp.events.callRemote('server:user:addHistory', type, reason);
+};
+
+user.sendSms = function(sender, title, text, pic) {
+    mp.events.callRemote('server:user:sendSms', sender, title, text, pic);
+};
+
 user.addMoney = function(money, text = 'Финансовая операция') {
     mp.events.callRemote('server:user:addMoney', money, text);
 };
@@ -873,7 +885,7 @@ user.sendSmsBankOperation = function(text, title = 'Операция со счё
 };
 
 user.getBankCardPrefix = function(bankCard = 0) {
-    methods.debug('bank.sendSmsBankOperation');
+    methods.debug('bank.getBankCardPrefix');
     if (!user.isLogin())
         return;
 

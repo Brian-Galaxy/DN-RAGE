@@ -19,7 +19,7 @@ import checkpoint from "./manager/checkpoint";
 import timer from "./manager/timer";
 import vBreakLight from "./manager/vBreakLight";
 import object from "./manager/object";
-//import npc from "./manager/npc";
+import npc from "./manager/npc";
 import skill from "./manager/skill";
 import attach from "./manager/attach";
 import attachItems from "./manager/attachItems";
@@ -51,7 +51,7 @@ try {
     business.loadScaleform();
 
     object.load();
-    //npc.loadAll();
+    npc.loadAll();
     skill.loadAll();
 
     attach.init();

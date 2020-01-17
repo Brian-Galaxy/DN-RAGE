@@ -20,6 +20,9 @@ let FullRealDateTime = "";
 let CurrentWeather = "CLEAR";
 let DayNames = ["Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"];
 
+let WindSpeed = 0;
+let WindDir = 0;
+
 weather.nextWeather = function(weatherName, delay) {
     //mp.game.gameplay.setWeatherTypeTransition(CurrentWeather, weatherName, delay);
     CurrentWeather = weatherName;
@@ -143,6 +146,11 @@ weather.getMin = function() {
     return Min;
 };
 
+weather.getYear = function() {
+    methods.debug('weather.getYear');
+    return Year - 2000;
+};
+
 weather.getTime = function() {
     return `${methods.digitFormat(Hour)}:${methods.digitFormat(Min)}`;
 };
@@ -196,6 +204,11 @@ weather.syncWeatherTemp = function(temp) {
     TempServer = temp;
 };
 
+weather.syncWeatherWind = function(windSpeed, windDir) {
+    WindSpeed = windSpeed;
+    WindDir = windDir;
+};
+
 weather.getWeatherTemp = function() {
     return Temp;
 };
@@ -210,6 +223,9 @@ weather.secSyncTimer = function() {
         if (Sec >= 59)
             Sec = 59;
         mp.game.time.setClockTime(Hour, Min, Sec);
+        mp.game.water.setWavesIntensity(WindSpeed);
+        mp.game.gameplay.setWindSpeed(WindSpeed + 1);
+        mp.game.gameplay.setWindDirection(WindDir);
     }
     catch (e) {
 
@@ -220,5 +236,14 @@ weather.secSyncTimer = function() {
 weather.getCurrentWeather = function() {
     return CurrentWeather;
 };
+
+weather.strDateToTime = function(date) {
+    let dateArray = date.split('/');
+    let day = methods.parseInt(dateArray[0]);
+    let month = methods.parseInt(dateArray[1]);
+    let year = methods.parseInt(dateArray[2]);
+    return new Date(year, month, day, 0, 0, 0, 0).getTime();
+};
+
 
 export default weather;

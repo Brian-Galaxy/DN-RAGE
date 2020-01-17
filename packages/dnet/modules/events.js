@@ -405,6 +405,56 @@ mp.events.addRemoteCounted('server:tattoo:destroy', (player, slot, type, zone, p
     tattoo.destroy(player, slot, type, zone, price, itemName, shopId);
 });
 
+mp.events.addRemoteCounted('server:user:buyLicense', (player, type, price) => {
+    if (!user.isLogin(player))
+        return;
+    methods.debug('licenseCenter.buy');
+    if (!user.isLogin(player))
+        return;
+
+    if (price < 1)
+        return;
+
+    try {
+        if (user.get(player, 'reg_status') == 0)
+        {
+            player.notify('~r~У Вас нет регистрации');
+            return;
+        }
+
+        if (!user.get(player, type))
+        {
+            if (user.getMoney(player) < price)
+            {
+                player.notify("~r~У Вас недостаточно средств");
+                return;
+            }
+            user.removeMoney(player, price, 'Покупка лицензии');
+            coffer.addMoney(price);
+
+            user.giveLic(player, type);
+            return;
+        }
+        player.notify("~r~У вас уже есть данная лицензия");
+    }
+    catch (e) {
+        methods.debug('Exception: licenseCenter.buy');
+        methods.debug(e);
+    }
+});
+
+mp.events.addRemoteCounted('server:user:sendSms', (player, sender, title, text, pic) => {
+    if (!user.isLogin(player))
+        return;
+    user.sendSms(player, sender, title, text, pic);
+});
+
+mp.events.addRemoteCounted('server:user:addHistory', (player, type, reason) => {
+    if (!user.isLogin(player))
+        return;
+    user.addHistory(player, type, reason);
+});
+
 mp.events.addRemoteCounted('server:bank:withdraw', (player, money, procent) => {
     if (!user.isLogin(player))
         return;

@@ -13,6 +13,9 @@ let _tempNew = 27;
 let _weatherType = 0;
 let _weather = "";
 
+let _windSpeed = 0;
+let _windDir = 0;
+
 weather.loadAll = function() {
     methods.debug('weather.loadAll');
     mysql.executeQuery(`SELECT * FROM daynight WHERE id = 1`, function (err, rows, fields) {
@@ -56,6 +59,8 @@ weather.load = function() {
         _tempNew = methods.getRandomInt(0, 4) + 16;
         _weatherType = 3;
     }
+
+    _windSpeed = methods.getRandomInt(0, 4);
 
     weather.randomTimer();
     weather.weatherTimer();
@@ -111,6 +116,23 @@ weather.weatherTimer = function() {
             break;
     }
 
+    if (methods.getRandomInt(0, 2) == 0)
+        _windDir - methods.getRandomFloat() - 1;
+    else
+        _windDir + methods.getRandomFloat() + 1;
+
+    if (_windDir > 8)
+        _windDir = 0;
+    if (_windDir < 0)
+        _windDir = 8;
+
+    _windSpeed = methods.getRandomInt(0, 4);
+
+    if (methods.getRandomInt(0, 20) == 0)
+        _windSpeed = methods.getRandomInt(4, 8);
+    if (methods.getRandomInt(0, 50) == 0)
+        _windSpeed = methods.getRandomInt(8, 12);
+
     setTimeout(weather.weatherTimer, 30 * 60 * 1000);
 };
 
@@ -151,6 +173,7 @@ weather.timeSyncTimer = function() {
         mp.players.call("client:managers:weather:syncDateTime", [_minute, _hour, _day, _month, _year]);
         mp.players.call("client:managers:weather:syncRealTime", [dateTime.getHours()]);
         mp.players.call("client:managers:weather:syncWeatherTemp", [Math.round(_tempNew)]);
+        mp.players.call("client:managers:weather:syncWeatherWind", [_windSpeed, _windDir]);
         mp.players.call("client:managers:weather:syncRealFullDateTime", [`${methods.digitFormat(dateTime.getDate())}/${methods.digitFormat(dateTime.getMonth()+1)} ${methods.digitFormat(dateTime.getHours())}:${methods.digitFormat(dateTime.getMinutes())}`]);
         mp.players.call("client:managers:weather:syncRealTime", [`${methods.digitFormat(dateTime.getHours())}:${methods.digitFormat(dateTime.getMinutes())}`]);
         mp.players.call("client:managers:weather:syncRealDate", [`${methods.digitFormat(dateTime.getDate())}/${methods.digitFormat(dateTime.getMonth()+1)}`]);
@@ -257,6 +280,26 @@ weather.getYear = function() {
 weather.getFullYear = function() {
     methods.debug('weather.getFullYear');
     return _year;
+};
+
+weather.getFullRpDate = function() {
+    return `${methods.digitFormat(_day)}/${methods.digitFormat(_month)}/${_year}`;
+};
+
+weather.getFullRpDateFormat = function(day, month, year) {
+    return `${methods.digitFormat(day)}/${methods.digitFormat(month)}/${year}`;
+};
+
+weather.getFullRpTime = function() {
+    return `${methods.digitFormat(_hour)}:${methods.digitFormat(_minute)}`;
+};
+
+weather.strDateToTime = function(date) {
+    let dateArray = date.split('/');
+    let day = methods.parseInt(dateArray[0]);
+    let month = methods.parseInt(dateArray[1]);
+    let year = methods.parseInt(dateArray[2]);
+    return new Date(year, month, day, 0, 0, 0, 0).getTime();
 };
 
 weather.nextRandomWeather = function() {
@@ -442,6 +485,17 @@ weather.nextRandomWeatherByType = function(weatherType) {
         }
     }
 
-    methods.notifyWithPictureToAll(`Life Invader [${weather.getFullRpTime()}]`, "~y~Новости погоды", `~y~${weather.getWeatherName(weather.getWeather())}~s~\nТемпература воздуха: ~y~${Math.round(_tempNew)}°C`, "CHAR_LIFEINVADER", 1);
+    if (weather.getWeather() == "RAIN")
+        _windSpeed = methods.getRandomInt(1, 8);
+    if (weather.getWeather() == "THUNDER")
+        _windSpeed = methods.getRandomInt(9, 12);
+
+    methods.notifyWithPictureToAll(
+        `Life Invader [${weather.getFullRpTime()}]`,
+        "~y~Новости погоды",
+        `Погода: ~y~${weather.getWeatherName(weather.getWeather())}~s~\nТемпература: ~y~${Math.round(_tempNew)}°C\n~s~Ветер: ~y~${Math.round(_windSpeed / 2)}m/s`,
+        "CHAR_LIFEINVADER",
+        1
+    );
     mp.players.call('client:managers:weather:nextWeather', [weather.getWeather(), methods.getRandomInt(100, 240)]);
 };

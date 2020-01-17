@@ -39,7 +39,6 @@ enums.userData = [
 
     "online_time",
     "reg_status",
-    "reg_time",
     "skin",
     "login_date",
     "reg_timestamp",
@@ -121,16 +120,43 @@ enums.userData = [
     "weapon_5_ammo",
 
     "a_lic",
+    "a_lic_create",
+    "a_lic_end",
     "b_lic",
+    "b_lic_create",
+    "b_lic_end",
     "c_lic",
+    "c_lic_create",
+    "c_lic_end",
     "air_lic",
+    "air_lic_create",
+    "air_lic_end",
     "taxi_lic",
+    "taxi_lic_create",
+    "taxi_lic_end",
     "ship_lic",
+    "ship_lic_create",
+    "ship_lic_end",
     "gun_lic",
+    "gun_lic_create",
+    "gun_lic_end",
     "law_lic",
+    "law_lic_create",
+    "law_lic_end",
     "med_lic",
+    "med_lic_create",
+    "med_lic_end",
     "biz_lic",
+    "biz_lic_create",
+    "biz_lic_end",
     "fish_lic",
+    "fish_lic_create",
+    "fish_lic_end",
+
+    "work_lic",
+    "work_date",
+    "work_lvl",
+    "work_exp",
 
     "is_custom",
     "is_online",
@@ -160,6 +186,14 @@ enums.vehicleClasses = [
     "Trailer",
     "Utility",
     "Vans",
+];
+
+enums.historyTypes = [
+    'Информация', //0
+    'Розыск', //1
+    'Заметка офицера', //2
+    'Имущество', //3
+    'Лицензии', //4
 ];
 
 enums.carShop = {

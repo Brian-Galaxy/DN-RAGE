@@ -1,13 +1,18 @@
 import user from "../user";
-import weather from './weather';
-import methods from "../modules/methods";
 import weapons from "../weapons";
-import vehicles from "../property/vehicles";
+import inventory from "../inventory";
+
+import methods from "../modules/methods";
 import Container from "../modules/data";
 import ui from "../modules/ui";
+
+import vehicles from "../property/vehicles";
+
 import vSync from "./vSync";
-import inventory from "../inventory";
 import enums from "../enums";
+import license from "./license";
+import weather from './weather';
+
 //import dispatcher from "./dispatcher";
 
 let EntityFleeca = 0;
@@ -143,6 +148,9 @@ timer.oneMinTimer = function() {
 };
 
 timer.min15Timer = function() {
+
+    license.checker();
+
     user.save();
     setTimeout(timer.min15Timer, 1000 * 60 * 16);
 };

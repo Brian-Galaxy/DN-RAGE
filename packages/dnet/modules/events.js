@@ -538,9 +538,7 @@ mp.events.addRemoteCounted('server:user:showPlayerHistory', (player,) => {
         try {
             let list = [];
             rows.forEach(function(item) {
-
-
-                list.push({id: item['id'], text: item['do'], datetime: item['datetime']});
+                list.push({id: item['id'], text: item['do'], timestamp: item['timestamp'], rp_datetime: item['rp_datetime']});
             });
             player.call('client:showPlayerHistoryMenu', [JSON.stringify(list)]);
         }

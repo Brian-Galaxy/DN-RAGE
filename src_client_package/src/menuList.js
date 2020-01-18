@@ -451,53 +451,126 @@ menuList.showBusinessTypeListMenu = function(data1, data2, data3) {
 };
 
 menuList.showBusinessLogMenu = function(data) {
-    let menu = UIMenu.Menu.Create(`Arcadius`, `~b~Список транзакций`);
+    let menu = UIMenu.Menu.Create(`Транзакции`, `~b~Нажмите ~s~Enter~b~ чтобы прочитать`);
 
-    JSON.parse(data).forEach(function (item, i, arr) {
-        UIMenu.Menu.AddMenuItem(`~b~#${item.id}. ~s~${item.product}`, `~b~Дата:~s~ ${item.rp_datetime}\n~b~OOC: ~s~${methods.unixTimeStampToDateTimeShort(item.timestamp)}`).SetRightLabel(`${item.price}`);
+    JSON.parse(data).forEach(function (item) {
+
+        let dateTime = methods.unixTimeStampToDateTimeShort(item.timestamp);
+
+        if (item.text.length >= 20)
+        {
+            let mItem = UIMenu.Menu.AddMenuItem(`~b~#${item.id}. ~s~${item.product.substring(0, 20)}...`, `~b~Дата:~s~ ${item.rp_datetime}\n~b~OOC: ~s~${dateTime}`);
+            mItem.SetRightLabel(`${item.price}`);
+            mItem.desc = item.product;
+            mItem.id = item.id;
+            mItem.datetime = dateTime;
+            mItem.rp_datetime = item.rp_datetime;
+        }
+        else {
+            let mItem = UIMenu.Menu.AddMenuItem(`~b~#${item.id}. ~s~${item.product.substring(0, 20)}`, `~b~Дата:~s~ ${item.rp_datetime}\n~b~OOC: ~s~${dateTime}`);
+            mItem.SetRightLabel(`${item.price}`);
+            mItem.desc = item.product;
+            mItem.id = item.id;
+            mItem.datetime = dateTime;
+            mItem.rp_datetime = item.rp_datetime;
+        }
     });
 
     let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
     menu.ItemSelect.on((item, index) => {
-        UIMenu.Menu.HideMenu();
         if (item == closeItem)
-            return;
+            UIMenu.Menu.HideMenu();
+        if (item.desc)
+            mp.game.ui.notifications.show(`~b~#${item.id}\n~c~ООС: ${item.datetime}\n~c~IC: ${item.rp_datetime}\n~s~${item.desc}`);
     });
 };
 
 menuList.showBankLogMenu = function(data) {
-    let menu = UIMenu.Menu.Create(`Bank`, `~b~Список транзакций`);
+    let menu = UIMenu.Menu.Create(`Транзакции`, `~b~Нажмите ~s~Enter~b~ чтобы прочитать`);
 
-    JSON.parse(data).forEach(function (item, i, arr) {
+    JSON.parse(data).forEach(function (item) {
 
-        if (item.price == '') {
-            UIMenu.Menu.AddMenuItem(`~b~#${item.id}. ~s~${item.text}`, `~b~Дата:~s~ ${item.rp_datetime}\n~b~OOC: ~s~${methods.unixTimeStampToDateTimeShort(item.timestamp)}`);
+        let dateTime = methods.unixTimeStampToDateTimeShort(item.timestamp);
+
+        if (item.price.trim() == '') {
+            if (item.text.length >= 33)
+            {
+                let mItem = UIMenu.Menu.AddMenuItem(`~b~#${item.id}. ~s~${item.text.substring(0, 33)}...`, `~b~Дата:~s~ ${item.rp_datetime}\n~b~OOC: ~s~${dateTime}`);
+                mItem.SetRightLabel(`${item.price}`);
+                mItem.desc = item.text;
+                mItem.id = item.id;
+                mItem.datetime = dateTime;
+                mItem.rp_datetime = item.rp_datetime;
+            }
+            else {
+                let mItem = UIMenu.Menu.AddMenuItem(`~b~#${item.id}. ~s~${item.text.substring(0, 33)}`, `~b~Дата:~s~ ${item.rp_datetime}\n~b~OOC: ~s~${dateTime}`);
+                mItem.SetRightLabel(`${item.price}`);
+                mItem.desc = item.text;
+                mItem.id = item.id;
+                mItem.datetime = dateTime;
+                mItem.rp_datetime = item.rp_datetime;
+            }
         }
         else {
-            UIMenu.Menu.AddMenuItem(`~b~#${item.id}. ~s~${item.text}`, `~b~Дата:~s~ ${item.rp_datetime}\n~b~OOC: ~s~${methods.unixTimeStampToDateTimeShort(item.timestamp)}`).SetRightLabel(`${item.price}`);
+            if (item.text.length >= 20)
+            {
+                let mItem = UIMenu.Menu.AddMenuItem(`~b~#${item.id}. ~s~${item.text.substring(0, 20)}...`, `~b~Дата:~s~ ${item.rp_datetime}\n~b~OOC: ~s~${dateTime}`);
+                mItem.SetRightLabel(`${item.price}`);
+                mItem.desc = item.text;
+                mItem.id = item.id;
+                mItem.datetime = dateTime;
+                mItem.rp_datetime = item.rp_datetime;
+            }
+            else {
+                let mItem = UIMenu.Menu.AddMenuItem(`~b~#${item.id}. ~s~${item.text.substring(0, 20)}`, `~b~Дата:~s~ ${item.rp_datetime}\n~b~OOC: ~s~${dateTime}`);
+                mItem.SetRightLabel(`${item.price}`);
+                mItem.desc = item.text;
+                mItem.id = item.id;
+                mItem.datetime = dateTime;
+                mItem.rp_datetime = item.rp_datetime;
+            }
         }
     });
 
     let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
     menu.ItemSelect.on((item, index) => {
-        UIMenu.Menu.HideMenu();
         if (item == closeItem)
-            return;
+            UIMenu.Menu.HideMenu();
+        if (item.desc)
+            mp.game.ui.notifications.show(`~b~#${item.id}\n~c~ООС: ${item.datetime}\n~c~IC: ${item.rp_datetime}\n~s~${item.desc}`);
     });
 };
 
 menuList.showPlayerHistoryMenu = function(data) {
-    let menu = UIMenu.Menu.Create(`Персонаж`, `~b~История персонажа`);
+    let menu = UIMenu.Menu.Create(`История`, `~b~Нажмите ~s~Enter~b~ чтобы прочитать`);
 
-    JSON.parse(data).forEach(function (item, i, arr) {
-        UIMenu.Menu.AddMenuItem(`~b~#${item.id}. ~s~${item.text}`, `~b~Дата:~s~ ${item.datetime}`);
+    JSON.parse(data).forEach(function (item) {
+
+        let dateTime = methods.unixTimeStampToDateTimeShort(item.timestamp);
+
+        if (item.text.length >= 33)
+        {
+            let mItem = UIMenu.Menu.AddMenuItem(`~b~#${item.id}. ~s~${item.text.substring(0, 33)}...`, `~b~Дата:~s~ ${item.rp_datetime}\n~b~OOC: ~s~${dateTime}`);
+            mItem.desc = item.text;
+            mItem.id = item.id;
+            mItem.datetime = dateTime;
+            mItem.rp_datetime = item.rp_datetime;
+        }
+        else {
+            let mItem = UIMenu.Menu.AddMenuItem(`~b~#${item.id}. ~s~${item.text.substring(0, 33)}`, `~b~Дата:~s~ ${item.rp_datetime}\n~b~OOC: ~s~${dateTime}`);
+            mItem.desc = item.text;
+            mItem.id = item.id;
+            mItem.datetime = dateTime;
+            mItem.rp_datetime = item.rp_datetime;
+        }
     });
 
-    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+    UIMenu.Menu.AddMenuItem("~r~Закрыть").close = true;
     menu.ItemSelect.on((item, index) => {
-        UIMenu.Menu.HideMenu();
-        if (item == closeItem)
-            return;
+        if (item.close)
+            UIMenu.Menu.HideMenu();
+        if (item.desc)
+            mp.game.ui.notifications.show(`~b~#${item.id}\n~c~ООС: ${item.datetime}\n~c~IC: ${item.rp_datetime}\n~s~${item.desc}`);
     });
 };
 
@@ -1093,17 +1166,17 @@ menuList.showPlayerDoсMenu = function(playerId) {
     let menu = UIMenu.Menu.Create(`Персонаж`, `~b~Документы`);
 
 
-    UIMenu.Menu.AddMenuItem("Card ID").doName = 'card_id';
+    UIMenu.Menu.AddMenuItem("Card ID", "~c~Это что-то типо паспорта\nтолько в Америке").doName = 'card_id';
 
-    UIMenu.Menu.AddMenuItem("Work ID").doName = 'work_lic';
+    UIMenu.Menu.AddMenuItem("Work ID", "~c~Это ваше разрешение на работу").doName = 'work_lic';
 
-    UIMenu.Menu.AddMenuItem("Мед. страховка").doName = 'med_lic';
+    UIMenu.Menu.AddMenuItem("Мед. страховка", "~c~Эта штука нужна для того\nчтобы лечение было дешевле").doName = 'med_lic';
 
-    UIMenu.Menu.AddMenuItem("Лицензия категории \"А\"").doName = 'a_lic';
+    UIMenu.Menu.AddMenuItem("Лицензия категории \"А\"", "~c~Лицензия на мотоциклы").doName = 'a_lic';
 
-    UIMenu.Menu.AddMenuItem("Лицензия категории \"B\"").doName = 'b_lic';
+    UIMenu.Menu.AddMenuItem("Лицензия категории \"B\"", "~c~Лицензия на обычный ТС").doName = 'b_lic';
 
-    UIMenu.Menu.AddMenuItem("Лицензия категории \"C\"").doName = 'c_lic';
+    UIMenu.Menu.AddMenuItem("Лицензия категории \"C\"", "~c~Лицензия на большие машинки").doName = 'c_lic';
 
     UIMenu.Menu.AddMenuItem("Лицензия на авиатранспорт").doName = 'air_lic';
 
@@ -1111,13 +1184,13 @@ menuList.showPlayerDoсMenu = function(playerId) {
 
     UIMenu.Menu.AddMenuItem("Лицензия на оружие").doName = 'gun_lic';
 
-    UIMenu.Menu.AddMenuItem("Лицензия на перевозку пассажиров").doName = 'taxi_lic';
+    UIMenu.Menu.AddMenuItem("Лицензия на перевозку пассажиров", "~c~Нужно для таксистов и\nводителей автобуса").doName = 'taxi_lic';
 
     UIMenu.Menu.AddMenuItem("Лицензия на адвоката").doName = 'law_lic';
 
-    UIMenu.Menu.AddMenuItem("Лицензия на бизнес").doName = 'biz_lic';
+    UIMenu.Menu.AddMenuItem("Лицензия на бизнес", "~c~Чтобы можно было иметь бизнес").doName = 'biz_lic';
 
-    UIMenu.Menu.AddMenuItem("Разрешение на рыболовство").doName = 'fish_lic';
+    UIMenu.Menu.AddMenuItem("Разрешение на рыболовство", "~c~Можно рыбачить, как-бы").doName = 'fish_lic';
 
     let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
     menu.ItemSelect.on(async (item, index) => {

@@ -161,12 +161,12 @@ methods.getRandomBankCard = function (prefix = 0) {
 
 methods.unixTimeStampToDateTime = function (timestamp) {
     let dateTime = new Date(timestamp * 1000);
-    return `${methods.digitFormat(dateTime.getDate())}/${methods.digitFormat(dateTime.getMonth()+1)}/${dateTime.getFullYear()} ${methods.digitFormat(dateTime.getHours())}:${methods.digitFormat(dateTime.getMinutes())}`
+    return `${methods.digitFormat(dateTime.getHours())}:${methods.digitFormat(dateTime.getMinutes())} ${methods.digitFormat(dateTime.getDate())}/${methods.digitFormat(dateTime.getMonth()+1)}/${dateTime.getFullYear()}`
 };
 
 methods.unixTimeStampToDateTimeShort = function (timestamp) {
     let dateTime = new Date(timestamp * 1000);
-    return `${methods.digitFormat(dateTime.getDate())}/${methods.digitFormat(dateTime.getMonth()+1)} ${methods.digitFormat(dateTime.getHours())}:${methods.digitFormat(dateTime.getMinutes())}`
+    return `${methods.digitFormat(dateTime.getHours())}:${methods.digitFormat(dateTime.getMinutes())} ${methods.digitFormat(dateTime.getDate())}/${methods.digitFormat(dateTime.getMonth()+1)}`
 };
 
 methods.unixTimeStampToDate = function (timestamp) {

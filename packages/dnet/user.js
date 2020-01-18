@@ -1209,12 +1209,10 @@ user.addHistory = function(player, type, reason) {
     if (!user.isLogin(player))
         return;
 
-    let time = methods.getTimeWithoutSec();
-    let date = methods.getDate();
-    let rpDateTime = weather.getFullRpTime() + ' ' + weather.getFullRpDate();
-    let dateTime = time + ' ' + date;
+    let rpDateTime = weather.getRpDateTime();
+    let timestamp = methods.getTimeStamp();
 
-    mysql.executeQuery(`INSERT INTO log_player (user_id, datetime, type, do) VALUES ('${user.getId(player)}', '${rpDateTime} (( ${dateTime} ))', '${type}', '${reason}')`);
+    mysql.executeQuery(`INSERT INTO log_player (user_id, type, do, rp_datetime, timestamp) VALUES ('${user.getId(player)}', '${type}', '${reason}', '${rpDateTime}', '${timestamp}')`);
 };
 
 user.sendSms = function(player, sender, title, text, pic) {

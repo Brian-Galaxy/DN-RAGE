@@ -1008,10 +1008,8 @@ menuList.showPlayerMenu = function() {
 
     let menu = UIMenu.Menu.Create(`Персонаж`, `~b~Меню вашего персонажа`);
 
-    //UIMenu.Menu.AddMenuItem("Действия").doName = 'showPlayerDoMenu';
-    //UIMenu.Menu.AddMenuItem("Документы").doName = 'showPlayerDoсMenu';
-
     UIMenu.Menu.AddMenuItem("Статистика").doName = 'showPlayerStatsMenu';
+    UIMenu.Menu.AddMenuItem("Посмотреть документы").doName = 'showPlayerDoсMenu';
     UIMenu.Menu.AddMenuItem("Анимации").doName = 'showAnimationTypeListMenu';
     UIMenu.Menu.AddMenuItem("~b~История персонажа").doName = 'showPlayerHistoryMenu';
 
@@ -1025,10 +1023,106 @@ menuList.showPlayerMenu = function() {
             menuList.showAnimationTypeListMenu();
         else if (item.doName == 'showPlayerHistoryMenu')
             mp.events.callRemote('server:user:showPlayerHistory');
-        else if (item.doName == 'showPlayerDoMenu')
-            menuList.showPlayerDoMenu();
         else if (item.doName == 'showPlayerDoсMenu')
-            menuList.showPlayerDoсMenu();
+            menuList.showPlayerDoсMenu(mp.players.local.remoteId);
+    });
+};
+
+menuList.showPlayerDoMenu = function(playerId) {
+
+    let target = mp.players.atRemoteId(playerId);
+
+    if (!mp.players.exists(target)) {
+        mp.game.ui.notifications.show("~g~Ошибка взаимодействия с игроком");
+        return;
+    }
+
+    let menu = UIMenu.Menu.Create(`Персонаж`, `~b~Взаимодействие`);
+
+    UIMenu.Menu.AddMenuItem("Передать деньги").doName = 'giveMoney';
+    UIMenu.Menu.AddMenuItem("Познакомиться").doName = 'dating';
+    UIMenu.Menu.AddMenuItem("Снять наручники").eventName = 'server:user:unCuffById';
+    UIMenu.Menu.AddMenuItem("Снять стяжки").eventName = 'server:user:unTieById';
+    UIMenu.Menu.AddMenuItem("Затащить в ближайшее авто").eventName = 'server:user:inCarById';
+    UIMenu.Menu.AddMenuItem("Вести за собой").eventName = 'server:user:taskFollowById';
+    UIMenu.Menu.AddMenuItem("Снять маску с игрока").eventName = 'server:user:taskRemoveMaskById';
+    UIMenu.Menu.AddMenuItem("Вытащить из тс").eventName = 'server:user:removeFromCarById';
+    UIMenu.Menu.AddMenuItem("Обыск игрока").eventName = 'server:user:getInvById';
+
+    UIMenu.Menu.AddMenuItem("~b~Документы").doName = 'showPlayerDoсMenu';
+
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+    menu.ItemSelect.on(async (item, index) => {
+        if (item == closeItem)
+            UIMenu.Menu.HideMenu();
+        else if (item.doName == 'giveMoney') {
+            let money = methods.parseInt(await UIMenu.Menu.GetUserInput("Сумма", "", 9));
+            if (money < 1) {
+                mp.game.ui.notifications.show("~r~Нельзя передавать меньше 1$");
+                return;
+            }
+            mp.events.callRemote('server:user:giveMoneyToPlayerId', playerId, money);
+        }
+        else if (item.doName == 'dating') {
+            let rpName = user.getCache('name').split(' ');
+            let name = await UIMenu.Menu.GetUserInput("Как вы себя представите?", rpName[0], 30);
+            if (name == '') return;
+            name = name.replace(/[^a-zA-Z\s]/ig, '');
+            if (name.trim() == '') {
+                mp.game.ui.notifications.show("~r~Доступны только английские буквы");
+                return;
+            }
+            mp.events.callRemote('server:user:askDatingToPlayerId', playerId, name);
+        }
+        else if (item.doName == 'showPlayerDoсMenu')
+            menuList.showPlayerDoсMenu(playerId);
+        else if (item.eventName)
+            mp.events.callRemote(item.eventName, playerId);
+    });
+};
+
+menuList.showPlayerDoсMenu = function(playerId) {
+
+    let target = mp.players.atRemoteId(playerId);
+
+    if (!mp.players.exists(target)) {
+        mp.game.ui.notifications.show("~g~Ошибка взаимодействия с игроком");
+        return;
+    }
+
+    let menu = UIMenu.Menu.Create(`Персонаж`, `~b~Документы`);
+
+
+    UIMenu.Menu.AddMenuItem("Card ID").doName = 'card_id';
+
+    UIMenu.Menu.AddMenuItem("Work ID").doName = 'work_lic';
+
+    UIMenu.Menu.AddMenuItem("Мед. страховка").doName = 'med_lic';
+
+    UIMenu.Menu.AddMenuItem("Лицензия категории \"А\"").doName = 'a_lic';
+
+    UIMenu.Menu.AddMenuItem("Лицензия категории \"B\"").doName = 'b_lic';
+
+    UIMenu.Menu.AddMenuItem("Лицензия категории \"C\"").doName = 'c_lic';
+
+    UIMenu.Menu.AddMenuItem("Лицензия на авиатранспорт").doName = 'air_lic';
+
+    UIMenu.Menu.AddMenuItem("Лицензия на водный транспорт").doName = 'ship_lic';
+
+    UIMenu.Menu.AddMenuItem("Лицензия на оружие").doName = 'gun_lic';
+
+    UIMenu.Menu.AddMenuItem("Лицензия на перевозку пассажиров").doName = 'taxi_lic';
+
+    UIMenu.Menu.AddMenuItem("Лицензия на адвоката").doName = 'law_lic';
+
+    UIMenu.Menu.AddMenuItem("Лицензия на бизнес").doName = 'biz_lic';
+
+    UIMenu.Menu.AddMenuItem("Разрешение на рыболовство").doName = 'fish_lic';
+
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+    menu.ItemSelect.on(async (item, index) => {
+        if (item == closeItem)
+            UIMenu.Menu.HideMenu();
     });
 };
 

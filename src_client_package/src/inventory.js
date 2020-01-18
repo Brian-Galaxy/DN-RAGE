@@ -121,7 +121,20 @@ inventory.openInventoryByEntity = function(entity) {
         }
     }
     else if (entity.getType() == 3) {
-        inventory.takeItem(entity.getVariable('isDrop'), entity.getVariable('itemId'));
+        try {
+            inventory.takeItem(entity.getVariable('isDrop'), entity.getVariable('itemId'));
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    }
+    else if (entity.getType() == 4) {
+        try {
+            menuList.showPlayerDoMenu(entity.remoteId);
+        }
+        catch (e) {
+            methods.debug(e);
+        }
     }
 };
 

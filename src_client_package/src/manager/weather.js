@@ -205,8 +205,20 @@ weather.syncWeatherTemp = function(temp) {
 };
 
 weather.syncWeatherWind = function(windSpeed, windDir) {
+
+    if (windSpeed == 0)
+        windSpeed = 0.1;
+
     WindSpeed = windSpeed;
     WindDir = windDir;
+
+    if (WindSpeed > 6)
+        mp.game.water.setWavesIntensity(WindSpeed);
+    else
+        mp.game.water.setWavesIntensity(0);
+
+    mp.game.gameplay.setWindSpeed(WindSpeed);
+    mp.game.gameplay.setWindDirection(WindDir);
 };
 
 weather.getWeatherTemp = function() {
@@ -223,9 +235,11 @@ weather.secSyncTimer = function() {
         if (Sec >= 59)
             Sec = 59;
         mp.game.time.setClockTime(Hour, Min, Sec);
-        mp.game.water.setWavesIntensity(WindSpeed);
-        mp.game.gameplay.setWindSpeed(WindSpeed + 1);
-        mp.game.gameplay.setWindDirection(WindDir);
+
+        /*if (CurrentWeather == "THUNDER")
+            mp.game.water.setWavesIntensity(WindSpeed + 10);
+        else
+            mp.game.water.setWavesIntensity(WindSpeed);*/
     }
     catch (e) {
 

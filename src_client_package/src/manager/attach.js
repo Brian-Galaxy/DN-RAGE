@@ -16,7 +16,9 @@ mp.attachmentMngr =
                     {
                         let attInfo = this.attachments[id];
 
-                        let object = mp.objects.new(attInfo.model, entity.position);
+                        let spawnPos = new mp.Vector3(entity.position.x, entity.position.y, entity.position.z - 5)
+
+                        let object = mp.objects.new(attInfo.model, spawnPos);
 
                         object.attachTo(entity.handle,
                             (typeof(attInfo.boneName) === 'string') ? entity.getBoneIndexByName(attInfo.boneName) : entity.getBoneIndex(attInfo.boneName),
@@ -33,7 +35,8 @@ mp.attachmentMngr =
                 }
             }
             catch (e) {
-                methods.debug(e);
+                methods.error('ATTACH ERROR');
+                methods.error(e);
             }
         },
 

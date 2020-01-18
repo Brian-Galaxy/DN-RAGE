@@ -810,7 +810,7 @@ mp.events.add('client:managers:weather:syncWeatherTemp', (temp) => {
     }
 });
 
-mp.events.add('client:managers:weather:syncWeatherTemp', (windSpeed, windDir) => {
+mp.events.add('client:managers:weather:syncWeatherWind', (windSpeed, windDir) => {
     try {
         //methods.debug('Event: client:user:syncWeatherTemp', temp);
         weather.syncWeatherWind(windSpeed, windDir);

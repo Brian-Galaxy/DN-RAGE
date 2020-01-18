@@ -530,6 +530,26 @@ mp.events.addRemoteCounted('server:rent:buy', (player, hash, price, shopId) => {
     rent.buy(player, hash, price, shopId);
 });
 
+mp.events.addRemoteCounted('server:user:showPlayerHistory', (player,) => {
+    if (!user.isLogin(player))
+        return;
+
+    mysql.executeQuery(`SELECT * FROM log_player WHERE user_id = ${user.getId(player)} ORDER BY id DESC LIMIT 200`, function (err, rows, fields) {
+        try {
+            let list = [];
+            rows.forEach(function(item) {
+
+
+                list.push({id: item['id'], text: item['do'], datetime: item['datetime']});
+            });
+            player.call('client:showPlayerHistoryMenu', [JSON.stringify(list)]);
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    });
+});
+
 mp.events.add('server:user:save', (player) => {
     user.save(player);
 });

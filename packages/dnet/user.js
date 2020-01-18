@@ -1477,16 +1477,16 @@ user.giveJobSkill = function(player) {
     }
 };
 
-user.giveLic = function (player, lic, monthEnd = 6, desc = '') {
+user.giveLic = function (player, lic, monthEnd = 12, desc = '') {
     if (!user.isLogin(player))
         return;
 
     let licName = '';
 
     let timestamp = weather.strDateToTime(weather.getFullRpDate());
-    let addTimestamp = monthEnd * 2629746; //1 month
+    let addTimestamp = monthEnd * 2592000000; //1 month
     let dateTimeStart = new Date(timestamp);
-    let dateTimeEnd = new Date(addTimestamp);
+    let dateTimeEnd = new Date(timestamp + addTimestamp);
     let dateTimeStartFormat = weather.getFullRpDateFormat(dateTimeStart.getDate(), dateTimeStart.getMonth(), dateTimeStart.getFullYear());
     let dateTimeEndFormat = weather.getFullRpDateFormat(dateTimeEnd.getDate(), dateTimeEnd.getMonth(), dateTimeEnd.getFullYear());
 
@@ -1530,12 +1530,12 @@ user.giveLic = function (player, lic, monthEnd = 6, desc = '') {
     }
 
     if (lic == 'med_lic') {
-        player.notify("~g~Вы получили ~s~медстраховку");
-        user.addHistory(player, 4, 'Получил медстраховку ' + desc);
+        player.notify(`~g~Вы получили ~s~медстраховку~g~ на~s~${monthEnd} ~g~мес.`);
+        user.addHistory(player, 4, `Получил медстраховку на ${monthEnd} мес.` + desc);
         return;
     }
-    player.notify("~g~Вы получили лицензию ~s~" + licName);
-    user.addHistory(player, 4, 'Получил лицензию ' + licName + desc);
+    player.notify(`~g~Вы получили лицензию ~s~${licName}~g~ на ~s~${monthEnd} ~g~мес.`);
+    user.addHistory(player, 4, `Получил лицензию ${licName} на ${monthEnd} мес.` + desc);
 };
 
 user.payDay = async function (player) {

@@ -486,6 +486,21 @@ menuList.showBankLogMenu = function(data) {
     });
 };
 
+menuList.showPlayerHistoryMenu = function(data) {
+    let menu = UIMenu.Menu.Create(`Персонаж`, `~b~История персонажа`);
+
+    JSON.parse(data).forEach(function (item, i, arr) {
+        UIMenu.Menu.AddMenuItem(`~b~#${item.id}. ~s~${item.text}`, `~b~Дата:~s~ ${item.datetime}`);
+    });
+
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+    menu.ItemSelect.on((item, index) => {
+        UIMenu.Menu.HideMenu();
+        if (item == closeItem)
+            return;
+    });
+};
+
 menuList.showBusinessMenu = async function(data) {
 
     let bankTarif = 0;
@@ -848,6 +863,10 @@ menuList.showMeriaMainMenu = function() {
                 mp.game.ui.notifications.show("~r~Рабочий стаж должен быть 4 уровня");
                 return;
             }
+            if (user.getCache('reg_status') < 1) {
+                mp.game.ui.notifications.show("~r~Вам необходима регистрация");
+                return;
+            }
             if (user.getCache('reg_status') > 1) {
                 mp.game.ui.notifications.show("~r~Вам не нужно гражданство");
                 return;
@@ -978,10 +997,131 @@ menuList.showMainMenu = function() {
         UIMenu.Menu.HideMenu();
         if (item.doName == 'showFractionMenu')
             menuList.showFractionMenu();
+        if (item.doName == 'showPlayerMenu')
+            menuList.showPlayerMenu();
         if (item.eventName)
             mp.events.callRemote(item.eventName);
     });
 };
+
+menuList.showPlayerMenu = function() {
+
+    let menu = UIMenu.Menu.Create(`Персонаж`, `~b~Меню вашего персонажа`);
+
+    //UIMenu.Menu.AddMenuItem("Действия").doName = 'showPlayerDoMenu';
+    //UIMenu.Menu.AddMenuItem("Документы").doName = 'showPlayerDoсMenu';
+
+    UIMenu.Menu.AddMenuItem("Статистика").doName = 'showPlayerStatsMenu';
+    UIMenu.Menu.AddMenuItem("Анимации").doName = 'showAnimationTypeListMenu';
+    UIMenu.Menu.AddMenuItem("~b~История персонажа").doName = 'showPlayerHistoryMenu';
+
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+    menu.ItemSelect.on(async (item, index) => {
+        if (item == closeItem)
+            UIMenu.Menu.HideMenu();
+        else if (item.doName == 'showPlayerStatsMenu')
+            menuList.showPlayerStatsMenu();
+        else if (item.doName == 'showAnimationTypeListMenu')
+            menuList.showAnimationTypeListMenu();
+        else if (item.doName == 'showPlayerHistoryMenu')
+            mp.events.callRemote('server:user:showPlayerHistory');
+        else if (item.doName == 'showPlayerDoMenu')
+            menuList.showPlayerDoMenu();
+        else if (item.doName == 'showPlayerDoсMenu')
+            menuList.showPlayerDoсMenu();
+    });
+};
+
+menuList.showPlayerStatsMenu = function() {
+
+    let menu = UIMenu.Menu.Create(`Персонаж`, `~b~${user.getCache('name')}`);
+
+    UIMenu.Menu.AddMenuItem("~b~Имя:~s~").SetRightLabel(`${user.getCache('name')}`);
+    UIMenu.Menu.AddMenuItem("~b~Дата рождения:~s~").SetRightLabel(`${user.getCache('age')}`);
+    //UIMenu.Menu.AddMenuItem("~b~Работа:~s~").SetRightLabel(`${user.get('fraction_id') > 0 ? methods.getFractionName(user.get('fraction_id')) : methods.getJobName(user.get('job'))}`);
+    UIMenu.Menu.AddMenuItem("~b~Вид на жительство:~s~").SetRightLabel(`${user.getRegStatusName()}`);
+    if (user.getCache('bank_card') > 0)
+        UIMenu.Menu.AddMenuItem("~b~Банковская карта:~s~").SetRightLabel(`${methods.bankFormat(user.getCache('bank_card'))}`);
+
+    //UIMenu.Menu.AddMenuItem("~b~Розыск:~s~").SetRightLabel(`${user.get('wanted_level') > 0 ? '~r~В розыске' : '~g~Нет'}`);
+    //UIMenu.Menu.AddMenuItem("~b~Рецепт марихуаны:~s~").SetRightLabel(`${user.get('allow_marg') ? 'Есть' : '~r~Нет'}`);
+
+    let label = '';
+    if (user.getCache('a_lic'))
+        label = `Действует с ~b~${user.getCache('a_lic_create')}~s~ по ~b~${user.getCache('a_lic_end')}`;
+    UIMenu.Menu.AddMenuItem("~b~Лицензия категории \"А\":~s~", label).SetRightLabel(`${user.getCache('a_lic') ? 'Есть' : '~r~Нет'}`);
+
+    label = '';
+    if (user.getCache('b_lic'))
+        label = `Действует с ~b~${user.getCache('b_lic_create')}~s~ по ~b~${user.getCache('b_lic_end')}`;
+    UIMenu.Menu.AddMenuItem("~b~Лицензия категории \"B\":~s~", label).SetRightLabel(`${user.getCache('b_lic') ? 'Есть' : '~r~Нет'}`);
+
+    label = '';
+    if (user.getCache('c_lic'))
+        label = `Действует с ~b~${user.getCache('c_lic_create')}~s~ по ~b~${user.getCache('c_lic_end')}`;
+    UIMenu.Menu.AddMenuItem("~b~Лицензия категории \"C\":~s~", label).SetRightLabel(`${user.getCache('c_lic') ? 'Есть' : '~r~Нет'}`);
+
+    label = '';
+    if (user.getCache('air_lic'))
+        label = `Действует с ~b~${user.getCache('air_lic_create')}~s~ по ~b~${user.getCache('air_lic_end')}`;
+    UIMenu.Menu.AddMenuItem("~b~Лицензия на авиатранспорт:~s~", label).SetRightLabel(`${user.getCache('air_lic') ? 'Есть' : '~r~Нет'}`);
+
+    label = '';
+    if (user.getCache('ship_lic'))
+        label = `Действует с ~b~${user.getCache('ship_lic_create')}~s~ по ~b~${user.getCache('ship_lic_end')}`;
+    UIMenu.Menu.AddMenuItem("~b~Лицензия на водный транспорт:~s~", label).SetRightLabel(`${user.getCache('ship_lic') ? 'Есть' : '~r~Нет'}`);
+
+    label = '';
+    if (user.getCache('gun_lic'))
+        label = `Действует с ~b~${user.getCache('gun_lic_create')}~s~ по ~b~${user.getCache('gun_lic_end')}`;
+    UIMenu.Menu.AddMenuItem("~b~Лицензия на оружие:~s~", label).SetRightLabel(`${user.getCache('gun_lic') ? 'Есть' : '~r~Нет'}`);
+
+    label = '';
+    if (user.getCache('taxi_lic'))
+        label = `Действует с ~b~${user.getCache('taxi_lic_create')}~s~ по ~b~${user.getCache('taxi_lic_end')}`;
+    UIMenu.Menu.AddMenuItem("~b~Лицензия на перевозку пассажиров:~s~", label).SetRightLabel(`${user.getCache('taxi_lic') ? 'Есть' : '~r~Нет'}`);
+
+    label = '';
+    if (user.getCache('law_lic'))
+        label = `Действует с ~b~${user.getCache('law_lic_create')}~s~ по ~b~${user.getCache('law_lic_end')}`;
+    UIMenu.Menu.AddMenuItem("~b~Лицензия на адвоката:~s~", label).SetRightLabel(`${user.getCache('law_lic') ? 'Есть' : '~r~Нет'}`);
+
+    label = '';
+    if (user.getCache('biz_lic'))
+        label = `Действует с ~b~${user.getCache('biz_lic_create')}~s~ по ~b~${user.getCache('biz_lic_end')}`;
+    UIMenu.Menu.AddMenuItem("~b~Лицензия на бизнес:~s~", label).SetRightLabel(`${user.getCache('biz_lic') ? 'Есть' : '~r~Нет'}`);
+
+    label = '';
+    if (user.getCache('fish_lic'))
+        label = `Действует с ~b~${user.getCache('fish_lic_create')}~s~ по ~b~${user.getCache('fish_lic_end')}`;
+    UIMenu.Menu.AddMenuItem("~b~Разрешение на рыболовство:~s~", label).SetRightLabel(`${user.getCache('fish_lic') ? 'Есть' : '~r~Нет'}`);
+
+    label = '';
+    if (user.getCache('med_lic'))
+        label = `Действует с ~b~${user.getCache('med_lic_create')}~s~ по ~b~${user.getCache('med_lic_end')}`;
+    UIMenu.Menu.AddMenuItem("~b~Мед. страховка:~s~", label).SetRightLabel(`${user.getCache('med_lic') ? 'Есть' : '~r~Нет'}`);
+
+    UIMenu.Menu.AddMenuItem("~b~Выносливость:~s~").SetRightLabel(`${user.getCache('stats_endurance') + 1}%`);
+    UIMenu.Menu.AddMenuItem("~b~Сила:~s~").SetRightLabel(`${user.getCache('stats_strength') + 1}%`);
+    UIMenu.Menu.AddMenuItem("~b~Объем легких:~s~").SetRightLabel(`${user.getCache('stats_lung_capacity') + 1}%`);
+    UIMenu.Menu.AddMenuItem("~b~Навык водителя:~s~").SetRightLabel(`${user.getCache('stats_driving') + 1}%`);
+    UIMenu.Menu.AddMenuItem("~b~Навык пилота:~s~").SetRightLabel(`${user.getCache('stats_flying') + 1}%`);
+    UIMenu.Menu.AddMenuItem("~b~Навык стрельбы:~s~").SetRightLabel(`${user.getCache('stats_shooting') + 1}%`);
+    UIMenu.Menu.AddMenuItem("~b~Удача:~s~").SetRightLabel(`${user.getCache('stats_lucky') + 1}%`);
+    //UIMenu.Menu.AddMenuItem("~b~Психика:~s~").SetRightLabel(`${user.getCache('stats_psychics') + 1}%`);
+
+    UIMenu.Menu.AddMenuItem("~b~Work ID:~s~").SetRightLabel(`${user.getCache('work_lic') != '' ? user.getCache('work_lic') : '~r~Нет'}`);
+    UIMenu.Menu.AddMenuItem("~b~Уровень рабочего:~s~").SetRightLabel(`${user.getCache('work_lvl')}`);
+    UIMenu.Menu.AddMenuItem("~b~Опыт рабочего:~s~").SetRightLabel(`${user.getCache('work_exp')}`);
+
+
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+    menu.ItemSelect.on(async (item, index) => {
+        if (item == closeItem)
+            UIMenu.Menu.HideMenu();
+    });
+};
+
 
 menuList.showVehicleMenu = function(data) {
 
@@ -1303,7 +1443,7 @@ menuList.showVehicleStatsMenu = function() {
     let menu = UIMenu.Menu.Create(`Транспорт`, `~b~Характеристики транспорта`);
 
     UIMenu.Menu.AddMenuItem("~b~Номер: ~s~").SetRightLabel(`${mp.players.local.vehicle.getNumberPlateText()}`);
-    UIMenu.Menu.AddMenuItem("~b~Класс: ~s~").SetRightLabel(`${vInfo.class_name}`);
+    UIMenu.Menu.AddMenuItem("~b~Класс: ~s~").SetRightLabel(`${vInfo.class_name_ru}`);
     UIMenu.Menu.AddMenuItem("~b~Модель: ~s~").SetRightLabel(`${vInfo.display_name}`);
     if (vInfo.price > 0)
         UIMenu.Menu.AddMenuItem("~b~Гос. стоимость: ~s~").SetRightLabel(`~g~${methods.moneyFormat(vInfo.price)}`);
@@ -3362,7 +3502,7 @@ menuList.showVehShopModelInfoMenu = function(model)
 
     let menu = UIMenu.Menu.Create(`${vInfo.display_name}`, "~b~Информация о ТС");
 
-    UIMenu.Menu.AddMenuItem("~b~Класс: ~s~").SetRightLabel(`${vInfo.class_name}`);
+    UIMenu.Menu.AddMenuItem("~b~Класс: ~s~").SetRightLabel(`${vInfo.class_name_ru}`);
     UIMenu.Menu.AddMenuItem("~b~Модель: ~s~").SetRightLabel(`${vInfo.display_name}`);
     UIMenu.Menu.AddMenuItem("~b~Гос. стоимость: ~s~").SetRightLabel(`~g~${methods.moneyFormat(vInfo.price)}`);
     if (vInfo.fuel_type > 0) {

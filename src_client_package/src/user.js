@@ -837,6 +837,18 @@ user.giveWanted = function(level, reason) {
     mp.events.callRemote('server:user:giveMeWanted', level, reason);
 };
 
+user.getRegStatusName = function() {
+    switch (user.getCache('reg_status'))
+    {
+        case 1:
+            return "Регистрация";
+        case 2:
+            return "Гражданство США";
+        default:
+            return "~r~Нет";
+    }
+};
+
 user.giveJobSkill = function() {
     mp.events.callRemote('server:user:giveJobSkill');
 };

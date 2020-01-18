@@ -910,6 +910,16 @@ mp.events.add('client:showBankLogMenu', (data) => {
     }
 });
 
+mp.events.add('client:showPlayerHistoryMenu', (data) => {
+    try {
+        methods.debug('Event: client:showPlayerHistoryMenu');
+        menuList.showPlayerHistoryMenu(data);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
 mp.events.add('client:menuList:showBusinessMenu', (data) => {
     try {
         methods.debug('Event: client:menuList:showBusinessMenu');

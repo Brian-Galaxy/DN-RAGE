@@ -13,6 +13,7 @@ let user = {};
 let _isLogin = false;
 
 let userData = new Map();
+let datingList = new Map();
 
 user.godmode = false;
 user.isTeleport = false;
@@ -539,6 +540,28 @@ user.setCache = function(key, value) {
     userData.set(key, value);
 };
 
+user.getDating = function(item) {
+    try {
+        if (datingList.has(item))
+            return datingList.get(item);
+        return item;
+    }
+    catch (e) {
+        methods.debug('Exception: user.getDating');
+        methods.debug(e);
+        datingList = new Map();
+        return item;
+    }
+};
+
+user.hasDating = function(item) {
+    return datingList.has(item);
+};
+
+user.setDating = function(key, value) {
+    datingList.set(key, value);
+};
+
 user.set = function(key, val) {
     user.setCache(key, val);
     Container.Data.Set(mp.players.local.remoteId, key, val);
@@ -906,6 +929,7 @@ user.getBankCardPrefix = function(bankCard = 0) {
 
     return methods.parseInt(bankCard.toString().substring(0, 4));
 };
+
 user.playAnimationWithUser = function(toId, animType) {
     if (mp.players.local.getVariable("isBlockAnimation") || mp.players.local.isInAnyVehicle(false) || user.isDead()) return;
     mp.events.callRemote('server:playAnimationWithUser', toId, animType);
@@ -926,13 +950,6 @@ user.stopAllAnimation = function() {
     if (!mp.players.local.getVariable("isBlockAnimation")) {
         //mp.players.local.clearTasks();
         //mp.players.local.clearSecondaryTask();
-        if (Container.Data.HasLocally(0, 'hasSeat')) {
-            let plPos = mp.players.local.position;
-            mp.players.local.freezePosition(false);
-            mp.players.local.setCollision(true, true);
-            mp.players.local.position = new mp.Vector3(plPos.x, plPos.y, plPos.z + 0.95);
-            Container.Data.ResetLocally(0, 'hasSeat');
-        }
         mp.events.callRemote('server:stopAllAnimation');
     }
 };
@@ -1053,6 +1070,30 @@ user.isLeader = function() {
 user.isSubLeader = function() {
     methods.debug('user.isSubLeader');
     return user.isLogin() && user.getCache('is_sub_leader');
+};
+
+user.cuff = function() {
+    mp.events.callRemote('server:user:cuff');
+};
+
+user.unCuff = function() {
+    mp.events.callRemote('server:user:unCuff');
+};
+
+user.isCuff = function() {
+    return mp.players.local.getVariable('isCuff') === true;
+};
+
+user.tie = function() {
+    mp.events.callRemote('server:user:tie');
+};
+
+user.unTie = function() {
+    mp.events.callRemote('server:user:unTie');
+};
+
+user.isTie = function() {
+    return mp.players.local.getVariable('isCuff') === true;
 };
 
 export default user;

@@ -21,6 +21,12 @@ inventory.hidden = true;
 let hidden = true;
 
 inventory.show = function() {
+
+    if (user.isCuff() || user.isTie()) {
+        mp.game.ui.notifications.show("~r~Вы связаны или в наручниках");
+        return;
+    }
+
     //mp.gui.chat.activate(false);
     try {
         mp.gui.cursor.show(false, true);
@@ -205,9 +211,8 @@ inventory.giveItem = async function(id, itemId, playerId, notify = true) {
             mp.game.ui.notifications.show("~r~Инвентарь заполнен");
             return;
         }
-        //Shared.TriggerEventToAllPlayers("ARP:UserPlayAnimationToAll", playerId, "mp_common","givetake2_a", 8);
-        //mp.events.callRemote("server:playAnimationByPlayerId", playerId, "mp_common", "givetake2_a", 8);
-        user.playAnimation("mp_common","givetake1_a", 8);
+
+        user.playAnimationWithUser(playerId, 6); //TODO
 
         inventory.updateItemOwnerServer(id, inventory.types.Player, playerId);
         inventory.updateAmount(playerId, inventory.types.Player);

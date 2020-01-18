@@ -4,6 +4,7 @@ let methods = {};
 
 import Menu from "./menu";
 import enums from "../enums";
+import user from "../user";
 import menuList from "../menuList";
 
 import timer from "../manager/timer";
@@ -178,6 +179,10 @@ methods.disableAllControls = function(disable) {
     mp.events.call('client:events:disableAllControls', disable);
 };
 
+methods.disableDefaultControls = function(disable) {
+    mp.events.call("client:events:disableDefaultControls", disable);
+};
+
 methods.isValidJSON = function(value){
     try{
         JSON.parse(value);
@@ -190,7 +195,7 @@ methods.isValidJSON = function(value){
 };
 
 methods.isBlockKeys = function() { //TODO
-    return Menu.Menu.IsShowInput() /*|| user.isCuff() || user.isTie() || user.isDead()*/;
+    return Menu.Menu.IsShowInput() || user.isCuff() || user.isTie() || user.isDead();
 };
 
 methods.distanceToPos = function (v1, v2) {

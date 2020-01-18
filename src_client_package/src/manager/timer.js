@@ -162,7 +162,7 @@ timer.ms50Timer = function() {
 
         ui.updateVehValues();
 
-        if (Container.Data.HasLocally(0, 'hasSeat')) {
+        if (Container.Data.HasLocally(mp.players.local.remoteId, 'hasSeat')) {
             mp.players.local.freezePosition(true);
             mp.players.local.setCollision(false, false);
         }

@@ -338,11 +338,16 @@ user.loadUser = function(player, name, spawn = 'Стандарт') {
                 userId = user.getId(player);
 
                 //TODO Оптимизировать
-                /*mysql.executeQuery(`SELECT * FROM user_dating WHERE user_owner = '${userId}'`, function (err, rowsD, fields) {
+                mysql.executeQuery(`SELECT * FROM user_dating WHERE user_owner = '${userId}'`, function (err, rowsD, fields) {
+
+                    let list = [];
+
                     rowsD.forEach(rowD => {
-                        user.setDating(player, rowD['user_id'], rowD['user_name']);
+                        list.push({ uId: rowD['user_id'], uName: rowD['user_name'] });
                     });
-                });*/
+
+                    player.call('client:user:updateDating', [JSON.stringify(list)]);
+                });
 
                 mysql.executeQuery('UPDATE users SET is_online=\'1\' WHERE id = \'' + user.getId(player) + '\'');
 
@@ -909,11 +914,50 @@ user.callCef = function(player, name, params) {
     player.call('client:user:callCef', [name, params]);
 };
 
+user.cuff = function(player) {
+    methods.debug('user.cuff');
+    if (!mp.players.exists(player))
+        return false;
+    user.playAnimation(player, "mp_arresting", "idle", 49);
+    player.call("client:handcuffs", [true]);
+    player.setVariable("isBlockAnimation", true);
+    player.setVariable("isCuff", true);
+};
+
+user.unCuff = function(player) {
+    methods.debug('user.unCuff');
+    if (!mp.players.exists(player))
+        return false;
+    player.call("client:handcuffs", [false]);
+    player.setVariable("isBlockAnimation", false);
+    player.setVariable("isCuff", false);
+};
+
 user.isCuff = function(player) {
     if (!user.isLogin(player))
         return false;
     methods.debug('user.isCuff');
     return player.getVariable("isCuff") === true;
+};
+
+user.tie = function(player) {
+    methods.debug('user.tie');
+    if (!mp.players.exists(player))
+        return false;
+    user.playAnimation("mp_arresting", "idle", 49);
+    player.call("client:handcuffs", [true]);
+    player.setVariable("isBlockAnimation", true);
+    player.setVariable("isTie", true);
+    player.notify("~r~Вас связали");
+};
+
+user.unTie = function(player) {
+    methods.debug('user.unTie');
+    if (!mp.players.exists(player))
+        return false;
+    player.call("client:handcuffs", [false]);
+    player.setVariable("isBlockAnimation", false);
+    player.setVariable("isTie", false);
 };
 
 user.isTie = function(player) {
@@ -1019,6 +1063,11 @@ user.showCustomNotify = function(player, text, style = 0) {
     //Number.isInteger(style)
     player.outputChatBox(text);
     //player.call('client:ui:showCustomNotify', [text]);
+};
+
+user.setDating = function(player, key, value) {
+    if (mp.players.exists(player))
+        player.call('client:user:setDating', [key, value]);
 };
 
 user.setById = function(id, key, val) {
@@ -1418,6 +1467,39 @@ user.playScenario = function(player, name) {
             methods.debug(e);
         }
     });
+};
+
+user.playAnimationWithUser = function(player, target, animId) {
+    if (!mp.players.exists(player))
+        return false;
+    if (!mp.players.exists(target))
+        return false;
+
+    try {
+        if (target.remoteId == player.remoteId)
+            return;
+
+        if (methods.distanceToPos(target.position, player.position) > 3) {
+            player.notify('~r~Вы слишком далеко');
+            return;
+        }
+
+        user.headingToTarget(target, player.id);
+        user.headingToTarget(player, target.id);
+
+        setTimeout(function () {
+            try {
+                user.playAnimation(player, enums.animTarget[animId][1], enums.animTarget[animId][2], 8);
+                user.playAnimation(target, enums.animTarget[animId][4], enums.animTarget[animId][5], 8);
+            }
+            catch (e) {
+                methods.debug(e);
+            }
+        }, 2100);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 };
 
 user.playAnimation = function(player, dict, anim, flag = 49) {

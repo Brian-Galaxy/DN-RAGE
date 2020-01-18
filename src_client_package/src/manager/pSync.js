@@ -1,6 +1,19 @@
 import methods from "../modules/methods";
+import Container from "../modules/data";
 
 let pSync = exports;
+
+pSync.animFreezer = function() {
+
+    let plList = [mp.players.local].concat(methods.getStreamPlayerList());
+    plList.forEach(p => {
+        if (mp.players.exists(p) && Container.Data.HasLocally(p.remoteId, 'hasSeat')) {
+            p.freezePosition(true);
+        }
+    });
+
+    setTimeout(pSync.animFreezer, 100);
+};
 
 mp.events.add('entityStreamIn', (entity) => {
     if (entity.type === 'player') {
@@ -72,6 +85,22 @@ mp.events.add('client:syncAnimation', async (playerId, dict, anim, flag) => {
             remotePlayer.clearTasks();
             //remotePlayer.clearTasksImmediately();
             //remotePlayer.clearSecondaryTask();
+
+
+            if (dict == 'amb@prop_human_seat_chair@male@generic@base' ||
+                dict == 'amb@prop_human_seat_chair@male@right_foot_out@base' ||
+                dict == 'amb@prop_human_seat_chair@male@left_elbow_on_knee@base' ||
+                dict == 'amb@prop_human_seat_chair@male@elbows_on_knees@base'
+            )
+            {
+                remotePlayer.freezePosition(true);
+                remotePlayer.setCollision(false, false);
+
+                if (!Container.Data.HasLocally(remotePlayer.remoteId, 'hasSeat'))
+                    remotePlayer.position = new mp.Vector3(remotePlayer.position.x, remotePlayer.position.y, remotePlayer.position.z - 0.95);
+                Container.Data.SetLocally(remotePlayer.remoteId, 'hasSeat', true);
+            }
+
             mp.game.streaming.requestAnimDict(dict);
 
             if (!mp.game.streaming.hasAnimDictLoaded(dict)) {
@@ -110,6 +139,14 @@ mp.events.add('client:syncStopAnimation', (playerId) => {
         let remotePlayer = mp.players.atRemoteId(playerId);
         if (remotePlayer && mp.players.exists(remotePlayer)) {
             remotePlayer.clearTasks();
+
+            if (Container.Data.HasLocally(remotePlayer.remoteId, 'hasSeat')) {
+                remotePlayer.freezePosition(false);
+                remotePlayer.setCollision(true, true);
+                remotePlayer.position = new mp.Vector3(remotePlayer.position.x, remotePlayer.position.y, remotePlayer.position.z + 0.95);
+                Container.Data.ResetLocally(remotePlayer.remoteId, 'hasSeat');
+            }
+
             if (!remotePlayer.isInAir() && !remotePlayer.vehicle)
                 remotePlayer.clearTasksImmediately();
         }

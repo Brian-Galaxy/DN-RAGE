@@ -275,36 +275,7 @@ mp.events.addRemoteCounted('server:stopAllAnimation', (player) => {
 mp.events.addRemoteCounted('server:playAnimationWithUser', (player, userId, animId) => {
     if (!user.isLogin(player))
         return;
-    let target = user.getPlayerById(userId);
-    if (user.isLogin(target)) {
-        if (methods.distanceToPos(target.position, player.position) > 3) {
-            player.notify('~r~Вы слишком далеко');
-            return;
-        }
-
-        if (animId != 0) {
-            if (user.has(player, 'useAnm')) {
-                player.notify('~r~Нельзя так часто использовать анимацию');
-                return;
-            }
-        }
-
-        user.headingToTarget(target, player.id);
-        user.headingToTarget(player, target.id);
-
-        setTimeout(function () {
-            user.playAnimation(player, enums.animTarget[animId][1], enums.animTarget[animId][2], 8);
-            user.playAnimation(target, enums.animTarget[animId][4], enums.animTarget[animId][5], 8);
-        }, 2100);
-
-        user.set(player, 'useAnm', true);
-        setTimeout(function () {
-            if (user.isLogin(player))
-                user.reset(player, 'useAnm');
-        }, 180000);
-    }
-    else
-        player.notify('~r~Вы слишком далеко');
+    user.playAnimationWithUser(player, mp.players.at(userId), animId);
 });
 
 mp.events.addRemoteCounted('playAnimationWithUserAsk', (player, userId, animId) => {
@@ -661,6 +632,235 @@ mp.events.add('server:user:showLic', (player, lic, playerId) => {
         }
     }
 
+});
+
+mp.events.addRemoteCounted('server:user:cuff', (player) => {
+    if (!user.isLogin(player))
+        return;
+    user.cuff(player);
+});
+
+mp.events.addRemoteCounted('server:user:unCuff', (player) => {
+    if (!user.isLogin(player))
+        return;
+    user.unCuff(player);
+});
+
+mp.events.addRemoteCounted('server:user:tie', (player) => {
+    if (!user.isLogin(player))
+        return;
+    user.tie(player);
+});
+
+mp.events.addRemoteCounted('server:user:unTie', (player) => {
+    if (!user.isLogin(player))
+        return;
+    user.unTie(player);
+});
+
+mp.events.addRemoteCounted("server:user:targetNotify", (player, nplayer, text) => {
+    if (!user.isLogin(nplayer))
+        return;
+    try {
+        nplayer.notify(text);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.addRemoteCounted('server:user:cuffById', (player, targetId) => {
+    if (!user.isLogin(player))
+        return;
+
+    let target = mp.players.at(targetId);
+
+    if (mp.players.exists(target)) {
+        user.playAnimation(player, "mp_arresting", "a_uncuff", 8);
+        user.cuff(target);
+    }
+    else
+        player.notify('~r~Рядом с вами никого нет');
+});
+
+mp.events.addRemoteCounted('server:user:unCuffById', (player, targetId) => {
+    if (!user.isLogin(player))
+        return;
+
+    let target = mp.players.at(targetId);
+
+    if (mp.players.exists(target)) {
+        user.stopAnimation(target);
+        user.playAnimation(player, "mp_arresting", "a_uncuff", 8);
+        user.unCuff(target);
+    }
+    else
+        player.notify('~r~Рядом с вами никого нет');
+});
+
+mp.events.addRemoteCounted('server:user:tieById', (player, targetId) => {
+    if (!user.isLogin(player))
+        return;
+
+    let target = mp.players.at(targetId);
+
+    if (mp.players.exists(target)) {
+        user.playAnimation(player, "mp_arresting", "a_uncuff", 8);
+        user.tie(target);
+    }
+    else
+        player.notify('~r~Рядом с вами никого нет');
+});
+
+mp.events.addRemoteCounted('server:user:unTieById', (player, targetId) => {
+    if (!user.isLogin(player))
+        return;
+
+    let target = mp.players.at(targetId);
+
+    if (mp.players.exists(target)) {
+        user.stopAnimation(target);
+        user.playAnimation(player, "mp_arresting", "a_uncuff", 8);
+        user.unTie(target);
+    }
+    else
+        player.notify('~r~Рядом с вами никого нет');
+});
+
+mp.events.addRemoteCounted('server:user:getInvById', (player, targetId) => {
+    if (!user.isLogin(player))
+        return;
+    let pl = mp.players.at(targetId);
+    if (pl && mp.players.exists(pl)) {
+        if (!user.isTie(pl) && !user.isCuff(pl)) {
+            player.notify('~r~Игрок должен быть связан или в наручниках');
+            return;
+        }
+        inventory.getItemList(player, inventory.types.Player, user.getId(pl));
+    }
+    else
+        player.notify('~r~Рядом с вами никого нет');
+});
+
+mp.events.addRemoteCounted('server:user:taskFollowById', (player, targetId) => {
+    if (!user.isLogin(player))
+        return;
+    let nplayer = mp.players.at(targetId);
+    if (!user.isLogin(nplayer))
+        return;
+    if (!user.isTie(nplayer) && !user.isCuff(nplayer)) {
+        player.notify('~r~Игрок должен быть связан или в наручниках');
+        return;
+    }
+    nplayer.call("client:taskFollow", [player]);
+});
+
+mp.events.addRemoteCounted('server:user:inCarById', (player, targetId) => {
+    if (!user.isLogin(player))
+        return;
+    try {
+        let pl = mp.players.at(targetId);
+        if (pl && mp.players.exists(pl)) {
+            if (!user.isTie(pl) && !user.isCuff(pl)) {
+                player.notify('~r~Игрок должен быть связан или в наручниках');
+                return;
+            }
+            let v = methods.getNearestVehicleWithCoords(player.position, 7);
+            if (v && mp.vehicles.exists(v)) {
+                pl.putIntoVehicle(v, 0);
+                player.notify('~g~Вы затащили человека в транспорт');
+                pl.notify('~r~Вас затащили в транспорт');
+            } else {
+                player.notify('~r~Рядом с вами нет транспорта');
+            }
+
+        }
+        else
+            player.notify('~r~Рядом с вами никого нет');
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.addRemoteCounted('server:user:removeCarById', (player, targetId) => {
+    if (!user.isLogin(player))
+        return;
+    try {
+        let pl = mp.players.at(targetId);
+        if (pl && mp.players.exists(pl)) {
+            if (!user.isTie(pl) && !user.isCuff(pl)) {
+                player.notify('~r~Игрок должен быть связан или в наручниках');
+                return;
+            }
+            if (pl.vehicle && mp.vehicles.exists(pl.vehicle)) {
+                pl.removeFromVehicle();
+                player.notify('~g~Вы вытащили человека из транспорта');
+                pl.notify('~r~Вас вытащили из транспорта');
+            } else {
+                player.notify('~r~Игрок не в транспорте');
+            }
+        }
+        else
+            player.notify('~r~Рядом с вами никого нет');
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.addRemoteCounted('server:user:giveMoneyToPlayerId', (player, playerRemoteId, money) => {
+    if (!user.isLogin(player))
+        return;
+
+    if (user.getCashMoney(player) < money) {
+        player.notify("~r~У Вас нет столько денег");
+        return;
+    }
+
+    let remotePlayer = mp.players.at(playerRemoteId);
+    if (remotePlayer && user.isLogin(remotePlayer)) {
+        user.removeCashMoney(player, money);
+        user.addCashMoney(remotePlayer, money);
+
+        user.playAnimationWithUser(player, remotePlayer, 6);
+
+        remotePlayer.notify('Вам передали ~g~$' + methods.numberFormat(money));
+        player.notify('Вы передали ~g~$' + methods.numberFormat(money));
+
+        methods.saveLog('GiveCash', `${user.getRpName(player)} (${user.getId(player)}) to ${user.getRpName(remotePlayer)} (${user.getId(remotePlayer)}) count $${money}`);
+    }
+});
+
+mp.events.addRemoteCounted('server:user:askDatingToPlayerId', (player, playerRemoteId, name) => {
+    if (!user.isLogin(player))
+        return;
+
+    let remotePlayer = mp.players.at(playerRemoteId);
+    if (user.isLogin(remotePlayer)) {
+        remotePlayer.call('client:user:askDatingToPlayerId', [player.id, name]);
+    }
+});
+
+mp.events.addRemoteCounted('server:user:askDatingToPlayerIdYes', (player, playerRemoteId, name, nameAnswer) => {
+    if (!user.isLogin(player))
+        return;
+    let remotePlayer = mp.players.at(playerRemoteId);
+    if (user.isLogin(remotePlayer)) {
+
+        mysql.executeQuery(`DELETE FROM user_dating WHERE user_id = '${user.getId(player)}' AND user_owner = '${user.getId(remotePlayer)}'`);
+        mysql.executeQuery(`DELETE FROM user_dating WHERE user_id = '${user.getId(remotePlayer)}' AND user_owner = '${user.getId(player)}'`);
+
+        setTimeout(function () {
+            if (!user.isLogin(remotePlayer) || !user.isLogin(player))
+                return;
+            mysql.executeQuery(`INSERT INTO user_dating (user_owner, user_id, user_name) VALUES ('${user.getId(remotePlayer)}', '${user.getId(player)}', '${nameAnswer}')`);
+            mysql.executeQuery(`INSERT INTO user_dating (user_owner, user_id, user_name) VALUES ('${user.getId(player)}', '${user.getId(remotePlayer)}', '${name}')`);
+        }, 5000);
+
+        user.setDating(player, user.getId(remotePlayer), name);
+        user.setDating(remotePlayer, user.getId(player), nameAnswer);
+    }
 });
 
 mp.events.add('server:houses:insert', (player, interior, number, price, zone, street) => {

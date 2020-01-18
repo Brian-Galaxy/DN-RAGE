@@ -1,5 +1,7 @@
 "use strict";
 
+import UIMenu from './menu';
+
 import methods from './methods';
 import user from '../user';
 import menuList from '../menuList';
@@ -34,6 +36,7 @@ mp.events.add('chatEnabled', (isEnabled) => {
 
 let maxSpeed = 500;
 let _playerDisableAllControls = false;
+let _playerDisableDefaultControls = false;
 
 mp.events.add('client:cefDebug', function (message) {
     try {
@@ -44,6 +47,10 @@ mp.events.add('client:cefDebug', function (message) {
 
 mp.events.add('client:events:disableAllControls', function (disable) {
     _playerDisableAllControls = disable;
+});
+
+mp.events.add('client:events:disableDefaultControls', function (disable) {
+    _playerDisableDefaultControls = disable;
 });
 
 mp.events.add('client:user:auth:register', function(mail, login, passwordReg, passwordRegCheck, acceptRules) {
@@ -844,6 +851,53 @@ mp.events.add('client:managers:weather:syncRealDate', (time) => {
     try {
         //methods.debug('Event: client:user:syncRealFullDateTime', dateTime);
         weather.syncRealDate(time);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+let handcuffTimerId = null;
+
+mp.events.add('client:handcuffs', (value) => {
+    UIMenu.Menu.HideMenu();
+    methods.debug('Event: client:handcuffs');
+    methods.disableDefaultControls(value);
+
+    /*if (value == false) {
+        mp.players.local.clearTasks();
+    }*/
+    //mp.game.invoke(methods.SET_ENABLE_HANDCUFFS, mp.players.local.handle, value);
+    if (value) {
+        handcuffTimerId = setInterval(function() {
+            if ((user.isCuff() || user.isTie()) && mp.players.local.isPlayingAnim("mp_arresting", "idle", 3) == 0)
+                mp.players.local.clearTasks();
+            user.playAnimation("mp_arresting", "idle", 49);
+        }, 2500);
+    } else {
+        clearInterval(handcuffTimerId);
+        user.stopAllAnimation();
+    }
+});
+
+mp.events.add('client:user:askDatingToPlayerId', (playerId, nick) => {
+    menuList.showPlayerDatingAskMenu(playerId, nick);
+});
+
+mp.events.add('client:user:setDating', (key, val) => {
+    user.setDating(key, val);
+});
+
+mp.events.add('client:user:updateDating', (datingList) => {
+    try {
+        JSON.parse(datingList).forEach(item => {
+            try {
+                user.setDating(item.uId, item.uName);
+            }
+            catch (e) {
+                methods.debug(e);
+            }
+        });
     }
     catch (e) {
         methods.debug(e);
@@ -1892,33 +1946,33 @@ mp.events.add('render', () => {
             mp.game.controls.enableControlAction(2, 201, true);
             mp.game.controls.enableControlAction(2, 177, true);
         }
-        /*if(_playerDisableDefaultControls) {
-            mp.game.controls.disableControlAction(0,21,true) // disable sprint
-            mp.game.controls.disableControlAction(0,24,true) // disable attack
-            mp.game.controls.disableControlAction(0,25,true) // disable aim
-            //--mp.game.controls.disableControlAction(0,47,true) // disable weapon
-            mp.game.controls.disableControlAction(0,58,true) // disable weapon
-            mp.game.controls.disableControlAction(0,263,true) // disable melee
-            mp.game.controls.disableControlAction(0,264,true) // disable melee
-            mp.game.controls.disableControlAction(0,257,true) // disable melee
-            mp.game.controls.disableControlAction(0,140,true) // disable melee
-            mp.game.controls.disableControlAction(0,141,true) // disable melee
-            mp.game.controls.disableControlAction(0,142,true) // disable melee
-            mp.game.controls.disableControlAction(0,143,true) // disable melee
-            mp.game.controls.disableControlAction(0,75,true) // disable exit vehicle
-            mp.game.controls.disableControlAction(27,75,true) // disable exit vehicle
-            mp.game.controls.disableControlAction(0,23,true) // disable enter vehicle
-            mp.game.controls.disableControlAction(27,23,true) // disable enter vehicle
-            mp.game.controls.disableControlAction(0,22,true) // disable jump
-            mp.game.controls.disableControlAction(0,32,true) // disable move up
-            mp.game.controls.disableControlAction(0,268,true)
-            mp.game.controls.disableControlAction(0,33,true) // disable move down
-            mp.game.controls.disableControlAction(0,269,true)
-            mp.game.controls.disableControlAction(0,34,true) // disable move left
-            mp.game.controls.disableControlAction(0,270,true)
-            mp.game.controls.disableControlAction(0,35,true) // disable move right
+        if(_playerDisableDefaultControls) {
+            mp.game.controls.disableControlAction(0,21,true); // disable sprint
+            mp.game.controls.disableControlAction(0,24,true); // disable attack
+            mp.game.controls.disableControlAction(0,25,true); // disable aim
+            //--mp.game.controls.disableControlAction(0,47,true); // disable weapon
+            mp.game.controls.disableControlAction(0,58,true); // disable weapon
+            mp.game.controls.disableControlAction(0,263,true); // disable melee
+            mp.game.controls.disableControlAction(0,264,true); // disable melee
+            mp.game.controls.disableControlAction(0,257,true); // disable melee
+            mp.game.controls.disableControlAction(0,140,true); // disable melee
+            mp.game.controls.disableControlAction(0,141,true); // disable melee
+            mp.game.controls.disableControlAction(0,142,true); // disable melee
+            mp.game.controls.disableControlAction(0,143,true); // disable melee
+            mp.game.controls.disableControlAction(0,75,true); // disable exit vehicle
+            mp.game.controls.disableControlAction(27,75,true); // disable exit vehicle
+            mp.game.controls.disableControlAction(0,23,true); // disable enter vehicle
+            mp.game.controls.disableControlAction(27,23,true); // disable enter vehicle
+            mp.game.controls.disableControlAction(0,22,true); // disable jump
+            mp.game.controls.disableControlAction(0,32,true); // disable move up
+            mp.game.controls.disableControlAction(0,268,true);
+            mp.game.controls.disableControlAction(0,33,true); // disable move down
+            mp.game.controls.disableControlAction(0,269,true);
+            mp.game.controls.disableControlAction(0,34,true); // disable move left
+            mp.game.controls.disableControlAction(0,270,true);
+            mp.game.controls.disableControlAction(0,35,true); // disable move right
             mp.game.controls.disableControlAction(0,271,true)
-        }*/
+        }
         if(ui.DisableMouseControl /*|| ui.isShowMenu()*/) {
             mp.game.controls.disableControlAction(0,12,true); // disable sprint
             mp.game.controls.disableControlAction(0,13,true); // disable sprint
@@ -2168,5 +2222,81 @@ mp.events.add('render', () => {
     }
     catch (e) {
         
+    }
+});
+
+
+// Task Follow
+let taskFollowed = false;
+let timerFollowedId = null;
+
+mp.events.add('client:taskFollow', (nplayer) => {
+    if (!mp.players.exists(nplayer))
+        return;
+    if (!taskFollowed) {
+
+        try {
+            if (user.isCuff() || user.isTie())
+                user.playAnimation("mp_arresting", "idle", 49);
+
+            mp.game.invoke(methods.TASK_GO_TO_ENTITY, mp.players.local.handle, nplayer.handle, -1, 10.0, 1073741824.0, 0);
+            mp.game.invoke(methods.SET_PED_KEEP_TASK, mp.players.local.handle, true);
+
+            mp.game.ui.notifications.show("~r~Человек повел вас за собой");
+            mp.events.callRemote("server:user:targetNotify", nplayer, `~g~Вы повели человека за собой (ID: ${user.getCache('id')})`);
+
+            taskFollowed = nplayer;
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+
+        timerFollowedId = setInterval(function() {
+            try {
+                if (mp.players.local.dimension != taskFollowed.dimension) {
+
+                    user.stopAllAnimation();
+                    mp.game.ui.notifications.show("~g~Вас отпустили");
+                    mp.events.callRemote("server:user:targetNotify", nplayer, `~g~Вы отпустили человека (ID: ${user.getCache('id')})`);
+
+                    taskFollowed = false;
+                    clearInterval(timerFollowedId);
+                    if (user.isCuff() || user.isTie())
+                        user.playAnimation("mp_arresting", "idle", 49);
+                }
+                if (taskFollowed && methods.distanceToPos(mp.players.local.position, taskFollowed.position) > 50.0) {
+                    user.teleportv(taskFollowed.position);
+                    if (user.isCuff() || user.isTie())
+                        user.playAnimation("mp_arresting", "idle", 49);
+                }
+                /*if (taskFollowed.getVehicleIsIn() && mp.players.local.vehicle !== taskFollowed.getVehicleIsIn()) {
+                    console.log(taskFollowed.vehicle, taskFollowed.getVehicleIsIn(), taskFollowed.position);
+                    mp.players.local.taskEnterVehicle(taskFollowed.getVehicleIsIn(), 0, 0, 1.0, 1, 0);
+                }
+                if (!taskFollowed.vehicle && mp.players.local.vehicle) {
+                    mp.players.local.taskLeaveAnyVehicle(1, 1);
+                }*/
+                if (!mp.players.local.vehicle) {
+                    mp.game.invoke(methods.TASK_GO_TO_ENTITY, mp.players.local.handle, taskFollowed.handle, -1, 10.0, 1073741824.0, 0);
+                    mp.game.invoke(methods.SET_PED_KEEP_TASK, mp.players.local.handle, true);
+                }
+            }
+            catch (e) {
+                methods.debug(e);
+            }
+        }, 3000);
+    } else {
+        try {
+            user.stopAllAnimation();
+            mp.game.ui.notifications.show("~g~Вас отпустили");
+            mp.events.callRemote("server:user:targetNotify", nplayer, `~g~Вы отпустили человека (ID: ${user.getCache('id')})`);
+            taskFollowed = false;
+            clearInterval(timerFollowedId);
+            if (user.isCuff() || user.isTie())
+                user.playAnimation("mp_arresting", "idle", 49);
+        }
+        catch (e) {
+            methods.debug(e);
+        }
     }
 });

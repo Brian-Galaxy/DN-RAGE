@@ -531,6 +531,7 @@ enums.animTarget = [
     ["Поцелуй", "mp_ped_interaction", "kisses_guy_a", '', "mp_ped_interaction", "kisses_guy_b", ''],
     ["Минет", "misscarsteal2pimpsex", "pimpsex_punter", '', "misscarsteal2pimpsex", "pimpsex_hooker", 'SEX_ORAL_FEM'],
     ["Секс", "rcmpaparazzo_2", "shag_loop_a", '', "rcmpaparazzo_2", "shag_loop_poppy", 'SEX_GENERIC'],
+    ["Передать", "mp_common","givetake2_a", '', "mp_common","givetake1_a", ''],
 ];
 
 enums.hairOverlays = [

@@ -1117,9 +1117,9 @@ menuList.showPlayerDoMenu = function(playerId) {
     UIMenu.Menu.AddMenuItem("Снять наручники").eventName = 'server:user:unCuffById';
     UIMenu.Menu.AddMenuItem("Снять стяжки").eventName = 'server:user:unTieById';
     UIMenu.Menu.AddMenuItem("Затащить в ближайшее авто").eventName = 'server:user:inCarById';
+    UIMenu.Menu.AddMenuItem("Вытащить из тс").eventName = 'server:user:removeCarById';
     UIMenu.Menu.AddMenuItem("Вести за собой").eventName = 'server:user:taskFollowById';
-    UIMenu.Menu.AddMenuItem("Снять маску с игрока").eventName = 'server:user:taskRemoveMaskById';
-    UIMenu.Menu.AddMenuItem("Вытащить из тс").eventName = 'server:user:removeFromCarById';
+    //UIMenu.Menu.AddMenuItem("Снять маску с игрока").eventName = 'server:user:taskRemoveMaskById';
     UIMenu.Menu.AddMenuItem("Обыск игрока").eventName = 'server:user:getInvById';
 
     UIMenu.Menu.AddMenuItem("~b~Документы").doName = 'showPlayerDoсMenu';
@@ -1129,9 +1129,9 @@ menuList.showPlayerDoMenu = function(playerId) {
         if (item == closeItem)
             UIMenu.Menu.HideMenu();
         else if (item.doName == 'giveMoney') {
-            let money = methods.parseInt(await UIMenu.Menu.GetUserInput("Сумма", "", 9));
-            if (money < 1) {
-                mp.game.ui.notifications.show("~r~Нельзя передавать меньше 1$");
+            let money = methods.parseFloat(await UIMenu.Menu.GetUserInput("Сумма", "", 9));
+            if (money < 0) {
+                mp.game.ui.notifications.show("~r~Нельзя передавать меньше 0$");
                 return;
             }
             mp.events.callRemote('server:user:giveMoneyToPlayerId', playerId, money);
@@ -1289,6 +1289,35 @@ menuList.showPlayerStatsMenu = function() {
         if (item == closeItem)
             UIMenu.Menu.HideMenu();
     });
+};
+
+menuList.showPlayerDatingAskMenu = function(playerId, name) {
+
+    let player = mp.players.atRemoteId(playerId);
+
+    if (mp.players.exists(player)) {
+        let menu = UIMenu.Menu.Create(`Знакомства`, `~b~${player.remoteId} хочет познакомиться`);
+
+        UIMenu.Menu.AddMenuItem('~g~Принять знакомство').doName = 'yes';
+        UIMenu.Menu.AddMenuItem('~r~Отказать');
+
+        UIMenu.Menu.AddMenuItem("~r~Закрыть");
+        menu.ItemSelect.on(async (item, index) => {
+            UIMenu.Menu.HideMenu();
+            if (item.doName) {
+                let rpName = user.getCache('name').split(' ');
+                let nameAnswer = await UIMenu.Menu.GetUserInput("Как вы себя представите?", rpName[0], 30);
+                if (nameAnswer == '') return;
+                nameAnswer = nameAnswer.replace(/[^a-zA-Z\s]/ig, '');
+                if (nameAnswer == '' || nameAnswer == ' ') {
+                    mp.game.ui.notifications.show("~r~Доступны только английские буквы");
+                    return;
+                }
+                mp.events.callRemote('server:user:askDatingToPlayerIdYes', playerId, name, nameAnswer);
+                user.playAnimationWithUser(player.remoteId, 0);
+            }
+        });
+    }
 };
 
 menuList.showMenu = function(title, desc, menuData) {
@@ -4621,29 +4650,7 @@ menuList.showAnimationListMenu = function(subtitle, array) {
             return;
         }
 
-        /*
-        .addMenuItem("Сидеть-1", "", false, true, "callServerTrigger", "anim_user", "amb@prop_human_seat_chair@male@generic@base", "base", true)
-        .addMenuItem("Сидеть-2", "", false, true, "callServerTrigger", "anim_user", "amb@prop_human_seat_chair@male@elbows_on_knees@base", "base", true)
-        .addMenuItem("Сидеть-3", "", false, true, "callServerTrigger", "anim_user", "amb@prop_human_seat_chair@male@left_elbow_on_knee@base", "base", true)
-        .addMenuItem("Сидеть-4", "", false, true, "callServerTrigger", "anim_user", "amb@prop_human_seat_chair@male@right_foot_out@base", "base", true)
-        * */
-
         let plPos = mp.players.local.position;
-
-        if (item.anim1 == 'amb@prop_human_seat_chair@male@generic@base' || item.anim1 == 'amb@prop_human_seat_chair@male@right_foot_out@base' || item.anim1 == 'amb@prop_human_seat_chair@male@left_elbow_on_knee@base' || item.anim1 == 'amb@prop_human_seat_chair@male@elbows_on_knees@base') {
-            mp.players.local.freezePosition(true);
-            mp.players.local.setCollision(false, false);
-            if (!Container.Data.HasLocally(0, 'hasSeat'))
-                mp.players.local.position = new mp.Vector3(plPos.x, plPos.y, plPos.z - 0.95);
-            Container.Data.SetLocally(0, 'hasSeat', true);
-        }
-        else if (Container.Data.HasLocally(0, 'hasSeat')) {
-            mp.players.local.freezePosition(false);
-            mp.players.local.setCollision(true, true);
-            mp.players.local.position = new mp.Vector3(plPos.x, plPos.y, plPos.z + 0.95);
-            Container.Data.ResetLocally(0, 'hasSeat');
-        }
-
         mp.game.ui.notifications.show("~b~Нажмите ~s~F10~b~ чтобы отменить анимацию");
         user.playAnimation(item.anim1, item.anim2, item.animFlag);
     });

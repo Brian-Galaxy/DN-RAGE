@@ -230,11 +230,7 @@ business.updateTarget = function()
             business.setScaleformName('City Hall');
             business.setScaleformParams(2, 15, 1);
         }
-        else if (methods.distanceToPos(mp.players.local.position, mazeBank) < 70) {
-            business.setScaleformName('Maze Bank');
-            business.setScaleformParams(2, 17, 1);
-        }
-        else if (methods.distanceToPos(mp.players.local.position, businessOffice) < 50) {
+        else if (methods.distanceToPos(mp.players.local.position, mazeBank) < 50) {
             business.setScaleformName('Maze Bank');
             business.setScaleformParams(2, 17, 1);
         }

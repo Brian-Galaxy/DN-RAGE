@@ -10,6 +10,7 @@ let items = require('../items');
 let Container = require('./data');
 let methods = require('./methods');
 let mysql = require('./mysql');
+let chat = require('./chat');
 
 let houses = require('../property/houses');
 let condos = require('../property/condos');
@@ -550,6 +551,116 @@ mp.events.addRemoteCounted('server:user:showPlayerHistory', (player,) => {
 
 mp.events.add('server:user:save', (player) => {
     user.save(player);
+});
+
+mp.events.add('server:user:showLic', (player, lic, playerId) => {
+    if (!user.isLogin(player))
+        return;
+
+    let remotePlayer = mp.players.at(playerId);
+    if (remotePlayer && user.isLogin(remotePlayer)) {
+        try {
+            if (user.isCuff(remotePlayer) || user.isTie(remotePlayer)) {
+                player.notify('~r~Игрок в наручниках');
+                return;
+            }
+
+            if (remotePlayer.remoteId != player.remoteId) {
+                user.playAnimation(remotePlayer, "mp_common","givetake2_a", 8);
+                user.playAnimation(player, "mp_common","givetake1_a", 8);
+                chat.sendMeCommand(remotePlayer, 'посмотрел документы');
+                chat.sendMeCommand(player, 'показал документы');
+            }
+            else
+                chat.sendMeCommand(player, 'посмотрел документы');
+
+            let menuData = new Map();
+
+            if (lic == 'card_id') {
+                menuData.set('ID', (user.getId(remotePlayer) + 10000000).toString());
+                menuData.set('Имя', user.getRpName(remotePlayer));
+                menuData.set('Тип регистрации', user.getRegStatusName(remotePlayer));
+                menuData.set('Дата рождения', user.get(remotePlayer, 'age'));
+                menuData.set('Пол', user.getSexName(player));
+                menuData.set('Национальность', user.get(remotePlayer, 'national'));
+
+                user.showMenu(remotePlayer, 'Card ID', user.getRpName(player), menuData);
+            }
+            else if (lic == 'work_lic') {
+
+                if (user.get(remotePlayer, 'work_lic') != '') {
+                    menuData.set('ID', user.get(remotePlayer, 'work_lic'));
+                    menuData.set('Владелец', user.getRpName(remotePlayer));
+                    menuData.set('Дата получения', user.get(remotePlayer, 'work_date'));
+                    menuData.set('Уровень рабочего', user.get(remotePlayer, 'work_lvl'));
+                    menuData.set('Опыт рабочего', user.get(remotePlayer, 'work_exp'));
+                    user.showMenu(remotePlayer, 'Work ID', user.getRpName(player), menuData);
+                }
+                else {
+                    player.notify('~r~У Вас отсутствует Work ID');
+                    if (remotePlayer.remoteId != player.remoteId)
+                        remotePlayer.notify('~r~У игрока отсуствует Work ID');
+                }
+            }
+            else {
+                let licName = '';
+
+                switch (lic) {
+                    case 'a_lic':
+                        licName = 'Категория А';
+                        break;
+                    case 'b_lic':
+                        licName = 'Категория B';
+                        break;
+                    case 'c_lic':
+                        licName = 'Категория C';
+                        break;
+                    case 'air_lic':
+                        licName = 'На авиа транспорт';
+                        break;
+                    case 'ship_lic':
+                        licName = 'На водный транспорт';
+                        break;
+                    case 'taxi_lic':
+                        licName = 'На перевозку пассажиров';
+                        break;
+                    case 'law_lic':
+                        licName = 'Адвоката';
+                        break;
+                    case 'gun_lic':
+                        licName = 'На оружие';
+                        break;
+                    case 'biz_lic':
+                        licName = 'На бизнес';
+                        break;
+                    case 'fish_lic':
+                        licName = 'На рыбалку';
+                        break;
+                    case 'med_lic':
+                        licName = 'Мед. страховка';
+                        break;
+                }
+
+                if (user.get(remotePlayer, lic)) {
+                    menuData.set('Тип лицензии', licName);
+                    menuData.set('Владелец', user.getRpName(remotePlayer));
+                    menuData.set('Действует с', user.get(remotePlayer, lic + '_create'));
+                    menuData.set('Действует по', user.get(remotePlayer, lic + '_end'));
+
+                    user.showMenu(remotePlayer, 'Лицензия', user.getRpName(player), menuData);
+                }
+                else {
+                    player.notify('~r~У Вас отсутствует тип лицензии: ~s~' + licName);
+                    if (remotePlayer.remoteId != player.remoteId)
+                        remotePlayer.notify('~r~У игрока отсуствует тип лицензии: ~s~' + licName);
+                }
+            }
+        }
+        catch (e) {
+            methods.error(e);
+        }
+    }
+
 });
 
 mp.events.add('server:houses:insert', (player, interior, number, price, zone, street) => {

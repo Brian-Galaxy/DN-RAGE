@@ -1036,7 +1036,7 @@ menuList.showMeriaJobListMenu = function() {
             mp.game.ui.notifications.show("~y~Вы уволились с работы");
         }
         if (item.jobName) {
-            if (user.getCache('work_lic') != '') {
+            if (user.getCache('work_lic').trim() != '') {
                 mp.game.ui.notifications.show("~r~Для начала оформите Work ID");
                 return;
             }
@@ -1196,6 +1196,8 @@ menuList.showPlayerDoсMenu = function(playerId) {
     menu.ItemSelect.on(async (item, index) => {
         if (item == closeItem)
             UIMenu.Menu.HideMenu();
+        if (item.doName)
+            mp.events.callRemote('server:user:showLic', item.doName, playerId);
     });
 };
 
@@ -1289,6 +1291,25 @@ menuList.showPlayerStatsMenu = function() {
     });
 };
 
+menuList.showMenu = function(title, desc, menuData) {
+
+    let menu = UIMenu.Menu.Create(title.toString(), `~b~${desc}`);
+
+    menuData.forEach(function (val, key, map) {
+        try {
+            UIMenu.Menu.AddMenuItem(`~b~${key} ~s~`).SetRightLabel(val.toString());
+        }
+        catch (e) {
+            methods.error(e);
+        }
+    });
+
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+    menu.ItemSelect.on(async (item, index) => {
+        if (item == closeItem)
+            UIMenu.Menu.HideMenu();
+    });
+};
 
 menuList.showVehicleMenu = function(data) {
 

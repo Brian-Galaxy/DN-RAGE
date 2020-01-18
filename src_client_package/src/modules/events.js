@@ -850,6 +850,11 @@ mp.events.add('client:managers:weather:syncRealDate', (time) => {
     }
 });
 
+mp.events.add('client:menuList:showMenu', (title, desc, menuData) => {
+    methods.debug('Event: client:menuList:showMenu');
+    menuList.showMenu(title, desc, new Map(menuData));
+});
+
 mp.events.add('client:menuList:showMazeOfficeTeleportMenu', () => {
     methods.debug('Event: client:menuList:showMazeOfficeTeleportMenu');
     menuList.showMazeOfficeTeleportMenu();

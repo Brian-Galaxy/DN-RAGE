@@ -909,10 +909,44 @@ user.callCef = function(player, name, params) {
     player.call('client:user:callCef', [name, params]);
 };
 
+user.isCuff = function(player) {
+    if (!user.isLogin(player))
+        return false;
+    methods.debug('user.isCuff');
+    return player.getVariable("isCuff") === true;
+};
+
+user.isTie = function(player) {
+    if (!user.isLogin(player))
+        return false;
+    methods.debug('user.isTie');
+    return player.getVariable("isTie") === true;
+};
+
 user.isLogin = function(player) {
     if (!mp.players.exists(player))
         return false;
     return user.has(player, 'id');
+};
+
+user.getRegStatusName = function(player) {
+    if (!user.isLogin(player))
+        return false;
+    switch (user.get(player, 'reg_status'))
+    {
+        case 1:
+            return "Регистрация";
+        case 2:
+            return "Гражданство США";
+        default:
+            return "Нет";
+    }
+};
+
+user.getSexName = function(player) {
+    if (!user.isLogin(player))
+        return false;
+    return user.getSex(player) == 1 ? 'Женский' : 'Мужской';
 };
 
 user.ready = function(player) {
@@ -1231,6 +1265,13 @@ user.sendSms = function(player, sender, title, text, pic) {
 
     return; //TODO
     mysql.executeQuery(`INSERT INTO log_player (user_id, datetime, type, do) VALUES ('${user.getId(player)}', '${rpDateTime} (( ${dateTime} ))', '${type}', '${reason}')`);
+};
+
+user.showMenu = function(player, title, desc, menuData) {
+    methods.debug('user.showMenu');
+    if (!mp.players.exists(player))
+        return false;
+    player.call('client:menuList:showMenu', [title, desc, Array.from(menuData)]);
 };
 
 user.clearChat = function(player) {

@@ -739,6 +739,7 @@ user.clearAllProp = function() {
 };
 
 user.stopAllScreenEffect = function() {
+    mp.game.graphics.setNightvision(false);
     mp.game.invoke(methods.ANIMPOSTFX_STOP_ALL);
 };
 

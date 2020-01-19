@@ -12,6 +12,7 @@ import coffer from './coffer';
 import items from './items';
 import inventory from './inventory';
 import weapons from './weapons';
+import chat from './chat';
 
 import houses from './property/houses';
 import condos from './property/condos';
@@ -1687,7 +1688,7 @@ menuList.showVehicleStatsMenu = function() {
         UIMenu.Menu.AddMenuItem("~b~Расход топлива: ~s~").SetRightLabel(`${vInfo.fuel_min}${vehicles.getFuelPostfix(vInfo.fuel_type)}`);
     }
     else
-        UIMenu.Menu.AddMenuItem("~b~Расход топлива: ~s~").SetRightLabel(`Электрокар`);
+        UIMenu.Menu.AddMenuItem("~b~Расход топлива: ~s~").SetRightLabel(`~r~Отсутствует`);
 
     if (vInfo.stock > 0) {
         UIMenu.Menu.AddMenuItem("~b~Объем багажника: ~s~").SetRightLabel(`${vInfo.stock}см³`);
@@ -2724,7 +2725,7 @@ menuList.showBarFreeMenu = function(price = 1)
     menu.ItemSelect.on(async (item, index) => {
         UIMenu.Menu.HideMenu();
         try {
-            if (item.price > 0) {
+            if (item.label) {
 
                 if (mp.players.local.health < 90)
                     mp.players.local.health += 5;
@@ -3745,7 +3746,7 @@ menuList.showVehShopModelInfoMenu = function(model)
         UIMenu.Menu.AddMenuItem("~b~Расход топлива: ~s~").SetRightLabel(`${vInfo.fuel_min}${vehicles.getFuelPostfix(vInfo.fuel_type)}`);
     }
     else
-        UIMenu.Menu.AddMenuItem("~b~Расход топлива: ~s~").SetRightLabel(`Электрокар`);
+        UIMenu.Menu.AddMenuItem("~b~Расход топлива: ~s~").SetRightLabel(`~r~Отсутствует`);
 
     if (vInfo.stock > 0) {
         UIMenu.Menu.AddMenuItem("~b~Объем багажника: ~s~").SetRightLabel(`${vInfo.stock}см³`);

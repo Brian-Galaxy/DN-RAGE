@@ -381,6 +381,9 @@ weather.nextRandomWeatherByType = function(weatherType) {
                 "EXTRASUNNY",
                 "EXTRASUNNY",
                 "EXTRASUNNY",
+                "EXTRASUNNY",
+                "EXTRASUNNY",
+                "EXTRASUNNY",
                 "CLEAR",
                 "CLEAR",
                 "CLEAR",
@@ -429,6 +432,9 @@ weather.nextRandomWeatherByType = function(weatherType) {
             break;
         case 2:
             weatherList = [
+                "EXTRASUNNY",
+                "EXTRASUNNY",
+                "EXTRASUNNY",
                 "EXTRASUNNY",
                 "EXTRASUNNY",
                 "EXTRASUNNY",
@@ -497,5 +503,5 @@ weather.nextRandomWeatherByType = function(weatherType) {
         "CHAR_LIFEINVADER",
         1
     );
-    mp.players.call('client:managers:weather:nextWeather', [weather.getWeather(), methods.getRandomInt(100, 240)]);
+    mp.players.call('client:managers:weather:nextWeather', [weather.getWeather(), methods.getRandomInt(150, 300)]);
 };

@@ -780,7 +780,7 @@ mp.events.add('client:managers:weather:nextWeather', (weatherName, delay) => {
 mp.events.add('client:managers:weather:setCurrentWeather', (weatherName) => {
     try {
         methods.debug('Event: client:user:setCurrentWeather');
-        weather.nextWeather(weatherName, 1);
+        weather.nextWeather(weatherName, 10);
     }
     catch (e) {
         methods.debug(e);
@@ -1830,6 +1830,33 @@ mp.keys.bind(0x4D, true, function() {
         return;
     if (!methods.isBlockKeys())
         menuList.showMainMenu();
+});
+
+//N
+mp.keys.bind(78, true, function() {
+    if (!user.isLogin())
+        return;
+    if (!methods.isBlockKeys()) {
+        let drawId = mp.players.local.getPropIndex(0);
+        let textureId = mp.players.local.getPropTextureIndex(0);
+        if (user.getSex() == 1 && (drawId == 116 || drawId == 118)) {
+            user.setProp(0, --drawId, textureId);
+            mp.game.graphics.setNightvision(true);
+        }
+        else if (user.getSex() == 1 && (drawId == 115 || drawId == 117)) {
+            user.setProp(0, ++drawId, textureId);
+            mp.game.graphics.setNightvision(false);
+        }
+
+        if (user.getSex() == 0 && (drawId == 117 || drawId == 119)) {
+            user.setProp(0, --drawId, textureId);
+            mp.game.graphics.setNightvision(true);
+        }
+        else if (user.getSex() == 0 && (drawId == 116 || drawId == 118)) {
+            user.setProp(0, ++drawId, textureId);
+            mp.game.graphics.setNightvision(false);
+        }
+    }
 });
 
 // Commands in 2020......

@@ -348,7 +348,7 @@ npc.timer = function() {
         }
     });
 
-    setTimeout(npc.timer, 10000);
+    setTimeout(npc.timer, 5000);
 };
 
 npc.timer500 = function() {

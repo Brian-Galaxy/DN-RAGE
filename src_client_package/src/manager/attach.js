@@ -16,12 +16,15 @@ mp.attachmentMngr =
                     {
                         let attInfo = this.attachments[id];
 
-                        let spawnPos = new mp.Vector3(entity.position.x, entity.position.y, entity.position.z - 5)
+                        let spawnPos = new mp.Vector3(entity.position.x, entity.position.y, entity.position.z - 5);
 
                         let object = mp.objects.new(attInfo.model, spawnPos);
 
-                        object.attachTo(entity.handle,
-                            (typeof(attInfo.boneName) === 'string') ? entity.getBoneIndexByName(attInfo.boneName) : entity.getBoneIndex(attInfo.boneName),
+                        let boneIndex = (typeof attInfo.boneName === 'string') ?
+                            entity.getBoneIndexByName(attInfo.boneName) :
+                            entity.getBoneIndex(attInfo.boneName);
+
+                        object.attachTo(entity.handle, boneIndex,
                             attInfo.offset.x, attInfo.offset.y, attInfo.offset.z,
                             attInfo.rotation.x, attInfo.rotation.y, attInfo.rotation.z,
                             false, false, false, false, 2, true);

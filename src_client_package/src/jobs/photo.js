@@ -76,7 +76,8 @@ photo.workProcess = function() {
             let pointPos = photo.getDirectionPosition(item[4]);
 
             isProcess = true;
-            methods.disableAllControls(true);
+            mp.players.local.freezePosition(true);
+            methods.blockKeys(true);
             try {
                 jobPoint.delete();
             }
@@ -90,7 +91,8 @@ photo.workProcess = function() {
 
             setTimeout(function () {
                 isProcess = false;
-                methods.disableAllControls(false);
+                methods.blockKeys(false);
+                mp.players.local.freezePosition(false);
                 user.stopScenario();
 
                 if (pointPos == playerPos) {

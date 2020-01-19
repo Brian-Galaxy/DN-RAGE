@@ -1757,6 +1757,14 @@ user.isJobBus3 = function(player) {
     return user.isLogin(player) && user.get(player, 'job') == 8;
 };
 
+user.isJobTree = function(player) {
+    return user.isLogin(player) && user.get(player, 'job') == 1;
+};
+
+user.isJobBuilder = function(player) {
+    return user.isLogin(player) && user.get(player, 'job') == 2;
+};
+
 user.isGos = function(player) {
     methods.debug('user.isGos');
     return user.isLogin(player) && (user.isSapd(player) || user.isFib(player) || user.isUsmc(player) || user.isGov(player) || user.isEms(player) || user.isSheriff(player));

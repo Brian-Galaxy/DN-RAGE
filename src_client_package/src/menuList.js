@@ -25,6 +25,8 @@ import bus from "./jobs/bus";
 import gr6 from "./jobs/gr6";
 import mail from "./jobs/mail";
 import photo from "./jobs/photo";
+import tree from "./jobs/tree";
+import builder from "./jobs/builder";
 
 let menuList = {};
 
@@ -1398,8 +1400,17 @@ menuList.showVehicleMenu = function(data) {
     if (user.getCache('job') == veh.getVariable('jobId')) {
         switch (veh.getVariable('jobId')) {
             case 1:
-                UIMenu.Menu.AddMenuItem("~g~Получить задание").doName = 'three:find';
-                UIMenu.Menu.AddMenuItem("~b~Справка").sendChatMessage = 'Получайте и выполняйте задания от начальника';
+                UIMenu.Menu.AddMenuItem("~g~Получить задание").doName = 'tree:find';
+                UIMenu.Menu.AddMenuItem("~b~Инструменты (Красный маркер)").doName = 'tree:take0';
+                UIMenu.Menu.AddMenuItem("~b~Инструменты (Зеленый маркер)").doName = 'tree:take1';
+                UIMenu.Menu.AddMenuItem("~y~Завершить досрочно", "~r~Штраф $100 в случае если\nвы не взяли хотя-бы 1 маркер").doName = 'tree:stop';
+                break;
+            case 2:
+                UIMenu.Menu.AddMenuItem("~g~Получить задание").doName = 'builder:find';
+                UIMenu.Menu.AddMenuItem("~b~Инструменты (Красный маркер)").doName = 'builder:take0';
+                UIMenu.Menu.AddMenuItem("~b~Инструменты (Зеленый маркер)").doName = 'builder:take1';
+                UIMenu.Menu.AddMenuItem("~b~Инструменты (Синий маркер)").doName = 'builder:take2';
+                UIMenu.Menu.AddMenuItem("~y~Завершить досрочно", "~r~Штраф $100 в случае если\nвы не взяли хотя-бы 1 маркер").doName = 'builder:stop';
                 break;
             case 3:
                 UIMenu.Menu.AddMenuItem("~g~Получить задание").doName = 'photo:find';
@@ -1469,8 +1480,6 @@ menuList.showVehicleMenu = function(data) {
             bus.start(3);
         else if (item.doName == 'bus:stop')
             bus.stop();
-        else if (item.doName == 'three:find')
-            gardener.start();
         else if (item.doName == 'gr6:start')
             gr6.start();
         else if (item.doName == 'gr6:unload') {
@@ -1487,24 +1496,32 @@ menuList.showVehicleMenu = function(data) {
             dispatcher.send(`Код 0`, `${user.getCache('rp_name')} - инкассация требует поддержки`);
             mp.game.ui.notifications.show('~b~Вызов был отправлен');
         }
+        else if (item.doName == 'tree:find')
+            tree.start();
+        else if (item.doName == 'tree:take0')
+            tree.take(0);
+        else if (item.doName == 'tree:take1')
+            tree.take(1);
+        else if (item.doName == 'tree:stop')
+            tree.stop();
+        else if (item.doName == 'builder:find')
+            builder.start();
+        else if (item.doName == 'builder:take0')
+            builder.take(0);
+        else if (item.doName == 'builder:take1')
+            builder.take(1);
+        else if (item.doName == 'builder:take2')
+            builder.take(2);
+        else if (item.doName == 'builder:stop')
+            builder.stop();
         else if (item.doName == 'photo:find')
             photo.start();
         else if (item.doName == 'photo:ask')
             photo.ask();
-        else if (item.doName == 'bshot:find')
-            burgershot.findHouse();
-        else if (item.doName == 'bugstar:find')
-            bugstars.findHouse();
-        else if (item.doName == 'sunb:find')
-            sunBleach.findHouse();
-        else if (item.doName == 'water:find')
-            waterPower.findHouse();
         else if (item.doName == 'trucker:getList')
             mp.events.callRemote('server:trucker:showMenu');
         else if (item.doName == 'trucker:stop')
             trucker.stop();
-        else if (item.doName == 'takeTool')
-            user.takeTool();
         else if (item.doName == 'showVehicleAutopilotMenu')
             menuList.showVehicleAutopilotMenu();
         else if (item.doName == 'showVehicleStatsMenu')

@@ -62,6 +62,8 @@ methods.SET_VEHICLE_UNDRIVEABLE = '0x8ABA6AF54B942B95';
 
 const streamedPlayers = new Set();
 
+let _isBlockKeys = false;
+
 mp.events.add({
     'entityStreamIn': (entity) => {
         if (entity.type === 'player') {
@@ -183,6 +185,10 @@ methods.disableDefaultControls = function(disable) {
     mp.events.call("client:events:disableDefaultControls", disable);
 };
 
+methods.blockKeys = function(enable) {
+    _isBlockKeys = enable;
+};
+
 methods.isValidJSON = function(value){
     try{
         JSON.parse(value);
@@ -195,7 +201,7 @@ methods.isValidJSON = function(value){
 };
 
 methods.isBlockKeys = function() { //TODO
-    return Menu.Menu.IsShowInput() || user.isCuff() || user.isTie() || user.isDead();
+    return Menu.Menu.IsShowInput() || user.isCuff() || user.isTie() || user.isDead() || _isBlockKeys;
 };
 
 methods.distanceToPos = function (v1, v2) {

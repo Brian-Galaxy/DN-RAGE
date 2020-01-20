@@ -563,6 +563,16 @@ mp.events.add('server:user:showLic', (player, lic, playerId) => {
                     menuData.set('ID', user.get(remotePlayer, 'work_lic'));
                     menuData.set('Владелец', user.getRpName(remotePlayer));
                     menuData.set('Дата получения', user.get(remotePlayer, 'work_date'));
+
+                    if (user.get(remotePlayer, 'job') > 0 && user.get(remotePlayer, 'fraction_id') > 0) {
+                        menuData.set('Основная работа', user.getFractionName(remotePlayer));
+                        menuData.set('Вторая работа', user.getJobName(remotePlayer));
+                    }
+                    else if (user.get(remotePlayer, 'fraction_id') > 0)
+                        menuData.set('Работа', user.getFractionName(remotePlayer));
+                    else
+                        menuData.set('Работа', user.getJobName(remotePlayer));
+
                     menuData.set('Уровень рабочего', user.get(remotePlayer, 'work_lvl'));
                     menuData.set('Опыт рабочего', user.get(remotePlayer, 'work_exp'));
                     user.showMenu(remotePlayer, 'Work ID', user.getRpName(player), menuData);
@@ -575,40 +585,52 @@ mp.events.add('server:user:showLic', (player, lic, playerId) => {
             }
             else {
                 let licName = '';
+                let licPref = 'L';
 
                 switch (lic) {
                     case 'a_lic':
                         licName = 'Категория А';
+                        licPref = 'A';
                         break;
                     case 'b_lic':
                         licName = 'Категория B';
+                        licPref = 'B';
                         break;
                     case 'c_lic':
                         licName = 'Категория C';
+                        licPref = 'C';
                         break;
                     case 'air_lic':
-                        licName = 'На авиа транспорт';
+                        licName = 'Авиа транспорт';
+                        licPref = 'P';
                         break;
                     case 'ship_lic':
-                        licName = 'На водный транспорт';
+                        licName = 'Водный транспорт';
+                        licPref = 'S';
                         break;
                     case 'taxi_lic':
-                        licName = 'На перевозку пассажиров';
+                        licName = 'Перевозка пассажиров';
+                        licPref = 'T';
                         break;
                     case 'law_lic':
                         licName = 'Адвоката';
+                        licPref = 'L';
                         break;
                     case 'gun_lic':
                         licName = 'На оружие';
+                        licPref = 'G';
                         break;
                     case 'biz_lic':
                         licName = 'На бизнес';
+                        licPref = 'Z';
                         break;
                     case 'fish_lic':
                         licName = 'На рыбалку';
+                        licPref = 'F';
                         break;
                     case 'med_lic':
                         licName = 'Мед. страховка';
+                        licPref = 'M';
                         break;
                 }
 
@@ -618,7 +640,21 @@ mp.events.add('server:user:showLic', (player, lic, playerId) => {
                     menuData.set('Действует с', user.get(remotePlayer, lic + '_create'));
                     menuData.set('Действует по', user.get(remotePlayer, lic + '_end'));
 
-                    user.showMenu(remotePlayer, 'Лицензия', user.getRpName(player), menuData);
+                    let dataSend = {
+                        type: 'updateValues',
+                        isShow: true,
+                        info: {
+                            name: user.getRpName(remotePlayer),
+                            sex: user.getSexName(remotePlayer),
+                            license: licName,
+                            date_start: user.get(remotePlayer, lic + '_create'),
+                            date_stop: user.get(remotePlayer, lic + '_end'),
+                            prefix: licPref,
+                            img: 'https://a.rsg.sc//n/' + remotePlayer.socialClub.toLowerCase(),
+                        },
+                    };
+                    user.callCef(remotePlayer, 'license', JSON.stringify(dataSend));
+                    //user.showMenu(remotePlayer, 'Лицензия', user.getRpName(player), menuData);
                 }
                 else {
                     player.notify('~r~У Вас отсутствует тип лицензии: ~s~' + licName);

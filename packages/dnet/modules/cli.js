@@ -33,7 +33,7 @@ function ParseCmd(s) {
             mp.players.forEach(player => {
                 if (player.name.toLowerCase() == params[1].toLowerCase()) {
                     player.kick("Console");
-                    res = " Player " + player.name + " was kicked!";
+                    res = " Player " + player.socialClub + " was kicked!";
                 }
             });
             break;

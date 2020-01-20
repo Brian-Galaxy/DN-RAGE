@@ -487,10 +487,23 @@ enums.fractionList = {
             ["Директор", "Зам. директора", "Старший ведущий", "Ведущий", "Младший ведущий"], //3
         ]
     },
+    none: {
+        fractionName: "Отсутсвтует",
+        fractionNameShort: "Отсутсвтует",
+        leaderName: "",
+        subLeaderName: "",
+        departmentList: ["Отдел кадров"],
+        departmentPayDay: [0],
+        leaderPayDay: 0,
+        subLeaderPayDay: 0,
+        rankList: [
+            ["", ""], //0
+        ]
+    },
 };
 
 enums.fractionListId = [
-    {}, //0
+    enums.fractionList.none, //0
     enums.fractionList.gov, //1
     enums.fractionList.sapd, //2
     enums.fractionList.fib, //3

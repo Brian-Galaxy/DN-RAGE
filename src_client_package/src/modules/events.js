@@ -177,6 +177,10 @@ mp.events.add('client:events:loginAccount:success', function(data) {
             });
         }
 
+        /*
+        {"type": "updatePlayers", "isShow1": ' + isShow1 + ', "isShow2": ' +  isShow2 + ', "isShow3": ' + isShow3 + ', "players": ' + JSON.stringify([{player: { name: 'Name', old: 'Name', money: '123', date: '123', sex: 'f', spawn: ['test'], index_spawn: 0 } }]) + '}
+        * */
+
         ui.callCef('ChangePlayer','{"type": "updatePlayers", "isShow1": ' + isShow1 + ', "isShow2": ' +  isShow2 + ', "isShow3": ' + isShow3 + ', "players": ' + JSON.stringify(players) + '}');
 
         mp.players.local.position = new mp.Vector3(9.66692, 528.34783, 170.63504);
@@ -1857,6 +1861,19 @@ mp.keys.bind(78, true, function() {
             mp.game.graphics.setNightvision(false);
         }
     }
+});
+
+//ESC
+mp.keys.bind(0x1B, true, function() {
+    if (!user.isLogin())
+        return;
+    ui.callCef('license', JSON.stringify({type: 'hide'}));
+});
+//BACKSPACE
+mp.keys.bind(0x08, true, function() {
+    if (!user.isLogin())
+        return;
+    ui.callCef('license', JSON.stringify({type: 'hide'}));
 });
 
 // Commands in 2020......

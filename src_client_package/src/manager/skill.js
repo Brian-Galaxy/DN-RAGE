@@ -30,14 +30,6 @@ let checkStats = function()
             user.set('stats_lung_capacity', user.getCache('stats_lung_capacity') + 1);
         }*/
 
-        if (mp.players.local.isSwimmingUnderWater() && user.getCache('mp0_lung_capacity') < 99)
-        {
-            mp.game.ui.notifications.show(`~g~Навык "Объем легких" был повышен`);
-            user.set('stats_lung_capacity', user.getCache('stats_lung_capacity') + 3);
-            if(user.getCache('stats_lung_capacity') > 99)
-                user.set('stats_lung_capacity', 99);
-        }
-
         if (user.getCache('stats_driving') < 99)
         {
             if (mp.players.local.isSittingInAnyVehicle())
@@ -75,6 +67,14 @@ let checkShooting = function () {
     if (!user.isLogin())
         return;
     try {
+        if (mp.players.local.isSwimmingUnderWater() && user.getCache('stats_lung_capacity') < 99)
+        {
+            mp.game.ui.notifications.show(`~g~Навык "Объем легких" был повышен`);
+            user.set('stats_lung_capacity', user.getCache('stats_lung_capacity') + 2);
+            if(user.getCache('stats_lung_capacity') > 99)
+                user.set('stats_lung_capacity', 99);
+        }
+
         if (mp.players.local.isShooting() && user.getCache('stats_shooting') < 99) {
             mp.game.ui.notifications.show(`~g~Навык стрельбы был повышен`);
             if (user.isUsmc())

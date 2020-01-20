@@ -987,6 +987,18 @@ user.getRegStatusName = function(player) {
     }
 };
 
+user.getJobName = function(player) {
+    if (!user.isLogin(player))
+        return false;
+    return enums.jobList[user.get(player, 'job')][0];
+};
+
+user.getFractionName = function(player) {
+    if (!user.isLogin(player))
+        return false;
+    return enums.fractionListId[user.get(player, 'fraction_id')].fractionNameShort;
+};
+
 user.getSexName = function(player) {
     if (!user.isLogin(player))
         return false;

@@ -224,11 +224,11 @@ weather.setWeather = function(weatherName) {
     methods.debug('weather.setWeather');
 
     methods.debug('CURRENT WEATHER: ' + weatherName);
-    if (weatherName == "RAIN" || weatherName == "THUNDER" || weatherName == "CLEARING")
+    /*if (weatherName == "RAIN" || weatherName == "THUNDER" || weatherName == "CLEARING")
     {
         if (methods.getRandomInt(0, 3) == 0)
             weather.nextRandomWeather();
-    }
+    }*/
     _weather = weatherName;
 };
 
@@ -384,6 +384,8 @@ weather.nextRandomWeatherByType = function(weatherType) {
                 "EXTRASUNNY",
                 "EXTRASUNNY",
                 "EXTRASUNNY",
+                "EXTRASUNNY",
+                "EXTRASUNNY",
                 "CLEAR",
                 "CLEAR",
                 "CLEAR",
@@ -416,6 +418,10 @@ weather.nextRandomWeatherByType = function(weatherType) {
                 "CLOUDS",
                 "CLOUDS",
                 "CLOUDS",
+                "CLOUDS",
+                "CLOUDS",
+                "CLOUDS",
+                "CLOUDS",
                 "SMOG",
                 "SMOG",
                 "SMOG",
@@ -432,6 +438,8 @@ weather.nextRandomWeatherByType = function(weatherType) {
             break;
         case 2:
             weatherList = [
+                "EXTRASUNNY",
+                "EXTRASUNNY",
                 "EXTRASUNNY",
                 "EXTRASUNNY",
                 "EXTRASUNNY",

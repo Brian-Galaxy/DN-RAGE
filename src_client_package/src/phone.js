@@ -109,6 +109,9 @@ phone.apps = function(action) {
         case 'app':
             phone.showAppList();
             break;
+        default:
+            phone.showLoad();
+            break;
     }
 };
 
@@ -157,18 +160,78 @@ phone.showAppList = function() {
     ui.callCef('phone' + phone.getType(), JSON.stringify(data));
 };
 
+phone.showAppFraction = function() {
+    let menu = {
+        UUID: 'fraction',
+        title: user.getFractionNameL(),
+        items: []
+    };
+
+    let item = {
+        title: "Список членов организации",
+        text: "",
+        clickable: true,
+        type: 1,
+        params: { name: "list" }
+    };
+    menu.items.push(item);
+
+    item = {
+        title: "Иерархия",
+        text: "Список всех отделов и должностей",
+        clickable: true,
+        type: 1,
+        params: { name: "list" }
+    };
+    menu.items.push(item);
+
+    let data = {
+        type: 'updateMenu',
+        menu: menu
+    };
+
+    ui.callCef('phone' + phone.getType(), JSON.stringify(data));
+};
+
+phone.showLoad = function() {
+    let menu = {
+        UUID: 'load',
+        title: 'Идёт загрузка...',
+        text: `Ваше приложение загружается...`,
+        items: []
+    };
+
+    let item = {
+        title: "Загрузка...",
+        type: 1,
+        params: { name: "loading" }
+    };
+    menu.items.push(item);
+
+    let data = {
+        type: 'updateMenu',
+        menu: menu
+    };
+    ui.callCef('phone' + phone.getType(), JSON.stringify(data));
+};
+
 phone.callBack = function(action, menu, id, ...args) {
     methods.debug(action, menu, id, ...args);
     if (action == 'button')
         phone.callBackButton(menu, id, ...args);
     else
         phone.callBackCheckbox(menu, id, ...args);
-
 };
 
 phone.callBackButton = function(menu, id, ...args) {
     try {
-        let params = JSON.stringify(args[0]);
+        let params = JSON.parse(args[0]);
+        if (menu == 'fraction') {
+        }
+        if (menu == 'apps') {
+            if (params.name == 'fraction')
+                phone.showAppFraction();
+        }
     }
     catch (e) {
         methods.debug(e)
@@ -178,7 +241,7 @@ phone.callBackButton = function(menu, id, ...args) {
 phone.callBackCheckbox = function(menu, id, ...args) {
     try {
         let checked = args[0];
-        let params = JSON.stringify(args[1]);
+        let params = JSON.parse(args[1]);
     }
     catch (e) {
         methods.debug(e);

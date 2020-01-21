@@ -40,6 +40,19 @@ checkpoint.checkPosition = function() {
         setTimeout(checkpoint.checkPosition, 1000);
 };
 
+checkpoint.emitEnter = function(idx) {
+    if (!entityList.has(idx)) {
+        entityList.set(idx, true);
+    }
+};
+
+checkpoint.emitExit = function(idx) {
+    if (entityList.has(idx)) {
+        entityList.delete(idx);
+        UIMenu.Menu.HideMenu();
+    }
+};
+
 checkpoint.updateCheckpointList = function(data) {
     try {
         methods.debug('Execute: checkpoint.updateCheckpointList');

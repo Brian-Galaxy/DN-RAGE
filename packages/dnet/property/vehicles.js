@@ -598,6 +598,12 @@ vehicles.setFuel = (veh, fuel) => {
     }
 };
 
+vehicles.addFuel = (veh, fuel) => {
+    if (!vehicles.exists(veh))
+        return;
+    vehicles.setFuel(veh, vehicles.getFuel(veh) + fuel);
+};
+
 vehicles.getFuel = (veh) => {
     if (!vehicles.exists(veh))
         return 0;
@@ -605,7 +611,7 @@ vehicles.getFuel = (veh) => {
 };
 
 vehicles.checkVehiclesFuel = () => {
-    methods.debug('vehicles.checkVehiclesFuel');
+    //methods.debug('vehicles.checkVehiclesFuel');
     mp.vehicles.forEach(function (veh) {
 
         if (!vehicles.exists(veh))
@@ -615,7 +621,7 @@ vehicles.checkVehiclesFuel = () => {
             return;
 
         let vInfo = methods.getVehicleInfo(veh.model);
-        if (vInfo.fuel_full == 1)
+        if (vInfo.fuel_type == 0)
             return;
 
         let velocity = veh.velocity;
@@ -630,7 +636,6 @@ vehicles.checkVehiclesFuel = () => {
 
         if (fuel <= 0) {
             vehicles.setFuel(veh, 0);
-            //veh.engine = false;
             methods.debug('checkVehiclesFuel');
             vSync.setEngineState(veh, false);
             return;

@@ -104,6 +104,18 @@ vehicles.setHoodStateById = function(id, state) {
     mp.events.callRemote('s:vSync:setHoodState', id, state);
 };
 
+vehicles.getFuel = (veh) => {
+    if (!mp.vehicles.exists(veh))
+        return 0;
+    return veh.getVariable('fuel');
+};
+
+vehicles.addFuel = (veh, fuel = 1) => {
+    if (!mp.vehicles.exists(veh))
+        return;
+    mp.events.callRemote('server:vehicles:addFuel', veh.remoteId, fuel);
+};
+
 vehicles.checkerControl = function() {
     try {
         let veh = mp.players.local.vehicle;
@@ -333,6 +345,7 @@ vehicles.getSpeedBoost = (model) => {
         case 'Double': return 30;
         case 'Entity2': return 60;
         case 'EntityXF': return 47;
+        case 'Elegy2': return 5;
         case 'FBI': return 30;
         case 'FBI2': return 20;
         case 'GP1': return 40;
@@ -583,7 +596,7 @@ vehicles.getSpeedMax = (model) => {
         case 'Dune4': return 160;
         case 'Dune5': return 160;
         case 'Duster': return 1;
-        case 'Elegy': return 280;
+        case 'Elegy': return 260;
         case 'Elegy2': return 270;
         case 'Ellie': return 220;
         case 'Emperor': return 160;

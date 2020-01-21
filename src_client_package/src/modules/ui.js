@@ -36,6 +36,8 @@ let showRadar = true;
 let showHud = true;
 let showMenu = false;
 
+let maxStringLength = 50;
+
 ui.create = function() {
     uiBrowser = mp.browsers.new("package://cef/index.html");
     //ui.callCef('authMain','{"type": "show"}');
@@ -43,6 +45,18 @@ ui.create = function() {
 
 ui.notify = function(text) {
     ui.callCef('notify','{"text": "' + text + '"}');
+};
+
+ui.showSubtitle = function(message, duration = 5000) {
+    try {
+        mp.game.ui.setTextEntry2("STRING");
+        for (let i = 0, msgLen = message.length; i < msgLen; i += maxStringLength)
+            mp.game.ui.addTextComponentSubstringPlayerName(message.substr(i, Math.min(maxStringLength, message.length - i)));
+        mp.game.ui.drawSubtitleTimed(duration, true);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 };
 
 ui.hideHud = function() {
@@ -264,6 +278,12 @@ ui.drawText3D = function(caption, x, y, z) {
     if (!mp.game.ui.isHudComponentActive(0))
         return false;
     try {
+
+        /*let scale = (4.00001 / methods.distanceToPos(new mp.Vector3(x, y, z), mp.players.local.position)) * 0.3;
+        if (scale > 0.3) scale = 0.3;
+        else if (scale < 0.15) scale = 0.15;
+        scale = scale * (1 / game.getFinalRenderedCamFov()) * 100;*/
+
         mp.game.graphics.setDrawOrigin(x, y, z + 0.5, 0);
         mp.game.ui.setTextFont(0);
         mp.game.ui.setTextScale(0.3, 0.3);

@@ -1839,7 +1839,7 @@ mp.events.add('render', () => {
                     //if (user.hasDating(player.getVariable('id')))
                     //    name = user.getDating(player.getVariable('id')) + ' | ';
                     //if(!player.getVariable('hiddenId'))
-                    ui.drawText3DRage( player.id + ' ' +  indicatorColor + typingLabel, headPosition.x, headPosition.y, headPosition.z + 0.1);
+                    ui.drawText3D( player.id + ' ' +  indicatorColor + typingLabel, headPosition.x, headPosition.y, headPosition.z + 0.1);
                 }
             }
             catch (e) {

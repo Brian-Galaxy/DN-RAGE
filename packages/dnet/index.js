@@ -24,6 +24,7 @@ let rent = require('./business/rent');
 let bar = require('./business/bar');
 let barberShop = require('./business/barberShop');
 let bank = require('./business/bank');
+let fuel = require('./business/fuel');
 
 let houses = require('./property/houses');
 let condos = require('./property/condos');
@@ -62,6 +63,7 @@ function init() {
         tattoo.loadAll();
         gun.loadAll();
         bank.loadAll();
+        fuel.loadAll();
 
         pickups.createPickups();
 
@@ -77,6 +79,7 @@ function init() {
             vShop.loadAllShopVehicles();
             vehicles.loadAllTimers();
             vehicles.loadAllFractionVehicles();
+            vehicles.checkVehiclesFuel();
         }, 10000);
     }
     catch (e) {

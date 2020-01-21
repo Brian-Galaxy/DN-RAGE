@@ -21,6 +21,7 @@ import vehicles from "./property/vehicles";
 
 import cloth from './business/cloth';
 import vShop from "./business/vShop";
+import fuel from "./business/fuel";
 
 import bus from "./jobs/bus";
 import gr6 from "./jobs/gr6";
@@ -2193,6 +2194,69 @@ menuList.showAtmMenu = async function() {
         }
         else if (item.eventName == 'server:bank:history') {
             mp.events.callRemote(item.eventName);
+        }
+    });
+};
+
+menuList.showFuelMenu = async function() {
+    if (methods.isBlackout()) {
+        mp.game.ui.notifications.show(`~r~В городе отсутствует свет`);
+        return;
+    }
+
+    let shopId = fuel.findNearestId(mp.players.local.position);
+    let price = await business.getPrice(shopId);
+
+    let menu = UIMenu.Menu.Create(`Заправка`, `~b~Нажмите "~g~Enter~b~", чтобы заправить`);
+
+    let list = ["1L", "5L", "10L", "FULL"];
+    let list2 = ["1%", "5%", "10%", "FULL"];
+
+    let itemPrice = 0.9 * price;
+    let listItem = UIMenu.Menu.AddMenuItemList("Бензин", list, `Цена: ~g~${methods.moneyFormat(itemPrice)}`);
+    listItem.type = 1;
+    listItem.price = itemPrice;
+
+    itemPrice = 0.76 * price;
+    listItem = UIMenu.Menu.AddMenuItemList("Дизель", list, `Цена: ~g~${methods.moneyFormat(itemPrice)}`);
+    listItem.type = 1;
+    listItem.price = itemPrice;
+
+    itemPrice = 0.3 * price;
+    listItem = UIMenu.Menu.AddMenuItemList("Электричество", list, `Цена: ~g~${methods.moneyFormat(itemPrice)}`);
+    listItem.type = 1;
+    listItem.price = itemPrice;
+
+    itemPrice = 1.2 * price;
+    listItem = UIMenu.Menu.AddMenuItemList("Авиатопливо", list, `Цена: ~g~${methods.moneyFormat(itemPrice)}`);
+    listItem.type = 1;
+    listItem.price = itemPrice;
+
+    itemPrice = 12 * price;
+    let menuItem = UIMenu.Menu.AddMenuItem("Канистра (Авиатопливо)", `Цена: ~g~${methods.moneyFormat(itemPrice)}`);
+    menuItem.price = itemPrice;
+    menuItem.itemId = 8;
+
+    itemPrice = 9 * price;
+    menuItem = UIMenu.Menu.AddMenuItem("Канистра (Бензин)", `Цена: ~g~${methods.moneyFormat(itemPrice)}`);
+    menuItem.price = itemPrice;
+    menuItem.itemId = 9;
+
+    itemPrice = 8 * price;
+    menuItem = UIMenu.Menu.AddMenuItem("Канистра (Дизель)", `Цена: ~g~${methods.moneyFormat(itemPrice)}`);
+    menuItem.price = itemPrice;
+    menuItem.itemId = 10;
+
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+
+    let listIndex = 0;
+    menu.ListChange.on((item, index) => {
+        listIndex = index;
+    });
+    menu.ItemSelect.on(async (item, index) => {
+        UIMenu.Menu.HideMenu();
+        if (item.type) {
+            fuel.fillVeh(item.price, shopId, item.type, listIndex);
         }
     });
 };

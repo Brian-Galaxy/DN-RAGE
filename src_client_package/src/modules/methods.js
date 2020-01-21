@@ -85,6 +85,8 @@ methods.getStreamPlayerList = function() {
 methods.pressEToPayRespect = function () {
     if (timer.isFleecaAtm() || timer.isOtherAtm())
         menuList.showAtmMenu();
+    if (timer.isFuel())
+        menuList.showFuelMenu();
 };
 
 methods.sleep = function(ms) {

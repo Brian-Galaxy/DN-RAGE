@@ -6,6 +6,8 @@ import methods from "../modules/methods";
 import Container from "../modules/data";
 import ui from "../modules/ui";
 
+import checkpoint from "./checkpoint";
+
 import vehicles from "../property/vehicles";
 
 import vSync from "./vSync";
@@ -14,12 +16,15 @@ import license from "./license";
 import weather from './weather';
 import phone from "../phone";
 
+import fuel from "../business/fuel";
+
 //import dispatcher from "./dispatcher";
 
 let EntityFleeca = 0;
 let EntityOther1 = 0;
 let EntityOther2 = 0;
 let EntityOther3 = 0;
+let EntityFuel = 0;
 
 let isDisableControl = false;
 let allModelLoader = false;
@@ -185,8 +190,21 @@ timer.twoSecTimer = function() {
         EntityOther2 = mp.game.object.getClosestObjectOfType(plPos.x, plPos.y, plPos.z, 0.68, -1364697528, false, false, false);
         EntityOther3 = mp.game.object.getClosestObjectOfType(plPos.x, plPos.y, plPos.z, 0.68, -870868698, false, false, false);
 
+        EntityFuel = 0;
+
+        fuel.hashList.forEach(hash => {
+            if (EntityFuel == 0)
+                EntityFuel = mp.game.object.getClosestObjectOfType(plPos.x, plPos.y, plPos.z, 3, hash, false, false, false);
+        });
+
         if (EntityFleeca != 0 || EntityOther1 != 0 || EntityOther2 != 0 || EntityOther3 != 0)
             mp.game.ui.notifications.show("Нажмите ~g~E~s~ чтобы открыть меню банкомата");
+        if (EntityFuel != 0) {
+            checkpoint.emitEnter(99999);
+            mp.game.ui.notifications.show("Нажмите ~g~E~s~ чтобы открыть меню заправки");
+        }
+        else
+            checkpoint.emitExit(99999);
 
         if (user.isLogin() && !user.isAdmin()) {
             if (mp.game.player.getInvincible() || mp.players.local.getMaxHealth() >= 1000 || mp.players.local.health >= 1000) {
@@ -541,6 +559,10 @@ timer.isFleecaAtm = function () {
 
 timer.isOtherAtm = function () {
     return user.getCache('bank_card') > 0 && (EntityOther1 != 0 || EntityOther2 != 0 || EntityOther3 != 0);
+};
+
+timer.isFuel = function () {
+    return EntityFuel != 0;
 };
 
 mp.events.add('render', () => {

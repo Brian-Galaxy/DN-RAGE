@@ -419,3 +419,10 @@ mp.events.add('s:vSync:radioChange', (player, vId, state) => {
         //mp.players.callInRange(veh.position, streamDist, "vSync:radioChange", [veh.id, state]);
     }
 });
+
+mp.events.add('server:vehicles:addFuel', (player, vId, fuel) => {
+    let veh = mp.vehicles.at(vId);
+    if (mp.players.exists(player) && vehicles.exists(veh)) {
+        vehicles.addFuel(veh, fuel)
+    }
+});

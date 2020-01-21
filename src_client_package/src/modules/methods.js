@@ -109,12 +109,6 @@ methods.error = function (message, ...args) {
     }
 };
 
-methods.generateWorkID = function() {
-    let prefix = 'WID' + weather.getYear();
-    let number = Date.now().toString().substr(2);
-    return `${prefix}-${number}`;
-};
-
 methods.getVehicleInfo = function (model) {
     try {
         let vehInfo = enums.get('vehicleInfo');
@@ -160,6 +154,19 @@ methods.getRandomBankCard = function (prefix = 0) {
     let num3 = methods.getRandomInt(1000, 9999);
 
     return methods.parseInt(`${prefix}${num1}${num2}${num3}`);
+};
+
+methods.getRandomPhone = function (prefix = 0) {
+    if (prefix == 0)
+        prefix = methods.getRandomInt(100, 999);
+    let num = methods.getRandomInt(100000, 9999999);
+    return methods.parseInt(`${prefix}${num}`);
+};
+
+methods.getRandomWorkID = function() {
+    let prefix = 'WID' + weather.getYear();
+    let number = Date.now().toString().substr(2);
+    return `${prefix}-${number}`;
 };
 
 methods.unixTimeStampToDateTime = function (timestamp) {
@@ -312,6 +319,17 @@ methods.bankFormat = function (currentMoney) {
     return currentMoney.toString().replace(/.+?(?=\D|$)/, function(f) {
         return f.replace(/(\d)(?=(?:\d\d\d\d)+$)/g, "$1 ");
     });
+};
+
+methods.phoneFormat = function (phoneNumber) {
+    let phoneNumberString = methods.parseInt(phoneNumber);
+    let cleaned = ('' + phoneNumberString).replace(/\D/g, '');
+    let match = cleaned.match(/^(1|)?(\d{3})(\d{3})(\d{4})$/);
+    if (match) {
+        let intlCode = (match[1] ? '+1 ' : '');
+        return [intlCode, '', match[2], ' ', match[3], '-', match[4]].join('');
+    }
+    return phoneNumberString;
 };
 
 methods.getCurrentSpeed = function () {

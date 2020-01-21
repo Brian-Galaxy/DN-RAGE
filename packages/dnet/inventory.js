@@ -205,6 +205,8 @@ inventory.dropItem = function(player, id, itemId, posX, posY, posZ, rotX, rotY, 
                 break;
         }
 
+        if(itemId >= 27 && itemId <= 30)
+            rot = new mp.Vector3(-90, 0, heading);
         if(itemId >= 54 && itemId <= 126)
             rot = new mp.Vector3(-90, 0, heading);
 

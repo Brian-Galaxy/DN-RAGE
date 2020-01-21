@@ -225,6 +225,12 @@ weather.getWeatherTemp = function() {
     return Temp;
 };
 
+weather.getWeatherTempFormat = function() {
+    if (Temp > 0)
+        return `+${Temp}°C`;
+    return `${Temp}°C`;
+};
+
 weather.getWeatherTempServer = function() {
     return TempServer;
 };

@@ -80,6 +80,13 @@ methods.getRandomBankCard = function (prefix = 0) {
     return methods.parseInt(`${prefix}${num1}${num2}${num3}`);
 };
 
+methods.getRandomPhone = function (prefix = 0) {
+    if (prefix == 0)
+        prefix = methods.getRandomInt(100, 999);
+    let num = methods.getRandomInt(100000, 9999999);
+    return methods.parseInt(`${prefix}${num}`);
+};
+
 methods.unixTimeStampToDateTime = function (timestamp) {
     let dateTime = new Date(timestamp * 1000);
     return `${methods.digitFormat(dateTime.getHours())}:${methods.digitFormat(dateTime.getMinutes())} ${methods.digitFormat(dateTime.getDate())}/${methods.digitFormat(dateTime.getMonth()+1)}/${dateTime.getFullYear()}`
@@ -109,6 +116,17 @@ methods.bankFormat = function (currentMoney) {
     return currentMoney.toString().replace(/.+?(?=\D|$)/, function(f) {
         return f.replace(/(\d)(?=(?:\d\d\d\d)+$)/g, "$1 ");
     });
+};
+
+methods.phoneFormat = function (phoneNumber) {
+    let phoneNumberString = methods.parseInt(phoneNumber);
+    let cleaned = ('' + phoneNumberString).replace(/\D/g, '');
+    let match = cleaned.match(/^(1|)?(\d{3})(\d{3})(\d{4})$/);
+    if (match) {
+        let intlCode = (match[1] ? '+1 ' : '');
+        return [intlCode, '', match[2], ' ', match[3], '-', match[4]].join('');
+    }
+    return phoneNumberString;
 };
 
 methods.moneyFormat = function (currentMoney, maxCentValue = 5000) {

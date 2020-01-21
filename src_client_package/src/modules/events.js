@@ -9,6 +9,7 @@ import voice from "../voice";
 import enums from "../enums";
 import inventory from "../inventory";
 import items from "../items";
+import phone from "../phone";
 
 import ui from "./ui";
 
@@ -176,10 +177,6 @@ mp.events.add('client:events:loginAccount:success', function(data) {
                 }
             });
         }
-
-        /*
-        {"type": "updatePlayers", "isShow1": ' + isShow1 + ', "isShow2": ' +  isShow2 + ', "isShow3": ' + isShow3 + ', "players": ' + JSON.stringify([{player: { name: 'Name', old: 'Name', money: '123', date: '123', sex: 'f', spawn: ['test'], index_spawn: 0 } }]) + '}
-        * */
 
         ui.callCef('ChangePlayer','{"type": "updatePlayers", "isShow1": ' + isShow1 + ', "isShow2": ' +  isShow2 + ', "isShow3": ' + isShow3 + ', "players": ' + JSON.stringify(players) + '}');
 
@@ -1630,6 +1627,30 @@ mp.events.add('client:inventory:equip', function(id, itemId, count, aparams) {
     inventory.updateEquipStatus(id, true);
 });
 
+
+mp.events.add('client:phone:status', function(status) {
+    if (status)
+        phone.show();
+    else
+        phone.hide();
+});
+
+
+mp.events.add('client:phone:rotate', function(status) {
+    if (status)
+        user.rotatePhoneV();
+    else
+        user.rotatePhoneH();
+});
+
+mp.events.add('client:phone:apps', function(action) {
+    phone.apps(action);
+});
+
+mp.events.add('client:phone:callBack', function(action, menu, id, ...args) {
+    phone.callBack(action, menu, id, ...args);
+});
+
 mp.events.add("client:vehicle:checker", function (vehicle, seat) {
 
     try {
@@ -1834,6 +1855,14 @@ mp.keys.bind(0x4D, true, function() {
         return;
     if (!methods.isBlockKeys())
         menuList.showMainMenu();
+});
+
+//O
+mp.keys.bind(0x4F, true, function() {
+    if (!user.isLogin())
+        return;
+    if (!methods.isBlockKeys())
+        phone.showOrHide();
 });
 
 //N

@@ -243,7 +243,7 @@ mp.events.addRemoteCounted('server:enums:getCloth', (player, requestID) => {
 
 mp.events.addRemoteCounted('server:enums:getCloth1', (player, requestID) => {
     try {
-        player.call('client:enums:updateCloth1', [requestID, JSON.stringify(enums.tattooList), JSON.stringify(enums.printList)]);
+        player.call('client:enums:updateCloth1', [requestID, JSON.stringify(enums.tattooList), JSON.stringify(enums.printList), JSON.stringify(enums.fractionListId)]);
     } catch (e) {
         methods.debug(e);
     }

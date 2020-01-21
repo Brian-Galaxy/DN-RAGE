@@ -892,6 +892,18 @@ user.giveJobMoney = function(money) {
     }
 };
 
+user.getFractionName = function() {
+    if (!user.isLogin())
+        return false;
+    return enums.fractionListId[user.getCache( 'fraction_id')].fractionNameShort;
+};
+
+user.getFractionNameL = function() {
+    if (!user.isLogin())
+        return false;
+    return enums.fractionListId[user.getCache( 'fraction_id')].fractionName;
+};
+
 user.sendSmsBankOperation = function(text, title = 'Операция со счётом') {
     methods.debug('bank.sendSmsBankOperation');
     if (!user.isLogin())

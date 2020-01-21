@@ -4,19 +4,13 @@ import container from './modules/data';
 import chat from './chat';
 import items from './items';
 import user from './user';
-import weapons from './weapons';
-import enums from './enums';
 import ui from "./modules/ui";
-import cloth from "./business/cloth";
 import menuList from "./menuList";
 import vehicles from "./property/vehicles";
 
 let inventory = {};
 
-inventory.browser = {};
-
 inventory.currentItem = -1;
-inventory.hidden = true;
 
 let hidden = true;
 

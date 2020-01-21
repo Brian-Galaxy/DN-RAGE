@@ -79,7 +79,7 @@ ui.updateValues = function() {
             let data = {
                 type: 'updateValues',
                 isShow: user.getCache("is_clock"),
-                temp: weather.getWeatherTemp(),
+                temp: weather.getWeatherTempFormat(),
                 date: weather.getFullRpDate(),
                 time: weather.getFullRpTime(),
             };

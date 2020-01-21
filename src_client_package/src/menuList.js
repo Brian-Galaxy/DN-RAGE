@@ -963,7 +963,7 @@ menuList.showMeriaMainMenu = function() {
                 return;
             }
             try {
-                user.set('work_lic', methods.generateWorkID());
+                user.set('work_lic', methods.getRandomWorkID());
                 user.set('work_date', weather.getFullRpDate());
                 mp.game.ui.notifications.show("~g~Поздравялем, вы получили WorkID!");
                 user.addHistory(0, 'Получил WorkID');

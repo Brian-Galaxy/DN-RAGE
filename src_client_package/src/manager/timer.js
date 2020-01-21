@@ -12,6 +12,7 @@ import vSync from "./vSync";
 import enums from "../enums";
 import license from "./license";
 import weather from './weather';
+import phone from "../phone";
 
 //import dispatcher from "./dispatcher";
 
@@ -264,6 +265,8 @@ let prevWpPos = new mp.Vector3(0, 0, 0);
 timer.secTimer = function() {
 
     try {
+        phone.timer();
+
         if (user.isOpenPhone()) {
             if (mp.players.local.isPlayingAnim("cellphone@in_car@ds@first_person", "cellphone_horizontal_base", 3) === 0 &&
                 mp.players.local.isPlayingAnim("cellphone@female", "cellphone_call_listen_base", 3) === 0 &&

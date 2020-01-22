@@ -57,7 +57,11 @@ npc.loadAll = function() {
     npc.create(mp.game.joaat("a_m_m_business_01"), new mp.Vector3(299.7478, -733.0994, 29.3525), 255.0316, false, "WORLD_HUMAN_STAND_IMPATIENT");
 // Больница - Аптека - Палето-Бей - Бульвар Палето
     npc.create(mp.game.joaat("a_f_y_business_01"), new mp.Vector3(-253.79364013671875, 6336.76953125, 32.426055908203125), 215.51046752929688, false, "WORLD_HUMAN_STAND_IMPATIENT");
-// Ammu-Nation - Татавиамские горы - Шоссе Паломино
+// Рыболовный магазин
+    npc.create(mp.game.joaat("s_m_y_ammucity_01"), new mp.Vector3(-1598.123046875, 5200.99609375, 4.3873372077941895), 68.22468566894531, false, "WORLD_HUMAN_GUARD_STAND");
+    // Магазин охоты
+    npc.create(mp.game.joaat("s_m_y_ammucity_01"), new mp.Vector3(-674.044677734375, 5837.830078125, 17.34016227722168), 118.35307312011719, false, "WORLD_HUMAN_GUARD_STAND");
+    // Ammu-Nation - Татавиамские горы - Шоссе Паломино
     npc.create(mp.game.joaat("s_m_y_ammucity_01"), new mp.Vector3(2567.45, 292.3297, 108.7349), 0.9863386, false, "WORLD_HUMAN_GUARD_STAND");
 // Ammu-Nation - Чумаш - Барбарено-роуд
     npc.create(mp.game.joaat("s_m_y_ammucity_01"), new mp.Vector3(-3173.501, 1088.957, 20.83874), -106.5671, false, "WORLD_HUMAN_GUARD_STAND");

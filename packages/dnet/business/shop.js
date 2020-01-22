@@ -46,6 +46,8 @@ shop.list = [
     [92.8906, -229.4265, 53.6636, 126, 6],
     [301.4576, -733.25683, 28.37248, 127, 6],
     [-252.5419, 6335.4926, 31.4260, 0, 6],
+
+    [-1599.7724, 5202.06640625, 3.397307, 128, 7], //FISH
 ];
 
 shop.loadAll = function() {
@@ -69,6 +71,9 @@ shop.loadAll = function() {
                     break;
                 case 6:
                     methods.createBlip(shopPos, 153, 69, 0.8, 'Аптека');
+                    break;
+                case 7:
+                    methods.createBlip(shopPos, 68, 0, 0.6, 'Fish Shop');
                     break;
             }
         }

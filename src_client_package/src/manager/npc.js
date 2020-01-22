@@ -7,20 +7,6 @@ let _loadDist = 100;
 
 npc.loadAll = function() {
 
-    //House1126
-    npc.create("s_m_m_highsec_01", new mp.Vector3(-137.6827, 974.5458, 235.75), -99.98929, true, "WORLD_HUMAN_GUARD_STAND");
-    npc.create("s_m_m_highsec_02", new mp.Vector3(-132.2644, 972.4172, 235.7416), 64.99982, true, "WORLD_HUMAN_GUARD_STAND");
-    npc.create("a_f_y_soucent_02", new mp.Vector3(-106.3265, 961.6937, 233.3073), 116.0001, true, "WORLD_HUMAN_GARDENER_PLANT");
-    npc.create("s_m_m_gardener_01", new mp.Vector3(-62.68492, 940.9781, 232.4227), 70.99993, true, "WORLD_HUMAN_GARDENER_LEAF_BLOWER");
-    npc.create("s_m_y_devinsec_01", new mp.Vector3(-110.9386, 999.0899, 240.8519), 28.40079, true, "CODE_HUMAN_CROSS_ROAD_WAIT");
-    npc.create("u_m_m_jewelsec_01", new mp.Vector3(-93.59818, 987.443, 240.9464), -152.9994, true, "WORLD_HUMAN_STAND_IMPATIENT");
-    npc.create("s_m_m_highsec_01", new mp.Vector3(-61.13178, 978.3408, 232.8693), -153.9992, true, "WORLD_HUMAN_STAND_IMPATIENT_UPRIGHT");
-    npc.create("s_m_m_highsec_02", new mp.Vector3(-82.46698, 942.5785, 233.0286), 0.09982711, true, "WORLD_HUMAN_STAND_IMPATIENT");
-    npc.create("s_m_y_devinsec_01", new mp.Vector3(-113.0847, 983.8484, 235.7563), 119.1996, true, "WORLD_HUMAN_GUARD_STAND");
-    npc.create("u_m_m_jewelsec_01", new mp.Vector3(-48.72831, 951.6181, 232.1743), -173.2996, true, "WORLD_HUMAN_GUARD_STAND");
-    npc.create("s_m_m_highsec_01", new mp.Vector3(-68.40871, 1007.543, 234.3994), -34.9999, true, "WORLD_HUMAN_STAND_IMPATIENT_UPRIGHT");
-    npc.create("a_f_m_eastsa_02", new mp.Vector3(-80.19171, 980.4577, 234.1708), -134.9996, true, "WORLD_HUMAN_GARDENER_PLANT");
-
     // 24/7 - Гора Чиллиад - Шоссе Сенора
     npc.create(mp.game.joaat("mp_m_shopkeep_01"), new mp.Vector3(1728.476, 6416.668, 35.03724), -109.9557, false, "WORLD_HUMAN_STAND_IMPATIENT");
 // LTD Gasoline - Грейпсид - Грейпсид-Пейн-стрит
@@ -69,8 +55,8 @@ npc.loadAll = function() {
     npc.create(mp.game.joaat("a_f_y_business_01"), new mp.Vector3(92.31831, -231.1054, 54.66363), 327.2379, false, "WORLD_HUMAN_STAND_IMPATIENT");
 // D.P. Pharmacy - Текстайл-Сити - Строберри-авеню
     npc.create(mp.game.joaat("a_m_m_business_01"), new mp.Vector3(299.7478, -733.0994, 29.3525), 255.0316, false, "WORLD_HUMAN_STAND_IMPATIENT");
-// Bay Side Drugs - Палето-Бей - Бульвар Палето
-    npc.create(mp.game.joaat("a_f_y_business_01"), new mp.Vector3(-177.5367, 6384.567, 31.49536), 224.1046, false, "WORLD_HUMAN_STAND_IMPATIENT");
+// Больница - Аптека - Палето-Бей - Бульвар Палето
+    npc.create(mp.game.joaat("a_f_y_business_01"), new mp.Vector3(-253.79364013671875, 6336.76953125, 32.426055908203125), 215.51046752929688, false, "WORLD_HUMAN_STAND_IMPATIENT");
 // Ammu-Nation - Татавиамские горы - Шоссе Паломино
     npc.create(mp.game.joaat("s_m_y_ammucity_01"), new mp.Vector3(2567.45, 292.3297, 108.7349), 0.9863386, false, "WORLD_HUMAN_GUARD_STAND");
 // Ammu-Nation - Чумаш - Барбарено-роуд
@@ -211,10 +197,18 @@ npc.loadAll = function() {
     npc.create(mp.game.joaat("a_m_y_runner_01"), new mp.Vector3(3867.177, 4463.583, 2.727666), 73.1316, false, "WORLD_HUMAN_CLIPBOARD");
 
 
-    //EMS
+    //EMS - Морг
     npc.create(mp.game.joaat("s_f_y_scrubs_01"), new mp.Vector3(262.7821, -1359.238, 24.53779), 46.81502, true, "WORLD_HUMAN_CLIPBOARD");
     npc.create(mp.game.joaat("s_m_m_doctor_01"), new mp.Vector3(280.5828, -1333.853, 24.53781), 319.4619, false, "WORLD_HUMAN_CLIPBOARD");
     npc.create(mp.game.joaat("s_m_m_paramedic_01"), new mp.Vector3(268.4438, -1357.79, 24.5378), 327.3099, false, "WORLD_HUMAN_STAND_MOBILE");
+
+    //EMS - Палето
+    npc.create(mp.game.joaat("s_f_y_scrubs_01"), new mp.Vector3(-248.2640838623047, 6321.82373046875, 32.42074203491211),  350.1827087402344, true, "WORLD_HUMAN_CLIPBOARD");
+    npc.create(mp.game.joaat("s_m_m_doctor_01"), new mp.Vector3(-242.58966064453125, 6323.96435546875, 32.426025390625), 320.5203857421875, false, "WORLD_HUMAN_SMOKING");
+    npc.create(mp.game.joaat("s_m_m_paramedic_01"), new mp.Vector3(-259.43194580078125, 6312.88525390625, 32.420700073242188),  49.83867263793945, false, "WORLD_HUMAN_STAND_MOBILE");
+
+    //EMS - Pill
+    npc.create(mp.game.joaat("s_f_y_scrubs_01"), new mp.Vector3(309.6512451171875, -593.9440307617188, 43.28398132324219),  13.167501449584961, true, "WORLD_HUMAN_CLIPBOARD");
 
 
     //GOV
@@ -252,6 +246,7 @@ npc.loadAll = function() {
     npc.create(mp.game.joaat("s_m_y_cop_01"), new mp.Vector3(448.1678, -988.1086, 30.68959), 20.97919, false, "WORLD_HUMAN_STAND_MOBILE");
     npc.create(mp.game.joaat("s_m_y_cop_01"), new mp.Vector3(426.3052, -992.8116, 35.68463), 90.84706, false, "WORLD_HUMAN_SMOKING");
 
+    //Церковь
     npc.create(mp.game.joaat("ig_priest"), new mp.Vector3(-787.1298828125, -708.8898315429688, 30.32028579711914), 265.47149658203125);
 
     npc.timer();

@@ -25,6 +25,7 @@ let bar = require('./business/bar');
 let barberShop = require('./business/barberShop');
 let bank = require('./business/bank');
 let fuel = require('./business/fuel');
+let shop = require('./business/shop');
 
 let houses = require('./property/houses');
 let condos = require('./property/condos');
@@ -64,6 +65,7 @@ function init() {
         gun.loadAll();
         bank.loadAll();
         fuel.loadAll();
+        shop.loadAll();
 
         pickups.createPickups();
 

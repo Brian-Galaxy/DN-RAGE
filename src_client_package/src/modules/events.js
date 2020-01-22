@@ -1293,7 +1293,7 @@ mp.events.add('client:inventory:unEquip', function(id, itemId) {
         inventory.updateItemCount(id, money);
         user.save();
     }
-    else if (itemId >= 54 && itemId <= 137) {
+    else if (itemId >= 54 && itemId <= 137 || itemId >= 8 && itemId <= 10) {
 
         let wpName = items.getItemNameHashById(itemId);
         let wpHash = weapons.getHashByName(wpName);
@@ -1456,7 +1456,7 @@ mp.events.add('client:inventory:equip', function(id, itemId, count, aparams) {
             return;
         }
     }
-    else if (itemId >= 54 && itemId <= 137) {
+    else if (itemId >= 54 && itemId <= 137 || itemId >= 8 && itemId <= 10) {
 
         let slot = weapons.getGunSlotIdByItem(itemId);
         if (user.getCache('weapon_' + slot) == '') {

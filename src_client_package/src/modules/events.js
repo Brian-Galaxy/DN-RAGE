@@ -1957,12 +1957,15 @@ mp.keys.bind(0x1B, true, function() {
     if (!user.isLogin())
         return;
     ui.callCef('license', JSON.stringify({type: 'hide'}));
+    ui.callCef('certificate', JSON.stringify({type: 'hide'}));
 });
+
 //BACKSPACE
 mp.keys.bind(0x08, true, function() {
     if (!user.isLogin())
         return;
     ui.callCef('license', JSON.stringify({type: 'hide'}));
+    ui.callCef('certificate', JSON.stringify({type: 'hide'}));
 });
 
 // Commands in 2020......

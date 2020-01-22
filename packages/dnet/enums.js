@@ -376,6 +376,7 @@ enums.fractionList = {
     gov: {
         fractionName: "Правительство",
         fractionNameShort: "Правительство",
+        hash: "gov",
         leaderName: "Губернатор",
         subLeaderName: "Вице-губернатор",
         departmentList: ["Отдел кадров", "Исполнительный аппарат", "Отдел юрисдикции", "Инспекция", "Генеральный совет", "Служба безопастности"],
@@ -394,6 +395,7 @@ enums.fractionList = {
     sapd: {
         fractionName: "Полицейский департамент",
         fractionNameShort: "LSPD",
+        hash: "lspd",
         leaderName: "Chief of Police",
         subLeaderName: "Deputy Chief of Police",
         departmentList: ["Police Academy", "Regular", "Detective Bureau", "AirSupport Division", "Tactical Division", "CyberSecurity Division"],
@@ -412,6 +414,7 @@ enums.fractionList = {
     sheriff: {
         fractionName: "Департамент шерифа",
         fractionNameShort: "BCSD",
+        hash: "sheriff",
         leaderName: "Sheriff",
         subLeaderName: "Deputy Sheriff",
         departmentList: ["Sheriff Academy", "Regular", "HighWay Patrol", "Detective Bureau", "AirSupport Division", "Tactical Division"],
@@ -430,6 +433,7 @@ enums.fractionList = {
     usmc: {
         fractionName: "Корпус морской пехоты США",
         fractionNameShort: "USMC",
+        hash: "usmc",
         leaderName: "General",
         subLeaderName: "Colonel",
         departmentList: ["USMC Academy", "Regular", "Sea Division", "AirSupport Division", "Special Forces"],
@@ -447,6 +451,7 @@ enums.fractionList = {
     ems: {
         fractionName: "Служба спасения",
         fractionNameShort: "EMS",
+        hash: "ems",
         leaderName: "Глава департамента",
         subLeaderName: "Зам. главы департамента",
         departmentList: ["Отдел кадров", "Регулярная группа", "Наземная группа", "Воздушная группа", "Спасательная группа"],
@@ -464,6 +469,7 @@ enums.fractionList = {
     fib: {
         fractionName: "Федеральное бюро расследований",
         fractionNameShort: "FIB",
+        hash: "fib",
         leaderName: "Глава департамента",
         subLeaderName: "Зам. главы департамента",
         departmentList: ["Отдел кадров", "Регулярная группа", "Наземная группа", "Воздушная группа", "Спасательная группа"],
@@ -481,6 +487,7 @@ enums.fractionList = {
     invader: {
         fractionName: "Служба новостей",
         fractionNameShort: "Life Invader",
+        hash: "inv",
         leaderName: "Генеральный Директор",
         subLeaderName: "Заместитель Директора",
         departmentList: ["Отдел кадров", "Отдел объявлений", "Отдел новостей", "Отдел радио"],
@@ -497,6 +504,7 @@ enums.fractionList = {
     none: {
         fractionName: "Отсутсвтует",
         fractionNameShort: "Отсутсвтует",
+        hash: "none",
         leaderName: "",
         subLeaderName: "",
         departmentList: ["Отдел кадров"],

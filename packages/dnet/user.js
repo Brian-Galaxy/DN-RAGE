@@ -994,9 +994,59 @@ user.getJobName = function(player) {
 };
 
 user.getFractionName = function(player) {
-    if (!user.isLogin(player))
-        return false;
-    return enums.fractionListId[user.get(player, 'fraction_id')].fractionNameShort;
+    try {
+        if (!user.isLogin(player))
+            return 'Отсуствует';
+        return enums.fractionListId[user.get(player, 'fraction_id')].fractionNameShort;
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+    return 'Отсуствует';
+};
+
+user.getDepartmentName = function(player) {
+    try {
+        if (!user.isLogin(player))
+            return 'Отсуствует';
+        if (user.get(player, 'is_leader'))
+            return 'Руководство';
+        else if (user.get(player, 'is_sub_leader'))
+            return 'Руководство';
+        return enums.fractionListId[user.get(player, 'fraction_id')].departmentList[user.get(player, 'rank_type')];
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+    return 'Отсуствует';
+};
+
+user.getRankName = function(player) {
+    try {
+        if (!user.isLogin(player))
+            return 'Отсуствует';
+        if (user.get(player, 'is_leader'))
+            return enums.fractionListId[user.get(player, 'fraction_id')].leaderName;
+        else if (user.get(player, 'is_sub_leader'))
+            return enums.fractionListId[user.get(player, 'fraction_id')].subLeaderName;
+        return enums.fractionListId[user.get(player, 'fraction_id')].rankList[user.get(player, 'rank_type')][user.get(player, 'rank')];
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+    return 'Отсуствует';
+};
+
+user.getFractionHash = function(player) {
+    try {
+        if (!user.isLogin(player))
+            return 'none';
+        return enums.fractionListId[user.get(player, 'fraction_id')].hash;
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+    return 'none';
 };
 
 user.getSexName = function(player) {

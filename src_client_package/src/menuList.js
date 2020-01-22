@@ -1174,6 +1174,9 @@ menuList.showPlayerDoсMenu = function(playerId) {
 
     UIMenu.Menu.AddMenuItem("Work ID", "~c~Это ваше разрешение на работу").doName = 'work_lic';
 
+    if (user.isGov() || user.isSheriff() || user.isEms() || user.isSapd() || user.isFib())
+        UIMenu.Menu.AddMenuItem("Удостоверение").doName = 'gos_lic';
+
     UIMenu.Menu.AddMenuItem("Мед. страховка", "~c~Эта штука нужна для того\nчтобы лечение было дешевле").doName = 'med_lic';
 
     UIMenu.Menu.AddMenuItem("Лицензия категории \"А\"", "~c~Лицензия на мотоциклы").doName = 'a_lic';
@@ -1200,7 +1203,9 @@ menuList.showPlayerDoсMenu = function(playerId) {
     menu.ItemSelect.on(async (item, index) => {
         if (item == closeItem)
             UIMenu.Menu.HideMenu();
-        if (item.doName)
+        if (item.doName == "gos_lic")
+            mp.events.callRemote('server:user:showLicGos', playerId);
+        else if (item.doName)
             mp.events.callRemote('server:user:showLic', item.doName, playerId);
     });
 };

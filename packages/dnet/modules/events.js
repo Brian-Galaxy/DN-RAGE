@@ -146,7 +146,7 @@ mp.events.add('server:clientDebug', (player, message) => {
     }
 });
 
-mp.events.add('server:user:createAccount', (player, login, password, email) => {
+mp.events.addRemoteCounted('server:user:createAccount', (player, login, password, email) => {
     try {
         user.createAccount(player, login, password, email);
     } catch (e) {
@@ -154,7 +154,7 @@ mp.events.add('server:user:createAccount', (player, login, password, email) => {
     }
 });
 
-mp.events.add('server:user:createUser', (player, name, surname, age, national) => {
+mp.events.addRemoteCounted('server:user:createUser', (player, name, surname, age, national) => {
     try {
         user.createUser(player, name, surname, age, national);
     } catch (e) {
@@ -162,7 +162,7 @@ mp.events.add('server:user:createUser', (player, name, surname, age, national) =
     }
 });
 
-mp.events.add('server:user:loginAccount', (player, login, password) => {
+mp.events.addRemoteCounted('server:user:loginAccount', (player, login, password) => {
     try {
         user.loginAccount(player, login, password);
     } catch (e) {
@@ -170,7 +170,7 @@ mp.events.add('server:user:loginAccount', (player, login, password) => {
     }
 });
 
-mp.events.add('server:user:loginUser', (player, login, spawnName) => {
+mp.events.addRemoteCounted('server:user:loginUser', (player, login, spawnName) => {
     try {
         user.loginUser(player, login, spawnName);
     } catch (e) {
@@ -178,7 +178,7 @@ mp.events.add('server:user:loginUser', (player, login, spawnName) => {
     }
 });
 
-mp.events.add('server:user:setPlayerModel', (player, model) => {
+mp.events.addRemoteCounted('server:user:setPlayerModel', (player, model) => {
     try {
         if (mp.players.exists(player))
             player.model = mp.joaat(model);
@@ -187,7 +187,7 @@ mp.events.add('server:user:setPlayerModel', (player, model) => {
     }
 });
 
-mp.events.add('server:user:setVirtualWorld', (player, vwId) => {
+mp.events.addRemoteCounted('server:user:setVirtualWorld', (player, vwId) => {
     try {
         if (mp.players.exists(player))
             player.dimension = vwId;
@@ -196,7 +196,7 @@ mp.events.add('server:user:setVirtualWorld', (player, vwId) => {
     }
 });
 
-mp.events.add('server:user:serVariable', (player, key, val) => {
+mp.events.addRemoteCounted('server:user:serVariable', (player, key, val) => {
     try {
         methods.debug('server:user:serVariable', key, val);
         if (mp.players.exists(player))
@@ -206,31 +206,31 @@ mp.events.add('server:user:serVariable', (player, key, val) => {
     }
 });
 
-mp.events.add('server:user:setDecoration', (player, slot, type) => {
+mp.events.addRemoteCounted('server:user:setDecoration', (player, slot, type) => {
     user.setDecoration(player, slot, type);
 });
 
-mp.events.add('server:user:clearDecorations', (player) => {
+mp.events.addRemoteCounted('server:user:clearDecorations', (player) => {
     user.clearDecorations(player);
 });
 
-mp.events.add('server:user:updateCharacterCloth', (player) => {
+mp.events.addRemoteCounted('server:user:updateCharacterCloth', (player) => {
     user.updateCharacterCloth(player);
 });
 
-mp.events.add('server:user:updateCharacterFace', (player) => {
+mp.events.addRemoteCounted('server:user:updateCharacterFace', (player) => {
     user.updateCharacterFace(player);
 });
 
-mp.events.add('server:user:setComponentVariation', (player, component, drawableId, textureId) => {
+mp.events.addRemoteCounted('server:user:setComponentVariation', (player, component, drawableId, textureId) => {
     user.setComponentVariation(player, component, drawableId, textureId);
 });
 
-mp.events.add('server:user:setProp', (player, slot, type, color) => {
+mp.events.addRemoteCounted('server:user:setProp', (player, slot, type, color) => {
     user.setProp(player, slot, type, color);
 });
 
-mp.events.add('server:user:clearAllProp', (player) => {
+mp.events.addRemoteCounted('server:user:clearAllProp', (player) => {
     user.clearAllProp(player);
 });
 
@@ -521,11 +521,11 @@ mp.events.addRemoteCounted('server:user:showPlayerHistory', (player,) => {
     });
 });
 
-mp.events.add('server:user:save', (player) => {
+mp.events.addRemoteCounted('server:user:save', (player) => {
     user.save(player);
 });
 
-mp.events.add('server:user:showLic', (player, lic, playerId) => {
+mp.events.addRemoteCounted('server:user:showLic', (player, lic, playerId) => {
     if (!user.isLogin(player))
         return;
 
@@ -636,10 +636,6 @@ mp.events.add('server:user:showLic', (player, lic, playerId) => {
                 }
 
                 if (user.get(remotePlayer, lic)) {
-                    menuData.set('Тип лицензии', licName);
-                    menuData.set('Владелец', user.getRpName(remotePlayer));
-                    menuData.set('Действует с', user.get(remotePlayer, lic + '_create'));
-                    menuData.set('Действует по', user.get(remotePlayer, lic + '_end'));
 
                     let dataSend = {
                         type: 'updateValues',
@@ -655,7 +651,6 @@ mp.events.add('server:user:showLic', (player, lic, playerId) => {
                         },
                     };
                     user.callCef(remotePlayer, 'license', JSON.stringify(dataSend));
-                    //user.showMenu(remotePlayer, 'Лицензия', user.getRpName(player), menuData);
                 }
                 else {
                     player.notify('~r~У Вас отсутствует тип лицензии: ~s~' + licName);
@@ -668,7 +663,46 @@ mp.events.add('server:user:showLic', (player, lic, playerId) => {
             methods.error(e);
         }
     }
+});
 
+mp.events.addRemoteCounted('server:user:showLicGos', (player, playerId) => {
+    if (!user.isLogin(player))
+        return;
+
+    let remotePlayer = mp.players.at(playerId);
+    if (remotePlayer && user.isLogin(remotePlayer)) {
+        try {
+
+            if (remotePlayer.remoteId != player.remoteId) {
+                user.playAnimation(remotePlayer, "mp_common","givetake2_a", 8);
+                user.playAnimation(player, "mp_common","givetake1_a", 8);
+                chat.sendMeCommand(remotePlayer, 'посмотрел удостоверение');
+                chat.sendMeCommand(player, 'показал удостоверение');
+            }
+            else
+                chat.sendMeCommand(player, 'посмотрел удостоверение');
+
+            let dataSend = {
+                type: 'updateValues',
+                isShow: true,
+                typef: user.getFractionHash(remotePlayer),
+                info: {
+                    name: user.getRpName(remotePlayer),
+                    sex: user.getSexName(remotePlayer),
+                    dep: user.getDepartmentName(remotePlayer),
+                    position: user.getRankName(remotePlayer),
+                    dob: user.get(remotePlayer, 'age'),
+                    id: user.getId(remotePlayer),
+                    img: 'https://a.rsg.sc//n/' + remotePlayer.socialClub.toLowerCase(),
+                },
+            };
+            user.callCef(remotePlayer, 'certificate', JSON.stringify(dataSend));
+
+        }
+        catch (e) {
+            methods.error(e);
+        }
+    }
 });
 
 mp.events.addRemoteCounted('server:user:cuff', (player) => {
@@ -900,29 +934,29 @@ mp.events.addRemoteCounted('server:user:askDatingToPlayerIdYes', (player, player
     }
 });
 
-mp.events.add('server:houses:insert', (player, interior, number, price, zone, street) => {
+mp.events.addRemoteCounted('server:houses:insert', (player, interior, number, price, zone, street) => {
     houses.insert(player, number, street, zone, player.position.x, player.position.y, player.position.z, player.heading, interior, price);
 });
 
-mp.events.add('server:condo:insert', (player, numberBig, number, price, interior, zone, street) => {
+mp.events.addRemoteCounted('server:condo:insert', (player, numberBig, number, price, interior, zone, street) => {
     condos.insert(player, number, numberBig, street, zone, player.position.x, player.position.y, player.position.z, player.heading, interior, price);
 });
 
-mp.events.add('server:condo:insertBig', (player, number, zone, street) => {
+mp.events.addRemoteCounted('server:condo:insertBig', (player, number, zone, street) => {
     condos.insertBig(player, number, street, zone, player.position.x, player.position.y, player.position.z);
 });
 
-mp.events.add('server:user:getPlayerPos', (player) => {
+mp.events.addRemoteCounted('server:user:getPlayerPos', (player) => {
     console.log(`PlayerPos: ${player.position.x}, ${player.position.y}, ${player.position.z - 1}, ${player.heading}`);
     methods.saveFile('plPos', `[${player.position.x}, ${player.position.y}, ${player.position.z - 1}, ${player.heading}],`);
 });
 
-mp.events.add('server:user:getPlayerPos2', (player, pos) => {
+mp.events.addRemoteCounted('server:user:getPlayerPos2', (player, pos) => {
     console.log(`PlayerPos: ${player.position.x}, ${player.position.y}, ${player.position.z - 1}, ${player.heading}`);
     methods.saveFile('plPos', `${pos}, ${player.position.x}, ${player.position.y}, ${player.position.z - 1}, ${player.heading}`);
 });
 
-mp.events.add('server:user:getVehPos', (player) => {
+mp.events.addRemoteCounted('server:user:getVehPos', (player) => {
     if (player.vehicle)
         methods.saveFile('vehPos', `["${methods.getVehicleInfo(player.vehicle.model).display_name}", ${player.vehicle.position.x}, ${player.vehicle.position.y}, ${player.vehicle.position.z}, ${player.vehicle.heading}],`)
 });

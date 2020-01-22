@@ -115,6 +115,31 @@ enums.gunShopItems = [
     280, 281, 282, 283, 284, 285, 286, 287,
 ];
 
+enums.shopItems = [
+    11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26,
+    4, 5, 6, 253
+];
+
+enums.shopAlcItems = [
+    241, 242, 243, 244, 245, 246, 247, 248, 249, 250
+];
+
+enums.shopElItems = [
+    27, 29, 59
+];
+
+enums.shopMedItems = [
+    215, 221
+];
+
+enums.shopFishItems = [
+    0, 1, 251, 253, 59
+];
+
+enums.shopHuntItems = [
+    0, 1, 59, 63
+];
+
 enums.lscClassPrice = [
     ['Commercials', 1.2],
     ['Compacts', 1],
@@ -390,118 +415,9 @@ enums.lscColors = [
     'Светло-бронзовый #2'
 ];
 
-enums.lscCarColorPos = [[-1167.36,-2013.42,11.63059,136.2973],[-327.3558,-144.5778,38.04641,250.0263],[735.6607,-1072.729,21.2193,179.3472],[-206.2765,-1323.342,29.87665,2.203119],[1182.65,2638.49,36.78132,357.8441],[103.6963,6622.596,30.81484,224.0517],[-151.0918,-594.4427,166.0052,308.8605],[478.4267,-1308.524,28.01912,27.1145]];
-enums.lscCamColorPos = [[-1167.856,-2016.76,13.53096],[-323.593,-143.7437,39.26034],[733.7505,-1069.566,22.43295],[-209.2587,-1319.221,31.09041],[1184.5,2635.391,38.0],[100.3815,6623.296,32.12886],[-146.051,-593.9824,167.5002],[475.9341,-1307.055,29.43324]];
-enums.lscCarPos = [[-1159.827,-2015.182,12.16598,338.3167],[-330.8568,-137.6985,38.00612,95.85743],[732.1998,-1088.71,21.15658,89.10553],[-222.6972,-1329.915,29.87796,269.8108],[1174.876,2640.67,36.7454,0.5306945],[110.3291,6626.977,30.7735,223.695],[-147.4434,-599.0691,166.0058,315.3235],[481.2153,-1317.698,28.09073,296.715]];
-
-enums.lscCamPos = [
-    [-1155.691, -2012.395, 13.18026],
-    [-335.2385, -136.069, 39.00966],
-    [727.5853, -1091.216, 22.16918],
-    [-217.821, -1327.9, 30.89041],
-    [1177.862, 2644.075, 37.78613],
-    [111.6643, 6621.887, 31.78725],
-    [-145.8006, -594.2851, 167.0002],
-    [482.9536, -1314.375, 29.20051]
-];
-
-/*enums.lscCamPos = [
-    [-1155.691, -2012.395, 13.18026],
-    [-1160.24, -2020.572, 13.18034],
-    [-1163.919, -2015.856, 13.98026],
-
-    [-335.2385, -136.069, 39.00966],
-    [-326.8082, -134.7203, 39.00966],
-    [-328.3979, -140.4191, 39.80966],
-
-    [727.5853, -1091.216, 22.16918],
-    [732.2767, -1084.753, 22.169],
-    [736.9069, -1090.952, 22.98864],
-
-    [-217.821, -1327.9, 30.89041],
-    [-223.2449, -1333.283, 30.8904],
-    [-226.2647, -1326.762, 31.3904],
-
-    [1177.862, 2644.075, 37.78613],
-    [1177.083, 2636.541, 37.75381],
-    [1172.015, 2641.024, 38.29303],
-
-    [111.6643, 6621.887, 31.78725],
-    [106.7364, 6627.241, 31.78723],
-    [112.0298, 6629.307, 32.28724],
-
-    [-145.8006, -594.2851, 167.0002],
-    [-144.9173, -602.0816, 167.5002],
-    [-152.5041, -600.7098, 167.0002],
-
-    [482.9536, -1314.375, 29.20051],
-    [478.4819, -1314.576, 29.60341],
-    [477.1504, -1319.856, 29.20595]
-];*/
-
-enums.lscCam = null;
-enums.lscCamRot = 0;
-
-enums.customIpl = [
-    ['Arcadius', -113.6372, -606.4175, 35.28072, 250],
-    ['Bike_rent_Chumash', -3239.396, 979.3148, 11.73511, 200],
-    ['Bike_rent_DelPerro', -1440.362, -614.8734, 29.82768, 200],
-    ['Bike_rent_DowntownVinewood', 318.6217, 134.4918, 102.5139, 200],
-    ['Bike_rent_GrandSenoraDesert', 1932.529, 2624.868, 45.17271, 200],
-    ['Bike_rent_Grapeseed', 1681.826, 4848.959, 41.11597, 200],
-    ['Bike_rent_Harmony', 287.979, 2594.161, 43.42525, 200],
-    ['Bike_rent_LittleSeoul', -873.5806, -811.7497, 18.28642, 200],
-    ['Bike_rent_MirrorPark', 1127.512, -504.3805, 63.17381, 200],
-    ['Bike_rent_MissionRow', 387.4997, -948.7668, 28.42549, 200],
-    ['Bike_rent_PaletoBay', -265.0951, 6285.909, 30.47534, 200],
-    ['Bike_rent_PillboxHill', -53.90234, -914.5641, 28.43059, 200],
-    ['Bike_rent_RockfordHills', -824.4766, -116.8027, 36.5822, 200],
-    ['Bike_rent_SandyShores', 1868.151, 3684.298, 32.72649, 200],
-    ['Bike_rent_TextileCity', 297.3168, -602.5576, 42.30396, 200],
-    ['Bike_rent_VespucciBeach', -1208.258, -1551.33, 3.373086, 200],
-    ['Boat_FS_LTD_LagoZancudo', -2079.196, 2604.659, 1.030312, 400],
-    ['Boat_FS_LTD_SanChianskiMR', 3855.35, 4458.623, 0.8497663, 400],
-    ['Boat_FS_Xero_LaPuerta', -793.9843, -1505.001, -1.474684, 400],
-    ['Boat_rent_LaPuerta', -789.2872, -1451.436, 0.6233408, 200],
-    ['Boat_rent_PaletoCove', -1605.6, 5250.369, 2.974098, 200],
-    ['Boat_rent_SanChianskiMR', 3865.394, 4463.864, 1.716229, 200],
-    ['CCTV_LosSantos', -500.6877, -511.4886, 24.12395, 3000],
-    ['CCTV_MirrorPark', 1129.704, -558.191, 55.74935, 500],
-    ['Emergency', 343.1284, -1398.297, 31.50923, 200],
-    ['Green_MirrorPark', 1129.704, -558.191, 55.74935, 750],
-    ['Jail', 1702.445, 2518.294, 44.56486, 700],
-    ['LSPD_MissionRow', 450.8555, -1002.655, 25.12975, 300],
-    ['M83_Ammunation_PillboxHill', 6.731856, -1116.993, 27.67282, 250],
-    ['MazeOffice', -50.70406, -788.6946, 43.2251, 200],
-    ['Meria', -1378.306, -486.7387, 49.01204, 350],
-    ['MirrorPark_Park', 1093.131, -635.7221, 57.74927, 400],
-    ['M83_House623', 906.3942, -623.0359, 57.04899, 200],
-    ['SD_PaletoBay', -461.1251, 6012.547, 30.34048, 400],
-    ['Bike_rent_Strawberry', 56.76987, -1331.693, 28.3127, 200],
-    ['Bike_rent_LISA', -1012.182, -2682.097, 12.98296, 200],
-    ['Gruppe6_Garage', 452.8934, -1097.205, 34.05798, 400],
-    ['M83_Ammunation_Morningwood', -1330.159, -392.0733, 35.56855, 200],
-    ['RockfordHills_Church', -776.3428, 19.6968, 39.65411, 100],
-    ['M83_House258', -1551.61, -86.43635, 53.3255, 200],
-    ['M83_Apartaments33', 385.6998, -56.79765, 121.5355, 400],
-    ['M83_House1126', -82.94398, 981.2236, 233.4471, 350],
-    ['AutoSchool', -1582.849, -556.4066, 33.95407, 100],
-    ['M83_House364', -554.9221, 753.3491, 184.4249, 250],
-    ['M83_House254', -1492.88, 127.1316, 54.64317, 300],
-    ['Army_Port', 528.8688, -3215.303, 16.12999, 400],
-    ['M83_PacificStandart', 242.8493, 206.8475, 104.2568, 150],
-    ['M83_Fleeca_Alta', 315.4205, -275.294, 52.92414, 100],
-    ['M83_Fleeca_PillboxHill', 150.9835, -1037.152, 28.33922, 100],
-    ['M83_Fleeca_BanhamCanyon', -2966.818, 483.0374, 14.69272, 100],
-    ['M83_Fleeca_Burton', -349.8218, -46.09695, 48.0368, 100],
-    ['M83_Fleeca_GrandSenoraDesert', 1175.237, 2702.871, 37.17272, 100],
-];
+enums.customIpl = [];
 
 enums.fractionListId = [];
-
-enums.rentList = [[1033245328,"Dinghy","Boats",434],[276773164,"Dinghy2","Boats",315],[509498602,"Dinghy3","Boats",365],[867467158,"Dinghy4","Boats",430],[861409633,"Jetmax","Boats",1460],[-1043459709,"Marquis","Boats",31010],[-1030275036,"Seashark","Boats",86],[-311022263,"Seashark3","Boats",92],[944930284,"Smuggler","Boats",3960],[231083307,"Speeder","Boats",1860],[437538602,"Speeder2","Boats",1880],[400514754,"Squalo","Boats",552],[771711535,"Submersible","Boats",12510],[-1066334226,"Submersible2","Boats",17510],[-282946103,"Suntrap","Boats",300],[1070967343,"Toro","Boats",6110],[908897389,"Toro2","Boats",6260],[290013743,"Tropic","Boats",705],[1448677353,"Tropic2","Boats",735],[-2100640717,"Tug","Boats",13560],[2053223216,"Benson","Commercials",529],[1518533038,"Hauler","Commercials",358],[904750859,"Mule","Commercials",365],[-1050465301,"Mule2","Commercials",369],[-2052737935,"Mule3","Commercials",406],[569305213,"Packer","Commercials",289],[-2137348917,"Phantom","Commercials",601],[2112052861,"Pounder","Commercials",636],[1827997487,"Roadkiller","Commercials",472],[-344943009,"Blista","Compacts",74],[1039032026,"Blista2","Compacts",31],[-591651781,"Blista3","Compacts",42],[1549126457,"Brioso","Compacts",144],[-1130810103,"Dilettante","Compacts",90],[-1177863319,"Issi2","Compacts",66],[931280609,"Issi3","Compacts",260],[-431692672,"Panto","Compacts",58],[1507916787,"Picador","Compacts",287],[-1450650718,"Prairie","Compacts",71],[841808271,"Rhapsody","Compacts",75],[330661258,"CogCabrio","Coupes",970],[-5153954,"Exemplar","Coupes",785],[-591610296,"F620","Coupes",530],[-391594584,"Felon","Coupes",420],[-89291282,"Felon2","Coupes",460],[-624529134,"Jackal","Coupes",134],[1348744438,"Oracle","Coupes",122],[-511601230,"Oracle2","Coupes",305],[1349725314,"Sentinel","Coupes",366],[873639469,"Sentinel2","Coupes",416],[1581459400,"Windsor","Coupes",2680],[-1930048799,"Windsor2","Coupes",3110],[-1122289213,"Zion","Coupes",154],[-1193103848,"Zion2","Coupes",204],[1131912276,"bmx","Cycles",13],[448402357,"Cruiser","Cycles",14],[-836512833,"Fixter","Cycles",17],[-186537451,"Scorcher","Cycles",18],[1127861609,"TriBike","Cycles",24],[-1233807380,"TriBike2","Cycles",24],[-400295096,"TriBike3","Cycles",24],[745926877,"Buzzard2","Helicopters",7910],[744705981,"Frogger","Helicopters",13910],[-1984275979,"Havok","Helicopters",900],[-1660661558,"Maverick","Helicopters",9210],[-726768679,"Seasparrow","Helicopters",1960],[710198397,"Supervolito","Helicopters",25010],[-1671539132,"Supervolito2","Helicopters",30010],[-339587598,"Swift","Helicopters",19460],[1075432268,"Swift2","Helicopters",39460],[-1845487887,"Volatus","Helicopters",88510],[-2107990196,"Guardian","Industrial",915],[1672195559,"Akuma","Motorcycles",56],[-571009320,"Angel","Motorcycles",94],[-2115793025,"Avarus","Motorcycles",66],[-2140431165,"Bagger","Motorcycles",250],[-114291515,"Bati","Motorcycles",145],[-891462355,"Bati2","Motorcycles",175],[86520421,"BF400","Motorcycles",49],[-440768424,"Blazer4","Motorcycles",106],[11251904,"CarbonRS","Motorcycles",193],[6774487,"Chimera","Motorcycles",255],[390201602,"Cliffhanger","Motorcycles",392],[2006142190,"Daemon","Motorcycles",77],[-1404136503,"Daemon2","Motorcycles",80],[822018448,"Defiler","Motorcycles",82],[-239841468,"Diablous","Motorcycles",130],[1790834270,"Diablous2","Motorcycles",250],[-1670998136,"Double","Motorcycles",131],[1753414259,"Enduro","Motorcycles",32],[2035069708,"Esskey","Motorcycles",142],[627535535,"Fcr","Motorcycles",125],[-757735410,"Fcr2","Motorcycles",225],[741090084,"Gargoyle","Motorcycles",595],[1265391242,"Hakuchou","Motorcycles",115],[-255678177,"Hakuchou2","Motorcycles",215],[301427732,"Hexer","Motorcycles",79],[-159126838,"Innovation","Motorcycles",194],[640818791,"Lectro","Motorcycles",81],[-1523428744,"Manchez","Motorcycles",94],[-634879114,"Nemesis","Motorcycles",90],[-1606187161,"Nightblade","Motorcycles",145],[-909201658,"PCJ","Motorcycles",86],[1873600305,"Ratbike","Motorcycles",59],[-893578776,"Ruffian","Motorcycles",87],[788045382,"Sanchez","Motorcycles",84],[-1453280962,"Sanchez2","Motorcycles",89],[1491277511,"Sanctus","Motorcycles",166],[-405626514,"Shotaro","Motorcycles",3910],[743478836,"Sovereign","Motorcycles",95],[1836027715,"Thrust","Motorcycles",61],[-140902153,"Vader","Motorcycles",77],[-1353081087,"Vindicator","Motorcycles",101],[-609625092,"Vortex","Motorcycles",207],[-618617997,"Wolfsbane","Motorcycles",50],[-1009268949,"Zombiea","Motorcycles",109],[-570033273,"Zombieb","Motorcycles",108],[-1205801634,"Blade","Muscle",338],[-682211828,"Buccaneer","Muscle",250],[-1013450936,"Buccaneer2","Muscle",350],[349605904,"Chino","Muscle",205],[-1361687965,"Chino2","Muscle",305],[-1116818112,"Domc","Muscle",474],[80636076,"Dominator","Muscle",91],[-915704871,"Dominator2","Muscle",101],[-986944621,"Dominator3","Muscle",460],[723973206,"Dukes","Muscle",764],[2134119907,"Dukes3","Muscle",854],[-1267543371,"Ellie","Muscle",1900],[-2119578145,"Faction","Muscle",305],[-1790546981,"Faction2","Muscle",405],[-2039755226,"Faction3","Muscle",425],[-1800170043,"Gauntlet","Muscle",209],[349315417,"Gauntlet2","Muscle",219],[-1848730848,"Gauntlets","Muscle",262],[15219735,"Hermes","Muscle",825],[37348240,"Hotknife","Muscle",463],[600450546,"Hustler","Muscle",493],[525509695,"Moonbeam","Muscle",57],[1896491931,"Moonbeam2","Muscle",157],[-1943285540,"NightShade","Muscle",352],[-2095439403,"Phoenix","Muscle",373],[-667151410,"RatLoader","Muscle",104],[-589178377,"RatLoader2","Muscle",404],[-227741703,"Ruiner","Muscle",97],[-1685021548,"SabreGT","Muscle",244],[223258115,"SabreGT2","Muscle",344],[729783779,"Slamvan","Muscle",365],[833469436,"SlamVan2","Muscle",415],[1119641113,"SlamVan3","Muscle",465],[1923400478,"Stalion","Muscle",260],[-401643538,"Stalion2","Muscle",270],[972671128,"Tampa","Muscle",282],[-825837129,"Vigero","Muscle",454],[-1758379524,"Vigero2","Muscle",55],[-498054846,"Virgo","Muscle",73],[-899509638,"Virgo2","Muscle",243],[16646064,"Virgo3","Muscle",143],[2006667053,"Voodoo","Muscle",363],[523724515,"Voodoo2","Muscle",64],[1871995513,"Yosemite","Muscle",165],[1126868326,"BfInjection","Off-Road",79],[-349601129,"Bifta","Off-Road",104],[-2128233223,"Blazer","Off-Road",52],[-1269889662,"Blazer3","Off-Road",56],[-1435919434,"Bodhi2","Off-Road",122],[-1479664699,"Brawler","Off-Road",1295],[-1993175239,"Cara","Off-Road",375],[1770332643,"DLoader","Off-Road",145],[-1661854193,"Dune","Off-Road",19],[92612664,"Kalahari","Off-Road",190],[-121446169,"Kamacho","Off-Road",463],[-2064372143,"Mesa3","Off-Road",280],[1390084576,"Rancher","Off-Road",262],[1645267888,"RancherXL","Off-Road",310],[-1207771834,"Rebel","Off-Road",22],[-2045594037,"Rebel2","Off-Road",47],[-1532697517,"Riata","Off-Road",860],[-1189015600,"Sandking","Off-Road",252],[989381445,"Sandking2","Off-Road",202],[101905590,"TrophyTruck","Off-Road",765],[-663299102,"TrophyTruck2","Off-Road",715],[-1523619738,"AlphaZ1","Planes",5360],[-150975354,"Blimp","Planes",25010],[-613725916,"Blimp2","Planes",25510],[-644710429,"Cuban800","Planes",1364],[-901163259,"Dodo","Planes",3465],[970356638,"Duster","Planes",489],[-1007528109,"Howard","Planes",4135],[621481054,"Luxor","Planes",23010],[-1214293858,"Luxor2","Planes",53010],[-1746576111,"Mammatus","Planes",1500],[-1763555241,"Microlight","Planes",363],[-392675425,"Seabreeze","Planes",3500],[-2122757008,"Stunt","Planes",3000],[-1673356438,"Velum","Planes",26010],[1077420264,"Velum2","Planes",28010],[1341619767,"Vestra","Planes",18810],[-1809822327,"Asea","Sedans",75],[-1903012613,"Asterope","Sedans",155],[906642318,"Cog55","Sedans",710],[-2030171296,"Cognoscenti","Sedans",530],[-685276541,"Emperor","Sedans",84],[-1883002148,"Emperor2","Sedans",33],[-311302597,"Emperor4","Sedans",154],[1909141499,"Fugitive","Sedans",150],[75131841,"Glendale","Sedans",161],[40817712,"Greenwood","Sedans",67],[-1289722222,"Ingot","Sedans",43],[886934177,"Intruder","Sedans",51],[-350899544,"Merit2","Sedans",100],[-2077743597,"Perennial","Sedans",29],[-1883869285,"Premier","Sedans",54],[-1150599089,"Primo","Sedans",55],[-2040426790,"Primo2","Sedans",155],[-14495224,"Regina","Sedans",86],[-1369781310,"Regina3","Sedans",94],[-322343873,"Schafter","Sedans",54],[-1477580979,"Stanier","Sedans",35],[-1445320949,"Stanier2","Sedans",40],[1723137093,"Stratum","Sedans",33],[-1961627517,"Stretch","Sedans",535],[-1894894188,"Surge","Sedans",102],[-1008861746,"Tailgater","Sedans",76],[251388012,"Torrence","Sedans",152],[-583281407,"Vincent","Sedans",45],[1373123368,"Warrener","Sedans",559],[1777363799,"Washington","Sedans",58],[767087018,"Alpha","Sports",1290],[-1041692462,"Banshee","Sports",860],[1274868363,"BestiaGTS","Sports",1930],[-304802106,"Buffalo","Sports",64],[736902334,"Buffalo2","Sports",105],[237764926,"Buffalo3","Sports",125],[2072687711,"Carbonizzare","Sports",2990],[-1045541610,"Comet2","Sports",1710],[-2022483795,"Comet3","Sports",1255],[1561920505,"Comet4","Sports",3910],[661493923,"Comet5","Sports",4610],[108773431,"Coquette","Sports",690],[-1728685474,"Coquette4","Sports",258],[-2125340601,"Coquette42","Sports",263],[196747873,"Elegy","Sports",669],[-566387422,"Elegy2","Sports",709],[-1995326987,"Feltzer2","Sports",260],[-1566741232,"Feltzer3","Sports",12510],[-1259134696,"FlashGT","Sports",910],[-1089039904,"Furoregt","Sports",1700],[499169875,"Fusilade","Sports",145],[2016857647,"Futo","Sports",175],[1909189272,"GB200","Sports",560],[-1297672541,"Jester","Sports",1790],[-1106353882,"Jester2","Sports",1820],[544021352,"Khamelion","Sports",830],[-1372848492,"Kuruma","Sports",245],[482197771,"Lynx","Sports",870],[-142942670,"Massacro","Sports",1330],[-631760477,"Massacro2","Sports",1360],[-1848994066,"Neon","Sports",2910],[1032823388,"Ninef","Sports",960],[-1461482751,"Ninef2","Sports",1010],[-777172681,"Omnis","Sports",595],[867799010,"Pariah","Sports",3260],[-377465520,"Penumbra","Sports",76],[-1529242755,"Raiden","Sports",2310],[-1934452204,"RapidGT","Sports",530],[1737773231,"RapidGT2","Sports",580],[-674927303,"Raptor","Sports",610],[-410205223,"Revolter","Sports",755],[719660200,"Ruston","Sports",990],[-1255452397,"Schafter2","Sports",186],[-1485523546,"Schafter3","Sports",286],[1489967196,"Schafter4","Sports",336],[-746882698,"Schwarzer","Sports",246],[1104234922,"Sentinel3","Sports",462],[-1757836725,"Seven70","Sports",2710],[1886268224,"Specter","Sports",28510],[1074745671,"Specter2","Sports",29510],[1741861769,"Streiter","Sports",1410],[970598228,"Sultan","Sports",276],[384071873,"Surano","Sports",1500],[-1071380347,"Tampa2","Sports",782],[1887331236,"Tropos","Sports",4760],[1102544804,"Verlierer2","Sports",650],[117401876,"BType","Sports Classics",4510],[-831834716,"BType2","Sports Classics",3810],[-602287871,"BType3","Sports Classics",5810],[941800958,"Casco","Sports Classics",2910],[-988501280,"Cheburek","Sports Classics",61],[223240013,"Cheetah2","Sports Classics",1260],[1011753235,"Coquette2","Sports Classics",950],[784565758,"Coquette3","Sports Classics",1240],[1617472902,"Fagaloa","Sports Classics",154],[-2079788230,"GT500","Sports Classics",6210],[-1405937764,"Infernus2","Sports Classics",2760],[1051415893,"JB700","Sports Classics",9710],[-1660945322,"Mamba","Sports Classics",560],[-2124201592,"Manana","Sports Classics",221],[1046206681,"Michelli","Sports Classics",466],[-433375717,"Monroe","Sports Classics",16010],[1830407356,"Peyote","Sports Classics",460],[1078682497,"Pigalle","Sports Classics",402],[2049897956,"RapidGT3","Sports Classics",1605],[1841130506,"Retinue","Sports Classics",359],[903794909,"Savestra","Sports Classics",1160],[1545842587,"Stinger","Sports Classics",85010],[-2098947590,"StingerGT","Sports Classics",120010],[1504306544,"Torero","Sports Classics",4810],[464687292,"Tornado","Sports Classics",365],[1531094468,"Tornado2","Sports Classics",415],[1762279763,"Tornado3","Sports Classics",85],[-2033222435,"Tornado4","Sports Classics",75],[-1797613329,"Tornado5","Sports Classics",515],[-1558399629,"Tornado6","Sports Classics",256],[-982130927,"Turismo2","Sports Classics",12510],[-391595372,"Viseris","Sports Classics",1460],[838982985,"Z190","Sports Classics",305],[758895617,"ZType","Sports Classics",100010],[-1216765807,"Adder","Super",17010],[-313185164,"Autarch","Super",21510],[633712403,"Banshee2","Super",1790],[-1696146015,"Bullet","Super",2660],[-802062533,"Bullet2","Super",2810],[-1311154784,"Cheetah","Super",24510],[1392481335,"Cyclone","Super",9810],[-2120700196,"Entity2","Super",25010],[-1291952903,"EntityXF","Super",13210],[1426219628,"FMJ","Super",20510],[1234311532,"GP1","Super",39010],[418536135,"Infernus","Super",1730],[-2048333973,"Italigtb","Super",1910],[-482719877,"Italigtb2","Super",2610],[-1232836011,"LE7B","Super",29010],[1034187331,"Nero","Super",33510],[1093792632,"Nero2","Super",36510],[1987142870,"Osiris","Super",22510],[-1758137366,"Penetrator","Super",6610],[-1829802492,"Pfister811","Super",14910],[2123327359,"Prototipo","Super",25010],[234062309,"Reaper","Super",33910],[1352136073,"SC1","Super",2960],[819197656,"Sheava","Super",3260],[-295689028,"SultanRS","Super",776],[1123216662,"Superd","Super",2210],[1663218586,"T20","Super",19510],[-1134706562,"Taipan","Super",16510],[272929391,"Tempesta","Super",2360],[1031562256,"Tezeract","Super",28510],[408192225,"Turismor","Super",34010],[-376434238,"Tyrant","Super",8160],[2067820283,"Tyrus","Super",57010],[338562499,"Vacca","Super",1360],[1939284556,"Vagner","Super",36510],[-998177792,"Visione","Super",43510],[-1622444098,"Voltic","Super",660],[917809321,"XA21","Super",12910],[-1403128555,"Zentorno","Super",30110],[-808831384,"Baller","SUVs",370],[142944341,"Baller2","SUVs",440],[1878062887,"Baller3","SUVs",505],[634118882,"Baller4","SUVs",575],[850565707,"BJXL","SUVs",195],[2006918058,"Cavalcade","SUVs",86],[-789894171,"Cavalcade2","SUVs",191],[683047626,"Contender","SUVs",1960],[1034516789,"Contender2","SUVs",135],[1177543287,"Dubsta","SUVs",1060],[-394074634,"Dubsta2","SUVs",1510],[-1237253773,"Dubsta3","SUVs",8760],[-2078554704,"Executioner","SUVs",108],[-1137532101,"FQ2","SUVs",235],[-1775728740,"Granger","SUVs",170],[-261346873,"Granger2","SUVs",66],[-33078019,"Granger3","SUVs",72],[-1543762099,"Gresley","SUVs",142],[884422927,"Habanero","SUVs",84],[486987393,"Huntley","SUVs",2110],[-330060047,"Huntley2","SUVs",180],[1269098716,"Landstalker","SUVs",189],[914654722,"Mesa","SUVs",180],[-808457413,"Patriot","SUVs",725],[-1651067813,"Radi","SUVs",114],[2136773105,"Rocoto","SUVs",389],[1221512915,"Seminole","SUVs",122],[-1810806490,"Seminole2","SUVs",129],[1337041428,"Serrano","SUVs",132],[1203490606,"XLS","SUVs",122],[-599568815,"Sadler","Utility",323],[-2076478498,"Tractor2","Utility",460],[-16948145,"Bison","Vans",281],[2072156101,"Bison2","Vans",285],[1739845664,"Bison3","Vans",307],[1069929536,"BobcatXL","Vans",64],[-1346687836,"Burrito","Vans",80],[-907477130,"Burrito2","Vans",79],[-1743316013,"Burrito3","Vans",72],[893081117,"Burrito4","Vans",79],[1876516712,"Camper","Vans",204],[486160351,"Contender8","Vans",68],[-1745203402,"GBurrito","Vans",145],[296357396,"GBurrito2","Vans",140],[-120287622,"Journey","Vans",99],[-310465116,"Minivan","Vans",42],[-1126264336,"Minivan2","Vans",142],[1488164764,"Paradise","Vans",144],[-119658072,"Pony","Vans",79],[943752001,"Pony2","Vans",84],[-1776615689,"Rumpo2","Vans",122],[1475773103,"Rumpo3","Vans",217],[524266990,"Speedo3","Vans",96],[440299355,"Steed2","Vans",68],[699456151,"Surfer","Vans",225],[-1311240698,"Surfer2","Vans",75],[1951180813,"Taco","Vans",236],[65402552,"Youga","Vans",79],[1026149675,"Youga2","Vans",46]];
-
-
 
 enums.animActions = [
     ["Поднять руки", "random@mugging3", "handsup_standing_base", 49],

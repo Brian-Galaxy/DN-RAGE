@@ -724,6 +724,66 @@ mp.events.add('client:menuList:showBankMenu', (bankId, price) => {
     }
 });
 
+mp.events.add('client:menuList:showShopMenu', (shopId, price, type) => {
+    try {
+        methods.debug('Event: client:menuList:showShopMenu');
+        menuList.showShopMenu(shopId, price, type);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.add('client:menuList:showShopAlcMenu', (shopId, price, type) => {
+    try {
+        methods.debug('Event: client:menuList:showShopAlcMenu');
+        menuList.showShopAlcMenu(shopId, price, type);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.add('client:menuList:showShopElMenu', (shopId, price) => {
+    try {
+        methods.debug('Event: client:menuList:showShopElMenu');
+        menuList.showShopElMenu(shopId, price);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.add('client:menuList:showShopMedMenu', (shopId, price) => {
+    try {
+        methods.debug('Event: client:menuList:showShopMedMenu');
+        menuList.showShopMedMenu(shopId, price);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.add('client:menuList:showShopFishMenu', (shopId, price) => {
+    try {
+        methods.debug('Event: client:menuList:showShopFishMenu');
+        menuList.showShopFishMenu(shopId, price);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.add('client:menuList:showShopHuntMenu', (shopId, price) => {
+    try {
+        methods.debug('Event: client:menuList:showShopHuntMenu');
+        menuList.showShopHuntMenu(shopId, price);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
 mp.events.add('client:menuList:showBarMenu', (shopId, price) => {
     try {
         methods.debug('Event: client:menuList:showBarMenu');

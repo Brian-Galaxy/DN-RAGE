@@ -24,6 +24,7 @@ let gun = require('../business/gun');
 let vShop = require('../business/vShop');
 let rent = require('../business/rent');
 let bank = require('../business/bank');
+let shop = require('../business/shop');
 
 let pickups = require('../managers/pickups');
 
@@ -1843,6 +1844,12 @@ mp.events.addRemoteCounted('server:gun:buy', (player, itemId, price, count, supe
     if (!user.isLogin(player))
         return;
     gun.buy(player, itemId, price, count, superTint, tint, shopId);
+});
+
+mp.events.addRemoteCounted('server:shop:buy', (player, itemId, price, shopId) => {
+    if (!user.isLogin(player))
+        return;
+    shop.buy(player, itemId, price, shopId);
 });
 
 mp.events.addRemoteCounted('server:uniform:sapd', (player, idx) => {

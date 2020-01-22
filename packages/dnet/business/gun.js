@@ -20,7 +20,6 @@ gun.list = [
     [-1117.679,2698.744,17.55415,79],
     [1693.555,3759.9,33.70533,80],
     [-330.36,6083.885,30.45477,81],
-    [-675.4125366210938, 5836.44140625, 17.34016227722168,0]
 ];
 
 gun.loadAll = function() {
@@ -83,7 +82,7 @@ gun.buy = function(player, itemId, price, count, superTint, tint, shopId) {
         return;
 
     let amount = inventory.getInvAmount(player, user.getId(player), 1);
-    if (amount + items.getItemAmountById(itemId) > 55000) {
+    if (amount + items.getItemAmountById(itemId) > 30000) {
         player.notify('~r~В инвентаре нет места');
         return;
     }

@@ -1,5 +1,9 @@
 let methods = require('../modules/methods');
+
 let business = require('../property/business');
+
+let user = require('../user');
+let items = require('../items');
 
 let shop = exports;
 
@@ -48,6 +52,7 @@ shop.list = [
     [-252.5419, 6335.4926, 31.4260, 0, 6],
 
     [-1599.7724, 5202.06640625, 3.397307, 128, 7], //FISH
+    [-675.4125366210938, 5836.44140625, 16.34016227722168, 129, 8] //Охота
 ];
 
 shop.loadAll = function() {
@@ -75,6 +80,9 @@ shop.loadAll = function() {
                 case 7:
                     methods.createBlip(shopPos, 68, 0, 0.6, 'Fish Shop');
                     break;
+                case 8:
+                    methods.createBlip(shopPos, 141, 0, 0.6, 'Hunting Store');
+                    break;
             }
         }
         methods.createStaticCheckpoint(shopPos.x, shopPos.y, shopPos.z, "Нажмите ~g~Е~s~ чтобы открыть меню");
@@ -89,6 +97,17 @@ shop.getInRadius = function(pos, radius = 2) {
         let shopPos = new mp.Vector3(item[0], item[1], item[2]);
         if (methods.distanceToPos(pos, shopPos) < radius)
             shopId = methods.parseInt(item[3]);
+    });
+    return shopId;
+};
+
+shop.getInRadiusItem = function(pos, radius = 2) {
+    methods.debug('shop.fuel');
+    let shopId = null;
+    shop.list.forEach(function (item, idx) {
+        let shopPos = new mp.Vector3(item[0], item[1], item[2]);
+        if (methods.distanceToPos(pos, shopPos) < radius)
+            shopId = item;
     });
     return shopId;
 };
@@ -109,12 +128,66 @@ shop.checkPosForOpenMenu = function(player) {
     methods.debug('shop.checkPosForOpenMenu');
     try {
         let playerPos = player.position;
-        let shopId = shop.getInRadius(playerPos, 2);
-        if (shopId == -1)
+        let shopItem = shop.getInRadiusItem(playerPos, 2);
+        if (shopItem == null)
             return;
-        player.call('client:menuList:showShopMenu', [shopId, business.getPrice(shopId)]);
+        let shopId = shopItem[3];
+
+        console.log(shopItem);
+
+        switch (shopItem[4]) {
+            case 0:
+            case 4:
+                player.call('client:menuList:showShopMenu', [shopId, business.getPrice(shopId), shopItem[4]]);
+                break;
+            case 1:
+            case 2:
+            case 3:
+                player.call('client:menuList:showShopAlcMenu', [shopId, business.getPrice(shopId), shopItem[4]]);
+                break;
+            case 5:
+                player.call('client:menuList:showShopElMenu', [shopId, business.getPrice(shopId)]);
+                break;
+            case 6:
+                player.call('client:menuList:showShopMedMenu', [shopId, business.getPrice(shopId)]);
+                break;
+            case 7:
+                player.call('client:menuList:showShopFishMenu', [shopId, business.getPrice(shopId)]);
+                break;
+            case 8:
+                player.call('client:menuList:showShopHuntMenu', [shopId, business.getPrice(shopId)]);
+                break;
+        }
     }
     catch (e) {
         methods.debug(e);
     }
+};
+
+shop.buy = function(player, itemId, price, shopId) {
+    methods.debug('shop.buy');
+
+    if (!user.isLogin(player))
+        return;
+
+    if (user.getBankMoney(player) < price) {
+        player.notify('~r~У вас недостаточно средств на банковском счету');
+        return;
+    }
+
+    if (price < 1)
+        return;
+
+    let amount = inventory.getInvAmount(player, user.getId(player), 1);
+    if (amount + items.getItemAmountById(itemId) > 30000) {
+        player.notify('~r~В инвентаре нет места');
+        return;
+    }
+
+    inventory.addItem(itemId, 1, 1, user.getId(player), 1, 0, `{"userName": "${user.getRpName(player)}"}`, 1);
+
+    player.notify('~g~Вы купили ' + items.getItemNameById(itemId) +  ' по цене: ~s~' + methods.moneyFormat(price));
+    user.removeBankMoney(player, price, 'Покупка ' + items.getItemNameById(itemId));
+    business.addMoney(shopId, price, items.getItemNameById(itemId));
+    inventory.updateAmount(player, user.getId(player), 1);
 };

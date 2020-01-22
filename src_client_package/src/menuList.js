@@ -2213,23 +2213,23 @@ menuList.showFuelMenu = async function() {
     let list2 = ["1%", "5%", "10%", "FULL"];
 
     let itemPrice = 0.9 * price;
-    let listItem = UIMenu.Menu.AddMenuItemList("Бензин", list, `Цена: ~g~${methods.moneyFormat(itemPrice)}`);
+    let listItem = UIMenu.Menu.AddMenuItemList("Бензин", list, `Цена: ~g~${methods.moneyFormat(itemPrice)}~s~ за 1л.`);
     listItem.type = 1;
     listItem.price = itemPrice;
 
     itemPrice = 0.76 * price;
-    listItem = UIMenu.Menu.AddMenuItemList("Дизель", list, `Цена: ~g~${methods.moneyFormat(itemPrice)}`);
-    listItem.type = 1;
+    listItem = UIMenu.Menu.AddMenuItemList("Дизель", list, `Цена: ~g~${methods.moneyFormat(itemPrice)}~s~ за 1л.`);
+    listItem.type = 2;
     listItem.price = itemPrice;
 
     itemPrice = 0.3 * price;
-    listItem = UIMenu.Menu.AddMenuItemList("Электричество", list, `Цена: ~g~${methods.moneyFormat(itemPrice)}`);
-    listItem.type = 1;
+    listItem = UIMenu.Menu.AddMenuItemList("Электричество", list, `Цена: ~g~${methods.moneyFormat(itemPrice)}~s~ за 1%`);
+    listItem.type = 3;
     listItem.price = itemPrice;
 
     itemPrice = 1.2 * price;
-    listItem = UIMenu.Menu.AddMenuItemList("Авиатопливо", list, `Цена: ~g~${methods.moneyFormat(itemPrice)}`);
-    listItem.type = 1;
+    listItem = UIMenu.Menu.AddMenuItemList("Авиатопливо", list, `Цена: ~g~${methods.moneyFormat(itemPrice)}~s~ за 1л.`);
+    listItem.type = 4;
     listItem.price = itemPrice;
 
     itemPrice = 12 * price;
@@ -2655,6 +2655,224 @@ menuList.showBarberShopMenu = function (shopId) {
     });
 };
 
+menuList.showShopMenu = function(shopId, price = 1, type = 0)
+{
+    if (methods.isBlackout()) {
+        mp.game.ui.notifications.show(`~r~В городе отсутствует свет`);
+        return;
+    }
+
+    let title = "shopui_title_conveniencestore";
+    if (type == 4)
+        title = "shopui_title_gasstation";
+
+    let menu = UIMenu.Menu.Create(" ", "~b~Магазин", false, false, false, title, title);
+
+    enums.shopItems.forEach(itemId => {
+        let itemPrice = items.getItemPrice(itemId) * price;
+        let menuItem = UIMenu.Menu.AddMenuItem(items.getItemNameById(itemId), `Цена: ~g~${methods.moneyFormat(itemPrice)}`);
+        menuItem.price = itemPrice;
+        menuItem.itemId = itemId;
+    });
+
+    //UIMenu.Menu.AddMenuItem("~y~Ограбить").doName = 'grab';
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = "closeButton";
+    menu.ItemSelect.on(async (item, index) => {
+        UIMenu.Menu.HideMenu();
+        try {
+            if (item.price > 0)
+                mp.events.callRemote('server:shop:buy', item.itemId, item.price, shopId);
+            if (item.doName == 'grab') {
+                user.grab(shopId);
+            }
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    });
+};
+
+menuList.showShopAlcMenu = function(shopId, price = 1, type = 0)
+{
+    if (methods.isBlackout()) {
+        mp.game.ui.notifications.show(`~r~В городе отсутствует свет`);
+        return;
+    }
+
+    let title = "shopui_title_liquorstore";
+    if (type == 2)
+        title = "shopui_title_liquorstore2";
+    if (type == 3)
+        title = "shopui_title_liquorstore3";
+
+    methods.debug(title);
+    methods.debug(title);
+    methods.debug(title);
+
+    let menu = UIMenu.Menu.Create(" ", "~b~Магазин", false, false, false, title, title);
+
+    enums.shopAlcItems.forEach(itemId => {
+        let itemPrice = items.getItemPrice(itemId) * price;
+        let menuItem = UIMenu.Menu.AddMenuItem(items.getItemNameById(itemId), `Цена: ~g~${methods.moneyFormat(itemPrice)}`);
+        menuItem.price = itemPrice;
+        menuItem.itemId = itemId;
+    });
+
+    //UIMenu.Menu.AddMenuItem("~y~Ограбить").doName = 'grab';
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = "closeButton";
+    menu.ItemSelect.on(async (item, index) => {
+        UIMenu.Menu.HideMenu();
+        try {
+            if (item.price > 0)
+                mp.events.callRemote('server:shop:buy', item.itemId, item.price, shopId);
+            if (item.doName == 'grab') {
+                user.grab(shopId);
+            }
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    });
+};
+
+menuList.showShopElMenu = function(shopId, price = 1)
+{
+    if (methods.isBlackout()) {
+        mp.game.ui.notifications.show(`~r~В городе отсутствует свет`);
+        return;
+    }
+
+    let menu = UIMenu.Menu.Create("Digital Den", "~b~Магазин");
+
+    enums.shopElItems.forEach(itemId => {
+        let itemPrice = items.getItemPrice(itemId) * price;
+        let menuItem = UIMenu.Menu.AddMenuItem(items.getItemNameById(itemId), `Цена: ~g~${methods.moneyFormat(itemPrice)}`);
+        menuItem.price = itemPrice;
+        menuItem.itemId = itemId;
+    });
+
+    //UIMenu.Menu.AddMenuItem("~y~Ограбить").doName = 'grab';
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = "closeButton";
+    menu.ItemSelect.on(async (item, index) => {
+        UIMenu.Menu.HideMenu();
+        try {
+            if (item.price > 0)
+                mp.events.callRemote('server:shop:buy', item.itemId, item.price, shopId);
+            if (item.doName == 'grab') {
+                user.grab(shopId);
+            }
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    });
+};
+
+menuList.showShopMedMenu = function(shopId, price = 1)
+{
+    if (methods.isBlackout()) {
+        mp.game.ui.notifications.show(`~r~В городе отсутствует свет`);
+        return;
+    }
+
+    let menu = UIMenu.Menu.Create("Аптека", "~b~Магазин");
+
+    enums.shopMedItems.forEach(itemId => {
+        let itemPrice = items.getItemPrice(itemId) * price;
+        let menuItem = UIMenu.Menu.AddMenuItem(items.getItemNameById(itemId), `Цена: ~g~${methods.moneyFormat(itemPrice)}`);
+        menuItem.price = itemPrice;
+        menuItem.itemId = itemId;
+    });
+
+    //UIMenu.Menu.AddMenuItem("~y~Ограбить").doName = 'grab';
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = "closeButton";
+    menu.ItemSelect.on(async (item, index) => {
+        UIMenu.Menu.HideMenu();
+        try {
+            if (item.price > 0)
+                mp.events.callRemote('server:shop:buy', item.itemId, item.price, shopId);
+            if (item.doName == 'grab') {
+                user.grab(shopId);
+            }
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    });
+};
+
+menuList.showShopFishMenu = function(shopId, price = 1)
+{
+    if (methods.isBlackout()) {
+        mp.game.ui.notifications.show(`~r~В городе отсутствует свет`);
+        return;
+    }
+
+    let menu = UIMenu.Menu.Create("Магазин", "~b~Рыболовный магазин");
+
+    enums.shopFishItems.forEach(itemId => {
+        let itemPrice = items.getItemPrice(itemId) * price;
+        let menuItem = UIMenu.Menu.AddMenuItem(items.getItemNameById(itemId), `Цена: ~g~${methods.moneyFormat(itemPrice)}`);
+        menuItem.price = itemPrice;
+        menuItem.itemId = itemId;
+    });
+
+    //UIMenu.Menu.AddMenuItem("~y~Ограбить").doName = 'grab';
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = "closeButton";
+    menu.ItemSelect.on(async (item, index) => {
+        UIMenu.Menu.HideMenu();
+        try {
+            if (item.price > 0)
+                mp.events.callRemote('server:shop:buy', item.itemId, item.price, shopId);
+            if (item.doName == 'grab') {
+                user.grab(shopId);
+            }
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    });
+};
+
+menuList.showShopHuntMenu = function(shopId, price = 1)
+{
+    if (methods.isBlackout()) {
+        mp.game.ui.notifications.show(`~r~В городе отсутствует свет`);
+        return;
+    }
+
+    let menu = UIMenu.Menu.Create("Магазин", "~b~Охотничий магазин");
+
+    enums.shopHuntItems.forEach(itemId => {
+        let itemPrice = items.getItemPrice(itemId) * price;
+        let menuItem = UIMenu.Menu.AddMenuItem(items.getItemNameById(itemId), `Цена: ~g~${methods.moneyFormat(itemPrice)}`);
+        menuItem.price = itemPrice;
+        menuItem.itemId = itemId;
+    });
+
+    //UIMenu.Menu.AddMenuItem("~y~Ограбить").doName = 'grab';
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = "closeButton";
+    menu.ItemSelect.on(async (item, index) => {
+        UIMenu.Menu.HideMenu();
+        try {
+            if (item.price > 0)
+                mp.events.callRemote('server:shop:buy', item.itemId, item.price, shopId);
+            if (item.doName == 'grab') {
+                user.grab(shopId);
+            }
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    });
+};
+
 menuList.showBarMenu = function(shopId, price = 1)
 {
     if (methods.isBlackout()) {
@@ -2896,6 +3114,11 @@ menuList.showShopClothMenu = function (shopId, type, menuType) {
             return;
         }
 
+
+        let subTitle = "Vangelico";
+        if (shopId == 129)
+            subTitle = "HuntingStore";
+
         let title1 = "commonmenu";
         let title2 = "interaction_bgd";
 
@@ -2922,7 +3145,7 @@ menuList.showShopClothMenu = function (shopId, type, menuType) {
                 break;
         }
 
-        let menu = UIMenu.Menu.Create(title1 != "commonmenu" ? " " : "Vangelico", "~b~Магазин", true, false, false, title1, title2);
+        let menu = UIMenu.Menu.Create(title1 != "commonmenu" ? " " : subTitle, "~b~Магазин", true, false, false, title1, title2);
 
         /*if (menuType == 5) {
             UIMenu.Menu.AddMenuItem("Бейсбольная бита", "Цена: ~g~$100").doName = "baseballBat";
@@ -3116,40 +3339,49 @@ menuList.showShopClothBagMenu = function (shopId, type, menuType) {
                 break;
         }
 
-        let menu = UIMenu.Menu.Create(title1 != "commonmenu" ? " " : "Vangelico", "~b~Магазин", true, false, false, title1, title2);
+        let subTitle = "Vangelico";
+        if (shopId == 129)
+            subTitle = "HuntingStore";
 
-        let list = ['Черная', 'Синяя', 'Желтая', 'Розовая', 'Зелёная', 'Оранжевая', 'Фиолетовая', 'Светло-розовая', 'Красно-синяя', 'Голубая', 'Цифра', 'Флора', 'Синяя флора', 'Узор', 'Пустынная', 'Камо', 'Белая'];
-        let menuListItem = UIMenu.Menu.AddMenuItemList('Спортивная сумка', list, `Цена: ~g~${(methods.moneyFormat(2000))}`);
-        menuListItem.id1 = 5;
-        menuListItem.id2 = 82;
-        menuListItem.id4 = 0;
-        menuListItem.id5 = 0;
-        menuListItem.id6 = 0;
-        menuListItem.id7 = 0;
-        menuListItem.id8 = 2000;
-        menuListItem.itemName = 'Спортивная сумка';
+        let menu = UIMenu.Menu.Create(title1 != "commonmenu" ? " " : subTitle, "~b~Магазин", true, false, false, title1, title2);
 
-        list = ['Обычная'];
-        menuListItem = UIMenu.Menu.AddMenuItemList('Спортивная сумка', list, `Цена: ~g~${(methods.moneyFormat(1500))}`);
-        menuListItem.id1 = 5;
-        menuListItem.id2 = 41;
-        menuListItem.id4 = 0;
-        menuListItem.id5 = 0;
-        menuListItem.id6 = 0;
-        menuListItem.id7 = 0;
-        menuListItem.id8 = 1500;
-        menuListItem.itemName = 'Спортивная сумка';
+        let list = [];
+        let menuListItem = null;
 
-        list = ['Обычная чёрная'];
-        menuListItem = UIMenu.Menu.AddMenuItemList('Спортивная сумка', list, `Цена: ~g~${(methods.moneyFormat(1500))}`);
-        menuListItem.id1 = 5;
-        menuListItem.id2 = 45;
-        menuListItem.id4 = 0;
-        menuListItem.id5 = 0;
-        menuListItem.id6 = 0;
-        menuListItem.id7 = 0;
-        menuListItem.id8 = 1500;
-        menuListItem.itemName = 'Спортивная сумка';
+        if (shopId == 129) {
+            list = ['Черная', 'Синяя', 'Желтая', 'Розовая', 'Зелёная', 'Оранжевая', 'Фиолетовая', 'Светло-розовая', 'Красно-синяя', 'Голубая', 'Цифра', 'Флора', 'Синяя флора', 'Узор', 'Пустынная', 'Камо', 'Белая'];
+            menuListItem = UIMenu.Menu.AddMenuItemList('Спортивная сумка', list, `Цена: ~g~${(methods.moneyFormat(2000))}`);
+            menuListItem.id1 = 5;
+            menuListItem.id2 = 82;
+            menuListItem.id4 = 0;
+            menuListItem.id5 = 0;
+            menuListItem.id6 = 0;
+            menuListItem.id7 = 0;
+            menuListItem.id8 = 2000;
+            menuListItem.itemName = 'Спортивная сумка';
+
+            list = ['Обычная'];
+            menuListItem = UIMenu.Menu.AddMenuItemList('Спортивная сумка', list, `Цена: ~g~${(methods.moneyFormat(1500))}`);
+            menuListItem.id1 = 5;
+            menuListItem.id2 = 41;
+            menuListItem.id4 = 0;
+            menuListItem.id5 = 0;
+            menuListItem.id6 = 0;
+            menuListItem.id7 = 0;
+            menuListItem.id8 = 1500;
+            menuListItem.itemName = 'Спортивная сумка';
+
+            list = ['Обычная чёрная'];
+            menuListItem = UIMenu.Menu.AddMenuItemList('Спортивная сумка', list, `Цена: ~g~${(methods.moneyFormat(1500))}`);
+            menuListItem.id1 = 5;
+            menuListItem.id2 = 45;
+            menuListItem.id4 = 0;
+            menuListItem.id5 = 0;
+            menuListItem.id6 = 0;
+            menuListItem.id7 = 0;
+            menuListItem.id8 = 1500;
+            menuListItem.itemName = 'Спортивная сумка';
+        }
 
         list = [];
         for (let j = 0; j <= 0; j++) {
@@ -3248,13 +3480,10 @@ menuList.showShopClothBagMenu = function (shopId, type, menuType) {
                 if (item == currentListChangeItem) {
                     cloth.buy(item.id8, item.id1, item.id2, currentListChangeItemIndex, item.id4, item.id5, item.id6, item.id7, item.itemName, shopId);
                 }
-
                 if (item.doName == "closeButton") {
                     UIMenu.Menu.HideMenu();
                     user.updateCharacterCloth();
                 }
-                if (item.price > 0)
-                    mp.events.callRemote('server:shop:buy', item.itemId, item.price, shopId);
             } catch (e) {
                 methods.debug('Exception: menuList.showShopClothMenu menu.ItemSelect');
                 methods.debug(e);

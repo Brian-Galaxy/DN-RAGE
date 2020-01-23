@@ -87,7 +87,7 @@ business.has = function(id, key) {
 };
 
 business.getPrice = function(id) {
-    return business.get(id, 'price_product');
+    return methods.parseFloat(business.get(id, 'price_product'));
 };
 
 business.getName = function(id) {

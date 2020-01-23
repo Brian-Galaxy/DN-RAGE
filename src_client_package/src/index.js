@@ -26,6 +26,7 @@ import attachItems from "./manager/attachItems";
 
 import user from "./user";
 import enums from "./enums";
+import weather from "./manager/weather";
 
 try {
 
@@ -59,6 +60,8 @@ try {
 
     timer.loadAll();
     vBreakLight.timer();
+
+    weather.secSyncTimer();
 
     /*mp.events.add('guiReady', () => {
         ui.create();

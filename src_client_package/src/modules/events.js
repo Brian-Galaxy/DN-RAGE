@@ -614,10 +614,10 @@ mp.events.add('client:showCondoInMenu', (item) => {
     }
 });
 
-mp.events.add('client:menuList:showShopClothMenu', (component, clothColor, ClothData) => {
+mp.events.add('client:menuList:showShopClothMenu', (shopId, type, menuType, price) => {
     try {
         methods.debug('Event: client:menuList:showShopClothMenu');
-        menuList.showShopClothMenu(component, clothColor, ClothData);
+        menuList.showShopClothMenu(shopId, type, menuType, price);
     }
     catch (e) {
         methods.debug(e);
@@ -704,10 +704,10 @@ mp.events.add('client:menuList:showRentBikeMenu', (shopId, price) => {
     }
 });
 
-mp.events.add('client:menuList:showBarberShopMenu', (shopId) => {
+mp.events.add('client:menuList:showBarberShopMenu', (shopId, price) => {
     try {
         methods.debug('Event: client:menuList:showBarberShopMenu');
-        menuList.showBarberShopMenu(shopId);
+        menuList.showBarberShopMenu(shopId, price);
     }
     catch (e) {
         methods.debug(e);

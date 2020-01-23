@@ -1,4 +1,5 @@
 let methods = require('../modules/methods');
+let business = require('../property/business');
 
 let barberShop = exports;
 
@@ -39,7 +40,7 @@ barberShop.checkPosForOpenMenu = function(player) {
         let shopId = barberShop.getInRadius(playerPos, 2);
         if (shopId == -1)
             return;
-        player.call('client:menuList:showBarberShopMenu', [shopId]);
+        player.call('client:menuList:showBarberShopMenu', [shopId, business.getPrice(shopId)]);
     }
     catch (e) {
         methods.debug(e);

@@ -63,7 +63,7 @@ business.setMoney = function(id, money) {
 
 business.getMoney = async function(id) {
     try {
-        return methods.parseInt(await Container.Data.Get(-20000 + id, 'bank'));
+        return methods.parseFloat(await Container.Data.Get(-20000 + id, 'bank'));
     }
     catch (e) {
         methods.debug(e);
@@ -73,12 +73,19 @@ business.getMoney = async function(id) {
 
 business.getPrice = async function(id) {
     try {
-        return methods.parseInt(await Container.Data.Get(-20000 + id, 'price_product'));
+        return methods.parseFloat(await Container.Data.Get(-20000 + id, 'price_product'));
     }
     catch (e) {
         methods.debug(e);
         return 0;
     }
+};
+
+business.getSale = function(price) {
+    let newPrice = (price - 1) * 100;
+    if (newPrice <= 50)
+        return 50 - newPrice;
+    return 0;
 };
 
 business.setPrice = function(id, price) {

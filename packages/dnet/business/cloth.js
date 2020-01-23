@@ -77,7 +77,7 @@ cloth.checkPosForOpenMenu = function (player) {
 
         for (let i = 0; i < shopList.length; i++){
             if(methods.distanceToPos(playerPos, new mp.Vector3(shopList[i][3], shopList[i][4], shopList[i][5])) < 2.0){
-                player.call('client:menuList:showShopClothMenu', [shopList[i][1], shopList[i][0], shopList[i][2]]);
+                player.call('client:menuList:showShopClothMenu', [shopList[i][1], shopList[i][0], shopList[i][2], business.getPrice(shopList[i][1])]);
                 return;
             }
         }

@@ -67,6 +67,8 @@ mp.events.add('client:syncAnimation', async (playerId, dict, anim, flag) => {
 
             if (remotePlayer.vehicle && dict != 'cellphone@female')
                 return;
+            if (remotePlayer === mp.players.local && dict == 'dead')
+                return;
 
             if (remotePlayer === mp.players.local)
                 remotePlayer = mp.players.local;
@@ -147,7 +149,7 @@ mp.events.add('client:syncStopAnimation', (playerId) => {
                 Container.Data.ResetLocally(remotePlayer.remoteId, 'hasSeat');
             }
 
-            if (!remotePlayer.isInAir() && !remotePlayer.vehicle)
+            if (!remotePlayer.isInAir() && !remotePlayer.vehicle && remotePlayer.getHealth() > 0)
                 remotePlayer.clearTasksImmediately();
         }
     }

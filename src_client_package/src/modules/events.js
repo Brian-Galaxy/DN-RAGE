@@ -2,7 +2,9 @@
 
 import UIMenu from './menu';
 
+import Container from './data';
 import methods from './methods';
+
 import user from '../user';
 import menuList from '../menuList';
 import voice from "../voice";
@@ -15,6 +17,7 @@ import ui from "./ui";
 
 import checkpoint from "../manager/checkpoint";
 import weather from "../manager/weather";
+import timer from "../manager/timer";
 
 import vehicles from "../property/vehicles";
 import weapons from "../weapons";
@@ -1986,6 +1989,33 @@ mp.keys.bind(0x08, true, function() {
         return;
     ui.callCef('license', JSON.stringify({type: 'hide'}));
     ui.callCef('certificate', JSON.stringify({type: 'hide'}));
+});
+
+
+mp.events.add("playerDeath", function (player, reason, killer) {
+    UIMenu.Menu.HideMenu();
+    inventory.hide();
+    phone.hide();
+
+    ui.callCef('license', JSON.stringify({type: 'hide'}));
+    ui.callCef('certificate', JSON.stringify({type: 'hide'}));
+
+    mp.game.gameplay.disableAutomaticRespawn(true);
+    mp.game.gameplay.ignoreNextRestart(true);
+    mp.game.gameplay.setFadeInAfterDeathArrest(true);
+    mp.game.gameplay.setFadeOutAfterDeath(false);
+
+    user.stopAllScreenEffect();
+
+    mp.players.local.freezePosition(false);
+    mp.players.local.setCollision(true, true);
+
+    Container.Data.ResetLocally(0, 'hasSeat');
+    Container.Data.ResetLocally(0, "canRun");
+
+    timer.setDeathTimer(30);
+    if (player.getVariable('enableAdmin'))
+        timer.setDeathTimer(10);
 });
 
 // Commands in 2020......

@@ -280,6 +280,14 @@ user.kickAntiCheat = function(reason, title = 'Вы были кикнуты.') {
     methods.debug(reason, title);
 };
 
+user.respawn = function(x, y, z) {
+    user.isTeleport = true;
+    mp.events.callRemote('server:user:respawn', x, y, z);
+    setTimeout(function () {
+        user.isTeleport = false;
+    }, 1500);
+};
+
 user.teleportv = function(pos, rot) {
     user.isTeleport = true;
     mp.game.streaming.requestCollisionAtCoord(pos.x, pos.y, pos.z);

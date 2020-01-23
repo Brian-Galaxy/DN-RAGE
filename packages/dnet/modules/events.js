@@ -146,6 +146,12 @@ mp.events.add('server:clientDebug', (player, message) => {
     }
 });
 
+mp.events.addRemoteCounted('server:user:respawn', (player, x, y, z) => {
+    if (!user.isLogin(player))
+        return;
+    player.spawn(new mp.Vector3(x, y, z));
+});
+
 mp.events.addRemoteCounted('server:user:createAccount', (player, login, password, email) => {
     try {
         user.createAccount(player, login, password, email);
@@ -2718,6 +2724,15 @@ mp.events.add("playerDeath", (player, reason, killer) => {
                 }
             }
         });
+    }
+});
+
+mp.events.addRemoteCounted("playerDeathDone", (player) => {
+    if (user.isLogin(player)) {
+        if (user.has(player, 'killerInJail') && user.get(player, 'killerInJail')) {
+            //user.jail(player, user.get(player, 'wanted_level') * 600); //TODO JAIL
+            player.outputChatBox('!{#FFC107}Вас привезли в больницу с огнестрельным ранением и у врачей возникли подозрения, поэтому они сделали запрос в SAPD и сотрудники SAPD выяснили, что у вас есть розыск. После лечения вы отправились в тюрьму.');
+        }
     }
 });
 

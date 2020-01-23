@@ -35,7 +35,7 @@
     var i;
     s.r(t),
         function(e) {
-            e[e.None = 0] = "None", e[e.BronzeMedal = 1] = "BronzeMedal", e[e.GoldMedal = 2] = "GoldMedal", e[e.SilverMedal = 3] = "SilverMedal", e[e.Alert = 4] = "Alert", e[e.Crown = 5] = "Crown", e[e.Ammo = 6] = "Ammo", e[e.Armour = 7] = "Armour", e[e.Barber = 8] = "Barber", e[e.Clothes = 9] = "Clothes", e[e.Franklin = 10] = "Franklin", e[e.Bike = 11] = "Bike", e[e.Car = 12] = "Car", e[e.Gun = 13] = "Gun", e[e.Heart = 14] = "Heart", e[e.Makeup = 15] = "Makeup", e[e.Mask = 16] = "Mask", e[e.Michael = 17] = "Michael", e[e.Star = 18] = "Star", e[e.Tatoo = 19] = "Tatoo", e[e.Trevor = 20] = "Trevor", e[e.Lock = 21] = "Lock", e[e.Tick = 22] = "Tick"
+            e[e.None = 0] = "None", e[e.BronzeMedal = 1] = "BronzeMedal", e[e.GoldMedal = 2] = "GoldMedal", e[e.SilverMedal = 3] = "SilverMedal", e[e.Alert = 4] = "Alert", e[e.Crown = 5] = "Crown", e[e.Ammo = 6] = "Ammo", e[e.Armour = 7] = "Armour", e[e.Barber = 8] = "Barber", e[e.Clothes = 9] = "Clothes", e[e.Franklin = 10] = "Franklin", e[e.Bike = 11] = "Bike", e[e.Car = 12] = "Car", e[e.Gun = 13] = "Gun", e[e.Heart = 14] = "Heart", e[e.Makeup = 15] = "Makeup", e[e.Mask = 16] = "Mask", e[e.Michael = 17] = "Michael", e[e.Star = 18] = "Star", e[e.Tatoo = 19] = "Tatoo", e[e.Trevor = 20] = "Trevor", e[e.Lock = 21] = "Lock", e[e.Tick = 22] = "Tick", e[e.Art = 23] = "Art", e[e.Clubs = 24] = "Clubs", e[e.Diamonds = 25] = "Diamonds", e[e.Spades = 26] = "Spades", e[e.Sale = 27] = "Sale"
         }(i || (i = {}));
     var n, h = i;
     ! function(e) {
@@ -151,7 +151,9 @@
             !e || t || s || i || n || h || (t = new u(this.pos.X + e.Width, this.pos.Y + e.Height), s = this.scale, i = this.color, n = this.font, h = this.centered);
             const o = t.X / 1280,
                 r = t.Y / 720;
-            mp.game.ui.setTextFont(parseInt(n)), mp.game.ui.setTextScale(s, s), mp.game.ui.setTextColour(i.R, i.G, i.B, i.A), mp.game.ui.setTextCentre(h), mp.game.ui.setTextEntry("STRING"), mp.game.ui.addTextComponentSubstringPlayerName(e), mp.game.ui.drawText(o, r)
+            mp.game.ui.setTextFont(parseInt(n)), mp.game.ui.setTextScale(s, s), mp.game.ui.setTextColour(i.R, i.G, i.B, i.A), mp.game.ui.setTextCentre(h), mp.game.ui.setTextEntry("STRING");
+            mp.game.ui.addTextComponentSubstringPlayerName(e);
+            mp.game.ui.drawText(o, r);
         }
     }
     exports = _,
@@ -184,11 +186,13 @@
                     mp.game.ui.setTextWrap(_, e)
                 }
             }
-            mp.game.ui.setTextEntry("STRING"), mp.game.ui.addTextComponentSubstringPlayerName(c), mp.game.ui.drawText(_, p)
+            mp.game.ui.setTextEntry("STRING");
+            mp.game.ui.addTextComponentSubstringPlayerName(c);
+            mp.game.ui.drawText(_, p)
         }
         static AddLongString(e) {
-            for (var t = 0; t < e.length; t += 99) {
-                e.substr(t, Math.min(99, e.length - t))
+            for (var t = 0; t < e.length; t += 50) {
+                e.substr(t, Math.min(50, e.length - t))
             }
         }
     }
@@ -227,6 +231,10 @@
             this.RightLabel = e
         }
         BadgeToSpriteLib(e) {
+            switch (e) {
+                case h.Sale:
+                    return "mpshopsale"
+            }
             return "commonmenu"
         }
         BadgeToSpriteName(e, t) {
@@ -272,11 +280,23 @@
                 case h.Star:
                     return "shop_new_star";
                 case h.Tatoo:
-                    return t ? "shop_tattoos_icon_b" : "shop_tattoos_icon_";
+                    return t ? "shop_tattoos_icon_b" : "shop_tattoos_icon_a";
                 case h.Tick:
                     return "shop_tick_icon";
                 case h.Trevor:
                     return t ? "shop_trevor_icon_b" : "shop_trevor_icon_a";
+                case h.Art:
+                    return t ? "shop_art_icon_b" : "shop_art_icon_a";
+                case h.Clubs:
+                    return "card_suit_clubs";
+                case h.Diamonds:
+                    return "card_suit_diamonds";
+                case h.Hearts:
+                    return "card_suit_hearts";
+                case h.Spades:
+                    return "card_suit_spades";
+                case h.Sale:
+                    return "saleicon";
                 default:
                     return ""
             }
@@ -744,7 +764,10 @@
                     let e = this.MenuItems[this._activeItem % this.MenuItems.length].Description;
                     this._descriptionText.caption = e;
                     const t = this._descriptionText.caption.split("\n").length;
-                    this._descriptionRectangle.size = new m(431 + this.WidthOffset, 25 * t + 15), this._descriptionBar.Draw(), this._descriptionRectangle.Draw(), this._descriptionText.Draw()
+
+                    if (e.trim() != "") {
+                        this._descriptionRectangle.size = new m(431 + this.WidthOffset, 25 * t + 15), this._descriptionBar.Draw(), this._descriptionRectangle.Draw(), this._descriptionText.Draw()
+                    }
                 }
                 if (this.MenuItems.length <= this.MaxItemsOnScreen + 1) {
                     let e = 0;

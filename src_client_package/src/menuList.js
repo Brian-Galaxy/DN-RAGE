@@ -2737,6 +2737,8 @@ menuList.showShopMenu = function(shopId, price = 2, type = 0)
         let menuItem = UIMenu.Menu.AddMenuItem(items.getItemNameById(itemId), `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`);
         menuItem.price = itemPrice;
         menuItem.itemId = itemId;
+        if (sale > 0)
+            menuItem.SetLeftBadge(27);
     });
 
     //UIMenu.Menu.AddMenuItem("~y~Ограбить").doName = 'grab';
@@ -5929,7 +5931,10 @@ menuList.showAdminDebugMenu = function() {
 
 menuList.showAdminDebug2Menu = function() {
     let menu = UIMenu.Menu.Create(`Admin`, `~b~Debug`);
-    
+
+    //for (let i = 0; i < 50; i++)
+    //    UIMenu.Menu.AddMenuItem("openPhone").SetRightBadge(i);
+
     UIMenu.Menu.AddMenuItem("openPhone").create = true;
     UIMenu.Menu.AddMenuItem("rotatePhoneV").rotatePhoneV = true;
     UIMenu.Menu.AddMenuItem("rotatePhoneH").rotatePhoneH = true;

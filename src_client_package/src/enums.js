@@ -117,7 +117,7 @@ enums.gunShopItems = [
 
 enums.shopItems = [
     11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 241, 242,
-    26, 4, 5, 6, 253
+    26, 4, 6, 253
 ];
 
 enums.shopAlcItems = [

@@ -1,6 +1,8 @@
 import user from "../user";
 import weapons from "../weapons";
 import inventory from "../inventory";
+import phone from "../phone";
+import enums from "../enums";
 
 import methods from "../modules/methods";
 import Container from "../modules/data";
@@ -11,10 +13,9 @@ import checkpoint from "./checkpoint";
 import vehicles from "../property/vehicles";
 
 import vSync from "./vSync";
-import enums from "../enums";
 import license from "./license";
 import weather from './weather';
-import phone from "../phone";
+import hosp from './hosp';
 
 import fuel from "../business/fuel";
 
@@ -38,10 +39,7 @@ let timer = {};
 
 timer.setDeathTimer = function(sec) {
     deathTimer = sec;
-    /*if (sec > 0) //TODO
-        ui.showDeathTimer();
-    else
-        ui.hideDeathTimer();*/
+    ui.showSubtitle(`Время до возрождения~g~ ${deathTimer} ~s~сек.`);
 };
 
 timer.getDeathTimer = function() {
@@ -313,59 +311,10 @@ timer.secTimer = function() {
         ui.updateValues();
 
         if (deathTimer > 0) {
-            deathTimer--;
+            timer.setDeathTimer(deathTimer - 1);
 
-            //ui.updateDeathTimer(deathTimer); //TODO
-
-            if (deathTimer == 0) {
-                user.showLoadDisplay();
-
-                timer.setDeathTimer(0);
-
-                let hospPos = new mp.Vector3(294.3142, -1350.633, 23.53781);
-                //mp.players.local.resurrect();
-                mp.players.local.clearBloodDamage();
-                //mp.players.local.position = hospPos;
-                //mp.players.local.health = 100;
-                mp.players.local.freezePosition(false);
-
-                // Перестраховочка
-                /*if (!user.isGos())
-                    user.removeAllWeapons();
-                else if ((weather.getHour() > 20 || weather.getHour() < 6) && user.isGos())
-                    user.removeAllWeapons();
-
-                if (user.isSheriff())
-                    user.respawn(-242.5556, 6326.2358, 31.4261);
-                else
-                    user.respawn(288.61148, -1345.5358, 23.5378017);*/
-
-                user.setVirtualWorld(0);
-
-                mp.game.ui.displayRadar(true);
-                mp.game.ui.displayHud(true);
-                //mp.game.ui.setMinimapVisible(false);
-
-                /*if (user.getCache('jail_time') == 0) {  //TODO
-                    if (!user.isSheriff() && !user.isAdmin()) {
-                        if (user.getCache('med_lic'))
-                            user.setData('med_time', 200);
-                        else
-                            user.setData('med_time', 500);
-                    }
-                }*/
-
-                mp.events.callRemote('playerDeathDone');
-
-                user.setGrabMoney(0);
-                /*user.unCuff(); //TODO
-                user.unTie();*/
-
-                setTimeout(function () {
-                    user.hideLoadDisplay();
-                }, 1000);
-            }
-
+            if (deathTimer == 0)
+                hosp.toHosp();
             if (!user.isDead())
                 timer.setDeathTimer(0);
         }

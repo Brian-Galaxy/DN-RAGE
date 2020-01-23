@@ -27,6 +27,7 @@ import attachItems from "./manager/attachItems";
 import user from "./user";
 import enums from "./enums";
 import weather from "./manager/weather";
+import hosp from "./manager/hosp";
 
 try {
 
@@ -44,6 +45,8 @@ try {
     mp.gui.cursor.show(true, true);
 
     ui.create();
+
+    hosp.timer();
 
     user.init();
     methods.requestIpls();

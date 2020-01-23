@@ -941,6 +941,22 @@ mp.events.add('client:handcuffs', (value) => {
     }
 });
 
+mp.events.add('client:user:addDrugLevel', (drugType, level) => {
+    user.addDrugLevel(drugType, level);
+});
+
+mp.events.add('client:user:removeDrugLevel', (drugType, level) => {
+    user.removeDrugLevel(drugType, level);
+});
+
+mp.events.add('client:user:setDrugLevel', (drugType, level) => {
+    user.setDrugLevel(drugType, level);
+});
+
+mp.events.add('client:user:stopAllScreenEffects', () => {
+    user.stopAllAnimation();
+});
+
 mp.events.add('client:user:askDatingToPlayerId', (playerId, nick) => {
     menuList.showPlayerDatingAskMenu(playerId, nick);
 });
@@ -1179,6 +1195,10 @@ mp.events.add('client:inventory:giveItemMenu', function() {
     }catch (e) {
         methods.debug(e);
     }
+});
+
+mp.events.add('client:inventory:use', function(id, itemId) {
+    inventory.useItem(id, itemId);
 });
 
 mp.events.add('client:inventory:moveTo', function(id, itemId, ownerId, ownerType) {

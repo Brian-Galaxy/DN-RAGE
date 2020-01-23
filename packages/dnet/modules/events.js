@@ -788,11 +788,24 @@ mp.events.addRemoteCounted('server:user:unTieById', (player, targetId) => {
         return;
 
     let target = mp.players.at(targetId);
-
     if (mp.players.exists(target)) {
         user.stopAnimation(target);
         user.playAnimation(player, "mp_arresting", "a_uncuff", 8);
         user.unTie(target);
+    }
+    else
+        player.notify('~r~Рядом с вами никого нет');
+});
+
+mp.events.addRemoteCounted('server:user:knockById', (player, targetId) => { //TODO
+    if (!user.isLogin(player))
+        return;
+
+    let target = mp.players.at(targetId);
+    if (mp.players.exists(target)) {
+        user.set(target, 'isKnockout', true);
+        user.playAnimation(target, "amb@world_human_bum_slumped@male@laying_on_right_side@base", "base", 9);
+        chat.sendMeCommand(player, "замахнулся кулаком и ударил человека напротив");
     }
     else
         player.notify('~r~Рядом с вами никого нет');
@@ -1335,6 +1348,10 @@ mp.events.addRemoteCounted('server:inventory:deleteDropItem', (player, id) => {
 
 mp.events.addRemoteCounted('server:inventory:deleteItem', (player, id) => {
     inventory.deleteItem(id);
+});
+
+mp.events.addRemoteCounted('server:inventory:useItem', (player, id, itemId) => {
+    inventory.useItem(player, id, itemId);
 });
 
 mp.events.addRemoteCounted("onKeyPress:2", (player) => {

@@ -187,14 +187,8 @@ pickups.EatPrisonPos = new mp.Vector3(1753.543, 2566.54, 44.56501);
 pickups.ClothMaskPos = new mp.Vector3(-1337.255, -1277.948, 3.872962);
 
 /*Jobs*/
-pickups.RoadWorkerStartPos = new mp.Vector3(52.84556, -722.4211, 30.7647);
-pickups.MainerStartPos = new mp.Vector3(2947.1118, 2745.2358, 42.37148);
-
-pickups.BuilderStartPos = new mp.Vector3(-142.2255, -936.2115, 28.29189);
 pickups.BuilderUpPos = new mp.Vector3(-155.5601, -945.4041, 268.1353);
 pickups.BuilderDownPos = new mp.Vector3(-163.4722, -942.6283, 28.28476);
-
-pickups.CleanerStartPos = new mp.Vector3(-1539.165, -448.0839, 34.88203);
 
 pickups.SpawnHelpPos = new mp.Vector3(-1026.957, -2734.395, 13.75665);
 
@@ -611,15 +605,10 @@ pickups.createPickups = function() {
     //Cloth
     //methods.createStaticCheckpointV(pickups.ClothMaskPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
 
-    //RoadWorker
-    methods.createStaticCheckpointV(pickups.RoadWorkerStartPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
-    methods.createStaticCheckpointV(pickups.MainerStartPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
 
     //Builder
-    methods.createStaticCheckpointV(pickups.BuilderStartPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
     methods.createStaticCheckpointV(pickups.BuilderUpPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
     methods.createStaticCheckpointV(pickups.BuilderDownPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-    methods.createStaticCheckpointV(pickups.CleanerStartPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
 
     //
     //methods.createStaticCheckpointV(pickups.GrabPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);

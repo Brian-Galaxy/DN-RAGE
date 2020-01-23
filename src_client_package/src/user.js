@@ -841,6 +841,62 @@ user.getDrugLevel = function(type) {
     return methods.parseInt(Container.Data.GetLocally(0, 'DrugLevel' + type));
 };
 
+// Water Level
+user.addWaterLevel = function(level) {
+    if (user.getWaterLevel() + level > 1000) {
+        user.setWaterLevel(1000);
+        return true;
+    }
+    user.setWaterLevel(user.getWaterLevel() + level);
+    return true
+};
+
+user.removeWaterLevel = function(level) {
+    if (user.getWaterLevel() - level < 0) {
+        user.setWaterLevel(0);
+        return true;
+    }
+    user.setWaterLevel(user.getWaterLevel() - level);
+    return true;
+};
+
+user.setWaterLevel = function(level) {
+    user.set("water_level", level);
+    return true;
+};
+
+user.getWaterLevel = function() {
+    return user.getCache("water_level");
+};
+
+// Eat Level
+user.addEatLevel = function(level) {
+    if (user.getEatLevel() + level > 1000) {
+        user.setEatLevel(1000);
+        return true;
+    }
+    user.setEatLevel(user.getEatLevel() + level);
+    return true
+};
+
+user.removeEatLevel = function(level) {
+    if (user.getEatLevel() - level < 0) {
+        user.setEatLevel(0);
+        return true;
+    }
+    user.setEatLevel(user.getEatLevel() - level);
+    return true;
+};
+
+user.setEatLevel = function(level) {
+    user.set("eat_level", level);
+    return true;
+};
+
+user.getEatLevel = function() {
+    return user.getCache("eat_level");
+};
+
 user.isLogin = function(){
     return _isLogin;
 };

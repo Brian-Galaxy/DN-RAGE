@@ -110,8 +110,8 @@ ui.updateValues = function() {
             data = {
                 type: 'updateValues',
                 microphone : voice.isEnabledMicrophone(),
-                drink: 100,
-                eat: 100,
+                drink: user.getWaterLevel() / 10,
+                eat: user.getEatLevel() / 10,
                 wallet: methods.moneyFormat(user.getCashMoney(), 999999999999),
                 card: user.getCache('bank_card') > 0 ? methods.moneyFormat(user.getBankMoney(), 9999999999999) : 'Нет карты',
             };

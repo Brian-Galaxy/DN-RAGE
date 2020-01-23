@@ -421,7 +421,7 @@ vehicles.getSpeedBoost = (model) => {
         case 'Tropos': return 30;
         case 'FlashGT': return 30;
         case 'Surrano': return 30;
-        case 'Jugular': return 30;
+        case 'Jugular': return 20;
         case 'Verlierer2': return 20;
         case 'Specter': return 35;
         case 'Specter2': return 39;

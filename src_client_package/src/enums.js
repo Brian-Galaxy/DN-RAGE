@@ -137,7 +137,7 @@ enums.shopFishItems = [
 ];
 
 enums.shopHuntItems = [
-    0, 1, 59, 63, 241, 242, 11, 13, 26
+    0, 1, 59, 63, 241, 242, 11, 13, 26, 4, 5, 6
 ];
 
 enums.lscClassPrice = [

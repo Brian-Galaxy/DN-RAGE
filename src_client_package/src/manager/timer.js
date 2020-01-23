@@ -50,84 +50,95 @@ timer.getDeathTimer = function() {
 
 timer.updateTempLevel = function() {
 
-    //TODO
-    /*if (weather.getWeatherTemp() < 20 && user.getCache('torso') == 15) {
-        mp.game.ui.notifications.show("~y~У Вас замерз торс");
-        mp.players.local.health = mp.players.local.health - 1;
-        return;
-    }*/
+    let clothList = user.getSex() == 1 ? JSON.parse(enums.get('clothF')) : JSON.parse(enums.get('clothM'));
 
-    /*let clothList = user.getSex() == 1 ? JSON.parse(enums.get('clothF')) : JSON.parse(enums.get('clothM'));
+    if (weather.getWeatherTemp() < 18 && user.getCache('torso') == 15) {
+        mp.game.ui.notifications.show("~y~У Вас замерз торс");
+        mp.players.local.setHealth(mp.players.local.getHealth() + 100 - 2);
+        return;
+    }
+    else {
+        for (let i = 0; i < clothList.length; i++) {
+            if (clothList[i][1] != 11) continue;
+            if (clothList[i][2] != user.getCache('body')) continue;
+            if (clothList[i][10] > weather.getWeatherTemp())
+            {
+                mp.game.ui.notifications.show("~y~У Вас замерз торс");
+                mp.players.local.setHealth(mp.players.local.getHealth() + 100 - 1);
+                break;
+            }
+        }
+    }
 
     for (let i = 0; i < clothList.length; i++) {
-        if (clothList[i][1] != 11) continue;
-        if (clothList[i][0] != 0) continue;
-        if (clothList[i][10] > weather.getWeatherTemp())
-        {
-            mp.game.ui.notifications.show("~y~У Вас замерз торс");
-            mp.players.local.health = mp.players.local.health - 1;
-            break;
-        }
-        if (clothList[i][10] < weather.getWeatherTemp())
-        {
-            mp.game.ui.notifications.show("~y~Вашему торсу жарко");
-            break;
-        }
-    }*/
-
-    /*for (let i = 0; i < clothList.length; i++) {
         if (clothList[i][1] != 4) continue;
-        if (clothList[i][0] != 0) continue;
+        if (clothList[i][2] != user.getCache('leg')) continue;
         if (clothList[i][10] > weather.getWeatherTemp())
         {
             mp.game.ui.notifications.show("~y~У Вас замерзли ноги");
-            mp.players.local.health = mp.players.local.health - 1;
+            mp.players.local.setHealth(mp.players.local.getHealth() + 100 - 1);
             break;
         }
-        if (clothList[i][10] < weather.getWeatherTemp())
-        {
-            mp.game.ui.notifications.show("~y~Вашим ногам жарко");
-            break;
-        }
-    }*/
+    }
 
-    /*for (let i = 0; i < clothList.length; i++) {
+    for (let i = 0; i < clothList.length; i++) {
         if (clothList[i][1] != 6) continue;
-        if (clothList[i][0] != 0) continue;
+        if (clothList[i][2] != user.getCache('foot')) continue;
         if (clothList[i][10] > weather.getWeatherTemp())
         {
             mp.game.ui.notifications.show("~y~У Вас замерзли ступни");
-            mp.players.local.health = mp.players.local.health - 1;
+            mp.players.local.setHealth(mp.players.local.getHealth() + 100 - 1);
             break;
         }
-    }*/
+    }
+};
+
+timer.updateEatLevel = function() {
+    if (user.isLogin()) {
+        user.removeEatLevel(10);
+        user.removeWaterLevel(10);
+
+        if (user.getEatLevel() < 10)
+            mp.players.local.setHealth(mp.players.local.getHealth() + 100 - 5);
+        if (user.getWaterLevel() < 10)
+            mp.players.local.setHealth(mp.players.local.getHealth() + 100 - 5);
+    }
 };
 
 timer.twoMinTimer = function() {
     //methods.showHelpNotify();
 
-    /*let veh = mp.players.local.vehicle; //TODO
+    let veh = mp.players.local.vehicle; //TODO
     if (veh && mp.vehicles.exists(veh) && veh.getClass() == 18 && !user.isGos()) {
         if (veh.getPedInSeat(-1) == mp.players.local.handle) {
             user.giveWanted(10, 'Угон служебного ТС');
             //dispatcher.send(`Код 0`, `Неизвестный угнал служебный трансопрт`);
         }
-    }*/
+    }
 
-    setTimeout(timer.twoMinTimer, 1000 * 60 * 2);
+    timer.updateEatLevel();
 
-    return;
-
-    /*if (user.isLogin() && user.getCache('jail_time') < 1) {
-
-        if (mp.players.local.vehicle)
-        {
-            if (methods.getVehicleInfo(mp.players.local.vehicle.model).class_name == "Cycles" || methods.getVehicleInfo(mp.players.local.vehicle.model).class_name == "Boats" || methods.getVehicleInfo(mp.players.local.vehicle.model).class_name == "Motorcycles")
+    try {
+        if (user.isLogin() && user.getCache('jail_time') < 1) {
+            if (mp.players.local.vehicle)
+            {
+                if (methods.getVehicleInfo(mp.players.local.vehicle.model).class_name == "Cycles" ||
+                    methods.getVehicleInfo(mp.players.local.vehicle.model).class_name == "Boats" ||
+                    methods.getVehicleInfo(mp.players.local.vehicle.model).class_name == "Motorcycles"
+                )
+                    timer.updateTempLevel();
+            }
+            else if (
+                mp.players.local.dimension == 0 &&
+                mp.game.interior.getInteriorAtCoords(mp.players.local.position.x, mp.players.local.position.y, mp.players.local.position.z) == 0
+            )
                 timer.updateTempLevel();
         }
-        else if (mp.players.local.dimension == 0 && mp.game.interior.getInteriorAtCoords(mp.players.local.position.x, mp.players.local.position.y, mp.players.local.position.z) == 0)
-            timer.updateTempLevel();
-    }*/
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+    setTimeout(timer.twoMinTimer, 1000 * 60 * 2);
 };
 
 timer.oneMinTimer = function() {
@@ -183,6 +194,7 @@ timer.ms50Timer = function() {
 timer.twoSecTimer = function() {
 
     try {
+
         let plPos = mp.players.local.position;
 
         EntityFleeca = mp.game.object.getClosestObjectOfType(plPos.x, plPos.y, plPos.z, 0.68, 506770882, false, false, false);
@@ -211,6 +223,12 @@ timer.twoSecTimer = function() {
                 user.kickAntiCheat('GodMode');
             }
         }
+
+        let drawId = mp.players.local.getPropIndex(0);
+        if (user.getSex() == 1 && drawId != 116 && drawId != 118)
+            mp.game.graphics.setNightvision(false);
+        if (user.getSex() == 0 && drawId != 117 && drawId != 119)
+            mp.game.graphics.setNightvision(false);
     }
     catch (e) {
         methods.debug(e);

@@ -1,10 +1,11 @@
 let Container = require('./modules/data');
 let mysql = require('./modules/mysql');
-
 let methods = require('./modules/methods');
-let weather = require('./managers/weather');
-//let dispatcher = require('./managers/dispatcher');
 let chat = require('./modules/chat');
+
+let weather = require('./managers/weather');
+let vSync = require('./managers/vSync');
+//let dispatcher = require('./managers/dispatcher');
 
 let user = require('./user');
 let enums = require('./enums');
@@ -312,65 +313,35 @@ inventory.useItem = function(player, id, itemId) {
         {
             case 0:
             {
-                var nplayer = methods.getNearestPlayerWithPlayer(player, 1.5);
-                if (!user.isLogin(nplayer))
+                let target = methods.getNearestPlayerWithPlayer(player, 1.5);
+                if (!user.isLogin(target))
                 {
                     player.notify("~r~Рядом с вами никого нет");
                     return;
                 }
 
-                if (nplayer.getVariable("isTie"))
+                if (user.isTie(target))
                 {
-                    user.unTie(nplayer)
-                    player.notify("~y~Вы развязали игрока");
-                    chat.sendMeCommand(player, "развязал человека рядом");
-                    inventory.addItem(itemId, 1, inventory.types.Player, user_id, 1, -1, -1, -1);
+                    user.stopAnimation(target);
+                    user.playAnimation(player, "mp_arresting", "a_uncuff", 8);
+                    user.unTie(target);
+                    chat.sendMeCommand(player, "снял стяжки с человека напротив");
                 }
                 else
                 {
-                    if (!nplayer.getVariable("isKnockout"))
+                    if (user.get(target, 'isKnockout'))
                     {
                         player.notify("~r~Игрок должен быть в нокауте");
                         return;
                     }
 
-                    if (user.isCuff(nplayer) || user.isTie(nplayer)) {
+                    if (user.isCuff(target) || user.isTie(target)) {
                         player.notify("~r~Этот человек уже в связан/в наручниках");
                         return;
                     }
-                    user.tie(nplayer);
+                    user.tie(target);
                     player.notify("~y~Вы связали игрока");
                     chat.sendMeCommand(player, "связал человека рядом");
-                    inventory.deleteItem(id);
-                }
-                break;
-            }
-            case 1:
-            {
-                var nplayer = methods.getNearestPlayerWithPlayer(player, 1.5);
-                if (!user.isLogin(nplayer))
-                {
-                    player.notify("~r~Рядом с вами никого нет");
-                    return;
-                }
-                if (nplayer.getVariable("isTieBandage"))
-                {
-                    user.unTieBandage(nplayer);
-                    player.notify("~y~Вы сняли мешок с головы");
-                    chat.sendMeCommand(player, "снял мешок с головы человеку рядом");
-                    inventory.addItem(itemId, 1, inventory.types.Player, user_id, 1, -1, -1, -1);
-                }
-                else
-                {
-                    if (!nplayer.getVariable("isTie"))
-                    {
-                        player.notify("~r~Игрок должен быть связан");
-                        return;
-                    }
-
-                    user.tieBandage(nplayer);
-                    player.notify("~y~Вы надели мешок на голову");
-                    chat.sendMeCommand(player, "надел мешок на голову человеку рядом");
                     inventory.deleteItem(id);
                 }
                 break;
@@ -527,59 +498,6 @@ inventory.useItem = function(player, id, itemId) {
             }
             case 4:
             {
-                let pos1 = new mp.Vector3(592.0863037109375, -3280.79931640625, 5.069560527801514);
-
-                if (methods.distanceToPos(player.position, pos1) < 2) {
-
-                    if (mp.players.length < 200) {
-                        player.notify("~r~Онлайн на сервере должен быть более 200 человек");
-                        return;
-                    }
-
-                    let dateTime = new Date();
-                    if (dateTime.getHours() < 17 || dateTime.getHours() > 19) {
-                        player.notify('~r~Доступно только с 17 до 20 вечера ООС времени');
-                        return;
-                    }
-
-                    if (dateTime.getDate() % 2) {
-                        player.notify('~r~Доступно каждые 2 дня (ООС)');
-                        player.notify('~r~А именно: 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30 число на календаре');
-                        return;
-                    }
-
-                    if (user.has(player, 'isGrab')) {
-                        player.notify('~r~Это действие сейчас не доступно');
-                        return;
-                    }
-
-                    user.playAnimation(player, "mp_arresting", "a_uncuff", 8);
-                    user.set(player, 'isGrab', true);
-
-                    setTimeout(function () {
-                        try {
-
-                            user.reset(player, 'isGrab');
-                            if (methods.getRandomInt(0, 10) < 3)
-                            {
-                                user.takeNewItem(player, 262, 1);
-                                player.notify("~g~Вы открыли ящик, сломав отмычку");
-                                inventory.deleteItem(id);
-                            }
-                            else
-                            {
-                                player.notify("~g~Вы сломали отмычку");
-                                inventory.deleteItem(id);
-                            }
-                        }
-                        catch (e) {
-                            methods.debug(e);
-                        }
-                    }, 5000);
-
-                    return;
-                }
-
                 let veh = methods.getNearestVehicleWithCoords(player.position, 10);
                 if (!vehicles.exists(veh))
                 {
@@ -588,7 +506,7 @@ inventory.useItem = function(player, id, itemId) {
                 }
 
                 let vehInfo = methods.getVehicleInfo(veh.model);
-                if (vehInfo.fuel_min == 0)
+                if (vehInfo.fuel_type == 3)
                 {
                     player.notify("~r~Электрокары можно взломать только с Kali Linux");
                     return;
@@ -663,13 +581,6 @@ inventory.useItem = function(player, id, itemId) {
                     return;
                 }
 
-                /*Vehicle.VehicleInfoGlobalDataList.forEach(item => {
-                    if (item.Number != Vehicle.GetVehicleNumber(v.Handle)) return;
-                    Vehicle.VehicleInfoGlobalDataList[item.VehId].SOil = 0;
-                    container.Data.Set(110000 + item.VehId, "SOil", 0);
-                    //TriggerServerEvent("ARP:SaveVehicle", item.VehId);
-                }); Система масла, не думаю что ее будут трогать */
-
                 player.notify("~g~Вы залили масло в транспорт");
                 inventory.deleteItem(id);
                 break;
@@ -681,16 +592,23 @@ inventory.useItem = function(player, id, itemId) {
                     player.notify("~r~Вы должны находиться около открытого капота");
                     return;
                 }
-                let veh = methods.getNearestVehicleWithCoords(player.position, 10)
+                let veh = methods.getNearestVehicleWithCoords(player.position, 10);
                 if (veh == null)
                 {
                     player.notify("~r~Нужно быть рядом с машиной");
                     return;
                 }
 
-                if (veh.engineHealth < 750.0)
+                let vehInfo = methods.getVehicleInfo(veh.model);
+                if (vehInfo.class_name == "Helicopters" || vehInfo.class_name == "Planes" || vehInfo.class_name == "Boats" || vehInfo.class_name == "Cycles")
                 {
-                    player.notify("~r~Вы не можете сами починить авто, вызывайте механика");
+                    player.notify("~r~Вы не можете ремонтировать это транспортное средство");
+                    return;
+                }
+
+                if (!vSync.getHoodState(veh) && vehInfo.class_name != "Motocycles")
+                {
+                    player.notify("~r~Необходимо открыть капот");
                     return;
                 }
                 if (veh.engineHealth >= 999)
@@ -705,13 +623,39 @@ inventory.useItem = function(player, id, itemId) {
                 inventory.deleteItem(id);
                 break;
             }
-            case 7:
+            case 8:
             {
-                player.notify(`~g~Ваш ID:~s~ ${user_id}`);
-                if (user.get(player, "jail_time") > 0)
-                    player.notify(`~g~Время в тюрьме:~s~ ${user.get(player, "jail_time")} сек.`);
-                /*if (user.IsMuted())
-                    player.notify(`~g~Время окончания мута:~s~ ${Main.UnixTimeStampToDateTime(user.Data.date_mute)}`); Заглушечка/Не думаю что нужно будет, оставим до лучших времен */
+                if (vehicles.exists(player.vehicle))
+                {
+                    player.notify("~r~Вы должны находиться около транспорта");
+                    return;
+                }
+                let veh = methods.getNearestVehicleWithCoords(player.position, 10);
+                if (!vehicles.exists(veh))
+                {
+                    player.notify("~r~Нужно быть рядом с машиной");
+                    return;
+                }
+
+                let vehInfo = methods.getVehicleInfo(veh.model);
+                if (vehInfo.fuel_type != 4)
+                {
+                    player.notify("~r~Данный вид топлива не подходит под этот транспорт");
+                    return;
+                }
+
+                let currentFuel = vehicles.getFuel(veh);
+
+                if (vehInfo.fuel_full < currentFuel + 10)
+                {
+                    player.notify("~r~В транспорте полный бак");
+                    return;
+                }
+
+                vehicles.setFuel(veh, currentFuel + 10);
+
+                player.notify("~g~Вы заправили транспорт на 10л.");
+                inventory.deleteItem(id);
                 break;
             }
             case 9:
@@ -729,362 +673,160 @@ inventory.useItem = function(player, id, itemId) {
                 }
 
                 let vehInfo = methods.getVehicleInfo(veh.model);
+                if (vehInfo.fuel_type != 1)
+                {
+                    player.notify("~r~Данный вид топлива не подходит под этот транспорт");
+                    return;
+                }
+
+
                 let currentFuel = vehicles.getFuel(veh);
 
                 if (vehInfo.fuel_full < currentFuel + 10)
                 {
-                    vehicles.setFuel(veh, vehInfo.fuel_full);
-                    player.notify("~r~Полный бак");
+                    player.notify("~r~В транспорте полный бак");
                     return;
                 }
 
                 vehicles.setFuel(veh, currentFuel + 10);
 
-                player.notify("~g~Вы заправили авто на 10л.");
+                player.notify("~g~Вы заправили транспорт на 10л.");
                 inventory.deleteItem(id);
                 break;
             }
-            case 63:
+            case 10:
             {
                 if (vehicles.exists(player.vehicle))
                 {
-                    player.notify("~r~Вы в автомобиле");
+                    player.notify("~r~Вы должны находиться около транспорта");
+                    return;
+                }
+                let veh = methods.getNearestVehicleWithCoords(player.position, 10);
+                if (!vehicles.exists(veh))
+                {
+                    player.notify("~r~Нужно быть рядом с машиной");
                     return;
                 }
 
-                /* var ped = Main.FindNearestPed();
-                if (!user.IsAnimal(ped.Model.Hash))
+                let vehInfo = methods.getVehicleInfo(veh.model);
+                if (vehInfo.fuel_type != 1)
                 {
-                    player.notify("~r~Это должно быть животное");
-                    break;
-                }
-                if (ped.Handle == 0)
-                {
-                    player.notify("~r~Рядом с вами нет животного");
-                    break;
-                }
-                if (ped.IsAlive)
-                {
-                    player.notify("~r~Животное должно быть мертвое");
-                    break;
+                    player.notify("~r~Данный вид топлива не подходит под этот транспорт");
+                    return;
                 }
 
-                user.playScenario("CODE_HUMAN_MEDIC_TEND_TO_DEAD");
-                mp.game.wait(10000);
-                player.clearTasks();
+                let currentFuel = vehicles.getFuel(veh);
 
-                if (ped.Model.Hash == GetHashKey("a_c_boar"))
+                if (vehInfo.fuel_full < currentFuel + 10)
                 {
-                    chat.sendMeCommand(player, "разрезал животное");
-                    inventory.takeNewItem(223).then();
-                    ped.Delete();
+                    player.notify("~r~В транспорте полный бак");
+                    return;
                 }
-                else if (ped.Model.Hash == GetHashKey("a_c_chickenhawk"))
-                {
-                    chat.sendMeCommand(player, "разрезал птицу");
-                    inventory.takeNewItem(224).then();
-                    ped.Delete();
-                }
-                else if (ped.Model.Hash == GetHashKey("a_c_cow"))
-                {
-                    chat.sendMeCommand(player, "разрезал животное");
-                    inventory.takeNewItem(225).then();
-                    ped.Delete();
-                }
-                else if (ped.Model.Hash == GetHashKey("a_c_cormorant"))
-                {
-                    chat.sendMeCommand(player, "разрезал птицу");
-                    inventory.takeNewItem(226).then();
-                    ped.Delete();
-                }
-                else if (ped.Model.Hash == GetHashKey("a_c_deer"))
-                {
-                    chat.sendMeCommand(player, "разрезал животное");
-                    inventory.takeNewItem(227).then();
-                    ped.Delete();
-                }
-                else if (ped.Model.Hash == GetHashKey("a_c_hen"))
-                {
-                    chat.sendMeCommand(player, "разрезал птицу");
-                    inventory.takeNewItem(228).then();
-                    ped.Delete();
-                }
-                else if (ped.Model.Hash == GetHashKey("a_c_pig"))
-                {
-                    chat.sendMeCommand(player, "разрезал животное");
-                    inventory.takeNewItem(229).then();
-                    ped.Delete();
-                }
-                else if (ped.Model.Hash == GetHashKey("a_c_rabbit_01"))
-                {
-                    chat.sendMeCommand(player, "разрезал животное");
-                    inventory.takeNewItem(230).then();
-                    ped.Delete();
-                }
-                else if (ped.Model.Hash == GetHashKey("a_c_rat"))
-                {
-                    chat.sendMeCommand(player, "разрезал животное");
-                    inventory.takeNewItem(231).then();
-                    ped.Delete();
-                }
-                else
-                {
-                    player.notify("~r~Этот тип не подходит для еды");
-                }
-                Заглушечка, NPC еще не завезли :( */
+
+                vehicles.setFuel(veh, currentFuel + 10);
+                player.notify("~g~Вы заправили транспорт на 10л.");
+                inventory.deleteItem(id);
                 break;
             }
             case 232:
+            case 233:
             case 234:
+            case 235:
             case 236:
+            case 237:
             case 238:
+            case 239:
+            case 240:
             {
                 user.addEatLevel(player, 800);
-                chat.sendMeCommand(player, "съедает мясо");
+                chat.sendMeCommand(player, "съедает рыбу");
                 inventory.deleteItem(id);
                 user.playEatAnimation(player);
                 break;
             }
+            case 11:
+            case 12:
+            case 13:
+            case 14:
+            case 15:
+            case 16:
+            case 17:
+            case 18:
+            case 19:
+            case 20:
+            case 21:
+            case 22:
+            case 23:
+            case 24:
+            case 25:
+            {
+                user.removeWaterLevel(player, 100);
+                user.addEatLevel(player, 500);
+                chat.sendMeCommand(player, "съедает " + items.getItemNameById(itemId));
+                inventory.deleteItem(id);
+                user.playEatAnimation(player);
+                break;
+            }
+            case 241:
+            case 242:
+            {
+                user.addWaterLevel(player, 500);
+                chat.sendMeCommand(player, "выпивает " + items.getItemNameById(itemId));
+                inventory.deleteItem(id);
+                user.playDrinkAnimation(player);
+                break;
+            }
+            case 243:
+            case 244:
+            case 245:
             case 246:
             case 247:
             case 248:
             case 249:
             case 250:
             {
-                user.addEatLevel(player, 850);
-                chat.sendMeCommand(player, "съедает рыбу");
+                user.addWaterLevel(player, 500);
+                chat.sendMeCommand(player, "выпивает " + items.getItemNameById(itemId));
                 inventory.deleteItem(id);
-                user.playEatAnimation(player);
-                break;
-            }
-            case 237:
-            case 239:
-            {
-                user.addEatLevel(player, 500);
-                chat.sendMeCommand(player, "съедает мясо");
-                inventory.deleteItem(id);
-                user.playEatAnimation(player);
-                break;
-            }
-            case 240:
-            {
-                user.addEatLevel(player, 100);
-                chat.sendMeCommand(player, "съедает мясо");
-                inventory.deleteItem(id);
-                user.playEatAnimation(player);
-                break;
-            }
-            case 233:
-            {
-                user.addEatLevel(player, 1500);
-                chat.sendMeCommand(player, "съедает мясо");
-                inventory.deleteItem(id);
-                user.playEatAnimation(player);
-                break;
-            }
-            case 235:
-            {
-                user.addEatLevel(player, 1000);
-                chat.sendMeCommand(player, "съедает мясо");
-                inventory.deleteItem(id);
-                user.playEatAnimation(player);
-                break;
-            }
-            case 10:
-            {
-                user.addEatLevel(player, 40);
-                chat.sendMeCommand(player, "съедает жвачку");
-                inventory.deleteItem(id);
-                user.playEatAnimation(player);
-                break;
-            }
-            case 11:
-            {
-                user.removeWaterLevel(10);
-                user.addEatLevel(player, 190);
-                chat.sendMeCommand(player, "съедает батончик");
-                inventory.deleteItem(id);
-                user.playEatAnimation(player);
-                break;
-            }
-            case 12:
-            {
-                user.removeWaterLevel(20);
-                user.addEatLevel(player, 160);
-                chat.sendMeCommand(player, "съедает чипсы");
-                inventory.deleteItem(id);
-                user.playEatAnimation(player);
-                break;
-            }
-            case 13:
-            {
-                user.removeWaterLevel(5);
-                user.addEatLevel(player, 320);
-                chat.sendMeCommand(player, "съедает роллы");
-                inventory.deleteItem(id);
-                user.playEatAnimation(player);
-                break;
-            }
-            case 14:
-            {
-                user.removeWaterLevel(7);
-                user.addEatLevel(player, 380);
-                chat.sendMeCommand(player, "съедает гамбургер");
-                inventory.deleteItem(id);
-                user.playEatAnimation(player);
-                break;
-            }
-            case 15:
-            {
-                user.removeWaterLevel(5);
-                user.addEatLevel(player, 420);
-                chat.sendMeCommand(player, "съедает салат");
-                inventory.deleteItem(id);
-                user.playEatAnimation(player);
-                break;
-            }
-            case 16:
-            {
-                user.removeWaterLevel(10);
-                user.addEatLevel(player, 550);
-                chat.sendMeCommand(player, "съедает пиццу");
-                inventory.deleteItem(id);
-                user.playEatAnimation(player);
-                break;
-            }
-            case 17:
-            {
-                user.removeWaterLevel(8);
-                user.addEatLevel(player, 780);
-                chat.sendMeCommand(player, "съедает жаркое");
-                inventory.deleteItem(id);
-                user.playEatAnimation(player);
-                break;
-            }
-            case 18:
-            {
-                user.removeWaterLevel(10);
-                user.addEatLevel(player, 850);
-                chat.sendMeCommand(player, "съедает кесадильи");
-                inventory.deleteItem(id);
-                user.playEatAnimation(player);
-                break;
-            }
-            case 19:
-            {
-                user.removeWaterLevel(10);
-                user.addEatLevel(player, 1100);
-                chat.sendMeCommand(player, "съедает фрикасе");
-                inventory.deleteItem(id);
-                user.playEatAnimation(player);
-                break;
-            }
-            case 20:
-            {
-                //user.AddHealthLevel(5); Заглушечка
-                user.addWaterLevel(20);
-                user.addEatLevel(player, 220);
-                chat.sendMeCommand(player, "съедает фрукты");
-                inventory.deleteItem(id);
-                user.playEatAnimation(player);
+                user.playDrinkAnimation(player);
+                user.addDrugLevel(player, 99, 200);
                 break;
             }
             case 32:
             {
-                user.addWaterLevel(100);
-                user.addEatLevel(player, 900);
+                user.addWaterLevel(player, 1000);
+                user.addEatLevel(player, 1000);
                 chat.sendMeCommand(player, "съедает сухпаёк");
                 inventory.deleteItem(id);
                 user.playEatAnimation(player);
                 break;
             }
-            case 21:
-            {
-                user.addWaterLevel(100);
-                chat.sendMeCommand(player, "выпивает бутылку воды");
-                inventory.deleteItem(id);
-                user.playDrinkAnimation(player);
-                break;
-            }
-            case 22:
-            {
-                /*if (user.GetTempLevel() < 35.9)
-                    user.AddTempLevel(0.9);*/
-                user.addWaterLevel(95);
-                chat.sendMeCommand(player, "выпивает стакан кофе");
-                inventory.deleteItem(id);
-                user.playDrinkAnimation(player);
-                break;
-            }
-            case 23:
-            {
-                /*if (user.GetTempLevel() < 35.9)
-                    user.AddTempLevel(1.2);*/
-                user.addWaterLevel(95);
-                chat.sendMeCommand(player, "выпивает стакан чая");
-                inventory.deleteItem(id);
-                user.playDrinkAnimation(player);
-                break;
-            }
-            case 24:
-            {
-                user.addWaterLevel(70);
-                chat.sendMeCommand(player, "выпивает бутылку лимонада");
-                inventory.deleteItem(id);
-                user.playDrinkAnimation(player);
-                break;
-            }
-            case 25:
-            {
-                user.addWaterLevel(55);
-                chat.sendMeCommand(player, "выпивает банку кока-колы");
-                inventory.deleteItem(id);
-                user.playDrinkAnimation(player);
-                break;
-            }
             case 26:
             {
-                user.addWaterLevel(110);
-                chat.sendMeCommand(player, "выпивает банку энергетика");
-                inventory.deleteItem(id);
-                user.playDrinkAnimation(player);
-                break;
-            }
-            case 31:
-            {
-                player.notify("~r~Больше не работает :c");
-                break;
-                var nplayer = methods.getNearestPlayerWithPlayer(player, 1.2);
-                if (!user.isLogin(nplayer))
-                {
-                    player.notify("~r~Рядом с вами никого нет");
-                    return;
-                }
-                user.useAdrenaline(nplayer);
-                chat.sendMeCommand(player, "сделал инъекцию адреналина");
+                chat.sendMeCommand(player, "выкуривает сигарету");
                 inventory.deleteItem(id);
                 break;
             }
             case 40:
             {
-                var nplayer = methods.getNearestPlayerWithPlayer(player, 1.2);
-                if (!user.isLogin(nplayer))
+                let target = methods.getNearestPlayerWithPlayer(player, 1.2);
+                if (!user.isLogin(target))
                 {
                     player.notify("~r~Рядом с вами никого нет");
                     return;
                 }
-                if (user.isCuff(nplayer) || user.isTie(nplayer)) {
+                if (user.isCuff(target) || user.isTie(target)) {
                     player.notify("~r~Этот человек уже в связан/в наручниках");
                     return;
                 }
-                if (nplayer.health == 0) {
+                if (target.health == 0) {
                     player.notify("~r~Нельзя надевать наручники на человека в коме");
                     return;
                 }
-                methods.saveLog('PlayerCuff', `${user.get(nplayer, 'rp_name')} (${user.getId(nplayer)}) cuffed by ${user.get(player, 'rp_name')} (${user.getId(player)})`);
-                chat.sendMeCommand(player, `надел наручники на человека рядом (${user.getId(nplayer)})`);
+                methods.saveLog('PlayerCuff', `${user.getRpName(target)} (${user.getId(target)}) cuffed by ${user.getRpName(player)} (${user.getId(player)})`);
+                chat.sendMeCommand(player, `надел наручники на человека рядом (${user.getId(target)})`);
                 user.playAnimation(player, "mp_arresting", "a_uncuff", 8);
-                user.cuff(nplayer);
+                user.cuff(target);
                 inventory.deleteItem(id);
                 break;
             }
@@ -1143,7 +885,6 @@ inventory.useItem = function(player, id, itemId) {
                 user.setDrugLevel(player, 99, 0);
 
                 user.stopAllScreenEffects(player);
-
                 user.playDrugAnimation(player);
 
                 inventory.deleteItem(id);
@@ -1153,245 +894,6 @@ inventory.useItem = function(player, id, itemId) {
                     if (user.isLogin(player))
                         user.reset(player, 'useHeal1');
                 }, 60000);
-                break;
-            }
-            case 263:
-            {
-                if (player.dimension > 0) {
-                    player.notify('~r~Нельзя совершить ограбление');
-                    return;
-                }
-
-                if (user.isGos(player)) {
-                    player.notify('~r~Вы состоите в гос. организации');
-                    return;
-                }
-
-                let grabId = bank.getGrabInRadius(player.position);
-
-                if (grabId == -1) {
-                    let veh = methods.getNearestVehicleWithCoords(player.position, 10);
-                    if (!vehicles.exists(veh))
-                    {
-                        player.notify("~r~Нужно быть рядом с машиной");
-                        return;
-                    }
-
-                    let vehInfo = methods.getVehicleInfo(veh.model);
-
-                    if (vehInfo.class_name == "Emergency")
-                    {
-                        player.notify("~r~Вы не можете взломать это транспортное средство");
-                        return;
-                    }
-
-                    if (!veh.locked)
-                    {
-                        player.notify("~r~Транспорт уже открыт");
-                        return;
-                    }
-
-                    user.playAnimation(player, "mp_arresting", "a_uncuff", 8);
-
-                    setTimeout(function () {
-                        try {
-
-                            if (!vehicles.exists(veh))
-                            {
-                                player.notify("~r~Не удалось взломать транспорт");
-                                return;
-                            }
-
-                            if (methods.getRandomInt(0, 3) == 1)
-                            {
-                                veh.locked = false;
-                                player.notify("~g~Вы открыли транспорт");
-                            }
-                            else
-                            {
-                                player.notify("~g~Вы сломали отмычку");
-                                inventory.deleteItem(id);
-                            }
-                        }
-                        catch (e) {
-                            methods.debug(e);
-                        }
-                    }, 25000);
-                    return;
-                }
-
-                if (grabId == 0 && !user.isMafia(player)) {
-                    player.notify('~r~Вы должны состоять в мафии для того чтобы грабить этот банк');
-                    return;
-                }
-
-                if (grabId == 0) {
-                    let dateTime = new Date();
-                    if (dateTime.getHours() < 19) {
-                        player.notify('~r~Доступно только с 19 до 24 ночи ООС времени');
-                        return;
-                    }
-                }
-
-                if (grabId == 5) {
-                    let dateTime = new Date();
-                    if (dateTime.getHours() < 17 || dateTime.getHours() > 19) {
-                        player.notify('~r~Доступно только с 17 до 20 вечера ООС времени');
-                        return;
-                    }
-
-                    if (dateTime.getDate() % 2) {
-                        player.notify('~r~Доступно каждые 2 дня (ООС)');
-                        player.notify('~r~А именно: 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30 число на календаре');
-                        return;
-                    }
-                }
-
-                if (weather.getHour() < 22 && weather.getHour() > 4) {
-                    player.notify("~r~Доступно только с 22 до 4 утра игрового времени");
-                    return;
-                }
-
-                if (player.dimension != 0) {
-                    player.notify("~r~Нельзя грабить в интерьере");
-                    return;
-                }
-
-                if (user.has(player, 'isGrab')) {
-                    player.notify('~r~Это действие сейчас не доступно');
-                    return;
-                }
-
-                if (user.get(player, 'fractionType') != 4 && !user.isMafia(player)) {
-                    player.notify('~r~Вы не состоите в ОПГ или Мафии');
-                    return;
-                }
-
-                if (user.get(player, 'age') < 19) {
-                    player.notify('~r~Разрешено грабить с 19 лет');
-                    return;
-                }
-
-                if (mp.players.length < 100) {
-                    player.notify("~r~Онлайн на сервере должен быть более 100 человек");
-                    return;
-                }
-
-                let count = bank.grabPos[grabId][3];
-                if (count == 0) {
-                    player.notify('~r~Все ячейки пустые');
-                    return;
-                }
-
-                user.set(player, 'isGrab', true);
-                user.playAnimation(player, "mp_arresting", "a_uncuff", 8);
-                user.disableAllControls(player, true);
-                bank.grabPos[grabId][3] = count - 1;
-
-                setTimeout(function () {
-                    user.playAnimation(player, "anim@heists@money_grab@duffel", "loop", 9);
-                }, 5000);
-
-                setTimeout(function () {
-                    if (!user.isLogin(player))
-                        return;
-                    player.call('client:grabBank:success', [grabId]);
-
-                    user.disableAllControls(player, false);
-                    player.notify(`~y~Осталось ячеек ~s~${count - 1}`);
-
-                    if (grabId == 5)
-                        user.giveWanted(player, 10, 'Ограбление хранилища USMC');
-                    else
-                        user.giveWanted(player, 10, 'Ограбление банка');
-
-                    user.reset(player, 'isGrab');
-                    user.stopAnimation(player);
-                    if (methods.getRandomInt(0, 3) == 0) {
-                        inventory.deleteItem(id);
-                        player.notify('~r~Вы сломали отмычку');
-                    }
-                }, 10000);
-
-                break;
-            }
-            case 262:
-            {
-                if (user.isGos(player)) {
-                    player.notify('~r~Вы состоите в гос. организации');
-                    return;
-                }
-
-                let grabId = bank.getBombInRadius(player.position);
-
-                if (grabId == -1) {
-                    player.notify('~r~Вы слишком далеко от двери');
-                    return;
-                }
-
-                if (grabId == 0 && !user.isMafia(player)) {
-                    player.notify('~r~Вы должны состоять в мафии для того чтобы грабить этот банк');
-                    return;
-                }
-
-                if (grabId == 0) {
-                    let dateTime = new Date();
-                    if (dateTime.getHours() < 19) {
-                        player.notify('~r~Доступно только с 19 до 24 ночи ООС времени');
-                        return;
-                    }
-                }
-
-                if (weather.getHour() < 23 && weather.getHour() > 4) {
-                    player.notify("~r~Доступно только с 23 до 4 утра игрового времени");
-                    return;
-                }
-
-                if (player.dimension != 0) {
-                    player.notify("~r~Нельзя грабить в интерьере");
-                    return;
-                }
-
-                if (mp.players.length < 100) {
-                    player.notify("~r~Онлайн на сервере должен быть более 100 человек");
-                    return;
-                }
-
-                let count = bank.grabPos[grabId][3];
-                if (count == 0) {
-                    player.notify('~r~Все ячейки в банке пустые');
-                    return;
-                }
-
-                inventory.deleteItem(id);
-                user.playAnimation(player, "mp_arresting", "a_uncuff", 8);
-
-                setTimeout(function () {
-                    player.notify("~y~Взрыв произойдет через ~s~10~y~ сек");
-
-                    setTimeout(function () {
-                        if (!user.isLogin(player))
-                            return;
-                        player.notify("~y~Взрыв произойдет через ~s~5~y~ сек");
-                    }, 5000);
-
-                    setTimeout(function () {
-                        if (!user.isLogin(player))
-                            return;
-                        player.notify("~y~Взрыв произойдет через ~s~3~y~ сек");
-                    }, 7000);
-
-                    setTimeout(function () {
-                        if (methods.getRandomInt(0, 3) == 0) {
-                            dispatcher.sendPos("Код 0", "В банке сработала сигнализация", player.position);
-                            methods.explodeObjectGlobal(bank.doorPos[grabId][1], bank.doorPos[grabId][2], bank.doorPos[grabId][3], bank.doorPos[grabId][0]);
-                        }
-                        else {
-                            player.notify('~r~C4 была бракованной, взрыв не произошел');
-                        }
-                    }, 10000);
-                }, 5000);
-
                 break;
             }
         }

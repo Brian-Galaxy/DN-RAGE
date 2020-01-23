@@ -165,6 +165,14 @@ enums.userData = [
     "work_lvl",
     "work_exp",
 
+    "water_level",
+    "eat_level",
+
+    "jail_time",
+    "jail_type",
+    "med_time",
+    "med_type",
+
     "is_custom",
     "is_online",
 ];

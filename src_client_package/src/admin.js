@@ -14,6 +14,11 @@ admin.noClip = function(enable) {
             mp.game.ui.notifications.show(`~b~Нажмите ~s~H~b~ чтобы выключить No Clip`);
 
         if (!noClipEnabled) {
+
+            let noClipEntity = mp.players.local.isSittingInAnyVehicle() ? mp.players.local.vehicle : mp.players.local;
+            noClipEntity.freezePosition(false);
+            noClipEntity.setInvincible(false);
+
             if (mp.players.local.vehicle) {
                 let plPos = mp.players.local.vehicle.position;
                 mp.players.local.vehicle.position = new mp.Vector3(plPos.x, plPos.y, plPos.z - mp.players.local.getHeightAboveGround() + 1);

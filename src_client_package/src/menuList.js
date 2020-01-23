@@ -1143,6 +1143,7 @@ menuList.showPlayerDoMenu = function(playerId) {
     UIMenu.Menu.AddMenuItem("Познакомиться").doName = 'dating';
     UIMenu.Menu.AddMenuItem("Снять наручники").eventName = 'server:user:unCuffById';
     UIMenu.Menu.AddMenuItem("Снять стяжки").eventName = 'server:user:unTieById';
+    UIMenu.Menu.AddMenuItem("Вырубить").eventName = 'server:user:knockById';
     UIMenu.Menu.AddMenuItem("Затащить в ближайшее авто").eventName = 'server:user:inCarById';
     UIMenu.Menu.AddMenuItem("Вытащить из тс").eventName = 'server:user:removeCarById';
     UIMenu.Menu.AddMenuItem("Вести за собой").eventName = 'server:user:taskFollowById';
@@ -2713,7 +2714,7 @@ menuList.showBarberShopMenu = function (shopId, price) {
     });
 };
 
-menuList.showShopMenu = function(shopId, price = 1, type = 0)
+menuList.showShopMenu = function(shopId, price = 2, type = 0)
 {
     if (methods.isBlackout()) {
         mp.game.ui.notifications.show(`~r~В городе отсутствует свет`);
@@ -2756,7 +2757,7 @@ menuList.showShopMenu = function(shopId, price = 1, type = 0)
     });
 };
 
-menuList.showShopAlcMenu = function(shopId, price = 1, type = 0)
+menuList.showShopAlcMenu = function(shopId, price = 2, type = 0)
 {
     if (methods.isBlackout()) {
         mp.game.ui.notifications.show(`~r~В городе отсутствует свет`);
@@ -2800,7 +2801,7 @@ menuList.showShopAlcMenu = function(shopId, price = 1, type = 0)
     });
 };
 
-menuList.showShopElMenu = function(shopId, price = 1)
+menuList.showShopElMenu = function(shopId, price = 2)
 {
     if (methods.isBlackout()) {
         mp.game.ui.notifications.show(`~r~В городе отсутствует свет`);
@@ -2838,7 +2839,7 @@ menuList.showShopElMenu = function(shopId, price = 1)
     });
 };
 
-menuList.showShopMedMenu = function(shopId, price = 1)
+menuList.showShopMedMenu = function(shopId, price = 2)
 {
     if (methods.isBlackout()) {
         mp.game.ui.notifications.show(`~r~В городе отсутствует свет`);
@@ -2876,7 +2877,7 @@ menuList.showShopMedMenu = function(shopId, price = 1)
     });
 };
 
-menuList.showShopFishMenu = function(shopId, price = 1)
+menuList.showShopFishMenu = function(shopId, price = 2)
 {
     if (methods.isBlackout()) {
         mp.game.ui.notifications.show(`~r~В городе отсутствует свет`);
@@ -2914,7 +2915,7 @@ menuList.showShopFishMenu = function(shopId, price = 1)
     });
 };
 
-menuList.showShopHuntMenu = function(shopId, price = 1)
+menuList.showShopHuntMenu = function(shopId, price = 2)
 {
     if (methods.isBlackout()) {
         mp.game.ui.notifications.show(`~r~В городе отсутствует свет`);
@@ -2952,7 +2953,7 @@ menuList.showShopHuntMenu = function(shopId, price = 1)
     });
 };
 
-menuList.showBarMenu = function(shopId, price = 1)
+menuList.showBarMenu = function(shopId, price = 2)
 {
     if (methods.isBlackout()) {
         mp.game.ui.notifications.show(`~r~В городе отсутствует свет`);
@@ -3048,7 +3049,7 @@ menuList.showBarMenu = function(shopId, price = 1)
     });
 };
 
-menuList.showBarFreeMenu = function(price = 1)
+menuList.showBarFreeMenu = function()
 {
     if (methods.isBlackout()) {
         mp.game.ui.notifications.show(`~r~В городе отсутствует свет`);
@@ -3109,7 +3110,7 @@ menuList.showBarFreeMenu = function(price = 1)
     });
 };
 
-menuList.showRentBikeMenu = function(shopId, price = 1)
+menuList.showRentBikeMenu = function(shopId, price = 2)
 {
     UIMenu.Menu.HideMenu();
 

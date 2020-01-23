@@ -1596,6 +1596,123 @@ user.stopAnimation = function(player) {
     });
 };
 
+user.playDrinkAnimation = function(player) {
+    methods.debug('user.playDrinkAnimation');
+    user.playAnimation(player, "mp_player_intdrink", "loop_bottle", 48);
+};
+
+user.playEatAnimation = function(player) {
+    user.playAnimation(player, "mp_player_inteat@burger", "mp_player_int_eat_burger", 48);
+};
+
+user.playDrugAnimation = function(player) {
+    methods.debug('user.playDrugAnimation');
+    user.playAnimation(player, "move_m@drunk@transitions", "slightly_to_idle", 8);
+};
+
+/*
+    Drug Types
+    - Amf 0
+    - Coca 1
+    - Dmt 2
+    - Ket 3
+    - Lsd 4
+    - Mef 5
+    - Marg 6
+*/
+user.addDrugLevel = function(player, drugType, level) {
+    if (user.isLogin(player))
+        player.call('client:user:addDrugLevel', [drugType, level]);
+};
+
+user.removeDrugLevel = function(player, drugType, level) {
+    if (user.isLogin(player))
+        player.call('client:user:removeDrugLevel', [drugType, level]);
+};
+
+user.setDrugLevel = function(player, drugType, level) {
+    if (user.isLogin(player))
+        player.call('client:user:setDrugLevel', [drugType, level]);
+};
+
+user.stopAllScreenEffects = function(player) {
+    if (user.isLogin(player))
+        player.call('client:user:stopAllScreenEffects');
+};
+
+// Water Level
+
+user.addWaterLevel = function(player, level) {
+    if (!user.isLogin(player))
+        return;
+    methods.debug('user.addWaterLevel');
+    if (user.getWaterLevel(player) + level > 1000) {
+        user.setWaterLevel(player, 1000);
+        return true;
+    }
+    user.setWaterLevel(player, user.getWaterLevel(player) + level);
+    return true
+};
+
+user.removeWaterLevel = function(player, level) {
+    if (!user.isLogin(player))
+        return;
+    if (user.getWaterLevel(player) - level < 0) {
+        user.setWaterLevel(player, 0);
+        return true;
+    }
+    user.setWaterLevel(player, user.getWaterLevel(player) - level);
+    return true;
+};
+
+user.setWaterLevel = function(player, level) {
+    if (!user.isLogin(player))
+        return;
+    user.set(player, "water_level", level);
+    user.updateClientCache(player);
+    return true;
+};
+
+user.getWaterLevel = function(player) {
+    return user.get(player, "water_level");
+};
+
+// Eat Level
+
+user.addEatLevel = function(player, level) {
+    if (!user.isLogin(player))
+        return;
+    if (user.getEatLevel(player) + level > 1000) {
+        user.setEatLevel(player, 1000);
+        return true;
+    }
+    user.setEatLevel(player, user.getEatLevel(player) + level);
+    return true
+};
+
+user.removeEatLevel = function(player, level) {
+    if (!user.isLogin(player))
+        return;
+    if (user.getEatLevel(player) - level < 0) {
+        user.setEatLevel(player, 0);
+        return true;
+    }
+    user.setEatLevel(player, user.getEatLevel(player) - level);
+    return true;
+};
+
+user.setEatLevel = function(player, level) {
+    if (!user.isLogin(player))
+        return;
+    user.set(player, "eat_level", level);
+    user.updateClientCache(player);
+    return true;
+};
+
+user.getEatLevel = function(player) {
+    return user.get(player, "eat_level");
+};
+
 user.giveWeaponComponent = function(player, weapon, component) {
     if (!mp.players.exists(player))
         return false;

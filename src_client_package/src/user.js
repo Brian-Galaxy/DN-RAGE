@@ -46,39 +46,35 @@ mp.events.add('render', () => {
 user.timerRayCast = function() {
 
     try {
+        if (!mp.players.local.vehicle) {
+            switch (mp.game.invoke(methods.GET_FOLLOW_PED_CAM_VIEW_MODE)) {
+                case 4:
+                    user.targetEntity = user.pointingAtRadius(2);
+                    //if (user.getTargetEntityValidate() === undefined)
+                    //    user.targetEntity = user.pointingAtRadius(2);
+                    break;
+                case 1:
+                    user.targetEntity = user.pointingAtRadius(6.8);
+                    //if (user.getTargetEntityValidate() === undefined)
+                    //    user.targetEntity = user.pointingAtRadius(6.8);
+                    break;
+                case 2:
+                    user.targetEntity = user.pointingAtRadius(9);
+                    //if (user.getTargetEntityValidate() === undefined)
+                    //    user.targetEntity = user.pointingAtRadius(9);
+                    break;
+                default:
+                    user.targetEntity = user.pointingAtRadius(5);
+                    //if (user.getTargetEntityValidate() === undefined)
+                    //    user.targetEntity = user.pointingAtRadius(5);
+                    break;
+            }
 
-        if (mp.players.local.vehicle)
-            return;
-
-        switch (mp.game.invoke(methods.GET_FOLLOW_PED_CAM_VIEW_MODE)) {
-            case 4:
-                user.targetEntity = user.pointingAtRadius(2);
-                //if (user.getTargetEntityValidate() === undefined)
-                //    user.targetEntity = user.pointingAtRadius(2);
-                break;
-            case 1:
-                user.targetEntity = user.pointingAtRadius(6.8);
-                //if (user.getTargetEntityValidate() === undefined)
-                //    user.targetEntity = user.pointingAtRadius(6.8);
-                break;
-            case 2:
-                user.targetEntity = user.pointingAtRadius(9);
-                //if (user.getTargetEntityValidate() === undefined)
-                //    user.targetEntity = user.pointingAtRadius(9);
-                break;
-            default:
-                user.targetEntity = user.pointingAtRadius(5);
-                //if (user.getTargetEntityValidate() === undefined)
-                //    user.targetEntity = user.pointingAtRadius(5);
-                break;
+            let target = user.getTargetEntityValidate();
+            if (target && target != targetEntityPrev)
+                mp.game.ui.notifications.show('Нажмите ~g~E~s~ для взаимодействия');
+            targetEntityPrev = target;
         }
-
-        let target = user.getTargetEntityValidate();
-        if (target && target != targetEntityPrev) {
-            mp.game.ui.notifications.show('Нажмите ~g~E~s~ для взаимодействия');
-        }
-
-        targetEntityPrev = target;
     }
     catch (e) {
 

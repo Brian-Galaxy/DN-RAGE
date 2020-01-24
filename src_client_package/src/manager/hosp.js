@@ -21,6 +21,12 @@ hosp.timer = function() {
         if (user.isLogin()) {
             if (user.getCache('med_time') > 1) {
 
+                if (user.getCache('jail_timer') > 0) {
+                    user.set('med_time', 0);
+                    prvTime = 0;
+                    return;
+                }
+
                 user.set('med_time', user.getCache('med_time') - 1);
 
                 if (prvTime > user.getCache('med_time') + 20)
@@ -31,13 +37,13 @@ hosp.timer = function() {
                 prvTime = user.getCache('med_time') + methods.getRandomInt(1, 5);
 
                 if (user.getCache('med_type') == 1) {
-                    if (methods.distanceToPos(mp.players.local.position, hosp.pos2) > 60) {
+                    if (methods.distanceToPos(mp.players.local.position, hosp.pos2) > 30) {
                         mp.game.ui.notifications.show("~r~Вам необходимо проходить лечение");
                         user.teleportv(hosp.pos2);
                     }
                 }
                 else {
-                    if (methods.distanceToPos(mp.players.local.position, hosp.pos1) > 60) {
+                    if (methods.distanceToPos(mp.players.local.position, hosp.pos1) > 50) {
                         mp.game.ui.notifications.show("~r~Вам необходимо проходить лечение");
                         user.teleportv(hosp.pos1);
                     }
@@ -66,24 +72,23 @@ hosp.freePlayer = function() {
 
     if (user.getCache('med_lic'))
     {
-        user.removeMoney(100);
-        coffer.addMoney(1, 100);
+        user.removeMoney(100, 'Лечение в больнице');
+        coffer.addMoney(6, 100);
         mp.game.ui.notifications.show("~g~Стоимость лечения со страховкой ~s~$100");
     }
     else
     {
         if (user.getCache('online_time') < 370) {
             user.removeMoney(50);
-            coffer.addMoney(50);
+            coffer.addMoney(6, 50, 'Лечение в больнице');
             mp.game.ui.notifications.show("~g~Стоимость лечения ~s~$50");
         }
         else {
-            user.removeMoney(1000);
-            coffer.addMoney(1,1000);
+            user.removeMoney(1000, 'Лечение в больнице');
+            coffer.addMoney(6,1000);
             mp.game.ui.notifications.show("~g~Стоимость лечения ~s~$1000");
         }
     }
-    //user.updateCharacterCloth();
 };
 
 hosp.toHospCache = function() {

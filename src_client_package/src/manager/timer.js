@@ -94,7 +94,16 @@ timer.updateTempLevel = function() {
 timer.updateEatLevel = function() {
     if (user.isLogin()) {
         user.removeEatLevel(10);
-        user.removeWaterLevel(10);
+        user.removeWaterLevel(20);
+
+        if (user.getEatLevel() < 200 || user.getWaterLevel() < 200) {
+            mp.game.cam.shakeGameplayCam("ROAD_VIBRATION_SHAKE", 1);
+            setTimeout(function () {
+                mp.game.cam.stopGameplayCamShaking(false);
+            }, 5000);
+        }
+        if (user.getEatLevel() < 100 || user.getWaterLevel() < 100)
+            user.setRagdoll(2000);
 
         if (user.getEatLevel() < 10)
             mp.players.local.setHealth(mp.players.local.getHealth() + 100 - 5);
@@ -137,29 +146,6 @@ timer.twoMinTimer = function() {
         methods.debug(e);
     }
     setTimeout(timer.twoMinTimer, 1000 * 60 * 2);
-};
-
-timer.oneMinTimer = function() {
-
-    try {
-        if (methods.distanceToPos(afkLastPos, mp.players.local.position) < 1) {
-            afkTimer++;
-            if (afkTimer > 10)
-                user.setVariable('isAfk', true);
-        }
-        else {
-            if (mp.players.local.getVariable('isAfk') === true)
-                user.setVariable('isAfk', false);
-            afkTimer = 0;
-        }
-
-        afkLastPos = mp.players.local.position;
-    }
-    catch (e) {
-        methods.debug(e);
-    }
-
-    setTimeout(timer.oneMinTimer, 1000 * 60);
 };
 
 timer.min15Timer = function() {
@@ -257,6 +243,18 @@ timer.tenSecTimer = function() {
         vSync.syncToServer();
 
     mp.events.call('client:vehicle:checker');
+
+    if (methods.distanceToPos(afkLastPos, mp.players.local.position) < 1) {
+        afkTimer++;
+        if (afkTimer > 600 && mp.players.local.getVariable('isAfk') !== true)
+            user.setVariable('isAfk', true);
+    }
+    else {
+        if (mp.players.local.getVariable('isAfk') === true)
+            user.setVariable('isAfk', false);
+        afkTimer = 0;
+    }
+    afkLastPos = mp.players.local.position;
 
     if (allModelLoader) {
         try {
@@ -512,7 +510,6 @@ timer.secTimer = function() {
 timer.loadAll = function () {
     timer.min15Timer();
     timer.twoMinTimer();
-    timer.oneMinTimer();
     timer.twoSecTimer();
     timer.tenSecTimer();
     timer.ms50Timer();

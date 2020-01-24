@@ -5,7 +5,7 @@ let methods = require('./methods');
 
 class Container {
     static SetClient(id, key, value, isInt = false) {
-        //methods.debug('Container.SetClient');
+        //methods.debug('Container.SetClient', id, key, value, isInt);
         try {
 
             if (isInt)
@@ -16,6 +16,19 @@ class Container {
                 mp.players.broadcast(`SRV: [SET-CLIENT-SRV] ID: ${id}, KEY: ${key}, OBJECT: ${value}`);
             }
             this.Set(id, key, value);
+        } catch(e) {
+            methods.debug(`SRV: [SET-CLIENT-SRV] ERR: ${e}`);
+        }
+    }
+
+    static SetGroupClient(json) {
+        //methods.debug('Container.SetGroupClient', json);
+        try {
+            let data = JSON.parse(json);
+            data.forEach(item => {
+                this.SetClient(item.id, item.key, item.value, item.isInt);
+            })
+
         } catch(e) {
             methods.debug(`SRV: [SET-CLIENT-SRV] ERR: ${e}`);
         }

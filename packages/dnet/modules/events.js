@@ -99,6 +99,10 @@ mp.events.add('modules:server:data:Set', (player, id, key, value, isInt) => {
     Container.Data.SetClient(id, key, value, isInt);
 });
 
+mp.events.add('modules:server:data:SetGroup', (player, data) => {
+    Container.Data.SetGroupClient(data);
+});
+
 mp.events.addRemoteCounted('modules:server:data:Reset', (player, id, key) => {
     Container.Data.Reset(id, key);
 });
@@ -270,6 +274,12 @@ mp.events.addRemoteCounted('server:playAnimation', (player, name1, name2, flag) 
     //mp.players.call('client:syncAnimation', [player.id, name1, name2, flag]);
 });
 
+mp.events.addRemoteCounted('server:setRagdoll', (player, timeout) => {
+    if (!user.isLogin(player))
+        return;
+    user.setRagdoll(player, timeout);
+});
+
 mp.events.addRemoteCounted('server:stopAllAnimation', (player) => {
     try {
         user.stopAnimation(player);
@@ -384,7 +394,7 @@ mp.events.addRemoteCounted('server:tattoo:destroy', (player, slot, type, zone, p
     tattoo.destroy(player, slot, type, zone, price, itemName, shopId);
 });
 
-mp.events.addRemoteCounted('server:user:buyLicense', (player, type, price) => {
+mp.events.addRemoteCounted('server:user:buyLicense', (player, type, price, month) => {
     if (!user.isLogin(player))
         return;
     methods.debug('licenseCenter.buy');
@@ -411,7 +421,7 @@ mp.events.addRemoteCounted('server:user:buyLicense', (player, type, price) => {
             user.removeMoney(player, price, 'Покупка лицензии');
             coffer.addMoney(price);
 
-            user.giveLic(player, type);
+            user.giveLic(player, type, month);
             return;
         }
         player.notify("~r~У вас уже есть данная лицензия");
@@ -1344,6 +1354,12 @@ mp.events.addRemoteCounted('server:inventory:addItem', (player, itemId, count, o
     inventory.addItem(itemId, count, ownerType, ownerId, countItems, isEquip, params, timeout);
 });
 
+mp.events.addRemoteCounted('server:inventory:addPlayerWeaponItem', (player, itemId, count, ownerType, ownerId, countItems, isEquip, params, text, timeout) => {
+    if (!user.isLogin(player))
+        return;
+    inventory.addPlayerWeaponItem(player, itemId, count, ownerType, ownerId, countItems, isEquip, params, text, timeout);
+});
+
 mp.events.addRemoteCounted('server:inventory:dropItem', (player, id, itemId, posX, posY, posZ, rotX, rotY, rotZ) => {
     inventory.dropItem(player, id, itemId, posX, posY, posZ, rotX, rotY, rotZ);
 });
@@ -1354,6 +1370,10 @@ mp.events.addRemoteCounted('server:inventory:deleteDropItem', (player, id) => {
 
 mp.events.addRemoteCounted('server:inventory:deleteItem', (player, id) => {
     inventory.deleteItem(id);
+});
+
+mp.events.addRemoteCounted('server:inventory:deleteItemsRange', (player, itemIdFrom, itemIdTo) => {
+    inventory.deleteItemsRange(player, itemIdFrom, itemIdTo);
 });
 
 mp.events.addRemoteCounted('server:inventory:useItem', (player, id, itemId) => {
@@ -2663,6 +2683,10 @@ mp.events.add('playerJoin', player => {
     player.countedTriggers = 0;
     player.countedTriggersSwap = 0;
     //player.outputChatBox("RAGE_Multiplayer HAS BEEN STARTED.");
+});
+
+mp.events.add('playerQuit', player => {
+    user.save(player, true);
 });
 
 mp.events.add("playerDeath", (player, reason, killer) => {

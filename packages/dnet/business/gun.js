@@ -5,6 +5,7 @@ let business = require('../property/business');
 let user = require('../user');
 let items = require('../items');
 let inventory = require('../inventory');
+let weapons = require('../weapons');
 
 let gun = exports;
 
@@ -87,12 +88,21 @@ gun.buy = function(player, itemId, price, count, superTint, tint, shopId) {
         return;
     }
 
+    let serial = weapons.getWeaponSerial(itemId);
+    let paramsObject = {
+        userName: user.getRpName(player),
+        serial: serial,
+        superTint: superTint,
+        tint: tint,
+    };
+
     if (items.isWeapon(itemId))
-        inventory.addItem(itemId, 1, 1, user.getId(player), 1, 0, `{"userName": "${user.getRpName(player)}", "superTint": ${superTint}, "tint": ${tint}}`, 1);
+        inventory.addItemSql(itemId, 1, 1, user.getId(player), 1, 0, JSON.stringify(paramsObject), 1);
     else
         inventory.addItem(itemId, 1, 1, user.getId(player), 1, 0, `{"userName": "${user.getRpName(player)}"}`, 1);
     player.notify('~g~Вы купили ' + items.getItemNameById(itemId) +  ' по цене: ~s~' + methods.moneyFormat(price));
-    user.removeBankMoney(player, price, 'Покупка оружия ' + items.getItemNameById(itemId));
+    user.addHistory(player, 5, `Покупка оружия ${items.getItemNameById(itemId)} (${serial})`);
+    user.removeBankMoney(player, price, `Покупка оружия ${items.getItemNameById(itemId)} (${serial})`);
     business.addMoney(shopId, price, items.getItemNameById(itemId));
     inventory.updateAmount(player, user.getId(player), 1);
 };

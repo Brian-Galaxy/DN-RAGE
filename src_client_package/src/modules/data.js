@@ -23,6 +23,7 @@ const createId = () => {
 };
 
 let promises = new Map();
+let dataSetterList = [];
 
 let handlerHas = (uuid, data) => {
 
@@ -56,6 +57,15 @@ let handlerGetAll = (uuid, data) => {
     }
     promises.delete(uuid);
 };
+
+let setterChecker = () => {
+    if (dataSetterList.length > 0) {
+        mp.events.callRemote('modules:server:data:SetGroup', JSON.stringify(dataSetterList));
+        dataSetterList = [];
+    }
+};
+
+setInterval(setterChecker, 5000);
 
 mp.events.add('modules:client:data:Has', handlerHas);
 mp.events.add('modules:client:data:Get', handlerGet);
@@ -138,6 +148,8 @@ class Data {
                 isInt = true;
                 value = value.toString();
             }
+
+            //dataSetterList.push({id: id, key: key, value: value, isInt: isInt});
             mp.events.callRemote('modules:server:data:Set', id, key, value, isInt);
         } catch (e) {
             methods.debug(`CLNT: [SET] ERR: ${e}`);

@@ -154,6 +154,10 @@ inventory.deleteItem = function(id) {
     mp.events.callRemote('server:inventory:deleteItem', id);
 };
 
+inventory.deleteItemsRange = function(itemIdFrom, itemIdTo) {
+    mp.events.callRemote('server:inventory:deleteItemsRange', itemIdFrom, itemIdTo);
+};
+
 inventory.takeNewItem = async function(itemId, params, count = 1) { //TODO
     try {
         let user_id = user.getCache('id');
@@ -164,6 +168,25 @@ inventory.takeNewItem = async function(itemId, params, count = 1) { //TODO
             return;
         }
         inventory.addItem(itemId, 1, inventory.types.Player, user_id, count, 0, params, 1);
+        inventory.updateAmount(user_id, inventory.types.Player);
+        mp.game.ui.notifications.show(`~b~Вы взяли \"${items.getItemNameById(itemId)}\"`);
+        chat.sendMeCommand(`взял \"${items.getItemNameById(itemId)}\"`);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+};
+
+inventory.takeNewWeaponItem = async function(itemId, params, text = 'Получено оружие', count = 1) { //TODO
+    try {
+        let user_id = user.getCache('id');
+        let amount = await inventory.getInvAmount(user_id, inventory.types.Player);
+        let amountMax = await inventory.getInvAmountMax(user_id, inventory.types.Player);
+        if (items.getItemAmountById(itemId) + amount > amountMax) {
+            mp.game.ui.notifications.show("~r~Инвентарь заполнен");
+            return;
+        }
+        inventory.addPlayerWeaponItem(itemId, 1, inventory.types.Player, user_id, count, 0, params, text, 1);
         inventory.updateAmount(user_id, inventory.types.Player);
         mp.game.ui.notifications.show(`~b~Вы взяли \"${items.getItemNameById(itemId)}\"`);
         chat.sendMeCommand(`взял \"${items.getItemNameById(itemId)}\"`);
@@ -472,6 +495,10 @@ inventory.updateAmount = function(id, type) {
 
 inventory.addItem = function(itemId, count, ownerType, ownerId, countItems, isEquip = 0, params = "{}", timeout = 10) {
     mp.events.callRemote('server:inventory:addItem', itemId, count, ownerType, ownerId, countItems, isEquip, params, timeout);
+};
+
+inventory.addPlayerWeaponItem = function(itemId, count, ownerType, ownerId, countItems, isEquip = 0, params = "{}", text = 'Получено оружие', timeout = 10) {
+    mp.events.callRemote('server:inventory:addPlayerWeaponItem', itemId, count, ownerType, ownerId, countItems, isEquip, params, text, timeout);
 };
 
 inventory.updateItemServer = function(itemId, count, ownerType, ownerId, countItems, prefix, number, keyId) {

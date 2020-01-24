@@ -187,6 +187,8 @@ user.removeAllWeapons = function() {
             methods.debug(e);
         }
     });
+
+    inventory.deleteItemsRange(54, 136);
 };
 
 user.giveWeaponByHash = function(model, pt) {
@@ -751,9 +753,9 @@ user.stopAllScreenEffect = function() {
     mp.game.invoke(methods.ANIMPOSTFX_STOP_ALL);
 };
 
-user.buyLicense = function(type, price)
+user.buyLicense = function(type, price, month = 12)
 {
-    mp.events.callRemote('server:user:buyLicense', type, price);
+    mp.events.callRemote('server:user:buyLicense', type, price, month);
 };
 
 user.addHistory = function(type, reason) {
@@ -1021,6 +1023,11 @@ user.playAnimation = function(dict, anim, flag = 49, sendEventToServer = true) {
         48 = нормально играть только верхнюю часть тела
         49 = цикл только верхняя часть тела
     */
+};
+
+user.setRagdoll = function(timeout = 1000) {
+    if (mp.players.local.getVariable("isBlockAnimation") || mp.players.local.isInAnyVehicle(false) || user.isDead()) return;
+    mp.events.callRemote('server:setRagdoll', timeout);
 };
 
 user.stopAllAnimation = function() {

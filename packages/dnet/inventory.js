@@ -258,6 +258,16 @@ inventory.deleteItem = function(id) {
     }
 };
 
+inventory.deleteItemsRange = function(player, itemIdFrom, itemIdTo) {
+    try {
+        if (!user.isLogin(player))
+            return;
+        mysql.executeQuery(`DELETE FROM items WHERE item_id >= ${itemIdFrom} AND item_id <= ${itemIdTo} AND owner_id = ${user.getId()} AND owner_type = 1`);
+    } catch(e) {
+        methods.debug(e);
+    }
+};
+
 inventory.addItem = function(itemId, count, ownerType, ownerId, countItems, isEquip, params, timeout = 1) {
     if (items.isWeapon(itemId))
         inventory.addWeaponItem(itemId, count, ownerType, ownerId, countItems, isEquip, params, timeout);
@@ -265,6 +275,14 @@ inventory.addItem = function(itemId, count, ownerType, ownerId, countItems, isEq
         inventory.addAmmoItem(itemId, count, ownerType, ownerId, countItems, isEquip, params, timeout);
     else
         inventory.addItemSql(itemId, count, ownerType, ownerId, countItems, isEquip, params, timeout);
+};
+
+inventory.addPlayerWeaponItem = function(player, itemId, count, ownerType, ownerId, countItems, isEquip, params, text = 'Выдано оружие', timeout = 1) {
+    let serial = weapons.getWeaponSerial(itemId);
+    let paramsObject = JSON.parse(params);
+    paramsObject.serial = serial;
+    inventory.addItemSql(itemId, count, ownerType, ownerId, countItems, isEquip, JSON.stringify(paramsObject), timeout);
+    user.addHistory(player, 5, `${text} ${items.getItemNameById(itemId)} (${serial})`);
 };
 
 inventory.addWeaponItem = function(itemId, count, ownerType, ownerId, countItems, isEquip, params, timeout = 1) {
@@ -745,29 +763,141 @@ inventory.useItem = function(player, id, itemId) {
                 break;
             }
             case 11:
-            case 12:
-            case 13:
-            case 14:
-            case 15:
-            case 16:
-            case 17:
-            case 18:
-            case 19:
-            case 20:
-            case 21:
-            case 22:
-            case 23:
-            case 24:
-            case 25:
             {
-                user.removeWaterLevel(player, 100);
+                user.removeWaterLevel(player, -400);
                 user.addEatLevel(player, 500);
                 chat.sendMeCommand(player, "съедает " + items.getItemNameById(itemId));
                 inventory.deleteItem(id);
                 user.playEatAnimation(player);
                 break;
             }
+            case 12:
+            {
+                user.addWaterLevel(player, 300);
+                user.addEatLevel(player, 400);
+                chat.sendMeCommand(player, "съедает " + items.getItemNameById(itemId));
+                inventory.deleteItem(id);
+                user.playEatAnimation(player);
+                break;
+            }
+            case 13:
+            {
+                user.removeWaterLevel(player, -200);
+                user.addEatLevel(player, 300);
+                chat.sendMeCommand(player, "съедает " + items.getItemNameById(itemId));
+                inventory.deleteItem(id);
+                user.playEatAnimation(player);
+                break;
+            }
+            case 14:
+            {
+                user.removeWaterLevel(player, 50);
+                user.addEatLevel(player, 100);
+                chat.sendMeCommand(player, "съедает " + items.getItemNameById(itemId));
+                inventory.deleteItem(id);
+                user.playEatAnimation(player);
+                break;
+            }
+            case 15:
+            case 16:
+            {
+                user.addWaterLevel(player, 150);
+                user.addEatLevel(player, 400);
+                chat.sendMeCommand(player, "съедает " + items.getItemNameById(itemId));
+                inventory.deleteItem(id);
+                user.playEatAnimation(player);
+                break;
+            }
+            case 17:
+            {
+                user.removeWaterLevel(player, 100);
+                user.addEatLevel(player, 250);
+                chat.sendMeCommand(player, "съедает " + items.getItemNameById(itemId));
+                inventory.deleteItem(id);
+                user.playEatAnimation(player);
+                break;
+            }
+            case 18:
+            {
+                user.removeWaterLevel(player, 100);
+                user.addEatLevel(player, 200);
+                chat.sendMeCommand(player, "съедает " + items.getItemNameById(itemId));
+                inventory.deleteItem(id);
+                user.playEatAnimation(player);
+                break;
+            }
+            case 19:
+            {
+                user.addWaterLevel(player, 150);
+                user.addEatLevel(player, 300);
+                chat.sendMeCommand(player, "съедает " + items.getItemNameById(itemId));
+                inventory.deleteItem(id);
+                user.playEatAnimation(player);
+                break;
+            }
+            case 20:
+            {
+                user.removeWaterLevel(player, 250);
+                user.addEatLevel(player, 500);
+                chat.sendMeCommand(player, "съедает " + items.getItemNameById(itemId));
+                inventory.deleteItem(id);
+                user.playEatAnimation(player);
+                break;
+            }
+            case 21:
+            {
+                user.removeWaterLevel(player, 50);
+                user.addEatLevel(player, 150);
+                chat.sendMeCommand(player, "съедает " + items.getItemNameById(itemId));
+                inventory.deleteItem(id);
+                user.playEatAnimation(player);
+                break;
+            }
+            case 22:
+            {
+                user.addWaterLevel(player, 50);
+                user.addEatLevel(player, 250);
+                chat.sendMeCommand(player, "съедает " + items.getItemNameById(itemId));
+                inventory.deleteItem(id);
+                user.playEatAnimation(player);
+                break;
+            }
+            case 23:
+            {
+                user.addWaterLevel(player, 50);
+                user.addEatLevel(player, 200);
+                chat.sendMeCommand(player, "съедает " + items.getItemNameById(itemId));
+                inventory.deleteItem(id);
+                user.playEatAnimation(player);
+                break;
+            }
+            case 24:
+            {
+                user.addWaterLevel(player, 100);
+                user.addEatLevel(player, 250);
+                chat.sendMeCommand(player, "съедает " + items.getItemNameById(itemId));
+                inventory.deleteItem(id);
+                user.playEatAnimation(player);
+                break;
+            }
+            case 25:
+            {
+                user.addWaterLevel(player, 50);
+                user.addEatLevel(player, 300);
+                chat.sendMeCommand(player, "съедает " + items.getItemNameById(itemId));
+                inventory.deleteItem(id);
+                user.playEatAnimation(player);
+                break;
+            }
             case 241:
+            {
+                user.addEatLevel(player, 50);
+                user.addWaterLevel(player, 300);
+                chat.sendMeCommand(player, "выпивает " + items.getItemNameById(itemId));
+                inventory.deleteItem(id);
+                user.playDrinkAnimation(player);
+                break;
+            }
             case 242:
             {
                 user.addWaterLevel(player, 500);
@@ -785,7 +915,7 @@ inventory.useItem = function(player, id, itemId) {
             case 249:
             case 250:
             {
-                user.addWaterLevel(player, 500);
+                user.addWaterLevel(player, 50);
                 chat.sendMeCommand(player, "выпивает " + items.getItemNameById(itemId));
                 inventory.deleteItem(id);
                 user.playDrinkAnimation(player);
@@ -794,8 +924,8 @@ inventory.useItem = function(player, id, itemId) {
             }
             case 32:
             {
-                user.addWaterLevel(player, 1000);
-                user.addEatLevel(player, 1000);
+                user.addWaterLevel(player, 600);
+                user.addEatLevel(player, 600);
                 chat.sendMeCommand(player, "съедает сухпаёк");
                 inventory.deleteItem(id);
                 user.playEatAnimation(player);
@@ -803,6 +933,7 @@ inventory.useItem = function(player, id, itemId) {
             }
             case 26:
             {
+                user.removeWaterLevel(player, 50);
                 chat.sendMeCommand(player, "выкуривает сигарету");
                 inventory.deleteItem(id);
                 break;

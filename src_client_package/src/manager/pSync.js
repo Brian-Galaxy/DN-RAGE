@@ -54,7 +54,7 @@ mp.events.add('client:syncComponentVariation', (playerId, component, drawableId,
         }
     }
     catch (e) {
-        methods.debug('Exception: events:client:syncComponentVariation');
+        methods.debug('Exception: client:syncComponentVariation');
         methods.debug(e);
     }
 });
@@ -82,7 +82,7 @@ mp.events.add('client:syncAnimation', async (playerId, dict, anim, flag) => {
                     flag = 1;
             }
 
-            methods.debug('Execute: events:client:syncAnimation:' + flag);
+            methods.debug('Execute: client:syncAnimation:' + flag);
 
             remotePlayer.clearTasks();
             //remotePlayer.clearTasksImmediately();
@@ -129,7 +129,7 @@ mp.events.add('client:syncAnimation', async (playerId, dict, anim, flag) => {
         }
     }
     catch (e) {
-        methods.debug('Exception: events:client:syncAnimation');
+        methods.debug('Exception: client:syncAnimation');
         methods.debug(e);
     }
 });
@@ -154,7 +154,23 @@ mp.events.add('client:syncStopAnimation', (playerId) => {
         }
     }
     catch (e) {
-        methods.debug('Exception: events:client:syncAnimation');
+        methods.debug('Exception: client:syncAnimation');
+        methods.debug(e);
+    }
+});
+
+mp.events.add('client:syncRagdoll', (playerId, timeout) => {
+    //if (mp.players.local.remoteId == playerId || mp.players.local.id == playerId)
+    try {
+        methods.debug('client:syncStopAnimation', playerId);
+        let remotePlayer = mp.players.atRemoteId(playerId);
+        if (remotePlayer && mp.players.exists(remotePlayer)) {
+            remotePlayer.setCanRagdoll(true);
+            remotePlayer.setToRagdoll(timeout, timeout, 0, false, false, false);
+        }
+    }
+    catch (e) {
+        methods.debug('Exception: client:syncRagdoll');
         methods.debug(e);
     }
 });

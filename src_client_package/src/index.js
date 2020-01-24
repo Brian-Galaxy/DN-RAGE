@@ -28,6 +28,7 @@ import user from "./user";
 import enums from "./enums";
 import weather from "./manager/weather";
 import hosp from "./manager/hosp";
+import jail from "./manager/jail";
 
 try {
 
@@ -47,6 +48,7 @@ try {
     ui.create();
 
     hosp.timer();
+    jail.timer();
 
     user.init();
     methods.requestIpls();

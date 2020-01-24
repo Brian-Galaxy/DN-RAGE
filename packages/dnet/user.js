@@ -254,7 +254,7 @@ user.save = function(player, withReset = false) {
         mysql.executeQuery(sql);
 
         if (withReset === true) {
-
+            //TODO
         }
         else
             user.updateClientCache(player);
@@ -1596,6 +1596,22 @@ user.stopAnimation = function(player) {
     });
 };
 
+user.setRagdoll = function(player, timeout) {
+    methods.debug('user.stopSyncAnimation');
+    if (!mp.players.exists(player))
+        return false;
+    let pos = player.position;
+    mp.players.forEach((p) => {
+        try {
+            if (methods.distanceToPos(pos, p.position) < 300)
+                p.call('client:syncRagdoll', [player.id, timeout])
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    });
+};
+
 user.playDrinkAnimation = function(player) {
     methods.debug('user.playDrinkAnimation');
     user.playAnimation(player, "mp_player_intdrink", "loop_bottle", 48);
@@ -1830,7 +1846,7 @@ user.giveLic = function (player, lic, monthEnd = 12, desc = '') {
     }
 
     if (lic == 'med_lic') {
-        player.notify(`~g~Вы получили ~s~медстраховку~g~ на~s~${monthEnd} ~g~мес.`);
+        player.notify(`~g~Вы получили ~s~медстраховку~g~ на ~s~${monthEnd} ~g~мес.`);
         user.addHistory(player, 4, `Получил медстраховку на ${monthEnd} мес.` + desc);
         return;
     }

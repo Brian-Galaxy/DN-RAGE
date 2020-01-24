@@ -2250,36 +2250,50 @@ menuList.showFuelMenu = async function() {
     let listItem = UIMenu.Menu.AddMenuItemList("Бензин", list, `Цена: ~g~${methods.moneyFormat(itemPrice)}~s~ за 1л.${saleLabel}`);
     listItem.type = 1;
     listItem.price = itemPrice;
+    if (sale > 0)
+        menuItem.SetLeftBadge(27);
 
     itemPrice = 1.1 * price;
     listItem = UIMenu.Menu.AddMenuItemList("Дизель", list, `Цена: ~g~${methods.moneyFormat(itemPrice)}~s~ за 1л.${saleLabel}`);
     listItem.type = 2;
     listItem.price = itemPrice;
+    if (sale > 0)
+        menuItem.SetLeftBadge(27);
 
     itemPrice = 0.5 * price;
     listItem = UIMenu.Menu.AddMenuItemList("Электричество", list2, `Цена: ~g~${methods.moneyFormat(itemPrice)}~s~ за 1%${saleLabel}`);
     listItem.type = 3;
     listItem.price = itemPrice;
+    if (sale > 0)
+        menuItem.SetLeftBadge(27);
 
     itemPrice = 3 * price;
     listItem = UIMenu.Menu.AddMenuItemList("Авиатопливо", list, `Цена: ~g~${methods.moneyFormat(itemPrice)}~s~ за 1л.${saleLabel}`);
     listItem.type = 4;
     listItem.price = itemPrice;
+    if (sale > 0)
+        menuItem.SetLeftBadge(27);
 
     itemPrice = items.getItemPrice(8) * price;
     let menuItem = UIMenu.Menu.AddMenuItem("Канистра (Авиатопливо)", `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`);
     menuItem.price = itemPrice;
     menuItem.itemId = 8;
+    if (sale > 0)
+        menuItem.SetLeftBadge(27);
 
     itemPrice = items.getItemPrice(9) * price;
     menuItem = UIMenu.Menu.AddMenuItem("Канистра (Бензин)", `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`);
     menuItem.price = itemPrice;
     menuItem.itemId = 9;
+    if (sale > 0)
+        menuItem.SetLeftBadge(27);
 
     itemPrice = items.getItemPrice(10) * price;
     menuItem = UIMenu.Menu.AddMenuItem("Канистра (Дизель)", `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`);
     menuItem.price = itemPrice;
     menuItem.itemId = 10;
+    if (sale > 0)
+        menuItem.SetLeftBadge(27);
 
     let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
 
@@ -2377,6 +2391,8 @@ menuList.showBarberShopMenu = function (shopId, price) {
     menuListItem.price = itemPrice + 0.01;
     menuListItem.label = "Причёска";
     menuListItem.Index = skin.SKIN_HAIR;
+    if (sale > 0)
+        menuListItem.SetLeftBadge(27);
 
     list = [];
     for (let j = 0; j < 64; j++) {
@@ -2389,6 +2405,8 @@ menuList.showBarberShopMenu = function (shopId, price) {
     menuListItem.price = itemPrice + 0.01;
     menuListItem.label = "Цвет волос";
     menuListItem.Index = skin.SKIN_HAIR_COLOR;
+    if (sale > 0)
+        menuListItem.SetLeftBadge(27);
 
     list = [];
     for (let j = 0; j < 64; j++) {
@@ -2401,6 +2419,8 @@ menuList.showBarberShopMenu = function (shopId, price) {
     menuListItem.price = itemPrice + 0.01;
     menuListItem.label = "Мелирование волос";
     menuListItem.Index = skin.SKIN_HAIR_COLOR_2;
+    if (sale > 0)
+        menuListItem.SetLeftBadge(27);
 
     list = [];
     for (let j = 0; j < 32; j++) {
@@ -2413,6 +2433,8 @@ menuList.showBarberShopMenu = function (shopId, price) {
     menuListItem.price = itemPrice + 0.01;
     menuListItem.label = "Цвет глаз";
     menuListItem.Index = skin.SKIN_EYE_COLOR;
+    if (sale > 0)
+        menuListItem.SetLeftBadge(27);
 
     list = [];
     for (let j = 0; j < 30; j++) {
@@ -2425,6 +2447,8 @@ menuList.showBarberShopMenu = function (shopId, price) {
     menuListItem.price = itemPrice + 0.01;
     menuListItem.label = "Брови";
     menuListItem.Index = skin.SKIN_EYEBROWS;
+    if (sale > 0)
+        menuListItem.SetLeftBadge(27);
 
     list = [];
     for (let j = 0; j < 64; j++) {
@@ -2436,6 +2460,8 @@ menuList.showBarberShopMenu = function (shopId, price) {
     menuListItem.doName = 'SKIN_EYEBROWS_COLOR';
     menuListItem.price = itemPrice + 0.01;
     menuListItem.Index = skin.SKIN_EYEBROWS_COLOR;
+    if (sale > 0)
+        menuListItem.SetLeftBadge(27);
 
     list = ['~r~Нет'];
     for (let j = 0; j < 10; j++) {
@@ -2448,6 +2474,8 @@ menuList.showBarberShopMenu = function (shopId, price) {
     menuListItem.price = itemPrice + 0.01;
     menuListItem.label = "Веснушки";
     menuListItem.Index = skin.SKIN_OVERLAY_9 + 1;
+    if (sale > 0)
+        menuListItem.SetLeftBadge(27);
 
     if (user.getSex() == 0) {
         list = ['~r~Нет'];
@@ -2461,6 +2489,8 @@ menuList.showBarberShopMenu = function (shopId, price) {
         menuListItem.price = itemPrice + 0.01;
         menuListItem.label = "Борода";
         menuListItem.Index = skin.SKIN_OVERLAY_1 + 1;
+        if (sale > 0)
+            menuListItem.SetLeftBadge(27);
 
         list = [];
         for (let j = 0; j < 64; j++) {
@@ -2473,6 +2503,8 @@ menuList.showBarberShopMenu = function (shopId, price) {
         menuListItem.price = itemPrice + 0.01;
         menuListItem.label = "Цвет бороды";
         menuListItem.Index = skin.SKIN_OVERLAY_COLOR_1;
+        if (sale > 0)
+            menuListItem.SetLeftBadge(27);
 
         list = ['~r~Нет'];
         for (let j = 0; j < mp.game.ped.getNumHeadOverlayValues(10) + 1; j++) {
@@ -2485,6 +2517,8 @@ menuList.showBarberShopMenu = function (shopId, price) {
         menuListItem.price = itemPrice + 0.01;
         menuListItem.label = "Волосы на груди";
         menuListItem.Index = skin.SKIN_OVERLAY_10 + 1;
+        if (sale > 0)
+            menuListItem.SetLeftBadge(27);
     }
     else {
         list = ['~r~Нет'];
@@ -2498,6 +2532,8 @@ menuList.showBarberShopMenu = function (shopId, price) {
         menuListItem.price = itemPrice + 0.01;
         menuListItem.label = "Помада";
         menuListItem.Index = skin.SKIN_OVERLAY_8 + 1;
+        if (sale > 0)
+            menuListItem.SetLeftBadge(27);
 
         list = [];
         for (let j = 0; j < 60; j++) {
@@ -2510,6 +2546,8 @@ menuList.showBarberShopMenu = function (shopId, price) {
         menuListItem.price = itemPrice + 0.01;
         menuListItem.label = "Цвет помады";
         menuListItem.Index = skin.SKIN_OVERLAY_COLOR_8;
+        if (sale > 0)
+            menuListItem.SetLeftBadge(27);
 
         list = ['~r~Нет'];
         for (let j = 0; j < 7; j++) {
@@ -2522,6 +2560,8 @@ menuList.showBarberShopMenu = function (shopId, price) {
         menuListItem.price = itemPrice + 0.01;
         menuListItem.label = "Румянец";
         menuListItem.Index = skin.SKIN_OVERLAY_5 + 1;
+        if (sale > 0)
+            menuListItem.SetLeftBadge(27);
 
         list = [];
         for (let j = 0; j < 60; j++) {
@@ -2534,6 +2574,8 @@ menuList.showBarberShopMenu = function (shopId, price) {
         menuListItem.price = itemPrice + 0.01;
         menuListItem.label = "Цвет румянца";
         menuListItem.Index = skin.SKIN_OVERLAY_COLOR_5;
+        if (sale > 0)
+            menuListItem.SetLeftBadge(27);
 
         list = ['~r~Нет'];
         for (let j = 0; j < mp.game.ped.getNumHeadOverlayValues(8) + 1; j++) {
@@ -2546,6 +2588,8 @@ menuList.showBarberShopMenu = function (shopId, price) {
         menuListItem.price = itemPrice + 0.01;
         menuListItem.label = "Макияж";
         menuListItem.Index = skin.SKIN_OVERLAY_4 + 1;
+        if (sale > 0)
+            menuListItem.SetLeftBadge(27);
 
         list = [];
         for (let j = 0; j < 10; j++) {
@@ -2558,6 +2602,8 @@ menuList.showBarberShopMenu = function (shopId, price) {
         menuListItem.price = itemPrice + 0.01;
         menuListItem.label = "Цвет макияжа";
         menuListItem.Index = skin.SKIN_OVERLAY_COLOR_4;
+        if (sale > 0)
+            menuListItem.SetLeftBadge(27);
     }
 
     UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = "closeButton";
@@ -2783,6 +2829,8 @@ menuList.showShopAlcMenu = function(shopId, price = 2, type = 0)
         let menuItem = UIMenu.Menu.AddMenuItem(items.getItemNameById(itemId), `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`);
         menuItem.price = itemPrice;
         menuItem.itemId = itemId;
+        if (sale > 0)
+            menuItem.SetLeftBadge(27);
     });
 
     //UIMenu.Menu.AddMenuItem("~y~Ограбить").doName = 'grab';
@@ -2821,6 +2869,8 @@ menuList.showShopElMenu = function(shopId, price = 2)
         let menuItem = UIMenu.Menu.AddMenuItem(items.getItemNameById(itemId), `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`);
         menuItem.price = itemPrice;
         menuItem.itemId = itemId;
+        if (sale > 0)
+            menuItem.SetLeftBadge(27);
     });
 
     //UIMenu.Menu.AddMenuItem("~y~Ограбить").doName = 'grab';
@@ -2854,11 +2904,21 @@ menuList.showShopMedMenu = function(shopId, price = 2)
     let sale = business.getSale(price);
     if (sale > 0)
         saleLabel = `\n~s~Скидка: ~r~${sale}%`;
+
+    let itemPrice = 10000 * price;
+    let menuItem = UIMenu.Menu.AddMenuItem("Мед. страховка на 6 мес.", `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`);
+    menuItem.price = itemPrice;
+    menuItem.doName = "med_lic";
+    if (sale > 0)
+        menuItem.SetLeftBadge(27);
+
     enums.shopMedItems.forEach(itemId => {
         let itemPrice = items.getItemPrice(itemId) * price;
         let menuItem = UIMenu.Menu.AddMenuItem(items.getItemNameById(itemId), `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`);
         menuItem.price = itemPrice;
         menuItem.itemId = itemId;
+        if (sale > 0)
+            menuItem.SetLeftBadge(27);
     });
 
     //UIMenu.Menu.AddMenuItem("~y~Ограбить").doName = 'grab';
@@ -2867,9 +2927,11 @@ menuList.showShopMedMenu = function(shopId, price = 2)
     menu.ItemSelect.on(async (item, index) => {
         UIMenu.Menu.HideMenu();
         try {
-            if (item.price > 0)
+            if (item.doName == "med_lic")
+                user.buyLicense(item.doName, item.price, 6);
+            else if (item.price > 0)
                 mp.events.callRemote('server:shop:buy', item.itemId, item.price, shopId);
-            if (item.doName == 'grab') {
+            else if (item.doName == 'grab') {
                 user.grab(shopId);
             }
         }
@@ -2897,6 +2959,8 @@ menuList.showShopFishMenu = function(shopId, price = 2)
         let menuItem = UIMenu.Menu.AddMenuItem(items.getItemNameById(itemId), `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`);
         menuItem.price = itemPrice;
         menuItem.itemId = itemId;
+        if (sale > 0)
+            menuItem.SetLeftBadge(27);
     });
 
     //UIMenu.Menu.AddMenuItem("~y~Ограбить").doName = 'grab';
@@ -2935,6 +2999,8 @@ menuList.showShopHuntMenu = function(shopId, price = 2)
         let menuItem = UIMenu.Menu.AddMenuItem(items.getItemNameById(itemId), `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`);
         menuItem.price = itemPrice;
         menuItem.itemId = itemId;
+        if (sale > 0)
+            menuItem.SetLeftBadge(27);
     });
 
     //UIMenu.Menu.AddMenuItem("~y~Ограбить").doName = 'grab';
@@ -2974,18 +3040,24 @@ menuList.showBarMenu = function(shopId, price = 2)
     menuItem.price = itemPrice;
     menuItem.label = "воду";
     menuItem.label2 = "Вода";
+    if (sale > 0)
+        menuItem.SetLeftBadge(27);
 
     itemPrice = 0.90 * price;
     menuItem = UIMenu.Menu.AddMenuItem("Лимонад", `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`);
     menuItem.price = itemPrice;
     menuItem.label = "лимонад";
     menuItem.label2 = "Лимонад";
+    if (sale > 0)
+        menuItem.SetLeftBadge(27);
 
     itemPrice = 0.99 * price;
     menuItem = UIMenu.Menu.AddMenuItem("Кола", `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`);
     menuItem.price = itemPrice;
     menuItem.label = "колу";
     menuItem.label2 = "Кола";
+    if (sale > 0)
+        menuItem.SetLeftBadge(27);
 
     itemPrice = 6.70 * price;
     menuItem = UIMenu.Menu.AddMenuItem("Пиво", `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`);
@@ -2993,6 +3065,8 @@ menuList.showBarMenu = function(shopId, price = 2)
     menuItem.label = "пиво";
     menuItem.label2 = "Пиво";
     menuItem.drunkLevel = 100;
+    if (sale > 0)
+        menuItem.SetLeftBadge(27);
 
     itemPrice = 9.99 * price;
     menuItem = UIMenu.Menu.AddMenuItem("Водка", `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`);
@@ -3000,6 +3074,8 @@ menuList.showBarMenu = function(shopId, price = 2)
     menuItem.label = "водку";
     menuItem.label2 = "Водка";
     menuItem.drunkLevel = 200;
+    if (sale > 0)
+        menuItem.SetLeftBadge(27);
 
     itemPrice = 12 * price;
     menuItem = UIMenu.Menu.AddMenuItem("Текила", `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`);
@@ -3007,6 +3083,8 @@ menuList.showBarMenu = function(shopId, price = 2)
     menuItem.label = "текилу";
     menuItem.label2 = "Текила";
     menuItem.drunkLevel = 200;
+    if (sale > 0)
+        menuItem.SetLeftBadge(27);
 
     itemPrice = 14 * price;
     menuItem = UIMenu.Menu.AddMenuItem("Бурбон", `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`);
@@ -3014,6 +3092,8 @@ menuList.showBarMenu = function(shopId, price = 2)
     menuItem.label = "бурбон";
     menuItem.label2 = "Бурбон";
     menuItem.drunkLevel = 200;
+    if (sale > 0)
+        menuItem.SetLeftBadge(27);
 
     itemPrice = 25 * price;
     menuItem = UIMenu.Menu.AddMenuItem("Виски", `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`);
@@ -3021,6 +3101,8 @@ menuList.showBarMenu = function(shopId, price = 2)
     menuItem.label = "виски";
     menuItem.label2 = "Виски";
     menuItem.drunkLevel = 200;
+    if (sale > 0)
+        menuItem.SetLeftBadge(27);
 
     UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = "closeButton";
     menu.ItemSelect.on(async (item, index) => {
@@ -3124,7 +3206,7 @@ menuList.showRentBikeMenu = function(shopId, price = 2)
     let menu = UIMenu.Menu.Create("Аренда", "~b~Аренда");
 
     if (user.getCache('online_time') <= 370)
-        price = 1;
+        price = 2;
 
     let saleLabel = '';
     let sale = business.getSale(price);
@@ -3135,51 +3217,71 @@ menuList.showRentBikeMenu = function(shopId, price = 2)
     let menuItem = UIMenu.Menu.AddMenuItem("Cruiser", `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`);
     menuItem.price = itemPrice;
     menuItem.hash = 448402357;
+    if (sale > 0)
+        menuItem.SetLeftBadge(27);
 
     itemPrice = 5 * price;
     menuItem = UIMenu.Menu.AddMenuItem("Bmx", `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`);
     menuItem.price = itemPrice;
     menuItem.hash = 1131912276;
+    if (sale > 0)
+        menuItem.SetLeftBadge(27);
 
     itemPrice = 10 * price;
     menuItem = UIMenu.Menu.AddMenuItem("Fixter", `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`);
     menuItem.price = itemPrice;
     menuItem.hash = -836512833;
+    if (sale > 0)
+        menuItem.SetLeftBadge(27);
 
     itemPrice = 10 * price;
     menuItem = UIMenu.Menu.AddMenuItem("Scorcher", `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`);
     menuItem.price = itemPrice;
     menuItem.hash = -186537451;
+    if (sale > 0)
+        menuItem.SetLeftBadge(27);
 
     itemPrice = 30 * price;
     menuItem = UIMenu.Menu.AddMenuItem("TriBike", `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`);
     menuItem.price = itemPrice;
     menuItem.hash = 1127861609;
+    if (sale > 0)
+        menuItem.SetLeftBadge(27);
 
     itemPrice = 30 * price;
     menuItem = UIMenu.Menu.AddMenuItem("TriBike2", `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`);
     menuItem.price = itemPrice;
     menuItem.hash = -1233807380;
+    if (sale > 0)
+        menuItem.SetLeftBadge(27);
 
     itemPrice = 30 * price;
     menuItem = UIMenu.Menu.AddMenuItem("TriBike3", `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`);
     menuItem.price = itemPrice;
     menuItem.hash = -400295096;
+    if (sale > 0)
+        menuItem.SetLeftBadge(27);
 
     itemPrice = 60 * price;
     menuItem = UIMenu.Menu.AddMenuItem("Faggio", `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`);
     menuItem.price = itemPrice;
     menuItem.hash = -1842748181;
+    if (sale > 0)
+        menuItem.SetLeftBadge(27);
 
     itemPrice = 55 * price;
     menuItem = UIMenu.Menu.AddMenuItem("Faggio2", `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`);
     menuItem.price = itemPrice;
     menuItem.hash = 55628203;
+    if (sale > 0)
+        menuItem.SetLeftBadge(27);
 
     itemPrice = 50 * price;
     menuItem = UIMenu.Menu.AddMenuItem("Faggio3", `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`);
     menuItem.price = itemPrice;
     menuItem.hash = -1289178744;
+    if (sale > 0)
+        menuItem.SetLeftBadge(27);
 
     UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = "closeButton";
     menu.ItemSelect.on((item, index) => {
@@ -3321,6 +3423,9 @@ menuList.showShopClothMenu = function (shopId, type, menuType, price = 1) {
             currentListChangeItem = item;
             currentListChangeItemIndex = index;
             cloth.change(item.id1, item.id2, index, item.id4, item.id5, item.id6, item.id7);
+
+            if (item.id1 == 11)
+                user.updateTattoo(true, true, false, true);
         });
 
         menu.ItemSelect.on(async (item, index) => {
@@ -5182,7 +5287,7 @@ menuList.showGovGarderobMenu = function() {
                 return;
             }
 
-            inventory.takeNewItem(item.itemId, `{"owner": "Правительство", "userName": "${user.getCache('name')}"}`).then();
+            inventory.takeNewWeaponItem(item.itemId, `{"owner": "Правительство", "userName": "${user.getCache('name')}}"`, 'Выдано оружие').then();
             methods.saveFractionLog(
                 user.getCache('name'),
                 `Взял ${items.getItemNameById(item.itemId)}`,
@@ -5279,7 +5384,7 @@ menuList.showSheriffArsenalMenu = function() {
                 return;
             }
 
-            inventory.takeNewItem(item.itemId, `{"owner": "BCSD", "userName": "${user.getCache('name')}", "tint": 4}`).then();
+            inventory.takeNewWeaponItem(item.itemId, `{"owner": "BCSD", "userName": "${user.getCache('name')}", "tint": 4}`, 'Выдано оружие').then();
             methods.saveFractionLog(
                 user.getCache('name'),
                 `Взял ${items.getItemNameById(item.itemId)}`,
@@ -5345,7 +5450,7 @@ menuList.showSheriffArsenalGunMenu = function() {
                 return;
             }
 
-            inventory.takeNewItem(item.itemId, `{"owner": "BCSD", "userName": "${user.getCache('name')}, "tint": 4"}`).then();
+            inventory.takeNewWeaponItem(item.itemId, `{"owner": "BCSD", "userName": "${user.getCache('name')}", "tint": 4}`, 'Выдано оружие').then();
             methods.saveFractionLog(
                 user.getCache('name'),
                 `Взял ${items.getItemNameById(item.itemId)}`,
@@ -5439,7 +5544,7 @@ menuList.showSheriffArsenalGunModMenu = function() {
                 return;
             }
 
-            inventory.takeNewItem(item.itemId, `{"owner": "BCSD", "userName": "${user.getCache('name')}, "tint": 4"}`).then();
+            inventory.takeNewWeaponItem(item.itemId, `{"owner": "BCSD", "userName": "${user.getCache('name')}", "tint": 4}`, 'Выдано оружие').then();
             methods.saveFractionLog(
                 user.getCache('name'),
                 `Взял ${items.getItemNameById(item.itemId)}`,
@@ -5522,7 +5627,7 @@ menuList.showSapdArsenalMenu = function() {
                 return;
             }
 
-            inventory.takeNewItem(item.itemId, `{"owner": "LSPD", "userName": "${user.getCache('name')}, "tint": 5"}`).then();
+            inventory.takeNewWeaponItem(item.itemId, `{"owner": "LSPD", "userName": "${user.getCache('name')}", "tint": 5}`, 'Выдано оружие').then();
             methods.saveFractionLog(
                 user.getCache('name'),
                 `Взял ${items.getItemNameById(item.itemId)}`,
@@ -5588,7 +5693,7 @@ menuList.showSapdArsenalGunMenu = function() {
                 return;
             }
 
-            inventory.takeNewItem(item.itemId, `{"owner": "LSPD", "userName": "${user.getCache('name')}", "tint": 5}`).then();
+            inventory.takeNewWeaponItem(item.itemId, `{"owner": "LSPD", "userName": "${user.getCache('name')}", "tint": 5}`, 'Выдано оружие').then();
             methods.saveFractionLog(
                 user.getCache('name'),
                 `Взял ${items.getItemNameById(item.itemId)}`,
@@ -5682,7 +5787,7 @@ menuList.showSapdArsenalGunModMenu = function() {
                 return;
             }
 
-            inventory.takeNewItem(item.itemId, `{"owner": "LSPD", "userName": "${user.getCache('name')}", "tint": 5}`).then();
+            inventory.takeNewWeaponItem(item.itemId, `{"owner": "LSPD", "userName": "${user.getCache('name')}", "tint": 5}`, 'Выдано оружие').then();
             methods.saveFractionLog(
                 user.getCache('name'),
                 `Взял ${items.getItemNameById(item.itemId)}`,

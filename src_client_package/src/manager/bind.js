@@ -1,36 +1,47 @@
+import Container from '../modules/data';
+import methods from '../modules/methods';
+import user from '../user';
+import inventory from "../inventory";
+import ui from "../modules/ui";
+import vehicles from "../property/vehicles";
+import phone from "../phone";
+import voice from "../voice";
+
+let bind = {};
+
 const keyCodes = {
-    0: 'That key has no keycode',
-    3: 'break',
-    8: 'backspace',
-    9: 'tab',
-    12: 'clear',
-    13: 'enter',
-    16: 'shift',
-    17: 'ctrl',
-    18: 'alt',
-    19: 'pause/break',
-    20: 'caps lock',
-    21: 'hangul',
-    25: 'hanja',
-    27: 'escape',
-    28: 'conversion',
-    29: 'non-conversion',
-    32: 'spacebar',
-    33: 'page up',
-    34: 'page down',
-    35: 'end',
-    36: 'home',
-    37: 'left arrow',
+    0: 'Unk',
+    3: 'Break',
+    //8: 'backspace',
+    9: 'Tab',
+    12: 'Clear',
+    //13: 'enter',
+    16: 'Shift',
+    17: 'Ctrl',
+    18: 'Alt',
+    19: 'Pause',
+    20: 'Caps Lock',
+    21: 'Hangul',
+    25: 'Hanja',
+    //27: 'Escape',
+    28: 'Convert',
+    29: 'Non-Convert',
+    32: 'Space',
+    33: 'Page Up',
+    34: 'Page Down',
+    35: 'End',
+    36: 'Home',
+    /*37: 'left arrow',
     38: 'up arrow',
     39: 'right arrow',
-    40: 'down arrow',
-    41: 'select',
-    42: 'print',
-    43: 'execute',
+    40: 'down arrow',*/
+    41: 'Select',
+    42: 'Print',
+    43: 'Execute',
     44: 'Print Screen',
-    45: 'insert',
-    46: 'delete',
-    47: 'help',
+    45: 'Insert',
+    46: 'Delete',
+    47: 'Help',
     48: '0',
     49: '1',
     50: '2',
@@ -42,134 +53,278 @@ const keyCodes = {
     56: '8',
     57: '9',
     58: ':',
-    59: 'semicolon (firefox), equals',
+    59: 'Semicolon',
     60: '<',
-    61: 'equals (firefox)',
+    61: 'Equals',
     63: 'ß',
-    64: '@ (firefox)',
-    65: 'a',
-    66: 'b',
-    67: 'c',
-    68: 'd',
-    69: 'e',
-    70: 'f',
-    71: 'g',
-    72: 'h',
-    73: 'i',
-    74: 'j',
-    75: 'k',
-    76: 'l',
-    77: 'm',
-    78: 'n',
-    79: 'o',
-    80: 'p',
-    81: 'q',
-    82: 'r',
-    83: 's',
-    84: 't',
-    85: 'u',
-    86: 'v',
-    87: 'w',
-    88: 'x',
-    89: 'y',
-    90: 'z',
+    64: '@',
+    65: 'A',
+    66: 'B',
+    67: 'C',
+    68: 'D',
+    69: 'E',
+    70: 'F',
+    71: 'G',
+    72: 'H',
+    73: 'I',
+    74: 'J',
+    75: 'K',
+    76: 'L',
+    //77: 'm',
+    78: 'N',
+    79: 'O',
+    80: 'P',
+    81: 'Q',
+    82: 'R',
+    83: 'S',
+    84: 'T',
+    85: 'U',
+    86: 'V',
+    87: 'W',
+    88: 'X',
+    89: 'U',
+    90: 'Z',
     91: 'Windows Key',
     92: 'Right window key',
-    93: 'Windows Menu / Right ⌘',
-    95: 'sleep',
-    96: 'numpad 0',
-    97: 'numpad 1',
-    98: 'numpad 2',
-    99: 'numpad 3',
-    100: 'numpad 4',
-    101: 'numpad 5',
-    102: 'numpad 6',
-    103: 'numpad 7',
-    104: 'numpad 8',
-    105: 'numpad 9',
-    106: 'multiply',
-    107: 'add',
-    108: 'numpad period (firefox)',
-    109: 'subtract',
-    110: 'decimal point',
-    111: 'divide',
-    112: 'f1',
-    113: 'f2',
-    114: 'f3',
-    115: 'f4',
-    116: 'f5',
-    117: 'f6',
-    118: 'f7',
-    119: 'f8',
-    120: 'f9',
-    121: 'f10',
-    122: 'f11',
-    123: 'f12',
-    124: 'f13',
-    125: 'f14',
-    126: 'f15',
-    127: 'f16',
-    128: 'f17',
-    129: 'f18',
-    130: 'f19',
-    131: 'f20',
-    132: 'f21',
-    133: 'f22',
-    134: 'f23',
-    135: 'f24',
-    144: 'num lock',
-    145: 'scroll lock',
-    151: 'airplane mode',
+    93: 'Windows Menu',
+    95: 'Sleep',
+    96: 'Numpad 0',
+    97: 'Numpad 1',
+    98: 'Numpad 2',
+    99: 'Numpad 3',
+    100: 'Numpad 4',
+    101: 'Numpad 5',
+    102: 'Numpad 6',
+    103: 'Numpad 7',
+    104: 'Numpad 8',
+    105: 'Numpad 9',
+    106: '*',
+    107: '+',
+    108: 'Numpad period',
+    109: '-',
+    110: 'Del',
+    111: '/',
+    112: 'F1',
+    113: 'F2',
+    114: 'F3',
+    115: 'F4',
+    116: 'F5',
+    117: 'F6',
+    118: 'F7',
+    119: 'F8',
+    120: 'F9',
+    121: 'F10',
+    122: 'F11',
+    123: 'F12',
+    124: 'F13',
+    125: 'F14',
+    126: 'F15',
+    127: 'F16',
+    128: 'F17',
+    129: 'F18',
+    130: 'F19',
+    131: 'F20',
+    132: 'F21',
+    133: 'F22',
+    134: 'F23',
+    135: 'F24',
+    144: 'Num Lock',
+    145: 'Scroll Lock',
+    151: 'Airplane Mode',
     160: '^',
     161: '!',
-    162: '؛ (arabic semicolon)',
+    162: '؛',
     163: '#',
     164: '$',
     165: 'ù',
-    166: 'page backward',
-    167: 'page forward',
-    168: 'refresh',
-    169: 'closing paren (AZERTY)',
+    166: 'Backward',
+    167: 'Forward',
+    168: 'Refresh',
+    169: 'Closing Paren',
     170: '*',
-    171: '~',
-    172: 'home key',
-    173: 'minus (firefox), mute/unmute',
-    174: 'decrease volume level',
-    175: 'increase volume level',
-    176: 'next',
-    177: 'previous',
-    178: 'stop',
-    179: 'play/pause',
-    180: 'e-mail',
-    181: 'mute/unmute (firefox)',
-    182: 'decrease volume level (firefox)',
-    183: 'increase volume level (firefox)',
-    186: 'semi-colon / ñ',
-    187: 'equal sign',
-    188: 'comma',
-    189: 'dash',
-    190: 'period',
-    191: 'forward slash / ç',
-    192: 'grave accent / ñ / æ / ö',
+    171: 'Ё',
+    172: '+',
+    173: '-',
+    /*174: 'decrease volume level',
+    175: 'increase volume level',*/
+    176: 'Next',
+    177: 'Previous',
+    178: 'Stop',
+    179: 'Play/Pause',
+    180: 'E-mail',
+    181: 'Mute/Unmute',
+    /*182: 'decrease volume level (firefox)',
+    183: 'increase volume level (firefox)',*/
+    186: 'Semi-colon / ñ',
+    187: '=',
+    188: 'Comma',
+    189: '_',
+    190: 'Period',
+    191: 'Forward Slash',
+    192: 'Ё',
     193: '?, / or °',
-    194: 'numpad period (chrome)',
-    219: 'open bracket',
-    220: 'back slash',
-    221: 'close bracket / å',
-    222: 'single quote / ø / ä',
+    /*194: 'Numpad period',
+    219: 'Open bracket',*/
+    220: '\\',
+    /*221: 'Close bracket / å',
+    222: 'Single quote / ø / ä',*/
     223: '`',
-    224: 'left or right ⌘ key (firefox)',
-    225: 'altgr',
+    /*224: 'Left or right ⌘ key',
+    225: 'Altgr',
     226: '< /git >, left back slash',
     230: 'GNOME Compose Key',
     231: 'ç',
     233: 'XF86Forward',
     234: 'XF86Back',
-    235: 'non-conversion',
-    240: 'alphanumeric',
-    242: 'hiragana/katakana',
-    243: 'half-width/full-width',
-    244: 'kanji',
-    251: 'unlock trackpad (Chrome/Edge)',
-    255: 'toggle touchpad',
+    235: 'Non-conversion',
+    240: 'Alphanumeric',
+    242: 'Hiragana/katakana',
+    243: 'Half-width/full-width',
+    244: 'Kanji',
+    251: 'Unlock Trackpad ',
+    255: 'Toggle Touchpad',*/
 };
+
+bind.isChange = false;
+bind.data = '';
+bind.lastKey = 0;
+
+bind.isKeyValid = function(keyCode) {
+    for(let code in keyCodes) {
+        if (methods.parseInt(code) === keyCode)
+            return true;
+    }
+    return false;
+};
+
+bind.bindNewKey = function(key) {
+    if (bind.data.trim() == '')
+        return;
+    key = methods.parseInt(key);
+    user.set(bind.data, key);
+    bind.lastKey = key;
+    bind.data = '';
+    bind.isChange = false;
+};
+
+bind.getKeyName = function(key) {
+    return keyCodes[methods.parseInt(key)];
+};
+
+bind.getChangeKey = async function(data) {
+    bind.data = data;
+    bind.isChange = true;
+    bind.lastKey = 0;
+
+    while (bind.isChange)
+        await methods.sleep(10);
+
+    return bind.lastKey;
+};
+/*
+    "s_bind_inv",
+    "s_bind_inv_world",
+    "s_bind_lock",
+    "s_bind_engine",
+    "s_bind_phone",
+    "s_bind_voice",
+    "s_bind_voice_radio",
+    "s_bind_pnv",
+    * */
+
+for(let code in keyCodes) {
+    mp.keys.bind(parseInt(code), true, function() {
+        if (bind.isChange)
+            bind.bindNewKey(parseInt(code));
+        if (user.getCache('s_bind_inv') == parseInt(code)) {
+            if (!user.isLogin())
+                return;
+            if (!methods.isBlockKeys()) {
+                //methods.pressEToPayRespect();
+                ui.callCef('inventory', '{"type": "showOrHide"}')
+            }
+        }
+        if (user.getCache('s_bind_inv_world') == parseInt(code)) {
+            inventory.getItemList(0, 0);
+        }
+        if (user.getCache('s_bind_phone') == parseInt(code)) {
+            if (!user.isLogin())
+                return;
+            if (!methods.isBlockKeys())
+                phone.showOrHide();
+        }
+        if (user.getCache('s_bind_lock') == parseInt(code)) {
+            if (!user.isLogin())
+                return;
+            if (!methods.isBlockKeys())
+                mp.events.callRemote('onKeyPress:L');
+        }
+        if (user.getCache('s_bind_engine') == parseInt(code)) {
+            if (!user.isLogin())
+                return;
+            if (!methods.isBlockKeys())
+                vehicles.engineVehicle();
+        }
+        if (user.getCache('s_bind_pnv') == parseInt(code)) {
+            if (!user.isLogin())
+                return;
+            if (!methods.isBlockKeys()) {
+                let drawId = mp.players.local.getPropIndex(0);
+                let textureId = mp.players.local.getPropTextureIndex(0);
+                if (user.getSex() == 1 && (drawId == 116 || drawId == 118)) {
+                    user.setProp(0, --drawId, textureId);
+                    mp.game.graphics.setNightvision(true);
+                }
+                else if (user.getSex() == 1 && (drawId == 115 || drawId == 117)) {
+                    user.setProp(0, ++drawId, textureId);
+                    mp.game.graphics.setNightvision(false);
+                }
+
+                if (user.getSex() == 0 && (drawId == 117 || drawId == 119)) {
+                    user.setProp(0, --drawId, textureId);
+                    mp.game.graphics.setNightvision(true);
+                }
+                else if (user.getSex() == 0 && (drawId == 116 || drawId == 118)) {
+                    user.setProp(0, ++drawId, textureId);
+                    mp.game.graphics.setNightvision(false);
+                }
+            }
+        }
+        if (user.getCache('s_bind_megaphone') == parseInt(code)) {
+            if (!user.isLogin())
+                return;
+            if (!methods.isBlockKeys()) {
+                let veh = mp.players.local.vehicle;
+                if (veh && veh.getPedInSeat(0) == mp.players.local.handle) {
+                    if (methods.getVehicleInfo(veh.model).class_name == 'Emergency') {
+                        user.setVariable('voice.distance', 7000);
+                        voice.enableMicrophone();
+                    }
+                }
+            }
+        }
+        if (user.getCache('s_bind_voice') == parseInt(code)) {
+            if (!user.isLogin())
+                return;
+            voice.enableMicrophone();
+        }
+    });
+
+    mp.keys.bind(parseInt(code), false, function() {
+        if (user.getCache('s_bind_megaphone') == parseInt(code)) {
+            if (!user.isLogin())
+                return;
+            if (!methods.isBlockKeys()) {
+                user.setVariable('voice.distance', 25);
+                voice.disableMicrophone();
+            }
+        }
+        if (user.getCache('s_bind_voice') == parseInt(code)) {
+            if (!user.isLogin())
+                return;
+            voice.disableMicrophone();
+        }
+    });
+}
+
+export default bind;

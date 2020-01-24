@@ -4,6 +4,7 @@ import methods from './modules/methods';
 import ui from './modules/ui';
 
 import weather from './manager/weather';
+import bind from './manager/bind';
 
 import user from './user';
 import admin from './admin';
@@ -13,6 +14,7 @@ import items from './items';
 import inventory from './inventory';
 import weapons from './weapons';
 import chat from './chat';
+import voice from './voice';
 
 import houses from './property/houses';
 import condos from './property/condos';
@@ -1099,6 +1101,8 @@ menuList.showMainMenu = function() {
             menuList.showFractionMenu();
         if (item.doName == 'showPlayerMenu')
             menuList.showPlayerMenu();
+        if (item.doName == 'showSettingsMenu')
+            menuList.showSettingsMenu();
         if (item.eventName)
             mp.events.callRemote(item.eventName);
     });
@@ -1125,6 +1129,236 @@ menuList.showPlayerMenu = function() {
             mp.events.callRemote('server:user:showPlayerHistory');
         else if (item.doName == 'showPlayerDoсMenu')
             menuList.showPlayerDoсMenu(mp.players.local.remoteId);
+    });
+};
+
+menuList.showSettingsMenu = function() {
+
+    let menu = UIMenu.Menu.Create(`Настройки`, `~b~Персональные настройки`);
+
+    UIMenu.Menu.AddMenuItem("~y~Пофиксить кастомизацию").doName = 'fixCustom';
+    UIMenu.Menu.AddMenuItem("~y~Вкл. / Выкл. доп. прогрузку моделей", "~r~Возможно слегка повлияет на FPS").doName = 'loadAllModels';
+    //UIMenu.Menu.AddMenuItem("~y~Вкл. / Выкл. доп. прогрузку ТС", "~r~Возможно слегка может повлиять на ФПС").doName = 'loadAllVeh';
+    UIMenu.Menu.AddMenuItem("~b~Промокод", "Нажмите ~g~Enter~s~ чтобы применить").doName = 'enterPromocode';
+
+    UIMenu.Menu.AddMenuItem("Интерфейс").doName = 'showSettingsHudMenu';
+    UIMenu.Menu.AddMenuItem("Текстовый чат").doName = 'showSettingsTextMenu';
+    UIMenu.Menu.AddMenuItem("Голосовой чат").doName = 'showSettingsVoiceMenu';
+    UIMenu.Menu.AddMenuItem("Назначение клавиш").doName = 'showSettingsKeyMenu';
+
+    UIMenu.Menu.AddMenuItem("~r~Выйти с сервера", "Нажмите ~g~Enter~s~ чтобы применить").doName = 'exit';
+
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+    menu.ItemSelect.on(async (item, index) => {
+        if (item == closeItem)
+            UIMenu.Menu.HideMenu();
+        if (item.doName == 'loadAllVeh') {
+            timer.allVehiclesLoader();
+        }
+        if (item.doName == 'loadAllModels') {
+            timer.allModelLoader();
+        }
+        if (item.doName == 'exit') {
+            user.kick('Выход с сервера');
+        }
+        if (item.doName == 'enterPromocode') {
+            let promocode = await UIMenu.Menu.GetUserInput("Введите промокод", "", 20);
+            if (promocode == '') return;
+            mp.events.callRemote("server:activatePromocode", promocode);
+        }
+        if (item.doName == 'enterPromocode2') {
+            let promocode = await UIMenu.Menu.GetUserInput("Введите промокод", "", 20);
+            mp.events.callRemote("server:activatePromocodeTop", promocode);
+        }
+        if (item.doName == 'fixCustom') {
+            UIMenu.Menu.HideMenu();
+            user.updateCharacterFace();
+            user.updateCharacterCloth();
+        }
+        if (item.eventName) {
+            UIMenu.Menu.HideMenu();
+            mp.events.callRemote(item.eventName);
+        }
+        if (item.doName == 'showSettingsKeyMenu') {
+            menuList.showSettingsKeyMenu();
+        }
+        if (item.doName == 'showSettingsVoiceMenu') {
+            menuList.showSettingsVoiceMenu();
+        }
+        if (item.doName == 'showSettingsTextMenu') {
+            menuList.showSettingsTextMenu();
+        }
+        if (item.doName == 'showSettingsHudMenu') {
+            menuList.showSettingsHudMenu();
+        }
+    });
+};
+
+menuList.showSettingsKeyMenu = function() {
+
+    let menu = UIMenu.Menu.Create(`Настройки`, `~b~Настройки управления`);
+
+    let menuItem = UIMenu.Menu.AddMenuItem("Инвентарь", "Нажмите ~g~Enter~s~ чтобы изменить");
+    menuItem.doName = 's_bind_inv';
+    menuItem.SetRightLabel(`~h~~m~[${bind.getKeyName(user.getCache(menuItem.doName))}]`);
+
+    menuItem = UIMenu.Menu.AddMenuItem("Предметы рядом", "Нажмите ~g~Enter~s~ чтобы изменить");
+    menuItem.doName = 's_bind_inv_world';
+    menuItem.SetRightLabel(`~h~~m~[${bind.getKeyName(user.getCache(menuItem.doName))}]`);
+
+    menuItem = UIMenu.Menu.AddMenuItem("Телефон", "Нажмите ~g~Enter~s~ чтобы изменить");
+    menuItem.doName = 's_bind_phone';
+    menuItem.SetRightLabel(`~h~~m~[${bind.getKeyName(user.getCache(menuItem.doName))}]`);
+
+    menuItem = UIMenu.Menu.AddMenuItem("Голосовой чат", "Нажмите ~g~Enter~s~ чтобы изменить");
+    menuItem.doName = 's_bind_voice';
+    menuItem.SetRightLabel(`~h~~m~[${bind.getKeyName(user.getCache(menuItem.doName))}]`);
+
+    menuItem = UIMenu.Menu.AddMenuItem("Запуск двигателя", "Нажмите ~g~Enter~s~ чтобы изменить");
+    menuItem.doName = 's_bind_engine';
+    menuItem.SetRightLabel(`~h~~m~[${bind.getKeyName(user.getCache(menuItem.doName))}]`);
+
+    menuItem = UIMenu.Menu.AddMenuItem("Закрыть/открыть ТС", "Нажмите ~g~Enter~s~ чтобы изменить");
+    menuItem.doName = 's_bind_lock';
+    menuItem.SetRightLabel(`~h~~m~[${bind.getKeyName(user.getCache(menuItem.doName))}]`);
+
+    menuItem = UIMenu.Menu.AddMenuItem("Прибор ночного видения", "Нажмите ~g~Enter~s~ чтобы изменить");
+    menuItem.doName = 's_bind_pnv';
+    menuItem.SetRightLabel(`~h~~m~[${bind.getKeyName(user.getCache(menuItem.doName))}]`);
+
+    menuItem = UIMenu.Menu.AddMenuItem("Полицейский мегафон", "Нажмите ~g~Enter~s~ чтобы изменить");
+    menuItem.doName = 's_bind_megaphone';
+    menuItem.SetRightLabel(`~h~~m~[${bind.getKeyName(user.getCache(menuItem.doName))}]`);
+
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+
+    menu.MenuClose.on((sender) =>
+    {
+        if (bind.isChange)
+            bind.bindNewKey(user.getCache(bind.data));
+    });
+
+    menu.ItemSelect.on(async (item, index) => {
+        if (item == closeItem)
+            UIMenu.Menu.HideMenu();
+        if (item.doName) {
+            item.SetRightLabel('~h~~m~...');
+            mp.game.ui.notifications.show("~g~Нажмите на клавишу, которую хотите назначить");
+            let keyCode = await bind.getChangeKey(item.doName);
+            let keyLabel = bind.getKeyName(keyCode);
+            item.SetRightLabel(`~h~~m~[${keyLabel}]`);
+            mp.game.ui.notifications.show(`~g~Вы назначили клавишу ~s~${keyLabel}`);
+        }
+    });
+};
+
+menuList.showSettingsHudMenu = function() {
+
+    let menu = UIMenu.Menu.Create(`Настройки`, `~b~Настройки интерфейса`);
+
+    UIMenu.Menu.AddMenuItem("Показывать HUD (~g~Вкл~s~/~r~Выкл~s~)", "Нажмите ~g~Enter~s~ чтобы применить").doName = 'showRadar';
+    UIMenu.Menu.AddMenuItem("Показывать ID игроков (~g~Вкл~s~/~r~Выкл~s~)", "Нажмите ~g~Enter~s~ чтобы применить").doName = 'showId';
+
+    let listVoiceItem = UIMenu.Menu.AddMenuItemList("Спидометр", ['Стандартный', 'Цифровой'], "Нажмите ~g~Enter~s~ чтобы применить");
+    listVoiceItem.doName = 'speed';
+    listVoiceItem.Index = user.getCache('s_hud_speed') ? 1 : 0;
+
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+
+    menu.ListChange.on((item, index) => {
+        if (item.doName === 'speed') {
+            user.set('s_hud_speed', index === 1);
+            mp.game.ui.notifications.show('~b~Настройки были сохранены');
+        }
+    });
+    menu.ItemSelect.on((item, index) => {
+        if (item == closeItem)
+            UIMenu.Menu.HideMenu();
+        if (item.doName == 'showId') {
+            mp.events.call('client:showId');
+        }
+        if (item.doName == 'showRadar') {
+            ui.showOrHideRadar();
+        }
+    });
+};
+
+menuList.showSettingsTextMenu = function() {
+
+    let menu = UIMenu.Menu.Create(`Настройки`, `~b~Настройки текст чата`);
+
+    UIMenu.Menu.AddMenuItem("Очистить чат").doName = 'clearChat';
+
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+    menu.ItemSelect.on(async (item, index) => {
+        if (item == closeItem)
+            UIMenu.Menu.HideMenu();
+        if (item.doName == 'clearChat') {
+            user.clearChat();
+        }
+    });
+};
+
+menuList.showSettingsVoiceMenu = function() {
+
+    let menu = UIMenu.Menu.Create(`Настройки`, `~b~Настройки голосового чата`);
+
+    //let listVoiceType = ["Шепот", "Нормально", "Крик"];
+    //let listVoice3d = ["Вкл", "Выкл"];
+    let listVoiceVol = ["0%", "10%", "20%", "30%", "40%", "50%", "60%", "70%", "80%", "90%", "100%"];
+
+    let status = '~r~Отключён';
+
+    switch (voice.getVoiceInfo(mp.players.local, 'stateConnection')) {
+        case "connected":
+            status = '~g~Подключен';
+            break;
+        case "connecting":
+            status = '~y~Подключение';
+            break;
+        case "failed":
+            status = '~r~Ошибка';
+            break;
+    }
+
+    UIMenu.Menu.AddMenuItem("Статус голосового чата:").SetRightLabel(status);
+
+    //UIMenu.Menu.AddMenuItemList("Тип голосового чата", listVoiceType, "Нажмите ~g~Enter~s~ чтобы применить").doName = '';
+    //UIMenu.Menu.AddMenuItemList("Объем голосового чата", listVoice3d, "Нажмите ~g~Enter~s~ чтобы применить").doName = '';
+
+    let listVoiceItem = UIMenu.Menu.AddMenuItemList("Громкость голосового чата", listVoiceVol, "Нажмите ~g~Enter~s~ чтобы применить");
+    listVoiceItem.doName = 'vol';
+    listVoiceItem.Index = methods.parseInt(user.getCache('s_voice_vol') * 10);
+
+    UIMenu.Menu.AddMenuItem("~y~Перезагрузить голосовой чат (Обычная)", "Нажмите ~g~Enter~s~ чтобы применить").doName = 'restartVoice';
+    UIMenu.Menu.AddMenuItem("~y~Перезагрузить голосовой чат (Сложная)", "Нажмите ~g~Enter~s~ чтобы применить").doName = 'restartVoice2';
+
+    let voiceVol = 1;
+    menu.ListChange.on(async (item, index) => {
+        if (item.doName == 'vol') {
+            voiceVol = index / 10;
+
+            user.set('s_voice_vol', voiceVol);
+            voice.setSettings('voiceVolume', voiceVol);
+            mp.game.ui.notifications.show('~b~Вы установили значение: ~s~' + (voiceVol * 100) + '%');
+        }
+    });
+
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+    menu.ItemSelect.on(async (item, index) => {
+        if (item == closeItem)
+            UIMenu.Menu.HideMenu();
+
+        if (item.doName == 'restartVoice') {
+            mp.events.call('client:restartVoice');
+        }
+        if (item.doName == 'restartVoice2') {
+            mp.events.call('client:restartVoice2');
+        }
+        if (item.eventName) {
+            UIMenu.Menu.HideMenu();
+            mp.events.callRemote(item.eventName);
+        }
     });
 };
 
@@ -2251,28 +2485,28 @@ menuList.showFuelMenu = async function() {
     listItem.type = 1;
     listItem.price = itemPrice;
     if (sale > 0)
-        menuItem.SetLeftBadge(27);
+        listItem.SetLeftBadge(27);
 
     itemPrice = 1.1 * price;
     listItem = UIMenu.Menu.AddMenuItemList("Дизель", list, `Цена: ~g~${methods.moneyFormat(itemPrice)}~s~ за 1л.${saleLabel}`);
     listItem.type = 2;
     listItem.price = itemPrice;
     if (sale > 0)
-        menuItem.SetLeftBadge(27);
+        listItem.SetLeftBadge(27);
 
     itemPrice = 0.5 * price;
     listItem = UIMenu.Menu.AddMenuItemList("Электричество", list2, `Цена: ~g~${methods.moneyFormat(itemPrice)}~s~ за 1%${saleLabel}`);
     listItem.type = 3;
     listItem.price = itemPrice;
     if (sale > 0)
-        menuItem.SetLeftBadge(27);
+        listItem.SetLeftBadge(27);
 
     itemPrice = 3 * price;
     listItem = UIMenu.Menu.AddMenuItemList("Авиатопливо", list, `Цена: ~g~${methods.moneyFormat(itemPrice)}~s~ за 1л.${saleLabel}`);
     listItem.type = 4;
     listItem.price = itemPrice;
     if (sale > 0)
-        menuItem.SetLeftBadge(27);
+        listItem.SetLeftBadge(27);
 
     itemPrice = items.getItemPrice(8) * price;
     let menuItem = UIMenu.Menu.AddMenuItem("Канистра (Авиатопливо)", `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`);

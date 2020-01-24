@@ -884,37 +884,14 @@ mp.events.add('voice.toggleMicrophone', async (peerName, isEnabled) => {
     }
 });
 
-mp.keys.bind(0x42, true, function() {
-    if (!user.isLogin())
-        return;
-    if (!methods.isBlockKeys()) {
-        let veh = mp.players.local.vehicle;
-        if (veh && veh.getPedInSeat(0) == mp.players.local.handle) {
-            if (methods.getVehicleInfo(veh.model).class_name == 'Emergency') {
-                user.setVariable('voice.distance', 7000);
-                enableMicrophone();
-            }
-        }
-    }
-});
-
-mp.keys.bind(0x42, false, function() {
-    if (!user.isLogin())
-        return;
-    if (!methods.isBlockKeys()) {
-        user.setVariable('voice.distance', 25);
-        disableMicrophone();
-    }
-});
-
 mp.events.add('voice.changeMicrophoneActivationKey', (newActivationKey) => {
-    mp.keys.unbind(__CONFIG__.pushToTalkKey, true, enableMicrophone);
+    /*mp.keys.unbind(__CONFIG__.pushToTalkKey, true, enableMicrophone);
     mp.keys.unbind(__CONFIG__.pushToTalkKey, false, disableMicrophone);
 
     __CONFIG__.pushToTalkKey = newActivationKey;
 
     mp.keys.bind(__CONFIG__.pushToTalkKey, true, enableMicrophone);
-    mp.keys.bind(__CONFIG__.pushToTalkKey, false, disableMicrophone);
+    mp.keys.bind(__CONFIG__.pushToTalkKey, false, disableMicrophone);*/
 });
 
 const enableMicrophone = async () => {
@@ -992,8 +969,8 @@ const disableMicrophoneRadio = () => {
     }
 };
 
-mp.keys.bind(__CONFIG__.pushToTalkKey, true, enableMicrophone);
-mp.keys.bind(__CONFIG__.pushToTalkKey, false, disableMicrophone);
+/*mp.keys.bind(__CONFIG__.pushToTalkKey, true, enableMicrophone);
+mp.keys.bind(__CONFIG__.pushToTalkKey, false, disableMicrophone);*/
 
 mp.keys.bind(0x14, true, enableMicrophoneRadio);
 mp.keys.bind(0x14, false, disableMicrophoneRadio);
@@ -1276,6 +1253,8 @@ export default {
     setSettings,
     changeSettings,
     isEnabledMicrophone,
+    enableMicrophone,
+    disableMicrophone,
     getVoiceInfo: safeGetVoiceInfo,
     setVoiceInfo: safeSetVoiceInfo
 };

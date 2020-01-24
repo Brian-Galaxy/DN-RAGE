@@ -168,6 +168,20 @@ enums.userData = [
     "water_level",
     "eat_level",
 
+    "s_hud_speed",
+    "s_voice_vol",
+    "s_clipset",
+
+    "s_bind_inv",
+    "s_bind_inv_world",
+    "s_bind_lock",
+    "s_bind_engine",
+    "s_bind_phone",
+    "s_bind_voice",
+    "s_bind_voice_radio",
+    "s_bind_pnv",
+    "s_bind_megaphone",
+
     "jail_time",
     "jail_type",
     "med_time",

@@ -102,10 +102,9 @@ fuel.fillVeh = function(price, shopId, type, idx) {
             mp.game.ui.notifications.show(`~r~Тип топлива не подходит данному транспорту`);
             return;
         }
-        if (veh.getIsEngineRunning()) {
-            mp.game.ui.notifications.show(`~r~Необходимо заглушить двигатель`);
-            return;
-        }
+        if (veh.getIsEngineRunning())
+            vehicles.engineVehicle();
+
         let currentFuel = vehicles.getFuel(veh);
         if (vInfo.fuel_full <= vehicles.getFuel(veh) + 1) {
             mp.game.ui.notifications.show.notify('~r~Транспорт уже заправлен');

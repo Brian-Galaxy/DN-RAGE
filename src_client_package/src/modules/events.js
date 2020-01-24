@@ -1764,126 +1764,16 @@ mp.events.add("client:vehicle:checker", function (vehicle, seat) {
     }
 });
 
-//KEYS
-
-// AllKeys
-/*for (let i = 0; i < 255; i++) { //TODO
-    mp.keys.bind(i, true, function() {
-        methods.debug(`KeyPress:${i}:${String.fromCharCode(i)}`);
-    });
-}*/
-
-mp.keys.bind(0xDB, true, function() {
-    if (!user.isLogin())
-        return;
-    if (!methods.isBlockKeys() && mp.players.local.vehicle) {
-        let actualData = mp.players.local.vehicle.getVariable('vehicleSyncData');
-        vehicles.setIndicatorLeftState(!actualData.IndicatorLeftToggle);
-        vehicles.setIndicatorRightState(false);
-    }
-});
-
-mp.keys.bind(0xDD, true, function() {
-    if (!user.isLogin())
-        return;
-    if (!methods.isBlockKeys() && mp.players.local.vehicle) {
-        let actualData = mp.players.local.vehicle.getVariable('vehicleSyncData');
-        vehicles.setIndicatorRightState(!actualData.IndicatorRightToggle);
-        vehicles.setIndicatorLeftState(false);
-    }
-});
-
-// ~ Key Code
-mp.keys.bind(0xC0, true, function() {
-    inventory.getItemList(0, 0);
-});
-
-mp.keys.bind(0x38, true, function() {
-    //if (!user.isLogin() || !user.isAdmin())
-    //    return;
-    if (!methods.isBlockKeys())
-        menuList.showAdminMenu();
-});
-
-mp.keys.bind(0x12, true, function() {
-    if (!user.isLogin())
-        return;
-    if (!methods.isBlockKeys())
-        mp.events.callRemote('onKeyPress:LAlt');
-});
-
-//L
-mp.keys.bind(0x4C, true, function() {
-    if (!user.isLogin())
-        return;
-    if (!methods.isBlockKeys())
-        mp.events.callRemote('onKeyPress:L');
-});
-
-//9
-mp.keys.bind(0x39, true, function() {
-    if (!user.isLogin())
-        return;
-
-    if (!methods.isBlockKeys())
-        menuList.showAnimationTypeListMenu();
-});
-
-//E
-mp.keys.bind(0x45, true, function() {
-    try {
-        if (!user.isLogin())
-            return;
-        if (!methods.isBlockKeys()) {
-
-            let targetEntity = user.getTargetEntityValidate();
-            if (targetEntity) {
-                inventory.openInventoryByEntity(targetEntity);
-            }
-            else {
-                mp.events.callRemote('onKeyPress:E');
-                methods.pressEToPayRespect();
-            }
-        }
-    }
-    catch (e) {
-        methods.debug(e);
-    }
-});
-
-//I
-mp.keys.bind(0x49, true, function() {
-    try {
-        if (!user.isLogin())
-            return;
-        if (!methods.isBlockKeys()) {
-            //methods.pressEToPayRespect();
-            ui.callCef('inventory', '{"type": "showOrHide"}')
-        }
-    }
-    catch (e) {
-        methods.debug(e);
-    }
-});
-
-//B
-mp.keys.bind(0x42, true, function() {
-    if (!user.isLogin())
-        return;
-    if (!methods.isBlockKeys())
-        vehicles.engineVehicle();
-});
-
-//CTRL
-mp.keys.bind(0xA2, true, function() {
-    if (!user.isLogin())
-        return;
-    if (!methods.isBlockKeys())
-        vehicles.engineVehicle();
-});
-
 let loadIndicatorDist = 15;
 let showIds = true;
+
+mp.events.add('client:showId', () => {
+    showIds = !showIds;
+    if (showIds)
+        mp.game.ui.notifications.show("Вы ~g~включили~s~ ID игроков");
+    else
+        mp.game.ui.notifications.show("Вы ~r~отключили~s~ ID игроков");
+});
 
 mp.events.add('render', () => {
     if (user.isLogin() && showIds) {
@@ -1932,47 +1822,70 @@ mp.events.add('render', () => {
     }
 });
 
+
+//KEYS
+mp.keys.bind(0xDB, true, function() {
+    if (!user.isLogin())
+        return;
+    if (!methods.isBlockKeys() && mp.players.local.vehicle) {
+        let actualData = mp.players.local.vehicle.getVariable('vehicleSyncData');
+        vehicles.setIndicatorLeftState(!actualData.IndicatorLeftToggle);
+        vehicles.setIndicatorRightState(false);
+    }
+});
+
+mp.keys.bind(0xDD, true, function() {
+    if (!user.isLogin())
+        return;
+    if (!methods.isBlockKeys() && mp.players.local.vehicle) {
+        let actualData = mp.players.local.vehicle.getVariable('vehicleSyncData');
+        vehicles.setIndicatorRightState(!actualData.IndicatorRightToggle);
+        vehicles.setIndicatorLeftState(false);
+    }
+});
+
+mp.keys.bind(0x38, true, function() {
+    //if (!user.isLogin() || !user.isAdmin())
+    //    return;
+    if (!methods.isBlockKeys())
+        menuList.showAdminMenu();
+});
+
+mp.keys.bind(0x12, true, function() {
+    if (!user.isLogin())
+        return;
+    if (!methods.isBlockKeys())
+        mp.events.callRemote('onKeyPress:LAlt');
+});
+
+//E
+mp.keys.bind(0x45, true, function() {
+    try {
+        if (!user.isLogin())
+            return;
+        if (!methods.isBlockKeys()) {
+
+            let targetEntity = user.getTargetEntityValidate();
+            if (targetEntity) {
+                inventory.openInventoryByEntity(targetEntity);
+            }
+            else {
+                mp.events.callRemote('onKeyPress:E');
+                methods.pressEToPayRespect();
+            }
+        }
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
 //M
 mp.keys.bind(0x4D, true, function() {
     if (!user.isLogin())
         return;
     if (!methods.isBlockKeys())
         menuList.showMainMenu();
-});
-
-//O
-mp.keys.bind(0x4F, true, function() {
-    if (!user.isLogin())
-        return;
-    if (!methods.isBlockKeys())
-        phone.showOrHide();
-});
-
-//N
-mp.keys.bind(78, true, function() {
-    if (!user.isLogin())
-        return;
-    if (!methods.isBlockKeys()) {
-        let drawId = mp.players.local.getPropIndex(0);
-        let textureId = mp.players.local.getPropTextureIndex(0);
-        if (user.getSex() == 1 && (drawId == 116 || drawId == 118)) {
-            user.setProp(0, --drawId, textureId);
-            mp.game.graphics.setNightvision(true);
-        }
-        else if (user.getSex() == 1 && (drawId == 115 || drawId == 117)) {
-            user.setProp(0, ++drawId, textureId);
-            mp.game.graphics.setNightvision(false);
-        }
-
-        if (user.getSex() == 0 && (drawId == 117 || drawId == 119)) {
-            user.setProp(0, --drawId, textureId);
-            mp.game.graphics.setNightvision(true);
-        }
-        else if (user.getSex() == 0 && (drawId == 116 || drawId == 118)) {
-            user.setProp(0, ++drawId, textureId);
-            mp.game.graphics.setNightvision(false);
-        }
-    }
 });
 
 //ESC
@@ -1990,7 +1903,6 @@ mp.keys.bind(0x08, true, function() {
     ui.callCef('license', JSON.stringify({type: 'hide'}));
     ui.callCef('certificate', JSON.stringify({type: 'hide'}));
 });
-
 
 mp.events.add("playerDeath", function (player, reason, killer) {
     UIMenu.Menu.HideMenu();

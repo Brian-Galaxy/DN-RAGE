@@ -59,6 +59,15 @@ ui.showSubtitle = function(message, duration = 5000) {
     }
 };
 
+ui.showOrHideRadar = function() {
+    showRadar = !showRadar;
+    mp.game.ui.displayRadar(showRadar);
+    if (!showRadar)
+        ui.hideHud();
+    else
+        ui.showHud();
+};
+
 ui.hideHud = function() {
     mp.game.ui.displayRadar(false);
     if (uiBrowser) {
@@ -74,7 +83,7 @@ ui.hideHud = function() {
 
 ui.showHud = function() {
     mp.game.ui.displayRadar(true);
-    return //TODO ВАЖНО
+    //return //TODO ВАЖНО
     if (uiBrowser) {
         try {
             //TODO
@@ -87,7 +96,7 @@ ui.showHud = function() {
 };
 
 ui.updateValues = function() {
-    return; //TODO ВАЖНО
+    //return; //TODO ВАЖНО
     if (uiBrowser && user.isLogin()) {
         try {
             let data = {
@@ -134,7 +143,7 @@ ui.updateValues = function() {
 };
 
 ui.updateVehValues = function() {
-    return; //TODO ВАЖНО
+    //return; //TODO ВАЖНО
     if (uiBrowser && user.isLogin()) {
         try {
 
@@ -150,7 +159,7 @@ ui.updateVehValues = function() {
 
             if (veh && mp.vehicles.exists(veh)) {
                 isShowSpeed = true;
-                isShowLight = veh.getLightsState(true,true).lightsOn || veh.getLightsState(true,true).highbeamsOn;
+                //isShowLight = veh.getLightsState(true,true).lightsOn || veh.getLightsState(true,true).highbeamsOn;
                 isShowEngine = veh.getIsEngineRunning();
                 isShowLock = veh.getDoorLockStatus() !== 1;
                 let vInfo = methods.getVehicleInfo(veh.model);
@@ -166,6 +175,7 @@ ui.updateVehValues = function() {
             let data = {
                 type: 'updateValues',
                 isShow: isShowSpeed,
+                isShowSmall: user.getCache('s_hud_speed'),
                 light: isShowLight,
                 door: isShowLock,
                 engine: isShowEngine,

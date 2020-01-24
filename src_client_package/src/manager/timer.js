@@ -97,10 +97,10 @@ timer.updateEatLevel = function() {
         user.removeWaterLevel(20);
 
         if (user.getEatLevel() < 200 || user.getWaterLevel() < 200) {
-            mp.game.cam.shakeGameplayCam("ROAD_VIBRATION_SHAKE", 1);
+            mp.game.cam.shakeGameplayCam("ROAD_VIBRATION_SHAKE", 1.5);
             setTimeout(function () {
                 mp.game.cam.stopGameplayCamShaking(false);
-            }, 5000);
+            }, 7000);
         }
         if (user.getEatLevel() < 100 || user.getWaterLevel() < 100)
             user.setRagdoll(2000);
@@ -162,6 +162,7 @@ timer.ms50Timer = function() {
         isDisableControl = vehicles.checkerControl();
 
         ui.updateVehValues();
+        ui.updateValues();
 
         if (Container.Data.HasLocally(mp.players.local.remoteId, 'hasSeat')) {
             mp.players.local.freezePosition(true);
@@ -305,8 +306,6 @@ timer.secTimer = function() {
                 mp.players.local.isPlayingAnim("cellphone@female", "cellphone_text_read_base", 3) === 0)
                 user.hidePhone();
         }
-
-        ui.updateValues();
 
         if (deathTimer > 0) {
             timer.setDeathTimer(deathTimer - 1);

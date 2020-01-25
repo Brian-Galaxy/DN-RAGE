@@ -764,7 +764,7 @@ inventory.useItem = function(player, id, itemId) {
             }
             case 11:
             {
-                user.removeWaterLevel(player, -400);
+                user.removeWaterLevel(player, 400);
                 user.addEatLevel(player, 500);
                 chat.sendMeCommand(player, "съедает " + items.getItemNameById(itemId));
                 inventory.deleteItem(id);
@@ -782,7 +782,7 @@ inventory.useItem = function(player, id, itemId) {
             }
             case 13:
             {
-                user.removeWaterLevel(player, -200);
+                user.removeWaterLevel(player, 200);
                 user.addEatLevel(player, 300);
                 chat.sendMeCommand(player, "съедает " + items.getItemNameById(itemId));
                 inventory.deleteItem(id);

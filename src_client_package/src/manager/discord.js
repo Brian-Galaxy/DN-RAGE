@@ -1,0 +1,34 @@
+import user from '../user';
+
+let discord = {};
+
+discord.checker = function() {
+    let label = 'DEDNET ROLE PLAY';
+    try {
+        if (user.isLogin()) {
+            if (mp.players.local.isDiving())
+                label = 'Занимается дайвингом';
+            else if (mp.players.local.isFalling())
+                label = 'Падает с высоты';
+            else if (mp.players.local.isInAnyVehicle(false))
+                label = 'В транспорте';
+            else if (mp.players.local.isRunning())
+                label = 'Бежит';
+            else if (mp.players.local.isShooting())
+                label = 'Стреляет';
+            else if (mp.players.local.isWalking())
+                label = 'Бродит';
+            else if (mp.players.local.getVariable('isAfk') === true)
+                label = 'Чиллит';
+            else
+                label = 'DEDNET ROLE PLAY';
+        }
+        else
+            label = 'В меню авторизации';
+    }
+    catch (e) {
+    }
+    mp.discord.update(label, 'dednet.ru');
+};
+
+export default discord;

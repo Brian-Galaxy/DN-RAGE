@@ -109,8 +109,6 @@ weather.getWeatherId = function(weatherName) {
 weather.syncDateTime = function(min, hour, day, month, year) {
 
     try {
-        mp.discord.update('DEDNET | HASKELL', 'dednet.ru');
-
         DayName = DayNames[new Date(year, month, day).getDay()];
 
         Day = day;

@@ -1045,5 +1045,11 @@ inventory.types = {
     Vehicle : 8,
     StockGang : 9,
     Fridge : 10,
-    UserStock : 11
+    UserStock1 : 11,
+    UserStock2 : 12,
+    UserStock3 : 13,
+    UserStock4 : 14,
+    UserStock5 : 15,
+    UserStock6 : 16,
+    UserStock7 : 17,
 };

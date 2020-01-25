@@ -1,12 +1,13 @@
 //let methods = require("./arp/modules/methods.js");
 import methods from '../modules/methods';
-import user from '../user';
 import Container from "../modules/data";
+
+import enums from "../enums";
 
 let vehicles = {};
 
 let isAutopilotEnable = false;
-let offset = 1000000;
+let offset = enums.offsets.vehicle;
 
 
 vehicles.set = function(id, key, val) {

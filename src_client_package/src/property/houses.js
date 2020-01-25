@@ -1,6 +1,7 @@
 import user from '../user';
 import Container from '../modules/data';
 import methods from '../modules/methods';
+import enums from '../enums';
 
 let houses = {};
 
@@ -8,13 +9,13 @@ houses.enter = function (id) {
     mp.events.callRemote('server:houses:enter', id);
 };
 
-houses.exit = function (x, y, z) {
+houses.exit = function (x, y, z, rot) {
     user.setVirtualWorld(0);
-    user.teleport(x, y, z + 1);
+    user.teleport(x, y, z + 1, rot);
 };
 
 houses.getData = async function(id) {
-    return await Container.Data.GetAll(100000 + methods.parseInt(id));
+    return await Container.Data.GetAll(enums.offsets.house + methods.parseInt(id));
 };
 
 houses.buy = function (id) {

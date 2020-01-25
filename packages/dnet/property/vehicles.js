@@ -8,11 +8,11 @@ const methods = require('../modules/methods');
 const vSync = require('../managers/vSync');
 const vehicles = exports;
 
-const offset = 200000;
+const offset = enums.offsets.vehicle;
 const offsetFr = -5000;
 const offsetJob = -10000;
 const offsetRent = -1000000;
-const offsetAll = -2000000;
+const offsetAll = enums.offsets.vehicleAll;
 let jobCount = 0;
 
 let creationQueue = [];

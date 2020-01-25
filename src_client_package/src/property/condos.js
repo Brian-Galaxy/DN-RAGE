@@ -1,6 +1,7 @@
 import user from '../user';
 import Container from '../modules/data';
 import methods from '../modules/methods';
+import enums from '../enums';
 
 let condos = {};
 
@@ -8,13 +9,13 @@ condos.enter = function (id) {
     mp.events.callRemote('server:condos:enter', id);
 };
 
-condos.exit = function (x, y, z) {
+condos.exit = function (x, y, z, rot) {
     user.setVirtualWorld(0);
-    user.teleport(x, y, z + 1);
+    user.teleport(x, y, z + 1, rot);
 };
 
 condos.getData = async function(id) {
-    return await Container.Data.GetAll(200000 + methods.parseInt(id));
+    return await Container.Data.GetAll(enums.offsets.condo + methods.parseInt(id));
 };
 
 condos.buy = function (id) {

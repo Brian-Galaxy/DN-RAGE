@@ -46,7 +46,7 @@ mp.events.add('render', () => {
 user.timerRayCast = function() {
 
     try {
-        if (!mp.players.local.vehicle) {
+        if (!mp.players.local.isSittingInAnyVehicle()) {
             switch (mp.game.invoke(methods.GET_FOLLOW_PED_CAM_VIEW_MODE)) {
                 case 4:
                     user.targetEntity = user.pointingAtRadius(2);
@@ -132,6 +132,12 @@ user.getTargetEntityValidate = function() {
             user.targetEntity &&
             user.targetEntity.entity &&
             user.targetEntity.entity.getVariable('isDrop')
+        )
+            return user.targetEntity.entity;
+        else if (
+            user.targetEntity &&
+            user.targetEntity.entity &&
+            user.targetEntity.entity.invType
         )
             return user.targetEntity.entity;
     }
@@ -292,11 +298,11 @@ user.teleportv = function(pos, rot) {
     user.showLoadDisplay(500);
     //methods.wait(500);
     setTimeout(function () {
-        mp.players.local.freezePosition(true);
         mp.players.local.position = pos;
+        if (rot != undefined)
+            mp.players.local.setRotation(0, 0, methods.parseInt(rot), 0, true);
         //methods.wait(500);
         setTimeout(function () {
-            mp.players.local.freezePosition(false);
             user.hideLoadDisplay(500);
             setTimeout(function () {
                 user.isTeleport = false;
@@ -307,14 +313,31 @@ user.teleportv = function(pos, rot) {
 
 user.teleportVehV = function(pos, rot) {
     user.isTeleport = true;
+    mp.game.streaming.requestAdditionalCollisionAtCoord(pos.x, pos.y, pos.z);
     mp.game.streaming.requestCollisionAtCoord(pos.x, pos.y, pos.z);
     user.showLoadDisplay(500);
     //methods.wait(500);
     setTimeout(function () {
-        if (mp.players.local.vehicle)
-            mp.players.local.vehicle.position = new mp.Vector3(pos.x, pos.y, pos.z + 0.5);
-        else
-            mp.players.local.position = pos;
+        try {
+            mp.game.streaming.requestAdditionalCollisionAtCoord(pos.x, pos.y, pos.z);
+            mp.game.streaming.requestCollisionAtCoord(pos.x, pos.y, pos.z);
+            if (mp.players.local.vehicle) {
+                mp.players.local.vehicle.position = pos;
+                if (rot != undefined)
+                    mp.players.local.vehicle.setRotation(0, 0, methods.parseInt(rot), 0, true);
+                setTimeout(function () {
+                    mp.players.local.vehicle.setOnGroundProperly();
+                }, 100);
+            }
+            else {
+                if (rot != undefined)
+                    mp.players.local.setRotation(0, 0, methods.parseInt(rot), 0, true);
+                mp.players.local.position = pos;
+            }
+        }
+        catch (e) {
+            methods.debug(e);
+        }
         //methods.wait(500);
         setTimeout(function () {
             user.hideLoadDisplay(500);
@@ -333,27 +356,30 @@ user.teleportVeh = function(x, y, z, rot) {
     user.teleportVehV(new mp.Vector3(x, y, z), rot);
 };
 
-user.clearChat = function() {
-    for (let i = 0; i < 100; i++) mp.gui.chat.push('');
-};
-
 user.tpToWaypoint = function() { //TODO машина
     try {
         let pos = methods.getWaypointPosition();
-        if (mp.players.local.vehicle) {
-            mp.players.local.vehicle.position = new mp.Vector3(pos.x, pos.y, pos.z + 100);
-            setTimeout(function () {
+
+        let entity = mp.players.local.vehicle ? mp.players.local.vehicle : mp.players.local;
+        entity.position = new mp.Vector3(pos.x, pos.y, pos.z + 20);
+        let interval = setInterval(function () {
+            try {
+                mp.game.streaming.requestCollisionAtCoord(pos.x, pos.y, pos.z);
+                entity.position = new mp.Vector3(pos.x, pos.y, entity.position.z + 20);
                 let zPos = mp.game.gameplay.getGroundZFor3dCoord(mp.players.local.position.x, mp.players.local.position.y, mp.players.local.position.z, 0, false);
-                mp.players.local.vehicle.position = new mp.Vector3(pos.x, pos.y, zPos + 1);
-            }, 100);
-        }
-        else {
-            mp.players.local.position = new mp.Vector3(pos.x, pos.y, pos.z + 100);
-            setTimeout(function () {
-                let zPos = mp.game.gameplay.getGroundZFor3dCoord(mp.players.local.position.x, mp.players.local.position.y, mp.players.local.position.z, 0, false);
-                mp.players.local.position = new mp.Vector3(pos.x, pos.y, zPos + 1);
-            }, 100);
-        }
+                if (zPos != 0) {
+                    entity.position = new mp.Vector3(pos.x, pos.y, zPos + 2);
+
+                    if (mp.players.local.vehicle)
+                        mp.players.local.vehicle.setOnGroundProperly();
+
+                    clearInterval(interval);
+                }
+            }
+            catch (e) {
+                methods.debug(e);
+            }
+        }, 1);
     } catch(e) {
         methods.debug(e);
     }
@@ -378,6 +404,10 @@ user.hideLoadDisplay = function(dur = 500) {
 user.showLoadDisplay = function(dur = 500) {
     mp.game.cam.doScreenFadeOut(dur);
     ui.hideHud();
+};
+
+user.clearChat = function() {
+    for (let i = 0; i < 100; i++) mp.gui.chat.push('');
 };
 
 user.notify = function (message) {
@@ -465,6 +495,10 @@ user.setVariable = function(key, value) {
 
 user.setVirtualWorld = function(worldId) {
     mp.events.callRemote('server:user:setVirtualWorld', worldId);
+};
+
+user.setVirtualWorldVeh = function(worldId) {
+    mp.events.callRemote('server:user:setVirtualWorldVeh', worldId);
 };
 
 user.setPlayerModel = function(model) {

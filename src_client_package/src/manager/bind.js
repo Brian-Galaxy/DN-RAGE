@@ -62,7 +62,7 @@ const keyCodes = {
     66: 'B',
     67: 'C',
     68: 'D',
-    69: 'E',
+    //69: 'E',
     70: 'F',
     71: 'G',
     72: 'H',
@@ -221,26 +221,13 @@ bind.getChangeKey = async function(data) {
 
     return bind.lastKey;
 };
-/*
-    "s_bind_inv",
-    "s_bind_inv_world",
-    "s_bind_lock",
-    "s_bind_engine",
-    "s_bind_phone",
-    "s_bind_voice",
-    "s_bind_voice_radio",
-    "s_bind_pnv",
-    * */
 
 for(let code in keyCodes) {
     mp.keys.bind(parseInt(code), true, function() {
-        if (bind.isChange)
-            bind.bindNewKey(parseInt(code));
         if (user.getCache('s_bind_inv') == parseInt(code)) {
             if (!user.isLogin())
                 return;
             if (!methods.isBlockKeys()) {
-                //methods.pressEToPayRespect();
                 ui.callCef('inventory', '{"type": "showOrHide"}')
             }
         }
@@ -308,6 +295,8 @@ for(let code in keyCodes) {
                 return;
             voice.enableMicrophone();
         }
+        if (bind.isChange)
+            bind.bindNewKey(parseInt(code));
     });
 
     mp.keys.bind(parseInt(code), false, function() {

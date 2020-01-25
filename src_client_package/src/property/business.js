@@ -1,6 +1,7 @@
 import Container from '../modules/data';
 import methods from '../modules/methods';
 import ui from '../modules/ui';
+import enums from '../enums';
 
 let business = {};
 
@@ -63,7 +64,7 @@ business.setMoney = function(id, money) {
 
 business.getMoney = async function(id) {
     try {
-        return methods.parseFloat(await Container.Data.Get(-20000 + id, 'bank'));
+        return methods.parseFloat(await Container.Data.Get(enums.offsets.business + id, 'bank'));
     }
     catch (e) {
         methods.debug(e);
@@ -73,7 +74,7 @@ business.getMoney = async function(id) {
 
 business.getPrice = async function(id) {
     try {
-        return methods.parseFloat(await Container.Data.Get(-20000 + id, 'price_product'));
+        return methods.parseFloat(await Container.Data.Get(enums.offsets.business + id, 'price_product'));
     }
     catch (e) {
         methods.debug(e);
@@ -89,25 +90,25 @@ business.getSale = function(price) {
 };
 
 business.setPrice = function(id, price) {
-    Container.Data.Set(-20000 + id, 'price_product', methods.parseInt(price));
+    Container.Data.Set(enums.offsets.business + id, 'price_product', methods.parseInt(price));
 };
 
 business.setName = function(id, name) {
     name = methods.removeQuotes(name);
     name = methods.removeQuotes2(name);
-    Container.Data.Set(-20000 + id, 'name', name);
+    Container.Data.Set(enums.offsets.business + id, 'name', name);
 };
 
 business.set = function(id, key, val) {
-    return Container.Data.Set(-20000 + methods.parseInt(id), key, val);
+    return Container.Data.Set(enums.offsets.business + methods.parseInt(id), key, val);
 };
 
 business.get = async function(id, key) {
-    return await Container.Data.Get(-20000 + methods.parseInt(id), key);
+    return await Container.Data.Get(enums.offsets.business + methods.parseInt(id), key);
 };
 
 business.getData = async function(id) {
-    return await Container.Data.GetAll(-20000 + methods.parseInt(id));
+    return await Container.Data.GetAll(enums.offsets.business + methods.parseInt(id));
 };
 
 business.save = function(id) {

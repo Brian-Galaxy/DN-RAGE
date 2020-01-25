@@ -1,8 +1,11 @@
 let Container = require('../modules/data');
 let mysql = require('../modules/mysql');
 let methods = require('../modules/methods');
+
 let user = require('../user');
 let coffer = require('../coffer');
+let enums = require('../enums');
+
 let weather = require('../managers/weather');
 let business = exports;
 
@@ -73,17 +76,17 @@ business.save = function(id) {
 };
 
 business.set = function(id, key, val) {
-    return Container.Data.Set(-20000 + methods.parseInt(id), key, val);
+    return Container.Data.Set(enums.offsets.business + methods.parseInt(id), key, val);
 };
 
 business.get = function(id, key) {
-    if (Container.Data.Has(-20000 + methods.parseInt(id), key))
-        return Container.Data.Get(-20000 + methods.parseInt(id), key);
+    if (Container.Data.Has(enums.offsets.business + methods.parseInt(id), key))
+        return Container.Data.Get(enums.offsets.business + methods.parseInt(id), key);
     return null;
 };
 
 business.has = function(id, key) {
-    return (Container.Data.Has(-20000 + methods.parseInt(id), key));
+    return (Container.Data.Has(enums.offsets.business + methods.parseInt(id), key));
 };
 
 business.getPrice = function(id) {
@@ -95,7 +98,7 @@ business.getName = function(id) {
 };
 
 business.getData = function(id) {
-    return Container.Data.GetAll(-20000 + methods.parseInt(id));
+    return Container.Data.GetAll(enums.offsets.business + methods.parseInt(id));
 };
 
 business.addMoney = function(id, money, name = "Операция со счетом") {
@@ -110,13 +113,13 @@ business.removeMoney = function(id, money, name = "Операция со сче�
 
 business.setMoney = function(id, money) {
     id = methods.parseInt(id);
-    Container.Data.Set(-20000 + id, 'bank', methods.parseFloat(money));
+    Container.Data.Set(enums.offsets.business + id, 'bank', methods.parseFloat(money));
 };
 
 business.getMoney = function(id) {
     id = methods.parseInt(id);
-    if (Container.Data.Has(-20000 + id, 'bank'))
-        return methods.parseFloat(Container.Data.Get(-20000 + id, 'bank'));
+    if (Container.Data.Has(enums.offsets.business + id, 'bank'))
+        return methods.parseFloat(Container.Data.Get(enums.offsets.business + id, 'bank'));
     return 0;
 };
 

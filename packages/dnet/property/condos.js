@@ -11,6 +11,8 @@ let condos = exports;
 let hBlips = new Map();
 let count = 0;
 
+let condoOffset = enums.offsets.condoBig - enums.offsets.condo;
+
 condos.loadAll = function() {
     methods.debug('condos.loadAll');
 
@@ -25,7 +27,7 @@ condos.loadAll = function() {
             condos.set(item['id'], 'price', item['price']);
             condos.set(item['id'], 'user_id', item['user_id']);
             condos.set(item['id'], 'user_name', item['user_name']);
-            condos.set(item['id'], 'pin', item['user_name']);
+            condos.set(item['id'], 'pin', item['pin']);
             condos.set(item['id'], 'is_safe', item['is_safe']);
             condos.set(item['id'], 'is_sec', item['is_sec']);
             condos.set(item['id'], 'is_lock', item['is_lock']);
@@ -53,13 +55,13 @@ condos.loadBigAll = function() {
 
         rows.forEach(function(item) {
 
-            condos.set(item['id'] + 50000, 'id', item['id']);
-            condos.set(item['id'] + 50000, 'number', item['number']);
-            condos.set(item['id'] + 50000, 'address', item['address']);
-            condos.set(item['id'] + 50000, 'street', item['street']);
-            condos.set(item['id'] + 50000, 'x', item['x']);
-            condos.set(item['id'] + 50000, 'y', item['y']);
-            condos.set(item['id'] + 50000, 'z', item['z']);
+            condos.set(item['id'] + condoOffset, 'id', item['id']);
+            condos.set(item['id'] + condoOffset, 'number', item['number']);
+            condos.set(item['id'] + condoOffset, 'address', item['address']);
+            condos.set(item['id'] + condoOffset, 'street', item['street']);
+            condos.set(item['id'] + condoOffset, 'x', item['x']);
+            condos.set(item['id'] + condoOffset, 'y', item['y']);
+            condos.set(item['id'] + condoOffset, 'z', item['z']);
 
             methods.createBlip(new mp.Vector3(parseFloat(item['x']), parseFloat(item['y']), parseFloat(item['z'])), 40, 0, 0.4);
         });
@@ -83,7 +85,7 @@ condos.loadLast = function() {
             condos.set(item['id'], 'price', item['price']);
             condos.set(item['id'], 'user_id', item['user_id']);
             condos.set(item['id'], 'user_name', item['user_name']);
-            condos.set(item['id'], 'pin', item['user_name']);
+            condos.set(item['id'], 'pin', item['pin']);
             condos.set(item['id'], 'is_safe', item['is_safe']);
             condos.set(item['id'], 'is_sec', item['is_sec']);
             condos.set(item['id'], 'is_lock', item['is_lock']);
@@ -91,6 +93,7 @@ condos.loadLast = function() {
             condos.set(item['id'], 'x', item['x']);
             condos.set(item['id'], 'y', item['y']);
             condos.set(item['id'], 'z', item['z']);
+            stocks.set(item['id'], 'rot', item['rot']);
             condos.set(item['id'], 'tax_money', item['tax_money']);
             condos.set(item['id'], 'tax_score', item['tax_score']);
 
@@ -116,13 +119,13 @@ condos.loadBigLast = function() {
 
         rows.forEach(function(item) {
 
-            condos.set(item['id'] + 50000, 'id', item['id']);
-            condos.set(item['id'] + 50000, 'number', item['number']);
-            condos.set(item['id'] + 50000, 'address', item['address']);
-            condos.set(item['id'] + 50000, 'street', item['street']);
-            condos.set(item['id'] + 50000, 'x', item['x']);
-            condos.set(item['id'] + 50000, 'y', item['y']);
-            condos.set(item['id'] + 50000, 'z', item['z']);
+            condos.set(item['id'] + condoOffset, 'id', item['id']);
+            condos.set(item['id'] + condoOffset, 'number', item['number']);
+            condos.set(item['id'] + condoOffset, 'address', item['address']);
+            condos.set(item['id'] + condoOffset, 'street', item['street']);
+            condos.set(item['id'] + condoOffset, 'x', item['x']);
+            condos.set(item['id'] + condoOffset, 'y', item['y']);
+            condos.set(item['id'] + condoOffset, 'z', item['z']);
 
             methods.createBlip(new mp.Vector3(parseFloat(item['x']), parseFloat(item['y']), parseFloat(item['z'])), 40, 0, 0.4);
 
@@ -148,15 +151,15 @@ condos.insertBig = function(player, number, street, zone, x, y, z) {
 };
 
 condos.getHouseData = function(id) {
-    return Container.Data.GetAll(200000 + methods.parseInt(id));
+    return Container.Data.GetAll(enums.offsets.condo + methods.parseInt(id));
 };
 
 condos.get = function(id, key) {
-    return Container.Data.Get(200000 + methods.parseInt(id), key);
+    return Container.Data.Get(enums.offsets.condo + methods.parseInt(id), key);
 };
 
 condos.set = function(id, key, val) {
-    Container.Data.Set(200000 + methods.parseInt(id), key, val);
+    Container.Data.Set(enums.offsets.condo + methods.parseInt(id), key, val);
 };
 
 condos.getCountLiveUser = function(id, cb) {
@@ -286,5 +289,5 @@ condos.enter = function (player, id) {
     let hInfo = condos.getHouseData(id);
     player.dimension = id + enums.offsets.condo; //TODO
     let intId = hInfo.get('interior');
-    user.teleport(player, houses.interiorList[intId][0], houses.interiorList[intId][1], houses.interiorList[intId][2] + 1);
+    user.teleport(player, houses.interiorList[intId][0], houses.interiorList[intId][1], houses.interiorList[intId][2] + 1, houses.interiorList[intId][3]);
 };

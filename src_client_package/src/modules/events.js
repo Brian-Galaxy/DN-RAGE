@@ -583,7 +583,6 @@ mp.events.add('client:showHouseInMenu', (item) => {
     }
 });
 
-
 mp.events.add('client:showCondoOutMenu', (item) => {
     try {
         methods.debug('Event: client:menuList:showCondoOutMenu');
@@ -610,6 +609,61 @@ mp.events.add('client:showCondoInMenu', (item) => {
     try {
         methods.debug('Event: client:menuList:showCondoInMenu');
         menuList.showCondoInMenu(new Map(item));
+    }
+    catch (e) {
+        methods.debug('Exception: events:client:showCondoInMenu');
+        methods.debug(e);
+    }
+});
+
+mp.events.add('client:showStockOutMenu', (item) => {
+    try {
+        methods.debug('Event: client:menuList:showCondoOutMenu');
+        menuList.showStockOutMenu(new Map(item)).then();
+    }
+    catch (e) {
+        methods.debug('Exception: events:client:showCondoOutMenu');
+        methods.debug(e);
+    }
+});
+
+mp.events.add('client:showStockBuyMenu', (item) => {
+    try {
+        methods.debug('Event: client:menuList:showCondoBuyMenu');
+        menuList.showStockBuyMenu(new Map(item)).then();
+    }
+    catch (e) {
+        methods.debug('Exception: events:client:showCondoBuyMenu');
+        methods.debug(e);
+    }
+});
+
+mp.events.add('client:showStockInMenu', (item) => {
+    try {
+        methods.debug('Event: client:menuList:showCondoInMenu');
+        menuList.showStockInMenu(new Map(item));
+    }
+    catch (e) {
+        methods.debug('Exception: events:client:showCondoInMenu');
+        methods.debug(e);
+    }
+});
+
+mp.events.add('client:showStockOutVMenu', (item) => {
+    try {
+        methods.debug('Event: client:menuList:showCondoOutMenu');
+        menuList.showStockOutVMenu(new Map(item)).then();
+    }
+    catch (e) {
+        methods.debug('Exception: events:client:showCondoOutMenu');
+        methods.debug(e);
+    }
+});
+
+mp.events.add('client:showStockInVMenu', (item) => {
+    try {
+        methods.debug('Event: client:menuList:showCondoInMenu');
+        menuList.showStockInVMenu(new Map(item));
     }
     catch (e) {
         methods.debug('Exception: events:client:showCondoInMenu');
@@ -1960,6 +2014,24 @@ mp.events.add("playerCommand", async (command) => {
         }
         mp.events.callRemote('server:houses:insert', args[1], args[2], args[3], ui.getCurrentZone(), ui.getCurrentStreet())
     }
+    else if (command.toLowerCase().slice(0, 2) === "s ") {
+        let args = command.split(' ');
+        if (args.length != 4) {
+            mp.gui.chat.push(`Не верно введено кол-во параметров `);
+            mp.gui.chat.push(`/s [ID Интерьера] [№ Дома] [Цена] `);
+            return;
+        }
+        mp.events.callRemote('server:stocks:insert', args[1], args[2], args[3], ui.getCurrentZone(), ui.getCurrentStreet())
+    }
+    else if (command.toLowerCase().slice(0, 3) === "sc ") {
+        let args = command.split(' ');
+        if (args.length != 2) {
+            mp.gui.chat.push(`Не верно введено кол-во параметров `);
+            mp.gui.chat.push(`/sc [ID]`);
+            return;
+        }
+        mp.events.callRemote('server:stocks:insert2', args[1])
+    }
     else if (command.toLowerCase().slice(0, 2) === "c ") {
         let args = command.split(' ');
         if (args.length != 5) {
@@ -2026,6 +2098,8 @@ mp.events.add("playerCommand", async (command) => {
 mp.events.add('render', () => {
     try {
         mp.game.controls.disableControlAction(0,243,true);
+
+        mp.game.controls.disableControlAction(0,44,true); //Q укрытие
 
         mp.game.controls.disableControlAction(0,53,true); //Фонарик на оружие
         mp.game.controls.disableControlAction(0,54,true);

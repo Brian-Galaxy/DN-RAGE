@@ -3,6 +3,7 @@ let mysql = require('../modules/mysql');
 let methods = require('../modules/methods');
 let user = require('../user');
 let coffer = require('../coffer');
+let enums = require('../enums');
 let houses = exports;
 
 let hBlips = new Map();
@@ -39,7 +40,7 @@ houses.loadAll = function() {
             houses.set(item['id'], 'price', item['price']);
             houses.set(item['id'], 'user_id', item['user_id']);
             houses.set(item['id'], 'user_name', item['user_name']);
-            houses.set(item['id'], 'pin', item['user_name']);
+            houses.set(item['id'], 'pin', item['pin']);
             houses.set(item['id'], 'is_safe', item['is_safe']);
             houses.set(item['id'], 'is_sec', item['is_sec']);
             houses.set(item['id'], 'is_lock', item['is_lock']);
@@ -84,7 +85,7 @@ houses.loadLast = function() {
             houses.set(item['id'], 'price', item['price']);
             houses.set(item['id'], 'user_id', item['user_id']);
             houses.set(item['id'], 'user_name', item['user_name']);
-            houses.set(item['id'], 'pin', item['user_name']);
+            houses.set(item['id'], 'pin', item['pin']);
             houses.set(item['id'], 'is_safe', item['is_safe']);
             houses.set(item['id'], 'is_sec', item['is_sec']);
             houses.set(item['id'], 'is_lock', item['is_lock']);
@@ -92,6 +93,7 @@ houses.loadLast = function() {
             houses.set(item['id'], 'x', item['x']);
             houses.set(item['id'], 'y', item['y']);
             houses.set(item['id'], 'z', item['z']);
+            stocks.set(item['id'], 'rot', item['rot']);
             houses.set(item['id'], 'tax_money', item['tax_money']);
             houses.set(item['id'], 'tax_score', item['tax_score']);
 
@@ -120,15 +122,15 @@ houses.insert = function(player, number, street, zone, x, y, z, rot, interior, p
 };
 
 houses.getHouseData = function(id) {
-    return Container.Data.GetAll(100000 + methods.parseInt(id));
+    return Container.Data.GetAll(enums.offsets.house + methods.parseInt(id));
 };
 
 houses.get = function(id, key) {
-    return Container.Data.Get(100000 + methods.parseInt(id), key);
+    return Container.Data.Get(enums.offsets.house + methods.parseInt(id), key);
 };
 
 houses.set = function(id, key, val) {
-    Container.Data.Set(100000 + methods.parseInt(id), key, val);
+    Container.Data.Set(enums.offsets.house + methods.parseInt(id), key, val);
 };
 
 houses.getCountLiveUser = function(id, cb) {
@@ -258,5 +260,5 @@ houses.enter = function (player, id) {
     let hInfo = houses.getHouseData(id);
     player.dimension = id;
     let intId = hInfo.get('interior');
-    user.teleport(player, houses.interiorList[intId][0], houses.interiorList[intId][1], houses.interiorList[intId][2] + 1);
+    user.teleport(player, houses.interiorList[intId][0], houses.interiorList[intId][1], houses.interiorList[intId][2] + 1, houses.interiorList[intId][3]);
 };

@@ -1,5 +1,4 @@
 import methods from '../modules/methods';
-import enums from "../enums";
 
 let object = {};
 
@@ -91,15 +90,187 @@ object.load = function () {
     //object.delete(868499217, -818.7643, -1079.545, 11.47806);
     //object.delete(3146141106, -816.7932, -1078.406, 11.47806);
 
+    // Основной маппинг малого склада Stock
+
+    object.create(-1659828682, new mp.Vector3(1105.48, -3101.43, -38.84), new mp.Vector3(-1.384231E-12, -5.008955E-06, -89.99998), false, false);
+    object.create(-1653844078, new mp.Vector3(1104.01, -3103, -39.99993), new mp.Vector3(0, 0, 0), false, false);
+    object.create(-1134789989, new mp.Vector3(1103.438, -3102.897, -39.7), new mp.Vector3(0, 0, 0), false, false, 16);
+    object.create(-1719363059, new mp.Vector3(1104.908, -3102.896, -39.62), new mp.Vector3(0, 0, 0), false, false, 14);
+    object.create(-1719363059, new mp.Vector3(1103.28, -3102.9, -38.73), new mp.Vector3(1.001786E-05, 5.008955E-06, -90.04958), false, false, 14);
+    object.create(-1134789989, new mp.Vector3(1104.8, -3102.88, -38.82), new mp.Vector3(1.001782E-05, 5.008955E-06, -179.9256), false, false, 16);
+    object.create(-1134789989, new mp.Vector3(1103.44, -3102.87, -37.93), new mp.Vector3(0, 0, 0), false, false, 16);
+    object.create(-1719363059, new mp.Vector3(1104.613, -3102.9, -37.84), new mp.Vector3(0, 0, 0), false, false, 14);
+    object.create(1089807209, new mp.Vector3(1102.14, -3103.26, -39.26), new mp.Vector3(0, -5.008956E-06, -180), false, false, 17);
+    object.create(347760077, new mp.Vector3(1104.103, -3103.102, -38.13803), new mp.Vector3(0, 0, -67.99998), false, false);
+    object.create(871161084, new mp.Vector3(1104.248, -3103.024, -39.91068), new mp.Vector3(0, 0, -136.999), false, false);
+    object.create(-2004926724, new mp.Vector3(1103.994, -3102.783, -39.03558), new mp.Vector3(0, 0, -179.4991), false, false);
+    object.create(-1659670616, new mp.Vector3(1102.872, -3103.059, -39.91068), new mp.Vector3(0, 0, -10.99999), false, false);
+    object.create(647318656, new mp.Vector3(1104.209, -3103.114, -39.03558), new mp.Vector3(0, 0, -37.99995), false, false);
+    object.create(510965455, new mp.Vector3(1103.996, -3102.932, -39.91068), new mp.Vector3(0, 0, -23.99994), false, false);
+    object.create(510965455, new mp.Vector3(1103.76, -3103.087, -39.03558), new mp.Vector3(0, 0, 17.00003), false, false);
+    object.create(2086814937, new mp.Vector3(1102.816, -3102.939, -39.03558), new mp.Vector3(0, 0, -21.99993), false, false);
+
+    object.delete(-200982847, 1087.956, -3102.626, -40.00024);
+    object.delete(-1069975900, 1087.405, -3102.546, -39.59656);
+    object.delete(-1738103333, 1087.467, -3103.16, -39.55749);
+    object.delete(171954244, 1087.416, -3103.19, -38.90747);
+    object.delete(-288941741, 1087.969, -3103.318, -39.76682);
+    object.delete(2057223314, 1087.786, -3100.579, -39.11903);
+    object.delete(176137803, 1087.46, -3101.968, -39.19104);
+    object.delete(-339081347, 1087.49, -3101.738, -39.18203);
+    object.delete(740404217, 1105.251, -3101.934, -39.77567);
+    object.delete(-1069975900, 1105.251, -3102.386, -39.59656);
+
+    object.delete(572449021, 1104.012, -3103.057, -39.98313);
+    object.delete(572449021, 1101.108, -3103.027, -39.99387);
+    object.delete(774227908, 1105.354, -3101.44, -39.06805);
+
+// Основной маппинг среднего склада Stock
+
+    object.create(-1659828682, new mp.Vector3(1073.51, -3099.978, -38.7), new mp.Vector3(-2.564906E-12, -5.008952E-06, -89.99995), false, false);
+    object.create(-1683917950, new mp.Vector3(1048.07, -3094.63, -36.28839), new mp.Vector3(2.564906E-12, -5.008952E-06, 89.99995), false, false);
+    object.create(-1683917950, new mp.Vector3(1047.83, -3094.64, -36.3), new mp.Vector3(3.732026E-12, -5.008951E-06, 89.99993), false, false);
+    object.create(-1653844078, new mp.Vector3(1050.2, -3111.12, -39.99993), new mp.Vector3(0, 0, 0), false, false);
+    object.create(-1653844078, new mp.Vector3(1048.22, -3109.628, -39.99993), new mp.Vector3(-5.97114E-13, -5.008956E-06, -89.99999), false, false);
+    object.create(1089807209, new mp.Vector3(1048.12, -3107.83, -39.32492), new mp.Vector3(-4.46236E-05, 2.231179E-05, 89.99999), false, false, 17);
+    object.create(1089807209, new mp.Vector3(1048.116, -3106.941, -39.32492), new mp.Vector3(-4.46236E-05, 2.231179E-05, 89.99999), false, false, 17);
+    object.create(-1719363059, new mp.Vector3(1050.986, -3111.007, -39.615), new mp.Vector3(0, 0, 0), false, false, 14);
+    object.create(-1719363059, new mp.Vector3(1049.357, -3111, -39.615), new mp.Vector3(0, 0, 90.69976), false, false, 14);
+    object.create(-1134789989, new mp.Vector3(1049.751, -3111.112, -38.82), new mp.Vector3(0, 0, -88.49972), false, false, 16);
+    object.create(-1134789989, new mp.Vector3(1050.877, -3111.005, -38.82), new mp.Vector3(0, 0, -0.09966588), false, false, 16);
+    object.create(-1719363059, new mp.Vector3(1049.666, -3110.977, -37.845), new mp.Vector3(0, 0, 0), false, false, 14);
+    object.create(-1719363059, new mp.Vector3(1050.97, -3111.026, -37.845), new mp.Vector3(0, 0, 90.69976), false, false, 14);
+    object.create(-1134789989, new mp.Vector3(1048.328, -3110.107, -39.705), new mp.Vector3(0, 0, -88.49972), false, false, 16);
+    object.create(-1134789989, new mp.Vector3(1048.322, -3108.908, -37.93), new mp.Vector3(0, 0, -88.49972), false, false, 16);
+    object.create(-1134789989, new mp.Vector3(1048.24, -3110.31, -37.93), new mp.Vector3(0, 0, -179.4995), false, false, 16);
+    object.create(-1134789989, new mp.Vector3(1048.33, -3108.893, -39.705), new mp.Vector3(0, 0, 88.50024), false, false, 16);
+    object.create(-1719363059, new mp.Vector3(1048.359, -3108.869, -38.735), new mp.Vector3(0, 0, -0.3002918), false, false, 14);
+    object.create(-1719363059, new mp.Vector3(1048.338, -3110.121, -38.735), new mp.Vector3(0, 0, 89.69965), false, false, 14);
+    object.create(2147289143, new mp.Vector3(1056.401, -3111.64, -35.39232), new mp.Vector3(0, 0, -177.6021), false, false);
+    object.create(479783305, new mp.Vector3(1050.09, -3108.62, -34.56526), new mp.Vector3(1.001791E-05, 2.23118E-05, -5.008959E-06), false, false);
+    object.create(347760077, new mp.Vector3(1048.284, -3109.535, -39.91675), new mp.Vector3(0, 0, 6.999997), false, false);
+    object.create(871161084, new mp.Vector3(1049.167, -3110.846, -39.03558), new mp.Vector3(0, 0, -177.7994), false, false);
+    object.create(-2004926724, new mp.Vector3(1048.44, -3109.493, -39.03558), new mp.Vector3(0, 0, 88.99989), false, false);
+    object.create(-1659670616, new mp.Vector3(1050.286, -3111.129, -39.03558), new mp.Vector3(0, 0, -21.99999), false, false);
+    object.create(510965455, new mp.Vector3(1048.186, -3110.709, -39.03558), new mp.Vector3(0, 0, -53.99994), false, false);
+    object.create(510965455, new mp.Vector3(1049.115, -3111.279, -39.03558), new mp.Vector3(0, 0, -103.9998), false, false);
+    object.create(1914482766, new mp.Vector3(1050.154, -3110.992, -39.03558), new mp.Vector3(0, 0, -50.99995), false, false);
+    object.create(-1987404681, new mp.Vector3(1050.337, -3110.965, -38.1441), new mp.Vector3(0, 0, -129.9999), false, false);
+    object.create(-1458189440, new mp.Vector3(1049.988, -3111.124, -39.91675), new mp.Vector3(0, 0, -17.99999), false, false);
+    object.create(-1693896857, new mp.Vector3(1050.128, -3111.179, -39.91675), new mp.Vector3(0, 0, 0), false, false);
+    object.create(-2067594533, new mp.Vector3(1050.198, -3111.02, -39.91675), new mp.Vector3(0, 0, 2.999955), false, false);
+    object.create(-1469896790, new mp.Vector3(1050.307, -3111.279, -39.91675), new mp.Vector3(0, 0, -12.99999), false, false);
+    object.create(123488498, new mp.Vector3(1050.486, -3111.2, -39.9), new mp.Vector3(0, 0, -60.99997), false, false);
+    object.create(-1960568157, new mp.Vector3(1049.108, -3111.084, -38.13), new mp.Vector3(0, 0, -44.99998), false, false);
+    object.create(-1119158544, new mp.Vector3(1048.389, -3109.669, -38.13), new mp.Vector3(0, 0, -40.99998), false, false);
+
+    object.delete(2040839490, 1048.537, -3101.301, -39.47729);
+    object.delete(1623033797, 1048.604, -3094.659, -39.97461);
+    object.delete(-13720938, 1047.957, -3098.591, -40);
+    object.delete(740895081, 1047.908, -3104.158, -39.01764);
+    object.delete(1343261146, 1049.849, -3111.289, -39.08353);
+    object.delete(1343261146, 1073.177, -3107.978, -39.08353);
+    object.delete(-1853453107, 1070.802, -3109.343, -40);
+    object.delete(895484294, 1071.861, -3096.517, -40);
+    object.delete(2057223314, 1048.376, -3100.055, -39.11857);
+    object.delete(176137803, 1048.41, -3101.416, -39.19058);
+    object.delete(-339081347, 1048.074, -3101.168, -39.18158);
+    object.delete(-2096130282, 1047.932, -3105.301, -39.09033);
+
+    object.delete(3694551461, 1051.075, -3109.071, -40);
+    object.delete(1350712180, 1049.091, -3108.253, -39.21489);
+    object.delete(3529086555, 1047.978, -3094.091, -37.23187);
+
+// Основной маппинг большого склада Stock
+
+    object.create(1089807209, new mp.Vector3(1000.29, -3113.02, -39.26), new mp.Vector3(0, -5.008956E-06, -180), false, false, 17);
+    object.create(1089807209, new mp.Vector3(997.3, -3113.02, -39.26), new mp.Vector3(0, -5.008956E-06, -180), false, false, 17);
+    object.create(1089807209, new mp.Vector3(998.8, -3113.02, -39.26), new mp.Vector3(0, -5.008956E-06, -180), false, false, 17);
+    object.create(-1719363059, new mp.Vector3(1022.705, -3112.87, -39.61), new mp.Vector3(0, 0, 0), false, false, 14);
+    object.create(-1719363059, new mp.Vector3(1021.6, -3112.88, -39.61), new mp.Vector3(0, 0, 88.89981), false, false, 14);
+    object.create(-1134789989, new mp.Vector3(1022.32, -3112.85, -38.82), new mp.Vector3(0, 0, 0), false, false, 16);
+    object.create(-1134789989, new mp.Vector3(1020.97, -3112.93, -38.81), new mp.Vector3(1.001788E-05, 5.008954E-06, -89.29992), false, false, 16);
+    object.create(-1134789989, new mp.Vector3(1021.549, -3112.87, -37.92), new mp.Vector3(0, 0, -179.3004), false, false, 16);
+    object.create(-1719363059, new mp.Vector3(1022.72, -3112.87, -37.84), new mp.Vector3(1.001785E-05, 5.008956E-06, -91.10022), false, false, 14);
+    object.create(-1134789989, new mp.Vector3(1002.95, -3112.97, -39.7), new mp.Vector3(1.001789E-05, -5.008956E-06, 90.14932), false, false, 16);
+    object.create(-1719363059, new mp.Vector3(1004.311, -3112.88, -39.61), new mp.Vector3(1.00179E-05, -5.008954E-06, 90.02467), false, false, 14);
+    object.create(-1134789989, new mp.Vector3(1004.34, -3112.85, -38.82), new mp.Vector3(1.001784E-05, -5.008956E-06, -179.8241), false, false, 16);
+    object.create(-1719363059, new mp.Vector3(1002.91, -3112.88, -38.73), new mp.Vector3(1.00179E-05, 5.008956E-06, 90.09966), false, false, 14);
+    object.create(-1134789989, new mp.Vector3(1004.56, -3112.84, -37.93), new mp.Vector3(0, 0, 0), false, false, 16);
+    object.create(-1719363059, new mp.Vector3(1003.429, -3112.88, -37.84), new mp.Vector3(1.001791E-05, 5.008956E-06, -179.9513), false, false, 14);
+    object.create(-1659828682, new mp.Vector3(1028.12, -3098.818, -38.52463), new mp.Vector3(0, 0, -90.39985), false, false);
+    object.create(347760077, new mp.Vector3(1020.728, -3112.954, -38.14285), new mp.Vector3(0, 0, 50.99998), false, false);
+    object.create(871161084, new mp.Vector3(1003.608, -3112.99, -39.03433), new mp.Vector3(0, 0, -139.9998), false, false);
+    object.create(510965455, new mp.Vector3(1021.668, -3112.962, -39.03433), new mp.Vector3(0, 0, 148.9997), false, false);
+    object.create(1611172902, new mp.Vector3(1022.93, -3113.083, -39.03433), new mp.Vector3(0, 0, 29.99998), false, false);
+    object.create(1142765633, new mp.Vector3(1004.927, -3112.966, -39.03433), new mp.Vector3(0, 0, 24.99992), false, false);
+    object.create(845878493, new mp.Vector3(1005.041, -3112.892, -39.03433), new mp.Vector3(0, 0, 0), false, false);
+    object.create(-1653844078, new mp.Vector3(1016.28, -3112.98, -39.99989), new mp.Vector3(0, 0, 0), false, false);
+    object.create(-1134789989, new mp.Vector3(1017.13, -3112.86, -37.93), new mp.Vector3(0, 0, 0), false, false, 16);
+    object.create(-1134789989, new mp.Vector3(1017.02, -3112.84, -39.7), new mp.Vector3(1.001782E-05, 5.008956E-06, -179.9236), false, false, 16);
+    object.create(-1134789989, new mp.Vector3(1017.069, -3112.93, -38.82), new mp.Vector3(0, 0, -87.99982), false, false, 16);
+    object.create(-1719363059, new mp.Vector3(1015.624, -3112.88, -39.61), new mp.Vector3(0, 0, 88.89981), false, false, 14);
+    object.create(-1719363059, new mp.Vector3(1015.474, -3112.884, -37.84405), new mp.Vector3(1.001786E-05, 5.008956E-06, -91.10022), false, false, 14);
+    object.create(-1719363059, new mp.Vector3(1015.85, -3112.89, -38.73), new mp.Vector3(1.001789E-05, -5.008957E-06, -0.02585409), false, false, 14);
+    object.create(347760077, new mp.Vector3(1003.629, -3113.037, -39.9155), new mp.Vector3(0, 0, -30.99997), false, false);
+    object.create(347760077, new mp.Vector3(1004.998, -3113.089, -39.9155), new mp.Vector3(0, 0, -161.9997), false, false);
+    object.create(347760077, new mp.Vector3(1016.277, -3113.043, -38.14405), new mp.Vector3(0, 0, -142.9996), false, false);
+    object.create(-2004926724, new mp.Vector3(1015.198, -3112.973, -39.03553), new mp.Vector3(0, 0, 161.0007), false, false);
+    object.create(-1659670616, new mp.Vector3(1016.443, -3113.014, -39.03553), new mp.Vector3(0, 0, -141.9995), false, false);
+    object.create(240285960, new mp.Vector3(1015.972, -3113.005, -38.14405), new mp.Vector3(0, 0, -16.99995), false, false);
+    object.create(-1951015928, new mp.Vector3(1016.093, -3112.986, -39.9167), new mp.Vector3(0, 0, 25.99999), false, false);
+    object.create(-1951015928, new mp.Vector3(1016.302, -3112.981, -39.9167), new mp.Vector3(0, 0, -126.9995), false, false);
+    object.create(845878493, new mp.Vector3(1021.48, -3112.859, -39.03433), new mp.Vector3(0, 0, -20.99998), false, false);
+    object.create(-1987404681, new mp.Vector3(1022.173, -3113.059, -39.9155), new mp.Vector3(0, 0, -164.9998), false, false);
+    object.create(-1458189440, new mp.Vector3(1015.143, -3112.979, -39.9167), new mp.Vector3(0, 0, -15.99995), false, false);
+    object.create(-1469896790, new mp.Vector3(1003.389, -3112.796, -39.03433), new mp.Vector3(0, 0, -44.99998), false, false);
+
+    object.delete(1343261146, 996.3063, -3112.344, -39.11191);
+    object.delete(-509973344, 992.0818, -3102.724, -38.61679);
+    object.delete(1268458364, 994.6763, -3099.17, -39.94958);
+    object.delete(176137803, 995.4335, -3100.887, -39.19104);
+    object.delete(895484294, 999.1875, -3093.501, -39.99869);
+    object.delete(-130812911, 997.8042, -3089.944, -40.00491);
+    object.delete(-1738103333, 999.114, -3090.1, -39.56229);
+    object.delete(3980350, 998.4703, -3089.788, -38.97379);
+    object.delete(2040839490, 1000.234, -3089.944, -39.47586);
+    object.delete(1343261146, 996.5288, -3095.898, -39.11191);
+    object.delete(38230152, 996.7981, -3097.769, -40.00165);
+    object.delete(548760764, 996.5059, -3094.706, -37.40491);
+    object.delete(2040839490, 996.5199, -3101.169, -39.47586);
+    object.delete(-13720938, 996.5199, -3100.583, -40.00784);
+    object.delete(548760764, 1028.243, -3098.224, -36.18852);
+    object.delete(-1999230727, 1022.777, -3112.889, -39.04367);
+    object.delete(1951313592, 1022.436, -3112.948, -39.7678);
+    object.delete(-130812911, 1019.859, -3112.965, -40.00491);
+    object.delete(1343261146, 1017.649, -3113.142, -39.11191);
+    object.delete(1974409830, 1002.726, -3112.927, -38.84708);
+    object.delete(-1890319650, 1002.996, -3113.119, -39.04764);
+    object.delete(1005516815, 1004.502, -3112.933, -39.82828);
+    object.delete(-1321159957, 1004.091, -3113.066, -39.76736);
+    object.delete(-832601639, 1004.868, -3113.002, -39.81144);
+    object.delete(-1321159957, 999.9357, -3113.013, -38.00833);
+    object.delete(-1134789989, 999.5406, -3112.927, -39.70865);
+    object.delete(456071379, 998.1865, -3112.855, -39.08329);
+    object.delete(1974409830, 998.2366, -3112.927, -37.9556);
+    object.delete(-1853453107, 1022.348, -3090.632, -40.00271);
+    object.delete(1298403575, 1024.832, -3089.79, -39.56229);
+    object.delete(-1738103333, 1024.25, -3089.946, -39.56229);
+    object.delete(-742198632, 993.6818, -3095.474, -40.00269);
+
+    object.delete(572449021, 999.0031, -3113.013, -39.99869);
+    object.delete(1350712180, 1001.339, -3111.927, -39.22092);
+    object.delete(1350712180, 1020.715, -3090.816, -39.22092);
+
     const end = new Date().getTime();
     methods.debug('Count Objects Loaded: ' + objectList.length + '  | ' + (end - start) + 'ms');
     object.process();
 };
 
-object.create = function (model, pos, rotation, dynamic, placeOnGround) {
+object.create = function (model, pos, rotation, dynamic, placeOnGround, invType = 0) {
     //if (mp.game.streaming.isModelValid(model)) {
     //mp.game.streaming.requestModel(model);
-    objectList.push({model: model, pos: pos, rotation: rotation, dynamic: dynamic, placeOnGround: placeOnGround, isCreate: false, handle: -1});
+    objectList.push({model: model, pos: pos, rotation: rotation, dynamic: dynamic, placeOnGround: placeOnGround, isCreate: false, handle: -1, invType: invType});
     //}
 };
 
@@ -359,6 +530,9 @@ object.process = function () {
                             alpha: 255,
                             dimension: -1
                         });
+
+                    if (item.invType > 0)
+                        item.handle.invType = item.invType;
 
                     /*item.handle = mp.game.invoke('0x9A294B2138ABB884', item.model, item.pos.x, item.pos.y, item.pos.z, false, true, false);
                     mp.game.invoke('0x8524A8B0171D5E07', item.handle, item.rotation.x, item.rotation.y, item.rotation.z, 2, true);

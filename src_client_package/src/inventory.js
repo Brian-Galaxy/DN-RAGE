@@ -122,7 +122,10 @@ inventory.openInventoryByEntity = function(entity) {
     }
     else if (entity.getType() == 3) {
         try {
-            inventory.takeItem(entity.getVariable('isDrop'), entity.getVariable('itemId'));
+            if (entity.getVariable('isDrop'))
+                inventory.takeItem(entity.getVariable('isDrop'), entity.getVariable('itemId'));
+            else
+                inventory.getItemList(entity.invType, mp.players.local.dimension);
         }
         catch (e) {
             methods.debug(e);
@@ -551,7 +554,13 @@ inventory.types = {
     Vehicle : 8,
     StockGang : 9,
     Fridge : 10,
-    UserStock : 11
+    UserStock1 : 11,
+    UserStock2 : 12,
+    UserStock3 : 13,
+    UserStock4 : 14,
+    UserStock5 : 15,
+    UserStock6 : 16,
+    UserStock7 : 17,
 };
 
 export default inventory;

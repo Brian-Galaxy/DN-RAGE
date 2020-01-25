@@ -293,19 +293,10 @@ methods.createStaticCheckpointV = function (pos, message, scale, dimension, colo
     return methods.createStaticCheckpoint(pos.x, pos.y, pos.z, message, scale, dimension, color, height);
 };
 
-methods.createStaticCheckpoint = function (x, y, z, message, scale, dimension, color, height) {
+methods.createStaticCheckpoint = function (x, y, z, message, scale = 1, dimension = -1, color = [33, 150, 243, 100], height = undefined) {
 
-    if (scale == undefined)
-        scale = 1;
-    if (color == undefined)
-        color = [33, 150, 243, 100];
     if (height == undefined)
         height = scale / 2;
-
-    if (dimension == undefined)
-        dimension = -1;
-    else
-        dimension = methods.parseInt(dimension);
 
     let checkpointID = checkPointStaticList.length;
     checkPointStaticList.push({id: checkpointID, x: parseFloat(x), y: parseFloat(y), z: parseFloat(z), color: color, scale: scale, height: height});

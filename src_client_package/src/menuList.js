@@ -18,6 +18,7 @@ import voice from './voice';
 
 import houses from './property/houses';
 import condos from './property/condos';
+import stocks from './property/stocks';
 import business from './property/business';
 import vehicles from "./property/vehicles";
 
@@ -102,7 +103,7 @@ menuList.showHouseInMenu = function(h) {
     menu.ItemSelect.on(async item => {
         UIMenu.Menu.HideMenu();
         if (item == exitHouseItem) {
-            houses.exit(h.get('x'), h.get('y'), h.get('z'));
+            houses.exit(h.get('x'), h.get('y'), h.get('z'), h.get('rot'));
         }
         if (item.doName == 'setPin') {
             let pass = methods.parseInt(await UIMenu.Menu.GetUserInput("Пароль", "", 5));
@@ -227,7 +228,7 @@ menuList.showCondoInMenu = function(h) {
     menu.ItemSelect.on(async item => {
         UIMenu.Menu.HideMenu();
         if (item == exitHouseItem) {
-            condos.exit(h.get('x'), h.get('y'), h.get('z'));
+            condos.exit(h.get('x'), h.get('y'), h.get('z'), h.get('rot'));
         }
         if (item.doName == 'setPin') {
             let pass = methods.parseInt(await UIMenu.Menu.GetUserInput("Пароль", "", 5));
@@ -273,6 +274,116 @@ menuList.showCondoOutMenu = async function(h) {
                     mp.game.ui.notifications.show('~r~Дверь закрыта, ее можно взломать отмычкой');
                 else
                     condos.enter(h.get('id'));
+            }
+            catch (e) {
+                methods.debug(e);
+            }
+        }
+        else if (item.doName) {
+            mail.sendMail2(item.doName)
+        }
+    });
+};
+
+menuList.showStockBuyMenu = async function(h) {
+
+    let menu = UIMenu.Menu.Create(`№${h.get('id')}`, `~b~Адрес: ~s~${h.get('address')} ${h.get('number')}`);
+
+    let buyHouseItem = UIMenu.Menu.AddMenuItem(`Купить склад за ~g~${methods.moneyFormat(h.get('price'))}`);
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+
+    menu.ItemSelect.on(async item => {
+        UIMenu.Menu.HideMenu();
+        if (item == buyHouseItem) {
+            stocks.buy(h.get('id'));
+        }
+        else if (item.doName) {
+            mail.sendMail2(item.doName)
+        }
+    });
+};
+
+menuList.showStockInMenu = function(h) {
+
+    let menu = UIMenu.Menu.Create(`№${h.get('id')}`, `~b~Адрес: ~s~${h.get('address')} ${h.get('number')}`);
+    let exitHouseItem = UIMenu.Menu.AddMenuItem("~g~Выйти");
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+
+    menu.ItemSelect.on(async item => {
+        UIMenu.Menu.HideMenu();
+        if (item == exitHouseItem) {
+            stocks.exit(h.get('x'), h.get('y'), h.get('z'), h.get('rot'));
+        }
+    });
+};
+
+menuList.showStockOutMenu = async function(h) {
+
+    let menu = UIMenu.Menu.Create(`№${h.get('id')}`, `~b~Адрес: ~s~${h.get('address')} ${h.get('number')}`);
+    let infoItem = UIMenu.Menu.AddMenuItem(`~b~Владелец:~s~ ${h.get('user_name')}`);
+    let enterHouseItem = UIMenu.Menu.AddMenuItem("~g~Войти");
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+
+    menu.ItemSelect.on(async item => {
+        UIMenu.Menu.HideMenu();
+        if (item == enterHouseItem) {
+            try {
+                if (user.getCache('id') != h.get('user_id')) {
+                    mp.game.ui.notifications.show('~r~Введите пинкод');
+                    let pass = methods.parseInt(await UIMenu.Menu.GetUserInput("Пароль", "", 5));
+                    if (pass == h.get('pin'))
+                        stocks.enter(h.get('id'));
+                    else
+                        mp.game.ui.notifications.show('~r~Вы ввели не правильный пинкод');
+                }
+                else
+                    stocks.enter(h.get('id'));
+            }
+            catch (e) {
+                methods.debug(e);
+            }
+        }
+        else if (item.doName) {
+            mail.sendMail2(item.doName)
+        }
+    });
+};
+
+menuList.showStockInVMenu = function(h) {
+
+    let menu = UIMenu.Menu.Create(`№${h.get('id')}`, `~b~Адрес: ~s~${h.get('address')} ${h.get('number')}`);
+    let exitHouseItem = UIMenu.Menu.AddMenuItem("~g~Выйти");
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+
+    menu.ItemSelect.on(async item => {
+        UIMenu.Menu.HideMenu();
+        if (item == exitHouseItem) {
+            stocks.exitv(h.get('vx'), h.get('vy'), h.get('vz'), h.get('vrot'));
+        }
+    });
+};
+
+menuList.showStockOutVMenu = async function(h) {
+
+    let menu = UIMenu.Menu.Create(`№${h.get('id')}`, `~b~Адрес: ~s~${h.get('address')} ${h.get('number')}`);
+    let infoItem = UIMenu.Menu.AddMenuItem(`~b~Владелец:~s~ ${h.get('user_name')}`);
+    let enterHouseItem = UIMenu.Menu.AddMenuItem("~g~Войти");
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+
+    menu.ItemSelect.on(async item => {
+        UIMenu.Menu.HideMenu();
+        if (item == enterHouseItem) {
+            try {
+                if (user.getCache('id') != h.get('user_id')) {
+                    mp.game.ui.notifications.show('~r~Введите пинкод');
+                    let pass = methods.parseInt(await UIMenu.Menu.GetUserInput("Пароль", "", 5));
+                    if (pass == h.get('pin'))
+                        stocks.enter(h.get('id'));
+                    else
+                        mp.game.ui.notifications.show('~r~Вы ввели не правильный пинкод');
+                }
+                else
+                    stocks.enterv(h.get('id'));
             }
             catch (e) {
                 methods.debug(e);
@@ -4288,7 +4399,6 @@ menuList.showTattooShopShortMenu = function(title1, title2, zone, shopId)
             }
 
             if (prizes.some(a => array.every((v, i) => v === a[i]))) {
-
                 let menuListItem = UIMenu.Menu.AddMenuItem(tattooList[i][0], `Свести тату\nЦена: ~g~$${methods.moneyFormat(price / 2)}`);
                 menuListItem.doName = 'destroy';
                 menuListItem.price = price / 2;
@@ -4896,7 +5006,7 @@ menuList.showLscTunningMenu = function(shopId, price, lscBanner1) {
     menu.ItemSelect.on(item => {
         UIMenu.Menu.HideMenu();
         if (closeItem == item)
-            return
+            return;
         menuList.showLscTunningListMenu(methods.parseInt(item.modType), shopId, price, lscBanner1);
     });
 };

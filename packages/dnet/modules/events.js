@@ -13,6 +13,7 @@ let mysql = require('./mysql');
 let chat = require('./chat');
 
 let houses = require('../property/houses');
+let stocks = require('../property/stocks');
 let condos = require('../property/condos');
 let business = require('../property/business');
 let vehicles = require('../property/vehicles');
@@ -206,6 +207,15 @@ mp.events.addRemoteCounted('server:user:setVirtualWorld', (player, vwId) => {
     }
 });
 
+mp.events.addRemoteCounted('server:user:setVirtualWorldVeh', (player, vwId) => {
+    try {
+        if (mp.players.exists(player.vehicle))
+            player.vehicle.dimension = vwId;
+    } catch (e) {
+        console.log(e);
+    }
+});
+
 mp.events.addRemoteCounted('server:user:serVariable', (player, key, val) => {
     try {
         methods.debug('server:user:serVariable', key, val);
@@ -338,6 +348,10 @@ mp.events.addRemoteCounted('server:players:notifyToAll', (player, message) => {
 
 mp.events.addRemoteCounted('server:user:setComponentVariation', (player, component, drawableId, textureId) => {
     user.setComponentVariation(player, component, drawableId, textureId);
+});
+
+mp.events.addRemoteCounted('server:user:updateTattoo', (player) => {
+    user.updateTattoo(player);
 });
 
 mp.events.addRemoteCounted('server:business:cloth:change', (player, body, clothId, color, torso, torsoColor, parachute, parachuteColor) => {
@@ -967,6 +981,17 @@ mp.events.addRemoteCounted('server:houses:insert', (player, interior, number, pr
     houses.insert(player, number, street, zone, player.position.x, player.position.y, player.position.z, player.heading, interior, price);
 });
 
+mp.events.addRemoteCounted('server:stocks:insert', (player, interior, number, price, zone, street) => {
+    stocks.insert(player, number, street, zone, player.position.x, player.position.y, player.position.z, player.heading, interior, price);
+});
+
+mp.events.addRemoteCounted('server:stocks:insert2', (player, id) => {
+    if (player.vehicle)
+        stocks.insert2(player, id, player.vehicle.position.x, player.vehicle.position.y, player.vehicle.position.z, player.vehicle.heading);
+    else
+        stocks.insert2(player, id, player.position.x, player.position.y, player.position.z, player.heading);
+});
+
 mp.events.addRemoteCounted('server:condo:insert', (player, numberBig, number, price, interior, zone, street) => {
     condos.insert(player, number, numberBig, street, zone, player.position.x, player.position.y, player.position.z, player.heading, interior, price);
 });
@@ -1460,6 +1485,21 @@ mp.events.addRemoteCounted("onKeyPress:E", (player) => {
         }
     });
 
+    stocks.getAll().forEach((val, key, object) => {
+        if (methods.distanceToPos(player.position, val.pos) < 1.5) {
+            let houseData = stocks.getData(key);
+            if (houseData.get('user_id') == 0)
+                player.call('client:showStockBuyMenu', [Array.from(houseData)]);
+            else
+                player.call('client:showStockOutMenu', [Array.from(houseData)]);
+        }
+        if (methods.distanceToPos(player.position, val.vPos) < 4) {
+            let houseData = stocks.getData(key);
+            if (houseData.get('user_id') != 0 && player.vehicle)
+                player.call('client:showStockOutVMenu', [Array.from(houseData)]);
+        }
+    });
+
     if (player.dimension >= enums.offsets.condo && player.dimension < enums.offsets.condoBig) {
 
         houses.interiorList.forEach(function(item) {
@@ -1479,6 +1519,28 @@ mp.events.addRemoteCounted("onKeyPress:E", (player) => {
                 player.call('client:showKitchenMenu');
             }
         });*/
+    }
+    else if (player.dimension >= enums.offsets.stock && player.dimension < enums.offsets.stock + 100000) {
+
+        stocks.interiorList.forEach(function(item) {
+            let x = item[0];
+            let y = item[1];
+            let z = item[2];
+
+            if (methods.distanceToPos(player.position, new mp.Vector3(x, y, z)) < 1.5) {
+                let houseData = stocks.getData(player.dimension - enums.offsets.stock);
+                player.call('client:showStockInMenu', [Array.from(houseData)]);
+            }
+
+            x = item[4];
+            y = item[5];
+            z = item[6];
+
+            if (methods.distanceToPos(player.position, new mp.Vector3(x, y, z)) < 4) {
+                let houseData = stocks.getData(player.dimension - enums.offsets.stock);
+                player.call('client:showStockInVMenu', [Array.from(houseData)]);
+            }
+        });
     }
     else if (player.dimension > 0) {
 
@@ -1525,11 +1587,53 @@ mp.events.addRemoteCounted("server:houses:updatePin", (player, id, pin) => {
     houses.updatePin(id, pin);
 });
 
-
 mp.events.addRemoteCounted("server:houses:lockStatus", (player, id, lockStatus) => {
     if (!user.isLogin(player))
         return;
     houses.lockStatus(id, lockStatus);
+});
+
+//Stocks
+mp.events.addRemoteCounted("server:stocks:enter", (player, id) => {
+    if (!user.isLogin(player))
+        return;
+    stocks.enter(player, id);
+});
+
+mp.events.addRemoteCounted("server:stocks:enterv", (player, id) => {
+    if (!user.isLogin(player))
+        return;
+    stocks.enterv(player, id);
+});
+
+mp.events.addRemoteCounted("server:stocks:buy", (player, id) => {
+    if (!user.isLogin(player))
+        return;
+    stocks.buy(player, id);
+});
+
+mp.events.addRemoteCounted("server:stocks:updatePin", (player, id, pin) => {
+    if (!user.isLogin(player))
+        return;
+    stocks.updatePin(id, pin);
+});
+
+mp.events.addRemoteCounted("server:stocks:updatePin1", (player, id, pin) => {
+    if (!user.isLogin(player))
+        return;
+    stocks.updatePin1(id, pin);
+});
+
+mp.events.addRemoteCounted("server:stocks:updatePin2", (player, id, pin) => {
+    if (!user.isLogin(player))
+        return;
+    stocks.updatePin2(id, pin);
+});
+
+mp.events.addRemoteCounted("server:stocks:updatePin3", (player, id, pin) => {
+    if (!user.isLogin(player))
+        return;
+    stocks.updatePin3(id, pin);
 });
 
 //Condos

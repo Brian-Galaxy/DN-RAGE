@@ -1,8 +1,9 @@
 import methods from '../modules/methods';
-import user from '../user';
+import ui from '../modules/ui';
 import UIMenu from '../modules/menu';
 
 let itemList = [];
+let markerList = [];
 let entityList = new Map();
 
 let checkpoint = {};
@@ -60,7 +61,16 @@ checkpoint.updateCheckpointList = function(data) {
     } catch (e) {
         methods.debug('Exception: checkpoint.updateCheckpointList');
         methods.debug(e);
-        //TODO очистить выполнить еще раз
+    }
+};
+
+checkpoint.addMarker = function(x, y, z, type = 1, scale = 1, height = 1, color = [33, 150, 243, 100]) {
+    try {
+        methods.debug('Execute: checkpoint.addMarker');
+        markerList = markerList.concat({x: parseFloat(x), y: parseFloat(y), z: parseFloat(z), type: type, color: color, scale: scale, height: height});
+    } catch (e) {
+        methods.debug('Exception: checkpoint.addMarker');
+        methods.debug(e);
     }
 };
 
@@ -80,6 +90,7 @@ mp.events.add('render', () => {
     let playerPos = mp.players.local.position;
 
     if (itemList.length > 0) {
+        //ui.drawText(`CP: ${itemList.length}`, 0, 0, 1, 255, 255, 255, 255, 0, 0, false, false);
         itemList.forEach(function (item, idx) {
             if (methods.distanceToPos(playerPos, new mp.Vector3(item.x, item.y, item.z)) <= 100) {
                 mp.game.graphics.drawMarker(
@@ -95,7 +106,22 @@ mp.events.add('render', () => {
             }
         });
     }
-
+    if (markerList.length > 0) {
+        markerList.forEach(function (item, idx) {
+            if (methods.distanceToPos(playerPos, new mp.Vector3(item.x, item.y, item.z)) <= 100) {
+                mp.game.graphics.drawMarker(
+                    item.type,
+                    item.x, item.y, item.z,
+                    0, 0, 0,
+                    0, 0, 0,
+                    item.scale, item.scale, item.height,
+                    item.color[0], item.color[1], item.color[2], item.color[3],
+                    false, false, 2,
+                    false, "", "",false
+                );
+            }
+        });
+    }
 });
 
 export default checkpoint;

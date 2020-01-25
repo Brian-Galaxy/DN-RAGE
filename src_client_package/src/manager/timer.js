@@ -8,14 +8,14 @@ import methods from "../modules/methods";
 import Container from "../modules/data";
 import ui from "../modules/ui";
 
-import checkpoint from "./checkpoint";
-
 import vehicles from "../property/vehicles";
 
 import vSync from "./vSync";
 import license from "./license";
 import weather from './weather';
 import hosp from './hosp';
+import discord from "./discord";
+import checkpoint from "./checkpoint";
 
 import fuel from "../business/fuel";
 
@@ -179,6 +179,8 @@ timer.ms50Timer = function() {
 timer.twoSecTimer = function() {
 
     try {
+
+        discord.checker();
 
         let plPos = mp.players.local.position;
 

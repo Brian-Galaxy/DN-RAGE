@@ -316,11 +316,13 @@ user.teleportVehV = function(pos, rot) {
     mp.game.streaming.requestAdditionalCollisionAtCoord(pos.x, pos.y, pos.z);
     mp.game.streaming.requestCollisionAtCoord(pos.x, pos.y, pos.z);
     user.showLoadDisplay(500);
+    let camMode = mp.game.invoke(methods.GET_FOLLOW_VEHICLE_CAM_VIEW_MODE);
     //methods.wait(500);
     setTimeout(function () {
         try {
             mp.game.streaming.requestAdditionalCollisionAtCoord(pos.x, pos.y, pos.z);
             mp.game.streaming.requestCollisionAtCoord(pos.x, pos.y, pos.z);
+            mp.game.invoke(methods.SET_FOLLOW_VEHICLE_CAM_VIEW_MODE, 4);
             if (mp.players.local.vehicle) {
                 mp.players.local.vehicle.position = pos;
                 if (rot != undefined)
@@ -340,6 +342,7 @@ user.teleportVehV = function(pos, rot) {
         }
         //methods.wait(500);
         setTimeout(function () {
+            mp.game.invoke(methods.SET_FOLLOW_VEHICLE_CAM_VIEW_MODE, camMode);
             user.hideLoadDisplay(500);
             setTimeout(function () {
                 user.isTeleport = false;

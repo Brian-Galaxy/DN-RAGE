@@ -159,7 +159,14 @@ ui.updateVehValues = function() {
 
             if (veh && mp.vehicles.exists(veh)) {
                 isShowSpeed = true;
-                //isShowLight = veh.getLightsState(true,true).lightsOn || veh.getLightsState(true,true).highbeamsOn;
+                try {
+                    let lightState = veh.getLightsState(1, 1);
+                    isShowLight = lightState.lightsOn || lightState.highbeamsOn;
+                }
+                catch (e) {
+                    //methods.debug(e);
+                }
+
                 isShowEngine = veh.getIsEngineRunning();
                 isShowLock = veh.getDoorLockStatus() !== 1;
                 let vInfo = methods.getVehicleInfo(veh.model);

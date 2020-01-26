@@ -70,7 +70,8 @@ mp.events.add("render", () => {
 
                 if (curBurstShots == 3) {
                     mp.game.player.disableFiring(false);
-                    if (mp.game.controls.isDisabledControlJustReleased(0, 24)) curBurstShots = 0;
+                    if (mp.game.controls.isDisabledControlJustReleased(0, 24))
+                        curBurstShots = 0;
                 }
                 if (localPlayer.isReloading())
                     curBurstShots = 0;

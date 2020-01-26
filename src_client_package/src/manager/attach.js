@@ -16,7 +16,7 @@ mp.attachmentMngr =
                     {
                         let attInfo = this.attachments[id];
 
-                        let spawnPos = new mp.Vector3(entity.position.x, entity.position.y, entity.position.z - 5);
+                        let spawnPos = new mp.Vector3(entity.position.x, entity.position.y, -90);
 
                         let object = mp.objects.new(attInfo.model, spawnPos, {dimension: -1});
 

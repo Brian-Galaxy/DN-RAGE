@@ -30,11 +30,9 @@ houses.interiorList = [
 
 houses.garageList = [
     [-811.6385498046875, 187.39349365234375, 72.12997436523438, 109.49578857421875, -811.6385498046875, 187.39349365234375, 72.12997436523438, 109.49578857421875], //0
-
     [1100.0780029296875, -3196.00830078125, -39.33464813232422, 269.392333984375, 1100.0780029296875, -3196.00830078125, -39.33464813232422, 269.392333984375], //1
-    [194.46551513671875, -1023.3160400390625, -99.34183502197266, 178.6278076171875, 194.46551513671875, -1023.3160400390625, -99.34183502197266, 178.6278076171875], //2
-
-    [171.62208557128906, -1004.2356567382812, -99.34237670898438, 176.3421630859375, 174.87139892578125, -1004.3195190429688, -99.34042358398438, 175.2149658203125], //3
+    [171.62208557128906, -1004.2356567382812, -99.34237670898438, 176.3421630859375, 174.87139892578125, -1004.3195190429688, -99.34042358398438, 175.2149658203125], //2
+    [194.46551513671875, -1023.3160400390625, -99.34183502197266, 178.6278076171875, 194.46551513671875, -1023.3160400390625, -99.34183502197266, 178.6278076171875], //3
     [202.08786010742188, -1004.32177734375, -99.3424072265625, 179.615478515625, 194.57009887695312, -1003.9288330078125, -99.34040832519531, 179.01983642578125], //4
     [231.94662475585938, -1002.9686889648438, -99.34088897705078, 177.40728759765625, 224.2627716064453, -1002.6691284179688, -99.3412094116211, 179.1136474609375], //5
 ];
@@ -42,9 +40,9 @@ houses.garageList = [
 houses.garageIntList = [
     [-807.2283325195312, 186.53334045410156, 71.47557067871094, 20.442567825317383], //0
     [1088.53173828125, -3187.9462890625, -39.99346923828125, 179.4635467529297], //1
-    [206.85565185546875, -1018.3351440429688, -100, 79.45574188232422], //2
-    [179.0699005126953, -1000.7018432617188, -99.99992370605469, 166.12240600585938], //3
-    [211.98886108398438, -999.029052734375, -99.99996948242188, 90.28498840332031], //4
+    [179.0699005126953, -1000.7018432617188, -99.99992370605469, 166.12240600585938], //2
+    [206.85565185546875, -1018.3351440429688, -100, 79.45574188232422], //3
+    [206.68206787109375, -999.125732421875, -99.99996948242188, 85.36624145507812], //4
     [240.39942932128906, -1004.7258911132812, -99.99995422363281, 90.05451202392578], //5
 ];
 
@@ -420,23 +418,20 @@ houses.enterv = function (player, id) {
     if (!user.isLogin(player))
         return;
 
-    if (!player.vehicle || !vehicles.exists(player.vehicle)) {
-        player.notify('~r~Необходимо находится в транспорте');
-        return;
-    }
-
-    let vInfo = methods.getVehicleInfo(player.vehicle.model);
-    if (vInfo.class_name == 'Planes' ||
-        vInfo.class_name == 'Boats' ||
-        vInfo.class_name == 'Helicopters' ||
-        vInfo.class_name == 'Emergency' ||
-        vInfo.class_name == 'Commercials' ||
-        vInfo.class_name == 'Service' ||
-        vInfo.class_name == 'Industrial' ||
-        vInfo.class_name == 'Military')
-    {
-        player.notify('~r~Данному классу авто запрещено заезжать в гараж');
-        return;
+    if (vehicles.exists(player.vehicle)) {
+        let vInfo = methods.getVehicleInfo(player.vehicle.model);
+        if (vInfo.class_name == 'Planes' ||
+            vInfo.class_name == 'Boats' ||
+            vInfo.class_name == 'Helicopters' ||
+            vInfo.class_name == 'Emergency' ||
+            vInfo.class_name == 'Commercials' ||
+            vInfo.class_name == 'Service' ||
+            vInfo.class_name == 'Industrial' ||
+            vInfo.class_name == 'Military')
+        {
+            player.notify('~r~Данному классу авто запрещено заезжать в гараж');
+            return;
+        }
     }
 
     id = methods.parseInt(id);
@@ -474,13 +469,15 @@ houses.enterv = function (player, id) {
         }
 
         player.dimension = id;
-        player.vehicle.dimension = id;
+        if (vehicles.exists(player.vehicle))
+            player.vehicle.dimension = id;
         user.teleportVeh(player, houses.garageList[garageId][4], houses.garageList[garageId][5], houses.garageList[garageId][6], houses.garageList[garageId][7]);
         return;
     }
 
     player.dimension = id;
-    player.vehicle.dimension = id;
+    if (vehicles.exists(player.vehicle))
+        player.vehicle.dimension = id;
     user.teleportVeh(player, houses.garageList[garageId][0], houses.garageList[garageId][1], houses.garageList[garageId][2], houses.garageList[garageId][3]);
 };
 
@@ -490,23 +487,20 @@ houses.exitv = function (player, id) {
     if (!user.isLogin(player))
         return;
 
-    if (!player.vehicle || !vehicles.exists(player.vehicle)) {
-        player.notify('~r~Необходимо находится в транспорте');
-        return;
-    }
-
-    let vInfo = methods.getVehicleInfo(player.vehicle.model);
-    if (vInfo.class_name == 'Planes' ||
-        vInfo.class_name == 'Boats' ||
-        vInfo.class_name == 'Helicopters' ||
-        vInfo.class_name == 'Emergency' ||
-        vInfo.class_name == 'Commercials' ||
-        vInfo.class_name == 'Service' ||
-        vInfo.class_name == 'Industrial' ||
-        vInfo.class_name == 'Military')
-    {
-        player.notify('~r~Данному классу авто запрещено заезжать в гараж');
-        return;
+    if (vehicles.exists(player.vehicle)) {
+        let vInfo = methods.getVehicleInfo(player.vehicle.model);
+        if (vInfo.class_name == 'Planes' ||
+            vInfo.class_name == 'Boats' ||
+            vInfo.class_name == 'Helicopters' ||
+            vInfo.class_name == 'Emergency' ||
+            vInfo.class_name == 'Commercials' ||
+            vInfo.class_name == 'Service' ||
+            vInfo.class_name == 'Industrial' ||
+            vInfo.class_name == 'Military')
+        {
+            player.notify('~r~Данному классу авто запрещено заезжать в гараж');
+            return;
+        }
     }
 
     id = methods.parseInt(id);
@@ -548,6 +542,7 @@ houses.exitv = function (player, id) {
     }
 
     player.dimension = 0;
-    player.vehicle.dimension = 0;
+    if (vehicles.exists(player.vehicle))
+        player.vehicle.dimension = 0;
     user.teleportVeh(player, hInfo.get('gx' + garageId), hInfo.get('gy' + garageId), hInfo.get('gz' + garageId), hInfo.get('grot' + garageId));
 };

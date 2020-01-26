@@ -300,30 +300,28 @@ stocks.enterv = function (player, id) {
     if (!user.isLogin(player))
         return;
 
-    if (!player.vehicle || !vehicles.exists(player.vehicle)) {
-        player.notify('~r~Необходимо находится в транспорте');
-        return;
-    }
-
-    let vInfo = methods.getVehicleInfo(player.vehicle.model);
-    if (vInfo.class_name == 'Planes' ||
-        vInfo.class_name == 'Boats' ||
-        vInfo.class_name == 'Helicopters' ||
-        vInfo.class_name == 'Emergency' ||
-        vInfo.class_name == 'Commercials' ||
-        vInfo.class_name == 'Service' ||
-        vInfo.class_name == 'Industrial' ||
-        vInfo.class_name == 'Military')
-    {
-        player.notify('~r~Данному классу авто запрещено заезжать в гараж');
-        return;
+    if (vehicles.exists(player.vehicle)) {
+        let vInfo = methods.getVehicleInfo(player.vehicle.model);
+        if (vInfo.class_name == 'Planes' ||
+            vInfo.class_name == 'Boats' ||
+            vInfo.class_name == 'Helicopters' ||
+            vInfo.class_name == 'Emergency' ||
+            vInfo.class_name == 'Commercials' ||
+            vInfo.class_name == 'Service' ||
+            vInfo.class_name == 'Industrial' ||
+            vInfo.class_name == 'Military')
+        {
+            player.notify('~r~Данному классу авто запрещено заезжать в гараж');
+            return;
+        }
     }
 
     id = methods.parseInt(id);
 
     let hInfo = stocks.getData(id);
     player.dimension = id + enums.offsets.stock;
-    player.vehicle.dimension = id + enums.offsets.stock;
+    if (vehicles.exists(player.vehicle))
+        player.vehicle.dimension = id + enums.offsets.stock;
     let intId = hInfo.get('interior');
     user.teleportVeh(player, stocks.interiorList[intId][4], stocks.interiorList[intId][5], stocks.interiorList[intId][6], stocks.interiorList[intId][7]);
 };

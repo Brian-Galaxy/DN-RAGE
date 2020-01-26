@@ -1495,7 +1495,7 @@ mp.events.addRemoteCounted("onKeyPress:E", (player) => {
         }
         if (methods.distanceToPos(player.position, val.g1.position) < 4 || methods.distanceToPos(player.position, val.g2.position) < 4 || methods.distanceToPos(player.position, val.g3.position) < 4) {
             let houseData = houses.getHouseData(key);
-            if (houseData.get('user_id') != 0 && player.vehicle)
+            if (houseData.get('user_id') != 0)
                 player.call('client:showHouseOutVMenu', [Array.from(houseData)]);
         }
     });
@@ -1521,7 +1521,7 @@ mp.events.addRemoteCounted("onKeyPress:E", (player) => {
         }
         if (methods.distanceToPos(player.position, val.vPos) < 4) {
             let houseData = stocks.getData(key);
-            if (houseData.get('user_id') != 0 && player.vehicle)
+            if (houseData.get('user_id') != 0)
                 player.call('client:showStockOutVMenu', [Array.from(houseData)]);
         }
     });

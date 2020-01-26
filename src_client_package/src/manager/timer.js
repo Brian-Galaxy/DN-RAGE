@@ -211,11 +211,11 @@ timer.twoSecTimer = function() {
             }
         }
 
-        let drawId = mp.players.local.getPropIndex(0);
+        /*let drawId = mp.players.local.getPropIndex(0); //TODO
         if (user.getSex() == 1 && drawId != 116 && drawId != 118)
             mp.game.graphics.setNightvision(false);
         if (user.getSex() == 0 && drawId != 117 && drawId != 119)
-            mp.game.graphics.setNightvision(false);
+            mp.game.graphics.setNightvision(false);*/
     }
     catch (e) {
         methods.debug(e);

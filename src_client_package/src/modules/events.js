@@ -21,6 +21,7 @@ import timer from "../manager/timer";
 
 import vehicles from "../property/vehicles";
 import weapons from "../weapons";
+import business from "../property/business";
 
 mp.gui.chat.enabled = false;
 
@@ -1162,9 +1163,9 @@ mp.events.add('client:menuList:showMeriaMainMenu', () => {
     menuList.showMeriaMainMenu();
 });
 
-mp.events.add('client:menuList:showMazeOfficeMenu', () => {
+mp.events.add('client:menuList:showMazeOfficeMenu', async () => {
     methods.debug('Event: client:menuList:showMazeOfficeMenu');
-    menuList.showMazeOfficeMenu();
+    menuList.showBankMenu(1, await business.getPrice(1));
 });
 
 mp.events.add('client:menuList:showGovGarderobMenu', () => {
@@ -1249,6 +1250,30 @@ mp.events.add('client:menuList:showVehicleMenu', (data) => {
         methods.debug('Exception: events:client:showVehicleMenu');
         methods.debug(e);
     }
+});
+
+mp.events.add('client:houses:sellToPlayer', (houseId, name, sum, userId) => {
+    menuList.showHouseSellToPlayerMenu(houseId, name, sum, userId);
+});
+
+mp.events.add('client:stock:sellToPlayer', (houseId, name, sum, userId) => {
+    menuList.showStockSellToPlayerMenu(houseId, name, sum, userId);
+});
+
+mp.events.add('client:apartments:sellToPlayer', (houseId, name, sum, userId) => {
+    menuList.showApartSellToPlayerMenu(houseId, name, sum, userId);
+});
+
+mp.events.add('client:business:sellToPlayer', (houseId, name, sum, userId) => {
+    menuList.showBusinessSellToPlayerMenu(houseId, name, sum, userId);
+});
+
+mp.events.add('client:condo:sellToPlayer', (houseId, name, sum, userId) => {
+    menuList.showCondoSellToPlayerMenu(houseId, name, sum, userId);
+});
+
+mp.events.add('client:car:sellToPlayer', (houseId, name, sum, userId, slot) => {
+    menuList.showCarSellToPlayerMenu(houseId, name, sum, userId, slot);
 });
 
 mp.events.add('client:events:debug', function(val) {

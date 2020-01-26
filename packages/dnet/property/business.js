@@ -168,8 +168,7 @@ business.sell = function (player) {
             return;
 
         user.addHistory(player, 3, 'Продал бизнес ' + hInfo.get('name') + ' №' + hInfo.get('id') + '. Цена: ' + methods.moneyFormat(nalog));
-        player.notify('~g~Вы продали бизнес');
-        player.notify(`~g~Налог:~s~ ${coffer.getTaxIntermediate()}%\n~g~Получено:~s~ ${methods.moneyFormat(nalog)}`);
+        player.notify(`~g~Вы продали бизнес\nНалог:~s~ ${coffer.getTaxIntermediate()}%\n~g~Получено:~s~ ${methods.moneyFormat(nalog)}`);
         user.save(player);
         user.updateClientCache(player);
         business.save(hInfo.get('id'));
@@ -202,8 +201,7 @@ business.buy = function (player, id) {
     }
 
     if (user.get(player, 'biz_lic') === false) {
-        player.notify('~r~У Вас нет лицензии на бизнес');
-        player.notify('~r~Купить её можно у сотрудников правительства');
+        player.notify('~r~У Вас нет лицензии на бизнес\nКупить её можно у сотрудников правительства');
         return false;
     }
 

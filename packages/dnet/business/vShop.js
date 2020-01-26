@@ -5,6 +5,7 @@ let vSync = require('../managers/vSync');
 
 let business = require('../property/business');
 let vehicles = require('../property/vehicles');
+let houses = require('../property/houses');
 
 let user = require('../user');
 let enums = require('../enums');
@@ -169,13 +170,48 @@ vShop.buy = function(player, model, color1, color2, shopId) {
     }
 
     let freeSlot = 0;
+    if (user.get(player, 'car_id1') == 0)
+        freeSlot = 1;
+    else if (user.get(player, 'car_id2') == 0) {
+        if (user.get(player, 'house_id') > 0 || user.get(player, 'condo_id') > 0 || user.get(player, 'apartment_id') > 0)
+            freeSlot = 2;
+    }
+    else if (user.get(player, 'car_id3') == 0) {
+        if (user.get(player, 'house_id') > 0) {
+            let hInfo = houses.getHouseData(user.get(player, 'house_id'));
+            if (hInfo.get('price') > 1000000)
+                freeSlot = 3;
+        }
+    }
+    else if (user.get(player, 'car_id4') == 0) {
+        if (user.get(player, 'house_id') > 0) {
+            let hInfo = houses.getHouseData(user.get(player, 'house_id'));
+            if (hInfo.get('price') > 2500000)
+                freeSlot = 4;
+        }
+    }
+    else if (user.get(player, 'car_id5') == 0) {
+        if (user.get(player, 'house_id') > 0) {
+            let hInfo = houses.getHouseData(user.get(player, 'house_id'));
+            if (hInfo.get('price') > 5000000)
+                freeSlot = 5;
+        }
+    }
+    else if (user.get(player, 'car_id6') == 0) {
+        if (user.get(player, 'house_id') > 0) {
+            let hInfo = houses.getHouseData(user.get(player, 'house_id'));
+            if (hInfo.get('price') > 7500000)
+                freeSlot = 6;
+        }
+    }
 
+    /*let freeSlot = 0;
     for (let i = 1; i <= 10; i++) {
         if (user.get(player, 'car_id' + i) == 0 && freeSlot == 0) {
             freeSlot = 1;
             break;
         }
-    }
+    }*/
 
     if (freeSlot == 0) {
         player.notify('~r~У Вас нет свободных слотов под транспорт');
@@ -196,7 +232,7 @@ vShop.buy = function(player, model, color1, color2, shopId) {
 
             vehicles.updateOwnerInfo(id, user.getId(player), user.getRpName(player));
             vehicles.loadUserVehicleByRow(row);
-            user.set(player, 'car_id' + freeSlot);
+            user.set(player, 'car_id' + freeSlot, id);
             user.save(player);
             vehicles.save(id);
 

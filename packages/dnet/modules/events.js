@@ -1725,6 +1725,634 @@ mp.events.addRemoteCounted("server:condos:lockStatus", (player, id, lockStatus) 
     condos.lockStatus(id, lockStatus);
 });
 
+//Sell
+mp.events.addRemoteCounted('server:houses:sell', (player) => {
+    if (!user.isLogin(player))
+        return;
+    houses.sell(player);
+});
+
+mp.events.addRemoteCounted('server:condo:sell', (player) => {
+    if (!user.isLogin(player))
+        return;
+    condos.sell(player);
+});
+
+mp.events.addRemoteCounted('server:stock:sell', (player) => {
+    if (!user.isLogin(player))
+        return;
+    stocks.sell(player);
+});
+
+mp.events.addRemoteCounted('server:apartments:sell', (player) => {
+    if (!user.isLogin(player))
+        return;
+    //apartments.sell(player); //TODO
+});
+
+mp.events.addRemoteCounted('server:yacht:sell', (player) => {
+    if (!user.isLogin(player))
+        return;
+    //apartments.sell(player); //TODO
+});
+
+mp.events.addRemoteCounted('server:business:sell', (player) => {
+    if (!user.isLogin(player))
+        return;
+    business.sell(player);
+});
+
+mp.events.addRemoteCounted('server:car1:sell', (player) => {
+    if (!user.isLogin(player))
+        return;
+    vehicles.sell(player, 1);
+});
+
+mp.events.addRemoteCounted('server:car2:sell', (player) => {
+    if (!user.isLogin(player))
+        return;
+    vehicles.sell(player, 2);
+});
+
+mp.events.addRemoteCounted('server:car3:sell', (player) => {
+    if (!user.isLogin(player))
+        return;
+    vehicles.sell(player, 3);
+});
+
+mp.events.addRemoteCounted('server:car4:sell', (player) => {
+    if (!user.isLogin(player))
+        return;
+    vehicles.sell(player, 4);
+});
+
+mp.events.addRemoteCounted('server:car5:sell', (player) => {
+    if (!user.isLogin(player))
+        return;
+    vehicles.sell(player, 5);
+});
+
+mp.events.addRemoteCounted('server:car6:sell', (player) => {
+    if (!user.isLogin(player))
+        return;
+    vehicles.sell(player, 6);
+});
+
+mp.events.addRemoteCounted('server:car7:sell', (player) => {
+    if (!user.isLogin(player))
+        return;
+    vehicles.sell(player, 7);
+});
+
+mp.events.addRemoteCounted('server:car8:sell', (player) => {
+    if (!user.isLogin(player))
+        return;
+    vehicles.sell(player, 8);
+});
+
+mp.events.addRemoteCounted('server:car9:sell', (player) => {
+    if (!user.isLogin(player))
+        return;
+    vehicles.sell(player, 9);
+});
+
+mp.events.addRemoteCounted('server:car10:sell', (player) => {
+    if (!user.isLogin(player))
+        return;
+    vehicles.sell(player, 10);
+});
+
+mp.events.addRemoteCounted('server:houses:sellToPlayer', (player, buyerId, sum) => {
+    if (!user.isLogin(player))
+        return;
+    if (user.get(player, 'house_id') === 0) {
+        player.notify('~r~У Вас нет дома');
+        return;
+    }
+
+    let hInfo = houses.getHouseData(user.get(player, 'house_id'));
+    if (hInfo.get('user_id') != user.get(player, 'id')) {
+        player.notify('~r~Этот дом вам не пренадлежит');
+        return;
+    }
+
+    let buyer = mp.players.at(buyerId);
+    if (user.isLogin(buyer)) {
+
+        if (methods.distanceToPos(buyer.position, player.position) > 2) {
+            player.notify('~r~Вы слишком далеко');
+            return;
+        }
+
+        if (user.get(buyer, 'house_id') > 0) {
+            player.notify('~r~У игрока уже есть дом');
+            buyer.notify('~r~У Вас уже есть дом');
+            return;
+        }
+
+        let hInfo = houses.getHouseData(user.get(player, 'house_id'));
+        buyer.call('client:houses:sellToPlayer', [user.get(player, 'house_id'), `${hInfo.get('address')} #${hInfo.get('number')}`, sum, player.id]);
+        buyer.notify('~b~Вам предложили купить дом за ~s~' + methods.moneyFormat(sum));
+        player.notify('~b~Вы предложили купить дом игроку');
+    }
+});
+
+mp.events.addRemoteCounted('server:houses:sellToPlayer:accept', (player, houseId, sum, sellerId) => {
+    if (!user.isLogin(player))
+        return;
+    if (user.get(player, 'house_id') > 0) {
+        player.notify('~r~У Вас есть дом');
+        return;
+    }
+
+    if (user.getCashMoney(player) < sum) {
+        player.notify('~r~У Вас нет столько денег');
+        return;
+    }
+
+    let seller = mp.players.at(sellerId);
+    if (user.isLogin(seller)) {
+
+        let hId = user.get(seller, 'house_id');
+        if (hId === 0) {
+            player.notify('~r~У игрока уже нет дома');
+            seller.notify('~r~У Вас нет дома');
+            return;
+        }
+
+        let hInfo = houses.getHouseData(hId);
+
+        houses.updateOwnerInfo(hId, user.getId(player), user.getRpName(player));
+        user.set(player, 'house_id', hId);
+        user.set(seller, 'house_id', 0);
+
+        user.addCashMoney(seller, sum);
+        user.removeCashMoney(player, sum);
+
+        seller.notify('~b~Вы продали дом за ~s~' + methods.moneyFormat(sum));
+        player.notify('~b~Вы купили дом за ~s~' + methods.moneyFormat(sum));
+
+        user.save(player);
+        user.save(seller);
+
+        user.addHistory(seller, 3, 'Продал дом ' + hInfo.get('address') + ' №' + hInfo.get('number') + '. Цена: ' + methods.moneyFormat(sum));
+        user.addHistory(player, 3, 'Купил дом ' + hInfo.get('address') + ' №' + hInfo.get('number') + '. Цена: ' + methods.moneyFormat(sum));
+    }
+});
+
+mp.events.addRemoteCounted('server:condo:sellToPlayer', (player, buyerId, sum) => {
+    if (!user.isLogin(player))
+        return;
+    if (user.get(player, 'condo_id') === 0) {
+        player.notify('~r~У Вас нет квартиры');
+        return;
+    }
+
+    let buyer = mp.players.at(buyerId);
+    if (user.isLogin(buyer)) {
+
+        if (methods.distanceToPos(buyer.position, player.position) > 2) {
+            player.notify('~r~Вы слишком далеко');
+            return;
+        }
+
+        if (user.get(buyer, 'condo_id') > 0) {
+            player.notify('~r~У игрока уже есть квартира');
+            buyer.notify('~r~У Вас уже есть квартира');
+            return;
+        }
+
+        let hInfo = condos.getHouseData(user.get(player, 'condo_id'));
+        buyer.call('client:condo:sellToPlayer', [user.get(player, 'condo_id'), `${hInfo.get('address')} #${hInfo.get('number')}`, sum, player.id]);
+        buyer.notify('~b~Вам предложили купить квартиру за ~s~' + methods.moneyFormat(sum));
+        player.notify('~b~Вы предложили купить квартиру игроку');
+    }
+});
+
+mp.events.addRemoteCounted('server:condo:sellToPlayer:accept', (player, houseId, sum, sellerId) => {
+    if (!user.isLogin(player))
+        return;
+    if (user.get(player, 'condo_id') > 0) {
+        player.notify('~r~У Вас есть квартира');
+        return;
+    }
+
+    if (user.getCashMoney(player) < sum) {
+        player.notify('~r~У Вас нет столько денег');
+        return;
+    }
+
+    let seller = mp.players.at(sellerId);
+    if (user.isLogin(seller)) {
+
+        let hId = user.get(seller, 'condo_id');
+        if (hId === 0) {
+            player.notify('~r~У игрока уже нет квартиры');
+            seller.notify('~r~У Вас нет квартиры');
+            return;
+        }
+
+        let hInfo = condos.getHouseData(hId);
+
+        condos.updateOwnerInfo(hId, user.getId(player), user.getRpName(player));
+        user.set(player, 'condo_id', hId);
+        user.set(seller, 'condo_id', 0);
+
+        user.addCashMoney(seller, sum);
+        user.removeCashMoney(player, sum);
+
+        seller.notify('~b~Вы продали квартиру за ~s~' + methods.moneyFormat(sum));
+        player.notify('~b~Вы купили квартиру за ~s~' + methods.moneyFormat(sum));
+
+        user.save(player);
+        user.save(seller);
+
+        user.addHistory(seller, 3, 'Продал квартиру ' + hInfo.get('address') + ' №' + hInfo.get('number') + '. Цена: ' + methods.moneyFormat(sum));
+        user.addHistory(player, 3, 'Купил квартиру ' + hInfo.get('address') + ' №' + hInfo.get('number') + '. Цена: ' + methods.moneyFormat(sum));
+    }
+});
+
+mp.events.addRemoteCounted('server:business:sellToPlayer', (player, buyerId, sum) => {
+    if (!user.isLogin(player))
+        return;
+    if (user.get(player, 'business_id') === 0) {
+        player.notify('~r~У Вас нет бизнеса');
+        return;
+    }
+
+    let buyer = mp.players.at(buyerId);
+    if (user.isLogin(buyer)) {
+
+        if (methods.distanceToPos(buyer.position, player.position) > 2) {
+            player.notify('~r~Вы слишком далеко');
+            return;
+        }
+
+        if (user.get(buyer, 'business_id') > 0) {
+            player.notify('~r~У игрока уже есть бизнес');
+            buyer.notify('~r~У Вас уже есть бизнес');
+            return;
+        }
+
+        if (user.get(buyer, 'age') < 21) {
+            player.notify('~r~Игроку должно быть 21 год');
+            return false;
+        }
+
+        let hInfo = business.getData(user.get(player, 'business_id'));
+        buyer.call('client:business:sellToPlayer', [user.get(player, 'business_id'), `${hInfo.get('name')}`, sum, player.id]);
+        buyer.notify('~b~Вам предложили купить бизнес за ~s~' + methods.moneyFormat(sum));
+        player.notify('~b~Вы предложили купить бизнес игроку');
+    }
+});
+
+mp.events.addRemoteCounted('server:business:sellToPlayer:accept', (player, houseId, sum, sellerId) => {
+    if (!user.isLogin(player))
+        return;
+    /*if (user.get(player, 'is_gos_blacklist')) { //TODO
+        player.notify('~r~Вы состоите в чёрном списке');
+        return;
+    }*/
+
+    if (user.get(player, 'business_id') > 0) {
+        player.notify('~r~У Вас есть бизнес');
+        return;
+    }
+
+    if (user.getCashMoney(player) < sum) {
+        player.notify('~r~У Вас нет столько денег');
+        return;
+    }
+
+    if (user.get(player, 'biz_lic') === false) {
+        player.notify('~r~У Вас нет лицензии на бизнес');
+        player.notify('~r~Купить её можно у сотрудников правительства');
+        return false;
+    }
+
+    if (user.get(player, 'fraction_id') == 1) {
+        player.notify('~r~Сотрудникам правительства запрещено покупать бизнес');
+        return false;
+    }
+
+    let seller = mp.players.at(sellerId);
+    if (user.isLogin(seller)) {
+
+        let hId = user.get(seller, 'business_id');
+        if (hId === 0) {
+            player.notify('~r~У игрока уже нет бизнеса');
+            seller.notify('~r~У Вас нет бизнеса');
+            return;
+        }
+
+        let hInfo = business.getData(hId);
+
+        business.updateOwnerInfo(hId, user.getId(player), user.getRpName(player));
+        user.set(player, 'business_id', hId);
+        user.set(seller, 'business_id', 0);
+
+        user.addCashMoney(seller, sum);
+        user.removeCashMoney(player, sum);
+
+        seller.notify('~b~Вы продали бизнес за ~s~' + methods.moneyFormat(sum));
+        player.notify('~b~Вы купили бизнес за ~s~' + methods.moneyFormat(sum));
+
+        user.save(player);
+        user.save(seller);
+
+        user.addHistory(seller, 3, 'Продал бизнес ' + hInfo.get('name') + '. Цена: ' + methods.moneyFormat(sum));
+        user.addHistory(player, 3, 'Купил бизнес ' + hInfo.get('name') + '. Цена: ' + methods.moneyFormat(sum));
+    }
+});
+
+mp.events.addRemoteCounted('server:apartments:sellToPlayer', (player, buyerId, sum) => {
+    /*if (!user.isLogin(player))
+        return;
+    if (user.get(player, 'apartment_id') === 0) {
+        player.notify('~r~У Вас нет апартаментов');
+        return;
+    }
+
+    let buyer = mp.players.at(buyerId);
+    if (user.isLogin(buyer)) {
+
+        if (methods.distanceToPos(buyer.position, player.position) > 2) {
+            player.notify('~r~Вы слишком далеко');
+            return;
+        }
+
+        if (user.get(buyer, 'apartment_id') > 0) {
+            player.notify('~r~У игрока уже есть апартаменты');
+            buyer.notify('~r~У Вас уже есть апартаменты');
+            return;
+        }
+
+        buyer.call('client:apartments:sellToPlayer', [user.get(player, 'apartment_id'), `${hInfo.get('address')} #${hInfo.get('number')}`, sum, player.id]);
+        buyer.notify('~b~Вам предложили купить апартаменты за ~s~' + methods.moneyFormat(sum));
+        player.notify('~b~Вы предложили купить апартаменты игроку');
+    }*/
+});
+
+mp.events.addRemoteCounted('server:apartments:sellToPlayer:accept', (player, houseId, sum, sellerId) => {
+    /*if (!user.isLogin(player))
+        return;
+    if (user.get(player, 'apartment_id') > 0) {
+        player.notify('~r~У Вас есть апартаменты');
+        return;
+    }
+
+    if (user.getCashMoney(player) < sum) {
+        player.notify('~r~У Вас нет столько денег');
+        return;
+    }
+
+    let seller = mp.players.at(sellerId);
+    if (user.isLogin(seller)) {
+
+        let hId = user.get(seller, 'apartment_id');
+        if (hId === 0) {
+            player.notify('~r~У игрока уже нет апартаментов');
+            seller.notify('~r~У Вас нет апартаментов');
+            return;
+        }
+
+        apartments.updateOwnerInfo(hId, user.getId(player), user.getRpName(player));
+        user.set(player, 'apartment_id', hId);
+        user.set(seller, 'apartment_id', 0);
+
+        user.addCashMoney(seller, sum);
+        user.removeCashMoney(player, sum);
+
+        seller.notify('~b~Вы продали апартаменты за ~s~' + methods.moneyFormat(sum));
+        player.notify('~b~Вы купили апартаменты за ~s~' + methods.moneyFormat(sum));
+
+        user.save(player);
+        user.save(seller);
+
+        user.addHistory(seller, 3, 'Продал апартаменты ' + hInfo.get('name') + '. Цена: ' + methods.moneyFormat(sum));
+        user.addHistory(player, 3, 'Купил апартаменты ' + hInfo.get('name') + '. Цена: ' + methods.moneyFormat(sum));
+    }*/
+});
+
+mp.events.addRemoteCounted('server:stock:sellToPlayer', (player, buyerId, sum) => {
+    if (!user.isLogin(player))
+        return;
+    if (user.get(player, 'stock_id') === 0) {
+        player.notify('~r~У Вас нет склада');
+        return;
+    }
+
+    let buyer = mp.players.at(buyerId);
+    if (user.isLogin(buyer)) {
+
+        if (methods.distanceToPos(buyer.position, player.position) > 2) {
+            player.notify('~r~Вы слишком далеко');
+            return;
+        }
+
+        if (user.get(buyer, 'stock_id') > 0) {
+            player.notify('~r~У игрока уже есть склад');
+            buyer.notify('~r~У Вас уже есть склад');
+            return;
+        }
+
+        let hInfo = stocks.getData(user.get(player, 'stock_id'));
+        buyer.call('client:stock:sellToPlayer', [user.get(player, 'stock_id'), `${hInfo.get('address')} #${hInfo.get('number')}`, sum, player.id]);
+        buyer.notify('~b~Вам предложили купить склад за ~s~' + methods.moneyFormat(sum));
+        player.notify('~b~Вы предложили купить склад игроку');
+    }
+});
+
+mp.events.addRemoteCounted('server:stock:sellToPlayer:accept', (player, houseId, sum, sellerId) => {
+    if (!user.isLogin(player))
+        return;
+    if (user.get(player, 'stock_id') > 0) {
+        player.notify('~r~У Вас есть склад');
+        return;
+    }
+
+    if (user.getCashMoney(player) < sum) {
+        player.notify('~r~У Вас нет столько денег');
+        return;
+    }
+
+    let seller = mp.players.at(sellerId);
+    if (user.isLogin(seller)) {
+
+        let hId = user.get(seller, 'stock_id');
+        if (hId === 0) {
+            player.notify('~r~У игрока уже нет склада');
+            seller.notify('~r~У Вас нет склада');
+            return;
+        }
+
+        let hInfo = stocks.getData(hId);
+
+        stocks.updateOwnerInfo(hId, user.getId(player), user.getRpName(player));
+        user.set(player, 'stock_id', hId);
+        user.set(seller, 'stock_id', 0);
+
+        user.addCashMoney(seller, sum);
+        user.removeCashMoney(player, sum);
+
+        seller.notify('~b~Вы продали склад за ~s~' + methods.moneyFormat(sum));
+        player.notify('~b~Вы купили склад за ~s~' + methods.moneyFormat(sum));
+
+        user.save(player);
+        user.save(seller);
+
+        user.addHistory(seller, 3, 'Продал склад ' + hInfo.get('address') + ' №' + hInfo.get('number') + '. Цена: ' + methods.moneyFormat(sum));
+        user.addHistory(player, 3, 'Купил склад ' + hInfo.get('address') + ' №' + hInfo.get('number') + '. Цена: ' + methods.moneyFormat(sum));
+    }
+});
+
+mp.events.addRemoteCounted('server:car:sellToPlayer', (player, buyerId, sum, slot) => {
+    if (!user.isLogin(player))
+        return;
+
+    if (user.get(player, 'car_id' + slot) == 0) {
+        player.notify('~r~У Вас нет транспорта');
+        return;
+    }
+
+    let buyer = mp.players.at(buyerId);
+    if (user.isLogin(buyer)) {
+
+        if (methods.distanceToPos(buyer.position, player.position) > 2) {
+            player.notify('~r~Вы слишком далеко');
+            return;
+        }
+
+        let isValid = false;
+        if (user.get(buyer, 'car_id1') == 0)
+            isValid = true;
+        else if (user.get(buyer, 'car_id2') == 0) {
+            if (user.get(buyer, 'house_id') > 0 || user.get(buyer, 'condo_id') > 0 || user.get(buyer, 'apartment_id') > 0 || user.get(buyer, 'yacht_id') > 0)
+                isValid = true;
+        }
+        else if (user.get(buyer, 'car_id3') == 0) {
+            if (user.get(buyer, 'house_id') > 0) {
+                let hInfo = houses.getHouseData(user.get(buyer, 'house_id'));
+                if (hInfo.get('price') > 1000000)
+                    isValid = true;
+            }
+        }
+        else if (user.get(buyer, 'car_id4') == 0) {
+            if (user.get(buyer, 'house_id') > 0) {
+                let hInfo = houses.getHouseData(user.get(buyer, 'house_id'));
+                if (hInfo.get('price') > 2500000)
+                    isValid = true;
+            }
+        }
+        else if (user.get(buyer, 'car_id5') == 0) {
+            if (user.get(buyer, 'house_id') > 0) {
+                let hInfo = houses.getHouseData(user.get(buyer, 'house_id'));
+                if (hInfo.get('price') > 5000000)
+                    isValid = true;
+            }
+        }
+        else if (user.get(buyer, 'car_id6') == 0) {
+            if (user.get(buyer, 'house_id') > 0) {
+                let hInfo = houses.getHouseData(user.get(buyer, 'house_id'));
+                if (hInfo.get('price') > 7500000)
+                    isValid = true;
+            }
+        }
+
+        if (isValid) {
+            let vInfo = vehicles.getData(user.get(player, 'car_id' + slot));
+            buyer.call('client:car:sellToPlayer', [user.get(player, 'car_id' + slot), vInfo.get('name'), sum, player.id, slot]);
+            buyer.notify('~b~Вам предложили купить ' + vInfo.get('name') + ' за ~s~' + methods.moneyFormat(sum));
+            player.notify('~b~Вы предложили купить ' + vInfo.get('name') + ' игроку');
+        }
+        else {
+            buyer.notify('~r~У Вас нет доступных свободных слотов');
+            player.notify('~r~У игрока нет доступных слотов под ТС');
+        }
+    }
+});
+
+mp.events.addRemoteCounted('server:car:sellToPlayer:accept', (player, houseId, sum, sellerId, slot) => {
+    if (!user.isLogin(player))
+        return;
+
+    let slotBuy = 0;
+
+    if (user.get(player, 'car_id1') == 0)
+        slotBuy = 1;
+    else if (user.get(player, 'car_id2') == 0) {
+        if (user.get(player, 'house_id') > 0 || user.get(player, 'condo_id') > 0 || user.get(player, 'apartment_id') > 0)
+            slotBuy = 2;
+    }
+    else if (user.get(player, 'car_id3') == 0) {
+        if (user.get(player, 'house_id') > 0) {
+            let hInfo = houses.getHouseData(user.get(player, 'house_id'));
+            if (hInfo.get('price') > 1000000)
+                slotBuy = 3;
+        }
+    }
+    else if (user.get(player, 'car_id4') == 0) {
+        if (user.get(player, 'house_id') > 0) {
+            let hInfo = houses.getHouseData(user.get(player, 'house_id'));
+            if (hInfo.get('price') > 2500000)
+                slotBuy = 4;
+        }
+    }
+    else if (user.get(player, 'car_id5') == 0) {
+        if (user.get(player, 'house_id') > 0) {
+            let hInfo = houses.getHouseData(user.get(player, 'house_id'));
+            if (hInfo.get('price') > 5000000)
+                slotBuy = 5;
+        }
+    }
+    else if (user.get(player, 'car_id6') == 0) {
+        if (user.get(player, 'house_id') > 0) {
+            let hInfo = houses.getHouseData(user.get(player, 'house_id'));
+            if (hInfo.get('price') > 7500000)
+                slotBuy = 6;
+        }
+    }
+
+    if (slotBuy == 0) {
+        player.notify('~r~У Вас нет доступных слотов');
+        return;
+    }
+
+    if (user.getCashMoney(player) < sum) {
+        player.notify('~r~У Вас нет столько денег');
+        return;
+    }
+
+    let seller = mp.players.at(sellerId);
+    if (user.isLogin(seller)) {
+
+        let hId = user.get(seller, 'car_id' + slot);
+        if (hId === 0) {
+            player.notify('~r~У игрока уже нет транспорта');
+            seller.notify('~r~У Вас нет транспорта');
+            return;
+        }
+
+        let vInfo = vehicles.getData(hId);
+
+        vehicles.updateOwnerInfo(hId, user.getId(player), user.getRpName(player));
+        user.set(player, 'car_id' + slotBuy, hId);
+        user.set(seller, 'car_id' + slot, 0);
+
+        user.addCashMoney(seller, sum);
+        user.removeCashMoney(player, sum);
+
+        seller.notify('~b~Вы продали ТС за ~s~' + methods.moneyFormat(sum));
+        player.notify('~b~Вы купили ТС за ~s~' + methods.moneyFormat(sum));
+
+        user.save(player);
+        user.save(seller);
+
+        user.addHistory(seller, 3, 'Продал транспорт ' + vInfo.get('name') + ' | ' + vInfo.get('number') + '. Цена: ' + methods.moneyFormat(sum));
+        user.addHistory(player, 3, 'Купил транспорт ' + vInfo.get('name') + ' | ' + vInfo.get('number') + '. Цена: ' + methods.moneyFormat(sum));
+    }
+});
+
 mp.events.addRemoteCounted("server:vShop:buy", (player, name, color1, color2, shopId) => {
     if (!user.isLogin(player))
         return;

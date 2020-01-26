@@ -711,7 +711,7 @@ vehicles.sell = function (player, slot) {
 
         if (veh.getVariable('container') == containerId) {
             let vInfo = vehicles.getData(user.get(player, 'car_id' + slot));
-            let nalog = methods.parseInt(vInfo.get('price') * (100 - (coffer.get('cofferNalog') + 20)) / 100);
+            let nalog = methods.parseInt(vInfo.get('price') * (100 - (coffer.getTaxIntermediate() + 20)) / 100);
 
             user.set(player, 'car_id' + slot, 0);
 
@@ -728,8 +728,7 @@ vehicles.sell = function (player, slot) {
                     return;
 
                 user.addHistory(player, 3, 'Продал транспорт ' + vInfo.get('name') + '. Цена: ' + methods.moneyFormat(nalog));
-                player.notify('~g~Вы продали транспорт');
-                player.notify(`~g~Налог:~s~ ${(coffer.get('cofferNalog') + 20)}\n~g~Получено:~s~ ${methods.moneyFormat(nalog)}`);
+                player.notify(`~g~Вы продали транспорт\nНалог:~s~ ${(coffer.getTaxIntermediate() + 20)}%\n~g~Получено:~s~ ${methods.moneyFormat(nalog)}`);
                 user.save(player);
             }, 1000);
         }

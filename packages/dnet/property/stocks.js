@@ -222,7 +222,7 @@ stocks.sell = function (player) {
     let hInfo = stocks.getData(user.get(player, 'stock_id'));
 
     if (hInfo.get('user_id') != user.get(player, 'id')) {
-        player.notify('~r~Этот дом вам не пренадлежит');
+        player.notify('~r~Этот склад вам не пренадлежит');
         return;
     }
 
@@ -239,8 +239,7 @@ stocks.sell = function (player) {
         if (!user.isLogin(player))
             return;
         user.addHistory(player, 3, 'Продал склад ' + hInfo.get('address') + ' №' + hInfo.get('number') + '. Цена: ' + methods.moneyFormat(nalog));
-        player.notify('~g~Вы продали недвижимость');
-        player.notify(`~g~Налог:~s~ ${coffer.getTaxIntermediate()}%\n~g~Получено:~s~ ${methods.moneyFormat(nalog)}`);
+        player.notify(`~g~Вы продали недвижимость\nНалог:~s~ ${coffer.getTaxIntermediate()}%\n~g~Получено:~s~ ${methods.moneyFormat(nalog)}`);
         user.save(player);
     }, 1000);
 };

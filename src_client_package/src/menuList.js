@@ -1105,11 +1105,15 @@ menuList.showMeriaMainMenu = function() {
     UIMenu.Menu.AddMenuItem("Трудовая биржа").doName = 'showMeriaJobListMenu';
     UIMenu.Menu.AddMenuItem("Лицензионный центр").doName = 'showLicBuyMenu';
 
+    UIMenu.Menu.AddMenuItem("Имущество", "Операции с вашим имуществом").doName = 'showMeriaSellHvbMenu';
+
     let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
     menu.ItemSelect.on(async (item, index) => {
         UIMenu.Menu.HideMenu();
         if (item == closeItem)
             return;
+        if (item.doName == 'showMeriaSellHvbMenu')
+            menuList.showMeriaSellHvbMenu(await coffer.getAllData());
         if (item.doName == 'showMeriaJobListMenu')
             menuList.showMeriaJobListMenu();
         if (item.doName == 'showLicBuyMenu')
@@ -1249,6 +1253,234 @@ menuList.showMeriaJobListMenu = function() {
             mp.game.ui.notifications.show("~g~Вы устроились на работу");
             user.save();
         }
+    });
+};
+
+menuList.showMeriaSellHvbMenu = function(cofferData) {
+    if (methods.isBlackout()) {
+        mp.game.ui.notifications.show(`~r~В городе отсутствует свет`);
+        return;
+    }
+
+    user.updateCache().then(function () {
+        let menu = UIMenu.Menu.Create(`Maze`, `~b~Текущая налоговая ставка: ~s~${cofferData.get('cofferTaxIntermediate')}%`);
+
+        if (user.getCache('house_id') > 0) {
+            UIMenu.Menu.AddMenuItem("Продать дом", "Продать дом государству.\nС учетом налога").eventName = 'server:houses:sell';
+            UIMenu.Menu.AddMenuItem("~y~Продать дом игроку").eventNameSell = 'server:houses:sellToPlayer';
+        }
+        if (user.getCache('condo_id') > 0) {
+            UIMenu.Menu.AddMenuItem("Продать квартиру", "Продать квартиру государству.\nС учетом налога").eventName = 'server:condo:sell';
+            UIMenu.Menu.AddMenuItem("~y~Продать квартиру игроку").eventNameSell = 'server:condo:sellToPlayer';
+        }
+        if (user.getCache('apartment_id') > 0) {
+            UIMenu.Menu.AddMenuItem("Продать апартаменты", "Продать апартаменты государству.\nС учетом налога").eventName = 'server:apartments:sell';
+            UIMenu.Menu.AddMenuItem("~y~Продать апартаменты игроку").eventNameSell = 'server:apartments:sellToPlayer';
+        }
+        if (user.getCache('business_id') > 0) {
+            UIMenu.Menu.AddMenuItem("Продать бизнес", "Продать бизнес государству.\nС учетом налога").eventName = 'server:business:sell';
+            UIMenu.Menu.AddMenuItem("~y~Продать бизнес игроку").eventNameSell = 'server:business:sellToPlayer';
+        }
+        if (user.getCache('stock_id') > 0) {
+            UIMenu.Menu.AddMenuItem("Продать склад", "Продать склад государству.\nС учетом налога").eventName = 'server:stock:sell';
+            UIMenu.Menu.AddMenuItem("~y~Продать склад игроку").eventNameSell = 'server:stock:sellToPlayer';
+        }
+        if (user.getCache('yacht_id') > 0) {
+            UIMenu.Menu.AddMenuItem("Продать яхту", "Продать яхту государству.\nС учетом налога").eventName = 'server:yacht:sell';
+            UIMenu.Menu.AddMenuItem("~y~Продать яхту игроку").eventNameSell = 'server:yacht:sellToPlayer';
+        }
+
+        //TODO в идеале вывести марку и номер транспорта, не только слот.
+        for (let i = 1; i < 11; i++) {
+            if (user.getCache(`car_id${i}`) > 0) {
+                UIMenu.Menu.AddMenuItem(`Продать ТС #${i}`, "Продать транспорт государству.\nНалог: ~g~" + (cofferData.get('cofferTaxIntermediate') + 20) + "%").eventName = `server:car${i}:sell`;
+                UIMenu.Menu.AddMenuItem(`~y~Продать ТС #${i} игроку`).eventNameSellV = i;
+            }
+        }
+
+        let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+        menu.ItemSelect.on(async (item, index) => {
+            UIMenu.Menu.HideMenu();
+            if (item == closeItem)
+                return;
+
+            if (item.eventName) {
+                menuList.showMeriaAcceptSellMenu(item.eventName);
+            }
+
+            if (item.eventNameSellV) {
+                if (Container.Data.HasLocally(mp.players.local.remoteId, "isSellTimeout"))
+                {
+                    mp.game.ui.notifications.show("~r~Таймаут 1 минута");
+                    return;
+                }
+
+                let playerId = methods.parseInt(await UIMenu.Menu.GetUserInput("ID Игрока", "", 5));
+                if (playerId < 0) {
+                    mp.game.ui.notifications.show("~r~ID Игркоа не может быть меньше нуля");
+                    return;
+                }
+                let sum = methods.parseFloat(await UIMenu.Menu.GetUserInput("Сумма", "", 12));
+                if (sum < 0) {
+                    mp.game.ui.notifications.show("~r~Сумма не может быть меньше нуля");
+                    return;
+                }
+
+                mp.events.callRemote('server:car:sellToPlayer', playerId, sum, item.eventNameSellV);
+
+                Container.Data.SetLocally(mp.players.local.remoteId, "isSellTimeout", true);
+
+                setTimeout(function () {
+                    Container.Data.ResetLocally(mp.players.local.remoteId, "isSellTimeout");
+                }, 1000 * 60);
+            }
+            if (item.eventNameSell) {
+
+                if (Container.Data.HasLocally(mp.players.local.remoteId, "isSellTimeout"))
+                {
+                    mp.game.ui.notifications.show("~r~Таймаут 1 минута");
+                    return;
+                }
+
+                let playerId = methods.parseInt(await UIMenu.Menu.GetUserInput("ID Игрока", "", 5));
+                if (playerId < 0) {
+                    mp.game.ui.notifications.show("~r~ID Игркоа не может быть меньше нуля");
+                    return;
+                }
+                let sum = methods.parseFloat(await UIMenu.Menu.GetUserInput("Сумма", "", 12));
+                if (sum < 0) {
+                    mp.game.ui.notifications.show("~r~Сумма не может быть меньше нуля");
+                    return;
+                }
+
+                mp.events.callRemote(item.eventNameSell, playerId, sum);
+
+                Container.Data.SetLocally(mp.players.local.remoteId, "isSellTimeout", true);
+
+                setTimeout(function () {
+                    Container.Data.ResetLocally(mp.players.local.remoteId, "isSellTimeout");
+                }, 1000 * 60);
+            }
+        });
+    });
+};
+
+menuList.showMeriaAcceptSellMenu = function(eventName) {
+    let menu = UIMenu.Menu.Create(`Maze`, `~b~Вы точно хотите продать?`);
+
+    UIMenu.Menu.AddMenuItem("~y~Продать").eventName = eventName;
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Отменить");
+    menu.ItemSelect.on(async (item, index) => {
+        UIMenu.Menu.HideMenu();
+        if (item == closeItem)
+            return;
+        if (item.eventName)
+            mp.events.callRemote(item.eventName);
+    });
+};
+
+menuList.showHouseSellToPlayerMenu = function(houseId, name, sum, userId) {
+    UIMenu.Menu.HideMenu();
+
+    let menu = UIMenu.Menu.Create("Дом", "~b~" + name);
+
+    UIMenu.Menu.AddMenuItem("Купить за ~g~" + methods.moneyFormat(sum), "").doName = "accept";
+    UIMenu.Menu.AddMenuItem("~r~Отказаться", "").doName = "closeMenu";
+
+    menu.ItemSelect.on(async (item, idx) => {
+        UIMenu.Menu.HideMenu();
+        if (item.doName == "accept")
+            mp.events.callRemote('server:houses:sellToPlayer:accept', houseId, sum, userId);
+    });
+};
+
+menuList.showCarSellToPlayerMenu = function(houseId, name, sum, userId, slot) {
+    UIMenu.Menu.HideMenu();
+
+    let menu = UIMenu.Menu.Create("Транспорт", "~b~Купить " + name);
+
+    UIMenu.Menu.AddMenuItem("Транспорт за ~g~" + methods.moneyFormat(sum), "").doName = "accept";
+    UIMenu.Menu.AddMenuItem("~r~Отказаться", "").doName = "closeMenu";
+
+    menu.ItemSelect.on(async (item, idx) => {
+        UIMenu.Menu.HideMenu();
+        if (item.doName == "accept")
+            mp.events.callRemote('server:car:sellToPlayer:accept', houseId, sum, userId, slot);
+    });
+};
+
+menuList.showCondoSellToPlayerMenu = function(houseId, name, sum, userId) {
+    UIMenu.Menu.HideMenu();
+
+    let menu = UIMenu.Menu.Create("Квартира", "~b~" + name);
+
+    UIMenu.Menu.AddMenuItem("Купить за ~g~" + methods.moneyFormat(sum), "").doName = "accept";
+    UIMenu.Menu.AddMenuItem("~r~Отказаться", "").doName = "closeMenu";
+
+    menu.ItemSelect.on(async (item, idx) => {
+        UIMenu.Menu.HideMenu();
+        if (item.doName == "accept")
+            mp.events.callRemote('server:condo:sellToPlayer:accept', houseId, sum, userId);
+    });
+};
+
+menuList.showApartSellToPlayerMenu = function(houseId, name, sum, userId) {
+    UIMenu.Menu.HideMenu();
+
+    let menu = UIMenu.Menu.Create("Апартаменты", "~b~" + name);
+
+    UIMenu.Menu.AddMenuItem("Купить за ~g~" + methods.moneyFormat(sum), "").doName = "accept";
+    UIMenu.Menu.AddMenuItem("~r~Отказаться", "").doName = "closeMenu";
+
+    menu.ItemSelect.on(async (item, idx) => {
+        UIMenu.Menu.HideMenu();
+        if (item.doName == "accept")
+            mp.events.callRemote('server:apartments:sellToPlayer:accept', houseId, sum, userId);
+    });
+};
+
+menuList.showYachtSellToPlayerMenu = function(houseId, name, sum, userId) {
+    UIMenu.Menu.HideMenu();
+
+    let menu = UIMenu.Menu.Create("Яхта", "~b~" + name);
+
+    UIMenu.Menu.AddMenuItem("Купить за ~g~" + methods.moneyFormat(sum), "").doName = "accept";
+    UIMenu.Menu.AddMenuItem("~r~Отказаться", "").doName = "closeMenu";
+
+    menu.ItemSelect.on(async (item, idx) => {
+        UIMenu.Menu.HideMenu();
+        if (item.doName == "accept")
+            mp.events.callRemote('server:yacht:sellToPlayer:accept', houseId, sum, userId);
+    });
+};
+
+menuList.showStockSellToPlayerMenu = function(houseId, name, sum, userId) {
+    UIMenu.Menu.HideMenu();
+
+    let menu = UIMenu.Menu.Create("Склад", "~b~" + name);
+
+    UIMenu.Menu.AddMenuItem("Купить за ~g~" + methods.moneyFormat(sum), "").doName = "accept";
+    UIMenu.Menu.AddMenuItem("~r~Отказаться", "").doName = "closeMenu";
+
+    menu.ItemSelect.on(async (item, idx) => {
+        UIMenu.Menu.HideMenu();
+        if (item.doName == "accept")
+            mp.events.callRemote('server:stock:sellToPlayer:accept', houseId, sum, userId);
+    });
+};
+
+menuList.showBusinessSellToPlayerMenu = function(houseId, name, sum, userId) {
+    UIMenu.Menu.HideMenu();
+
+    let menu = UIMenu.Menu.Create("Бизнес", "~b~" + name);
+
+    UIMenu.Menu.AddMenuItem("Купить за ~g~" + methods.moneyFormat(sum), "").doName = "accept";
+    UIMenu.Menu.AddMenuItem("~r~Отказаться", "").doName = "closeMenu";
+
+    menu.ItemSelect.on(async (item, idx) => {
+        UIMenu.Menu.HideMenu();
+        if (item.doName == "accept")
+            mp.events.callRemote('server:business:sellToPlayer:accept', houseId, sum, userId);
     });
 };
 
@@ -2498,7 +2730,6 @@ menuList.showBankMenu = async function(bankId, price) {
         mp.game.ui.notifications.show(`~r~В городе отсутствует свет`);
         return;
     }
-
 
     let getBankPrefix = user.getBankCardPrefix();
 

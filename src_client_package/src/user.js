@@ -583,6 +583,10 @@ user.setCache = function(key, value) {
     userData.set(key, value);
 };
 
+user.updateCache = async function() {
+    userData = await Container.Data.GetAll(mp.players.local.remoteId);
+};
+
 user.getDating = function(item) {
     try {
         if (datingList.has(item))

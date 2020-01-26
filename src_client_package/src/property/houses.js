@@ -9,9 +9,17 @@ houses.enter = function (id) {
     mp.events.callRemote('server:houses:enter', id);
 };
 
+houses.enterv = function (id) {
+    mp.events.callRemote('server:houses:enterv', id);
+};
+
 houses.exit = function (x, y, z, rot) {
     user.setVirtualWorld(0);
     user.teleport(x, y, z + 1, rot);
+};
+
+houses.exitv = function (id) {
+    mp.events.callRemote('server:houses:exitv', id);
 };
 
 houses.getData = async function(id) {

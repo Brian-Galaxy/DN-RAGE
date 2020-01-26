@@ -18,7 +18,7 @@ mp.attachmentMngr =
 
                         let spawnPos = new mp.Vector3(entity.position.x, entity.position.y, entity.position.z - 5);
 
-                        let object = mp.objects.new(attInfo.model, spawnPos);
+                        let object = mp.objects.new(attInfo.model, spawnPos, {dimension: -1});
 
                         let boneIndex = (typeof attInfo.boneName === 'string') ?
                             entity.getBoneIndexByName(attInfo.boneName) :

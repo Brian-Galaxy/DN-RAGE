@@ -561,6 +561,17 @@ mp.events.add('client:showHouseOutMenu', (item) => {
     }
 });
 
+mp.events.add('client:showHouseOutVMenu', (item) => {
+    try {
+        methods.debug('Event: client:menuList:showHouseOutMenu');
+        menuList.showHouseOutVMenu(new Map(item)).then();
+    }
+    catch (e) {
+        methods.debug('Exception: events:client:showHouseOutMenu');
+        methods.debug(e);
+    }
+});
+
 mp.events.add('client:showHouseBuyMenu', (item) => {
     try {
         methods.debug('Event: client:menuList:showHouseBuyMenu');
@@ -576,6 +587,28 @@ mp.events.add('client:showHouseInMenu', (item) => {
     try {
         methods.debug('Event: client:menuList:showHouseInMenu');
         menuList.showHouseInMenu(new Map(item));
+    }
+    catch (e) {
+        methods.debug('Exception: events:client:showHouseInMenu');
+        methods.debug(e);
+    }
+});
+
+mp.events.add('client:showHouseInGMenu', (item) => {
+    try {
+        methods.debug('Event: client:menuList:showHouseInMenu');
+        menuList.showHouseInGMenu(new Map(item));
+    }
+    catch (e) {
+        methods.debug('Exception: events:client:showHouseInMenu');
+        methods.debug(e);
+    }
+});
+
+mp.events.add('client:showHouseInVMenu', (item) => {
+    try {
+        methods.debug('Event: client:menuList:showHouseInMenu');
+        menuList.showHouseInVMenu(new Map(item));
     }
     catch (e) {
         methods.debug('Exception: events:client:showHouseInMenu');
@@ -2031,6 +2064,33 @@ mp.events.add("playerCommand", async (command) => {
             return;
         }
         mp.events.callRemote('server:stocks:insert2', args[1])
+    }
+    else if (command.toLowerCase().slice(0, 4) === "hc1 ") {
+        let args = command.split(' ');
+        if (args.length != 3) {
+            mp.gui.chat.push(`Не верно введено кол-во параметров `);
+            mp.gui.chat.push(`/hc1 [ID] [INT]`);
+            return;
+        }
+        mp.events.callRemote('server:houses:insert1', args[1], args[2])
+    }
+    else if (command.toLowerCase().slice(0, 4) === "hc2 ") {
+        let args = command.split(' ');
+        if (args.length != 3) {
+            mp.gui.chat.push(`Не верно введено кол-во параметров `);
+            mp.gui.chat.push(`/hc2 [ID] [INT]`);
+            return;
+        }
+        mp.events.callRemote('server:houses:insert2', args[1], args[2])
+    }
+    else if (command.toLowerCase().slice(0, 4) === "hc3 ") {
+        let args = command.split(' ');
+        if (args.length != 3) {
+            mp.gui.chat.push(`Не верно введено кол-во параметров `);
+            mp.gui.chat.push(`/hc3 [ID] [INT]`);
+            return;
+        }
+        mp.events.callRemote('server:houses:insert3', args[1], args[2])
     }
     else if (command.toLowerCase().slice(0, 2) === "c ") {
         let args = command.split(' ');

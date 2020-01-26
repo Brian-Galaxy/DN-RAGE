@@ -981,6 +981,27 @@ mp.events.addRemoteCounted('server:houses:insert', (player, interior, number, pr
     houses.insert(player, number, street, zone, player.position.x, player.position.y, player.position.z, player.heading, interior, price);
 });
 
+mp.events.addRemoteCounted('server:houses:insert1', (player, id, int) => {
+    if (player.vehicle)
+        houses.insert1(player, id, int, player.vehicle.position.x, player.vehicle.position.y, player.vehicle.position.z, player.vehicle.heading);
+    else
+        houses.insert1(player, id, int, player.position.x, player.position.y, player.position.z, player.heading);
+});
+
+mp.events.addRemoteCounted('server:houses:insert2', (player, id, int) => {
+    if (player.vehicle)
+        houses.insert2(player, id, int, player.vehicle.position.x, player.vehicle.position.y, player.vehicle.position.z, player.vehicle.heading);
+    else
+        houses.insert2(player, id, int, player.position.x, player.position.y, player.position.z, player.heading);
+});
+
+mp.events.addRemoteCounted('server:houses:insert3', (player, id, int) => {
+    if (player.vehicle)
+        houses.insert3(player, id, int, player.vehicle.position.x, player.vehicle.position.y, player.vehicle.position.z, player.vehicle.heading);
+    else
+        houses.insert3(player, id, int, player.position.x, player.position.y, player.position.z, player.heading);
+});
+
 mp.events.addRemoteCounted('server:stocks:insert', (player, interior, number, price, zone, street) => {
     stocks.insert(player, number, street, zone, player.position.x, player.position.y, player.position.z, player.heading, interior, price);
 });
@@ -1472,6 +1493,11 @@ mp.events.addRemoteCounted("onKeyPress:E", (player) => {
                 player.call('client:showHouseOutMenu', [Array.from(houseData)]);
             }
         }
+        if (methods.distanceToPos(player.position, val.g1.position) < 4 || methods.distanceToPos(player.position, val.g2.position) < 4 || methods.distanceToPos(player.position, val.g3.position) < 4) {
+            let houseData = houses.getHouseData(key);
+            if (houseData.get('user_id') != 0 && player.vehicle)
+                player.call('client:showHouseOutVMenu', [Array.from(houseData)]);
+        }
     });
 
     condos.getAll().forEach((val, key, object) => {
@@ -1555,6 +1581,32 @@ mp.events.addRemoteCounted("onKeyPress:E", (player) => {
             }
         });
 
+        houses.garageIntList.forEach(function(item) {
+            let x = item[0];
+            let y = item[1];
+            let z = item[2];
+
+            if (methods.distanceToPos(player.position, new mp.Vector3(x, y, z)) < 1.5) {
+                let houseData = houses.getHouseData(player.dimension);
+                player.call('client:showHouseInGMenu', [Array.from(houseData)]);
+            }
+        });
+
+        houses.garageList.forEach(function(item) {
+            let x = item[0];
+            let y = item[1];
+            let z = item[2];
+
+            let x1 = item[4];
+            let y1 = item[5];
+            let z1 = item[6];
+
+            if (methods.distanceToPos(player.position, new mp.Vector3(x, y, z)) < 4 || methods.distanceToPos(player.position, new mp.Vector3(x1, y1, z1)) < 4) {
+                let houseData = houses.getHouseData(player.dimension);
+                player.call('client:showHouseInVMenu', [Array.from(houseData)]);
+            }
+        });
+
         /*let houseData = houses.getHouseData(player.dimension);
         if (methods.distanceToPos(player.position, new mp.Vector3(houseData.get('int_x'), houseData.get('int_y'), houseData.get('int_z'))) < 1.5)
             player.call('client:showHouseInMenu', [Array.from(houseData)]);*/
@@ -1573,6 +1625,18 @@ mp.events.addRemoteCounted("server:houses:enter", (player, id) => {
     if (!user.isLogin(player))
         return;
     houses.enter(player, id);
+});
+
+mp.events.addRemoteCounted("server:houses:enterv", (player, id) => {
+    if (!user.isLogin(player))
+        return;
+    houses.enterv(player, id);
+});
+
+mp.events.addRemoteCounted("server:houses:exitv", (player, id) => {
+    if (!user.isLogin(player))
+        return;
+    houses.exitv(player, id);
 });
 
 mp.events.addRemoteCounted("server:houses:buy", (player, id) => {
@@ -1996,7 +2060,7 @@ mp.events.addRemoteCounted('server:vehicle:park', (player) => {
         let veh = player.vehicle;
         if (veh) {
             let pos = veh.position;
-            vehicles.park(veh.getVariable('container'), pos.x, pos.y, pos.z, veh.heading);
+            vehicles.park(veh.getVariable('container'), pos.x, pos.y, pos.z, veh.heading, veh.dimension);
             player.notify('~b~Вы припарковали свой транспорт');
         }
     }

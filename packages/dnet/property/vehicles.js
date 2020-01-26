@@ -137,6 +137,7 @@ vehicles.loadUserVehicleByRow = (row) => {
     vehicles.set(row['id'], 'y', parkPos.y);
     vehicles.set(row['id'], 'z', parkPos.z);
     vehicles.set(row['id'], 'rot', parkRot);
+    vehicles.set(row['id'], 'dimension', row['dimension']);
     vehicles.set(row['id'], 'upgrade', row['upgrade']);
     vehicles.set(row['id'], 'is_cop_park', row['is_cop_park']);
     vehicles.set(row['id'], 'cop_park_name', row['cop_park_name']);
@@ -166,6 +167,7 @@ vehicles.spawnPlayerCar = (id) => {
             veh.numberPlate = vehicles.get(id, 'number').toString();
             veh.numberPlateType = numberStyle;
             veh.locked = true;
+            veh.dimension = vehicles.get(id, 'dimension');
 
             veh.setColor(vehicles.get(id, 'color1'), vehicles.get(id, 'color2'));
             vSync.setEngineState(veh, false);
@@ -507,10 +509,10 @@ vehicles.save = (id) => {
         sql = sql + ", cop_park_name = '" + vehicles.get(id, "cop_park_name") + "'";
         sql = sql + ", s_mp = '" + methods.parseFloat(vehicles.get(id, "s_mp")) + "'";
         sql = sql + ", livery = '" + methods.parseInt(vehicles.get(id, "livery")) + "'";
-        sql = sql + ", x = '" + methods.parseFloat(vehicles.get(id, "x")) + "'";
+        /*sql = sql + ", x = '" + methods.parseFloat(vehicles.get(id, "x")) + "'";
         sql = sql + ", y = '" + methods.parseFloat(vehicles.get(id, "y")) + "'";
         sql = sql + ", z = '" + methods.parseFloat(vehicles.get(id, "z")) + "'";
-        sql = sql + ", rot = '" + methods.parseFloat(vehicles.get(id, "rot")) + "'";
+        sql = sql + ", rot = '" + methods.parseFloat(vehicles.get(id, "rot")) + "'";*/
         sql = sql + ", upgrade = '" + vehicles.get(id, "upgrade") + "'";
 
         sql = sql + " where id = '" + methods.parseInt(vehicles.get(id, "id")) + "'";
@@ -540,14 +542,15 @@ vehicles.getData = function(id) {
     return Container.Data.GetAll(offset + methods.parseInt(id));
 };
 
-vehicles.park = function(id, x, y, z, rot) {
+vehicles.park = function(id, x, y, z, rot, dimension) {
     methods.debug('vehicles.park');
     rot = methods.parseInt(rot);
     vehicles.set(id, 'x', methods.parseFloat(x));
     vehicles.set(id, 'y', methods.parseFloat(y));
     vehicles.set(id, 'z', methods.parseFloat(z));
     vehicles.set(id, 'rot', methods.parseFloat(rot));
-    mysql.executeQuery("UPDATE cars SET x = '" + methods.parseFloat(x) + "', y = '" + methods.parseFloat(y) + "', z = '" + methods.parseFloat(z) + "', rot = '" + methods.parseFloat(rot) + "' where id = '" + methods.parseInt(id) + "'");
+    vehicles.set(id, 'dimension', methods.parseFloat(dimension));
+    mysql.executeQuery("UPDATE cars SET x = '" + methods.parseFloat(x) + "', y = '" + methods.parseFloat(y) + "', z = '" + methods.parseFloat(z) + "', rot = '" + methods.parseFloat(rot) + "', dimension = '" + methods.parseInt(dimension) + "' where id = '" + methods.parseInt(id) + "'");
 };
 
 vehicles.respawn = (vehicle) => {

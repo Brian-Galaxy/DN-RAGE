@@ -415,14 +415,22 @@ methods.getFractionPayDay = function (fractionId, rank, rankType) {
     return money;
 };
 
-methods.getNearestVehicleWithCoords = function(pos, r) {
+methods.getNearestVehicleWithCoords = function(pos, r, dim = 0) {
     let nearest = undefined, dist;
     let min = r;
     methods.getListOfVehicleInRadius(pos, r).forEach(vehicle => {
         dist = methods.distanceToPos(pos, vehicle.position);
         if (dist < min) {
-            nearest = vehicle;
-            min = dist;
+            if (dim != 0) {
+                if (dim == vehicle.dimension) {
+                    nearest = vehicle;
+                    min = dist;
+                }
+            }
+            else {
+                nearest = vehicle;
+                min = dist;
+            }
         }
     });
     return nearest;

@@ -117,6 +117,40 @@ menuList.showHouseInMenu = function(h) {
     });
 };
 
+menuList.showHouseInGMenu = function(h) {
+
+    let menu = UIMenu.Menu.Create(`№${h.get('number')}`, `~b~Адрес: ~s~${h.get('address')} ${h.get('number')}`);
+
+    let houseHouseItem = UIMenu.Menu.AddMenuItem("~g~Войти в дом");
+    let exitHouseItem = UIMenu.Menu.AddMenuItem("~g~Выйти из гаража");
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+
+    menu.ItemSelect.on(async item => {
+        UIMenu.Menu.HideMenu();
+        if (item == exitHouseItem) {
+            houses.exit(h.get('x'), h.get('y'), h.get('z'), h.get('rot'));
+        }
+        if (item == houseHouseItem) {
+            houses.enter(h.get('id'));
+        }
+    });
+};
+
+menuList.showHouseInVMenu = function(h) {
+
+    let menu = UIMenu.Menu.Create(`№${h.get('number')}`, `~b~Адрес: ~s~${h.get('address')} ${h.get('number')}`);
+
+    let exitHouseItem = UIMenu.Menu.AddMenuItem("~g~Выйти из гаража");
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+
+    menu.ItemSelect.on(async item => {
+        UIMenu.Menu.HideMenu();
+        if (item == exitHouseItem) {
+            houses.exitv(h.get('id'));
+        }
+    });
+};
+
 menuList.showHouseOutMenu = async function(h) {
 
     let menu = UIMenu.Menu.Create(`№${h.get('id')}`, `~b~Адрес: ~s~${h.get('address')} ${h.get('number')}`);
@@ -156,6 +190,37 @@ menuList.showHouseOutMenu = async function(h) {
         }
         else if (item.doName) {
             mail.sendMail(item.doName)
+        }
+    });
+};
+
+menuList.showHouseOutVMenu = async function(h) {
+
+    let menu = UIMenu.Menu.Create(`№${h.get('number')}`, `~b~Адрес: ~s~${h.get('address')} ${h.get('number')}`);
+    let infoItem = UIMenu.Menu.AddMenuItem(`~b~Владелец:~s~ ${h.get('user_name')}`);
+    let enterHouseItem = UIMenu.Menu.AddMenuItem("~g~Войти в гараж");
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+
+    menu.ItemSelect.on(async item => {
+        UIMenu.Menu.HideMenu();
+        if (item == enterHouseItem) {
+            try {
+                if (h.get('pin') > 0 && user.getCache('id') != h.get('user_id')) {
+                    mp.game.ui.notifications.show('~r~Введите пинкод');
+                    let pass = methods.parseInt(await UIMenu.Menu.GetUserInput("Пароль", "", 5));
+                    if (pass == h.get('pin'))
+                        houses.enter(h.get('id'));
+                    else
+                        mp.game.ui.notifications.show('~r~Вы ввели не правильный пинкод');
+                }
+                else if (h.get('is_lock') && h.get('user_id') != user.getCache('id'))
+                    mp.game.ui.notifications.show('~r~Дверь закрыта, ее можно взломать отмычкой');
+                else
+                    houses.enterv(h.get('id'));
+            }
+            catch (e) {
+                methods.debug(e);
+            }
         }
     });
 };

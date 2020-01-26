@@ -305,6 +305,20 @@ stocks.enterv = function (player, id) {
         return;
     }
 
+    let vInfo = methods.getVehicleInfo(player.vehicle.model);
+    if (vInfo.class_name == 'Planes' ||
+        vInfo.class_name == 'Boats' ||
+        vInfo.class_name == 'Helicopters' ||
+        vInfo.class_name == 'Emergency' ||
+        vInfo.class_name == 'Commercials' ||
+        vInfo.class_name == 'Service' ||
+        vInfo.class_name == 'Industrial' ||
+        vInfo.class_name == 'Military')
+    {
+        player.notify('~r~Данному классу авто запрещено заезжать в гараж');
+        return;
+    }
+
     id = methods.parseInt(id);
 
     let hInfo = stocks.getData(id);

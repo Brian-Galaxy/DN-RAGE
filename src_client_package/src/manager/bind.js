@@ -224,9 +224,11 @@ bind.getChangeKey = async function(data) {
 
 for(let code in keyCodes) {
     mp.keys.bind(parseInt(code), true, function() {
+
+        if (!user.isLogin())
+            return;
+
         if (user.getCache('s_bind_inv') == parseInt(code)) {
-            if (!user.isLogin())
-                return;
             if (!methods.isBlockKeys()) {
                 ui.callCef('inventory', '{"type": "showOrHide"}')
             }
@@ -235,26 +237,18 @@ for(let code in keyCodes) {
             inventory.getItemList(0, 0);
         }
         if (user.getCache('s_bind_phone') == parseInt(code)) {
-            if (!user.isLogin())
-                return;
             if (!methods.isBlockKeys())
                 phone.showOrHide();
         }
         if (user.getCache('s_bind_lock') == parseInt(code)) {
-            if (!user.isLogin())
-                return;
             if (!methods.isBlockKeys())
                 mp.events.callRemote('onKeyPress:L');
         }
         if (user.getCache('s_bind_engine') == parseInt(code)) {
-            if (!user.isLogin())
-                return;
             if (!methods.isBlockKeys())
                 vehicles.engineVehicle();
         }
         if (user.getCache('s_bind_pnv') == parseInt(code)) {
-            if (!user.isLogin())
-                return;
             if (!methods.isBlockKeys()) {
                 let drawId = mp.players.local.getPropIndex(0);
                 let textureId = mp.players.local.getPropTextureIndex(0);
@@ -278,8 +272,6 @@ for(let code in keyCodes) {
             }
         }
         if (user.getCache('s_bind_megaphone') == parseInt(code)) {
-            if (!user.isLogin())
-                return;
             if (!methods.isBlockKeys()) {
                 let veh = mp.players.local.vehicle;
                 if (veh && veh.getPedInSeat(0) == mp.players.local.handle) {
@@ -291,26 +283,25 @@ for(let code in keyCodes) {
             }
         }
         if (user.getCache('s_bind_voice') == parseInt(code)) {
-            if (!user.isLogin())
-                return;
             voice.enableMicrophone();
+        }
+        if (user.getCache('s_bind_firemod') == parseInt(code)) {
+            mp.events.call('client:changeFireMod');
         }
         if (bind.isChange)
             bind.bindNewKey(parseInt(code));
     });
 
     mp.keys.bind(parseInt(code), false, function() {
+        if (!user.isLogin())
+            return;
         if (user.getCache('s_bind_megaphone') == parseInt(code)) {
-            if (!user.isLogin())
-                return;
             if (!methods.isBlockKeys()) {
                 user.setVariable('voice.distance', 25);
                 voice.disableMicrophone();
             }
         }
         if (user.getCache('s_bind_voice') == parseInt(code)) {
-            if (!user.isLogin())
-                return;
             voice.disableMicrophone();
         }
     });

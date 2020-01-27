@@ -183,6 +183,7 @@ enums.userData = [
     "s_bind_voice_radio",
     "s_bind_pnv",
     "s_bind_megaphone",
+    "s_bind_firemod",
 
     "jail_time",
     "jail_type",

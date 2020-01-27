@@ -4,6 +4,7 @@ let user = require('../user');
 let enums = require('../enums');
 let coffer = require('../coffer');
 let inventory = require('../inventory');
+let phone = require('../phone');
 let weapons = require('../weapons');
 let items = require('../items');
 
@@ -28,6 +29,7 @@ let bank = require('../business/bank');
 let shop = require('../business/shop');
 
 let pickups = require('../managers/pickups');
+let dispatcher = require('../managers/dispatcher');
 
 mp.events.__add__ = mp.events.add;
 
@@ -977,6 +979,10 @@ mp.events.addRemoteCounted('server:user:askDatingToPlayerIdYes', (player, player
     }
 });
 
+mp.events.addRemoteCounted('server:houses:teleport', (player, id) => {
+    user.teleport(player, houses.get(id, 'x'), houses.get(id, 'y'), houses.get(id, 'z'), houses.get(id, 'rot'));
+});
+
 mp.events.addRemoteCounted('server:houses:insert', (player, interior, number, price, zone, street) => {
     houses.insert(player, number, street, zone, player.position.x, player.position.y, player.position.z, player.heading, interior, price);
 });
@@ -1366,6 +1372,26 @@ mp.events.addRemoteCounted('server:vehicles:addNew', (player, model, count) => {
         vehicles.addNew(model, count);
         player.notify('~g~Транспорт на авторынок был добавлен. Кол-во: ~s~' + count)
     }
+});
+
+mp.events.addRemoteCounted('server:dispatcher:sendPos', (player, title, desc, x, y, z, withCoord) => {
+    dispatcher.sendPos(title, desc, new mp.Vector3(x, y, z), withCoord);
+});
+
+mp.events.addRemoteCounted('server:dispatcher:sendLocalPos', (player, title, desc, x, y, z, fractionId, withCoord) => {
+    dispatcher.sendLocalPos(title, desc, new mp.Vector3(x, y, z), fractionId, withCoord);
+});
+
+mp.events.addRemoteCounted('server:phone:fractionList', (player) => {
+    if (!user.isLogin(player))
+        return;
+    phone.fractionList(player);
+});
+
+mp.events.addRemoteCounted('server:phone:memberAction', (player, id) => {
+    if (!user.isLogin(player))
+        return;
+    phone.memberAction(player, id);
 });
 
 mp.events.addRemoteCounted('server:inventory:getItemList', (player, ownerType, ownerId) => {

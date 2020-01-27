@@ -44,6 +44,8 @@ function init() {
     try {
         methods.debug('INIT GAMEMODE');
 
+        mysql.executeQuery('UPDATE users SET is_online=\'0\'');
+
         for (let i = 0; i < weapons.hashesMap.length; i++)
             weapons.hashesMap[i][1] *= 2;
 

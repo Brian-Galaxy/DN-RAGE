@@ -93,22 +93,25 @@ timer.updateTempLevel = function() {
 
 timer.updateEatLevel = function() {
     if (user.isLogin()) {
-        user.removeEatLevel(10);
-        user.removeWaterLevel(20);
 
-        if (user.getEatLevel() < 200 || user.getWaterLevel() < 200) {
-            mp.game.cam.shakeGameplayCam("ROAD_VIBRATION_SHAKE", 1.5);
-            setTimeout(function () {
-                mp.game.cam.stopGameplayCamShaking(false);
-            }, 7000);
+        if (!mp.players.local.getVariable('enableAdmin')) {
+            user.removeEatLevel(10);
+            user.removeWaterLevel(20);
+
+            if (user.getEatLevel() < 200 || user.getWaterLevel() < 200) {
+                mp.game.cam.shakeGameplayCam("ROAD_VIBRATION_SHAKE", 1.5);
+                setTimeout(function () {
+                    mp.game.cam.stopGameplayCamShaking(false);
+                }, 7000);
+            }
+            if (user.getEatLevel() < 100 || user.getWaterLevel() < 100)
+                user.setRagdoll(2000);
+
+            if (user.getEatLevel() < 10)
+                mp.players.local.setHealth(mp.players.local.getHealth() + 100 - 5);
+            if (user.getWaterLevel() < 10)
+                mp.players.local.setHealth(mp.players.local.getHealth() + 100 - 5);
         }
-        if (user.getEatLevel() < 100 || user.getWaterLevel() < 100)
-            user.setRagdoll(2000);
-
-        if (user.getEatLevel() < 10)
-            mp.players.local.setHealth(mp.players.local.getHealth() + 100 - 5);
-        if (user.getWaterLevel() < 10)
-            mp.players.local.setHealth(mp.players.local.getHealth() + 100 - 5);
     }
 };
 

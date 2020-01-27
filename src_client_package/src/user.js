@@ -19,6 +19,7 @@ user.godmode = false;
 user.isTeleport = false;
 user.currentId = 0;
 user.targetEntity = undefined;
+user.socialClub = 'socialclub';
 
 let currentCamDist = 0.2;
 let currentCamRot = -2;
@@ -1007,6 +1008,39 @@ user.getFractionNameL = function() {
     return enums.fractionListId[user.getCache( 'fraction_id')].fractionName;
 };
 
+user.getDepartmentName = function() {
+    try {
+        if (!user.isLogin())
+            return 'Отсуствует';
+        if (user.getCache('is_leader'))
+            return 'Руководство';
+        else if (user.getCache('is_sub_leader'))
+            return 'Руководство';
+        return enums.fractionListId[user.getCache('fraction_id')].departmentList[user.getCache('rank_type')];
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+    return 'Отсуствует';
+};
+
+user.getRankName = function() {
+    try {
+        if (!user.isLogin())
+            return 'Отсуствует';
+        if (user.getCache('is_leader'))
+            return enums.fractionListId[user.getCache('fraction_id')].leaderName;
+        else if (user.getCache('is_sub_leader'))
+            return enums.fractionListId[user.getCache('fraction_id')].subLeaderName;
+        return enums.fractionListId[user.getCache('fraction_id')].rankList[user.getCache('rank_type')][user.getCache('rank')];
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+    return 'Отсуствует';
+};
+
+
 user.sendSmsBankOperation = function(text, title = 'Операция со счётом') {
     methods.debug('bank.sendSmsBankOperation');
     if (!user.isLogin())
@@ -1102,6 +1136,7 @@ user.stopScenario = function() {
 let isOpenPhone = false;
 
 user.openPhone = function(type) {
+    ui.hideHud();
     user.playAnimation("cellphone@female", "cellphone_text_read_base", 49);
     mp.attachmentMngr.addLocal('phone' + type);
     isOpenPhone = true;
@@ -1125,9 +1160,11 @@ user.isOpenPhone = function() {
 };
 
 user.hidePhone = function() {
+    ui.showHud();
     mp.attachmentMngr.removeLocal('phone1');
     mp.attachmentMngr.removeLocal('phone2');
     mp.attachmentMngr.removeLocal('phone3');
+    //user.playAnimation("cellphone@female", "cellphone_text_out", 48);
     user.stopAllAnimation();
     isOpenPhone = false;
 };

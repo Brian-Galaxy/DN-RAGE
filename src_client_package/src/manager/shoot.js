@@ -64,7 +64,8 @@ mp.events.add("render", () => {
 
         if (curFiringMode != firingModes.Auto) {
             if (curFiringMode == firingModes.Burst) {
-                if (localPlayer.isShooting()) curBurstShots++;
+                if (localPlayer.isShooting())
+                    curBurstShots++;
                 if (curBurstShots > 0 && curBurstShots < 3)
                     mp.game.controls.setControlNormal(0, 24, 1.0);
 
@@ -90,8 +91,7 @@ mp.events.add("render", () => {
     }
 });
 
-// B - change firing mode
-mp.keys.bind(0x42, false, () => {
+mp.events.add('client:changeFireMod', () => {
     if (ignoreCurrentWeapon) return;
 
     try {

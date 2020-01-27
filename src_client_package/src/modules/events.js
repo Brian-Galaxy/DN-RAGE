@@ -18,6 +18,7 @@ import ui from "./ui";
 import checkpoint from "../manager/checkpoint";
 import weather from "../manager/weather";
 import timer from "../manager/timer";
+import dispatcher from "../manager/dispatcher";
 
 import vehicles from "../property/vehicles";
 import weapons from "../weapons";
@@ -506,6 +507,16 @@ mp.events.add('client:user:hideLoadDisplay', () => {
 mp.events.add('client:user:showLoadDisplay', () => {
     methods.debug('Event: client:user:showLoadDisplay');
     user.showLoadDisplay();
+});
+
+mp.events.add('client:dispatcher:addDispatcherList', (title, desc, time, x, y, z, withCoord) => {
+    methods.debug('Event: client:dispatcher:addDispatcherList', title, desc, time, x, y, z, withCoord);
+    dispatcher.addDispatcherList(title, desc, time, x, y, z, withCoord);
+});
+
+mp.events.add('client:dispatcher:addDispatcherTaxiList', (count, title, desc, time, price, x, y, z) => {
+    methods.debug('Event: client:dispatcher:addDispatcherTaxiList', count, title, desc, time, price, x, y, z);
+    dispatcher.addDispatcherTaxiList(count, title, desc, time, price, x, y, z);
 });
 
 mp.events.add('client:updateCheckpointList', (data) => {
@@ -1822,6 +1833,15 @@ mp.events.add('client:inventory:equip', function(id, itemId, count, aparams) {
     inventory.updateEquipStatus(id, true);
 });
 
+mp.events.add('client:phone:showMenu', function(data) {
+    try {
+        methods.debug(data);
+        phone.showMenu(JSON.parse(data));
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
 
 mp.events.add('client:phone:status', function(status) {
     if (status)
@@ -1829,7 +1849,6 @@ mp.events.add('client:phone:status', function(status) {
     else
         phone.hide();
 });
-
 
 mp.events.add('client:phone:rotate', function(status) {
     if (status)
@@ -1893,8 +1912,8 @@ mp.events.add('render', () => {
         let __localPlayerPosition__ = mp.players.local.position;
 
         methods.getStreamPlayerList().forEach((player, i) => {
-            if (/*player === localPlayer || */!mp.players.exists(player)/* || i > 50*/) {
-                //return false;
+            if (/*player === localPlayer || */!mp.players.exists(player) || i > 50) {
+                return false;
             }
 
             try {
@@ -1913,18 +1932,19 @@ mp.events.add('render', () => {
                     const headPosition = player.getBoneCoords(12844, 0, 0, 0);
 
                     let typingLabel = '';
+                    let pref = '';
                     if (player.getVariable('enableAdmin'))
-                        typingLabel += '\n~r~ADMIN MOD';
+                        pref = '~r~';
                     if (player.getVariable('isTyping'))
                         typingLabel += '\n~b~Печатает...';
                     if (player.getVariable('isAfk'))
                         typingLabel += '\n~r~AFK...';
 
-                    //let name = '';
-                    //if (user.hasDating(player.getVariable('id')))
-                    //    name = user.getDating(player.getVariable('id')) + ' | ';
+                    let name = '';
+                    if (user.hasDating(player.getVariable('id')))
+                        name = user.getDating(player.getVariable('id')) + ' | ';
                     //if(!player.getVariable('hiddenId'))
-                    ui.drawText3D( player.id + ' ' +  indicatorColor + typingLabel, headPosition.x, headPosition.y, headPosition.z + 0.1);
+                    ui.drawText3D( pref + name + player.id + ' ' +  indicatorColor + typingLabel, headPosition.x, headPosition.y, headPosition.z + 0.1);
                 }
             }
             catch (e) {
@@ -2044,8 +2064,13 @@ mp.events.add("playerDeath", function (player, reason, killer) {
 
 // Commands in 2020......
 mp.events.add("playerCommand", async (command) => {
-    if (command.toLowerCase().slice(0, 2) === "tp") {
-
+    if (command.toLowerCase().slice(0, 3) === "tph") {
+        if (!user.isLogin() || !user.isAdmin())
+            return;
+        let args = command.toLowerCase().split(' ');
+        mp.events.callRemote('server:houses:teleport', args[1]);
+    }
+    else if (command.toLowerCase().slice(0, 2) === "tp") {
         let args = command.toLowerCase().split(' ');
         user.teleport(parseFloat(args[1]), parseFloat(args[2]), parseFloat(args[3]));
     }

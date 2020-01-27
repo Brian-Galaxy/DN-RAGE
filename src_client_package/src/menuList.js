@@ -354,6 +354,13 @@ menuList.showStockBuyMenu = async function(h) {
 
     let menu = UIMenu.Menu.Create(`№${h.get('id')}`, `~b~Адрес: ~s~${h.get('address')} ${h.get('number')}`);
 
+    if (h.get('interior') == 0)
+        UIMenu.Menu.AddMenuItem(`~b~Тип склада:~s~ Маленький`);
+    if (h.get('interior') == 1)
+        UIMenu.Menu.AddMenuItem(`~b~Тип склада:~s~ Средний`);
+    if (h.get('interior') == 2)
+        UIMenu.Menu.AddMenuItem(`~b~Тип склада:%~s~ Большой`);
+
     let buyHouseItem = UIMenu.Menu.AddMenuItem(`Купить склад за ~g~${methods.moneyFormat(h.get('price'))}`);
     let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
 
@@ -361,9 +368,6 @@ menuList.showStockBuyMenu = async function(h) {
         UIMenu.Menu.HideMenu();
         if (item == buyHouseItem) {
             stocks.buy(h.get('id'));
-        }
-        else if (item.doName) {
-            mail.sendMail2(item.doName)
         }
     });
 };
@@ -408,9 +412,6 @@ menuList.showStockOutMenu = async function(h) {
                 methods.debug(e);
             }
         }
-        else if (item.doName) {
-            mail.sendMail2(item.doName)
-        }
     });
 };
 
@@ -453,9 +454,6 @@ menuList.showStockOutVMenu = async function(h) {
             catch (e) {
                 methods.debug(e);
             }
-        }
-        else if (item.doName) {
-            mail.sendMail2(item.doName)
         }
     });
 };
@@ -1666,6 +1664,10 @@ menuList.showSettingsKeyMenu = function() {
 
     menuItem = UIMenu.Menu.AddMenuItem("Полицейский мегафон", "Нажмите ~g~Enter~s~ чтобы изменить");
     menuItem.doName = 's_bind_megaphone';
+    menuItem.SetRightLabel(`~h~~m~[${bind.getKeyName(user.getCache(menuItem.doName))}]`);
+
+    menuItem = UIMenu.Menu.AddMenuItem("Режим стрельбы", "Нажмите ~g~Enter~s~ чтобы изменить");
+    menuItem.doName = 's_bind_firemod';
     menuItem.SetRightLabel(`~h~~m~[${bind.getKeyName(user.getCache(menuItem.doName))}]`);
 
     let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");

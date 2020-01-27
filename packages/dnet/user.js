@@ -1906,7 +1906,6 @@ user.payDay = async function (player) {
             }
             else {
                 let ben = coffer.getBenefit(coffer.getIdByFraction(user.get(player, 'fraction_id')));
-                methods.debug(ben);
                 if (ben > 0)
                     user.sendSmsBankOperation(player, `Зачисление: ~g~${methods.moneyFormat(nalog)}\n~s~Прибавка к зарплате: ~g~${methods.moneyFormat(ben)}`, 'Зарплата');
                 else

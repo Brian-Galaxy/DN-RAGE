@@ -70,6 +70,7 @@ ui.showOrHideRadar = function() {
 
 ui.hideHud = function() {
     mp.game.ui.displayRadar(false);
+    showRadar = false;
     if (uiBrowser) {
         try {
             //TODO
@@ -83,6 +84,7 @@ ui.hideHud = function() {
 
 ui.showHud = function() {
     mp.game.ui.displayRadar(true);
+    showRadar = true;
     //return //TODO ВАЖНО
     if (uiBrowser) {
         try {

@@ -218,7 +218,7 @@ npc.loadAll = function() {
     //GOV
     npc.create(mp.game.joaat("s_m_m_highsec_01"), new mp.Vector3(-1385.913, -477.0084, 72.04214), 191.1487, true, "WORLD_HUMAN_GUARD_STAND");
     npc.create(mp.game.joaat("s_m_m_highsec_02"), new mp.Vector3(-1385.346, -479.9799, 72.04214), 3.717501, true, "WORLD_HUMAN_GUARD_STAND");
-    npc.create(mp.game.joaat("a_f_y_business_04"), new mp.Vector3(-1379.815, -477.6191, 72.04214), 90.06773, true, "WORLD_HUMAN_CLIPBOARD");
+    npc.create(mp.game.joaat("a_f_y_femaleagent"), new mp.Vector3(-1379.815, -477.6191, 72.04214), 90.06773, true, "WORLD_HUMAN_CLIPBOARD");
 
 
     //Pacific Standart

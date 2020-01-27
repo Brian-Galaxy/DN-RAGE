@@ -1107,6 +1107,8 @@ menuList.showMeriaMainMenu = function() {
 
     UIMenu.Menu.AddMenuItem("Имущество", "Операции с вашим имуществом").doName = 'showMeriaSellHvbMenu';
 
+    UIMenu.Menu.AddMenuItem("Экономика штата").doName = 'showMeriaInfoMenu';
+
     let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
     menu.ItemSelect.on(async (item, index) => {
         UIMenu.Menu.HideMenu();
@@ -1114,6 +1116,8 @@ menuList.showMeriaMainMenu = function() {
             return;
         if (item.doName == 'showMeriaSellHvbMenu')
             menuList.showMeriaSellHvbMenu(await coffer.getAllData());
+        if (item.doName == 'showMeriaInfoMenu')
+            menuList.showMeriaInfoMenu(await coffer.getAllData());
         if (item.doName == 'showMeriaJobListMenu')
             menuList.showMeriaJobListMenu();
         if (item.doName == 'showLicBuyMenu')
@@ -1254,6 +1258,32 @@ menuList.showMeriaJobListMenu = function() {
             user.save();
         }
     });
+};
+
+menuList.showMeriaInfoMenu = function(cofferData) {
+    if (methods.isBlackout()) {
+        mp.game.ui.notifications.show(`~r~В городе отсутствует свет`);
+        return;
+    }
+
+    try {
+        let menu = UIMenu.Menu.Create(`Информация`, `~b~Экономика штата`);
+
+        UIMenu.Menu.AddMenuItem(`~b~Бюджет`).SetRightLabel(`~g~${methods.moneyFormat(cofferData.get('cofferMoney'))}`);
+        UIMenu.Menu.AddMenuItem(`~b~Пособие`).SetRightLabel(`~g~${methods.moneyFormat(cofferData.get('cofferBenefit'))}`);
+        UIMenu.Menu.AddMenuItem(`~b~Налог на зарплату`).SetRightLabel(`~s~${cofferData.get('cofferTaxPayDay')}%`);
+        UIMenu.Menu.AddMenuItem(`~b~Налог на бизнес`).SetRightLabel(`~s~${cofferData.get('cofferTaxBusiness')}%`);
+        UIMenu.Menu.AddMenuItem(`~b~Налог на имущество`).SetRightLabel(`~s~${cofferData.get('cofferTaxProperty')}%`);
+        UIMenu.Menu.AddMenuItem(`~b~Промежуточный налог`).SetRightLabel(`~s~${cofferData.get('cofferTaxIntermediate')}%`);
+
+        UIMenu.Menu.AddMenuItem("~r~Закрыть");
+        menu.ItemSelect.on(async (item, index) => {
+            UIMenu.Menu.HideMenu();
+        });
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 };
 
 menuList.showMeriaSellHvbMenu = function(cofferData) {

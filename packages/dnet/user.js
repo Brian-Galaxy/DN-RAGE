@@ -1896,7 +1896,7 @@ user.payDay = async function (player) {
         else if (user.get(player, 'fraction_id') > 0) {
 
             let money = methods.getFractionPayDay(user.get(player, 'fraction_id'), user.get(player, 'rank'), user.get(player, 'rank_type'));
-            let nalog = money * (100 - coffer.getTaxIntermediate()) / 100;
+            let nalog = money * (100 - coffer.getTaxPayDay()) / 100;
 
             let frId = coffer.getIdByFraction(user.get(player, 'fraction_id'));
             let currentCofferMoney = coffer.getMoney(frId);
@@ -1905,7 +1905,12 @@ user.payDay = async function (player) {
                 user.sendSmsBankOperation(player, `~r~В бюджете организации не достаточно средств для выплаты зарплаты`, 'Пособие');
             }
             else {
-                user.sendSmsBankOperation(player, `Зачисление: ~g~${methods.moneyFormat(nalog)}`, 'Зарплата');
+                let ben = coffer.getBenefit(coffer.getIdByFraction(user.get(player, 'fraction_id')));
+                methods.debug(ben);
+                if (ben > 0)
+                    user.sendSmsBankOperation(player, `Зачисление: ~g~${methods.moneyFormat(nalog)}\n~s~Прибавка к зарплате: ~g~${methods.moneyFormat(ben)}`, 'Зарплата');
+                else
+                    user.sendSmsBankOperation(player, `Зачисление: ~g~${methods.moneyFormat(nalog)}`, 'Зарплата');
                 user.addPayDayMoney(player, nalog);
                 coffer.removeMoney(frId, nalog)
             }

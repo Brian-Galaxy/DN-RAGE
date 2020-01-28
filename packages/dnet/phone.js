@@ -10,8 +10,12 @@ phone.memberAction = function(player, id) {
     if (!user.isLogin(player))
         return;
 
-    methods.debug('phone.memberAction');
+    if (user.getId(player) == id) {
+        player.notify('~r~Данный профиль для просмотра не доступен');
+        return;
+    }
 
+    methods.debug('phone.memberAction');
     let fractionId = user.get(player, 'fraction_id');
     mysql.executeQuery(`SELECT id, social, name, fraction_id, rank, rank_type, is_sub_leader FROM users WHERE id = '${methods.parseInt(id)}'`, (err, rows, fields) => {
 
@@ -126,7 +130,7 @@ phone.fractionList = function(player) {
 
     let fractionId = user.get(player, 'fraction_id');
 
-    mysql.executeQuery(`SELECT id, social, name, fraction_id, rank, rank_type, is_leader, is_sub_leader, is_online FROM users WHERE fraction_id = '${fractionId}' ORDER BY is_leader ASC, rank_type ASC, is_online ASC, rank ASC, name ASC`, (err, rows, fields) => {
+    mysql.executeQuery(`SELECT id, social, name, fraction_id, rank, rank_type, is_leader, is_sub_leader, is_online FROM users WHERE fraction_id = '${fractionId}' ORDER BY is_leader ASC, is_sub_leader ASC, rank_type ASC, is_online DESC, rank ASC, name ASC`, (err, rows, fields) => {
         let items = [];
         let depName = '';
         let depList = [];

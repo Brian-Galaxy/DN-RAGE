@@ -35,7 +35,7 @@ checkpoint.checkPosition = function() {
 
     if (itemList.length < 1000) { //TODO
         checkpoint.fixCheckpointList();
-        setTimeout(checkpoint.checkPosition, 5000);
+        setTimeout(checkpoint.checkPosition, 10000);
     }
     else
         setTimeout(checkpoint.checkPosition, 1000);
@@ -76,7 +76,7 @@ checkpoint.addMarker = function(x, y, z, type = 1, scale = 1, height = 1, color 
 
 checkpoint.fixCheckpointList = function() {
     try {
-        methods.debug('Execute: checkpoint.fixCheckpointList');
+        methods.debug('Execute: checkpoint.fixCheckpointList' + itemList.length);
         itemList = [];
         mp.events.callRemote('server:fixCheckpointList');
         //mp.events.callRemote('server:updateGangZoneList');

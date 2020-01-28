@@ -391,7 +391,7 @@ user.tpToWaypoint = function() { //TODO машина
 
 user.setWaypoint = function(x, y) {
     mp.game.ui.setNewWaypoint(methods.parseInt(x), methods.parseInt(y));
-    //ui.showSubtitle('Метка в ~g~GPS~s~ была установлена');
+    ui.showSubtitle('Метка в ~g~GPS~s~ была установлена');
 };
 
 user.removeWaypoint = function() {

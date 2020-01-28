@@ -2530,6 +2530,13 @@ mp.events.addRemoteCounted('server:user:newRank', (player, id, rank) => {
     id = methods.parseInt(id);
     rank = methods.parseInt(rank);
 
+    if (!user.isLeader(player) && !user.isSubLeader(player)) {
+        if (user.get(player, 'rank') >= rank) {
+            player.notify('~r~У Вас нет полномочий чтобы выдавать данную должность');
+            return;
+        }
+    }
+
     let rankName = methods.getRankName(user.get(player, 'fraction_id'), user.get(player, 'rank_type'), rank);
 
     let target = user.getPlayerById(id);

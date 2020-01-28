@@ -13,7 +13,7 @@ phone.memberAction = function(player, id) {
     methods.debug('phone.memberAction');
 
     let fractionId = user.get(player, 'fraction_id');
-    mysql.executeQuery(`SELECT id, social, name, fraction_id, rank, rank_type FROM users WHERE id = '${methods.parseInt(id)}'`, (err, rows, fields) => {
+    mysql.executeQuery(`SELECT id, social, name, fraction_id, rank, rank_type, is_sub_leader FROM users WHERE id = '${methods.parseInt(id)}'`, (err, rows, fields) => {
 
         rows.forEach(row => {
 
@@ -30,40 +30,89 @@ phone.memberAction = function(player, id) {
                 'https://a.rsg.sc//n/' + row['social'].toLowerCase(),
             ));
 
-            if (user.isLeader(player) || user.isSubLeader(player)) {
+            if (!row['is_sub_leader']) {
+                if (user.isLeader(player)) {
+                    items.push(phone.getMenuItemModal(
+                        'Выдать должность заместителя',
+                        '',
+                        'Заместитель',
+                        `Вы точно хотите выдать должность ${row['name']}?`,
+                        'Выдать',
+                        'Отмена',
+                        { name: 'memberGiveSubLeader', memberId: row['id'] },
+                        '',
+                        true
+                    ));
+                }
 
+                let rankList = [];
+                fractionItem.rankList[row['rank_type']].forEach((item, id) => {
+                    if (id == row['rank'])
+                        rankList.push({title: item, checked: true, params: { name: 'memberNewRank', memberId: row['id'], rankId: id }})
+                    else
+                        rankList.push({title: item, params: { name: 'memberNewRank', memberId: row['id'], rankId: id }})
+                });
+
+                items.push(phone.getMenuItemRadio(
+                    'Изменить должность',
+                    'Текущая должность: ' + fractionItem.rankList[row['rank_type']][row['rank']],
+                    'Выберите должность',
+                    rankList,
+                    { name: 'none' },
+                    '',
+                    true
+                ));
+
+                if (user.isLeader(player) || user.isSubLeader(player)) {
+                    let depList = [];
+
+                    fractionItem.departmentList.forEach((item, id) => {
+                        if (id == row['rank_type'])
+                            depList.push({title: item, checked: true, params: { name: 'memberNewDep', memberId: row['id'], depId: id }})
+                        else
+                            depList.push({title: item, params: { name: 'memberNewDep', memberId: row['id'], depId: id }})
+                    });
+
+                    items.push(phone.getMenuItemRadio(
+                        'Перевести в другой отдел',
+                        'Текущий отдел: ' + fractionItem.departmentList[row['rank_type']],
+                        'Выберите отдел',
+                        depList,
+                        { name: 'none' },
+                        '',
+                        true
+                    ));
+                }
+            }
+            else {
+                if (user.isLeader(player)) {
+                    items.push(phone.getMenuItemModal(
+                        'Снять с должности заместителя',
+                        '',
+                        'Заместитель',
+                        `Вы точно хотите снять с должности ${row['name']}?`,
+                        'Снять',
+                        'Отмена',
+                        { name: 'memberTakeSubLeader', memberId: row['id'] },
+                        '',
+                        true
+                    ));
+                }
             }
 
-            items.push(phone.getMenuItem(
-                'Повысить',
-                '',
-                { name: 'memberUninvite', memberId: row['id'] },
-                1,
-                '',
-                true,
-                true
-            ));
-
-            items.push(phone.getMenuItem(
-                'Перевести в другой отдел',
-                '',
-                { name: 'memberUninvite', memberId: row['id'] },
-                1,
-                '',
-                true,
-                true
-            ));
-
-            items.push(phone.getMenuItem(
-                'Уволить',
-                '',
-                { name: 'memberUninvite', memberId: row['id'] },
-                1,
-                '',
-                true,
-                true,
-                '#ffcdd2',
-            ));
+            if (user.isLeader(player) || user.isSubLeader(player)) {
+                items.push(phone.getMenuItemModal(
+                    'Уволить',
+                    '',
+                    'Уволить',
+                    `Вы точно хотите уволить ${row['name']}?`,
+                    'Уволить',
+                    'Отмена',
+                    { name: 'memberUninvite', memberId: row['id'] },
+                    '',
+                    true
+                ));
+            }
 
             phone.showMenu(player, 'fraction', 'Действия', [phone.getMenuMainItem('', items)]);
         });
@@ -77,7 +126,7 @@ phone.fractionList = function(player) {
 
     let fractionId = user.get(player, 'fraction_id');
 
-    mysql.executeQuery(`SELECT id, name, fraction_id, rank, rank_type, is_leader, is_sub_leader, is_online FROM users WHERE fraction_id = '${fractionId}' ORDER BY is_leader ASC, rank_type ASC, is_online ASC, rank ASC, name ASC`, (err, rows, fields) => {
+    mysql.executeQuery(`SELECT id, social, name, fraction_id, rank, rank_type, is_leader, is_sub_leader, is_online FROM users WHERE fraction_id = '${fractionId}' ORDER BY is_leader ASC, rank_type ASC, is_online ASC, rank ASC, name ASC`, (err, rows, fields) => {
         let items = [];
         let depName = '';
         let depList = [];
@@ -88,8 +137,8 @@ phone.fractionList = function(player) {
 
         let fractionItem = enums.fractionListId[fractionId];
 
-        let leaderItem = null;
-        let subLeaderItem = null;
+        let leaderItem = [];
+        let subLeaderItem = [];
 
         let rankType = user.get(player, 'rank_type');
         let canEdit = user.get(player, 'rank') == 0 || user.get(player, 'rank') == 1;
@@ -97,33 +146,33 @@ phone.fractionList = function(player) {
         rows.forEach(row => {
 
             if (row['is_leader']) {
-                leaderItem = phone.getMenuItem(
+                leaderItem.push(phone.getMenuItemUser(
                     row['name'],
                     fractionItem.leaderName,
+                    row['is_online'] === 1,
                     { name: 'none' },
-                    1,
-                    row['is_online'] === 1 ? 'green' : 'red',
-                );
+                    'https://a.rsg.sc//n/' + row['social'].toLowerCase(),
+                ));
             }
-            else if (row['is_leader']) {
+            else if (row['is_sub_leader']) {
                 if (isLeader) {
-                    subLeaderItem = phone.getMenuItem(
+                    subLeaderItem.push(phone.getMenuItemUser(
                         row['name'],
                         fractionItem.subLeaderName,
+                        row['is_online'] === 1,
                         { name: 'memberAction', memberId: row['id'] },
-                        1,
-                        row['is_online'] === 1 ? 'green' : 'red',
-                        true
-                    );
+                        'https://a.rsg.sc//n/' + row['social'].toLowerCase(),
+                        true,
+                    ));
                 }
                 else {
-                    subLeaderItem = phone.getMenuItem(
+                    subLeaderItem.push(phone.getMenuItemUser(
                         row['name'],
                         fractionItem.subLeaderName,
+                        row['is_online'] === 1,
                         { name: 'none' },
-                        1,
-                        row['is_online'] === 1 ? 'green' : 'red',
-                    );
+                        'https://a.rsg.sc//n/' + row['social'].toLowerCase()
+                    ));
                 }
 
             }
@@ -136,22 +185,22 @@ phone.fractionList = function(player) {
                 }
 
                 if (isLeader || isSubLeader || (canEdit && rankType == row['rank_type'])) {
-                    depList.push(phone.getMenuItem(
+                    depList.push(phone.getMenuItemUser(
                         row['name'],
                         fractionItem.rankList[row['rank_type']][row['rank']],
+                        row['is_online'] === 1,
                         { name: 'memberAction', memberId: row['id'] },
-                        1,
-                        row['is_online'] === 1 ? 'green' : 'red',
-                        true
+                        'https://a.rsg.sc//n/' + row['social'].toLowerCase(),
+                        true,
                     ));
                 }
                 else {
-                    depList.push(phone.getMenuItem(
+                    depList.push(phone.getMenuItemUser(
                         row['name'],
                         fractionItem.rankList[row['rank_type']][row['rank']],
+                        row['is_online'] === 1,
                         { name: 'none' },
-                        1,
-                        row['is_online'] === 1 ? 'green' : 'red',
+                        'https://a.rsg.sc//n/' + row['social'].toLowerCase()
                     ));
                 }
 
@@ -164,10 +213,10 @@ phone.fractionList = function(player) {
 
         let newItems = [];
         let leaderItems = [];
-        if (leaderItem)
-            leaderItems.push(leaderItem);
-        if (subLeaderItem)
-            leaderItems.push(subLeaderItem);
+        if (leaderItem.length > 0)
+            leaderItems = leaderItems.concat(leaderItem);
+        if (subLeaderItem.length > 0)
+            leaderItems = leaderItems.concat(subLeaderItem);
 
         if (leaderItems.length > 0)
             newItems.push(phone.getMenuMainItem('Руководство', leaderItems));
@@ -190,7 +239,7 @@ phone.showMenu = function(player, uuid, title, items) {
     player.call('client:phone:showMenu', [JSON.stringify(menu)]);
 };
 
-phone.getMenuItem = function(title, text, params = { name: "null" }, type = 1, img = undefined, clickable = false, value = undefined, background = undefined) {
+phone.getMenuItem = function(title, text, params = { name: "null" }, type = 1, img = undefined, clickable = false, value = undefined, background = undefined, online = false) {
     return {
         title: title,
         text: text,
@@ -199,6 +248,97 @@ phone.getMenuItem = function(title, text, params = { name: "null" }, type = 1, i
         background: background,
         clickable: clickable,
         value: value,
+        online: online,
+        params: params
+    };
+};
+
+phone.getMenuItemTitle = function(title, text, params = { name: "null" }, img = undefined, clickable = false, background = undefined) {
+    return {
+        title: title,
+        text: text,
+        type: 0,
+        img: img,
+        background: background,
+        clickable: clickable,
+        params: params
+    };
+};
+
+phone.getMenuItemButton = function(title, text, params = { name: "null" }, img = undefined, clickable = false, background = undefined) {
+    return {
+        title: title,
+        text: text,
+        type: 1,
+        img: img,
+        background: background,
+        clickable: clickable,
+        params: params
+    };
+};
+
+phone.getMenuItemCheckbox = function(title, text, checked = false, params = { name: "null" }, img = undefined, clickable = false, background = undefined) {
+    return {
+        title: title,
+        text: text,
+        type: 2,
+        img: img,
+        value: checked,
+        background: background,
+        clickable: clickable,
+        params: params
+    };
+};
+
+phone.getMenuItemUser = function(title, text, isOnline = false, params = { name: "null" }, img = undefined, clickable = false, background = undefined) {
+    return {
+        title: title,
+        text: text,
+        type: 4,
+        img: img,
+        online: isOnline,
+        background: background,
+        clickable: clickable,
+        params: params
+    };
+};
+
+phone.getMenuItemRadio = function(title, text, selectTitle, selectItems, params = { name: "null" }, img = undefined, clickable = false, background = undefined) {
+    return {
+        title: title,
+        text: text,
+        type: 5,
+        img: img,
+        background: background,
+        clickable: clickable,
+        scrollbarTitle: selectTitle,
+        scrollbar: selectItems,
+        params: params
+    };
+};
+
+phone.getMenuItemImg = function(height = 150, params = { name: "null" }, img = undefined, clickable = false, background = undefined) {
+    return {
+        type: 6,
+        img: img,
+        background: background,
+        clickable: clickable,
+        height: height,
+        params: params
+    };
+};
+
+phone.getMenuItemModal = function(title, text, modalTitle, modalText, modalYes = 'Применить', modalNo = 'Отмена', params = { name: "null" }, img = undefined, clickable = false, background = undefined) {
+    return {
+        title: title,
+        text: text,
+        type: 7,
+        modalTitle: modalTitle,
+        modalText: modalText,
+        modalButton: [modalNo, modalYes],
+        img: img,
+        background: background,
+        clickable: clickable,
         params: params
     };
 };

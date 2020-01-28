@@ -1360,6 +1360,14 @@ user.addHistory = function(player, type, reason) {
     mysql.executeQuery(`INSERT INTO log_player (user_id, type, do, rp_datetime, timestamp) VALUES ('${user.getId(player)}', '${type}', '${reason}', '${rpDateTime}', '${timestamp}')`);
 };
 
+user.addHistoryById = function(id, type, reason) {
+
+    let rpDateTime = weather.getRpDateTime();
+    let timestamp = methods.getTimeStamp();
+
+    mysql.executeQuery(`INSERT INTO log_player (user_id, type, do, rp_datetime, timestamp) VALUES ('${id}', '${type}', '${reason}', '${rpDateTime}', '${timestamp}')`);
+};
+
 user.sendSms = function(player, sender, title, text, pic) {
 
     if (!user.isLogin(player))

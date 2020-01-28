@@ -397,10 +397,59 @@ methods.isBlackout = function () {
     return false; //TODO заглушка
 };
 
+methods.getFractionName = function(fractionId) {
+    try {
+        return enums.fractionListId[fractionId].fractionNameShort;
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+    return 'Отсуствует';
+};
+
+methods.getFractionNameL = function(fractionId) {
+    try {
+        return enums.fractionListId[fractionId].fractionName;
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+    return 'Отсуствует';
+};
+
+methods.getDepartmentName = function(fractionId, depId) {
+    try {
+        return enums.fractionListId[fractionId].departmentList[depId];
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+    return 'Отсуствует';
+};
+
+methods.getRankName = function(fractionId, depId, rankId) {
+    try {
+        return enums.fractionListId[fractionId].rankList[depId][rankId];
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+    return 'Отсуствует';
+};
+
+methods.getFractionHash = function(fractionId) {
+    try {
+        return enums.fractionListId[fractionId].hash;
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+    return 'none';
+};
+
 methods.getFractionById = function (fractionId) {
     return enums.fractionListId[fractionId];
 };
-
 
 methods.getFractionCountRank = function (fractionId, rankType = 0) {
     return methods.getFractionById(fractionId).rankList[rankType].length;

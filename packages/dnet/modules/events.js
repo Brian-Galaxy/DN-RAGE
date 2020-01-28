@@ -2423,6 +2423,165 @@ mp.events.addRemoteCounted('server:updateVehicleInfo', player => {
     user.updateVehicleInfo(player);
 });
 
+mp.events.addRemoteCounted('server:user:uninvite', (player, id) => {
+
+    if (!user.isLogin(player))
+        return;
+
+    if (!user.isLeader(player) && !user.isSubLeader(player)) {
+        player.notify('~r~Вы не лидер чтобы уволнять или зам лидера');
+        return;
+    }
+
+    id = methods.parseInt(id);
+    let target = user.getPlayerById(id);
+    if (user.isLogin(target)) {
+
+        user.addHistory(target, 0, 'Был уволен из организации ' + methods.getFractionName(user.get(player, 'fraction_id')) + '. Уволил: ' + user.getRpName(player));
+
+        user.set(target, 'rank', 0);
+        user.set(target, 'rank_type', 0);
+        user.set(target, 'fraction_id', 0);
+        user.set(target, 'is_leader', false);
+        user.set(target, 'is_sub_leader', false);
+
+        target.notify('~r~Вас уволили из организации');
+        player.notify('~b~Вы уволили сотрудника: ~s~' + user.getRpName(target));
+
+        user.save(target);
+    }
+    else {
+        mysql.executeQuery(`UPDATE users SET rank = '0', rank_type = '0', fraction_id = '0', is_sub_leader = '0' where id = '${id}' AND is_leader <> 1`);
+        player.notify('~b~Вы уволили сотрудника');
+        user.addHistoryById(id, 0, 'Был уволен из организации ' + methods.getFractionName(user.get(player, 'fraction_id')) + '. Уволил: ' + user.getRpName(player));
+    }
+});
+
+mp.events.addRemoteCounted('server:user:giveSubLeader', (player, id) => {
+
+    if (!user.isLogin(player))
+        return;
+
+    if (!user.isLeader(player)) {
+        player.notify('~r~Вы не лидер чтобы выдавать такие полномочия');
+        return;
+    }
+
+    id = methods.parseInt(id);
+    let target = user.getPlayerById(id);
+    if (user.isLogin(target)) {
+
+        user.addHistory(target, 0, 'Были выданы полномочия заместителя в организации ' + methods.getFractionName(user.get(player, 'fraction_id')) + '. Выдал: ' + user.getRpName(player));
+
+        user.set(target, 'is_sub_leader', true);
+
+        target.notify('~g~Вам выдали полномочия заместителя');
+        player.notify('~b~Вы выдали полномочия заместителя: ~s~' + user.getRpName(target));
+
+        user.save(target);
+    }
+    else {
+        mysql.executeQuery(`UPDATE users SET is_sub_leader = '1' where id = '${id}' AND is_leader <> 1`);
+        player.notify('~b~Вы выдали полномочия заместителя');
+        user.addHistoryById(id, 0, 'Были выданы полномочия заместителя в организации ' + methods.getFractionName(user.get(player, 'fraction_id')) + '. Выдал: ' + user.getRpName(player));
+    }
+});
+
+mp.events.addRemoteCounted('server:user:takeSubLeader', (player, id) => {
+
+    if (!user.isLogin(player))
+        return;
+
+    if (!user.isLeader(player)) {
+        player.notify('~r~Вы не лидер чтобы выдавать такие полномочия');
+        return;
+    }
+
+    id = methods.parseInt(id);
+    let target = user.getPlayerById(id);
+
+    let rank = enums.fractionListId[user.get(player, 'fraction_id')].rankList[0].length - 1;
+
+    if (user.isLogin(target)) {
+
+        user.addHistory(target, 0, 'Были изъяты полномочия заместителя в организации ' + methods.getFractionName(user.get(player, 'fraction_id')) + '. Выдал: ' + user.getRpName(player));
+
+        user.set(target, 'rank', rank);
+        user.set(target, 'rank_type', 0);
+        user.set(target, 'is_sub_leader', false);
+
+        target.notify('~r~У Вас изъяли полномочия заместителя');
+        player.notify('~b~Вы изъяли полномочия заместителя: ~s~' + user.getRpName(target));
+
+        user.save(target);
+    }
+    else {
+        mysql.executeQuery(`UPDATE users SET is_sub_leader = '0', rank = '${rank}', rank_type = '0' where id = '${id}' AND is_leader <> 1`);
+        player.notify('~b~Вы изъяли полномочия заместителя: ~s~' + id);
+        user.addHistoryById(id, 0, 'Были изъяты полномочия заместителя в организации ' + methods.getFractionName(user.get(player, 'fraction_id')) + '. Выдал: ' + user.getRpName(player));
+    }
+});
+
+mp.events.addRemoteCounted('server:user:newRank', (player, id, rank) => {
+
+    if (!user.isLogin(player))
+        return;
+
+    id = methods.parseInt(id);
+    rank = methods.parseInt(rank);
+
+    let rankName = methods.getRankName(user.get(player, 'fraction_id'), user.get(player, 'rank_type'), rank);
+
+    let target = user.getPlayerById(id);
+    if (user.isLogin(target)) {
+
+        user.addHistory(target, 0, 'Была выдана новая должность ' + rankName + '. Выдал: ' + user.getRpName(player));
+
+        user.set(target, 'rank', rank);
+
+        target.notify('~g~Вам была выдана новая должность~s~ ' + rankName);
+        player.notify('~b~Вы выдали новую должность: ~s~' + user.getRpName(target));
+
+        user.save(target);
+    }
+    else {
+        mysql.executeQuery(`UPDATE users SET rank = '${rank}' where id = '${id}' AND is_leader <> 1`);
+        player.notify('~b~Вы выдали новую должность');
+        user.addHistoryById(id, 0, 'Была выдана новая должность ' + rankName + '. Выдал: ' + user.getRpName(player));
+    }
+});
+
+mp.events.addRemoteCounted('server:user:newDep', (player, id, dep) => {
+
+    if (!user.isLogin(player))
+        return;
+
+    id = methods.parseInt(id);
+    dep = methods.parseInt(dep);
+
+    let depName = methods.getDepartmentName(user.get(player, 'fraction_id'), dep);
+    let rank = enums.fractionListId[user.get(player, 'fraction_id')].rankList[dep].length - 1;
+
+    let target = user.getPlayerById(id);
+    if (user.isLogin(target)) {
+
+        user.addHistory(target, 0, 'Был переведен в отдел ' + depName + '. Выдал: ' + user.getRpName(player));
+
+        user.set(target, 'rank', rank);
+        user.set(target, 'rank_type', dep);
+
+        target.notify('~g~Вас перевели в другой отдел~s~ ' + depName);
+        player.notify('~b~Вы перевели в другой отдел: ~s~' + user.getRpName(target));
+
+        user.save(target);
+    }
+    else {
+        mysql.executeQuery(`UPDATE users SET rank = '${rank}', rank_type = '${dep}' where id = '${id}' AND is_leader <> 1`);
+        player.notify('~b~Вы перевели в другой отдел');
+        user.addHistoryById(id, 0, 'Был переведен в отдел ' + depName + '. Выдал: ' + user.getRpName(player));
+    }
+});
+
 mp.events.addRemoteCounted('server:user:fixNearestVehicle', (player) => {
     if (!user.isLogin(player))
         return;

@@ -255,13 +255,13 @@ phone.showAppFraction = function() {
                 title: 'Раздел для лидера',
                 umenu: [
                     {
-                        title: "Транспорт организации",
+                        title: "Автопарк",
                         type: 1,
                         clickable: true,
                         params: { name: "list" }
                     },
                     {
-                        title: "Бюджет организации",
+                        title: "Бюджет",
                         type: 1,
                         clickable: true,
                         params: { name: "list" }
@@ -317,7 +317,7 @@ phone.showAppFraction = function() {
                         title: "Написать членам организации",
                         type: 1,
                         clickable: true,
-                        params: { name: "list" }
+                        params: { name: "destroyVehicle" }
                     },
                 ],
             },
@@ -627,7 +627,6 @@ phone.showMenu = function(menu) {
     ui.callCef('phone' + phone.getType(), JSON.stringify(data));
 };
 
-
 phone.getMenuItem = function(title, text, params = { name: "null" }, type = 1, img = undefined, clickable = false, value = undefined, background = undefined) {
     return {
         title: title,
@@ -637,6 +636,96 @@ phone.getMenuItem = function(title, text, params = { name: "null" }, type = 1, i
         background: background,
         clickable: clickable,
         value: value,
+        params: params
+    };
+};
+
+phone.getMenuItemTitle = function(title, text, params = { name: "null" }, img = undefined, clickable = false, background = undefined) {
+    return {
+        title: title,
+        text: text,
+        type: 0,
+        img: img,
+        background: background,
+        clickable: clickable,
+        params: params
+    };
+};
+
+phone.getMenuItemButton = function(title, text, params = { name: "null" }, img = undefined, clickable = false, background = undefined) {
+    return {
+        title: title,
+        text: text,
+        type: 1,
+        img: img,
+        background: background,
+        clickable: clickable,
+        params: params
+    };
+};
+
+phone.getMenuItemCheckbox = function(title, text, checked = false, params = { name: "null" }, img = undefined, clickable = false, background = undefined) {
+    return {
+        title: title,
+        text: text,
+        type: 2,
+        img: img,
+        value: checked,
+        background: background,
+        clickable: clickable,
+        params: params
+    };
+};
+
+phone.getMenuItemUser = function(title, text, isOnline = false, params = { name: "null" }, img = undefined, clickable = false, background = undefined) {
+    return {
+        title: title,
+        text: text,
+        type: 4,
+        img: img,
+        online: isOnline,
+        background: background,
+        clickable: clickable,
+        params: params
+    };
+};
+
+phone.getMenuItemRadio = function(title, text, selectTitle, selectItems, params = { name: "null" }, img = undefined, clickable = false, background = undefined) {
+    return {
+        title: title,
+        text: text,
+        type: 5,
+        img: img,
+        background: background,
+        clickable: clickable,
+        scrollbarTitle: selectTitle,
+        scrollbar: selectItems,
+        params: params
+    };
+};
+
+phone.getMenuItemImg = function(height = 150, params = { name: "null" }, img = undefined, clickable = false, background = undefined) {
+    return {
+        type: 6,
+        img: img,
+        background: background,
+        clickable: clickable,
+        height: height,
+        params: params
+    };
+};
+
+phone.getMenuItemModal = function(title, text, modalTitle, modalText, modalYes = 'Применить', modalNo = 'Отмена', params = { name: "null" }, img = undefined, clickable = false, background = undefined) {
+    return {
+        title: title,
+        text: text,
+        type: 7,
+        modalTitle: modalTitle,
+        modalText: modalText,
+        modalButton: [modalNo, modalYes],
+        img: img,
+        background: background,
+        clickable: clickable,
         params: params
     };
 };
@@ -652,8 +741,52 @@ phone.callBack = function(action, menu, id, ...args) {
     methods.debug(action, menu, id, ...args);
     if (action == 'button')
         phone.callBackButton(menu, id, ...args);
+    else if (action == 'radio')
+        phone.callBackRadio(menu, id, ...args);
+    else if (action == 'modal')
+        phone.callBackModal(menu);
     else
         phone.callBackCheckbox(menu, id, ...args);
+};
+
+phone.callBackRadio = function(checked, id, ...args) {
+    methods.debug(checked, id, ...args);
+
+    try {
+        let params = JSON.parse(args[0]);
+        if (params.name == 'memberNewRank') {
+            mp.events.callRemote('server:user:newRank', params.memberId, params.rankId);
+            phone.showAppFraction();
+        }
+        if (params.name == 'memberNewDep') {
+            mp.events.callRemote('server:user:newDep', params.memberId, params.depId);
+            phone.showAppFraction();
+        }
+    }
+    catch(e) {
+        methods.debug(e);
+    }
+};
+
+phone.callBackModal = function(paramsJson) {
+    try {
+        let params = JSON.parse(paramsJson);
+        if (params.name == 'memberUninvite') {
+            mp.events.callRemote('server:user:uninvite', params.memberId);
+            phone.showAppFraction();
+        }
+        if (params.name == 'memberGiveSubLeader') {
+            mp.events.callRemote('server:user:giveSubLeader', params.memberId);
+            phone.showAppFraction();
+        }
+        if (params.name == 'memberTakeSubLeader') {
+            mp.events.callRemote('server:user:takeSubLeader', params.memberId);
+            phone.showAppFraction();
+        }
+    }
+    catch(e) {
+        methods.debug(e);
+    }
 };
 
 phone.callBackButton = function(menu, id, ...args) {
@@ -665,6 +798,9 @@ phone.callBackButton = function(menu, id, ...args) {
             else if (params.name == 'list') {
                 mp.events.callRemote('server:phone:fractionList', user.getCache('fraction_id'));
                 phone.showLoad();
+            }
+            else if (params.name == 'destroyVehicle') {
+                mp.events.callRemote('server:respawnNearstVehicle');
             }
             else if (params.name == 'dispatcherList') {
                 phone.showAppFractionDispatcherList();

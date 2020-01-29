@@ -2423,6 +2423,15 @@ mp.events.addRemoteCounted('server:updateVehicleInfo', player => {
     user.updateVehicleInfo(player);
 });
 
+mp.events.add("server:pSync:fpUpdate", (player, camPitch, camHeading) => {
+    try {
+        mp.players.call(player.streamedPlayers, "client:pSync:fpUpdate", [player.id, camPitch, camHeading]);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
 mp.events.addRemoteCounted('server:user:uninvite', (player, id) => {
 
     if (!user.isLogin(player))

@@ -1,11 +1,15 @@
 import Container from '../modules/data';
 import methods from '../modules/methods';
-import user from '../user';
-import inventory from "../inventory";
 import ui from "../modules/ui";
+
 import vehicles from "../property/vehicles";
+
 import phone from "../phone";
 import voice from "../voice";
+import user from '../user';
+import inventory from "../inventory";
+
+import pSync from "./pSync";
 
 let bind = {};
 
@@ -288,6 +292,9 @@ for(let code in keyCodes) {
         if (user.getCache('s_bind_firemod') == parseInt(code)) {
             mp.events.call('client:changeFireMod');
         }
+        if (user.getCache('s_bind_fingerpoint') == parseInt(code)) {
+            pSync.pointing.start();
+        }
         if (bind.isChange)
             bind.bindNewKey(parseInt(code));
     });
@@ -303,6 +310,9 @@ for(let code in keyCodes) {
         }
         if (user.getCache('s_bind_voice') == parseInt(code)) {
             voice.disableMicrophone();
+        }
+        if (user.getCache('s_bind_fingerpoint') == parseInt(code)) {
+            pSync.pointing.stop();
         }
     });
 }

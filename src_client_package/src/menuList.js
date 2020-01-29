@@ -1670,6 +1670,10 @@ menuList.showSettingsKeyMenu = function() {
     menuItem.doName = 's_bind_firemod';
     menuItem.SetRightLabel(`~h~~m~[${bind.getKeyName(user.getCache(menuItem.doName))}]`);
 
+    menuItem = UIMenu.Menu.AddMenuItem("Показывать пальцем", "Нажмите ~g~Enter~s~ чтобы изменить");
+    menuItem.doName = 's_bind_fingerpoint';
+    menuItem.SetRightLabel(`~h~~m~[${bind.getKeyName(user.getCache(menuItem.doName))}]`);
+
     let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
 
     menu.MenuClose.on((sender) =>

@@ -1,7 +1,10 @@
 import methods from "../modules/methods";
+
 import Container from "../modules/data";
 
-let pSync = exports;
+import user from "../user";
+
+let pSync = {};
 
 pSync.animFreezer = function() {
 
@@ -271,8 +274,164 @@ mp.events.add('client:syncHeadingToTarget', (playerId, targetId) => {
     }
 });
 
-/*
+//Fingerpointing
+pSync.pointing =
+{
+    active: false,
+    interval: null,
+    lastSent: 0,
+    start: async function () {
+        if (!this.active) {
+            try {
+                this.active = true;
 
+                mp.game.streaming.requestAnimDict("anim@mp_point");
+                while (!mp.game.streaming.hasAnimDictLoaded("anim@mp_point"))
+                    await methods.sleep(1);
+
+                mp.game.invoke("0x0725a4ccfded9a70", mp.players.local.handle, 0, 1, 1, 1);
+                mp.players.local.setConfigFlag(36, true);
+                mp.players.local.taskMoveNetwork("task_mp_pointing", 0.5, false, "anim@mp_point", 24);
+                mp.game.streaming.removeAnimDict("anim@mp_point");
+
+                this.interval = setInterval(this.process.bind(this), 0);
+            }
+            catch (e) {
+                methods.debug(e);
+            }
+        }
+    },
+
+    stop: function () {
+        if (this.active) {
+            clearInterval(this.interval);
+            this.interval = null;
+            this.active = false;
+
+            try {
+                mp.game.invoke(methods.REQUEST_TASK_MOVE_NETWORK_STATE_TRANSITION, mp.players.local.handle, "Stop");
+
+                if (!mp.players.local.isInAnyVehicle(true)) {
+                    mp.game.invoke(methods.SET_PED_CURRENT_WEAPON_VISIBLE, mp.players.local.handle, 1, 1, 1, 1);
+                }
+                mp.players.local.setConfigFlag(36, false);
+            }
+            catch (e) {
+                methods.debug(e);
+            }
+            user.stopAllAnimation();
+        }
+    },
+
+    gameplayCam: mp.cameras.new("gameplay"),
+    lastSync: 0,
+
+    getRelativePitch: function () {
+        let camRot = this.gameplayCam.getRot(2);
+        return camRot.x - mp.players.local.getPitch();
+    },
+
+    process: function () {
+        if (this.active) {
+            try {
+                mp.game.invoke(methods.IS_TASK_MOVE_NETWORK_ACTIVE, mp.players.local.handle);
+
+                let camPitch = this.getRelativePitch();
+
+                if (camPitch < -70.0) {
+                    camPitch = -70.0;
+                }
+                else if (camPitch > 42.0) {
+                    camPitch = 42.0;
+                }
+                camPitch = (camPitch + 70.0) / 112.0;
+
+                let camHeading = mp.game.cam.getGameplayCamRelativeHeading();
+
+                if (camHeading < -180.0) {
+                    camHeading = -180.0;
+                }
+                else if (camHeading > 180.0) {
+                    camHeading = 180.0;
+                }
+                camHeading = (camHeading + 180.0) / 360.0;
+
+                mp.game.invoke(methods.SET_TASK_MOVE_NETWORK_SIGNAL_FLOAT, mp.players.local.handle, "Pitch", camPitch);
+                mp.game.invoke(methods.SET_TASK_MOVE_NETWORK_SIGNAL_FLOAT, mp.players.local.handle, "Heading", camHeading * -1.0 + 1.0);
+                mp.game.invoke(methods.SET_TASK_MOVE_NETWORK_SIGNAL_BOOL, mp.players.local.handle, "isBlocked", 0);
+                mp.game.invoke(methods.SET_TASK_MOVE_NETWORK_SIGNAL_BOOL, mp.players.local.handle, "isFirstPerson", mp.game.invoke(methods.GET_FOLLOW_PED_CAM_VIEW_MODE) == 4);
+
+                if ((Date.now() - this.lastSent) > 100) {
+                    this.lastSent = Date.now();
+                    mp.events.callRemote("server:pSync:fpUpdate", camPitch, camHeading);
+                }
+            }
+            catch (e) {
+                methods.debug(e);
+            }
+        }
+    }
+};
+
+mp.events.add("client:pSync:fpUpdate", async (id, camPitch, camHeading) => {
+    let netPlayer = getPlayerByRemoteId(parseInt(id));
+    if (netPlayer != null) {
+        if (netPlayer != mp.players.local) {
+            try {
+                netPlayer.lastReceivedPointing = Date.now();
+
+                if (!netPlayer.pointingInterval) {
+                    netPlayer.pointingInterval = setInterval((function () {
+                        if ((Date.now() - netPlayer.lastReceivedPointing) > 1000) {
+                            clearInterval(netPlayer.pointingInterval);
+
+                            netPlayer.lastReceivedPointing = undefined;
+                            netPlayer.pointingInterval = undefined;
+
+                            mp.game.invoke(methods.REQUEST_TASK_MOVE_NETWORK_STATE_TRANSITION, netPlayer.handle, "Stop");
+
+                            if (!netPlayer.isInAnyVehicle(true)) {
+                                mp.game.invoke(methods.SET_PED_CURRENT_WEAPON_VISIBLE, netPlayer.handle, 1, 1, 1, 1);
+                            }
+                            netPlayer.setConfigFlag(36, false);
+
+                        }
+                    }).bind(netPlayer), 500);
+
+                    mp.game.streaming.requestAnimDict("anim@mp_point");
+
+                    while (!mp.game.streaming.hasAnimDictLoaded("anim@mp_point")) {
+                        await methods.sleep(1);
+                    }
+
+                    mp.game.invoke(methods.SET_PED_CURRENT_WEAPON_VISIBLE, netPlayer.handle, 0, 1, 1, 1);
+                    netPlayer.setConfigFlag(36, true)
+                    netPlayer.taskMoveNetwork("task_mp_pointing", 0.5, false, "anim@mp_point", 24);
+                    mp.game.streaming.removeAnimDict("anim@mp_point");
+                }
+
+                mp.game.invoke(methods.SET_TASK_MOVE_NETWORK_SIGNAL_FLOAT, netPlayer.handle, "Pitch", camPitch);
+                mp.game.invoke(methods.SET_TASK_MOVE_NETWORK_SIGNAL_FLOAT, netPlayer.handle, "Heading", camHeading * -1.0 + 1.0);
+                mp.game.invoke(methods.SET_TASK_MOVE_NETWORK_SIGNAL_BOOL, netPlayer.handle, "isBlocked", 0);
+                mp.game.invoke(methods.SET_TASK_MOVE_NETWORK_SIGNAL_BOOL, netPlayer.handle, "isFirstPerson", 0);
+            }
+            catch (e) {
+                methods.debug(e);
+            }
+        }
+    }
+});
+
+function getPlayerByRemoteId(remoteId) {
+    let pla = mp.players.atRemoteId(remoteId);
+    if (pla == undefined || pla == null || !mp.players.exists(pla))
+        return null;
+    return pla;
+}
+
+export default pSync;
+
+/*
 cellphone@	f_cellphone_text_in
 cellphone@female	cellphone_call_to_text
 cellphone@first_person	cellphone_text_read_base
@@ -304,5 +463,4 @@ local toTextAnim = "cellphone_call_to_text"
 local horizontalAnim = "cellphone_horizontal_base"
 
 mp.events.callRemote('server:playAnimation', "cellphone@female", "cellphone_call_listen_base", 49);
-
 * */

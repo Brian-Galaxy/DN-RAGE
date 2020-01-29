@@ -184,6 +184,7 @@ enums.userData = [
     "s_bind_pnv",
     "s_bind_megaphone",
     "s_bind_firemod",
+    "s_bind_fingerpoint",
 
     "jail_time",
     "jail_type",

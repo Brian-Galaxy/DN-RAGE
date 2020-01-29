@@ -62,6 +62,12 @@ methods.SET_ENTITY_AS_MISSION_ENTITY = '0xAD738C3085FE7E11';
 methods.SET_VEHICLE_MOD = '0x6AF0636DDEDCB6DD';
 methods.SET_VEHICLE_UNDRIVEABLE = '0x8ABA6AF54B942B95';
 
+methods.REQUEST_TASK_MOVE_NETWORK_STATE_TRANSITION = '0xD01015C7316AE176';
+methods.SET_PED_CURRENT_WEAPON_VISIBLE = '0x0725A4CCFDED9A70';
+methods.IS_TASK_MOVE_NETWORK_ACTIVE = '0x921CE12C489C4C41';
+methods.SET_TASK_MOVE_NETWORK_SIGNAL_FLOAT = '0xD5BB4025AE449A4E';
+methods.SET_TASK_MOVE_NETWORK_SIGNAL_BOOL = '0xB0A6CFD2C69C1088';
+
 const streamedPlayers = new Set();
 
 let _isBlockKeys = false;
@@ -212,7 +218,7 @@ methods.isValidJSON = function(value){
 };
 
 methods.isBlockKeys = function() { //TODO
-    return Menu.Menu.IsShowInput() || user.isCuff() || user.isTie() || user.isDead() || _isBlockKeys;
+    return Menu.Menu.IsShowInput() || user.isCuff() || user.isTie() || user.isDead() || _isBlockKeys || mp.gui.cursor.visible;
 };
 
 methods.distanceToPos = function (v1, v2) {

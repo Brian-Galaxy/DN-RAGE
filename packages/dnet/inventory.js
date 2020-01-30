@@ -322,6 +322,40 @@ inventory.getInvAmount = function(player, id, type) {
     }
 };
 
+inventory.usePlayerItem = function(player, id, itemId) {
+    if (!user.isLogin(player))
+        return;
+
+    switch (itemId) {
+        case 277: {
+            let target = methods.getNearestPlayerWithPlayer(player, 1.5);
+            if (!user.isLogin(target)) {
+                player.notify("~r~Рядом с вами никого нет");
+                return;
+            }
+
+            if (!user.isEms(player)) {
+                player.notify("~y~У Вас нет навыка для использования этой приблуды");
+                return;
+            }
+
+            player.notify("~y~Вы связали игрока");
+            chat.sendMeCommand(player, "использовал дефибриллятор");
+            user.useAdrenaline(target);
+            break;
+        }
+        default:
+        {
+            let target = methods.getNearestPlayerWithPlayer(player, 1.5);
+            if (!user.isLogin(target)) {
+                player.notify("~r~Рядом с вами никого нет");
+                return;
+            }
+            inventory.useItem(target, id, itemId);
+        }
+    }
+};
+
 inventory.useItem = function(player, id, itemId) {
     if (!user.isLogin(player))
         return;

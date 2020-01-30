@@ -447,9 +447,8 @@ phone.userVehicleAppMenu = function(player) {
                 let item = phone.getMenuItemTitle(
                     `${row['name']}`,
                     `Гос. цена: ${methods.moneyFormat(row['price'], 1)}`,
-                    { name: 'userVehicleRespawn', id: row['id'] },
-                    enums.getVehicleImg(row['name']),
-                    true,
+                    { name: 'none' },
+                    enums.getVehicleImg(row['name'])
                 );
                 subItems.push(item);
 

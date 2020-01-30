@@ -1908,6 +1908,22 @@ user.giveLic = function (player, lic, monthEnd = 12, desc = '') {
     user.addHistory(player, 4, `Получил лицензию ${licName} на ${monthEnd} мес. ` + desc);
 };
 
+user.revive = function(player, hp = 20) {
+    methods.debug('user.revive');
+    if (!mp.players.exists(player))
+        return false;
+    player.call('client:user:revive', [hp]);
+};
+
+user.useAdrenaline = function(player) {
+    methods.debug('user.useAdrenaline');
+    if (!mp.players.exists(player))
+        return false;
+    user.revive(player);
+    // Нужно как-то очищать скрин эффект Заглушечка
+    // Dispatcher // Нужно ли это тут?
+};
+
 user.payDay = async function (player) {
     if (!user.isLogin(player))
         return false;

@@ -145,6 +145,10 @@ inventory.useItem = function(id, itemId)    {
     mp.events.callRemote('server:inventory:useItem', id, itemId);
 };
 
+inventory.usePlayerItem = function(id, itemId)    {
+    mp.events.callRemote('server:inventory:usePlayerItem', id, itemId);
+};
+
 inventory.dropItem = function(id, itemId, pos, rot) {
     mp.events.callRemote('server:inventory:dropItem', id, itemId, pos.x, pos.y, pos.z, rot.x, rot.y, rot.z);
 };

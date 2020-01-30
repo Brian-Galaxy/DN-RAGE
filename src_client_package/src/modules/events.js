@@ -1059,6 +1059,11 @@ mp.events.add('client:user:stopAllScreenEffects', () => {
     user.stopAllAnimation();
 });
 
+mp.events.add('client:user:revive', (hp) => {
+    methods.debug('Event: client:user:revive');
+    user.revive(hp);
+});
+
 mp.events.add('client:jail:jailPlayer', (sec, withIzol) => {
     methods.debug('Event: client:jail:toJail' + sec);
     jail.toJail(sec);
@@ -1355,6 +1360,10 @@ mp.events.add('client:inventory:giveItemMenu', function() {
 
 mp.events.add('client:inventory:use', function(id, itemId) {
     inventory.useItem(id, itemId);
+});
+
+mp.events.add('client:inventory:usePlayer', function(id, itemId) {
+    inventory.usePlayerItem(id, itemId);
 });
 
 mp.events.add('client:inventory:moveTo', function(id, itemId, ownerId, ownerType) {

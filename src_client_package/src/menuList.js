@@ -5919,6 +5919,10 @@ menuList.showFractionInfoMenu = function() {
         UIMenu.Menu.AddMenuItem(`Выдать лицензию на оружие`, "Стоимость: ~g~$30,000").licName = 'gun_lic';
     }
     if (user.isGov()) {
+
+        if (user.isLeader())
+            UIMenu.Menu.AddMenuItem(`Кабинет штата`).coffer = true;
+
         UIMenu.Menu.AddMenuItem(`Выдать лицензию адвоката`, "Стоимость: ~g~$20,000").licName = 'law_lic';
         UIMenu.Menu.AddMenuItem(`Выдать лицензию на бизнес`, "Стоимость: ~g~$20,000").licName = 'biz_lic';
         UIMenu.Menu.AddMenuItem(`Выдать лицензию на рыбалку"`, "Стоимость: ~g~$5,000").licName = 'fish_lic';
@@ -5960,6 +5964,23 @@ menuList.showFractionInfoMenu = function() {
             }
             mp.events.callRemote('server:user:invite', id);
         }
+
+        if (item.coffer) {
+            menuList.showCofferInfoMenu(await coffer.getAllData());
+        }
+    });
+};
+
+menuList.showCofferInfoMenu = function(data) {
+
+    let menu = UIMenu.Menu.Create(`Правительство`, `~b~Кабинет штата`);
+
+    UIMenu.Menu.AddMenuItem("В казне средств: ").SetRightLabel('~g~$' + methods.numberFormat(data.get('cofferMoney')));
+
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+    menu.ItemSelect.on(async (item, index) => {
+        if (item == closeItem)
+            UIMenu.Menu.HideMenu();
     });
 };
 

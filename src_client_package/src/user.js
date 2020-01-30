@@ -287,6 +287,19 @@ user.kickAntiCheat = function(reason, title = 'Вы были кикнуты.') {
     methods.debug(reason, title);
 };
 
+user.revive = function(hp = 20) {
+    user.isTeleport = true;
+    let hospPos = mp.players.local.position;
+    //mp.players.local.resurrect();
+    //mp.players.local.position = hospPos;
+    mp.events.callRemote('server:user:respawn', hospPos.x, hospPos.y, hospPos.z);
+    mp.players.local.health = hp;
+    mp.players.local.freezePosition(false);
+    setTimeout(function () {
+        user.isTeleport = false;
+    }, 1500);
+};
+
 user.respawn = function(x, y, z) {
     user.isTeleport = true;
     mp.events.callRemote('server:user:respawn', x, y, z);

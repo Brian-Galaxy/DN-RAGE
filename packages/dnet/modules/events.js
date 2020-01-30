@@ -1553,6 +1553,10 @@ mp.events.addRemoteCounted('server:inventory:useItem', (player, id, itemId) => {
     inventory.useItem(player, id, itemId);
 });
 
+mp.events.addRemoteCounted('server:inventory:usePlayerItem', (player, id, itemId) => {
+    inventory.usePlayerItem(player, id, itemId);
+});
+
 mp.events.addRemoteCounted("server:showVehMenu", (player) => {
     if (!user.isLogin(player))
         return;

@@ -1436,6 +1436,11 @@ mp.events.addRemoteCounted('server:phone:userRespawnById', (player, id) => {
         return;
     mp.vehicles.forEach(v => {
         if (v.getVariable('vid') == id) {
+            if (v.getOccupants().length > 0) {
+                player.notify('~r~Транспорт в угоне');
+                return;
+            }
+
             if (user.getBankMoney(player) < 500) {
                 player.notify('~r~Необходимо иметь $500 на банковской карте для использования эвакуатора');
                 return;

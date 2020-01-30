@@ -1519,11 +1519,6 @@ menuList.showMainMenu = function() {
     UIMenu.Menu.AddMenuItem("Персонаж").doName = 'showPlayerMenu';
     UIMenu.Menu.AddMenuItem("Транспорт").eventName = 'server:showVehMenu';
 
-    if (user.getCache('fraction_id') > 0)
-        UIMenu.Menu.AddMenuItem("Организация").doName = 'showFractionMenu';
-    if (user.getCache('fraction_id2') > 0)
-        UIMenu.Menu.AddMenuItem("Неоф. Организация").doName = 'showFraction2Menu';
-
     UIMenu.Menu.AddMenuItem("Помощь").doName = 'showHelpMenu';
     UIMenu.Menu.AddMenuItem("Настройки").doName = 'showSettingsMenu';
 
@@ -1533,8 +1528,6 @@ menuList.showMainMenu = function() {
     let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
     menu.ItemSelect.on(async (item, index) => {
         UIMenu.Menu.HideMenu();
-        if (item.doName == 'showFractionMenu')
-            menuList.showFractionMenu();
         if (item.doName == 'showPlayerMenu')
             menuList.showPlayerMenu();
         if (item.doName == 'showSettingsMenu')
@@ -2413,21 +2406,6 @@ menuList.showVehicleStatsMenu = function() {
     menu.ItemSelect.on((item, index) => {
         if (item == closeItem)
             UIMenu.Menu.HideMenu();
-    });
-};
-
-
-menuList.showFractionMenu = function() {
-
-    let menu = UIMenu.Menu.Create(`Организация`, `~b~Меню вашей организации`);
-
-    UIMenu.Menu.AddMenuItem("Диспетчерская").eventName = '';
-    UIMenu.Menu.AddMenuItem("Список членов организации").eventName = '';
-
-    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
-    menu.ItemSelect.on(async (item, index) => {
-        UIMenu.Menu.HideMenu();
-
     });
 };
 

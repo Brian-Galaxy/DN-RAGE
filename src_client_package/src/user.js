@@ -76,6 +76,8 @@ user.timerRayCast = function() {
                 mp.game.ui.notifications.show('Нажмите ~g~E~s~ для взаимодействия');
             targetEntityPrev = target;
         }
+        else
+            user.targetEntity = null;
     }
     catch (e) {
 

@@ -428,6 +428,97 @@ phone.fractionVehiclesBuyList = function(player) {
     });
 };
 
+phone.userVehicleAppMenu = function(player) {
+    if (!user.isLogin(player))
+        return;
+    methods.debug('phone.fractionVehiclesBuyList');
+
+    mysql.executeQuery(`SELECT * FROM cars WHERE user_id = '${user.getId(player)}' ORDER BY name ASC`, (err, rows, fields) => {
+
+        let items = [];
+
+        if (rows.length > 0) {
+
+            rows.forEach(row => {
+
+                let subItems = [];
+                let name = row['name'];
+
+                let item = phone.getMenuItemTitle(
+                    `${row['name']}`,
+                    `Гос. цена: ${methods.moneyFormat(row['price'], 1)}`,
+                    { name: 'userVehicleRespawn', id: row['id'] },
+                    enums.getVehicleImg(row['name']),
+                    true,
+                );
+                subItems.push(item);
+
+                item = phone.getMenuItemButton(
+                    'Вызвать эвакуатор',
+                    'Стоимость: $500',
+                    { name: "respawn", id: row['id'] },
+                    '',
+                    true,
+                );
+                subItems.push(item);
+
+                item = phone.getMenuItemButton(
+                    'Узнать местоположение',
+                    '',
+                    { name: "getPos", id: row['id'] },
+                    '',
+                    true,
+                );
+                subItems.push(item);
+
+                if (row['is_special'])
+                {
+                    item = phone.getMenuItemButton(
+                        'Открыть / Закрыть двери',
+                        'Удаленное управление транспортом',
+                        { name: "lock", id: row['id'] },
+                        '',
+                        true,
+                    );
+                    subItems.push(item);
+
+                    item = phone.getMenuItemButton(
+                        'Запустить / Заглушить двигатель',
+                        'Удаленное управление транспортом',
+                        { name: "engine", id: row['id'] },
+                        '',
+                        true,
+                    );
+                    subItems.push(item);
+
+                    if (row['neon_r'] > 0) {
+                        item = phone.getMenuItemButton(
+                            'Вкл / Выкл неон',
+                            'Удаленное управление транспортом',
+                            { name: "neon", id: row['id'] },
+                            '',
+                            true,
+                        );
+                        subItems.push(item);
+                    }
+                }
+
+                items.push(phone.getMenuMainItem(`${name} | ${row['number']}`, subItems));
+            });
+        }
+        else {
+            items.push(phone.getMenuMainItem(`Список пуст`, [
+                phone.getMenuItemButton(
+                    `У вас нет транспорта`,
+                    ``
+                )
+            ]));
+        }
+
+        phone.showMenu(player, 'uvehicle', `UVehicle`, items);
+    });
+};
+
 phone.fractionVehicleBuyInfo = function(player, id) {
     if (!user.isLogin(player))
         return;

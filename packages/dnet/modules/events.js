@@ -1407,6 +1407,12 @@ mp.events.addRemoteCounted('server:phone:fractionVehiclesBuyList', (player) => {
     phone.fractionVehiclesBuyList(player);
 });
 
+mp.events.addRemoteCounted('server:phone:userVehicleAppMenu', (player) => {
+    if (!user.isLogin(player))
+        return;
+    phone.userVehicleAppMenu(player);
+});
+
 mp.events.addRemoteCounted('server:phone:fractionVehicleBuyInfo', (player, id) => {
     if (!user.isLogin(player))
         return;
@@ -1423,6 +1429,65 @@ mp.events.addRemoteCounted('server:phone:fractionVehicleAction', (player, id) =>
     if (!user.isLogin(player))
         return;
     phone.fractionVehicleAction(player, id);
+});
+
+mp.events.addRemoteCounted('server:phone:userRespawnById', (player, id) => {
+    if (!user.isLogin(player))
+        return;
+    mp.vehicles.forEach(v => {
+        if (v.getVariable('vid') == id) {
+            if (user.getBankMoney(player) < 500) {
+                player.notify('~r~Необходимо иметь $500 на банковской карте для использования эвакуатора');
+                return;
+            }
+
+            user.removeBankMoney(player, 500, 'Услуги эвакуатора');
+            coffer.addMoney(1, 500);
+
+            vehicles.respawn(v);
+            player.notify('~g~Ваш транспорт скоро будет на парковочном месте');
+        }
+    });
+});
+
+mp.events.addRemoteCounted('server:phone:userGetPosById', (player, id) => {
+    if (!user.isLogin(player))
+        return;
+    mp.vehicles.forEach(v => {
+        if (v.getVariable('vid') == id) {
+            user.setWaypoint(player, v.position.x, v.position.y);
+        }
+    });
+});
+
+mp.events.addRemoteCounted('server:phone:userLockById', (player, id) => {
+    if (!user.isLogin(player))
+        return;
+    mp.vehicles.forEach(v => {
+        if (v.getVariable('vid') == id) {
+            vehicles.lockStatus(player, v);
+        }
+    });
+});
+
+mp.events.addRemoteCounted('server:phone:userEngineById', (player, id) => {
+    if (!user.isLogin(player))
+        return;
+    mp.vehicles.forEach(v => {
+        if (v.getVariable('vid') == id) {
+            vehicles.engineStatus(player, v);
+        }
+    });
+});
+
+mp.events.addRemoteCounted('server:phone:userNeonById', (player, id) => {
+    if (!user.isLogin(player))
+        return;
+    mp.vehicles.forEach(v => {
+        if (v.getVariable('vid') == id) {
+            vehicles.neonStatus(player, v);
+        }
+    });
 });
 
 mp.events.addRemoteCounted('server:inventory:getItemList', (player, ownerType, ownerId) => {

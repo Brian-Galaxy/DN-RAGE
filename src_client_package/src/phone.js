@@ -303,6 +303,16 @@ phone.showAppFraction = function() {
                     params: { name: "destroyVehicle" }
                 }
             );
+
+            if (!(user.getCache('rank') >= 2 && user.getCache('rank_type') == 0))
+                titleMenu.umenu.push(
+                    {
+                        title: "Информация о человеке",
+                        type: 1,
+                        clickable: true,
+                        params: { name: "getUserInfo" }
+                    }
+                );
         }
         if (user.isEms()) {
             titleMenu.umenu.push(
@@ -353,6 +363,61 @@ phone.showAppFraction = function() {
             );
         }
         menu.items.push(titleMenu);
+    }
+
+    phone.showMenu(menu);
+};
+
+phone.showAppVehicle = function() {
+
+    let menu = {
+        UUID: 'vehicle',
+        title: 'Ваши автомобили',
+        items: [],
+    };
+
+    for (let i = 1; i <= 10; i++) {
+        if (user.getCache('car_id' + i) > 0) {
+            let subItems = [];
+
+            let item = phone.getMenuItemButton(
+                'Вызвать эвакуатор',
+                'Стоимость: $500',
+                { name: "respawn", slot: i },
+                '',
+                true,
+            );
+            subItems.push(item);
+
+            item = phone.getMenuItemButton(
+                'Узнать местоположение',
+                '',
+                { name: "getPos", slot: i },
+                '',
+                true,
+            );
+            subItems.push(item);
+
+            item = phone.getMenuItemButton(
+                'Открыть / Закрыть двери',
+                'Удаленное управление транспортом',
+                { name: "lock", slot: i },
+                '',
+                true,
+            );
+            subItems.push(item);
+
+            item = phone.getMenuItemButton(
+                'Запустить / Заглушить двигатель',
+                'Удаленное управление транспортом',
+                { name: "engine", slot: i },
+                '',
+                true,
+            );
+            subItems.push(item);
+
+            menu.items.push(phone.getMenuMainItem('Слот #' + i, subItems));
+        }
     }
 
     phone.showMenu(menu);
@@ -1531,9 +1596,25 @@ phone.callBackButton = function(menu, id, ...args) {
                 dispatcher.send(`Код ${params.code}`, params.codeDesc);
             }
         }
+        if (menu == 'uvehicle') {
+            if (params.name == 'respawn')
+                mp.events.callRemote('server:phone:userRespawnById', params.id);
+            if (params.name == 'getPos')
+                mp.events.callRemote('server:phone:userGetPosById', params.id);
+            if (params.name == 'lock')
+                mp.events.callRemote('server:phone:userLockById', params.id);
+            if (params.name == 'engine')
+                mp.events.callRemote('server:phone:userEngineById', params.id);
+            if (params.name == 'neon')
+                mp.events.callRemote('server:phone:userNeonById', params.id);
+        }
         if (menu == 'apps') {
             if (params.name == 'fraction')
                 phone.showAppFraction();
+            if (params.name == 'car') {
+                mp.events.callRemote('server:phone:userVehicleAppMenu');
+                phone.showLoad();
+            }
         }
         if (menu == 'gps') {
             if (params.x)

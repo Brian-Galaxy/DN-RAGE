@@ -5908,6 +5908,73 @@ menuList.showFractionKeyMenu = function(data) {
     });
 };
 
+menuList.showFractionInfoMenu = function() {
+
+    let menu = UIMenu.Menu.Create(`Организация`, `~b~Ваша органзация`)
+
+    if (user.isLeader() || user.isSubLeader() || (user.isDepLeader() && user.getCache('rank_type') === 0))
+        UIMenu.Menu.AddMenuItem(`Принять в организацию`).invite = true;
+
+    if (user.isSapd() || user.isSheriff() || user.isFib()) {
+        UIMenu.Menu.AddMenuItem(`Выдать лицензию на оружие`, "Стоимость: ~g~$30,000").licName = 'gun_lic';
+    }
+    if (user.isGov()) {
+        UIMenu.Menu.AddMenuItem(`Выдать лицензию адвоката`, "Стоимость: ~g~$20,000").licName = 'law_lic';
+        UIMenu.Menu.AddMenuItem(`Выдать лицензию на бизнес`, "Стоимость: ~g~$20,000").licName = 'biz_lic';
+        UIMenu.Menu.AddMenuItem(`Выдать лицензию на рыбалку"`, "Стоимость: ~g~$5,000").licName = 'fish_lic';
+    }
+    if (user.isEms()) {
+        UIMenu.Menu.AddMenuItem(`Выдать мед. страховку`, "Стоимость: ~g~$20,000").licName = 'med_lic';
+    }
+
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+    menu.ItemSelect.on(async (item, index) => {
+        UIMenu.Menu.HideMenu();
+
+        if (item.licName) {
+
+            let id = methods.parseInt(await UIMenu.Menu.GetUserInput("ID Игрока", "", 9));
+            if (id < 0) {
+                mp.game.ui.notifications.show("~r~ID Игркоа не может быть меньше нуля");
+                return;
+            }
+
+            if (item.licName == 'gun_lic')
+                mp.events.callRemote('server:user:askSellLic', id, item.licName, 30000);
+            if (item.licName == 'law_lic')
+                mp.events.callRemote('server:user:askSellLic', id, item.licName, 20000);
+            if (item.licName == 'biz_lic')
+                mp.events.callRemote('server:user:askSellLic', id, item.licName, 20000);
+            if (item.licName == 'med_lic')
+                mp.events.callRemote('server:user:askSellLic', id, item.licName, 20000);
+            if (item.licName == 'fish_lic')
+                mp.events.callRemote('server:user:askSellLic', id, item.licName, 5000);
+        }
+
+        if (item.invite) {
+
+            let id = methods.parseInt(await UIMenu.Menu.GetUserInput("ID Игрока", "", 9));
+            if (id < 0) {
+                mp.game.ui.notifications.show("~r~ID Игркоа не может быть меньше нуля");
+                return;
+            }
+            mp.events.callRemote('server:user:invite', id);
+        }
+    });
+};
+
+menuList.showAskBuyLicMenu = function(playerId, lic, licName, price) {
+
+    let menu = UIMenu.Menu.Create(`Лицензия`, `~b~${licName}`);
+    UIMenu.Menu.AddMenuItem(`~g~Купить лицензию за ${methods.moneyFormat(price)}`).isAccept = true;
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Отмена");
+    menu.ItemSelect.on(async (item, index) => {
+        UIMenu.Menu.HideMenu();
+        if (item.isAccept) {
+            mp.events.callRemote('server:user:buyLicensePlayer', playerId, lic, price);
+        }
+    });
+};
 
 menuList.showGovGarderobMenu = function() {
     let menu = UIMenu.Menu.Create(`Гардероб`, `~b~Гардероб`);
@@ -6276,6 +6343,40 @@ menuList.showSapdGarderobMenu = function() {
     });
     menu.ItemSelect.on(item => {
         UIMenu.Menu.HideMenu();
+    });
+};
+
+menuList.showSapdArrestMenu = function() {
+
+    let menu = UIMenu.Menu.Create(`PC`, `~b~Арест`);
+    UIMenu.Menu.AddMenuItem("Арест").eventName = 'server:user:arrest';
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+
+    menu.ItemSelect.on(async item => {
+        UIMenu.Menu.HideMenu();
+        if (item.eventName) {
+            let id = await UIMenu.Menu.GetUserInput("ID Игрока", "", 10);
+            mp.events.callRemote(item.eventName, methods.parseInt(id));
+        }
+    });
+};
+
+menuList.showSapdClearMenu = function() {
+    if (user.getCache('rank') > 1 && user.getCache('rank_type') == 0) {
+        mp.game.ui.notifications.show("~r~Не доступно для кадетов");
+        return;
+    }
+
+    let menu = UIMenu.Menu.Create(`PC`, `~b~Очистить розыск`);
+    UIMenu.Menu.AddMenuItem("Очистить розыск").eventName = 'server:user:giveWanted';
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+
+    menu.ItemSelect.on(async item => {
+        UIMenu.Menu.HideMenu();
+        if (item.eventName) {
+            let id = await UIMenu.Menu.GetUserInput("ID Игрока", "", 10);
+            mp.events.callRemote(item.eventName, methods.parseInt(id), 0, 'clear');
+        }
     });
 };
 

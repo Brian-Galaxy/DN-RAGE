@@ -293,6 +293,46 @@ methods.saveFractionLog = function(name, doName, text, fractionId = 0) {
     mp.events.callRemote('server:addFractionLog', name, doName, text, fractionId);
 };
 
+methods.getLicName = function (lic) {
+    let licName = '';
+    switch (lic) {
+        case 'a_lic':
+            licName = 'Лицензия категории А';
+            break;
+        case 'b_lic':
+            licName = 'Лицензия категории B';
+            break;
+        case 'c_lic':
+            licName = 'Лицензия категории C';
+            break;
+        case 'air_lic':
+            licName = 'Лицензия пилота';
+            break;
+        case 'ship_lic':
+            licName = 'Лицензия на водный транспорт';
+            break;
+        case 'taxi_lic':
+            licName = 'Лицензия на перевозку пассажиров';
+            break;
+        case 'law_lic':
+            licName = 'Лицензия адвоката';
+            break;
+        case 'gun_lic':
+            licName = 'Лицензия на оружие';
+            break;
+        case 'biz_lic':
+            licName = 'Лицензия на бизнес';
+            break;
+        case 'fish_lic':
+            licName = 'Лицензия на рыбалку';
+            break;
+        case 'med_lic':
+            licName = 'Мед. страховка';
+            break;
+    }
+    return licName;
+};
+
 methods.getWaypointPosition = function () {
     let pos = new mp.Vector3(0, 0, 0);
     if (mp.game.invoke('0x1DD1F58F493F1DA5')) {

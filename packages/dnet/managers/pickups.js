@@ -107,11 +107,18 @@ pickups.LicBuyPos = new mp.Vector3(-1576.237, -579.495, 107.523);
 /*Keys*/
 pickups.GovKeyPos = new mp.Vector3(-1397.35693359375, -464.54345703125, 33.4775505065918);
 pickups.SapdKeyPos = new mp.Vector3(458.65, -1007.944, 27.27073);
-pickups.FibKeyPos = new mp.Vector3(138.4407, -702.3063, 32.12376);
 pickups.SheriffKeyPos = new mp.Vector3(-453.48065185546875, 6031.2314453125, 30.340538024902344);
 pickups.InvaderKeyPos = new mp.Vector3(-1095.8746337890625, -254.6504669189453, 36.68137741088867);
-pickups.Ems1KeyPos = new mp.Vector3(293.5118, -1447.379, 28.96659);
-pickups.Ems2KeyPos = new mp.Vector3(293.5118, -1447.379, 28.96659);
+pickups.EmsKeyPos = new mp.Vector3(293.5118, -1447.379, 28.96659);
+
+/*Info*/
+pickups.GovInfoPos = new mp.Vector3(-1372.4476318359375, -464.2900695800781, 71.05709075927734);
+pickups.SapdInfoPos = new mp.Vector3(447.4615783691406, -973.3896484375, 29.689332962036133);
+pickups.SheriffInfo1Pos = new mp.Vector3(-447.1171569824219, 6014.25732421875, 35.50706481933594);
+pickups.SheriffInfo2Pos = new mp.Vector3(1861.929931640625, 3689.359375, 33.26704788208008);
+pickups.InvaderInfoPos = new mp.Vector3(-1082.346923828125, -245.2889404296875, 36.763282775878906);
+pickups.EmsInfo1Pos = new mp.Vector3(334.723876953125, -594.0081176757812, 42.28398895263672);
+pickups.EmsInfo2Pos = new mp.Vector3(-268.90997314453125, 6321.72802734375, 31.47595977783203);
 
 /*EMS*/
 pickups.EmsGarderobPos1 = new mp.Vector3(299.0457458496094, -598.6067504882812, 42.28403091430664);
@@ -324,6 +331,23 @@ pickups.checkPressE = function(player) {
     if (methods.distanceToPos(pickups.MeriaHelpPos, playerPos) < distanceCheck)
         player.call('client:menuList:showMeriaMainMenu');
 
+    if (user.isLeader(player) || user.isSubLeader(player) || user.isDepLeader(player) || user.isDepSubLeader(player)) {
+        if (methods.distanceToPos(pickups.GovInfoPos, playerPos) < distanceCheck)
+            player.call('client:menuList:showFractionInfoMenu');
+        if (methods.distanceToPos(pickups.SapdInfoPos, playerPos) < distanceCheck)
+            player.call('client:menuList:showFractionInfoMenu');
+        if (methods.distanceToPos(pickups.SheriffInfo1Pos, playerPos) < distanceCheck)
+            player.call('client:menuList:showFractionInfoMenu');
+        if (methods.distanceToPos(pickups.SheriffInfo2Pos, playerPos) < distanceCheck)
+            player.call('client:menuList:showFractionInfoMenu');
+        if (methods.distanceToPos(pickups.InvaderInfoPos, playerPos) < distanceCheck)
+            player.call('client:menuList:showFractionInfoMenu');
+        if (methods.distanceToPos(pickups.EmsInfo1Pos, playerPos) < distanceCheck)
+            player.call('client:menuList:showFractionInfoMenu');
+        if (methods.distanceToPos(pickups.EmsInfo2Pos, playerPos) < distanceCheck)
+            player.call('client:menuList:showFractionInfoMenu');
+    }
+
     if (methods.distanceToPos(pickups.GovKeyPos, playerPos) < distanceCheck && user.isGov(player))
         player.call('client:menuList:showFractionKeyMenu', [vehicles.getFractionAllowCarList(1, user.isLeader(player) || user.isSubLeader(player) ? -1 : user.get(player, 'rank_type'))]);
 
@@ -333,10 +357,7 @@ pickups.checkPressE = function(player) {
     else if (methods.distanceToPos(pickups.SheriffKeyPos, playerPos) < distanceCheck && user.isSheriff(player))
         player.call('client:menuList:showFractionKeyMenu', [vehicles.getFractionAllowCarList(5, user.isLeader(player) || user.isSubLeader(player) ? -1 : user.get(player, 'rank_type'))]);
 
-    else if (methods.distanceToPos(pickups.Ems1KeyPos, playerPos) < distanceCheck && user.isEms(player))
-        player.call('client:menuList:showFractionKeyMenu', [vehicles.getFractionAllowCarList(6, user.isLeader(player) || user.isSubLeader(player) ? -1 : user.get(player, 'rank_type'))]);
-
-    else if (methods.distanceToPos(pickups.Ems2KeyPos, playerPos) < distanceCheck && user.isEms(player))
+    else if (methods.distanceToPos(pickups.EmsKeyPos, playerPos) < distanceCheck && user.isEms(player))
         player.call('client:menuList:showFractionKeyMenu', [vehicles.getFractionAllowCarList(6, user.isLeader(player) || user.isSubLeader(player) ? -1 : user.get(player, 'rank_type'))]);
 
     else if (methods.distanceToPos(pickups.InvaderKeyPos, playerPos) < distanceCheck && user.isNews(player))
@@ -456,9 +477,17 @@ pickups.createPickups = function() {
     methods.createStaticCheckpointV(pickups.UsmcPos22, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);*/
 
     //Keys
-    methods.createStaticCheckpointV(pickups.Ems1KeyPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
-    methods.createStaticCheckpointV(pickups.Ems2KeyPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
+    methods.createStaticCheckpointV(pickups.EmsKeyPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
     methods.createStaticCheckpointV(pickups.GovKeyPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
+
+    //Info
+    methods.createStaticCheckpointV(pickups.GovInfoPos, 'Нажмите ~g~E~s~ чтобы открыть меню руководства', 1, -1, pickups.Blue);
+    methods.createStaticCheckpointV(pickups.SapdInfoPos, 'Нажмите ~g~E~s~ чтобы открыть меню руководства', 1, -1, pickups.Blue);
+    methods.createStaticCheckpointV(pickups.SheriffInfo1Pos, 'Нажмите ~g~E~s~ чтобы открыть меню руководства', 1, -1, pickups.Blue);
+    methods.createStaticCheckpointV(pickups.SheriffInfo2Pos, 'Нажмите ~g~E~s~ чтобы открыть меню руководства', 1, -1, pickups.Blue);
+    methods.createStaticCheckpointV(pickups.InvaderInfoPos, 'Нажмите ~g~E~s~ чтобы открыть меню руководства', 1, -1, pickups.Blue);
+    methods.createStaticCheckpointV(pickups.EmsInfo1Pos, 'Нажмите ~g~E~s~ чтобы открыть меню руководства', 1, -1, pickups.Blue);
+    methods.createStaticCheckpointV(pickups.EmsInfo2Pos, 'Нажмите ~g~E~s~ чтобы открыть меню руководства', 1, -1, pickups.Blue);
 
     //Hackerspace
     methods.createStaticCheckpointV(pickups.HackerSpaceShopPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);

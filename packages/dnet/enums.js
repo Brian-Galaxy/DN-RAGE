@@ -46,6 +46,9 @@ enums.userData = [
     "is_sub_leader",
     "job",
 
+    "wanted_level",
+    "wanted_reason",
+
     "online_time",
     "reg_status",
     "skin",

@@ -1801,6 +1801,52 @@ user.giveJobSkill = function(player) {
     }
 };
 
+user.jail = function(player, sec, withIzol = false) {
+    methods.debug('user.jail');
+    if (!user.isLogin(player))
+        return false;
+    player.call('client:jail:jailPlayer', [sec, withIzol]);
+};
+
+user.arrest = function(player) {
+    methods.debug('user.arrest');
+    if (!user.isLogin(player))
+        return false;
+    if (methods.parseInt(user.get(player, 'wanted_level')) <= 0)
+        return false;
+
+    user.addHistory(player, 1, 'Был посажен в тюрьму на ' + user.get(player, 'wanted_level') + ' лет');
+    user.jail(player, methods.parseInt(user.get(player, 'wanted_level')) * 120);
+};
+
+user.giveWanted = function(player, level, reason) {
+    methods.debug('user.giveWanted');
+    if (!user.isLogin(player))
+        return false;
+
+    if (reason == 'clear') {
+        user.set(player, 'wanted_level', 0);
+        user.set(player, 'wanted_reason', '');
+        player.notifyWithPicture('Уведомление', 'Police Department', 'Вы больше не находитесь в розыске', 'WEB_LOSSANTOSPOLICEDEPT', 2);
+        user.addHistory(player, 1, 'Был очищен розыск');
+    }
+    else {
+
+        let currentLvl = user.get(player, 'wanted_level');
+        if (currentLvl + level >= 50) {
+            //methods.notifyWithPictureToAll('Федеральный розыск', 'Police Department', `${user.getRpName(player)} был объявлен в розыск`, 'WEB_LOSSANTOSPOLICEDEPT', 2);
+            user.set(player, 'wanted_level', 50);
+        }
+        else
+            user.set(player, 'wanted_level', currentLvl + level);
+        user.set(player, 'wanted_reason', reason);
+        player.notifyWithPicture('Уведомление', 'Police Department', 'Просим Вас явиться в участок Los Santos Police Department', 'WEB_LOSSANTOSPOLICEDEPT', 2);
+
+        user.addHistory(player, 1, 'Был выдан розыск ' + level + '. Причина: ' + reason);
+    }
+    user.updateClientCache(player);
+};
+
 user.giveLic = function (player, lic, monthEnd = 12, desc = '') {
     if (!user.isLogin(player))
         return;
@@ -1855,11 +1901,11 @@ user.giveLic = function (player, lic, monthEnd = 12, desc = '') {
 
     if (lic == 'med_lic') {
         player.notify(`~g~Вы получили ~s~медстраховку~g~ на ~s~${monthEnd} ~g~мес.`);
-        user.addHistory(player, 4, `Получил медстраховку на ${monthEnd} мес.` + desc);
+        user.addHistory(player, 4, `Получил медстраховку на ${monthEnd} мес. ` + desc);
         return;
     }
     player.notify(`~g~Вы получили лицензию ~s~${licName}~g~ на ~s~${monthEnd} ~g~мес.`);
-    user.addHistory(player, 4, `Получил лицензию ${licName} на ${monthEnd} мес.` + desc);
+    user.addHistory(player, 4, `Получил лицензию ${licName} на ${monthEnd} мес. ` + desc);
 };
 
 user.payDay = async function (player) {

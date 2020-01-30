@@ -242,6 +242,46 @@ methods.saveFractionLog = function (name, doName, text, fractionId) {
     mysql.executeQuery(`INSERT INTO log_fraction (name, text, text2, fraction_id, timestamp, rp_datetime) VALUES ('${name}', '${doName}', '${text}', '${fractionId}', '${methods.getTimeStamp()}', '${weather.getRpDateTime()}')`);
 };
 
+methods.getLicName = function (lic) {
+    let licName = '';
+    switch (lic) {
+        case 'a_lic':
+            licName = 'Лицензия категории А';
+            break;
+        case 'b_lic':
+            licName = 'Лицензия категории B';
+            break;
+        case 'c_lic':
+            licName = 'Лицензия категории C';
+            break;
+        case 'air_lic':
+            licName = 'Лицензия пилота';
+            break;
+        case 'ship_lic':
+            licName = 'Лицензия на водный транспорт';
+            break;
+        case 'taxi_lic':
+            licName = 'Лицензия на перевозку пассажиров';
+            break;
+        case 'law_lic':
+            licName = 'Лицензия адвоката';
+            break;
+        case 'gun_lic':
+            licName = 'Лицензия на оружие';
+            break;
+        case 'biz_lic':
+            licName = 'Лицензия на бизнес';
+            break;
+        case 'fish_lic':
+            licName = 'Лицензия на рыбалку';
+            break;
+        case 'med_lic':
+            licName = 'Мед. страховка';
+            break;
+    }
+    return licName;
+};
+
 methods.saveFile = function (name, log) {
     fs.appendFile("" + name + ".log", `${log}\n`, function (err) {
         if(err) {

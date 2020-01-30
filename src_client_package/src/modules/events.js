@@ -1059,6 +1059,11 @@ mp.events.add('client:user:stopAllScreenEffects', () => {
     user.stopAllAnimation();
 });
 
+mp.events.add('client:jail:jailPlayer', (sec, withIzol) => {
+    methods.debug('Event: client:jail:toJail' + sec);
+    jail.toJail(sec);
+});
+
 mp.events.add('client:user:askDatingToPlayerId', (playerId, nick) => {
     menuList.showPlayerDatingAskMenu(playerId, nick);
 });
@@ -1184,6 +1189,16 @@ mp.events.add('client:menuList:showFractionKeyMenu', (data) => {
     menuList.showFractionKeyMenu(data);
 });
 
+mp.events.add('client:menuList:showFractionInfoMenu', () => {
+    methods.debug('Event: client:menuList:showFractionInfoMenu');
+    menuList.showFractionInfoMenu();
+});
+
+mp.events.add('client:menuList:showAskBuyLicMenu', (playerId, lic, licName, price) => {
+    methods.debug('Event: client:menuList:showAskBuyLicMenu');
+    menuList.showAskBuyLicMenu(playerId, lic, licName, price);
+});
+
 mp.events.add('client:menuList:showGovGarderobMenu', () => {
     methods.debug('Event: client:menuList:showGovGarderobMenu');
     menuList.showGovGarderobMenu();
@@ -1192,6 +1207,16 @@ mp.events.add('client:menuList:showGovGarderobMenu', () => {
 mp.events.add('client:menuList:showSapdArsenalMenu', () => {
     methods.debug('Event: client:menuList:showSapdArsenalMenu');
     menuList.showSapdArsenalMenu();
+});
+
+mp.events.add('client:menuList:showSapdArrestMenu', () => {
+    methods.debug('Event: client:menuList:showSapdArrestMenu');
+    menuList.showSapdArrestMenu();
+});
+
+mp.events.add('client:menuList:showSapdClearMenu', () => {
+    methods.debug('Event: client:menuList:showSapdClearMenu');
+    menuList.showSapdClearMenu();
 });
 
 mp.events.add('client:menuList:showSapdGarderobMenu', () => {

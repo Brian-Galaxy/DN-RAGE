@@ -2721,6 +2721,211 @@ mp.events.addRemoteCounted('server:user:uninvite', (player, id) => {
     }
 });
 
+mp.events.addRemoteCounted('server:user:invite', (player, id) => {
+
+    if (!user.isLogin(player))
+        return;
+
+    id = methods.parseInt(id);
+    let target = mp.players.at(id);
+    if (user.isLogin(target)) {
+
+        if (target.id == player.id) {
+            player.notify('~r~Здравствуйте, я хотел вставить сюда шутку, но я ее не придумал, в общем, как ты собрался самого себя принять в организацию в которой ты уже состоишь?');
+            return;
+        }
+
+        if (methods.distanceToPos(target.position, player.position) > 5) {
+            player.notify('~r~Вы слишком далеко друг от друга');
+            return;
+        }
+
+        user.addHistory(target, 0, 'Был принят в организацию ' + user.getFractionName(player) + '. Принял: ' + user.getRpName(player));
+
+        let rank = enums.fractionListId[user.get(player, 'fraction_id')].rankList[0].length - 1;
+
+        user.set(target, 'rank', rank);
+        user.set(target, 'rank_type', 0);
+        user.set(target, 'fraction_id', user.get(player, 'fraction_id'));
+        user.set(target, 'is_leader', false);
+        user.set(target, 'is_sub_leader', false);
+
+        target.notify('~g~Вас приняли в организацию ' + user.getFractionName(player));
+        player.notify('~b~Вы приняли сотрудника: ~s~' + user.getRpName(target));
+
+        user.save(target);
+    }
+    else {
+        player.notify('~r~Игрок не найден');
+    }
+});
+
+mp.events.addRemoteCounted('server:user:askSellLic', (player, id, lic, price) => {
+
+    if (!user.isLogin(player))
+        return;
+
+    id = methods.parseInt(id);
+    price = methods.parseFloat(price);
+    let target = mp.players.at(id);
+    if (user.isLogin(target)) {
+
+        if (methods.distanceToPos(target.position, player.position) > 5) {
+            player.notify('~r~Вы слишком далеко друг от друга');
+            return;
+        }
+
+        let licName = '';
+        switch (lic) {
+            case 'a_lic':
+                licName = 'Лицензия категории А';
+                break;
+            case 'b_lic':
+                licName = 'Лицензия категории B';
+                break;
+            case 'c_lic':
+                licName = 'Лицензия категории C';
+                break;
+            case 'air_lic':
+                licName = 'Лицензия пилота';
+                break;
+            case 'ship_lic':
+                licName = 'Лицензия на водный транспорт';
+                break;
+            case 'taxi_lic':
+                licName = 'Лицензия на перевозку пассажиров';
+                break;
+            case 'law_lic':
+                licName = 'Лицензия адвоката';
+                break;
+            case 'gun_lic':
+                licName = 'Лицензия на оружие';
+                break;
+            case 'biz_lic':
+                licName = 'Лицензия на бизнес';
+                break;
+            case 'fish_lic':
+                licName = 'Лицензия на рыбалку';
+                break;
+            case 'med_lic':
+                licName = 'Мед. страховка';
+                break;
+        }
+
+        target.call('client:menuList:showAskBuyLicMenu', [player.id, lic, licName, price])
+    }
+    else {
+        player.notify('~r~Игрок не найден');
+    }
+});
+
+mp.events.addRemoteCounted('server:user:buyLicensePlayer', (player, id, lic, price) => {
+
+    if (!user.isLogin(player))
+        return;
+
+    id = methods.parseInt(id);
+    price = methods.parseFloat(price);
+    let target = mp.players.at(id);
+    if (user.isLogin(target)) {
+
+        if (methods.distanceToPos(target.position, player.position) > 5) {
+            player.notify('~r~Вы слишком далеко друг от друга');
+            return;
+        }
+
+        if (user.getMoney(player) < price) {
+            player.notify('~r~У Вас не достаточно средств');
+            return;
+        }
+
+        user.removeMoney(player, price, 'Покупка лицензии');
+        user.addMoney(target, price * 0.2, 'Продажа лицензии лицензии');
+        coffer.addMoney(coffer.getIdByFraction(user.get(target, 'fraction_id')), price * 0.8);
+
+        methods.saveFractionLog(
+            user.getRpName(target),
+            `Выдал "${methods.getLicName(lic)}" гражданину ${user.getRpName(player)}`,
+            `Пополнение бюджета: ${methods.moneyFormat(price * 0.8)}`,
+            user.get(target, 'fraction_id')
+        );
+
+        user.giveLic(player, lic, 24, `Выдал: ${user.getRpName(target)}`);
+        player.notify('~g~Поздравляем с покупкой ~s~' + methods.getLicName(lic));
+    }
+    else {
+        player.notify('~r~Игрок не найден');
+    }
+});
+
+mp.events.addRemoteCounted('server:user:giveWanted', (player, id, level, reason) => {
+    if (!user.isLogin(player))
+        return;
+    try {
+        let p = mp.players.at(id);
+        if (user.isLogin(p)) {
+            if (reason == 'clear') {
+
+                methods.saveFractionLog(
+                    user.getRpName(player),
+                    `Очистил розыск гражданину ${user.getRpName(p)}`,
+                    ``,
+                    user.get(player, 'fraction_id')
+                );
+
+                player.notify('~g~Вы очистили розыск');
+            }
+            else {
+                player.notify('~g~Вы выдали розыск');
+            }
+            methods.saveLog('GiveWanted', `${user.getRpName(player)} give to ${user.getRpName(p)} - ${level} - ${reason}`);
+            user.giveWanted(p, level, reason);
+        }
+        else
+            player.notify('~r~Игрок не найден');
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.addRemoteCounted('server:user:arrest', (player, id) => {
+    if (!user.isLogin(player))
+        return;
+    try {
+        let p = mp.players.at(id);
+        if (user.isLogin(p)) {
+
+            if (methods.distanceToPos(p.position, player.position) > 10) {
+                player.notify('~r~Вы слишком далеко друг от друга');
+                return;
+            }
+
+            if (!user.isLogin(p) || user.get(p, 'wanted_level') <= 0) {
+                player.notify('~r~У игрока нет розыска');
+                return;
+            }
+            coffer.addMoney(coffer.getIdByFraction(user.get(player, 'fraction_id'), 1500));
+            user.addMoney(player, 1500, 'Премия');
+            player.notify('~g~Вы произвели арест. Премия: ~s~$1500');
+
+            methods.saveFractionLog(
+                user.getRpName(player),
+                `Произвел арест ${user.getRpName(p)}`,
+                `Пополнение бюджета: ${methods.moneyFormat(1500)}`,
+                user.get(player, 'fraction_id')
+            );
+
+            user.arrest(p);
+        }
+        else
+            player.notify('~r~Игрок не найден');
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
 mp.events.addRemoteCounted('server:user:giveSubLeader', (player, id) => {
 
     if (!user.isLogin(player))
@@ -3949,7 +4154,7 @@ mp.events.add("playerDeath", (player, reason, killer) => {
 mp.events.addRemoteCounted("playerDeathDone", (player) => {
     if (user.isLogin(player)) {
         if (user.has(player, 'killerInJail') && user.get(player, 'killerInJail')) {
-            //user.jail(player, user.get(player, 'wanted_level') * 600); //TODO JAIL
+            user.jail(player, user.get(player, 'wanted_level') * 120);
             player.outputChatBox('!{#FFC107}Вас привезли в больницу с огнестрельным ранением и у врачей возникли подозрения, поэтому они сделали запрос в SAPD и сотрудники SAPD выяснили, что у вас есть розыск. После лечения вы отправились в тюрьму.');
         }
     }

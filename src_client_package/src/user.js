@@ -1230,6 +1230,16 @@ user.isSubLeader = function() {
     return user.isLogin() && user.getCache('is_sub_leader');
 };
 
+user.isDepLeader = function() {
+    methods.debug('user.isDepLeader');
+    return user.isLogin() && user.getCache('fraction_id') > 0 && user.getCache('rank') === 0;
+};
+
+user.isDepSubLeader = function() {
+    methods.debug('user.isDepSubLeader');
+    return user.isLogin() && user.getCache('fraction_id') > 0 && user.getCache('rank') === 1;
+};
+
 user.cuff = function() {
     mp.events.callRemote('server:user:cuff');
 };

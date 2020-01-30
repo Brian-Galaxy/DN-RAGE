@@ -16,6 +16,7 @@ let bank = require('../business/bank');
 let shop = require('../business/shop');
 
 let business = require('../property/business');
+let vehicles = require('../property/vehicles');
 
 let pickups = exports;
 let distanceCheck = 1.4;
@@ -110,8 +111,7 @@ pickups.FibKeyPos = new mp.Vector3(138.4407, -702.3063, 32.12376);
 pickups.SheriffKeyPos = new mp.Vector3(-453.48065185546875, 6031.2314453125, 30.340538024902344);
 pickups.InvaderKeyPos = new mp.Vector3(-1095.8746337890625, -254.6504669189453, 36.68137741088867);
 pickups.Ems1KeyPos = new mp.Vector3(293.5118, -1447.379, 28.96659);
-pickups.Usmc1KeyPos = new mp.Vector3(468.5301818847656, -3205.692138671875, 5.069559097290039);
-pickups.Usmc2KeyPos = new mp.Vector3(3080.830810546875, -4693.53515625, 14.262321472167969);
+pickups.Ems2KeyPos = new mp.Vector3(293.5118, -1447.379, 28.96659);
 
 /*EMS*/
 pickups.EmsGarderobPos1 = new mp.Vector3(299.0457458496094, -598.6067504882812, 42.28403091430664);
@@ -325,21 +325,22 @@ pickups.checkPressE = function(player) {
         player.call('client:menuList:showMeriaMainMenu');
 
     if (methods.distanceToPos(pickups.GovKeyPos, playerPos) < distanceCheck && user.isGov(player))
-        player.call('client:menuList:showFractionKeyMenu', [methods.getFractionAllowCarList(1)]);
+        player.call('client:menuList:showFractionKeyMenu', [vehicles.getFractionAllowCarList(1, user.isLeader(player) || user.isSubLeader(player) ? -1 : user.get(player, 'rank_type'))]);
+
     else if (methods.distanceToPos(pickups.SapdKeyPos, playerPos) < distanceCheck && user.isSapd(player))
-        player.call('client:menuList:showFractionKeyMenu', [methods.getFractionAllowCarList(2)]);
-    else if (methods.distanceToPos(pickups.FibKeyPos, playerPos) < distanceCheck && user.isFib(player))
-        player.call('client:menuList:showFractionKeyMenu', [methods.getFractionAllowCarList(3)]);
+        player.call('client:menuList:showFractionKeyMenu', [vehicles.getFractionAllowCarList(2, user.isLeader(player) || user.isSubLeader(player) ? -1 : user.get(player, 'rank_type'))]);
+
     else if (methods.distanceToPos(pickups.SheriffKeyPos, playerPos) < distanceCheck && user.isSheriff(player))
-        player.call('client:menuList:showFractionKeyMenu', [methods.getFractionAllowCarList(7)]);
-    else if (methods.distanceToPos(pickups.InvaderKeyPos, playerPos) < distanceCheck && user.isPrison(player))
-        player.call('client:menuList:showFractionKeyMenu', [methods.getFractionAllowCarList(5)]);
+        player.call('client:menuList:showFractionKeyMenu', [vehicles.getFractionAllowCarList(5, user.isLeader(player) || user.isSubLeader(player) ? -1 : user.get(player, 'rank_type'))]);
+
     else if (methods.distanceToPos(pickups.Ems1KeyPos, playerPos) < distanceCheck && user.isEms(player))
-        player.call('client:menuList:showFractionKeyMenu', [methods.getFractionAllowCarList(16)]);
-    else if (methods.distanceToPos(pickups.Usmc1KeyPos, playerPos) < distanceCheck && user.isUsmc(player))
-        player.call('client:menuList:showFractionKeyMenu', [methods.getFractionAllowCarList(4)]);
-    else if (methods.distanceToPos(pickups.Usmc2KeyPos, playerPos) < distanceCheck && user.isUsmc(player))
-        player.call('client:menuList:showFractionKeyMenu', [methods.getFractionAllowCarList(104)]);
+        player.call('client:menuList:showFractionKeyMenu', [vehicles.getFractionAllowCarList(6, user.isLeader(player) || user.isSubLeader(player) ? -1 : user.get(player, 'rank_type'))]);
+
+    else if (methods.distanceToPos(pickups.Ems2KeyPos, playerPos) < distanceCheck && user.isEms(player))
+        player.call('client:menuList:showFractionKeyMenu', [vehicles.getFractionAllowCarList(6, user.isLeader(player) || user.isSubLeader(player) ? -1 : user.get(player, 'rank_type'))]);
+
+    else if (methods.distanceToPos(pickups.InvaderKeyPos, playerPos) < distanceCheck && user.isNews(player))
+        player.call('client:menuList:showFractionKeyMenu', [vehicles.getFractionAllowCarList(7, user.isLeader(player) || user.isSubLeader(player) ? -1 : user.get(player, 'rank_type'))]);
 
     if (player.dimension > 0) {
         if (methods.distanceToPos(business.BusinessBotPos, playerPos) < distanceCheck)
@@ -456,10 +457,8 @@ pickups.createPickups = function() {
 
     //Keys
     methods.createStaticCheckpointV(pickups.Ems1KeyPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
-    //methods.createStaticCheckpointV(pickups.Usmc1KeyPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
-    //methods.createStaticCheckpointV(pickups.Usmc2KeyPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
+    methods.createStaticCheckpointV(pickups.Ems2KeyPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
     methods.createStaticCheckpointV(pickups.GovKeyPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
-    //methods.createStaticCheckpointV(pickups.FibKeyPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
 
     //Hackerspace
     methods.createStaticCheckpointV(pickups.HackerSpaceShopPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);

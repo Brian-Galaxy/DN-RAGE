@@ -1179,6 +1179,11 @@ mp.events.add('client:menuList:showMazeOfficeMenu', async () => {
     menuList.showBankMenu(1, await business.getPrice(1));
 });
 
+mp.events.add('client:menuList:showFractionKeyMenu', (data) => {
+    methods.debug('Event: client:menuList:showFractionKeyMenu', data);
+    menuList.showFractionKeyMenu(data);
+});
+
 mp.events.add('client:menuList:showGovGarderobMenu', () => {
     methods.debug('Event: client:menuList:showGovGarderobMenu');
     menuList.showGovGarderobMenu();

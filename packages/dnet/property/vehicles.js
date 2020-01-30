@@ -226,7 +226,7 @@ vehicles.loadAllFractionVehicles = () => {
                 id: item['id'],
                 x: item['x'], y: item['y'], z: item['z'], rot: item['rot'],
                 name: item['name'], hash: item['hash'], price: item['price'],
-                number: item['number'], is_default: item['is_default'],
+                number: item['number'], fuel: item['fuel'], is_default: item['is_default'],
                 rank_type: item['rank_type'], rank: item['rank'], fraction_id: item['fraction_id']
             };
             vehicles.fractionList.push(v);
@@ -237,8 +237,32 @@ vehicles.loadAllFractionVehicles = () => {
     });
 };
 
+
+vehicles.getFractionAllowCarList = function(fractionId, rankType) {
+    let carAllowList = [];
+    //console.time('getFractionAllowCarList');
+
+    vehicles.fractionList.forEach(item => {
+        if (item.fraction_id == fractionId && (item.rank_type == rankType || rankType == -1) && item.is_default == 0) {
+            let canAdd = 0;
+            mp.vehicles.forEach(function (veh) {
+                if (!vehicles.exists(veh))
+                    return;
+                if (veh.getVariable('veh_id') == item.id)
+                    canAdd = 99;
+            });
+
+            let name = methods.getVehicleInfo(item.name);
+            carAllowList.push({name: name.display_name, id: item.id, rank: item.rank - canAdd, number: item.number});
+        }
+    });
+    //console.timeEnd('getFractionAllowCarList');
+    return carAllowList;
+};
+
 vehicles.getFractionVehicleInfo = (id) => {
     let veh = undefined;
+    id = methods.parseInt(id);
     vehicles.fractionList.forEach(item => {
         if (item.id == id)
             veh = item;
@@ -427,6 +451,34 @@ vehicles.spawnFractionCar = (id) => {
             }
         }
 
+        let spawnPos = new mp.Vector3(methods.parseFloat(info.x), methods.parseFloat(info.y), methods.parseFloat(info.z));
+        let spawnRot = methods.parseFloat(info.rot);
+
+        if (info.x == 0) {
+            switch (fractionId) {
+                case 1:
+                    spawnPos = new mp.Vector3(-1387.08056640625, -459.5600280761719, 34.1392822265625);
+                    spawnRot = methods.parseFloat(97.86029052734375);
+                    break;
+                case 2:
+                    spawnPos = new mp.Vector3(432.25347900390625, -1014.165771484375, 28.466196060180664);
+                    spawnRot = methods.parseFloat(158.577392578125);
+                    break;
+                case 5:
+                    spawnPos = new mp.Vector3(-472.1729431152344, 6034.9501953125, 30.960887908935547);
+                    spawnRot = methods.parseFloat(224.53294372558594);
+                    break;
+                case 6:
+                    spawnPos = new mp.Vector3(330.93255615234375, -555.2595825195312, 28.404523849487305);
+                    spawnRot = methods.parseFloat(332.39996337890625);
+                    break;
+                case 7:
+                    spawnPos = new mp.Vector3(-1100.1817626953125, -260.07623291015625, 37.33765411376953);
+                    spawnRot = methods.parseFloat(165.04827880859375);
+                    break;
+            }
+        }
+
         vehicles.spawnCarCb(veh => {
 
             if (!vehicles.exists(veh))
@@ -467,7 +519,7 @@ vehicles.spawnFractionCar = (id) => {
             if (fractionId == 4 && model == -121446169)
                 veh.setMod(48, 4);
 
-        }, new mp.Vector3(methods.parseFloat(info.x), methods.parseFloat(info.y), methods.parseFloat(info.z)), methods.parseFloat(info.rot), info.name);
+        }, spawnPos, spawnRot, info.name);
     }
     catch (e) {
         methods.debug(e);
@@ -570,6 +622,37 @@ vehicles.getData = function(id) {
     return Container.Data.GetAll(offset + methods.parseInt(id));
 };
 
+vehicles.getFuelLabel = function(id) {
+    switch (id) {
+        case 1:
+            return 'Бензин';
+        case 2:
+            return 'Дизель';
+        case 3:
+            return 'Электричество';
+        case 4:
+            return 'Авиатопливо';
+    }
+    return 'Нет топлива';
+};
+
+vehicles.getFuelPostfix = function(id) {
+    switch (id) {
+        case 1:
+        case 2:
+        case 4:
+            return 'L';
+        case 3:
+            return '%';
+    }
+    return 'Нет топлива';
+};
+
+vehicles.getFractionDay = function(price) {
+    let newPrice = price / 200;
+    return newPrice > 2000 ? 2000 : newPrice;
+};
+
 vehicles.park = function(id, x, y, z, rot, dimension) {
     methods.debug('vehicles.park');
     rot = methods.parseInt(rot);
@@ -590,6 +673,12 @@ vehicles.respawn = (vehicle) => {
         let containerId = vehicle.getVariable('container');
         if (containerId != undefined && vehicle.getVariable('user_id') > 0)
             vehicles.spawnPlayerCar(containerId);
+        let fractionId = vehicle.getVariable('fraction_id');
+        if (fractionId > 0) {
+            let info = vehicles.getFractionVehicleInfo(vehicle.getVariable('veh_id'));
+            if (info.is_default)
+                vehicles.spawnFractionCar(info.id);
+        }
         vehicle.destroy();
     }
     catch (e) {
@@ -838,6 +927,13 @@ vehicles.addNew = (model, count) => {
     let vInfo = methods.getVehicleInfo(model);
     for (let i = 0; i < count; i++) {
         mysql.executeQuery(`INSERT INTO cars (name, class, price, fuel, number) VALUES ('${vInfo.display_name}', '${vInfo.class_name}', '${vInfo.price}', '${vInfo.fuel_full}', '${vehicles.generateNumber()}')`);
+    }
+};
+
+vehicles.addNewFraction = (model, count, fractionId) => {
+    let vInfo = methods.getVehicleInfo(model);
+    for (let i = 0; i < count; i++) {
+        mysql.executeQuery(`INSERT INTO cars_fraction (name, price, fuel, number, fraction_id) VALUES ('${vInfo.display_name}', '${vInfo.price}', '${vInfo.fuel_full}', '${vehicles.generateNumber()}', '${fractionId}')`);
     }
 };
 

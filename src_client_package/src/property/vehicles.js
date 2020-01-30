@@ -505,7 +505,7 @@ vehicles.getSpeedMax = (model) => {
         case 'Buffalo2': return 211;
         case 'Buffalo3': return 210;
         case 'Bulldozer': return 40;
-        case 'Bullet': return 270;
+        case 'Bullet': return 340;
         case 'Burrito': return 180;
         case 'Burrito2': return 180;
         case 'Burrito3': return 180;

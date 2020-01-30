@@ -246,7 +246,7 @@ for(let code in keyCodes) {
         }
         if (user.getCache('s_bind_lock') == parseInt(code)) {
             if (!methods.isBlockKeys())
-                mp.events.callRemote('onKeyPress:L');
+                mp.events.callRemote('server:vehicle:lockStatus');
         }
         if (user.getCache('s_bind_engine') == parseInt(code)) {
             if (!methods.isBlockKeys())

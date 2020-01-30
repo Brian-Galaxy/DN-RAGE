@@ -1517,7 +1517,7 @@ menuList.showMainMenu = function() {
     let menu = UIMenu.Menu.Create(`Меню`, `~b~Главное меню`);
 
     UIMenu.Menu.AddMenuItem("Персонаж").doName = 'showPlayerMenu';
-    UIMenu.Menu.AddMenuItem("Транспорт").eventName = 'onKeyPress:2';
+    UIMenu.Menu.AddMenuItem("Транспорт").eventName = 'server:showVehMenu';
 
     if (user.getCache('fraction_id') > 0)
         UIMenu.Menu.AddMenuItem("Организация").doName = 'showFractionMenu';
@@ -5898,6 +5898,39 @@ menuList.showAnimationSyncListMenu = function() {
     });
 };
 
+menuList.showFractionKeyMenu = function(data) {
+
+    let menu = UIMenu.Menu.Create(`Транспорт`, `~b~Транспорт организации`);
+
+    data.forEach(function (item) {
+
+        if (item.rank < 0) {
+            UIMenu.Menu.AddMenuItem(`~c~${item.name}: ~s~`, `Транспорт не доступен`).SetRightLabel(`${item.number + item.id}`);
+            return;
+        }
+
+        if (item.rank >= user.getCache('rank') || user.isLeader() || user.isSubLeader()) {
+            let menuItem = UIMenu.Menu.AddMenuItem(`~b~${item.name}: ~s~`, "Нажмите \"~g~Enter~s~\" чтобы взять транспорт");
+            menuItem.vehicleId = item.id;
+            menuItem.vName = item.name;
+            menuItem.SetRightLabel(`${item.number}`);
+        }
+        else {
+            UIMenu.Menu.AddMenuItem(`~c~${item.name}: ~s~`, `Транспорт не доступен`).SetRightLabel(`${item.number + item.id}`);
+        }
+    });
+
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+    menu.ItemSelect.on((item, index) => {
+        UIMenu.Menu.HideMenu();
+
+        if (item.vehicleId != undefined) {
+            mp.events.callRemote('server:vehicle:spawnFractionCar', item.vehicleId);
+        }
+    });
+};
+
+
 menuList.showGovGarderobMenu = function() {
     let menu = UIMenu.Menu.Create(`Гардероб`, `~b~Гардероб`);
 
@@ -6493,9 +6526,10 @@ menuList.showAdminMenu = function() {
         UIMenu.Menu.AddMenuItem("Godmode ON/OFF").doName = 'godmode';*/
         UIMenu.Menu.AddMenuItem("Телепорт на метку").doName = 'teleportToWaypoint';
         UIMenu.Menu.AddMenuItem("Пофиксить тачку").doName = 'fixvehicle';
-        //UIMenu.Menu.AddMenuItem("Зареспавнить ближайший ТС").doName = 'respvehicle';
-        UIMenu.Menu.AddMenuItem("Удалить ближайший ТС").doName = 'deletevehicle';
+        UIMenu.Menu.AddMenuItem("Зареспавнить ближайший ТС").doName = 'respvehicle';
         UIMenu.Menu.AddMenuItem("Перевернуть ближайший ТС").doName = 'flipVehicle';
+
+        UIMenu.Menu.AddMenuItem("Добавить ТС для фракций").addFraction = true;
 
         if (user.isAdmin(5)) {
             UIMenu.Menu.AddMenuItem("Debug").doName = 'debug';
@@ -6521,6 +6555,12 @@ menuList.showAdminMenu = function() {
             user.setVariable('enableAdmin', false);
         if (item.doName == 'noClip')
             admin.noClip(true);
+        if (item.addFraction) {
+            let display_name = await UIMenu.Menu.GetUserInput("Имя", "", 32);
+            let fr = methods.parseInt(await UIMenu.Menu.GetUserInput("Фракция", "", 8));
+            let count = methods.parseInt(await UIMenu.Menu.GetUserInput("Кол-во", "", 8));
+            mp.events.callRemote('server:vehicles:addNewFraction', display_name, count, fr);
+        }
         if (item.eventName == 'server:vehicle:park') {
             UIMenu.Menu.HideMenu();
             mp.events.callRemote(item.eventName);
@@ -6626,9 +6666,6 @@ menuList.showAdminMenu = function() {
         }
         if (item.doName == 'respvehicle') {
             mp.events.callRemote('server:respawnNearstVehicle');
-        }
-        if (item.doName == 'deletevehicle') {
-            mp.events.callRemote('server:deleteNearstVehicle');
         }
         if (item.doName == 'flipVehicle') {
             mp.events.callRemote('server:flipNearstVehicle');

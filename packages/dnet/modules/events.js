@@ -1374,6 +1374,13 @@ mp.events.addRemoteCounted('server:vehicles:addNew', (player, model, count) => {
     }
 });
 
+mp.events.addRemoteCounted('server:vehicles:addNewFraction', (player, model, count, fractionId) => {
+    if (user.isAdmin(player)) {
+        vehicles.addNewFraction(model, count, fractionId);
+        player.notify('~g~Транспорт на авторынок был добавлен. Кол-во: ~s~' + count)
+    }
+});
+
 mp.events.addRemoteCounted('server:dispatcher:sendPos', (player, title, desc, x, y, z, withCoord) => {
     dispatcher.sendPos(title, desc, new mp.Vector3(x, y, z), withCoord);
 });
@@ -1388,10 +1395,34 @@ mp.events.addRemoteCounted('server:phone:fractionList', (player) => {
     phone.fractionList(player);
 });
 
+mp.events.addRemoteCounted('server:phone:fractionVehicles', (player) => {
+    if (!user.isLogin(player))
+        return;
+    phone.fractionVehicles(player);
+});
+
+mp.events.addRemoteCounted('server:phone:fractionVehiclesBuyList', (player) => {
+    if (!user.isLogin(player))
+        return;
+    phone.fractionVehiclesBuyList(player);
+});
+
+mp.events.addRemoteCounted('server:phone:fractionVehicleBuyInfo', (player, id) => {
+    if (!user.isLogin(player))
+        return;
+    phone.fractionVehicleBuyInfo(player, id);
+});
+
 mp.events.addRemoteCounted('server:phone:memberAction', (player, id) => {
     if (!user.isLogin(player))
         return;
     phone.memberAction(player, id);
+});
+
+mp.events.addRemoteCounted('server:phone:fractionVehicleAction', (player, id) => {
+    if (!user.isLogin(player))
+        return;
+    phone.fractionVehicleAction(player, id);
 });
 
 mp.events.addRemoteCounted('server:inventory:getItemList', (player, ownerType, ownerId) => {
@@ -1452,7 +1483,7 @@ mp.events.addRemoteCounted('server:inventory:useItem', (player, id, itemId) => {
     inventory.useItem(player, id, itemId);
 });
 
-mp.events.addRemoteCounted("onKeyPress:2", (player) => {
+mp.events.addRemoteCounted("server:showVehMenu", (player) => {
     if (!user.isLogin(player))
         return;
     if (player.vehicle && player.seat == -1)
@@ -1461,39 +1492,55 @@ mp.events.addRemoteCounted("onKeyPress:2", (player) => {
         player.notify('~r~Вы должны находиться в транспорте');
 });
 
-mp.events.addRemoteCounted("onKeyPress:L", (player) => {
+mp.events.addRemoteCounted("server:vehicle:lockStatus", (player) => {
     if (!user.isLogin(player))
         return;
 
-    let vehicle = methods.getNearestVehicleWithCoords(player.position, 5);
-    if (vehicles.exists(vehicle)) {
-        let data = vehicles.getData(vehicle.getVariable('container'));
-        if (data.has('fraction_id')) {
-            if (data.get('fraction_id') == user.get(player, 'fraction_id'))
-                vehicles.lockStatus(player, vehicle);
-            else
-                player.notify('~r~У Вас нет ключей от транспорта');
+    try {
+        if (player.vehicle && player.seat == -1) {
+            vehicles.lockStatus(player, player.vehicle);
+            return;
         }
-        else if (data.has('owner_id')) {
-            if (data.get('owner_id') == user.getId(player))
-                vehicles.lockStatus(player, vehicle);
+
+        let vehicle = methods.getNearestVehicleWithCoords(player.position, 5);
+        if (vehicles.exists(vehicle)) {
+            let data = vehicles.getData(vehicle.getVariable('container'));
+            if (vehicle.getVariable('fraction_id')) {
+                if (
+                    vehicle.getVariable('fraction_id') == user.get(player, 'fraction_id') &&
+                    vehicle.getVariable('rank_type') == user.get(player, 'rank_type') &&
+                    vehicle.getVariable('rank') <= user.get(player, 'rank')
+                )
+                    vehicles.lockStatus(player, vehicle);
+                else if (vehicle.getVariable('fraction_id') == user.get(player, 'fraction_id') && (user.isLeader(player) || user.isSubLeader(player)))
+                    vehicles.lockStatus(player, vehicle);
+                else
+                    player.notify('~r~У Вас нет ключей от транспорта');
+            }
+            else if (data.has('owner_id')) {
+                if (data.get('owner_id') == user.getId(player))
+                    vehicles.lockStatus(player, vehicle);
+                else
+                    player.notify('~r~У Вас нет ключей от транспорта');
+            }
+            else if (data.has('rentOwner')) {
+                if (data.get('rentOwner') == user.getId(player))
+                    vehicles.lockStatus(player, vehicle);
+                else
+                    player.notify('~r~У Вас нет ключей от транспорта');
+            }
+            else if (data.has('user_id')) {
+                if (data.get('user_id') == user.getId(player))
+                    vehicles.lockStatus(player, vehicle);
+                else
+                    player.notify('~r~У Вас нет ключей от транспорта');
+            }
             else
-                player.notify('~r~У Вас нет ключей от транспорта');
-        }
-        else if (data.has('rentOwner')) {
-            if (data.get('rentOwner') == user.getId(player))
                 vehicles.lockStatus(player, vehicle);
-            else
-                player.notify('~r~У Вас нет ключей от транспорта');
         }
-        else if (data.has('user_id')) {
-            if (data.get('user_id') == user.getId(player))
-                vehicles.lockStatus(player, vehicle);
-            else
-                player.notify('~r~У Вас нет ключей от транспорта');
-        }
-        else
-            vehicles.lockStatus(player, vehicle);
+    }
+    catch (e) {
+        methods.debug(e);
     }
 });
 
@@ -2432,6 +2479,144 @@ mp.events.add("server:pSync:fpUpdate", (player, camPitch, camHeading) => {
     }
 });
 
+mp.events.addRemoteCounted('server:fraction:vehicleNewRank', (player, id, rank) => {
+
+    if (!user.isLogin(player))
+        return;
+
+    id = methods.parseInt(id);
+    rank = methods.parseInt(rank);
+
+    mp.vehicles.forEach(veh => {
+        if (veh.getVariable('veh_id') == id)
+            veh.setVariable('rank', rank);
+    });
+
+    vehicles.fractionList.forEach((item, i) => {
+        if (item.id == id)
+            vehicles.fractionList[i].rank = rank;
+    });
+
+    mysql.executeQuery(`UPDATE cars_fraction SET rank = '${rank}' where id = '${id}'`);
+    player.notify('~b~Вы изменили доступ к транспорту');
+});
+
+mp.events.addRemoteCounted('server:fraction:vehicleNewDep', (player, id, dep) => {
+
+    if (!user.isLogin(player))
+        return;
+
+    id = methods.parseInt(id);
+    dep = methods.parseInt(dep);
+    let rank = enums.fractionListId[user.get(player, 'fraction_id')].rankList[dep].length - 1;
+
+    mp.vehicles.forEach(veh => {
+        if (veh.getVariable('veh_id') == id)
+            veh.setVariable('rank_type', dep);
+        veh.setVariable('rank', rank);
+    });
+
+    vehicles.fractionList.forEach((item, i) => {
+        if (item.id == id) {
+            vehicles.fractionList[i].rank_type = dep;
+            vehicles.fractionList[i].rank = rank;
+        }
+    });
+
+    mysql.executeQuery(`UPDATE cars_fraction SET rank = '${rank}', rank_type = '${dep}' where id = '${id}'`);
+    player.notify('~b~Вы перевели транспорт в другой отдел');
+});
+
+mp.events.addRemoteCounted('server:fraction:vehicleBuy', (player, id, price) => {
+
+    if (!user.isLogin(player))
+        return;
+
+    id = methods.parseInt(id);
+    price = methods.parseInt(price);
+    let fractionId = user.get(player, 'fraction_id');
+
+    let cofferId = coffer.getIdByFraction(fractionId);
+    if (coffer.getMoney(cofferId) < price) {
+        player.notify('~r~В бюджете организации не достаточно средств');
+        return;
+    }
+
+    mysql.executeQuery(`SELECT * FROM cars_fraction WHERE id = '${id}'`, function (err, rows, fields) {
+        rows.forEach(function (item) {
+
+            let v = {
+                id: item['id'],
+                x: item['x'], y: item['y'], z: item['z'], rot: item['rot'],
+                name: item['name'], hash: item['hash'], price: item['price'],
+                number: item['number'], is_default: item['is_default'],
+                rank_type: item['rank_type'], rank: item['rank'], fraction_id: item['fraction_id']
+            };
+            vehicles.fractionList.push(v);
+
+            methods.saveFractionLog(
+                user.getRpName(player),
+                `Купил транспорт ${item['name']}`,
+                `Потрачено из бюджета: ${methods.moneyFormat(price)}`,
+                fractionId
+            );
+
+            player.notify(`~b~Вы купили ${item['name']} для организации по цене ${methods.moneyFormat(item['price'])}`);
+        });
+    });
+
+    coffer.removeMoney(cofferId, price);
+    coffer.addMoney(1, price);
+
+    coffer.saveAll();
+
+    mysql.executeQuery(`UPDATE cars_fraction SET is_buy = '1' where id = '${id}'`);
+});
+
+mp.events.addRemoteCounted('server:fraction:vehicleSell', (player, id, price) => {
+
+    if (!user.isLogin(player))
+        return;
+
+    id = methods.parseInt(id);
+    price = methods.parseInt(price);
+    let fractionId = user.get(player, 'fraction_id');
+
+    let cofferId = coffer.getIdByFraction(fractionId);
+
+    coffer.addMoney(cofferId, price);
+    coffer.removeMoney(1, price);
+
+    vehicles.fractionList.forEach((item, i) => {
+        if (item.id == id) {
+            vehicles.fractionList[i].fraction_id = 0;
+        }
+    });
+
+    coffer.saveAll();
+
+    mysql.executeQuery(`SELECT * FROM cars_fraction WHERE id = '${id}'`, function (err, rows, fields) {
+        rows.forEach(function (item) {
+            methods.saveFractionLog(
+                user.getRpName(player),
+                `Продал транспорт ${item['name']}`,
+                `Получено в бюджет: ${methods.moneyFormat(price)}`,
+                fractionId
+            );
+        });
+    });
+
+    mysql.executeQuery(`UPDATE cars_fraction SET is_buy = '0' where id = '${id}'`);
+    player.notify(`~b~Вы продали транспорт организации по цене ${methods.moneyFormat(price)}`);
+});
+
+mp.events.addRemoteCounted('server:vehicle:spawnFractionCar', (player, id) => {
+    if (!user.isLogin(player))
+        return;
+    vehicles.spawnFractionCar(id);
+    player.notify('~b~Транспорт стоит на парковке, возьмите его');
+});
+
 mp.events.addRemoteCounted('server:user:uninvite', (player, id) => {
 
     if (!user.isLogin(player))
@@ -2624,14 +2809,6 @@ mp.events.addRemoteCounted('server:user:setWeaponTint', (player, weapon, tint) =
     user.setWeaponTint(player, methods.parseInt(weapon), methods.parseInt(tint));
 });
 
-mp.events.addRemoteCounted('server:deleteNearstVehicle', (player) => {
-    if (!user.isLogin(player))
-        return;
-    let vehicle = methods.getNearestVehicleWithCoords(player.position, 5);
-    if (vehicles.exists(vehicle))
-        vehicle.destroy();
-});
-
 mp.events.addRemoteCounted('server:respawnNearstVehicle', (player) => {
     if (!user.isLogin(player))
         return;
@@ -2654,55 +2831,6 @@ mp.events.addRemoteCounted('server:vehicle:engineStatus', (player) => {
     try {
         if (player.vehicle && player.seat == -1) {
             vehicles.engineStatus(player, player.vehicle);
-        }
-    }
-    catch (e) {
-        methods.debug(e);
-    }
-});
-
-mp.events.addRemoteCounted('server:vehicle:lockStatus', (player) => {
-    if (!user.isLogin(player))
-        return;
-    try {
-
-
-        if (player.vehicle && player.seat == -1) {
-            vehicles.lockStatus(player, player.vehicle);
-            return;
-        }
-
-        let vehicle = methods.getNearestVehicleWithCoords(player.position, 5);
-        if (vehicles.exists(vehicle)) {
-            let data = vehicles.getData(vehicle.getVariable('container'));
-
-            if (vehicle.getVariable('useless') === true) {
-                player.notify('~r~Простите, транспорт закрыт');
-                return;
-            }
-
-            if (data.has('fraction_id')) {
-                if (data.get('fraction_id') == user.get(player, 'fraction_id'))
-                    vehicles.lockStatus(player, vehicle);
-                else
-                    player.notify('~r~У Вас нет ключей от транспорта');
-            } else if (data.has('owner_id')) {
-                if (data.get('owner_id') == user.getId(player))
-                    vehicles.lockStatus(player, vehicle);
-                else
-                    player.notify('~r~У Вас нет ключей от транспорта');
-            } else if (data.has('rentOwner')) {
-                if (data.get('rentOwner') == user.getId(player))
-                    vehicles.lockStatus(player, vehicle);
-                else
-                    player.notify('~r~У Вас нет ключей от транспорта');
-            } else if (data.has('id_user')) {
-                if (data.get('id_user') == user.getId(player))
-                    vehicles.lockStatus(player, vehicle);
-                else
-                    player.notify('~r~У Вас нет ключей от транспорта');
-            } else
-                vehicles.lockStatus(player, vehicle);
         }
     }
     catch (e) {

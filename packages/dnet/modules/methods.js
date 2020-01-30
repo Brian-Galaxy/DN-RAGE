@@ -397,6 +397,12 @@ methods.isBlackout = function () {
     return false; //TODO заглушка
 };
 
+methods.sortBy = function (arr, p) {
+    return arr.slice(0).sort(function(a,b) {
+        return (a[p] > b[p]) ? 1 : (a[p] < b[p]) ? -1 : 0;
+    });
+};
+
 methods.getFractionName = function(fractionId) {
     try {
         return enums.fractionListId[fractionId].fractionNameShort;

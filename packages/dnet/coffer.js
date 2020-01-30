@@ -31,6 +31,9 @@ coffer.save = function (id) {
 
     id = methods.parseInt(id);
 
+    if (!Container.Data.Has(containerId + id, 'cofferMoney'))
+        return;
+
     let cofferMoney = coffer.getMoney(id);
     let cofferTaxPayDay = coffer.getTaxPayDay(id);
     let cofferTaxBusiness = coffer.getTaxBusiness(id);
@@ -40,6 +43,12 @@ coffer.save = function (id) {
 
     mysql.executeQuery("UPDATE official_bank SET  money = '" + cofferMoney + "', tax_pay_day = '" +
         cofferTaxPayDay + "', tax_business = '" + cofferTaxBusiness + "', tax_property = '" + cofferTaxProperty + "', tax_intermediate = '" + cofferIntermediate + "', benefit = '" + cofferBenefit + "' WHERE id = '" + id + "'");
+};
+
+coffer.saveAll = function () {
+    methods.debug('coffer.saveAll');
+    for (let i = 0; i < 20; i++)
+        coffer.save(i);
 };
 
 coffer.get = function(id, key) {

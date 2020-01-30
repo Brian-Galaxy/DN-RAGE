@@ -2022,6 +2022,16 @@ user.isSubLeader = function(player) {
     return user.isLogin(player) && user.get(player, 'is_sub_leader');
 };
 
+user.isDepLeader = function(player) {
+    methods.debug('user.isDepLeader');
+    return user.isLogin(player) && user.get(player, 'fraction_id') > 0 && user.get(player, 'rank') === 0;
+};
+
+user.isDepSubLeader = function(player) {
+    methods.debug('user.isDepSubLeader');
+    return user.isLogin(player) && user.get(player, 'fraction_id') > 0 && user.get(player, 'rank') === 1;
+};
+
 user.isAdmin = function(player, level = 1) {
     return user.isLogin(player) && user.get(player, 'admin_level') >= level;
 };

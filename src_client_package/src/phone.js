@@ -254,78 +254,106 @@ phone.showAppFraction = function() {
                     },
                 ],
             },
-            {
-                title: 'Раздел для лидера',
-                umenu: [
-                    {
-                        title: "Автопарк",
-                        type: 1,
-                        clickable: true,
-                        params: { name: "list" }
-                    },
-                    {
-                        title: "Бюджет",
-                        type: 1,
-                        clickable: true,
-                        params: { name: "list" }
-                    },
-                    {
-                        title: "Лог организации",
-                        type: 1,
-                        clickable: true,
-                        params: { name: "list" }
-                    },
-                    {
-                        title: "Написать новость",
-                        type: 1,
-                        clickable: true,
-                        params: { name: "list" }
-                    },
-                ],
-            },
-            {
-                title: 'Служебный раздел',
-                umenu: [
-                    {
-                        title: "Диспетчерская",
-                        type: 1,
-                        clickable: true,
-                        params: { name: "dispatcherList" }
-                    },
-                    {
-                        title: "Локальные коды",
-                        type: 1,
-                        clickable: true,
-                        params: { name: "dispatcherLoc" }
-                    },
-                    {
-                        title: "Коды департамента",
-                        type: 1,
-                        clickable: true,
-                        params: { name: "dispatcherDep" }
-                    },
-                    {
-                        title: "Выдать розыск",
-                        type: 1,
-                        clickable: true,
-                        params: { name: "list" }
-                    },
-                    {
-                        title: "Эвакуировать ближайший транспорт",
-                        type: 1,
-                        clickable: true,
-                        params: { name: "destroyVehicle" }
-                    },
-                    {
-                        title: "Написать членам организации",
-                        type: 1,
-                        clickable: true,
-                        params: { name: "list" }
-                    },
-                ],
-            },
         ],
     };
+
+    if (user.isGos()) {
+        let titleMenu = {
+            title: 'Служебный раздел',
+            umenu: [
+                {
+                    title: "Диспетчерская",
+                    type: 1,
+                    clickable: true,
+                    params: { name: "dispatcherList" }
+                },
+                {
+                    title: "Локальные коды",
+                    type: 1,
+                    clickable: true,
+                    params: { name: "dispatcherLoc" }
+                },
+                {
+                    title: "Коды департамента",
+                    type: 1,
+                    clickable: true,
+                    params: { name: "dispatcherDep" }
+                },
+                {
+                    title: "Написать членам организации",
+                    type: 1,
+                    clickable: true,
+                    params: { name: "sendFraction" }
+                },
+            ],
+        };
+
+        if (user.isSapd() || user.isSheriff() || user.isFib()) {
+            titleMenu.umenu.push(
+                {
+                    title: "Выдать розыск",
+                    type: 1,
+                    clickable: true,
+                    params: { name: "giveWanted" }
+                },
+                {
+                    title: "Эвакуировать ближайший транспорт",
+                    type: 1,
+                    clickable: true,
+                    params: { name: "destroyVehicle" }
+                }
+            );
+        }
+        if (user.isEms()) {
+            titleMenu.umenu.push(
+                {
+                    title: "Эвакуировать ближайший транспорт",
+                    type: 1,
+                    clickable: true,
+                    params: { name: "destroyVehicle" }
+                }
+            );
+        }
+        menu.items.push(titleMenu);
+    }
+
+    if (user.isLeader() || user.isSubLeader() || user.isDepLeader()) {
+        let titleMenu = {
+            title: 'Раздел для руководства',
+            umenu: [
+                {
+                    title: "Лог организации",
+                    type: 1,
+                    clickable: true,
+                    params: { name: "log" }
+                },
+                {
+                    title: "Написать новость",
+                    type: 1,
+                    clickable: true,
+                    params: { name: "sendNews" }
+                },
+                {
+                    title: "Управление автопарком",
+                    type: 1,
+                    clickable: true,
+                    params: { name: "vehicles" }
+                },
+            ],
+        };
+
+        if (user.isLeader()) {
+            titleMenu.umenu.push(
+                {
+                    title: "Управление бюджетом",
+                    type: 1,
+                    clickable: true,
+                    params: { name: "money" }
+                }
+            );
+        }
+        menu.items.push(titleMenu);
+    }
 
     phone.showMenu(menu);
 };
@@ -1284,7 +1312,7 @@ phone.getMenuItemTitle = function(title, text, params = { name: "null" }, img = 
         title: title,
         text: text,
         type: 0,
-        img: img,
+        value: img,
         background: background,
         clickable: clickable,
         params: params
@@ -1346,7 +1374,7 @@ phone.getMenuItemRadio = function(title, text, selectTitle, selectItems, params 
 phone.getMenuItemImg = function(height = 150, params = { name: "null" }, img = undefined, clickable = false, background = undefined) {
     return {
         type: 6,
-        img: img,
+        value: img,
         background: background,
         clickable: clickable,
         height: height,
@@ -1401,6 +1429,14 @@ phone.callBackRadio = function(checked, id, ...args) {
             mp.events.callRemote('server:user:newDep', params.memberId, params.depId);
             phone.showAppFraction();
         }
+        if (params.name == 'vehicleNewRank') {
+            mp.events.callRemote('server:fraction:vehicleNewRank', params.memberId, params.rankId);
+            phone.showAppFraction();
+        }
+        if (params.name == 'vehicleNewDep') {
+            mp.events.callRemote('server:fraction:vehicleNewDep', params.memberId, params.depId);
+            phone.showAppFraction();
+        }
     }
     catch(e) {
         methods.debug(e);
@@ -1422,6 +1458,14 @@ phone.callBackModal = function(paramsJson) {
             mp.events.callRemote('server:user:takeSubLeader', params.memberId);
             phone.showAppFraction();
         }
+        if (params.name == 'fractionVehicleBuy') {
+            mp.events.callRemote('server:fraction:vehicleBuy', params.vehId, params.price);
+            phone.showAppFraction();
+        }
+        if (params.name == 'fractionVehicleSell') {
+            mp.events.callRemote('server:fraction:vehicleSell', params.vehId, params.price);
+            phone.showAppFraction();
+        }
     }
     catch(e) {
         methods.debug(e);
@@ -1435,7 +1479,19 @@ phone.callBackButton = function(menu, id, ...args) {
             if (params.name == 'hierarchy')
                 phone.showAppFractionHierarchy();
             else if (params.name == 'list') {
-                mp.events.callRemote('server:phone:fractionList', user.getCache('fraction_id'));
+                mp.events.callRemote('server:phone:fractionList');
+                phone.showLoad();
+            }
+            else if (params.name == 'vehicles') {
+                mp.events.callRemote('server:phone:fractionVehicles');
+                phone.showLoad();
+            }
+            else if (params.name == 'fractionVehicleBuyInfo') {
+                mp.events.callRemote('server:phone:fractionVehicleBuyInfo', params.id);
+                phone.showLoad();
+            }
+            else if (params.name == 'vehicleBuyList') {
+                mp.events.callRemote('server:phone:fractionVehiclesBuyList');
                 phone.showLoad();
             }
             else if (params.name == 'destroyVehicle') {
@@ -1462,6 +1518,10 @@ phone.callBackButton = function(menu, id, ...args) {
             }
             else if (params.name == 'memberAction') {
                 mp.events.callRemote('server:phone:memberAction', params.memberId);
+                phone.showLoad();
+            }
+            else if (params.name == 'fractionVehicleAction') {
+                mp.events.callRemote('server:phone:fractionVehicleAction', params.vehId);
                 phone.showLoad();
             }
             else if (params.name == 'codeLoc') {

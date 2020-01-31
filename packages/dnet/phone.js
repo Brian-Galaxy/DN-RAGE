@@ -8,6 +8,234 @@ let enums = require('./enums');
 
 let phone = exports;
 
+phone.getUserInfo = function(player, text) {
+    if (!user.isLogin(player))
+        return;
+
+    methods.debug('phone.memberAction');
+
+    text = methods.removeQuotes(text);
+
+    mysql.executeQuery(`SELECT * FROM users WHERE id = '${methods.parseInt(text)}' OR name = '${text}'`, (err, rows, fields) => {
+
+        rows.forEach(row => {
+            let subItems = [];
+            let items = [];
+
+            subItems.push(phone.getMenuItem(
+                row['name'],
+                'ID: ' + row['id'],
+                { name: 'none' },
+                0,
+                '',
+                false,
+                'https://a.rsg.sc//n/' + row['social'].toLowerCase(),
+            ));
+
+            subItems.push(phone.getMenuItemButton(
+                'Личная история',
+                '',
+                { name: 'none' },
+                '',
+                true,
+            ));
+
+            subItems.push(phone.getMenuItemButton(
+                'Возраст',
+                row['age'],
+                { name: 'none' },
+            ));
+
+            let regName = '';
+
+            switch (row['reg_status'])
+            {
+                case 1:
+                    regName = "Регистрация";
+                    break;
+                case 2:
+                    regName = "Гражданство США";
+                    break;
+                default:
+                    regName = "Нет";
+                    break;
+            }
+
+            subItems.push(phone.getMenuItemButton(
+                'Вид на жительство',
+                regName,
+                { name: 'none' },
+            ));
+
+            if (row['phone'] != '') {
+                subItems.push(phone.getMenuItemButton(
+                    'Мобильный телефон',
+                    row['phone'],
+                    { name: 'none' },
+                ));
+            }
+
+            if (row['bank_card'] > 0) {
+                subItems.push(phone.getMenuItemButton(
+                    'Банковская карта',
+                    methods.bankFormat(row['bank_card']),
+                    { name: 'none' },
+                ));
+            }
+
+            items.push(phone.getMenuMainItem('Основной раздел', subItems));
+
+            subItems = [];
+
+            let label = 'Отсутствует';
+            if (row['a_lic']) {
+                label = `С ${row['a_lic_create']} по ${row['a_lic_end']}`;
+            }
+
+            subItems.push(phone.getMenuItemButton(
+                'Лицензия категории А',
+                label,
+                { name: 'none' },
+            ));
+
+            label = 'Отсутствует';
+            if (row['b_lic'])
+            {
+                label = `С ${row['b_lic_create']} по ${row['b_lic_end']}`;
+            }
+
+            subItems.push(phone.getMenuItemButton(
+                'Лицензия категории B',
+                label,
+                { name: 'none' },
+            ));
+
+            label = 'Отсутствует';
+            if (row['c_lic'])
+            {
+                label = `С ${row['c_lic_create']} по ${row['c_lic_end']}`;
+            }
+
+            subItems.push(phone.getMenuItemButton(
+                'Лицензия категории C',
+                label,
+                { name: 'none' },
+            ));
+
+            label = 'Отсутствует';
+            if (row['air_lic'])
+            {
+                label = `С ${row['air_lic_create']} по ${row['air_lic_end']}`;
+            }
+
+            subItems.push(phone.getMenuItemButton(
+                'Лицензия на авиатранспорт',
+                label,
+                { name: 'none' },
+            ));
+
+            label = 'Отсутствует';
+            if (row['ship_lic'])
+            {
+                label = `С ${row['ship_lic_create']} по ${row['ship_lic_end']}`;
+            }
+
+            subItems.push(phone.getMenuItemButton(
+                'Лицензия на водный транспорт',
+                label,
+                { name: 'none' },
+            ));
+
+            label = 'Отсутствует';
+            if (row['gun_lic'])
+            {
+                label = `С ${row['gun_lic_create']} по ${row['gun_lic_end']}`;
+            }
+
+            subItems.push(phone.getMenuItemButton(
+                'Лицензия на оружие',
+                label,
+                { name: 'none' },
+            ));
+
+            label = 'Отсутствует';
+            if (row['taxi_lic'])
+            {
+                label = `С ${row['taxi_lic_create']} по ${row['taxi_lic_end']}`;
+            }
+
+            subItems.push(phone.getMenuItemButton(
+                'Лицензия на перевозку пассажиров',
+                label,
+                { name: 'none' },
+            ));
+
+            label = 'Отсутствует';
+            if (row['law_lic'])
+            {
+                label = `С ${row['law_lic_create']} по ${row['law_lic_end']}`;
+            }
+
+            subItems.push(phone.getMenuItemButton(
+                'Лицензия на адвоката',
+                label,
+                { name: 'none' },
+            ));
+
+            label = 'Отсутствует';
+            if (row['biz_lic'])
+            {
+                label = `С ${row['biz_lic_create']} по ${row['biz_lic_end']}`;
+            }
+
+            subItems.push(phone.getMenuItemButton(
+                'Лицензия на бизнес',
+                label,
+                { name: 'none' },
+            ));
+
+            label = 'Отсутствует';
+            if (row['fish_lic'])
+            {
+                label = `С ${row['fish_lic_create']} по ${row['fish_lic_end']}`;
+            }
+
+            subItems.push(phone.getMenuItemButton(
+                'Разрешение на рыболовство',
+                label,
+                { name: 'none' },
+            ));
+
+            label = 'Отсутствует';
+            if (row['med_lic'])
+            {
+                label = `С ${row['med_lic_create']} по ${row['med_lic_end']}`;
+            }
+
+            subItems.push(phone.getMenuItemButton(
+                'Мед. страховка',
+                label,
+                { name: 'none' },
+            ));
+
+            items.push(phone.getMenuMainItem('Лицензии', subItems));
+
+            phone.showMenu(player, 'userInfo', 'База данных', items);
+        });
+
+        if (rows.length == 0) {
+            let items = [];
+            items.push(phone.getMenuMainItem(`Список пуст`, [
+                phone.getMenuItemButton(
+                    `Поиск ничего не нашел`,
+                    ``
+                )
+            ]));
+            phone.showMenu(player, 'userInfo', 'База данных', items);
+        }
+    });
+};
+
 phone.memberAction = function(player, id) {
     if (!user.isLogin(player))
         return;
@@ -686,6 +914,21 @@ phone.getMenuItemModal = function(title, text, modalTitle, modalText, modalYes =
         type: 7,
         modalTitle: modalTitle,
         modalText: modalText,
+        modalButton: [modalNo, modalYes],
+        img: img,
+        background: background,
+        clickable: clickable,
+        params: params
+    };
+};
+
+phone.getMenuItemModalInput = function(title, text, modalTitle, modalValue = '', modalYes = 'Применить', modalNo = 'Отмена', params = { name: "null" }, img = undefined, clickable = false, background = undefined) {
+    return {
+        title: title,
+        text: text,
+        type: 8,
+        modalTitle: modalTitle,
+        modalValue: modalValue,
         modalButton: [modalNo, modalYes],
         img: img,
         background: background,

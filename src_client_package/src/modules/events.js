@@ -1887,6 +1887,12 @@ mp.events.add('client:phone:showMenu', function(data) {
     }
 });
 
+mp.events.add('client:phone:inputModal', function(state) {
+    mp.gui.chat.show(!state);
+    mp.gui.chat.activate(!state);
+    mp.gui.cursor.show(state, true);
+});
+
 mp.events.add('client:phone:status', function(status) {
     if (status)
         phone.show();

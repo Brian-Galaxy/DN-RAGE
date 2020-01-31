@@ -1425,6 +1425,12 @@ mp.events.addRemoteCounted('server:phone:memberAction', (player, id) => {
     phone.memberAction(player, id);
 });
 
+mp.events.addRemoteCounted('server:phone:getUserInfo', (player, text) => {
+    if (!user.isLogin(player))
+        return;
+    phone.getUserInfo(player, text);
+});
+
 mp.events.addRemoteCounted('server:phone:fractionVehicleAction', (player, id) => {
     if (!user.isLogin(player))
         return;
@@ -2867,7 +2873,7 @@ mp.events.addRemoteCounted('server:user:giveWanted', (player, id, level, reason)
     if (!user.isLogin(player))
         return;
     try {
-        let p = mp.players.at(id);
+        let p = user.getPlayerById(id);
         if (user.isLogin(p)) {
             if (reason == 'clear') {
 

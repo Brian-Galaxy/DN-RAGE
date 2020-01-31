@@ -69,6 +69,10 @@ phone.hide = function() {
     }
 };
 
+phone.isHide = function() {
+    return hidden;
+};
+
 phone.getType = function() {
     return user.getCache('phone_type')
 };
@@ -111,10 +115,6 @@ phone.timer = function() {
         };
         ui.callCef('phone' + pType, JSON.stringify(data));
     }
-};
-
-phone.isHide = function() {
-    return hidden;
 };
 
 phone.apps = function(action) {
@@ -253,6 +253,126 @@ phone.showAppList = function() {
     phone.showMenu(menu);
 };
 
+phone.showAppBank= function() {
+
+    let bankName = '';
+    let bankColor = '#000';
+
+    let cardPrefix = user.getBankCardPrefix();
+
+    switch (cardPrefix) {
+        case 6000:
+            bankName = 'Maze Bank';
+            bankColor = '#f44336';
+            break;
+        case 7000:
+            bankName = 'Pacific Bank';
+            bankColor = '#000';
+            break;
+        case 8000:
+            bankName = 'Fleeca Bank';
+            bankColor = '#4CAF50';
+            break;
+        case 9000:
+            bankName = 'Blaine Bank';
+            bankColor = '#2196F3';
+            break;
+    }
+
+    let menu = {
+        UUID: 'bank',
+        title: bankName,
+        items: [
+            {
+                title: '',
+                umenu: [
+                    {
+                        title: bankName,
+                        text: methods.bankFormat(user.getCache('bank_card')),
+                        name: user.getCache('bank_owner'),
+                        color: bankColor,
+                        type: 9,
+                        clickable: false,
+                        params: { name: "null" }
+                    },
+                    {
+                        title: "Состояние счёта",
+                        text: methods.moneyFormat(user.getBankMoney()),
+                        type: 1,
+                        clickable: false,
+                        params: {name: "none"}
+                    },
+                    /*{
+                        title: "Оплата налогов",
+                        type: 1,
+                        clickable: true,
+                        params: {name: "tax"}
+                    },
+                    {
+                        title: "Перевод средств",
+                        type: 1,
+                        clickable: true,
+                        params: {name: "trans"}
+                    },*/
+                    {
+                        title: "История транзакций",
+                        type: 1,
+                        clickable: true,
+                        params: {name: "history"}
+                    },
+                ],
+            },
+        ],
+    };
+
+    phone.showMenu(menu);
+};
+
+phone.showAppInvader= function() {
+
+    let menu = {
+        UUID: 'invader',
+        title: 'Life Invader',
+        items: [
+            {
+                title: 'Основной раздел',
+                umenu: [
+                    {
+                        title: user.getCache('name'),
+                        text: `${user.getCache('social')}#${user.getCache('id')}`,
+                        type: 0,
+                        value: 'https://a.rsg.sc//n/' + user.getCache('social').toString().toLowerCase(),
+                        params: { name: "null" }
+                    },
+                    {
+                        title: "Новости",
+                        type: 1,
+                        clickable: true,
+                        params: {name: "news"}
+                    },
+                    {
+                        title: "Подача объявления",
+                        text: `Стоимость $500`,
+                        modalTitle: 'Введите текст',
+                        modalButton: ['Отмена', 'Отправить'],
+                        type: 8,
+                        clickable: true,
+                        params: {name: "sendAd"}
+                    },
+                    {
+                        title: "Список объявлений",
+                        type: 1,
+                        clickable: true,
+                        params: {name: "adList"}
+                    },
+                ],
+            },
+        ],
+    };
+
+    phone.showMenu(menu);
+};
+
 phone.showAppFraction = function() {
 
     let menu = {
@@ -303,9 +423,11 @@ phone.showAppFraction = function() {
                 },
                 {
                     title: "Написать членам организации",
-                    type: 1,
+                    modalTitle: 'Введите текст',
+                    modalButton: ['Отмена', 'Отправить'],
+                    type: 8,
                     clickable: true,
-                    params: { name: "sendFraction" }
+                    params: { name: "sendFractionMessage" }
                 },
             ],
         };
@@ -314,7 +436,9 @@ phone.showAppFraction = function() {
             titleMenu.umenu.push(
                 {
                     title: "Выдать розыск",
-                    type: 1,
+                    modalTitle: 'Card ID, Кол-во, Причина',
+                    modalButton: ['Отмена', 'Выдать'],
+                    type: 8,
                     clickable: true,
                     params: { name: "giveWanted" }
                 },
@@ -330,7 +454,9 @@ phone.showAppFraction = function() {
                 titleMenu.umenu.push(
                     {
                         title: "Информация о человеке",
-                        type: 1,
+                        modalTitle: 'Card ID или Имя Фамилия',
+                        modalButton: ['Отмена', 'Поиск'],
+                        type: 8,
                         clickable: true,
                         params: { name: "getUserInfo" }
                     }
@@ -361,9 +487,11 @@ phone.showAppFraction = function() {
                 },
                 {
                     title: "Написать новость",
-                    type: 1,
+                    modalTitle: 'Введите текст',
+                    modalButton: ['Отмена', 'Отправить'],
+                    type: 8,
                     clickable: true,
-                    params: { name: "sendNews" }
+                    params: { name: "sendFractionNews" }
                 },
                 {
                     title: "Управление автопарком",
@@ -1505,6 +1633,21 @@ phone.getMenuItemModal = function(title, text, modalTitle, modalText, modalYes =
     };
 };
 
+phone.getMenuItemModalInput = function(title, text, modalTitle, modalValue = '', modalYes = 'Применить', modalNo = 'Отмена', params = { name: "null" }, img = undefined, clickable = false, background = undefined) {
+    return {
+        title: title,
+        text: text,
+        type: 8,
+        modalTitle: modalTitle,
+        modalValue: modalValue,
+        modalButton: [modalNo, modalYes],
+        img: img,
+        background: background,
+        clickable: clickable,
+        params: params
+    };
+};
+
 phone.getMenuMainItem = function(title, items) {
     return {
         title: title,
@@ -1526,6 +1669,8 @@ phone.callBack = function(action, menu, id, ...args) {
         phone.callBackRadio(menu, id, ...args);
     else if (action == 'modal')
         phone.callBackModal(menu);
+    else if (action == 'inputmodal')
+        phone.callBackModalInput(menu, id);
     else
         phone.callBackCheckbox(menu, id, ...args);
 };
@@ -1579,6 +1724,81 @@ phone.callBackModal = function(paramsJson) {
         if (params.name == 'fractionVehicleSell') {
             mp.events.callRemote('server:fraction:vehicleSell', params.vehId, params.price);
             phone.showAppFraction();
+        }
+    }
+    catch(e) {
+        methods.debug(e);
+    }
+};
+
+phone.callBackModalInput = function(paramsJson, text) {
+    try {
+        methods.debug(text);
+        let params = JSON.parse(paramsJson);
+        if (params.name == 'giveWanted') {
+            let args = text.split(',');
+            let id = methods.parseInt(args[0]);
+            let count = methods.parseInt(args[1]);
+            let reason = methods.removeQuotes(args[2]);
+            mp.events.callRemote('server:user:giveWanted', methods.parseInt(id), count, reason);
+        }
+        if (params.name == 'getUserInfo') {
+            mp.events.callRemote('server:phone:getUserInfo', text);
+        }
+        if (params.name == 'sendFractionMessage') {
+            let title = user.getCache('name');
+            switch (user.getCache('fraction_id')) {
+                case 1:
+                    methods.notifyWithPictureToFraction(title, `Правительство`, text, 'CHAR_DAVE', user.getCache('fraction_id'));
+                    break;
+                case 2:
+                    methods.notifyWithPictureToFraction(title, `SAPD`, text, 'WEB_LOSSANTOSPOLICEDEPT', user.getCache('fraction_id'));
+                    break;
+                case 3:
+                    methods.notifyWithPictureToFraction(title, `FIB`, text, 'DIA_TANNOY', user.getCache('fraction_id'));
+                    break;
+                case 4:
+                    methods.notifyWithPictureToFraction(title, `USMC`, text, 'DIA_ARMY', user.getCache('fraction_id'));
+                    break;
+                case 5:
+                    methods.notifyWithPictureToFraction(title, `SHERIFF`, text, 'DIA_POLICE', user.getCache('fraction_id'));
+                    break;
+                case 6:
+                    methods.notifyWithPictureToFraction(title, `EMS`, text, 'CHAR_CALL911', user.getCache('fraction_id'));
+                    break;
+                case 7:
+                    methods.notifyWithPictureToFraction(title, `EMS`, text, 'CHAR_LIFEINVADER', user.getCache('fraction_id'));
+                    break;
+                default:
+                    methods.notifyWithPictureToFraction(title, `Организация`, text, 'CHAR_DEFAULT', user.getCache('fraction_id'));
+                    break;
+            }
+        }
+        if (params.name == 'sendFractionNews') {
+            let title = user.getCache('name');
+            switch (user.getCache('fraction_id')) {
+                case 1:
+                    methods.notifyWithPictureToAll(title, 'Новости правительства', text, 'CHAR_DAVE');
+                    break;
+                case 2:
+                    methods.notifyWithPictureToAll(title, 'Новости SAPD', text, 'WEB_LOSSANTOSPOLICEDEPT');
+                    break;
+                case 3:
+                    methods.notifyWithPictureToAll(title, 'Новости FIB', text, 'DIA_TANNOY');
+                    break;
+                case 4:
+                    methods.notifyWithPictureToAll(title, 'Новости USMC', text, 'DIA_ARMY');
+                    break;
+                case 5:
+                    methods.notifyWithPictureToAll(title, 'Новости SHERIFF', text, 'DIA_POLICE');
+                    break;
+                case 6:
+                    methods.notifyWithPictureToAll(title, 'Новости EMS', text, 'CHAR_CALL911');
+                    break;
+                case 7:
+                    methods.notifyWithPictureToAll(title, 'Новости Life Invader', text, 'CHAR_LIFEINVADER');
+                    break;
+            }
         }
     }
     catch(e) {
@@ -1660,6 +1880,10 @@ phone.callBackButton = function(menu, id, ...args) {
         if (menu == 'apps') {
             if (params.name == 'fraction')
                 phone.showAppFraction();
+            if (params.name == 'bank')
+                phone.showAppBank();
+            if (params.name == 'invader')
+                phone.showAppInvader();
             if (params.name == 'car') {
                 mp.events.callRemote('server:phone:userVehicleAppMenu');
                 phone.showLoad();

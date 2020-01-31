@@ -241,7 +241,7 @@ houses.insert1 = function(player, id, int, gx, gy, gz, grot) {
 
     mysql.executeQuery(`UPDATE houses SET grot1 = '${grot}', gx1 = '${gx}', gy1 = '${gy}', gz1 = '${gz}', ginterior1 = '${int}' where id = '${id}'`);
 
-    player.notify('~g~Дом успешно обновлен')
+    player.outputChatBox(`Дом успешно обновлен (G1 | ID ${id} | INT ${int})`);
 };
 
 houses.insert2 = function(player, id, int, gx, gy, gz, grot) {
@@ -254,7 +254,7 @@ houses.insert2 = function(player, id, int, gx, gy, gz, grot) {
 
     mysql.executeQuery(`UPDATE houses SET grot2 = '${grot}', gx2 = '${gx}', gy2 = '${gy}', gz2 = '${gz}', ginterior2 = '${int}' where id = '${id}'`);
 
-    player.notify('~g~Дом успешно обновлен')
+    player.outputChatBox(`Дом успешно обновлен (G2 | ID ${id} | INT ${int})`);
 };
 
 houses.insert3 = function(player, id, int, gx, gy, gz, grot) {
@@ -267,7 +267,7 @@ houses.insert3 = function(player, id, int, gx, gy, gz, grot) {
 
     mysql.executeQuery(`UPDATE houses SET grot3 = '${grot}', gx3 = '${gx}', gy3 = '${gy}', gz3 = '${gz}', ginterior3 = '${int}' where id = '${id}'`);
 
-    player.notify('~g~Дом успешно обновлен')
+    player.outputChatBox(`Дом успешно обновлен (G3 | ID ${id} | INT ${int})`);
 };
 
 houses.getHouseData = function(id) {

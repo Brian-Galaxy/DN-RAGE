@@ -286,6 +286,15 @@ methods.getListOfPlayerInRadius = function(pos, r) {
     return returnPlayers;
 };
 
+methods.removeQuotes = function (str) {
+    //TODO RemoveSlash
+    return str.toString().replace('\'', '');
+};
+
+methods.removeQuotes2 = function(text) {
+    return text.toString().replace('"', '');
+};
+
 methods.saveLog = function(file, log){//TODO
 };
 

@@ -6388,15 +6388,22 @@ menuList.showSapdClearMenu = function() {
         return;
     }
 
-    let menu = UIMenu.Menu.Create(`PC`, `~b~Очистить розыск`);
-    UIMenu.Menu.AddMenuItem("Очистить розыск").eventName = 'server:user:giveWanted';
+    let menu = UIMenu.Menu.Create(`PC`, `~b~Меню`);
+    UIMenu.Menu.AddMenuItem("Выдать розыск").eventName = 'server:user:giveWanted';
+    UIMenu.Menu.AddMenuItem("Очистить розыск").eventName = 'server:user:giveWantedClear';
     let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
 
     menu.ItemSelect.on(async item => {
         UIMenu.Menu.HideMenu();
-        if (item.eventName) {
-            let id = await UIMenu.Menu.GetUserInput("ID Игрока", "", 10);
-            mp.events.callRemote(item.eventName, methods.parseInt(id), 0, 'clear');
+        if (item.eventName == 'server:user:giveWantedClear') {
+            let id = await UIMenu.Menu.GetUserInput("Card ID", "", 10);
+            mp.events.callRemote('server:user:giveWanted', methods.parseInt(id), 0, 'clear');
+        }
+        if (item.eventName == 'server:user:giveWanted') {
+            let id = await UIMenu.Menu.GetUserInput("Card ID", "", 10);
+            let count = await UIMenu.Menu.GetUserInput("Уровень", "", 10);
+            let reason = await UIMenu.Menu.GetUserInput("Причина", "", 10);
+            mp.events.callRemote('server:user:giveWanted', methods.parseInt(id), count, reason);
         }
     });
 };
@@ -6715,10 +6722,9 @@ menuList.showAdminMenu = function() {
             let title = await UIMenu.Menu.GetUserInput("Заголовок", "", 20);
             if (title == '')
                 return;
-            let text = await UIMenu.Menu.GetUserInput("Текст новости", "", 55);
+            let text = await UIMenu.Menu.GetUserInput("Текст новости", "", 150);
             if (text == '')
                 return;
-            methods.saveLog('AdminNotify', `${user.getCache('rp_name')} - ${title} | ${text}`);
             methods.notifyWithPictureToAll(title, 'Администрация', text, 'CHAR_ACTING_UP');
         }
         if (item.doName == 'kick') {

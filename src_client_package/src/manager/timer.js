@@ -104,8 +104,11 @@ timer.updateEatLevel = function() {
                     mp.game.cam.stopGameplayCamShaking(false);
                 }, 7000);
             }
-            if (user.getEatLevel() < 100 || user.getWaterLevel() < 100)
-                user.setRagdoll(2000);
+
+            if (phone.isHide()) {
+                if (user.getEatLevel() < 100 || user.getWaterLevel() < 100)
+                    user.setRagdoll(2000);
+            }
 
             if (user.getEatLevel() < 10)
                 mp.players.local.setHealth(mp.players.local.getHealth() + 100 - 5);

@@ -873,6 +873,22 @@ user.getCashMoney = function() {
     return methods.parseFloat(user.getCache('money'));
 };
 
+user.addPayDayMoney = function(money, text = 'Финансовая операция') {
+    mp.events.callRemote('server:user:addPayDayMoney', money, text);
+};
+
+user.removePayDayMoney = function(money, text = 'Финансовая операция') {
+    mp.events.callRemote('server:user:removePayDayMoney', money, text);
+};
+
+user.setPayDayMoney = function(money) {
+    mp.events.callRemote('server:user:setPayDayMoney', money);
+};
+
+user.getPayDayMoney = function() {
+    return methods.parseFloat(user.getCache('money_payday'));
+};
+
 user.addGrabMoney = function(money) {
     user.setGrabMoney(user.getGrabMoney() + money);
 };

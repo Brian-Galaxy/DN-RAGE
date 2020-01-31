@@ -1153,6 +1153,36 @@ mp.events.add('client:showBusinessLogMenu', (data) => {
     }
 });
 
+mp.events.add('client:showInvaderNewsMenu', (data) => {
+    try {
+        methods.debug('Event: client:showInvaderAdMenu');
+        menuList.showInvaderNewsMenu(data);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.add('client:showInvaderAdMenu', (data) => {
+    try {
+        methods.debug('Event: client:showInvaderAdMenu');
+        menuList.showInvaderAdMenu(data);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.add('client:showInvaderAdTempMenu', (data) => {
+    try {
+        methods.debug('Event: client:showInvaderAdMenu');
+        menuList.showInvaderAdTempMenu(data);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
 mp.events.add('client:showBankLogMenu', (data) => {
     try {
         methods.debug('Event: client:showBankLogMenu');
@@ -1202,6 +1232,11 @@ mp.events.add('client:menuList:showFractionKeyMenu', (data) => {
 mp.events.add('client:menuList:showFractionInfoMenu', () => {
     methods.debug('Event: client:menuList:showFractionInfoMenu');
     menuList.showFractionInfoMenu();
+});
+
+mp.events.add('client:menuList:showFractionInvaderMenu', () => {
+    methods.debug('Event: client:menuList:showFractionInvaderMenu');
+    menuList.showFractionInvaderMenu();
 });
 
 mp.events.add('client:menuList:showAskBuyLicMenu', (playerId, lic, licName, price) => {

@@ -297,10 +297,25 @@ phone.showAppBank= function() {
                     },
                     {
                         title: "Состояние счёта",
-                        text: methods.moneyFormat(user.getBankMoney()),
+                        text: methods.moneyFormat(user.getBankMoney(), 999999999),
                         type: 1,
                         clickable: false,
                         params: {name: "none"}
+                    },
+                    {
+                        title: "Зарплатный счёт",
+                        text: methods.moneyFormat(user.getPayDayMoney(), 999999999),
+                        type: 1,
+                        clickable: false,
+                        params: {name: "none" }
+                    },
+                    {
+                        title: "Обналичить зарплату",
+                        modalTitle: 'Введите сумму',
+                        modalButton: ['Отмена', 'Обналичить'],
+                        type: 8,
+                        clickable: true,
+                        params: {name: "getPayDay"}
                     },
                     /*{
                         title: "Оплата налогов",
@@ -348,7 +363,7 @@ phone.showAppInvader= function() {
                         title: "Новости",
                         type: 1,
                         clickable: true,
-                        params: {name: "news"}
+                        params: {name: "newsList"}
                     },
                     {
                         title: "Подача объявления",
@@ -1745,6 +1760,23 @@ phone.callBackModalInput = function(paramsJson, text) {
         if (params.name == 'getUserInfo') {
             mp.events.callRemote('server:phone:getUserInfo', text);
         }
+        if (params.name == 'sendAd') {
+            mp.events.callRemote('server:invader:sendAdTemp', text);
+        }
+        if (params.name == 'getPayDay') {
+            let sum = methods.parseInt(text);
+            if (sum < 0) {
+                user.sendSmsBankOperation('Ошибка транзакции', 'Зарплата');
+                return;
+            }
+            if (sum > user.getPayDayMoney()) {
+                user.sendSmsBankOperation('У Вас недостаточно средств', 'Зарплата');
+                return;
+            }
+            user.removePayDayMoney(sum);
+            user.addBankMoney(sum);
+            user.sendSmsBankOperation(`Вы перевели ~g~${methods.moneyFormat(sum)}~s~ на ваш банковский счёт`, 'Зарплата');
+        }
         if (params.name == 'sendFractionMessage') {
             let title = user.getCache('name');
             switch (user.getCache('fraction_id')) {
@@ -1895,6 +1927,16 @@ phone.callBackButton = function(menu, id, ...args) {
             if (params.event)
                 mp.events.callRemote(params.event);
         }
+        if (menu == 'invader') {
+            if (params.name == 'adList') {
+                mp.events.callRemote('server:phone:userAdList');
+                phone.showLoad();
+            }
+            if (params.name == 'newsList') {
+                mp.events.callRemote('server:phone:userNewsList');
+                phone.showLoad();
+            }
+        }
     }
     catch (e) {
         methods.debug(e)
@@ -1985,6 +2027,7 @@ phone.findNetworkTimer = function() {
             notifyList.forEach(item => {
                 mp.game.ui.notifications.showWithPicture(item.sender, item.title, item.message, item.pic, 1);
             });
+            notifyList = [];
         }
     }
     catch (e) {

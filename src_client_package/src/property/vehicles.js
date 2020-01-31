@@ -9,7 +9,6 @@ let vehicles = {};
 let isAutopilotEnable = false;
 let offset = enums.offsets.vehicle;
 
-
 vehicles.set = function(id, key, val) {
     Container.Data.SetLocally(offset + id, key, val);
 };
@@ -26,6 +25,10 @@ vehicles.get = function(id, key) {
 
 vehicles.has = function(id, key) {
     return Container.Data.HasLocally(offset + id, key);
+};
+
+vehicles.getData = async function(id) {
+    return await Container.Data.GetAll(offset + methods.parseInt(id));
 };
 
 /*
@@ -148,10 +151,6 @@ vehicles.checkAutopilot = function() {
         else
             setTimeout(vehicles.checkAutopilot, 1000);
     }
-};
-
-vehicles.getData = async function(id) {
-    return await Container.Data.GetAll(200000 + methods.parseInt(id));
 };
 
 vehicles.getFuelLabel = function(id) {

@@ -656,6 +656,101 @@ phone.fractionVehiclesBuyList = function(player) {
     });
 };
 
+phone.userAdList = function(player) {
+    if (!user.isLogin(player))
+        return;
+    methods.debug('phone.userAdList');
+
+    mysql.executeQuery(`SELECT * FROM rp_inv_ad ORDER BY id DESC LIMIT 50`, (err, rows, fields) => {
+
+        let items = [];
+
+        if (rows.length > 0) {
+            rows.forEach(row => {
+
+                let subItems = [];
+                let item = phone.getMenuItemButton(
+                    `${row['text']}`,
+                    ``,
+                    { name: 'none' }
+                );
+                subItems.push(item);
+
+                item = phone.getMenuItemButton(
+                    `${row['phone']} (${row['name']})`,
+                    `${row['rp_datetime']}`,
+                    { name: 'none' }
+                );
+                subItems.push(item);
+
+                item = phone.getMenuItemButton(
+                    `${row['editor']}`,
+                    `Редактор`,
+                    { name: 'none' }
+                );
+                subItems.push(item);
+
+                items.push(phone.getMenuMainItem(`${row['title']}`, subItems));
+            });
+
+        }
+        else {
+            items.push(phone.getMenuMainItem(`Список пуст`, [
+                phone.getMenuItemButton(
+                    `Нет доступных объявлений`,
+                    ``
+                )
+            ]));
+        }
+
+        phone.showMenu(player, 'adList', `Список объявлений`, items);
+    });
+};
+
+phone.userNewsList = function(player) {
+    if (!user.isLogin(player))
+        return;
+    methods.debug('phone.userAdList');
+
+    mysql.executeQuery(`SELECT * FROM rp_inv_news ORDER BY id DESC LIMIT 50`, (err, rows, fields) => {
+
+        let items = [];
+
+        if (rows.length > 0) {
+            rows.forEach(row => {
+
+                let subItems = [];
+                let item = phone.getMenuItemButton(
+                    `${row['text']}`,
+                    ``,
+                    { name: 'none' }
+                );
+                subItems.push(item);
+
+                item = phone.getMenuItemButton(
+                    `${row['name']}`,
+                    `Автор | ${row['rp_datetime']}`,
+                    { name: 'none' }
+                );
+                subItems.push(item);
+
+                items.push(phone.getMenuMainItem(`${row['title']}`, subItems));
+            });
+
+        }
+        else {
+            items.push(phone.getMenuMainItem(`Список пуст`, [
+                phone.getMenuItemButton(
+                    `Нет доступных новостей`,
+                    ``
+                )
+            ]));
+        }
+
+        phone.showMenu(player, 'adList', `Список объявлений`, items);
+    });
+};
+
 phone.userVehicleAppMenu = function(player) {
     if (!user.isLogin(player))
         return;

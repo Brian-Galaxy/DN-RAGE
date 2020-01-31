@@ -665,6 +665,139 @@ menuList.showBusinessLogMenu = function(data) {
     });
 };
 
+menuList.showInvaderNewsMenu = function(data) {
+    let menu = UIMenu.Menu.Create(`Invader`, `~b~Нажмите ~s~Enter~b~ чтобы выбрать`);
+
+    JSON.parse(data).forEach(function (item) {
+
+        let mItem = UIMenu.Menu.AddMenuItem(`~b~#${item.id}. ~s~${item.title}`, `~b~Автор:~s~ ${item.name}`);
+        mItem.id = item.id;
+        mItem.title = item.title;
+        mItem.name = item.name;
+    });
+
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+    menu.ItemSelect.on((item, index) => {
+        UIMenu.Menu.HideMenu();
+        if (item.id && (user.isLeader() || user.isSubLeader() || user.isDepLeader()))
+            menuList.showInvaderNewsDelMenu(item.id, item.title, item.name)
+    });
+};
+
+menuList.showInvaderNewsDelMenu = function(id, title, name) {
+    let menu = UIMenu.Menu.Create(`Invader`, `~b~Номер новости: ${id}`);
+
+    UIMenu.Menu.AddMenuItem(`${title}`);
+    UIMenu.Menu.AddMenuItem(`${name}`);
+    UIMenu.Menu.AddMenuItem(`~r~Удалить новость`).delete = true;
+
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+    menu.ItemSelect.on((item, index) => {
+        UIMenu.Menu.HideMenu();
+        if (item.delete)
+            mp.events.callRemote('server:invader:delNews', id);
+    });
+};
+
+menuList.showInvaderAdMenu = function(data) {
+    let menu = UIMenu.Menu.Create(`Invader`, `~b~Нажмите ~s~Enter~b~ чтобы выбрать`);
+
+    JSON.parse(data).forEach(function (item) {
+
+        let mItem = UIMenu.Menu.AddMenuItem(`~b~#${item.id}. ~s~${item.title} [${item.phone}]`, `~b~Автор:~s~ ${item.name}`);
+        mItem.id = item.id;
+        mItem.title = item.title;
+        mItem.name = item.name;
+        mItem.phone = item.phone;
+    });
+
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+    menu.ItemSelect.on((item, index) => {
+        if (item == closeItem)
+            UIMenu.Menu.HideMenu();
+        if (item.id && (user.isLeader() || user.isSubLeader() || user.isDepLeader()))
+            menuList.showInvaderAdDelMenu(item.id, item.title, item.name, item.phone)
+    });
+};
+
+menuList.showInvaderAdDelMenu = function(id, title, name, phone) {
+    let menu = UIMenu.Menu.Create(`Invader`, `~b~Номер новости: ${id}`);
+
+    UIMenu.Menu.AddMenuItem(`${title}`);
+    UIMenu.Menu.AddMenuItem(`${name}`);
+    UIMenu.Menu.AddMenuItem(`${phone}`);
+    UIMenu.Menu.AddMenuItem(`~r~Удалить объявление`).delete = true;
+
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+    menu.ItemSelect.on((item, index) => {
+        UIMenu.Menu.HideMenu();
+        if (item.delete)
+            mp.events.callRemote('server:invader:delNews', id);
+    });
+};
+
+menuList.showInvaderAdTempMenu = function(data) {
+    let menu = UIMenu.Menu.Create(`Invader`, `~b~Нажмите ~s~Enter~b~ чтобы выбрать`);
+
+    JSON.parse(data).forEach(function (item) {
+
+        let mItem = UIMenu.Menu.AddMenuItem(`~b~#${item.id}. ~s~${item.text.substring(0, 25)}`, `~b~Автор:~s~ ${item.name}`);
+        mItem.id = item.id;
+        mItem.text = item.text;
+        mItem.name = item.name;
+        mItem.phone = item.phone;
+    });
+
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+    menu.ItemSelect.on((item, index) => {
+        if (item == closeItem)
+            UIMenu.Menu.HideMenu();
+        if (item.id && (user.isLeader() || user.isSubLeader() || user.isDepLeader()))
+            menuList.showInvaderAdTempEditMenu(item.id, item.text, item.name, item.phone)
+    });
+};
+
+menuList.showInvaderAdTempEditMenu = function(id, text, name, phone) {
+    let menu = UIMenu.Menu.Create(`Invader`, `~b~Номер новости: ${id}`);
+
+    let titleList = ['Разное', 'Покупка', 'Продажа', 'Услуга'];
+    let lockItem = UIMenu.Menu.AddMenuItemList("Заголовок", titleList);
+    lockItem.doName = 'title';
+
+    let title = 'Разное';
+
+    UIMenu.Menu.AddMenuItem(`Редактировать текст`).textEdit = true;
+    UIMenu.Menu.AddMenuItem(`${name}`);
+    UIMenu.Menu.AddMenuItem(`${phone}`);
+    UIMenu.Menu.AddMenuItem(`~g~Отредактировать`).save = true;
+    UIMenu.Menu.AddMenuItem(`~r~Удалить объявление`).delete = true;
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+
+    menu.ListChange.on((item, index) => {
+        if (item.doName == 'title') {
+            title = titleList[index];
+        }
+    });
+
+    menu.ItemSelect.on(async (item, index) => {
+        if (item == closeItem)
+            UIMenu.Menu.HideMenu();
+        if (item.textEdit)
+        {
+            text = await UIMenu.Menu.GetUserInput("Введите текст", text, 200);
+            mp.game.ui.notifications.show("~b~Вы отредактировали текст\n~s~" + text);
+        }
+        if (item.save) {
+            UIMenu.Menu.HideMenu();
+            mp.events.callRemote('server:invader:sendAd', id, title, name, text, phone);
+        }
+        if (item.delete) {
+            UIMenu.Menu.HideMenu();
+            mp.events.callRemote('server:invader:delNews', id);
+        }
+    });
+};
+
 menuList.showBankLogMenu = function(data) {
     let menu = UIMenu.Menu.Create(`Транзакции`, `~b~Нажмите ~s~Enter~b~ чтобы прочитать`);
 
@@ -5967,6 +6100,80 @@ menuList.showFractionInfoMenu = function() {
 
         if (item.coffer) {
             menuList.showCofferInfoMenu(await coffer.getAllData());
+        }
+    });
+};
+
+menuList.showFractionInvaderMenu = function() {
+
+    let menu = UIMenu.Menu.Create(`Организация`, `~b~Ваша органзация`);
+
+    if (!user.isLeader() && !user.isSubLeader() && user.getCache('rank_type') === 0) {
+        UIMenu.Menu.AddMenuItem(`~y~Не доступно для стажеров`);
+    }
+    if (user.isLeader() || user.isSubLeader() || user.getCache('rank_type') === 1) {
+        UIMenu.Menu.AddMenuItem(`Список объявлений`).adList = true;
+        UIMenu.Menu.AddMenuItem(`Список всех объявлений`).adListAll = true;
+    }
+    if (user.isLeader() || user.isSubLeader() || user.getCache('rank_type') === 2) {
+        UIMenu.Menu.AddMenuItem(`Написать новость`).writeNews = true;
+        UIMenu.Menu.AddMenuItem(`Список новостей`).newsList = true;
+    }
+
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+    menu.ItemSelect.on(async (item, index) => {
+        UIMenu.Menu.HideMenu();
+
+        if (item.writeNews) {
+            menuList.showFractionInvaderNewsWriteMenu();
+        }
+        if (item.newsList) {
+            mp.events.callRemote('server:invader:getNewsList');
+        }
+        if (item.adList) {
+            mp.events.callRemote('server:invader:getAdTempList');
+        }
+        if (item.adListAll) {
+            mp.events.callRemote('server:invader:getAdList');
+        }
+    });
+};
+
+
+menuList.showFractionInvaderNewsWriteMenu = function() {
+
+    let title = '';
+    let text = '';
+
+    let menu = UIMenu.Menu.Create(`Организация`, `~b~Написать новость`);
+
+    UIMenu.Menu.AddMenuItem(`~b~Заголовок~s~`).title = true;
+    UIMenu.Menu.AddMenuItem(`~b~Введите текст`).text = true;
+    UIMenu.Menu.AddMenuItem(`Прочитать текст`).textRead = true;
+
+    UIMenu.Menu.AddMenuItem(`~g~Отправить`).save = true;
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть").close = true;
+    menu.ItemSelect.on(async (item, index) => {
+
+        if (item.title) {
+            title = await UIMenu.Menu.GetUserInput("Введите заголовок", title, 20);
+            item.SetRightLabel(title);
+            mp.game.ui.notifications.show("~b~Вы написали заголовок\n" + title);
+        }
+        if (item.text) {
+            text = await UIMenu.Menu.GetUserInput("Введите текст", text, 200);
+            mp.game.ui.notifications.show("~b~Вы написали текст\n~s~" + text);
+        }
+        if (item.textRead) {
+            chat.sendLocal(text);
+        }
+        if (item.save) {
+            UIMenu.Menu.HideMenu();
+            mp.events.callRemote('server:invader:sendNews', title, text);
+        }
+        if (item.close) {
+            UIMenu.Menu.HideMenu();
         }
     });
 };

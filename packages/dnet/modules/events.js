@@ -30,6 +30,7 @@ let shop = require('../business/shop');
 
 let pickups = require('../managers/pickups');
 let dispatcher = require('../managers/dispatcher');
+let weather = require('../managers/weather');
 
 mp.events.__add__ = mp.events.add;
 
@@ -411,41 +412,7 @@ mp.events.addRemoteCounted('server:tattoo:destroy', (player, slot, type, zone, p
 });
 
 mp.events.addRemoteCounted('server:user:buyLicense', (player, type, price, month) => {
-    if (!user.isLogin(player))
-        return;
-    methods.debug('licenseCenter.buy');
-    if (!user.isLogin(player))
-        return;
-
-    if (price < 1)
-        return;
-
-    try {
-        if (user.get(player, 'reg_status') == 0)
-        {
-            player.notify('~r~У Вас нет регистрации');
-            return;
-        }
-
-        if (!user.get(player, type))
-        {
-            if (user.getMoney(player) < price)
-            {
-                player.notify("~r~У Вас недостаточно средств");
-                return;
-            }
-            user.removeMoney(player, price, 'Покупка лицензии');
-            coffer.addMoney(price);
-
-            user.giveLic(player, type, month);
-            return;
-        }
-        player.notify("~r~У вас уже есть данная лицензия");
-    }
-    catch (e) {
-        methods.debug('Exception: licenseCenter.buy');
-        methods.debug(e);
-    }
+    user.buyLicense(player, type, price, month);
 });
 
 mp.events.addRemoteCounted('server:user:sendSms', (player, sender, title, text, pic) => {
@@ -1088,6 +1055,149 @@ mp.events.addRemoteCounted('server:business:log', (player, id) => {
     });
 });
 
+mp.events.addRemoteCounted('server:invader:sendNews', (player, title, text) => {
+    if (!user.isLogin(player))
+        return;
+
+    title = methods.removeQuotes(title);
+    text = methods.removeQuotes(text);
+    let name = methods.removeQuotes(user.getRpName(player));
+
+    let rpDateTime = weather.getRpDateTime();
+    let timestamp = methods.getTimeStamp();
+
+    mysql.executeQuery(`INSERT INTO rp_inv_news (title, name, text, timestamp, rp_datetime) VALUES ('${title}', '${name}', '${text}', '${timestamp}', '${rpDateTime}')`);
+
+    mp.players.forEach(p => {
+        user.sendPhoneNotify(player, 'Life Invader', title, text, 'CHAR_LIFEINVADER');
+    });
+});
+
+mp.events.addRemoteCounted('server:invader:delNews', (player, id) => {
+    if (!user.isLogin(player))
+        return;
+
+    mysql.executeQuery(`DELETE FROM rp_inv_news WHERE id = ${methods.parseInt(id)}`);
+    player.notify('~b~Вы удалили новость #' + id);
+});
+
+mp.events.addRemoteCounted('server:invader:getNewsList', (player) => {
+    if (!user.isLogin(player))
+        return;
+    mysql.executeQuery(`SELECT * FROM rp_inv_news ORDER BY id DESC LIMIT 100`, function (err, rows, fields) {
+        try {
+            let list = [];
+            rows.forEach(function(item) {
+                list.push({id: item['id'], title: item['title'], name: item['name'], text: item['text']});
+            });
+            player.call('client:showInvaderNewsMenu', [JSON.stringify(list)]);
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    });
+});
+
+mp.events.addRemoteCounted('server:invader:sendAd', (player, id, title, name, text, phone) => {
+    if (!user.isLogin(player))
+        return;
+
+    title = methods.removeQuotes(title);
+    text = methods.removeQuotes(text);
+    name = methods.removeQuotes(name);
+    phone = methods.removeQuotes(phone);
+    let editor = methods.removeQuotes(user.getRpName(player));
+
+    let rpDateTime = weather.getRpDateTime();
+    let timestamp = methods.getTimeStamp();
+
+    mysql.executeQuery(`DELETE FROM rp_inv_ad_temp WHERE id = ${methods.parseInt(id)}`);
+    mysql.executeQuery(`INSERT INTO rp_inv_ad (title, name, text, phone, editor, timestamp, rp_datetime) VALUES ('${title}', '${name}', '${text}', '${phone}', '${editor}', '${timestamp}', '${rpDateTime}')`);
+
+    user.addPayDayMoney(player, 100, 'Отредактировал объявление');
+
+    mp.players.forEach(p => {
+        user.sendPhoneNotify(player, 'Life Invader', '~g~Реклама | ' + title, text, 'CHAR_LIFEINVADER');
+    });
+});
+
+mp.events.addRemoteCounted('server:invader:delAd', (player, id) => {
+    if (!user.isLogin(player))
+        return;
+
+    mysql.executeQuery(`DELETE FROM rp_inv_ad WHERE id = ${methods.parseInt(id)}`);
+    player.notify('~b~Вы удалили объявление #' + id);
+});
+
+mp.events.addRemoteCounted('server:invader:getAdList', (player) => {
+    if (!user.isLogin(player))
+        return;
+    mysql.executeQuery(`SELECT * FROM rp_inv_ad ORDER BY id DESC LIMIT 100`, function (err, rows, fields) {
+        try {
+            let list = [];
+            rows.forEach(function(item) {
+                list.push({id: item['id'], title: item['title'], name: item['name'], phone: item['phone'], editor: item['editor']});
+            });
+            player.call('client:showInvaderAdMenu', [JSON.stringify(list)]);
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    });
+});
+
+mp.events.addRemoteCounted('server:invader:sendAdTemp', (player, text) => {
+    if (!user.isLogin(player))
+        return;
+
+    if (user.getBankMoney(player) < 500) {
+        user.sendSmsBankOperation(player, 'Не достаточно средств', 'Отказ операции');
+        return;
+    }
+
+    text = methods.removeQuotes(text);
+    let phone = methods.removeQuotes(user.get(player, 'phone'));
+    let name = methods.removeQuotes(user.getRpName(player).split(' ')[0]);
+
+    coffer.addMoney(8, 400);
+    methods.saveFractionLog(
+        'Система',
+        `Рекламное объявление`,
+        `Пополнение бюджета: ${methods.moneyFormat(400)}`,
+        7
+    );
+
+    mysql.executeQuery(`INSERT INTO rp_inv_ad_temp (name, text, phone) VALUES ('${name}', '${text}', '${phone}')`);
+
+    user.sendPhoneNotify(player, 'Life Invader', '~g~Реклама', 'Ваше объявление на рассмотрении', 'CHAR_LIFEINVADER');
+});
+
+mp.events.addRemoteCounted('server:invader:getAdTempList', (player) => {
+    if (!user.isLogin(player))
+        return;
+    mysql.executeQuery(`SELECT * FROM rp_inv_ad_temp ORDER BY id DESC LIMIT 100`, function (err, rows, fields) {
+        try {
+            let list = [];
+            rows.forEach(function(item) {
+
+                list.push({id: item['id'], name: item['name'], phone: item['phone'], text: item['text']});
+            });
+            player.call('client:showInvaderAdTempMenu', [JSON.stringify(list)]);
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    });
+});
+
+mp.events.addRemoteCounted('server:invader:deleteAdTemp', (player, id) => {
+    if (!user.isLogin(player))
+        return;
+
+    user.addPayDayMoney(player, 100, 'Удалил объявление #' + id);
+    mysql.executeQuery(`DELETE FROM rp_inv_ad_temp WHERE id = ${methods.parseInt(id)}`);
+});
+
 mp.events.addRemoteCounted('server:events:showTypeListMenu', (player, type) => {
     if (!user.isLogin(player))
         return;
@@ -1163,6 +1273,18 @@ mp.events.addRemoteCounted('server:user:removeCashMoney', (player, money, text) 
 
 mp.events.addRemoteCounted('server:user:setCashMoney', (player, money) => {
     user.setCashMoney(player, money);
+});
+
+mp.events.addRemoteCounted('server:user:addPayDayMoney', (player, money, text) => {
+    user.addPayDayMoney(player, money, text);
+});
+
+mp.events.addRemoteCounted('server:user:removePayDayMoney', (player, money, text) => {
+    user.removePayDayMoney(player, money, text);
+});
+
+mp.events.addRemoteCounted('server:user:setPayDayMoney', (player, money) => {
+    user.setPayDayMoney(player, money);
 });
 
 mp.events.addRemoteCounted('server:business:setMoney', (player, id, money) => {
@@ -1411,6 +1533,18 @@ mp.events.addRemoteCounted('server:phone:userVehicleAppMenu', (player) => {
     if (!user.isLogin(player))
         return;
     phone.userVehicleAppMenu(player);
+});
+
+mp.events.addRemoteCounted('server:phone:userAdList', (player) => {
+    if (!user.isLogin(player))
+        return;
+    phone.userAdList(player);
+});
+
+mp.events.addRemoteCounted('server:phone:userNewsList', (player) => {
+    if (!user.isLogin(player))
+        return;
+    phone.userNewsList(player);
 });
 
 mp.events.addRemoteCounted('server:phone:fractionVehicleBuyInfo', (player, id) => {

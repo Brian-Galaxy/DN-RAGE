@@ -120,6 +120,12 @@ pickups.InvaderInfoPos = new mp.Vector3(-1082.346923828125, -245.2889404296875, 
 pickups.EmsInfo1Pos = new mp.Vector3(334.723876953125, -594.0081176757812, 42.28398895263672);
 pickups.EmsInfo2Pos = new mp.Vector3(-268.90997314453125, 6321.72802734375, 31.47595977783203);
 
+/*Invader*/
+pickups.InvaderWorkPos1 = new mp.Vector3(-1055.5491943359375, -242.51651000976562, 43.021060943603516);
+pickups.InvaderWorkPos2 = new mp.Vector3(-1050.10302734375, -242.052734375, 43.02106475830078);
+pickups.InvaderWorkPos3 = new mp.Vector3(-1059.9254150390625, -246.7880096435547, 43.021060943603516);
+pickups.InvaderWorkPos4 = new mp.Vector3(-1056.6370849609375, -245.4740447998047, 43.021060943603516);
+
 /*EMS*/
 pickups.EmsGarderobPos1 = new mp.Vector3(299.0457458496094, -598.6067504882812, 42.28403091430664);
 pickups.EmsGarderobPos2 = new mp.Vector3(-244.68588256835938, 6318.1396484375, 31.44457244873047);
@@ -348,6 +354,17 @@ pickups.checkPressE = function(player) {
             player.call('client:menuList:showFractionInfoMenu');
     }
 
+    if (user.isNews(player)) {
+        if (methods.distanceToPos(pickups.InvaderWorkPos1, playerPos) < distanceCheck)
+            player.call('client:menuList:showFractionInvaderMenu');
+        if (methods.distanceToPos(pickups.InvaderWorkPos2, playerPos) < distanceCheck)
+            player.call('client:menuList:showFractionInvaderMenu');
+        if (methods.distanceToPos(pickups.InvaderWorkPos3, playerPos) < distanceCheck)
+            player.call('client:menuList:showFractionInvaderMenu');
+        if (methods.distanceToPos(pickups.InvaderWorkPos4, playerPos) < distanceCheck)
+            player.call('client:menuList:showFractionInvaderMenu');
+    }
+
     if (methods.distanceToPos(pickups.GovKeyPos, playerPos) < distanceCheck && user.isGov(player))
         player.call('client:menuList:showFractionKeyMenu', [vehicles.getFractionAllowCarList(1, user.isLeader(player) || user.isSubLeader(player) ? -1 : user.get(player, 'rank_type'))]);
 
@@ -488,6 +505,12 @@ pickups.createPickups = function() {
     methods.createStaticCheckpointV(pickups.InvaderInfoPos, 'Нажмите ~g~E~s~ чтобы открыть меню руководства', 1, -1, pickups.Blue);
     methods.createStaticCheckpointV(pickups.EmsInfo1Pos, 'Нажмите ~g~E~s~ чтобы открыть меню руководства', 1, -1, pickups.Blue);
     methods.createStaticCheckpointV(pickups.EmsInfo2Pos, 'Нажмите ~g~E~s~ чтобы открыть меню руководства', 1, -1, pickups.Blue);
+
+
+    methods.createStaticCheckpointV(pickups.InvaderWorkPos1, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
+    methods.createStaticCheckpointV(pickups.InvaderWorkPos2, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
+    methods.createStaticCheckpointV(pickups.InvaderWorkPos3, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
+    methods.createStaticCheckpointV(pickups.InvaderWorkPos4, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
 
     //Hackerspace
     methods.createStaticCheckpointV(pickups.HackerSpaceShopPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);

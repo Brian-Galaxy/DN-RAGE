@@ -1923,6 +1923,42 @@ user.giveLic = function (player, lic, monthEnd = 12, desc = '') {
     user.addHistory(player, 4, `Получил лицензию ${licName} на ${monthEnd} мес. ` + desc);
 };
 
+user.buyLicense = function (player, type, price, month) {
+    if (!user.isLogin(player))
+        return;
+    methods.debug('licenseCenter.buy');
+
+    if (price < 1)
+        return;
+
+    try {
+        if (user.get(player, 'reg_status') == 0)
+        {
+            player.notify('~r~У Вас нет регистрации');
+            return;
+        }
+
+        if (!user.get(player, type))
+        {
+            if (user.getMoney(player) < price)
+            {
+                player.notify("~r~У Вас недостаточно средств");
+                return;
+            }
+            user.removeMoney(player, price, 'Покупка лицензии');
+            coffer.addMoney(price);
+
+            user.giveLic(player, type, month);
+            return;
+        }
+        player.notify("~r~У вас уже есть данная лицензия");
+    }
+    catch (e) {
+        methods.debug('Exception: licenseCenter.buy');
+        methods.debug(e);
+    }
+};
+
 user.revive = function(player, hp = 20) {
     methods.debug('user.revive');
     if (!mp.players.exists(player))

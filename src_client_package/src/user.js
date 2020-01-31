@@ -7,6 +7,7 @@ import ui from "./modules/ui";
 import weapons from "./weapons";
 import enums from "./enums";
 import items from "./items";
+import phone from "./phone";
 
 let user = {};
 
@@ -434,6 +435,11 @@ user.notify = function (message) {
         mp.events.callRemote('server:clientDebug', `${message}`)
     } catch (e) {
     }
+};
+
+user.sendPhoneNotify = function(sender, title, message, pic = 'CHAR_BLANK_ENTRY') {
+    if (phone.getType() > 0)
+        phone.sendNotify(sender, title, message, pic);
 };
 
 user.init = function() {
@@ -1066,16 +1072,16 @@ user.sendSmsBankOperation = function(text, title = 'Операция со счё
     try {
         switch (prefix) {
             case 6000:
-                mp.game.ui.notifications.showWithPicture('~r~Maze Bank', '~g~' + title, text, 'CHAR_BANK_MAZE', 2);
+                user.sendPhoneNotify('~r~Maze Bank', '~g~' + title, text, 'CHAR_BANK_MAZE', 2);
                 break;
             case 7000:
-                mp.game.ui.notifications.showWithPicture('~o~Pacific Bank', '~g~' + title, text, 'WEB_SIXFIGURETEMPS', 2);
+                user.sendPhoneNotify('~o~Pacific Bank', '~g~' + title, text, 'WEB_SIXFIGURETEMPS', 2);
                 break;
             case 8000:
-                mp.game.ui.notifications.showWithPicture('~g~Fleeca Bank', '~g~' + title, text, 'CHAR_BANK_FLEECA', 2);
+                user.sendPhoneNotify('~g~Fleeca Bank', '~g~' + title, text, 'CHAR_BANK_FLEECA', 2);
                 break;
             case 9000:
-                mp.game.ui.notifications.showWithPicture('~b~Blaine Bank', '~g~' + title, text, 'DIA_CUSTOMER', 2);
+                user.sendPhoneNotify('~b~Blaine Bank', '~g~' + title, text, 'DIA_CUSTOMER', 2);
                 break;
         }
     }

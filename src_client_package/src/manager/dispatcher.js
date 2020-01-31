@@ -30,7 +30,8 @@ dispatcher.addDispatcherList = function (title, desc, time, x, y, z, withCoord) 
     itemList.push({title: title, desc: desc, street1: street1, street2: street2, time: time, x: x, y: y, z: z,  withCoord: withCoord});
 
     let subLabel = `\n~y~Район:~s~ ${street1}\n~y~Улица:~s~ ${street2}`;
-    mp.game.ui.notifications.showWithPicture(title, `Диспетчер [${time}]`, desc + subLabel, "CHAR_CALL911", 1);
+
+    user.sendPhoneNotify(`Диспетчер [${time}]`, title, desc + subLabel, "CHAR_CALL911");
 };
 
 dispatcher.addDispatcherTaxiList = function (count, title, desc, time, price, x, y, z) {
@@ -41,7 +42,8 @@ dispatcher.addDispatcherTaxiList = function (count, title, desc, time, price, x,
     itemTaxiList.push({count: count, title: title, desc: desc, street1: street1, street2: street2, time: time, price: price, x: x, y: y, z: z});
 
     let icon = user.getCache('job') == 'taxi1' ? 'CHAR_TAXI' : 'CHAR_TAXI_LIZ';
-    mp.game.ui.notifications.showWithPicture(title, `Диспетчер [${time}]`, desc + `\n~y~Район:~s~ ${street1}\n~y~Улица:~s~ ${street2}`, icon, 1);
+
+    user.sendPhoneNotify(`Диспетчер [${time}]`, title, desc + `\n~y~Район:~s~ ${street1}\n~y~Улица:~s~ ${street2}`, icon);
 };
 
 dispatcher.sendNotification = function (title, desc, desc2, desc3) {

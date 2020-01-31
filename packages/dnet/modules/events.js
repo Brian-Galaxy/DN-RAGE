@@ -2856,6 +2856,7 @@ mp.events.addRemoteCounted('server:user:buyLicensePlayer', (player, id, lic, pri
 
         user.giveLic(player, lic, 24, `Выдал: ${user.getRpName(target)}`);
         player.notify('~g~Поздравляем с покупкой ~s~' + methods.getLicName(lic));
+        target.notify(`~g~Вы заработали ${methods.moneyFormat(price * 0.2)}\n~g~В бюджет организации поступило ${methods.moneyFormat(price * 0.8)}`);
     }
     else {
         player.notify('~r~Игрок не найден');

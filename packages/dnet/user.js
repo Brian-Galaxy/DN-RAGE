@@ -1424,6 +1424,21 @@ user.setWaypoint = function(player, x, y) {
     player.call('client:user:setWaypoint', [x, y]);
 };
 
+user.sendPhoneNotify = function(player, sender, title, message, pic = 'CHAR_BLANK_ENTRY') {
+    if (!user.isLogin(player))
+        return;
+
+    player.call('client:user:sendPhoneNotify', [sender, title, message, pic]);
+};
+
+user.sendPhoneSms = function(player, sender, title, message, pic = 'CHAR_BLANK_ENTRY') {
+    if (!user.isLogin(player))
+        return;
+
+    user.sendPhoneNotify(player, sender, title, message, pic);
+    //TODO
+};
+
 user.sendSmsBankOperation = function(player, text, title = 'Операция со счётом') {
     methods.debug('bank.sendSmsBankOperation');
     if (!user.isLogin(player))
@@ -1434,16 +1449,16 @@ user.sendSmsBankOperation = function(player, text, title = 'Операция с�
     try {
         switch (prefix) {
             case 6000:
-                player.notifyWithPicture('~r~Maze Bank', '~g~' + title, text, 'CHAR_BANK_MAZE', 2);
+                user.sendPhoneNotify(player,'~r~Maze Bank', '~g~' + title, text, 'CHAR_BANK_MAZE', 2);
                 break;
             case 7000:
-                player.notifyWithPicture('~o~Pacific Bank', '~g~' + title, text, 'WEB_SIXFIGURETEMPS', 2);
+                user.sendPhoneNotify(player,'~o~Pacific Bank', '~g~' + title, text, 'WEB_SIXFIGURETEMPS', 2);
                 break;
             case 8000:
-                player.notifyWithPicture('~g~Fleeca Bank', '~g~' + title, text, 'CHAR_BANK_FLEECA', 2);
+                user.sendPhoneNotify(player,'~g~Fleeca Bank', '~g~' + title, text, 'CHAR_BANK_FLEECA', 2);
                 break;
             case 9000:
-                player.notifyWithPicture('~b~Blaine Bank', '~g~' + title, text, 'DIA_CUSTOMER', 2);
+                user.sendPhoneNotify(player,'~b~Blaine Bank', '~g~' + title, text, 'DIA_CUSTOMER', 2);
                 break;
         }
     }

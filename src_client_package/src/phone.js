@@ -10,6 +10,7 @@ import dispatcher from "./manager/dispatcher";
 let phone = {};
 
 let hidden = true;
+phone.network = 0;
 
 phone.show = function() {
 
@@ -82,19 +83,34 @@ phone.timer = function() {
         return;
     }
 
-    let data = {
-        type: "updateTopBar",
-        bar: {
-            time: weather.getFullRpTime(),
-            battery: 11,
-            network: 5,
-            temperature: weather.getWeatherTempFormat(),
-            date: weather.getCurrentDayName()
+    if (phone.network == 0) {
+        let data = {
+            type: "updateTopBar",
+            bar: {
+                time: weather.getFullRpTime(),
+                battery: 11,
+                network: phone.network,
+                temperature: '',
+                date: 'Поиск сети...'
 
-        }
-    };
+            }
+        };
+        ui.callCef('phone' + pType, JSON.stringify(data));
+    }
+    else {
+        let data = {
+            type: "updateTopBar",
+            bar: {
+                time: weather.getFullRpTime(),
+                battery: 11,
+                network: phone.network,
+                temperature: weather.getWeatherTempFormat(),
+                date: weather.getCurrentDayName()
 
-    ui.callCef('phone' + pType, JSON.stringify(data));
+            }
+        };
+        ui.callCef('phone' + pType, JSON.stringify(data));
+    }
 };
 
 phone.isHide = function() {
@@ -103,6 +119,12 @@ phone.isHide = function() {
 
 phone.apps = function(action) {
     methods.debug(action);
+
+    if (phone.network == 0) {
+        phone.showNoNetwork();
+        return;
+    }
+
     switch (action) {
         case 'app':
             phone.showAppList();
@@ -1348,6 +1370,27 @@ phone.showLoad = function() {
     phone.showMenu(menu);
 };
 
+phone.showNoNetwork = function() {
+    let menu = {
+        UUID: 'error',
+        title: 'Ошибка',
+        items: [
+            {
+                title: 'Нет сети...',
+                umenu: [
+                    {
+                        title: "Приложение не работает без подключения к сети",
+                        type: 1,
+                        params: { name: "error" }
+                    }
+                ],
+            },
+        ],
+    };
+
+    phone.showMenu(menu);
+};
+
 phone.showMenu = function(menu) {
     let data = {
         type: 'updateMenu',
@@ -1471,6 +1514,12 @@ phone.getMenuMainItem = function(title, items) {
 
 phone.callBack = function(action, menu, id, ...args) {
     methods.debug(action, menu, id, ...args);
+
+    if (phone.network == 0) {
+        phone.showNoNetwork();
+        return;
+    }
+
     if (action == 'button')
         phone.callBackButton(menu, id, ...args);
     else if (action == 'radio')
@@ -1636,6 +1685,89 @@ phone.callBackCheckbox = function(menu, id, ...args) {
     catch (e) {
         methods.debug(e);
     }
+};
+
+let notifyList = [];
+
+phone.sendNotify = function(sender, title, message, pic = 'CHAR_BLANK_ENTRY') {
+    if (phone.getType() > 0)
+        notifyList.push({ title: title, sender: sender, message: message, pic: pic });
+};
+
+phone.findNearestNetwork = function(pos) {
+    let prevPos = new mp.Vector3(9999, 9999, 9999);
+    enums.networkList.forEach(function (item) {
+        let shopPos = new mp.Vector3(item[0], item[1], item[2]);
+        if (methods.distanceToPos(shopPos, pos) < methods.distanceToPos(prevPos, pos))
+            prevPos = shopPos;
+    });
+    return prevPos;
+};
+
+phone.findNetworkTimer = function() {
+    try {
+        if (!methods.isBlackout() && phone.getType() > 0)
+        {
+            let plPos = mp.players.local.position;
+            let pos = phone.findNearestNetwork(plPos);
+            let distance = methods.distanceToPos(pos, plPos);
+
+            if (plPos.z < 270 && plPos.z > 0)
+            {
+                if (distance <= 1000)
+                    phone.network = 5;
+                else if (distance > 1000 && distance < 1500)
+                {
+                    let distanceNetwork = (500 - (distance - 1000)) / 5.0;
+                    if (distanceNetwork > 90)
+                        phone.network = 5;
+                    else if (distanceNetwork > 70)
+                        phone.network = 4;
+                    else if (distanceNetwork > 50)
+                        phone.network = 3;
+                    else if (distanceNetwork > 30)
+                        phone.network = 2;
+                    else if (distanceNetwork > 10)
+                        phone.network = 1;
+                    else
+                        phone.network = 0;
+                }
+                else
+                    phone.network = 0;
+            }
+            else if (plPos.z < 450 && plPos.z >= 270)
+            {
+                let distanceNetwork = (180 - (plPos.z - 270)) / 1.8;
+                if (distanceNetwork > 90)
+                    phone.network = 5;
+                else if (distanceNetwork > 70)
+                    phone.network = 4;
+                else if (distanceNetwork > 50)
+                    phone.network = 3;
+                else if (distanceNetwork > 30)
+                    phone.network = 2;
+                else if (distanceNetwork > 10)
+                    phone.network = 1;
+                else
+                    phone.network = 0;
+            }
+            else
+                phone.network = 0;
+        }
+        else
+            phone.network = 0;
+
+        if (phone.network > 0 && phone.getType() > 0) {
+            notifyList.forEach(item => {
+                mp.game.ui.notifications.showWithPicture(item.sender, item.title, item.message, item.pic, 1);
+            });
+        }
+    }
+    catch (e) {
+        methods.debug('NETWORK', e);
+    }
+
+    setTimeout(phone.findNetworkTimer, 1000);
 };
 
 phone.types = {

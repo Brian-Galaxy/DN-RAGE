@@ -23,12 +23,13 @@ import npc from "./manager/npc";
 import skill from "./manager/skill";
 import attach from "./manager/attach";
 import attachItems from "./manager/attachItems";
-
-import user from "./user";
-import enums from "./enums";
 import weather from "./manager/weather";
 import hosp from "./manager/hosp";
 import jail from "./manager/jail";
+
+import user from "./user";
+import enums from "./enums";
+import phone from "./phone";
 
 try {
 
@@ -67,6 +68,8 @@ try {
     vBreakLight.timer();
 
     weather.secSyncTimer();
+
+    phone.findNetworkTimer();
 
     /*mp.events.add('guiReady', () => {
         ui.create();

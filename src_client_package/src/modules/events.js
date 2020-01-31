@@ -1064,6 +1064,11 @@ mp.events.add('client:user:revive', (hp) => {
     user.revive(hp);
 });
 
+mp.events.add('client:user:sendPhoneNotify', (sender, title, message, pic) => {
+    methods.debug('Event: client:user:sendPhoneNotify');
+    user.sendPhoneNotify(sender, title, message, pic);
+});
+
 mp.events.add('client:jail:jailPlayer', (sec, withIzol) => {
     methods.debug('Event: client:jail:toJail' + sec);
     jail.toJail(sec);

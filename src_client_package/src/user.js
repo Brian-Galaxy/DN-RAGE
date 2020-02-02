@@ -290,6 +290,14 @@ user.getAmmoByHash = function(name) {
     return mp.game.invoke(methods.GET_PED_AMMO_TYPE_FROM_WEAPON, mp.players.local.handle, name);
 };
 
+user.getCurrentAmmoInClip = function() {
+    return mp.players.local.getAmmoInClip(user.getCurrentWeapon());
+};
+
+user.getCurrentWeapon = function() {
+    return mp.game.invoke(methods.GET_SELECTED_PED_WEAPON, mp.players.local.handle);
+};
+
 user.kickAntiCheat = function(reason, title = 'Вы были кикнуты.') {
     methods.debug(reason, title);
 };

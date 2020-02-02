@@ -1951,13 +1951,23 @@ menuList.showSettingsHudMenu = function() {
     listVoiceItem.doName = 'speed';
     listVoiceItem.Index = user.getCache('s_hud_speed') ? 1 : 0;
 
-    UIMenu.Menu.AddMenuItem("~y~Перезапустить интерфейс", 'В случае если у вас он завис или не работает').doName = 'fixInterface';
+    let listVoiceVol = ["0%", "10%", "20%", "30%", "40%", "50%", "60%", "70%", "80%", "90%", "100%"];
+    listVoiceItem = UIMenu.Menu.AddMenuItemList("Прозрачность интерфейса", listVoiceVol, "Нажмите ~g~Enter~s~ чтобы применить");
+    listVoiceItem.doName = 'bg';
+    listVoiceItem.Index = methods.parseInt(user.getCache('s_hud_bg') * 10);
+
+    UIMenu.Menu.AddMenuItem("~y~Перезапустить интерфейс", 'В случае если у вас он завис\nили не работает').doName = 'fixInterface';
     let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
 
     menu.ListChange.on((item, index) => {
         if (item.doName === 'speed') {
             user.set('s_hud_speed', index === 1);
             mp.game.ui.notifications.show('~b~Настройки были сохранены');
+        }
+        if (item.doName == 'bg') {
+            let voiceVol = index / 10;
+            user.set('s_hud_bg', voiceVol);
+            mp.game.ui.notifications.show('~b~Вы установили значение: ~s~' + (voiceVol * 100) + '%');
         }
     });
     menu.ItemSelect.on((item, index) => {

@@ -1,4 +1,9 @@
 // script constants
+import dispatcher from "./dispatcher";
+import object from "./object";
+
+let shoot = {};
+
 const localPlayer = mp.players.local;
 
 const firingModes = {
@@ -24,6 +29,7 @@ const singleFireBlacklist = [ // weapons in here are not able to use single fire
     mp.game.joaat("WEAPON_MUSKET"), mp.game.joaat("WEAPON_DBSHOTGUN"), mp.game.joaat("WEAPON_SNIPERRIFLE"), mp.game.joaat("WEAPON_HEAVYSNIPER"), mp.game.joaat("WEAPON_HEAVYSNIPER_MK2")
 ];
 
+
 // script functions
 const isWeaponIgnored = (weaponHash) => {
     return ignoredWeaponGroups.indexOf(mp.game.weapon.getWeapontypeGroup(weaponHash)) > -1;
@@ -46,6 +52,15 @@ let lastWeaponConfigUpdate = 0;
 // these are for the current weapon
 let curFiringMode = 0;
 let curBurstShots = 0;
+
+
+shoot.getCurrentModeName = function () {
+    return firingModeNames[curFiringMode].toLowerCase();
+};
+
+shoot.isIgnoreWeapon = function () {
+    return ignoreCurrentWeapon;
+};
 
 // load mp audio for the click sound
 mp.game.audio.setAudioFlag("LoadMPData", true);
@@ -119,3 +134,5 @@ mp.events.add('client:changeFireMod', () => {
 
     }
 });
+
+export default shoot;

@@ -5,6 +5,7 @@ import user from "../user";
 import voice from "../voice";
 
 import weather from "../manager/weather";
+import shoot from "../manager/shoot";
 import vehicles from "../property/vehicles";
 
 let ui = {};
@@ -119,6 +120,7 @@ ui.updateValues = function() {
                 temp: weather.getWeatherTempFormat(),
                 date: weather.getFullRpDate(),
                 time: weather.getFullRpTime(),
+                background: user.getCache('s_hud_bg'),
             };
             ui.callCef('hudw', JSON.stringify(data));
 
@@ -127,6 +129,7 @@ ui.updateValues = function() {
                 isShow: user.getCache("is_clock"),
                 district: ui.getCurrentZone(),
                 street: ui.getCurrentStreet(),
+                background: user.getCache('s_hud_bg'),
             };
             ui.callCef('hudg', JSON.stringify(data));
 
@@ -137,6 +140,7 @@ ui.updateValues = function() {
                 eat: user.getEatLevel() / 10,
                 wallet: methods.moneyFormat(user.getCashMoney(), 999999999999),
                 card: user.getCache('bank_card') > 0 ? methods.moneyFormat(user.getBankMoney(), 9999999999999) : 'Нет карты',
+                background: user.getCache('s_hud_bg'),
             };
             ui.callCef('hudp', JSON.stringify(data));
 
@@ -147,7 +151,16 @@ ui.updateValues = function() {
                 online: mp.players.length,
                 max_player: "1000",
                 id: mp.players.local.remoteId,
+                showAmmo: !shoot.isIgnoreWeapon(),
+                ammoMode: shoot.getCurrentModeName(),
+                ammoCount: `${user.getCurrentAmmoInClip()}`,
+                background: user.getCache('s_hud_bg'),
             };
+            /*
+            his.setState({showAmmo: value.showAmmo});
+        this.setState({ammoCount: value.ammoCount});
+        this.setState({ammoMode: value.ammoMode});
+            * */
             ui.callCef('hudl', JSON.stringify(data));
         }
         catch (e) {
@@ -204,6 +217,7 @@ ui.updateVehValues = function() {
                 fuelType: fuelPostfix,
                 max_fuel: fuelMax,
                 speed: vSpeed,
+                background: user.getCache('s_hud_bg'),
             };
             ui.callCef('hudc', JSON.stringify(data));
         }

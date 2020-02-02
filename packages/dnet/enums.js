@@ -174,6 +174,7 @@ enums.userData = [
     "eat_level",
 
     "s_hud_speed",
+    "s_hud_bg",
     "s_voice_vol",
     "s_clipset",
 

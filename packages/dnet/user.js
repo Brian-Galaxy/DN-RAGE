@@ -311,6 +311,10 @@ user.loadUser = function(player, name, spawn = 'Стандарт') {
                 user.set(player, 'login_date', methods.getTimeStamp());
                 user.set(player, 'login_ip', player.ip);
 
+                if (user.get(player, 'crypto_card').trim() == '') {
+                    user.set(player, 'crypto_card', methods.md5(`${methods.getTimeStamp()}${player.socialClub}`));
+                }
+
                 //mysql.executeQuery(`INSERT INTO log_auth (nick, lic, datetime) VALUES ('${user.getRpName(player)}', '${player.serial}', '${methods.getTimeStamp()}')`);
             } catch (e) {
                 methods.debug(e);
@@ -987,6 +991,54 @@ user.getRegStatusName = function(player) {
     }
 };
 
+user.getRepName = function(player) {
+    if (!user.isLogin(player))
+        return 'Нейтральная';
+    let rep = user.get(player, 'rep');
+    if (rep > 900)
+        return 'Идеальная';
+    if (rep > 800 && rep <= 900)
+        return 'Очень хорошая';
+    if (rep > 700 && rep <= 800)
+        return 'Хорошая';
+    if (rep > 600 && rep <= 700)
+        return 'Положительная';
+    if (rep >= 400 && rep <= 600)
+        return 'Нейтральная';
+    if (rep >= 300 && rep < 400)
+        return 'Отрицательная';
+    if (rep >= 200 && rep < 300)
+        return 'Плохая';
+    if (rep >= 100 && rep < 200)
+        return 'Очень плохая';
+    if (rep < 100)
+        return 'Наихудшая';
+};
+
+user.getRepColorName = function(player) {
+    if (!user.isLogin(player))
+        return 'Нейтральная';
+    let rep = user.get(player, 'rep');
+    if (rep > 900)
+        return '~b~Идеальная';
+    if (rep > 800 && rep <= 900)
+        return '~g~Очень хорошая';
+    if (rep > 700 && rep <= 800)
+        return '~g~Хорошая';
+    if (rep > 600 && rep <= 700)
+        return '~g~Положительная';
+    if (rep >= 400 && rep <= 600)
+        return 'Нейтральная';
+    if (rep >= 300 && rep < 400)
+        return '~y~Отрицательная';
+    if (rep >= 200 && rep < 300)
+        return '~o~Плохая';
+    if (rep >= 100 && rep < 200)
+        return '~o~Очень плохая';
+    if (rep < 100)
+        return '~r~Наихудшая';
+};
+
 user.getJobName = function(player) {
     if (!user.isLogin(player))
         return false;
@@ -1263,6 +1315,29 @@ user.getCashMoney = function(player) {
     return 0;
 };
 
+user.addCryptoMoney = function(player, money, text = 'Финансовая операция') {
+    methods.saveLog('Money', `[ADD_CASH] ${user.getRpName(player)} (${user.getId(player)}) ${user.getCryptoMoney(player)} - ${money}`);
+    user.addCryptoHistory(player, text, methods.parseFloat(money));
+    user.setCryptoMoney(player, user.getCryptoMoney(player) + methods.parseFloat(money));
+};
+
+user.removeCryptoMoney = function(player, money, text = 'Финансовая операция') {
+    methods.saveLog('Money', `[REMOVE_CASH] ${user.getRpName(player)} (${user.getId(player)}) ${user.getCryptoMoney(player)} + ${money}`);
+    user.addCryptoHistory(player, text, methods.parseFloat(money) * -1);
+    user.setCryptoMoney(player, user.getCryptoMoney(player) - methods.parseFloat(money));
+};
+
+user.setCryptoMoney = function(player, money) {
+    user.set(player, 'money_crypto', methods.parseFloat(money));
+    user.updateClientCache(player);
+};
+
+user.getCryptoMoney = function(player) {
+    if (user.has(player, 'money_crypto'))
+        return methods.parseFloat(user.get(player, 'money_crypto'));
+    return 0;
+};
+
 user.addBankMoney = function(player, money, text = "Операция со счетом") {
     methods.saveLog('Money', `[ADD_BANK] ${user.getRpName(player)} (${user.getId(player)}) ${user.getBankMoney(player)} - ${money}`);
     user.addBankHistory(player, text, methods.parseFloat(money));
@@ -1347,6 +1422,21 @@ user.addCashHistory = function(player, text, price) {
     let timestamp = methods.getTimeStamp();
 
     mysql.executeQuery(`INSERT INTO log_cash_user (user_id, text, price, timestamp, rp_datetime) VALUES ('${userId}', '${text}', '${price}', '${timestamp}', '${rpDateTime}')`);
+};
+
+user.addCryptoHistory = function(player, text, price) {
+    if (!user.isLogin(player))
+        return;
+
+    let userId = user.getId(player);
+
+    text = methods.removeQuotes(text);
+    price = methods.parseFloat(price);
+
+    let rpDateTime = weather.getRpDateTime();
+    let timestamp = methods.getTimeStamp();
+
+    mysql.executeQuery(`INSERT INTO log_crypto_user (user_id, text, price, timestamp, rp_datetime) VALUES ('${userId}', '${text}', '${price}', '${timestamp}', '${rpDateTime}')`);
 };
 
 user.addHistory = function(player, type, reason) {

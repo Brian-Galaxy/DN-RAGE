@@ -21,6 +21,10 @@ methods.sha256 = function (text) {
     return crypto.createHash('sha256').update(text).digest('hex');
 };
 
+methods.md5 = function (text) {
+    return crypto.createHash('md5').update(text).digest('hex');
+};
+
 methods.sleep = ms => new Promise(res => setTimeout(res, ms));
 
 methods.checkTeleport = function(player, pos1, pos2) {

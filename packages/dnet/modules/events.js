@@ -18,6 +18,7 @@ let stocks = require('../property/stocks');
 let condos = require('../property/condos');
 let business = require('../property/business');
 let vehicles = require('../property/vehicles');
+let fraction = require('../property/fraction');
 
 let cloth = require('../business/cloth');
 let tattoo = require('../business/tattoo');
@@ -1275,6 +1276,18 @@ mp.events.addRemoteCounted('server:user:setCashMoney', (player, money) => {
     user.setCashMoney(player, money);
 });
 
+mp.events.addRemoteCounted('server:user:addCryptoMoney', (player, money, text) => {
+    user.addCryptoMoney(player, money, text);
+});
+
+mp.events.addRemoteCounted('server:user:removeCryptoMoney', (player, money, text) => {
+    user.removeCryptoMoney(player, money, text);
+});
+
+mp.events.addRemoteCounted('server:user:setCryptoMoney', (player, money) => {
+    user.setCryptoMoney(player, money);
+});
+
 mp.events.addRemoteCounted('server:user:addPayDayMoney', (player, money, text) => {
     user.addPayDayMoney(player, money, text);
 });
@@ -1517,6 +1530,18 @@ mp.events.addRemoteCounted('server:phone:fractionList', (player) => {
     phone.fractionList(player);
 });
 
+mp.events.addRemoteCounted('server:phone:fractionList2', (player) => {
+    if (!user.isLogin(player))
+        return;
+    phone.fractionList2(player);
+});
+
+mp.events.addRemoteCounted('server:phone:fractionAll', (player) => {
+    if (!user.isLogin(player))
+        return;
+    phone.fractionAll(player);
+});
+
 mp.events.addRemoteCounted('server:phone:fractionMoney', (player) => {
     if (!user.isLogin(player))
         return;
@@ -1551,6 +1576,16 @@ mp.events.addRemoteCounted('server:phone:userNewsList', (player) => {
     if (!user.isLogin(player))
         return;
     phone.userNewsList(player);
+});
+
+mp.events.addRemoteCounted('server:phone:createFraction', (player) => {
+    if (!user.isLogin(player))
+        return;
+    phone.createFraction(player);
+});
+
+mp.events.addRemoteCounted('server:phone:buyFraction', (player, id) => {
+    fraction.create(player, id);
 });
 
 mp.events.addRemoteCounted('server:phone:fractionVehicleBuyInfo', (player, id) => {

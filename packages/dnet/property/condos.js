@@ -182,8 +182,6 @@ condos.updateOwnerInfo = function (id, userId, userName) {
     condos.set(id, "user_name", userName);
     condos.set(id, "user_id", userId);
 
-    hBlips.get(id).color = userId > 0 ? 59 : 69;
-
     if (userId == 0) {
         condos.updatePin(id, 0);
         condos.lockStatus(id, false);

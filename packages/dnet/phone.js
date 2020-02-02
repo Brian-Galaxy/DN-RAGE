@@ -2,6 +2,7 @@ let methods = require('./modules/methods');
 let mysql = require('./modules/mysql');
 
 let vehicles = require('./property/vehicles');
+let fraction = require('./property/fraction');
 
 let user = require('./user');
 let enums = require('./enums');
@@ -65,6 +66,34 @@ phone.getUserInfo = function(player, text) {
             subItems.push(phone.getMenuItemButton(
                 'Вид на жительство',
                 regName,
+                { name: 'none' },
+            ));
+
+            let repName = '';
+            let rep = row['rep'];
+
+            if (rep > 900)
+                repName = 'Идеальная';
+            if (rep > 800 && rep <= 900)
+                repName = 'Очень хорошая';
+            if (rep > 700 && rep <= 800)
+                repName = 'Хорошая';
+            if (rep > 600 && rep <= 700)
+                repName = 'Положительная';
+            if (rep >= 400 && rep <= 600)
+                repName = 'Нейтральная';
+            if (rep >= 300 && rep < 400)
+                repName = 'Отрицательная';
+            if (rep >= 200 && rep < 300)
+                repName = 'Плохая';
+            if (rep >= 100 && rep < 200)
+                repName = 'Очень плохая';
+            if (rep < 100)
+                repName = 'Наихудшая';
+
+            subItems.push(phone.getMenuItemButton(
+                'Репутация',
+                repName,
                 { name: 'none' },
             ));
 
@@ -566,6 +595,124 @@ phone.fractionList = function(player) {
     });
 };
 
+phone.fractionList2 = function(player) {
+    if (!user.isLogin(player))
+        return;
+    methods.debug('phone.fractionList2');
+
+    let fractionId = user.get(player, 'fraction_id2');
+
+    mysql.executeQuery(`SELECT id, social, name, fraction_id2, rank2, rank_type2, is_leader2, is_sub_leader2, is_online FROM users WHERE fraction_id2 = '${fractionId}' ORDER BY is_leader2 ASC, is_sub_leader2 ASC, rank_type2 ASC, is_online DESC, rank2 ASC, name ASC`, (err, rows, fields) => {
+        let items = [];
+        let depName = '';
+        let depList = [];
+        let depPrev = -1;
+
+        let isLeader = user.isLeader(player);
+        let isSubLeader = user.isSubLeader(player);
+
+        let fractionItem = fraction.getData(fractionId);
+        let fractionItemRanks = JSON.parse(fractionItem.get('rank_list'));
+        let fractionItemDep = JSON.parse(fractionItem.get('rank_type_list'));
+
+        let leaderItem = [];
+        let subLeaderItem = [];
+
+        let rankType = user.get(player, 'rank_type2');
+        let canEdit = user.get(player, 'rank2') == 0 || user.get(player, 'rank2') == 1;
+
+        rows.forEach(row => {
+
+            try {
+                if (row['is_leader2']) {
+                    leaderItem.push(phone.getMenuItemUser(
+                        row['name'],
+                        fractionItem.get('rank_leader'),
+                        row['is_online'] === 1,
+                        { name: 'none' },
+                        'https://a.rsg.sc//n/' + row['social'].toLowerCase(),
+                    ));
+                }
+                else if (row['is_sub_leader2']) {
+                    if (isLeader) {
+                        subLeaderItem.push(phone.getMenuItemUser(
+                            row['name'],
+                            fractionItem.get('rank_sub_leader'),
+                            row['is_online'] === 1,
+                            { name: 'memberAction', memberId: row['id'] },
+                            'https://a.rsg.sc//n/' + row['social'].toLowerCase(),
+                            true,
+                        ));
+                    }
+                    else {
+                        subLeaderItem.push(phone.getMenuItemUser(
+                            row['name'],
+                            fractionItem.get('rank_sub_leader'),
+                            row['is_online'] === 1,
+                            { name: 'none' },
+                            'https://a.rsg.sc//n/' + row['social'].toLowerCase()
+                        ));
+                    }
+
+                }
+                else {
+                    if (depPrev != row['rank_type2']) {
+                        if (depList.length > 0)
+                            items.push(phone.getMenuMainItem(`${depName} | ${depList.length} чел.`, depList));
+                        depName = fractionItemDep[row['rank_type2']];
+                        depList = [];
+                    }
+
+                    if (isLeader || isSubLeader || (canEdit && rankType == row['rank_type2'])) {
+                        depList.push(phone.getMenuItemUser(
+                            row['name'],
+                            fractionItemRanks[row['rank_type2']][row['rank2']],
+                            row['is_online'] === 1,
+                            { name: 'memberAction', memberId: row['id'] },
+                            'https://a.rsg.sc//n/' + row['social'].toLowerCase(),
+                            true,
+                        ));
+                    }
+                    else {
+                        depList.push(phone.getMenuItemUser(
+                            row['name'],
+                            fractionItemRanks[row['rank_type2']][row['rank2']],
+                            row['is_online'] === 1,
+                            { name: 'none' },
+                            'https://a.rsg.sc//n/' + row['social'].toLowerCase()
+                        ));
+                    }
+
+                    depPrev = row['rank_type2'];
+                }
+            }
+            catch (e) {
+                methods.debug(e);
+            }
+        });
+
+        try {
+            if (depList.length > 0)
+                items.push(phone.getMenuMainItem(`${depName} | ${depList.length} чел.`, depList));
+
+            let newItems = [];
+            let leaderItems = [];
+            if (leaderItem.length > 0)
+                leaderItems = leaderItems.concat(leaderItem);
+            if (subLeaderItem.length > 0)
+                leaderItems = leaderItems.concat(subLeaderItem);
+
+            if (leaderItems.length > 0)
+                newItems.push(phone.getMenuMainItem('Руководство', leaderItems));
+
+            phone.showMenu(player, 'fraction2', `Список членов организации | ${rows.length} чел.`, newItems.concat(items));
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    });
+};
+
 phone.fractionVehicles = function(player) {
     if (!user.isLogin(player))
         return;
@@ -781,6 +928,78 @@ phone.userNewsList = function(player) {
         }
 
         phone.showMenu(player, 'adList', `Список объявлений`, items);
+    });
+};
+
+phone.createFraction = function(player) {
+    if (!user.isLogin(player))
+        return;
+    methods.debug('phone.createFraction');
+
+    mysql.executeQuery(`SELECT * FROM fraction_list WHERE owner_id = 0`, (err, rows, fields) => {
+
+        let items = [];
+
+        if (rows.length > 0) {
+            let subItems = [];
+            rows.forEach(row => {
+
+                let item = phone.getMenuItemButton(
+                    `Слот свободен`,
+                    `Взнос 50₠`,
+                    { name: 'buyFraction', id: row['id'] },
+                    '',
+                    true,
+                );
+                subItems.push(item);
+            });
+            items.push(phone.getMenuMainItem(`Список доступных слотов`, subItems));
+        }
+        else {
+            items.push(phone.getMenuMainItem(`Список пуст`, [
+                phone.getMenuItemButton(
+                    `Нет доступных слотов`,
+                    ``
+                )
+            ]));
+        }
+
+        phone.showMenu(player, 'ecorp', `E-CORP`, items);
+    });
+};
+
+phone.fractionAll = function(player) {
+    if (!user.isLogin(player))
+        return;
+    methods.debug('phone.fractionAll');
+
+    mysql.executeQuery(`SELECT * FROM fraction_list WHERE owner_id = 1`, (err, rows, fields) => {
+
+        let items = [];
+
+        if (rows.length > 0) {
+            let subItems = [];
+            rows.forEach(row => {
+
+                let item = phone.getMenuItemButton(
+                    `${row['name']}`,
+                    ``,
+                    { name: 'none' }
+                );
+                subItems.push(item);
+            });
+            items.push(phone.getMenuMainItem(`Список организаций`, subItems));
+        }
+        else {
+            items.push(phone.getMenuMainItem(`Список пуст`, [
+                phone.getMenuItemButton(
+                    `Нет доступных организаций`,
+                    ``
+                )
+            ]));
+        }
+
+        phone.showMenu(player, 'ecorp', `E-CORP`, items);
     });
 };
 

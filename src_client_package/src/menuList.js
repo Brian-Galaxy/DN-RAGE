@@ -2178,6 +2178,7 @@ menuList.showPlayerStatsMenu = function() {
     UIMenu.Menu.AddMenuItem("~b~Дата рождения:~s~").SetRightLabel(`${user.getCache('age')}`);
     //UIMenu.Menu.AddMenuItem("~b~Работа:~s~").SetRightLabel(`${user.get('fraction_id') > 0 ? methods.getFractionName(user.get('fraction_id')) : methods.getJobName(user.get('job'))}`);
     UIMenu.Menu.AddMenuItem("~b~Вид на жительство:~s~").SetRightLabel(`${user.getRegStatusName()}`);
+    UIMenu.Menu.AddMenuItem("~b~Репутация:~s~").SetRightLabel(`${user.getRepColorName()}`);
     if (user.getCache('bank_card') > 0)
         UIMenu.Menu.AddMenuItem("~b~Банковская карта:~s~").SetRightLabel(`${methods.bankFormat(user.getCache('bank_card'))}`);
 

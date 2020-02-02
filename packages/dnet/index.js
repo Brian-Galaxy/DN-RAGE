@@ -32,6 +32,7 @@ let condos = require('./property/condos');
 let business = require('./property/business');
 let vehicles = require('./property/vehicles');
 let stocks = require('./property/stocks');
+let fraction = require('./property/fraction');
 
 let weather = require('./managers/weather');
 let pickups = require('./managers/pickups');
@@ -56,6 +57,7 @@ function init() {
         condos.loadBigAll();
         business.loadAll();
         stocks.loadAll();
+        fraction.loadAll();
 
         weather.loadAll();
 

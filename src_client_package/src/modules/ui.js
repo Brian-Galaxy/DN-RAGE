@@ -233,6 +233,8 @@ ui.updateZoneAndStreet = function() {
         let getStreet = mp.game.pathfind.getStreetNameAtCoord(local.position.x, local.position.y, local.position.z, 0, 0);
         _street = mp.game.ui.getStreetNameFromHashKey(getStreet.streetName); // Return string, if exist
         _zone = mp.game.ui.getLabelText(mp.game.zone.getNameOfZone(local.position.x, local.position.y, local.position.z));
+        if (getStreet.crossingRoad != 0)
+            _street += ' / ' + mp.game.ui.getStreetNameFromHashKey(getStreet.crossingRoad);
     }
     catch (e) {
         methods.debug(e);

@@ -504,6 +504,9 @@ weather.nextRandomWeatherByType = function(weatherType) {
     if (weather.getWeather() == "THUNDER")
         _windSpeed = methods.getRandomInt(9, 12);
 
+    if (_tempNew < 5)
+        _windSpeed = methods.getRandomInt(1, 12);
+
     methods.notifyWithPictureToAll(
         `Life Invader [${weather.getFullRpTime()}]`,
         "~y~Новости погоды",

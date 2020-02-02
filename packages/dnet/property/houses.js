@@ -81,7 +81,7 @@ houses.loadAll = function() {
             houses.set(item['id'], 'gz2', item['gz2']);
             houses.set(item['id'], 'grot2', item['grot2']);
 
-            houses.set(item['id'], 'ginterior3', item['ginterior33']);
+            houses.set(item['id'], 'ginterior3', item['ginterior3']);
             houses.set(item['id'], 'gx3', item['gx3']);
             houses.set(item['id'], 'gy3', item['gy3']);
             houses.set(item['id'], 'gz3', item['gz3']);
@@ -92,7 +92,7 @@ houses.loadAll = function() {
 
             let sprite = 40;
             let scale = 0.4;
-            let name;
+            let name = undefined;
             if (item['ginterior1'] >= 0) {
                 sprite = 492;
                 scale = 0.55;
@@ -189,7 +189,7 @@ houses.loadLast = function() {
             houses.set(item['id'], 'gz2', item['gz2']);
             houses.set(item['id'], 'grot2', item['grot2']);
 
-            houses.set(item['id'], 'ginterior3', item['ginterior33']);
+            houses.set(item['id'], 'ginterior3', item['ginterior3']);
             houses.set(item['id'], 'gx3', item['gx3']);
             houses.set(item['id'], 'gy3', item['gy3']);
             houses.set(item['id'], 'gz3', item['gz3']);

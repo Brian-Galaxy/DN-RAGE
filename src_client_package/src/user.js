@@ -893,6 +893,22 @@ user.getCashMoney = function() {
     return methods.parseFloat(user.getCache('money'));
 };
 
+user.addCryptoMoney = function(money, text = "Операция со счетом") {
+    mp.events.callRemote('server:user:addCryptoMoney', money, text);
+};
+
+user.removeCryptoMoney = function(money, text = "Операция со счетом") {
+    mp.events.callRemote('server:user:removeCryptoMoney', money, text);
+};
+
+user.setCryptoMoney = function(money) {
+    mp.events.callRemote('server:user:setCryptoMoney', money);
+};
+
+user.getCryptoMoney = function() {
+    return methods.parseFloat(user.getCache('money_crypto'));
+};
+
 user.addPayDayMoney = function(money, text = 'Финансовая операция') {
     mp.events.callRemote('server:user:addPayDayMoney', money, text);
 };
@@ -1032,6 +1048,50 @@ user.getRegStatusName = function() {
         default:
             return "~r~Нет";
     }
+};
+
+user.getRepName = function() {
+    let rep = user.getCache('rep');
+    if (rep > 900)
+        return 'Идеальная';
+    if (rep > 800 && rep <= 900)
+        return 'Очень хорошая';
+    if (rep > 700 && rep <= 800)
+        return 'Хорошая';
+    if (rep > 600 && rep <= 700)
+        return 'Положительная';
+    if (rep >= 400 && rep <= 600)
+        return 'Нейтральная';
+    if (rep >= 300 && rep < 400)
+        return 'Отрицательная';
+    if (rep >= 200 && rep < 300)
+        return 'Плохая';
+    if (rep >= 100 && rep < 200)
+        return 'Очень плохая';
+    if (rep < 100)
+        return 'Наихудшая';
+};
+
+user.getRepColorName = function() {
+    let rep = user.getCache('rep');
+    if (rep > 900)
+        return '~b~Идеальная';
+    if (rep > 800 && rep <= 900)
+        return '~g~Очень хорошая';
+    if (rep > 700 && rep <= 800)
+        return '~g~Хорошая';
+    if (rep > 600 && rep <= 700)
+        return '~g~Положительная';
+    if (rep >= 400 && rep <= 600)
+        return 'Нейтральная';
+    if (rep >= 300 && rep < 400)
+        return '~y~Отрицательная';
+    if (rep >= 200 && rep < 300)
+        return '~o~Плохая';
+    if (rep >= 100 && rep < 200)
+        return '~o~Очень плохая';
+    if (rep < 100)
+        return '~r~Наихудшая';
 };
 
 user.giveJobSkill = function() {
@@ -1239,7 +1299,6 @@ user.isHelper = function(level) {
 };
 
 user.isGos = function() {
-    methods.debug('user.isGos');
     return user.isLogin() && (user.isSapd() || user.isFib() || user.isUsmc() || user.isGov() || user.isEms() || user.isSheriff());
 };
 
@@ -1248,57 +1307,62 @@ user.isPolice = function() {
 };
 
 user.isGov = function() {
-    methods.debug('user.isGov');
     return user.isLogin() && user.getCache('fraction_id') == 1;
 };
 
 user.isSapd = function() {
-    methods.debug('user.isSapd');
     return user.isLogin() && user.getCache('fraction_id') == 2;
 };
 
 user.isFib = function() {
-    methods.debug('user.isFib');
     return user.isLogin() && user.getCache('fraction_id') == 3;
 };
 
 user.isUsmc = function() {
-    methods.debug('user.isUsmc');
     return user.isLogin() && user.getCache('fraction_id') == 4;
 };
 
 user.isSheriff = function() {
-    methods.debug('user.isSheriff');
     return user.isLogin() && user.getCache('fraction_id') == 5;
 };
 
 user.isEms = function() {
-    methods.debug('user.isEms');
     return user.isLogin() && user.getCache('fraction_id') == 6;
 };
 user.isNews = function() {
-    methods.debug('user.isNews');
     return user.isLogin() && user.getCache('fraction_id') == 7;
 };
 
 user.isLeader = function() {
-    methods.debug('user.isLeader');
     return user.isLogin() && user.getCache('is_leader');
 };
 
 user.isSubLeader = function() {
-    methods.debug('user.isSubLeader');
     return user.isLogin() && user.getCache('is_sub_leader');
 };
 
 user.isDepLeader = function() {
-    methods.debug('user.isDepLeader');
     return user.isLogin() && user.getCache('fraction_id') > 0 && user.getCache('rank') === 0;
 };
 
 user.isDepSubLeader = function() {
-    methods.debug('user.isDepSubLeader');
     return user.isLogin() && user.getCache('fraction_id') > 0 && user.getCache('rank') === 1;
+};
+
+user.isLeader2 = function() {
+    return user.isLogin() && user.getCache('is_leader2');
+};
+
+user.isSubLeader2 = function() {
+    return user.isLogin() && user.getCache('is_sub_leader2');
+};
+
+user.isDepLeader2 = function() {
+    return user.isLogin() && user.getCache('fraction_id2') > 0 && user.getCache('rank2') === 0;
+};
+
+user.isDepSubLeader2 = function() {
+    return user.isLogin() && user.getCache('fraction_id2') > 0 && user.getCache('rank2') === 1;
 };
 
 user.cuff = function() {

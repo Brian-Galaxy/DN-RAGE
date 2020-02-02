@@ -12,6 +12,7 @@ enums.offsets = { //TODO
     yacht: 500000,
     business: 600000,
     stock: 700000,
+    fraction: 800000,
 };
 
 enums.repList = [
@@ -44,6 +45,13 @@ enums.userData = [
     "rank_type",
     "is_leader",
     "is_sub_leader",
+
+    "fraction_id2",
+    "rank2",
+    "rank_type2",
+    "is_leader2",
+    "is_sub_leader2",
+
     "job",
 
     "wanted_level",

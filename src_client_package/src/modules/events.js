@@ -2503,6 +2503,7 @@ mp.events.add('render', () => {
     }*/
 });
 
+//TODO Переделать отдачу стрельбы, для начала переделав IS SHOOOTING, чтобы он после того как закончил стрелять , еще 1 секунду ждал, вдруг игрок снова начнет стрелять
 let isShootingActive = false;
 mp.events.add('render', async () => {
 

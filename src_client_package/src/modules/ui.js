@@ -153,7 +153,7 @@ ui.updateValues = function() {
                 id: mp.players.local.remoteId,
                 showAmmo: !shoot.isIgnoreWeapon(),
                 ammoMode: shoot.getCurrentModeName(),
-                ammoCount: `${user.getCurrentAmmoInClip()}`,
+                ammoCount: `${user.getCurrentAmmo()}`,
                 background: user.getCache('s_hud_bg'),
             };
             /*

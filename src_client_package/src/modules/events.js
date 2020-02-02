@@ -1475,11 +1475,14 @@ mp.events.add('client:inventory:unloadW', function(itemId) {
     let wpName = items.getItemNameHashById(itemId);
     let wpHash = weapons.getHashByName(wpName);
     let slot = weapons.getGunSlotIdByItem(itemId);
+    let ammoId = weapons.getGunAmmoNameByItemId(itemId);
 
-    if (user.getCache('weapon_' + slot + '_ammo') >= 0) {
-        let ammoCount = mp.game.invoke(methods.GET_AMMO_IN_PED_WEAPON, mp.players.local.handle, wpHash);
-        inventory.addItem(weapons.getGunAmmoNameByItemId(itemId), 1, inventory.types.Player, user.getCache('id'), ammoCount);
+    if (ammoId == -1) {
+        mp.game.ui.notifications.show(`~r~Данное оружие нельзя разрядить`);
+        return;
     }
+
+    inventory.addItemSql(ammoId, 1, inventory.types.Player, user.getCache('id'), user.getAmmoByHash(wpHash));
 
     user.setAmmo(wpName, 0);
     user.set('weapon_' + slot + '_ammo', -1);
@@ -1492,19 +1495,26 @@ mp.events.add('client:inventory:loadWeapon', function(id, itemId, loadItemId, co
 
     let currentAmmoId = weapons.getGunAmmoNameByItemId(loadItemId);
 
+    if (currentAmmoId == -1) {
+        mp.game.ui.notifications.show(`~r~Это оружие не нуждается в патронах`);
+        return;
+    }
+
     if (currentAmmoId != itemId) {
         mp.game.ui.notifications.show(`~r~Оружие использует патроны "${items.getItemNameById(currentAmmoId)}"`);
         return;
     }
 
-    if (items.getAmmoCount(currentAmmoId) <= user.getCache('weapon_' + slot + '_ammo')) {
+    let ammo = user.getAmmoByHash(wpHash);
+
+    if (items.getAmmoCount(currentAmmoId) <= ammo) {
         mp.game.ui.notifications.show(`~r~Превышен максимальный запас патрон`);
         return;
     }
 
-    if (user.getCache('weapon_' + slot + '_ammo') > 0) {
-        let newCount = items.getAmmoCount(currentAmmoId) - user.getCache('weapon_' + slot + '_ammo');
-        user.setAmmoByHash(wpHash, user.getCache('weapon_' + slot + '_ammo') + newCount);
+    if (ammo > 0) {
+        let newCount = items.getAmmoCount(currentAmmoId) - ammo;
+        user.setAmmoByHash(wpHash, ammo + newCount);
         inventory.updateItemCount(id, count - newCount);
         ui.callCef('inventory', JSON.stringify({ type: 'updateItemIdCount', itemId: id, count: count - newCount }));
     }
@@ -1595,9 +1605,10 @@ mp.events.add('client:inventory:unEquip', function(id, itemId) {
         let wpHash = weapons.getHashByName(wpName);
         let slot = weapons.getGunSlotIdByItem(itemId);
 
-        if (user.getCache('weapon_' + slot + '_ammo') >= 0) {
-            let ammoCount = mp.game.invoke(methods.GET_AMMO_IN_PED_WEAPON, mp.players.local.handle, wpHash);
-            inventory.addItem(weapons.getGunAmmoNameByItemId(itemId), 1, inventory.types.Player, user.getCache('id'), ammoCount);
+        let ammoId = weapons.getGunAmmoNameByItemId(itemId);
+
+        if (ammoId >= 0) {
+            inventory.addItemSql(ammoId, 1, inventory.types.Player, user.getCache('id'), user.getAmmoByHash(wpHash));
         }
 
         user.setAmmo(wpName, 0);
@@ -2499,29 +2510,60 @@ mp.events.add('render', async () => {
         if (mp.players.local.isShooting() && !isShootingActive) {
 
             isShootingActive = true;
-            mp.game.cam.shakeGameplayCam("ROAD_VIBRATION_SHAKE", 1);
+            //mp.game.cam.shakeGameplayCam("ROAD_VIBRATION_SHAKE", 1.2);
 
-            /*  //TODO
-            if (user.getCache('mp0_shooting_ability') < 20)
-                mp.game.cam.shakeGameplayCam("ROAD_VIBRATION_SHAKE", 1);
-            else if (user.getCache('mp0_shooting_ability') < 40)
-                mp.game.cam.shakeGameplayCam("ROAD_VIBRATION_SHAKE", 0.7);
-            else if (user.getCache('mp0_shooting_ability') < 70)
+            //TODO
+            if (user.getCache('stats_shooting') < 20)
+                mp.game.cam.shakeGameplayCam("ROAD_VIBRATION_SHAKE", 1.2);
+            else if (user.getCache('stats_shooting') < 40)
+                mp.game.cam.shakeGameplayCam("ROAD_VIBRATION_SHAKE", 0.8);
+            else if (user.getCache('stats_shooting') < 70)
                 mp.game.cam.shakeGameplayCam("ROAD_VIBRATION_SHAKE", 0.5);
             else
                 mp.game.cam.shakeGameplayCam("ROAD_VIBRATION_SHAKE", 0.2);
-            */
+
         }
         else if (isShootingActive) {
-            await methods.sleep(5000);
-            isShootingActive = false;
-            if (!mp.players.local.isShooting())
+            await methods.sleep(4000);
+            if (!mp.players.local.isShooting()) {
+                isShootingActive = false;
                 mp.game.cam.stopGameplayCamShaking(false);
+            }
         }
     }
     catch (e) {
 
     }
+});
+
+mp.events.add('render', () => {
+    try {
+        let veh = mp.players.local.vehicle;
+        if (veh && veh.getClass() != 8) {
+            if (veh.getPedInSeat(-1) == mp.players.local.handle) {
+                if (user.getCache('stats_shooting') < 99 && !user.isPolice()) {
+                    mp.game.controls.disableControlAction(2, 24, true);
+                    mp.game.controls.disableControlAction(2, 25, true);
+                    mp.game.controls.disableControlAction(2, 66, true);
+                    mp.game.controls.disableControlAction(2, 67, true);
+                    mp.game.controls.disableControlAction(2, 69, true);
+                    mp.game.controls.disableControlAction(2, 70, true);
+                    mp.game.controls.disableControlAction(2, 140, true);
+                    mp.game.controls.disableControlAction(2, 141, true);
+                    mp.game.controls.disableControlAction(2, 143, true);
+                    mp.game.controls.disableControlAction(2, 263, true);
+                }
+            }
+        }
+    }
+    catch (e) {
+        
+    }
+});
+
+mp.events.add('render', () => {
+    if (user.isLogin() && user.getCache('stats_shooting') < 70)
+        mp.game.ui.hideHudComponentThisFrame(14);
 });
 
 /*mp.events.add('render', () => { //Включить свет в больке старой

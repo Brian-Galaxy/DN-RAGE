@@ -304,7 +304,8 @@ for(let code in keyCodes) {
             return;
         if (user.getCache('s_bind_megaphone') == parseInt(code)) {
             if (!methods.isBlockKeys()) {
-                user.setVariable('voice.distance', 25);
+                if (mp.players.local.getVariable('voice.distance') > 25)
+                    user.setVariable('voice.distance', 25);
                 voice.disableMicrophone();
             }
         }

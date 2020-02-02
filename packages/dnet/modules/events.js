@@ -1673,6 +1673,12 @@ mp.events.addRemoteCounted('server:inventory:addItem', (player, itemId, count, o
     inventory.addItem(itemId, count, ownerType, ownerId, countItems, isEquip, params, timeout);
 });
 
+mp.events.addRemoteCounted('server:inventory:addItemSql', (player, itemId, count, ownerType, ownerId, countItems, isEquip, params, timeout) => {
+    if (!user.isLogin(player))
+        return;
+    inventory.addItemSql(itemId, count, ownerType, ownerId, countItems, isEquip, params, timeout);
+});
+
 mp.events.addRemoteCounted('server:inventory:addPlayerWeaponItem', (player, itemId, count, ownerType, ownerId, countItems, isEquip, params, text, timeout) => {
     if (!user.isLogin(player))
         return;

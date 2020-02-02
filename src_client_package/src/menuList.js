@@ -6724,7 +6724,7 @@ menuList.showSheriffArsenalGunModMenu = function() {
         UIMenu.Menu.AddMenuItem(" ");
         UIMenu.Menu.AddMenuItem("MP5A3").itemId = 103;
     }
-    else if (user.getCache('rank_type') == 5) {
+    else if (user.getCache('rank_type') == 5 || user.isLeader() || user.isSubLeader()) {
         UIMenu.Menu.AddMenuItem("Фонарик Beretta 90Two").itemId = 311;
         UIMenu.Menu.AddMenuItem("Оптический прицел Beretta 90Two").itemId = 312;
         UIMenu.Menu.AddMenuItem("Глушитель Beretta 90Two").itemId = 313;
@@ -6930,7 +6930,7 @@ menuList.showSapdArsenalGunMenu = function() {
 
         UIMenu.Menu.AddMenuItem("Коробка патронов 9mm").itemId = 280;
     }
-    if (user.getCache('rank_type') == 4) {
+    if (user.getCache('rank_type') == 4 || user.isLeader() || user.isSubLeader()) {
         UIMenu.Menu.AddMenuItem("Beretta 90Two").itemId = 78;
         UIMenu.Menu.AddMenuItem("Benelli M3").itemId = 90;
         UIMenu.Menu.AddMenuItem("Benelli M4").itemId = 91;
@@ -7008,7 +7008,7 @@ menuList.showSapdArsenalGunModMenu = function() {
         UIMenu.Menu.AddMenuItem(" ");
         UIMenu.Menu.AddMenuItem("MP5A3").itemId = 103;
     }
-    else if (user.getCache('rank_type') == 4) {
+    else if (user.getCache('rank_type') == 4 || user.isLeader() || user.isSubLeader()) {
         UIMenu.Menu.AddMenuItem("Фонарик Beretta 90Two").itemId = 311;
         UIMenu.Menu.AddMenuItem("Оптический прицел Beretta 90Two").itemId = 312;
         UIMenu.Menu.AddMenuItem("Глушитель Beretta 90Two").itemId = 313;

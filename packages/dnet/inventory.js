@@ -281,7 +281,10 @@ inventory.addPlayerWeaponItem = function(player, itemId, count, ownerType, owner
     let serial = weapons.getWeaponSerial(itemId);
     let paramsObject = JSON.parse(params);
     paramsObject.serial = serial;
-    inventory.addItemSql(itemId, count, ownerType, ownerId, countItems, isEquip, JSON.stringify(paramsObject), timeout);
+    if (items.isAmmo(itemId))
+        inventory.addAmmoItem(itemId, count, ownerType, ownerId, countItems, isEquip, JSON.stringify(paramsObject), timeout);
+    else
+        inventory.addItemSql(itemId, count, ownerType, ownerId, countItems, isEquip, JSON.stringify(paramsObject), timeout);
     user.addHistory(player, 5, `${text} ${items.getItemNameById(itemId)} (${serial})`);
 };
 

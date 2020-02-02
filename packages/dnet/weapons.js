@@ -121,28 +121,28 @@ weapons.components = [
 
     ["weapon_pistol", "Flashlight", 899381934, 2],
     ["weapon_pistol", "Suppressor", 1709866683, 1],
-    ["weapon_pistol", "Yusuf Amir Luxury Finish", -684126074, 0],
+    ["weapon_pistol", "Yusuf Amir Luxury", -684126074, 0],
 
     ["weapon_combatpistol", "Flashlight", 899381934, 2],
     ["weapon_combatpistol", "Suppressor", -1023114086, 1],
-    ["weapon_combatpistol", "Yusuf Amir Luxury Finish", -966439566, 0],
+    ["weapon_combatpistol", "Yusuf Amir Luxury", -966439566, 0],
 
     ["weapon_appistol", "Flashlight", 899381934, 2],
     ["weapon_appistol", "Suppressor", -1023114086, 1],
-    ["weapon_appistol", "Gilded Gun Metal Finish", -1686714580, 0],
+    ["weapon_appistol", "Gilded Gun Metal", -1686714580, 0],
 
     ["weapon_pistol50", "Flashlight", 899381934, 2],
     ["weapon_pistol50", "Suppressor", -1489156508, 1],
-    ["weapon_pistol50", "Platinum Pearl Deluxe Finish", 2008591151, 0],
+    ["weapon_pistol50", "Platinum Pearl Deluxe", 2008591151, 0],
 
     ["weapon_revolver", "VIP Variant", 384708672, 0],
     ["weapon_revolver", "Bodyguard Variant", -1802258419, 0],
 
-    ["weapon_snspistol", "Etched Wood Grip Finish", -2144080721, 0],
+    ["weapon_snspistol", "Etched Wood Grip", -2144080721, 0],
 
     ["weapon_heavypistol", "Flashlight", 899381934, 2],
     ["weapon_heavypistol", "Suppressor", -1023114086, 1],
-    ["weapon_heavypistol", "Etched Wood Grip Finish", 2053798779, 0],
+    ["weapon_heavypistol", "Etched Wood Grip", 2053798779, 0],
 
     ["weapon_revolver_mk2", "Default Rounds", -1172055874, 4],
     ["weapon_revolver_mk2", "Tracer Rounds", -958864266, 4],
@@ -233,16 +233,16 @@ weapons.components = [
     ["weapon_microsmg", "Flashlight", 899381934, 2],
     ["weapon_microsmg", "Scope", -1657815255, 3],
     ["weapon_microsmg", "Suppressor", -1489156508, 1],
-    ["weapon_microsmg", "Yusuf Amir Luxury Finish", 1215999497, 0],
+    ["weapon_microsmg", "Yusuf Amir Luxury", 1215999497, 0],
 
     ["weapon_smg", "Scope", 1019656791, 3],
     ["weapon_smg", "Suppressor", -1023114086, 1],
-    ["weapon_smg", "Yusuf Amir Luxury Finish", 663170192, 0],
+    ["weapon_smg", "Yusuf Amir Luxury", 663170192, 0],
 
     ["weapon_assaultsmg", "Flashlight", 2076495324, 2],
     ["weapon_assaultsmg", "Scope", -1657815255, 3],
     ["weapon_assaultsmg", "Suppressor", -1489156508, 1],
-    ["weapon_assaultsmg", "Yusuf Amir Luxury Finish", 663517359, 0],
+    ["weapon_assaultsmg", "Yusuf Amir Luxury", 663517359, 0],
 
     ["weapon_smg_mk2", "Tracer Rounds", 2146055916, 4],
     ["weapon_smg_mk2", "Incendiary Rounds", -644734235, 4],
@@ -280,9 +280,9 @@ weapons.components = [
 
     ["weapon_pumpshotgun", "Flashlight", 2076495324, 2],
     ["weapon_pumpshotgun", "Suppressor", -435637410, 1],
-    ["weapon_pumpshotgun", "Yusuf Amir Luxury Finish", -1562927653, 0],
+    ["weapon_pumpshotgun", "Yusuf Amir Luxury", -1562927653, 0],
 
-    ["weapon_sawnoffshotgun", "Gilded Gun Metal Finish", -2052698631, 0],
+    ["weapon_sawnoffshotgun", "Gilded Gun Metal", -2052698631, 0],
 
     ["weapon_assaultshotgun", "Flashlight", 2076495324, 2],
     ["weapon_assaultshotgun", "Suppressor", -2089531990, 1],
@@ -323,30 +323,30 @@ weapons.components = [
     ["weapon_assaultrifle", "Scope", -1657815255, 3],
     ["weapon_assaultrifle", "Suppressor", -1489156508, 1],
     ["weapon_assaultrifle", "Grip", 202788691, 5],
-    ["weapon_assaultrifle", "Yusuf Amir Luxury Finish", 1319990579, 0],
+    ["weapon_assaultrifle", "Yusuf Amir Luxury", 1319990579, 0],
 
     ["weapon_carbinerifle", "Flashlight", 2076495324, 2],
     ["weapon_carbinerifle", "Scope", -1596416958, 3],
     ["weapon_carbinerifle", "Suppressor", -2089531990, 1],
     ["weapon_carbinerifle", "Grip", 202788691, 5],
-    ["weapon_carbinerifle", "Yusuf Amir Luxury Finish", -660892072, 0],
+    ["weapon_carbinerifle", "Yusuf Amir Luxury", -660892072, 0],
 
     ["weapon_advancedrifle", "Flashlight", 2076495324, 2],
     ["weapon_advancedrifle", "Scope", -1439939148, 3],
     ["weapon_advancedrifle", "Suppressor", -2089531990, 1],
-    ["weapon_advancedrifle", "Gilded Gun Metal Finish", 930927479, 0],
+    ["weapon_advancedrifle", "Gilded Gun Metal", 930927479, 0],
 
     ["weapon_specialcarbine", "Flashlight", 2076495324, 2],
     ["weapon_specialcarbine", "Scope", -1596416958, 3],
     ["weapon_specialcarbine", "Suppressor", -1489156508, 1],
     ["weapon_specialcarbine", "Grip", 202788691, 5],
-    ["weapon_specialcarbine", "Etched Gun Metal Finish", 1929467122, 0],
+    ["weapon_specialcarbine", "Etched Gun Metal", 1929467122, 0],
 
     ["weapon_bullpuprifle", "Flashlight", 2076495324, 2],
     ["weapon_bullpuprifle", "Scope", -1439939148, 3],
     ["weapon_bullpuprifle", "Suppressor", -2089531990, 1],
     ["weapon_bullpuprifle", "Grip", 202788691, 5],
-    ["weapon_bullpuprifle", "Gilded Gun Metal Finish", -1470645128, 0],
+    ["weapon_bullpuprifle", "Gilded Gun Metal", -1470645128, 0],
 
     ["weapon_bullpuprifle_mk2", "Tracer Rounds", -2111807319, 4],
     ["weapon_bullpuprifle_mk2", "Incendiary Rounds", -1449330342, 4],
@@ -465,11 +465,11 @@ weapons.components = [
     ["weapon_carbinerifle_mk2", "Patriotic", -631911105, 0],
 
     ["weapon_mg", "Scope", 1006677997, 3],
-    ["weapon_mg", "Yusuf Amir Luxury Finish", -690308418, 0],
+    ["weapon_mg", "Yusuf Amir Luxury", -690308418, 0],
 
     ["weapon_combatmg", "Scope", -1596416958, 3],
     ["weapon_combatmg", "Grip", 202788691, 5],
-    ["weapon_combatmg", "Etched Gun Metal Finish", -1828795171, 0],
+    ["weapon_combatmg", "Etched Gun Metal", -1828795171, 0],
 
     ["weapon_combatmg_mk2", "Tracer Rounds", -161179835, 4],
     ["weapon_combatmg_mk2", "Incendiary Rounds", -1020871238, 4],
@@ -500,7 +500,7 @@ weapons.components = [
 
     ["weapon_sniperrifle", "Scope", -767279652, 3],
     ["weapon_sniperrifle", "Advanced Scope", -1135289737, 3],
-    ["weapon_sniperrifle", "Etched Gun Metal Finish", 1077065191, 0],
+    ["weapon_sniperrifle", "Etched Gun Metal", 1077065191, 0],
 
     ["weapon_heavysniper", "Scope", -767279652, 3],
     ["weapon_heavysniper", "Advanced Scope", -1135289737, 3],
@@ -560,7 +560,7 @@ weapons.components = [
     ["weapon_marksmanrifle", "Scope", 471997210, 3],
     ["weapon_marksmanrifle", "Suppressor", -2089531990, 1],
     ["weapon_marksmanrifle", "Grip", 202788691, 5],
-    ["weapon_marksmanrifle", "Yusuf Amir Luxury Finish", 371102273, 0],
+    ["weapon_marksmanrifle", "Yusuf Amir Luxury", 371102273, 0],
 
     ["weapon_grenadelauncher", "Flashlight", 2076495324, 2],
     ["weapon_grenadelauncher", "Grip", 202788691, 5],

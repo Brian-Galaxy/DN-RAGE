@@ -99,7 +99,7 @@ gun.buy = function(player, itemId, price, count, superTint, tint, shopId) {
     if (items.isWeapon(itemId))
         inventory.addItemSql(itemId, 1, 1, user.getId(player), 1, 0, JSON.stringify(paramsObject), 1);
     else
-        inventory.addItem(itemId, 1, 1, user.getId(player), 1, 0, `{"userName": "${user.getRpName(player)}"}`, 1);
+        inventory.addItem(itemId, 1, 1, user.getId(player), -1, 0, `{"userName": "${user.getRpName(player)}"}`, 1);
     player.notify('~g~Вы купили ' + items.getItemNameById(itemId) +  ' по цене: ~s~' + methods.moneyFormat(price));
     user.addHistory(player, 5, `Покупка оружия ${items.getItemNameById(itemId)} (${serial})`);
     user.removeBankMoney(player, price, `Покупка оружия ${items.getItemNameById(itemId)} (${serial})`);

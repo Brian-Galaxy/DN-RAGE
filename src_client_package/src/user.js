@@ -100,11 +100,11 @@ user.timer1sec = function() {
                 let hash = item[1] / 2;
                 if (!mp.game.invoke(methods.HAS_PED_GOT_WEAPON, mp.players.local.handle, hash, false)) return;
 
-                let ammoCount = mp.game.invoke(methods.GET_AMMO_IN_PED_WEAPON, mp.players.local.handle, hash);
+                let ammoCount = user.getAmmoByHash(hash);
                 let slot = weapons.getGunSlotIdByItem(n);
 
-                if (user.getCache('weapon_' + slot + '_ammo') == -1)
-                    return;
+                //if (user.getCache('weapon_' + slot + '_ammo') == -1)
+                //    return;
 
                 if (methods.parseInt(user.getCache('weapon_' + slot + '_ammo')) != methods.parseInt(ammoCount)) {
                     user.set('weapon_' + slot + '_ammo', ammoCount);
@@ -205,6 +205,8 @@ user.removeAllWeapons = function() {
 
 user.giveWeaponByHash = function(model, pt) {
     try {
+        if (pt < 0)
+            pt = 0;
         mp.game.invoke(methods.GIVE_WEAPON_TO_PED, mp.players.local.handle, model, methods.parseInt(pt), false, true);
         Container.Data.SetLocally(0, model.toString(), true);
         Container.Data.Set(mp.players.local.remoteId, model.toString(), methods.parseInt(pt));
@@ -287,11 +289,15 @@ user.getAmmo = function(name) {
 };
 
 user.getAmmoByHash = function(name) {
-    return mp.game.invoke(methods.GET_PED_AMMO_TYPE_FROM_WEAPON, mp.players.local.handle, name);
+    return mp.game.invoke(methods.GET_AMMO_IN_PED_WEAPON, mp.players.local.handle, name);
 };
 
-user.getCurrentAmmoInClip = function() {
+user.getCurrentAmmoInClip = function() {ammo
     return mp.players.local.getAmmoInClip(user.getCurrentWeapon());
+};
+
+user.getCurrentAmmo = function() {
+    return user.getAmmoByHash(user.getCurrentWeapon());
 };
 
 user.getCurrentWeapon = function() {
@@ -1235,6 +1241,10 @@ user.isHelper = function(level) {
 user.isGos = function() {
     methods.debug('user.isGos');
     return user.isLogin() && (user.isSapd() || user.isFib() || user.isUsmc() || user.isGov() || user.isEms() || user.isSheriff());
+};
+
+user.isPolice = function() {
+    return user.isLogin() && (user.isSapd() || user.isFib() || user.isUsmc() || user.isSheriff());
 };
 
 user.isGov = function() {

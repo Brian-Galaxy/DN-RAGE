@@ -186,7 +186,7 @@ inventory.takeNewItem = async function(itemId, params, count = 1) { //TODO
     }
 };
 
-inventory.takeNewWeaponItem = async function(itemId, params, text = 'Получено оружие', count = 1) { //TODO
+inventory.takeNewWeaponItem = async function(itemId, params, text = 'Получено оружие', count = -1) { //TODO
     try {
         let user_id = user.getCache('id');
         let amount = await inventory.getInvAmount(user_id, inventory.types.Player);
@@ -500,6 +500,10 @@ inventory.updateAmount = function(id, type) {
 
 inventory.addItem = function(itemId, count, ownerType, ownerId, countItems, isEquip = 0, params = "{}", timeout = 10) {
     mp.events.callRemote('server:inventory:addItem', itemId, count, ownerType, ownerId, countItems, isEquip, params, timeout);
+};
+
+inventory.addItemSql = function(itemId, count, ownerType, ownerId, countItems, isEquip = 0, params = "{}", timeout = 10) {
+    mp.events.callRemote('server:inventory:addItemSql', itemId, count, ownerType, ownerId, countItems, isEquip, params, timeout);
 };
 
 inventory.addPlayerWeaponItem = function(itemId, count, ownerType, ownerId, countItems, isEquip = 0, params = "{}", text = 'Получено оружие', timeout = 10) {

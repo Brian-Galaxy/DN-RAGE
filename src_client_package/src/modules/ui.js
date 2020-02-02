@@ -47,6 +47,18 @@ ui.notify = function(text) {
     ui.callCef('notify','{"text": "' + text + '"}');
 };
 
+ui.fixInterface = function() {
+    try {
+        uiBrowser.destroy();
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+    uiBrowser = mp.browsers.new("package://cef/index.html");
+    ui.callCef('authMain','{"type": "hide"}');
+    ui.showHud();
+};
+
 ui.showSubtitle = function(message, duration = 5000) {
     try {
         mp.game.ui.setTextEntry2("STRING");

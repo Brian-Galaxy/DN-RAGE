@@ -601,7 +601,7 @@ mp.events.addRemoteCounted('server:user:showLic', (player, lic, playerId) => {
                         licPref = 'C';
                         break;
                     case 'air_lic':
-                        licName = 'Авиа транспорт';
+                        licName = 'Воздушный транспорт';
                         licPref = 'P';
                         break;
                     case 'ship_lic':
@@ -613,7 +613,7 @@ mp.events.addRemoteCounted('server:user:showLic', (player, lic, playerId) => {
                         licPref = 'T';
                         break;
                     case 'law_lic':
-                        licName = 'Адвоката';
+                        licName = 'Юриста';
                         licPref = 'L';
                         break;
                     case 'gun_lic':
@@ -621,11 +621,11 @@ mp.events.addRemoteCounted('server:user:showLic', (player, lic, playerId) => {
                         licPref = 'G';
                         break;
                     case 'biz_lic':
-                        licName = 'На бизнес';
+                        licName = 'На предпринимательство';
                         licPref = 'Z';
                         break;
                     case 'fish_lic':
-                        licName = 'На рыбалку';
+                        licName = 'На рыбаловство';
                         licPref = 'F';
                         break;
                     case 'med_lic':
@@ -1517,6 +1517,12 @@ mp.events.addRemoteCounted('server:phone:fractionList', (player) => {
     phone.fractionList(player);
 });
 
+mp.events.addRemoteCounted('server:phone:fractionMoney', (player) => {
+    if (!user.isLogin(player))
+        return;
+    phone.fractionMoney(player);
+});
+
 mp.events.addRemoteCounted('server:phone:fractionVehicles', (player) => {
     if (!user.isLogin(player))
         return;
@@ -1854,6 +1860,19 @@ mp.events.addRemoteCounted("onKeyPress:E", (player) => {
                 player.call('client:showStockInVMenu', [Array.from(houseData)]);
             }
         });
+        stocks.pcList.forEach(function(item) {
+            let x = item[0];
+            let y = item[1];
+            let z = item[2];
+
+            if (methods.distanceToPos(player.position, new mp.Vector3(x, y, z)) < 1.5) {
+                let houseData = stocks.getData(player.dimension - enums.offsets.stock);
+                if (houseData.get('user_id') == user.getId(player))
+                    player.call('client:showStockPanelMenu', [Array.from(houseData)]);
+                else
+                    player.notify('~r~Вы не владелец склада');
+            }
+        });
     }
     else if (player.dimension > 0) {
 
@@ -1985,6 +2004,12 @@ mp.events.addRemoteCounted("server:stocks:updatePin3", (player, id, pin) => {
     if (!user.isLogin(player))
         return;
     stocks.updatePin3(id, pin);
+});
+
+mp.events.addRemoteCounted("server:stocks:upgradeAdd", (player, id, slot, box) => {
+    if (!user.isLogin(player))
+        return;
+    stocks.upgradeAdd(player, id, slot, box);
 });
 
 //Condos
@@ -2931,7 +2956,7 @@ mp.events.addRemoteCounted('server:user:askSellLic', (player, id, lic, price) =>
                 licName = 'Лицензия категории C';
                 break;
             case 'air_lic':
-                licName = 'Лицензия пилота';
+                licName = 'Лицензия на воздушный транспорт';
                 break;
             case 'ship_lic':
                 licName = 'Лицензия на водный транспорт';
@@ -2940,16 +2965,16 @@ mp.events.addRemoteCounted('server:user:askSellLic', (player, id, lic, price) =>
                 licName = 'Лицензия на перевозку пассажиров';
                 break;
             case 'law_lic':
-                licName = 'Лицензия адвоката';
+                licName = 'Лицензия юриста';
                 break;
             case 'gun_lic':
                 licName = 'Лицензия на оружие';
                 break;
             case 'biz_lic':
-                licName = 'Лицензия на бизнес';
+                licName = 'Лицензия на предпринимательство';
                 break;
             case 'fish_lic':
-                licName = 'Лицензия на рыбалку';
+                licName = 'Разрешение на рыбаловство';
                 break;
             case 'med_lic':
                 licName = 'Мед. страховка';

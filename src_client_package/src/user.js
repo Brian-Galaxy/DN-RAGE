@@ -51,7 +51,7 @@ user.timerRayCast = function() {
         if (!mp.players.local.isSittingInAnyVehicle()) {
             switch (mp.game.invoke(methods.GET_FOLLOW_PED_CAM_VIEW_MODE)) {
                 case 4:
-                    user.targetEntity = user.pointingAtRadius(2);
+                    user.targetEntity = user.pointingAtRadius(3);
                     //if (user.getTargetEntityValidate() === undefined)
                     //    user.targetEntity = user.pointingAtRadius(2);
                     break;
@@ -142,6 +142,12 @@ user.getTargetEntityValidate = function() {
             user.targetEntity &&
             user.targetEntity.entity &&
             user.targetEntity.entity.invType
+        )
+            return user.targetEntity.entity;
+        else if (
+            user.targetEntity &&
+            user.targetEntity.entity &&
+            user.targetEntity.entity.getVariable('stockId')
         )
             return user.targetEntity.entity;
     }
@@ -1091,13 +1097,13 @@ user.sendSmsBankOperation = function(text, title = 'Операция со счё
                 user.sendPhoneNotify('~r~Maze Bank', '~g~' + title, text, 'CHAR_BANK_MAZE', 2);
                 break;
             case 7000:
-                user.sendPhoneNotify('~o~Pacific Bank', '~g~' + title, text, 'WEB_SIXFIGURETEMPS', 2);
+                user.sendPhoneNotify('~o~Pacific Bank', '~g~' + title, text, 'CHAR_STEVE_MIKE_CONF', 2);
                 break;
             case 8000:
                 user.sendPhoneNotify('~g~Fleeca Bank', '~g~' + title, text, 'CHAR_BANK_FLEECA', 2);
                 break;
             case 9000:
-                user.sendPhoneNotify('~b~Blaine Bank', '~g~' + title, text, 'DIA_CUSTOMER', 2);
+                user.sendPhoneNotify('~b~Blaine Bank', '~g~' + title, text, 'CHAR_STEVE_TREV_CONF', 2);
                 break;
         }
     }

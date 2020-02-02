@@ -1452,13 +1452,13 @@ user.sendSmsBankOperation = function(player, text, title = 'Операция с�
                 user.sendPhoneNotify(player,'~r~Maze Bank', '~g~' + title, text, 'CHAR_BANK_MAZE', 2);
                 break;
             case 7000:
-                user.sendPhoneNotify(player,'~o~Pacific Bank', '~g~' + title, text, 'WEB_SIXFIGURETEMPS', 2);
+                user.sendPhoneNotify(player,'~o~Pacific Bank', '~g~' + title, text, 'CHAR_STEVE_MIKE_CONF', 2);
                 break;
             case 8000:
                 user.sendPhoneNotify(player,'~g~Fleeca Bank', '~g~' + title, text, 'CHAR_BANK_FLEECA', 2);
                 break;
             case 9000:
-                user.sendPhoneNotify(player,'~b~Blaine Bank', '~g~' + title, text, 'DIA_CUSTOMER', 2);
+                user.sendPhoneNotify(player,'~b~Blaine Bank', '~g~' + title, text, 'CHAR_STEVE_TREV_CONF', 2);
                 break;
         }
     }
@@ -1892,7 +1892,7 @@ user.giveLic = function (player, lic, monthEnd = 12, desc = '') {
             licName = 'категории C';
             break;
         case 'air_lic':
-            licName = 'пилота';
+            licName = 'на воздушный транспорт';
             break;
         case 'ship_lic':
             licName = 'на водный транспорт';
@@ -1901,16 +1901,16 @@ user.giveLic = function (player, lic, monthEnd = 12, desc = '') {
             licName = 'на перевозку пассажиров';
             break;
         case 'law_lic':
-            licName = 'адвоката';
+            licName = 'юриста';
             break;
         case 'gun_lic':
             licName = 'на оружие';
             break;
         case 'biz_lic':
-            licName = 'на бизнес';
+            licName = 'на предпринимательство';
             break;
         case 'fish_lic':
-            licName = 'на рыбалку';
+            licName = 'на рыбаловство';
             break;
     }
 

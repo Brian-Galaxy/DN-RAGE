@@ -694,6 +694,17 @@ mp.events.add('client:showStockInMenu', (item) => {
     }
 });
 
+mp.events.add('client:showStockPanelMenu', (item) => {
+    try {
+        methods.debug('Event: client:menuList:showCondoInMenu');
+        menuList.showStockPanelMenu(new Map(item));
+    }
+    catch (e) {
+        methods.debug('Exception: events:client:showCondoInMenu');
+        methods.debug(e);
+    }
+});
+
 mp.events.add('client:showStockOutVMenu', (item) => {
     try {
         methods.debug('Event: client:menuList:showCondoOutMenu');
@@ -2290,8 +2301,13 @@ mp.events.add("playerCommand", async (command) => {
 * */
 
 
+mp.events.add('render', () => { mp.game.controls.disableControlAction(0,68,true); });
+
 mp.events.add('render', () => {
     try {
+        mp.game.controls.disableControlAction(0,68,true); //ATTACK VEHICLE
+        mp.game.controls.disableControlAction(0,350,true); //E JUMP
+
         mp.game.controls.disableControlAction(0,243,true);
 
         mp.game.controls.disableControlAction(0,44,true); //Q укрытие

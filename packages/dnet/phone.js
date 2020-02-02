@@ -5,6 +5,7 @@ let vehicles = require('./property/vehicles');
 
 let user = require('./user');
 let enums = require('./enums');
+let coffer = require('./coffer');
 
 let phone = exports;
 
@@ -129,7 +130,7 @@ phone.getUserInfo = function(player, text) {
             }
 
             subItems.push(phone.getMenuItemButton(
-                'Лицензия на авиатранспорт',
+                'Лицензия на воздушный транспорт',
                 label,
                 { name: 'none' },
             ));
@@ -177,7 +178,7 @@ phone.getUserInfo = function(player, text) {
             }
 
             subItems.push(phone.getMenuItemButton(
-                'Лицензия на адвоката',
+                'Лицензия на юриста',
                 label,
                 { name: 'none' },
             ));
@@ -189,7 +190,7 @@ phone.getUserInfo = function(player, text) {
             }
 
             subItems.push(phone.getMenuItemButton(
-                'Лицензия на бизнес',
+                'Лицензия на предпринимательство',
                 label,
                 { name: 'none' },
             ));
@@ -425,6 +426,38 @@ phone.fractionVehicleAction = function(player, id) {
     }
 
     phone.showMenu(player, 'fraction', 'Действия', [phone.getMenuMainItem(`${veh.name} | ${veh.number}`, items)]);
+};
+
+phone.fractionMoney = function(player) {
+    if (!user.isLogin(player))
+        return;
+    methods.debug('phone.fractionMoney');
+    let fractionId = user.get(player, 'fraction_id');
+    let cofferId = coffer.getIdByFraction(fractionId);
+
+    let items = [];
+
+    items.push(phone.getMenuItemButton(
+        'Текущее состояние бюджета',
+        '' + methods.moneyFormat(coffer.getMoney(cofferId)),
+        { name: 'log' },
+        '',
+        true
+    ));
+
+    items.push(phone.getMenuItemModalInput(
+        'Прибавка к зарплате',
+        'Текущее значение: ' + methods.moneyFormat(coffer.getBenefit(cofferId)),
+        'Введите значение',
+        coffer.getBenefit(cofferId).toString(),
+        'Применить',
+        'Отмена',
+        { name: 'fractionBenefit' },
+        '',
+        true
+    ));
+
+    phone.showMenu(player, 'fractionMoney', 'Управление бюджетом', [phone.getMenuMainItem(`Основной раздел`, items)]);
 };
 
 phone.fractionList = function(player) {

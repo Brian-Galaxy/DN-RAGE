@@ -95,15 +95,16 @@ object.load = function () {
 
     // Основной маппинг малого склада Stock
 
+    object.create(-1134789989, new mp.Vector3(1103.438, -3102.897, -39.7), new mp.Vector3(0, 0, 0), false, false, 75);
+    object.create(-1719363059, new mp.Vector3(1104.908, -3102.896, -39.62), new mp.Vector3(0, 0, 0), false, false, 76);
+    object.create(-1719363059, new mp.Vector3(1103.28, -3102.9, -38.73), new mp.Vector3(1.001786E-05, 5.008955E-06, -90.04958), false, false, 77);
+    object.create(-1134789989, new mp.Vector3(1104.8, -3102.88, -38.82), new mp.Vector3(1.001782E-05, 5.008955E-06, -179.9256), false, false, 78);
+    object.create(-1134789989, new mp.Vector3(1103.44, -3102.87, -37.93), new mp.Vector3(0, 0, 0), false, false, 79);
+    object.create(-1719363059, new mp.Vector3(1104.613, -3102.9, -37.84), new mp.Vector3(0, 0, 0), false, false, 80);
+    object.create(1089807209, new mp.Vector3(1102.14, -3103.26, -39.26), new mp.Vector3(0, -5.008956E-06, -180), false, false, 81);
+
     object.create(-1659828682, new mp.Vector3(1105.48, -3101.43, -38.84), new mp.Vector3(-1.384231E-12, -5.008955E-06, -89.99998), false, false);
     object.create(-1653844078, new mp.Vector3(1104.01, -3103, -39.99993), new mp.Vector3(0, 0, 0), false, false);
-    object.create(-1134789989, new mp.Vector3(1103.438, -3102.897, -39.7), new mp.Vector3(0, 0, 0), false, false, 16);
-    object.create(-1719363059, new mp.Vector3(1104.908, -3102.896, -39.62), new mp.Vector3(0, 0, 0), false, false, 14);
-    object.create(-1719363059, new mp.Vector3(1103.28, -3102.9, -38.73), new mp.Vector3(1.001786E-05, 5.008955E-06, -90.04958), false, false, 14);
-    object.create(-1134789989, new mp.Vector3(1104.8, -3102.88, -38.82), new mp.Vector3(1.001782E-05, 5.008955E-06, -179.9256), false, false, 16);
-    object.create(-1134789989, new mp.Vector3(1103.44, -3102.87, -37.93), new mp.Vector3(0, 0, 0), false, false, 16);
-    object.create(-1719363059, new mp.Vector3(1104.613, -3102.9, -37.84), new mp.Vector3(0, 0, 0), false, false, 14);
-    object.create(1089807209, new mp.Vector3(1102.14, -3103.26, -39.26), new mp.Vector3(0, -5.008956E-06, -180), false, false, 17);
     object.create(347760077, new mp.Vector3(1104.103, -3103.102, -38.13803), new mp.Vector3(0, 0, -67.99998), false, false);
     object.create(871161084, new mp.Vector3(1104.248, -3103.024, -39.91068), new mp.Vector3(0, 0, -136.999), false, false);
     object.create(-2004926724, new mp.Vector3(1103.994, -3102.783, -39.03558), new mp.Vector3(0, 0, -179.4991), false, false);
@@ -130,25 +131,26 @@ object.load = function () {
 
 // Основной маппинг среднего склада Stock
 
+    object.create(1089807209, new mp.Vector3(1048.12, -3107.83, -39.32492), new mp.Vector3(-4.46236E-05, 2.231179E-05, 89.99999), false, false, 75);
+    object.create(1089807209, new mp.Vector3(1048.116, -3106.941, -39.32492), new mp.Vector3(-4.46236E-05, 2.231179E-05, 89.99999), false, false, 76);
+    object.create(-1719363059, new mp.Vector3(1050.986, -3111.007, -39.615), new mp.Vector3(0, 0, 0), false, false, 77);
+    object.create(-1719363059, new mp.Vector3(1049.357, -3111, -39.615), new mp.Vector3(0, 0, 90.69976), false, false, 78);
+    object.create(-1134789989, new mp.Vector3(1049.751, -3111.112, -38.82), new mp.Vector3(0, 0, -88.49972), false, false, 79);
+    object.create(-1134789989, new mp.Vector3(1050.877, -3111.005, -38.82), new mp.Vector3(0, 0, -0.09966588), false, false, 80);
+    object.create(-1719363059, new mp.Vector3(1049.666, -3110.977, -37.845), new mp.Vector3(0, 0, 0), false, false, 81);
+    object.create(-1719363059, new mp.Vector3(1050.97, -3111.026, -37.845), new mp.Vector3(0, 0, 90.69976), false, false, 82);
+    object.create(-1134789989, new mp.Vector3(1048.328, -3110.107, -39.705), new mp.Vector3(0, 0, -88.49972), false, false, 83);
+    object.create(-1134789989, new mp.Vector3(1048.322, -3108.908, -37.93), new mp.Vector3(0, 0, -88.49972), false, false, 84);
+    object.create(-1134789989, new mp.Vector3(1048.24, -3110.31, -37.93), new mp.Vector3(0, 0, -179.4995), false, false, 85);
+    object.create(-1134789989, new mp.Vector3(1048.33, -3108.893, -39.705), new mp.Vector3(0, 0, 88.50024), false, false, 86);
+    object.create(-1719363059, new mp.Vector3(1048.359, -3108.869, -38.735), new mp.Vector3(0, 0, -0.3002918), false, false, 87);
+    object.create(-1719363059, new mp.Vector3(1048.338, -3110.121, -38.735), new mp.Vector3(0, 0, 89.69965), false, false, 88);
+
     object.create(-1659828682, new mp.Vector3(1073.51, -3099.978, -38.7), new mp.Vector3(-2.564906E-12, -5.008952E-06, -89.99995), false, false);
     object.create(-1683917950, new mp.Vector3(1048.07, -3094.63, -36.28839), new mp.Vector3(2.564906E-12, -5.008952E-06, 89.99995), false, false);
     object.create(-1683917950, new mp.Vector3(1047.83, -3094.64, -36.3), new mp.Vector3(3.732026E-12, -5.008951E-06, 89.99993), false, false);
     object.create(-1653844078, new mp.Vector3(1050.2, -3111.12, -39.99993), new mp.Vector3(0, 0, 0), false, false);
     object.create(-1653844078, new mp.Vector3(1048.22, -3109.628, -39.99993), new mp.Vector3(-5.97114E-13, -5.008956E-06, -89.99999), false, false);
-    object.create(1089807209, new mp.Vector3(1048.12, -3107.83, -39.32492), new mp.Vector3(-4.46236E-05, 2.231179E-05, 89.99999), false, false, 17);
-    object.create(1089807209, new mp.Vector3(1048.116, -3106.941, -39.32492), new mp.Vector3(-4.46236E-05, 2.231179E-05, 89.99999), false, false, 17);
-    object.create(-1719363059, new mp.Vector3(1050.986, -3111.007, -39.615), new mp.Vector3(0, 0, 0), false, false, 14);
-    object.create(-1719363059, new mp.Vector3(1049.357, -3111, -39.615), new mp.Vector3(0, 0, 90.69976), false, false, 14);
-    object.create(-1134789989, new mp.Vector3(1049.751, -3111.112, -38.82), new mp.Vector3(0, 0, -88.49972), false, false, 16);
-    object.create(-1134789989, new mp.Vector3(1050.877, -3111.005, -38.82), new mp.Vector3(0, 0, -0.09966588), false, false, 16);
-    object.create(-1719363059, new mp.Vector3(1049.666, -3110.977, -37.845), new mp.Vector3(0, 0, 0), false, false, 14);
-    object.create(-1719363059, new mp.Vector3(1050.97, -3111.026, -37.845), new mp.Vector3(0, 0, 90.69976), false, false, 14);
-    object.create(-1134789989, new mp.Vector3(1048.328, -3110.107, -39.705), new mp.Vector3(0, 0, -88.49972), false, false, 16);
-    object.create(-1134789989, new mp.Vector3(1048.322, -3108.908, -37.93), new mp.Vector3(0, 0, -88.49972), false, false, 16);
-    object.create(-1134789989, new mp.Vector3(1048.24, -3110.31, -37.93), new mp.Vector3(0, 0, -179.4995), false, false, 16);
-    object.create(-1134789989, new mp.Vector3(1048.33, -3108.893, -39.705), new mp.Vector3(0, 0, 88.50024), false, false, 16);
-    object.create(-1719363059, new mp.Vector3(1048.359, -3108.869, -38.735), new mp.Vector3(0, 0, -0.3002918), false, false, 14);
-    object.create(-1719363059, new mp.Vector3(1048.338, -3110.121, -38.735), new mp.Vector3(0, 0, 89.69965), false, false, 14);
     object.create(2147289143, new mp.Vector3(1056.401, -3111.64, -35.39232), new mp.Vector3(0, 0, -177.6021), false, false);
     object.create(479783305, new mp.Vector3(1050.09, -3108.62, -34.56526), new mp.Vector3(1.001791E-05, 2.23118E-05, -5.008959E-06), false, false);
     object.create(347760077, new mp.Vector3(1048.284, -3109.535, -39.91675), new mp.Vector3(0, 0, 6.999997), false, false);
@@ -185,22 +187,28 @@ object.load = function () {
     object.delete(3529086555, 1047.978, -3094.091, -37.23187);
 
 // Основной маппинг большого склада Stock
+    object.create(-1134789989, new mp.Vector3(1017.13, -3112.86, -37.93), new mp.Vector3(0, 0, 0), false, false, 75);
+    object.create(-1134789989, new mp.Vector3(1017.02, -3112.84, -39.7), new mp.Vector3(1.001782E-05, 5.008956E-06, -179.9236), false, false, 76);
+    object.create(-1134789989, new mp.Vector3(1017.069, -3112.93, -38.82), new mp.Vector3(0, 0, -87.99982), false, false, 77);
+    object.create(-1719363059, new mp.Vector3(1015.624, -3112.88, -39.61), new mp.Vector3(0, 0, 88.89981), false, false, 78);
+    object.create(-1719363059, new mp.Vector3(1015.474, -3112.884, -37.84405), new mp.Vector3(1.001786E-05, 5.008956E-06, -91.10022), false, false, 79);
+    object.create(-1719363059, new mp.Vector3(1015.85, -3112.89, -38.73), new mp.Vector3(1.001789E-05, -5.008957E-06, -0.02585409), false, false, 80);
+    object.create(1089807209, new mp.Vector3(1000.29, -3113.02, -39.26), new mp.Vector3(0, -5.008956E-06, -180), false, false, 81);
+    object.create(1089807209, new mp.Vector3(997.3, -3113.02, -39.26), new mp.Vector3(0, -5.008956E-06, -180), false, false, 82);
+    object.create(1089807209, new mp.Vector3(998.8, -3113.02, -39.26), new mp.Vector3(0, -5.008956E-06, -180), false, false, 83);
+    object.create(-1719363059, new mp.Vector3(1022.705, -3112.87, -39.61), new mp.Vector3(0, 0, 0), false, false, 84);
+    object.create(-1719363059, new mp.Vector3(1021.6, -3112.88, -39.61), new mp.Vector3(0, 0, 88.89981), false, false, 85);
+    object.create(-1134789989, new mp.Vector3(1022.32, -3112.85, -38.82), new mp.Vector3(0, 0, 0), false, false, 86);
+    object.create(-1134789989, new mp.Vector3(1020.97, -3112.93, -38.81), new mp.Vector3(1.001788E-05, 5.008954E-06, -89.29992), false, false, 87);
+    object.create(-1134789989, new mp.Vector3(1021.549, -3112.87, -37.92), new mp.Vector3(0, 0, -179.3004), false, false, 88);
+    object.create(-1719363059, new mp.Vector3(1022.72, -3112.87, -37.84), new mp.Vector3(1.001785E-05, 5.008956E-06, -91.10022), false, false, 89);
+    object.create(-1134789989, new mp.Vector3(1002.95, -3112.97, -39.7), new mp.Vector3(1.001789E-05, -5.008956E-06, 90.14932), false, false, 90);
+    object.create(-1719363059, new mp.Vector3(1004.311, -3112.88, -39.61), new mp.Vector3(1.00179E-05, -5.008954E-06, 90.02467), false, false, 91);
+    object.create(-1134789989, new mp.Vector3(1004.34, -3112.85, -38.82), new mp.Vector3(1.001784E-05, -5.008956E-06, -179.8241), false, false, 92);
+    object.create(-1719363059, new mp.Vector3(1002.91, -3112.88, -38.73), new mp.Vector3(1.00179E-05, 5.008956E-06, 90.09966), false, false, 93);
+    object.create(-1134789989, new mp.Vector3(1004.56, -3112.84, -37.93), new mp.Vector3(0, 0, 0), false, false, 94);
+    object.create(-1719363059, new mp.Vector3(1003.429, -3112.88, -37.84), new mp.Vector3(1.001791E-05, 5.008956E-06, -179.9513), false, false, 95);
 
-    object.create(1089807209, new mp.Vector3(1000.29, -3113.02, -39.26), new mp.Vector3(0, -5.008956E-06, -180), false, false, 17);
-    object.create(1089807209, new mp.Vector3(997.3, -3113.02, -39.26), new mp.Vector3(0, -5.008956E-06, -180), false, false, 17);
-    object.create(1089807209, new mp.Vector3(998.8, -3113.02, -39.26), new mp.Vector3(0, -5.008956E-06, -180), false, false, 17);
-    object.create(-1719363059, new mp.Vector3(1022.705, -3112.87, -39.61), new mp.Vector3(0, 0, 0), false, false, 14);
-    object.create(-1719363059, new mp.Vector3(1021.6, -3112.88, -39.61), new mp.Vector3(0, 0, 88.89981), false, false, 14);
-    object.create(-1134789989, new mp.Vector3(1022.32, -3112.85, -38.82), new mp.Vector3(0, 0, 0), false, false, 16);
-    object.create(-1134789989, new mp.Vector3(1020.97, -3112.93, -38.81), new mp.Vector3(1.001788E-05, 5.008954E-06, -89.29992), false, false, 16);
-    object.create(-1134789989, new mp.Vector3(1021.549, -3112.87, -37.92), new mp.Vector3(0, 0, -179.3004), false, false, 16);
-    object.create(-1719363059, new mp.Vector3(1022.72, -3112.87, -37.84), new mp.Vector3(1.001785E-05, 5.008956E-06, -91.10022), false, false, 14);
-    object.create(-1134789989, new mp.Vector3(1002.95, -3112.97, -39.7), new mp.Vector3(1.001789E-05, -5.008956E-06, 90.14932), false, false, 16);
-    object.create(-1719363059, new mp.Vector3(1004.311, -3112.88, -39.61), new mp.Vector3(1.00179E-05, -5.008954E-06, 90.02467), false, false, 14);
-    object.create(-1134789989, new mp.Vector3(1004.34, -3112.85, -38.82), new mp.Vector3(1.001784E-05, -5.008956E-06, -179.8241), false, false, 16);
-    object.create(-1719363059, new mp.Vector3(1002.91, -3112.88, -38.73), new mp.Vector3(1.00179E-05, 5.008956E-06, 90.09966), false, false, 14);
-    object.create(-1134789989, new mp.Vector3(1004.56, -3112.84, -37.93), new mp.Vector3(0, 0, 0), false, false, 16);
-    object.create(-1719363059, new mp.Vector3(1003.429, -3112.88, -37.84), new mp.Vector3(1.001791E-05, 5.008956E-06, -179.9513), false, false, 14);
     object.create(-1659828682, new mp.Vector3(1028.12, -3098.818, -38.52463), new mp.Vector3(0, 0, -90.39985), false, false);
     object.create(347760077, new mp.Vector3(1020.728, -3112.954, -38.14285), new mp.Vector3(0, 0, 50.99998), false, false);
     object.create(871161084, new mp.Vector3(1003.608, -3112.99, -39.03433), new mp.Vector3(0, 0, -139.9998), false, false);
@@ -209,12 +217,6 @@ object.load = function () {
     object.create(1142765633, new mp.Vector3(1004.927, -3112.966, -39.03433), new mp.Vector3(0, 0, 24.99992), false, false);
     object.create(845878493, new mp.Vector3(1005.041, -3112.892, -39.03433), new mp.Vector3(0, 0, 0), false, false);
     object.create(-1653844078, new mp.Vector3(1016.28, -3112.98, -39.99989), new mp.Vector3(0, 0, 0), false, false);
-    object.create(-1134789989, new mp.Vector3(1017.13, -3112.86, -37.93), new mp.Vector3(0, 0, 0), false, false, 16);
-    object.create(-1134789989, new mp.Vector3(1017.02, -3112.84, -39.7), new mp.Vector3(1.001782E-05, 5.008956E-06, -179.9236), false, false, 16);
-    object.create(-1134789989, new mp.Vector3(1017.069, -3112.93, -38.82), new mp.Vector3(0, 0, -87.99982), false, false, 16);
-    object.create(-1719363059, new mp.Vector3(1015.624, -3112.88, -39.61), new mp.Vector3(0, 0, 88.89981), false, false, 14);
-    object.create(-1719363059, new mp.Vector3(1015.474, -3112.884, -37.84405), new mp.Vector3(1.001786E-05, 5.008956E-06, -91.10022), false, false, 14);
-    object.create(-1719363059, new mp.Vector3(1015.85, -3112.89, -38.73), new mp.Vector3(1.001789E-05, -5.008957E-06, -0.02585409), false, false, 14);
     object.create(347760077, new mp.Vector3(1003.629, -3113.037, -39.9155), new mp.Vector3(0, 0, -30.99997), false, false);
     object.create(347760077, new mp.Vector3(1004.998, -3113.089, -39.9155), new mp.Vector3(0, 0, -161.9997), false, false);
     object.create(347760077, new mp.Vector3(1016.277, -3113.043, -38.14405), new mp.Vector3(0, 0, -142.9996), false, false);

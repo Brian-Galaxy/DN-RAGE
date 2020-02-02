@@ -128,7 +128,7 @@ vShop.buy = function(player, model, color1, color2, shopId) {
         case 'Planes':
         case 'Helicopters':
             if (!user.get(player, 'air_lic')) {
-                player.notify('~r~У Вас нет лицензии пилота');
+                player.notify('~r~У Вас нет лицензии на воздушный транспорт');
                 return;
             }
             break;
@@ -288,7 +288,7 @@ vShop.rent = function(player, model, color1, color2, shopId) {
         case 'Planes':
         case 'Helicopters':
             if (!user.get(player, 'air_lic')) {
-                player.notify('~r~У Вас нет лицензии пилота');
+                player.notify('~r~У Вас нет лицензии на воздушный транспорт');
                 return;
             }
             break;

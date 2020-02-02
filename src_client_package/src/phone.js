@@ -3,6 +3,7 @@ import ui from "./modules/ui";
 
 import enums from './enums';
 import user from './user';
+import coffer from './coffer';
 
 import weather from "./manager/weather";
 import dispatcher from "./manager/dispatcher";
@@ -1760,6 +1761,24 @@ phone.callBackModalInput = function(paramsJson, text) {
         if (params.name == 'getUserInfo') {
             mp.events.callRemote('server:phone:getUserInfo', text);
         }
+        if (params.name == 'fractionBenefit') {
+            let price = methods.parseFloat(text);
+
+            if (price < 0) {
+                mp.game.ui.notifications.show(`~r~Значение не может быть меньше нуля`);
+                return;
+            }
+            if (price > 1000) {
+                mp.game.ui.notifications.show(`~r~Значение не может быть больше 1000`);
+                return;
+            }
+
+            coffer.setBenefit(coffer.getIdByFraction(user.getCache('fraction_id')), text);
+            mp.game.ui.notifications.show(`~g~Вы установили новое значение прибавки к зарплате`);
+
+            mp.events.callRemote('server:phone:fractionMoney');
+            phone.showLoad();
+        }
         if (params.name == 'sendAd') {
             mp.events.callRemote('server:invader:sendAdTemp', text);
         }
@@ -1776,18 +1795,20 @@ phone.callBackModalInput = function(paramsJson, text) {
             user.removePayDayMoney(sum);
             user.addBankMoney(sum);
             user.sendSmsBankOperation(`Вы перевели ~g~${methods.moneyFormat(sum)}~s~ на ваш банковский счёт`, 'Зарплата');
+
+            phone.showAppBank();
         }
         if (params.name == 'sendFractionMessage') {
             let title = user.getCache('name');
             switch (user.getCache('fraction_id')) {
                 case 1:
-                    methods.notifyWithPictureToFraction(title, `Правительство`, text, 'CHAR_DAVE', user.getCache('fraction_id'));
+                    methods.notifyWithPictureToFraction(title, `Правительство`, text, 'CHAR_FLOYD', user.getCache('fraction_id'));
                     break;
                 case 2:
                     methods.notifyWithPictureToFraction(title, `SAPD`, text, 'WEB_LOSSANTOSPOLICEDEPT', user.getCache('fraction_id'));
                     break;
                 case 3:
-                    methods.notifyWithPictureToFraction(title, `FIB`, text, 'DIA_TANNOY', user.getCache('fraction_id'));
+                    methods.notifyWithPictureToFraction(title, `FIB`, text, 'CHAR_DR_FRIEDLANDER', user.getCache('fraction_id'));
                     break;
                 case 4:
                     methods.notifyWithPictureToFraction(title, `USMC`, text, 'DIA_ARMY', user.getCache('fraction_id'));
@@ -1796,10 +1817,10 @@ phone.callBackModalInput = function(paramsJson, text) {
                     methods.notifyWithPictureToFraction(title, `SHERIFF`, text, 'DIA_POLICE', user.getCache('fraction_id'));
                     break;
                 case 6:
-                    methods.notifyWithPictureToFraction(title, `EMS`, text, 'CHAR_CALL911', user.getCache('fraction_id'));
+                    methods.notifyWithPictureToFraction(title, `EMS`, text, 'CHAR_CRIS', user.getCache('fraction_id'));
                     break;
                 case 7:
-                    methods.notifyWithPictureToFraction(title, `EMS`, text, 'CHAR_LIFEINVADER', user.getCache('fraction_id'));
+                    methods.notifyWithPictureToFraction(title, `Life Invader`, text, 'CHAR_LIFEINVADER', user.getCache('fraction_id'));
                     break;
                 default:
                     methods.notifyWithPictureToFraction(title, `Организация`, text, 'CHAR_DEFAULT', user.getCache('fraction_id'));
@@ -1810,13 +1831,13 @@ phone.callBackModalInput = function(paramsJson, text) {
             let title = user.getCache('name');
             switch (user.getCache('fraction_id')) {
                 case 1:
-                    methods.notifyWithPictureToAll(title, 'Новости правительства', text, 'CHAR_DAVE');
+                    methods.notifyWithPictureToAll(title, 'Новости правительства', text, 'CHAR_FLOYD');
                     break;
                 case 2:
                     methods.notifyWithPictureToAll(title, 'Новости SAPD', text, 'WEB_LOSSANTOSPOLICEDEPT');
                     break;
                 case 3:
-                    methods.notifyWithPictureToAll(title, 'Новости FIB', text, 'DIA_TANNOY');
+                    methods.notifyWithPictureToAll(title, 'Новости FIB', text, 'CHAR_DR_FRIEDLANDER');
                     break;
                 case 4:
                     methods.notifyWithPictureToAll(title, 'Новости USMC', text, 'DIA_ARMY');
@@ -1825,7 +1846,7 @@ phone.callBackModalInput = function(paramsJson, text) {
                     methods.notifyWithPictureToAll(title, 'Новости SHERIFF', text, 'DIA_POLICE');
                     break;
                 case 6:
-                    methods.notifyWithPictureToAll(title, 'Новости EMS', text, 'CHAR_CALL911');
+                    methods.notifyWithPictureToAll(title, 'Новости EMS', text, 'CHAR_CRIS');
                     break;
                 case 7:
                     methods.notifyWithPictureToAll(title, 'Новости Life Invader', text, 'CHAR_LIFEINVADER');
@@ -1846,6 +1867,10 @@ phone.callBackButton = function(menu, id, ...args) {
                 phone.showAppFractionHierarchy();
             else if (params.name == 'list') {
                 mp.events.callRemote('server:phone:fractionList');
+                phone.showLoad();
+            }
+            else if (params.name == 'money') {
+                mp.events.callRemote('server:phone:fractionMoney');
                 phone.showLoad();
             }
             else if (params.name == 'vehicles') {

@@ -124,6 +124,8 @@ inventory.openInventoryByEntity = function(entity) {
         try {
             if (entity.getVariable('isDrop'))
                 inventory.takeItem(entity.getVariable('isDrop'), entity.getVariable('itemId'));
+            if (entity.getVariable('stockId'))
+                inventory.getItemList(entity.getVariable('stockId'), mp.players.local.dimension);
             else
                 inventory.getItemList(entity.invType, mp.players.local.dimension);
         }
@@ -427,7 +429,9 @@ inventory.getInvAmountMax = async function(id, type) {
         return container.Data.GetLocally(id, "invAmountMax:" + type);
     }
     if (await container.Data.Has(id, "invAmountMax:" + type)) {
-        return await container.Data.Get(id, "invAmountMax:" + type);
+        let maxVal = await container.Data.Get(id, "invAmountMax:" + type);
+        inventory.setInvAmountMax(id, type, maxVal);
+        return maxVal;
     }
     inventory.updateAmountMax(id, type);
     await methods.sleep(1000);
@@ -473,12 +477,6 @@ inventory.updateAmountMax = function(id, type) {
         else if (type == inventory.types.Fridge)
             invAmountMax = 100000;
         //Main.GetKitchenAmount();
-        else if (type == 12 || type == 13)
-            invAmountMax = 750000;
-        else if (type >= 14 && type <= 17)
-            invAmountMax = 1100000;
-        else if (type >= 18 && type <= 22 || type == 11)
-            invAmountMax = 950000;
         inventory.setInvAmountMax(id, type, invAmountMax);
     }
 };
@@ -558,13 +556,9 @@ inventory.types = {
     Vehicle : 8,
     StockGang : 9,
     Fridge : 10,
-    UserStock1 : 11,
-    UserStock2 : 12,
-    UserStock3 : 13,
-    UserStock4 : 14,
-    UserStock5 : 15,
-    UserStock6 : 16,
-    UserStock7 : 17,
+    UserStockDef : 75,
+    UserStock : 100,
+    UserStockEnd : 200,
 };
 
 export default inventory;

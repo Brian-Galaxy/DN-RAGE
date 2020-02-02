@@ -39,7 +39,7 @@ license.checker = function() {
                         licName = 'категории C';
                         break;
                     case 'air_lic':
-                        licName = 'пилота';
+                        licName = 'на воздушный транспорт';
                         break;
                     case 'ship_lic':
                         licName = 'на водный транспорт';
@@ -48,25 +48,25 @@ license.checker = function() {
                         licName = 'на перевозку пассажиров';
                         break;
                     case 'law_lic':
-                        licName = 'адвоката';
+                        licName = 'юриста';
                         break;
                     case 'gun_lic':
                         licName = 'на оружие';
                         break;
                     case 'biz_lic':
-                        licName = 'на бизнес';
+                        licName = 'на предпринимательство';
                         break;
                     case 'fish_lic':
-                        licName = 'на рыбалку';
+                        licName = 'на рыбаловство';
                         break;
                 }
 
                 user.set(lic, false);
                 if (lic == 'med_lic') {
-                    user.sendSms('Правительство', 'Срок лицензии истёк', 'Ваш срок мед. страховки истёк', 'CHAR_DAVE');
+                    user.sendSms('Правительство', 'Срок лицензии истёк', 'Ваш срок мед. страховки истёк', 'CHAR_FLOYD');
                     return;
                 }
-                user.sendSms('Правительство', 'Срок лицензии истёк', `Ваш срок лицензии ${licName} истёк`, 'CHAR_DAVE');
+                user.sendSms('Правительство', 'Срок лицензии истёк', `Ваш срок лицензии ${licName} истёк`, 'CHAR_FLOYD');
             }
         });
     }

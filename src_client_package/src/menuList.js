@@ -37,7 +37,7 @@ let menuList = {};
 
 menuList.showHouseBuyMenu = async function(h) {
 
-    let menu = UIMenu.Menu.Create(`№${h.get('id')}`, `~b~Адрес: ~s~${h.get('address')} ${h.get('number')}`);
+    let menu = UIMenu.Menu.Create(`№${h.get('number')}`, `~b~Адрес: ~s~${h.get('address')} ${h.get('number')}`);
 
     let buyHouseItem = UIMenu.Menu.AddMenuItem(`Купить дом за ~g~${methods.moneyFormat(h.get('price'))}`);
     let enterHouseItem = null;
@@ -69,7 +69,7 @@ menuList.showHouseBuyMenu = async function(h) {
 
 menuList.showHouseInMenu = function(h) {
 
-    let menu = UIMenu.Menu.Create(`№${h.get('id')}`, `~b~Адрес: ~s~${h.get('address')} ${h.get('number')}`);
+    let menu = UIMenu.Menu.Create(`№${h.get('number')}`, `~b~Адрес: ~s~${h.get('address')} ${h.get('number')}`);
 
     if (h.get('user_id') == user.getCache('id')) {
         if (h.get('pin') > 0)
@@ -153,7 +153,7 @@ menuList.showHouseInVMenu = function(h) {
 
 menuList.showHouseOutMenu = async function(h) {
 
-    let menu = UIMenu.Menu.Create(`№${h.get('id')}`, `~b~Адрес: ~s~${h.get('address')} ${h.get('number')}`);
+    let menu = UIMenu.Menu.Create(`№${h.get('number')}`, `~b~Адрес: ~s~${h.get('address')} ${h.get('number')}`);
     let infoItem = UIMenu.Menu.AddMenuItem(`~b~Владелец:~s~ ${h.get('user_name')}`);
 
     let enterHouseItem = UIMenu.Menu.AddMenuItem("~g~Войти");
@@ -227,7 +227,7 @@ menuList.showHouseOutVMenu = async function(h) {
 
 menuList.showCondoBuyMenu = async function(h) {
 
-    let menu = UIMenu.Menu.Create(`№${h.get('id')}`, `~b~Адрес: ~s~${h.get('address')} ${h.get('number')}`);
+    let menu = UIMenu.Menu.Create(`№${h.get('number')}`, `~b~Адрес: ~s~${h.get('address')} ${h.get('number')}`);
 
     let buyHouseItem = UIMenu.Menu.AddMenuItem(`Купить квартиру за ~g~${methods.moneyFormat(h.get('price'))}`);
     let enterHouseItem = null;
@@ -259,7 +259,7 @@ menuList.showCondoBuyMenu = async function(h) {
 
 menuList.showCondoInMenu = function(h) {
 
-    let menu = UIMenu.Menu.Create(`№${h.get('id')}`, `~b~Адрес: ~s~${h.get('address')} ${h.get('number')}`);
+    let menu = UIMenu.Menu.Create(`№${h.get('number')}`, `~b~Адрес: ~s~${h.get('address')} ${h.get('number')}`);
 
     if (h.get('user_id') == user.getCache('id')) {
         if (h.get('pin') > 0)
@@ -309,7 +309,7 @@ menuList.showCondoInMenu = function(h) {
 
 menuList.showCondoOutMenu = async function(h) {
 
-    let menu = UIMenu.Menu.Create(`№${h.get('id')}`, `~b~Адрес: ~s~${h.get('address')} ${h.get('number')}`);
+    let menu = UIMenu.Menu.Create(`№${h.get('number')}`, `~b~Адрес: ~s~${h.get('address')} ${h.get('number')}`);
     let infoItem = UIMenu.Menu.AddMenuItem(`~b~Владелец:~s~ ${h.get('user_name')}`);
 
     let enterHouseItem = UIMenu.Menu.AddMenuItem("~g~Войти");
@@ -352,7 +352,7 @@ menuList.showCondoOutMenu = async function(h) {
 
 menuList.showStockBuyMenu = async function(h) {
 
-    let menu = UIMenu.Menu.Create(`№${h.get('id')}`, `~b~Адрес: ~s~${h.get('address')} ${h.get('number')}`);
+    let menu = UIMenu.Menu.Create(`№${h.get('number')}`, `~b~Адрес: ~s~${h.get('address')} ${h.get('number')}`);
 
     if (h.get('interior') == 0)
         UIMenu.Menu.AddMenuItem(`~b~Тип склада:~s~ Маленький`);
@@ -374,7 +374,7 @@ menuList.showStockBuyMenu = async function(h) {
 
 menuList.showStockInMenu = function(h) {
 
-    let menu = UIMenu.Menu.Create(`№${h.get('id')}`, `~b~Адрес: ~s~${h.get('address')} ${h.get('number')}`);
+    let menu = UIMenu.Menu.Create(`№${h.get('number')}`, `~b~Адрес: ~s~${h.get('address')} ${h.get('number')}`);
     let exitHouseItem = UIMenu.Menu.AddMenuItem("~g~Выйти");
     let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
 
@@ -386,9 +386,121 @@ menuList.showStockInMenu = function(h) {
     });
 };
 
+menuList.showStockPanelMenu = function(h) {
+
+    let menu = UIMenu.Menu.Create(`№${h.get('number')}`, `~b~Адрес: ~s~${h.get('address')} ${h.get('number')}`);
+    UIMenu.Menu.AddMenuItem("Модернизировать").doName = 'showStockPanelUpgradeMenu';
+    UIMenu.Menu.AddMenuItem("Сменить пинкод").doName = 'setPin';
+    if (h.get('interior') == 0) {
+        UIMenu.Menu.AddMenuItem("Сменить пинкод от сейфа").doName = 'setPin1';
+    }
+    if (h.get('interior') == 1) {
+        UIMenu.Menu.AddMenuItem("Сменить пинкод от сейфа #1").doName = 'setPin1';
+        UIMenu.Menu.AddMenuItem("Сменить пинкод от сейфа #2").doName = 'setPin2';
+    }
+    if (h.get('interior') == 2) {
+        UIMenu.Menu.AddMenuItem("Сменить пинкод от сейфа #1").doName = 'setPin1';
+        UIMenu.Menu.AddMenuItem("Сменить пинкод от сейфа #2").doName = 'setPin2';
+        UIMenu.Menu.AddMenuItem("Сменить пинкод от сейфа #3").doName = 'setPin3';
+    }
+    UIMenu.Menu.AddMenuItem("~y~Лог");
+    UIMenu.Menu.AddMenuItem("~r~Закрыть");
+
+    menu.ItemSelect.on(async item => {
+        UIMenu.Menu.HideMenu();
+
+        if (item.doName == 'setPin') {
+            let pass = methods.parseInt(await UIMenu.Menu.GetUserInput("Пароль", "", 5));
+            if (pass < 1) {
+                mp.game.ui.notifications.show('~r~Пароль должен быть больше нуля');
+                return false;
+            }
+            mp.game.ui.notifications.show('~g~Ваш новый пароль: ~s~' + pass);
+            stocks.updatePin(h.get('id'), pass);
+        }
+        if (item.doName == 'setPin1') {
+            let pass = methods.parseInt(await UIMenu.Menu.GetUserInput("Пароль", "", 5));
+            if (pass < 1) {
+                mp.game.ui.notifications.show('~r~Пароль должен быть больше нуля');
+                return false;
+            }
+            mp.game.ui.notifications.show('~g~Ваш новый пароль: ~s~' + pass);
+            stocks.updatePin1(h.get('id'), pass);
+        }
+        if (item.doName == 'setPin2') {
+            let pass = methods.parseInt(await UIMenu.Menu.GetUserInput("Пароль", "", 5));
+            if (pass < 1) {
+                mp.game.ui.notifications.show('~r~Пароль должен быть больше нуля');
+                return false;
+            }
+            mp.game.ui.notifications.show('~g~Ваш новый пароль: ~s~' + pass);
+            stocks.updatePin2(h.get('id'), pass);
+        }
+        if (item.doName == 'setPin3') {
+            let pass = methods.parseInt(await UIMenu.Menu.GetUserInput("Пароль", "", 5));
+            if (pass < 1) {
+                mp.game.ui.notifications.show('~r~Пароль должен быть больше нуля');
+                return false;
+            }
+            mp.game.ui.notifications.show('~g~Ваш новый пароль: ~s~' + pass);
+            stocks.updatePin3(h.get('id'), pass);
+        }
+        if (item.doName == 'showStockPanelUpgradeMenu') {
+            menuList.showStockPanelUpgradeMenu(h);
+        }
+    });
+};
+
+menuList.showStockPanelUpgradeMenu = function(h) {
+
+    let menu = UIMenu.Menu.Create(`№${h.get('number')}`, `~b~Адрес: ~s~${h.get('address')} ${h.get('number')}`);
+
+    h.get('upgrade').split('_').forEach((uItem, idx) => {
+        uItem = methods.parseInt(uItem);
+        if (uItem == -1) {
+            UIMenu.Menu.AddMenuItem(`${idx}. ~g~Слот свободен`).buySlot = idx;
+        }
+        else {
+            UIMenu.Menu.AddMenuItem(`${idx}. ${stocks.boxList[uItem][0]}`).sellSlot = idx;
+        }
+    });
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть");
+
+    menu.ItemSelect.on(async item => {
+        UIMenu.Menu.HideMenu();
+        if (item.buySlot >= 0)
+            menuList.showStockPanelUpgradeBuySlotMenu(h, item.buySlot);
+    });
+};
+
+menuList.showStockPanelUpgradeBuySlotMenu = function(h, slot) {
+
+    try {
+        let menu = UIMenu.Menu.Create(`№${h.get('number')}`, `~b~Выберите ящик для покупки`);
+
+        stocks.boxList.forEach((item, idx) => {
+            if (!item[4])
+                return;
+            UIMenu.Menu.AddMenuItem(`${item[0]}`, `Цена: ~g~${methods.moneyFormat(item[5])}\n~s~Объем: ~g~${methods.numberFormat(item[2])}см³`).buyBox = idx;
+        });
+
+        UIMenu.Menu.AddMenuItem("~r~Закрыть");
+
+        menu.ItemSelect.on(async item => {
+            UIMenu.Menu.HideMenu();
+            if (item.buyBox >= 0)
+                stocks.upgradeAdd(h.get('id'), slot, item.buyBox);
+        });
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+};
+
 menuList.showStockOutMenu = async function(h) {
 
-    let menu = UIMenu.Menu.Create(`№${h.get('id')}`, `~b~Адрес: ~s~${h.get('address')} ${h.get('number')}`);
+    let menu = UIMenu.Menu.Create(`№${h.get('number')}`, `~b~Адрес: ~s~${h.get('address')} ${h.get('number')}`);
     let infoItem = UIMenu.Menu.AddMenuItem(`~b~Владелец:~s~ ${h.get('user_name')}`);
     let enterHouseItem = UIMenu.Menu.AddMenuItem("~g~Войти");
     let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
@@ -417,7 +529,7 @@ menuList.showStockOutMenu = async function(h) {
 
 menuList.showStockInVMenu = function(h) {
 
-    let menu = UIMenu.Menu.Create(`№${h.get('id')}`, `~b~Адрес: ~s~${h.get('address')} ${h.get('number')}`);
+    let menu = UIMenu.Menu.Create(`№${h.get('number')}`, `~b~Адрес: ~s~${h.get('address')} ${h.get('number')}`);
     let exitHouseItem = UIMenu.Menu.AddMenuItem("~g~Выйти");
     let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
 
@@ -431,7 +543,7 @@ menuList.showStockInVMenu = function(h) {
 
 menuList.showStockOutVMenu = async function(h) {
 
-    let menu = UIMenu.Menu.Create(`№${h.get('id')}`, `~b~Адрес: ~s~${h.get('address')} ${h.get('number')}`);
+    let menu = UIMenu.Menu.Create(`№${h.get('number')}`, `~b~Адрес: ~s~${h.get('address')} ${h.get('number')}`);
     let infoItem = UIMenu.Menu.AddMenuItem(`~b~Владелец:~s~ ${h.get('user_name')}`);
     let enterHouseItem = UIMenu.Menu.AddMenuItem("~g~Войти");
     let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
@@ -631,38 +743,44 @@ menuList.showBusinessTypeListMenu = function(data1, data2, data3) {
 };
 
 menuList.showBusinessLogMenu = function(data) {
-    let menu = UIMenu.Menu.Create(`Транзакции`, `~b~Нажмите ~s~Enter~b~ чтобы прочитать`);
+    try {
 
-    JSON.parse(data).forEach(function (item) {
+        let menu = UIMenu.Menu.Create(`Транзакции`, `~b~Нажмите ~s~Enter~b~ чтобы прочитать`);
 
-        let dateTime = methods.unixTimeStampToDateTimeShort(item.timestamp);
+        JSON.parse(data).forEach(function (item) {
 
-        if (item.text.length >= 20)
-        {
-            let mItem = UIMenu.Menu.AddMenuItem(`~b~#${item.id}. ~s~${item.product.substring(0, 20)}...`, `~b~Дата:~s~ ${item.rp_datetime}\n~b~OOC: ~s~${dateTime}`);
-            mItem.SetRightLabel(`${item.price}`);
-            mItem.desc = item.product;
-            mItem.id = item.id;
-            mItem.datetime = dateTime;
-            mItem.rp_datetime = item.rp_datetime;
-        }
-        else {
-            let mItem = UIMenu.Menu.AddMenuItem(`~b~#${item.id}. ~s~${item.product.substring(0, 20)}`, `~b~Дата:~s~ ${item.rp_datetime}\n~b~OOC: ~s~${dateTime}`);
-            mItem.SetRightLabel(`${item.price}`);
-            mItem.desc = item.product;
-            mItem.id = item.id;
-            mItem.datetime = dateTime;
-            mItem.rp_datetime = item.rp_datetime;
-        }
-    });
+            let dateTime = methods.unixTimeStampToDateTimeShort(item.timestamp);
 
-    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
-    menu.ItemSelect.on((item, index) => {
-        if (item == closeItem)
-            UIMenu.Menu.HideMenu();
-        if (item.desc)
-            mp.game.ui.notifications.show(`~b~#${item.id}\n~c~ООС: ${item.datetime}\n~c~IC: ${item.rp_datetime}\n~s~${item.desc}`);
-    });
+            if (item.product.length >= 20)
+            {
+                let mItem = UIMenu.Menu.AddMenuItem(`~b~#${item.id}. ~s~${item.product.substring(0, 20)}...`, `~b~Дата:~s~ ${item.rp_datetime}\n~b~OOC: ~s~${dateTime}`);
+                mItem.SetRightLabel(`${item.price}`);
+                mItem.desc = item.product;
+                mItem.id = item.id;
+                mItem.datetime = dateTime;
+                mItem.rp_datetime = item.rp_datetime;
+            }
+            else {
+                let mItem = UIMenu.Menu.AddMenuItem(`~b~#${item.id}. ~s~${item.product.substring(0, 20)}`, `~b~Дата:~s~ ${item.rp_datetime}\n~b~OOC: ~s~${dateTime}`);
+                mItem.SetRightLabel(`${item.price}`);
+                mItem.desc = item.product;
+                mItem.id = item.id;
+                mItem.datetime = dateTime;
+                mItem.rp_datetime = item.rp_datetime;
+            }
+        });
+
+        let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+        menu.ItemSelect.on((item, index) => {
+            if (item == closeItem)
+                UIMenu.Menu.HideMenu();
+            if (item.desc)
+                mp.game.ui.notifications.show(`~b~#${item.id}\n~c~ООС: ${item.datetime}\n~c~IC: ${item.rp_datetime}\n~s~${item.desc}`);
+        });
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 };
 
 menuList.showInvaderNewsMenu = function(data) {
@@ -1833,6 +1951,7 @@ menuList.showSettingsHudMenu = function() {
     listVoiceItem.doName = 'speed';
     listVoiceItem.Index = user.getCache('s_hud_speed') ? 1 : 0;
 
+    UIMenu.Menu.AddMenuItem("~y~Перезапустить интерфейс", 'В случае если у вас он завис или не работает').doName = 'fixInterface';
     let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
 
     menu.ListChange.on((item, index) => {
@@ -1849,6 +1968,9 @@ menuList.showSettingsHudMenu = function() {
         }
         if (item.doName == 'showRadar') {
             ui.showOrHideRadar();
+        }
+        if (item.doName == 'fixInterface') {
+            ui.fixInterface();
         }
     });
 };
@@ -2021,7 +2143,7 @@ menuList.showPlayerDoсMenu = function(playerId) {
 
     UIMenu.Menu.AddMenuItem("Лицензия на перевозку пассажиров", "~c~Нужно для таксистов и\nводителей автобуса").doName = 'taxi_lic';
 
-    UIMenu.Menu.AddMenuItem("Лицензия на адвоката").doName = 'law_lic';
+    UIMenu.Menu.AddMenuItem("Лицензия юриста").doName = 'law_lic';
 
     UIMenu.Menu.AddMenuItem("Лицензия на бизнес", "~c~Чтобы можно было иметь бизнес").doName = 'biz_lic';
 
@@ -2090,12 +2212,12 @@ menuList.showPlayerStatsMenu = function() {
     label = '';
     if (user.getCache('law_lic'))
         label = `Действует с ~b~${user.getCache('law_lic_create')}~s~ по ~b~${user.getCache('law_lic_end')}`;
-    UIMenu.Menu.AddMenuItem("~b~Лицензия на адвоката:~s~", label).SetRightLabel(`${user.getCache('law_lic') ? 'Есть' : '~r~Нет'}`);
+    UIMenu.Menu.AddMenuItem("~b~Лицензия юриста:~s~", label).SetRightLabel(`${user.getCache('law_lic') ? 'Есть' : '~r~Нет'}`);
 
     label = '';
     if (user.getCache('biz_lic'))
         label = `Действует с ~b~${user.getCache('biz_lic_create')}~s~ по ~b~${user.getCache('biz_lic_end')}`;
-    UIMenu.Menu.AddMenuItem("~b~Лицензия на бизнес:~s~", label).SetRightLabel(`${user.getCache('biz_lic') ? 'Есть' : '~r~Нет'}`);
+    UIMenu.Menu.AddMenuItem("~b~Лицензия на предпринимательство:~s~", label).SetRightLabel(`${user.getCache('biz_lic') ? 'Есть' : '~r~Нет'}`);
 
     label = '';
     if (user.getCache('fish_lic'))
@@ -6056,9 +6178,9 @@ menuList.showFractionInfoMenu = function() {
         if (user.isLeader())
             UIMenu.Menu.AddMenuItem(`Кабинет штата`).coffer = true;
 
-        UIMenu.Menu.AddMenuItem(`Выдать лицензию адвоката`, "Стоимость: ~g~$20,000").licName = 'law_lic';
+        UIMenu.Menu.AddMenuItem(`Выдать лицензию юриста`, "Стоимость: ~g~$20,000").licName = 'law_lic';
         UIMenu.Menu.AddMenuItem(`Выдать лицензию на бизнес`, "Стоимость: ~g~$20,000").licName = 'biz_lic';
-        UIMenu.Menu.AddMenuItem(`Выдать лицензию на рыбалку"`, "Стоимость: ~g~$5,000").licName = 'fish_lic';
+        UIMenu.Menu.AddMenuItem(`Выдать лицензию на рыбаловство"`, "Стоимость: ~g~$5,000").licName = 'fish_lic';
     }
     if (user.isEms()) {
         UIMenu.Menu.AddMenuItem(`Выдать мед. страховку`, "Стоимость: ~g~$20,000").licName = 'med_lic';
@@ -6182,12 +6304,125 @@ menuList.showCofferInfoMenu = function(data) {
 
     let menu = UIMenu.Menu.Create(`Правительство`, `~b~Кабинет штата`);
 
-    UIMenu.Menu.AddMenuItem("В казне средств: ").SetRightLabel('~g~$' + methods.numberFormat(data.get('cofferMoney')));
+    UIMenu.Menu.AddMenuItem("В казне средств: ").SetRightLabel('~g~' + methods.moneyFormat(data.get('cofferMoney')));
+
+    UIMenu.Menu.AddMenuItem("Пособие", `Текущая ставка: ~g~${methods.moneyFormat(data.get('cofferBenefit'))}`).doName = 'cofferBenefit';
+    UIMenu.Menu.AddMenuItem("Налог на имущество", `Текущая ставка: ~g~${data.get('cofferTaxProperty')}%`).doName = 'cofferTaxProperty';
+    UIMenu.Menu.AddMenuItem("Налог на зарплату", `Текущая ставка: ~g~${data.get('cofferTaxPayDay')}%`).doName = 'cofferTaxPayDay';
+    UIMenu.Menu.AddMenuItem("Налог на бизнес", `Текущая ставка: ~g~${data.get('cofferTaxBusiness')}%`).doName = 'cofferTaxBusiness';
+    UIMenu.Menu.AddMenuItem("Промежуточный налог", `Текущая ставка: ~g~${data.get('cofferTaxIntermediate')}%`).doName = 'cofferTaxBusiness';
+
+    UIMenu.Menu.AddMenuItem("Финансировать бюджет правительства").doName = 'cofferGiveGov';
+    UIMenu.Menu.AddMenuItem("Финансировать бюджет LSPD").doName = 'cofferGiveLspd';
+    UIMenu.Menu.AddMenuItem("Финансировать бюджет SASD").doName = 'cofferGiveSheriff';
+    UIMenu.Menu.AddMenuItem("Финансировать бюджет EMS").doName = 'cofferGiveEms';
+    UIMenu.Menu.AddMenuItem("Финансировать бюджет Invader News").doName = 'cofferGiveInvader';
 
     let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
     menu.ItemSelect.on(async (item, index) => {
         if (item == closeItem)
             UIMenu.Menu.HideMenu();
+
+        if (item.doName == 'cofferTaxIntermediate') {
+            let price = methods.parseFloat(await UIMenu.Menu.GetUserInput("Введите число", '', 10));
+
+            if (price < 0) {
+                mp.game.ui.notifications.show(`~r~Значение не может быть меньше нуля`);
+                return;
+            }
+            if (price > 10) {
+                mp.game.ui.notifications.show(`~r~Значение не может быть больше 10`);
+                return;
+            }
+
+            coffer.setTaxIntermediate(1, price);
+            methods.notifyWithPictureToAll(
+                `Губернатор`,
+                'Новости правительства',
+                `Изменён промежуточный налог.\nСтарое значение: ~g~${data.get('cofferTaxIntermediate')}%~s~\nНовое значение: ~g~${price}%`,
+                'CHAR_FLOYD'
+            );
+        }
+        if (item.doName == 'cofferTaxBusiness') {
+            let price = methods.parseFloat(await UIMenu.Menu.GetUserInput("Введите число", '', 10));
+
+            if (price < 0) {
+                mp.game.ui.notifications.show(`~r~Значение не может быть меньше нуля`);
+                return;
+            }
+            if (price > 10) {
+                mp.game.ui.notifications.show(`~r~Значение не может быть больше 10`);
+                return;
+            }
+
+            coffer.setTaxBusiness(1, price);
+            methods.notifyWithPictureToAll(
+                `Губернатор`,
+                'Новости правительства',
+                `Изменён налог на бизнес.\nСтарое значение: ~g~${data.get('cofferTaxBusiness')}%~s~\nНовое значение: ~g~${price}%`,
+                'CHAR_FLOYD'
+            );
+        }
+        if (item.doName == 'cofferTaxPayDay') {
+            let price = methods.parseFloat(await UIMenu.Menu.GetUserInput("Введите число", '', 10));
+
+            if (price < 0) {
+                mp.game.ui.notifications.show(`~r~Значение не может быть меньше нуля`);
+                return;
+            }
+            if (price > 10) {
+                mp.game.ui.notifications.show(`~r~Значение не может быть больше 10`);
+                return;
+            }
+
+            coffer.setTaxPayDay(1, price);
+            methods.notifyWithPictureToAll(
+                `Губернатор`,
+                'Новости правительства',
+                `Изменён налог на зарплату.\nСтарое значение: ~g~${data.get('cofferTaxPayDay')}%~s~\nНовое значение: ~g~${price}%`,
+                'CHAR_FLOYD'
+            );
+        }
+        if (item.doName == 'cofferTaxProperty') {
+            let price = methods.parseFloat(await UIMenu.Menu.GetUserInput("Введите число", '', 10));
+
+            if (price < 0) {
+                mp.game.ui.notifications.show(`~r~Значение не может быть меньше нуля`);
+                return;
+            }
+            if (price > 2) {
+                mp.game.ui.notifications.show(`~r~Значение не может быть больше 2`);
+                return;
+            }
+
+            coffer.setTaxIntermediate(1, price);
+            methods.notifyWithPictureToAll(
+                `Губернатор`,
+                'Новости правительства',
+                `Изменён налог на имущество.\nСтарое значение: ~g~${data.get('cofferTaxProperty')}%~s~\nНовое значение: ~g~${price}%`,
+                'CHAR_FLOYD'
+            );
+        }
+        if (item.doName == 'cofferBenefit') {
+            let price = methods.parseFloat(await UIMenu.Menu.GetUserInput("Введите число", '', 10));
+
+            if (price < 0) {
+                mp.game.ui.notifications.show(`~r~Значение не может быть меньше нуля`);
+                return;
+            }
+            if (price > 100) {
+                mp.game.ui.notifications.show(`~r~Значение не может быть больше 100`);
+                return;
+            }
+
+            coffer.setBenefit(1, price);
+            methods.notifyWithPictureToAll(
+                `Губернатор`,
+                'Новости правительства',
+                `Изменена ставка на пособие.\nСтарое значение: ~g~${methods.moneyFormat(data.get('cofferBenefit'))}~s~\nНовое значение: ~g~${methods.moneyFormat(price)}`,
+                'CHAR_FLOYD'
+            );
+        }
     });
 };
 

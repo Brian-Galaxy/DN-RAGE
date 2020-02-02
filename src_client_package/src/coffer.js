@@ -32,20 +32,40 @@ coffer.getTaxProperty = async function(id = 1) {
     return methods.parseInt(await Container.Data.Get(containerId + id, 'cofferTaxProperty'));
 };
 
+coffer.setTaxProperty = function(id = 1, num) {
+    Container.Data.Set(containerId + id, 'cofferTaxProperty', methods.parseFloat(num));
+};
+
 coffer.getTaxPayDay = async function(id = 1) {
     return methods.parseInt(await Container.Data.Get(containerId + id, 'cofferTaxPayDay'));
+};
+
+coffer.setTaxPayDay = function(id = 1, num) {
+    Container.Data.Set(containerId + id, 'cofferTaxPayDay', methods.parseFloat(num));
 };
 
 coffer.getTaxBusiness = async function(id = 1) {
     return methods.parseInt(await Container.Data.Get(containerId + id, 'cofferTaxBusiness'));
 };
 
+coffer.setTaxBusiness = function(id = 1, num) {
+    Container.Data.Set(containerId + id, 'cofferTaxBusiness', methods.parseFloat(num));
+};
+
 coffer.getTaxIntermediate = async function(id = 1) {
     return methods.parseInt(await Container.Data.Get(containerId + id, 'cofferTaxIntermediate'));
 };
 
+coffer.setTaxIntermediate = function(id = 1, num) {
+    Container.Data.Set(containerId + id, 'cofferTaxIntermediate', methods.parseFloat(num));
+};
+
 coffer.getBenefit = async function(id = 1) {
     return methods.parseFloat(await Container.Data.Get(containerId + id, 'cofferBenefit'));
+};
+
+coffer.setBenefit = function(id, money) {
+    Container.Data.Set(containerId + id, 'cofferBenefit', methods.parseFloat(money));
 };
 
 coffer.getIdByFraction = function(fractionId) {

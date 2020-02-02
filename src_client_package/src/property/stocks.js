@@ -5,6 +5,12 @@ import enums from '../enums';
 
 let stocks = {};
 
+stocks.boxList = [
+    ['Малая коробка', 1165008631, 400000, 0, true, 10000],
+    ['Средняя коробка', 1875981008, 600000, 0, true, 20000],
+    ['Большая коробка', -1322183878, 800000, 0, true, 30000],
+];
+
 stocks.enter = function (id) {
     mp.events.callRemote('server:stocks:enter', id);
 };
@@ -30,7 +36,7 @@ stocks.getData = async function(id) {
 
 stocks.buy = function (id) {
     if (user.getCacheData().get('stock_id') > 0) {
-        mp.game.ui.notifications.show('~r~У Вас уже есть дом');
+        mp.game.ui.notifications.show('~r~У Вас уже есть склад');
         return false;
     }
     mp.events.callRemote('server:stocks:buy', id);
@@ -51,6 +57,10 @@ stocks.updatePin2 = function (id, pin) {
 
 stocks.updatePin3 = function (id, pin) {
     mp.events.callRemote('server:stocks:updatePin3', id, pin);
+};
+
+stocks.upgradeAdd = function (id, slot, box) {
+    mp.events.callRemote('server:stocks:upgradeAdd', id, slot, box);
 };
 
 export default stocks;

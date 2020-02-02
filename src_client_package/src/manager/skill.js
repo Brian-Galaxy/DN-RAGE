@@ -75,7 +75,7 @@ let checkShooting = function () {
                 user.set('stats_lung_capacity', 99);
         }
 
-        if (mp.players.local.isShooting() && user.getCache('stats_shooting') < 99) {
+        if (!mp.players.local.isInAnyVehicle(false) && mp.players.local.isShooting() && user.getCache('stats_shooting') < 99) {
             mp.game.ui.notifications.show(`~g~Навык стрельбы был повышен`);
             if (user.isUsmc())
                 user.set('stats_shooting', user.getCache('stats_shooting') + 1);

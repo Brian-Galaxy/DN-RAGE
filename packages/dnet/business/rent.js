@@ -100,7 +100,7 @@ rent.buy = function(player, hash, price, shopId) {
         case 'Planes':
         case 'Helicopters':
             if (!user.get(player, 'air_lic')) {
-                player.notify('~r~У Вас нет лицензии пилота');
+                player.notify('~r~У Вас нет лицензии на воздушный транспорт');
                 return;
             }
             break;

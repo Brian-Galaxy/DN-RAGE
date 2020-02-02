@@ -255,7 +255,7 @@ methods.getLicName = function (lic) {
             licName = 'Лицензия категории C';
             break;
         case 'air_lic':
-            licName = 'Лицензия пилота';
+            licName = 'Лицензия на воздушный транспорт';
             break;
         case 'ship_lic':
             licName = 'Лицензия на водный транспорт';
@@ -264,16 +264,16 @@ methods.getLicName = function (lic) {
             licName = 'Лицензия на перевозку пассажиров';
             break;
         case 'law_lic':
-            licName = 'Лицензия адвоката';
+            licName = 'Лицензия юриста';
             break;
         case 'gun_lic':
             licName = 'Лицензия на оружие';
             break;
         case 'biz_lic':
-            licName = 'Лицензия на бизнес';
+            licName = 'Лицензия на предпринимательство';
             break;
         case 'fish_lic':
-            licName = 'Лицензия на рыбалку';
+            licName = 'Разрешение на рыболовство';
             break;
         case 'med_lic':
             licName = 'Мед. страховка';

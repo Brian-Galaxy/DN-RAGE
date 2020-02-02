@@ -508,7 +508,7 @@ weather.nextRandomWeatherByType = function(weatherType) {
         `Life Invader [${weather.getFullRpTime()}]`,
         "~y~Новости погоды",
         `Погода: ~y~${weather.getWeatherName(weather.getWeather())}~s~\nТемпература: ~y~${Math.round(_tempNew)}°C\n~s~Ветер: ~y~${Math.round(_windSpeed / 2)}m/s`,
-        "CHAR_LIFEINVADER",
+        "CHAR_TANISHA",
         1
     );
     mp.players.call('client:managers:weather:nextWeather', [weather.getWeather(), methods.getRandomInt(150, 300)]);

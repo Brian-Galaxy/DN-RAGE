@@ -14,7 +14,7 @@ phone.getUserInfo = function(player, text) {
     if (!user.isLogin(player))
         return;
 
-    methods.debug('phone.memberAction');
+    methods.debug('phone.getUserInfo');
 
     text = methods.removeQuotes(text);
 
@@ -37,7 +37,7 @@ phone.getUserInfo = function(player, text) {
             subItems.push(phone.getMenuItemButton(
                 'Личная история',
                 '',
-                { name: 'none' },
+                { name: 'history', id: row['id'] },
                 '',
                 true,
             ));
@@ -489,6 +489,63 @@ phone.fractionMoney = function(player) {
     phone.showMenu(player, 'fractionMoney', 'Управление бюджетом', [phone.getMenuMainItem(`Основной раздел`, items)]);
 };
 
+phone.fractionLog = function(player) {
+    if (!user.isLogin(player))
+        return;
+    methods.debug('phone.fractionLog');
+
+    let fractionId = user.get(player, 'fraction_id');
+
+    mysql.executeQuery(`SELECT * FROM log_fraction WHERE fraction_id = ${fractionId} LIMIT 50`, (err, rows, fields) => {
+
+        let items = [];
+
+        if (rows.length > 0) {
+            try {
+                let columns = [
+                    { title: '№', field: 'id' },
+                    { title: 'Имя', field: 'name' },
+                    { title: 'Описание', field: 'text' },
+                    { title: 'Сумма', field: 'text2' },
+                    { title: 'Дата', field: 'datetime' },
+                ];
+                let data = [];
+
+                rows.forEach(row => {
+
+                    data.push({
+                        id: row['id'], name: row['name'], text: row['text'].replace('\"', '').replace('"', ''), text2: row['text2'].replace('\"', '').replace('"', ''), datetime: `${row['rp_datetime']} (( ${methods.unixTimeStampToDateTimeShort(row['timestamp'])} ))`
+                    });
+                });
+
+                let item = phone.getMenuItemTable('История организации', columns, data);
+                items.push(phone.getMenuMainItem(``, [item]));
+            }
+            catch (e) {
+
+                items.push(phone.getMenuMainItem(`Список пуст`, [
+                    phone.getMenuItemButton(
+                        `Произошла ошибка, попробуйте еще раз`,
+                        ``
+                    )
+                ]));
+
+                methods.debug(e);
+            }
+        }
+        else {
+            items.push(phone.getMenuMainItem(`Список пуст`, [
+                phone.getMenuItemButton(
+                    `Нет доступных транзакций`,
+                    ``
+                )
+            ]));
+        }
+
+        phone.showMenu(player, 'fractionHistory', `История организации`, items);
+    });
+};
+
 phone.fractionList = function(player) {
     if (!user.isLogin(player))
         return;
@@ -931,6 +988,118 @@ phone.userNewsList = function(player) {
     });
 };
 
+phone.bankHistory = function(player, bankCard) {
+    if (!user.isLogin(player))
+        return;
+    methods.debug('phone.bankHistory');
+
+    if (bankCard === undefined)
+        bankCard = user.get(player, 'bank_card');
+
+    mysql.executeQuery(`SELECT * FROM log_bank_user WHERE card = ${methods.parseInt(bankCard)} LIMIT 100`, (err, rows, fields) => {
+
+        let items = [];
+
+        if (rows.length > 0) {
+            try {
+                let columns = [
+                    { title: '№', field: 'id' },
+                    { title: 'Описание', field: 'text' },
+                    { title: 'Сумма', field: 'price' },
+                    { title: 'Дата', field: 'datetime' },
+                ];
+                let data = [];
+
+                rows.forEach(row => {
+
+                    data.push({
+                        id: row['id'], text: row['text'], price: methods.moneyFormat(row['price']), datetime: `${row['rp_datetime']} (( ${methods.unixTimeStampToDateTimeShort(row['timestamp'])} ))`
+                    });
+                });
+
+                let item = phone.getMenuItemTable('Банковские операции', columns, data);
+                items.push(phone.getMenuMainItem(``, [item]));
+            }
+            catch (e) {
+
+                items.push(phone.getMenuMainItem(`Список пуст`, [
+                    phone.getMenuItemButton(
+                        `Произошла ошибка, попробуйте еще раз`,
+                        ``
+                    )
+                ]));
+
+                methods.debug(e);
+            }
+        }
+        else {
+            items.push(phone.getMenuMainItem(`Список пуст`, [
+                phone.getMenuItemButton(
+                    `Нет доступных транзакций`,
+                    ``
+                )
+            ]));
+        }
+
+        phone.showMenu(player, 'bankHistory', `История транзакций`, items);
+    });
+};
+
+phone.userHistory = function(player, id) {
+    if (!user.isLogin(player))
+        return;
+    methods.debug('phone.bankHistory');
+
+    if (id === undefined)
+        id = user.get(player, 'id');
+
+    mysql.executeQuery(`SELECT * FROM log_player WHERE user_id = ${methods.parseInt(id)} LIMIT 100`, (err, rows, fields) => {
+
+        let items = [];
+
+        if (rows.length > 0) {
+            try {
+                let columns = [
+                    { title: '№', field: 'id' },
+                    { title: 'Описание', field: 'do' },
+                    { title: 'Дата', field: 'datetime' },
+                ];
+                let data = [];
+
+                rows.forEach(row => {
+                    data.push({
+                        id: row['id'], do: row['do'], datetime: `${row['rp_datetime']} (( ${methods.unixTimeStampToDateTimeShort(row['timestamp'])} ))`
+                    });
+                });
+
+                let item = phone.getMenuItemTable('Личная история', columns, data);
+                items.push(phone.getMenuMainItem(``, [item]));
+            }
+            catch (e) {
+
+                items.push(phone.getMenuMainItem(`Список пуст`, [
+                    phone.getMenuItemButton(
+                        `Произошла ошибка, попробуйте еще раз`,
+                        ``
+                    )
+                ]));
+
+                methods.debug(e);
+            }
+        }
+        else {
+            items.push(phone.getMenuMainItem(`Список пуст`, [
+                phone.getMenuItemButton(
+                    `Список пуст`,
+                    ``
+                )
+            ]));
+        }
+
+        phone.showMenu(player, 'userHistory', `Личная история`, items);
+    });
+};
+
 phone.createFraction = function(player) {
     if (!user.isLogin(player))
         return;
@@ -1284,18 +1453,22 @@ phone.getMenuItemModalInput = function(title, text, modalTitle, modalValue = '',
     };
 };
 
+phone.getMenuItemTable = function(title, columns, data, readonly = true, params = { name: "null" }, clickable = false, background = undefined) {
+    return {
+        type: 10,
+        title: title,
+        columns: columns,
+        data: data,
+        readonly: readonly,
+        params: params,
+        background: background,
+        clickable: clickable,
+    };
+};
+
 phone.getMenuMainItem = function(title, items) {
     return {
         title: title,
         umenu: items,
     };
-};
-
-phone.types = {
-    title: 0,
-    default: 1,
-    checkbox: 2,
-    user: 3,
-    select: 4,
-    accept: 5,
 };

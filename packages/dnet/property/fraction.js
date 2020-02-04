@@ -49,7 +49,7 @@ fraction.save = function(id) {
 
         let sql = "UPDATE fraction_list SET";
 
-        sql = sql + " name = '" + methods.parseFloat(fraction.get(id, "name")) + "'";
+        sql = sql + " name = '" + methods.removeQuotes(fraction.get(id, "name")) + "'";
         sql = sql + ", money = '" + methods.parseInt(fraction.get(id, "money")) + "'";
         sql = sql + ", is_bank = '" + methods.parseInt(fraction.get(id, "is_bank")) + "'";
         sql = sql + ", is_shop = '" + methods.parseInt(fraction.get(id, "is_shop")) + "'";
@@ -73,6 +73,10 @@ fraction.getData = function(id) {
 
 fraction.get = function(id, key) {
     return Container.Data.Get(enums.offsets.fraction + methods.parseInt(id), key);
+};
+
+fraction.has = function(id, key) {
+    return Container.Data.Has(enums.offsets.fraction + methods.parseInt(id), key);
 };
 
 fraction.set = function(id, key, val) {
@@ -111,6 +115,144 @@ fraction.addHistory = function(id, name, price) {
     let timestamp = methods.getTimeStamp();
 
     mysql.executeQuery(`INSERT INTO log_fraction_2 (fraction_id, name, price, timestamp, rp_datetime) VALUES ('${id}', '${name}', '${price}', '${timestamp}', '${rpDateTime}')`);
+};
+
+fraction.editFractionName = function(player, text) {
+    if (!user.isLogin(player))
+        return;
+
+    let id = user.get(player, 'fraction_id2');
+    fraction.set(id, "name", methods.removeQuotes2(methods.removeQuotes(text)));
+    player.notify('~g~Вы сменили название организации');
+
+    fraction.save(id);
+};
+
+fraction.editFractionLeader = function(player, text) {
+    if (!user.isLogin(player))
+        return;
+
+    let id = user.get(player, 'fraction_id2');
+    fraction.set(id, "rank_leader", methods.removeQuotes2(methods.removeQuotes(text)));
+    player.notify('~g~Вы обновили название ранга');
+
+    fraction.save(id);
+};
+
+fraction.editFractionSubLeader = function(player, text) {
+    if (!user.isLogin(player))
+        return;
+
+    let id = user.get(player, 'fraction_id2');
+    fraction.set(id, "rank_sub_leader", methods.removeQuotes2(methods.removeQuotes(text)));
+    player.notify('~g~Вы обновили название ранга');
+
+    fraction.save(id);
+};
+
+fraction.editFractionRank = function(player, text, rankId, depId) {
+    if (!user.isLogin(player))
+        return;
+
+    text = methods.removeQuotes2(methods.removeQuotes(text));
+
+    let id = user.get(player, 'fraction_id2');
+    let rankList = JSON.parse(fraction.get(id, 'rank_list'));
+    rankList[depId][rankId] = text;
+    fraction.set(id, "rank_list", JSON.stringify(rankList));
+
+    player.notify('~g~Вы обновили название ранга');
+
+    fraction.save(id);
+};
+
+fraction.editFractionDep = function(player, text, depId) {
+    if (!user.isLogin(player))
+        return;
+
+    text = methods.removeQuotes2(methods.removeQuotes(text));
+
+    let id = user.get(player, 'fraction_id2');
+    let depList = JSON.parse(fraction.get(id, 'rank_type_list'));
+    depList[depId] = text;
+    fraction.set(id, "rank_type_list", JSON.stringify(depList));
+
+    player.notify('~g~Вы обновили название раздела');
+
+    fraction.save(id);
+};
+
+fraction.deleteFractionDep = function(player) {
+    if (!user.isLogin(player))
+        return;
+
+    let id = user.get(player, 'fraction_id2');
+
+    let depList = JSON.parse(fraction.get(id, 'rank_type_list'));
+    let rankList = JSON.parse(fraction.get(id, 'rank_list'));
+    depList.pop();
+    rankList.pop();
+
+    fraction.set(id, "rank_type_list", JSON.stringify(depList));
+    fraction.set(id, "rank_list", JSON.stringify(rankList));
+
+    player.notify('~g~Вы удалили раздел');
+
+    fraction.save(id);
+};
+
+fraction.addFractionRank = function(player, text, depId) {
+    if (!user.isLogin(player))
+        return;
+
+    text = methods.removeQuotes2(methods.removeQuotes(text));
+
+    let id = user.get(player, 'fraction_id2');
+    let rankList = JSON.parse(fraction.get(id, 'rank_list'));
+    rankList[depId].push(text);
+    fraction.set(id, "rank_list", JSON.stringify(rankList));
+
+    player.notify('~g~Вы добавили должность');
+
+    fraction.save(id);
+};
+
+fraction.editFractionDep = function(player, text, depId) {
+    if (!user.isLogin(player))
+        return;
+
+    text = methods.removeQuotes2(methods.removeQuotes(text));
+
+    let id = user.get(player, 'fraction_id2');
+    let depList = JSON.parse(fraction.get(id, 'rank_type_list'));
+    depList[depId] = text;
+    fraction.set(id, "rank_type_list", JSON.stringify(depList));
+
+    player.notify('~g~Вы обновили название раздела');
+
+    fraction.save(id);
+};
+
+fraction.createFractionDep = function(player, text) {
+    if (!user.isLogin(player))
+        return;
+
+    let id = user.get(player, 'fraction_id2');
+
+    text = methods.removeQuotes2(methods.removeQuotes(text));
+
+    let depList = JSON.parse(fraction.get(id, 'rank_type_list'));
+    depList.push(text);
+
+    let rankList = JSON.parse(fraction.get(id, 'rank_list'));
+    rankList.push(["Глава отдела", "Зам. главы отдела"]);
+
+    fraction.set(id, "rank_type_list", JSON.stringify(depList));
+    fraction.set(id, "rank_list", JSON.stringify(rankList));
+
+    player.notify('~g~Вы сменили добавили новый раздел');
+
+    fraction.save(id);
 };
 
 fraction.updateOwnerInfo = function (id, userId) {

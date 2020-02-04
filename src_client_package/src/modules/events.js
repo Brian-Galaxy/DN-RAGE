@@ -1958,6 +1958,9 @@ mp.events.add('client:phone:status', function(status) {
 });
 
 mp.events.add('client:phone:rotate', function(status) {
+    mp.gui.chat.show(status);
+    mp.gui.chat.activate(status);
+    mp.gui.cursor.show(!status, true);
     if (status)
         user.rotatePhoneV();
     else

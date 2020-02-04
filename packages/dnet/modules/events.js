@@ -1530,6 +1530,12 @@ mp.events.addRemoteCounted('server:phone:fractionList', (player) => {
     phone.fractionList(player);
 });
 
+mp.events.addRemoteCounted('server:phone:fractionLog', (player) => {
+    if (!user.isLogin(player))
+        return;
+    phone.fractionLog(player);
+});
+
 mp.events.addRemoteCounted('server:phone:fractionList2', (player) => {
     if (!user.isLogin(player))
         return;
@@ -1578,6 +1584,18 @@ mp.events.addRemoteCounted('server:phone:userNewsList', (player) => {
     phone.userNewsList(player);
 });
 
+mp.events.addRemoteCounted('server:phone:bankHistory', (player) => {
+    if (!user.isLogin(player))
+        return;
+    phone.bankHistory(player);
+});
+
+mp.events.addRemoteCounted('server:phone:userHistory', (player, id) => {
+    if (!user.isLogin(player))
+        return;
+    phone.userHistory(player, id);
+});
+
 mp.events.addRemoteCounted('server:phone:createFraction', (player) => {
     if (!user.isLogin(player))
         return;
@@ -1604,6 +1622,54 @@ mp.events.addRemoteCounted('server:phone:getUserInfo', (player, text) => {
     if (!user.isLogin(player))
         return;
     phone.getUserInfo(player, text);
+});
+
+mp.events.addRemoteCounted('server:phone:editFractionName', (player, text) => {
+    if (!user.isLogin(player))
+        return;
+    fraction.editFractionName(player, text);
+});
+
+mp.events.addRemoteCounted('server:phone:editFractionLeader', (player, text) => {
+    if (!user.isLogin(player))
+        return;
+    fraction.editFractionLeader(player, text);
+});
+
+mp.events.addRemoteCounted('server:phone:editFractionSubLeader', (player, text) => {
+    if (!user.isLogin(player))
+        return;
+    fraction.editFractionSubLeader(player, text);
+});
+
+mp.events.addRemoteCounted('server:phone:createFractionDep', (player, text) => {
+    if (!user.isLogin(player))
+        return;
+    fraction.createFractionDep(player, text);
+});
+
+mp.events.addRemoteCounted('server:phone:editFractionRank', (player, text, rankId, depId) => {
+    if (!user.isLogin(player))
+        return;
+    fraction.editFractionRank(player, text, rankId, depId);
+});
+
+mp.events.addRemoteCounted('server:phone:editFractionDep', (player, text, depId) => {
+    if (!user.isLogin(player))
+        return;
+    fraction.editFractionDep(player, text, depId);
+});
+
+mp.events.addRemoteCounted('server:phone:deleteFractionDep', (player) => {
+    if (!user.isLogin(player))
+        return;
+    fraction.deleteFractionDep(player);
+});
+
+mp.events.addRemoteCounted('server:phone:addFractionRank', (player, text, depId) => {
+    if (!user.isLogin(player))
+        return;
+    fraction.addFractionRank(player, text, depId);
 });
 
 mp.events.addRemoteCounted('server:phone:fractionVehicleAction', (player, id) => {

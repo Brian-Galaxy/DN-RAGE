@@ -7,6 +7,8 @@ import coffer from './coffer';
 
 import weather from "./manager/weather";
 import dispatcher from "./manager/dispatcher";
+import bind from "./manager/bind";
+
 import fraction from "./property/fraction";
 
 let phone = {};
@@ -28,11 +30,10 @@ phone.show = function() {
 
     //mp.gui.chat.activate(false);
     try {
-
         user.openPhone(pType);
 
         mp.gui.cursor.show(false, true);
-        mp.game.ui.notifications.show("~b~Скрыть телефон на ~s~O~");
+        mp.game.ui.notifications.show(`~b~Скрыть телефон на ~s~${bind.getKeyName(user.getCache('s_bind_phone'))}`);
         ui.DisableMouseControl = true;
         hidden = false;
 
@@ -154,6 +155,12 @@ phone.showAppList = function() {
                         type: 0,
                         value: 'https://a.rsg.sc//n/' + user.getCache('social').toString().toLowerCase(),
                         params: { name: "null" }
+                    },
+                    {
+                        title: 'Личная история',
+                        type: 1,
+                        params: { name: 'myHistory' },
+                        clickable: true
                     }
                 ],
             },
@@ -225,9 +232,9 @@ phone.showAppList = function() {
             case 7000:
             {
                 let item = {
-                    title: 'Fleeca Bank',
+                    title: 'Pacific Standard Bank',
                     text: `Приложение вашего банка`,
-                    img: 'fleeca',
+                    img: 'pacific',
                     clickable: true,
                     type: 1,
                     params: { name: "bank" }
@@ -238,9 +245,9 @@ phone.showAppList = function() {
             case 8000:
             {
                 let item = {
-                    title: 'Pacific Standard Bank',
+                    title: 'Fleeca Bank',
                     text: `Приложение вашего банка`,
-                    img: 'pacific',
+                    img: 'fleeca',
                     clickable: true,
                     type: 1,
                     params: { name: "bank" }
@@ -1429,7 +1436,7 @@ phone.showAppFractionHierarchy2 = async function() {
     let fractionItemRanks = JSON.parse(fractionItem.get('rank_list'));
     let fractionItemDep = JSON.parse(fractionItem.get('rank_type_list'));
 
-    if (user.isLeader()) {
+    if (user.isLeader2()) {
         try {
             let menu = {
                 UUID: 'fraction_hierarchy2',
@@ -1512,15 +1519,41 @@ phone.showAppFractionHierarchy2 = async function() {
                 if (i > 0) {
                     menuItem.umenu.push(
                         {
-                            title: 'Удалить раздел',
+                            title: 'Добавить должность',
                             text: '',
-                            modalTitle: 'Вы точно хотите удалить?',
-                            modalButton: ['Отмена', 'Удалить'],
-                            type: 7,
-                            params: { name: "deleteFractionDep", depId: i },
+                            modalTitle: 'Введите название ранга',
+                            modalButton: ['Отмена', 'Добавить'],
+                            type: 8,
+                            params: { name: "addFractionRank", depId: i },
                             clickable: true,
                         },
                     );
+                    menuItem.umenu.push(
+                        {
+                            title: 'Редактировать название раздела',
+                            text: '',
+                            modalTitle: 'Введите название раздела',
+                            modalValue: item,
+                            modalButton: ['Отмена', 'Добавить'],
+                            type: 8,
+                            params: { name: "editFractionDep", depId: i },
+                            clickable: true,
+                        },
+                    );
+
+                    if (i == (fractionItemDep.length - 1)) {
+                        menuItem.umenu.push(
+                            {
+                                title: 'Удалить раздел',
+                                text: '',
+                                modalTitle: 'Вы точно хотите удалить?',
+                                modalButton: ['Отмена', 'Удалить'],
+                                type: 7,
+                                params: { name: "deleteFractionDep" },
+                                clickable: true,
+                            },
+                        );
+                    }
                 }
 
                 menu.items.push(menuItem);
@@ -1971,6 +2004,19 @@ phone.getMenuItemModalInput = function(title, text, modalTitle, modalValue = '',
     };
 };
 
+phone.getMenuItemTable = function(title, columns, data, readonly = true, params = { name: "null" }, clickable = false, background = undefined) {
+    return {
+        type: 10,
+        title: title,
+        columns: columns,
+        data: data,
+        readonly: readonly,
+        params: params,
+        background: background,
+        clickable: clickable,
+    };
+};
+
 phone.getMenuMainItem = function(title, items) {
     return {
         title: title,
@@ -2048,6 +2094,10 @@ phone.callBackModal = function(paramsJson) {
             mp.events.callRemote('server:fraction:vehicleSell', params.vehId, params.price);
             phone.showAppFraction();
         }
+        if (params.name == 'deleteFractionDep') {
+            mp.events.callRemote('server:phone:deleteFractionDep');
+            setTimeout(phone.showAppFractionHierarchy2, 300);
+        }
     }
     catch(e) {
         methods.debug(e);
@@ -2067,6 +2117,34 @@ phone.callBackModalInput = function(paramsJson, text) {
         }
         if (params.name == 'getUserInfo') {
             mp.events.callRemote('server:phone:getUserInfo', text);
+        }
+        if (params.name == 'editFractionName') {
+            mp.events.callRemote('server:phone:editFractionName', text);
+            setTimeout(phone.showAppFractionHierarchy2, 300);
+        }
+        if (params.name == 'createFractionDep') {
+            mp.events.callRemote('server:phone:createFractionDep', text);
+            setTimeout(phone.showAppFractionHierarchy2, 300);
+        }
+        if (params.name == 'editFractionLeader') {
+            mp.events.callRemote('server:phone:editFractionLeader', text);
+            setTimeout(phone.showAppFractionHierarchy2, 300);
+        }
+        if (params.name == 'editFractionSubLeader') {
+            mp.events.callRemote('server:phone:editFractionSubLeader', text);
+            setTimeout(phone.showAppFractionHierarchy2, 300);
+        }
+        if (params.name == 'editFractionRank') {
+            mp.events.callRemote('server:phone:editFractionRank', text, params.rankId, params.depId);
+            setTimeout(phone.showAppFractionHierarchy2, 300);
+        }
+        if (params.name == 'editFractionDep') {
+            mp.events.callRemote('server:phone:editFractionDep', text, params.depId);
+            setTimeout(phone.showAppFractionHierarchy2, 300);
+        }
+        if (params.name == 'addFractionRank') {
+            mp.events.callRemote('server:phone:addFractionRank', text, params.depId);
+            setTimeout(phone.showAppFractionHierarchy2, 300);
         }
         if (params.name == 'fractionBenefit') {
             let price = methods.parseFloat(text);
@@ -2208,6 +2286,10 @@ phone.callBackButton = function(menu, id, ...args) {
                 mp.events.callRemote('server:phone:fractionList');
                 phone.showLoad();
             }
+            else if (params.name == 'log') {
+                mp.events.callRemote('server:phone:fractionLog');
+                phone.showLoad();
+            }
             else if (params.name == 'money') {
                 mp.events.callRemote('server:phone:fractionMoney');
                 phone.showLoad();
@@ -2288,6 +2370,10 @@ phone.callBackButton = function(menu, id, ...args) {
                 mp.events.callRemote('server:phone:userVehicleAppMenu');
                 phone.showLoad();
             }
+            if (params.name == 'myHistory') {
+                mp.events.callRemote('server:phone:userHistory', user.getCache('id'));
+                phone.showLoad();
+            }
         }
         if (menu == 'gps') {
             if (params.x)
@@ -2302,6 +2388,18 @@ phone.callBackButton = function(menu, id, ...args) {
             }
             if (params.name == 'newsList') {
                 mp.events.callRemote('server:phone:userNewsList');
+                phone.showLoad();
+            }
+        }
+        if (menu == 'bank') {
+            if (params.name == 'history') {
+                mp.events.callRemote('server:phone:bankHistory');
+                phone.showLoad();
+            }
+        }
+        if (menu == 'userInfo') {
+            if (params.name == 'history') {
+                mp.events.callRemote('server:phone:userHistory', params.id);
                 phone.showLoad();
             }
         }
@@ -2425,12 +2523,6 @@ phone.findNetworkTimer = function() {
     }
 
     setTimeout(phone.findNetworkTimer, 1000);
-};
-
-phone.types = {
-    title: 0,
-    default: 1,
-    checkbox: 2,
 };
 
 export default phone;

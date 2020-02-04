@@ -8,6 +8,8 @@ import ui from "./modules/ui";
 import menuList from "./menuList";
 import vehicles from "./property/vehicles";
 
+import bind from "./manager/bind";
+
 let inventory = {};
 
 inventory.currentItem = -1;
@@ -24,7 +26,7 @@ inventory.show = function() {
     //mp.gui.chat.activate(false);
     try {
         mp.gui.cursor.show(false, true);
-        mp.game.ui.notifications.show("~b~Скрыть ивентарь на ~s~I~");
+        mp.game.ui.notifications.show(`~b~Скрыть ивентарь на ~s~${bind.getKeyName(user.getCache('s_bind_inv'))}`);
         ui.DisableMouseControl = true;
         hidden = false;
         ui.hideHud();

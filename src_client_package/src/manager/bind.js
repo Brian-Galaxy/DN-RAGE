@@ -233,7 +233,7 @@ for(let code in keyCodes) {
             return;
 
         if (user.getCache('s_bind_inv') == parseInt(code)) {
-            if (!methods.isBlockKeys()) {
+            if (!methods.isBlockKeys() && phone.isHide()) {
                 ui.callCef('inventory', '{"type": "showOrHide"}')
             }
         }
@@ -241,7 +241,7 @@ for(let code in keyCodes) {
             inventory.getItemList(0, 0);
         }
         if (user.getCache('s_bind_phone') == parseInt(code)) {
-            if (!methods.isBlockKeys())
+            if (!methods.isBlockKeys() && !mp.gui.cursor.visible)
                 phone.showOrHide();
         }
         if (user.getCache('s_bind_lock') == parseInt(code)) {

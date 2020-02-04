@@ -1253,7 +1253,6 @@ user.stopScenario = function() {
 let isOpenPhone = false;
 
 user.openPhone = function(type) {
-    ui.hideHud();
     user.playAnimation("cellphone@female", "cellphone_text_read_base", 49);
     mp.attachmentMngr.addLocal('phone' + type);
     isOpenPhone = true;
@@ -1277,7 +1276,6 @@ user.isOpenPhone = function() {
 };
 
 user.hidePhone = function() {
-    ui.showHud();
     mp.attachmentMngr.removeLocal('phone1');
     mp.attachmentMngr.removeLocal('phone2');
     mp.attachmentMngr.removeLocal('phone3');

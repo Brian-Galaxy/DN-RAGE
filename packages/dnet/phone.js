@@ -383,6 +383,126 @@ phone.memberAction = function(player, id) {
     });
 };
 
+phone.memberAction2 = function(player, id) {
+    if (!user.isLogin(player))
+        return;
+
+    if (user.getId(player) == id) {
+        player.notify('~r~Данный профиль для просмотра не доступен');
+        return;
+    }
+
+    methods.debug('phone.memberAction');
+    let fractionId = user.get(player, 'fraction_id2');
+    mysql.executeQuery(`SELECT id, social, name, fraction_id2, rank2, rank_type2, is_sub_leader2 FROM users WHERE id = '${methods.parseInt(id)}'`, (err, rows, fields) => {
+
+        rows.forEach(row => {
+
+            let fractionItem = fraction.getData(fractionId);
+            let fractionItemRanks = JSON.parse(fractionItem.get('rank_list'));
+            let fractionItemDep = JSON.parse(fractionItem.get('rank_type_list'));
+
+            let items = [];
+
+            items.push(phone.getMenuItem(
+                row['name'],
+                '',
+                { name: 'none' },
+                0,
+                '',
+                false,
+                'https://a.rsg.sc//n/' + row['social'].toLowerCase(),
+            ));
+
+            if (!row['is_sub_leader2']) {
+                if (user.isLeader(player)) {
+                    items.push(phone.getMenuItemModal(
+                        'Выдать должность заместителя',
+                        '',
+                        'Заместитель',
+                        `Вы точно хотите выдать должность ${row['name']}?`,
+                        'Выдать',
+                        'Отмена',
+                        { name: 'memberGiveSubLeader2', memberId: row['id'] },
+                        '',
+                        true
+                    ));
+                }
+
+                let rankList = [];
+                fractionItemRanks[row['rank_type2']].forEach((item, id) => {
+                    if (id == row['rank2'])
+                        rankList.push({title: item, checked: true, params: { name: 'memberNewRank2', memberId: row['id'], rankId: id }})
+                    else
+                        rankList.push({title: item, params: { name: 'memberNewRank2', memberId: row['id'], rankId: id }})
+                });
+
+                items.push(phone.getMenuItemRadio(
+                    'Изменить должность',
+                    'Текущая должность: ' + fractionItemRanks[row['rank_type2']][row['rank2']],
+                    'Выберите должность',
+                    rankList,
+                    { name: 'none' },
+                    '',
+                    true
+                ));
+
+                if (user.isLeader2(player) || user.isSubLeader2(player)) {
+                    let depList = [];
+
+                    fractionItemDep.forEach((item, id) => {
+                        if (id == row['rank_type2'])
+                            depList.push({title: item, checked: true, params: { name: 'memberNewDep2', memberId: row['id'], depId: id }})
+                        else
+                            depList.push({title: item, params: { name: 'memberNewDep2', memberId: row['id'], depId: id }})
+                    });
+
+                    items.push(phone.getMenuItemRadio(
+                        'Перевести в другой отдел',
+                        'Текущий отдел: ' + fractionItemDep[row['rank_type2']],
+                        'Выберите отдел',
+                        depList,
+                        { name: 'none' },
+                        '',
+                        true
+                    ));
+                }
+            }
+            else {
+                if (user.isLeader2(player)) {
+                    items.push(phone.getMenuItemModal(
+                        'Снять с должности заместителя',
+                        '',
+                        'Заместитель',
+                        `Вы точно хотите снять с должности ${row['name']}?`,
+                        'Снять',
+                        'Отмена',
+                        { name: 'memberTakeSubLeader2', memberId: row['id'] },
+                        '',
+                        true
+                    ));
+                }
+            }
+
+            if (user.isLeader2(player) || user.isSubLeader2(player)) {
+                items.push(phone.getMenuItemModal(
+                    'Уволить',
+                    '',
+                    'Уволить',
+                    `Вы точно хотите уволить ${row['name']}?`,
+                    'Уволить',
+                    'Отмена',
+                    { name: 'memberUninvite2', memberId: row['id'] },
+                    '',
+                    true
+                ));
+            }
+
+            phone.showMenu(player, 'fraction2', 'Действия', [phone.getMenuMainItem('', items)]);
+        });
+    });
+};
+
 phone.fractionVehicleAction = function(player, id) {
     if (!user.isLogin(player))
         return;
@@ -543,6 +663,63 @@ phone.fractionLog = function(player) {
         }
 
         phone.showMenu(player, 'fractionHistory', `История организации`, items);
+    });
+};
+
+phone.fractionLog2 = function(player) {
+    if (!user.isLogin(player))
+        return;
+    methods.debug('phone.fractionLog');
+
+    let fractionId = user.get(player, 'fraction_id2');
+
+    mysql.executeQuery(`SELECT * FROM log_fraction_2 WHERE fraction_id = ${fractionId} LIMIT 50`, (err, rows, fields) => {
+
+        let items = [];
+
+        if (rows.length > 0) {
+            try {
+                let columns = [
+                    { title: '№', field: 'id' },
+                    { title: 'Имя', field: 'name' },
+                    { title: 'Описание', field: 'text' },
+                    { title: 'Сумма', field: 'text2' },
+                    { title: 'Дата', field: 'datetime' },
+                ];
+                let data = [];
+
+                rows.forEach(row => {
+
+                    data.push({
+                        id: row['id'], name: row['name'], text: row['text'].replace('\"', '').replace('"', ''), text2: row['text2'].replace('\"', '').replace('"', ''), datetime: `${row['rp_datetime']} (( ${methods.unixTimeStampToDateTimeShort(row['timestamp'])} ))`
+                    });
+                });
+
+                let item = phone.getMenuItemTable('История организации', columns, data);
+                items.push(phone.getMenuMainItem(``, [item]));
+            }
+            catch (e) {
+
+                items.push(phone.getMenuMainItem(`Список пуст`, [
+                    phone.getMenuItemButton(
+                        `Произошла ошибка, попробуйте еще раз`,
+                        ``
+                    )
+                ]));
+
+                methods.debug(e);
+            }
+        }
+        else {
+            items.push(phone.getMenuMainItem(`Список пуст`, [
+                phone.getMenuItemButton(
+                    `Нет доступных транзакций`,
+                    ``
+                )
+            ]));
+        }
+
+        phone.showMenu(player, 'fraction2History', `История организации`, items);
     });
 };
 

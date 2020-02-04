@@ -2136,6 +2136,8 @@ mp.keys.bind(0x1B, true, function() {
         return;
     ui.callCef('license', JSON.stringify({type: 'hide'}));
     ui.callCef('certificate', JSON.stringify({type: 'hide'}));
+    phone.hide();
+    inventory.hide();
 });
 
 //BACKSPACE
@@ -2144,6 +2146,7 @@ mp.keys.bind(0x08, true, function() {
         return;
     ui.callCef('license', JSON.stringify({type: 'hide'}));
     ui.callCef('certificate', JSON.stringify({type: 'hide'}));
+    inventory.hide();
 });
 
 mp.events.add("playerDeath", function (player, reason, killer) {

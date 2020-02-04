@@ -1536,6 +1536,12 @@ mp.events.addRemoteCounted('server:phone:fractionLog', (player) => {
     phone.fractionLog(player);
 });
 
+mp.events.addRemoteCounted('server:phone:fractionLog2', (player) => {
+    if (!user.isLogin(player))
+        return;
+    phone.fractionLog2(player);
+});
+
 mp.events.addRemoteCounted('server:phone:fractionList2', (player) => {
     if (!user.isLogin(player))
         return;
@@ -1618,10 +1624,54 @@ mp.events.addRemoteCounted('server:phone:memberAction', (player, id) => {
     phone.memberAction(player, id);
 });
 
+mp.events.addRemoteCounted('server:phone:memberAction2', (player, id) => {
+    if (!user.isLogin(player))
+        return;
+    phone.memberAction2(player, id);
+});
+
 mp.events.addRemoteCounted('server:phone:getUserInfo', (player, text) => {
     if (!user.isLogin(player))
         return;
     phone.getUserInfo(player, text);
+});
+
+mp.events.addRemoteCounted('server:phone:inviteFraction2', (player, id) => {
+    if (!user.isLogin(player))
+        return;
+
+    id = methods.parseInt(id);
+    let target = mp.players.at(id);
+    if (user.isLogin(target)) {
+
+        if (target.id == player.id) {
+            player.notify('~r~Здравствуйте, я хотел вставить сюда шутку, но я ее не придумал, в общем, как ты собрался самого себя принять в организацию в которой ты уже состоишь?');
+            return;
+        }
+
+        if (methods.distanceToPos(target.position, player.position) > 5) {
+            player.notify('~r~Вы слишком далеко друг от друга');
+            return;
+        }
+
+        let fractionId = user.get(player, 'fraction_id');
+
+        let rank = JSON.parse(fraction.getData(fractionId).get('rank_list')).length - 1;
+
+        user.set(target, 'rank2', rank);
+        user.set(target, 'rank_type2', 0);
+        user.set(target, 'fraction_id2', fractionId);
+        user.set(target, 'is_leader2', false);
+        user.set(target, 'is_sub_leader2', false);
+
+        target.notify('~g~Вас приняли в организацию');
+        player.notify('~b~Вы приняли: ~s~' + user.getRpName(target));
+
+        user.save(target);
+    }
+    else {
+        player.notify('~r~Игрок не найден');
+    }
 });
 
 mp.events.addRemoteCounted('server:phone:editFractionName', (player, text) => {
@@ -2997,6 +3047,37 @@ mp.events.addRemoteCounted('server:user:uninvite', (player, id) => {
     }
 });
 
+mp.events.addRemoteCounted('server:user:uninvite2', (player, id) => {
+
+    if (!user.isLogin(player))
+        return;
+
+    if (!user.isLeader2(player) && !user.isSubLeader2(player)) {
+        player.notify('~r~Вы не лидер чтобы уволнять или зам лидера');
+        return;
+    }
+
+    id = methods.parseInt(id);
+    let target = user.getPlayerById(id);
+    if (user.isLogin(target)) {
+
+        user.set(target, 'rank2', 0);
+        user.set(target, 'rank_type2', 0);
+        user.set(target, 'fraction_id2', 0);
+        user.set(target, 'is_leader2', false);
+        user.set(target, 'is_sub_leader2', false);
+
+        target.notify('~r~Вас уволили из организации');
+        player.notify('~b~Вы уволили сотрудника: ~s~' + user.getRpName(target));
+
+        user.save(target);
+    }
+    else {
+        mysql.executeQuery(`UPDATE users SET rank2 = '0', rank_type2 = '0', fraction_id2 = '0', is_sub_leader2 = '0' where id = '${id}' AND is_leader2 <> 1`);
+        player.notify('~b~Вы уволили сотрудника');
+    }
+});
+
 mp.events.addRemoteCounted('server:user:invite', (player, id) => {
 
     if (!user.isLogin(player))
@@ -3233,6 +3314,33 @@ mp.events.addRemoteCounted('server:user:giveSubLeader', (player, id) => {
     }
 });
 
+mp.events.addRemoteCounted('server:user:giveSubLeader2', (player, id) => {
+
+    if (!user.isLogin(player))
+        return;
+
+    if (!user.isLeader2(player)) {
+        player.notify('~r~Вы не лидер чтобы выдавать такие полномочия');
+        return;
+    }
+
+    id = methods.parseInt(id);
+    let target = user.getPlayerById(id);
+    if (user.isLogin(target)) {
+
+        user.set(target, 'is_sub_leader2', true);
+
+        target.notify('~g~Вам выдали полномочия заместителя');
+        player.notify('~b~Вы выдали полномочия заместителя: ~s~' + user.getRpName(target));
+
+        user.save(target);
+    }
+    else {
+        mysql.executeQuery(`UPDATE users SET is_sub_leader2 = '1' where id = '${id}' AND is_leader2 <> 1`);
+        player.notify('~b~Вы выдали полномочия заместителя');
+    }
+});
+
 mp.events.addRemoteCounted('server:user:takeSubLeader', (player, id) => {
 
     if (!user.isLogin(player))
@@ -3265,6 +3373,38 @@ mp.events.addRemoteCounted('server:user:takeSubLeader', (player, id) => {
         mysql.executeQuery(`UPDATE users SET is_sub_leader = '0', rank = '${rank}', rank_type = '0' where id = '${id}' AND is_leader <> 1`);
         player.notify('~b~Вы изъяли полномочия заместителя: ~s~' + id);
         user.addHistoryById(id, 0, 'Были изъяты полномочия заместителя в организации ' + methods.getFractionName(user.get(player, 'fraction_id')) + '. Выдал: ' + user.getRpName(player));
+    }
+});
+
+mp.events.addRemoteCounted('server:user:takeSubLeader2', (player, id) => {
+
+    if (!user.isLogin(player))
+        return;
+
+    if (!user.isLeader2(player)) {
+        player.notify('~r~Вы не лидер чтобы выдавать такие полномочия');
+        return;
+    }
+
+    id = methods.parseInt(id);
+    let target = user.getPlayerById(id);
+
+    let rank = JSON.parse(fraction.getData(user.get(player, 'fraction_id2')).get('rank_list')).length - 1;
+
+    if (user.isLogin(target)) {
+
+        user.set(target, 'rank2', rank);
+        user.set(target, 'rank_type2', 0);
+        user.set(target, 'is_sub_leader2', false);
+
+        target.notify('~r~У Вас изъяли полномочия заместителя');
+        player.notify('~b~Вы изъяли полномочия заместителя: ~s~' + user.getRpName(target));
+
+        user.save(target);
+    }
+    else {
+        mysql.executeQuery(`UPDATE users SET is_sub_leader2 = '0', rank2 = '${rank}', rank_type2 = '0' where id = '${id}' AND is_leader2 <> 1`);
+        player.notify('~b~Вы изъяли полномочия заместителя: ~s~' + id);
     }
 });
 
@@ -3304,6 +3444,38 @@ mp.events.addRemoteCounted('server:user:newRank', (player, id, rank) => {
     }
 });
 
+
+mp.events.addRemoteCounted('server:user:newRank2', (player, id, rank) => {
+
+    if (!user.isLogin(player))
+        return;
+
+    id = methods.parseInt(id);
+    rank = methods.parseInt(rank);
+
+    if (!user.isLeader2(player) && !user.isSubLeader2(player)) {
+        if (user.get(player, 'rank2') >= rank) {
+            player.notify('~r~У Вас нет полномочий чтобы выдавать данную должность');
+            return;
+        }
+    }
+
+    let target = user.getPlayerById(id);
+    if (user.isLogin(target)) {
+
+        user.set(target, 'rank2', rank);
+
+        target.notify('~g~Вам была выдана новая должность');
+        player.notify('~b~Вы выдали новую должность: ~s~' + user.getRpName(target));
+
+        user.save(target);
+    }
+    else {
+        mysql.executeQuery(`UPDATE users SET rank2 = '${rank}' where id = '${id}' AND is_leader2 <> 1`);
+        player.notify('~b~Вы выдали новую должность');
+    }
+});
+
 mp.events.addRemoteCounted('server:user:newDep', (player, id, dep) => {
 
     if (!user.isLogin(player))
@@ -3332,6 +3504,33 @@ mp.events.addRemoteCounted('server:user:newDep', (player, id, dep) => {
         mysql.executeQuery(`UPDATE users SET rank = '${rank}', rank_type = '${dep}' where id = '${id}' AND is_leader <> 1`);
         player.notify('~b~Вы перевели в другой отдел');
         user.addHistoryById(id, 0, 'Был переведен в отдел ' + depName + '. Выдал: ' + user.getRpName(player));
+    }
+});
+
+mp.events.addRemoteCounted('server:user:newDep2', (player, id, dep) => {
+
+    if (!user.isLogin(player))
+        return;
+
+    id = methods.parseInt(id);
+    dep = methods.parseInt(dep);
+
+    let rank = JSON.parse(fraction.getData(user.get(player, 'fraction_id2')).get('rank_list')).length - 1;
+
+    let target = user.getPlayerById(id);
+    if (user.isLogin(target)) {
+
+        user.set(target, 'rank2', rank);
+        user.set(target, 'rank_type2', dep);
+
+        target.notify('~g~Вас перевели в другой отдел');
+        player.notify('~b~Вы перевели в другой отдел: ~s~' + user.getRpName(target));
+
+        user.save(target);
+    }
+    else {
+        mysql.executeQuery(`UPDATE users SET rank2 = '${rank}', rank_type2 = '${dep}' where id = '${id}' AND is_leader2 <> 1`);
+        player.notify('~b~Вы перевели в другой отдел');
     }
 });
 

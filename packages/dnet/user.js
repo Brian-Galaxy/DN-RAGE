@@ -2235,6 +2235,26 @@ user.isDepSubLeader = function(player) {
     return user.isLogin(player) && user.get(player, 'fraction_id') > 0 && user.get(player, 'rank') === 1;
 };
 
+user.isLeader2 = function(player) {
+    methods.debug('user.isLeader2');
+    return user.isLogin(player) && user.get(player, 'is_leader2');
+};
+
+user.isSubLeader2 = function(player) {
+    methods.debug('user.isSubLeader2');
+    return user.isLogin(player) && user.get(player, 'is_sub_leader2');
+};
+
+user.isDepLeader2 = function(player) {
+    methods.debug('user.isDepLeader2');
+    return user.isLogin(player) && user.get(player, 'fraction_id2') > 0 && user.get(player, 'rank2') === 0;
+};
+
+user.isDepSubLeader2 = function(player) {
+    methods.debug('user.isDepSubLeader2');
+    return user.isLogin(player) && user.get(player, 'fraction_id2') > 0 && user.get(player, 'rank2') === 1;
+};
+
 user.isAdmin = function(player, level = 1) {
     return user.isLogin(player) && user.get(player, 'admin_level') >= level;
 };

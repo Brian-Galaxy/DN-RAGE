@@ -538,6 +538,29 @@ phone.showAppFraction2 = function() {
         ],
     };
 
+    if (user.isLeader2() || user.isSubLeader2()) {
+        let titleMenu = {
+            title: 'Раздел для руководства',
+            umenu: [
+                {
+                    title: "Лог организации",
+                    type: 1,
+                    clickable: true,
+                    params: { name: "log" }
+                },
+                {
+                    title: "Принять в организацию",
+                    modalTitle: 'Введите ID',
+                    modalButton: ['Отмена', 'Принять'],
+                    type: 8,
+                    clickable: true,
+                    params: { name: "inviteFraction2" }
+                },
+            ],
+        };
+        menu.items.push(titleMenu);
+    }
+
     phone.showMenu(menu);
 };
 
@@ -2057,6 +2080,14 @@ phone.callBackRadio = function(checked, id, ...args) {
             mp.events.callRemote('server:user:newDep', params.memberId, params.depId);
             phone.showAppFraction();
         }
+        if (params.name == 'memberNewRank2') {
+            mp.events.callRemote('server:user:newRank2', params.memberId, params.rankId);
+            phone.showAppFraction2();
+        }
+        if (params.name == 'memberNewDep2') {
+            mp.events.callRemote('server:user:newDep2', params.memberId, params.depId);
+            phone.showAppFraction2();
+        }
         if (params.name == 'vehicleNewRank') {
             mp.events.callRemote('server:fraction:vehicleNewRank', params.memberId, params.rankId);
             phone.showAppFraction();
@@ -2085,6 +2116,18 @@ phone.callBackModal = function(paramsJson) {
         if (params.name == 'memberTakeSubLeader') {
             mp.events.callRemote('server:user:takeSubLeader', params.memberId);
             phone.showAppFraction();
+        }
+        if (params.name == 'memberUninvite2') {
+            mp.events.callRemote('server:user:uninvite2', params.memberId);
+            phone.showAppFraction2();
+        }
+        if (params.name == 'memberGiveSubLeader2') {
+            mp.events.callRemote('server:user:giveSubLeader2', params.memberId);
+            phone.showAppFraction2();
+        }
+        if (params.name == 'memberTakeSubLeader2') {
+            mp.events.callRemote('server:user:takeSubLeader2', params.memberId);
+            phone.showAppFraction2();
         }
         if (params.name == 'fractionVehicleBuy') {
             mp.events.callRemote('server:fraction:vehicleBuy', params.vehId, params.price);
@@ -2117,6 +2160,9 @@ phone.callBackModalInput = function(paramsJson, text) {
         }
         if (params.name == 'getUserInfo') {
             mp.events.callRemote('server:phone:getUserInfo', text);
+        }
+        if (params.name == 'inviteFraction2') {
+            mp.events.callRemote('server:phone:inviteFraction2', methods.parseInt(text));
         }
         if (params.name == 'editFractionName') {
             mp.events.callRemote('server:phone:editFractionName', text);
@@ -2422,6 +2468,14 @@ phone.callBackButton = function(menu, id, ...args) {
                 phone.showAppFractionHierarchy2();
             else if (params.name == 'list') {
                 mp.events.callRemote('server:phone:fractionList2');
+                phone.showLoad();
+            }
+            else if (params.name == 'log') {
+                mp.events.callRemote('server:phone:fractionLog2');
+                phone.showLoad();
+            }
+            else if (params.name == 'memberAction') {
+                mp.events.callRemote('server:phone:memberAction2', params.memberId);
                 phone.showLoad();
             }
         }

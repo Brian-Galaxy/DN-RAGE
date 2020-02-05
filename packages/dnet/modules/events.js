@@ -3777,6 +3777,12 @@ mp.events.addRemoteCounted('server:vehicle:park', (player) => {
     }
 });
 
+mp.events.addRemoteCounted('server:vehicle:cargoUnload', (player) => {
+    if (!user.isLogin(player))
+        return;
+    stocks.cargoUnload(player);
+});
+
 mp.events.addRemoteCounted('server:vehicle:setNeonColor', (player, r, g, b) => {
     if (!user.isLogin(player))
         return;

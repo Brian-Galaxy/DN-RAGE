@@ -2050,16 +2050,52 @@ user.buyLicense = function (player, type, price, month) {
 };
 
 user.revive = function(player, hp = 20) {
-    methods.debug('user.revive');
     if (!mp.players.exists(player))
         return false;
+    methods.debug('user.revive');
     player.call('client:user:revive', [hp]);
 };
 
-user.useAdrenaline = function(player) {
-    methods.debug('user.useAdrenaline');
+user.createBlip1 = function(player, x, y, z, blipId = 1, blipColor = 0, route = false) {
     if (!mp.players.exists(player))
         return false;
+    player.call('client:user:createBlip1', [x, y, z, blipId, blipColor, route]);
+};
+
+user.deleteBlip1= function(player) {
+    if (!mp.players.exists(player))
+        return false;
+    player.call('client:user:deleteBlip1');
+};
+
+user.createBlip2 = function(player, x, y, z, blipId = 1, blipColor = 0, route = false) {
+    if (!mp.players.exists(player))
+        return false;
+    player.call('client:user:createBlip2', [x, y, z, blipId, blipColor, route]);
+};
+
+user.deleteBlip2= function(player) {
+    if (!mp.players.exists(player))
+        return false;
+    player.call('client:user:deleteBlip2');
+};
+
+user.createBlip3 = function(player, x, y, z, blipId = 1, blipColor = 0, route = false) {
+    if (!mp.players.exists(player))
+        return false;
+    player.call('client:user:createBlip3', [x, y, z, blipId, blipColor, route]);
+};
+
+user.deleteBlip3= function(player) {
+    if (!mp.players.exists(player))
+        return false;
+    player.call('client:user:deleteBlip3');
+};
+
+user.useAdrenaline = function(player) {
+    if (!mp.players.exists(player))
+        return false;
+    methods.debug('user.useAdrenaline');
     user.revive(player);
     // Нужно как-то очищать скрин эффект Заглушечка
     // Dispatcher // Нужно ли это тут?

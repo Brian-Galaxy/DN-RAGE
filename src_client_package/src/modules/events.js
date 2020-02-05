@@ -19,6 +19,7 @@ import checkpoint from "../manager/checkpoint";
 import weather from "../manager/weather";
 import timer from "../manager/timer";
 import dispatcher from "../manager/dispatcher";
+import jobPoint from "../manager/jobPoint";
 
 import vehicles from "../property/vehicles";
 import weapons from "../weapons";
@@ -1073,6 +1074,30 @@ mp.events.add('client:user:stopAllScreenEffects', () => {
 mp.events.add('client:user:revive', (hp) => {
     methods.debug('Event: client:user:revive');
     user.revive(hp);
+});
+
+mp.events.add('client:user:createBlip1', (x, y, z, blipId, blipColor, route) => {
+    jobPoint.createBlip1(new mp.Vector3(x, y, z), blipId, blipColor, route);
+});
+
+mp.events.add('client:user:deleteBlip1', () => {
+    jobPoint.deleteBlip1();
+});
+
+mp.events.add('client:user:createBlip2', (x, y, z, blipId, blipColor, route) => {
+    jobPoint.createBlip2(new mp.Vector3(x, y, z), blipId, blipColor, route);
+});
+
+mp.events.add('client:user:deleteBlip2', () => {
+    jobPoint.deleteBlip2();
+});
+
+mp.events.add('client:user:createBlip3', (x, y, z, blipId, blipColor, route) => {
+    jobPoint.createBlip3(new mp.Vector3(x, y, z), blipId, blipColor, route);
+});
+
+mp.events.add('client:user:deleteBlip3', () => {
+    jobPoint.deleteBlip3();
 });
 
 mp.events.add('client:user:sendPhoneNotify', (sender, title, message, pic) => {
@@ -2146,7 +2171,6 @@ mp.keys.bind(0x08, true, function() {
         return;
     ui.callCef('license', JSON.stringify({type: 'hide'}));
     ui.callCef('certificate', JSON.stringify({type: 'hide'}));
-    inventory.hide();
 });
 
 mp.events.add("playerDeath", function (player, reason, killer) {
@@ -2193,10 +2217,25 @@ mp.events.add("playerCommand", async (command) => {
         let args = command.toLowerCase().split(' ');
         user.playAnimation(args[1], args[2], args[2]);
     }
-    else if (command.toLowerCase().slice(0, 1) === "t") {
+    else if (command.toLowerCase().slice(0, 1) === "p") {
         if (!user.isLogin() || !user.isAdmin())
             return;
-        user.getTargetEntity();
+        try {
+            let args = command.toLowerCase().split(' ');
+            mp.game.streaming.requestNamedPtfxAsset(args[1]);
+            while (!mp.game.streaming.hasNamedPtfxAssetLoaded(args[1]))
+                await methods.sleep(10);
+
+            mp.game.graphics.setPtfxAssetNextCall(args[1]);
+
+            let posOffset = mp.players.local.getOffsetFromInWorldCoords(0.0, 2.0, 0.5);
+            mp.game.graphics.startParticleFxLoopedAtCoord(args[2], posOffset.x, posOffset.y, posOffset.z, 1.0, 1.0, 1.0, 1.0, false, false, false, false);
+
+            mp.gui.chat.push(`Ptx Activate: ${args[1]} | ${args[2]} | ${mp.game.streaming.hasNamedPtfxAssetLoaded(args[1])}`);
+        }
+        catch (e) {
+            methods.debug(e);
+        }
     }
     else if (command.toLowerCase().slice(0, 1) === "m") {
         menuList.showAdminMenu();

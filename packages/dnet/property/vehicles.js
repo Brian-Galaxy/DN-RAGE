@@ -858,8 +858,6 @@ vehicles.sell = function (player, slot) {
 vehicles.setTunning = (veh) => {
     setTimeout(function () {
         if (vehicles.exists(veh)) {
-
-
             try {
                 let vid = veh.getVariable('vid');
                 let car = vehicles.getData(vid);

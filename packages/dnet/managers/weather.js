@@ -1,5 +1,8 @@
 let mysql = require('../modules/mysql');
 let methods = require('../modules/methods');
+
+let fraction = require('../property/fraction');
+
 let user = require('../user');
 
 let weather = exports;
@@ -167,6 +170,10 @@ weather.timeSyncTimer = function() {
                     }
                 }
             }
+        }
+
+        if (_hour === 2 && _minute === 0) {
+            fraction.createCargoWar()
         }
 
         let dateTime = new Date();

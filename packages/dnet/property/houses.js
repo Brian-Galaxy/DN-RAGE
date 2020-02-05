@@ -458,11 +458,11 @@ houses.enterv = function (player, id) {
     let pos = new mp.Vector3(houses.garageList[garageId][0], houses.garageList[garageId][1], houses.garageList[garageId][2]);
     let v = methods.getNearestVehicleWithCoords(pos, 4, id);
 
-    if (vehicles.exists(v)) {
+    if (vehicles.exists(v) && player.vehicle) {
         let pos = new mp.Vector3(houses.garageList[garageId][4], houses.garageList[garageId][5], houses.garageList[garageId][6]);
         let v2 = methods.getNearestVehicleWithCoords(pos, 4, id);
 
-        if (vehicles.exists(v)) {
+        if (vehicles.exists(v2) && player.vehicle) {
             player.notify('~r~К сожалению, сейчас у ворот уже стоит транспорт, необходимо чтобы он отъехал');
             return;
         }

@@ -388,9 +388,22 @@ methods.notifyWithPictureToFraction = function(title, sender, message, notifPic,
     });
 };
 
-methods.notifyWithPictureToFraction2 = function(title, sender, message, notifPic, fractionId = 0, icon = 0, flashing = false, textColor = -1, bgColor = -1, flashColor = [77, 77, 77, 200]) {
+methods.notifyWithPictureToFraction2 = function(title, sender, message, notifPic = 'CHAR_DEFAULT', fractionId = 0, icon = 0, flashing = false, textColor = -1, bgColor = -1, flashColor = [77, 77, 77, 200]) {
     mp.players.forEach(function (p) {
         if (user.isLogin(p) && user.get(p, 'fraction_id2') == fractionId) {
+            try {
+                p.notifyWithPicture(title, sender, message, notifPic, icon, flashing, textColor, bgColor, flashColor);
+            }
+            catch (e) {
+
+            }
+        }
+    });
+};
+
+methods.notifyWithPictureToFractions2 = function(title, sender, message, notifPic = 'CHAR_DEFAULT', icon = 0, flashing = false, textColor = -1, bgColor = -1, flashColor = [77, 77, 77, 200]) {
+    mp.players.forEach(function (p) {
+        if (user.isLogin(p) && user.get(p, 'fraction_id2') > 0) {
             try {
                 p.notifyWithPicture(title, sender, message, notifPic, icon, flashing, textColor, bgColor, flashColor);
             }

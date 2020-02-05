@@ -311,8 +311,17 @@ lsc.showTun = function(player, modType, idx) {
         veh.windowTint = idx;
     else if (modType == 76)
         veh.livery = idx;
-    else if (modType == 78)
+    else if (modType == 78) {
         veh.wheelType = idx;
+        setTimeout(function () {
+            try {
+                veh.setMod(23, 0);
+            }
+            catch (e) {
+                methods.debug(e);
+            }
+        }, 200)
+    }
     else
         veh.setMod(modType, idx);
 };

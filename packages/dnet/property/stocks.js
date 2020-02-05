@@ -28,9 +28,21 @@ stocks.pcList = [
 
 //Имя, Model, Объем, OffsetZ, Можно ли юзать, Цена
 stocks.boxList = [
-    ['Малая коробка', 1165008631, 400000, -0.12, true, 10000],
-    ['Средняя коробка', 1875981008, 600000, -0.12, true, 20000],
-    ['Большая коробка', -1322183878, 800000, -0.12, true, 30000],
+    ['Малая коробка', 1165008631, 400000, -0.12, true, 10000, 'Стандарт'],
+    ['Средняя коробка', 1875981008, 600000, -0.12, true, 20000, 'Стандарт'],
+    ['Большая коробка', -1322183878, 800000, -0.12, true, 30000, 'Стандарт'],
+
+    ['Малая коробка1', 1165008631, 400000, -0.12, false, 10000, 'Стандарт'],
+    ['Средняя коробка1', 1875981008, 600000, -0.12, false, 20000, 'Стандарт'],
+    ['Большая коробка1', -1322183878, 800000, -0.12, false, 30000, 'Стандарт'],
+
+    ['Малая коробка2', 1165008631, 400000, -0.12, false, 10000, 'Стандарт'],
+    ['Средняя коробка2', 1875981008, 600000, -0.12, false, 20000, 'Стандарт'],
+    ['Большая коробка2', -1322183878, 800000, -0.12, false, 30000, 'Стандарт'],
+
+    ['Малая коробка3', 1165008631, 400000, -0.12, false, 10000, 'Стандарт'],
+    ['Средняя коробка3', 1875981008, 600000, -0.12, false, 20000, 'Стандарт'],
+    ['Большая коробка3', -1322183878, 800000, -0.12, false, 30000, 'Стандарт'],
 ];
 
 stocks.boxPosList = [
@@ -313,6 +325,60 @@ stocks.set = function(id, key, val) {
     Container.Data.Set(enums.offsets.stock + methods.parseInt(id), key, val);
 };
 
+stocks.cargoUnload = function(player) {
+    if (!user.isLogin(player))
+        return;
+    let veh = player.vehicle;
+    if (!vehicles.exists(player.vehicle))
+        return;
+
+    if (veh.getVariable('box') === undefined || veh.getVariable('box') === null || veh.getVariable('boxCount') == 0) {
+        player.notify('~r~Транспорт пуст');
+        return;
+    }
+
+    if (player.dimension >= enums.offsets.stock && player.dimension < enums.offsets.stock + 100000) {
+        let id = player.dimension - enums.offsets.stock;
+        let upgradeStr = stocks.get(id, 'upgrade');
+        let upgrade = upgradeStr.split('_');
+
+        let countLoad = 0;
+
+        upgrade.forEach((item, i) => {
+            if (veh.getVariable('boxCount') == 0)
+                return;
+
+            if (item == -1) {
+                upgrade[i] = veh.getVariable('box');
+                veh.setVariable('boxCount', veh.getVariable('boxCount') - 1);
+                countLoad++;
+            }
+        });
+
+        let upgradeNew = '';
+
+        upgrade.forEach(item => {
+            upgradeNew += item + '_';
+        });
+
+        upgradeNew = upgradeNew.substring(0, upgradeNew.length - 1);
+
+        if (veh.getVariable('boxCount') === 0) {
+            veh.setVariable('box', undefined);
+            veh.setVariable('cargoId', undefined);
+        }
+
+        stocks.set(id, 'upgrade', upgradeNew);
+        mysql.executeQuery(`UPDATE stocks SET upgrade = '${upgradeNew}' where id = '${id}'`);
+        stocks.loadUpgrades(upgradeNew, id, stocks.get(id, 'interior'));
+
+        player.notify(`~g~Разгружено ящиков~s~ ${countLoad}шт.`);
+    }
+    else {
+        player.notify('~r~Необходимо находиться на складе');
+    }
+};
+
 stocks.upgradeAdd = function(player, id, slot, boxId) {
     if (!user.isLogin(player))
         return;
@@ -347,6 +413,16 @@ stocks.upgradeAdd = function(player, id, slot, boxId) {
 };
 
 stocks.loadUpgrades = function(upgradeString, id, interior) {
+
+    mp.objects.forEachInDimension(id + enums.offsets.stock, o => {
+        try {
+            o.destroy();
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    });
+
     upgradeString.split('_').forEach((boxId, slot) => {
 
         boxId = methods.parseInt(boxId);
@@ -536,12 +612,20 @@ stocks.enterv = function (player, id) {
         }
     }
 
+    let hInfo = stocks.getData(id);
+    let intId = hInfo.get('interior');
     id = methods.parseInt(id);
 
-    let hInfo = stocks.getData(id);
+    let pos = new mp.Vector3(stocks.interiorList[intId][4], stocks.interiorList[intId][5], stocks.interiorList[intId][6]);
+    let v = methods.getNearestVehicleWithCoords(pos, 4, id + enums.offsets.stock);
+
+    if (vehicles.exists(v) && player.vehicle) {
+        player.notify('~r~К сожалению, сейчас у ворот уже стоит транспорт, необходимо чтобы он отъехал');
+        return;
+    }
+
     player.dimension = id + enums.offsets.stock;
     if (vehicles.exists(player.vehicle))
         player.vehicle.dimension = id + enums.offsets.stock;
-    let intId = hInfo.get('interior');
     user.teleportVeh(player, stocks.interiorList[intId][4], stocks.interiorList[intId][5], stocks.interiorList[intId][6], stocks.interiorList[intId][7]);
 };

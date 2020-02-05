@@ -6,6 +6,9 @@ let jobPoint = {};
 let _checkpoint = null;
 let _marker = null;
 let _blip = null;
+let _blip1 = null;
+let _blip2 = null;
+let _blip3 = null;
 let _lastPos = new mp.Vector3(0, 0, 0);
 
 let list = [];
@@ -43,6 +46,87 @@ jobPoint.create = function(pickupPos, route = false, radius = 1, color = ui.Mark
     _blip.setRoute(route);
 
     return _checkpoint.id;
+};
+
+jobPoint.createBlip1 = function(pickupPos, blipId = 1, blipColor = 0, route = false) {
+
+    jobPoint.deleteBlip1();
+
+    _blip1 = mp.blips.new(blipId, pickupPos,
+        {
+            color: blipColor,
+            scale: 0.8,
+            name: 'Цель',
+            dimension: -1
+        });
+
+    _blip1.setRoute(route);
+
+    return _blip1.id;
+};
+
+jobPoint.deleteBlip1 = function() {
+    try {
+        if (typeof _blip1 == 'object' && mp.blips.exists(_blip1))
+            _blip1.destroy();
+    }
+    catch (e) {
+        console.log(e);
+    }
+};
+
+jobPoint.createBlip2 = function(pickupPos, blipId = 1, blipColor = 0, route = false) {
+
+    jobPoint.deleteBlip2();
+
+    _blip2 = mp.blips.new(blipId, pickupPos,
+        {
+            color: blipColor,
+            scale: 0.8,
+            name: 'Цель',
+            dimension: -1
+        });
+
+    _blip2.setRoute(route);
+
+    return _blip2.id;
+};
+
+jobPoint.deleteBlip2 = function() {
+    try {
+        if (typeof _blip2 == 'object' && mp.blips.exists(_blip2))
+            _blip2.destroy();
+    }
+    catch (e) {
+        console.log(e);
+    }
+};
+
+jobPoint.createBlip3 = function(pickupPos, blipId = 1, blipColor = 0, route = false) {
+
+    jobPoint.deleteBlip3();
+
+    _blip3 = mp.blips.new(blipId, pickupPos,
+        {
+            color: blipColor,
+            scale: 0.8,
+            name: 'Цель',
+            dimension: -1
+        });
+
+    _blip3.setRoute(route);
+
+    return _blip3.id;
+};
+
+jobPoint.deleteBlip3 = function() {
+    try {
+        if (typeof _blip3 == 'object' && mp.blips.exists(_blip3))
+            _blip3.destroy();
+    }
+    catch (e) {
+        console.log(e);
+    }
 };
 
 jobPoint.delete = function() {

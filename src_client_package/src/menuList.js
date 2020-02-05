@@ -359,7 +359,7 @@ menuList.showStockBuyMenu = async function(h) {
     if (h.get('interior') == 1)
         UIMenu.Menu.AddMenuItem(`~b~Тип склада:~s~ Средний`);
     if (h.get('interior') == 2)
-        UIMenu.Menu.AddMenuItem(`~b~Тип склада:%~s~ Большой`);
+        UIMenu.Menu.AddMenuItem(`~b~Тип склада:~s~ Большой`);
 
     let buyHouseItem = UIMenu.Menu.AddMenuItem(`Купить склад за ~g~${methods.moneyFormat(h.get('price'))}`);
     let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
@@ -2332,6 +2332,11 @@ menuList.showVehicleMenu = function(data) {
     if (data.get('user_id') > 0 && user.getCache('id') == data.get('user_id'))
         UIMenu.Menu.AddMenuItem("Припарковать", "ТС будет спавниться на месте парковки").eventName = 'server:vehicle:park';
 
+    if (veh.getVariable('box') !== null && veh.getVariable('box') !== undefined) {
+        UIMenu.Menu.AddMenuItem(`~y~${stocks.boxList[veh.getVariable('box')][0]}`, `~b~Кол-во: ~s~${veh.getVariable('boxCount')}`);
+        UIMenu.Menu.AddMenuItem(`~y~Разгрузить`, 'Доступно только внутри склада').eventName = 'server:vehicle:cargoUnload';
+    }
+
     //UIMenu.Menu.AddMenuItem("~y~Выкинуть из транспорта").eventName = 'server:vehicle:engineStatus';
     UIMenu.Menu.AddMenuItem("Характеристики").doName = 'showVehicleStatsMenu';
     //UIMenu.Menu.AddMenuItem("Управление транспортом").eventName = 'server:vehicle:engineStatus';
@@ -2528,6 +2533,10 @@ menuList.showVehicleMenu = function(data) {
                 mp.game.ui.notifications.show('~y~Вы сняли якорь');
         }
         else if (item.eventName == 'server:vehicle:park') {
+            UIMenu.Menu.HideMenu();
+            mp.events.callRemote(item.eventName);
+        }
+        else if (item.eventName == 'server:vehicle:cargoUnload') {
             UIMenu.Menu.HideMenu();
             mp.events.callRemote(item.eventName);
         }
@@ -5315,7 +5324,7 @@ menuList.showLscMenu = function(shopId, price = 1)
             if (item.doName == 'sellCar')
                 mp.events.callRemote('server:lsc:sellCar');
 
-            if (veh.getVariable('user_id') > 0) {
+            if (veh.getVariable('user_id') > 0 || user.isAdmin()) {
                 if (item.doName == 'setTunning')
                     menuList.showLscTunningMenu(shopId, price, lscBanner1);
                 if (item.doName == 'setSTunning')
@@ -5601,24 +5610,31 @@ menuList.showLscTunningListMenu = async function(modType, shopId, price, lscBann
         }
 
         let car = await vehicles.getData(veh.getVariable('container'));
-        let upgradeList = JSON.parse(car.get('upgrade'));
+        let upgradeList = {};
+        try {
+            upgradeList = JSON.parse(car.get('upgrade'))
+        }
+        catch (e) {
+        }
 
         price = 1.1;
         let list = [];
         let vehInfo = methods.getVehicleInfo(veh.model);
 
-        if (
-            vehInfo.class_name == 'Helicopters' ||
-            vehInfo.class_name == 'Planes' ||
-            vehInfo.class_name == 'Cycles' ||
-            vehInfo.class_name == 'Vans' ||
-            vehInfo.class_name == 'Commercials' ||
-            vehInfo.class_name == 'Industrial' ||
-            vehInfo.class_name == 'Utility' ||
-            vehInfo.class_name == 'Boats'
-        ) {
-            mp.game.ui.notifications.show(`~r~Данный класс транспорта нельзя тюнинговать`);
-            return;
+        if (!user.isAdmin()) {
+            if (
+                vehInfo.class_name == 'Helicopters' ||
+                vehInfo.class_name == 'Planes' ||
+                vehInfo.class_name == 'Cycles' ||
+                vehInfo.class_name == 'Vans' ||
+                vehInfo.class_name == 'Commercials' ||
+                vehInfo.class_name == 'Industrial' ||
+                vehInfo.class_name == 'Utility' ||
+                vehInfo.class_name == 'Boats'
+            ) {
+                mp.game.ui.notifications.show(`~r~Данный класс транспорта нельзя тюнинговать`);
+                return;
+            }
         }
 
         if (veh.getVariable('price') >= 8000 && veh.getVariable('price') < 15000)

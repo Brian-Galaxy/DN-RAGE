@@ -1,5 +1,6 @@
 let user = require('../user');
 let methods = require('./methods');
+let fraction = require('../property/fraction');
 
 let chat = exports;
 
@@ -117,6 +118,9 @@ mp.events.add('playerCommand', (player, command) => {
         else if (command.toLowerCase() === "p" || command.toLowerCase() === "netstat") {
             player.notify("~g~Ping: " + player.ping + "ms");
             player.notify("~g~PacketLoss: " + player.packetLoss + "ms");
+        }
+        else if (command.toLowerCase() === "t") {
+            fraction.createCargoWar();
         }
         else if (command.slice(0, 6) === "seval ") {
             if (!user.isLogin(player))

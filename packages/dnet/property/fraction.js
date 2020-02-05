@@ -8,11 +8,38 @@ let enums = require('../enums');
 
 let weather = require('../managers/weather');
 
+let vehicles = require('./vehicles');
+let stocks = require('./stocks');
+
 let fraction = exports;
 
 let count = 0;
 
-let offset = enums.offsets.fraction;
+let isCargo = false;
+
+fraction.warVehPos = [
+    [2928.988, 4326.465, 50.24669, 110.217],
+    [2435.031, 5849.181, 58.25533, 212.8665],
+    [6.348791, 6991.53, 2.57166, 127.8678],
+    [-510.0732, 5264.707, 80.42155, 142.493],
+    [-1132.549, 2694.568, 18.61222, 136.3167],
+    [2792.521, -586.8479, 4.593227, 202.1658],
+    [2610.733, 1779.282, 14.89643, 54.15783],
+    [3821.329, 4495.155, 4.003921, 200.5734],
+    [3346.39, 5460.819, 21.0535, 152.928],
+    [2548.83, 4646.1, 33.8904, 318.3983],
+    [2313.962, 4856.113, 41.62167, 226.6534],
+    [2015.526, 4980.063, 41.0751, 211.3261],
+    [1705.282, 4820.805, 41.82844, 358.1678],
+    [1638.058, 4858.017, 41.83628, 152.9237],
+    [1376.23, 4294.902, 36.58451, 34.89478],
+    [764.3878, 4153.446, 32.82285, 257.7639],
+    [-217.1819, 3643.204, 51.57141, 198.9409],
+    [448.8071, 3523.698, 33.37255, 96.53196],
+    [895.5853, 3610.553, 32.63937, 282.7461],
+    [1377.589, 3620.44, 34.70487, 179.3007],
+    [1709.564, 3318.991, 40.99873, 44.82842],
+];
 
 fraction.loadAll = function() {
     methods.debug('fraction.loadAll');
@@ -35,6 +62,95 @@ fraction.loadAll = function() {
         count = rows.length;
         methods.debug('All Fraction Loaded: ' + count);
     });
+};
+
+fraction.createCargoWar = function() {
+    methods.notifyWithPictureToFractions2('Борьба за груз', `~r~ВНИМАНИЕ!`, 'Началась война за груз, груз отмечен на карте');
+    isCargo = true;
+
+    let boxList = [];
+    boxList.push(methods.getRandomInt(3, stocks.boxList.length));
+    boxList.push(methods.getRandomInt(3, stocks.boxList.length));
+    boxList.push(methods.getRandomInt(3, stocks.boxList.length));
+
+    let spawnList = [];
+    spawnList.push(methods.getRandomInt(0, fraction.warVehPos.length));
+    spawnList.push(methods.getRandomInt(0, fraction.warVehPos.length));
+    spawnList.push(methods.getRandomInt(0, fraction.warVehPos.length));
+
+    spawnList.forEach((item, i) => {
+        vehicles.spawnCarCb(veh => {
+
+            if (!vehicles.exists(veh))
+                return;
+
+            try {
+                let color = methods.getRandomInt(0, 150);
+                veh.numberPlateType = methods.getRandomInt(0, 3);
+                veh.locked = false;
+                veh.setColor(color, color);
+                veh.setVariable('box', boxList[i]);
+                veh.setVariable('boxCount', 3);
+                veh.setVariable('cargoId', i);
+            }
+            catch (e) {
+                methods.debug(e);
+            }
+
+        }, new mp.Vector3(fraction.warVehPos[item][0], fraction.warVehPos[item][1], fraction.warVehPos[item][2]), fraction.warVehPos[item][3], 'Speedo4');
+    });
+
+    setTimeout(fraction.timerCargoWar, 1000);
+};
+
+fraction.timerCargoWar = function() {
+    if (!isCargo)
+        return;
+
+    isCargo = false;
+
+    mp.vehicles.forEachInDimension(0, v => {
+        if (!vehicles.exists(v))
+            return;
+        if (v.getVariable('cargoId') !== null && v.getVariable('box') !== null && v.getVariable('cargoId') !== undefined && v.getVariable('box') !== undefined) {
+            let cargoId = v.getVariable('cargoId');
+            let vPos = v.position;
+
+            isCargo = true;
+
+            mp.players.forEach(p => {
+                if (!user.isLogin(p))
+                    return;
+
+                if (user.get(p, 'fraction_id2') > 0 && user.has(p, 'isCargo')) {
+                    if (cargoId == 1)
+                        user.createBlip1(p, vPos.x, vPos.y, vPos.z, 616, 59);
+                    else if (cargoId == 2)
+                        user.createBlip2(p, vPos.x, vPos.y, vPos.z, 616, 59);
+                    else
+                        user.createBlip3(p, vPos.x, vPos.y, vPos.z, 616, 59);
+                }
+            });
+        }
+    });
+
+    if (!isCargo) {
+
+        methods.notifyWithPictureToFractions2('Борьба за груз', `~r~Конец поставкам`, 'Весь груз был доставлен, ждите следующую партию');
+
+        mp.players.forEach(p => {
+            if (!user.isLogin(p))
+                return;
+
+            if (user.get(p, 'fraction_id2') > 0) {
+                user.deleteBlip1(p);
+                user.deleteBlip2(p);
+                user.deleteBlip3(p);
+            }
+        });
+    }
+
+    setTimeout(fraction.timerCargoWar, 5000);
 };
 
 fraction.save = function(id) {

@@ -429,6 +429,19 @@ phone.showAppEcorp= function() {
         menu.items[0].umenu.push(item);
     }
 
+    if (user.getCache('fraction_id2') > 0) {
+        let item ={
+                title: "Перевести E-Coin",
+                text: 'Перевод E-Coin на счет вашей организации',
+                modalTitle: 'Сколько ₠ вы хотите перевести',
+                modalButton: ['Закрыть', 'Перевести'],
+                type: 8,
+                clickable: true,
+                params: {name: "cryptoToFraction"}
+        };
+        menu.items[0].umenu.push(item);
+    }
+
     if (user.getCache('rep') < 400) {
         let item = {
             title: 'Получить задание на угон',
@@ -537,6 +550,21 @@ phone.showAppFraction2 = function() {
             },
         ],
     };
+
+    let titleMenu = {
+        title: 'Борьба за груз',
+        umenu: [
+            {
+                title: "Учавствовать в операции",
+                text: "Груз будет отмечен на карте",
+                type: 1,
+                clickable: true,
+                params: { name: "goCargo" }
+            },
+        ],
+    };
+    menu.items.push(titleMenu);
+
 
     if (user.isLeader2() || user.isSubLeader2()) {
         let titleMenu = {
@@ -2261,6 +2289,21 @@ phone.callBackModalInput = function(paramsJson, text) {
 
             setTimeout(phone.showAppEcorp, 200);
         }
+        if (params.name == 'cryptoToFraction') {
+            let sum = methods.parseInt(text);
+            if (sum < 0) {
+                user.sendSmsBankOperation('Ошибка транзакции', 'Ошибка');
+                return;
+            }
+            if (sum > user.getCryptoMoney()) {
+                user.sendSmsBankOperation('У Вас недостаточно средств', 'Ошибка');
+                return;
+            }
+            user.removeCryptoMoney(sum, 'Обмен E-Coin');
+            fraction.addMoney(user.getCache('fraction_id2'), sum, 'Обмен E-Coin');
+
+            setTimeout(phone.showAppEcorp, 200);
+        }
         if (params.name == 'sendFractionMessage') {
             let title = user.getCache('name');
             switch (user.getCache('fraction_id')) {
@@ -2477,6 +2520,10 @@ phone.callBackButton = function(menu, id, ...args) {
             else if (params.name == 'memberAction') {
                 mp.events.callRemote('server:phone:memberAction2', params.memberId);
                 phone.showLoad();
+            }
+            else if (params.name == 'goCargo') {
+                user.set('isCargo', true);
+                mp.game.ui.notifications.show(`~g~Ожидайте начало операции, в случае перезахода, необходимо нажать еще раз`);
             }
         }
     }

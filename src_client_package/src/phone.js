@@ -10,6 +10,7 @@ import dispatcher from "./manager/dispatcher";
 import bind from "./manager/bind";
 
 import fraction from "./property/fraction";
+import items from "./items";
 
 let phone = {};
 
@@ -385,7 +386,7 @@ phone.showAppEcorp= function() {
                 umenu: [
                     {
                         title: user.getCache('name'),
-                        text: `${methods.numberFormat(user.getCryptoMoney())}₠`,
+                        text: `${methods.cryptoFormat(user.getCryptoMoney())}`,
                         type: 0,
                         value: 'https://a.rsg.sc//n/' + user.getCache('social').toString().toLowerCase(),
                         params: { name: "null" }
@@ -525,7 +526,9 @@ phone.showAppInvader= function() {
     phone.showMenu(menu);
 };
 
-phone.showAppFraction2 = function() {
+phone.showAppFraction2 = async function() {
+
+    let fData = await fraction.getData(user.getCache('fraction_id2'));
 
     let menu = {
         UUID: 'fraction2',
@@ -565,6 +568,21 @@ phone.showAppFraction2 = function() {
     };
     menu.items.push(titleMenu);
 
+    if (fData.get('is_war')) {
+        let titleMenu = {
+            title: 'Война за территорию',
+            umenu: [
+                {
+                    title: "Список территорий",
+                    text: "",
+                    type: 1,
+                    clickable: true,
+                    params: { name: "showGangList" }
+                },
+            ],
+        };
+        menu.items.push(titleMenu);
+    }
 
     if (user.isLeader2() || user.isSubLeader2()) {
         let titleMenu = {
@@ -575,6 +593,18 @@ phone.showAppFraction2 = function() {
                     type: 1,
                     clickable: true,
                     params: { name: "log" }
+                },
+                {
+                    title: "Текущее состояние бюджета",
+                    text: `${methods.cryptoFormat(fData.get('money'))}`,
+                    type: 1,
+                    params: { name: "none" }
+                },
+                {
+                    title: "Модернизация",
+                    type: 1,
+                    clickable: true,
+                    params: { name: "upgrade" }
                 },
                 {
                     title: "Принять в организацию",
@@ -1669,6 +1699,115 @@ phone.showAppFractionHierarchy2 = async function() {
     }
 };
 
+phone.showAppFractionUpgrade2 = async function() {
+
+    let fData = await fraction.getData(user.getCache('fraction_id2'));
+
+    let menu = {
+        UUID: 'fraction2',
+        title: `Список улучшений`,
+        items: []
+    };
+
+    if (fData.get('is_war')) {
+        menu.items.push(
+            {
+                title: 'Война за территории',
+                umenu: [
+                    {
+                        title: 'Отказаться от улучшения',
+                        type: 1,
+                        clickable: true,
+                        params: { name: "unsetWar" }
+                    }
+                ],
+            }
+        );
+    }
+    else {
+        if (fData.get('money') >= 100) {
+            menu.items.push(
+                {
+                    title: 'Война за территории',
+                    umenu: [
+                        {
+                            title: `Улучшить за ${methods.cryptoFormat(100, 0)}`,
+                            text: `Обслуживание в 1 реальный день ${methods.cryptoFormat(10, 0)}`,
+                            type: 1,
+                            clickable: true,
+                            params: { name: "setWar" }
+                        }
+                    ],
+                }
+            );
+        }
+        else {
+            menu.items.push(
+                {
+                    title: 'Война за территории',
+                    umenu: [
+                        {
+                            title: `Не хватает ${methods.cryptoFormat(100 - fData.get('money'), 0)} для улучшения`,
+                            type: 1,
+                            params: { name: "none" }
+                        }
+                    ],
+                }
+            );
+        }
+    }
+
+    if (fData.get('is_shop')) {
+        menu.items.push(
+            {
+                title: 'Ограбления магазинов',
+                umenu: [
+                    {
+                        title: 'Отказаться от улучшения',
+                        type: 1,
+                        clickable: true,
+                        params: { name: "unsetShop" }
+                    }
+                ],
+            }
+        );
+    }
+    else {
+        if (fData.get('money') >= 50) {
+            menu.items.push(
+                {
+                    title: 'Ограбления магазинов',
+                    umenu: [
+                        {
+                            title: `Улучшить за ${methods.cryptoFormat(50, 0)}`,
+                            text: `Обслуживание в 1 реальный день ${methods.cryptoFormat(5, 0)}`,
+                            type: 1,
+                            clickable: true,
+                            params: { name: "setShop" }
+                        }
+                    ],
+                }
+            );
+        }
+        else {
+            menu.items.push(
+                {
+                    title: 'Ограбления магазинов',
+                    umenu: [
+                        {
+                            title: `Не хватает ${methods.cryptoFormat(50 - fData.get('money'), 0)} для улучшения`,
+                            type: 1,
+                            params: { name: "none" }
+                        }
+                    ],
+                }
+            );
+        }
+    }
+
+    phone.showMenu(menu);
+};
+
 phone.showAppFractionDispatcherList = function() {
 
     try {
@@ -2242,7 +2381,7 @@ phone.callBackModalInput = function(paramsJson, text) {
             mp.events.callRemote('server:invader:sendAdTemp', text);
         }
         if (params.name == 'getPayDay') {
-            let sum = methods.parseInt(text);
+            let sum = methods.parseFloat(text);
             if (sum < 0) {
                 user.sendSmsBankOperation('Ошибка транзакции', 'Зарплата');
                 return;
@@ -2258,7 +2397,7 @@ phone.callBackModalInput = function(paramsJson, text) {
             setTimeout(phone.showAppBank, 500);
         }
         if (params.name == 'moneyToCrypto') {
-            let sum = methods.parseInt(text) * 1000;
+            let sum = methods.parseFloat(text) * 1000;
             if (sum < 0) {
                 user.sendSmsBankOperation('Ошибка транзакции', 'Ошибка');
                 return;
@@ -2274,7 +2413,7 @@ phone.callBackModalInput = function(paramsJson, text) {
             setTimeout(phone.showAppEcorp, 200);
         }
         if (params.name == 'cryptoToMoney') {
-            let sum = methods.parseInt(text);
+            let sum = methods.parseFloat(text);
             if (sum < 0) {
                 user.sendSmsBankOperation('Ошибка транзакции', 'Ошибка');
                 return;
@@ -2290,7 +2429,7 @@ phone.callBackModalInput = function(paramsJson, text) {
             setTimeout(phone.showAppEcorp, 200);
         }
         if (params.name == 'cryptoToFraction') {
-            let sum = methods.parseInt(text);
+            let sum = methods.parseFloat(text);
             if (sum < 0) {
                 user.sendSmsBankOperation('Ошибка транзакции', 'Ошибка');
                 return;
@@ -2299,8 +2438,8 @@ phone.callBackModalInput = function(paramsJson, text) {
                 user.sendSmsBankOperation('У Вас недостаточно средств', 'Ошибка');
                 return;
             }
-            user.removeCryptoMoney(sum, 'Обмен E-Coin');
-            fraction.addMoney(user.getCache('fraction_id2'), sum, 'Обмен E-Coin');
+            user.removeCryptoMoney(sum, 'Перевод E-Coin');
+            fraction.addMoney(user.getCache('fraction_id2'), sum, 'Перевод E-Coin от ' + user.getCache('name'));
 
             setTimeout(phone.showAppEcorp, 200);
         }
@@ -2509,6 +2648,8 @@ phone.callBackButton = function(menu, id, ...args) {
         if (menu == 'fraction2') {
             if (params.name == 'hierarchy')
                 phone.showAppFractionHierarchy2();
+            else if (params.name == 'upgrade')
+                phone.showAppFractionUpgrade2();
             else if (params.name == 'list') {
                 mp.events.callRemote('server:phone:fractionList2');
                 phone.showLoad();
@@ -2521,9 +2662,47 @@ phone.callBackButton = function(menu, id, ...args) {
                 mp.events.callRemote('server:phone:memberAction2', params.memberId);
                 phone.showLoad();
             }
+            else if (params.name == 'showGangList') {
+                mp.events.callRemote('server:phone:showGangList');
+                phone.showLoad();
+            }
+            else if (params.name == 'attackStreet') {
+                mp.events.callRemote('server:phone:attackStreet', params.zone);
+                phone.showLoad();
+                setTimeout(phone.showAppFraction2, 500);
+            }
+            else if (params.name == 'getPos') {
+                user.setWaypoint(params.x, params.y);
+            }
             else if (params.name == 'goCargo') {
                 user.set('isCargo', true);
                 mp.game.ui.notifications.show(`~g~Ожидайте начало операции, в случае перезахода, необходимо нажать еще раз`);
+            }
+            else if (params.name == 'unsetWar') {
+                fraction.set(user.getCache('fraction_id2'), 'is_war', 0);
+                mp.game.ui.notifications.show(`~g~Вы отказались от улучшения`);
+                phone.showLoad();
+                setTimeout(phone.showAppFraction2, 500);
+            }
+            else if (params.name == 'setWar') {
+                fraction.set(user.getCache('fraction_id2'), 'is_war', 1);
+                fraction.removeMoney(user.getCache('fraction_id2'), 100, 'Возможность битвы за территории');
+                mp.game.ui.notifications.show(`~g~Вы успешно наладили связи и теперь вам доступна война за территории`);
+                phone.showLoad();
+                setTimeout(phone.showAppFraction2, 500);
+            }
+            else if (params.name == 'unsetShop') {
+                fraction.set(user.getCache('fraction_id2'), 'is_shop', 0);
+                mp.game.ui.notifications.show(`~g~Вы отказались от улучшения`);
+                phone.showLoad();
+                setTimeout(phone.showAppFraction2, 500);
+            }
+            else if (params.name == 'setShop') {
+                fraction.set(user.getCache('fraction_id2'), 'is_shop', 1);
+                fraction.removeMoney(user.getCache('fraction_id2'), 100, 'Возможность битвы за территории');
+                mp.game.ui.notifications.show(`~g~Вы успешно наладили связи и теперь вам доступны наводки на ограбления магазинов`);
+                phone.showLoad();
+                setTimeout(phone.showAppFraction2, 500);
             }
         }
     }

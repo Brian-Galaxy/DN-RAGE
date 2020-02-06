@@ -116,6 +116,11 @@ methods.numberFormat = function (currentMoney) {
     });
 };
 
+methods.cryptoFormat = function (currentMoney, toFixed = 5) {
+    currentMoney = methods.parseFloat(currentMoney);
+    return `${methods.numberFormat(currentMoney.toFixed(toFixed))}₠`;
+};
+
 methods.bankFormat = function (currentMoney) {
     return currentMoney.toString().replace(/.+?(?=\D|$)/, function(f) {
         return f.replace(/(\d)(?=(?:\d\d\d\d)+$)/g, "$1 ");

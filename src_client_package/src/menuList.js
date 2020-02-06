@@ -42,6 +42,17 @@ menuList.showHouseBuyMenu = async function(h) {
     let buyHouseItem = UIMenu.Menu.AddMenuItem(`Купить дом за ~g~${methods.moneyFormat(h.get('price'))}`);
     let enterHouseItem = null;
 
+    let garage = 0;
+    if (h.get('ginterior1') > 0)
+        garage++;
+    if (h.get('ginterior2') > 0)
+        garage++;
+    if (h.get('ginterior3') > 0)
+        garage++;
+
+    if (garage > 0)
+        UIMenu.Menu.AddMenuItem("~b~Кол-во гаражей: ~s~" + garage);
+
     enterHouseItem = UIMenu.Menu.AddMenuItem("~g~Осмотреть дом");
 
     if (user.getCache('job') == 4) {
@@ -155,6 +166,16 @@ menuList.showHouseOutMenu = async function(h) {
 
     let menu = UIMenu.Menu.Create(`№${h.get('number')}`, `~b~Адрес: ~s~${h.get('address')} ${h.get('number')}`);
     let infoItem = UIMenu.Menu.AddMenuItem(`~b~Владелец:~s~ ${h.get('user_name')}`);
+
+    let garage = 0;
+    if (h.get('ginterior1') > 0)
+        garage++;
+    if (h.get('ginterior2') > 0)
+        garage++;
+    if (h.get('ginterior3') > 0)
+        garage++;
+    if (garage > 0)
+        UIMenu.Menu.AddMenuItem("~b~Кол-во гаражей: ~s~" + garage);
 
     let enterHouseItem = UIMenu.Menu.AddMenuItem("~g~Войти");
 
@@ -406,7 +427,10 @@ menuList.showStockPanelMenu = function(h) {
         UIMenu.Menu.AddMenuItem("Сменить пинкод от сейфа #2").doName = 'setPin2';
         UIMenu.Menu.AddMenuItem("Сменить пинкод от сейфа #3").doName = 'setPin3';
     }
-    UIMenu.Menu.AddMenuItem("~y~Лог");
+
+    //UIMenu.Menu.AddMenuItem("~y~Лог"); //TODO
+    //UIMenu.Menu.AddMenuItem("Руководство").doName = 'setPin';
+
     UIMenu.Menu.AddMenuItem("~r~Закрыть");
 
     menu.ItemSelect.on(async item => {
@@ -604,7 +628,10 @@ menuList.showStockPanelBoxInfoMenu = function(h, className) {
 menuList.showStockPanelBoxInfoMoreMenu = function(h, item, slot, price) {
 
     let menu = UIMenu.Menu.Create(`№${h.get('number')}`, `~b~${item[0]}`);
-    UIMenu.Menu.AddMenuItem(`~y~Продать за ~s~${methods.numberFormat(price)}ec`).isSell = true;
+    if (item[7] < 0)
+        UIMenu.Menu.AddMenuItem(`~y~Продать за ~s~${methods.moneyFormat(price)}`).isSell = true;
+    else
+        UIMenu.Menu.AddMenuItem(`~y~Продать за ~s~${methods.numberFormat(price)}ec`).isSell = true;
     UIMenu.Menu.AddMenuItem("~r~Закрыть");
 
     menu.ItemSelect.on(async item => {

@@ -172,9 +172,10 @@ weather.timeSyncTimer = function() {
             }
         }
 
-        if (_hour === 2 && _minute === 0) {
-            fraction.createCargoWar()
-        }
+        if (_hour === 2 && _minute === 0)
+            fraction.createCargoWar();
+        if (_hour === 6 && _minute === 0)
+            fraction.stopCargoWar();
 
         let dateTime = new Date();
         mp.players.call("client:managers:weather:syncDateTime", [_minute, _hour, _day, _month, _year]);

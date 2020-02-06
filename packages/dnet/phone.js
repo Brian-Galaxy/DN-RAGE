@@ -4,6 +4,8 @@ let mysql = require('./modules/mysql');
 let vehicles = require('./property/vehicles');
 let fraction = require('./property/fraction');
 
+let gangWar = require('./managers/gangWar');
+
 let user = require('./user');
 let enums = require('./enums');
 let coffer = require('./coffer');
@@ -723,6 +725,58 @@ phone.fractionLog2 = function(player) {
     });
 };
 
+phone.showGangList = function(player) {
+    if (!user.isLogin(player))
+        return;
+    methods.debug('phone.showGangList');
+    let items = [];
+    gangWar.getZoneList().forEach(zone => {
+        let subItems = [];
+
+        subItems.push(
+            phone.getMenuItemButton(
+                `${gangWar.get(zone.id, 'zone')}`,
+                `${gangWar.get(zone.id, 'street')}`
+            )
+        );
+
+
+        let frName = gangWar.get(zone.id, 'fraction_name');
+        subItems.push(
+            phone.getMenuItemButton(
+                `Зона под контролем`,
+                `${(frName == '' ? 'Нет' : frName)}`
+            )
+        );
+
+        subItems.push(
+            phone.getMenuItemButton(
+                `Узнать местоположение`,
+                ``,
+                { name: "getPos", x: zone.x, y: zone.y },
+                ``,
+                true,
+            )
+        );
+
+        if (user.isLeader2(player) || user.isSubLeader2(player) || user.isDepLeader2(player) || user.isDepSubLeader2(player))
+        {
+            subItems.push(
+                phone.getMenuItemButton(
+                    `Начать захват`,
+                    ``,
+                    { name: "attackStreet", zone: zone.id },
+                    ``,
+                    true,
+                )
+            );
+        }
+
+        items.push(phone.getMenuMainItem(`#${zone.id} | ${gangWar.get(zone.id, 'zone')}`, subItems));
+    });
+    phone.showMenu(player, 'fraction2', `Список улиц`, items);
+};
+
 phone.fractionList = function(player) {
     if (!user.isLogin(player))
         return;
@@ -1292,7 +1346,7 @@ phone.createFraction = function(player) {
 
                 let item = phone.getMenuItemButton(
                     `Слот свободен`,
-                    `Взнос 50₠`,
+                    `Взнос 100₠`,
                     { name: 'buyFraction', id: row['id'] },
                     '',
                     true,

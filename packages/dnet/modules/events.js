@@ -32,6 +32,7 @@ let shop = require('../business/shop');
 let pickups = require('../managers/pickups');
 let dispatcher = require('../managers/dispatcher');
 let weather = require('../managers/weather');
+let gangWar = require('../managers/gangWar');
 
 mp.events.__add__ = mp.events.add;
 
@@ -1240,6 +1241,22 @@ mp.events.addRemoteCounted('server:business:removeMoney', (player, id, money, it
     business.removeMoney(id, money, itemName);
 });
 
+mp.events.addRemoteCounted('server:business:setMoney', (player, id, money) => {
+    business.setMoney(id, money);
+});
+
+mp.events.addRemoteCounted('server:fraction:addMoney', (player, id, money, itemName) => {
+    fraction.addMoney(id, money, itemName);
+});
+
+mp.events.addRemoteCounted('server:fraction:removeMoney', (player, id, money, itemName) => {
+    fraction.removeMoney(id, money, itemName);
+});
+
+mp.events.addRemoteCounted('server:fraction:setMoney', (player, id, money, itemName) => {
+    fraction.setMoney(id, money, itemName);
+});
+
 mp.events.addRemoteCounted('server:user:addMoney', (player, money, text) => {
     user.addMoney(player, money, text);
 });
@@ -1298,10 +1315,6 @@ mp.events.addRemoteCounted('server:user:removePayDayMoney', (player, money, text
 
 mp.events.addRemoteCounted('server:user:setPayDayMoney', (player, money) => {
     user.setPayDayMoney(player, money);
-});
-
-mp.events.addRemoteCounted('server:business:setMoney', (player, id, money) => {
-    business.setMoney(id, money);
 });
 
 mp.events.addRemoteCounted('server:business:save', (player, id) => {
@@ -1540,6 +1553,18 @@ mp.events.addRemoteCounted('server:phone:fractionLog2', (player) => {
     if (!user.isLogin(player))
         return;
     phone.fractionLog2(player);
+});
+
+mp.events.addRemoteCounted('server:phone:showGangList', (player) => {
+    if (!user.isLogin(player))
+        return;
+    phone.showGangList(player);
+});
+
+mp.events.addRemoteCounted('server:phone:attackStreet', (player, id) => {
+    if (!user.isLogin(player))
+        return;
+    gangWar.startWar(player, id);
 });
 
 mp.events.addRemoteCounted('server:phone:fractionList2', (player) => {
@@ -4570,6 +4595,10 @@ mp.events.addRemoteCounted('server:uniform:ems', (player, idx) => {
 
 mp.events.addRemoteCounted('server:addFractionLog', (player, name, doName, text, fractionId) => {
     methods.saveFractionLog(name, doName, text, fractionId);
+});
+
+mp.events.addRemoteCounted('server:addFractionLog2', (player, name, doName, text, fractionId) => {
+    fraction.addHistory(name, doName, text, fractionId);
 });
 
 mp.events.add('playerJoin', player => {

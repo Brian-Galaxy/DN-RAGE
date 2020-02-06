@@ -64,6 +64,31 @@ fraction.loadAll = function() {
     });
 };
 
+fraction.removeTaxAndSave = function() {
+    methods.debug('fraction.removeTax');
+
+    mysql.executeQuery(`SELECT * FROM fraction_list`, function (err, rows, fields) {
+        rows.forEach(function(item) {
+            let sum = 5;
+            if (item['is_war'])
+                sum += 10;
+            if (item['is_shop'])
+                sum += 5;
+            fraction.removeMoney(item['id'], sum, 'Взнос за существование');
+            fraction.save(item['id']);
+        });
+    });
+};
+
+fraction.saveAll = function() {
+    methods.debug('fraction.saveAll');
+    mysql.executeQuery(`SELECT * FROM fraction_list`, function (err, rows, fields) {
+        rows.forEach(function(item) {
+            fraction.save(item['id']);
+        });
+    });
+};
+
 fraction.createCargoWar = function() {
     methods.notifyWithPictureToFractions2('Борьба за груз', `~r~ВНИМАНИЕ!`, 'Началась война за груз, груз отмечен на карте');
     isCargo = true;
@@ -127,6 +152,35 @@ fraction.createCargoWar = function() {
     setTimeout(fraction.timerCargoWar, 1000);
 };
 
+fraction.stopCargoWar = function() {
+
+    if (!isCargo)
+        return;
+
+    methods.notifyWithPictureToFractions2('Борьба за груз', `~r~ВНИМАНИЕ!`, 'Миссия была завершена по времени');
+    isCargo = false;
+
+    mp.vehicles.forEach(v => {
+        if (!vehicles.exists(v))
+            return;
+        if (v.getVariable('cargoId') !== null && v.getVariable('cargoId') !== undefined) {
+            if (v.getOccupants().length == 0)
+                vehicles.respawn(v);
+        }
+    });
+
+    mp.players.forEach(p => {
+        if (!user.isLogin(p))
+            return;
+
+        if (user.get(p, 'fraction_id2') > 0) {
+            user.deleteBlip1(p);
+            user.deleteBlip2(p);
+            user.deleteBlip3(p);
+        }
+    });
+};
+
 fraction.timerCargoWar = function() {
     if (!isCargo)
         return;
@@ -168,9 +222,6 @@ fraction.timerCargoWar = function() {
             });
         }
     });
-
-    mp.vehicles.forEach(v => { if (v.getVariable('box1') !== null && v.getVariable('box1') !== undefined) v.position = player.position });
-
 
     if (!isCargo) {
 
@@ -242,12 +293,12 @@ fraction.getName = function(id) {
 };
 
 fraction.addMoney = function(id, money, name = "Операция со счетом") {
-    fraction.addHistory(id, name, money * -1);
+    fraction.addHistory('Система', name, `Зачисление в бюждет: ${methods.cryptoFormat(money)}`, id);
     fraction.setMoney(id, fraction.getMoney(id) + methods.parseFloat(money));
 };
 
 fraction.removeMoney = function(id, money, name = "Операция со счетом") {
-    fraction.addHistory(id, name, money * -1);
+    fraction.addHistory('Система', name, `Потрачено из бюджета: ${methods.cryptoFormat(money * -1)}`, id);
     fraction.setMoney(id, fraction.getMoney(id) - methods.parseFloat(money));
 };
 
@@ -263,16 +314,11 @@ fraction.getMoney = function(id) {
     return 0;
 };
 
-fraction.addHistory = function(id, name, price) {
-
-    id = methods.parseInt(id);
+fraction.addHistory = function (name, doName, text, fractionId) {
+    doName = methods.removeQuotes(doName);
+    text = methods.removeQuotes(text);
     name = methods.removeQuotes(name);
-    price = methods.parseFloat(price);
-
-    let rpDateTime = weather.getRpDateTime();
-    let timestamp = methods.getTimeStamp();
-
-    mysql.executeQuery(`INSERT INTO log_fraction_2 (fraction_id, name, price, timestamp, rp_datetime) VALUES ('${id}', '${name}', '${price}', '${timestamp}', '${rpDateTime}')`);
+    mysql.executeQuery(`INSERT INTO log_fraction_2 (name, text, text2, fraction_id, timestamp, rp_datetime) VALUES ('${name}', '${doName}', '${text}', '${fractionId}', '${methods.getTimeStamp()}', '${weather.getRpDateTime()}')`);
 };
 
 fraction.editFractionName = function(player, text) {
@@ -447,7 +493,7 @@ fraction.create = function (player, id) {
         player.notify('~r~У организации уже есть владелец');
         return;
     }
-    if (user.getCryptoMoney(player) < 50) {
+    if (user.getCryptoMoney(player) < 100) {
         player.notify('~r~У Вас не достаточно валюты E-COIN для создания организации');
         return;
     }
@@ -455,8 +501,10 @@ fraction.create = function (player, id) {
     user.set(player, 'fraction_id2', id);
     user.set(player, 'is_leader2', true);
 
+    fraction.setMoney(id, 100);
+    fraction.addHistory(user.getRpName(player), 'Создал организацию', '', id);
     fraction.updateOwnerInfo(id, user.getId(player));
-    user.removeCryptoMoney(player, 50, 'Создание организации');
+    user.removeCryptoMoney(player, 100, 'Создание организации');
 
     setTimeout(function () {
         if (!user.isLogin(player))

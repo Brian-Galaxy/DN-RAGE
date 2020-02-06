@@ -122,7 +122,7 @@ class Menu {
             let data = {
                 type: 'updateValues',
                 isShow: true,
-                title: `${title} (${maxInputLength} макс.)`,
+                title: `${title}`,
                 text: defaultText,
                 maxLength: maxInputLength,
             };

@@ -34,15 +34,18 @@ gangWar.loadAll = function() {
             gangWar.set(row['id'], 'x', row['x']);
             gangWar.set(row['id'], 'y', row['y']);
             gangWar.set(row['id'], 'z', row['z']);
+            gangWar.set(row['id'], 'zone', row['zone']);
+            gangWar.set(row['id'], 'street', row['street']);
             gangWar.set(row['id'], 'fraction_id', row['fraction_id']);
             gangWar.set(row['id'], 'fraction_name', row['fraction_name']);
-            gangWar.set(row['id'], 'money', row['money']);
             gangWar.set(row['id'], 'timestamp', row['timestamp']);
             gangWar.set(row['id'], 'canWar', true);
             countZone++;
 
             gangList.push({ id: row['id'], x: row['x'], y: row['y'], z: row['z']});
         });
+
+        console.log(gangList);
     });
 
     setTimeout(function () {
@@ -58,32 +61,8 @@ gangWar.save = function(id, ownerId, name) {
     mysql.executeQuery("UPDATE gang_war SET fraction_id = '" + ownerId + "',  fraction_name = '" + name + "',  timestamp = '" + methods.getTimeStamp() + "' where id = '" + id + "'");
 };
 
-gangWar.saveMoney = function(id, money) {
-    methods.debug('gangWar.saveMoney');
-    gangWar.set(id, 'money', money);
-    mysql.executeQuery("UPDATE gang_war SET money = '" + money + "' where id = '" + id + "'");
-};
-
 gangWar.getZoneList = function() {
     return gangList;
-};
-
-gangWar.takeBank = function(player, id, sum) {
-    methods.debug('gangWar.takeBank');
-    if (!user.isLogin(player))
-        return;
-    if (gangWar.get(id, 'money') < sum) {
-        player.notify('~r~Такой суммы нет на счету');
-        return;
-    }
-    if (gangWar.get(id, 'fraction_id') != user.get(player, 'fraction_id2')) {
-        player.notify('~r~Данная территория вам не принадлежит');
-        return;
-    }
-
-    gangWar.saveMoney(id, gangWar.get(id, 'money') - sum);
-    player.notify('~y~Вы сняли деньги со счета территории');
-    user.addMoney(player, sum);
 };
 
 gangWar.startWar = function(player, zoneId) {
@@ -117,6 +96,11 @@ gangWar.startWar = function(player, zoneId) {
     let dateTime = new Date();
     if (dateTime.getHours() < 20) {
         player.notify('~r~Доступно только с 20 до 24 ночи ООС времени');
+        return;
+    }
+
+    if (methods.distanceToPos(gangWar.getPos(id), player.position) > 80) {
+        player.notify('~r~Вы слишком далеко, пожалуйста поставьте метку в GPS, через список улиц и начните захват прямо с нее');
         return;
     }
 
@@ -224,9 +208,11 @@ gangWar.timer = function() {
 };
 
 gangWar.timerMoney = function() {
-    for (let i = 1; i <= countZone; i++)
-        gangWar.saveMoney(i, gangWar.get(i, 'money') + (methods.getRandomInt(200, 400) * 2));
-    setTimeout(gangWar.timerMoney, 8500 * 60 * 3);
+    for (let i = 1; i <= countZone; i++) {
+        if (gangWar.get(i, 'fraction_id') > 0)
+            fraction.addMoney(gangWar.get(i, 'fraction_id'), methods.getRandomInt(6, 10), 'Зачисление средств с территории #' + i)
+    }
+    setTimeout(gangWar.timerMoney, 1000 * 60 * 60 * 2);
 };
 
 gangWar.getMaxCounterFractionId = function(at, def) {
@@ -248,6 +234,10 @@ gangWar.reset = function(id, key, val) {
 
 gangWar.get = function(id, key) {
     return Container.Data.Get(offset + methods.parseInt(id), keyPrefix + key);
+};
+
+gangWar.getData = function(id) {
+    return Container.Data.GetAll(offset + methods.parseInt(id));
 };
 
 gangWar.has = function(id, key) {

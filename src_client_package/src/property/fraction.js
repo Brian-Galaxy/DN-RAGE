@@ -26,6 +26,18 @@ fraction.getMoney = async function(id) {
     }
 };
 
+fraction.addHistory = function(name, doName, text, fractionId = 0) {
+    mp.events.callRemote('server:addFractionLog2', name, doName, text, fractionId);
+};
+
+fraction.set = function(id, key, value) {
+    Container.Data.Set(enums.offsets.fraction + methods.parseInt(id), key, value);
+};
+
+fraction.get = async function(id, key) {
+    return await Container.Data.Get(enums.offsets.fraction + methods.parseInt(id), key);
+};
+
 fraction.getData = async function(id) {
     return await Container.Data.GetAll(enums.offsets.fraction + methods.parseInt(id));
 };

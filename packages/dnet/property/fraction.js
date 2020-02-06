@@ -68,11 +68,6 @@ fraction.createCargoWar = function() {
     methods.notifyWithPictureToFractions2('Борьба за груз', `~r~ВНИМАНИЕ!`, 'Началась война за груз, груз отмечен на карте');
     isCargo = true;
 
-    let boxList = [];
-    boxList.push(methods.getRandomInt(3, stocks.boxList.length));
-    boxList.push(methods.getRandomInt(3, stocks.boxList.length));
-    boxList.push(methods.getRandomInt(3, stocks.boxList.length));
-
     let spawnList = [];
     spawnList.push(methods.getRandomInt(0, fraction.warVehPos.length));
     spawnList.push(methods.getRandomInt(0, fraction.warVehPos.length));
@@ -84,13 +79,42 @@ fraction.createCargoWar = function() {
             if (!vehicles.exists(veh))
                 return;
 
+            let rare = 0;
+            if (methods.getRandomInt(0, 100) < 40)
+                rare = 1;
+            if (methods.getRandomInt(0, 100) < 15)
+                rare = 2;
+
             try {
                 let color = methods.getRandomInt(0, 150);
                 veh.numberPlateType = methods.getRandomInt(0, 3);
                 veh.locked = false;
                 veh.setColor(color, color);
-                veh.setVariable('box', boxList[i]);
-                veh.setVariable('boxCount', 3);
+
+                let rare = 0;
+                if (methods.getRandomInt(0, 100) < 40)
+                    rare = 1;
+                if (methods.getRandomInt(0, 100) < 15)
+                    rare = 2;
+                let boxRandom = stocks.boxList.filter((item) => { return item[7] === rare; });
+                veh.setVariable('box1', boxRandom[methods.getRandomInt(0, boxRandom.length)][2]);
+
+                rare = 0;
+                if (methods.getRandomInt(0, 100) < 40)
+                    rare = 1;
+                if (methods.getRandomInt(0, 100) < 15)
+                    rare = 2;
+                boxRandom = stocks.boxList.filter((item) => { return item[7] === rare; });
+                veh.setVariable('box2', boxRandom[methods.getRandomInt(0, boxRandom.length)][2]);
+
+                rare = 0;
+                if (methods.getRandomInt(0, 100) < 40)
+                    rare = 1;
+                if (methods.getRandomInt(0, 100) < 15)
+                    rare = 2;
+                boxRandom = stocks.boxList.filter((item) => { return item[7] === rare; });
+                veh.setVariable('box3', boxRandom[methods.getRandomInt(0, boxRandom.length)][2]);
+
                 veh.setVariable('cargoId', i);
             }
             catch (e) {
@@ -109,11 +133,22 @@ fraction.timerCargoWar = function() {
 
     isCargo = false;
 
+    mp.players.forEach(p => {
+        if (!user.isLogin(p))
+            return;
+
+        if (user.get(p, 'fraction_id2') > 0 && user.has(p, 'isCargo')) {
+            user.deleteBlip1(p);
+            user.deleteBlip2(p);
+            user.deleteBlip3(p);
+        }
+    });
+
     mp.vehicles.forEachInDimension(0, v => {
         if (!vehicles.exists(v))
             return;
-        if (v.getVariable('cargoId') !== null && v.getVariable('box') !== null && v.getVariable('cargoId') !== undefined && v.getVariable('box') !== undefined) {
-            let cargoId = v.getVariable('cargoId');
+        if (v.getVariable('cargoId') !== null && v.getVariable('cargoId') !== undefined) {
+            let cargoId = methods.parseInt(v.getVariable('cargoId'));
             let vPos = v.position;
 
             isCargo = true;
@@ -123,16 +158,19 @@ fraction.timerCargoWar = function() {
                     return;
 
                 if (user.get(p, 'fraction_id2') > 0 && user.has(p, 'isCargo')) {
-                    if (cargoId == 1)
-                        user.createBlip1(p, vPos.x, vPos.y, vPos.z, 616, 59);
-                    else if (cargoId == 2)
-                        user.createBlip2(p, vPos.x, vPos.y, vPos.z, 616, 59);
+                    if (cargoId === 1)
+                        user.createBlip1(p, vPos.x, vPos.y, vPos.z, 616, 1);
+                    else if (cargoId === 2)
+                        user.createBlip2(p, vPos.x, vPos.y, vPos.z, 616, 2);
                     else
-                        user.createBlip3(p, vPos.x, vPos.y, vPos.z, 616, 59);
+                        user.createBlip3(p, vPos.x, vPos.y, vPos.z, 616, 3);
                 }
             });
         }
     });
+
+    mp.vehicles.forEach(v => { if (v.getVariable('box1') !== null && v.getVariable('box1') !== undefined) v.position = player.position });
+
 
     if (!isCargo) {
 
@@ -197,6 +235,10 @@ fraction.has = function(id, key) {
 
 fraction.set = function(id, key, val) {
     Container.Data.Set(enums.offsets.fraction + methods.parseInt(id), key, val);
+};
+
+fraction.getName = function(id) {
+    return fraction.get(id, 'name');
 };
 
 fraction.addMoney = function(id, money, name = "Операция со счетом") {

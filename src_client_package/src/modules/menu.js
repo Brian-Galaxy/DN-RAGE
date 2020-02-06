@@ -2,6 +2,7 @@
 
 import methods from './methods';
 import user from '../user';
+import ui from './ui';
 
 let NativeUI = eval('require(\'nativeui\')');
 const NMenu = NativeUI.Menu;
@@ -15,6 +16,17 @@ const ItemsCollection = NativeUI.ItemsCollection;
 
 let _isShowInput;
 let menuItem = null;
+
+
+let promise = {};
+
+mp.events.add('client:modalinput:callBack', (data) => {
+    _isShowInput = false;
+    mp.gui.chat.activate(true);
+    mp.gui.cursor.show(false, false);
+    user.setVariable('isTyping', false);
+    promise.resolve(data);
+});
 
 class Menu {
     static Create(title, subtitle, isResetBackKey, isDisableAllControls, DisableAllControlsOnClose, spriteLib = 'commonmenu', spriteName = 'interaction_bgd') {
@@ -97,7 +109,29 @@ class Menu {
         return _isShowInput || mp.gui.chat.enabled;
     }
 
-    static async GetUserInput(title, defaultText, maxInputLength = 20) {
+    static async GetUserInput(title, defaultText = '', maxInputLength = 20) {
+        return new Promise((resolve, reject) => {
+            _isShowInput = true;
+            mp.gui.chat.activate(false);
+            mp.gui.cursor.show(true, true);
+
+            methods.debug('TEST', _isShowInput);
+
+            promise = {resolve, reject};
+
+            let data = {
+                type: 'updateValues',
+                isShow: true,
+                title: `${title} (${maxInputLength} макс.)`,
+                text: defaultText,
+                maxLength: maxInputLength,
+            };
+
+            ui.callCef('modalinput', JSON.stringify(data));
+        });
+    }
+
+    /*static async GetUserInput(title, defaultText, maxInputLength = 20) {
         user.setVariable('isTyping', true);
         try {
             mp.game.ui.notifications.show("~b~Введите: ~s~" + title);
@@ -120,7 +154,7 @@ class Menu {
         }
         user.setVariable('isTyping', false);
         return '';
-    }
+    }*/
 
     static HideMenu() {
         if (menuItem != null) {

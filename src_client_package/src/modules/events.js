@@ -1051,7 +1051,7 @@ mp.events.add('client:handcuffs', (value) => {
         }, 2500);
     } else {
         clearInterval(handcuffTimerId);
-        user.stopAllAnimation();
+        user.playAnimation("mp_arresting", "b_uncuff", 8);
     }
 });
 
@@ -2215,7 +2215,13 @@ mp.events.add("playerCommand", async (command) => {
         if (!user.isLogin() || !user.isAdmin())
             return;
         let args = command.toLowerCase().split(' ');
-        user.playAnimation(args[1], args[2], args[2]);
+        user.playAnimation(args[1], args[2], args[3]);
+    }
+    else if (command.toLowerCase().slice(0, 1) === "s") {
+        if (!user.isLogin() || !user.isAdmin())
+            return;
+        let args = command.toLowerCase().split(' ');
+        user.playScenario(args[1]);
     }
     else if (command.toLowerCase().slice(0, 1) === "p") {
         if (!user.isLogin() || !user.isAdmin())

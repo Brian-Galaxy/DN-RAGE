@@ -389,7 +389,10 @@ menuList.showStockInMenu = function(h) {
 menuList.showStockPanelMenu = function(h) {
 
     let menu = UIMenu.Menu.Create(`№${h.get('number')}`, `~b~Адрес: ~s~${h.get('address')} ${h.get('number')}`);
+
     UIMenu.Menu.AddMenuItem("Модернизировать").doName = 'showStockPanelUpgradeMenu';
+    UIMenu.Menu.AddMenuItem("Список ваших ящиков").doName = 'showStockPanelBoxListMenu';
+
     UIMenu.Menu.AddMenuItem("Сменить пинкод").doName = 'setPin';
     if (h.get('interior') == 0) {
         UIMenu.Menu.AddMenuItem("Сменить пинкод от сейфа").doName = 'setPin1';
@@ -448,6 +451,9 @@ menuList.showStockPanelMenu = function(h) {
         if (item.doName == 'showStockPanelUpgradeMenu') {
             menuList.showStockPanelUpgradeMenu(h);
         }
+        if (item.doName == 'showStockPanelBoxListMenu') {
+            menuList.showStockPanelBoxListMenu(h);
+        }
     });
 };
 
@@ -458,10 +464,16 @@ menuList.showStockPanelUpgradeMenu = function(h) {
     h.get('upgrade').split('_').forEach((uItem, idx) => {
         uItem = methods.parseInt(uItem);
         if (uItem == -1) {
-            UIMenu.Menu.AddMenuItem(`${idx}. ~g~Слот свободен`).buySlot = idx;
+            UIMenu.Menu.AddMenuItem(`${(idx + 1)}. ~g~Слот свободен`).buySlot = idx;
         }
         else {
-            UIMenu.Menu.AddMenuItem(`${idx}. ${stocks.boxList[uItem][0]}`).sellSlot = idx;
+            let rare = 'Стандарт';
+            if (stocks.boxList[uItem][7] == 1)
+                rare = '~b~Редкий';
+            if (stocks.boxList[uItem][7] == 2)
+                rare = '~p~Очень редкий';
+
+            UIMenu.Menu.AddMenuItem(`${(idx + 1)}. ${stocks.boxList[uItem][0]}`, `Редкость: ${rare}\n~s~Класс: ~b~${stocks.boxList[uItem][6]}`).sellSlot = idx;
         }
     });
 
@@ -498,6 +510,110 @@ menuList.showStockPanelUpgradeBuySlotMenu = function(h, slot) {
     }
 };
 
+menuList.showStockPanelBoxListMenu = function(h) {
+
+    let menu = UIMenu.Menu.Create(`№${h.get('number')}`, `~b~Категории ящиков`);
+
+    let incList = [];
+
+    stocks.boxList.forEach((item, idx) => {
+        if (incList.includes(item[6]))
+            return;
+        incList.push(item[6]);
+        UIMenu.Menu.AddMenuItem(`${item[6]}`).className = item[6];
+    });
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть");
+
+    menu.ItemSelect.on(async item => {
+        UIMenu.Menu.HideMenu();
+        if (item.className)
+            menuList.showStockPanelBoxInfoMenu(h, item.className);
+    });
+};
+
+menuList.showStockPanelBoxInfoMenu = function(h, className) {
+
+    let menu = UIMenu.Menu.Create(`№${h.get('number')}`, `~b~${className}`);
+
+    let price = 0;
+    let classIdx = 0;
+
+    h.get('upgrade').split('_').forEach((uItem, idx) => {
+
+        uItem = methods.parseInt(uItem);
+        if (uItem == -1)
+            return;
+
+        let item = stocks.boxList[uItem];
+
+        if (item[6] != className)
+            return;
+
+        if (className == 'Стандарт') {
+            let priceBox = item[5] / 4;
+            let mItem = UIMenu.Menu.AddMenuItem(`${item[0]}`, 'Нажмите ~g~Enter~s~ чтобы посмотреть');
+            mItem.slot = idx;
+            mItem.price = priceBox;
+            mItem.item = item;
+            mItem.SetRightLabel(`~g~${methods.moneyFormat(priceBox)}`);
+
+            classIdx++;
+            price += priceBox;
+        }
+        else {
+            let priceBox = item[5] / 1000;
+            let mItem = UIMenu.Menu.AddMenuItem(`${item[0]}`, 'Нажмите ~g~Enter~s~ чтобы посмотреть');
+            mItem.slot = idx;
+            mItem.price = priceBox;
+            mItem.item = item;
+            mItem.SetRightLabel(`~g~${methods.numberFormat(priceBox)}ec`);
+
+            classIdx++;
+
+            if (classIdx >= 9)
+                price += priceBox * 2;
+            else if (classIdx >= 6)
+                price += priceBox * 1.5;
+            else if (classIdx >= 3)
+                price += priceBox * 1.1;
+            else
+                price += priceBox;
+        }
+    });
+
+    if (price > 0) {
+        if (className != 'Стандарт')
+            UIMenu.Menu.AddMenuItem(`~y~Продать всё за ~s~${methods.numberFormat(price)}ec`).sellAll = price + 0.00001;
+    }
+    else {
+        UIMenu.Menu.AddMenuItem("Список пуст");
+    }
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть");
+
+    menu.ItemSelect.on(async item => {
+        UIMenu.Menu.HideMenu();
+        if (item.sellAll)
+            mp.events.callRemote('server:stock:sellAllByClass', className, item.sellAll);
+        if (item.price)
+            menuList.showStockPanelBoxInfoMoreMenu(h, item.item, item.slot, item.price);
+    });
+};
+
+menuList.showStockPanelBoxInfoMoreMenu = function(h, item, slot, price) {
+
+    let menu = UIMenu.Menu.Create(`№${h.get('number')}`, `~b~${item[0]}`);
+    UIMenu.Menu.AddMenuItem(`~y~Продать за ~s~${methods.numberFormat(price)}ec`).isSell = true;
+    UIMenu.Menu.AddMenuItem("~r~Закрыть");
+
+    menu.ItemSelect.on(async item => {
+        UIMenu.Menu.HideMenu();
+        if (item.isSell)
+            mp.events.callRemote('server:stock:sellBySlot', slot);
+    });
+};
+
 menuList.showStockOutMenu = async function(h) {
 
     let menu = UIMenu.Menu.Create(`№${h.get('number')}`, `~b~Адрес: ~s~${h.get('address')} ${h.get('number')}`);
@@ -511,7 +627,7 @@ menuList.showStockOutMenu = async function(h) {
             try {
                 if (user.getCache('id') != h.get('user_id')) {
                     mp.game.ui.notifications.show('~r~Введите пинкод');
-                    let pass = methods.parseInt(await UIMenu.Menu.GetUserInput("Пароль", "", 5));
+                    let pass = methods.parseInt(await UIMenu.Menu.GetUserInput("Введите пинкод", "", 5));
                     if (pass == h.get('pin'))
                         stocks.enter(h.get('id'));
                     else
@@ -2332,9 +2448,16 @@ menuList.showVehicleMenu = function(data) {
     if (data.get('user_id') > 0 && user.getCache('id') == data.get('user_id'))
         UIMenu.Menu.AddMenuItem("Припарковать", "ТС будет спавниться на месте парковки").eventName = 'server:vehicle:park';
 
-    if (veh.getVariable('box') !== null && veh.getVariable('box') !== undefined) {
-        UIMenu.Menu.AddMenuItem(`~y~${stocks.boxList[veh.getVariable('box')][0]}`, `~b~Кол-во: ~s~${veh.getVariable('boxCount')}`);
-        UIMenu.Menu.AddMenuItem(`~y~Разгрузить`, 'Доступно только внутри склада').eventName = 'server:vehicle:cargoUnload';
+    if (veh.getVariable('cargoId') !== null && veh.getVariable('cargoId') !== undefined) {
+
+        if (veh.getVariable('box1') !== null && veh.getVariable('box1') !== undefined)
+            UIMenu.Menu.AddMenuItem(`~y~${stocks.boxList[veh.getVariable('box1')][0]}`, 'Нажмите ~g~Enter~s~ чтобы разгрузить').cargoUnload1 = true;
+        if (veh.getVariable('box2') !== null && veh.getVariable('box2') !== undefined)
+            UIMenu.Menu.AddMenuItem(`~y~${stocks.boxList[veh.getVariable('box2')][0]}`, 'Нажмите ~g~Enter~s~ чтобы разгрузить').cargoUnload2 = true;
+        if (veh.getVariable('box3') !== null && veh.getVariable('box3') !== undefined)
+            UIMenu.Menu.AddMenuItem(`~y~${stocks.boxList[veh.getVariable('box3')][0]}`, 'Нажмите ~g~Enter~s~ чтобы разгрузить').cargoUnload3 = true;
+
+        UIMenu.Menu.AddMenuItem(`~y~Разгрузить весь груз`, 'Доступно только внутри склада').cargoUnloadAll = true;
     }
 
     //UIMenu.Menu.AddMenuItem("~y~Выкинуть из транспорта").eventName = 'server:vehicle:engineStatus';
@@ -2536,9 +2659,27 @@ menuList.showVehicleMenu = function(data) {
             UIMenu.Menu.HideMenu();
             mp.events.callRemote(item.eventName);
         }
-        else if (item.eventName == 'server:vehicle:cargoUnload') {
+        else if (item.cargoUnload1) {
             UIMenu.Menu.HideMenu();
-            mp.events.callRemote(item.eventName);
+            mp.events.callRemote('server:vehicle:cargoUnload', 1);
+        }
+        else if (item.cargoUnload2) {
+            UIMenu.Menu.HideMenu();
+            mp.events.callRemote('server:vehicle:cargoUnload', 2);
+        }
+        else if (item.cargoUnload3) {
+            UIMenu.Menu.HideMenu();
+            mp.events.callRemote('server:vehicle:cargoUnload', 3);
+        }
+        else if (item.cargoUnloadAll) {
+            UIMenu.Menu.HideMenu();
+            mp.events.callRemote('server:vehicle:cargoUnload', 1);
+            setTimeout(function () {
+                mp.events.callRemote('server:vehicle:cargoUnload', 2);
+            }, 300);
+            setTimeout(function () {
+                mp.events.callRemote('server:vehicle:cargoUnload', 3);
+            }, 600);
         }
         else if (item.eventName == 'server:vehicle:setNeonColor') {
             UIMenu.Menu.HideMenu();

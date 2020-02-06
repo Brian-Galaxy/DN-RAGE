@@ -368,6 +368,10 @@ methods.numberFormat = function (currentMoney) {
     });
 };
 
+methods.cryptoFormat = function (currentMoney) {
+    return `${methods.numberFormat(currentMoney)}₠`;
+};
+
 methods.moneyFormat = function (currentMoney, maxCentValue = 5000) {
     currentMoney = methods.parseFloat(currentMoney);
     if (currentMoney < maxCentValue)

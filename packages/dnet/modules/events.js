@@ -2213,6 +2213,18 @@ mp.events.addRemoteCounted('server:stock:sell', (player) => {
     stocks.sell(player);
 });
 
+mp.events.addRemoteCounted('server:stock:sellAllByClass', (player, className, price) => {
+    if (!user.isLogin(player))
+        return;
+    stocks.sellAllByClass(player, className, price);
+});
+
+mp.events.addRemoteCounted('server:stock:sellBySlot', (player, slot) => {
+    if (!user.isLogin(player))
+        return;
+    stocks.sellBySlot(player, slot);
+});
+
 mp.events.addRemoteCounted('server:apartments:sell', (player) => {
     if (!user.isLogin(player))
         return;
@@ -3777,10 +3789,10 @@ mp.events.addRemoteCounted('server:vehicle:park', (player) => {
     }
 });
 
-mp.events.addRemoteCounted('server:vehicle:cargoUnload', (player) => {
+mp.events.addRemoteCounted('server:vehicle:cargoUnload', (player, id) => {
     if (!user.isLogin(player))
         return;
-    stocks.cargoUnload(player);
+    stocks.cargoUnload(player, id);
 });
 
 mp.events.addRemoteCounted('server:vehicle:setNeonColor', (player, r, g, b) => {

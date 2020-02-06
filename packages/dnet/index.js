@@ -36,6 +36,7 @@ let fraction = require('./property/fraction');
 
 let weather = require('./managers/weather');
 let pickups = require('./managers/pickups');
+let gangWar = require('./managers/gangWar');
 
 let coffer = require('./coffer');
 let inventory = require('./inventory');
@@ -58,6 +59,7 @@ function init() {
         business.loadAll();
         stocks.loadAll();
         fraction.loadAll();
+        gangWar.loadAll();
 
         weather.loadAll();
 

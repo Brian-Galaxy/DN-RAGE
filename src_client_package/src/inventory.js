@@ -4,9 +4,11 @@ import container from './modules/data';
 import chat from './chat';
 import items from './items';
 import user from './user';
+import enums from './enums';
 import ui from "./modules/ui";
 import menuList from "./menuList";
 import vehicles from "./property/vehicles";
+import stocks from "./property/stocks";
 
 import bind from "./manager/bind";
 
@@ -91,7 +93,7 @@ inventory.updateItemParams = function(id, params) {
     }
 };
 
-inventory.openInventoryByEntity = function(entity) {
+inventory.openInventoryByEntity = async function(entity) {
 
     if (entity.getType() == 2) {
 
@@ -128,8 +130,18 @@ inventory.openInventoryByEntity = function(entity) {
                 inventory.takeItem(entity.getVariable('isDrop'), entity.getVariable('itemId'));
             if (entity.getVariable('stockId'))
                 inventory.getItemList(entity.getVariable('stockId'), mp.players.local.dimension);
-            else
-                inventory.getItemList(entity.invType, mp.players.local.dimension);
+            else if (entity.invType) {
+                if (entity.safe) {
+                    let data = await stocks.getData(mp.players.local.dimension - enums.offsets.stock);
+                    let pass = methods.parseInt(await UIMenu.Menu.GetUserInput("Введите пинкод", "", 5));
+                    if (pass == data.get('pin' + entity.safe))
+                        inventory.getItemList(entity.invType, mp.players.local.dimension);
+                    else
+                        mp.game.ui.notifications.show('~r~Вы ввели не правильный пинкод');
+                }
+                else
+                    inventory.getItemList(entity.invType, mp.players.local.dimension);
+            }
         }
         catch (e) {
             methods.debug(e);

@@ -230,11 +230,19 @@ ui.updateVehValues = function() {
 ui.updateZoneAndStreet = function() {
     try {
         const local = mp.players.local;
-        let getStreet = mp.game.pathfind.getStreetNameAtCoord(local.position.x, local.position.y, local.position.z, 0, 0);
-        _street = mp.game.ui.getStreetNameFromHashKey(getStreet.streetName); // Return string, if exist
-        _zone = mp.game.ui.getLabelText(mp.game.zone.getNameOfZone(local.position.x, local.position.y, local.position.z));
-        if (getStreet.crossingRoad != 0)
-            _street += ' / ' + mp.game.ui.getStreetNameFromHashKey(getStreet.crossingRoad);
+
+        if (local.position.z < -30) {
+            let dot = ['.', '...'];
+            _street = 'Поиск сети GPS' + dot[methods.getRandomInt(0, dot.length)];
+            _zone = 'Нет сети';
+        }
+        else {
+            let getStreet = mp.game.pathfind.getStreetNameAtCoord(local.position.x, local.position.y, local.position.z, 0, 0);
+            _street = mp.game.ui.getStreetNameFromHashKey(getStreet.streetName); // Return string, if exist
+            _zone = mp.game.ui.getLabelText(mp.game.zone.getNameOfZone(local.position.x, local.position.y, local.position.z));
+            if (getStreet.crossingRoad != 0)
+                _street += ' / ' + mp.game.ui.getStreetNameFromHashKey(getStreet.crossingRoad);
+        }
     }
     catch (e) {
         methods.debug(e);

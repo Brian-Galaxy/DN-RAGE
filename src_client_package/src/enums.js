@@ -520,6 +520,7 @@ enums.fractionListId = [];
 
 enums.animActions = [
     ["Поднять руки", "random@mugging3", "handsup_standing_base", 49],
+    ["Поднять руки стоя на коленях", "random@arrests", "kneeling_arrest_idle", 9],
     ["Передать что-то по рации", "random@arrests", "generic_radio_chatter", 49],
     ["Сесть 1","amb@prop_human_seat_chair@male@generic@base", "base",9],
     ["Сесть 2","amb@prop_human_seat_chair@male@elbows_on_knees@base", "base",9],

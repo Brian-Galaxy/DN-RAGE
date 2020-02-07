@@ -35,6 +35,7 @@ vSync.VehicleSyncData = {
     IndicatorRightToggle: false,
     InteriorLight: false,
     TaxiLight: false,
+    SpotLight: false,
 };
 
 let streamDist = 250;
@@ -255,6 +256,19 @@ vSync.getTaxiLightState = function(v) {
     return vSync.getVehicleSyncData(v).TaxiLight;
 };
 
+vSync.setSpotLightState = function(v, status) {
+    if (!vehicles.exists(v))
+        return;
+    let data = vSync.getVehicleSyncData(v);
+    data.SpotLight = status;
+    vSync.updateVehicleSyncData(v, data);
+    mp.players.callInRange(v.position, streamDist, "vSync:setSpotLightState", [v.id, status]);
+};
+
+vSync.getSpotLightState = function(v) {
+    return vSync.getVehicleSyncData(v).SpotLight;
+};
+
 vSync.setLockStatus = function(v, status) {
     if (!vehicles.exists(v))
         return;
@@ -312,6 +326,13 @@ mp.events.add('s:vSync:setTaxiLightState', (player, vId, status) => {
     let veh = mp.vehicles.at(vId);
     if (mp.players.exists(player) && vehicles.exists(veh))
         vSync.setTaxiLightState(veh, status);
+});
+
+mp.events.add('s:vSync:setSpotLightState', (player, vId, status) => {
+    methods.debug('server:vehicles:addFuel', vId, status);
+    let veh = mp.vehicles.at(vId);
+    if (mp.players.exists(player) && vehicles.exists(veh))
+        vSync.setSpotLightState(veh, status);
 });
 
 mp.events.add('s:vSync:setIndicatorLeftState', (player, vId, status) => {

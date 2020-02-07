@@ -10,6 +10,7 @@ import user from '../user';
 import inventory from "../inventory";
 
 import pSync from "./pSync";
+import heliCam from "./heliCam";
 
 let bind = {};
 
@@ -159,19 +160,19 @@ const keyCodes = {
     181: 'Mute/Unmute',
     /*182: 'decrease volume level (firefox)',
     183: 'increase volume level (firefox)',*/
-    186: 'Semi-colon / ñ',
+    186: ';:',
     187: '=',
-    188: 'Comma',
+    188: '<',
     189: '_',
-    190: 'Period',
-    191: 'Forward Slash',
+    190: '>',
+    191: '/',
     192: 'Ё',
-    193: '?, / or °',
-    /*194: 'Numpad period',
-    219: 'Open bracket',*/
+    193: '?,',
+    //194: 'Numpad period',
+    219: '[',
     220: '\\',
-    /*221: 'Close bracket / å',
-    222: 'Single quote / ø / ä',*/
+    221: ']',
+    222: '\'',
     223: '`',
     /*224: 'Left or right ⌘ key',
     225: 'Altgr',
@@ -257,21 +258,33 @@ for(let code in keyCodes) {
                 let drawId = mp.players.local.getPropIndex(0);
                 let textureId = mp.players.local.getPropTextureIndex(0);
                 if (user.getSex() == 1 && (drawId == 116 || drawId == 118)) {
-                    user.setProp(0, --drawId, textureId);
-                    mp.game.graphics.setNightvision(true);
+                    user.playAnimation("anim@mp_helmets@on_foot", "visor_down", 48);
+                    setTimeout(function () {
+                        user.setProp(0, --drawId, textureId);
+                        mp.game.graphics.setNightvision(true);
+                    }, 400);
                 }
                 else if (user.getSex() == 1 && (drawId == 115 || drawId == 117)) {
-                    user.setProp(0, ++drawId, textureId);
-                    mp.game.graphics.setNightvision(false);
+                    user.playAnimation("anim@mp_helmets@on_foot", "visor_up", 48);
+                    setTimeout(function () {
+                        user.setProp(0, ++drawId, textureId);
+                        mp.game.graphics.setNightvision(false);
+                    }, 400)
                 }
 
                 if (user.getSex() == 0 && (drawId == 117 || drawId == 119)) {
-                    user.setProp(0, --drawId, textureId);
-                    mp.game.graphics.setNightvision(true);
+                    user.playAnimation("anim@mp_helmets@on_foot", "visor_down", 48);
+                    setTimeout(function () {
+                        user.setProp(0, --drawId, textureId);
+                        mp.game.graphics.setNightvision(true);
+                    }, 400);
                 }
                 else if (user.getSex() == 0 && (drawId == 116 || drawId == 118)) {
-                    user.setProp(0, ++drawId, textureId);
-                    mp.game.graphics.setNightvision(false);
+                    user.playAnimation("anim@mp_helmets@on_foot", "visor_up", 48);
+                    setTimeout(function () {
+                        user.setProp(0, ++drawId, textureId);
+                        mp.game.graphics.setNightvision(false);
+                    }, 400);
                 }
             }
         }
@@ -294,6 +307,18 @@ for(let code in keyCodes) {
         }
         if (user.getCache('s_bind_fingerpoint') == parseInt(code)) {
             pSync.pointing.start();
+        }
+        if (user.getCache('s_bind_helicam') == parseInt(code)) {
+            heliCam.keyPressToggleHeliCam();
+        }
+        if (user.getCache('s_bind_helicam_vision') == parseInt(code)) {
+            heliCam.keyPressToggleVision();
+        }
+        if (user.getCache('s_bind_helicam_lock') == parseInt(code)) {
+            heliCam.keyPressToggleLockVehicle();
+        }
+        if (user.getCache('s_bind_helilight') == parseInt(code)) {
+            heliCam.keyPressToggleSpotLight();
         }
         if (bind.isChange)
             bind.bindNewKey(parseInt(code));

@@ -10,6 +10,29 @@ let objectDelList = [];
 object.load = function () {
     const start = new Date().getTime();
 
+    //Dock Mapping
+    object.create(1524671283, new mp.Vector3(-426.3395, -2638.948, 7.62), new mp.Vector3(0, 0, 28.9998), false, false);
+    object.create(1576342596, new mp.Vector3(-428.1002, -2640.67, 7.5), new mp.Vector3(0, 0, 50.99985), false, false);
+    object.create(1935071027, new mp.Vector3(-424.359, -2636.884, 7.5), new mp.Vector3(0, 0, 44.90015), false, false);
+    object.create(300547451, new mp.Vector3(-420.5733, -2640.223, 8.26), new mp.Vector3(0, 0, -38.99992), false, false);
+    object.create(153748523, new mp.Vector3(-422.7863, -2642.506, 7.51), new mp.Vector3(0, 0, 133.0002), false, false);
+    object.create(-188983024, new mp.Vector3(-424.9482, -2644.421, 7.5), new mp.Vector3(0, 0, -44.00007), false, false);
+    object.create(1524671283, new mp.Vector3(-431.6065, -2643.968, 7.62), new mp.Vector3(0, 0, 50.99967), false, false);
+    object.create(-188983024, new mp.Vector3(-426.1255, -2645.613, 7.5), new mp.Vector3(0, 0, -47.00003), false, false);
+    object.create(-188983024, new mp.Vector3(-427.364, -2646.901, 7.5), new mp.Vector3(0, 0, -43.40001), false, false);
+    object.create(1524671283, new mp.Vector3(-433.2048, -2645.564, 7.63), new mp.Vector3(0, 0, 37.99947), false, false);
+    object.create(300547451, new mp.Vector3(-399.1165, -2639.074, 5.76), new mp.Vector3(0, 0, 42.00002), false, false);
+    object.create(1524671283, new mp.Vector3(-401.9056, -2636.135, 5.13), new mp.Vector3(0, 0, 53.99917), false, false);
+    object.create(153748523, new mp.Vector3(-400.4529, -2637.686, 5.000217), new mp.Vector3(0, 0, 127.8999), false, false);
+    object.create(1935071027, new mp.Vector3(-403.6677, -2635.208, 5.00835), new mp.Vector3(0, 0, 63.89999), false, false);
+    object.create(-188983024, new mp.Vector3(-402.352, -2643.216, 5.000216), new mp.Vector3(0, 0, -132.4995), false, false);
+    object.create(-188983024, new mp.Vector3(-404.0558, -2644.229, 5.000216), new mp.Vector3(0, 0, -60.00001), false, false);
+    object.create(1576342596, new mp.Vector3(-405.3622, -2645.786, 5.000217), new mp.Vector3(0, 0, 43.79976), false, false);
+    object.create(-1286880215, new mp.Vector3(-406.5015, -2650.262, 5.000217), new mp.Vector3(0, 0, -134.6452), false, false);
+    object.create(-1286880215, new mp.Vector3(-409.755, -2653.563, 5.000217), new mp.Vector3(0, 0, -134.6452), false, false);
+    object.create(-1286880215, new mp.Vector3(-413.0188, -2656.853, 5.000217), new mp.Vector3(0, 0, -135.2446), false, false);
+    object.create(-1286880215, new mp.Vector3(-397.9273, -2641.651, 5.000217), new mp.Vector3(0, 0, -135.8452), false, false);
+
     //Galaxy
     object.create(1873958683, new mp.Vector3(5.12, 221.3692, 111.1681), new mp.Vector3(1.00179E-05, -5.008956E-06, 69.94978), false, false);
     object.create(-62459927, new mp.Vector3(3.640865, 218.7829, 106.7872), new mp.Vector3(0, 0, 65.09992), false, false);

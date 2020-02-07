@@ -217,11 +217,13 @@ timer.twoSecTimer = function() {
             }
         }
 
-        /*let drawId = mp.players.local.getPropIndex(0); //TODO
-        if (user.getSex() == 1 && drawId != 116 && drawId != 118)
-            mp.game.graphics.setNightvision(false);
-        if (user.getSex() == 0 && drawId != 117 && drawId != 119)
-            mp.game.graphics.setNightvision(false);*/
+        if (!mp.players.local.isInAnyVehicle(true)) {
+            let drawId = mp.players.local.getPropIndex(0);
+            if (user.getSex() == 0 && drawId != 116 && drawId != 117)
+                mp.game.graphics.setNightvision(false);
+            if (user.getSex() == 1 && drawId != 118 && drawId != 119)
+                mp.game.graphics.setNightvision(false);
+        }
     }
     catch (e) {
         methods.debug(e);

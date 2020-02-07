@@ -81,6 +81,8 @@ vSync.updateValues = function(entity) {
                 entity.setInteriorlight(actualData.InteriorLight);
                 entity.setTaxiLights(actualData.TaxiLight);
 
+                entity.setSearchlight(actualData.SpotLight, false);
+
                 if (actualData.Trunk)
                     entity.setDoorOpen(5, false, false);
                 else
@@ -351,12 +353,22 @@ mp.events.add("vSync:setInteriorLightState", (vehId, status) => {
     }
 });
 
-
 mp.events.add("vSync:setTaxiLightState", (vehId, status) => {
     try {
         let veh = mp.vehicles.atRemoteId(vehId);
         if (veh !== undefined && mp.vehicles.exists(veh)) {
             veh.setTaxiLights(status);
+        }
+    } catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.add("vSync:setSpotLightState", (vehId, status) => {
+    try {
+        let veh = mp.vehicles.atRemoteId(vehId);
+        if (veh !== undefined && mp.vehicles.exists(veh)) {
+            veh.setSearchlight(status, false);
         }
     } catch (e) {
         methods.debug(e);

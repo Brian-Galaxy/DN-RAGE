@@ -5,6 +5,7 @@ import ui from './modules/ui';
 
 import weather from './manager/weather';
 import bind from './manager/bind';
+import heliCam from './manager/heliCam';
 
 import user from './user';
 import admin from './admin';
@@ -1491,8 +1492,8 @@ menuList.showMeriaMainMenu = function() {
     let menu = UIMenu.Menu.Create(`Секретарь`, `~b~Секретарь правительства`);
 
     UIMenu.Menu.AddMenuItem("Оформить WorkID").doName = 'getWorkId';
-    UIMenu.Menu.AddMenuItem("Оформить регистрацию", 'Стоимость: ~g~1,000').doName = 'getRegister';
-    UIMenu.Menu.AddMenuItem("Оформить гражданство", 'Стоимость: ~g~10,000').doName = 'getFullRegister';
+    UIMenu.Menu.AddMenuItem("Оформить регистрацию", 'Стоимость: ~g~$1,000').doName = 'getRegister';
+    UIMenu.Menu.AddMenuItem("Оформить гражданство", 'Стоимость: ~g~$10,000').doName = 'getFullRegister';
 
     UIMenu.Menu.AddMenuItem("Трудовая биржа").doName = 'showMeriaJobListMenu';
     UIMenu.Menu.AddMenuItem("Лицензионный центр").doName = 'showLicBuyMenu';
@@ -2045,6 +2046,14 @@ menuList.showSettingsKeyMenu = function() {
     menuItem.doName = 's_bind_lock';
     menuItem.SetRightLabel(`~h~~m~[${bind.getKeyName(user.getCache(menuItem.doName))}]`);
 
+    menuItem = UIMenu.Menu.AddMenuItem("Режим стрельбы", "Нажмите ~g~Enter~s~ чтобы изменить");
+    menuItem.doName = 's_bind_firemod';
+    menuItem.SetRightLabel(`~h~~m~[${bind.getKeyName(user.getCache(menuItem.doName))}]`);
+
+    menuItem = UIMenu.Menu.AddMenuItem("Показывать пальцем", "Нажмите ~g~Enter~s~ чтобы изменить");
+    menuItem.doName = 's_bind_fingerpoint';
+    menuItem.SetRightLabel(`~h~~m~[${bind.getKeyName(user.getCache(menuItem.doName))}]`);
+
     menuItem = UIMenu.Menu.AddMenuItem("Прибор ночного видения", "Нажмите ~g~Enter~s~ чтобы изменить");
     menuItem.doName = 's_bind_pnv';
     menuItem.SetRightLabel(`~h~~m~[${bind.getKeyName(user.getCache(menuItem.doName))}]`);
@@ -2053,13 +2062,26 @@ menuList.showSettingsKeyMenu = function() {
     menuItem.doName = 's_bind_megaphone';
     menuItem.SetRightLabel(`~h~~m~[${bind.getKeyName(user.getCache(menuItem.doName))}]`);
 
-    menuItem = UIMenu.Menu.AddMenuItem("Режим стрельбы", "Нажмите ~g~Enter~s~ чтобы изменить");
-    menuItem.doName = 's_bind_firemod';
+    menuItem = UIMenu.Menu.AddMenuItem("Режим камеры на вертолете", "Нажмите ~g~Enter~s~ чтобы изменить");
+    menuItem.doName = 's_bind_helicam';
     menuItem.SetRightLabel(`~h~~m~[${bind.getKeyName(user.getCache(menuItem.doName))}]`);
 
-    menuItem = UIMenu.Menu.AddMenuItem("Показывать пальцем", "Нажмите ~g~Enter~s~ чтобы изменить");
-    menuItem.doName = 's_bind_fingerpoint';
+    menuItem = UIMenu.Menu.AddMenuItem("Эффект камеры на вертолете", "Нажмите ~g~Enter~s~ чтобы изменить");
+    menuItem.doName = 's_bind_helicam_vision';
     menuItem.SetRightLabel(`~h~~m~[${bind.getKeyName(user.getCache(menuItem.doName))}]`);
+
+    menuItem = UIMenu.Menu.AddMenuItem("Преследование ТС на вертолете", "Нажмите ~g~Enter~s~ чтобы изменить");
+    menuItem.doName = 's_bind_helicam_lock';
+    menuItem.SetRightLabel(`~h~~m~[${bind.getKeyName(user.getCache(menuItem.doName))}]`);
+
+    menuItem = UIMenu.Menu.AddMenuItem("Фонарь на вертолете", "Нажмите ~g~Enter~s~ чтобы изменить");
+    menuItem.doName = 's_bind_helilight';
+    menuItem.SetRightLabel(`~h~~m~[${bind.getKeyName(user.getCache(menuItem.doName))}]`);
+
+    /*UIMenu.Menu.AddMenuItem("keyPressToggleHeliCam").keyPressToggleHeliCam = true;
+    UIMenu.Menu.AddMenuItem("keyPressToggleSpotLight").keyPressToggleSpotLight = true;
+    UIMenu.Menu.AddMenuItem("keyPressToggleVision").keyPressToggleVision = true;
+    UIMenu.Menu.AddMenuItem("keyPressToggleLockVehicle").keyPressToggleLockVehicle = true;*/
 
     let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
 
@@ -7275,6 +7297,28 @@ menuList.showSapdArsenalGunModMenu = function() {
     });
 };
 
+menuList.showBotQuestRole0Menu = function()
+{
+    /*if (user.getCache('role') != 1) {
+        mp.game.ui.notifications.show(`~r~Вам не доступна эта квестовая линия`);
+        return;
+    }*/
+
+    if (user.getCache('quest_role_0') == 0) {
+        mp.game.ui.notifications.show(`~r~Вам не доступна эта квестовая линия`);
+        return;
+    }
+
+    let menu = UIMenu.Menu.Create("Бар", "~b~Меню бара");
+
+    let menuItem = UIMenu.Menu.AddMenuItem("Вода");
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = "closeButton";
+    menu.ItemSelect.on(async (item, index) => {
+        UIMenu.Menu.HideMenu();
+    });
+};
+
 menuList.showAdminMenu = function() {
     let menu = UIMenu.Menu.Create(`ADMIN`, `~b~Админ меню`);
 
@@ -7526,6 +7570,11 @@ menuList.showAdminDebug2Menu = function() {
     UIMenu.Menu.AddMenuItem("callPhone").callPhone = true;
     UIMenu.Menu.AddMenuItem("hidePhone").destroy = true;
 
+    UIMenu.Menu.AddMenuItem("keyPressToggleHeliCam").keyPressToggleHeliCam = true;
+    UIMenu.Menu.AddMenuItem("keyPressToggleSpotLight").keyPressToggleSpotLight = true;
+    UIMenu.Menu.AddMenuItem("keyPressToggleVision").keyPressToggleVision = true;
+    UIMenu.Menu.AddMenuItem("keyPressToggleLockVehicle").keyPressToggleLockVehicle = true;
+
     UIMenu.Menu.AddMenuItem("~r~Закрыть");
     menu.ItemSelect.on(async item => {
         if (item.create)
@@ -7538,6 +7587,14 @@ menuList.showAdminDebug2Menu = function() {
             user.callPhone();
         if (item.destroy)
             user.hidePhone();
+        if (item.keyPressToggleHeliCam)
+            heliCam.keyPressToggleHeliCam();
+        if (item.keyPressToggleSpotLight)
+            heliCam.keyPressToggleSpotLight();
+        if (item.keyPressToggleVision)
+            heliCam.keyPressToggleVision();
+        if (item.keyPressToggleLockVehicle)
+            heliCam.keyPressToggleLockVehicle();
     });
 };
 

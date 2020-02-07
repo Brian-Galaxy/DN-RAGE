@@ -5,6 +5,7 @@ import './manager/vSync';
 import './manager/pSync';
 import './manager/wpSync';
 import './manager/shoot';
+import './manager/heliCam';
 import './manager/attachWeapons';
 
 import './betternotifs';

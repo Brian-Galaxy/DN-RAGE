@@ -832,6 +832,8 @@ user.clearAllProp = function() {
 
 user.stopAllScreenEffect = function() {
     mp.game.graphics.setNightvision(false);
+    mp.game.graphics.setSeethrough(false);
+    mp.game.graphics.setTimecycleModifierStrength(0);
     mp.game.invoke(methods.ANIMPOSTFX_STOP_ALL);
 };
 

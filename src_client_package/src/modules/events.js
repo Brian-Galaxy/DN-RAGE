@@ -954,6 +954,16 @@ mp.events.add('client:menuList:showBarFreeMenu', () => {
     }
 });
 
+mp.events.add('client:menuList:showBotQuestRole0Menu', () => {
+    try {
+        methods.debug('Event: client:menuList:showBotQuestRole0Menu');
+        menuList.showBotQuestRole0Menu();
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
 mp.events.add('client:showToPlayerItemListMenu', (data, ownerType, ownerId) => {
     try {
         methods.debug('Event: client:showToPlayerItemListMenu');

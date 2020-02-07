@@ -197,11 +197,23 @@ enums.userData = [
     "s_bind_megaphone",
     "s_bind_firemod",
     "s_bind_fingerpoint",
+    "s_bind_helicam",
+    "s_bind_helicam_vision",
+    "s_bind_helicam_lock",
+    "s_bind_helilight",
 
     "jail_time",
     "jail_type",
     "med_time",
     "med_type",
+
+    "promocode",
+    "referer",
+
+    "quest_role_0",
+    "quest_role_2",
+    "quest_standart",
+    "quest_gang",
 
     "is_custom",
     "is_online",
@@ -591,7 +603,7 @@ enums.jobList = [
 ];
 
 enums.spawnByRole = [
-    [-332.417, -2792.682, 4.000233, 91.04308],
+    [-415.363037109375, -2630.680419921875, 8.761142730712891, 224.08807373046875],
     [-1370.454833984375, -526.2842407226562, 29.326345443725586, 116.12171936035156],
     //[-1042.025, -2744.718, 20.3594, 327.3454], //AERO
     [2046.785, 3566.849, 39.19671, 243.1456],

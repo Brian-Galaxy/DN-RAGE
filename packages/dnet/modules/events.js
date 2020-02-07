@@ -170,9 +170,9 @@ mp.events.addRemoteCounted('server:user:createAccount', (player, login, password
     }
 });
 
-mp.events.addRemoteCounted('server:user:createUser', (player, name, surname, age, national) => {
+mp.events.addRemoteCounted('server:user:createUser', (player, name, surname, age, promocode, referer, national) => {
     try {
-        user.createUser(player, name, surname, age, national);
+        user.createUser(player, name, surname, age, promocode, referer, national);
     } catch (e) {
         console.log(e);
     }

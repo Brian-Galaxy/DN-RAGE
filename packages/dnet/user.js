@@ -10,6 +10,8 @@ let wpSync = require('./managers/wpSync');
 let weather = require('./managers/weather');
 
 let vehicles = require('./property/vehicles');
+let houses = require('./property/houses');
+let condos = require('./property/condos');
 
 let user = exports;
 
@@ -25,15 +27,15 @@ user.createAccount = function(player, login, pass, email) {
         methods.debug(cb);
 
         if (cb == 1) {
-            user.showCustomNotify(player, 'Аккаунт с такими SocialClub уже существует', 4);
+            user.showCustomNotify(player, 'Аккаунт с такими SocialClub уже существует', 1);
             return;
         }
         else if (cb == 2) {
-            user.showCustomNotify(player, 'Логин уже занят', 4);
+            user.showCustomNotify(player, 'Логин уже занят', 1);
             return;
         }
         else if (cb == 3) {
-            user.showCustomNotify(player, 'Email уже занят', 4);
+            user.showCustomNotify(player, 'Email уже занят', 1);
             return;
         }
 
@@ -88,31 +90,39 @@ let skin = {
     SKIN_FACE_SPECIFICATIONS: [],
 };
 
-user.createUser = function(player, name, surname, age, national) {
-
-    methods.debug('user.createUser');
-
+user.createUser = function(player, name, surname, age, promocode, referer, national) {
     if (!mp.players.exists(player))
         return;
+    methods.debug('user.createUser');
 
     user.doesExistUser(name + ' ' + surname, function (cb) {
 
         if (cb == true) {
-            user.showCustomNotify(player, 'Имя и Фамилия уже занята другим пользователем, попробуйте другое', 4);
+            user.showCustomNotify(player, 'Имя и Фамилия уже занята другим пользователем, попробуйте другое', 1);
             return;
         }
 
-        user.showCustomNotify(player, 'Пожалуйста подожите...', 1);
+        promocode = promocode.toUpperCase();
+        mysql.executeQuery(`SELECT * FROM promocode_top_list WHERE promocode = '${promocode}' LIMIT 1`, function (err, rows, fields) {
+            if (rows.length >= 1) {
 
-        let newAge = '01.01.' + (2010 - age); //TODO
+                let money = methods.getRandomInt(500, 999) / 100;
+                if (promocode != '')
+                    money += 1000;
 
-        let sql = "INSERT INTO users (name, age, social, national, skin, parachute, parachute_color, body_color, leg_color, foot_color, body, leg, foot, login_ip, login_date, reg_ip, reg_timestamp) VALUES ('" + name + ' ' + surname +
-            "', '" + newAge + "', '" + player.socialClub + "', '" + national + "', '" + JSON.stringify(skin) + "', '0', '44', '" + methods.getRandomInt(0, 5) + "', '" + methods.getRandomInt(0, 15) + "', '" + methods.getRandomInt(0, 15) + "', '0', '1', '1', '" + player.ip + "', '" + methods.getTimeStamp() + "', '" + player.ip + "', '" + methods.getTimeStamp() + "')";
-        mysql.executeQuery(sql);
+                user.showCustomNotify(player, 'Пожалуйста подожите...');
+                let newAge = `${methods.digitFormat(weather.getDay())}.${methods.digitFormat(weather.getMonth())}.${(weather.getYear() - age)}`;
+                let sql = "INSERT INTO users (name, age, social, national, promocode, referer, skin, parachute, parachute_color, body_color, leg_color, foot_color, body, leg, foot, login_ip, login_date, reg_ip, reg_timestamp) VALUES ('" + name + ' ' + surname +
+                    "', '" + newAge + "', '" + player.socialClub + "', '" + national + "', '" + money + "', '" + promocode + "', '" + referer + "', '" + JSON.stringify(skin) + "', '0', '44', '" + methods.getRandomInt(0, 5) + "', '" + methods.getRandomInt(0, 15) + "', '" + methods.getRandomInt(0, 15) + "', '0', '1', '1', '" + player.ip + "', '" + methods.getTimeStamp() + "', '" + player.ip + "', '" + methods.getTimeStamp() + "')";
+                mysql.executeQuery(sql);
 
-        setTimeout(function () {
-            user.loginUser(player, name + ' ' + surname);
-        }, 1000)
+                setTimeout(function () {
+                    user.loginUser(player, name + ' ' + surname);
+                }, 1000);
+            } else {
+                user.showCustomNotify(player, 'Промокод не найден. Промокод можно ввести после регистрации в течении 48 часов через M - Настройки - Промокод', 1);
+            }
+        });
     });
 };
 
@@ -123,10 +133,10 @@ user.loginAccount = function(player, login, pass) {
         return false;
     user.validateAccount(login, pass, function (callback) {
 
-        //user.showCustomNotify(player, 'Проверяем данные...', 1);
+        //user.showCustomNotify(player, 'Проверяем данные...', 0);
 
         if (callback == false) {
-            user.showCustomNotify(player, 'Ошибка пароля или аккаунт еще не был создан', 4);
+            user.showCustomNotify(player, 'Ошибка пароля или аккаунт еще не был создан', 1);
             return;
         }
 
@@ -143,8 +153,28 @@ user.loginAccount = function(player, login, pass) {
                 else {
                     rows.forEach(row => {
                         let sex = JSON.parse(row['skin'])['SKIN_SEX'] == 0 ? "m" : "w";
-                        methods.debug(sex);
-                        players.push({name: row['name'], age: row['id'], money: row['money'], sex: sex, spawnList: ['Стандарт', 'Стандарт2'], lastLogin: methods.unixTimeStampToDate(row['login_date'])})
+
+                        let spawnList = [];
+
+                        let userId = row['id'];
+                        if (user.hasById(userId, 'timestamp') && (user.getById(userId, 'timestamp') + 60 * 15) > methods.getTimeStamp())
+                            spawnList.push('Точка выхода');
+
+                        if (row['house_id'])
+                            spawnList.push('Дом');
+
+                        if (row['condo_id'])
+                            spawnList.push('Квартира');
+
+                        if (row['apartment_id'])
+                            spawnList.push('Апартаменты');
+
+                        if (row['yacht_id'])
+                            spawnList.push('Яхта');
+
+                        spawnList.push('Стандарт');
+
+                        players.push({name: row['name'], age: row['id'], money: row['money'], sex: sex, spawnList: spawnList, lastLogin: methods.unixTimeStampToDate(row['login_date'])})
                     });
 
                     player.call('client:events:loginAccount:success', [JSON.stringify(players)]);
@@ -152,7 +182,7 @@ user.loginAccount = function(player, login, pass) {
             });
         }
         else
-            user.showCustomNotify(player, 'Произошла неизвестная ошибка. Код ошибки #9999', 4);
+            user.showCustomNotify(player, 'Произошла неизвестная ошибка. Код ошибки #9999', 1);
         //player.notify('~b~Входим в аккаунт...');
     });
 };
@@ -165,14 +195,14 @@ user.loginUser = function(player, name, spawn = 'Стандарт') {
     user.validateUser(name, function (callback) {
 
         if (callback == false) {
-            user.showCustomNotify(player, 'Ошибка авторизации аккаунта, попробуйте еще раз', 4);
+            user.showCustomNotify(player, 'Ошибка авторизации аккаунта, попробуйте еще раз', 1);
             return;
         }
 
         if (mp.players.exists(player))
             user.loadUser(player, name, spawn);
         else
-            user.showCustomNotify(player, 'Произошла неизвестная ошибка. Код ошибки #9999', 4);
+            user.showCustomNotify(player, 'Произошла неизвестная ошибка. Код ошибки #9999', 1);
         //player.notify('~b~Входим в аккаунт...');
     });
 };
@@ -292,14 +322,14 @@ user.loadUser = function(player, name, spawn = 'Стандарт') {
                 return false;
 
             if (user.get(player, 'date_ban') > methods.getTimeStamp()) {
-                user.showCustomNotify(player, 'Аккаунт забанен до: ' + methods.unixTimeStampToDateTime(user.get(player, 'date_ban')), 4);
+                user.showCustomNotify(player, 'Аккаунт забанен до: ' + methods.unixTimeStampToDateTime(user.get(player, 'date_ban')), 1);
                 return;
             }
 
-            /*if (user.get(player, 'is_online') == 1) {
-                user.showCustomNotify(player, 'Аккаунт уже авторизован', 4);
+            if (user.get(player, 'is_online') == 1) {
+                user.showCustomNotify(player, 'Аккаунт уже авторизован', 1);
                 return;
-            }*/
+            }
 
             JSON.parse(user.get(player, 'skin'), function(k, v) {
                 user.set(player, k, v);
@@ -356,7 +386,6 @@ user.loadUser = function(player, name, spawn = 'Стандарт') {
                 mysql.executeQuery('UPDATE users SET is_online=\'1\' WHERE id = \'' + user.getId(player) + '\'');
 
                 vehicles.loadAllUserVehicles(userId);
-
                 if (!user.get(player, 'is_custom'))
                     player.call('client:events:loginUser:finalCreate');
                 else {
@@ -383,8 +412,24 @@ user.spawnByName = function(player, spawn = 'Стандарт') { //TODO by LVL
         if (!user.isLogin(player))
             return false;
 
-        if (spawn == 'Дом') {
-            //...
+        if (user.hasById(user.getId(player), 'hp'))
+            player.health = user.getById(user.getId(player), 'hp');
+
+        if (spawn == 'Точка выхода') {
+            let userId = user.getId(player);
+            player.spawn(new mp.Vector3(user.getById(userId, 'pos_x'), user.getById(userId, 'pos_y'), user.getById(userId, 'pos_z')));
+            player.heading = user.getById(userId, 'rot');
+            player.dimension = user.getById(userId, 'dimension');
+        }
+        else if (spawn == 'Дом') {
+            let hData = houses.getHouseData(user.get(player, 'house_id'));
+            player.spawn(new mp.Vector3(hData.get('x'), hData.get('y'), hData.get('z')));
+            player.heading = hData.get('rot');
+        }
+        else if (spawn == 'Квартира') {
+            let hData = houses.getHouseData(user.get(player, 'condo_id'));
+            player.spawn(new mp.Vector3(hData.get('x'), hData.get('y'), hData.get('z')));
+            player.heading = hData.get('rot');
         }
         else {
             let roleId = user.get(player, 'role') - 1;
@@ -1163,20 +1208,21 @@ user.updateVehicleInfo = function(player) {
 };*/
 
 /*
-* StyleType = HEX
-* 0 = White
-* 1 = Blue
-* 2 = Green
-* 3 = Yellow
-* 4 = Red
+* StyleType
+* 0 = Info
+* 1 = Warn
+* 2 = Success
+* 3 = White
+*
+* ['top', 'topLeft', 'topCenter', 'topRight', 'center', 'centerLeft', 'centerRight', 'bottom', 'bottomLeft', 'bottomCenter', 'bottomRight'];
+*
 * */
-user.showCustomNotify = function(player, text, style = 0) {
+user.showCustomNotify = function(player, text, style = 0, layout = 5, time = 5000) {
     methods.debug('user.showCustomNotify', text);
     if (!mp.players.exists(player))
         return;
-    //Number.isInteger(style)
-    player.outputChatBox(text);
-    //player.call('client:ui:showCustomNotify', [text]);
+
+    user.callCef(player, 'notify', JSON.stringify({type: style, layout: layout, text: text, time: time}))
 };
 
 user.setDating = function(player, key, value) {

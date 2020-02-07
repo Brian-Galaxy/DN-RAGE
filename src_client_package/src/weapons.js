@@ -266,6 +266,7 @@ weapons.getGunAmmoId = function(name) {
         case 'weapon_combatpistol':
         case 'weapon_pistol':
         case 'weapon_pistol_mk2':
+        case 'weapon_ceramicpistol':
         case 'weapon_snspistol':
         case 'weapon_snspistol_mk2':
         case 'weapon_combatpdw':

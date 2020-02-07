@@ -472,6 +472,16 @@ user.init = function() {
         user.hideLoadDisplay();
         user.clearChat();
 
+        user.init2();
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+};
+
+user.init2 = function() {
+
+    try {
         cam = mp.cameras.new('customization', new mp.Vector3(8.243752, 527.4373, 171.6173), new mp.Vector3(0, 0, 0), 20);
         cam.pointAtCoord(9.66692, 528.34783, 171.2);
         cam.setActive(true);
@@ -585,16 +595,9 @@ user.login = function(name, spawnName) {
         try {
             ui.callCef('authMain','{"type": "hide"}');
             ui.callCef('customization','{"type": "hide"}');
-            user.destroyCam();
 
             user.setLogin(true);
 
-            mp.players.local.freezePosition(false);
-            mp.players.local.setCollision(true, true);
-            mp.gui.cursor.show(false, false);
-            mp.gui.chat.show(true);
-            mp.gui.chat.activate(true);
-            mp.game.ui.displayRadar(true);
             mp.events.callRemote('server:user:loginUser', name, spawnName);
         }
         catch (e) {
@@ -738,22 +741,22 @@ user.updateCharacterFace = function(isLocal = false) {
             mp.players.local.setEyeColor(user.getCache('SKIN_EYE_COLOR'));
             mp.players.local.setHeadOverlayColor(2, 1, user.getCache('SKIN_EYEBROWS_COLOR'), 0);
 
-            mp.players.local.setHeadOverlay(9, user.getCache('SKIN_OVERLAY_9'), 1.0, user.getCache('SKIN_OVERLAY_9_COLOR'), 0);
+            mp.players.local.setHeadOverlay(9, user.getCache('SKIN_OVERLAY_9'), 1.0, user.getCache('SKIN_OVERLAY_COLOR_9'), 0);
 
             try {
-                //TODO Exepted Number
                 if (user.getSex() == 0) {
-                    mp.players.local.setHeadOverlay(10, user.getCache('SKIN_OVERLAY_10'), 1.0, user.getCache('SKIN_OVERLAY_10_COLOR'), 0);
-                    mp.players.local.setHeadOverlay(1, user.getCache('SKIN_OVERLAY_1'), 1.0, user.getCache('SKIN_OVERLAY_1_COLOR'), 0);
+                    mp.players.local.setHeadOverlay(10, user.getCache('SKIN_OVERLAY_10'), 1.0, user.getCache('SKIN_OVERLAY_COLOR_10'), 0);
+                    mp.players.local.setHeadOverlay(1, user.getCache('SKIN_OVERLAY_1'), 1.0, user.getCache('SKIN_OVERLAY_COLOR_1'), 0);
                 }
                 else if (user.getSex() == 1) {
-                    mp.players.local.setHeadOverlay(4, user.getCache('SKIN_OVERLAY_4'), 1.0, user.getCache('SKIN_OVERLAY_4_COLOR'), 0);
-                    mp.players.local.setHeadOverlay(5, user.getCache('SKIN_OVERLAY_5'), 1.0, user.getCache('SKIN_OVERLAY_5_COLOR'), 0);
-                    mp.players.local.setHeadOverlay(8, user.getCache('SKIN_OVERLAY_8'), 1.0, user.getCache('SKIN_OVERLAY_8_COLOR'), 0);
+                    mp.players.local.setHeadOverlay(4, user.getCache('SKIN_OVERLAY_4'), 1.0, user.getCache('SKIN_OVERLAY_COLOR_4'), 0);
+                    mp.players.local.setHeadOverlay(5, user.getCache('SKIN_OVERLAY_5'), 1.0, user.getCache('SKIN_OVERLAY_COLOR_5'), 0);
+                    mp.players.local.setHeadOverlay(8, user.getCache('SKIN_OVERLAY_8'), 1.0, user.getCache('SKIN_OVERLAY_COLOR_8'), 0);
                 }
             }
             catch (e) {
-                methods.debug('user.updateCharacterFaceLocal', e);
+                methods.debug('user.updateCharacterFaceLocal');
+                methods.debug(e);
             }
 
             user.updateTattoo(true);
@@ -1282,6 +1285,20 @@ user.hidePhone = function() {
     //user.playAnimation("cellphone@female", "cellphone_text_out", 48);
     user.stopAllAnimation();
     isOpenPhone = false;
+};
+
+/*
+* StyleType
+* 0 = Info
+* 1 = Warn
+* 2 = Success
+* 3 = White
+*
+* ['top', 'topLeft', 'topCenter', 'topRight', 'center', 'centerLeft', 'centerRight', 'bottom', 'bottomLeft', 'bottomCenter', 'bottomRight'];
+*
+* */
+user.showCustomNotify = function(text, style = 0, layout = 5, time = 5000) {
+    ui.callCef('notify', JSON.stringify({type: style, layout: layout, text: text, time: time}));
 };
 
 user.isDead = function() {

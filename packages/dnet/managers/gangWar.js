@@ -44,8 +44,6 @@ gangWar.loadAll = function() {
 
             gangList.push({ id: row['id'], x: row['x'], y: row['y'], z: row['z']});
         });
-
-        console.log(gangList);
     });
 
     setTimeout(function () {

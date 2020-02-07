@@ -11,7 +11,7 @@ items.updateItems = function(data)
 };
 
 items.isWeapon = function(itemId) {
-    return itemId >= 54 && itemId <= 138;
+    return itemId >= 54 && itemId <= 138 || itemId == 146 || itemId == 147;
 };
 
 items.isAmmo = function(itemId) {

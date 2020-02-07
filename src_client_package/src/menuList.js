@@ -2955,7 +2955,7 @@ menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId) {
                     else if(params.state == 1)
                         desc = "Статус: Заберите выигрыш";
                 }
-                else if (item.item_id <= 137 && item.item_id >= 54) {
+                else if (items.isWeapon(item.item_id)) {
 
                     let wpName = items.getItemNameHashById(item.item_id);
                     itemName = items.getItemNameById(item.item_id);
@@ -2998,7 +2998,7 @@ menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId) {
                         }
                     }
 
-                    if (item.item_id <= 137 && item.item_id >= 54) {
+                    if (items.isWeapon(item.item_id)) {
 
                         let slot = weapons.getGunSlotIdByItem(item.item_id);
 
@@ -6817,6 +6817,7 @@ menuList.showSheriffArsenalGunMenu = function() {
 
     if (user.getCache('rank_type') == 1 || user.getCache('rank_type') == 2 || user.getCache('rank_type') == 3) {
         UIMenu.Menu.AddMenuItem("Beretta 90Two").itemId = 78;
+        UIMenu.Menu.AddMenuItem("Glock 17").itemId = 146;
         UIMenu.Menu.AddMenuItem("Benelli M3").itemId = 90;
         UIMenu.Menu.AddMenuItem("Benelli M4").itemId = 91;
         UIMenu.Menu.AddMenuItem("HK-416").itemId = 110;
@@ -6827,12 +6828,14 @@ menuList.showSheriffArsenalGunMenu = function() {
     }
     if (user.getCache('rank_type') == 4) {
         UIMenu.Menu.AddMenuItem("Beretta 90Two").itemId = 78;
+        UIMenu.Menu.AddMenuItem("Glock 17").itemId = 146;
         UIMenu.Menu.AddMenuItem("MP5A3").itemId = 103;
 
         UIMenu.Menu.AddMenuItem("Коробка патронов 9mm").itemId = 280;
     }
     if (user.getCache('rank_type') == 5) {
         UIMenu.Menu.AddMenuItem("Beretta 90Two").itemId = 78;
+        UIMenu.Menu.AddMenuItem("Glock 17").itemId = 146;
         UIMenu.Menu.AddMenuItem("Benelli M3").itemId = 90;
         UIMenu.Menu.AddMenuItem("Benelli M4").itemId = 91;
         UIMenu.Menu.AddMenuItem("HK-416").itemId = 110;
@@ -6883,6 +6886,9 @@ menuList.showSheriffArsenalGunModMenu = function() {
         UIMenu.Menu.AddMenuItem("Компенсатор Beretta 90Two").itemId = 314;
 
         UIMenu.Menu.AddMenuItem(" ");
+        UIMenu.Menu.AddMenuItem("Глушитель Glock 17").itemId = 316;
+
+        UIMenu.Menu.AddMenuItem(" ");
         UIMenu.Menu.AddMenuItem("Фонарик Benelli M3").itemId = 341;
         UIMenu.Menu.AddMenuItem("Глушитель Benelli M3").itemId = 342;
 
@@ -6907,6 +6913,9 @@ menuList.showSheriffArsenalGunModMenu = function() {
         UIMenu.Menu.AddMenuItem("Компенсатор Beretta 90Two").itemId = 314;
 
         UIMenu.Menu.AddMenuItem(" ");
+        UIMenu.Menu.AddMenuItem("Глушитель Glock 17").itemId = 316;
+
+        UIMenu.Menu.AddMenuItem(" ");
         UIMenu.Menu.AddMenuItem("MP5A3").itemId = 103;
     }
     else if (user.getCache('rank_type') == 5 || user.isLeader() || user.isSubLeader()) {
@@ -6914,6 +6923,9 @@ menuList.showSheriffArsenalGunModMenu = function() {
         UIMenu.Menu.AddMenuItem("Оптический прицел Beretta 90Two").itemId = 312;
         UIMenu.Menu.AddMenuItem("Глушитель Beretta 90Two").itemId = 313;
         UIMenu.Menu.AddMenuItem("Компенсатор Beretta 90Two").itemId = 314;
+
+        UIMenu.Menu.AddMenuItem(" ");
+        UIMenu.Menu.AddMenuItem("Глушитель Glock 17").itemId = 316;
 
         UIMenu.Menu.AddMenuItem(" ");
         UIMenu.Menu.AddMenuItem("Фонарик Benelli M3").itemId = 341;
@@ -7101,6 +7113,7 @@ menuList.showSapdArsenalGunMenu = function() {
 
     if (user.getCache('rank_type') == 1 || user.getCache('rank_type') == 2) {
         UIMenu.Menu.AddMenuItem("Beretta 90Two").itemId = 78;
+        UIMenu.Menu.AddMenuItem("Glock 17").itemId = 146;
         UIMenu.Menu.AddMenuItem("Benelli M3").itemId = 90;
         UIMenu.Menu.AddMenuItem("Benelli M4").itemId = 91;
         UIMenu.Menu.AddMenuItem("HK-416").itemId = 110;
@@ -7111,12 +7124,14 @@ menuList.showSapdArsenalGunMenu = function() {
     }
     if (user.getCache('rank_type') == 3 || user.getCache('rank_type') == 5) {
         UIMenu.Menu.AddMenuItem("Beretta 90Two").itemId = 78;
+        UIMenu.Menu.AddMenuItem("Glock 17").itemId = 146;
         UIMenu.Menu.AddMenuItem("MP5A3").itemId = 103;
 
         UIMenu.Menu.AddMenuItem("Коробка патронов 9mm").itemId = 280;
     }
     if (user.getCache('rank_type') == 4 || user.isLeader() || user.isSubLeader()) {
         UIMenu.Menu.AddMenuItem("Beretta 90Two").itemId = 78;
+        UIMenu.Menu.AddMenuItem("Glock 17").itemId = 146;
         UIMenu.Menu.AddMenuItem("Benelli M3").itemId = 90;
         UIMenu.Menu.AddMenuItem("Benelli M4").itemId = 91;
         UIMenu.Menu.AddMenuItem("HK-416").itemId = 110;
@@ -7167,6 +7182,9 @@ menuList.showSapdArsenalGunModMenu = function() {
         UIMenu.Menu.AddMenuItem("Компенсатор Beretta 90Two").itemId = 314;
 
         UIMenu.Menu.AddMenuItem(" ");
+        UIMenu.Menu.AddMenuItem("Глушитель Glock 17").itemId = 316;
+
+        UIMenu.Menu.AddMenuItem(" ");
         UIMenu.Menu.AddMenuItem("Фонарик Benelli M3").itemId = 341;
         UIMenu.Menu.AddMenuItem("Глушитель Benelli M3").itemId = 342;
 
@@ -7191,6 +7209,9 @@ menuList.showSapdArsenalGunModMenu = function() {
         UIMenu.Menu.AddMenuItem("Компенсатор Beretta 90Two").itemId = 314;
 
         UIMenu.Menu.AddMenuItem(" ");
+        UIMenu.Menu.AddMenuItem("Глушитель Glock 17").itemId = 316;
+
+        UIMenu.Menu.AddMenuItem(" ");
         UIMenu.Menu.AddMenuItem("MP5A3").itemId = 103;
     }
     else if (user.getCache('rank_type') == 4 || user.isLeader() || user.isSubLeader()) {
@@ -7198,6 +7219,9 @@ menuList.showSapdArsenalGunModMenu = function() {
         UIMenu.Menu.AddMenuItem("Оптический прицел Beretta 90Two").itemId = 312;
         UIMenu.Menu.AddMenuItem("Глушитель Beretta 90Two").itemId = 313;
         UIMenu.Menu.AddMenuItem("Компенсатор Beretta 90Two").itemId = 314;
+
+        UIMenu.Menu.AddMenuItem(" ");
+        UIMenu.Menu.AddMenuItem("Глушитель Glock 17").itemId = 316;
 
         UIMenu.Menu.AddMenuItem(" ");
         UIMenu.Menu.AddMenuItem("Фонарик Benelli M3").itemId = 341;

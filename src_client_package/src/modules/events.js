@@ -61,7 +61,7 @@ mp.events.add('client:events:disableDefaultControls', function (disable) {
 });
 
 mp.events.add('client:user:auth:register', function(mail, login, passwordReg, passwordRegCheck, acceptRules) {
-    methods.debug(`'${mail} ${login} ${passwordReg} ${passwordRegCheck} ${acceptRules}'`);
+    //methods.debug(`'${mail} ${login} ${passwordReg} ${passwordRegCheck} ${acceptRules}'`);
     try {
         var checkMail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         if(!checkMail.test(String(mail).toLowerCase())) {
@@ -72,22 +72,22 @@ mp.events.add('client:user:auth:register', function(mail, login, passwordReg, pa
         login = login.toLowerCase();
         login = login.replace(/[^a-zA-Z0-9\s]/ig, '');
         if (login === "") {
-            mp.game.ui.notifications.show('~r~Логин - поле не заполнено');
+            user.showCustomNotify('Логин - поле не заполнено', 1);
             return;
         }
         if (passwordReg === "") {
-            mp.game.ui.notifications.show('~r~Пароль - поле не заполнено');
+            user.showCustomNotify('Пароль - поле не заполнено', 1);
             return;
         }
         if (passwordReg !== passwordRegCheck) {
-            mp.game.ui.notifications.show('~r~Пароли не совпадают');
+            user.showCustomNotify('Пароли не совпадают', 1);
             return;
         }
         if (acceptRules === false) {
-            mp.game.ui.notifications.show('~r~Вы не согласились с правилами сервера');
+            user.showCustomNotify('Вы не согласились с правилами сервера', 1);
             return;
         }
-        mp.game.ui.notifications.show('~b~Пожалуйста подождите...');
+        //user.showCustomNotify('~b~Пожалуйста подождите...');
         //methods.storage.set('login', login);
         mp.events.callRemote('server:user:createAccount', login, passwordReg, mail);
     }
@@ -197,11 +197,13 @@ mp.events.add('client:events:loginAccount:success', function(data) {
 
 mp.events.add('client:events:createNewPlayer', function() {
     try {
+        user.hideLoadDisplay();
         ui.callCef('authMain','{"type": "hide"}');
         ui.callCef('customization','{"type": "show"}');
 
         user.set('SKIN_SEX', 0);
         user.setPlayerModel('mp_m_freemode_01');
+        ui.hideHud();
     }
     catch (e) {
         methods.debug(e);
@@ -322,14 +324,15 @@ mp.events.add('client:events:custom:set', function(input_editor_face, input_edit
 
         user.set('SKIN_HAIR', faceLastEditor[0].index_help);
         user.set('SKIN_HAIR_COLOR', faceLastEditor[1].index_help);
-        user.set('SKIN_EYEBROWS', faceLastEditor[2].index_help);
-        user.set('SKIN_EYEBROWS_COLOR', faceLastEditor[3].index_help);
-        user.set('SKIN_EYE_COLOR', faceLastEditor[4].index_help);
-        user.set('SKIN_OVERLAY_9', faceLastEditor[5].index_help - 1);
-        user.set('SKIN_OVERLAY_9_COLOR', faceLastEditor[6].index_help);
+        user.set('SKIN_HAIR_COLOR_2', faceLastEditor[2].index_help);
+        user.set('SKIN_EYEBROWS', faceLastEditor[3].index_help);
+        user.set('SKIN_EYEBROWS_COLOR', faceLastEditor[4].index_help);
+        user.set('SKIN_EYE_COLOR', faceLastEditor[5].index_help);
+        user.set('SKIN_OVERLAY_9', faceLastEditor[6].index_help - 1);
+        user.set('SKIN_OVERLAY_COLOR_9', faceLastEditor[7].index_help);
 
-        user.set('SKIN_OVERLAY_1', faceLastEditor[7].index_help - 1);
-        user.set('SKIN_OVERLAY_1_COLOR', faceLastEditor[8].index_help);
+        /*user.set('SKIN_OVERLAY_1', faceLastEditor[8].index_help - 1);
+        user.set('SKIN_OVERLAY_COLOR_1', faceLastEditor[9].index_help);*/
 
         user.updateCharacterFace(true);
     }
@@ -405,11 +408,27 @@ mp.events.add('client:events:custom:choiceRole', function(roleIndex) {
             if (user.getCache('role') > 0) {
                 user.set('is_custom', true);
                 user.save();
-                ui.notify('Вы уже выбрали роль');
+                user.showCustomNotify('Вы уже выбирали роль', 1);
 
                 let roleIdx = user.getCache('role') - 1;
                 user.teleport(enums.spawnByRole[roleIdx][0], enums.spawnByRole[roleIdx][1], enums.spawnByRole[roleIdx][2], enums.spawnByRole[roleIdx][3]);
                 return;
+            }
+
+            switch (roleIndex) {
+                case 0:
+                    //Еда, вода
+                    //Нет регистрации
+                    //После квеста 3 уровень рабочего стажа
+                    break;
+                case 1:
+                    //Телефон
+                    //Временная регистрация
+                    user.addCashMoney(500);
+                    break;
+                case 2:
+                    //Выдадут Гражданство
+                    break;
             }
 
             user.set('role', roleIndex + 1);
@@ -417,8 +436,6 @@ mp.events.add('client:events:custom:choiceRole', function(roleIndex) {
             user.save();
 
             user.teleport(enums.spawnByRole[roleIndex][0], enums.spawnByRole[roleIndex][1], enums.spawnByRole[roleIndex][2], enums.spawnByRole[roleIndex][3]);
-
-
         }
         catch (e) {
             methods.debug(e);
@@ -439,7 +456,7 @@ mp.events.add('client:events:custom:camera', function(rot, range, height) {
     }
 });
 
-mp.events.add('client:events:custom:register', function(name, surname, age, national) {
+mp.events.add('client:events:custom:register', function(name, surname, age, promocode, referer, national) {
     try {
         if (age < 18) {
             ui.notify('Возраст не может быть меньше 18 лет', 1);
@@ -449,7 +466,7 @@ mp.events.add('client:events:custom:register', function(name, surname, age, nati
             ui.notify('Возраст не может быть больше 60 лет', 1);
             return;
         }
-        mp.events.callRemote('server:user:createUser', name, surname, age, national);
+        mp.events.callRemote('server:user:createUser', name, surname, age, promocode, referer, national);
     }
     catch (e) {
         methods.debug(e);
@@ -458,6 +475,14 @@ mp.events.add('client:events:custom:register', function(name, surname, age, nati
 
 mp.events.add('client:events:loginUser:finalCreate', function() {
     try {
+        if (user.isLogin()) {
+            user.init2();
+            mp.players.local.position = new mp.Vector3(9.66692, 528.34783, 170.63504);
+            mp.players.local.setRotation(0, 0, 123.53768, 0, true);
+        }
+        user.hideLoadDisplay();
+        setTimeout(ui.hideHud, 500);
+
         user.setLogin(true);
         ui.callCef('authMain','{"type": "hide"}');
         ui.callCef('customization','{"type": "show"}');
@@ -471,11 +496,22 @@ mp.events.add('client:events:loginUser:finalCreate', function() {
     }
 });
 
-mp.events.add('client:events:loginUser:success', function() {
+mp.events.add('client:events:loginUser:success', async function() {
     user.setLogin(true);
-    setTimeout(function () {
-        inventory.getItemList(inventory.types.Player, user.getCache('id'));
-    }, 5000);
+
+    if (await user.get('is_custom')) {
+        user.destroyCam();
+        mp.players.local.freezePosition(false);
+        mp.players.local.setCollision(true, true);
+        mp.gui.cursor.show(false, false);
+        mp.gui.chat.show(true);
+        mp.gui.chat.activate(true);
+        mp.game.ui.displayRadar(true);
+    }
+
+    setTimeout(async function () {
+        inventory.getItemList(inventory.types.Player, await user.get('id'));
+    }, 3000);
 });
 
 mp.events.add('client:user:updateCache', (data) => {
@@ -1624,7 +1660,7 @@ mp.events.add('client:inventory:unEquip', function(id, itemId) {
         inventory.updateItemCount(id, money);
         user.save();
     }
-    else if (itemId >= 54 && itemId <= 137 || itemId >= 8 && itemId <= 10) {
+    else if (items.isWeapon(itemId)) {
 
         let wpName = items.getItemNameHashById(itemId);
         let wpHash = weapons.getHashByName(wpName);
@@ -1788,7 +1824,7 @@ mp.events.add('client:inventory:equip', function(id, itemId, count, aparams) {
             return;
         }
     }
-    else if (itemId >= 54 && itemId <= 137 || itemId >= 8 && itemId <= 10) {
+    else if (items.isWeapon(itemId)) {
 
         let slot = weapons.getGunSlotIdByItem(itemId);
         if (user.getCache('weapon_' + slot) == '') {

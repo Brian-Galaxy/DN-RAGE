@@ -6,6 +6,8 @@ import ui from './modules/ui';
 import weather from './manager/weather';
 import bind from './manager/bind';
 import heliCam from './manager/heliCam';
+import edu from './manager/edu';
+import quest from "./manager/quest";
 
 import user from './user';
 import admin from './admin';
@@ -1917,6 +1919,8 @@ menuList.showMainMenu = function() {
     UIMenu.Menu.AddMenuItem("Помощь").doName = 'showHelpMenu';
     UIMenu.Menu.AddMenuItem("Настройки").doName = 'showSettingsMenu';
 
+    UIMenu.Menu.AddMenuItem("Квесты").doName = 'showQuestMenu';
+
     UIMenu.Menu.AddMenuItem("~y~Задать вопрос").eventName = 'server:sendAsk';
     UIMenu.Menu.AddMenuItem("~r~Жалоба").eventName = 'server:sendReport';
 
@@ -1927,6 +1931,8 @@ menuList.showMainMenu = function() {
             menuList.showPlayerMenu();
         if (item.doName == 'showSettingsMenu')
             menuList.showSettingsMenu();
+        if (item.doName == 'showQuestMenu')
+            menuList.showQuestMenu();
         if (item.eventName)
             mp.events.callRemote(item.eventName);
     });
@@ -1953,6 +1959,50 @@ menuList.showPlayerMenu = function() {
             mp.events.callRemote('server:user:showPlayerHistory');
         else if (item.doName == 'showPlayerDoсMenu')
             menuList.showPlayerDoсMenu(mp.players.local.remoteId);
+    });
+};
+
+
+menuList.showQuestMenu = function() {
+
+    let menu = UIMenu.Menu.Create(`Квесты`, `~b~Ваши квестовые линии`);
+
+    if (user.getCache('role') === 0)
+        UIMenu.Menu.AddMenuItem(quest.getQuestName('quest_role_0')).doName = 'quest_role_0';
+
+    UIMenu.Menu.AddMenuItem(quest.getQuestName('quest_standart')).doName = 'quest_standart';
+    UIMenu.Menu.AddMenuItem(quest.getQuestName('quest_gang')).doName = 'quest_gang';
+
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+    menu.ItemSelect.on(async (item, index) => {
+        if (item == closeItem)
+            UIMenu.Menu.HideMenu();
+        if (item.doName) {
+            menuList.showQuestListMenu(item.doName);
+        }
+    });
+};
+
+menuList.showQuestListMenu = function(name) {
+
+    let menu = UIMenu.Menu.Create(`Квесты`, `~b~${quest.getQuestName(name)}`);
+
+    for (let i = 0; i <= quest.getQuestLineMax(name); i++) {
+
+        let mItem = UIMenu.Menu.AddMenuItem(`${user.getCache(name) >= i ? '' : '~c~'}${quest.getQuestLineName(name, i)}`);
+        mItem.SetRightBadge(user.getCache(name) > i ? 18 : 0);
+        if(user.getCache(name) >= i)
+            mItem.idx = i;
+    }
+
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+
+    menu.ItemSelect.on(async (item, index) => {
+        if (item == closeItem)
+            UIMenu.Menu.HideMenu();
+        if (item.idx >= 0) {
+            mp.game.ui.notifications.show(`~b~${quest.getQuestLineName(name, item.idx)}\n~s~${quest.getQuestLineInfo(name, item.idx)}`);
+        }
     });
 };
 
@@ -7304,18 +7354,46 @@ menuList.showBotQuestRole0Menu = function()
         return;
     }*/
 
-    if (user.getCache('quest_role_0') == 0) {
+    if (user.getCache('quest_role_0') > 2) {
         mp.game.ui.notifications.show(`~r~Вам не доступна эта квестовая линия`);
         return;
     }
 
-    let menu = UIMenu.Menu.Create("Бар", "~b~Меню бара");
+    let menu = UIMenu.Menu.Create("Каспер", "~b~Взаимодействие с Каспером");
 
-    let menuItem = UIMenu.Menu.AddMenuItem("Вода");
+    if (user.getCache('quest_role_0') < 1)
+        UIMenu.Menu.AddMenuItem("Получить задание").take = true;
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = "closeButton";
+
+    menu.ItemSelect.on(async (item, index) => {
+        UIMenu.Menu.HideMenu();
+        if (item.take)
+            quest.role0();
+    });
+};
+
+menuList.showBotQuestRoleAllMenu = function()
+{
+    /*if (user.getCache('role') != 1) {
+        mp.game.ui.notifications.show(`~r~Вам не доступна эта квестовая линия`);
+        return;
+    }*/
+
+    let menu = UIMenu.Menu.Create("Майкл", "~b~Взаимодействие с Майклом");
+
+    UIMenu.Menu.AddMenuItem("Получить задание").take = true;
+    UIMenu.Menu.AddMenuItem(" ");
+    UIMenu.Menu.AddMenuItem("Посмотреть обучение", "Займёт ~g~5~s~ минут твоего времени").full = true;
+    UIMenu.Menu.AddMenuItem("Посмотреть все фишки проекта", "Займёт ~g~2~s~ минуты твоего времени").short = true;
 
     UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = "closeButton";
     menu.ItemSelect.on(async (item, index) => {
         UIMenu.Menu.HideMenu();
+        if (item.full)
+            edu.startLong();
+        if (item.short)
+            edu.startShort();
     });
 };
 

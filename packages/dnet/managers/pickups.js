@@ -29,6 +29,7 @@ pickups.Blue100 = [187, 222, 251, 100];
 pickups.White = [255, 255, 255, 100];
 
 pickups.BotRole0 = new mp.Vector3(-414.9725036621094, -2644.56201171875, 5.000218868255615);
+pickups.BotRoleAll = new mp.Vector3(-1374.5379638671875, -503.15283203125, 32.157405853271484);
 
 pickups.PrintShopPos = new mp.Vector3(-1234.7786865234375, -1477.7230224609375, 3.324739933013916);
 
@@ -336,6 +337,8 @@ pickups.checkPressE = function(player) {
 
     if (methods.distanceToPos(pickups.BotRole0, playerPos) < distanceCheck)
         player.call('client:menuList:showBotQuestRole0Menu');
+    if (methods.distanceToPos(pickups.BotRoleAll, playerPos) < distanceCheck)
+        player.call('client:menuList:showBotQuestRoleAllMenu');
 
     if (methods.distanceToPos(pickups.BankMazeOfficePos, playerPos) < distanceCheck)
         player.call('client:menuList:showMazeOfficeMenu');
@@ -523,6 +526,7 @@ pickups.createPickups = function() {
     methods.createStaticCheckpointV(pickups.PrintShopPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
 
     methods.createStaticCheckpointV(pickups.BotRole0, 'Нажмите ~g~E~s~ чтобы взаимодействовать с NPC', 1, -1, pickups.Yellow);
+    methods.createStaticCheckpointV(pickups.BotRoleAll, 'Нажмите ~g~E~s~ чтобы взаимодействовать с NPC', 1, -1, pickups.Yellow);
 
     //Invader
     methods.createStaticCheckpointV(pickups.LifeInvaderShopPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);

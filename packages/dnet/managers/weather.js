@@ -131,9 +131,9 @@ weather.weatherTimer = function() {
 
     _windSpeed = methods.getRandomInt(0, 4);
 
-    if (methods.getRandomInt(0, 20) == 0)
+    if (methods.getRandomInt(0, 70) == 0)
         _windSpeed = methods.getRandomInt(4, 8);
-    if (methods.getRandomInt(0, 50) == 0)
+    if (methods.getRandomInt(0, 100) == 0)
         _windSpeed = methods.getRandomInt(8, 12);
 
     setTimeout(weather.weatherTimer, 30 * 60 * 1000);

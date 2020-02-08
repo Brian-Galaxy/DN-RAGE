@@ -306,19 +306,24 @@ for(let code in keyCodes) {
             mp.events.call('client:changeFireMod');
         }
         if (user.getCache('s_bind_fingerpoint') == parseInt(code)) {
-            pSync.pointing.start();
+            if (!methods.isBlockKeys())
+                pSync.pointing.start();
         }
         if (user.getCache('s_bind_helicam') == parseInt(code)) {
-            heliCam.keyPressToggleHeliCam();
+            if (!methods.isBlockKeys())
+                heliCam.keyPressToggleHeliCam();
         }
         if (user.getCache('s_bind_helicam_vision') == parseInt(code)) {
-            heliCam.keyPressToggleVision();
+            if (!methods.isBlockKeys())
+                heliCam.keyPressToggleVision();
         }
         if (user.getCache('s_bind_helicam_lock') == parseInt(code)) {
-            heliCam.keyPressToggleLockVehicle();
+            if (!methods.isBlockKeys())
+                heliCam.keyPressToggleLockVehicle();
         }
         if (user.getCache('s_bind_helilight') == parseInt(code)) {
-            heliCam.keyPressToggleSpotLight();
+            if (!methods.isBlockKeys())
+                heliCam.keyPressToggleSpotLight();
         }
         if (bind.isChange)
             bind.bindNewKey(parseInt(code));

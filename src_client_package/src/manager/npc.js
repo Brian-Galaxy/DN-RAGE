@@ -10,6 +10,9 @@ npc.loadAll = function() {
     //BotSpawn Role0
     npc.create(mp.game.joaat("s_m_y_dockwork_01"), new mp.Vector3(-415.9264831542969, -2645.4287109375, 6.000219345092773), 316.27508544921875, false, "WORLD_HUMAN_CLIPBOARD");
 
+    //BotSpawn All
+    npc.create(mp.game.joaat("s_m_y_dockwork_01"), new mp.Vector3(-1373.781494140625, -501.8981018066406, 33.157405853271484), 151.9842071533203, false, "WORLD_HUMAN_CLIPBOARD");
+
 
     // 24/7 - Гора Чиллиад - Шоссе Сенора
     npc.create(mp.game.joaat("mp_m_shopkeep_01"), new mp.Vector3(1728.476, 6416.668, 35.03724), -109.9557, false, "WORLD_HUMAN_STAND_IMPATIENT");

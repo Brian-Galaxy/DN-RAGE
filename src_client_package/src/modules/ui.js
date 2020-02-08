@@ -44,8 +44,21 @@ ui.create = function() {
     //ui.callCef('authMain','{"type": "show"}');
 };
 
-ui.notify = function(text) {
-    ui.callCef('notify','{"text": "' + text + '"}');
+ui.showDialog = function(text, title = '', icon = 'none', buttons = ['Ок'], position = ui.dialogTypes.center, dtype = 1) {
+    mp.gui.cursor.show(true, true);
+    ui.callCef('dialog', JSON.stringify({type: 'updateValues', isShow: true, position: position, text: text, buttons: buttons, icon: icon, title: title, dtype: dtype}));
+};
+
+ui.dialogTypes = {
+    leftTop: 'leftTop',
+    left: 'left',
+    leftBottom: 'leftBottom',
+    centerTop: 'centerTop',
+    center: 'center',
+    centerBottom: 'centerBottom',
+    rightTop: 'rightTop',
+    right: 'right',
+    rightBottom: 'rightBottom',
 };
 
 ui.fixInterface = function() {

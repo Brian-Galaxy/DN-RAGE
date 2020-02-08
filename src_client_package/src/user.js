@@ -329,18 +329,20 @@ user.respawn = function(x, y, z) {
     }, 1500);
 };
 
-user.teleportv = function(pos, rot) {
+user.teleportv = function(pos, rot, isHud = true) {
     user.isTeleport = true;
     mp.game.streaming.requestCollisionAtCoord(pos.x, pos.y, pos.z);
-    user.showLoadDisplay(500);
+    user.showLoadDisplay(500, isHud);
     //methods.wait(500);
     setTimeout(function () {
+        mp.attachmentMngr.shutdownFor(mp.players.local);
         mp.players.local.position = pos;
         if (rot != undefined)
             mp.players.local.setRotation(0, 0, methods.parseInt(rot), 0, true);
         //methods.wait(500);
         setTimeout(function () {
-            user.hideLoadDisplay(500);
+            mp.attachmentMngr.initFor(mp.players.local);
+            user.hideLoadDisplay(500, isHud);
             setTimeout(function () {
                 user.isTeleport = false;
             }, 500);
@@ -357,6 +359,7 @@ user.teleportVehV = function(pos, rot) {
     //methods.wait(500);
     setTimeout(function () {
         try {
+            mp.attachmentMngr.shutdownFor(mp.players.local);
             mp.game.streaming.requestAdditionalCollisionAtCoord(pos.x, pos.y, pos.z);
             mp.game.streaming.requestCollisionAtCoord(pos.x, pos.y, pos.z);
             mp.game.invoke(methods.SET_FOLLOW_VEHICLE_CAM_VIEW_MODE, 4);
@@ -379,6 +382,7 @@ user.teleportVehV = function(pos, rot) {
         }
         //methods.wait(500);
         setTimeout(function () {
+            mp.attachmentMngr.initFor(mp.players.local);
             mp.game.invoke(methods.SET_FOLLOW_VEHICLE_CAM_VIEW_MODE, camMode);
             user.hideLoadDisplay(500);
             setTimeout(function () {
@@ -388,8 +392,8 @@ user.teleportVehV = function(pos, rot) {
     }, 500);
 };
 
-user.teleport = function(x, y, z, rot) {
-    user.teleportv(new mp.Vector3(x, y, z), rot);
+user.teleport = function(x, y, z, rot, isHud = true) {
+    user.teleportv(new mp.Vector3(x, y, z), rot, isHud);
 };
 
 user.teleportVeh = function(x, y, z, rot) {
@@ -434,16 +438,18 @@ user.removeWaypoint = function() {
     user.setWaypoint(mp.players.local.position.x, mp.players.local.position.y);
 };
 
-user.hideLoadDisplay = function(dur = 500) {
+user.hideLoadDisplay = function(dur = 500, isHud = true) {
     mp.game.cam.doScreenFadeIn(dur);
     setTimeout(function () {
-        ui.showHud();
+        if (isHud)
+            ui.showHud();
     }, dur);
 };
 
-user.showLoadDisplay = function(dur = 500) {
+user.showLoadDisplay = function(dur = 500, isHud = true) {
     mp.game.cam.doScreenFadeOut(dur);
-    ui.hideHud();
+    if (isHud)
+        ui.hideHud();
 };
 
 user.clearChat = function() {
@@ -471,6 +477,7 @@ user.init = function() {
         user.stopAllScreenEffect();
         user.hideLoadDisplay();
         user.clearChat();
+        user.setAlpha(255);
 
         user.init2();
     }
@@ -554,6 +561,10 @@ user.setVirtualWorld = function(worldId) {
 
 user.setVirtualWorldVeh = function(worldId) {
     mp.events.callRemote('server:user:setVirtualWorldVeh', worldId);
+};
+
+user.setAlpha = function(alpha) {
+    mp.events.callRemote('server:user:setAlpha', alpha);
 };
 
 user.setPlayerModel = function(model) {

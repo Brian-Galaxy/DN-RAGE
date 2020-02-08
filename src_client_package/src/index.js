@@ -72,6 +72,17 @@ try {
 
     phone.findNetworkTimer();
 
+    if(!mp.game.streaming.isIplActive("int_magazel1_milo_"))
+    {
+        user.showCustomNotify('Идёт прогрузка интерьеров и маппинга, возможно игра подвиснет на несколько секунд...');
+        setTimeout(function () {
+            mp.game.invoke("0xD7C10C4A637992C9"); // _LOAD_SP_DLC_MAPS
+            mp.game.invoke("0x0888C3502DBBEEF5"); // _LOAD_MP_DLC_MAPS
+
+            mp.game.invoke("0xD7C10C4A637992C9"); mp.game.invoke("0x0888C3502DBBEEF5"); // _LOAD_MP_DLC_MAPS
+        }, 1000);
+    }
+
     /*mp.events.add('guiReady', () => {
         ui.create();
     });*/

@@ -148,6 +148,31 @@ methods.parseFloat = function (str) {
     return parseFloat(str) || 0;
 };
 
+methods.parseFloatHex = function (str) {
+    str = '0x' + str;
+    var float = 0, sign, order, mantiss,exp,
+        int = 0, multi = 1;
+    if (/^0x/.exec(str)) {
+        int = parseInt(str,16);
+    }else{
+        for (var i = str.length -1; i >=0; i -= 1) {
+            if (str.charCodeAt(i)>255) {
+                return 0;
+            }
+            int += str.charCodeAt(i) * multi;
+            multi *= 256;
+        }
+    }
+    sign = (int>>>31)?-1:1;
+    exp = (int >>> 23 & 0xff) - 127;
+    mantiss = ((int & 0x7fffff) + 0x800000).toString(2);
+    for (i=0; i<mantiss.length; i+=1){
+        float += parseInt(mantiss[i])? Math.pow(2,exp):0;
+        exp--;
+    }
+    return float*sign;
+};
+
 methods.getRandomInt = function (min, max) {
     return Math.floor(Math.random() * (max - min)) + min;
 };

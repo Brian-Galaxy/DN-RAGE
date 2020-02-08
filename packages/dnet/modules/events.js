@@ -221,6 +221,14 @@ mp.events.addRemoteCounted('server:user:setVirtualWorldVeh', (player, vwId) => {
     }
 });
 
+mp.events.addRemoteCounted('server:user:setAlpha', (player, alpha) => {
+    try {
+        player.alpha = alpha;
+    } catch (e) {
+        console.log(e);
+    }
+});
+
 mp.events.addRemoteCounted('server:user:serVariable', (player, key, val) => {
     try {
         methods.debug('server:user:serVariable', key, val);

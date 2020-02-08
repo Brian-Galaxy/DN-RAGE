@@ -156,6 +156,8 @@ user.loginAccount = function(player, login, pass) {
 
                         let spawnList = [];
 
+                        spawnList.push('Стандарт'); //TODO SPAWN
+
                         let userId = row['id'];
                         if (user.hasById(userId, 'timestamp') && (user.getById(userId, 'timestamp') + 60 * 15) > methods.getTimeStamp())
                             spawnList.push('Точка выхода');

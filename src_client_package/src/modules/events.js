@@ -60,6 +60,14 @@ mp.events.add('client:events:disableDefaultControls', function (disable) {
     _playerDisableDefaultControls = disable;
 });
 
+mp.events.add('client:events:dialog:onClose', function () {
+
+});
+
+mp.events.add('client:events:dialog:click', function () {
+
+});
+
 mp.events.add('client:user:auth:register', function(mail, login, passwordReg, passwordRegCheck, acceptRules) {
     //methods.debug(`'${mail} ${login} ${passwordReg} ${passwordRegCheck} ${acceptRules}'`);
     try {
@@ -459,11 +467,11 @@ mp.events.add('client:events:custom:camera', function(rot, range, height) {
 mp.events.add('client:events:custom:register', function(name, surname, age, promocode, referer, national) {
     try {
         if (age < 18) {
-            ui.notify('Возраст не может быть меньше 18 лет', 1);
+            user.showCustomNotify('Возраст не может быть меньше 18 лет', 1);
             return;
         }
         else if (age > 60) {
-            ui.notify('Возраст не может быть больше 60 лет', 1);
+            user.showCustomNotify('Возраст не может быть больше 60 лет', 1);
             return;
         }
         mp.events.callRemote('server:user:createUser', name, surname, age, promocode, referer, national);
@@ -964,6 +972,16 @@ mp.events.add('client:menuList:showBotQuestRole0Menu', () => {
     }
 });
 
+mp.events.add('client:menuList:showBotQuestRoleAllMenu', () => {
+    try {
+        methods.debug('Event: client:menuList:showBotQuestRoleAllMenu');
+        menuList.showBotQuestRoleAllMenu();
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
 mp.events.add('client:showToPlayerItemListMenu', (data, ownerType, ownerId) => {
     try {
         methods.debug('Event: client:showToPlayerItemListMenu');
@@ -1097,7 +1115,10 @@ mp.events.add('client:handcuffs', (value) => {
         }, 2500);
     } else {
         clearInterval(handcuffTimerId);
-        user.playAnimation("mp_arresting", "b_uncuff", 8);
+        if (mp.players.local.isPlayingAnim("mp_arresting", "idle", 3) == 0)
+            user.stopAllAnimation();
+        else
+            user.playAnimation("mp_arresting", "b_uncuff", 8);
     }
 });
 
@@ -2076,6 +2097,14 @@ mp.events.add("client:vehicle:checker", function (vehicle, seat) {
     }
 });
 
+mp.events.add('client:events:dialog:onClose', function () {
+    mp.gui.cursor.show(false, false);
+});
+
+mp.events.add('client:events:dialog:click', function () {
+    mp.gui.cursor.show(false, false);
+});
+
 let loadIndicatorDist = 15;
 let showIds = true;
 
@@ -2125,7 +2154,11 @@ mp.events.add('render', () => {
                     if (user.hasDating(player.getVariable('id')))
                         name = user.getDating(player.getVariable('id')) + ' | ';
                     //if(!player.getVariable('hiddenId'))
-                    ui.drawText3D( pref + name + player.id + ' ' +  indicatorColor + typingLabel, headPosition.x, headPosition.y, headPosition.z + 0.1);
+
+                    const entity = player.vehicle ? player.vehicle : player;
+                    const vector = entity.getVelocity();
+                    const frameTime = methods.parseFloatHex(mp.game.invoke('0x15C40837039FFAF7').toString(16));
+                    ui.drawText3D( pref + name + player.id + ' ' +  indicatorColor + typingLabel, headPosition.x + vector.x * frameTime, headPosition.y + vector.y * frameTime, headPosition.z + vector.z * frameTime + 0.1);
                 }
             }
             catch (e) {
@@ -2207,6 +2240,7 @@ mp.keys.bind(0x1B, true, function() {
         return;
     ui.callCef('license', JSON.stringify({type: 'hide'}));
     ui.callCef('certificate', JSON.stringify({type: 'hide'}));
+    ui.callCef('dialog', JSON.stringify({type: 'hide'}));
     phone.hide();
     inventory.hide();
 });
@@ -2217,6 +2251,7 @@ mp.keys.bind(0x08, true, function() {
         return;
     ui.callCef('license', JSON.stringify({type: 'hide'}));
     ui.callCef('certificate', JSON.stringify({type: 'hide'}));
+    ui.callCef('dialog', JSON.stringify({type: 'hide'}));
 });
 
 mp.events.add("playerDeath", function (player, reason, killer) {

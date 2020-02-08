@@ -211,7 +211,6 @@ enums.userData = [
     "referer",
 
     "quest_role_0",
-    "quest_role_2",
     "quest_standart",
     "quest_gang",
 

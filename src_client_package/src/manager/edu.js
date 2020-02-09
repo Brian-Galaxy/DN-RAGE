@@ -294,12 +294,24 @@ let longPos = [
 ];
 
 edu.startShort = function() {
+
+    if (user.getCache('wanted_level') > 0) {
+        mp.game.ui.notifications.show("~r~Вы в розыске, обучение не доступно");
+        return;
+    }
+
     isShort = true;
     edu.init();
     edu.nextShort();
 };
 
 edu.startLong = function() {
+
+    if (user.getCache('wanted_level') > 0) {
+        mp.game.ui.notifications.show("~r~Вы в розыске, обучение не доступно");
+        return;
+    }
+
     isLong = true;
     edu.init();
     edu.nextLong();

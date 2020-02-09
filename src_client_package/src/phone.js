@@ -272,15 +272,17 @@ phone.showAppList = function() {
         }
     }
 
-    let item = {
-        title: 'E-Corp',
-        text: `Ваш надежный кошелёк`,
-        img: 'community',
-        clickable: true,
-        type: 1,
-        params: { name: "ecorp" }
-    };
-    menu.items[1].umenu.push(item);
+    if (user.getCache('crypto_card').trim() !== '') {
+        let item = {
+            title: 'E-Corp',
+            text: `Ваш надежный кошелёк`,
+            img: 'community',
+            clickable: true,
+            type: 1,
+            params: { name: "ecorp" }
+        };
+        menu.items[1].umenu.push(item);
+    }
 
     phone.showMenu(menu);
 };

@@ -343,10 +343,6 @@ user.loadUser = function(player, name, spawn = 'Стандарт') {
                 user.set(player, 'login_date', methods.getTimeStamp());
                 user.set(player, 'login_ip', player.ip);
 
-                if (user.get(player, 'crypto_card').trim() == '') {
-                    user.set(player, 'crypto_card', methods.md5(`${methods.getTimeStamp()}${player.socialClub}`));
-                }
-
                 //mysql.executeQuery(`INSERT INTO log_auth (nick, lic, datetime) VALUES ('${user.getRpName(player)}', '${player.serial}', '${methods.getTimeStamp()}')`);
             } catch (e) {
                 methods.debug(e);

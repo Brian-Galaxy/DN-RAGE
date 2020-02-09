@@ -239,6 +239,16 @@ mp.events.addRemoteCounted('server:user:serVariable', (player, key, val) => {
     }
 });
 
+mp.events.addRemoteCounted('server:user:generateCryptoCard', (player) => {
+    try {
+        user.set(player, 'crypto_card', methods.md5(`${methods.getTimeStamp()}${player.socialClub}`));
+        user.save(player);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
 mp.events.addRemoteCounted('server:user:setDecoration', (player, slot, type) => {
     user.setDecoration(player, slot, type);
 });
@@ -1515,6 +1525,20 @@ mp.events.addRemoteCounted('server:vehicles:spawnJobCar', (player, x, y, z, head
         catch (e) {
             methods.debug(e);
         }
+
+        setTimeout(function () {
+            user.hideLoadDisplay(player);
+        }, 500);
+
+    }, 500);
+});
+
+mp.events.addRemoteCounted('server:vehicles:destroy', (player) => {
+
+    user.showLoadDisplay(player);
+    setTimeout(function () {
+
+        vehicles.respawn(player.vehicle);
 
         setTimeout(function () {
             user.hideLoadDisplay(player);

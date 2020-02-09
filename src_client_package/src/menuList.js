@@ -35,6 +35,7 @@ import mail from "./jobs/mail";
 import photo from "./jobs/photo";
 import tree from "./jobs/tree";
 import builder from "./jobs/builder";
+import loader from "./jobs/loader";
 
 let menuList = {};
 
@@ -1494,7 +1495,11 @@ menuList.showMeriaMainMenu = function() {
     let menu = UIMenu.Menu.Create(`Секретарь`, `~b~Секретарь правительства`);
 
     UIMenu.Menu.AddMenuItem("Оформить WorkID").doName = 'getWorkId';
-    UIMenu.Menu.AddMenuItem("Оформить регистрацию", 'Стоимость: ~g~$1,000').doName = 'getRegister';
+
+    if (user.getCache('online_time') < 200)
+        UIMenu.Menu.AddMenuItem("Оформить регистрацию", 'Стоимость: ~g~Бесплатно').doName = 'getRegisterFree';
+    else
+        UIMenu.Menu.AddMenuItem("Оформить регистрацию", 'Стоимость: ~g~$1,000').doName = 'getRegister';
     UIMenu.Menu.AddMenuItem("Оформить гражданство", 'Стоимость: ~g~$10,000').doName = 'getFullRegister';
 
     UIMenu.Menu.AddMenuItem("Трудовая биржа").doName = 'showMeriaJobListMenu';
@@ -1522,10 +1527,17 @@ menuList.showMeriaMainMenu = function() {
                 mp.game.ui.notifications.show("~r~У Вас недостаточно средств на банковском счету");
                 return;
             }
-            if (user.getCache('work_lvl') < 2) {
-                mp.game.ui.notifications.show("~r~Рабочий стаж должен быть 2 уровня");
+            if (user.getCache('reg_status') > 0) {
+                mp.game.ui.notifications.show("~r~Вам не нужна регистрация");
                 return;
             }
+            user.removeCashMoney(1000, 'Получение регистрации');
+            user.set('reg_status', 1);
+            mp.game.ui.notifications.show("~g~Поздравялем, вы получили регистрацию!");
+            user.addHistory(0, 'Получил регистрацию');
+            user.save();
+        }
+        if (item.doName == 'getRegisterFree') {
             if (user.getCache('reg_status') > 0) {
                 mp.game.ui.notifications.show("~r~Вам не нужна регистрация");
                 return;
@@ -1552,6 +1564,7 @@ menuList.showMeriaMainMenu = function() {
                 mp.game.ui.notifications.show("~r~Вам не нужно гражданство");
                 return;
             }
+            user.removeCashMoney(10000, 'Получение гражданства');
             user.set('reg_status', 2);
             mp.game.ui.notifications.show("~g~Поздравялем, вы получили регистрацию!");
             user.addHistory(0, 'Получил гражданство');
@@ -1573,6 +1586,9 @@ menuList.showMeriaMainMenu = function() {
                 mp.game.ui.notifications.show("~g~Поздравялем, вы получили WorkID!");
                 user.addHistory(0, 'Получил WorkID');
                 user.save();
+
+                quest.role0();
+                quest.standart();
             }
             catch (e) {
                 methods.error(e);
@@ -1648,9 +1664,12 @@ menuList.showMeriaJobListMenu = function() {
                 mp.game.ui.notifications.show("~r~Для начала оформите Work ID");
                 return;
             }
+
             user.set('job', item.jobName);
             mp.game.ui.notifications.show("~g~Вы устроились на работу");
             user.save();
+
+            quest.standart();
         }
     });
 };
@@ -1919,7 +1938,7 @@ menuList.showMainMenu = function() {
     UIMenu.Menu.AddMenuItem("Помощь").doName = 'showHelpMenu';
     UIMenu.Menu.AddMenuItem("Настройки").doName = 'showSettingsMenu';
 
-    UIMenu.Menu.AddMenuItem("Квесты").doName = 'showQuestMenu';
+    UIMenu.Menu.AddMenuItem("Список квестов").doName = 'showQuestMenu';
 
     UIMenu.Menu.AddMenuItem("~y~Задать вопрос").eventName = 'server:sendAsk';
     UIMenu.Menu.AddMenuItem("~r~Жалоба").eventName = 'server:sendReport';
@@ -1965,13 +1984,17 @@ menuList.showPlayerMenu = function() {
 
 menuList.showQuestMenu = function() {
 
-    let menu = UIMenu.Menu.Create(`Квесты`, `~b~Ваши квестовые линии`);
+    let menu = UIMenu.Menu.Create(`Задания`, `~b~Ваши квестовые линии`);
 
-    if (user.getCache('role') === 0)
-        UIMenu.Menu.AddMenuItem(quest.getQuestName('quest_role_0')).doName = 'quest_role_0';
+    quest.getQuestAllNames().forEach(item => {
+        if (!quest.getQuestCanSee(item))
+            return;
+        let mItem = UIMenu.Menu.AddMenuItem(quest.getQuestName(item));
+        mItem.SetRightBadge(user.getCache(item) === quest.getQuestLineMax(item) ? 18 : 0);
+        mItem.doName = item;
+    });
 
-    UIMenu.Menu.AddMenuItem(quest.getQuestName('quest_standart')).doName = 'quest_standart';
-    UIMenu.Menu.AddMenuItem(quest.getQuestName('quest_gang')).doName = 'quest_gang';
+    UIMenu.Menu.AddMenuItem(`~b~Справка`).ask = true;
 
     let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
     menu.ItemSelect.on(async (item, index) => {
@@ -1980,15 +2003,21 @@ menuList.showQuestMenu = function() {
         if (item.doName) {
             menuList.showQuestListMenu(item.doName);
         }
+        if (item.ask) {
+            ui.showDialog('В случае, если квест не выполнился автоматически, приезжайте к боту, который выдает вам этот квест и завершите его там через кнопку получить задание');
+        }
     });
 };
 
 menuList.showQuestListMenu = function(name) {
 
-    let menu = UIMenu.Menu.Create(`Квесты`, `~b~${quest.getQuestName(name)}`);
+    let menu = UIMenu.Menu.Create(`Задания`, `~b~${quest.getQuestName(name)}`);
 
-    for (let i = 0; i <= quest.getQuestLineMax(name); i++) {
+    /*let mItem = UIMenu.Menu.AddMenuItem(`~g~Получить местоположение бота`);
+    mItem.posX = quest.getQuestPos(name).x;
+    mItem.posY = quest.getQuestPos(name).y;*/
 
+    for (let i = 0; i < quest.getQuestLineMax(name); i++) {
         let mItem = UIMenu.Menu.AddMenuItem(`${user.getCache(name) >= i ? '' : '~c~'}${quest.getQuestLineName(name, i)}`);
         mItem.SetRightBadge(user.getCache(name) > i ? 18 : 0);
         if(user.getCache(name) >= i)
@@ -2001,7 +2030,10 @@ menuList.showQuestListMenu = function(name) {
         if (item == closeItem)
             UIMenu.Menu.HideMenu();
         if (item.idx >= 0) {
-            mp.game.ui.notifications.show(`~b~${quest.getQuestLineName(name, item.idx)}\n~s~${quest.getQuestLineInfo(name, item.idx)}`);
+            mp.game.ui.notifications.show(`~b~${quest.getQuestLineName(name, item.idx)}\n~s~${quest.getQuestLineInfo(name, item.idx)}\n~b~Награда: ~s~${quest.getQuestLinePrize(name, item.idx)}`);
+        }
+        if (item.posX) {
+            user.setWaypoint(item.posX, item.posY);
         }
     });
 };
@@ -2397,7 +2429,7 @@ menuList.showPlayerStatsMenu = function() {
     if (user.getCache('bank_card') > 0)
         UIMenu.Menu.AddMenuItem("~b~Банковская карта:~s~").SetRightLabel(`${methods.bankFormat(user.getCache('bank_card'))}`);
 
-    //UIMenu.Menu.AddMenuItem("~b~Розыск:~s~").SetRightLabel(`${user.get('wanted_level') > 0 ? '~r~В розыске' : '~g~Нет'}`);
+    UIMenu.Menu.AddMenuItem("~b~Розыск:~s~").SetRightLabel(`${user.getCache('wanted_level') > 0 ? '~r~В розыске' : '~g~Нет'}`);
     //UIMenu.Menu.AddMenuItem("~b~Рецепт марихуаны:~s~").SetRightLabel(`${user.get('allow_marg') ? 'Есть' : '~r~Нет'}`);
 
     let label = '';
@@ -5477,6 +5509,9 @@ menuList.showVehShopModelInfoMenu = function(model)
             setTimeout(function () {
                 mp.events.callRemote('server:vShop:buy', vInfo.display_name, cl1 , cl2, shopId);
             }, 1000);
+            setTimeout(function () {
+                quest.standart();
+            }, 20000);
         }
         if (item.isRent) {
 
@@ -7349,20 +7384,15 @@ menuList.showSapdArsenalGunModMenu = function() {
 
 menuList.showBotQuestRole0Menu = function()
 {
-    /*if (user.getCache('role') != 1) {
-        mp.game.ui.notifications.show(`~r~Вам не доступна эта квестовая линия`);
-        return;
-    }*/
-
-    if (user.getCache('quest_role_0') > 2) {
-        mp.game.ui.notifications.show(`~r~Вам не доступна эта квестовая линия`);
-        return;
-    }
-
     let menu = UIMenu.Menu.Create("Каспер", "~b~Взаимодействие с Каспером");
 
-    if (user.getCache('quest_role_0') < 1)
-        UIMenu.Menu.AddMenuItem("Получить задание").take = true;
+    UIMenu.Menu.AddMenuItem("~g~Начать/~r~Закончить~s~ рабочий день").start = true;
+    if (user.getCache('quest_role_0') < quest.getQuestLineMax('quest_role_0')) {
+        UIMenu.Menu.AddMenuItem("~g~Получить задание").take = true;
+    }
+    UIMenu.Menu.AddMenuItem(" ");
+    UIMenu.Menu.AddMenuItem("Посмотреть обучение", "Займёт ~g~5~s~ минут твоего времени").full = true;
+    UIMenu.Menu.AddMenuItem("Посмотреть все фишки проекта", "Займёт ~g~2~s~ минуты твоего времени").short = true;
 
     UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = "closeButton";
 
@@ -7370,30 +7400,56 @@ menuList.showBotQuestRole0Menu = function()
         UIMenu.Menu.HideMenu();
         if (item.take)
             quest.role0();
+        if (item.full)
+            edu.startLong();
+        if (item.short)
+            edu.startShort();
+        if (item.start)
+            loader.startOrEnd();
     });
 };
 
 menuList.showBotQuestRoleAllMenu = function()
 {
-    /*if (user.getCache('role') != 1) {
-        mp.game.ui.notifications.show(`~r~Вам не доступна эта квестовая линия`);
-        return;
-    }*/
+    let menu = UIMenu.Menu.Create("Сюзанна", "~b~Взаимодействие с Сюзанной");
 
-    let menu = UIMenu.Menu.Create("Майкл", "~b~Взаимодействие с Майклом");
-
-    UIMenu.Menu.AddMenuItem("Получить задание").take = true;
-    UIMenu.Menu.AddMenuItem(" ");
+    if (user.getCache('quest_standart') < quest.getQuestLineMax('quest_role_0'))
+    {
+        UIMenu.Menu.AddMenuItem("~g~Квестовое задание", `${quest.getQuestLineName('quest_standart', user.getCache('quest_standart'))}`).take = true;
+        UIMenu.Menu.AddMenuItem(" ");
+    }
     UIMenu.Menu.AddMenuItem("Посмотреть обучение", "Займёт ~g~5~s~ минут твоего времени").full = true;
     UIMenu.Menu.AddMenuItem("Посмотреть все фишки проекта", "Займёт ~g~2~s~ минуты твоего времени").short = true;
 
     UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = "closeButton";
     menu.ItemSelect.on(async (item, index) => {
         UIMenu.Menu.HideMenu();
+        if (item.take)
+            quest.standart();
         if (item.full)
             edu.startLong();
         if (item.short)
             edu.startShort();
+    });
+};
+
+menuList.showBotQuestGangMenu = function()
+{
+    let menu = UIMenu.Menu.Create("Ламар", "~b~Взаимодействие с Ламаром");
+
+    if (user.getCache('quest_gang') < quest.getQuestLineMax('quest_gang'))
+    {
+        UIMenu.Menu.AddMenuItem("~g~Квестовое задание", `${quest.getQuestLineName('quest_gang', user.getCache('quest_gang'))}`).take = true;
+    }
+    else {
+        UIMenu.Menu.AddMenuItem("~y~Квестовое задание не доступно");
+    }
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = "closeButton";
+    menu.ItemSelect.on(async (item, index) => {
+        UIMenu.Menu.HideMenu();
+        if (item.take)
+            quest.gang();
     });
 };
 

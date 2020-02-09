@@ -1050,6 +1050,10 @@ vehicles.spawnJobCar = (x, y, z, heading, name, job) => {
     mp.events.callRemote('server:vehicles:spawnJobCar', x, y, z, heading, name, job);
 };
 
+vehicles.destroy = () => {
+    mp.events.callRemote('server:vehicles:destroy');
+};
+
 vehicles.findVehicleByNumber = (number) => {
     methods.debug('vehicles.findVehicleByNumber');
     let returnVehicle = null;

@@ -8,6 +8,7 @@ import weapons from "./weapons";
 import enums from "./enums";
 import items from "./items";
 import phone from "./phone";
+import quest from "./manager/quest";
 
 let user = {};
 
@@ -850,6 +851,11 @@ user.stopAllScreenEffect = function() {
 
 user.buyLicense = function(type, price, month = 12)
 {
+    if (type === "b_lic") {
+        setTimeout(function () {
+            quest.standart();
+        }, 5000);
+    }
     mp.events.callRemote('server:user:buyLicense', type, price, month);
 };
 

@@ -12,6 +12,7 @@ import enums from "../enums";
 import inventory from "../inventory";
 import items from "../items";
 import phone from "../phone";
+import weapons from "../weapons";
 
 import ui from "./ui";
 
@@ -20,9 +21,9 @@ import weather from "../manager/weather";
 import timer from "../manager/timer";
 import dispatcher from "../manager/dispatcher";
 import jobPoint from "../manager/jobPoint";
+import quest from "../manager/quest";
 
 import vehicles from "../property/vehicles";
-import weapons from "../weapons";
 import business from "../property/business";
 
 mp.gui.chat.enabled = false;
@@ -506,6 +507,7 @@ mp.events.add('client:events:loginUser:finalCreate', function() {
 
 mp.events.add('client:events:loginUser:success', async function() {
     user.setLogin(true);
+    //user.updateCache();
 
     if (await user.get('is_custom')) {
         user.destroyCam();
@@ -517,9 +519,12 @@ mp.events.add('client:events:loginUser:success', async function() {
         mp.game.ui.displayRadar(true);
     }
 
+    user.showCustomNotify('Если у Вас не рабоатет управление, нажмите ALT+TAB', 0, 5, 15000);
+
     setTimeout(async function () {
         inventory.getItemList(inventory.types.Player, await user.get('id'));
-    }, 3000);
+        quest.loadAllBlip();
+    }, 5000);
 });
 
 mp.events.add('client:user:updateCache', (data) => {
@@ -976,6 +981,16 @@ mp.events.add('client:menuList:showBotQuestRoleAllMenu', () => {
     try {
         methods.debug('Event: client:menuList:showBotQuestRoleAllMenu');
         menuList.showBotQuestRoleAllMenu();
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.add('client:menuList:showBotQuestGangMenu', () => {
+    try {
+        methods.debug('Event: client:menuList:showBotQuestGangMenu');
+        menuList.showBotQuestGangMenu();
     }
     catch (e) {
         methods.debug(e);

@@ -270,9 +270,7 @@ mp.events.add('client:events:custom:updateAge', function(age) {
     }
 });
 
-mp.events.add('client:events:custom:set', function(input_editor_face, input_editor_nose, input_editor_eyes_lips, input_editor_face_last, cheked_sex, mother, father, mix1, mix2) {
-    methods.debug('CUSTOM', input_editor_face, input_editor_nose, input_editor_eyes_lips, input_editor_face_last, cheked_sex, mother, father, mix1, mix2);
-
+mp.events.add('client:events:custom:set', function(input_editor_face, input_editor_nose, input_editor_eyes_lips, input_editor_face_last, cheked_sex, mother, father, mix1, mix2, isSave) {
     try {
         let faceEditor = JSON.parse(input_editor_face);
         let noseEditor = JSON.parse(input_editor_nose);
@@ -286,7 +284,7 @@ mp.events.add('client:events:custom:set', function(input_editor_face, input_edit
                 }
             }
             else {
-                user.set('SKIN_FACE_SPECIFICATIONS', JSON.stringify([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]));
+                user.setCache('SKIN_FACE_SPECIFICATIONS', JSON.stringify([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]));
             }
         }
         catch (e) {
@@ -318,32 +316,64 @@ mp.events.add('client:events:custom:set', function(input_editor_face, input_edit
         skinSpec[18] = faceEditor[10].value / 100;
         skinSpec[19] = faceEditor[11].value / 100;
 
-        user.set('SKIN_FACE_SPECIFICATIONS', JSON.stringify(skinSpec));
+        if (isSave) {
+            user.set('SKIN_FACE_SPECIFICATIONS', JSON.stringify(skinSpec));
 
-        let fatherList = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 42, 43, 44];
-        let motherList = [21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 45];
+            let fatherList = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 42, 43, 44];
+            let motherList = [21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 45];
 
-        user.set('SKIN_MOTHER_FACE', motherList[mother]);
-        user.set('SKIN_MOTHER_SKIN', mother);
-        user.set('SKIN_FATHER_FACE', fatherList[father]);
-        user.set('SKIN_FATHER_SKIN', father);
+            user.set('SKIN_MOTHER_FACE', motherList[mother]);
+            user.set('SKIN_MOTHER_SKIN', mother);
+            user.set('SKIN_FATHER_FACE', fatherList[father]);
+            user.set('SKIN_FATHER_SKIN', father);
 
-        user.set('SKIN_PARENT_FACE_MIX', mix1 / 20);
-        user.set('SKIN_PARENT_SKIN_MIX', mix2 / 20);
+            user.set('SKIN_PARENT_FACE_MIX', mix1 / 20);
+            user.set('SKIN_PARENT_SKIN_MIX', mix2 / 20);
 
-        user.set('SKIN_HAIR', faceLastEditor[0].index_help);
-        user.set('SKIN_HAIR_COLOR', faceLastEditor[1].index_help);
-        user.set('SKIN_HAIR_COLOR_2', faceLastEditor[2].index_help);
-        user.set('SKIN_EYEBROWS', faceLastEditor[3].index_help);
-        user.set('SKIN_EYEBROWS_COLOR', faceLastEditor[4].index_help);
-        user.set('SKIN_EYE_COLOR', faceLastEditor[5].index_help);
-        user.set('SKIN_OVERLAY_9', faceLastEditor[6].index_help - 1);
-        user.set('SKIN_OVERLAY_COLOR_9', faceLastEditor[7].index_help);
+            user.set('SKIN_HAIR', faceLastEditor[0].index_help);
+            user.set('SKIN_HAIR_3', faceLastEditor[1].index_help);
+            user.set('SKIN_HAIR_COLOR', faceLastEditor[2].index_help);
+            user.set('SKIN_HAIR_COLOR_2', faceLastEditor[3].index_help);
+            user.set('SKIN_EYEBROWS', faceLastEditor[4].index_help);
+            user.set('SKIN_EYEBROWS_COLOR', faceLastEditor[5].index_help);
+            user.set('SKIN_EYE_COLOR', faceLastEditor[6].index_help);
+            user.set('SKIN_OVERLAY_9', faceLastEditor[7].index_help - 1);
+            user.set('SKIN_OVERLAY_COLOR_9', faceLastEditor[8].index_help);
 
-        /*user.set('SKIN_OVERLAY_1', faceLastEditor[8].index_help - 1);
-        user.set('SKIN_OVERLAY_COLOR_1', faceLastEditor[9].index_help);*/
+            /*user.set('SKIN_OVERLAY_1', faceLastEditor[8].index_help - 1);
+            user.set('SKIN_OVERLAY_COLOR_1', faceLastEditor[9].index_help);*/
 
-        user.updateCharacterFace(true);
+            user.updateCharacterFace(true);
+        }
+        else {
+            user.setCache('SKIN_FACE_SPECIFICATIONS', JSON.stringify(skinSpec));
+
+            let fatherList = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 42, 43, 44];
+            let motherList = [21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 45];
+
+            user.setCache('SKIN_MOTHER_FACE', motherList[mother]);
+            user.setCache('SKIN_MOTHER_SKIN', mother);
+            user.setCache('SKIN_FATHER_FACE', fatherList[father]);
+            user.setCache('SKIN_FATHER_SKIN', father);
+
+            user.setCache('SKIN_PARENT_FACE_MIX', mix1 / 20);
+            user.setCache('SKIN_PARENT_SKIN_MIX', mix2 / 20);
+
+            user.setCache('SKIN_HAIR', faceLastEditor[0].index_help);
+            user.setCache('SKIN_HAIR_3', faceLastEditor[1].index_help);
+            user.setCache('SKIN_HAIR_COLOR', faceLastEditor[2].index_help);
+            user.setCache('SKIN_HAIR_COLOR_2', faceLastEditor[3].index_help);
+            user.setCache('SKIN_EYEBROWS', faceLastEditor[4].index_help);
+            user.setCache('SKIN_EYEBROWS_COLOR', faceLastEditor[5].index_help);
+            user.setCache('SKIN_EYE_COLOR', faceLastEditor[6].index_help);
+            user.setCache('SKIN_OVERLAY_9', faceLastEditor[7].index_help - 1);
+            user.setCache('SKIN_OVERLAY_COLOR_9', faceLastEditor[8].index_help);
+
+            /*user.set('SKIN_OVERLAY_1', faceLastEditor[8].index_help - 1);
+            user.set('SKIN_OVERLAY_COLOR_1', faceLastEditor[9].index_help);*/
+
+            user.updateCharacterFace(true);
+        }
     }
     catch (e) {
         methods.debug(e);

@@ -92,7 +92,16 @@ class Menu {
         return item;
     }
 
-    static AddMenuItemCheckbox(title, items, subtitle, startIndex, divider) {
+    static AddMenuItemCheckbox(title, subtitle, isChecked) {
+        if (isChecked === undefined || isChecked == null)
+            isChecked = false;
+
+        let item = new MenuCheckboxItem(title, isChecked, subtitle);
+        menuItem.AddItem(item);
+        return item;
+    }
+
+    static AddMenuItemSlider(title, items, subtitle, startIndex, divider) {
         if (divider === undefined || divider == null)
             divider = false;
 

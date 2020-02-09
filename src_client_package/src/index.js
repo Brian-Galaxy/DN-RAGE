@@ -79,7 +79,7 @@ try {
             mp.game.invoke("0xD7C10C4A637992C9"); // _LOAD_SP_DLC_MAPS
             mp.game.invoke("0x0888C3502DBBEEF5"); // _LOAD_MP_DLC_MAPS
 
-            mp.game.invoke("0xD7C10C4A637992C9"); mp.game.invoke("0x0888C3502DBBEEF5"); // _LOAD_MP_DLC_MAPS
+            //mp.game.invoke("0xD7C10C4A637992C9"); mp.game.invoke("0x0888C3502DBBEEF5"); // _LOAD_MP_DLC_MAPS
         }, 1000);
     }
 

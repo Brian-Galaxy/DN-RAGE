@@ -58,6 +58,8 @@ let skin = {
     SKIN_PARENT_FACE_MIX: 0,
     SKIN_PARENT_SKIN_MIX: 0,
     SKIN_HAIR: 0,
+    SKIN_HAIR_2: 0,
+    SKIN_HAIR_3: 0,
     SKIN_HAIR_COLOR: 0,
     SKIN_HAIR_COLOR_2: 0,
     SKIN_EYE_COLOR: 0,
@@ -113,7 +115,7 @@ user.createUser = function(player, name, surname, age, promocode, referer, natio
                 user.showCustomNotify(player, 'Пожалуйста подожите...');
                 let newAge = `${methods.digitFormat(weather.getDay())}.${methods.digitFormat(weather.getMonth())}.${(weather.getFullYear() - age)}`;
 
-                let sql = "INSERT INTO users (name, age, social, national, promocode, referer, skin, parachute, parachute_color, body_color, leg_color, foot_color, body, leg, foot, login_ip, login_date, reg_ip, reg_timestamp) VALUES ('" + name + ' ' + surname +
+                let sql = "INSERT INTO users (name, age, social, national, money, promocode, referer, skin, parachute, parachute_color, body_color, leg_color, foot_color, body, leg, foot, login_ip, login_date, reg_ip, reg_timestamp) VALUES ('" + name + ' ' + surname +
                     "', '" + newAge + "', '" + player.socialClub + "', '" + national + "', '" + money + "', '" + promocode + "', '" + referer + "', '" + JSON.stringify(skin) + "', '0', '44', '" + methods.getRandomInt(0, 5) + "', '" + methods.getRandomInt(0, 15) + "', '" + methods.getRandomInt(0, 15) + "', '0', '1', '1', '" + player.ip + "', '" + methods.getTimeStamp() + "', '" + player.ip + "', '" + methods.getTimeStamp() + "')";
                 mysql.executeQuery(sql);
 
@@ -234,6 +236,8 @@ user.save = function(player, withReset = false) {
         skin.SKIN_PARENT_FACE_MIX = user.get(player, "SKIN_PARENT_FACE_MIX");
         skin.SKIN_PARENT_SKIN_MIX = user.get(player, "SKIN_PARENT_SKIN_MIX");
         skin.SKIN_HAIR = methods.parseInt(user.get(player, "SKIN_HAIR"));
+        skin.SKIN_HAIR_2 = methods.parseInt(user.get(player, "SKIN_HAIR_2"));
+        skin.SKIN_HAIR_3 = methods.parseInt(user.get(player, "SKIN_HAIR_3"));
         skin.SKIN_HAIR_COLOR = methods.parseInt(user.get(player, "SKIN_HAIR_COLOR"));
         skin.SKIN_HAIR_COLOR_2 = methods.parseInt(user.get(player, "SKIN_HAIR_COLOR_2"));
         skin.SKIN_EYE_COLOR = methods.parseInt(user.get(player, "SKIN_EYE_COLOR"));
@@ -455,6 +459,8 @@ user.updateClientCache = function(player) {
         skin.SKIN_PARENT_FACE_MIX = user.get(player, "SKIN_PARENT_FACE_MIX");
         skin.SKIN_PARENT_SKIN_MIX = user.get(player, "SKIN_PARENT_SKIN_MIX");
         skin.SKIN_HAIR = methods.parseInt(user.get(player, "SKIN_HAIR"));
+        skin.SKIN_HAIR_2 = methods.parseInt(user.get(player, "SKIN_HAIR_2"));
+        skin.SKIN_HAIR_3 = methods.parseInt(user.get(player, "SKIN_HAIR_3"));
         skin.SKIN_HAIR_COLOR = methods.parseInt(user.get(player, "SKIN_HAIR_COLOR"));
         skin.SKIN_HAIR_COLOR_2 = methods.parseInt(user.get(player, "SKIN_HAIR_COLOR_2"));
         skin.SKIN_EYE_COLOR = methods.parseInt(user.get(player, "SKIN_EYE_COLOR"));
@@ -514,6 +520,8 @@ user.updateCharacterFace = function(player) {
         skin.SKIN_PARENT_FACE_MIX = user.get(player, "SKIN_PARENT_FACE_MIX");
         skin.SKIN_PARENT_SKIN_MIX = user.get(player, "SKIN_PARENT_SKIN_MIX");
         skin.SKIN_HAIR = methods.parseInt(user.get(player, "SKIN_HAIR"));
+        skin.SKIN_HAIR_2 = methods.parseInt(user.get(player, "SKIN_HAIR_2"));
+        skin.SKIN_HAIR_3 = methods.parseInt(user.get(player, "SKIN_HAIR_3"));
         skin.SKIN_HAIR_COLOR = methods.parseInt(user.get(player, "SKIN_HAIR_COLOR"));
         skin.SKIN_HAIR_COLOR_2 = methods.parseInt(user.get(player, "SKIN_HAIR_COLOR_2"));
         skin.SKIN_EYE_COLOR = methods.parseInt(user.get(player, "SKIN_EYE_COLOR"));
@@ -763,7 +771,11 @@ user.updateTattoo = function(player) {
             }
         }
 
-        let data = enums.hairOverlays[methods.parseInt(user.get(player, "SKIN_SEX"))][user.get(player, "SKIN_HAIR")];
+        if (user.get(player, "SKIN_HAIR_2")) {
+            let data = enums.hairOverlays[methods.parseInt(user.get(player, "SKIN_SEX"))][user.get(player, "SKIN_HAIR")];
+            user.setDecoration(player, data[0], data[1]);
+        }
+        let data = enums.hairOverlays[methods.parseInt(user.get(player, "SKIN_SEX"))][methods.parseInt(user.get(player, "SKIN_HAIR_3"))];
         user.setDecoration(player, data[0], data[1]);
 
         if (user.get(player, 'body') == player.getVariable('topsDraw')) {

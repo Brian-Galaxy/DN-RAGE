@@ -672,7 +672,7 @@ enums.hairOverlays = [
         ["multiplayer_overlays","NG_M_Hair_009"], // 9 прическа 45 прическа
         ["multiplayer_overlays","NGBea_M_Hair_000"], //46 прическа
         ["multiplayer_overlays","NG_M_Hair_011"], // 11 прическа // 16 прическа //47 прическа
-        ["mpbiker_overlays","MP_Biker_Hair_005_M"], // 36 прическа //48 прическа 71
+        ["multiplayer_overlays","NGHip_M_Hair_001"], // 36 прическа //48 прическа 71
         ["multiplayer_overlays","NG_M_Hair_005"], // 5 прическа 13 прическа 41 прическа //49 прическа
         ["multiplayer_overlays","NGBea_M_Hair_001"], //50 прическа
         ["mpbiker_overlays","MP_Biker_Hair_002_M"], // 33 прическа //51 прическа 68

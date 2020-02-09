@@ -806,7 +806,12 @@ user.updateTattoo = function(isLocal = false, updateTattoo = true, updatePrint =
             }
 
             if (updateHair) {
-                let data = JSON.parse(enums.get('overlays'))[user.getSex()][user.getCache( "SKIN_HAIR")];
+                if (user.getCache('SKIN_HAIR_2')) {
+                    let data = JSON.parse(enums.get('overlays'))[user.getSex()][user.getCache( "SKIN_HAIR")];
+                    user.setDecoration(data[0], data[1], true);
+                }
+
+                let data = JSON.parse(enums.get('overlays'))[user.getSex()][methods.parseInt(user.getCache( "SKIN_HAIR_3"))];
                 user.setDecoration(data[0], data[1], true);
             }
 

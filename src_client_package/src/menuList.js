@@ -3549,6 +3549,8 @@ menuList.showBarberShopMenu = function (shopId, price) {
     let skin = {};
 
     skin.SKIN_HAIR = methods.parseInt(user.getCache('SKIN_HAIR'));
+    skin.SKIN_HAIR_2 = methods.parseInt(user.getCache('SKIN_HAIR_2'));
+    skin.SKIN_HAIR_3 = methods.parseInt(user.getCache('SKIN_HAIR_3'));
     skin.SKIN_HAIR_COLOR = methods.parseInt(user.getCache('SKIN_HAIR_COLOR'));
     skin.SKIN_HAIR_COLOR_2 = methods.parseInt(user.getCache('SKIN_HAIR_COLOR_2'));
     skin.SKIN_EYE_COLOR = methods.parseInt(user.getCache('SKIN_EYE_COLOR'));
@@ -3593,6 +3595,23 @@ menuList.showBarberShopMenu = function (shopId, price) {
     menuListItem.price = itemPrice + 0.01;
     menuListItem.label = "Причёска";
     menuListItem.Index = skin.SKIN_HAIR;
+    if (sale > 0)
+        menuListItem.SetLeftBadge(27);
+
+    itemPrice = 100 * price;
+    menuListItem = UIMenu.Menu.AddMenuItemList('Стиль причёски', list, `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`);
+    menuListItem.doName = 'SKIN_HAIR_3';
+    menuListItem.price = itemPrice + 0.01;
+    menuListItem.label = "Стиль причёски";
+    menuListItem.Index = skin.SKIN_HAIR_3;
+    if (sale > 0)
+        menuListItem.SetLeftBadge(27);
+
+    itemPrice = 10 * price;
+    menuListItem = UIMenu.Menu.AddMenuItemCheckbox('Тип причёски', `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`, skin.SKIN_HAIR_2);
+    menuListItem.doName = 'SKIN_HAIR_2';
+    menuListItem.price = itemPrice + 0.01;
+    menuListItem.label = "Тип причёски";
     if (sale > 0)
         menuListItem.SetLeftBadge(27);
 
@@ -3818,101 +3837,150 @@ menuList.showBarberShopMenu = function (shopId, price) {
     let currentListChangeItem = null;
     let currentListChangeItemIndex = 0;
 
+    menu.CheckboxChange.on((item, checked) => {
+        if (user.getMoney() < item.price) {
+            mp.game.ui.notifications.show("~r~У Вас недостаточно денег");
+            return;
+        }
+
+        if (item.price < 1)
+            return;
+
+        user.removeMoney(methods.parseInt(item.price), 'Услуги барбершопа ' + item.label);
+        business.addMoney(shopId, methods.parseInt(item.price), item.label);
+        user.set(item.doName, checked ? 1 : 0);
+        mp.game.ui.notifications.show("~g~Вы изменили внешность по цене: ~s~$" + methods.parseInt(item.price));
+        user.updateCharacterFace();
+    });
+
     menu.ListChange.on((item, index) => {
-        currentListChangeItem = item;
-        currentListChangeItemIndex = index;
+        try {
+            currentListChangeItem = item;
+            currentListChangeItemIndex = index;
 
-        switch (item.doName) {
-            case 'SKIN_HAIR':
+            switch (item.doName) {
+                case 'SKIN_HAIR':
 
-                if (index == 23 || index == 24)
-                    skin.SKIN_HAIR = 1;
-                else
-                    skin.SKIN_HAIR = index;
-                mp.players.local.setComponentVariation(2, skin.SKIN_HAIR, 0, 2);
-                mp.players.local.setHairColor(skin.SKIN_HAIR_COLOR, skin.SKIN_HAIR_COLOR_2);
+                    if (index == 23 || index == 24)
+                        skin.SKIN_HAIR = 1;
+                    else
+                        skin.SKIN_HAIR = index;
+                    mp.players.local.setComponentVariation(2, skin.SKIN_HAIR, 0, 2);
+                    mp.players.local.setHairColor(skin.SKIN_HAIR_COLOR, skin.SKIN_HAIR_COLOR_2);
 
-                user.updateTattoo(true, true, true, false);
+                    user.updateTattoo(true, true, true, false);
 
-                let data = JSON.parse(enums.get('overlays'))[user.getSex()][skin.SKIN_HAIR];
-                user.setDecoration(data[0], data[1], true);
-                break;
-            case 'SKIN_HAIR_COLOR':
-                skin.SKIN_HAIR_COLOR = index;
-                mp.players.local.setHairColor(skin.SKIN_HAIR_COLOR, skin.SKIN_HAIR_COLOR_2);
-                user.updateTattoo(true, true, true, false);
+                    if (skin.SKIN_HAIR_2) {
+                        let data = JSON.parse(enums.get('overlays'))[user.getSex()][skin.SKIN_HAIR];
+                        user.setDecoration(data[0], data[1], true);
+                    }
 
-                let data1 = JSON.parse(enums.get('overlays'))[user.getSex()][skin.SKIN_HAIR];
-                user.setDecoration(data1[0], data1[1], true);
-                break;
-            case 'SKIN_HAIR_COLOR_2':
-                skin.SKIN_HAIR_COLOR_2 = index;
-                mp.players.local.setHairColor(skin.SKIN_HAIR_COLOR, skin.SKIN_HAIR_COLOR_2);
-                user.updateTattoo(true, true, true, false);
+                    let data2 = JSON.parse(enums.get('overlays'))[user.getSex()][skin.SKIN_HAIR_3];
+                    user.setDecoration(data[0], data[1], true);
+                    break;
+                case 'SKIN_HAIR_3':
 
-                let data2 = JSON.parse(enums.get('overlays'))[user.getSex()][skin.SKIN_HAIR];
-                user.setDecoration(data2[0], data2[1], true);
-                break;
-            case 'SKIN_EYE_COLOR':
-                skin.SKIN_EYE_COLOR = index;
-                mp.players.local.setEyeColor(skin.SKIN_EYE_COLOR);
-                break;
-            case 'SKIN_EYEBROWS':
-                skin.SKIN_EYEBROWS = index;
-                mp.players.local.setHeadOverlay(2, skin.SKIN_EYEBROWS, 1.0, skin.SKIN_EYEBROWS_COLOR, 0);
-                break;
-            case 'SKIN_EYEBROWS_COLOR':
-                skin.SKIN_EYEBROWS_COLOR = index;
-                mp.players.local.setHeadOverlay(2, skin.SKIN_EYEBROWS, 1.0, skin.SKIN_EYEBROWS_COLOR, 0);
-                break;
-            case 'SKIN_OVERLAY_9':
-                skin.SKIN_OVERLAY_9 = index - 1;
-                mp.players.local.setHeadOverlay(9, skin.SKIN_OVERLAY_9, 1.0, skin.SKIN_OVERLAY_COLOR_9, 0);
-                break;
-            case 'SKIN_OVERLAY_COLOR_9':
-                skin.SKIN_OVERLAY_COLOR_9 = index;
-                mp.players.local.setHeadOverlay(9, skin.SKIN_OVERLAY_9, 1.0, skin.SKIN_OVERLAY_COLOR_9, 0);
-                break;
-            case 'SKIN_OVERLAY_1':
-                skin.SKIN_OVERLAY_1 = index - 1;
-                mp.players.local.setHeadOverlay(1, skin.SKIN_OVERLAY_1, 1.0, skin.SKIN_OVERLAY_COLOR_1, 0);
-                break;
-            case 'SKIN_OVERLAY_COLOR_1':
-                skin.SKIN_OVERLAY_COLOR_1 = index;
-                mp.players.local.setHeadOverlay(1, skin.SKIN_OVERLAY_1, 1.0, skin.SKIN_OVERLAY_COLOR_1, 0);
-                break;
-            case 'SKIN_OVERLAY_4':
-                skin.SKIN_OVERLAY_4 = index - 1;
-                mp.players.local.setHeadOverlay(4, skin.SKIN_OVERLAY_4, 1.0, skin.SKIN_OVERLAY_COLOR_4, 0);
-                break;
-            case 'SKIN_OVERLAY_COLOR_4':
-                skin.SKIN_OVERLAY_COLOR_4 = index;
-                mp.players.local.setHeadOverlay(4, skin.SKIN_OVERLAY_4, 1.0, skin.SKIN_OVERLAY_COLOR_4, 0);
-                break;
-            case 'SKIN_OVERLAY_5':
-                skin.SKIN_OVERLAY_5 = index - 1;
-                mp.players.local.setHeadOverlay(5, skin.SKIN_OVERLAY_5, 1.0, skin.SKIN_OVERLAY_COLOR_5, 0);
-                break;
-            case 'SKIN_OVERLAY_COLOR_5':
-                skin.SKIN_OVERLAY_COLOR_5 = index;
-                mp.players.local.setHeadOverlay(5, skin.SKIN_OVERLAY_5, 1.0, skin.SKIN_OVERLAY_COLOR_5, 0);
-                break;
-            case 'SKIN_OVERLAY_8':
-                skin.SKIN_OVERLAY_8 = index - 1;
-                mp.players.local.setHeadOverlay(8, skin.SKIN_OVERLAY_8, 1.0, skin.SKIN_OVERLAY_COLOR_8, 0);
-                break;
-            case 'SKIN_OVERLAY_COLOR_8':
-                skin.SKIN_OVERLAY_COLOR_8 = index;
-                mp.players.local.setHeadOverlay(8, skin.SKIN_OVERLAY_8, 1.0, skin.SKIN_OVERLAY_COLOR_8, 0);
-                break;
-            case 'SKIN_OVERLAY_10':
-                skin.SKIN_OVERLAY_10 = index - 1;
-                mp.players.local.setHeadOverlay(10, skin.SKIN_OVERLAY_10, 1.0, skin.SKIN_OVERLAY_COLOR_10, 0);
-                break;
-            case 'SKIN_OVERLAY_COLOR_10':
-                skin.SKIN_OVERLAY_COLOR_10 = index;
-                mp.players.local.setHeadOverlay(10, skin.SKIN_OVERLAY_10, 1.0, skin.SKIN_OVERLAY_COLOR_10, 0);
-                break;
+                    skin.SKIN_HAIR_3 = index;
+                    user.updateTattoo(true, true, true, false);
+
+                    if (skin.SKIN_HAIR_2) {
+                        let data = JSON.parse(enums.get('overlays'))[user.getSex()][skin.SKIN_HAIR];
+                        user.setDecoration(data[0], data[1], true);
+                    }
+
+                    let data = JSON.parse(enums.get('overlays'))[user.getSex()][skin.SKIN_HAIR_3];
+                    user.setDecoration(data[0], data[1], true);
+                    break;
+                case 'SKIN_HAIR_COLOR':
+                    skin.SKIN_HAIR_COLOR = index;
+                    mp.players.local.setHairColor(skin.SKIN_HAIR_COLOR, skin.SKIN_HAIR_COLOR_2);
+                    user.updateTattoo(true, true, true, false);
+
+                    if (skin.SKIN_HAIR_2) {
+                        let data1 = JSON.parse(enums.get('overlays'))[user.getSex()][skin.SKIN_HAIR];
+                        user.setDecoration(data1[0], data1[1], true);
+                    }
+
+                    let data1 = JSON.parse(enums.get('overlays'))[user.getSex()][skin.SKIN_HAIR_3];
+                    user.setDecoration(data1[0], data1[1], true);
+                    break;
+                case 'SKIN_HAIR_COLOR_2':
+                    skin.SKIN_HAIR_COLOR_2 = index;
+                    mp.players.local.setHairColor(skin.SKIN_HAIR_COLOR, skin.SKIN_HAIR_COLOR_2);
+                    user.updateTattoo(true, true, true, false);
+
+                    if (skin.SKIN_HAIR_2) {
+                        let data2 = JSON.parse(enums.get('overlays'))[user.getSex()][skin.SKIN_HAIR];
+                        user.setDecoration(data2[0], data2[1], true);
+                    }
+
+                    let data3 = JSON.parse(enums.get('overlays'))[user.getSex()][skin.SKIN_HAIR_3];
+                    user.setDecoration(data1[0], data1[1], true);
+                    break;
+                case 'SKIN_EYE_COLOR':
+                    skin.SKIN_EYE_COLOR = index;
+                    mp.players.local.setEyeColor(skin.SKIN_EYE_COLOR);
+                    break;
+                case 'SKIN_EYEBROWS':
+                    skin.SKIN_EYEBROWS = index;
+                    mp.players.local.setHeadOverlay(2, skin.SKIN_EYEBROWS, 1.0, skin.SKIN_EYEBROWS_COLOR, 0);
+                    break;
+                case 'SKIN_EYEBROWS_COLOR':
+                    skin.SKIN_EYEBROWS_COLOR = index;
+                    mp.players.local.setHeadOverlay(2, skin.SKIN_EYEBROWS, 1.0, skin.SKIN_EYEBROWS_COLOR, 0);
+                    break;
+                case 'SKIN_OVERLAY_9':
+                    skin.SKIN_OVERLAY_9 = index - 1;
+                    mp.players.local.setHeadOverlay(9, skin.SKIN_OVERLAY_9, 1.0, skin.SKIN_OVERLAY_COLOR_9, 0);
+                    break;
+                case 'SKIN_OVERLAY_COLOR_9':
+                    skin.SKIN_OVERLAY_COLOR_9 = index;
+                    mp.players.local.setHeadOverlay(9, skin.SKIN_OVERLAY_9, 1.0, skin.SKIN_OVERLAY_COLOR_9, 0);
+                    break;
+                case 'SKIN_OVERLAY_1':
+                    skin.SKIN_OVERLAY_1 = index - 1;
+                    mp.players.local.setHeadOverlay(1, skin.SKIN_OVERLAY_1, 1.0, skin.SKIN_OVERLAY_COLOR_1, 0);
+                    break;
+                case 'SKIN_OVERLAY_COLOR_1':
+                    skin.SKIN_OVERLAY_COLOR_1 = index;
+                    mp.players.local.setHeadOverlay(1, skin.SKIN_OVERLAY_1, 1.0, skin.SKIN_OVERLAY_COLOR_1, 0);
+                    break;
+                case 'SKIN_OVERLAY_4':
+                    skin.SKIN_OVERLAY_4 = index - 1;
+                    mp.players.local.setHeadOverlay(4, skin.SKIN_OVERLAY_4, 1.0, skin.SKIN_OVERLAY_COLOR_4, 0);
+                    break;
+                case 'SKIN_OVERLAY_COLOR_4':
+                    skin.SKIN_OVERLAY_COLOR_4 = index;
+                    mp.players.local.setHeadOverlay(4, skin.SKIN_OVERLAY_4, 1.0, skin.SKIN_OVERLAY_COLOR_4, 0);
+                    break;
+                case 'SKIN_OVERLAY_5':
+                    skin.SKIN_OVERLAY_5 = index - 1;
+                    mp.players.local.setHeadOverlay(5, skin.SKIN_OVERLAY_5, 1.0, skin.SKIN_OVERLAY_COLOR_5, 0);
+                    break;
+                case 'SKIN_OVERLAY_COLOR_5':
+                    skin.SKIN_OVERLAY_COLOR_5 = index;
+                    mp.players.local.setHeadOverlay(5, skin.SKIN_OVERLAY_5, 1.0, skin.SKIN_OVERLAY_COLOR_5, 0);
+                    break;
+                case 'SKIN_OVERLAY_8':
+                    skin.SKIN_OVERLAY_8 = index - 1;
+                    mp.players.local.setHeadOverlay(8, skin.SKIN_OVERLAY_8, 1.0, skin.SKIN_OVERLAY_COLOR_8, 0);
+                    break;
+                case 'SKIN_OVERLAY_COLOR_8':
+                    skin.SKIN_OVERLAY_COLOR_8 = index;
+                    mp.players.local.setHeadOverlay(8, skin.SKIN_OVERLAY_8, 1.0, skin.SKIN_OVERLAY_COLOR_8, 0);
+                    break;
+                case 'SKIN_OVERLAY_10':
+                    skin.SKIN_OVERLAY_10 = index - 1;
+                    mp.players.local.setHeadOverlay(10, skin.SKIN_OVERLAY_10, 1.0, skin.SKIN_OVERLAY_COLOR_10, 0);
+                    break;
+                case 'SKIN_OVERLAY_COLOR_10':
+                    skin.SKIN_OVERLAY_COLOR_10 = index;
+                    mp.players.local.setHeadOverlay(10, skin.SKIN_OVERLAY_10, 1.0, skin.SKIN_OVERLAY_COLOR_10, 0);
+                    break;
+            }
+        }
+        catch (e) {
+            methods.debug(e);
         }
     });
 

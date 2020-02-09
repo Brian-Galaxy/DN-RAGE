@@ -377,7 +377,7 @@ inventory.useItem = function(player, id, itemId) {
 
                 if (user.isTie(target))
                 {
-                    user.stopAnimation(target);
+                    //user.stopAnimation(target);
                     user.playAnimation(player, "mp_arresting", "a_uncuff", 8);
                     user.unTie(target);
                     chat.sendMeCommand(player, "снял стяжки с человека напротив");
@@ -991,11 +991,35 @@ inventory.useItem = function(player, id, itemId) {
                     player.notify("~r~Нельзя надевать наручники на человека в коме");
                     return;
                 }
+
+                user.headingToTarget(player, target.id);
+
                 methods.saveLog('PlayerCuff', `${user.getRpName(target)} (${user.getId(target)}) cuffed by ${user.getRpName(player)} (${user.getId(player)})`);
-                chat.sendMeCommand(player, `надел наручники на человека рядом (${user.getId(target)})`);
-                user.playAnimation(player, "mp_arresting", "a_uncuff", 8);
-                user.cuff(target);
-                inventory.deleteItem(id);
+
+                setTimeout(function () {
+                    try {
+                        //chat.sendMeCommand(player, `надел наручники на человека рядом (${user.getId(target)})`);
+                        //user.playAnimation(player, "mp_arresting", "a_uncuff", 8);
+
+                        target.heading = player.heading;
+
+                        user.playAnimation(target, 'mp_arrest_paired', 'crook_p2_back_right', 8);
+                        user.playAnimation(target, 'mp_arrest_paired', 'cop_p2_back_right', 8);
+
+                        setTimeout(function () {
+                            try {
+                                user.cuff(target);
+                                inventory.deleteItem(id);
+                            }
+                            catch (e) {
+                                methods.debug(e);
+                            }
+                        }, 3760);
+                    }
+                    catch (e) {
+                        methods.debug(e);
+                    }
+                }, 2100);
                 break;
             }
             case 215:

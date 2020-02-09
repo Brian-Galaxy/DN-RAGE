@@ -766,7 +766,8 @@ mp.events.addRemoteCounted('server:user:cuffById', (player, targetId) => {
     let target = mp.players.at(targetId);
 
     if (mp.players.exists(target)) {
-        user.playAnimation(player, "mp_arresting", "a_uncuff", 8);
+
+        //user.playAnimation(player, "mp_arresting", "a_uncuff", 8);
         user.cuff(target);
     }
     else

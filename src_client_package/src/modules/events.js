@@ -271,7 +271,7 @@ mp.events.add('client:events:custom:updateAge', function(age) {
 });
 
 mp.events.add('client:events:custom:set', function(input_editor_face, input_editor_nose, input_editor_eyes_lips, input_editor_face_last, cheked_sex, mother, father, mix1, mix2) {
-    methods.debug('CUSTOM');
+    methods.debug('CUSTOM', input_editor_face, input_editor_nose, input_editor_eyes_lips, input_editor_face_last, cheked_sex, mother, father, mix1, mix2);
 
     try {
         let faceEditor = JSON.parse(input_editor_face);
@@ -2114,10 +2114,12 @@ mp.events.add("client:vehicle:checker", function (vehicle, seat) {
 
 mp.events.add('client:events:dialog:onClose', function () {
     mp.gui.cursor.show(false, false);
+    mp.game.audio.playSoundFrontend(-1, "EXIT", "HUD_FRONTEND_DEFAULT_SOUNDSET", false);
 });
 
 mp.events.add('client:events:dialog:click', function () {
     mp.gui.cursor.show(false, false);
+    mp.game.audio.playSoundFrontend(-1, "SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET", false);
 });
 
 let loadIndicatorDist = 15;

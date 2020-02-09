@@ -111,7 +111,8 @@ user.createUser = function(player, name, surname, age, promocode, referer, natio
                     money += 1000;
 
                 user.showCustomNotify(player, 'Пожалуйста подожите...');
-                let newAge = `${methods.digitFormat(weather.getDay())}.${methods.digitFormat(weather.getMonth())}.${(weather.getYear() - age)}`;
+                let newAge = `${methods.digitFormat(weather.getDay())}.${methods.digitFormat(weather.getMonth())}.${(weather.getFullYear() - age)}`;
+
                 let sql = "INSERT INTO users (name, age, social, national, promocode, referer, skin, parachute, parachute_color, body_color, leg_color, foot_color, body, leg, foot, login_ip, login_date, reg_ip, reg_timestamp) VALUES ('" + name + ' ' + surname +
                     "', '" + newAge + "', '" + player.socialClub + "', '" + national + "', '" + money + "', '" + promocode + "', '" + referer + "', '" + JSON.stringify(skin) + "', '0', '44', '" + methods.getRandomInt(0, 5) + "', '" + methods.getRandomInt(0, 15) + "', '" + methods.getRandomInt(0, 15) + "', '0', '1', '1', '" + player.ip + "', '" + methods.getTimeStamp() + "', '" + player.ip + "', '" + methods.getTimeStamp() + "')";
                 mysql.executeQuery(sql);

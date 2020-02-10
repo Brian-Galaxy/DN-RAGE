@@ -597,6 +597,8 @@ inventory.useItem = function(player, id, itemId) {
                         if (!user.isLogin(player))
                             return;
 
+                        user.removeRep(player, 1);
+
                         if (!vehicles.exists(veh))
                         {
                             player.notify("~r~Не удалось взломать транспорт");
@@ -606,6 +608,7 @@ inventory.useItem = function(player, id, itemId) {
 
                         if (methods.getRandomInt(0, 5) == 1)
                         {
+                            user.removeRep(player, 5);
                             veh.locked = false;
                             player.notify("~g~Вы открыли транспорт");
                         }

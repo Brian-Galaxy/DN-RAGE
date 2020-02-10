@@ -220,13 +220,13 @@ pickups.StartHelpPos = new mp.Vector3(-1033.243, -2735.249, 19.16927);
 pickups.GrabPos = new mp.Vector3(973.4865, -2190.531, 29.55157);
 
 /*Jobs*/
-pickups.Gr6Pos = new mp.Vector3(484.4730224609375, -1094.7589111328125, 28.202163696289062);
+pickups.Gr6Pos = new mp.Vector3(-20.93047523498535, -660.4189453125, 32.48031997680664);
 pickups.MailPos = new mp.Vector3(78.78807067871094, 111.90670013427734, 80.16815948486328);
 pickups.Bus1Pos = new mp.Vector3(461.0713806152344, -573.357666015625, 27.499807357788086);
 pickups.Bus2Pos = new mp.Vector3(471.4545593261719, -576.7513427734375, 27.499744415283203);
 pickups.Bus3Pos = new mp.Vector3(466.4013671875, -576.0244140625, 27.499794006347656);
-pickups.TreePos = new mp.Vector3(528.791748046875, -144.18431091308594, 57.53441619873047);
-pickups.BuilderPos = new mp.Vector3(759.6802368164062, -777.7739868164062, 25.455625534057617);
+pickups.TreePos = new mp.Vector3(-1583.03857421875, -234.56666564941406, 53.840614318847656);
+pickups.BuilderPos = new mp.Vector3(-1202.8348388671875, -733.3151245117188, 20.016342163085938);
 
 pickups.checkPressLAlt = function(player) {
 
@@ -452,7 +452,7 @@ pickups.checkPressE = function(player) {
         if (user.isJobMail(player) && methods.distanceToPos(pickups.MailPos, playerPos) < distanceCheck)
             player.call('client:menuList:showSpawnJobCarMailMenu');
         if (user.isJobGr6(player) && methods.distanceToPos(pickups.Gr6Pos, playerPos) < distanceCheck)
-            player.call('client:menuList:showSpawnJobCarMenu', [500, 484.1923522949219, -1103.3271484375, 28.807828903198242, 128.7122802734375, 'Stockade', 10]);
+            player.call('client:menuList:showSpawnJobGr6Menu');
         if (user.isJobBus1(player) && methods.distanceToPos(pickups.Bus1Pos, playerPos) < distanceCheck)
             player.call('client:menuList:showSpawnJobCarMenu', [150, 459.72247314453125, -582.0006103515625, 28.495769500732422, 170.3814697265625, 'Bus', 6]);
         if (user.isJobBus2(player) && methods.distanceToPos(pickups.Bus2Pos, playerPos) < distanceCheck)
@@ -460,9 +460,9 @@ pickups.checkPressE = function(player) {
         if (user.isJobBus3(player) && methods.distanceToPos(pickups.Bus3Pos, playerPos) < distanceCheck)
             player.call('client:menuList:showSpawnJobCarMenu', [200, 465.9425048828125, -582.1303100585938, 29.325841903686523, 173.46160888671875, 'Coach', 8]);
         if (user.isJobTree(player) && methods.distanceToPos(pickups.TreePos, playerPos) < distanceCheck)
-            player.call('client:menuList:showSpawnJobCarMenu', [100, 544.7220458984375, -137.17112731933594, 58.900089263916016, 181.23944091796875, 'UtilliTruck3', 1]);
+            player.call('client:menuList:showSpawnJobCarMenu', [100, -1590.850341796875, -230.34060668945312, 53.86422348022461, 330.6097412109375, 'Bison3', 1]);
         if (user.isJobBuilder(player) && methods.distanceToPos(pickups.BuilderPos, playerPos) < distanceCheck)
-            player.call('client:menuList:showSpawnJobCarMenu', [100, 762.8366088867188, -770.2244262695312, 26.34084701538086, 176.8997802734375, 'UtilliTruck', 2]);
+            player.call('client:menuList:showSpawnJobCarMenu', [100, -1201.99267578125, -729.6393432617188, 20.672805786132812, 308.53955078125, 'Bison2', 2]);
     }
     catch (e) {
         methods.debug('TEST', e);

@@ -44,9 +44,14 @@ ui.create = function() {
     //ui.callCef('authMain','{"type": "show"}');
 };
 
-ui.showDialog = function(text, title = '', icon = 'none', buttons = ['Ок'], position = ui.dialogTypes.center, dtype = 1) {
-    mp.gui.cursor.show(true, true);
-    ui.callCef('dialog', JSON.stringify({type: 'updateValues', isShow: true, position: position, text: text, buttons: buttons, icon: icon, title: title, dtype: dtype}));
+ui.showDialog = function(text, title = '', icon = 'none', buttons = ['Ок'], position = ui.dialogTypes.center, dtype = 1, isShowClose = true, cursor = true) {
+    mp.gui.cursor.show(cursor, cursor);
+    ui.callCef('dialog', JSON.stringify({type: 'updateValues', isShow: true, isShowClose: isShowClose, position: position, text: text, buttons: buttons, icon: icon, title: title, dtype: dtype}));
+};
+
+ui.hideDialog = function() {
+    mp.gui.cursor.show(false, false);
+    ui.callCef('dialog', JSON.stringify({type: 'hide'}));
 };
 
 ui.dialogTypes = {
@@ -342,7 +347,7 @@ ui.drawRect = function(xPos, yPos, wSize, hSize, r, g, b, a) {
     }
 };
 
-ui.drawText3D = function(caption, x, y, z) {
+ui.drawText3D = function(caption, x, y, z, scale = 0.3) {
     if (!mp.game.ui.isHudComponentActive(0))
         return false;
     try {
@@ -354,7 +359,7 @@ ui.drawText3D = function(caption, x, y, z) {
 
         mp.game.graphics.setDrawOrigin(x, y, z + 0.5, 0);
         mp.game.ui.setTextFont(0);
-        mp.game.ui.setTextScale(0.3, 0.3);
+        mp.game.ui.setTextScale(scale, scale);
         mp.game.ui.setTextColour(255, 255, 255, 255);
         mp.game.ui.setTextProportional(true);
         mp.game.ui.setTextDropshadow(0, 0, 0, 0, 255);

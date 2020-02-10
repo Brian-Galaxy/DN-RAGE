@@ -602,10 +602,7 @@ methods.requestIpls = function () {
         mp.game.interior.enableInteriorProp(phIntID, propName);
         mp.game.invoke(methods.SET_INTERIOR_PROP_COLOR, phIntID, propName, 1);
     }
-
     mp.game.interior.refreshInterior(phIntID);
-
-    //---
 
     mp.game.streaming.requestIpl("imp_dt1_02_modgarage");
 
@@ -801,7 +798,7 @@ methods.requestIpls = function () {
     mp.game.streaming.requestIpl("apa_ch2_12b_interior_0_v_mp_stilts_a_milo_");
 
     //Galaxy
-    mp.game.interior.enableInteriorProp(271617, "Int01_ba_clubname_01");
+    //mp.game.interior.enableInteriorProp(271617, "Int01_ba_clubname_01");
     mp.game.interior.enableInteriorProp(271617, "Int01_ba_Style02");
     mp.game.interior.enableInteriorProp(271617, "Int01_ba_style02_podium");
     mp.game.interior.enableInteriorProp(271617, "Int01_ba_equipment_setup");
@@ -816,6 +813,15 @@ methods.requestIpls = function () {
     mp.game.interior.enableInteriorProp(271617, "Int01_ba_booze_01");
     mp.game.interior.enableInteriorProp(271617, "Int01_ba_dry_ice");
     mp.game.interior.refreshInterior(271617);
+
+    for (let i = 0; i < 10; i++) { mp.game.streaming.requestIpl(`ba_case${i}_dixon`); }
+    for (let i = 0; i < 10; i++) { mp.game.streaming.requestIpl(`ba_case${i}_solomun`); }
+    for (let i = 0; i < 10; i++) { mp.game.streaming.requestIpl(`ba_case${i}_taleofus`); }
+    for (let i = 0; i < 10; i++) { mp.game.streaming.requestIpl(`ba_case${i}_madonna`); }
+
+    mp.game.streaming.requestIpl("ba_barriers_case1");
+    mp.game.streaming.requestIpl("ba_barriers_case3");
+    mp.game.streaming.requestIpl("ba_barriers_case9");
 };
 
 methods.isPlayerInOcean = function() {

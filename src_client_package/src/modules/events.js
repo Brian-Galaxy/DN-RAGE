@@ -25,6 +25,7 @@ import quest from "../manager/quest";
 
 import vehicles from "../property/vehicles";
 import business from "../property/business";
+import loader from "../jobs/loader";
 
 mp.gui.chat.enabled = false;
 
@@ -1464,6 +1465,17 @@ mp.events.add('client:menuList:showSpawnJobCarMenu', (price, x, y, z, heading, n
     }
 });
 
+mp.events.add('client:menuList:showSpawnJobGr6Menu', () => {
+    try {
+        methods.debug('Event: client:menuList:showSpawnJobCarMenu');
+        menuList.showSpawnJobGr6Menu();
+    }
+    catch (e) {
+        methods.debug('Exception: events:client:showSpawnJobCarMenu');
+        methods.debug(e);
+    }
+});
+
 mp.events.add('client:menuList:showSpawnJobCarMailMenu', () => {
     try {
         methods.debug('Event: client:menuList:showSpawnJobCarMenu');
@@ -2301,6 +2313,63 @@ mp.keys.bind(0x08, true, function() {
     ui.callCef('dialog', JSON.stringify({type: 'hide'}));
 });
 
+//N
+mp.keys.bind(0x4E, true, function() {
+    if (!user.isLogin())
+        return;
+    if (user.isDead()) {
+
+        if (Container.Data.HasLocally(mp.players.local.remoteId, "isEmsTimeout"))
+        {
+            mp.game.ui.notifications.show("~r~Нельзя так часто нажимать эту кнопку");
+            mp.game.ui.notifications.show("~r~Подождите 30 секунд");
+            return;
+        }
+
+        if (timer.getDeathTimer() > 120)
+            timer.setDeathTimer(120);
+        mp.game.ui.notifications.show("~r~Вы отказались от вызова медиков");
+
+        Container.Data.SetLocally(mp.players.local.remoteId, "isEmsTimeout", true);
+
+        setTimeout(function () {
+            Container.Data.ResetLocally(mp.players.local.remoteId, "isEmsTimeout");
+        }, 30000);
+    }
+});
+
+//Y
+mp.keys.bind(0x59, true, function() {
+    if (!user.isLogin())
+        return;
+    if (user.isDead()) {
+
+        if (Container.Data.HasLocally(mp.players.local.remoteId, "isEmsTimeout"))
+        {
+            mp.game.ui.notifications.show("~r~Нельзя так часто нажимать эту кнопку");
+            mp.game.ui.notifications.show("~r~Подождите 30 секунд");
+            return;
+        }
+
+        dispatcher.send(`[EMS] Код 3`, `Человек без сознания`);
+        mp.game.ui.notifications.show("~b~Вызов был отправлен медикам, ожидайте");
+
+        Container.Data.SetLocally(mp.players.local.remoteId, "isEmsTimeout", true);
+
+        setTimeout(function () {
+            Container.Data.ResetLocally(mp.players.local.remoteId, "isEmsTimeout");
+        }, 30000);
+    }
+});
+
+mp.events.add("playerEnterCheckpoint", (checkpoint) => {
+    if (user.hasCache('isSellCar')) {
+        user.reset('isSellCar');
+        jobPoint.delete();
+        mp.events.callRemote('server:sellVeh');
+    }
+});
+
 mp.events.add("playerDeath", function (player, reason, killer) {
     UIMenu.Menu.HideMenu();
     inventory.hide();
@@ -2322,9 +2391,17 @@ mp.events.add("playerDeath", function (player, reason, killer) {
     Container.Data.ResetLocally(0, 'hasSeat');
     Container.Data.ResetLocally(0, "canRun");
 
-    timer.setDeathTimer(30);
+    mp.game.graphics.startScreenEffect('DeathFailMPDark', 0, true);
+    timer.setDeathTimer(300);
     if (player.getVariable('enableAdmin'))
         timer.setDeathTimer(10);
+    else {
+        mp.game.graphics.setNoiseoveride(true);
+        mp.game.graphics.setNoisinessoveride(0.2);
+
+        user.showCustomNotify('Нажмите Y чтобы вызвать медиков', 0, 5, 15000);
+        user.showCustomNotify('Нажмите N чтобы отказаться от помощи', 0, 5, 15000);
+    }
 });
 
 // Commands in 2020......

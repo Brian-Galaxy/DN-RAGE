@@ -8,9 +8,9 @@ import coffer from './coffer';
 import weather from "./manager/weather";
 import dispatcher from "./manager/dispatcher";
 import bind from "./manager/bind";
+import jobPoint from "./manager/jobPoint";
 
 import fraction from "./property/fraction";
-import items from "./items";
 
 let phone = {};
 
@@ -445,28 +445,28 @@ phone.showAppEcorp= function() {
         menu.items[0].umenu.push(item);
     }
 
-    if (user.getCache('rep') < 400) {
+    if (user.getCache('quest_gang') > 4) {
         let item = {
             title: 'Получить задание на угон',
             text: ``,
             img: '',
             clickable: true,
             type: 1,
-            params: { name: "ecorp" }
+            params: {name: "sellCar"}
         };
         menu.items[0].umenu.push(item);
+    }
 
-        if (user.getCache('rep') < 300) {
-            let item = {
-                title: 'Список организаций',
-                text: ``,
-                img: '',
-                clickable: true,
-                type: 1,
-                params: { name: "fractionList" }
-            };
-            menu.items[0].umenu.push(item);
-        }
+    if (user.getCache('rep') < 300) {
+        let item = {
+            title: 'Список организаций',
+            text: ``,
+            img: '',
+            clickable: true,
+            type: 1,
+            params: { name: "fractionList" }
+        };
+        menu.items[0].umenu.push(item);
     }
     if (user.getCache('rep') < 100 && user.getCache('fraction_id2') == 0) {
         let item = {
@@ -2641,6 +2641,23 @@ phone.callBackButton = function(menu, id, ...args) {
             if (params.name == 'fractionList') {
                 mp.events.callRemote('server:phone:fractionAll');
                 phone.showLoad();
+            }
+            if (params.name == 'sellCar') {
+
+                if (weather.getHour() < 22 && weather.getHour() > 4) {
+                    mp.game.ui.notifications.show('~r~Доступно только с 22 до 4 утра игрового времени');
+                    return;
+                }
+
+                if (user.hasCache('isSellCar')) {
+                    mp.game.ui.notifications.show(`~r~Вы уже получили задание на угон`);
+                    return;
+                }
+
+                user.set('isSellCar', true);
+                let posId = methods.getRandomInt(0, enums.spawnSellCar.length);
+                jobPoint.create(new mp.Vector3(enums.spawnSellCar[posId][0], enums.spawnSellCar[posId][1], enums.spawnSellCar[posId][2]), true, 3);
+                mp.game.ui.notifications.show(`~g~Метка была установлена`);
             }
             if (params.name == 'buyFraction') {
                 mp.events.callRemote('server:phone:buyFraction', params.id);

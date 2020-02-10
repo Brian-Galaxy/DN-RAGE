@@ -56,7 +56,7 @@ gr6.grabMarkers = [
 ];
 
 gr6.start = function() {
-    if (mp.players.local.vehicle.getVariable('job') != 8){
+    if (mp.players.local.vehicle.getVariable('job') != 10){
         mp.game.ui.notifications.showWithPicture('Gruppe6', "Godvil", 'Хорошая попытка!', "CHAR_BANK_BOL", 1);
         return;
     }
@@ -65,18 +65,18 @@ gr6.start = function() {
 };
 
 gr6.unload = function() {
-    if (methods.distanceToPos(new mp.Vector3(478.9451, -1091.8182, 28.2014), mp.players.local.position) > 30) {
+    if (methods.distanceToPos(new mp.Vector3(-5.008303642272949, -670.9888916015625, 31.338104248046875), mp.players.local.position) > 50) {
         mp.game.ui.notifications.show('~r~Деньги надо разгружать на базе');
-        user.setWaypoint(478.9451, -1091.8182);
+        user.setWaypoint(-5.008303642272949, -670.9888916015625);
         return;
     }
     mp.events.callRemote('server:gr6:unload', mp.players.local.vehicle.remoteId);
 };
 
 gr6.deleteVeh = function() {
-    if (methods.distanceToPos(new mp.Vector3(478.9451, -1091.8182, 28.2014), mp.players.local.position) > 30) {
+    if (methods.distanceToPos(new mp.Vector3(-5.008303642272949, -670.9888916015625, 31.338104248046875), mp.players.local.position) > 50) {
         mp.game.ui.notifications.show('~r~Транспорт можно сдать только на базе');
-        user.setWaypoint(478.9451, -1091.8182);
+        user.setWaypoint(-5.008303642272949, -670.9888916015625);
         return;
     }
     mp.events.callRemote('server:gr6:delete');
@@ -151,9 +151,9 @@ mp.events.add("client:createGr6Checkpoint", (x, y, z) => {
 });
 
 mp.events.add("playerEnterVehicle", function (vehicle, seat) {
-    if (user.getCache('job') != 8)
+    if (user.getCache('job') != 10)
         return;
-    if (vehicle.getVariable('job') == 8 && Container.Data.HasLocally(0, 'gr6Money') && Container.Data.HasLocally(0, 'gr6MoneyBag')) {
+    if (vehicle.getVariable('job') == 10 && Container.Data.HasLocally(0, 'gr6Money') && Container.Data.HasLocally(0, 'gr6MoneyBag')) {
         let money = Container.Data.GetLocally(0, 'gr6Money');
         mp.events.callRemote('server:gr6:dropCar', money * 100, vehicle.remoteId);
         user.setComponentVariation(5, 0, 0);

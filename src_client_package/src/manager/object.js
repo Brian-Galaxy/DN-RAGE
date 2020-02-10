@@ -372,6 +372,9 @@ object.load = function () {
     object.delete(969847031, -1057.767, -237.484, 43.021); // InvaderDelete
     object.delete(969847031, -1063.842, -240.6464, 43.021); // InvaderDelete
 
+    object.delete(267648181, -72.77863, -682.169, 34.5284); // UnionDepository
+    //object.delete(3717863426, 25.06954, -664.5161, 30.98253); // UnionDepository
+
     const end = new Date().getTime();
     methods.debug('Count Objects Loaded: ' + objectList.length + '  | ' + (end - start) + 'ms');
     object.process();

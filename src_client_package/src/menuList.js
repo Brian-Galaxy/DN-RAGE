@@ -2198,6 +2198,10 @@ menuList.showSettingsHudMenu = function() {
     listVoiceItem.doName = 'speed';
     listVoiceItem.Index = user.getCache('s_hud_speed') ? 1 : 0;
 
+    let listRayItem = UIMenu.Menu.AddMenuItemList("Взаимодействие", ['Стандартное', 'Над объектом'], "Нажмите ~g~Enter~s~ чтобы применить");
+    listRayItem.doName = 'raycast';
+    listRayItem.Index = user.getCache('s_hud_raycast') ? 1 : 0;
+
     let listVoiceVol = ["0%", "10%", "20%", "30%", "40%", "50%", "60%", "70%", "80%", "90%", "100%"];
     listVoiceItem = UIMenu.Menu.AddMenuItemList("Прозрачность интерфейса", listVoiceVol, "Нажмите ~g~Enter~s~ чтобы применить");
     listVoiceItem.doName = 'bg';
@@ -2209,6 +2213,10 @@ menuList.showSettingsHudMenu = function() {
     menu.ListChange.on((item, index) => {
         if (item.doName === 'speed') {
             user.set('s_hud_speed', index === 1);
+            mp.game.ui.notifications.show('~b~Настройки были сохранены');
+        }
+        if (item.doName === 'raycast') {
+            user.set('s_hud_raycast', index === 1);
             mp.game.ui.notifications.show('~b~Настройки были сохранены');
         }
         if (item.doName == 'bg') {
@@ -2674,7 +2682,7 @@ menuList.showVehicleMenu = function(data) {
         }
     }
 
-    if (data.get('job') == 'gr6') {
+    if (data.get('job') == 10) {
         UIMenu.Menu.AddMenuItem("Денег в транспорте: ~g~" + methods.moneyFormat(mp.players.local.vehicle.getVariable('gr6Money'))).doName = 'close';
         UIMenu.Menu.AddMenuItem("~y~Ограбить транспорт").doName = 'gr6:grab';
     }
@@ -2972,7 +2980,79 @@ menuList.showSpawnJobCarMenu = function(price, x, y, z, heading, name, job) {
                 return;
             }
 
+            user.removeMoney(price, 'Аренда рабочего ТС: ' + name);
             vehicles.spawnJobCar(x, y, z, heading, name, job);
+        }
+    });
+};
+
+menuList.showSpawnJobGr6Menu = function() {
+
+    let menu = UIMenu.Menu.Create(`Gruppe6`, `~b~Меню Gruppe6`);
+
+    UIMenu.Menu.AddMenuItem("~g~Начать рабочий день").doName = 'startDuty';
+    UIMenu.Menu.AddMenuItem("Арендовать транспорт", 'Цена за аренду: ~g~$500~s~\nЗалог: ~g~$4,500').doName = 'spawnCar';
+    UIMenu.Menu.AddMenuItem("~b~Стандартное вооружение", 'Цена: ~g~$3,000').doName = 'getMore0';
+    UIMenu.Menu.AddMenuItem("~b~Доп. вооружение", 'Цена: ~g~$10,000').doName = 'getMore1';
+    UIMenu.Menu.AddMenuItem("~r~Закончить рабочий день").doName = 'stopDuty';
+    UIMenu.Menu.AddMenuItem("~r~Закрыть");
+
+    menu.ItemSelect.on(async (item, index) => {
+        UIMenu.Menu.HideMenu();
+        if (item.doName == 'startDuty') {
+            if (user.getCashMoney() < 3000) {
+                mp.game.ui.notifications.show("~r~У Вас нет на руках $500");
+                return;
+            }
+
+            mp.events.callRemote('server:uniform:gr6');
+            Container.Data.SetLocally(0, 'is6Duty', true);
+
+            mp.game.ui.notifications.show("~g~Вы вышли на дежурство");
+        }
+        if (item.doName == 'getMore0') {
+            if (user.getCashMoney() < 3000) {
+                mp.game.ui.notifications.show("~r~У Вас нет на руках $3000");
+                return;
+            }
+
+            mp.events.callRemote('server:gun:buy', 77, 2250, 1, 0, 5, 0);
+            mp.events.callRemote('server:gun:buy', 280, 850, 1, 0, 5, 0);
+            mp.players.local.setArmour(20);
+
+            mp.game.ui.notifications.show("~g~Вы взяли стандартное вооружение");
+        }
+        if (item.doName == 'getMore1') {
+            if (!Container.Data.HasLocally(0, 'is6Duty')) {
+                mp.game.ui.notifications.show("~r~Вы не вышли на дежурство");
+                return;
+            }
+            if (user.getCashMoney() < 10000) {
+                mp.game.ui.notifications.show("~r~У Вас нет на руках $10,000");
+                return;
+            }
+
+            mp.events.callRemote('server:gun:buy', 103, 9250, 1, 0, 5, 0);
+            mp.events.callRemote('server:gun:buy', 280, 850, 1, 0, 5, 0);
+
+            mp.players.local.setArmour(100);
+            mp.game.ui.notifications.show("~g~Вы купили MP5 и взяли в аренду бронежилет.");
+        }
+        if (item.doName == 'stopDuty') {
+            user.updateCharacterCloth();
+            mp.players.local.setArmour(0);
+            mp.game.ui.notifications.show("~y~Вы закончили дежурство и сдали бронежилет.");
+            Container.Data.ResetLocally(0, 'is6Duty');
+        }
+        if (item.doName == 'spawnCar') {
+
+            if (user.getMoney() < 5000) {
+                mp.game.ui.notifications.show(`~r~У Вас недостаточно средств`);
+                return;
+            }
+
+            user.removeMoney(5000.0001, 'Аренда рабочего ТС: Stockade');
+            vehicles.spawnJobCar(-19.704904556274414, -671.88427734375, 31.945446014404297, 186.04244995117188, 'Stockade', 10);
         }
     });
 };
@@ -3608,7 +3688,7 @@ menuList.showBarberShopMenu = function (shopId, price) {
         menuListItem.SetLeftBadge(27);
 
     itemPrice = 10 * price;
-    menuListItem = UIMenu.Menu.AddMenuItemCheckbox('Тип причёски', `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`, skin.SKIN_HAIR_2);
+    menuListItem = UIMenu.Menu.AddMenuItemCheckbox('Тип причёски', `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`, skin.SKIN_HAIR_2 === 1);
     menuListItem.doName = 'SKIN_HAIR_2';
     menuListItem.price = itemPrice + 0.01;
     menuListItem.label = "Тип причёски";
@@ -3986,7 +4066,8 @@ menuList.showBarberShopMenu = function (shopId, price) {
 
     menu.ItemSelect.on(async (item, index) => {
         try {
-            UIMenu.Menu.HideMenu();
+            if (item.doName == "closeButton")
+                UIMenu.Menu.HideMenu();
             if (item == currentListChangeItem) {
 
                 switch (item.doName) {
@@ -4430,7 +4511,6 @@ menuList.showBarFreeMenu = function()
     menuItem.drunkLevel = 200;
 
     menuItem = UIMenu.Menu.AddMenuItem("Текила");
-    menuItem.price = itemPrice;
     menuItem.label = "текилу";
     menuItem.drunkLevel = 200;
 

@@ -183,6 +183,7 @@ enums.userData = [
 
     "s_hud_speed",
     "s_hud_bg",
+    "s_hud_raycast",
     "s_voice_vol",
     "s_clipset",
 

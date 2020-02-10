@@ -39,7 +39,12 @@ let timer = {};
 
 timer.setDeathTimer = function(sec) {
     deathTimer = sec;
-    ui.showSubtitle(`Время до возрождения~g~ ${deathTimer} ~s~сек.`);
+    if (sec > 0)
+        ui.showDialog(`Время до возрождения ${deathTimer} сек.`, '', 'none', [], ui.dialogTypes.centerBottom, 0, false, false);
+    else {
+        user.stopAllScreenEffect();
+        ui.hideDialog();
+    }
 };
 
 timer.getDeathTimer = function() {
@@ -317,10 +322,10 @@ timer.secTimer = function() {
                 user.hidePhone();
         }
 
-        if (deathTimer > 0) {
-            timer.setDeathTimer(deathTimer - 1);
+        if (timer.getDeathTimer() > 0) {
+            timer.setDeathTimer(timer.getDeathTimer() - 1);
 
-            if (deathTimer == 0)
+            if (timer.getDeathTimer() == 0)
                 hosp.toHosp();
             if (!user.isDead())
                 timer.setDeathTimer(0);

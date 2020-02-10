@@ -92,8 +92,8 @@ items.itemList = [
     ['Raging Bull', 'weapon_revolver', 0, 1430410579, 1440, 1080, 8500], //74
     ['Raging Bull Mk II', 'weapon_revolver_mk2', 0, 1430410579, 1990, 1080, 11000], //75
     ['Contender G2', 'weapon_marksmanpistol', 0, 1430410579, 1360, 1800, 9000], //76
-    ['Taurus PT92', 'weapon_pistol', 0, 1467525553, 950, 1230, 6000], //77
-    ['Beretta 90Two', 'weapon_pistol_mk2', 0, 1430410579, 920, 1050, 8500], //78
+    ['Taurus PT92', 'weapon_pistol', 0, 1467525553, 950, 1230, 2800], //77
+    ['Beretta 90Two', 'weapon_pistol_mk2', 0, 1430410579, 920, 1050, 4200], //78
     ['Desert Eagle', 'weapon_pistol50', 0, -178484015, 1700, 1720, 9000], //79
     ['HK P7M10', 'weapon_snspistol', 0, 339962010, 785, 660, 4000], //80
     ['Colt Junior', 'weapon_snspistol_mk2', 0, 1430410579, 365, 310, 5500], //81

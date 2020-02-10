@@ -1436,6 +1436,30 @@ user.getPayDayMoney = function(player) {
     return 0;
 };
 
+user.addRep = function(player, rep) {
+    user.setRep(player, user.getRep(player) + methods.parseInt(rep));
+};
+
+user.removeRep= function(player, rep) {
+    user.setRep(player, user.getRep(player) - methods.parseInt(rep));
+};
+
+user.setRep = function(player, rep) {
+    if (rep > 1000)
+        user.set(player, 'rep', 1000);
+    else if (rep < 0)
+        user.set(player, 'rep', 0);
+    else
+        user.set(player, 'rep', methods.parseInt(rep));
+    user.updateClientCache(player);
+};
+
+user.getRep = function(player) {
+    if (user.has(player, 'rep'))
+        return methods.parseInt(user.get(player, 'rep'));
+    return 0;
+};
+
 user.getBankCardPrefix = function(player, bankCard = 0) {
     methods.debug('bank.getBankCardPrefix');
     if (!user.isLogin(player))

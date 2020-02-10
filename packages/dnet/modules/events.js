@@ -1336,6 +1336,18 @@ mp.events.addRemoteCounted('server:user:setPayDayMoney', (player, money) => {
     user.setPayDayMoney(player, money);
 });
 
+mp.events.addRemoteCounted('server:user:addRep', (player, rep) => {
+    user.addRep(player, rep);
+});
+
+mp.events.addRemoteCounted('server:user:removeRep', (player, rep) => {
+    user.removeRep(player, rep);
+});
+
+mp.events.addRemoteCounted('server:user:setRep', (player, rep) => {
+    user.setRep(player, rep);
+});
+
 mp.events.addRemoteCounted('server:business:save', (player, id) => {
     business.save(id);
 });
@@ -1372,9 +1384,9 @@ mp.events.addRemoteCounted('server:uniform:gr6', (player) => {
         user.setComponentVariation(player, 6, 25, 0);
         user.setComponentVariation(player, 7, 0, 0);
         user.setComponentVariation(player, 8, 122, 0);
-        user.setComponentVariation(player, 9, 4, 1);
-        user.setComponentVariation(player, 10, 0, 0);
-        user.setComponentVariation(player, 11, 26, 1);
+        user.setComponentVariation(player, 9, 7, 1);
+        user.setComponentVariation(player, 10, 71, 0);
+        user.setComponentVariation(player, 11, 318, 1);
     }
 });
 
@@ -1384,27 +1396,31 @@ mp.events.addRemoteCounted('server:gr6:findPickup', (player, x, y, z) => {
     try {
 
         if (player.vehicle && player.seat == -1) {
-
             if (player.vehicle.getOccupants().length == 1) {
                 player.notify('~b~Работать можно только с напарниками!');
             }
             else {
                 let isStart = false;
                 player.vehicle.getOccupants().forEach(function (p) {
-                    if (!user.isLogin(p))
-                        return;
-                    if (user.get(p, 'job') == 8) {
-                        user.setWaypoint(p, x, y);
-                        Container.Data.Set(player.vehicle.id, 'validWorker' + user.getId(p), true);
-                        if (user.getRpName(p) == user.getRpName(player))
+                    try {
+                        if (!user.isLogin(p))
                             return;
-                        p.notify('~b~Вы получили задание');
-                        player.notify('~b~Напарник: ~s~' + user.getRpName(p));
+                        if (user.get(p, 'job') == 10) {
+                            user.setWaypoint(p, x, y);
+                            Container.Data.Set(player.vehicle.id, 'validWorker' + user.getId(p), true);
+                            if (user.getRpName(p) == user.getRpName(player))
+                                return;
+                            p.notify('~b~Вы получили задание');
+                            player.notify('~b~Напарник: ~s~' + user.getRpName(p));
 
-                        if (isStart)
-                            return;
-                        p.call('client:createGr6Checkpoint', [x, y, z]);
-                        isStart = true;
+                            if (isStart)
+                                return;
+                            p.call('client:createGr6Checkpoint', [x, y, z]);
+                            isStart = true;
+                        }
+                    }
+                    catch (e) {
+                        methods.debug(e);
                     }
                 })
             }
@@ -1419,8 +1435,13 @@ mp.events.addRemoteCounted('server:gr6:dropCar', (player, money, vId) => {
     if (!user.isLogin(player))
         return;
     mp.vehicles.forEach(function (v) {
-        if (vehicles.exists(v) && v.id == vId)
-            v.setVariable('gr6Money', methods.parseFloat(v.getVariable('gr6Money') + money));
+        try {
+            if (vehicles.exists(v) && v.id == vId)
+                v.setVariable('gr6Money', methods.parseFloat(v.getVariable('gr6Money') + money));
+        }
+        catch (e) {
+            methods.debug(e);
+        }
     });
 });
 
@@ -1430,34 +1451,41 @@ mp.events.addRemoteCounted('server:gr6:unload', (player, vId) => {
 
     if (player.vehicle && player.seat == -1) {
         mp.vehicles.forEach(function (v) {
-            if (vehicles.exists(v) && v.id == vId) {
-                let money = methods.parseFloat(v.getVariable('gr6Money') / 100);
+            try {
+                if (vehicles.exists(v) && v.id == vId) {
+                    let money = methods.parseFloat(v.getVariable('gr6Money') / 100);
+                    let countOcc = v.getOccupants().length;
 
-                let countOcc = v.getOccupants().length;
+                    v.getOccupants().forEach(function (p) {
+                        try {
+                            if (!user.isLogin(p) || user.get(p, 'job') != 10)
+                                return;
 
-                v.getOccupants().forEach(function (p) {
-                    if (!user.isLogin(p) || user.get(p, 'job') != 8)
-                        return;
+                            if (Container.Data.Has(v.id, 'validWorker' + user.getId(p))) {
 
-                    if (Container.Data.Has(v.id, 'validWorker' + user.getId(p))) {
+                                let currentMoney = methods.parseFloat(money / countOcc);
 
-                        let currentMoney = methods.parseFloat(money / countOcc);
-                        if (user.get(p, 'skill_gr6') >= 500)
-                            currentMoney = methods.parseFloat(money * 1.5);
-
-                        user.addCashMoney(p, currentMoney, 'Зарплата инкассатора');
-                        business.addMoney(162, methods.parseFloat(currentMoney / 10));
-                        coffer.removeMoney(currentMoney + methods.parseFloat(currentMoney / 10));
-                        p.notify('~g~Вы заработали: ~s~' + methods.moneyFormat(currentMoney));
-                        Container.Data.Reset(v.id, 'validWorker' + user.getId(p));
-                        user.giveJobSkill(p);
-                    }
-                    else {
-                        p.notify('~r~Вы не являетесь напарником ' + user.getRpName(player));
-                        p.notify('~r~Зарплату вы не получили');
-                    }
-                });
-                v.setVariable('gr6Money', 0);
+                                user.addCashMoney(p, currentMoney, 'Зарплата инкассатора');
+                                business.addMoney(162, methods.parseFloat(currentMoney / 10));
+                                coffer.removeMoney(currentMoney + methods.parseFloat(currentMoney / 10));
+                                p.notify('~g~Вы заработали: ~s~' + methods.moneyFormat(currentMoney));
+                                Container.Data.Reset(v.id, 'validWorker' + user.getId(p));
+                                user.giveJobSkill(p);
+                            }
+                            else {
+                                p.notify('~r~Вы не являетесь напарником ' + user.getRpName(player));
+                                p.notify('~r~Зарплату вы не получили');
+                            }
+                        }
+                        catch (e) {
+                            methods.debug(e);
+                        }
+                    });
+                    v.setVariable('gr6Money', 0);
+                }
+            }
+            catch (e) {
+                methods.debug(e);
             }
         });
     }
@@ -1466,46 +1494,61 @@ mp.events.addRemoteCounted('server:gr6:unload', (player, vId) => {
 mp.events.addRemoteCounted('server:gr6:delete', (player) => {
     if (!user.isLogin(player))
         return;
-    let veh = player.vehicle;
-    if (veh && player.seat == -1) {
-        if (veh.getVariable('owner_id') == user.getId(player)) {
-            user.showLoadDisplay(player);
-            setTimeout(function () {
-                vehicles.respawn(veh);
+    try {
+        let veh = player.vehicle;
+        if (veh && player.seat == -1) {
+            if (veh.getVariable('owner_id') == user.getId(player)) {
+                user.showLoadDisplay(player);
                 setTimeout(function () {
-                    if (user.isLogin(player)) {
-                        user.hideLoadDisplay(player);
-                        user.addCashMoney(player, 4500, 'Возврат ТС инкассатора');
-                        player.notify('~b~Вы вернули транспорт в гараж');
-                    }
-                }, 500);
-            }, 700);
+                    vehicles.respawn(veh);
+                    setTimeout(function () {
+                        try {
+                            if (user.isLogin(player)) {
+                                user.hideLoadDisplay(player);
+                                user.addMoney(player, 4500, 'Возврат ТС инкассатора');
+                                player.notify('~b~Вы вернули транспорт в гараж');
+                            }
+                        }
+                        catch (e) {
+                            methods.debug(e);
+                        }
+                    }, 500);
+                }, 700);
+            }
+            else {
+                player.notify('~r~Не вы арендовали, не вам сдавать.');
+            }
         }
-        else {
-            player.notify('~r~Не вы арендовали, не вам сдавать.');
-        }
+    }
+    catch (e) {
+        methods.debug(e);
     }
 });
 
 mp.events.addRemoteCounted('server:gr6:grab', (player) => {
     if (!user.isLogin(player))
         return;
-    if (player.vehicle && player.seat == -1) {
-        if (player.vehicle.getVariable('job') == 8) {
-            user.showLoadDisplay(player);
-            let money = methods.parseFloat(player.vehicle.getVariable('gr6Money') / 90);
-            setTimeout(function () {
-                vehicles.respawn(player.vehicle);
+    try {
+        if (player.vehicle && player.seat == -1) {
+            if (player.vehicle.getVariable('job') == 10) {
+                user.showLoadDisplay(player);
+                let money = methods.parseFloat(player.vehicle.getVariable('gr6Money') / 90);
                 setTimeout(function () {
-                    user.hideLoadDisplay(player);
-                    user.addCashMoney(player, money, 'Ограбление');
-                    player.notify('~b~Вы ограбили транспорт на сумму: ~s~' + methods.moneyFormat(money));
-                }, 500);
-            }, 700);
+                    vehicles.respawn(player.vehicle);
+                    setTimeout(function () {
+                        user.hideLoadDisplay(player);
+                        user.addCashMoney(player, money, 'Ограбление');
+                        player.notify('~b~Вы ограбили транспорт на сумму: ~s~' + methods.moneyFormat(money));
+                    }, 500);
+                }, 700);
+            }
+            else {
+                player.notify('~r~Это не инкассаторская машина');
+            }
         }
-        else {
-            player.notify('~r~Это не инкассаторская машина');
-        }
+    }
+    catch (e) {
+        methods.debug(e);
     }
 });
 
@@ -1521,6 +1564,7 @@ mp.events.addRemoteCounted('server:vehicles:spawnJobCar', (player, x, y, z, head
                 player.putIntoVehicle(veh, -1);
                 vehicles.set(veh.getVariable('container'), 'owner_id', user.getId(player));
                 veh.setVariable('owner_id', user.getId(player));
+                veh.setVariable('job', job);
             }, new mp.Vector3(x, y, z), heading, name, job);
         }
         catch (e) {
@@ -3698,6 +3742,64 @@ mp.events.addRemoteCounted('server:vehicle:setLivery', (player, liv) => {
     }
 });
 
+mp.events.addRemoteCounted('server:sellVeh', (player) => {
+    if (!user.isLogin(player))
+        return;
+    let veh = player.vehicle;
+    if (!vehicles.exists(veh))
+        return;
+
+    if (weather.getHour() < 22 && weather.getHour() > 4) {
+        player.notify('~r~Доступно только с 22 до 4 утра игрового времени');
+        return;
+    }
+
+    if (user.has(player, 'grabVeh')) {
+        player.notify('~r~Вы не можете сейчас сбыть транспорт');
+        return;
+    }
+
+    let money = 200;
+
+    let vInfo = methods.getVehicleInfo(veh.model);
+
+    switch (vInfo.class_name) {
+        case "Emergency":
+        case "Boats":
+        case "Helicopters":
+        case "Planes":
+            player.notify("~r~Мы такое не принимаем");
+            return;
+        case "Sports Classics":
+            money += 450;
+            break;
+        case "Sports":
+        case "Super":
+            money += 320;
+            break;
+        case "SUVs":
+        case "Muscle":
+        case "Off-Road":
+            money += 190;
+            break;
+    }
+    user.showLoadDisplay(player);
+
+    user.addCryptoMoney(player, money / 1000);
+    user.removeRep(player, 50);
+    user.set(player, 'grabVeh', true);
+
+    setTimeout(function () {
+        if (!user.isLogin(player))
+            return;
+        user.hideLoadDisplay(player);
+        player.notify('~g~Вы заработали: ~s~' + methods.cryptoFormat(money));
+        if (!vehicles.exists(veh))
+            return;
+        vehicles.respawn(veh);
+    }, 1000);
+});
+
 mp.events.addRemoteCounted('server:lsc:showTun', (player, modType, idx) => {
     if (!user.isLogin(player))
         return;
@@ -3756,63 +3858,6 @@ mp.events.addRemoteCounted('server:lsc:buySpecial', (player, shopId, price) => {
     if (!user.isLogin(player))
         return;
     lsc.buySpecial(player, price, shopId);
-});
-
-mp.events.addRemoteCounted('server:lsc:sellCar', (player) => {
-    if (!user.isLogin(player))
-        return;
-    let veh = player.vehicle;
-    if (!vehicles.exists(veh))
-        return;
-
-    if (weather.getHour() < 22 && weather.getHour() > 4) {
-        player.notify('~r~Доступно только с 22 до 4 утра игрового времени');
-        return;
-    }
-
-    if (user.has(player, 'grabVeh')) {
-        player.notify('~r~Вы не можете сейчас сбыть транспорт');
-        return;
-    }
-
-    let money = 100;
-
-    let vInfo = methods.getVehicleInfo(veh.model);
-
-    switch (vInfo.class_name) {
-        case "Emergency":
-        case "Boats":
-        case "Helicopters":
-        case "Planes":
-            player.notify("~r~Мы такое не принимаем");
-            return;
-        case "Sports Classics":
-            money += 350;
-            break;
-        case "Sports":
-        case "Super":
-            money += 220;
-            break;
-        case "SUVs":
-        case "Muscle":
-        case "Off-Road":
-            money += 90;
-            break;
-    }
-    user.showLoadDisplay(player);
-
-    user.addCashMoney(player, money, 'Угон');
-    user.set(player, 'grabVeh', true);
-
-    setTimeout(function () {
-        if (!user.isLogin(player))
-            return;
-        user.hideLoadDisplay(player);
-        player.notify('~g~Вы заработали: ~s~$' + money);
-        if (!vehicles.exists(veh))
-            return;
-        vehicles.respawn(veh);
-    }, 1000);
 });
 
 mp.events.addRemoteCounted('server:vehicle:occ', (player) => {

@@ -38,8 +38,15 @@ let cam = null;
 
 mp.events.add('render', () => {
     try {
-        if (user.isLogin() && user.getTargetEntityValidate())
-            ui.drawText(`•`, 0.5, 0.5, 0.3, 255, 255, 255, 180, 0, 1, false, true);
+        let entity = user.getTargetEntityValidate();
+        if (user.isLogin() && entity) {
+            if (user.getCache('s_hud_raycast')) {
+                let pos = entity.position;
+                ui.drawText3D(`•`, pos.x, pos.y, pos.z + 0.8, 0.6);
+            }
+            else
+                ui.drawText(`•`, 0.5, 0.5, 0.3, 255, 255, 255, 200, 0, 1, false, true);
+        }
     }
     catch (e) {
 
@@ -851,6 +858,10 @@ user.stopAllScreenEffect = function() {
     mp.game.graphics.setNightvision(false);
     mp.game.graphics.setSeethrough(false);
     mp.game.graphics.setTimecycleModifierStrength(0);
+
+    mp.game.graphics.setNoiseoveride(false);
+    mp.game.graphics.setNoisinessoveride(0);
+
     mp.game.invoke(methods.ANIMPOSTFX_STOP_ALL);
 };
 
@@ -950,6 +961,22 @@ user.setPayDayMoney = function(money) {
 
 user.getPayDayMoney = function() {
     return methods.parseFloat(user.getCache('money_payday'));
+};
+
+user.addRep = function(rep) {
+    mp.events.callRemote('server:user:addRep', rep);
+};
+
+user.removeRep= function(rep) {
+    mp.events.callRemote('server:user:removeRep', rep);
+};
+
+user.setRep = function(rep) {
+    mp.events.callRemote('server:user:setRep', rep);
+};
+
+user.getRep= function() {
+    return methods.parseInt(user.getCache('rep'));
 };
 
 user.addGrabMoney = function(money) {
@@ -1058,7 +1085,7 @@ user.isJobMail = function() {
 };
 
 user.isJobGr6 = function() {
-    return user.isLogin() && user.getCache('job') == 8;
+    return user.isLogin() && user.getCache('job') == 10;
 };
 
 user.giveWanted = function(level, reason) {

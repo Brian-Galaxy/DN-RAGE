@@ -741,6 +741,8 @@ builder.workProcess = function(id) {
                 user.stopScenario();
                 user.giveJobMoney(methods.getRandomInt(20, 25) + methods.getRandomFloat());
 
+                user.addRep(1);
+
                 user.giveJobSkill();
             }, 20000);
         }

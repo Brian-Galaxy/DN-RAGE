@@ -46,6 +46,13 @@ timer.min30Timer = function() {
         }
     });
 
+    mp.players.forEach(function (p) {
+        if (user.isLogin(p)) {
+            if (user.has(p, 'grabVeh'))
+                user.reset(p, 'grabVeh');
+        }
+    });
+
     setTimeout(timer.min30Timer, 1000 * 60 * 30);
 };
 

@@ -239,7 +239,7 @@ enums.shopAlcItems = [
 ];
 
 enums.shopElItems = [
-    27, 29, 59
+    29, 59
 ];
 
 enums.shopMedItems = [

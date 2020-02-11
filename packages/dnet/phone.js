@@ -1551,6 +1551,46 @@ phone.fractionVehicleBuyInfo = function(player, id) {
     });
 };
 
+phone.updateContactList = function(player) {
+    if (!user.isLogin(player))
+        return;
+
+    try {
+        mysql.executeQuery(`SELECT * FROM phone_contact WHERE phone = '${user.get(player, 'phone')}' LIMIT 50`, (err, rows, fields) => {
+
+            let array = [];
+
+            rows.forEach(row => {
+                array.push(
+                    {
+                        id: row['id'],
+                        name: row['name'],
+                        numbers: JSON.parse(row['numbers']),
+                        mail: '',
+                        isFavorite: row['is_fav'] === 1,
+                        img: 'https://a.rsg.sc//n/socialclub',
+                    }
+                );
+            });
+
+            let contacts = {
+                type: 'updatePhonebook',
+                phonebook: {
+                    editing_contact: false,
+                    selected_contact: {},
+                    history: [],
+                    contact: array,
+                }
+            };
+
+            user.callCef(player, 'phone' + user.get(player, 'phone_type'), JSON.stringify(contacts));
+        });
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+};
+
 phone.showMenu = function(player, uuid, title, items) {
     if (!user.isLogin(player))
         return;

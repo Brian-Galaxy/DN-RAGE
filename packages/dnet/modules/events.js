@@ -1614,6 +1614,76 @@ mp.events.addRemoteCounted('server:dispatcher:sendLocalPos', (player, title, des
     dispatcher.sendLocalPos(title, desc, new mp.Vector3(x, y, z), fractionId, withCoord);
 });
 
+mp.events.addRemoteCounted('server:phone:editContact', (player, json) => {
+    if (!user.isLogin(player))
+        return;
+
+    try {
+        let contact = JSON.parse(json);
+        methods.debug(json);
+        mysql.executeQuery(`UPDATE phone_contact SET name = '${methods.removeQuotes(contact.name)}', numbers = '${JSON.stringify(contact.numbers)}' WHERE id = '${contact.id}'`);
+        player.notify('~y~Контакнт отредактирован');
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.addRemoteCounted('server:phone:favoriteContact', (player, json) => {
+    if (!user.isLogin(player))
+        return;
+
+    try {
+        let contact = JSON.parse(json);
+        mysql.executeQuery(`UPDATE phone_contact SET is_fav = '${contact.isFavorite ? 0 : 1}' WHERE id = '${contact.id}'`);
+        player.notify('~y~Контакнт добавлен в избранное');
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.addRemoteCounted('server:phone:deleteContact', (player, json) => {
+    if (!user.isLogin(player))
+        return;
+
+    try {
+        let contact = JSON.parse(json);
+        mysql.executeQuery(`DELETE FROM phone_contact WHERE id = '${contact.id}'`);
+        player.notify('~y~Контакнт удалён');
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.addRemoteCounted('server:phone:addContact', (player, json) => {
+    if (!user.isLogin(player))
+        return;
+
+    try {
+        let contact = JSON.parse(json);
+
+        if (contact.name === '') {
+            player.notify('~y~Поле "Имя" не заполнено');
+            return;
+        }
+
+        mysql.executeQuery(`INSERT INTO phone_contact (phone, name, numbers) VALUES ('${user.get(player, 'phone')}', '${methods.removeQuotes(contact.name)}', '${JSON.stringify(contact.numbers)}')`);
+        player.notify('~g~Контакт был добавлен');
+        setTimeout(function () {
+            phone.updateContactList(player);
+        }, 1000);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.addRemoteCounted('server:phone:updateContactList', (player) => {
+    phone.updateContactList(player);
+});
+
 mp.events.addRemoteCounted('server:phone:fractionList', (player) => {
     if (!user.isLogin(player))
         return;

@@ -1323,7 +1323,7 @@ menuList.showBusinessSettingsMenu = async function(data) {
     interiorItem.doName = 'setInterior';
     interiorItem.Index = data.get('interior');
 
-    if (data.get('type') == 0) {
+    /*if (data.get('type') == 0) { //TODO
         let priceItem = UIMenu.Menu.AddMenuItemList("~b~Процент обслуживания~s~", priceBankList);
         priceItem.doName = 'setPriceBank';
         priceItem.Index = data.get('price_product') - 1;
@@ -1332,7 +1332,7 @@ menuList.showBusinessSettingsMenu = async function(data) {
         let priceItem = UIMenu.Menu.AddMenuItemList("~b~Цена на весь товар~s~");
         priceItem.SetRightLabel(`${data.get('price_product') * 100}%`);
         priceItem.doName = 'setPrice';
-    }
+    }*/
 
     let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
 
@@ -3130,16 +3130,7 @@ menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId) {
                 else if (item.label.toString() != "")
                     desc += item.label;
 
-                if (item.item_id == 277) {
-                    itemName = items.getItemNameById(item.item_id);
-                    if(params.state == -1)
-                        desc = "Статус: Использован";
-                    else if(params.state == 0)
-                        desc = "Статус: Ожидает розыгрыша";
-                    else if(params.state == 1)
-                        desc = "Статус: Заберите выигрыш";
-                }
-                else if (items.isWeapon(item.item_id)) {
+                if (items.isWeapon(item.item_id)) {
 
                     let wpName = items.getItemNameHashById(item.item_id);
                     itemName = items.getItemNameById(item.item_id);
@@ -3170,6 +3161,10 @@ menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId) {
                     itemName = items.getItemNameById(item.item_id);
                     desc = methods.bankFormat(params.number);
                 }
+                else if (item.item_id <= 30 && item.item_id >= 27) {
+                    itemName = items.getItemNameById(item.item_id);
+                    desc = methods.phoneFormat(params.number);
+                }
 
                 if (item.is_equip == 1 && ownerType == 1 && ownerId == user.getCache('id')) {
 
@@ -3177,6 +3172,12 @@ menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId) {
 
                     if (item.item_id == 50) {
                         if (params.number != user.getCache('bank_card')) {
+                            inventory.updateEquipStatus(item.id, false);
+                            success = false;
+                        }
+                    }
+                    if (item.item_id <= 30 && item.item_id >= 27) {
+                        if (params.number != user.getCache('phone')) {
                             inventory.updateEquipStatus(item.id, false);
                             success = false;
                         }

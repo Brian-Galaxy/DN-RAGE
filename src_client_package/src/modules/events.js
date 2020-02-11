@@ -1748,6 +1748,11 @@ mp.events.add('client:inventory:unEquip', function(id, itemId) {
         inventory.updateItemCount(id, money);
         user.save();
     }
+    else if (itemId >= 27 && itemId <= 30) {
+        user.set('phone_type', 0);
+        user.set('phone', 0);
+        user.save();
+    }
     else if (items.isWeapon(itemId)) {
 
         let wpName = items.getItemNameHashById(itemId);
@@ -1909,6 +1914,17 @@ mp.events.add('client:inventory:equip', function(id, itemId, count, aparams) {
         }
         else {
             mp.game.ui.notifications.show("~r~Карта уже экипирована, для начала снимите текущую");
+            return;
+        }
+    }
+    else if (itemId >= 27 && itemId <= 30) {
+        if (user.getCache('phone_type') == 0) {
+            user.set('phone', methods.parseInt(params.number));
+            user.set('phone_type', methods.parseInt(params.type));
+            user.save();
+        }
+        else {
+            mp.game.ui.notifications.show("~r~Телефон уже экипирован, для начала снимите текущий");
             return;
         }
     }
@@ -2124,7 +2140,23 @@ mp.events.add('client:phone:callBack', function(action, menu, id, ...args) {
     phone.callBack(action, menu, id, ...args);
 });
 
-mp.events.add("client:vehicle:checker", function (vehicle, seat) {
+mp.events.add('client:phone:editContact', function(contJson) {
+    mp.events.callRemote('server:phone:editContact', contJson);
+});
+
+mp.events.add('client:phone:addContact', function(contJson) {
+    mp.events.callRemote('server:phone:addContact', contJson);
+});
+
+mp.events.add('client:phone:deleteContact', function(contJson) {
+    mp.events.callRemote('server:phone:deleteContact', contJson);
+});
+
+mp.events.add('client:phone:favoriteContact', function(contJson) {
+    mp.events.callRemote('server:phone:favoriteContact', contJson);
+});
+
+mp.events.add("client:vehicle:checker", function () {
 
     try {
         let vehicle = mp.players.local.vehicle;

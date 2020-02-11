@@ -33,6 +33,9 @@ phone.show = function() {
     try {
         user.openPhone(pType);
 
+        mp.events.callRemote('server:phone:updateContactList');
+
+        mp.gui.chat.activate(false);
         mp.gui.cursor.show(false, true);
         mp.game.ui.notifications.show(`~b~Скрыть телефон на ~s~${bind.getKeyName(user.getCache('s_bind_phone'))}`);
         ui.DisableMouseControl = true;
@@ -63,6 +66,7 @@ phone.hide = function() {
     //mp.gui.chat.activate(true);
     try {
         user.hidePhone();
+        mp.gui.chat.activate(true);
         mp.gui.cursor.show(false, false);
         ui.DisableMouseControl = false;
         hidden = true;

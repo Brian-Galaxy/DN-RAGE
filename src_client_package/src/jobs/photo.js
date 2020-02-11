@@ -305,6 +305,7 @@ photo.workProcess = function() {
                     user.giveJobMoney(price);
                 }
 
+                user.addRep(5);
                 user.giveJobSkill();
                 price = 0;
             }, 30000);

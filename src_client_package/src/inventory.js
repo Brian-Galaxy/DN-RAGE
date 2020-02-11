@@ -181,7 +181,7 @@ inventory.deleteItemsRange = function(itemIdFrom, itemIdTo) {
     mp.events.callRemote('server:inventory:deleteItemsRange', itemIdFrom, itemIdTo);
 };
 
-inventory.takeNewItem = async function(itemId, params, count = 1) { //TODO
+inventory.takeNewItem = async function(itemId, params = "{}", count = 1) { //TODO
     try {
         let user_id = user.getCache('id');
         let amount = await inventory.getInvAmount(user_id, inventory.types.Player);
@@ -194,6 +194,17 @@ inventory.takeNewItem = async function(itemId, params, count = 1) { //TODO
         inventory.updateAmount(user_id, inventory.types.Player);
         mp.game.ui.notifications.show(`~b~Вы взяли \"${items.getItemNameById(itemId)}\"`);
         chat.sendMeCommand(`взял \"${items.getItemNameById(itemId)}\"`);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+};
+
+inventory.takeNewItemJust = function(itemId, params = "{}", count = 1) {
+    try {
+        let user_id = user.getCache('id');
+        inventory.addItem(itemId, 1, inventory.types.Player, user_id, count, 0, params, 1);
+        inventory.updateAmount(user_id, inventory.types.Player);
     }
     catch (e) {
         methods.debug(e);

@@ -1097,8 +1097,12 @@ user.getRepColorName = function(player) {
 
 user.getJobName = function(player) {
     if (!user.isLogin(player))
-        return false;
-    return enums.jobList[user.get(player, 'job')][0];
+        return 'Отсуствует';
+    try {
+        return enums.jobList[user.get(player, 'job')][0];
+    }catch (e) {
+    }
+    return 'Отсуствует';
 };
 
 user.getFractionName = function(player) {

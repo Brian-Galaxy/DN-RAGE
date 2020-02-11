@@ -129,8 +129,8 @@ timer.twoMinTimer = function() {
     let veh = mp.players.local.vehicle; //TODO
     if (veh && mp.vehicles.exists(veh) && veh.getClass() == 18 && !user.isGos()) {
         if (veh.getPedInSeat(-1) == mp.players.local.handle) {
-            user.giveWanted(10, 'Угон служебного ТС');
-            //dispatcher.send(`Код 0`, `Неизвестный угнал служебный трансопрт`);
+            user.giveWanted(50, 'Угон служебного ТС');
+            dispatcher.send(`Код 0`, `Неизвестный угнал служебный трансопрт`);
         }
     }
 

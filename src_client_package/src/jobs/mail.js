@@ -14,6 +14,7 @@ mail.sendMail = function(houseId) {
                 mp.game.ui.notifications.show(`~g~Вы отнесли почту ${Container.Data.GetLocally(mp.players.local.id, 'mail')}/10`);
                 user.giveJobSkill();
                 user.giveJobMoney(11);
+                user.addRep(1);
                 return;
             }
         }
@@ -34,6 +35,7 @@ mail.sendMail2 = function(houseId) {
                 mp.game.ui.notifications.show(`~g~Вы отнесли почту ${Container.Data.GetLocally(mp.players.local.id, 'mail')}/10`);
                 user.giveJobSkill();
                 user.giveJobMoney(11);
+                user.addRep(1);
                 return;
             }
         }

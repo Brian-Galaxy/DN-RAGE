@@ -1602,8 +1602,15 @@ menuList.showLicBuyMenu = function()
     UIMenu.Menu.HideMenu();
     let menu = UIMenu.Menu.Create("Правительство", "~b~Покупка лицензий");
 
-    UIMenu.Menu.AddMenuItem("Категория A", "Цена: ~g~$99.90").doName = "a_lic";
-    UIMenu.Menu.AddMenuItem("Категория B", "Цена: ~g~$300").doName = "b_lic";
+    if (user.getCache('online_time') < 200) {
+
+        UIMenu.Menu.AddMenuItem("Категория A", "Цена: ~g~$0.10").doName = "a_lic";
+        UIMenu.Menu.AddMenuItem("Категория B", "Цена: ~g~$0.10").doName = "b_lic";
+    }
+    else {
+        UIMenu.Menu.AddMenuItem("Категория A", "Цена: ~g~$99.90").doName = "a_lic";
+        UIMenu.Menu.AddMenuItem("Категория B", "Цена: ~g~$300").doName = "b_lic";
+    }
     UIMenu.Menu.AddMenuItem("Категория C", "Цена: ~g~$500").doName = "c_lic";
     UIMenu.Menu.AddMenuItem("Водный транспорт", "Цена: ~g~$990").doName = "ship_lic";
     UIMenu.Menu.AddMenuItem("Перевозка пассажиров", "Цена: ~g~$1500").doName = "taxi_lic";
@@ -1613,11 +1620,19 @@ menuList.showLicBuyMenu = function()
 
     menu.ItemSelect.on((item, index) => {
         UIMenu.Menu.HideMenu();
-        if (item.doName == "a_lic")
-            user.buyLicense('a_lic', 99.90);
-        else if (item.doName == "b_lic")
-            user.buyLicense('b_lic', 300);
-        else if (item.doName == "c_lic")
+        if (user.getCache('online_time') < 200) {
+            if (item.doName == "a_lic")
+                user.buyLicense('a_lic', 0.10);
+            else if (item.doName == "b_lic")
+                user.buyLicense('b_lic', 0.10);
+        }
+        else {
+            if (item.doName == "a_lic")
+                user.buyLicense('a_lic', 99.90);
+            else if (item.doName == "b_lic")
+                user.buyLicense('b_lic', 300);
+        }
+        if (item.doName == "c_lic")
             user.buyLicense('c_lic', 500);
         else if (item.doName == "air_lic")
             user.buyLicense('air_lic', 5000);
@@ -1632,16 +1647,17 @@ menuList.showMeriaJobListMenu = function() {
 
     let menu = UIMenu.Menu.Create(`Секретарь`, `~b~Трудовая биржа`);
 
-    UIMenu.Menu.AddMenuItem("Садовник", "Компания: ~y~O'Connor").jobName = 1;
-    UIMenu.Menu.AddMenuItem("Разнорабочий", "Компания: ~y~Bugstars").jobName = 2;
+    UIMenu.Menu.AddMenuItem("Садовник").jobName = 1;
+    UIMenu.Menu.AddMenuItem("Разнорабочий").jobName = 2;
 
-    UIMenu.Menu.AddMenuItem("Фотограф", "Компания: ~y~LifeInvader").jobName = 3;
-
-    UIMenu.Menu.AddMenuItem("Почтальон", "Компания: ~y~PostOp").jobName = 4;
+    UIMenu.Menu.AddMenuItem("Фотограф").jobName = 3;
+    UIMenu.Menu.AddMenuItem("Почтальон").jobName = 4;
 
     UIMenu.Menu.AddMenuItem("Водитель автобуса-1", "Городской автобус").jobName = 6;
     UIMenu.Menu.AddMenuItem("Водитель автобуса-2", "Трансферный автобус").jobName = 7;
     UIMenu.Menu.AddMenuItem("Водитель автобуса-3", "Рейсовый автобус").jobName = 8;
+
+    UIMenu.Menu.AddMenuItem("Инкассатор").jobName = 10;
 
     /*UIMenu.Menu.AddMenuItem("Таксист", "Компания: ~y~DownTown Cab Co.").jobName = 9;
 
@@ -1660,15 +1676,28 @@ menuList.showMeriaJobListMenu = function() {
             mp.game.ui.notifications.show("~y~Вы уволились с работы");
         }
         if (item.jobName) {
-            if (user.getCache('work_lic').trim() != '') {
+            if (user.getCache('work_lic').trim() === '') {
                 mp.game.ui.notifications.show("~r~Для начала оформите Work ID");
+                return;
+            }
+
+            if ((item.jobName === 3 || item.jobName === 4) && user.getCache('work_lvl') < 2) {
+                mp.game.ui.notifications.show("~r~Вам необходим 2 уровень рабочего стажа");
+                return;
+            }
+
+            if ((item.jobName === 6 || item.jobName === 7 || item.jobName === 8) && user.getCache('work_lvl') < 3) {
+                mp.game.ui.notifications.show("~r~Вам необходим 3 уровень рабочего стажа");
+                return;
+            }
+
+            if (item.jobName === 4 && user.getCache('work_lvl') < 4 && user.getCache('gun_lic')) {
+                mp.game.ui.notifications.show("~r~Вам необходим 4 уровень рабочего стажа и лицензия на ношение оружия");
                 return;
             }
 
             user.set('job', item.jobName);
             mp.game.ui.notifications.show("~g~Вы устроились на работу");
-            user.save();
-
             quest.standart();
         }
     });
@@ -1952,6 +1981,8 @@ menuList.showMainMenu = function() {
             menuList.showSettingsMenu();
         if (item.doName == 'showQuestMenu')
             menuList.showQuestMenu();
+        if (item.doName == 'showHelpMenu')
+            menuList.showHelpMenu();
         if (item.eventName)
             mp.events.callRemote(item.eventName);
     });
@@ -1981,6 +2012,22 @@ menuList.showPlayerMenu = function() {
     });
 };
 
+menuList.showHelpMenu = function() {
+
+    let menu = UIMenu.Menu.Create(`Справка`, `~b~Ответы на ваши вопросы`);
+
+    let mItem = UIMenu.Menu.AddMenuItem("Статистика");
+    mItem.textTitle = '';
+    mItem.text = '';
+
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+    menu.ItemSelect.on(async (item, index) => {
+        if (item == closeItem)
+            UIMenu.Menu.HideMenu();
+        else if (item.textTitle)
+            ui.showDialog(item.text, item.textTitle);
+    });
+};
 
 menuList.showQuestMenu = function() {
 
@@ -3150,9 +3197,12 @@ menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId) {
                 else if (item.item_id <= 292 && item.item_id >= 279) {
                     if (methods.parseInt(item.count) == 0)
                         desc = "Пустая";
+                    else
+                        desc = `Количество патрон: ${item.count}шт.`;
                 }
                 else if (item.item_id <= 274 && item.item_id >= 264) {
                     itemName = params.name;
+                    desc = params.sex === 1 ? 'Женская одежда' : 'Мужская одежда';
                 }
                 else if (item.item_id <= 473 && item.item_id >= 293) {
                     desc = 'Используется для: ' + items.getWeaponNameByName(items.getItemNameHashById(item.item_id));

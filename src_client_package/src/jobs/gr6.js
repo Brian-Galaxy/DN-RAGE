@@ -95,8 +95,9 @@ gr6.grab = function() {
     gr6.grabMarkers.forEach(function (item) {
         if (methods.distanceToPos(new mp.Vector3(item[0], item[1], item[2]), mp.players.local.position) < 20) {
             mp.events.callRemote('server:gr6:grab');
-            user.giveWanted(5, 'Ограбление инкассаторского ТС');
+            user.giveWanted(25, 'Ограбление инкассаторского ТС');
             isFind = true;
+            user.removeRep(50);
             return;
         }
     });

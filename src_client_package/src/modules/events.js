@@ -457,17 +457,24 @@ mp.events.add('client:events:custom:choiceRole', function(roleIndex) {
 
             switch (roleIndex) {
                 case 0:
-                    //Еда, вода
-                    //Нет регистрации
-                    //После квеста 3 уровень рабочего стажа
+                    inventory.takeNewItemJust(15, "{}", 2);
+                    inventory.takeNewItemJust(242, "{}", 4);
                     break;
                 case 1:
-                    //Телефон
-                    //Временная регистрация
-                    user.addCashMoney(500);
+                    inventory.takeNewItemJust(242, "{}", 1);
+
+                    mp.events.callRemote('server:shop:buy', 29, 10, 0);
+
+                    user.set('reg_status', 2);
+                    user.addHistory(0, 'Получил гражданство');
+
+                    user.addCashMoney(methods.getRandomInt(900, 1100));
+                    user.showCustomNotify('Телефон находиться в инвентаре, экипируйте его', 0, 5, 10000);
                     break;
                 case 2:
-                    //Выдадут Гражданство
+                    inventory.takeNewItemJust(242, "{}", 2);
+                    user.set('reg_status', 2);
+                    user.addHistory(0, 'Получил гражданство');
                     break;
             }
 
@@ -1968,12 +1975,24 @@ mp.events.add('client:inventory:equip', function(id, itemId, count, aparams) {
         let slot = weapons.getGunSlotIdByItem(useItemId);
     }
     else if (itemId == 264 || itemId == 263) {
+
+        if (params.sex !== user.getSex()) {
+            mp.game.ui.notifications.show("~r~Одежда подходит только для противоположного");
+            return;
+        }
+
         user.set("hand", params.hand);
         user.set("hand_color", params.hand_color);
         user.updateCharacterCloth();
         user.save();
     }
     else if (itemId == 265) {
+
+        if (params.sex !== user.getSex()) {
+            mp.game.ui.notifications.show("~r~Одежда подходит только для противоположного");
+            return;
+        }
+
         if (user.getCache('torso') == 15) {
             user.set("torso", params.torso);
             user.set("torso_color", params.torso_color);
@@ -1994,6 +2013,12 @@ mp.events.add('client:inventory:equip', function(id, itemId, count, aparams) {
         }
     }
     else if (itemId == 266) {
+
+        if (params.sex !== user.getSex()) {
+            mp.game.ui.notifications.show("~r~Одежда подходит только для противоположного");
+            return;
+        }
+
         if (user.getCache('leg') == 61 && user.getSex() == 0 || user.getCache('leg') == 15 && user.getSex() == 1) {
             user.set("leg", params.leg);
             user.set("leg_color", params.leg_color);
@@ -2005,6 +2030,12 @@ mp.events.add('client:inventory:equip', function(id, itemId, count, aparams) {
         }
     }
     else if (itemId == 267) {
+
+        if (params.sex !== user.getSex()) {
+            mp.game.ui.notifications.show("~r~Одежда подходит только для противоположного");
+            return;
+        }
+
         if (user.getCache('foot') == 34 && user.getSex() == 0 || user.getCache('leg') == 35 && user.getSex() == 1) {
             user.set("foot", params.foot);
             user.set("foot_color", params.foot_color);
@@ -2016,6 +2047,12 @@ mp.events.add('client:inventory:equip', function(id, itemId, count, aparams) {
         }
     }
     else if (itemId == 268) {
+
+        if (params.sex !== user.getSex()) {
+            mp.game.ui.notifications.show("~r~Одежда подходит только для противоположного");
+            return;
+        }
+
         if (user.getCache('accessorie') == 0) {
             user.set("accessorie", params.accessorie);
             user.set("accessorie_color", params.accessorie_color);
@@ -2027,6 +2064,12 @@ mp.events.add('client:inventory:equip', function(id, itemId, count, aparams) {
         }
     }
     else if (itemId == 269) {
+
+        if (params.sex !== user.getSex()) {
+            mp.game.ui.notifications.show("~r~Одежда подходит только для противоположного");
+            return;
+        }
+
         if (user.getCache('hat') == -1) {
             user.set("hat", params.hat);
             user.set("hat_color", params.hat_color);
@@ -2038,6 +2081,12 @@ mp.events.add('client:inventory:equip', function(id, itemId, count, aparams) {
         }
     }
     else if (itemId == 270) {
+
+        if (params.sex !== user.getSex()) {
+            mp.game.ui.notifications.show("~r~Одежда подходит только для противоположного");
+            return;
+        }
+
         if (user.getCache('glasses') == -1) {
             user.set("glasses", params.glasses);
             user.set("glasses_color", params.glasses_color);
@@ -2049,6 +2098,12 @@ mp.events.add('client:inventory:equip', function(id, itemId, count, aparams) {
         }
     }
     else if (itemId == 271) {
+
+        if (params.sex !== user.getSex()) {
+            mp.game.ui.notifications.show("~r~Одежда подходит только для противоположного");
+            return;
+        }
+
         if (user.getCache('ear') == -1) {
             user.set("ear", params.ear);
             user.set("ear_color", params.ear_color);
@@ -2060,6 +2115,12 @@ mp.events.add('client:inventory:equip', function(id, itemId, count, aparams) {
         }
     }
     else if (itemId == 272) {
+
+        if (params.sex !== user.getSex()) {
+            mp.game.ui.notifications.show("~r~Одежда подходит только для противоположного");
+            return;
+        }
+
         if (user.getCache('watch') == -1) {
             user.set("watch", params.watch);
             user.set("watch_color", params.watch_color);
@@ -2071,6 +2132,12 @@ mp.events.add('client:inventory:equip', function(id, itemId, count, aparams) {
         }
     }
     else if (itemId == 273) {
+
+        if (params.sex !== user.getSex()) {
+            mp.game.ui.notifications.show("~r~Одежда подходит только для противоположного");
+            return;
+        }
+
         if (user.getCache('bracelet') == -1) {
             user.set("bracelet", params.bracelet);
             user.set("bracelet_color", params.bracelet_color);
@@ -2082,6 +2149,12 @@ mp.events.add('client:inventory:equip', function(id, itemId, count, aparams) {
         }
     }
     else if (itemId == 274) {
+
+        if (params.sex !== user.getSex()) {
+            mp.game.ui.notifications.show("~r~Одежда подходит только для противоположного");
+            return;
+        }
+
         if (user.getCache('mask') == -1) {
             user.set("mask", params.bracelet);
             user.set("mask_color", params.bracelet_color);
@@ -2332,6 +2405,8 @@ mp.keys.bind(0x1B, true, function() {
     ui.callCef('license', JSON.stringify({type: 'hide'}));
     ui.callCef('certificate', JSON.stringify({type: 'hide'}));
     ui.callCef('dialog', JSON.stringify({type: 'hide'}));
+    ui.callCef('cardid', JSON.stringify({type: 'hide'}));
+    ui.callCef('workid', JSON.stringify({type: 'hide'}));
     phone.hide();
     inventory.hide();
 });
@@ -2343,6 +2418,8 @@ mp.keys.bind(0x08, true, function() {
     ui.callCef('license', JSON.stringify({type: 'hide'}));
     ui.callCef('certificate', JSON.stringify({type: 'hide'}));
     ui.callCef('dialog', JSON.stringify({type: 'hide'}));
+    ui.callCef('cardid', JSON.stringify({type: 'hide'}));
+    ui.callCef('workid', JSON.stringify({type: 'hide'}));
 });
 
 //N

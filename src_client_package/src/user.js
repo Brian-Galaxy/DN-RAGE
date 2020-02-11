@@ -1100,7 +1100,7 @@ user.getRegStatusName = function() {
         case 2:
             return "Гражданство США";
         default:
-            return "~r~Нет";
+            return "Нет";
     }
 };
 

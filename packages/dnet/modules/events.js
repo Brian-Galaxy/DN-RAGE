@@ -568,19 +568,56 @@ mp.events.addRemoteCounted('server:user:showLic', (player, lic, playerId) => {
             let menuData = new Map();
 
             if (lic == 'card_id') {
-                menuData.set('ID', (user.getId(remotePlayer) + 10000000).toString());
+
+                let dataSend = {
+                    type: 'updateValues',
+                    isShow: true,
+                    info: {
+                        firstname: user.getRpName(remotePlayer).split(' ')[0],
+                        lastname: user.getRpName(remotePlayer).split(' ')[1],
+                        sex: user.getSexName(remotePlayer),
+                        age: user.get(remotePlayer, 'age'),
+                        nation: user.get(remotePlayer, 'national'),
+                        regist: user.getRegStatusName(remotePlayer),
+                        idcard: (user.getId(remotePlayer) + 10000000).toString(),
+                        img: 'https://a.rsg.sc//n/' + remotePlayer.socialClub.toLowerCase(),
+                    },
+                };
+                user.callCef(remotePlayer, 'cardid', JSON.stringify(dataSend));
+
+                /*menuData.set('ID', (user.getId(remotePlayer) + 10000000).toString());
                 menuData.set('Имя', user.getRpName(remotePlayer));
                 menuData.set('Тип регистрации', user.getRegStatusName(remotePlayer));
                 menuData.set('Дата рождения', user.get(remotePlayer, 'age'));
                 menuData.set('Пол', user.getSexName(player));
                 menuData.set('Национальность', user.get(remotePlayer, 'national'));
 
-                user.showMenu(remotePlayer, 'Card ID', user.getRpName(player), menuData);
+                user.showMenu(remotePlayer, 'Card ID', user.getRpName(player), menuData);*/
             }
             else if (lic == 'work_lic') {
 
                 if (user.get(remotePlayer, 'work_lic') != '') {
-                    menuData.set('ID', user.get(remotePlayer, 'work_lic'));
+
+                    let dataSend = {
+                        type: 'updateValues',
+                        isShow: true,
+                        info: {
+                            firstname: user.getRpName(remotePlayer).split(' ')[0],
+                            lastname: user.getRpName(remotePlayer).split(' ')[1],
+                            sex: user.getSexName(remotePlayer),
+                            age: user.get(remotePlayer, 'age'),
+                            first_work: user.getFractionName(remotePlayer),
+                            second_work: user.getJobName(remotePlayer),
+                            lvl_work: user.get(remotePlayer, 'work_lvl').toString(),
+                            experience: user.get(remotePlayer, 'work_exp').toString(),
+                            data: user.get(remotePlayer, 'work_date'),
+                            idwork: user.get(remotePlayer, 'work_lic'),
+                            img: 'https://a.rsg.sc//n/' + remotePlayer.socialClub.toLowerCase(),
+                        },
+                    };
+                    user.callCef(remotePlayer, 'workid', JSON.stringify(dataSend));
+
+                    /*menuData.set('ID', user.get(remotePlayer, 'work_lic'));
                     menuData.set('Владелец', user.getRpName(remotePlayer));
                     menuData.set('Дата получения', user.get(remotePlayer, 'work_date'));
 
@@ -595,7 +632,7 @@ mp.events.addRemoteCounted('server:user:showLic', (player, lic, playerId) => {
 
                     menuData.set('Уровень рабочего', user.get(remotePlayer, 'work_lvl'));
                     menuData.set('Опыт рабочего', user.get(remotePlayer, 'work_exp'));
-                    user.showMenu(remotePlayer, 'Work ID', user.getRpName(player), menuData);
+                    user.showMenu(remotePlayer, 'Work ID', user.getRpName(player), menuData);*/
                 }
                 else {
                     player.notify('~r~У Вас отсутствует Work ID');
@@ -1471,6 +1508,8 @@ mp.events.addRemoteCounted('server:gr6:unload', (player, vId) => {
                                 p.notify('~g~Вы заработали: ~s~' + methods.moneyFormat(currentMoney));
                                 Container.Data.Reset(v.id, 'validWorker' + user.getId(p));
                                 user.giveJobSkill(p);
+
+                                user.addRep(50);
                             }
                             else {
                                 p.notify('~r~Вы не являетесь напарником ' + user.getRpName(player));
@@ -3398,6 +3437,12 @@ mp.events.addRemoteCounted('server:user:buyLicensePlayer', (player, id, lic, pri
     else {
         player.notify('~r~Игрок не найден');
     }
+});
+
+mp.events.addRemoteCounted('server:user:giveMeWanted', (player, level, reason) => {
+    if (!user.isLogin(player))
+        return;
+    user.giveWanted(player, level, reason);
 });
 
 mp.events.addRemoteCounted('server:user:giveWanted', (player, id, level, reason) => {

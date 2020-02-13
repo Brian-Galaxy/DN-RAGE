@@ -1167,8 +1167,8 @@ menuList.showBusinessMenu = async function(data) {
     let menu = UIMenu.Menu.Create(`Arcadius`, `~b~Владелец: ~s~${(data.get('user_id') < 1 ? "Государство" : data.get('user_name'))}`);
 
     let nalogOffset = bankTarif;
-    if (data.get('type') == 1 || data.get('type') == 11) //TODO
-        nalogOffset += 30;
+    /*if (data.get('type') == 1 || data.get('type') == 11) //TODO
+        nalogOffset += 30;*/
 
     nalog = nalog + nalogOffset;
 
@@ -1178,13 +1178,16 @@ menuList.showBusinessMenu = async function(data) {
     if (user.getCache('id') == data.get('user_id')) {
 
         UIMenu.Menu.AddMenuItem("~b~Банк: ~s~").SetRightLabel(`~g~${methods.moneyFormat(data.get('bank'))}`);
-        UIMenu.Menu.AddMenuItem("~b~Бюджет обслуживания: ~s~").SetRightLabel(`~g~${methods.moneyFormat(data.get('bank_tax'))}`);
+        if (data.get('bank_tax') > 0)
+            UIMenu.Menu.AddMenuItem("~b~Продукты: ~s~").SetRightLabel(`~g~${methods.moneyFormat(data.get('bank_tax'))}`);
+        else
+            UIMenu.Menu.AddMenuItem("~b~Продукты: ~s~").SetRightLabel(`~r~${methods.moneyFormat(data.get('bank_tax'))}`);
         UIMenu.Menu.AddMenuItem("Настройка бизнеса").doName = 'settings';
         UIMenu.Menu.AddMenuItem("Список транзакций").doName = 'log';
         UIMenu.Menu.AddMenuItem("Положить средства").doName = 'addMoney';
         UIMenu.Menu.AddMenuItem("Снять средства").doName = 'removeMoney';
         UIMenu.Menu.AddMenuItem("Положить бюджет").doName = 'addMoneyTax';
-        UIMenu.Menu.AddMenuItem("~y~Что такое бюджет для обслуживания?").doName = 'ask';
+        UIMenu.Menu.AddMenuItem("~y~Что такое продукты?").doName = 'ask';
     }
     else if (data.get('user_id') == 0) {
         if (data.get('price') < 1)
@@ -1203,7 +1206,7 @@ menuList.showBusinessMenu = async function(data) {
             mp.events.callRemote('server:business:buy', data.get('id'));
         }
         if (item.doName == 'ask') {
-            ui.showDialog('Бюджет обслуживания бизнеса, это тот счет, с которого списывается минимальная стоимость товара бизнеса, то есть, если этот счёт будет пустым, то игрок не сможет купить у вас товар или воспользоваться услугой.')
+            ui.showDialog('У продуктов есть свой отдельный счет, если он равен меньше 1$, то бизнес перестает функционировать и нести прибыль. Достаточно пополнять счет продуктов, чтобы бизнес функционировал. Цена каждого продукта уникальна, она равна минимальной стоимости наценки на товар. Поэтому если вы ставите цену на товар в 100%, то ваш бизнес будет работать в ноль. Если у бизнеса нет возможности ставить наценку, то текущая цена на продукт делённая на два.')
         }
         if (item.doName == 'settings') {
             menuList.showBusinessSettingsMenu(data);
@@ -1216,23 +1219,23 @@ menuList.showBusinessMenu = async function(data) {
         }
         if (item.doName == 'addMoneyTax') {
             try {
-
-                if (user.getCache('bank_card') < 1) {
-                    mp.game.ui.notifications.show(`~r~У Вас нет банковской карты`);
+                if (data.get('bank_id') == 0) {
+                    mp.game.ui.notifications.show(`~r~Вы не привязаны ни к какому банку`);
                     return;
                 }
+
                 let money = await UIMenu.Menu.GetUserInput("Сумма", "", 8);
                 money = methods.parseFloat(money);
-                if (money > user.getBankMoney()) {
-                    mp.game.ui.notifications.show(`~r~У Вас нет столько денег на вашей карте`);
+                if (money > data.get('bank')) {
+                    mp.game.ui.notifications.show(`~r~На счету бизнеса нет столько денег`);
                     return;
                 }
                 if (money < 1) {
-                    mp.game.ui.notifications.show(`~r~Нельзя положить меньше 1$`);
+                    mp.game.ui.notifications.show(`~r~Нельзя взять меньше 1$`);
                     return;
                 }
                 business.addMoneyTax(data.get('id'), money);
-                user.removeBankMoney(money, 'Зачиление на счет бизнеса ' + data.get('name'));
+                business.removeMoney(data.get('id'), money, 'Внутренний перевод на счёт продуктов');
                 business.save(data.get('id'));
                 mp.game.ui.notifications.show(`~b~Вы положили деньги на счет бизнеса`);
             }
@@ -5352,7 +5355,7 @@ menuList.showPrintShopMenu = function()
     });
 };
 
-menuList.showTattooShopMenu = function(title1, title2, shopId)
+menuList.showTattooShopMenu = function(title1, title2, shopId, price)
 {
     UIMenu.Menu.HideMenu();
 
@@ -5374,11 +5377,11 @@ menuList.showTattooShopMenu = function(title1, title2, shopId)
     menu.ItemSelect.on((item, index) => {
         UIMenu.Menu.HideMenu();
         if (item.zone)
-            menuList.showTattooShopShortMenu(title1, title2, item.zone, shopId);
+            menuList.showTattooShopShortMenu(title1, title2, item.zone, shopId, price);
     });
 };
 
-menuList.showTattooShopShortMenu = function(title1, title2, zone, shopId)
+menuList.showTattooShopShortMenu = function(title1, title2, zone, shopId, price)
 {
     UIMenu.Menu.HideMenu();
 
@@ -5483,6 +5486,12 @@ menuList.showTattooShopShortMenu = function(title1, title2, zone, shopId)
             continue;
 
         let price = methods.parseFloat(methods.parseFloat(tattooList[i][5]) / 8);
+
+        let saleLabel = '';
+        let sale = business.getSale(price);
+        if (sale > 0)
+            saleLabel = `\n~s~Скидка: ~r~${sale}%`;
+
         if (user.getSex() == 1 && tattooList[i][3] != "") {
 
             let array = [tattooList[i][1], tattooList[i][3]];
@@ -5494,7 +5503,6 @@ menuList.showTattooShopShortMenu = function(title1, title2, zone, shopId)
             catch (e) {
                 methods.debug(e);
             }
-
             if (prizes.some(a => array.every((v, i) => v === a[i]))) {
                 let menuListItem = UIMenu.Menu.AddMenuItem(tattooList[i][0], `Свести тату\nЦена: ~g~$${methods.moneyFormat(price / 2)}`);
                 menuListItem.doName = 'destroy';
@@ -5504,17 +5512,20 @@ menuList.showTattooShopShortMenu = function(title1, title2, zone, shopId)
                 menuListItem.tatto2 = tattooList[i][3];
                 menuListItem.tatto3 = tattooList[i][4];
                 menuListItem.SetRightLabel('~g~Куплено');
+                if (sale > 0)
+                    menuListItem.SetLeftBadge(27);
                 list.push(menuListItem);
             }
             else {
-                let menuListItem = UIMenu.Menu.AddMenuItem(tattooList[i][0], `Цена: ~g~$${methods.moneyFormat(price)}`);
+                let menuListItem = UIMenu.Menu.AddMenuItem(tattooList[i][0], `Цена: ~g~$${methods.moneyFormat(price)}${saleLabel}`);
                 menuListItem.doName = 'show';
                 menuListItem.price = price;
                 menuListItem.tatto0 = tattooList[i][0];
                 menuListItem.tatto1 = tattooList[i][1];
                 menuListItem.tatto2 = tattooList[i][3];
                 menuListItem.tatto3 = tattooList[i][4];
-
+                if (sale > 0)
+                    menuListItem.SetLeftBadge(27);
                 list.push(menuListItem);
             }
         }
@@ -5539,17 +5550,20 @@ menuList.showTattooShopShortMenu = function(title1, title2, zone, shopId)
                 menuListItem.tatto2 = tattooList[i][2];
                 menuListItem.tatto3 = tattooList[i][4];
                 menuListItem.SetRightLabel('~g~Куплено');
+                if (sale > 0)
+                    menuListItem.SetLeftBadge(27);
                 list.push(menuListItem);
             }
             else {
-                let menuListItem = UIMenu.Menu.AddMenuItem(tattooList[i][0], `Цена: ~g~${methods.moneyFormat(price)}`);
+                let menuListItem = UIMenu.Menu.AddMenuItem(tattooList[i][0], `Цена: ~g~${methods.moneyFormat(price)}${saleLabel}`);
                 menuListItem.doName = 'show';
                 menuListItem.price = price;
                 menuListItem.tatto0 = tattooList[i][0];
                 menuListItem.tatto1 = tattooList[i][1];
                 menuListItem.tatto2 = tattooList[i][2];
                 menuListItem.tatto3 = tattooList[i][4];
-
+                if (sale > 0)
+                    menuListItem.SetLeftBadge(27);
                 list.push(menuListItem);
             }
         }

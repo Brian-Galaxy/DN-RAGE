@@ -825,10 +825,10 @@ mp.events.add('client:menuList:showShopClothMenu', (shopId, type, menuType, pric
     }
 });
 
-mp.events.add('client:menuList:showTattooShopMenu', (title1, title2, shopId) => {
+mp.events.add('client:menuList:showTattooShopMenu', (title1, title2, shopId, price) => {
     try {
         methods.debug('Event: client:menuList:showTattooShopMenu');
-        menuList.showTattooShopMenu(title1, title2, shopId);
+        menuList.showTattooShopMenu(title1, title2, shopId, price);
     }
     catch (e) {
         methods.debug(e);

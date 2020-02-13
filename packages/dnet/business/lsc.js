@@ -51,6 +51,10 @@ lsc.checkPosForOpenMenu = function(player) {
                 shopId = methods.parseInt(lsc.list[i][3]);
 
                 try {
+                    if (!business.isOpen(shopId)) {
+                        player.notify('~r~К сожалению автосервис сейчас не работает');
+                        return;
+                    }
                     player.call('client:menuList:showLscMenu', [shopId, business.getPrice(shopId)]);
                 }
                 catch (e) {
@@ -94,9 +98,9 @@ lsc.repair = function(player, price, shopId) {
     veh.repair();
     user.removeMoney(player, price, 'Ремонт транспорта');
     business.addMoney(shopId, price, 'Ремонт транспорта');
+    business.removeMoneyTax(shopId, price / business.getPrice(shopId));
 
     player.notify('~g~Вы отремонтировали трансопрт');
-
 };
 
 lsc.buyNeon = function(player, price, shopId) {
@@ -146,6 +150,7 @@ lsc.buyNeon = function(player, price, shopId) {
 
     user.removeMoney(player, price, 'Неоновая подсветка');
     business.addMoney(shopId, price, 'Неоновая подсветка');
+    business.removeMoneyTax(shopId, price / 2);
 
     player.notify('~g~Вы установили неон');
 
@@ -195,6 +200,7 @@ lsc.buySpecial = function(player, price, shopId) {
     vehicles.neonStatus(player, veh);
     user.removeMoney(player, price, 'Дистанционное управление');
     business.addMoney(shopId, price, 'Дистанционное управление');
+    business.removeMoneyTax(shopId, price / 2);
 
     player.notify('~g~Вы установили модификацию');
 
@@ -265,23 +271,28 @@ lsc.buyNumber = function(player, shopId, newNumber) {
 
                 if (newNumber.length == 1) {
                     user.removeMoney(player, 1000000, 'Смена номера на транспорте');
-                    business.addMoney(shopId, 500000, 'Смена номера');
+                    business.addMoney(shopId, 1000000, 'Смена номера');
+                    business.removeMoneyTax(shopId, price / 2);
                 }
                 else if (newNumber.length == 2) {
                     user.removeMoney(player, 500000, 'Смена номера на транспорте');
-                    business.addMoney(shopId, 200000, 'Смена номера');
+                    business.addMoney(shopId, 500000, 'Смена номера');
+                    business.removeMoneyTax(shopId, price / 2);
                 }
                 else if (newNumber.length == 3) {
                     user.removeMoney(player, 250000, 'Смена номера на транспорте');
-                    business.addMoney(shopId, 100000, 'Смена номера');
+                    business.addMoney(shopId, 250000, 'Смена номера');
+                    business.removeMoneyTax(shopId, price / 2);
                 }
                 else if (newNumber.length == 4) {
                     user.removeMoney(player, 100000, 'Смена номера на транспорте');
-                    business.addMoney(shopId, 50000, 'Смена номера');
+                    business.addMoney(shopId, 100000, 'Смена номера');
+                    business.removeMoneyTax(shopId, price / 2);
                 }
                 else {
                     user.removeMoney(player, 40000, 'Смена номера на транспорте');
                     business.addMoney(shopId, 40000, 'Смена номера');
+                    business.removeMoneyTax(shopId, price / 2);
                 }
 
                 mysql.executeQuery(`UPDATE items SET owner_id = '${mp.joaat(newNumber)}' where owner_id = '${mp.joaat(veh.numberPlate)}' and (owner_type = '2' or owner_type = '3' or owner_type = '4')`);
@@ -359,6 +370,7 @@ lsc.buyTun = function(player, modType, idx, price, shopId, itemName) {
     if (price > 5) {
         user.removeMoney(player, price, 'Тюнинг транспорта. Деталь: ' + itemName);
         business.addMoney(shopId, price, itemName);
+        business.removeMoneyTax(shopId, price / business.getPrice(shopId));
         player.notify('~g~Вы установили деталь, цена: ~s~' + methods.moneyFormat(price));
         //veh.setMod(modType, -1);
     }
@@ -447,6 +459,7 @@ lsc.buyColor1 = function(player, idx, price, shopId, itemName) {
 
     user.removeMoney(player, price, 'Цвет транспорта ' + itemName);
     business.addMoney(shopId, price, itemName);
+    business.removeMoneyTax(shopId, price / business.getPrice(shopId));
 
     player.notify('~g~Вы изменили цвет транспорта');
 
@@ -481,6 +494,7 @@ lsc.buyColor2 = function(player, idx, price, shopId, itemName) {
 
     user.removeMoney(player, price, 'Цвет транспорта ' + itemName);
     business.addMoney(shopId, price, itemName);
+    business.removeMoneyTax(shopId, price / business.getPrice(shopId));
 
     player.notify('~g~Вы изменили цвет транспорта');
 
@@ -515,6 +529,7 @@ lsc.buyColor3 = function(player, idx, price, shopId, itemName) {
 
     user.removeMoney(player, price, 'Цвет транспорта ' + itemName);
     business.addMoney(shopId, price, itemName);
+    business.removeMoneyTax(shopId, price / business.getPrice(shopId));
 
     player.notify('~g~Вы изменили цвет транспорта');
 
@@ -549,6 +564,7 @@ lsc.buyColor4 = function(player, idx, price, shopId, itemName) {
 
     user.removeMoney(player, price, 'Цвет колёс ' + itemName);
     business.addMoney(shopId, price, itemName);
+    business.removeMoneyTax(shopId, price / business.getPrice(shopId));
 
     player.notify('~g~Вы изменили цвет колёс транспорта');
 

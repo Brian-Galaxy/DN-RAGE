@@ -134,7 +134,10 @@ shop.checkPosForOpenMenu = function(player) {
             return;
         let shopId = shopItem[3];
 
-        console.log(shopItem);
+        if (!business.isOpen(shopId)) {
+            player.notify('~r~К сожалению магазин сейчас не работает');
+            return;
+        }
 
         switch (shopItem[4]) {
             case 0:
@@ -192,8 +195,11 @@ shop.buy = function(player, itemId, price, shopId) {
 
     inventory.addItem(itemId, 1, 1, user.getId(player), 1, 0, JSON.stringify(params), 1);
 
-    player.notify('~g~Вы купили ' + items.getItemNameById(itemId) +  ' по цене: ~s~' + methods.moneyFormat(price));
-    user.removeBankMoney(player, price, 'Покупка ' + items.getItemNameById(itemId));
-    business.addMoney(shopId, price, items.getItemNameById(itemId));
+    if (shopId > 0) {
+        player.notify('~g~Вы купили ' + items.getItemNameById(itemId) +  ' по цене: ~s~' + methods.moneyFormat(price));
+        user.removeBankMoney(player, price, 'Покупка ' + items.getItemNameById(itemId));
+        business.addMoney(shopId, price, items.getItemNameById(itemId));
+        business.removeMoneyTax(shopId, price / business.getPrice(shopId));
+    }
     inventory.updateAmount(player, user.getId(player), 1);
 };

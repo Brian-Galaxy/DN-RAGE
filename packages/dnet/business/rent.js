@@ -57,6 +57,10 @@ rent.checkPosForOpenMenu = function(player) {
         let shopId = rent.getBikeInRadius(playerPos, 2);
         if (shopId == -1)
             return;
+        if (!business.isOpen(shopId)) {
+            player.notify('~r~К сожалению аренда сейчас не работает');
+            return;
+        }
         player.call('client:menuList:showRentBikeMenu', [shopId, business.getPrice(shopId)]);
     }
     catch (e) {
@@ -157,6 +161,7 @@ rent.buy = function(player, hash, price, shopId) {
 
     user.removeMoney(player, price, 'Аренда ТС ' + vInfo.display_name);
     business.addMoney(shopId, price, 'Аренда ' + vInfo.display_name);
+    business.removeMoneyTax(shopId, price / business.getPrice(shopId));
 
     player.notify('~g~Вы арендовали транспорт');
     player.notify('~g~Для того чтобы его закрыть, нажмите ~s~L');

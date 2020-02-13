@@ -136,13 +136,13 @@ business.getMoney = function(id) {
     return 0;
 };
 
-business.addMoneyTax = function(id, money, name = "Операция со счетом") {
+business.addMoneyTax = function(id, money) {
     if (id === 0 || business.get(id, 'user_id') === 0)
         return;
     business.setMoney(id, business.getMoneyTax(id) + methods.parseFloat(money));
 };
 
-business.removeMoneyTax = function(id, money, name = "Операция со счетом") {
+business.removeMoneyTax = function(id, money) {
     if (id === 0 || business.get(id, 'user_id') === 0)
         return;
     business.setMoneyTax(id, business.getMoneyTax(id) - methods.parseFloat(money));

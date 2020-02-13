@@ -126,7 +126,6 @@ bank.loadGrabCounts = function() {
     }
 };
 
-
 bank.addBankHistory = function(userId, card, text, price) {
 
     userId = methods.parseInt(userId);
@@ -146,7 +145,7 @@ bank.transferMoney = function(player, bankNumber, money) {
         return;
 
     if (money < 1) {
-        player.notify('~r~Сумам должна быть больше нуля');
+        player.notify('~r~Сумма должна быть больше нуля');
         user.updateClientCache(player);
         return;
     }
@@ -394,6 +393,11 @@ bank.openCard = function(player, bankId, price) {
         return;
     }
 
+    if (!business.isOpen(bankId)) {
+        player.notify('~r~К сожалению у банка сейчас нет возможности выдать Вам карту.');
+        return;
+    }
+
     if (price < 1)
         return;
 
@@ -421,6 +425,7 @@ bank.openCard = function(player, bankId, price) {
 
     user.removeCashMoney(player, price, 'Смена номера карты');
     business.addMoney(bankId, price);
+    business.removeMoneyTax(bankId, price / business.getPrice(bankId));
 
     bank.sendSmsBankOpenOperation(player);
     bank.addBankHistory(user.getId(player), number, 'Открытие счёта на имя ' + user.getRpName(player), price * -1);

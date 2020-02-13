@@ -33,23 +33,26 @@ tattoo.checkPosForOpenMenu = function(player) {
         let shopId = tattoo.getInRadius(playerPos, 2);
         if (shopId == -1)
             return;
-
+        if (!business.isOpen(shopId)) {
+            player.notify('~r~К сожалению тату салон сейчас не работает');
+            return;
+        }
         switch (shopId)
         {
             case 94:
-                player.call('client:menuList:showTattooShopMenu', ["shopui_title_tattoos", "shopui_title_tattoos", shopId]);
+                player.call('client:menuList:showTattooShopMenu', ["shopui_title_tattoos", "shopui_title_tattoos", shopId, business.getPrice(shopId)]);
                 break;
             case 95:
-                player.call('client:menuList:showTattooShopMenu', ["shopui_title_tattoos2", "shopui_title_tattoos2", shopId]);
+                player.call('client:menuList:showTattooShopMenu', ["shopui_title_tattoos2", "shopui_title_tattoos2", shopId, business.getPrice(shopId)]);
                 break;
             case 96:
-                player.call('client:menuList:showTattooShopMenu', ["shopui_title_tattoos3", "shopui_title_tattoos3", shopId]);
+                player.call('client:menuList:showTattooShopMenu', ["shopui_title_tattoos3", "shopui_title_tattoos3", shopId, business.getPrice(shopId)]);
                 break;
             case 97:
-                player.call('client:menuList:showTattooShopMenu', ["shopui_title_tattoos4", "shopui_title_tattoos4", shopId]);
+                player.call('client:menuList:showTattooShopMenu', ["shopui_title_tattoos4", "shopui_title_tattoos4", shopId, business.getPrice(shopId)]);
                 break;
             case 98:
-                player.call('client:menuList:showTattooShopMenu', ["shopui_title_tattoos5", "shopui_title_tattoos5", shopId]);
+                player.call('client:menuList:showTattooShopMenu', ["shopui_title_tattoos5", "shopui_title_tattoos5", shopId, business.getPrice(shopId)]);
                 break;
         }
     }
@@ -87,7 +90,7 @@ tattoo.buy = function(player, collection, overlay, zone, price, itemName, shopId
         tattooList = [];
 
     if (tattooList.length > 20) {
-        player.notify('~r~У Вас на теле слишком много тату, для начала надо свести старые');
+        player.notify('~r~У Вас на теле слишком много татуировок, для начала необходимо свести старые');
         user.updateTattoo(player);
         return;
     }
@@ -98,6 +101,9 @@ tattoo.buy = function(player, collection, overlay, zone, price, itemName, shopId
 
     user.removeMoney(player, price, 'Татуировка: ' + itemName);
     business.addMoney(shopId, price, itemName);
+
+    business.removeMoneyTax(shopId, price / business.getPrice(shopId));
+
     player.notify('~g~Вы набили татуировку');
     user.updateTattoo(player);
     user.save(player);
@@ -128,6 +134,7 @@ tattoo.destroy = function(player, collection, overlay, zone, price, itemName, sh
 
     user.removeMoney(player, price, 'Лазерная коррекция татуировки ' + itemName);
     business.addMoney(shopId, price, itemName);
+    business.removeMoneyTax(shopId, price / business.getPrice(shopId));
     player.notify('~g~Вы сделали лазерную коррецию');
     user.updateTattoo(player);
     user.save(player);

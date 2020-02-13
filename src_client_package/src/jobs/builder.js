@@ -739,12 +739,13 @@ builder.workProcess = function(id) {
                 mp.players.local.freezePosition(false);
                 methods.blockKeys(false);
                 user.stopScenario();
-                user.giveJobMoney(methods.getRandomInt(20, 25) + methods.getRandomFloat());
+                user.giveJobMoney(methods.getRandomInt(17, 22) + methods.getRandomFloat());
 
+                user.addWorkExp(1);
                 user.addRep(1);
 
                 user.giveJobSkill();
-            }, 20000);
+            }, 10000);
         }
         else
             newList.push(item);

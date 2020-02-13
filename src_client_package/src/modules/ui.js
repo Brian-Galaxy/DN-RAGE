@@ -138,6 +138,8 @@ ui.updateValues = function() {
                 temp: weather.getWeatherTempFormat(),
                 date: weather.getFullRpDate(),
                 time: weather.getFullRpTime(),
+                showGreen: true,
+                showYellow: true,
                 background: user.getCache('s_hud_bg'),
             };
             ui.callCef('hudw', JSON.stringify(data));

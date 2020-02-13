@@ -72,6 +72,28 @@ business.getMoney = async function(id) {
     }
 };
 
+business.addMoneyTax = function(id, money) {
+    mp.events.callRemote('server:business:addMoneyTax', id, money);
+};
+
+business.removeMoneyTax = function(id, money) {
+    mp.events.callRemote('server:business:removeMoneyTax', id, money);
+};
+
+business.setMoneyTax = function(id, money) {
+    mp.events.callRemote('server:business:setMoneyTax', id, money);
+};
+
+business.getMoneyTax = async function(id) {
+    try {
+        return methods.parseFloat(await Container.Data.Get(enums.offsets.business + id, 'bank_tax'));
+    }
+    catch (e) {
+        methods.debug(e);
+        return 0;
+    }
+};
+
 business.getPrice = async function(id) {
     try {
         return methods.parseFloat(await Container.Data.Get(enums.offsets.business + id, 'price_product'));
@@ -83,7 +105,7 @@ business.getPrice = async function(id) {
 };
 
 business.getSale = function(price) {
-    let newPrice = (price - 1) * 100;
+    let newPrice = Math.round((price - 1) * 100);
     if (newPrice <= 50)
         return 50 - newPrice;
     return 0;

@@ -1464,6 +1464,38 @@ user.getRep = function(player) {
     return 0;
 };
 
+user.addWorkExp = function(player, rep) {
+    user.setWorkExp(player, user.getWorkExp(player) + methods.parseInt(rep));
+};
+
+user.removeRep= function(player, rep) {
+    user.setWorkExp(player, user.getWorkExp(player) - methods.parseInt(rep));
+};
+
+user.setWorkExp = function(player, rep) {
+    if (rep >= user.getWorkLvl(player) * 500) {
+        user.set(player, 'work_exp', 0);
+        user.set(player, 'work_lvl', user.getWorkLvl(player) + 1);
+    }
+    else if (rep < 0)
+        user.set(player, 'work_exp', 0);
+    else
+        user.set(player, 'work_exp', methods.parseInt(rep));
+    user.updateClientCache(player);
+};
+
+user.getWorkExp = function(player) {
+    if (user.has(player, 'work_exp'))
+        return methods.parseInt(user.get(player, 'work_exp'));
+    return 0;
+};
+
+user.getWorkLvl = function(player) {
+    if (user.has(player, 'work_lvl'))
+        return methods.parseInt(user.get(player, 'work_lvl'));
+    return 1;
+};
+
 user.getBankCardPrefix = function(player, bankCard = 0) {
     methods.debug('bank.getBankCardPrefix');
     if (!user.isLogin(player))

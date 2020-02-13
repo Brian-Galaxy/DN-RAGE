@@ -1301,6 +1301,18 @@ mp.events.addRemoteCounted('server:business:setMoney', (player, id, money) => {
     business.setMoney(id, money);
 });
 
+mp.events.addRemoteCounted('server:business:addMoneyTax', (player, id, money) => {
+    business.addMoneyTax(id, money);
+});
+
+mp.events.addRemoteCounted('server:business:removeMoneyTax', (player, id, money) => {
+    business.removeMoneyTax(id, money);
+});
+
+mp.events.addRemoteCounted('server:business:setMoneyTax', (player, id, money) => {
+    business.setMoneyTax(id, money);
+});
+
 mp.events.addRemoteCounted('server:fraction:addMoney', (player, id, money, itemName) => {
     fraction.addMoney(id, money, itemName);
 });
@@ -1473,8 +1485,22 @@ mp.events.addRemoteCounted('server:gr6:dropCar', (player, money, vId) => {
         return;
     mp.vehicles.forEach(function (v) {
         try {
-            if (vehicles.exists(v) && v.id == vId)
+            if (vehicles.exists(v) && v.id == vId) {
+                v.getOccupants().forEach(function (p) {
+                    try {
+                        if (!user.isLogin(p) || user.get(p, 'job') != 10)
+                            return;
+
+                        if (Container.Data.Has(v.id, 'validWorker' + user.getId(p))) {
+                            user.addWorkExp(p, 40);
+                        }
+                    }
+                    catch (e) {
+                        methods.debug(e);
+                    }
+                });
                 v.setVariable('gr6Money', methods.parseFloat(v.getVariable('gr6Money') + money));
+            }
         }
         catch (e) {
             methods.debug(e);
@@ -1502,14 +1528,14 @@ mp.events.addRemoteCounted('server:gr6:unload', (player, vId) => {
 
                                 let currentMoney = methods.parseFloat(money / countOcc);
 
-                                user.addCashMoney(p, currentMoney, 'Зарплата инкассатора');
-                                business.addMoney(162, methods.parseFloat(currentMoney / 10));
+                                user.addMoney(p, currentMoney, 'Зарплата инкассатора');
                                 coffer.removeMoney(currentMoney + methods.parseFloat(currentMoney / 10));
                                 p.notify('~g~Вы заработали: ~s~' + methods.moneyFormat(currentMoney));
                                 Container.Data.Reset(v.id, 'validWorker' + user.getId(p));
                                 user.giveJobSkill(p);
 
-                                user.addRep(50);
+                                user.addRep(p, 50);
+                                user.addWorkExp(p, 50);
                             }
                             else {
                                 p.notify('~r~Вы не являетесь напарником ' + user.getRpName(player));
@@ -1576,8 +1602,8 @@ mp.events.addRemoteCounted('server:gr6:grab', (player) => {
                     vehicles.respawn(player.vehicle);
                     setTimeout(function () {
                         user.hideLoadDisplay(player);
-                        user.addCashMoney(player, money, 'Ограбление');
-                        player.notify('~b~Вы ограбили транспорт на сумму: ~s~' + methods.moneyFormat(money));
+                        user.addCryptoMoney(player, money / 1000, 'Ограбление');
+                        player.notify('~b~Вы ограбили транспорт на сумму: ~s~' + methods.cryptoFormat(money));
                     }, 500);
                 }, 700);
             }
@@ -3874,30 +3900,11 @@ mp.events.addRemoteCounted('server:sellVeh', (player) => {
         return;
     }
 
-    let money = 200;
+    let price = methods.getVehicleInfo(veh.model).price * 0.01;
+    if (price > 2000)
+        price = 2000;
+    let money = 200 + price;
 
-    let vInfo = methods.getVehicleInfo(veh.model);
-
-    switch (vInfo.class_name) {
-        case "Emergency":
-        case "Boats":
-        case "Helicopters":
-        case "Planes":
-            player.notify("~r~Мы такое не принимаем");
-            return;
-        case "Sports Classics":
-            money += 450;
-            break;
-        case "Sports":
-        case "Super":
-            money += 320;
-            break;
-        case "SUVs":
-        case "Muscle":
-        case "Off-Road":
-            money += 190;
-            break;
-    }
     user.showLoadDisplay(player);
 
     user.addCryptoMoney(player, money / 1000);
@@ -3937,6 +3944,18 @@ mp.events.addRemoteCounted('server:lsc:showColor2', (player, idx) => {
     if (!user.isLogin(player))
         return;
     lsc.showColor2(player, idx);
+});
+
+mp.events.addRemoteCounted('server:lsc:showColor3', (player, idx) => {
+    if (!user.isLogin(player))
+        return;
+    lsc.showColor3(player, idx);
+});
+
+mp.events.addRemoteCounted('server:lsc:showColor4', (player, idx) => {
+    if (!user.isLogin(player))
+        return;
+    lsc.showColor4(player, idx);
 });
 
 mp.events.addRemoteCounted('server:lsc:buyColor1', (player, idx, price, shopId, itemName) => {

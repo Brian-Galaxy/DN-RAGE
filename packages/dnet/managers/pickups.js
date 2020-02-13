@@ -45,6 +45,8 @@ pickups.BankMazeOfficePos = new mp.Vector3(-72.80013, -816.4397, 242.3859);
 pickups.CasinoLiftStreetPos = new mp.Vector3(935.5374755859375, 46.44008255004883, 80.09577178955078);
 pickups.CasinoLiftBalconPos = new mp.Vector3(964.3539428710938, 58.81953048706055, 111.5530014038086);
 pickups.CasinoLiftRoofPos = new mp.Vector3(972.0299072265625, 52.14411163330078, 119.24087524414062);
+pickups.CasinoLiftInPos = new mp.Vector3(1089.85009765625, 206.42514038085938, -49.99974822998047);
+pickups.CasinoLiftCondoPos = new mp.Vector3(2518.663330078125, -259.46478271484375, -40.122894287109375);
 
 pickups.LifeInvaderShopPos = new mp.Vector3(-1083.074, -248.3521, 36.76329);
 pickups.HackerSpaceShopPos = new mp.Vector3(522.0684, 167.0983, 98.38704);
@@ -253,6 +255,8 @@ pickups.checkPressLAlt = function(player) {
 
     if (methods.distanceToPos(pickups.CasinoLiftStreetPos, playerPos) < distanceCheck ||
         methods.distanceToPos(pickups.CasinoLiftBalconPos, playerPos) < distanceCheck ||
+        methods.distanceToPos(pickups.CasinoLiftInPos, playerPos) < distanceCheck ||
+        methods.distanceToPos(pickups.CasinoLiftCondoPos, playerPos) < distanceCheck ||
         methods.distanceToPos(pickups.CasinoLiftRoofPos, playerPos) < distanceCheck)
         player.call('client:menuList:showCasinoLiftTeleportMenu');
 
@@ -572,6 +576,8 @@ pickups.createPickups = function() {
     methods.createStaticCheckpointV(pickups.CasinoLiftStreetPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
     methods.createStaticCheckpointV(pickups.CasinoLiftBalconPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
     methods.createStaticCheckpointV(pickups.CasinoLiftRoofPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
+    methods.createStaticCheckpointV(pickups.CasinoLiftCondoPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
+    methods.createStaticCheckpointV(pickups.CasinoLiftInPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
 
     //Meria
     methods.createStaticCheckpointV(pickups.MeriaUpPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);

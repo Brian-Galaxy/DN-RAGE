@@ -15,7 +15,7 @@ dispatcher.sendPos = function (title, desc, pos, withCoord = true) {
     methods.debug('dispatcher.sendPos');
     let time = methods.digitFormat(weather.getHour()) + ':' + methods.digitFormat(weather.getMin());
     mp.players.forEach(function (player) {
-        if (user.isFib(player) || user.isEms(player) || user.isSapd(player) || user.isSheriff(player) || user.isPrison(player))
+        if (user.isFib(player) || user.isEms(player) || user.isSapd(player) || user.isSheriff(player))
             player.call("client:dispatcher:addDispatcherList", [title, desc, time, pos.x, pos.y, pos.z, withCoord]);
     });
 };

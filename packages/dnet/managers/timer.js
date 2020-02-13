@@ -12,6 +12,7 @@ let user = require('../user');
 let timer = exports;
 
 timer.loadAll = function() {
+    timer.min60Timer();
     timer.min30Timer();
     timer.sec10Timer();
     timer.secTimer();
@@ -21,22 +22,9 @@ timer.min30Timer = function() {
 
     inventory.deleteWorldItems();
 
-    for (let i = 1; i < 1300; i++)
-    {
-        try {
-            if (Container.Data.Has(i, "isMail"))
-                Container.Data.Reset(i, "isMail");
-            if (Container.Data.Has(i, "isMail2"))
-                Container.Data.Reset(i, "isMail2");
-        }
-        catch (e) {
-            methods.debug(e);
-        }
-    }
-
     mp.vehicles.forEach(function (v) {
         try {
-            if (vehicles.exists(v) && vehicles.getFuel(v) == 0 && v.getOccupants().length == 0) {
+            if (vehicles.exists(v) && vehicles.getFuel(v) < 2 && v.getOccupants().length == 0) {
                 if (!v.getVariable('trId'))
                     vehicles.respawn(v);
             }
@@ -54,6 +42,24 @@ timer.min30Timer = function() {
     });
 
     setTimeout(timer.min30Timer, 1000 * 60 * 30);
+};
+
+timer.min60Timer = function() {
+
+    for (let i = 1; i < 1300; i++)
+    {
+        try {
+            if (Container.Data.Has(i, "isMail"))
+                Container.Data.Reset(i, "isMail");
+            if (Container.Data.Has(i, "isMail2"))
+                Container.Data.Reset(i, "isMail2");
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    }
+
+    setTimeout(timer.min30Timer, 1000 * 60 * 60);
 };
 
 timer.sec10Timer = function() {

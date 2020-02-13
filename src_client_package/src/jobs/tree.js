@@ -1049,9 +1049,9 @@ tree.findRandomPickup = function() {
             let _checkpointId = 0;
             let pos = new mp.Vector3(item[0], item[1], item[2] - 1);
             if (item[4] == 0)
-                _checkpointId = jobPoint.createList(pos, false, 2, ui.MarkerRed);
+                _checkpointId = jobPoint.createList(pos, false, 1, ui.MarkerRed);
             else
-                _checkpointId = jobPoint.createList(pos, false, 2, ui.MarkerGreen);
+                _checkpointId = jobPoint.createList(pos, false, 1, ui.MarkerGreen);
             checkpointList.push({id: _checkpointId, type: item[4], rot: item[3], pos: pos});
         });
 
@@ -1084,8 +1084,8 @@ tree.workProcess = function(id) {
             methods.blockKeys(true);
             pickupId = 0;
 
-            /*mp.players.local.position = item.pos;
-            mp.players.local.setRotation(0, 0, item.rot, 0, true);*/
+            mp.players.local.position = new mp.Vector3(item.pos.x, item.pos.y, item.pos.z + 1);
+            mp.players.local.setRotation(0, 0, item.rot, 0, true);
 
             if (item.type == 0)
                 user.playScenario("WORLD_HUMAN_GARDENER_PLANT");
@@ -1098,11 +1098,11 @@ tree.workProcess = function(id) {
                 methods.blockKeys(false);
                 user.stopScenario();
                 user.giveJobMoney(methods.getRandomInt(9, 12) + methods.getRandomFloat());
-
                 user.addRep(1);
+                user.addWorkExp(1);
 
                 user.giveJobSkill();
-            }, 20000);
+            }, 10000);
         }
         else
             newList.push(item);

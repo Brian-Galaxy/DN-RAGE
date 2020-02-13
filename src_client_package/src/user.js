@@ -979,6 +979,26 @@ user.getRep= function() {
     return methods.parseInt(user.getCache('rep'));
 };
 
+user.addWorkExp = function(rep) {
+    mp.events.callRemote('server:user:addWorkExp', rep);
+};
+
+user.removeWorkExp= function(rep) {
+    mp.events.callRemote('server:user:removeWorkExp', rep);
+};
+
+user.setWorkExp = function(rep) {
+    mp.events.callRemote('server:user:setWorkExp', rep);
+};
+
+user.getWorkLvl = function() {
+    return methods.parseInt(user.getCache('work_lvl'));
+};
+
+user.getWorkExp= function() {
+    return methods.parseInt(user.getCache('work_lvl'));
+};
+
 user.addGrabMoney = function(money) {
     user.setGrabMoney(user.getGrabMoney() + money);
 };

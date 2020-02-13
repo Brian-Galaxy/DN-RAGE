@@ -121,7 +121,7 @@ gr6.findRandomPickup = function() {
 
 gr6.workProcess = function() {
     jobPoint.delete();
-    Container.Data.SetLocally(0, 'gr6Money', price + methods.getRandomInt(90, 270));
+    Container.Data.SetLocally(0, 'gr6Money', price + methods.getRandomInt(120, 300));
     Container.Data.SetLocally(0, 'gr6MoneyBag', true);
     user.setComponentVariation(5, 45, 0);
     mp.game.ui.notifications.show('~y~Вы взяли сумку с деньгами, садитесь в транспорт');
@@ -160,7 +160,6 @@ mp.events.add("playerEnterVehicle", function (vehicle, seat) {
         user.setComponentVariation(5, 0, 0);
 
         Container.Data.ResetLocally(0, 'gr6MoneyBag');
-
         mp.game.ui.notifications.show('~g~Вы загрузили деньги в транспорт');
         user.giveJobSkill();
     }

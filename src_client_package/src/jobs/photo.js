@@ -231,10 +231,10 @@ photo.findRandomPickup = function() {
     try {
         isProcess = true;
         pickupId = methods.getRandomInt(0, photo.markers.length - 1);
-        let pos = new mp.Vector3(photo.markers[pickupId][1], photo.markers[pickupId][2], photo.markers[pickupId][3]);
+        let pos = new mp.Vector3(photo.markers[pickupId][1], photo.markers[pickupId][2], photo.markers[pickupId][3] - 1);
         price = methods.parseFloat(methods.distanceToPos(pos, mp.players.local.position) / 50);
-        if (price > 400)
-            price = 400;
+        if (price > 200)
+            price = 200;
         _checkpointId = jobPoint.create(pos, true, 3);
         mp.game.ui.notifications.showWithPicture('Life Invader', "Начальник", `Необходимо сфотографировать ~y~${photo.markers[pickupId][0]}`, "CHAR_LIFEINVADER", 1);
     }
@@ -262,7 +262,10 @@ photo.getDirectionPosition = function(rot) {
     return "S";
 };
 
-photo.workProcess = function() {
+photo.workProcess = function() { //TODO
+
+    methods.debug('photo.work')
+
     isCheckpoint = false;
     let pos = mp.players.local.position;
     photo.markers.forEach(function (item, i) {
@@ -292,17 +295,23 @@ photo.workProcess = function() {
                 mp.players.local.freezePosition(false);
                 user.stopScenario();
 
-                if (pointPos == playerPos) {
+                methods.debug(pointPos);
+                methods.debug(playerPos);
+
+                if (pointPos === playerPos) {
                     mp.game.ui.notifications.showWithPicture('Life Invader', "Начальник", `Отличный кардр, за него ты получишь премию!`, "CHAR_LIFEINVADER", 1);
-                    user.giveJobMoney(methods.getRandomInt(100, 200) + price);
+                    user.giveJobMoney(methods.getRandomInt(200, 300) + price);
+                    user.addWorkExp(10);
                 }
                 else if (playerPos.indexOf(pointPos) >= 0 || pointPos.indexOf(playerPos) >= 0) {
                     mp.game.ui.notifications.showWithPicture('Life Invader', "Начальник", `Не плохой кадр, но можно и лучше`, "CHAR_LIFEINVADER", 1);
-                    user.giveJobMoney(methods.getRandomInt(40, 70) + price);
+                    user.giveJobMoney(methods.getRandomInt(100, 150) + price);
+                    user.addWorkExp(5);
                 }
                 else {
                     mp.game.ui.notifications.showWithPicture('Life Invader', "Начальник", `Я промолчу... Вот твои деньги`, "CHAR_LIFEINVADER", 1);
                     user.giveJobMoney(price);
+                    user.addWorkExp(1);
                 }
 
                 user.addRep(5);

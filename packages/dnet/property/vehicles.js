@@ -126,6 +126,8 @@ vehicles.loadUserVehicleByRow = (row) => {
     vehicles.set(row['id'], 'fuel', row['fuel']);
     vehicles.set(row['id'], 'color1', row['color1']);
     vehicles.set(row['id'], 'color2', row['color2']);
+    vehicles.set(row['id'], 'color3', row['color3']);
+    vehicles.set(row['id'], 'colorwheel', row['colorwheel']);
     vehicles.set(row['id'], 'livery', row['livery']);
     vehicles.set(row['id'], 'neon_r', row['neon_r']);
     vehicles.set(row['id'], 'neon_g', row['neon_g']);
@@ -882,6 +884,8 @@ vehicles.setTunning = (veh) => {
                 veh.numberPlateType = numberStyle;
 
                 veh.setColor(car.get('color1'), car.get('color2'));
+                veh.pearlescentColor = car.get('color3');
+                veh.wheelColor = car.get('colorwheel');
 
                 if (car.get('neon_r') > 0)
                     veh.setNeonColor(car.get('neon_r'), car.get('neon_g'), car.get('neon_b'));

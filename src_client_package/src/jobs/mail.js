@@ -13,8 +13,9 @@ mail.sendMail = function(houseId) {
                 Container.Data.SetLocally(mp.players.local.id, 'mail', Container.Data.GetLocally(mp.players.local.id, 'mail') - 1);
                 mp.game.ui.notifications.show(`~g~Вы отнесли почту ${Container.Data.GetLocally(mp.players.local.id, 'mail')}/10`);
                 user.giveJobSkill();
-                user.giveJobMoney(11);
+                user.giveJobMoney(methods.getRandomInt(12, 15) + methods.getRandomFloat());
                 user.addRep(1);
+                user.addWorkExp(1);
                 return;
             }
         }
@@ -34,8 +35,9 @@ mail.sendMail2 = function(houseId) {
                 Container.Data.SetLocally(mp.players.local.id, 'mail', Container.Data.GetLocally(mp.players.local.id, 'mail') - 1);
                 mp.game.ui.notifications.show(`~g~Вы отнесли почту ${Container.Data.GetLocally(mp.players.local.id, 'mail')}/10`);
                 user.giveJobSkill();
-                user.giveJobMoney(11);
+                user.giveJobMoney(methods.getRandomInt(5, 7) + methods.getRandomFloat());
                 user.addRep(1);
+                user.addWorkExp(1);
                 return;
             }
         }

@@ -314,7 +314,7 @@ enums.carShop = {
         id: 5,
         blipId: 369,
         blipColor: 0,
-        name: "Sandres Motocycles",
+        name: "Sandres Motorcycles",
         notifyPic: "CHAR_MP_FM_CONTACT",
         buyPos: [268.03997802734375, -1155.5076904296875, 29.289066314697266],
         //carPos: [262.5167236328125, -1161.56982421875, 28.536949157714844, 357.2798767089844],

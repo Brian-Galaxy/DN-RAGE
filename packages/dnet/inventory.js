@@ -664,7 +664,7 @@ inventory.useItem = function(player, id, itemId) {
                     return;
                 }
 
-                if (!vSync.getHoodState(veh) && vehInfo.class_name != "Motocycles")
+                if (!vSync.getHoodState(veh) && vehInfo.class_name != "Motorcycles")
                 {
                     player.notify("~r~Необходимо открыть капот");
                     return;

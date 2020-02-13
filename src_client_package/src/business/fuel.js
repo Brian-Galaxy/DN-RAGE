@@ -50,10 +50,10 @@ fuel.hashList = [
 
 fuel.fillVehTimer = async function(count) {
     try {
+        await methods.sleep(500);
+
         let time = 0;
         let allCount = methods.parseInt(count);
-
-
         let veh = mp.players.local.vehicle;
         if (!veh) {
             mp.game.ui.notifications.show(`~r~Вы должны находиться в транспорте`);
@@ -63,6 +63,7 @@ fuel.fillVehTimer = async function(count) {
         let vInfo = methods.getVehicleInfo(veh.model);
 
         let pref = vehicles.getFuelPostfix(vInfo.fuel_type);
+        let wait = vInfo.fuel_type === 3 ? 1000 : 500;
 
         while (time <= allCount && !veh.getIsEngineRunning()) {
 
@@ -75,7 +76,7 @@ fuel.fillVehTimer = async function(count) {
             ui.showSubtitle(`Осталось ~g~${time}${pref}~s~ из ~g~${allCount}${pref}`);
             time++;
             vehicles.addFuel(veh);
-            await methods.sleep(500);
+            await methods.sleep(wait);
         }
         mp.game.ui.notifications.show(`~g~Заправка транспорта была завершена`);
     }

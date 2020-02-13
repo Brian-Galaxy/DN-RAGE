@@ -24,6 +24,7 @@ business.loadAll = function() {
             business.set(item['id'], 'name', item['name']);
             business.set(item['id'], 'price', item['price']);
             business.set(item['id'], 'bank', item['bank']);
+            business.set(item['id'], 'bank_tax', item['bank_tax']);
             business.set(item['id'], 'bank_score', item['bank_score']);
             business.set(item['id'], 'bank_id', item['bank_id']);
             business.set(item['id'], 'user_name', item['user_name']);
@@ -67,7 +68,7 @@ business.save = function(id) {
     sql = sql + ", sc_color = '" + methods.parseInt(business.get(id, "sc_color")) + "'";
     sql = sql + ", sc_alpha = '" + methods.parseInt(business.get(id, "sc_alpha")) + "'";
     //sql = sql + ", type = '" + business.get(id, "type") + "'";
-    sql = sql + ", price_product = '" + methods.parseInt(business.get(id, "price_product")) + "'";
+    sql = sql + ", price_product = '" + methods.parseFloat(business.get(id, "price_product")) + "'";
     sql = sql + ", interior = '" + methods.parseInt(business.get(id, "interior")) + "'";
 
     sql = sql + " where id = '" + business.get(id, "id") + "'";
@@ -101,12 +102,24 @@ business.getData = function(id) {
     return Container.Data.GetAll(enums.offsets.business + methods.parseInt(id));
 };
 
+business.isOpen = function(id, minPrice = 0) {
+    return business.get(id, 'user_id') === 0 || (business.get(id, 'user_id') > 0 && business.getMoneyTax(id) > minPrice);
+};
+
 business.addMoney = function(id, money, name = "Операция со счетом") {
+    if (id === 0 || business.get(id, 'user_id') === 0) {
+        coffer.addMoney(1, money);
+        return;
+    }
     business.addHistory(id, name, money);
     business.setMoney(id, business.getMoney(id) + methods.parseFloat(money));
 };
 
 business.removeMoney = function(id, money, name = "Операция со счетом") {
+    if (id === 0 || business.get(id, 'user_id') === 0) {
+        coffer.removeMoney(1, money);
+        return;
+    }
     business.addHistory(id, name, money * -1);
     business.setMoney(id, business.getMoney(id) - methods.parseFloat(money));
 };
@@ -120,6 +133,30 @@ business.getMoney = function(id) {
     id = methods.parseInt(id);
     if (Container.Data.Has(enums.offsets.business + id, 'bank'))
         return methods.parseFloat(Container.Data.Get(enums.offsets.business + id, 'bank'));
+    return 0;
+};
+
+business.addMoneyTax = function(id, money, name = "Операция со счетом") {
+    if (id === 0 || business.get(id, 'user_id') === 0)
+        return;
+    business.setMoney(id, business.getMoneyTax(id) + methods.parseFloat(money));
+};
+
+business.removeMoneyTax = function(id, money, name = "Операция со счетом") {
+    if (id === 0 || business.get(id, 'user_id') === 0)
+        return;
+    business.setMoneyTax(id, business.getMoneyTax(id) - methods.parseFloat(money));
+};
+
+business.setMoneyTax = function(id, money) {
+    id = methods.parseInt(id);
+    Container.Data.Set(enums.offsets.business + id, 'bank_tax', methods.parseFloat(money));
+};
+
+business.getMoneyTax = function(id) {
+    id = methods.parseInt(id);
+    if (Container.Data.Has(enums.offsets.business + id, 'bank_tax'))
+        return methods.parseFloat(Container.Data.Get(enums.offsets.business + id, 'bank_tax'));
     return 0;
 };
 

@@ -790,8 +790,12 @@ menuList.showCasinoLiftTeleportMenu = function() {
     let CasinoLiftStreetPos = new mp.Vector3(935.5374755859375, 46.44008255004883, 80.09577178955078);
     let CasinoLiftBalconPos = new mp.Vector3(964.3539428710938, 58.81953048706055, 111.5530014038086);
     let CasinoLiftRoofPos = new mp.Vector3(972.0299072265625, 52.14411163330078, 119.24087524414062);
+    let CasinoLiftInPos = new mp.Vector3(1089.85009765625, 206.42514038085938, -49.99974822998047);
+    let CasinoLiftCondoPos = new mp.Vector3(2518.663330078125, -259.46478271484375, -40.122894287109375);
 
     UIMenu.Menu.AddMenuItem("Улица").teleportPos = CasinoLiftStreetPos;
+    UIMenu.Menu.AddMenuItem("Казино").teleportPos = CasinoLiftInPos;
+    UIMenu.Menu.AddMenuItem("Квартиры").teleportPos = CasinoLiftCondoPos;
     UIMenu.Menu.AddMenuItem("Балкон").teleportPos = CasinoLiftBalconPos;
     UIMenu.Menu.AddMenuItem("Крыша").teleportPos = CasinoLiftRoofPos;
 
@@ -1160,7 +1164,7 @@ menuList.showBusinessMenu = async function(data) {
 
     let nalog = await coffer.getTaxBusiness();
 
-    let menu = UIMenu.Menu.Create(`Arcadius`, `~b~Владелец: ~s~${(data.get('user_id') == 0 ? "Государство" : data.get('user_name'))}`);
+    let menu = UIMenu.Menu.Create(`Arcadius`, `~b~Владелец: ~s~${(data.get('user_id') < 1 ? "Государство" : data.get('user_name'))}`);
 
     let nalogOffset = bankTarif;
     if (data.get('type') == 1 || data.get('type') == 11) //TODO
@@ -1174,13 +1178,16 @@ menuList.showBusinessMenu = async function(data) {
     if (user.getCache('id') == data.get('user_id')) {
 
         UIMenu.Menu.AddMenuItem("~b~Банк: ~s~").SetRightLabel(`~g~${methods.moneyFormat(data.get('bank'))}`);
+        UIMenu.Menu.AddMenuItem("~b~Бюджет обслуживания: ~s~").SetRightLabel(`~g~${methods.moneyFormat(data.get('bank_tax'))}`);
         UIMenu.Menu.AddMenuItem("Настройка бизнеса").doName = 'settings';
         UIMenu.Menu.AddMenuItem("Список транзакций").doName = 'log';
         UIMenu.Menu.AddMenuItem("Положить средства").doName = 'addMoney';
         UIMenu.Menu.AddMenuItem("Снять средства").doName = 'removeMoney';
+        UIMenu.Menu.AddMenuItem("Положить бюджет").doName = 'addMoneyTax';
+        UIMenu.Menu.AddMenuItem("~y~Что такое бюджет для обслуживания?").doName = 'ask';
     }
     else if (data.get('user_id') == 0) {
-        if (data.get('price') == 0)
+        if (data.get('price') < 1)
             UIMenu.Menu.AddMenuItem("~y~На реконструкции, скоро будет доступен");
         else
             UIMenu.Menu.AddMenuItem("~g~Купить", `Цена: ~g~${methods.moneyFormat(data.get('price'))}`).doName = 'buy';
@@ -1195,6 +1202,9 @@ menuList.showBusinessMenu = async function(data) {
         if (item.doName == 'buy') {
             mp.events.callRemote('server:business:buy', data.get('id'));
         }
+        if (item.doName == 'ask') {
+            ui.showDialog('Бюджет обслуживания бизнеса, это тот счет, с которого списывается минимальная стоимость товара бизнеса, то есть, если этот счёт будет пустым, то игрок не сможет купить у вас товар или воспользоваться услугой.')
+        }
         if (item.doName == 'settings') {
             menuList.showBusinessSettingsMenu(data);
         }
@@ -1204,17 +1214,43 @@ menuList.showBusinessMenu = async function(data) {
         if (item.doName == 'log') {
             mp.events.callRemote('server:business:log', data.get('id'));
         }
-        if (item.doName == 'addMoney') {
+        if (item.doName == 'addMoneyTax') {
             try {
 
-                if (user.get('bank_card') < 1) {
+                if (user.getCache('bank_card') < 1) {
                     mp.game.ui.notifications.show(`~r~У Вас нет банковской карты`);
                     return;
                 }
                 let money = await UIMenu.Menu.GetUserInput("Сумма", "", 8);
                 money = methods.parseFloat(money);
                 if (money > user.getBankMoney()) {
-                    mp.game.ui.notifications.show(`~r~У Вас нет столько денег на руках`);
+                    mp.game.ui.notifications.show(`~r~У Вас нет столько денег на вашей карте`);
+                    return;
+                }
+                if (money < 1) {
+                    mp.game.ui.notifications.show(`~r~Нельзя положить меньше 1$`);
+                    return;
+                }
+                business.addMoneyTax(data.get('id'), money);
+                user.removeBankMoney(money, 'Зачиление на счет бизнеса ' + data.get('name'));
+                business.save(data.get('id'));
+                mp.game.ui.notifications.show(`~b~Вы положили деньги на счет бизнеса`);
+            }
+            catch (e) {
+                methods.debug(e);
+            }
+        }
+        if (item.doName == 'addMoney') {
+            try {
+
+                if (user.getCache('bank_card') < 1) {
+                    mp.game.ui.notifications.show(`~r~У Вас нет банковской карты`);
+                    return;
+                }
+                let money = await UIMenu.Menu.GetUserInput("Сумма", "", 8);
+                money = methods.parseFloat(money);
+                if (money > user.getBankMoney()) {
+                    mp.game.ui.notifications.show(`~r~У Вас нет столько денег на вашей карте`);
                     return;
                 }
                 if (money < 1) {
@@ -1232,7 +1268,7 @@ menuList.showBusinessMenu = async function(data) {
         }
         if (item.doName == 'removeMoney') {
 
-            if (user.get('bank_card') < 1) {
+            if (user.getCache('bank_card') < 1) {
                 mp.game.ui.notifications.show(`~r~У Вас нет банковской карты`);
                 return;
             }
@@ -1323,16 +1359,21 @@ menuList.showBusinessSettingsMenu = async function(data) {
     interiorItem.doName = 'setInterior';
     interiorItem.Index = data.get('interior');
 
-    /*if (data.get('type') == 0) { //TODO
-        let priceItem = UIMenu.Menu.AddMenuItemList("~b~Процент обслуживания~s~", priceBankList);
-        priceItem.doName = 'setPriceBank';
-        priceItem.Index = data.get('price_product') - 1;
+    try {
+        if (data.get('type') === 0) { //TODO
+            let priceItem = UIMenu.Menu.AddMenuItemList("~b~Процент обслуживания~s~", priceBankList);
+            priceItem.doName = 'setPriceBank';
+            priceItem.Index = data.get('price_product') - 1;
+        }
+        else {
+            let priceItem = UIMenu.Menu.AddMenuItem("~b~Цена на весь товар~s~");
+            priceItem.SetRightLabel(`${data.get('price_product') * 100}%`);
+            priceItem.doName = 'setPrice';
+        }
     }
-    else {
-        let priceItem = UIMenu.Menu.AddMenuItemList("~b~Цена на весь товар~s~");
-        priceItem.SetRightLabel(`${data.get('price_product') * 100}%`);
-        priceItem.doName = 'setPrice';
-    }*/
+    catch (e) {
+        methods.debug(e);
+    }
 
     let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
 
@@ -1377,7 +1418,7 @@ menuList.showBusinessSettingsMenu = async function(data) {
         if (item == closeItem)
             return;
         if (item.doName == 'setPrice') {
-            let price = methods.parseInt(await UIMenu.Menu.GetUserInput("Цена на весь товар", "", 4));
+            let price = methods.parseInt(await UIMenu.Menu.GetUserInput("Цена на весь товар", "", 3));
 
             if (price < 100) {
                 mp.game.ui.notifications.show(`~b~Процент не может быть меньше 100`);
@@ -2553,7 +2594,7 @@ menuList.showPlayerStatsMenu = function() {
 
     UIMenu.Menu.AddMenuItem("~b~Work ID:~s~").SetRightLabel(`${user.getCache('work_lic') != '' ? user.getCache('work_lic') : '~r~Нет'}`);
     UIMenu.Menu.AddMenuItem("~b~Уровень рабочего:~s~").SetRightLabel(`${user.getCache('work_lvl')}`);
-    UIMenu.Menu.AddMenuItem("~b~Опыт рабочего:~s~").SetRightLabel(`${user.getCache('work_exp')}`);
+    UIMenu.Menu.AddMenuItem("~b~Опыт рабочего:~s~").SetRightLabel(`${user.getCache('work_exp')}/${user.getCache('work_lvl') * 500}`);
 
 
     let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
@@ -3039,8 +3080,8 @@ menuList.showSpawnJobGr6Menu = function() {
 
     UIMenu.Menu.AddMenuItem("~g~Начать рабочий день").doName = 'startDuty';
     UIMenu.Menu.AddMenuItem("Арендовать транспорт", 'Цена за аренду: ~g~$500~s~\nЗалог: ~g~$4,500').doName = 'spawnCar';
-    UIMenu.Menu.AddMenuItem("~b~Стандартное вооружение", 'Цена: ~g~$3,000').doName = 'getMore0';
-    UIMenu.Menu.AddMenuItem("~b~Доп. вооружение", 'Цена: ~g~$10,000').doName = 'getMore1';
+    UIMenu.Menu.AddMenuItem("~b~Стандартное вооружение (Taurus PT92)", 'Цена: ~g~$3,000').doName = 'getMore0';
+    UIMenu.Menu.AddMenuItem("~b~Доп. вооружение (MP5A3 + Бронежилет)", 'Цена: ~g~$10,000').doName = 'getMore1';
     UIMenu.Menu.AddMenuItem("~r~Закончить рабочий день").doName = 'stopDuty';
     UIMenu.Menu.AddMenuItem("~r~Закрыть");
 
@@ -5651,15 +5692,15 @@ menuList.showVehShopModelInfoMenu = function(model)
         UIMenu.Menu.AddMenuItem("~b~Багажник: ~s~").SetRightLabel(`~r~Отсутствует`);
     }
 
-    let listItem = UIMenu.Menu.AddMenuItemList(`~b~Цвет 1:`, enums.lscColors);
+    let listItem = UIMenu.Menu.AddMenuItemList(`~b~Цвет 1:`, enums.lscColorsEn);
     listItem.color1 = true;
     listItem.Index = vShop.getColor1();
 
-    listItem = UIMenu.Menu.AddMenuItemList(`~b~Цвет 2:`, enums.lscColors);
+    listItem = UIMenu.Menu.AddMenuItemList(`~b~Цвет 2:`, enums.lscColorsEn);
     listItem.color2 = true;
     listItem.Index = vShop.getColor2();
 
-    if (vInfo.class_name != 'Cycles' && vInfo.class_name != 'Motocycles' && vInfo.class_name != 'Boats')
+    if (vInfo.class_name != 'Cycles' && vInfo.class_name != 'Motorcycles' && vInfo.class_name != 'Boats')
     {
         listItem = UIMenu.Menu.AddMenuItemList(`~b~Двери:`, ['~r~Закрыто', '~g~Открыто']);
         listItem.doorOpen = true;
@@ -5780,7 +5821,7 @@ menuList.showLscMenu = function(shopId, price = 1)
     menuItem.price = itemPrice;
     menuItem.doName = 'setNumber';
 
-    menuItem = UIMenu.Menu.AddMenuItem("Цвет");
+    menuItem = UIMenu.Menu.AddMenuItem("Покраска транспорта");
     menuItem.doName = 'setColor';
 
     menuItem = UIMenu.Menu.AddMenuItem("~y~Сбыт угнанного ТС");
@@ -5832,9 +5873,27 @@ menuList.showLscColorMenu = function(shopId, price, lscBanner1) {
 
     let menu = UIMenu.Menu.Create(` `, `~b~Выбор цвета`, false, false, false, lscBanner1, lscBanner1);
 
+    let saleLabel = '';
+    let sale = business.getSale(price);
+    if (sale > 0)
+        saleLabel = `\n~s~Скидка: ~r~${sale}%`;
 
-    let color1Item = UIMenu.Menu.AddMenuItem("Основной цвет", 'Цена: ~g~$' + (3000 * price));
-    let color2Item = UIMenu.Menu.AddMenuItem("Дополнительный цвет", 'Цена: ~g~$' + (1000 * price));
+    let color1Item = UIMenu.Menu.AddMenuItem("Основной цвет", 'Цена: ~g~$' + (3000 * price) + saleLabel);
+    if (sale > 0)
+        color1Item.SetLeftBadge(27);
+
+    let color2Item = UIMenu.Menu.AddMenuItem("Дополнительный цвет", 'Цена: ~g~$' + (1000 * price) + saleLabel);
+    if (sale > 0)
+        color2Item.SetLeftBadge(27);
+
+    let color3Item = UIMenu.Menu.AddMenuItem("Перламутровый цвет", 'Цена: ~g~$' + (5000 * price) + saleLabel);
+    if (sale > 0)
+        color3Item.SetLeftBadge(27);
+
+    let color4Item = UIMenu.Menu.AddMenuItem("Цвет колёс", 'Цена: ~g~$' + (500 * price) + saleLabel);
+    if (sale > 0)
+        color4Item.SetLeftBadge(27);
+
     let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
 
     menu.ItemSelect.on(item => {
@@ -5843,6 +5902,10 @@ menuList.showLscColorMenu = function(shopId, price, lscBanner1) {
             menuList.showLscColor1Menu(shopId, price, lscBanner1);
         else if (item == color2Item)
             menuList.showLscColor2Menu(shopId, price, lscBanner1);
+        else if (item == color3Item)
+            menuList.showLscColor3Menu(shopId, price, lscBanner1);
+        else if (item == color4Item)
+            menuList.showLscColor4Menu(shopId, price, lscBanner1);
     });
 };
 
@@ -5860,9 +5923,9 @@ menuList.showLscColor1Menu = async function(shopId, price, lscBanner1) {
 
         let menu = UIMenu.Menu.Create(` `, `~b~Выбор основного цвета`, false, false, false, lscBanner1, lscBanner1);
 
-        for (let i = 0; i < 156; i++) {
+        for (let i = 0; i < 161; i++) {
             try {
-                let label = enums.lscColors[i];
+                let label = enums.lscColorsEn[i];
                 let listItem = UIMenu.Menu.AddMenuItem(`${label}`,`Цена: ~g~${methods.moneyFormat(3000 * price)}`);
 
                 try {
@@ -5924,9 +5987,9 @@ menuList.showLscColor2Menu = async function(shopId, price, lscBanner1) {
 
     let menu = UIMenu.Menu.Create(` `, `~b~Выбор доп. цвета`, false, false, false, lscBanner1, lscBanner1);
 
-    for (let i = 0; i < 156; i++) {
+    for (let i = 0; i < 161; i++) {
         try {
-            let label = enums.lscColors[i];
+            let label = enums.lscColorsEn[i];
             let listItem = UIMenu.Menu.AddMenuItem(`${label}`,`Цена: ~g~${methods.moneyFormat(1000 * price)}`);
 
             try {
@@ -5970,6 +6033,130 @@ menuList.showLscColor2Menu = async function(shopId, price, lscBanner1) {
     });
 };
 
+menuList.showLscColor3Menu = async function(shopId, price, lscBanner1) {
+
+    let veh = mp.players.local.vehicle;
+
+    if (!veh) {
+        mp.game.ui.notifications.show(`~r~Необходимо находиться в личном транспорте`);
+        return;
+    }
+
+    let car = await vehicles.getData(veh.getVariable('container'));
+    let list = [];
+
+    let menu = UIMenu.Menu.Create(` `, `~b~Выбор перламутра`, false, false, false, lscBanner1, lscBanner1);
+
+    for (let i = 0; i < 161; i++) {
+        try {
+            let label = enums.lscColorsEn[i];
+            if (i === 0)
+                label = "По умолчанию";
+            let listItem = UIMenu.Menu.AddMenuItem(`${label}`,`Цена: ~g~${methods.moneyFormat(5000 * price)}`);
+
+            try {
+                if (car.get('color3') == i)
+                    listItem.SetRightBadge(12);
+            }
+            catch (e) {
+
+            }
+
+            listItem.modType = i;
+            listItem.price = 5000 * price;
+            listItem.itemName = label;
+            list.push(listItem);
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    }
+
+    let backItem = UIMenu.Menu.AddMenuItem("~g~Назад");
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+
+    menu.IndexChange.on((index) => {
+        if (index >= list.length)
+            return;
+        mp.events.callRemote('server:lsc:showColor3', index);
+    });
+
+    menu.ItemSelect.on(item => {
+        UIMenu.Menu.HideMenu();
+        if (backItem == item) {
+            menuList.showLscColorMenu(shopId, price, lscBanner1);
+            return;
+        }
+        if (closeItem == item) {
+            return;
+        }
+        menuList.showLscMenu(shopId, price);
+        mp.events.callRemote('server:lsc:buyColor3', item.modType, 5000 * price + 0.001, shopId, `Цвет: ${item.itemName}`);
+    });
+};
+
+menuList.showLscColor4Menu = async function(shopId, price, lscBanner1) {
+
+    let veh = mp.players.local.vehicle;
+
+    if (!veh) {
+        mp.game.ui.notifications.show(`~r~Необходимо находиться в личном транспорте`);
+        return;
+    }
+
+    let car = await vehicles.getData(veh.getVariable('container'));
+    let list = [];
+
+    let menu = UIMenu.Menu.Create(` `, `~b~Выбор цвета колёс`, false, false, false, lscBanner1, lscBanner1);
+
+    for (let i = 0; i < 161; i++) {
+        try {
+            let label = enums.lscColorsEn[i];
+            if (i === 0)
+                label = "По умолчанию";
+            let listItem = UIMenu.Menu.AddMenuItem(`${label}`,`Цена: ~g~${methods.moneyFormat(500 * price)}`);
+
+            try {
+                if (car.get('color4') == i)
+                    listItem.SetRightBadge(12);
+            }
+            catch (e) {
+
+            }
+
+            listItem.modType = i;
+            listItem.price = 500 * price;
+            listItem.itemName = label;
+            list.push(listItem);
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    }
+
+    let backItem = UIMenu.Menu.AddMenuItem("~g~Назад");
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+
+    menu.IndexChange.on((index) => {
+        if (index >= list.length)
+            return;
+        mp.events.callRemote('server:lsc:showColor4', index);
+    });
+
+    menu.ItemSelect.on(item => {
+        UIMenu.Menu.HideMenu();
+        if (backItem == item) {
+            menuList.showLscColorMenu(shopId, price, lscBanner1);
+            return;
+        }
+        if (closeItem == item) {
+            return;
+        }
+        menuList.showLscMenu(shopId, price);
+        mp.events.callRemote('server:lsc:buyColor4', item.modType, 500 * price + 0.001, shopId, `Цвет: ${item.itemName}`);
+    });
+};
+
 menuList.showLscSTunningMenu = function(shopId, price, lscBanner1) {
 
     let veh = mp.players.local.vehicle;
@@ -5983,12 +6170,12 @@ menuList.showLscSTunningMenu = function(shopId, price, lscBanner1) {
 
     let menu = UIMenu.Menu.Create(` `, `~b~Установка модулей`, false, false, false, lscBanner1, lscBanner1);
 
-    let itemPrice = 50000 * price + 0.001;
+    let itemPrice = 100000 + 0.001;
     let menuItem = UIMenu.Menu.AddMenuItem("Неоновая подсветка", `Цена: ~g~${methods.moneyFormat(methods.parseInt(itemPrice))}`);
     menuItem.price = itemPrice;
     menuItem.doName = 'setNeon';
 
-    itemPrice = 5000 * price + 0.001;
+    itemPrice = 10000 + 0.001;
     menuItem = UIMenu.Menu.AddMenuItem("Дистанционное управление", `Цена: ~g~${methods.moneyFormat(methods.parseInt(itemPrice))}`);
     menuItem.price = itemPrice;
     menuItem.doName = 'setSpecial';
@@ -6044,6 +6231,20 @@ menuList.showLscTunningMenu = function(shopId, price, lscBanner1) {
             continue;
         try {
             if (veh.getNumMods(i) == 0) continue;
+            if (i == 23) continue;
+
+            if (i == 1 || i == 10) {
+                if (vehInfo.display_name == 'Havok' ||
+                    vehInfo.display_name == 'Microlight' ||
+                    vehInfo.display_name == 'Seasparrow' ||
+                    vehInfo.display_name == 'Revolter' ||
+                    vehInfo.display_name == 'Viseris' ||
+                    vehInfo.display_name == 'Savestra' ||
+                    vehInfo.display_name == 'Deluxo' ||
+                    vehInfo.display_name == 'Comet4')
+                    continue;
+            }
+
             if (veh.getNumMods(i) > 0 && enums.lscNames[i][1] > 0) {
                 let label = mp.game.ui.getLabelText(veh.getModSlotName(i));
                 if (label == "NULL" || label == "")
@@ -6059,7 +6260,8 @@ menuList.showLscTunningMenu = function(shopId, price, lscBanner1) {
     UIMenu.Menu.AddMenuItem(`Тонировка`,`Нажмите ~g~Enter~s~, чтобы посмотреть`).modType = 69;
     if (veh.getLiveryCount() > 1)
         UIMenu.Menu.AddMenuItem(`Специальная окраска`,`Нажмите ~g~Enter~s~, чтобы посмотреть`).modType = 76;
-    UIMenu.Menu.AddMenuItem(`Тип колёс`,`Нажмите ~g~Enter~s~, чтобы посмотреть`).modType = 78;
+    if (vehInfo.class_name !== 'Motorcycles')
+        UIMenu.Menu.AddMenuItem(`Колёса`,`Нажмите ~g~Enter~s~, чтобы посмотреть`).modType = 78;
 
     let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
     menu.ItemSelect.on(item => {
@@ -6091,7 +6293,6 @@ menuList.showLscTunningListMenu = async function(modType, shopId, price, lscBann
         catch (e) {
         }
 
-        price = 1.1;
         let list = [];
         let vehInfo = methods.getVehicleInfo(veh.model);
 
@@ -6111,49 +6312,61 @@ menuList.showLscTunningListMenu = async function(modType, shopId, price, lscBann
             }
         }
 
+        let defaultPrice = price;
+        price = price - 1;
+
         if (veh.getVariable('price') >= 8000 && veh.getVariable('price') < 15000)
-            price = 1.2;
+            price += 1.2;
         else if (veh.getVariable('price') >= 15000 && veh.getVariable('price') < 30000)
-            price = 1.4;
+            price += 1.4;
         else if (veh.getVariable('price') >= 30000 && veh.getVariable('price') < 45000)
-            price = 1.6;
+            price += 1.6;
         else if (veh.getVariable('price') >= 45000 && veh.getVariable('price') < 60000)
-            price = 1.8;
+            price += 1.8;
         else if (veh.getVariable('price') >= 60000 && veh.getVariable('price') < 75000)
-            price = 2;
+            price += 2;
         else if (veh.getVariable('price') >= 90000 && veh.getVariable('price') < 105000)
-            price = 2.2;
+            price += 2.2;
         else if (veh.getVariable('price') >= 105000 && veh.getVariable('price') < 120000)
-            price = 2.4;
+            price += 2.4;
         else if (veh.getVariable('price') >= 120000 && veh.getVariable('price') < 135000)
-            price = 2.6;
+            price += 2.6;
         else if (veh.getVariable('price') >= 135000 && veh.getVariable('price') < 150000)
-            price = 2.8;
+            price += 2.8;
         else if (veh.getVariable('price') >= 150000 && veh.getVariable('price') < 200000)
-            price = 3;
+            price += 3;
         else if (veh.getVariable('price') >= 200000 && veh.getVariable('price') < 240000)
-            price = 3.3;
+            price += 3.3;
         else if (veh.getVariable('price') >= 240000 && veh.getVariable('price') < 280000)
-            price = 3.6;
+            price += 3.6;
         else if (veh.getVariable('price') >= 280000 && veh.getVariable('price') < 320000)
-            price = 4;
+            price += 4;
         else if (veh.getVariable('price') >= 320000 && veh.getVariable('price') < 380000)
-            price = 4.4;
+            price += 4.4;
         else if (veh.getVariable('price') >= 380000 && veh.getVariable('price') < 500000)
-            price = 5;
+            price += 5;
         else if (veh.getVariable('price') >= 500000 && veh.getVariable('price') < 600000)
-            price = 5.5;
+            price += 5.5;
         else if (veh.getVariable('price') >= 600000 && veh.getVariable('price') < 700000)
-            price = 6;
+            price += 6;
         else if (veh.getVariable('price') >= 700000 && veh.getVariable('price') < 800000)
-            price = 6.5;
+            price += 6.5;
         else if (veh.getVariable('price') >= 800000)
-            price = 7;
+            price += 7;
+        else
+            price += 1;
+
+        let saleLabel = '';
+        let sale = business.getSale(defaultPrice);
+        if (sale > 0)
+            saleLabel = `\n~s~Скидка: ~r~${sale}%`;
 
         let menu = UIMenu.Menu.Create(` `, `~b~${enums.lscNames[modType][0]}`, false, false, false, lscBanner1, lscBanner1);
 
         let removePrice = (enums.lscNames[modType][1] * price) / 2;
-        let removeItem = UIMenu.Menu.AddMenuItem("Стандартная деталь", `Цена: ~g~${methods.moneyFormat(removePrice)}`);
+        let removeItem = UIMenu.Menu.AddMenuItem("Стандартная деталь", `Цена: ~g~${methods.moneyFormat(removePrice)}${saleLabel}`);
+        if (sale > 0)
+            removeItem.SetLeftBadge(27);
         list.push(removeItem);
 
         if (modType == 69) {
@@ -6161,7 +6374,7 @@ menuList.showLscTunningListMenu = async function(modType, shopId, price, lscBann
                 try {
                     let itemPrice = enums.lscNames[modType][1] * (i / 20 + price);
                     let label = `${enums.lscNames[modType][0]} #${(i + 1)}`;
-                    let listItem = UIMenu.Menu.AddMenuItem(`${label}`,`Цена: ~g~${methods.moneyFormat(itemPrice)}`);
+                    let listItem = UIMenu.Menu.AddMenuItem(`${label}`,`Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`);
 
                     try {
                         if (upgradeList[modType.toString()] == i)
@@ -6171,6 +6384,8 @@ menuList.showLscTunningListMenu = async function(modType, shopId, price, lscBann
 
                     }
 
+                    if (sale > 0)
+                        listItem.SetLeftBadge(27);
                     listItem.modType = i;
                     listItem.price = itemPrice + 0.001;
                     listItem.itemName = label;
@@ -6186,7 +6401,7 @@ menuList.showLscTunningListMenu = async function(modType, shopId, price, lscBann
                 try {
                     let itemPrice = enums.lscNames[modType][1] * (i / 20 + price);
                     let label = `${enums.lscNames[modType][0]} #${(i + 1)}`;
-                    let listItem = UIMenu.Menu.AddMenuItem(`${label}`,`Цена: ~g~${methods.moneyFormat(itemPrice)}`);
+                    let listItem = UIMenu.Menu.AddMenuItem(`${label}`,`Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`);
 
                     try {
                         if (car.get('livery') == i)
@@ -6196,6 +6411,8 @@ menuList.showLscTunningListMenu = async function(modType, shopId, price, lscBann
 
                     }
 
+                    if (sale > 0)
+                        listItem.SetLeftBadge(27);
                     listItem.modType = i;
                     listItem.price = itemPrice + 0.001;
                     listItem.itemName = label;
@@ -6210,9 +6427,8 @@ menuList.showLscTunningListMenu = async function(modType, shopId, price, lscBann
             let wheelList = ['Спорт', 'Массл', 'Лоурайдер', 'Кроссовер', 'Внедорожник', 'Специальные', 'Мото', 'Уникальные', 'Benny\'s Original', 'Benny\'s Bespoke'];
             for (let i = 0; i < wheelList.length; i++) {
                 try {
-                    let itemPrice = enums.lscNames[modType][1] * (i / 20 + price);
                     let label = `${wheelList[i]}`;
-                    let listItem = UIMenu.Menu.AddMenuItem(`${label}`,`Цена: ~g~${methods.moneyFormat(itemPrice)}`);
+                    let listItem = UIMenu.Menu.AddMenuItem(`${label}`);
 
                     try {
                         if (upgradeList[modType.toString()] == i)
@@ -6222,9 +6438,12 @@ menuList.showLscTunningListMenu = async function(modType, shopId, price, lscBann
 
                     }
 
+                    if (sale > 0)
+                        listItem.SetLeftBadge(27);
                     listItem.modType = i;
-                    listItem.price = itemPrice + 0.001;
+                    listItem.price = 1;
                     listItem.itemName = label;
+                    listItem.showWheel = true;
                     list.push(listItem);
                 }
                 catch (e) {
@@ -6252,7 +6471,7 @@ menuList.showLscTunningListMenu = async function(modType, shopId, price, lscBann
                     let label = mp.game.ui.getLabelText(veh.getModTextLabel(modType, i));
                     if (label == "NULL")
                         label = `${enums.lscNames[modType][0]} #${(i + 1)}`;
-                    let listItem = UIMenu.Menu.AddMenuItem(`${label}`,`Цена: ~g~${methods.moneyFormat(itemPrice)}`);
+                    let listItem = UIMenu.Menu.AddMenuItem(`${label}`,`Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`);
 
                     try {
                         if (upgradeList[modType.toString()] == i)
@@ -6261,7 +6480,8 @@ menuList.showLscTunningListMenu = async function(modType, shopId, price, lscBann
                     catch (e) {
 
                     }
-
+                    if (sale > 0)
+                        listItem.SetLeftBadge(27);
                     listItem.modType = i;
                     listItem.price = itemPrice + 0.001;
                     listItem.itemName = label;
@@ -6279,30 +6499,41 @@ menuList.showLscTunningListMenu = async function(modType, shopId, price, lscBann
         let modIndex = -1;
         menu.IndexChange.on((index) => {
             if (index == 0) {
-                mp.events.callRemote('server:lsc:showTun', modType, -1);
-                modIndex = -1;
+                if (modType === 78) {
+                    mp.game.ui.notifications.show(`~r~Для этого типа тюнинга не доступно`);
+                    return;
+                }
+                else {
+                    mp.events.callRemote('server:lsc:showTun', modType, -1);
+                    modIndex = -1;
+                }
                 return;
             }
             if (index >= list.length)
                 return;
-            mp.events.callRemote('server:lsc:showTun', modType, list[index].modType);
         });
 
         menu.ItemSelect.on(item => {
             UIMenu.Menu.HideMenu();
             if (item == backItem)
-                menuList.showLscTunningMenu(shopId, price, lscBanner1);
+                menuList.showLscTunningMenu(shopId, defaultPrice, lscBanner1);
 
             if (item == removeItem) {
                 mp.events.callRemote('server:lsc:buyTun', modType, -1, removePrice, shopId, 'Стандартная деталь');
-                menuList.showLscTunningMenu(shopId, price, lscBanner1);
+                menuList.showLscTunningMenu(shopId, defaultPrice, lscBanner1);
             }
 
-            if (item.modType) {
-                mp.events.callRemote('server:lsc:buyTun', modType, item.modType, methods.parseInt(item.price), shopId, item.itemName);
-                if (modType == 78)
-                    mp.events.callRemote('server:lsc:buyTun', 23, -1, 1, shopId, item.itemName);
-                menuList.showLscTunningMenu(shopId, price, lscBanner1);
+            if (item.price) {
+                if (item.showWheel)
+                {
+                    setTimeout(function () {
+                        menuList.showLscTunningListMenu(23, shopId, defaultPrice, lscBanner1);
+                    }, 300);
+                }
+                else {
+                    menuList.showLscTunningMenu(shopId, defaultPrice, lscBanner1);
+                    mp.events.callRemote('server:lsc:buyTun', modType, item.modType, methods.parseInt(item.price), shopId, item.itemName);
+                }
             }
         });
     }
@@ -6362,7 +6593,7 @@ menuList.showGunShopMenu = function(shopId, price = 1)
     menuItem.price = itemPrice;
     menuItem.armor = 100;*/
 
-    UIMenu.Menu.AddMenuItem("~y~Ограбить").doName = "grab";
+    //UIMenu.Menu.AddMenuItem("~y~Ограбить").doName = "grab";
 
     UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = "closeButton";
     menu.ItemSelect.on((item, index) => {
@@ -7684,7 +7915,6 @@ menuList.showAdminMenu = function() {
             UIMenu.Menu.AddMenuItem("Коорды2").doName = 'server:user:getPlayerPos2';
         }
         UIMenu.Menu.AddMenuItem("~y~Выключить админку").doName = 'disableAdmin';
-        UIMenu.Menu.AddMenuItem("Debug2").doName = 'debug2';
     }
     else {
         UIMenu.Menu.AddMenuItem("~y~Включить админку").doName = 'enableAdmin';
@@ -7897,6 +8127,9 @@ menuList.showAdminDebug2Menu = function() {
     //for (let i = 0; i < 50; i++)
     //    UIMenu.Menu.AddMenuItem("openPhone").SetRightBadge(i);
 
+    for (let i = 0; i <= 16; i++)
+        UIMenu.Menu.AddMenuItemCheckbox("Light " + i, "", mp.game.graphics.getLightsState(i)).lightId = i;
+
     UIMenu.Menu.AddMenuItem("openPhone").create = true;
     UIMenu.Menu.AddMenuItem("rotatePhoneV").rotatePhoneV = true;
     UIMenu.Menu.AddMenuItem("rotatePhoneH").rotatePhoneH = true;
@@ -7909,6 +8142,11 @@ menuList.showAdminDebug2Menu = function() {
     UIMenu.Menu.AddMenuItem("keyPressToggleLockVehicle").keyPressToggleLockVehicle = true;
 
     UIMenu.Menu.AddMenuItem("~r~Закрыть");
+
+    menu.CheckboxChange.on((item, checked) => {
+        mp.game.graphics.setLightsState(item.lightId, checked);
+    });
+
     menu.ItemSelect.on(async item => {
         if (item.create)
             user.openPhone(1);

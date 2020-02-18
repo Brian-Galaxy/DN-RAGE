@@ -10,6 +10,7 @@ let user = require('../user');
 let coffer = require('../coffer');
 
 let vehicles = require('../property/vehicles');
+let business = require('../property/business');
 
 let weather = require('../managers/weather');
 
@@ -26,6 +27,61 @@ methods.md5 = function (text) {
 };
 
 methods.sleep = ms => new Promise(res => setTimeout(res, ms));
+
+
+methods.saveAll = function () {
+    methods.saveAllAnother();
+    methods.saveAllUser();
+};
+
+methods.saveAllAnother = async function () {
+
+    console.time('saveCoffers');
+    coffer.saveAll();
+    console.timeEnd('saveCoffers');
+
+    console.time('saveBusiness');
+    for (let i = 1; i < 300; i++)
+        business.save(i);
+    console.timeEnd('saveBusiness');
+
+    console.time('saveVehicle');
+    mp.vehicles.forEach(async (v) => {
+        if (vehicles.exists(v)) {
+            try {
+                await vehicles.save(v.getVariable('container'));
+            }
+            catch (e) {
+                methods.debug(e);
+            }
+        }
+    });
+    console.timeEnd('saveVehicle');
+
+    methods.debug('Save All Another');
+};
+
+methods.saveAllUser = async function () {
+
+    console.time('saveAllUser');
+    mp.players.forEach(async (p) => {
+        if (user.isLogin(p)) {
+            try {
+                let isSave = await user.save(p);
+                if (!isSave) {
+                    p.notify('~r~Ошибка сохранения аккаунта, сообщите разработчикам');
+                    p.notify('~r~Обязательно запомните время');
+                    methods.debug(`SAVE ERROR: ${user.get(p, 'id')} | ${user.has(p, 'id')} | ${methods.getTimeStamp()}`)
+                }
+            }
+            catch (e) {
+                methods.debug(e);
+            }
+        }
+    });
+    console.timeEnd('saveAllUser');
+    methods.debug('Save All User');
+};
 
 methods.checkTeleport = function(player, pos1, pos2) {
     try {

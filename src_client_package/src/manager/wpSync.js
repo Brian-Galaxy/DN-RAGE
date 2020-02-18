@@ -13,7 +13,6 @@ function addComponentToPlayer(player, weaponHash, componentHash) {
     try {
         if (!player.hasOwnProperty("__weaponComponentData")) player.__weaponComponentData = {};
         if (!player.__weaponComponentData.hasOwnProperty(weaponHash)) player.__weaponComponentData[weaponHash] = new Set();
-
         player.__weaponComponentData[weaponHash].add(componentHash);
         mp.game.invoke(Natives.GIVE_WEAPON_COMPONENT_TO_PED, player.handle, weaponHash, componentHash);
     }

@@ -1,8 +1,10 @@
 import methods from './modules/methods';
+import user from "./user";
 
 let admin = {};
 
 let noClipEnabled = false;
+let godmodeEnabled = false;
 let noClipSpeed = 1;
 let noClipSpeedNames = ["Die", "Slow", "Medium", "Fast", "Very Fast", "Extremely Fast", "Snail Speed!"];
 
@@ -35,8 +37,32 @@ admin.noClip = function(enable) {
     }
 };
 
+admin.godmode= function(enable) {
+    try {
+        methods.debug('Execute: admin.godmode');
+        godmodeEnabled = enable;
+
+        if (godmodeEnabled)
+            mp.game.ui.notifications.show(`~q~GodeMode был активирован`);
+        else
+            mp.game.ui.notifications.show(`~q~GodeMode был деактивирован`);
+
+        mp.players.local.setInvincible(enable);
+        mp.players.local.setCanBeDamaged(!enable);
+        mp.players.local.setHealth(100);
+
+    } catch (e) {
+        methods.debug('Exception: admin.noClip');
+        methods.debug(e);
+    }
+};
+
 admin.isNoClipEnable = function() {
     return noClipEnabled;
+};
+
+admin.isGodModeEnable = function() {
+    return godmodeEnabled;
 };
 
 admin.getNoClipSpeedName = function() {
@@ -44,6 +70,15 @@ admin.getNoClipSpeedName = function() {
 };
 
 mp.events.add('render', () => {
+
+    if (godmodeEnabled) {
+        mp.players.local.setInvincible(true);
+        mp.players.local.setCanBeDamaged(false);
+
+        if (mp.players.local.getHealth() < 999)
+            mp.players.local.setHealth(1000);
+    }
+
     if (noClipEnabled) {
         try {
             let noClipEntity = mp.players.local.isSittingInAnyVehicle() ? mp.players.local.vehicle : mp.players.local;

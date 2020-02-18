@@ -7,7 +7,7 @@ mp.attachmentMngr =
     {
         attachments: {},
 
-        addFor: function(entity, id)
+        addFor: async function(entity, id)
         {
             try {
                 if(this.attachments.hasOwnProperty(id))
@@ -18,18 +18,45 @@ mp.attachmentMngr =
 
                         let spawnPos = new mp.Vector3(entity.position.x, entity.position.y, -90);
 
-                        let object = mp.objects.new(attInfo.model, spawnPos, {dimension: -1});
+                        if (mp.game.weapon.isWeaponValid(attInfo.model)) {
 
-                        let boneIndex = (typeof attInfo.boneName === 'string') ?
-                            entity.getBoneIndexByName(attInfo.boneName) :
-                            entity.getBoneIndex(attInfo.boneName);
+                            mp.game.weapon.requestWeaponAsset(attInfo.model, 1, 1);
+                            while (!mp.game.weapon.hasWeaponAssetLoaded(attInfo.model))
+                                await methods.sleep(10);
 
-                        object.attachTo(entity.handle, boneIndex,
-                            attInfo.offset.x, attInfo.offset.y, attInfo.offset.z,
-                            attInfo.rotation.x, attInfo.rotation.y, attInfo.rotation.z,
-                            false, false, false, false, 2, true);
+                            let object = mp.game.weapon.createWeaponObject(attInfo.model, 0, spawnPos.x, spawnPos.y, spawnPos.z, false, 0, 0);
+                            let boneIndex =  mp.game.invoke(methods.GET_PED_BONE_INDEX, entity.handle, attInfo.boneName);
 
-                        entity.__attachmentObjects[id] = object;
+                            try {
+                                let data = JSON.parse(mp.players.local.getVariable('allWeaponComponents'));
+                                data[attInfo.model.toString()].forEach(item => {
+                                    mp.game.weapon.giveWeaponComponentToWeaponObject(object, item);
+                                })
+                            }
+                            catch (e) {
+
+                            }
+
+                            mp.game.invoke(methods.ATTACH_ENTITY_TO_ENTITY, object, entity.handle, boneIndex
+                                , attInfo.offset.x, attInfo.offset.y, attInfo.offset.z
+                                , attInfo.rotation.x, attInfo.rotation.y, attInfo.rotation.z
+                                , true, true, false, false, 2, true);
+
+                            entity.__attachmentObjects[id] = object;
+                        }
+                        else {
+                            let object = mp.objects.new(attInfo.model, spawnPos, {dimension: entity.dimension});
+                            let boneIndex = (typeof attInfo.boneName === 'string') ?
+                                entity.getBoneIndexByName(attInfo.boneName) :
+                                entity.getBoneIndex(attInfo.boneName);
+
+                            object.attachTo(entity.handle, boneIndex,
+                                attInfo.offset.x, attInfo.offset.y, attInfo.offset.z,
+                                attInfo.rotation.x, attInfo.rotation.y, attInfo.rotation.z,
+                                false, false, false, false, 2, true);
+
+                            entity.__attachmentObjects[id] = object;
+                        }
                     }
                 }
                 else
@@ -54,6 +81,12 @@ mp.attachmentMngr =
                     if(mp.objects.exists(obj))
                     {
                         obj.destroy();
+                    }
+                    else {
+                        methods.debug('DESTROY ' + obj);
+                        mp.game.invoke(methods.DETACH_ENTITY, obj, true, true);
+                        mp.game.invoke(methods.SET_ENTITY_COORDS, obj, 9999, 9999, 9999, false, false, false, true);
+                        mp.game.invoke(methods.SET_ENTITY_ALPHA, obj, 0, 0);
                     }
                 }
             }
@@ -103,7 +136,15 @@ mp.attachmentMngr =
 
                 if(!this.attachments.hasOwnProperty(id))
                 {
-                    if(mp.game.streaming.isModelInCdimage(model))
+                    this.attachments[id] =
+                        {
+                            id: id,
+                            model: model,
+                            offset: offset,
+                            rotation: rotation,
+                            boneName: boneName
+                        };
+                    /*if(mp.game.streaming.isModelInCdimage(model))
                     {
                         this.attachments[id] =
                             {
@@ -117,7 +158,7 @@ mp.attachmentMngr =
                     else
                     {
                         methods.debug(`Static Attachments Error: Invalid Model (0x${model.toString(16)})`);
-                    }
+                    }*/
                 }
                 else
                 {
@@ -196,6 +237,8 @@ mp.attachmentMngr =
 mp.events.add("entityStreamIn", (entity) =>
 {
     try {
+        mp.attachmentMngr.shutdownFor(entity);
+
         if(entity.__attachments)
         {
             mp.attachmentMngr.initFor(entity);
@@ -207,6 +250,19 @@ mp.events.add("entityStreamIn", (entity) =>
 });
 
 mp.events.add("entityStreamOut", (entity) =>
+{
+    try {
+        if(entity.__attachmentObjects)
+        {
+            mp.attachmentMngr.shutdownFor(entity);
+        }
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.add("playerQuit", (entity, exitType, reason) =>
 {
     try {
         if(entity.__attachmentObjects)
@@ -252,6 +308,10 @@ mp.events.addDataHandler("attachmentsData", (entity, data) =>
                 }
             }
         }
+        else
+        {
+            entity.__attachmentObjects = {};
+        }
 
         entity.__attachments = newAttachments;
     }
@@ -272,7 +332,32 @@ attach.init = function () {
                     let atts = data.split('|').map(att => parseInt(att, 36));
                     _player.__attachments = atts;
                     _player.__attachmentObjects = {};
-                    weapon_4_ammo   }
+                }
+            }
+            catch (e) {
+                methods.debug(e);
+            }
+        });
+
+        setInterval(attach.timer, 5000);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+};
+
+attach.timer = function () {
+    try {
+        mp.vehicles.forEach(_vehicle =>
+        {
+            try {
+                if(_vehicle.__attachmentObjects)
+                {
+                    for(let attachment in _vehicle.__attachmentObjects)
+                    {
+                        _vehicle.__attachmentObjects[attachment].position = new mp.Vector3(_vehicle.position.x, _vehicle.position.y, -90);
+                    }
+                }
             }
             catch (e) {
                 methods.debug(e);

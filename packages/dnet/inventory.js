@@ -262,7 +262,7 @@ inventory.deleteItemsRange = function(player, itemIdFrom, itemIdTo) {
     try {
         if (!user.isLogin(player))
             return;
-        mysql.executeQuery(`DELETE FROM items WHERE item_id >= ${itemIdFrom} AND item_id <= ${itemIdTo} AND owner_id = ${user.getId()} AND owner_type = 1`);
+        mysql.executeQuery(`DELETE FROM items WHERE item_id >= ${itemIdFrom} AND item_id <= ${itemIdTo} AND owner_id = ${user.getId(player)} AND owner_type = 1`);
     } catch(e) {
         methods.debug(e);
     }

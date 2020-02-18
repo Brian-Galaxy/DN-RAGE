@@ -34,6 +34,7 @@ phone.show = function() {
         user.openPhone(pType);
 
         mp.events.callRemote('server:phone:updateContactList');
+        mp.events.callRemote('server:phone:updateDialogList');
 
         mp.gui.chat.activate(false);
         mp.gui.cursor.show(false, true);
@@ -100,6 +101,7 @@ phone.timer = function() {
             type: "updateTopBar",
             bar: {
                 time: weather.getFullRpTime(),
+                dateFull: weather.getFullRpDate().replace('/', '.'),
                 battery: 11,
                 network: phone.network,
                 temperature: '',
@@ -114,6 +116,7 @@ phone.timer = function() {
             type: "updateTopBar",
             bar: {
                 time: weather.getFullRpTime(),
+                dateFull: weather.getFullRpDate().replace('/', '.'),
                 battery: 11,
                 network: phone.network,
                 temperature: weather.getWeatherTempFormat(),
@@ -2296,6 +2299,10 @@ phone.callBackModal = function(paramsJson) {
         }
         if (params.name == 'memberGiveSubLeader2') {
             mp.events.callRemote('server:user:giveSubLeader2', params.memberId);
+            phone.showAppFraction2();
+        }
+        if (params.name == 'memberGiveLeader2') {
+            mp.events.callRemote('server:user:giveLeader2', params.memberId);
             phone.showAppFraction2();
         }
         if (params.name == 'memberTakeSubLeader2') {

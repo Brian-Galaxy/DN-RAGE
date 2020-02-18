@@ -1,6 +1,7 @@
 import methods from "../modules/methods";
 import user from "../user";
 import vehicles from "../property/vehicles";
+import Container from "../modules/data";
 let vSync = {};
 //mp.game.vehicle.defaultEngineBehaviour = false;
 
@@ -80,6 +81,9 @@ vSync.updateValues = function(entity) {
 
                 entity.setInteriorlight(actualData.InteriorLight);
                 entity.setTaxiLights(actualData.TaxiLight);
+
+                mp.game.invoke(methods.SET_BOAT_FROZEN_WHEN_ANCHORED, entity.handle, true);
+                entity.setBoatAnchor(actualData.Anchor);
 
                 entity.setSearchlight(actualData.SpotLight, false);
 
@@ -358,6 +362,18 @@ mp.events.add("vSync:setTaxiLightState", (vehId, status) => {
         let veh = mp.vehicles.atRemoteId(vehId);
         if (veh !== undefined && mp.vehicles.exists(veh)) {
             veh.setTaxiLights(status);
+        }
+    } catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.add("vSync:setAnchorState", (vehId, status) => {
+    try {
+        let veh = mp.vehicles.atRemoteId(vehId);
+        if (veh !== undefined && mp.vehicles.exists(veh)) {
+            mp.game.invoke(methods.SET_BOAT_FROZEN_WHEN_ANCHORED, veh.handle, true);
+            veh.setBoatAnchor(status);
         }
     } catch (e) {
         methods.debug(e);

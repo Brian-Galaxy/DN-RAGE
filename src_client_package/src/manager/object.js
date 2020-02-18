@@ -399,147 +399,172 @@ object.delete = function (model, x, y, z) {
 object.process = function () {
 
     // Банки
-    object.openDoor(3941780146, -111.48, 6463.94, 31.98499); //Блейн Банк
-    object.openDoor(2628496933, -109.65, 6462.11, 31.98499); //Блейн Банк
-    object.openDoor(73386408, -2965.71, 484.2195, 16.0481); //Флека Чумаш
-    object.openDoor(3142793112, -2965.821, 481.6297, 16.04816); //Флека Чумаш
-    object.openDoor(73386408, -1213.074, -327.3524, 38.13205); //Флека Ричманд
-    object.openDoor(3142793112, -1215.386, -328.5237, 38.13211); //Флека Ричманд
-    object.openDoor(73386408, -348.8109, -47.26213, 49.38759); //Флека Бертон
-    object.openDoor(3142793112, -351.2598, -46.41221, 49.38765); //Флека Бертон
-    object.openDoor(73386408, 316.3925, -276.4888, 54.5158); //Флека Вайнвуд
-    object.openDoor(3142793112, 313.9587, -275.5965, 54.51586); //Флека Вайнвуд
-    object.openDoor(73386408, 152.0632, -1038.124, 29.71909); //Флека ДавнТавн
-    object.openDoor(3142793112, 149.6298, -1037.231, 29.71915); //Флека ДавнТавн
-    object.openDoor(73386408, 1173.903, 2703.613, 38.43904); //Флека Гранд Сенора
-    object.openDoor(3142793112, 1176.495, 2703.613, 38.43911); //Флека Гранд Сенора
-    object.openDoor(110411286, 231.5123, 216.5177, 106.4049); //Пацифик Главный вход
-    object.openDoor(110411286, 232.6054, 214.1584, 106.4049); //Пацифик Главный вход
-    object.openDoor(110411286, 258.2022, 204.1005, 106.4049); //Пацифик Боковой вход
-    object.openDoor(110411286, 260.6432, 203.2052, 106.4049); //Пацифик Боковой вход
+    object.openDoor(3941780146, -111.48, 6463.94, 31.98499, false); //Блейн Банк
+    object.openDoor(2628496933, -109.65, 6462.11, 31.98499, false); //Блейн Банк
+    object.openDoor(73386408, -2965.71, 484.2195, 16.0481, false); //Флека Чумаш
+    object.openDoor(3142793112, -2965.821, 481.6297, 16.04816, false); //Флека Чумаш
+    object.openDoor(73386408, -1213.074, -327.3524, 38.13205, false); //Флека Ричманд
+    object.openDoor(3142793112, -1215.386, -328.5237, 38.13211, false); //Флека Ричманд
+    object.openDoor(73386408, -348.8109, -47.26213, 49.38759, false); //Флека Бертон
+    object.openDoor(3142793112, -351.2598, -46.41221, 49.38765, false); //Флека Бертон
+    object.openDoor(73386408, 316.3925, -276.4888, 54.5158, false); //Флека Вайнвуд
+    object.openDoor(3142793112, 313.9587, -275.5965, 54.51586, false); //Флека Вайнвуд
+    object.openDoor(73386408, 152.0632, -1038.124, 29.71909, false); //Флека ДавнТавн
+    object.openDoor(3142793112, 149.6298, -1037.231, 29.71915, false); //Флека ДавнТавн
+    object.openDoor(73386408, 1173.903, 2703.613, 38.43904, false); //Флека Гранд Сенора
+    object.openDoor(3142793112, 1176.495, 2703.613, 38.43911, false); //Флека Гранд Сенора
+    object.openDoor(110411286, 231.5123, 216.5177, 106.4049, false); //Пацифик Главный вход
+    object.openDoor(110411286, 232.6054, 214.1584, 106.4049, false); //Пацифик Главный вход
+    object.openDoor(110411286, 258.2022, 204.1005, 106.4049, false); //Пацифик Боковой вход
+    object.openDoor(110411286, 260.6432, 203.2052, 106.4049, false); //Пацифик Боковой вход
 // Магазины одежды и ювилирка
-    object.openDoor(868499217, 418.5713, -806.3979, 29.64108); //Бинко Текстайл Сити
-    object.openDoor(3146141106, 418.5713, -808.674, 29.64108); //Бинко Текстайл Сити
-    object.openDoor(868499217, -818.7643, -1079.545, 11.47806); //Бинко Веспуччи
-    object.openDoor(3146141106, -816.7932, -1078.406, 11.47806); //Бинко Веспуччи
-    object.openDoor(868499217, 82.38156, -1392.752, 29.52609); //Дисконт Девис
-    object.openDoor(3146141106, 82.38156, -1390.476, 29.52609); //Дисконт Девис
-    object.openDoor(868499217, -1096.661, 2705.446, 19.25781); //Дисконт Лого Занкудо
-    object.openDoor(3146141106, -1094.965, 2706.964, 19.25781); //Дисконт Лого Занкудо
-    object.openDoor(868499217, 1196.825, 2703.221, 38.37257); //Дисконт Гранд Сенора
-    object.openDoor(3146141106, 1199.101, 2703.221, 38.37257); //Дисконт Гранд Сенора
-    object.openDoor(868499217, 1686.983, 4821.741, 42.21305); //Дисконт Грепсид
-    object.openDoor(3146141106, 1687.282, 4819.484, 42.21305); //Дисконт Грепсид
-    object.openDoor(868499217, -0.05637026, 6517.461, 32.02779); //Дисконт Палето-Бей
-    object.openDoor(3146141106, -1.725257, 6515.914, 32.02779); //Дисконт Палето-Бей
-    object.openDoor(1780022985, 617.2458, 2751.022, 42.75777); // Сабурбан Хармони
-    object.openDoor(1780022985, 127.8201, -211.8274, 55.22751); // Сабурбан Хевик
-    object.openDoor(1780022985, -1201.435, -776.8566, 17.99184); // Сабурбан Дель-Перро
-    object.openDoor(1780022985, -3167.75, 1055.536, 21.53288); // Сабурбан Каньён Бенкхэм
-    object.openDoor(2372686273, -1454.782, -231.7927, 50.05648); // Пансонбус Морнингвуд
-    object.openDoor(2372686273, -1456.201, -233.3682, 50.05648); // Пансонбус Морнингвуд
-    object.openDoor(2372686273, -716.6755, -155.42, 37.67493); // Пансонбус Рокфорд Хиллс
-    object.openDoor(2372686273, -715.6154, -157.2561, 37.67493); // Пансонбус Рокфорд Хиллс
-    object.openDoor(2372686273, -157.1293, -306.4341, 39.99308); // Пансонбус Бертон
-    object.openDoor(2372686273, -156.439, -304.4294, 39.99308); // Пансонбус Бертон
-    object.openDoor(1425919976, -631.9554, -236.3333, 38.20653); // Ванжелико
-    object.openDoor(9467943, -630.4265, -238.4376, 38.20653); // Ванжелико
+    object.openDoor(868499217, 418.5713, -806.3979, 29.64108, false); //Бинко Текстайл Сити
+    object.openDoor(3146141106, 418.5713, -808.674, 29.64108, false); //Бинко Текстайл Сити
+    object.openDoor(868499217, -818.7643, -1079.545, 11.47806, false); //Бинко Веспуччи
+    object.openDoor(3146141106, -816.7932, -1078.406, 11.47806, false); //Бинко Веспуччи
+    object.openDoor(868499217, 82.38156, -1392.752, 29.52609, false); //Дисконт Девис
+    object.openDoor(3146141106, 82.38156, -1390.476, 29.52609, false); //Дисконт Девис
+    object.openDoor(868499217, -1096.661, 2705.446, 19.25781, false); //Дисконт Лого Занкудо
+    object.openDoor(3146141106, -1094.965, 2706.964, 19.25781, false); //Дисконт Лого Занкудо
+    object.openDoor(868499217, 1196.825, 2703.221, 38.37257, false); //Дисконт Гранд Сенора
+    object.openDoor(3146141106, 1199.101, 2703.221, 38.37257, false); //Дисконт Гранд Сенора
+    object.openDoor(868499217, 1686.983, 4821.741, 42.21305, false); //Дисконт Грепсид
+    object.openDoor(3146141106, 1687.282, 4819.484, 42.21305, false); //Дисконт Грепсид
+    object.openDoor(868499217, -0.05637026, 6517.461, 32.02779, false); //Дисконт Палето-Бей
+    object.openDoor(3146141106, -1.725257, 6515.914, 32.02779, false); //Дисконт Палето-Бей
+    object.openDoor(1780022985, 617.2458, 2751.022, 42.75777, false); // Сабурбан Хармони
+    object.openDoor(1780022985, 127.8201, -211.8274, 55.22751, false); // Сабурбан Хевик
+    object.openDoor(1780022985, -1201.435, -776.8566, 17.99184, false); // Сабурбан Дель-Перро
+    object.openDoor(1780022985, -3167.75, 1055.536, 21.53288, false); // Сабурбан Каньён Бенкхэм
+    object.openDoor(2372686273, -1454.782, -231.7927, 50.05648, false); // Пансонбус Морнингвуд
+    object.openDoor(2372686273, -1456.201, -233.3682, 50.05648, false); // Пансонбус Морнингвуд
+    object.openDoor(2372686273, -716.6755, -155.42, 37.67493, false); // Пансонбус Рокфорд Хиллс
+    object.openDoor(2372686273, -715.6154, -157.2561, 37.67493, false); // Пансонбус Рокфорд Хиллс
+    object.openDoor(2372686273, -157.1293, -306.4341, 39.99308, false); // Пансонбус Бертон
+    object.openDoor(2372686273, -156.439, -304.4294, 39.99308, false); // Пансонбус Бертон
+    object.openDoor(1425919976, -631.9554, -236.3333, 38.20653, false); // Ванжелико
+    object.openDoor(9467943, -630.4265, -238.4376, 38.20653, false); // Ванжелико
 // Тату Салоны
-    object.openDoor(543652229, -1155.454, -1424.008, 5.046147); // the pit веспуччи бич
-    object.openDoor(543652229, 1321.286, -1650.597, 52.36629); // los santos tattoo эль-бурро-хайтс
-    object.openDoor(543652229, 321.8085, 178.3599, 103.6782); // Blazing Tatto вайнвуд
-    object.openDoor(543652229, -3167.789, 1074.867, 20.92086); // InkInc Tattoos Каньён Бенкхэм
-    object.openDoor(3082015943, -289.1752, 6199.113, 31.63704); // Tatto Палето-Бей
-    object.openDoor(3082015943, 1859.894, 3749.786, 33.18181); // Tatto Сэнди-Шорес
+    object.openDoor(543652229, -1155.454, -1424.008, 5.046147, false); // the pit веспуччи бич
+    object.openDoor(543652229, 1321.286, -1650.597, 52.36629, false); // los santos tattoo эль-бурро-хайтс
+    object.openDoor(543652229, 321.8085, 178.3599, 103.6782, false); // Blazing Tatto вайнвуд
+    object.openDoor(543652229, -3167.789, 1074.867, 20.92086, false); // InkInc Tattoos Каньён Бенкхэм
+    object.openDoor(3082015943, -289.1752, 6199.113, 31.63704, false); // Tatto Палето-Бей
+    object.openDoor(3082015943, 1859.894, 3749.786, 33.18181, false); // Tatto Сэнди-Шорес
 // Барбершопы
-    object.openDoor(2450522579, 1932.952, 3725.154, 32.9944); // osheas barber Сэнди-Шорес
-    object.openDoor(2450522579, -280.7851, 6232.782, 31.84548); // herr kutz Палето-Бей
-    object.openDoor(2450522579, 1207.873, -470.0363, 66.358); // herr kutz Миррор-Парк
-    object.openDoor(2450522579, 132.5569, -1710.996, 29.44157); // herr kutz Девис
-    object.openDoor(2450522579, -1287.857, -1115.742, 7.140073); // beachcombover дель-перро
-    object.openDoor(2450522579, -29.86917, -148.1571, 57.22648); // hair on hawick альта
-    object.openDoor(2631455204, -823.2001, -187.0831, 37.81895); // bob mulet Рокфорд Хиллс
-    object.openDoor(145369505, -822.4442, -188.3924, 37.81895); // bob mulet Рокфорд Хиллс
+    object.openDoor(2450522579, 1932.952, 3725.154, 32.9944, false); // osheas barber Сэнди-Шорес
+    object.openDoor(2450522579, -280.7851, 6232.782, 31.84548, false); // herr kutz Палето-Бей
+    object.openDoor(2450522579, 1207.873, -470.0363, 66.358, false); // herr kutz Миррор-Парк
+    object.openDoor(2450522579, 132.5569, -1710.996, 29.44157, false); // herr kutz Девис
+    object.openDoor(2450522579, -1287.857, -1115.742, 7.140073, false); // beachcombover дель-перро
+    object.openDoor(2450522579, -29.86917, -148.1571, 57.22648, false); // hair on hawick альта
+    object.openDoor(2631455204, -823.2001, -187.0831, 37.81895, false); // bob mulet Рокфорд Хиллс
+    object.openDoor(145369505, -822.4442, -188.3924, 37.81895, false); // bob mulet Рокфорд Хиллс
 // Бары
-    object.openDoor(993120320, -565.1712, 276.6259, 83.28626); // tequi-lala главный вход
-    object.openDoor(993120320, -561.2866, 293.5044, 87.77851); // tequi-lala задний вход
-    object.openDoor(190770132, 981.1506, -103.2552, 74.99358); // the lost
-    object.openDoor(3178925983, 127.9552, -1298.503, 29.41962); // vanilla unicorn главный вход
-    object.openDoor(668467214, 96.09197, -1284.854, 29.43878); // vanilla unicorn задний вход
-    object.openDoor(4007304890, 1991.106, 3053.105, 47.36528); // yellow jack
+    object.openDoor(993120320, -565.1712, 276.6259, 83.28626, false); // tequi-lala главный вход
+    object.openDoor(993120320, -561.2866, 293.5044, 87.77851, false); // tequi-lala задний вход
+    object.openDoor(190770132, 981.1506, -103.2552, 74.99358, false); // the lost
+    object.openDoor(3178925983, 127.9552, -1298.503, 29.41962, false); // vanilla unicorn главный вход
+    object.openDoor(668467214, 96.09197, -1284.854, 29.43878, false); // vanilla unicorn задний вход
+    object.openDoor(4007304890, 1991.106, 3053.105, 47.36528, false); // yellow jack
 // Магазины
-    object.openDoor(1196685123, 375.3528, 323.8015, 103.7163); // 247 Downtown Vinewood
-    object.openDoor(997554217, 377.8753, 323.1672, 103.7163); // 247 Downtown Vinewood
-    object.openDoor(1196685123, -3240.128, 1003.157, 12.98064); // 247 Banham Canyon
-    object.openDoor(997554217, -3239.905, 1005.749, 12.98064); // 247 Banham Canyon
-    object.openDoor(1196685123, -3038.219, 588.2872, 8.058861); // 247 Chumash
-    object.openDoor(997554217, -3039.012, 590.7642, 8.058861); // 247 Chumash
-    object.openDoor(1196685123, 1963.917, 3740.075, 32.49369); // 247 247 Sandy Shores
-    object.openDoor(997554217, 1966.17, 3741.376, 32.49369); // 247 Sandy Shores
-    object.openDoor(1196685123, 545.504, 2672.745, 42.30644); // 247 Harmony
-    object.openDoor(997554217, 542.9252, 2672.406, 42.30644); // 247 Harmony
-    object.openDoor(1196685123, 1730.032, 6412.072, 35.18717); // 247 Mount Chiliad
-    object.openDoor(997554217, 1732.362, 6410.917, 35.18717); // 247 Mount Chiliad
-    object.openDoor(1196685123, 2681.292, 3281.427, 55.39108); // 247 Grand Senora Desert
-    object.openDoor(997554217, 2682.558, 3283.699, 55.39108); // 247 Grand Senora Desert
-    object.openDoor(1196685123, 27.81761, -1349.169, 29.64696); // 247 Strawberry
-    object.openDoor(997554217, 30.4186, -1349.169, 29.64696); // 247 Strawberry
-    object.openDoor(1196685123, 2559.201, 384.0875, 108.7729); // 247 Tataviam Mountains
-    object.openDoor(997554217, 2559.304, 386.6864, 108.7729); // 247 Tataviam Mountains
-    object.openDoor(3082015943, 1392.927, 3599.469, 35.13078); // Liquor Ace
-    object.openDoor(3082015943, 1395.371, 3600.358, 35.13078); // Liquor Ace
-    object.openDoor(3082015943, -2973.535, 390.1414, 15.18735); // Robs Liquor Banham Canyon
-    object.openDoor(3082015943, -1490.411, -383.8453, 40.30745); // Robs Liquor Morningwood
-    object.openDoor(3082015943, 1141.038, -980.3225, 46.55986); // Robs Liquor Murrieta Heights
-    object.openDoor(3082015943, -1226.894, -903.1218, 12.47039); // Robs Liquor Vespucci Canals
-    object.openDoor(3082015943, 1167.129, 2703.754, 38.30173); // Scoops Liquor Barn
-    object.openDoor(3426294393, -53.96112, -1755.717, 29.57094); // LTD Gasoline Davis
-    object.openDoor(2065277225, -51.96669, -1757.387, 29.57094); // LTD Gasoline Davis
-    object.openDoor(3426294393, -713.0732, -916.5409, 19.36553); // LTD Gasoline Little Seoul
-    object.openDoor(2065277225, -710.4722, -916.5372, 19.36553); // LTD Gasoline Little Seoul
-    object.openDoor(3426294393, 1699.661, 4930.278, 42.21359); // LTD Gasoline Grapeseed
-    object.openDoor(2065277225, 1698.172, 4928.146, 42.21359); // LTD Gasoline Grapeseed
-    object.openDoor(3426294393, 1158.364, -326.8165, 69.35503); // LTD Gasoline Mirror Park
-    object.openDoor(2065277225, 1160.925, -326.3612, 69.35503); // LTD Gasoline Mirror Park
-    object.openDoor(3426294393, -1823.285, 787.3687, 138.3624); // LTD Gasoline Richman Glen
-    object.openDoor(2065277225, -1821.369, 789.1274, 138.3124); // LTD Gasoline Richman Glen
+    object.openDoor(1196685123, 375.3528, 323.8015, 103.7163, false); // 247 Downtown Vinewood
+    object.openDoor(997554217, 377.8753, 323.1672, 103.7163, false); // 247 Downtown Vinewood
+    object.openDoor(1196685123, -3240.128, 1003.157, 12.98064, false); // 247 Banham Canyon
+    object.openDoor(997554217, -3239.905, 1005.749, 12.98064, false); // 247 Banham Canyon
+    object.openDoor(1196685123, -3038.219, 588.2872, 8.058861, false); // 247 Chumash
+    object.openDoor(997554217, -3039.012, 590.7642, 8.058861, false); // 247 Chumash
+    object.openDoor(1196685123, 1963.917, 3740.075, 32.49369, false); // 247 247 Sandy Shores
+    object.openDoor(997554217, 1966.17, 3741.376, 32.49369, false); // 247 Sandy Shores
+    object.openDoor(1196685123, 545.504, 2672.745, 42.30644, false); // 247 Harmony
+    object.openDoor(997554217, 542.9252, 2672.406, 42.30644, false); // 247 Harmony
+    object.openDoor(1196685123, 1730.032, 6412.072, 35.18717, false); // 247 Mount Chiliad
+    object.openDoor(997554217, 1732.362, 6410.917, 35.18717, false); // 247 Mount Chiliad
+    object.openDoor(1196685123, 2681.292, 3281.427, 55.39108, false); // 247 Grand Senora Desert
+    object.openDoor(997554217, 2682.558, 3283.699, 55.39108, false); // 247 Grand Senora Desert
+    object.openDoor(1196685123, 27.81761, -1349.169, 29.64696, false); // 247 Strawberry
+    object.openDoor(997554217, 30.4186, -1349.169, 29.64696, false); // 247 Strawberry
+    object.openDoor(1196685123, 2559.201, 384.0875, 108.7729, false); // 247 Tataviam Mountains
+    object.openDoor(997554217, 2559.304, 386.6864, 108.7729, false); // 247 Tataviam Mountains
+    object.openDoor(3082015943, 1392.927, 3599.469, 35.13078, false); // Liquor Ace
+    object.openDoor(3082015943, 1395.371, 3600.358, 35.13078, false); // Liquor Ace
+    object.openDoor(3082015943, -2973.535, 390.1414, 15.18735, false); // Robs Liquor Banham Canyon
+    object.openDoor(3082015943, -1490.411, -383.8453, 40.30745, false); // Robs Liquor Morningwood
+    object.openDoor(3082015943, 1141.038, -980.3225, 46.55986, false); // Robs Liquor Murrieta Heights
+    object.openDoor(3082015943, -1226.894, -903.1218, 12.47039, false); // Robs Liquor Vespucci Canals
+    object.openDoor(3082015943, 1167.129, 2703.754, 38.30173, false); // Scoops Liquor Barn
+    object.openDoor(3426294393, -53.96112, -1755.717, 29.57094, false); // LTD Gasoline Davis
+    object.openDoor(2065277225, -51.96669, -1757.387, 29.57094, false); // LTD Gasoline Davis
+    object.openDoor(3426294393, -713.0732, -916.5409, 19.36553, false); // LTD Gasoline Little Seoul
+    object.openDoor(2065277225, -710.4722, -916.5372, 19.36553, false); // LTD Gasoline Little Seoul
+    object.openDoor(3426294393, 1699.661, 4930.278, 42.21359, false); // LTD Gasoline Grapeseed
+    object.openDoor(2065277225, 1698.172, 4928.146, 42.21359, false); // LTD Gasoline Grapeseed
+    object.openDoor(3426294393, 1158.364, -326.8165, 69.35503, false); // LTD Gasoline Mirror Park
+    object.openDoor(2065277225, 1160.925, -326.3612, 69.35503, false); // LTD Gasoline Mirror Park
+    object.openDoor(3426294393, -1823.285, 787.3687, 138.3624, false); // LTD Gasoline Richman Glen
+    object.openDoor(2065277225, -1821.369, 789.1274, 138.3124, false); // LTD Gasoline Richman Glen
 // Аммунации
-    object.openDoor(97297972, 16.12787, -1114.606, 29.94694); // GunShop Pillbox
-    object.openDoor(4286093708, 18.572, -1115.495, 29.94694); // GunShop Pillbox
-    object.openDoor(97297972, 244.7275, -44.07911, 70.09098); // GunShop Havik
-    object.openDoor(4286093708, 243.8379, -46.52324, 70.09098); // GunShop Havik
-    object.openDoor(97297972, 845.3694, -1024.539, 28.34478); // GunShop LaMesa
-    object.openDoor(4286093708, 842.7685, -1024.539, 28.34478); // GunShop LaMesa
-    object.openDoor(97297972, -665.2424, -944.3256, 21.97915); // GunShop Seul
-    object.openDoor(4286093708, -662.6415, -944.3256, 21.97915); // GunShop Seul
-    object.openDoor(97297972, -1313.826, -389.1259, 36.84573); // GunShop Morningwood
-    object.openDoor(4286093708, -1314.465, -391.6472, 36.84573); // GunShop Morningwood
-    object.openDoor(97297972, 813.1779, -2148.27, 29.76892); // GunShop Saipres-Flets
-    object.openDoor(4286093708, 810.5769, -2148.27, 29.76892); // GunShop Saipres-Flets
-    object.openDoor(97297972, 2570.905, 303.3556, 108.8848); // GunShop Tataviamskoe
-    object.openDoor(4286093708, 2568.304, 303.3556, 108.8848); // GunShop Tataviamskoe
-    object.openDoor(97297972, -3164.845, 1081.392, 20.98866); // GunShop Chumash
-    object.openDoor(4286093708, -3163.812, 1083.778, 20.98866); // GunShop Chumash
-    object.openDoor(97297972, -1114.009, 2689.77, 18.70407); // GunShop Zancudo River
-    object.openDoor(4286093708, -1112.071, 2691.505, 18.70407); // GunShop Zancudo River
-    object.openDoor(97297972, 1698.176, 3751.506, 34.85526); // GunShop Sandy
-    object.openDoor(4286093708, 1699.937, 3753.42, 34.85526); // GunShop Sandy
-    object.openDoor(97297972, -326.1122, 6075.27, 31.6047); // GunShop PaletoBay
-    object.openDoor(4286093708, -324.2731, 6077.109, 31.6047); // GunShop PaletoBay
+    object.openDoor(97297972, 16.12787, -1114.606, 29.94694, false); // GunShop Pillbox
+    object.openDoor(4286093708, 18.572, -1115.495, 29.94694, false); // GunShop Pillbox
+    object.openDoor(97297972, 244.7275, -44.07911, 70.09098, false); // GunShop Havik
+    object.openDoor(4286093708, 243.8379, -46.52324, 70.09098, false); // GunShop Havik
+    object.openDoor(97297972, 845.3694, -1024.539, 28.34478, false); // GunShop LaMesa
+    object.openDoor(4286093708, 842.7685, -1024.539, 28.34478, false); // GunShop LaMesa
+    object.openDoor(97297972, -665.2424, -944.3256, 21.97915, false); // GunShop Seul
+    object.openDoor(4286093708, -662.6415, -944.3256, 21.97915, false); // GunShop Seul
+    object.openDoor(97297972, -1313.826, -389.1259, 36.84573, false); // GunShop Morningwood
+    object.openDoor(4286093708, -1314.465, -391.6472, 36.84573, false); // GunShop Morningwood
+    object.openDoor(97297972, 813.1779, -2148.27, 29.76892, false); // GunShop Saipres-Flets
+    object.openDoor(4286093708, 810.5769, -2148.27, 29.76892, false); // GunShop Saipres-Flets
+    object.openDoor(97297972, 2570.905, 303.3556, 108.8848, false); // GunShop Tataviamskoe
+    object.openDoor(4286093708, 2568.304, 303.3556, 108.8848, false); // GunShop Tataviamskoe
+    object.openDoor(97297972, -3164.845, 1081.392, 20.98866, false); // GunShop Chumash
+    object.openDoor(4286093708, -3163.812, 1083.778, 20.98866, false); // GunShop Chumash
+    object.openDoor(97297972, -1114.009, 2689.77, 18.70407, false); // GunShop Zancudo River
+    object.openDoor(4286093708, -1112.071, 2691.505, 18.70407, false); // GunShop Zancudo River
+    object.openDoor(97297972, 1698.176, 3751.506, 34.85526, false); // GunShop Sandy
+    object.openDoor(4286093708, 1699.937, 3753.42, 34.85526, false); // GunShop Sandy
+    object.openDoor(97297972, -326.1122, 6075.27, 31.6047, false); // GunShop PaletoBay
+    object.openDoor(4286093708, -324.2731, 6077.109, 31.6047, false); // GunShop PaletoBay
 // Автомастерские
-    object.openDoor(3744620119, -1145.898, -1991.144, 14.18357); // Los Santos Customs LSIA
-    object.openDoor(3744620119, -356.0905, -134.7714, 40.01295); // Los Santos Customs Burton
-    object.openDoor(270330101, 723.116, -1088.831, 23.23201); // Los Santos Customs La Mesa
-    object.openDoor(3472067116, 1182.306, 2645.232, 38.63961); // Los Santos Customs Senora
-    object.openDoor(3472067116, 1174.654, 2645.222, 38.63961); // Los Santos Customs Senora
-    object.openDoor(1335311341, 1187.202, 2644.95, 38.55176); // Los Santos Customs Senora дверь
-    object.openDoor(3867468406, -205.6828, -1310.683, 30.29572); // Bennys Original Motor Works
-    object.openDoor(4104186511, 484.5642, -1315.574, 30.20331); // Beekers Garage
-    object.openDoor(3630385052, 482.8112, -1311.953, 29.35057); // Beekers Garage дверь
-    object.openDoor(2367695858, 500.1746, -1320.543, 28.25339); // Beekers Garage ворота перед
-    object.openDoor(3472067116, 108.8502, 6617.876, 32.67305); // Hayes Autos
-    object.openDoor(3472067116, 114.3135, 6623.233, 32.67305); // Hayes Autos
-    object.openDoor(1335311341, 105.1518, 6614.655, 32.58521); // Hayes Autos дверь
+    object.openDoor(3744620119, -1145.898, -1991.144, 14.18357, false); // Los Santos Customs LSIA
+    object.openDoor(3744620119, -356.0905, -134.7714, 40.01295, false); // Los Santos Customs Burton
+    object.openDoor(270330101, 723.116, -1088.831, 23.23201, false); // Los Santos Customs La Mesa
+    object.openDoor(3472067116, 1182.306, 2645.232, 38.63961, false); // Los Santos Customs Senora
+    object.openDoor(3472067116, 1174.654, 2645.222, 38.63961, false); // Los Santos Customs Senora
+    object.openDoor(1335311341, 1187.202, 2644.95, 38.55176, false); // Los Santos Customs Senora дверь
+    object.openDoor(3867468406, -205.6828, -1310.683, 30.29572, false); // Bennys Original Motor Works
+    object.openDoor(4104186511, 484.5642, -1315.574, 30.20331, false); // Beekers Garage
+    object.openDoor(3630385052, 482.8112, -1311.953, 29.35057, false); // Beekers Garage дверь
+    object.openDoor(2367695858, 500.1746, -1320.543, 28.25339, false); // Beekers Garage ворота перед
+    object.openDoor(3472067116, 108.8502, 6617.876, 32.67305, false); // Hayes Autos
+    object.openDoor(3472067116, 114.3135, 6623.233, 32.67305, false); // Hayes Autos
+    object.openDoor(1335311341, 105.1518, 6614.655, 32.58521, false); // Hayes Autos дверь
+// Остальное
+    object.openDoor(2059227086, -59.89302, -1092.952, 26.88362, false); //Западная дверь PDM
+    object.openDoor(1417577297, -60.54582, -1094.749, 26.88872, false); //Западная дверь PDM
+    object.openDoor(2059227086, -39.13366, -1108.218, 26.7198, false); //Южная дверь PDM
+    object.openDoor(1417577297, -37.33113, -1108.873, 26.7198, false); //Южная дверь PDM
+    object.openDoor(2777093385, 106.3793, -742.6982, 46.18171, false); //Главный вход FIB
+    object.openDoor(4204511029, 105.7607, -746.646, 46.18266, false); //Главный вход FIB
+    object.openDoor(245182344, 716.7805, -975.4207, 25.00606, false); //Вход на швейную фабрику
+    object.openDoor(3613901090, 719.3815, -975.4185, 25.00606, false); //Вход на швейную фабрику
+    object.openDoor(2866345169, 1083.547, -1975.435, 31.62222, false); //Дверь литейного завода
+    object.openDoor(2866345169, 1065.237, -2006.079, 32.23295, false); //Дверь литейного завода
+    object.openDoor(2866345169, 1085.307, -2018.561, 41.62894, false); //Дверь литейного завода
+    object.openDoor(2529918806, 1855.685, 3683.93, 34.59282, false); //Дверь Шерифов Сэнди-Шорес
+    object.openDoor(2271212864, 1851.249, 3681.846, 34.417, false); //Дверь Шерифов Сэнди-Шорес
+    object.openDoor(2271212864, 1849.948, 3684.099, 34.417, false); //Дверь Шерифов Сэнди-Шорес
+    object.openDoor(2271212864, 1847.147, 3689.904, 34.417, false); //Дверь Шерифов Сэнди-Шорес
+    object.openDoor(2271212864, 1849.4, 3691.204, 34.417, false); //Дверь Шерифов Сэнди-Шорес
+    object.openDoor(2271212864, 1857.249, 3690.31, 34.417, false); //Дверь Шерифов Сэнди-Шорес
+    object.openDoor(2793810241, -444.4985, 6017.06, 31.86633, false); //Дверь Шерифов Палето-Бей
+    object.openDoor(2793810241, -442.66, 6015.222, 31.86633, false); //Дверь Шерифов Палето-Бей
+    object.openDoor(2271212864, -440.9874, 6012.765, 31.86633, false); //Дверь Шерифов Палето-Бей
+    object.openDoor(2271212864, -442.8268, 6010.925, 31.86633, false); //Дверь Шерифов Палето-Бей
+    object.openDoor(2271212864, -447.7092, 6006.717, 31.86633, false); //Дверь Шерифов Палето-Бей
+    object.openDoor(2271212864, -449.5486, 6008.556, 31.86633, false); //Дверь Шерифов Палето-Бей
+    object.openDoor(2271212864, -450.716, 6016.37, 31.86633, false); //Дверь Шерифов Палето-Бей
 
     //GarageClose
     object.openDoor(703855057, -25.2784, -1431.061, 30.83955, true); // House 500
@@ -567,11 +592,16 @@ object.process = function () {
     object.openDoor(2840207166, -793.3943, 180.5075, 73.04045, true); // int 9
     object.openDoor(1245831483, -794.1853, 182.568, 73.04045, true); // int 9
     object.openDoor(2731327123, -806.2817, 186.0246, 72.62405, true); // int 9
-    object.openDoor(34120519, -610.0969, 59.60177, 98.34972, true); // int 10
+    object.openDoor(2731327123, -777.9761, 322.9964, 212.1467, true); // int 10
     object.openDoor(3636940819, -757.6743, 618.5995, 144.2903, true); // int 11
-    object.openDoor(3636940819, -859.3043, 691.8406, 153.0022, true); // int 12
-    object.openDoor(3636940819, -782.4496, 317.5156, 188.0627, true); // int 13
-    object.openDoor(330294775, -602.4177, 42.96198, 93.73995, true); // int 14
+    object.openDoor(3636940819, -1289.193, 450.2027, 98.04399, true); // int 12
+    object.openDoor(3636940819, -793.9415, 324.5879, 217.1877, true); // int 13
+    object.openDoor(2607919673, -793.9415, 324.5879, 217.1877, true); // int 13
+    object.openDoor(4030239080, -793.9415, 324.5879, 217.1877, true); // int 13
+    object.openDoor(1927676967, -793.9415, 324.5879, 217.1877, true); // int 13
+    object.openDoor(3108570583, -793.9415, 324.5879, 217.1877, true); // int 13
+    object.openDoor(1927676967, -793.9415, 324.5879, 217.1877, true); // int 13
+    object.openDoor(330294775, -776.7023, 339.3779, 207.7347, true); // int 14
 
     //Close Doors
     object.openDoor(486670049, -107.5373, -9.018098, 70.67085, true);

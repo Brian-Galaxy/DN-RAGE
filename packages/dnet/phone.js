@@ -429,6 +429,17 @@ phone.memberAction2 = function(player, id) {
                         '',
                         true
                     ));
+                    items.push(phone.getMenuItemModal(
+                        'Передать организацию',
+                        '',
+                        'Передача',
+                        `Вы точно хотите передать организацию ${row['name']}?`,
+                        'Выдать',
+                        'Отмена',
+                        { name: 'memberGiveLeader2', memberId: row['id'] },
+                        '',
+                        true
+                    ));
                 }
 
                 let rankList = [];
@@ -1589,6 +1600,93 @@ phone.updateContactList = function(player) {
     catch (e) {
         methods.debug(e);
     }
+};
+
+phone.updateDialogList = function(player) {
+    if (!user.isLogin(player))
+        return;
+
+    let myPhone = user.get(player, 'phone').toString();
+    try {
+        mysql.executeQuery(`SELECT * FROM phone_sms WHERE number_from = '${myPhone}' OR number_to = '${myPhone}' GROUP BY number_from, number_to ORDER BY id DESC`, (err, rows, fields) => {
+
+            let array = [];
+            let numbers = [myPhone];
+
+            rows.forEach(row => {
+
+                let phoneNumber = row['number_from'];
+                let messageType = 2;
+                let newMessages = row['is_unread'];
+
+                if (myPhone === row['number_from']) {
+                    phoneNumber = row['number_to'];
+                    messageType = 1;
+                    newMessages = 0;
+                }
+
+                if (numbers.indexOf(phoneNumber) >= 0)
+                    return;
+
+                numbers.push(phoneNumber);
+
+                array.push(
+                    {
+                        phone_number: phoneNumber,
+                        is_online: true, // был(а) в сети 12.01.2019
+                        last_login: '01.01.1990',
+                        new_messages: newMessages,
+                        message: [
+                            {type: messageType, text: row['text'], date: row['date'], time: row['time'] + ':00'},
+                        ]
+                    },
+                );
+            });
+
+            let contacts = {
+                type: 'updateMessenger',
+                chats: array
+            };
+
+            user.callCef(player, 'phone' + user.get(player, 'phone_type'), JSON.stringify(contacts));
+        });
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+};
+
+phone.selectChat = function(player, phoneNumber, chat) {
+    if (!user.isLogin(player))
+        return;
+
+    let myPhone = user.get(player, 'phone');
+
+    mysql.executeQuery(`UPDATE phone_sms SET is_unread = '0' WHERE number_to = '${myPhone}' AND number_from = '${phoneNumber}'`);
+
+    mysql.executeQuery(`SELECT * FROM phone_sms WHERE (number_from = '${myPhone}' AND number_to = '${phoneNumber}') OR (number_to = '${myPhone}' AND number_from = '${phoneNumber}') ORDER BY id DESC LIMIT 100`, (err, rows, fields) => {
+
+        let array = [];
+
+        rows.forEach(row => {
+
+            let messageType = 2;
+            if (myPhone === row['number_from'])
+                messageType = 1;
+
+            array.push(
+                {type: messageType, text: row['text'], date: row['date'], time: row['time'] + ':00'},
+            );
+        });
+
+        let contacts = {
+            type: 'updateMessengerChat',
+            idx: chat,
+            messages: array,
+        };
+
+        user.callCef(player, 'phone' + user.get(player, 'phone_type'), JSON.stringify(contacts));
+    });
 };
 
 phone.showMenu = function(player, uuid, title, items) {

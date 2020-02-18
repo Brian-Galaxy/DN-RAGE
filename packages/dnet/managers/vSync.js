@@ -36,6 +36,7 @@ vSync.VehicleSyncData = {
     InteriorLight: false,
     TaxiLight: false,
     SpotLight: false,
+    Anchor: false,
 };
 
 let streamDist = 250;
@@ -256,6 +257,19 @@ vSync.getTaxiLightState = function(v) {
     return vSync.getVehicleSyncData(v).TaxiLight;
 };
 
+vSync.setAnchorState = function(v, status) {
+    if (!vehicles.exists(v))
+        return;
+    let data = vSync.getVehicleSyncData(v);
+    data.Anchor = status;
+    vSync.updateVehicleSyncData(v, data);
+    mp.players.callInRange(v.position, streamDist, "vSync:setAnchorState", [v.id, status]);
+};
+
+vSync.getAnchorState = function(v) {
+    return vSync.getVehicleSyncData(v).Anchor;
+};
+
 vSync.setSpotLightState = function(v, status) {
     if (!vehicles.exists(v))
         return;
@@ -288,7 +302,6 @@ mp.events.add("playerEnterVehicle", function (player, vehicle) {
     if (vehicles.exists(vehicle) && !vSync.has(vehicle))
         vSync.updateVehicleSyncData(vehicle, vSync.VehicleSyncData);
 });
-
 
 mp.events.add("playerExitVehicle", function (player, vehicle) {
     //setTimeout(function () {
@@ -326,6 +339,12 @@ mp.events.add('s:vSync:setTaxiLightState', (player, vId, status) => {
     let veh = mp.vehicles.at(vId);
     if (mp.players.exists(player) && vehicles.exists(veh))
         vSync.setTaxiLightState(veh, status);
+});
+
+mp.events.add('s:vSync:setAnchorState', (player, vId, status) => {
+    let veh = mp.vehicles.at(vId);
+    if (mp.players.exists(player) && vehicles.exists(veh))
+        vSync.setAnchorState(veh, status);
 });
 
 mp.events.add('s:vSync:setSpotLightState', (player, vId, status) => {

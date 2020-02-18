@@ -860,6 +860,12 @@ user.doesExistAccount = function(login, email, social, callback) {
     });
 };
 
+user.setOnlineStatus = function(player, isOnline) {
+    methods.debug('user.setOnlineStatus');
+    if (user.isLogin(player))
+        mysql.executeQuery('UPDATE users SET is_online=\'' + methods.parseInt(isOnline) + '\' WHERE id = \'' + user.getId(player) + '\'');
+};
+
 user.clearAllProp = function(player) {
     methods.debug('user.clearAllProp');
     if (!mp.players.exists(player))
@@ -951,6 +957,12 @@ user.showLoadDisplay = function(player) {
     if (!mp.players.exists(player))
         return false;
     player.call('client:user:showLoadDisplay');
+};
+
+user.addExplode = function(player, x, y, z, explosionType, damageScale, isAudible, isInvisible, cameraShake) {
+    if (!mp.players.exists(player))
+        return false;
+    player.call('client:user:addExplode', [x, y, z, explosionType, damageScale, isAudible, isInvisible, cameraShake]);
 };
 
 user.removeWaypoint = function(player) {
@@ -1680,12 +1692,12 @@ user.kick = function(player, reason, title = 'Вы были кикнуты.') {
     methods.debug('user.kick ' + player.socialClub + ' ' + reason);
     player.outputChatBox('!{f44336}' + title);
     player.outputChatBox('!{f44336}Причина: !{FFFFFF}' + reason);
+
+    user.callCef(player, 'dialog', JSON.stringify({type: 'updateValues', isShow: true, isShowClose: false, position: 'center', text: reason, buttons: [], icon: '', title: title, dtype: 0}));
     player.kick(reason);
 };
 
 user.kickAntiCheat = function(player, reason, title = 'Вы были кикнуты.') {
-    /*if (!user.isLogin(player))
-        return;*/
     methods.debug('user.kickAntiCheat');
     user.kick(player, reason, title);
     if (user.isLogin(player)) {
@@ -1964,6 +1976,13 @@ user.giveWeaponComponent = function(player, weapon, component) {
         return false;
     methods.debug('user.giveWeaponComponent', weapon, component);
     player.giveWeaponComponent(weapon, component);
+};
+
+user.removeWeaponComponent = function(player, weapon, component) {
+    if (!mp.players.exists(player))
+        return false;
+    methods.debug('user.removeWeaponComponent', weapon, component);
+    player.removeWeaponComponent(weapon, component);
 };
 
 user.removeAllWeaponComponents = function(player, weapon) {

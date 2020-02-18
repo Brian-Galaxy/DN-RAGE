@@ -1,7 +1,6 @@
 "use strict";
 
 import UIMenu from './menu';
-
 import Container from './data';
 import methods from './methods';
 
@@ -22,10 +21,10 @@ import timer from "../manager/timer";
 import dispatcher from "../manager/dispatcher";
 import jobPoint from "../manager/jobPoint";
 import quest from "../manager/quest";
+import jail from "../manager/jail";
 
 import vehicles from "../property/vehicles";
 import business from "../property/business";
-import loader from "../jobs/loader";
 
 mp.gui.chat.enabled = false;
 
@@ -595,6 +594,11 @@ mp.events.add('client:user:hideLoadDisplay', () => {
 mp.events.add('client:user:showLoadDisplay', () => {
     methods.debug('Event: client:user:showLoadDisplay');
     user.showLoadDisplay();
+});
+
+mp.events.add('client:user:addExplode', (x, y, z, explosionType, damageScale, isAudible, isInvisible, cameraShake) => {
+    methods.debug('Event: client:user:showLoadDisplay');
+    mp.game.fire.addExplosion(x, y, z, explosionType, damageScale, isAudible, isInvisible, cameraShake);
 });
 
 mp.events.add('client:dispatcher:addDispatcherList', (title, desc, time, x, y, z, withCoord) => {
@@ -1450,6 +1454,11 @@ mp.events.add('client:menuList:showSheriffArsenalMenu', () => {
     menuList.showSheriffArsenalMenu();
 });
 
+mp.events.add('client:menuList:showInviteMpMenu', (x, y, z) => {
+    methods.debug('Event: client:menuList:showInviteMpMenu');
+    menuList.showInviteMpMenu(x, y, z);
+});
+
 /*mp.events.add('client:menuList:showFibArsenalMenu', () => {
     methods.debug('Event: client:menuList:showFibArsenalMenu');
     menuList.showFibArsenalMenu();
@@ -1740,8 +1749,64 @@ mp.events.add('client:inventory:upgradeWeapon', function(id, itemId, weaponStr) 
 
     inventory.updateItemParams(weapon.id, JSON.stringify(weapon.params));
     inventory.deleteItem(id);
+
     ui.callCef('inventory', JSON.stringify({ type: 'removeItemId', itemId: id }));
-    ui.callCef('inventory', JSON.stringify({ type: 'updateWeaponParams', itemId: id, params: weapon.params }));
+    ui.callCef('inventory', JSON.stringify({ type: 'updateWeaponParams', itemId: weapon.id, params: weapon.params }));
+});
+
+mp.events.add('client:inventory:unEquipWeaponUpgrade', function(id, itemId, paramsJson, wpSlot) {
+
+    let params = JSON.parse(paramsJson);
+
+    let wpName = items.getItemNameHashById(itemId);
+    let wpHash = weapons.getHashByName(wpName);
+    let wpcId = -1;
+
+    if (wpSlot == 1) {
+        if (!params.slot1) {
+            mp.game.ui.notifications.show(`~r~Слот пустой`);
+            return;
+        }
+        user.removeWeaponComponentByHash(wpHash, params.slot1hash);
+        wpcId = items.getWeaponComponentIdByHash(params.slot1hash, wpName);
+        params.slot1 = false;
+        params.slot1hash = 0;
+    }
+    if (wpSlot == 2) {
+        if (!params.slot2) {
+            mp.game.ui.notifications.show(`~r~Слот пустой`);
+            return;
+        }
+        user.removeWeaponComponentByHash(wpHash, params.slot2hash);
+        wpcId = items.getWeaponComponentIdByHash(params.slot2hash, wpName);
+        params.slot2 = false;
+        params.slot2hash = 0;
+    }
+    if (wpSlot == 3) {
+        if (!params.slot3) {
+            mp.game.ui.notifications.show(`~r~Слот пустой`);
+            return;
+        }
+        user.removeWeaponComponentByHash(wpHash, params.slot3hash);
+        wpcId = items.getWeaponComponentIdByHash(params.slot3hash, wpName);
+        params.slot3 = false;
+        params.slot3hash = 0;
+    }
+    if (wpSlot == 4) {
+        if (!params.slot4) {
+            mp.game.ui.notifications.show(`~r~Слот пустой`);
+            return;
+        }
+        user.removeWeaponComponentByHash(wpHash, params.slot4hash);
+        wpcId = items.getWeaponComponentIdByHash(params.slot4hash, wpName);
+        params.slot4 = false;
+        params.slot4hash = 0;
+    }
+
+    inventory.takeNewItemJust(wpcId);
+    inventory.updateItemParams(id, JSON.stringify(params));
+
+    ui.callCef('inventory', JSON.stringify({ type: 'updateWeaponParams', itemId: id, params: params }));
 });
 
 mp.events.add('client:inventory:unEquip', function(id, itemId) {
@@ -1825,7 +1890,7 @@ mp.events.add('client:inventory:unEquip', function(id, itemId) {
         if (user.getSex() == 0)
         {
             user.set("leg", 61);
-            user.set("leg_color", 13);
+            user.set("leg_color", 1);
             user.updateCharacterCloth();
         }
         else
@@ -2213,6 +2278,18 @@ mp.events.add('client:phone:callBack', function(action, menu, id, ...args) {
     phone.callBack(action, menu, id, ...args);
 });
 
+mp.events.add('client:phone:focusInput', function(focus) {
+
+});
+
+mp.events.add('client:phone:sendMessage', function(phone, chat, message) {
+    mp.events.callRemote('server:phone:sendMessage', phone, methods.removeQuotes(methods.removeQuotes2(message)));
+});
+
+mp.events.add('client:phone:selectChat', function(phone, idx) {
+    mp.events.callRemote('server:phone:selectChat', phone, idx);
+});
+
 mp.events.add('client:phone:editContact', function(contJson) {
     mp.events.callRemote('server:phone:editContact', contJson);
 });
@@ -2322,7 +2399,8 @@ mp.events.add('render', () => {
                     const entity = player.vehicle ? player.vehicle : player;
                     const vector = entity.getVelocity();
                     const frameTime = methods.parseFloatHex(mp.game.invoke('0x15C40837039FFAF7').toString(16));
-                    ui.drawText3D( pref + name + player.id + ' ' +  indicatorColor + typingLabel, headPosition.x + vector.x * frameTime, headPosition.y + vector.y * frameTime, headPosition.z + vector.z * frameTime + 0.1);
+                    if (player.getAlpha() > 0)
+                        ui.drawText3D( pref + name + player.id + ' ' +  indicatorColor + typingLabel, headPosition.x + vector.x * frameTime, headPosition.y + vector.y * frameTime, headPosition.z + vector.z * frameTime + 0.1);
                 }
             }
             catch (e) {
@@ -2355,8 +2433,8 @@ mp.keys.bind(0xDD, true, function() {
 });
 
 mp.keys.bind(0x38, true, function() {
-    //if (!user.isLogin() || !user.isAdmin())
-    //    return;
+    if (!user.isLogin() || (!user.isAdmin() && !user.isHelper()))
+        return;
     if (!methods.isBlockKeys())
         menuList.showAdminMenu();
 });
@@ -2647,10 +2725,24 @@ mp.events.add("playerCommand", async (command) => {
         });
     }
     else if (command.toLowerCase().slice(0, 3) === "qwe") {
-        /*let player = mp.players.local; //TODO Спавн объектов оружия и обвесов на них
+        let player = mp.players.local; //TODO Спавн объектов оружия и обвесов на них
         let pos = player.position;
-        let object = mp.game.weapon.createWeaponObject(-86904375, 1000, pos.x + 2, pos.y + 2, pos.z, true, player.heading, 0);
-        mp.game.weapon.giveWeaponObjectToPed(object, mp.players.local.handle);*/
+        let object = mp.game.weapon.createWeaponObject(-86904375, 1000, mp.players.local.position.x, mp.players.local.position.y, mp.players.local.position.z, false, mp.players.local.heading, 0);
+        //366594
+        //mp.game.invoke('0x9F47B058362C84B5', 81154);
+        //mp.game.invoke('0x44A0870B7E92D7C0', 254211, 0, 0);
+        //mp.game.invoke('0xB346476EF1A64897', 772098);
+        //mp.game.invoke('0x961AC54BF0613F5D', 254211, true, true);
+
+        //mp.game.invoke('0x6B9BBD38AB0796DF', 110596, mp.players.local.handle, 58271, 0.09, -0.15, 0.1, 180.0, 100.0, 150.0, true, true, false, false, 2, true);
+
+        //mp.game.invoke('0x8524A8B0171D5E07', 110596, 100, 100, 100, 0, true);
+        //mp.game.invoke('0x6B9BBD38AB0796DF', 254211, mp.players.local.handle, mp.game.invoke('0x3F428D08BE5AAE31', mp.players.local.handle, 24818), 0.09, -0.15, 0.1, 10.0, 160.0, 10.0, true, true, false, false, 2, true);
+        //mp.game.invoke('0x06843DA7060A026B', 558594, mp.players.local.position.x, mp.players.local.position.y, mp.players.local.position.z, false, false, false, true);
+        //mp.game.entity.createModelHide(mp.players.local.position.x, mp.players.local.position.y, mp.players.local.position.z, mp.game.weapon.getWeapontypeModel(-1038739674), 3, true);
+        //mp.game.entity.createModelHide(mp.players.local.position.x, mp.players.local.position.y, mp.players.local.position.z, 1520780799, 3, true);
+
+        //let object = mp.game.weapon.createWeaponObject(-86904375, 1000, pos.x + 2, pos.y + 2, pos.z, true, player.heading, 0);
     }
     else if (command.slice(0, 5) === "eval ") {
         if (!user.isLogin() || !user.isAdmin(5))

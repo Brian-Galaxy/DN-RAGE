@@ -128,7 +128,36 @@ inventory.openInventoryByEntity = async function(entity) {
         try {
             if (entity.getVariable('isDrop'))
                 inventory.takeItem(entity.getVariable('isDrop'), entity.getVariable('itemId'));
-            if (entity.getVariable('stockId'))
+            else if (entity.getVariable('emsType') !== undefined && entity.getVariable('emsType') !== null) {
+
+                /*if (!user.isEms()) {
+                    mp.game.ui.notifications.show("~r~Доступно только для сотрудников EMS");
+                    return;
+                }*/
+
+                let type = methods.parseInt(entity.getVariable('emsType').split('|')[0]);
+                if (type === 0) {
+                    user.playAnimation("amb@medic@standing@tendtodead@idle_a", "idle_a", 9);
+                    methods.blockKeys(true);
+                    setTimeout(function () {
+                        mp.events.callRemote('server:ems:removeObject', entity.remoteId);
+                        methods.blockKeys(false);
+                        user.addRep(10);
+                        user.stopAllAnimation();
+                    }, 15000);
+                }
+                else if (type === 1) {
+                    user.playAnimation("amb@medic@standing@tendtodead@idle_a", "idle_a", 9);
+                    methods.blockKeys(true);
+                    setTimeout(function () {
+                        mp.events.callRemote('server:ems:attachObject', entity.remoteId);
+                        methods.blockKeys(false);
+                        user.addRep(10);
+                        user.stopAllAnimation();
+                    }, 8000);
+                }
+            }
+            else if (entity.getVariable('stockId'))
                 inventory.getItemList(entity.getVariable('stockId'), mp.players.local.dimension);
             else if (entity.invType) {
                 if (entity.safe) {

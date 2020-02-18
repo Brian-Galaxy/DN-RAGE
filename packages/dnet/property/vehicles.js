@@ -6,6 +6,7 @@ const coffer = require('../coffer');
 //const fuel = require('./business/fuel');
 const methods = require('../modules/methods');
 const vSync = require('../managers/vSync');
+const attach = require('../managers/attach');
 const vehicles = exports;
 
 const offset = enums.offsets.vehicle;
@@ -41,6 +42,7 @@ vehicles.processVehicleManager = () =>
             let vehicle = mp.vehicles.new.apply(mp.vehicles, creation.args);
             methods.debug('processVehicleManager', creation.args);
             vSync.setEngineState(vehicle, false);
+            attach.initFunctions(vehicle);
             cbs.push([vehicle, creation.cb]);
         }
         catch (e) {
@@ -955,6 +957,8 @@ vehicles.spawnCar = (position, heading, nameOrModel, number = undefined) => {
 
     let veh = mp.vehicles.new(model, position, {heading: parseFloat(heading), numberPlate: number, engine: false, dimension: 0});
     let vInfo = methods.getVehicleInfo(model);
+
+    attach.initFunctions(veh);
 
     veh.numberPlate = number;
     //veh.engine = false;

@@ -78,11 +78,16 @@ jail.updateCloth = function() {
         user.setComponentVariation( 8, 60, 500);
         user.setComponentVariation( 6, 6, 0);
     }
-
 };
 
 jail.toJail = function(sec) {
     try {
+
+        if (sec < 1) {
+            jail.freePlayer();
+            return;
+        }
+
         user.showLoadDisplay();
         timer.setDeathTimer(0);
 

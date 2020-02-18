@@ -1,4 +1,8 @@
+
 const weaponData = require("./weaponData");
+const items = require("../items");
+const weapons = require("../weapons");
+const methods = require("../modules/methods");
 
 const PistolAttachmentPos = new mp.Vector3(0.02, 0.06, 0.1);
 const PistolAttachmentRot = new mp.Vector3(-100.0, 0.0, 0.0);
@@ -9,8 +13,8 @@ const SMGAttachmentRot = new mp.Vector3(-80.77, 0.0, 0.0);
 const ShotgunAttachmentPos = new mp.Vector3(-0.1, -0.15, 0.11);
 const ShotgunAttachmentRot = new mp.Vector3(-180.0, 0.0, 0.0);
 
-const RifleAttachmentPos = new mp.Vector3(-0.1, -0.15, -0.13);
-const RifleAttachmentRot = new mp.Vector3(0.0, 0.0, 3.5);
+const RifleAttachmentPos = new mp.Vector3(0, 0.185, 0);
+const RifleAttachmentRot = new mp.Vector3(-180.0, 150, 0);
 
 const weaponAttachmentData = {
     // Pistols
@@ -64,6 +68,7 @@ for (let weapon in weaponAttachmentData) {
     if (weaponData[hash]) {
         weaponAttachmentData[weapon].AttachName = `WDSP_${weaponData[hash].HashKey}`;
         weaponAttachmentData[weapon].AttachModel = weaponData[hash].ModelHashKey;
+        //weaponAttachmentData[weapon].AttachModel = hash;//weaponData[hash].ModelHashKey;
     } else {
         console.log(`[!] ${weapon} not found in weapon data file and will cause issues, remove it from weaponAttachmentData.`);
     }

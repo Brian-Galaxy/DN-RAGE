@@ -1,0 +1,518 @@
+let mysql = require('./modules/mysql');
+let methods = require('./modules/methods');
+let chat = require('./modules/chat');
+
+let user = require('./user');
+
+let admin = exports;
+
+admin.giveLeader = function(player, type, id, listIndex) {
+    try {
+
+        methods.debug('admin.giveLeader');
+
+        if (!user.isAdmin(player))
+            return;
+
+        id = methods.parseInt(id);
+
+        if (type === 0) {
+            let target = mp.players.at(id);
+            if (!user.isLogin(target)) {
+                player.notify('~r~Игрок не найден на сервере.');
+                return;
+            }
+
+            user.set(target, 'fraction_id', listIndex);
+            user.set(target, 'is_leader', listIndex > 0);
+            user.set(target, 'is_sub_leader', false);
+            user.set(target, 'rank', 0);
+            user.set(target, 'rank_type', 0);
+
+            user.updateClientCache(target);
+
+            target.notify(`~b~Администратор ${user.getRpName(player)} выдал доступ ${user.getRpName(target)} к организации ${user.getFractionName(target)}`);
+            player.notify(`~b~Администратор ${user.getRpName(player)} выдал доступ ${user.getRpName(target)} к организации ${user.getFractionName(target)}`);
+        }
+        else {
+            let target = user.getPlayerById(id);
+            if (user.isLogin(target)) {
+                admin.giveLeader(player, 0, target.id, listIndex);
+                return;
+            }
+
+            mysql.executeQuery(`UPDATE users SET fraction_id = '${listIndex}', is_leader = '${listIndex > 0 ? 1 : 0}' WHERE id = '${id}'`);
+            player.notify('~r~Вы выдали лидерку игроку ' + id);
+        }
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+};
+
+admin.blacklist = function(player, type, id, reason) {
+    try {
+        if (!user.isAdmin(player))
+            return;
+
+        id = methods.parseInt(id);
+
+        if (type === 0) {
+            let target = mp.players.at(id);
+            if (!user.isLogin(target)) {
+                player.notify('~r~Игрок не найден на сервере.');
+                return;
+            }
+
+            mysql.executeQuery(`INSERT INTO black_list (social, serial, address, reason) VALUES ('${target.socialClub}', '${target.serial}', '${target.ip}', '${reason}')`);
+
+            chat.sendToAll(`Администратор ${user.getRpName(player)}`, `${user.getRpName(target)}!{${chat.clRed}} был занесён в чёрный список проекта с причиной!{${chat.clWhite}} ${reason}`, chat.clRed);
+
+            user.kick(target, reason, 'BlackList');
+        }
+        else {
+            let target = user.getPlayerById(id);
+            if (!user.isLogin(target)) {
+                player.notify('~r~Игрок не найден на сервере.');
+                return;
+            }
+            admin.blacklist(player, 0, target.id, reason);
+        }
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+};
+
+admin.ban = function(player, type, id, listIndex, reason) {
+    try {
+        if (!user.isAdmin(player))
+            return;
+
+        id = methods.parseInt(id);
+
+        let timeStr = ['1h', '6h', '12h', '1d', '3d', '7d', '14d', '30d', '60d', '90d', 'Permanent'];
+        let timeFormat = 1;
+
+        switch (listIndex)
+        {
+            case 0:
+                timeFormat = 1 * 60 * 60;
+                break;
+            case 1:
+                timeFormat = 6 * 60 * 60;
+                break;
+            case 2:
+                timeFormat = 12 * 60 * 60;
+                break;
+            case 3:
+                timeFormat = 1 * 60 * 60 * 24;
+                break;
+            case 4:
+                timeFormat = 3 * 60 * 60 * 24;
+                break;
+            case 5:
+                timeFormat = 7 * 60 * 60 * 24;
+                break;
+            case 6:
+                timeFormat = 14 * 60 * 60 * 24;
+                break;
+            case 7:
+                timeFormat = 30 * 60 * 60 * 24;
+                break;
+            case 8:
+                timeFormat = 60 * 60 * 60 * 24;
+                break;
+            case 9:
+                timeFormat = 90 * 60 * 60 * 24;
+                break;
+            case 10:
+                timeFormat = 5 * 365 * 60 * 60 * 24;
+                break;
+        }
+
+        if (type === 0) {
+            let target = mp.players.at(id);
+            if (!user.isLogin(target)) {
+                player.notify('~r~Игрок не найден на сервере.');
+                return;
+            }
+
+            user.set(target, 'date_ban', methods.getTimeStamp() + timeFormat);
+            mysql.executeQuery(`INSERT INTO ban_list (ban_from, ban_to, count, datetime, reason) VALUES ('${user.getRpName(player)}', '${user.getRpName(target)}', '${timeStr[listIndex]}', '${methods.getTimeStamp()}', '${reason}')`);
+
+            chat.sendToAll(`Администратор ${user.getRpName(player)}`, `${user.getRpName(target)}!{${chat.clRed}} был забанен с причиной!{${chat.clWhite}} ${reason}`, chat.clRed);
+
+            user.kick(target, reason, 'Вы забанены');
+        }
+        else {
+            let target = user.getPlayerById(id);
+            if (user.isLogin(target)) {
+                admin.ban(player, 0, target.id, listIndex, reason);
+                return;
+            }
+
+            mysql.executeQuery(`SELECT * FROM users WHERE id = '${methods.parseInt(id)}'`, (err, rows, fields) => {
+                rows.forEach(row => {
+                    mysql.executeQuery(`INSERT INTO ban_list (ban_from, ban_to, count, datetime, reason) VALUES ('${user.getRpName(player)}', '${row['name']}', '${timeStr[listIndex]}', '${methods.getTimeStamp()}', '${reason}')`);
+                    mysql.executeQuery(`UPDATE users SET date_ban = '${methods.getTimeStamp() + timeFormat}' WHERE id = '${id}'`);
+
+                    chat.sendToAll(`Администратор ${user.getRpName(player)}`, `${row['name']}!{${chat.clRed}} был забанен с причиной!{${chat.clWhite}} ${reason}`, chat.clRed);
+                })
+            });
+        }
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+};
+
+admin.unban = function(player, type, id, reason) {
+    try {
+        if (!user.isAdmin(player))
+            return;
+
+        id = methods.parseInt(id);
+
+        if (type === 0) {
+            player.notify('~r~Доступно только для статичных ID.');
+        }
+        else {
+            let target = user.getPlayerById(id);
+            if (user.isLogin(target)) {
+                player.notify('~r~Игрок сейчас находится на сервере. Его ID: ~s~' + target.id);
+                return;
+            }
+
+            mysql.executeQuery(`SELECT * FROM users WHERE id = '${methods.parseInt(id)}'`, (err, rows, fields) => {
+                rows.forEach(row => {
+                    mysql.executeQuery(`INSERT INTO ban_list (ban_from, ban_to, count, datetime, reason) VALUES ('${user.getRpName(player)}', '${row['name']}', 'Разбан', '${methods.getTimeStamp()}', '${reason}')`);
+                    mysql.executeQuery(`UPDATE users SET date_ban = '0' WHERE id = '${id}'`);
+
+                    chat.sendToAll(`Администратор ${user.getRpName(player)}`, `${row['name']}!{${chat.clRed}} был разбанен с причиной!{${chat.clWhite}} ${reason}`, chat.clRed);
+                })
+            });
+        }
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+};
+
+admin.kick = function(player, type, id, reason) {
+    try {
+        if (!user.isAdmin(player))
+            return;
+
+        id = methods.parseInt(id);
+
+        if (type === 0) {
+            let target = mp.players.at(id);
+            if (!user.isLogin(target)) {
+                player.notify('~r~Игрок не найден на сервере.');
+                return;
+            }
+            chat.sendToAll(`Администратор ${user.getRpName(player)}`, `${user.getRpName(target)}!{${chat.clRed}} был кикнут с причиной!{${chat.clWhite}} ${reason}`, chat.clRed);
+            user.kick(target, reason);
+        }
+        else {
+            let target = user.getPlayerById(id);
+            if (!user.isLogin(target)) {
+                player.notify('~r~Игрок не найден на сервере.');
+                return;
+            }
+            chat.sendToAll(`Администратор ${user.getRpName(player)}`, `${user.getRpName(target)}!{${chat.clRed}} был кикнут с причиной!{${chat.clWhite}} ${reason}`, chat.clRed);
+            user.kick(target, reason);
+        }
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+};
+
+admin.jail = function(player, type, id, min, reason) {
+    try {
+        if (!user.isAdmin(player))
+            return;
+
+        id = methods.parseInt(id);
+
+        if (type === 0) {
+            let target = mp.players.at(id);
+            if (!user.isLogin(target)) {
+                player.notify('~r~Игрок не найден на сервере.');
+                return;
+            }
+            user.jail(target, min * 60);
+            chat.sendToAll(`Администратор ${user.getRpName(player)}`, `${user.getRpName(target)}!{${chat.clRed}} был посажен в тюрьму на ${min}мин. с причиной!{${chat.clWhite}} ${reason}`, chat.clRed);
+        }
+        else {
+            let target = user.getPlayerById(id);
+            if (user.isLogin(target)) {
+                admin.jail(player, 0, target.id, min, reason);
+                return;
+            }
+
+            mysql.executeQuery(`SELECT * FROM users WHERE id = '${methods.parseInt(id)}'`, (err, rows, fields) => {
+                rows.forEach(row => {
+                    mysql.executeQuery(`UPDATE users SET jail_time = '${min * 60}' WHERE id = '${id}'`);
+                    chat.sendToAll(`Администратор ${user.getRpName(player)}`, `${row['name']}!{${chat.clRed}} был посажен в тюрьму на ${min}мин. с причиной!{${chat.clWhite}} ${reason}`, chat.clRed);
+                })
+            });
+        }
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+};
+
+admin.setArmorById = function(player, type, id, num) {
+    try {
+        if (!user.isAdmin(player))
+            return;
+
+        id = methods.parseInt(id);
+
+        if (type === 0) {
+            let target = mp.players.at(id);
+            if (!user.isLogin(target)) {
+                player.notify('~r~Игрок не найден на сервере.');
+                return;
+            }
+
+            target.armour = num;
+
+            target.notify(`~b~Администратор ${user.getRpName(player)} выдал ${num}% брони ${user.getRpName(target)}`);
+            player.notify(`~b~Администратор ${user.getRpName(player)} выдал ${num}% брони ${user.getRpName(target)}`);
+        }
+        else {
+            let target = user.getPlayerById(id);
+            if (!user.isLogin(target)) {
+                player.notify('~r~Игрок не найден на сервере.');
+                return;
+            }
+
+            target.armour = num;
+
+            target.notify(`~b~Администратор ${user.getRpName(player)} выдал ${num}% брони ${user.getRpName(target)}`);
+            player.notify(`~b~Администратор ${user.getRpName(player)} выдал ${num}% брони ${user.getRpName(target)}`);
+        }
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+};
+
+admin.setHpById = function(player, type, id, num) {
+    try {
+        if (!user.isAdmin(player))
+            return;
+
+        id = methods.parseInt(id);
+
+        if (type === 0) {
+            let target = mp.players.at(id);
+            if (!user.isLogin(target)) {
+                player.notify('~r~Игрок не найден на сервере.');
+                return;
+            }
+
+            target.health = num;
+
+            target.notify(`~b~Администратор ${user.getRpName(player)} выдал ${num}% здоровья ${user.getRpName(target)}`);
+            player.notify(`~b~Администратор ${user.getRpName(player)} выдал ${num}% здоровья ${user.getRpName(target)}`);
+        }
+        else {
+            let target = user.getPlayerById(id);
+            if (!user.isLogin(target)) {
+                player.notify('~r~Игрок не найден на сервере.');
+                return;
+            }
+
+            target.health = num;
+
+            target.notify(`~b~Администратор ${user.getRpName(player)} выдал ${num}% здоровья ${user.getRpName(target)}`);
+            player.notify(`~b~Администратор ${user.getRpName(player)} выдал ${num}% здоровья ${user.getRpName(target)}`);
+        }
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+};
+
+admin.setSkinById = function(player, type, id, skin) {
+    try {
+        if (!user.isAdmin(player))
+            return;
+
+        id = methods.parseInt(id);
+
+        if (type === 0) {
+            let target = mp.players.at(id);
+            if (!user.isLogin(target)) {
+                player.notify('~r~Игрок не найден на сервере.');
+                return;
+            }
+
+            if (user.getSex(target) == 1)
+                target.model = mp.joaat(skin);
+            else
+                target.model = mp.joaat(skin);
+
+            target.notify(`~b~Администратор ${user.getRpName(player)} выдал скин ${user.getRpName(target)}`);
+            player.notify(`~b~Администратор ${user.getRpName(player)} выдал скин ${user.getRpName(target)}`);
+        }
+        else {
+            let target = user.getPlayerById(id);
+            if (!user.isLogin(target)) {
+                player.notify('~r~Игрок не найден на сервере.');
+                return;
+            }
+
+            if (user.getSex(target) == 1)
+                target.model = mp.joaat(skin);
+            else
+                target.model = mp.joaat(skin);
+
+            target.notify(`~b~Администратор ${user.getRpName(player)} выдал скин ${user.getRpName(target)}`);
+            player.notify(`~b~Администратор ${user.getRpName(player)} выдал скин ${user.getRpName(target)}`);
+        }
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+};
+
+admin.resetSkinById = function(player, type, id) {
+    try {
+        if (!user.isAdmin(player))
+            return;
+
+        id = methods.parseInt(id);
+
+        if (type === 0) {
+            let target = mp.players.at(id);
+            if (!user.isLogin(target)) {
+                player.notify('~r~Игрок не найден на сервере.');
+                return;
+            }
+
+            if (user.getSex(target) == 1)
+                target.model = mp.joaat('mp_f_freemode_01');
+            else
+                target.model = mp.joaat('mp_m_freemode_01');
+
+            user.updateCharacterFace(target);
+            user.updateCharacterCloth(target);
+
+            target.notify(`~b~Администратор ${user.getRpName(player)} выдал скин ${user.getRpName(target)}`);
+            player.notify(`~b~Администратор ${user.getRpName(player)} выдал скин ${user.getRpName(target)}`);
+        }
+        else {
+            let target = user.getPlayerById(id);
+            if (!user.isLogin(target)) {
+                player.notify('~r~Игрок не найден на сервере.');
+                return;
+            }
+
+            if (user.getSex(target) == 1)
+                target.model = mp.joaat('mp_f_freemode_01');
+            else
+                target.model = mp.joaat('mp_m_freemode_01');
+
+            user.updateCharacterFace(target);
+            user.updateCharacterCloth(target);
+
+            target.notify(`~b~Администратор ${user.getRpName(player)} выдал скин ${user.getRpName(target)}`);
+            player.notify(`~b~Администратор ${user.getRpName(player)} выдал скин ${user.getRpName(target)}`);
+        }
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+};
+
+admin.tpToAdmin = function(player, type, id) {
+    try {
+        if (!user.isAdmin(player))
+            return;
+
+        id = methods.parseInt(id);
+
+        if (type === 0) {
+            let target = mp.players.at(id);
+            if (!user.isLogin(target)) {
+                player.notify('~r~Игрок не найден на сервере.');
+                return;
+            }
+
+            user.teleport(target, player.position.x, player.position.y, player.position.z);
+
+            target.notify(`~b~Администратор ${user.getRpName(player)} телепортировал игрока ${user.getRpName(target)} к себе`);
+            player.notify(`~b~Администратор ${user.getRpName(player)} телепортировал игрока ${user.getRpName(target)} к себе`);
+        }
+        else {
+            let target = user.getPlayerById(id);
+            if (!user.isLogin(target)) {
+                player.notify('~r~Игрок не найден на сервере.');
+                return;
+            }
+
+            user.teleport(target, player.position.x, player.position.y, player.position.z);
+
+            target.notify(`~b~Администратор ${user.getRpName(player)} телепортировал игрока ${user.getRpName(target)} к себе`);
+            player.notify(`~b~Администратор ${user.getRpName(player)} телепортировал игрока ${user.getRpName(target)} к себе`);
+        }
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+};
+
+admin.tpToUser = function(player, type, id) {
+    try {
+        if (!user.isAdmin(player))
+            return;
+
+        id = methods.parseInt(id);
+
+        if (type === 0) {
+            let target = mp.players.at(id);
+            if (!user.isLogin(target)) {
+                player.notify('~r~Игрок не найден на сервере.');
+                return;
+            }
+
+            user.teleport(player, target.position.x, target.position.y, target.position.z);
+        }
+        else {
+            let target = user.getPlayerById(id);
+            if (!user.isLogin(target)) {
+                player.notify('~r~Игрок не найден на сервере.');
+                return;
+            }
+
+            user.teleport(player, target.position.x, target.position.y, target.position.z);
+        }
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+};
+
+admin.inviteMp = function(player) {
+    try {
+        if (!user.isAdmin(player))
+            return;
+
+        let pos = player.position;
+        mp.players.forEach(p => {
+            if (user.isLogin(p) && !user.isCuff(p) && !user.isTie(p)) {
+                p.call('client:menuList:showInviteMpMenu', [pos.x, pos.y, pos.z]);
+            }
+        })
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+};

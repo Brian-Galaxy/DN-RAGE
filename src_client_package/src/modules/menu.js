@@ -123,8 +123,7 @@ class Menu {
             _isShowInput = true;
             mp.gui.chat.activate(false);
             mp.gui.cursor.show(true, true);
-
-            methods.debug('TEST', _isShowInput);
+            user.setVariable('isTyping', true);
 
             promise = {resolve, reject};
 

@@ -211,6 +211,8 @@ enums.userData = [
     "promocode",
     "referer",
 
+    "date_ban",
+
     "quest_role_0",
     "quest_standart",
     "quest_gang",

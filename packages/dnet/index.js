@@ -38,6 +38,7 @@ let weather = require('./managers/weather');
 let pickups = require('./managers/pickups');
 let gangWar = require('./managers/gangWar');
 let timer = require('./managers/timer');
+let ems = require('./managers/ems');
 
 let coffer = require('./coffer');
 let inventory = require('./inventory');
@@ -63,6 +64,10 @@ function init() {
         gangWar.loadAll();
         timer.loadAll();
 
+        setTimeout(function () {
+            ems.createSmall();
+        }, 20000);
+
         weather.loadAll();
 
         carWash.loadAll();
@@ -86,6 +91,8 @@ function init() {
         inventory.loadAll();
 
         vShop.loadAllShop();
+
+        setInterval(methods.saveAllAnother, 15 * 1000 * 60);
 
         setTimeout(function () {
             vShop.loadAllShopVehicles();

@@ -124,7 +124,7 @@ cloth.buyProp = function (player, price, body, clothId, color, itemName, shopId,
         return;
     }
 
-    let params = `{"name": "${itemName}"}`;
+    let params = `{"name": "${itemName}", "sex": ${user.getSex(player)}}`;
 
     switch (body) {
         case 0:
@@ -133,7 +133,7 @@ cloth.buyProp = function (player, price, body, clothId, color, itemName, shopId,
             user.set(player, 'hat', clothId);
             user.set(player, 'hat_color', color);
 
-            params = `{"name": "${itemName}", "hat": ${clothId}, "hat_color": ${color}}`;
+            params = `{"name": "${itemName}", "sex": ${user.getSex(player)}, "hat": ${clothId}, "hat_color": ${color}}`;
             inventory.addItem(269, 1, inventory.types.Player, user.getId(player), 1, 1, params, 100);
             break;
         case 1:
@@ -151,7 +151,7 @@ cloth.buyProp = function (player, price, body, clothId, color, itemName, shopId,
             user.set(player, 'ear', clothId);
             user.set(player, 'ear_color', color);
 
-            params = `{"name": "${itemName}", "ear": ${clothId}, "ear_color": ${color}}`;
+            params = `{"name": "${itemName}", "sex": ${user.getSex(player)}, "ear": ${clothId}, "ear_color": ${color}}`;
             inventory.addItem(271, 1, inventory.types.Player, user.getId(player), 1, 1, params, 100);
             break;
         case 6:
@@ -160,7 +160,7 @@ cloth.buyProp = function (player, price, body, clothId, color, itemName, shopId,
             user.set(player, 'watch', clothId);
             user.set(player, 'watch_color', color);
 
-            params = `{"name": "${itemName}", "watch": ${clothId}, "watch_color": ${color}}`;
+            params = `{"name": "${itemName}", "sex": ${user.getSex(player)}, "watch": ${clothId}, "watch_color": ${color}}`;
             inventory.addItem(272, 1, inventory.types.Player, user.getId(player), 1, 1, params, 100);
             break;
         case 7:
@@ -169,7 +169,7 @@ cloth.buyProp = function (player, price, body, clothId, color, itemName, shopId,
             user.set(player, 'bracelet', clothId);
             user.set(player, 'bracelet_color', color);
 
-            params = `{"name": "${itemName}", "bracelet": ${clothId}, "bracelet_color": ${color}}`;
+            params = `{"name": "${itemName}", "sex": ${user.getSex(player)}, "bracelet": ${clothId}, "bracelet_color": ${color}}`;
             inventory.addItem(273, 1, inventory.types.Player, user.getId(player), 1, 1, params, 100);
             break;
     }
@@ -229,7 +229,7 @@ cloth.buy = function (player, price, body, cloth, color, torso, torsoColor, para
             user.set(player, 'mask', cloth);
             user.set(player, 'mask_color', color);
 
-            params = `{"name": "${itemName}", "mask": ${cloth}, "mask_color": ${color}}`;
+            params = `{"name": "${itemName}", "sex": ${user.getSex(player)}, "mask": ${cloth}, "mask_color": ${color}}`;
             inventory.addItem(274, 1, inventory.types.Player, user.getId(player), 1, 1, params, 100);
             break;
         case 4:
@@ -238,7 +238,7 @@ cloth.buy = function (player, price, body, cloth, color, torso, torsoColor, para
             user.set(player, 'leg', cloth);
             user.set(player, 'leg_color', color);
 
-            params = `{"name": "${itemName}", "leg": ${cloth}, "leg_color": ${color}}`;
+            params = `{"name": "${itemName}", "sex": ${user.getSex(player)}, "leg": ${cloth}, "leg_color": ${color}}`;
             inventory.addItem(266, 1, inventory.types.Player, user.getId(player), 1, 1, params, 100);
             break;
         case 5:
@@ -247,11 +247,11 @@ cloth.buy = function (player, price, body, cloth, color, torso, torsoColor, para
             user.set(player, 'hand', cloth);
             user.set(player, 'hand_color', color);
 
-            params = `{"name": "${itemName}", "hand": ${cloth}, "hand_color": ${color}}`;
+            params = `{"name": "${itemName}", "sex": ${user.getSex(player)}, "hand": ${cloth}, "hand_color": ${color}}`;
             if (cloth == 82)
             {
                 let names = ['Черная', 'Синяя', 'Желтая', 'Розовая', 'Зелёная', 'Оранжевая', 'Фиолетовая', 'Светло-розовая', 'Красно-синяя', 'Голубая', 'Цифра', 'Флора', 'Синяя флора', 'Узор', 'Пустынная', 'Камо', 'Белая'];
-                params = `{"name": "${itemName} (${names[color]})", "hand": ${cloth}, "hand_color": ${color}}`;
+                params = `{"name": "${itemName} (${names[color]})", "sex": ${user.getSex(player)}, "hand": ${cloth}, "hand_color": ${color}}`;
             }
 
             if (cloth == 41 || cloth == 45 || cloth == 82)
@@ -265,7 +265,7 @@ cloth.buy = function (player, price, body, cloth, color, torso, torsoColor, para
             user.set(player, 'foot', cloth);
             user.set(player, 'foot_color', color);
 
-            params = `{"name": "${itemName}", "foot": ${cloth}, "foot_color": ${color}}`;
+            params = `{"name": "${itemName}", "sex": ${user.getSex(player)}, "foot": ${cloth}, "foot_color": ${color}}`;
             inventory.addItem(267, 1, inventory.types.Player, user.getId(player), 1, 1, params, 100);
             break;
         case 7:
@@ -274,7 +274,7 @@ cloth.buy = function (player, price, body, cloth, color, torso, torsoColor, para
             user.set(player, 'accessorie', cloth);
             user.set(player, 'accessorie_color', color);
 
-            params = `{"name": "${itemName}", "accessorie": ${cloth}, "accessorie_color": ${color}}`;
+            params = `{"name": "${itemName}", "sex": ${user.getSex(player)}, "accessorie": ${cloth}, "accessorie_color": ${color}}`;
             inventory.addItem(268, 1, inventory.types.Player, user.getId(player), 1, 1, params, 100);
             break;
         case 10:
@@ -348,7 +348,7 @@ cloth.buyMask = function (player, price, clothId, color, itemName, shopId) {
     user.set(player, 'mask', clothId);
     user.set(player, 'mask_color', color);
 
-    let params = `{"name": "${itemName}", "mask": ${clothId}, "mask_color": ${color}}`;
+    let params = `{"name": "${itemName}", "sex": ${user.getSex(player)}, "mask": ${clothId}, "mask_color": ${color}}`;
     inventory.addItem(274, 1, inventory.types.Player, user.getId(player), 1, 1, params, 100);
 
     user.updateCharacterCloth(player);

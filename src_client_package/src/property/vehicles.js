@@ -80,6 +80,11 @@ vehicles.setTaxiLightState = function(state) {
         mp.events.callRemote('s:vSync:setTaxiLightState', mp.players.local.vehicle.remoteId, state);
 };
 
+vehicles.setAnchorState = function(state) {
+    if (mp.players.local.vehicle)
+        mp.events.callRemote('s:vSync:setAnchorState', mp.players.local.vehicle.remoteId, state);
+};
+
 vehicles.setSpotLightState = function(state) {
     if (mp.players.local.vehicle)
         mp.events.callRemote('s:vSync:setSpotLightState', mp.players.local.vehicle.remoteId, state);

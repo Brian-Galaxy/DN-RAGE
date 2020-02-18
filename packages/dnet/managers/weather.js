@@ -318,8 +318,9 @@ weather.nextRandomWeather = function() {
 weather.getWeatherName = function(type) {
     switch (type) {
         case "EXTRASUNNY":
+            return 'Безоблачно';
         case "CLEAR":
-            return 'Солнечно';
+            return 'Низкая облачность';
         case "CLOUDS":
             return 'Облачно';
         case "SMOG":
@@ -337,7 +338,32 @@ weather.getWeatherName = function(type) {
         case "XMAS":
             return 'Снег';
     }
-    return 'Солнечно';
+    return 'Безоблачно';
+};
+
+weather.getWeatherDesc = function(type) {
+    switch (type) {
+        case "EXTRASUNNY":
+        case "CLEAR":
+            return '';
+        case "CLOUDS":
+            return '';
+        case "SMOG":
+            return 'На дорогах будет слегка понижена видимость, будьте осторожны';
+        case "FOGGY":
+            return 'Водителям рекомендуем включить фары и быть аккуратными на дорогах';
+        case "OVERCAST":
+            return '';
+        case "RAIN":
+            return '';
+        case "THUNDER":
+            return 'В океане прогнозируется шторм с сильным ветром';
+        case "CLEARING":
+            return 'Не забывайте зонтик ;)';
+        case "XMAS":
+            return '';
+    }
+    return '';
 };
 
 weather.getFullRpTime = function() {
@@ -518,7 +544,7 @@ weather.nextRandomWeatherByType = function(weatherType) {
     methods.notifyWithPictureToAll(
         `Life Invader [${weather.getFullRpTime()}]`,
         "~y~Новости погоды",
-        `Погода: ~y~${weather.getWeatherName(weather.getWeather())}~s~\nТемпература: ~y~${Math.round(_tempNew)}°C\n~s~Ветер: ~y~${Math.round(_windSpeed / 2)}m/s`,
+        `Погода: ~y~${weather.getWeatherName(weather.getWeather())}~s~\nТемпература: ~y~${Math.round(_tempNew)}°C\n~s~Ветер: ~y~${methods.parseFloat(_windSpeed * 1.4).toFixed(1)}m/s\n~c~${weather.getWeatherDesc(weather.getWeather())}`,
         "CHAR_TANISHA",
         1
     );

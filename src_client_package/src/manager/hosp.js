@@ -70,6 +70,9 @@ hosp.freePlayer = function() {
     prvTime = 0;
     mp.game.ui.notifications.show("~g~Вы успешно прошли лечение");
 
+    user.setWaterLevel(500);
+    user.setEatLevel(500);
+
     if (user.getCache('med_lic'))
     {
         user.removeMoney(100, 'Лечение в больнице');

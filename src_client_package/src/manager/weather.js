@@ -132,6 +132,10 @@ weather.getCurrentDayName = function() {
     return DayName;
 };
 
+weather.getWindSpeed = function() {
+    return WindSpeed;
+};
+
 weather.getMonth = function() {
     return Month;
 };

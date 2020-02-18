@@ -8,6 +8,8 @@ import weapons from "./weapons";
 import enums from "./enums";
 import items from "./items";
 import phone from "./phone";
+import inventory from "./inventory";
+
 import quest from "./manager/quest";
 
 let user = {};
@@ -149,6 +151,12 @@ user.getTargetEntityValidate = function() {
         else if (
             user.targetEntity &&
             user.targetEntity.entity &&
+            (user.targetEntity.entity.getVariable('emsType') !== undefined || user.targetEntity.entity.getVariable('emsType') !== null)
+        )
+            return user.targetEntity.entity;
+        else if (
+            user.targetEntity &&
+            user.targetEntity.entity &&
             user.targetEntity.entity.invType
         )
             return user.targetEntity.entity;
@@ -208,6 +216,7 @@ user.removeAllWeapons = function() {
         }
     });
 
+    user.setCurrentWeapon('weapon_unarmed');
     inventory.deleteItemsRange(54, 136);
 };
 
@@ -231,6 +240,15 @@ user.giveWeaponComponentByHash = function(model, component) {
 
 user.giveWeaponComponent = function(model, component) {
     user.giveWeaponComponentByHash(weapons.getHashByName(model), component);
+};
+
+user.removeWeaponComponentByHash = function(model, component) {
+    //mp.game.invoke(methods.GIVE_WEAPON_COMPONENT_TO_PED, mp.players.local.handle, model, component);
+    mp.events.callRemote('server:user:removeWeaponComponent', model.toString(), component.toString());
+};
+
+user.removeWeaponComponent = function(model, component) {
+    user.removeWeaponComponentByHash(weapons.getHashByName(model), component);
 };
 
 user.removeAllWeaponComponents = function(model) {

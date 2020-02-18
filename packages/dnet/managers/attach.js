@@ -1,3 +1,12 @@
+const attach = exports;
+
+attach.initFunctions = (entity) =>
+{
+    entity._attachments = [];
+    entity.addAttachment = _addAttachmentWrap;
+    entity.hasAttachment = _hasAttachment;
+};
+
 function serializeAttachments(attachments)
 {
     return (attachments.map((hash) => (hash.toString(36)))).join("|");

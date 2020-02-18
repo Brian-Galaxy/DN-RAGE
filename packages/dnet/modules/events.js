@@ -7,6 +7,7 @@ let inventory = require('../inventory');
 let phone = require('../phone');
 let weapons = require('../weapons');
 let items = require('../items');
+let admin = require('../admin');
 
 let Container = require('./data');
 let methods = require('./methods');
@@ -33,6 +34,7 @@ let pickups = require('../managers/pickups');
 let dispatcher = require('../managers/dispatcher');
 let weather = require('../managers/weather');
 let gangWar = require('../managers/gangWar');
+let ems = require('../managers/ems');
 
 mp.events.__add__ = mp.events.add;
 
@@ -1077,6 +1079,85 @@ mp.events.addRemoteCounted('server:admin:spawnVeh', (player, vName) => {
     }
 });
 
+mp.events.addRemoteCounted('server:admin:giveLeader', (player, type, id, listIndex) => {
+    admin.giveLeader(player, type, id, listIndex);
+});
+
+mp.events.addRemoteCounted('server:admin:blacklist', (player, type, id, reason) => {
+    admin.blacklist(player, type, id, reason);
+});
+
+mp.events.addRemoteCounted('server:admin:kick', (player, type, id, reason) => {
+    admin.kick(player, type, id, reason);
+});
+
+mp.events.addRemoteCounted('server:admin:unban', (player, type, id, reason) => {
+    admin.unban(player, type, id, reason);
+});
+
+mp.events.addRemoteCounted('server:admin:ban', (player, type, id, idx, reason) => {
+    admin.ban(player, type, id, idx, reason);
+});
+
+mp.events.addRemoteCounted('server:admin:jail', (player, type, id, idx, reason) => {
+    admin.jail(player, type, id, idx, reason);
+});
+
+mp.events.addRemoteCounted('server:admin:setHpById', (player, type, id, num) => {
+    admin.setHpById(player, type, id, num);
+});
+
+mp.events.addRemoteCounted('server:admin:setArmorById', (player, type, id, num) => {
+    admin.setArmorById(player, type, id, num);
+});
+
+mp.events.addRemoteCounted('server:admin:setSkinById', (player, type, id, skin) => {
+    admin.setSkinById(player, type, id, skin);
+});
+
+mp.events.addRemoteCounted('server:admin:resetSkinById', (player, type, id) => {
+    admin.resetSkinById(player, type, id);
+});
+
+mp.events.addRemoteCounted('server:admin:tptoid', (player, type, id) => {
+    admin.tpToUser(player, type, id);
+});
+
+mp.events.addRemoteCounted('server:admin:tptome', (player, type, id) => {
+    admin.tpToAdmin(player, type, id);
+});
+
+mp.events.addRemoteCounted('server:admin:inviteMp', (player) => {
+    admin.inviteMp(player);
+});
+
+mp.events.addRemoteCounted('server:ems:removeObject', (player, id) => {
+    try {
+        ems.removeObject(id);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.addRemoteCounted('server:ems:attachObject', (player, id) => {
+    try {
+        ems.attachObject(player, id);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.addRemoteCounted('server:ems:vehicleUnload', (player) => {
+    try {
+        ems.vehicleUnload(player);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
 mp.events.addRemoteCounted('server:business:buy', (player, id) => {
     if (!user.isLogin(player))
         return;
@@ -1686,7 +1767,7 @@ mp.events.addRemoteCounted('server:phone:editContact', (player, json) => {
     try {
         let contact = JSON.parse(json);
         methods.debug(json);
-        mysql.executeQuery(`UPDATE phone_contact SET name = '${methods.removeQuotes(contact.name)}', numbers = '${JSON.stringify(contact.numbers)}' WHERE id = '${contact.id}'`);
+        mysql.executeQuery(`UPDATE phone_contact SET name = '${methods.removeQuotes(methods.removeQuotes2(contact.name))}', numbers = '${JSON.stringify(contact.numbers)}' WHERE id = '${contact.id}'`);
         player.notify('~y~Контакнт отредактирован');
     }
     catch (e) {
@@ -1734,7 +1815,7 @@ mp.events.addRemoteCounted('server:phone:addContact', (player, json) => {
             return;
         }
 
-        mysql.executeQuery(`INSERT INTO phone_contact (phone, name, numbers) VALUES ('${user.get(player, 'phone')}', '${methods.removeQuotes(contact.name)}', '${JSON.stringify(contact.numbers)}')`);
+        mysql.executeQuery(`INSERT INTO phone_contact (phone, name, numbers) VALUES ('${user.get(player, 'phone')}', '${methods.removeQuotes(methods.removeQuotes2(contact.name))}', '${JSON.stringify(contact.numbers)}')`);
         player.notify('~g~Контакт был добавлен');
         setTimeout(function () {
             phone.updateContactList(player);
@@ -1745,8 +1826,36 @@ mp.events.addRemoteCounted('server:phone:addContact', (player, json) => {
     }
 });
 
+mp.events.addRemoteCounted('server:phone:sendMessage', (player, phoneNumber, message) => {
+    if (!user.isLogin(player))
+        return;
+
+    try {
+        mysql.executeQuery(`INSERT INTO phone_sms (number_from, number_to, text, date, time) VALUES ('${user.get(player, 'phone').toString()}', '${phoneNumber}', '${message}', '${weather.getFullRpDate().replace('/', '.')}', '${weather.getFullRpTime()}')`);
+
+        mp.players.forEach(p => {
+            if (user.isLogin(p) && user.get(player, 'phone').toString() === phoneNumber) {
+                user.sendPhoneNotify(p, player, phoneNumber, message);
+                //phone.selectChat(player, user.get(player, 'phone').toString(), chat);
+            }
+        });
+
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
 mp.events.addRemoteCounted('server:phone:updateContactList', (player) => {
     phone.updateContactList(player);
+});
+
+mp.events.addRemoteCounted('server:phone:updateDialogList', (player) => {
+    phone.updateDialogList(player);
+});
+
+mp.events.addRemoteCounted('server:phone:selectChat', (player, phoneNumber, chat) => {
+    phone.selectChat(player, phoneNumber, chat);
 });
 
 mp.events.addRemoteCounted('server:phone:fractionList', (player) => {
@@ -3596,6 +3705,41 @@ mp.events.addRemoteCounted('server:user:giveSubLeader2', (player, id) => {
     }
 });
 
+mp.events.addRemoteCounted('server:user:giveLeader2', (player, id) => {
+
+    if (!user.isLogin(player))
+        return;
+
+    if (!user.isLeader2(player)) {
+        player.notify('~r~Вы не лидер чтобы выдавать такие полномочия');
+        return;
+    }
+
+    id = methods.parseInt(id);
+    let target = user.getPlayerById(id);
+    if (user.isLogin(target)) {
+
+        user.set(player, 'is_sub_leader2', true);
+        user.set(target, 'is_sub_leader2', false);
+
+        user.set(player, 'is_leader2', false);
+        user.set(target, 'is_leader2', true);
+
+        target.notify('~g~Вам выдали полномочия лидера');
+        player.notify('~b~Вы выдали полномочия лидера: ~s~' + user.getRpName(target));
+
+        user.save(target);
+        user.save(player);
+    }
+    else {
+        mysql.executeQuery(`UPDATE users SET is_sub_leader2 = '0', is_leader2 = '1' where id = '${id}' AND is_leader2 <> 1`);
+        player.notify('~b~Вы выдали полномочия лидера');
+        user.set(player, 'is_sub_leader2', true);
+        user.set(player, 'is_leader2', false);
+        user.save(player);
+    }
+});
+
 mp.events.addRemoteCounted('server:user:takeSubLeader', (player, id) => {
 
     if (!user.isLogin(player))
@@ -3801,6 +3945,12 @@ mp.events.addRemoteCounted('server:user:giveWeaponComponent', (player, weapon, c
     if (!user.isLogin(player))
         return;
     user.giveWeaponComponent(player, methods.parseInt(weapon), methods.parseInt(component));
+});
+
+mp.events.addRemoteCounted('server:user:removeWeaponComponent', (player, weapon, component) => {
+    if (!user.isLogin(player))
+        return;
+    user.removeWeaponComponent(player, methods.parseInt(weapon), methods.parseInt(component));
 });
 
 mp.events.addRemoteCounted('server:user:removeAllWeaponComponents', (player, weapon) => {
@@ -4821,6 +4971,7 @@ mp.events.add('playerJoin', player => {
 });
 
 mp.events.add('playerQuit', player => {
+    user.setOnlineStatus(player, 0);
     user.save(player, true);
 });
 

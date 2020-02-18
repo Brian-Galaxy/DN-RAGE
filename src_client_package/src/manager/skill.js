@@ -1,5 +1,6 @@
 import methods from '../modules/methods';
 import user from '../user';
+import weather from "./weather";
 
 let skill = {};
 
@@ -98,7 +99,6 @@ let updateStats = function(){
         mp.game.stats.statSetInt(mp.game.joaat("MP0_STRENGTH"), user.getCache('stats_strength'), true);
         mp.game.stats.statSetInt(mp.game.joaat("MP0_LUNG_CAPACITY"), user.getCache('stats_lung_capacity'), true);
         mp.game.stats.statSetInt(mp.game.joaat("MP0_WHEELIE_ABILITY"), user.getCache('stats_driving'), true);
-        mp.game.stats.statSetInt(mp.game.joaat("MP0_FLYING_ABILITY"), user.getCache('stats_flying'), true);
         mp.game.stats.statSetInt(mp.game.joaat("MP0_STEALTH_ABILITY"), user.getCache('stats_lucky'), true);
         mp.game.stats.statSetInt(mp.game.joaat("MP0_SHOOTING_ABILITY"), user.getCache('stats_shooting'), true);
 
@@ -106,7 +106,6 @@ let updateStats = function(){
         mp.game.stats.statSetInt(mp.game.joaat("STRENGTH"), user.getCache('stats_strength'), true);
         mp.game.stats.statSetInt(mp.game.joaat("LUNG_CAPACITY"), user.getCache('stats_lung_capacity'), true);
         mp.game.stats.statSetInt(mp.game.joaat("WHEELIE_ABILITY"), user.getCache('stats_driving'), true);
-        mp.game.stats.statSetInt(mp.game.joaat("FLYING_ABILITY"), user.getCache('stats_flying'), true);
         mp.game.stats.statSetInt(mp.game.joaat("STEALTH_ABILITY"), user.getCache('stats_lucky'), true);
         mp.game.stats.statSetInt(mp.game.joaat("SHOOTING_ABILITY"), user.getCache('stats_shooting'), true);
 
@@ -114,7 +113,6 @@ let updateStats = function(){
         mp.game.stats.statSetInt(mp.game.joaat("SP0_STRENGTH"), user.getCache('stats_strength'), true);
         mp.game.stats.statSetInt(mp.game.joaat("SP0_LUNG_CAPACITY"), user.getCache('stats_lung_capacity'), true);
         mp.game.stats.statSetInt(mp.game.joaat("SP0_WHEELIE_ABILITY"), user.getCache('stats_driving'), true);
-        mp.game.stats.statSetInt(mp.game.joaat("SP0_FLYING_ABILITY"), user.getCache('stats_flying'), true);
         mp.game.stats.statSetInt(mp.game.joaat("SP0_STEALTH_ABILITY"), user.getCache('stats_lucky'), true);
         mp.game.stats.statSetInt(mp.game.joaat("SP0_SHOOTING_ABILITY"), user.getCache('stats_shooting'), true);
 
@@ -122,7 +120,6 @@ let updateStats = function(){
         mp.game.stats.statSetInt(mp.game.joaat("SP1_STRENGTH"), user.getCache('stats_strength'), true);
         mp.game.stats.statSetInt(mp.game.joaat("SP1_LUNG_CAPACITY"), user.getCache('stats_lung_capacity'), true);
         mp.game.stats.statSetInt(mp.game.joaat("SP1_WHEELIE_ABILITY"), user.getCache('stats_driving'), true);
-        mp.game.stats.statSetInt(mp.game.joaat("SP1_FLYING_ABILITY"), user.getCache('stats_flying'), true);
         mp.game.stats.statSetInt(mp.game.joaat("SP1_STEALTH_ABILITY"), user.getCache('stats_lucky'), true);
         mp.game.stats.statSetInt(mp.game.joaat("SP1_SHOOTING_ABILITY"), user.getCache('stats_shooting'), true);
 
@@ -130,9 +127,23 @@ let updateStats = function(){
         mp.game.stats.statSetInt(mp.game.joaat("SP2_STRENGTH"), user.getCache('stats_strength'), true);
         mp.game.stats.statSetInt(mp.game.joaat("SP2_LUNG_CAPACITY"), user.getCache('stats_lung_capacity'), true);
         mp.game.stats.statSetInt(mp.game.joaat("SP2_WHEELIE_ABILITY"), user.getCache('stats_driving'), true);
-        mp.game.stats.statSetInt(mp.game.joaat("SP2_FLYING_ABILITY"), user.getCache('stats_flying'), true);
         mp.game.stats.statSetInt(mp.game.joaat("SP2_STEALTH_ABILITY"), user.getCache('stats_lucky'), true);
         mp.game.stats.statSetInt(mp.game.joaat("SP2_SHOOTING_ABILITY"), user.getCache('stats_shooting'), true);
+
+        if (weather.getWindSpeed() >= 8) {
+            mp.game.stats.statSetInt(mp.game.joaat("MP0_FLYING_ABILITY"), 0, true);
+            mp.game.stats.statSetInt(mp.game.joaat("FLYING_ABILITY"), 0, true);
+            mp.game.stats.statSetInt(mp.game.joaat("SP0_FLYING_ABILITY"), 0, true);
+            mp.game.stats.statSetInt(mp.game.joaat("SP1_FLYING_ABILITY"), 0, true);
+            mp.game.stats.statSetInt(mp.game.joaat("SP2_FLYING_ABILITY"), 0, true);
+        }
+        else {
+            mp.game.stats.statSetInt(mp.game.joaat("MP0_FLYING_ABILITY"), user.getCache('stats_flying'), true);
+            mp.game.stats.statSetInt(mp.game.joaat("FLYING_ABILITY"), user.getCache('stats_flying'), true);
+            mp.game.stats.statSetInt(mp.game.joaat("SP0_FLYING_ABILITY"), user.getCache('stats_flying'), true);
+            mp.game.stats.statSetInt(mp.game.joaat("SP1_FLYING_ABILITY"), user.getCache('stats_flying'), true);
+            mp.game.stats.statSetInt(mp.game.joaat("SP2_FLYING_ABILITY"), user.getCache('stats_flying'), true);
+        }
     }
     catch (e) {
         methods.debug(e);

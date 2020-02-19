@@ -187,6 +187,7 @@ enums.userData = [
     "s_voice_vol",
     "s_clipset",
 
+    "s_bind_do",
     "s_bind_inv",
     "s_bind_inv_world",
     "s_bind_lock",

@@ -349,7 +349,7 @@ timer.secTimer = function() {
 
             if (user.getDrugLevel(drugId) > 1000) {
                 mp.gui.chat.push(`!{03A9F4}Вы в коме от передозировки`);
-                //user.setHeal(0); //TODO
+                user.setHeal(0); //TODO
             }
 
             if (!mp.game.graphics.getScreenEffectIsActive("DrugsMichaelAliensFightIn"))
@@ -370,7 +370,7 @@ timer.secTimer = function() {
 
             if (user.getDrugLevel(drugId) > 1000) {
                 mp.gui.chat.push(`!{03A9F4}Вы в коме от передозировки`);
-                //user.setHeal(0); //TODO
+                user.setHeal(0); //TODO
             }
 
             if (!mp.game.graphics.getScreenEffectIsActive("DrugsTrevorClownsFightIn"))
@@ -391,7 +391,7 @@ timer.secTimer = function() {
 
             if (user.getDrugLevel(drugId) > 1000) {
                 mp.gui.chat.push(`!{03A9F4}Вы в коме от передозировки`);
-                //user.setHeal(0); //TODO
+                user.setHeal(0); //TODO
             }
 
             if (!mp.game.graphics.getScreenEffectIsActive("DMT_flight"))
@@ -408,7 +408,7 @@ timer.secTimer = function() {
 
             if (user.getDrugLevel(drugId) > 1000) {
                 mp.gui.chat.push(`!{03A9F4}Вы в коме от передозировки`);
-                //user.setHeal(0); //TODO
+                user.setHeal(0); //TODO
             }
 
             if (!mp.game.graphics.getScreenEffectIsActive("Rampage"))
@@ -425,7 +425,7 @@ timer.secTimer = function() {
 
             if (user.getDrugLevel(drugId) > 1000) {
                 mp.gui.chat.push(`!{03A9F4}Вы в коме от передозировки`);
-                //user.setHeal(0); //TODO
+                user.setHeal(0); //TODO
             }
 
             if (!mp.game.graphics.getScreenEffectIsActive("DrugsDrivingIn"))
@@ -446,7 +446,7 @@ timer.secTimer = function() {
 
             if (user.getDrugLevel(drugId) > 1000) {
                 mp.gui.chat.push(`!{03A9F4}Вы в коме от передозировки`);
-                //user.setHeal(0); //TODO
+                user.setHeal(0); //TODO
             }
 
             if (!mp.game.graphics.getScreenEffectIsActive("PeyoteEndIn"))
@@ -467,7 +467,7 @@ timer.secTimer = function() {
 
             if (user.getDrugLevel(drugId) > 1500) {
                 mp.gui.chat.push(`!{03A9F4}Вы в коме от передозировки`);
-                //user.setHeal(0); //TODO
+                user.setHeal(0); //TODO
             }
 
             if (!mp.game.graphics.getScreenEffectIsActive("ChopVision"))

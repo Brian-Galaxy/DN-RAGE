@@ -112,7 +112,7 @@ cloth.changeProp = function (player, body, clothId, color) {
 cloth.buyProp = function (player, price, body, clothId, color, itemName, shopId, isFree) {
     methods.debug('barberShop.buyProp');
 
-    if (price < 1)
+    if (price < 0)
         return;
 
     if (!user.isLogin(player))
@@ -128,7 +128,7 @@ cloth.buyProp = function (player, price, body, clothId, color, itemName, shopId,
 
     switch (body) {
         case 0:
-            inventory.updateItemsEquipByItemId(269, inventory.types.Player, user.getId(player), 0);
+            inventory.updateItemsEquipByItemId(269, user.getId(player), inventory.types.Player, 0);
 
             user.set(player, 'hat', clothId);
             user.set(player, 'hat_color', color);
@@ -137,7 +137,7 @@ cloth.buyProp = function (player, price, body, clothId, color, itemName, shopId,
             inventory.addItem(269, 1, inventory.types.Player, user.getId(player), 1, 1, params, 100);
             break;
         case 1:
-            inventory.updateItemsEquipByItemId(270, inventory.types.Player, user.getId(player), 0);
+            inventory.updateItemsEquipByItemId(270, user.getId(player), inventory.types.Player, 0);
 
             user.set(player, 'glasses', clothId);
             user.set(player, 'glasses_color', color);
@@ -146,7 +146,7 @@ cloth.buyProp = function (player, price, body, clothId, color, itemName, shopId,
             inventory.addItem(270, 1, inventory.types.Player, user.getId(player), 1, 1, params, 100);
             break;
         case 2:
-            inventory.updateItemsEquipByItemId(271, inventory.types.Player, user.getId(player), 0);
+            inventory.updateItemsEquipByItemId(271, user.getId(player), inventory.types.Player, 0);
 
             user.set(player, 'ear', clothId);
             user.set(player, 'ear_color', color);
@@ -155,7 +155,7 @@ cloth.buyProp = function (player, price, body, clothId, color, itemName, shopId,
             inventory.addItem(271, 1, inventory.types.Player, user.getId(player), 1, 1, params, 100);
             break;
         case 6:
-            inventory.updateItemsEquipByItemId(272, inventory.types.Player, user.getId(player), 0);
+            inventory.updateItemsEquipByItemId(272, user.getId(player), inventory.types.Player, 0);
 
             user.set(player, 'watch', clothId);
             user.set(player, 'watch_color', color);
@@ -164,7 +164,7 @@ cloth.buyProp = function (player, price, body, clothId, color, itemName, shopId,
             inventory.addItem(272, 1, inventory.types.Player, user.getId(player), 1, 1, params, 100);
             break;
         case 7:
-            inventory.updateItemsEquipByItemId(273, inventory.types.Player, user.getId(player), 0);
+            inventory.updateItemsEquipByItemId(273, user.getId(player), inventory.types.Player, 0);
 
             user.set(player, 'bracelet', clothId);
             user.set(player, 'bracelet_color', color);
@@ -217,14 +217,14 @@ cloth.buy = function (player, price, body, cloth, color, torso, torsoColor, para
         return;
     }
 
-    if (price < 1)
+    if (price < 0)
         return;
 
     let params = `{"name": "${itemName}"}`;
 
     switch (body) {
         case 1:
-            inventory.updateItemsEquipByItemId(274, inventory.types.Player, user.getId(player), 0);
+            inventory.updateItemsEquipByItemId(274, user.getId(player), inventory.types.Player, 0);
 
             user.set(player, 'mask', cloth);
             user.set(player, 'mask_color', color);
@@ -233,7 +233,7 @@ cloth.buy = function (player, price, body, cloth, color, torso, torsoColor, para
             inventory.addItem(274, 1, inventory.types.Player, user.getId(player), 1, 1, params, 100);
             break;
         case 4:
-            inventory.updateItemsEquipByItemId(266, inventory.types.Player, user.getId(player), 0);
+            inventory.updateItemsEquipByItemId(266, user.getId(player), inventory.types.Player, 0);
 
             user.set(player, 'leg', cloth);
             user.set(player, 'leg_color', color);
@@ -242,7 +242,7 @@ cloth.buy = function (player, price, body, cloth, color, torso, torsoColor, para
             inventory.addItem(266, 1, inventory.types.Player, user.getId(player), 1, 1, params, 100);
             break;
         case 5:
-            inventory.updateItemsEquipByItemId(264, inventory.types.Player, user.getId(player), 0);
+            inventory.updateItemsEquipByItemId(264, user.getId(player), inventory.types.Player, 0);
 
             user.set(player, 'hand', cloth);
             user.set(player, 'hand_color', color);
@@ -260,7 +260,7 @@ cloth.buy = function (player, price, body, cloth, color, torso, torsoColor, para
                 inventory.addItem(263, 1, inventory.types.Player, user.getId(player), 1, 1, params, 100);
             break;
         case 6:
-            inventory.updateItemsEquipByItemId(267, inventory.types.Player, user.getId(player), 0);
+            inventory.updateItemsEquipByItemId(267, user.getId(player), inventory.types.Player, 0);
 
             user.set(player, 'foot', cloth);
             user.set(player, 'foot_color', color);
@@ -269,7 +269,7 @@ cloth.buy = function (player, price, body, cloth, color, torso, torsoColor, para
             inventory.addItem(267, 1, inventory.types.Player, user.getId(player), 1, 1, params, 100);
             break;
         case 7:
-            inventory.updateItemsEquipByItemId(268, inventory.types.Player, user.getId(player), 0);
+            inventory.updateItemsEquipByItemId(268, user.getId(player), inventory.types.Player, 0);
 
             user.set(player, 'accessorie', cloth);
             user.set(player, 'accessorie_color', color);
@@ -283,7 +283,7 @@ cloth.buy = function (player, price, body, cloth, color, torso, torsoColor, para
             break;
         case 11:
 
-            inventory.updateItemsEquipByItemId(265, inventory.types.Player, user.getId(player), 0);
+            inventory.updateItemsEquipByItemId(265, user.getId(player), inventory.types.Player, 0);
 
             if (torso == -1) torso = 0;
             if (torsoColor == -1) torsoColor = 0;
@@ -341,9 +341,9 @@ cloth.buyMask = function (player, price, clothId, color, itemName, shopId) {
         }
     }
 
-    if (price < 1)
+    if (price < 0)
         return;
-    inventory.updateItemsEquipByItemId(274, inventory.types.Player, user.getId(player), 0);
+    inventory.updateItemsEquipByItemId(274, user.getId(player), inventory.types.Player, 0);
 
     user.set(player, 'mask', clothId);
     user.set(player, 'mask_color', color);
@@ -372,7 +372,7 @@ cloth.buyPrint = function(player, collection, overlay, price) {
         return;
     }
 
-    if (price < 1)
+    if (price < 0)
         return;
 
     if (user.get(player, 'tprint_c').toString().trim() != '') {

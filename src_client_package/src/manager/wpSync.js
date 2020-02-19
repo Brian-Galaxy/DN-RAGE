@@ -98,6 +98,8 @@ mp.events.add("entityStreamIn", (entity) => {
         try {
             let data = entity.getVariable("currentWeaponComponents");
 
+            methods.debug('entityStreamIn:currentWeaponComponents', data);
+
             if (data) {
                 let [weaponHash, components] = data.split(".");
                 weaponHash = parseInt(weaponHash, 36);
@@ -141,18 +143,24 @@ mp.events.add("entityStreamOut", (entity) => {
 mp.events.addDataHandler("currentWeaponComponents", (entity, value) => {
     try {
         if (entity.type === "player" && entity.handle !== 0) {
-            if (!entity.hasOwnProperty("__weaponComponentData")) entity.__weaponComponentData = {};
+
+            methods.debug('currentWeaponComponents', value);
+
+            if (!entity.hasOwnProperty("__weaponComponentData"))
+                entity.__weaponComponentData = {};
 
             let [weaponHash, components] = value.split(".");
             weaponHash = parseInt(weaponHash, 36);
 
-            if (!entity.__weaponComponentData.hasOwnProperty(weaponHash)) entity.__weaponComponentData[weaponHash] = new Set();
+            if (!entity.__weaponComponentData.hasOwnProperty(weaponHash))
+                entity.__weaponComponentData[weaponHash] = new Set();
 
             let currentComponents = entity.__weaponComponentData[weaponHash];
             let newComponents = (components && components.length > 0) ? components.split('|').map(hash => parseInt(hash, 36)) : [];
 
             for (let component of currentComponents) {
-                if (!newComponents.includes(component)) removeComponentFromPlayer(entity, weaponHash, component);
+                if (!newComponents.includes(component))
+                    removeComponentFromPlayer(entity, weaponHash, component);
             }
 
             for (let component of newComponents) addComponentToPlayer(entity, weaponHash, component);

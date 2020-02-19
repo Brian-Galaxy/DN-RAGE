@@ -4,6 +4,8 @@ import UIMenu from './menu';
 import Container from './data';
 import methods from './methods';
 
+import cloth from '../business/cloth';
+
 import user from '../user';
 import menuList from '../menuList';
 import voice from "../voice";
@@ -139,6 +141,7 @@ mp.events.add('client:user:auth:login', function(login, password) {
 
 mp.events.add('client:events:loginAccount:success', function(data) {
     try {
+        user.setVirtualWorld(mp.players.local.remoteId + 1);
         ui.callCef('authMain','{"type": "showCreatePage"}');
 
         let playerList = JSON.parse(data);
@@ -209,6 +212,8 @@ mp.events.add('client:events:createNewPlayer', function() {
         user.hideLoadDisplay();
         ui.callCef('authMain','{"type": "hide"}');
         ui.callCef('customization','{"type": "show"}');
+
+        user.setVirtualWorld(mp.players.local.remoteId + 1);
 
         user.set('SKIN_SEX', 0);
         user.setPlayerModel('mp_m_freemode_01');
@@ -444,6 +449,50 @@ mp.events.add('client:events:custom:choiceRole', function(roleIndex) {
 
             user.setLogin(true);
 
+            user.setVirtualWorld(0);
+
+            let clothList = user.getSex() == 1 ? JSON.parse(enums.get('clothF')) : JSON.parse(enums.get('clothM'));
+            let listTorso = [];
+            let listLeg = [];
+            let listFoot = [];
+
+            for (let i = 0; i < clothList.length; i++) {
+                if (clothList[i][1] != 11) continue;
+                if (clothList[i][0] != 0) continue;
+                if (clothList[i][10] > weather.getWeatherTemp() + 5) continue;
+                listTorso.push(i);
+            }
+            for (let i = 0; i < clothList.length; i++) {
+                if (clothList[i][1] != 4) continue;
+                if (clothList[i][0] != 0) continue;
+                if (clothList[i][10] > weather.getWeatherTemp() + 5) continue;
+                listLeg.push(i);
+            }
+
+            for (let i = 0; i < clothList.length; i++) {
+                if (clothList[i][1] != 6) continue;
+                if (clothList[i][0] != 0) continue;
+                if (clothList[i][10] > weather.getWeatherTemp() + 5) continue;
+                listFoot.push(i);
+            }
+
+            let idTorso = listTorso[methods.getRandomInt(0, listTorso.length-1)];
+            let idLeg = listLeg[methods.getRandomInt(0, listLeg.length-1)];
+            let idFoot = listFoot[methods.getRandomInt(0, listFoot.length-1)];
+
+            let cl1 = methods.getRandomInt(0, clothList[idTorso][3] - 1);
+            let cl2 = methods.getRandomInt(0, clothList[idLeg][3] - 1);
+            let cl3 = methods.getRandomInt(0, clothList[idFoot][3] - 1);
+
+            if (idTorso >= 0)
+                cloth.buy(0, clothList[idTorso][1], clothList[idTorso][2], cl1 < 0 ? 0 : cl1, clothList[idTorso][4], clothList[idTorso][5], clothList[idTorso][6], clothList[idTorso][7], clothList[idTorso][9], 0, true);
+
+            if (idLeg >= 0)
+                cloth.buy(0, clothList[idLeg][1], clothList[idLeg][2], cl2 < 0 ? 0 : cl2, clothList[idLeg][4], clothList[idLeg][5], clothList[idLeg][6], clothList[idLeg][7], clothList[idLeg][9], 0, true);
+
+            if (idFoot >= 0)
+                cloth.buy(0, clothList[idFoot][1], clothList[idFoot][2], cl3 < 0 ? 0 : cl3, clothList[idFoot][4], clothList[idFoot][5], clothList[idFoot][6], clothList[idFoot][7], clothList[idFoot][9], 0, true);
+
             if (user.getCache('role') > 0) {
                 user.set('is_custom', true);
                 user.save();
@@ -462,13 +511,14 @@ mp.events.add('client:events:custom:choiceRole', function(roleIndex) {
                 case 1:
                     inventory.takeNewItemJust(242, "{}", 1);
 
-                    mp.events.callRemote('server:shop:buy', 29, 10, 0);
 
                     user.set('reg_status', 2);
                     user.addHistory(0, 'Получил гражданство');
 
                     user.addCashMoney(methods.getRandomInt(900, 1100));
                     user.showCustomNotify('Телефон находиться в инвентаре, экипируйте его', 0, 5, 10000);
+
+                    mp.events.callRemote('server:shop:buy', 29, 0, 0);
                     break;
                 case 2:
                     inventory.takeNewItemJust(242, "{}", 2);
@@ -534,6 +584,8 @@ mp.events.add('client:events:loginUser:finalCreate', function() {
         ui.callCef('customization','{"type": "show"}');
         ui.callCef('customization','{"type": "showFamilyPage"}');
 
+        user.setVirtualWorld(mp.players.local.remoteId + 1);
+
         user.set('SKIN_SEX', 0);
         user.setPlayerModel('mp_m_freemode_01');
     }
@@ -556,7 +608,7 @@ mp.events.add('client:events:loginUser:success', async function() {
         mp.game.ui.displayRadar(true);
     }
 
-    user.showCustomNotify('Если у Вас не рабоатет управление, нажмите ALT+TAB', 0, 5, 15000);
+    user.showCustomNotify('Если у Вас не работает управление, нажмите ALT+TAB', 0, 5, 15000);
 
     setTimeout(async function () {
         inventory.getItemList(inventory.types.Player, await user.get('id'));
@@ -1626,7 +1678,7 @@ mp.events.add('client:inventory:selectWeapon', function(id, itemId, serial) {
     let slot = weapons.getGunSlotIdByItem(itemId);
 
     if (user.getCache('weapon_' + slot) != serial) {
-        inventory.updateItemsEquipByItemId(itemId, inventory.types.Player, user.getCache('id'), 0);
+        inventory.updateItemsEquipByItemId(itemId, user.getCache('id'), inventory.types.Player, 0);
         user.set('weapon_' + slot, '');
         user.set('weapon_' + slot + '_ammo', -1);
         return;
@@ -1959,13 +2011,13 @@ mp.events.add('client:inventory:unEquip', function(id, itemId) {
         user.save();
     }
     //inventory.updateEquipStatus(id, false);
-    inventory.updateItemsEquipByItemId(itemId, inventory.types.Player, user.getCache('id'), 0);
+    inventory.updateItemsEquipByItemId(itemId, user.getCache('id'), inventory.types.Player, 0);
 });
 
 mp.events.add('client:inventory:equip', function(id, itemId, count, aparams) {
 
     inventory.deleteItemProp(id);
-    inventory.updateOwnerId(id, inventory.types.Player, user.getCache('id'));
+    inventory.updateOwnerId(id, user.getCache('id'), inventory.types.Player);
 
     let params = {};
 
@@ -2391,16 +2443,16 @@ mp.events.add('render', () => {
                     if (player.getVariable('isAfk'))
                         typingLabel += '\n~r~AFK...';
 
-                    let name = '';
-                    if (user.hasDating(player.getVariable('id')))
-                        name = user.getDating(player.getVariable('id')) + ' | ';
+                    let name = 'Игрок | ';
+                    if (user.hasDating(player.getVariable('idLabel')))
+                        name = user.getDating(player.getVariable('idLabel')) + ' | ';
                     //if(!player.getVariable('hiddenId'))
 
                     const entity = player.vehicle ? player.vehicle : player;
                     const vector = entity.getVelocity();
                     const frameTime = methods.parseFloatHex(mp.game.invoke('0x15C40837039FFAF7').toString(16));
                     if (player.getAlpha() > 0)
-                        ui.drawText3D( pref + name + player.id + ' ' +  indicatorColor + typingLabel, headPosition.x + vector.x * frameTime, headPosition.y + vector.y * frameTime, headPosition.z + vector.z * frameTime + 0.1);
+                        ui.drawText3D( pref + name + player.remoteId + ' ' +  indicatorColor + typingLabel, headPosition.x + vector.x * frameTime, headPosition.y + vector.y * frameTime, headPosition.z + vector.z * frameTime + 0.1);
                 }
             }
             catch (e) {
@@ -2452,15 +2504,8 @@ mp.keys.bind(0x45, true, function() {
         if (!user.isLogin())
             return;
         if (!methods.isBlockKeys()) {
-
-            let targetEntity = user.getTargetEntityValidate();
-            if (targetEntity) {
-                inventory.openInventoryByEntity(targetEntity);
-            }
-            else {
-                mp.events.callRemote('onKeyPress:E');
-                methods.pressEToPayRespect();
-            }
+            mp.events.callRemote('onKeyPress:E');
+            methods.pressEToPayRespect();
         }
     }
     catch (e) {
@@ -3136,6 +3181,15 @@ mp.events.add('client:taskFollow', (nplayer) => {
 
         timerFollowedId = setInterval(function() {
             try {
+
+                if (!user.isCuff() && !user.isTie()) {
+                    mp.game.ui.notifications.show("~g~Вас отпустили");
+                    user.stopAllAnimation();
+                    taskFollowed = false;
+                    clearInterval(timerFollowedId);
+                    return;
+                }
+
                 if (mp.players.local.dimension != taskFollowed.dimension) {
 
                     user.stopAllAnimation();

@@ -510,7 +510,6 @@ user.updateCharacterFace = function(player) {
     if (!mp.players.exists(player))
         return;
     try {
-        let health = player.health;
         let skin = {};
 
         skin.SKIN_MOTHER_FACE = methods.parseInt(user.get(player, "SKIN_MOTHER_FACE"));
@@ -562,7 +561,6 @@ user.updateCharacterFace = function(player) {
         }
 
         if (!user.has(player, 'hasMask')) {
-
             player.setHeadBlend(
                 skin.SKIN_MOTHER_FACE,
                 skin.SKIN_FATHER_FACE,
@@ -575,16 +573,31 @@ user.updateCharacterFace = function(player) {
                 0
             );
         }
+        else {
+            player.setHeadBlend(
+                0,
+                0,
+                0,
+                skin.SKIN_MOTHER_SKIN,
+                skin.SKIN_FATHER_SKIN,
+                0,
+                0,
+                0,
+                0
+            );
+        }
 
-        player.setClothes(2, skin.SKIN_HAIR, skin.SKIN_HAIR_COLOR, 0);
         player.setHairColor(skin.SKIN_HAIR_COLOR, skin.SKIN_HAIR_COLOR_2);
         player.setHeadOverlay(2, [skin.SKIN_EYEBROWS, 1, skin.SKIN_EYEBROWS_COLOR, 0]);
+        player.eyeColor = skin.SKIN_EYE_COLOR;
+
+        player.setClothes(2, skin.SKIN_HAIR, 0, 0);
 
         if (skin.SKIN_FACE_SPECIFICATIONS) {
             try {
                 JSON.parse(skin.SKIN_FACE_SPECIFICATIONS).forEach((item, i) => {
                     try {
-                        player.setFaceFeature(methods.parseInt(i), parseFloat(item));
+                        player.setFaceFeature(methods.parseInt(i), methods.parseFloat(item));
                     }
                     catch (e) {
                         methods.debug(e);
@@ -646,8 +659,6 @@ user.updateCharacterFace = function(player) {
             if (skin.SKIN_OVERLAY_8 != undefined)
                 player.setHeadOverlay(8, [skin.SKIN_OVERLAY_8, 1, skin.SKIN_OVERLAY_COLOR_8, skin.SKIN_OVERLAY_COLOR_8]);
         }
-
-        player.health = health;
 
     } catch (e) {
         methods.debug('Exception: user.updateCharacterFace');
@@ -1480,7 +1491,7 @@ user.addWorkExp = function(player, rep) {
     user.setWorkExp(player, user.getWorkExp(player) + methods.parseInt(rep));
 };
 
-user.removeRep= function(player, rep) {
+user.removeWorkExp = function(player, rep) {
     user.setWorkExp(player, user.getWorkExp(player) - methods.parseInt(rep));
 };
 
@@ -2154,7 +2165,7 @@ user.buyLicense = function (player, type, price, month) {
         return;
     methods.debug('licenseCenter.buy');
 
-    if (price < 1)
+    if (price < 0)
         return;
 
     try {

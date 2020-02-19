@@ -11,6 +11,7 @@ import phone from "./phone";
 import inventory from "./inventory";
 
 import quest from "./manager/quest";
+import bind from "./manager/bind";
 
 let user = {};
 
@@ -84,7 +85,7 @@ user.timerRayCast = function() {
 
             let target = user.getTargetEntityValidate();
             if (target && target != targetEntityPrev)
-                mp.game.ui.notifications.show('Нажмите ~g~E~s~ для взаимодействия');
+                mp.game.ui.notifications.show(`Нажмите ~g~${bind.getKeyName(user.getCache('s_bind_do'))}~s~ для взаимодействия`);
             targetEntityPrev = target;
         }
         else
@@ -497,6 +498,7 @@ user.sendPhoneNotify = function(sender, title, message, pic = 'CHAR_BLANK_ENTRY'
 user.init = function() {
 
     try {
+        mp.nametags.enabled = false;
         mp.game.graphics.transitionFromBlurred(false);
         user.timerRayCast();
         user.timer1sec();
@@ -595,6 +597,10 @@ user.setAlpha = function(alpha) {
 
 user.setPlayerModel = function(model) {
     mp.events.callRemote('server:user:setPlayerModel', model);
+};
+
+user.setHeal = function(level) {
+    mp.events.callRemote('server:user:setHeal', level);
 };
 
 user.setDecoration = function(slot, type, isLocal = false) {

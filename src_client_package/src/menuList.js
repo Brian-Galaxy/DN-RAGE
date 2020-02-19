@@ -847,7 +847,7 @@ menuList.showGovOfficeTeleportMenu = function() {
 
     let menu = UIMenu.Menu.Create(`Правительство`, `~b~Лифт`);
 
-    let MeriaUpPos = new mp.Vector3(-1395.997, -479.8439, 71.04215);
+    let MeriaUpPos = new mp.Vector3(-1395.997, -479.8439, 72.04215);
     let MeriaDownPos = new mp.Vector3(-1379.659, -499.748, 32.15739);
     let MeriaRoofPos = new mp.Vector3(-1369, -471.5994, 83.44699);
     let MeriaGarPos = new mp.Vector3(-1360.679, -471.8841, 30.59572);
@@ -2231,6 +2231,10 @@ menuList.showSettingsKeyMenu = function() {
     menuItem.doName = 's_bind_inv_world';
     menuItem.SetRightLabel(`~h~~m~[${bind.getKeyName(user.getCache(menuItem.doName))}]`);
 
+    menuItem = UIMenu.Menu.AddMenuItem("Взаимодействие", "Нажмите ~g~Enter~s~ чтобы изменить");
+    menuItem.doName = 's_bind_do';
+    menuItem.SetRightLabel(`~h~~m~[${bind.getKeyName(user.getCache(menuItem.doName))}]`);
+
     menuItem = UIMenu.Menu.AddMenuItem("Телефон", "Нажмите ~g~Enter~s~ чтобы изменить");
     menuItem.doName = 's_bind_phone';
     menuItem.SetRightLabel(`~h~~m~[${bind.getKeyName(user.getCache(menuItem.doName))}]`);
@@ -2555,6 +2559,8 @@ menuList.showPlayerStatsMenu = function() {
     UIMenu.Menu.AddMenuItem("~b~Репутация:~s~").SetRightLabel(`${user.getRepColorName()}`);
     if (user.getCache('bank_card') > 0)
         UIMenu.Menu.AddMenuItem("~b~Банковская карта:~s~").SetRightLabel(`${methods.bankFormat(user.getCache('bank_card'))}`);
+    if (user.getCache('phone') > 0)
+        UIMenu.Menu.AddMenuItem("~b~Мобильный телефон:~s~").SetRightLabel(`${methods.phoneFormat(user.getCache('phone'))}`);
 
     UIMenu.Menu.AddMenuItem("~b~Розыск:~s~").SetRightLabel(`${user.getCache('wanted_level') > 0 ? '~r~В розыске' : '~g~Нет'}`);
     //UIMenu.Menu.AddMenuItem("~b~Рецепт марихуаны:~s~").SetRightLabel(`${user.get('allow_marg') ? 'Есть' : '~r~Нет'}`);
@@ -4069,7 +4075,7 @@ menuList.showBarberShopMenu = function (shopId, price) {
             return;
         }
 
-        if (item.price < 1)
+        if (item.price < 0)
             return;
 
         user.removeMoney(methods.parseInt(item.price), 'Услуги барбершопа ' + item.label);
@@ -4232,7 +4238,7 @@ menuList.showBarberShopMenu = function (shopId, price) {
                     return;
                 }
 
-                if (item.price < 1)
+                if (item.price < 0)
                     return;
 
                 user.removeMoney(methods.parseInt(item.price), 'Услуги барбершопа ' + item.label);
@@ -6987,8 +6993,8 @@ menuList.showFractionInfoMenu = function() {
             UIMenu.Menu.AddMenuItem(`Кабинет штата`).coffer = true;
 
         UIMenu.Menu.AddMenuItem(`Выдать лицензию юриста`, "Стоимость: ~g~$20,000").licName = 'law_lic';
-        UIMenu.Menu.AddMenuItem(`Выдать лицензию на бизнес`, "Стоимость: ~g~$20,000").licName = 'biz_lic';
-        UIMenu.Menu.AddMenuItem(`Выдать лицензию на рыбаловство"`, "Стоимость: ~g~$5,000").licName = 'fish_lic';
+        UIMenu.Menu.AddMenuItem(`Выдать лицензию на предпренимательство`, "Стоимость: ~g~$20,000").licName = 'biz_lic';
+        UIMenu.Menu.AddMenuItem(`Выдать разрешение на рыбаловство`, "Стоимость: ~g~$5,000").licName = 'fish_lic';
     }
     if (user.isEms()) {
         UIMenu.Menu.AddMenuItem(`Выдать мед. страховку`, "Стоимость: ~g~$20,000").licName = 'med_lic';
@@ -7446,7 +7452,7 @@ menuList.showSheriffArsenalGunMenu = function() {
 
         UIMenu.Menu.AddMenuItem("Коробка патронов 9mm").itemId = 280;
     }
-    if (user.getCache('rank_type') == 5) {
+    if (user.getCache('rank_type') == 5 || user.isLeader() || user.isSubLeader()) {
         UIMenu.Menu.AddMenuItem("Beretta 90Two").itemId = 78;
         UIMenu.Menu.AddMenuItem("Glock 17").itemId = 146;
         UIMenu.Menu.AddMenuItem("Benelli M3").itemId = 90;
@@ -7922,7 +7928,6 @@ menuList.showBotQuestRoleAllMenu = function()
     if (user.getCache('quest_standart') < quest.getQuestLineMax('quest_role_0'))
     {
         UIMenu.Menu.AddMenuItem("~g~Квестовое задание", `${quest.getQuestLineName('quest_standart', user.getCache('quest_standart'))}`).take = true;
-        UIMenu.Menu.AddMenuItem(" ");
     }
     UIMenu.Menu.AddMenuItem("Посмотреть обучение", "Займёт ~g~5~s~ минут твоего времени").full = true;
     UIMenu.Menu.AddMenuItem("Посмотреть все фишки проекта", "Займёт ~g~2~s~ минуты твоего времени").short = true;

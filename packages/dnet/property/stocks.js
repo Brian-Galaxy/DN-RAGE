@@ -528,7 +528,7 @@ stocks.upgradeAdd = function(player, id, slot, boxId) {
     let boxPrice = stocks.boxList[boxId][5];
 
     if (boxPrice > user.getBankMoney(player)) {
-        user.sendSmsBankOperation(player, 'На вашем счету не достаточно средств', '~r~Ошибка операции');
+        player.notify('~r~На вашем счету не достаточно средств');
         return;
     }
 

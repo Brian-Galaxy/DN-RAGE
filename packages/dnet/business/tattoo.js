@@ -46,19 +46,20 @@ tattoo.checkPosForOpenMenu = function(player) {
         }
         switch (shopId)
         {
-            case 94:
+            case 37:
                 player.call('client:menuList:showTattooShopMenu', ["shopui_title_tattoos", "shopui_title_tattoos", shopId, business.getPrice(shopId)]);
                 break;
-            case 95:
+            case 38:
+            case 39:
                 player.call('client:menuList:showTattooShopMenu', ["shopui_title_tattoos2", "shopui_title_tattoos2", shopId, business.getPrice(shopId)]);
                 break;
-            case 96:
+            case 40:
                 player.call('client:menuList:showTattooShopMenu', ["shopui_title_tattoos3", "shopui_title_tattoos3", shopId, business.getPrice(shopId)]);
                 break;
-            case 97:
+            case 41:
                 player.call('client:menuList:showTattooShopMenu', ["shopui_title_tattoos4", "shopui_title_tattoos4", shopId, business.getPrice(shopId)]);
                 break;
-            case 98:
+            case 42:
                 player.call('client:menuList:showTattooShopMenu', ["shopui_title_tattoos5", "shopui_title_tattoos5", shopId, business.getPrice(shopId)]);
                 break;
         }
@@ -88,7 +89,7 @@ tattoo.buy = function(player, collection, overlay, zone, price, itemName, shopId
         return;
     }
 
-    if (price < 1)
+    if (price < 0)
         return;
 
     let tattooList = JSON.parse(user.get(player, 'tattoo'));
@@ -96,7 +97,7 @@ tattoo.buy = function(player, collection, overlay, zone, price, itemName, shopId
     if (tattooList == null)
         tattooList = [];
 
-    if (tattooList.length > 20) {
+    if (tattooList.length > 30) {
         player.notify('~r~У Вас на теле слишком много татуировок, для начала необходимо свести старые');
         user.updateTattoo(player);
         return;
@@ -125,7 +126,7 @@ tattoo.destroy = function(player, collection, overlay, zone, price, itemName, sh
         return;
     }
 
-    if (price < 1)
+    if (price < 0)
         return;
 
     let tattooList = JSON.parse(user.get(player, 'tattoo'));

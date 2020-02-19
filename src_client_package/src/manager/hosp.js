@@ -43,7 +43,7 @@ hosp.timer = function() {
                     }
                 }
                 else {
-                    if (methods.distanceToPos(mp.players.local.position, hosp.pos1) > 50) {
+                    if (methods.distanceToPos(mp.players.local.position, hosp.pos1) > 40) {
                         mp.game.ui.notifications.show("~r~Вам необходимо проходить лечение");
                         user.teleportv(hosp.pos1);
                     }

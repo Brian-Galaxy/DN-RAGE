@@ -739,24 +739,27 @@ methods.requestIpls = function () {
     mp.game.streaming.requestIpl("CS3_07_MPGates");
 
     //Pillbox hospital:
-    mp.game.streaming.removeIpl("rc12b_default");
+    try {
+        mp.game.streaming.removeIpl("rc12b_default");
+        mp.game.streaming.requestIpl("gabz_pillbox_milo_");
+        let hospIntId = mp.game.interior.getInteriorAtCoords(311.2546, -592.4204, 42.32737);
+        let hospPropList = [
+            "rc12b_fixed",
+            "rc12b_destroyed",
+            "rc12b_default",
+            "rc12b_hospitalinterior_lod",
+            "rc12b_hospitalinterior"
+        ];
 
-    mp.game.streaming.requestIpl("gabz_pillbox_milo_");
-    let hospIntId = mp.game.interior.getInteriorAtCoords(311.2546, -592.4204, 42.32737);
-    let hospPropList = [
-        "rc12b_fixed",
-        "rc12b_destroyed",
-        "rc12b_default",
-        "rc12b_hospitalinterior_lod",
-        "rc12b_hospitalinterior"
-    ];
-
-    for (const propName of hospPropList) {
-        mp.game.interior.enableInteriorProp(hospIntId, propName);
-        mp.game.invoke(methods.SET_INTERIOR_PROP_COLOR, hospIntId, propName, 1);
+        for (const propName of hospPropList) {
+            mp.game.interior.enableInteriorProp(hospIntId, propName);
+            mp.game.invoke(methods.SET_INTERIOR_PROP_COLOR, hospIntId, propName, 1);
+        }
+        mp.game.interior.refreshInterior(hospIntId);
     }
-
-    mp.game.interior.refreshInterior(hospIntId);
+    catch (e) {
+        methods.debug(e);
+    }
 
     //mp.game.streaming.removeIpl("rc12b_default");
     //mp.game.streaming.requestIpl("rc12b_hospitalinterior");

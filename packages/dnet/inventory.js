@@ -384,7 +384,7 @@ inventory.useItem = function(player, id, itemId) {
                 }
                 else
                 {
-                    if (user.get(target, 'isKnockout'))
+                    if (!user.get(target, 'isKnockout'))
                     {
                         player.notify("~r~Игрок должен быть в нокауте");
                         return;

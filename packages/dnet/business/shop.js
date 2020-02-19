@@ -179,7 +179,7 @@ shop.buy = function(player, itemId, price, shopId) {
         return;
     }
 
-    if (price < 1)
+    if (price < 0)
         return;
 
     let amount = inventory.getInvAmount(player, user.getId(player), 1);

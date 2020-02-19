@@ -29,7 +29,6 @@ business.loadAll = function() {
             business.set(item['id'], 'bank_id', item['bank_id']);
             business.set(item['id'], 'user_name', item['user_name']);
             business.set(item['id'], 'user_id', item['user_id']);
-            business.set(item['id'], 'fraction_type', item['fraction_type']);
             business.set(item['id'], 'type', item['type']);
             business.set(item['id'], 'price_product', item['price_product']);
             business.set(item['id'], 'interior', item['interior']);
@@ -57,7 +56,6 @@ business.save = function(id) {
     let sql = "UPDATE business SET";
 
     sql = sql + " name = '" + methods.removeQuotes(business.get(id, "name")) + "'";
-    sql = sql + ", fraction_type = '" + methods.parseInt(business.get(id, "fraction_type")) + "'";
     //sql = sql + ", price = '" + business.get(id, "price") + "'";
     sql = sql + ", user_name = '" + business.get(id, "user_name") + "'";
     sql = sql + ", user_id = '" + business.get(id, "user_id") + "'";

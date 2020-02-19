@@ -233,6 +233,14 @@ for(let code in keyCodes) {
         if (!user.isLogin())
             return;
 
+        if (user.getCache('s_bind_do') == parseInt(code)) {
+            if (!methods.isBlockKeys()) {
+                let targetEntity = user.getTargetEntityValidate();
+                if (targetEntity) {
+                    inventory.openInventoryByEntity(targetEntity);
+                }
+            }
+        }
         if (user.getCache('s_bind_inv') == parseInt(code)) {
             if (!methods.isBlockKeys() && phone.isHide()) {
                 ui.callCef('inventory', '{"type": "showOrHide"}')

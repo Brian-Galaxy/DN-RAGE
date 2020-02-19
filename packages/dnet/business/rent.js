@@ -94,7 +94,7 @@ rent.buy = function(player, hash, price, shopId) {
         return;
     }
 
-    if (price < 1)
+    if (price < 0)
         return;
 
     let vInfo = methods.getVehicleInfo(hash);

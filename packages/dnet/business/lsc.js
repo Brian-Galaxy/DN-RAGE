@@ -101,7 +101,7 @@ lsc.repair = function(player, price, shopId) {
         return;
     }
 
-    if (price < 1)
+    if (price < 0)
         return;
 
     veh.repair();
@@ -125,7 +125,7 @@ lsc.buyNeon = function(player, price, shopId) {
         return;
     }
 
-    if (price < 1)
+    if (price < 0)
         return;
 
     if (veh.getVariable('user_id') < 1) {
@@ -180,7 +180,7 @@ lsc.buySpecial = function(player, price, shopId) {
         return;
     }
 
-    if (price < 1)
+    if (price < 0)
         return;
 
     if (veh.getVariable('user_id') < 1) {
@@ -450,7 +450,7 @@ lsc.buyColor1 = function(player, idx, price, shopId, itemName) {
         return;
     }
 
-    if (price < 1)
+    if (price < 0)
         return;
 
     let veh = player.vehicle;
@@ -485,7 +485,7 @@ lsc.buyColor2 = function(player, idx, price, shopId, itemName) {
         return;
     }
 
-    if (price < 1)
+    if (price < 0)
         return;
 
     let veh = player.vehicle;
@@ -520,7 +520,7 @@ lsc.buyColor3 = function(player, idx, price, shopId, itemName) {
         return;
     }
 
-    if (price < 1)
+    if (price < 0)
         return;
 
     let veh = player.vehicle;
@@ -555,7 +555,7 @@ lsc.buyColor4 = function(player, idx, price, shopId, itemName) {
         return;
     }
 
-    if (price < 1)
+    if (price < 0)
         return;
 
     let veh = player.vehicle;

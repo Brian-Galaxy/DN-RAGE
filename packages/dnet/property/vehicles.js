@@ -807,6 +807,24 @@ vehicles.updateOwnerInfo = function (id, userId, userName) {
     vehicles.set(id, 'user_name', methods.removeQuotes(userName));
     vehicles.set(id, 'user_id', methods.parseInt(userId));
 
+    mp.vehicles.forEach(v => {
+
+        try {
+            if (vehicles.exists(v) && v.getVariable('user_id') && v.getVariable('vid') === id) {
+                if (userId === 0) {
+                    v.destroy();
+                }
+                else {
+                    v.setVariable('user_id', methods.parseInt(userId));
+                    v.setVariable('user_name', methods.removeQuotes(userName));
+                }
+            }
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    });
+
     if (userId == 0) {
         vehicles.park(id, 0, 0, 0, 0);
         mysql.executeQuery("UPDATE cars SET user_name = '" + userName + "', user_id = '" + userId + "', number = '" + vehicles.generateNumber() + "', tax_money = '0', s_mp = '0', neon_r = '0', neon_g = '0', neon_b = '0', upgrade = '{\"18\":-1}' where id = '" + id + "'");

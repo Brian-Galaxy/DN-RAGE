@@ -79,7 +79,7 @@ gangWar.startWar = function(player, zoneId) {
         player.notify('~r~Захват этой территории сейчас не доступен');
         return;
     }
-    if (!user.get(player, 'fraction_id2') < 1) {
+    if (user.get(player, 'fraction_id2') < 1) {
         player.notify('~r~Вы не состоите в организации');
         return;
     }

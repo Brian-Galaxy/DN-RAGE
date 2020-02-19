@@ -49,7 +49,7 @@ admin.godmode= function(enable) {
 
         mp.players.local.setInvincible(enable);
         mp.players.local.setCanBeDamaged(!enable);
-        mp.players.local.setHealth(100);
+        mp.players.local.setHealth(200);
 
     } catch (e) {
         methods.debug('Exception: admin.noClip');

@@ -398,7 +398,7 @@ bank.openCard = function(player, bankId, price) {
         return;
     }
 
-    if (price < 1)
+    if (price < 0)
         return;
 
     let bankPrefix = 6000;
@@ -430,7 +430,7 @@ bank.openCard = function(player, bankId, price) {
     bank.sendSmsBankOpenOperation(player);
     bank.addBankHistory(user.getId(player), number, 'Открытие счёта на имя ' + user.getRpName(player), price * -1);
 
-    inventory.addItem(50, 1, user.getId(player), 1, 0, 0, `{"number": ${number}, "pin": 1234, "owner": "${user.getRpName(player)}"}`);
+    inventory.addItem(50, 1, 1, user.getId(player), 0, 0, `{"number": ${number}, "pin": 1234, "owner": "${user.getRpName(player)}"}`);
 
     player.notify('~g~Вы оформили крату, она лежит в инвентаре, экипируйте её');
     player.notify('~g~Ваш пинкод от карты:~s~ 1234');

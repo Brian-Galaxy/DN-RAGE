@@ -184,6 +184,14 @@ inventory.openInventoryByEntity = async function(entity) {
             methods.debug(e);
         }
     }
+    else if (entity.getType() == 5) {
+        try {
+            menuList.showPlayerDoMenu(entity.remoteId);
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    }
 };
 
 inventory.useItem = function(id, itemId)    {

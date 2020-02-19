@@ -262,7 +262,8 @@ methods.replaceAll = function(str, find, replace) {
 
 methods.debug = function (message, ...args) {
     try {
-        console.log(`[DEBUG-SERVER] [${methods.getTime()}]: ${message}`, args)
+        console.log(`[DEBUG-SERVER] [${methods.getTime()}]: ${message}`, args);
+        methods.saveFile('log', `[DEBUG-SERVER] [${methods.getTime()}]: ${message} | ${JSON.stringify(args)}`);
     } catch (e) {
         console.log(e)
     }

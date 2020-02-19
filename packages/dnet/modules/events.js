@@ -152,7 +152,8 @@ mp.events.addRemoteCounted('modules:server:data:Has', (player, promiseId, id, ke
 
 mp.events.add('server:clientDebug', (player, message) => {
     try {
-        console.log(`[DEBUG-CLIENT][${player.socialClub}]: ${message}`)
+        console.log(`[DEBUG-CLIENT][${player.socialClub}]: ${message}`);
+        methods.saveFile('log', `[DEBUG-CLIENT][${player.socialClub}]: ${message}`);
     } catch (e) {
         console.log(e);
     }
@@ -200,6 +201,15 @@ mp.events.addRemoteCounted('server:user:setPlayerModel', (player, model) => {
     try {
         if (mp.players.exists(player))
             player.model = mp.joaat(model);
+    } catch (e) {
+        console.log(e);
+    }
+});
+
+mp.events.addRemoteCounted('server:user:setHeal', (player, level) => {
+    try {
+        if (mp.players.exists(player))
+            player.health = level;
     } catch (e) {
         console.log(e);
     }
@@ -575,14 +585,14 @@ mp.events.addRemoteCounted('server:user:showLic', (player, lic, playerId) => {
                     type: 'updateValues',
                     isShow: true,
                     info: {
-                        firstname: user.getRpName(remotePlayer).split(' ')[0],
-                        lastname: user.getRpName(remotePlayer).split(' ')[1],
-                        sex: user.getSexName(remotePlayer),
-                        age: user.get(remotePlayer, 'age'),
-                        nation: user.get(remotePlayer, 'national'),
-                        regist: user.getRegStatusName(remotePlayer),
-                        idcard: (user.getId(remotePlayer) + 10000000).toString(),
-                        img: 'https://a.rsg.sc//n/' + remotePlayer.socialClub.toLowerCase(),
+                        firstname: user.getRpName(player).split(' ')[0],
+                        lastname: user.getRpName(player).split(' ')[1],
+                        sex: user.getSexName(player),
+                        age: user.get(player, 'age'),
+                        nation: user.get(player, 'national'),
+                        regist: user.getRegStatusName(player),
+                        idcard: (user.getId(player) + 10000000).toString(),
+                        img: 'https://a.rsg.sc//n/' + player.socialClub.toLowerCase(),
                     },
                 };
                 user.callCef(remotePlayer, 'cardid', JSON.stringify(dataSend));
@@ -604,17 +614,17 @@ mp.events.addRemoteCounted('server:user:showLic', (player, lic, playerId) => {
                         type: 'updateValues',
                         isShow: true,
                         info: {
-                            firstname: user.getRpName(remotePlayer).split(' ')[0],
-                            lastname: user.getRpName(remotePlayer).split(' ')[1],
-                            sex: user.getSexName(remotePlayer),
-                            age: user.get(remotePlayer, 'age'),
-                            first_work: user.getFractionName(remotePlayer),
-                            second_work: user.getJobName(remotePlayer),
-                            lvl_work: user.get(remotePlayer, 'work_lvl').toString(),
-                            experience: user.get(remotePlayer, 'work_exp').toString(),
-                            data: user.get(remotePlayer, 'work_date'),
-                            idwork: user.get(remotePlayer, 'work_lic'),
-                            img: 'https://a.rsg.sc//n/' + remotePlayer.socialClub.toLowerCase(),
+                            firstname: user.getRpName(player).split(' ')[0],
+                            lastname: user.getRpName(player).split(' ')[1],
+                            sex: user.getSexName(player),
+                            age: user.get(player, 'age'),
+                            first_work: user.getFractionName(player),
+                            second_work: user.getJobName(player),
+                            lvl_work: user.get(player, 'work_lvl').toString(),
+                            experience: user.get(player, 'work_exp').toString(),
+                            data: user.get(player, 'work_date'),
+                            idwork: user.get(player, 'work_lic'),
+                            img: 'https://a.rsg.sc//n/' + player.socialClub.toLowerCase(),
                         },
                     };
                     user.callCef(remotePlayer, 'workid', JSON.stringify(dataSend));
@@ -699,13 +709,13 @@ mp.events.addRemoteCounted('server:user:showLic', (player, lic, playerId) => {
                         type: 'updateValues',
                         isShow: true,
                         info: {
-                            name: user.getRpName(remotePlayer),
-                            sex: user.getSexName(remotePlayer),
+                            name: user.getRpName(player),
+                            sex: user.getSexName(player),
                             license: licName,
-                            date_start: user.get(remotePlayer, lic + '_create'),
-                            date_stop: user.get(remotePlayer, lic + '_end'),
+                            date_start: user.get(player, lic + '_create'),
+                            date_stop: user.get(player, lic + '_end'),
                             prefix: licPref,
-                            img: 'https://a.rsg.sc//n/' + remotePlayer.socialClub.toLowerCase(),
+                            img: 'https://a.rsg.sc//n/' + player.socialClub.toLowerCase(),
                         },
                     };
                     user.callCef(remotePlayer, 'license', JSON.stringify(dataSend));
@@ -1208,7 +1218,7 @@ mp.events.addRemoteCounted('server:invader:sendNews', (player, title, text) => {
     mysql.executeQuery(`INSERT INTO rp_inv_news (title, name, text, timestamp, rp_datetime) VALUES ('${title}', '${name}', '${text}', '${timestamp}', '${rpDateTime}')`);
 
     mp.players.forEach(p => {
-        user.sendPhoneNotify(player, 'Life Invader', title, text, 'CHAR_LIFEINVADER');
+        user.sendPhoneNotify(p, 'Life Invader', title, text, 'CHAR_LIFEINVADER');
     });
 });
 
@@ -1256,7 +1266,7 @@ mp.events.addRemoteCounted('server:invader:sendAd', (player, id, title, name, te
     user.addPayDayMoney(player, 100, 'Отредактировал объявление');
 
     mp.players.forEach(p => {
-        user.sendPhoneNotify(player, 'Life Invader', '~g~Реклама | ' + title, text, 'CHAR_LIFEINVADER');
+        user.sendPhoneNotify(p, 'Life Invader', '~g~Реклама | ' + title, text, 'CHAR_LIFEINVADER');
     });
 });
 
@@ -1476,6 +1486,18 @@ mp.events.addRemoteCounted('server:user:removeRep', (player, rep) => {
 
 mp.events.addRemoteCounted('server:user:setRep', (player, rep) => {
     user.setRep(player, rep);
+});
+
+mp.events.addRemoteCounted('server:user:addWorkExp', (player, rep) => {
+    user.addWorkExp(player, rep);
+});
+
+mp.events.addRemoteCounted('server:user:removeWorkExp', (player, rep) => {
+    user.removeWorkExp(player, rep);
+});
+
+mp.events.addRemoteCounted('server:user:setWorkExp', (player, rep) => {
+    user.setWorkExp(player, rep);
 });
 
 mp.events.addRemoteCounted('server:business:save', (player, id) => {
@@ -2000,7 +2022,7 @@ mp.events.addRemoteCounted('server:phone:inviteFraction2', (player, id) => {
             return;
         }
 
-        let fractionId = user.get(player, 'fraction_id');
+        let fractionId = user.get(player, 'fraction_id2');
 
         let rank = JSON.parse(fraction.getData(fractionId).get('rank_list')).length - 1;
 

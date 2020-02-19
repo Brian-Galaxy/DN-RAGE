@@ -131,7 +131,7 @@ mp.Player.prototype.getAllWeaponTints = function() {
  */
 mp.Player.prototype.resetAllWeaponTints = function() {
     if (this.__weaponTints.hasOwnProperty(this.weapon)) this.setVariable("currentWeaponTint", `${this.weapon.toString(36)}|0`);
-    else mp.players.callInRange(this.position, mp.config["stream-distance"], "updatePlayerWeaponTint", [this, `${weaponHash.toString(36)}|0`]);
+    else mp.players.callInRange(this.position, mp.config["stream-distance"], "updatePlayerWeaponTint", [this, `${this.weapon.toString(36)}|0`]);
     this.__weaponTints = {};
 };
 

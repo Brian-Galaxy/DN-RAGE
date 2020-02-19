@@ -73,6 +73,11 @@ fuel.fillVehTimer = async function(count) {
                 return;
             }
 
+            if (vInfo.fuel_full <= vehicles.getFuel(veh)) {
+                mp.game.ui.notifications.show(`~g~Заправка транспорта была завершена`);
+                return;
+            }
+
             ui.showSubtitle(`Осталось ~g~${time}${pref}~s~ из ~g~${allCount}${pref}`);
             time++;
             vehicles.addFuel(veh);

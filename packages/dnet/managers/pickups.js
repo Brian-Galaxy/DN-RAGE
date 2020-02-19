@@ -49,10 +49,6 @@ pickups.CasinoLiftInPos = new mp.Vector3(1089.85009765625, 206.42514038085938, -
 pickups.CasinoLiftCondoPos = new mp.Vector3(2518.663330078125, -259.46478271484375, -40.122894287109375);
 
 pickups.LifeInvaderShopPos = new mp.Vector3(-1083.074, -248.3521, 36.76329);
-pickups.HackerSpaceShopPos = new mp.Vector3(522.0684, 167.0983, 98.38704);
-
-pickups.HackerSpaceOutPos = new mp.Vector3(1672.243, -26.09709, 172.7747);
-pickups.HackerSpaceInPos = new mp.Vector3(1671.604, -23.82703, 177.2864);
 
 pickups.MeriaUpPos = new mp.Vector3(-1395.997, -479.8439, 71.04215);
 pickups.MeriaDownPos = new mp.Vector3(-1379.659, -499.748, 32.15739);
@@ -526,11 +522,6 @@ pickups.createPickups = function() {
     methods.createStaticCheckpointV(pickups.InvaderWorkPos2, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
     methods.createStaticCheckpointV(pickups.InvaderWorkPos3, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
     methods.createStaticCheckpointV(pickups.InvaderWorkPos4, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
-
-    //Hackerspace
-    methods.createStaticCheckpointV(pickups.HackerSpaceShopPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
-    //Hackerspace
-    methods.createStaticCheckpointV(pickups.PrintShopPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
 
     methods.createStaticCheckpointV(pickups.BotRole0, 'Нажмите ~g~E~s~ чтобы взаимодействовать с NPC', 1, -1, pickups.Yellow);
     methods.createStaticCheckpointV(pickups.BotRoleAll, 'Нажмите ~g~E~s~ чтобы взаимодействовать с NPC', 1, -1, pickups.Yellow);

@@ -432,7 +432,7 @@ bank.openCard = function(player, bankId, price) {
 
     inventory.addItem(50, 1, 1, user.getId(player), 0, 0, `{"number": ${number}, "pin": 1234, "owner": "${user.getRpName(player)}"}`);
 
-    player.notify('~g~Вы оформили крату, она лежит в инвентаре, экипируйте её');
+    player.notify('~g~Вы оформили карту, она лежит в инвентаре, экипируйте её');
     player.notify('~g~Ваш пинкод от карты:~s~ 1234');
 };
 

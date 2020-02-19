@@ -10,39 +10,44 @@ let radioInterval = null;
 let currentSound;
 
 vSync.radio = function(entity) {
-    if (entity && mp.vehicles.exists(entity)) {
-        try {
-            let localPlayer = mp.players.local;
-            if (localPlayer.vehicle == entity) {
-                let vehSyncData = entity.getVariable('vehicleSyncData');
-
-                if (typeof entity.getVariable('vehicleSyncData') !== 'undefined') {
-                    currentSound = mp.game.invoke(methods.GET_PLAYER_RADIO_STATION_INDEX);
-                    if (entity.getPedInSeat(-1) == localPlayer.handle) {
-                        if (vehSyncData.RadioState != currentSound)
-                            mp.events.callRemote('s:vSync:radioChange', entity, currentSound);
-                    } else {
-                        if (vehSyncData.RadioState == 255)
-                            mp.game.audio.setRadioToStationName("OFF");
-                        else {
-                            if (vehSyncData.RadioState != currentSound) {
-                                mp.game.invoke(methods.SET_FRONTEND_RADIO_ACTIVE, true);
-                                mp.game.invoke(methods.SET_RADIO_TO_STATION_INDEX, vehSyncData.RadioState);
+    try {
+        if (entity && mp.vehicles.exists(entity)) {
+            try {
+                let localPlayer = mp.players.local;
+                if (localPlayer.vehicle == entity) {
+                    let vehSyncData = entity.getVariable('vehicleSyncData');
+                    if (typeof entity.getVariable('vehicleSyncData') !== 'undefined') {
+                        currentSound = mp.game.invoke(methods.GET_PLAYER_RADIO_STATION_INDEX);
+                        if (entity.getPedInSeat(-1) == localPlayer.handle) {
+                            if (vehSyncData.RadioState != currentSound)
+                                mp.events.callRemote('s:vSync:radioChange', entity.remoteId, currentSound);
+                        } else {
+                            if (vehSyncData.RadioState == 255)
+                                mp.game.audio.setRadioToStationName("OFF");
+                            else {
+                                if (vehSyncData.RadioState != currentSound) {
+                                    mp.game.invoke(methods.SET_FRONTEND_RADIO_ACTIVE, true);
+                                    mp.game.invoke(methods.SET_RADIO_TO_STATION_INDEX, vehSyncData.RadioState);
+                                }
                             }
                         }
                     }
                 }
             }
+            catch (e) {
+                methods.debug('RADIO_TIMER');
+                methods.debug(e);
+            }
+        } else {
+            if (radioInterval != null) {
+                clearInterval(radioInterval);
+                radioInterval = null;
+            }
         }
-        catch (e) {
-            methods.debug('RADIO_TIMER');
-            methods.debug(e);
-        }
-    } else {
-        if (radioInterval != null) {
-            clearInterval(radioInterval);
-            radioInterval = null;
-        }
+    }
+    catch (e) {
+        methods.debug('RADIO_TIMER_2');
+        methods.debug(e);
     }
 };
 
@@ -485,6 +490,9 @@ mp.events.add("vSync:setSirenState", (vehId, state) => {
 });
 
 mp.events.add("playerEnterVehicle", (entity, seat) => {
+
+    methods.debug('playerEnterVehicle' + seat);
+
     try {
         if (entity) {
             if (radioInterval != null)

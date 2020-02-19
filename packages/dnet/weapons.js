@@ -7,101 +7,101 @@ let items = require('./items');
 let weapons = exports;
 
 weapons.hashesMap = [
-    ["weapon_dagger", -1834847097],
-    ["weapon_bat", -1786099057],
-    ["weapon_bottle", -102323637],
-    ["weapon_crowbar", -2067956739],
-    ["weapon_unarmed", -1569615261],
-    ["weapon_flashlight", -1951375401],
-    ["weapon_golfclub", 1141786504],
-    ["weapon_hammer", 1317494643],
-    ["weapon_hatchet", -102973651],
-    ["weapon_knuckle", -656458692],
-    ["weapon_knife", -1716189206],
-    ["weapon_machete", -581044007],
-    ["weapon_switchblade", -538741184],
-    ["weapon_nightstick", 1737195953],
-    ["weapon_wrench", 419712736],
-    ["weapon_battleaxe", -853065399],
-    ["weapon_poolcue", -1810795771],
-    ["weapon_stone_hatchet", 940833800],
-    ["weapon_pistol", 453432689],
-    ["weapon_pistol_mk2", -1075685676],
-    ["weapon_combatpistol", 1593441988],
-    ["weapon_appistol", 584646201],
-    ["weapon_stungun", 911657153],
-    ["weapon_pistol50", -1716589765],
-    ["weapon_snspistol", -1076751822],
-    ["weapon_snspistol_mk2", -2009644972],
-    ["weapon_heavypistol", -771403250],
-    ["weapon_vintagepistol", 137902532],
-    ["weapon_flaregun", 1198879012],
-    ["weapon_marksmanpistol", -598887786],
-    ["weapon_revolver", -1045183535],
-    ["weapon_revolver_mk2", -879347409],
-    ["weapon_doubleaction", -1746263880],
-    ["weapon_raypistol", -1355376991],
-    ["weapon_ceramicpistol", 727643628],
-    ["weapon_navyrevolver", -1853920116],
-    ["weapon_microsmg", 324215364],
-    ["weapon_smg", 736523883],
-    ["weapon_smg_mk2", 2024373456],
-    ["weapon_assaultsmg", -270015777],
-    ["weapon_combatpdw", 171789620],
-    ["weapon_machinepistol", -619010992],
-    ["weapon_minismg", -1121678507],
-    ["weapon_raycarbine", 1198256469],
-    ["weapon_pumpshotgun", 487013001],
-    ["weapon_pumpshotgun_mk2", 1432025498],
-    ["weapon_sawnoffshotgun", 2017895192],
-    ["weapon_assaultshotgun", -494615257],
-    ["weapon_bullpupshotgun", -1654528753],
-    ["weapon_musket", -1466123874],
-    ["weapon_heavyshotgun", 984333226],
-    ["weapon_dbshotgun", -275439685],
-    ["weapon_autoshotgun", 317205821],
-    ["weapon_assaultrifle", -1074790547],
-    ["weapon_assaultrifle_mk2", 961495388],
-    ["weapon_carbinerifle", -2084633992],
-    ["weapon_carbinerifle_mk2", -86904375],
-    ["weapon_advancedrifle", -1357824103],
-    ["weapon_specialcarbine", -1063057011],
-    ["weapon_specialcarbine_mk2", -1768145561],
-    ["weapon_bullpuprifle", 2132975508],
-    ["weapon_bullpuprifle_mk2", -2066285827],
-    ["weapon_compactrifle", 1649403952],
-    ["weapon_mg", -1660422300],
-    ["weapon_combatmg", 2144741730],
-    ["weapon_combatmg_mk2", -608341376],
-    ["weapon_gusenberg", 1627465347],
-    ["weapon_sniperrifle", 100416529],
-    ["weapon_heavysniper", 205991906],
-    ["weapon_heavysniper_mk2", 177293209],
-    ["weapon_marksmanrifle", -952879014],
-    ["weapon_marksmanrifle_mk2", 1785463520],
-    ["weapon_rpg", -1312131151],
-    ["weapon_grenadelauncher", -1568386805],
-    ["weapon_grenadelauncher_smoke", 1305664598],
-    ["weapon_minigun", 1119849093],
-    ["weapon_firework", 2138347493],
-    ["weapon_railgun", 1834241177],
-    ["weapon_hominglauncher", 1672152130],
-    ["weapon_compactlauncher", 125959754],
-    ["weapon_rayminigun", -1238556825],
-    ["weapon_grenade", -1813897027],
-    ["weapon_bzgas", -1600701090],
-    ["weapon_smokegrenade", -37975472],
-    ["weapon_flare", 1233104067],
-    ["weapon_molotov", 615608432],
-    ["weapon_stickybomb", 741814745],
-    ["weapon_proxmine", -1420407917],
-    ["weapon_snowball", 126349499],
-    ["weapon_pipebomb", -1169823560],
-    ["weapon_ball", 600439132],
-    ["weapon_petrolcan", 883325847],
-    ["weapon_fireextinguisher", 101631238],
-    ["weapon_parachute", -196322845],
-    ["weapon_hazardcan", -1168940174],
+    ["weapon_dagger", -1834847097, 1],
+    ["weapon_bat", -1786099057, 1],
+    ["weapon_bottle", -102323637, 1],
+    ["weapon_crowbar", -2067956739, 1],
+    ["weapon_unarmed", -1569615261, 1],
+    ["weapon_flashlight", -1951375401, 1],
+    ["weapon_golfclub", 1141786504, 1],
+    ["weapon_hammer", 1317494643, 1],
+    ["weapon_hatchet", -102973651, 1],
+    ["weapon_knuckle", -656458692, 1],
+    ["weapon_knife", -1716189206, 1],
+    ["weapon_machete", -581044007, 1],
+    ["weapon_switchblade", -538741184, 1],
+    ["weapon_nightstick", 1737195953, 1],
+    ["weapon_wrench", 419712736, 1],
+    ["weapon_battleaxe", -853065399, 1],
+    ["weapon_poolcue", -1810795771, 1],
+    ["weapon_stone_hatchet", 940833800, 1],
+    ["weapon_pistol", 453432689, 3], //4
+    ["weapon_pistol_mk2", -1075685676, 3], //5-7
+    ["weapon_combatpistol", 1593441988, 3], //5-7
+    ["weapon_appistol", 584646201, 1], //5-7
+    ["weapon_stungun", 911657153, 1],
+    ["weapon_pistol50", -1716589765, 2.2], //10
+    ["weapon_snspistol", -1076751822, 2], //3
+    ["weapon_snspistol_mk2", -2009644972, 2], //4
+    ["weapon_heavypistol", -771403250, 4], //10
+    ["weapon_vintagepistol", 137902532, 2], //7
+    ["weapon_flaregun", 1198879012, 1],
+    ["weapon_marksmanpistol", -598887786, 0.7], //70
+    ["weapon_revolver", -1045183535, 0.7], //50хп
+    ["weapon_revolver_mk2", -879347409, 0.8], //50хп
+    ["weapon_doubleaction", -1746263880, 1], //
+    ["weapon_raypistol", -1355376991, 1],
+    ["weapon_ceramicpistol", 727643628, 3],
+    ["weapon_navyrevolver", -1853920116, 1],
+    ["weapon_microsmg", 324215364, 1.5],
+    ["weapon_smg", 736523883, 2],
+    ["weapon_smg_mk2", 2024373456, 2],
+    ["weapon_assaultsmg", -270015777, 1.5],
+    ["weapon_combatpdw", 171789620, 1.7],
+    ["weapon_machinepistol", -619010992, 2],
+    ["weapon_minismg", -1121678507, 1],
+    ["weapon_raycarbine", 1198256469, 1],
+    ["weapon_pumpshotgun", 487013001, 1.5],
+    ["weapon_pumpshotgun_mk2", 1432025498, 1.7],
+    ["weapon_sawnoffshotgun", 2017895192, 1.4],
+    ["weapon_assaultshotgun", -494615257, 1],
+    ["weapon_bullpupshotgun", -1654528753, 3],
+    ["weapon_musket", -1466123874, 1],
+    ["weapon_heavyshotgun", 984333226, 0.7],
+    ["weapon_dbshotgun", -275439685, 1.7],
+    ["weapon_autoshotgun", 317205821, 1.3],
+    ["weapon_assaultrifle", -1074790547, 1.2],
+    ["weapon_assaultrifle_mk2", 961495388, 1.1],
+    ["weapon_carbinerifle", -2084633992, 1.4],
+    ["weapon_carbinerifle_mk2", -86904375, 1.6],
+    ["weapon_advancedrifle", -1357824103, 1],
+    ["weapon_specialcarbine", -1063057011, 1.4],
+    ["weapon_specialcarbine_mk2", -1768145561, 1.6],
+    ["weapon_bullpuprifle", 2132975508, 1.2],
+    ["weapon_bullpuprifle_mk2", -2066285827, 1.2],
+    ["weapon_compactrifle", 1649403952, 1.2],
+    ["weapon_mg", -1660422300, 1],
+    ["weapon_combatmg", 2144741730, 1],
+    ["weapon_combatmg_mk2", -608341376, 1],
+    ["weapon_gusenberg", 1627465347, 1],
+    ["weapon_sniperrifle", 100416529, 1.3],
+    ["weapon_heavysniper", 205991906, 1.2],
+    ["weapon_heavysniper_mk2", 177293209, 1.3],
+    ["weapon_marksmanrifle", -952879014, 1.2],
+    ["weapon_marksmanrifle_mk2", 1785463520, 1.2],
+    ["weapon_rpg", -1312131151, 1],
+    ["weapon_grenadelauncher", -1568386805, 1],
+    ["weapon_grenadelauncher_smoke", 1305664598, 1],
+    ["weapon_minigun", 1119849093, 1],
+    ["weapon_firework", 2138347493, 1],
+    ["weapon_railgun", 1834241177, 1],
+    ["weapon_hominglauncher", 1672152130, 1],
+    ["weapon_compactlauncher", 125959754, 1],
+    ["weapon_rayminigun", -1238556825, 1],
+    ["weapon_grenade", -1813897027, 1],
+    ["weapon_bzgas", -1600701090, 1],
+    ["weapon_smokegrenade", -37975472, 1],
+    ["weapon_flare", 1233104067, 1],
+    ["weapon_molotov", 615608432, 1],
+    ["weapon_stickybomb", 741814745, 1],
+    ["weapon_proxmine", -1420407917, 1],
+    ["weapon_snowball", 126349499, 1],
+    ["weapon_pipebomb", -1169823560, 1],
+    ["weapon_ball", 600439132, 1],
+    ["weapon_petrolcan", 883325847, 1],
+    ["weapon_fireextinguisher", 101631238, 1],
+    ["weapon_parachute", -196322845, 1],
+    ["weapon_hazardcan", -1168940174, 1],
 ];
 
 weapons.components = [
@@ -576,6 +576,15 @@ weapons.getHashByName = function(name) {
     return hash;
 };
 
+weapons.getHashByInt64 = function(int64) {
+    let hash = 0;
+    weapons.hashesMap.forEach(item => {
+        if (mp.joaat(item[0]) == int64)
+            hash = item[1] / 2;
+    });
+    return hash;
+};
+
 weapons.getWeaponComponentHashName = function(weaponName, hash) {
     let component = '';
     weapons.components.forEach(item => {
@@ -765,6 +774,8 @@ weapons.getGunAmmoId = function(name) {
         case 'weapon_assaultrifle':
         case 'weapon_specialcarbine':
         case 'weapon_specialcarbine_mk2':
+        case 'weapon_bullpuprifle':
+        case 'weapon_bullpuprifle_mk2':
             return 284; //5.56mm
 
         case 'weapon_compactrifle':
@@ -833,10 +844,10 @@ weapons.getGunAmmoId = function(name) {
         case 'weapon_revolver_mk2':
         case 'weapon_marksmanpistol':
         case 'weapon_pistol50':
-            return 288; //.44 Magnum
+            return 287; //.44 Magnum
 
         case 'weapon_flaregun':
-            return 287; //Патроны сигнального пистолета
+            return 288; //Патроны сигнального пистолета
 
         default:
             return -1;

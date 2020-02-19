@@ -117,17 +117,20 @@ mp.events.add('client:syncAnimation', async (playerId, dict, anim, flag) => {
             remotePlayer.taskPlayAnim(dict, anim, 8, 0, -1, flag, 0.0, false, false, false);
 
             if (flag != 1 && flag != 9 && flag != 49) {
-                setTimeout(async function () {
-                    try {
-                        while (mp.players.exists(remotePlayer) && remotePlayer.isPlayingAnim(dict, anim, 3) !== 0)
-                            await methods.sleep(10);
-                        if (remotePlayer.getHealth() > 0)
-                            remotePlayer.clearTasksImmediately();
-                    }
-                    catch (e) {
-                        methods.debug(e);
-                    }
-                }, 1000);
+                if (remotePlayer.remoteId === mp.players.local.remoteId) {
+                    setTimeout(async function () {
+                        try {
+                            /*while (mp.players.exists(remotePlayer) && remotePlayer.isPlayingAnim(dict, anim, 3) !== 0)
+                                await methods.sleep(10);*/
+                            await methods.sleep(remotePlayer.getAnimTotalTime(dict, anim));
+                            if (remotePlayer.getHealth() > 0)
+                                user.stopAllAnimation();
+                        }
+                        catch (e) {
+                            methods.debug(e);
+                        }
+                    }, 20);
+                }
             }
         }
     }
@@ -232,6 +235,28 @@ mp.events.add('client:syncHeadingToCoord', (playerId, x, y, z) => {
                     methods.debug(e);
                 }
             }, 2000);
+        }
+    }
+    catch (e) {
+        methods.debug('Exception: events:client:syncHeadingToCoord');
+        methods.debug(e);
+    }
+});
+
+mp.events.add('client:syncHeading', (playerId, rot) => {
+    //if (mp.players.local.remoteId == playerId || mp.players.local.id == playerId)
+    try {
+        let remotePlayer = mp.players.atRemoteId(playerId);
+        if (remotePlayer && mp.players.exists(remotePlayer)) {
+
+            if (remotePlayer.vehicle)
+                return;
+
+            if (remotePlayer === mp.players.local)
+                remotePlayer = mp.players.local;
+
+            methods.debug('Execute: events:client:syncHeading');
+            remotePlayer.setRotation(0, 0, rot, 0, true);
         }
     }
     catch (e) {

@@ -641,6 +641,12 @@ builder.start = function() {
 };
 
 builder.take = function(type) {
+
+    if (!mp.players.local.vehicle) {
+        mp.game.ui.notifications.show('~r~Вы не в транспорте');
+        return;
+    }
+
     Container.Data.SetLocally(0, 'tool', type);
     if (type == 0)
         mp.game.ui.notifications.show('~r~Вы взяли набор инструментов');

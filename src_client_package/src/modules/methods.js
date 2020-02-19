@@ -778,8 +778,6 @@ methods.requestIpls = function () {
 
     mp.game.streaming.requestIpl("ex_dt1_02_office_02b");
 
-    mp.game.streaming.requestIpl("ex_sm_15_office_01a"); // Meria - old ex_dt1_02_office_03a
-
     mp.game.streaming.requestIpl("ex_dt1_11_office_01b"); //Maze Bank Office
 
     //Bahama Mamas: -1388.0013, -618.41967, 30.819599

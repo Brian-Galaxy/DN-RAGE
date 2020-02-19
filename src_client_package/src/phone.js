@@ -416,7 +416,7 @@ phone.showAppEcorp= function() {
     };
 
     if (user.getCache('bank_card') > 0) {
-        let item ={
+        /*let item ={
                 title: "Обменять $ на ₠",
                 text: 'Курс: $1,000 = 1₠',
                 modalTitle: 'Сколько ₠ вы хотите купить',
@@ -425,11 +425,11 @@ phone.showAppEcorp= function() {
                 clickable: true,
                 params: {name: "moneyToCrypto"}
         };
-        menu.items[0].umenu.push(item);
+        menu.items[0].umenu.push(item);*/
 
-        item ={
+        let item ={
                 title: "Обменять ₠ на $",
-                text: 'Курс: 1₠ = $1,000',
+                text: 'Курс: 1₠ = $500',
                 modalTitle: 'Сколько ₠ вы хотите обменять',
                 modalButton: ['Закрыть', 'Перевести'],
                 type: 8,
@@ -705,6 +705,12 @@ phone.showAppFraction = function() {
                     type: 1,
                     clickable: true,
                     params: { name: "destroyVehicle" }
+                },
+                {
+                    title: "На штраф стоянку ближайший транспорт",
+                    type: 1,
+                    clickable: true,
+                    params: { name: "destroyVehicle2" }
                 }
             );
 
@@ -727,6 +733,12 @@ phone.showAppFraction = function() {
                     type: 1,
                     clickable: true,
                     params: { name: "destroyVehicle" }
+                },
+                {
+                    title: "На штраф стоянку ближайший транспорт",
+                    type: 1,
+                    clickable: true,
+                    params: { name: "destroyVehicle2" }
                 }
             );
         }
@@ -2436,8 +2448,8 @@ phone.callBackModalInput = function(paramsJson, text) {
                 return;
             }
             user.removeCryptoMoney(sum, 'Обмен E-Coin');
-            user.addBankMoney(sum * 1000, 'Обмен E-Coin');
-            user.sendSmsBankOperation(`Транзакция успешно прошла\\nПолучено ~g~${methods.moneyFormat(sum * 1000)}`, 'E-Coin');
+            user.addBankMoney(sum * 500, 'Обмен E-Coin');
+            user.sendSmsBankOperation(`Транзакция успешно прошла\\nПолучено ~g~${methods.moneyFormat(sum * 500)}`, 'E-Coin');
 
             setTimeout(phone.showAppEcorp, 200);
         }
@@ -2517,7 +2529,7 @@ phone.callBackModalInput = function(paramsJson, text) {
     }
 };
 
-phone.callBackButton = function(menu, id, ...args) {
+phone.callBackButton = async function(menu, id, ...args) {
     try {
         let params = JSON.parse(args[0]);
         if (menu == 'fraction') {
@@ -2549,6 +2561,9 @@ phone.callBackButton = function(menu, id, ...args) {
             }
             else if (params.name == 'destroyVehicle') {
                 mp.events.callRemote('server:respawnNearstVehicle');
+            }
+            else if (params.name == 'destroyVehicle2') {
+                mp.events.callRemote('server:respawnNearstVehicle2');
             }
             else if (params.name == 'dispatcherList') {
                 phone.showAppFractionDispatcherList();
@@ -2657,6 +2672,11 @@ phone.callBackButton = function(menu, id, ...args) {
 
                 if (weather.getHour() < 22 && weather.getHour() > 4) {
                     mp.game.ui.notifications.show('~r~Доступно только с 22 до 4 утра игрового времени');
+                    return;
+                }
+
+                if (await user.has('grabVeh')) {
+                    mp.game.ui.notifications.showy('~r~Вы не можете сейчас сбыть транспорт');
                     return;
                 }
 

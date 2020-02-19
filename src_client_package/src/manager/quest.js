@@ -91,7 +91,7 @@ quest.loadAllBlip = function() {
     });
 };
 
-quest.gang = function(start = -1) {
+quest.gang = function(isBot = false, start = -1) {
 
     if (weather.getHour() < 22 && weather.getHour() > 4) {
         ui.showDialog('Приходи ночью, с 22 до 4 утра', 'Ламар');
@@ -113,6 +113,8 @@ quest.gang = function(start = -1) {
                 mp.game.ui.notifications.show(`~r~Для того, чтобы начать квест, необходимо иметь телефон`);
                 return;
             }
+            if (!isBot)
+                return;
             user.set(qName, 1);
             setTimeout(function () {
                 mp.events.callRemote('server:user:generateCryptoCard');
@@ -136,6 +138,8 @@ quest.gang = function(start = -1) {
                 return;
             }
 
+            if (!isBot)
+                return;
             isBoxTake = true;
             ui.showDialog('У друга лежит коробка на заднем дворе, мне надо чтобы ты помог её забрать, принесешь сюда, я тебе заплачу', 'Ламар');
 
@@ -154,6 +158,8 @@ quest.gang = function(start = -1) {
                 return;
             }
 
+            if (!isBot)
+                return;
             isLamar = true;
             ui.showDialog('Слушай, можешь зайти в магазин, посмотреть, спит ли продавец', 'Ламар');
             _checkpointId = jobPoint.create(questLamarShop[_currentCheckpointId]);
@@ -173,6 +179,8 @@ quest.gang = function(start = -1) {
                 return;
             }
 
+            if (!isBot)
+                return;
             isLamar = true;
             ui.showDialog('Мне надо чтобы ты отвёз фургон до точки, вот ключи', 'Ламар');
             _checkpointId = jobPoint.create(new mp.Vector3(330.46771240234375, 2615.75439453125, 43.49345016479492), true, 3);
@@ -187,7 +195,7 @@ quest.gang = function(start = -1) {
     }
 };
 
-quest.role0 = function(start = -1) {
+quest.role0 = function(isBot = false, start = -1) {
 
     let qName = 'quest_role_0';
 
@@ -210,6 +218,8 @@ quest.role0 = function(start = -1) {
                 user.set(qName, 2);
                 return;
             }
+            if (!isBot)
+                return;
             ui.showDialog('Ты не плохо справился, езжай теперь к зданию правительства, подойди к стойке регистрации и тебе помогут оформить Word ID', 'Каспер');
             user.setWaypoint(-1379.659, -499.748);
             break;
@@ -217,7 +227,7 @@ quest.role0 = function(start = -1) {
     }
 };
 
-quest.standart = function(start = -1) {
+quest.standart = function(isBot = false, start = -1) {
 
     let qName = 'quest_standart';
 
@@ -238,6 +248,8 @@ quest.standart = function(start = -1) {
                 return;
             }
 
+            if (!isBot)
+                return;
             user.showCustomNotify('Список ваших квестов можно посмотреть через M -> Квесты', 0, 5, 20000);
             ui.showDialog('Привет, тебе необходимо сейчас в здании правительства, которое находиться позади меня, оформить лицензию категории B, заодно можешь получить WorkID', 'Сюзанна');
             break;
@@ -250,6 +262,8 @@ quest.standart = function(start = -1) {
                 quest.standart();
                 return;
             }
+            if (!isBot)
+                return;
             ui.showDialog('Теперь тебе необходимо оформить Work ID в здании правительства', 'Сюзанна');
             break;
         }
@@ -261,6 +275,8 @@ quest.standart = function(start = -1) {
                 quest.standart();
                 return;
             }
+            if (!isBot)
+                return;
             ui.showDialog('Устройся на работу садовника или разнорабочего, чтобы заработать свои первые деньги', 'Сюзанна');
             break;
         }
@@ -272,6 +288,8 @@ quest.standart = function(start = -1) {
                 quest.standart();
                 return;
             }
+            if (!isBot)
+                return;
             ui.showDialog('Оформи банковскую карту в любом из выбранных тобой банка', 'Сюзанна');
             break;
         }
@@ -283,6 +301,8 @@ quest.standart = function(start = -1) {
                 quest.standart();
                 return;
             }
+            if (!isBot)
+                return;
             ui.showDialog('Осталось тебе купить транспорт и дело в шляпе!', 'Сюзанна');
             break;
         }

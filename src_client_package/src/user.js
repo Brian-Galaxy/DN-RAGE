@@ -468,7 +468,7 @@ user.removeWaypoint = function() {
 user.hideLoadDisplay = function(dur = 500, isHud = true) {
     mp.game.cam.doScreenFadeIn(dur);
     setTimeout(function () {
-        if (isHud)
+        if (isHud && user.isLogin())
             ui.showHud();
     }, dur);
 };
@@ -876,6 +876,14 @@ user.setProp = function(slot, type, color) {
 
 user.clearAllProp = function() {
     mp.events.callRemote('server:user:clearAllProp');
+};
+
+user.kick = function(reason) {
+    mp.events.callRemote('server:user:kick', reason);
+};
+
+user.kickAntiCheat = function(reason) {
+    mp.events.callRemote('server:user:kickAntiCheat', reason);
 };
 
 user.stopAllScreenEffect = function() {
@@ -1317,6 +1325,10 @@ user.setRagdoll = function(timeout = 1000) {
 };
 
 user.stopAllAnimation = function() {
+
+    if (methods.isBlockKeys())
+        return;
+
     if (!mp.players.local.getVariable("isBlockAnimation")) {
         //mp.players.local.clearTasks();
         //mp.players.local.clearSecondaryTask();

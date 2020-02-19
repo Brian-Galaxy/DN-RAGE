@@ -852,11 +852,11 @@ mp.events.add('voice.toggleMicrophone', async (peerName, isEnabled) => {
                 player.playFacialAnim("mood_normal_1", "facials@gen_male@variations@normal");
 
 
-            if (isEnabled && safeGetVoiceInfo(player, 'distance') > 100) {
+            /*if (isEnabled && safeGetVoiceInfo(player, 'distance') > 100) {
                 ui.radioSoundShOn();
             }
             else
-                ui.radioSoundShOff();
+                ui.radioSoundShOff();*/
 
             safeSetVoiceInfo(player, 'enabled', isEnabled);
         }

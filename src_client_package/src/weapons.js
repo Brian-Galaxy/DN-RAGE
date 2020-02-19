@@ -55,6 +55,15 @@ weapons.getHashByName = function(name) {
     return hash;
 };
 
+weapons.getDamageByHash = function(hash) {
+    let damage = 1;
+    weapons.getMapList().forEach(item => {
+        if (item[1] / 2 == hash)
+            damage = item[2];
+    });
+    return damage;
+};
+
 weapons.getTintName = function(wpName, tint) {
     tint = methods.parseInt(tint);
     let tintList = ['','Green','Gold','Pink','BCSD','LSPD','Orange','Platinum'];

@@ -1,4 +1,7 @@
 // "Borrowed" from attachments resource, credits to ragempdev
+
+let weapons = require('../weapons');
+
 function serializeComponentSet(dataSet) {
     return (Array.from(dataSet).map((hash) => (hash.toString(36)))).join("|");
 }
@@ -142,6 +145,7 @@ mp.events.add("playerJoin", (player) => {
 });
 
 mp.events.add("playerWeaponChange", (player, oldWeapon, newWeapon) => {
-    player.setVariable("currentWeaponComponents", newWeapon.toString(36) + "." + (player.__weaponComponents.hasOwnProperty(newWeapon) ? serializeComponentSet(player.__weaponComponents[newWeapon]) : ""));
-    player.setVariable("currentWeaponTint", `${newWeapon.toString(36)}|${player.__weaponTints.hasOwnProperty(newWeapon) ? player.__weaponTints[newWeapon] : 0}`);
+    let newWeaponInt32 = weapons.getHashByInt64(newWeapon);
+    player.setVariable("currentWeaponComponents", newWeaponInt32.toString(36) + "." + (player.__weaponComponents.hasOwnProperty(newWeaponInt32) ? serializeComponentSet(player.__weaponComponents[newWeaponInt32]) : ""));
+    player.setVariable("currentWeaponTint", `${newWeaponInt32.toString(36)}|${player.__weaponTints.hasOwnProperty(newWeaponInt32) ? player.__weaponTints[newWeaponInt32] : 0}`);
 });

@@ -212,6 +212,7 @@ mp.events.add('client:events:createNewPlayer', function() {
         user.hideLoadDisplay();
         ui.callCef('authMain','{"type": "hide"}');
         ui.callCef('customization','{"type": "show"}');
+        methods.blockKeys(true);
 
         user.setVirtualWorld(mp.players.local.remoteId + 1);
 
@@ -277,6 +278,9 @@ mp.events.add('client:events:custom:updateAge', function(age) {
 
 mp.events.add('client:events:custom:set', function(input_editor_face, input_editor_nose, input_editor_eyes_lips, input_editor_face_last, cheked_sex, mother, father, mix1, mix2, isSave) {
     try {
+
+        methods.blockKeys(true);
+
         let faceEditor = JSON.parse(input_editor_face);
         let noseEditor = JSON.parse(input_editor_nose);
         let eyeEditor = JSON.parse(input_editor_eyes_lips);
@@ -321,6 +325,10 @@ mp.events.add('client:events:custom:set', function(input_editor_face, input_edit
         skinSpec[18] = faceEditor[10].value / 100;
         skinSpec[19] = faceEditor[11].value / 100;
 
+        let hairIdx = faceLastEditor[0].index_help;
+        if (hairIdx == 23 || hairIdx == 24)
+            hairIdx = 1;
+
         if (isSave) {
             user.set('SKIN_FACE_SPECIFICATIONS', JSON.stringify(skinSpec));
 
@@ -335,7 +343,7 @@ mp.events.add('client:events:custom:set', function(input_editor_face, input_edit
             user.set('SKIN_PARENT_FACE_MIX', mix1 / 20);
             user.set('SKIN_PARENT_SKIN_MIX', mix2 / 20);
 
-            user.set('SKIN_HAIR', faceLastEditor[0].index_help);
+            user.set('SKIN_HAIR', hairIdx);
             user.set('SKIN_HAIR_3', faceLastEditor[1].index_help);
             user.set('SKIN_HAIR_COLOR', faceLastEditor[2].index_help);
             user.set('SKIN_HAIR_COLOR_2', faceLastEditor[3].index_help);
@@ -364,7 +372,7 @@ mp.events.add('client:events:custom:set', function(input_editor_face, input_edit
             user.setCache('SKIN_PARENT_FACE_MIX', mix1 / 20);
             user.setCache('SKIN_PARENT_SKIN_MIX', mix2 / 20);
 
-            user.setCache('SKIN_HAIR', faceLastEditor[0].index_help);
+            user.setCache('SKIN_HAIR', hairIdx);
             user.setCache('SKIN_HAIR_3', faceLastEditor[1].index_help);
             user.setCache('SKIN_HAIR_COLOR', faceLastEditor[2].index_help);
             user.setCache('SKIN_HAIR_COLOR_2', faceLastEditor[3].index_help);
@@ -448,6 +456,7 @@ mp.events.add('client:events:custom:choiceRole', function(roleIndex) {
             mp.game.ui.displayRadar(true);
 
             user.setLogin(true);
+            methods.blockKeys(false);
 
             user.setVirtualWorld(0);
 
@@ -583,6 +592,7 @@ mp.events.add('client:events:loginUser:finalCreate', function() {
         ui.callCef('authMain','{"type": "hide"}');
         ui.callCef('customization','{"type": "show"}');
         ui.callCef('customization','{"type": "showFamilyPage"}');
+        methods.blockKeys(false);
 
         user.setVirtualWorld(mp.players.local.remoteId + 1);
 
@@ -631,6 +641,11 @@ mp.events.add('client:user:updateCache', (data) => {
 mp.events.add('client:user:callCef', (name, params) => {
     methods.debug('Event: client:user:callCef');
     ui.callCef(name, params);
+});
+
+mp.events.add('client:user:giveWeapon', (name, pt) => {
+    methods.debug('Event: client:user:giveWeapon');
+    user.giveWeapon(name, pt);
 });
 
 mp.events.add('client:user:setWaypoint', (x, y) => {
@@ -1613,7 +1628,7 @@ mp.events.add('client:inventory:notify', function(text) {
 mp.events.add('client:inventory:giveItemMenu', function() {
     try {
         let playerList = methods.getListOfPlayerInRadius(mp.players.local.position, 2);
-        let tradeArray = [mp.players.local.remoteId];
+        let tradeArray = [];
 
         playerList.forEach(p => {
             tradeArray.push(p.remoteId);
@@ -1644,6 +1659,10 @@ mp.events.add('client:inventory:moveTo', function(id, itemId, ownerId, ownerType
     }
     else
         inventory.updateOwnerId(id, methods.parseInt(ownerId), ownerType);
+});
+
+mp.events.add('client:inventory:giveItem', function(id, itemId, playerId) {
+    inventory.giveItem(id, itemId, playerId)
 });
 
 mp.events.add('client:inventory:moveFrom', function(id, ownerType) {
@@ -2015,278 +2034,7 @@ mp.events.add('client:inventory:unEquip', function(id, itemId) {
 });
 
 mp.events.add('client:inventory:equip', function(id, itemId, count, aparams) {
-
-    inventory.deleteItemProp(id);
-    inventory.updateOwnerId(id, user.getCache('id'), inventory.types.Player);
-
-    let params = {};
-
-    try {
-        params = JSON.parse(aparams);
-    }
-    catch (e) {
-        methods.debug(e);
-    }
-
-    if (itemId == 50) {
-        if (user.getCache('bank_card') == 0) {
-            user.set('bank_card', methods.parseInt(params.number));
-            user.set('bank_owner', params.owner);
-            user.set('bank_pin', methods.parseInt(params.pin));
-            user.setBankMoney(count);
-            user.save();
-        }
-        else {
-            mp.game.ui.notifications.show("~r~Карта уже экипирована, для начала снимите текущую");
-            return;
-        }
-    }
-    else if (itemId >= 27 && itemId <= 30) {
-        if (user.getCache('phone_type') == 0) {
-            user.set('phone', methods.parseInt(params.number));
-            user.set('phone_type', methods.parseInt(params.type));
-            user.save();
-        }
-        else {
-            mp.game.ui.notifications.show("~r~Телефон уже экипирован, для начала снимите текущий");
-            return;
-        }
-    }
-    else if (items.isWeapon(itemId)) {
-
-        let slot = weapons.getGunSlotIdByItem(itemId);
-        if (user.getCache('weapon_' + slot) == '') {
-            user.set('weapon_' + slot, params.serial);
-            user.set('weapon_' + slot + '_ammo', -1);
-            user.giveWeapon(items.getItemNameHashById(itemId), 0);
-            ui.callCef('inventory', JSON.stringify({type: "updateSelectWeapon", selectId: id}));
-
-            let wpHash = weapons.getHashByName(items.getItemNameHashById(itemId));
-
-            user.removeAllWeaponComponentsByHash(wpHash);
-            user.setWeaponTintByHash(wpHash, 0);
-
-            if (params.slot1)
-                user.giveWeaponComponentByHash(wpHash, params.slot1hash);
-            if (params.slot2)
-                user.giveWeaponComponentByHash(wpHash, params.slot2hash);
-            if (params.slot3)
-                user.giveWeaponComponentByHash(wpHash, params.slot3hash);
-            if (params.slot4)
-                user.giveWeaponComponentByHash(wpHash, params.slot4hash);
-            if (params.superTint)
-                user.giveWeaponComponentByHash(wpHash, params.superTint);
-            if (params.tint)
-                user.setWeaponTintByHash(wpHash, params.tint);
-
-            user.save();
-        }
-        else {
-            ui.callCef('inventory', JSON.stringify({type: "weaponToInventory", itemId: id}));
-            mp.game.ui.notifications.show("~r~Слот под оружие уже занят");
-            return;
-        }
-    }
-    else if (itemId <= 471 && itemId >= 293) {
-        let useItemId = items.getWeaponIdByName(items.getItemNameHashById(itemId));
-        let slot = weapons.getGunSlotIdByItem(useItemId);
-    }
-    else if (itemId == 264 || itemId == 263) {
-
-        if (params.sex !== user.getSex()) {
-            mp.game.ui.notifications.show("~r~Одежда подходит только для противоположного");
-            return;
-        }
-
-        user.set("hand", params.hand);
-        user.set("hand_color", params.hand_color);
-        user.updateCharacterCloth();
-        user.save();
-    }
-    else if (itemId == 265) {
-
-        if (params.sex !== user.getSex()) {
-            mp.game.ui.notifications.show("~r~Одежда подходит только для противоположного");
-            return;
-        }
-
-        if (user.getCache('torso') == 15) {
-            user.set("torso", params.torso);
-            user.set("torso_color", params.torso_color);
-            user.set("body", params.body);
-            user.set("body_color", params.body_color);
-            user.set("parachute", params.parachute);
-            user.set("parachute_color", params.parachute_color);
-            user.set("decal", 0);
-            user.set("decal_color", 0);
-            user.set("tprint_o", params.tprint_o);
-            user.set("tprint_c", params.tprint_c);
-            user.updateCharacterCloth();
-            user.updateTattoo();
-        }
-        else {
-            mp.game.ui.notifications.show("~r~Одежда уже экипирована, для начала снимите текущую");
-            return;
-        }
-    }
-    else if (itemId == 266) {
-
-        if (params.sex !== user.getSex()) {
-            mp.game.ui.notifications.show("~r~Одежда подходит только для противоположного");
-            return;
-        }
-
-        if (user.getCache('leg') == 61 && user.getSex() == 0 || user.getCache('leg') == 15 && user.getSex() == 1) {
-            user.set("leg", params.leg);
-            user.set("leg_color", params.leg_color);
-            user.updateCharacterCloth();
-        }
-        else {
-            mp.game.ui.notifications.show("~r~Одежда уже экипирована, для начала снимите текущую");
-            return;
-        }
-    }
-    else if (itemId == 267) {
-
-        if (params.sex !== user.getSex()) {
-            mp.game.ui.notifications.show("~r~Одежда подходит только для противоположного");
-            return;
-        }
-
-        if (user.getCache('foot') == 34 && user.getSex() == 0 || user.getCache('leg') == 35 && user.getSex() == 1) {
-            user.set("foot", params.foot);
-            user.set("foot_color", params.foot_color);
-            user.updateCharacterCloth();
-        }
-        else {
-            mp.game.ui.notifications.show("~r~Одежда уже экипирована, для начала снимите текущую");
-            return;
-        }
-    }
-    else if (itemId == 268) {
-
-        if (params.sex !== user.getSex()) {
-            mp.game.ui.notifications.show("~r~Одежда подходит только для противоположного");
-            return;
-        }
-
-        if (user.getCache('accessorie') == 0) {
-            user.set("accessorie", params.accessorie);
-            user.set("accessorie_color", params.accessorie_color);
-            user.updateCharacterCloth();
-        }
-        else {
-            mp.game.ui.notifications.show("~r~Одежда уже экипирована, для начала снимите текущую");
-            return;
-        }
-    }
-    else if (itemId == 269) {
-
-        if (params.sex !== user.getSex()) {
-            mp.game.ui.notifications.show("~r~Одежда подходит только для противоположного");
-            return;
-        }
-
-        if (user.getCache('hat') == -1) {
-            user.set("hat", params.hat);
-            user.set("hat_color", params.hat_color);
-            user.updateCharacterCloth();
-        }
-        else {
-            mp.game.ui.notifications.show("~r~Одежда уже экипирована, для начала снимите текущую");
-            return;
-        }
-    }
-    else if (itemId == 270) {
-
-        if (params.sex !== user.getSex()) {
-            mp.game.ui.notifications.show("~r~Одежда подходит только для противоположного");
-            return;
-        }
-
-        if (user.getCache('glasses') == -1) {
-            user.set("glasses", params.glasses);
-            user.set("glasses_color", params.glasses_color);
-            user.updateCharacterCloth();
-        }
-        else {
-            mp.game.ui.notifications.show("~r~Одежда уже экипирована, для начала снимите текущую");
-            return;
-        }
-    }
-    else if (itemId == 271) {
-
-        if (params.sex !== user.getSex()) {
-            mp.game.ui.notifications.show("~r~Одежда подходит только для противоположного");
-            return;
-        }
-
-        if (user.getCache('ear') == -1) {
-            user.set("ear", params.ear);
-            user.set("ear_color", params.ear_color);
-            user.updateCharacterCloth();
-        }
-        else {
-            mp.game.ui.notifications.show("~r~Одежда уже экипирована, для начала снимите текущую");
-            return;
-        }
-    }
-    else if (itemId == 272) {
-
-        if (params.sex !== user.getSex()) {
-            mp.game.ui.notifications.show("~r~Одежда подходит только для противоположного");
-            return;
-        }
-
-        if (user.getCache('watch') == -1) {
-            user.set("watch", params.watch);
-            user.set("watch_color", params.watch_color);
-            user.updateCharacterCloth();
-        }
-        else {
-            mp.game.ui.notifications.show("~r~Одежда уже экипирована, для начала снимите текущую");
-            return;
-        }
-    }
-    else if (itemId == 273) {
-
-        if (params.sex !== user.getSex()) {
-            mp.game.ui.notifications.show("~r~Одежда подходит только для противоположного");
-            return;
-        }
-
-        if (user.getCache('bracelet') == -1) {
-            user.set("bracelet", params.bracelet);
-            user.set("bracelet_color", params.bracelet_color);
-            user.updateCharacterCloth();
-        }
-        else {
-            mp.game.ui.notifications.show("~r~Одежда уже экипирована, для начала снимите текущую");
-            return;
-        }
-    }
-    else if (itemId == 274) {
-
-        if (params.sex !== user.getSex()) {
-            mp.game.ui.notifications.show("~r~Одежда подходит только для противоположного");
-            return;
-        }
-
-        if (user.getCache('mask') == -1) {
-            user.set("mask", params.bracelet);
-            user.set("mask_color", params.bracelet_color);
-            user.updateCharacterCloth();
-        }
-        else {
-            mp.game.ui.notifications.show("~r~Одежда уже экипирована, для начала снимите текущую");
-            return;
-        }
-    }
-    else {
-        return;
-    }
-
-    inventory.updateEquipStatus(id, true);
+    mp.events.callRemote('server:inventory:equip', id, itemId, count, aparams);
 });
 
 mp.events.add('client:phone:showMenu', function(data) {
@@ -2599,6 +2347,38 @@ mp.events.add("playerEnterCheckpoint", (checkpoint) => {
         user.reset('isSellCar');
         jobPoint.delete();
         mp.events.callRemote('server:sellVeh');
+    }
+});
+
+mp.events.add('playerWeaponShot', (targetPosition, targetEntity) => {
+    try {
+        if (targetEntity.getType() === 4 || targetEntity.getType() === 5)
+            mp.events.callRemote('server:playerWeaponShot', targetEntity.remoteId);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.add('playerMaybeTakeShot', (shootEntityId) => {
+    try {
+        let shootEntity = mp.players.atRemoteId(shootEntityId);
+
+        let currentWeapon = mp.game.invoke(methods.GET_SELECTED_PED_WEAPON, shootEntity.handle);
+        let damage = weapons.getDamageByHash(currentWeapon);
+
+        mp.game.ped.setAiMeleeWeaponDamageModifier(damage);
+        mp.game.player.setMeleeWeaponDefenseModifier(damage);
+        mp.game.player.setWeaponDefenseModifier(damage);
+
+        methods.debug('playerMaybeTakeShot', damage, currentWeapon, shootEntityId);
+    }
+    catch (e) {
+        mp.game.ped.setAiMeleeWeaponDamageModifier(2);
+        mp.game.player.setMeleeWeaponDefenseModifier(2);
+        mp.game.player.setWeaponDefenseModifier(2)
+
+        methods.debug(e);
     }
 });
 

@@ -50,6 +50,7 @@ inventory.show = function() {
 inventory.hide = function() {
     //mp.gui.chat.activate(true);
     try {
+        ui.callCef('inventory', '{"type": "hide"}');
         mp.gui.cursor.show(false, false);
         ui.DisableMouseControl = false;
         hidden = true;
@@ -292,9 +293,19 @@ inventory.takeItem = async function(id, itemId, notify = true) {
 
 inventory.giveItem = async function(id, itemId, playerId, notify = true) {
     try {
+
+        let target = mp.players.atRemoteId(playerId);
+
+        if (!mp.players.exists(target)) {
+            mp.game.ui.notifications.show("~r~Вы слишком далеко");
+            return;
+        }
+
+        let targetId = target.getVariable('idLabel');
+
         let user_id = user.getCache('id');
-        let amount = await inventory.getInvAmount(playerId, inventory.types.Player);
-        let amountMax = await inventory.getInvAmountMax(playerId, inventory.types.Player);
+        let amount = await inventory.getInvAmount(targetId, inventory.types.Player);
+        let amountMax = await inventory.getInvAmountMax(targetId, inventory.types.Player);
         if (items.getItemAmountById(itemId) + amount > amountMax) {
             mp.game.ui.notifications.show("~r~Инвентарь заполнен");
             return;
@@ -302,9 +313,10 @@ inventory.giveItem = async function(id, itemId, playerId, notify = true) {
 
         user.playAnimationWithUser(playerId, 6); //TODO
 
-        inventory.updateItemOwnerServer(id, inventory.types.Player, playerId);
-        inventory.updateAmount(playerId, inventory.types.Player);
+        inventory.updateAmount(targetId, inventory.types.Player);
         inventory.updateAmount(user_id, inventory.types.Player);
+
+        inventory.updateOwnerId(id, targetId, inventory.types.Player);
 
         if (!notify) return;
         mp.game.ui.notifications.show(`~g~Вы передали \"${items.getItemNameById(itemId)}\" игроку`);
@@ -562,6 +574,8 @@ inventory.updateAmount = function(id, type) {
 
 inventory.addItem = function(itemId, count, ownerType, ownerId, countItems, isEquip = 0, params = "{}", timeout = 10) {
     mp.events.callRemote('server:inventory:addItem', itemId, count, ownerType, ownerId, countItems, isEquip, params, timeout);
+
+    //for (let i = 279; i < 292; i++) mp.events.callRemote('server:inventory:addItem', i, 1, 1, 1, 1, 0, "{}", 10);
 };
 
 inventory.addItemSql = function(itemId, count, ownerType, ownerId, countItems, isEquip = 0, params = "{}", timeout = 10) {

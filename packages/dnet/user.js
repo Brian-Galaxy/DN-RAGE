@@ -1008,9 +1008,9 @@ user.cuff = function(player) {
 };
 
 user.unCuff = function(player) {
-    methods.debug('user.unCuff');
     if (!mp.players.exists(player))
         return false;
+    methods.debug('user.unCuff');
     player.call("client:handcuffs", [false]);
     player.setVariable("isBlockAnimation", false);
     player.setVariable("isCuff", false);
@@ -1455,6 +1455,7 @@ user.removePayDayMoney = function(player, money) {
 
 user.setPayDayMoney = function(player, money) {
     user.set(player, 'money_payday', methods.parseFloat(money));
+    user.updateClientCache(player);
 };
 
 user.getPayDayMoney = function(player) {
@@ -1736,6 +1737,22 @@ user.getVehicleDriver = function(vehicle) {
     return driver;
 };
 
+user.heading = function(player, rot) {
+    methods.debug('user.headingToCoord');
+    if (!mp.players.exists(player))
+        return false;
+    let pos = player.position;
+    mp.players.forEach((p) => {
+        try {
+            if (methods.distanceToPos(pos, p.position) < 100)
+                p.call('client:syncHeading', [player.id, rot])
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    });
+};
+
 user.headingToCoord = function(player, x, y, z) {
     methods.debug('user.headingToCoord');
     if (!mp.players.exists(player))
@@ -1791,7 +1808,7 @@ user.playAnimationWithUser = function(player, target, animId) {
         return false;
 
     try {
-        if (target.remoteId == player.remoteId)
+        if (target.id == player.id)
             return;
 
         if (methods.distanceToPos(target.position, player.position) > 3) {
@@ -1980,6 +1997,12 @@ user.setEatLevel = function(player, level) {
 
 user.getEatLevel = function(player) {
     return user.get(player, "eat_level");
+};
+
+user.giveWeapon = function(player, weapon, pt) {
+    if (!mp.players.exists(player))
+        return false;
+    player.call('client:user:giveWeapon', [weapon, pt])
 };
 
 user.giveWeaponComponent = function(player, weapon, component) {

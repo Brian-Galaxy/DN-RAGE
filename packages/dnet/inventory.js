@@ -102,6 +102,290 @@ inventory.getItemList = function(player, ownerType, ownerId) {
     }
 };
 
+
+inventory.equip = function(player, id, itemId, count, aparams) {
+
+    if (!user.isLogin(player))
+        return;
+    try {
+
+        let sql = `SELECT * FROM items WHERE id = ${id} AND owner_id = ${user.getId(player)} AND owner_type = ${inventory.types.Player}`;
+        if (itemId === 264 || itemId === 263)
+            sql = `SELECT * FROM items WHERE id = ${id}`;
+
+        mysql.executeQuery(sql, function (err, rows, fields) {
+            if (rows.length === 0) {
+                return;
+            }
+
+            inventory.deleteDropItem(id);
+            inventory.updateOwnerId(id, user.getId(player), inventory.types.Player);
+
+            let params = {};
+
+            try {
+                params = JSON.parse(aparams);
+            }
+            catch (e) {
+                methods.debug(e);
+            }
+
+            if (itemId == 50) {
+                if (user.get(player, 'bank_card') == 0) {
+                    user.set(player, 'bank_card', methods.parseInt(params.number));
+                    user.set(player, 'bank_owner', params.owner);
+                    user.set(player, 'bank_pin', methods.parseInt(params.pin));
+                    user.setBankMoney(player, count);
+                    user.save(player);
+                }
+                else {
+                    player.notify("~r~Карта уже экипирована, для начала снимите текущую");
+                    return;
+                }
+            }
+            else if (itemId >= 27 && itemId <= 30) {
+                if (user.get(player, 'phone_type') == 0) {
+                    user.set(player, 'phone', methods.parseInt(params.number));
+                    user.set(player, 'phone_type', methods.parseInt(params.type));
+                    user.save(player);
+                }
+                else {
+                    player.notify("~r~Телефон уже экипирован, для начала снимите текущий");
+                    return;
+                }
+            }
+            else if (items.isWeapon(itemId)) {
+
+                let slot = weapons.getGunSlotIdByItem(itemId);
+                if (user.get(player, 'weapon_' + slot) == '') {
+                    user.set(player, 'weapon_' + slot, params.serial);
+                    user.set(player, 'weapon_' + slot + '_ammo', -1);
+                    user.giveWeapon(player, items.getItemNameHashById(itemId), 0);
+                    user.callCef(player, 'inventory', JSON.stringify({type: "updateSelectWeapon", selectId: id}));
+
+                    let wpHash = weapons.getHashByName(items.getItemNameHashById(itemId));
+
+                    player.removeAllWeaponComponents(wpHash);
+                    player.setWeaponTint(wpHash, 0);
+
+                    if (params.slot1)
+                        player.giveWeaponComponent(wpHash, params.slot1hash);
+                    if (params.slot2)
+                        player.giveWeaponComponent(wpHash, params.slot2hash);
+                    if (params.slot3)
+                        player.giveWeaponComponent(wpHash, params.slot3hash);
+                    if (params.slot4)
+                        player.giveWeaponComponent(wpHash, params.slot4hash);
+                    if (params.superTint)
+                        player.giveWeaponComponent(wpHash, params.superTint);
+                    if (params.tint)
+                        player.setWeaponTint(wpHash, params.tint);
+
+                    user.save(player);
+                }
+                else {
+                    user.callCef(player, 'inventory', JSON.stringify({type: "weaponToInventory", itemId: id}));
+                    player.notify("~r~Слот под оружие уже занят");
+                    return;
+                }
+            }
+            else if (itemId == 264 || itemId == 263) {
+                user.set(player, "hand", params.hand);
+                user.set(player, "hand_color", params.hand_color);
+                user.updateCharacterCloth(player);
+                user.save(player);
+            }
+            else if (itemId == 265) {
+
+                if (params.sex !== user.getSex(player)) {
+                    player.notify("~r~Одежда подходит только для противоположного");
+                    return;
+                }
+
+                if (user.get(player, 'torso') == 15) {
+                    user.set(player, "torso", params.torso);
+                    user.set(player, "torso_color", params.torso_color);
+                    user.set(player, "body", params.body);
+                    user.set(player, "body_color", params.body_color);
+                    user.set(player, "parachute", params.parachute);
+                    user.set(player, "parachute_color", params.parachute_color);
+                    user.set(player, "decal", 0);
+                    user.set(player, "decal_color", 0);
+                    user.set(player, "tprint_o", params.tprint_o);
+                    user.set(player, "tprint_c", params.tprint_c);
+                    user.updateCharacterCloth(player);
+                    user.updateTattoo(player);
+                }
+                else {
+                    player.notify("~r~Одежда уже экипирована, для начала снимите текущую");
+                    return;
+                }
+            }
+            else if (itemId == 266) {
+
+                if (params.sex !== user.getSex(player)) {
+                    player.notify("~r~Одежда подходит только для противоположного");
+                    return;
+                }
+
+                if (user.get(player, 'leg') == 61 && user.getSex(player) == 0 || user.get(player, 'leg') == 15 && user.getSex(player) == 1) {
+                    user.set(player, "leg", params.leg);
+                    user.set(player, "leg_color", params.leg_color);
+                    user.updateCharacterCloth(player);
+                }
+                else {
+                    player.notify("~r~Одежда уже экипирована, для начала снимите текущую");
+                    return;
+                }
+            }
+            else if (itemId == 267) {
+
+                if (params.sex !== user.getSex(player)) {
+                    player.notify("~r~Одежда подходит только для противоположного");
+                    return;
+                }
+
+                if (user.get(player, 'foot') == 34 && user.getSex(player) == 0 || user.get(player, 'leg') == 35 && user.getSex(player) == 1) {
+                    user.set(player, "foot", params.foot);
+                    user.set(player, "foot_color", params.foot_color);
+                    user.updateCharacterCloth(player);
+                }
+                else {
+                    player.notify("~r~Одежда уже экипирована, для начала снимите текущую");
+                    return;
+                }
+            }
+            else if (itemId == 268) {
+
+                if (params.sex !== user.getSex(player)) {
+                    player.notify("~r~Одежда подходит только для противоположного");
+                    return;
+                }
+
+                if (user.get(player, 'accessorie') == 0) {
+                    user.set(player, "accessorie", params.accessorie);
+                    user.set(player, "accessorie_color", params.accessorie_color);
+                    user.updateCharacterCloth(player);
+                }
+                else {
+                    player.notify("~r~Одежда уже экипирована, для начала снимите текущую");
+                    return;
+                }
+            }
+            else if (itemId == 269) {
+
+                if (params.sex !== user.getSex(player)) {
+                    player.notify("~r~Одежда подходит только для противоположного");
+                    return;
+                }
+
+                if (user.get(player, 'hat') == -1) {
+                    user.set(player, "hat", params.hat);
+                    user.set(player, "hat_color", params.hat_color);
+                    user.updateCharacterCloth(player);
+                }
+                else {
+                    player.notify("~r~Одежда уже экипирована, для начала снимите текущую");
+                    return;
+                }
+            }
+            else if (itemId == 270) {
+
+                if (params.sex !== user.getSex(player)) {
+                    player.notify("~r~Одежда подходит только для противоположного");
+                    return;
+                }
+
+                if (user.get(player, 'glasses') == -1) {
+                    user.set(player, "glasses", params.glasses);
+                    user.set(player, "glasses_color", params.glasses_color);
+                    user.updateCharacterCloth(player);
+                }
+                else {
+                    player.notify("~r~Одежда уже экипирована, для начала снимите текущую");
+                    return;
+                }
+            }
+            else if (itemId == 271) {
+
+                if (params.sex !== user.getSex(player)) {
+                    player.notify("~r~Одежда подходит только для противоположного");
+                    return;
+                }
+
+                if (user.get(player, 'ear') == -1) {
+                    user.set(player, "ear", params.ear);
+                    user.set(player, "ear_color", params.ear_color);
+                    user.updateCharacterCloth(player);
+                }
+                else {
+                    player.notify("~r~Одежда уже экипирована, для начала снимите текущую");
+                    return;
+                }
+            }
+            else if (itemId == 272) {
+
+                if (params.sex !== user.getSex(player)) {
+                    player.notify("~r~Одежда подходит только для противоположного");
+                    return;
+                }
+
+                if (user.get(player, 'watch') == -1) {
+                    user.set(player, "watch", params.watch);
+                    user.set(player, "watch_color", params.watch_color);
+                    user.updateCharacterCloth(player);
+                }
+                else {
+                    player.notify("~r~Одежда уже экипирована, для начала снимите текущую");
+                    return;
+                }
+            }
+            else if (itemId == 273) {
+
+                if (params.sex !== user.getSex(player)) {
+                    player.notify("~r~Одежда подходит только для противоположного");
+                    return;
+                }
+
+                if (user.get(player, 'bracelet') == -1) {
+                    user.set(player, "bracelet", params.bracelet);
+                    user.set(player, "bracelet_color", params.bracelet_color);
+                    user.updateCharacterCloth(player);
+                }
+                else {
+                    player.notify("~r~Одежда уже экипирована, для начала снимите текущую");
+                    return;
+                }
+            }
+            else if (itemId == 274) {
+
+                if (params.sex !== user.getSex(player)) {
+                    player.notify("~r~Одежда подходит только для противоположного");
+                    return;
+                }
+
+                if (user.get(player, 'mask') == -1) {
+                    user.set(player, "mask", params.bracelet);
+                    user.set(player, "mask_color", params.bracelet_color);
+                    user.updateCharacterCloth(player);
+                }
+                else {
+                    player.notify("~r~Одежда уже экипирована, для начала снимите текущую");
+                    return;
+                }
+            }
+            else {
+                return;
+            }
+
+            user.updateClientCache(player);
+            inventory.updateEquipStatus(id, true);
+        });
+    } catch(e) {
+        methods.debug(e);
+    }
+};
+
 inventory.updateEquipStatus = function(id, status) {
     try {
         let newStatus = 0;
@@ -377,6 +661,7 @@ inventory.useItem = function(player, id, itemId) {
 
                 if (user.isTie(target))
                 {
+                    inventory.addItem(0, 1, inventory.types.Player, user.getId(player), 1, 0, "{}", 10);
                     //user.stopAnimation(target);
                     user.playAnimation(player, "mp_arresting", "a_uncuff", 8);
                     user.unTie(target);
@@ -995,34 +1280,22 @@ inventory.useItem = function(player, id, itemId) {
                     return;
                 }
 
-                user.headingToTarget(player, target.id);
-
-                methods.saveLog('PlayerCuff', `${user.getRpName(target)} (${user.getId(target)}) cuffed by ${user.getRpName(player)} (${user.getId(player)})`);
+                user.heading(target, player.heading);
 
                 setTimeout(function () {
-                    try {
-                        //chat.sendMeCommand(player, `надел наручники на человека рядом (${user.getId(target)})`);
-                        //user.playAnimation(player, "mp_arresting", "a_uncuff", 8);
+                    user.playAnimation(target, 'mp_arrest_paired', 'crook_p2_back_right', 8);
+                    user.playAnimation(player, 'mp_arrest_paired', 'cop_p2_back_right', 8);
 
-                        target.heading = player.heading;
-
-                        user.playAnimation(target, 'mp_arrest_paired', 'crook_p2_back_right', 8);
-                        user.playAnimation(target, 'mp_arrest_paired', 'cop_p2_back_right', 8);
-
-                        setTimeout(function () {
-                            try {
-                                user.cuff(target);
-                                inventory.deleteItem(id);
-                            }
-                            catch (e) {
-                                methods.debug(e);
-                            }
-                        }, 3760);
-                    }
-                    catch (e) {
-                        methods.debug(e);
-                    }
-                }, 2100);
+                    setTimeout(function () {
+                        try {
+                            user.cuff(target);
+                            inventory.deleteItem(id);
+                        }
+                        catch (e) {
+                            methods.debug(e);
+                        }
+                    }, 3760);
+                }, 200);
                 break;
             }
             case 215:

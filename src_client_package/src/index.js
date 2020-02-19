@@ -41,9 +41,9 @@ try {
         object.createIpl(item[0], new mp.Vector3(item[1], item[2], item[3]), item[4]);
     });*/
 
-    mp.game.ped.setAiMeleeWeaponDamageModifier(1.5);
-    mp.game.player.setMeleeWeaponDefenseModifier(1.5);
-    mp.game.player.setWeaponDefenseModifier(1.5);
+    mp.game.ped.setAiMeleeWeaponDamageModifier(2);
+    mp.game.player.setMeleeWeaponDefenseModifier(2);
+    mp.game.player.setWeaponDefenseModifier(2);
 
     mp.gui.cursor.show(true, true);
 
@@ -51,9 +51,15 @@ try {
 
     hosp.timer();
     jail.timer();
+    mp.game.streaming.requestIpl("ex_sm_15_office_01a"); // Meria - old ex_dt1_02_office_03a
 
     user.init();
-    methods.requestIpls();
+    try {
+        methods.requestIpls();
+    }
+    catch (e) {
+        methods.debug(e);
+    }
     setTimeout(checkpoint.checkPosition, 10000);
     enums.loadCloth();
     business.loadScaleform();
@@ -78,6 +84,15 @@ try {
         setTimeout(function () {
             mp.game.invoke("0xD7C10C4A637992C9"); // _LOAD_SP_DLC_MAPS
             mp.game.invoke("0x0888C3502DBBEEF5"); // _LOAD_MP_DLC_MAPS
+
+            setTimeout(function () {
+                try {
+                    methods.requestIpls();
+                }
+                catch (e) {
+                    methods.debug(e);
+                }
+            }, 30000)
 
             //mp.game.invoke("0xD7C10C4A637992C9"); mp.game.invoke("0x0888C3502DBBEEF5"); // _LOAD_MP_DLC_MAPS
         }, 1000);

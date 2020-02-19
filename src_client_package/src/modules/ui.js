@@ -39,6 +39,14 @@ let showMenu = false;
 
 let maxStringLength = 50;
 
+mp.events.add('guiReady', () => {
+    mp.events.add('browserDomReady', (browser) => {
+        if (browser === uiBrowser) {
+            ui.hideHud();
+        }
+    });
+});
+
 ui.create = function() {
     uiBrowser = mp.browsers.new("package://cef/index.html");
     //ui.callCef('authMain','{"type": "show"}');

@@ -224,9 +224,9 @@ timer.twoSecTimer = function() {
 
         if (!mp.players.local.isInAnyVehicle(true)) {
             let drawId = mp.players.local.getPropIndex(0);
-            if (user.getSex() == 0 && drawId != 116 && drawId != 117)
+            if (user.getSex() == 0 && drawId != 116 && drawId != 118)
                 mp.game.graphics.setNightvision(false);
-            if (user.getSex() == 1 && drawId != 118 && drawId != 119)
+            if (user.getSex() == 1 && drawId != 115 && drawId != 117)
                 mp.game.graphics.setNightvision(false);
         }
     }

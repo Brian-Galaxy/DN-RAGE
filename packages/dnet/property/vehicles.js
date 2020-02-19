@@ -149,10 +149,31 @@ vehicles.loadUserVehicleByRow = (row) => {
     vehicles.spawnPlayerCar(row['id']);
 };
 
+vehicles.getFreePolicePos = () => {
+
+    let freeItem = [818.2474, -1333.713, 25.41951, 179.2672];
+
+    enums.lspdCarPark.forEach(item => {
+        let spawnPos = new mp.Vector3(item[0], item[1], item[2]);
+        if (vehicles.exists(methods.getNearestVehicleWithCoords(spawnPos, 3)))
+            return;
+
+        freeItem = item;
+    });
+
+    return freeItem;
+};
+
 vehicles.spawnPlayerCar = (id) => {
 
     let spawnPos = new mp.Vector3(vehicles.get(id, 'x'), vehicles.get(id, 'y'), vehicles.get(id, 'z'));
     let spawnRot = vehicles.get(id, 'rot');
+
+    if (vehicles.get(id, 'cop_park_name') !== '') {
+        let item = vehicles.getFreePolicePos();
+        spawnPos = new mp.Vector3(item[0], item[1], item[2]);
+        spawnRot = item[3];
+    }
 
     vehicles.spawnCarCb(veh => {
 
@@ -584,6 +605,8 @@ vehicles.save = (id) => {
         sql = sql + " fuel = '" + methods.parseFloat(vehicles.get(id, "fuel")) + "'";
         sql = sql + ", color1 = '" + methods.parseInt(vehicles.get(id, "color1")) + "'";
         sql = sql + ", color2 = '" + methods.parseInt(vehicles.get(id, "color2")) + "'";
+        sql = sql + ", color3 = '" + methods.parseInt(vehicles.get(id, "color3")) + "'";
+        sql = sql + ", colorwheel = '" + methods.parseInt(vehicles.get(id, "colorwheel")) + "'";
         sql = sql + ", is_special = '" + methods.parseInt(vehicles.get(id, "is_special")) + "'";
         sql = sql + ", neon_r = '" + methods.parseInt(vehicles.get(id, "neon_r")) + "'";
         sql = sql + ", neon_g = '" + methods.parseInt(vehicles.get(id, "neon_g")) + "'";
@@ -659,12 +682,12 @@ vehicles.getFractionDay = function(price) {
 
 vehicles.park = function(id, x, y, z, rot, dimension) {
     methods.debug('vehicles.park');
-    rot = methods.parseInt(rot);
+    rot = methods.parseFloat(rot);
     vehicles.set(id, 'x', methods.parseFloat(x));
     vehicles.set(id, 'y', methods.parseFloat(y));
     vehicles.set(id, 'z', methods.parseFloat(z));
     vehicles.set(id, 'rot', methods.parseFloat(rot));
-    vehicles.set(id, 'dimension', methods.parseFloat(dimension));
+    vehicles.set(id, 'dimension', methods.parseInt(dimension));
     mysql.executeQuery("UPDATE cars SET x = '" + methods.parseFloat(x) + "', y = '" + methods.parseFloat(y) + "', z = '" + methods.parseFloat(z) + "', rot = '" + methods.parseFloat(rot) + "', dimension = '" + methods.parseInt(dimension) + "' where id = '" + methods.parseInt(id) + "'");
 };
 
@@ -688,6 +711,53 @@ vehicles.respawn = (vehicle) => {
     catch (e) {
         methods.debug(e);
     }
+};
+
+vehicles.respawn2 = (vehicle, player) => {
+    if (!vehicles.exists(vehicle))
+        return;
+    if (!user.isLogin(player))
+        return;
+
+    try {
+        methods.debug('vehicles.respawn');
+
+        let containerId = vehicle.getVariable('container');
+        if (containerId != undefined && vehicle.getVariable('user_id') > 0)
+        {
+            if (vehicles.get(containerId, 'cop_park_name') !== '') {
+                player.notify('~r~Транспорт уже стоит на штраф стоянке');
+                return;
+            }
+
+            vehicles.set(containerId, 'is_cop_park', 1);
+            vehicles.set(containerId, 'cop_park_name', user.getRpName(player));
+            vehicles.save(containerId);
+
+            let price = methods.getVehicleInfo(vehicle.model).price * 0.01 + 200;
+            if (price > 2000)
+                price = 2000;
+            user.addPayDayMoney(player, price / 2);
+
+            coffer.addMoney(coffer.getIdByFraction(user.get(player, 'fraction_id')), price / 2); //TODO мб историю добавить
+
+            player.notify('~g~Вы получили премию ' + methods.moneyFormat(price / 2));
+        }
+
+        vehicles.respawn(vehicle);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+};
+
+vehicles.removePlayerVehicle = (userId) => {
+    mp.vehicles.forEach(function (v) {
+        if (vehicles.exists(v) && v.getVariable('user_id') == userId) {
+            vehicles.save(v.getVariable('container'));
+            v.destroy();
+        }
+    })
 };
 
 vehicles.findVehicleByNumber = (number) => {

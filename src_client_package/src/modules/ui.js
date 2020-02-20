@@ -75,6 +75,7 @@ ui.dialogTypes = {
 };
 
 ui.fixInterface = function() {
+    mp.game.ui.notifications.show('~y~Интерфейс выполняет перезагрузку');
     try {
         uiBrowser.destroy();
     }
@@ -83,7 +84,9 @@ ui.fixInterface = function() {
     }
     uiBrowser = mp.browsers.new("package://cef/index.html");
     ui.callCef('authMain','{"type": "hide"}');
-    ui.showHud();
+    setTimeout(function () {
+        ui.showHud();
+    }, 1000);
 };
 
 ui.showSubtitle = function(message, duration = 5000) {
@@ -95,6 +98,46 @@ ui.showSubtitle = function(message, duration = 5000) {
     }
     catch (e) {
         methods.debug(e);
+    }
+};
+
+
+ui.updateGangInfo = function(top1, top2, timerCounter) {
+    if (uiBrowser) {
+        try {
+            let data = {
+                type: 'updateGangInfo',
+                top1 : top1,
+                top2 : top2,
+                timerCounter : timerCounter,
+            };
+            ui.callCef('hudg', JSON.stringify(data));
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    }
+};
+
+ui.showGangInfo = function() {
+    if (uiBrowser) {
+        try {
+            ui.callCef('hudg','{"type": "showGangInfo"}');
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    }
+};
+
+ui.hideGangInfo = function() {
+    if (uiBrowser) {
+        try {
+            ui.callCef('hudg','{"type": "hideGangInfo"}');
+        }
+        catch (e) {
+            methods.debug(e);
+        }
     }
 };
 
@@ -136,9 +179,10 @@ ui.showHud = function() {
     }
 };
 
+
 ui.updateValues = function() {
     //return; //TODO ВАЖНО
-    if (uiBrowser && user.isLogin()) {
+    if (user.isLogin()) {
         try {
             let data = {
                 type: 'updateValues',
@@ -245,6 +289,7 @@ ui.updateVehValues = function() {
                 fuelType: fuelPostfix,
                 max_fuel: fuelMax,
                 speed: vSpeed,
+                speedLabel: user.getCache('s_hud_speed_type') ? 'KM/H' : 'MP/H',
                 background: user.getCache('s_hud_bg'),
             };
             ui.callCef('hudc', JSON.stringify(data));

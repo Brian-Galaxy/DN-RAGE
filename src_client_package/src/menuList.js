@@ -1038,7 +1038,7 @@ menuList.showInvaderAdTempEditMenu = function(id, text, name, phone) {
     UIMenu.Menu.AddMenuItem(`Редактировать текст`).textEdit = true;
     UIMenu.Menu.AddMenuItem(`${name}`);
     UIMenu.Menu.AddMenuItem(`${phone}`);
-    UIMenu.Menu.AddMenuItem(`~g~Отредактировать`).save = true;
+    UIMenu.Menu.AddMenuItem(`~g~Опубликовать`).save = true;
     UIMenu.Menu.AddMenuItem(`~r~Удалить объявление`).delete = true;
     let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
 
@@ -1780,7 +1780,7 @@ menuList.showMeriaSellHvbMenu = function(cofferData) {
     }
 
     user.updateCache().then(function () {
-        let menu = UIMenu.Menu.Create(`Maze`, `~b~Текущая налоговая ставка: ~s~${cofferData.get('cofferTaxIntermediate')}%`);
+        let menu = UIMenu.Menu.Create(`City Hall`, `~b~Текущая налоговая ставка: ~s~${cofferData.get('cofferTaxIntermediate')}%`);
 
         if (user.getCache('house_id') > 0) {
             UIMenu.Menu.AddMenuItem("Продать дом", "Продать дом государству.\nС учетом налога").eventName = 'server:houses:sell';
@@ -1883,7 +1883,7 @@ menuList.showMeriaSellHvbMenu = function(cofferData) {
 };
 
 menuList.showMeriaAcceptSellMenu = function(eventName) {
-    let menu = UIMenu.Menu.Create(`Maze`, `~b~Вы точно хотите продать?`);
+    let menu = UIMenu.Menu.Create(`City Hall`, `~b~Вы точно хотите продать?`);
 
     UIMenu.Menu.AddMenuItem("~y~Продать").eventName = eventName;
     let closeItem = UIMenu.Menu.AddMenuItem("~r~Отменить");
@@ -2328,16 +2328,28 @@ menuList.showSettingsHudMenu = function() {
     UIMenu.Menu.AddMenuItem("Показывать HUD (~g~Вкл~s~/~r~Выкл~s~)", "Нажмите ~g~Enter~s~ чтобы применить").doName = 'showRadar';
     UIMenu.Menu.AddMenuItem("Показывать ID игроков (~g~Вкл~s~/~r~Выкл~s~)", "Нажмите ~g~Enter~s~ чтобы применить").doName = 'showId';
 
-    let listVoiceItem = UIMenu.Menu.AddMenuItemList("Спидометр", ['Стандартный', 'Цифровой'], "Нажмите ~g~Enter~s~ чтобы применить");
+    let listVoiceItem = UIMenu.Menu.AddMenuItemList("Спидометр", ['Стандартный', 'Цифровой']);
     listVoiceItem.doName = 'speed';
     listVoiceItem.Index = user.getCache('s_hud_speed') ? 1 : 0;
 
-    let listRayItem = UIMenu.Menu.AddMenuItemList("Взаимодействие", ['Стандартное', 'Над объектом'], "Нажмите ~g~Enter~s~ чтобы применить");
+    let listSpeedItem = UIMenu.Menu.AddMenuItemList("Скорость", ['MP/H', 'KM/H']);
+    listSpeedItem.doName = 'speed_type';
+    listSpeedItem.Index = user.getCache('s_hud_speed_type') ? 1 : 0;
+
+    let listTempItem = UIMenu.Menu.AddMenuItemList("Температура", ['°C', '°F']);
+    listTempItem.doName = 'temp';
+    listTempItem.Index = user.getCache('s_hud_temp') ? 1 : 0;
+
+    let listRayItem = UIMenu.Menu.AddMenuItemList("Взаимодействие", ['Стандартное', 'Над объектом']);
     listRayItem.doName = 'raycast';
     listRayItem.Index = user.getCache('s_hud_raycast') ? 1 : 0;
 
+    let listRestItem = UIMenu.Menu.AddMenuItemList("Авто. перезагрузка интерфейса", ['Вкл', 'Выкл'], "В случае если у вас он завис\nили не работает");
+    listRestItem.doName = 'restart';
+    listRestItem.Index = user.getCache('s_hud_restart') ? 0 : 1;
+
     let listVoiceVol = ["0%", "10%", "20%", "30%", "40%", "50%", "60%", "70%", "80%", "90%", "100%"];
-    listVoiceItem = UIMenu.Menu.AddMenuItemList("Прозрачность интерфейса", listVoiceVol, "Нажмите ~g~Enter~s~ чтобы применить");
+    listVoiceItem = UIMenu.Menu.AddMenuItemList("Прозрачность интерфейса", listVoiceVol);
     listVoiceItem.doName = 'bg';
     listVoiceItem.Index = methods.parseInt(user.getCache('s_hud_bg') * 10);
 
@@ -2349,8 +2361,20 @@ menuList.showSettingsHudMenu = function() {
             user.set('s_hud_speed', index === 1);
             mp.game.ui.notifications.show('~b~Настройки были сохранены');
         }
+        if (item.doName === 'speed_type') {
+            user.set('s_hud_speed_type', index === 1);
+            mp.game.ui.notifications.show('~b~Настройки были сохранены');
+        }
+        if (item.doName === 'temp') {
+            user.set('s_hud_temp', index === 1);
+            mp.game.ui.notifications.show('~b~Настройки были сохранены');
+        }
         if (item.doName === 'raycast') {
             user.set('s_hud_raycast', index === 1);
+            mp.game.ui.notifications.show('~b~Настройки были сохранены');
+        }
+        if (item.doName === 'restart') {
+            user.set('s_hud_restart', index === 1);
             mp.game.ui.notifications.show('~b~Настройки были сохранены');
         }
         if (item.doName == 'bg') {
@@ -2738,9 +2762,9 @@ menuList.showVehicleMenu = function(data) {
     if (data.get('user_id') > 0 && user.getCache('id') == data.get('user_id')) {
         if (data.get('cop_park_name') !== '') {
 
-            let price = methods.getVehicleInfo(mp.players.local.vehicle.model).price * 0.01 + 200;
-            if (price > 2000)
-                price = 2000;
+            let price = methods.getVehicleInfo(mp.players.local.vehicle.model).price * 0.01 + 100;
+            if (price > 500)
+                price = 500;
 
             UIMenu.Menu.AddMenuItem("~y~Оплатить штраф", "Штраф: ~r~" + methods.moneyFormat(price) + "\nПрипарковал: " + data.get('cop_park_name')).eventName = 'server:vehicle:park2';
         }
@@ -2955,7 +2979,7 @@ menuList.showVehicleMenu = function(data) {
         }
         else if (item.eventName == 'server:vehicleFreeze') {
             if (methods.getCurrentSpeed() > 10) {
-                mp.game.ui.notifications.show('~r~Скорость должна быть меньше 10 км в час');
+                mp.game.ui.notifications.show('~r~Скорость должна быть меньше 10 ед. в час');
                 return;
             }
 
@@ -2972,9 +2996,9 @@ menuList.showVehicleMenu = function(data) {
 
             UIMenu.Menu.HideMenu();
 
-            let price = methods.getVehicleInfo(mp.players.local.vehicle.model).price * 0.01 + 200;
-            if (price > 2000)
-                price = 2000;
+            let price = methods.getVehicleInfo(mp.players.local.vehicle.model).price * 0.01 + 100;
+            if (price > 500)
+                price = 500;
 
             if (user.getMoney() < price) {
                 mp.game.ui.notifications.show('~y~У Вас недостаточно средств');
@@ -3347,9 +3371,12 @@ menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId) {
                     else
                         desc = `Количество патрон: ${item.count}шт.`;
                 }
-                else if (item.item_id <= 274 && item.item_id >= 265) {
+                else if (item.item_id <= 273 && item.item_id >= 265) {
                     itemName = params.name;
                     desc = params.sex === 1 ? 'Женская одежда' : 'Мужская одежда';
+                }
+                else if (item.item_id === 274 || item.item_id === 266 || item.item_id === 262) {
+                    itemName = params.name;
                 }
                 else if (item.item_id <= 473 && item.item_id >= 293) {
                     desc = 'Используется для: ' + items.getWeaponNameByName(items.getItemNameHashById(item.item_id));
@@ -3616,7 +3643,7 @@ menuList.showBankMenu = async function(bankId, price) {
                 else if (item.eventName == 'server:bank:transferMoney') {
                     let bankNumber = methods.parseInt(await UIMenu.Menu.GetUserInput("Номер карты", "", 16));
                     let money = methods.parseFloat(await UIMenu.Menu.GetUserInput("Сумма перевода", "", 9));
-                    mp.events.callRemote(item.eventName, bankNumber, money);
+                    mp.events.callRemote(item.eventName, bankNumber.toString(), money);
                 }
                 else if (item.eventName == 'server:bank:changePin') {
                     let pin1 = methods.parseInt(await UIMenu.Menu.GetUserInput("Введите пинкод", "", 4));
@@ -5392,7 +5419,7 @@ menuList.showShopMaskMenu = function (shopId) {
         menu.ItemSelect.on(async (item, index) => {
             try {
                 if (item == currentListChangeItem) {
-                    cloth.buyMask(900, item.maskId, currentListChangeItemIndex, shopId);
+                    cloth.buyMask(900.001, item.maskId, currentListChangeItemIndex, "Маска #" + item.maskId, shopId);
                 }
                 if (item.doName == "closeButton") {
                     UIMenu.Menu.HideMenu();
@@ -5720,9 +5747,9 @@ menuList.showVehShopMenu = function(shopId, carPos, buyPos, carList)
         return;
     }
 
-    let menu = UIMenu.Menu.Create("Автосалон", "~b~Посмотреть список транспорта");
+    let menu = UIMenu.Menu.Create("Салон", "~b~Посмотреть список транспорта");
 
-    UIMenu.Menu.AddMenuItem("~g~Войти в автосалон").enter = true;
+    UIMenu.Menu.AddMenuItem("~g~Войти в салон").enter = true;
     UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = "closeButton";
 
     menu.ItemSelect.on((item, index) => {
@@ -5747,7 +5774,7 @@ menuList.showVehShopListMenu = function(shopId, carList)
         return;
     }
 
-    let menu = UIMenu.Menu.Create("Автосалон", "~b~Список транспорта");
+    let menu = UIMenu.Menu.Create("Салон", "~b~Список транспорта");
 
     let list = [];
 
@@ -6557,7 +6584,7 @@ menuList.showLscTunningListMenu = async function(modType, shopId, price, lscBann
             }
         }
         else if (modType == 78) {
-            let wheelList = ['Спорт', 'Массл', 'Лоурайдер', 'Кроссовер', 'Внедорожник', 'Специальные', 'Мото', 'Уникальные', 'Benny\'s Original', 'Benny\'s Bespoke'];
+            let wheelList = ['Спорт', 'Массл', 'Лоурайдер', 'Кроссовер', 'Внедорожник', 'Специальные', 'Мото', 'Уникальные', 'Benny\'s Original', 'Benny\'s Bespoke', 'Big'];
             for (let i = 0; i < wheelList.length; i++) {
                 try {
                     let label = `${wheelList[i]}`;
@@ -6641,8 +6668,6 @@ menuList.showLscTunningListMenu = async function(modType, shopId, price, lscBann
                 return;
             }*/
             if (index >= list.length)
-                return;
-            if (modType === 78)
                 return;
             mp.events.callRemote('server:lsc:showTun', modType, index - 1);
         });
@@ -8273,6 +8298,7 @@ menuList.showAdminTeleportMenu = function() {
     UIMenu.Menu.AddMenuItem("Телепорт на метку").doName = 'teleportToWaypoint';
     UIMenu.Menu.AddMenuItem("Телепортироваться к игроку").doName = 'tptoid';
     UIMenu.Menu.AddMenuItem("Телепортировать игрока к себе").doName = 'tptome';
+    UIMenu.Menu.AddMenuItem("Телепорт по ID дома").doName = 'tptoh';
 
     UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = 'close';
 
@@ -8294,6 +8320,10 @@ menuList.showAdminTeleportMenu = function() {
         if (item.doName == 'tptome') {
             let id = await UIMenu.Menu.GetUserInput("ID Игрока", "", 10);
             mp.events.callRemote('server:admin:tptome', 0, methods.parseInt(id));
+        }
+        if (item.doName == 'tptoh') {
+            let id = await UIMenu.Menu.GetUserInput("ID Дома", "", 10);
+            mp.events.callRemote('server:houses:teleport', methods.parseInt(id));
         }
         if (item.doName == 'close')
             UIMenu.Menu.HideMenu();

@@ -348,7 +348,7 @@ cloth.buyMask = function (player, price, clothId, color, itemName, shopId) {
     user.set(player, 'mask', clothId);
     user.set(player, 'mask_color', color);
 
-    let params = `{"name": "${itemName}", "sex": ${user.getSex(player)}, "mask": ${clothId}, "mask_color": ${color}}`;
+    let params = `{"name": "${itemName}", "mask": ${clothId}, "mask_color": ${color}}`;
     inventory.addItem(274, 1, inventory.types.Player, user.getId(player), 1, 1, params, 100);
 
     user.updateCharacterCloth(player);

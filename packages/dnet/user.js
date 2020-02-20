@@ -1670,12 +1670,14 @@ user.sendPhoneSms = function(player, sender, title, message, pic = 'CHAR_BLANK_E
     //TODO
 };
 
-user.sendSmsBankOperation = function(player, text, title = 'Операция со счётом') {
+user.sendSmsBankOperation = function(player, text, title = 'Операция со счётом', pref = 0) {
     methods.debug('bank.sendSmsBankOperation');
     if (!user.isLogin(player))
         return;
 
     let prefix = methods.parseInt(user.get(player, 'bank_card').toString().substring(0, 4));
+    if (pref > 0)
+        prefix = pref;
 
     try {
         switch (prefix) {

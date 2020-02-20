@@ -199,6 +199,7 @@ bank.transferMoney = function(player, bankNumber, money) {
                 user.sendSmsBankOperation(player, 'Перевод: ~g~$' + methods.numberFormat(sumFinal));
                 user.removeBankMoney(player, money, 'Перевод ' + bankNumber);
                 bank.addBankHistory(0, bankNumber, 'Перевод от ' + user.get(player, 'bank_card'), sumFinal);
+                bank.addBankHistory(0, user.get(player, 'bank_card'), 'Перевод ' + bankNumber, sumFinal);
 
                 mysql.executeQuery("UPDATE users SET money_bank = '" + (item["money_bank"] + sumFinal) + "' where id = '" + item["id"] + "'");
                 isEquip = true;
@@ -206,8 +207,7 @@ bank.transferMoney = function(player, bankNumber, money) {
         });
 
         if (!isEquip) {
-
-            mysql.executeQuery(`SELECT * FROM items WHERE params LIKE '%"number": ${bankNumber}%'`, function (err, rows, fields) {
+            mysql.executeQuery(`SELECT * FROM items WHERE params LIKE '%"number":${bankNumber}%' OR params LIKE '%"number": ${bankNumber}%'`, function (err, rows, fields) {
                 rows.forEach(function (item) {
 
                     bank.addBusinessBankMoneyByCard(bankNumber, sumForBiz);
@@ -216,6 +216,7 @@ bank.transferMoney = function(player, bankNumber, money) {
                     user.sendSmsBankOperation(player, 'Перевод: ~g~$' + methods.numberFormat(sumFinal));
                     user.removeBankMoney(player, money, 'Перевод ' + bankNumber);
                     bank.addBankHistory(0, bankNumber, 'Перевод от ' + user.get(player, 'bank_card'), sumFinal);
+                    bank.addBankHistory(0, user.get(player, 'bank_card'), 'Перевод ' + bankNumber, sumFinal);
 
                     mysql.executeQuery("UPDATE items SET count = '" + (item["count"] + sumFinal) + "' where id = '" + item["id"] + "'");
                     isEquip = true;
@@ -236,7 +237,7 @@ bank.changePin = function(player, pin) {
         return;
 
     let bankNumber = user.get(player, 'bank_card');
-    mysql.executeQuery(`SELECT * FROM items WHERE params LIKE '%"number": ${bankNumber}%'`, function (err, rows, fields) {
+    mysql.executeQuery(`SELECT * FROM items WHERE params LIKE '%"number":${bankNumber}%' OR params LIKE '%"number": ${bankNumber}%'`, function (err, rows, fields) {
         rows.forEach(function (item) {
             if (user.isLogin(player)) {
                 user.set(player, 'bank_pin', pin);
@@ -427,13 +428,12 @@ bank.openCard = function(player, bankId, price) {
     business.addMoney(bankId, price);
     business.removeMoneyTax(bankId, price / business.getPrice(bankId));
 
-    bank.sendSmsBankOpenOperation(player);
+    bank.sendSmsBankOpenOperation(player, bankPrefix);
     bank.addBankHistory(user.getId(player), number, 'Открытие счёта на имя ' + user.getRpName(player), price * -1);
 
-    inventory.addItem(50, 1, 1, user.getId(player), 0, 0, `{"number": ${number}, "pin": 1234, "owner": "${user.getRpName(player)}"}`);
+    inventory.addItem(50, 1, 1, user.getId(player), 0, 0, `{"number":${number}, "pin":1234, "owner":"${user.getRpName(player)}"}`);
 
     player.notify('~g~Вы оформили карту, она лежит в инвентаре, экипируйте её');
-    player.notify('~g~Ваш пинкод от карты:~s~ 1234');
 };
 
 bank.closeCard = function(player) {
@@ -449,16 +449,16 @@ bank.closeCard = function(player) {
     bank.addBankHistory(user.getId(player), number, 'Закрытие счёта', 0);
     user.addCashMoney(player, currentBankMoney);
 
-    mysql.executeQuery(`DELETE FROM items WHERE params LIKE '%"number": ${number}%'`);
+    mysql.executeQuery(`DELETE FROM items WHERE params LIKE '%"number":${number}%' OR params LIKE '%"number": ${number}%'`);
     //inventory.updateItemsEquipByItemId(50, user.getId(player), 1, 0);
 };
 
-bank.sendSmsBankCloseOperation = function(player) {
+bank.sendSmsBankCloseOperation = function(player, pref = 0) {
     user.sendSmsBankOperation(player, 'Ваш счёт в банке был закрыт. СМС оповещения были отключены, всего Вам хорошего!');
 };
 
-bank.sendSmsBankOpenOperation = function(player) {
-    user.sendSmsBankOperation(player, 'Поздравляем с открытием счёта! Надеемся на долгое сотрудничество!');
+bank.sendSmsBankOpenOperation = function(player, pref = 0) {
+    user.sendSmsBankOperation(player, 'Поздравляем с открытием счёта! Надеемся на долгое сотрудничество!\nВаш пинкод от карты:~g~ 1234', pref);
 };
 
 bank.getInRadius = function(pos, radius = 2) {

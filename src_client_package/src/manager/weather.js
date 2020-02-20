@@ -228,9 +228,17 @@ weather.getWeatherTemp = function() {
 };
 
 weather.getWeatherTempFormat = function() {
-    if (Temp > 0)
-        return `+${Temp}°C`;
-    return `${Temp}°C`;
+    let _temp = Temp;
+    let _tempLabel = 'C';
+
+    if (user.getCache('s_hud_temp')) {
+        _temp = methods.parseInt((Temp * 9 / 5) + 32);
+        _tempLabel = 'F';
+    }
+
+    if (_temp > 0)
+        return `+${_temp}°${_tempLabel}`;
+    return `${_temp}°${_tempLabel}`;
 };
 
 weather.getWeatherTempServer = function() {

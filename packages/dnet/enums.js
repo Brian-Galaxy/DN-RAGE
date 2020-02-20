@@ -182,8 +182,11 @@ enums.userData = [
     "eat_level",
 
     "s_hud_speed",
+    "s_hud_speed_type",
+    "s_hud_temp",
     "s_hud_bg",
     "s_hud_raycast",
+    "s_hud_restart",
     "s_voice_vol",
     "s_clipset",
 

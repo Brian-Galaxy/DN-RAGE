@@ -2449,7 +2449,7 @@ phone.callBackModalInput = function(paramsJson, text) {
             }
             user.removeCryptoMoney(sum, 'Обмен E-Coin');
             user.addBankMoney(sum * 500, 'Обмен E-Coin');
-            user.sendSmsBankOperation(`Транзакция успешно прошла\\nПолучено ~g~${methods.moneyFormat(sum * 500)}`, 'E-Coin');
+            user.sendSmsBankOperation(`Транзакция успешно прошла\nПолучено ~g~${methods.moneyFormat(sum * 500)}`, 'E-Coin');
 
             setTimeout(phone.showAppEcorp, 200);
         }

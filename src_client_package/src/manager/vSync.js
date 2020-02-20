@@ -16,7 +16,7 @@ vSync.radio = function(entity) {
                 let localPlayer = mp.players.local;
                 if (localPlayer.vehicle == entity) {
                     let vehSyncData = entity.getVariable('vehicleSyncData');
-                    if (typeof entity.getVariable('vehicleSyncData') !== 'undefined') {
+                    if (typeof vehSyncData !== 'undefined') {
                         currentSound = mp.game.invoke(methods.GET_PLAYER_RADIO_STATION_INDEX);
                         if (entity.getPedInSeat(-1) == localPlayer.handle) {
                             if (vehSyncData.RadioState != currentSound)
@@ -53,9 +53,10 @@ vSync.radio = function(entity) {
 
 vSync.updateValues = function(entity) {
     if (entity && mp.vehicles.exists(entity)) {
-        let typeor = typeof entity.getVariable('vehicleSyncData');
         let actualData = entity.getVariable('vehicleSyncData');
-        if (typeor !== 'undefined') {
+        if (typeof actualData !== 'undefined') {
+
+            methods.debug(JSON.stringify(actualData));
 
             try {
                 if (vehicles.isVehicleSirenValid(entity.model)) {

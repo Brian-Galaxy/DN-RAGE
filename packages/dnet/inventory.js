@@ -358,12 +358,6 @@ inventory.equip = function(player, id, itemId, count, aparams) {
                 }
             }
             else if (itemId == 274) {
-
-                if (params.sex !== user.getSex(player)) {
-                    player.notify("~r~Одежда подходит только для противоположного");
-                    return;
-                }
-
                 if (user.get(player, 'mask') == -1) {
                     user.set(player, "mask", params.bracelet);
                     user.set(player, "mask_color", params.bracelet_color);

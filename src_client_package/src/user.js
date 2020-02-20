@@ -438,7 +438,7 @@ user.tpToWaypoint = function() { //TODO машина
                 mp.game.streaming.requestCollisionAtCoord(pos.x, pos.y, pos.z);
                 entity.position = new mp.Vector3(pos.x, pos.y, entity.position.z + 20);
                 let zPos = mp.game.gameplay.getGroundZFor3dCoord(mp.players.local.position.x, mp.players.local.position.y, mp.players.local.position.z, 0, false);
-                if (zPos != 0) {
+                if (entity.position.z > 1000 || zPos != 0) {
                     entity.position = new mp.Vector3(pos.x, pos.y, zPos + 2);
 
                     if (mp.players.local.vehicle)

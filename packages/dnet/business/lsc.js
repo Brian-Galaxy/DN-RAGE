@@ -278,41 +278,51 @@ lsc.buyNumber = function(player, shopId, newNumber) {
 
             if (valid) {
 
-                if (newNumber.length == 1) {
-                    user.removeMoney(player, 1000000, 'Смена номера на транспорте');
-                    business.addMoney(shopId, 1000000, 'Смена номера');
-                    business.removeMoneyTax(shopId, price / 2);
-                }
-                else if (newNumber.length == 2) {
-                    user.removeMoney(player, 500000, 'Смена номера на транспорте');
-                    business.addMoney(shopId, 500000, 'Смена номера');
-                    business.removeMoneyTax(shopId, price / 2);
-                }
-                else if (newNumber.length == 3) {
-                    user.removeMoney(player, 250000, 'Смена номера на транспорте');
-                    business.addMoney(shopId, 250000, 'Смена номера');
-                    business.removeMoneyTax(shopId, price / 2);
-                }
-                else if (newNumber.length == 4) {
-                    user.removeMoney(player, 100000, 'Смена номера на транспорте');
-                    business.addMoney(shopId, 100000, 'Смена номера');
-                    business.removeMoneyTax(shopId, price / 2);
-                }
-                else {
-                    user.removeMoney(player, 40000, 'Смена номера на транспорте');
-                    business.addMoney(shopId, 40000, 'Смена номера');
-                    business.removeMoneyTax(shopId, price / 2);
-                }
+                try {
+                    if (newNumber.length == 1) {
+                        let price = 1000000;
+                        user.removeMoney(player, price, 'Смена номера на транспорте');
+                        business.addMoney(shopId, price, 'Смена номера');
+                        business.removeMoneyTax(shopId, price / 2);
+                    }
+                    else if (newNumber.length == 2) {
+                        let price = 500000;
+                        user.removeMoney(player, price, 'Смена номера на транспорте');
+                        business.addMoney(shopId, price, 'Смена номера');
+                        business.removeMoneyTax(shopId, price / 2);
+                    }
+                    else if (newNumber.length == 3) {
+                        let price = 250000;
+                        user.removeMoney(player, price, 'Смена номера на транспорте');
+                        business.addMoney(shopId, price, 'Смена номера');
+                        business.removeMoneyTax(shopId, price / 2);
+                    }
+                    else if (newNumber.length == 4) {
+                        let price = 100000;
+                        user.removeMoney(player, price, 'Смена номера на транспорте');
+                        business.addMoney(shopId, price, 'Смена номера');
+                        business.removeMoneyTax(shopId, price / 2);
+                    }
+                    else {
+                        let price = 40000;
+                        user.removeMoney(player, price, 'Смена номера на транспорте');
+                        business.addMoney(shopId, price, 'Смена номера');
+                        business.removeMoneyTax(shopId, price / 2);
+                    }
 
-                mysql.executeQuery(`UPDATE items SET owner_id = '${mp.joaat(newNumber)}' where owner_id = '${mp.joaat(veh.numberPlate)}' and (owner_type = '2' or owner_type = '3' or owner_type = '4')`);
+                    mysql.executeQuery(`UPDATE items SET owner_id = '${mp.joaat(newNumber)}' where owner_id = '${mp.joaat(veh.numberPlate)}' and (owner_type = '2' or owner_type = '3' or owner_type = '4')`);
 
-                vehicles.set(veh.getVariable('container'), 'number', newNumber);
-                veh.numberPlate = newNumber;
+                    vehicles.set(veh.getVariable('container'), 'number', newNumber);
+                    veh.numberPlate = newNumber;
 
-                user.save(player);
-                vehicles.save(veh.getVariable('container'));
+                    user.save(player);
+                    vehicles.save(veh.getVariable('container'));
 
-                player.notify('~g~Вы изменили номер');
+                    player.notify('~g~Вы изменили номер');
+                }
+                catch (e) {
+                    methods.debug(e);
+                }
                 return;
             }
         }

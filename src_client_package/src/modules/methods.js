@@ -435,8 +435,10 @@ methods.getCurrentSpeed = function () {
     if (player.isSittingInAnyVehicle()) {
         let velocity = player.vehicle.getVelocity();
         speed = Math.sqrt(velocity.x * velocity.x + velocity.y * velocity.y + velocity.z * velocity.z);
-        speed = Math.round(speed * 2.23693629);
-        //speed = Math.round(speed * 3.6);
+        if (user.getCache('s_hud_speed_type'))
+            speed = Math.round(speed * 3.6);
+        else
+            speed = Math.round(speed * 2.23693629);
     }
     return speed;
 };

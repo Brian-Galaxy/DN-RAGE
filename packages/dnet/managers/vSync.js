@@ -44,29 +44,25 @@ let offsetId = -999000;
 let prefix = 'vSync';
 
 vSync.set = function(vehicle, key, value) {
-    if (vehicles.exists(vehicle)) {
+    if (vehicles.exists(vehicle))
         vehicle.setVariable(key, value);
-        Container.Data.Set(vehicle.id + offsetId, prefix + key, true);
-    }
 };
 
 vSync.get = function(vehicle, key) {
     if (vehicles.exists(vehicle))
         return vehicle.getVariable(key);
-    return null;
+    return vSync.VehicleSyncData;
 };
 
 vSync.has = function(vehicle, key) {
     if (vehicles.exists(vehicle))
-        return vehicle.getVariable(key) == true;
-    //return Container.Data.Has(vehicle.id + offsetId, prefix + key);
+        return vehicle.getVariable(key) !== undefined && vehicle.getVariable(key) !== null;
     return false;
 };
 
 vSync.getVehicleSyncData = function(vehicle) {
-    if (vehicles.exists(vehicle) && vSync.has(vehicle, 'vehicleSyncData')) {
+    if (vSync.has(vehicle, 'vehicleSyncData'))
         return vSync.get(vehicle, 'vehicleSyncData');
-    }
     return vSync.VehicleSyncData;
 };
 

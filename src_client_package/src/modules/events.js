@@ -637,14 +637,54 @@ mp.events.add('client:user:updateCache', (data) => {
     }
 });
 
-
 mp.events.add('client:user:callCef', (name, params) => {
     methods.debug('Event: client:user:callCef');
     ui.callCef(name, params);
 });
 
+let isZone = false;
+let gangWarTimeout = null;
+mp.events.add('client:gangWar:sendInfo', (atC, defC, x, y, z, timerCounter) => {
+    if (gangWarTimeout) {
+        clearTimeout(gangWarTimeout);
+        gangWarTimeout = null;
+    }
+
+    try {
+        const local = mp.players.local;
+        let street = mp.game.pathfind.getStreetNameAtCoord(local.position.x, local.position.y, local.position.z, 0, 0).streetName;
+        let zone = mp.game.zone.getNameOfZone(local.position.x, local.position.y, local.position.z);
+
+        let street2 = mp.game.pathfind.getStreetNameAtCoord(x, y, z, 0, 0).streetName;
+        let zone2 = mp.game.zone.getNameOfZone(x, y, z);
+
+        if (street2 == street && zone2 == zone) {
+            if (!isZone)
+                user.set('isGangZone', true);
+            isZone = true;
+            ui.showGangInfo();
+            ui.updateGangInfo(atC, defC, timerCounter);
+            gangWarTimeout = setTimeout(function () {
+                ui.hideGangInfo();
+                user.reset('isGangZone');
+                isZone = false;
+            }, 3000);
+        }
+        else {
+            if (isZone)
+                user.reset('isGangZone');
+            isZone = false;
+            ui.hideGangInfo();
+        }
+    }
+    catch (e) {
+        methods.debug(e);
+        ui.hideGangInfo();
+    }
+});
+
 mp.events.add('client:user:giveWeapon', (name, pt) => {
-    methods.debug('Event: client:user:giveWeapon');
+    methods.debug('Event: client:user:giveWeapon', name, pt);
     user.giveWeapon(name, pt);
 });
 
@@ -2342,6 +2382,29 @@ mp.keys.bind(0x59, true, function() {
     }
 });
 
+let uiTimeout = null;
+mp.events.add('client:ui:checker', () => {
+
+    if (!user.isLogin())
+        return;
+    if (!user.getCache('s_hud_restart'))
+        return;
+
+    if (uiTimeout) {
+        clearTimeout(uiTimeout);
+        uiTimeout = null;
+    }
+
+    try {
+        uiTimeout = setTimeout(function () {
+            ui.fixInterface();
+        }, 3000);
+    }
+    catch (e) {
+        ui.fixInterface();
+    }
+});
+
 mp.events.add("playerEnterCheckpoint", (checkpoint) => {
     if (user.hasCache('isSellCar')) {
         user.reset('isSellCar');
@@ -2376,7 +2439,7 @@ mp.events.add('playerMaybeTakeShot', (shootEntityId) => {
     catch (e) {
         mp.game.ped.setAiMeleeWeaponDamageModifier(2);
         mp.game.player.setMeleeWeaponDefenseModifier(2);
-        mp.game.player.setWeaponDefenseModifier(2)
+        mp.game.player.setWeaponDefenseModifier(2);
 
         methods.debug(e);
     }
@@ -2460,10 +2523,7 @@ mp.events.add("playerCommand", async (command) => {
             methods.debug(e);
         }
     }
-    else if (command.toLowerCase().slice(0, 1) === "m") {
-        menuList.showAdminMenu();
-    }
-    else if (command.toLowerCase().slice(0, 2) === "h ") {
+    /*else if (command.toLowerCase().slice(0, 2) === "h ") {
         let args = command.split(' ');
         if (args.length != 4) {
             mp.gui.chat.push(`Не верно введено кол-во параметров `);
@@ -2534,7 +2594,7 @@ mp.events.add("playerCommand", async (command) => {
             return;
         }
         mp.events.callRemote('server:condo:insertBig', args[1], ui.getCurrentZone(), ui.getCurrentStreet())
-    }
+    }*/
     else if (command.toLowerCase().slice(0, 4) === "get ") {
         let args = command.split(' ');
         if (args.length != 2) {
@@ -2550,9 +2610,9 @@ mp.events.add("playerCommand", async (command) => {
         });
     }
     else if (command.toLowerCase().slice(0, 3) === "qwe") {
-        let player = mp.players.local; //TODO Спавн объектов оружия и обвесов на них
+        /*let player = mp.players.local; //TODO Спавн объектов оружия и обвесов на них
         let pos = player.position;
-        let object = mp.game.weapon.createWeaponObject(-86904375, 1000, mp.players.local.position.x, mp.players.local.position.y, mp.players.local.position.z, false, mp.players.local.heading, 0);
+        let object = mp.game.weapon.createWeaponObject(-86904375, 1000, mp.players.local.position.x, mp.players.local.position.y, mp.players.local.position.z, false, mp.players.local.heading, 0);*/
         //366594
         //mp.game.invoke('0x9F47B058362C84B5', 81154);
         //mp.game.invoke('0x44A0870B7E92D7C0', 254211, 0, 0);

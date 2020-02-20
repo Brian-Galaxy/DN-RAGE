@@ -482,7 +482,7 @@ mp.events.addRemoteCounted('server:bank:deposit', (player, money, procent) => {
 mp.events.addRemoteCounted('server:bank:transferMoney', (player, bankNumber, money) => {
     if (!user.isLogin(player))
         return;
-    bank.transferMoney(player, bankNumber, money);
+    bank.transferMoney(player, methods.parseInt(bankNumber), money);
 });
 
 mp.events.addRemoteCounted('server:bank:changePin', (player, pin) => {
@@ -1043,8 +1043,8 @@ mp.events.addRemoteCounted('server:user:giveMoneyToPlayerId', (player, playerRem
 
         user.playAnimationWithUser(player, remotePlayer, 6);
 
-        remotePlayer.notify('Вам передали ~g~$' + methods.numberFormat(money));
-        player.notify('Вы передали ~g~$' + methods.numberFormat(money));
+        remotePlayer.notify('Вам передали ~g~' + methods.moneyFormat(money));
+        player.notify('Вы передали ~g~' + methods.moneyFormat(money));
 
         methods.saveLog('GiveCash', `${user.getRpName(player)} (${user.getId(player)}) to ${user.getRpName(remotePlayer)} (${user.getId(remotePlayer)}) count $${money}`);
     }
@@ -4242,6 +4242,13 @@ mp.events.addRemoteCounted('server:sellVeh', (player) => {
     if (price > 2000)
         price = 2000;
     let money = 200 + price;
+
+    let containerId = veh.getVariable('container');
+    if (containerId != undefined && veh.getVariable('user_id') > 0) {
+        vehicles.set(containerId, 'is_cop_park', 1);
+        vehicles.set(containerId, 'cop_park_name', 'В угоне');
+        vehicles.save(containerId);
+    }
 
     user.showLoadDisplay(player);
 

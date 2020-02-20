@@ -40,7 +40,7 @@ vehicles.processVehicleManager = () =>
     {
         try {
             let vehicle = mp.vehicles.new.apply(mp.vehicles, creation.args);
-            methods.debug('processVehicleManager', creation.args);
+            //methods.debug('processVehicleManager', creation.args);
             vSync.setEngineState(vehicle, false);
             attach.initFunctions(vehicle);
             cbs.push([vehicle, creation.cb]);
@@ -734,9 +734,9 @@ vehicles.respawn2 = (vehicle, player) => {
             vehicles.set(containerId, 'cop_park_name', user.getRpName(player));
             vehicles.save(containerId);
 
-            let price = methods.getVehicleInfo(vehicle.model).price * 0.01 + 200;
-            if (price > 2000)
-                price = 2000;
+            let price = methods.getVehicleInfo(vehicle.model).price * 0.01 + 100;
+            if (price > 500)
+                price = 500;
             user.addPayDayMoney(player, price / 2);
 
             coffer.addMoney(coffer.getIdByFraction(user.get(player, 'fraction_id')), price / 2); //TODO мб историю добавить

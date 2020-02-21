@@ -2,6 +2,8 @@ import methods from '../modules/methods';
 
 import user from '../user';
 import chat from "../chat";
+import ui from "../modules/ui";
+import Camera from "../manager/cameraRotator";
 
 let vShop = {};
 
@@ -12,13 +14,44 @@ let vCurrent = null;
 
 let insidePos = new mp.Vector3(-1507.416259765625, -3005.405029296875, -82.55733489990234);
 let exitPos = new mp.Vector3(-1507.416259765625, -3005.405029296875, -82.55733489990234);
+let camPos = new mp.Vector3(-1500.3770751953125, -2998.169677734375, -81.15196990966797);
 let currentShop = 0;
+
+let camera = null;
 
 let carList = new Map();
 
 let color1 = 111;
 let color2 = 111;
 let openAllDoor = false;
+
+const cameraRotator = new Camera.Rotator();
+
+vShop.createCamera = function() {
+    camera = mp.cameras.new("vshop_camera");
+    /*camera.setActive(true);
+    camera.setCoord(-1500.3770751953125, -2998.169677734375, -81.15196990966797);
+    camera.pointAtCoord(vPos.x, vPos.y, vPos.z);*/
+    cameraRotator.start(camera, vPos, vPos, new mp.Vector3(0, 10, 0), 360);
+    cameraRotator.setXBound(-360, 360);
+
+    mp.game.cam.renderScriptCams(true, false, 0, false, false);
+};
+
+vShop.destroyCamera = function() {
+    try {
+        cameraRotator.reset();
+        if (camera) {
+            camera.destroy();
+            camera = null;
+        }
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+
+    mp.game.cam.renderScriptCams(false, true, 0, true, true);
+};
 
 vShop.goToInside = function(shopId, x, y, z, rot, bx, by, bz, cars) {
     try {
@@ -30,11 +63,17 @@ vShop.goToInside = function(shopId, x, y, z, rot, bx, by, bz, cars) {
         vRot = rot;
 
         currentShop = shopId;
-        user.teleportv(insidePos);
+        ui.hideHud();
+        user.teleportv(insidePos, 0, false);
+        mp.gui.cursor.show(true, true);
 
-        chat.sendLocal(`!{${chat.clBlue}}Подсказка`);
+        setTimeout(function () {
+            vShop.createCamera();
+        }, 500);
+
+        /*chat.sendLocal(`!{${chat.clBlue}}Подсказка`);
         chat.sendLocal(`Если вы вдруг закрыли меню, то не переживайте, подойдите к транспорту, наведитесь и нажмите E`);
-        chat.sendLocal(`Чтобы выйти из автосалона, в самом низу есть пункт меню выхода`);
+        chat.sendLocal(`Чтобы выйти из автосалона, в самом низу есть пункт меню выхода`);*/
     }
     catch (e) {
         methods.debug(e);
@@ -43,10 +82,13 @@ vShop.goToInside = function(shopId, x, y, z, rot, bx, by, bz, cars) {
 
 vShop.exit = function() {
     try {
+        ui.callCef('carShop','{"type": "hide"}');
+        mp.gui.cursor.show(false, false);
         vShop.destroyVehicle();
         user.setVirtualWorld(0);
         currentShop = 0;
         user.teleportv(exitPos);
+        vShop.destroyCamera();
     }
     catch (e) {
         methods.debug(e);
@@ -152,5 +194,45 @@ vShop.getShopId = function() {
 vShop.getCarList = function() {
     return carList;
 };
+
+mp.events.add("render", () => {
+    if (!mp.gui.cursor.visible || !cameraRotator.isActive || cameraRotator.isPause) {
+        return;
+    }
+
+    const x = mp.game.controls.getDisabledControlNormal(2, 239);
+    const y = mp.game.controls.getDisabledControlNormal(2, 240);
+
+    const su = mp.game.controls.getDisabledControlNormal(2, 241);
+    const sd = mp.game.controls.getDisabledControlNormal(2, 242);
+
+    if (cameraRotator.isPointEmpty()) {
+        cameraRotator.setPoint(x, y);
+    }
+
+    const currentPoint = cameraRotator.getPoint();
+    const dX = currentPoint.x - x;
+    const dY = currentPoint.y - y;
+
+    cameraRotator.setPoint(x, y);
+
+    if (mp.game.controls.isDisabledControlPressed(2, 237)) {
+        cameraRotator.onMouseMove(dX, dY);
+    }
+
+    cameraRotator.onMouseScroll(su, sd);
+
+    // Comment before commit
+    /*let message = `su: ${su}`;
+    message += `\nsd: ${sd}`;
+
+    mp.game.graphics.drawText(message, [0.5, 0.005], {
+        font: 7,
+        color: [255, 255, 255, 185],
+        scale: [0.5, 0.5],
+        outline: true,
+        centre: true
+    });*/
+});
 
 export default vShop;

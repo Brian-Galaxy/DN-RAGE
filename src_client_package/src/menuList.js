@@ -5774,6 +5774,88 @@ menuList.showVehShopListMenu = function(shopId, carList)
         return;
     }
 
+    let list = [];
+
+    let vehicleInfo = enums.get('vehicleInfo');
+
+    vehicleInfo.forEach(item => {
+        if (shopId != item.type)
+            return;
+
+        /*let label = `~c~${item.display_name} (0 шт.)`;
+        let subLabel = `\n~r~Доступно только для аренды`;
+
+        if (carList.has(item.display_name)) {
+            label = `${item.display_name} (${carList.get(item.display_name)} шт.)`;
+            subLabel = ``;
+        }*/
+
+        let label = mp.game.ui.getLabelText(item.display_name);
+        if (label === 'NULL')
+            label = item.display_name;
+
+        let count = 0;
+        if (carList.has(item.display_name))
+            count = methods.parseInt(carList.get(item.display_name));
+
+        let carInfo = [];
+
+        carInfo.push({title: 'Класс', info: item.class_name});
+
+        if (item.fuel_type > 0) {
+            carInfo.push({title: 'Тип топлива', info: `${vehicles.getFuelLabel(item.fuel_type)}`});
+            carInfo.push({title: 'Вместимость бака', info: `${item.fuel_full}${vehicles.getFuelPostfix(item.fuel_type)}`});
+            carInfo.push({title: 'Расход топлива', info: `${item.fuel_min}${vehicles.getFuelPostfix(item.fuel_type)}`});
+        }
+        else
+            carInfo.push({title: 'Расход топлива', info: `Отсутствует`});
+
+        if (item.stock > 0) {
+
+            let stockFull = item.stock_full;
+            if (item.stock_full > 0)
+                stockFull = stockFull / 1000;
+
+            carInfo.push({title: 'Объем багажника', info: `${item.stock}см³`});
+            carInfo.push({title: 'Допустимый вес', info: `${stockFull}кг.`});
+        }
+        else
+            carInfo.push({title: 'Багажник', info: `Отсутствует`});
+
+        list.push(
+            {
+                make: label,
+                model: item.class_name,
+                name: item.display_name,
+                count: count,
+                price: methods.moneyFormat(item.price, 1),
+                rent: methods.moneyFormat(item.price / 100 + 100.01, 999),
+                img: enums.getVehicleImg(item.display_name),
+                character_car: carInfo,
+                color_car_main: ['111', '0', '4', '28', '38', '42', '70', '81', '135', '107'],
+                color_car_secondary: ['111', '0', '4', '28', '38', '42', '70', '81', '135', '107'],
+                current_main_color: '111',
+                current_secondary_color: '111',
+            }
+        );
+    });
+
+    let listNew = methods.sortBy(list, 'make');
+
+    vShop.createVehicle(listNew[0].name);
+    ui.callCef('carShop', JSON.stringify({ type: 'updateValues', list: listNew, isShow: true }));
+};
+
+menuList.showVehShopListOldMenu = function(shopId, carList)
+{
+    UIMenu.Menu.HideMenu();
+
+    methods.getVehicleInfo(shopId);
+    if (methods.isBlackout()) {
+        mp.game.ui.notifications.show(`~r~В городе отсутствует свет`);
+        return;
+    }
+
     let menu = UIMenu.Menu.Create("Салон", "~b~Список транспорта");
 
     let list = [];

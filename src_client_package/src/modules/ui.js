@@ -152,6 +152,7 @@ ui.showOrHideRadar = function() {
 
 ui.hideHud = function() {
     mp.game.ui.displayRadar(false);
+    mp.gui.chat.activate(false);
     showRadar = false;
     if (uiBrowser) {
         try {
@@ -166,6 +167,7 @@ ui.hideHud = function() {
 
 ui.showHud = function() {
     mp.game.ui.displayRadar(true);
+    mp.gui.chat.activate(true);
     showRadar = true;
     //return //TODO ВАЖНО
     if (uiBrowser) {

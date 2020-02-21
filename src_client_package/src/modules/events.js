@@ -27,6 +27,7 @@ import jail from "../manager/jail";
 
 import vehicles from "../property/vehicles";
 import business from "../property/business";
+import vShop from "../business/vShop";
 
 mp.gui.chat.enabled = false;
 
@@ -2075,6 +2076,71 @@ mp.events.add('client:inventory:unEquip', function(id, itemId) {
 
 mp.events.add('client:inventory:equip', function(id, itemId, count, aparams) {
     mp.events.callRemote('server:inventory:equip', id, itemId, count, aparams);
+});
+
+mp.events.add('client:carshop:changeCar', function(carName) {
+    try {
+        vShop.createVehicle(carName);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.add('client:carshop:changeColor', function(type, color) {
+    try {
+        if (type === 1)
+            vShop.setColor2(color);
+        else
+            vShop.setColor1(color);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.add('client:carshop:buyCar', function(carName) {
+    try {
+        let cl1 = vShop.getColor1();
+        let cl2 = vShop.getColor2();
+        let shopId = vShop.getShopId();
+
+        vShop.exit();
+        setTimeout(function () {
+            mp.events.callRemote('server:vShop:buy', carName, cl1 , cl2, shopId);
+        }, 1000);
+        setTimeout(function () {
+            quest.standart();
+        }, 20000);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.add('client:carshop:rentCar', function(carName) {
+    try {
+        let cl1 = vShop.getColor1();
+        let cl2 = vShop.getColor2();
+        let shopId = vShop.getShopId();
+
+        vShop.exit();
+        setTimeout(function () {
+            mp.events.callRemote('server:vShop:rent', carName, cl1 , cl2, shopId);
+        }, 1000);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.add('client:carshop:exit', function() {
+    try {
+        vShop.exit();
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 });
 
 mp.events.add('client:phone:showMenu', function(data) {

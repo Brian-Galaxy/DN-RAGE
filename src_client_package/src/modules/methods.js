@@ -859,6 +859,12 @@ methods.notifyToAll = function (message) {
     mp.events.callRemote('server:players:notifyToAll', message);
 };
 
+methods.sortBy = function (arr, p) {
+    return arr.slice(0).sort(function(a,b) {
+        return (a[p] > b[p]) ? 1 : (a[p] < b[p]) ? -1 : 0;
+    });
+};
+
 methods.isInPoint = function (p1, p2, p3, p4, p5) {
     return Math.min(p1.x, p2.x) < p5.x && Math.max(p3.x, p4.x) > p5.x && Math.min(p1.y, p4.y) < p5.y && Math.max(p2.y, p3.y) > p5.y;
 };

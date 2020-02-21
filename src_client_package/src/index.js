@@ -31,11 +31,17 @@ import jail from "./manager/jail";
 import user from "./user";
 import enums from "./enums";
 import phone from "./phone";
+import chat from "./chat";
 
 try {
 
     mp.gui.chat.show(false);
     mp.gui.chat.activate(false);
+    for (let i = 0; i < 50; i++)
+        mp.gui.chat.push('');
+
+    chat.show(false);
+    chat.activate(false);
 
     /*enums.customIpl.forEach(item => {
         object.createIpl(item[0], new mp.Vector3(item[1], item[2], item[3]), item[4]);

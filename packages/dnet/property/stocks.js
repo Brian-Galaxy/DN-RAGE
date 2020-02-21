@@ -1,6 +1,7 @@
 let Container = require('../modules/data');
 let mysql = require('../modules/mysql');
 let methods = require('../modules/methods');
+let chat = require('../modules/chat');
 
 let user = require('../user');
 let coffer = require('../coffer');
@@ -316,7 +317,7 @@ stocks.loadLast = function() {
             };
 
             methods.createStaticCheckpoint(hBlip.pos.x, hBlip.pos.y, hBlip.pos.z, "Нажмите ~g~Е~s~ чтобы открыть меню");
-            mp.players.broadcast(`Склад добавлен. ID: ${item['id']}. Name: ${item['number']}. Int: ${item['interior']}. Price: ${methods.moneyFormat(item['price'])}`);
+            chat.sendToAll(`Склад добавлен. ID: ${item['id']}. Name: ${item['number']}. Int: ${item['interior']}. Price: ${methods.moneyFormat(item['price'])}`);
 
             mp.players.forEach(p => {
                 methods.updateCheckpointList(p);

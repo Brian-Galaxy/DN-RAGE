@@ -1,4 +1,6 @@
 import user from '../user';
+import chat from '../chat';
+
 import ui from '../modules/ui';
 import methods from "../modules/methods";
 
@@ -326,8 +328,8 @@ edu.init = function() {
     mp.players.local.setCollision(false, true);
     mp.gui.cursor.show(true, true);
     methods.disableAllControls(true);
-    mp.gui.chat.show(false);
-    mp.gui.chat.activate(false);
+    chat.show(false);
+    chat.activate(false);
 
     user.setCurrentWeapon('weapon_unarmed');
     mp.attachmentMngr.shutdownFor(mp.players.local);
@@ -386,8 +388,8 @@ edu.stopAll = async function() {
     mp.players.local.setCollision(true, true);
     mp.gui.cursor.show(false, false);
     methods.disableAllControls(false);
-    mp.gui.chat.show(true);
-    mp.gui.chat.activate(true);
+    chat.show(true);
+    chat.activate(true);
 
     edu.destroyCamera();
     mp.attachmentMngr.initFor(mp.players.local);

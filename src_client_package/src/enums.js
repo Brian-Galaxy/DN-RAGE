@@ -46,11 +46,6 @@ mp.events.add('client:enums:updateCloth', (requestID, overlays, clothM, clothF, 
 // должно быть тут, иначе никак
 mp.events.add('client:enums:updateCloth1', (requestID, tattooList, printList, fractionList) => {
     try {
-        /*mp.gui.chat.push(clothM);
-        mp.gui.chat.push(propM);
-        mp.gui.chat.push(clothF);
-        mp.gui.chat.push(propF);
-        mp.gui.chat.push(shopList);*/ // работает
         if (pendingRequests[requestID]) {
             pendingRequests[requestID]([tattooList, printList, fractionList]);
         }
@@ -85,6 +80,8 @@ enums.updateVehicleInfo = function(idx, data) {
         enums.vehicleInfo = [];
     enums.vehicleInfo = enums.vehicleInfo.concat(data);
 };
+
+enums.fontList = ["Roboto", "Arial", "HACKED", "Choujikuu"];
 
 enums.offsets = { //TODO
     house: 100000,

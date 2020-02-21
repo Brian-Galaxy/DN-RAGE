@@ -331,6 +331,10 @@ methods.removeQuotes2 = function(text) {
 methods.saveLog = function(file, log){//TODO
 };
 
+methods.saveFile = function(file, log){
+    mp.events.callRemote('server:saveFile', file, log);
+};
+
 methods.saveFractionLog = function(name, doName, text, fractionId = 0) {
     mp.events.callRemote('server:addFractionLog', name, doName, text, fractionId);
 };

@@ -2,6 +2,7 @@
 
 import methods from './methods';
 import user from '../user';
+import chat from '../chat';
 import ui from './ui';
 
 let NativeUI = eval('require(\'nativeui\')');
@@ -22,7 +23,7 @@ let promise = {};
 
 mp.events.add('client:modalinput:callBack', (data) => {
     _isShowInput = false;
-    mp.gui.chat.activate(true);
+    chat.activate(true);
     mp.gui.cursor.show(false, false);
     user.setVariable('isTyping', false);
     promise.resolve(data);
@@ -47,7 +48,7 @@ class Menu {
                 menuItem.MenuClose.on( () => {
                     mp.players.local.freezePosition(false);
                     methods.disableAllControls(false);
-                    mp.gui.chat.activate(true);
+                    chat.activate(true);
                 });
             }
 
@@ -121,7 +122,7 @@ class Menu {
     static async GetUserInput(title, defaultText = '', maxInputLength = 20) {
         return new Promise((resolve, reject) => {
             _isShowInput = true;
-            mp.gui.chat.activate(false);
+            chat.activate(false);
             mp.gui.cursor.show(true, true);
             user.setVariable('isTyping', true);
 
@@ -144,18 +145,18 @@ class Menu {
         try {
             mp.game.ui.notifications.show("~b~Введите: ~s~" + title);
             _isShowInput = true;
-            mp.gui.chat.activate(false);
+            chat.activate(false);
             mp.game.gameplay.displayOnscreenKeyboard(1, 'FMMC_KEY_TIP8', "", defaultText, "", "", "", maxInputLength);
             while (mp.game.gameplay.updateOnscreenKeyboard() != 1 && mp.game.gameplay.updateOnscreenKeyboard() != 2 && mp.game.gameplay.updateOnscreenKeyboard() != 3)
                 await methods.sleep(1);
             if (mp.game.gameplay.updateOnscreenKeyboard() == 1) {
                 _isShowInput = false;
-                mp.gui.chat.activate(true);
+                chat.activate(true);
                 user.setVariable('isTyping', false);
                 return mp.game.gameplay.getOnscreenKeyboardResult();
             }
             _isShowInput = false;
-            mp.gui.chat.activate(true);
+            chat.activate(true);
         }
         catch (e) {
             methods.debug(e);
@@ -169,7 +170,7 @@ class Menu {
 
             mp.players.local.freezePosition(false);
             methods.disableAllControls(false);
-            mp.gui.chat.activate(true);
+            chat.activate(true);
 
             /*MenuItem.ItemSelect.clear();
             menuItem.IndexChange.clear();

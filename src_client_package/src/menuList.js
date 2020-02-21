@@ -2400,11 +2400,98 @@ menuList.showSettingsHudMenu = function() {
 
 menuList.showSettingsTextMenu = function() {
 
-    let menu = UIMenu.Menu.Create(`Настройки`, `~b~Настройки текст чата`);
+    let menu = UIMenu.Menu.Create(`Настройки`, `~b~Настройки чата`);
 
-    UIMenu.Menu.AddMenuItem("Очистить чат").doName = 'clearChat';
+    let fontSizeList = ['10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24'];
+    let lineSizeList = ['10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30'];
+    let bgStateList = ['Выкл', 'Вкл', 'Всегда вкл'];
+    let bgOpacity = ["0%", "10%", "20%", "30%", "40%", "50%", "60%", "70%", "80%", "90%", "100%"];
+    let timeoutList = ['1s', '3s', '5s', '10s', '15s', '20s', '30s', 'Never'];
+
+    UIMenu.Menu.AddMenuItem("~y~Очистить чат").doName = 'clearChat';
+
+    let listItem = UIMenu.Menu.AddMenuItemList("Шрифт", enums.fontList);
+    listItem.doName = 'font';
+    listItem.Index = enums.fontList.indexOf(user.getCache('s_chat_font'));
+
+    listItem = UIMenu.Menu.AddMenuItemList("Размер шрифта", fontSizeList);
+    listItem.doName = 'fontSize';
+    listItem.Index = fontSizeList.indexOf(user.getCache('s_chat_font_s').toString());
+
+    listItem = UIMenu.Menu.AddMenuItemList("Отступ текста", lineSizeList);
+    listItem.doName = 'lineSize';
+    listItem.Index = lineSizeList.indexOf(user.getCache('s_chat_font_l').toString());
+
+    listItem = UIMenu.Menu.AddMenuItemList("Тип фона", bgStateList);
+    listItem.doName = 'bgStyle';
+    listItem.Index = user.getCache('s_chat_bg_s');
+
+    listItem = UIMenu.Menu.AddMenuItemList("Прозрачность фона", bgOpacity);
+    listItem.doName = 'bgOpacity';
+    listItem.Index = methods.parseInt(user.getCache('s_chat_bg_o') * 10);
+
+    listItem = UIMenu.Menu.AddMenuItemList("Прозрачность чата", bgOpacity);
+    listItem.doName = 'chatOpacity';
+    listItem.Index = methods.parseInt(user.getCache('s_chat_opacity') * 10);
+
+    listItem = UIMenu.Menu.AddMenuItemList("Ширина", bgOpacity);
+    listItem.doName = 'width';
+    listItem.Index = methods.parseInt(user.getCache('s_chat_width') / 10);
+
+    listItem = UIMenu.Menu.AddMenuItemList("Высота", bgOpacity);
+    listItem.doName = 'height';
+    listItem.Index = methods.parseInt(user.getCache('s_chat_height') / 10);
+
+    listItem = UIMenu.Menu.AddMenuItemList("Закрыть по таймауту", timeoutList);
+    listItem.doName = 'timeout';
+    listItem.Index = user.getCache('s_chat_timeout');
 
     let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+
+    menu.ListChange.on(async (item, index) => {
+        if (item.doName == 'font') {
+            user.set('s_chat_font', enums.fontList[index]);
+            mp.game.ui.notifications.show('~b~Настройки были сохранены');
+        }
+        if (item.doName == 'fontSize') {
+            user.set('s_chat_font_s', fontSizeList[index]);
+            mp.game.ui.notifications.show('~b~Настройки были сохранены');
+        }
+        if (item.doName == 'lineSize') {
+            user.set('s_chat_font_l', lineSizeList[index]);
+            mp.game.ui.notifications.show('~b~Настройки были сохранены');
+        }
+        if (item.doName == 'bgStyle') {
+            user.set('s_chat_bg_s', index);
+            mp.game.ui.notifications.show('~b~Настройки были сохранены');
+        }
+        if (item.doName == 'timeout') {
+            user.set('s_chat_timeout', index);
+            mp.game.ui.notifications.show('~b~Настройки были сохранены');
+        }
+        if (item.doName == 'width') {
+            let num = index * 10;
+            user.set('s_chat_width', num);
+            mp.game.ui.notifications.show('~b~Настройки были сохранены');
+        }
+        if (item.doName == 'height') {
+            let num = index * 10;
+            user.set('s_chat_height', num);
+            mp.game.ui.notifications.show('~b~Настройки были сохранены');
+        }
+        if (item.doName == 'bgOpacity') {
+            let num = index / 10;
+            user.set('s_chat_bg_o', num);
+            mp.game.ui.notifications.show('~b~Настройки были сохранены');
+        }
+        if (item.doName == 'chatOpacity') {
+            let num = index / 10;
+            user.set('s_chat_opacity', num);
+            mp.game.ui.notifications.show('~b~Настройки были сохранены');
+        }
+        chat.updateSettings();
+    });
+
     menu.ItemSelect.on(async (item, index) => {
         if (item == closeItem)
             UIMenu.Menu.HideMenu();
@@ -2890,7 +2977,7 @@ menuList.showVehicleMenu = function(data) {
             return;
         }
         else if (item.sendChatMessage)
-            mp.gui.chat.push(`${item.sendChatMessage}`);
+            chat.push(`${item.sendChatMessage}`);
         else if (item.doName == 'taxi:dispatch')
             menuList.showDispatchTaxiMenu();
         else if (item.doName == 'mail:take')
@@ -6666,7 +6753,7 @@ menuList.showLscTunningListMenu = async function(modType, shopId, price, lscBann
             }
         }
         else if (modType == 78) {
-            let wheelList = ['Спорт', 'Массл', 'Лоурайдер', 'Кроссовер', 'Внедорожник', 'Специальные', 'Мото', 'Уникальные', 'Benny\'s Original', 'Benny\'s Bespoke', 'Big'];
+            let wheelList = ['Спорт', 'Массл', 'Лоурайдер', 'Кроссовер', 'Внедорожник', 'Специальные', 'Мото', 'Уникальные', 'Benny\'s Original', 'Benny\'s Bespoke', 'Open Wheel'];
             for (let i = 0; i < wheelList.length; i++) {
                 try {
                     let label = `${wheelList[i]}`;

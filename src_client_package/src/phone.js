@@ -4,6 +4,7 @@ import ui from "./modules/ui";
 import enums from './enums';
 import user from './user';
 import coffer from './coffer';
+import chat from './chat';
 
 import weather from "./manager/weather";
 import dispatcher from "./manager/dispatcher";
@@ -29,14 +30,14 @@ phone.show = function() {
         return;
     }
 
-    //mp.gui.chat.activate(false);
+    //chat.activate(false);
     try {
         user.openPhone(pType);
 
         mp.events.callRemote('server:phone:updateContactList');
         mp.events.callRemote('server:phone:updateDialogList');
 
-        mp.gui.chat.activate(false);
+        chat.activate(false);
         mp.gui.cursor.show(false, true);
         mp.game.ui.notifications.show(`~b~Скрыть телефон на ~s~${bind.getKeyName(user.getCache('s_bind_phone'))}`);
         ui.DisableMouseControl = true;
@@ -64,10 +65,10 @@ phone.showOrHide = function() {
 };
 
 phone.hide = function() {
-    //mp.gui.chat.activate(true);
+    //chat.activate(true);
     try {
         user.hidePhone();
-        mp.gui.chat.activate(true);
+        chat.activate(true);
         mp.gui.cursor.show(false, false);
         ui.DisableMouseControl = false;
         hidden = true;

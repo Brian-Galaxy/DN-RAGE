@@ -16,6 +16,7 @@ import weather from './weather';
 import hosp from './hosp';
 import discord from "./discord";
 import checkpoint from "./checkpoint";
+import chat from "../chat";
 
 import fuel from "../business/fuel";
 
@@ -191,6 +192,7 @@ timer.twoSecTimer = function() {
 
     try {
 
+        chat.updateSettings();
         discord.checker();
 
         let plPos = mp.players.local.position;
@@ -348,7 +350,7 @@ timer.secTimer = function() {
             user.removeDrugLevel(drugId, 1);
 
             if (user.getDrugLevel(drugId) > 1000) {
-                mp.gui.chat.push(`!{03A9F4}Вы в коме от передозировки`);
+                chat.sendLocal(`!{03A9F4}Вы в коме от передозировки`);
                 user.setHeal(0); //TODO
             }
 
@@ -369,7 +371,7 @@ timer.secTimer = function() {
             user.removeDrugLevel(drugId, 1);
 
             if (user.getDrugLevel(drugId) > 1000) {
-                mp.gui.chat.push(`!{03A9F4}Вы в коме от передозировки`);
+                chat.sendLocal(`!{03A9F4}Вы в коме от передозировки`);
                 user.setHeal(0); //TODO
             }
 
@@ -390,7 +392,7 @@ timer.secTimer = function() {
             user.removeDrugLevel(drugId, 1);
 
             if (user.getDrugLevel(drugId) > 1000) {
-                mp.gui.chat.push(`!{03A9F4}Вы в коме от передозировки`);
+                chat.sendLocal(`!{03A9F4}Вы в коме от передозировки`);
                 user.setHeal(0); //TODO
             }
 
@@ -407,7 +409,7 @@ timer.secTimer = function() {
             user.removeDrugLevel(drugId, 1);
 
             if (user.getDrugLevel(drugId) > 1000) {
-                mp.gui.chat.push(`!{03A9F4}Вы в коме от передозировки`);
+                chat.sendLocal(`!{03A9F4}Вы в коме от передозировки`);
                 user.setHeal(0); //TODO
             }
 
@@ -424,7 +426,7 @@ timer.secTimer = function() {
             user.removeDrugLevel(drugId, 1);
 
             if (user.getDrugLevel(drugId) > 1000) {
-                mp.gui.chat.push(`!{03A9F4}Вы в коме от передозировки`);
+                chat.sendLocal(`!{03A9F4}Вы в коме от передозировки`);
                 user.setHeal(0); //TODO
             }
 
@@ -445,7 +447,7 @@ timer.secTimer = function() {
             user.removeDrugLevel(drugId, 1);
 
             if (user.getDrugLevel(drugId) > 1000) {
-                mp.gui.chat.push(`!{03A9F4}Вы в коме от передозировки`);
+                chat.sendLocal(`!{03A9F4}Вы в коме от передозировки`);
                 user.setHeal(0); //TODO
             }
 
@@ -466,7 +468,7 @@ timer.secTimer = function() {
             user.removeDrugLevel(drugId, 1);
 
             if (user.getDrugLevel(drugId) > 1500) {
-                mp.gui.chat.push(`!{03A9F4}Вы в коме от передозировки`);
+                chat.sendLocal(`!{03A9F4}Вы в коме от передозировки`);
                 user.setHeal(0); //TODO
             }
 

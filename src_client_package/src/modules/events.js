@@ -14,6 +14,7 @@ import inventory from "../inventory";
 import items from "../items";
 import phone from "../phone";
 import weapons from "../weapons";
+import chat from "../chat";
 
 import ui from "./ui";
 
@@ -142,6 +143,8 @@ mp.events.add('client:user:auth:login', function(login, password) {
 
 mp.events.add('client:events:loginAccount:success', function(data) {
     try {
+        //user.clearChat();
+
         user.setVirtualWorld(mp.players.local.remoteId + 1);
         ui.callCef('authMain','{"type": "showCreatePage"}');
 
@@ -452,8 +455,8 @@ mp.events.add('client:events:custom:choiceRole', function(roleIndex) {
             mp.players.local.freezePosition(false);
             mp.players.local.setCollision(true, true);
             mp.gui.cursor.show(false, false);
-            mp.gui.chat.show(true);
-            mp.gui.chat.activate(true);
+            chat.show(true);
+            chat.activate(true);
             mp.game.ui.displayRadar(true);
 
             user.setLogin(true);
@@ -614,8 +617,8 @@ mp.events.add('client:events:loginUser:success', async function() {
         mp.players.local.freezePosition(false);
         mp.players.local.setCollision(true, true);
         mp.gui.cursor.show(false, false);
-        mp.gui.chat.show(true);
-        mp.gui.chat.activate(true);
+        chat.show(true);
+        chat.activate(true);
         mp.game.ui.displayRadar(true);
     }
 
@@ -624,6 +627,7 @@ mp.events.add('client:events:loginUser:success', async function() {
     setTimeout(async function () {
         inventory.getItemList(inventory.types.Player, await user.get('id'));
         quest.loadAllBlip();
+        chat.updateSettings();
     }, 5000);
 });
 
@@ -2078,6 +2082,10 @@ mp.events.add('client:inventory:equip', function(id, itemId, count, aparams) {
     mp.events.callRemote('server:inventory:equip', id, itemId, count, aparams);
 });
 
+mp.events.add('client:ui:debug', function(file, error, errorInfo) {
+    methods.saveFile('ui', `[${user.getCache('social')}] [${file}] ${error} | ${errorInfo}`);
+});
+
 mp.events.add('client:carshop:changeCar', function(carName) {
     try {
         vShop.createVehicle(carName);
@@ -2154,8 +2162,8 @@ mp.events.add('client:phone:showMenu', function(data) {
 });
 
 mp.events.add('client:phone:inputModal', function(state) {
-    mp.gui.chat.show(!state);
-    mp.gui.chat.activate(!state);
+    chat.show(!state);
+    chat.activate(!state);
     mp.gui.cursor.show(state, true);
 });
 
@@ -2167,8 +2175,8 @@ mp.events.add('client:phone:status', function(status) {
 });
 
 mp.events.add('client:phone:rotate', function(status) {
-    mp.gui.chat.show(status);
-    mp.gui.chat.activate(status);
+    chat.show(status);
+    chat.activate(status);
     mp.gui.cursor.show(!status, true);
     if (status)
         user.rotatePhoneV();
@@ -2583,7 +2591,7 @@ mp.events.add("playerCommand", async (command) => {
             let posOffset = mp.players.local.getOffsetFromInWorldCoords(0.0, 2.0, 0.5);
             mp.game.graphics.startParticleFxLoopedAtCoord(args[2], posOffset.x, posOffset.y, posOffset.z, 1.0, 1.0, 1.0, 1.0, false, false, false, false);
 
-            mp.gui.chat.push(`Ptx Activate: ${args[1]} | ${args[2]} | ${mp.game.streaming.hasNamedPtfxAssetLoaded(args[1])}`);
+            chat.sendLocal(`Ptx Activate: ${args[1]} | ${args[2]} | ${mp.game.streaming.hasNamedPtfxAssetLoaded(args[1])}`);
         }
         catch (e) {
             methods.debug(e);
@@ -2592,8 +2600,8 @@ mp.events.add("playerCommand", async (command) => {
     /*else if (command.toLowerCase().slice(0, 2) === "h ") {
         let args = command.split(' ');
         if (args.length != 4) {
-            mp.gui.chat.push(`Не верно введено кол-во параметров `);
-            mp.gui.chat.push(`/h [ID Интерьера] [№ Дома] [Цена] `);
+            chat.sendLocal(`Не верно введено кол-во параметров `);
+            chat.sendLocal(`/h [ID Интерьера] [№ Дома] [Цена] `);
             return;
         }
         mp.events.callRemote('server:houses:insert', args[1], args[2], args[3], ui.getCurrentZone(), ui.getCurrentStreet())
@@ -2601,8 +2609,8 @@ mp.events.add("playerCommand", async (command) => {
     else if (command.toLowerCase().slice(0, 2) === "s ") {
         let args = command.split(' ');
         if (args.length != 4) {
-            mp.gui.chat.push(`Не верно введено кол-во параметров `);
-            mp.gui.chat.push(`/s [ID Интерьера] [№ Дома] [Цена] `);
+            chat.sendLocal(`Не верно введено кол-во параметров `);
+            chat.sendLocal(`/s [ID Интерьера] [№ Дома] [Цена] `);
             return;
         }
         mp.events.callRemote('server:stocks:insert', args[1], args[2], args[3], ui.getCurrentZone(), ui.getCurrentStreet())
@@ -2610,8 +2618,8 @@ mp.events.add("playerCommand", async (command) => {
     else if (command.toLowerCase().slice(0, 3) === "sc ") {
         let args = command.split(' ');
         if (args.length != 2) {
-            mp.gui.chat.push(`Не верно введено кол-во параметров `);
-            mp.gui.chat.push(`/sc [ID]`);
+            chat.sendLocal(`Не верно введено кол-во параметров `);
+            chat.sendLocal(`/sc [ID]`);
             return;
         }
         mp.events.callRemote('server:stocks:insert2', args[1])
@@ -2619,8 +2627,8 @@ mp.events.add("playerCommand", async (command) => {
     else if (command.toLowerCase().slice(0, 4) === "hc1 ") {
         let args = command.split(' ');
         if (args.length != 3) {
-            mp.gui.chat.push(`Не верно введено кол-во параметров `);
-            mp.gui.chat.push(`/hc1 [ID] [INT]`);
+            chat.sendLocal(`Не верно введено кол-во параметров `);
+            chat.sendLocal(`/hc1 [ID] [INT]`);
             return;
         }
         mp.events.callRemote('server:houses:insert1', args[1], args[2])
@@ -2628,8 +2636,8 @@ mp.events.add("playerCommand", async (command) => {
     else if (command.toLowerCase().slice(0, 4) === "hc2 ") {
         let args = command.split(' ');
         if (args.length != 3) {
-            mp.gui.chat.push(`Не верно введено кол-во параметров `);
-            mp.gui.chat.push(`/hc2 [ID] [INT]`);
+            chat.sendLocal(`Не верно введено кол-во параметров `);
+            chat.sendLocal(`/hc2 [ID] [INT]`);
             return;
         }
         mp.events.callRemote('server:houses:insert2', args[1], args[2])
@@ -2637,8 +2645,8 @@ mp.events.add("playerCommand", async (command) => {
     else if (command.toLowerCase().slice(0, 4) === "hc3 ") {
         let args = command.split(' ');
         if (args.length != 3) {
-            mp.gui.chat.push(`Не верно введено кол-во параметров `);
-            mp.gui.chat.push(`/hc3 [ID] [INT]`);
+            chat.sendLocal(`Не верно введено кол-во параметров `);
+            chat.sendLocal(`/hc3 [ID] [INT]`);
             return;
         }
         mp.events.callRemote('server:houses:insert3', args[1], args[2])
@@ -2646,8 +2654,8 @@ mp.events.add("playerCommand", async (command) => {
     else if (command.toLowerCase().slice(0, 2) === "c ") {
         let args = command.split(' ');
         if (args.length != 5) {
-            mp.gui.chat.push(`Не верно введено кол-во параметров `);
-            mp.gui.chat.push(`/c [ID Дома] [№ Кв] [Цена] [ID Интерьера]`);
+            chat.sendLocal(`Не верно введено кол-во параметров `);
+            chat.sendLocal(`/c [ID Дома] [№ Кв] [Цена] [ID Интерьера]`);
             return;
         }
         mp.events.callRemote('server:condo:insert', args[1], args[2], args[3], args[4], ui.getCurrentZone(), ui.getCurrentStreet())
@@ -2655,8 +2663,8 @@ mp.events.add("playerCommand", async (command) => {
     else if (command.toLowerCase().slice(0, 3) === "cb ") {
         let args = command.split(' ');
         if (args.length != 2) {
-            mp.gui.chat.push(`Не верно введено кол-во параметров `);
-            mp.gui.chat.push(`/cb [№ Дома]`);
+            chat.sendLocal(`Не верно введено кол-во параметров `);
+            chat.sendLocal(`/cb [№ Дома]`);
             return;
         }
         mp.events.callRemote('server:condo:insertBig', args[1], ui.getCurrentZone(), ui.getCurrentStreet())
@@ -2664,8 +2672,8 @@ mp.events.add("playerCommand", async (command) => {
     else if (command.toLowerCase().slice(0, 4) === "get ") {
         let args = command.split(' ');
         if (args.length != 2) {
-            mp.gui.chat.push(`Не верно введено кол-во параметров `);
-            mp.gui.chat.push(`/get [name]`);
+            chat.sendLocal(`Не верно введено кол-во параметров `);
+            chat.sendLocal(`/get [name]`);
             return;
         }
         methods.debug(user.getCache(args[1]));
@@ -2699,15 +2707,15 @@ mp.events.add("playerCommand", async (command) => {
         if (!user.isLogin() || !user.isAdmin(5))
             return;
         let evalCmd = command.substring(5);
-        mp.gui.chat.push(`Eval ${evalCmd}`);
+        chat.sendLocal(`Eval ${evalCmd}`);
         let result;
 
         try {
             result = eval(evalCmd);
-            mp.gui.chat.push(`Result ${result}`);
+            chat.sendLocal(`Result ${result}`);
         } catch (e) {
             result = e;
-            mp.gui.chat.push(`Result ${result}`);
+            chat.sendLocal(`Result ${result}`);
         }
     }
 });

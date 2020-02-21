@@ -2321,7 +2321,7 @@ user.payDay = async function (player) {
             let currentCofferMoney = coffer.getMoney(frId);
 
             if (currentCofferMoney < nalog) {
-                user.sendSmsBankOperation(player, `~r~В бюджете организации не достаточно средств для выплаты зарплаты`, 'Пособие');
+                user.sendSmsBankOperation(player, `~r~В бюджете организации не достаточно средств для выплаты зарплаты`, 'Зарплата');
             }
             else {
                 let ben = coffer.getBenefit(coffer.getIdByFraction(user.get(player, 'fraction_id')));

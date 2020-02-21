@@ -115,6 +115,7 @@ inventory.equip = function(player, id, itemId, count, aparams) {
 
         mysql.executeQuery(sql, function (err, rows, fields) {
             if (rows.length === 0) {
+                player.notify('~r~Этот предмет Вам не принадлежит');
                 return;
             }
 

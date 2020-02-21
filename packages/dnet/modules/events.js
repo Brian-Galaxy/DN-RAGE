@@ -153,7 +153,7 @@ mp.events.addRemoteCounted('modules:server:data:Has', (player, promiseId, id, ke
 mp.events.add('server:clientDebug', (player, message) => {
     try {
         console.log(`[DEBUG-CLIENT][${player.socialClub}]: ${message}`);
-        methods.saveFile('log', `[DEBUG-CLIENT][${player.socialClub}]: ${message}`);
+        //methods.saveFile('log', `[DEBUG-CLIENT][${player.socialClub}]: ${message}`);
     } catch (e) {
         console.log(e);
     }
@@ -5186,6 +5186,10 @@ mp.events.addRemoteCounted('server:addFractionLog2', (player, name, doName, text
     fraction.addHistory(name, doName, text, fractionId);
 });
 
+mp.events.addRemoteCounted('server:saveFile', (player, file, log) => {
+    methods.saveFile(file, log);
+});
+
 mp.events.add('playerJoin', player => {
     player.dimension = player.id + 1;
     player.countedTriggers = 0;
@@ -5313,6 +5317,15 @@ mp.events.add('playerReady', player => {
     user.ready(player);
 
     player.spawn(new mp.Vector3(8.243752, 527.4373, 171.6173));
+
+    player.outputChatBox = function(message) {
+        try {
+            this.call("client:chat:sendMessage", [message]);
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    };
 
     player.notify = function(message, flashing = false, textColor = -1, bgColor = -1, flashColor = [77, 77, 77, 200]) {
         try {

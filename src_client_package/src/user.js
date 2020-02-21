@@ -9,6 +9,7 @@ import enums from "./enums";
 import items from "./items";
 import phone from "./phone";
 import inventory from "./inventory";
+import chat from "./chat";
 
 import quest from "./manager/quest";
 import bind from "./manager/bind";
@@ -480,7 +481,8 @@ user.showLoadDisplay = function(dur = 500, isHud = true) {
 };
 
 user.clearChat = function() {
-    for (let i = 0; i < 100; i++) mp.gui.chat.push('');
+    for (let i = 0; i < 50; i++)
+        chat.sendLocal('');
 };
 
 user.notify = function (message) {

@@ -25,7 +25,7 @@ inventory.show = function() {
         return;
     }
 
-    //mp.gui.chat.activate(false);
+    //chat.activate(false);
     try {
         mp.gui.cursor.show(false, true);
         mp.game.ui.notifications.show(`~b~Скрыть ивентарь на ~s~${bind.getKeyName(user.getCache('s_bind_inv'))}`);
@@ -48,7 +48,7 @@ inventory.show = function() {
 };
 
 inventory.hide = function() {
-    //mp.gui.chat.activate(true);
+    //chat.activate(true);
     try {
         ui.callCef('inventory', '{"type": "hide"}');
         mp.gui.cursor.show(false, false);

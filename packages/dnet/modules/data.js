@@ -13,7 +13,6 @@ class Container {
 
             if (Debug) {
                 methods.debug(`SRV: [SET-CLIENT-SRV] ID: ${id}, KEY: ${key}, OBJECT: ${value}`);
-                mp.players.broadcast(`SRV: [SET-CLIENT-SRV] ID: ${id}, KEY: ${key}, OBJECT: ${value}`);
             }
             this.Set(id, key, value);
         } catch(e) {
@@ -45,7 +44,6 @@ class Container {
             }
             if (Debug) {
                 methods.debug(`SRV: [SET] ID: ${id}, KEY: ${key}, OBJECT: ${value}`);
-                mp.players.broadcast(`SRV: [SET] ID: ${id}, KEY: ${key}, OBJECT: ${value}`);
             }
         } catch (e) {
             methods.debug(`SRV: [SET] ERR: ${e}`);
@@ -61,7 +59,6 @@ class Container {
             _data.get(id).delete(key);
             if (Debug) {
                 methods.debug(`SRV: [RESET] ID: ${id}, KEY: ${key}`);
-                mp.players.broadcast(`SRV: [RESET] ID: ${id}, KEY: ${key}`);
             }
         } catch (e) {
             methods.debug(`SRV: [RESET] ERR: ${e}`);
@@ -76,7 +73,6 @@ class Container {
             _data.delete(id);
             if (Debug) {
                 methods.debug(`SRV: [RESETALL] ID: ${id}, KEY: ${key}`);
-                mp.players.broadcast(`SRV: [RESETALL] ID: ${id}, KEY: ${key}`);
             }
         } catch (e) {
             methods.debug(`SRV: [RESETALL] ERR: ${e}`);
@@ -89,7 +85,6 @@ class Container {
         try {
             if (Debug) {
                 methods.debug(`SRV: [GET] ID: ${id}, KEY: ${key}`);
-                mp.players.broadcast(`SRV: [GET] ID: ${id}, KEY: ${key}`);
             }
             if (_data.has(id)) {
                 if (_data.get(id).has(key)) {
@@ -108,7 +103,6 @@ class Container {
         try {
             if (Debug) {
                 methods.debug(`SRV: [HAS] ID: ${id}, KEY: ${key}`);
-                mp.players.broadcast(`SRV: [HAS] ID: ${id}, KEY: ${key}`);
             }
             if (_data.has(id)) {
                 return _data.get(id).has(key);
@@ -126,7 +120,6 @@ class Container {
         try {
             if (Debug) {
                 methods.debug(`SRV: [GETALL] ID: ${id}, KEY: ${_data.get(id)}`);
-                mp.players.broadcast(`SRV: [GETALL] ID: ${id}, KEYS:`);
             }
             if (!_data.has(id)) {
                 return null;
@@ -143,7 +136,6 @@ class Container {
         try {
             if (Debug) {
                 methods.debug(`SRV: [GET ALL CLIENT] ID: ${id}`);
-                mp.players.broadcast(`SRV: [GET ALL CLIENT] ID: ${id}`);
             }
             player.call('modules:client:data:GetAll', [promiseId, Array.from(this.GetAll(id))]);
         } catch (e) {
@@ -156,7 +148,6 @@ class Container {
         try {
             if (Debug) {
                 methods.debug(`SRV: [GETCLIENT] ID: ${id}, KEY: ${key}`);
-                mp.players.broadcast(`SRV: [GETCLIENT] ID: ${id}, KEY: ${key}`);
             }
             player.call('modules:client:data:Get', [promiseId, this.Get(id, key)]);
         } catch (e) {
@@ -169,7 +160,6 @@ class Container {
         try {
             if (Debug) {
                 methods.debug(`SRV: [HASCLIENT] ID: ${id}, KEY: ${key}`);
-                mp.players.broadcast(`SRV: [HASCLIENT] ID: ${id}, KEY: ${key}`);
             }
             player.call('modules:client:data:Has', [promiseId, this.Has(id, key)]);
         } catch (e) {

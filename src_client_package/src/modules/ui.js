@@ -3,6 +3,7 @@
 import methods from "./methods";
 import user from "../user";
 import voice from "../voice";
+import chat from "../chat";
 
 import weather from "../manager/weather";
 import shoot from "../manager/shoot";
@@ -49,6 +50,7 @@ mp.events.add('guiReady', () => {
 
 ui.create = function() {
     uiBrowser = mp.browsers.new("package://cef/index.html");
+    uiBrowser.markAsChat();
     //ui.callCef('authMain','{"type": "show"}');
 };
 
@@ -84,8 +86,10 @@ ui.fixInterface = function() {
     }
     uiBrowser = mp.browsers.new("package://cef/index.html");
     ui.callCef('authMain','{"type": "hide"}');
+    ui.hideHud();
     setTimeout(function () {
         ui.showHud();
+        chat.updateSettings();
     }, 1000);
 };
 
@@ -152,7 +156,7 @@ ui.showOrHideRadar = function() {
 
 ui.hideHud = function() {
     mp.game.ui.displayRadar(false);
-    mp.gui.chat.activate(false);
+    chat.activate(false);
     showRadar = false;
     if (uiBrowser) {
         try {
@@ -167,7 +171,7 @@ ui.hideHud = function() {
 
 ui.showHud = function() {
     mp.game.ui.displayRadar(true);
-    mp.gui.chat.activate(true);
+    chat.activate(true);
     showRadar = true;
     //return //TODO ВАЖНО
     if (uiBrowser) {
@@ -446,8 +450,6 @@ mp.events.add('client:ui:callCef', (event, value) => {
 
 // Эвенты на cef только через эту функцию
 ui.callCef = function(event, value) {
-    if (event == 'inventory')
-        methods.debug(event, value);
     try {
         if(uiBrowser && methods.isValidJSON(value))
             uiBrowser.execute(`trigger('${event}', '${value}')`);

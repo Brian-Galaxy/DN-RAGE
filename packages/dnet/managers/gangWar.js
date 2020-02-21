@@ -91,7 +91,8 @@ gangWar.startWar = function(player, zoneId) {
         player.notify('~r~Доступно только с 23 до 4 утра IC времени');
         return;
     }
-    let dateTime = new Date();
+
+    let dateTime = new Date(); //TODO
     if (dateTime.getHours() < 20) {
         player.notify('~r~Доступно только с 20 до 24 ночи ООС времени');
         return;

@@ -4,6 +4,7 @@ let methods = require('../modules/methods');
 let user = require('../user');
 let coffer = require('../coffer');
 let enums = require('../enums');
+let chat = require('../modules/chat');
 
 let houses = require('./houses');
 let condos = exports;
@@ -101,7 +102,7 @@ condos.loadLast = function() {
             methods.createStaticCheckpoint(hBlip.position.x, hBlip.position.y, hBlip.position.z, "Нажмите ~g~Е~s~ чтобы открыть меню", 0.8, -1, [33, 150, 243, 100], 0.3);
             hBlips.set(item['id'], hBlip);
 
-            mp.players.broadcast(`Квартира загружена. ID: ${item['id']}. HID: ${item['condo_big_id']}. Name: ${item['number']}. Int: ${item['interior']}. Price: ${methods.moneyFormat(item['price'])}`);
+            chat.sendToAll(`Квартира загружена. ID: ${item['id']}. HID: ${item['condo_big_id']}. Name: ${item['number']}. Int: ${item['interior']}. Price: ${methods.moneyFormat(item['price'])}`);
 
             mp.players.forEach(p => {
                 methods.updateCheckpointList(p);
@@ -129,7 +130,7 @@ condos.loadBigLast = function() {
 
             methods.createBlip(new mp.Vector3(parseFloat(item['x']), parseFloat(item['y']), parseFloat(item['z'])), 40, 0, 0.4);
 
-            mp.players.broadcast(`Квартира загружена. ID: ${item['id']}. Name: ${item['number']}`);
+            chat.sendToAll(`Квартира загружена. ID: ${item['id']}. Name: ${item['number']}`);
         });
         count = rows.length;
         methods.debug(`Last Condo Big Loaded`);

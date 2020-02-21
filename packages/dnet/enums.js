@@ -190,6 +190,18 @@ enums.userData = [
     "s_voice_vol",
     "s_clipset",
 
+    "s_chat_font",
+    "s_chat_font_s",
+    "s_chat_font_w",
+    "s_chat_font_o",
+    "s_chat_font_l",
+    "s_chat_bg_s",
+    "s_chat_bg_o",
+    "s_chat_opacity",
+    "s_chat_width",
+    "s_chat_height",
+    "s_chat_timeout",
+
     "s_bind_do",
     "s_bind_inv",
     "s_bind_inv_world",

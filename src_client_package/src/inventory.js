@@ -1,12 +1,15 @@
 import UIMenu from './modules/menu';
 import methods from './modules/methods';
 import container from './modules/data';
+import ui from "./modules/ui";
+
 import chat from './chat';
 import items from './items';
 import user from './user';
 import enums from './enums';
-import ui from "./modules/ui";
 import menuList from "./menuList";
+import phone from "./phone";
+
 import vehicles from "./property/vehicles";
 import stocks from "./property/stocks";
 
@@ -19,9 +22,12 @@ inventory.currentItem = -1;
 let hidden = true;
 
 inventory.show = function() {
-
     if (user.isCuff() || user.isTie()) {
         mp.game.ui.notifications.show("~r~Вы связаны или в наручниках");
+        return;
+    }
+    if (user.getCache('jail_time') > 0) {
+        mp.game.ui.notifications.show("~r~Нельзя пользоваться инвентарем, в тюрьме");
         return;
     }
 

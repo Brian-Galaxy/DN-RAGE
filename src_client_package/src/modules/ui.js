@@ -1,12 +1,15 @@
 "use strict";
 
 import methods from "./methods";
+
 import user from "../user";
 import voice from "../voice";
 import chat from "../chat";
+import enums from "../enums";
 
 import weather from "../manager/weather";
 import shoot from "../manager/shoot";
+
 import vehicles from "../property/vehicles";
 
 let ui = {};
@@ -89,7 +92,6 @@ ui.fixInterface = function() {
     ui.hideHud();
     setTimeout(function () {
         ui.showHud();
-        chat.updateSettings();
     }, 1000);
 };
 
@@ -178,6 +180,9 @@ ui.showHud = function() {
         try {
             //TODO
             ui.callCef('hud','{"type": "show"}');
+            setTimeout(function () {
+                chat.updateSettings();
+            }, 100)
         }
         catch (e) {
             methods.debug(e);
@@ -197,7 +202,7 @@ ui.updateValues = function() {
                 date: weather.getFullRpDate(),
                 time: weather.getFullRpTime(),
                 showGreen: false,
-                showYellow: false,
+                showYellow: weather.getHour() >= 6 && weather.getHour() <= 22 && enums.zoneYellowList.indexOf(mp.game.zone.getNameOfZone(mp.players.local.position.x, mp.players.local.position.y, mp.players.local.position.z)) >= 0,
                 background: user.getCache('s_hud_bg'),
             };
             ui.callCef('hudw', JSON.stringify(data));

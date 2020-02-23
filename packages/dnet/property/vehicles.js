@@ -1,9 +1,12 @@
 const Container = require('../modules/data');
 const mysql = require('../modules/mysql');
+
 const enums = require('../enums');
 const user = require('../user');
 const coffer = require('../coffer');
-//const fuel = require('./business/fuel');
+
+const fuel = require('../business/fuel');
+
 const methods = require('../modules/methods');
 const vSync = require('../managers/vSync');
 const attach = require('../managers/attach');
@@ -1227,8 +1230,8 @@ vehicles.engineStatus = (player, vehicle) => {
         if (vehicle.getVariable('fuel') == 0) {
             player.notify('~r~В транспорте закончился бензин');
             player.notify('~b~Метка на заправку установлена');
-            /*let pos = fuel.findNearest(player.position); //TODO
-            user.setWaypoint(player, pos.x, pos.y);*/
+            let pos = fuel.findNearest(player.position);
+            user.setWaypoint(player, pos.x, pos.y);
             vSync.setEngineState(vehicle, false);
             return;
         }

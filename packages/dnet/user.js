@@ -991,7 +991,7 @@ user.setWaypoint = function(player, x, y) {
 };
 
 user.callCef = function(player, name, params) {
-    methods.debug('user.callCef');
+    methods.debug('user.callCef', params);
     if (!mp.players.exists(player))
         return false;
     player.call('client:user:callCef', [name, params]);

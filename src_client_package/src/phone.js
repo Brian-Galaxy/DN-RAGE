@@ -5,6 +5,7 @@ import enums from './enums';
 import user from './user';
 import coffer from './coffer';
 import chat from './chat';
+import inventory from './inventory';
 
 import weather from "./manager/weather";
 import dispatcher from "./manager/dispatcher";
@@ -19,7 +20,6 @@ let hidden = true;
 phone.network = 0;
 
 phone.show = function() {
-
     let pType = phone.getType();
     if (user.isCuff() || user.isTie()) {
         mp.game.ui.notifications.show("~r~Вы связаны или в наручниках");
@@ -27,6 +27,10 @@ phone.show = function() {
     }
     if (pType == 0) {
         mp.game.ui.notifications.show("~r~У Вас нет телефона");
+        return;
+    }
+    if (user.getCache('jail_time') > 0) {
+        mp.game.ui.notifications.show("~r~Нельзя пользоваться телефонов в тюрьме");
         return;
     }
 
@@ -51,7 +55,10 @@ phone.show = function() {
 };
 
 phone.showOrHide = function() {
-
+    if (!inventory.isHide()) {
+        //mp.game.ui.notifications.show("~r~Во время открытого инвентаря, нельзоя пользоваться телефоном");
+        return;
+    }
     if (user.isCuff() || user.isTie()) {
         mp.game.ui.notifications.show("~r~Вы связаны или в наручниках");
         return;
@@ -578,6 +585,21 @@ phone.showAppFraction2 = async function() {
     };
     menu.items.push(titleMenu);
 
+    if (!user.isLeader2()) {
+        let titleMenu2 = {
+            title: 'Покинуть организацию',
+            umenu: [
+                {
+                    title: "Покинуть организацию",
+                    type: 1,
+                    clickable: true,
+                    params: { name: "uninviteMe" }
+                },
+            ],
+        };
+        menu.items.push(titleMenu2);
+    }
+
     if (fData.get('is_war')) {
         let titleMenu = {
             title: 'Война за территорию',
@@ -947,6 +969,53 @@ phone.showAppGps = function() {
                 ],
             },
             {
+                title: 'Работы',
+                umenu: [
+                    {
+                        title: "Садовник",
+                        text: "",
+                        type: 1,
+                        clickable: true,
+                        params: {x: -1583, y: -234}
+                    },
+                    {
+                        title: "Разнорабочий",
+                        text: "",
+                        type: 1,
+                        clickable: true,
+                        params: {x: -1202, y: -733}
+                    },
+                    {
+                        title: "Фотограф",
+                        text: "",
+                        type: 1,
+                        clickable: true,
+                        params: {x: -1041, y: -241}
+                    },
+                    {
+                        title: "Почтальон",
+                        text: "",
+                        type: 1,
+                        clickable: true,
+                        params: {x: 78, y: 111}
+                    },
+                    {
+                        title: "Автобусный парк",
+                        text: "",
+                        type: 1,
+                        clickable: true,
+                        params: {x: 461, y: -573}
+                    },
+                    {
+                        title: "Инкассаторы",
+                        text: "",
+                        type: 1,
+                        clickable: true,
+                        params: {x: -20, y: -660}
+                    },
+                ],
+            },
+            {
                 title: 'Магазины и прочее',
                 umenu: [
                     {
@@ -964,19 +1033,19 @@ phone.showAppGps = function() {
                         params: { event: 'server:gps:findEl' }
                     },
                     {
-                        title: "Найти ближайший магазин 24/7",
+                        title: "Найти ближайший магазин",
                         text: "",
                         type: 1,
                         clickable: true,
                         params: { event: 'server:gps:find247' }
                     },
-                    {
+                    /*{
                         title: "Найти ближайший магазин алкогольный магазин",
                         text: "",
                         type: 1,
                         clickable: true,
                         params: { event: 'server:gps:findAlc' }
-                    },
+                    },*/
                     {
                         title: "Найти ближайшую заправку",
                         text: "",
@@ -1046,6 +1115,20 @@ phone.showAppGps = function() {
                         type: 1,
                         clickable: true,
                         params: { x: -1234, y: -1477 }
+                    },
+                    {
+                        title: "Магазин охоты",
+                        text: "",
+                        type: 1,
+                        clickable: true,
+                        params: { x: -675, y: 5836 }
+                    },
+                    {
+                        title: "Рыболовный магазин",
+                        text: "",
+                        type: 1,
+                        clickable: true,
+                        params: { x: -1599, y: 5202 }
                     },
                 ],
             },
@@ -1731,7 +1814,20 @@ phone.showAppFractionUpgrade2 = async function() {
         items: []
     };
 
-    if (fData.get('is_war')) {
+    menu.items.push(
+        {
+            title: '...',
+            umenu: [
+                {
+                    title: 'Временно не доступно',
+                    type: 1,
+                    params: { name: "none" }
+                }
+            ],
+        }
+    );
+
+    /*if (fData.get('is_war')) {
         menu.items.push(
             {
                 title: 'Война за территории',
@@ -1777,9 +1873,9 @@ phone.showAppFractionUpgrade2 = async function() {
                 }
             );
         }
-    }
+    }*/
 
-    if (fData.get('is_shop')) {
+    /*if (fData.get('is_shop')) {
         menu.items.push(
             {
                 title: 'Ограбления магазинов',
@@ -1825,7 +1921,7 @@ phone.showAppFractionUpgrade2 = async function() {
                 }
             );
         }
-    }
+    }*/
 
     phone.showMenu(menu);
 };
@@ -2728,6 +2824,14 @@ phone.callBackButton = async function(menu, id, ...args) {
             else if (params.name == 'goCargo') {
                 user.set('isCargo', true);
                 mp.game.ui.notifications.show(`~g~Ожидайте начало операции, в случае перезахода, необходимо нажать еще раз`);
+            }
+            else if (params.name == 'uninviteMe') {
+                user.set('is_leader2', 0);
+                user.set('is_sub_leader2', 0);
+                user.set('fraction_id2', 0);
+                user.set('rank2', 0);
+                user.set('rank_type2', 0);
+                mp.game.ui.notifications.show(`~g~Вы покинули организацию`);
             }
             else if (params.name == 'unsetWar') {
                 fraction.set(user.getCache('fraction_id2'), 'is_war', 0);

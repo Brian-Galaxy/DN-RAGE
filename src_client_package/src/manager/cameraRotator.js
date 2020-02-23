@@ -21,7 +21,7 @@ class CameraRotator {
         this.offsetMultipler = offsetVector.y;
         this.offsetBound = [ 5, 10 ];
         this.xBound = [ 0, 360 ];
-        this.zBound = [ -0.8, 0.8 ];
+        this.zBound = [ -0.8, 1 ];
 
         this.changePosition();
 
@@ -153,11 +153,6 @@ class CameraRotator {
     }
 
     normilizeHeading(heading) {
-        /*if (heading > 360) {
-            heading = heading - 360;
-        } else if (heading < 0) {
-            heading = 360 + heading;
-        }*/
         return heading;
     }
 }

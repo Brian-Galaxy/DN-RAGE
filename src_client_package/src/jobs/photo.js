@@ -223,6 +223,15 @@ photo.start = function() {
     photo.findRandomPickup();
 };
 
+photo.stop = function() {
+    isProcess = false;
+    isCheckpoint = false;
+    _checkpointId = -1;
+    price = 0;
+    pickupId = 0;
+    jobPoint.delete();
+};
+
 photo.ask = function() {
     mp.game.ui.notifications.showWithPicture('Life Invader', "Начальник", `Необходимо сфотографировать ~y~${photo.markers[pickupId][0]}`, "CHAR_LIFEINVADER", 1);
 };
@@ -299,7 +308,7 @@ photo.workProcess = function() { //TODO
                 methods.debug(playerPos);
 
                 if (pointPos === playerPos) {
-                    mp.game.ui.notifications.showWithPicture('Life Invader', "Начальник", `Отличный кардр, за него ты получишь премию!`, "CHAR_LIFEINVADER", 1);
+                    mp.game.ui.notifications.showWithPicture('Life Invader', "Начальник", `Отличный кадр, за него ты получишь премию!`, "CHAR_LIFEINVADER", 1);
                     user.giveJobMoney(methods.getRandomInt(200, 300) + price);
                     user.addWorkExp(10);
                 }
@@ -323,6 +332,8 @@ photo.workProcess = function() { //TODO
 };
 
 mp.events.add("playerEnterCheckpoint", (checkpoint) => {
+    if (mp.players.local.vehicle)
+        return;
     if (!isProcess) return;
     if (_checkpointId == -1 || _checkpointId == undefined)
         return;

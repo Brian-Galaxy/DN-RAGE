@@ -124,6 +124,18 @@ shop.findNearest = function(pos) {
     return prevPos;
 };
 
+shop.findNearestById = function(pos, id) {
+    methods.debug('shop.findNearest');
+    let prevPos = new mp.Vector3(9999, 9999, 9999);
+    shop.list.forEach(function (item) {
+        if (item[4] !== id)
+            return;
+        let shopPos = new mp.Vector3(item[0], item[1], item[2]);
+        if (methods.distanceToPos(shopPos, pos) < methods.distanceToPos(prevPos, pos))
+            prevPos = shopPos;
+    });
+    return prevPos;
+};
 
 shop.checkPosForOpenMenu = function(player) {
     methods.debug('shop.checkPosForOpenMenu');
@@ -174,8 +186,8 @@ shop.buy = function(player, itemId, price, shopId) {
     if (!user.isLogin(player))
         return;
 
-    if (user.getBankMoney(player) < price) {
-        player.notify('~r~У вас недостаточно средств на банковском счету');
+    if (user.getMoney(player) < price) {
+        player.notify('~r~У вас недостаточно средств');
         return;
     }
 
@@ -197,7 +209,7 @@ shop.buy = function(player, itemId, price, shopId) {
 
     if (shopId > 0) {
         player.notify('~g~Вы купили ' + items.getItemNameById(itemId) +  ' по цене: ~s~' + methods.moneyFormat(price));
-        user.removeBankMoney(player, price, 'Покупка ' + items.getItemNameById(itemId));
+        user.removeMoney(player, price, 'Покупка ' + items.getItemNameById(itemId));
         business.addMoney(shopId, price, items.getItemNameById(itemId));
         business.removeMoneyTax(shopId, price / business.getPrice(shopId));
     }

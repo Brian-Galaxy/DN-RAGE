@@ -1123,6 +1123,8 @@ tree.workProcess = function(id) {
 };
 
 mp.events.add("playerEnterCheckpoint", (checkpoint) => {
+    if (mp.players.local.vehicle)
+        return;
     if (!isProcess) return;
     tree.workProcess(checkpoint.id);
 });

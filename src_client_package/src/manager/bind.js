@@ -247,7 +247,8 @@ for(let code in keyCodes) {
             }
         }
         if (user.getCache('s_bind_inv_world') == parseInt(code)) {
-            inventory.getItemList(0, 0);
+            if (!methods.isBlockKeys() && phone.isHide())
+                inventory.getItemList(0, 0);
         }
         if (user.getCache('s_bind_phone') == parseInt(code)) {
             if (!methods.isBlockKeys() && !mp.gui.cursor.visible)

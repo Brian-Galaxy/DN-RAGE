@@ -10,6 +10,8 @@ chat.clOrange = '#FFC107';
 chat.clWhite = '#FFFFFF';
 chat.clBlack = '#000000';
 
+let chatHistory = [];
+
 /*mp.gui.chat = {
     push: (message) => {
         ui.callCef('chat', JSON.stringify({ type: 'push', message: message }));
@@ -25,22 +27,6 @@ chat.clBlack = '#000000';
     }
 };*/
 
-/*mp.gui.chat.push = function (message) {
-    ui.callCef('chat', JSON.stringify({ type: 'push', message: message }));
-};
-
-mp.gui.chat.activate = function (enable) {
-    ui.callCef('chat', JSON.stringify({ type: 'activate', enable: enable }));
-};
-
-mp.gui.chat.show = function (toggle) {
-    ui.callCef('chat', JSON.stringify({ type: 'show', toggle: toggle }));
-};
-
-mp.gui.chat.clear = function () {
-    ui.callCef('chat', JSON.stringify({ type: 'clear' }));
-};*/
-
 mp.events.add('client:chat:sendMessage', function(message) {
     chat.sendLocal(message);
 });
@@ -50,6 +36,7 @@ mp.events.add('client:chatTyping', function(state) {
 });
 
 chat.sendLocal = function(message) {
+    chatHistory.push(message);
     ui.callCef('chat', JSON.stringify({ type: 'push', message: message }));
 };
 
@@ -62,10 +49,23 @@ chat.show = function(toggle) {
 };
 
 chat.clear = function() {
+    chatHistory = [];
     ui.callCef('chat', JSON.stringify({ type: 'clear' }));
 };
 
+chat.updateHistory = function() {
+    ui.callCef('chat', JSON.stringify({ type: 'clear' }));
+    let chatList = chatHistory.reverse();
+    if (chatHistory.length > 50)
+        chatList.splice(50, chatHistory.length);
+    chatList.reverse().forEach(msg => {
+        ui.callCef('chat', JSON.stringify({ type: 'push', message: msg }));
+    });
+};
+
 chat.updateSettings = function() {
+
+    chat.updateHistory();
 
     let array = [1000, 3000, 5000, 10000, 15000, 20000, 30000, 99999000];
 

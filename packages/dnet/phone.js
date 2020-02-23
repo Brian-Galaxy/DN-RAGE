@@ -1670,9 +1670,9 @@ phone.selectChat = function(player, phoneNumber, chat) {
 
         rows.forEach(row => {
 
-            let messageType = 2;
-            if (myPhone === row['number_from'])
-                messageType = 1;
+            let messageType = 1;
+            if (myPhone.toString() === row['number_from'])
+                messageType = 2;
 
             array.push(
                 {type: messageType, text: row['text'], date: row['date'], time: row['time'] + ':00'},

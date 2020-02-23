@@ -331,6 +331,8 @@ edu.init = function() {
     chat.show(false);
     chat.activate(false);
 
+    methods.blockKeys(true);
+
     user.setCurrentWeapon('weapon_unarmed');
     mp.attachmentMngr.shutdownFor(mp.players.local);
 };
@@ -390,6 +392,8 @@ edu.stopAll = async function() {
     methods.disableAllControls(false);
     chat.show(true);
     chat.activate(true);
+
+    methods.blockKeys(false);
 
     edu.destroyCamera();
     mp.attachmentMngr.initFor(mp.players.local);

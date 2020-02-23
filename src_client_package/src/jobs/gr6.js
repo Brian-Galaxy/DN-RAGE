@@ -3,6 +3,7 @@ import Container from '../modules/data';
 import jobPoint from '../manager/jobPoint';
 import weather from '../manager/weather';
 import user from '../user';
+import photo from "./photo";
 
 let gr6 = {};
 
@@ -117,6 +118,13 @@ gr6.findRandomPickup = function() {
         mp.game.ui.notifications.show('~r~Для начала нужно завершить текущее задание');
         mp.game.ui.notifications.show('~r~Передайте это напарникам');
     }
+};
+
+gr6.stop = function() {
+    isProcess = false;
+    _checkpointId = -1;
+    price = 0;
+    jobPoint.delete();
 };
 
 gr6.workProcess = function() {

@@ -101,6 +101,8 @@ loader.workProcess = function() {
 };
 
 mp.events.add("playerEnterCheckpoint", (checkpoint) => {
+    if (mp.players.local.vehicle)
+        return;
     if (!isStart)
         return;
     if (_checkpointId == -1 || _checkpointId == undefined)

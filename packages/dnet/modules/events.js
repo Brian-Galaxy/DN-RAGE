@@ -29,6 +29,10 @@ let vShop = require('../business/vShop');
 let rent = require('../business/rent');
 let bank = require('../business/bank');
 let shop = require('../business/shop');
+let fuel = require('../business/fuel');
+let bar = require('../business/bar');
+let barberShop = require('../business/barberShop');
+let carWash = require('../business/carWash');
 
 let pickups = require('../managers/pickups');
 let dispatcher = require('../managers/dispatcher');
@@ -564,6 +568,90 @@ mp.events.addRemoteCounted('server:user:save', (player) => {
     user.save(player);
 });
 
+mp.events.addRemoteCounted('server:gps:findFleeca', (player) => {
+    if (!user.isLogin(player))
+        return;
+    let pos = bank.findNearestFleeca(player.position);
+    user.setWaypoint(player, pos.x, pos.y);
+});
+
+mp.events.addRemoteCounted('server:gps:find247', (player) => {
+    if (!user.isLogin(player))
+        return;
+    let pos = shop.findNearestById(player.position, 0);
+    user.setWaypoint(player, pos.x, pos.y);
+});
+
+mp.events.addRemoteCounted('server:gps:findApt', (player) => {
+    if (!user.isLogin(player))
+        return;
+    let pos = shop.findNearestById(player.position, 6);
+    user.setWaypoint(player, pos.x, pos.y);
+});
+
+mp.events.addRemoteCounted('server:gps:findEl', (player) => {
+    if (!user.isLogin(player))
+        return;
+    let pos = shop.findNearestById(player.position, 5);
+    user.setWaypoint(player, pos.x, pos.y);
+});
+
+mp.events.addRemoteCounted('server:gps:findFuel', (player) => {
+    if (!user.isLogin(player))
+        return;
+    let pos = fuel.findNearest(player.position);
+    user.setWaypoint(player, pos.x, pos.y);
+});
+
+mp.events.addRemoteCounted('server:gps:findRent', (player) => {
+    if (!user.isLogin(player))
+        return;
+    let pos = rent.findNearest(player.position);
+    user.setWaypoint(player, pos.x, pos.y);
+});
+
+mp.events.addRemoteCounted('server:gps:findGunShop', (player) => {
+    if (!user.isLogin(player))
+        return;
+    let pos = gun.findNearest(player.position);
+    user.setWaypoint(player, pos.x, pos.y);
+});
+
+mp.events.addRemoteCounted('server:gps:findBar', (player) => {
+    if (!user.isLogin(player))
+        return;
+    let pos = bar.findNearest(player.position);
+    user.setWaypoint(player, pos.x, pos.y);
+});
+
+mp.events.addRemoteCounted('server:gps:findBarberShop', (player) => {
+    if (!user.isLogin(player))
+        return;
+    let pos = barberShop.findNearest(player.position);
+    user.setWaypoint(player, pos.x, pos.y);
+});
+
+mp.events.addRemoteCounted('server:gps:findTattooShop', (player) => {
+    if (!user.isLogin(player))
+        return;
+    let pos = tattoo.findNearest(player.position);
+    user.setWaypoint(player, pos.x, pos.y);
+});
+
+mp.events.addRemoteCounted('server:gps:findLsc', (player) => {
+    if (!user.isLogin(player))
+        return;
+    let pos = lsc.findNearest(player.position);
+    user.setWaypoint(player, pos.x, pos.y);
+});
+
+mp.events.addRemoteCounted('server:gps:findCarWash', (player) => {
+    if (!user.isLogin(player))
+        return;
+    let pos = carWash.findNearest(player.position);
+    user.setWaypoint(player, pos.x, pos.y);
+});
+
 mp.events.addRemoteCounted('server:user:showLic', (player, lic, playerId) => {
     if (!user.isLogin(player))
         return;
@@ -599,7 +687,7 @@ mp.events.addRemoteCounted('server:user:showLic', (player, lic, playerId) => {
                         age: user.get(player, 'age'),
                         nation: user.get(player, 'national'),
                         regist: user.getRegStatusName(player),
-                        idcard: (user.getId(player) + 10000000).toString(),
+                        idcard: user.getId(player).toString(),
                         img: 'https://a.rsg.sc//n/' + player.socialClub.toLowerCase(),
                     },
                 };
@@ -616,7 +704,7 @@ mp.events.addRemoteCounted('server:user:showLic', (player, lic, playerId) => {
             }
             else if (lic == 'work_lic') {
 
-                if (user.get(remotePlayer, 'work_lic') != '') {
+                if (user.get(player, 'work_lic') != '') {
 
                     let dataSend = {
                         type: 'updateValues',
@@ -711,7 +799,7 @@ mp.events.addRemoteCounted('server:user:showLic', (player, lic, playerId) => {
                         break;
                 }
 
-                if (user.get(remotePlayer, lic)) {
+                if (user.get(player, lic)) {
 
                     let dataSend = {
                         type: 'updateValues',
@@ -850,7 +938,8 @@ mp.events.addRemoteCounted('server:user:unCuffById', (player, targetId) => {
         user.playAnimation(player, "mp_arresting", "a_uncuff", 8);
         user.playAnimation(target, 'mp_arresting', 'b_uncuff', 8);
 
-        inventory.addItem(40, 1, inventory.types.Player, user.getId(player), 1, 0, "{}", 10);
+        if (user.isCuff(target))
+            inventory.addItem(40, 1, inventory.types.Player, user.getId(player), 1, 0, "{}", 10);
 
         setTimeout(function () {
             user.unCuff(target);
@@ -891,7 +980,8 @@ mp.events.addRemoteCounted('server:user:unTieById', (player, targetId) => {
         user.stopAnimation(target);
         user.playAnimation(player, "mp_arresting", "a_uncuff", 8);
 
-        inventory.addItem(0, 1, inventory.types.Player, user.getId(player), 1, 0, "{}", 10);
+        if (user.isTie(target))
+            inventory.addItem(0, 1, inventory.types.Player, user.getId(player), 1, 0, "{}", 10);
 
         user.unTie(target);
     }
@@ -1997,14 +2087,35 @@ mp.events.addRemoteCounted('server:phone:sendMessage', (player, phoneNumber, mes
         return;
 
     try {
-        mysql.executeQuery(`INSERT INTO phone_sms (number_from, number_to, text, date, time) VALUES ('${user.get(player, 'phone').toString()}', '${phoneNumber}', '${message}', '${weather.getFullRpDate().replace('/', '.')}', '${weather.getFullRpTime()}')`);
+
+        message = methods.removeQuotes(methods.removeQuotes2(message));
+
+        let date = weather.getFullRpDate().replace('/', '.').replace('/', '.');
+
+        mysql.executeQuery(`INSERT INTO phone_sms (number_from, number_to, text, date, time) VALUES ('${user.get(player, 'phone').toString()}', '${phoneNumber}', '${message}', '${date}', '${weather.getFullRpTime()}')`);
 
         mp.players.forEach(p => {
+            if (user.isLogin(p) && user.get(p, 'phone_type') > 0 && user.get(p, 'phone') === methods.parseInt(phoneNumber)) {
+                user.sendPhoneNotify(p, methods.phoneFormat(user.get(player, 'phone')), '~b~Новое сообщение', message);
+
+                let msg = {
+                    type: 'addMessengerMessage',
+                    phone: phoneNumber.toString(),
+                    text: message,
+                    date: date,
+                    time: weather.getFullRpTime() + ':00',
+                };
+
+                user.callCef(p, 'phone' + user.get(p, 'phone_type'), JSON.stringify(msg));
+            }
+        });
+
+        /*mp.players.forEach(p => {
             if (user.isLogin(p) && user.get(player, 'phone').toString() === phoneNumber) {
                 user.sendPhoneNotify(p, player, phoneNumber, message);
                 //phone.selectChat(player, user.get(player, 'phone').toString(), chat);
             }
-        });
+        });*/
 
     }
     catch (e) {
@@ -4403,6 +4514,17 @@ mp.events.addRemoteCounted('server:vehicle:cargoUnload', (player, id) => {
     if (!user.isLogin(player))
         return;
     stocks.cargoUnload(player, id);
+});
+
+mp.events.addRemoteCounted('server:vehicle:ejectById', (player, id) => {
+    if (!user.isLogin(player))
+        return;
+    player.vehicle.getOccupants().forEach(p => {
+        if (user.isLogin(p) && p.id === id) {
+            p.notify('~r~Вас выкинули из транспорта');
+            p.removeFromVehicle();
+        }
+    })
 });
 
 mp.events.addRemoteCounted('server:vehicle:setNeonColor', (player, r, g, b) => {

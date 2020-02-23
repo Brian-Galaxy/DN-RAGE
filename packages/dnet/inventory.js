@@ -136,7 +136,7 @@ inventory.equip = function(player, id, itemId, count, aparams) {
                     user.set(player, 'bank_card', methods.parseInt(params.number));
                     user.set(player, 'bank_owner', params.owner);
                     user.set(player, 'bank_pin', methods.parseInt(params.pin));
-                    user.setBankMoney(player, count);
+                    user.setBankMoney(player, methods.parseFloat(rows[0]['count']));
                     user.save(player);
                 }
                 else {
@@ -902,7 +902,7 @@ inventory.useItem = function(player, id, itemId) {
                     catch (e) {
                         methods.debug(e);
                     }
-                }, 25000);
+                }, 5000);
                 break;
             }
             case 5:

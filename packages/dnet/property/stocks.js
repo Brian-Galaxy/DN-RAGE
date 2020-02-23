@@ -629,8 +629,10 @@ stocks.updateOwnerInfo = function (id, userId, userName) {
     stocks.set(id, "user_id", userId);
 
     if (userId == 0) {
-        stocks.updatePin(id, 0);
-        stocks.lockStatus(id, false);
+        stocks.updatePin(id, 1);
+        stocks.updatePin1(id, 1);
+        stocks.updatePin2(id, 1);
+        stocks.updatePin3(id, 1);
     }
 
     mysql.executeQuery("UPDATE stocks SET user_name = '" + userName + "', user_id = '" + userId + "', tax_money = '0' where id = '" + id + "'");

@@ -204,7 +204,7 @@ bus.nextCheckpoint = function() {
                             break;
                         }
 
-                        if (_currentId >= bus.markers1.length) {
+                        if (_currentId > bus.markers1.length) {
                             user.giveJobMoney(340);
                             user.giveJobSkill();
                             mp.game.ui.notifications.show('~g~Вы закончили свой рейс');
@@ -228,7 +228,7 @@ bus.nextCheckpoint = function() {
                             break;
                         }
 
-                        if (_currentId >= bus.markers2.length) {
+                        if (_currentId > bus.markers2.length) {
                             user.giveJobMoney(120);
                             user.giveJobSkill();
                             mp.game.ui.notifications.show('~g~Вы закончили свой рейс');
@@ -252,7 +252,7 @@ bus.nextCheckpoint = function() {
                             break;
                         }
 
-                        if (_currentId >= bus.markers3.length) {
+                        if (_currentId > bus.markers3.length) {
                             user.giveJobMoney(560);
                             user.giveJobSkill();
                             mp.game.ui.notifications.show('~g~Вы закончили свой рейс');
@@ -299,6 +299,8 @@ bus.stop = function() {
 };
 
 mp.events.add("playerEnterCheckpoint", (checkpoint) => {
+    if (!mp.players.local.vehicle)
+        return;
     if (_checkpointId == -1 || _checkpointId == undefined)
         return;
     if (checkpoint.id == _checkpointId)

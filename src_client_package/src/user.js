@@ -46,7 +46,7 @@ mp.events.add('render', () => {
         if (user.isLogin() && entity) {
             if (user.getCache('s_hud_raycast')) {
                 let pos = entity.position;
-                ui.drawText3D(`•`, pos.x, pos.y, pos.z + 0.8, 0.6);
+                ui.drawText3D(`•`, pos.x, pos.y, pos.z, 0.7);
             }
             else
                 ui.drawText(`•`, 0.5, 0.5, 0.3, 255, 255, 255, 200, 0, 1, false, true);
@@ -481,8 +481,7 @@ user.showLoadDisplay = function(dur = 500, isHud = true) {
 };
 
 user.clearChat = function() {
-    for (let i = 0; i < 50; i++)
-        chat.sendLocal('');
+    chat.clear();
 };
 
 user.notify = function (message) {

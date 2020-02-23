@@ -286,7 +286,10 @@ business.renderThings = function(id)
     try {
         mp.game.ui.setTextRenderId(id);
         mp.game.graphics.set2dLayer(4);
-        ui.drawText(name, 0.5, 0.3, 1, color[0], color[1], color[2], color[3], font, 1, color[3] == 255, false);
+        if (name.length > 22)
+            ui.drawText(name, 0.5, 0.09, 1, color[0], color[1], color[2], color[3], font, 1, color[3] == 255, false);
+        else
+            ui.drawText(name, 0.5, 0.3, 1, color[0], color[1], color[2], color[3], font, 1, color[3] == 255, false);
         mp.game.graphics.drawScaleformMovie(scale, 0.5, 0.5, 1, 1, 255, 255,255, 255, 0);
         mp.game.ui.setTextRenderId(1);
     }

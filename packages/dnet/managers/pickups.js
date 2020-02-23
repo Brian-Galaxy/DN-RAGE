@@ -76,6 +76,7 @@ pickups.SheriffGarderobPos = new mp.Vector3(-452.945, 6013.818, 30.716);
 pickups.SheriffGarderobPos2 = new mp.Vector3(1849.775390625, 3695.501953125, 33.26706314086914);
 pickups.SheriffArsenalPos = new mp.Vector3(-437.330, 6001.264, 30.716);
 pickups.SheriffArsenalPos2 = new mp.Vector3(1845.992431640625, 3692.927734375, 33.26704406738281);
+
 pickups.SheriffClearPos = new mp.Vector3(-448.6859, 6012.703, 30.71638);
 pickups.SheriffArrestPos = new mp.Vector3(-441.605, 6012.786, 26.985);
 pickups.SheriffArrestPos2 = new mp.Vector3(1856.632080078125, 3685.5849609375, 29.259225845336914);
@@ -83,6 +84,9 @@ pickups.SheriffArrestPos2 = new mp.Vector3(1856.632080078125, 3685.5849609375, 2
 pickups.PrisonArrestPos = new mp.Vector3(1690.606, 2591.926, 44.83793);
 pickups.PrisonPos1 = new mp.Vector3(1846.5198, 2585.9008, 44.6720);
 pickups.PrisonPos2 = new mp.Vector3(1774.8231, 2552.00925, 44.5649);
+
+pickups.EmsArsenalPos = new mp.Vector3(311.363037109375, -563.9005737304688, 42.28398895263672);
+pickups.EmsArsenalPos2 = new mp.Vector3(-258.50933837890625, 6308.8623046875, 31.426040649414062);
 
 /*pickups.UsmcPos1 = new mp.Vector3(556.8799, -3119.107, 17.76859);
 pickups.UsmcPos2 = new mp.Vector3(556.9783, -3120.458, 17.76858);
@@ -111,7 +115,7 @@ pickups.GovKeyPos = new mp.Vector3(-1397.35693359375, -464.54345703125, 33.47755
 pickups.SapdKeyPos = new mp.Vector3(458.65, -1007.944, 27.27073);
 pickups.SheriffKeyPos = new mp.Vector3(-453.48065185546875, 6031.2314453125, 30.340538024902344);
 pickups.InvaderKeyPos = new mp.Vector3(-1095.8746337890625, -254.6504669189453, 36.68137741088867);
-pickups.EmsKeyPos = new mp.Vector3(293.5118, -1447.379, 28.96659);
+pickups.EmsKeyPos = new mp.Vector3(319.167236328125, -559.7047119140625, 27.743427276611328);
 
 /*Info*/
 pickups.GovInfoPos = new mp.Vector3(-1372.4476318359375, -464.2900695800781, 71.05709075927734);
@@ -414,6 +418,10 @@ pickups.checkPressE = function(player) {
             player.call('client:menuList:showEmsGarderobMenu');
         if (methods.distanceToPos(pickups.EmsGarderobPos2, playerPos) < distanceCheck)
             player.call('client:menuList:showEmsGarderobMenu');
+        if (methods.distanceToPos(pickups.EmsArsenalPos, playerPos) < distanceCheck)
+            player.call('client:menuList:showEmsArsenalMenu');
+        if (methods.distanceToPos(pickups.EmsArsenalPos2, playerPos) < distanceCheck)
+            player.call('client:menuList:showEmsArsenalMenu');
     }
     if (user.isSheriff(player)) {
         if (methods.distanceToPos(pickups.SheriffGarderobPos, playerPos) < distanceCheck)
@@ -596,6 +604,9 @@ pickups.createPickups = function() {
     methods.createStaticCheckpointV(pickups.SheriffArrestPos2, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
     methods.createStaticCheckpointV(pickups.SheriffArsenalPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
     methods.createStaticCheckpointV(pickups.SheriffArsenalPos2, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
+
+    methods.createStaticCheckpointV(pickups.EmsArsenalPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
+    methods.createStaticCheckpointV(pickups.EmsArsenalPos2, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
 
     methods.createStaticCheckpointV(pickups.PrisonArrestPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
 

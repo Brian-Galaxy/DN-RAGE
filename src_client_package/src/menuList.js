@@ -36,6 +36,7 @@ import photo from "./jobs/photo";
 import tree from "./jobs/tree";
 import builder from "./jobs/builder";
 import loader from "./jobs/loader";
+import jobPoint from "./manager/jobPoint";
 
 let menuList = {};
 
@@ -47,15 +48,22 @@ menuList.showHouseBuyMenu = async function(h) {
     let enterHouseItem = null;
 
     let garage = 0;
-    if (h.get('ginterior1') > 0)
+    if (h.get('ginterior1') >= 0)
         garage++;
-    if (h.get('ginterior2') > 0)
+    if (h.get('ginterior2') >= 0)
         garage++;
-    if (h.get('ginterior3') > 0)
+    if (h.get('ginterior3') >= 0)
         garage++;
 
     if (garage > 0)
         UIMenu.Menu.AddMenuItem("~b~Кол-во гаражей: ~s~" + garage);
+
+    if (h.get('ginterior1') >= 0)
+        UIMenu.Menu.AddMenuItem("~b~Гараж: ~s~" + enums.garageNames[h.get('ginterior1')]);
+    if (h.get('ginterior2') >= 0)
+        UIMenu.Menu.AddMenuItem("~b~Гараж: ~s~" + enums.garageNames[h.get('ginterior2')]);
+    if (h.get('ginterior3') >= 0)
+        UIMenu.Menu.AddMenuItem("~b~Гараж: ~s~" + enums.garageNames[h.get('ginterior3')]);
 
     enterHouseItem = UIMenu.Menu.AddMenuItem("~g~Осмотреть дом");
 
@@ -260,7 +268,7 @@ menuList.showCondoBuyMenu = async function(h) {
     enterHouseItem = UIMenu.Menu.AddMenuItem("~g~Осмотреть квартиру");
 
     if (user.getCache('job') == 4) {
-        if (!await Container.Data.Has(h.get('id'), 'isMail'))
+        if (!await Container.Data.Has(h.get('id'), 'isMail2'))
             UIMenu.Menu.AddMenuItem("~g~Положить почту").doName = h.get('id');
         else
             UIMenu.Menu.AddMenuItem("~o~Дом уже обслуживался");
@@ -340,7 +348,7 @@ menuList.showCondoOutMenu = async function(h) {
     let enterHouseItem = UIMenu.Menu.AddMenuItem("~g~Войти");
 
     if (user.getCache('job') == 4) {
-        if (!await Container.Data.Has(h.get('id'), 'isMail'))
+        if (!await Container.Data.Has(h.get('id'), 'isMail2'))
             UIMenu.Menu.AddMenuItem("~g~Положить почту").doName = h.get('id');
         else
             UIMenu.Menu.AddMenuItem("~o~Дом уже обслуживался");
@@ -1260,7 +1268,7 @@ menuList.showBusinessMenu = async function(data) {
                     mp.game.ui.notifications.show(`~r~Нельзя положить меньше 1$`);
                     return;
                 }
-                business.addMoney(data.get('id'), money, 'Зачиление со счета ' + methods.bankFormat(user.get('bank_card')));
+                business.addMoney(data.get('id'), money, 'Зачиление со счета ' + methods.bankFormat(user.getCache('bank_card')));
                 user.removeBankMoney(money, 'Зачиление на счет бизнеса ' + data.get('name'));
                 business.save(data.get('id'));
                 mp.game.ui.notifications.show(`~b~Вы положили деньги на счет бизнеса`);
@@ -1293,7 +1301,7 @@ menuList.showBusinessMenu = async function(data) {
 
             business.addMoney(data.get('bank_id'), money * (bankTarif / 100));
 
-            business.removeMoney(data.get('id'), money, 'Вывод средств на карту ' + methods.bankFormat(user.get('bank_card')));
+            business.removeMoney(data.get('id'), money, 'Вывод средств на карту ' + methods.bankFormat(user.getCache('bank_card')));
             business.save(data.get('id'));
             user.addBankMoney(money * (100 - nalog - bankTarif) / 100, 'Вывод со счета бизнеса ' + data.get('name'));
             coffer.addMoney(1, money * nalog / 100);
@@ -1716,6 +1724,12 @@ menuList.showMeriaJobListMenu = function() {
         if (item == closeItem)
             return;
         if (item.doName == 'uninvite') {
+            jobPoint.delete();
+            builder.stop();
+            tree.stop();
+            bus.stop();
+            photo.stop();
+            gr6.stop();
             user.set('job', 0);
             mp.game.ui.notifications.show("~y~Вы уволились с работы");
         }
@@ -1740,8 +1754,33 @@ menuList.showMeriaJobListMenu = function() {
                 return;
             }
 
+            if (item.jobName === 1) {
+                chat.sendLocal(`!{${chat.clBlue}}Справка по работе Садовник`);
+                chat.sendLocal(`Для начала Вам необходимо арендовать транспорт. Затем откройте меню транспорта и нажмите "Получить задание", а далее думаю и так понятно.`);
+            }
+            if (item.jobName === 2) {
+                chat.sendLocal(`!{${chat.clBlue}}Справка по работе Разнорабочий`);
+                chat.sendLocal(`Для начала Вам необходимо арендовать транспорт. Затем откройте меню транспорта и нажмите "Получить задание", а далее думаю и так понятно.`);
+            }
+            if (item.jobName === 3) {
+                chat.sendLocal(`!{${chat.clBlue}}Справка по работе Фотограф`);
+                chat.sendLocal(`Для начала Вам необходимо арендовать транспорт. Затем откройте меню транспорта и нажмите "Получить задание", а далее думаю и так понятно.`);
+            }
+            if (item.jobName === 4) {
+                chat.sendLocal(`!{${chat.clBlue}}Справка по работе Почтальон`);
+                chat.sendLocal(`Для начала Вам необходимо арендовать транспорт. Затем откройте меню транспорта и нажмите "Взять почту", а далее езжайте к !{${chat.clBlue}}любому !{${chat.clWhite}} дому или квартире.`);
+            }
+            if (item.jobName === 6 || item.jobName === 7 || item.jobName === 8) {
+                chat.sendLocal(`!{${chat.clBlue}}Справка по работе Водитель автобуса`);
+                chat.sendLocal(`Для начала Вам необходимо арендовать транспорт. Затем откройте меню транспорта и нажмите "Начать рейс".`);
+            }
+            if (item.jobName === 10) {
+                chat.sendLocal(`!{${chat.clBlue}}Справка по работе Инкассатор`);
+                chat.sendLocal(`Для начала Вам необходимо арендовать транспорт, далее найти напарника и работать, всё работает через меню транспорта.`);
+            }
+
             user.set('job', item.jobName);
-            mp.game.ui.notifications.show("~g~Вы устроились на работу");
+            mp.game.ui.notifications.show("~g~Вы устроились на новую работу");
             quest.standart();
         }
     });
@@ -2794,7 +2833,7 @@ menuList.showPlayerDatingAskMenu = function(playerId, name) {
 
 menuList.showInviteMpMenu = function(x, y, z) {
 
-    let menu = UIMenu.Menu.Create(`Знакомства`, `~b~Приглашение на мероприятие`);
+    let menu = UIMenu.Menu.Create(`Мероприятие`, `~b~Приглашение на мероприятие`);
 
     UIMenu.Menu.AddMenuItem('~g~Принять приглашение').doName = 'yes';
     UIMenu.Menu.AddMenuItem('~r~Отказать');
@@ -2840,8 +2879,6 @@ menuList.showVehicleMenu = function(data) {
         UIMenu.Menu.AddMenuItem("~g~Вкл~s~ / ~r~выкл~s~ двигатель").eventName = 'server:vehicle:engineStatus';
     if (vInfo.class_name == 'Boats')
         UIMenu.Menu.AddMenuItem("~g~Вкл~s~ / ~r~выкл~s~ якорь").eventName = 'server:vehicleFreeze';
-    if (vInfo.fuel_min > 0) //TODO
-        UIMenu.Menu.AddMenuItem("Топливо", `Топливо: ~g~${Math.round(data.get('fuel'))}~s~л.`);
 
     if (vInfo.class_name != 'Cycles' || vInfo.class_name != 'Planes' || vInfo.class_name != 'Helicopters' || vInfo.class_name != 'Boats')
         UIMenu.Menu.AddMenuItem("Управление транспортом").doName = 'showVehicleDoMenu';
@@ -2876,7 +2913,7 @@ menuList.showVehicleMenu = function(data) {
         UIMenu.Menu.AddMenuItem(`~y~Разгрузить транспорт`).emsUnloadAll = true;
     }
 
-    //UIMenu.Menu.AddMenuItem("~y~Выкинуть из транспорта").eventName = 'server:vehicle:engineStatus';
+    UIMenu.Menu.AddMenuItem("~y~Выкинуть из транспорта").doName = 'eject';
     UIMenu.Menu.AddMenuItem("Характеристики").doName = 'showVehicleStatsMenu';
     //UIMenu.Menu.AddMenuItem("Управление транспортом").eventName = 'server:vehicle:engineStatus';
 
@@ -2959,7 +2996,7 @@ menuList.showVehicleMenu = function(data) {
         }
     }
 
-    if (data.get('job') == 10) {
+    if (veh.getVariable('jobId') == 10) {
         UIMenu.Menu.AddMenuItem("Денег в транспорте: ~g~" + methods.moneyFormat(mp.players.local.vehicle.getVariable('gr6Money'))).doName = 'close';
         UIMenu.Menu.AddMenuItem("~y~Ограбить транспорт").doName = 'gr6:grab';
     }
@@ -3052,17 +3089,30 @@ menuList.showVehicleMenu = function(data) {
         }
         else if (item.eventName == 'server:vehicle:engineStatus') {
 
-            if (data.get('user_id') > 0 && user.getCache('id') == data.get('user_id')) {
-                if (data.get('cop_park_name') !== '') {
-                    mp.game.ui.notifications.show('~r~Для начала необходимо оплатить штраф');
-                    return;
+            try {
+                if (data.get('user_id') > 0 && user.getCache('id') == data.get('user_id')) {
+                    if (data.get('cop_park_name') !== '') {
+                        mp.game.ui.notifications.show('~r~Для начала необходимо оплатить штраф');
+                        return;
+                    }
                 }
             }
+            catch (e) {
+                methods.debug(e);
+            }
 
-            user.engineVehicle();
+            vehicles.engineVehicle();
         }
         else if (item.doName == 'showVehicleDoMenu') {
             menuList.showVehicleDoMenu();
+        }
+        else if (item.doName == 'eject') {
+            let id = methods.parseInt(await UIMenu.Menu.GetUserInput("R", "", 3));
+            if (id < 0) {
+                mp.game.ui.notifications.show('~r~ID не может быть меньше 0');
+                return;
+            }
+            mp.events.callRemote('server:vehicle:ejectById', methods.parseInt(id));
         }
         else if (item.eventName == 'server:vehicleFreeze') {
             if (methods.getCurrentSpeed() > 10) {
@@ -3776,7 +3826,7 @@ menuList.showAtmMenu = async function() {
         return;
     }
 
-    if (user.get('bank_card') < 1) {
+    if (user.getCache('bank_card') < 1) {
         mp.game.ui.notifications.show("~r~У Вас нет банковской карты");
         return;
     }
@@ -5527,7 +5577,7 @@ menuList.showPrintShopMenu = function()
 {
     UIMenu.Menu.HideMenu();
 
-    if (user.get('torso') == 15)
+    if (user.getCache('torso') == 15)
     {
         mp.game.ui.notifications.show("~r~Вам необходимо купить вверхнюю одежду в магазине одежды, прежде чем пользоваться услугой наклейки принта");
         return;
@@ -5571,12 +5621,14 @@ menuList.showPrintShopMenu = function()
     menu.IndexChange.on((index) => {
         if (index >= list.length)
             return;
+        user.setCache('tprint_c', ' ');
         user.updateTattoo(true, true, false, true);
         user.setDecoration(list[index].tatto1, list[index].tatto2, true);
     });
 
     menu.MenuClose.on(() => {
         user.updateTattoo();
+        user.updateCache();
     });
 
     menu.ItemSelect.on((item, index) => {
@@ -5877,59 +5929,70 @@ menuList.showVehShopListMenu = function(shopId, carList)
             subLabel = ``;
         }*/
 
-        let label = mp.game.ui.getLabelText(item.display_name);
-        if (label === 'NULL')
-            label = item.display_name;
+        try {
+            let label = methods.removeQuotes(methods.removeQuotes2(mp.game.ui.getLabelText(item.display_name)));
+            label = methods.removeQuotes(methods.removeQuotes2(label));
+            if (label === 'NULL')
+                label = item.display_name;
 
-        let count = 0;
-        if (carList.has(item.display_name))
-            count = methods.parseInt(carList.get(item.display_name));
+            let count = 0;
+            if (carList.has(item.display_name))
+                count = methods.parseInt(carList.get(item.display_name));
 
-        let carInfo = [];
+            let carInfo = [];
 
-        carInfo.push({title: 'Класс', info: item.class_name});
+            carInfo.push({title: 'Класс', info: item.class_name});
+            if (user.getCache('s_hud_speed_type'))
+                carInfo.push({title: 'Макс. скорость', info: `~${vehicles.getSpeedMax(mp.game.joaat(item.display_name))} KM/H`});
+            else
+                carInfo.push({title: 'Макс. скорость', info: `~${methods.parseInt(vehicles.getSpeedMax(mp.game.joaat(item.display_name)) / 1.609)} MP/H`});
 
-        if (item.fuel_type > 0) {
-            carInfo.push({title: 'Тип топлива', info: `${vehicles.getFuelLabel(item.fuel_type)}`});
-            carInfo.push({title: 'Вместимость бака', info: `${item.fuel_full}${vehicles.getFuelPostfix(item.fuel_type)}`});
-            carInfo.push({title: 'Расход топлива', info: `${item.fuel_min}${vehicles.getFuelPostfix(item.fuel_type)}`});
-        }
-        else
-            carInfo.push({title: 'Расход топлива', info: `Отсутствует`});
-
-        if (item.stock > 0) {
-
-            let stockFull = item.stock_full;
-            if (item.stock_full > 0)
-                stockFull = stockFull / 1000;
-
-            carInfo.push({title: 'Объем багажника', info: `${item.stock}см³`});
-            carInfo.push({title: 'Допустимый вес', info: `${stockFull}кг.`});
-        }
-        else
-            carInfo.push({title: 'Багажник', info: `Отсутствует`});
-
-        list.push(
-            {
-                make: label,
-                model: item.class_name,
-                name: item.display_name,
-                count: count,
-                price: methods.moneyFormat(item.price, 1),
-                rent: methods.moneyFormat(item.price / 100 + 100.01, 999),
-                img: enums.getVehicleImg(item.display_name),
-                character_car: carInfo,
-                color_car_main: ['111', '0', '4', '28', '38', '42', '70', '81', '135', '107'],
-                color_car_secondary: ['111', '0', '4', '28', '38', '42', '70', '81', '135', '107'],
-                current_main_color: '111',
-                current_secondary_color: '111',
+            if (item.fuel_type > 0) {
+                carInfo.push({title: 'Тип топлива', info: `${vehicles.getFuelLabel(item.fuel_type)}`});
+                carInfo.push({title: 'Вместимость бака', info: `${item.fuel_full}${vehicles.getFuelPostfix(item.fuel_type)}`});
+                carInfo.push({title: 'Расход топлива', info: `${item.fuel_min}${vehicles.getFuelPostfix(item.fuel_type)}`});
             }
-        );
+            else
+                carInfo.push({title: 'Расход топлива', info: `Отсутствует`});
+
+            if (item.stock > 0) {
+
+                let stockFull = item.stock_full;
+                if (item.stock_full > 0)
+                    stockFull = stockFull / 1000;
+
+                carInfo.push({title: 'Объем багажника', info: `${item.stock}см³`});
+                carInfo.push({title: 'Допустимый вес', info: `${stockFull}кг.`});
+            }
+            else
+                carInfo.push({title: 'Багажник', info: `Отсутствует`});
+
+            list.push(
+                {
+                    make: label,
+                    model: item.class_name,
+                    name: item.display_name,
+                    count: count,
+                    price: methods.moneyFormat(item.price, 1),
+                    rent: methods.moneyFormat(item.price / 100 + 100.01, 999),
+                    img: enums.getVehicleImg(item.display_name),
+                    character_car: carInfo,
+                    color_car_main: ['111', '0', '4', '28', '38', '42', '70', '81', '135', '107'],
+                    color_car_secondary: ['111', '0', '4', '28', '38', '42', '70', '81', '135', '107'],
+                    current_main_color: '111',
+                    current_secondary_color: '111',
+                }
+            );
+        }
+        catch (e) {
+            methods.debug(e);
+        }
     });
 
     let listNew = methods.sortBy(list, 'make');
 
     vShop.createVehicle(listNew[0].name);
+
     ui.callCef('carShop', JSON.stringify({ type: 'updateValues', list: listNew, isShow: true }));
 };
 
@@ -6644,43 +6707,43 @@ menuList.showLscTunningListMenu = async function(modType, shopId, price, lscBann
         let defaultPrice = price;
         price = price - 1;
 
-        if (veh.getVariable('price') >= 8000 && veh.getVariable('price') < 15000)
+        if (vehInfo.price >= 8000 && vehInfo.price < 15000)
             price += 1.2;
-        else if (veh.getVariable('price') >= 15000 && veh.getVariable('price') < 30000)
+        else if (vehInfo.price >= 15000 && vehInfo.price < 30000)
             price += 1.4;
-        else if (veh.getVariable('price') >= 30000 && veh.getVariable('price') < 45000)
+        else if (vehInfo.price >= 30000 && vehInfo.price < 45000)
             price += 1.6;
-        else if (veh.getVariable('price') >= 45000 && veh.getVariable('price') < 60000)
+        else if (vehInfo.price >= 45000 && vehInfo.price < 60000)
             price += 1.8;
-        else if (veh.getVariable('price') >= 60000 && veh.getVariable('price') < 75000)
+        else if (vehInfo.price >= 60000 && vehInfo.price < 75000)
             price += 2;
-        else if (veh.getVariable('price') >= 90000 && veh.getVariable('price') < 105000)
+        else if (vehInfo.price >= 90000 && vehInfo.price < 105000)
             price += 2.2;
-        else if (veh.getVariable('price') >= 105000 && veh.getVariable('price') < 120000)
+        else if (vehInfo.price >= 105000 && vehInfo.price < 120000)
             price += 2.4;
-        else if (veh.getVariable('price') >= 120000 && veh.getVariable('price') < 135000)
+        else if (vehInfo.price >= 120000 && vehInfo.price < 135000)
             price += 2.6;
-        else if (veh.getVariable('price') >= 135000 && veh.getVariable('price') < 150000)
+        else if (vehInfo.price >= 135000 && vehInfo.price < 150000)
             price += 2.8;
-        else if (veh.getVariable('price') >= 150000 && veh.getVariable('price') < 200000)
+        else if (vehInfo.price >= 150000 && vehInfo.price < 200000)
             price += 3;
-        else if (veh.getVariable('price') >= 200000 && veh.getVariable('price') < 240000)
+        else if (vehInfo.price >= 200000 && vehInfo.price < 240000)
             price += 3.3;
-        else if (veh.getVariable('price') >= 240000 && veh.getVariable('price') < 280000)
+        else if (vehInfo.price >= 240000 && vehInfo.price < 280000)
             price += 3.6;
-        else if (veh.getVariable('price') >= 280000 && veh.getVariable('price') < 320000)
+        else if (vehInfo.price >= 280000 && vehInfo.price < 320000)
             price += 4;
-        else if (veh.getVariable('price') >= 320000 && veh.getVariable('price') < 380000)
+        else if (vehInfo.price >= 320000 && vehInfo.price < 380000)
             price += 4.4;
-        else if (veh.getVariable('price') >= 380000 && veh.getVariable('price') < 500000)
+        else if (vehInfo.price >= 380000 && vehInfo.price < 500000)
             price += 5;
-        else if (veh.getVariable('price') >= 500000 && veh.getVariable('price') < 600000)
+        else if (vehInfo.price >= 500000 && vehInfo.price < 600000)
             price += 5.5;
-        else if (veh.getVariable('price') >= 600000 && veh.getVariable('price') < 700000)
+        else if (vehInfo.price >= 600000 && vehInfo.price < 700000)
             price += 6;
-        else if (veh.getVariable('price') >= 700000 && veh.getVariable('price') < 800000)
+        else if (vehInfo.price >= 700000 && vehInfo.price < 800000)
             price += 6.5;
-        else if (veh.getVariable('price') >= 800000)
+        else if (vehInfo.price >= 800000)
             price += 7;
         else
             price += 1;
@@ -6859,7 +6922,12 @@ menuList.showLscTunningListMenu = async function(modType, shopId, price, lscBann
                 if (item.showWheel)
                 {
                     setTimeout(function () {
-                        menuList.showLscTunningListMenu(23, shopId, defaultPrice, lscBanner1);
+                        if (item.modType === 10)
+                            menuList.showLscTunningListMenu(23, shopId, defaultPrice * 3, lscBanner1);
+                        else if (item.modType === 9 || item.modType === 8)
+                            menuList.showLscTunningListMenu(23, shopId, defaultPrice * 2, lscBanner1);
+                        else
+                            menuList.showLscTunningListMenu(23, shopId, defaultPrice * 2, lscBanner1);
                     }, 300);
                 }
                 else {
@@ -7567,8 +7635,10 @@ menuList.showGovGarderobMenu = function() {
                 mp.game.ui.notifications.show(`~r~В бюджете организации не достаточно средств`);
                 return;
             }
-
-            inventory.takeNewWeaponItem(item.itemId, `{"owner": "Правительство", "userName": "${user.getCache('name')}}"`, 'Выдано оружие').then();
+            if (items.isWeapon(item.itemId))
+                inventory.takeNewWeaponItem(item.itemId, `{"owner": "Правительство", "userName": "${user.getCache('name')}"}`, 'Выдано оружие').then();
+            else
+                inventory.takeNewWeaponItem(item.itemId, `{"owner": "Правительство", "userName": "${user.getCache('name')}"}`, 'Выдан предмет').then();
             methods.saveFractionLog(
                 user.getCache('name'),
                 `Взял ${items.getItemNameById(item.itemId)}`,
@@ -7601,8 +7671,43 @@ menuList.showEmsGarderobMenu = function() {
             return;
         mp.events.callRemote('server:uniform:ems', index);
     });
-    menu.ItemSelect.on(item => {
+};
+
+menuList.showEmsArsenalMenu = function() {
+    let menu = UIMenu.Menu.Create(`Арсенал`, `~b~Арсенал`);
+
+    UIMenu.Menu.AddMenuItem("Сухпаёк").itemId = 32;
+    UIMenu.Menu.AddMenuItem("Антипохмелин").itemId = 221;
+    UIMenu.Menu.AddMenuItem("Спец. Аптечка").itemId = 278;
+    UIMenu.Menu.AddMenuItem("Дефибриллятор").itemId = 277;
+    UIMenu.Menu.AddMenuItem("Полицейское огорождение").itemId = 199;
+    UIMenu.Menu.AddMenuItem("Полосатый конус").itemId = 201;
+    UIMenu.Menu.AddMenuItem("Красный конус").itemId = 202;
+
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+
+    menu.ItemSelect.on(async item => {
         UIMenu.Menu.HideMenu();
+        if (item.itemId) {
+            let moneyFraction = await coffer.getMoney(coffer.getIdByFraction(user.getCache('fraction_id')));
+            let itemPrice = items.getItemPrice(item.itemId);
+
+            if (moneyFraction < itemPrice) {
+                mp.game.ui.notifications.show(`~r~В бюджете организации не достаточно средств`);
+                return;
+            }
+
+            if (items.isWeapon(item.itemId))
+                inventory.takeNewWeaponItem(item.itemId, `{"owner": "EMS", "userName": "${user.getCache('name')}"}`, 'Выдано оружие').then();
+            else
+                inventory.takeNewWeaponItem(item.itemId, `{"owner": "EMS", "userName": "${user.getCache('name')}"}`, 'Выдан предмет').then();
+            methods.saveFractionLog(
+                user.getCache('name'),
+                `Взял ${items.getItemNameById(item.itemId)}`,
+                `Потрачено из бюджета: ${methods.moneyFormat(itemPrice)}`,
+                user.getCache('fraction_id')
+            );
+        }
     });
 };
 
@@ -7665,7 +7770,10 @@ menuList.showSheriffArsenalMenu = function() {
                 return;
             }
 
-            inventory.takeNewWeaponItem(item.itemId, `{"owner": "BCSD", "userName": "${user.getCache('name')}", "tint": 4}`, 'Выдано оружие').then();
+            if (items.isWeapon(item.itemId))
+                inventory.takeNewWeaponItem(item.itemId, `{"owner": "BCSD", "userName": "${user.getCache('name')}", "tint": 4}`, 'Выдано оружие').then();
+            else
+                inventory.takeNewWeaponItem(item.itemId, `{"owner": "BCSD", "userName": "${user.getCache('name')}"}`, 'Выдан предмет').then();
             methods.saveFractionLog(
                 user.getCache('name'),
                 `Взял ${items.getItemNameById(item.itemId)}`,
@@ -7734,7 +7842,10 @@ menuList.showSheriffArsenalGunMenu = function() {
                 return;
             }
 
-            inventory.takeNewWeaponItem(item.itemId, `{"owner": "BCSD", "userName": "${user.getCache('name')}", "tint": 4}`, 'Выдано оружие').then();
+            if (items.isWeapon(item.itemId))
+                inventory.takeNewWeaponItem(item.itemId, `{"owner": "BCSD", "userName": "${user.getCache('name')}", "tint": 4}`, 'Выдано оружие').then();
+            else
+                inventory.takeNewWeaponItem(item.itemId, `{"owner": "BCSD", "userName": "${user.getCache('name')}"}`, 'Выдан предмет').then();
             methods.saveFractionLog(
                 user.getCache('name'),
                 `Взял ${items.getItemNameById(item.itemId)}`,
@@ -7837,7 +7948,10 @@ menuList.showSheriffArsenalGunModMenu = function() {
                 return;
             }
 
-            inventory.takeNewWeaponItem(item.itemId, `{"owner": "BCSD", "userName": "${user.getCache('name')}", "tint": 4}`, 'Выдано оружие').then();
+            if (items.isWeapon(item.itemId))
+                inventory.takeNewWeaponItem(item.itemId, `{"owner": "BCSD", "userName": "${user.getCache('name')}", "tint": 4}`, 'Выдано оружие').then();
+            else
+                inventory.takeNewWeaponItem(item.itemId, `{"owner": "BCSD", "userName": "${user.getCache('name')}"}`, 'Выдан предмет').then();
             methods.saveFractionLog(
                 user.getCache('name'),
                 `Взял ${items.getItemNameById(item.itemId)}`,
@@ -7961,7 +8075,10 @@ menuList.showSapdArsenalMenu = function() {
                 return;
             }
 
-            inventory.takeNewWeaponItem(item.itemId, `{"owner": "LSPD", "userName": "${user.getCache('name')}", "tint": 5}`, 'Выдано оружие').then();
+            if (items.isWeapon(item.itemId))
+                inventory.takeNewWeaponItem(item.itemId, `{"owner": "LSPD", "userName": "${user.getCache('name')}", "tint": 5}`, 'Выдано оружие').then();
+            else
+                inventory.takeNewWeaponItem(item.itemId, `{"owner": "LSPD", "userName": "${user.getCache('name')}"}`, 'Выдан предмет').then();
             methods.saveFractionLog(
                 user.getCache('name'),
                 `Взял ${items.getItemNameById(item.itemId)}`,
@@ -8030,7 +8147,10 @@ menuList.showSapdArsenalGunMenu = function() {
                 return;
             }
 
-            inventory.takeNewWeaponItem(item.itemId, `{"owner": "LSPD", "userName": "${user.getCache('name')}", "tint": 5}`, 'Выдано оружие').then();
+            if (items.isWeapon(item.itemId))
+                inventory.takeNewWeaponItem(item.itemId, `{"owner": "LSPD", "userName": "${user.getCache('name')}", "tint": 5}`, 'Выдано оружие').then();
+            else
+                inventory.takeNewWeaponItem(item.itemId, `{"owner": "LSPD", "userName": "${user.getCache('name')}"}`, 'Выдан предмет').then();
             methods.saveFractionLog(
                 user.getCache('name'),
                 `Взял ${items.getItemNameById(item.itemId)}`,
@@ -8133,7 +8253,10 @@ menuList.showSapdArsenalGunModMenu = function() {
                 return;
             }
 
-            inventory.takeNewWeaponItem(item.itemId, `{"owner": "LSPD", "userName": "${user.getCache('name')}", "tint": 5}`, 'Выдано оружие').then();
+            if (items.isWeapon(item.itemId))
+                inventory.takeNewWeaponItem(item.itemId, `{"owner": "LSPD", "userName": "${user.getCache('name')}", "tint": 5}`, 'Выдано оружие').then();
+            else
+                inventory.takeNewWeaponItem(item.itemId, `{"owner": "LSPD", "userName": "${user.getCache('name')}"}`, 'Выдан предмет').then();
             methods.saveFractionLog(
                 user.getCache('name'),
                 `Взял ${items.getItemNameById(item.itemId)}`,

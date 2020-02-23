@@ -11,6 +11,7 @@ let vPos = new mp.Vector3(198.04959106445312, -1000.5430297851562, -99.673171997
 let vRot = 180;
 
 let vCurrent = null;
+let isInside = false;
 
 let insidePos = new mp.Vector3(-1507.416259765625, -3005.405029296875, -82.55733489990234);
 let exitPos = new mp.Vector3(-1507.416259765625, -3005.405029296875, -82.55733489990234);
@@ -40,6 +41,7 @@ vShop.createCamera = function() {
 
 vShop.destroyCamera = function() {
     try {
+        cameraRotator.stop();
         cameraRotator.reset();
         if (camera) {
             camera.destroy();
@@ -57,6 +59,8 @@ vShop.goToInside = function(shopId, x, y, z, rot, bx, by, bz, cars) {
     try {
         carList = cars;
 
+        isInside = true;
+
         user.setVirtualWorld(mp.players.local.remoteId + 1);
         vPos = new mp.Vector3(x, y, z);
         exitPos = new mp.Vector3(bx, by, bz);
@@ -66,6 +70,7 @@ vShop.goToInside = function(shopId, x, y, z, rot, bx, by, bz, cars) {
         ui.hideHud();
         user.teleportv(insidePos, 0, false);
         mp.gui.cursor.show(true, true);
+        methods.blockKeys(true);
 
         setTimeout(function () {
             vShop.createCamera();
@@ -82,6 +87,8 @@ vShop.goToInside = function(shopId, x, y, z, rot, bx, by, bz, cars) {
 
 vShop.exit = function() {
     try {
+        isInside = false;
+        methods.blockKeys(false);
         ui.callCef('carShop','{"type": "hide"}');
         mp.gui.cursor.show(false, false);
         vShop.destroyVehicle();
@@ -93,6 +100,10 @@ vShop.exit = function() {
     catch (e) {
         methods.debug(e);
     }
+};
+
+vShop.isInside = function() {
+    return isInside;
 };
 
 vShop.createVehicle = function(model, c1 = 111, c2 = 111) {
@@ -196,31 +207,35 @@ vShop.getCarList = function() {
 };
 
 mp.events.add("render", () => {
-    if (!mp.gui.cursor.visible || !cameraRotator.isActive || cameraRotator.isPause) {
-        return;
-    }
+    try {
+        if (!mp.gui.cursor.visible || !cameraRotator.isActive || cameraRotator.isPause) {
+            return;
+        }
 
-    const x = mp.game.controls.getDisabledControlNormal(2, 239);
-    const y = mp.game.controls.getDisabledControlNormal(2, 240);
+        const x = mp.game.controls.getDisabledControlNormal(2, 239);
+        const y = mp.game.controls.getDisabledControlNormal(2, 240);
 
-    const su = mp.game.controls.getDisabledControlNormal(2, 241);
-    const sd = mp.game.controls.getDisabledControlNormal(2, 242);
+        const su = mp.game.controls.getDisabledControlNormal(2, 241);
+        const sd = mp.game.controls.getDisabledControlNormal(2, 242);
 
-    if (cameraRotator.isPointEmpty()) {
+        if (cameraRotator.isPointEmpty()) {
+            cameraRotator.setPoint(x, y);
+        }
+
+        const currentPoint = cameraRotator.getPoint();
+        const dX = currentPoint.x - x;
+        const dY = currentPoint.y - y;
+
         cameraRotator.setPoint(x, y);
+
+        if (mp.game.controls.isDisabledControlPressed(2, 237)) {
+            cameraRotator.onMouseMove(dX, dY);
+        }
+
+        cameraRotator.onMouseScroll(su, sd);
     }
-
-    const currentPoint = cameraRotator.getPoint();
-    const dX = currentPoint.x - x;
-    const dY = currentPoint.y - y;
-
-    cameraRotator.setPoint(x, y);
-
-    if (mp.game.controls.isDisabledControlPressed(2, 237)) {
-        cameraRotator.onMouseMove(dX, dY);
+    catch (e) {
     }
-
-    cameraRotator.onMouseScroll(su, sd);
 
     // Comment before commit
     /*let message = `su: ${su}`;

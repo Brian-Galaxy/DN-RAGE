@@ -627,6 +627,8 @@ mp.events.add('client:events:loginUser:success', async function() {
     setTimeout(async function () {
         inventory.getItemList(inventory.types.Player, await user.get('id'));
         quest.loadAllBlip();
+        chat.sendLocal('Добро пожаловать на DEDNET 💀');
+        chat.sendLocal('Желаем приятной игры ;]');
         chat.updateSettings();
     }, 5000);
 });
@@ -1556,6 +1558,11 @@ mp.events.add('client:menuList:showEmsGarderobMenu', () => {
     menuList.showEmsGarderobMenu();
 });
 
+mp.events.add('client:menuList:showEmsArsenalMenu', () => {
+    methods.debug('Event: client:menuList:showEmsArsenalMenu');
+    menuList.showEmsArsenalMenu();
+});
+
 mp.events.add('client:menuList:showSheriffGarderobMenu', () => {
     methods.debug('Event: client:menuList:showSheriffGarderobMenu');
     menuList.showSheriffGarderobMenu();
@@ -2394,6 +2401,9 @@ mp.keys.bind(0x1B, true, function() {
     ui.callCef('workid', JSON.stringify({type: 'hide'}));
     phone.hide();
     inventory.hide();
+
+    if (vShop.isInside())
+        vShop.exit();
 });
 
 //BACKSPACE

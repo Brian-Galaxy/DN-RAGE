@@ -142,7 +142,7 @@ cloth.buyProp = function (player, price, body, clothId, color, itemName, shopId,
             user.set(player, 'glasses', clothId);
             user.set(player, 'glasses_color', color);
 
-            params = `{"name": "${itemName}", "glasses": ${clothId}, "glasses_color": ${color}}`;
+            params = `{"name": "${itemName}", "sex": ${user.getSex(player)}, "glasses": ${clothId}, "glasses_color": ${color}}`;
             inventory.addItem(270, 1, inventory.types.Player, user.getId(player), 1, 1, params, 100);
             break;
         case 2:

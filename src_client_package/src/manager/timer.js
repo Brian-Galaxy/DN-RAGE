@@ -191,8 +191,6 @@ timer.ms50Timer = function() {
 timer.twoSecTimer = function() {
 
     try {
-
-        chat.updateSettings();
         discord.checker();
 
         let plPos = mp.players.local.position;

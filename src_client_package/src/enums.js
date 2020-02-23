@@ -81,7 +81,7 @@ enums.updateVehicleInfo = function(idx, data) {
     enums.vehicleInfo = enums.vehicleInfo.concat(data);
 };
 
-enums.fontList = ["Roboto", "Arial", "HACKED", "Choujikuu"];
+enums.fontList = ["Roboto", "Arial", "Century Gothic", "HACKED", "Choujikuu"];
 
 enums.offsets = { //TODO
     house: 100000,
@@ -248,7 +248,63 @@ enums.shopFishItems = [
 ];
 
 enums.shopHuntItems = [
-    0, 1, 59, 63, 241, 242, 11, 13, 26, 4, 5, 6
+    0, /*1, */59, 63, 241, 242, 11, 13, 26, 4, 5, 6
+];
+
+enums.zoneYellowList = [
+    "ALTA",
+    "BEACH",
+    "BRADT",
+    "BURTON",
+    "CHIL",
+    "CHU",
+    "CMSW",
+    "CYPRE",
+    "DELBE",
+    "DELPE",
+    "DELSOL",
+    "LOSPUER",
+    "DOWNT",
+    "DTVINE",
+    "EAST_V",
+    "ELYSIAN",
+    "GRAPES",
+    "HARMO",
+    "HAWICK",
+    "KOREAT",
+    "LEGSQU",
+    "LMESA",
+    "MIRR",
+    "MORN",
+    "MURRI",
+    "MOVIE",
+    "NCHU",
+    "PALETO",
+    "PALMPOW",
+    "PBLUFF",
+    "PBOX",
+    "RICHM",
+    "ROCKF",
+    "SANDY",
+    "SKID",
+    "TERMINA",
+    "TEXTI",
+    "VCANA",
+    "VESP",
+    "VINE",
+    "WVINE",
+];
+
+enums.garageNames = [
+    'Очень маленький',
+    'Очень маленький',
+    'Маленький',
+    'Средний',
+    'Средний',
+    'Большой',
+    'Маленький',
+    'Многоуровневый',
+    'Многоуровневый',
 ];
 
 enums.lscClassPrice = [

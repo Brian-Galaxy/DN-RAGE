@@ -13,6 +13,7 @@ import chat from "./chat";
 
 import quest from "./manager/quest";
 import bind from "./manager/bind";
+import object from "./manager/object";
 
 let user = {};
 
@@ -22,7 +23,7 @@ let userData = new Map();
 let datingList = new Map();
 
 user.godmode = false;
-user.isTeleport = false;
+//user.isTeleport = true;
 user.currentId = 0;
 user.targetEntity = undefined;
 user.socialClub = 'socialclub';
@@ -30,6 +31,8 @@ user.socialClub = 'socialclub';
 let currentCamDist = 0.2;
 let currentCamRot = -2;
 let targetEntityPrev = undefined;
+
+let isTeleport = true;
 
 let cam = null;
 
@@ -153,13 +156,15 @@ user.getTargetEntityValidate = function() {
         else if (
             user.targetEntity &&
             user.targetEntity.entity &&
-            (user.targetEntity.entity.getVariable('emsType') !== undefined || user.targetEntity.entity.getVariable('emsType') !== null)
+            user.targetEntity.entity.getVariable('emsType') !== undefined &&
+            user.targetEntity.entity.getVariable('emsType') !== null
         )
             return user.targetEntity.entity;
         else if (
             user.targetEntity &&
             user.targetEntity.entity &&
-            user.targetEntity.entity.invType
+            user.targetEntity.entity.invType !== undefined &&
+            user.targetEntity.entity.invType !== null
         )
             return user.targetEntity.entity;
         else if (
@@ -200,6 +205,14 @@ user.pointingAtRadius = function(distance, radius = 0.2) {
     catch (e) {
     }
     return undefined;
+};
+
+user.setTeleport = function(state) {
+    isTeleport = state;
+};
+
+user.isTeleport = function() {
+    return isTeleport;
 };
 
 user.removeAllWeapons = function() {
@@ -332,33 +345,23 @@ user.getCurrentWeapon = function() {
     return mp.game.invoke(methods.GET_SELECTED_PED_WEAPON, mp.players.local.handle);
 };
 
-user.kickAntiCheat = function(reason, title = 'Вы были кикнуты.') {
-    methods.debug(reason, title);
-};
-
 user.revive = function(hp = 20) {
-    user.isTeleport = true;
+    isTeleport = true;
     let hospPos = mp.players.local.position;
     //mp.players.local.resurrect();
     //mp.players.local.position = hospPos;
     mp.events.callRemote('server:user:respawn', hospPos.x, hospPos.y, hospPos.z);
     mp.players.local.health = hp;
     mp.players.local.freezePosition(false);
-    setTimeout(function () {
-        user.isTeleport = false;
-    }, 1500);
 };
 
 user.respawn = function(x, y, z) {
-    user.isTeleport = true;
+    isTeleport = true;
     mp.events.callRemote('server:user:respawn', x, y, z);
-    setTimeout(function () {
-        user.isTeleport = false;
-    }, 1500);
 };
 
 user.teleportv = function(pos, rot, isHud = true) {
-    user.isTeleport = true;
+    isTeleport = true;
     mp.game.streaming.requestCollisionAtCoord(pos.x, pos.y, pos.z);
     user.showLoadDisplay(500, isHud);
     //methods.wait(500);
@@ -369,17 +372,15 @@ user.teleportv = function(pos, rot, isHud = true) {
             mp.players.local.setRotation(0, 0, methods.parseInt(rot), 0, true);
         //methods.wait(500);
         setTimeout(function () {
+            object.process();
             mp.attachmentMngr.initFor(mp.players.local);
             user.hideLoadDisplay(500, isHud);
-            setTimeout(function () {
-                user.isTeleport = false;
-            }, 500);
         }, 1000);
     }, 500);
 };
 
 user.teleportVehV = function(pos, rot) {
-    user.isTeleport = true;
+    isTeleport = true;
     mp.game.streaming.requestAdditionalCollisionAtCoord(pos.x, pos.y, pos.z);
     mp.game.streaming.requestCollisionAtCoord(pos.x, pos.y, pos.z);
     user.showLoadDisplay(500);
@@ -410,12 +411,10 @@ user.teleportVehV = function(pos, rot) {
         }
         //methods.wait(500);
         setTimeout(function () {
+            object.process();
             mp.attachmentMngr.initFor(mp.players.local);
             mp.game.invoke(methods.SET_FOLLOW_VEHICLE_CAM_VIEW_MODE, camMode);
             user.hideLoadDisplay(500);
-            setTimeout(function () {
-                user.isTeleport = false;
-            }, 1000);
         }, 500);
     }, 500);
 };
@@ -432,6 +431,7 @@ user.tpToWaypoint = function() { //TODO машина
     try {
         let pos = methods.getWaypointPosition();
 
+        isTeleport = true;
         let entity = mp.players.local.vehicle ? mp.players.local.vehicle : mp.players.local;
         entity.position = new mp.Vector3(pos.x, pos.y, pos.z + 20);
         let interval = setInterval(function () {
@@ -1202,7 +1202,7 @@ user.getRepColorName = function() {
 };
 
 user.giveJobSkill = function() {
-    mp.events.callRemote('server:user:giveJobSkill');
+    //mp.events.callRemote('server:user:giveJobSkill'); TODO
 };
 
 user.giveJobMoney = function(money) {
@@ -1510,6 +1510,10 @@ user.unTie = function() {
 
 user.isTie = function() {
     return mp.players.local.getVariable('isCuff') === true;
+};
+
+user.isKnockout = function() {
+    return mp.players.local.getVariable('isKnockout') === true;
 };
 
 export default user;

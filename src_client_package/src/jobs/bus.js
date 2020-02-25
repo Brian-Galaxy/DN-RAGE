@@ -186,14 +186,19 @@ bus.nextCheckpoint = function() {
     jobPoint.delete();
 
     let timeout = 1;
-    if (_isBus1 && bus.markers1[_currentId][3] == 1 || _isBus2 && bus.markers2[_currentId][3] == 1 || _isBus3 && bus.markers3[_currentId][3] == 1) {
-        mp.game.ui.notifications.show('~g~Ожидайте 10 секунд');
-        mp.players.local.freezePosition(true);
-        timeout = 10000;
+    try {
+        if (_isBus1 && bus.markers1[_currentId][3] == 1 || _isBus2 && bus.markers2[_currentId][3] == 1 || _isBus3 && bus.markers3[_currentId][3] == 1) {
+            mp.game.ui.notifications.show('~g~Ожидайте 10 секунд');
+            mp.players.local.vehicle.freezePosition(true);
+            timeout = 10000;
+        }
+    }
+    catch (e) {
+        methods.debug(e);
     }
 
     setTimeout(function () {
-        mp.players.local.freezePosition(false);
+        mp.players.local.vehicle.freezePosition(false);
         try {
             methods.debug('Execute: bus.nextCheckpoint');
             if (mp.players.local.vehicle) {
@@ -204,7 +209,7 @@ bus.nextCheckpoint = function() {
                             break;
                         }
 
-                        if (_currentId > bus.markers1.length) {
+                        if (_currentId >= bus.markers1.length) {
                             user.giveJobMoney(340);
                             user.giveJobSkill();
                             mp.game.ui.notifications.show('~g~Вы закончили свой рейс');
@@ -214,6 +219,7 @@ bus.nextCheckpoint = function() {
                             _isBus1 = false;
                             _currentId = 0;
                             _checkpointId = -1;
+                            bus.stop();
                             break;
                         }
 
@@ -228,7 +234,7 @@ bus.nextCheckpoint = function() {
                             break;
                         }
 
-                        if (_currentId > bus.markers2.length) {
+                        if (_currentId >= bus.markers2.length) {
                             user.giveJobMoney(120);
                             user.giveJobSkill();
                             mp.game.ui.notifications.show('~g~Вы закончили свой рейс');
@@ -238,6 +244,7 @@ bus.nextCheckpoint = function() {
                             _isBus2 = false;
                             _currentId = 0;
                             _checkpointId = -1;
+                            bus.stop();
                             break;
                         }
 
@@ -252,7 +259,7 @@ bus.nextCheckpoint = function() {
                             break;
                         }
 
-                        if (_currentId > bus.markers3.length) {
+                        if (_currentId >= bus.markers3.length) {
                             user.giveJobMoney(560);
                             user.giveJobSkill();
                             mp.game.ui.notifications.show('~g~Вы закончили свой рейс');
@@ -262,6 +269,7 @@ bus.nextCheckpoint = function() {
                             _isBus3 = false;
                             _currentId = 0;
                             _checkpointId = -1;
+                            bus.stop();
                             break;
                         }
 

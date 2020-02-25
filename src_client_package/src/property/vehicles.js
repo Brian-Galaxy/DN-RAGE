@@ -375,6 +375,8 @@ vehicles.getSpeedBoost = (model) => {
         case 'Nero': return 62;
         case 'Nero2': return 63;
         case 'Nightblade': return 5;
+        case 'Italigtb2': return 3;
+        case 'Italigto': return 5;
         case 'PCJ': return 10;
         case 'Penetrator': return 35;
         case 'Pfister811': return 25;
@@ -695,8 +697,8 @@ vehicles.getSpeedMax = (model) => {
         case 'Issi5': return 150;
         case 'Issi6': return 150;
         case 'Italigtb': return 286;
-        case 'Italigtb2': return 286;
-        case 'Italigto': return 280;
+        case 'Italigtb2': return 290;
+        case 'Italigto': return 310;
         case 'Jackal': return 230;
         case 'JB700': return 200;
         case 'Jester': return 267;

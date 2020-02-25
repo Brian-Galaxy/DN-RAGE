@@ -36,6 +36,7 @@ mp.events.add('client:chatTyping', function(state) {
 });
 
 chat.sendLocal = function(message) {
+    message = methods.replaceAll(methods.replaceAll(message, '\'', '`'), '"', '`');
     chatHistory.push(message);
     ui.callCef('chat', JSON.stringify({ type: 'push', message: message }));
 };

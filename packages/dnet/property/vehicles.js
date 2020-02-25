@@ -699,6 +699,8 @@ vehicles.respawn = (vehicle) => {
         return;
 
     try {
+        if (vehicle.getVariable('useless'))
+            return;
         methods.debug('vehicles.respawn');
         let containerId = vehicle.getVariable('container');
         if (containerId != undefined && vehicle.getVariable('user_id') > 0)

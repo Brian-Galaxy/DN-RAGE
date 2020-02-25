@@ -447,6 +447,7 @@ admin.tpToAdmin = function(player, type, id) {
             }
 
             user.teleport(target, player.position.x, player.position.y, player.position.z);
+            target.dimension = player.dimension;
 
             target.notify(`~b~Администратор ${user.getRpName(player)} телепортировал игрока ${user.getRpName(target)} к себе`);
             player.notify(`~b~Администратор ${user.getRpName(player)} телепортировал игрока ${user.getRpName(target)} к себе`);
@@ -459,6 +460,7 @@ admin.tpToAdmin = function(player, type, id) {
             }
 
             user.teleport(target, player.position.x, player.position.y, player.position.z);
+            target.dimension = player.dimension;
 
             target.notify(`~b~Администратор ${user.getRpName(player)} телепортировал игрока ${user.getRpName(target)} к себе`);
             player.notify(`~b~Администратор ${user.getRpName(player)} телепортировал игрока ${user.getRpName(target)} к себе`);
@@ -483,6 +485,7 @@ admin.tpToUser = function(player, type, id) {
                 return;
             }
 
+            player.dimension = target.dimension;
             user.teleport(player, target.position.x, target.position.y, target.position.z);
         }
         else {
@@ -492,7 +495,45 @@ admin.tpToUser = function(player, type, id) {
                 return;
             }
 
+            player.dimension = target.dimension;
             user.teleport(player, target.position.x, target.position.y, target.position.z);
+        }
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+};
+
+admin.changeDimension = function(player, type, id, dim) {
+    try {
+        if (!user.isAdmin(player))
+            return;
+
+        id = methods.parseInt(id);
+
+        if (type === 0) {
+            let target = mp.players.at(id);
+            if (!user.isLogin(target)) {
+                player.notify('~r~Игрок не найден на сервере.');
+                return;
+            }
+
+            target.dimension = dim;
+
+            target.notify(`~b~Администратор ${user.getRpName(player)} изменил виртуальный мир игроку ${user.getRpName(target)}`);
+            player.notify(`~b~Администратор ${user.getRpName(player)} изменил виртуальный мир игроку ${user.getRpName(target)}`);
+        }
+        else {
+            let target = user.getPlayerById(id);
+            if (!user.isLogin(target)) {
+                player.notify('~r~Игрок не найден на сервере.');
+                return;
+            }
+
+            target.dimension = dim;
+
+            target.notify(`~b~Администратор ${user.getRpName(player)} изменил виртуальный мир игроку ${user.getRpName(target)}`);
+            player.notify(`~b~Администратор ${user.getRpName(player)} изменил виртуальный мир игроку ${user.getRpName(target)}`);
         }
     }
     catch (e) {

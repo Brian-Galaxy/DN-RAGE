@@ -244,7 +244,7 @@ enums.shopMedItems = [
 ];
 
 enums.shopFishItems = [
-    0, 1, 251, 253, 59, 241, 242, 11, 13, 26
+    0, /*1, 251, */253, 59, 241, 242, 11, 13, 26
 ];
 
 enums.shopHuntItems = [
@@ -1257,7 +1257,7 @@ enums.vehicleImgList = [
     {name: "Moonbeam2", path: "https://wiki.rage.mp/images/thumb/c/c1/Moonbeam2.png/164px-Moonbeam2.png"},
     {name: "Nightshade", path: "https://wiki.rage.mp/images/thumb/e/ec/Nightshade.png/164px-Nightshade.png"},
     {name: "Peyote2", path: "https://wiki.rage.mp/images/thumb/3/35/Peyote2.png/137px-Peyote2.png"},
-    {name: "Pheonix", path: "https://wiki.rage.mp/images/thumb/5/53/Pheonix.png/164px-Pheonix.png"},
+    {name: "Phoenix", path: "https://wiki.rage.mp/images/thumb/5/53/Pheonix.png/164px-Pheonix.png"},
     {name: "Picador", path: "https://wiki.rage.mp/images/thumb/1/15/Picador.png/164px-Picador.png"},
     {name: "Ratloader", path: "https://wiki.rage.mp/images/thumb/7/7a/Ratloader.png/164px-Ratloader.png"},
     {name: "Ratloader2", path: "https://wiki.rage.mp/images/thumb/b/b7/Ratloader2.png/164px-Ratloader2.png"},
@@ -1494,6 +1494,7 @@ enums.vehicleImgList = [
     {name: "Kuruma", path: "https://wiki.rage.mp/images/thumb/8/8f/Kuruma.png/164px-Kuruma.png"},
     {name: "Kuruma2", path: "https://wiki.rage.mp/images/thumb/0/09/Kuruma2.png/164px-Kuruma2.png"},
     {name: "Locust", path: "https://wiki.rage.mp/images/thumb/1/1e/Locust.png/130px-Locust.png"},
+    {name: "Lynx", path: "https://wiki.rage.mp/images/thumb/a/a7/Lynx2.png/164px-Lynx2.png"},
     {name: "Lynx2", path: "https://wiki.rage.mp/images/thumb/a/a7/Lynx2.png/164px-Lynx2.png"},
     {name: "Massacro", path: "https://wiki.rage.mp/images/thumb/7/78/Massacro.png/164px-Massacro.png"},
     {name: "Massacro2", path: "https://wiki.rage.mp/images/thumb/b/be/Massacro2.png/164px-Massacro2.png"},

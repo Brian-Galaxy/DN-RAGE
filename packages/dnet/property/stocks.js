@@ -467,7 +467,7 @@ stocks.sellBySlot = function (player, slot) {
     else {
         if (user.get(player, 'fraction_id2') > 0) {
             user.addCryptoMoney(player, boxPrice / 2, 'Продажа ' + stocks.boxList[box][0]);
-            fraction.addMoney(id, boxPrice / 2, 'Продажа груза от ' + user.getRpName(player));
+            fraction.addMoney(user.get(player, 'fraction_id2'), boxPrice / 2, 'Продажа груза от ' + user.getRpName(player));
             player.notify(`~g~Вы продали ${stocks.boxList[box][0]}. Деньги были зачислены на ваш E-Coin кошелёк. 50% зачислено в общак организации`);
         }
         else {
@@ -514,7 +514,7 @@ stocks.sellAllByClass = function (player, className, price) {
 
     if (user.get(player, 'fraction_id2') > 0) {
         user.addCryptoMoney(player, price / 2, 'Продажа ' + className);
-        fraction.addMoney(id, price / 2, 'Продажа груза от ' + user.getRpName(player));
+        fraction.addMoney(user.get(player, 'fraction_id2'), price / 2, 'Продажа груза от ' + user.getRpName(player));
         player.notify(`~g~Вы продали ${className}. Деньги были зачислены на ваш E-Coin кошелёк. 50% зачислено в общак организации`);
     }
     else {

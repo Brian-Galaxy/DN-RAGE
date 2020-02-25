@@ -39,6 +39,7 @@ let pickups = require('./managers/pickups');
 let gangWar = require('./managers/gangWar');
 let timer = require('./managers/timer');
 let ems = require('./managers/ems');
+let tax = require('./managers/tax');
 
 let coffer = require('./coffer');
 let inventory = require('./inventory');
@@ -63,6 +64,7 @@ function init() {
         fraction.loadAll();
         gangWar.loadAll();
         timer.loadAll();
+        tax.loadAll();
 
         setTimeout(function () {
             ems.createSmall();

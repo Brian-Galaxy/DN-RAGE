@@ -157,37 +157,53 @@ inventory.equip = function(player, id, itemId, count, aparams) {
             }
             else if (items.isWeapon(itemId)) {
 
-                let slot = weapons.getGunSlotIdByItem(itemId);
-                if (user.get(player, 'weapon_' + slot) == '') {
-                    user.set(player, 'weapon_' + slot, params.serial);
-                    user.set(player, 'weapon_' + slot + '_ammo', -1);
-                    user.giveWeapon(player, items.getItemNameHashById(itemId), 0);
-                    user.callCef(player, 'inventory', JSON.stringify({type: "updateSelectWeapon", selectId: id}));
+                try {
+                    let slot = weapons.getGunSlotIdByItem(itemId);
+                    if (user.get(player, 'weapon_' + slot) == '') {
 
-                    let wpHash = weapons.getHashByName(items.getItemNameHashById(itemId));
+                        user.set(player, 'weapon_' + slot, params.serial);
+                        user.set(player, 'weapon_' + slot + '_ammo', 0);
 
-                    player.removeAllWeaponComponents(wpHash);
-                    player.setWeaponTint(wpHash, 0);
+                        methods.debug(user.get(player, 'weapon_' + slot));
+                        methods.debug(user.get(player, 'weapon_' + slot + '_ammo'));
 
-                    if (params.slot1)
-                        player.giveWeaponComponent(wpHash, params.slot1hash);
-                    if (params.slot2)
-                        player.giveWeaponComponent(wpHash, params.slot2hash);
-                    if (params.slot3)
-                        player.giveWeaponComponent(wpHash, params.slot3hash);
-                    if (params.slot4)
-                        player.giveWeaponComponent(wpHash, params.slot4hash);
-                    if (params.superTint)
-                        player.giveWeaponComponent(wpHash, params.superTint);
-                    if (params.tint)
-                        player.setWeaponTint(wpHash, params.tint);
+                        user.giveWeapon(player, items.getItemNameHashById(itemId), 0);
+                        user.callCef(player, 'inventory', JSON.stringify({type: "updateSelectWeapon", selectId: id}));
 
-                    user.save(player);
+                        let wpHash = weapons.getHashByName(items.getItemNameHashById(itemId));
+
+                        player.removeAllWeaponComponents(wpHash);
+                        player.setWeaponTint(wpHash, 0);
+
+                        if (params.slot1)
+                            player.giveWeaponComponent(wpHash, params.slot1hash);
+                        if (params.slot2)
+                            player.giveWeaponComponent(wpHash, params.slot2hash);
+                        if (params.slot3)
+                            player.giveWeaponComponent(wpHash, params.slot3hash);
+                        if (params.slot4)
+                            player.giveWeaponComponent(wpHash, params.slot4hash);
+                        if (params.superTint)
+                            player.giveWeaponComponent(wpHash, params.superTint);
+                        if (params.tint)
+                            player.setWeaponTint(wpHash, params.tint);
+
+                        user.updateClientCache(player);
+                        user.save(player);
+                    }
+                    else {
+                        user.callCef(player, 'inventory', JSON.stringify({type: "weaponToInventory", itemId: id}));
+                        player.notify("~r~Слот под оружие уже занят");
+                        return;
+                    }
                 }
-                else {
-                    user.callCef(player, 'inventory', JSON.stringify({type: "weaponToInventory", itemId: id}));
-                    player.notify("~r~Слот под оружие уже занят");
-                    return;
+                catch (e) {
+                    methods.debug(e);
+                    methods.debug(e);
+                    methods.debug(e);
+                    methods.debug(e);
+                    methods.debug(e);
+                    methods.debug(e);
                 }
             }
             else if (itemId == 264 || itemId == 263) {
@@ -246,7 +262,7 @@ inventory.equip = function(player, id, itemId, count, aparams) {
                     return;
                 }
 
-                if (user.get(player, 'foot') == 34 && user.getSex(player) == 0 || user.get(player, 'leg') == 35 && user.getSex(player) == 1) {
+                if (user.get(player, 'foot') == 34 && user.getSex(player) == 0 || user.get(player, 'foot') == 35 && user.getSex(player) == 1) {
                     user.set(player, "foot", params.foot);
                     user.set(player, "foot_color", params.foot_color);
                     user.updateCharacterCloth(player);
@@ -404,6 +420,14 @@ inventory.updateItemsEquipByItemId = function(itemId, ownerId, ownerType, equip)
 inventory.updateOwnerId = function(id, ownerId, ownerType) {
     try {
         mysql.executeQuery(`UPDATE items SET owner_type = '${ownerType}', owner_id = '${methods.parseInt(ownerId)}' where id = '${id}'`);
+    } catch(e) {
+        methods.debug(e);
+    }
+};
+
+inventory.updateOwnerAll = function(oldOwnerId, oldOwnerType, ownerId, ownerType) {
+    try {
+        mysql.executeQuery(`UPDATE items SET owner_type = '${ownerType}', owner_id = '${methods.parseInt(ownerId)}' where owner_type = '${oldOwnerType}' AND owner_id = '${methods.parseInt(oldOwnerId)}' AND is_equip = '0'`);
     } catch(e) {
         methods.debug(e);
     }

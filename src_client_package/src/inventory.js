@@ -22,15 +22,6 @@ inventory.currentItem = -1;
 let hidden = true;
 
 inventory.show = function() {
-    if (user.isCuff() || user.isTie()) {
-        mp.game.ui.notifications.show("~r~Вы связаны или в наручниках");
-        return;
-    }
-    if (user.getCache('jail_time') > 0) {
-        mp.game.ui.notifications.show("~r~Нельзя пользоваться инвентарем, в тюрьме");
-        return;
-    }
-
     //chat.activate(false);
     try {
         mp.gui.cursor.show(false, true);
@@ -89,6 +80,12 @@ inventory.updateOwnerId = function(id, ownerId, ownerType) {
     mp.events.callRemote('server:inventory:updateOwnerId', id, ownerId, ownerType);
 };
 
+inventory.updateOwnerAll = function(oldOwnerId, oldOwnerType, ownerId, ownerType) {
+    ownerId = ownerId.toString();
+    oldOwnerId = oldOwnerId.toString();
+    mp.events.callRemote('server:inventory:updateOwnerAll', oldOwnerId, oldOwnerType, ownerId, ownerType);
+};
+
 inventory.updateItemParams = function(id, params) {
     try {
         if (typeof params != "string")
@@ -122,8 +119,7 @@ inventory.openInventoryByEntity = async function(entity) {
                 mp.game.ui.notifications.show("~r~Данный транспорт не доступен");
             }
             else {
-                inventory.getItemList(inventory.types.Vehicle, mp.game.joaat(entity.getNumberPlateText().trim()));
-                vehicles.setTrunkStateById(entity.remoteId, true);
+                menuList.showVehicleDoInvMenu(entity.remoteId);
             }
         }
         catch (e) {
@@ -133,6 +129,9 @@ inventory.openInventoryByEntity = async function(entity) {
     }
     else if (entity.getType() == 3) {
         try {
+
+            methods.debug(entity.getType());
+
             if (entity.getVariable('isDrop'))
                 inventory.takeItem(entity.getVariable('isDrop'), entity.getVariable('itemId'));
             else if (entity.getVariable('emsType') !== undefined && entity.getVariable('emsType') !== null) {

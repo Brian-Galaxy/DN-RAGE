@@ -15,7 +15,6 @@ timer.loadAll = function() {
     timer.min60Timer();
     timer.min30Timer();
     timer.sec10Timer();
-    timer.secTimer();
 };
 
 timer.min30Timer = function() {
@@ -78,15 +77,4 @@ timer.sec10Timer = function() {
     });
 
     setTimeout(timer.sec10Timer, 1000 * 10);
-};
-
-timer.secTimer = function() {
-    //TODO
-    /*mp.players.forEach(function (p) {
-        if (user.isLogin(p) && user.has(p, 'ping')) {
-            if (user.get(p, 'ping') + 400 < p.ping)
-                user.kickAntiCheat(p, 'Ping: ' + p.ping + 'ms')
-        }
-    });
-    setTimeout(timer.secTimer, 1000);*/
 };

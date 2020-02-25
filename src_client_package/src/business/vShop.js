@@ -29,6 +29,9 @@ let openAllDoor = false;
 const cameraRotator = new Camera.Rotator();
 
 vShop.createCamera = function() {
+
+    user.showCustomNotify('Зажмите ЛКМ для смены положения камеры', 0, 1);
+
     camera = mp.cameras.new("vshop_camera");
     /*camera.setActive(true);
     camera.setCoord(-1500.3770751953125, -2998.169677734375, -81.15196990966797);

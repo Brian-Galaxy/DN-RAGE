@@ -11,6 +11,7 @@ let coffer = require('../coffer');
 
 let vehicles = require('../property/vehicles');
 let business = require('../property/business');
+let fraction = require('../property/fraction');
 
 let weather = require('../managers/weather');
 
@@ -39,6 +40,10 @@ methods.saveAllAnother = async function () {
     console.time('saveCoffers');
     coffer.saveAll();
     console.timeEnd('saveCoffers');
+
+    console.time('saveFractions');
+    fraction.saveAll();
+    console.timeEnd('saveFractions');
 
     console.time('saveBusiness');
     for (let i = 1; i < 300; i++)
@@ -244,12 +249,32 @@ methods.distanceToPos2D = function (v1, v2) {
 };
 
 methods.removeQuotes = function (str) {
-    //TODO RemoveSlash
-    return str.toString().replace('\'', '');
+    return methods.replaceAll(str, '\'', '');
+    //return str.toString().replace('\'', '');
 };
 
-methods.removeQuotes2 = function(text) {
-    return text.toString().replace('"', '');
+methods.removeQuotes2 = function(str) {
+    return methods.replaceAll(str, '"', '');
+    //return text.toString().replace('"', '');
+};
+
+methods.replaceAll = function(string, search, replace){
+    return string.split(search).join(replace);
+};
+
+methods.lerp = function(pos1, pos2, amt) {
+    pos1.x += (pos2.x - pos1.x) * amt || 0;
+    pos1.y += (pos2.y - pos1.y) * amt || 0;
+    pos1.z += (pos2.z - pos1.z) * amt || 0;
+    return pos1;
+};
+
+methods.moveObject = function(object, toPos, timeout = 0.01) {
+    let internal = setInterval(function () {
+        object.position = methods.lerp(object.position, toPos, timeout);
+        if (methods.distanceToPos(object.position, toPos) < 0.1)
+            clearInterval(internal);
+    }, 10);
 };
 
 methods.escapeRegExp = function(str) {

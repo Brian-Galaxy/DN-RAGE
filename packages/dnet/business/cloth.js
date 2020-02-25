@@ -313,7 +313,7 @@ cloth.buy = function (player, price, body, cloth, color, torso, torsoColor, para
         user.removeCashMoney(player, price, 'Покупка одежды ' + itemName);
         business.addMoney(shopId, price, itemName);
         business.removeMoneyTax(shopId, price / business.getPrice(shopId));
-        player.notify("~g~Вы купили одежду, она находится в инвентаре");
+        player.notify("~g~Вы купили одежду, старая одежда находится в инвентаре");
     }
 
     user.updateCharacterCloth(player);

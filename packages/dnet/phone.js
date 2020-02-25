@@ -629,7 +629,7 @@ phone.fractionLog = function(player) {
 
     let fractionId = user.get(player, 'fraction_id');
 
-    mysql.executeQuery(`SELECT * FROM log_fraction WHERE fraction_id = ${fractionId} LIMIT 50`, (err, rows, fields) => {
+    mysql.executeQuery(`SELECT * FROM log_fraction WHERE fraction_id = ${fractionId} ORDER BY id DESC LIMIT 50`, (err, rows, fields) => {
 
         let items = [];
 
@@ -686,7 +686,7 @@ phone.fractionLog2 = function(player) {
 
     let fractionId = user.get(player, 'fraction_id2');
 
-    mysql.executeQuery(`SELECT * FROM log_fraction_2 WHERE fraction_id = ${fractionId} LIMIT 50`, (err, rows, fields) => {
+    mysql.executeQuery(`SELECT * FROM log_fraction_2 WHERE fraction_id = ${fractionId} ORDER BY id DESC LIMIT 50`, (err, rows, fields) => {
 
         let items = [];
 
@@ -1156,9 +1156,11 @@ phone.userAdList = function(player) {
                 subItems.push(item);
 
                 item = phone.getMenuItemButton(
-                    `${row['phone']} (${row['name']})`,
+                    `${methods.phoneFormat(row['phone'])} (${row['name']})`,
                     `${row['rp_datetime']}`,
-                    { name: 'none' }
+                    { name: 'sendMessage', phone: row['phone'] },
+                    '',
+                    true
                 );
                 subItems.push(item);
 
@@ -1238,7 +1240,7 @@ phone.bankHistory = function(player, bankCard) {
     if (bankCard === undefined)
         bankCard = user.get(player, 'bank_card');
 
-    mysql.executeQuery(`SELECT * FROM log_bank_user WHERE card = ${methods.parseInt(bankCard)} LIMIT 100`, (err, rows, fields) => {
+    mysql.executeQuery(`SELECT * FROM log_bank_user WHERE card = ${methods.parseInt(bankCard)} ORDER BY id DESC LIMIT 100`, (err, rows, fields) => {
 
         let items = [];
 
@@ -1295,7 +1297,7 @@ phone.userHistory = function(player, id) {
     if (id === undefined)
         id = user.get(player, 'id');
 
-    mysql.executeQuery(`SELECT * FROM log_player WHERE user_id = ${methods.parseInt(id)} LIMIT 100`, (err, rows, fields) => {
+    mysql.executeQuery(`SELECT * FROM log_player WHERE user_id = ${methods.parseInt(id)} ORDER BY id DESC LIMIT 100`, (err, rows, fields) => {
 
         let items = [];
 

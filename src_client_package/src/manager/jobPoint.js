@@ -153,16 +153,26 @@ jobPoint.delete = function() {
             _marker.destroy();
         else {
             mp.markers.forEach(function (marker) {
-                if (mp.markers.exists(marker) && marker.getColor() === ui.ColorRed)
-                    marker.destroy();
+                try {
+                    if (mp.markers.exists(marker) && marker.getColor() === ui.ColorRed)
+                        marker.destroy();
+                }
+                catch (e) {
+                    methods.debug(e);
+                }
             });
         }
     }
     catch (e) {
         console.log(e);
         mp.markers.forEach(function (marker) {
-            if (mp.markers.exists(marker) && marker.getColor() === ui.ColorRed)
-                marker.destroy();
+            try {
+                if (mp.markers.exists(marker) && marker.getColor() === ui.ColorRed)
+                    marker.destroy();
+            }
+            catch (e) {
+                methods.debug(e);
+            }
         });
     }
 

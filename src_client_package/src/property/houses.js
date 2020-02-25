@@ -13,6 +13,10 @@ houses.enterv = function (id) {
     mp.events.callRemote('server:houses:enterv', id);
 };
 
+houses.enterGarage = function (id) {
+    mp.events.callRemote('server:houses:enterGarage', id);
+};
+
 houses.exit = function (x, y, z, rot) {
     user.setVirtualWorld(0);
     user.teleport(x, y, z + 1, rot);

@@ -27,6 +27,14 @@ houses.interiorList = [
     [-1289.856, 449.4803, 96.90755, -180], //12
     [-781.7711, 318.185, 216.6389, 0], //13
     [-777.33831, 340.02807, 206.62086, 93.02799], //14
+    [980.438720703125, 56.759857177734375, 115.1641845703125, 56.140254974365234], //15
+    [373.4725646972656, 423.40234375, 144.9078826904297, 169.2933807373047], //16
+    [341.7474670410156, 437.6512145996094, 148.39407348632812, 115.6588134765625], //17
+    [117.16754913330078, 559.5700073242188, 183.30487060546875, 188.30841064453125], //18
+    [-174.2841339111328, 497.3167419433594, 136.66693115234375, 192.0149688720703], //19
+    [-571.9983520507812, 661.6953735351562, 144.83985900878906, 165.8435821533203], //20
+    [-682.216796875, 592.0908813476562, 144.39306640625, 223.222900390625], //21
+    [-859.8622436523438, 690.9188842773438, 151.86073303222656, 187.37477111816406], //22
 ];
 
 houses.garageList = [
@@ -416,6 +424,12 @@ houses.enter = function (player, id) {
     player.dimension = id;
     let intId = hInfo.get('interior');
     user.teleport(player, houses.interiorList[intId][0], houses.interiorList[intId][1], houses.interiorList[intId][2] + 1, houses.interiorList[intId][3]);
+};
+
+houses.enterGarage = function (player, id) {
+    if (!user.isLogin(player))
+        return;
+    user.teleport(player, houses.garageList[id][0], houses.garageList[id][1], houses.garageList[id][2], houses.garageList[id][3])
 };
 
 houses.enterv = function (player, id) {

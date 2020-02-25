@@ -55,9 +55,6 @@ vSync.updateValues = function(entity) {
     if (entity && mp.vehicles.exists(entity)) {
         let actualData = entity.getVariable('vehicleSyncData');
         if (typeof actualData !== 'undefined') {
-
-            methods.debug(JSON.stringify(actualData));
-
             try {
                 if (vehicles.isVehicleSirenValid(entity.model)) {
                     entity.setSirenSound(true);
@@ -542,7 +539,7 @@ mp.keys.bind(0x51, true, function() {
     if (!user.isLogin())
         return;
     let veh = mp.players.local.vehicle;
-    if (!methods.isBlockKeys() && veh && vehicles.isVehicleSirenValid(veh.model)) {
+    if (!methods.isBlockKeys() && veh && veh.getPedInSeat(-1) === mp.players.local.handle && vehicles.isVehicleSirenValid(veh.model)) {
 
         let typeor = typeof veh.getVariable('vehicleSyncData');
         let actualData = veh.getVariable('vehicleSyncData');
@@ -564,7 +561,7 @@ mp.keys.bind(0xBC, true, function() {
     if (!user.isLogin())
         return;
     let veh = mp.players.local.vehicle;
-    if (!methods.isBlockKeys() && veh && vehicles.isVehicleSirenValid(veh.model)) {
+    if (!methods.isBlockKeys() && veh && veh.getPedInSeat(-1) === mp.players.local.handle && vehicles.isVehicleSirenValid(veh.model)) {
 
         let typeor = typeof veh.getVariable('vehicleSyncData');
         let actualData = veh.getVariable('vehicleSyncData');
@@ -587,7 +584,7 @@ mp.keys.bind(0xBE, true, function() {
     if (!user.isLogin())
         return;
     let veh = mp.players.local.vehicle;
-    if (!methods.isBlockKeys() && veh && vehicles.isVehicleSirenValid(veh.model)) {
+    if (!methods.isBlockKeys() && veh && veh.getPedInSeat(-1) === mp.players.local.handle && vehicles.isVehicleSirenValid(veh.model)) {
 
         let typeor = typeof veh.getVariable('vehicleSyncData');
         let actualData = veh.getVariable('vehicleSyncData');
@@ -613,7 +610,7 @@ mp.keys.bind(0xBE, false, function() {
     if (!user.isLogin())
         return;
     let veh = mp.players.local.vehicle;
-    if (!methods.isBlockKeys() && veh && vehicles.isVehicleSirenValid(veh.model)) {
+    if (!methods.isBlockKeys() && veh && veh.getPedInSeat(-1) === mp.players.local.handle && vehicles.isVehicleSirenValid(veh.model)) {
 
         let typeor = typeof veh.getVariable('vehicleSyncData');
         let actualData = veh.getVariable('vehicleSyncData');

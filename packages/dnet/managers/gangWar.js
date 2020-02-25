@@ -39,6 +39,7 @@ gangWar.loadAll = function() {
             gangWar.set(row['id'], 'fraction_id', row['fraction_id']);
             gangWar.set(row['id'], 'fraction_name', row['fraction_name']);
             gangWar.set(row['id'], 'timestamp', row['timestamp']);
+            gangWar.set(row['id'], 'cant_war', row['cant_war']);
             gangWar.set(row['id'], 'canWar', true);
             countZone++;
 
@@ -77,6 +78,10 @@ gangWar.startWar = function(player, zoneId) {
 
     if (!gangWar.get(id, 'canWar')) {
         player.notify('~r~Захват этой территории сейчас не доступен');
+        return;
+    }
+    if (gangWar.get(id, 'cant_war')) {
+        player.notify('~r~Захват этой территории не доступен');
         return;
     }
     if (user.get(player, 'fraction_id2') < 1) {
@@ -209,7 +214,7 @@ gangWar.timer = function() {
 gangWar.timerMoney = function() {
     for (let i = 1; i <= countZone; i++) {
         if (gangWar.get(i, 'fraction_id') > 0)
-            fraction.addMoney(gangWar.get(i, 'fraction_id'), methods.getRandomInt(6, 10), 'Зачисление средств с территории #' + i)
+            fraction.addMoney(gangWar.get(i, 'fraction_id'), methods.getRandomInt(2, 4), 'Зачисление средств с территории #' + i)
     }
     setTimeout(gangWar.timerMoney, 1000 * 60 * 60 * 2);
 };

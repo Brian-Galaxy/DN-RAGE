@@ -251,7 +251,7 @@ methods.isValidJSON = function(value){
 };
 
 methods.isBlockKeys = function() { //TODO
-    return Menu.Menu.IsShowInput() || user.isCuff() || user.isTie() || user.isDead() || _isBlockKeys/* || mp.gui.cursor.visible*/;
+    return Menu.Menu.IsShowInput() || user.isCuff() || user.isTie() || user.isDead() || user.isKnockout() || _isBlockKeys/* || mp.gui.cursor.visible*/;
 };
 
 methods.distanceToPos = function (v1, v2) {
@@ -321,11 +321,17 @@ methods.getListOfPlayerInRadius = function(pos, r) {
 
 methods.removeQuotes = function (str) {
     //TODO RemoveSlash
-    return str.toString().replace('\'', '');
+    return methods.replaceAll(str, '\'', '');
+    //return str.toString().replace('\'', '');
 };
 
-methods.removeQuotes2 = function(text) {
-    return text.toString().replace('"', '');
+methods.removeQuotes2 = function(str) {
+    return methods.replaceAll(str, '"', '');
+    //return text.toString().replace('"', '');
+};
+
+methods.replaceAll = function(string, search, replace){
+    return string.split(search).join(replace);
 };
 
 methods.saveLog = function(file, log){//TODO
@@ -596,6 +602,7 @@ methods.requestIpls = function () {
     mp.game.streaming.requestIpl("hei_dlc_windows_casino﻿");
     mp.game.streaming.requestIpl("vw_casino_penthouse");
     mp.game.streaming.requestIpl("vw_casino_garage");
+    mp.game.streaming.requestIpl("vw_casino_carpark");
 
     let phIntID = mp.game.interior.getInteriorAtCoords(976.636, 70.295, 115.164);
     let phPropList = [

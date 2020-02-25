@@ -10,6 +10,462 @@ let objectDelList = [];
 object.load = function () {
     const start = new Date().getTime();
 
+    // Int 1
+    object.create(2079702193, new mp.Vector3(1975.56, 3822.615, 34.21246), new mp.Vector3(1.001791E-05, 5.008956E-06, 30.0498), false, false);
+    object.create(2079702193, new mp.Vector3(1978.14, 3818.533, 34.21576), new mp.Vector3(1.00179E-05, 5.008956E-06, -149.9994), false, false);
+    object.create(2079702193, new mp.Vector3(1975.25, 3816.847, 34.59501), new mp.Vector3(1.00179E-05, 5.008956E-06, -149.9994), false, false);
+    object.create(2079702193, new mp.Vector3(1977.93, 3822.51, 34.15), new mp.Vector3(-14.69982, 0.2406464, -60.07864), false, false);
+    object.create(2079702193, new mp.Vector3(1978.92, 3820.79, 34.15), new mp.Vector3(-14.69982, 0.240646, -60.07864), false, false);
+    object.create(2079702193, new mp.Vector3(1979.1, 3820.486, 34.15), new mp.Vector3(-14.69982, 0.2406473, -60.07863), false, false);
+
+// Int 4
+    object.create(1404517486, new mp.Vector3(264.59, -995.83, -97.3), new mp.Vector3(0, 0, 0), false, false);
+    object.create(1404517486, new mp.Vector3(264.59, -996.74, -97.3), new mp.Vector3(0, 0, 0), false, false);
+    object.create(1556826721, new mp.Vector3(258.36, -994.7146, -100.0086), new mp.Vector3(0, 0, -29.99981), false, false);
+    object.create(2004890126, new mp.Vector3(256.28, -998.28, -100.0086), new mp.Vector3(0, 0, 123.9997), false, false);
+    object.create(630784631, new mp.Vector3(262.6944, -1001.486, -98.24239), new mp.Vector3(0, 0, 179.9996), false, false);
+    object.create(-1884999004, new mp.Vector3(261.48, -997.8755, -99.78), new mp.Vector3(0, 0, 8.999984), false, false);
+    object.create(1398355146, new mp.Vector3(265.78, -1001.55, -98.85782), new mp.Vector3(0, 0, 0), false, false);
+
+// Int 5
+    object.create(-1113453233, new mp.Vector3(-1152.59, -1523.245, 10.95272), new mp.Vector3(1.017777E-12, -5.008956E-06, -145.0245), false, false);
+    object.create(-856584171, new mp.Vector3(-1148.74, -1513.23, 9.682452), new mp.Vector3(1.001789E-05, 5.008956E-06, -10.00001), false, false);
+    object.create(-1350614541, new mp.Vector3(-1156.203, -1525.353, 9.631849), new mp.Vector3(0, 0, -124.0001), false, false);
+    object.create(-1113453233, new mp.Vector3(-1161.52, -1521.869, 9.8), new mp.Vector3(1.001791E-05, 5.008956E-06, 124.98), false, false);
+    object.create(-1113453233, new mp.Vector3(-1161.52, -1521.869, 10.99), new mp.Vector3(1.001791E-05, 5.008956E-06, 124.98), false, false);
+    object.create(-1113453233, new mp.Vector3(-1161.79, -1521.49, 12), new mp.Vector3(1.001791E-05, 5.008956E-06, 124.98), false, false);
+    object.create(-1113453233, new mp.Vector3(-1161.79, -1521.49, 9.63), new mp.Vector3(1.001791E-05, 5.008956E-06, 124.98), false, false);
+    object.create(-1113453233, new mp.Vector3(-1161.79, -1521.49, 10.81), new mp.Vector3(1.001791E-05, 5.008956E-06, 124.98), false, false);
+    object.create(-1113453233, new mp.Vector3(-1158.99, -1525.48, 9.81), new mp.Vector3(1.001791E-05, 5.008956E-06, 124.98), false, false);
+    object.create(-1113453233, new mp.Vector3(-1158.99, -1525.48, 11), new mp.Vector3(1.001791E-05, 5.008956E-06, 124.98), false, false);
+    object.create(-1113453233, new mp.Vector3(-1160.16, -1523.807, 9.81), new mp.Vector3(1.001791E-05, 5.008956E-06, 124.98), false, false);
+    object.create(-1113453233, new mp.Vector3(-1160.16, -1523.807, 11), new mp.Vector3(1.001791E-05, 5.008956E-06, 124.98), false, false);
+    object.create(-1113453233, new mp.Vector3(-1157.07, -1516.08, 10.37), new mp.Vector3(5.008956E-06, -5.008956E-06, 34.97549), false, false);
+    object.create(-1113453233, new mp.Vector3(-1157.07, -1516.08, 11.56), new mp.Vector3(5.008955E-06, -5.008955E-06, 34.97549), false, false);
+    object.create(-1113453233, new mp.Vector3(-1146.44, -1511.069, 9.8), new mp.Vector3(2.035555E-13, -5.008955E-06, -55.02429), false, false);
+    object.create(-1113453233, new mp.Vector3(-1146.44, -1511.069, 10.99), new mp.Vector3(2.035555E-13, -5.008955E-06, -55.02429), false, false);
+    object.create(-1113453233, new mp.Vector3(-1145.31, -1512.73, 9.8), new mp.Vector3(2.035555E-13, -5.008955E-06, -55.02429), false, false);
+    object.create(-1113453233, new mp.Vector3(-1145.31, -1512.73, 10.99), new mp.Vector3(2.035555E-13, -5.008955E-06, -55.02429), false, false);
+    object.create(-936729545, new mp.Vector3(-1161.6, -1521.76, 10.57), new mp.Vector3(1.001791E-05, -5.008957E-06, -55.02488), false, false);
+    object.create(-936729545, new mp.Vector3(-1161.605, -1521.76, 11.05), new mp.Vector3(1.001791E-05, -5.008957E-06, -55.02487), false, false);
+    object.create(-936729545, new mp.Vector3(-1159.13, -1525.29, 10.58), new mp.Vector3(1.00179E-05, -5.008956E-06, -55.07461), false, false);
+    object.create(-936729545, new mp.Vector3(-1159.13, -1525.29, 11.05), new mp.Vector3(1.00179E-05, -5.008956E-06, -55.07461), false, false);
+    object.create(-936729545, new mp.Vector3(-1146.403, -1511.13, 10.56), new mp.Vector3(1.001791E-05, -5.008945E-06, 124.8749), false, false);
+    object.create(-936729545, new mp.Vector3(-1146.405, -1511.13, 11.04), new mp.Vector3(1.001791E-05, -5.008945E-06, 124.8749), false, false);
+    object.create(-936729545, new mp.Vector3(-1156.95, -1516.02, 11.16), new mp.Vector3(1.001791E-05, -5.008937E-06, -144.925), false, false);
+    object.create(-936729545, new mp.Vector3(-1152.6, -1523.22, 11.23657), new mp.Vector3(1.001789E-05, 5.008955E-06, 35.10036), false, false);
+    object.create(1055533654, new mp.Vector3(-1151.98, -1521.43, 10.53337), new mp.Vector3(0, 0, 130), false, false);
+
+    object.delete(1333481871, -1147.072, -1513.776, 10.40341);
+    object.delete(1258923146, -1149.182, -1513.149, 9.654871);
+    object.delete(797240705, -1149.215, -1512.77, 9.654378);
+    object.delete(492521774, -1149.632, -1512.585, 9.655569);
+    object.delete(32477783, -1150.278, -1512.184, 10.41471);
+    object.delete(419020243, -1147.349, -1513.848, 10.41411);
+    object.delete(1319414056, -1147.431, -1514.007, 10.49785);
+    object.delete(1013548210, -1147.834, -1514.223, 10.41915);
+    object.delete(827254092, -1144.454, -1515.907, 10.08414);
+    object.delete(-1077568635, -1143.784, -1515.831, 10.03522);
+    object.delete(1319414056, -1161.492, -1520.295, 10.25615);
+    object.delete(419020243, -1161.181, -1519.775, 10.25615);
+    object.delete(1160787715, -1158.4, -1523.117, 10.54145);
+    object.delete(520088227, -1158.26, -1523.191, 10.53249);
+    object.delete(1560277278, -1156.226, -1522.208, 10.32687);
+
+// Int 6
+    object.create(1978613345, new mp.Vector3(351.479, -996.0478, -100.1962), new mp.Vector3(0, 0, 0), false, false);
+    object.create(1978613345, new mp.Vector3(350.53, -996.05, -100.1961), new mp.Vector3(0, 0, 0), false, false);
+    object.create(951345131, new mp.Vector3(350.8078, -994.3985, -100.08), new mp.Vector3(1.001785E-05, 5.008952E-06, -132.5001), false, false);
+    object.create(2057223314, new mp.Vector3(352.1311, -993.4043, -100.12), new mp.Vector3(0, 0, -36.99995), false, false);
+    object.create(-978849650, new mp.Vector3(337.51, -996.68, -99.55), new mp.Vector3(0, 0, -90.00005), false, false);
+    object.create(1881864012, new mp.Vector3(341.6673, -996.1204, -99.65), new mp.Vector3(0, 0, -62.99994), false, false);
+    object.create(-807401144, new mp.Vector3(341.3907, -996.1807, -99.65697), new mp.Vector3(0, 0, 69.99995), false, false);
+    object.create(470212711, new mp.Vector3(341.99, -1004.06, -99.21622), new mp.Vector3(0, 0, 54.99997), false, false);
+    object.create(-331509782, new mp.Vector3(342.3735, -1004.137, -99.16), new mp.Vector3(0, 0, 29.99998), false, false);
+    object.create(1319392426, new mp.Vector3(342.251, -1004.089, -99.16), new mp.Vector3(0, 0, 104.9999), false, false);
+    object.create(-2037843699, new mp.Vector3(341.6503, -1003.813, -99.16), new mp.Vector3(0, 0, 104.9999), false, false);
+    object.create(477649989, new mp.Vector3(342.39, -1003.78, -99.21622), new mp.Vector3(1.001788E-05, -5.008956E-06, -179.4498), false, false);
+    object.create(-1246711311, new mp.Vector3(352.7462, -992.9322, -100.1962), new mp.Vector3(0, 0, -79.99947), false, false);
+    object.create(-2044627725, new mp.Vector3(343.22, -994, -99.71), new mp.Vector3(0, 0, 74.99995), false, false);
+    object.create(-1328202619, new mp.Vector3(348.0154, -1002.648, -100.1962), new mp.Vector3(0, 0, 0), false, false);
+    object.create(-1769322543, new mp.Vector3(348.7386, -995.0312, -99.43916), new mp.Vector3(0, 0, 21.89992), false, false);
+    object.create(-1884999004, new mp.Vector3(343.0679, -998.2321, -99.97), new mp.Vector3(0, 0, 0), false, false);
+    object.create(-1989035681, new mp.Vector3(350.644, -999.722, -99.2), new mp.Vector3(0, 0, -166.0001), false, false);
+    object.create(-364924791, new mp.Vector3(339.4279, -1003.846, -99.27671), new mp.Vector3(0, -5.008956E-06, -180), false, false);
+    object.create(-331509782, new mp.Vector3(339.3438, -995.3307, -99.65813), new mp.Vector3(0, 0, 14.99997), false, false);
+    object.create(-331509782, new mp.Vector3(339.5025, -995.2882, -99.65813), new mp.Vector3(0, 0, 144.9998), false, false);
+    object.create(-1540767983, new mp.Vector3(351.9503, -999.8756, -99.25986), new mp.Vector3(0, 0, 2.599953), false, false);
+    object.create(1398355146, new mp.Vector3(345.86, -1003.03, -99.04), new mp.Vector3(0, -5.008956E-06, -180), false, false);
+
+    object.delete(492521774, 341.5645, -995.9878, -99.65434);
+    object.delete(-664859048, 352.6909, -993.5197, -100.2083);
+    object.delete(32477783, 341.602, -995.6356, -99.65398);
+    object.delete(996113921, 341.5686, -996.3506, -99.63911);
+    object.delete(1356866689, 341.6109, -995.6426, -99.62861);
+    object.delete(-1158929576, 341.2068, -995.6591, -99.60791);
+    object.delete(-502099890, 341.1056, -996.3447, -99.59258);
+    object.delete(270388964, 341.6335, -996.7438, -99.65703);
+    object.delete(-1264675346, 339.9229, -1001.782, -99.39119);
+    object.delete(1160787715, 338.8171, -1001.489, -99.3647);
+    object.delete(520088227, 339.4384, -1001.095, -99.37474);
+    object.delete(-1264675346, 351.8941, -1000.098, -99.18714);
+    object.delete(-1533900808, 341.9066, -1001.67, -99.23304);
+    object.delete(-807401144, 341.8589, -1000.846, -99.31647);
+    object.delete(-664859048, 345.3659, -992.827, -100.2083);
+    object.delete(97410561, 345.5305, -1002.223, -99.30497);
+
+// Int 7
+    object.create(2079702193, new mp.Vector3(-10.29, -1442.83, 31.15963), new mp.Vector3(1.001791E-05, 5.008956E-06, -179.6995), false, false);
+    object.create(2079702193, new mp.Vector3(-10.29, -1442.83, 31.98463), new mp.Vector3(1.001791E-05, 5.008956E-06, -179.6995), false, false);
+    object.create(2079702193, new mp.Vector3(-10.36, -1426.92, 31.77), new mp.Vector3(1.001791E-05, 5.008956E-06, 0.3004003), false, false);
+    object.create(2079702193, new mp.Vector3(-13.56, -1441.16, 31.28), new mp.Vector3(0, -5.008956E-06, -180), false, false);
+    object.create(2079702193, new mp.Vector3(-13.56, -1441.16, 32.03001), new mp.Vector3(0, -5.008956E-06, -180), false, false);
+    object.create(2079702193, new mp.Vector3(-14.91, -1441.16, 32.03001), new mp.Vector3(0, -5.008956E-06, -180), false, false);
+    object.create(2079702193, new mp.Vector3(-14.91, -1441.16, 31.205), new mp.Vector3(0, -5.008956E-06, -180), false, false);
+    object.create(506946533, new mp.Vector3(-14.92, -1427.13, 31.4), new mp.Vector3(1.001785E-05, 5.008956E-06, -6.899237), false, false);
+    object.create(246006942, new mp.Vector3(-14.6, -1427.1, 31.38808), new mp.Vector3(0, 0, 0), false, false);
+    object.create(687012144, new mp.Vector3(-14.23, -1427.1, 31.3), new mp.Vector3(0, 0, 13.99999), false, false);
+    object.create(-1856393901, new mp.Vector3(-14.55637, -1427.31, 30.59), new mp.Vector3(-18.00005, -5.330159E-06, 1.750024), false, false);
+
+// Int 8
+    object.create(-1154592059, new mp.Vector3(-8.15, 513.5, 173.6282), new mp.Vector3(0, 0, -29.31598), true, false);
+    object.create(2079702193, new mp.Vector3(15.24, 537.2923, 174.27), new mp.Vector3(1.00179E-05, -5.008956E-06, -155.0239), false, false);
+    object.create(2079702193, new mp.Vector3(15.24, 537.2923, 175.38), new mp.Vector3(1.00179E-05, -5.008956E-06, -155.0239), false, false);
+    object.create(2079702193, new mp.Vector3(15.24, 537.2923, 176.355), new mp.Vector3(1.00179E-05, -5.008956E-06, -155.0239), false, false);
+    object.create(2079702193, new mp.Vector3(14.07, 527.38, 174.2382), new mp.Vector3(1.00179E-05, -5.008955E-06, -155), false, false);
+    object.create(2079702193, new mp.Vector3(14.07, 527.38, 175.34), new mp.Vector3(1.00179E-05, -5.008955E-06, -155), false, false);
+    object.create(2079702193, new mp.Vector3(14.07, 527.38, 176.44), new mp.Vector3(1.00179E-05, -5.008955E-06, -155), false, false);
+    object.create(2079702193, new mp.Vector3(12.68, 526.7334, 174.2382), new mp.Vector3(1.00179E-05, -5.008955E-06, -155), false, false);
+    object.create(2079702193, new mp.Vector3(12.68, 526.7334, 175.33), new mp.Vector3(1.00179E-05, -5.008955E-06, -155), false, false);
+    object.create(2079702193, new mp.Vector3(12.68, 526.7334, 176.43), new mp.Vector3(1.00179E-05, -5.008955E-06, -155), false, false);
+    object.create(2079702193, new mp.Vector3(10.91, 525.79, 174.2382), new mp.Vector3(1.00179E-05, -5.008955E-06, -155), false, false);
+    object.create(2079702193, new mp.Vector3(10.91, 525.79, 175.34), new mp.Vector3(1.00179E-05, -5.008955E-06, -155), false, false);
+    object.create(2079702193, new mp.Vector3(10.91, 525.79, 176.44), new mp.Vector3(1.00179E-05, -5.008955E-06, -155), false, false);
+    object.create(2079702193, new mp.Vector3(9.57, 525.17, 174.2382), new mp.Vector3(1.00179E-05, -5.008955E-06, -155), false, false);
+    object.create(2079702193, new mp.Vector3(9.57, 525.17, 175.35), new mp.Vector3(1.00179E-05, -5.008955E-06, -155), false, false);
+    object.create(2079702193, new mp.Vector3(9.57, 525.17, 176.46), new mp.Vector3(1.00179E-05, -5.008955E-06, -155), false, false);
+    object.create(2079702193, new mp.Vector3(6.86, 524.02, 174.2382), new mp.Vector3(1.00179E-05, -5.008955E-06, -155), false, false);
+    object.create(2079702193, new mp.Vector3(6.86, 524.02, 175.34), new mp.Vector3(1.00179E-05, -5.008955E-06, -155), false, false);
+    object.create(2079702193, new mp.Vector3(6.86, 524.02, 176.44), new mp.Vector3(1.00179E-05, -5.008955E-06, -155), false, false);
+    object.create(2079702193, new mp.Vector3(5.06, 523.18, 174.2382), new mp.Vector3(1.00179E-05, -5.008955E-06, -155), false, false);
+    object.create(2079702193, new mp.Vector3(5.06, 523.18, 175.34), new mp.Vector3(1.00179E-05, -5.008955E-06, -155), false, false);
+    object.create(2079702193, new mp.Vector3(5.06, 523.18, 176.45), new mp.Vector3(1.00179E-05, -5.008955E-06, -155), false, false);
+    object.create(2079702193, new mp.Vector3(5.02, 523.16, 174.2382), new mp.Vector3(1.00179E-05, -5.008955E-06, -155), false, false);
+    object.create(2079702193, new mp.Vector3(5.02, 523.16, 175.34), new mp.Vector3(1.00179E-05, -5.008955E-06, -155), false, false);
+    object.create(2079702193, new mp.Vector3(5.02, 523.16, 176.24), new mp.Vector3(1.00179E-05, -5.008955E-06, -155), false, false);
+    object.create(2079702193, new mp.Vector3(3.19, 522.19, 174.2382), new mp.Vector3(1.00179E-05, -5.008955E-06, -155), false, false);
+    object.create(2079702193, new mp.Vector3(3.19, 522.19, 175.34), new mp.Vector3(1.00179E-05, -5.008955E-06, -155), false, false);
+    object.create(2079702193, new mp.Vector3(3.19, 522.19, 176.43), new mp.Vector3(1.00179E-05, -5.008955E-06, -155), false, false);
+    object.create(2079702193, new mp.Vector3(1.39, 521.35, 174.2382), new mp.Vector3(1.00179E-05, -5.008955E-06, -155), false, false);
+    object.create(2079702193, new mp.Vector3(1.39, 521.35, 175.35), new mp.Vector3(1.00179E-05, -5.008955E-06, -155), false, false);
+    object.create(2079702193, new mp.Vector3(1.39, 521.35, 176.46), new mp.Vector3(1.00179E-05, -5.008955E-06, -155), false, false);
+    object.create(2079702193, new mp.Vector3(1.35, 521.33, 174.2382), new mp.Vector3(1.00179E-05, -5.008955E-06, -155), false, false);
+    object.create(2079702193, new mp.Vector3(1.35, 521.33, 175.34), new mp.Vector3(1.00179E-05, -5.008955E-06, -155), false, false);
+    object.create(2079702193, new mp.Vector3(1.35, 521.33, 176.44), new mp.Vector3(1.00179E-05, -5.008955E-06, -155), false, false);
+    object.create(2079702193, new mp.Vector3(-2.83, 518.67, 174.24), new mp.Vector3(1.831999E-12, -5.008956E-06, -119.3748), false, false);
+    object.create(2079702193, new mp.Vector3(-2.83, 518.67, 175.35), new mp.Vector3(1.831999E-12, -5.008956E-06, -119.3748), false, false);
+    object.create(2079702193, new mp.Vector3(-2.83, 518.67, 176.45), new mp.Vector3(1.250441E-09, -5.008956E-06, -119.3748), false, false);
+    object.create(2079702193, new mp.Vector3(-3.800568, 516.94, 174.24), new mp.Vector3(1.831999E-12, -5.008956E-06, -119.3748), false, false);
+    object.create(2079702193, new mp.Vector3(-3.800568, 516.94, 175.35), new mp.Vector3(1.831999E-12, -5.008956E-06, -119.3748), false, false);
+    object.create(2079702193, new mp.Vector3(-3.800568, 516.94, 176.46), new mp.Vector3(1.831999E-12, -5.008956E-06, -119.3748), false, false);
+    object.create(2079702193, new mp.Vector3(-4.89, 515.21, 174.24), new mp.Vector3(1.831999E-12, -5.008956E-06, -119.3748), false, false);
+    object.create(2079702193, new mp.Vector3(-4.89, 515.21, 175.34), new mp.Vector3(1.831999E-12, -5.008956E-06, -119.3748), false, false);
+    object.create(2079702193, new mp.Vector3(-4.89, 515.21, 176.44), new mp.Vector3(1.831999E-12, -5.008956E-06, -119.3748), false, false);
+    object.create(2079702193, new mp.Vector3(-5.86, 513.48, 174.24), new mp.Vector3(1.831999E-12, -5.008956E-06, -119.3748), false, false);
+    object.create(2079702193, new mp.Vector3(-5.86, 513.48, 175.35), new mp.Vector3(1.831999E-12, -5.008956E-06, -119.3748), false, false);
+    object.create(2079702193, new mp.Vector3(-5.86, 513.48, 176.46), new mp.Vector3(1.831999E-12, -5.008956E-06, -119.3748), false, false);
+    object.create(2079702193, new mp.Vector3(-10.84, 514.89, 174.28), new mp.Vector3(1.001791E-05, 5.008956E-06, 150.5997), false, false);
+    object.create(2079702193, new mp.Vector3(-10.84, 514.89, 175.37), new mp.Vector3(1.001791E-05, 5.008956E-06, 150.5997), false, false);
+    object.create(2079702193, new mp.Vector3(-10.84, 514.89, 176.48), new mp.Vector3(1.001791E-05, 5.008956E-06, 150.5997), false, false);
+    object.create(2079702193, new mp.Vector3(-12.57, 515.865, 174.28), new mp.Vector3(1.001791E-05, 5.008956E-06, 150.5997), false, false);
+    object.create(2079702193, new mp.Vector3(-12.57, 515.865, 175.39), new mp.Vector3(1.001791E-05, 5.008956E-06, 150.5997), false, false);
+    object.create(2079702193, new mp.Vector3(-12.57, 515.865, 176.5), new mp.Vector3(1.001791E-05, 5.008956E-06, 150.5997), false, false);
+    object.create(2079702193, new mp.Vector3(-12.68, 515.93, 174.28), new mp.Vector3(1.001791E-05, 5.008956E-06, 150.5997), false, false);
+    object.create(2079702193, new mp.Vector3(-12.68, 515.93, 175.37), new mp.Vector3(1.001791E-05, 5.008956E-06, 150.5997), false, false);
+    object.create(2079702193, new mp.Vector3(-12.68, 515.93, 176.47), new mp.Vector3(1.001791E-05, 5.008956E-06, 150.5997), false, false);
+    object.create(2079702193, new mp.Vector3(-8.98, 513.95, 174.28), new mp.Vector3(1.001791E-05, 5.008956E-06, 150.5997), false, false);
+    object.create(2079702193, new mp.Vector3(-8.98, 513.95, 175.39), new mp.Vector3(1.001791E-05, 5.008956E-06, 150.5997), false, false);
+    object.create(2079702193, new mp.Vector3(-8.98, 513.95, 176.5), new mp.Vector3(1.001791E-05, 5.008956E-06, 150.5997), false, false);
+    object.create(2079702193, new mp.Vector3(-7.29, 513, 174.28), new mp.Vector3(1.001791E-05, 5.008956E-06, 150.5997), false, false);
+    object.create(2079702193, new mp.Vector3(-7.29, 513, 175.38), new mp.Vector3(1.001791E-05, 5.008956E-06, 150.5997), false, false);
+    object.create(2079702193, new mp.Vector3(-7.29, 513, 176.49), new mp.Vector3(1.001791E-05, 5.008956E-06, 150.5997), false, false);
+    object.create(2079702193, new mp.Vector3(12.99, 533.9, 174.2336), new mp.Vector3(1.001791E-05, -5.008955E-06, -65.02461), false, false);
+    object.create(2079702193, new mp.Vector3(12.99, 533.9, 175.34), new mp.Vector3(1.001791E-05, -5.008955E-06, -65.02461), false, false);
+    object.create(2079702193, new mp.Vector3(12.99, 533.9, 176.44), new mp.Vector3(1.001791E-05, -5.008955E-06, -65.02461), false, false);
+    object.create(2079702193, new mp.Vector3(13.52, 532.7679, 174.2336), new mp.Vector3(1.001791E-05, -5.008955E-06, -65.02461), false, false);
+    object.create(2079702193, new mp.Vector3(13.52, 532.7679, 175.34), new mp.Vector3(1.001791E-05, -5.008955E-06, -65.02461), false, false);
+    object.create(2079702193, new mp.Vector3(13.52, 532.7679, 176.44), new mp.Vector3(1.001791E-05, -5.008955E-06, -65.02461), false, false);
+    object.create(2079702193, new mp.Vector3(14.31, 530.84, 174.2336), new mp.Vector3(1.001791E-05, -5.008955E-06, -65.02461), false, false);
+    object.create(2079702193, new mp.Vector3(14.31, 530.84, 175.34), new mp.Vector3(1.001791E-05, -5.008955E-06, -65.02461), false, false);
+    object.create(2079702193, new mp.Vector3(14.31, 530.84, 176.44), new mp.Vector3(1.001791E-05, -5.008955E-06, -65.02461), false, false);
+    object.create(2079702193, new mp.Vector3(14.91, 529.55, 174.2336), new mp.Vector3(1.001791E-05, -5.008955E-06, -65.02461), false, false);
+    object.create(2079702193, new mp.Vector3(14.91, 529.55, 175.34), new mp.Vector3(1.001791E-05, -5.008955E-06, -65.02461), false, false);
+    object.create(2079702193, new mp.Vector3(14.91, 529.55, 176.39), new mp.Vector3(1.001791E-05, -5.008955E-06, -65.02461), false, false);
+    object.create(2079702193, new mp.Vector3(10.82, 525.85, 170.28), new mp.Vector3(1.00179E-05, -5.008955E-06, -155), false, false);
+    object.create(2079702193, new mp.Vector3(10.82, 525.85, 171.38), new mp.Vector3(1.00179E-05, -5.008955E-06, -155), false, false);
+    object.create(2079702193, new mp.Vector3(10.82, 525.85, 172.49), new mp.Vector3(1.00179E-05, -5.008955E-06, -155), false, false);
+    object.create(2079702193, new mp.Vector3(9.49, 525.23, 170.28), new mp.Vector3(1.00179E-05, -5.008955E-06, -155), false, false);
+    object.create(2079702193, new mp.Vector3(9.49, 525.23, 171.38), new mp.Vector3(1.00179E-05, -5.008955E-06, -155), false, false);
+    object.create(2079702193, new mp.Vector3(9.49, 525.23, 172.48), new mp.Vector3(1.00179E-05, -5.008955E-06, -155), false, false);
+    object.create(2079702193, new mp.Vector3(6.9, 523.94, 170.28), new mp.Vector3(1.00179E-05, -5.008955E-06, -155), false, false);
+    object.create(2079702193, new mp.Vector3(6.9, 523.94, 171.39), new mp.Vector3(1.00179E-05, -5.008955E-06, -155), false, false);
+    object.create(2079702193, new mp.Vector3(6.9, 523.94, 172.5), new mp.Vector3(1.00179E-05, -5.008955E-06, -155), false, false);
+    object.create(2079702193, new mp.Vector3(5.14, 523.12, 170.28), new mp.Vector3(1.00179E-05, -5.008955E-06, -155), false, false);
+    object.create(2079702193, new mp.Vector3(5.14, 523.12, 171.38), new mp.Vector3(1.00179E-05, -5.008955E-06, -155), false, false);
+    object.create(2079702193, new mp.Vector3(5.14, 523.12, 172.48), new mp.Vector3(1.00179E-05, -5.008955E-06, -155), false, false);
+    object.create(-1154592059, new mp.Vector3(2.14, 521.84, 169.63), new mp.Vector3(0, 0, 24.88396), false, false);
+    object.create(-1154592059, new mp.Vector3(2.15, 521.84, 169.73), new mp.Vector3(0, 0, 24.88396), false, false);
+    object.create(2079702193, new mp.Vector3(4.37, 522.87, 170.29), new mp.Vector3(1.001791E-05, -5.008956E-06, -155.0237), false, false);
+    object.create(2079702193, new mp.Vector3(4.37, 522.87, 171.4), new mp.Vector3(1.001791E-05, -5.008956E-06, -155.0237), false, false);
+    object.create(2079702193, new mp.Vector3(4.37, 522.87, 172.51), new mp.Vector3(1.001791E-05, -5.008956E-06, -155.0237), false, false);
+    object.create(2079702193, new mp.Vector3(2.57, 522.03, 170.29), new mp.Vector3(1.001791E-05, -5.008956E-06, -155.0237), false, false);
+    object.create(2079702193, new mp.Vector3(2.57, 522.03, 171.4), new mp.Vector3(1.001791E-05, -5.008956E-06, -155.0237), false, false);
+    object.create(2079702193, new mp.Vector3(2.57, 522.03, 172.5), new mp.Vector3(1.001791E-05, -5.008956E-06, -155.0237), false, false);
+    object.create(2079702193, new mp.Vector3(0.81, 521.2136, 170.29), new mp.Vector3(1.001791E-05, -5.008956E-06, -155.0237), false, false);
+    object.create(2079702193, new mp.Vector3(0.81, 521.2136, 171.4), new mp.Vector3(1.001791E-05, -5.008956E-06, -155.0237), false, false);
+    object.create(2079702193, new mp.Vector3(0.81, 521.2136, 172.48), new mp.Vector3(1.001791E-05, -5.008956E-06, -155.0237), false, false);
+
+    object.delete(-1154592059, -9.796242, 514.4293, 173.6281);
+
+// Int 9
+    object.create(2079702193, new mp.Vector3(-793.81, 181.6, 74.58), new mp.Vector3(1.001791E-05, 5.008957E-06, -69.02483), false, false);
+    object.create(2079702193, new mp.Vector3(-793.81, 181.6, 73.47), new mp.Vector3(1.001791E-05, 5.008957E-06, -69.02484), false, false);
+    object.create(2079702193, new mp.Vector3(-793.81, 181.6, 72.35), new mp.Vector3(1.001791E-05, 5.008955E-06, -69.02483), false, false);
+    object.create(2079702193, new mp.Vector3(-793.72, 181.3724, 72.35), new mp.Vector3(1.001791E-05, 5.008955E-06, -69.02483), false, false);
+    object.create(2079702193, new mp.Vector3(-793.72, 181.3724, 73.46), new mp.Vector3(1.001791E-05, 5.008955E-06, -69.02483), false, false);
+    object.create(2079702193, new mp.Vector3(-793.72, 181.3724, 74.56), new mp.Vector3(1.001791E-05, 5.008955E-06, -69.02483), false, false);
+    object.create(2079702193, new mp.Vector3(-795.69, 187.0083, 73.35403), new mp.Vector3(1.001791E-05, 5.008955E-06, -69.02483), false, false);
+    object.create(2079702193, new mp.Vector3(-795.69, 187.0083, 74.46), new mp.Vector3(1.001791E-05, 5.008955E-06, -69.02483), false, false);
+    object.create(2079702193, new mp.Vector3(-795.48, 177.63, 74.59), new mp.Vector3(1.001783E-05, -5.008956E-06, -158.8983), false, false);
+    object.create(2079702193, new mp.Vector3(-795.48, 177.63, 73.5), new mp.Vector3(1.001783E-05, -5.008956E-06, -158.8983), false, false);
+    object.create(2079702193, new mp.Vector3(-795.48, 177.63, 72.4), new mp.Vector3(1.001783E-05, -5.008956E-06, -158.8983), false, false);
+    object.create(2079702193, new mp.Vector3(-796.34, 177.3059, 72.57), new mp.Vector3(1.001783E-05, -5.008956E-06, -159.0483), false, false);
+    object.create(2079702193, new mp.Vector3(-796.34, 177.3059, 73.62), new mp.Vector3(1.001783E-05, -5.008956E-06, -159.0483), false, false);
+    object.create(2079702193, new mp.Vector3(-796.34, 177.3059, 74.14498), new mp.Vector3(1.001783E-05, -5.008956E-06, -159.0483), false, false);
+    object.create(2079702193, new mp.Vector3(-798.21, 171.0743, 73.23387), new mp.Vector3(1.001791E-05, 5.008955E-06, -69.02483), false, false);
+    object.create(2079702193, new mp.Vector3(-798.21, 171.0743, 74.33), new mp.Vector3(1.001791E-05, 5.008955E-06, -69.02483), false, false);
+    object.create(2079702193, new mp.Vector3(-798.21, 171.0743, 75.4), new mp.Vector3(1.001791E-05, 5.008955E-06, -69.02483), false, false);
+    object.create(2079702193, new mp.Vector3(-799.1232, 168.9022, 73.32), new mp.Vector3(1.001783E-05, -5.008956E-06, -158.8983), false, false);
+    object.create(2079702193, new mp.Vector3(-799.1232, 168.9022, 74.42), new mp.Vector3(1.001783E-05, -5.008956E-06, -158.8983), false, false);
+    object.create(2079702193, new mp.Vector3(-799.1232, 168.9022, 74.71999), new mp.Vector3(1.001783E-05, -5.008956E-06, -158.8983), false, false);
+    object.create(2079702193, new mp.Vector3(-816.73, 181.8873, 73.01957), new mp.Vector3(1.001789E-05, -5.008955E-06, 21.00013), false, false);
+    object.create(2079702193, new mp.Vector3(-816.73, 181.8873, 74.12), new mp.Vector3(1.001789E-05, -5.008954E-06, 21.00013), false, false);
+    object.create(1019527301, new mp.Vector3(-802.78, 167.61, 77.58), new mp.Vector3(1.001791E-05, 5.008956E-06, 20.94992), false, false);
+    object.create(2079702193, new mp.Vector3(-802.31, 167.7864, 76.94), new mp.Vector3(1.001782E-05, -5.008956E-06, -159.0478), false, false);
+    object.create(2079702193, new mp.Vector3(-802.31, 167.7864, 78.04), new mp.Vector3(1.001782E-05, -5.008956E-06, -159.0478), false, false);
+    object.create(2079702193, new mp.Vector3(-802.31, 167.7864, 78.23), new mp.Vector3(1.001782E-05, -5.008955E-06, -159.0478), false, false);
+
+// Int 10
+    object.create(2079702193, new mp.Vector3(-769.26, 344.1094, 211.06), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-769.26, 344.1094, 212.17), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-769.26, 344.1094, 213.29), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-771.25, 344.1094, 211.06), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-771.25, 344.1094, 212.17), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-771.25, 344.1094, 213.29), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-773.24, 344.1094, 211.06), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-773.24, 344.1094, 212.17), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-773.24, 344.1094, 213.29), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-775.29, 344.1094, 211.06), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-775.29, 344.1094, 212.17), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-775.29, 344.1094, 213.29), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-777.27, 344.1094, 211.06), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-777.27, 344.1094, 212.17), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-777.27, 344.1094, 213.29), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-786.42, 342.47, 210.85), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-786.42, 342.47, 211.96), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-786.42, 342.47, 213.06), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-786.42, 342.48, 214.17), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-784.44, 342.47, 210.85), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-784.44, 342.47, 211.96), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-784.44, 342.47, 213.06), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-784.44, 342.47, 214.17), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-790.44, 336.19, 210.41), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-790.44, 336.19, 211.52), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-792.42, 336.19, 211.52), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-792.42, 336.19, 210.47), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-794.4, 336.19, 211.52), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-794.4, 336.19, 210.41), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-794.4, 336.19, 212.63), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-792.41, 336.19, 212.63), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-790.43, 336.19, 212.63), new mp.Vector3(0, 0, 0), false, false);
+
+// Int 11
+    object.create(2079702193, new mp.Vector3(-757.74, 609.0231, 144.7975), new mp.Vector3(1.001788E-05, -5.008957E-06, -161.5), false, false);
+    object.create(2079702193, new mp.Vector3(-764.45, 606.827, 144.52), new mp.Vector3(0, 0, -161.4989), false, false);
+    object.create(2079702193, new mp.Vector3(-764.45, 606.827, 145.62), new mp.Vector3(0, 0, -161.4989), false, false);
+    object.create(2079702193, new mp.Vector3(-766.38, 606.185, 144.52), new mp.Vector3(0, 0, -161.4989), false, false);
+    object.create(2079702193, new mp.Vector3(-766.38, 606.185, 145.62), new mp.Vector3(0, 0, -161.4989), false, false);
+    object.create(2079702193, new mp.Vector3(-777.81, 611.66, 143.36), new mp.Vector3(6.411998E-12, -5.008956E-06, 108.5), false, false);
+    object.create(2079702193, new mp.Vector3(-777.81, 611.66, 144.47), new mp.Vector3(6.411998E-12, -5.008956E-06, 108.5), false, false);
+    object.create(2079702193, new mp.Vector3(-777.81, 611.66, 145.58), new mp.Vector3(6.411998E-12, -5.008956E-06, 108.5), false, false);
+    object.create(2079702193, new mp.Vector3(-777.18, 609.776, 143.36), new mp.Vector3(6.411998E-12, -5.008956E-06, 108.5), false, false);
+    object.create(2079702193, new mp.Vector3(-777.18, 609.776, 144.46), new mp.Vector3(6.411998E-12, -5.008956E-06, 108.5), false, false);
+    object.create(2079702193, new mp.Vector3(-777.18, 609.776, 145.57), new mp.Vector3(6.411998E-12, -5.008956E-06, 108.5), false, false);
+    object.create(2079702193, new mp.Vector3(-776.55, 607.89, 143.36), new mp.Vector3(6.411998E-12, -5.008956E-06, 108.5), false, false);
+    object.create(2079702193, new mp.Vector3(-776.55, 607.89, 144.46), new mp.Vector3(6.411998E-12, -5.008956E-06, 108.5), false, false);
+    object.create(2079702193, new mp.Vector3(-776.55, 607.89, 145.56), new mp.Vector3(6.411998E-12, -5.008956E-06, 108.5), false, false);
+    object.create(2079702193, new mp.Vector3(-775.92, 606, 143.36), new mp.Vector3(6.411998E-12, -5.008956E-06, 108.5), false, false);
+    object.create(2079702193, new mp.Vector3(-775.92, 606, 144.46), new mp.Vector3(6.411998E-12, -5.008956E-06, 108.5), false, false);
+    object.create(2079702193, new mp.Vector3(-775.92, 606, 145.56), new mp.Vector3(6.411998E-12, -5.008956E-06, 108.5), false, false);
+    object.create(2079702193, new mp.Vector3(-775.315, 604.19, 143.36), new mp.Vector3(6.411998E-12, -5.008956E-06, 108.5), false, false);
+    object.create(2079702193, new mp.Vector3(-775.315, 604.19, 144.46), new mp.Vector3(6.411998E-12, -5.008956E-06, 108.5), false, false);
+    object.create(2079702193, new mp.Vector3(-775.315, 604.19, 145.56), new mp.Vector3(6.411998E-12, -5.008956E-06, 108.5), false, false);
+    object.create(2079702193, new mp.Vector3(-777.83, 611.65, 139.96), new mp.Vector3(6.411998E-12, -5.008956E-06, 108.5), false, false);
+    object.create(2079702193, new mp.Vector3(-777.83, 611.65, 141.06), new mp.Vector3(6.411998E-12, -5.008956E-06, 108.5), false, false);
+    object.create(2079702193, new mp.Vector3(-777.83, 611.65, 142.16), new mp.Vector3(6.411998E-12, -5.008956E-06, 108.5), false, false);
+    object.create(2079702193, new mp.Vector3(-777.19, 609.76, 139.96), new mp.Vector3(6.411998E-12, -5.008956E-06, 108.5), false, false);
+    object.create(2079702193, new mp.Vector3(-777.19, 609.76, 141.06), new mp.Vector3(6.411998E-12, -5.008956E-06, 108.5), false, false);
+    object.create(2079702193, new mp.Vector3(-777.19, 609.76, 142.16), new mp.Vector3(6.411998E-12, -5.008956E-06, 108.5), false, false);
+    object.create(2079702193, new mp.Vector3(-776.56, 607.88, 139.96), new mp.Vector3(6.411998E-12, -5.008956E-06, 108.5), false, false);
+    object.create(2079702193, new mp.Vector3(-776.56, 607.88, 141.06), new mp.Vector3(6.411998E-12, -5.008956E-06, 108.5), false, false);
+    object.create(2079702193, new mp.Vector3(-776.56, 607.88, 142.17), new mp.Vector3(6.411998E-12, -5.008956E-06, 108.5), false, false);
+    object.create(2079702193, new mp.Vector3(-775.93, 605.99, 139.96), new mp.Vector3(6.411998E-12, -5.008956E-06, 108.5), false, false);
+    object.create(2079702193, new mp.Vector3(-775.93, 605.99, 141.07), new mp.Vector3(6.411998E-12, -5.008956E-06, 108.5), false, false);
+    object.create(2079702193, new mp.Vector3(-775.93, 605.99, 142.18), new mp.Vector3(6.411998E-12, -5.008956E-06, 108.5), false, false);
+    object.create(2079702193, new mp.Vector3(-775.33, 604.18, 139.96), new mp.Vector3(6.411998E-12, -5.008956E-06, 108.5), false, false);
+    object.create(2079702193, new mp.Vector3(-775.33, 604.18, 141.06), new mp.Vector3(6.411998E-12, -5.008956E-06, 108.5), false, false);
+    object.create(2079702193, new mp.Vector3(-775.33, 604.18, 142.16), new mp.Vector3(6.411998E-12, -5.008956E-06, 108.5), false, false);
+    object.create(2079702193, new mp.Vector3(-773.11, 603.86, 141.7318), new mp.Vector3(0, 0, -161.4989), false, false);
+    object.create(2079702193, new mp.Vector3(-773.1, 603.8708, 140.63), new mp.Vector3(0, 0, -161.4989), false, false);
+
+// Int 12
+    object.create(2079702193, new mp.Vector3(-1290.16, 428.36, 97.1), new mp.Vector3(-4.462359E-05, -6.329293E-05, -179.99), false, false);
+    object.create(2079702193, new mp.Vector3(-1290.16, 428.36, 98.2), new mp.Vector3(-4.462359E-05, -6.329293E-05, -179.99), false, false);
+    object.create(2079702193, new mp.Vector3(-1290.16, 428.36, 99.31), new mp.Vector3(-4.462359E-05, -6.329293E-05, -179.99), false, false);
+    object.create(2079702193, new mp.Vector3(-1288.18, 428.36, 97.1), new mp.Vector3(-4.462359E-05, -6.329293E-05, -179.99), false, false);
+    object.create(2079702193, new mp.Vector3(-1288.18, 428.36, 98.2), new mp.Vector3(-4.462359E-05, -6.329293E-05, -179.99), false, false);
+    object.create(2079702193, new mp.Vector3(-1288.18, 428.36, 99.3), new mp.Vector3(-4.462359E-05, -6.329293E-05, -179.99), false, false);
+    object.create(2079702193, new mp.Vector3(-1286.2, 428.36, 97.1), new mp.Vector3(-4.462359E-05, -6.329293E-05, -179.99), false, false);
+    object.create(2079702193, new mp.Vector3(-1286.2, 428.36, 98.2), new mp.Vector3(-4.462359E-05, -6.329293E-05, -179.99), false, false);
+    object.create(2079702193, new mp.Vector3(-1286.2, 428.36, 99.3), new mp.Vector3(-4.462359E-05, -6.329293E-05, -179.99), false, false);
+    object.create(2079702193, new mp.Vector3(-1284.21, 428.36, 97.1), new mp.Vector3(-4.462359E-05, -6.329293E-05, -179.99), false, false);
+    object.create(2079702193, new mp.Vector3(-1284.21, 428.36, 98.21), new mp.Vector3(-4.462359E-05, -6.329293E-05, -179.99), false, false);
+    object.create(2079702193, new mp.Vector3(-1284.21, 428.36, 99.32), new mp.Vector3(-4.462359E-05, -6.329293E-05, -179.99), false, false);
+    object.create(2079702193, new mp.Vector3(-1282.23, 428.36, 97.1), new mp.Vector3(-4.462359E-05, -6.329293E-05, -179.99), false, false);
+    object.create(2079702193, new mp.Vector3(-1282.23, 428.36, 98.2), new mp.Vector3(-4.462359E-05, -6.329293E-05, -179.99), false, false);
+    object.create(2079702193, new mp.Vector3(-1282.23, 428.36, 99.3), new mp.Vector3(-4.462359E-05, -6.329293E-05, -179.99), false, false);
+    object.create(2079702193, new mp.Vector3(-1281.29, 446.65, 98.41), new mp.Vector3(6.329293E-05, 6.329292E-05, -89.99001), false, false);
+    object.create(2079702193, new mp.Vector3(-1281.29, 437.49, 98.21005), new mp.Vector3(6.329293E-05, 6.329289E-05, -89.98997), false, false);
+    object.create(2079702193, new mp.Vector3(-1281.29, 437.49, 99.32), new mp.Vector3(6.329293E-05, 6.329286E-05, -89.98996), false, false);
+    object.create(2079702193, new mp.Vector3(-1281.29, 439.49, 98.21005), new mp.Vector3(6.329293E-05, 6.329286E-05, -89.98996), false, false);
+    object.create(2079702193, new mp.Vector3(-1281.29, 439.49, 99.32), new mp.Vector3(6.329293E-05, 6.329281E-05, -89.98991), false, false);
+    object.create(2079702193, new mp.Vector3(-1290.16, 428.34, 93.72), new mp.Vector3(-4.462359E-05, -6.329293E-05, -179.99), false, false);
+    object.create(2079702193, new mp.Vector3(-1290.16, 428.34, 94.82), new mp.Vector3(-4.462359E-05, -6.329293E-05, -179.99), false, false);
+    object.create(2079702193, new mp.Vector3(-1290.16, 428.34, 95.93), new mp.Vector3(-4.462359E-05, -6.329293E-05, -179.99), false, false);
+    object.create(2079702193, new mp.Vector3(-1288.18, 428.34, 93.72), new mp.Vector3(-4.462359E-05, -6.329293E-05, -179.99), false, false);
+    object.create(2079702193, new mp.Vector3(-1288.18, 428.34, 94.82), new mp.Vector3(-4.462359E-05, -6.329293E-05, -179.99), false, false);
+    object.create(2079702193, new mp.Vector3(-1288.18, 428.34, 95.92), new mp.Vector3(-4.462359E-05, -6.329293E-05, -179.99), false, false);
+    object.create(2079702193, new mp.Vector3(-1286.2, 428.34, 93.72), new mp.Vector3(-4.462359E-05, -6.329293E-05, -179.99), false, false);
+    object.create(2079702193, new mp.Vector3(-1286.2, 428.34, 94.82), new mp.Vector3(-4.462359E-05, -6.329293E-05, -179.99), false, false);
+    object.create(2079702193, new mp.Vector3(-1286.2, 428.34, 95.92), new mp.Vector3(-4.462359E-05, -6.329293E-05, -179.99), false, false);
+    object.create(2079702193, new mp.Vector3(-1284.21, 428.34, 93.72), new mp.Vector3(-4.462359E-05, -6.329293E-05, -179.99), false, false);
+    object.create(2079702193, new mp.Vector3(-1284.21, 428.34, 94.82), new mp.Vector3(-4.462359E-05, -6.329293E-05, -179.99), false, false);
+    object.create(2079702193, new mp.Vector3(-1284.21, 428.34, 95.92), new mp.Vector3(-4.462359E-05, -6.329293E-05, -179.99), false, false);
+    object.create(2079702193, new mp.Vector3(-1282.23, 428.34, 93.72), new mp.Vector3(-4.462359E-05, -6.329293E-05, -179.99), false, false);
+    object.create(2079702193, new mp.Vector3(-1282.23, 428.34, 94.82), new mp.Vector3(-4.462359E-05, -6.329293E-05, -179.99), false, false);
+    object.create(2079702193, new mp.Vector3(-1282.23, 428.34, 95.92), new mp.Vector3(-4.462359E-05, -6.329293E-05, -179.99), false, false);
+    object.create(2079702193, new mp.Vector3(-1281.28, 430.24, 94.2196), new mp.Vector3(6.329293E-05, 6.329289E-05, -89.98997), false, false);
+    object.create(2079702193, new mp.Vector3(-1281.28, 430.24, 95.32), new mp.Vector3(6.329293E-05, 6.329286E-05, -89.98996), false, false);
+
+// Int 13
+    object.create(2079702193, new mp.Vector3(-781.37, 343.96, 216.48), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-781.37, 343.96, 217.59), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-781.37, 343.96, 218.7), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-783.35, 343.96, 216.48), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-783.35, 343.96, 217.58), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-783.35, 343.96, 218.68), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-785.33, 343.96, 216.48), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-785.33, 343.96, 217.58), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-785.33, 343.96, 218.68), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-787.31, 343.96, 216.48), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-787.31, 343.96, 217.58), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-787.31, 343.96, 218.69), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-789.29, 343.96, 216.48), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-789.29, 343.96, 217.59), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-789.29, 343.96, 218.7), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-796.37, 340.36, 220.08), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-796.37, 340.36, 221.18), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-796.37, 340.36, 222.29), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-798.35, 340.36, 220.08), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-798.35, 340.36, 221.18), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-798.35, 340.36, 222.29), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-799.97, 340.36, 220.08), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-799.97, 340.36, 221.19), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-799.97, 340.36, 222.3), new mp.Vector3(0, 0, 0), false, false);
+
+// Int 14
+    object.create(2079702193, new mp.Vector3(-787.32, 343.54, 205.87), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-787.32, 343.54, 206.98), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-787.32, 343.54, 208.09), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-787.85, 343.54, 205.87), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-787.85, 343.54, 206.98), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-787.85, 343.54, 208.08), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-790.52, 343.54, 205.87), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-790.52, 343.54, 206.98), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-790.52, 343.54, 208.08), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-792.5, 343.54, 205.87), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-792.5, 343.54, 206.98), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-792.5, 343.54, 208.08), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-794.48, 343.54, 205.87), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-794.48, 343.54, 206.98), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-794.48, 343.54, 208.08), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-796.46, 343.54, 205.88), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-796.46, 343.54, 206.98), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-796.46, 343.54, 208.08), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-804.52, 341.93, 205.88), new mp.Vector3(2.564906E-12, -5.008952E-06, 89.99995), false, false);
+    object.create(2079702193, new mp.Vector3(-804.52, 341.93, 206.99), new mp.Vector3(3.732026E-12, -5.008951E-06, 89.99993), false, false);
+    object.create(2079702193, new mp.Vector3(-804.52, 341.93, 208.1), new mp.Vector3(5.292704E-12, -5.008949E-06, 89.99989), false, false);
+    object.create(2079702193, new mp.Vector3(-804.52, 339.94, 205.88), new mp.Vector3(3.732026E-12, -5.008951E-06, 89.99993), false, false);
+    object.create(2079702193, new mp.Vector3(-804.52, 339.94, 206.99), new mp.Vector3(5.292704E-12, -5.008949E-06, 89.99989), false, false);
+    object.create(2079702193, new mp.Vector3(-804.52, 339.94, 208.1), new mp.Vector3(7.844052E-12, -5.008947E-06, 89.99985), false, false);
+    object.create(2079702193, new mp.Vector3(-804.52, 337.96, 205.88), new mp.Vector3(5.292704E-12, -5.008949E-06, 89.99989), false, false);
+    object.create(2079702193, new mp.Vector3(-804.52, 337.96, 206.98), new mp.Vector3(7.844052E-12, -5.008947E-06, 89.99985), false, false);
+    object.create(2079702193, new mp.Vector3(-804.52, 337.96, 208.08), new mp.Vector3(1.116895E-11, -5.008944E-06, 89.99978), false, false);
+    object.create(2079702193, new mp.Vector3(-804.52, 335.98, 205.88), new mp.Vector3(7.844052E-12, -5.008947E-06, 89.99985), false, false);
+    object.create(2079702193, new mp.Vector3(-804.52, 335.98, 206.98), new mp.Vector3(1.116895E-11, -5.008944E-06, 89.99978), false, false);
+    object.create(2079702193, new mp.Vector3(-804.52, 335.98, 208.08), new mp.Vector3(1.448029E-11, -5.008941E-06, 89.9997), false, false);
+    object.create(2079702193, new mp.Vector3(-804.52, 334, 206.99), new mp.Vector3(1.448029E-11, -5.008941E-06, 89.9997), false, false);
+    object.create(2079702193, new mp.Vector3(-804.52, 334, 208.1), new mp.Vector3(1.857873E-11, -5.008937E-06, 89.99962), false, false);
+    object.create(2079702193, new mp.Vector3(-804.52, 334, 205.88), new mp.Vector3(1.857873E-11, -5.008937E-06, 89.99962), false, false);
+    object.create(2079702193, new mp.Vector3(-804.52, 327.94, 205.88), new mp.Vector3(2.208005E-11, -5.008933E-06, 89.99953), false, false);
+    object.create(2079702193, new mp.Vector3(-804.52, 327.94, 206.99), new mp.Vector3(2.558136E-11, -5.008929E-06, 89.99945), false, false);
+    object.create(2079702193, new mp.Vector3(-804.52, 327.94, 208.1), new mp.Vector3(2.928621E-11, -5.008925E-06, 89.99937), false, false);
+    object.create(2079702193, new mp.Vector3(-804.52, 325.96, 205.88), new mp.Vector3(2.558136E-11, -5.008929E-06, 89.99945), false, false);
+    object.create(2079702193, new mp.Vector3(-804.52, 325.96, 206.98), new mp.Vector3(2.928621E-11, -5.008925E-06, 89.99937), false, false);
+    object.create(2079702193, new mp.Vector3(-804.52, 325.96, 208.09), new mp.Vector3(3.299104E-11, -5.008921E-06, 89.99929), false, false);
+    object.create(2079702193, new mp.Vector3(-787.32, 343.54, 201.06), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-787.32, 343.54, 202.17), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-787.32, 343.54, 203.28), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-787.85, 343.54, 201.06), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-787.85, 343.54, 202.16), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-787.85, 343.54, 203.27), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-790.52, 343.54, 201.05), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-790.52, 343.54, 202.16), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-790.52, 343.54, 203.26), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-792.5, 343.54, 201.06), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-792.5, 343.54, 202.17), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-792.5, 343.54, 203.28), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-794.48, 343.54, 201.06), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-794.48, 343.54, 202.16), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-794.48, 343.54, 203.26), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-796.46, 343.54, 201.06), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-796.46, 343.54, 202.16), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2079702193, new mp.Vector3(-796.46, 343.54, 203.26), new mp.Vector3(0, 0, 0), false, false);
+
+    //Clubs
+    object.create(-1964135416, new mp.Vector3(-1178.14, -1195.98, 9.233026), new mp.Vector3(2.035555E-13, 5.008956E-06, 10.00001), false, false);
+    object.create(-1964135416, new mp.Vector3(-1173.33, -1173.46, 9.965003), new mp.Vector3(1.00179E-05, 5.008956E-06, 15), false, false);
+    object.create(-1964135416, new mp.Vector3(-1175.2, -1152.501, 11.08638), new mp.Vector3(1.424888E-12, 5.008948E-06, 105.0995), false, false);
+    object.create(1873958683, new mp.Vector3(345.16, -966.5164, 33.99652), new mp.Vector3(5.97114E-13, -5.008956E-06, 89.99999), false, false);
+    object.create(1873958683, new mp.Vector3(345.16, -978.5415, 32.49959), new mp.Vector3(1.384231E-12, -5.008955E-06, 89.99998), false, false);
+    object.create(1873958683, new mp.Vector3(345.1865, -992.3479, 34), new mp.Vector3(1.384231E-12, -5.008955E-06, 89.99998), false, false);
+    object.create(1873958683, new mp.Vector3(332.75, -994.23, 32.69476), new mp.Vector3(5.008951E-06, -5.008956E-06, -5.008955E-06), false, false);
+    object.create(-1874162628, new mp.Vector3(-1173.742, -1152.158, 8.116696), new mp.Vector3(-58.75011, 0.07550914, -75.86123), false, false);
+    object.create(-1874162628, new mp.Vector3(-1173.221, -1173.51, 12.67857), new mp.Vector3(13.74995, -4.834294E-06, 16.00003), false, false);
+    object.create(-1874162628, new mp.Vector3(-1178.13, -1196, 11.73), new mp.Vector3(13.74994, 5.273774E-06, 9.875067), false, false);
+    object.create(1449564591, new mp.Vector3(5.06, 221.26, 110.7812), new mp.Vector3(1.001791E-05, 5.008956E-06, 69.95999), false, false);
+    object.create(1449564591, new mp.Vector3(-21.69, 219.83, 110.0739), new mp.Vector3(1.001787E-05, 5.008956E-06, -8.999997), false, false);
+
     //Dock Mapping
     object.create(1524671283, new mp.Vector3(-426.3395, -2638.948, 7.62), new mp.Vector3(0, 0, 28.9998), false, false);
     object.create(1576342596, new mp.Vector3(-428.1002, -2640.67, 7.5), new mp.Vector3(0, 0, 50.99985), false, false);
@@ -33,19 +489,11 @@ object.load = function () {
     object.create(-1286880215, new mp.Vector3(-413.0188, -2656.853, 5.000217), new mp.Vector3(0, 0, -135.2446), false, false);
     object.create(-1286880215, new mp.Vector3(-397.9273, -2641.651, 5.000217), new mp.Vector3(0, 0, -135.8452), false, false);
 
-    //Galaxy
-    object.create(1873958683, new mp.Vector3(5.12, 221.3692, 111.1681), new mp.Vector3(1.00179E-05, -5.008956E-06, 69.94978), false, false);
-    object.create(-62459927, new mp.Vector3(3.640865, 218.7829, 106.7872), new mp.Vector3(0, 0, 65.09992), false, false);
-    object.create(-62459927, new mp.Vector3(3.344031, 217.5904, 106.7872), new mp.Vector3(0, 0, -105.9), false, false);
-    object.create(-62459927, new mp.Vector3(2.891121, 216.7459, 106.7872), new mp.Vector3(0, 0, 71.10005), false, false);
-    object.create(-62459927, new mp.Vector3(2.662874, 215.7804, 106.7872), new mp.Vector3(0, 0, -108.8998), false, false);
-    object.create(-62459927, new mp.Vector3(0.7765616, 210.9651, 106.116), new mp.Vector3(0, 0, 71.10004), false, false);
-    object.create(-62459927, new mp.Vector3(1.297037, 212.0501, 106.116), new mp.Vector3(0, 0, -108.8998), false, false);
-    object.create(-62459927, new mp.Vector3(1.594715, 213.2014, 106.116), new mp.Vector3(0, 0, 71.10004), false, false);
-    object.create(-62459927, new mp.Vector3(2.124307, 214.2887, 106.116), new mp.Vector3(0, 0, -108.8998), false, false);
+    // Баррикада возле Мейз Офис
+    object.create(1603241576, new mp.Vector3(50.99, -781.9912, 43.16505), new mp.Vector3(0, 0, 70.19968), false, false);
 
     //Sheriff LS
-    //object.delete(mp.game.joaat("prop_sec_gate_01c"), 375.9481, -1632.531, 27.24899);
+    object.delete(mp.game.joaat("prop_sec_gate_01c"), 375.9481, -1632.531, 27.24899);
 
     //SAPD Банкомат
     object.create(-870868698, new mp.Vector3(436.36, -988.04, 29.68959), new mp.Vector3(0, 0, 179.8003), false, false);
@@ -377,7 +825,7 @@ object.load = function () {
 
     const end = new Date().getTime();
     methods.debug('Count Objects Loaded: ' + objectList.length + '  | ' + (end - start) + 'ms');
-    object.process();
+    setInterval(object.process, 5000);
 };
 
 object.create = function (model, pos, rotation, dynamic, placeOnGround, invType = 0, safe = 0) {
@@ -705,8 +1153,6 @@ object.process = function () {
             }
         }
     });
-
-    setTimeout(object.process, 5000);
 };
 
 object.openDoor = function (hash, x, y, z, isClose) {

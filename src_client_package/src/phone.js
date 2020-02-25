@@ -29,10 +29,6 @@ phone.show = function() {
         mp.game.ui.notifications.show("~r~У Вас нет телефона");
         return;
     }
-    if (user.getCache('jail_time') > 0) {
-        mp.game.ui.notifications.show("~r~Нельзя пользоваться телефонов в тюрьме");
-        return;
-    }
 
     //chat.activate(false);
     try {
@@ -57,6 +53,10 @@ phone.show = function() {
 phone.showOrHide = function() {
     if (!inventory.isHide()) {
         //mp.game.ui.notifications.show("~r~Во время открытого инвентаря, нельзоя пользоваться телефоном");
+        return;
+    }
+    if (user.getCache('jail_time') > 0) {
+        mp.game.ui.notifications.show("~r~Нельзя пользоваться телефонов в тюрьме");
         return;
     }
     if (user.isCuff() || user.isTie()) {
@@ -2513,7 +2513,7 @@ phone.callBackModalInput = function(paramsJson, text) {
                 return;
             }
             user.removePayDayMoney(sum);
-            user.addBankMoney(sum);
+            user.addBankMoney(sum, 'Перевод с зарплатного счёта');
             user.sendSmsBankOperation(`Вы перевели ~g~${methods.moneyFormat(sum)}~s~ на ваш банковский счёт`, 'Зарплата');
 
             setTimeout(phone.showAppBank, 500);
@@ -2742,6 +2742,11 @@ phone.callBackButton = async function(menu, id, ...args) {
             if (params.name == 'newsList') {
                 mp.events.callRemote('server:phone:userNewsList');
                 phone.showLoad();
+            }
+        }
+        if (menu == 'adList') {
+            if (params.name == 'sendMessage') {
+                ui.callCef('phone' + phone.getType(), JSON.stringify({type: 'selectChat', phone: params.phone}));
             }
         }
         if (menu == 'bank') {

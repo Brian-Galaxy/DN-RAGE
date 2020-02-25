@@ -234,6 +234,14 @@ for(let code in keyCodes) {
             return;
 
         if (user.getCache('s_bind_do') == parseInt(code)) {
+            if (user.isCuff() || user.isTie()) {
+                mp.game.ui.notifications.show("~r~Вы связаны или в наручниках");
+                return;
+            }
+            if (user.getCache('jail_time') > 0) {
+                mp.game.ui.notifications.show("~r~Нельзя пользоваться этим меню, в тюрьме");
+                return;
+            }
             if (!methods.isBlockKeys()) {
                 let targetEntity = user.getTargetEntityValidate();
                 if (targetEntity) {
@@ -242,11 +250,27 @@ for(let code in keyCodes) {
             }
         }
         if (user.getCache('s_bind_inv') == parseInt(code)) {
+            if (user.isCuff() || user.isTie()) {
+                mp.game.ui.notifications.show("~r~Вы связаны или в наручниках");
+                return;
+            }
+            if (user.getCache('jail_time') > 0) {
+                mp.game.ui.notifications.show("~r~Нельзя пользоваться инвентарем, в тюрьме");
+                return;
+            }
             if (!methods.isBlockKeys() && phone.isHide()) {
                 ui.callCef('inventory', '{"type": "showOrHide"}')
             }
         }
         if (user.getCache('s_bind_inv_world') == parseInt(code)) {
+            if (user.isCuff() || user.isTie()) {
+                mp.game.ui.notifications.show("~r~Вы связаны или в наручниках");
+                return;
+            }
+            if (user.getCache('jail_time') > 0) {
+                mp.game.ui.notifications.show("~r~Нельзя пользоваться инвентарем, в тюрьме");
+                return;
+            }
             if (!methods.isBlockKeys() && phone.isHide())
                 inventory.getItemList(0, 0);
         }

@@ -39,6 +39,7 @@ let checkStats = function()
                 if (veh.getPedInSeat(-1) == localPlayer.handle && !veh.isInAir() && methods.getCurrentSpeed() > 10) {
                     mp.game.ui.notifications.show(`~g~Навык вождения был повышен`);
 
+                    user.set('stats_driving', user.getCache('stats_driving') + 1);
                     if (user.isUsmc())
                         user.set('stats_driving', user.getCache('stats_driving') + 1);
                 }
@@ -53,6 +54,7 @@ let checkStats = function()
                 if (veh.getPedInSeat(-1) == localPlayer.handle && veh.isInAir()) {
                     mp.game.ui.notifications.show(`~g~Навык пилота был повышен`);
 
+                    user.set('stats_flying', user.getCache('stats_flying') + 1);
                     if (user.isUsmc())
                         user.set('stats_flying', user.getCache('stats_flying') + 1);
                 }
@@ -94,6 +96,8 @@ let updateStats = function(){
 
     try {
         mp.game.gameplay.terminateAllScriptsWithThisName('stats_controller﻿');
+
+        //mp.players.local.setAccuracy(user.getCache('stats_shooting'));
 
         mp.game.stats.statSetInt(mp.game.joaat("MP0_STAMINA"), user.getCache('stats_endurance'), true);
         mp.game.stats.statSetInt(mp.game.joaat("MP0_STRENGTH"), user.getCache('stats_strength'), true);

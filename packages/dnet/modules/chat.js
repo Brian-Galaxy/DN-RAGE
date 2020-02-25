@@ -148,9 +148,26 @@ mp.events.add("playerChat", function (player, text) {
     chat.send(player, text);
 });
 
+let gate = null;
 mp.events.add('playerCommand', (player, command) => {
 
     try {
+        if (command.toLowerCase().slice(0, 2) === "gt") {
+            gate = mp.objects.new(-1603817716, new mp.Vector3(410.56, -1023.27, 28.4),
+                {
+                    rotation: new mp.Vector3(-5.97114E-13, -5.008956E-06, -89.99999),
+                    alpha: 255,
+                    dimension: -1
+                });
+
+            let newPos =  new mp.Vector3(410.56, -1028.75, 28.4);
+            let internal = setInterval(function () {
+                gate.position = methods.lerp(gate.position, newPos, 0.01);
+                if (methods.distanceToPos(gate.position, newPos) < 0.1)
+                    clearInterval(internal);
+            }, 10);
+        }
+
         if (command.toLowerCase().slice(0, 3) === "me ") {
             chat.sendMeCommand(player, command.substring(3));
         }

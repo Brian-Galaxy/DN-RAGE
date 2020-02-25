@@ -362,7 +362,7 @@ enums.carShop = {
         buyPos: [-753.868896484375, -1511.37255859375, 5.018497467041016],
         //carPos: [-745.6092529296875, -1468.6219482421875, 4.9029998779296875, 141.96343994140625],
         carPos: [-1509.556640625, -2993.076416015625, -81.60472869873047, 271.43310546875],
-        spawnPos: [-745.0640869140625, -1468.766845703125, 4.89816951751709, 325.9874572753906],
+        spawnPos: [-745.0640869140625, -1468.766845703125, 5.99816951751709, 325.9874572753906],
     },
     plane: {
         id: 8,
@@ -373,7 +373,7 @@ enums.carShop = {
         buyPos: [-1242.8729248046875, -3392.7373046875, 13.940155982971191],
         //carPos: [-1260.41064453125, -3385.53955078125, 14.54305648803711, 330.30157470703125],
         carPos: [-1509.556640625, -2993.076416015625, -81.60472869873047, 271.43310546875],
-        spawnPos: [-1240.5579833984375, -3321.62255859375, 14.547557830810547, 332.23095703125],
+        spawnPos: [-1240.5579833984375, -3321.62255859375, 15.847557830810547, 332.23095703125],
     },
     boat: {
         id: 9,
@@ -484,7 +484,7 @@ enums.fractionList = {
         leaderPayDay: 3400,
         subLeaderPayDay: 2800,
         rankList: [
-            ["Captain", "Deputy Captain", "Senior Cadet", "Cadet"], //0
+            ["Captain", "Deputy Captain", "Instructor", "Junior Instructor", "Senior Cadet", "Cadet"], //0
             ["Captain", "Deputy Captain", "Lieutenant II", "Lieutenant I", "Sergeant II", "Sergeant I", "Police Officier III+1", "Police Officier III", "Police Officier II", "Police Officier I"], //1
             ["Captain", "Deputy Captain", "Lieutenant II", "Lieutenant I", "Sergeant II", "Sergeant I"], //2
             ["Captain", "Deputy Captain", "Lieutenant II", "Lieutenant I", "Sergeant II", "Sergeant I"], //3
@@ -3883,7 +3883,7 @@ enums.vehicleImgList = [
     {name: "Moonbeam2", path: "https://wiki.rage.mp/images/thumb/c/c1/Moonbeam2.png/164px-Moonbeam2.png"},
     {name: "Nightshade", path: "https://wiki.rage.mp/images/thumb/e/ec/Nightshade.png/164px-Nightshade.png"},
     {name: "Peyote2", path: "https://wiki.rage.mp/images/thumb/3/35/Peyote2.png/137px-Peyote2.png"},
-    {name: "Pheonix", path: "https://wiki.rage.mp/images/thumb/5/53/Pheonix.png/164px-Pheonix.png"},
+    {name: "Phoenix", path: "https://wiki.rage.mp/images/thumb/5/53/Pheonix.png/164px-Pheonix.png"},
     {name: "Picador", path: "https://wiki.rage.mp/images/thumb/1/15/Picador.png/164px-Picador.png"},
     {name: "Ratloader", path: "https://wiki.rage.mp/images/thumb/7/7a/Ratloader.png/164px-Ratloader.png"},
     {name: "Ratloader2", path: "https://wiki.rage.mp/images/thumb/b/b7/Ratloader2.png/164px-Ratloader2.png"},
@@ -4120,6 +4120,7 @@ enums.vehicleImgList = [
     {name: "Kuruma", path: "https://wiki.rage.mp/images/thumb/8/8f/Kuruma.png/164px-Kuruma.png"},
     {name: "Kuruma2", path: "https://wiki.rage.mp/images/thumb/0/09/Kuruma2.png/164px-Kuruma2.png"},
     {name: "Locust", path: "https://wiki.rage.mp/images/thumb/1/1e/Locust.png/130px-Locust.png"},
+    {name: "Lynx", path: "https://wiki.rage.mp/images/thumb/a/a7/Lynx2.png/164px-Lynx2.png"},
     {name: "Lynx2", path: "https://wiki.rage.mp/images/thumb/a/a7/Lynx2.png/164px-Lynx2.png"},
     {name: "Massacro", path: "https://wiki.rage.mp/images/thumb/7/78/Massacro.png/164px-Massacro.png"},
     {name: "Massacro2", path: "https://wiki.rage.mp/images/thumb/b/be/Massacro2.png/164px-Massacro2.png"},

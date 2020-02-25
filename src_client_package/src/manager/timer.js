@@ -3,6 +3,7 @@ import weapons from "../weapons";
 import inventory from "../inventory";
 import phone from "../phone";
 import enums from "../enums";
+import chat from "../chat";
 
 import methods from "../modules/methods";
 import Container from "../modules/data";
@@ -16,7 +17,7 @@ import weather from './weather';
 import hosp from './hosp';
 import discord from "./discord";
 import checkpoint from "./checkpoint";
-import chat from "../chat";
+import dispatcher from "./dispatcher";
 
 import fuel from "../business/fuel";
 
@@ -216,12 +217,6 @@ timer.twoSecTimer = function() {
         else
             checkpoint.emitExit(99999);
 
-        if (user.isLogin() && !user.isAdmin()) {
-            if (mp.game.player.getInvincible() || mp.players.local.getMaxHealth() >= 1000 || mp.players.local.health >= 1000) {
-                user.kickAntiCheat('GodMode');
-            }
-        }
-
         if (!mp.players.local.isInAnyVehicle(true)) {
             let drawId = mp.players.local.getPropIndex(0);
             if (user.getSex() == 0 && drawId != 116 && drawId != 118)
@@ -307,7 +302,6 @@ timer.tenSecTimer = function() {
     setTimeout(timer.tenSecTimer, 10000);
 };
 
-let prevPos = new mp.Vector3(0, 0, 0);
 let prevWpPos = new mp.Vector3(0, 0, 0);
 
 timer.secTimer = function() {
@@ -484,35 +478,12 @@ timer.secTimer = function() {
             return;
         }
 
-        let isKick = false;
-        weapons.getMapList().forEach(item => {
-            if (mp.game.invoke(methods.HAS_PED_GOT_WEAPON, mp.players.local.handle, (item[1] / 2), false)) {
-                if (isKick)
-                    return;
-                if (!Container.Data.HasLocally(0, (item[1] / 2).toString()) && item[0] != 'weapon_unarmed') {
-                    user.kickAntiCheat(`Try Gun ${item[0]}`);
-                    methods.saveLog('Cheater', `${user.getCache('name')} (${user.getCache('id')}) gun: ${item[0]}`);
-                    isKick = true;
-                }
-            }
-        });
-
         let wpPos = methods.getWaypointPosition();
         if (mp.players.local.vehicle && wpPos.x != 0 && wpPos.y != 0) {
             if (prevWpPos.x != wpPos.x && prevWpPos.y != wpPos.y)
                 mp.events.callRemote('server:changeWaypointPos', wpPos.x, wpPos.y);
         }
         prevWpPos = wpPos;
-
-        /*if (!user.isAdmin() && (user.getCache('age') == 18 && user.getCache('exp_age') > 5 || user.getCache('age') > 18)) {
-            let newPos = mp.players.local.position;
-            let dist = mp.players.local.vehicle ? methods.getCurrentSpeed() + 100 : 100;
-            if (methods.distanceToPos2D(prevPos, newPos) > dist && prevPos.x != 0) {
-                if (!user.isTeleport)
-                    user.kickAntiCheat(`Teleport`);
-            }
-            prevPos = newPos;
-        }*/
     }
     catch (e) {
         methods.debug(e);

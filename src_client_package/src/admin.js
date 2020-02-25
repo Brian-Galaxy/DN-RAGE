@@ -86,6 +86,8 @@ mp.events.add('render', () => {
             noClipEntity.freezePosition(true);
             noClipEntity.setInvincible(true);
 
+            user.setTeleport(true);
+
             mp.game.controls.disableControlAction(0, 8, true);
             mp.game.controls.disableControlAction(0, 9, true);
             mp.game.controls.disableControlAction(0, 30, true);

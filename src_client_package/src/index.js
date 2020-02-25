@@ -33,6 +33,8 @@ import enums from "./enums";
 import phone from "./phone";
 import chat from "./chat";
 
+import "./antiCheat";
+
 try {
 
     mp.gui.chat.show(false);
@@ -64,9 +66,10 @@ try {
         methods.requestIpls();
     }
     catch (e) {
-        methods.debug(e);
+        methods.saveFile('errorIpl', e);
     }
     setTimeout(checkpoint.checkPosition, 10000);
+
     enums.loadCloth();
     business.loadScaleform();
 
@@ -86,19 +89,26 @@ try {
 
     if(!mp.game.streaming.isIplActive("int_magazel1_milo_"))
     {
-        user.showCustomNotify('Идёт прогрузка интерьеров и маппинга, возможно игра подвиснет на несколько секунд...');
-        setTimeout(function () {
-            mp.game.invoke("0xD7C10C4A637992C9"); // _LOAD_SP_DLC_MAPS
-            mp.game.invoke("0x0888C3502DBBEEF5"); // _LOAD_MP_DLC_MAPS
+        user.showCustomNotify('Идёт прогрузка интерьеров и маппинга, возможно игра подвиснет на несколько секунд...', 0, 1000);
 
-            setTimeout(function () {
+        /*let interval = null; //TODO переделать
+        setTimeout(function () {
+            setInterval(function () {
                 try {
-                    methods.requestIpls();
+                    if (!mp.game.streaming.isIplActive("ex_sm_15_office_01a"))
+                        methods.requestIpls();
+                    else
+                        clearInterval(interval);
                 }
                 catch (e) {
                     methods.debug(e);
                 }
-            }, 30000)
+            }, 1000);
+        }, 60000);*/
+
+        setTimeout(function () {
+            mp.game.invoke("0xD7C10C4A637992C9"); // _LOAD_SP_DLC_MAPS
+            mp.game.invoke("0x0888C3502DBBEEF5"); // _LOAD_MP_DLC_MAPS
 
             //mp.game.invoke("0xD7C10C4A637992C9"); mp.game.invoke("0x0888C3502DBBEEF5"); // _LOAD_MP_DLC_MAPS
         }, 1000);

@@ -194,6 +194,8 @@ mp.events.add('client:syncScenario', (playerId, name) => {
                 remotePlayer.setAsMission(false, true);
 
             remotePlayer.clearTasks();
+            remotePlayer.clearTasksImmediately();
+
             if (name == 'PROP_HUMAN_SEAT_BENCH') {
                 let pos = remotePlayer.getOffsetFromInWorldCoords(0, -0.5, -0.5);
                 let heading = remotePlayer.getRotation(0).z;
@@ -430,7 +432,7 @@ mp.events.add("client:pSync:fpUpdate", async (id, camPitch, camHeading) => {
                     }
 
                     mp.game.invoke(methods.SET_PED_CURRENT_WEAPON_VISIBLE, netPlayer.handle, 0, 1, 1, 1);
-                    netPlayer.setConfigFlag(36, true)
+                    netPlayer.setConfigFlag(36, true);
                     netPlayer.taskMoveNetwork("task_mp_pointing", 0.5, false, "anim@mp_point", 24);
                     mp.game.streaming.removeAnimDict("anim@mp_point");
                 }

@@ -29,6 +29,7 @@ import jail from "../manager/jail";
 import vehicles from "../property/vehicles";
 import business from "../property/business";
 import vShop from "../business/vShop";
+import antiCheat from "../antiCheat";
 
 mp.gui.chat.enabled = false;
 
@@ -162,7 +163,7 @@ mp.events.add('client:events:loginAccount:success', function(data) {
                 player: {
                     name: playerList[0].name,
                     old: playerList[0].age,
-                    money: methods.moneyFormat(playerList[0].money),
+                    money: methods.moneyFormat(playerList[0].money, 999999999),
                     date: playerList[0].lastLogin,
                     sex: playerList[0].sex,
                     spawn: playerList[0].spawnList,
@@ -177,7 +178,7 @@ mp.events.add('client:events:loginAccount:success', function(data) {
                 player: {
                     name: playerList[1].name,
                     old: playerList[1].age,
-                    money: methods.moneyFormat(playerList[1].money),
+                    money: methods.moneyFormat(playerList[1].money, 999999999),
                     date: playerList[1].lastLogin,
                     sex: playerList[1].sex,
                     spawn: playerList[1].spawnList,
@@ -191,7 +192,7 @@ mp.events.add('client:events:loginAccount:success', function(data) {
                 player: {
                     name: playerList[2].name,
                     old: playerList[2].age,
-                    money: methods.moneyFormat(playerList[2].money),
+                    money: methods.moneyFormat(playerList[2].money, 999999999),
                     date: playerList[2].lastLogin,
                     sex: playerList[2].sex,
                     spawn: playerList[2].spawnList,
@@ -630,6 +631,8 @@ mp.events.add('client:events:loginUser:success', async function() {
         chat.sendLocal('Добро пожаловать на DEDNET 💀');
         chat.sendLocal('Желаем приятной игры ;]');
         chat.updateSettings();
+
+        antiCheat.load();
     }, 5000);
 });
 
@@ -1713,6 +1716,14 @@ mp.events.add('client:inventory:moveTo', function(id, itemId, ownerId, ownerType
         inventory.updateOwnerId(id, methods.parseInt(ownerId), ownerType);
 });
 
+mp.events.add('client:inventory:moveToAll', function(ownerId, ownerType) {
+    if (ownerType == 0) {
+        mp.game.ui.notifications.show("~r~Нельзя таким образом выкидывать предметы :c");
+        return;
+    }
+    inventory.updateOwnerAll(user.getCache('id'), inventory.types.Player, methods.parseInt(ownerId), ownerType);
+});
+
 mp.events.add('client:inventory:giveItem', function(id, itemId, playerId) {
     inventory.giveItem(id, itemId, playerId)
 });
@@ -1797,6 +1808,10 @@ mp.events.add('client:inventory:loadWeapon', function(id, itemId, loadItemId, co
 
     if (items.getAmmoCount(currentAmmoId) <= ammo) {
         mp.game.ui.notifications.show(`~r~Превышен максимальный запас патрон`);
+        return;
+    }
+    if (count <= 0) {
+        mp.game.ui.notifications.show(`~r~Коробка пустая`);
         return;
     }
 
@@ -2171,6 +2186,7 @@ mp.events.add('client:phone:showMenu', function(data) {
 mp.events.add('client:phone:inputModal', function(state) {
     chat.show(!state);
     chat.activate(!state);
+    methods.blockKeys(state);
     mp.gui.cursor.show(state, true);
 });
 
@@ -2518,7 +2534,7 @@ mp.events.add('playerMaybeTakeShot', (shootEntityId) => {
         mp.game.player.setMeleeWeaponDefenseModifier(damage);
         mp.game.player.setWeaponDefenseModifier(damage);
 
-        methods.debug('playerMaybeTakeShot', damage, currentWeapon, shootEntityId);
+        //methods.debug('playerMaybeTakeShot', damage, currentWeapon, shootEntityId);
     }
     catch (e) {
         mp.game.ped.setAiMeleeWeaponDamageModifier(2);
@@ -2563,6 +2579,7 @@ mp.events.add("playerDeath", function (player, reason, killer) {
     }
 });
 
+let gate = null;
 // Commands in 2020......
 mp.events.add("playerCommand", async (command) => {
     if (command.toLowerCase().slice(0, 3) === "tph") {
@@ -2607,7 +2624,7 @@ mp.events.add("playerCommand", async (command) => {
             methods.debug(e);
         }
     }
-    /*else if (command.toLowerCase().slice(0, 2) === "h ") {
+    else if (command.toLowerCase().slice(0, 2) === "h ") {
         let args = command.split(' ');
         if (args.length != 4) {
             chat.sendLocal(`Не верно введено кол-во параметров `);
@@ -2678,7 +2695,7 @@ mp.events.add("playerCommand", async (command) => {
             return;
         }
         mp.events.callRemote('server:condo:insertBig', args[1], ui.getCurrentZone(), ui.getCurrentStreet())
-    }*/
+    }
     else if (command.toLowerCase().slice(0, 4) === "get ") {
         let args = command.split(' ');
         if (args.length != 2) {
@@ -2802,6 +2819,14 @@ mp.events.add('render', () => {
             mp.game.controls.disableControlAction(0,18,true); // disable sprint
             mp.game.controls.disableControlAction(0,24,true); // disable sprint
             mp.game.controls.disableControlAction(0,25,true); // disable sprint
+
+            mp.game.controls.disableControlAction(0,332,true); // RadioVeh
+            mp.game.controls.disableControlAction(0,333,true); // RadioVeh
+
+            mp.game.controls.disableControlAction(0,81,true); // RadioVeh
+            mp.game.controls.disableControlAction(0,82,true); // RadioVeh
+            mp.game.controls.disableControlAction(0,83,true); // RadioVeh
+            mp.game.controls.disableControlAction(0,84,true); // RadioVeh
 
             mp.game.controls.disableControlAction(0,24,true); // Attack
             mp.game.controls.disableControlAction(0,69,true); // Attack

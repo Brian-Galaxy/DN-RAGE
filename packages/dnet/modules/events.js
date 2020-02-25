@@ -39,6 +39,7 @@ let dispatcher = require('../managers/dispatcher');
 let weather = require('../managers/weather');
 let gangWar = require('../managers/gangWar');
 let ems = require('../managers/ems');
+let tax = require('../managers/tax');
 
 mp.events.__add__ = mp.events.add;
 
@@ -993,25 +994,65 @@ mp.events.addRemoteCounted('server:user:knockById', (player, targetId) => { //TO
     if (!user.isLogin(player))
         return;
 
+    if (user.has(player, 'isKnockoutTimeout'))
+    {
+        player.notify("~r~Таймаут 2 минуты на данное действие");
+        return;
+    }
+
     let target = mp.players.at(targetId);
     if (mp.players.exists(target)) {
-        if (methods.distanceToPos(pl.position, player.position) > 3) {
+        if (methods.distanceToPos(target.position, player.position) > 3) {
             player.notify('~r~Вы слишком далеко');
             return;
         }
-        user.set(target, 'isKnockout', true);
-        user.playAnimation(target, "amb@world_human_bum_slumped@male@laying_on_right_side@base", "base", 9);
-        chat.sendMeCommand(player, "замахнулся кулаком и ударил человека напротив");
 
+        if (user.get(player, 'jail_time') > 0 || user.get(target, 'jail_time') > 0)
+        {
+            player.notify("~r~В тюрьме это действие не доступно");
+            return;
+        }
+        if (user.get(player, 'med_time') > 0 || user.get(target, 'med_time') > 0)
+        {
+            player.notify("~r~В больнице это действие не доступно");
+            return;
+        }
+
+        let random = methods.getRandomInt(0, user.get(player, 'stats_strength') - 100);
+        //let random2 = methods.getRandomInt(0, user.get(target, 'stats_strength') - 200);
+
+        user.set(player, 'isKnockoutTimeout', true);
         setTimeout(function () {
             try {
-                user.set(target, 'isKnockout', false);
-                user.stopAnimation(target)
+                if (!user.isLogin(player))
+                    return;
+                user.reset(player, 'isKnockoutTimeout');
             }
             catch (e) {
                 methods.debug(e);
             }
-        }, 10000)
+        }, 120000);
+
+        if (random < 2) {
+            user.set(target, 'isKnockout', true);
+            target.setVariable('isKnockout', true);
+            user.playAnimation(target, "amb@world_human_bum_slumped@male@laying_on_right_side@base", "base", 9);
+            chat.sendMeCommand(player, "замахнулся кулаком и ударил человека напротив и точным ударом в челюсть, вырубил");
+
+            setTimeout(function () {
+                try {
+                    user.set(target, 'isKnockout', false);
+                    target.setVariable('isKnockout', undefined);
+                    user.stopAnimation(target)
+                }
+                catch (e) {
+                    methods.debug(e);
+                }
+            }, 10000)
+        }
+        else {
+            chat.sendMeCommand(player, "замахнулся кулаком и ударил человека напротив");
+        }
     }
     else
         player.notify('~r~Рядом с вами никого нет');
@@ -1361,6 +1402,10 @@ mp.events.addRemoteCounted('server:admin:setSkinById', (player, type, id, skin) 
 
 mp.events.addRemoteCounted('server:admin:resetSkinById', (player, type, id) => {
     admin.resetSkinById(player, type, id);
+});
+
+mp.events.addRemoteCounted('server:admin:changeDimension', (player, type, id, dim) => {
+    admin.changeDimension(player, type, id, dim);
 });
 
 mp.events.addRemoteCounted('server:admin:tptoid', (player, type, id) => {
@@ -2444,6 +2489,10 @@ mp.events.addRemoteCounted('server:inventory:updateOwnerId', (player, id, ownerI
     inventory.updateOwnerId(id, ownerId, ownerType);
 });
 
+mp.events.addRemoteCounted('server:inventory:updateOwnerAll', (player, oldOwnerId, oldOwnerType, ownerId, ownerType) => {
+    inventory.updateOwnerAll(oldOwnerId, oldOwnerType, ownerId, ownerType);
+});
+
 mp.events.addRemoteCounted('server:inventory:updateItemParams', (player, id, params) => {
     inventory.updateItemParams(id, params);
 });
@@ -2515,6 +2564,15 @@ mp.events.addRemoteCounted("server:vehicle:lockStatus", (player) => {
 
         let vehicle = methods.getNearestVehicleWithCoords(player.position, 5);
         if (vehicles.exists(vehicle)) {
+
+            if (vehicle.getVariable('useless'))
+                return;
+
+            if (user.isAdmin(player)) {
+                vehicles.lockStatus(player, vehicle);
+                return;
+            }
+
             let data = vehicles.getData(vehicle.getVariable('container'));
             if (vehicle.getVariable('fraction_id')) {
                 if (
@@ -2717,6 +2775,10 @@ mp.events.addRemoteCounted("onKeyPress:E", (player) => {
     }
 });
 
+mp.events.addRemoteCounted('server:tax:payTax', (player, type, score, sum) => {
+    tax.payTax(player, type, sum, score);
+});
+
 //Houses
 mp.events.addRemoteCounted("server:houses:enter", (player, id) => {
     if (!user.isLogin(player))
@@ -2728,6 +2790,12 @@ mp.events.addRemoteCounted("server:houses:enterv", (player, id) => {
     if (!user.isLogin(player))
         return;
     houses.enterv(player, id);
+});
+
+mp.events.addRemoteCounted("server:houses:enterGarage", (player, id) => {
+    if (!user.isLogin(player))
+        return;
+    houses.enterGarage(player, id);
 });
 
 mp.events.addRemoteCounted("server:houses:exitv", (player, id) => {
@@ -5330,9 +5398,11 @@ mp.events.add('server:playerWeaponShot', (player, targetId) => {
     }
 });
 
-mp.events.add("playerDamage", (player, healthLoss, armorLoss) => {
+/*mp.events.add("playerDamage", (player, healthLoss, armorLoss) => {
     //methods.saveFile('damage', `${player.socialClub} | ${healthLoss} ${armorLoss}`)
-});
+    player.call('client:anticheat:damage', [healthLoss, armorLoss]);
+    console.log(`${player.socialClub} | ${healthLoss} ${armorLoss}`);
+});*/
 
 mp.events.add('playerQuit', player => {
     user.setOnlineStatus(player, 0);

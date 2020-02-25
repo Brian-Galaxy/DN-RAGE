@@ -2270,6 +2270,12 @@ mp.events.addRemoteCounted('server:phone:userHistory', (player, id) => {
     phone.userHistory(player, id);
 });
 
+mp.events.addRemoteCounted('server:phone:changeBg', (player, id) => {
+    if (!user.isLogin(player))
+        return;
+    phone.changeBg(player, id);
+});
+
 mp.events.addRemoteCounted('server:phone:createFraction', (player) => {
     if (!user.isLogin(player))
         return;

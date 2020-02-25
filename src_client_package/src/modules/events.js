@@ -1960,6 +1960,7 @@ mp.events.add('client:inventory:unEquip', function(id, itemId) {
     }
     else if (itemId >= 27 && itemId <= 30) {
         user.set('phone_type', 0);
+        user.set('phone_bg', 'https://i.imgur.com/v4aju8F.jpg');
         user.set('phone', 0);
         user.save();
     }
@@ -2213,10 +2214,6 @@ mp.events.add('client:phone:apps', function(action) {
 
 mp.events.add('client:phone:callBack', function(action, menu, id, ...args) {
     phone.callBack(action, menu, id, ...args);
-});
-
-mp.events.add('client:phone:focusInput', function(focus) {
-
 });
 
 mp.events.add('client:phone:sendMessage', function(phone, chat, message) {

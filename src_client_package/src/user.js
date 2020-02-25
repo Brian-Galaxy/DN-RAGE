@@ -1452,6 +1452,7 @@ user.isSheriff = function() {
 user.isEms = function() {
     return user.isLogin() && user.getCache('fraction_id') == 6;
 };
+
 user.isNews = function() {
     return user.isLogin() && user.getCache('fraction_id') == 7;
 };

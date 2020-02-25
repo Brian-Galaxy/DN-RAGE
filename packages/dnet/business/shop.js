@@ -203,7 +203,7 @@ shop.buy = function(player, itemId, price, shopId) {
     let params = { userName: user.getRpName(player) };
 
     if (itemId >= 27 && itemId <= 30)
-        params = { userName: user.getRpName(player), type: itemId - 26, number: methods.getRandomPhone() };
+        params = { userName: user.getRpName(player), type: itemId - 26, number: methods.getRandomPhone(), bg: 'https://i.imgur.com/v4aju8F.jpg' };
 
     inventory.addItem(itemId, 1, 1, user.getId(player), 1, 0, JSON.stringify(params), 1);
 

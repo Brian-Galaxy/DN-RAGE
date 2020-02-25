@@ -47,7 +47,7 @@ tax.sell = function() {
     //=============================
     //============Склады=============
     //=============================
-    mysql.executeQuery("SELECT * FROM stocks WHERE tax_money <= (round(price * '" + _currentTax + "' + '10', 0) * '" + _taxDays + "') * '-1' AND user_id > '0' LIMIT 20", function (err, rows, fields) {
+    mysql.executeQuery("SELECT * FROM stocks WHERE tax_money <= (round(price * '" + _currentTax + "' + '" + _taxMin + "', 0) * '" + _taxDays + "') * '-1' AND user_id > '0' LIMIT 20", function (err, rows, fields) {
         rows.forEach(row => {
 
             let price = methods.parseInt(row['price']);
@@ -78,7 +78,7 @@ tax.sell = function() {
     //=============================
     //============Дома=============
     //=============================
-    mysql.executeQuery("SELECT * FROM houses WHERE tax_money <= (round(price * '" + _currentTax + "' + '10', 0) * '" + _taxDays + "') * '-1' AND user_id > '0' LIMIT 20", function (err, rows, fields) {
+    mysql.executeQuery("SELECT * FROM houses WHERE tax_money <= (round(price * '" + _currentTax + "' + '" + _taxMin + "', 0) * '" + _taxDays + "') * '-1' AND user_id > '0' LIMIT 20", function (err, rows, fields) {
         rows.forEach(row => {
 
             let price = methods.parseInt(row['price']);
@@ -109,7 +109,7 @@ tax.sell = function() {
     //=============================
     //============Квартира=============
     //=============================
-    mysql.executeQuery("SELECT * FROM condos WHERE tax_money <= (round(price * '" + _currentTax + "' + '10', 0) * '" + _taxDays + "') * '-1' AND user_id > '0' LIMIT 20", function (err, rows, fields) {
+    mysql.executeQuery("SELECT * FROM condos WHERE tax_money <= (round(price * '" + _currentTax + "' + '" + _taxMin + "', 0) * '" + _taxDays + "') * '-1' AND user_id > '0' LIMIT 20", function (err, rows, fields) {
         rows.forEach(row => {
 
             let price = methods.parseInt(row['price']);
@@ -140,7 +140,7 @@ tax.sell = function() {
     //=============================
     //============Бизнес=============
     //=============================
-    mysql.executeQuery("SELECT * FROM business WHERE tax_money <= (round(price * '" + _currentTax + "' + '10', 0) * '7') * '-1' AND user_id > '0' LIMIT 20", function (err, rows, fields) {
+    mysql.executeQuery("SELECT * FROM business WHERE tax_money <= (round(price * '" + _currentTax + "' + '" + _taxMin + "', 0) * '7') * '-1' AND user_id > '0' LIMIT 20", function (err, rows, fields) {
         rows.forEach(row => {
 
             let price = methods.parseInt(row['price']);
@@ -172,7 +172,7 @@ tax.sell = function() {
     //=============================
     //============Апарты=============
     //=============================
-    /*mysql.executeQuery("SELECT * FROM apartment WHERE tax_money <= (round(price * '" + _currentTax + "' + '10', 0) * '" + _taxDays + "') * '-1' AND user_id > '0' LIMIT 20", function (err, rows, fields) {
+    /*mysql.executeQuery("SELECT * FROM apartment WHERE tax_money <= (round(price * '" + _currentTax + "' + '" + _taxMin + "', 0) * '" + _taxDays + "') * '-1' AND user_id > '0' LIMIT 20", function (err, rows, fields) {
         rows.forEach(row => {
 
             let price = methods.parseInt(row['price']);
@@ -203,7 +203,7 @@ tax.sell = function() {
     //=============================
     //============Авто=============
     //=============================
-    mysql.executeQuery("SELECT * FROM cars WHERE tax_money <= (round(price * '" + _currentTax + "' + '10', 0) * '" + _taxDays + "') * '-1' AND user_id > '0' LIMIT 20", function (err, rows, fields) {
+    mysql.executeQuery("SELECT * FROM cars WHERE tax_money <= (round(price * '" + _currentTax + "' + '" + _taxMin + "', 0) * '" + _taxDays + "') * '-1' AND user_id > '0' LIMIT 20", function (err, rows, fields) {
         rows.forEach(row => {
 
             let price = methods.parseInt(row['price']);

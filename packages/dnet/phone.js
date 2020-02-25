@@ -9,6 +9,7 @@ let gangWar = require('./managers/gangWar');
 let user = require('./user');
 let enums = require('./enums');
 let coffer = require('./coffer');
+let inventory = require('./inventory');
 
 let phone = exports;
 
@@ -1341,6 +1342,30 @@ phone.userHistory = function(player, id) {
         }
 
         phone.showMenu(player, 'userHistory', `Личная история`, items);
+    });
+};
+
+phone.changeBg = function(player, str) {
+    if (!user.isLogin(player))
+        return;
+
+    let phoneNumber = user.get(player, 'phone');
+    mysql.executeQuery(`SELECT * FROM items WHERE params LIKE '%"number":${phoneNumber}%' OR params LIKE '%"number": ${phoneNumber}%'`, function (err, rows, fields) {
+
+        rows.forEach(function (item) {
+            try {
+                if (user.isLogin(player)) {
+                    str = methods.removeQuotes(methods.removeQuotes2(str));
+                    user.set(player, 'phone_bg', str);
+                    let params = JSON.parse(item['params']);
+                    params.bg = str;
+                    inventory.updateItemParams(item['id'], JSON.stringify(params));
+                }
+            }
+            catch (e) {
+                methods.debug(e);
+            }
+        });
     });
 };
 

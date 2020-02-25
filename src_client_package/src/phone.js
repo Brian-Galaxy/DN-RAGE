@@ -44,6 +44,8 @@ phone.show = function() {
         hidden = false;
 
         ui.callCef('phone', '{"type": "show"}');
+
+        phone.updateMainAppList();
     }
     catch (e) {
         methods.debug(e);
@@ -92,6 +94,29 @@ phone.isHide = function() {
 
 phone.getType = function() {
     return user.getCache('phone_type')
+};
+
+phone.addConsoleCommand = function(command) {
+
+    let data = {
+        type: 'addConsoleCommand',
+        command: command,
+    };
+
+    ui.callCef('phone' + phone.getType(), JSON.stringify(data));
+};
+
+phone.updateBg = function(idx) {
+    let data = {
+        type: 'updateBg',
+        url: idx,
+    };
+    ui.callCef('phone' + phone.getType(), JSON.stringify(data));
+};
+
+phone.toMainPage = function() {
+    let data = { type: 'toMainPage' };
+    ui.callCef('phone' + phone.getType(), JSON.stringify(data));
 };
 
 phone.timer = function() {
@@ -151,13 +176,97 @@ phone.apps = function(action) {
         case 'gps':
             phone.showAppGps();
             break;
+        case 'fraction':
+            phone.showAppFraction();
+            break;
+        case 'fraction2':
+            phone.showAppFraction2();
+            break;
+        case 'invader':
+            phone.showAppInvader();
+            break;
+        case 'bank':
+            phone.showAppBank();
+            break;
+        case 'settings':
+            phone.showAppSettings();
+            break;
+        case 'uveh':
+            mp.events.callRemote('server:phone:userVehicleAppMenu');
+            phone.showLoad();
+            break;
         default:
             phone.showLoad();
             break;
     }
 };
 
+phone.updateMainAppList = function() {
+    let appList = [
+        { link: "/phone/android/umenu", action: 'app', img: 'apps' },
+        { link: "/phone/android/umenu", action: 'gps', img: 'gps' },
+        { link: "/phone/android/phonebook", action: 'cont', img: 'cont' },
+        { link: "/phone/android/messenger", action: 'sms', img: 'sms' },
+        //{ link: "/phone/android/umenu", action: 'settings', img: 'settings' },
+        { link: "/phone/android/umenu", action: 'uveh', img: 'uveh' },
+        { link: "/phone/android/umenu", action: 'invader', img: 'invader' },
+    ];
+
+    if (user.getCache('fraction_id') === 1)
+        appList.push({ link: "/phone/android/umenu", action: 'fraction', img: 'gov' });
+    else if (user.getCache('fraction_id') === 2)
+        appList.push({ link: "/phone/android/umenu", action: 'fraction', img: 'lspd2' });
+    else if (user.getCache('fraction_id') === 5)
+        appList.push({ link: "/phone/android/umenu", action: 'fraction', img: 'bcsd' });
+    else if (user.getCache('fraction_id') === 6)
+        appList.push({ link: "/phone/android/umenu", action: 'fraction', img: 'ems' });
+    else if (user.getCache('fraction_id') === 7)
+        appList.push({ link: "/phone/android/umenu", action: 'fraction', img: 'news' });
+
+    if (user.getCache('fraction_id2') > 0)
+        appList.push({ link: "/phone/android/umenu", action: 'fraction2', img: 'community' });
+
+    if (user.getCache('bank_card') > 0) {
+
+        let prefix = user.getBankCardPrefix();
+
+        switch (prefix) {
+            case 6000:
+            {
+                appList.push({ link: "/phone/android/umenu", action: 'bank', img: 'maze' });
+                break;
+            }
+            case 7000:
+            {
+                appList.push({ link: "/phone/android/umenu", action: 'bank', img: 'pacific' });
+                break;
+            }
+            case 8000:
+            {
+                appList.push({ link: "/phone/android/umenu", action: 'bank', img: 'fleeca' });
+                break;
+            }
+            case 9000:
+            {
+                appList.push({ link: "/phone/android/umenu", action: 'bank', img: 'blaine' });
+                break;
+            }
+        }
+    }
+
+    if (user.getCache('crypto_card').trim() !== '')
+        appList.push({ link: "/phone/android/console", action: 'console', img: 'console' });
+
+    let data = {
+        type: 'updateApps',
+        apps: appList,
+    };
+
+    ui.callCef('phone' + phone.getType(), JSON.stringify(data));
+};
+
 phone.showAppList = function() {
+
     let menu = {
         UUID: 'apps',
         title: 'Установленные приложения',
@@ -177,10 +286,16 @@ phone.showAppList = function() {
                         type: 1,
                         params: { name: 'myHistory' },
                         clickable: true
-                    }
+                    },
+                    {
+                        title: 'Настройки',
+                        type: 1,
+                        params: { name: 'settings' },
+                        clickable: true
+                    },
                 ],
             },
-            {
+            /*{
                 title: 'Приложения',
                 umenu: [
                     {
@@ -200,11 +315,12 @@ phone.showAppList = function() {
                         params: { name: "invader" }
                     },
                 ],
-            },
+            },*/
         ],
     };
 
-    if (user.getCache('fraction_id') > 0) {
+
+    /*if (user.getCache('fraction_id') > 0) {
         let item = {
             title: user.getFractionNameL(),
             text: `Официальное приложение организации ${user.getFractionName()}`,
@@ -297,7 +413,7 @@ phone.showAppList = function() {
             params: { name: "ecorp" }
         };
         menu.items[1].umenu.push(item);
-    }
+    }*/
 
     phone.showMenu(menu);
 };
@@ -539,6 +655,54 @@ phone.showAppInvader= function() {
             },
         ],
     };
+
+    phone.showMenu(menu);
+};
+
+phone.showAppSettings = function() {
+
+    let menu = {
+        UUID: 'settings',
+        title: 'Настройки',
+        items: [
+            {
+                title: 'Фон',
+                umenu: [
+                    phone.getMenuItemModalInput(
+                        'Сменить фон',
+                        'Доступно только через сайт imgur.com и только по прямой ссылке (ПКМ по изображению и копировать URL изображения)',
+                        'Введите URL',
+                        user.getCache('phone_bg'),
+                        'Применить',
+                        'Отмена',
+                        { name: 'changeBg' },
+                        '',
+                        true
+                    )
+                ],
+            },
+        ],
+    };
+
+    let imgList = [
+        'https://i.imgur.com/v4aju8F.jpg',
+        'https://i.imgur.com/1AaJHAC.jpg',
+        'https://i.imgur.com/Z1udZP3.jpg',
+        'https://i.imgur.com/Kv46Oye.jpg',
+        'https://i.imgur.com/6TRT27j.jpg',
+        'https://i.imgur.com/8lOLNXr.jpg',
+        'https://i.imgur.com/aPQR0hE.jpg',
+        'https://i.imgur.com/RmYDFxw.png',
+        'https://i.imgur.com/u5MfuvP.png',
+    ];
+
+    imgList.forEach((img, idx) => {
+        menu.items[0].umenu.push(phone.getMenuItemImg(
+            undefined,
+            { name: "changeBg", img: img },
+            img
+        ));
+    });
 
     phone.showMenu(menu);
 };
@@ -2189,8 +2353,6 @@ phone.showMenu = function(menu) {
         menu: menu
     };
 
-    methods.debug('showMenu', menu);
-
     ui.callCef('phone' + phone.getType(), JSON.stringify(data));
 };
 
@@ -2449,6 +2611,17 @@ phone.callBackModalInput = function(paramsJson, text) {
         }
         if (params.name == 'getUserInfo') {
             mp.events.callRemote('server:phone:getUserInfo', text);
+        }
+        if (params.name == 'changeBg') {
+
+            if (text.indexOf("imgur.com") < 0) {
+                mp.game.ui.notifications.show(`~r~Доступно только для сайта imgur.com`);
+                return;
+            }
+
+            phone.updateBg(text);
+            phone.toMainPage();
+            mp.events.callRemote('server:phone:changeBg', text);
         }
         if (params.name == 'inviteFraction2') {
             mp.events.callRemote('server:phone:inviteFraction2', methods.parseInt(text));
@@ -2719,6 +2892,8 @@ phone.callBackButton = async function(menu, id, ...args) {
                 phone.showAppEcorp();
             if (params.name == 'invader')
                 phone.showAppInvader();
+            if (params.name == 'settings')
+                phone.showAppSettings();
             if (params.name == 'car') {
                 mp.events.callRemote('server:phone:userVehicleAppMenu');
                 phone.showLoad();
@@ -2795,6 +2970,13 @@ phone.callBackButton = async function(menu, id, ...args) {
             if (params.name == 'buyFraction') {
                 mp.events.callRemote('server:phone:buyFraction', params.id);
                 phone.showAppList();
+            }
+        }
+        if (menu == 'settings') {
+            if (params.name == 'changeBg') {
+                phone.updateBg(params.img);
+                phone.toMainPage();
+                mp.events.callRemote('server:phone:changeBg', params.img);
             }
         }
         if (menu == 'fraction2') {

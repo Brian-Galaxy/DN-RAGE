@@ -145,9 +145,10 @@ inventory.equip = function(player, id, itemId, count, aparams) {
                 }
             }
             else if (itemId >= 27 && itemId <= 30) {
-                if (user.get(player, 'phone_type') == 0) {
+                if (user.get(player, 'phone_type') === 0) {
                     user.set(player, 'phone', methods.parseInt(params.number));
                     user.set(player, 'phone_type', methods.parseInt(params.type));
+                    user.set(player, 'phone_bg', methods.parseInt(params.bg));
                     user.save(player);
                 }
                 else {

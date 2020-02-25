@@ -36,6 +36,7 @@ enums.userData = [
 
     "phone",
     "phone_type",
+    "phone_bg",
 
     "admin_level",
     "helper_level",

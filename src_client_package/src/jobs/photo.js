@@ -242,8 +242,8 @@ photo.findRandomPickup = function() {
         pickupId = methods.getRandomInt(0, photo.markers.length - 1);
         let pos = new mp.Vector3(photo.markers[pickupId][1], photo.markers[pickupId][2], photo.markers[pickupId][3] - 1);
         price = methods.parseFloat(methods.distanceToPos(pos, mp.players.local.position) / 50);
-        if (price > 200)
-            price = 200;
+        if (price > 100)
+            price = 100;
         _checkpointId = jobPoint.create(pos, true, 3);
         mp.game.ui.notifications.showWithPicture('Life Invader', "Начальник", `Необходимо сфотографировать ~y~${photo.markers[pickupId][0]}`, "CHAR_LIFEINVADER", 1);
     }
@@ -309,7 +309,7 @@ photo.workProcess = function() { //TODO
 
                 if (pointPos === playerPos) {
                     mp.game.ui.notifications.showWithPicture('Life Invader', "Начальник", `Отличный кадр, за него ты получишь премию!`, "CHAR_LIFEINVADER", 1);
-                    user.giveJobMoney(methods.getRandomInt(200, 300) + price);
+                    user.giveJobMoney(methods.getRandomInt(150, 200) + price);
                     user.addWorkExp(10);
                 }
                 else if (playerPos.indexOf(pointPos) >= 0 || pointPos.indexOf(playerPos) >= 0) {

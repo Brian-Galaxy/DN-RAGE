@@ -1360,6 +1360,7 @@ phone.changeBg = function(player, str) {
                     let params = JSON.parse(item['params']);
                     params.bg = str;
                     inventory.updateItemParams(item['id'], JSON.stringify(params));
+                    user.updateClientCache(player);
                 }
             }
             catch (e) {

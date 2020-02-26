@@ -17,10 +17,11 @@ let rangeLoad = 400;
 let emsList = {
     small: [
         {
-            title: '',
-            desc: '',
+            title: 'Упал вертолёт',
+            desc: 'Срочно, всем сотрудникам EMS, упал вертолет. Координаты у вас в телефоне.',
             moneyToUser: 5000,
             moneyToFraction: 80000,
+            pos: new mp.Vector3(-1176.001, -649.4301, 21.94),
             preLoadEffects: () => {
 
             },
@@ -142,7 +143,8 @@ ems.createSmall = function (id = 0) {
             obj.setVariable('emsType', `${item[3]}|${item[0]}`);
         });
         emsList.small[id].afterLoadEffects();
-        dispatcher.sendPos(emsList.small[id].title, emsList.small[id].desc, item[0]);
+
+        dispatcher.sendPos(emsList.small[id].title, emsList.small[id].desc, emsList.small[id].pos);
     }
     catch (e) {
         methods.debug(e);

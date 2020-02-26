@@ -1724,7 +1724,7 @@ user.kickAntiCheat = function(player, reason, title = 'Вы были кикну�
     //user.kick(player, reason, title);
     if (user.isLogin(player)) {
         methods.saveLog('AntiCheat', `${user.getRpName(player)} (${user.getId(player)}) - ${reason}`);
-        chat.sendToAll('Anti-Cheat System', `${user.getRpName(player)} (${player.id})!{${chat.clRed}} был кикнут с причиной!{${chat.clWhite}} ${reason}`, chat.clRed);
+        chat.sendToAll('Anti-Cheat Protection', `${user.getRpName(player)} (${player.id})!{${chat.clRed}} был кикнут с причиной!{${chat.clWhite}} ${reason}`, chat.clRed);
     }
 };
 

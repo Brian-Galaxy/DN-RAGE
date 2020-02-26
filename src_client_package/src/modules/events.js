@@ -1798,7 +1798,7 @@ mp.events.add('client:inventory:unloadW', function(itemId) {
 
     setTimeout(function () {
         if (user.getAmmo(wpName) > 1)
-            user.kickAntiCheat('Endless Ammo #2');
+            user.kickAntiCheat('Dupe Ammo');
     }, 100)
 });
 
@@ -2915,8 +2915,8 @@ mp.events.add('render', () => {
     try {
         let veh = mp.players.local.vehicle;
         if (veh && veh.getClass() != 8) {
-            if (veh.getPedInSeat(-1) == mp.players.local.handle) {
-                if (user.getCache('stats_shooting') < 99/* && !user.isPolice()*/) { //TODO
+            if (veh.getPedInSeat(-1) === mp.players.local.handle) {
+                if (user.getCache('stats_shooting') < 99 && !user.isPolice() && methods.getCurrentSpeed() > 30) {
                     mp.game.controls.disableControlAction(2, 24, true);
                     mp.game.controls.disableControlAction(2, 25, true);
                     mp.game.controls.disableControlAction(2, 66, true);
@@ -2973,7 +2973,7 @@ mp.events.add('render', () => {
 });
 
 //TODO Переделать отдачу стрельбы, для начала переделав IS SHOOOTING, чтобы он после того как закончил стрелять , еще 1 секунду ждал, вдруг игрок снова начнет стрелять
-let isShootingActive = false;
+/*let isShootingActive = false;
 mp.events.add('render', async () => {
 
     try {
@@ -3004,7 +3004,7 @@ mp.events.add('render', async () => {
     catch (e) {
 
     }
-});
+});*/
 
 mp.events.add('render', () => {
     try {

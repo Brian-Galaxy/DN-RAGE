@@ -745,7 +745,7 @@ builder.workProcess = function(id) {
                 mp.players.local.freezePosition(false);
                 methods.blockKeys(false);
                 user.stopScenario();
-                user.giveJobMoney(methods.getRandomInt(17, 22) + methods.getRandomFloat());
+                user.giveJobMoney(methods.getRandomInt(10, 13) + methods.getRandomFloat());
 
                 user.addWorkExp(1);
                 user.addRep(1);

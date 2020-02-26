@@ -155,6 +155,18 @@ mp.events.add('client:syncStopAnimation', (playerId) => {
                 Container.Data.ResetLocally(remotePlayer.remoteId, 'hasSeat');
             }
 
+            if (remotePlayer.isInAir() ||
+                remotePlayer.isReloading() ||
+                remotePlayer.isRagdoll() ||
+                remotePlayer.isFalling() ||
+                remotePlayer.isShooting() ||
+                remotePlayer.isSprinting() ||
+                remotePlayer.isGettingUp() ||
+                remotePlayer.vehicle ||
+                remotePlayer.getHealth() <= 0
+            )
+                return;
+
             if (!remotePlayer.isInAir() && !remotePlayer.vehicle && remotePlayer.getHealth() > 0)
                 remotePlayer.clearTasksImmediately();
         }

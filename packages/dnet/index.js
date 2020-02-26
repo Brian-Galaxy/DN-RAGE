@@ -66,10 +66,6 @@ function init() {
         timer.loadAll();
         tax.loadAll();
 
-        setTimeout(function () {
-            ems.createSmall();
-        }, 20000);
-
         weather.loadAll();
 
         carWash.loadAll();

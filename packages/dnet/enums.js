@@ -209,6 +209,7 @@ enums.userData = [
     "s_bind_lock",
     "s_bind_engine",
     "s_bind_phone",
+    "s_bind_stopanim",
     "s_bind_voice",
     "s_bind_voice_radio",
     "s_bind_pnv",

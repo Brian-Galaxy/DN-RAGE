@@ -187,7 +187,7 @@ bus.nextCheckpoint = function() {
 
     let timeout = 1;
     try {
-        if (_isBus1 && bus.markers1[_currentId][3] == 1 || _isBus2 && bus.markers2[_currentId][3] == 1 || _isBus3 && bus.markers3[_currentId][3] == 1) {
+        if (_isBus1 && bus.markers1[_currentId - 1][3] == 1 || _isBus2 && bus.markers2[_currentId - 1][3] == 1 || _isBus3 && bus.markers3[_currentId - 1][3] == 1) {
             mp.game.ui.notifications.show('~g~Ожидайте 10 секунд');
             mp.players.local.vehicle.freezePosition(true);
             timeout = 10000;
@@ -219,13 +219,13 @@ bus.nextCheckpoint = function() {
                             _isBus1 = false;
                             _currentId = 0;
                             _checkpointId = -1;
-                            bus.stop();
+                            bus.stop(false);
                             break;
                         }
 
                         _checkpointId = jobPoint.create(new mp.Vector3(bus.markers1[_currentId][0], bus.markers1[_currentId][1], bus.markers1[_currentId][2] - 1), true, 3);
                         _currentId++;
-                        mp.game.ui.notifications.show('~b~Двигайтесь к следующей остановке');
+                        mp.game.ui.notifications.show('~b~Двигайтесь к следующему чекпоинту');
                         break;
                     }
                     case mp.game.joaat('airbus'): {
@@ -244,13 +244,13 @@ bus.nextCheckpoint = function() {
                             _isBus2 = false;
                             _currentId = 0;
                             _checkpointId = -1;
-                            bus.stop();
+                            bus.stop(false);
                             break;
                         }
 
                         _checkpointId = jobPoint.create(new mp.Vector3(bus.markers2[_currentId][0], bus.markers2[_currentId][1], bus.markers2[_currentId][2] - 1), true, 3);
                         _currentId++;
-                        mp.game.ui.notifications.show('~b~Двигайтесь к следующей остановке');
+                        mp.game.ui.notifications.show('~b~Двигайтесь к следующему чекпоинту');
                         break;
                     }
                     case mp.game.joaat('coach'): {
@@ -269,13 +269,13 @@ bus.nextCheckpoint = function() {
                             _isBus3 = false;
                             _currentId = 0;
                             _checkpointId = -1;
-                            bus.stop();
+                            bus.stop(false);
                             break;
                         }
 
                         _checkpointId = jobPoint.create(new mp.Vector3(bus.markers3[_currentId][0], bus.markers3[_currentId][1], bus.markers3[_currentId][2] - 1), true, 3);
                         _currentId++;
-                        mp.game.ui.notifications.show('~b~Двигайтесь к следующей остановке');
+                        mp.game.ui.notifications.show('~b~Двигайтесь к следующему чекпоинту');
                         break;
                     }
                     default:
@@ -293,7 +293,7 @@ bus.nextCheckpoint = function() {
     }, timeout);
 };
 
-bus.stop = function() {
+bus.stop = function(isNotify = true) {
     jobPoint.delete();
     mp.players.local.freezePosition(false);
 
@@ -303,7 +303,8 @@ bus.stop = function() {
     _checkpointId = -1;
     _currentId = 0;
 
-    mp.game.ui.notifications.show('~r~Ваш рейс досрочно завершен');
+    if (isNotify)
+        mp.game.ui.notifications.show('~r~Ваш рейс досрочно завершен');
 };
 
 mp.events.add("playerEnterCheckpoint", (checkpoint) => {

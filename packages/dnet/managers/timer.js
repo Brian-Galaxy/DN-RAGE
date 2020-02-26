@@ -48,10 +48,19 @@ timer.min60Timer = function() {
     for (let i = 1; i < 1300; i++)
     {
         try {
-            if (Container.Data.Has(i, "isMail"))
-                Container.Data.Reset(i, "isMail");
-            if (Container.Data.Has(i, "isMail2"))
-                Container.Data.Reset(i, "isMail2");
+
+            for (let j = 1; j < 1300; j++)
+            {
+                try {
+                    if (Container.Data.Has(i, "isMail" + j))
+                        Container.Data.Reset(i, "isMail" + j);
+                    if (Container.Data.Has(i, "isMail2" + j))
+                        Container.Data.Reset(i, "isMail2" + j);
+                }
+                catch (e) {
+                    methods.debug(e);
+                }
+            }
         }
         catch (e) {
             methods.debug(e);

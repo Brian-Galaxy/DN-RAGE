@@ -278,6 +278,10 @@ for(let code in keyCodes) {
             if (!methods.isBlockKeys() && !mp.gui.cursor.visible)
                 phone.showOrHide();
         }
+        if (user.getCache('s_bind_stopanim') == parseInt(code)) {
+            if (!methods.isBlockKeys())
+                user.stopAllAnimation();
+        }
         if (user.getCache('s_bind_lock') == parseInt(code)) {
             if (!methods.isBlockKeys())
                 mp.events.callRemote('server:vehicle:lockStatus');

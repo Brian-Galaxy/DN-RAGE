@@ -5,6 +5,8 @@ let fraction = require('../property/fraction');
 
 let user = require('../user');
 
+let ems = require('./ems');
+
 let weather = exports;
 
 let _year = 2012;
@@ -18,6 +20,8 @@ let _weather = "";
 
 let _windSpeed = 0;
 let _windDir = 0;
+
+let isCreateEms = false;
 
 weather.loadAll = function() {
     methods.debug('weather.loadAll');
@@ -186,6 +190,7 @@ weather.timeSyncTimer = function() {
         mp.players.call("client:managers:weather:syncRealTime", [`${methods.digitFormat(dateTime.getHours())}:${methods.digitFormat(dateTime.getMinutes())}`]);
         mp.players.call("client:managers:weather:syncRealDate", [`${methods.digitFormat(dateTime.getDate())}/${methods.digitFormat(dateTime.getMonth()+1)}`]);
 
+
         /*if (dateTime.getHours() == 18 && dateTime.getMinutes() == 1) { //TODO
             if (isVip < 1) {
                 let playerRandomList = [];
@@ -208,6 +213,13 @@ weather.timeSyncTimer = function() {
                 }
             }
         }*/
+
+        if (dateTime.getHours() === 18 && dateTime.getMinutes() === 1) {
+            if (!isCreateEms) {
+                isCreateEms = true;
+                ems.createSmall();
+            }
+        }
 
         /*if (dateTime.getHours() == 4 && dateTime.getMinutes() == 50) //TODO
             methods.notifyToAll('Рестарт сервера через 15 минут');

@@ -35,7 +35,7 @@ let targetEntityPrev = undefined;
 let isTeleport = true;
 let isHeal = true;
 let isArmor = false;
-let isGiveAmmo = false;
+let isGiveAmmo = true;
 
 let cam = null;
 
@@ -342,6 +342,10 @@ user.isSetAmmo = function() {
 
 user.isSetAmmoFalse = function() {
     isGiveAmmo = false;
+};
+
+user.isSetAmmoTrue = function() {
+    isGiveAmmo = true;
 };
 
 user.getAmmoByHash = function(name) {
@@ -1365,6 +1369,10 @@ user.stopAllAnimation = function() {
 
     if (methods.isBlockKeys())
         return;
+
+    if (mp.game.player.isFreeAiming()) {
+        return;
+    }
 
     if (!mp.players.local.getVariable("isBlockAnimation")) {
         //mp.players.local.clearTasks();

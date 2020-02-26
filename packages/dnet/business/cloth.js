@@ -66,6 +66,8 @@ cloth.checkPosForOpenMenu = function (player) {
         let playerPos = player.position;
 
         if (methods.distanceToPos(cloth.maskShop, playerPos) < 2) {
+            player.notify('~r~К сожалению магазин сейчас на реконструкции');
+            return;
             if (!business.isOpen(69)) {
                 player.notify('~r~К сожалению магазин сейчас не работает');
                 return;

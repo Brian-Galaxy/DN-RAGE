@@ -11,6 +11,7 @@ import weather from "../manager/weather";
 import shoot from "../manager/shoot";
 
 import vehicles from "../property/vehicles";
+import phone from "../phone";
 
 let ui = {};
 let uiBrowser = null;
@@ -291,7 +292,7 @@ ui.updateVehValues = function() {
 
             let data = {
                 type: 'updateValues',
-                isShow: isShowSpeed,
+                isShow: isShowSpeed && phone.isHide(),
                 isShowSmall: user.getCache('s_hud_speed'),
                 light: isShowLight,
                 door: isShowLock,

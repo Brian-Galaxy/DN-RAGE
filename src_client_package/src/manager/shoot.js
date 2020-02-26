@@ -1,6 +1,6 @@
 // script constants
-import dispatcher from "./dispatcher";
-import object from "./object";
+import user from "../user";
+import methods from "../modules/methods";
 
 let shoot = {};
 
@@ -28,7 +28,6 @@ const singleFireBlacklist = [ // weapons in here are not able to use single fire
     mp.game.joaat("WEAPON_DOUBLEACTION"), mp.game.joaat("WEAPON_PUMPSHOTGUN"), mp.game.joaat("WEAPON_PUMPSHOTGUN_MK2"), mp.game.joaat("WEAPON_SAWNOFFSHOTGUN"), mp.game.joaat("WEAPON_BULLPUPSHOTGUN"),
     mp.game.joaat("WEAPON_MUSKET"), mp.game.joaat("WEAPON_DBSHOTGUN"), mp.game.joaat("WEAPON_SNIPERRIFLE"), mp.game.joaat("WEAPON_HEAVYSNIPER"), mp.game.joaat("WEAPON_HEAVYSNIPER_MK2")
 ];
-
 
 // script functions
 const isWeaponIgnored = (weaponHash) => {
@@ -62,8 +61,34 @@ shoot.isIgnoreWeapon = function () {
     return ignoreCurrentWeapon;
 };
 
+shoot.getWeaponRecoil = function (wpHash) {
+    if (user.getCache('stats_shooting') < 20)
+        return 0.6;
+    else if (user.getCache('stats_shooting') < 40)
+        return 0.4;
+    else if (user.getCache('stats_shooting') < 70)
+        return 0.2;
+    return 0.1;
+};
+
 // load mp audio for the click sound
 mp.game.audio.setAudioFlag("LoadMPData", true);
+
+let isAimActive = false;
+mp.events.add("render", async () => {
+    try {
+        if (mp.game.player.isFreeAiming() && !isAimActive) {
+            isAimActive = true;
+            mp.game.cam.shakeGameplayCam("ROAD_VIBRATION_SHAKE", 0.2);
+        }
+        else if (isAimActive && !mp.game.player.isFreeAiming()) {
+            mp.game.cam.stopGameplayCamShaking(false);
+            isAimActive = false;
+        }
+    }
+    catch (e) {
+    }
+});
 
 mp.events.add("render", () => {
     try {
@@ -102,7 +127,7 @@ mp.events.add("render", () => {
         }
     }
     catch (e) {
-        
+
     }
 });
 

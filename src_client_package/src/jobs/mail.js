@@ -7,11 +7,11 @@ let mail = {};
 mail.sendMail = function(houseId) {
     try {
         methods.debug('Execute: mail.sendMail');
-        if (Container.Data.HasLocally(mp.players.local.id, 'mail')) {
-            if (Container.Data.GetLocally(mp.players.local.id, 'mail') > 0) {
-                Container.Data.Set(houseId, 'isMail', true);
-                Container.Data.SetLocally(mp.players.local.id, 'mail', Container.Data.GetLocally(mp.players.local.id, 'mail') - 1);
-                mp.game.ui.notifications.show(`~g~Вы отнесли почту ${Container.Data.GetLocally(mp.players.local.id, 'mail')}/10`);
+        if (Container.Data.HasLocally(mp.players.local.remoteId, 'mail')) {
+            if (Container.Data.GetLocally(mp.players.local.remoteId, 'mail') > 0) {
+                Container.Data.Set(houseId, 'isMail' + mp.players.local.remoteId, true);
+                Container.Data.SetLocally(mp.players.local.remoteId, 'mail', Container.Data.GetLocally(mp.players.local.remoteId, 'mail') - 1);
+                mp.game.ui.notifications.show(`~g~Вы отнесли почту ${Container.Data.GetLocally(mp.players.local.remoteId, 'mail')}/25`);
                 user.giveJobSkill();
                 user.giveJobMoney(methods.getRandomInt(12, 15) + methods.getRandomFloat());
                 user.addRep(1);
@@ -29,11 +29,11 @@ mail.sendMail = function(houseId) {
 mail.sendMail2 = function(houseId) {
     try {
         methods.debug('Execute: mail.sendMail2');
-        if (Container.Data.HasLocally(mp.players.local.id, 'mail')) {
-            if (Container.Data.GetLocally(mp.players.local.id, 'mail') > 0) {
-                Container.Data.Set(houseId, 'isMail2', true);
-                Container.Data.SetLocally(mp.players.local.id, 'mail', Container.Data.GetLocally(mp.players.local.id, 'mail') - 1);
-                mp.game.ui.notifications.show(`~g~Вы отнесли почту ${Container.Data.GetLocally(mp.players.local.id, 'mail')}/10`);
+        if (Container.Data.HasLocally(mp.players.local.remoteId, 'mail')) {
+            if (Container.Data.GetLocally(mp.players.local.remoteId, 'mail') > 0) {
+                Container.Data.Set(houseId, 'isMail2' + mp.players.local.remoteId, true);
+                Container.Data.SetLocally(mp.players.local.remoteId, 'mail', Container.Data.GetLocally(mp.players.local.remoteId, 'mail') - 1);
+                mp.game.ui.notifications.show(`~g~Вы отнесли почту ${Container.Data.GetLocally(mp.players.local.remoteId, 'mail')}/25`);
                 user.giveJobSkill();
                 user.giveJobMoney(methods.getRandomInt(5, 7) + methods.getRandomFloat());
                 user.addRep(1);
@@ -51,7 +51,7 @@ mail.sendMail2 = function(houseId) {
 mail.takeMail = function() {
     try {
         methods.debug('Execute: mail.takeMail');
-        Container.Data.SetLocally(mp.players.local.id, 'mail', 10);
+        Container.Data.SetLocally(mp.players.local.remoteId, 'mail', 25);
         mp.game.ui.notifications.show("~g~Вы взяли почту из транспорта");
     } catch (e) {
         methods.debug('Exception: mail.takeMail');

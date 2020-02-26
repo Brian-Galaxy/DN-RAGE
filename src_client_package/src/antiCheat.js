@@ -13,6 +13,8 @@ let prevArrayConfig = [];
 let attemptRecoil = 0;
 let attemptGm = 0;
 let attemptWeapon = 0;
+let attemptAmmo = 0;
+
 let healthPrev = 100;
 let armorPrev = 100;
 let weaponAmmoPrev = 0;
@@ -21,9 +23,17 @@ let autoHeal = 100;
 let autoArmor = 0;
 let autoAmmo = 0;
 
+mp.events.add("playerEnterVehicle", function (vehicle, seat) {
+    user.isSetAmmoTrue();
+});
+
+mp.events.add("playerLeaveVehicle", function () {
+    user.isSetAmmoTrue();
+});
+
 antiCheat.load = function() {
     //setInterval(antiCheat.gmTimer, 1);
-    setInterval(antiCheat.healTimer, 50);
+    setInterval(antiCheat.healTimer, 1);
     setInterval(antiCheat.secTimer, 1000);
     setInterval(antiCheat.tenSecTimer, 10000);
     setInterval(antiCheat.ten3SecTimer, 30000);
@@ -42,22 +52,18 @@ antiCheat.ten3SecTimer = function() {
     attemptWeapon = 0;
 };
 
-mp.events.add('render', () => {
-    if (user.isLogin()) {
-        if (mp.players.local.isShooting()) {
-            if (user.getCurrentAmmo() > weaponAmmoPrev)
-                attemptWeapon++;
-            weaponAmmoPrev = user.getCurrentAmmo();
-        }
-    }
-});
-
 antiCheat.gmTimer = function() {
     if (user.isLogin()) {
         if (mp.players.local.getHealth() > healthPrev || mp.players.local.getArmour() > armorPrev)
             attemptGm++;
         healthPrev = mp.players.local.getHealth();
         armorPrev = mp.players.local.getArmour();
+
+        /*if (mp.players.local.isShooting()) {
+            if (user.getCurrentAmmo() > weaponAmmoPrev)
+                attemptWeapon++;
+            weaponAmmoPrev = user.getCurrentAmmo();
+        }*/
     }
 };
 
@@ -112,7 +118,7 @@ antiCheat.secTimer = function() {
         }*/
 
         if (attemptWeapon > 3) {
-            user.kickAntiCheat('Endless Ammo #1');
+            user.kickAntiCheat('Endless Ammo');
         }
 
         if (!user.isAdmin()) {
@@ -141,7 +147,7 @@ antiCheat.secTimer = function() {
 
         let newPos = mp.players.local.position;
         let dist = mp.players.local.vehicle ? methods.getCurrentSpeed() + 50 : 20;
-        if (methods.distanceToPos2D(prevPos, newPos) > dist) {
+        if (methods.distanceToPos(prevPos, newPos) > dist && !mp.players.local.isFalling()) {
             if (!user.isTeleport())
                 user.kickAntiCheat(`Teleport`);
             user.setTeleport(false);

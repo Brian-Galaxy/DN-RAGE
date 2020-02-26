@@ -68,7 +68,7 @@ menuList.showHouseBuyMenu = async function(h) {
     enterHouseItem = UIMenu.Menu.AddMenuItem("~g~Осмотреть дом");
 
     if (user.getCache('job') == 4) {
-        if (!await Container.Data.Has(h.get('id'), 'isMail'))
+        if (!await Container.Data.Has(h.get('id'), 'isMail' + mp.players.local.remoteId))
             UIMenu.Menu.AddMenuItem("~g~Положить почту").doName = h.get('id');
         else
             UIMenu.Menu.AddMenuItem("~o~Дом уже обслуживался");
@@ -208,7 +208,7 @@ menuList.showHouseOutMenu = async function(h) {
     let enterHouseItem = UIMenu.Menu.AddMenuItem("~g~Войти");
 
     if (user.getCache('job') == 4) {
-        if (!await Container.Data.Has(h.get('id'), 'isMail'))
+        if (!await Container.Data.Has(h.get('id'), 'isMail' + mp.players.local.remoteId))
             UIMenu.Menu.AddMenuItem("~g~Положить почту").doName = h.get('id');
         else
             UIMenu.Menu.AddMenuItem("~o~Дом уже обслуживался");
@@ -284,7 +284,7 @@ menuList.showCondoBuyMenu = async function(h) {
     enterHouseItem = UIMenu.Menu.AddMenuItem("~g~Осмотреть квартиру");
 
     if (user.getCache('job') == 4) {
-        if (!await Container.Data.Has(h.get('id'), 'isMail2'))
+        if (!await Container.Data.Has(h.get('id'), 'isMail2' + mp.players.local.remoteId))
             UIMenu.Menu.AddMenuItem("~g~Положить почту").doName = h.get('id');
         else
             UIMenu.Menu.AddMenuItem("~o~Дом уже обслуживался");
@@ -364,7 +364,7 @@ menuList.showCondoOutMenu = async function(h) {
     let enterHouseItem = UIMenu.Menu.AddMenuItem("~g~Войти");
 
     if (user.getCache('job') == 4) {
-        if (!await Container.Data.Has(h.get('id'), 'isMail2'))
+        if (!await Container.Data.Has(h.get('id'), 'isMail2' + mp.players.local.remoteId))
             UIMenu.Menu.AddMenuItem("~g~Положить почту").doName = h.get('id');
         else
             UIMenu.Menu.AddMenuItem("~o~Дом уже обслуживался");
@@ -2307,6 +2307,10 @@ menuList.showHelpMenu = function() {
     mItem.textTitle = 'Лицензии';
     mItem.text = 'Лицензии на вождение какого либо транспорта получаются в здание правительства. Лицензии на рыболовство/бизнес получаются исключительно у сотрудников правительства. Лицензию на оружие вы можете приобрести у сотрудников полицейского и шериф департамента.';
 
+    mItem = UIMenu.Menu.AddMenuItem("Где моя зарплата?");
+    mItem.textTitle = 'Зарплатный счет';
+    mItem.text = 'Зарплата приходит на ваш зарплатный счет, для этого необходимо открыть приложение вашего банка на телефоне и перевести нужную сумму денег на вашу карту.';
+
     mItem = UIMenu.Menu.AddMenuItem("Система рабочего стажа.");
     mItem.textTitle = 'Система рабочего стажа.';
     mItem.text = 'Данная система предназначена для того, чтобы вы могли устраиваться в перспективе на работу получше. Она растет, если вы работаете.';
@@ -2329,7 +2333,19 @@ menuList.showHelpMenu = function() {
 
     mItem = UIMenu.Menu.AddMenuItem("Как создать свою организацию?");
     mItem.textTitle = 'Своя организация';
-    mItem.text = 'Для начала вам необходимо иметь низкую репутацию, далее обменяв деньги в e-coins вы сможете создать свою организацию.';
+    mItem.text = 'Для начала вам необходимо иметь низкую репутацию, далее необходимо иметь достаточную сумму в e-coins вы сможете создать свою организацию в коснли телефона через комануду ecorp. Учтите, что слоты фракций на сервере ограничено';
+    
+    mItem = UIMenu.Menu.AddMenuItem("Где мой прицел?");
+    mItem.textTitle = 'Навык оружия';
+    mItem.text = 'Для того, чтобы появился прицел, необходимо владеть 100% навыком оружия';
+
+    mItem = UIMenu.Menu.AddMenuItem("Как стрелять из машины?");
+    mItem.textTitle = 'Навык оружия';
+    mItem.text = 'Чтобы стрелять из транспорта, необходимо прокачать навык владения оружием на 100% или работать в полиции';
+
+    mItem = UIMenu.Menu.AddMenuItem("Штрафстоянка");
+    mItem.textTitle = 'Штрафстоянка';
+    mItem.text = 'Ваш транспорт может попасть на штрафстоянку, поэтому паркуйтесь по правилам дорожного кодекса';
 
     let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
     menu.ItemSelect.on(async (item, index) => {
@@ -2481,6 +2497,10 @@ menuList.showSettingsKeyMenu = function() {
 
     menuItem = UIMenu.Menu.AddMenuItem("Голосовой чат", "Нажмите ~g~Enter~s~ чтобы изменить");
     menuItem.doName = 's_bind_voice';
+    menuItem.SetRightLabel(`~h~~m~[${bind.getKeyName(user.getCache(menuItem.doName))}]`);
+
+    menuItem = UIMenu.Menu.AddMenuItem("Остановить анимацию", "Нажмите ~g~Enter~s~ чтобы изменить");
+    menuItem.doName = 's_bind_stopanim';
     menuItem.SetRightLabel(`~h~~m~[${bind.getKeyName(user.getCache(menuItem.doName))}]`);
 
     menuItem = UIMenu.Menu.AddMenuItem("Запуск двигателя", "Нажмите ~g~Enter~s~ чтобы изменить");
@@ -3324,9 +3344,13 @@ menuList.showVehicleMenu = function(data) {
             menuList.showVehicleDoMenu();
         }
         else if (item.doName == 'eject') {
-            let id = methods.parseInt(await UIMenu.Menu.GetUserInput("R", "", 3));
+            let id = methods.parseInt(await UIMenu.Menu.GetUserInput("ID Игрока", "", 3));
             if (id < 0) {
                 mp.game.ui.notifications.show('~r~ID не может быть меньше 0');
+                return;
+            }
+            if (methods.parseInt(id) === mp.players.local.remoteId) {
+                mp.game.ui.notifications.show('~r~Дядь, себя нельзя никак выкинуть из ТС');
                 return;
             }
             mp.events.callRemote('server:vehicle:ejectById', methods.parseInt(id));
@@ -7441,7 +7465,7 @@ menuList.showAnimationListMenu = function(subtitle, array) {
         }
 
         let plPos = mp.players.local.position;
-        mp.game.ui.notifications.show("~b~Нажмите ~s~F10~b~ чтобы отменить анимацию");
+        mp.game.ui.notifications.show(`~b~Нажмите ~s~${bind.getKeyName(user.getCache('s_bind_stopanim'))}~b~ чтобы отменить анимацию`);
         user.playAnimation(item.anim1, item.anim2, item.animFlag);
     });
 };

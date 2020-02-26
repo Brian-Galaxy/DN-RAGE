@@ -73,7 +73,7 @@ for (let weapon in weaponAttachmentData) {
         console.log(`[!] ${weapon} not found in weapon data file and will cause issues, remove it from weaponAttachmentData.`);
     }
 }
-
+/*
 mp.events.add("playerReady", (player) => {
     player._bodyWeapons = {};
     player.call("registerWeaponAttachments", [ JSON.stringify(weaponAttachmentData) ]);
@@ -117,4 +117,4 @@ mp.events.add("playerDeath", (player) => {
         player.addAttachment(player._bodyWeapons[name], true);
         delete player._bodyWeapons[name];
     }
-});
+});*/

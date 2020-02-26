@@ -46,6 +46,7 @@ phone.show = function() {
         ui.callCef('phone', '{"type": "show"}');
 
         phone.updateMainAppList();
+        phone.updateBg(user.getCache('phone_bg'));
     }
     catch (e) {
         methods.debug(e);
@@ -115,7 +116,15 @@ phone.updateBg = function(idx) {
 };
 
 phone.toMainPage = function() {
-    let data = { type: 'toMainPage' };
+    phone.toPage('/phone/android/defaultpage');
+};
+
+phone.toMainUMenu = function() {
+    phone.toPage('/phone/android/umenu');
+};
+
+phone.toPage = function(page) {
+    let data = { type: 'toPage', page: page };
     ui.callCef('phone' + phone.getType(), JSON.stringify(data));
 };
 
@@ -203,28 +212,28 @@ phone.apps = function(action) {
 
 phone.updateMainAppList = function() {
     let appList = [
-        { link: "/phone/android/umenu", action: 'app', img: 'apps' },
-        { link: "/phone/android/umenu", action: 'gps', img: 'gps' },
-        { link: "/phone/android/phonebook", action: 'cont', img: 'cont' },
-        { link: "/phone/android/messenger", action: 'sms', img: 'sms' },
+        { link: "/phone/android/umenu", action: 'app', img: 'apps', name: 'Прилж.' },
+        { link: "/phone/android/umenu", action: 'gps', img: 'gps', name: 'GPS' },
+        { link: "/phone/android/phonebook", action: 'cont', img: 'cont', name: 'Контакты' },
+        { link: "/phone/android/messenger", action: 'sms', img: 'sms', name: 'SMS' },
         //{ link: "/phone/android/umenu", action: 'settings', img: 'settings' },
-        { link: "/phone/android/umenu", action: 'uveh', img: 'uveh' },
-        { link: "/phone/android/umenu", action: 'invader', img: 'invader' },
+        { link: "/phone/android/umenu", action: 'uveh', img: 'uveh', name: 'UVeh' },
+        { link: "/phone/android/umenu", action: 'invader', img: 'invader', name: 'INews' },
     ];
 
     if (user.getCache('fraction_id') === 1)
-        appList.push({ link: "/phone/android/umenu", action: 'fraction', img: 'gov' });
+        appList.push({ link: "/phone/android/umenu", action: 'fraction', img: 'gov', name: 'Gov' });
     else if (user.getCache('fraction_id') === 2)
-        appList.push({ link: "/phone/android/umenu", action: 'fraction', img: 'lspd2' });
+        appList.push({ link: "/phone/android/umenu", action: 'fraction', img: 'lspd2', name: 'LSPD' });
     else if (user.getCache('fraction_id') === 5)
-        appList.push({ link: "/phone/android/umenu", action: 'fraction', img: 'bcsd' });
+        appList.push({ link: "/phone/android/umenu", action: 'fraction', img: 'bcsd', name: 'BCSD' });
     else if (user.getCache('fraction_id') === 6)
-        appList.push({ link: "/phone/android/umenu", action: 'fraction', img: 'ems' });
+        appList.push({ link: "/phone/android/umenu", action: 'fraction', img: 'ems', name: 'EMS' });
     else if (user.getCache('fraction_id') === 7)
-        appList.push({ link: "/phone/android/umenu", action: 'fraction', img: 'news' });
+        appList.push({ link: "/phone/android/umenu", action: 'fraction', img: 'news', name: 'Invader' });
 
     if (user.getCache('fraction_id2') > 0)
-        appList.push({ link: "/phone/android/umenu", action: 'fraction2', img: 'community' });
+        appList.push({ link: "/phone/android/umenu", action: 'fraction2', img: 'community', name: 'Орг.' });
 
     if (user.getCache('bank_card') > 0) {
 
@@ -233,29 +242,29 @@ phone.updateMainAppList = function() {
         switch (prefix) {
             case 6000:
             {
-                appList.push({ link: "/phone/android/umenu", action: 'bank', img: 'maze' });
+                appList.push({ link: "/phone/android/umenu", action: 'bank', img: 'maze', name: 'Bank' });
                 break;
             }
             case 7000:
             {
-                appList.push({ link: "/phone/android/umenu", action: 'bank', img: 'pacific' });
+                appList.push({ link: "/phone/android/umenu", action: 'bank', img: 'pacific', name: 'Bank' });
                 break;
             }
             case 8000:
             {
-                appList.push({ link: "/phone/android/umenu", action: 'bank', img: 'fleeca' });
+                appList.push({ link: "/phone/android/umenu", action: 'bank', img: 'fleeca', name: 'Bank' });
                 break;
             }
             case 9000:
             {
-                appList.push({ link: "/phone/android/umenu", action: 'bank', img: 'blaine' });
+                appList.push({ link: "/phone/android/umenu", action: 'bank', img: 'blaine', name: 'Bank' });
                 break;
             }
         }
     }
 
     if (user.getCache('crypto_card').trim() !== '')
-        appList.push({ link: "/phone/android/console", action: 'console', img: 'console' });
+        appList.push({ link: "/phone/android/console", action: 'console', img: 'console', name: 'Console' });
 
     let data = {
         type: 'updateApps',
@@ -1057,7 +1066,7 @@ phone.showAppGps = function() {
                         text: "",
                         type: 1,
                         clickable: true,
-                        params: {x: -235, y: -216}
+                        params: {x: 235, y: 216}
                     },
                     {
                         title: "Найти ближайший Flecca банк",
@@ -1106,14 +1115,14 @@ phone.showAppGps = function() {
                         text: "",
                         type: 1,
                         clickable: true,
-                        params: {x: 341, y: -1397}
+                        params: {x: 292, y: -591}
                     },
                     {
                         title: "Больница Палето-Бей",
                         text: "",
                         type: 1,
                         clickable: true,
-                        params: {x: 341, y: -1397}
+                        params: {x: -253, y: 6336}
                     },
                     {
                         title: "Федеральная тюрьма",
@@ -2322,6 +2331,11 @@ phone.showLoad = function() {
         ],
     };
 
+    chat.show(true);
+    chat.activate(true);
+    methods.blockKeys(false);
+    mp.gui.cursor.show(false, true);
+
     phone.showMenu(menu);
 };
 
@@ -2520,7 +2534,8 @@ phone.consoleCallback = function(command) {
                 phone.addConsoleCommand('ecorp -coin -toBankCard [sum]');
                 //phone.addConsoleCommand('ecorp -send [coin number] [sum]');
                 phone.addConsoleCommand('ecorp -send -fraction [sum]');
-                phone.addConsoleCommand('ecorp -create -fraction');
+                phone.addConsoleCommand('ecorp -fraction -create');
+                phone.addConsoleCommand('ecorp -fraction -list');
 
             }
             else if (args[0] === '-number') {
@@ -2565,13 +2580,14 @@ phone.consoleCallback = function(command) {
                     fraction.addMoney(user.getCache('fraction_id2'), sum, 'Перевод E-Coin от ' + user.getCache('name'));
                 }
                 else {
-                    phone.addConsoleCommand('Usage: ecorp -create -fraction');
+                    phone.addConsoleCommand('Usage: ecorp -fraction -create');
                 }
             }
-            else if (args[0] === '-create') {
-                if (args[1] === '-fraction') {
+            else if (args[0] === '-fraction') {
+                if (args[1] === '-create') {
                     if (user.getCache('rep') < 100 && user.getCache('fraction_id2') == 0) {
                         mp.events.callRemote('server:phone:createFraction');
+                        phone.toMainUMenu();
                         phone.showLoad();
                     }
                     else {
@@ -2579,8 +2595,14 @@ phone.consoleCallback = function(command) {
                         phone.addConsoleCommand('Access denied');
                     }
                 }
+                else if (args[1] === '-list') {
+                    mp.events.callRemote('server:phone:fractionAll');
+                    phone.toMainUMenu();
+                    phone.showLoad();
+                }
                 else {
-                    phone.addConsoleCommand('Usage: ecorp -create -fraction');
+                    phone.addConsoleCommand('Usage: ecorp -fraction -create');
+                    phone.addConsoleCommand('Usage: ecorp -fraction -list');
                 }
             }
         }

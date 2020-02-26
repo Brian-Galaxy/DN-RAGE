@@ -1170,6 +1170,16 @@ mp.events.add('client:clearChat', () => {
     user.clearChat();
 });
 
+mp.events.add('client:setHealth', (hp) => {
+    methods.debug('Event: client:setHealth', hp);
+    user.setHealth(hp);
+});
+
+mp.events.add('client:setArmour', (hp) => {
+    methods.debug('Event: client:setArmour', hp);
+    user.setArmour(hp);
+});
+
 mp.events.add('client:teleport', (x, y, z, rot) => {
     methods.debug('Event: client:teleport', x, y, z, rot);
     user.teleport(x, y, z, rot);
@@ -1785,6 +1795,11 @@ mp.events.add('client:inventory:unloadW', function(itemId) {
 
     user.setAmmo(wpName, 0);
     user.set('weapon_' + slot + '_ammo', -1);
+
+    setTimeout(function () {
+        if (user.getAmmo(wpName) > 1)
+            user.kickAntiCheat('Endless Ammo #2');
+    }, 100)
 });
 
 mp.events.add('client:inventory:loadWeapon', function(id, itemId, loadItemId, count) {
@@ -2216,6 +2231,10 @@ mp.events.add('client:phone:callBack', function(action, menu, id, ...args) {
     phone.callBack(action, menu, id, ...args);
 });
 
+mp.events.add('client:phone:consoleCallback', function(command) {
+    phone.consoleCallback(command);
+});
+
 mp.events.add('client:phone:sendMessage', function(phone, chat, message) {
     mp.events.callRemote('server:phone:sendMessage', phone, methods.removeQuotes(methods.removeQuotes2(message)));
 });
@@ -2546,6 +2565,8 @@ mp.events.add("playerDeath", function (player, reason, killer) {
     UIMenu.Menu.HideMenu();
     inventory.hide();
     phone.hide();
+
+    user.setTeleport(true);
 
     ui.callCef('license', JSON.stringify({type: 'hide'}));
     ui.callCef('certificate', JSON.stringify({type: 'hide'}));

@@ -508,7 +508,6 @@ phone.showAppBank= function() {
     phone.showMenu(menu);
 };
 
-
 phone.showAppEcorp= function() {
     let menu = {
         UUID: 'ecorp',
@@ -2492,6 +2491,110 @@ phone.getMenuMainItem = function(title, items) {
         title: title,
         umenu: items,
     };
+};
+
+phone.consoleCallback = function(command) {
+
+    try {
+        let args = command.split(' ');
+        let cmd = args[0];
+        args.shift();
+
+        if (cmd === 'help') {
+            phone.addConsoleCommand('GNU bash, version 4.3.48(1)-release (x86_64-pc-linux-gnu)');
+            phone.addConsoleCommand(' ');
+            phone.addConsoleCommand('help');
+            phone.addConsoleCommand('ecorp -h');
+        }
+        else if (cmd === 'ecorp') {
+            if (args.length === 0 || args[0] === '-h') {
+                phone.addConsoleCommand('Usage: ecorp [options]');
+                phone.addConsoleCommand(' ');
+                phone.addConsoleCommand('Balance: ' + methods.cryptoFormat(user.getCryptoMoney()));
+                phone.addConsoleCommand('Number: ' + user.getCache('crypto_card'));
+                phone.addConsoleCommand(' ');
+                phone.addConsoleCommand('Most used commands:');
+                phone.addConsoleCommand('ecorp -h');
+                phone.addConsoleCommand('ecorp -number');
+                phone.addConsoleCommand('ecorp -balance');
+                phone.addConsoleCommand('ecorp -coin -toBankCard [sum]');
+                //phone.addConsoleCommand('ecorp -send [coin number] [sum]');
+                phone.addConsoleCommand('ecorp -send -fraction [sum]');
+                phone.addConsoleCommand('ecorp -create -fraction');
+
+            }
+            else if (args[0] === '-number') {
+                phone.addConsoleCommand('Number: ' + user.getCache('crypto_card'));
+            }
+            else if (args[0] === '-balance') {
+                phone.addConsoleCommand('Balance: ' + methods.cryptoFormat(user.getCryptoMoney()));
+            }
+            else if (args[0] === '-coin') {
+                if (args[1] === '-toBankCard') {
+                    let sum = methods.parseFloat(args[2]);
+                    if (sum < 0) {
+                        phone.addConsoleCommand('Usage: ecorp -coin -toBankCard [sum]');
+                        return;
+                    }
+                    if (sum > user.getCryptoMoney()) {
+                        phone.addConsoleCommand('Error: You have not e-coin');
+                        return;
+                    }
+                    phone.addConsoleCommand('Transfer success');
+                    user.removeCryptoMoney(sum, 'Обмен E-Coin');
+                    user.addBankMoney(sum * 500, 'Обмен E-Coin');
+                    user.sendSmsBankOperation(`Транзакция успешно прошла\nПолучено ~g~${methods.moneyFormat(sum * 500)}`, 'E-Coin');
+                }
+                else {
+                    phone.addConsoleCommand('Usage: ecorp -coin -toBankCard [sum]');
+                }
+            }
+            else if (args[0] === '-send') {
+                if (args[1] === '-fraction') {
+                    let sum = methods.parseFloat(args[2]);
+                    if (sum < 0) {
+                        phone.addConsoleCommand('Usage: ecorp -coin -toBankCard [sum]');
+                        return;
+                    }
+                    if (sum > user.getCryptoMoney()) {
+                        phone.addConsoleCommand('Error: You have not e-coin');
+                        return;
+                    }
+                    phone.addConsoleCommand('Transfer to fraction success');
+                    user.removeCryptoMoney(sum, 'Перевод E-Coin');
+                    fraction.addMoney(user.getCache('fraction_id2'), sum, 'Перевод E-Coin от ' + user.getCache('name'));
+                }
+                else {
+                    phone.addConsoleCommand('Usage: ecorp -create -fraction');
+                }
+            }
+            else if (args[0] === '-create') {
+                if (args[1] === '-fraction') {
+                    if (user.getCache('rep') < 100 && user.getCache('fraction_id2') == 0) {
+                        mp.events.callRemote('server:phone:createFraction');
+                        phone.showLoad();
+                    }
+                    else {
+                        mp.game.ui.notifications.show(`~r~Необходимо иметь наихудшую репутацию и не состоять ни в каких фракциях`);
+                        phone.addConsoleCommand('Access denied');
+                    }
+                }
+                else {
+                    phone.addConsoleCommand('Usage: ecorp -create -fraction');
+                }
+            }
+        }
+        else {
+            phone.addConsoleCommand(`${cmd}: command not found`);
+
+        }
+    }
+    catch (e) {
+        phone.addConsoleCommand('GNU bash, version 4.3.48(1)-release (x86_64-pc-linux-gnu)');
+        phone.addConsoleCommand(' ');
+        phone.addConsoleCommand('help');
+        phone.addConsoleCommand('ecorp -h');
+    }
 };
 
 phone.callBack = function(action, menu, id, ...args) {

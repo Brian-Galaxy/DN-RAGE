@@ -59,7 +59,7 @@ timer.updateTempLevel = function() {
 
     if (weather.getWeatherTemp() < 18 && user.getCache('torso') == 15) {
         mp.game.ui.notifications.show("~y~У Вас замерз торс");
-        mp.players.local.setHealth(mp.players.local.getHealth() + 100 - 2);
+        user.setHealth(mp.players.local.getHealth() - 2);
         return;
     }
     else {
@@ -69,7 +69,7 @@ timer.updateTempLevel = function() {
             if (clothList[i][10] > weather.getWeatherTemp())
             {
                 mp.game.ui.notifications.show("~y~У Вас замерз торс");
-                mp.players.local.setHealth(mp.players.local.getHealth() + 100 - 1);
+                user.setHealth(mp.players.local.getHealth() - 1);
                 break;
             }
         }
@@ -81,7 +81,7 @@ timer.updateTempLevel = function() {
         if (clothList[i][10] > weather.getWeatherTemp())
         {
             mp.game.ui.notifications.show("~y~У Вас замерзли ноги");
-            mp.players.local.setHealth(mp.players.local.getHealth() + 100 - 1);
+            user.setHealth(mp.players.local.getHealth() - 1);
             break;
         }
     }
@@ -92,7 +92,7 @@ timer.updateTempLevel = function() {
         if (clothList[i][10] > weather.getWeatherTemp())
         {
             mp.game.ui.notifications.show("~y~У Вас замерзли ступни");
-            mp.players.local.setHealth(mp.players.local.getHealth() + 100 - 1);
+            user.setHealth(mp.players.local.getHealth() - 1);
             break;
         }
     }
@@ -118,9 +118,9 @@ timer.updateEatLevel = function() {
             }
 
             if (user.getEatLevel() < 10)
-                mp.players.local.setHealth(mp.players.local.getHealth() + 100 - 5);
+                user.setHealth(mp.players.local.getHealth() - 5);
             if (user.getWaterLevel() < 10)
-                mp.players.local.setHealth(mp.players.local.getHealth() + 100 - 5);
+                user.setHealth(mp.players.local.getHealth() - 5);
         }
     }
 };
@@ -343,7 +343,7 @@ timer.secTimer = function() {
 
             if (user.getDrugLevel(drugId) > 1000) {
                 chat.sendLocal(`!{03A9F4}Вы в коме от передозировки`);
-                user.setHeal(0); //TODO
+                user.setHealth(0); //TODO
             }
 
             if (!mp.game.graphics.getScreenEffectIsActive("DrugsMichaelAliensFightIn"))
@@ -364,7 +364,7 @@ timer.secTimer = function() {
 
             if (user.getDrugLevel(drugId) > 1000) {
                 chat.sendLocal(`!{03A9F4}Вы в коме от передозировки`);
-                user.setHeal(0); //TODO
+                user.setHealth(0); //TODO
             }
 
             if (!mp.game.graphics.getScreenEffectIsActive("DrugsTrevorClownsFightIn"))
@@ -385,7 +385,7 @@ timer.secTimer = function() {
 
             if (user.getDrugLevel(drugId) > 1000) {
                 chat.sendLocal(`!{03A9F4}Вы в коме от передозировки`);
-                user.setHeal(0); //TODO
+                user.setHealth(0); //TODO
             }
 
             if (!mp.game.graphics.getScreenEffectIsActive("DMT_flight"))
@@ -402,7 +402,7 @@ timer.secTimer = function() {
 
             if (user.getDrugLevel(drugId) > 1000) {
                 chat.sendLocal(`!{03A9F4}Вы в коме от передозировки`);
-                user.setHeal(0); //TODO
+                user.setHealth(0); //TODO
             }
 
             if (!mp.game.graphics.getScreenEffectIsActive("Rampage"))
@@ -419,7 +419,7 @@ timer.secTimer = function() {
 
             if (user.getDrugLevel(drugId) > 1000) {
                 chat.sendLocal(`!{03A9F4}Вы в коме от передозировки`);
-                user.setHeal(0); //TODO
+                user.setHealth(0); //TODO
             }
 
             if (!mp.game.graphics.getScreenEffectIsActive("DrugsDrivingIn"))
@@ -440,7 +440,7 @@ timer.secTimer = function() {
 
             if (user.getDrugLevel(drugId) > 1000) {
                 chat.sendLocal(`!{03A9F4}Вы в коме от передозировки`);
-                user.setHeal(0); //TODO
+                user.setHealth(0); //TODO
             }
 
             if (!mp.game.graphics.getScreenEffectIsActive("PeyoteEndIn"))
@@ -461,7 +461,7 @@ timer.secTimer = function() {
 
             if (user.getDrugLevel(drugId) > 1500) {
                 chat.sendLocal(`!{03A9F4}Вы в коме от передозировки`);
-                user.setHeal(0); //TODO
+                user.setHealth(0); //TODO
             }
 
             if (!mp.game.graphics.getScreenEffectIsActive("ChopVision"))

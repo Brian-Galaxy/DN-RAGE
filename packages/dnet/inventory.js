@@ -723,7 +723,7 @@ inventory.useItem = function(player, id, itemId) {
                     return;
                 }
                 chat.sendMeCommand(player, "употребил кокаин");
-                player.health = 100;
+                user.setHealth(player, 100);
                 inventory.deleteItem(id);
 
                 user.addDrugLevel(player, 1, 200);
@@ -743,7 +743,7 @@ inventory.useItem = function(player, id, itemId) {
                     return;
                 }
                 chat.sendMeCommand(player, "употребил амфетамин");
-                player.health = 100;
+                user.setHealth(player, 100);
                 inventory.deleteItem(id);
 
                 user.addDrugLevel(player, 0, 200);
@@ -763,7 +763,7 @@ inventory.useItem = function(player, id, itemId) {
                     return;
                 }
                 chat.sendMeCommand(player, "употребил DMT");
-                player.health = 100;
+                user.setHealth(player, 100);
                 inventory.deleteItem(id);
 
                 user.addDrugLevel(player, 2, 200);
@@ -783,7 +783,7 @@ inventory.useItem = function(player, id, itemId) {
                     return;
                 }
                 chat.sendMeCommand(player, "употребил мефедрон");
-                player.health = 100;
+                user.setHealth(player, 100);
                 inventory.deleteItem(id);
 
                 user.addDrugLevel(player, 5, 200);
@@ -803,7 +803,7 @@ inventory.useItem = function(player, id, itemId) {
                     return;
                 }
                 chat.sendMeCommand(player, "употребил кетамин");
-                player.health = 100;
+                user.setHealth(player, 100);
                 inventory.deleteItem(id);
 
                 user.addDrugLevel(player, 3, 200);
@@ -823,7 +823,7 @@ inventory.useItem = function(player, id, itemId) {
                     return;
                 }
                 chat.sendMeCommand(player, "употребил LSD");
-                player.health = 100;
+                user.setHealth(player, 100);
                 inventory.deleteItem(id);
 
                 user.addDrugLevel(player, 4, 200);
@@ -844,9 +844,9 @@ inventory.useItem = function(player, id, itemId) {
                 }
                 chat.sendMeCommand(player, "употребил марихуану");
                 if (player.health <= 90)
-                    player.health = player.health + 10;
+                    user.setHealth(player, player.health + 10);
                 else
-                    player.health = 100;
+                    user.setHealth(player, 100);
                 inventory.deleteItem(id);
 
                 user.set(player, 'useHeal', true);
@@ -1326,9 +1326,9 @@ inventory.useItem = function(player, id, itemId) {
                 }
                 chat.sendMeCommand(player, "использовал аптечку");
                 if (player.health >= 60)
-                    player.health = 100;
+                    user.setHealth(player, 100);
                 else
-                    player.health = player.health + 40;
+                    user.setHealth(player, player.health + 40);
                 inventory.deleteItem(id);
                 user.playDrugAnimation(player);
                 user.set(player, 'useHeal', true);
@@ -1345,7 +1345,7 @@ inventory.useItem = function(player, id, itemId) {
                     return;
                 }
                 chat.sendMeCommand(player, "использовал аптечку");
-                player.health = 100;
+                user.setHealth(player, 100);
                 inventory.deleteItem(id);
                 user.playDrugAnimation(player);
                 user.set(player, 'useHeal', true);

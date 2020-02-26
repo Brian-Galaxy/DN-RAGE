@@ -33,6 +33,9 @@ let currentCamRot = -2;
 let targetEntityPrev = undefined;
 
 let isTeleport = true;
+let isHeal = true;
+let isArmor = false;
+let isGiveAmmo = false;
 
 let cam = null;
 
@@ -239,6 +242,7 @@ user.giveWeaponByHash = function(model, pt) {
     try {
         if (pt < 0)
             pt = 0;
+        isGiveAmmo = true;
         mp.game.invoke(methods.GIVE_WEAPON_TO_PED, mp.players.local.handle, model, methods.parseInt(pt), false, true);
         Container.Data.SetLocally(0, model.toString(), true);
         Container.Data.Set(mp.players.local.remoteId, model.toString(), methods.parseInt(pt));
@@ -280,6 +284,7 @@ user.setCurrentWeapon = function(model) {
 
 user.setCurrentWeaponByHash = function(model) {
     try {
+        isGiveAmmo = true;
         mp.game.invoke(methods.SET_CURRENT_PED_WEAPON, mp.players.local.handle, model, true);
     }
     catch (e) {
@@ -305,6 +310,7 @@ user.addAmmo = function(name, count) {
 
 user.addAmmoByHash = function(name, count) {
     try {
+        isGiveAmmo = true;
         mp.game.invoke(methods.ADD_AMMO_TO_PED, mp.players.local.handle, name, methods.parseInt(count));
     }
     catch (e) {
@@ -318,6 +324,7 @@ user.setAmmo = function(name, count) {
 
 user.setAmmoByHash = function(name, count) {
     try {
+        isGiveAmmo = true;
         mp.game.invoke(methods.SET_PED_AMMO, mp.players.local.handle, name, methods.parseInt(count));
     }
     catch (e) {
@@ -329,11 +336,19 @@ user.getAmmo = function(name) {
     return user.getAmmoByHash(weapons.getHashByName(name));
 };
 
+user.isSetAmmo = function() {
+    return isGiveAmmo;
+};
+
+user.isSetAmmoFalse = function() {
+    isGiveAmmo = false;
+};
+
 user.getAmmoByHash = function(name) {
     return mp.game.invoke(methods.GET_AMMO_IN_PED_WEAPON, mp.players.local.handle, name);
 };
 
-user.getCurrentAmmoInClip = function() {ammo
+user.getCurrentAmmoInClip = function() {
     return mp.players.local.getAmmoInClip(user.getCurrentWeapon());
 };
 
@@ -351,7 +366,6 @@ user.revive = function(hp = 20) {
     //mp.players.local.resurrect();
     //mp.players.local.position = hospPos;
     mp.events.callRemote('server:user:respawn', hospPos.x, hospPos.y, hospPos.z);
-    mp.players.local.health = hp;
     mp.players.local.freezePosition(false);
 };
 
@@ -600,8 +614,30 @@ user.setPlayerModel = function(model) {
     mp.events.callRemote('server:user:setPlayerModel', model);
 };
 
-user.setHeal = function(level) {
-    mp.events.callRemote('server:user:setHeal', level);
+user.setHealth = function(level) {
+    isHeal = true;
+    mp.players.local.setHealth(level + 100);
+};
+
+user.setArmour = function(level) {
+    isArmor = true;
+    mp.players.local.setArmour(level);
+};
+
+user.setHealthFalse = function() {
+    isHeal = false;
+};
+
+user.setArmorFalse = function() {
+    isArmor = false;
+};
+
+user.isHealth = function() {
+    return isHeal;
+};
+
+user.isArmor = function() {
+    return isArmor;
 };
 
 user.setDecoration = function(slot, type, isLocal = false) {

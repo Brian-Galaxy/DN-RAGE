@@ -280,7 +280,7 @@ admin.setArmorById = function(player, type, id, num) {
                 return;
             }
 
-            target.armour = num;
+            user.setArmour(target, num);
 
             target.notify(`~b~Администратор ${user.getRpName(player)} выдал ${num}% брони ${user.getRpName(target)}`);
             player.notify(`~b~Администратор ${user.getRpName(player)} выдал ${num}% брони ${user.getRpName(target)}`);
@@ -292,7 +292,7 @@ admin.setArmorById = function(player, type, id, num) {
                 return;
             }
 
-            target.armour = num;
+            user.setArmour(target, num);
 
             target.notify(`~b~Администратор ${user.getRpName(player)} выдал ${num}% брони ${user.getRpName(target)}`);
             player.notify(`~b~Администратор ${user.getRpName(player)} выдал ${num}% брони ${user.getRpName(target)}`);
@@ -317,7 +317,7 @@ admin.setHpById = function(player, type, id, num) {
                 return;
             }
 
-            target.health = num;
+            user.setHealth(target, num);
 
             target.notify(`~b~Администратор ${user.getRpName(player)} выдал ${num}% здоровья ${user.getRpName(target)}`);
             player.notify(`~b~Администратор ${user.getRpName(player)} выдал ${num}% здоровья ${user.getRpName(target)}`);
@@ -329,7 +329,7 @@ admin.setHpById = function(player, type, id, num) {
                 return;
             }
 
-            target.health = num;
+            user.setHealth(target, num);
 
             target.notify(`~b~Администратор ${user.getRpName(player)} выдал ${num}% здоровья ${user.getRpName(target)}`);
             player.notify(`~b~Администратор ${user.getRpName(player)} выдал ${num}% здоровья ${user.getRpName(target)}`);

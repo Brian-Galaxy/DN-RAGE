@@ -49,7 +49,7 @@ admin.godmode= function(enable) {
 
         mp.players.local.setInvincible(enable);
         mp.players.local.setCanBeDamaged(!enable);
-        mp.players.local.setHealth(200);
+        user.setHealth(100);
 
     } catch (e) {
         methods.debug('Exception: admin.noClip');
@@ -76,7 +76,7 @@ mp.events.add('render', () => {
         mp.players.local.setCanBeDamaged(false);
 
         if (mp.players.local.getHealth() < 999)
-            mp.players.local.setHealth(1000);
+            user.setHealth(1000);
     }
 
     if (noClipEnabled) {

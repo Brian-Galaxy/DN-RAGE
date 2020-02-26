@@ -416,7 +416,7 @@ user.spawnByName = function(player, spawn = 'Стандарт') { //TODO by LVL
             return false;
 
         if (user.hasById(user.getId(player), 'hp'))
-            player.health = user.getById(user.getId(player), 'hp');
+            user.setHealth(player, user.getById(user.getId(player), 'hp'));
 
         if (spawn == 'Точка выхода') {
             let userId = user.getId(player);
@@ -1628,6 +1628,14 @@ user.clearChat = function(player) {
     if (!mp.players.exists(player))
         return false;
     player.call('client:clearChat');
+};
+
+user.setHealth = function(player, level) {
+    player.call('client:setHealth', [level]);
+};
+
+user.setArmour = function(player, level) {
+    player.call('client:setArmour', [level]);
 };
 
 user.teleport = function(player, x, y, z, rot = 0.1) {

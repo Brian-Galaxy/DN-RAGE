@@ -3606,7 +3606,7 @@ menuList.showSpawnJobGr6Menu = function() {
 
             mp.events.callRemote('server:gun:buy', 77, 2250, 1, 0, 5, 0);
             mp.events.callRemote('server:gun:buy', 280, 850, 1, 0, 5, 0);
-            mp.players.local.setArmour(20);
+            user.setArmour(20);
 
             mp.game.ui.notifications.show("~g~Вы взяли стандартное вооружение");
         }
@@ -3623,12 +3623,12 @@ menuList.showSpawnJobGr6Menu = function() {
             mp.events.callRemote('server:gun:buy', 103, 9250, 1, 0, 5, 0);
             mp.events.callRemote('server:gun:buy', 280, 850, 1, 0, 5, 0);
 
-            mp.players.local.setArmour(100);
+            user.setArmour(100);
             mp.game.ui.notifications.show("~g~Вы купили MP5 и взяли в аренду бронежилет.");
         }
         if (item.doName == 'stopDuty') {
             user.updateCharacterCloth();
-            mp.players.local.setArmour(0);
+            user.setArmour(0);
             mp.game.ui.notifications.show("~y~Вы закончили дежурство и сдали бронежилет.");
             Container.Data.ResetLocally(0, 'is6Duty');
         }
@@ -5070,8 +5070,8 @@ menuList.showBarMenu = function(shopId, price = 2)
                 business.addMoney(shopId, item.price, item.label2);
                 user.removeMoney(item.price, 'Выпил ' + item.label + ' в баре');
 
-                if (mp.players.local.health < 90)
-                    mp.players.local.health += 5;
+                if (mp.players.local.getHealth() < 90)
+                    user.setHealth(mp.players.local.getHealth() + 5);
 
                 if (item.drunkLevel)
                     user.addDrugLevel(99, item.drunkLevel);
@@ -5130,8 +5130,8 @@ menuList.showBarFreeMenu = function()
         try {
             if (item.label) {
 
-                if (mp.players.local.health < 90)
-                    mp.players.local.health += 5;
+                if (mp.players.local.getHealth() < 90)
+                    user.setHealth(mp.players.local.getHealth() + 5);
 
                 if (item.drunkLevel)
                     user.addDrugLevel(99, item.drunkLevel);
@@ -7245,7 +7245,7 @@ menuList.showGunShopMenu = function(shopId, price = 1)
                     mp.game.ui.notifications.show("~r~У вас недостаточно средств");
                     return;
                 }
-                mp.players.local.setArmour(item.armor);
+                user.setArmour(item.armor);
                 mp.game.ui.notifications.show("~b~Вы купили бронежилет");
                 user.removeCashMoney(item.price, 'Покупка бронежилета');
                 business.addMoney(shopId, item.price, 'Бронежилет');
@@ -7358,7 +7358,7 @@ menuList.showGunShopWeaponMenu = function(shopId, itemId, price = 1)
                     mp.game.ui.notifications.show("~r~У вас недостаточно средств");
                     return;
                 }
-                mp.players.local.setArmour(item.armor);
+                user.setArmour(item.armor);
                 mp.game.ui.notifications.show("~b~Вы купили бронежилет");
                 user.removeCashMoney(item.price, 'Покупка бронежилета');
                 business.addMoney(shopId, item.price, 'Бронежилет');
@@ -7864,7 +7864,7 @@ menuList.showGovGarderobMenu = function() {
     menu.ItemSelect.on(async item => {
         UIMenu.Menu.HideMenu();
         if (item.armor) {
-            mp.players.local.setArmour(100);
+            user.setArmour(100);
             mp.game.ui.notifications.show("~b~Вы взяли броню");
         }
         if (item.itemId) {
@@ -8070,7 +8070,7 @@ menuList.showSheriffArsenalGunMenu = function() {
     menu.ItemSelect.on(async item => {
         UIMenu.Menu.HideMenu();
         if (item.armor) {
-            mp.players.local.setArmour(100);
+            user.setArmour(100);
             mp.game.ui.notifications.show("~b~Вы взяли броню");
         }
         if (item.itemId) {
@@ -8297,7 +8297,7 @@ menuList.showSapdArsenalMenu = function() {
     menu.ItemSelect.on(async item => {
         UIMenu.Menu.HideMenu();
         if (item.armor) {
-            mp.players.local.setArmour(100);
+            user.setArmour(100);
             mp.game.ui.notifications.show("~b~Вы взяли броню");
         }
         if (item.showGun) {
@@ -8375,7 +8375,7 @@ menuList.showSapdArsenalGunMenu = function() {
     menu.ItemSelect.on(async item => {
         UIMenu.Menu.HideMenu();
         if (item.armor) {
-            mp.players.local.setArmour(100);
+            user.setArmour(100);
             mp.game.ui.notifications.show("~b~Вы взяли броню");
         }
         if (item.itemId) {

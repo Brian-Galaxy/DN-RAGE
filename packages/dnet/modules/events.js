@@ -167,6 +167,7 @@ mp.events.add('server:clientDebug', (player, message) => {
 mp.events.addRemoteCounted('server:user:respawn', (player, x, y, z) => {
     if (!user.isLogin(player))
         return;
+    user.setHealth(player, 100);
     player.spawn(new mp.Vector3(x, y, z));
 });
 

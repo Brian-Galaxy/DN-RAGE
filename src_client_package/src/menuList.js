@@ -2938,7 +2938,7 @@ menuList.showPlayerDocMenu = function(playerId) {
 
     UIMenu.Menu.AddMenuItem("Лицензия юриста").doName = 'law_lic';
 
-    UIMenu.Menu.AddMenuItem("Лицензия на бизнес", "~c~Чтобы можно было иметь бизнес").doName = 'biz_lic';
+    UIMenu.Menu.AddMenuItem("Лицензия на предпринимательство", "~c~Чтобы можно было иметь бизнес").doName = 'biz_lic';
 
     UIMenu.Menu.AddMenuItem("Разрешение на рыболовство", "~c~Можно рыбачить, как-бы").doName = 'fish_lic';
 
@@ -7591,7 +7591,7 @@ menuList.showFractionInfoMenu = function() {
             UIMenu.Menu.AddMenuItem(`Кабинет штата`).coffer = true;
 
         UIMenu.Menu.AddMenuItem(`Выдать лицензию юриста`, "Стоимость: ~g~$20,000").licName = 'law_lic';
-        UIMenu.Menu.AddMenuItem(`Выдать лицензию на предпренимательство`, "Стоимость: ~g~$20,000").licName = 'biz_lic';
+        UIMenu.Menu.AddMenuItem(`Выдать лицензию на предпринимательство`, "Стоимость: ~g~$20,000").licName = 'biz_lic';
         UIMenu.Menu.AddMenuItem(`Выдать разрешение на рыбаловство`, "Стоимость: ~g~$5,000").licName = 'fish_lic';
     }
     if (user.isEms()) {

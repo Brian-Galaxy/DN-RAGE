@@ -4,8 +4,10 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
+    "lerp": "^1.0.3",
     "mysql": "^2.17.1",
     "watch": "^1.0.2",
+    "webhook-discord": "^3.5.1",
     "webpack": "^4.41.2"
   },
   "scripts": {

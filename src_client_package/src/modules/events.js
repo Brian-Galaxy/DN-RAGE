@@ -2776,9 +2776,6 @@ mp.events.add("playerCommand", async (command) => {
 *
 * */
 
-
-mp.events.add('render', () => { mp.game.controls.disableControlAction(0,68,true); });
-
 mp.events.add('render', () => {
     try {
         mp.game.controls.disableControlAction(0,68,true); //ATTACK VEHICLE
@@ -2962,7 +2959,7 @@ mp.events.add('render', () => {
 });
 
 mp.events.add('render', () => {
-    /*if (user.getCache('med_time') > 0) {
+    if (user.getCache('med_time') > 0) {
         mp.game.controls.disableControlAction(2, 24, true);
         mp.game.controls.disableControlAction(2, 25, true);
         mp.game.controls.disableControlAction(2, 66, true);
@@ -2973,7 +2970,7 @@ mp.events.add('render', () => {
         mp.game.controls.disableControlAction(2, 141, true);
         mp.game.controls.disableControlAction(2, 143, true);
         mp.game.controls.disableControlAction(2, 263, true);
-    }*/
+    }
 });
 
 //TODO Переделать отдачу стрельбы, для начала переделав IS SHOOOTING, чтобы он после того как закончил стрелять , еще 1 секунду ждал, вдруг игрок снова начнет стрелять

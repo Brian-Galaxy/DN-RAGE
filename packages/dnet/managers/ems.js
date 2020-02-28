@@ -223,7 +223,7 @@ ems.vehicleUnload = function (player) {
 
         let v = player.vehicle;
         if (vehicles.exists(v)) {
-            v.addAttachment(`ems_${v.getVariable('emsType')}`, true);
+            v.addAttachment(`ems_${obj.getVariable('emsType').split('|')[1]}`, true);
             v.setVariable('emsTruck', undefined);
             player.notify('~g~Вы разгрузили транспорт. Вам была выдана премия в $1000');
             user.addRep(player, 10);

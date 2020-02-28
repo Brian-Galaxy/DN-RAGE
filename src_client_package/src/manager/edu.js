@@ -101,8 +101,6 @@ let shortPos = [
     ],
 ];
 
-mp.events.add('render', () => { mp.game.vehicle.setRandomVehicleDensityMultiplierThisFrame(1); });
-
 let longPos = [
     [
         "Добро пожаловать",

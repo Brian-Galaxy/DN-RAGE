@@ -461,7 +461,8 @@ bank.sendSmsBankCloseOperation = function(player, pref = 0) {
 };
 
 bank.sendSmsBankOpenOperation = function(player, pref = 0) {
-    user.sendSmsBankOperation(player, 'Поздравляем с открытием счёта! Надеемся на долгое сотрудничество!\nВаш пинкод от карты:~g~ 1234', pref);
+    player.notify('Поздравляем с открытием счёта! Надеемся на долгое сотрудничество!\nВаш пинкод от карты:~g~ 1234');
+    //user.sendSmsBankOperation(player, 'Поздравляем с открытием счёта! Надеемся на долгое сотрудничество!\nВаш пинкод от карты:~g~ 1234', pref);
 };
 
 bank.getInRadius = function(pos, radius = 2) {

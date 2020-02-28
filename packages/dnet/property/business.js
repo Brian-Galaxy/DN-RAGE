@@ -236,7 +236,7 @@ business.buy = function (player, id) {
     }
 
     if (user.get(player, 'biz_lic') === false) {
-        player.notify('~r~У Вас нет лицензии на бизнес\nКупить её можно у сотрудников правительства');
+        player.notify('~r~У Вас нет лицензии на предпринимательство\nКупить её можно у сотрудников правительства');
         return false;
     }
 

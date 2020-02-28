@@ -1128,7 +1128,7 @@ const drawText = (text, position, options) => {
 const specialKey = {
     [192]: `\\\~`
 };
-
+/*
 mp.events.add('render', () => {
 
     if (!__CONFIG__.debug)
@@ -1176,7 +1176,7 @@ mp.events.add('render', () => {
         color: [255, 255, 255, 255],
         align: 0
     });
-});
+});*/
 
 /*
     EXAMPLE - HUD - end

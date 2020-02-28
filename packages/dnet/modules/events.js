@@ -3245,7 +3245,7 @@ mp.events.addRemoteCounted('server:business:sellToPlayer:accept', (player, house
     }
 
     if (user.get(player, 'biz_lic') === false) {
-        player.notify('~r~У Вас нет лицензии на бизнес');
+        player.notify('~r~У Вас нет лицензии на предпринимательство');
         player.notify('~r~Купить её можно у сотрудников правительства');
         return false;
     }
@@ -4032,7 +4032,7 @@ mp.events.addRemoteCounted('server:user:arrest', (player, id) => {
             }
             coffer.addMoney(coffer.getIdByFraction(user.get(player, 'fraction_id'), 1500));
             user.addMoney(player, 1500, 'Премия');
-            player.notify('~g~Вы произвели арест. Премия: ~s~$1500');
+            player.notify('~g~Вы произвели арест. Премия: ~s~$1,500');
 
             methods.saveFractionLog(
                 user.getRpName(player),

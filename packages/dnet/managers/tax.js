@@ -68,7 +68,10 @@ tax.sell = function() {
             stock.updateOwnerInfo(methods.parseInt(row['id']), 0, '');
             mysql.executeQuery("UPDATE users SET money_bank = money_bank + '" + price + "', stock_id = '0' WHERE id = '" + methods.parseInt(row["user_id"]) + "'");
 
-            methods.saveLog('SellInactive', `"USER: ${row["user_id"]} STOCK ${row["id"]}"`);
+            methods.saveLog('log_sell_inactive',
+                ['text'],
+                [`USER: ${row["user_id"]} STOCK ${row["id"]}`],
+            );
         });
 
         if (rows.length > 0)
@@ -99,7 +102,10 @@ tax.sell = function() {
             houses.updateOwnerInfo(methods.parseInt(row['id']), 0, '');
             mysql.executeQuery("UPDATE users SET money_bank = money_bank + '" + price + "', house_id = '0' WHERE id = '" + methods.parseInt(row["user_id"]) + "'");
 
-            methods.saveLog('SellInactive', `"USER: ${row["user_id"]} HOUSE ${row["id"]}"`)
+            methods.saveLog('log_sell_inactive',
+                ['text'],
+                [`USER: ${row["user_id"]} HOUSE ${row["id"]}`],
+            );
         });
 
         if (rows.length > 0)
@@ -130,7 +136,10 @@ tax.sell = function() {
             condo.updateOwnerInfo(methods.parseInt(row['id']), 0, '');
             mysql.executeQuery("UPDATE users SET money_bank = money_bank + '" + price + "', condo_id = '0' WHERE id = '" + methods.parseInt(row["user_id"]) + "'");
 
-            methods.saveLog('SellInactive', `"USER: ${row["user_id"]} CONDO ${row["id"]}"`)
+            methods.saveLog('log_sell_inactive',
+                ['text'],
+                [`USER: ${row["user_id"]} CONDO ${row["id"]}`],
+            );
         });
 
         if (rows.length > 0)
@@ -162,7 +171,11 @@ tax.sell = function() {
             mysql.executeQuery("UPDATE users SET money_bank = money_bank + '" + price + "', business_id = '0' WHERE id = '" + methods.parseInt(row["user_id"]) + "'");
 
             tax.adLiveInvader(`Бизнес ${row["name"]} поступил в продажу`);
-            methods.saveLog('SellInactive', `"USER: ${row["user_id"]} BIZZ ${row["id"]}"`)
+
+            methods.saveLog('log_sell_inactive',
+                ['text'],
+                [`USER: ${row["user_id"]} BUSINESS ${row["id"]}`],
+            );
         });
 
         if (rows.length > 0)
@@ -193,7 +206,7 @@ tax.sell = function() {
             apartments.updateOwnerInfo(methods.parseInt(row['id']), 0, '');
             mysql.executeQuery("UPDATE users SET money_bank = money_bank + '" + price + "', apartment_id = '0' WHERE id = '" + methods.parseInt(row["user_id"]) + "'");
 
-            methods.saveLog('SellInactive', `"USER: ${row["user_id"]} APART ${row["id"]}"`)
+            //methods.saveLog('SellInactive', `"USER: ${row["user_id"]} APART ${row["id"]}"`)
         });
 
         if (rows.length > 0)
@@ -247,7 +260,10 @@ tax.sell = function() {
                 vehicles.updateOwnerInfo(methods.parseInt(row['id']), 0, '');
                 mysql.executeQuery("UPDATE users SET money_bank = money_bank + '" + price + "', car_id" + carId + " = '0' WHERE id = '" + methods.parseInt(row["user_id"]) + "'");
 
-                methods.saveLog('SellInactive', `"USER: ${row["user_id"]} CAR ${row["id"]}"`);
+                methods.saveLog('log_sell_inactive',
+                    ['text'],
+                    [`USER: ${row["user_id"]} VEHICLE ${row["id"]}`],
+                );
             });
 
             if (rows.length > 0)

@@ -40,6 +40,7 @@ let weather = require('../managers/weather');
 let gangWar = require('../managers/gangWar');
 let ems = require('../managers/ems');
 let tax = require('../managers/tax');
+let discord = require('../managers/discord');
 
 mp.events.__add__ = mp.events.add;
 
@@ -169,6 +170,7 @@ mp.events.addRemoteCounted('server:user:respawn', (player, x, y, z) => {
         return;
     user.setHealth(player, 100);
     player.spawn(new mp.Vector3(x, y, z));
+    user.stopAnimation(player);
 });
 
 mp.events.addRemoteCounted('server:user:createAccount', (player, login, password, email) => {
@@ -303,6 +305,10 @@ mp.events.addRemoteCounted('server:user:kickAntiCheat', (player, reason) => {
     user.kickAntiCheat(player, reason);
 });
 
+mp.events.addRemoteCounted('server:user:banAntiCheat', (player, type, reason) => {
+    admin.banByAnticheat(0, player.id, type, reason);
+});
+
 mp.events.addRemoteCounted('server:enums:getCloth', (player, requestID) => {
     try {
         player.call('client:enums:updateCloth', [requestID, JSON.stringify(enums.hairOverlays), JSON.stringify(enums.clothM), JSON.stringify(enums.clothF), JSON.stringify(enums.propM), JSON.stringify(enums.propF)]);
@@ -373,6 +379,23 @@ mp.events.addRemoteCounted('server:playAnimationByPlayerId', (player, playerId, 
         return;
     user.playAnimation(user.getPlayerById(playerId), name1, name2, flag);
     //mp.players.call('client:syncAnimation', [player.id, name1, name2, flag]);
+});
+
+mp.events.addRemoteCounted('server:discord:sendDiscordServerNews', (player, title, sender, message) => {
+    if (user.get(player, 'fraction_id') === 1)
+        discord.sendFractionList(title, sender, message, discord.socialClub + player.socialClub.toLowerCase(), discord.imgGov, discord.colorGov);
+    if (user.get(player, 'fraction_id') === 2)
+        discord.sendFractionList(title, sender, message, discord.socialClub + player.socialClub.toLowerCase(), discord.imgLspd, discord.colorLspd);
+    if (user.get(player, 'fraction_id') === 3)
+        discord.sendFractionList(title, sender, message, discord.socialClub + player.socialClub.toLowerCase(), discord.imgFib, discord.colorFib);
+    if (user.get(player, 'fraction_id') === 4)
+        discord.sendFractionList(title, sender, message, discord.socialClub + player.socialClub.toLowerCase(), discord.imgUsmc, discord.colorUsmc);
+    if (user.get(player, 'fraction_id') === 5)
+        discord.sendFractionList(title, sender, message, discord.socialClub + player.socialClub.toLowerCase(), discord.imgSheriff, discord.colorSheriff);
+    if (user.get(player, 'fraction_id') === 6)
+        discord.sendFractionList(title, sender, message, discord.socialClub + player.socialClub.toLowerCase(), discord.imgEms, discord.colorEms);
+    if (user.get(player, 'fraction_id') === 7)
+        discord.sendFractionList(title, sender, message, discord.socialClub + player.socialClub.toLowerCase(), discord.imgInvader, discord.colorInvader);
 });
 
 mp.events.addRemoteCounted('server:players:notifyWithPictureToAll', (player, title, sender, message, notifPic, icon, flashing, textColor, bgColor, flashColor) => {
@@ -1178,7 +1201,10 @@ mp.events.addRemoteCounted('server:user:giveMoneyToPlayerId', (player, playerRem
         remotePlayer.notify('Вам передали ~g~' + methods.moneyFormat(money));
         player.notify('Вы передали ~g~' + methods.moneyFormat(money));
 
-        methods.saveLog('GiveCash', `${user.getRpName(player)} (${user.getId(player)}) to ${user.getRpName(remotePlayer)} (${user.getId(remotePlayer)}) count $${money}`);
+        methods.saveLog('log_give_money',
+            ['type', 'user_from', 'user_to', 'sum'],
+            ['CASH', `${user.getRpName(player)} (${user.getId(player)})`, `${user.getRpName(remotePlayer)} (${user.getId(remotePlayer)})`, methods.moneyFormat(money)],
+        );
     }
 });
 
@@ -1497,6 +1523,8 @@ mp.events.addRemoteCounted('server:invader:sendNews', (player, title, text) => {
 
     mysql.executeQuery(`INSERT INTO rp_inv_news (title, name, text, timestamp, rp_datetime) VALUES ('${title}', '${name}', '${text}', '${timestamp}', '${rpDateTime}')`);
 
+    discord.sendNews(title, text, name, player.socialClub);
+
     mp.players.forEach(p => {
         user.sendPhoneNotify(p, 'Life Invader', title, text, 'CHAR_LIFEINVADER');
     });
@@ -1534,7 +1562,7 @@ mp.events.addRemoteCounted('server:invader:sendAd', (player, id, title, name, te
     title = methods.removeQuotes(title);
     text = methods.removeQuotes(text);
     name = methods.removeQuotes(name);
-    phone = methods.removeQuotes(phone);
+    phone = methods.phoneFormat(methods.removeQuotes(phone));
     let editor = methods.removeQuotes(user.getRpName(player));
 
     let rpDateTime = weather.getRpDateTime();
@@ -1544,6 +1572,8 @@ mp.events.addRemoteCounted('server:invader:sendAd', (player, id, title, name, te
     mysql.executeQuery(`INSERT INTO rp_inv_ad (title, name, text, phone, editor, timestamp, rp_datetime) VALUES ('${title}', '${name}', '${text}', '${phone}', '${editor}', '${timestamp}', '${rpDateTime}')`);
 
     user.addPayDayMoney(player, 100, 'Отредактировал объявление');
+
+    discord.sendAd(title, name, text, phone, editor, player.socialClub);
 
     mp.players.forEach(p => {
         user.sendPhoneNotify(p, 'Life Invader', '~g~Реклама | ' + title, text, 'CHAR_LIFEINVADER');
@@ -2408,7 +2438,7 @@ mp.events.addRemoteCounted('server:phone:fractionVehicleAction', (player, id) =>
     phone.fractionVehicleAction(player, id);
 });
 
-mp.events.addRemoteCounted('server:phone:userRespawnById', (player, id) => {
+mp.events.addRemoteCounted('server:phone:userRespawnById', (player, id, price) => {
     if (!user.isLogin(player))
         return;
     mp.vehicles.forEach(v => {
@@ -2418,13 +2448,13 @@ mp.events.addRemoteCounted('server:phone:userRespawnById', (player, id) => {
                 return;
             }
 
-            if (user.getBankMoney(player) < 500) {
-                player.notify('~r~Необходимо иметь $500 на банковской карте для использования эвакуатора');
+            if (user.getBankMoney(player) < price) {
+                player.notify(`~r~Необходимо иметь ${methods.moneyFormat(price)} на банковской карте для использования эвакуатора`);
                 return;
             }
 
-            user.removeBankMoney(player, 500, 'Услуги эвакуатора');
-            coffer.addMoney(1, 500);
+            user.removeBankMoney(player, price, 'Услуги эвакуатора');
+            coffer.addMoney(1, price);
 
             vehicles.respawn(v);
             player.notify('~g~Ваш транспорт скоро будет на парковочном месте');
@@ -3832,6 +3862,7 @@ mp.events.addRemoteCounted('server:user:invite', (player, id) => {
         user.set(target, 'fraction_id', user.get(player, 'fraction_id'));
         user.set(target, 'is_leader', false);
         user.set(target, 'is_sub_leader', false);
+        user.set(target, 'job', 0);
 
         target.notify('~g~Вас приняли в организацию ' + user.getFractionName(player));
         player.notify('~b~Вы приняли сотрудника: ~s~' + user.getRpName(target));
@@ -3968,7 +3999,11 @@ mp.events.addRemoteCounted('server:user:giveWanted', (player, id, level, reason)
             else {
                 player.notify('~g~Вы выдали розыск');
             }
-            methods.saveLog('GiveWanted', `${user.getRpName(player)} give to ${user.getRpName(p)} - ${level} - ${reason}`);
+
+            methods.saveLog('log_give_wanted',
+                ['user_from', 'user_to', 'lvl', 'reason'],
+                [`${user.getRpName(player)} (${user.getId(player)})`, `${user.getRpName(p)} (${user.getId(p)})`, level, methods.removeQuotes(methods.removeQuotes2(reason))],
+            );
             user.giveWanted(p, level, reason);
         }
         else
@@ -4190,8 +4225,6 @@ mp.events.addRemoteCounted('server:user:newRank', (player, id, rank) => {
         }
     }
 
-    let rankName = methods.getRankName(user.get(player, 'fraction_id'), user.get(player, 'rank_type'), rank);
-
     let target = user.getPlayerById(id);
     if (user.isLogin(target)) {
 
@@ -4199,7 +4232,7 @@ mp.events.addRemoteCounted('server:user:newRank', (player, id, rank) => {
 
         user.set(target, 'rank', rank);
 
-        target.notify('~g~Вам была выдана новая должность~s~ ' + rankName);
+        target.notify('~g~Вам была выдана новая должность');
         player.notify('~b~Вы выдали новую должность: ~s~' + user.getRpName(target));
 
         user.save(target);
@@ -4207,7 +4240,7 @@ mp.events.addRemoteCounted('server:user:newRank', (player, id, rank) => {
     else {
         mysql.executeQuery(`UPDATE users SET rank = '${rank}' where id = '${id}' AND is_leader <> 1`);
         player.notify('~b~Вы выдали новую должность');
-        user.addHistoryById(id, 0, 'Была выдана новая должность ' + rankName + '. Выдал: ' + user.getRpName(player));
+        user.addHistoryById(id, 0, 'Была выдана новая должность. Выдал: ' + user.getRpName(player));
     }
 });
 
@@ -5387,10 +5420,85 @@ mp.events.addRemoteCounted('server:saveFile', (player, file, log) => {
     methods.saveFile(file, log);
 });
 
+mp.events.addRemoteCounted('server:saveLog', (player, table, cols, values) => {
+    methods.saveLog(table, cols, values);
+});
+
+mp.events.addRemoteCounted("server:activatePromocode", (player, promocode) => {
+    if (!user.isLogin(player))
+        return;
+    promocode = promocode.toUpperCase();
+    mysql.executeQuery(`SELECT id FROM promocode_using WHERE user_id = '${user.getId(player)}' AND promocode_name = '${promocode}' LIMIT 1`, function (err, rows, fields) {
+        if (rows.length == 0) {
+            mysql.executeQuery(`SELECT bonus FROM promocode_list WHERE code = '${promocode}' LIMIT 1`, function (err, rows, fields) {
+                if (rows.length >= 1) {
+                    rows.forEach(row => {
+                        user.addMoney(player, methods.parseInt(row['bonus']));
+                        player.notify(`~g~Промокод: ${promocode} активирован, вы получили $${methods.numberFormat(row['bonus'])}`);
+                        mysql.executeQuery(`INSERT INTO promocode_using (user_id, promocode_name) VALUES ('${user.getId(player)}', '${promocode}')`);
+                    });
+                } else {
+                    mysql.executeQuery(`SELECT * FROM promocode_top_list WHERE promocode = '${promocode}' AND is_use = 0 LIMIT 1`, function (err, rows, fields) {
+                        if (rows.length >= 1) {
+                            if (user.get(player, 'promocode') === '') {
+                                if (user.get(player, 'online_time') < 339) {
+
+                                    let paramsStart = JSON.parse(rows[0]["start"]);
+
+                                    user.set(player, 'promocode', promocode);
+                                    user.addCashMoney(player, paramsStart.money);
+                                    user.save(player);
+
+                                    let string = `~b~Вы ввели промокод: ~s~${promocode}\n`;
+                                    if (paramsStart.money > 0)
+                                        string += `~b~Вы получили~s~ ${methods.moneyFormat(paramsStart.money)}\n`;
+                                    if (paramsStart.vipt === 1)
+                                        string += `~b~Вы получили ~s~VIP LIGHT~b~ на ~s~${paramsStart.vip}д.\n`;
+                                    if (paramsStart.vipt === 2)
+                                        string += `~b~Вы получили ~s~VIP HARD~b~ на ~s~${paramsStart.vip}д.\n`;
+
+                                    let vipTime = 0;
+                                    let vipType = methods.parseInt(paramsStart.vipt);
+                                    if (methods.parseInt(paramsStart.vip) > 0 && user.get(player, 'vip_type') > 0 && user.get(player, 'vip_time') > 0)
+                                        vipTime = methods.parseInt(paramsStart.vip * 86400) + user.set(player, 'vip_time');
+                                    else if (methods.parseInt(paramsStart.vip) > 0)
+                                        vipTime = methods.parseInt(paramsStart.vip * 86400) + methods.getTimeStamp();
+
+                                    user.set(player, 'vip_time', vipTime);
+                                    user.set(player, 'vip_type', vipType);
+
+                                    player.notify(string);
+
+                                    mysql.executeQuery(`UPDATE users SET money_donate = money_donate + '2' WHERE parthner_promocode = '${user.get(player, 'promocode')}'`);
+                                    return;
+                                }
+                                player.notify("~r~Вы отыграли более 48 часов, промокод не доступен");
+                                return;
+                            }
+                            player.notify("~r~Вы уже активировали этот промокод");
+                        } else {
+                            player.notify("~r~Такого промокода не существует");
+                        }
+                    });
+                }
+            });
+        } else {
+            player.notify("~r~Вы уже активировали этот промокод");
+        }
+    });
+});
+
+
 mp.events.add('playerJoin', player => {
     player.dimension = player.id + 1;
     player.countedTriggers = 0;
     player.countedTriggersSwap = 0;
+
+    methods.saveLog('log_connect',
+        ['type', 'social', 'serial', 'address', 'game_id', 'account_id'],
+        ['JOIN', player.socialClub, player.serial, player.ip, player.id, 0]
+    );
+
     //player.outputChatBox("RAGE_Multiplayer HAS BEEN STARTED.");
 });
 
@@ -5413,6 +5521,12 @@ mp.events.add('server:playerWeaponShot', (player, targetId) => {
 
 mp.events.add('playerQuit', player => {
     user.setOnlineStatus(player, 0);
+
+    methods.saveLog('log_connect',
+        ['type', 'social', 'serial', 'address', 'game_id', 'account_id'],
+        ['QUIT', player.socialClub, player.serial, player.ip, player.id, user.getId(player)]
+    );
+
     if (user.isLogin(player)) {
         vehicles.removePlayerVehicle(user.getId(player));
         try {
@@ -5456,7 +5570,10 @@ mp.events.add("playerDeath", (player, reason, killer) => {
         user.set(player, 'killerInJail', false);
 
         try {
-            methods.saveLog('PlayerDeath', `${user.getRpName(player)} (${user.getId(player)}) ${reason}`);
+            methods.saveLog('log_user_death',
+                ['user', 'reason'],
+                [`${user.getRpName(player)} (${user.getId(player)})`, methods.removeQuotes(methods.removeQuotes2(reason))],
+            );
         }
         catch (e) {
             methods.debug(e);
@@ -5514,6 +5631,11 @@ mp.events.addRemoteCounted("playerDeathDone", (player) => {
 mp.events.add('playerReady', player => {
 
     user.ready(player);
+
+    methods.saveLog('log_connect',
+        ['type', 'social', 'serial', 'address', 'game_id', 'account_id'],
+        ['READY', player.socialClub, player.serial, player.ip, player.id, 0]
+    );
 
     player.spawn(new mp.Vector3(8.243752, 527.4373, 171.6173));
 

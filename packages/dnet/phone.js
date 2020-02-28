@@ -1466,10 +1466,14 @@ phone.userVehicleAppMenu = function(player) {
                 );
                 subItems.push(item);
 
+                let price = methods.parseInt(row['price'] * 0.001 + 100);
+                if (user.get(player, 'vip_type') > 0)
+                    price = methods.parseInt(price / 2);
+
                 item = phone.getMenuItemButton(
                     'Вызвать эвакуатор',
-                    'Стоимость: $500',
-                    { name: "respawn", id: row['id'] },
+                    'Стоимость: ' + methods.moneyFormat(price),
+                    { name: "respawn", price: price, id: row['id'] },
                     '',
                     true,
                 );

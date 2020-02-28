@@ -2,6 +2,8 @@ let mysql = require('./modules/mysql');
 let methods = require('./modules/methods');
 let chat = require('./modules/chat');
 
+let discord = require('./managers/discord');
+
 let user = require('./user');
 
 let admin = exports;
@@ -143,6 +145,8 @@ admin.ban = function(player, type, id, listIndex, reason) {
 
             chat.sendToAll(`Администратор ${user.getRpName(player)}`, `${user.getRpName(target)}!{${chat.clRed}} был забанен с причиной!{${chat.clWhite}} ${reason}`, chat.clRed);
 
+            discord.sendDeadList(user.getRpName(target), 'Забанен на ' + timeStr[listIndex], reason, user.getRpName(player), discord.socialClub + player.socialClub.toLowerCase());
+
             user.kick(target, reason, 'Вы забанены');
         }
         else {
@@ -158,6 +162,90 @@ admin.ban = function(player, type, id, listIndex, reason) {
                     mysql.executeQuery(`UPDATE users SET date_ban = '${methods.getTimeStamp() + timeFormat}' WHERE id = '${id}'`);
 
                     chat.sendToAll(`Администратор ${user.getRpName(player)}`, `${row['name']}!{${chat.clRed}} был забанен с причиной!{${chat.clWhite}} ${reason}`, chat.clRed);
+
+                    discord.sendDeadList(row['name'], 'Забанен на ' + timeStr[listIndex], reason, user.getRpName(player), discord.socialClub + player.socialClub.toLowerCase());
+                })
+            });
+        }
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+};
+
+admin.banByAnticheat = function(type, id, listIndex, reason) {
+    try {
+        id = methods.parseInt(id);
+
+        let timeStr = ['1h', '6h', '12h', '1d', '3d', '7d', '14d', '30d', '60d', '90d', 'Permanent'];
+        let timeFormat = 1;
+
+        switch (listIndex)
+        {
+            case 0:
+                timeFormat = 1 * 60 * 60;
+                break;
+            case 1:
+                timeFormat = 6 * 60 * 60;
+                break;
+            case 2:
+                timeFormat = 12 * 60 * 60;
+                break;
+            case 3:
+                timeFormat = 1 * 60 * 60 * 24;
+                break;
+            case 4:
+                timeFormat = 3 * 60 * 60 * 24;
+                break;
+            case 5:
+                timeFormat = 7 * 60 * 60 * 24;
+                break;
+            case 6:
+                timeFormat = 14 * 60 * 60 * 24;
+                break;
+            case 7:
+                timeFormat = 30 * 60 * 60 * 24;
+                break;
+            case 8:
+                timeFormat = 60 * 60 * 60 * 24;
+                break;
+            case 9:
+                timeFormat = 90 * 60 * 60 * 24;
+                break;
+            case 10:
+                timeFormat = 5 * 365 * 60 * 60 * 24;
+                break;
+        }
+
+        if (type === 0) {
+            let target = mp.players.at(id);
+            if (!user.isLogin(target))
+                return;
+
+            user.set(target, 'date_ban', methods.getTimeStamp() + timeFormat);
+            mysql.executeQuery(`INSERT INTO ban_list (ban_from, ban_to, count, datetime, reason) VALUES ('${user.getRpName(player)}', '${user.getRpName(target)}', '${timeStr[listIndex]}', '${methods.getTimeStamp()}', '${reason}')`);
+
+            chat.sendToAll(`Anti-Cheat Protection`, `${user.getRpName(target)}!{${chat.clRed}} был забанен с причиной!{${chat.clWhite}} ${reason}`, chat.clRed);
+
+            discord.sendDeadList(user.getRpName(target), 'Забанен на ' + timeStr[listIndex], reason, 'Anti-Cheat Protection');
+
+            user.kick(target, reason, 'Вы забанены');
+        }
+        else {
+            let target = user.getPlayerById(id);
+            if (user.isLogin(target)) {
+                admin.banByAnticheat(0, target.id, listIndex, reason);
+                return;
+            }
+
+            mysql.executeQuery(`SELECT * FROM users WHERE id = '${methods.parseInt(id)}'`, (err, rows, fields) => {
+                rows.forEach(row => {
+                    mysql.executeQuery(`INSERT INTO ban_list (ban_from, ban_to, count, datetime, reason) VALUES ('${user.getRpName(player)}', '${row['name']}', '${timeStr[listIndex]}', '${methods.getTimeStamp()}', '${reason}')`);
+                    mysql.executeQuery(`UPDATE users SET date_ban = '${methods.getTimeStamp() + timeFormat}' WHERE id = '${id}'`);
+
+                    chat.sendToAll(`Anti-Cheat Protection`, `${row['name']}!{${chat.clRed}} был забанен с причиной!{${chat.clWhite}} ${reason}`, chat.clRed);
+
+                    discord.sendDeadList(row['name'], 'Забанен на ' + timeStr[listIndex], reason, 'Anti-Cheat Protection');
                 })
             });
         }
@@ -190,6 +278,7 @@ admin.unban = function(player, type, id, reason) {
                     mysql.executeQuery(`UPDATE users SET date_ban = '0' WHERE id = '${id}'`);
 
                     chat.sendToAll(`Администратор ${user.getRpName(player)}`, `${row['name']}!{${chat.clRed}} был разбанен с причиной!{${chat.clWhite}} ${reason}`, chat.clRed);
+                    discord.sendDeadList(row['name'], 'Разбанен', reason, user.getRpName(player), discord.socialClub + player.socialClub.toLowerCase());
                 })
             });
         }
@@ -214,6 +303,8 @@ admin.kick = function(player, type, id, reason) {
             }
             chat.sendToAll(`Администратор ${user.getRpName(player)}`, `${user.getRpName(target)}!{${chat.clRed}} был кикнут с причиной!{${chat.clWhite}} ${reason}`, chat.clRed);
             user.kick(target, reason);
+
+            discord.sendDeadList(user.getRpName(target), 'Был кикнут', reason, user.getRpName(player), discord.socialClub + player.socialClub.toLowerCase(), "#FFEB3B");
         }
         else {
             let target = user.getPlayerById(id);
@@ -223,6 +314,8 @@ admin.kick = function(player, type, id, reason) {
             }
             chat.sendToAll(`Администратор ${user.getRpName(player)}`, `${user.getRpName(target)}!{${chat.clRed}} был кикнут с причиной!{${chat.clWhite}} ${reason}`, chat.clRed);
             user.kick(target, reason);
+
+            discord.sendDeadList(user.getRpName(target), 'Был кикнут', reason, user.getRpName(player), discord.socialClub + player.socialClub.toLowerCase(), "#FFEB3B");
         }
     }
     catch (e) {
@@ -245,6 +338,8 @@ admin.jail = function(player, type, id, min, reason) {
             }
             user.jail(target, min * 60);
             chat.sendToAll(`Администратор ${user.getRpName(player)}`, `${user.getRpName(target)}!{${chat.clRed}} был посажен в тюрьму на ${min}мин. с причиной!{${chat.clWhite}} ${reason}`, chat.clRed);
+
+            discord.sendDeadList(user.getRpName(target), 'Посажен в тюрьму', reason, user.getRpName(player), discord.socialClub + player.socialClub.toLowerCase(), "#FF9800");
         }
         else {
             let target = user.getPlayerById(id);
@@ -257,6 +352,7 @@ admin.jail = function(player, type, id, min, reason) {
                 rows.forEach(row => {
                     mysql.executeQuery(`UPDATE users SET jail_time = '${min * 60}' WHERE id = '${id}'`);
                     chat.sendToAll(`Администратор ${user.getRpName(player)}`, `${row['name']}!{${chat.clRed}} был посажен в тюрьму на ${min}мин. с причиной!{${chat.clWhite}} ${reason}`, chat.clRed);
+                    discord.sendDeadList(row['name'], 'Посажен в тюрьму', reason, user.getRpName(player), discord.socialClub + player.socialClub.toLowerCase(), "#FF9800");
                 })
             });
         }

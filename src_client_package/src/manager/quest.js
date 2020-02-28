@@ -197,6 +197,9 @@ quest.gang = function(isBot = false, start = -1) {
 
 quest.role0 = function(isBot = false, start = -1) {
 
+    if (user.getCache('role') !== 0)
+        return;
+
     let qName = 'quest_role_0';
 
     if (start < 0)
@@ -207,6 +210,8 @@ quest.role0 = function(isBot = false, start = -1) {
 
     switch (start) {
         case 0: {
+            if (!isBot)
+                return;
             user.showCustomNotify('Список ваших квестов можно посмотреть через M -> Квесты', 0, 5, 20000);
             ui.showDialog('Привет, я смотрю ты только приехал, у меня для тебя работка есть, уверен лишние деньги тебе не помешают. В общем, необходимо разгрузить 30 ящиков с корабля, как будешь готов, я выдам тебе форму', 'Каспер');
             break;

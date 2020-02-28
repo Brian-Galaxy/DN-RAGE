@@ -167,7 +167,10 @@ bank.transferMoney = function(player, bankNumber, money) {
     let isOnline = false;
     let isEquip = false;
 
-    methods.saveLog('GiveBank', `${user.getRpName(player)} (${user.getId(player)}) [${user.get(player, 'bank_card')}] to ${bankNumber} count $${money}`);
+    methods.saveLog('log_give_money',
+        ['type', 'user_from', 'user_to', 'sum'],
+        ['BANK', user.get(player, 'bank_card'), bankNumber, methods.moneyFormat(money)],
+    );
 
     mp.players.forEach((pl) => {
         if (!user.isLogin(pl))
@@ -422,7 +425,7 @@ bank.openCard = function(player, bankId, price) {
 
     let number = methods.getRandomBankCard(bankPrefix);
 
-    methods.saveLog('BuyCardNumber', `${user.getRpName(player)} (${user.getId(player)}): ${number}`);
+    //methods.saveLog('BuyCardNumber', `${user.getRpName(player)} (${user.getId(player)}): ${number}`);
 
     user.removeCashMoney(player, price, 'Смена номера карты');
     business.addMoney(bankId, price);
@@ -433,7 +436,7 @@ bank.openCard = function(player, bankId, price) {
 
     inventory.addItem(50, 1, 1, user.getId(player), 0, 0, `{"number":${number}, "pin":1234, "owner":"${user.getRpName(player)}"}`);
 
-    player.notify('~g~Вы оформили карту, она лежит в инвентаре, экипируйте её');
+    player.notify('~g~Вы оформили карту, она лежит в инвентаре, экипируйте её\nВаш пинкод: ~s~1234');
 };
 
 bank.closeCard = function(player) {

@@ -119,6 +119,11 @@ inventory.equip = function(player, id, itemId, count, aparams) {
                 return;
             }
 
+            methods.saveLog('log_inventory',
+                ['type', 'text'],
+                ['EQUIP', `id:${id}, itemId:${itemId}, count:${count}, params:${aparams}`],
+            );
+
             inventory.deleteDropItem(id);
             inventory.updateOwnerId(id, user.getId(player), inventory.types.Player);
 
@@ -403,7 +408,7 @@ inventory.updateEquipStatus = function(id, status) {
         let newStatus = 0;
         if (status == true)
             newStatus = 1;
-        mysql.executeQuery(`UPDATE items SET is_equip = '${newStatus}'  WHERE id = '${methods.parseInt(id)}'`);
+        mysql.executeQuery(`UPDATE items SET is_equip = '${newStatus}' WHERE id = '${methods.parseInt(id)}'`);
     }
     catch (e) {
         methods.debug('inventory.updateEquipStatus', e);
@@ -421,6 +426,11 @@ inventory.updateItemsEquipByItemId = function(itemId, ownerId, ownerType, equip)
 inventory.updateOwnerId = function(id, ownerId, ownerType) {
     try {
         mysql.executeQuery(`UPDATE items SET owner_type = '${ownerType}', owner_id = '${methods.parseInt(ownerId)}' where id = '${id}'`);
+
+        methods.saveLog('log_inventory',
+            ['type', 'text'],
+            ['UPDATE_OWNER', `id:${id}, ownerId:${ownerId}, ownerType:${ownerType}`],
+        );
     } catch(e) {
         methods.debug(e);
     }
@@ -437,6 +447,11 @@ inventory.updateOwnerAll = function(oldOwnerId, oldOwnerType, ownerId, ownerType
 inventory.updateItemParams = function(id, params) {
     try {
         mysql.executeQuery(`UPDATE items SET params = '${params}' where id = '${methods.parseInt(id)}'`);
+
+        methods.saveLog('log_inventory',
+            ['type', 'text'],
+            ['UPDATE_PARAMS', `id:${id}, params:${params}`],
+        );
     } catch(e) {
         methods.debug(e);
     }
@@ -445,6 +460,11 @@ inventory.updateItemParams = function(id, params) {
 inventory.updateItemCount = function(id, count) {
     try {
         mysql.executeQuery(`UPDATE items SET count = '${count}', timestamp_update = '${methods.getTimeStamp()}' where id = '${id}'`);
+
+        methods.saveLog('log_inventory',
+            ['type', 'text'],
+            ['UPDATE_COUNT', `id:${id}, count:${count}`],
+        );
     } catch(e) {
         methods.debug(e);
     }
@@ -610,6 +630,11 @@ inventory.addItemSql = function(itemId, count, ownerType, ownerId, countItems, i
             for (let i = 0; i < count; i++) {
                 mysql.executeQuery(`INSERT INTO items (item_id, owner_type, owner_id, count, is_equip, params, timestamp_update) VALUES ('${itemId}', '${ownerType}', '${ownerId}', '${countItems}', '${isEquip}', '${params}', '${methods.getTimeStamp()}')`);
             }
+
+            methods.saveLog('log_inventory',
+                ['type', 'text'],
+                ['ADD_NEW', `itemId:${itemId}, count:${count}, ownerType:${ownerType}, ownerId:${ownerId}, countItems:${countItems}, params:${params}`],
+            );
         } catch(e) {
             methods.debug(e);
         }
@@ -646,7 +671,6 @@ inventory.usePlayerItem = function(player, id, itemId) {
                 return;
             }
 
-            player.notify("~y~Вы связали игрока");
             chat.sendMeCommand(player, "использовал дефибриллятор");
             user.useAdrenaline(target);
             break;
@@ -668,6 +692,12 @@ inventory.useItem = function(player, id, itemId) {
         return;
     try {
         let user_id = user.getId(player);
+
+        methods.saveLog('log_inventory',
+            ['type', 'text'],
+            ['USE', `id:${id}, itemId:${itemId}`],
+        );
+
         switch (itemId)
         {
             case 0:

@@ -49,7 +49,7 @@ business.save = function(id) {
 
     let bBank = methods.parseFloat(business.get(id, "bank"));
     if (bBank < 0) {
-        methods.saveLog('businessBugUse', `${bBank} | ${id}`);
+        //methods.saveLog('businessBugUse', `${bBank} | ${id}`);
         bBank = 0;
     }
 

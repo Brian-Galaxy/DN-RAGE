@@ -321,9 +321,31 @@ methods.parseFloat = function (str) {
     return parseFloat(str) || 0;
 };
 
-methods.saveLog = function (name, log) {
-    methods.debug(name, log);
-    //TODO
+methods.saveLog = function (table, cols, values) {
+
+    let colStr = '';
+    let valStr = '';
+
+    if (typeof cols === 'object')
+        colStr = methods.removeQuotes(methods.removeQuotes2(cols.toString()));
+    else if (typeof cols === 'string')
+        colStr = cols;
+
+    if (typeof values === 'object') {
+        values.forEach(item => {
+            valStr += `'${methods.removeQuotes(methods.removeQuotes2(item))}',`
+        });
+        valStr = valStr.slice(0, -1);
+    }
+    else if (typeof values === 'string')
+        valStr = values;
+
+    if (colStr === '' || colStr === undefined)
+        return;
+    if (valStr === '' || valStr === undefined)
+        return;
+
+    mysql.executeQuery(`INSERT INTO ${table} (${colStr}) VALUES (${valStr})`);
 };
 
 methods.saveFractionLog = function (name, doName, text, fractionId) {

@@ -927,6 +927,10 @@ user.kickAntiCheat = function(reason) {
     mp.events.callRemote('server:user:kickAntiCheat', reason);
 };
 
+user.banAntiCheat = function(type, reason) {
+    mp.events.callRemote('server:user:banAntiCheat', type, reason);
+};
+
 user.stopAllScreenEffect = function() {
     mp.game.graphics.setNightvision(false);
     mp.game.graphics.setSeethrough(false);

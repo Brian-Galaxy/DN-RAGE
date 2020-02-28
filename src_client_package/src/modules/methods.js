@@ -335,7 +335,21 @@ methods.replaceAll = function(string, search, replace){
     return string.split(search).join(replace);
 };
 
-methods.saveLog = function(file, log){//TODO
+methods.saveLog = function (table, cols, values) {
+    let colStr = '';
+    let valStr = '';
+
+    if (typeof cols === 'object')
+        colStr = methods.removeQuotes(methods.removeQuotes2(cols.toString()));
+
+    if (typeof values === 'object') {
+        values.forEach(item => {
+            valStr += `'${methods.removeQuotes(methods.removeQuotes2(item))}',`
+        });
+        valStr = valStr.slice(0, -1);
+    }
+
+    mp.events.callRemote('server:saveLog', table, colStr, valStr);
 };
 
 methods.saveFile = function(file, log){
@@ -849,6 +863,10 @@ methods.requestIpls = function () {
 methods.isPlayerInOcean = function() {
     let pos = mp.players.local.position;
     return (mp.game.zone.getNameOfZone(pos.x, pos.y, pos.z) === "OCEANA");
+};
+
+methods.sendDiscordServerNews = function (title, sender, message) {
+    mp.events.callRemote('server:discord:sendDiscordServerNews', title, sender, message);
 };
 
 methods.notifyWithPictureToAll = function (title, sender, message, notifPic, icon = 0, flashing = false, textColor = -1, bgColor = -1, flashColor = [77, 77, 77, 200]) {

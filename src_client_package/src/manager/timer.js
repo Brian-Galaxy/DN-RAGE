@@ -255,18 +255,6 @@ timer.tenSecTimer = function() {
 
     mp.events.call('client:vehicle:checker');
 
-    if (methods.distanceToPos(afkLastPos, mp.players.local.position) < 1) {
-        afkTimer++;
-        if (afkTimer > 600 && mp.players.local.getVariable('isAfk') !== true)
-            user.setVariable('isAfk', true);
-    }
-    else {
-        if (mp.players.local.getVariable('isAfk') === true)
-            user.setVariable('isAfk', false);
-        afkTimer = 0;
-    }
-    afkLastPos = mp.players.local.position;
-
     if (allModelLoader) {
         try {
             mp.game.invoke("0xBD6E84632DD4CB3F");
@@ -308,6 +296,18 @@ timer.secTimer = function() {
 
     try {
         phone.timer();
+
+        if (methods.distanceToPos(afkLastPos, mp.players.local.position) < 1) {
+            afkTimer++;
+            if (afkTimer > 600 && mp.players.local.getVariable('isAfk') !== true)
+                user.setVariable('isAfk', true);
+        }
+        else {
+            if (mp.players.local.getVariable('isAfk') === true)
+                user.setVariable('isAfk', false);
+            afkTimer = 0;
+        }
+        afkLastPos = mp.players.local.position;
 
         if (user.isOpenPhone()) {
             if (mp.players.local.isPlayingAnim("cellphone@in_car@ds@first_person", "cellphone_horizontal_base", 3) === 0 &&
@@ -473,8 +473,7 @@ timer.secTimer = function() {
         }
 
         if (user.getCashMoney() < -15000 || user.getBankMoney() < -15000) {
-            user.kick(`Anti-Cheat System: Пожалуйста, свяжитесь с администрацией`);
-            methods.saveLog('CheaterMoney', `${user.getCache('name')} (${user.getCache('id')})`);
+            user.kick(`Anti-Cheat Protection: Пожалуйста, свяжитесь с администрацией`);
             return;
         }
 

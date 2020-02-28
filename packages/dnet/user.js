@@ -8,6 +8,7 @@ let coffer = require('./coffer');
 
 let wpSync = require('./managers/wpSync');
 let weather = require('./managers/weather');
+let discord = require('./managers/discord');
 
 let vehicles = require('./property/vehicles');
 let houses = require('./property/houses');
@@ -105,18 +106,25 @@ user.createUser = function(player, name, surname, age, promocode, referer, natio
         }
 
         promocode = promocode.toUpperCase();
-        mysql.executeQuery(`SELECT * FROM promocode_top_list WHERE promocode = '${promocode}' LIMIT 1`, function (err, rows, fields) {
+        mysql.executeQuery(`SELECT * FROM promocode_top_list WHERE promocode = '${promocode}' AND is_use = 0 LIMIT 1`, function (err, rows, fields) {
             if (rows.length >= 1) {
 
+                let paramsStart = JSON.parse(rows[0]["start"]);
                 let money = methods.getRandomInt(500, 999) / 100;
-                if (promocode != '')
-                    money += 1000;
+                let vipTime = 0;
+                let vipType = 0;
+                if (promocode !== '') {
+                    money += methods.parseInt(paramsStart.money);
+                    vipType = methods.parseInt(paramsStart.vipt);
+                    if (methods.parseInt(paramsStart.vip) > 0)
+                        vipTime = methods.parseInt(paramsStart.vip * 86400) + methods.getTimeStamp();
+                }
 
                 user.showCustomNotify(player, 'Пожалуйста подожите...');
                 let newAge = `${methods.digitFormat(weather.getDay())}.${methods.digitFormat(weather.getMonth())}.${(weather.getFullYear() - age)}`;
 
-                let sql = "INSERT INTO users (name, age, social, national, money, promocode, referer, skin, parachute, parachute_color, body_color, leg_color, foot_color, body, leg, foot, login_ip, login_date, reg_ip, reg_timestamp) VALUES ('" + name + ' ' + surname +
-                    "', '" + newAge + "', '" + player.socialClub + "', '" + national + "', '" + money + "', '" + promocode + "', '" + referer + "', '" + JSON.stringify(skin) + "', '0', '44', '" + methods.getRandomInt(0, 5) + "', '" + methods.getRandomInt(0, 15) + "', '" + methods.getRandomInt(0, 15) + "', '0', '1', '1', '" + player.ip + "', '" + methods.getTimeStamp() + "', '" + player.ip + "', '" + methods.getTimeStamp() + "')";
+                let sql = "INSERT INTO users (name, age, social, national, money, promocode, referer, skin, parachute, parachute_color, body_color, leg_color, foot_color, body, leg, foot, login_ip, login_date, reg_ip, reg_timestamp, vip_type, vip_time) VALUES ('" + name + ' ' + surname +
+                    "', '" + newAge + "', '" + player.socialClub + "', '" + national + "', '" + money + "', '" + promocode + "', '" + referer + "', '" + JSON.stringify(skin) + "', '0', '44', '" + methods.getRandomInt(0, 5) + "', '" + methods.getRandomInt(0, 15) + "', '" + methods.getRandomInt(0, 15) + "', '0', '1', '1', '" + player.ip + "', '" + methods.getTimeStamp() + "', '" + player.ip + "', '" + methods.getTimeStamp() + "', '" + vipType + "', '" + vipTime + "')";
                 mysql.executeQuery(sql);
 
                 setTimeout(function () {
@@ -179,7 +187,7 @@ user.loginAccount = function(player, login, pass) {
 
                         spawnList.push('Стандарт');
 
-                        players.push({name: row['name'], age: row['id'], money: row['money'], sex: sex, spawnList: spawnList, lastLogin: methods.unixTimeStampToDate(row['login_date'])})
+                        players.push({name: row['name'], age: methods.parseFloat(row['online_time'] * 8.5 / 60).toFixed(1), money: row['money'] + row['money_bank'], sex: sex, spawnList: spawnList, lastLogin: methods.unixTimeStampToDate(row['login_date'])})
                     });
 
                     player.call('client:events:loginAccount:success', [JSON.stringify(players)]);
@@ -347,8 +355,6 @@ user.loadUser = function(player, name, spawn = 'Стандарт') {
             try {
                 user.set(player, 'login_date', methods.getTimeStamp());
                 user.set(player, 'login_ip', player.ip);
-
-                //mysql.executeQuery(`INSERT INTO log_auth (nick, lic, datetime) VALUES ('${user.getRpName(player)}', '${player.serial}', '${methods.getTimeStamp()}')`);
             } catch (e) {
                 methods.debug(e);
             }
@@ -370,7 +376,11 @@ user.loadUser = function(player, name, spawn = 'Стандарт') {
                 player.setVariable('name', user.get(player, 'name'));
                 player.dimension = 0;
 
-                //methods.saveLog('PlayerActivity', `[LOGIN] ${player.socialClub} | ${player.serial} | ${player.address} | ${user.getId(player)}`);
+                if (user.get(player, 'vip_time') > 0 && user.get(player, 'vip_time') < methods.getTimeStamp()) {
+                    player.outputChatBox(`!{#f44336}Срок действия вашего VIP статуса подошел к концу`);
+                    user.set(player, 'vip_time', 0);
+                    user.set(player, 'vip_type', 0);
+                }
 
                 userId = user.getId(player);
 
@@ -394,6 +404,11 @@ user.loadUser = function(player, name, spawn = 'Стандарт') {
                 else {
                     user.spawnByName(player, spawn);
                 }
+
+                methods.saveLog('log_connect',
+                    ['type', 'social', 'serial', 'address', 'game_id', 'account_id'],
+                    ['LOGIN', player.socialClub, player.serial, player.ip, player.id, userId]
+                );
 
                 player.call('client:events:loginUser:success');
                 //user.setOnlineStatus(player, 1);
@@ -1377,13 +1392,11 @@ user.getMoney = function(player) {
 };
 
 user.addCashMoney = function(player, money, text = 'Финансовая операция') {
-    methods.saveLog('Money', `[ADD_CASH] ${user.getRpName(player)} (${user.getId(player)}) ${user.getCashMoney(player)} - ${money}`);
     user.addCashHistory(player, text, methods.parseFloat(money));
     user.setCashMoney(player, user.getCashMoney(player) + methods.parseFloat(money));
 };
 
 user.removeCashMoney = function(player, money, text = 'Финансовая операция') {
-    methods.saveLog('Money', `[REMOVE_CASH] ${user.getRpName(player)} (${user.getId(player)}) ${user.getCashMoney(player)} + ${money}`);
     user.addCashHistory(player, text, methods.parseFloat(money) * -1);
     user.setCashMoney(player, user.getCashMoney(player) - methods.parseFloat(money));
 };
@@ -1400,13 +1413,11 @@ user.getCashMoney = function(player) {
 };
 
 user.addCryptoMoney = function(player, money, text = 'Финансовая операция') {
-    methods.saveLog('Money', `[ADD_CASH] ${user.getRpName(player)} (${user.getId(player)}) ${user.getCryptoMoney(player)} - ${money}`);
     user.addCryptoHistory(player, text, methods.parseFloat(money));
     user.setCryptoMoney(player, user.getCryptoMoney(player) + methods.parseFloat(money));
 };
 
 user.removeCryptoMoney = function(player, money, text = 'Финансовая операция') {
-    methods.saveLog('Money', `[REMOVE_CASH] ${user.getRpName(player)} (${user.getId(player)}) ${user.getCryptoMoney(player)} + ${money}`);
     user.addCryptoHistory(player, text, methods.parseFloat(money) * -1);
     user.setCryptoMoney(player, user.getCryptoMoney(player) - methods.parseFloat(money));
 };
@@ -1423,13 +1434,11 @@ user.getCryptoMoney = function(player) {
 };
 
 user.addBankMoney = function(player, money, text = "Операция со счетом") {
-    methods.saveLog('Money', `[ADD_BANK] ${user.getRpName(player)} (${user.getId(player)}) ${user.getBankMoney(player)} - ${money}`);
     user.addBankHistory(player, text, methods.parseFloat(money));
     user.setBankMoney(player, user.getBankMoney(player) + methods.parseFloat(money));
 };
 
 user.removeBankMoney = function(player, money, text = "Операция со счетом") {
-    methods.saveLog('Money', `[REMOVE_BANK] ${user.getRpName(player)} (${user.getId(player)}) ${user.getBankMoney(player)} + ${money}`);
     user.addBankHistory(player, text, methods.parseFloat(money) * -1);
     user.setBankMoney(player, user.getBankMoney(player) - methods.parseFloat(money));
 };
@@ -1721,11 +1730,11 @@ user.kick = function(player, reason, title = 'Вы были кикнуты.') {
 
 user.kickAntiCheat = function(player, reason, title = 'Вы были кикнуты.') {
     methods.debug('user.kickAntiCheat');
-    //user.kick(player, reason, title);
     if (user.isLogin(player)) {
-        methods.saveLog('AntiCheat', `${user.getRpName(player)} (${user.getId(player)}) - ${reason}`);
         chat.sendToAll('Anti-Cheat Protection', `${user.getRpName(player)} (${player.id})!{${chat.clRed}} был кикнут с причиной!{${chat.clWhite}} ${reason}`, chat.clRed);
+        discord.sendDeadList(user.getRpName(player), 'Был кикнут', reason, 'Anti-Cheat Protection');
     }
+    user.kick(player, reason, title);
 };
 
 user.getPlayerById = function(id) {
@@ -2298,21 +2307,50 @@ user.payDay = async function (player) {
         user.set(player, 'exp_age', user.get(player, 'exp_age') + 1);*/
 
 
-    if (user.get(player, 'online_time') == 372) {
+    if (user.get(player, 'online_time') === 339) {
+        if (user.get(player, 'referer') !== "") {
 
-        /*if (user.get(player, 'age') == 19 && user.get(player, 'referer') != "") { //TODO
-            user.addCashMoney(player, 25000);
+            user.addCashMoney(player, 25000, 'Бонус от государства');
             player.notify(`~g~Вы получили $25,000 по реферальной системе`);
             player.notify(`~g~Пригласивший ${user.get(player, 'referer')} получил 200ac на личный счёт`);
             mysql.executeQuery(`UPDATE users SET money_donate = money_donate + '200' WHERE name ='${user.get(player, 'referer')}'`);
             mysql.executeQuery(`INSERT INTO log_referrer (name, referrer, money, timestamp) VALUES ('${user.getRpName(player)}', '${user.get(player, 'referer')}', '200', '${methods.getTimeStamp()}')`);
         }
 
-        if (user.get(player, 'age') == 19 && user.get(player, 'promocode') != "") {
-            player.notify(`~g~Вы получили ~s~$25000 ~g~по промокоду ~s~${user.get(player, 'promocode')}`);
-            user.addCashMoney(player, 25000);
-            mysql.executeQuery(`UPDATE users SET money_donate = money_donate + '50' WHERE parthner_promocode = '${user.get(player, 'promocode')}'`);
-        }*/
+        if (user.get(player, 'promocode') !== "") {
+
+            let promocode = user.get(player, 'promocode');
+
+            mysql.executeQuery(`SELECT * FROM promocode_top_list WHERE promocode = '${promocode}' LIMIT 1`, function (err, rows, fields) {
+                if (rows.length >= 1) {
+                    let paramsStart = JSON.parse(rows[0]["end"]);
+
+                    let string = `~b~Вы отыграли на проекте 48ч, вы получили бонус по промокоду ${promocode}\n`;
+                    if (paramsStart.money > 0)
+                        string += `~b~Вы получили~s~ ${methods.moneyFormat(paramsStart.money)}\n`;
+                    if (paramsStart.vipt === 1)
+                        string += `~b~Вы получили ~s~VIP LIGHT~b~ на ~s~${paramsStart.vip}д.\n`;
+                    if (paramsStart.vipt === 2)
+                        string += `~b~Вы получили ~s~VIP HARD~b~ на ~s~${paramsStart.vip}д.\n`;
+
+                    let vipTime = 0;
+                    let vipType = methods.parseInt(paramsStart.vipt);
+                    if (methods.parseInt(paramsStart.vip) > 0 && user.get(player, 'vip_type') > 0 && user.get(player, 'vip_time') > 0)
+                        vipTime = methods.parseInt(paramsStart.vip * 86400) + user.set(player, 'vip_time');
+                    else if (methods.parseInt(paramsStart.vip) > 0)
+                        vipTime = methods.parseInt(paramsStart.vip * 86400) + methods.getTimeStamp();
+
+                    user.set(player, 'vip_time', vipTime);
+                    user.set(player, 'vip_type', vipType);
+
+                    player.notify(string);
+                } else {
+                    player.notify(`~g~Вы получили ~s~$25000 ~g~по промокоду ~s~${user.get(player, 'promocode')}`);
+                    user.addCashMoney(player, 25000, 'Бонус от государства');
+                }
+                mysql.executeQuery(`UPDATE users SET money_donate = money_donate + '50' WHERE parthner_promocode = '${user.get(player, 'promocode')}'`);
+            });
+        }
     }
 
     if (user.get(player, 'bank_card') > 0) {

@@ -38,10 +38,10 @@ antiCheat.load = function() {
     setInterval(antiCheat.tenSecTimer, 10000);
     setInterval(antiCheat.ten3SecTimer, 30000);
 
-    prevArrayConfig = [];
+    /*prevArrayConfig = [];
     for (let i = 0; i <= 27; i++) {
         prevArrayConfig.push(mp.players.local.getCombatFloat(i));
-    }
+    }*/
 };
 
 antiCheat.tenSecTimer = function() {
@@ -94,7 +94,7 @@ antiCheat.secTimer = function() {
 
     if (user.isLogin()) {
 
-        for (let i = 0; i <= 27; i++) {
+        /*for (let i = 0; i <= 27; i++) {
             try {
                 if (prevArrayConfig[i] !== mp.players.local.getCombatFloat(i)) {
                     user.kickAntiCheat('Cheat #' + i);
@@ -107,7 +107,7 @@ antiCheat.secTimer = function() {
         prevArrayConfig = [];
         for (let i = 0; i <= 27; i++) {
             prevArrayConfig.push(mp.players.local.getCombatFloat(i));
-        }
+        }*/
 
         /*if (mp.players.local.getAccuracy() === 100) {
             attemptRecoil++;
@@ -123,7 +123,7 @@ antiCheat.secTimer = function() {
 
         if (!user.isAdmin()) {
             if (mp.game.player.getInvincible() || mp.players.local.getMaxHealth() >= 300 || mp.players.local.getHealth() >= 300 || mp.players.local.getArmour() >= 101/* || attemptGm > 2*/) {
-                user.kickAntiCheat('GodMode');
+                user.banAntiCheat(3, 'GodMode');
             }
             if (!mp.players.local.isVisible()) {
                 user.kickAntiCheat('Invision');
@@ -146,8 +146,8 @@ antiCheat.secTimer = function() {
         });
 
         let newPos = mp.players.local.position;
-        let dist = mp.players.local.vehicle ? methods.getCurrentSpeed() + 50 : 20;
-        if (methods.distanceToPos(prevPos, newPos) > dist && !mp.players.local.isFalling()) {
+        let dist = mp.players.local.vehicle ? methods.getCurrentSpeed() + 50 : 50;
+        if (methods.distanceToPos(prevPos, newPos) > dist && !mp.players.local.isFalling() && !mp.players.local.isRagdoll()) {
             if (!user.isTeleport())
                 user.kickAntiCheat(`Teleport`);
             user.setTeleport(false);

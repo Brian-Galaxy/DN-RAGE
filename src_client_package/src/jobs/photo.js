@@ -273,7 +273,7 @@ photo.getDirectionPosition = function(rot) {
 
 photo.workProcess = function() { //TODO
 
-    methods.debug('photo.work')
+    methods.debug('photo.work');
 
     isCheckpoint = false;
     let pos = mp.players.local.position;
@@ -303,9 +303,6 @@ photo.workProcess = function() { //TODO
                 methods.blockKeys(false);
                 mp.players.local.freezePosition(false);
                 user.stopScenario();
-
-                methods.debug(pointPos);
-                methods.debug(playerPos);
 
                 if (pointPos === playerPos) {
                     mp.game.ui.notifications.showWithPicture('Life Invader', "Начальник", `Отличный кадр, за него ты получишь премию!`, "CHAR_LIFEINVADER", 1);

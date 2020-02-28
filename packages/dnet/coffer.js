@@ -56,10 +56,22 @@ coffer.get = function(id, key) {
 };
 
 coffer.addMoney = function(id, money) {
+
+    methods.saveLog('log_official_bank',
+        ['fraction_id', 'money_was', 'money'],
+        [id, coffer.getMoney(id), methods.parseFloat(money)],
+    );
+
     coffer.setMoney(id, coffer.getMoney(id) + methods.parseFloat(money));
 };
 
 coffer.removeMoney = function(id, money) {
+
+    methods.saveLog('log_official_bank',
+        ['fraction_id', 'money_was', 'money'],
+        [id, coffer.getMoney(id), methods.parseFloat(money) * -1],
+    );
+
     coffer.setMoney(id, coffer.getMoney(id) - methods.parseFloat(money));
 };
 

@@ -1008,7 +1008,7 @@ menuList.showInvaderAdMenu = function(data) {
     menu.ItemSelect.on((item, index) => {
         if (item == closeItem)
             UIMenu.Menu.HideMenu();
-        if (item.id && (user.isLeader() || user.isSubLeader() || user.isDepLeader()))
+        if (item.id)
             menuList.showInvaderAdDelMenu(item.id, item.title, item.name, item.phone)
     });
 };
@@ -1019,7 +1019,8 @@ menuList.showInvaderAdDelMenu = function(id, title, name, phone) {
     UIMenu.Menu.AddMenuItem(`${title}`);
     UIMenu.Menu.AddMenuItem(`${name}`);
     UIMenu.Menu.AddMenuItem(`${phone}`);
-    UIMenu.Menu.AddMenuItem(`~r~Удалить объявление`).delete = true;
+    if (user.isLeader() || user.isSubLeader() || user.isDepLeader() || user.isSubDepLeader())
+        UIMenu.Menu.AddMenuItem(`~r~Удалить объявление`).delete = true;
 
     let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
     menu.ItemSelect.on((item, index) => {
@@ -1045,7 +1046,7 @@ menuList.showInvaderAdTempMenu = function(data) {
     menu.ItemSelect.on((item, index) => {
         if (item == closeItem)
             UIMenu.Menu.HideMenu();
-        if (item.id && (user.isLeader() || user.isSubLeader() || user.isDepLeader()))
+        if (item.id)
             menuList.showInvaderAdTempEditMenu(item.id, item.text, item.name, item.phone)
     });
 };
@@ -1063,7 +1064,8 @@ menuList.showInvaderAdTempEditMenu = function(id, text, name, phone) {
     UIMenu.Menu.AddMenuItem(`${name}`);
     UIMenu.Menu.AddMenuItem(`${phone}`);
     UIMenu.Menu.AddMenuItem(`~g~Опубликовать`).save = true;
-    UIMenu.Menu.AddMenuItem(`~r~Удалить объявление`).delete = true;
+    if (user.isLeader() || user.isSubLeader() || user.isDepLeader() || user.isSubDepLeader())
+        UIMenu.Menu.AddMenuItem(`~r~Удалить объявление`).delete = true;
     let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
 
     menu.ListChange.on((item, index) => {
@@ -1803,12 +1805,11 @@ menuList.showMeriaTaxInfoMenu = async function(type, id) {
         name = item.get("address") + " №" + item.get("number");
     }
 
-    methods.debug(name, tax, taxLimit, taxDay, score);
-
     let menu = UIMenu.Menu.Create(`Офис`, `~b~` + name);
 
     UIMenu.Menu.AddMenuItem(`~b~Счёт:~s~ ${score}`, "Уникальный счёт вашего имущества");
-    UIMenu.Menu.AddMenuItem(`~b~Ваша задолженность:~s~ ~r~${(tax == 0 ? "~g~Отсутствует" : `$${tax}`)}`, `Ваш текущий долг, при достижении ~r~$${taxLimit}~s~ ваше имущество будет изъято`);
+    UIMenu.Menu.AddMenuItem(`~b~Ваша задолженность:~s~ ~r~${(tax == 0 ? "~g~Отсутствует" : `${methods.moneyFormat(tax)}`)}`, `Ваш текущий долг, при достижении ~r~$${taxLimit}~s~ ваше имущество будет изъято`);
+    UIMenu.Menu.AddMenuItem(`~b~Ваша задолженность:~s~ ~r~${(tax == 0 ? "~g~Отсутствует" : `${methods.moneyFormat(tax)}`)}`);
     UIMenu.Menu.AddMenuItem(`~b~Налог в день (( ООС )):~s~ $${taxDay}`, "Индвивидуальная налоговая ставка");
     UIMenu.Menu.AddMenuItem(`~b~Допустимый лимит:~s~ $${taxLimit}`, "Допустимый лимит до обнуления имущества");
 
@@ -1924,6 +1925,12 @@ menuList.showMeriaJobListMenu = function() {
             mp.game.ui.notifications.show("~y~Вы уволились с работы");
         }
         if (item.jobName) {
+
+            if (user.getCache('fraction_id') > 0) {
+                mp.game.ui.notifications.show("~r~Вы состоите в гос фракции.");
+                return;
+            }
+
             if (user.getCache('work_lic').trim() === '') {
                 mp.game.ui.notifications.show("~r~Для начала оформите Work ID");
                 return;
@@ -2959,6 +2966,15 @@ menuList.showPlayerStatsMenu = function() {
         UIMenu.Menu.AddMenuItem("~b~Банковская карта:~s~").SetRightLabel(`${methods.bankFormat(user.getCache('bank_card'))}`);
     if (user.getCache('phone') > 0)
         UIMenu.Menu.AddMenuItem("~b~Мобильный телефон:~s~").SetRightLabel(`${methods.phoneFormat(user.getCache('phone'))}`);
+
+    UIMenu.Menu.AddMenuItem("~b~Вы играли:~r~").SetRightLabel(`${methods.parseFloat(user.getCache('online_time') * 8.5 / 60).toFixed(1)}ч.`);
+
+    if (user.getCache('vip_type') === 1)
+        UIMenu.Menu.AddMenuItem("~b~VIP:~s~").SetRightLabel(`LIGHT`);
+    else if (user.getCache('vip_type') === 2)
+        UIMenu.Menu.AddMenuItem("~b~VIP:~s~").SetRightLabel(`HARD`);
+    else
+        UIMenu.Menu.AddMenuItem("~b~VIP:~r~").SetRightLabel(`Отсутствует`);
 
     UIMenu.Menu.AddMenuItem("~b~Розыск:~s~").SetRightLabel(`${user.getCache('wanted_level') > 0 ? '~r~В розыске' : '~g~Нет'}`);
     //UIMenu.Menu.AddMenuItem("~b~Рецепт марихуаны:~s~").SetRightLabel(`${user.get('allow_marg') ? 'Есть' : '~r~Нет'}`);
@@ -7710,7 +7726,7 @@ menuList.showCofferInfoMenu = function(data) {
 
     UIMenu.Menu.AddMenuItem("Финансировать бюджет правительства").doName = 'cofferGiveGov';
     UIMenu.Menu.AddMenuItem("Финансировать бюджет LSPD").doName = 'cofferGiveLspd';
-    UIMenu.Menu.AddMenuItem("Финансировать бюджет SASD").doName = 'cofferGiveSheriff';
+    UIMenu.Menu.AddMenuItem("Финансировать бюджет BCSD").doName = 'cofferGiveSheriff';
     UIMenu.Menu.AddMenuItem("Финансировать бюджет EMS").doName = 'cofferGiveEms';
     UIMenu.Menu.AddMenuItem("Финансировать бюджет Invader News").doName = 'cofferGiveInvader';
 
@@ -7719,6 +7735,126 @@ menuList.showCofferInfoMenu = function(data) {
         if (item == closeItem)
             UIMenu.Menu.HideMenu();
 
+        if (item.doName == 'cofferGiveGov') {
+            let price = methods.parseFloat(await UIMenu.Menu.GetUserInput("Введите сумму", '', 10));
+
+            if (price < 0) {
+                mp.game.ui.notifications.show(`~r~Значение не может быть меньше нуля`);
+                return;
+            }
+            if (price > await coffer.getMoney()) {
+                mp.game.ui.notifications.show(`~r~В Бюджете недостаточно средств`);
+                return;
+            }
+            if (price > 1000000) {
+                mp.game.ui.notifications.show(`~r~Значение не может быть больше 1,000,000`);
+                return;
+            }
+            coffer.removeMoney(1, price);
+            coffer.addMoney(2, price);
+
+            methods.saveLog('log_coffer',
+                ['name', 'text'],
+                [user.getCache('name'), `Перевёл ${methods.moneyFormat(price)} из казны на счёт Правительства.`],
+            );
+            mp.game.ui.notifications.show(`~g~Вы перевели денежные средства`);
+        }
+        if (item.doName == 'cofferGiveLspd') {
+            let price = methods.parseFloat(await UIMenu.Menu.GetUserInput("Введите сумму", '', 10));
+
+            if (price < 0) {
+                mp.game.ui.notifications.show(`~r~Значение не может быть меньше нуля`);
+                return;
+            }
+            if (price > await coffer.getMoney()) {
+                mp.game.ui.notifications.show(`~r~В Бюджете недостаточно средств`);
+                return;
+            }
+            if (price > 1000000) {
+                mp.game.ui.notifications.show(`~r~Значение не может быть больше 1,000,000`);
+                return;
+            }
+            coffer.removeMoney(1, price);
+            coffer.addMoney(3, price);
+
+            methods.saveLog('log_coffer',
+                ['name', 'text'],
+                [user.getCache('name'), `Перевёл ${methods.moneyFormat(price)} из казны на счёт LSPD.`],
+            );
+            mp.game.ui.notifications.show(`~g~Вы перевели денежные средства`);
+        }
+        if (item.doName == 'cofferGiveSheriff') {
+            let price = methods.parseFloat(await UIMenu.Menu.GetUserInput("Введите сумму", '', 10));
+
+            if (price < 0) {
+                mp.game.ui.notifications.show(`~r~Значение не может быть меньше нуля`);
+                return;
+            }
+            if (price > await coffer.getMoney()) {
+                mp.game.ui.notifications.show(`~r~В Бюджете недостаточно средств`);
+                return;
+            }
+            if (price > 1000000) {
+                mp.game.ui.notifications.show(`~r~Значение не может быть больше 1,000,000`);
+                return;
+            }
+            coffer.removeMoney(1, price);
+            coffer.addMoney(4, price);
+
+            methods.saveLog('log_coffer',
+                ['name', 'text'],
+                [user.getCache('name'), `Перевёл ${methods.moneyFormat(price)} из казны на счёт BCSD.`],
+            );
+            mp.game.ui.notifications.show(`~g~Вы перевели денежные средства`);
+        }
+        if (item.doName == 'cofferGiveEms') {
+            let price = methods.parseFloat(await UIMenu.Menu.GetUserInput("Введите сумму", '', 10));
+
+            if (price < 0) {
+                mp.game.ui.notifications.show(`~r~Значение не может быть меньше нуля`);
+                return;
+            }
+            if (price > await coffer.getMoney()) {
+                mp.game.ui.notifications.show(`~r~В Бюджете недостаточно средств`);
+                return;
+            }
+            if (price > 1000000) {
+                mp.game.ui.notifications.show(`~r~Значение не может быть больше 1,000,000`);
+                return;
+            }
+            coffer.removeMoney(1, price);
+            coffer.addMoney(6, price);
+
+            methods.saveLog('log_coffer',
+                ['name', 'text'],
+                [user.getCache('name'), `Перевёл ${methods.moneyFormat(price)} из казны на счёт EMS.`],
+            );
+            mp.game.ui.notifications.show(`~g~Вы перевели денежные средства`);
+        }
+        if (item.doName == 'cofferGiveInvader') {
+            let price = methods.parseFloat(await UIMenu.Menu.GetUserInput("Введите сумму", '', 10));
+
+            if (price < 0) {
+                mp.game.ui.notifications.show(`~r~Значение не может быть меньше нуля`);
+                return;
+            }
+            if (price > await coffer.getMoney()) {
+                mp.game.ui.notifications.show(`~r~В Бюджете недостаточно средств`);
+                return;
+            }
+            if (price > 1000000) {
+                mp.game.ui.notifications.show(`~r~Значение не может быть больше 1,000,000`);
+                return;
+            }
+            coffer.removeMoney(1, price);
+            coffer.addMoney(6, price);
+
+            methods.saveLog('log_coffer',
+                ['name', 'text'],
+                [user.getCache('name'), `Перевёл ${methods.moneyFormat(price)} из казны на счёт Life Invader.`],
+            );
+            mp.game.ui.notifications.show(`~g~Вы перевели денежные средства`);
+        }
         if (item.doName == 'cofferTaxIntermediate') {
             let price = methods.parseFloat(await UIMenu.Menu.GetUserInput("Введите число", '', 10));
 
@@ -8056,6 +8192,11 @@ menuList.showSheriffArsenalGunMenu = function() {
     UIMenu.Menu.AddMenuItem("Полицейская дубинка").itemId = 66;
     UIMenu.Menu.AddMenuItem("Электрошокер").itemId = 82;
 
+    if (user.getCache('rank_type') === 0) {
+        UIMenu.Menu.AddMenuItem("Beretta 90Two").itemId = 78;
+        UIMenu.Menu.AddMenuItem("Коробка патронов 9mm").itemId = 280;
+    }
+
     if (user.getCache('rank_type') == 1 || user.getCache('rank_type') == 2 || user.getCache('rank_type') == 3) {
         UIMenu.Menu.AddMenuItem("Beretta 90Two").itemId = 78;
         UIMenu.Menu.AddMenuItem("Glock 17").itemId = 146;
@@ -8074,7 +8215,7 @@ menuList.showSheriffArsenalGunMenu = function() {
 
         UIMenu.Menu.AddMenuItem("Коробка патронов 9mm").itemId = 280;
     }
-    if (user.getCache('rank_type') == 5 || user.isLeader() || user.isSubLeader()) {
+    if (user.getCache('rank_type') == 5 || user.isLeader() || user.isSubLeader() || user.isDepLeader() || user.isSubDepLeader()) {
         UIMenu.Menu.AddMenuItem("Beretta 90Two").itemId = 78;
         UIMenu.Menu.AddMenuItem("Glock 17").itemId = 146;
         UIMenu.Menu.AddMenuItem("Benelli M3").itemId = 90;
@@ -8361,7 +8502,12 @@ menuList.showSapdArsenalGunMenu = function() {
     UIMenu.Menu.AddMenuItem("Полицейская дубинка").itemId = 66;
     UIMenu.Menu.AddMenuItem("Электрошокер").itemId = 82;
 
-    if (user.getCache('rank_type') == 1 || user.getCache('rank_type') == 2) {
+    if (user.getCache('rank_type') === 0) {
+        UIMenu.Menu.AddMenuItem("Beretta 90Two").itemId = 78;
+        UIMenu.Menu.AddMenuItem("Коробка патронов 9mm").itemId = 280;
+    }
+
+    if (user.getCache('rank_type') === 1 || user.getCache('rank_type') === 2) {
         UIMenu.Menu.AddMenuItem("Beretta 90Two").itemId = 78;
         UIMenu.Menu.AddMenuItem("Glock 17").itemId = 146;
         UIMenu.Menu.AddMenuItem("Benelli M3").itemId = 90;
@@ -8372,14 +8518,14 @@ menuList.showSapdArsenalGunMenu = function() {
         UIMenu.Menu.AddMenuItem("Коробка патронов 12 калибра").itemId = 281;
         UIMenu.Menu.AddMenuItem("Коробка патронов 5.56mm").itemId = 284;
     }
-    if (user.getCache('rank_type') == 3 || user.getCache('rank_type') == 5) {
+    if (user.getCache('rank_type') === 3 || user.getCache('rank_type') === 5) {
         UIMenu.Menu.AddMenuItem("Beretta 90Two").itemId = 78;
         UIMenu.Menu.AddMenuItem("Glock 17").itemId = 146;
         UIMenu.Menu.AddMenuItem("MP5A3").itemId = 103;
 
         UIMenu.Menu.AddMenuItem("Коробка патронов 9mm").itemId = 280;
     }
-    if (user.getCache('rank_type') == 4 || user.isLeader() || user.isSubLeader()) {
+    if (user.getCache('rank_type') === 4 || user.isLeader() || user.isSubLeader() || user.isDepLeader() || user.isSubDepLeader()) {
         UIMenu.Menu.AddMenuItem("Beretta 90Two").itemId = 78;
         UIMenu.Menu.AddMenuItem("Glock 17").itemId = 146;
         UIMenu.Menu.AddMenuItem("Benelli M3").itemId = 90;
@@ -8836,7 +8982,7 @@ menuList.showAdminVehicleMenu = function() {
             let vName = await UIMenu.Menu.GetUserInput("Название ТС", "", 20);
             if (vName == '')
                 return;
-            methods.saveLog('AdminSpawnVehicle', `${user.getCache('rp_name')} - ${vName}`);
+            //methods.saveLog('AdminSpawnVehicle', `${user.getCache('rp_name')} - ${vName}`);
             mp.events.callRemote('server:admin:spawnVeh', vName);
         }
         if (item.doName == 'fixvehicle') {

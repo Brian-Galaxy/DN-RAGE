@@ -407,7 +407,7 @@ mp.events.add('client:events:custom:setSex', function(sex) {
             user.setPlayerModel('mp_f_freemode_01');
             setTimeout(function () {
                 user.updateCharacterFace(true);
-                user.hideLoadDisplay();
+                user.hideLoadDisplay(500,false);
             }, 500)
         }, 500);
     }
@@ -418,11 +418,10 @@ mp.events.add('client:events:custom:setSex', function(sex) {
             user.setPlayerModel('mp_m_freemode_01');
             setTimeout(function () {
                 user.updateCharacterFace(true);
-                user.hideLoadDisplay();
+                user.hideLoadDisplay(500,false);
             }, 500)
         }, 500);
     }
-
 });
 
 mp.events.add('client:events:custom:save', function(endurance, driving, flying, psychics, shooting, stealth, strength) {
@@ -1798,7 +1797,7 @@ mp.events.add('client:inventory:unloadW', function(itemId) {
 
     setTimeout(function () {
         if (user.getAmmo(wpName) > 1)
-            user.kickAntiCheat('Dupe Ammo');
+            user.banAntiCheat(3, 'Dupe Ammo');
     }, 100)
 });
 
@@ -1963,6 +1962,11 @@ mp.events.add('client:inventory:unEquipWeaponUpgrade', function(id, itemId, para
 });
 
 mp.events.add('client:inventory:unEquip', function(id, itemId) {
+
+    methods.saveLog('log_inventory',
+        ['type', 'text'],
+        ['UNEQUIP', `id:${id}, itemId:${itemId}`],
+    );
 
     if (itemId == 50) {
         let money = user.getBankMoney();
@@ -3138,7 +3142,7 @@ mp.events.add('client:taskFollow', (nplayer) => {
             mp.game.invoke(methods.SET_PED_KEEP_TASK, mp.players.local.handle, true);
 
             mp.game.ui.notifications.show("~r~Человек повел вас за собой");
-            mp.events.callRemote("server:user:targetNotify", nplayer, `~g~Вы повели человека за собой (ID: ${user.getCache('id')})`);
+            mp.events.callRemote("server:user:targetNotify", nplayer, `~g~Вы повели человека за собой (ID: ${mp.players.local.remoteId})`);
 
             taskFollowed = nplayer;
         }
@@ -3151,7 +3155,7 @@ mp.events.add('client:taskFollow', (nplayer) => {
 
                 if (!user.isCuff() && !user.isTie()) {
                     mp.game.ui.notifications.show("~g~Вас отпустили");
-                    user.stopAllAnimation();
+                    mp.players.local.clearTasks();
                     taskFollowed = false;
                     clearInterval(timerFollowedId);
                     return;
@@ -3159,9 +3163,9 @@ mp.events.add('client:taskFollow', (nplayer) => {
 
                 if (mp.players.local.dimension != taskFollowed.dimension) {
 
-                    user.stopAllAnimation();
+                    mp.players.local.clearTasks();
                     mp.game.ui.notifications.show("~g~Вас отпустили");
-                    mp.events.callRemote("server:user:targetNotify", nplayer, `~g~Вы отпустили человека (ID: ${user.getCache('id')})`);
+                    mp.events.callRemote("server:user:targetNotify", nplayer, `~g~Вы отпустили человека (ID: ${mp.players.local.remoteId})`);
 
                     taskFollowed = false;
                     clearInterval(timerFollowedId);
@@ -3191,9 +3195,9 @@ mp.events.add('client:taskFollow', (nplayer) => {
         }, 3000);
     } else {
         try {
-            user.stopAllAnimation();
+            mp.players.local.clearTasks();
             mp.game.ui.notifications.show("~g~Вас отпустили");
-            mp.events.callRemote("server:user:targetNotify", nplayer, `~g~Вы отпустили человека (ID: ${user.getCache('id')})`);
+            mp.events.callRemote("server:user:targetNotify", nplayer, `~g~Вы отпустили человека (ID: ${mp.players.local.remoteId})`);
             taskFollowed = false;
             clearInterval(timerFollowedId);
             if (user.isCuff() || user.isTie())

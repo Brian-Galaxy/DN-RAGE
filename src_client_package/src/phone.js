@@ -2870,7 +2870,7 @@ phone.callBackModalInput = function(paramsJson, text) {
                     methods.notifyWithPictureToFraction(title, `Правительство`, text, 'CHAR_FLOYD', user.getCache('fraction_id'));
                     break;
                 case 2:
-                    methods.notifyWithPictureToFraction(title, `SAPD`, text, 'WEB_LOSSANTOSPOLICEDEPT', user.getCache('fraction_id'));
+                    methods.notifyWithPictureToFraction(title, `LSPD`, text, 'WEB_LOSSANTOSPOLICEDEPT', user.getCache('fraction_id'));
                     break;
                 case 3:
                     methods.notifyWithPictureToFraction(title, `FIB`, text, 'CHAR_DR_FRIEDLANDER', user.getCache('fraction_id'));
@@ -2896,24 +2896,31 @@ phone.callBackModalInput = function(paramsJson, text) {
             let title = user.getCache('name');
             switch (user.getCache('fraction_id')) {
                 case 1:
+                    methods.sendDiscordServerNews(title, 'Новости правительства', text);
                     methods.notifyWithPictureToAll(title, 'Новости правительства', text, 'CHAR_FLOYD');
                     break;
                 case 2:
-                    methods.notifyWithPictureToAll(title, 'Новости SAPD', text, 'WEB_LOSSANTOSPOLICEDEPT');
+                    methods.sendDiscordServerNews(title, 'Новости LSPD', text);
+                    methods.notifyWithPictureToAll(title, 'Новости LSPD', text, 'WEB_LOSSANTOSPOLICEDEPT');
                     break;
                 case 3:
+                    methods.sendDiscordServerNews(title, 'Новости FIB', text);
                     methods.notifyWithPictureToAll(title, 'Новости FIB', text, 'CHAR_DR_FRIEDLANDER');
                     break;
                 case 4:
+                    methods.sendDiscordServerNews(title, 'Новости USMC', text);
                     methods.notifyWithPictureToAll(title, 'Новости USMC', text, 'DIA_ARMY');
                     break;
                 case 5:
-                    methods.notifyWithPictureToAll(title, 'Новости SHERIFF', text, 'DIA_POLICE');
+                    methods.sendDiscordServerNews(title, 'Новости BCSD', text);
+                    methods.notifyWithPictureToAll(title, 'Новости BCSD', text, 'DIA_POLICE');
                     break;
                 case 6:
+                    methods.sendDiscordServerNews(title, 'Новости EMS', text);
                     methods.notifyWithPictureToAll(title, 'Новости EMS', text, 'CHAR_CRIS');
                     break;
                 case 7:
+                    methods.sendDiscordServerNews(title, 'Новости Life Invader', text);
                     methods.notifyWithPictureToAll(title, 'Новости Life Invader', text, 'CHAR_LIFEINVADER');
                     break;
             }
@@ -2996,7 +3003,7 @@ phone.callBackButton = async function(menu, id, ...args) {
         }
         if (menu == 'uvehicle') {
             if (params.name == 'respawn')
-                mp.events.callRemote('server:phone:userRespawnById', params.id);
+                mp.events.callRemote('server:phone:userRespawnById', params.id, params.price);
             if (params.name == 'getPos')
                 mp.events.callRemote('server:phone:userGetPosById', params.id);
             if (params.name == 'lock')

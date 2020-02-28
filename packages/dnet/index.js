@@ -40,6 +40,7 @@ let gangWar = require('./managers/gangWar');
 let timer = require('./managers/timer');
 let ems = require('./managers/ems');
 let tax = require('./managers/tax');
+let discord = require('./managers/discord');
 
 let coffer = require('./coffer');
 let inventory = require('./inventory');

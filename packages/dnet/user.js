@@ -163,7 +163,7 @@ user.loginAccount = function(player, login, pass) {
                 }
                 else {
                     rows.forEach(row => {
-                        let sex = JSON.parse(row['skin'])['SKIN_SEX'] == 0 ? "m" : "w";
+                        let sex = methods.parseInt(JSON.parse(row['skin'])['SKIN_SEX']) == 0 ? "m" : "w";
 
                         let spawnList = [];
 
@@ -276,7 +276,7 @@ user.save = function(player, withReset = false) {
         skin.SKIN_OVERLAY_12 = methods.parseInt(user.get(player, "SKIN_OVERLAY_12"));
         skin.SKIN_OVERLAY_COLOR_12 = methods.parseInt(user.get(player, "SKIN_OVERLAY_COLOR_12"));
         skin.SKIN_FACE_SPECIFICATIONS = user.get(player, "SKIN_FACE_SPECIFICATIONS");
-        skin.SKIN_SEX = user.get(player, "SKIN_SEX");
+        skin.SKIN_SEX = methods.parseInt(user.get(player, "SKIN_SEX"));
 
         user.set(player, 'skin', JSON.stringify(skin));
 
@@ -506,7 +506,7 @@ user.updateClientCache = function(player) {
         skin.SKIN_OVERLAY_12 = methods.parseInt(user.get(player, "SKIN_OVERLAY_12"));
         skin.SKIN_OVERLAY_COLOR_12 = methods.parseInt(user.get(player, "SKIN_OVERLAY_COLOR_12"));
         skin.SKIN_FACE_SPECIFICATIONS = user.get(player, "SKIN_FACE_SPECIFICATIONS");
-        skin.SKIN_SEX = user.get(player, "SKIN_SEX");
+        skin.SKIN_SEX = methods.parseInt(user.get(player, "SKIN_SEX"));
 
         user.set(player, 'skin', JSON.stringify(skin));
 
@@ -566,7 +566,7 @@ user.updateCharacterFace = function(player) {
         skin.SKIN_OVERLAY_12 = methods.parseInt(user.get(player, "SKIN_OVERLAY_12"));
         skin.SKIN_OVERLAY_COLOR_12 = methods.parseInt(user.get(player, "SKIN_OVERLAY_COLOR_12"));
         skin.SKIN_FACE_SPECIFICATIONS = user.get(player, "SKIN_FACE_SPECIFICATIONS");
-        skin.SKIN_SEX = user.get(player, "SKIN_SEX");
+        skin.SKIN_SEX = methods.parseInt(user.get(player, "SKIN_SEX"));
 
         if (user.getSex(player) != skin.SKIN_SEX) {
             if (skin.SKIN_SEX == 1)

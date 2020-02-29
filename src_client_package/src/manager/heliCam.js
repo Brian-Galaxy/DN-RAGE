@@ -67,69 +67,96 @@ heliCam.keyPressToggleHeliCam = async function () {
 };
 
 heliCam.keyPressToggleSpotLight = function () {
-    if (heliCam.isValideVeh() && heliCam.isHeliHighEnough() &&
-        (
-            mp.players.local.vehicle.model === mp.game.joaat('polmav') ||
-            mp.players.local.vehicle.model === mp.game.joaat('buzzard') ||
-            mp.players.local.vehicle.model === mp.game.joaat('buzzard2')
-        )
-    ) {
-        spotLight = !spotLight;
-        vehicles.setSpotLightState(spotLight);
-        mp.game.audio.playSoundFrontend(-1, "SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET", false);
+    try {
+        if (heliCam.isValideVeh() && heliCam.isHeliHighEnough() &&
+            (
+                mp.players.local.vehicle.model === mp.game.joaat('polmav') ||
+                mp.players.local.vehicle.model === mp.game.joaat('buzzard') ||
+                mp.players.local.vehicle.model === mp.game.joaat('buzzard2')
+            )
+        ) {
+            spotLight = !spotLight;
+            vehicles.setSpotLightState(spotLight);
+            mp.game.audio.playSoundFrontend(-1, "SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET", false);
+        }
+    }
+    catch (e) {
+        
     }
 };
 
 heliCam.keyPressToggleVision = function () {
-    if (heliCam.isValideVeh() && heliCam.isHeliHighEnough() && enableCam) {
+    try {
+        if (heliCam.isValideVeh() && heliCam.isHeliHighEnough() && enableCam) {
 
-        if (vision_state == 0) {
-            mp.game.graphics.setNightvision(true);
-            vision_state = 1;
+            if (vision_state == 0) {
+                mp.game.graphics.setNightvision(true);
+                vision_state = 1;
+            }
+            else if (vision_state == 1) {
+                mp.game.graphics.setNightvision(false);
+                mp.game.graphics.setSeethrough(true);
+                vision_state = 2;
+            }
+            else {
+                mp.game.graphics.setNightvision(false);
+                mp.game.graphics.setSeethrough(false);
+                vision_state = 0;
+            }
+            mp.game.audio.playSoundFrontend(-1, "SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET", false);
         }
-        else if (vision_state == 1) {
-            mp.game.graphics.setNightvision(false);
-            mp.game.graphics.setSeethrough(true);
-            vision_state = 2;
-        }
-        else {
-            mp.game.graphics.setNightvision(false);
-            mp.game.graphics.setSeethrough(false);
-            vision_state = 0;
-        }
-        mp.game.audio.playSoundFrontend(-1, "SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET", false);
+        else
+            mp.game.ui.notifications.show('~y~Необходимо включить режим камеры на вертолете, либо функция на данном ТС не доступна.');
     }
-    else
-        mp.game.ui.notifications.show('~y~Необходимо включить режим камеры на вертолете, либо функция на данном ТС не доступна.');
+    catch (e) {
+        
+    }
 };
 
 heliCam.keyPressToggleLockVehicle = function () {
-    if (heliCam.isValideVeh() && heliCam.isHeliHighEnough()) {
-        if (mp.vehicles.exists(locked_on_vehicle)) {
-            locked_on_vehicle = null;
-            mp.game.audio.playSoundFrontend(-1, "SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET", false);
-            heliCam.destroyCam();
-            heliCam.createCam();
-        }
-        else if(enableCam) {
-            locked_on_vehicle = heliCam.getVehicleInView();
+    try {
+        if (heliCam.isValideVeh() && heliCam.isHeliHighEnough()) {
             if (mp.vehicles.exists(locked_on_vehicle)) {
+                locked_on_vehicle = null;
                 mp.game.audio.playSoundFrontend(-1, "SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET", false);
+                heliCam.destroyCam();
+                heliCam.createCam();
+            }
+            else if(enableCam) {
+                locked_on_vehicle = heliCam.getVehicleInView();
+                if (mp.vehicles.exists(locked_on_vehicle)) {
+                    mp.game.audio.playSoundFrontend(-1, "SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET", false);
+                }
             }
         }
+        else
+            mp.game.ui.notifications.show('~y~Необходимо включить режим камеры на вертолете, либо функция на данном ТС не доступна.');
     }
-    else
-        mp.game.ui.notifications.show('~y~Необходимо включить режим камеры на вертолете, либо функция на данном ТС не доступна.');
+    catch (e) {
+
+    }
 };
 
 heliCam.isValideVeh = function () {
-    return mp.players.local.vehicle &&
-        mp.players.local.isInAnyVehicle(true) &&
-        (mp.players.local.vehicle.getPedInSeat(-1) == mp.players.local.handle || mp.players.local.vehicle.getPedInSeat(0) == mp.players.local.handle);
+    try {
+        return mp.players.local.vehicle &&
+            mp.players.local.isInAnyVehicle(true) &&
+            (mp.players.local.vehicle.getPedInSeat(-1) == mp.players.local.handle || mp.players.local.vehicle.getPedInSeat(0) == mp.players.local.handle);
+    }
+    catch (e) {
+
+    }
+    return  false;
 };
 
 heliCam.isHeliHighEnough = function () {
-    return mp.players.local.vehicle.getHeightAboveGround() >= 1.5;
+    try {
+        return mp.players.local.vehicle.getHeightAboveGround() >= 1.5;
+    }
+    catch (e) {
+
+    }
+    return false;
 };
 
 heliCam.createCam = function () {

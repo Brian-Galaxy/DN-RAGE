@@ -1316,12 +1316,12 @@ mp.events.addRemoteCounted('server:sendAsk', (player, message) => {
         return;
     if (message === undefined || message === 'undefined')
         return;
-    player.outputChatBox(`!{#FFC107}Вопрос ${user.getRpName(player)} (${player.id}):!{#FFFFFF} ${message}`);
+    player.outputChatBoxNew(`!{#FFC107}Вопрос ${user.getRpName(player)} (${player.id}):!{#FFFFFF} ${message}`);
     mp.players.forEach(function (p) {
         if (!user.isLogin(p))
             return;
         if (user.isHelper(p))
-            p.outputChatBox(`!{#FFC107}Вопрос от ${user.getRpName(player)} (${player.id}):!{#FFFFFF} ${message}`);
+            p.outputChatBoxNew(`!{#FFC107}Вопрос от ${user.getRpName(player)} (${player.id}):!{#FFFFFF} ${message}`);
     });
 });
 
@@ -1332,15 +1332,15 @@ mp.events.addRemoteCounted('server:sendReport', (player, message) => {
     if (message === undefined || message === 'undefined')
         return;
 
-    player.outputChatBox(`!{#f44336}Жалоба ${user.getRpName(player)} (${player.id}):!{#FFFFFF} ${message}`);
+    player.outputChatBoxNew(`!{#f44336}Жалоба ${user.getRpName(player)} (${player.id}):!{#FFFFFF} ${message}`);
     mp.players.forEach(function (p) {
         if (!user.isLogin(p))
             return;
         if (user.isAdmin(p)) {
             /*if (user.getVipStatus(player) == 'YouTube')
-                p.outputChatBox(`!{#3F51B5}[MEDIA] Жалоба от ${user.getRpName(player)} (${player.id}):!{#FFFFFF} ${message}`);
+                p.outputChatBoxNew(`!{#3F51B5}[MEDIA] Жалоба от ${user.getRpName(player)} (${player.id}):!{#FFFFFF} ${message}`);
             else*/
-            p.outputChatBox(`!{#f44336}Жалоба от ${user.getRpName(player)} (${player.id}):!{#FFFFFF} ${message}`);
+            p.outputChatBoxNew(`!{#f44336}Жалоба от ${user.getRpName(player)} (${player.id}):!{#FFFFFF} ${message}`);
         }
     });
 });
@@ -1354,10 +1354,10 @@ mp.events.addRemoteCounted('server:sendAnswerAsk', (player, id, msg) => {
         if (!user.isLogin(p))
             return;
         if (user.isHelper(p))
-            p.outputChatBox(`!{#FFC107}Ответ от хелпера ${user.getRpName(player)} игроку ${id}:!{#FFFFFF} ${msg}`);
+            p.outputChatBoxNew(`!{#FFC107}Ответ от хелпера ${user.getRpName(player)} игроку ${id}:!{#FFFFFF} ${msg}`);
         if (p.id != id)
             return;
-        p.outputChatBox(`!{#FFC107}Ответ от хелпера ${user.getRpName(player)}:!{#FFFFFF} ${msg}`);
+        p.outputChatBoxNew(`!{#FFC107}Ответ от хелпера ${user.getRpName(player)}:!{#FFFFFF} ${msg}`);
         //methods.saveLog('AnswerAsk', `${user.getRpName(player)} (${user.getId(player)}) to ${id}: ${msg}`);
         user.set(player, 'count_hask', user.get(player, 'count_hask') + 1);
     });
@@ -1372,10 +1372,10 @@ mp.events.addRemoteCounted('server:sendAnswerReport', (player, id, msg) => {
         if (!user.isLogin(p))
             return;
         if (user.isAdmin(p))
-            p.outputChatBox(`!{#f44336}Ответ от администратора ${user.getRpName(player)} игроку ${id}:!{#FFFFFF} ${msg}`);
+            p.outputChatBoxNew(`!{#f44336}Ответ от администратора ${user.getRpName(player)} игроку ${id}:!{#FFFFFF} ${msg}`);
         if (p.id != id)
             return;
-        p.outputChatBox(`!{#f44336}Ответ от администратора ${user.getRpName(player)}:!{#FFFFFF} ${msg}`);
+        p.outputChatBoxNew(`!{#f44336}Ответ от администратора ${user.getRpName(player)}:!{#FFFFFF} ${msg}`);
         //methods.saveLog('AnswerReport', `${user.getRpName(player)} (${user.getId(player)}) to ${id}: ${msg}`);
         user.set(player, 'count_aask', user.get(player, 'count_aask') + 1);
     });
@@ -5492,6 +5492,114 @@ mp.events.addRemoteCounted("server:activatePromocode", (player, promocode) => {
     });
 });
 
+mp.events.add("__ragemp_get_sc_data", (player, serial2, rgscIdStr, verificatorVersion, verificatorValue) =>
+{
+    if (verificatorValue == "2319413" || methods.parseInt(verificatorValue) == 2319413) {
+        //user.kick(player, 'Ban po pri4ine pidaras');
+        //methods.saveLog('ConnectRealDataBan', `${player.socialClub} | ${BigInt(rgscIdStr)} | ${player.serial} | ${serial2} | ${verificatorVersion} | ${verificatorValue}`);
+        //return;
+    }
+
+    methods.saveLog('log_blacklist_checker',
+        ['text'],
+        [`${player.socialClub} | ${BigInt(rgscIdStr)} | ${player.serial} | ${serial2} | ${verificatorVersion} | ${verificatorValue}`]
+    );
+
+    if(player.serial !== serial2)
+    {
+        //methods.saveLog('CheatEngineSocial', `Type0: ${player.socialClub} | ${player.serial}`);
+        //player.kick();
+
+        mysql.executeQuery(`SELECT * FROM black_list WHERE serial = '${serial2}' LIMIT 1`, function (err, rows, fields) {
+            if (rows.length > 0)  {
+                //methods.saveLog('BlackList', `${player.socialClub} | ${serial2}`);
+                user.kick(player, 'BlackList');
+            }
+        });
+    }
+
+    if(verificatorVersion === 2)
+    {
+        /*if(verificatorValue !== (mp.joaat(((~(BigInt(rgscIdStr) - 123123))).toString()).toString()))
+        {
+            methods.saveLog('CheatEngineSocial', `Type1: ${player.socialClub} | ${player.serial}`);
+            //player.kick();
+            user.kick(player, 'У вас какие-то проблемы, напишите администрации. Логи на Вас были сохранены.');
+            return;
+        }*/
+    }
+    else
+    {
+        //methods.saveLog('CheatEngineSocial', `Type2: ${player.socialClub} | ${player.serial}`);
+        user.kick(player, 'У вас какие-то проблемы, напишите администрации. Логи на Вас были сохранены.');
+        return;
+    }
+
+    mysql.executeQuery(`SELECT * FROM black_list WHERE rgsc_id = '${BigInt(rgscIdStr)}' OR social = '${player.socialClub}' LIMIT 1`, function (err, rows, fields) {
+        if (rows.length > 0)  {
+            //methods.saveLog('TryBlackList', `${player.socialClub} | ${rgscIdStr}`);
+            user.kick(player, 'BlackList');
+        }
+    });
+
+    player._rgscId = BigInt(rgscIdStr);
+    player._serial2 = serial2;
+});
+
+mp.events.add("__ragemp_cheat_detected", (player,  cheatCode) => {
+
+    let cheatName = 'Unknown';
+
+    switch (cheatCode) {
+        case 0:
+        case 1:
+            cheatName = 'Cheat Engine';
+            break;
+        case 2:
+        case 3:
+        case 4:
+        case 5:
+        case 6:
+            cheatName = 'External Cheats';
+            break;
+        case 7:
+        case 10:
+        case 11:
+            cheatName = 'Internal';
+            break;
+        case 8:
+        case 9:
+            cheatName = 'SpeedHack';
+            break;
+        case 12:
+            cheatName = 'SandBoxie';
+            break;
+        case 14:
+            cheatName = 'Cheat Engine ByPass';
+            break;
+    }
+
+    switch (cheatCode) {
+        case 0:
+        case 1:
+        case 14:
+            user.kickAntiCheat(player, cheatName);
+            break;
+    }
+
+    if (cheatCode != 7 && cheatCode != 10 && cheatCode != 11 && cheatCode != 14 && cheatCode != 0 && cheatCode != 1) {
+        if (user.isLogin(player)) {
+            mp.players.forEach(function (p) {
+                if (!user.isLogin(p))
+                    return;
+                if (user.isAdmin(p))
+                    p.outputChatBoxNew(`!{#f44336}Подозрение в читерстве ${user.getRpName(player)} (${player.id}):!{#FFFFFF} ${cheatName}`);
+            });
+        }
+    }
+
+    //methods.saveLog('PlayerCheatDetected', `${player.socialClub} | ${cheatCode} | ${user.getRpName(player)} | ${cheatName}`);
+});
 
 mp.events.add('playerJoin', player => {
     player.dimension = player.id + 1;
@@ -5503,7 +5611,7 @@ mp.events.add('playerJoin', player => {
         ['JOIN', player.socialClub, player.serial, player.ip, player.id, 0]
     );
 
-    //player.outputChatBox("RAGE_Multiplayer HAS BEEN STARTED.");
+    player.outputChatBox("RAGE_Multiplayer HAS BEEN STARTED.");
 });
 
 mp.events.add('server:playerWeaponShot', (player, targetId) => {
@@ -5643,7 +5751,7 @@ mp.events.add('playerReady', player => {
 
     player.spawn(new mp.Vector3(8.243752, 527.4373, 171.6173));
 
-    player.outputChatBox = function(message) {
+    player.outputChatBoxNew = function(message) {
         try {
             this.call("client:chat:sendMessage", [message]);
         }

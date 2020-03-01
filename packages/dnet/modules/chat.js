@@ -17,7 +17,7 @@ chat.sendBCommand = function(player, text) {
 
         mp.players.forEach(p => {
             if (user.isLogin(p) && p.dimension === player.dimension && methods.distanceToPos(player.position, p.position) <= range)
-                p.outputChatBox(`[${chat.getTime()}] !{2196F3} Игрок (${user.getSvId(player)}): !{FFFFFF}(( ${text} ))`);
+                p.outputChatBoxNew(`[${chat.getTime()}] !{2196F3} Игрок (${user.getSvId(player)}): !{FFFFFF}(( ${text} ))`);
         });
 
         methods.saveLog('log_chat', ['text'], [`/b ${user.getRpName(player)} (${user.getId(player)}): ${methods.removeQuotes(methods.removeQuotes2(text))}`]);
@@ -31,7 +31,7 @@ chat.sendTryCommand = function(player, text) {
 
         mp.players.forEach(p => {
             if (user.isLogin(p) && p.dimension === player.dimension && methods.distanceToPos(player.position, p.position) <= range)
-                p.outputChatBox(`[${chat.getTime()}] !{C2A2DA} ${label} ${user.getSvId(player)} ${text}`);
+                p.outputChatBoxNew(`[${chat.getTime()}] !{C2A2DA} ${label} ${user.getSvId(player)} ${text}`);
         });
 
         methods.saveLog('log_chat', ['text'], [`/try ${user.getRpName(player)} (${user.getId(player)}): ${label} ${methods.removeQuotes(methods.removeQuotes2(text))}`]);
@@ -43,7 +43,7 @@ chat.sendDoCommand = function(player, text) {
 
         mp.players.forEach(p => {
             if (user.isLogin(p) && p.dimension === player.dimension && methods.distanceToPos(player.position, p.position) <= range)
-                p.outputChatBox(`[${chat.getTime()}] !{C2A2DA} (( ${text} )) ${user.getSvId(player)}`);
+                p.outputChatBoxNew(`[${chat.getTime()}] !{C2A2DA} (( ${text} )) ${user.getSvId(player)}`);
         });
         methods.saveLog('log_chat', ['text'], [`/do ${user.getRpName(player)} (${user.getId(player)}): ${methods.removeQuotes(methods.removeQuotes2(text))}`]);
     }
@@ -54,7 +54,7 @@ chat.sendMeCommand = function(player, text) {
 
         mp.players.forEach(p => {
             if (user.isLogin(p) && p.dimension === player.dimension && methods.distanceToPos(player.position, p.position) <= range)
-                p.outputChatBox(`[${chat.getTime()}] !{C2A2DA}${user.getSvId(player)} ${text}`);
+                p.outputChatBoxNew(`[${chat.getTime()}] !{C2A2DA}${user.getSvId(player)} ${text}`);
         });
 
         methods.saveLog('log_chat', ['text'], [`/me ${user.getRpName(player)} (${user.getId(player)}): ${methods.removeQuotes(methods.removeQuotes2(text))}`]);
@@ -67,7 +67,7 @@ chat.sendDiceCommand = function(player) {
 
         mp.players.forEach(p => {
             if (user.isLogin(p) && p.dimension === player.dimension && methods.distanceToPos(player.position, p.position) <= range)
-                p.outputChatBox(`[${chat.getTime()}] !{C2A2DA}${user.getSvId(player)} бросил кости !{FF9800}(( Выпало ${dice} ))`);
+                p.outputChatBoxNew(`[${chat.getTime()}] !{C2A2DA}${user.getSvId(player)} бросил кости !{FF9800}(( Выпало ${dice} ))`);
         });
 
         methods.saveLog('log_chat', ['text'], [`/dice ${user.getRpName(player)} (${user.getId(player)}): Выпало ${dice}`]);
@@ -79,7 +79,7 @@ chat.send = function(player, text) {
 
         mp.players.forEach(p => {
             if (user.isLogin(p) && p.dimension === player.dimension && methods.distanceToPos(player.position, p.position) <= range)
-                p.outputChatBox(`[${chat.getTime()}] !{2196F3}Игрок (${user.getSvId(player)}) говорит:!{FFFFFF} ${text}`);
+                p.outputChatBoxNew(`[${chat.getTime()}] !{2196F3}Игрок (${user.getSvId(player)}) говорит:!{FFFFFF} ${text}`);
         });
         methods.saveLog('log_chat', ['text'], [`${user.getRpName(player)} (${user.getId(player)}): ${methods.removeQuotes(methods.removeQuotes2(text))}`]);
     }
@@ -89,7 +89,7 @@ chat.sendPos = function(pos, range, sender, text, color = '2196F3') {
 
     mp.players.forEach(p => {
         if (user.isLogin(p) && methods.distanceToPos(pos, p.position) <= range)
-            p.outputChatBox(`[${chat.getTime()}] !{${color}} ${sender}:!{FFFFFF} ${text}`);
+            p.outputChatBoxNew(`[${chat.getTime()}] !{${color}} ${sender}:!{FFFFFF} ${text}`);
     });
 
     //mp.players.broadcastInRange(pos, range, `[${chat.getTime()}] !{${color}} ${sender}:!{FFFFFF} ${text}`);
@@ -99,7 +99,7 @@ chat.sendToAll = function(sender, text, color = '2196F3') {
 
     mp.players.forEach(p => {
         if (user.isLogin(p))
-            p.outputChatBox(`[${chat.getTime()}] !{${color}} ${sender}:!{FFFFFF} ${text}`);
+            p.outputChatBoxNew(`[${chat.getTime()}] !{${color}} ${sender}:!{FFFFFF} ${text}`);
     });
 
     methods.saveLog('log_chat', ['text'], [`ALL: ${methods.removeQuotes(methods.removeQuotes2(text))}`]);
@@ -186,19 +186,19 @@ mp.events.add('playerCommand', (player, command) => {
             if (!user.isLogin(player))
                 return;
             let evalCmd = command.substring(6);
-            player.outputChatBox(`SEval ${evalCmd}`);
+            player.outputChatBoxNew(`SEval ${evalCmd}`);
             let result;
 
             try {
                 result = eval(evalCmd);
-                player.outputChatBox(`SResult ${result}`);
+                player.outputChatBoxNew(`SResult ${result}`);
             } catch (e) {
                 result = e;
-                player.outputChatBox(`SResult ${result}`);
+                player.outputChatBoxNew(`SResult ${result}`);
             }
         }
         else {
-            // TODO player.outputChatBox(`!{FFC107}На сервере нет команд, кроме: /me, /do, /try, /b. Используйте меню на кнопку M`);
+            // TODO player.outputChatBoxNew(`!{FFC107}На сервере нет команд, кроме: /me, /do, /try, /b. Используйте меню на кнопку M`);
         }
     }
     catch (e) {

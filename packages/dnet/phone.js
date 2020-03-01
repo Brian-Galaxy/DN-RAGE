@@ -1721,6 +1721,15 @@ phone.selectChat = function(player, phoneNumber, chat) {
     });
 };
 
+phone.deleteChat = function(player, phoneNumber,) {
+    if (!user.isLogin(player))
+        return;
+
+    let myPhone = user.get(player, 'phone');
+    mysql.executeQuery(`DELETE FROM phone_sms WHERE (number_from = '${myPhone}' AND number_to = '${phoneNumber}') OR (number_to = '${myPhone}' AND number_from = '${phoneNumber}')`);
+    player.notify('~b~Чат был удалён');
+};
+
 phone.showMenu = function(player, uuid, title, items) {
     if (!user.isLogin(player))
         return;

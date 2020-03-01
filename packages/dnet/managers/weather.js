@@ -237,7 +237,7 @@ weather.timeSyncTimer = function() {
     } catch (e) {
         methods.debug(e);
     }
-    setTimeout(weather.timeSyncTimer, 8500);
+    setTimeout(weather.timeSyncTimer, 8571);
 };
 
 weather.setWeather = function(weatherName) {

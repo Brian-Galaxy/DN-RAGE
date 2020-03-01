@@ -2211,6 +2211,10 @@ mp.events.addRemoteCounted('server:phone:selectChat', (player, phoneNumber, chat
     phone.selectChat(player, phoneNumber, chat);
 });
 
+mp.events.addRemoteCounted('server:phone:deleteChat', (player, phoneNumber) => {
+    phone.deleteChat(player, phoneNumber);
+});
+
 mp.events.addRemoteCounted('server:phone:fractionList', (player) => {
     if (!user.isLogin(player))
         return;

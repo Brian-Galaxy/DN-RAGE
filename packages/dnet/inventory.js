@@ -577,6 +577,11 @@ inventory.deleteItem = function(id) {
     try {
         mysql.executeQuery(`DELETE FROM items WHERE id = ${id}`);
         inventory.deleteDropItem(id);
+        let data = JSON.stringify({type: 'deleteItemById', id: id});
+        mp.players.forEach(p => {
+            if (user.isLogin(p))
+                user.callCef(p, 'inventory', data);
+        });
     } catch(e) {
         methods.debug(e);
     }

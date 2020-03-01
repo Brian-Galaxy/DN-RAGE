@@ -2324,7 +2324,7 @@ phone.showLoad = function() {
                     {
                         title: "Ваше приложение загружается...",
                         type: 1,
-                        params: { name: "loading" }
+                        params: { name: "loading", skip: true }
                     }
                 ],
             },

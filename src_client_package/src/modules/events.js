@@ -2247,6 +2247,10 @@ mp.events.add('client:phone:selectChat', function(phone, idx) {
     mp.events.callRemote('server:phone:selectChat', phone, idx);
 });
 
+mp.events.add('client:phone:deleteChat', function(phone) {
+    mp.events.callRemote('server:phone:deleteChat', phone);
+});
+
 mp.events.add('client:phone:editContact', function(contJson) {
     mp.events.callRemote('server:phone:editContact', contJson);
 });
@@ -2430,11 +2434,16 @@ mp.keys.bind(0x4D, true, function() {
 mp.keys.bind(0x1B, true, function() {
     if (!user.isLogin())
         return;
+
     ui.callCef('license', JSON.stringify({type: 'hide'}));
     ui.callCef('certificate', JSON.stringify({type: 'hide'}));
     ui.callCef('dialog', JSON.stringify({type: 'hide'}));
     ui.callCef('cardid', JSON.stringify({type: 'hide'}));
     ui.callCef('workid', JSON.stringify({type: 'hide'}));
+
+    if (methods.isBlockKeys())
+        return;
+
     phone.hide();
     inventory.hide();
 

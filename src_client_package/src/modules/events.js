@@ -1345,7 +1345,7 @@ mp.events.add('client:user:setDrugLevel', (drugType, level) => {
 });
 
 mp.events.add('client:user:stopAllScreenEffects', () => {
-    user.stopAllAnimation();
+    user.stopAllScreenEffect();
 });
 
 mp.events.add('client:user:revive', (hp) => {

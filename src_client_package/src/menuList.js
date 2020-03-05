@@ -4982,70 +4982,70 @@ menuList.showBarMenu = function(shopId, price = 2)
         saleLabel = `\n~s~Скидка: ~r~${sale}%`;
 
     let itemPrice = 0.50 * price;
-    let menuItem = UIMenu.Menu.AddMenuItem("Вода", `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`);
+    let menuItem = UIMenu.Menu.AddMenuItem("Вода Rainé", `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`);
     menuItem.price = itemPrice;
     menuItem.label = "воду";
-    menuItem.label2 = "Вода";
+    menuItem.label2 = "Вода Rainé";
     if (sale > 0)
         menuItem.SetLeftBadge(27);
 
     itemPrice = 0.90 * price;
-    menuItem = UIMenu.Menu.AddMenuItem("Лимонад", `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`);
+    menuItem = UIMenu.Menu.AddMenuItem("Баночка E-Cola", `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`);
     menuItem.price = itemPrice;
-    menuItem.label = "лимонад";
-    menuItem.label2 = "Лимонад";
+    menuItem.label = "E-Cola";
+    menuItem.label2 = "Баночка E-Cola";
     if (sale > 0)
         menuItem.SetLeftBadge(27);
 
     itemPrice = 0.99 * price;
-    menuItem = UIMenu.Menu.AddMenuItem("Кола", `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`);
+    menuItem = UIMenu.Menu.AddMenuItem("Бутылка E-Cola", `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`);
     menuItem.price = itemPrice;
-    menuItem.label = "колу";
-    menuItem.label2 = "Кола";
+    menuItem.label = "E-Cola";
+    menuItem.label2 = "Бутылка E-Cola";
     if (sale > 0)
         menuItem.SetLeftBadge(27);
 
     itemPrice = 6.70 * price;
-    menuItem = UIMenu.Menu.AddMenuItem("Пиво", `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`);
+    menuItem = UIMenu.Menu.AddMenuItem("Пиво Pißwasser", `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`);
     menuItem.price = itemPrice;
     menuItem.label = "пиво";
-    menuItem.label2 = "Пиво";
+    menuItem.label2 = "Пиво Pißwasser";
     menuItem.drunkLevel = 100;
     if (sale > 0)
         menuItem.SetLeftBadge(27);
 
     itemPrice = 9.99 * price;
-    menuItem = UIMenu.Menu.AddMenuItem("Водка", `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`);
+    menuItem = UIMenu.Menu.AddMenuItem("Водка Nogo", `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`);
     menuItem.price = itemPrice;
     menuItem.label = "водку";
-    menuItem.label2 = "Водка";
+    menuItem.label2 = "Водка Nogo";
     menuItem.drunkLevel = 200;
     if (sale > 0)
         menuItem.SetLeftBadge(27);
 
     itemPrice = 12 * price;
-    menuItem = UIMenu.Menu.AddMenuItem("Текила", `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`);
+    menuItem = UIMenu.Menu.AddMenuItem("Ром Ragga", `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`);
     menuItem.price = itemPrice;
-    menuItem.label = "текилу";
-    menuItem.label2 = "Текила";
+    menuItem.label = "рома";
+    menuItem.label2 = "Ром Ragga";
     menuItem.drunkLevel = 200;
     if (sale > 0)
         menuItem.SetLeftBadge(27);
 
     itemPrice = 14 * price;
-    menuItem = UIMenu.Menu.AddMenuItem("Бурбон", `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`);
+    menuItem = UIMenu.Menu.AddMenuItem("Коньяк Bourgeoix", `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`);
     menuItem.price = itemPrice;
-    menuItem.label = "бурбон";
-    menuItem.label2 = "Бурбон";
+    menuItem.label = "коньяк";
+    menuItem.label2 = "Коньяк Bourgeoix";
     menuItem.drunkLevel = 200;
     if (sale > 0)
         menuItem.SetLeftBadge(27);
 
     itemPrice = 25 * price;
-    menuItem = UIMenu.Menu.AddMenuItem("Виски", `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`);
+    menuItem = UIMenu.Menu.AddMenuItem("Вино Rockford Hill Reserve", `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`);
     menuItem.price = itemPrice;
-    menuItem.label = "виски";
-    menuItem.label2 = "Виски";
+    menuItem.label = "вина";
+    menuItem.label2 = "Вино Rockford Hill Reserve";
     menuItem.drunkLevel = 200;
     if (sale > 0)
         menuItem.SetLeftBadge(27);
@@ -5088,33 +5088,33 @@ menuList.showBarFreeMenu = function()
 
     let menu = UIMenu.Menu.Create("Бар", "~b~Меню бара");
 
-    let menuItem = UIMenu.Menu.AddMenuItem("Вода");
+    let menuItem = UIMenu.Menu.AddMenuItem("Вода Rainé");
     menuItem.label = "воду";
 
-    menuItem = UIMenu.Menu.AddMenuItem("Лимонад");
-    menuItem.label = "лимонад";
+    menuItem = UIMenu.Menu.AddMenuItem("Баночка E-Cola");
+    menuItem.label = "E-Cola";
 
-    menuItem = UIMenu.Menu.AddMenuItem("Кола");
-    menuItem.label = "колу";
+    menuItem = UIMenu.Menu.AddMenuItem("Бутылка E-Cola");
+    menuItem.label = "E-Cola";
 
-    menuItem = UIMenu.Menu.AddMenuItem("Пиво");
+    menuItem = UIMenu.Menu.AddMenuItem("Пиво Pißwasser");
     menuItem.label = "пиво";
     menuItem.drunkLevel = 100;
 
-    menuItem = UIMenu.Menu.AddMenuItem("Водка");
+    menuItem = UIMenu.Menu.AddMenuItem("Водка Nogo");
     menuItem.label = "водку";
     menuItem.drunkLevel = 200;
 
-    menuItem = UIMenu.Menu.AddMenuItem("Текила");
-    menuItem.label = "текилу";
+    menuItem = UIMenu.Menu.AddMenuItem("Ром Ragga");
+    menuItem.label = "рома";
     menuItem.drunkLevel = 200;
 
-    menuItem = UIMenu.Menu.AddMenuItem("Бурбон");
-    menuItem.label = "бурбон";
+    menuItem = UIMenu.Menu.AddMenuItem("Коньяк Bourgeoix");
+    menuItem.label = "коньяк";
     menuItem.drunkLevel = 200;
 
-    menuItem = UIMenu.Menu.AddMenuItem("Виски");
-    menuItem.label = "виски";
+    menuItem = UIMenu.Menu.AddMenuItem("Вино Rockford Hill Reserve");
+    menuItem.label = "вина";
     menuItem.drunkLevel = 200;
 
     UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = "closeButton";

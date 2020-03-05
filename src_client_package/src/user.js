@@ -960,6 +960,14 @@ user.stopAllScreenEffect = function() {
 
     mp.game.graphics.setNoiseoveride(false);
     mp.game.graphics.setNoisinessoveride(0);
+
+    user.setDrugLevel(0, 0);
+    user.setDrugLevel(1, 0);
+    user.setDrugLevel(2, 0);
+    user.setDrugLevel(3, 0);
+    user.setDrugLevel(4, 0);
+    user.setDrugLevel(5, 0);
+    user.setDrugLevel(99, 0);
 };
 
 user.buyLicense = function(type, price, month = 12)

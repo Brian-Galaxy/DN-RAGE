@@ -5301,7 +5301,6 @@ menuList.showShopClothMenu = function (shopId, type, menuType, price = 1) {
             return;
         }
 
-
         let subTitle = "Vangelico";
         if (shopId == 129)
             subTitle = "HuntingStore";
@@ -5339,10 +5338,7 @@ menuList.showShopClothMenu = function (shopId, type, menuType, price = 1) {
 
         let menu = UIMenu.Menu.Create(title1 != "commonmenu" ? " " : subTitle, "~b~Магазин" + saleLabel, true, false, false, title1, title2);
 
-        /*if (menuType == 5) {
-            UIMenu.Menu.AddMenuItem("Бейсбольная бита", "Цена: ~g~$100").doName = "baseballBat";
-            UIMenu.Menu.AddMenuItem("Бейсбольный мяч", "Цена: ~g~$10").doName = "baseballBall";
-        }*/
+        let cList = [];
 
         if (menuType == 0) {
             UIMenu.Menu.AddMenuItem("Головные уборы").doName = "head";
@@ -5375,16 +5371,12 @@ menuList.showShopClothMenu = function (shopId, type, menuType, price = 1) {
                 if (cloth[id][1] != menuType) continue;
                 if (cloth[id][0] != type) continue;
 
-                let list = [];
-                for (let j = 0; j <= cloth[i][3] + 1; j++) {
-                    list.push(j + '');
-                }
-
                 let pr = cloth[i][8] * price;
-                let menuListItem = UIMenu.Menu.AddMenuItemList(cloth[i][9].toString(), list, `Цена: ~g~${(methods.moneyFormat(pr))} ${(cloth[i][10] > -99 ? `\n~s~Термостойкость до ~g~${cloth[i][10]}°` : "")}`);
+                let menuListItem = UIMenu.Menu.AddMenuItem(cloth[i][9].toString(), `Цена: ~g~${(methods.moneyFormat(pr))} ${(cloth[i][10] > -99 ? `\n~s~Термостойкость до ~g~${cloth[i][10]}°` : "")}`);
 
                 menuListItem.id1 = cloth[id][1];
                 menuListItem.id2 = cloth[id][2];
+                menuListItem.id3 = cloth[id][3];
                 menuListItem.id4 = cloth[id][4];
                 menuListItem.id5 = cloth[id][5];
                 menuListItem.id6 = cloth[id][6];
@@ -5393,6 +5385,8 @@ menuList.showShopClothMenu = function (shopId, type, menuType, price = 1) {
                 menuListItem.itemName = cloth[id][9].toString();
                 if (sale > 0)
                     menuListItem.SetLeftBadge(27);
+
+                cList.push(menuListItem);
             }
         }
 
@@ -5416,30 +5410,25 @@ menuList.showShopClothMenu = function (shopId, type, menuType, price = 1) {
             }
         });
 
-        let currentListChangeItem = null;
-        let currentListChangeItemIndex = 0;
+        menu.IndexChange.on((index) => {
+            if (index >= cList.length)
+                return;
 
-        menu.ListChange.on((item, index) => {
-            currentListChangeItem = item;
-            currentListChangeItemIndex = index;
-            cloth.change(item.id1, item.id2, index, item.id4, item.id5, item.id6, item.id7);
-
+            let item = cList[index];
+            cloth.change(item.id1, item.id2, 0, item.id4, item.id5, item.id6, item.id7);
             if (item.id1 == 11)
                 user.updateTattoo(true, true, false, true);
         });
 
         menu.ItemSelect.on(async (item, index) => {
             try {
-                if (item == currentListChangeItem) {
-                    cloth.buy(item.id8, item.id1, item.id2, currentListChangeItemIndex, item.id4, item.id5, item.id6, item.id7, item.itemName, shopId);
-                }
-                if (item.doName == "grab") {
+                if (item.itemName) {
                     UIMenu.Menu.HideMenu();
-                    //user.grab(shopId);
+                    menuList.showShopClothMoreMenu(shopId, type, menuType, price, item.id1, item.id2, item.id3, item.id4, item.id5, item.id6, item.id7, item.id8, item.itemName);
                 }
                 if (item.doName == "openBag") {
                     UIMenu.Menu.HideMenu();
-                    menuList.showShopClothBagMenu(shopId, type, menuType);
+                    menuList.showShopClothBagMenu(shopId, type, menuType, price);
                 }
                 if (item.doName == "takeOff") {
                     UIMenu.Menu.HideMenu();
@@ -5490,6 +5479,99 @@ menuList.showShopClothMenu = function (shopId, type, menuType, price = 1) {
                 if (item.doName == "shoes") {
                     UIMenu.Menu.HideMenu();
                     menuList.showShopClothMenu(shopId, 3, 6, price);
+                }
+            } catch (e) {
+                methods.debug('Exception: menuList.showShopClothMenu menu.ItemSelect');
+                methods.debug(e);
+            }
+        });
+    } catch (e) {
+        methods.debug('Exception: menuList.showShopClothMenu');
+        methods.debug(e);
+    }
+};
+
+menuList.showShopClothMoreMenu = function (shopId, type, menuType, price, id1, id2, id3, id4, id5, id6, id7, id8, itemName) {
+    try {
+        methods.debug('Execute: menuList.showShopClothMenu');
+
+        if (methods.isBlackout()) {
+            mp.game.ui.notifications.show(`~r~В городе отсутствует свет`);
+            return;
+        }
+
+        let subTitle = "Vangelico";
+        if (shopId == 129)
+            subTitle = "HuntingStore";
+
+        let title1 = "commonmenu";
+        let title2 = "interaction_bgd";
+
+        switch (type) {
+            case 0:
+                title1 = "shopui_title_lowendfashion";
+                title2 = "shopui_title_lowendfashion";
+                break;
+            case 1:
+                title1 = "shopui_title_midfashion";
+                title2 = "shopui_title_midfashion";
+                break;
+            case 2:
+                title1 = "shopui_title_highendfashion";
+                title2 = "shopui_title_highendfashion";
+                break;
+            case 3:
+                title1 = "shopui_title_gunclub";
+                title2 = "shopui_title_gunclub";
+                break;
+            case 5:
+                title1 = "shopui_title_lowendfashion2";
+                title2 = "shopui_title_lowendfashion2";
+                break;
+        }
+
+        let sale = business.getSale(price);
+        let saleLabel = '';
+        if (sale > 0)
+            saleLabel = `. Скидка: ~r~${sale}%`;
+
+        let menu = UIMenu.Menu.Create(title1 != "commonmenu" ? " " : subTitle, "~b~Магазин" + saleLabel, true, false, false, title1, title2);
+
+        let cList = [];
+
+        for (let i = 0; i <= id3 + 1; i++) {
+            let menuItem = UIMenu.Menu.AddMenuItem(`${itemName} #${(i + 1)}`, `Нажмите ~g~Enter~s~ чтобы купить`);
+            menuItem.idx = i;
+            cList.push(menuItem);
+        }
+
+        UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = "closeButton";
+
+        menu.MenuClose.on(() => {
+            try {
+                if (type == 11)
+                    user.updateTattoo();
+                user.updateCharacterCloth();
+            } catch (e) {
+                methods.debug('Exception: menuList.showShopClothMenu menu.MenuClose');
+                methods.debug(e);
+            }
+        });
+
+        menu.IndexChange.on((index) => {
+            if (index >= cList.length)
+                return;
+
+            let item = cList[index];
+            cloth.change(id1, id2, item.idx, id4, id5, id6, id7);
+            if (id1 == 11)
+                user.updateTattoo(true, true, false, true);
+        });
+
+        menu.ItemSelect.on(async (item, index) => {
+            try {
+                if (item.idx >= 0) {
+                    cloth.buy(id8, id1, id2, item.idx, id4, id5, id6, id7, itemName + ' #' + (item.idx + 1), shopId);
                 }
             } catch (e) {
                 methods.debug('Exception: menuList.showShopClothMenu menu.ItemSelect');
@@ -5727,10 +5809,10 @@ menuList.showShopPropMenu = function (shopId, type, menuType, price) {
 
     let menu = UIMenu.Menu.Create(title1 != "commonmenu" ? " " : "Vangelico", "~b~Магазин" + saleLabel, true, false, false, title1, title2);
 
-    //UIMenu.Menu.AddMenuItem( "~y~Снять").doName = "takeOff";
-
     let skin = JSON.parse(user.getCache('skin'));
     let clothList = skin.SKIN_SEX == 1 ? JSON.parse(enums.propF) : JSON.parse(enums.propM);
+
+    let cList = [];
 
     for (let i = 0; i < clothList.length; i++)
     {
@@ -5739,20 +5821,18 @@ menuList.showShopPropMenu = function (shopId, type, menuType, price) {
         if (clothList[id][1] != menuType) continue;
         if (clothList[id][0] != type) continue;
 
-        let list = [];
-        for (let j = 0; j <= clothList[i][3] + 1; j++) {
-            list.push(j + '');
-        }
-
         let pr = clothList[i][4] * price;
-        let menuListItem = UIMenu.Menu.AddMenuItemList(clothList[i][5].toString(), list, `Цена: ~g~${methods.moneyFormat(pr)}`);
+        let menuListItem = UIMenu.Menu.AddMenuItem(clothList[i][5].toString(), `Цена: ~g~${methods.moneyFormat(pr)}`);
 
         menuListItem.id1 = clothList[id][1];
         menuListItem.id2 = clothList[id][2];
+        menuListItem.id3 = clothList[id][3];
         menuListItem.id4 = pr;
         menuListItem.itemName = clothList[id][5].toString();
         if (sale > 0)
             menuListItem.SetLeftBadge(27);
+
+        cList.push(menuListItem);
     }
 
     UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = "closeButton";
@@ -5762,28 +5842,98 @@ menuList.showShopPropMenu = function (shopId, type, menuType, price) {
         user.updateCharacterCloth();
     });
 
-    let currentListChangeItem = null;
-    let currentListChangeItemIndex = 0;
-
-    menu.ListChange.on((item, index) => {
-        currentListChangeItem = item;
-        currentListChangeItemIndex = index;
-        cloth.changeProp(item.id1, item.id2, index);
+    menu.IndexChange.on((index) => {
+        if (index >= cList.length)
+            return;
+        let item = cList[index];
+        cloth.changeProp(item.id1, item.id2, 0);
     });
 
     menu.ItemSelect.on((item, index) => {
         try {
-            if (item == currentListChangeItem) {
-                cloth.buyProp(item.id4, item.id1, item.id2, currentListChangeItemIndex, item.itemName, shopId);
+            if (item.itemName) {
+                menuList.showShopPropMoreMenu(shopId, type, menuType, price, item.id1, item.id2, item.id3, item.id4, item.itemName)
             }
             if (item.doName == "closeButton") {
                 UIMenu.Menu.HideMenu();
                 user.updateCharacterCloth();
             }
-            if (item.doName == "takeOff")
-            {
+        }
+        catch (e) {
+
+            methods.debug('Exception: menuList.showShopPropMenu menu.ItemSelect');
+            methods.debug(e);
+        }
+    });
+};
+
+menuList.showShopPropMoreMenu = function (shopId, type, menuType, price, id1, id2, id3, id4, itemName) {
+    let title1 = "commonmenu";
+    let title2 = "interaction_bgd";
+
+    switch (type) {
+        case 0:
+            title1 = "shopui_title_lowendfashion";
+            title2 = "shopui_title_lowendfashion";
+            break;
+        case 1:
+            title1 = "shopui_title_midfashion";
+            title2 = "shopui_title_midfashion";
+            break;
+        case 2:
+            title1 = "shopui_title_highendfashion";
+            title2 = "shopui_title_highendfashion";
+            break;
+        case 3:
+            title1 = "shopui_title_gunclub";
+            title2 = "shopui_title_gunclub";
+            break;
+        case 5:
+            title1 = "shopui_title_lowendfashion2";
+            title2 = "shopui_title_lowendfashion2";
+            break;
+    }
+
+    let sale = business.getSale(price);
+    let saleLabel = '';
+    if (sale > 0)
+        saleLabel = `. Скидка: ~r~${sale}%`;
+
+    let menu = UIMenu.Menu.Create(title1 != "commonmenu" ? " " : "Vangelico", "~b~Магазин" + saleLabel, true, false, false, title1, title2);
+
+    let skin = JSON.parse(user.getCache('skin'));
+    let clothList = skin.SKIN_SEX == 1 ? JSON.parse(enums.propF) : JSON.parse(enums.propM);
+
+    let cList = [];
+
+    for (let i = 0; i <= id3 + 1; i++) {
+        let menuItem = UIMenu.Menu.AddMenuItem(`${itemName} #${(i + 1)}`, `Нажмите ~g~Enter~s~ чтобы купить`);
+        menuItem.idx = i;
+        cList.push(menuItem);
+    }
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = "closeButton";
+
+    menu.MenuClose.on((sender) =>
+    {
+        user.updateCharacterCloth();
+    });
+
+    menu.IndexChange.on((index) => {
+        if (index >= cList.length)
+            return;
+        let item = cList[index];
+        cloth.changeProp(id1, id2, item.idx);
+    });
+
+    menu.ItemSelect.on((item, index) => {
+        try {
+            if (item.idx >= 0) {
+                cloth.buyProp(id4, id1, id2, item.idx, itemName + ' #' + item.idx, shopId);
+            }
+            if (item.doName == "closeButton") {
                 UIMenu.Menu.HideMenu();
-                cloth.buyProp(0, menuType, -1, -1, "", shopId, true);
+                user.updateCharacterCloth();
             }
         }
         catch (e) {

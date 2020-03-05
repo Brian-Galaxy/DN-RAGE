@@ -29,7 +29,6 @@ methods.md5 = function (text) {
 
 methods.sleep = ms => new Promise(res => setTimeout(res, ms));
 
-
 methods.saveAll = function () {
     methods.saveAllAnother();
     methods.saveAllUser();
@@ -262,9 +261,9 @@ methods.removeQuotes2 = function(str) {
     //return text.toString().replace('"', '');
 };
 
-methods.replaceAll = function(string, search, replace){
+/*methods.replaceAll = function(string, search, replace){
     return string.split(search).join(replace);
-};
+};*/
 
 methods.lerp = function(pos1, pos2, amt) {
     pos1.x += (pos2.x - pos1.x) * amt || 0;
@@ -446,11 +445,11 @@ methods.createBlip = function (pos, sprite, color, scale, name, dimension) {
         });
 };
 
-methods.createStaticCheckpointV = function (pos, message, scale, dimension, color, height) {
-    return methods.createStaticCheckpoint(pos.x, pos.y, pos.z, message, scale, dimension, color, height);
+methods.createCpVector = function (pos, message, scale, dimension, color, height) {
+    return methods.createCp(pos.x, pos.y, pos.z, message, scale, dimension, color, height);
 };
 
-methods.createStaticCheckpoint = function (x, y, z, message, scale = 1, dimension = -1, color = [33, 150, 243, 100], height = undefined) {
+methods.createCp = function (x, y, z, message, scale = 1, dimension = -1, color = [33, 150, 243, 100], height = undefined) {
 
     if (height == undefined)
         height = scale / 2;

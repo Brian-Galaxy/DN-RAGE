@@ -754,7 +754,6 @@ menuList.showBusinessTeleportMenu = function() {
         UIMenu.Menu.AddMenuItem(`${item}`).typeId = i;
     });
 
-    UIMenu.Menu.AddMenuItem("~b~Arcadius Motors").teleportPos = business.BusinessMotorPos;
     UIMenu.Menu.AddMenuItem("~g~Улица").teleportPos = business.BusinessStreetPos;
     UIMenu.Menu.AddMenuItem("~g~Крыша").teleportPos = business.BusinessRoofPos;
     UIMenu.Menu.AddMenuItem("~g~Гараж").teleportPos = business.BusinessGaragePos;
@@ -4595,11 +4594,11 @@ menuList.showBarberShopMenu = function (shopId, price) {
                     user.updateTattoo(true, true, true, false);
 
                     if (skin.SKIN_HAIR_2) {
-                        let data = JSON.parse(enums.get('overlays'))[user.getSex()][skin.SKIN_HAIR];
+                        let data = JSON.parse(enums.overlays)[user.getSex()][skin.SKIN_HAIR];
                         user.setDecoration(data[0], data[1], true);
                     }
 
-                    let data2 = JSON.parse(enums.get('overlays'))[user.getSex()][skin.SKIN_HAIR_3];
+                    let data2 = JSON.parse(enums.overlays)[user.getSex()][skin.SKIN_HAIR_3];
                     user.setDecoration(data[0], data[1], true);
                     break;
                 case 'SKIN_HAIR_3':
@@ -4608,11 +4607,11 @@ menuList.showBarberShopMenu = function (shopId, price) {
                     user.updateTattoo(true, true, true, false);
 
                     if (skin.SKIN_HAIR_2) {
-                        let data = JSON.parse(enums.get('overlays'))[user.getSex()][skin.SKIN_HAIR];
+                        let data = JSON.parse(enums.overlays)[user.getSex()][skin.SKIN_HAIR];
                         user.setDecoration(data[0], data[1], true);
                     }
 
-                    let data = JSON.parse(enums.get('overlays'))[user.getSex()][skin.SKIN_HAIR_3];
+                    let data = JSON.parse(enums.overlays)[user.getSex()][skin.SKIN_HAIR_3];
                     user.setDecoration(data[0], data[1], true);
                     break;
                 case 'SKIN_HAIR_COLOR':
@@ -4621,11 +4620,11 @@ menuList.showBarberShopMenu = function (shopId, price) {
                     user.updateTattoo(true, true, true, false);
 
                     if (skin.SKIN_HAIR_2) {
-                        let data1 = JSON.parse(enums.get('overlays'))[user.getSex()][skin.SKIN_HAIR];
+                        let data1 = JSON.parse(enums.overlays)[user.getSex()][skin.SKIN_HAIR];
                         user.setDecoration(data1[0], data1[1], true);
                     }
 
-                    let data1 = JSON.parse(enums.get('overlays'))[user.getSex()][skin.SKIN_HAIR_3];
+                    let data1 = JSON.parse(enums.overlays)[user.getSex()][skin.SKIN_HAIR_3];
                     user.setDecoration(data1[0], data1[1], true);
                     break;
                 case 'SKIN_HAIR_COLOR_2':
@@ -4634,11 +4633,11 @@ menuList.showBarberShopMenu = function (shopId, price) {
                     user.updateTattoo(true, true, true, false);
 
                     if (skin.SKIN_HAIR_2) {
-                        let data2 = JSON.parse(enums.get('overlays'))[user.getSex()][skin.SKIN_HAIR];
+                        let data2 = JSON.parse(enums.overlays)[user.getSex()][skin.SKIN_HAIR];
                         user.setDecoration(data2[0], data2[1], true);
                     }
 
-                    let data3 = JSON.parse(enums.get('overlays'))[user.getSex()][skin.SKIN_HAIR_3];
+                    let data3 = JSON.parse(enums.overlays)[user.getSex()][skin.SKIN_HAIR_3];
                     user.setDecoration(data1[0], data1[1], true);
                     break;
                 case 'SKIN_EYE_COLOR':
@@ -5369,7 +5368,7 @@ menuList.showShopClothMenu = function (shopId, type, menuType, price = 1) {
                 user.updateTattoo(true, true, false, true);
 
             let skin = JSON.parse(user.getCache('skin'));
-            let cloth = skin.SKIN_SEX == 1 ? JSON.parse(enums.get('clothF')) : JSON.parse(enums.get('clothM'));
+            let cloth = skin.SKIN_SEX == 1 ? JSON.parse(enums.clothF) : JSON.parse(enums.clothM);
             for (let i = 0; i < cloth.length; i++) {
                 let id = i;
 
@@ -5731,7 +5730,7 @@ menuList.showShopPropMenu = function (shopId, type, menuType, price) {
     //UIMenu.Menu.AddMenuItem( "~y~Снять").doName = "takeOff";
 
     let skin = JSON.parse(user.getCache('skin'));
-    let clothList = skin.SKIN_SEX == 1 ? JSON.parse(enums.get('propF')) : JSON.parse(enums.get('propM'));
+    let clothList = skin.SKIN_SEX == 1 ? JSON.parse(enums.propF) : JSON.parse(enums.propM);
 
     for (let i = 0; i < clothList.length; i++)
     {
@@ -5873,7 +5872,7 @@ menuList.showPrintShopMenu = function()
 
     let list = [];
 
-    let printList = JSON.parse(enums.get('printList'));
+    let printList = JSON.parse(enums.printList);
 
     for (let i = 0; i < printList.length; i++) {
 
@@ -5959,7 +5958,7 @@ menuList.showTattooShopShortMenu = function(title1, title2, zone, shopId, price)
 
     let list = [];
 
-    let tattooList = JSON.parse(enums.get('tattooList'));
+    let tattooList = JSON.parse(enums.tattooList);
 
     for (let i = 0; i < tattooList.length; i++) {
 
@@ -5979,7 +5978,7 @@ menuList.showTattooShopShortMenu = function(title1, title2, zone, shopId, price)
             tattooList[i][1] == "mpsmuggler_overlays" ||
             tattooList[i][1] == "mpchristmas2017_overlays" ||
             tattooList[i][1] == "mpstunt_overlays"
-        ) && title1 == "shopui_title_tattoos")
+        ) && title1 == "shopui_title_tattoos3")
             continue;
 
         if ((
@@ -5992,6 +5991,23 @@ menuList.showTattooShopShortMenu = function(title1, title2, zone, shopId, price)
             tattooList[i][1] == "mpimportexport_overlays" ||
             tattooList[i][1] == "mpluxe_overlays" ||
             tattooList[i][1] == "mpluxe2_overlays" ||
+            tattooList[i][1] == "mpsmuggler_overlays" ||
+            tattooList[i][1] == "mpchristmas2017_overlays" ||
+            tattooList[i][1] == "mpstunt_overlays" ||
+            tattooList[i][1] == "multiplayer_overlays"
+        ) && title1 == "shopui_title_tattoos")
+            continue;
+
+        if ((
+            tattooList[i][1] == "mpairraces_overlays" ||
+            tattooList[i][1] == "mpbeach_overlays" ||
+            tattooList[i][1] == "mpbiker_overlays" ||
+            tattooList[i][1] == "mpbusiness_overlays" ||
+            tattooList[i][1] == "mpchristmas2_overlays" ||
+            tattooList[i][1] == "mpgunrunning_overlays" ||
+            tattooList[i][1] == "mpimportexport_overlays" ||
+            tattooList[i][1] == "mplowrider_overlays" ||
+            tattooList[i][1] == "mplowrider2_overlays" ||
             tattooList[i][1] == "mpsmuggler_overlays" ||
             tattooList[i][1] == "mpchristmas2017_overlays" ||
             tattooList[i][1] == "mpstunt_overlays" ||
@@ -6006,48 +6022,31 @@ menuList.showTattooShopShortMenu = function(title1, title2, zone, shopId, price)
             tattooList[i][1] == "mpbusiness_overlays" ||
             tattooList[i][1] == "mpchristmas2_overlays" ||
             tattooList[i][1] == "mpgunrunning_overlays" ||
-            tattooList[i][1] == "mpimportexport_overlays" ||
-            tattooList[i][1] == "mplowrider_overlays" ||
-            tattooList[i][1] == "mplowrider2_overlays" ||
-            tattooList[i][1] == "mpsmuggler_overlays" ||
-            tattooList[i][1] == "mpchristmas2017_overlays" ||
-            tattooList[i][1] == "mpstunt_overlays" ||
-            tattooList[i][1] == "multiplayer_overlays"
-        ) && title1 == "shopui_title_tattoos3")
-            continue;
-
-        if ((
-            tattooList[i][1] == "mpairraces_overlays" ||
-            tattooList[i][1] == "mpbeach_overlays" ||
-            tattooList[i][1] == "mpbiker_overlays" ||
-            tattooList[i][1] == "mpbusiness_overlays" ||
-            tattooList[i][1] == "mpchristmas2_overlays" ||
-            tattooList[i][1] == "mpgunrunning_overlays" ||
             tattooList[i][1] == "mphipster_overlays" ||
             tattooList[i][1] == "mpimportexport_overlays" ||
             tattooList[i][1] == "mplowrider_overlays" ||
             tattooList[i][1] == "mplowrider2_overlays" ||
             tattooList[i][1] == "mpluxe_overlays" ||
             tattooList[i][1] == "mpluxe2_overlays" ||
-            tattooList[i][1] == "multiplayer_overlays"
-        ) && title1 == "shopui_title_tattoos4")
-            continue;
-
-        if ((
-            tattooList[i][1] == "mpairraces_overlays" ||
-            tattooList[i][1] == "mpbiker_overlays" ||
-            tattooList[i][1] == "mpbusiness_overlays" ||
-            tattooList[i][1] == "mphipster_overlays" ||
-            tattooList[i][1] == "mpimportexport_overlays" ||
-            tattooList[i][1] == "mplowrider_overlays" ||
-            tattooList[i][1] == "mplowrider2_overlays" ||
-            tattooList[i][1] == "mpluxe_overlays" ||
-            tattooList[i][1] == "mpluxe2_overlays" ||
-            tattooList[i][1] == "mpsmuggler_overlays" ||
-            tattooList[i][1] == "mpchristmas2017_overlays" ||
-            tattooList[i][1] == "mpstunt_overlays" ||
             tattooList[i][1] == "multiplayer_overlays"
         ) && title1 == "shopui_title_tattoos5")
+            continue;
+
+        if ((
+            tattooList[i][1] == "mpairraces_overlays" ||
+            tattooList[i][1] == "mpbiker_overlays" ||
+            tattooList[i][1] == "mpbusiness_overlays" ||
+            tattooList[i][1] == "mphipster_overlays" ||
+            tattooList[i][1] == "mpimportexport_overlays" ||
+            tattooList[i][1] == "mplowrider_overlays" ||
+            tattooList[i][1] == "mplowrider2_overlays" ||
+            tattooList[i][1] == "mpluxe_overlays" ||
+            tattooList[i][1] == "mpluxe2_overlays" ||
+            tattooList[i][1] == "mpsmuggler_overlays" ||
+            tattooList[i][1] == "mpchristmas2017_overlays" ||
+            tattooList[i][1] == "mpstunt_overlays" ||
+            tattooList[i][1] == "multiplayer_overlays"
+        ) && title1 == "shopui_title_tattoos4")
             continue;
 
         let price = methods.parseFloat(methods.parseFloat(tattooList[i][5]) / 8);
@@ -6197,7 +6196,7 @@ menuList.showVehShopListMenu = function(shopId, carList)
 
     let list = [];
 
-    let vehicleInfo = enums.get('vehicleInfo');
+    let vehicleInfo = enums.vehicleInfo;
 
     vehicleInfo.forEach(item => {
         if (shopId != item.type)
@@ -6292,7 +6291,7 @@ menuList.showVehShopListOldMenu = function(shopId, carList)
 
     let list = [];
 
-    let vehicleInfo = enums.get('vehicleInfo');
+    let vehicleInfo = enums.vehicleInfo;
 
     vehicleInfo.forEach(item => {
         if (shopId != item.type)

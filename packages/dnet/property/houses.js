@@ -125,14 +125,14 @@ houses.loadAll = function() {
                 g3: { int: item['ginterior3'], position: new mp.Vector3(parseFloat(item['gx3']), parseFloat(item['gy3']), parseFloat(item['gz3'])), rot: item['grot3'] },
             };
 
-            methods.createStaticCheckpoint(hBlip.position.x, hBlip.position.y, hBlip.position.z, "Нажмите ~g~Е~s~ чтобы открыть меню");
+            methods.createCp(hBlip.position.x, hBlip.position.y, hBlip.position.z, "Нажмите ~g~Е~s~ чтобы открыть меню");
 
             if (hBlip.g1.int >= 0)
-                methods.createStaticCheckpointV(hBlip.g1.position, "Нажмите ~g~Е~s~ чтобы открыть меню гаража", 3, -1, [33, 150, 243, 0]);
+                methods.createCpVector(hBlip.g1.position, "Нажмите ~g~Е~s~ чтобы открыть меню гаража", 3, -1, [33, 150, 243, 0]);
             if (hBlip.g2.int >= 0)
-                methods.createStaticCheckpointV(hBlip.g2.position, "Нажмите ~g~Е~s~ чтобы открыть меню гаража", 3, -1, [33, 150, 243, 0]);
+                methods.createCpVector(hBlip.g2.position, "Нажмите ~g~Е~s~ чтобы открыть меню гаража", 3, -1, [33, 150, 243, 0]);
             if (hBlip.g3.int >= 0)
-                methods.createStaticCheckpointV(hBlip.g3.position, "Нажмите ~g~Е~s~ чтобы открыть меню гаража", 3, -1, [33, 150, 243, 0]);
+                methods.createCpVector(hBlip.g3.position, "Нажмите ~g~Е~s~ чтобы открыть меню гаража", 3, -1, [33, 150, 243, 0]);
 
             hBlips.set(item['id'], hBlip);
         });
@@ -144,26 +144,26 @@ houses.loadAll = function() {
         let x = item[0];
         let y = item[1];
         let z = item[2];
-        methods.createStaticCheckpoint(x, y, z, "Нажмите ~g~Е~s~ чтобы открыть меню");
+        methods.createCp(x, y, z, "Нажмите ~g~Е~s~ чтобы открыть меню");
     });
 
     houses.garageIntList.forEach(function(item) {
         let x = item[0];
         let y = item[1];
         let z = item[2];
-        methods.createStaticCheckpoint(x, y, z, "Нажмите ~g~Е~s~ чтобы открыть меню");
+        methods.createCp(x, y, z, "Нажмите ~g~Е~s~ чтобы открыть меню");
     });
 
     houses.garageList.forEach(function(item) {
         let x = item[0];
         let y = item[1];
         let z = item[2];
-        methods.createStaticCheckpoint(x, y, z, "Нажмите ~g~Е~s~ чтобы открыть меню гаража", 3, -1, [33, 150, 243, 0]);
+        methods.createCp(x, y, z, "Нажмите ~g~Е~s~ чтобы открыть меню гаража", 3, -1, [33, 150, 243, 0]);
 
         x = item[4];
         y = item[5];
         z = item[6];
-        methods.createStaticCheckpoint(x, y, z, "Нажмите ~g~Е~s~ чтобы открыть меню гаража", 3, -1, [33, 150, 243, 0]);
+        methods.createCp(x, y, z, "Нажмите ~g~Е~s~ чтобы открыть меню гаража", 3, -1, [33, 150, 243, 0]);
     });
 };
 
@@ -224,7 +224,7 @@ houses.loadLast = function() {
                 g3: { int: item['ginterior3'], position: new mp.Vector3(parseFloat(item['gx3']), parseFloat(item['gy3']), parseFloat(item['gz3'])), rot: item['grot3'] },
             };
 
-            methods.createStaticCheckpoint(hBlip.position.x, hBlip.position.y, hBlip.position.z, "Нажмите ~g~Е~s~ чтобы открыть меню");
+            methods.createCp(hBlip.position.x, hBlip.position.y, hBlip.position.z, "Нажмите ~g~Е~s~ чтобы открыть меню");
 
             hBlips.set(item['id'], hBlip);
 

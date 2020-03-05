@@ -2730,13 +2730,6 @@ mp.events.addRemoteCounted("onKeyPress:E", (player) => {
                 player.call('client:showCondoInMenu', [Array.from(houseData)]);
             }
         });
-
-        /*enums.kitchenIntData.forEach(function(item, i, arr) {
-            let pos = new mp.Vector3(item[0], item[1], item[2]);
-            if (methods.distanceToPos(player.position, pos) < 1.5) {
-                player.call('client:showKitchenMenu');
-            }
-        });*/
     }
     else if (player.dimension >= enums.offsets.stock && player.dimension < enums.offsets.stock + 100000) {
 
@@ -2811,17 +2804,6 @@ mp.events.addRemoteCounted("onKeyPress:E", (player) => {
                 player.call('client:showHouseInVMenu', [Array.from(houseData)]);
             }
         });
-
-        /*let houseData = houses.getHouseData(player.dimension);
-        if (methods.distanceToPos(player.position, new mp.Vector3(houseData.get('int_x'), houseData.get('int_y'), houseData.get('int_z'))) < 1.5)
-            player.call('client:showHouseInMenu', [Array.from(houseData)]);*/
-        // Kitchen
-        /*enums.kitchenIntData.forEach(function(item, i, arr) {
-            let pos = new mp.Vector3(item[0], item[1], item[2]);
-            if (methods.distanceToPos(player.position, pos) < 1.5) {
-                player.call('client:showKitchenMenu');
-            }
-        });*/
     }
 });
 

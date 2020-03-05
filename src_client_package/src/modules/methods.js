@@ -130,7 +130,7 @@ methods.error = function (message, ...args) {
 
 methods.getVehicleInfo = function (model) {
     try {
-        let vehInfo = enums.get('vehicleInfo');
+        let vehInfo = enums.vehicleInfo;
         for (let item in vehInfo) {
             let vItem = vehInfo[item];
             if (vItem.hash == model || vItem.display_name == model || mp.game.joaat(vItem.display_name.toString().toLowerCase()) == model)
@@ -804,13 +804,10 @@ methods.requestIpls = function () {
     mp.game.streaming.removeIpl("sunkcargoship");
     mp.game.streaming.requestIpl("cargoship");
 
-    mp.game.streaming.requestIpl("ex_sm_13_office_02b"); //АШ
-
-    //mp.game.streaming.requestIpl("ex_dt1_02_office_02a"); // Бизнес Центр - old ex_dt1_02_office_03a
-
-    mp.game.streaming.requestIpl("ex_dt1_02_office_02b");
-
-    mp.game.streaming.requestIpl("ex_dt1_11_office_01b"); //Maze Bank Office
+    mp.game.streaming.requestIpl("ex_sm_13_office_02c"); //Лом Банк
+    mp.game.streaming.requestIpl("ex_dt1_02_office_02b"); // Бизнес Центр
+    mp.game.streaming.requestIpl("ex_dt1_11_office_03b"); //Maze Bank Office
+    mp.game.streaming.requestIpl("ex_sm_15_office_03b"); //Meria
 
     //Bahama Mamas: -1388.0013, -618.41967, 30.819599
     mp.game.streaming.requestIpl("hei_sm_16_interior_v_bahama_milo_");

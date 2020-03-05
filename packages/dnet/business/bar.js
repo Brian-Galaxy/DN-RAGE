@@ -45,11 +45,11 @@ bar.loadAll = function() {
                     methods.createBlip(shopPos, 93, 0, 0.6);
                 break;
         }
-        methods.createStaticCheckpoint(shopPos.x, shopPos.y, shopPos.z, "Нажмите ~g~Е~s~ чтобы открыть меню бара");
+        methods.createCp(shopPos.x, shopPos.y, shopPos.z, "Нажмите ~g~Е~s~ чтобы открыть меню бара");
     });
     bar.listFree.forEach(function (item) {
         let shopPos = new mp.Vector3(item[0], item[1], item[2]);
-        methods.createStaticCheckpoint(shopPos.x, shopPos.y, shopPos.z, "Нажмите ~g~Е~s~ чтобы открыть меню бара");
+        methods.createCp(shopPos.x, shopPos.y, shopPos.z, "Нажмите ~g~Е~s~ чтобы открыть меню бара");
     });
 };
 

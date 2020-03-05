@@ -41,7 +41,7 @@ condos.loadAll = function() {
             condos.set(item['id'], 'tax_score', item['tax_score']);
 
             let hBlip = {position: new mp.Vector3(parseFloat(item['x']), parseFloat(item['y']), parseFloat(item['z']))};
-            methods.createStaticCheckpoint(hBlip.position.x, hBlip.position.y, hBlip.position.z, "Нажмите ~g~Е~s~ чтобы открыть меню", 0.8, -1, [33, 150, 243, 100], 0.3);
+            methods.createCp(hBlip.position.x, hBlip.position.y, hBlip.position.z, "Нажмите ~g~Е~s~ чтобы открыть меню", 0.8, -1, [33, 150, 243, 100], 0.3);
             hBlips.set(item['id'], hBlip);
         });
         count = rows.length;
@@ -99,7 +99,7 @@ condos.loadLast = function() {
             condos.set(item['id'], 'tax_score', item['tax_score']);
 
             let hBlip = {position: new mp.Vector3(parseFloat(item['x']), parseFloat(item['y']), parseFloat(item['z']))};
-            methods.createStaticCheckpoint(hBlip.position.x, hBlip.position.y, hBlip.position.z, "Нажмите ~g~Е~s~ чтобы открыть меню", 0.8, -1, [33, 150, 243, 100], 0.3);
+            methods.createCp(hBlip.position.x, hBlip.position.y, hBlip.position.z, "Нажмите ~g~Е~s~ чтобы открыть меню", 0.8, -1, [33, 150, 243, 100], 0.3);
             hBlips.set(item['id'], hBlip);
 
             chat.sendToAll(`Квартира загружена. ID: ${item['id']}. HID: ${item['condo_big_id']}. Name: ${item['number']}. Int: ${item['interior']}. Price: ${methods.moneyFormat(item['price'])}`);

@@ -59,7 +59,6 @@ try {
 
     hosp.timer();
     jail.timer();
-    mp.game.streaming.requestIpl("ex_sm_15_office_01a"); // Meria - old ex_dt1_02_office_03a
 
     user.init();
     try {

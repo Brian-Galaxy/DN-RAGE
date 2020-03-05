@@ -33,7 +33,7 @@ vShop.loadAllShop = () => {
             return;
 
         let blip = methods.createBlip(new mp.Vector3(item.buyPos[0], item.buyPos[1], item.buyPos[2]), item.blipId, item.blipColor, 0.8, item.name);
-        methods.createStaticCheckpoint(blip.position.x, blip.position.y, blip.position.z - 1, "Нажмите ~g~Е~s~ чтобы открыть меню");
+        methods.createCp(blip.position.x, blip.position.y, blip.position.z - 1, "Нажмите ~g~Е~s~ чтобы открыть меню");
     });
 };
 
@@ -46,7 +46,7 @@ vShop.loadAllShopVehicles = () => {
             veh.engine = false;
             veh.setVariable('useless', true);
         }, new mp.Vector3(item[1], item[2], item[3]), item[4], item[0]);
-        methods.createStaticCheckpoint(item[1], item[2], item[3], `~b~Название:~s~ ${item[0]}\n~b~Цена: ~g~${methods.moneyFormat(methods.getVehicleInfo(item[0]).price)}`, 5, -1, [0, 0, 0, 0]);
+        methods.createCp(item[1], item[2], item[3], `~b~Название:~s~ ${item[0]}\n~b~Цена: ~g~${methods.moneyFormat(methods.getVehicleInfo(item[0]).price)}`, 5, -1, [0, 0, 0, 0]);
     });
 };
 

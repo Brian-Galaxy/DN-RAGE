@@ -35,7 +35,7 @@ rent.loadAll = function() {
     rent.listBike.forEach(function (item) {
         let shopPos = new mp.Vector3(item[0], item[1], item[2]);
         methods.createBlip(shopPos, 226, 0, 0.6, 'Bike Rent');
-        methods.createStaticCheckpoint(shopPos.x, shopPos.y, shopPos.z, "Нажмите ~g~Е~s~ чтобы открыть меню", 0.8, -1, [33, 150, 243, 100], 0.3);
+        methods.createCp(shopPos.x, shopPos.y, shopPos.z, "Нажмите ~g~Е~s~ чтобы открыть меню", 0.8, -1, [33, 150, 243, 100], 0.3);
     });
 };
 

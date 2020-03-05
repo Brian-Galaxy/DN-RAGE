@@ -55,7 +55,7 @@ timer.getDeathTimer = function() {
 
 timer.updateTempLevel = function() {
 
-    let clothList = user.getSex() == 1 ? JSON.parse(enums.get('clothF')) : JSON.parse(enums.get('clothM'));
+    let clothList = user.getSex() == 1 ? JSON.parse(enums.clothF) : JSON.parse(enums.clothM);
 
     if (weather.getWeatherTemp() < 18 && user.getCache('torso') == 15) {
         mp.game.ui.notifications.show("~y~У Вас замерз торс");
@@ -265,7 +265,7 @@ timer.tenSecTimer = function() {
     }
 
     if (allVehiclesLoader) {
-        let vehInfo = enums.get('vehicleInfo');
+        let vehInfo = enums.vehicleInfo;
         for (let item in vehInfo) {
             try {
                 let vItem = vehInfo[item];

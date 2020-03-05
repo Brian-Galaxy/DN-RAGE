@@ -18,10 +18,10 @@ cloth.loadAll = function(){
     methods.debug('barberShop.loadAll');
 
     methods.createBlip(cloth.printShopPos, 72, 0, 0.8, 'Vespucci Print Shop');
-    methods.createStaticCheckpointV(cloth.printShopPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, [33, 150, 243, 100]);
+    methods.createCpVector(cloth.printShopPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, [33, 150, 243, 100]);
 
     methods.createBlip(cloth.maskShop, 437, 0, 0.8, 'Vespucci Movie Masks');
-    methods.createStaticCheckpoint(cloth.maskShop.x, cloth.maskShop.y, cloth.maskShop.z, "Нажмите ~g~E~s~ чтобы открыть меню магазина", 0.8, -1, [33, 150, 243, 100], 0.3);
+    methods.createCp(cloth.maskShop.x, cloth.maskShop.y, cloth.maskShop.z, "Нажмите ~g~E~s~ чтобы открыть меню магазина", 0.8, -1, [33, 150, 243, 100], 0.3);
 
     try {
         for (var i = 0; i < shopList.length; i++) {
@@ -52,7 +52,7 @@ cloth.loadAll = function(){
                 }
             }
 
-            methods.createStaticCheckpoint(pos.x, pos.y, pos.z, "Нажмите ~g~E~s~ чтобы открыть меню магазина", 0.8, -1, [33, 150, 243, 100], 0.3);
+            methods.createCp(pos.x, pos.y, pos.z, "Нажмите ~g~E~s~ чтобы открыть меню магазина", 0.8, -1, [33, 150, 243, 100], 0.3);
         }
     } catch (e) {
         console.log(e);

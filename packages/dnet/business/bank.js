@@ -88,7 +88,7 @@ bank.loadAll = function() {
 
     bank.markers.forEach(function (item) {
         let bankPos = new mp.Vector3(item[0], item[1], item[2] - 1);
-        methods.createStaticCheckpointV(bankPos, "Нажмите ~g~Е~s~ чтобы открыть меню");
+        methods.createCpVector(bankPos, "Нажмите ~g~Е~s~ чтобы открыть меню");
     });
 
     /*bank.bombPos.forEach(function (item) {

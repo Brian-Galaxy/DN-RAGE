@@ -12,7 +12,7 @@ carWash.loadAll = function() {
     carWash.list.forEach(function (item) {
         let shopPos = new mp.Vector3(item[0], item[1], item[2]);
         methods.createBlip(shopPos, 100, 0, 0.6);
-        methods.createStaticCheckpoint(shopPos.x, shopPos.y, shopPos.z, "Нажмите ~g~Е~s~ чтобы воспользоваться", 4, 0, [0, 0, 0, 0]);
+        methods.createCp(shopPos.x, shopPos.y, shopPos.z, "Нажмите ~g~Е~s~ чтобы воспользоваться", 4, 0, [0, 0, 0, 0]);
     });
 };
 

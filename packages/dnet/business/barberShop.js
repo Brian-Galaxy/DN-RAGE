@@ -18,7 +18,7 @@ barberShop.loadAll = function() {
     barberShop.list.forEach(function (item) {
         let shopPos = new mp.Vector3(item[0], item[1], item[2]);
         methods.createBlip(shopPos, 71, 0, 0.8, 'BarberShop');
-        methods.createStaticCheckpoint(shopPos.x, shopPos.y, shopPos.z, "Нажмите ~g~Е~s~ чтобы открыть меню");
+        methods.createCp(shopPos.x, shopPos.y, shopPos.z, "Нажмите ~g~Е~s~ чтобы открыть меню");
     });
 };
 

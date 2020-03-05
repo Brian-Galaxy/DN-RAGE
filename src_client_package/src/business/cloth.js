@@ -11,11 +11,11 @@ var shopList = [];
 var initCloth = false;
 
 cloth.initCloth = function() {
-    clothM = enums.get('clothM');
-    clothF = enums.get('clothF');
-    propM = enums.get('propM');
-    propF = enums.get('propF');
-    shopList = enums.get('shopList');
+    clothM = enums.clothM;
+    clothF = enums.clothF;
+    propM = enums.propM;
+    propF = enums.propF;
+    shopList = enums.shopList;
     methods.debug('Execute: cloth.initCloth');
 };
 

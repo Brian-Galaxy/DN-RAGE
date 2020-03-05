@@ -466,7 +466,7 @@ mp.events.add('client:events:custom:choiceRole', function(roleIndex) {
 
             user.setVirtualWorld(0);
 
-            let clothList = user.getSex() == 1 ? JSON.parse(enums.get('clothF')) : JSON.parse(enums.get('clothM'));
+            let clothList = user.getSex() == 1 ? JSON.parse(enums.clothF) : JSON.parse(enums.clothM);
             let listTorso = [];
             let listLeg = [];
             let listFoot = [];
@@ -2818,10 +2818,8 @@ mp.events.add("playerCommand", async (command) => {
 * */
 
 mp.events.add('render', () => {
-
     if(user.isLogin()) {
         if (user.getCache("online_time") < 200) {
-            ui.drawText('Нажмите ~b~ALT + TAB ~s~если не работает управление', 0.5, 0.95, 0.3, 255, 255, 255, 180, 0, 1, false, false);
             ui.drawText('M - Меню | N - Голосовой чат | I - Инвентарь | O - Телефон', 0.5, 0.97, 0.3, 255, 255, 255, 180, 0, 1, false, false);
         }
     }

@@ -86,7 +86,7 @@ shop.loadAll = function() {
                     break;
             }
         }
-        methods.createStaticCheckpoint(shopPos.x, shopPos.y, shopPos.z, "Нажмите ~g~Е~s~ чтобы открыть меню");
+        methods.createCp(shopPos.x, shopPos.y, shopPos.z, "Нажмите ~g~Е~s~ чтобы открыть меню");
         prevId = item[3];
     });
 };

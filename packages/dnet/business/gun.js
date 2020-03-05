@@ -28,7 +28,7 @@ gun.loadAll = function() {
     gun.list.forEach(function (item) {
         let shopPos = new mp.Vector3(item[0], item[1], item[2] - 1);
         methods.createBlip(shopPos, 110, 0, 0.8);
-        methods.createStaticCheckpoint(shopPos.x, shopPos.y, shopPos.z, "Нажмите ~g~Е~s~ чтобы открыть меню магазина");
+        methods.createCp(shopPos.x, shopPos.y, shopPos.z, "Нажмите ~g~Е~s~ чтобы открыть меню магазина");
     });
 };
 

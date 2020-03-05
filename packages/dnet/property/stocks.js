@@ -254,7 +254,7 @@ stocks.loadAll = function() {
                 pos: new mp.Vector3(parseFloat(item['x']), parseFloat(item['y']), parseFloat(item['z'])),
                 vPos: new mp.Vector3(parseFloat(item['vx']), parseFloat(item['vy']), parseFloat(item['vz']))
             };
-            methods.createStaticCheckpoint(hBlip.pos.x, hBlip.pos.y, hBlip.pos.z, "Нажмите ~g~Е~s~ чтобы открыть меню");
+            methods.createCp(hBlip.pos.x, hBlip.pos.y, hBlip.pos.z, "Нажмите ~g~Е~s~ чтобы открыть меню");
 
             stocks.loadUpgrades(item['upgrade'], item['id'], item['interior']);
 
@@ -268,14 +268,14 @@ stocks.loadAll = function() {
         let x = item[0];
         let y = item[1];
         let z = item[2];
-        methods.createStaticCheckpoint(x, y, z, "Нажмите ~g~Е~s~ чтобы открыть меню");
+        methods.createCp(x, y, z, "Нажмите ~g~Е~s~ чтобы открыть меню");
     });
 
     stocks.pcList.forEach(function(item) {
         let x = item[0];
         let y = item[1];
         let z = item[2];
-        methods.createStaticCheckpoint(x, y, z, "Нажмите ~g~Е~s~ чтобы открыть меню");
+        methods.createCp(x, y, z, "Нажмите ~g~Е~s~ чтобы открыть меню");
     });
 };
 
@@ -316,7 +316,7 @@ stocks.loadLast = function() {
                 vPos: new mp.Vector3(parseFloat(item['vx']), parseFloat(item['vy']), parseFloat(item['vz']))
             };
 
-            methods.createStaticCheckpoint(hBlip.pos.x, hBlip.pos.y, hBlip.pos.z, "Нажмите ~g~Е~s~ чтобы открыть меню");
+            methods.createCp(hBlip.pos.x, hBlip.pos.y, hBlip.pos.z, "Нажмите ~g~Е~s~ чтобы открыть меню");
             chat.sendToAll(`Склад добавлен. ID: ${item['id']}. Name: ${item['number']}. Int: ${item['interior']}. Price: ${methods.moneyFormat(item['price'])}`);
 
             mp.players.forEach(p => {

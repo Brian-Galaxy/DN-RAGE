@@ -81,7 +81,7 @@ function init() {
         fuel.loadAll();
         shop.loadAll();
 
-        pickups.createPickups();
+        pickups.createAll();
 
         coffer.load();
 

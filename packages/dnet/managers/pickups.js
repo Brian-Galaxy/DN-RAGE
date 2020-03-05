@@ -34,8 +34,6 @@ pickups.QuestBotGang = new mp.Vector3(-119.17330932617188, -1769.6900634765625, 
 
 pickups.PrintShopPos = new mp.Vector3(-1234.7786865234375, -1477.7230224609375, 3.324739933013916);
 
-pickups.StockSapdPos = new mp.Vector3(477.2227, -984.3262, 23.91476);
-
 pickups.BankMazeLiftOfficePos = new mp.Vector3(-77.77799, -829.6542, 242.3859);
 pickups.BankMazeLiftStreetPos = new mp.Vector3(-66.66476, -802.0474, 43.22729);
 pickups.BankMazeLiftRoofPos = new mp.Vector3(-67.13605, -821.9, 320.2874);
@@ -82,33 +80,9 @@ pickups.SheriffArrestPos = new mp.Vector3(-441.605, 6012.786, 26.985);
 pickups.SheriffArrestPos2 = new mp.Vector3(1856.632080078125, 3685.5849609375, 29.259225845336914);
 
 pickups.PrisonArrestPos = new mp.Vector3(1690.606, 2591.926, 44.83793);
-pickups.PrisonPos1 = new mp.Vector3(1846.5198, 2585.9008, 44.6720);
-pickups.PrisonPos2 = new mp.Vector3(1774.8231, 2552.00925, 44.5649);
 
 pickups.EmsArsenalPos = new mp.Vector3(311.363037109375, -563.9005737304688, 42.28398895263672);
 pickups.EmsArsenalPos2 = new mp.Vector3(-258.50933837890625, 6308.8623046875, 31.426040649414062);
-
-/*pickups.UsmcPos1 = new mp.Vector3(556.8799, -3119.107, 17.76859);
-pickups.UsmcPos2 = new mp.Vector3(556.9783, -3120.458, 17.76858);
-pickups.UsmcPos11 = new mp.Vector3(581.3184, -3119.271, 17.76858);
-pickups.UsmcPos22 = new mp.Vector3(581.518, -3120.49, 17.76858);
-
-pickups.UsmcArsenal1Pos = new mp.Vector3(467.5390319824219, -3212.447509765625, 6.056999683380127);
-pickups.UsmcArsenal2Pos = new mp.Vector3(3095.916259765625, -4707.67138671875, 11.24404525756836);*/
-
-//pickups.FibDutyPos = new mp.Vector3(131.0169, -729.158, 257.1521);
-//pickups.FibArsenalPos = new mp.Vector3(129.3821, -730.57, 257.1521);
-pickups.FibLift0StationPos = new mp.Vector3(122.9873, -741.1865, 32.13323);
-pickups.FibLift1StationPos = new mp.Vector3(136.2213, -761.6816, 44.75201);
-pickups.FibLift2StationPos = new mp.Vector3(136.2213, -761.6816, 241.152);
-pickups.FibLift3StationPos = new mp.Vector3(114.9807, -741.8279, 257.1521);
-pickups.FibLift4StationPos = new mp.Vector3(141.4099, -735.3376, 261.8516);
-
-pickups.LicUpPos = new mp.Vector3(-1580.642, -561.7131, 107.523);
-pickups.LicDownPos = new mp.Vector3(-1581.576, -557.9908, 33.953);
-pickups.LicRoofPos = new mp.Vector3(-1581.576, -557.9908, 33.953);
-pickups.LicGaragePos = new mp.Vector3(-1540.117, -576.3737, 24.70784);
-pickups.LicBuyPos = new mp.Vector3(-1576.237, -579.495, 107.523);
 
 /*Keys*/
 pickups.GovKeyPos = new mp.Vector3(-1397.35693359375, -464.54345703125, 33.4775505065918);
@@ -136,19 +110,10 @@ pickups.InvaderWorkPos4 = new mp.Vector3(-1056.6370849609375, -245.4740447998047
 pickups.EmsGarderobPos1 = new mp.Vector3(299.0457458496094, -598.6067504882812, 42.28403091430664);
 pickups.EmsGarderobPos2 = new mp.Vector3(-244.68588256835938, 6318.1396484375, 31.44457244873047);
 pickups.EmsTakeMedPos = new mp.Vector3(251.6622, -1346.598, 23.53781);
-//pickups.EmsAptekaPos = new mp.Vector3(260.5087, -1358.359, 23.53779);
-
-pickups.EmsInPos = new mp.Vector3(275.4971, -1361.269, 23.53781);
-pickups.EmsOutPos = new mp.Vector3(344.0675, -1397.467, 31.50924);
-pickups.EmsIn1Pos = new mp.Vector3(306.6194, -1432.875, 28.93673);
-pickups.EmsOut1Pos = new mp.Vector3(279.6934, -1349.311, 23.53781);
 
 pickups.EmsElevatorRoofPos = new mp.Vector3(334.7327, -1432.775, 45.51179);
 pickups.EmsElevatorParkPos = new mp.Vector3(406.5373, -1347.918, 40.05356);
 pickups.EmsElevatorPos = new mp.Vector3(247.0811, -1371.92, 23.53779);
-
-//Apteka
-pickups.AptekaPos = new mp.Vector3(318.3438, -1078.762, 18.68166);
 
 pickups.BahamaPos1 = new mp.Vector3(-1387.69, -588.719, 29.3198);
 pickups.BahamaPos2 = new mp.Vector3(-1388.88, -586.291, 29.2198);
@@ -170,56 +135,14 @@ pickups.ClubGalaxyUserPos2 = new mp.Vector3(4.723007, 220.3487, 106.7251);
 pickups.ClubGalaxyVPos1 = new mp.Vector3(-1640.193, -2989.592, -78.22095);
 pickups.ClubGalaxyVPos2 = new mp.Vector3(-22.13015, 217.3953, 105.5861);
 
-/*ArcMotors*/
-pickups.ArcMotorsPos1 = new mp.Vector3(-142.2805, -590.9449, 166);
-pickups.ArcMotorsPos2 = new mp.Vector3(-144.3968, -577.2031, 31.42448);
-
-/*Apart*/
-pickups.Apart19RoofPos = new mp.Vector3(109.9076, -867.6014, 133.7701);
-pickups.Apart16RoofPos = new mp.Vector3(-902.897, -369.9444, 135.2822);
-pickups.Apart5GaragePos = new mp.Vector3(-761.8995, 352.0111, 86.99801);
-pickups.Apart0GaragePos = new mp.Vector3(-15.46794, -612.5906, 34.86151);
-
-/*Other*/
-pickups.WzlInPos = new mp.Vector3(-569.2264, -927.8373, 35.83355);
-pickups.WzlOutPos = new mp.Vector3(-598.7546, -929.9592, 22.86355);
-pickups.Ems1InPos = new mp.Vector3(-292.4272, -602.7892, 47.43756);
-pickups.Ems1OutPos = new mp.Vector3(-292.3299, -600.8806, 32.55319);
-
 /*Bar*/
 pickups.BannanaInPos = new mp.Vector3(-1387.63, -588.0929, 29.31953);
 pickups.BannanaOutPos = new mp.Vector3(-1388.737, -586.4232, 29.21938);
-pickups.ComedyInPos = new mp.Vector3(-458.3946, 284.7393, 77.52148);
 pickups.ComedyOutPos = new mp.Vector3(-430.0718, 261.1223, 82.00773);
-
-/*AutoRepairs*/
-pickups.AutoRepairsPos1 = new mp.Vector3(1130.324, -776.4052, 56.61017);
-pickups.AutoRepairsPos2 = new mp.Vector3(1130.287, -778.5369, 56.62984);
-pickups.AutoRepairsPosShop = new mp.Vector3(1128.081, -780.6564, 56.62164);
-pickups.AutoRepairsPosCarShop = new mp.Vector3(1154.168, -785.3322, 56.59872);
-pickups.AutoRepairsPosCarPos = new mp.Vector3(1150.372, -776.313, 56.59872);
-
-/*Eat Prison*/
-pickups.EatPrisonPos = new mp.Vector3(1753.543, 2566.54, 44.56501);
-
-/*Cloth*/
-pickups.ClothMaskPos = new mp.Vector3(-1337.255, -1277.948, 3.872962);
-
-/*Jobs*/
-pickups.BuilderUpPos = new mp.Vector3(-155.5601, -945.4041, 268.1353);
-pickups.BuilderDownPos = new mp.Vector3(-163.4722, -942.6283, 28.28476);
-
-pickups.SpawnHelpPos = new mp.Vector3(-1026.957, -2734.395, 13.75665);
 
 /*Biz*/
 pickups.InvaderPos1 = new mp.Vector3(-1078.19, -254.3557, 43.02112);
 pickups.InvaderPos2 = new mp.Vector3(-1072.305, -246.3927, 53.00602);
-
-/*NPC*/
-pickups.StartHelpPos = new mp.Vector3(-1033.243, -2735.249, 19.16927);
-
-/*Grab*/
-pickups.GrabPos = new mp.Vector3(973.4865, -2190.531, 29.55157);
 
 /*Jobs*/
 pickups.Gr6Pos = new mp.Vector3(-20.93047523498535, -660.4189453125, 32.48031997680664);
@@ -260,47 +183,19 @@ pickups.checkPressLAlt = function(player) {
         methods.distanceToPos(pickups.CasinoLiftRoofPos, playerPos) < distanceCheck)
         player.call('client:menuList:showCasinoLiftTeleportMenu');
 
-    if (methods.distanceToPos(pickups.FibLift0StationPos, playerPos) < distanceCheck ||
-        methods.distanceToPos(pickups.FibLift1StationPos, playerPos) < distanceCheck ||
-        methods.distanceToPos(pickups.FibLift2StationPos, playerPos) < distanceCheck ||
-        methods.distanceToPos(pickups.FibLift3StationPos, playerPos) < distanceCheck ||
-        methods.distanceToPos(pickups.FibLift4StationPos, playerPos) < distanceCheck)
-        player.call('client:menuList:showFibOfficeTeleportMenu');
-
     if (methods.distanceToPos(pickups.MeriaDownPos, playerPos) < distanceCheck ||
         methods.distanceToPos(pickups.MeriaGarPos, playerPos) < distanceCheck ||
         methods.distanceToPos(pickups.MeriaRoofPos, playerPos) < distanceCheck ||
         methods.distanceToPos(pickups.MeriaUpPos, playerPos) < distanceCheck)
         player.call('client:menuList:showGovOfficeTeleportMenu');
 
-    //if (methods.distanceToPos(pickups.GrabPos, playerPos) < distanceCheck)
-    //   player.call('client:clearGrabMoney');
-
-    //if (user.isGos(player))
-    //    methods.checkTeleport(player, pickups.PrisonPos1, pickups.PrisonPos2);
-
     methods.checkTeleport(player, pickups.BahamaPos1, pickups.BahamaPos2);
-    //methods.checkTeleport(player, pickups.TheLostPos1, pickups.TheLostPos2);
-    /*methods.checkTeleport(player, pickups.UsmcPos1, pickups.UsmcPos2);
-    methods.checkTeleport(player, pickups.UsmcPos11, pickups.UsmcPos22);*/
-    methods.checkTeleport(player, pickups.EmsInPos, pickups.EmsOutPos);
-    methods.checkTeleport(player, pickups.EmsIn1Pos, pickups.EmsOut1Pos);
-    //methods.checkTeleport(player, pickups.SapdFromBalconPos, pickups.SapdToCyberRoomPos);
-    //methods.checkTeleport(player, pickups.SapdToBalconPos, pickups.SapdFromBalconPos);
-    //methods.checkTeleport(player, pickups.SapdToBalcon2Pos, pickups.SapdFromBalcon2Pos);
-    //methods.checkTeleport(player, pickups.SapdToInterrogationPos, pickups.SapdFromInterrogationPos);
-    //methods.checkTeleport(player, pickups.ComedyInPos, pickups.ComedyOutPos);
     methods.checkTeleport(player, pickups.ClubGalaxyUserPos1, pickups.ClubGalaxyUserPos2);
-    methods.checkTeleport(player, pickups.Ems1OutPos, pickups.Ems1InPos);
-    methods.checkTeleport(player, pickups.WzlInPos, pickups.WzlOutPos);
-    methods.checkTeleport(player, pickups.LicDownPos, pickups.LicUpPos);
-    methods.checkTeleport(player, pickups.BuilderDownPos, pickups.BuilderUpPos);
     methods.checkTeleport(player, pickups.InvaderPos2, pickups.InvaderPos1);
 
     //gr6
     methods.checkTeleport(player, new mp.Vector3(486.0731, -1075.497, 28.00087), new mp.Vector3(486.0519, -1078.475, 28.19953));
 
-    methods.checkTeleportVeh(player, pickups.ArcMotorsPos1, pickups.ArcMotorsPos2);
     methods.checkTeleportVeh(player, pickups.ClubGalaxyVPos1, pickups.ClubGalaxyVPos2);
 };
 
@@ -445,16 +340,6 @@ pickups.checkPressE = function(player) {
         if (methods.distanceToPos(pickups.PrisonArrestPos, playerPos) < distanceCheck)
             player.call('client:menuList:showSapdArrestMenu');
     }
-    /*if (user.isFib(player)) {
-        if (methods.distanceToPos(pickups.FibArsenalPos, playerPos) < distanceCheck)
-            player.call('client:menuList:showFibArsenalMenu');
-    }
-    if (user.isUsmc(player)) {
-        if (methods.distanceToPos(pickups.UsmcArsenal1Pos, playerPos) < distanceCheck)
-            player.call('client:menuList:showUsmcArsenalMenu');
-        if (methods.distanceToPos(pickups.UsmcArsenal2Pos, playerPos) < distanceCheck)
-            player.call('client:menuList:showUsmcArsenalMenu');
-    }*/
 
     try {
         if (user.isJobMail(player) && methods.distanceToPos(pickups.MailPos, playerPos) < distanceCheck)
@@ -473,229 +358,107 @@ pickups.checkPressE = function(player) {
             player.call('client:menuList:showSpawnJobCarMenu', [100, -1201.99267578125, -729.6393432617188, 20.672805786132812, 308.53955078125, 'Bison2', 2]);
     }
     catch (e) {
-        methods.debug('TEST', e);
+        methods.debug('PICKUP', e);
     }
 
 };
 
-pickups.createPickups = function() {
+pickups.createAll = function() {
     methods.debug('pickups.createPickups');
-    //NPC
-    //methods.createStaticCheckpointV(pickups.StartHelpPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Yellow);
 
-    //AutoRepairs
-    //methods.createStaticCheckpointV(pickups.AutoRepairsPosShop, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
-    //methods.createStaticCheckpointV(pickups.AutoRepairsPosCarShop, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
-    //methods.createStaticCheckpointV(pickups.AutoRepairsPosCarPos, 'Место для ремонта транспорта', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.EmsGarderobPos1, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.EmsGarderobPos2, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
 
-    //Eat Prison
-    methods.createStaticCheckpointV(pickups.EatPrisonPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
-
-    //EMS
-    methods.createStaticCheckpointV(pickups.EmsGarderobPos1, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
-    methods.createStaticCheckpointV(pickups.EmsGarderobPos2, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
-    //methods.createStaticCheckpointV(pickups.EmsTakeMedPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
-    //methods.createStaticCheckpointV(pickups.EmsAptekaPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
-
-    //Apteka
-    //methods.createStaticCheckpointV(pickups.AptekaPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
     //methods.createStaticCheckpointV(pickups.TheLostPos1, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
     //methods.createStaticCheckpointV(pickups.TheLostPos2, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-    methods.createStaticCheckpointV(pickups.BahamaPos1, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-    methods.createStaticCheckpointV(pickups.BahamaPos2, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-    methods.createStaticCheckpointV(pickups.PrisonPos1, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-    methods.createStaticCheckpointV(pickups.PrisonPos2, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-    //methods.createStaticCheckpointV(pickups.AptekaEnterPos1, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
+    methods.createCpVector(pickups.BahamaPos1, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
+    methods.createCpVector(pickups.BahamaPos2, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
 
-    /*methods.createStaticCheckpointV(pickups.UsmcPos1, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-    methods.createStaticCheckpointV(pickups.UsmcPos2, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-    methods.createStaticCheckpointV(pickups.UsmcPos11, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-    methods.createStaticCheckpointV(pickups.UsmcPos22, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);*/
+    methods.createCpVector(pickups.EmsKeyPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.GovKeyPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
 
-    //Keys
-    methods.createStaticCheckpointV(pickups.EmsKeyPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
-    methods.createStaticCheckpointV(pickups.GovKeyPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.GovInfoPos, 'Нажмите ~g~E~s~ чтобы открыть меню руководства', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.SapdInfoPos, 'Нажмите ~g~E~s~ чтобы открыть меню руководства', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.SheriffInfo1Pos, 'Нажмите ~g~E~s~ чтобы открыть меню руководства', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.SheriffInfo2Pos, 'Нажмите ~g~E~s~ чтобы открыть меню руководства', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.InvaderInfoPos, 'Нажмите ~g~E~s~ чтобы открыть меню руководства', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.EmsInfo1Pos, 'Нажмите ~g~E~s~ чтобы открыть меню руководства', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.EmsInfo2Pos, 'Нажмите ~g~E~s~ чтобы открыть меню руководства', 1, -1, pickups.Blue);
 
-    //Info
-    methods.createStaticCheckpointV(pickups.GovInfoPos, 'Нажмите ~g~E~s~ чтобы открыть меню руководства', 1, -1, pickups.Blue);
-    methods.createStaticCheckpointV(pickups.SapdInfoPos, 'Нажмите ~g~E~s~ чтобы открыть меню руководства', 1, -1, pickups.Blue);
-    methods.createStaticCheckpointV(pickups.SheriffInfo1Pos, 'Нажмите ~g~E~s~ чтобы открыть меню руководства', 1, -1, pickups.Blue);
-    methods.createStaticCheckpointV(pickups.SheriffInfo2Pos, 'Нажмите ~g~E~s~ чтобы открыть меню руководства', 1, -1, pickups.Blue);
-    methods.createStaticCheckpointV(pickups.InvaderInfoPos, 'Нажмите ~g~E~s~ чтобы открыть меню руководства', 1, -1, pickups.Blue);
-    methods.createStaticCheckpointV(pickups.EmsInfo1Pos, 'Нажмите ~g~E~s~ чтобы открыть меню руководства', 1, -1, pickups.Blue);
-    methods.createStaticCheckpointV(pickups.EmsInfo2Pos, 'Нажмите ~g~E~s~ чтобы открыть меню руководства', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.InvaderWorkPos1, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.InvaderWorkPos2, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.InvaderWorkPos3, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.InvaderWorkPos4, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
 
+    methods.createCpVector(pickups.BotRole0, 'Нажмите ~g~E~s~ чтобы взаимодействовать с NPC', 1, -1, pickups.Yellow);
+    methods.createCpVector(pickups.BotRoleAll, 'Нажмите ~g~E~s~ чтобы взаимодействовать с NPC', 1, -1, pickups.Yellow);
+    methods.createCpVector(pickups.QuestBotGang, 'Нажмите ~g~E~s~ чтобы взаимодействовать с NPC', 1, -1, pickups.Yellow);
 
-    methods.createStaticCheckpointV(pickups.InvaderWorkPos1, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
-    methods.createStaticCheckpointV(pickups.InvaderWorkPos2, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
-    methods.createStaticCheckpointV(pickups.InvaderWorkPos3, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
-    methods.createStaticCheckpointV(pickups.InvaderWorkPos4, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.LifeInvaderShopPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
 
-    methods.createStaticCheckpointV(pickups.BotRole0, 'Нажмите ~g~E~s~ чтобы взаимодействовать с NPC', 1, -1, pickups.Yellow);
-    methods.createStaticCheckpointV(pickups.BotRoleAll, 'Нажмите ~g~E~s~ чтобы взаимодействовать с NPC', 1, -1, pickups.Yellow);
-    methods.createStaticCheckpointV(pickups.QuestBotGang, 'Нажмите ~g~E~s~ чтобы взаимодействовать с NPC', 1, -1, pickups.Yellow);
+    methods.createCpVector(pickups.EmsElevatorPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
+    methods.createCpVector(pickups.EmsElevatorParkPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
+    methods.createCpVector(pickups.EmsElevatorRoofPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
 
-    //Invader
-    methods.createStaticCheckpointV(pickups.LifeInvaderShopPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.BankMazeLiftOfficePos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
+    methods.createCpVector(pickups.BankMazeLiftStreetPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
+    methods.createCpVector(pickups.BankMazeLiftRoofPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
+    methods.createCpVector(pickups.BankMazeLiftGaragePos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
+    methods.createCpVector(pickups.BankMazeOfficePos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
 
-    //EMS
-    methods.createStaticCheckpointV(pickups.EmsInPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-    methods.createStaticCheckpointV(pickups.EmsOutPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
+    methods.createCpVector(pickups.CasinoLiftStreetPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
+    methods.createCpVector(pickups.CasinoLiftBalconPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
+    methods.createCpVector(pickups.CasinoLiftRoofPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
+    methods.createCpVector(pickups.CasinoLiftCondoPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
+    methods.createCpVector(pickups.CasinoLiftInPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
 
-    methods.createStaticCheckpointV(pickups.EmsIn1Pos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-    methods.createStaticCheckpointV(pickups.EmsOut1Pos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
+    methods.createCpVector(pickups.MeriaUpPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
+    methods.createCpVector(pickups.MeriaDownPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
+    methods.createCpVector(pickups.MeriaRoofPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
+    methods.createCpVector(pickups.MeriaGarPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
+    methods.createCpVector(pickups.MeriaGarderobPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.MeriaHelpPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
 
-    methods.createStaticCheckpointV(pickups.EmsElevatorPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-    methods.createStaticCheckpointV(pickups.EmsElevatorParkPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-    methods.createStaticCheckpointV(pickups.EmsElevatorRoofPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
+    methods.createCpVector(pickups.SapdGarderobPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.SapdArsenalPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.SapdClearPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.SapdArrestPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.SapdKeyPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
 
-    //SAPD
-    /*methods.createStaticCheckpointV(pickups.SapdFromCyberRoomPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-    methods.createStaticCheckpointV(pickups.SapdToCyberRoomPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-    methods.createStaticCheckpointV(pickups.SapdToBalconPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-    methods.createStaticCheckpointV(pickups.SapdFromBalconPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-    methods.createStaticCheckpointV(pickups.SapdToBalcon2Pos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-    methods.createStaticCheckpointV(pickups.SapdFromBalcon2Pos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-    methods.createStaticCheckpointV(pickups.SapdFromInterrogationPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-    methods.createStaticCheckpointV(pickups.SapdToInterrogationPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);*/
+    methods.createCpVector(pickups.SheriffKeyPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.InvaderKeyPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.SheriffClearPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.SheriffGarderobPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.SheriffGarderobPos2, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.SheriffArrestPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.SheriffArrestPos2, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.SheriffArsenalPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.SheriffArsenalPos2, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
 
-    //methods.createStaticCheckpointV(pickups.SapdToInterrogationPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-    //Checkpoint.Create(SapdToInterrogationPos, 1.4, "pickup:teleport");
+    methods.createCpVector(pickups.EmsArsenalPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.EmsArsenalPos2, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
 
-    //methods.createStaticCheckpointV(pickups.SapdFromInterrogationPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-    //Checkpoint.Create(SapdFromInterrogationPos, 1.4, "pickup:teleport");
+    methods.createCpVector(pickups.PrisonArrestPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
 
-    //Maze Bank
-    methods.createStaticCheckpointV(pickups.BankMazeLiftOfficePos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-    methods.createStaticCheckpointV(pickups.BankMazeLiftStreetPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-    methods.createStaticCheckpointV(pickups.BankMazeLiftRoofPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-    methods.createStaticCheckpointV(pickups.BankMazeLiftGaragePos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-    methods.createStaticCheckpointV(pickups.BankMazeOfficePos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.ClubGalaxyUserPos1, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
+    methods.createCpVector(pickups.ClubGalaxyUserPos2, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
+    methods.createCpVector(pickups.ClubGalaxyVPos2, "Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом", 4, -1, pickups.Blue100, 0.3);
 
-    methods.createStaticCheckpointV(pickups.CasinoLiftStreetPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-    methods.createStaticCheckpointV(pickups.CasinoLiftBalconPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-    methods.createStaticCheckpointV(pickups.CasinoLiftRoofPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-    methods.createStaticCheckpointV(pickups.CasinoLiftCondoPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-    methods.createStaticCheckpointV(pickups.CasinoLiftInPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
+    methods.createCpVector(business.BusinessOfficePos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
+    methods.createCpVector(business.BusinessStreetPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
+    methods.createCpVector(business.BusinessMotorPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
+    methods.createCpVector(business.BusinessRoofPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
+    methods.createCpVector(business.BusinessGaragePos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
+    methods.createCpVector(business.BusinessBotPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
 
-    //Meria
-    methods.createStaticCheckpointV(pickups.MeriaUpPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-    methods.createStaticCheckpointV(pickups.MeriaDownPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-    methods.createStaticCheckpointV(pickups.MeriaRoofPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-    methods.createStaticCheckpointV(pickups.MeriaGarPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-    methods.createStaticCheckpointV(pickups.MeriaGarderobPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
-    methods.createStaticCheckpointV(pickups.MeriaHelpPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.InvaderPos1, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
+    methods.createCpVector(pickups.InvaderPos2, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
 
-    //SAPD
-    //methods.createStaticCheckpointV(pickups.SapdDutyPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
-    methods.createStaticCheckpointV(pickups.SapdGarderobPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
-    methods.createStaticCheckpointV(pickups.SapdArsenalPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
-    //methods.createStaticCheckpointV(pickups.StockSapdPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
-    methods.createStaticCheckpointV(pickups.SapdClearPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
-    methods.createStaticCheckpointV(pickups.SapdArrestPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
-    methods.createStaticCheckpointV(pickups.SapdKeyPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
-
-    methods.createStaticCheckpointV(pickups.SheriffKeyPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
-    methods.createStaticCheckpointV(pickups.InvaderKeyPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
-    methods.createStaticCheckpointV(pickups.SheriffClearPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
-    methods.createStaticCheckpointV(pickups.SheriffGarderobPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
-    methods.createStaticCheckpointV(pickups.SheriffGarderobPos2, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
-    methods.createStaticCheckpointV(pickups.SheriffArrestPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
-    methods.createStaticCheckpointV(pickups.SheriffArrestPos2, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
-    methods.createStaticCheckpointV(pickups.SheriffArsenalPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
-    methods.createStaticCheckpointV(pickups.SheriffArsenalPos2, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
-
-    methods.createStaticCheckpointV(pickups.EmsArsenalPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
-    methods.createStaticCheckpointV(pickups.EmsArsenalPos2, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
-
-    methods.createStaticCheckpointV(pickups.PrisonArrestPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
-
-    //FIB
-    //methods.createStaticCheckpointV(pickups.FibDutyPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
-
-   /* methods.createStaticCheckpointV(pickups.UsmcArsenal1Pos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
-    methods.createStaticCheckpointV(pickups.UsmcArsenal2Pos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
-
-    methods.createStaticCheckpointV(pickups.FibArsenalPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);*/
-    methods.createStaticCheckpointV(pickups.FibLift0StationPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-    methods.createStaticCheckpointV(pickups.FibLift1StationPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-    methods.createStaticCheckpointV(pickups.FibLift2StationPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-    methods.createStaticCheckpointV(pickups.FibLift3StationPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-    methods.createStaticCheckpointV(pickups.FibLift4StationPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-
-    //Bar
-    /*methods.createStaticCheckpointV(pickups.BannanaInPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-    Checkpoint.Create(BannanaInPos, 1.4, "pickup:teleport:menu");
-
-    methods.createStaticCheckpointV(pickups.BannanaOutPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-    Checkpoint.Create(BannanaOutPos, 1.4, "pickup:teleport:menu");*/
-
-    /*methods.createStaticCheckpointV(pickups.ComedyInPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-    methods.createStaticCheckpointV(pickups.ComedyOutPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);*/
-
-    //methods.createStaticCheckpointV(pickups.AutoRepairsPos1, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-    //methods.createStaticCheckpointV(pickups.AutoRepairsPos2, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-
-    //Apart
-    methods.createStaticCheckpointV(pickups.Apart0GaragePos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
-    methods.createStaticCheckpointV(pickups.Apart5GaragePos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
-    methods.createStaticCheckpointV(pickups.Apart16RoofPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
-    methods.createStaticCheckpointV(pickups.Apart19RoofPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
-
-    //ElShop
-
-    //ClubGalaxy
-    methods.createStaticCheckpointV(pickups.ClubGalaxyUserPos1, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-    methods.createStaticCheckpointV(pickups.ClubGalaxyUserPos2, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-    //methods.createStaticCheckpointV(pickups.ClubGalaxyVPos1, 4, 0.3, pickups.Blue100);
-    methods.createStaticCheckpointV(pickups.ClubGalaxyVPos2, "Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом", 4, -1, pickups.Blue100, 0.3);
-
-    //ArcMotors
-    methods.createStaticCheckpointV(pickups.ArcMotorsPos1, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 4, -1, pickups.Blue100, 0.3);
-    methods.createStaticCheckpointV(pickups.ArcMotorsPos2, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 4, -1, pickups.Blue100, 0.3);
-
-    //Other
-    methods.createStaticCheckpointV(pickups.Ems1OutPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-    methods.createStaticCheckpointV(pickups.Ems1InPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-
-    methods.createStaticCheckpointV(pickups.WzlInPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-    methods.createStaticCheckpointV(pickups.WzlOutPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-
-    //Business
-    methods.createStaticCheckpointV(business.BusinessOfficePos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-    methods.createStaticCheckpointV(business.BusinessStreetPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-    methods.createStaticCheckpointV(business.BusinessMotorPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-    methods.createStaticCheckpointV(business.BusinessRoofPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-    methods.createStaticCheckpointV(business.BusinessGaragePos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-    methods.createStaticCheckpointV(business.BusinessBotPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
-
-    //Lic
-    methods.createStaticCheckpointV(pickups.LicUpPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-    methods.createStaticCheckpointV(pickups.LicDownPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-    methods.createStaticCheckpointV(pickups.LicRoofPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-    methods.createStaticCheckpointV(pickups.LicGaragePos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-    //methods.createStaticCheckpointV(pickups.LicBuyPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
-
-    //Cloth
-    //methods.createStaticCheckpointV(pickups.ClothMaskPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
-
-
-    //Builder
-    methods.createStaticCheckpointV(pickups.BuilderUpPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-    methods.createStaticCheckpointV(pickups.BuilderDownPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-
-    //
-    //methods.createStaticCheckpointV(pickups.GrabPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
-
-    methods.createStaticCheckpointV(pickups.InvaderPos1, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-    methods.createStaticCheckpointV(pickups.InvaderPos2, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-
-    //JOBS
-    methods.createStaticCheckpointV(pickups.Gr6Pos, 'Нажмите ~g~E~s~ чтобы открыть меню инкассатора', 1, -1, pickups.Blue);
-    methods.createStaticCheckpointV(pickups.MailPos, 'Нажмите ~g~E~s~ чтобы открыть меню почтальона', 1, -1, pickups.Blue);
-    methods.createStaticCheckpointV(pickups.Bus1Pos, 'Нажмите ~g~E~s~ чтобы открыть меню городского рейса', 1, -1, pickups.Blue);
-    methods.createStaticCheckpointV(pickups.Bus2Pos, 'Нажмите ~g~E~s~ чтобы открыть меню трансферного рейса', 1, -1, pickups.Blue);
-    methods.createStaticCheckpointV(pickups.Bus3Pos, 'Нажмите ~g~E~s~ чтобы открыть меню рейсового рейса', 1, -1, pickups.Blue);
-    methods.createStaticCheckpointV(pickups.TreePos, 'Нажмите ~g~E~s~ чтобы открыть меню садовника', 1, -1, pickups.Blue);
-    methods.createStaticCheckpointV(pickups.BuilderPos, 'Нажмите ~g~E~s~ чтобы открыть меню разнорабочего', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.Gr6Pos, 'Нажмите ~g~E~s~ чтобы открыть меню инкассатора', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.MailPos, 'Нажмите ~g~E~s~ чтобы открыть меню почтальона', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.Bus1Pos, 'Нажмите ~g~E~s~ чтобы открыть меню городского рейса', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.Bus2Pos, 'Нажмите ~g~E~s~ чтобы открыть меню трансферного рейса', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.Bus3Pos, 'Нажмите ~g~E~s~ чтобы открыть меню рейсового рейса', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.TreePos, 'Нажмите ~g~E~s~ чтобы открыть меню садовника', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.BuilderPos, 'Нажмите ~g~E~s~ чтобы открыть меню разнорабочего', 1, -1, pickups.Blue);
 };

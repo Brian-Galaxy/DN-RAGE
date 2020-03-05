@@ -32,7 +32,7 @@ lsc.loadAll = function() {
 
     lsc.carPos.forEach(function (item) {
         let shopPos = new mp.Vector3(item[0], item[1], item[2]);
-        let cId = methods.createStaticCheckpoint(shopPos.x, shopPos.y, shopPos.z, "~b~Нажмите ~s~L.ALT~b~ чтобы открыть меню тюнинга", 4, -1, [33, 150, 243, 100], 0.3);
+        let cId = methods.createCp(shopPos.x, shopPos.y, shopPos.z, "~b~Нажмите ~s~L.ALT~b~ чтобы открыть меню тюнинга", 4, -1, [33, 150, 243, 100], 0.3);
 
         Container.Data.Set(999999, 'resetTunning' + cId, true);
     });

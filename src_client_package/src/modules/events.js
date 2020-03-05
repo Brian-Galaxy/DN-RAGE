@@ -283,8 +283,13 @@ mp.events.add('client:events:custom:updateAge', function(age) {
     }
 });
 
+let timeout = null;
 mp.events.add('client:events:custom:set', function(input_editor_face, input_editor_nose, input_editor_eyes_lips, input_editor_face_last, cheked_sex, mother, father, mix1, mix2, isSave) {
     try {
+
+        if (timeout)
+            clearTimeout(timeout);
+        user.cameraBlockRotator(true);
 
         methods.blockKeys(true);
 
@@ -394,6 +399,10 @@ mp.events.add('client:events:custom:set', function(input_editor_face, input_edit
 
             user.updateCharacterFace(true);
         }
+
+        timeout = setTimeout(function () {
+            user.cameraBlockRotator(false);
+        }, 300)
     }
     catch (e) {
         methods.debug(e);

@@ -1882,7 +1882,7 @@ mp.events.addRemoteCounted('server:gr6:findPickup', (player, x, y, z) => {
                             if (user.getRpName(p) == user.getRpName(player))
                                 return;
                             p.notify('~b~Вы получили задание');
-                            player.notify('~b~Напарник: ~s~' + user.getRpName(p));
+                            player.notify('~b~Напарник: ~s~ID: ' + p.id);
 
                             if (isStart)
                                 return;
@@ -1960,7 +1960,7 @@ mp.events.addRemoteCounted('server:gr6:unload', (player, vId) => {
                                 user.addWorkExp(p, 50);
                             }
                             else {
-                                p.notify('~r~Вы не являетесь напарником ' + user.getRpName(player));
+                                p.notify('~r~Вы не являетесь напарником ID: ' + player.id);
                                 p.notify('~r~Зарплату вы не получили');
                             }
                         }

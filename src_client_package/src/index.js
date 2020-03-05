@@ -7,6 +7,7 @@ import './manager/wpSync';
 import './manager/shoot';
 import './manager/heliCam';
 import './manager/attachWeapons';
+import './manager/cameraRotator';
 
 import './betternotifs';
 import './voice';

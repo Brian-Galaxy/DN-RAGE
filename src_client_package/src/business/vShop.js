@@ -239,18 +239,6 @@ mp.events.add("render", () => {
     }
     catch (e) {
     }
-
-    // Comment before commit
-    /*let message = `su: ${su}`;
-    message += `\nsd: ${sd}`;
-
-    mp.game.graphics.drawText(message, [0.5, 0.005], {
-        font: 7,
-        color: [255, 255, 255, 185],
-        scale: [0.5, 0.5],
-        outline: true,
-        centre: true
-    });*/
 });
 
 export default vShop;

@@ -260,7 +260,7 @@ bus.nextCheckpoint = function() {
                         }
 
                         if (_currentId >= bus.markers3.length) {
-                            user.giveJobMoney(560);
+                            user.giveJobMoney(1500);
                             user.giveJobSkill();
                             mp.game.ui.notifications.show('~g~Вы закончили свой рейс');
                             user.addRep(35);

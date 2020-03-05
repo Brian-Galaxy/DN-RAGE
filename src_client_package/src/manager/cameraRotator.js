@@ -156,4 +156,5 @@ class CameraRotator {
         return heading;
     }
 }
+
 export default {Rotator: CameraRotator};

@@ -129,7 +129,8 @@ gr6.workProcess = function() {
     jobPoint.delete();
     Container.Data.SetLocally(0, 'gr6Money', price + methods.getRandomInt(120, 300));
     Container.Data.SetLocally(0, 'gr6MoneyBag', true);
-    user.setComponentVariation(5, 45, 0);
+    if (user.getCache('hand') > 0)
+        user.setComponentVariation(5, 45, 0);
     mp.game.ui.notifications.show('~y~Вы взяли сумку с деньгами, садитесь в транспорт');
     isProcess = false;
 };
@@ -145,7 +146,6 @@ mp.events.add("client:createGr6Checkpoint", (x, y, z) => {
 
     if (isProcess) {
         mp.game.ui.notifications.show('~r~Для начала нужно завершить текущее задание');
-        mp.game.ui.notifications.show('~r~Передайте это напарникам');
         return;
     }
 
@@ -164,7 +164,8 @@ mp.events.add("playerEnterVehicle", function (vehicle, seat) {
         if (Container.Data.HasLocally(0, 'gr6Money') && Container.Data.HasLocally(0, 'gr6MoneyBag')) {
             let money = Container.Data.GetLocally(0, 'gr6Money');
             mp.events.callRemote('server:gr6:dropCar', money * 100, vehicle.remoteId);
-            user.setComponentVariation(5, 0, 0);
+            if (user.getCache('hand') > 0)
+                user.setComponentVariation(5, 0, 0);
 
             Container.Data.ResetLocally(0, 'gr6Money');
             Container.Data.ResetLocally(0, 'gr6MoneyBag');

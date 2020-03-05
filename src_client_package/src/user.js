@@ -14,6 +14,7 @@ import chat from "./chat";
 import quest from "./manager/quest";
 import bind from "./manager/bind";
 import object from "./manager/object";
+import Camera from "./manager/cameraRotator";
 
 let user = {};
 
@@ -38,6 +39,7 @@ let isArmor = false;
 let isGiveAmmo = true;
 
 let cam = null;
+let cameraRotator = new Camera.Rotator();
 
 /*
 0 - Third Person Close
@@ -536,9 +538,19 @@ user.init = function() {
 user.init2 = function() {
 
     try {
-        cam = mp.cameras.new('customization', new mp.Vector3(8.243752, 527.4373, 171.6173), new mp.Vector3(0, 0, 0), 20);
-        cam.pointAtCoord(9.66692, 528.34783, 171.2);
-        cam.setActive(true);
+
+        let vPos = new mp.Vector3(9.66692, 528.34783, 171.3);
+        let vRot = 180;
+
+        cam = mp.cameras.new('customization');
+        /*cam.pointAtCoord(9.66692, 528.34783, 171.2);
+        cam.setActive(true);*/
+
+        cameraRotator.start(cam, vPos, vPos, new mp.Vector3(0, 3, 0), 120);
+        cameraRotator.setXBound(-360, 360);
+        cameraRotator.setOffsetBound(0.4, 1.5);
+        cameraRotator.setZUpMultipler(1);
+
         mp.game.cam.renderScriptCams(true, false, 0, false, false);
 
         user.setVirtualWorld(mp.players.local.remoteId + 1);
@@ -558,6 +570,8 @@ user.init2 = function() {
 
 user.destroyCam = function() {
     try {
+        cameraRotator.stop();
+        cameraRotator.reset();
         if (cam) {
             cam.destroy();
             cam = null;
@@ -572,6 +586,10 @@ user.destroyCam = function() {
 
 user.getCam = function() {
     return cam;
+};
+
+user.cameraBlockRotator = function(enable) {
+    cameraRotator.pause(enable)
 };
 
 user.camSetRot = function(idx) {
@@ -1566,5 +1584,37 @@ user.isTie = function() {
 user.isKnockout = function() {
     return mp.players.local.getVariable('isKnockout') === true;
 };
+
+mp.events.add("render", () => {
+    try {
+        if (!mp.gui.cursor.visible || !cameraRotator.isActive || cameraRotator.isPause) {
+            return;
+        }
+
+        const x = mp.game.controls.getDisabledControlNormal(2, 239);
+        const y = mp.game.controls.getDisabledControlNormal(2, 240);
+
+        const su = mp.game.controls.getDisabledControlNormal(2, 241);
+        const sd = mp.game.controls.getDisabledControlNormal(2, 242);
+
+        if (cameraRotator.isPointEmpty()) {
+            cameraRotator.setPoint(x, y);
+        }
+
+        const currentPoint = cameraRotator.getPoint();
+        const dX = currentPoint.x - x;
+        const dY = currentPoint.y - y;
+
+        cameraRotator.setPoint(x, y);
+
+        if (mp.game.controls.isDisabledControlPressed(2, 237)) {
+            cameraRotator.onMouseMove(dX, dY);
+        }
+
+        cameraRotator.onMouseScroll(su, sd);
+    }
+    catch (e) {
+    }
+});
 
 export default user;

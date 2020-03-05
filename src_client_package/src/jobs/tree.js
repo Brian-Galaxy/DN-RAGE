@@ -1103,7 +1103,7 @@ tree.workProcess = function(id) {
                 mp.players.local.freezePosition(false);
                 methods.blockKeys(false);
                 user.stopScenario();
-                user.giveJobMoney(methods.getRandomInt(9, 12) + methods.getRandomFloat());
+                user.giveJobMoney(methods.getRandomInt(10, 13) + methods.getRandomFloat());
                 user.addRep(1);
                 user.addWorkExp(1);
 

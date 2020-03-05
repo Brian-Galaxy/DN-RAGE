@@ -78,8 +78,8 @@ gun.buy = function(player, itemId, price, count, superTint, tint, shopId) {
     if (!user.isLogin(player))
         return;
 
-    if (user.getBankMoney(player) < price) {
-        player.notify('~r~У вас недостаточно средств на банковском счету');
+    if (user.getCashMoney(player) < price) {
+        player.notify('~r~У вас недостаточно средств');
         return;
     }
 
@@ -106,7 +106,7 @@ gun.buy = function(player, itemId, price, count, superTint, tint, shopId) {
         inventory.addItem(itemId, 1, 1, user.getId(player), -1, 0, `{"userName": "${user.getRpName(player)}"}`, 1);
     player.notify('~g~Вы купили ' + items.getItemNameById(itemId) +  ' по цене: ~s~' + methods.moneyFormat(price));
     user.addHistory(player, 5, `Покупка оружия ${items.getItemNameById(itemId)} (${serial})`);
-    user.removeBankMoney(player, price, `Покупка оружия ${items.getItemNameById(itemId)} (${serial})`);
+    user.removeCashMoney(player, price, `Покупка оружия ${items.getItemNameById(itemId)} (${serial})`);
     business.addMoney(shopId, price, items.getItemNameById(itemId));
     business.removeMoneyTax(shopId, price / business.getPrice(shopId));
     inventory.updateAmount(player, user.getId(player), 1);

@@ -100,6 +100,8 @@ jail.toJail = function(sec) {
         user.unTie();
         user.setVirtualWorld(0);
 
+        user.set('wanted_level', 0);
+
         mp.game.ui.displayRadar(true);
         mp.game.ui.displayHud(true);
         mp.players.local.freezePosition(false);

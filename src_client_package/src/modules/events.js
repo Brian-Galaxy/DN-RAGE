@@ -30,6 +30,8 @@ import vehicles from "../property/vehicles";
 import business from "../property/business";
 import vShop from "../business/vShop";
 import antiCheat from "../antiCheat";
+import hosp from "../manager/hosp";
+import edu from "../manager/edu";
 
 mp.gui.chat.enabled = false;
 
@@ -356,7 +358,7 @@ mp.events.add('client:events:custom:set', function(input_editor_face, input_edit
             user.set('SKIN_EYEBROWS_COLOR', faceLastEditor[5].index_help);
             user.set('SKIN_EYE_COLOR', faceLastEditor[6].index_help);
             user.set('SKIN_OVERLAY_9', faceLastEditor[7].index_help - 1);
-            user.set('SKIN_OVERLAY_COLOR_9', faceLastEditor[8].index_help);
+            //user.set('SKIN_OVERLAY_COLOR_9', faceLastEditor[8].index_help);
 
             /*user.set('SKIN_OVERLAY_1', faceLastEditor[8].index_help - 1);
             user.set('SKIN_OVERLAY_COLOR_1', faceLastEditor[9].index_help);*/
@@ -385,7 +387,7 @@ mp.events.add('client:events:custom:set', function(input_editor_face, input_edit
             user.setCache('SKIN_EYEBROWS_COLOR', faceLastEditor[5].index_help);
             user.setCache('SKIN_EYE_COLOR', faceLastEditor[6].index_help);
             user.setCache('SKIN_OVERLAY_9', faceLastEditor[7].index_help - 1);
-            user.setCache('SKIN_OVERLAY_COLOR_9', faceLastEditor[8].index_help);
+            //user.setCache('SKIN_OVERLAY_COLOR_9', faceLastEditor[8].index_help);
 
             /*user.set('SKIN_OVERLAY_1', faceLastEditor[8].index_help - 1);
             user.set('SKIN_OVERLAY_COLOR_1', faceLastEditor[9].index_help);*/
@@ -567,6 +569,14 @@ mp.events.add('client:events:custom:camera', function(rot, range, height) {
 
 mp.events.add('client:events:custom:register', function(name, surname, age, promocode, referer, national) {
     try {
+        if (name.trim() === '') {
+            user.showCustomNotify('Имя не может быть пустым значением', 1);
+            return;
+        }
+        if (surname.trim() === '') {
+            user.showCustomNotify('Фамилия не может быть пустым значением', 1);
+            return;
+        }
         if (age < 18) {
             user.showCustomNotify('Возраст не может быть меньше 18 лет', 1);
             return;
@@ -575,7 +585,15 @@ mp.events.add('client:events:custom:register', function(name, surname, age, prom
             user.showCustomNotify('Возраст не может быть больше 60 лет', 1);
             return;
         }
-        mp.events.callRemote('server:user:createUser', name, surname, age, promocode, referer, national);
+        if (name.length > 32) {
+            user.showCustomNotify('Имя не может быть больше 32 символов', 1);
+            return;
+        }
+        if (surname.length > 32) {
+            user.showCustomNotify('Фамилия не может быть больше 32 символов', 1);
+            return;
+        }
+        mp.events.callRemote('server:user:createUser', methods.capitalizeFirstLetter(name.trim()), methods.capitalizeFirstLetter(surname.trim()), age, promocode, referer, national);
     }
     catch (e) {
         methods.debug(e);
@@ -2149,8 +2167,14 @@ mp.events.add('client:carshop:changeColor', function(type, color) {
     }
 });
 
-mp.events.add('client:carshop:buyCar', function(carName) {
+mp.events.add('client:carshop:buyCar', function(carName, count) {
     try {
+
+        if (count === 0) {
+            user.showCustomNotify('Транспорта нет в наличии', 0, 1);
+            return;
+        }
+
         let cl1 = vShop.getColor1();
         let cl2 = vShop.getColor2();
         let shopId = vShop.getShopId();
@@ -2441,10 +2465,15 @@ mp.keys.bind(0x1B, true, function() {
     ui.callCef('cardid', JSON.stringify({type: 'hide'}));
     ui.callCef('workid', JSON.stringify({type: 'hide'}));
 
+    if (edu.isShort() || edu.isLong())
+        edu.stopAll();
+
     if (methods.isBlockKeys())
         return;
 
-    phone.hide();
+    if (!phone.isHide())
+        phone.hide();
+
     inventory.hide();
 
     if (vShop.isInside())
@@ -2476,7 +2505,7 @@ mp.keys.bind(0x4E, true, function() {
         }
 
         if (timer.getDeathTimer() > 120)
-            timer.setDeathTimer(120);
+            timer.setDeathTimer(10); //TODO ZBT
         mp.game.ui.notifications.show("~r~Вы отказались от вызова медиков");
 
         Container.Data.SetLocally(mp.players.local.remoteId, "isEmsTimeout", true);
@@ -2579,6 +2608,7 @@ mp.events.add("playerDeath", function (player, reason, killer) {
     inventory.hide();
     phone.hide();
 
+    hosp.reset();
     user.setTeleport(true);
 
     ui.callCef('license', JSON.stringify({type: 'hide'}));
@@ -2620,6 +2650,8 @@ mp.events.add("playerCommand", async (command) => {
         mp.events.callRemote('server:houses:teleport', args[1]);
     }
     else if (command.toLowerCase().slice(0, 2) === "tp") {
+        if (!user.isLogin() || !user.isAdmin())
+            return;
         let args = command.toLowerCase().split(' ');
         user.teleport(parseFloat(args[1]), parseFloat(args[2]), parseFloat(args[3]));
     }
@@ -2784,6 +2816,16 @@ mp.events.add("playerCommand", async (command) => {
 * RENDER
 *
 * */
+
+mp.events.add('render', () => {
+
+    if(user.isLogin()) {
+        if (user.getCache("online_time") < 200) {
+            ui.drawText('Нажмите ~b~ALT + TAB ~s~если не работает управление', 0.5, 0.95, 0.3, 255, 255, 255, 180, 0, 1, false, false);
+            ui.drawText('M - Меню | N - Голосовой чат | I - Инвентарь | O - Телефон', 0.5, 0.97, 0.3, 255, 255, 255, 180, 0, 1, false, false);
+        }
+    }
+});
 
 mp.events.add('render', () => {
     try {

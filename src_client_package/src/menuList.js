@@ -1212,7 +1212,7 @@ menuList.showBusinessMenu = async function(data) {
         UIMenu.Menu.AddMenuItem("Список транзакций").doName = 'log';
         UIMenu.Menu.AddMenuItem("Положить средства").doName = 'addMoney';
         UIMenu.Menu.AddMenuItem("Снять средства").doName = 'removeMoney';
-        UIMenu.Menu.AddMenuItem("Положить бюджет").doName = 'addMoneyTax';
+        UIMenu.Menu.AddMenuItem("Пополнить бюджет продуктов", 'Бюджет для продуктов бизнеса').doName = 'addMoneyTax';
         UIMenu.Menu.AddMenuItem("~y~Что такое продукты?").doName = 'ask';
     }
     else if (data.get('user_id') == 0) {
@@ -1246,7 +1246,7 @@ menuList.showBusinessMenu = async function(data) {
         if (item.doName == 'addMoneyTax') {
             try {
                 if (data.get('bank_id') == 0) {
-                    mp.game.ui.notifications.show(`~r~Вы не привязаны ни к какому банку`);
+                    mp.game.ui.notifications.show(`~r~Ваш бизнес не привязан ни к какому банку`);
                     return;
                 }
 
@@ -1260,10 +1260,12 @@ menuList.showBusinessMenu = async function(data) {
                     mp.game.ui.notifications.show(`~r~Нельзя взять меньше 1$`);
                     return;
                 }
-                business.addMoneyTax(data.get('id'), money);
                 business.removeMoney(data.get('id'), money, 'Внутренний перевод на счёт продуктов');
-                business.save(data.get('id'));
-                mp.game.ui.notifications.show(`~b~Вы положили деньги на счет бизнеса`);
+                setTimeout(function () {
+                    business.addMoneyTax(data.get('id'), money);
+                    business.save(data.get('id'));
+                    mp.game.ui.notifications.show(`~b~Вы положили деньги на счет продуктов`);
+                }, 500);
             }
             catch (e) {
                 methods.debug(e);
@@ -1302,7 +1304,7 @@ menuList.showBusinessMenu = async function(data) {
                 return;
             }
             if (data.get('bank_id') == 0) {
-                mp.game.ui.notifications.show(`~r~Вы не привязаны ни к какому банку`);
+                mp.game.ui.notifications.show(`~r~Ваш бизнес не привязан ни к какому банку`);
                 return;
             }
 
@@ -2850,7 +2852,7 @@ menuList.showPlayerDoMenu = function(playerId) {
             UIMenu.Menu.HideMenu();
         else if (item.doName == 'giveMoney') {
             let money = methods.parseFloat(await UIMenu.Menu.GetUserInput("Сумма", "", 9));
-            if (money < 0) {
+            if (money <= 0) {
                 mp.game.ui.notifications.show("~r~Нельзя передавать меньше 0$");
                 return;
             }
@@ -8690,7 +8692,6 @@ menuList.showBotQuestRole0Menu = function()
     if (user.getCache('quest_role_0') < quest.getQuestLineMax('quest_role_0')) {
         UIMenu.Menu.AddMenuItem("~g~Получить задание").take = true;
     }
-    UIMenu.Menu.AddMenuItem(" ");
     UIMenu.Menu.AddMenuItem("Посмотреть обучение", "Займёт ~g~5~s~ минут твоего времени").full = true;
     UIMenu.Menu.AddMenuItem("Посмотреть все фишки проекта", "Займёт ~g~2~s~ минуты твоего времени").short = true;
 

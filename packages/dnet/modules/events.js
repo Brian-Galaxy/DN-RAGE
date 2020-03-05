@@ -689,6 +689,11 @@ mp.events.addRemoteCounted('server:user:showLic', (player, lic, playerId) => {
                 return;
             }
 
+            if (methods.distanceToPos(remotePlayer.position, player.position) > 4) {
+                player.notify('~r~Вы слишком далеко');
+                return;
+            }
+
             if (remotePlayer.id != player.id) {
                 user.playAnimation(remotePlayer, "mp_common","givetake2_a", 8);
                 user.playAnimation(player, "mp_common","givetake1_a", 8);
@@ -861,6 +866,10 @@ mp.events.addRemoteCounted('server:user:showLicGos', (player, playerId) => {
     let remotePlayer = mp.players.at(playerId);
     if (remotePlayer && user.isLogin(remotePlayer)) {
         try {
+            if (methods.distanceToPos(remotePlayer.position, player.position) > 4) {
+                player.notify('~r~Вы слишком далеко');
+                return;
+            }
 
             if (remotePlayer.id != player.id) {
                 user.playAnimation(remotePlayer, "mp_common","givetake2_a", 8);

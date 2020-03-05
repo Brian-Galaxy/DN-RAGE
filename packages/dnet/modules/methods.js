@@ -206,6 +206,10 @@ methods.moneyFormat = function (currentMoney, maxCentValue = 5000) {
     return '$' + methods.numberFormat(currentMoney.toFixed(0));
 };
 
+methods.capitalizeFirstLetter  = function (string) {
+    return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+};
+
 methods.boolToInt = function (boolean) {
     return boolean ? 1 : 0;
 };
@@ -734,7 +738,7 @@ methods.loadAllBlips = function () {
     methods.createBlip(new mp.Vector3(-448.6859, 6012.703, 30.71638), 60, 16, 0.8, 'Sheriff Department');
     methods.createBlip(new mp.Vector3(1853.22, 3686.6796875, 33.2670), 60, 16, 0.8, 'Sheriff Department');
     methods.createBlip(new mp.Vector3(-158.44952392578125, -605.221923828125, 48.23460388183594), 535, 67, 0.8, 'Arcadius - Бизнес Центр');
-    methods.createBlip(new mp.Vector3(2484.16748046875, -384.5539245605469, 93.9015121459961), 498, 0, 0.8, 'Здание NOOSE');
+    //methods.createBlip(new mp.Vector3(2484.16748046875, -384.5539245605469, 93.9015121459961), 498, 0, 0.8, 'Здание NOOSE');
     methods.createBlip(new mp.Vector3(1830.489, 2603.093, 45.8891), 238, 0, 0.8, 'Федеральная тюрьма');
     methods.createBlip(new mp.Vector3(-1379.659, -499.748, 33.15739), 419, 0, 0.8, 'Здание правительства');
     methods.createBlip(new mp.Vector3(311.9224853515625, -583.9681396484375, 44.299190521240234), 489, 59, 0.8, 'Здание больницы');

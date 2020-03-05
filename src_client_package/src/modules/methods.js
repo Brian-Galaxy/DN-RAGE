@@ -454,6 +454,10 @@ methods.phoneFormat = function (phoneNumber) {
     return phoneNumberString;
 };
 
+methods.capitalizeFirstLetter  = function (string) {
+    return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+};
+
 methods.getCurrentSpeed = function () {
     const player = mp.players.local;
     let speed = 0;

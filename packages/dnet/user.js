@@ -511,7 +511,7 @@ user.updateClientCache = function(player) {
         user.set(player, 'skin', JSON.stringify(skin));
 
         player.call('client:user:updateCache', [Array.from(Container.Data.GetAll(player.id))]);
-        methods.debug('user.updateClientCache', Array.from(Container.Data.GetAll(player.id)));
+        methods.debug('user.updateClientCache');
     }
     catch (e) {
         methods.debug(e);
@@ -1724,7 +1724,7 @@ user.kick = function(player, reason, title = 'Вы были кикнуты.') {
     player.outputChatBox('!{f44336}' + title);
     player.outputChatBox('!{f44336}Причина: !{FFFFFF}' + reason);
 
-    user.callCef(player, 'dialog', JSON.stringify({type: 'updateValues', isShow: true, isShowClose: false, position: 'center', text: reason, buttons: [], icon: '', title: title, dtype: 0}));
+    user.callCef(player, 'dialog', JSON.stringify({type: 'updateValues', isShow: true, isShowClose: false, position: 'center', text: reason, buttons: [], icon: '', title: title, dtype: 1}));
     player.kick(reason);
 };
 

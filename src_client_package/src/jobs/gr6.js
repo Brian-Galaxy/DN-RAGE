@@ -57,10 +57,8 @@ gr6.grabMarkers = [
 ];
 
 gr6.start = function() {
-    if (mp.players.local.vehicle.getVariable('job') != 10){
-        mp.game.ui.notifications.showWithPicture('Gruppe6', "Godvil", 'Хорошая попытка!', "CHAR_BANK_BOL", 1);
+    if (mp.players.local.vehicle.getVariable('job') != 10)
         return;
-    }
     mp.game.ui.notifications.showWithPicture('Gruppe6', "~g~Работа", 'Скинул координаты точки', "CHAR_BANK_BOL", 1);
     gr6.findRandomPickup();
 };
@@ -162,14 +160,22 @@ mp.events.add("client:createGr6Checkpoint", (x, y, z) => {
 mp.events.add("playerEnterVehicle", function (vehicle, seat) {
     if (user.getCache('job') != 10)
         return;
-    if (vehicle.getVariable('job') == 10 && Container.Data.HasLocally(0, 'gr6Money') && Container.Data.HasLocally(0, 'gr6MoneyBag')) {
-        let money = Container.Data.GetLocally(0, 'gr6Money');
-        mp.events.callRemote('server:gr6:dropCar', money * 100, vehicle.remoteId);
-        user.setComponentVariation(5, 0, 0);
+    if (vehicle.getVariable('job') == 10) {
+        if (Container.Data.HasLocally(0, 'gr6Money') && Container.Data.HasLocally(0, 'gr6MoneyBag')) {
+            let money = Container.Data.GetLocally(0, 'gr6Money');
+            mp.events.callRemote('server:gr6:dropCar', money * 100, vehicle.remoteId);
+            user.setComponentVariation(5, 0, 0);
 
-        Container.Data.ResetLocally(0, 'gr6MoneyBag');
-        mp.game.ui.notifications.show('~g~Вы загрузили деньги в транспорт');
-        user.giveJobSkill();
+            Container.Data.ResetLocally(0, 'gr6Money');
+            Container.Data.ResetLocally(0, 'gr6MoneyBag');
+            mp.game.ui.notifications.show('~g~Вы загрузили деньги в транспорт');
+            user.giveJobSkill();
+        }
+        else {
+            Container.Data.ResetLocally(0, 'gr6Money');
+            Container.Data.ResetLocally(0, 'gr6MoneyBag');
+            mp.game.ui.notifications.show('~r~Вы сели в не тот транспорт, деньги были удалены.');
+        }
     }
 });
 

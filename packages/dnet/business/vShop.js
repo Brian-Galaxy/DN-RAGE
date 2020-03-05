@@ -173,37 +173,20 @@ vShop.buy = function(player, model, color1, color2, shopId) {
     if (user.get(player, 'car_id1') == 0)
         freeSlot = 1;
     else if (user.get(player, 'car_id2') == 0) {
-        if (user.get(player, 'house_id') > 0 || user.get(player, 'condo_id') > 0 || user.get(player, 'apartment_id') > 0)
-            freeSlot = 2;
+        freeSlot = 2;
     }
     else if (user.get(player, 'car_id3') == 0) {
-        if (user.get(player, 'house_id') > 0) {
-            let hInfo = houses.getHouseData(user.get(player, 'house_id'));
-            if (hInfo.get('price') > 1000000)
-                freeSlot = 3;
-        }
+        freeSlot = 3;
     }
     else if (user.get(player, 'car_id4') == 0) {
-        if (user.get(player, 'house_id') > 0) {
-            let hInfo = houses.getHouseData(user.get(player, 'house_id'));
-            if (hInfo.get('price') > 2500000)
-                freeSlot = 4;
-        }
+        freeSlot = 4;
     }
     else if (user.get(player, 'car_id5') == 0) {
-        if (user.get(player, 'house_id') > 0) {
-            let hInfo = houses.getHouseData(user.get(player, 'house_id'));
-            if (hInfo.get('price') > 5000000)
-                freeSlot = 5;
-        }
+        freeSlot = 5;
     }
-    else if (user.get(player, 'car_id6') == 0) {
-        if (user.get(player, 'house_id') > 0) {
-            let hInfo = houses.getHouseData(user.get(player, 'house_id'));
-            if (hInfo.get('price') > 7500000)
-                freeSlot = 6;
-        }
-    }
+    /*else if (user.get(player, 'car_id6') == 0) {
+        freeSlot = 6;
+    }*/
 
     /*let freeSlot = 0;
     for (let i = 1; i <= 10; i++) {
@@ -253,6 +236,7 @@ vShop.buy = function(player, model, color1, color2, shopId) {
                         veh.position = new mp.Vector3(shopItem.spawnPos[0], shopItem.spawnPos[1], shopItem.spawnPos[2]);
                         veh.heading = shopItem.spawnPos[3] - 180;
                         player.putIntoVehicle(veh, -1);
+                        vehicles.setFuel(veh, methods.getVehicleInfo(veh.model).fuel_full);
                     }
                 }
             }, 2000);

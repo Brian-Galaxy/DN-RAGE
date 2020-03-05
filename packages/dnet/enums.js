@@ -1,3 +1,6 @@
+
+let methods = require('./modules/methods');
+
 let enums = exports;
 
 enums.vehicleInfo = [];
@@ -509,9 +512,9 @@ enums.fractionList = {
         subLeaderPayDay: 2700,
         rankList: [
             ["Captain", "Deputy Captain", "Senior Cadet", "Cadet"], //0
-            ["Captain", "Deputy Captain", "Lieutenant II", "Lieutenant I", "Sergeant II", "Sergeant I", "Corporal", "1st Private", "Private"], //1
-            ["Captain", "Deputy Captain", "Lieutenant II", "Lieutenant I", "Sergeant II", "Sergeant I", "Corporal", "1st Private", "Private"], //2
-            ["Captain", "Deputy Captain", "Lieutenant II", "Lieutenant I", "Sergeant II", "Sergeant I", "Corporal", "1st Private", "Private"], //3
+            ["Captain", "Deputy Captain", "Lieutenant II", "Lieutenant I", "Sergeant II", "Sergeant I", "Corporal"], //1
+            ["Captain", "Deputy Captain", "Lieutenant II", "Lieutenant I", "Sergeant II", "Sergeant I", "Corporal"], //2
+            ["Captain", "Deputy Captain", "Lieutenant II", "Lieutenant I", "Sergeant II", "Sergeant I", "Corporal"], //3
             ["Captain", "Deputy Captain", "Lieutenant II", "Lieutenant I", "Sergeant II", "Sergeant I"], //4
             ["Captain", "Deputy Captain", "Lieutenant II", "Lieutenant I", "Sergeant II", "Sergeant I"], //5
             ["Commander", "Deputy Commander", "Captain", "Lieutenant II", "Lieutenant I", "Sergeant II", "Sergeant I"], //6
@@ -3647,7 +3650,7 @@ enums.randomSpawnBoat = [
     [ -803.195, -1419.51, 0.294382, 227.689 ],
     [ -319.467, -2491.83, 1.40205, 231.721 ],
 ];
-
+/*
 enums.vehicleImgList = [
     {name: "Dinghy", path: "https://wiki.rage.mp/images/thumb/3/39/Dinghy.png/164px-Dinghy.png"},
     {name: "Dinghy2", path: "https://wiki.rage.mp/images/thumb/0/09/Dinghy2.png/164px-Dinghy2.png"},
@@ -4340,13 +4343,7 @@ enums.vehicleImgList = [
     {name: "Youga", path: "https://wiki.rage.mp/images/thumb/d/d5/Youga.png/133px-Youga.png"},
     {name: "Youga2", path: "https://wiki.rage.mp/images/thumb/e/e6/Youga2.png/164px-Youga2.png"},
 ];
-
+*/
 enums.getVehicleImg = (name) => {
-    name = name.toLowerCase();
-    let src = '';
-    enums.vehicleImgList.forEach(item => {
-       if (item.name.toLowerCase() == name)
-           src = item.path;
-    });
-    return src;
+    return 'https://dednet.ru/client/images/cars/' + methods.capitalizeFirstLetter(name) + '_1.jpg';
 };

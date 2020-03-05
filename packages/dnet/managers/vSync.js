@@ -300,10 +300,10 @@ mp.events.add("playerEnterVehicle", function (player, vehicle) {
 });
 
 mp.events.add("playerExitVehicle", function (player, vehicle) {
-    //setTimeout(function () {
-    //if (vehicles.exists(vehicle))
-    //    vSync.setEngineState(vehicle, vSync.getEngineState(vehicle));
-    //}, 1000);
+    setTimeout(function () {
+    if (vehicles.exists(vehicle))
+        vSync.setEngineState(vehicle, vSync.getEngineState(vehicle));
+    }, 2000);
 });
 
 mp.events.add('s:vSync:setDirtLevel', (player, vId, level) => {

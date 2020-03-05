@@ -94,6 +94,11 @@ hosp.freePlayer = function() {
     }
 };
 
+hosp.reset = function() {
+    user.set('med_time', 0);
+    prvTime = 0;
+};
+
 hosp.toHospCache = function() {
     try {
         if (user.getCache('med_type') == 1) {
@@ -125,9 +130,9 @@ hosp.toHosp = function() {
 
         if (user.getCache('jail_time') == 0) {
             if (user.getCache('med_lic'))
-                user.set('med_time', 200);
+                user.set('med_time', 20); //TODO ZBT
             else
-                user.set('med_time', 500);
+                user.set('med_time', 50); //TODO ZBT
         }
 
         mp.events.callRemote('playerDeathDone');

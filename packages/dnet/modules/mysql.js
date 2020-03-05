@@ -5,14 +5,15 @@ let methods = require('./methods');
 
 let mysql = exports;
 
-let host = '54.37.128.202';
-//let host = '173.249.7.147';
+/*let host = '54.37.128.202';
 let dbuser = 'admin';
-//let dbuser = 'user';
 let password = 'mtWkh03ur0ywxwXj';
-//let password = 'PO~w~^vI2*m?:JZQ&`$0';
-let database = 'admin_rage';
-//let database = 'dNet_haskell';
+let database = 'admin_rage';*/
+
+let host = 'localhost';
+let dbuser = 'dNet_python';
+let database = 'dNet_python';
+let password = 'b3282a2f2a28757b3a18ab833de16a9c54518c0b0cf493e3f0a7cf09386f326a';
 
 const pool = mysql2.createPool({
     host: host,

@@ -1017,7 +1017,7 @@ enums.animRemain = [
     ["Смотреть по сторонам", "CODE_HUMAN_CROSS_ROAD_WAIT"],
     ["Высматривать", "CODE_HUMAN_MEDIC_KNEEL"]
 ];*/
-
+/*
 enums.vehicleImgList = [
     {name: "Dinghy", path: "https://wiki.rage.mp/images/thumb/3/39/Dinghy.png/164px-Dinghy.png"},
     {name: "Dinghy2", path: "https://wiki.rage.mp/images/thumb/0/09/Dinghy2.png/164px-Dinghy2.png"},
@@ -1719,6 +1719,10 @@ enums.getVehicleImg = (name) => {
             src = item.path;
     });
     return src;
+};*/
+
+enums.getVehicleImg = (name) => {
+    return 'https://dednet.ru/client/images/cars/' + methods.capitalizeFirstLetter(name) + '_1.jpg';
 };
 
 enums.loadCloth = function () {

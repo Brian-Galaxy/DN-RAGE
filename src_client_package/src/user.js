@@ -620,6 +620,8 @@ user.setPlayerModel = function(model) {
 
 user.setHealth = function(level) {
     isHeal = true;
+    if (level === 0)
+        level = -1;
     mp.players.local.setHealth(level + 100);
 };
 
@@ -932,14 +934,14 @@ user.banAntiCheat = function(type, reason) {
 };
 
 user.stopAllScreenEffect = function() {
+    mp.game.invoke(methods.ANIMPOSTFX_STOP_ALL);
+
     mp.game.graphics.setNightvision(false);
     mp.game.graphics.setSeethrough(false);
     mp.game.graphics.setTimecycleModifierStrength(0);
 
     mp.game.graphics.setNoiseoveride(false);
     mp.game.graphics.setNoisinessoveride(0);
-
-    mp.game.invoke(methods.ANIMPOSTFX_STOP_ALL);
 };
 
 user.buyLicense = function(type, price, month = 12)

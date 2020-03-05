@@ -68,7 +68,7 @@ antiCheat.gmTimer = function() {
 };
 
 antiCheat.healTimer = function() {
-    if (user.isLogin()) {
+    if (user.isLogin() && !methods.isBlockKeys()) {
         if (mp.players.local.getHealth() > autoHeal) {
             if (!user.isHealth())
                 user.kickAntiCheat(`Auto Heal (HP)`);
@@ -79,11 +79,11 @@ antiCheat.healTimer = function() {
                 user.kickAntiCheat(`Auto Heal (AP)`);
             user.setArmorFalse();
         }
-        if (user.getCurrentAmmo() > autoAmmo && user.getCurrentAmmo() > 0) {
+        /*if (user.getCurrentAmmo() > autoAmmo && user.getCurrentAmmo() > 0) {
             if (!user.isSetAmmo())
                 user.kickAntiCheat(`Full Ammo`);
             user.isSetAmmoFalse();
-        }
+        }*/
         autoHeal = mp.players.local.getHealth();
         autoArmor = mp.players.local.getArmour();
         autoAmmo = user.getCurrentAmmo();
@@ -92,7 +92,7 @@ antiCheat.healTimer = function() {
 
 antiCheat.secTimer = function() {
 
-    if (user.isLogin()) {
+    if (user.isLogin() && !methods.isBlockKeys()) {
 
         /*for (let i = 0; i <= 27; i++) {
             try {
@@ -125,9 +125,9 @@ antiCheat.secTimer = function() {
             if (mp.game.player.getInvincible() || mp.players.local.getMaxHealth() >= 300 || mp.players.local.getHealth() >= 300 || mp.players.local.getArmour() >= 101/* || attemptGm > 2*/) {
                 user.banAntiCheat(3, 'GodMode');
             }
-            if (!mp.players.local.isVisible()) {
+            /*if (!mp.players.local.isVisible()) {
                 user.kickAntiCheat('Invision');
-            }
+            }*/
             /*if (!mp.players.local.canRagdoll()) {
                 user.kickAntiCheat('Ragdoll');
             }*/
@@ -145,14 +145,14 @@ antiCheat.secTimer = function() {
             }
         });
 
-        let newPos = mp.players.local.position;
+        /*let newPos = mp.players.local.position;
         let dist = mp.players.local.vehicle ? methods.getCurrentSpeed() + 50 : 50;
         if (methods.distanceToPos(prevPos, newPos) > dist && !mp.players.local.isFalling() && !mp.players.local.isRagdoll()) {
-            if (!user.isTeleport())
+            if (!user.isTeleport() && !methods.isBlockKeys())
                 user.kickAntiCheat(`Teleport`);
             user.setTeleport(false);
         }
-        prevPos = newPos;
+        prevPos = newPos;*/
 
         /*if (mp.players.local.isSittingInAnyVehicle())
         {

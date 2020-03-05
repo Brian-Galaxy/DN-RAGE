@@ -160,7 +160,7 @@ mp.events.add('client:syncStopAnimation', (playerId) => {
                 remotePlayer.isRagdoll() ||
                 remotePlayer.isFalling() ||
                 remotePlayer.isShooting() ||
-                remotePlayer.isSprinting() ||
+                //remotePlayer.isSprinting() ||
                 remotePlayer.isGettingUp() ||
                 remotePlayer.vehicle ||
                 remotePlayer.getHealth() <= 0

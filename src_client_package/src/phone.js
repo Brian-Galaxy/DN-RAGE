@@ -2350,7 +2350,7 @@ phone.showNoNetwork = function() {
                     {
                         title: "Приложение не работает без подключения к сети",
                         type: 1,
-                        params: { name: "error" }
+                        params: { name: "error", skip: true }
                     }
                 ],
             },

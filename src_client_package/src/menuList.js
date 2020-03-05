@@ -3171,35 +3171,6 @@ menuList.showVehicleMenu = function(data) {
     UIMenu.Menu.AddMenuItem("Характеристики").doName = 'showVehicleStatsMenu';
     //UIMenu.Menu.AddMenuItem("Управление транспортом").eventName = 'server:vehicle:engineStatus';
 
-    if (!veh.getVariable('jobId')) {
-        switch (user.getCache('job')) {
-            case 'trucker1':
-                if (vInfo.class_name == 'Vans') {
-                    UIMenu.Menu.AddMenuItem("~g~Список заказов").doName = 'trucker:getList';
-                    UIMenu.Menu.AddMenuItem("~b~Частота рации:~s~ ").SetRightLabel('444.001');
-                    if (trucker.isProcess())
-                        UIMenu.Menu.AddMenuItem("~r~Завершить досрочно рейс", 'Штраф ~r~$500').doName = 'trucker:stop';
-                }
-                break;
-            case 'trucker2':
-                if (vInfo.display_name == 'Benson' || vInfo.display_name == 'Mule' || vInfo.display_name == 'Mule2' || vInfo.display_name == 'Mule3' || vInfo.display_name == 'Pounder') {
-                    UIMenu.Menu.AddMenuItem("~g~Список заказов").doName = 'trucker:getList';
-                    UIMenu.Menu.AddMenuItem("~b~Частота рации:~s~ ").SetRightLabel('444.002');
-                    if (trucker.isProcess())
-                        UIMenu.Menu.AddMenuItem("~r~Завершить досрочно рейс", 'Штраф ~r~$500').doName = 'trucker:stop';
-                }
-                break;
-            case 'trucker3':
-                if (vInfo.display_name == 'Hauler' || vInfo.display_name == 'Packer' || vInfo.display_name == 'Phantom') {
-                    UIMenu.Menu.AddMenuItem("~g~Список заказов").doName = 'trucker:getList';
-                    UIMenu.Menu.AddMenuItem("~b~Частота рации:~s~ ").SetRightLabel('444.003');
-                    if (trucker.isProcess())
-                        UIMenu.Menu.AddMenuItem("~r~Завершить досрочно рейс", 'Штраф ~r~$500').doName = 'trucker:stop';
-                }
-                break;
-        }
-    }
-
     if (user.getCache('job') == veh.getVariable('jobId')) {
         switch (veh.getVariable('jobId')) {
             case 1:
@@ -3243,10 +3214,6 @@ menuList.showVehicleMenu = function(data) {
                 UIMenu.Menu.AddMenuItem("~g~Взять почту из транспорта").doName = 'mail:take';
                 UIMenu.Menu.AddMenuItem("~b~Справка").sendChatMessage = 'Возьмите почту из транспорта, далее езжай к любым жилым домам, подходи к дому нажимай E и кладите туда почту.';
                 break;
-            case 9:
-                UIMenu.Menu.AddMenuItem("~g~Диспетчерская таксопарка").doName = 'taxi:dispatch';
-                UIMenu.Menu.AddMenuItem("~g~Получить задание").doName = 'taxi:start';
-                break;
         }
     }
 
@@ -3269,8 +3236,6 @@ menuList.showVehicleMenu = function(data) {
         }
         else if (item.sendChatMessage)
             chat.push(`${item.sendChatMessage}`);
-        else if (item.doName == 'taxi:dispatch')
-            menuList.showDispatchTaxiMenu();
         else if (item.doName == 'mail:take')
             mail.takeMail();
         else if (item.doName == 'taxi:start')
@@ -3321,10 +3286,6 @@ menuList.showVehicleMenu = function(data) {
             photo.start();
         else if (item.doName == 'photo:ask')
             photo.ask();
-        else if (item.doName == 'trucker:getList')
-            mp.events.callRemote('server:trucker:showMenu');
-        else if (item.doName == 'trucker:stop')
-            trucker.stop();
         else if (item.doName == 'showVehicleAutopilotMenu')
             menuList.showVehicleAutopilotMenu();
         else if (item.doName == 'showVehicleStatsMenu')
@@ -3497,7 +3458,7 @@ menuList.showVehicleDoMenu = function() {
         let menu = UIMenu.Menu.Create(`Транспорт`, `~b~Нажмите Enter чтобы применить`);
 
         let listEn = ["~r~Выкл", "~g~Вкл"];
-        let listOp = ["~r~Закрыт~r~", "~g~Открыт~g~"];
+        let listOp = ["~r~Закрыт", "~g~Открыт"];
 
         let actualData = mp.players.local.vehicle.getVariable('vehicleSyncData');
 
@@ -3517,12 +3478,6 @@ menuList.showVehicleDoMenu = function() {
         listItem.doName = 'trunk';
         listItem.Index = actualData.Trunk === true ? 1 : 0;
 
-        /*if (methods.getVehicleInfo(mp.players.local.vehicle.model).display_name == 'Taxi') {
-            listItem = UIMenu.Menu.AddMenuItemList("Свет на шашке", listEn);
-            listItem.doName = 'lightTaxi';
-            listItem.Index = actualData.TaxiLight === true ? 1 : 0;
-        }*/
-
         let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
 
         let listIndex = 0;
@@ -3537,9 +3492,6 @@ menuList.showVehicleDoMenu = function() {
             }
             if (item.doName == 'trunk') {
                 vehicles.setTrunkState(listIndex == 1);
-            }
-            if (item.doName == 'lightTaxi') {
-                vehicles.setTaxiLightState(listIndex == 1);
             }
             if (item.doName == 'twoIndicator') {
                 vehicles.setIndicatorLeftState(listIndex == 1);
@@ -3622,7 +3574,7 @@ menuList.showSpawnJobGr6Menu = function() {
     UIMenu.Menu.AddMenuItem("~g~Начать рабочий день").doName = 'startDuty';
     UIMenu.Menu.AddMenuItem("Арендовать транспорт", 'Цена за аренду: ~g~$500~s~\nЗалог: ~g~$4,500').doName = 'spawnCar';
     UIMenu.Menu.AddMenuItem("~b~Стандартное вооружение (Taurus PT92)", 'Цена: ~g~$3,000').doName = 'getMore0';
-    UIMenu.Menu.AddMenuItem("~b~Доп. вооружение (MP5A3 + Бронежилет)", 'Цена: ~g~$10,000').doName = 'getMore1';
+    //UIMenu.Menu.AddMenuItem("~b~Доп. вооружение (MP5A3 + Бронежилет)", 'Цена: ~g~$10,000').doName = 'getMore1';
     UIMenu.Menu.AddMenuItem("~r~Закончить рабочий день").doName = 'stopDuty';
     UIMenu.Menu.AddMenuItem("~r~Закрыть");
 
@@ -3651,7 +3603,7 @@ menuList.showSpawnJobGr6Menu = function() {
 
             mp.game.ui.notifications.show("~g~Вы взяли стандартное вооружение");
         }
-        if (item.doName == 'getMore1') {
+        /*if (item.doName == 'getMore1') {
             if (!Container.Data.HasLocally(0, 'is6Duty')) {
                 mp.game.ui.notifications.show("~r~Вы не вышли на дежурство");
                 return;
@@ -3666,7 +3618,7 @@ menuList.showSpawnJobGr6Menu = function() {
 
             user.setArmour(100);
             mp.game.ui.notifications.show("~g~Вы купили MP5 и взяли в аренду бронежилет.");
-        }
+        }*/
         if (item.doName == 'stopDuty') {
             user.updateCharacterCloth();
             user.setArmour(0);

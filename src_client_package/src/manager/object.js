@@ -774,6 +774,94 @@ object.load = function () {
     object.delete(1350712180, 1049.091, -3108.253, -39.21489);
     object.delete(3529086555, 1047.978, -3094.091, -37.23187);
 
+    // Остановки (Город)
+    object.create(1888204845, new mp.Vector3(-25.00374, -1351.213, 28.31467), new mp.Vector3(0, 0, 0), false, false);
+    object.create(2142033519, new mp.Vector3(-651.5632, -869.9038, 23.48871), new mp.Vector3(-0.5250403, -0.1499586, 90.82462), false, false);
+    object.create(2142033519, new mp.Vector3(-1199.349, -1189.598, 6.687958), new mp.Vector3(0, 0, -81.99986), false, false);
+    object.create(2142033519, new mp.Vector3(-1426.916, -438.0547, 34.88), new mp.Vector3(9.661302E-06, 1.425005, -149.1991), false, false);
+    object.create(2142033519, new mp.Vector3(-1012.661, -246.9745, 36.73038), new mp.Vector3(9.988492E-06, -0.07489484, -151.9996), false, false);
+    object.create(2142033519, new mp.Vector3(-757.9441, -350.8195, 34.88), new mp.Vector3(-0.8251041, -1.424772, 158.3999), false, false);
+    object.create(2142033519, new mp.Vector3(-204.6708, -700.7742, 32.95), new mp.Vector3(9.980403E-06, 1.124995, 159.3999), false, false);
+    object.create(2142033519, new mp.Vector3(235.123, -692.5045, 35.61), new mp.Vector3(1.124952, 3.399995, -111.1994), false, false);
+    object.create(2142033519, new mp.Vector3(351.6387, -310.4411, 51.99164), new mp.Vector3(5.370342E-06, 6.475041, -107.3995), false, false);
+    object.create(2142033519, new mp.Vector3(966.4988, -181.2201, 72.10435), new mp.Vector3(8.015111E-06, -2.999882, 148.9995), false, false);
+    object.create(2142033519, new mp.Vector3(1178.494, -444.7159, 65.75287), new mp.Vector3(1.155658E-05, -1.499699, 77.59977), false, false);
+    object.create(2142033519, new mp.Vector3(817.7294, -996.8601, 25.24501), new mp.Vector3(-0.4500174, 5.007582E-06, 2.699996), false, false);
+    object.create(2142033519, new mp.Vector3(321.01, -1033.08, 28.24), new mp.Vector3(1.00179E-05, -0.149904, 5.008956E-06), false, false);
+
+// Остановки (Загород)
+    object.create(2142033519, new mp.Vector3(1558.44, 874.3721, 76.4571), new mp.Vector3(0, 0, -140.9992), false, false);
+    object.create(1681727376, new mp.Vector3(1957.909, 2987.314, 44.62), new mp.Vector3(-0.8251861, -0.2252273, 13.59998), false, false);
+    object.create(1681727376, new mp.Vector3(1091.956, 2695.625, 37.61), new mp.Vector3(1.250645E-09, 4.963255E-05, -2.999964), false, false);
+    object.create(1681727376, new mp.Vector3(394.3408, 2676.185, 43.21), new mp.Vector3(2.135166E-07, 1.499987, 11.69997), false, false);
+    object.create(1681727376, new mp.Vector3(229.2961, 3070.666, 41.13), new mp.Vector3(0, 0, -85.99977), false, false);
+    object.create(1681727376, new mp.Vector3(1936.598, 3699.375, 31.39), new mp.Vector3(0.1500101, -0.749813, -148.9993), false, false);
+    object.create(1888204845, new mp.Vector3(1682.902, 4825.715, 40.95), new mp.Vector3(1.000519E-05, 0.1499586, -83.89984), false, false);
+    object.create(1681727376, new mp.Vector3(1653.029, 6419.541, 27.82), new mp.Vector3(-0.5251219, -4.200262, -19.09998), false, false);
+    object.create(2142033519, new mp.Vector3(-166.6941, 6383.723, 30.48), new mp.Vector3(1.028865E-05, -6.329292E-05, 43.79989), false, false);
+    object.create(2142033519, new mp.Vector3(-438.895, 6052.333, 30.5), new mp.Vector3(1.028862E-05, -6.329292E-05, 116.7995), false, false);
+    object.create(1681727376, new mp.Vector3(-942.9807, 5432.132, 37.12), new mp.Vector3(0.8250042, 2.549977, 16.99997), false, false);
+    object.create(1681727376, new mp.Vector3(-1532.689, 4996.663, 61.08), new mp.Vector3(-0.6751952, 0.5248131, 49.99994), false, false);
+    object.create(1681727376, new mp.Vector3(-2234.323, 4319.973, 47.49), new mp.Vector3(2.074609E-05, -3.649816, 67.29963), false, false);
+    object.create(1681727376, new mp.Vector3(-2509.702, 3599.954, 13.39), new mp.Vector3(9.873415E-06, 1.049973, 92.19895), false, false);
+    object.create(1681727376, new mp.Vector3(-2741.74, 2289.816, 18.45), new mp.Vector3(0.9000043, 2.850124, 80.29944), false, false);
+    object.create(1681727376, new mp.Vector3(-3124.893, 1183.931, 19.44), new mp.Vector3(0, 0, 89.69975), false, false);
+    object.create(1681727376, new mp.Vector3(-3026.607, 332.7633, 13.62), new mp.Vector3(3.168344E-08, 0.2999769, 86.5997), false, false);
+    object.create(1681727376, new mp.Vector3(-1837.992, -607.2737, 10.35), new mp.Vector3(1.015221E-05, -0.4498585, 141.1494), false, false);
+    object.create(2142033519, new mp.Vector3(246.44, -574.35, 42.31), new mp.Vector3(9.618499E-06, 0.374986, 69.37473), false, false);
+
+    // Блокировка дверей и ворот снизу больницы Pillbox Hill
+    object.create(-837080589, new mp.Vector3(355.5018, -595.0157, 28.03345), new mp.Vector3(1.001791E-05, 5.008954E-06, -110.0491), false, false);
+    object.create(-837080589, new mp.Vector3(358.85, -585.7106, 29.2134), new mp.Vector3(1.001791E-05, 5.008954E-06, -110.0491), false, false);
+    object.create(-1212944997, new mp.Vector3(327.56, -560.7, 29.6863), new mp.Vector3(1.001791E-05, 5.008956E-06, -20.09985), false, false);
+    object.create(-1212944997, new mp.Vector3(335.72, -563.68, 29.6863), new mp.Vector3(1.001791E-05, 5.008956E-06, -19.94983), false, false);
+    object.create(-1212944997, new mp.Vector3(340.27, -565.33, 29.6863), new mp.Vector3(1.001791E-05, 5.008956E-06, -19.94983), false, false);
+    object.create(-837080589, new mp.Vector3(355.5018, -595.0157, 29.38346), new mp.Vector3(1.001791E-05, 5.008954E-06, -110.0491), false, false);
+    object.create(-837080589, new mp.Vector3(355.5018, -595.0157, 30.88348), new mp.Vector3(1.001791E-05, 5.008954E-06, -110.0491), false, false);
+    object.create(-837080589, new mp.Vector3(358.85, -585.7106, 30.63842), new mp.Vector3(1.001791E-05, 5.008954E-06, -110.0491), false, false);
+
+    // Добавленные гаражные двери домам
+    object.create(-1857663329, new mp.Vector3(-911.8047, 195.3755, 70.26), new mp.Vector3(0, 0, 0), false, false); // Гаражная дверь дома id 543
+    object.create(-1857663329, new mp.Vector3(-905.84, 195.37, 70.26), new mp.Vector3(0, 0, 0), false, false); // Гаражная дверь дома id 543
+    object.create(-1857663329, new mp.Vector3(-1128.305, 308.3432, 66.95), new mp.Vector3(1.00179E-05, -5.008956E-06, -9.575194), false, false); // Гаражная дверь дома id 556
+    object.create(-1082334994, new mp.Vector3(-1130.57, 315.49, 66.57), new mp.Vector3(1.001791E-05, 5.008956E-06, -9.449916), false, false); // Гаражная дверь дома id 556
+    object.create(-1212944997, new mp.Vector3(-1587.19, -58.56, 57.43), new mp.Vector3(1.001791E-05, 5.008956E-06, -90.09966), false, false); // Гаражная дверь дома id 566
+    object.create(-1429437264, new mp.Vector3(-1596.58, -55.44, 57.40207), new mp.Vector3(1.001789E-05, -5.008955E-06, 89.97427), false, false); // Гаражная дверь дома id 566
+    object.create(-1429437264, new mp.Vector3(-1596.58, -56.81, 57.40207), new mp.Vector3(1.001789E-05, -5.008953E-06, 89.97425), false, false); // Гаражная дверь дома id 566
+    object.create(-2045308299, new mp.Vector3(-1591.19, -89.04, 54.54069), new mp.Vector3(0, 0, 0), false, false); // Гаражная дверь дома id 565
+    object.create(-42303174, new mp.Vector3(-1588.73, -89.04208, 54.53976), new mp.Vector3(0, 0, 0), false, false); // Гаражная дверь дома id 565
+    object.create(1693207013, new mp.Vector3(-1582.3, -86.47108, 54.7), new mp.Vector3(-5.97114E-13, -5.008956E-06, -89.99999), false, false); // Гаражная дверь дома id 565
+    object.create(1693207013, new mp.Vector3(-1582.3, -80.98515, 54.7), new mp.Vector3(-1.384231E-12, -5.008955E-06, -89.99998), false, false); // Гаражная дверь дома id 565
+    object.create(1301550063, new mp.Vector3(-275.01, 599.8553, 182.1845), new mp.Vector3(0, 0, -2.999996), false, false); // Гаражная дверь дома id 507
+    object.create(224975209, new mp.Vector3(-273.2677, 594.1454, 181.8125), new mp.Vector3(1.001791E-05, 5.008956E-06, -2.250036), false, false); // Гаражная дверь дома id 507
+    object.create(-1212944997, new mp.Vector3(-178.3, 590.79, 198.58), new mp.Vector3(1.463055E-13, -5.008956E-06, 0.8250271), false, false); // Гаражная дверь дома id 505
+    object.create(-493122268, new mp.Vector3(-516.87, 576.36, 121.78), new mp.Vector3(1.001791E-05, 5.008955E-06, -79.4995), false, false); // Гаражная дверь дома id 51
+    object.create(-1265404967, new mp.Vector3(-627.86, 524.13, 108.6877), new mp.Vector3(1.001791E-05, -5.008957E-06, 10.27498), false, false); // Гаражная дверь дома id 54
+    object.create(-1265404967, new mp.Vector3(-633.4645, 523.1584, 108.6877), new mp.Vector3(1.001791E-05, -5.008956E-06, 10.27498), false, false); // Гаражная дверь дома id 54
+    object.create(1991494706, new mp.Vector3(-404.51, 340.59, 109.85), new mp.Vector3(1.001791E-05, 5.008956E-06, 0.3001271), false, false); // Гаражная дверь дома id 31
+    object.create(1991494706, new mp.Vector3(-398.32, 340.6257, 109.85), new mp.Vector3(1.001791E-05, 5.008956E-06, 0.3001271), false, false); // Гаражная дверь дома id 31
+    object.create(1991494706, new mp.Vector3(-494.29, 743.6877, 164), new mp.Vector3(0, 0, 64.59978), false, false); // Гаражная дверь дома id 154
+    object.create(1991494706, new mp.Vector3(-491.65, 749.2623, 164), new mp.Vector3(0, 0, 64.59978), false, false); // Гаражная дверь дома id 154
+    object.create(-1857663329, new mp.Vector3(-950.39, 690.71, 154.37), new mp.Vector3(1.001791E-05, -5.008955E-06, 1.275014), false, false); // Гаражная дверь дома id 145
+    object.create(1991494706, new mp.Vector3(-1355.44, 499.29, 104.24), new mp.Vector3(1.001791E-05, 5.008956E-06, -64.19965), false, false); // Гаражная дверь дома id 100
+    object.create(1991494706, new mp.Vector3(-1352.76, 493.74, 104.24), new mp.Vector3(1.001791E-05, -5.008956E-06, -64.12453), false, false); // Гаражная дверь дома id 100
+    object.create(-1265404967, new mp.Vector3(-1109.085, 485.002, 81.15), new mp.Vector3(0, -5.008956E-06, -10.72488), false, false); // Гаражная дверь дома id 87
+    object.create(-1265404967, new mp.Vector3(-1114.67, 486.05, 81.15), new mp.Vector3(-1.017777E-13, -5.008956E-06, -10.72488), false, false); // Гаражная дверь дома id 87
+
+    // Лифты в многоуровневом гараже (dedgarage4)
+    object.create(-643813287, new mp.Vector3(-852.52, 284.51, 31.37), new mp.Vector3(1.001779E-05, -5.008956E-06, -54.08999), false, false);
+    object.create(-883977292, new mp.Vector3(-852.52, 284.51, 31.37), new mp.Vector3(0, 0, -54.19993), false, false);
+    object.create(-643813287, new mp.Vector3(-852.52, 284.51, 26.03), new mp.Vector3(1.001779E-05, -5.008957E-06, -54.08998), false, false);
+    object.create(-883977292, new mp.Vector3(-852.52, 284.51, 26.03), new mp.Vector3(0, 0, -54.19992), false, false);
+    object.create(-643813287, new mp.Vector3(-852.52, 284.51, 20.68), new mp.Vector3(1.001779E-05, -5.008957E-06, -54.08998), false, false);
+    object.create(-883977292, new mp.Vector3(-852.52, 284.51, 20.68), new mp.Vector3(0, 0, -54.19992), false, false);
+    object.create(-643813287, new mp.Vector3(-812.17, 314.04, 31.36), new mp.Vector3(1.001779E-05, 5.008955E-06, -53.83999), false, false);
+    object.create(-883977292, new mp.Vector3(-812.17, 314.04, 31.36), new mp.Vector3(-2.035555E-13, -5.008955E-06, -53.83999), false, false);
+    object.create(-643813287, new mp.Vector3(-812.17, 314.04, 26.03), new mp.Vector3(1.001778E-05, 5.008956E-06, -53.83999), false, false);
+    object.create(-883977292, new mp.Vector3(-812.17, 314.04, 26.03), new mp.Vector3(4.07111E-13, -5.008955E-06, -53.83999), false, false);
+    object.create(-643813287, new mp.Vector3(-812.17, 314.04, 20.68), new mp.Vector3(1.001778E-05, 5.008956E-06, -53.83999), false, false);
+    object.create(-883977292, new mp.Vector3(-812.17, 314.04, 20.68), new mp.Vector3(6.106665E-13, -5.008955E-06, -53.83999), false, false);
+
 // Основной маппинг большого склада Stock
     object.create(-1134789989, new mp.Vector3(1017.13, -3112.86, -37.93), new mp.Vector3(0, 0, 0), false, false, 75);
     object.create(-1134789989, new mp.Vector3(1017.02, -3112.84, -39.7), new mp.Vector3(1.001782E-05, 5.008956E-06, -179.9236), false, false, 76);
@@ -1208,7 +1296,7 @@ object.process = function () {
     object.openDoor(2271212864, -449.5486, 6008.556, 31.86633, false); //Дверь Шерифов Палето-Бей
     object.openDoor(2271212864, -450.716, 6016.37, 31.86633, false); //Дверь Шерифов Палето-Бей
 
-    //GarageClose
+    // Закрытые,Удалённые,Открытые ворота у домов
     object.openDoor(703855057, -25.2784, -1431.061, 30.83955, true); // House id 500
     object.openDoor(30769481, -815.2816, 185.975, 72.99993, true); // House id 539
     object.openDoor(67910261, 1972.787, 3824.554, 32.65174, true); // House id 777
@@ -1224,22 +1312,9 @@ object.process = function () {
     object.openDoor(913904359, -689.1114, 506.9815, 110.6122, true); // Гараж N2840
     object.openDoor(4030503004, -400.4116, 513.326, 120.5016, true); // Гараж N3583
     object.openDoor(30769481, -966.759, 106.4263, 56.17257, true); // Гараж N4128
-    object.openDoor(3450140131, -875.4845, 18.12612, 44.4434, false, true); // Ворота N4134
-    object.openDoor(2169543803, -844.051, 155.9619, 66.03221, false, true); // Ворота N4110
-
-    // Лифты в многоуровневом гараже (dedgarage4)
-    object.create(-643813287, new mp.Vector3(-852.52, 284.51, 31.37), new mp.Vector3(1.001779E-05, -5.008956E-06, -54.08999), false, false);
-    object.create(-883977292, new mp.Vector3(-852.52, 284.51, 31.37), new mp.Vector3(0, 0, -54.19993), false, false);
-    object.create(-643813287, new mp.Vector3(-852.52, 284.51, 26.03), new mp.Vector3(1.001779E-05, -5.008957E-06, -54.08998), false, false);
-    object.create(-883977292, new mp.Vector3(-852.52, 284.51, 26.03), new mp.Vector3(0, 0, -54.19992), false, false);
-    object.create(-643813287, new mp.Vector3(-852.52, 284.51, 20.68), new mp.Vector3(1.001779E-05, -5.008957E-06, -54.08998), false, false);
-    object.create(-883977292, new mp.Vector3(-852.52, 284.51, 20.68), new mp.Vector3(0, 0, -54.19992), false, false);
-    object.create(-643813287, new mp.Vector3(-812.17, 314.04, 31.36), new mp.Vector3(1.001779E-05, 5.008955E-06, -53.83999), false, false);
-    object.create(-883977292, new mp.Vector3(-812.17, 314.04, 31.36), new mp.Vector3(-2.035555E-13, -5.008955E-06, -53.83999), false, false);
-    object.create(-643813287, new mp.Vector3(-812.17, 314.04, 26.03), new mp.Vector3(1.001778E-05, 5.008956E-06, -53.83999), false, false);
-    object.create(-883977292, new mp.Vector3(-812.17, 314.04, 26.03), new mp.Vector3(4.07111E-13, -5.008955E-06, -53.83999), false, false);
-    object.create(-643813287, new mp.Vector3(-812.17, 314.04, 20.68), new mp.Vector3(1.001778E-05, 5.008956E-06, -53.83999), false, false);
-    object.create(-883977292, new mp.Vector3(-812.17, 314.04, 20.68), new mp.Vector3(6.106665E-13, -5.008955E-06, -53.83999), false, false);
+    object.openDoor(3450140131, -875.4845, 18.12612, 44.4434, false); // Ворота N4134
+    object.openDoor(2169543803, -844.051, 155.9619, 66.03221, false); // Ворота N4110
+    object.openDoor(889818406, 1151.06, -1646.344, 36.56644, true); // Гараж N733
 
     //IntClose
     object.openDoor(132154435, 1972.769, 3815.366, 33.66326, true); // int 1
@@ -1303,16 +1378,6 @@ object.process = function () {
     });
 
     objectList.forEach(async function(item) {
-        /*if (methods.distanceToPos(playerPos, item.pos) < loadDist + 300 && !item.isCreate) {
-            try {
-                if (!mp.game.streaming.hasModelLoaded(item.model))
-                    mp.game.streaming.requestModel(item.model);
-            }
-            catch (e) {
-                methods.debug(`Exeption: objectList.forEach.loadModel`);
-                methods.debug(e);
-            }
-        }*/
         let dist = methods.distanceToPos(playerPos, item.pos);
         if (dist < loadDist && !item.isCreate) {
             try {
@@ -1328,12 +1393,6 @@ object.process = function () {
                         item.handle.invType = item.invType;
                     if (item.safe > 0)
                         item.handle.safe = item.safe;
-
-                    /*item.handle = mp.game.invoke('0x9A294B2138ABB884', item.model, item.pos.x, item.pos.y, item.pos.z, false, true, false);
-                    mp.game.invoke('0x8524A8B0171D5E07', item.handle, item.rotation.x, item.rotation.y, item.rotation.z, 2, true);
-                    mp.game.invoke('0x428CA6DBD1094446', item.handle, true);*/
-                    //mp.game.invoke('0xE532F5D78798DAAB', item.model);
-                    methods.debug(`Execute: objectList.forEach.create`);
                     item.isCreate = true;
                 }
                 else if(item.didRequest !== true) {
@@ -1348,7 +1407,6 @@ object.process = function () {
         }
         else if (dist > loadDist + 50 && item.isCreate) {
             try {
-                //mp.game.object.object.openDoor(item.handle);
                 if (mp.objects.exists(item.handle)) {
                     item.handle.destroy();
                     item.handle = -1;
@@ -1368,10 +1426,8 @@ object.process = function () {
     });
 };
 
-object.openDoor = function (hash, x, y, z, isClose) {
+object.openDoor = function (hash, x, y, z, isClose = false) {
     try {
-        if (isClose == undefined)
-            isClose = false;
         if (methods.distanceToPos(mp.players.local.position, new mp.Vector3(x, y, z)) < loadDist) {
             mp.game.object.doorControl(hash, x, y, z, isClose, 0.0, 50.0, 0);
             if (isClose == true)

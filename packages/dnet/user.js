@@ -375,6 +375,7 @@ user.loadUser = function(player, name, spawn = 'Стандарт') {
                 player.setVariable('idLabel', user.get(player, 'id'));
                 player.setVariable('name', user.get(player, 'name'));
                 player.dimension = 0;
+                user.setArmour(player, 0);
 
                 if (user.get(player, 'vip_time') > 0 && user.get(player, 'vip_time') < methods.getTimeStamp()) {
                     player.outputChatBox(`!{#f44336}Срок действия вашего VIP статуса подошел к концу`);

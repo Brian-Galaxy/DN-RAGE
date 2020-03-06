@@ -687,12 +687,12 @@ inventory.usePlayerItem = function(player, id, itemId) {
                 player.notify("~r~Рядом с вами никого нет");
                 return;
             }
-            inventory.useItem(target, id, itemId);
+            inventory.useItem(target, id, itemId, true);
         }
     }
 };
 
-inventory.useItem = function(player, id, itemId) {
+inventory.useItem = function(player, id, itemId, isTargetable = false) {
     if (!user.isLogin(player))
         return;
     try {
@@ -700,7 +700,7 @@ inventory.useItem = function(player, id, itemId) {
 
         methods.saveLog('log_inventory',
             ['type', 'text'],
-            ['USE', `id:${id}, itemId:${itemId}`],
+            ['USE', `userId: ${user_id}, id:${id}, itemId:${itemId}`],
         );
 
         switch (itemId)
@@ -903,13 +903,13 @@ inventory.useItem = function(player, id, itemId) {
                 let vehInfo = methods.getVehicleInfo(veh.model);
                 if (vehInfo.fuel_type == 3)
                 {
-                    player.notify("~r~Электрокары можно взломать только с Kali Linux");
+                    player.notify("~r~Данный класс автомобиля взломать нельзя");
                     return;
                 }
 
                 if (vehInfo.class_name == "Super")
                 {
-                    player.notify("~r~Спорткары можно взломать только с Kali Linux");
+                    player.notify("~r~Данный класс автомобиля взломать нельзя");
                     return;
                 }
 
@@ -1384,6 +1384,11 @@ inventory.useItem = function(player, id, itemId) {
                 inventory.deleteItem(id);
                 user.playDrugAnimation(player);
                 user.set(player, 'useHeal', true);
+
+                if (isTargetable && user.get(player, 'med_time') > 0) {
+                    player.call('client:hosp:free');
+                }
+
                 setTimeout(function () {
                     if (user.isLogin(player))
                         user.reset(player, 'useHeal');

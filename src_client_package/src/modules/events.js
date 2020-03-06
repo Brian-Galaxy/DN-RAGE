@@ -1411,6 +1411,10 @@ mp.events.add('client:user:updateDating', (datingList) => {
     }
 });
 
+mp.events.add('client:hosp:free', () => {
+    hosp.freePlayer()
+});
+
 mp.events.add('client:menuList:showMenu', (title, desc, menuData) => {
     methods.debug('Event: client:menuList:showMenu');
     menuList.showMenu(title, desc, new Map(menuData));

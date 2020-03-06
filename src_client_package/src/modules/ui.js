@@ -54,7 +54,7 @@ mp.events.add('guiReady', () => {
 
 ui.create = function() {
     uiBrowser = mp.browsers.new("package://cef/index.html");
-    uiBrowser.markAsChat();
+    //uiBrowser.markAsChat();
     //ui.callCef('authMain','{"type": "show"}');
 };
 

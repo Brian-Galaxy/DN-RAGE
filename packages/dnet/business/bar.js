@@ -4,13 +4,15 @@ let business = require('../property/business');
 let bar = exports;
 
 bar.list = [
-    [127.024, -1284.24, 28.28062, 43],
-    [-560.0792, 287.0196, 81.17641, 44],
-    [-1394.226, -605.4658, 29.31955, 45],
-    [988.5745, -96.85889, 73.84525, 46],
-    [1986.267, 3054.349, 46.21521, 47],
-    [-441.0517883300781, 268.8336181640625, 82.01594543457031, 48],
-    [-1587.188, -3012.827, -77.00496, 49]
+    [127.024, -1284.24, 28.28062, 43, 0],
+    [-560.0792, 287.0196, 81.17641, 44, 0],
+    [-1394.226, -605.4658, 29.31955, 45, 0],
+    [988.5745, -96.85889, 73.84525, 46, 0],
+    [1986.267, 3054.349, 46.21521, 47, 0],
+    [-441.0517883300781, 268.8336181640625, 82.01594543457031, 48, 0],
+    [-1587.188, -3012.827, -77.00496, 49, 49],
+    [-1587.188, -3012.827, -77.00496, 130, 130],
+    [-1587.188, -3012.827, -77.00496, 131, 131],
 ];
 
 bar.listFree = [
@@ -40,6 +42,12 @@ bar.loadAll = function() {
             case 49:
                 methods.createBlip(new mp.Vector3(4.723007, 220.3487, 106.7251), 614, 0, 0.6, 'Клуб');
                 break;
+            case 130:
+                methods.createBlip(new mp.Vector3(346.0204772949219, -977.866943359375, 28.369871139526367), 614, 0, 0.6, 'Клуб');
+                break;
+            case 131:
+                methods.createBlip(new mp.Vector3(-1173.9403076171875, -1153.419189453125, 4.657954216003418), 614, 0, 0.6, 'Клуб');
+                break;
             default:
                 if (item[3] != 0)
                     methods.createBlip(shopPos, 93, 0, 0.6);
@@ -53,12 +61,12 @@ bar.loadAll = function() {
     });
 };
 
-bar.getInRadius = function(pos, radius = 2) {
+bar.getInRadius = function(pos, radius = 2, dim = 0) {
     methods.debug('bar.getInRadius');
     let shopId = -1;
     bar.list.forEach(function (item, idx) {
         let shopPos = new mp.Vector3(item[0], item[1], item[2]);
-        if (methods.distanceToPos(pos, shopPos) < radius)
+        if (methods.distanceToPos(pos, shopPos) < radius && dim === item[4])
             shopId = methods.parseInt(item[3]);
     });
     bar.listFree.forEach(function (item, idx) {
@@ -73,7 +81,7 @@ bar.checkPosForOpenMenu = function(player) {
     methods.debug('bar.checkPosForOpenMenu');
     try {
         let playerPos = player.position;
-        let shopId = bar.getInRadius(playerPos, 2);
+        let shopId = bar.getInRadius(playerPos, 2, player.dimension);
         if (shopId == -1)
             return;
         if (shopId == 999) {

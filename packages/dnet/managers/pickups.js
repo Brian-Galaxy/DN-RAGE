@@ -129,11 +129,22 @@ pickups.ElShopPos11 = new mp.Vector3(1137.675, -470.7754, 65.66285);
 pickups.ElShopPos12 = new mp.Vector3(1136.156, -470.4759, 65.70986);
 
 /*Club*/
-pickups.ClubGalaxyUserPos1 = new mp.Vector3(-1569.33, -3016.98, -75.40616);
-pickups.ClubGalaxyUserPos2 = new mp.Vector3(4.723007, 220.3487, 106.7251);
+pickups.ClubUserPos = new mp.Vector3(-1569.33, -3016.98, -75.40616);
+pickups.ClubTehUserPos = new mp.Vector3(4.723007, 220.3487, 106.7251);
+pickups.ClubGalaxyUserPos = new mp.Vector3(346.0204772949219, -977.866943359375, 28.369871139526367);
+pickups.ClubLsUserPos = new mp.Vector3(-1173.9403076171875, -1153.419189453125, 4.657954216003418);
 
-pickups.ClubGalaxyVPos1 = new mp.Vector3(-1640.193, -2989.592, -78.22095);
-pickups.ClubGalaxyVPos2 = new mp.Vector3(-22.13015, 217.3953, 105.5861);
+pickups.ClubVPos = new mp.Vector3(-1640.193, -2989.592, -78.22095);
+pickups.ClubVPos.rot = 267.697265625;
+
+pickups.ClubTehVPos = new mp.Vector3(-22.223295211791992, 216.72283935546875, 105.57382202148438);
+pickups.ClubTehVPos.rot = 170.98104858398438;
+
+pickups.ClubGalaxyVPos = new mp.Vector3(333.1056213378906, -997.6213989257812, 28.13120460510254);
+pickups.ClubGalaxyVPos.rot = 176.21629333496094;
+
+pickups.ClubLsVPos = new mp.Vector3(-1169.167236328125, -1159.6075439453125, 4.643235683441162);
+pickups.ClubLsVPos.rot = 283.82879638671875;
 
 /*Bar*/
 pickups.BannanaInPos = new mp.Vector3(-1387.63, -588.0929, 29.31953);
@@ -190,13 +201,74 @@ pickups.checkPressLAlt = function(player) {
         player.call('client:menuList:showGovOfficeTeleportMenu');
 
     methods.checkTeleport(player, pickups.BahamaPos1, pickups.BahamaPos2);
-    methods.checkTeleport(player, pickups.ClubGalaxyUserPos1, pickups.ClubGalaxyUserPos2);
     methods.checkTeleport(player, pickups.InvaderPos2, pickups.InvaderPos1);
+
+    if (methods.distanceToPos(pickups.ClubUserPos, playerPos) < distanceCheck && player.dimension === 49) {
+        player.dimension = 0;
+        user.teleport(player, pickups.ClubTehUserPos.x, pickups.ClubTehUserPos.y, pickups.ClubTehUserPos.z + 1);
+    }
+    if (methods.distanceToPos(pickups.ClubUserPos, playerPos) < distanceCheck && player.dimension === 130) {
+        player.dimension = 0;
+        user.teleport(player, pickups.ClubGalaxyUserPos.x, pickups.ClubGalaxyUserPos.y, pickups.ClubGalaxyUserPos.z + 1);
+    }
+    if (methods.distanceToPos(pickups.ClubUserPos, playerPos) < distanceCheck && player.dimension === 131) {
+        player.dimension = 0;
+        user.teleport(player, pickups.ClubLsUserPos.x, pickups.ClubLsUserPos.y, pickups.ClubLsUserPos.z + 1);
+    }
+
+    if (methods.distanceToPos(pickups.ClubTehUserPos, playerPos) < distanceCheck) {
+        player.dimension = 49;
+        user.teleport(player, pickups.ClubUserPos.x, pickups.ClubUserPos.y, pickups.ClubUserPos.z + 1);
+    }
+    if (methods.distanceToPos(pickups.ClubGalaxyUserPos, playerPos) < distanceCheck) {
+        player.dimension = 130;
+        user.teleport(player, pickups.ClubUserPos.x, pickups.ClubUserPos.y, pickups.ClubUserPos.z + 1);
+    }
+    if (methods.distanceToPos(pickups.ClubLsUserPos, playerPos) < distanceCheck) {
+        player.dimension = 131;
+        user.teleport(player, pickups.ClubUserPos.x, pickups.ClubUserPos.y, pickups.ClubUserPos.z + 1);
+    }
+
+    if (methods.distanceToPos(pickups.ClubVPos, playerPos) < distanceCheck && player.dimension === 49) {
+        player.dimension = 0;
+        if (player.vehicle)
+            player.vehicle.dimension = 0;
+        user.teleportVeh(player, pickups.ClubTehVPos.x, pickups.ClubTehVPos.y, pickups.ClubTehVPos.z + 1, pickups.ClubTehVPos.rot);
+    }
+    if (methods.distanceToPos(pickups.ClubVPos, playerPos) < distanceCheck && player.dimension === 130) {
+        player.dimension = 0;
+        if (player.vehicle)
+            player.vehicle.dimension = 0;
+        user.teleportVeh(player, pickups.ClubGalaxyVPos.x, pickups.ClubGalaxyVPos.y, pickups.ClubGalaxyVPos.z + 1, pickups.ClubGalaxyVPos.rot);
+    }
+    if (methods.distanceToPos(pickups.ClubVPos, playerPos) < distanceCheck && player.dimension === 131) {
+        player.dimension = 0;
+        if (player.vehicle)
+            player.vehicle.dimension = 0;
+        user.teleportVeh(player, pickups.ClubLsVPos.x, pickups.ClubLsVPos.y, pickups.ClubLsVPos.z + 1, pickups.ClubLsVPos.rot);
+    }
+
+    if (methods.distanceToPos(pickups.ClubTehVPos, playerPos) < distanceCheck) {
+        player.dimension = 49;
+        if (player.vehicle)
+            player.vehicle.dimension = 49;
+        user.teleportVeh(player, pickups.ClubVPos.x, pickups.ClubVPos.y, pickups.ClubVPos.z + 1, pickups.ClubVPos.rot);
+    }
+    if (methods.distanceToPos(pickups.ClubGalaxyVPos, playerPos) < distanceCheck) {
+        player.dimension = 130;
+        if (player.vehicle)
+            player.vehicle.dimension = 130;
+        user.teleportVeh(player, pickups.ClubVPos.x, pickups.ClubVPos.y, pickups.ClubVPos.z + 1, pickups.ClubVPos.rot);
+    }
+    if (methods.distanceToPos(pickups.ClubLsVPos, playerPos) < distanceCheck) {
+        player.dimension = 131;
+        if (player.vehicle)
+            player.vehicle.dimension = 131;
+        user.teleportVeh(player, pickups.ClubVPos.x, pickups.ClubVPos.y, pickups.ClubVPos.z + 1, pickups.ClubVPos.rot);
+    }
 
     //gr6
     methods.checkTeleport(player, new mp.Vector3(486.0731, -1075.497, 28.00087), new mp.Vector3(486.0519, -1078.475, 28.19953));
-
-    methods.checkTeleportVeh(player, pickups.ClubGalaxyVPos1, pickups.ClubGalaxyVPos2);
 };
 
 pickups.checkPressE = function(player) {
@@ -440,9 +512,13 @@ pickups.createAll = function() {
 
     methods.createCpVector(pickups.PrisonArrestPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
 
-    methods.createCpVector(pickups.ClubGalaxyUserPos1, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-    methods.createCpVector(pickups.ClubGalaxyUserPos2, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-    methods.createCpVector(pickups.ClubGalaxyVPos2, "Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом", 4, -1, pickups.Blue100, 0.3);
+    methods.createCpVector(pickups.ClubLsUserPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
+    methods.createCpVector(pickups.ClubTehUserPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
+    methods.createCpVector(pickups.ClubGalaxyUserPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
+    methods.createCpVector(pickups.ClubUserPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
+    methods.createCpVector(pickups.ClubGalaxyVPos, "Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом", 4, -1, pickups.Blue100, 0.3);
+    methods.createCpVector(pickups.ClubTehVPos, "Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом", 4, -1, pickups.Blue100, 0.3);
+    methods.createCpVector(pickups.ClubLsVPos, "Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом", 4, -1, pickups.Blue100, 0.3);
 
     methods.createCpVector(business.BusinessOfficePos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
     methods.createCpVector(business.BusinessStreetPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);

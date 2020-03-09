@@ -115,6 +115,9 @@ pickups.EmsElevatorRoofPos = new mp.Vector3(334.7327, -1432.775, 45.51179);
 pickups.EmsElevatorParkPos = new mp.Vector3(406.5373, -1347.918, 40.05356);
 pickups.EmsElevatorPos = new mp.Vector3(247.0811, -1371.92, 23.53779);
 
+pickups.EmsRoofPos1 = new mp.Vector3(338.9745788574219, -584.0857543945312, 73.16557312011719);
+pickups.EmsRoofPos2 = new mp.Vector3(327.2897644042969, -603.27734375, 42.28400802612305);
+
 pickups.BahamaPos1 = new mp.Vector3(-1387.69, -588.719, 29.3198);
 pickups.BahamaPos2 = new mp.Vector3(-1388.88, -586.291, 29.2198);
 
@@ -201,6 +204,7 @@ pickups.checkPressLAlt = function(player) {
         player.call('client:menuList:showGovOfficeTeleportMenu');
 
     methods.checkTeleport(player, pickups.BahamaPos1, pickups.BahamaPos2);
+    methods.checkTeleport(player, pickups.EmsRoofPos1, pickups.EmsRoofPos2);
     methods.checkTeleport(player, pickups.InvaderPos2, pickups.InvaderPos1);
 
     if (methods.distanceToPos(pickups.ClubUserPos, playerPos) < distanceCheck && player.dimension === 49) {
@@ -278,6 +282,11 @@ pickups.checkPressE = function(player) {
 
     let playerPos = player.position;
 
+    carWash.checkPosForOpenMenu(player);
+
+    if (player.vehicle)
+        return;
+
     if (methods.distanceToPos(business.BusinessStreetPos, playerPos) < distanceCheck ||
         methods.distanceToPos(business.BusinessMotorPos, playerPos) < distanceCheck ||
         methods.distanceToPos(business.BusinessRoofPos, playerPos) < distanceCheck ||
@@ -294,7 +303,6 @@ pickups.checkPressE = function(player) {
     tattoo.checkPosForOpenMenu(player);
     gun.checkPosForOpenMenu(player);
     vShop.checkPosForOpenMenu(player);
-    carWash.checkPosForOpenMenu(player);
     rent.checkPosForOpenMenu(player);
     bar.checkPosForOpenMenu(player);
     barberShop.checkPosForOpenMenu(player);
@@ -445,6 +453,9 @@ pickups.createAll = function() {
     //methods.createStaticCheckpointV(pickups.TheLostPos2, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
     methods.createCpVector(pickups.BahamaPos1, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
     methods.createCpVector(pickups.BahamaPos2, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
+
+    methods.createCpVector(pickups.EmsRoofPos1, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
+    methods.createCpVector(pickups.EmsRoofPos2, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
 
     methods.createCpVector(pickups.EmsKeyPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
     methods.createCpVector(pickups.GovKeyPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);

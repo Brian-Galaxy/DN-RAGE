@@ -12,7 +12,7 @@ let shopList = enums.shopList;
 let cloth = exports;
 
 cloth.maskShop = new mp.Vector3(-1337.255, -1277.948, 3.872962);
-cloth.printShopPos = new mp.Vector3(-1234.7786865234375, -1477.7230224609375, 3.324739933013916);
+cloth.printShopPos = new mp.Vector3(-1339.9146728515625, -1268.3306884765625, 3.8951973915100098);
 
 cloth.loadAll = function(){
     methods.debug('barberShop.loadAll');
@@ -24,10 +24,10 @@ cloth.loadAll = function(){
     methods.createCp(cloth.maskShop.x, cloth.maskShop.y, cloth.maskShop.z, "Нажмите ~g~E~s~ чтобы открыть меню магазина", 0.8, -1, [33, 150, 243, 100], 0.3);
 
     try {
-        for (var i = 0; i < shopList.length; i++) {
-            var pos = new mp.Vector3(shopList[i][3], shopList[i][4], shopList[i][5]);
-            var shopType = shopList[i][0];
-            var type = shopList[i][2];
+        for (let i = 0; i < shopList.length; i++) {
+            let pos = new mp.Vector3(shopList[i][3], shopList[i][4], shopList[i][5]);
+            let shopType = shopList[i][0];
+            let type = shopList[i][2];
 
             if (type == 0) {
                 switch (shopType) {

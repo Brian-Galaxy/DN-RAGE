@@ -172,10 +172,19 @@ timer.min15Timer = function() {
 timer.ms50Timer = function() {
 
     try {
-        isDisableControl = vehicles.checkerControl();
-
         ui.updateVehValues();
         ui.updateValues();
+    }
+    catch (e) {
+    }
+
+    try {
+        isDisableControl = vehicles.checkerControl();
+    }
+    catch (e) {
+    }
+
+    try {
 
         if (Container.Data.HasLocally(mp.players.local.remoteId, 'hasSeat')) {
             mp.players.local.freezePosition(true);
@@ -183,7 +192,6 @@ timer.ms50Timer = function() {
         }
     }
     catch (e) {
-        methods.debug(e);
     }
 
     setTimeout(timer.ms50Timer, 50);

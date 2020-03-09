@@ -93,6 +93,7 @@ jail.toJail = function(sec) {
 
         user.respawn(jail.pos.x, jail.pos.y, jail.pos.z);
 
+        prvTime = sec;
         user.set('jail_time', sec);
 
         user.setGrabMoney(0);

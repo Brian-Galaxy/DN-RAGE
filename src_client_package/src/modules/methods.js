@@ -148,6 +148,20 @@ methods.getVehicleInfo = function (model) {
     return {id: 0, hash: model, display_name: 'Unknown', class_name: 'Unknown', class_name_ru: 'Unknown', stock: 378000, stock_full: 205000, price: 50000, fuel_full: 75, fuel_min: 8, fuel_type: 0, type: 0, sb: 1, sm: 200};
 };
 
+methods.setVehicleInfo = function (model, value) {
+    try {
+        let vehInfo = enums.vehicleInfo;
+        for (let item in vehInfo) {
+            let vItem = vehInfo[item];
+            if (vItem.hash == model || vItem.display_name == model || mp.game.joaat(vItem.display_name.toString().toLowerCase()) == model)
+                vehInfo[item] = value;
+        }
+    }
+    catch (e) {
+
+    }
+};
+
 methods.parseInt = function (str) {
     return parseInt(str) || 0;
 };

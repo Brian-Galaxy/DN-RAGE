@@ -180,7 +180,7 @@ rent.buy = function(player, hash, price, shopId) {
 
         if (!user.isLogin(player))
             return;
-        player.putIntoVehicle(veh, -1);
+        user.putInVehicle(player, veh, -1);
 
     }, player.position, player.heading, hash);
 };

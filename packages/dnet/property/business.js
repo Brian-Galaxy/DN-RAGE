@@ -62,6 +62,7 @@ business.save = function(id) {
     sql = sql + ", bank = '" + bBank + "'";
     sql = sql + ", bank_id = '" + methods.parseInt(business.get(id, "bank_id")) + "'";
     sql = sql + ", bank_score = '" + methods.parseInt(business.get(id, "bank_score")) + "'";
+    sql = sql + ", bank_tax = '" + methods.parseFloat(business.get(id, "bank_tax")) + "'";
     sql = sql + ", sc_font = '" + methods.parseInt(business.get(id, "sc_font")) + "'";
     sql = sql + ", sc_color = '" + methods.parseInt(business.get(id, "sc_color")) + "'";
     sql = sql + ", sc_alpha = '" + methods.parseInt(business.get(id, "sc_alpha")) + "'";

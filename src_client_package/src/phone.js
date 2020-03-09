@@ -1286,7 +1286,7 @@ phone.showAppGps = function() {
                         text: "",
                         type: 1,
                         clickable: true,
-                        params: { x: -1234, y: -1477 }
+                        params: { x: -1339, y: -1268 }
                     },
                     {
                         title: "Магазин охоты",
@@ -2507,7 +2507,7 @@ phone.getMenuMainItem = function(title, items) {
     };
 };
 
-phone.consoleCallback = function(command) {
+phone.consoleCallback = async function(command) {
 
     try {
         let args = command.split(' ');
@@ -2536,6 +2536,7 @@ phone.consoleCallback = function(command) {
                 phone.addConsoleCommand('ecorp -send -fraction [sum]');
                 phone.addConsoleCommand('ecorp -fraction -create');
                 phone.addConsoleCommand('ecorp -fraction -list');
+                phone.addConsoleCommand('ecorp -car -getpos');
 
             }
             else if (args[0] === '-number') {
@@ -2603,6 +2604,32 @@ phone.consoleCallback = function(command) {
                 else {
                     phone.addConsoleCommand('Usage: ecorp -fraction -create');
                     phone.addConsoleCommand('Usage: ecorp -fraction -list');
+                }
+            }
+            else if (args[0] === '-car') {
+                if (args[1] === '-getpos') {
+                    if (weather.getHour() < 22 && weather.getHour() > 4) {
+                        mp.game.ui.notifications.show('~r~Доступно только с 22 до 4 утра игрового времени');
+                        return;
+                    }
+
+                    if (await user.has('grabVeh')) {
+                        mp.game.ui.notifications.showy('~r~Вы не можете сейчас сбыть транспорт');
+                        return;
+                    }
+
+                    if (user.hasCache('isSellCar')) {
+                        mp.game.ui.notifications.show(`~r~Вы уже получили задание на угон`);
+                        return;
+                    }
+
+                    user.set('isSellCar', true);
+                    let posId = methods.getRandomInt(0, enums.spawnSellCar.length);
+                    jobPoint.create(new mp.Vector3(enums.spawnSellCar[posId][0], enums.spawnSellCar[posId][1], enums.spawnSellCar[posId][2]), true, 3);
+                    mp.game.ui.notifications.show(`~g~Метка была установлена`);
+                }
+                else {
+                    phone.addConsoleCommand('Usage: ecorp -car -getpos');
                 }
             }
         }

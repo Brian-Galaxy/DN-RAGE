@@ -23,6 +23,9 @@ user.createAccount = function(player, login, pass, email) {
     if (!mp.players.exists(player))
         return;
 
+    //user.showCustomNotify(player, 'Регистрация аккаунтов запрещена', 1);
+    //return;
+
     user.doesExistAccount(login, email, player.socialClub, function (cb) {
 
         methods.debug(cb);
@@ -167,8 +170,6 @@ user.loginAccount = function(player, login, pass) {
 
                         let spawnList = [];
 
-                        spawnList.push('Стандарт'); //TODO SPAWN
-
                         let userId = row['id'];
                         if (user.hasById(userId, 'timestamp') && (user.getById(userId, 'timestamp') + 60 * 15) > methods.getTimeStamp())
                             spawnList.push('Точка выхода');
@@ -299,7 +300,7 @@ user.save = function(player, withReset = false) {
         mysql.executeQuery(sql);
 
         if (withReset === true) {
-            //TODO
+            user.resetAll(player);
         }
         else
             user.updateClientCache(player);
@@ -422,7 +423,7 @@ user.loadUser = function(player, name, spawn = 'Стандарт') {
     });
 };
 
-user.spawnByName = function(player, spawn = 'Стандарт') { //TODO by LVL
+user.spawnByName = function(player, spawn = 'Стандарт') {
     methods.debug('user.spawnByName', spawn);
     if (!user.isLogin(player))
         return false;
@@ -1216,7 +1217,7 @@ user.ready = function(player) {
 
     player.dimension = player.id + 1;
     try {
-        Container.Data.ResetAll(player.id);
+        user.resetAll(player);
     }
     catch (e) {
         methods.debug(e);
@@ -1309,10 +1310,15 @@ user.set = function(player, key, val) {
 };
 
 user.reset = function(player, key) {
-    //methods.debug('user.reset');
     if (!mp.players.exists(player))
         return false;
     Container.Data.Reset(player.id, key);
+};
+
+user.resetAll = function(player) {
+    if (!mp.players.exists(player))
+        return false;
+    Container.Data.ResetAll(player.id);
 };
 
 user.get = function(player, key) {
@@ -1664,6 +1670,14 @@ user.teleportVeh = function(player, x, y, z, rot = 0.1) {
     if (rot == 0.1 && player.vehicle)
         rot = player.vehicle.heading;
     player.call('client:teleportVeh', [x, y, z, rot]);
+};
+
+user.putInVehicle = function(player, veh, seat) {
+    methods.debug('user.putInVehicle');
+    if (!mp.players.exists(player))
+        return false;
+    player.putIntoVehicle(veh, seat);
+    player.call('client:putInVehicle');
 };
 
 user.setWaypoint = function(player, x, y) {
@@ -2308,7 +2322,7 @@ user.payDay = async function (player) {
         user.set(player, 'exp_age', user.get(player, 'exp_age') + 1);*/
 
 
-    if (user.get(player, 'online_time') === 339) {
+    if (user.get(player, 'online_time') === 169) {
         if (user.get(player, 'referer') !== "") {
 
             user.addCashMoney(player, 25000, 'Бонус от государства');

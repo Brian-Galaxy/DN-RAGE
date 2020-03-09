@@ -240,11 +240,6 @@ ui.updateValues = function() {
                 ammoCount: `${user.getCurrentAmmo()}`,
                 background: user.getCache('s_hud_bg'),
             };
-            /*
-            his.setState({showAmmo: value.showAmmo});
-        this.setState({ammoCount: value.ammoCount});
-        this.setState({ammoMode: value.ammoMode});
-            * */
             ui.callCef('hudl', JSON.stringify(data));
         }
         catch (e) {

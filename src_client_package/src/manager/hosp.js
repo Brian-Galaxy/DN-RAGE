@@ -4,6 +4,7 @@ import Container from '../modules/data';
 import ui from '../modules/ui';
 
 import timer from "./timer";
+import jail from './jail';
 
 import user from '../user';
 import coffer from "../coffer";
@@ -24,6 +25,7 @@ hosp.timer = function() {
                 if (user.getCache('jail_timer') > 0) {
                     user.set('med_time', 0);
                     prvTime = 0;
+                    jail.toJail(user.getCache('jail_timer'));
                     return;
                 }
 
@@ -81,7 +83,7 @@ hosp.freePlayer = function() {
     }
     else
     {
-        if (user.getCache('online_time') < 370) {
+        if (user.getCache('online_time') < 169) {
             user.removeMoney(50);
             coffer.addMoney(6, 50, 'Лечение в больнице');
             mp.game.ui.notifications.show("~g~Стоимость лечения ~s~$50");
@@ -119,20 +121,24 @@ hosp.toHosp = function() {
         user.showLoadDisplay();
         timer.setDeathTimer(0);
 
-        if (methods.distanceToPos(mp.players.local.position, hosp.pos1) > methods.distanceToPos(mp.players.local.position, hosp.pos2)) {
-            user.set('med_type', 1);
-            user.respawn(hosp.pos2.x, hosp.pos2.y, hosp.pos2.z);
-        }
-        else {
-            user.set('med_type', 0);
-            user.respawn(hosp.pos1.x, hosp.pos1.y, hosp.pos1.z);
+        if (user.getCache('jail_time') == 0) {
+            if (methods.distanceToPos(mp.players.local.position, hosp.pos1) > methods.distanceToPos(mp.players.local.position, hosp.pos2)) {
+                user.set('med_type', 1);
+                user.respawn(hosp.pos2.x, hosp.pos2.y, hosp.pos2.z);
+            }
+            else {
+                user.set('med_type', 0);
+                user.respawn(hosp.pos1.x, hosp.pos1.y, hosp.pos1.z);
+            }
         }
 
-        if (user.getCache('jail_time') == 0) {
-            if (user.getCache('med_lic'))
-                user.set('med_time', 20); //TODO ZBT
-            else
-                user.set('med_time', 50); //TODO ZBT
+        if (user.getCache('med_lic')) {
+            prvTime = 200;
+            user.set('med_time', 200);
+        }
+        else {
+            prvTime = 500;
+            user.set('med_time', 500);
         }
 
         mp.events.callRemote('playerDeathDone');

@@ -179,9 +179,9 @@ mp.events.add('playerCommand', (player, command) => {
             player.notify("~g~Ping: " + player.ping + "ms");
             player.notify("~g~PacketLoss: " + player.packetLoss + "ms");
         }
-        else if (command.toLowerCase() === "t") {
+        /*else if (command.toLowerCase() === "t") {
             fraction.createCargoWar();
-        }
+        }*/
         else if (command.slice(0, 6) === "seval ") {
             if (!user.isLogin(player))
                 return;

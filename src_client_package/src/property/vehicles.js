@@ -297,7 +297,7 @@ vehicles.getWarningSound = function (model) {
 };
 
 vehicles.getSpeedBoost = (model) => {
-    return methods.getVehicleInfo(model).speed_boost;
+    return methods.parseInt(methods.getVehicleInfo(model).sb);
 };
 
 vehicles.getSpeedMax = (model) => {

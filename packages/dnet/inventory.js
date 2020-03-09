@@ -119,6 +119,11 @@ inventory.equip = function(player, id, itemId, count, aparams) {
                 return;
             }
 
+            if (rows[0]['is_equip'] === 1) {
+                player.notify('~r~Карта уже экипирована');
+                return;
+            }
+
             methods.saveLog('log_inventory',
                 ['type', 'text'],
                 ['EQUIP', `id:${id}, itemId:${itemId}, count:${count}, params:${aparams}`],
@@ -1370,7 +1375,7 @@ inventory.useItem = function(player, id, itemId, isTargetable = false) {
                 setTimeout(function () {
                     if (user.isLogin(player))
                         user.reset(player, 'useHeal');
-                }, 10000);
+                }, 20000);
                 break;
             }
             case 278:
@@ -1392,7 +1397,7 @@ inventory.useItem = function(player, id, itemId, isTargetable = false) {
                 setTimeout(function () {
                     if (user.isLogin(player))
                         user.reset(player, 'useHeal');
-                }, 10000);
+                }, 20000);
                 break;
             }
             case 221:

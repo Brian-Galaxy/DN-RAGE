@@ -69,6 +69,10 @@ let checkStats = function()
 let checkShooting = function () {
     if (!user.isLogin())
         return;
+
+    if (mp.players.local.isInAnyVehicle(true))
+        return;
+
     try {
         if (mp.players.local.isSwimmingUnderWater() && user.getCache('stats_lung_capacity') < 99)
         {
@@ -78,11 +82,11 @@ let checkShooting = function () {
                 user.set('stats_lung_capacity', 99);
         }
 
-        if (!mp.players.local.isInAnyVehicle(false) && mp.players.local.isShooting() && user.getCache('stats_shooting') < 99) {
+        if (mp.players.local.isShooting() && user.getCache('stats_shooting') < 99) {
             mp.game.ui.notifications.show(`~g~Навык стрельбы был повышен`);
+            user.set('stats_shooting', user.getCache('stats_shooting') + 1);
             if (user.isUsmc())
                 user.set('stats_shooting', user.getCache('stats_shooting') + 1);
-            user.set('stats_shooting', user.getCache('stats_shooting') + 1);
         }
     }
     catch (e) {
@@ -156,7 +160,7 @@ let updateStats = function(){
 
 skill.loadAll = function() {
     setInterval(checkStats, 180000);
-    setInterval(checkShooting, 10000);
+    setInterval(checkShooting, 5000);
     setInterval(updateStats, 10000);
 };
 

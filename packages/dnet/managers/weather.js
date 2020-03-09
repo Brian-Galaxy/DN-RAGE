@@ -182,13 +182,16 @@ weather.timeSyncTimer = function() {
             fraction.stopCargoWar();
 
         let dateTime = new Date();
-        mp.players.call("client:managers:weather:syncDateTime", [_minute, _hour, _day, _month, _year]);
-        mp.players.call("client:managers:weather:syncRealTime", [dateTime.getHours()]);
-        mp.players.call("client:managers:weather:syncWeatherTemp", [Math.round(_tempNew)]);
-        mp.players.call("client:managers:weather:syncWeatherWind", [_windSpeed, _windDir]);
-        mp.players.call("client:managers:weather:syncRealFullDateTime", [`${methods.digitFormat(dateTime.getDate())}/${methods.digitFormat(dateTime.getMonth()+1)} ${methods.digitFormat(dateTime.getHours())}:${methods.digitFormat(dateTime.getMinutes())}`]);
-        mp.players.call("client:managers:weather:syncRealTime", [`${methods.digitFormat(dateTime.getHours())}:${methods.digitFormat(dateTime.getMinutes())}`]);
-        mp.players.call("client:managers:weather:syncRealDate", [`${methods.digitFormat(dateTime.getDate())}/${methods.digitFormat(dateTime.getMonth()+1)}`]);
+
+        mp.players.forEach(function (p) {
+            p.call("client:managers:weather:syncDateTime", [_minute, _hour, _day, _month, _year]);
+            p.call("client:managers:weather:syncRealTime", [dateTime.getHours()]);
+            p.call("client:managers:weather:syncWeatherTemp", [Math.round(_tempNew)]);
+            p.call("client:managers:weather:syncWeatherWind", [_windSpeed, _windDir]);
+            p.call("client:managers:weather:syncRealFullDateTime", [`${methods.digitFormat(dateTime.getDate())}/${methods.digitFormat(dateTime.getMonth()+1)} ${methods.digitFormat(dateTime.getHours())}:${methods.digitFormat(dateTime.getMinutes())}`]);
+            p.call("client:managers:weather:syncRealTime", [`${methods.digitFormat(dateTime.getHours())}:${methods.digitFormat(dateTime.getMinutes())}`]);
+            p.call("client:managers:weather:syncRealDate", [`${methods.digitFormat(dateTime.getDate())}/${methods.digitFormat(dateTime.getMonth()+1)}`]);
+        });
 
 
         /*if (dateTime.getHours() == 18 && dateTime.getMinutes() == 1) { //TODO

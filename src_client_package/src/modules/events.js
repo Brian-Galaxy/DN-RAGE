@@ -1211,6 +1211,10 @@ mp.events.add('client:teleport', (x, y, z, rot) => {
     user.teleport(x, y, z, rot);
 });
 
+mp.events.add('client:putInVehicle', () => {
+    user.putInVehicle();
+});
+
 mp.events.add('client:teleportVeh', (x, y, z, rot) => {
     methods.debug('Event: client:teleportVeh', x, y, z, rot);
     user.teleportVeh(x, y, z, rot);
@@ -2518,7 +2522,7 @@ mp.keys.bind(0x4E, true, function() {
         }
 
         if (timer.getDeathTimer() > 120)
-            timer.setDeathTimer(10); //TODO ZBT
+            timer.setDeathTimer(120);
         mp.game.ui.notifications.show("~r~Вы отказались от вызова медиков");
 
         Container.Data.SetLocally(mp.players.local.remoteId, "isEmsTimeout", true);
@@ -2558,18 +2562,19 @@ mp.events.add('client:ui:checker', () => {
 
     if (!user.isLogin())
         return;
-    if (!user.getCache('s_hud_restart'))
-        return;
 
     if (uiTimeout) {
         clearTimeout(uiTimeout);
         uiTimeout = null;
     }
 
+    if (user.getCache('s_hud_restart') === 0 || user.getCache('s_hud_restart') === false)
+        return;
+
     try {
         uiTimeout = setTimeout(function () {
             ui.fixInterface();
-        }, 3000);
+        }, 10000);
     }
     catch (e) {
         ui.fixInterface();
@@ -2832,7 +2837,7 @@ mp.events.add("playerCommand", async (command) => {
 
 mp.events.add('render', () => {
     if(user.isLogin()) {
-        if (user.getCache("online_time") < 200) {
+        if (user.getCache("online_time") < 169) {
             ui.drawText('M - Меню | N - Голосовой чат | I - Инвентарь | O - Телефон', 0.5, 0.97, 0.3, 255, 255, 255, 180, 0, 1, false, false);
         }
     }
@@ -3001,6 +3006,8 @@ mp.events.add('render', () => {
 
 mp.events.add('render', () => {
     try {
+        if (!user.isLogin())
+            return;
         let veh = mp.players.local.vehicle;
         if (veh && veh.getClass() == 8 && methods.getCurrentSpeed() > 50) {
             mp.game.controls.disableControlAction(2, 24, true);

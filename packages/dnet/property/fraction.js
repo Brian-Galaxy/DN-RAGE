@@ -201,6 +201,10 @@ fraction.timerCargoWar = function() {
     mp.vehicles.forEachInDimension(0, v => {
         if (!vehicles.exists(v))
             return;
+
+        if (v.bodyHealth === 0 || v.engineHealth === 0 || v.dead)
+            return;
+
         if (v.getVariable('cargoId') !== null && v.getVariable('cargoId') !== undefined) {
             let cargoId = methods.parseInt(v.getVariable('cargoId'));
             let vPos = v.position;

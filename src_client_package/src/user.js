@@ -373,6 +373,7 @@ user.revive = function(hp = 20) {
     //mp.players.local.position = hospPos;
     mp.events.callRemote('server:user:respawn', hospPos.x, hospPos.y, hospPos.z);
     mp.players.local.freezePosition(false);
+    ui.showHud();
 };
 
 user.respawn = function(x, y, z) {
@@ -445,6 +446,10 @@ user.teleport = function(x, y, z, rot, isHud = true) {
 
 user.teleportVeh = function(x, y, z, rot) {
     user.teleportVehV(new mp.Vector3(x, y, z), rot);
+};
+
+user.putInVehicle = function() {
+    isTeleport = true;
 };
 
 user.tpToWaypoint = function() { //TODO машина

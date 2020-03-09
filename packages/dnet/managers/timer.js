@@ -82,6 +82,9 @@ timer.sec10Timer = function() {
             user.setById(userId, 'hp', p.health);
             user.setById(userId, 'dimension', p.dimension);
             user.setById(userId, 'timestamp', methods.getTimeStamp());
+
+            if (p.ping > 500)
+                user.kickAntiCheat(p, `Ping: ${p.ping}ms`);
         }
     });
 

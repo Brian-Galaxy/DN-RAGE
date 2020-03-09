@@ -1567,7 +1567,7 @@ menuList.showMeriaMainMenu = function() {
 
     UIMenu.Menu.AddMenuItem("Оформить WorkID").doName = 'getWorkId';
 
-    if (user.getCache('online_time') < 200)
+    if (user.getCache('online_time') < 169)
         UIMenu.Menu.AddMenuItem("Оформить регистрацию", 'Стоимость: ~g~Бесплатно').doName = 'getRegisterFree';
     else
         UIMenu.Menu.AddMenuItem("Оформить регистрацию", 'Стоимость: ~g~$1,000').doName = 'getRegister';
@@ -1846,7 +1846,7 @@ menuList.showLicBuyMenu = function()
     UIMenu.Menu.HideMenu();
     let menu = UIMenu.Menu.Create("Правительство", "~b~Покупка лицензий");
 
-    if (user.getCache('online_time') < 200) {
+    if (user.getCache('online_time') < 169) {
 
         UIMenu.Menu.AddMenuItem("Категория A", "Цена: ~g~$0.10").doName = "a_lic";
         UIMenu.Menu.AddMenuItem("Категория B", "Цена: ~g~$0.10").doName = "b_lic";
@@ -1864,7 +1864,7 @@ menuList.showLicBuyMenu = function()
 
     menu.ItemSelect.on((item, index) => {
         UIMenu.Menu.HideMenu();
-        if (user.getCache('online_time') < 200) {
+        if (user.getCache('online_time') < 169) {
             if (item.doName == "a_lic")
                 user.buyLicense('a_lic', 0.10);
             else if (item.doName == "b_lic")
@@ -1947,7 +1947,7 @@ menuList.showMeriaJobListMenu = function() {
                 return;
             }
 
-            if (item.jobName === 4 && user.getCache('work_lvl') < 4 && user.getCache('gun_lic')) {
+            if (item.jobName === 10 && user.getCache('work_lvl') < 4 && user.getCache('gun_lic')) {
                 mp.game.ui.notifications.show("~r~Вам необходим 4 уровень рабочего стажа и лицензия на ношение оружия");
                 return;
             }
@@ -2601,9 +2601,9 @@ menuList.showSettingsHudMenu = function() {
     listRayItem.doName = 'raycast';
     listRayItem.Index = user.getCache('s_hud_raycast') ? 1 : 0;
 
-    let listRestItem = UIMenu.Menu.AddMenuItemList("Авто. перезагрузка интерфейса", ['Вкл', 'Выкл'], "В случае если у вас он завис\nили не работает");
+    let listRestItem = UIMenu.Menu.AddMenuItemList("Авто. перезагрузка интерфейса", ['Выкл', 'Вкл'], "В случае если у вас он завис\nили не работает");
     listRestItem.doName = 'restart';
-    listRestItem.Index = user.getCache('s_hud_restart') ? 0 : 1;
+    listRestItem.Index = user.getCache('s_hud_restart') ? 1 : 0;
 
     let listVoiceVol = ["0%", "10%", "20%", "30%", "40%", "50%", "60%", "70%", "80%", "90%", "100%"];
     listVoiceItem = UIMenu.Menu.AddMenuItemList("Прозрачность интерфейса", listVoiceVol);
@@ -3893,18 +3893,33 @@ menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId) {
             };
 
             let slotUse = [];
+            let bankEquip = false;
             equipWeapons.forEach(item => {
                 let slot = weapons.getGunSlotIdByItem(item.item_id);
                 if (item.params.serial == user.getCache('weapon_' + slot))
                     slotUse.push(slot);
             });
-
-
             for (let i = 1; i < 6; i++) {
                 if (!slotUse.includes(i)) {
                     user.set('weapon_' + i, '');
                     user.set('weapon_' + i + '_ammo', -1);
                 }
+            }
+
+            equipItems.forEach(item => {
+                if (methods.parseInt(item.item_id) == 50) {
+                    if (methods.parseInt(item.params.number) == methods.parseInt(user.getCache('bank_card'))) {
+                        bankEquip = true;
+                    }
+                }
+            });
+            if (bankEquip === false) {
+                inventory.updateItemsEquipByItemId(50, user.getCache('id'), inventory.types.Player, 0);
+                user.set('bank_card', 0);
+                user.set('bank_owner', '');
+                user.set('bank_pin', 0);
+                user.setBankMoney(0);
+                user.save();
             }
 
             ui.callCef('inventory', JSON.stringify(dataSend));
@@ -4012,8 +4027,12 @@ menuList.showBankMenu = async function(bankId, price) {
                 }
                 else if (item.eventName == 'server:bank:transferMoney') {
                     let bankNumber = methods.parseInt(await UIMenu.Menu.GetUserInput("Номер карты", "", 16));
+                    if (bankNumber < 9999)
+                        return;
                     let money = methods.parseFloat(await UIMenu.Menu.GetUserInput("Сумма перевода", "", 9));
-                    mp.events.callRemote(item.eventName, bankNumber.toString(), money);
+                    if (money < 0)
+                        return;
+                    mp.events.callRemote(item.eventName, bankNumber, money);
                 }
                 else if (item.eventName == 'server:bank:changePin') {
                     let pin1 = methods.parseInt(await UIMenu.Menu.GetUserInput("Введите пинкод", "", 4));
@@ -4095,7 +4114,11 @@ menuList.showAtmMenu = async function() {
         }
         else if (item.eventName == 'server:bank:transferMoney') {
             let bankNumber = methods.parseInt(await UIMenu.Menu.GetUserInput("Номер карты", "", 16));
+            if (bankNumber < 9999)
+                return;
             let money = methods.parseFloat(await UIMenu.Menu.GetUserInput("Сумма перевода", "", 9));
+            if (money < 0)
+                return;
             mp.events.callRemote(item.eventName, bankNumber, money);
         }
         else if (item.eventName == 'server:bank:history') {
@@ -5150,7 +5173,7 @@ menuList.showRentBikeMenu = function(shopId, price = 2)
 
     let menu = UIMenu.Menu.Create("Аренда", "~b~Аренда");
 
-    if (user.getCache('online_time') <= 370)
+    if (user.getCache('online_time') <= 169)
         price = 2;
 
     let saleLabel = '';
@@ -6606,8 +6629,6 @@ menuList.showLscMenu = function(shopId, price = 1)
 
             if (item.doName == 'repair')
                 mp.events.callRemote('server:lsc:repair', shopId, item.price);
-            if (item.doName == 'sellCar')
-                mp.events.callRemote('server:lsc:sellCar');
 
             if (veh.getVariable('user_id') > 0 || user.isAdmin()) {
                 if (item.doName == 'setTunning')
@@ -8181,7 +8202,7 @@ menuList.showEmsArsenalMenu = function() {
 
     UIMenu.Menu.AddMenuItem("Сухпаёк").itemId = 32;
     UIMenu.Menu.AddMenuItem("Антипохмелин").itemId = 221;
-    UIMenu.Menu.AddMenuItem("Спец. Аптечка").itemId = 278;
+    UIMenu.Menu.AddMenuItem("Большая Аптечка").itemId = 278;
     UIMenu.Menu.AddMenuItem("Дефибриллятор").itemId = 277;
     UIMenu.Menu.AddMenuItem("Полицейское огорождение").itemId = 199;
     UIMenu.Menu.AddMenuItem("Полосатый конус").itemId = 201;
@@ -8245,7 +8266,7 @@ menuList.showSheriffArsenalMenu = function() {
     let menu = UIMenu.Menu.Create(`Арсенал`, `~b~Арсенал`);
 
     UIMenu.Menu.AddMenuItem("Сухпаёк").itemId = 32;
-    UIMenu.Menu.AddMenuItem("Спец. Аптечка").itemId = 278;
+    UIMenu.Menu.AddMenuItem("Большая Аптечка").itemId = 278;
     UIMenu.Menu.AddMenuItem("Полицейское огорождение").itemId = 199;
     UIMenu.Menu.AddMenuItem("Полосатый конус").itemId = 201;
     UIMenu.Menu.AddMenuItem("Красный конус").itemId = 202;
@@ -8552,7 +8573,7 @@ menuList.showSapdArsenalMenu = function() {
     let menu = UIMenu.Menu.Create(`Арсенал`, `~b~Арсенал`);
 
     UIMenu.Menu.AddMenuItem("Сухпаёк").itemId = 32;
-    UIMenu.Menu.AddMenuItem("Спец. Аптечка").itemId = 278;
+    UIMenu.Menu.AddMenuItem("Большая Аптечка").itemId = 278;
     UIMenu.Menu.AddMenuItem("Полицейское огорождение").itemId = 199;
     UIMenu.Menu.AddMenuItem("Полосатый конус").itemId = 201;
     UIMenu.Menu.AddMenuItem("Красный конус").itemId = 202;
@@ -8867,8 +8888,9 @@ menuList.showAdminMenu = function() {
                 UIMenu.Menu.AddMenuItem("Режим No Clip").doName = 'noClip';
             if (user.isAdmin(2))
                 UIMenu.Menu.AddMenuItem("Режим GodMode").doName = 'godMode';
-            if (user.isAdmin(2))
-                UIMenu.Menu.AddMenuItem("Режим невидимки").doName = 'invise';
+
+            UIMenu.Menu.AddMenuItem("Режим невидимки").doName = 'invise';
+
             if (user.isAdmin(3))
                 UIMenu.Menu.AddMenuItem("Выбор одежды").doName = 'clothMenu';
             if (user.isAdmin(2))
@@ -8969,10 +8991,10 @@ menuList.showAdminPlayerMenu = function() {
         UIMenu.Menu.AddMenuItemList("Лидер организации", ["None", "Gov", "LSPD", "FIB", "USMC", "BCSD", "EMS", "News"]).doName = 'giveLeader';
 
     UIMenu.Menu.AddMenuItem("Посадить в тюрьму").doName = 'jail';
-    UIMenu.Menu.AddMenuItem("Кикнуть").doName = 'kick';
 
     if (user.isAdmin(2))
     {
+        UIMenu.Menu.AddMenuItem("Кикнуть").doName = 'kick';
         UIMenu.Menu.AddMenuItemList("~y~Забанить", ['1h', '6h', '12h', '1d', '3d', '7d', '14d', '30d', '60d', '90d', 'Permanent']).doName = 'ban';
         UIMenu.Menu.AddMenuItem("~y~Разбанить").doName = 'unban';
     }
@@ -9066,6 +9088,15 @@ menuList.showAdminVehicleMenu = function() {
     UIMenu.Menu.AddMenuItem("Зареспавнить ближайший транспорт").doName = 'respvehicle';
     UIMenu.Menu.AddMenuItem("Перевернуть ближайший транспорт").doName = 'flipVehicle';
 
+    if (user.isAdmin(5)) {
+        if (mp.players.local.vehicle) {
+            let vInfo = methods.getVehicleInfo(mp.players.local.vehicle.model);
+            UIMenu.Menu.AddMenuItem(`Макс. скорость ~g~${vehicles.getSpeedMax(mp.players.local.vehicle.model)}km/h`).doName = 'vehicleSpeedMax';
+            UIMenu.Menu.AddMenuItem(`Состояние буста ~g~${vInfo.sb}ед.`).doName = 'vehicleSpeedBoost';
+            UIMenu.Menu.AddMenuItem(`Стоимость ~g~${methods.moneyFormat(vInfo.price)}`);
+        }
+    }
+
     UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = 'close';
 
     let listIndex = 0;
@@ -9086,6 +9117,28 @@ menuList.showAdminVehicleMenu = function() {
                 return;
             //methods.saveLog('AdminSpawnVehicle', `${user.getCache('rp_name')} - ${vName}`);
             mp.events.callRemote('server:admin:spawnVeh', vName);
+        }
+        if (item.doName === 'vehicleSpeedMax') {
+            let vInfo = methods.getVehicleInfo(mp.players.local.vehicle.model);
+
+            let num = methods.parseInt(await UIMenu.Menu.GetUserInput("Значение", "", 5));
+            mp.events.callRemote('server:admin:vehicleSpeedMax', vInfo.display_name, num);
+
+            vInfo.sm = num;
+            methods.setVehicleInfo(mp.players.local.vehicle.model, vInfo);
+
+            menuList.showAdminVehicleMenu();
+        }
+        if (item.doName === 'vehicleSpeedBoost') {
+            let vInfo = methods.getVehicleInfo(mp.players.local.vehicle.model);
+
+            let num = methods.parseInt(await UIMenu.Menu.GetUserInput("Значение", "", 5));
+            mp.events.callRemote('server:admin:vehicleSpeedBoost', vInfo.display_name, num);
+
+            vInfo.sb = num;
+            methods.setVehicleInfo(mp.players.local.vehicle.model, vInfo);
+
+            menuList.showAdminVehicleMenu();
         }
         if (item.doName == 'fixvehicle') {
             mp.events.callRemote('server:user:fixNearestVehicle');

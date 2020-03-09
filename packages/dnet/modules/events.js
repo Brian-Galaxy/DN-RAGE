@@ -170,7 +170,9 @@ mp.events.addRemoteCounted('server:user:respawn', (player, x, y, z) => {
         return;
     user.setHealth(player, 100);
     player.spawn(new mp.Vector3(x, y, z));
-    user.stopAnimation(player);
+    setTimeout(function () {
+        user.stopAnimation(player);
+    }, 500);
 });
 
 mp.events.addRemoteCounted('server:user:createAccount', (player, login, password, email) => {
@@ -1143,7 +1145,7 @@ mp.events.addRemoteCounted('server:user:inCarById', (player, targetId) => {
             }
             let v = methods.getNearestVehicleWithCoords(player.position, 7);
             if (v && mp.vehicles.exists(v)) {
-                pl.putIntoVehicle(v, 0);
+                user.putInVehicle(pl, v, 0);
                 player.notify('~g~Вы затащили человека в транспорт');
                 pl.notify('~r~Вас затащили в транспорт');
             } else {
@@ -1393,7 +1395,27 @@ mp.events.addRemoteCounted('server:sendAnswerReport', (player, id, msg) => {
 mp.events.addRemoteCounted('server:admin:spawnVeh', (player, vName) => {
     try {
         let v = vehicles.spawnCar(player.position, player.heading, vName);
-        player.putIntoVehicle(v, -1);
+        user.putInVehicle(player, v, -1);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.addRemoteCounted('server:admin:vehicleSpeedBoost', (player, vName, num) => {
+    try {
+
+        mysql.executeQuery(`UPDATE veh_info SET sb = '${num}' WHERE display_name = '${vName}'`);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.addRemoteCounted('server:admin:vehicleSpeedMax', (player, vName, num) => {
+    try {
+
+        mysql.executeQuery(`UPDATE veh_info SET sm = '${num}' WHERE display_name = '${vName}'`);
     }
     catch (e) {
         methods.debug(e);
@@ -1938,6 +1960,12 @@ mp.events.addRemoteCounted('server:gr6:unload', (player, vId) => {
         mp.vehicles.forEach(function (v) {
             try {
                 if (vehicles.exists(v) && v.id == vId) {
+
+                    if (methods.parseInt(v.getVariable('gr6Money')) <= 1) {
+                        player.notify('~r~В машине нет средств');
+                        return;
+                    }
+
                     let money = methods.parseFloat(v.getVariable('gr6Money') / 100);
                     let countOcc = v.getOccupants().length;
 
@@ -2048,7 +2076,7 @@ mp.events.addRemoteCounted('server:vehicles:spawnJobCar', (player, x, y, z, head
             vehicles.spawnJobCar(veh => {
                 if (!vehicles.exists(veh))
                     return;
-                player.putIntoVehicle(veh, -1);
+                user.putInVehicle(player, veh, -1);
                 vehicles.set(veh.getVariable('container'), 'owner_id', user.getId(player));
                 veh.setVariable('owner_id', user.getId(player));
                 veh.setVariable('job', job);
@@ -4223,7 +4251,7 @@ mp.events.addRemoteCounted('server:user:newRank', (player, id, rank) => {
     let target = user.getPlayerById(id);
     if (user.isLogin(target)) {
 
-        user.addHistory(target, 0, 'Была выдана новая должность ' + rankName + '. Выдал: ' + user.getRpName(player));
+        user.addHistory(target, 0, 'Была выдана новая должность. Выдал: ' + user.getRpName(player));
 
         user.set(target, 'rank', rank);
 
@@ -4474,7 +4502,7 @@ mp.events.addRemoteCounted('server:sellVeh', (player) => {
         if (!user.isLogin(player))
             return;
         user.hideLoadDisplay(player);
-        player.notify('~g~Вы заработали: ~s~' + methods.numberFormat(money) + 'ec');
+        player.notify('~g~Вы заработали: ~s~' + methods.numberFormat(money / 1000) + 'ec');
         if (!vehicles.exists(veh))
             return;
         vehicles.respawn(veh);
@@ -5436,7 +5464,7 @@ mp.events.addRemoteCounted("server:activatePromocode", (player, promocode) => {
                     mysql.executeQuery(`SELECT * FROM promocode_top_list WHERE promocode = '${promocode}' AND is_use = 0 LIMIT 1`, function (err, rows, fields) {
                         if (rows.length >= 1) {
                             if (user.get(player, 'promocode') === '') {
-                                if (user.get(player, 'online_time') < 339) {
+                                if (user.get(player, 'online_time') < 169) {
 
                                     let paramsStart = JSON.parse(rows[0]["start"]);
 
@@ -5467,7 +5495,7 @@ mp.events.addRemoteCounted("server:activatePromocode", (player, promocode) => {
                                     mysql.executeQuery(`UPDATE users SET money_donate = money_donate + '2' WHERE parthner_promocode = '${user.get(player, 'promocode')}'`);
                                     return;
                                 }
-                                player.notify("~r~Вы отыграли более 48 часов, промокод не доступен");
+                                player.notify("~r~Вы отыграли более 24 часа, промокод не доступен");
                                 return;
                             }
                             player.notify("~r~Вы уже активировали этот промокод");

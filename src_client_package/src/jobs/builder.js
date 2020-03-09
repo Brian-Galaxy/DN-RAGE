@@ -666,6 +666,10 @@ builder.stop = function() {
         }
     });
     checkpointList = [];
+
+    if (!isProcess)
+        return;
+
     isProcess = false;
 
     if (count == 0) {

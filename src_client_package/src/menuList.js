@@ -801,6 +801,58 @@ menuList.showMazeOfficeTeleportMenu = function() {
     });
 };
 
+menuList.showBuilder3TeleportMenu = function() {
+
+    if (methods.isBlackout()) {
+        mp.game.ui.notifications.show(`~r~В городе отсутствует свет`);
+        return;
+    }
+
+    let menu = UIMenu.Menu.Create(`Лифт`, `~b~Лифт`);
+
+    let Builder3Pos1 = new mp.Vector3(-158.1335, -940.4475, 29.07765);
+    let Builder3Pos2 = new mp.Vector3(-158.1225, -940.4036, 113.3513);
+    let Builder3Pos3 = new mp.Vector3(-158.0644, -940.4244, 268.2277);
+
+    UIMenu.Menu.AddMenuItem("1 уровень").teleportPos = Builder3Pos1;
+    UIMenu.Menu.AddMenuItem("1 уровень").teleportPos = Builder3Pos2;
+    UIMenu.Menu.AddMenuItem("3 уровень").teleportPos = Builder3Pos3;
+
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+    menu.ItemSelect.on((item, index) => {
+        UIMenu.Menu.HideMenu();
+        if (item == closeItem)
+            return;
+        user.teleportv(item.teleportPos);
+    });
+};
+
+menuList.showBuilder4TeleportMenu = function() {
+
+    if (methods.isBlackout()) {
+        mp.game.ui.notifications.show(`~r~В городе отсутствует свет`);
+        return;
+    }
+
+    let menu = UIMenu.Menu.Create(`Лифт`, `~b~Лифт`);
+
+    let Builder4Pos1 = new mp.Vector3(-159.4984, -944.1298, 29.07765);
+    let Builder4Pos2 = new mp.Vector3(-159.3199, -944.1606, 113.3277);
+    let Builder4Pos3 = new mp.Vector3(-159.5894, -944.1558, 268.2277);
+
+    UIMenu.Menu.AddMenuItem("1 уровень").teleportPos = Builder4Pos1;
+    UIMenu.Menu.AddMenuItem("1 уровень").teleportPos = Builder4Pos2;
+    UIMenu.Menu.AddMenuItem("3 уровень").teleportPos = Builder4Pos3;
+
+    let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+    menu.ItemSelect.on((item, index) => {
+        UIMenu.Menu.HideMenu();
+        if (item == closeItem)
+            return;
+        user.teleportv(item.teleportPos);
+    });
+};
+
 menuList.showCasinoLiftTeleportMenu = function() {
 
     if (methods.isBlackout()) {
@@ -1545,7 +1597,7 @@ menuList.showBusinessSettingsMenu = async function(data) {
                 return;
             }
 
-            business.set(data.get('id'), 'interior', alphaIndex);
+            business.set(data.get('id'), 'interior', intIndex);
             coffer.addMoney(1, price);
             business.removeMoney(data.get('id'), price, 'Обновление интерьера');
             business.save(data.get('id'));
@@ -9094,6 +9146,8 @@ menuList.showAdminVehicleMenu = function() {
             UIMenu.Menu.AddMenuItem(`Макс. скорость ~g~${vehicles.getSpeedMax(mp.players.local.vehicle.model)}km/h`).doName = 'vehicleSpeedMax';
             UIMenu.Menu.AddMenuItem(`Состояние буста ~g~${vInfo.sb}ед.`).doName = 'vehicleSpeedBoost';
             UIMenu.Menu.AddMenuItem(`Стоимость ~g~${methods.moneyFormat(vInfo.price)}`);
+            UIMenu.Menu.AddMenuItem(`~b~Добавить на авторынок`).doName = 'vehicleAdd';
+            UIMenu.Menu.AddMenuItem(`~b~Добавить на авторынок орг.`).doName = 'vehicleAddFraction';
         }
     }
 
@@ -9117,6 +9171,11 @@ menuList.showAdminVehicleMenu = function() {
                 return;
             //methods.saveLog('AdminSpawnVehicle', `${user.getCache('rp_name')} - ${vName}`);
             mp.events.callRemote('server:admin:spawnVeh', vName);
+        }
+        if (item.doName == 'vehicleAdd') {
+            let vInfo = methods.getVehicleInfo(mp.players.local.vehicle.model);
+            let count = methods.parseInt(await UIMenu.Menu.GetUserInput("Кол-во", "", 8));
+            mp.events.callRemote('server:vehicles:addNew', vInfo.display_name, count);
         }
         if (item.doName === 'vehicleSpeedMax') {
             let vInfo = methods.getVehicleInfo(mp.players.local.vehicle.model);
@@ -9244,8 +9303,6 @@ menuList.showAdminEventActivateMenu = function() {
 menuList.showAdminDevMenu = function() {
     let menu = UIMenu.Menu.Create(`ADMIN`, `~b~Админ меню`);
 
-    UIMenu.Menu.AddMenuItem("AddCar").doName = 'addCar';
-
     UIMenu.Menu.AddMenuItem("Debug").doName = 'debug';
     UIMenu.Menu.AddMenuItem("Debug2").doName = 'debug2';
     UIMenu.Menu.AddMenuItem("КоордыVeh").doName = 'server:user:getVehPos';
@@ -9266,11 +9323,6 @@ menuList.showAdminDevMenu = function() {
     menu.ItemSelect.on(async item => {
         if (item.doName == 'debug') {
             menuList.showAdminDebugMenu();
-        }
-        if (item.doName == 'addCar') {
-            let name = await UIMenu.Menu.GetUserInput("Кол-во", "", 30);
-            let count = methods.parseInt(await UIMenu.Menu.GetUserInput("Кол-во", "", 8));
-            mp.events.callRemote('server:vehicles:addNew', name, count);
         }
         if (item.doName == 'debug2') {
             menuList.showAdminDebug2Menu();

@@ -196,13 +196,20 @@ ui.updateValues = function() {
     //return; //TODO ВАЖНО
     if (user.isLogin()) {
         try {
+
+            let isGreenZone = false;
+            enums.zoneGreenList.forEach(item => {
+                if (methods.isInPoint(mp.players.local.position, [item[0], item[1], item[2], item[2]]))
+                    isGreenZone = true;
+            });
+
             let data = {
                 type: 'updateValues',
                 isShow: user.getCache("is_clock"),
                 temp: weather.getWeatherTempFormat(),
                 date: weather.getFullRpDate(),
                 time: weather.getFullRpTime(),
-                showGreen: false,
+                showGreen: isGreenZone,
                 showYellow: weather.getHour() >= 6 && weather.getHour() < 22 && enums.zoneYellowList.indexOf(mp.game.zone.getNameOfZone(mp.players.local.position.x, mp.players.local.position.y, mp.players.local.position.z)) >= 0,
                 background: user.getCache('s_hud_bg'),
             };

@@ -1620,7 +1620,7 @@ mp.events.add("render", () => {
 
         cameraRotator.setPoint(x, y);
 
-        if (mp.game.controls.isDisabledControlPressed(2, 237)) {
+        if (mp.game.controls.isDisabledControlPressed(2, 238)) {
             cameraRotator.onMouseMove(dX, dY);
         }
 

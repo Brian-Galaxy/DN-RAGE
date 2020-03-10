@@ -5673,6 +5673,7 @@ mp.events.add('playerQuit', player => {
         }
         try {
             if (user.isTie(player)) {
+                user.addHistory(player, 1, 'Был посажен в тюрьму');
                 user.set(player, 'jail_time', 120 * 60);
                 user.set(player, 'wanted_level', 0);
                 chat.sendToAll('Anti-Cheat System', `${user.getRpName(player)} (${user.getId(player)})!{${chat.clRed}} был посажен в тюрьму с причиной:!{${chat.clWhite}} выход из игры во время похищения`, chat.clRed);

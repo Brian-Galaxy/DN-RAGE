@@ -1429,6 +1429,16 @@ mp.events.add('client:menuList:showMazeOfficeTeleportMenu', () => {
     menuList.showMazeOfficeTeleportMenu();
 });
 
+mp.events.add('client:menuList:showBuilder3TeleportMenu', () => {
+    methods.debug('Event: client:menuList:showBuilder3TeleportMenu');
+    menuList.showBuilder3TeleportMenu();
+});
+
+mp.events.add('client:menuList:showBuilder4TeleportMenu', () => {
+    methods.debug('Event: client:menuList:showBuilder4TeleportMenu');
+    menuList.showBuilder4TeleportMenu();
+});
+
 mp.events.add('client:menuList:showCasinoLiftTeleportMenu', () => {
     methods.debug('Event: client:menuList:showCasinoLiftTeleportMenu');
     menuList.showCasinoLiftTeleportMenu();

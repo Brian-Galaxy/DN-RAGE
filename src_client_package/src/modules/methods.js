@@ -910,8 +910,35 @@ methods.sortBy = function (arr, p) {
     });
 };
 
-methods.isInPoint = function (p1, p2, p3, p4, p5) {
-    return Math.min(p1.x, p2.x) < p5.x && Math.max(p3.x, p4.x) > p5.x && Math.min(p1.y, p4.y) < p5.y && Math.max(p2.y, p3.y) > p5.y;
+/*methods.isInPoint = function (p1, p2, p3, p4, point) {
+    return Math.min(p1.x, p2.x) < point.x && Math.max(p3.x, p4.x) > point.x && Math.min(p1.y, p4.y) < point.y && Math.max(p2.y, p3.y) > point.y;
+};*/
+
+methods.isInPoint = function (p, polygon) {
+    let isInside = false;
+    let minX = polygon[0].x, maxX = polygon[0].x;
+    let minY = polygon[0].y, maxY = polygon[0].y;
+    for (let n = 1; n < polygon.length; n++) {
+        let q = polygon[n];
+        minX = Math.min(q.x, minX);
+        maxX = Math.max(q.x, maxX);
+        minY = Math.min(q.y, minY);
+        maxY = Math.max(q.y, maxY);
+    }
+
+    if (p.x < minX || p.x > maxX || p.y < minY || p.y > maxY) {
+        return false;
+    }
+
+    let i = 0, j = polygon.length - 1;
+    for (i, j; i < polygon.length; j = i++) {
+        if ( (polygon[i].y > p.y) != (polygon[j].y > p.y) &&
+            p.x < (polygon[j].x - polygon[i].x) * (p.y - polygon[i].y) / (polygon[j].y - polygon[i].y) + polygon[i].x ) {
+            isInside = !isInside;
+        }
+    }
+
+    return isInside;
 };
 
 let isBlackout = false;

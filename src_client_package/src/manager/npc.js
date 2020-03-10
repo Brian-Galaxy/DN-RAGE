@@ -153,15 +153,15 @@ npc.loadAll = function() {
 // Vespucci Movie Masks - Веспуччи-бич - Витус-стрит
     npc.create(mp.game.joaat("s_m_y_shop_mask"), new mp.Vector3(-1334.673, -1276.343, 4.963552), 142.5475, false, "WORLD_HUMAN_STAND_IMPATIENT");
 // Beekers Garage - Палето-Бэй - Бульвар Палето
-    npc.create(mp.game.joaat("s_m_m_autoshop_01"), new mp.Vector3(106.3625, 6628.315, 31.78724), -108.3491, false, "WORLD_HUMAN_CLIPBOARD");
+    npc.create(mp.game.joaat("s_m_m_autoshop_02"), new mp.Vector3(106.3625, 6628.315, 31.78724), -108.3491, false, "WORLD_HUMAN_CLIPBOARD");
 // Los Santos Customs Senora - Пустыня-Гранд-Сенора - Шоссе 68
     npc.create(mp.game.joaat("s_m_m_autoshop_01"), new mp.Vector3(1178.711, 2639.02, 37.7538), 64.71403, false, "WORLD_HUMAN_CLIPBOARD");
 // Los Santos Customs Burton - Бертон - Карсер-вэй
-    npc.create(mp.game.joaat("s_m_m_autoshop_01"), new mp.Vector3(-345.0504, -129.6553, 39.00965), -149.6841, false, "WORLD_HUMAN_CLIPBOARD");
+    npc.create(mp.game.joaat("s_m_m_autoshop_02"), new mp.Vector3(-345.0504, -129.6553, 39.00965), -149.6841, false, "WORLD_HUMAN_CLIPBOARD");
 // Los Santos Customs La Mesa - Ла-Меса - Шоссе-Олимпик
     npc.create(mp.game.joaat("s_m_m_autoshop_01"), new mp.Vector3(737.2117, -1083.939, 22.16883), 97.4564, false, "WORLD_HUMAN_CLIPBOARD");
 // Hayes Autos - Строберри - Литл-Бигхорн-авеню
-    npc.create(mp.game.joaat("s_m_m_autoshop_01"), new mp.Vector3(471.7564, -1310.021, 29.22494), -128.6412, false, "WORLD_HUMAN_CLIPBOARD");
+    npc.create(mp.game.joaat("s_m_m_autoshop_02"), new mp.Vector3(471.7564, -1310.021, 29.22494), -128.6412, false, "WORLD_HUMAN_CLIPBOARD");
 // Bennys Original Motor Works - Строберри - Альта-стрит
     npc.create(mp.game.joaat("ig_benny"), new mp.Vector3(-216.5449, -1320.012, 30.89039), -97.54453, false, "WORLD_HUMAN_CLIPBOARD");
 // Los Santos Customs LSIA - Международный аэропорт Лос-Сантос - Гринвич-Парквэй
@@ -236,6 +236,19 @@ npc.loadAll = function() {
     npc.create(mp.game.joaat("a_f_y_business_01"), new mp.Vector3(254.011, 222.395, 106.2868), 172.9996, false, "WORLD_HUMAN_STAND_IMPATIENT");
 // Maze Bank
     npc.create(mp.game.joaat("a_f_y_business_04"), new mp.Vector3(-72.27431, -814.5317, 243.3859), 162.9991, false, "WORLD_HUMAN_STAND_IMPATIENT");
+
+// Работодатель на Садовнике
+    npc.create(mp.game.joaat("s_m_m_gardener_01"), new mp.Vector3(-1585.051, -234.8312, 54.33006), 43.62775, false, "WORLD_HUMAN_CLIPBOARD");
+// Работодатель на Разнорабочем
+    npc.create(mp.game.joaat("s_m_y_construct_02"), new mp.Vector3(-1159.267, -739.1121, 19.88993), -171.2985, false, "WORLD_HUMAN_CLIPBOARD");
+// Работодатель на Фотографе LifeInvader
+    npc.create(mp.game.joaat("a_m_m_prolhost_01"), new mp.Vector3(-1075.676, -246.3934, 37.76327), 147.1302, false, "WORLD_HUMAN_CLIPBOARD");
+// Работодатель на Почте GoPostal
+    npc.create(mp.game.joaat("s_m_m_janitor"), new mp.Vector3(136.4377, 92.83617, 83.5126), 40.21272, false, "WORLD_HUMAN_CLIPBOARD");
+// Работодатель на Автобусной станции
+    npc.create(mp.game.joaat("ig_jimmyboston"), new mp.Vector3(454.2171, -596.1467, 28.53182), -36.12801, false, "WORLD_HUMAN_CLIPBOARD");
+// Работодатель на Инкассаторе
+    npc.create(mp.game.joaat("ig_casey"), new mp.Vector3(3.112391, -660.4219, 33.4508), -49.89936, false, "WORLD_HUMAN_CLIPBOARD");
 
 //Церковь
     npc.create(mp.game.joaat("ig_priest"), new mp.Vector3(-787.1298828125, -708.8898315429688, 30.32028579711914), 265.47149658203125);

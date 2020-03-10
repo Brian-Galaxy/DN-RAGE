@@ -129,6 +129,7 @@ inventory.equip = function(player, id, itemId, count, aparams) {
                 ['EQUIP', `id:${id}, itemId:${itemId}, count:${count}, params:${aparams}`],
             );
 
+            inventory.deleteItemByUsers(id);
             inventory.deleteDropItem(id);
             inventory.updateOwnerId(id, user.getId(player), inventory.types.Player);
 
@@ -582,6 +583,14 @@ inventory.deleteItem = function(id) {
     try {
         mysql.executeQuery(`DELETE FROM items WHERE id = ${id}`);
         inventory.deleteDropItem(id);
+        inventory.deleteItemByUsers(id);
+    } catch(e) {
+        methods.debug(e);
+    }
+};
+
+inventory.deleteItemByUsers = function(id) {
+    try {
         let data = JSON.stringify({type: 'deleteItemById', id: id});
         mp.players.forEach(p => {
             if (user.isLogin(p))

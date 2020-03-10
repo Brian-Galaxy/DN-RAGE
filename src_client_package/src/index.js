@@ -90,25 +90,9 @@ try {
     if(!mp.game.streaming.isIplActive("int_magazel1_milo_"))
     {
         user.showCustomNotify('Идёт прогрузка интерьеров и маппинга, возможно игра подвиснет на несколько секунд...', 0, 1000);
-
-        /*let interval = null; //TODO переделать
         setTimeout(function () {
-            setInterval(function () {
-                try {
-                    if (!mp.game.streaming.isIplActive("ex_sm_15_office_01a"))
-                        methods.requestIpls();
-                    else
-                        clearInterval(interval);
-                }
-                catch (e) {
-                    methods.debug(e);
-                }
-            }, 1000);
-        }, 60000);*/
-
-        setTimeout(function () {
-           /* mp.game.invoke("0xD7C10C4A637992C9"); // _LOAD_SP_DLC_MAPS
-            mp.game.invoke("0x0888C3502DBBEEF5"); // _LOAD_MP_DLC_MAPS*/
+            mp.game.invoke("0xD7C10C4A637992C9"); // _LOAD_SP_DLC_MAPS
+            mp.game.invoke("0x0888C3502DBBEEF5"); // _LOAD_MP_DLC_MAPS
 
             //mp.game.invoke("0xD7C10C4A637992C9"); mp.game.invoke("0x0888C3502DBBEEF5"); // _LOAD_MP_DLC_MAPS
         }, 1000);
@@ -125,9 +109,3 @@ catch (e) {
     methods.debug('ERROR INIT CLIENT', e);
     methods.debug('ERROR INIT CLIENT', e);
 }
-
-/*mp.events.add('guiReady', () => {
-    mp.events.add('browserDomReady', (browser) => {
-        //mp.events.callRemote("playerJoined");
-    });
-});*/

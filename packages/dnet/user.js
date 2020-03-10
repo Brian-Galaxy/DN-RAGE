@@ -23,8 +23,8 @@ user.createAccount = function(player, login, pass, email) {
     if (!mp.players.exists(player))
         return;
 
-    //user.showCustomNotify(player, 'Регистрация аккаунтов запрещена', 1);
-    //return;
+    user.showCustomNotify(player, 'Регистрация аккаунтов запрещена', 1);
+    return;
 
     user.doesExistAccount(login, email, player.socialClub, function (cb) {
 

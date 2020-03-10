@@ -263,6 +263,9 @@ timer.tenSecTimer = function() {
 
     mp.events.call('client:vehicle:checker');
 
+    if (!mp.game.streaming.isIplActive("ex_sm_15_office_03b"))
+        methods.requestIpls();
+
     if (allModelLoader) {
         try {
             mp.game.invoke("0xBD6E84632DD4CB3F");
@@ -500,12 +503,42 @@ timer.secTimer = function() {
 };
 
 timer.loadAll = function () {
-    timer.min15Timer();
-    timer.twoMinTimer();
-    timer.twoSecTimer();
-    timer.tenSecTimer();
-    timer.ms50Timer();
-    timer.secTimer();
+    try {
+        timer.min15Timer();
+    }
+    catch (e) {
+        
+    }
+    try {
+        timer.twoMinTimer();
+    }
+    catch (e) {
+        
+    }
+    try {
+        timer.twoSecTimer();
+    }
+    catch (e) {
+        
+    }
+    try {
+        timer.tenSecTimer();
+    }
+    catch (e) {
+        
+    }
+    try {
+        timer.ms50Timer();
+    }
+    catch (e) {
+        
+    }
+    try {
+        timer.secTimer();
+    }
+    catch (e) {
+        
+    }
 };
 
 timer.isFleecaAtm = function () {

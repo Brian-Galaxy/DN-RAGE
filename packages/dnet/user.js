@@ -23,8 +23,10 @@ user.createAccount = function(player, login, pass, email) {
     if (!mp.players.exists(player))
         return;
 
-    user.showCustomNotify(player, 'Регистрация аккаунтов запрещена', 1);
-    return;
+    if (!enums.whiteList.includes(player.socialClub)) {
+        user.showCustomNotify(player, 'Регистрация аккаунтов запрещена', 1);
+        return;
+    }
 
     user.doesExistAccount(login, email, player.socialClub, function (cb) {
 
@@ -134,7 +136,7 @@ user.createUser = function(player, name, surname, age, promocode, referer, natio
                     user.loginUser(player, name + ' ' + surname);
                 }, 1000);
             } else {
-                user.showCustomNotify(player, 'Промокод не найден. Промокод можно ввести после регистрации в течении 48 часов через M - Настройки - Промокод', 1);
+                user.showCustomNotify(player, 'Промокод не найден. Промокод можно ввести после регистрации в течении 24 часов через M - Настройки - Промокод', 1);
             }
         });
     });

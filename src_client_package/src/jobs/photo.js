@@ -306,12 +306,12 @@ photo.workProcess = function() { //TODO
 
                 if (pointPos === playerPos) {
                     mp.game.ui.notifications.showWithPicture('Life Invader', "Начальник", `Отличный кадр, за него ты получишь премию!`, "CHAR_LIFEINVADER", 1);
-                    user.giveJobMoney(methods.getRandomInt(80, 100) + price);
+                    user.giveJobMoney(methods.getRandomInt(120, 150) + price);
                     user.addWorkExp(10);
                 }
                 else if (playerPos.indexOf(pointPos) >= 0 || pointPos.indexOf(playerPos) >= 0) {
                     mp.game.ui.notifications.showWithPicture('Life Invader', "Начальник", `Не плохой кадр, но можно и лучше`, "CHAR_LIFEINVADER", 1);
-                    user.giveJobMoney(methods.getRandomInt(40, 60) + price);
+                    user.giveJobMoney(methods.getRandomInt(50, 80) + price);
                     user.addWorkExp(5);
                 }
                 else {

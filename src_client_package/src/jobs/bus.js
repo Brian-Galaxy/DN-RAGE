@@ -210,7 +210,7 @@ bus.nextCheckpoint = function() {
                         }
 
                         if (_currentId >= bus.markers1.length) {
-                            user.giveJobMoney(340);
+                            user.giveJobMoney(380);
                             user.giveJobSkill();
                             mp.game.ui.notifications.show('~g~Вы закончили свой рейс');
                             user.addRep(25);
@@ -235,7 +235,7 @@ bus.nextCheckpoint = function() {
                         }
 
                         if (_currentId >= bus.markers2.length) {
-                            user.giveJobMoney(120);
+                            user.giveJobMoney(200);
                             user.giveJobSkill();
                             mp.game.ui.notifications.show('~g~Вы закончили свой рейс');
                             user.addRep(5);
@@ -260,7 +260,7 @@ bus.nextCheckpoint = function() {
                         }
 
                         if (_currentId >= bus.markers3.length) {
-                            user.giveJobMoney(1500);
+                            user.giveJobMoney(1300);
                             user.giveJobSkill();
                             mp.game.ui.notifications.show('~g~Вы закончили свой рейс');
                             user.addRep(35);

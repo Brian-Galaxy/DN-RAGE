@@ -815,7 +815,7 @@ menuList.showBuilder3TeleportMenu = function() {
     let Builder3Pos3 = new mp.Vector3(-158.0644, -940.4244, 268.2277);
 
     UIMenu.Menu.AddMenuItem("1 уровень").teleportPos = Builder3Pos1;
-    UIMenu.Menu.AddMenuItem("1 уровень").teleportPos = Builder3Pos2;
+    UIMenu.Menu.AddMenuItem("2 уровень").teleportPos = Builder3Pos2;
     UIMenu.Menu.AddMenuItem("3 уровень").teleportPos = Builder3Pos3;
 
     let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
@@ -841,7 +841,7 @@ menuList.showBuilder4TeleportMenu = function() {
     let Builder4Pos3 = new mp.Vector3(-159.5894, -944.1558, 268.2277);
 
     UIMenu.Menu.AddMenuItem("1 уровень").teleportPos = Builder4Pos1;
-    UIMenu.Menu.AddMenuItem("1 уровень").teleportPos = Builder4Pos2;
+    UIMenu.Menu.AddMenuItem("2 уровень").teleportPos = Builder4Pos2;
     UIMenu.Menu.AddMenuItem("3 уровень").teleportPos = Builder4Pos3;
 
     let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
@@ -1946,12 +1946,12 @@ menuList.showMeriaJobListMenu = function() {
     UIMenu.Menu.AddMenuItem("Садовник").jobName = 1;
     UIMenu.Menu.AddMenuItem("Разнорабочий").jobName = 2;
 
-    UIMenu.Menu.AddMenuItem("Фотограф").jobName = 3;
-    UIMenu.Menu.AddMenuItem("Почтальон").jobName = 4;
-
     UIMenu.Menu.AddMenuItem("Водитель автобуса-1", "Городской автобус").jobName = 6;
     UIMenu.Menu.AddMenuItem("Водитель автобуса-2", "Трансферный автобус").jobName = 7;
     UIMenu.Menu.AddMenuItem("Водитель автобуса-3", "Рейсовый автобус").jobName = 8;
+
+    UIMenu.Menu.AddMenuItem("Фотограф").jobName = 3;
+    UIMenu.Menu.AddMenuItem("Почтальон").jobName = 4;
 
     UIMenu.Menu.AddMenuItem("Инкассатор").jobName = 10;
 
@@ -1989,12 +1989,12 @@ menuList.showMeriaJobListMenu = function() {
                 return;
             }
 
-            if ((item.jobName === 3 || item.jobName === 4) && user.getCache('work_lvl') < 2) {
+            if ((item.jobName === 6 || item.jobName === 7 || item.jobName === 8) && user.getCache('work_lvl') < 2) {
                 mp.game.ui.notifications.show("~r~Вам необходим 2 уровень рабочего стажа");
                 return;
             }
 
-            if ((item.jobName === 6 || item.jobName === 7 || item.jobName === 8) && user.getCache('work_lvl') < 3) {
+            if ((item.jobName === 3 || item.jobName === 4) && user.getCache('work_lvl') < 3) {
                 mp.game.ui.notifications.show("~r~Вам необходим 3 уровень рабочего стажа");
                 return;
             }
@@ -5375,6 +5375,13 @@ menuList.showShopClothMenu = function (shopId, type, menuType, price = 1) {
             UIMenu.Menu.AddMenuItem("Правая рука").doName = "rightHand";
             //UIMenu.Menu.AddMenuItem("~y~Ограбить").doName = 'grab';
 
+            if (type == 5) {
+                let menuItem = UIMenu.Menu.AddMenuItem("Бита", `Цена: ~g~$349.99`);
+                menuItem.price = 349.99;
+                menuItem.itemId = 55;
+                menuItem.itemName = "Бита";
+            }
+
             UIMenu.Menu.AddMenuItem('~b~Сумки и рюкзаки').doName = 'openBag';
 
         } else if (menuType == 1) {
@@ -5383,6 +5390,13 @@ menuList.showShopClothMenu = function (shopId, type, menuType, price = 1) {
             UIMenu.Menu.AddMenuItem("Торс").doName = "body";
             UIMenu.Menu.AddMenuItem("Ноги").doName = "legs";
             UIMenu.Menu.AddMenuItem("Обувь").doName = "shoes";
+
+            if (type == 5) {
+                let menuItem = UIMenu.Menu.AddMenuItem("Бита", `Цена: ~g~$349.99`);
+                menuItem.price = 349.99;
+                menuItem.itemId = 55;
+                menuItem.itemName = "Бита";
+            }
 
             UIMenu.Menu.AddMenuItem('~b~Сумки и рюкзаки').doName = 'openBag';
         } else {
@@ -5415,13 +5429,6 @@ menuList.showShopClothMenu = function (shopId, type, menuType, price = 1) {
 
                 cList.push(menuListItem);
             }
-        }
-
-        if (type == 5) {
-            let menuItem = UIMenu.Menu.AddMenuItem("Бита", `Цена: ~g~$349.99`);
-            menuItem.price = 349.99;
-            menuItem.itemId = 55;
-            menuItem.itemName = "Бита";
         }
 
         UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = "closeButton";

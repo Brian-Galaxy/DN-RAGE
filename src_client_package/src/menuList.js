@@ -6062,7 +6062,7 @@ menuList.showPrintShopMenu = function()
 
     let list = [];
 
-    let printList = JSON.parse(enums.printList);
+    let printList = JSON.parse(enums.tprint);
 
     for (let i = 0; i < printList.length; i++) {
 

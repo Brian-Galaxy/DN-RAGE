@@ -2408,6 +2408,10 @@ mp.events.addRemoteCounted('server:phone:inviteFraction2', (player, id) => {
             return;
         }
 
+        if (user.get(target, 'fraction_id') > 0) {
+            player.notify('~r~Игрок уже состоит в организации');
+            return;
+        }
         if (user.get(target, 'fraction_id2') > 0) {
             player.notify('~r~Игрок уже состоит в организации');
             return;

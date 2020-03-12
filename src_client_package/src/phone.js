@@ -583,6 +583,18 @@ phone.showAppEcorp= function() {
         };
         menu.items[0].umenu.push(item);
     }
+    if (user.getCache('fraction_id2') > 0 && user.isLeader2()) {
+        let item ={
+                title: "Перевести E-Coin",
+                text: 'Перевод E-Coin со счета вашей организации',
+                modalTitle: 'Сколько ₠ вы хотите перевести',
+                modalButton: ['Закрыть', 'Перевести'],
+                type: 8,
+                clickable: true,
+                params: {name: "fractionToCrypto"}
+        };
+        menu.items[0].umenu.push(item);
+    }
 
     if (user.getCache('quest_gang') > 4) {
         let item = {
@@ -2750,7 +2762,7 @@ phone.callBackModal = function(paramsJson) {
     }
 };
 
-phone.callBackModalInput = function(paramsJson, text) {
+phone.callBackModalInput = async function(paramsJson, text) {
     try {
         methods.debug(text);
         let params = JSON.parse(paramsJson);
@@ -2887,6 +2899,21 @@ phone.callBackModalInput = function(paramsJson, text) {
             }
             user.removeCryptoMoney(sum, 'Перевод E-Coin');
             fraction.addMoney(user.getCache('fraction_id2'), sum, 'Перевод E-Coin от ' + user.getCache('name'));
+
+            setTimeout(phone.showAppEcorp, 200);
+        }
+        if (params.name == 'fractionToCrypto') {
+            let sum = methods.parseFloat(text);
+            if (sum < 0) {
+                user.sendSmsBankOperation('Ошибка транзакции', 'Ошибка');
+                return;
+            }
+            if (sum > await fraction.getMoney(user.getCache('fraction_id2'))) {
+                user.sendSmsBankOperation('У Вас недостаточно средств', 'Ошибка');
+                return;
+            }
+            user.addCryptoMoney(sum, 'Перевод E-Coin');
+            fraction.removeMoney(user.getCache('fraction_id2'), sum, 'Перевод из E-Coin от ' + user.getCache('name'));
 
             setTimeout(phone.showAppEcorp, 200);
         }

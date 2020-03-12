@@ -23,7 +23,7 @@ enums.repList = [
 ];
 
 enums.whiteList = [
-    "tripledu", "LockeStone", "yadedinside", "Rodjer011", "MoLoYKUN", "sntnt4", "ArtStepy", "Tony_Morreti", "BlackPrima", "Maraboou", "saivori", "WHAREISMAZ", "Asselom", "Annhax", "lForeverAlone", "-Patrakeev-", "stiv15", "ArtStepy", "Lendstoun"
+    "TripleDu", "LockeStone", "yadedinside", "Rodjer011", "MaLoYKUN", "sntnt4", "ArtStepy", "Tony_Morreti", "BlackPrima", "Maraboou", "saivori", "WHAREISMAZ", "Asselom", "Annhax", "lForeverAlone", "-Patrakeev-", "stiv15", "ArtStepy", "VIVA_DISEDES", "m0rpeh", "m7Name", "Piligrimius", "ElusiveMen", "JohnLeeYT", ".Slip.", "Mikzu1337"
 ];
 
 enums.userData = [

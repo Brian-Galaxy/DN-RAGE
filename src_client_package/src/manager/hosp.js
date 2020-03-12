@@ -132,15 +132,6 @@ hosp.toHosp = function() {
             }
         }
 
-        if (user.getCache('med_lic')) {
-            prvTime = 200;
-            user.set('med_time', 200);
-        }
-        else {
-            prvTime = 500;
-            user.set('med_time', 500);
-        }
-
         mp.events.callRemote('playerDeathDone');
 
         user.setGrabMoney(0);
@@ -151,6 +142,22 @@ hosp.toHosp = function() {
         mp.game.ui.displayRadar(true);
         mp.game.ui.displayHud(true);
         mp.players.local.freezePosition(false);
+
+        if (user.getCache('jail_timer') > 0) {
+            user.set('med_time', 0);
+            prvTime = 0;
+            jail.toJail(user.getCache('jail_timer'));
+            return;
+        }
+
+        if (user.getCache('med_lic')) {
+            prvTime = 200;
+            user.set('med_time', 200);
+        }
+        else {
+            prvTime = 500;
+            user.set('med_time', 500);
+        }
 
         setTimeout(function () {
             user.hideLoadDisplay();

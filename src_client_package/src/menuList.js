@@ -1999,7 +1999,7 @@ menuList.showMeriaJobListMenu = function() {
                 return;
             }
 
-            if (item.jobName === 10 && user.getCache('work_lvl') < 4 && user.getCache('gun_lic')) {
+            if (item.jobName === 10 && user.getCache('work_lvl') < 4 && !user.getCache('gun_lic')) {
                 mp.game.ui.notifications.show("~r~Вам необходим 4 уровень рабочего стажа и лицензия на ношение оружия");
                 return;
             }
@@ -3633,8 +3633,8 @@ menuList.showSpawnJobGr6Menu = function() {
     menu.ItemSelect.on(async (item, index) => {
         UIMenu.Menu.HideMenu();
         if (item.doName == 'startDuty') {
-            if (user.getCashMoney() < 3000) {
-                mp.game.ui.notifications.show("~r~У Вас нет на руках $500");
+            if (!user.getCache('gun_lic')) {
+                mp.game.ui.notifications.show("~r~У Вас нет лицензии на оружие");
                 return;
             }
 
@@ -3644,6 +3644,12 @@ menuList.showSpawnJobGr6Menu = function() {
             mp.game.ui.notifications.show("~g~Вы вышли на дежурство");
         }
         if (item.doName == 'getMore0') {
+
+            if (!user.getCache('gun_lic')) {
+                mp.game.ui.notifications.show("~r~У Вас нет лицензии на оружие");
+                return;
+            }
+
             if (user.getCashMoney() < 3000) {
                 mp.game.ui.notifications.show("~r~У Вас нет на руках $3000");
                 return;
@@ -6252,7 +6258,7 @@ menuList.showTattooShopShortMenu = function(title1, title2, zone, shopId, price)
                 methods.debug(e);
             }
             if (prizes.some(a => array.every((v, i) => v === a[i]))) {
-                let menuListItem = UIMenu.Menu.AddMenuItem(tattooList[i][0], `Свести тату\nЦена: ~g~$${methods.moneyFormat(price / 2)}`);
+                let menuListItem = UIMenu.Menu.AddMenuItem(tattooList[i][0], `Свести тату\nЦена: ~g~${methods.moneyFormat(price / 2)}`);
                 menuListItem.doName = 'destroy';
                 menuListItem.price = price / 2;
                 menuListItem.tatto0 = tattooList[i][0];
@@ -6265,7 +6271,7 @@ menuList.showTattooShopShortMenu = function(title1, title2, zone, shopId, price)
                 list.push(menuListItem);
             }
             else {
-                let menuListItem = UIMenu.Menu.AddMenuItem(tattooList[i][0], `Цена: ~g~$${methods.moneyFormat(price)}${saleLabel}`);
+                let menuListItem = UIMenu.Menu.AddMenuItem(tattooList[i][0], `Цена: ~g~${methods.moneyFormat(price)}${saleLabel}`);
                 menuListItem.doName = 'show';
                 menuListItem.price = price;
                 menuListItem.tatto0 = tattooList[i][0];

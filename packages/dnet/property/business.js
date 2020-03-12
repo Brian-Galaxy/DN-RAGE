@@ -235,9 +235,17 @@ business.buy = function (player, id) {
         player.notify('~r~Недвижимость уже куплена');
         return false;
     }
+    if (user.get(player, 'reg_status') < 2) {
+        player.notify('~r~Необходимо иметь гражданство');
+        return false;
+    }
 
-    if (user.get(player, 'biz_lic') === false) {
+    if (!user.get(player, 'biz_lic')) {
         player.notify('~r~У Вас нет лицензии на предпринимательство\nКупить её можно у сотрудников правительства');
+        return false;
+    }
+    if (user.getBankMoney(player) < hInfo.get('price')) {
+        player.notify('~r~У Вас недостаточно средств');
         return false;
     }
 

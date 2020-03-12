@@ -811,16 +811,16 @@ object.load = function () {
     object.create(2142033519, new mp.Vector3(246.44, -574.35, 42.31), new mp.Vector3(9.618499E-06, 0.374986, 69.37473), false, false);
 
     // Блокировка дверей и ворот снизу больницы Pillbox Hill
-    object.create(-837080589, new mp.Vector3(355.5018, -595.0157, 28.03345), new mp.Vector3(1.001791E-05, 5.008954E-06, -110.0491), false, false);
-    object.create(-837080589, new mp.Vector3(358.85, -585.7106, 29.2134), new mp.Vector3(1.001791E-05, 5.008954E-06, -110.0491), false, false);
-    object.create(-1212944997, new mp.Vector3(327.56, -560.7, 29.6863), new mp.Vector3(1.001791E-05, 5.008956E-06, -20.09985), false, false);
-    object.create(-1212944997, new mp.Vector3(335.72, -563.68, 29.6863), new mp.Vector3(1.001791E-05, 5.008956E-06, -19.94983), false, false);
-    object.create(-1212944997, new mp.Vector3(340.27, -565.33, 29.6863), new mp.Vector3(1.001791E-05, 5.008956E-06, -19.94983), false, false);
-    object.create(-837080589, new mp.Vector3(355.5018, -595.0157, 29.38346), new mp.Vector3(1.001791E-05, 5.008954E-06, -110.0491), false, false);
-    object.create(-837080589, new mp.Vector3(355.5018, -595.0157, 30.88348), new mp.Vector3(1.001791E-05, 5.008954E-06, -110.0491), false, false);
-    object.create(-837080589, new mp.Vector3(358.85, -585.7106, 30.63842), new mp.Vector3(1.001791E-05, 5.008954E-06, -110.0491), false, false);
+    object.create(-982531572, new mp.Vector3(343.4154, -566.52, 30.08493), new mp.Vector3(1.00179E-05, 5.008956E-06, -20.00006), false, false);
+    object.create(-982531572, new mp.Vector3(338.9554, -564.91, 30.04101), new mp.Vector3(1.00179E-05, 5.008956E-06, -20.00006), false, false);
+    object.create(-982531572, new mp.Vector3(325.56, -560.04, 29.86809), new mp.Vector3(1.00179E-05, 5.008956E-06, -20.00006), false, false);
+    object.create(-982531572, new mp.Vector3(329.9954, -561.64, 29.95774), new mp.Vector3(1.00179E-05, 5.008956E-06, -20.00006), false, false);
+    object.create(-982531572, new mp.Vector3(334.4736, -563.27, 30.00469), new mp.Vector3(1.00179E-05, 5.008956E-06, -20.00006), false, false);
+    object.create(-1829309699, new mp.Vector3(359.09, -584.8922, 29.38), new mp.Vector3(1.00179E-05, 5.008956E-06, 69.94945), false, false);
+    object.create(-1829309699, new mp.Vector3(355.33, -595.4761, 29.38), new mp.Vector3(1.00179E-05, 5.008956E-06, 69.94945), false, false);
 
-    // Добавленные гаражные двери домам
+    // Добавленные гаражные двери и простые двери к домам
+    object.create(781635019, new mp.Vector3(-2169.67, 5194.76, 17.02), new mp.Vector3(1.001791E-05, 5.008957E-06, -167.6991), false, false); // Дверь в доме на острове
     object.create(-1857663329, new mp.Vector3(-911.8047, 195.3755, 70.26), new mp.Vector3(0, 0, 0), false, false); // Гаражная дверь дома id 543
     object.create(-1857663329, new mp.Vector3(-905.84, 195.37, 70.26), new mp.Vector3(0, 0, 0), false, false); // Гаражная дверь дома id 543
     object.create(-1857663329, new mp.Vector3(-1128.305, 308.3432, 66.95), new mp.Vector3(1.00179E-05, -5.008956E-06, -9.575194), false, false); // Гаражная дверь дома id 556
@@ -847,6 +847,11 @@ object.load = function () {
     object.create(1991494706, new mp.Vector3(-1352.76, 493.74, 104.24), new mp.Vector3(1.001791E-05, -5.008956E-06, -64.12453), false, false); // Гаражная дверь дома id 100
     object.create(-1265404967, new mp.Vector3(-1109.085, 485.002, 81.15), new mp.Vector3(0, -5.008956E-06, -10.72488), false, false); // Гаражная дверь дома id 87
     object.create(-1265404967, new mp.Vector3(-1114.67, 486.05, 81.15), new mp.Vector3(-1.017777E-13, -5.008956E-06, -10.72488), false, false); // Гаражная дверь дома id 87
+    object.create(-1212944997, new mp.Vector3(-976.2, 520.59, 82.35), new mp.Vector3(1.00179E-05, 5.008955E-06, -33.14966), false, false); // Гаражная дверь дома N 2128
+    object.create(-1265404967, new mp.Vector3(-708.808, 647.228, 154.1753), new mp.Vector3(1.001791E-05, -5.008956E-06, -11.92505), false, false); // Гаражная дверь дома N 2589
+    object.create(-1265404967, new mp.Vector3(-714.3678, 648.3885, 154.1753), new mp.Vector3(1.001791E-05, -5.008956E-06, -11.92505), false, false); // Гаражная дверь дома N 2589
+    object.create(1991494706, new mp.Vector3(114.4517, 494.24, 148.32), new mp.Vector3(5.008957E-06, 2.23118E-05, 11), false, false); // Гаражная дверь дома N 3688
+    object.create(1991494706, new mp.Vector3(108.64, 493.1, 148.32), new mp.Vector3(5.008957E-06, 2.23118E-05, 11), false, false); // Гаражная дверь дома N 3688
 
     // Лифты в многоуровневом гараже (dedgarage4)
     object.create(-643813287, new mp.Vector3(-852.52, 284.51, 31.37), new mp.Vector3(1.001779E-05, -5.008956E-06, -54.08999), false, false);
@@ -1295,6 +1300,11 @@ object.process = function () {
     object.openDoor(2271212864, -447.7092, 6006.717, 31.86633, false); //Дверь Шерифов Палето-Бей
     object.openDoor(2271212864, -449.5486, 6008.556, 31.86633, false); //Дверь Шерифов Палето-Бей
     object.openDoor(2271212864, -450.716, 6016.37, 31.86633, false); //Дверь Шерифов Палето-Бей
+    object.openDoor(2615085319, -1083.62, -260.4166, 38.1867, false); //Основные двери LifeInvader
+    object.openDoor(3249951925, -1080.974, -259.0203, 38.1867, false); //Основные двери LifeInvader
+    object.openDoor(1104171198, -1045.12, -232.004, 39.43794, false); //Задние двери LifeInvader
+    object.openDoor(2869895994, -1046.516, -229.3581, 39.43794, false); //Задние двери LifeInvader
+    object.openDoor(3954737168, -1042.518, -240.6915, 38.11796, false); //Служебная дверь LifeInvader
 
     // Закрытые,Удалённые,Открытые ворота у домов
     object.openDoor(703855057, -25.2784, -1431.061, 30.83955, true); // House id 500

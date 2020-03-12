@@ -457,6 +457,8 @@ mp.events.add('client:events:custom:choiceRole', function(roleIndex) {
 
     user.showLoadDisplay();
 
+    user.setLogin(true);
+
     setTimeout(function () {
         try {
             ui.callCef('authMain','{"type": "hide"}');
@@ -1840,10 +1842,10 @@ mp.events.add('client:inventory:unloadW', function(itemId) {
     user.setAmmo(wpName, 0);
     user.set('weapon_' + slot + '_ammo', -1);
 
-    setTimeout(function () {
+    /*setTimeout(function () {
         if (user.getAmmo(wpName) > 1)
             user.banAntiCheat(3, 'Dupe Ammo');
-    }, 100)
+    }, 100)*/
 });
 
 mp.events.add('client:inventory:loadWeapon', function(id, itemId, loadItemId, count) {

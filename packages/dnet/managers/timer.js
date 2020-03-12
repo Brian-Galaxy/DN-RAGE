@@ -35,8 +35,8 @@ timer.min30Timer = function() {
 
     mp.players.forEach(function (p) {
         if (user.isLogin(p)) {
-            if (user.has(p, 'grabVeh'))
-                user.reset(p, 'grabVeh');
+            if (user.hasById(user.getId(p), 'grabVeh'))
+                user.resetById(user.getId(p), 'grabVeh');
         }
     });
 

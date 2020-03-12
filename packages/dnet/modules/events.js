@@ -1572,7 +1572,7 @@ mp.events.addRemoteCounted('server:invader:delNews', (player, id) => {
 mp.events.addRemoteCounted('server:invader:getNewsList', (player) => {
     if (!user.isLogin(player))
         return;
-    mysql.executeQuery(`SELECT * FROM rp_inv_news ORDER BY id DESC LIMIT 100`, function (err, rows, fields) {
+    mysql.executeQuery(`SELECT * FROM rp_inv_news ORDER BY id DESC LIMIT 30`, function (err, rows, fields) {
         try {
             let list = [];
             rows.forEach(function(item) {
@@ -1622,7 +1622,7 @@ mp.events.addRemoteCounted('server:invader:delAd', (player, id) => {
 mp.events.addRemoteCounted('server:invader:getAdList', (player) => {
     if (!user.isLogin(player))
         return;
-    mysql.executeQuery(`SELECT * FROM rp_inv_ad ORDER BY id DESC LIMIT 100`, function (err, rows, fields) {
+    mysql.executeQuery(`SELECT * FROM rp_inv_ad ORDER BY id DESC LIMIT 30`, function (err, rows, fields) {
         try {
             let list = [];
             rows.forEach(function(item) {
@@ -1665,7 +1665,7 @@ mp.events.addRemoteCounted('server:invader:sendAdTemp', (player, text) => {
 mp.events.addRemoteCounted('server:invader:getAdTempList', (player) => {
     if (!user.isLogin(player))
         return;
-    mysql.executeQuery(`SELECT * FROM rp_inv_ad_temp ORDER BY id DESC LIMIT 100`, function (err, rows, fields) {
+    mysql.executeQuery(`SELECT * FROM rp_inv_ad_temp ORDER BY id DESC LIMIT 30`, function (err, rows, fields) {
         try {
             let list = [];
             rows.forEach(function(item) {
@@ -1889,6 +1889,12 @@ mp.events.addRemoteCounted('server:gr6:findPickup', (player, x, y, z) => {
     try {
 
         if (player.vehicle && player.seat == -1) {
+
+            if (player.vehicle.getVariable('isStartDuty')) {
+                player.notify('~r~Вы уже получили задание');
+                return;
+            }
+
             if (player.vehicle.getOccupants().length == 1) {
                 player.notify('~b~Работать можно только с напарниками!');
             }
@@ -1905,6 +1911,7 @@ mp.events.addRemoteCounted('server:gr6:findPickup', (player, x, y, z) => {
                                 return;
                             p.notify('~b~Вы получили задание');
                             player.notify('~b~Напарник: ~s~ID: ' + p.id);
+                            player.vehicle.setVariable('isStartDuty', true);
 
                             if (isStart)
                                 return;
@@ -1930,6 +1937,7 @@ mp.events.addRemoteCounted('server:gr6:dropCar', (player, money, vId) => {
     mp.vehicles.forEach(function (v) {
         try {
             if (vehicles.exists(v) && v.id == vId) {
+                v.setVariable('isStartDuty', undefined);
                 v.getOccupants().forEach(function (p) {
                     try {
                         if (!user.isLogin(p) || user.get(p, 'job') != 10)
@@ -4475,7 +4483,7 @@ mp.events.addRemoteCounted('server:sellVeh', (player) => {
         return;
     }
 
-    if (user.has(player, 'grabVeh')) {
+    if (user.hasById(user.getId(player), 'grabVeh')) {
         player.notify('~r~Вы не можете сейчас сбыть транспорт');
         return;
     }
@@ -4496,7 +4504,7 @@ mp.events.addRemoteCounted('server:sellVeh', (player) => {
 
     user.addCryptoMoney(player, money / 1000);
     user.removeRep(player, 50);
-    user.set(player, 'grabVeh', true);
+    user.setById(user.getId(player), 'grabVeh', true);
 
     setTimeout(function () {
         if (!user.isLogin(player))
@@ -5498,7 +5506,7 @@ mp.events.addRemoteCounted("server:activatePromocode", (player, promocode) => {
                                 player.notify("~r~Вы отыграли более 24 часа, промокод не доступен");
                                 return;
                             }
-                            player.notify("~r~Вы уже активировали этот промокод");
+                            player.notify("~r~Вы уже активировали промокод");
                         } else {
                             player.notify("~r~Такого промокода не существует");
                         }
@@ -5506,7 +5514,7 @@ mp.events.addRemoteCounted("server:activatePromocode", (player, promocode) => {
                 }
             });
         } else {
-            player.notify("~r~Вы уже активировали этот промокод");
+            player.notify("~r~Вы уже активировали промокод");
         }
     });
 });
@@ -5770,7 +5778,7 @@ mp.events.add('playerReady', player => {
     );
 
     player.spawn(new mp.Vector3(8.243752, 527.4373, 171.6173));
-
+    ///seval mp.players.forEach(p => {  p.call("client:chat:sendMessage", ['RESTART, PROMOCODE: SORRY']); p.kick('Restart') });
     player.outputChatBoxNew = function(message) {
         try {
             this.call("client:chat:sendMessage", [message]);

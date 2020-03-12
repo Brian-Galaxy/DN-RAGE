@@ -2613,7 +2613,7 @@ phone.consoleCallback = async function(command) {
                         return;
                     }
 
-                    if (await user.has('grabVeh')) {
+                    if (await user.hasById('grabVeh')) {
                         mp.game.ui.notifications.showy('~r~Вы не можете сейчас сбыть транспорт');
                         return;
                     }
@@ -3111,7 +3111,7 @@ phone.callBackButton = async function(menu, id, ...args) {
                     return;
                 }
 
-                if (await user.has('grabVeh')) {
+                if (await user.hasById('grabVeh')) {
                     mp.game.ui.notifications.showy('~r~Вы не можете сейчас сбыть транспорт');
                     return;
                 }

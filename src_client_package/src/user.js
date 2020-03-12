@@ -509,13 +509,6 @@ user.clearChat = function() {
     chat.clear();
 };
 
-user.notify = function (message) {
-    try {
-        mp.events.callRemote('server:clientDebug', `${message}`)
-    } catch (e) {
-    }
-};
-
 user.sendPhoneNotify = function(sender, title, message, pic = 'CHAR_BLANK_ENTRY') {
     if (phone.getType() > 0)
         phone.sendNotify(sender, title, message, pic);
@@ -785,6 +778,11 @@ user.get = async function(key) {
 user.has = async function(key) {
     return await Container.Data.Has(mp.players.local.remoteId, key);
 };
+
+user.hasById = async function(key) {
+    return await Container.Data.Has(user.getCache('id'), key);
+};
+
 user.setCacheData = function(data) {
     userData = data;
     user.currentId = data.get('id') + 1000000;
@@ -1498,7 +1496,7 @@ user.isAdmin = function(level = 1) {
     return user.getCache('admin_level') >= level;
 };
 
-user.isHelper = function(level) {
+user.isHelper = function(level = 1) {
     return user.getCache('helper_level') >= level;
 };
 

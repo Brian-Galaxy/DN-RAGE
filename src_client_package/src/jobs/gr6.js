@@ -152,9 +152,9 @@ mp.events.add("client:createGr6Checkpoint", (x, y, z) => {
     isProcess = true;
     let pos = new mp.Vector3(x, y, z);
     price = methods.parseFloat(methods.distanceToPos(pos, mp.players.local.position) / 5);
-    if (price > 2200)
-        price = 2200;
-    _checkpointId = jobPoint.create(pos);
+    if (price > 1900)
+        price = 1900;
+    _checkpointId = jobPoint.create(pos, true);
 });
 
 mp.events.add("playerEnterVehicle", function (vehicle, seat) {

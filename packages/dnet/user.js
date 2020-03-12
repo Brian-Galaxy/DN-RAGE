@@ -23,10 +23,10 @@ user.createAccount = function(player, login, pass, email) {
     if (!mp.players.exists(player))
         return;
 
-    if (!enums.whiteList.includes(player.socialClub)) {
+    /*if (!enums.whiteList.includes(player.socialClub)) {
         user.showCustomNotify(player, 'Регистрация аккаунтов запрещена', 1);
         return;
-    }
+    }*/
 
     user.doesExistAccount(login, email, player.socialClub, function (cb) {
 
@@ -433,6 +433,8 @@ user.spawnByName = function(player, spawn = 'Стандарт') {
     setTimeout(function () {
         if (!user.isLogin(player))
             return false;
+
+        player.dimension = 0;
 
         if (user.hasById(user.getId(player), 'hp'))
             user.setHealth(player, user.getById(user.getId(player), 'hp'));
@@ -1293,6 +1295,10 @@ user.setById = function(id, key, val) {
 
 user.hasById = function(id, key) {
     return Container.Data.Has(id, key);
+};
+
+user.resetById = function(id, key) {
+    return Container.Data.Reset(id, key);
 };
 
 user.getById = function(id, key) {
@@ -2378,6 +2384,18 @@ user.payDay = async function (player) {
         else if (user.get(player, 'fraction_id') > 0) {
 
             let money = methods.getFractionPayDay(user.get(player, 'fraction_id'), user.get(player, 'rank'), user.get(player, 'rank_type'));
+
+            if (user.isLeader(player))
+            {
+                let frItem = methods.getFractionById(user.get(player, 'fraction_id'));
+                money = frItem.leaderPayDay;
+            }
+            if (user.isSubLeader(player))
+            {
+                let frItem = methods.getFractionById(user.get(player, 'fraction_id'));
+                money = frItem.subLeaderPayDay;
+            }
+
             let nalog = money * (100 - coffer.getTaxPayDay()) / 100;
 
             let frId = coffer.getIdByFraction(user.get(player, 'fraction_id'));

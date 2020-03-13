@@ -2383,6 +2383,9 @@ user.payDay = async function (player) {
         }
         else if (user.get(player, 'fraction_id') > 0) {
 
+            user.addWorkExp(player, 10);
+            user.addRep(player, 5);
+
             let money = methods.getFractionPayDay(user.get(player, 'fraction_id'), user.get(player, 'rank'), user.get(player, 'rank_type'));
 
             if (user.isLeader(player))
@@ -2410,7 +2413,7 @@ user.payDay = async function (player) {
                     user.sendSmsBankOperation(player, `Зачисление: ~g~${methods.moneyFormat(nalog)}\n~s~Прибавка к зарплате: ~g~${methods.moneyFormat(ben)}`, 'Зарплата');
                 else
                     user.sendSmsBankOperation(player, `Зачисление: ~g~${methods.moneyFormat(nalog)}`, 'Зарплата');
-                user.addPayDayMoney(player, nalog);
+                user.addPayDayMoney(player, nalog + ben);
                 coffer.removeMoney(frId, nalog)
             }
         }

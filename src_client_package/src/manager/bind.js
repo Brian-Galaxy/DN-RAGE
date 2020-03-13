@@ -5,7 +5,8 @@ import ui from "../modules/ui";
 import vehicles from "../property/vehicles";
 
 import phone from "../phone";
-import voice from "../voice";
+//import voice from "../voice";
+import voiceRage from "../voiceRage";
 import user from '../user';
 import inventory from "../inventory";
 
@@ -331,13 +332,13 @@ for(let code in keyCodes) {
                 if (veh && veh.getPedInSeat(0) == mp.players.local.handle) {
                     if (methods.getVehicleInfo(veh.model).class_name == 'Emergency') {
                         user.setVariable('voice.distance', 7000);
-                        voice.enableMicrophone();
+                        voiceRage.enableMic();
                     }
                 }
             }
         }
         if (user.getCache('s_bind_voice') == parseInt(code)) {
-            voice.enableMicrophone();
+            voiceRage.enableMic();
         }
         if (user.getCache('s_bind_firemod') == parseInt(code)) {
             mp.events.call('client:changeFireMod');
@@ -373,11 +374,11 @@ for(let code in keyCodes) {
             if (!methods.isBlockKeys()) {
                 if (mp.players.local.getVariable('voice.distance') > 25)
                     user.setVariable('voice.distance', 25);
-                voice.disableMicrophone();
+                voiceRage.disableMic();
             }
         }
         if (user.getCache('s_bind_voice') == parseInt(code)) {
-            voice.disableMicrophone();
+            voiceRage.disableMic();
         }
         if (user.getCache('s_bind_fingerpoint') == parseInt(code)) {
             pSync.pointing.stop();

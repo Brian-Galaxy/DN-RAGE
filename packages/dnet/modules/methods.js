@@ -201,7 +201,7 @@ methods.phoneFormat = function (phoneNumber) {
 methods.moneyFormat = function (currentMoney, maxCentValue = 5000) {
     currentMoney = methods.parseFloat(currentMoney);
     if (currentMoney < maxCentValue)
-        return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(currentMoney.toFixed(2));
+        return '$' + methods.numberFormat(currentMoney.toFixed(2));
     return '$' + methods.numberFormat(currentMoney.toFixed(0));
 };
 

@@ -49,7 +49,7 @@ inventory.deleteWorldItems = function() {
     });
 };
 
-inventory.getItemList = function(player, ownerType, ownerId) {
+inventory.getItemList = function(player, ownerType, ownerId, isFrisk = false) {
 
     ownerId = methods.parseInt(ownerId);
 
@@ -60,7 +60,11 @@ inventory.getItemList = function(player, ownerType, ownerId) {
         let data = [];
         //let data2 = new Map();
 
-        let sql = `SELECT * FROM items WHERE owner_id = '${ownerId}' AND owner_type = '${ownerType}' ORDER BY item_id DESC`;
+        let addWhere = '';
+        if (isFrisk)
+            addWhere = ' AND item_id <> 50 AND item_id <> 27 AND item_id <> 28 AND item_id <> 29 AND item_id <> 30';
+
+        let sql = `SELECT * FROM items WHERE owner_id = '${ownerId}' AND owner_type = '${ownerType}'${addWhere} ORDER BY item_id DESC`;
         if (ownerId == 0 && ownerType == 0)
             sql = `SELECT * FROM items WHERE DISTANCE(POINT(pos_x, pos_y), POINT(${player.position.x}, ${player.position.y})) < 2 AND owner_type = 0 ORDER BY item_id DESC`;
 
@@ -119,7 +123,7 @@ inventory.equip = function(player, id, itemId, count, aparams) {
                 return;
             }
 
-            if (rows[0]['is_equip'] === 1) {
+            if (rows[0]['is_equip'] === 1 && itemId === 50) {
                 player.notify('~r~Карта уже экипирована');
                 return;
             }
@@ -679,7 +683,7 @@ inventory.usePlayerItem = function(player, id, itemId) {
 
     switch (itemId) {
         case 277: {
-            let target = methods.getNearestPlayerWithPlayer(player, 1.5);
+            let target = methods.getNearestPlayerWithPlayer(player, 4);
             if (!user.isLogin(target)) {
                 player.notify("~r~Рядом с вами никого нет");
                 return;
@@ -1158,7 +1162,6 @@ inventory.useItem = function(player, id, itemId, isTargetable = false) {
             }
             case 11:
             {
-                user.removeWaterLevel(player, 400);
                 user.addEatLevel(player, 500);
                 chat.sendMeCommand(player, "съедает " + items.getItemNameById(itemId));
                 inventory.deleteItem(id);
@@ -1176,7 +1179,6 @@ inventory.useItem = function(player, id, itemId, isTargetable = false) {
             }
             case 13:
             {
-                user.removeWaterLevel(player, 200);
                 user.addEatLevel(player, 300);
                 chat.sendMeCommand(player, "съедает " + items.getItemNameById(itemId));
                 inventory.deleteItem(id);
@@ -1185,7 +1187,6 @@ inventory.useItem = function(player, id, itemId, isTargetable = false) {
             }
             case 14:
             {
-                user.removeWaterLevel(player, 50);
                 user.addEatLevel(player, 100);
                 chat.sendMeCommand(player, "съедает " + items.getItemNameById(itemId));
                 inventory.deleteItem(id);
@@ -1204,7 +1205,6 @@ inventory.useItem = function(player, id, itemId, isTargetable = false) {
             }
             case 17:
             {
-                user.removeWaterLevel(player, 100);
                 user.addEatLevel(player, 250);
                 chat.sendMeCommand(player, "съедает " + items.getItemNameById(itemId));
                 inventory.deleteItem(id);
@@ -1213,7 +1213,6 @@ inventory.useItem = function(player, id, itemId, isTargetable = false) {
             }
             case 18:
             {
-                user.removeWaterLevel(player, 100);
                 user.addEatLevel(player, 200);
                 chat.sendMeCommand(player, "съедает " + items.getItemNameById(itemId));
                 inventory.deleteItem(id);
@@ -1231,7 +1230,6 @@ inventory.useItem = function(player, id, itemId, isTargetable = false) {
             }
             case 20:
             {
-                user.removeWaterLevel(player, 250);
                 user.addEatLevel(player, 500);
                 chat.sendMeCommand(player, "съедает " + items.getItemNameById(itemId));
                 inventory.deleteItem(id);
@@ -1240,7 +1238,6 @@ inventory.useItem = function(player, id, itemId, isTargetable = false) {
             }
             case 21:
             {
-                user.removeWaterLevel(player, 50);
                 user.addEatLevel(player, 150);
                 chat.sendMeCommand(player, "съедает " + items.getItemNameById(itemId));
                 inventory.deleteItem(id);

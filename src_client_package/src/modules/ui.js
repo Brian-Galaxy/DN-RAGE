@@ -3,7 +3,7 @@
 import methods from "./methods";
 
 import user from "../user";
-import voice from "../voice";
+import voiceRage from "../voiceRage";
 import chat from "../chat";
 import enums from "../enums";
 
@@ -41,6 +41,7 @@ ui.DisableMouseControl = false;
 let showRadar = true;
 let showHud = true;
 let showMenu = false;
+let isGreenZone = false;
 
 let maxStringLength = 50;
 
@@ -191,13 +192,16 @@ ui.showHud = function() {
     }
 };
 
+ui.isGreenZone = function() {
+    return isGreenZone;
+};
 
 ui.updateValues = function() {
     //return; //TODO ВАЖНО
     if (user.isLogin()) {
         try {
 
-            let isGreenZone = false;
+            isGreenZone = false;
             enums.zoneGreenList.forEach(item => {
                 if (methods.isInPoint(mp.players.local.position, [item[0], item[1], item[2], item[3]]))
                     isGreenZone = true;
@@ -226,7 +230,7 @@ ui.updateValues = function() {
 
             data = {
                 type: 'updateValues',
-                microphone : voice.isEnabledMicrophone(),
+                microphone : voiceRage.isEnable(),
                 drink: user.getWaterLevel() / 10,
                 eat: user.getEatLevel() / 10,
                 wallet: methods.moneyFormat(user.getCashMoney(), 999999999999),

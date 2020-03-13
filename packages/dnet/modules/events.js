@@ -108,6 +108,29 @@ mp.events.addRemoteCounted = (eventName, handler) =>
     });
 };
 
+mp.events.add("addVoiceListener", (player, target) =>
+{
+    if(target)
+    {
+        player.enableVoiceTo(target);
+    }
+});
+
+mp.events.add("removeVoiceListener", (player, target) =>
+{
+    if(target)
+    {
+        player.disableVoiceTo(target);
+    }
+});
+
+mp.events.add("voice.toggleMicrophone", (player, enable) =>
+{
+    if (user.isLogin(player)) {
+        player.setVariable('voiceMic', enable);
+        mp.players.callInRange(player.position,200, 'voice.toggleMicrophone', [player.id, enable]);
+    }
+});
 
 mp.events.add('modules:server:data:Set', (player, id, key, value, isInt) => {
     Container.Data.SetClient(id, key, value, isInt);
@@ -1106,7 +1129,7 @@ mp.events.addRemoteCounted('server:user:getInvById', (player, targetId) => {
             player.notify('~r~Вы слишком далеко');
             return;
         }
-        inventory.getItemList(player, inventory.types.Player, user.getId(pl));
+        inventory.getItemList(player, inventory.types.Player, user.getId(pl), true);
     }
     else
         player.notify('~r~Рядом с вами никого нет');
@@ -1462,6 +1485,10 @@ mp.events.addRemoteCounted('server:admin:resetSkinById', (player, type, id) => {
     admin.resetSkinById(player, type, id);
 });
 
+mp.events.addRemoteCounted('server:admin:adrenalineById', (player, type, id) => {
+    admin.adrenalineById(player, type, id);
+});
+
 mp.events.addRemoteCounted('server:admin:changeDimension', (player, type, id, dim) => {
     admin.changeDimension(player, type, id, dim);
 });
@@ -1593,7 +1620,7 @@ mp.events.addRemoteCounted('server:invader:sendAd', (player, id, title, name, te
     title = methods.removeQuotes(title);
     text = methods.removeQuotes(text);
     name = methods.removeQuotes(name);
-    phone = methods.phoneFormat(methods.removeQuotes(phone));
+    phone = methods.removeQuotes(phone);
     let editor = methods.removeQuotes(user.getRpName(player));
 
     let rpDateTime = weather.getRpDateTime();
@@ -1944,7 +1971,7 @@ mp.events.addRemoteCounted('server:gr6:dropCar', (player, money, vId) => {
                             return;
 
                         if (Container.Data.Has(v.id, 'validWorker' + user.getId(p))) {
-                            user.addWorkExp(p, 40);
+                            user.addWorkExp(p, 1);
                         }
                     }
                     catch (e) {
@@ -1993,7 +2020,7 @@ mp.events.addRemoteCounted('server:gr6:unload', (player, vId) => {
                                 user.giveJobSkill(p);
 
                                 user.addRep(p, 50);
-                                user.addWorkExp(p, 50);
+                                user.addWorkExp(p, 1);
                             }
                             else {
                                 p.notify('~r~Вы не являетесь напарником ID: ' + player.id);
@@ -2667,8 +2694,7 @@ mp.events.addRemoteCounted("server:vehicle:lockStatus", (player) => {
             if (vehicle.getVariable('fraction_id')) {
                 if (
                     vehicle.getVariable('fraction_id') == user.get(player, 'fraction_id') &&
-                    vehicle.getVariable('rank_type') == user.get(player, 'rank_type') &&
-                    vehicle.getVariable('rank') <= user.get(player, 'rank')
+                    vehicle.getVariable('rank_type') == user.get(player, 'rank_type')
                 )
                     vehicles.lockStatus(player, vehicle);
                 else if (vehicle.getVariable('fraction_id') == user.get(player, 'fraction_id') && (user.isLeader(player) || user.isSubLeader(player)))
@@ -2676,14 +2702,8 @@ mp.events.addRemoteCounted("server:vehicle:lockStatus", (player) => {
                 else
                     player.notify('~r~У Вас нет ключей от транспорта');
             }
-            else if (data.has('owner_id')) {
-                if (data.get('owner_id') == user.getId(player))
-                    vehicles.lockStatus(player, vehicle);
-                else
-                    player.notify('~r~У Вас нет ключей от транспорта');
-            }
-            else if (data.has('rentOwner')) {
-                if (data.get('rentOwner') == user.getId(player))
+            else if (vehicle.getVariable('owner_id')) {
+                if (vehicle.getVariable('owner_id') == user.getId(player))
                     vehicles.lockStatus(player, vehicle);
                 else
                     player.notify('~r~У Вас нет ключей от транспорта');
@@ -5677,7 +5697,7 @@ mp.events.add('playerQuit', player => {
                 user.addHistory(player, 1, 'Был посажен в тюрьму');
                 user.set(player, 'jail_time', 120 * 60);
                 user.set(player, 'wanted_level', 0);
-                chat.sendToAll('Anti-Cheat System', `${user.getRpName(player)} (${user.getId(player)})!{${chat.clRed}} был посажен в тюрьму с причиной:!{${chat.clWhite}} выход из игры во время ареста`, chat.clRed);
+                chat.sendToAll('Anti-Cheat System', `${user.getRpName(player)} (${player.id})!{${chat.clRed}} был посажен в тюрьму с причиной:!{${chat.clWhite}} выход из игры во время ареста`, chat.clRed);
             }
         }
         catch (e) {
@@ -5688,7 +5708,7 @@ mp.events.add('playerQuit', player => {
                 user.addHistory(player, 1, 'Был посажен в тюрьму');
                 user.set(player, 'jail_time', 120 * 60);
                 user.set(player, 'wanted_level', 0);
-                chat.sendToAll('Anti-Cheat System', `${user.getRpName(player)} (${user.getId(player)})!{${chat.clRed}} был посажен в тюрьму с причиной:!{${chat.clWhite}} выход из игры во время похищения`, chat.clRed);
+                chat.sendToAll('Anti-Cheat System', `${user.getRpName(player)} (${player.id})!{${chat.clRed}} был посажен в тюрьму с причиной:!{${chat.clWhite}} выход из игры во время похищения`, chat.clRed);
             }
         }
         catch (e) {
@@ -5782,7 +5802,7 @@ mp.events.add('playerReady', player => {
     );
 
     player.spawn(new mp.Vector3(8.243752, 527.4373, 171.6173));
-    ///seval mp.players.forEach(p => {  p.call("client:chat:sendMessage", ['RESTART, PROMOCODE: SORRY']); p.kick('Restart') });
+    ///seval mp.players.forEach(p => {  p.call("client:chat:sendMessage", ['RESTART, WAIT 1 MIN']); p.kick('Restart') });
     player.outputChatBoxNew = function(message) {
         try {
             this.call("client:chat:sendMessage", [message]);

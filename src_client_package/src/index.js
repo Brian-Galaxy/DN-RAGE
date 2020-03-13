@@ -10,7 +10,7 @@ import './manager/attachWeapons';
 import './manager/cameraRotator';
 
 import './betternotifs';
-import './voice';
+//import './voice';
 
 import business from "./property/business";
 
@@ -33,6 +33,7 @@ import user from "./user";
 import enums from "./enums";
 import phone from "./phone";
 import chat from "./chat";
+import voiceRage from "./voiceRage";
 
 import "./antiCheat";
 
@@ -60,6 +61,8 @@ try {
 
     hosp.timer();
     jail.timer();
+
+    setInterval(voiceRage.timer, 500);
 
     user.init();
     try {

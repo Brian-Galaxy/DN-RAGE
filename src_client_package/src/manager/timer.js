@@ -102,8 +102,8 @@ timer.updateEatLevel = function() {
     if (user.isLogin()) {
 
         if (!mp.players.local.getVariable('enableAdmin')) {
-            user.removeEatLevel(10);
-            user.removeWaterLevel(20);
+            user.removeEatLevel(5);
+            user.removeWaterLevel(10);
 
             if (user.getEatLevel() < 200 || user.getWaterLevel() < 200) {
                 mp.game.cam.shakeGameplayCam("ROAD_VIBRATION_SHAKE", 1.5);

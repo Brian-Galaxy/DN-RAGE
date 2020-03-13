@@ -214,7 +214,7 @@ bus.nextCheckpoint = function() {
                             user.giveJobSkill();
                             mp.game.ui.notifications.show('~g~Вы закончили свой рейс');
                             user.addRep(25);
-                            user.addWorkExp(75);
+                            user.addWorkExp(25);
 
                             _isBus1 = false;
                             _currentId = 0;
@@ -239,7 +239,7 @@ bus.nextCheckpoint = function() {
                             user.giveJobSkill();
                             mp.game.ui.notifications.show('~g~Вы закончили свой рейс');
                             user.addRep(5);
-                            user.addWorkExp(25);
+                            user.addWorkExp(10);
 
                             _isBus2 = false;
                             _currentId = 0;
@@ -264,7 +264,7 @@ bus.nextCheckpoint = function() {
                             user.giveJobSkill();
                             mp.game.ui.notifications.show('~g~Вы закончили свой рейс');
                             user.addRep(35);
-                            user.addWorkExp(150);
+                            user.addWorkExp(50);
 
                             _isBus3 = false;
                             _currentId = 0;

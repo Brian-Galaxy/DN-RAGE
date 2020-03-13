@@ -535,7 +535,7 @@ phone.fractionVehicleAction = function(player, id) {
         enums.getVehicleImg(veh.name)
     ));
 
-    let rankList = [];
+    /*let rankList = [];
     fractionItem.rankList[veh.rank_type].forEach((item, id) => {
         if (id == veh.rank)
             rankList.push({title: item, checked: true, params: { name: 'vehicleNewRank', memberId: veh.id, rankId: id }});
@@ -551,7 +551,7 @@ phone.fractionVehicleAction = function(player, id) {
         { name: 'none' },
         '',
         true
-    ));
+    ));*/
 
     if (user.isLeader(player) || user.isSubLeader(player)) {
         let depList = [];
@@ -1141,7 +1141,7 @@ phone.userAdList = function(player) {
         return;
     methods.debug('phone.userAdList');
 
-    mysql.executeQuery(`SELECT * FROM rp_inv_ad ORDER BY id DESC LIMIT 50`, (err, rows, fields) => {
+    mysql.executeQuery(`SELECT * FROM rp_inv_ad ORDER BY id DESC LIMIT 30`, (err, rows, fields) => {
 
         let items = [];
 
@@ -1194,7 +1194,7 @@ phone.userNewsList = function(player) {
         return;
     methods.debug('phone.userAdList');
 
-    mysql.executeQuery(`SELECT * FROM rp_inv_news ORDER BY id DESC LIMIT 50`, (err, rows, fields) => {
+    mysql.executeQuery(`SELECT * FROM rp_inv_news ORDER BY id DESC LIMIT 30`, (err, rows, fields) => {
 
         let items = [];
 
@@ -1412,7 +1412,7 @@ phone.fractionAll = function(player) {
         return;
     methods.debug('phone.fractionAll');
 
-    mysql.executeQuery(`SELECT * FROM fraction_list WHERE owner_id = 1`, (err, rows, fields) => {
+    mysql.executeQuery(`SELECT * FROM fraction_list WHERE owner_id > 0`, (err, rows, fields) => {
 
         let items = [];
 

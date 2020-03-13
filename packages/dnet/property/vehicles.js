@@ -195,7 +195,10 @@ vehicles.spawnPlayerCar = (id) => {
             veh.numberPlate = vehicles.get(id, 'number').toString();
             veh.numberPlateType = numberStyle;
             veh.locked = true;
-            veh.dimension = vehicles.get(id, 'dimension');
+            if (vehicles.get(id, 'cop_park_name') !== '')
+                veh.dimension = 0;
+            else
+                veh.dimension = vehicles.get(id, 'dimension');
 
             veh.setColor(vehicles.get(id, 'color1'), vehicles.get(id, 'color2'));
             vSync.setEngineState(veh, false);

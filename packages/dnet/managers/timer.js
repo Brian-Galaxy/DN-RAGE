@@ -14,24 +14,13 @@ let timer = exports;
 timer.loadAll = function() {
     timer.min60Timer();
     timer.min30Timer();
+    timer.min10Timer();
     timer.sec10Timer();
 };
 
 timer.min30Timer = function() {
 
     inventory.deleteWorldItems();
-
-    mp.vehicles.forEach(function (v) {
-        try {
-            if (vehicles.exists(v) && vehicles.getFuel(v) < 2 && v.getOccupants().length == 0) {
-                if (!v.getVariable('trId'))
-                    vehicles.respawn(v);
-            }
-        }
-        catch (e) {
-            methods.debug(e);
-        }
-    });
 
     mp.players.forEach(function (p) {
         if (user.isLogin(p)) {
@@ -41,6 +30,39 @@ timer.min30Timer = function() {
     });
 
     setTimeout(timer.min30Timer, 1000 * 60 * 30);
+};
+
+timer.min10Timer = function() {
+
+    mp.vehicles.forEach(function (v) {
+        try {
+            if (vehicles.exists(v) && v.getOccupants().length == 0 && !v.getVariable('trId')) {
+                try {
+                    if (v.afkPos && !v.getVariable('user_id') && !v.getVariable('fraction_id') && !v.getVariable('useless')) {
+                        if (methods.distanceToPos(v.position, v.afkPos) < 1) {
+                            v.afkTimer = methods.parseInt(v.afkTimer) + 1;
+                            if (v.afkTimer >= 3)
+                                vehicles.respawn(v);
+                        }
+                        else {
+                            v.afkTimer = 0;
+                        }
+                        v.afkPos = v.position;
+                    }
+                }
+                catch (e) {
+
+                }
+
+                if (v.dead)
+                    vehicles.respawn(v);
+            }
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    });
+    setTimeout(timer.min30Timer, 1000 * 60 * 10);
 };
 
 timer.min60Timer = function() {

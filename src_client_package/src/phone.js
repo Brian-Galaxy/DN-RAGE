@@ -571,31 +571,6 @@ phone.showAppEcorp= function() {
         menu.items[0].umenu.push(item);
     }
 
-    if (user.getCache('fraction_id2') > 0) {
-        let item ={
-                title: "Перевести E-Coin",
-                text: 'Перевод E-Coin на счет вашей организации',
-                modalTitle: 'Сколько ₠ вы хотите перевести',
-                modalButton: ['Закрыть', 'Перевести'],
-                type: 8,
-                clickable: true,
-                params: {name: "cryptoToFraction"}
-        };
-        menu.items[0].umenu.push(item);
-    }
-    if (user.getCache('fraction_id2') > 0 && user.isLeader2()) {
-        let item ={
-                title: "Перевести E-Coin",
-                text: 'Перевод E-Coin со счета вашей организации',
-                modalTitle: 'Сколько ₠ вы хотите перевести',
-                modalButton: ['Закрыть', 'Перевести'],
-                type: 8,
-                clickable: true,
-                params: {name: "fractionToCrypto"}
-        };
-        menu.items[0].umenu.push(item);
-    }
-
     if (user.getCache('quest_gang') > 4) {
         let item = {
             title: 'Получить задание на угон',
@@ -754,6 +729,31 @@ phone.showAppFraction2 = async function() {
             },
         ],
     };
+
+    if (user.getCache('fraction_id2') > 0) {
+        let item ={
+            title: "Перевести E-Coin",
+            text: 'Перевод E-Coin на счет вашей организации',
+            modalTitle: 'Сколько ₠ вы хотите перевести',
+            modalButton: ['Закрыть', 'Перевести'],
+            type: 8,
+            clickable: true,
+            params: {name: "cryptoToFraction"}
+        };
+        menu.items[0].umenu.push(item);
+    }
+    if (user.getCache('fraction_id2') > 0 && user.isLeader2()) {
+        let item ={
+            title: "Перевести E-Coin",
+            text: 'Перевод E-Coin со счета вашей организации',
+            modalTitle: 'Сколько ₠ вы хотите перевести',
+            modalButton: ['Закрыть', 'Перевести'],
+            type: 8,
+            clickable: true,
+            params: {name: "fractionToCrypto"}
+        };
+        menu.items[0].umenu.push(item);
+    }
 
     let titleMenu = {
         title: 'Борьба за груз',
@@ -2825,8 +2825,8 @@ phone.callBackModalInput = async function(paramsJson, text) {
                 mp.game.ui.notifications.show(`~r~Значение не может быть меньше нуля`);
                 return;
             }
-            if (price > 1000) {
-                mp.game.ui.notifications.show(`~r~Значение не может быть больше 1000`);
+            if (price > 250) {
+                mp.game.ui.notifications.show(`~r~Значение не может быть больше 250`);
                 return;
             }
 

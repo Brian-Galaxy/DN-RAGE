@@ -119,7 +119,7 @@ mp.events.add('client:user:auth:login', function(login, password) {
         if(login.includes('@')) {
             var checkMail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
             if(!checkMail.test(String(login).toLowerCase())) {
-                mp.game.ui.notifications.show('~r~Не валидный E-Mail адрес');
+                user.showCustomNotify('Не валидный E-Mail адрес');
                 return;
             }
             usingEmail = true;
@@ -128,15 +128,16 @@ mp.events.add('client:user:auth:login', function(login, password) {
         }
         login = login.toLowerCase();
         if (login === "") {
-            mp.game.ui.notifications.show('~r~Логин - поле не заполнено');
+            user.showCustomNotify('Логин - поле не заполнено');
             return;
         }
         if (password === "") {
-            mp.game.ui.notifications.show('~r~Пароль - поле не заполнено');
+            user.showCustomNotify('Пароль - поле не заполнено');
             return;
         }
-        mp.game.ui.notifications.show('~b~Пожалуйста подождите...');
+        //user.showCustomNotify('Пожалуйста подождите...');
         //methods.storage.set('login', login);
+        methods.debug('START_LOGIN');
         mp.events.callRemote('server:user:loginAccount', login, password, usingEmail);
     }
     catch (e) {
@@ -166,14 +167,13 @@ mp.events.add('client:events:loginAccount:success', function(data) {
                     name: playerList[0].name,
                     old: playerList[0].age,
                     money: methods.moneyFormat(playerList[0].money, 999999999),
-                    date: playerList[0].lastLogin,
+                    date: methods.replaceAll(playerList[0].lastLogin, '/', '.'),
                     sex: playerList[0].sex,
                     spawn: playerList[0].spawnList,
                     index_spawn: 0
                 }
             });
         }
-
         if (playerList.length >= 2) {
             isShow2 = true;
             players.push({
@@ -181,7 +181,7 @@ mp.events.add('client:events:loginAccount:success', function(data) {
                     name: playerList[1].name,
                     old: playerList[1].age,
                     money: methods.moneyFormat(playerList[1].money, 999999999),
-                    date: playerList[1].lastLogin,
+                    date: methods.replaceAll(playerList[1].lastLogin, '/', '.'),
                     sex: playerList[1].sex,
                     spawn: playerList[1].spawnList,
                     index_spawn: 0
@@ -195,7 +195,7 @@ mp.events.add('client:events:loginAccount:success', function(data) {
                     name: playerList[2].name,
                     old: playerList[2].age,
                     money: methods.moneyFormat(playerList[2].money, 999999999),
-                    date: playerList[2].lastLogin,
+                    date: methods.replaceAll(playerList[2].lastLogin, '/', '.'),
                     sex: playerList[2].sex,
                     spawn: playerList[2].spawnList,
                     index_spawn: 0
@@ -1323,18 +1323,28 @@ mp.events.add('client:handcuffs', (value) => {
         mp.players.local.clearTasks();
     }*/
     //mp.game.invoke(methods.SET_ENABLE_HANDCUFFS, mp.players.local.handle, value);
-    if (value) {
-        handcuffTimerId = setInterval(function() {
-            if ((user.isCuff() || user.isTie()) && mp.players.local.isPlayingAnim("mp_arresting", "idle", 3) == 0)
-                mp.players.local.clearTasks();
-            user.playAnimation("mp_arresting", "idle", 49);
-        }, 2500);
-    } else {
-        clearInterval(handcuffTimerId);
-        if (mp.players.local.isPlayingAnim("mp_arresting", "idle", 3) == 0)
-            user.stopAllAnimation();
-        else
-            user.playAnimation("mp_arresting", "b_uncuff", 8);
+    try {
+        if (value) {
+            handcuffTimerId = setInterval(function() {
+                try {
+                    if ((user.isCuff() || user.isTie()) && mp.players.local.isPlayingAnim("mp_arresting", "idle", 3) == 0)
+                        mp.players.local.clearTasks();
+                    user.playAnimation("mp_arresting", "idle", 49);
+                }
+                catch (e) {
+
+                }
+            }, 2500);
+        } else {
+            clearInterval(handcuffTimerId);
+            if (mp.players.local.isPlayingAnim("mp_arresting", "idle", 3) == 0)
+                user.stopAllAnimation();
+            else
+                user.playAnimation("mp_arresting", "b_uncuff", 8);
+        }
+    }
+    catch (e) {
+        methods.debug(e);
     }
 });
 
@@ -2371,6 +2381,10 @@ mp.events.add('client:showId', () => {
         mp.game.ui.notifications.show("Вы ~r~отключили~s~ ID игроков");
 });
 
+mp.events.add('client:idDist', (val) => {
+    loadIndicatorDist = val;
+});
+
 mp.events.add('render', () => {
     if (user.isLogin() && showIds) {
         let localPlayer = mp.players.local;
@@ -2387,12 +2401,12 @@ mp.events.add('render', () => {
                 const distance = methods.distanceToPos(__localPlayerPosition__, __playerPosition__);
 
                 if (distance <= loadIndicatorDistTemp && player.dimension == localPlayer.dimension) {
-                    const isConnected = voice.getVoiceInfo(player, 'stateConnection') === 'connected';
-                    const isEnable = voice.getVoiceInfo(player, 'enabled');
-                    let indicatorColor = '~r~•';
-                    if (isConnected && !isEnable)
-                        indicatorColor = '~m~•';
-                    else if (isConnected && isEnable)
+                    /*const isConnected = voice.getVoiceInfo(player, 'stateConnection') === 'connected';
+                    const isEnable = voice.getVoiceInfo(player, 'enabled');*/
+                    let indicatorColor = '~m~•';
+                    /*if (isConnected && !isEnable)
+                        indicatorColor = '~m~•';*/
+                    if (player.getVariable('voiceMic'))
                         indicatorColor = '~w~•';
                     const headPosition = player.getBoneCoords(12844, 0, 0, 0);
 
@@ -2617,6 +2631,9 @@ mp.events.add('playerMaybeTakeShot', (shootEntityId) => {
 
         let currentWeapon = mp.game.invoke(methods.GET_SELECTED_PED_WEAPON, shootEntity.handle);
         let damage = weapons.getDamageByHash(currentWeapon);
+
+        if (damage < 1)
+            damage = 1;
 
         mp.game.ped.setAiMeleeWeaponDamageModifier(damage);
         mp.game.player.setMeleeWeaponDefenseModifier(damage);
@@ -2907,6 +2924,18 @@ mp.events.add('render', () => {
             mp.game.controls.disableControlAction(0,270,true);
             mp.game.controls.disableControlAction(0,35,true); // disable move right
             mp.game.controls.disableControlAction(0,271,true)
+        }
+        if(ui.isGreenZone()) {
+            mp.game.controls.disableControlAction(2, 24, true);
+            mp.game.controls.disableControlAction(2, 25, true);
+            mp.game.controls.disableControlAction(2, 66, true);
+            mp.game.controls.disableControlAction(2, 67, true);
+            mp.game.controls.disableControlAction(2, 69, true);
+            mp.game.controls.disableControlAction(2, 70, true);
+            mp.game.controls.disableControlAction(2, 140, true);
+            mp.game.controls.disableControlAction(2, 141, true);
+            mp.game.controls.disableControlAction(2, 143, true);
+            mp.game.controls.disableControlAction(2, 263, true);
         }
         if(ui.DisableMouseControl /*|| ui.isShowMenu()*/) {
             mp.game.controls.disableControlAction(0,12,true); // disable sprint

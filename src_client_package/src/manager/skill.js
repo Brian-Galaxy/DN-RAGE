@@ -46,7 +46,7 @@ let checkStats = function()
             }
         }
 
-        if (user.getCache('mp0_flying_ability') < 99)
+        if (user.getCache('stats_flying') < 99)
         {
             if (mp.players.local.isSittingInAnyVehicle())
             {

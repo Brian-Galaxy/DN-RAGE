@@ -2485,7 +2485,7 @@ menuList.showSettingsMenu = function() {
 
     UIMenu.Menu.AddMenuItem("Интерфейс").doName = 'showSettingsHudMenu';
     UIMenu.Menu.AddMenuItem("Текстовый чат").doName = 'showSettingsTextMenu';
-    //UIMenu.Menu.AddMenuItem("Голосовой чат").doName = 'showSettingsVoiceMenu';
+    UIMenu.Menu.AddMenuItem("Голосовой чат").doName = 'showSettingsVoiceMenu';
     UIMenu.Menu.AddMenuItem("Назначение клавиш").doName = 'showSettingsKeyMenu';
 
     UIMenu.Menu.AddMenuItem("~r~Выйти с сервера", "Нажмите ~g~Enter~s~ чтобы применить").doName = 'exit';
@@ -2843,8 +2843,10 @@ menuList.showSettingsVoiceMenu = function() {
     listVoiceItem.doName = 'vol';
     listVoiceItem.Index = methods.parseInt(user.getCache('s_voice_vol') * 10);
 
-    UIMenu.Menu.AddMenuItem("~y~Перезагрузить голосовой чат (Обычная)", "Нажмите ~g~Enter~s~ чтобы применить").doName = 'restartVoice';
-    UIMenu.Menu.AddMenuItem("~y~Перезагрузить голосовой чат (Сложная)", "Нажмите ~g~Enter~s~ чтобы применить").doName = 'restartVoice2';
+    UIMenu.Menu.AddMenuItem("~y~Перезагрузить голосовой чат (#1)", "Нажмите ~g~Enter~s~ чтобы применить").doName = 'restartVoice1';
+    UIMenu.Menu.AddMenuItem("~y~Перезагрузить голосовой чат (#2)", "Нажмите ~g~Enter~s~ чтобы применить").doName = 'restartVoice2';
+    UIMenu.Menu.AddMenuItem("~y~Перезагрузить голосовой чат (#3)", "Нажмите ~g~Enter~s~ чтобы применить").doName = 'restartVoice3';
+    UIMenu.Menu.AddMenuItem("~y~Перезагрузить голосовой чат (Полная)", "Нажмите ~g~Enter~s~ чтобы применить").doName = 'restartVoice4';
 
     let voiceVol = 1;
     menu.ListChange.on(async (item, index) => {
@@ -2852,7 +2854,8 @@ menuList.showSettingsVoiceMenu = function() {
             voiceVol = index / 10;
 
             user.set('s_voice_vol', voiceVol);
-            voice.setSettings('voiceVolume', voiceVol);
+            voiceRage.setConfig('voiceVolume', user.getCache('s_voice_vol'));
+            //voice.setSettings('voiceVolume', voiceVol);
             mp.game.ui.notifications.show('~b~Вы установили значение: ~s~' + (voiceVol * 100) + '%');
         }
     });
@@ -2862,11 +2865,17 @@ menuList.showSettingsVoiceMenu = function() {
         if (item == closeItem)
             UIMenu.Menu.HideMenu();
 
-        if (item.doName == 'restartVoice') {
-            mp.events.call('client:restartVoice');
+        if (item.doName == 'restartVoice1') {
+            mp.voiceChat.cleanupAndReload(true, false, false);
         }
         if (item.doName == 'restartVoice2') {
-            mp.events.call('client:restartVoice2');
+            mp.voiceChat.cleanupAndReload(false, true, false);
+        }
+        if (item.doName == 'restartVoice3') {
+            mp.voiceChat.cleanupAndReload(false, false, true);
+        }
+        if (item.doName == 'restartVoice4') {
+            mp.voiceChat.cleanupAndReload(true, true, true);
         }
         if (item.eventName) {
             UIMenu.Menu.HideMenu();
@@ -2911,7 +2920,7 @@ menuList.showPlayerDoMenu = function(playerId) {
             }
         }
 
-        else if (item.doName == 'giveMoney') {
+        if (item.doName == 'giveMoney') {
             let money = methods.parseFloat(await UIMenu.Menu.GetUserInput("Сумма", "", 9));
             if (money <= 0) {
                 mp.game.ui.notifications.show("~r~Нельзя передавать меньше 0$");
@@ -9340,6 +9349,9 @@ menuList.showAdminEventActivateMenu = function() {
 menuList.showAdminDevMenu = function() {
     let menu = UIMenu.Menu.Create(`ADMIN`, `~b~Админ меню`);
 
+    UIMenu.Menu.AddMenuItem("Сохранить все аккаунты").doName = 'saveAllAcc';
+    UIMenu.Menu.AddMenuItem("Сохранить всё").doName = 'saveAll';
+
     UIMenu.Menu.AddMenuItem("Debug").doName = 'debug';
     UIMenu.Menu.AddMenuItem("Debug2").doName = 'debug2';
     UIMenu.Menu.AddMenuItem("КоордыVeh").doName = 'server:user:getVehPos';
@@ -9366,6 +9378,12 @@ menuList.showAdminDevMenu = function() {
         }
         if (item.doName == 'server:user:getPlayerPos') {
             mp.events.callRemote('server:user:getPlayerPos');
+        }
+        if (item.doName == 'server:user:saveAllAcc') {
+            mp.events.callRemote('server:saveAllAcc');
+        }
+        if (item.doName == 'server:user:saveAll') {
+            mp.events.callRemote('server:saveAll');
         }
         if (item.doName == 'server:user:getPlayerPos2') {
             let str = await UIMenu.Menu.GetUserInput("Коорды", "", 200);

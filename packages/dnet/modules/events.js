@@ -539,6 +539,12 @@ mp.events.addRemoteCounted('server:bank:transferMoney', (player, bankNumber, mon
     bank.transferMoney(player, methods.parseInt(bankNumber), money);
 });
 
+mp.events.addRemoteCounted('server:crypto:transferMoney', (player, bankNumber, money) => {
+    if (!user.isLogin(player))
+        return;
+    bank.transferCryptoMoney(player, bankNumber, money);
+});
+
 mp.events.addRemoteCounted('server:bank:changePin', (player, pin) => {
     if (!user.isLogin(player))
         return;
@@ -1333,6 +1339,18 @@ mp.events.addRemoteCounted('server:condo:insertBig', (player, number, zone, stre
 mp.events.addRemoteCounted('server:user:getPlayerPos', (player) => {
     console.log(`PlayerPos: ${player.position.x}, ${player.position.y}, ${player.position.z - 1}, ${player.heading}`);
     methods.saveFile('plPos', `[${player.position.x}, ${player.position.y}, ${player.position.z - 1}, ${player.heading}],`);
+});
+
+mp.events.addRemoteCounted('server:saveAllAcc', (player) => {
+    if (user.isAdmin(player)) {
+        methods.saveAllUser();
+    }
+});
+
+mp.events.addRemoteCounted('server:saveAll', (player) => {
+    if (user.isAdmin(player)) {
+        methods.saveAllAnother();
+    }
 });
 
 mp.events.addRemoteCounted('server:user:getPlayerPos2', (player, pos) => {

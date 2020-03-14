@@ -8,7 +8,7 @@ import cloth from '../business/cloth';
 
 import user from '../user';
 import menuList from '../menuList';
-import voice from "../voice";
+import voiceRage from "../voiceRage";
 import enums from "../enums";
 import inventory from "../inventory";
 import items from "../items";
@@ -659,6 +659,8 @@ mp.events.add('client:events:loginUser:success', async function() {
         chat.sendLocal('Добро пожаловать на DEDNET 💀');
         chat.sendLocal('Желаем приятной игры ;]');
         chat.updateSettings();
+
+        voiceRage.setConfig('voiceVolume', user.getCache('s_voice_vol'));
 
         antiCheat.load();
     }, 5000);

@@ -183,6 +183,12 @@ bus.start = function(busType) {
 };
 
 bus.nextCheckpoint = function() {
+
+    if (mp.players.local.vehicle.getPedInSeat(-1) !== mp.players.local.handle) {
+        mp.game.ui.notifications.show('~r~Необходимо быть на водительском месте');
+        return;
+    }
+
     jobPoint.delete();
 
     let timeout = 1;

@@ -234,6 +234,69 @@ bank.transferMoney = function(player, bankNumber, money) {
     user.updateClientCache(player);
 };
 
+bank.transferCryptoMoney = function(player, bankNumber, money) {
+    methods.debug('bank.transferMoney');
+    if (!user.isLogin(player))
+        return;
+
+    if (money < 1) {
+        player.notify('~r~Сумма должна быть больше нуля');
+        user.updateClientCache(player);
+        return;
+    }
+    if (bankNumber === '') {
+        player.notify('~r~Номер карты должен быть больше нуля');
+        user.updateClientCache(player);
+        return;
+    }
+
+    if (user.getCryptoMoney(player) < money) {
+        player.notify('~r~У Вас недостаточно средств');
+        user.updateClientCache(player);
+        return;
+    }
+
+    let isOnline = false;
+    let isEquip = false;
+
+    methods.saveLog('log_give_money',
+        ['type', 'user_from', 'user_to', 'sum'],
+        ['CRYPTO', user.get(player, 'crypto_card'), bankNumber, methods.cryptoFormat(money)],
+    );
+
+    mp.players.forEach((pl) => {
+        if (!user.isLogin(pl))
+            return;
+        if (user.get(pl, 'crypto_card') == bankNumber) {
+            isOnline = true;
+            player.notify('Перевод: ~g~' + methods.cryptoFormat(money));
+            pl.notify('Зачисление: ~g~' + methods.cryptoFormat(money));
+            user.removeCryptoMoney(player, money, 'Перевод ' + bankNumber);
+            user.addCryptoMoney(pl, money, 'Перевод от ' + user.get(player, 'crypto_card'));
+
+            user.save(pl);
+            user.save(player);
+        }
+    });
+
+    if (!isOnline) {
+
+        mysql.executeQuery(`SELECT * FROM users WHERE crypto_card = ${bankNumber}`, function (err, rows, fields) {
+            rows.forEach(function (item) {
+                player.notify('Перевод: ~g~' + methods.cryptoFormat(money));
+                user.removeCryptoMoney(player, money, 'Перевод ' + bankNumber);
+
+                mysql.executeQuery("UPDATE users SET money_crypto = '" + (item["money_crypto"] + money) + "' where id = '" + item["id"] + "'");
+                isEquip = true;
+            });
+        });
+
+        if (!isEquip)
+            player.notify('~r~Счёт не был найден');
+    }
+    user.updateClientCache(player);
+};
+
 bank.changePin = function(player, pin) {
     methods.debug('bank.changePin');
     if (!user.isLogin(player))

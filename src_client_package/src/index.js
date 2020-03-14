@@ -51,9 +51,9 @@ try {
         object.createIpl(item[0], new mp.Vector3(item[1], item[2], item[3]), item[4]);
     });*/
 
-    mp.game.ped.setAiMeleeWeaponDamageModifier(2);
-    mp.game.player.setMeleeWeaponDefenseModifier(2);
-    mp.game.player.setWeaponDefenseModifier(2);
+    mp.game.ped.setAiMeleeWeaponDamageModifier(1);
+    mp.game.player.setMeleeWeaponDefenseModifier(1);
+    mp.game.player.setWeaponDefenseModifier(1);
 
     mp.gui.cursor.show(true, true);
 

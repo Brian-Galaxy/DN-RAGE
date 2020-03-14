@@ -2544,7 +2544,7 @@ phone.consoleCallback = async function(command) {
                 phone.addConsoleCommand('ecorp -number');
                 phone.addConsoleCommand('ecorp -balance');
                 phone.addConsoleCommand('ecorp -coin -toBankCard [sum]');
-                //phone.addConsoleCommand('ecorp -send [coin number] [sum]');
+                phone.addConsoleCommand('ecorp -send [coin number] [sum]');
                 phone.addConsoleCommand('ecorp -send -fraction [sum]');
                 phone.addConsoleCommand('ecorp -fraction -create');
                 phone.addConsoleCommand('ecorp -fraction -list');
@@ -2581,7 +2581,7 @@ phone.consoleCallback = async function(command) {
                 if (args[1] === '-fraction') {
                     let sum = methods.parseFloat(args[2]);
                     if (sum < 0) {
-                        phone.addConsoleCommand('Usage: ecorp -coin -toBankCard [sum]');
+                        phone.addConsoleCommand('Usage: ecorp -send -fraction [sum]');
                         return;
                     }
                     if (sum > user.getCryptoMoney()) {
@@ -2591,6 +2591,18 @@ phone.consoleCallback = async function(command) {
                     phone.addConsoleCommand('Transfer to fraction success');
                     user.removeCryptoMoney(sum, 'Перевод E-Coin');
                     fraction.addMoney(user.getCache('fraction_id2'), sum, 'Перевод E-Coin от ' + user.getCache('name'));
+                }
+                else if (args[1]) {
+                    let sum = methods.parseFloat(args[2]);
+                    if (sum < 0) {
+                        phone.addConsoleCommand('Usage: ecorp -send [coin number] [sum]');
+                        return;
+                    }
+                    if (sum > user.getCryptoMoney()) {
+                        phone.addConsoleCommand('Error: You have not e-coin');
+                        return;
+                    }
+                    mp.events.callRemote('server:crypto:transferMoney', args[1], sum);
                 }
                 else {
                     phone.addConsoleCommand('Usage: ecorp -fraction -create');

@@ -22,10 +22,10 @@ hosp.timer = function() {
         if (user.isLogin()) {
             if (user.getCache('med_time') > 1) {
 
-                if (user.getCache('jail_timer') > 0) {
+                if (user.getCache('jail_time') > 0) {
                     user.set('med_time', 0);
                     prvTime = 0;
-                    jail.toJail(user.getCache('jail_timer'));
+                    jail.toJail(user.getCache('jail_time'));
                     return;
                 }
 
@@ -83,7 +83,7 @@ hosp.freePlayer = function() {
     }
     else
     {
-        if (user.getCache('online_time') < 169) {
+        if (user.getCache('online_time') < 300) {
             user.removeMoney(50);
             coffer.addMoney(6, 50, 'Лечение в больнице');
             mp.game.ui.notifications.show("~g~Стоимость лечения ~s~$50");
@@ -143,10 +143,10 @@ hosp.toHosp = function() {
         mp.game.ui.displayHud(true);
         mp.players.local.freezePosition(false);
 
-        if (user.getCache('jail_timer') > 0) {
+        if (user.getCache('jail_time') > 0) {
             user.set('med_time', 0);
             prvTime = 0;
-            jail.toJail(user.getCache('jail_timer'));
+            jail.toJail(user.getCache('jail_time'));
             return;
         }
 

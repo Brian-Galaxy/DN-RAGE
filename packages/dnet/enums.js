@@ -515,7 +515,7 @@ enums.fractionList = {
         leaderPayDay: 1900,
         subLeaderPayDay: 1600,
         rankList: [
-            ["Captain", "Deputy Captain", "Senior Cadet", "Cadet"], //0
+            ["Captain", "Deputy Captain", "Instructor", "Junior Instructor", "Senior Cadet", "Cadet"], //0
             ["Captain", "Deputy Captain", "Lieutenant II", "Lieutenant I", "Sergeant II", "Sergeant I", "Corporal"], //1
             ["Captain", "Deputy Captain", "Lieutenant II", "Lieutenant I", "Sergeant II", "Sergeant I", "Corporal"], //2
             ["Captain", "Deputy Captain", "Lieutenant II", "Lieutenant I", "Sergeant II", "Sergeant I", "Corporal"], //3

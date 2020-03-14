@@ -2309,8 +2309,6 @@ user.useAdrenaline = function(player) {
         return false;
     methods.debug('user.useAdrenaline');
     user.revive(player);
-    // Нужно как-то очищать скрин эффект Заглушечка
-    // Dispatcher // Нужно ли это тут?
 };
 
 user.payDay = async function (player) {
@@ -2348,15 +2346,15 @@ user.payDay = async function (player) {
                 if (rows.length >= 1) {
                     let paramsStart = JSON.parse(rows[0]["end"]);
 
-                    let string = `~b~Вы отыграли на проекте 48ч, вы получили бонус по промокоду ${promocode}\n`;
+                    let string = `~b~Вы отыграли на проекте 24ч, вы получили бонус по промокоду ${promocode}\n`;
                     if (paramsStart.money > 0)
                         string += `~b~Вы получили~s~ ${methods.moneyFormat(paramsStart.money)}\n`;
-                    if (paramsStart.vipt === 1)
+                    /*if (paramsStart.vipt === 1)
                         string += `~b~Вы получили ~s~VIP LIGHT~b~ на ~s~${paramsStart.vip}д.\n`;
                     if (paramsStart.vipt === 2)
-                        string += `~b~Вы получили ~s~VIP HARD~b~ на ~s~${paramsStart.vip}д.\n`;
+                        string += `~b~Вы получили ~s~VIP HARD~b~ на ~s~${paramsStart.vip}д.\n`;*/
 
-                    let vipTime = 0;
+                    /*let vipTime = 0;
                     let vipType = methods.parseInt(paramsStart.vipt);
                     if (methods.parseInt(paramsStart.vip) > 0 && user.get(player, 'vip_type') > 0 && user.get(player, 'vip_time') > 0)
                         vipTime = methods.parseInt(paramsStart.vip * 86400) + user.set(player, 'vip_time');
@@ -2364,9 +2362,10 @@ user.payDay = async function (player) {
                         vipTime = methods.parseInt(paramsStart.vip * 86400) + methods.getTimeStamp();
 
                     user.set(player, 'vip_time', vipTime);
-                    user.set(player, 'vip_type', vipType);
+                    user.set(player, 'vip_type', vipType);*/
 
                     player.notify(string);
+                    user.addCashMoney(player, paramsStart.money, 'Бонус от государства');
                 } else {
                     player.notify(`~g~Вы получили ~s~$25000 ~g~по промокоду ~s~${user.get(player, 'promocode')}`);
                     user.addCashMoney(player, 25000, 'Бонус от государства');

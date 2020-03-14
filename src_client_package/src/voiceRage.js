@@ -10,23 +10,15 @@ let voiceRage = {};
 
 //0x4E
 let __CONFIG__ = {
-    pushToTalkKey: 78, // default voice activation key
     defaultDistance: 25, // default proximity distance
-    token: 'lol', // that is token from server
-    isTokenSecurity: false, //
-    serverName: 'Python',
-    //prefixId: `${this.serverName}_pl_`, // that prefix for voice id
-    prefixId: `Python_pl_`, // that prefix for voice id
-    receivingTokenEventName: 'youToken', // the name of the event that receives the token
-    sendDataProximityInterval: 500, // the interval between sending loudness data to ms
-    debug: false, // debug mode
-    smoothTransitionRate: 0.09, // speed of transition from global chat to radio / phone call
     voiceVolume: 0,
-    radioVolume: 1,
-    radioBalance: 0
 };
 
 voiceRage.listeners = [];
+
+voiceRage.setConfig = function(key, value) {
+    __CONFIG__[key] = value;
+};
 
 voiceRage.enableMic = function() {
     mp.voiceChat.muted = false;
@@ -60,7 +52,7 @@ voiceRage.add = (player) => {
     }
     else
     {
-        player.voiceVolume = 1.0;
+        player.voiceVolume = 0;
     }
 
     if(Use3d)

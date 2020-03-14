@@ -515,6 +515,8 @@ vehicles.spawnFractionCar = (id) => {
             if (!vehicles.exists(veh))
                 return;
 
+            let vInfo = methods.getVehicleInfo(info.name);
+
             veh.numberPlate = number;
             veh.numberPlateType = numberStyle;
             veh.livery = livery;
@@ -525,7 +527,7 @@ vehicles.spawnFractionCar = (id) => {
             veh.setVariable('rank', info.rank);
             veh.setVariable('rank_type', info.rank_type);
             veh.setVariable('veh_id', info.id);
-            vehicles.setFuel(veh, info.fuel);
+            vehicles.setFuel(veh, vInfo.fuel_full);
 
             if (fractionId == 1) {
                 veh.windowTint = 1;

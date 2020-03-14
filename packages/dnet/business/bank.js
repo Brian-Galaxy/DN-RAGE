@@ -239,7 +239,7 @@ bank.transferCryptoMoney = function(player, bankNumber, money) {
     if (!user.isLogin(player))
         return;
 
-    if (money < 1) {
+    if (money < 0) {
         player.notify('~r~Сумма должна быть больше нуля');
         user.updateClientCache(player);
         return;

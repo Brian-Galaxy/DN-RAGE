@@ -59,7 +59,7 @@ phone.showOrHide = function() {
         return;
     }
     if (user.getCache('jail_time') > 0) {
-        mp.game.ui.notifications.show("~r~Нельзя пользоваться телефонов в тюрьме");
+        mp.game.ui.notifications.show("~r~Нельзя пользоваться телефоном в тюрьме");
         return;
     }
     if (user.isCuff() || user.isTie()) {

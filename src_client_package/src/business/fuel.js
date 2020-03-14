@@ -126,12 +126,12 @@ fuel.fillVeh = function(price, shopId, type, idx) {
                     return;
                 }
                 business.addMoney(shopId, money, 'Заправка транспорта: ' + vehicles.getFuelLabel(vInfo.fuel_type));
-                if (veh.getVariable('fraction_id')) {
+                /*if (veh.getVariable('fraction_id')) {
                     coffer.removeMoney(coffer.getIdByFraction(veh.getVariable('fraction_id')), money, 'Заправка транспорта');
                     mp.game.ui.notifications.show('~y~Транспорт будет заправлен за счет бюджета организации.');
                     fuel.fillVehTimer(1);
                     return;
-                }
+                }*/
                 mp.game.ui.notifications.show('~y~Вы заправили свой транспорт по цене: ' + methods.moneyFormat(money));
                 user.removeMoney(money, 'Заправка транспорта');
                 fuel.fillVehTimer(1);
@@ -145,12 +145,12 @@ fuel.fillVeh = function(price, shopId, type, idx) {
                     return;
                 }
                 business.addMoney(shopId, money, 'Заправка транспорта: ' + vehicles.getFuelLabel(vInfo.fuel_type));
-                if (veh.getVariable('fraction_id')) {
+                /*if (veh.getVariable('fraction_id')) {
                     coffer.removeMoney(coffer.getIdByFraction(veh.getVariable('fraction_id')), money, 'Заправка транспорта');
                     mp.game.ui.notifications.show('~y~Транспорт будет заправлен за счет бюджета организации.');
                     fuel.fillVehTimer(5);
                     return;
-                }
+                }*/
                 mp.game.ui.notifications.show('~y~Вы заправили свой транспорт по цене: ' + methods.moneyFormat(money));
                 user.removeMoney(money, 'Заправка транспорта');
                 fuel.fillVehTimer(5);
@@ -164,12 +164,12 @@ fuel.fillVeh = function(price, shopId, type, idx) {
                     return;
                 }
                 business.addMoney(shopId, money, 'Заправка транспорта: ' + vehicles.getFuelLabel(vInfo.fuel_type));
-                if (veh.getVariable('fraction_id')) {
+                /*if (veh.getVariable('fraction_id')) {
                     coffer.removeMoney(coffer.getIdByFraction(veh.getVariable('fraction_id')), money, 'Заправка транспорта');
                     mp.game.ui.notifications.show('~y~Транспорт будет заправлен за счет бюджета организации.');
                     fuel.fillVehTimer(10);
                     return;
-                }
+                }*/
                 mp.game.ui.notifications.show('~y~Вы заправили свой транспорт по цене: ' + methods.moneyFormat(money));
                 user.removeMoney(money, 'Заправка транспорта');
                 fuel.fillVehTimer(10);
@@ -185,12 +185,12 @@ fuel.fillVeh = function(price, shopId, type, idx) {
                     return;
                 }
                 business.addMoney(shopId, money, 'Заправка транспорта: ' + vehicles.getFuelLabel(vInfo.fuel_type));
-                if (veh.getVariable('fraction_id')) {
+                /*if (veh.getVariable('fraction_id')) {
                     coffer.removeMoney(coffer.getIdByFraction(veh.getVariable('fraction_id')), money, 'Заправка транспорта');
                     mp.game.ui.notifications.show('~y~Транспорт будет заправлен за счет бюджета организации.');
                     fuel.fillVehTimer(vInfo.fuel_full - currentFuel);
                     return;
-                }
+                }*/
                 mp.game.ui.notifications.show('~y~Вы заправили свой транспорт по цене: ' + methods.moneyFormat(money));
                 user.removeMoney(money, 'Заправка транспорта');
                 fuel.fillVehTimer(vInfo.fuel_full - currentFuel);

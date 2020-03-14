@@ -2,6 +2,7 @@ let methods = require('../modules/methods');
 
 let enums = require('../enums');
 let user = require('../user');
+let inventory = require('../inventory');
 
 let cloth = require('../business/cloth');
 let tattoo = require('../business/tattoo');
@@ -77,6 +78,8 @@ pickups.SapdToBalcon2Pos = new mp.Vector3(428.4888, -995.2952, 34.68689);
 pickups.SapdFromBalcon2Pos = new mp.Vector3(464.1708, -984.0346, 38.89184);
 pickups.SapdToInterrogationPos = new mp.Vector3(404.0302, -997.302, -100.004);
 pickups.SapdFromInterrogationPos = new mp.Vector3(446.7996, -985.8127, 25.67422);
+
+pickups.SapdStockPos = new mp.Vector3(472.8161315917969, -990.1664428710938, 23.91470718383789);
 
 pickups.SheriffGarderobPos = new mp.Vector3(-452.945, 6013.818, 30.716);
 pickups.SheriffGarderobPos2 = new mp.Vector3(1849.775390625, 3695.501953125, 33.26706314086914);
@@ -399,6 +402,11 @@ pickups.checkPressE = function(player) {
         if (methods.distanceToPos(pickups.MeriaGarderobPos, playerPos) < distanceCheck)
             player.call('client:menuList:showGovGarderobMenu');
     }
+
+
+    if (methods.distanceToPos(pickups.SapdStockPos, playerPos) < distanceCheck)
+        inventory.getItemList(inventory.types.StockGov, user.getId(player));
+
     if (user.isSapd(player)) {
         if (methods.distanceToPos(pickups.SapdGarderobPos, playerPos) < distanceCheck)
             player.call('client:menuList:showSapdGarderobMenu');

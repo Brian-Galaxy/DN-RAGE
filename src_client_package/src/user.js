@@ -51,7 +51,7 @@ let cameraRotator = new Camera.Rotator();
 mp.events.add('render', () => {
     try {
         let entity = user.getTargetEntityValidate();
-        if (user.isLogin() && entity) {
+        if (user.isLogin() && entity && entity.getAlpha() > 0) {
             if (user.getCache('s_hud_raycast')) {
                 let pos = entity.position;
                 ui.drawText3D(`•`, pos.x, pos.y, pos.z, 0.7);
@@ -372,8 +372,10 @@ user.revive = function(hp = 20) {
     //mp.players.local.resurrect();
     //mp.players.local.position = hospPos;
     mp.events.callRemote('server:user:respawn', hospPos.x, hospPos.y, hospPos.z);
-    mp.players.local.freezePosition(false);
-    ui.showHud();
+    setTimeout(function () {
+        mp.players.local.freezePosition(false);
+        ui.showHud();
+    }, 2000)
 };
 
 user.respawn = function(x, y, z) {

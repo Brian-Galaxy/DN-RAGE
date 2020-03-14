@@ -1,5 +1,4 @@
 "use strict";
-
 let user = require('../user');
 let enums = require('../enums');
 let coffer = require('../coffer');
@@ -1082,7 +1081,12 @@ mp.events.addRemoteCounted('server:user:knockById', (player, targetId) => { //TO
             return;
         }
 
-        let random = methods.getRandomInt(0, user.get(player, 'stats_strength') - 100);
+        if (user.get(player, 'stats_strength') < 96) {
+            player.notify("~r~Необходимо иметь навык силы больше 95%");
+            return;
+        }
+
+        let random = methods.getRandomInt(0, 100);
         //let random2 = methods.getRandomInt(0, user.get(target, 'stats_strength') - 200);
 
         user.set(player, 'isKnockoutTimeout', true);
@@ -1097,7 +1101,7 @@ mp.events.addRemoteCounted('server:user:knockById', (player, targetId) => { //TO
             }
         }, 120000);
 
-        if (random < 2) {
+        if (random < 25) {
             user.set(target, 'isKnockout', true);
             target.setVariable('isKnockout', true);
             user.playAnimation(target, "amb@world_human_bum_slumped@male@laying_on_right_side@base", "base", 9);
@@ -1435,8 +1439,40 @@ mp.events.addRemoteCounted('server:sendAnswerReport', (player, id, msg) => {
 
 mp.events.addRemoteCounted('server:admin:spawnVeh', (player, vName) => {
     try {
-        let v = vehicles.spawnCar(player.position, player.heading, vName);
-        user.putInVehicle(player, v, -1);
+        if (user.isAdmin(player)) {
+            let v = vehicles.spawnCar(player.position, player.heading, vName);
+            user.putInVehicle(player, v, -1);
+        }
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.addRemoteCounted('server:admin:gangZone:editPos', (player, id) => {
+    if (!user.isAdmin(player))
+        return;
+    try {
+        let pos = player.position;
+        gangWar.set(id, 'x', pos.x);
+        gangWar.set(id, 'y', pos.y);
+        gangWar.set(id, 'z', pos.z);
+        mysql.executeQuery("UPDATE gang_war SET x = '" + pos.x + "', y = '" + pos.y + "', z = '" + pos.z + "' where id = '" + id + "'");
+        player.notify('~b~Координаты были обновлены');
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.addRemoteCounted('server:admin:gangZone:edit', (player, id, key, val) => {
+    if (!user.isAdmin(player))
+        return;
+    try {
+        let pos = player.position;
+        gangWar.set(id, key, val);
+        mysql.executeQuery("UPDATE gang_war SET " + key + " = '" + val + "' where id = '" + id + "'");
+        player.notify(`~b~Значение ${key} было обновлено на ${val}`);
     }
     catch (e) {
         methods.debug(e);
@@ -1444,6 +1480,8 @@ mp.events.addRemoteCounted('server:admin:spawnVeh', (player, vName) => {
 });
 
 mp.events.addRemoteCounted('server:admin:vehicleSpeedBoost', (player, vName, num) => {
+    if (!user.isAdmin(player))
+        return;
     try {
 
         mysql.executeQuery(`UPDATE veh_info SET sb = '${num}' WHERE display_name = '${vName}'`);
@@ -1454,6 +1492,8 @@ mp.events.addRemoteCounted('server:admin:vehicleSpeedBoost', (player, vName, num
 });
 
 mp.events.addRemoteCounted('server:admin:vehicleSpeedMax', (player, vName, num) => {
+    if (!user.isAdmin(player))
+        return;
     try {
 
         mysql.executeQuery(`UPDATE veh_info SET sm = '${num}' WHERE display_name = '${vName}'`);
@@ -1505,6 +1545,10 @@ mp.events.addRemoteCounted('server:admin:resetSkinById', (player, type, id) => {
 
 mp.events.addRemoteCounted('server:admin:adrenalineById', (player, type, id) => {
     admin.adrenalineById(player, type, id);
+});
+
+mp.events.addRemoteCounted('server:admin:freeHospById', (player, type, id) => {
+    admin.freeHospById(player, type, id);
 });
 
 mp.events.addRemoteCounted('server:admin:changeDimension', (player, type, id, dim) => {
@@ -1591,7 +1635,7 @@ mp.events.addRemoteCounted('server:invader:sendNews', (player, title, text) => {
         return;
 
     title = methods.removeQuotes(title);
-    text = methods.removeQuotes(text);
+    text = methods.removeQuotes(methods.replaceAll('"', '`', text));
     let name = methods.removeQuotes(user.getRpName(player));
 
     let rpDateTime = weather.getRpDateTime();
@@ -1635,8 +1679,8 @@ mp.events.addRemoteCounted('server:invader:sendAd', (player, id, title, name, te
     if (!user.isLogin(player))
         return;
 
-    title = methods.removeQuotes(title);
-    text = methods.removeQuotes(text);
+    title = methods.removeQuotes(methods.replaceAll('"', '`', title));
+    text = methods.removeQuotes(methods.replaceAll('"', '`', text));
     name = methods.removeQuotes(name);
     phone = methods.removeQuotes(phone);
     let editor = methods.removeQuotes(user.getRpName(player));
@@ -1690,7 +1734,7 @@ mp.events.addRemoteCounted('server:invader:sendAdTemp', (player, text) => {
         return;
     }
 
-    text = methods.removeQuotes(text);
+    text = methods.removeQuotes(methods.replaceAll('"', '`', text));
     let phone = methods.removeQuotes(user.get(player, 'phone'));
     let name = methods.removeQuotes(user.getRpName(player).split(' ')[0]);
 
@@ -2726,6 +2770,12 @@ mp.events.addRemoteCounted("server:vehicle:lockStatus", (player) => {
                 else
                     player.notify('~r~У Вас нет ключей от транспорта');
             }
+            else if (vehicle.getVariable('cargoId')) {
+                if (vehicle.getVariable('fraction_id2') > 0)
+                    vehicles.lockStatus(player, vehicle);
+                else
+                    player.notify('~r~У Вас нет ключей от транспорта');
+            }
             else if (data.has('user_id')) {
                 if (data.get('user_id') == user.getId(player))
                     vehicles.lockStatus(player, vehicle);
@@ -3037,6 +3087,12 @@ mp.events.addRemoteCounted('server:stock:sellBySlot', (player, slot) => {
     stocks.sellBySlot(player, slot);
 });
 
+mp.events.addRemoteCounted('server:stock:openBySlot', (player, slot, boxId) => {
+    if (!user.isLogin(player))
+        return;
+    stocks.openBySlot(player, slot, boxId);
+});
+
 mp.events.addRemoteCounted('server:apartments:sell', (player) => {
     if (!user.isLogin(player))
         return;
@@ -3317,9 +3373,13 @@ mp.events.addRemoteCounted('server:business:sellToPlayer:accept', (player, house
         return;
     }
 
-    if (user.get(player, 'biz_lic') === false) {
-        player.notify('~r~У Вас нет лицензии на предпринимательство');
-        player.notify('~r~Купить её можно у сотрудников правительства');
+    if (user.get(player, 'reg_status') < 2) {
+        player.notify('~r~Необходимо иметь гражданство');
+        return false;
+    }
+
+    if (!user.get(player, 'biz_lic')) {
+        player.notify('~r~У Вас нет лицензии на предпринимательство\nКупить её можно у сотрудников правительства');
         return false;
     }
 
@@ -5760,6 +5820,8 @@ mp.events.add("playerDeath", (player, reason, killer) => {
         catch (e) {
             methods.debug(e);
         }
+
+        mysql.executeQuery(`UPDATE items SET owner_type = '${inventory.types.StockGov}', owner_id = '${user.getId(player)}' where owner_id = '${user.getId(player)}' AND owner_type = '1' AND (item_id > '53' AND item_id < '139' OR item_id = '146' OR item_id = '147')`);
 
         setTimeout(function () {
             let rand = 'a';

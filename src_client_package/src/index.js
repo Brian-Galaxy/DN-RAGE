@@ -62,7 +62,7 @@ try {
     hosp.timer();
     jail.timer();
 
-    setInterval(voiceRage.timer, 500);
+    setInterval(voiceRage.timer, 10);
 
     user.init();
     try {

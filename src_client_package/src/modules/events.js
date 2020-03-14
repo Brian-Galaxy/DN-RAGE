@@ -684,38 +684,20 @@ mp.events.add('client:user:callCef', (name, params) => {
 
 let isZone = false;
 let gangWarTimeout = null;
-mp.events.add('client:gangWar:sendInfo', (atC, defC, x, y, z, timerCounter) => {
+mp.events.add('client:gangWar:sendInfo', (atC, defC, timerCounter) => {
     if (gangWarTimeout) {
         clearTimeout(gangWarTimeout);
         gangWarTimeout = null;
     }
 
     try {
-        const local = mp.players.local;
-        let street = mp.game.pathfind.getStreetNameAtCoord(local.position.x, local.position.y, local.position.z, 0, 0).streetName;
-        let zone = mp.game.zone.getNameOfZone(local.position.x, local.position.y, local.position.z);
-
-        let street2 = mp.game.pathfind.getStreetNameAtCoord(x, y, z, 0, 0).streetName;
-        let zone2 = mp.game.zone.getNameOfZone(x, y, z);
-
-        if (street2 == street && zone2 == zone) {
-            if (!isZone)
-                user.set('isGangZone', true);
-            isZone = true;
-            ui.showGangInfo();
-            ui.updateGangInfo(atC, defC, timerCounter);
-            gangWarTimeout = setTimeout(function () {
-                ui.hideGangInfo();
-                user.reset('isGangZone');
-                isZone = false;
-            }, 3000);
-        }
-        else {
-            if (isZone)
-                user.reset('isGangZone');
-            isZone = false;
+        isZone = true;
+        ui.showGangInfo();
+        ui.updateGangInfo(atC, defC, timerCounter);
+        gangWarTimeout = setTimeout(function () {
             ui.hideGangInfo();
-        }
+            isZone = false;
+        }, 3000);
     }
     catch (e) {
         methods.debug(e);
@@ -1849,6 +1831,9 @@ mp.events.add('client:inventory:unloadW', function(itemId) {
         return;
     }
 
+    if (user.getAmmoByHash(wpHash) === 0)
+        return;
+
     inventory.addItemSql(ammoId, 1, inventory.types.Player, user.getCache('id'), user.getAmmoByHash(wpHash));
 
     user.setAmmo(wpName, 0);
@@ -2180,6 +2165,15 @@ mp.events.add('client:inventory:unEquip', function(id, itemId) {
 });
 
 mp.events.add('client:inventory:equip', function(id, itemId, count, aparams) {
+    setTimeout(function () {
+        try {
+            if (itemId === 50)
+                quest.standart();
+        }
+        catch (e) {
+
+        }
+    }, 5000);
     mp.events.callRemote('server:inventory:equip', id, itemId, count, aparams);
 });
 

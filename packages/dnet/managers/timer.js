@@ -36,25 +36,8 @@ timer.min10Timer = function() {
 
     mp.vehicles.forEach(function (v) {
         try {
-            if (vehicles.exists(v) && v.getOccupants().length == 0 && !v.getVariable('trId')) {
-                try {
-                    if (v.afkPos && !v.getVariable('user_id') && !v.getVariable('fraction_id') && !v.getVariable('useless')) {
-                        if (methods.distanceToPos(v.position, v.afkPos) < 1) {
-                            v.afkTimer = methods.parseInt(v.afkTimer) + 1;
-                            if (v.afkTimer >= 3)
-                                vehicles.respawn(v);
-                        }
-                        else {
-                            v.afkTimer = 0;
-                        }
-                        v.afkPos = v.position;
-                    }
-                }
-                catch (e) {
-
-                }
-
-                if (v.dead)
+            if (vehicles.exists(v) && (vehicles.getFuel(v) == 0 && v.getOccupants().length == 0 || v.dead)) {
+                if (!v.getVariable('trId'))
                     vehicles.respawn(v);
             }
         }

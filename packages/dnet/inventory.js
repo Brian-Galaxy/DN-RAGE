@@ -516,6 +516,9 @@ inventory.dropItem = function(player, id, itemId, posX, posY, posZ, rotX, rotY, 
             return;
         }
 
+        if (props.has(id.toString()))
+            return;
+
         let heading = player.heading;
         let rot = new mp.Vector3(0, 0, heading);
 
@@ -547,7 +550,7 @@ inventory.dropItem = function(player, id, itemId, posX, posY, posZ, rotX, rotY, 
 
         let obj = mp.objects.new(
             items.getItemHashById(itemId),
-            new mp.Vector3(posX + (methods.getRandomInt(-100, 100) / 300), posY + (methods.getRandomInt(-100, 100) / 400), posZ-0.98),
+            new mp.Vector3(posX + (methods.getRandomInt(-100, 100) / 300), posY + (methods.getRandomInt(-100, 100) / 400), posZ - 0.98),
             {
                 rotation: rot,
                 alpha: 255,
@@ -752,6 +755,15 @@ inventory.useItem = function(player, id, itemId, isTargetable = false) {
                         player.notify("~r~Этот человек уже в связан/в наручниках");
                         return;
                     }
+                    if (target.health == 0) {
+                        player.notify("~r~Нельзя надевать наручники на человека в коме");
+                        return;
+                    }
+                    if (target.vehicle) {
+                        player.notify("~r~Игрок находится в машине");
+                        return;
+                    }
+
                     user.tie(target);
                     player.notify("~y~Вы связали игрока");
                     chat.sendMeCommand(player, "связал человека рядом");
@@ -892,7 +904,7 @@ inventory.useItem = function(player, id, itemId, isTargetable = false) {
             case 3:
             {
                 if (user.has(player, 'useHeal')) {
-                    player.notify('~r~Нельзя так часто употреблять аптечки');
+                    player.notify('~r~Нельзя так часто употреблять наркотики');
                     return;
                 }
                 chat.sendMeCommand(player, "употребил марихуану");
@@ -1125,7 +1137,7 @@ inventory.useItem = function(player, id, itemId, isTargetable = false) {
                 }
 
                 let vehInfo = methods.getVehicleInfo(veh.model);
-                if (vehInfo.fuel_type != 1)
+                if (vehInfo.fuel_type != 2)
                 {
                     player.notify("~r~Данный вид топлива не подходит под этот транспорт");
                     return;
@@ -1345,6 +1357,10 @@ inventory.useItem = function(player, id, itemId, isTargetable = false) {
                     player.notify("~r~Нельзя надевать наручники на человека в коме");
                     return;
                 }
+                if (target.vehicle) {
+                    player.notify("~r~Игрок находится в машине");
+                    return;
+                }
 
                 user.heading(target, player.heading);
 
@@ -1451,7 +1467,7 @@ inventory.types = {
     Apartment : 6,
     Bag : 7,
     Vehicle : 8,
-    StockGang : 9,
+    StockGov : 9,
     Fridge : 10,
     UserStockDef : 75,
     UserStock : 100,

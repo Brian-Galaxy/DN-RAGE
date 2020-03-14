@@ -339,19 +339,23 @@ user.loadUser = function(player, name, spawn = 'Стандарт') {
             if (!mp.players.exists(player))
                 return false;
 
+            JSON.parse(user.get(player, 'skin'), function(k, v) {
+                user.set(player, k, v);
+            });
+
             if (user.get(player, 'date_ban') > methods.getTimeStamp()) {
+                user.resetAll(player);
                 user.showCustomNotify(player, 'Аккаунт забанен до: ' + methods.unixTimeStampToDateTime(user.get(player, 'date_ban')), 1);
+                user.kick(player, 'Вы забанены');
                 return;
             }
 
             if (user.get(player, 'is_online') == 1) {
+                user.resetAll(player);
                 user.showCustomNotify(player, 'Аккаунт уже авторизован', 1);
+                user.kick(player, 'Вы забанены');
                 return;
             }
-
-            JSON.parse(user.get(player, 'skin'), function(k, v) {
-                user.set(player, k, v);
-            });
 
             user.set(player, 'ping', player.ping);
 

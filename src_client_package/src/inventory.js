@@ -551,8 +551,8 @@ inventory.updateAmountMax = function(id, type) {
             invAmountMax = 50000;
         else if (type == inventory.types.BagSmall)
             invAmountMax = 20000;
-        else if (type == inventory.types.StockGang)
-            invAmountMax = 21000000;
+        else if (type == inventory.types.StockGov)
+            invAmountMax = 999999999;
         else if (type == inventory.types.Fridge)
             invAmountMax = 100000;
         //Main.GetKitchenAmount();
@@ -637,7 +637,7 @@ inventory.types = {
     Apartment : 6,
     Bag : 7,
     Vehicle : 8,
-    StockGang : 9,
+    StockGov : 9,
     Fridge : 10,
     UserStockDef : 75,
     UserStock : 100,

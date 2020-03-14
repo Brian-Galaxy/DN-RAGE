@@ -209,50 +209,65 @@ voiceRage.vdist = (v1, v2) => {
 };
 
 voiceRage.timer = () => {
-    let localPlayer = mp.players.local;
-    let localPos = localPlayer.position;
+    try {
+        let localPlayer = mp.players.local;
+        let localPos = localPlayer.position;
 
-    mp.players.forEachInStreamRange(player =>
-    {
-        if(player != localPlayer)
+        mp.players.forEachInStreamRange(player =>
         {
-            if(!player.isListening)
-            {
-                const playerPos = player.position;
-                let dist = mp.game.system.vdist(playerPos.x, playerPos.y, playerPos.z, localPos.x, localPos.y, localPos.z);
-
-                if(dist <= MaxRange)
+            try {
+                if(player != localPlayer)
                 {
-                    voiceRage.add(player);
+                    if(!player.isListening)
+                    {
+                        const playerPos = player.position;
+                        let dist = mp.game.system.vdist(playerPos.x, playerPos.y, playerPos.z, localPos.x, localPos.y, localPos.z);
+
+                        if(dist <= MaxRange)
+                        {
+                            voiceRage.add(player);
+                        }
+                    }
                 }
             }
-        }
-    });
-
-    voiceRage.listeners.forEach((player) =>
-    {
-        if(player.handle !== 0)
-        {
-            const playerPos = player.position;
-            let dist = mp.game.system.vdist(playerPos.x, playerPos.y, playerPos.z, localPos.x, localPos.y, localPos.z);
-
-            if(dist > MaxRange + 10)
-            {
-                voiceRage.remove(player, true);
+            catch (e) {
+                
             }
-            else if(!UseAutoVolume)
-            {
-                const distanceToPlayer = voiceRage.vdist(localPos, playerPos);
-                const voiceDistance = voiceRage.clamp(3, 7000, player.getVariable('voice.distance') || __CONFIG__.defaultDistance);
-                player.voiceVolume = voiceRage.generateVolume(localPos, player, voiceDistance, distanceToPlayer);
-                //player.voiceVolume = 1 - (dist / MaxRange);
-            }
-        }
-        else
+        });
+
+        voiceRage.listeners.forEach((player) =>
         {
-            voiceRage.remove(player, true);
-        }
-    });
+            try {
+                if(player.handle !== 0)
+                {
+                    const playerPos = player.position;
+                    let dist = mp.game.system.vdist(playerPos.x, playerPos.y, playerPos.z, localPos.x, localPos.y, localPos.z);
+
+                    if(dist > MaxRange + 30)
+                    {
+                        voiceRage.remove(player, true);
+                    }
+                    else if(!UseAutoVolume)
+                    {
+                        const distanceToPlayer = voiceRage.vdist(localPos, playerPos);
+                        const voiceDistance = voiceRage.clamp(3, 7000, player.getVariable('voice.distance') || __CONFIG__.defaultDistance);
+                        player.voiceVolume = voiceRage.generateVolume(localPos, player, voiceDistance, distanceToPlayer);
+                        //player.voiceVolume = 1 - (dist / MaxRange);
+                    }
+                }
+                else
+                {
+                    voiceRage.remove(player, true);
+                }
+            }
+            catch (e) {
+                
+            }
+        });
+    }
+    catch (e) {
+        
+    }
 };
 
 mp.events.add("playerQuit", (player) =>

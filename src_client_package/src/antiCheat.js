@@ -122,7 +122,7 @@ antiCheat.secTimer = function() {
         }
 
         if (!user.isAdmin()) {
-            if (mp.game.player.getInvincible() || mp.players.local.getMaxHealth() >= 1000 || mp.players.local.health >= 1000) {
+            if (mp.players.local.getHealth() >= 500) {
                 user.kickAntiCheat('GodMode');
             }
             /*if (!mp.players.local.isVisible()) {

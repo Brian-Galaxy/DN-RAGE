@@ -40,6 +40,7 @@ gangWar.loadAll = function() {
             gangWar.set(row['id'], 'fraction_name', row['fraction_name']);
             gangWar.set(row['id'], 'timestamp', row['timestamp']);
             gangWar.set(row['id'], 'cant_war', row['cant_war']);
+            gangWar.set(row['id'], 'on_map', row['on_map']);
             gangWar.set(row['id'], 'canWar', true);
             countZone++;
 
@@ -103,8 +104,8 @@ gangWar.startWar = function(player, zoneId) {
         return;
     }
 
-    if (methods.distanceToPos(gangWar.getPos(id), player.position) > 80) {
-        player.notify('~r~Вы слишком далеко, пожалуйста поставьте метку в GPS, через список улиц и начните захват прямо с нее');
+    if (gangWar.isInZone(player, id)) {
+        player.notify('~r~Необходимо находиться на территории');
         return;
     }
 
@@ -165,11 +166,11 @@ gangWar.timer = function() {
         timerCounter--;
 
         if (timerCounter % 30 == 0) {
-            mp.players.forEachInRange(warPos, 1000, p => {
+            mp.players.forEachInRange(warPos, 500, p => {
                 if (!user.isLogin(p))
                     return;
                 let fId = user.get(p, 'fraction_id2');
-                if (user.has(p, 'isGangZone')) {
+                if (gangWar.isInZone(p, currentZone)) {
                     if (p.health == 0) return;
                     if (currentDef == fId)
                         defC++;
@@ -179,12 +180,12 @@ gangWar.timer = function() {
             });
         }
 
-        mp.players.forEachInRange(warPos, 1000, p => {
+        mp.players.forEachInRange(warPos, 500, p => {
             if (!user.isLogin(p))
                 return;
             let fId = user.get(p, 'fraction_id2');
             if (currentDef == fId || currentAttack == fId) {
-                p.call("client:gangWar:sendInfo", [attC, defC, warPos.x, warPos.y, warPos.z, timerCounter]);
+                p.call("client:gangWar:sendInfo", [attC, defC, timerCounter]);
             }
         });
 
@@ -251,4 +252,13 @@ gangWar.has = function(id, key) {
 gangWar.getPos = function(id) {
     let pos = new mp.Vector3(gangWar.get(id, 'x'), gangWar.get(id, 'y'), gangWar.get(id, 'z'));
     return pos;
+};
+
+gangWar.isInZone = function(player, id) {
+    let list = [];
+    let json = JSON.parse(gangWar.get(id, 'on_map'));
+    json.forEach(item => {
+        list.push(new mp.Vector3(item[0], item[1], 0))
+    });
+    return methods.isInPoint(player.position, list);
 };

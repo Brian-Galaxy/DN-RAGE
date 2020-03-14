@@ -37,6 +37,7 @@ import tree from "./jobs/tree";
 import builder from "./jobs/builder";
 import loader from "./jobs/loader";
 import jobPoint from "./manager/jobPoint";
+import vSync from "./manager/vSync";
 
 let menuList = {};
 
@@ -608,6 +609,7 @@ menuList.showStockPanelBoxInfoMenu = function(h, className) {
             mItem.slot = idx;
             mItem.price = priceBox;
             mItem.item = item;
+            mItem.boxId = uItem;
             mItem.SetRightLabel(`~g~${methods.moneyFormat(priceBox)}`);
 
             classIdx++;
@@ -619,6 +621,7 @@ menuList.showStockPanelBoxInfoMenu = function(h, className) {
             mItem.slot = idx;
             mItem.price = priceBox;
             mItem.item = item;
+            mItem.boxId = uItem;
             mItem.SetRightLabel(`~g~${methods.numberFormat(priceBox)}ec`);
 
             classIdx++;
@@ -649,13 +652,17 @@ menuList.showStockPanelBoxInfoMenu = function(h, className) {
         if (item.sellAll)
             mp.events.callRemote('server:stock:sellAllByClass', className, item.sellAll);
         if (item.price)
-            menuList.showStockPanelBoxInfoMoreMenu(h, item.item, item.slot, item.price);
+            menuList.showStockPanelBoxInfoMoreMenu(h, item.item, item.slot, item.price, item.boxId);
     });
 };
 
-menuList.showStockPanelBoxInfoMoreMenu = function(h, item, slot, price) {
+menuList.showStockPanelBoxInfoMoreMenu = function(h, item, slot, price, boxId) {
 
     let menu = UIMenu.Menu.Create(`№${h.get('number')}`, `~b~${item[0]}`);
+
+    if (boxId === 3 || boxId === 4 || boxId === 38 || boxId === 39)
+        UIMenu.Menu.AddMenuItem(`~g~Открыть ящик`).isOpen = true;
+
     if (item[7] < 0)
         UIMenu.Menu.AddMenuItem(`~y~Продать за ~s~${methods.moneyFormat(price)}`).isSell = true;
     else
@@ -666,6 +673,8 @@ menuList.showStockPanelBoxInfoMoreMenu = function(h, item, slot, price) {
         UIMenu.Menu.HideMenu();
         if (item.isSell)
             mp.events.callRemote('server:stock:sellBySlot', slot);
+        if (item.isOpen)
+            mp.events.callRemote('server:stock:openBySlot', slot, boxId);
     });
 };
 
@@ -1132,7 +1141,7 @@ menuList.showInvaderAdTempEditMenu = function(id, text, name, phone) {
             UIMenu.Menu.HideMenu();
         if (item.textEdit)
         {
-            textTemp = await UIMenu.Menu.GetUserInput("Введите текст", textTemp, 200);
+            textTemp = await UIMenu.Menu.GetUserInput("Введите текст", methods.replaceAll(methods.replaceAll(textTemp, '\'', '`'), '"', '`'), 200);
             mp.game.ui.notifications.show("~b~Вы отредактировали текст\n~s~" + textTemp);
         }
         if (item.save) {
@@ -1252,7 +1261,7 @@ menuList.showBusinessMenu = async function(data) {
     nalog = nalog + nalogOffset;
 
     UIMenu.Menu.AddMenuItem("~b~Название: ~s~").SetRightLabel(data.get('name'));
-    UIMenu.Menu.AddMenuItem("~b~Налог на прибыль: ~s~").SetRightLabel(`${nalog}%`);
+    UIMenu.Menu.AddMenuItem("~b~Налог на прибыль: ~s~", 'Только гос. налога').SetRightLabel(`${nalog}%`);
 
     if (user.getCache('id') == data.get('user_id')) {
 
@@ -1417,7 +1426,7 @@ menuList.showBusinessSettingsMenu = async function(data) {
     let bankNumberStr = (data.get('bank_score') == 0 ? '~r~Отсуствует' : methods.bankFormat(data.get('bank_score')));
 
     UIMenu.Menu.AddMenuItem("~b~Название ~s~").SetRightLabel(data.get('name'));
-    UIMenu.Menu.AddMenuItem("~b~Налог на прибыль ~s~").SetRightLabel(`${nalog}%`);
+    UIMenu.Menu.AddMenuItem("~b~Налог на прибыль ~s~", 'Гос. налог + банк').SetRightLabel(`${nalog}%`);
     UIMenu.Menu.AddMenuItem("~b~Ваш счёт ~s~").SetRightLabel(`${bankNumberStr}`);
 
     let bankItem = UIMenu.Menu.AddMenuItemList("~b~Ваш банк~s~", bankList, 'Стоимость перехода: ~g~$4,990');
@@ -1864,7 +1873,7 @@ menuList.showMeriaTaxInfoMenu = async function(type, id) {
 
     UIMenu.Menu.AddMenuItem(`~b~Счёт:~s~ ${score}`, "Уникальный счёт вашего имущества");
     UIMenu.Menu.AddMenuItem(`~b~Ваша задолженность:~s~ ~r~${(tax == 0 ? "~g~Отсутствует" : `${methods.moneyFormat(tax)}`)}`, `Ваш текущий долг, при достижении ~r~$${taxLimit}~s~ ваше имущество будет изъято`);
-    UIMenu.Menu.AddMenuItem(`~b~Ваша задолженность:~s~ ~r~${(tax == 0 ? "~g~Отсутствует" : `${methods.moneyFormat(tax)}`)}`);
+    //UIMenu.Menu.AddMenuItem(`~b~Ваша задолженность:~s~ ~r~${(tax == 0 ? "~g~Отсутствует" : `${methods.moneyFormat(tax)}`)}`);
     UIMenu.Menu.AddMenuItem(`~b~Налог в день (( ООС )):~s~ $${taxDay}`, "Индвивидуальная налоговая ставка");
     UIMenu.Menu.AddMenuItem(`~b~Допустимый лимит:~s~ $${taxLimit}`, "Допустимый лимит до обнуления имущества");
 
@@ -2009,18 +2018,22 @@ menuList.showMeriaJobListMenu = function() {
             if (item.jobName === 1) {
                 chat.sendLocal(`!{${chat.clBlue}}Справка по работе Садовник`);
                 chat.sendLocal(`Для начала Вам необходимо арендовать транспорт. Затем откройте меню транспорта и нажмите Получить задание, а далее думаю и так понятно.`);
+                chat.sendLocal(`Чтобы найти работу садовника, откройте телефон (По стандарту кнопка O, далее откройте GPS и найдите там работу садовника).`);
             }
             if (item.jobName === 2) {
                 chat.sendLocal(`!{${chat.clBlue}}Справка по работе Разнорабочий`);
                 chat.sendLocal(`Для начала Вам необходимо арендовать транспорт. Затем откройте меню транспорта и нажмите Получить задание, а далее думаю и так понятно.`);
+                chat.sendLocal(`Чтобы найти работу разнорабочего, откройте телефон (По стандарту кнопка O, далее откройте GPS и найдите там работу разнорабочего).`);
             }
             if (item.jobName === 3) {
                 chat.sendLocal(`!{${chat.clBlue}}Справка по работе Фотограф`);
                 chat.sendLocal(`Для начала Вам необходимо арендовать транспорт. Затем откройте меню транспорта и нажмите Получить задание, а далее думаю и так понятно.`);
+                chat.sendLocal(`Чтобы найти работу фотографа, откройте телефон (По стандарту кнопка O, далее откройте GPS и найдите там работу фотографа).`);
             }
             if (item.jobName === 4) {
                 chat.sendLocal(`!{${chat.clBlue}}Справка по работе Почтальон`);
-                chat.sendLocal(`Для начала Вам необходимо арендовать транспорт. Затем откройте меню транспорта и нажмите Взять почту, а далее езжайте к !{${chat.clBlue}}любому !{${chat.clWhite}} дому или квартире.`);
+                chat.sendLocal(`Для начала Вам необходимо арендовать транспорт. Затем откройте меню транспорта и нажмите Взять почту, а далее езжайте к !{${chat.clBlue}}любому !{${chat.clWhite}} дому или квартире и просто раскладывайте почту в тех местах, где нравится вам.`);
+                chat.sendLocal(`Чтобы найти работу почтальона, откройте телефон (По стандарту кнопка O, далее откройте GPS и найдите там работу почтальона).`);
             }
             if (item.jobName === 6 || item.jobName === 7 || item.jobName === 8) {
                 chat.sendLocal(`!{${chat.clBlue}}Справка по работе Водитель автобуса`);
@@ -2516,7 +2529,8 @@ menuList.showSettingsMenu = function() {
             UIMenu.Menu.HideMenu();
             user.reset('hasMask');
             user.updateCharacterFace();
-            user.updateCharacterCloth();
+            if (user.getCache('jail_time')  < 1)
+                user.updateCharacterCloth();
         }
         if (item.eventName) {
             UIMenu.Menu.HideMenu();
@@ -2820,22 +2834,6 @@ menuList.showSettingsVoiceMenu = function() {
     //let listVoice3d = ["Вкл", "Выкл"];
     let listVoiceVol = ["0%", "10%", "20%", "30%", "40%", "50%", "60%", "70%", "80%", "90%", "100%"];
 
-    let status = '~r~Отключён';
-
-    switch (voice.getVoiceInfo(mp.players.local, 'stateConnection')) {
-        case "connected":
-            status = '~g~Подключен';
-            break;
-        case "connecting":
-            status = '~y~Подключение';
-            break;
-        case "failed":
-            status = '~r~Ошибка';
-            break;
-    }
-
-    UIMenu.Menu.AddMenuItem("Статус голосового чата:").SetRightLabel(status);
-
     //UIMenu.Menu.AddMenuItemList("Тип голосового чата", listVoiceType, "Нажмите ~g~Enter~s~ чтобы применить").doName = '';
     //UIMenu.Menu.AddMenuItemList("Объем голосового чата", listVoice3d, "Нажмите ~g~Enter~s~ чтобы применить").doName = '';
 
@@ -2904,7 +2902,9 @@ menuList.showPlayerDoMenu = function(playerId) {
     //UIMenu.Menu.AddMenuItem("Вытащить из тс").eventName = 'server:user:removeCarById';
     UIMenu.Menu.AddMenuItem("Вести за собой").eventName = 'server:user:taskFollowById';
     //UIMenu.Menu.AddMenuItem("Снять маску с игрока").eventName = 'server:user:taskRemoveMaskById';
-    UIMenu.Menu.AddMenuItem("Обыск игрока").eventName = 'server:user:getInvById';
+
+    if (user.isPolice())
+        UIMenu.Menu.AddMenuItem("Обыск игрока").eventName = 'server:user:getInvById';
 
     UIMenu.Menu.AddMenuItem("~b~Документы").doName = 'showPlayerDoсMenu';
 
@@ -3222,16 +3222,18 @@ menuList.showVehicleMenu = function(data) {
         }
     }
 
-    if (veh.getVariable('cargoId') !== null && veh.getVariable('cargoId') !== undefined) {
+    if (user.getCache('fraction_id')) {
+        if (veh.getVariable('cargoId') !== null && veh.getVariable('cargoId') !== undefined) {
 
-        if (veh.getVariable('box1') !== null && veh.getVariable('box1') !== undefined)
-            UIMenu.Menu.AddMenuItem(`~y~${stocks.boxList[veh.getVariable('box1')][0]}`, 'Нажмите ~g~Enter~s~ чтобы разгрузить').cargoUnload1 = true;
-        if (veh.getVariable('box2') !== null && veh.getVariable('box2') !== undefined)
-            UIMenu.Menu.AddMenuItem(`~y~${stocks.boxList[veh.getVariable('box2')][0]}`, 'Нажмите ~g~Enter~s~ чтобы разгрузить').cargoUnload2 = true;
-        if (veh.getVariable('box3') !== null && veh.getVariable('box3') !== undefined)
-            UIMenu.Menu.AddMenuItem(`~y~${stocks.boxList[veh.getVariable('box3')][0]}`, 'Нажмите ~g~Enter~s~ чтобы разгрузить').cargoUnload3 = true;
+            if (veh.getVariable('box1') !== null && veh.getVariable('box1') !== undefined)
+                UIMenu.Menu.AddMenuItem(`~y~${stocks.boxList[veh.getVariable('box1')][0]}`, 'Нажмите ~g~Enter~s~ чтобы разгрузить').cargoUnload1 = true;
+            if (veh.getVariable('box2') !== null && veh.getVariable('box2') !== undefined)
+                UIMenu.Menu.AddMenuItem(`~y~${stocks.boxList[veh.getVariable('box2')][0]}`, 'Нажмите ~g~Enter~s~ чтобы разгрузить').cargoUnload2 = true;
+            if (veh.getVariable('box3') !== null && veh.getVariable('box3') !== undefined)
+                UIMenu.Menu.AddMenuItem(`~y~${stocks.boxList[veh.getVariable('box3')][0]}`, 'Нажмите ~g~Enter~s~ чтобы разгрузить').cargoUnload3 = true;
 
-        UIMenu.Menu.AddMenuItem(`~y~Разгрузить весь груз`, 'Доступно только внутри склада').cargoUnloadAll = true;
+            UIMenu.Menu.AddMenuItem(`~y~Разгрузить весь груз`, 'Доступно только внутри склада').cargoUnloadAll = true;
+        }
     }
 
     if (veh.getVariable('emsTruck') !== null && veh.getVariable('emsTruck') !== undefined) {
@@ -4974,7 +4976,10 @@ menuList.showShopMedMenu = function(shopId, price = 2)
         UIMenu.Menu.HideMenu();
         try {
             if (item.doName == "med_lic")
+            {
+                business.addMoney(shopId, item.price / 5, 'Мед. страховка (20% от стоимости)');
                 user.buyLicense(item.doName, item.price, 6);
+            }
             else if (item.price > 0)
                 mp.events.callRemote('server:shop:buy', item.itemId, item.price, shopId);
             else if (item.doName == 'grab') {
@@ -5169,6 +5174,7 @@ menuList.showBarMenu = function(shopId, price = 2)
                 if (item.drunkLevel)
                     user.addDrugLevel(99, item.drunkLevel);
 
+                user.addWaterLevel(50);
                 chat.sendMeCommand(`выпил ${item.label}`);
                 user.playAnimation("mp_player_intdrink", "loop_bottle", 48);
             }
@@ -7729,7 +7735,7 @@ menuList.showAnimationSyncListMenu = function() {
     let menu = UIMenu.Menu.Create(`Анимации`, `~b~Взаимодействие`);
 
     UIMenu.Menu.AddMenuItem(`Подзороваться 1`).animId = 0;
-    UIMenu.Menu.AddMenuItem(`Поздороваться 2`).animId = 2;
+    UIMenu.Menu.AddMenuItem(`Подзороваться 2`).animId = 2;
     UIMenu.Menu.AddMenuItem(`Дать пять`).animId = 1;
     UIMenu.Menu.AddMenuItem(`Поцелуй`).animId = 3;
     //UIMenu.Menu.AddMenuItem(`Минет`).animId = 4;
@@ -7899,12 +7905,12 @@ menuList.showFractionInvaderNewsWriteMenu = function() {
     menu.ItemSelect.on(async (item, index) => {
 
         if (item.title) {
-            title = await UIMenu.Menu.GetUserInput("Введите заголовок", title, 20);
+            title = await UIMenu.Menu.GetUserInput("Введите заголовок", methods.replaceAll(methods.replaceAll(title, '\'', '`'), '"', '`'), 20);
             item.SetRightLabel(title);
             mp.game.ui.notifications.show("~b~Вы написали заголовок\n" + title);
         }
         if (item.text) {
-            text = await UIMenu.Menu.GetUserInput("Введите текст", text, 200);
+            text = await UIMenu.Menu.GetUserInput("Введите текст", methods.replaceAll(methods.replaceAll(text, '\'', '`'), '"', '`'), 200);
             mp.game.ui.notifications.show("~b~Вы написали текст\n~s~" + text);
         }
         if (item.textRead) {
@@ -8627,9 +8633,11 @@ menuList.showSapdArrestMenu = function() {
 };
 
 menuList.showSapdClearMenu = function() {
-    if (user.getCache('rank') > 1 && user.getCache('rank_type') === 0) {
-        mp.game.ui.notifications.show("~r~Не доступно для кадетов");
-        return;
+    if (!user.isLeader() && !user.isSubLeader()) {
+        if (user.getCache('rank') > 1 && user.getCache('rank_type') === 0) {
+            mp.game.ui.notifications.show("~r~Не доступно для кадетов");
+            return;
+        }
     }
 
     let menu = UIMenu.Menu.Create(`PC`, `~b~Меню`);
@@ -8969,8 +8977,8 @@ menuList.showAdminMenu = function() {
             UIMenu.Menu.AddMenuItem("Телепорт").doName = 'teleportMenu';
             if (user.isAdmin(2))
                 UIMenu.Menu.AddMenuItem("Режим No Clip").doName = 'noClip';
-            if (user.isAdmin(2))
-                UIMenu.Menu.AddMenuItem("Режим GodMode").doName = 'godMode';
+            //if (user.isAdmin(2))
+            UIMenu.Menu.AddMenuItem("Режим GodMode").doName = 'godMode';
 
             UIMenu.Menu.AddMenuItem("Режим невидимки").doName = 'invise';
             UIMenu.Menu.AddMenuItem("Прогрузка ID").doName = 'idDist';
@@ -8981,6 +8989,9 @@ menuList.showAdminMenu = function() {
                 UIMenu.Menu.AddMenuItem("Уведомление").doName = 'notify';
             if (user.isAdmin(2))
                 UIMenu.Menu.AddMenuItem("Меропритие").doName = 'eventMenu';
+
+            if (user.isAdmin(3))
+                UIMenu.Menu.AddMenuItem("Управление ганг. зонами").doName = 'gangZone';
 
             UIMenu.Menu.AddMenuItem("~y~Выключить админку").doName = 'disableAdmin';
             UIMenu.Menu.AddMenuItem("~y~Ответить на жалобу").doName = 'askReport';
@@ -9004,8 +9015,12 @@ menuList.showAdminMenu = function() {
         UIMenu.Menu.HideMenu();
         if (item.doName == 'enableAdmin')
             user.setVariable('enableAdmin', true);
-        if (item.doName == 'disableAdmin')
+        if (item.doName == 'disableAdmin') {
+            user.setAlpha(255);
+            admin.godmode(false);
+            mp.events.call('client:idDist', 15);
             user.setVariable('enableAdmin', false);
+        }
         if (item.doName == 'askReport') {
             let id = await UIMenu.Menu.GetUserInput("ID", "", 5);
             let text = await UIMenu.Menu.GetUserInput("Ответ", "", 300);
@@ -9017,6 +9032,10 @@ menuList.showAdminMenu = function() {
             let text = await UIMenu.Menu.GetUserInput("Ответ", "", 300);
             if (text != '')
                 mp.events.callRemote('server:sendAnswerAsk', methods.parseInt(id), text);
+        }
+        if (item.doName == 'gangZone') {
+            let id = await UIMenu.Menu.GetUserInput("Введите ID территори", "", 5);
+            menuList.showAdminGangZoneMenu(await Container.Data.GetAll(600000 + methods.parseInt(id)));
         }
         if (item.doName == 'noClip')
             admin.noClip(true);
@@ -9075,6 +9094,7 @@ menuList.showAdminPlayerMenu = function() {
     }
     UIMenu.Menu.AddMenuItem("Восстановить скин").doName = 'resetSkinById';
     UIMenu.Menu.AddMenuItem("Воскресить").doName = 'adrenalineById';
+    UIMenu.Menu.AddMenuItem("Выписать из больницы").doName = 'freeHospById';
 
     if (user.isAdmin(5))
         UIMenu.Menu.AddMenuItemList("Лидер организации", ["None", "Gov", "LSPD", "FIB", "USMC", "BCSD", "EMS", "News"]).doName = 'giveLeader';
@@ -9161,6 +9181,47 @@ menuList.showAdminPlayerMenu = function() {
                 if (id < 0)
                     id = mp.players.local.remoteId;
                 item.SetRightLabel(id.toString())
+            }
+            if (item.doName == 'close')
+                UIMenu.Menu.HideMenu();
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    });
+};
+
+menuList.showAdminGangZoneMenu = function(zone) {
+    let menu = UIMenu.Menu.Create(`ADMIN`, `~b~ID: ${zone.get('gangWarid')}`);
+
+
+    UIMenu.Menu.AddMenuItem("Zone", zone.get('gangWarzone').toString()).doName = 'zone';
+    UIMenu.Menu.AddMenuItem("Street", zone.get('gangWarstreet').toString()).doName = 'street';
+    UIMenu.Menu.AddMenuItem("FractionId", zone.get('gangWarfraction_id').toString()).doName = 'fraction_id';
+    UIMenu.Menu.AddMenuItem("FractionName", zone.get('gangWarfraction_name').toString()).doName = 'fraction_name';
+    UIMenu.Menu.AddMenuItem("Timestamp", zone.get('gangWartimestamp').toString()).doName = 'timestamp';
+    UIMenu.Menu.AddMenuItem("CantWar", zone.get('gangWarcant_war').toString()).doName = 'cant_war';
+    UIMenu.Menu.AddMenuItem("Координаты").doName = 'pos';
+    UIMenu.Menu.AddMenuItem("Телепорт на центр").doName = 'tppos';
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = 'close';
+
+    menu.ItemSelect.on(async item => {
+        methods.debug(item.doName);
+        try {
+            if (item.doName === 'tppos') {
+                user.teleport(zone.get('gangWarx'), zone.get('gangWary'), zone.get('gangWarz'))
+            }
+            if (item.doName === 'pos') {
+                mp.events.callRemote('server:admin:gangZone:editPos', zone.get('gangWarid'));
+            }
+            if (item.doName === 'timestamp' || item.doName === 'fraction_id' || item.doName === 'cant_war') {
+                let name = await UIMenu.Menu.GetUserInput("Число", "", 9);
+                mp.events.callRemote('server:admin:gangZone:edit', zone.get('gangWarid'), item.doName, methods.parseInt(name));
+            }
+            if (item.doName == 'zone' || item.doName == 'street' || item.doName == 'fraction_name') {
+                let name = await UIMenu.Menu.GetUserInput("Название", "", 120);
+                mp.events.callRemote('server:admin:gangZone:edit', zone.get('gangWarid'), item.doName, name);
             }
             if (item.doName == 'close')
                 UIMenu.Menu.HideMenu();
@@ -9655,5 +9716,8 @@ menuList.showAdminClothMenu = function() {
     });
 };
 
+mp.events.add("vSync:playerExitVehicle", (vehId) => {
+    UIMenu.Menu.HideMenu();
+});
 
 export default menuList;

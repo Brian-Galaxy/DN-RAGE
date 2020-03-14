@@ -542,10 +542,44 @@ admin.adrenalineById = function(player, type, id) {
                 return;
             }
 
-            user.useAdrenaline(target);
+            target.call('client:hosp:free');
 
-            user.updateCharacterFace(target);
-            user.updateCharacterCloth(target);
+            target.notify(`~b~Администратор ${user.getRpName(player)} выпустил из больницы ${user.getRpName(target)}`);
+            player.notify(`~b~Администратор ${user.getRpName(player)} выпустил из больницы ${user.getRpName(target)}`);
+        }
+        else {
+            let target = user.getPlayerById(id);
+            if (!user.isLogin(target)) {
+                player.notify('~r~Игрок не найден на сервере.');
+                return;
+            }
+
+            target.call('client:hosp:free');
+
+            target.notify(`~b~Администратор ${user.getRpName(player)} выпустил из больницы ${user.getRpName(target)}`);
+            player.notify(`~b~Администратор ${user.getRpName(player)} выпустил из больницы ${user.getRpName(target)}`);
+        }
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+};
+
+admin.freeHospById = function(player, type, id) {
+    try {
+        if (!user.isAdmin(player))
+            return;
+
+        id = methods.parseInt(id);
+
+        if (type === 0) {
+            let target = mp.players.at(id);
+            if (!user.isLogin(target)) {
+                player.notify('~r~Игрок не найден на сервере.');
+                return;
+            }
+
+            user.useAdrenaline(target);
 
             target.notify(`~b~Администратор ${user.getRpName(player)} использовал адреналин на ${user.getRpName(target)}`);
             player.notify(`~b~Администратор ${user.getRpName(player)} использовал адреналин на ${user.getRpName(target)}`);
@@ -558,9 +592,6 @@ admin.adrenalineById = function(player, type, id) {
             }
 
             user.useAdrenaline(target);
-
-            user.updateCharacterFace(target);
-            user.updateCharacterCloth(target);
 
             target.notify(`~b~Администратор ${user.getRpName(player)} использовал адреналин на ${user.getRpName(target)}`);
             player.notify(`~b~Администратор ${user.getRpName(player)} использовал адреналин на ${user.getRpName(target)}`);

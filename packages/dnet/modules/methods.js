@@ -178,7 +178,7 @@ methods.numberFormat = function (currentMoney) {
 
 methods.cryptoFormat = function (currentMoney, toFixed = 5) {
     currentMoney = methods.parseFloat(currentMoney);
-    return `${methods.numberFormat(currentMoney.toFixed(toFixed))}₠`;
+    return `${methods.numberFormat(currentMoney.toFixed(toFixed))}ec`;
 };
 
 methods.bankFormat = function (currentMoney) {

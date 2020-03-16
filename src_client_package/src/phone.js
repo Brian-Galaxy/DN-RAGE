@@ -2660,10 +2660,10 @@ phone.consoleCallback = async function(command) {
             }
             else if (args[0] === '-car') {
                 if (args[1] === '-getpos') {
-                    if (weather.getHour() < 22 && weather.getHour() > 4) {
+                    /*if (weather.getHour() < 22 && weather.getHour() > 4) {
                         mp.game.ui.notifications.show('~r~Доступно только с 22 до 4 утра игрового времени');
                         return;
-                    }
+                    }*/
 
                     if (await user.hasById('grabVeh')) {
                         mp.game.ui.notifications.showy('~r~Вы не можете сейчас сбыть транспорт');

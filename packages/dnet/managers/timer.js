@@ -26,6 +26,8 @@ timer.min30Timer = function() {
         if (user.isLogin(p)) {
             if (user.hasById(user.getId(p), 'grabVeh'))
                 user.resetById(user.getId(p), 'grabVeh');
+            if (user.hasById(user.getId(p), 'grabLamar'))
+                user.resetById(user.getId(p), 'grabLamar');
         }
     });
 

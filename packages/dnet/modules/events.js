@@ -2195,6 +2195,68 @@ mp.events.addRemoteCounted('server:vehicles:spawnJobCar', (player, x, y, z, head
     }, 500);
 });
 
+mp.events.addRemoteCounted('server:vehicles:spawnLamarCar', (player, x, y, z, heading, name) => {
+
+    user.showLoadDisplay(player);
+    setTimeout(function () {
+
+        try {
+            vehicles.spawnCarCb(veh => {
+                if (!vehicles.exists(veh))
+                    return;
+                user.putInVehicle(player, veh, -1);
+                vehicles.set(veh.getVariable('container'), 'owner_id', user.getId(player));
+                veh.setVariable('owner_id', user.getId(player));
+                veh.setVariable('lamar', true);
+                if (methods.getRandomInt(0, 100) < 5) {
+                    let rare = 0;
+                    if (methods.getRandomInt(0, 100) < 40)
+                        rare = 1;
+                    if (methods.getRandomInt(0, 100) < 15)
+                        rare = 2;
+
+                    try {
+                        let rare = 0;
+                        if (methods.getRandomInt(0, 100) < 40)
+                            rare = 1;
+                        if (methods.getRandomInt(0, 100) < 15)
+                            rare = 2;
+                        let boxRandom = stocks.boxList.filter((item) => { return item[7] === rare; });
+                        veh.setVariable('box1', boxRandom[methods.getRandomInt(0, boxRandom.length)][2]);
+
+                        rare = 0;
+                        if (methods.getRandomInt(0, 100) < 40)
+                            rare = 1;
+                        if (methods.getRandomInt(0, 100) < 15)
+                            rare = 2;
+                        boxRandom = stocks.boxList.filter((item) => { return item[7] === rare; });
+                        veh.setVariable('box2', boxRandom[methods.getRandomInt(0, boxRandom.length)][2]);
+
+                        rare = 0;
+                        if (methods.getRandomInt(0, 100) <= 50)
+                            veh.setVariable('box3', methods.getRandomInt(3, 5));
+                        else
+                            veh.setVariable('box3', methods.getRandomInt(38, 40));
+
+                        veh.setVariable('cargoId', 999);
+                    }
+                    catch (e) {
+                        methods.debug(e);
+                    }
+                }
+            }, new mp.Vector3(x, y, z), heading, name);
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+
+        setTimeout(function () {
+            user.hideLoadDisplay(player);
+        }, 500);
+
+    }, 500);
+});
+
 mp.events.addRemoteCounted('server:vehicles:destroy', (player) => {
 
     user.showLoadDisplay(player);
@@ -4585,10 +4647,10 @@ mp.events.addRemoteCounted('server:sellVeh', (player) => {
     if (!vehicles.exists(veh))
         return;
 
-    if (weather.getHour() < 22 && weather.getHour() > 4) {
+    /*if (weather.getHour() < 22 && weather.getHour() > 4) {
         player.notify('~r~Доступно только с 22 до 4 утра игрового времени');
         return;
-    }
+    }*/
 
     if (user.hasById(user.getId(player), 'grabVeh')) {
         player.notify('~r~Вы не можете сейчас сбыть транспорт');

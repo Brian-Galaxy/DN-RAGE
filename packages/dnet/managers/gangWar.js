@@ -255,10 +255,15 @@ gangWar.getPos = function(id) {
 };
 
 gangWar.isInZone = function(player, id) {
-    let list = [];
-    let json = JSON.parse(gangWar.get(id, 'on_map'));
-    json.forEach(item => {
-        list.push(new mp.Vector3(item[0], item[1], 0))
-    });
-    return methods.isInPoint(player.position, list);
+    try {
+        let list = [];
+        let json = JSON.parse(gangWar.get(id, 'on_map'));
+        json.forEach(item => {
+            list.push(new mp.Vector3(item[0], item[1], 0))
+        });
+        return methods.isInPoint(player.position, list);
+    }
+    catch (e) {
+    }
+    return false;
 };

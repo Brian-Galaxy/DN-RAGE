@@ -8,6 +8,8 @@ import bind from './manager/bind';
 import heliCam from './manager/heliCam';
 import edu from './manager/edu';
 import quest from "./manager/quest";
+import jobPoint from "./manager/jobPoint";
+import vSync from "./manager/vSync";
 
 import user from './user';
 import admin from './admin';
@@ -36,8 +38,7 @@ import photo from "./jobs/photo";
 import tree from "./jobs/tree";
 import builder from "./jobs/builder";
 import loader from "./jobs/loader";
-import jobPoint from "./manager/jobPoint";
-import vSync from "./manager/vSync";
+import lamar from "./jobs/lamar";
 
 let menuList = {};
 
@@ -1416,10 +1417,10 @@ menuList.showBusinessSettingsMenu = async function(data) {
     let menu = UIMenu.Menu.Create(`Arcadius`, `~b~Панель вашего бизнеса`);
 
     let nalogOffset = 0;
-    if (data.get('type') == 3) //TODO
+    /*if (data.get('type') == 3) //TODO
         nalogOffset += 35;
     if (data.get('type') == 11)
-        nalogOffset += 20;
+        nalogOffset += 20;*/
 
     nalog = nalog + nalogOffset;
 
@@ -3244,6 +3245,10 @@ menuList.showVehicleMenu = function(data) {
         }
     }
 
+    if (veh.getVariable('lamar')) {
+        UIMenu.Menu.AddMenuItem(`~y~Контрабанда`, 'Этот фургон везёт контрабанду');
+    }
+
     if (veh.getVariable('emsTruck') !== null && veh.getVariable('emsTruck') !== undefined) {
         UIMenu.Menu.AddMenuItem(`~y~Разгрузить транспорт`).emsUnloadAll = true;
     }
@@ -4966,7 +4971,7 @@ menuList.showShopMedMenu = function(shopId, price = 2)
     if (sale > 0)
         saleLabel = `\n~s~Скидка: ~r~${sale}%`;
 
-    let itemPrice = 10000 * price;
+    let itemPrice = 5000 * price;
     let menuItem = UIMenu.Menu.AddMenuItem("Мед. страховка на 6 мес.", `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`);
     menuItem.price = itemPrice;
     menuItem.doName = "med_lic";
@@ -8969,7 +8974,7 @@ menuList.showBotQuestGangMenu = function()
         UIMenu.Menu.AddMenuItem("~g~Квестовое задание", `${quest.getQuestLineName('quest_gang', user.getCache('quest_gang'))}`).take = true;
     }
     else {
-        UIMenu.Menu.AddMenuItem("~y~Квестовое задание не доступно");
+        UIMenu.Menu.AddMenuItem("~y~Задание на перевозку").isCargo = true;
     }
 
     UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = "closeButton";
@@ -8977,6 +8982,8 @@ menuList.showBotQuestGangMenu = function()
         UIMenu.Menu.HideMenu();
         if (item.take)
             quest.gang(true);
+        if (item.isCargo)
+            lamar.start();
     });
 };
 
@@ -9041,7 +9048,7 @@ menuList.showAdminMenu = function() {
         if (item.doName == 'disableAdmin') {
             user.setAlpha(255);
             admin.godmode(false);
-            mp.events.call('client:idDist', 15);
+            //mp.events.call('client:idDist', 15);
             user.setVariable('enableAdmin', false);
         }
         if (item.doName == 'askReport') {

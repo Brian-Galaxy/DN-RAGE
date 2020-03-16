@@ -418,7 +418,7 @@ phone.memberAction2 = function(player, id) {
             ));
 
             if (!row['is_sub_leader2']) {
-                if (user.isLeader(player)) {
+                if (user.isLeader2(player)) {
                     items.push(phone.getMenuItemModal(
                         'Выдать должность заместителя',
                         '',
@@ -908,8 +908,8 @@ phone.fractionList2 = function(player) {
         let depList = [];
         let depPrev = -1;
 
-        let isLeader = user.isLeader(player);
-        let isSubLeader = user.isSubLeader(player);
+        let isLeader = user.isLeader2(player);
+        let isSubLeader = user.isSubLeader2(player);
 
         let fractionItem = fraction.getData(fractionId);
         let fractionItemRanks = JSON.parse(fractionItem.get('rank_list'));

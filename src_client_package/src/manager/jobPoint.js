@@ -47,8 +47,6 @@ jobPoint.create = function(pickupPos, route = false, radius = 1, color = ui.Mark
             dimension: -1
         });
 
-    mp.blips.new(1, mp.players.local.position, {color: 4, scale: 4, shortRange: true, dimension: -1});
-
     _blip.setRoute(route);
 
     return _checkpoint.id;

@@ -312,6 +312,11 @@ vehicles.spawnJobCar = (x, y, z, heading, name, job) => {
     mp.events.callRemote('server:vehicles:spawnJobCar', x, y, z, heading, name, job);
 };
 
+vehicles.spawnLamarCar = (x, y, z, heading, name) => {
+    mp.game.ui.notifications.show('Нажмите ~g~L~s~ чтобы открыть или закрыть ТС');
+    mp.events.callRemote('server:vehicles:spawnLamarCar', x, y, z, heading, name);
+};
+
 vehicles.destroy = () => {
     mp.events.callRemote('server:vehicles:destroy');
 };

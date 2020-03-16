@@ -785,6 +785,10 @@ user.hasById = async function(key) {
     return await Container.Data.Has(user.getCache('id'), key);
 };
 
+user.setById = function(key, value) {
+    Container.Data.Set(user.getCache('id'), key, value);
+};
+
 user.setCacheData = function(data) {
     userData = data;
     user.currentId = data.get('id') + 1000000;

@@ -216,7 +216,7 @@ voiceRage.timer = () => {
         mp.players.forEachInStreamRange(player =>
         {
             try {
-                if(player != localPlayer && player.dimension != localPlayer.dimension)
+                if(player != localPlayer && player.dimension === localPlayer.dimension)
                 {
                     if(!player.isListening)
                     {

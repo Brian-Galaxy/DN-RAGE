@@ -2441,7 +2441,7 @@ mp.events.add('render', () => {
                     if (user.hasDating(player.getVariable('idLabel')))
                         name = user.getDating(player.getVariable('idLabel')) + ' | ';
                     if (player.getVariable('enableAdmin') && player.getVariable('adminRole'))
-                        name = player.getVariable('adminRole');
+                        name = player.getVariable('adminRole') + ' | ';
                     //if(!player.getVariable('hiddenId'))
 
                     const entity = player.vehicle ? player.vehicle : player;
@@ -2636,13 +2636,13 @@ mp.events.add("playerEnterCheckpoint", (checkpoint) => {
 });
 
 mp.events.add('playerWeaponShot', (targetPosition, targetEntity) => {
-    try {
+    /*try {
         if (targetEntity.getType() === 4 || targetEntity.getType() === 5)
             mp.events.callRemote('server:playerWeaponShot', targetEntity.remoteId);
     }
     catch (e) {
         methods.debug(e);
-    }
+    }*/
 });
 
 mp.events.add('playerMaybeTakeShot', (shootEntityId) => {

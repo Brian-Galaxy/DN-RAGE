@@ -238,7 +238,7 @@ fraction.timerCargoWar = function() {
 
             if (user.get(p, 'fraction_id2') > 0 && user.has(p, 'isCargo')) {
                 currentWarPos.forEach((item, i) => {
-                    user.deleteBlipByRadius(p, i + 10);
+                    user.deleteBlipByRadius(p, i);
                 });
             }
         });
@@ -262,8 +262,13 @@ fraction.timerCargoWar = function() {
             if (!vehicles.exists(v))
                 return;
 
-            if (v.getOccupants().length > 0)
-                vehicles.respawn(v);
+            if (v.getVariable('cargoId') !== null && v.getVariable('cargoId') !== undefined) {
+                //...
+            }
+            else {
+                if (v.getOccupants().length > 0)
+                    vehicles.respawn(v);
+            }
         });
     });
 

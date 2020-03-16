@@ -1,6 +1,7 @@
 let user = require('../user');
 let methods = require('./methods');
 let fraction = require('../property/fraction');
+let gangWar = require('../managers/gangWar');
 
 let chat = exports;
 
@@ -158,6 +159,9 @@ mp.events.add('playerCommand', (player, command) => {
         }
         else if (command.toLowerCase().slice(0, 2) === "b ") {
             chat.sendBCommand(player, command.substring(2));
+        }
+        else if (command.toLowerCase().slice(0, 2) === "z ") {
+            console.log(gangWar.isInZone(player, methods.parseInt(command.substring(2))));
         }
         else if (command.toLowerCase() === "p" || command.toLowerCase() === "netstat") {
             player.notify("~g~Ping: " + player.ping + "ms");

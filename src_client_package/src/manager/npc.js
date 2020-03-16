@@ -13,7 +13,7 @@ npc.loadAll = function() {
     npc.create(mp.game.joaat("a_f_y_business_02"), new mp.Vector3(-1373.781494140625, -501.8981018066406, 33.157405853271484), 151.9842071533203, false, "WORLD_HUMAN_CLIPBOARD");
 
 //Quest Gang
-    npc.create(mp.game.joaat("ig_lamardavis"), new mp.Vector3(-119.74713134765625, -1770.3973388671875, 29.852500915527344), 331.20037841796875, false, "WORLD_HUMAN_SMOKING");
+    npc.create(mp.game.joaat("ig_lamardavis"), new mp.Vector3(-218.75608825683594, -1368.4576416015625, 31.25823402404785), 43.398406982421875, false, "WORLD_HUMAN_SMOKING");
 
 
 // 24/7 - Гора Чиллиад - Шоссе Сенора

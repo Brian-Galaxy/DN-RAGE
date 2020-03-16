@@ -283,6 +283,9 @@ user.save = function(player, withReset = false) {
 
         user.set(player, 'skin', JSON.stringify(skin));
 
+        user.set(player, 'hp', player.health);
+        user.set(player, 'ap', player.armour);
+
         enums.userData.forEach(function(element) {
             if (element === 'id') return;
             else if (element === 'name') return;
@@ -382,7 +385,8 @@ user.loadUser = function(player, name, spawn = 'Стандарт') {
                 player.setVariable('idLabel', user.get(player, 'id'));
                 player.setVariable('name', user.get(player, 'name'));
                 player.dimension = 0;
-                user.setArmour(player, 0);
+                user.setArmour(player, user.get(player, 'ap'));
+                user.setHealth(player, user.get(player, 'hp'));
 
                 if (user.get(player, 'vip_time') > 0 && user.get(player, 'vip_time') < methods.getTimeStamp()) {
                     player.outputChatBox(`!{#f44336}Срок действия вашего VIP статуса подошел к концу`);
@@ -455,7 +459,7 @@ user.spawnByName = function(player, spawn = 'Стандарт') {
             player.heading = hData.get('rot');
         }
         else if (spawn == 'Квартира') {
-            let hData = houses.getHouseData(user.get(player, 'condo_id'));
+            let hData = condos.getHouseData(user.get(player, 'condo_id'));
             player.spawn(new mp.Vector3(hData.get('x'), hData.get('y'), hData.get('z')));
             player.heading = hData.get('rot');
         }
@@ -2270,6 +2274,30 @@ user.revive = function(player, hp = 20) {
         return false;
     methods.debug('user.revive');
     player.call('client:user:revive', [hp]);
+};
+
+user.createBlip = function(player, id, x, y, z, blipId = 1, blipColor = 0, route = false) {
+    if (!mp.players.exists(player))
+        return false;
+    player.call('client:user:createBlip', [id, x, y, z, blipId, blipColor, route]);
+};
+
+user.deleteBlip= function(player, id) {
+    if (!mp.players.exists(player))
+        return false;
+    player.call('client:user:deleteBlip', [id]);
+};
+
+user.createBlipByRadius = function(player, id, x, y, z, radius, blipId = 1, blipColor = 0, route = false) {
+    if (!mp.players.exists(player))
+        return false;
+    player.call('client:user:createBlipByRadius', [id, x, y, z, radius, blipId, blipColor, route]);
+};
+
+user.deleteBlipByRadius = function(player, id) {
+    if (!mp.players.exists(player))
+        return false;
+    player.call('client:user:deleteBlipByRadius', [id]);
 };
 
 user.createBlip1 = function(player, x, y, z, blipId = 1, blipColor = 0, route = false) {

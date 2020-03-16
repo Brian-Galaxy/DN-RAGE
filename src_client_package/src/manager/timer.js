@@ -101,6 +101,9 @@ timer.updateTempLevel = function() {
 timer.updateEatLevel = function() {
     if (user.isLogin()) {
 
+        if (user.getCache('jail_time') > 0)
+            return;
+
         if (!mp.players.local.getVariable('enableAdmin')) {
             user.removeEatLevel(5);
             user.removeWaterLevel(10);
@@ -357,7 +360,7 @@ timer.secTimer = function() {
                 user.setHealth(0); //TODO
             }
 
-            if (!mp.game.graphics.getScreenEffectIsActive("DrugsMichaelAliensFightIn"))
+            /*if (!mp.game.graphics.getScreenEffectIsActive("DrugsMichaelAliensFightIn"))
                 mp.game.graphics.startScreenEffect("DrugsMichaelAliensFightIn", 0, true);
 
             if (user.getDrugLevel(drugId) < 1) {
@@ -366,7 +369,7 @@ timer.secTimer = function() {
                 setTimeout(function () {
                     mp.game.graphics.stopScreenEffect("DrugsMichaelAliensFightOut");
                 }, 10000);
-            }
+            }*/
         }
 
         drugId = 1;
@@ -378,7 +381,7 @@ timer.secTimer = function() {
                 user.setHealth(0); //TODO
             }
 
-            if (!mp.game.graphics.getScreenEffectIsActive("DrugsTrevorClownsFightIn"))
+            /*if (!mp.game.graphics.getScreenEffectIsActive("DrugsTrevorClownsFightIn"))
                 mp.game.graphics.startScreenEffect("DrugsTrevorClownsFightIn", 0, true);
 
             if (user.getDrugLevel(drugId) < 1) {
@@ -387,7 +390,7 @@ timer.secTimer = function() {
                 setTimeout(function () {
                     mp.game.graphics.stopScreenEffect("DrugsTrevorClownsFightOut");
                 }, 10000);
-            }
+            }*/
         }
 
         drugId = 2;
@@ -399,12 +402,12 @@ timer.secTimer = function() {
                 user.setHealth(0); //TODO
             }
 
-            if (!mp.game.graphics.getScreenEffectIsActive("DMT_flight"))
+            /*if (!mp.game.graphics.getScreenEffectIsActive("DMT_flight"))
                 mp.game.graphics.startScreenEffect("DMT_flight", 0, true);
 
             if (user.getDrugLevel(drugId) < 1) {
                 mp.game.graphics.stopScreenEffect("DMT_flight");
-            }
+            }*/
         }
 
         drugId = 3;
@@ -416,12 +419,12 @@ timer.secTimer = function() {
                 user.setHealth(0); //TODO
             }
 
-            if (!mp.game.graphics.getScreenEffectIsActive("Rampage"))
+            /*if (!mp.game.graphics.getScreenEffectIsActive("Rampage"))
                 mp.game.graphics.startScreenEffect("Rampage", 0, true);
 
             if (user.getDrugLevel(drugId) < 1) {
                 mp.game.graphics.stopScreenEffect("Rampage");
-            }
+            }*/
         }
 
         drugId = 4;
@@ -433,7 +436,7 @@ timer.secTimer = function() {
                 user.setHealth(0); //TODO
             }
 
-            if (!mp.game.graphics.getScreenEffectIsActive("DrugsDrivingIn"))
+            /*if (!mp.game.graphics.getScreenEffectIsActive("DrugsDrivingIn"))
                 mp.game.graphics.startScreenEffect("DrugsDrivingIn", 0, true);
 
             if (user.getDrugLevel(drugId) < 1) {
@@ -442,7 +445,7 @@ timer.secTimer = function() {
                 setTimeout(function () {
                     mp.game.graphics.stopScreenEffect("DrugsDrivingOut");
                 }, 10000);
-            }
+            }*/
         }
 
         drugId = 5;
@@ -454,7 +457,7 @@ timer.secTimer = function() {
                 user.setHealth(0); //TODO
             }
 
-            if (!mp.game.graphics.getScreenEffectIsActive("PeyoteEndIn"))
+            /*if (!mp.game.graphics.getScreenEffectIsActive("PeyoteEndIn"))
                 mp.game.graphics.startScreenEffect("PeyoteEndIn", 0, true);
 
             if (user.getDrugLevel(drugId) < 1) {
@@ -463,7 +466,7 @@ timer.secTimer = function() {
                 setTimeout(function () {
                     mp.game.graphics.stopScreenEffect("PeyoteEndOut");
                 }, 10000);
-            }
+            }*/
         }
 
         drugId = 99;

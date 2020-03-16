@@ -405,7 +405,7 @@ pickups.checkPressE = function(player) {
 
 
     if (methods.distanceToPos(pickups.SapdStockPos, playerPos) < distanceCheck)
-        inventory.getItemList(inventory.types.StockGov, user.getId(player));
+        inventory.getItemList(player, inventory.types.StockGov, user.getId(player));
 
     if (user.isSapd(player)) {
         if (methods.distanceToPos(pickups.SapdGarderobPos, playerPos) < distanceCheck)
@@ -545,6 +545,7 @@ pickups.createAll = function() {
     methods.createCpVector(pickups.MeriaGarderobPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
     methods.createCpVector(pickups.MeriaHelpPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
 
+    methods.createCpVector(pickups.SapdStockPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
     methods.createCpVector(pickups.SapdGarderobPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
     methods.createCpVector(pickups.SapdArsenalPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
     methods.createCpVector(pickups.SapdClearPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);

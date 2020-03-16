@@ -10,6 +10,10 @@ let objectDelList = [];
 object.load = function () {
     const start = new Date().getTime();
 
+    // Колонки на заправке LTD Grapeseed
+    object.create(-164877493, new mp.Vector3(1690.1, 4927.81, 41.23172), new mp.Vector3(0, 0, -125), false, false);
+    object.create(-164877493, new mp.Vector3(1684.59, 4931.65, 41.23172), new mp.Vector3(0, 0, -125), false, false);
+
     // Стройка на DownTown (Cеверное здание)
     object.create(667319138, new mp.Vector3(-152.5572, -973.0461, 268.1352), new mp.Vector3(0, 0, 70.00006), false, false);
     object.create(667319138, new mp.Vector3(-143.19, -946.334, 263.1339), new mp.Vector3(1.017777E-13, -5.008956E-06, 160), false, false);

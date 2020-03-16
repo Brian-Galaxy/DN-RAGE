@@ -1,5 +1,6 @@
 import ui from '../modules/ui';
 import methods from '../modules/methods';
+import tree from "../jobs/tree";
 
 let jobPoint = {};
 
@@ -12,6 +13,9 @@ let _blip3 = null;
 let _lastPos = new mp.Vector3(0, 0, 0);
 
 let list = [];
+
+let blipList = new Map();
+let blipRadiusList = new Map();
 
 jobPoint.create = function(pickupPos, route = false, radius = 1, color = ui.MarkerRed) {
 
@@ -43,9 +47,70 @@ jobPoint.create = function(pickupPos, route = false, radius = 1, color = ui.Mark
             dimension: -1
         });
 
+    mp.blips.new(1, mp.players.local.position, {color: 4, scale: 4, shortRange: true, dimension: -1});
+
     _blip.setRoute(route);
 
     return _checkpoint.id;
+};
+
+jobPoint.createBlipById = function(id, pickupPos, blipId = 1, blipColor = 0, route = false) {
+
+    jobPoint.deleteBlipById(id);
+
+    let blip = mp.blips.new(blipId, pickupPos,
+        {
+            color: blipColor,
+            scale: 0.8,
+            name: 'Цель',
+            dimension: -1
+        });
+
+    blip.setRoute(route);
+
+    blipList.set(id.toString(), blip);
+
+    return blip.id;
+};
+
+jobPoint.deleteBlipById = function(id) {
+    try {
+        if (!blipList.has(id.toString()))
+            return;
+        let blip = blipList.get(id.toString());
+        if (typeof blip == 'object' && mp.blips.exists(blip))
+            blip.destroy();
+    }
+    catch (e) {
+        console.log(e);
+    }
+};
+
+jobPoint.createBlipByRadius = function(id, pickupPos, radius, blipId = 1, blipColor = 0, route = false) {
+
+    jobPoint.deleteBlipByRadius(id);
+
+    let blip = mp.game.ui.addBlipForRadius(pickupPos.x, pickupPos.y, pickupPos.z, radius);
+    mp.game.invoke(methods.SET_BLIP_SPRITE, blip, blipId);
+    mp.game.invoke(methods.SET_BLIP_COLOUR, blip, blipColor);
+    mp.game.invoke(methods.SET_BLIP_ALPHA, blip, 100);
+
+    //blip.setRoute(route);
+
+    blipRadiusList.set(id.toString(), blip);
+
+    return blip.id;
+};
+
+jobPoint.deleteBlipByRadius = function(id) {
+    try {
+        if (!blipRadiusList.has(id.toString()))
+            return;
+        mp.game.ui.removeBlip(blipRadiusList.get(id.toString()));
+    }
+    catch (e) {
+        console.log(e);
+    }
 };
 
 jobPoint.createBlip1 = function(pickupPos, blipId = 1, blipColor = 0, route = false) {

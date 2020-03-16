@@ -189,6 +189,9 @@ enums.userData = [
     "water_level",
     "eat_level",
 
+    "hp",
+    "ap",
+
     "s_hud_speed",
     "s_hud_speed_type",
     "s_hud_temp",

@@ -1,5 +1,6 @@
 import methods from './modules/methods';
 import ui from "./modules/ui";
+import Container from "./modules/data";
 
 import enums from './enums';
 import user from './user';
@@ -295,6 +296,33 @@ phone.showAppList = function() {
                         type: 1,
                         params: { name: 'myHistory' },
                         clickable: true
+                    },
+                    {
+                        title: 'Полиция',
+                        text: `Вызов сотрудников полиции`,
+                        modalTitle: 'Введите текст',
+                        modalButton: ['Закрыть', 'Отправить'],
+                        type: 8,
+                        clickable: true,
+                        params: {name: "call9111"}
+                    },
+                    {
+                        title: 'Мед. служба',
+                        text: `Вызов сотрудников мед. службы`,
+                        modalTitle: 'Введите текст',
+                        modalButton: ['Закрыть', 'Отправить'],
+                        type: 8,
+                        clickable: true,
+                        params: {name: "call9112"}
+                    },
+                    {
+                        title: 'Спасательная служба',
+                        text: `Вызов сотрудников спасательной службы`,
+                        modalTitle: 'Введите текст',
+                        modalButton: ['Закрыть', 'Отправить'],
+                        type: 8,
+                        clickable: true,
+                        params: {name: "call9113"}
                     },
                     {
                         title: 'Настройки',
@@ -2849,7 +2877,28 @@ phone.callBackModalInput = async function(paramsJson, text) {
             phone.showLoad();
         }
         if (params.name == 'sendAd') {
+            if (Container.Data.HasLocally(mp.players.local.remoteId, "isAdTimeout"))
+            {
+                mp.game.ui.notifications.show("~r~Таймаут 5 минуты");
+                return;
+            }
             mp.events.callRemote('server:invader:sendAdTemp', text);
+
+            Container.Data.SetLocally(mp.players.local.remoteId, "isAdTimeout", true);
+
+            setTimeout(function () {
+                Container.Data.ResetLocally(mp.players.local.remoteId, "isAdTimeout");
+                //user.stopScenario();
+            }, 300000);
+        }
+        if (params.name == 'call9111') {
+            dispatcher.send(`Диспетчер | Police`, text);
+        }
+        if (params.name == 'call9112') {
+            dispatcher.send(`Диспетчер | Med`, text);
+        }
+        if (params.name == 'call9113') {
+            dispatcher.send(`Диспетчер | Fire`, text);
         }
         if (params.name == 'getPayDay') {
             let sum = methods.parseFloat(text);

@@ -5,19 +5,19 @@ let methods = require('./methods');
 
 let mysql = exports;
 
-let host = '54.37.128.202';
+/*let host = '54.37.128.202';
 let dbuser = 'admin';
 let password = 'mtWkh03ur0ywxwXj';
-let database = 'admin_rage';
+let database = 'admin_rage';*/
 
-/*let host = 'localhost';
+let host = 'localhost';
 let dbuser = 'dNet_python';
 let database = 'dNet_python';
-let password = 'b3282a2f2a28757b3a18ab833de16a9c54518c0b0cf493e3f0a7cf09386f326a';*/
+let password = 'b3282a2f2a28757b3a18ab833de16a9c54518c0b0cf493e3f0a7cf09386f326a';
 
 const pool = mysql2.createPool({
-    host: host,
-    //socketPath: '/var/run/mysqld/mysqld.sock',
+    //host: host,
+    socketPath: '/var/run/mysqld/mysqld.sock',
     user: dbuser,
     password: password,
     database: database,

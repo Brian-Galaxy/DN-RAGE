@@ -555,6 +555,9 @@ inventory.updateAmountMax = function(id, type) {
             invAmountMax = 999999999;
         else if (type == inventory.types.Fridge)
             invAmountMax = 100000;
+        else if (type >= inventory.types.UserStockDef && type < inventory.types.UserStock)
+            invAmountMax = 100000;
+
         //Main.GetKitchenAmount();
         inventory.setInvAmountMax(id, type, invAmountMax);
     }
@@ -574,7 +577,7 @@ inventory.sendToPlayerItemListUpdateAmountMenu = function(data, ownerType, owner
 };
 
 inventory.updateAmount = function(id, type) {
-    mp.events.callRemote('server:inventory:updateAmount', id, type);
+    //mp.events.callRemote('server:inventory:updateAmount', id, type); //TODO
 };
 
 inventory.addItem = function(itemId, count, ownerType, ownerId, countItems, isEquip = 0, params = "{}", timeout = 10) {

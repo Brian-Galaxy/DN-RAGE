@@ -542,10 +542,10 @@ admin.adrenalineById = function(player, type, id) {
                 return;
             }
 
-            target.call('client:hosp:free');
+            user.useAdrenaline(target);
 
-            target.notify(`~b~Администратор ${user.getRpName(player)} выпустил из больницы ${user.getRpName(target)}`);
-            player.notify(`~b~Администратор ${user.getRpName(player)} выпустил из больницы ${user.getRpName(target)}`);
+            target.notify(`~b~Администратор ${user.getRpName(player)} использовал адреналин на ${user.getRpName(target)}`);
+            player.notify(`~b~Администратор ${user.getRpName(player)} использовал адреналин на ${user.getRpName(target)}`);
         }
         else {
             let target = user.getPlayerById(id);
@@ -554,10 +554,10 @@ admin.adrenalineById = function(player, type, id) {
                 return;
             }
 
-            target.call('client:hosp:free');
+            user.useAdrenaline(target);
 
-            target.notify(`~b~Администратор ${user.getRpName(player)} выпустил из больницы ${user.getRpName(target)}`);
-            player.notify(`~b~Администратор ${user.getRpName(player)} выпустил из больницы ${user.getRpName(target)}`);
+            target.notify(`~b~Администратор ${user.getRpName(player)} использовал адреналин на ${user.getRpName(target)}`);
+            player.notify(`~b~Администратор ${user.getRpName(player)} использовал адреналин на ${user.getRpName(target)}`);
         }
     }
     catch (e) {
@@ -579,10 +579,10 @@ admin.freeHospById = function(player, type, id) {
                 return;
             }
 
-            user.useAdrenaline(target);
+            target.call('client:hosp:free');
 
-            target.notify(`~b~Администратор ${user.getRpName(player)} использовал адреналин на ${user.getRpName(target)}`);
-            player.notify(`~b~Администратор ${user.getRpName(player)} использовал адреналин на ${user.getRpName(target)}`);
+            target.notify(`~b~Администратор ${user.getRpName(player)} выпустил из больницы ${user.getRpName(target)}`);
+            player.notify(`~b~Администратор ${user.getRpName(player)} выпустил из больницы ${user.getRpName(target)}`);
         }
         else {
             let target = user.getPlayerById(id);
@@ -591,10 +591,10 @@ admin.freeHospById = function(player, type, id) {
                 return;
             }
 
-            user.useAdrenaline(target);
+            target.call('client:hosp:free');
 
-            target.notify(`~b~Администратор ${user.getRpName(player)} использовал адреналин на ${user.getRpName(target)}`);
-            player.notify(`~b~Администратор ${user.getRpName(player)} использовал адреналин на ${user.getRpName(target)}`);
+            target.notify(`~b~Администратор ${user.getRpName(player)} выпустил из больницы ${user.getRpName(target)}`);
+            player.notify(`~b~Администратор ${user.getRpName(player)} выпустил из больницы ${user.getRpName(target)}`);
         }
     }
     catch (e) {

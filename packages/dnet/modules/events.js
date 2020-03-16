@@ -1635,7 +1635,7 @@ mp.events.addRemoteCounted('server:invader:sendNews', (player, title, text) => {
         return;
 
     title = methods.removeQuotes(title);
-    text = methods.removeQuotes(methods.replaceAll('"', '`', text));
+    text = methods.removeQuotes(methods.replaceAll(text, '"', '`'));
     let name = methods.removeQuotes(user.getRpName(player));
 
     let rpDateTime = weather.getRpDateTime();
@@ -1679,8 +1679,8 @@ mp.events.addRemoteCounted('server:invader:sendAd', (player, id, title, name, te
     if (!user.isLogin(player))
         return;
 
-    title = methods.removeQuotes(methods.replaceAll('"', '`', title));
-    text = methods.removeQuotes(methods.replaceAll('"', '`', text));
+    title = methods.removeQuotes(methods.replaceAll(title, '"', '`'));
+    text = methods.removeQuotes(methods.replaceAll(text, '"', '`'));
     name = methods.removeQuotes(name);
     phone = methods.removeQuotes(phone);
     let editor = methods.removeQuotes(user.getRpName(player));
@@ -1692,6 +1692,7 @@ mp.events.addRemoteCounted('server:invader:sendAd', (player, id, title, name, te
     mysql.executeQuery(`INSERT INTO rp_inv_ad (title, name, text, phone, editor, timestamp, rp_datetime) VALUES ('${title}', '${name}', '${text}', '${phone}', '${editor}', '${timestamp}', '${rpDateTime}')`);
 
     user.addPayDayMoney(player, 100, 'Отредактировал объявление');
+    player.notify('~g~Вы получили премию в $100 за отредактированное объявление');
 
     discord.sendAd(title, name, text, phone, editor, player.socialClub);
 
@@ -1704,8 +1705,11 @@ mp.events.addRemoteCounted('server:invader:delAd', (player, id) => {
     if (!user.isLogin(player))
         return;
 
+    user.addPayDayMoney(player, 100, 'Отредактировал объявление');
+
     mysql.executeQuery(`DELETE FROM rp_inv_ad WHERE id = ${methods.parseInt(id)}`);
     player.notify('~b~Вы удалили объявление #' + id);
+    player.notify('~g~Вы получили премию в $100 за отредактированное объявление');
 });
 
 mp.events.addRemoteCounted('server:invader:getAdList', (player) => {
@@ -1734,10 +1738,11 @@ mp.events.addRemoteCounted('server:invader:sendAdTemp', (player, text) => {
         return;
     }
 
-    text = methods.removeQuotes(methods.replaceAll('"', '`', text));
+    text = methods.removeQuotes(methods.replaceAll(text, '"', '`'));
     let phone = methods.removeQuotes(user.get(player, 'phone'));
     let name = methods.removeQuotes(user.getRpName(player).split(' ')[0]);
 
+    user.removeBankMoney(player, 500, 'Подача объявления');
     coffer.addMoney(8, 400);
     methods.saveFractionLog(
         'Система',
@@ -3981,7 +3986,7 @@ mp.events.addRemoteCounted('server:user:invite', (player, id) => {
             return;
         }
 
-        if (user.get(target, 'fraction_id') > 0) {
+        if (user.get(target, 'fraction_id') > 0 || user.get(target, 'fraction_id2') > 0) {
             player.notify('~r~Игрок уже состоит в организации');
             return;
         }
@@ -5809,6 +5814,10 @@ mp.events.add("playerDeath", (player, reason, killer) => {
     }
 
     if (user.isLogin(player)) {
+
+        if (player.vehicle)
+            player.removeFromVehicle();
+
         user.set(player, 'killerInJail', false);
 
         try {
@@ -5821,7 +5830,8 @@ mp.events.add("playerDeath", (player, reason, killer) => {
             methods.debug(e);
         }
 
-        mysql.executeQuery(`UPDATE items SET owner_type = '${inventory.types.StockGov}', owner_id = '${user.getId(player)}' where owner_id = '${user.getId(player)}' AND owner_type = '1' AND (item_id > '53' AND item_id < '139' OR item_id = '146' OR item_id = '147')`);
+        /*user.showCustomNotify(player, 'Ваше оружие лежит в сейфе LSPD');
+        mysql.executeQuery(`UPDATE items SET owner_type = '${inventory.types.StockGov}', owner_id = '${user.getId(player)}' where owner_id = '${user.getId(player)}' AND owner_type = '1' AND (item_id > '53' AND item_id < '139' OR item_id = '146' OR item_id = '147')`);*/
 
         setTimeout(function () {
             let rand = 'a';

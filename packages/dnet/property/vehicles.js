@@ -1100,6 +1100,7 @@ vehicles.spawnCarCb = (cb, position, heading, nameOrModel, color1 = -1, color2 =
         let vInfo = methods.getVehicleInfo(model);
 
         veh.numberPlate = number;
+        veh.numberPlateType = methods.getRandomInt(0, 4);
         //veh.engine = false;
         vSync.setEngineState(veh, false);
         veh.locked = false;

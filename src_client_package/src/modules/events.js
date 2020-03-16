@@ -651,7 +651,7 @@ mp.events.add('client:events:loginUser:success', async function() {
         mp.game.ui.displayRadar(true);
     }
 
-    user.showCustomNotify('Если у Вас не работает управление, нажмите ALT+TAB', 0, 5, 15000);
+    //user.showCustomNotify('Если у Вас не работает управление, нажмите ALT+TAB', 0, 5, 15000);
 
     setTimeout(async function () {
         inventory.getItemList(inventory.types.Player, await user.get('id'));
@@ -1353,6 +1353,22 @@ mp.events.add('client:user:revive', (hp) => {
     user.revive(hp);
 });
 
+mp.events.add('client:user:createBlip', (id, x, y, z, blipId, blipColor, route) => {
+    jobPoint.createBlipById(id, new mp.Vector3(x, y, z), blipId, blipColor, route);
+});
+
+mp.events.add('client:user:deleteBlip', (id) => {
+    jobPoint.deleteBlipById(id);
+});
+
+mp.events.add('client:user:createBlipByRadius', (id, x, y, z, radius, blipId, blipColor, route) => {
+    jobPoint.createBlipByRadius(id, new mp.Vector3(x, y, z), radius, blipId, blipColor, route);
+});
+
+mp.events.add('client:user:deleteBlipByRadius', (id) => {
+    jobPoint.deleteBlipByRadius(id);
+});
+
 mp.events.add('client:user:createBlip1', (x, y, z, blipId, blipColor, route) => {
     jobPoint.createBlip1(new mp.Vector3(x, y, z), blipId, blipColor, route);
 });
@@ -1747,6 +1763,12 @@ mp.events.add('client:inventory:giveItemMenu', function() {
 });
 
 mp.events.add('client:inventory:use', function(id, itemId) {
+    if (ui.isGreenZone()) {
+        if (itemId === 4) {
+            mp.game.ui.notifications.show("~r~В зелёной зоне это действие запрещено");
+            return;
+        }
+    }
     inventory.useItem(id, itemId);
 });
 
@@ -2418,6 +2440,8 @@ mp.events.add('render', () => {
                     let name = 'Игрок | ';
                     if (user.hasDating(player.getVariable('idLabel')))
                         name = user.getDating(player.getVariable('idLabel')) + ' | ';
+                    if (player.getVariable('enableAdmin') && player.getVariable('adminRole'))
+                        name = player.getVariable('adminRole');
                     //if(!player.getVariable('hiddenId'))
 
                     const entity = player.vehicle ? player.vehicle : player;
@@ -2638,9 +2662,9 @@ mp.events.add('playerMaybeTakeShot', (shootEntityId) => {
         //methods.debug('playerMaybeTakeShot', damage, currentWeapon, shootEntityId);
     }
     catch (e) {
-        mp.game.ped.setAiMeleeWeaponDamageModifier(2);
-        mp.game.player.setMeleeWeaponDefenseModifier(2);
-        mp.game.player.setWeaponDefenseModifier(2);
+        mp.game.ped.setAiMeleeWeaponDamageModifier(1);
+        mp.game.player.setMeleeWeaponDefenseModifier(1);
+        mp.game.player.setWeaponDefenseModifier(1);
 
         methods.debug(e);
     }
@@ -3138,10 +3162,10 @@ mp.events.add('render', () => {
     }
 });
 
-mp.events.add('render', () => {
+/*mp.events.add('render', () => {
     if (user.isLogin() && user.getCache('stats_shooting') < 70)
         mp.game.ui.hideHudComponentThisFrame(14);
-});
+});*/
 
 /*mp.events.add('render', () => { //Включить свет в больке старой
     let plPos = mp.players.local.position;

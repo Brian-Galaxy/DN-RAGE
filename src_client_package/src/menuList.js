@@ -1150,7 +1150,7 @@ menuList.showInvaderAdTempEditMenu = function(id, text, name, phone) {
         }
         if (item.delete) {
             UIMenu.Menu.HideMenu();
-            mp.events.callRemote('server:invader:delNews', id);
+            mp.events.callRemote('server:invader:delAd', id);
         }
     });
 };
@@ -2964,6 +2964,12 @@ menuList.showVehicleDoInvMenu = function(vehId) {
     menu.ItemSelect.on(async (item, index) => {
         UIMenu.Menu.HideMenu();
         if (item.doName == 'openInv') {
+
+            if (ui.isGreenZone() && !user.isPolice()) {
+                mp.game.ui.notifications.show("~r~В зелёной зоне это действие запрещено");
+                return;
+            }
+
             inventory.getItemList(inventory.types.Vehicle, mp.game.joaat(vehicle.getNumberPlateText().trim()));
             vehicles.setTrunkStateById(vehicle.remoteId, true);
         }
@@ -3200,8 +3206,10 @@ menuList.showVehicleMenu = function(data) {
 
     let menu = UIMenu.Menu.Create(`Транспорт`, `~b~Номер ТС: ~s~${ownerName}`);
 
-    if (vInfo.class_name != 'Cycles')
+    if (vInfo.class_name != 'Cycles') {
         UIMenu.Menu.AddMenuItem("~g~Вкл~s~ / ~r~выкл~s~ двигатель").eventName = 'server:vehicle:engineStatus';
+        UIMenu.Menu.AddMenuItem("Пристегнуть ремень").doName = 'belt';
+    }
     if (vInfo.class_name == 'Boats')
         UIMenu.Menu.AddMenuItem("~g~Вкл~s~ / ~r~выкл~s~ якорь").eventName = 'server:vehicleFreeze';
 
@@ -3222,7 +3230,7 @@ menuList.showVehicleMenu = function(data) {
         }
     }
 
-    if (user.getCache('fraction_id')) {
+    if (user.getCache('fraction_id2') > 0) {
         if (veh.getVariable('cargoId') !== null && veh.getVariable('cargoId') !== undefined) {
 
             if (veh.getVariable('box1') !== null && veh.getVariable('box1') !== undefined)
@@ -3393,6 +3401,11 @@ menuList.showVehicleMenu = function(data) {
         }
         else if (item.doName == 'showVehicleDoMenu') {
             menuList.showVehicleDoMenu();
+        }
+        else if (item.doName == 'belt') {
+            mp.players.local.setConfigFlag(32, false);
+            mp.game.ui.notifications.show('~g~Вы пристегнули ремень безопасности');
+            chat.sendMeCommand('пристегнул ремень безопасности');
         }
         else if (item.doName == 'eject') {
             let id = methods.parseInt(await UIMenu.Menu.GetUserInput("ID Игрока", "", 3));
@@ -4977,7 +4990,8 @@ menuList.showShopMedMenu = function(shopId, price = 2)
         try {
             if (item.doName == "med_lic")
             {
-                business.addMoney(shopId, item.price / 5, 'Мед. страховка (20% от стоимости)');
+                if (!user.getCache('med_lic'))
+                    business.addMoney(shopId, item.price / 5, 'Мед. страховка (20% от стоимости)');
                 user.buyLicense(item.doName, item.price, 6);
             }
             else if (item.price > 0)
@@ -9013,8 +9027,17 @@ menuList.showAdminMenu = function() {
 
     menu.ItemSelect.on(async item => {
         UIMenu.Menu.HideMenu();
-        if (item.doName == 'enableAdmin')
+        if (item.doName == 'enableAdmin') {
             user.setVariable('enableAdmin', true);
+            if (user.getCache('admin_level') < 4)
+                user.setVariable('adminRole', 'Game Admin');
+            else if (user.getCache('admin_level') === 4)
+                user.setVariable('adminRole', 'Admin');
+            else if (user.getCache('admin_level') === 5)
+                user.setVariable('adminRole', 'GA');
+            else if (user.getCache('admin_level') === 6)
+                user.setVariable('adminRole', 'Developer');
+        }
         if (item.doName == 'disableAdmin') {
             user.setAlpha(255);
             admin.godmode(false);
@@ -9163,6 +9186,9 @@ menuList.showAdminPlayerMenu = function() {
             }
             if (item.doName == 'adrenalineById') {
                 mp.events.callRemote('server:admin:adrenalineById', typeIndex, id)
+            }
+            if (item.doName == 'freeHospById') {
+                mp.events.callRemote('server:admin:freeHospById', typeIndex, id)
             }
             if (item.doName == 'setSkinById') {
                 let num = await UIMenu.Menu.GetUserInput("Имя скина", "", 32);

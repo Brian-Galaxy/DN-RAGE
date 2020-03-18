@@ -26,8 +26,6 @@ timer.min30Timer = function() {
         if (user.isLogin(p)) {
             if (user.hasById(user.getId(p), 'grabVeh'))
                 user.resetById(user.getId(p), 'grabVeh');
-            if (user.hasById(user.getId(p), 'grabLamar'))
-                user.resetById(user.getId(p), 'grabLamar');
         }
     });
 
@@ -52,7 +50,7 @@ timer.min10Timer = function() {
 
 timer.min60Timer = function() {
 
-    for (let i = 1; i < 1300; i++)
+    /*for (let i = 1; i < 1300; i++)
     {
         try {
 
@@ -72,7 +70,27 @@ timer.min60Timer = function() {
         catch (e) {
             methods.debug(e);
         }
-    }
+    }*/
+
+    mp.players.forEach(function (p) {
+        if (user.isLogin(p)) {
+            if (user.hasById(user.getId(p), 'grabLamar'))
+                user.resetById(user.getId(p), 'grabLamar');
+
+            for (let j = 1; j < 1000; j++)
+            {
+                try {
+                    if (user.hasById(user.getId(p), 'isMail' + j))
+                        user.resetById(user.getId(p), 'isMail' + j);
+                    if (user.hasById(user.getId(p), 'isMail2' + j))
+                        user.resetById(user.getId(p), 'isMail2' + j);
+                }
+                catch (e) {
+                    methods.debug(e);
+                }
+            }
+        }
+    });
 
     setTimeout(timer.min30Timer, 1000 * 60 * 60);
 };

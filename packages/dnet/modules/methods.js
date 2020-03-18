@@ -558,6 +558,26 @@ methods.notifyToAll = function(message) {
     });
 };
 
+methods.getCurrentOnlineFraction = function(frId) {
+    let count = 0;
+    mp.players.forEach(p => {
+        if (user.isLogin(p) && user.get(p, 'fraction_id') === frId) {
+            count++;
+        }
+    });
+    return count;
+};
+
+methods.getCurrentOnlineFraction2 = function(frId) {
+    let count = 0;
+    mp.players.forEach(p => {
+        if (user.isLogin(p) && user.get(p, 'fraction_id2') === frId) {
+            count++;
+        }
+    });
+    return count;
+};
+
 methods.isInPoint = function (p, polygon) {
     let isInside = false;
     let minX = polygon[0].x, maxX = polygon[0].x;
@@ -655,15 +675,7 @@ methods.getFractionCountRank = function (fractionId, rankType = 0) {
 
 methods.getFractionPayDay = function (fractionId, rank, rankType) {
     let frItem = methods.getFractionById(fractionId);
-    let currentPayDay = frItem.departmentPayDay[rankType];
-    let money = currentPayDay * (methods.getFractionCountRank(fractionId, rankType) - (rank - 1)) + coffer.getBenefit(coffer.getIdByFraction(fractionId));
-    if (rank == 1 || rank == 2) {
-        if (rankType == 0)
-            money = money * 2;
-        else
-            money = money * 1.5;
-    }
-    return money;
+    return methods.parseInt(frItem.rankPayDay[rankType][rank]) + coffer.getBenefit(coffer.getIdByFraction(fractionId));
 };
 
 methods.getNearestVehicleWithCoords = function(pos, r, dim = 0) {

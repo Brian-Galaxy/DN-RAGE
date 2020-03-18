@@ -5,8 +5,10 @@ let methods = require('../modules/methods');
 let user = require('../user');
 let coffer = require('../coffer');
 let enums = require('../enums');
+let inventory = require('../inventory');
 
 let weather = require('../managers/weather');
+let dispatcher = require('../managers/dispatcher');
 
 let vehicles = require('./vehicles');
 let stocks = require('./stocks');
@@ -17,6 +19,322 @@ let count = 0;
 let timer = 0;
 
 let isCargo = false;
+
+fraction.shopList = [
+    {
+        bId: 76,
+        name: "Ammu-Nation Cypress Flats",
+        sumMax: 60000,
+        sumMin: 55000,
+        pos: [
+            [808.8968, -2159.189, 28.61901, 6.53001],
+        ]
+    },
+    {
+        bId: 41,
+        name: "Los Santos Tattoo",
+        sumMax: 60000,
+        sumMin: 55000,
+        pos: [
+            [1325.094, -1650.716, 51.27528, 133.9299],
+        ]
+    },
+    {
+        bId: 94,
+        name: "Robs Liquor Murrieta Heights",
+        sumMax: 60000,
+        sumMin: 55000,
+        pos: [
+            [1134.14, -982.4875, 45.41582, 284.5632],
+        ]
+    },
+    {
+        bId: 30,
+        name: "Herr Kutz Devis",
+        sumMax: 60000,
+        sumMin: 55000,
+        pos: [
+            [134.455, -1707.691, 28.29161, 151.1897],
+        ]
+    },
+    {
+        bId: 104,
+        name: "LTD Gasoline Davis",
+        sumMax: 32000,
+        sumMin: 28000,
+        pos: [
+            [-47.89329, -1759.359, 28.42101, 87.38793],
+            [-46.6761, -1758.042, 28.42101, 58.77755],
+        ]
+    },
+    {
+        bId: 64,
+        name: "Discount Store Strawberry",
+        sumMax: 24000,
+        sumMin: 19000,
+        pos: [
+            [73.85292, -1392.154, 28.37614, 283.6447],
+            [74.91823, -1387.565, 28.37614, 185.8019],
+            [78.02972, -1387.558, 28.37614, 184.6837],
+        ]
+    },
+    {
+        bId: 89,
+        name: "24/7 Strawberry",
+        sumMax: 32000,
+        sumMin: 28000,
+        pos: [
+            [24.31314, -1347.342, 28.49703, 274.6689],
+            [24.29523, -1345, 28.49703, 271.7999],
+        ]
+    },
+    {
+        bId: 40,
+        name: "The Pit Tattoo",
+        sumMax: 60000,
+        sumMin: 55000,
+        pos: [
+            [-1151.652, -1424.404, 3.954463, 132.5959],
+        ]
+    },
+    {
+        bId: 33,
+        name: "Beachcombover",
+        sumMax: 60000,
+        sumMin: 55000,
+        pos: [
+            [-1151.652, -1424.404, 3.954463, 132.5959],
+        ]
+    },
+    {
+        bId: 67,
+        name: "Binco Vespucci Canals",
+        sumMax: 24000,
+        sumMin: 19000,
+        pos: [
+            [-822.4609, -1071.843, 10.32811, 216.5726],
+            [-817.9464, -1070.503, 10.32811, 120.5435],
+            [-816.4236, -1073.197, 10.32811, 122.9058],
+        ]
+    },
+    {
+        bId: 95,
+        name: "Robs Liquor Vespucci Canals",
+        sumMax: 60000,
+        sumMin: 55000,
+        pos: [
+            [-1222.079, -908.4241, 11.32635, 26.30677],
+        ]
+    },
+    {
+        bId: 106,
+        name: "LTD Gasoline Little Seoul",
+        sumMax: 32000,
+        sumMin: 28000,
+        pos: [
+            [-706.0416, -915.4315, 18.2156, 121.0112],
+            [-705.9542, -913.6546, 18.2156, 91.24891],
+        ]
+    },
+    {
+        bId: 74,
+        name: "Ammu-Nation Little Seoul",
+        sumMax: 60000,
+        sumMin: 55000,
+        pos: [
+            [-660.9584, -933.4232, 20.82923, 182.273],
+        ]
+    },
+    {
+        bId: 92,
+        name: "-660.9584, -933.4232, 20.82923, 182.273",
+        sumMax: 60000,
+        sumMin: 55000,
+        pos: [
+            [-2966.386, 390.7784, 14.04331, 73.20607],
+        ]
+    },
+    {
+        bId: 82,
+        name: "24/7 Banham Canyon",
+        sumMax: 32000,
+        sumMin: 28000,
+        pos: [
+            [-3039.08, 584.3269, 6.908932, 358.8096],
+            [-3041.149, 583.6489, 6.908932, 22.88623],
+        ]
+    },
+    {
+        bId: 83,
+        name: "24/7 Chumash",
+        sumMax: 32000,
+        sumMin: 28000,
+        pos: [
+            [-3244.603, 1000.006, 11.83071, 355.5228],
+            [-3242.168, 999.9278, 11.83075, 359.23],
+        ]
+    },
+    {
+        bId: 58,
+        name: "Suburban Chumash",
+        sumMax: 24000,
+        sumMin: 19000,
+        pos: [
+            [-3170.013, 1041.548, 19.86322, 75.12622],
+            [-3169.305, 1043.154, 19.86322, 74.92207],
+            [-3168.563, 1044.739, 19.86322, 70.76829],
+        ]
+    },
+    {
+        bId: 42,
+        name: "Ink Inc Tattoo",
+        sumMax: 60000,
+        sumMin: 55000,
+        pos: [
+            [-3171.197, 1073.201, 19.82917, 343.623],
+        ]
+    },
+    {
+        bId: 78,
+        name: "Ammu-Nation Chumash",
+        sumMax: 60000,
+        sumMin: 55000,
+        pos: [
+            [-3173.123, 1089.66, 19.83874, 247.4527],
+        ]
+    },
+    {
+        bId: 108,
+        name: "LTD Gasoline Richman Glen",
+        sumMax: 32000,
+        sumMin: 28000,
+        pos: [
+            [-1818.927, 792.9451, 137.0822, 169.9128],
+            [-1820.002, 794.2521, 137.0863, 134.8464],
+        ]
+    },
+    {
+        bId: 79,
+        name: "Ammu-Nation Great Chaparral",
+        sumMax: 60000,
+        sumMin: 55000,
+        pos: [
+            [-1118.094, 2700.753, 17.55414, 225.373],
+        ]
+    },
+    {
+        bId: 65,
+        name: "Discount Store Great Chaparral",
+        sumMax: 24000,
+        sumMin: 19000,
+        pos: [
+            [-1101.912, 2712.19, 18.10786, 229.5424],
+            [-1097.746, 2714.485, 18.10786, 138.8698],
+            [-1095.678, 2712.181, 18.10786, 140.0079],
+        ]
+    },
+    {
+        bId: 86,
+        name: "24/7 Harmony",
+        sumMax: 32000,
+        sumMin: 28000,
+        pos: [
+            [549.2157, 2671.359, 41.15651, 100.8311],
+            [549.5192, 2669.066, 41.15651, 100.3135],
+        ]
+    },
+    {
+        bId: 60,
+        name: "Suburban Harmony",
+        sumMax: 24000,
+        sumMin: 19000,
+        pos: [
+            [612.6832, 2764.496, 41.08812, 276.5388],
+            [612.8069, 2762.66, 41.08812, 283.3486],
+            [612.9492, 2760.931, 41.08812, 279.4291],
+        ]
+    },
+    {
+        bId: 96,
+        name: "Scoops Liquor Barn",
+        sumMax: 60000,
+        sumMin: 55000,
+        pos: [
+            [1165.981, 2710.884, 37.15769, 180.4475],
+        ]
+    },
+    {
+        bId: 61,
+        name: "Discount Store Grand Senora Desert",
+        sumMax: 24000,
+        sumMin: 19000,
+        pos: [
+            [1197.434, 2711.755, 37.22262, 188.5901],
+            [1202.03, 2710.732, 37.22262, 101.2999],
+            [1202.06, 2707.603, 37.22262, 98.07609],
+        ]
+    },
+    {
+        bId: 77,
+        name: "Ammu-Nation Tataviam Mountains",
+        sumMax: 60000,
+        sumMin: 55000,
+        pos: [
+            [2566.637, 292.4502, 107.7349, 4.131579],
+        ]
+    },
+    {
+        bId: 90,
+        name: "24/7 Tataviam Mountains",
+        sumMax: 32000,
+        sumMin: 28000,
+        pos: [
+            [2554.851, 380.7508, 107.623, 358.886],
+            [2557.135, 380.7416, 107.623, 357.6542],
+        ]
+    },
+    {
+        bId: 85,
+        name: "24/7 Grand Senora Desert",
+        sumMax: 32000,
+        sumMin: 28000,
+        pos: [
+            [2675.927, 3280.391, 54.24115, 332.3407],
+            [2677.966, 3279.257, 54.24115, 333.0592],
+        ]
+    },
+    {
+        bId: 62,
+        name: "Discount Store Grapeseed",
+        sumMax: 24000,
+        sumMin: 19000,
+        pos: [
+            [1695.544, 4822.227, 41.0631, 106.2861],
+            [1695.11, 4817.554, 41.0631, 13.15722],
+            [1691.959, 4817.184, 41.0631, 14.44859],
+        ]
+    },
+    {
+        bId: 105,
+        name: "LTD Gasoline Grapeseed",
+        sumMax: 32000,
+        sumMin: 28000,
+        pos: [
+            [1696.593, 4923.86, 41.06366, 6.185347],
+            [1697.936, 4922.814, 41.06366, 327.2919],
+        ]
+    },
+    {
+        bId: 87,
+        name: "24/7 Mount Chiliad",
+        sumMax: 32000,
+        sumMin: 28000,
+        pos: [
+            [1728.755, 6417.411, 34.03724, 245.723],
+            [1727.664, 6415.288, 34.03724, 245.5537],
+        ]
+    }
+];
 
 fraction.warVehPos = [
     [-2989.434, 1206.93, 19.08533, 70.15103],
@@ -106,7 +424,7 @@ fraction.createCargoWar = function() {
     spawnList.push(methods.getRandomInt(0, fraction.warVehPos.length));
     spawnList.push(methods.getRandomInt(0, fraction.warVehPos.length));
 
-    timer = 600;
+    timer = 400;
 
     spawnList.forEach((item, i) => {
         let posVeh = new mp.Vector3(fraction.warVehPos[item][0], fraction.warVehPos[item][1], fraction.warVehPos[item][2]);
@@ -231,7 +549,7 @@ fraction.timerCargoWar = function() {
 
     timer--;
 
-    if (timer === 300) {
+    if (timer === 100) {
         mp.players.forEach(p => {
             if (!user.isLogin(p))
                 return;
@@ -244,7 +562,7 @@ fraction.timerCargoWar = function() {
         });
     }
 
-    if (timer > 300) {
+    if (timer > 100) {
         currentWarPos.forEach(item => {
             mp.players.forEachInRange(item, 15, p => {
                 if (!user.isLogin(p))
@@ -309,6 +627,132 @@ fraction.timerCargoWar = function() {
     setTimeout(fraction.timerCargoWar, 1000);
 };
 
+fraction.getShopGang = function(player) {
+    if (!user.isLogin(player))
+        return;
+
+    if (user.get(player, 'fraction_id2') < 1) {
+        player.notify('~r~Вы не состоите в организации');
+        return;
+    }
+    if (fraction.get(user.get(player, 'fraction_id2'), 'cantGrab')) {
+        player.notify('~r~Вы уже сегодня совершали ограбление');
+        return;
+    }
+    if (!user.isLeader2(player) && !user.isSubLeader2(player)) {
+        player.notify('~r~Начать захват может только лидер или заместитель лидера');
+        return;
+    }
+
+    /*if (weather.getHour() < 23 && weather.getHour() > 4) {
+        player.notify('~r~Доступно только с 23 до 4 утра IC времени');
+        return;
+    }*/
+
+    /*let dateTime = new Date();
+    if (dateTime.getHours() < 18) {
+        player.notify('~r~Доступно только с 18 до 24 ночи ООС времени');
+        return;
+    }*/
+
+    let frId = user.get(player, 'fraction_id2');
+
+    fraction.set(frId, 'cantGrab', true);
+
+    let shopItem = fraction.shopList[methods.getRandomInt(0, fraction.shopList.length)];
+
+    fraction.set(frId, 'currentGrabShop', shopItem);
+
+    mp.players.forEach(p => {
+        if (user.isLogin(p) && user.get(p, 'fraction_id2') === frId) {
+            shopItem.pos.forEach((pos, i) => {
+                user.createBlip(p, i + 1000, pos[0], pos[1], pos[2], 628, 0);
+            });
+        }
+    });
+
+    shopItem.pos.forEach((pos, i) => {
+        fraction.set(frId, 'currentGrabShop' + i, false);
+    });
+
+    player.notify('~b~Ламар скинул кооринаты на магазин');
+};
+
+fraction.startGrabShopGang = function(player, itemId = 0) {
+    if (!user.isLogin(player))
+        return;
+
+    if (user.get(player, 'fraction_id2') < 1) {
+        player.notify('~r~Вы не состоите в организации');
+        return;
+    }
+
+    let frId = user.get(player, 'fraction_id2');
+
+    if (!fraction.has(frId, 'currentGrabShop')) {
+        player.notify('~r~Необходимо начать задание');
+        return;
+    }
+
+    let shopItem = fraction.get(frId, 'currentGrabShop');
+
+    shopItem.pos.forEach((pos, i) => {
+        if (methods.distanceToPos(new mp.Vector3(pos[0], pos[1], pos[2]), player.position) < 1.5) {
+
+            if (fraction.has(frId, 'currentGrabShopActive' + i)) {
+                player.notify('~r~Касса сейчас уже взламывается');
+                return;
+            }
+            if (fraction.get(frId, 'currentGrabShop' + i)) {
+                player.notify('~r~Эту кассу уже взламывали');
+                return;
+            }
+
+            dispatcher.sendPos(`Код 0`, `Срочно, всем патрулям, происходит ограбление магазина ${shopItem.name}`, player.position);
+
+            player.position = new mp.Vector3(pos[0], pos[1], pos[2]);
+            player.heading = pos[3];
+
+            user.playAnimation(player, "missheistfbisetup1", "unlock_loop_janitor", 9);
+            user.blockKeys(player, true);
+
+            fraction.set(frId, 'currentGrabShopActive' + i, true);
+
+            setTimeout(function () {
+
+                if (!user.isLogin(player))
+                    return;
+
+                try {
+                    user.blockKeys(player, false);
+                    user.stopAnimation(player);
+
+                    fraction.reset(frId, 'currentGrabShopActive' + i);
+
+                    if (methods.getRandomInt(0, 100) < 40) {
+                        inventory.addItem(141, 1, inventory.types.Player, user.getId(player), methods.getRandomInt(shopItem.sumMax, shopItem.sumMin), 0, "{}", 2);
+                        mp.players.forEach(p => {
+                            if (user.isLogin(p) && user.get(p, 'fraction_id2') === frId) {
+                                user.deleteBlip(p, i + 1000);
+                            }
+                        });
+                        player.notify('~g~Вы успешно взломали кассу');
+
+                        fraction.set(frId, 'currentGrabShop' + i, true);
+                    }
+                    else {
+                        player.notify('~r~Вы сломали отмычку');
+                        inventory.deleteItem(itemId);
+                    }
+                }
+                catch (e) {
+                    methods.debug(e);
+                }
+            }, 60000)
+        }
+    });
+};
+
 fraction.save = function(id) {
 
     return new Promise((resolve) => {
@@ -353,6 +797,10 @@ fraction.has = function(id, key) {
 
 fraction.set = function(id, key, val) {
     Container.Data.Set(enums.offsets.fraction + methods.parseInt(id), key, val);
+};
+
+fraction.reset = function(id, key, val) {
+    Container.Data.Reset(enums.offsets.fraction + methods.parseInt(id), key, val);
 };
 
 fraction.getName = function(id) {
@@ -571,12 +1019,14 @@ fraction.create = function (player, id) {
     fraction.setMoney(id, 100);
     fraction.addHistory(user.getRpName(player), 'Создал организацию', '', id);
     fraction.updateOwnerInfo(id, user.getId(player));
+    fraction.set(id, "name", 'Группировка');
     user.removeCryptoMoney(player, 100, 'Создание организации');
 
     setTimeout(function () {
         if (!user.isLogin(player))
             return;
         user.save(player);
+        fraction.save(id);
         player.notify('~g~Поздравляем с созданием организации');
     }, 500);
 };

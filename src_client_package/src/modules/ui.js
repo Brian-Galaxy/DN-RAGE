@@ -203,7 +203,7 @@ ui.updateValues = function() {
 
             isGreenZone = false;
             enums.zoneGreenList.forEach(item => {
-                if (methods.isInPoint(mp.players.local.position, [item[0], item[1], item[2], item[3]]))
+                if (methods.isInPoint(mp.players.local.position, item))
                     isGreenZone = true;
             });
 
@@ -239,9 +239,13 @@ ui.updateValues = function() {
             };
             ui.callCef('hudp', JSON.stringify(data));
 
+            let dateLabel = '';
+            if (mp.players.local.getVariable('enableAdmin'))
+                dateLabel = 'ADMIN MOD | ';
+
             data = {
                 type: 'updateValues',
-                date: weather.getRealDate(),
+                date: dateLabel + weather.getRealDate(),
                 time: weather.getRealTime(),
                 online: mp.players.length,
                 max_player: "1000",

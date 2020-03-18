@@ -183,9 +183,7 @@ lamar.findRandomPickup = function() {
         isProcess = true;
         pickupId = methods.getRandomInt(0, lamar.markers.length - 1);
         let pos = new mp.Vector3(lamar.markers[pickupId][0], lamar.markers[pickupId][1], lamar.markers[pickupId][2] - 1);
-        price = methods.parseFloat(methods.distanceToPos(pos, mp.players.local.position) / 50);
-        if (price > 350)
-            price = 350;
+        price = methods.getRandomInt(3000, 4000);
         _checkpointId = jobPoint.create(pos, true, 3);
         vehicles.spawnLamarCar(-216.03062438964844, -1363.7830810546875, 31.010269165039062, 29.823272705078125, "Speedo4");
         user.setById('grabLamar', true);
@@ -197,6 +195,7 @@ lamar.findRandomPickup = function() {
 
 lamar.finish = function() {
     try {
+        user.removeRep(20);
         isProcess = false;
         jobPoint.delete();
         vehicles.destroy();

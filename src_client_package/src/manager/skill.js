@@ -60,6 +60,14 @@ let checkStats = function()
                 }
             }
         }
+
+        if (mp.players.local.isSwimmingUnderWater() && user.getCache('stats_lung_capacity') < 99)
+        {
+            mp.game.ui.notifications.show(`~g~Навык "Объем легких" был повышен`);
+            user.set('stats_lung_capacity', user.getCache('stats_lung_capacity') + 2);
+            if(user.getCache('stats_lung_capacity') > 99)
+                user.set('stats_lung_capacity', 99);
+        }
     }
     catch (e) {
         methods.debug(e);
@@ -74,14 +82,6 @@ let checkShooting = function () {
         return;
 
     try {
-        if (mp.players.local.isSwimmingUnderWater() && user.getCache('stats_lung_capacity') < 99)
-        {
-            mp.game.ui.notifications.show(`~g~Навык "Объем легких" был повышен`);
-            user.set('stats_lung_capacity', user.getCache('stats_lung_capacity') + 2);
-            if(user.getCache('stats_lung_capacity') > 99)
-                user.set('stats_lung_capacity', 99);
-        }
-
         if (mp.players.local.isShooting() && user.getCache('stats_shooting') < 99) {
             mp.game.ui.notifications.show(`~g~Навык стрельбы был повышен`);
             user.set('stats_shooting', user.getCache('stats_shooting') + 1);

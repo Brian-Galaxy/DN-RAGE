@@ -62,6 +62,16 @@ mp.events.add('client:syncComponentVariation', (playerId, component, drawableId,
     }
 });
 
+mp.events.add("entityStreamIn", (entity) => {
+    if (entity.type !== "player") return;
+    setClipSet(entity, entity.getVariable("walkingStyle"));
+});
+
+mp.events.addDataHandler("walkingStyle", (entity, value) => {
+    if (entity.type === "player")
+        setClipSet(entity, value);
+});
+
 mp.events.add('client:syncAnimation', async (playerId, dict, anim, flag) => {
     //if (mp.players.local.remoteId == playerId || mp.players.local.id == playerId)
     try {
@@ -216,6 +226,21 @@ mp.events.add('client:syncScenario', (playerId, name) => {
             else {
                 remotePlayer.taskStartScenarioInPlace(name, 0, true);
             }
+        }
+    }
+    catch (e) {
+        methods.debug('Exception: events:client:syncScenario');
+        methods.debug(e);
+    }
+});
+
+mp.events.add('client:syncStopScenario', (playerId) => {
+    //if (mp.players.local.remoteId == playerId || mp.players.local.id == playerId)
+    try {
+        methods.debug('Execute: events:client:syncScenario');
+        let remotePlayer = mp.players.atRemoteId(playerId);
+        if (remotePlayer && mp.players.exists(remotePlayer)) {
+            remotePlayer.clearTasks();
         }
     }
     catch (e) {
@@ -466,6 +491,26 @@ function getPlayerByRemoteId(remoteId) {
     if (pla == undefined || pla == null || !mp.players.exists(pla))
         return null;
     return pla;
+}
+
+async function setClipSet(player, style) {
+    try {
+        if (!style) {
+            player.resetMovementClipset(0.0);
+        } else {
+            if (!mp.game.streaming.hasClipSetLoaded(style)) {
+                mp.game.streaming.requestClipSet(style);
+                while(!mp.game.streaming.hasClipSetLoaded(style))
+                    await methods.sleep(1);
+            }
+
+            player.setMovementClipset(style, 0.0);
+        }
+    }
+    catch (e) {
+        methods.debug('Exception: client:syncComponentVariation');
+        methods.debug(e);
+    }
 }
 
 export default pSync;

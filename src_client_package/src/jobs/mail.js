@@ -9,7 +9,7 @@ mail.sendMail = function(houseId) {
         methods.debug('Execute: mail.sendMail');
         if (Container.Data.HasLocally(mp.players.local.remoteId, 'mail')) {
             if (Container.Data.GetLocally(mp.players.local.remoteId, 'mail') > 0) {
-                Container.Data.Set(houseId, 'isMail' + mp.players.local.remoteId, true);
+                user.setById('isMail' + houseId, true);
                 Container.Data.SetLocally(mp.players.local.remoteId, 'mail', Container.Data.GetLocally(mp.players.local.remoteId, 'mail') - 1);
                 mp.game.ui.notifications.show(`~g~Вы отнесли почту ${Container.Data.GetLocally(mp.players.local.remoteId, 'mail')}/25`);
                 user.giveJobSkill();
@@ -31,7 +31,7 @@ mail.sendMail2 = function(houseId) {
         methods.debug('Execute: mail.sendMail2');
         if (Container.Data.HasLocally(mp.players.local.remoteId, 'mail')) {
             if (Container.Data.GetLocally(mp.players.local.remoteId, 'mail') > 0) {
-                Container.Data.Set(houseId, 'isMail2' + mp.players.local.remoteId, true);
+                user.setById('isMail2' + houseId, true);
                 Container.Data.SetLocally(mp.players.local.remoteId, 'mail', Container.Data.GetLocally(mp.players.local.remoteId, 'mail') - 1);
                 mp.game.ui.notifications.show(`~g~Вы отнесли почту ${Container.Data.GetLocally(mp.players.local.remoteId, 'mail')}/25`);
                 user.giveJobSkill();

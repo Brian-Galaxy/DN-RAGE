@@ -13,6 +13,7 @@ let items = require('./items');
 let weapons = require('./weapons');
 
 let vehicles = require('./property/vehicles');
+let fraction = require('./property/fraction');
 
 //let bank = require('./business/bank');
 let inventory = exports;
@@ -756,7 +757,7 @@ inventory.useItem = function(player, id, itemId, isTargetable = false) {
                         return;
                     }
                     if (target.health == 0) {
-                        player.notify("~r~Нельзя надевать наручники на человека в коме");
+                        player.notify("~r~Нельзя надевать верёвку на человека в коме");
                         return;
                     }
                     if (target.vehicle) {
@@ -997,20 +998,7 @@ inventory.useItem = function(player, id, itemId, isTargetable = false) {
             }
             case 5:
             {
-                if (vehicles.exists(player.vehicle))
-                {
-                    player.notify("~r~Вы должны находиться около открытого капота");
-                    return;
-                }
-                let veh = methods.getNearestVehicleWithCoords(player.position, 10);
-                if (veh == null)
-                {
-                    player.notify("~r~Нужно быть рядом с машиной");
-                    return;
-                }
-
-                player.notify("~g~Вы залили масло в транспорт");
-                inventory.deleteItem(id);
+                fraction.startGrabShopGang(player, id);
                 break;
             }
             case 6:

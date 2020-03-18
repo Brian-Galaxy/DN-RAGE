@@ -283,8 +283,8 @@ user.save = function(player, withReset = false) {
 
         user.set(player, 'skin', JSON.stringify(skin));
 
-        user.set(player, 'hp', player.health);
-        user.set(player, 'ap', player.armour);
+        user.set(player, 'hp', player.health > 100 ? 100 : player.health);
+        user.set(player, 'ap', player.armour > 100 ? 100 : player.armour);
 
         enums.userData.forEach(function(element) {
             if (element === 'id') return;
@@ -385,8 +385,18 @@ user.loadUser = function(player, name, spawn = 'Стандарт') {
                 player.setVariable('idLabel', user.get(player, 'id'));
                 player.setVariable('name', user.get(player, 'name'));
                 player.dimension = 0;
-                user.setArmour(player, user.get(player, 'ap'));
-                user.setHealth(player, user.get(player, 'hp'));
+
+                setTimeout(function () {
+                    try {
+                        user.setArmour(player, user.get(player, 'ap'));
+                        user.setHealth(player, user.get(player, 'hp'));
+
+                        user.setClipset(player, user.get(player, 'clipset'));
+                    }
+                    catch (e) {
+
+                    }
+                }, 10000);
 
                 if (user.get(player, 'vip_time') > 0 && user.get(player, 'vip_time') < methods.getTimeStamp()) {
                     player.outputChatBox(`!{#f44336}Срок действия вашего VIP статуса подошел к концу`);
@@ -999,10 +1009,12 @@ user.showLoadDisplay = function(player) {
     player.call('client:user:showLoadDisplay');
 };
 
-user.addExplode = function(player, x, y, z, explosionType, damageScale, isAudible, isInvisible, cameraShake) {
+user.addExplode = function(player, x, y, z, explosionType, damageScale, isAudible, isInvisible, cameraShake, timeout = 1) {
     if (!mp.players.exists(player))
         return false;
-    player.call('client:user:addExplode', [x, y, z, explosionType, damageScale, isAudible, isInvisible, cameraShake]);
+    setTimeout(function () {
+        player.call('client:user:addExplode', [x, y, z, explosionType, damageScale, isAudible, isInvisible, cameraShake]);
+    }, timeout);
 };
 
 user.removeWaypoint = function(player) {
@@ -1703,6 +1715,18 @@ user.setWaypoint = function(player, x, y) {
     player.call('client:user:setWaypoint', [x, y]);
 };
 
+user.setClipset = function(player, style) {
+    try {
+        methods.debug('user.setClipset');
+        if (!mp.players.exists(player))
+            return false;
+        player.data.walkingStyle = style;
+    }
+    catch (e) {
+
+    }
+};
+
 user.sendPhoneNotify = function(player, sender, title, message, pic = 'CHAR_BLANK_ENTRY') {
     if (!user.isLogin(player))
         return;
@@ -1787,6 +1811,13 @@ user.getVehicleDriver = function(vehicle) {
     return driver;
 };
 
+user.blockKeys = function(player, enable) {
+    methods.debug('user.blockKeys');
+    if (!mp.players.exists(player))
+        return false;
+    player.call('client:user:blockKeys', [enable])
+};
+
 user.heading = function(player, rot) {
     methods.debug('user.headingToCoord');
     if (!mp.players.exists(player))
@@ -1844,6 +1875,22 @@ user.playScenario = function(player, name) {
         try {
             if (methods.distanceToPos(pos, p.position) < 300)
                 p.call('client:syncScenario', [player.id, name])
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    });
+};
+
+user.stopScenario = function(player, name) {
+    methods.debug('user.playScenario');
+    if (!mp.players.exists(player))
+        return false;
+    let pos = player.position;
+    mp.players.forEach((p) => {
+        try {
+            if (methods.distanceToPos(pos, p.position) < 300)
+                p.call('client:syncStopScenario', [player.id])
         }
         catch (e) {
             methods.debug(e);
@@ -2365,7 +2412,7 @@ user.payDay = async function (player) {
 
             user.addCashMoney(player, 25000, 'Бонус от государства');
             player.notify(`~g~Вы получили $25,000 по реферальной системе`);
-            player.notify(`~g~Пригласивший ${user.get(player, 'referer')} получил 200ac на личный счёт`);
+            player.notify(`~g~Пригласивший ${user.get(player, 'referer')} получил 200dc на личный счёт`);
             mysql.executeQuery(`UPDATE users SET money_donate = money_donate + '200' WHERE name ='${user.get(player, 'referer')}'`);
             mysql.executeQuery(`INSERT INTO log_referrer (name, referrer, money, timestamp) VALUES ('${user.getRpName(player)}', '${user.get(player, 'referer')}', '200', '${methods.getTimeStamp()}')`);
         }

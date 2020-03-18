@@ -50,7 +50,7 @@ gangWar.loadAll = function() {
 
     setTimeout(function () {
         gangWar.timer();
-        gangWar.timerMoney();
+        //gangWar.timerMoney();
     }, 10000);
 };
 
@@ -213,11 +213,34 @@ gangWar.timer = function() {
 };
 
 gangWar.timerMoney = function() {
+
+    let moneyToUser = new Map();
     for (let i = 1; i <= countZone; i++) {
-        if (gangWar.get(i, 'fraction_id') > 0)
-            fraction.addMoney(gangWar.get(i, 'fraction_id'), methods.getRandomInt(2, 4), 'Зачисление средств с территории #' + i)
+        if (gangWar.get(i, 'fraction_id') > 0) {
+
+            let money = methods.getRandomInt(400, 500) / 1000;
+            fraction.addMoney(gangWar.get(i, 'fraction_id'), money, 'Зачисление средств с территории #' + i);
+
+            if (moneyToUser.has(gangWar.get(i, 'fraction_id').toString())) {
+                let cMoney = moneyToUser.get(gangWar.get(i, 'fraction_id').toString());
+                cMoney += methods.getRandomInt(100, 150) / 1000;
+                moneyToUser.set(gangWar.get(i, 'fraction_id').toString(), cMoney);
+            }
+            else {
+                moneyToUser.set(gangWar.get(i, 'fraction_id').toString(), methods.getRandomInt(100, 150) / 1000);
+            }
+        }
     }
-    setTimeout(gangWar.timerMoney, 1000 * 60 * 60 * 2);
+
+    mp.players.forEach(p => {
+        if (user.isLogin(p) && user.get(p, 'fraction_id2') > 0) {
+            if (moneyToUser.has(user.get(p, 'fraction_id2').toString())) {
+                let cMoney = moneyToUser.get(user.get(p, 'fraction_id2').toString());
+                p.notify(`~g~Вы получили ${methods.cryptoFormat(cMoney)} за ваши захваченные территории`);
+                user.addCryptoMoney(p, cMoney, 'Прибыль с территорий');
+            }
+        }
+    });
 };
 
 gangWar.getMaxCounterFractionId = function(at, def) {

@@ -622,8 +622,9 @@ stocks.openBySlot = function (player, slot, boxId) {
     let caseId = methods.getRandomInt(0, stocks.openCase[boxId].length);
 
     stocks.openCase[boxId][caseId].forEach(async item => {
-        await methods.sleep(methods.getRandomInt(0, 50));
-        inventory.addItem(item, 1, slot + inventory.types.UserStock, id + enums.offsets.stock, 1, 0, "{}", 1);
+        setTimeout(function () {
+            inventory.addItem(item, 1, slot + inventory.types.UserStock, id + enums.offsets.stock, 1, 0, "{}", 1);
+        }, methods.getRandomInt(0, 1000))
     });
 
     stocks.loadUpgrades(upgradeNew, id, stocks.get(id, 'interior'));

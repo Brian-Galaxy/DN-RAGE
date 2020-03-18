@@ -636,6 +636,14 @@ user.setPlayerModel = function(model) {
     mp.events.callRemote('server:user:setPlayerModel', model);
 };
 
+user.setClipset = function(style) {
+    mp.events.callRemote('server:user:setClipset', style);
+};
+
+user.getClipset = function() {
+    return mp.players.local.getVariable("walkingStyle");
+};
+
 user.setHealth = function(level) {
     isHeal = true;
     if (level === 0)
@@ -1423,9 +1431,9 @@ user.stopAllAnimation = function() {
 };
 
 user.playScenario = function(name) {
-    //mp.events.callRemote('server:playScenario', name);
+    mp.events.callRemote('server:playScenario', name);
 
-    try {
+    /*try {
         let remotePlayer = mp.players.local;
         remotePlayer.clearTasks();
         if (name == 'PROP_HUMAN_SEAT_BENCH') {
@@ -1439,11 +1447,12 @@ user.playScenario = function(name) {
     }
     catch (e) {
         methods.debug(e);
-    }
+    }*/
 };
 
 user.stopScenario = function() {
-    mp.players.local.clearTasks();
+    mp.events.callRemote('server:stopScenario', name);
+    //mp.players.local.clearTasks();
 };
 
 let isOpenPhone = false;

@@ -235,11 +235,11 @@ pickups.checkPressLAlt = function(player) {
         player.dimension = 0;
         user.teleport(player, pickups.ClubTehUserPos.x, pickups.ClubTehUserPos.y, pickups.ClubTehUserPos.z + 1);
     }
-    if (methods.distanceToPos(pickups.ClubUserPos, playerPos) < distanceCheck && player.dimension === 130) {
+    if (methods.distanceToPos(pickups.ClubUserPos, playerPos) < distanceCheck && player.dimension === 131) {
         player.dimension = 0;
         user.teleport(player, pickups.ClubGalaxyUserPos.x, pickups.ClubGalaxyUserPos.y, pickups.ClubGalaxyUserPos.z + 1);
     }
-    if (methods.distanceToPos(pickups.ClubUserPos, playerPos) < distanceCheck && player.dimension === 131) {
+    if (methods.distanceToPos(pickups.ClubUserPos, playerPos) < distanceCheck && player.dimension === 130) {
         player.dimension = 0;
         user.teleport(player, pickups.ClubLsUserPos.x, pickups.ClubLsUserPos.y, pickups.ClubLsUserPos.z + 1);
     }
@@ -249,11 +249,11 @@ pickups.checkPressLAlt = function(player) {
         user.teleport(player, pickups.ClubUserPos.x, pickups.ClubUserPos.y, pickups.ClubUserPos.z + 1);
     }
     if (methods.distanceToPos(pickups.ClubGalaxyUserPos, playerPos) < distanceCheck) {
-        player.dimension = 130;
+        player.dimension = 131;
         user.teleport(player, pickups.ClubUserPos.x, pickups.ClubUserPos.y, pickups.ClubUserPos.z + 1);
     }
     if (methods.distanceToPos(pickups.ClubLsUserPos, playerPos) < distanceCheck) {
-        player.dimension = 131;
+        player.dimension = 130;
         user.teleport(player, pickups.ClubUserPos.x, pickups.ClubUserPos.y, pickups.ClubUserPos.z + 1);
     }
 
@@ -263,13 +263,13 @@ pickups.checkPressLAlt = function(player) {
             player.vehicle.dimension = 0;
         user.teleportVeh(player, pickups.ClubTehVPos.x, pickups.ClubTehVPos.y, pickups.ClubTehVPos.z + 1, pickups.ClubTehVPos.rot);
     }
-    if (methods.distanceToPos(pickups.ClubVPos, playerPos) < distanceCheck && player.dimension === 130) {
+    if (methods.distanceToPos(pickups.ClubVPos, playerPos) < distanceCheck && player.dimension === 131) {
         player.dimension = 0;
         if (player.vehicle)
             player.vehicle.dimension = 0;
         user.teleportVeh(player, pickups.ClubGalaxyVPos.x, pickups.ClubGalaxyVPos.y, pickups.ClubGalaxyVPos.z + 1, pickups.ClubGalaxyVPos.rot);
     }
-    if (methods.distanceToPos(pickups.ClubVPos, playerPos) < distanceCheck && player.dimension === 131) {
+    if (methods.distanceToPos(pickups.ClubVPos, playerPos) < distanceCheck && player.dimension === 130) {
         player.dimension = 0;
         if (player.vehicle)
             player.vehicle.dimension = 0;
@@ -283,15 +283,15 @@ pickups.checkPressLAlt = function(player) {
         user.teleportVeh(player, pickups.ClubVPos.x, pickups.ClubVPos.y, pickups.ClubVPos.z + 1, pickups.ClubVPos.rot);
     }
     if (methods.distanceToPos(pickups.ClubGalaxyVPos, playerPos) < distanceCheck) {
-        player.dimension = 130;
-        if (player.vehicle)
-            player.vehicle.dimension = 130;
-        user.teleportVeh(player, pickups.ClubVPos.x, pickups.ClubVPos.y, pickups.ClubVPos.z + 1, pickups.ClubVPos.rot);
-    }
-    if (methods.distanceToPos(pickups.ClubLsVPos, playerPos) < distanceCheck) {
         player.dimension = 131;
         if (player.vehicle)
             player.vehicle.dimension = 131;
+        user.teleportVeh(player, pickups.ClubVPos.x, pickups.ClubVPos.y, pickups.ClubVPos.z + 1, pickups.ClubVPos.rot);
+    }
+    if (methods.distanceToPos(pickups.ClubLsVPos, playerPos) < distanceCheck) {
+        player.dimension = 130;
+        if (player.vehicle)
+            player.vehicle.dimension = 130;
         user.teleportVeh(player, pickups.ClubVPos.x, pickups.ClubVPos.y, pickups.ClubVPos.z + 1, pickups.ClubVPos.rot);
     }
 

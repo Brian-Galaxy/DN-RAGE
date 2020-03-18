@@ -710,6 +710,11 @@ mp.events.add('client:user:giveWeapon', (name, pt) => {
     user.giveWeapon(name, pt);
 });
 
+mp.events.add('client:user:blockKeys', (enable) => {
+    methods.debug('Event: client:user:blockKeys', enable);
+    methods.blockKeys(enable);
+});
+
 mp.events.add('client:user:setWaypoint', (x, y) => {
     methods.debug('Event: client:user:setWaypoint');
     user.setWaypoint(x, y);
@@ -1782,6 +1787,13 @@ mp.events.add('client:inventory:moveTo', function(id, itemId, ownerId, ownerType
             mp.game.ui.notifications.show("~r~Нельзя выкидывать предметы в интерьере");
             return;
         }
+
+        if (itemId === 141 || itemId === 140) {
+            inventory.deleteItem(id);
+            mp.game.ui.notifications.show("~r~Пачка была удалена");
+            return;
+        }
+
         inventory.dropItem(id, itemId, mp.players.local.position, mp.players.local.getRotation(0));
     }
     else
@@ -2437,6 +2449,9 @@ mp.events.add('render', () => {
                     if (player.getVariable('isAfk'))
                         typingLabel += '\n~r~AFK...';
 
+                    if (player.getHealth() < 1)
+                        pref = '~m~';
+
                     let name = 'Игрок | ';
                     if (user.hasDating(player.getVariable('idLabel')))
                         name = user.getDating(player.getVariable('idLabel')) + ' | ';
@@ -2444,11 +2459,16 @@ mp.events.add('render', () => {
                         name = player.getVariable('adminRole') + ' | ';
                     //if(!player.getVariable('hiddenId'))
 
+                    let remoteId = player.remoteId;
+
+                    if (user.isAdmin())
+                        remoteId = `${remoteId} (${player.getVariable('idLabel')})`;
+
                     const entity = player.vehicle ? player.vehicle : player;
                     const vector = entity.getVelocity();
                     const frameTime = methods.parseFloatHex(mp.game.invoke('0x15C40837039FFAF7').toString(16));
                     if (player.getAlpha() > 0)
-                        ui.drawText3D( pref + name + player.remoteId + ' ' +  indicatorColor + typingLabel, headPosition.x + vector.x * frameTime, headPosition.y + vector.y * frameTime, headPosition.z + vector.z * frameTime + 0.1);
+                        ui.drawText3D( pref + name + remoteId + ' ' +  indicatorColor + typingLabel, headPosition.x + vector.x * frameTime, headPosition.y + vector.y * frameTime, headPosition.z + vector.z * frameTime + 0.1);
                 }
             }
             catch (e) {
@@ -2632,6 +2652,11 @@ mp.events.add("playerEnterCheckpoint", (checkpoint) => {
         user.reset('isSellCar');
         jobPoint.delete();
         mp.events.callRemote('server:sellVeh');
+    }
+    if (user.hasCache('isSellMoney')) {
+        user.reset('isSellMoney');
+        jobPoint.delete();
+        mp.events.callRemote('server:sellMoney');
     }
 });
 
@@ -2883,6 +2908,32 @@ mp.events.add("playerCommand", async (command) => {
 * RENDER
 *
 * */
+
+/*mp.events.add('render', () => //TODO Посадка ТС
+{
+    const controls = mp.game.controls;
+
+    controls.enableControlAction(0, 23, true);
+    controls.disableControlAction(0, 58, true);
+
+    if(controls.isDisabledControlJustPressed(0, 58))
+    {
+        let position = mp.players.local.position;
+        let vehHandle = mp.game.vehicle.getClosestVehicle(position.x, position.y, position.z, 5, 0, 70);
+
+        let vehicle = mp.vehicles.atHandle(vehHandle);
+
+        if(vehicle
+            && vehicle.isAnySeatEmpty()
+            && vehicle.getSpeed() < 5)
+        {
+            for (let i = 0; i < 8; i++) {
+                if (vehicle.isSeatFree(i))
+                    mp.players.local.taskEnterVehicle(vehicle.handle, 5000, i, 2, 1, 0);
+            }
+        }
+    }
+});*/
 
 mp.events.add('render', () => {
     if(user.isLogin()) {

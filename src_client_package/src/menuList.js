@@ -70,7 +70,7 @@ menuList.showHouseBuyMenu = async function(h) {
     enterHouseItem = UIMenu.Menu.AddMenuItem("~g~Осмотреть дом");
 
     if (user.getCache('job') == 4) {
-        if (!await Container.Data.Has(h.get('id'), 'isMail' + mp.players.local.remoteId))
+        if (!await user.hasById('isMail' + h.get('id')))
             UIMenu.Menu.AddMenuItem("~g~Положить почту").doName = h.get('id');
         else
             UIMenu.Menu.AddMenuItem("~o~Дом уже обслуживался");
@@ -210,7 +210,7 @@ menuList.showHouseOutMenu = async function(h) {
     let enterHouseItem = UIMenu.Menu.AddMenuItem("~g~Войти");
 
     if (user.getCache('job') == 4) {
-        if (!await Container.Data.Has(h.get('id'), 'isMail' + mp.players.local.remoteId))
+        if (!await user.hasById('isMail' + h.get('id')))
             UIMenu.Menu.AddMenuItem("~g~Положить почту").doName = h.get('id');
         else
             UIMenu.Menu.AddMenuItem("~o~Дом уже обслуживался");
@@ -286,7 +286,7 @@ menuList.showCondoBuyMenu = async function(h) {
     enterHouseItem = UIMenu.Menu.AddMenuItem("~g~Осмотреть квартиру");
 
     if (user.getCache('job') == 4) {
-        if (!await Container.Data.Has(h.get('id'), 'isMail2' + mp.players.local.remoteId))
+        if (!await user.hasById('isMail2' + h.get('id')))
             UIMenu.Menu.AddMenuItem("~g~Положить почту").doName = h.get('id');
         else
             UIMenu.Menu.AddMenuItem("~o~Дом уже обслуживался");
@@ -366,7 +366,7 @@ menuList.showCondoOutMenu = async function(h) {
     let enterHouseItem = UIMenu.Menu.AddMenuItem("~g~Войти");
 
     if (user.getCache('job') == 4) {
-        if (!await Container.Data.Has(h.get('id'), 'isMail2' + mp.players.local.remoteId))
+        if (!await user.hasById('isMail2' + h.get('id')))
             UIMenu.Menu.AddMenuItem("~g~Положить почту").doName = h.get('id');
         else
             UIMenu.Menu.AddMenuItem("~o~Дом уже обслуживался");
@@ -459,7 +459,7 @@ menuList.showStockPanelMenu = function(h) {
     }
 
     //UIMenu.Menu.AddMenuItem("~y~Лог"); //TODO
-    //UIMenu.Menu.AddMenuItem("Руководство").doName = 'setPin';
+    UIMenu.Menu.AddMenuItem("Руководство").doName = 'about';
 
     UIMenu.Menu.AddMenuItem("~r~Закрыть");
 
@@ -504,6 +504,11 @@ menuList.showStockPanelMenu = function(h) {
         }
         if (item.doName == 'showStockPanelUpgradeMenu') {
             menuList.showStockPanelUpgradeMenu(h);
+        }
+        if (item.doName == 'about') {
+            chat.sendLocal(`!{${chat.clBlue}}Справка`);
+            chat.sendLocal(`Вы можете модернизировать склад.`);
+            chat.sendLocal(`Если продавать груз коллекциями, то множитель будет увеличиваться, например вы собрали 3 груза одинаково класса, то вы получите множитель x1.1, и так не больше x2.`);
         }
         if (item.doName == 'showStockPanelBoxListMenu') {
             menuList.showStockPanelBoxListMenu(h);
@@ -2352,11 +2357,47 @@ menuList.showPlayerMenu = function() {
     let menu = UIMenu.Menu.Create(`Персонаж`, `~b~Меню вашего персонажа`);
 
     UIMenu.Menu.AddMenuItem("Статистика").doName = 'showPlayerStatsMenu';
+
+    UIMenu.Menu.AddMenuItem("Походки").doName = 'showPlayerStatsMenu';
+
+    let list = [];
+    if (user.getSex() === 1) {
+        enums.clopsetFemale.forEach(item => {
+            list.push(item[0]);
+        })
+    }
+    else {
+        enums.clopsetMale.forEach(item => {
+            list.push(item[0]);
+        })
+    }
+
+    let listItem = UIMenu.Menu.AddMenuItemList("Походка", list);
+    listItem.doName = 'clipset';
+    if (user.getCache('clipset') != '')
+        listItem.Index = list.indexOf(user.getCache('clipset'));
+
     UIMenu.Menu.AddMenuItem("Посмотреть документы").doName = 'showPlayerDoсMenu';
     UIMenu.Menu.AddMenuItem("Анимации").doName = 'showAnimationTypeListMenu';
     UIMenu.Menu.AddMenuItem("~b~История персонажа").doName = 'showPlayerHistoryMenu';
 
     let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+
+    menu.ListChange.on((item, index) => {
+        if (item.doName === 'clipset') {
+
+            if (user.getSex() === 1) {
+                user.set('clipset', enums.clopsetFemale[index][1]);
+                user.setClipset(enums.clopsetFemale[index][1]);
+            }
+            else {
+                user.set('clipset', enums.clopsetMale[index][1]);
+                user.setClipset(enums.clopsetMale[index][1]);
+            }
+            mp.game.ui.notifications.show('~b~Настройки были сохранены');
+        }
+    });
+
     menu.ItemSelect.on(async (item, index) => {
         if (item == closeItem)
             UIMenu.Menu.HideMenu();
@@ -2411,9 +2452,9 @@ menuList.showHelpMenu = function() {
     mItem.textTitle = 'Своя организация';
     mItem.text = 'Для начала вам необходимо иметь низкую репутацию, далее необходимо иметь достаточную сумму в e-coins вы сможете создать свою организацию в коснли телефона через комануду ecorp. Учтите, что слоты фракций на сервере ограничено';
     
-    mItem = UIMenu.Menu.AddMenuItem("Где мой прицел?");
+    /*mItem = UIMenu.Menu.AddMenuItem("Где мой прицел?");
     mItem.textTitle = 'Навык оружия';
-    mItem.text = 'Для того, чтобы появился прицел, необходимо владеть 100% навыком оружия';
+    mItem.text = 'Для того, чтобы появился прицел, необходимо владеть 100% навыком оружия';*/
 
     mItem = UIMenu.Menu.AddMenuItem("Как стрелять из машины?");
     mItem.textTitle = 'Навык оружия';
@@ -2570,6 +2611,10 @@ menuList.showSettingsKeyMenu = function() {
 
     menuItem = UIMenu.Menu.AddMenuItem("Телефон", "Нажмите ~g~Enter~s~ чтобы изменить");
     menuItem.doName = 's_bind_phone';
+    menuItem.SetRightLabel(`~h~~m~[${bind.getKeyName(user.getCache(menuItem.doName))}]`);
+
+    menuItem = UIMenu.Menu.AddMenuItem("Сидеть", "Нажмите ~g~Enter~s~ чтобы изменить");
+    menuItem.doName = 's_bind_seat';
     menuItem.SetRightLabel(`~h~~m~[${bind.getKeyName(user.getCache(menuItem.doName))}]`);
 
     menuItem = UIMenu.Menu.AddMenuItem("Голосовой чат", "Нажмите ~g~Enter~s~ чтобы изменить");
@@ -2904,15 +2949,17 @@ menuList.showPlayerDoMenu = function(playerId) {
     UIMenu.Menu.AddMenuItem("Вести за собой").eventName = 'server:user:taskFollowById';
     //UIMenu.Menu.AddMenuItem("Снять маску с игрока").eventName = 'server:user:taskRemoveMaskById';
 
-    if (user.isPolice())
+    if (user.isPolice()) {
+
         UIMenu.Menu.AddMenuItem("Обыск игрока").eventName = 'server:user:getInvById';
+        UIMenu.Menu.AddMenuItem("Установить личность").eventName = 'server:user:getPassById';
+    }
 
     UIMenu.Menu.AddMenuItem("~b~Документы").doName = 'showPlayerDoсMenu';
 
     let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
     menu.ItemSelect.on(async (item, index) => {
-        if (item == closeItem)
-            UIMenu.Menu.HideMenu();
+        UIMenu.Menu.HideMenu();
 
         if (ui.isGreenZone()) {
             if (item.eventName === 'server:user:knockById') {
@@ -3316,6 +3363,7 @@ menuList.showVehicleMenu = function(data) {
     let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
     menu.ItemSelect.on(async (item, index) => {
 
+        UIMenu.Menu.HideMenu();
         if (item == closeItem) {
             UIMenu.Menu.HideMenu();
             return;
@@ -3372,8 +3420,8 @@ menuList.showVehicleMenu = function(data) {
             photo.start();
         else if (item.doName == 'photo:ask')
             photo.ask();
-        else if (item.doName == 'showVehicleAutopilotMenu')
-            menuList.showVehicleAutopilotMenu();
+        /*else if (item.doName == 'showVehicleAutopilotMenu')
+            menuList.showVehicleAutopilotMenu();*/
         else if (item.doName == 'showVehicleStatsMenu')
             menuList.showVehicleStatsMenu();
         else if (item.eventName == 'server:vehicle:neonStatus')
@@ -3457,6 +3505,10 @@ menuList.showVehicleMenu = function(data) {
         }
         else if (item.eventName == 'server:vehicle:park') {
             UIMenu.Menu.HideMenu();
+            if (ui.isGreenZone()) {
+                mp.game.ui.notifications.show("~r~В Зелёной зоне парковка транспорта запрещена");
+                return;
+            }
 
             if (vehicles.checkerControl()) {
                 mp.game.ui.notifications.show('~y~В таком положении транспорт не паркуется');
@@ -3814,6 +3866,9 @@ menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId) {
                     itemName = item.label;
                 else if (item.label.toString() != "")
                     desc += item.label;
+
+                if (item.item_id === 140 || item.item_id === 141)
+                    desc = `В пачке: ${methods.moneyFormat(item.count)}`;
 
                 if (items.isWeapon(item.item_id)) {
 
@@ -5188,12 +5243,12 @@ menuList.showBarMenu = function(shopId, price = 2)
                 user.removeMoney(item.price, 'Выпил ' + item.label + ' в баре');
 
                 if (mp.players.local.getHealth() < 90)
-                    user.setHealth(mp.players.local.getHealth() + 5);
+                    user.setHealth(mp.players.local.getHealth() + 2);
 
                 if (item.drunkLevel)
                     user.addDrugLevel(99, item.drunkLevel);
 
-                user.addWaterLevel(50);
+                user.addWaterLevel(200);
                 chat.sendMeCommand(`выпил ${item.label}`);
                 user.playAnimation("mp_player_intdrink", "loop_bottle", 48);
             }
@@ -5249,11 +5304,12 @@ menuList.showBarFreeMenu = function()
             if (item.label) {
 
                 if (mp.players.local.getHealth() < 90)
-                    user.setHealth(mp.players.local.getHealth() + 5);
+                    user.setHealth(mp.players.local.getHealth() + 2);
 
                 if (item.drunkLevel)
                     user.addDrugLevel(99, item.drunkLevel);
 
+                user.addWaterLevel(200);
                 chat.sendMeCommand(`выпил ${item.label}`);
                 user.playAnimation("mp_player_intdrink", "loop_bottle", 48);
             }
@@ -8311,11 +8367,14 @@ menuList.showEmsArsenalMenu = function() {
 
     UIMenu.Menu.AddMenuItem("Сухпаёк").itemId = 32;
     UIMenu.Menu.AddMenuItem("Антипохмелин").itemId = 221;
-    UIMenu.Menu.AddMenuItem("Большая Аптечка").itemId = 278;
-    UIMenu.Menu.AddMenuItem("Дефибриллятор").itemId = 277;
-    UIMenu.Menu.AddMenuItem("Полицейское огорождение").itemId = 199;
-    UIMenu.Menu.AddMenuItem("Полосатый конус").itemId = 201;
-    UIMenu.Menu.AddMenuItem("Красный конус").itemId = 202;
+    
+    if (user.getCache('rank_type') !== 0 || user.isLeader() || user.isSubLeader() || user.isDepLeader() || user.isSubLeader()) {
+        UIMenu.Menu.AddMenuItem("Большая Аптечка").itemId = 278;
+        UIMenu.Menu.AddMenuItem("Дефибриллятор").itemId = 277;
+        UIMenu.Menu.AddMenuItem("Полицейское огорождение").itemId = 199;
+        UIMenu.Menu.AddMenuItem("Полосатый конус").itemId = 201;
+        UIMenu.Menu.AddMenuItem("Красный конус").itemId = 202;
+    }
 
     let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
 
@@ -8375,11 +8434,15 @@ menuList.showSheriffArsenalMenu = function() {
     let menu = UIMenu.Menu.Create(`Арсенал`, `~b~Арсенал`);
 
     UIMenu.Menu.AddMenuItem("Сухпаёк").itemId = 32;
-    UIMenu.Menu.AddMenuItem("Большая Аптечка").itemId = 278;
-    UIMenu.Menu.AddMenuItem("Полицейское огорождение").itemId = 199;
-    UIMenu.Menu.AddMenuItem("Полосатый конус").itemId = 201;
-    UIMenu.Menu.AddMenuItem("Красный конус").itemId = 202;
 
+    if (user.getCache('rank_type') !== 0 || user.isLeader() || user.isSubLeader() || user.isDepLeader() || user.isSubLeader()) {
+        UIMenu.Menu.AddMenuItem("Большая Аптечка").itemId = 278;
+        UIMenu.Menu.AddMenuItem("Полицейское огорождение").itemId = 199;
+        UIMenu.Menu.AddMenuItem("Полосатый конус").itemId = 201;
+        UIMenu.Menu.AddMenuItem("Красный конус").itemId = 202;
+    }
+
+    UIMenu.Menu.AddMenuItem("~b~Сдать грязные деньги").getMoneyPolice = true;
     UIMenu.Menu.AddMenuItem("~b~Оружие").showGun = true;
     UIMenu.Menu.AddMenuItem("~b~Модули на оружие").showGunMod = true;
 
@@ -8393,6 +8456,9 @@ menuList.showSheriffArsenalMenu = function() {
         }
         if (item.showGunMod) {
             menuList.showSheriffArsenalGunModMenu();
+        }
+        if (item.getMoneyPolice) {
+            mp.events.callRemote('server:sellMoneyPolice');
         }
         if (item.itemId) {
             let moneyFraction = await coffer.getMoney(coffer.getIdByFraction(user.getCache('fraction_id')));
@@ -8683,11 +8749,14 @@ menuList.showSapdArsenalMenu = function() {
     let menu = UIMenu.Menu.Create(`Арсенал`, `~b~Арсенал`);
 
     UIMenu.Menu.AddMenuItem("Сухпаёк").itemId = 32;
-    UIMenu.Menu.AddMenuItem("Большая Аптечка").itemId = 278;
-    UIMenu.Menu.AddMenuItem("Полицейское огорождение").itemId = 199;
-    UIMenu.Menu.AddMenuItem("Полосатый конус").itemId = 201;
-    UIMenu.Menu.AddMenuItem("Красный конус").itemId = 202;
+    if (user.getCache('rank_type') !== 0 || user.isLeader() || user.isSubLeader() || user.isDepLeader() || user.isSubLeader()) {
+        UIMenu.Menu.AddMenuItem("Большая Аптечка").itemId = 278;
+        UIMenu.Menu.AddMenuItem("Полицейское огорождение").itemId = 199;
+        UIMenu.Menu.AddMenuItem("Полосатый конус").itemId = 201;
+        UIMenu.Menu.AddMenuItem("Красный конус").itemId = 202;
+    }
 
+    UIMenu.Menu.AddMenuItem("~b~Сдать грязные деньги").getMoneyPolice = true;
     UIMenu.Menu.AddMenuItem("~b~Оружие").showGun = true;
     UIMenu.Menu.AddMenuItem("~b~Модули на оружие").showGunMod = true;
 
@@ -8704,6 +8773,9 @@ menuList.showSapdArsenalMenu = function() {
         }
         if (item.showGunMod) {
             menuList.showSapdArsenalGunModMenu();
+        }
+        if (item.getMoneyPolice) {
+            mp.events.callRemote('server:sellMoneyPolice');
         }
         if (item.itemId) {
             let moneyFraction = await coffer.getMoney(coffer.getIdByFraction(user.getCache('fraction_id')));
@@ -8975,6 +9047,7 @@ menuList.showBotQuestGangMenu = function()
     }
     else {
         UIMenu.Menu.AddMenuItem("~y~Задание на перевозку").isCargo = true;
+        UIMenu.Menu.AddMenuItem("Купить спец. отмычку", 'Цена: ~g~0.2ec').takeSpec = true;
     }
 
     UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = "closeButton";
@@ -8984,6 +9057,16 @@ menuList.showBotQuestGangMenu = function()
             quest.gang(true);
         if (item.isCargo)
             lamar.start();
+        if (item.takeSpec) {
+            if (user.getCryptoMoney() < 0.2) {
+                mp.game.ui.notifications.show(`~r~На счету ECOIN нет столько денег`);
+                return;
+            }
+
+            user.removeCryptoMoney(0.2, 'Покупка спец. отмычек');
+            inventory.takeNewItemJust(5);
+            mp.game.ui.notifications.show(`~g~Вы купили отмычку`);
+        }
     });
 };
 
@@ -9008,6 +9091,8 @@ menuList.showAdminMenu = function() {
                 UIMenu.Menu.AddMenuItem("Выбор одежды").doName = 'clothMenu';
             if (user.isAdmin(2))
                 UIMenu.Menu.AddMenuItem("Уведомление").doName = 'notify';
+            if (user.isAdmin(2))
+                UIMenu.Menu.AddMenuItem("Уведомление для крайма").doName = 'notifyCrime';
             if (user.isAdmin(2))
                 UIMenu.Menu.AddMenuItem("Меропритие").doName = 'eventMenu';
 
@@ -9100,6 +9185,14 @@ menuList.showAdminMenu = function() {
                 return;
             methods.notifyWithPictureToAll(title, 'Администрация', text, 'CHAR_ACTING_UP');
         }
+        if (item.doName == 'notifyCrime') {
+            let text = await UIMenu.Menu.GetUserInput("Текст новости", "", 150);
+            if (text == '')
+                return;
+            for (let i = 1; i <= 20; i++) {
+                methods.notifyWithPictureToFraction2('E CORP', 'Администрация', text, 'CHAR_ACTING_UP', i);
+            }
+        }
     });
 };
 
@@ -9186,6 +9279,8 @@ menuList.showAdminPlayerMenu = function() {
             if (item.doName == 'jail') {
                 let num = methods.parseInt(await UIMenu.Menu.GetUserInput("Время в минутах", "", 5));
                 let reason = await UIMenu.Menu.GetUserInput("Причина", "", 32);
+                if (reason === '')
+                    return;
                 mp.events.callRemote('server:admin:jail', typeIndex, id, num, methods.removeQuotes(reason));
             }
             if (item.doName == 'resetSkinById') {
@@ -9452,6 +9547,9 @@ menuList.showAdminDevMenu = function() {
     UIMenu.Menu.AddMenuItem("Коорды").doName = 'server:user:getPlayerPos';
     UIMenu.Menu.AddMenuItem("Коорды2").doName = 'server:user:getPlayerPos2';
 
+    UIMenu.Menu.AddMenuItem("Добавить на счета орг.").doName = 'addFraction2';
+    UIMenu.Menu.AddMenuItem("Списать со счета орг.").doName = 'removeFraction2';
+
     UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = 'close';
 
     let listIndex = 0;
@@ -9464,6 +9562,16 @@ menuList.showAdminDevMenu = function() {
     });
 
     menu.ItemSelect.on(async item => {
+        if (item.doName == 'addFraction2') {
+            let fr = methods.parseInt(await UIMenu.Menu.GetUserInput("ID Фракции", "", 15));
+            let sum = methods.parseFloat(await UIMenu.Menu.GetUserInput("Сумма", "", 15));
+            fraction.addMoney(fr, sum, 'Администратор ' + user.getCache('name'));
+        }
+        if (item.doName == 'removeFraction2') {
+            let fr = methods.parseInt(await UIMenu.Menu.GetUserInput("ID Фракции", "", 15));
+            let sum = methods.parseFloat(await UIMenu.Menu.GetUserInput("Сумма", "", 15));
+            fraction.removeMoney(fr, sum, 'Администратор ' + user.getCache('name'));
+        }
         if (item.doName == 'debug') {
             menuList.showAdminDebugMenu();
         }

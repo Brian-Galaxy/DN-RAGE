@@ -5,6 +5,8 @@ let fraction = require('../property/fraction');
 
 let user = require('../user');
 
+let gangWar = require('../managers/gangWar');
+
 let ems = require('./ems');
 
 let weather = exports;
@@ -148,6 +150,11 @@ weather.timeSyncTimer = function() {
 
     try {
         _minute++;
+
+        if (_minute === 30) {
+            gangWar.timerMoney();
+        }
+
         if (_minute > 59)
         {
             _minute = 0;
@@ -461,8 +468,7 @@ weather.nextRandomWeatherByType = function(weatherType) {
             weatherList = [
                 "CLEAR",
                 "CLEAR",
-                "CLEAR",
-                "CLEAR",
+                "CLOUDS",
                 "CLOUDS",
                 "CLOUDS",
                 "CLOUDS",
@@ -474,9 +480,15 @@ weather.nextRandomWeatherByType = function(weatherType) {
                 "SMOG",
                 "SMOG",
                 "SMOG",
+                "SMOG",
+                "SMOG",
                 "FOGGY",
                 "FOGGY",
                 "FOGGY",
+                "FOGGY",
+                "FOGGY",
+                "OVERCAST",
+                "OVERCAST",
                 "OVERCAST",
                 "OVERCAST",
                 "OVERCAST",

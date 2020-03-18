@@ -331,7 +331,7 @@ tax.removeTax = function() {
     mysql.executeQuery("UPDATE stocks SET tax_money = tax_money - (round((price * '" + _currentTax + "' + '" + _taxMin +  "') / '7', 0)) WHERE user_id > 0");
     mysql.executeQuery("UPDATE cars SET tax_money = tax_money - (round((price * '" + _currentTax + "' + '" + _taxMin +  "') / '7', 0)) WHERE user_id > 0");
 
-    methods.notifyWithPictureToAll('~y~Оплата налогов', 'Новости правительства', 'Не забудьте оплатить налог за ваше имущество', 'CHAR_BANK_MAZE');
+    methods.notifyWithPictureToAll('~y~Оплата налогов', 'Новости правительства', 'Не забудьте оплатить налог за ваше имущество', 'CHAR_FLOYD');
 
     setTimeout(tax.sell, 5000);
     setTimeout(tax.updateTax, 10000);

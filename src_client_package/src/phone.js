@@ -827,6 +827,25 @@ phone.showAppFraction2 = async function() {
         };
         menu.items.push(titleMenu);
     }
+    else {
+        if (user.isLeader2() || user.isSubLeader2()) {
+            if (fData.get('is_shop')) {
+                let titleMenu = {
+                    title: 'Ограбление магазинов',
+                    umenu: [
+                        {
+                            title: "Получить наводку на магазин",
+                            text: "",
+                            type: 1,
+                            clickable: true,
+                            params: { name: "getShopGang" }
+                        },
+                    ],
+                };
+                menu.items.push(titleMenu);
+            }
+        }
+    }
 
     if (user.isLeader2() || user.isSubLeader2()) {
         let titleMenu = {
@@ -968,6 +987,12 @@ phone.showAppFraction = function() {
                     type: 1,
                     clickable: true,
                     params: { name: "destroyVehicle" }
+                },
+                {
+                    title: "Перевернуть ближайший транспорт",
+                    type: 1,
+                    clickable: true,
+                    params: { name: "flipVehicle" }
                 },
                 {
                     title: "На штраф стоянку ближайший транспорт",
@@ -2026,18 +2051,69 @@ phone.showAppFractionUpgrade2 = async function() {
         items: []
     };
 
-    menu.items.push(
-        {
-            title: '...',
-            umenu: [
+    if (fData.get('is_war')) {
+        menu.items.push(
+            {
+                title: '...',
+                umenu: [
+                    {
+                        title: 'Не доступно для гетто организаций',
+                        type: 1,
+                        params: { name: "none" }
+                    }
+                ],
+            }
+        );
+    }
+    else {
+        if (fData.get('is_shop')) {
+            menu.items.push(
                 {
-                    title: 'Временно не доступно',
-                    type: 1,
-                    params: { name: "none" }
+                    title: 'Ограбления магазинов',
+                    umenu: [
+                        {
+                            title: 'Отказаться от улучшения',
+                            type: 1,
+                            clickable: true,
+                            params: { name: "unsetShop" }
+                        }
+                    ],
                 }
-            ],
+            );
         }
-    );
+        else {
+            if (fData.get('money') >= 50) {
+                menu.items.push(
+                    {
+                        title: 'Ограбления магазинов',
+                        umenu: [
+                            {
+                                title: `Улучшить за ${methods.cryptoFormat(50, 0)}`,
+                                text: `Обслуживание в 1 реальный день ${methods.cryptoFormat(5, 0)}`,
+                                type: 1,
+                                clickable: true,
+                                params: { name: "setShop" }
+                            }
+                        ],
+                    }
+                );
+            }
+            else {
+                menu.items.push(
+                    {
+                        title: 'Ограбления магазинов',
+                        umenu: [
+                            {
+                                title: `Не хватает ${methods.cryptoFormat(50 - fData.get('money'), 0)} для улучшения`,
+                                type: 1,
+                                params: { name: "none" }
+                            }
+                        ],
+                    }
+                );
+            }
+        }
+    }
 
     /*if (fData.get('is_war')) {
         menu.items.push(
@@ -2078,54 +2154,6 @@ phone.showAppFractionUpgrade2 = async function() {
                     umenu: [
                         {
                             title: `Не хватает ${methods.cryptoFormat(100 - fData.get('money'), 0)} для улучшения`,
-                            type: 1,
-                            params: { name: "none" }
-                        }
-                    ],
-                }
-            );
-        }
-    }*/
-
-    /*if (fData.get('is_shop')) {
-        menu.items.push(
-            {
-                title: 'Ограбления магазинов',
-                umenu: [
-                    {
-                        title: 'Отказаться от улучшения',
-                        type: 1,
-                        clickable: true,
-                        params: { name: "unsetShop" }
-                    }
-                ],
-            }
-        );
-    }
-    else {
-        if (fData.get('money') >= 50) {
-            menu.items.push(
-                {
-                    title: 'Ограбления магазинов',
-                    umenu: [
-                        {
-                            title: `Улучшить за ${methods.cryptoFormat(50, 0)}`,
-                            text: `Обслуживание в 1 реальный день ${methods.cryptoFormat(5, 0)}`,
-                            type: 1,
-                            clickable: true,
-                            params: { name: "setShop" }
-                        }
-                    ],
-                }
-            );
-        }
-        else {
-            menu.items.push(
-                {
-                    title: 'Ограбления магазинов',
-                    umenu: [
-                        {
-                            title: `Не хватает ${methods.cryptoFormat(50 - fData.get('money'), 0)} для улучшения`,
                             type: 1,
                             params: { name: "none" }
                         }
@@ -2577,6 +2605,7 @@ phone.consoleCallback = async function(command) {
                 phone.addConsoleCommand('ecorp -fraction -create');
                 phone.addConsoleCommand('ecorp -fraction -list');
                 phone.addConsoleCommand('ecorp -car -getpos');
+                phone.addConsoleCommand('ecorp -money -clear');
 
             }
             else if (args[0] === '-number') {
@@ -2679,9 +2708,50 @@ phone.consoleCallback = async function(command) {
                     let posId = methods.getRandomInt(0, enums.spawnSellCar.length);
                     jobPoint.create(new mp.Vector3(enums.spawnSellCar[posId][0], enums.spawnSellCar[posId][1], enums.spawnSellCar[posId][2]), true, 3);
                     mp.game.ui.notifications.show(`~g~Метка была установлена`);
+
+                    setTimeout(function () {
+                        if (user.hasCache('isSellCar')) {
+                            jobPoint.delete();
+                            mp.game.ui.notifications.show(`~r~Метка на сдачу ТС денег была удалена`);
+                        }
+                    }, 600 * 1000);
                 }
                 else {
                     phone.addConsoleCommand('Usage: ecorp -car -getpos');
+                }
+            }
+            else if (args[0] === '-money') {
+                if (args[1] === '-clear') {
+
+                    if (user.getCache('fraction_id2') === 0) {
+                        mp.game.ui.notifications.show('~r~Отмыв денег доступен только для крайм организаций');
+                        return;
+                    }
+
+                    if (weather.getHour() < 22 && weather.getHour() > 4) {
+                        mp.game.ui.notifications.show('~r~Доступно только с 22 до 4 утра игрового времени');
+                        return;
+                    }
+
+                    if (user.hasCache('isSellMoney')) {
+                        mp.game.ui.notifications.show(`~r~Вы уже получили задание отмыв денег`);
+                        return;
+                    }
+
+                    user.set('isSellMoney', true);
+                    let posId = methods.getRandomInt(0, enums.spawnSellMoney.length);
+                    jobPoint.create(new mp.Vector3(enums.spawnSellMoney[posId][0], enums.spawnSellMoney[posId][1], enums.spawnSellMoney[posId][2]), true, 2);
+                    mp.game.ui.notifications.show(`~g~Метка была установлена`);
+
+                    setTimeout(function () {
+                        if (user.hasCache('isSellMoney')) {
+                            jobPoint.delete();
+                            mp.game.ui.notifications.show(`~r~Метка на отмыв денег была удалена`);
+                        }
+                    }, 600 * 1000);
+                }
+                else {
+                    phone.addConsoleCommand('Usage: ecorp -money -clear');
                 }
             }
         }
@@ -3079,6 +3149,9 @@ phone.callBackButton = async function(menu, id, ...args) {
             else if (params.name == 'destroyVehicle') {
                 mp.events.callRemote('server:respawnNearstVehicle');
             }
+            else if (params.name == 'flipVehicle') {
+                mp.events.callRemote('server:flipNearstVehicle');
+            }
             else if (params.name == 'destroyVehicle2') {
                 mp.events.callRemote('server:respawnNearstVehicle2');
             }
@@ -3245,6 +3318,10 @@ phone.callBackButton = async function(menu, id, ...args) {
             }
             else if (params.name == 'showGangList') {
                 mp.events.callRemote('server:phone:showGangList');
+                phone.showLoad();
+            }
+            else if (params.name == 'getShopGang') {
+                mp.events.callRemote('server:phone:getShopGang');
                 phone.showLoad();
             }
             else if (params.name == 'attackStreet') {

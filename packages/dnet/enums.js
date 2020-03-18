@@ -189,6 +189,7 @@ enums.userData = [
     "water_level",
     "eat_level",
 
+    "clipset",
     "hp",
     "ap",
 
@@ -216,6 +217,7 @@ enums.userData = [
     "s_bind_do",
     "s_bind_inv",
     "s_bind_inv_world",
+    "s_bind_seat",
     "s_bind_lock",
     "s_bind_engine",
     "s_bind_phone",
@@ -475,6 +477,14 @@ enums.fractionList = {
         vehicleList: ["Washington", "FBI", "FBI2", "Police4", "Stretch"],
         departmentList: ["Отдел кадров", "Исполнительный аппарат", "Отдел юрисдикции", "Инспекция", "Генеральный совет", "Служба безопастности"],
         departmentPayDay: [40, 90, 220, 200, 220, 210],
+        rankPayDay: [
+            [700, 500, 175, 125], //0
+            [1500, 1200, 600], //1
+            [800, 400], //2
+            [800, 700, 400, 250], //3
+            [950, 700, 500], //4
+            [950, 750, 600, 500, 300], //5
+        ],
         leaderPayDay: 2100,
         subLeaderPayDay: 1800,
         rankList: [
@@ -495,6 +505,14 @@ enums.fractionList = {
         vehicleList: ["Police", "Police2", "Police3", "Police4", "FBI", "FBI2", "Policeb", "Insurgent2", "Riot", "Riot2", "PoliceT"],
         departmentList: ["Police Academy", "Regular", "Detective Bureau", "AirSupport Division", "Tactical Division", "CyberSecurity Division"],
         departmentPayDay: [40, 90, 180, 160, 180, 170],
+        rankPayDay: [
+            [1200, 1000, 760, 690, 200, 150], //0
+            [1200, 1000, 850, 760, 690, 600, 500, 450, 350, 250], //1
+            [1200, 1000, 850, 760, 690, 600], //2
+            [1200, 1000, 850, 760, 690, 600], //3
+            [1450, 1350, 1200, 850, 760, 690, 600], //4
+            [1200, 1000, 850, 760, 690, 600], //5
+        ],
         leaderPayDay: 1900,
         subLeaderPayDay: 1600,
         rankList: [
@@ -515,6 +533,15 @@ enums.fractionList = {
         vehicleList: ["Sheriff", "Sheriff2", "Police4", "FBI", "FBI2", "Pranger", "Insurgent2"],
         departmentList: ["Sheriff Academy", "Regular", "HighWay Patrol", "Park Ranger", "Detective Bureau", "AirSupport Division", "Tactical Division"],
         departmentPayDay: [40, 90, 100, 110, 180, 170, 180],
+        rankPayDay: [
+            [1200, 1000, 760, 690, 200, 150], //0
+            [1200, 1000, 700, 600, 500, 400, 300], //1
+            [1200, 1000, 700, 600, 500, 400, 300], //2
+            [1200, 1000, 700, 600, 500, 400, 300], //3
+            [1200, 1000, 700, 600, 500, 400], //4
+            [1200, 1000, 700, 600, 500, 400], //5
+            [1450, 1350, 1200, 700, 600, 500, 400], //6
+        ],
         leaderPayDay: 1900,
         subLeaderPayDay: 1600,
         rankList: [
@@ -536,6 +563,13 @@ enums.fractionList = {
         vehicleList: ["FBI", "FBI2", "Insurgent2"],
         departmentList: ["USMC Academy", "Regular", "Sea Division", "AirSupport Division", "Special Forces"],
         departmentPayDay: [40, 45, 45, 100, 150],
+        rankPayDay: [
+            ["Captain", "Deputy Captain", "Senior Cadet", "Cadet"], //0
+            ["Captain", "Deputy Captain", "Lieutenant I", "Lieutenant II", "Master Sergeant", "Staff Sergeant", "Sergeant", "Corporal", "1st Private", "Private"], //1
+            ["Captain", "Deputy Captain", "Lieutenant I", "Lieutenant II", "Master Sergeant", "Staff Sergeant", "Sergeant", "Corporal", "1st Private", "Private"], //2
+            ["Captain", "Deputy Captain", "Lieutenant I", "Lieutenant II", "Master Sergeant", "Staff Sergeant", "Sergeant"], //3
+            ["Commander", "Deputy Commander", "Captain", "Lieutenant II", "Lieutenant I", "Sergeant II", "Sergeant I"], //4
+        ],
         leaderPayDay: 3000,
         subLeaderPayDay: 2500,
         rankList: [
@@ -555,6 +589,13 @@ enums.fractionList = {
         vehicleList: ["Ambulance", "Police4", "FBI", "FBI2", "Lguard", "Blazer2"],
         departmentList: ["Отдел кадров", "Регулярная группа", "Наземная группа", "Воздушная группа", "Спасательная группа"],
         departmentPayDay: [80, 150, 200, 200, 250],
+        rankPayDay: [
+            [1200, 1000, 350, 250], //0
+            [1200, 1000, 800, 600, 450], //1
+            [1200, 1000, 800, 600], //2
+            [1200, 1000, 800, 600], //3
+            [1200, 1000, 800, 600], //4
+        ],
         leaderPayDay: 1900,
         subLeaderPayDay: 1600,
         rankList: [
@@ -574,6 +615,13 @@ enums.fractionList = {
         vehicleList: ["Police4", "FBI", "FBI2"],
         departmentList: ["Отдел кадров", "Регулярная группа", "Наземная группа", "Воздушная группа", "Спасательная группа"],
         departmentPayDay: [80, 150, 200, 200, 250],
+        rankPayDay: [
+            ["Директор", "Зам. директора", "Старший стажер", "Стажер"], //0
+            ["Директор", "Зам. директора", "Старший специалист", "Младший специалист", "Интерн"], //1
+            ["Директор", "Зам. директора", "Старший специалист", "Младший специалист"], //2
+            ["Директор", "Зам. директора", "Старший специалист", "Младший специалист"], //3
+            ["Директор", "Зам. директора", "Старший офицер", "Младший офицер"], //4
+        ],
         leaderPayDay: 3350,
         subLeaderPayDay: 2750,
         rankList: [
@@ -593,6 +641,12 @@ enums.fractionList = {
         vehicleList: ["Mesa3", "Rumpo", "Stanier", "Stanier", "Surge", "Premier"],
         departmentList: ["Отдел кадров", "Отдел объявлений", "Отдел новостей", "Отдел радио"],
         departmentPayDay: [80, 200, 200, 200],
+        rankPayDay: [
+            [900, 700, 175, 125], //0
+            [900, 700, 500, 375, 250], //1
+            [900, 700, 500, 375, 250], //2
+            [900, 700, 500, 375, 250], //3
+        ],
         leaderPayDay: 1500,
         subLeaderPayDay: 1200,
         rankList: [
@@ -610,6 +664,9 @@ enums.fractionList = {
         subLeaderName: "",
         departmentList: ["Отдел кадров"],
         departmentPayDay: [0],
+        rankPayDay: [
+            [0, 0], //0
+        ],
         leaderPayDay: 0,
         subLeaderPayDay: 0,
         rankList: [

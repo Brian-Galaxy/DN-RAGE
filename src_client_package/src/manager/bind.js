@@ -340,6 +340,12 @@ for(let code in keyCodes) {
         if (user.getCache('s_bind_voice') == parseInt(code)) {
             voiceRage.enableMic();
         }
+        if (user.getCache('s_bind_seat') == parseInt(code)) {
+            if (user.getClipset() === 'move_ped_crouched')
+                user.setClipset(user.getCache('clipset'));
+            else
+                user.setClipset('move_ped_crouched');
+        }
         if (user.getCache('s_bind_firemod') == parseInt(code)) {
             mp.events.call('client:changeFireMod');
         }

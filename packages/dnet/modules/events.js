@@ -238,6 +238,10 @@ mp.events.addRemoteCounted('server:user:setPlayerModel', (player, model) => {
     }
 });
 
+mp.events.addRemoteCounted('server:user:setClipset', (player, style) => {
+    user.setClipset(player, style);
+});
+
 mp.events.addRemoteCounted('server:user:setHeal', (player, level) => {
     try {
         if (mp.players.exists(player))
@@ -354,6 +358,13 @@ mp.events.addRemoteCounted('server:playScenario', (player, name) => {
         return;
     //player.playScenario(name);
     user.playScenario(player, name);
+});
+
+mp.events.addRemoteCounted('server:stopScenario', (player) => {
+    if (!user.isLogin(player))
+        return;
+    //player.playScenario(name);
+    user.stopScenario(player);
 });
 
 mp.events.addRemoteCounted('server:playAnimation', (player, name1, name2, flag) => {
@@ -1140,6 +1151,40 @@ mp.events.addRemoteCounted('server:user:getInvById', (player, targetId) => {
             return;
         }
         inventory.getItemList(player, inventory.types.Player, user.getId(pl), true);
+    }
+    else
+        player.notify('~r~Рядом с вами никого нет');
+});
+
+mp.events.addRemoteCounted('server:user:getPassById', (player, targetId) => {
+    if (!user.isLogin(player))
+        return;
+    let pl = mp.players.at(targetId);
+    if (pl && mp.players.exists(pl)) {
+        if (!user.isTie(pl) && !user.isCuff(pl)) {
+            player.notify('~r~Игрок должен быть связан или в наручниках');
+            return;
+        }
+        if (methods.distanceToPos(pl.position, player.position) > 3) {
+            player.notify('~r~Вы слишком далеко');
+            return;
+        }
+
+        let dataSend = {
+            type: 'updateValues',
+            isShow: true,
+            info: {
+                firstname: user.getRpName(pl).split(' ')[0],
+                lastname: user.getRpName(pl).split(' ')[1],
+                sex: user.getSexName(pl),
+                age: user.get(pl, 'age'),
+                nation: user.get(pl, 'national'),
+                regist: user.getRegStatusName(pl),
+                idcard: user.getId(pl).toString(),
+                img: 'https://a.rsg.sc//n/' + pl.socialClub.toLowerCase(),
+            },
+        };
+        user.callCef(player, 'cardid', JSON.stringify(dataSend));
     }
     else
         player.notify('~r~Рядом с вами никого нет');
@@ -2210,25 +2255,15 @@ mp.events.addRemoteCounted('server:vehicles:spawnLamarCar', (player, x, y, z, he
                 veh.setVariable('lamar', true);
                 if (methods.getRandomInt(0, 100) < 5) {
                     let rare = 0;
-                    if (methods.getRandomInt(0, 100) < 40)
-                        rare = 1;
-                    if (methods.getRandomInt(0, 100) < 15)
-                        rare = 2;
 
                     try {
                         let rare = 0;
-                        if (methods.getRandomInt(0, 100) < 40)
-                            rare = 1;
-                        if (methods.getRandomInt(0, 100) < 15)
-                            rare = 2;
                         let boxRandom = stocks.boxList.filter((item) => { return item[7] === rare; });
                         veh.setVariable('box1', boxRandom[methods.getRandomInt(0, boxRandom.length)][2]);
 
-                        rare = 0;
+                        /*rare = 0;
                         if (methods.getRandomInt(0, 100) < 40)
                             rare = 1;
-                        if (methods.getRandomInt(0, 100) < 15)
-                            rare = 2;
                         boxRandom = stocks.boxList.filter((item) => { return item[7] === rare; });
                         veh.setVariable('box2', boxRandom[methods.getRandomInt(0, boxRandom.length)][2]);
 
@@ -2236,7 +2271,7 @@ mp.events.addRemoteCounted('server:vehicles:spawnLamarCar', (player, x, y, z, he
                         if (methods.getRandomInt(0, 100) <= 50)
                             veh.setVariable('box3', methods.getRandomInt(3, 5));
                         else
-                            veh.setVariable('box3', methods.getRandomInt(38, 40));
+                            veh.setVariable('box3', methods.getRandomInt(38, 40));*/
 
                         veh.setVariable('cargoId', 999);
                     }
@@ -2438,6 +2473,12 @@ mp.events.addRemoteCounted('server:phone:showGangList', (player) => {
     if (!user.isLogin(player))
         return;
     phone.showGangList(player);
+});
+
+mp.events.addRemoteCounted('server:phone:getShopGang', (player) => {
+    if (!user.isLogin(player))
+        return;
+    fraction.getShopGang(player);
 });
 
 mp.events.addRemoteCounted('server:phone:attackStreet', (player, id) => {
@@ -4686,6 +4727,91 @@ mp.events.addRemoteCounted('server:sellVeh', (player) => {
     }, 1000);
 });
 
+mp.events.addRemoteCounted('server:sellMoney', (player) => {
+    if (!user.isLogin(player))
+        return;
+
+    if (weather.getHour() < 22 && weather.getHour() > 4) {
+        player.notify('~r~Доступно только с 22 до 4 утра игрового времени');
+        return;
+    }
+
+    mysql.executeQuery(`SELECT * FROM items WHERE owner_id = ${user.getId(player)} AND owner_type = 1`, function (err, rows, fields) {
+
+        let money = 0;
+        let count = 0;
+
+        rows.forEach((item) => {
+
+            if (item['item_id'] == 140 || item['item_id'] == 141) {
+                money += item['count'];
+                count++;
+                inventory.deleteItem(item['id']);
+            }
+        });
+
+        if (count > 0) {
+
+            let moneyHalf = money / 2 / 1000;
+            let frId = user.get(player, 'fraction_id2');
+            let currentOnline = methods.getCurrentOnlineFraction2(frId);
+
+            fraction.addMoney(frId, moneyHalf, 'Отмыв средств');
+
+            mp.players.forEach(p => {
+                if (user.isLogin(p) && user.get(p, 'fraction_id2') === frId) {
+                    user.addCryptoMoney(p, moneyHalf / currentOnline, 'Отмыв средств');
+                    p.notify(`~g~К вам на счет поступило: ~s~${methods.cryptoFormat(moneyHalf / currentOnline)}`);
+                }
+            });
+            player.notify('~b~Деньги с отмыва были разделены следующим образом. 50% идёт на счет организации, 50% разделяется над всеми, кто в сети');
+        }
+        else {
+            player.notify('~r~У Вас нет денег для отмыва');
+        }
+    });
+});
+
+mp.events.addRemoteCounted('server:sellMoneyPolice', (player) => {
+    if (!user.isLogin(player))
+        return;
+
+    mysql.executeQuery(`SELECT * FROM items WHERE owner_id = ${user.getId(player)} AND owner_type = 1`, function (err, rows, fields) {
+
+        let money = 0;
+        let count = 0;
+
+        rows.forEach((item) => {
+
+            if (item['item_id'] == 140 || item['item_id'] == 141) {
+                money += item['count'];
+                count++;
+                inventory.deleteItem(item['id']);
+            }
+        });
+
+        if (count > 0) {
+
+            let moneyHalf = money / 2;
+            let frId = user.get(player, 'fraction_id');
+            let currentOnline = methods.getCurrentOnlineFraction(frId);
+
+            coffer.addMoney(coffer.getIdByFraction(frId), moneyHalf, 'Премия за грязные деньги');
+
+            mp.players.forEach(p => {
+                if (user.isLogin(p) && user.get(p, 'fraction_id') === frId) {
+                    user.addPayDayMoney(p, moneyHalf / currentOnline, 'Премия');
+                    p.notify(`~g~К вам на счет поступило: ~s~${methods.moneyFormat(moneyHalf / currentOnline)}`);
+                }
+            });
+            player.notify('~b~Деньги были разделены следующим образом. 50% идёт на счет организации, 50% разделяется над всеми, кто в сети');
+        }
+        else {
+            player.notify('~r~У Вас нет награбленных денег');
+        }
+    });
+});
+
 mp.events.addRemoteCounted('server:lsc:showTun', (player, modType, idx) => {
     if (!user.isLogin(player))
         return;
@@ -5837,6 +5963,9 @@ mp.events.add('playerQuit', player => {
 
     if (user.isLogin(player)) {
         vehicles.removePlayerVehicle(user.getId(player));
+
+        inventory.deleteItemsRange(player, 138, 141);
+
         try {
             if (user.isCuff(player)) {
                 user.addHistory(player, 1, 'Был посажен в тюрьму');
@@ -5875,10 +6004,17 @@ mp.events.add("playerDeath", (player, reason, killer) => {
         }
     }
 
-    if (user.isLogin(player)) {
+    setTimeout(function () {
+        try {
+            if (player.vehicle)
+                player.removeFromVehicle();
+        }
+        catch (e) {
 
-        if (player.vehicle)
-            player.removeFromVehicle();
+        }
+    }, 10000);
+
+    if (user.isLogin(player)) {
 
         user.set(player, 'killerInJail', false);
 

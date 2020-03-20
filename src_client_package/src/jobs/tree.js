@@ -1002,6 +1002,10 @@ tree.start = function() {
         mp.game.ui.notifications.show('~r~Вы уже получили задание');
         return;
     }
+    if (mp.players.local.dimension > 0) {
+        mp.game.ui.notifications.show('~r~В интерьерах данное действие запрещено');
+        return;
+    }
     tree.findRandomPickup();
 };
 
@@ -1107,9 +1111,9 @@ tree.workProcess = function(id) {
                 mp.players.local.freezePosition(false);
                 methods.blockKeys(false);
                 user.stopScenario();
-                user.giveJobMoney(methods.getRandomInt(10, 13) + methods.getRandomFloat());
+                user.giveJobMoney(methods.getRandomInt(11, 14) + methods.getRandomFloat());
                 user.addRep(1);
-                user.addWorkExp(1);
+                user.addWorkExp(2);
 
                 user.giveJobSkill();
             }, 10000);

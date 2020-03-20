@@ -170,6 +170,11 @@ lamar.start = async function() {
         return;
     }
 
+    if (mp.players.local.dimension > 0) {
+        mp.game.ui.notifications.show('~r~В интерьерах данное действие запрещено');
+        return;
+    }
+
     if (await user.hasById('grabLamar')) {
         mp.game.ui.notifications.show('~r~Вы не давно уже возили фургон');
         return;

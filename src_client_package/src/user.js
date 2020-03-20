@@ -1006,15 +1006,18 @@ user.sendSms = function(sender, title, text, pic) {
 };
 
 user.addMoney = function(money, text = 'Финансовая операция') {
-    mp.events.callRemote('server:user:addMoney', money, text);
+    user.addCashMoney(money, text);
+    //mp.events.callRemote('server:user:addMoney', money, text);
 };
 
 user.removeMoney = function(money, text = 'Финансовая операция') {
-    mp.events.callRemote('server:user:removeMoney', money, text);
+    user.removeCashMoney(money, text);
+    //mp.events.callRemote('server:user:removeMoney', money, text);
 };
 
 user.setMoney = function(money) {
-    mp.events.callRemote('server:user:setMoney', money);
+    user.setCashMoney(money);
+    //mp.events.callRemote('server:user:setMoney', money);
 };
 
 user.getMoney = function() {
@@ -1022,14 +1025,17 @@ user.getMoney = function() {
 };
 
 user.addBankMoney = function(money, text = "Операция со счетом") {
+    user.setCache('money_bank', user.getBankMoney() + methods.parseFloat(money));
     mp.events.callRemote('server:user:addBankMoney', money, text);
 };
 
 user.removeBankMoney = function(money, text = "Операция со счетом") {
+    user.setCache('money_bank', user.getBankMoney() - methods.parseFloat(money));
     mp.events.callRemote('server:user:removeBankMoney', money, text);
 };
 
 user.setBankMoney = function(money) {
+    user.setCache('money_bank', methods.parseFloat(money));
     mp.events.callRemote('server:user:setBankMoney', money);
 };
 
@@ -1038,14 +1044,17 @@ user.getBankMoney = function() {
 };
 
 user.addCashMoney = function(money, text = 'Финансовая операция') {
+    user.setCache('money', user.getCashMoney() + methods.parseFloat(money));
     mp.events.callRemote('server:user:addCashMoney', money, text);
 };
 
 user.removeCashMoney = function(money, text = 'Финансовая операция') {
+    user.setCache('money', user.getCashMoney() - methods.parseFloat(money));
     mp.events.callRemote('server:user:removeCashMoney', money, text);
 };
 
 user.setCashMoney = function(money) {
+    user.setCache('money', methods.parseFloat(money));
     mp.events.callRemote('server:user:setCashMoney', money);
 };
 
@@ -1054,14 +1063,17 @@ user.getCashMoney = function() {
 };
 
 user.addCryptoMoney = function(money, text = "Операция со счетом") {
+    user.setCache('money_crypto', user.getCryptoMoney() + methods.parseFloat(money));
     mp.events.callRemote('server:user:addCryptoMoney', money, text);
 };
 
 user.removeCryptoMoney = function(money, text = "Операция со счетом") {
+    user.setCache('money_crypto', user.getCryptoMoney() - methods.parseFloat(money));
     mp.events.callRemote('server:user:removeCryptoMoney', money, text);
 };
 
 user.setCryptoMoney = function(money) {
+    user.setCache('money_crypto', methods.parseFloat(money));
     mp.events.callRemote('server:user:setCryptoMoney', money);
 };
 
@@ -1070,14 +1082,17 @@ user.getCryptoMoney = function() {
 };
 
 user.addPayDayMoney = function(money, text = 'Финансовая операция') {
+    user.setCache('money_payday', user.getPayDayMoney() + methods.parseFloat(money));
     mp.events.callRemote('server:user:addPayDayMoney', money, text);
 };
 
 user.removePayDayMoney = function(money, text = 'Финансовая операция') {
+    user.setCache('money_payday', user.getPayDayMoney() - methods.parseFloat(money));
     mp.events.callRemote('server:user:removePayDayMoney', money, text);
 };
 
 user.setPayDayMoney = function(money) {
+    user.setCache('money_payday', methods.parseFloat(money));
     mp.events.callRemote('server:user:setPayDayMoney', money);
 };
 
@@ -1451,7 +1466,7 @@ user.playScenario = function(name) {
 };
 
 user.stopScenario = function() {
-    mp.events.callRemote('server:stopScenario', name);
+    mp.events.callRemote('server:stopScenario');
     //mp.players.local.clearTasks();
 };
 

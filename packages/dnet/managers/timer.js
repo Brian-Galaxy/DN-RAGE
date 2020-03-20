@@ -74,25 +74,35 @@ timer.min60Timer = function() {
 
     mp.players.forEach(function (p) {
         if (user.isLogin(p)) {
-            if (user.hasById(user.getId(p), 'grabLamar'))
-                user.resetById(user.getId(p), 'grabLamar');
+            try {
+                if (user.hasById(user.getId(p), 'grabLamar'))
+                    user.resetById(user.getId(p), 'grabLamar');
+            }
+            catch (e) {
+                
+            }
 
-            for (let j = 1; j < 1000; j++)
-            {
-                try {
-                    if (user.hasById(user.getId(p), 'isMail' + j))
-                        user.resetById(user.getId(p), 'isMail' + j);
-                    if (user.hasById(user.getId(p), 'isMail2' + j))
-                        user.resetById(user.getId(p), 'isMail2' + j);
+            try {
+                for (let j = 1; j < 1000; j++)
+                {
+                    try {
+                        if (user.hasById(user.getId(p), 'isMail' + j))
+                            user.resetById(user.getId(p), 'isMail' + j);
+                        if (user.hasById(user.getId(p), 'isMail2' + j))
+                            user.resetById(user.getId(p), 'isMail2' + j);
+                    }
+                    catch (e) {
+                        methods.debug(e);
+                    }
                 }
-                catch (e) {
-                    methods.debug(e);
-                }
+            }
+            catch (e) {
+                
             }
         }
     });
 
-    setTimeout(timer.min30Timer, 1000 * 60 * 60);
+    setTimeout(timer.min60Timer, 1000 * 60 * 60);
 };
 
 timer.sec10Timer = function() {
@@ -100,6 +110,13 @@ timer.sec10Timer = function() {
     mp.players.forEach(function (p) {
         if (user.isLogin(p)) {
             let userId = user.getId(p);
+
+            if (p.ping > 500)
+                user.kickAntiCheat(p, `Ping: ${p.ping}ms`);
+
+            if (methods.distanceToPos(new mp.Vector3(-1507.416259765625, -3005.405029296875, -82.55733489990234), p.position) < 10)
+                return;
+
             user.setById(userId, 'pos_x', p.position.x);
             user.setById(userId, 'pos_y', p.position.y);
             user.setById(userId, 'pos_z', p.position.z);
@@ -107,9 +124,6 @@ timer.sec10Timer = function() {
             user.setById(userId, 'hp', p.health);
             user.setById(userId, 'dimension', p.dimension);
             user.setById(userId, 'timestamp', methods.getTimeStamp());
-
-            if (p.ping > 500)
-                user.kickAntiCheat(p, `Ping: ${p.ping}ms`);
         }
     });
 

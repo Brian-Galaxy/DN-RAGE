@@ -220,6 +220,10 @@ photo.start = function() {
         mp.game.ui.notifications.show('~r~Вы уже получили задание');
         return;
     }
+    if (mp.players.local.dimension > 0) {
+        mp.game.ui.notifications.show('~r~В интерьерах данное действие запрещено');
+        return;
+    }
     photo.findRandomPickup();
 };
 
@@ -306,18 +310,18 @@ photo.workProcess = function() { //TODO
 
                 if (pointPos === playerPos) {
                     mp.game.ui.notifications.showWithPicture('Life Invader', "Начальник", `Отличный кадр, за него ты получишь премию!`, "CHAR_LIFEINVADER", 1);
-                    user.giveJobMoney(methods.getRandomInt(120, 150) + price);
-                    user.addWorkExp(10);
+                    user.giveJobMoney(methods.getRandomInt(180, 200) + price);
+                    user.addWorkExp(25);
                 }
                 else if (playerPos.indexOf(pointPos) >= 0 || pointPos.indexOf(playerPos) >= 0) {
                     mp.game.ui.notifications.showWithPicture('Life Invader', "Начальник", `Не плохой кадр, но можно и лучше`, "CHAR_LIFEINVADER", 1);
-                    user.giveJobMoney(methods.getRandomInt(50, 80) + price);
-                    user.addWorkExp(5);
+                    user.giveJobMoney(methods.getRandomInt(70, 110) + price);
+                    user.addWorkExp(10);
                 }
                 else {
                     mp.game.ui.notifications.showWithPicture('Life Invader', "Начальник", `Я промолчу... Вот твои деньги`, "CHAR_LIFEINVADER", 1);
                     user.giveJobMoney(price);
-                    user.addWorkExp(1);
+                    user.addWorkExp(5);
                 }
 
                 user.addRep(5);

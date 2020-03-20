@@ -764,7 +764,7 @@ let emsList = {
 };
 
 ems.createSmallRandom = function () {
-
+    ems.createSmall(methods.getRandomInt(0, emsList.small.length));
 };
 
 ems.createSmallByDay = function () {

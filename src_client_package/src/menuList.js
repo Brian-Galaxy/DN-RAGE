@@ -2016,7 +2016,7 @@ menuList.showMeriaJobListMenu = function() {
                 return;
             }
 
-            if (item.jobName === 10 && user.getCache('work_lvl') < 4 && !user.getCache('gun_lic')) {
+            if (item.jobName === 10 && (user.getCache('work_lvl') < 4 || !user.getCache('gun_lic'))) {
                 mp.game.ui.notifications.show("~r~Вам необходим 4 уровень рабочего стажа и лицензия на ношение оружия");
                 return;
             }
@@ -2357,8 +2357,6 @@ menuList.showPlayerMenu = function() {
     let menu = UIMenu.Menu.Create(`Персонаж`, `~b~Меню вашего персонажа`);
 
     UIMenu.Menu.AddMenuItem("Статистика").doName = 'showPlayerStatsMenu';
-
-    UIMenu.Menu.AddMenuItem("Походки").doName = 'showPlayerStatsMenu';
 
     let list = [];
     if (user.getSex() === 1) {
@@ -3015,6 +3013,11 @@ menuList.showVehicleDoInvMenu = function(vehId) {
 
             if (ui.isGreenZone() && !user.isPolice()) {
                 mp.game.ui.notifications.show("~r~В зелёной зоне это действие запрещено");
+                return;
+            }
+
+            if (methods.distanceToPos(vehicle.position, mp.players.local.position) > 5) {
+                mp.game.ui.notifications.show("~r~Вы слишком далеко");
                 return;
             }
 

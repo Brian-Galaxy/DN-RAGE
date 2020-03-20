@@ -260,7 +260,9 @@ for(let code in keyCodes) {
                 return;
             }
             if (!methods.isBlockKeys() && phone.isHide()) {
-                ui.callCef('inventory', '{"type": "showOrHide"}')
+                setTimeout(function () {
+                    ui.callCef('inventory', '{"type": "showOrHide"}');
+                }, 100);
             }
         }
         if (user.getCache('s_bind_inv_world') == parseInt(code)) {

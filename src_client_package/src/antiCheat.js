@@ -122,8 +122,17 @@ antiCheat.secTimer = function() {
         }
 
         if (!user.isAdmin()) {
-            if (mp.players.local.getHealth() >= 500 || mp.players.local.getArmour() >= 200 || mp.game.player.getInvincible()) {
+            if (mp.players.local.getHealth() >= 500 || mp.players.local.getArmour() >= 200) {
                 user.kickAntiCheat('GodMode');
+            }
+            if (mp.game.player.getInvincible()) {
+                try {
+                    mp.players.local.setInvincible(false);
+                    mp.game.player.setInvincible(false);
+                }
+                catch (e) {
+
+                }
             }
             /*if (!mp.players.local.isVisible()) {
                 user.kickAntiCheat('Invision');

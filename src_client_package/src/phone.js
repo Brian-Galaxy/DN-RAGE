@@ -994,12 +994,12 @@ phone.showAppFraction = function() {
                     clickable: true,
                     params: { name: "flipVehicle" }
                 },
-                {
+                /*{
                     title: "На штраф стоянку ближайший транспорт",
                     type: 1,
                     clickable: true,
                     params: { name: "destroyVehicle2" }
-                }
+                }*/
             );
         }
         menu.items.push(titleMenu);
@@ -3365,7 +3365,7 @@ phone.callBackButton = async function(menu, id, ...args) {
             }
             else if (params.name == 'setShop') {
                 fraction.set(user.getCache('fraction_id2'), 'is_shop', 1);
-                fraction.removeMoney(user.getCache('fraction_id2'), 100, 'Возможность битвы за территории');
+                fraction.removeMoney(user.getCache('fraction_id2'), 50, 'Возможность ограбления магазина');
                 mp.game.ui.notifications.show(`~g~Вы успешно наладили связи и теперь вам доступны наводки на ограбления магазинов`);
                 phone.showLoad();
                 setTimeout(phone.showAppFraction2, 500);

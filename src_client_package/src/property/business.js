@@ -112,7 +112,7 @@ business.getSale = function(price) {
 };
 
 business.setPrice = function(id, price) {
-    Container.Data.Set(enums.offsets.business + id, 'price_product', methods.parseInt(price));
+    Container.Data.Set(enums.offsets.business + id, 'price_product', methods.parseFloat(price));
 };
 
 business.setName = function(id, name) {

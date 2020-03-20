@@ -70,6 +70,9 @@ gangWar.startWar = function(player, zoneId) {
     if (!user.isLogin(player))
         return;
 
+    player.notify('~r~Война за территории заморожена, до выхода следующего обновления');
+    return;
+
     let id = zoneId;
 
     if (id == 0) {
@@ -182,6 +185,8 @@ gangWar.timer = function() {
 
         mp.players.forEachInRange(warPos, 500, p => {
             if (!user.isLogin(p))
+                return;
+            if (!gangWar.isInZone(p, currentZone))
                 return;
             let fId = user.get(p, 'fraction_id2');
             if (currentDef == fId || currentAttack == fId) {

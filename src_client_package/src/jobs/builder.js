@@ -637,6 +637,10 @@ builder.start = function() {
         mp.game.ui.notifications.show('~r~Вы уже получили задание');
         return;
     }
+    if (mp.players.local.dimension > 0) {
+        mp.game.ui.notifications.show('~r~В интерьерах данное действие запрещено');
+        return;
+    }
     builder.findRandomPickup();
 };
 
@@ -751,7 +755,7 @@ builder.workProcess = function(id) {
                 user.stopScenario();
                 user.giveJobMoney(methods.getRandomInt(11, 15) + methods.getRandomFloat());
 
-                user.addWorkExp(1);
+                user.addWorkExp(2);
                 user.addRep(1);
 
                 user.giveJobSkill();

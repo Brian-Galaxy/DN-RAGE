@@ -1898,8 +1898,8 @@ mp.events.add('client:inventory:loadWeapon', function(id, itemId, loadItemId, co
 
     let ammo = user.getAmmoByHash(wpHash);
 
-    if (items.getAmmoCount(currentAmmoId) <= ammo) {
-        mp.game.ui.notifications.show(`~r~Превышен максимальный запас патрон`);
+    if (ammo >= 1) { //TODO был дюп, на то, что экипируешь 2 пачку и он выдает фулл обойму, когда должен просто стакнуть два патрона
+        mp.game.ui.notifications.show(`~r~У вас уже экипированы патроны`);
         return;
     }
     if (count <= 0) {
@@ -2996,7 +2996,7 @@ mp.events.add('render', () => {
             mp.game.controls.disableControlAction(0,35,true); // disable move right
             mp.game.controls.disableControlAction(0,271,true)
         }
-        if(ui.isGreenZone()) {
+        if(ui.isGreenZone() && !user.isPolice()) {
             mp.game.controls.disableControlAction(2, 24, true);
             mp.game.controls.disableControlAction(2, 25, true);
             mp.game.controls.disableControlAction(2, 66, true);

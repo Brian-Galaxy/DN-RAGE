@@ -227,6 +227,8 @@ weapons.getGunAmmoId = function(name) {
         case 'weapon_specialcarbine_mk2':
         case 'weapon_carbinerifle':
         case 'weapon_carbinerifle_mk2':
+        case 'weapon_bullpuprifle':
+        case 'weapon_bullpuprifle_mk2':
             return 284; //5.56mm
 
         case 'weapon_compactrifle':
@@ -295,10 +297,10 @@ weapons.getGunAmmoId = function(name) {
         case 'weapon_revolver_mk2':
         case 'weapon_marksmanpistol':
         case 'weapon_pistol50':
-            return 288; //.44 Magnum
+            return 287; //.44 Magnum
 
         case 'weapon_flaregun':
-            return 287; //Патроны сигнального пистолета
+            return 288; //Патроны сигнального пистолета
 
         default:
             return -1;

@@ -80,6 +80,8 @@ pickups.SapdToInterrogationPos = new mp.Vector3(404.0302, -997.302, -100.004);
 pickups.SapdFromInterrogationPos = new mp.Vector3(446.7996, -985.8127, 25.67422);
 
 pickups.SapdStockPos = new mp.Vector3(472.8161315917969, -990.1664428710938, 23.91470718383789);
+pickups.Bcsd1StockPos = new mp.Vector3(-439.0313720703125, 6010.5322265625, 26.985639572143555);
+pickups.Bcsd2StockPos = new mp.Vector3(1855.5472412109375, 3699.1943359375, 33.267086029052734);
 
 pickups.SheriffGarderobPos = new mp.Vector3(-452.945, 6013.818, 30.716);
 pickups.SheriffGarderobPos2 = new mp.Vector3(1849.775390625, 3695.501953125, 33.26706314086914);
@@ -404,7 +406,7 @@ pickups.checkPressE = function(player) {
     }
 
 
-    if (methods.distanceToPos(pickups.SapdStockPos, playerPos) < distanceCheck)
+    if (methods.distanceToPos(pickups.SapdStockPos, playerPos) < distanceCheck || methods.distanceToPos(pickups.Bcsd1StockPos, playerPos) < distanceCheck || methods.distanceToPos(pickups.Bcsd2StockPos, playerPos) < distanceCheck)
         inventory.getItemList(player, inventory.types.StockGov, user.getId(player));
 
     if (user.isSapd(player)) {

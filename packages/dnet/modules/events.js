@@ -2083,7 +2083,7 @@ mp.events.addRemoteCounted('server:gr6:dropCar', (player, money, vId) => {
                             return;
 
                         if (Container.Data.Has(v.id, 'validWorker' + user.getId(p))) {
-                            user.addWorkExp(p, 1);
+                            user.addWorkExp(p, 2);
                         }
                     }
                     catch (e) {
@@ -2132,7 +2132,7 @@ mp.events.addRemoteCounted('server:gr6:unload', (player, vId) => {
                                 user.giveJobSkill(p);
 
                                 user.addRep(p, 50);
-                                user.addWorkExp(p, 1);
+                                user.addWorkExp(p, 2);
                             }
                             else {
                                 p.notify('~r~Вы не являетесь напарником ID: ' + player.id);
@@ -2199,7 +2199,7 @@ mp.events.addRemoteCounted('server:gr6:grab', (player) => {
                     vehicles.respawn(player.vehicle);
                     setTimeout(function () {
                         user.hideLoadDisplay(player);
-                        user.addCryptoMoney(player, money / 1000, 'Ограбление');
+                        user.addCryptoMoney(player, money / 1000 / 2, 'Ограбление');
                         player.notify('~b~Вы ограбили транспорт на сумму: ~s~' + methods.cryptoFormat(money));
                     }, 500);
                 }, 700);
@@ -2849,7 +2849,7 @@ mp.events.addRemoteCounted("server:vehicle:lockStatus", (player) => {
             return;
         }
 
-        let vehicle = methods.getNearestVehicleWithCoords(player.position, 5);
+        let vehicle = methods.getNearestVehicleWithCoords(player.position, 5, player.dimension);
         if (vehicles.exists(vehicle)) {
 
             if (vehicle.getVariable('useless'))
@@ -6016,6 +6016,7 @@ mp.events.add("playerDeath", (player, reason, killer) => {
 
     if (user.isLogin(player)) {
 
+        inventory.deleteItemsRange(player, 138, 141);
         user.set(player, 'killerInJail', false);
 
         try {
@@ -6073,6 +6074,7 @@ mp.events.add("playerDeath", (player, reason, killer) => {
 
 mp.events.addRemoteCounted("playerDeathDone", (player) => {
     if (user.isLogin(player)) {
+        player.dimension = 0;
         if (user.has(player, 'killerInJail') && user.get(player, 'killerInJail')) {
             user.jail(player, user.get(player, 'wanted_level') * 120);
             player.outputChatBox('!{#FFC107}Вас привезли в больницу с огнестрельным ранением и у врачей возникли подозрения, поэтому они сделали запрос в SAPD и сотрудники SAPD выяснили, что у вас есть розыск. После лечения вы отправились в тюрьму.');

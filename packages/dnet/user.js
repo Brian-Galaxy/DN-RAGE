@@ -1882,7 +1882,7 @@ user.playScenario = function(player, name) {
     });
 };
 
-user.stopScenario = function(player, name) {
+user.stopScenario = function(player) {
     methods.debug('user.playScenario');
     if (!mp.players.exists(player))
         return false;
@@ -2548,6 +2548,10 @@ user.isJobBuilder = function(player) {
 user.isGos = function(player) {
     methods.debug('user.isGos');
     return user.isLogin(player) && (user.isSapd(player) || user.isFib(player) || user.isUsmc(player) || user.isGov(player) || user.isEms(player) || user.isSheriff(player));
+};
+
+user.isPolice = function(player) {
+    return user.isLogin(player) && (user.isSapd(player) || user.isFib(player) || user.isUsmc(player) || user.isSheriff(player));
 };
 
 user.isGov = function(player) {

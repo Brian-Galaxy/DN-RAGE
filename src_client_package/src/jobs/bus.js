@@ -145,6 +145,12 @@ bus.markers3 = [
 
 bus.start = function(busType) {
     try {
+
+        if (mp.players.local.dimension > 0) {
+            mp.game.ui.notifications.show('~r~В интерьерах данное действие запрещено');
+            return;
+        }
+
         methods.debug('Execute: bus.start');
         switch (busType) {
             case 1: {
@@ -216,11 +222,11 @@ bus.nextCheckpoint = function() {
                         }
 
                         if (_currentId >= bus.markers1.length) {
-                            user.giveJobMoney(380);
+                            user.giveJobMoney(530);
                             user.giveJobSkill();
                             mp.game.ui.notifications.show('~g~Вы закончили свой рейс');
-                            user.addRep(25);
-                            user.addWorkExp(25);
+                            user.addRep(10);
+                            user.addWorkExp(60);
 
                             _isBus1 = false;
                             _currentId = 0;
@@ -241,11 +247,11 @@ bus.nextCheckpoint = function() {
                         }
 
                         if (_currentId >= bus.markers2.length) {
-                            user.giveJobMoney(200);
+                            user.giveJobMoney(216);
                             user.giveJobSkill();
                             mp.game.ui.notifications.show('~g~Вы закончили свой рейс');
                             user.addRep(5);
-                            user.addWorkExp(10);
+                            user.addWorkExp(25);
 
                             _isBus2 = false;
                             _currentId = 0;
@@ -269,8 +275,8 @@ bus.nextCheckpoint = function() {
                             user.giveJobMoney(1300);
                             user.giveJobSkill();
                             mp.game.ui.notifications.show('~g~Вы закончили свой рейс');
-                            user.addRep(35);
-                            user.addWorkExp(50);
+                            user.addRep(25);
+                            user.addWorkExp(145);
 
                             _isBus3 = false;
                             _currentId = 0;

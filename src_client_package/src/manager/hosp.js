@@ -89,9 +89,9 @@ hosp.freePlayer = function() {
             mp.game.ui.notifications.show("~g~Стоимость лечения ~s~$50");
         }
         else {
-            user.removeMoney(1000, 'Лечение в больнице');
-            coffer.addMoney(6,1000);
-            mp.game.ui.notifications.show("~g~Стоимость лечения ~s~$1000");
+            user.removeMoney(300, 'Лечение в больнице');
+            coffer.addMoney(6,300);
+            mp.game.ui.notifications.show("~g~Стоимость лечения ~s~$300");
         }
     }
 };

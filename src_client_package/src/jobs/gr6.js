@@ -89,6 +89,10 @@ gr6.grabMarkers = [
 gr6.start = function() {
     if (mp.players.local.vehicle.getVariable('job') != 10)
         return;
+    if (mp.players.local.dimension > 0) {
+        mp.game.ui.notifications.show('~r~В интерьерах данное действие запрещено');
+        return;
+    }
     mp.game.ui.notifications.showWithPicture('Gruppe6', "~g~Работа", 'Скинул координаты точки', "CHAR_BANK_BOL", 1);
     gr6.findRandomPickup();
 };

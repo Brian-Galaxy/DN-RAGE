@@ -1898,7 +1898,7 @@ mp.events.add('client:inventory:loadWeapon', function(id, itemId, loadItemId, co
 
     let ammo = user.getAmmoByHash(wpHash);
 
-    if (ammo >= 1) { //TODO был дюп, на то, что экипируешь 2 пачку и он выдает фулл обойму, когда должен просто стакнуть два патрона
+    if (items.getAmmoCount(currentAmmoId) <= ammo) {
         mp.game.ui.notifications.show(`~r~У вас уже экипированы патроны`);
         return;
     }
@@ -1908,10 +1908,12 @@ mp.events.add('client:inventory:loadWeapon', function(id, itemId, loadItemId, co
     }
 
     if (ammo > 0) {
-        let newCount = items.getAmmoCount(currentAmmoId) - ammo;
-        user.setAmmoByHash(wpHash, ammo + newCount);
-        inventory.updateItemCount(id, count - newCount);
-        ui.callCef('inventory', JSON.stringify({ type: 'updateItemIdCount', itemId: id, count: count - newCount }));
+        user.setAmmoByHash(wpHash, ammo + count);
+        inventory.deleteItem(id);
+        ui.callCef('inventory', JSON.stringify({ type: 'removeItemId', itemId: id }));
+
+        /*inventory.updateItemCount(id, count - newCount);
+        ui.callCef('inventory', JSON.stringify({ type: 'updateItemIdCount', itemId: id, count: count - newCount }));*/
     }
     else {
         user.setAmmoByHash(wpHash, count);
@@ -2557,7 +2559,8 @@ mp.keys.bind(0x1B, true, function() {
     if (!phone.isHide())
         phone.hide();
 
-    inventory.hide();
+    if (!inventory.isHide())
+        inventory.hide();
 
     if (vShop.isInside())
         vShop.exit();

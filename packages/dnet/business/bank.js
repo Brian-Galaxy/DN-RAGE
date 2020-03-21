@@ -199,7 +199,7 @@ bank.transferMoney = function(player, bankNumber, money) {
                 bank.addBusinessBankMoneyByCard(bankNumber, sumForBiz);
                 bank.addBusinessBankMoneyByCard(user.getBankCardPrefix(player), sumForBiz);
 
-                user.sendSmsBankOperation(player, 'Перевод: ~g~$' + methods.numberFormat(sumFinal));
+                user.sendSmsBankOperation(player, 'Перевод: ~g~' + methods.moneyFormat(sumFinal));
                 user.removeBankMoney(player, money, 'Перевод ' + bankNumber);
                 bank.addBankHistory(0, bankNumber, 'Перевод от ' + user.get(player, 'bank_card'), sumFinal);
                 bank.addBankHistory(0, user.get(player, 'bank_card'), 'Перевод ' + bankNumber, sumFinal);
@@ -216,7 +216,7 @@ bank.transferMoney = function(player, bankNumber, money) {
                     bank.addBusinessBankMoneyByCard(bankNumber, sumForBiz);
                     bank.addBusinessBankMoneyByCard(user.getBankCardPrefix(player), sumForBiz);
 
-                    user.sendSmsBankOperation(player, 'Перевод: ~g~$' + methods.numberFormat(sumFinal));
+                    user.sendSmsBankOperation(player, 'Перевод: ~g~' + methods.moneyFormat(sumFinal));
                     user.removeBankMoney(player, money, 'Перевод ' + bankNumber);
                     bank.addBankHistory(0, bankNumber, 'Перевод от ' + user.get(player, 'bank_card'), sumFinal);
                     bank.addBankHistory(0, user.get(player, 'bank_card'), 'Перевод ' + bankNumber, sumFinal);

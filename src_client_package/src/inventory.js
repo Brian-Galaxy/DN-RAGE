@@ -14,6 +14,7 @@ import vehicles from "./property/vehicles";
 import stocks from "./property/stocks";
 
 import bind from "./manager/bind";
+import coffer from "./coffer";
 
 let inventory = {};
 
@@ -267,6 +268,17 @@ inventory.takeNewWeaponItem = async function(itemId, params, text = 'Получ�
         inventory.updateAmount(user_id, inventory.types.Player);
         mp.game.ui.notifications.show(`~b~Вы взяли \"${items.getItemNameById(itemId)}\"`);
         chat.sendMeCommand(`взял \"${items.getItemNameById(itemId)}\"`);
+
+        let itemPrice = items.getItemPrice(itemId);
+
+        coffer.removeMoney(coffer.getIdByFraction(user.getCache('fraction_id')), itemPrice);
+
+        methods.saveFractionLog(
+            user.getCache('name'),
+            `Взял ${items.getItemNameById(itemId)}`,
+            `Потрачено из бюджета: ${methods.moneyFormat(itemPrice)}`,
+            user.getCache('fraction_id')
+        );
     }
     catch (e) {
         methods.debug(e);

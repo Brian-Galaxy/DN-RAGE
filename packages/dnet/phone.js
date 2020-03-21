@@ -771,7 +771,7 @@ phone.showGangList = function(player) {
             )
         );
 
-        if (user.isLeader2(player) || user.isSubLeader2(player) || user.isDepLeader2(player) || user.isDepSubLeader2(player))
+        if (user.isLeader2(player) || user.isSubLeader2(player))
         {
             subItems.push(
                 phone.getMenuItemButton(
@@ -785,6 +785,76 @@ phone.showGangList = function(player) {
         }
 
         items.push(phone.getMenuMainItem(`#${zone.id} | ${gangWar.get(zone.id, 'zone')}`, subItems));
+    });
+    phone.showMenu(player, 'fraction2', `Список улиц`, items);
+};
+
+phone.showGangWarList = function(player) {
+    if (!user.isLogin(player))
+        return;
+    methods.debug('phone.showGangList');
+    let items = [];
+    gangWar.getZoneWarList().forEach((value, key) => {
+        let subItems = [];
+
+        subItems.push(
+            phone.getMenuItemButton(
+                `${gangWar.get(value.zoneId, 'zone')}`,
+                `${gangWar.get(value.zoneId, 'street')}`
+            )
+        );
+
+        subItems.push(
+            phone.getMenuItemButton(
+                `Атака`,
+                `${fraction.getName(value.attack)}`
+            )
+        );
+
+        let frName = gangWar.get(value.zoneId, 'fraction_name');
+        subItems.push(
+            phone.getMenuItemButton(
+                `Оборона`,
+                `${(frName == '' ? 'Нет' : frName)}`
+            )
+        );
+
+        subItems.push(
+            phone.getMenuItemButton(
+                `Начало захвата`,
+                `${value.timeLabel}`
+            )
+        );
+        subItems.push(
+            phone.getMenuItemButton(
+                `Оружие`,
+                `${value.gunLabel}`
+            )
+        );
+        subItems.push(
+            phone.getMenuItemButton(
+                `Броня`,
+                `${value.armorLabel}`
+            )
+        );
+        subItems.push(
+            phone.getMenuItemButton(
+                `Количество`,
+                `${value.count} vs ${value.count}`
+            )
+        );
+
+        subItems.push(
+            phone.getMenuItemButton(
+                `Узнать местоположение`,
+                ``,
+                { name: "getPos", x: gangWar.get(value.zoneId, 'x'), y: gangWar.get(value.zoneId, 'y') },
+                ``,
+                true,
+            )
+        );
+
+        items.push(phone.getMenuMainItem(`#${value.zoneId} | ${gangWar.get(value.zoneId, 'zone')}`, subItems));
     });
     phone.showMenu(player, 'fraction2', `Список улиц`, items);
 };

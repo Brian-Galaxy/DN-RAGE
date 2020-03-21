@@ -726,12 +726,12 @@ inventory.useItem = function(player, id, itemId, isTargetable = false) {
         );
 
         let sql = `SELECT * FROM items WHERE id = ${id} AND owner_id = ${user.getId(player)} AND owner_type = ${inventory.types.Player}`;
-        if (itemId === 264 || itemId === 263)
+        if (itemId === 264 || itemId === 263 || isTargetable)
             sql = `SELECT * FROM items WHERE id = ${id}`;
 
         mysql.executeQuery(sql, function (err, rows, fields) {
             if (rows.length === 0) {
-                player.notify('~r~Этот предмет Вам не принадлежит');
+                player.notify('~r~Чтобы использовать предмет, он должен находится у Вас в инвентаре');
                 return;
             }
 
@@ -1390,6 +1390,12 @@ inventory.useItem = function(player, id, itemId, isTargetable = false) {
                         player.notify('~r~Нельзя так часто употреблять аптечки');
                         return;
                     }
+
+                    if (player.health < 1) {
+                        player.notify('~r~Нельзя использовать будучи мертвым');
+                        return;
+                    }
+
                     chat.sendMeCommand(player, "использовал аптечку");
                     if (player.health >= 60)
                         user.setHealth(player, 100);
@@ -1410,6 +1416,11 @@ inventory.useItem = function(player, id, itemId, isTargetable = false) {
                         player.notify('~r~Нельзя так часто употреблять аптечки');
                         return;
                     }
+
+                    if (player.health < 1 && isTargetable) {
+                        user.revive(player);
+                    }
+
                     chat.sendMeCommand(player, "использовал аптечку");
                     user.setHealth(player, 100);
                     inventory.deleteItem(id);

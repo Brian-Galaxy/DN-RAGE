@@ -7,6 +7,7 @@ import user from './user';
 import coffer from './coffer';
 import chat from './chat';
 import inventory from './inventory';
+import menuList from './menuList';
 
 import weather from "./manager/weather";
 import dispatcher from "./manager/dispatcher";
@@ -822,6 +823,13 @@ phone.showAppFraction2 = async function() {
                     type: 1,
                     clickable: true,
                     params: { name: "showGangList" }
+                },
+                {
+                    title: "Список захватов",
+                    text: "",
+                    type: 1,
+                    clickable: true,
+                    params: { name: "showGangWarList" }
                 },
             ],
         };
@@ -2699,6 +2707,16 @@ phone.consoleCallback = async function(command) {
                         return;
                     }
 
+                    if (await user.hasById('grabLamar')) {
+                        mp.game.ui.notifications.showy('~r~Вы не можете сейчас сбыть транспорт, т.к. вы выполняете заказ Ламара');
+                        return;
+                    }
+
+                    if (user.getCache('job') === 10) {
+                        mp.game.ui.notifications.showy('~r~Инкассаторам запрещено это действие');
+                        return;
+                    }
+
                     if (user.hasCache('isSellCar')) {
                         mp.game.ui.notifications.show(`~r~Вы уже получили задание на угон`);
                         return;
@@ -2725,6 +2743,11 @@ phone.consoleCallback = async function(command) {
 
                     if (user.getCache('fraction_id2') === 0) {
                         mp.game.ui.notifications.show('~r~Отмыв денег доступен только для крайм организаций');
+                        return;
+                    }
+
+                    if (user.getCache('job') === 10) {
+                        mp.game.ui.notifications.showy('~r~Инкассаторам запрещено это действие');
                         return;
                     }
 
@@ -3320,14 +3343,19 @@ phone.callBackButton = async function(menu, id, ...args) {
                 mp.events.callRemote('server:phone:showGangList');
                 phone.showLoad();
             }
+            else if (params.name == 'showGangWarList') {
+                mp.events.callRemote('server:phone:showGangWarList');
+                phone.showLoad();
+            }
             else if (params.name == 'getShopGang') {
                 mp.events.callRemote('server:phone:getShopGang');
                 phone.showLoad();
             }
             else if (params.name == 'attackStreet') {
-                mp.events.callRemote('server:phone:attackStreet', params.zone);
-                phone.showLoad();
-                setTimeout(phone.showAppFraction2, 500);
+                //mp.events.callRemote('server:phone:attackStreet', params.zone);
+                phone.hide();
+                menuList.showGangZoneAttackMenu(await Container.Data.GetAll(600000 + methods.parseInt(params.zone)))
+                //setTimeout(phone.showAppFraction2, 500);
             }
             else if (params.name == 'getPos') {
                 user.setWaypoint(params.x, params.y);

@@ -103,7 +103,7 @@ gr6.unload = function() {
         user.setWaypoint(-5.008303642272949, -670.9888916015625);
         return;
     }
-    mp.events.callRemote('server:gr6:unload', mp.players.local.vehicle.remoteId);
+    mp.events.callRemote('server:gr6:unload');
 };
 
 gr6.deleteVeh = function() {

@@ -652,6 +652,11 @@ vehicles.has = function(id, key) {
     return Container.Data.Has(offset + methods.parseInt(id), key);
 };
 
+vehicles.reset = function(id, key) {
+    //methods.debug('vehicles.get');
+    return Container.Data.Reset(offset + methods.parseInt(id), key);
+};
+
 vehicles.getData = function(id) {
     //methods.debug('vehicles.getData');
     return Container.Data.GetAll(offset + methods.parseInt(id));

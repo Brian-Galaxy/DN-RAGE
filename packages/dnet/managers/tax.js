@@ -68,6 +68,8 @@ tax.sell = function() {
             stock.updateOwnerInfo(methods.parseInt(row['id']), 0, '');
             mysql.executeQuery("UPDATE users SET money_bank = money_bank + '" + price + "', stock_id = '0' WHERE id = '" + methods.parseInt(row["user_id"]) + "'");
 
+            mysql.executeQuery("UPDATE stocks SET tax_money = '0' WHERE id = '" + item['id'] + "'");
+
             methods.saveLog('log_sell_inactive',
                 ['text'],
                 [`USER: ${row["user_id"]} STOCK ${row["id"]}`],
@@ -102,6 +104,8 @@ tax.sell = function() {
             houses.updateOwnerInfo(methods.parseInt(row['id']), 0, '');
             mysql.executeQuery("UPDATE users SET money_bank = money_bank + '" + price + "', house_id = '0' WHERE id = '" + methods.parseInt(row["user_id"]) + "'");
 
+            mysql.executeQuery("UPDATE houses SET tax_money = '0' WHERE id = '" + item['id'] + "'");
+
             methods.saveLog('log_sell_inactive',
                 ['text'],
                 [`USER: ${row["user_id"]} HOUSE ${row["id"]}`],
@@ -135,6 +139,8 @@ tax.sell = function() {
 
             condo.updateOwnerInfo(methods.parseInt(row['id']), 0, '');
             mysql.executeQuery("UPDATE users SET money_bank = money_bank + '" + price + "', condo_id = '0' WHERE id = '" + methods.parseInt(row["user_id"]) + "'");
+
+            mysql.executeQuery("UPDATE condos SET tax_money = '0' WHERE id = '" + item['id'] + "'");
 
             methods.saveLog('log_sell_inactive',
                 ['text'],
@@ -171,6 +177,7 @@ tax.sell = function() {
             mysql.executeQuery("UPDATE users SET money_bank = money_bank + '" + price + "', business_id = '0' WHERE id = '" + methods.parseInt(row["user_id"]) + "'");
 
             tax.adLiveInvader(`Бизнес ${row["name"]} поступил в продажу`);
+            mysql.executeQuery("UPDATE business SET tax_money = '0' WHERE id = '" + item['id'] + "'");
 
             methods.saveLog('log_sell_inactive',
                 ['text'],
@@ -259,6 +266,9 @@ tax.sell = function() {
 
                 vehicles.updateOwnerInfo(methods.parseInt(row['id']), 0, '');
                 mysql.executeQuery("UPDATE users SET money_bank = money_bank + '" + price + "', car_id" + carId + " = '0' WHERE id = '" + methods.parseInt(row["user_id"]) + "'");
+
+
+                mysql.executeQuery("UPDATE cars SET tax_money = '0' WHERE id = '" + item['id'] + "'");
 
                 methods.saveLog('log_sell_inactive',
                     ['text'],

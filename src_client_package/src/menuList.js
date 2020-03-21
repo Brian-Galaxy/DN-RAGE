@@ -2448,7 +2448,7 @@ menuList.showHelpMenu = function() {
 
     mItem = UIMenu.Menu.AddMenuItem("Как создать свою организацию?");
     mItem.textTitle = 'Своя организация';
-    mItem.text = 'Для начала вам необходимо иметь низкую репутацию, далее необходимо иметь достаточную сумму в e-coins вы сможете создать свою организацию в коснли телефона через комануду ecorp. Учтите, что слоты фракций на сервере ограничено';
+    mItem.text = 'Для начала вам необходимо иметь низкую репутацию, далее необходимо иметь достаточную сумму в e-coins вы сможете создать свою организацию в консоли телефона через команду ecorp. Учтите, что слоты фракций на сервере ограничены';
     
     /*mItem = UIMenu.Menu.AddMenuItem("Где мой прицел?");
     mItem.textTitle = 'Навык оружия';
@@ -2541,7 +2541,7 @@ menuList.showSettingsMenu = function() {
     UIMenu.Menu.AddMenuItem("Голосовой чат").doName = 'showSettingsVoiceMenu';
     UIMenu.Menu.AddMenuItem("Назначение клавиш").doName = 'showSettingsKeyMenu';
 
-    UIMenu.Menu.AddMenuItem("~r~Выйти с сервера", "Нажмите ~g~Enter~s~ чтобы применить").doName = 'exit';
+    //UIMenu.Menu.AddMenuItem("~r~Выйти с сервера", "Нажмите ~g~Enter~s~ чтобы применить").doName = 'exit';
 
     let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
     menu.ItemSelect.on(async (item, index) => {
@@ -2948,7 +2948,6 @@ menuList.showPlayerDoMenu = function(playerId) {
     //UIMenu.Menu.AddMenuItem("Снять маску с игрока").eventName = 'server:user:taskRemoveMaskById';
 
     if (user.isPolice()) {
-
         UIMenu.Menu.AddMenuItem("Обыск игрока").eventName = 'server:user:getInvById';
         UIMenu.Menu.AddMenuItem("Установить личность").eventName = 'server:user:getPassById';
     }
@@ -3522,8 +3521,8 @@ menuList.showVehicleMenu = function(data) {
                 mp.game.ui.notifications.show('~y~Нельзя это делать на скорости');
                 return;
             }
-
-            if (mp.players.local.vehicle.isInWater()) {
+            let vInfo = methods.getVehicleInfo(mp.players.local.vehicle.model);
+            if (mp.players.local.vehicle.isInWater() && vInfo.class_name !== 'Boats') {
                 mp.game.ui.notifications.show('~y~Ты точно понимаешь адекватность этого поступка?');
                 return;
             }
@@ -4187,7 +4186,7 @@ menuList.showBankMenu = async function(bankId, price) {
                     let money = methods.parseFloat(await UIMenu.Menu.GetUserInput("Сумма перевода", "", 9));
                     if (money < 0)
                         return;
-                    mp.events.callRemote(item.eventName, bankNumber, money);
+                    mp.events.callRemote(item.eventName, bankNumber.toString(), money);
                 }
                 else if (item.eventName == 'server:bank:changePin') {
                     let pin1 = methods.parseInt(await UIMenu.Menu.GetUserInput("Введите пинкод", "", 4));
@@ -4274,7 +4273,7 @@ menuList.showAtmMenu = async function() {
             let money = methods.parseFloat(await UIMenu.Menu.GetUserInput("Сумма перевода", "", 9));
             if (money < 0)
                 return;
-            mp.events.callRemote(item.eventName, bankNumber, money);
+            mp.events.callRemote(item.eventName, bankNumber.toString(), money);
         }
         else if (item.eventName == 'server:bank:history') {
             mp.events.callRemote(item.eventName);
@@ -5569,6 +5568,10 @@ menuList.showShopClothMenu = function (shopId, type, menuType, price = 1) {
                     UIMenu.Menu.HideMenu();
                     menuList.showShopClothMoreMenu(shopId, type, menuType, price, item.id1, item.id2, item.id3, item.id4, item.id5, item.id6, item.id7, item.id8, item.itemName);
                 }
+                if (item.doName == "closeButton") {
+                    UIMenu.Menu.HideMenu();
+                    user.updateCharacterCloth();
+                }
                 if (item.doName == "openBag") {
                     UIMenu.Menu.HideMenu();
                     menuList.showShopClothBagMenu(shopId, type, menuType, price);
@@ -5713,6 +5716,10 @@ menuList.showShopClothMoreMenu = function (shopId, type, menuType, price, id1, i
 
         menu.ItemSelect.on(async (item, index) => {
             try {
+                if (item.doName == "closeButton") {
+                    UIMenu.Menu.HideMenu();
+                    user.updateCharacterCloth();
+                }
                 if (item.idx >= 0) {
                     cloth.buy(id8, id1, id2, item.idx, id4, id5, id6, id7, itemName + ' #' + (item.idx + 1), shopId);
                 }
@@ -8331,12 +8338,6 @@ menuList.showGovGarderobMenu = function() {
                 inventory.takeNewWeaponItem(item.itemId, `{"owner": "Правительство", "userName": "${user.getCache('name')}"}`, 'Выдано оружие').then();
             else
                 inventory.takeNewWeaponItem(item.itemId, `{"owner": "Правительство", "userName": "${user.getCache('name')}"}`, 'Выдан предмет').then();
-            methods.saveFractionLog(
-                user.getCache('name'),
-                `Взял ${items.getItemNameById(item.itemId)}`,
-                `Потрачено из бюджета: ${methods.moneyFormat(itemPrice)}`,
-                user.getCache('fraction_id')
-            );
         }
     });
 };
@@ -8396,12 +8397,6 @@ menuList.showEmsArsenalMenu = function() {
                 inventory.takeNewWeaponItem(item.itemId, `{"owner": "EMS", "userName": "${user.getCache('name')}"}`, 'Выдано оружие').then();
             else
                 inventory.takeNewWeaponItem(item.itemId, `{"owner": "EMS", "userName": "${user.getCache('name')}"}`, 'Выдан предмет').then();
-            methods.saveFractionLog(
-                user.getCache('name'),
-                `Взял ${items.getItemNameById(item.itemId)}`,
-                `Потрачено из бюджета: ${methods.moneyFormat(itemPrice)}`,
-                user.getCache('fraction_id')
-            );
         }
     });
 };
@@ -8476,12 +8471,6 @@ menuList.showSheriffArsenalMenu = function() {
                 inventory.takeNewWeaponItem(item.itemId, `{"owner": "BCSD", "userName": "${user.getCache('name')}", "tint": 4}`, 'Выдано оружие').then();
             else
                 inventory.takeNewWeaponItem(item.itemId, `{"owner": "BCSD", "userName": "${user.getCache('name')}"}`, 'Выдан предмет').then();
-            methods.saveFractionLog(
-                user.getCache('name'),
-                `Взял ${items.getItemNameById(item.itemId)}`,
-                `Потрачено из бюджета: ${methods.moneyFormat(itemPrice)}`,
-                user.getCache('fraction_id')
-            );
         }
     });
 };
@@ -8552,12 +8541,6 @@ menuList.showSheriffArsenalGunMenu = function() {
                 inventory.takeNewWeaponItem(item.itemId, `{"owner": "BCSD", "userName": "${user.getCache('name')}", "tint": 4}`, 'Выдано оружие').then();
             else
                 inventory.takeNewWeaponItem(item.itemId, `{"owner": "BCSD", "userName": "${user.getCache('name')}"}`, 'Выдан предмет').then();
-            methods.saveFractionLog(
-                user.getCache('name'),
-                `Взял ${items.getItemNameById(item.itemId)}`,
-                `Потрачено из бюджета: ${methods.moneyFormat(itemPrice)}`,
-                user.getCache('fraction_id')
-            );
         }
     });
 };
@@ -8658,12 +8641,6 @@ menuList.showSheriffArsenalGunModMenu = function() {
                 inventory.takeNewWeaponItem(item.itemId, `{"owner": "BCSD", "userName": "${user.getCache('name')}", "tint": 4}`, 'Выдано оружие').then();
             else
                 inventory.takeNewWeaponItem(item.itemId, `{"owner": "BCSD", "userName": "${user.getCache('name')}"}`, 'Выдан предмет').then();
-            methods.saveFractionLog(
-                user.getCache('name'),
-                `Взял ${items.getItemNameById(item.itemId)}`,
-                `Потрачено из бюджета: ${methods.moneyFormat(itemPrice)}`,
-                user.getCache('fraction_id')
-            );
         }
     });
 };
@@ -8793,12 +8770,6 @@ menuList.showSapdArsenalMenu = function() {
                 inventory.takeNewWeaponItem(item.itemId, `{"owner": "LSPD", "userName": "${user.getCache('name')}", "tint": 5}`, 'Выдано оружие').then();
             else
                 inventory.takeNewWeaponItem(item.itemId, `{"owner": "LSPD", "userName": "${user.getCache('name')}"}`, 'Выдан предмет').then();
-            methods.saveFractionLog(
-                user.getCache('name'),
-                `Взял ${items.getItemNameById(item.itemId)}`,
-                `Потрачено из бюджета: ${methods.moneyFormat(itemPrice)}`,
-                user.getCache('fraction_id')
-            );
         }
     });
 };
@@ -8870,12 +8841,6 @@ menuList.showSapdArsenalGunMenu = function() {
                 inventory.takeNewWeaponItem(item.itemId, `{"owner": "LSPD", "userName": "${user.getCache('name')}", "tint": 5}`, 'Выдано оружие').then();
             else
                 inventory.takeNewWeaponItem(item.itemId, `{"owner": "LSPD", "userName": "${user.getCache('name')}"}`, 'Выдан предмет').then();
-            methods.saveFractionLog(
-                user.getCache('name'),
-                `Взял ${items.getItemNameById(item.itemId)}`,
-                `Потрачено из бюджета: ${methods.moneyFormat(itemPrice)}`,
-                user.getCache('fraction_id')
-            );
         }
     });
 };
@@ -8976,12 +8941,6 @@ menuList.showSapdArsenalGunModMenu = function() {
                 inventory.takeNewWeaponItem(item.itemId, `{"owner": "LSPD", "userName": "${user.getCache('name')}", "tint": 5}`, 'Выдано оружие').then();
             else
                 inventory.takeNewWeaponItem(item.itemId, `{"owner": "LSPD", "userName": "${user.getCache('name')}"}`, 'Выдан предмет').then();
-            methods.saveFractionLog(
-                user.getCache('name'),
-                `Взял ${items.getItemNameById(item.itemId)}`,
-                `Потрачено из бюджета: ${methods.moneyFormat(itemPrice)}`,
-                user.getCache('fraction_id')
-            );
         }
     });
 };
@@ -9069,6 +9028,59 @@ menuList.showBotQuestGangMenu = function()
             user.removeCryptoMoney(0.2, 'Покупка спец. отмычек');
             inventory.takeNewItemJust(5);
             mp.game.ui.notifications.show(`~g~Вы купили отмычку`);
+        }
+    });
+};
+
+menuList.showGangZoneAttackMenu = function(zone, count = 5) {
+    let menu = UIMenu.Menu.Create(`Захват`, `~b~ID: ${zone.get('gangWarid')}`);
+
+    UIMenu.Menu.AddMenuItem(`~b~${zone.get('gangWarzone').toString()}`);
+    UIMenu.Menu.AddMenuItem(`~b~${zone.get('gangWarstreet').toString()}`);
+    UIMenu.Menu.AddMenuItem(`~b~${zone.get('gangWarfraction_name').toString()}`);
+
+    UIMenu.Menu.AddMenuItem(`~b~Кол-во:~s~ ${count}vs${count}`).doName = 'count';
+    UIMenu.Menu.AddMenuItemList("~b~Броня~s~", ['~g~Да', '~r~Нет']).doName = 'armor';
+    UIMenu.Menu.AddMenuItemList("~b~Оружие~s~", ['Любое', 'Ближнее', 'Пистолеты', 'Дробовики', 'SMG', 'Автоматы']).doName = 'gun';
+    UIMenu.Menu.AddMenuItemList("~b~Время~s~", ['17:00', '17:30', '18:00', '18:30', '19:00', '19:30', '20:00', '20:30', '21:00', '21:30', '22:00', '22:30', '23:00', '23:30']).doName = 'time';
+    UIMenu.Menu.AddMenuItem(`~g~Объявить захват`).doName = 'start';
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = 'close';
+
+    let armorIndex = 0;
+    let gunIndex = 0;
+    let timeIndex = 0;
+
+    menu.ListChange.on((item, index) => {
+        if (item.doName === 'armor')
+            armorIndex = index;
+        if (item.doName === 'gun')
+            gunIndex = index;
+        if (item.doName === 'time')
+            timeIndex = index;
+    });
+
+    menu.ItemSelect.on(async item => {
+        try {
+            if (item.doName === 'count') {
+                let name = methods.parseInt(await UIMenu.Menu.GetUserInput("Число", "", 9));
+                if (name > 10) {
+                    mp.game.ui.notifications.show(`~r~Значение не должно быть больше 10`);
+                    return;
+                }
+                if (name < 1) {
+                    mp.game.ui.notifications.show(`~r~Значение не должно быть меньше 1`);
+                    return;
+                }
+                menuList.showGangZoneAttackMenu(zone, name);
+            }
+            if (item.doName == 'close')
+                UIMenu.Menu.HideMenu();
+            if (item.doName == 'start')
+                mp.events.callRemote('server:gangWar:addWar', zone.get('gangWarid'), count, armorIndex, gunIndex, timeIndex);
+        }
+        catch (e) {
+            methods.debug(e);
         }
     });
 };

@@ -18,12 +18,16 @@ let currentAttack = 0;
 let currentDef = 0;
 let isStartTimer = false;
 let timerCounter = 0;
+let canArmor = false;
+let countUsers = 5;
 let warPos = new mp.Vector3(0, 0, 0);
 
 let defC = 0;
 let attC = 0;
 
 let gangList = [];
+
+let warPool = new Map();
 
 gangWar.loadAll = function() {
     methods.debug('gangWar.loadAll');
@@ -58,6 +62,7 @@ gangWar.save = function(id, ownerId, name) {
     methods.debug('gangWar.save');
     gangWar.set(id, 'fraction_id', ownerId);
     gangWar.set(id, 'fraction_name', name);
+    gangWar.set(id, 'timestamp', methods.getTimeStamp());
     mysql.executeQuery("UPDATE gang_war SET fraction_id = '" + ownerId + "',  fraction_name = '" + name + "',  timestamp = '" + methods.getTimeStamp() + "' where id = '" + id + "'");
 };
 
@@ -65,13 +70,42 @@ gangWar.getZoneList = function() {
     return gangList;
 };
 
-gangWar.startWar = function(player, zoneId) {
-    methods.debug('gangWar.startWar');
-    if (!user.isLogin(player))
+gangWar.getZoneWarList = function() {
+    return warPool;
+};
+
+gangWar.hasWar = function(idx) {
+    return warPool.has(idx.toString());
+};
+
+gangWar.getWar = function(idx) {
+    return warPool.get(idx.toString());
+};
+
+gangWar.startWar = function(zoneId, attack, def, isArmor, count) {
+    if (isStartTimer)
         return;
 
-    player.notify('~r~Война за территории заморожена, до выхода следующего обновления');
-    return;
+    methods.debug('gangWar.startWar');
+
+    isStartTimer = true;
+    timerCounter = 600;
+    currentZone = zoneId;
+    currentAttack = attack;
+    currentDef = def;
+    warPos = gangWar.getPos(zoneId);
+
+    countUsers = count;
+    canArmor = isArmor;
+
+    methods.notifyWithPictureToFraction2('Улица под угрзой', `ВНИМАНИЕ!`, 'Начался захват улицы ~y~#' + zoneId, 'CHAR_DEFAULT', def);
+    methods.notifyWithPictureToFraction2('Война за улицу', `ВНИМАНИЕ!`, 'Начался захват улицы ~y~#' + zoneId, 'CHAR_DEFAULT', currentAttack);
+};
+
+gangWar.addWar = function(player, zoneId, count, armorIndex, gunIndex, timeIndex) {
+    methods.debug('gangWar.addWar');
+    if (!user.isLogin(player))
+        return;
 
     let id = zoneId;
 
@@ -92,31 +126,21 @@ gangWar.startWar = function(player, zoneId) {
         player.notify('~r~Вы не состоите в организации');
         return;
     }
-    if (!user.isLeader2(player) && !user.isSubLeader2(player) && !user.isDepLeader2(player) && !user.isDepSubLeader2(player)) {
-        player.notify('~r~Начать захват может только лидер, заместитель лидера, глава отдела или зам. главы отдела');
-        return;
-    }
-    if (weather.getHour() < 23 && weather.getHour() > 4) {
-        player.notify('~r~Доступно только с 23 до 4 утра IC времени');
+    if (!user.isLeader2(player) && !user.isSubLeader2(player)) {
+        player.notify('~r~Начать захват может только лидер или заместитель лидера');
         return;
     }
 
-    let dateTime = new Date(); //TODO
-    if (dateTime.getHours() < 20) {
-        player.notify('~r~Доступно только с 20 до 24 ночи ООС времени');
-        return;
-    }
-
-    if (gangWar.isInZone(player, id)) {
-        player.notify('~r~Необходимо находиться на территории');
+    if (warPool.has(timeIndex.toString())) {
+        player.notify('~r~Данное время занято другими людьми, выберите другое');
         return;
     }
 
     let ownerId = gangWar.get(id, 'fraction_id');
     if (ownerId > 0) {
-        if (methods.getTimeStamp() < (gangWar.get(id, 'timestamp') + 244800)) {
-            let date = new Date(methods.parseInt(gangWar.get(id, 'timestamp') + 244800) * 1000);
-            player.notify('~r~Доступно каждые 3 дня (ООС)');
+        if (methods.getTimeStamp() < (gangWar.get(id, 'timestamp') + 163200)) {
+            let date = new Date(methods.parseInt(gangWar.get(id, 'timestamp') + 163200) * 1000);
+            player.notify('~r~Доступно каждые 2 дня (ООС)');
             player.notify(`~r~А именно:~s~ ${date.getDate()}/${(date.getMonth() + 1)}/${date.getFullYear()}`);
             return;
         }
@@ -130,21 +154,35 @@ gangWar.startWar = function(player, zoneId) {
         return;
     }
 
-    if (isStartTimer) {
-        player.notify('~r~В данный момент уже происходит захват ~s~#' + currentZone + '~r~ улицы\nДождитесь окончания захвата, чтобы начать следующий');
-        player.notify('~r~Осталось: ~s~' + timerCounter + 'сек\n~r~Атака: ~w~' + fraction.getName(currentAttack) + '\n~r~Оборона: ~w~' + fraction.getName(currentDef));
+    let idxToHour = [17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23];
+
+    let dateTime = new Date(); //TODO
+    if (dateTime.getHours() + 1 >= idxToHour[timeIndex]) {
+        player.notify('~r~Назначеное время не доступно, попробуйте выбрать на час-два позже');
         return;
     }
 
-    isStartTimer = true;
-    timerCounter = 600;
-    currentZone = zoneId;
-    currentAttack = user.get(player, 'fraction_id2');
-    currentDef = ownerId;
-    warPos = gangWar.getPos(zoneId);
+    gangWar.set(id, 'timestamp', methods.getTimeStamp());
 
-    methods.notifyWithPictureToFraction2('Улица под угрзой', `ВНИМАНИЕ!`, 'Начался захват улицы ~y~#' + zoneId, 'CHAR_DEFAULT', ownerId);
-    methods.notifyWithPictureToFraction2('Война за улицу', `ВНИМАНИЕ!`, 'Начался захват улицы ~y~#' + zoneId, 'CHAR_DEFAULT', currentAttack);
+    let gunLabel = ['Любое', 'Ближнее', 'Пистолеты', 'Дробовики', 'SMG', 'Автоматы'];
+    let timeLabel = ['17:00', '17:30', '18:00', '18:30', '19:00', '19:30', '20:00', '20:30', '21:00', '21:30', '22:00', '22:30', '23:00', '23:30'];
+
+    let data = {
+        zoneId: zoneId,
+        attack: user.get(player, 'fraction_id2'),
+        def: ownerId,
+        count: count,
+        armor: armorIndex,
+        gun: gunIndex,
+        gunLabel: gunLabel[gunIndex],
+        timeLabel: timeLabel[timeIndex],
+        armorLabel: armorIndex === 0 ? 'Разрешено' : 'Запрещено',
+    };
+
+    warPool.set(timeIndex.toString(), data);
+
+    methods.notifyWithPictureToFraction2('Улица под угрзой', `ВНИМАНИЕ!`, `Захват ~y~#${zoneId}~s~ начнется в ${timeLabel[timeIndex]} (( ООС МСК ))`, 'CHAR_DEFAULT', ownerId);
+    methods.notifyWithPictureToFraction2('Война за улицу', `ВНИМАНИЕ!`, `Захват ~y~#${zoneId}~s~ начнется в ${timeLabel[timeIndex]} (( ООС МСК ))`, 'CHAR_DEFAULT', user.get(player, 'fraction_id2'));
 };
 
 gangWar.dropTimer = function(player) {
@@ -168,7 +206,11 @@ gangWar.timer = function() {
     if (isStartTimer) {
         timerCounter--;
 
-        if (timerCounter % 30 == 0) {
+        if (timerCounter % 3 == 0) {
+
+            defC = 0;
+            attC = 0;
+
             mp.players.forEachInRange(warPos, 500, p => {
                 if (!user.isLogin(p))
                     return;
@@ -183,28 +225,20 @@ gangWar.timer = function() {
             });
         }
 
-        mp.players.forEachInRange(warPos, 500, p => {
-            if (!user.isLogin(p))
-                return;
-            if (!gangWar.isInZone(p, currentZone))
-                return;
-            let fId = user.get(p, 'fraction_id2');
-            if (currentDef == fId || currentAttack == fId) {
-                p.call("client:gangWar:sendInfo", [attC, defC, timerCounter]);
-            }
-        });
+        if ((attC === 0 || defC === 0) && timerCounter > 10)
+            timerCounter = 10;
 
-        if (timerCounter < 1) {
+        if (attC > countUsers) {
             timerCounter = 0;
             isStartTimer = false;
             let zoneId = currentZone;
-            let ownerId = gangWar.getMaxCounterFractionId(attC, defC);
+            let ownerId = defC;
             let fractionName = fraction.getName(ownerId);
             gangWar.save(zoneId, ownerId, fractionName);
             gangWar.set(zoneId, 'canWar', false);
 
-            methods.notifyWithPictureToFraction2('Итоги войны', `Улица #${currentZone}`, 'Территория под контролем ' + fractionName, 'CHAR_DEFAULT', currentDef);
-            methods.notifyWithPictureToFraction2('Итоги войны', `Улица #${currentZone}`, 'Территория под контролем ' + fractionName, 'CHAR_DEFAULT', currentAttack);
+            methods.notifyWithPictureToFraction2('Досрочное завершение', `Улица #${currentZone}`, 'Территория под контролем ' + fractionName + '\nСвязи с нарушением количества людей в территории', 'CHAR_DEFAULT', currentDef);
+            methods.notifyWithPictureToFraction2('Досрочное завершение', `Улица #${currentZone}`, 'Территория под контролем ' + fractionName + '\nСвязи с нарушением количества людей в территории', 'CHAR_DEFAULT', currentAttack);
 
             currentZone = 0;
             currentAttack = 0;
@@ -212,6 +246,61 @@ gangWar.timer = function() {
             defC = 0;
             attC = 0;
             warPos = new mp.Vector3(0, 0, 0);
+        }
+        else if (defC > countUsers) {
+            timerCounter = 0;
+            isStartTimer = false;
+            let zoneId = currentZone;
+            let ownerId = attC;
+            let fractionName = fraction.getName(ownerId);
+            gangWar.save(zoneId, ownerId, fractionName);
+            gangWar.set(zoneId, 'canWar', false);
+
+            methods.notifyWithPictureToFraction2('Досрочное завершение', `Улица #${currentZone}`, 'Территория под контролем ' + fractionName + '\nСвязи с нарушением количества людей в территории', 'CHAR_DEFAULT', currentDef);
+            methods.notifyWithPictureToFraction2('Досрочное завершение', `Улица #${currentZone}`, 'Территория под контролем ' + fractionName + '\nСвязи с нарушением количества людей в территории', 'CHAR_DEFAULT', currentAttack);
+
+            currentZone = 0;
+            currentAttack = 0;
+            currentDef = 0;
+            defC = 0;
+            attC = 0;
+            warPos = new mp.Vector3(0, 0, 0);
+        }
+        else {
+            mp.players.forEachInRange(warPos, 500, p => {
+                if (!user.isLogin(p))
+                    return;
+                if (!gangWar.isInZone(p, currentZone))
+                    return;
+                let fId = user.get(p, 'fraction_id2');
+                if (currentDef == fId || currentAttack == fId) {
+
+                    if (!canArmor && p.armour > 0)
+                        user.setArmour(p, 0);
+
+                    p.call("client:gangWar:sendInfo", [attC, defC, timerCounter]);
+                }
+            });
+
+            if (timerCounter < 1) {
+                timerCounter = 0;
+                isStartTimer = false;
+                let zoneId = currentZone;
+                let ownerId = gangWar.getMaxCounterFractionId(attC, defC);
+                let fractionName = fraction.getName(ownerId);
+                gangWar.save(zoneId, ownerId, fractionName);
+                gangWar.set(zoneId, 'canWar', false);
+
+                methods.notifyWithPictureToFraction2('Итоги войны', `Улица #${currentZone}`, 'Территория под контролем ' + fractionName, 'CHAR_DEFAULT', currentDef);
+                methods.notifyWithPictureToFraction2('Итоги войны', `Улица #${currentZone}`, 'Территория под контролем ' + fractionName, 'CHAR_DEFAULT', currentAttack);
+
+                currentZone = 0;
+                currentAttack = 0;
+                currentDef = 0;
+                defC = 0;
+                attC = 0;
+                warPos = new mp.Vector3(0, 0, 0);
+            }
         }
     }
     setTimeout(gangWar.timer, 1000);
@@ -224,7 +313,8 @@ gangWar.timerMoney = function() {
         if (gangWar.get(i, 'fraction_id') > 0) {
 
             let money = methods.getRandomInt(400, 500) / 1000;
-            fraction.addMoney(gangWar.get(i, 'fraction_id'), money, 'Зачисление средств с территории #' + i);
+            let id = methods.parseInt(gangWar.get(i, 'fraction_id'));
+            fraction.setMoney(id, fraction.getMoney(id) + methods.parseFloat(money));
 
             if (moneyToUser.has(gangWar.get(i, 'fraction_id').toString())) {
                 let cMoney = moneyToUser.get(gangWar.get(i, 'fraction_id').toString());

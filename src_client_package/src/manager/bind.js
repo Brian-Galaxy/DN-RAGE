@@ -234,6 +234,9 @@ for(let code in keyCodes) {
         if (!user.isLogin())
             return;
 
+        if (mp.gui.chat.enabled)
+            return;;
+
         if (user.getCache('s_bind_do') == parseInt(code)) {
             if (user.isCuff() || user.isTie()) {
                 mp.game.ui.notifications.show("~r~Вы связаны или в наручниках");
@@ -378,6 +381,10 @@ for(let code in keyCodes) {
     mp.keys.bind(parseInt(code), false, function() {
         if (!user.isLogin())
             return;
+
+        if (mp.gui.chat.enabled)
+            return;
+
         if (user.getCache('s_bind_megaphone') == parseInt(code)) {
             if (!methods.isBlockKeys()) {
                 if (mp.players.local.getVariable('voice.distance') > 25)

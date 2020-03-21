@@ -344,8 +344,11 @@ vehicles.findVehicleByNumber = (number) => {
 };
 
 vehicles.engineVehicle = function() {
-    if (mp.players.local.vehicle) //TODO
-        mp.events.callRemote('server:vehicle:engineStatus');
+    if (mp.players.local.vehicle) {
+        let vInfo = methods.getVehicleInfo(mp.players.local.vehicle.model);
+        if (vInfo.class_name != 'Cycles')
+            mp.events.callRemote('server:vehicle:engineStatus');
+    }
 };
 
 export default vehicles;

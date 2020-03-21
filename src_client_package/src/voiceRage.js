@@ -250,8 +250,8 @@ voiceRage.timer = () => {
                     else if(!UseAutoVolume)
                     {
                         const distanceToPlayer = voiceRage.vdist(localPos, playerPos);
-                        //const voiceDistance = voiceRage.clamp(3, 7000, player.getVariable('voice.distance') || __CONFIG__.defaultDistance);
-                        const voiceDistance = voiceRage.clamp(3, 50, __CONFIG__.defaultDistance);
+                        const voiceDistance = voiceRage.clamp(3, 7000, player.getVariable('voice.distance') || __CONFIG__.defaultDistance);
+                        //const voiceDistance = voiceRage.clamp(3, 50, __CONFIG__.defaultDistance);
                         player.voiceVolume = voiceRage.generateVolume(localPos, player, voiceDistance, distanceToPlayer);
                         //player.voiceVolume = 1 - (dist / MaxRange);
                     }

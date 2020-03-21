@@ -2045,7 +2045,9 @@ mp.events.addRemoteCounted('server:gr6:findPickup', (player, x, y, z) => {
                             return;
                         if (user.get(p, 'job') == 10) {
                             user.setWaypoint(p, x, y);
-                            Container.Data.Set(player.vehicle.id, 'validWorker' + user.getId(p), true);
+
+                            user.set(p, 'gr6', player.vehicle.id);
+
                             if (user.getRpName(p) == user.getRpName(player))
                                 return;
                             p.notify('~b~Вы получили задание');
@@ -2082,9 +2084,8 @@ mp.events.addRemoteCounted('server:gr6:dropCar', (player, money, vId) => {
                         if (!user.isLogin(p) || user.get(p, 'job') != 10)
                             return;
 
-                        if (Container.Data.Has(v.id, 'validWorker' + user.getId(p))) {
+                        if (user.get(p, 'gr6') === v.id)
                             user.addWorkExp(p, 2);
-                        }
                     }
                     catch (e) {
                         methods.debug(e);
@@ -2099,57 +2100,55 @@ mp.events.addRemoteCounted('server:gr6:dropCar', (player, money, vId) => {
     });
 });
 
-mp.events.addRemoteCounted('server:gr6:unload', (player, vId) => {
+mp.events.addRemoteCounted('server:gr6:unload', (player) => {
     if (!user.isLogin(player))
         return;
 
     if (player.vehicle && player.seat == -1) {
-        mp.vehicles.forEach(function (v) {
-            try {
-                if (vehicles.exists(v) && v.id == vId) {
+        try {
+            let v = player.vehicle;
+            if (vehicles.exists(v) && v.id == vId) {
 
-                    if (methods.parseInt(v.getVariable('gr6Money')) <= 1) {
-                        player.notify('~r~В машине нет средств');
-                        return;
-                    }
-
-                    let money = methods.parseFloat(v.getVariable('gr6Money') / 100);
-                    let countOcc = v.getOccupants().length;
-
-                    v.getOccupants().forEach(function (p) {
-                        try {
-                            if (!user.isLogin(p) || user.get(p, 'job') != 10)
-                                return;
-
-                            if (Container.Data.Has(v.id, 'validWorker' + user.getId(p))) {
-
-                                let currentMoney = methods.parseFloat(money / countOcc);
-
-                                user.addMoney(p, currentMoney, 'Зарплата инкассатора');
-                                coffer.removeMoney(currentMoney + methods.parseFloat(currentMoney / 10));
-                                p.notify('~g~Вы заработали: ~s~' + methods.moneyFormat(currentMoney));
-                                Container.Data.Reset(v.id, 'validWorker' + user.getId(p));
-                                user.giveJobSkill(p);
-
-                                user.addRep(p, 50);
-                                user.addWorkExp(p, 2);
-                            }
-                            else {
-                                p.notify('~r~Вы не являетесь напарником ID: ' + player.id);
-                                p.notify('~r~Зарплату вы не получили');
-                            }
-                        }
-                        catch (e) {
-                            methods.debug(e);
-                        }
-                    });
-                    v.setVariable('gr6Money', 0);
+                if (methods.parseInt(v.getVariable('gr6Money')) <= 1) {
+                    player.notify('~r~В машине нет средств');
+                    return;
                 }
+
+                let money = methods.parseFloat(v.getVariable('gr6Money') / 100);
+                let countOcc = v.getOccupants().length;
+
+                v.getOccupants().forEach(function (p) {
+                    try {
+                        if (!user.isLogin(p) || user.get(p, 'job') != 10)
+                            return;
+
+                        if (user.get(p, 'gr6') === v.id) {
+                            let currentMoney = methods.parseFloat(money / countOcc);
+
+                            user.addMoney(p, currentMoney, 'Зарплата инкассатора');
+                            coffer.removeMoney(currentMoney + methods.parseFloat(currentMoney / 10));
+                            p.notify('~g~Вы заработали: ~s~' + methods.moneyFormat(currentMoney));
+                            user.reset(p, 'gr6');
+                            user.giveJobSkill(p);
+
+                            user.addRep(p, 50);
+                            user.addWorkExp(p, 2);
+                        }
+                        else {
+                            p.notify('~r~Вы не являетесь напарником ID: ' + player.id);
+                            p.notify('~r~Зарплату вы не получили');
+                        }
+                    }
+                    catch (e) {
+                        methods.debug(e);
+                    }
+                });
+                v.setVariable('gr6Money', 0);
             }
-            catch (e) {
-                methods.debug(e);
-            }
-        });
+        }
+        catch (e) {
+            methods.debug(e);
+        }
     }
 });
 
@@ -2475,6 +2474,12 @@ mp.events.addRemoteCounted('server:phone:showGangList', (player) => {
     phone.showGangList(player);
 });
 
+mp.events.addRemoteCounted('server:phone:showGangWarList', (player) => {
+    if (!user.isLogin(player))
+        return;
+    phone.showGangWarList(player);
+});
+
 mp.events.addRemoteCounted('server:phone:getShopGang', (player) => {
     if (!user.isLogin(player))
         return;
@@ -2485,6 +2490,12 @@ mp.events.addRemoteCounted('server:phone:attackStreet', (player, id) => {
     if (!user.isLogin(player))
         return;
     gangWar.startWar(player, id);
+});
+
+mp.events.addRemoteCounted('server:gangWar:addWar', (player, id, count, armorIndex, gunIndex, timeIndex) => {
+    if (!user.isLogin(player))
+        return;
+    gangWar.addWar(player, id, count, armorIndex, gunIndex, timeIndex);
 });
 
 mp.events.addRemoteCounted('server:phone:fractionList2', (player) => {

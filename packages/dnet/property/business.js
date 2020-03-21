@@ -175,6 +175,7 @@ business.updateOwnerInfo = function (bId, userId, userName) {
     methods.debug('business.updateOwnerInfo');
     business.set(bId, 'user_id', userId);
     business.set(bId, 'user_name', userName);
+    business.save(bId);
 };
 
 business.sell = function (player) {

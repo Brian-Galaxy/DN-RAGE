@@ -469,6 +469,11 @@ fraction.saveAll = function() {
     });
 };
 
+fraction.getCount = function() {
+    methods.debug('fraction.getCount');
+    return count;
+};
+
 fraction.createCargoWar = function() {
     methods.notifyWithPictureToFractions2('Борьба за груз', `~r~ВНИМАНИЕ!`, 'Началась война за груз, груз отмечен на карте');
     isCargo = true;
@@ -479,7 +484,7 @@ fraction.createCargoWar = function() {
     spawnList.push(methods.getRandomInt(0, fraction.warVehPos.length));
     spawnList.push(methods.getRandomInt(0, fraction.warVehPos.length));
 
-    timer = 400;
+    timer = 600;
 
     spawnList.forEach((item, i) => {
         let posVeh = new mp.Vector3(fraction.warVehPos[item][0], fraction.warVehPos[item][1], fraction.warVehPos[item][2]);
@@ -598,7 +603,7 @@ fraction.timerCargoWar = function() {
 
     timer--;
 
-    if (timer === 100) {
+    if (timer === 120) {
         mp.players.forEach(p => {
             if (!user.isLogin(p))
                 return;
@@ -611,14 +616,14 @@ fraction.timerCargoWar = function() {
         });
     }
 
-    if (timer > 100) {
+    if (timer > 120) {
         currentWarPos.forEach(item => {
             mp.players.forEachInRange(item, 15, p => {
                 if (!user.isLogin(p))
                     return;
 
                 if (p.health > 0) {
-                    user.setHealth(p, p.health - 20);
+                    user.setHealth(p, p.health - 25);
                 }
             });
         });
@@ -1087,7 +1092,7 @@ fraction.destroy = function (player, id) {
     id = methods.parseInt(id);
     methods.debug('fraction.destroy');
 
-    if (fraction.get(id, 'owner_id') != user.getId(player)) {
+    if (!user.isLeader2(player)) {
         player.notify('~r~Эта организация вам не приналдежит');
         return;
     }

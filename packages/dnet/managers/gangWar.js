@@ -99,7 +99,13 @@ gangWar.startWar = function(zoneId, attack, def, isArmor, count) {
     canArmor = isArmor;
 
     methods.notifyWithPictureToFraction2('Улица под угрзой', `ВНИМАНИЕ!`, 'Начался захват улицы ~y~#' + zoneId, 'CHAR_DEFAULT', def);
-    methods.notifyWithPictureToFraction2('Война за улицу', `ВНИМАНИЕ!`, 'Начался захват улицы ~y~#' + zoneId, 'CHAR_DEFAULT', currentAttack);
+
+    for (let i = 1; i <= fraction.getCount(); i++) {
+        if (def == i) continue;
+        if (fraction.get(i, 'is_war')) {
+            methods.notifyWithPictureToFraction2('Война за улицу', `ВНИМАНИЕ!`, 'Начался захват улицы ~y~#' + zoneId, 'CHAR_DEFAULT', i);
+        }
+    }
 };
 
 gangWar.addWar = function(player, zoneId, count, armorIndex, gunIndex, timeIndex) {
@@ -138,9 +144,9 @@ gangWar.addWar = function(player, zoneId, count, armorIndex, gunIndex, timeIndex
 
     let ownerId = gangWar.get(id, 'fraction_id');
     if (ownerId > 0) {
-        if (methods.getTimeStamp() < (gangWar.get(id, 'timestamp') + 163200)) {
-            let date = new Date(methods.parseInt(gangWar.get(id, 'timestamp') + 163200) * 1000);
-            player.notify('~r~Доступно каждые 2 дня (ООС)');
+        if (methods.getTimeStamp() < (gangWar.get(id, 'timestamp') + 244800)) {
+            let date = new Date(methods.parseInt(gangWar.get(id, 'timestamp') + 244800) * 1000);
+            player.notify('~r~Доступно каждые 3 дня (ООС)');
             player.notify(`~r~А именно:~s~ ${date.getDate()}/${(date.getMonth() + 1)}/${date.getFullYear()}`);
             return;
         }
@@ -159,6 +165,11 @@ gangWar.addWar = function(player, zoneId, count, armorIndex, gunIndex, timeIndex
     let dateTime = new Date(); //TODO
     if (dateTime.getHours() + 1 >= idxToHour[timeIndex]) {
         player.notify('~r~Назначеное время не доступно, попробуйте выбрать на час-два позже');
+        return;
+    }
+
+    if (dateTime.getHours() < 14) {
+        player.notify('~r~Доступно с 14:00');
         return;
     }
 
@@ -206,27 +217,31 @@ gangWar.timer = function() {
     if (isStartTimer) {
         timerCounter--;
 
-        if (timerCounter % 3 == 0) {
+        defC = 0;
+        attC = 0;
 
-            defC = 0;
-            attC = 0;
+        mp.players.forEachInRange(warPos, 500, p => {
+            if (!user.isLogin(p))
+                return;
+            let fId = user.get(p, 'fraction_id2');
+            if (gangWar.isInZone(p, currentZone)) {
+                if (p.health == 0) return;
+                if (currentDef == fId)
+                    defC++;
+                if (currentAttack == fId)
+                    attC++;
+            }
+        });
 
-            mp.players.forEachInRange(warPos, 500, p => {
-                if (!user.isLogin(p))
-                    return;
-                let fId = user.get(p, 'fraction_id2');
-                if (gangWar.isInZone(p, currentZone)) {
-                    if (p.health == 0) return;
-                    if (currentDef == fId)
-                        defC++;
-                    if (currentAttack == fId)
-                        attC++;
-                }
-            });
-        }
-
-        if ((attC === 0 || defC === 0) && timerCounter > 10)
-            timerCounter = 10;
+        setTimeout(function () {
+            try {
+                if (attC === 0 || defC === 0)
+                    timerCounter = timerCounter - 9;
+            }
+            catch (e) {
+                
+            }
+        }, 500);
 
         if (attC > countUsers) {
             timerCounter = 0;

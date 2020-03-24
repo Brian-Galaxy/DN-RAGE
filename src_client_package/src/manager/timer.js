@@ -161,7 +161,6 @@ timer.twoMinTimer = function() {
     catch (e) {
         methods.debug(e);
     }
-    setTimeout(timer.twoMinTimer, 1000 * 60 * 2);
 };
 
 timer.min15Timer = function() {
@@ -169,7 +168,6 @@ timer.min15Timer = function() {
     license.checker();
 
     user.save();
-    setTimeout(timer.min15Timer, 1000 * 60 * 16);
 };
 
 timer.ms50Timer = function() {
@@ -196,8 +194,6 @@ timer.ms50Timer = function() {
     }
     catch (e) {
     }
-
-    setTimeout(timer.ms50Timer, 50);
 };
 
 timer.twoSecTimer = function() {
@@ -239,8 +235,6 @@ timer.twoSecTimer = function() {
     catch (e) {
         methods.debug(e);
     }
-
-    setTimeout(timer.twoSecTimer, 2000);
 };
 
 timer.allModelLoader = function() {
@@ -300,8 +294,6 @@ timer.tenSecTimer = function() {
             }
         }
     });
-
-    setTimeout(timer.tenSecTimer, 10000);
 };
 
 let prevWpPos = new mp.Vector3(0, 0, 0);
@@ -309,6 +301,9 @@ let prevWpPos = new mp.Vector3(0, 0, 0);
 timer.secTimer = function() {
 
     try {
+        if (!user.isLogin() && !mp.gui.cursor.visible)
+            mp.gui.cursor.show(true, true);
+
         phone.timer();
 
         if (methods.distanceToPos(afkLastPos, mp.players.local.position) < 1) {
@@ -501,43 +496,41 @@ timer.secTimer = function() {
     catch (e) {
         methods.debug(e);
     }
-
-    setTimeout(timer.secTimer, 1000);
 };
 
 timer.loadAll = function () {
     try {
-        timer.min15Timer();
+        setInterval(timer.min15Timer, 1000 * 60 * 16);
     }
     catch (e) {
         
     }
     try {
-        timer.twoMinTimer();
+        setInterval(timer.twoMinTimer, 1000 * 60 * 2);
     }
     catch (e) {
         
     }
     try {
-        timer.twoSecTimer();
+        setInterval(timer.twoSecTimer, 2000);
     }
     catch (e) {
         
     }
     try {
-        timer.tenSecTimer();
+        setInterval(timer.tenSecTimer, 10000);
     }
     catch (e) {
         
     }
     try {
-        timer.ms50Timer();
+        setInterval(timer.ms50Timer, 50);
     }
     catch (e) {
         
     }
     try {
-        timer.secTimer();
+        setInterval(timer.secTimer, 1000);
     }
     catch (e) {
         

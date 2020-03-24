@@ -92,13 +92,13 @@ try {
 
     if(!mp.game.streaming.isIplActive("int_magazel1_milo_"))
     {
-        user.showCustomNotify('Идёт прогрузка интерьеров и маппинга, возможно игра подвиснет на несколько секунд...', 0, 1000);
+        user.showCustomNotify('Возможно некоторые интерьеры у вас не подгрузятся, поэтому перезайдите, фикс будет в следующей версии мультиплеера', 0, 1000);
         setTimeout(function () {
             mp.game.invoke("0xD7C10C4A637992C9"); // _LOAD_SP_DLC_MAPS
             mp.game.invoke("0x0888C3502DBBEEF5"); // _LOAD_MP_DLC_MAPS
 
             //mp.game.invoke("0xD7C10C4A637992C9"); mp.game.invoke("0x0888C3502DBBEEF5"); // _LOAD_MP_DLC_MAPS
-        }, 1000);
+        }, 5000);
     }
 
     /*mp.events.add('guiReady', () => {

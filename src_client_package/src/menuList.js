@@ -7229,6 +7229,7 @@ menuList.showLscTunningMenu = function(shopId, price, lscBanner1) {
     }
 
     UIMenu.Menu.AddMenuItem(`Тонировка`,`Нажмите ~g~Enter~s~, чтобы посмотреть`).modType = 69;
+    UIMenu.Menu.AddMenuItem(`Турбо`,`Нажмите ~g~Enter~s~, чтобы посмотреть`).modType = 18;
     if (veh.getLiveryCount() > 1)
         UIMenu.Menu.AddMenuItem(`Специальная окраска`,`Нажмите ~g~Enter~s~, чтобы посмотреть`).modType = 76;
     if (vehInfo.class_name !== 'Motorcycles')
@@ -7365,6 +7366,31 @@ menuList.showLscTunningListMenu = async function(modType, shopId, price, lscBann
                 catch (e) {
                     methods.debug(e);
                 }
+            }
+        }
+        else if (modType == 18) {
+            try {
+                let itemPrice = enums.lscNames[modType][1] * (1 / 20 + price);
+                let label = `${enums.lscNames[modType][0]} SpeedBoost`;
+                let listItem = UIMenu.Menu.AddMenuItem(`${label}`,`Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`);
+
+                try {
+                    if (upgradeList[modType.toString()] == 0)
+                        listItem.SetRightBadge(12);
+                }
+                catch (e) {
+
+                }
+
+                if (sale > 0)
+                    listItem.SetLeftBadge(27);
+                listItem.modType = 0;
+                listItem.price = itemPrice + 0.001;
+                listItem.itemName = label;
+                list.push(listItem);
+            }
+            catch (e) {
+                methods.debug(e);
             }
         }
         else if (modType == 76) {
@@ -9041,7 +9067,7 @@ menuList.showGangZoneAttackMenu = function(zone, count = 5) {
 
     UIMenu.Menu.AddMenuItem(`~b~Кол-во:~s~ ${count}vs${count}`).doName = 'count';
     UIMenu.Menu.AddMenuItemList("~b~Броня~s~", ['~g~Да', '~r~Нет']).doName = 'armor';
-    UIMenu.Menu.AddMenuItemList("~b~Оружие~s~", ['Любое', 'Ближнее', 'Пистолеты', 'Дробовики', 'SMG', 'Автоматы']).doName = 'gun';
+    UIMenu.Menu.AddMenuItemList("~b~Оружие~s~", ['Любое', 'Пистолеты', 'Дробовики', 'SMG', 'Автоматы']).doName = 'gun';
     UIMenu.Menu.AddMenuItemList("~b~Время~s~", ['17:00', '17:30', '18:00', '18:30', '19:00', '19:30', '20:00', '20:30', '21:00', '21:30', '22:00', '22:30', '23:00', '23:30']).doName = 'time';
     UIMenu.Menu.AddMenuItem(`~g~Объявить захват`).doName = 'start';
 
@@ -9098,6 +9124,8 @@ menuList.showAdminMenu = function() {
                 UIMenu.Menu.AddMenuItem("Режим No Clip").doName = 'noClip';
             //if (user.isAdmin(2))
             UIMenu.Menu.AddMenuItem("Режим GodMode").doName = 'godMode';
+
+            UIMenu.Menu.AddMenuItem("Лидер крайма", "Значение 0 убирает оргу").doName = 'giveLeader';
 
             UIMenu.Menu.AddMenuItem("Режим невидимки").doName = 'invise';
             UIMenu.Menu.AddMenuItem("Прогрузка ID").doName = 'idDist';
@@ -9172,6 +9200,14 @@ menuList.showAdminMenu = function() {
         if (item.doName == 'invise') {
             let val = methods.parseInt(await UIMenu.Menu.GetUserInput("От 0 до 255", "", 3));
             user.setAlpha(val);
+        }
+        if (item.doName == 'giveLeader') {
+            let val = methods.parseInt(await UIMenu.Menu.GetUserInput("От 0 до 15", "", 3));
+            user.set('fraction_id2', val);
+            user.set('is_leader2', val > 0);
+            user.set('is_sub_leader2', false);
+            user.set('rank2', 0);
+            user.set('rank_type2', 0);
         }
         if (item.doName == 'idDist') {
             let val = methods.parseInt(await UIMenu.Menu.GetUserInput("От 10 до 200", "", 3));

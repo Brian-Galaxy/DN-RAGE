@@ -48,7 +48,6 @@ jobPoint.create = function(pickupPos, route = false, radius = 1, color = ui.Mark
         });
 
     _blip.setRoute(route);
-
     return _checkpoint.id;
 };
 

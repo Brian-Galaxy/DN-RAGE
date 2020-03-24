@@ -164,8 +164,7 @@ mp.events.add('playerCommand', (player, command) => {
             console.log(gangWar.isInZone(player, methods.parseInt(command.substring(2))));
         }
         else if (command.toLowerCase() === "p" || command.toLowerCase() === "netstat") {
-            player.notify("~g~Ping: " + player.ping + "ms");
-            player.notify("~g~PacketLoss: " + player.packetLoss + "ms");
+            player.notify("~g~Ping: " + player.ping + "ms\n~g~PacketLoss: " + player.packetLoss + "ms");
         }
         else if (command.toLowerCase() === "crimewar") {
             if (!user.isAdmin(player))
@@ -178,7 +177,6 @@ mp.events.add('playerCommand', (player, command) => {
             let evalCmd = command.substring(6);
             player.outputChatBoxNew(`SEval ${evalCmd}`);
             let result;
-
             try {
                 result = eval(evalCmd);
                 player.outputChatBoxNew(`SResult ${result}`);

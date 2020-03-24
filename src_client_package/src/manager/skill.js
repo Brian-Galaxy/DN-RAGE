@@ -78,15 +78,13 @@ let checkShooting = function () {
     if (!user.isLogin())
         return;
 
-    if (mp.players.local.isInAnyVehicle(true))
+    if (mp.players.local.isInAnyVehicle(false))
         return;
 
     try {
         if (mp.players.local.isShooting() && user.getCache('stats_shooting') < 99) {
             mp.game.ui.notifications.show(`~g~Навык стрельбы был повышен`);
             user.set('stats_shooting', user.getCache('stats_shooting') + 1);
-            if (user.isUsmc())
-                user.set('stats_shooting', user.getCache('stats_shooting') + 1);
         }
     }
     catch (e) {

@@ -890,6 +890,23 @@ phone.showAppFraction2 = async function() {
         menu.items.push(titleMenu);
     }
 
+    if (user.isLeader2()) {
+        let titleMenu = {
+            title: 'Раздел для лидера',
+            umenu: [
+                {
+                    title: "Расформировать организацию",
+                    modalTitle: 'Введите слово ДА',
+                    modalButton: ['Отмена', 'Расформировать'],
+                    type: 8,
+                    clickable: true,
+                    params: { name: "destroyFraction" }
+                },
+            ],
+        };
+        menu.items.push(titleMenu);
+    }
+
     phone.showMenu(menu);
 };
 
@@ -2922,6 +2939,12 @@ phone.callBackModalInput = async function(paramsJson, text) {
         }
         if (params.name == 'inviteFraction2') {
             mp.events.callRemote('server:phone:inviteFraction2', methods.parseInt(text));
+        }
+        if (params.name == 'destroyFraction') {
+            if (text.toLowerCase() === 'да')
+                mp.events.callRemote('server:phone:destroyFraction');
+            else
+                mp.game.ui.notifications.show(`~r~Вы не ввели слово "да"`);
         }
         if (params.name == 'editFractionName') {
             mp.events.callRemote('server:phone:editFractionName', text);

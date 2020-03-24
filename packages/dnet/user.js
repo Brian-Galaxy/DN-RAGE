@@ -2411,9 +2411,9 @@ user.payDay = async function (player) {
     if (user.get(player, 'online_time') === 169) {
         if (user.get(player, 'referer') !== "") {
 
-            user.addCashMoney(player, 25000, 'Бонус от государства');
-            player.notify(`~g~Вы получили $25,000 по реферальной системе`);
-            player.notify(`~g~Пригласивший ${user.get(player, 'referer')} получил 200dc на личный счёт`);
+            user.addCashMoney(player, 24000, 'Бонус от государства');
+            player.notify(`~g~Вы получили $24,000 по реферальной системе`);
+            player.notify(`~g~Пригласивший ${user.get(player, 'referer')} получил 200nc на личный счёт`);
             mysql.executeQuery(`UPDATE users SET money_donate = money_donate + '200' WHERE name ='${user.get(player, 'referer')}'`);
             mysql.executeQuery(`INSERT INTO log_referrer (name, referrer, money, timestamp) VALUES ('${user.getRpName(player)}', '${user.get(player, 'referer')}', '200', '${methods.getTimeStamp()}')`);
         }
@@ -2447,8 +2447,8 @@ user.payDay = async function (player) {
                     player.notify(string);
                     user.addCashMoney(player, paramsStart.money, 'Бонус от государства');
                 } else {
-                    player.notify(`~g~Вы получили ~s~$25000 ~g~по промокоду ~s~${user.get(player, 'promocode')}`);
-                    user.addCashMoney(player, 25000, 'Бонус от государства');
+                    player.notify(`~g~Вы получили ~s~$24000 ~g~по промокоду ~s~${user.get(player, 'promocode')}`);
+                    user.addCashMoney(player, 24000, 'Бонус от государства');
                 }
                 mysql.executeQuery(`UPDATE users SET money_donate = money_donate + '50' WHERE parthner_promocode = '${user.get(player, 'promocode')}'`);
             });

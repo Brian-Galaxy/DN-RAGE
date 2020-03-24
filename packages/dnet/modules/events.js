@@ -2107,7 +2107,7 @@ mp.events.addRemoteCounted('server:gr6:unload', (player) => {
     if (player.vehicle && player.seat == -1) {
         try {
             let v = player.vehicle;
-            if (vehicles.exists(v) && v.id == vId) {
+            if (vehicles.exists(v)) {
 
                 if (methods.parseInt(v.getVariable('gr6Money')) <= 1) {
                     player.notify('~r~В машине нет средств');
@@ -2122,7 +2122,7 @@ mp.events.addRemoteCounted('server:gr6:unload', (player) => {
                         if (!user.isLogin(p) || user.get(p, 'job') != 10)
                             return;
 
-                        if (user.get(p, 'gr6') === v.id) {
+                        if (user.has(p, 'gr6') && user.get(p, 'gr6') === v.id) {
                             let currentMoney = methods.parseFloat(money / countOcc);
 
                             user.addMoney(p, currentMoney, 'Зарплата инкассатора');
@@ -2643,6 +2643,12 @@ mp.events.addRemoteCounted('server:phone:inviteFraction2', (player, id) => {
     else {
         player.notify('~r~Игрок не найден');
     }
+});
+
+mp.events.addRemoteCounted('server:phone:destroyFraction', (player) => {
+    if (!user.isLogin(player))
+        return;
+    fraction.destroy(player, user.get(player, 'fraction_id'));
 });
 
 mp.events.addRemoteCounted('server:phone:editFractionName', (player, text) => {

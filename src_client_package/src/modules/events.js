@@ -521,6 +521,7 @@ mp.events.add('client:events:custom:choiceRole', function(roleIndex) {
 
             if (user.getCache('role') > 0) {
                 user.set('is_custom', true);
+                user.setLogin(true);
                 user.save();
                 user.showCustomNotify('Вы уже выбирали роль', 1);
 
@@ -555,6 +556,7 @@ mp.events.add('client:events:custom:choiceRole', function(roleIndex) {
 
             user.set('role', roleIndex + 1);
             user.set('is_custom', true);
+            user.setLogin(true);
             user.save();
 
             user.teleport(enums.spawnByRole[roleIndex][0], enums.spawnByRole[roleIndex][1], enums.spawnByRole[roleIndex][2], enums.spawnByRole[roleIndex][3]);
@@ -2368,7 +2370,7 @@ mp.events.add("client:vehicle:checker", function () {
         let vehicle = mp.players.local.vehicle;
         if (vehicle) {
             let boost = 0;
-            if (vehicle.getMod(18) == 1)
+            if (vehicle.getMod(18) >= 0 || vehicle.getVariable('boost') > 0)
                 boost = 5;
 
             let vehInfo = methods.getVehicleInfo(vehicle.model);
@@ -2380,6 +2382,16 @@ mp.events.add("client:vehicle:checker", function () {
             maxSpeed = vehicles.getSpeedMax(vehicle.model);
             if (maxSpeed == 1)
                 maxSpeed = 350;
+
+            if (vehicle.getMod(18) >= 0 || vehicle.getVariable('boost') > 0)
+                maxSpeed = maxSpeed + 10;
+
+            for (let i = 0; i < 4; i++) {
+                if (vehicle.getMod(11) === i) {
+                    boost = boost + (i + 1);
+                    maxSpeed = maxSpeed + 5 * (i + 1);
+                }
+            }
 
             if (vehicle.getVariable('boost') > 0)
                 vehicle.setEnginePowerMultiplier(vehicle.getVariable('boost') + boost);
@@ -2464,7 +2476,7 @@ mp.events.add('render', () => {
                     let remoteId = player.remoteId;
 
                     if (user.isAdmin())
-                        remoteId = `${remoteId} (${player.getVariable('idLabel')})`;
+                        remoteId = `${remoteId} (${player.getVariable('idLabel')} | ~g~${player.getHealth()} ~s~|~b~ ${player.getArmour()}~s~)`;
 
                     const entity = player.vehicle ? player.vehicle : player;
                     const vector = entity.getVelocity();
@@ -2664,14 +2676,16 @@ mp.events.add("playerEnterCheckpoint", (checkpoint) => {
 });
 
 mp.events.add('playerWeaponShot', (targetPosition, targetEntity) => {
-    /*try {
+    try {
         if (targetEntity.getType() === 4 || targetEntity.getType() === 5)
             mp.events.callRemote('server:playerWeaponShot', targetEntity.remoteId);
     }
     catch (e) {
         methods.debug(e);
-    }*/
+    }
 });
+
+let timeoutShoot = null;
 
 mp.events.add('playerMaybeTakeShot', (shootEntityId) => {
     try {
@@ -2695,6 +2709,20 @@ mp.events.add('playerMaybeTakeShot', (shootEntityId) => {
         mp.game.player.setWeaponDefenseModifier(1);
 
         methods.debug(e);
+    }
+
+    try {
+        if (timeoutShoot)
+            clearTimeout(timeoutShoot);
+
+        timeoutShoot = setTimeout(function () {
+            mp.game.ped.setAiMeleeWeaponDamageModifier(1);
+            mp.game.player.setMeleeWeaponDefenseModifier(1);
+            mp.game.player.setWeaponDefenseModifier(1);
+        }, 30000);
+    }
+    catch (e) {
+        
     }
 });
 
@@ -3085,16 +3113,13 @@ mp.events.add('render', () => {
         mp.game.controls.disableControlAction(0, 262, true);
         mp.game.controls.disableControlAction(0, 99, true);
         mp.game.controls.disableControlAction(0, 100, true);
-
-        if (!user.isLogin() && !mp.gui.cursor.visible)
-            mp.gui.cursor.show(true, true);
     }
     catch (e) {
         
     }
 });
 
-mp.events.add('render', () => {
+/*mp.events.add('render', () => {
     try {
         let veh = mp.players.local.vehicle;
         if (veh && veh.getClass() != 8) {
@@ -3140,20 +3165,27 @@ mp.events.add('render', () => {
     catch (e) {
         
     }
-});
+});*/
 
 mp.events.add('render', () => {
-    if (user.getCache('med_time') > 0) {
-        mp.game.controls.disableControlAction(2, 24, true);
-        mp.game.controls.disableControlAction(2, 25, true);
-        mp.game.controls.disableControlAction(2, 66, true);
-        mp.game.controls.disableControlAction(2, 67, true);
-        mp.game.controls.disableControlAction(2, 69, true);
-        mp.game.controls.disableControlAction(2, 70, true);
-        mp.game.controls.disableControlAction(2, 140, true);
-        mp.game.controls.disableControlAction(2, 141, true);
-        mp.game.controls.disableControlAction(2, 143, true);
-        mp.game.controls.disableControlAction(2, 263, true);
+    try {
+        if (!user.isLogin())
+            return;
+        if (user.getCache('med_time') > 0) {
+            mp.game.controls.disableControlAction(2, 24, true);
+            mp.game.controls.disableControlAction(2, 25, true);
+            mp.game.controls.disableControlAction(2, 66, true);
+            mp.game.controls.disableControlAction(2, 67, true);
+            mp.game.controls.disableControlAction(2, 69, true);
+            mp.game.controls.disableControlAction(2, 70, true);
+            mp.game.controls.disableControlAction(2, 140, true);
+            mp.game.controls.disableControlAction(2, 141, true);
+            mp.game.controls.disableControlAction(2, 143, true);
+            mp.game.controls.disableControlAction(2, 263, true);
+        }
+    }
+    catch (e) {
+        
     }
 });
 
@@ -3191,7 +3223,7 @@ mp.events.add('render', async () => {
     }
 });*/
 
-mp.events.add('render', () => {
+/*mp.events.add('render', () => {
     try {
         let veh = mp.players.local.vehicle;
         if (veh && veh.getClass() != 8) {
@@ -3214,7 +3246,7 @@ mp.events.add('render', () => {
     catch (e) {
         
     }
-});
+});*/
 
 /*mp.events.add('render', () => {
     if (user.isLogin() && user.getCache('stats_shooting') < 70)
@@ -3319,7 +3351,10 @@ mp.events.add('client:taskFollow', (nplayer) => {
             if (user.isCuff() || user.isTie())
                 user.playAnimation("mp_arresting", "idle", 49);
 
-            mp.game.invoke(methods.TASK_GO_TO_ENTITY, mp.players.local.handle, nplayer.handle, -1, 10.0, 1073741824.0, 0);
+            //TASK_FOLLOW_TO_OFFSET_OF_ENTITY(Ped ped, Entity entity, float offsetX, float offsetY, float offsetZ, float movementSpeed, int timeout, float stoppingRange, BOOL persistFollowing);
+
+            //mp.game.invoke(methods.TASK_GO_TO_ENTITY, mp.players.local.handle, nplayer.handle, -1, 10.0, 1073741824.0, 0);
+            mp.game.invoke(methods.TASK_FOLLOW_TO_OFFSET_OF_ENTITY, mp.players.local.handle, nplayer.handle, 1, 1, 1, 10.0, -1, 0.5, 1);
             mp.game.invoke(methods.SET_PED_KEEP_TASK, mp.players.local.handle, true);
 
             mp.game.ui.notifications.show("~r~Человек повел вас за собой");
@@ -3366,7 +3401,8 @@ mp.events.add('client:taskFollow', (nplayer) => {
                     mp.players.local.taskLeaveAnyVehicle(1, 1);
                 }*/
                 if (!mp.players.local.vehicle) {
-                    mp.game.invoke(methods.TASK_GO_TO_ENTITY, mp.players.local.handle, taskFollowed.handle, -1, 10.0, 1073741824.0, 0);
+                    //mp.game.invoke(methods.TASK_GO_TO_ENTITY, mp.players.local.handle, taskFollowed.handle, -1, 10.0, 1073741824.0, 0);
+                    mp.game.invoke(methods.TASK_FOLLOW_TO_OFFSET_OF_ENTITY, mp.players.local.handle, nplayer.handle, 1, 1, 1, 10.0, -1, 0.5, 1);
                     mp.game.invoke(methods.SET_PED_KEEP_TASK, mp.players.local.handle, true);
                 }
             }
@@ -3374,6 +3410,7 @@ mp.events.add('client:taskFollow', (nplayer) => {
                 methods.debug(e);
             }
         }, 3000);
+
     } else {
         try {
             mp.players.local.clearTasks();

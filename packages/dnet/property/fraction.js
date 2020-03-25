@@ -536,27 +536,24 @@ fraction.createCargoWar = function() {
 
                 veh.setMod(5, methods.getRandomInt(0, 2));
 
-                let rare = 0;
-                if (methods.getRandomInt(0, 100) < 40)
-                    rare = 1;
-                if (methods.getRandomInt(0, 100) < 15)
-                    rare = 2;
-                let boxRandom = stocks.boxList.filter((item) => { return item[7] === rare; });
-                veh.setVariable('box1', boxRandom[methods.getRandomInt(0, boxRandom.length)][2]);
+                let boxes = [];
 
-                rare = 0;
-                if (methods.getRandomInt(0, 100) < 40)
-                    rare = 1;
-                if (methods.getRandomInt(0, 100) < 15)
-                    rare = 2;
-                boxRandom = stocks.boxList.filter((item) => { return item[7] === rare; });
-                veh.setVariable('box2', boxRandom[methods.getRandomInt(0, boxRandom.length)][2]);
+                for (let i = 0; i < 4; i++) {
+                    let rare = 0;
+                    if (methods.getRandomInt(0, 100) < 40)
+                        rare = 1;
+                    if (methods.getRandomInt(0, 100) < 10)
+                        rare = 2;
+                    let boxRandom = stocks.boxList.filter((item) => { return item[7] === rare; });
+                    boxes.push(boxRandom[methods.getRandomInt(0, boxRandom.length)][2]);
+                }
 
-                rare = 0;
                 if (methods.getRandomInt(0, 100) <= 50)
-                    veh.setVariable('box3', methods.getRandomInt(3, 5));
+                    boxes.push(methods.getRandomInt(3, 5));
                 else
-                    veh.setVariable('box3', methods.getRandomInt(38, 40));
+                    boxes.push(methods.getRandomInt(38, 40));
+
+                veh.setVariable('box', JSON.stringify(boxes));
 
                 veh.setVariable('cargoId', i);
             }
@@ -634,7 +631,7 @@ fraction.timerCargoWar = function() {
             if (!vehicles.exists(v))
                 return;
 
-            if (v.getVariable('box1') !== null && v.getVariable('box1') !== undefined) {
+            if (v.getVariable('box') !== null && v.getVariable('box') !== undefined) {
                 //...
             }
             else {
@@ -1099,6 +1096,7 @@ fraction.destroy = function (player, id) {
 
     fraction.set(id, "name", 'Слот свободен');
     fraction.set(id, "money", 0);
+    fraction.set(id, "owner_id", 0);
     fraction.set(id, "is_bank", false);
     fraction.set(id, "is_shop", false);
     fraction.set(id, "is_war", false);
@@ -1112,6 +1110,8 @@ fraction.destroy = function (player, id) {
     user.set(player, 'is_leader2', false);
 
     fraction.updateOwnerInfo(id, 0);
+
+    fraction.save(id);
 
     mysql.executeQuery("UPDATE users SET fraction_id2 = '" + 0 + "' where fraction_id2 = '" + id + "'");
 

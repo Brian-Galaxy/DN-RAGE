@@ -2724,10 +2724,10 @@ phone.consoleCallback = async function(command) {
                         return;
                     }
 
-                    if (await user.hasById('grabLamar')) {
+                    /*if (await user.hasById('grabLamar')) {
                         mp.game.ui.notifications.showy('~r~Вы не можете сейчас сбыть транспорт, т.к. вы выполняете заказ Ламара');
                         return;
-                    }
+                    }*/
 
                     if (user.getCache('job') === 10) {
                         mp.game.ui.notifications.showy('~r~Инкассаторам запрещено это действие');

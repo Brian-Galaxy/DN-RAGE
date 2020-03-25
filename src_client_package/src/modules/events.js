@@ -995,6 +995,16 @@ mp.events.add('client:menuList:showPrintShopMenu', () => {
     }
 });
 
+mp.events.add('client:menuList:showMazeBankLobbyMenu', () => {
+    try {
+        methods.debug('Event: client:menuList:showMazeBankLobbyMenu');
+        menuList.showMazeBankLobbyMenu();
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
 mp.events.add('client:menuList:showGunShopMenu', (shopId, price) => {
     try {
         methods.debug('Event: client:menuList:showGunShopMenu');

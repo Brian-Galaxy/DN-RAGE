@@ -41,6 +41,7 @@ let timer = require('./managers/timer');
 let ems = require('./managers/ems');
 let tax = require('./managers/tax');
 let discord = require('./managers/discord');
+let racer = require('./managers/racer');
 
 let coffer = require('./coffer');
 let inventory = require('./inventory');
@@ -68,6 +69,7 @@ function init() {
         tax.loadAll();
 
         weather.loadAll();
+        racer.loadAll();
 
         carWash.loadAll();
         rent.loadAll();

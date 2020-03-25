@@ -462,7 +462,7 @@ user.spawnByName = function(player, spawn = 'Стандарт') {
             let userId = user.getId(player);
             player.spawn(new mp.Vector3(user.getById(userId, 'pos_x'), user.getById(userId, 'pos_y'), user.getById(userId, 'pos_z')));
             player.heading = user.getById(userId, 'rot');
-            player.dimension = user.getById(userId, 'dimension');
+            //player.dimension = user.getById(userId, 'dimension');
         }
         else if (spawn == 'Дом') {
             let hData = houses.getHouseData(user.get(player, 'house_id'));

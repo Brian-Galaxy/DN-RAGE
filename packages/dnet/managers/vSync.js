@@ -37,6 +37,8 @@ vSync.VehicleSyncData = {
     TaxiLight: false,
     SpotLight: false,
     Anchor: false,
+    Freeze: false,
+    Collision: true,
 };
 
 let streamDist = 250;
@@ -266,6 +268,32 @@ vSync.getAnchorState = function(v) {
     return vSync.getVehicleSyncData(v).Anchor;
 };
 
+vSync.setFreezeState = function(v, status) {
+    if (!vehicles.exists(v))
+        return;
+    let data = vSync.getVehicleSyncData(v);
+    data.Freeze = status;
+    vSync.updateVehicleSyncData(v, data);
+    mp.players.callInRange(v.position, streamDist, "vSync:setFreezeState", [v.id, status]);
+};
+
+vSync.getFreezeState = function(v) {
+    return vSync.getVehicleSyncData(v).Freeze;
+};
+
+vSync.setCollisionState = function(v, status) {
+    if (!vehicles.exists(v))
+        return;
+    let data = vSync.getVehicleSyncData(v);
+    data.Collision = status;
+    vSync.updateVehicleSyncData(v, data);
+    mp.players.callInRange(v.position, streamDist, "vSync:setCollisionState", [v.id, status]);
+};
+
+vSync.getCollisionState = function(v) {
+    return vSync.getVehicleSyncData(v).Collision;
+};
+
 vSync.setSpotLightState = function(v, status) {
     if (!vehicles.exists(v))
         return;
@@ -341,6 +369,18 @@ mp.events.add('s:vSync:setAnchorState', (player, vId, status) => {
     let veh = mp.vehicles.at(vId);
     if (mp.players.exists(player) && vehicles.exists(veh))
         vSync.setAnchorState(veh, status);
+});
+
+mp.events.add('s:vSync:setFreezeState', (player, vId, status) => {
+    let veh = mp.vehicles.at(vId);
+    if (mp.players.exists(player) && vehicles.exists(veh))
+        vSync.setFreezeState(veh, status);
+});
+
+mp.events.add('s:vSync:setCollisionState', (player, vId, status) => {
+    let veh = mp.vehicles.at(vId);
+    if (mp.players.exists(player) && vehicles.exists(veh))
+        vSync.setCollisionState(veh, status);
 });
 
 mp.events.add('s:vSync:setSpotLightState', (player, vId, status) => {

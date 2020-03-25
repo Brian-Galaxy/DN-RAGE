@@ -479,52 +479,54 @@ stocks.cargoUnload = function(player, bid = 1) {
         return;
 
     bid = methods.parseInt(bid);
+    
+    try {
+        let boxes = JSON.parse(veh.getVariable('box'));
 
-    if (veh.getVariable('box' + bid) === undefined || veh.getVariable('box' + bid) === null) {
-        player.notify('~r~Транспорт пуст');
-        return;
-    }
-
-    if (player.dimension >= enums.offsets.stock && player.dimension < enums.offsets.stock + 100000) {
-        let id = player.dimension - enums.offsets.stock;
-        let upgradeStr = stocks.get(id, 'upgrade');
-        let upgrade = upgradeStr.split('_');
-
-        let countLoad = 0;
-
-        upgrade.forEach((item, i) => {
-            if (item == -1 && countLoad == 0) {
-                upgrade[i] = veh.getVariable('box' + bid);
-                veh.setVariable('box' + bid, undefined);
-                countLoad++;
-            }
-        });
-
-        let upgradeNew = '';
-        upgrade.forEach(item => {
-            upgradeNew += item + '_';
-        });
-        upgradeNew = upgradeNew.substring(0, upgradeNew.length - 1);
-
-        if (
-            (veh.getVariable('box1') === undefined || veh.getVariable('box1') === null) &&
-            (veh.getVariable('box2') === undefined || veh.getVariable('box2') === null) &&
-            (veh.getVariable('box3') === undefined || veh.getVariable('box3') === null)
-        ) {
-            veh.setVariable('cargoId', undefined);
+        if (boxes[bid] === -1 || boxes[bid] === undefined || boxes[bid] === null) {
+            player.notify('~r~Транспорт пуст');
+            return;
         }
 
-        stocks.set(id, 'upgrade', upgradeNew);
-        mysql.executeQuery(`UPDATE stocks SET upgrade = '${upgradeNew}' where id = '${id}'`);
-        stocks.loadUpgrades(upgradeNew, id, stocks.get(id, 'interior'));
+        if (player.dimension >= enums.offsets.stock && player.dimension < enums.offsets.stock + 100000) {
+            let id = player.dimension - enums.offsets.stock;
+            let upgradeStr = stocks.get(id, 'upgrade');
+            let upgrade = upgradeStr.split('_');
 
-        if (countLoad > 0)
-            player.notify(`~g~Вы разгрузили ящик`);
-        else
-            player.notify(`~r~На складе нет места`);
+            let countLoad = 0;
+
+            upgrade.forEach((item, i) => {
+                if (item == -1 && countLoad == 0) {
+                    upgrade[i] = boxes[bid];
+
+                    boxes[bid] = -1;
+
+                    veh.setVariable('box', JSON.stringify(boxes));
+                    countLoad++;
+                }
+            });
+
+            let upgradeNew = '';
+            upgrade.forEach(item => {
+                upgradeNew += item + '_';
+            });
+            upgradeNew = upgradeNew.substring(0, upgradeNew.length - 1);
+
+            stocks.set(id, 'upgrade', upgradeNew);
+            mysql.executeQuery(`UPDATE stocks SET upgrade = '${upgradeNew}' where id = '${id}'`);
+            stocks.loadUpgrades(upgradeNew, id, stocks.get(id, 'interior'));
+
+            if (countLoad > 0)
+                player.notify(`~g~Вы разгрузили ящик`);
+            else
+                player.notify(`~r~На складе нет места`);
+        }
+        else {
+            player.notify('~r~Необходимо находиться на складе');
+        }
     }
-    else {
-        player.notify('~r~Необходимо находиться на складе');
+    catch (e) {
+        
     }
 };
 

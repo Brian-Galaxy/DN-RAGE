@@ -34,6 +34,7 @@ pickups.BotRoleAll = new mp.Vector3(-1374.5379638671875, -503.15283203125, 32.15
 pickups.QuestBotGang = new mp.Vector3(-219.3651123046875, -1367.4730224609375, 30.25823402404785);
 
 pickups.PrintShopPos = new mp.Vector3(-1234.7786865234375, -1477.7230224609375, 3.324739933013916);
+pickups.MazeBankLobby = new mp.Vector3(-265.6993713378906, -2017.7603759765625, 29.14558219909668);
 
 pickups.BankMazeLiftOfficePos = new mp.Vector3(-77.77799, -829.6542, 242.3859);
 pickups.BankMazeLiftStreetPos = new mp.Vector3(-66.66476, -802.0474, 43.22729);
@@ -340,6 +341,8 @@ pickups.checkPressE = function(player) {
 
     if (methods.distanceToPos(pickups.PrintShopPos, playerPos) < distanceCheck)
         player.call('client:menuList:showPrintShopMenu');
+    if (methods.distanceToPos(pickups.MazeBankLobby, playerPos) < distanceCheck)
+        player.call('client:menuList:showMazeBankLobbyMenu');
 
     if (methods.distanceToPos(pickups.BotRole0, playerPos) < distanceCheck)
         player.call('client:menuList:showBotQuestRole0Menu');
@@ -513,6 +516,8 @@ pickups.createAll = function() {
     methods.createCpVector(pickups.BotRole0, 'Нажмите ~g~E~s~ чтобы взаимодействовать с NPC', 1, -1, pickups.Yellow);
     methods.createCpVector(pickups.BotRoleAll, 'Нажмите ~g~E~s~ чтобы взаимодействовать с NPC', 1, -1, pickups.Yellow);
     methods.createCpVector(pickups.QuestBotGang, 'Нажмите ~g~E~s~ чтобы взаимодействовать с NPC', 1, -1, pickups.Yellow);
+
+    methods.createCpVector(pickups.MazeBankLobby, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
 
     methods.createCpVector(pickups.LifeInvaderShopPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
 

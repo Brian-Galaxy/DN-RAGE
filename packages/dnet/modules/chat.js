@@ -1,7 +1,10 @@
 let user = require('../user');
 let methods = require('./methods');
+
 let fraction = require('../property/fraction');
+
 let gangWar = require('../managers/gangWar');
+let racer = require('../managers/racer');
 
 let chat = exports;
 
@@ -170,6 +173,16 @@ mp.events.add('playerCommand', (player, command) => {
             if (!user.isAdmin(player))
                 return;
             fraction.createCargoWar();
+        }
+        else if (command.toLowerCase() === "racerc") {
+            if (!user.isAdmin(player))
+                return;
+            racer.createRace();
+        }
+        else if (command.toLowerCase() === "racers") {
+            if (!user.isAdmin(player))
+                return;
+            racer.startRace();
         }
         else if (command.slice(0, 6) === "seval ") {
             if (!user.isLogin(player))

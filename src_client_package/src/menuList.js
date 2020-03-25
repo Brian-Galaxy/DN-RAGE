@@ -11,6 +11,8 @@ import quest from "./manager/quest";
 import jobPoint from "./manager/jobPoint";
 import vSync from "./manager/vSync";
 
+import fraction from "./property/fraction";
+
 import user from './user';
 import admin from './admin';
 import enums from './enums';
@@ -696,12 +698,36 @@ menuList.showStockOutMenu = async function(h) {
         if (item == enterHouseItem) {
             try {
                 if (user.getCache('id') != h.get('user_id')) {
+
+                    if (Container.Data.HasLocally(mp.players.local.remoteId, "isPassTimeout"))
+                    {
+                        mp.game.ui.notifications.show("~r~Таймаут 10 сек");
+                        return;
+                    }
+
                     mp.game.ui.notifications.show('~r~Введите пинкод');
+                    let pass = methods.parseInt(await UIMenu.Menu.GetUserInput("Пароль", "", 5));
+
+                    Container.Data.SetLocally(mp.players.local.remoteId, "isPassTimeout", true);
+
+                    if (pass == h.get('pin')) {
+                        stocks.enter(h.get('id'));
+                        Container.Data.ResetLocally(mp.players.local.remoteId, "isPassTimeout");
+                    }
+                    else {
+
+                        mp.game.ui.notifications.show('~r~Вы ввели не правильный пинкод');
+                        setTimeout(function () {
+                            Container.Data.ResetLocally(mp.players.local.remoteId, "isPassTimeout");
+                        }, 10000);
+                    }
+
+                    /*mp.game.ui.notifications.show('~r~Введите пинкод');
                     let pass = methods.parseInt(await UIMenu.Menu.GetUserInput("Введите пинкод", "", 5));
                     if (pass == h.get('pin'))
                         stocks.enter(h.get('id'));
                     else
-                        mp.game.ui.notifications.show('~r~Вы ввели не правильный пинкод');
+                        mp.game.ui.notifications.show('~r~Вы ввели не правильный пинкод');*/
                 }
                 else
                     stocks.enter(h.get('id'));
@@ -739,12 +765,29 @@ menuList.showStockOutVMenu = async function(h) {
         if (item == enterHouseItem) {
             try {
                 if (user.getCache('id') != h.get('user_id')) {
+
+                    if (Container.Data.HasLocally(mp.players.local.remoteId, "isPassTimeout"))
+                    {
+                        mp.game.ui.notifications.show("~r~Таймаут 10 сек");
+                        return;
+                    }
+
                     mp.game.ui.notifications.show('~r~Введите пинкод');
                     let pass = methods.parseInt(await UIMenu.Menu.GetUserInput("Пароль", "", 5));
-                    if (pass == h.get('pin'))
+
+                    Container.Data.SetLocally(mp.players.local.remoteId, "isPassTimeout", true);
+
+                    if (pass == h.get('pin')) {
                         stocks.enterv(h.get('id'));
-                    else
+                        Container.Data.ResetLocally(mp.players.local.remoteId, "isPassTimeout");
+                    }
+                    else {
+
                         mp.game.ui.notifications.show('~r~Вы ввели не правильный пинкод');
+                        setTimeout(function () {
+                            Container.Data.ResetLocally(mp.players.local.remoteId, "isPassTimeout");
+                        }, 10000);
+                    }
                 }
                 else
                     stocks.enterv(h.get('id'));
@@ -3282,14 +3325,11 @@ menuList.showVehicleMenu = function(data) {
 
     if (user.getCache('fraction_id2') > 0) {
         if (veh.getVariable('cargoId') !== null && veh.getVariable('cargoId') !== undefined) {
-
-            if (veh.getVariable('box1') !== null && veh.getVariable('box1') !== undefined)
-                UIMenu.Menu.AddMenuItem(`~y~${stocks.boxList[veh.getVariable('box1')][0]}`, 'Нажмите ~g~Enter~s~ чтобы разгрузить').cargoUnload1 = true;
-            if (veh.getVariable('box2') !== null && veh.getVariable('box2') !== undefined)
-                UIMenu.Menu.AddMenuItem(`~y~${stocks.boxList[veh.getVariable('box2')][0]}`, 'Нажмите ~g~Enter~s~ чтобы разгрузить').cargoUnload2 = true;
-            if (veh.getVariable('box3') !== null && veh.getVariable('box3') !== undefined)
-                UIMenu.Menu.AddMenuItem(`~y~${stocks.boxList[veh.getVariable('box3')][0]}`, 'Нажмите ~g~Enter~s~ чтобы разгрузить').cargoUnload3 = true;
-
+            let boxes = JSON.parse(veh.getVariable('box'));
+            boxes.forEach((item, i) => {
+                if (item >= 0)
+                    UIMenu.Menu.AddMenuItem(`~y~${stocks.boxList[item][0]}`, 'Нажмите ~g~Enter~s~ чтобы разгрузить').cargoUnloadId = i;
+            });
             UIMenu.Menu.AddMenuItem(`~y~Разгрузить весь груз`, 'Доступно только внутри склада').cargoUnloadAll = true;
         }
     }
@@ -3529,27 +3569,30 @@ menuList.showVehicleMenu = function(data) {
 
             mp.events.callRemote(item.eventName);
         }
-        else if (item.cargoUnload1) {
+        else if (item.cargoUnloadId >= 0) {
             UIMenu.Menu.HideMenu();
-            mp.events.callRemote('server:vehicle:cargoUnload', 1);
-        }
-        else if (item.cargoUnload2) {
-            UIMenu.Menu.HideMenu();
-            mp.events.callRemote('server:vehicle:cargoUnload', 2);
-        }
-        else if (item.cargoUnload3) {
-            UIMenu.Menu.HideMenu();
-            mp.events.callRemote('server:vehicle:cargoUnload', 3);
+            mp.events.callRemote('server:vehicle:cargoUnload', item.cargoUnloadId);
         }
         else if (item.cargoUnloadAll) {
             UIMenu.Menu.HideMenu();
-            mp.events.callRemote('server:vehicle:cargoUnload', 1);
-            setTimeout(function () {
-                mp.events.callRemote('server:vehicle:cargoUnload', 2);
-            }, 300);
-            setTimeout(function () {
-                mp.events.callRemote('server:vehicle:cargoUnload', 3);
-            }, 600);
+            try {
+                if (user.getCache('fraction_id2') > 0) {
+                    if (veh.getVariable('cargoId') !== null && veh.getVariable('cargoId') !== undefined) {
+                        let boxes = JSON.parse(veh.getVariable('box'));
+                        boxes.forEach((item, i) => {
+                            if (item >= 0)
+                            {
+                                setTimeout(function () {
+                                    mp.events.callRemote('server:vehicle:cargoUnload', i);
+                                }, methods.getRandomInt(0, 2000));
+                            }
+                        });
+                    }
+                }
+            }
+            catch (e) {
+                
+            }
         }
         else if (item.emsUnloadAll) {
             UIMenu.Menu.HideMenu();
@@ -6216,6 +6259,24 @@ menuList.showPrintShopMenu = function()
         UIMenu.Menu.HideMenu();
         if(item.doName == 'show')
             mp.events.callRemote('server:print:buy', item.tatto1, item.tatto2, item.price);
+    });
+};
+
+menuList.showMazeBankLobbyMenu = function()
+{
+    UIMenu.Menu.HideMenu();
+
+    let menu = UIMenu.Menu.Create("Arena", "~b~MazeBank Arena");
+
+    let menuListItem = UIMenu.Menu.AddMenuItem('~g~Приять участие $1,000');
+    menuListItem.doName = 'start';
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = "closeButton";
+
+    menu.ItemSelect.on((item, index) => {
+        UIMenu.Menu.HideMenu();
+        if(item.doName == 'start')
+            mp.events.callRemote('server:race:toLobby');
     });
 };
 
@@ -9169,7 +9230,7 @@ menuList.showAdminMenu = function() {
             else if (user.getCache('admin_level') === 4)
                 user.setVariable('adminRole', 'Admin');
             else if (user.getCache('admin_level') === 5)
-                user.setVariable('adminRole', 'GA');
+                user.setVariable('adminRole', 'Main Admin');
             else if (user.getCache('admin_level') === 6)
                 user.setVariable('adminRole', 'Developer');
         }
@@ -9906,6 +9967,10 @@ menuList.showAdminClothMenu = function() {
     menu.ItemSelect.on(item => {
         UIMenu.Menu.HideMenu();
     });
+};
+
+menuList.hide = function() {
+    UIMenu.Menu.HideMenu();
 };
 
 mp.events.add("vSync:playerExitVehicle", (vehId) => {

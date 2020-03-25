@@ -64,6 +64,16 @@ vehicles.setAnchorState = function(state) {
         mp.events.callRemote('s:vSync:setAnchorState', mp.players.local.vehicle.remoteId, state);
 };
 
+vehicles.setFreezeState = function(state) {
+    if (mp.players.local.vehicle)
+        mp.events.callRemote('s:vSync:setFreezeState', mp.players.local.vehicle.remoteId, state);
+};
+
+vehicles.setCollisionState = function(state) {
+    if (mp.players.local.vehicle)
+        mp.events.callRemote('s:vSync:setCollisionState', mp.players.local.vehicle.remoteId, state);
+};
+
 vehicles.setSpotLightState = function(state) {
     if (mp.players.local.vehicle)
         mp.events.callRemote('s:vSync:setSpotLightState', mp.players.local.vehicle.remoteId, state);

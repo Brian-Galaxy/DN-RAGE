@@ -72,6 +72,13 @@ timer.min60Timer = function() {
         }
     }*/
 
+    try {
+        mysql.executeQuery(`INSERT INTO stats_online (online) VALUES ('${mp.players.length}'])`)
+    }
+    catch (e) {
+
+    }
+
     mp.players.forEach(function (p) {
         if (user.isLogin(p)) {
             try {
@@ -125,7 +132,7 @@ timer.sec10Timer = function() {
             if (p.ping > 500)
                 user.kickAntiCheat(p, `Ping: ${p.ping}ms`);
 
-            if (methods.distanceToPos(new mp.Vector3(-1507.416259765625, -3005.405029296875, -82.55733489990234), p.position) < 10)
+            if (p.dimension > 0)
                 return;
 
             user.setById(userId, 'pos_x', p.position.x);
@@ -133,7 +140,7 @@ timer.sec10Timer = function() {
             user.setById(userId, 'pos_z', p.position.z);
             user.setById(userId, 'rot', p.heading);
             user.setById(userId, 'hp', p.health);
-            user.setById(userId, 'dimension', p.dimension);
+            //user.setById(userId, 'dimension', p.dimension);
             user.setById(userId, 'timestamp', methods.getTimeStamp());
         }
     });

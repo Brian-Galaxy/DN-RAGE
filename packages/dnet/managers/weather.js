@@ -6,6 +6,7 @@ let fraction = require('../property/fraction');
 let user = require('../user');
 
 let gangWar = require('../managers/gangWar');
+let racer = require('../managers/racer');
 
 let ems = require('./ems');
 
@@ -24,6 +25,7 @@ let _windSpeed = 0;
 let _windDir = 0;
 
 let isCreateEms = false;
+let isSaveStats = false;
 
 weather.loadAll = function() {
     methods.debug('weather.loadAll');
@@ -188,6 +190,15 @@ weather.timeSyncTimer = function() {
         if (_hour === 6 && _minute === 0)
             fraction.stopCargoWar();
 
+        if (_hour === 8 && _minute === 0)
+            racer.createRace();
+        if ((_hour === 9 || _hour === 10 || _hour === 11) && _minute === 0)
+            racer.notifyRace();
+        if (_hour === 11 && _minute === 30)
+            racer.notifyRace();
+        if (_hour === 12 && _minute === 0)
+            racer.startRace();
+
         let dateTime = new Date();
 
         mp.players.forEach(function (p) {
@@ -299,7 +310,24 @@ weather.timeSyncTimer = function() {
             mp.players.forEach(function (p) {
                 if (mp.players.exists(p))
                     user.kick(p, 'Рестарт');
-            })
+            });
+
+            if (!isSaveStats) {
+                isSaveStats = true;
+
+                try {
+                    mysql.executeQuery(`SELECT COUNT(*) as countr FROM users WHERE reg_timestamp >= ${methods.getTimeStamp() - 86400}`, function (rows) {
+                        let countr = rows[0]['countr'];
+                        mysql.executeQuery(`SELECT COUNT(*) as countl FROM users WHERE login_date >= ${methods.getTimeStamp() - 86400}`, function (rows2) {
+                            let countl = rows2[0]['countl'];
+                            mysql.executeQuery(`INSERT INTO stats_users (reg, auth) VALUES ('${countr}','${countl}'])`)
+                        })
+                    })
+                }
+                catch (e) {
+
+                }
+            }
         }
     } catch (e) {
         methods.debug(e);

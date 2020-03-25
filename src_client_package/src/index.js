@@ -8,6 +8,7 @@ import './manager/shoot';
 import './manager/heliCam';
 import './manager/attachWeapons';
 import './manager/cameraRotator';
+import './manager/racer';
 
 import './betternotifs';
 //import './voice';

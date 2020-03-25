@@ -40,6 +40,7 @@ let gangWar = require('../managers/gangWar');
 let ems = require('../managers/ems');
 let tax = require('../managers/tax');
 let discord = require('../managers/discord');
+let racer = require('../managers/racer');
 
 mp.events.__add__ = mp.events.add;
 
@@ -224,6 +225,30 @@ mp.events.addRemoteCounted('server:user:loginAccount', (player, login, password)
 mp.events.addRemoteCounted('server:user:loginUser', (player, login, spawnName) => {
     try {
         user.loginUser(player, login, spawnName);
+    } catch (e) {
+        console.log(e);
+    }
+});
+
+mp.events.addRemoteCounted('server:race:finish', (player) => {
+    try {
+        racer.finish(player);
+    } catch (e) {
+        console.log(e);
+    }
+});
+
+mp.events.addRemoteCounted('server:race:exit', (player) => {
+    try {
+        racer.exit(player);
+    } catch (e) {
+        console.log(e);
+    }
+});
+
+mp.events.addRemoteCounted('server:race:toLobby', (player) => {
+    try {
+        racer.enterLobby(player);
     } catch (e) {
         console.log(e);
     }
@@ -2253,25 +2278,10 @@ mp.events.addRemoteCounted('server:vehicles:spawnLamarCar', (player, x, y, z, he
                 veh.setVariable('owner_id', user.getId(player));
                 veh.setVariable('lamar', true);
                 if (methods.getRandomInt(0, 100) < 5) {
-                    let rare = 0;
-
                     try {
                         let rare = 0;
                         let boxRandom = stocks.boxList.filter((item) => { return item[7] === rare; });
-                        veh.setVariable('box1', boxRandom[methods.getRandomInt(0, boxRandom.length)][2]);
-
-                        /*rare = 0;
-                        if (methods.getRandomInt(0, 100) < 40)
-                            rare = 1;
-                        boxRandom = stocks.boxList.filter((item) => { return item[7] === rare; });
-                        veh.setVariable('box2', boxRandom[methods.getRandomInt(0, boxRandom.length)][2]);
-
-                        rare = 0;
-                        if (methods.getRandomInt(0, 100) <= 50)
-                            veh.setVariable('box3', methods.getRandomInt(3, 5));
-                        else
-                            veh.setVariable('box3', methods.getRandomInt(38, 40));*/
-
+                        veh.setVariable('box', JSON.stringify([boxRandom[methods.getRandomInt(0, boxRandom.length)][2]]));
                         veh.setVariable('cargoId', 999);
                     }
                     catch (e) {
@@ -2648,7 +2658,7 @@ mp.events.addRemoteCounted('server:phone:inviteFraction2', (player, id) => {
 mp.events.addRemoteCounted('server:phone:destroyFraction', (player) => {
     if (!user.isLogin(player))
         return;
-    fraction.destroy(player, user.get(player, 'fraction_id'));
+    fraction.destroy(player, user.get(player, 'fraction_id2'));
 });
 
 mp.events.addRemoteCounted('server:phone:editFractionName', (player, text) => {

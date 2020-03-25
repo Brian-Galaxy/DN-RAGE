@@ -1578,7 +1578,7 @@ phone.userVehicleAppMenu = function(player) {
                     );
                     subItems.push(item);
 
-                    if (row['neon_r'] > 0) {
+                    if (row['is_neon'] > 0) {
                         item = phone.getMenuItemButton(
                             'Вкл / Выкл неон',
                             'Удаленное управление транспортом',
@@ -1791,11 +1791,11 @@ phone.selectChat = function(player, phoneNumber, chat) {
     });
 };
 
-phone.deleteChat = function(player, phoneNumber,) {
+phone.deleteChat = function(player, phoneNumber) {
     if (!user.isLogin(player))
         return;
 
-    let myPhone = user.get(player, 'phone');
+    let myPhone = methods.parseInt(user.get(player, 'phone'));
     mysql.executeQuery(`DELETE FROM phone_sms WHERE (number_from = '${myPhone}' AND number_to = '${phoneNumber}') OR (number_to = '${myPhone}' AND number_from = '${phoneNumber}')`);
     player.notify('~b~Чат был удалён');
 };

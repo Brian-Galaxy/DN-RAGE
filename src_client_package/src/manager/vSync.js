@@ -22,14 +22,14 @@ vSync.radio = function(entity) {
                             if (vehSyncData.RadioState != currentSound)
                                 mp.events.callRemote('s:vSync:radioChange', entity.remoteId, currentSound);
                         } else {
-                            if (vehSyncData.RadioState == 255)
+                            /*if (vehSyncData.RadioState == 255)
                                 mp.game.audio.setRadioToStationName("OFF");
                             else {
                                 if (vehSyncData.RadioState != currentSound) {
                                     mp.game.invoke(methods.SET_FRONTEND_RADIO_ACTIVE, true);
                                     mp.game.invoke(methods.SET_RADIO_TO_STATION_INDEX, vehSyncData.RadioState);
                                 }
-                            }
+                            }*/
                         }
                     }
                 }
@@ -82,6 +82,12 @@ vSync.updateValues = function(entity) {
                 entity.setDirtLevel(actualData.Dirt);
                 entity.setIndicatorLights(1, actualData.IndicatorLeftToggle);
                 entity.setIndicatorLights(0, actualData.IndicatorRightToggle);
+
+                if (actualData.RadioState == 255) mp.game.audio.setRadioToStationName("OFF");
+                else {
+                    mp.game.invoke(methods.SET_FRONTEND_RADIO_ACTIVE, true);
+                    mp.game.invoke(methods.SET_RADIO_TO_STATION_INDEX, actualData.RadioState);
+                }
 
                 entity.setInteriorlight(actualData.InteriorLight);
                 entity.setTaxiLights(actualData.TaxiLight);
@@ -234,7 +240,7 @@ mp.events.add("vSync:setVehicleWindowStatus", (vehId, windw, state) => {
     }
 });
 
-/*mp.events.add("vSync:radioChange", (vehId, state) => {
+mp.events.add("vSync:radioChange", (vehId, state) => {
     try {
         let veh = mp.vehicles.atRemoteId(vehId);
         if (veh !== undefined && mp.vehicles.exists(veh)) {
@@ -248,7 +254,7 @@ mp.events.add("vSync:setVehicleWindowStatus", (vehId, windw, state) => {
     catch (e) {
         methods.debug(e);
     }
-});*/
+});
 
 /*mp.events.add("vSync:setVehicleWheelMod", (vehId, state, isShowLabel) => {
     try {

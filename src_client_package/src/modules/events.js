@@ -1445,7 +1445,7 @@ mp.events.add('client:user:updateDating', (datingList) => {
 });
 
 mp.events.add('client:hosp:free', () => {
-    hosp.freePlayer()
+    hosp.freePlayer();
 });
 
 mp.events.add('client:menuList:showMenu', (title, desc, menuData) => {
@@ -1794,7 +1794,7 @@ mp.events.add('client:inventory:usePlayer', function(id, itemId) {
 });
 
 mp.events.add('client:inventory:moveTo', function(id, itemId, ownerId, ownerType) {
-    if (ownerType == 0) {
+    if (ownerType === 0) {
         if (mp.players.local.dimension > 0) {
             mp.game.ui.notifications.show("~r~Нельзя выкидывать предметы в интерьере");
             return;
@@ -1807,6 +1807,10 @@ mp.events.add('client:inventory:moveTo', function(id, itemId, ownerId, ownerType
         }
 
         inventory.dropItem(id, itemId, mp.players.local.position, mp.players.local.getRotation(0));
+    }
+    else if (ownerType === inventory.types.BagSmall && itemId === 263 || ownerType === inventory.types.Bag && itemId === 264) {
+        mp.game.ui.notifications.show("~r~Нельзя ложить сумку в сумку, образуется черная дыра и нам всем придёт ТАРКОВ");
+        return;
     }
     else
         inventory.updateOwnerId(id, methods.parseInt(ownerId), ownerType);
@@ -2454,7 +2458,8 @@ mp.events.add('render', () => {
                 const __playerPosition__ = player.position;
                 const distance = methods.distanceToPos(__localPlayerPosition__, __playerPosition__);
 
-                if (distance <= loadIndicatorDistTemp && player.dimension == localPlayer.dimension) {
+                if (distance <= loadIndicatorDistTemp && player.dimension === localPlayer.dimension && player.iSeeYou) {
+
                     /*const isConnected = voice.getVoiceInfo(player, 'stateConnection') === 'connected';
                     const isEnable = voice.getVoiceInfo(player, 'enabled');*/
                     let indicatorColor = '~m~•';
@@ -2821,6 +2826,8 @@ mp.events.add("playerCommand", async (command) => {
         }
     }
     else if (command.toLowerCase().slice(0, 2) === "h ") {
+        if (!user.isLogin() || !user.isAdmin(5))
+            return;
         let args = command.split(' ');
         if (args.length != 4) {
             chat.sendLocal(`Не верно введено кол-во параметров `);
@@ -2830,6 +2837,8 @@ mp.events.add("playerCommand", async (command) => {
         mp.events.callRemote('server:houses:insert', args[1], args[2], args[3], ui.getCurrentZone(), ui.getCurrentStreet())
     }
     else if (command.toLowerCase().slice(0, 2) === "s ") {
+        if (!user.isLogin() || !user.isAdmin(5))
+            return;
         let args = command.split(' ');
         if (args.length != 4) {
             chat.sendLocal(`Не верно введено кол-во параметров `);
@@ -2839,6 +2848,8 @@ mp.events.add("playerCommand", async (command) => {
         mp.events.callRemote('server:stocks:insert', args[1], args[2], args[3], ui.getCurrentZone(), ui.getCurrentStreet())
     }
     else if (command.toLowerCase().slice(0, 3) === "sc ") {
+        if (!user.isLogin() || !user.isAdmin(5))
+            return;
         let args = command.split(' ');
         if (args.length != 2) {
             chat.sendLocal(`Не верно введено кол-во параметров `);
@@ -2848,6 +2859,8 @@ mp.events.add("playerCommand", async (command) => {
         mp.events.callRemote('server:stocks:insert2', args[1])
     }
     else if (command.toLowerCase().slice(0, 4) === "hc1 ") {
+        if (!user.isLogin() || !user.isAdmin(5))
+            return;
         let args = command.split(' ');
         if (args.length != 3) {
             chat.sendLocal(`Не верно введено кол-во параметров `);
@@ -2857,6 +2870,8 @@ mp.events.add("playerCommand", async (command) => {
         mp.events.callRemote('server:houses:insert1', args[1], args[2])
     }
     else if (command.toLowerCase().slice(0, 4) === "hc2 ") {
+        if (!user.isLogin() || !user.isAdmin(5))
+            return;
         let args = command.split(' ');
         if (args.length != 3) {
             chat.sendLocal(`Не верно введено кол-во параметров `);
@@ -2866,6 +2881,8 @@ mp.events.add("playerCommand", async (command) => {
         mp.events.callRemote('server:houses:insert2', args[1], args[2])
     }
     else if (command.toLowerCase().slice(0, 4) === "hc3 ") {
+        if (!user.isLogin() || !user.isAdmin(5))
+            return;
         let args = command.split(' ');
         if (args.length != 3) {
             chat.sendLocal(`Не верно введено кол-во параметров `);
@@ -2875,6 +2892,8 @@ mp.events.add("playerCommand", async (command) => {
         mp.events.callRemote('server:houses:insert3', args[1], args[2])
     }
     else if (command.toLowerCase().slice(0, 2) === "c ") {
+        if (!user.isLogin() || !user.isAdmin(5))
+            return;
         let args = command.split(' ');
         if (args.length != 5) {
             chat.sendLocal(`Не верно введено кол-во параметров `);
@@ -2884,6 +2903,8 @@ mp.events.add("playerCommand", async (command) => {
         mp.events.callRemote('server:condo:insert', args[1], args[2], args[3], args[4], ui.getCurrentZone(), ui.getCurrentStreet())
     }
     else if (command.toLowerCase().slice(0, 3) === "cb ") {
+        if (!user.isLogin() || !user.isAdmin(5))
+            return;
         let args = command.split(' ');
         if (args.length != 2) {
             chat.sendLocal(`Не верно введено кол-во параметров `);

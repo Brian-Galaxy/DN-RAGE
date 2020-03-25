@@ -202,10 +202,15 @@ lamar.finish = function() {
     try {
         user.removeRep(20);
         isProcess = false;
-        jobPoint.delete();
         vehicles.destroy();
         user.addCryptoMoney(price / 1000, 'Помощь Ламару');
         mp.game.ui.notifications.show(`~b~Вы довезли груз и заработали ${methods.cryptoFormat(price / 1000)}`);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+    try {
+        jobPoint.delete();
     }
     catch (e) {
         methods.debug(e);
@@ -215,8 +220,13 @@ lamar.finish = function() {
 mp.events.add("playerEnterCheckpoint", (checkpoint) => {
     if (!mp.players.local.vehicle)
         return;
-    if (!mp.players.local.vehicle.getVariable('lamar'))
-        return;
+    try {
+        if (!mp.players.local.vehicle.getVariable('lamar'))
+            return;
+    }
+    catch (e) {
+
+    }
     if (_checkpointId == -1 || _checkpointId == undefined)
         return;
     if (checkpoint.id == _checkpointId)

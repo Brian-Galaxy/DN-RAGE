@@ -134,6 +134,7 @@ vehicles.loadUserVehicleByRow = (row) => {
     vehicles.set(row['id'], 'color3', row['color3']);
     vehicles.set(row['id'], 'colorwheel', row['colorwheel']);
     vehicles.set(row['id'], 'livery', row['livery']);
+    vehicles.set(row['id'], 'is_neon', row['is_neon']);
     vehicles.set(row['id'], 'neon_r', row['neon_r']);
     vehicles.set(row['id'], 'neon_g', row['neon_g']);
     vehicles.set(row['id'], 'neon_b', row['neon_b']);
@@ -616,6 +617,7 @@ vehicles.save = (id) => {
         sql = sql + ", color3 = '" + methods.parseInt(vehicles.get(id, "color3")) + "'";
         sql = sql + ", colorwheel = '" + methods.parseInt(vehicles.get(id, "colorwheel")) + "'";
         sql = sql + ", is_special = '" + methods.parseInt(vehicles.get(id, "is_special")) + "'";
+        sql = sql + ", is_neon = '" + methods.parseInt(vehicles.get(id, "is_neon")) + "'";
         sql = sql + ", neon_r = '" + methods.parseInt(vehicles.get(id, "neon_r")) + "'";
         sql = sql + ", neon_g = '" + methods.parseInt(vehicles.get(id, "neon_g")) + "'";
         sql = sql + ", neon_b = '" + methods.parseInt(vehicles.get(id, "neon_b")) + "'";
@@ -912,7 +914,7 @@ vehicles.updateOwnerInfo = function (id, userId, userName) {
 
     if (userId == 0) {
         vehicles.park(id, 0, 0, 0, 0);
-        mysql.executeQuery("UPDATE cars SET user_name = '" + userName + "', user_id = '" + userId + "', number = '" + vehicles.generateNumber() + "', tax_money = '0', s_mp = '0', neon_r = '0', neon_g = '0', neon_b = '0', upgrade = '{\"18\":-1}' where id = '" + id + "'");
+        mysql.executeQuery("UPDATE cars SET user_name = '" + userName + "', user_id = '" + userId + "', number = '" + vehicles.generateNumber() + "', tax_money = '0', s_mp = '0', is_neon = '0', neon_r = '0', neon_g = '0', neon_b = '0', upgrade = '{\"18\":-1}' where id = '" + id + "'");
     }
 };
 
@@ -992,7 +994,7 @@ vehicles.setTunning = (veh) => {
                 veh.pearlescentColor = car.get('color3');
                 veh.wheelColor = car.get('colorwheel');
 
-                if (car.get('neon_r') > 0)
+                if (car.get('is_neon'))
                     veh.setNeonColor(car.get('neon_r'), car.get('neon_g'), car.get('neon_b'));
 
                 veh.livery = car.get('livery');

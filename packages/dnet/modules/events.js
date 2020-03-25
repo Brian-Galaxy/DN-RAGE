@@ -1035,11 +1035,12 @@ mp.events.addRemoteCounted('server:user:unCuffById', (player, targetId) => {
             return;
         }
         //user.stopAnimation(target);
-        user.playAnimation(player, "mp_arresting", "a_uncuff", 8);
-        user.playAnimation(target, 'mp_arresting', 'b_uncuff', 8);
 
-        if (user.isCuff(target))
+        if (user.isCuff(target)) {
+            user.playAnimation(player, "mp_arresting", "a_uncuff", 8);
+            user.playAnimation(target, 'mp_arresting', 'b_uncuff', 8);
             inventory.addItem(40, 1, inventory.types.Player, user.getId(player), 1, 0, "{}", 10);
+        }
 
         setTimeout(function () {
             user.unCuff(target);
@@ -1077,11 +1078,12 @@ mp.events.addRemoteCounted('server:user:unTieById', (player, targetId) => {
             player.notify('~r~Вы слишком далеко');
             return;
         }
-        user.stopAnimation(target);
-        user.playAnimation(player, "mp_arresting", "a_uncuff", 8);
 
-        if (user.isTie(target))
+        if (user.isTie(target)) {
+            user.stopAnimation(target);
+            user.playAnimation(player, "mp_arresting", "a_uncuff", 8);
             inventory.addItem(0, 1, inventory.types.Player, user.getId(player), 1, 0, "{}", 10);
+        }
 
         user.unTie(target);
     }
@@ -4982,6 +4984,23 @@ mp.events.addRemoteCounted('server:vehicle:ejectById', (player, id) => {
         return;
     player.vehicle.getOccupants().forEach(p => {
         if (user.isLogin(p) && p.id === id) {
+            p.notify('~r~Вас выкинули из транспорта');
+            p.removeFromVehicle();
+        }
+    })
+});
+
+mp.events.addRemoteCounted('server:vehicle:ejectByIdOut', (player, id) => {
+    if (!user.isLogin(player))
+        return;
+    player.vehicle.getOccupants().forEach(p => {
+        if (user.isLogin(p) && p.id === id) {
+
+            if (p.health > 1 && !user.isCuff(p) && !user.isTie(p)) {
+                player.notify('~r~Игрок должен быть в наручниках, связан или мертв');
+                return;
+            }
+
             p.notify('~r~Вас выкинули из транспорта');
             p.removeFromVehicle();
         }

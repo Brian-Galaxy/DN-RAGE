@@ -92,6 +92,9 @@ ui.fixInterface = function() {
     uiBrowser = mp.browsers.new("package://cef/index.html");
     ui.callCef('authMain','{"type": "hide"}');
     ui.hideHud();
+    mp.gui.cursor.show(false, false);
+    methods.blockKeys(false);
+
     setTimeout(function () {
         ui.showHud();
     }, 1000);
@@ -242,6 +245,11 @@ ui.updateValues = function() {
             let dateLabel = '';
             if (mp.players.local.getVariable('enableAdmin'))
                 dateLabel = 'ADMIN MOD | ';
+
+            if (user.getCache('med_time') > 1)
+                dateLabel = `Время лечения ${user.getCache('med_time')} сек.`;
+            if (user.getCache('jail_time') > 1)
+                dateLabel = `Время в тюрьме ${user.getCache('jail_time')} сек.`;
 
             data = {
                 type: 'updateValues',

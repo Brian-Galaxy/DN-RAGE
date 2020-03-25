@@ -48,15 +48,20 @@ fuel.hashList = [
     -462817101,
 ];
 
+let isFill = false;
+
 fuel.fillVehTimer = async function(count) {
     try {
+        isFill = true;
         await methods.sleep(500);
+
 
         let time = 0;
         let allCount = methods.parseInt(count);
         let veh = mp.players.local.vehicle;
         if (!veh) {
             mp.game.ui.notifications.show(`~r~Вы должны находиться в транспорте`);
+            isFill = false;
             return;
         }
 
@@ -70,11 +75,13 @@ fuel.fillVehTimer = async function(count) {
             let veh = mp.players.local.vehicle;
             if (!veh) {
                 mp.game.ui.notifications.show(`~r~Вы должны находиться в транспорте`);
+                isFill = false;
                 return;
             }
 
             if (vInfo.fuel_full <= vehicles.getFuel(veh)) {
                 mp.game.ui.notifications.show(`~g~Заправка транспорта была завершена`);
+                isFill = false;
                 return;
             }
 
@@ -84,6 +91,7 @@ fuel.fillVehTimer = async function(count) {
             await methods.sleep(wait);
         }
         mp.game.ui.notifications.show(`~g~Заправка транспорта была завершена`);
+        isFill = false;
     }
     catch (e) {
         methods.debug(e);
@@ -96,6 +104,10 @@ fuel.fillVeh = function(price, shopId, type, idx) {
         let veh = mp.players.local.vehicle;
         if (!veh) {
             mp.game.ui.notifications.show(`~r~Вы должны находиться в транспорте`);
+            return;
+        }
+        if (isFill) {
+            mp.game.ui.notifications.show(`~r~Вы уже заправляете транспорт`);
             return;
         }
 

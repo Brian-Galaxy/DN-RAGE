@@ -205,8 +205,13 @@ jobPoint.delete = function() {
     catch (e) {
         console.log(e);
         mp.blips.forEach(function (blip) {
-            if (mp.blips.exists(blip) && blip.getSprite() == 1)
-                blip.destroy();
+            try {
+                if (mp.blips.exists(blip) && blip.getSprite() == 1)
+                    blip.destroy();
+            }
+            catch (e) {
+                
+            }
         });
     }
 
@@ -243,16 +248,26 @@ jobPoint.delete = function() {
             _checkpoint.destroy();
         else {
             mp.checkpoints.forEach(function (cp) {
-                if (methods.distanceToPos(_lastPos, cp.position) < 3)
-                    cp.destroy();
+                try {
+                    if (methods.distanceToPos(_lastPos, cp.position) < 3)
+                        cp.destroy();
+                }
+                catch (e) {
+                    
+                }
             });
         }
     }
     catch (e) {
         console.log(e);
         mp.checkpoints.forEach(function (cp) {
-            if (methods.distanceToPos(_lastPos, cp.position) < 3)
-                cp.destroy();
+            try {
+                if (methods.distanceToPos(_lastPos, cp.position) < 3)
+                    cp.destroy();
+            }
+            catch (e) {
+                
+            }
         });
     }
 

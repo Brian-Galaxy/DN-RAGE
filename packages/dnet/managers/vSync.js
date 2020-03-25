@@ -492,6 +492,7 @@ mp.events.add('s:vSync:radioChange', (player, vId, state) => {
         let data = vSync.getVehicleSyncData(veh);
         data.RadioState = state;
         vSync.updateVehicleSyncData(veh, data);
+        mp.players.callInRange(veh.position, streamDist, "vSync:radioChange", [veh.id, state]);
     }
 });
 

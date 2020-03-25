@@ -2650,6 +2650,10 @@ phone.consoleCallback = async function(command) {
                         phone.addConsoleCommand('Error: You have not e-coin');
                         return;
                     }
+                    if (user.getCache('bank_card') < 1) {
+                        phone.addConsoleCommand('Error: You have not bank card');
+                        return;
+                    }
                     phone.addConsoleCommand('Transfer success');
                     user.removeCryptoMoney(sum, 'Обмен E-Coin');
                     user.addBankMoney(sum * 500, 'Обмен E-Coin');
@@ -2998,6 +3002,12 @@ phone.callBackModalInput = async function(paramsJson, text) {
                 mp.game.ui.notifications.show("~r~Таймаут 5 минуты");
                 return;
             }
+
+            if (text.trim() === '') {
+                mp.game.ui.notifications.show("~r~Текст объявления пуст");
+                return;
+            }
+
             mp.events.callRemote('server:invader:sendAdTemp', text);
 
             Container.Data.SetLocally(mp.players.local.remoteId, "isAdTimeout", true);

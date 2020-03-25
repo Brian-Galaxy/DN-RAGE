@@ -301,12 +301,30 @@ let prevWpPos = new mp.Vector3(0, 0, 0);
 timer.secTimer = function() {
 
     try {
+        methods.getStreamPlayerList().forEach((player, i) => {
+            if (/*player === localPlayer || */!mp.players.exists(player) || i > 50)
+                return false;
+            try {
+                player.iSeeYou = mp.players.local.hasClearLosTo(player.handle, 17);
+                if (mp.players.local.getVariable('enableAdmin'))
+                    player.iSeeYou = true;
+            }
+            catch (e) {
+
+            }
+        });
+    }
+    catch (e) {
+
+    }
+
+    try {
         if (!user.isLogin() && !mp.gui.cursor.visible)
             mp.gui.cursor.show(true, true);
 
         phone.timer();
 
-        if (methods.distanceToPos(afkLastPos, mp.players.local.position) < 1) {
+        /*if (methods.distanceToPos(afkLastPos, mp.players.local.position) < 1) {
             afkTimer++;
             if (afkTimer > 600 && mp.players.local.getVariable('isAfk') !== true)
                 user.setVariable('isAfk', true);
@@ -316,7 +334,7 @@ timer.secTimer = function() {
                 user.setVariable('isAfk', false);
             afkTimer = 0;
         }
-        afkLastPos = mp.players.local.position;
+        afkLastPos = mp.players.local.position;*/
 
         if (user.isOpenPhone()) {
             if (mp.players.local.isPlayingAnim("cellphone@in_car@ds@first_person", "cellphone_horizontal_base", 3) === 0 &&

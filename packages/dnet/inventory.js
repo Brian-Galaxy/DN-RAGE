@@ -585,6 +585,13 @@ inventory.deleteDropItem = function(id) {
     } catch(e) {
         methods.debug(e);
     }
+    
+    try {
+        props.delete(id.toString());
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 };
 
 inventory.deleteItem = function(id) {

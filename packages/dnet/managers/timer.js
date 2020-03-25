@@ -132,6 +132,24 @@ timer.sec10Timer = function() {
             if (p.ping > 500)
                 user.kickAntiCheat(p, `Ping: ${p.ping}ms`);
 
+            if (user.has(p, 'afkLastPos')) {
+                if (methods.distanceToPos(user.get(p, 'afkLastPos'), p.position) < 1) {
+
+                    let timer = methods.parseInt(user.get(p, 'afkTimer'));
+                    user.set(p, 'afkTimer', timer + 10);
+
+                    if (timer > 600 && p.getVariable('isAfk') !== true)
+                        p.setVariable('isAfk', true);
+                }
+                else {
+                    if (p.getVariable('isAfk') === true)
+                        p.setVariable('isAfk', false);
+                    user.set(p, 'afkTimer', 0);
+                }
+            }
+
+            user.set(p, 'afkLastPos', p.position);
+
             if (p.dimension > 0)
                 return;
 

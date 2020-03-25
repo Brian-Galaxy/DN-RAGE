@@ -154,8 +154,8 @@ rent.buy = function(player, hash, price, shopId) {
             countOwnerCars++;
     });
 
-    if (countOwnerCars > 10) {
-        player.notify('~r~Нельзя арендовывать более 10 ТС');
+    if (countOwnerCars > 5) {
+        player.notify('~r~Нельзя арендовывать более 5 ТС');
         return;
     }
 
@@ -163,8 +163,7 @@ rent.buy = function(player, hash, price, shopId) {
     business.addMoney(shopId, price, 'Аренда ' + vInfo.display_name);
     business.removeMoneyTax(shopId, price / business.getPrice(shopId));
 
-    player.notify('~g~Вы арендовали транспорт');
-    player.notify('~g~Для того чтобы его закрыть, нажмите ~s~L');
+    player.notify('~g~Вы арендовали транспорт\nДля того чтобы его закрыть, нажмите ~s~L~g~\nЧтобы завершить аренду нажмите ~s~M -> Транспорт -> Завершить аренду');
 
     vehicles.spawnCarCb(veh => {
 

@@ -1310,7 +1310,7 @@ menuList.showBusinessMenu = async function(data) {
     nalog = nalog + nalogOffset;
 
     UIMenu.Menu.AddMenuItem("~b~Название: ~s~").SetRightLabel(data.get('name'));
-    UIMenu.Menu.AddMenuItem("~b~Налог на прибыль: ~s~", 'Только гос. налога').SetRightLabel(`${nalog}%`);
+    UIMenu.Menu.AddMenuItem("~b~Налог на прибыль: ~s~", 'Гос. налог + налог банка').SetRightLabel(`${nalog}%`);
 
     if (user.getCache('id') == data.get('user_id')) {
 
@@ -2160,11 +2160,114 @@ menuList.showMeriaSellHvbMenu = function(cofferData) {
             UIMenu.Menu.AddMenuItem("~y~Продать яхту игроку").eventNameSell = 'server:yacht:sellToPlayer';
         }
 
-        //TODO в идеале вывести марку и номер транспорта, не только слот.
-        for (let i = 1; i < 11; i++) {
+        UIMenu.Menu.AddMenuItem(`~b~Продать транспорт`, 'Открыть список ТС').doName = 'veh';
+
+        let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
+        menu.ItemSelect.on(async (item, index) => {
+            UIMenu.Menu.HideMenu();
+            if (item == closeItem)
+                return;
+
+            if (item.eventName) {
+                menuList.showMeriaAcceptSellMenu(item.eventName);
+            }
+            if (item.doName = 'veh') {
+                menuList.showMeriaSellVehHvbMenu(cofferData);
+            }
+
+            if (item.eventNameSellV) {
+                if (Container.Data.HasLocally(mp.players.local.remoteId, "isSellTimeout"))
+                {
+                    mp.game.ui.notifications.show("~r~Таймаут 1 минута");
+                    return;
+                }
+
+                let playerId = methods.parseInt(await UIMenu.Menu.GetUserInput("ID Игрока", "", 5));
+                if (playerId < 0) {
+                    mp.game.ui.notifications.show("~r~ID Игркоа не может быть меньше нуля");
+                    return;
+                }
+                let sum = methods.parseFloat(await UIMenu.Menu.GetUserInput("Сумма", "", 12));
+                if (sum < 0) {
+                    mp.game.ui.notifications.show("~r~Сумма не может быть меньше нуля");
+                    return;
+                }
+
+                mp.events.callRemote('server:car:sellToPlayer', playerId, sum, item.eventNameSellV);
+
+                Container.Data.SetLocally(mp.players.local.remoteId, "isSellTimeout", true);
+
+                setTimeout(function () {
+                    Container.Data.ResetLocally(mp.players.local.remoteId, "isSellTimeout");
+                }, 1000 * 60);
+            }
+            if (item.eventNameSell) {
+
+                if (Container.Data.HasLocally(mp.players.local.remoteId, "isSellTimeout"))
+                {
+                    mp.game.ui.notifications.show("~r~Таймаут 1 минута");
+                    return;
+                }
+
+                let playerId = methods.parseInt(await UIMenu.Menu.GetUserInput("ID Игрока", "", 5));
+                if (playerId < 0) {
+                    mp.game.ui.notifications.show("~r~ID Игркоа не может быть меньше нуля");
+                    return;
+                }
+                let sum = methods.parseFloat(await UIMenu.Menu.GetUserInput("Сумма", "", 12));
+                if (sum < 0) {
+                    mp.game.ui.notifications.show("~r~Сумма не может быть меньше нуля");
+                    return;
+                }
+
+                mp.events.callRemote(item.eventNameSell, playerId, sum);
+
+                Container.Data.SetLocally(mp.players.local.remoteId, "isSellTimeout", true);
+
+                setTimeout(function () {
+                    Container.Data.ResetLocally(mp.players.local.remoteId, "isSellTimeout");
+                }, 1000 * 60);
+            }
+        });
+    });
+};
+
+menuList.showMeriaSellVehHvbMenu = async function(cofferData) {
+    if (methods.isBlackout()) {
+        mp.game.ui.notifications.show(`~r~В городе отсутствует свет`);
+        return;
+    }
+
+    let vehList = [];
+
+    for (let i = 1; i < 11; i++) {
+        try {
             if (user.getCache(`car_id${i}`) > 0) {
-                UIMenu.Menu.AddMenuItem(`Продать ТС #${i}`, "Продать транспорт государству.\nНалог: ~g~" + (cofferData.get('cofferTaxIntermediate') + 20) + "%").eventName = `server:car${i}:sell`;
-                UIMenu.Menu.AddMenuItem(`~y~Продать ТС #${i} игроку`).eventNameSellV = i;
+                let vehData = await vehicles.getData(user.getCache(`car_id${i}`));
+                vehList.push(vehData);
+            }
+            else {
+                vehList.push(null);
+            }
+        }
+        catch (e) {
+
+        }
+    }
+
+    user.updateCache().then(async function () {
+        let menu = UIMenu.Menu.Create(`City Hall`, `~b~Текущая налоговая ставка: ~s~${cofferData.get('cofferTaxIntermediate')}%`);
+
+        for (let i = 1; i < 11; i++) {
+            try {
+                if (user.getCache(`car_id${i}`) > 0) {
+                    let vehData = vehList[i];
+                    UIMenu.Menu.AddMenuItem(`Продать ТС ${vehData.get('name')} (${vehData.get('number')})`, "Продать транспорт государству.\nНалог: ~g~" + (cofferData.get('cofferTaxIntermediate') + 20) + "%").eventName = `server:car${i}:sell`;
+                    UIMenu.Menu.AddMenuItem(`~y~Продать ТС ${vehData.get('name')} (${vehData.get('number')}) игроку`).eventNameSellV = i;
+                }
+            }
+            catch (e) {
+
             }
         }
 
@@ -3046,6 +3149,7 @@ menuList.showVehicleDoInvMenu = function(vehId) {
     let menu = UIMenu.Menu.Create(`Транспорт`, `~b~Взаимодействие с транспортом`);
 
     UIMenu.Menu.AddMenuItem("Открыть багажник").doName = 'openInv';
+    UIMenu.Menu.AddMenuItem("Выкинуть человека").doName = 'eject';
     UIMenu.Menu.AddMenuItem("Закрыть багажник").doName = 'close';
     UIMenu.Menu.AddMenuItem("~r~Закрыть");
 
@@ -3058,6 +3162,11 @@ menuList.showVehicleDoInvMenu = function(vehId) {
                 return;
             }
 
+            if (mp.players.local.vehicle) {
+                mp.game.ui.notifications.show("~r~Это действие не доступно");
+                return;
+            }
+
             if (methods.distanceToPos(vehicle.position, mp.players.local.position) > 5) {
                 mp.game.ui.notifications.show("~r~Вы слишком далеко");
                 return;
@@ -3065,6 +3174,24 @@ menuList.showVehicleDoInvMenu = function(vehId) {
 
             inventory.getItemList(inventory.types.Vehicle, mp.game.joaat(vehicle.getNumberPlateText().trim()));
             vehicles.setTrunkStateById(vehicle.remoteId, true);
+        }
+        if (item.doName == 'eject') {
+
+            if (methods.distanceToPos(vehicle.position, mp.players.local.position) > 5) {
+                mp.game.ui.notifications.show("~r~Вы слишком далеко");
+                return;
+            }
+
+            let id = methods.parseInt(await UIMenu.Menu.GetUserInput("ID Игрока", "", 3));
+            if (id < 0) {
+                mp.game.ui.notifications.show('~r~ID не может быть меньше 0');
+                return;
+            }
+            if (methods.parseInt(id) === mp.players.local.remoteId) {
+                mp.game.ui.notifications.show('~r~Дядь, себя нельзя никак выкинуть из ТС');
+                return;
+            }
+            mp.events.callRemote('server:vehicle:ejectByIdOut', methods.parseInt(id));
         }
         else if (item.doName == 'close') {
             vehicles.setTrunkStateById(vehicle.remoteId, false);
@@ -3397,7 +3524,11 @@ menuList.showVehicleMenu = function(data) {
         UIMenu.Menu.AddMenuItem("~y~Ограбить транспорт").doName = 'gr6:grab';
     }
 
-    if (data.get('neon_r') > 0) {
+    if (veh.getVariable('rentOwner') == user.getCache('id')) {
+        UIMenu.Menu.AddMenuItem("~y~Закончить аренду").doName = 'stopRent';
+    }
+
+    if (data.get('is_neon')) {
         UIMenu.Menu.AddMenuItem("~g~Вкл~s~ / ~r~выкл~s~ неон").eventName = 'server:vehicle:neonStatus';
         UIMenu.Menu.AddMenuItem("~b~Цвет неона").eventName = 'server:vehicle:setNeonColor';
     }
@@ -3437,8 +3568,11 @@ menuList.showVehicleMenu = function(data) {
         else if (item.doName == 'gr6:grab')
             gr6.grab();
         else if (item.doName == 'gr6:getHelp') {
-            dispatcher.send(`Код 0`, `${user.getCache('rp_name')} - инкассация требует поддержки`);
+            dispatcher.send(`Код 0`, `${user.getCache('name')} - инкассация требует поддержки`);
             mp.game.ui.notifications.show('~b~Вызов был отправлен');
+        }
+        else if (item.doName == 'stopRent') {
+            vehicles.destroy();
         }
         else if (item.doName == 'tree:find')
             tree.start();
@@ -7863,6 +7997,20 @@ menuList.showAnimationListMenu = function(subtitle, array) {
     menu.ItemSelect.on((item, index) => {
         if (item == closeItem) {
             UIMenu.Menu.HideMenu();
+            return;
+        }
+
+        if (mp.players.local.isInAir() ||
+            mp.players.local.isReloading() ||
+            mp.players.local.isRagdoll() ||
+            mp.players.local.isFalling() ||
+            mp.players.local.isShooting() ||
+            //remotePlayer.isSprinting() ||
+            mp.players.local.isGettingUp() ||
+            mp.players.local.vehicle ||
+            mp.players.local.getHealth() <= 0
+        ) {
+            mp.game.ui.notifications.show(`~b~Данное действие сейчас не доступно`);
             return;
         }
 

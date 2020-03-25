@@ -21,6 +21,8 @@ voiceRage.setConfig = function(key, value) {
 };
 
 voiceRage.enableMic = function() {
+    if (user.isDead())
+        return;
     mp.voiceChat.muted = false;
     mp.events.callRemote('voice.toggleMicrophone', true);
     //user.setVariable('voiceMic', mp.voiceChat.muted);

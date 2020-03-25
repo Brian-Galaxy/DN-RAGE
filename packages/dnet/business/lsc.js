@@ -3,6 +3,7 @@ let mysql = require('../modules/mysql');
 let Container = require('../modules/data');
 
 let user = require('../user');
+let inventory = require('../inventory');
 
 let vSync = require('../managers/vSync');
 
@@ -154,7 +155,7 @@ lsc.buyNeon = function(player, price, shopId) {
         player.notify('~r~Это должен быть ваш транспорт');
         return;
     }
-    if (vehicles.get(veh.getVariable('container'), 'neon_r') > 0) {
+    if (vehicles.get(veh.getVariable('container'), 'is_neon')) {
         player.notify('~r~На транспорте уже установлен неон');
         return;
     }
@@ -319,7 +320,7 @@ lsc.buyNumber = function(player, shopId, newNumber) {
                         business.removeMoneyTax(shopId, price / 2);
                     }
 
-                    mysql.executeQuery(`UPDATE items SET owner_id = '${mp.joaat(newNumber)}' where owner_id = '${mp.joaat(veh.numberPlate)}' and (owner_type = '2' or owner_type = '3' or owner_type = '4')`);
+                    mysql.executeQuery(`UPDATE items SET owner_id = '${mp.joaat(newNumber.trim())}' where owner_id = '${mp.joaat(veh.numberPlate.trim())}' and owner_type = '${inventory.types.Vehicle}'`);
 
                     vehicles.set(veh.getVariable('container'), 'number', newNumber);
                     veh.numberPlate = newNumber;

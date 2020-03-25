@@ -691,7 +691,6 @@ weapons.getGunSlotId = function(name) {
         case 'weapon_pistol_mk2':
         case 'weapon_combatpistol':
         case 'weapon_appistol':
-        case 'weapon_stungun':
         case 'weapon_pistol50':
         case 'weapon_snspistol':
         case 'weapon_snspistol_mk2':
@@ -706,6 +705,7 @@ weapons.getGunSlotId = function(name) {
         case 'weapon_ceramicpistol':
         case 'weapon_navyrevolver':
             return 4;
+        case 'weapon_stungun':
         case 'weapon_dagger':
         case 'weapon_bat':
         case 'weapon_bottle':

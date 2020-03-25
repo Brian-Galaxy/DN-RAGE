@@ -59,7 +59,7 @@ npc.loadAll = function() {
 // Digital Den - Миррор-Парк - Бульвар Миррор-Парк
     npc.create(mp.game.joaat("a_m_y_hipster_01"), new mp.Vector3(1132.687, -474.5676, 66.7187), 345.9362, false, "WORLD_HUMAN_STAND_IMPATIENT");
 // Family Pharmacy - Мишн-Роу - Фантастик-плейс
-    npc.create(mp.game.joaat("a_f_m_business_02"), new mp.Vector3(317.9639, -1078.319, 30.47855), 359.3141, false, "WORLD_HUMAN_STAND_IMPATIENT");
+    npc.create(mp.game.joaat("a_f_m_business_02"), new mp.Vector3(317.9639, -1078.319, 29.47855), 359.3141, false, "WORLD_HUMAN_STAND_IMPATIENT");
 // Dollars Pills - Альта - Альта-стрит
     npc.create(mp.game.joaat("a_f_y_business_04"), new mp.Vector3(92.31831, -231.1054, 54.66363), 327.2379, false, "WORLD_HUMAN_STAND_IMPATIENT");
 // D.P. Pharmacy - Текстайл-Сити - Строберри-авеню

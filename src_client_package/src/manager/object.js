@@ -14,6 +14,17 @@ object.load = function () {
     object.create(-164877493, new mp.Vector3(1690.1, 4927.81, 41.23172), new mp.Vector3(0, 0, -125), false, false);
     object.create(-164877493, new mp.Vector3(1684.59, 4931.65, 41.23172), new mp.Vector3(0, 0, -125), false, false);
 
+    // Удаленные объекты в гараже Arcadius
+    object.delete(682074297, -159.213, -577.0652, 31.4243);
+    object.delete(765541575, -157.2606, -578.0063, 31.4192);
+    object.delete(31071109, -156.353, -577.0887, 31.4192);
+    object.delete(765541575, -154.8471, -578.4473, 31.4192);
+    object.delete(-2096130282, -154.4395, -577.1686, 32.38988);
+    object.delete(1506454359, -155.0695, -577.3192, 32.63888);
+    object.delete(-246563715, -158.1, -577.4991, 32.38954);
+    object.delete(648185618, -153.6201, -577.7612, 31.42653);
+    object.delete(-1784486639, -153.2719, -578.2529, 31.5959);
+
     // Стройка на DownTown (Cеверное здание)
     object.create(667319138, new mp.Vector3(-152.5572, -973.0461, 268.1352), new mp.Vector3(0, 0, 70.00006), false, false);
     object.create(667319138, new mp.Vector3(-143.19, -946.334, 263.1339), new mp.Vector3(1.017777E-13, -5.008956E-06, 160), false, false);
@@ -814,6 +825,14 @@ object.load = function () {
     object.create(1681727376, new mp.Vector3(-1837.992, -607.2737, 10.35), new mp.Vector3(1.015221E-05, -0.4498585, 141.1494), false, false);
     object.create(2142033519, new mp.Vector3(246.44, -574.35, 42.31), new mp.Vector3(9.618499E-06, 0.374986, 69.37473), false, false);
 
+    // Столбики EMS PillboxHill
+    object.create(-994492850, new mp.Vector3(299.3083, -579.6682, 42.26086), new mp.Vector3(0, 0, -10.59997), false, false);
+    object.create(-994492850, new mp.Vector3(298.9536, -581.5536, 42.26086), new mp.Vector3(0, 0, -14.49999), false, false);
+    object.create(-994492850, new mp.Vector3(298.4625, -583.3111, 42.26086), new mp.Vector3(0, 0, -14.49999), false, false);
+    object.create(-994492850, new mp.Vector3(297.924, -584.9352, 42.26086), new mp.Vector3(0, 0, -17.19997), false, false);
+    object.create(-994492850, new mp.Vector3(297.269, -586.6929, 42.26086), new mp.Vector3(0, 0, -16.59998), false, false);
+    object.create(-994492850, new mp.Vector3(296.5572, -588.6815, 42.26086), new mp.Vector3(0, 0, -16.59998), false, false);
+
     // Блокировка дверей и ворот снизу больницы Pillbox Hill
     object.create(-982531572, new mp.Vector3(343.4154, -566.52, 30.08493), new mp.Vector3(1.00179E-05, 5.008956E-06, -20.00006), false, false);
     object.create(-982531572, new mp.Vector3(338.9554, -564.91, 30.04101), new mp.Vector3(1.00179E-05, 5.008956E-06, -20.00006), false, false);
@@ -822,6 +841,7 @@ object.load = function () {
     object.create(-982531572, new mp.Vector3(334.4736, -563.27, 30.00469), new mp.Vector3(1.00179E-05, 5.008956E-06, -20.00006), false, false);
     object.create(-1829309699, new mp.Vector3(359.09, -584.8922, 29.38), new mp.Vector3(1.00179E-05, 5.008956E-06, 69.94945), false, false);
     object.create(-1829309699, new mp.Vector3(355.33, -595.4761, 29.38), new mp.Vector3(1.00179E-05, 5.008956E-06, 69.94945), false, false);
+    object.create(1693207013, new mp.Vector3(338.07, -583.8448, 74.40556), new mp.Vector3(1.001791E-05, -5.008956E-06, -110.7243), false, false);
 
     // Добавленные гаражные двери и простые двери к домам
     object.create(781635019, new mp.Vector3(-2169.67, 5194.76, 17.02), new mp.Vector3(1.001791E-05, 5.008957E-06, -167.6991), false, false); // Дверь в доме на острове
@@ -1309,6 +1329,7 @@ object.process = function () {
     object.openDoor(1104171198, -1045.12, -232.004, 39.43794, false); //Задние двери LifeInvader
     object.openDoor(2869895994, -1046.516, -229.3581, 39.43794, false); //Задние двери LifeInvader
     object.openDoor(3954737168, -1042.518, -240.6915, 38.11796, false); //Служебная дверь LifeInvader
+    object.openDoor(2795991823, 2509.743, -266.5509, -38.965, false); // Служебная дверь к лестнице в апартаментах Casino
 
     // Закрытые,Удалённые,Открытые ворота у домов
     object.openDoor(703855057, -25.2784, -1431.061, 30.83955, true); // House id 500

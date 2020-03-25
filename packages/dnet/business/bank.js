@@ -191,26 +191,10 @@ bank.transferMoney = function(player, bankNumber, money) {
         }
     });
 
-    if (!isOnline) {
+    setTimeout(function () {
+        if (!isOnline) {
 
-        mysql.executeQuery(`SELECT * FROM users WHERE bank_card = ${bankNumber}`, function (err, rows, fields) {
-            rows.forEach(function (item) {
-
-                bank.addBusinessBankMoneyByCard(bankNumber, sumForBiz);
-                bank.addBusinessBankMoneyByCard(user.getBankCardPrefix(player), sumForBiz);
-
-                user.sendSmsBankOperation(player, 'Перевод: ~g~' + methods.moneyFormat(sumFinal));
-                user.removeBankMoney(player, money, 'Перевод ' + bankNumber);
-                bank.addBankHistory(0, bankNumber, 'Перевод от ' + user.get(player, 'bank_card'), sumFinal);
-                bank.addBankHistory(0, user.get(player, 'bank_card'), 'Перевод ' + bankNumber, sumFinal);
-
-                mysql.executeQuery("UPDATE users SET money_bank = '" + (item["money_bank"] + sumFinal) + "' where id = '" + item["id"] + "'");
-                isEquip = true;
-            });
-        });
-
-        if (!isEquip) {
-            mysql.executeQuery(`SELECT * FROM items WHERE params LIKE '%"number":${bankNumber}%' OR params LIKE '%"number": ${bankNumber}%'`, function (err, rows, fields) {
+            mysql.executeQuery(`SELECT * FROM users WHERE bank_card = ${bankNumber}`, function (err, rows, fields) {
                 rows.forEach(function (item) {
 
                     bank.addBusinessBankMoneyByCard(bankNumber, sumForBiz);
@@ -221,15 +205,33 @@ bank.transferMoney = function(player, bankNumber, money) {
                     bank.addBankHistory(0, bankNumber, 'Перевод от ' + user.get(player, 'bank_card'), sumFinal);
                     bank.addBankHistory(0, user.get(player, 'bank_card'), 'Перевод ' + bankNumber, sumFinal);
 
-                    mysql.executeQuery("UPDATE items SET count = '" + (item["count"] + sumFinal) + "' where id = '" + item["id"] + "'");
+                    mysql.executeQuery("UPDATE users SET money_bank = '" + (item["money_bank"] + sumFinal) + "' where id = '" + item["id"] + "'");
                     isEquip = true;
                 });
 
-                if (!isOnline && !isEquip)
-                    user.sendSmsBankOperation(player, 'Счёт не был найден', '~r~Ошибка перевода');
+                if (!isEquip) {
+                    mysql.executeQuery(`SELECT * FROM items WHERE params LIKE '%"number":${bankNumber}%' OR params LIKE '%"number": ${bankNumber}%'`, function (err, rows, fields) {
+                        rows.forEach(function (item) {
+
+                            bank.addBusinessBankMoneyByCard(bankNumber, sumForBiz);
+                            bank.addBusinessBankMoneyByCard(user.getBankCardPrefix(player), sumForBiz);
+
+                            user.sendSmsBankOperation(player, 'Перевод: ~g~' + methods.moneyFormat(sumFinal));
+                            user.removeBankMoney(player, money, 'Перевод ' + bankNumber);
+                            bank.addBankHistory(0, bankNumber, 'Перевод от ' + user.get(player, 'bank_card'), sumFinal);
+                            bank.addBankHistory(0, user.get(player, 'bank_card'), 'Перевод ' + bankNumber, sumFinal);
+
+                            mysql.executeQuery("UPDATE items SET count = '" + (item["count"] + sumFinal) + "' where id = '" + item["id"] + "'");
+                            isEquip = true;
+                        });
+
+                        if (!isOnline && !isEquip)
+                            user.sendSmsBankOperation(player, 'Счёт не был найден', '~r~Ошибка перевода');
+                    });
+                }
             });
         }
-    }
+    }, 500);
 
     user.updateClientCache(player);
 };
@@ -279,21 +281,23 @@ bank.transferCryptoMoney = function(player, bankNumber, money) {
         }
     });
 
-    if (!isOnline) {
+    setTimeout(function () {
+        if (!isOnline) {
 
-        mysql.executeQuery(`SELECT * FROM users WHERE crypto_card = ${bankNumber}`, function (err, rows, fields) {
-            rows.forEach(function (item) {
-                player.notify('Перевод: ~g~' + methods.cryptoFormat(money));
-                user.removeCryptoMoney(player, money, 'Перевод ' + bankNumber);
+            mysql.executeQuery(`SELECT * FROM users WHERE crypto_card = ${bankNumber}`, function (err, rows, fields) {
+                rows.forEach(function (item) {
+                    player.notify('Перевод: ~g~' + methods.cryptoFormat(money));
+                    user.removeCryptoMoney(player, money, 'Перевод ' + bankNumber);
 
-                mysql.executeQuery("UPDATE users SET money_crypto = '" + (item["money_crypto"] + money) + "' where id = '" + item["id"] + "'");
-                isEquip = true;
+                    mysql.executeQuery("UPDATE users SET money_crypto = '" + (item["money_crypto"] + money) + "' where id = '" + item["id"] + "'");
+                    isEquip = true;
+                });
             });
-        });
 
-        if (!isEquip)
-            player.notify('~r~Счёт не был найден');
-    }
+            if (!isEquip)
+                player.notify('~r~Счёт не был найден');
+        }
+    }, 500);
     user.updateClientCache(player);
 };
 

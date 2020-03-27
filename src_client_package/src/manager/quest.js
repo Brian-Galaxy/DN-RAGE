@@ -362,35 +362,40 @@ quest.getQuestLinePrize = function(type, lineId) {
 };
 
 mp.events.add("playerEnterCheckpoint", (checkpoint) => {
-    if (_checkpointId == -1 || _checkpointId == undefined)
-        return;
-    if (checkpoint.id == _checkpointId) {
-        if (isBoxTake) {
-            isBoxTake = false;
-            isBoxPut = true;
-            _checkpointId = jobPoint.create(gangPutBoxPos);
+    try {
+        if (_checkpointId == -1 || _checkpointId == undefined)
+            return;
+        if (checkpoint.id == _checkpointId) {
+            if (isBoxTake) {
+                isBoxTake = false;
+                isBoxPut = true;
+                _checkpointId = jobPoint.create(gangPutBoxPos);
 
-            mp.attachmentMngr.addLocal('loader');
-            user.playAnimation("anim@heists@box_carry@", "idle", 49);
-            mp.game.ui.notifications.show(`~b~Отнестие коробку Ламару`);
-        }
-        else if (isBoxPut) {
-            quest.gang();
-        }
-        else if (isLamar) {
-
-            if (mp.players.local.vehicle) {
-                quest.gang();
-                return;
+                mp.attachmentMngr.addLocal('loader');
+                user.playAnimation("anim@heists@box_carry@", "idle", 49);
+                mp.game.ui.notifications.show(`~b~Отнестие коробку Ламару`);
             }
-
-            _currentCheckpointId++;
-            if (_currentCheckpointId >= questLamarShop.length) {
+            else if (isBoxPut) {
                 quest.gang();
-                return;
             }
-            _checkpointId = jobPoint.create(questLamarShop[_currentCheckpointId]);
+            else if (isLamar) {
+
+                if (mp.players.local.vehicle) {
+                    quest.gang();
+                    return;
+                }
+
+                _currentCheckpointId++;
+                if (_currentCheckpointId >= questLamarShop.length) {
+                    quest.gang();
+                    return;
+                }
+                _checkpointId = jobPoint.create(questLamarShop[_currentCheckpointId]);
+            }
         }
+    }
+    catch (e) {
+        
     }
 });
 

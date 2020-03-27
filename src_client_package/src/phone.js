@@ -1,6 +1,7 @@
 import methods from './modules/methods';
 import ui from "./modules/ui";
 import Container from "./modules/data";
+import ctos from "./modules/ctos";
 
 import enums from './enums';
 import user from './user';
@@ -19,7 +20,7 @@ import fraction from "./property/fraction";
 let phone = {};
 
 let hidden = true;
-phone.network = 0;
+phone.network = 5;
 
 phone.show = function() {
     let pType = phone.getType();
@@ -993,17 +994,16 @@ phone.showAppFraction = function() {
                 }
             );
 
-            if (!(user.getCache('rank') >= 2 && user.getCache('rank_type') == 0))
-                titleMenu.umenu.push(
-                    {
-                        title: "Информация о человеке",
-                        modalTitle: 'Card ID или Имя Фамилия',
-                        modalButton: ['Отмена', 'Поиск'],
-                        type: 8,
-                        clickable: true,
-                        params: { name: "getUserInfo" }
-                    }
-                );
+            titleMenu.umenu.push(
+                {
+                    title: "Информация о человеке",
+                    modalTitle: 'Card ID или Имя Фамилия',
+                    modalButton: ['Отмена', 'Поиск'],
+                    type: 8,
+                    clickable: true,
+                    params: { name: "getUserInfo" }
+                }
+            );
         }
         if (user.isEms()) {
             titleMenu.umenu.push(
@@ -2600,6 +2600,32 @@ phone.getMenuMainItem = function(title, items) {
     };
 };
 
+phone.consoleAwait = async function(text, count = 100, delay = 200) {
+    for (let i = 0; i < count; i++) {
+        let network = 6 - phone.network;
+        if (phone.network === 0) {
+            phone.addConsoleCommand('Connection closed');
+            return;
+        }
+        await methods.sleep(methods.getRandomInt(1, delay + network * 100));
+        phone.addConsoleCommand(text + ctos.generateCode(methods.getRandomInt(32, 65)));
+    }
+    return true;
+};
+
+phone.consoleWget = async function(text, delay = 200) {
+    for (let i = 0; i < 100; i++) {
+        let network = 6 - phone.network;
+        if (phone.network === 0) {
+            phone.addConsoleCommand('Connection closed');
+            return;
+        }
+        await methods.sleep(methods.getRandomInt(1, delay + network * 100));
+        phone.addConsoleCommand(`${text} ${ctos.generateLoad(i + 1)} (${i + 1}%)`);
+    }
+    return true;
+};
+
 phone.consoleCallback = async function(command) {
 
     try {
@@ -2607,12 +2633,177 @@ phone.consoleCallback = async function(command) {
         let cmd = args[0];
         args.shift();
 
+        if (phone.network === 0) {
+            phone.addConsoleCommand('No internet connection');
+            return;
+        }
+
         if (cmd === 'help') {
-            phone.addConsoleCommand('GNU bash, version 4.3.48(1)-release (x86_64-pc-linux-gnu)');
+            if (user.getCache('stats_darknet') > 0)
+                phone.addConsoleCommand('GNU bash, version 5.0.0(1)-release (x86_64-pc-linux-gnu)');
+            else
+                phone.addConsoleCommand('GNU bash, version 4.3.48(1)-release (x86_64-pc-linux-gnu)');
             phone.addConsoleCommand(' ');
             phone.addConsoleCommand('help');
             phone.addConsoleCommand('ecorp -h');
+            /*phone.addConsoleCommand('apt-get update');
+            phone.addConsoleCommand('apt-get install [package]');
+            phone.addConsoleCommand('ls');
+            phone.addConsoleCommand('bash [filename] [params]');
+            if (user.getCache('stats_darknet') > 1)
+                phone.addConsoleCommand('python [filename] [params]');*/
         }
+        /*else if (cmd === 'apt-get') {
+            if (args.length === 0 || args[0] === '-h') {
+                phone.addConsoleCommand('Usage: apt-get [options]');
+                phone.addConsoleCommand(' ');
+                phone.addConsoleCommand('apt-get update');
+                phone.addConsoleCommand('apt-get install [package]');
+            }
+            else if (args[0] === 'update') {
+                if (user.getCache('stats_darknet') > 0) {
+                    phone.addConsoleCommand('Reading package lists... Done');
+                    await methods.sleep(1000 + methods.getRandomInt(1, 500));
+                    phone.addConsoleCommand('Building dependency tree');
+                    await methods.sleep(1000 + methods.getRandomInt(1, 500));
+                    phone.addConsoleCommand('Reading state information... Done');
+                    await methods.sleep(1000 + methods.getRandomInt(1, 500));
+                    phone.addConsoleCommand('All packages is updated');
+                    return;
+                }
+                try {
+                    phone.addConsoleCommand('Reading package lists... Done');
+                    await methods.sleep(1000 + methods.getRandomInt(1, 500));
+                    phone.addConsoleCommand('Building dependency tree');
+                    await methods.sleep(1000 + methods.getRandomInt(1, 500));
+                    phone.addConsoleCommand('Reading state information... Done');
+                    await methods.sleep(1000 + methods.getRandomInt(1, 500));
+                    for (let i = 0; i < 300; i++) {
+                        let network = 6 - phone.network;
+                        if (phone.network === 0) {
+                            phone.addConsoleCommand('Connection closed');
+                            return;
+                        }
+                        await methods.sleep(methods.getRandomInt(1, 200 + network * 100));
+                        phone.addConsoleCommand('Download package from https://fsoc.sh/' + ctos.generateCode(methods.getRandomInt(32, 65)));
+                    }
+                    for (let i = 0; i < 300; i++) {
+                        let network = 6 - phone.network;
+                        if (phone.network === 0) {
+                            phone.addConsoleCommand('Connection closed');
+                            return;
+                        }
+                        await methods.sleep(methods.getRandomInt(1, 200 + network * 100));
+                        phone.addConsoleCommand('Download package from https://xss-game.appspot.com/' + ctos.generateCode(methods.getRandomInt(32, 65)));
+                    }
+                    for (let i = 0; i < 300; i++) {
+                        let network = 6 - phone.network;
+                        if (phone.network === 0) {
+                            phone.addConsoleCommand('Connection closed');
+                            return;
+                        }
+                        await methods.sleep(methods.getRandomInt(1, 200 + network * 100));
+                        phone.addConsoleCommand('Download package from https://i239.bxjyb2jvda.net/' + ctos.generateCode(methods.getRandomInt(32, 65)));
+                    }
+                    await methods.sleep(500);
+                    phone.addConsoleCommand('All packages is updated');
+                    user.set('stats_darknet', 1);
+                    user.save()
+                }
+                catch (e) {
+                    methods.debug(e);
+                }
+            }
+            else if (args[0] === 'install') {
+                if (user.getCache('stats_darknet') === 0) {
+                    phone.addConsoleCommand('Please update packages');
+                    return;
+                }
+                if (args.length === 1 || args[1] === '-h') {
+                    phone.addConsoleCommand('Usage: apt-get install [package]');
+                    phone.addConsoleCommand(' ');
+                    phone.addConsoleCommand('All packages are downloaded only for the current session.');
+                    phone.addConsoleCommand('Package list:');
+                    phone.addConsoleCommand('python');
+                    phone.addConsoleCommand('arp-scan');
+                    phone.addConsoleCommand('route');
+                    phone.addConsoleCommand('wget');
+                }
+                else if (args[1] === 'python') {
+
+                    if (user.getCache('stats_darknet') > 1) {
+                        phone.addConsoleCommand('Package has been installed');
+                        return;
+                    }
+
+                    for (let i = 0; i < 100; i++) {
+                        let network = 6 - phone.network;
+                        if (phone.network === 0) {
+                            phone.addConsoleCommand('Connection closed');
+                            return;
+                        }
+                        await methods.sleep(methods.getRandomInt(1, 50 + network * 100));
+                        phone.addConsoleCommand(`Download ${args[1].toUpperCase()} package from https://i239.bxjyb2jvda.net/` + ctos.generateCode(methods.getRandomInt(32, 65)));
+                    }
+                    for (let i = 0; i < 200; i++) {
+                        await methods.sleep(methods.getRandomInt(1, 100));
+                        phone.addConsoleCommand(`Install ${args[1].toUpperCase()} package ` + ctos.generateCode(methods.getRandomInt(32, 65)));
+                    }
+                    await methods.sleep(500);
+                    phone.addConsoleCommand(`Package ${args[1].toUpperCase()} has been installed`);
+                    user.set('stats_darknet', 2);
+                    user.save()
+                }
+                else if (args[1] === 'arp-scan' || args[1] === 'wget' || args[1] === 'route') {
+                    for (let i = 0; i < 300; i++) {
+                        let network = 6 - phone.network;
+                        if (phone.network === 0) {
+                            phone.addConsoleCommand('Connection closed');
+                            return;
+                        }
+                        await methods.sleep(methods.getRandomInt(1, 50 + network * 100));
+                        phone.addConsoleCommand(`Download ${args[1].toUpperCase()} package from https://i239.bxjyb2jvda.net/` + ctos.generateCode(methods.getRandomInt(32, 65)));
+                    }
+                    for (let i = 0; i < 200; i++) {
+                        await methods.sleep(methods.getRandomInt(1, 100));
+                        phone.addConsoleCommand(`Install ${args[1].toUpperCase()} package ` + ctos.generateCode(methods.getRandomInt(32, 65)));
+                    }
+                    phone.addConsoleCommand(`Package ${args[1].toUpperCase()} has been installed`);
+                    user.set('package-' + args[1].toLowerCase(), true);
+                }
+                else {
+                    phone.addConsoleCommand(`Package ${args[1]} not found. Please use: apt-get install -h`);
+                }
+            }
+        }
+        else if (cmd === 'arp-scan') {
+
+            if (!user.hasCache('package-' + cmd)) {
+                phone.addConsoleCommand(`${cmd}: command not found. Maybe do you want apt-get install ${cmd}? `);
+                return;
+            }
+
+            if (args.length === 0 || args[0] === '-h') {
+                phone.addConsoleCommand('Usage: arp-scan [options]');
+                phone.addConsoleCommand(' ');
+                phone.addConsoleCommand('arp-scan vehicles');
+            }
+            else if (args[0] === 'vehicles') {
+                mp.vehicles.forEachInStreamRange(async (v, i) => {
+                    if (phone.network === 0) {
+                        phone.addConsoleCommand('Connection closed');
+                        return;
+                    }
+
+                    let dist = methods.distanceToPos(v.position, mp.players.local.position);
+                    if (dist > 30)
+                        return;
+
+                    await methods.sleep(methods.getRandomInt(1, 100));
+                    phone.addConsoleCommand(`Scanning ${mp.game.vehicle.getDisplayNameFromVehicleModel(v.model)} | HASH: ${methods.md5(v.remoteId.toString()).slice(0, 6)} | DIST: ${dist.toFixed(2)}m`);
+                });
+            }
+        }*/
         else if (cmd === 'ecorp') {
             if (args.length === 0 || args[0] === '-h') {
                 phone.addConsoleCommand('Usage: ecorp [options]');
@@ -2724,17 +2915,17 @@ phone.consoleCallback = async function(command) {
                     }*/
 
                     if (await user.hasById('grabVeh')) {
-                        mp.game.ui.notifications.showy('~r~Вы не можете сейчас сбыть транспорт');
+                        mp.game.ui.notifications.show('~r~Вы не можете сейчас сбыть транспорт');
                         return;
                     }
 
-                    /*if (await user.hasById('grabLamar')) {
-                        mp.game.ui.notifications.showy('~r~Вы не можете сейчас сбыть транспорт, т.к. вы выполняете заказ Ламара');
+                    if (await user.hasById('grabLamar')) {
+                        mp.game.ui.notifications.show('~r~Вы не можете сейчас сбыть транспорт, т.к. вы выполняете заказ Ламара');
                         return;
-                    }*/
+                    }
 
                     if (user.getCache('job') === 10) {
-                        mp.game.ui.notifications.showy('~r~Инкассаторам запрещено это действие');
+                        mp.game.ui.notifications.show('~r~Инкассаторам запрещено это действие');
                         return;
                     }
 
@@ -2768,7 +2959,7 @@ phone.consoleCallback = async function(command) {
                     }
 
                     if (user.getCache('job') === 10) {
-                        mp.game.ui.notifications.showy('~r~Инкассаторам запрещено это действие');
+                        mp.game.ui.notifications.show('~r~Инкассаторам запрещено это действие');
                         return;
                     }
 
@@ -2801,14 +2992,11 @@ phone.consoleCallback = async function(command) {
         }
         else {
             phone.addConsoleCommand(`${cmd}: command not found`);
-
         }
     }
     catch (e) {
-        phone.addConsoleCommand('GNU bash, version 4.3.48(1)-release (x86_64-pc-linux-gnu)');
-        phone.addConsoleCommand(' ');
-        phone.addConsoleCommand('help');
-        phone.addConsoleCommand('ecorp -h');
+        phone.addConsoleCommand('Command exception');
+        phone.addConsoleCommand(`${e}`);
     }
 };
 
@@ -3329,7 +3517,7 @@ phone.callBackButton = async function(menu, id, ...args) {
                 }
 
                 if (await user.hasById('grabVeh')) {
-                    mp.game.ui.notifications.showy('~r~Вы не можете сейчас сбыть транспорт');
+                    mp.game.ui.notifications.show('~r~Вы не можете сейчас сбыть транспорт');
                     return;
                 }
 
@@ -3467,7 +3655,7 @@ phone.findNearestNetwork = function(pos) {
 
 phone.findNetworkTimer = function() {
     try {
-        if (!methods.isBlackout() && phone.getType() > 0)
+        if (!methods.isBlackout() && !ctos.isDisableNetwork() && phone.getType() > 0)
         {
             let plPos = mp.players.local.position;
             let pos = phone.findNearestNetwork(plPos);
@@ -3518,6 +3706,9 @@ phone.findNetworkTimer = function() {
         else
             phone.network = 0;
 
+        if (user.getCache('phoneNetwork') !== phone.network)
+            user.set('phoneNetwork', phone.network);
+
         if (phone.network > 0 && phone.getType() > 0) {
             notifyList.forEach(item => {
                 mp.game.ui.notifications.showWithPicture(item.sender, item.title, item.message, item.pic, 1);
@@ -3529,7 +3720,7 @@ phone.findNetworkTimer = function() {
         methods.debug('NETWORK', e);
     }
 
-    setTimeout(phone.findNetworkTimer, 1000);
+    //setTimeout(phone.findNetworkTimer, 5000);
 };
 
 export default phone;

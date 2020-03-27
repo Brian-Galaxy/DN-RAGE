@@ -215,7 +215,7 @@ weather.syncWeatherWind = function(windSpeed, windDir) {
     WindDir = windDir;
 
     if (WindSpeed > 6)
-        mp.game.water.setWavesIntensity(WindSpeed / 2);
+        mp.game.water.setWavesIntensity(WindSpeed / 1.5);
     else
         mp.game.water.setWavesIntensity(0);
 

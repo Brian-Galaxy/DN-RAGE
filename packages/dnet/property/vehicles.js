@@ -946,7 +946,12 @@ vehicles.sell = function (player, slot) {
             coffer.removeMoney(nalog);
             user.addMoney(player, nalog, 'Продажа транспорта ' + vInfo.get('name'));
 
-            veh.destroy();
+            try {
+                veh.destroy();
+            }
+            catch (e) {
+                
+            }
             isSpawn = true;
 
             setTimeout(function () {

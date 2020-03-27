@@ -1,6 +1,6 @@
 "use strict";
 
-var mysql2 = require('mysql');
+let mysql2 = require('mysql');
 let methods = require('./methods');
 
 let mysql = exports;
@@ -56,7 +56,7 @@ mysql.stressTest = async function() {
 };
 
 setInterval(function() {
-    mysql.executeQueryOld(`SELECT * FROM accounts`);
+    mysql.executeQuery(`UPDATE monitoring SET online = ${mp.players.length}, last_update = ${Math.round(new Date().getTime()/1000)}`);
 }, 5000);
 
 mysql.getTime = function() {

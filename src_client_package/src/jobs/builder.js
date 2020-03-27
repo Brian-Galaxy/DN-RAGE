@@ -774,10 +774,15 @@ builder.workProcess = function(id) {
 };
 
 mp.events.add("playerEnterCheckpoint", (checkpoint) => {
-    if (mp.players.local.vehicle)
-        return;
-    if (!isProcess) return;
-    builder.workProcess(checkpoint.id);
+    try {
+        if (mp.players.local.vehicle)
+            return;
+        if (!isProcess) return;
+        builder.workProcess(checkpoint.id);
+    }
+    catch (e) {
+        
+    }
 });
 
 export default builder;

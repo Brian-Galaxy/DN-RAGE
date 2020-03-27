@@ -61,8 +61,6 @@ hosp.timer = function() {
     catch (e) {
         methods.debug(e);
     }
-
-    setTimeout(hosp.timer, 1000);
 };
 
 

@@ -170,10 +170,15 @@ gr6.workProcess = function() {
 };
 
 mp.events.add("playerEnterCheckpoint", (checkpoint) => {
-    if (_checkpointId == -1 || _checkpointId == undefined)
-        return;
-    if (checkpoint.id == _checkpointId)
-        gr6.workProcess();
+    try {
+        if (_checkpointId == -1 || _checkpointId == undefined)
+            return;
+        if (checkpoint.id == _checkpointId)
+            gr6.workProcess();
+    }
+    catch (e) {
+        
+    }
 });
 
 mp.events.add("client:createGr6Checkpoint", (x, y, z) => {

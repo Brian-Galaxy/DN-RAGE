@@ -160,6 +160,7 @@ lsc.buyNeon = function(player, price, shopId) {
         return;
     }
 
+    vehicles.set(veh.getVariable('container'), 'is_neon', 1);
     vehicles.set(veh.getVariable('container'), 'neon_r', 255);
     vehicles.set(veh.getVariable('container'), 'neon_g', 255);
     vehicles.set(veh.getVariable('container'), 'neon_b', 255);

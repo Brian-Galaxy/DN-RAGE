@@ -833,10 +833,10 @@ menuList.showBusinessTeleportMenu = function() {
 
 menuList.showMazeOfficeTeleportMenu = function() {
 
-    if (methods.isBlackout()) {
+    /*if (methods.isBlackout()) {
         mp.game.ui.notifications.show(`~r~В городе отсутствует свет`);
         return;
-    }
+    }*/
 
     let menu = UIMenu.Menu.Create(`Maze`, `~b~Maze Bank Лифт`);
 
@@ -2167,14 +2167,12 @@ menuList.showMeriaSellHvbMenu = function(cofferData) {
             UIMenu.Menu.HideMenu();
             if (item == closeItem)
                 return;
-
+            if (item.doName == 'veh') {
+                menuList.showMeriaSellVehHvbMenu(cofferData);
+            }
             if (item.eventName) {
                 menuList.showMeriaAcceptSellMenu(item.eventName);
             }
-            if (item.doName = 'veh') {
-                menuList.showMeriaSellVehHvbMenu(cofferData);
-            }
-
             if (item.eventNameSellV) {
                 if (Container.Data.HasLocally(mp.players.local.remoteId, "isSellTimeout"))
                 {
@@ -2261,7 +2259,7 @@ menuList.showMeriaSellVehHvbMenu = async function(cofferData) {
         for (let i = 1; i < 11; i++) {
             try {
                 if (user.getCache(`car_id${i}`) > 0) {
-                    let vehData = vehList[i];
+                    let vehData = vehList[i - 1];
                     UIMenu.Menu.AddMenuItem(`Продать ТС ${vehData.get('name')} (${vehData.get('number')})`, "Продать транспорт государству.\nНалог: ~g~" + (cofferData.get('cofferTaxIntermediate') + 20) + "%").eventName = `server:car${i}:sell`;
                     UIMenu.Menu.AddMenuItem(`~y~Продать ТС ${vehData.get('name')} (${vehData.get('number')}) игроку`).eventNameSellV = i;
                 }
@@ -2777,6 +2775,10 @@ menuList.showSettingsKeyMenu = function() {
     menuItem.doName = 's_bind_lock';
     menuItem.SetRightLabel(`~h~~m~[${bind.getKeyName(user.getCache(menuItem.doName))}]`);
 
+    menuItem = UIMenu.Menu.AddMenuItem("Пристегнуть ремень", "Нажмите ~g~Enter~s~ чтобы изменить");
+    menuItem.doName = 's_bind_belt';
+    menuItem.SetRightLabel(`~h~~m~[${bind.getKeyName(user.getCache(menuItem.doName))}]`);
+
     menuItem = UIMenu.Menu.AddMenuItem("Режим стрельбы", "Нажмите ~g~Enter~s~ чтобы изменить");
     menuItem.doName = 's_bind_firemod';
     menuItem.SetRightLabel(`~h~~m~[${bind.getKeyName(user.getCache(menuItem.doName))}]`);
@@ -3150,11 +3152,35 @@ menuList.showVehicleDoInvMenu = function(vehId) {
 
     UIMenu.Menu.AddMenuItem("Открыть багажник").doName = 'openInv';
     UIMenu.Menu.AddMenuItem("Выкинуть человека").doName = 'eject';
+
+    if (vehicle.getVariable('fraction_id') === 7 && user.isNews()) {
+        UIMenu.Menu.AddMenuItem("~g~Взять камеру").doName = 'takeCam';
+        UIMenu.Menu.AddMenuItem("~y~Положить камеру").doName = 'putCam';
+
+        UIMenu.Menu.AddMenuItem("~g~Взять микрофон").doName = 'takeMic';
+        UIMenu.Menu.AddMenuItem("~y~Положить микрофон").doName = 'putMic';
+    }
+
     UIMenu.Menu.AddMenuItem("Закрыть багажник").doName = 'close';
     UIMenu.Menu.AddMenuItem("~r~Закрыть");
 
     menu.ItemSelect.on(async (item, index) => {
         UIMenu.Menu.HideMenu();
+        if (item.doName == 'takeCam') {
+            mp.attachmentMngr.addLocal('cam');
+            user.playAnimation('missfinale_c2mcs_1', 'fin_c2_mcs_1_camman', 49);
+        }
+        if (item.doName == 'putCam') {
+            mp.attachmentMngr.removeLocal('cam');
+            user.stopAllAnimation();
+        }
+        if (item.doName == 'takeMic') {
+            mp.attachmentMngr.addLocal('mic');
+        }
+        if (item.doName == 'putMic') {
+            mp.attachmentMngr.removeLocal('mic');
+            user.stopAllAnimation();
+        }
         if (item.doName == 'openInv') {
 
             if (ui.isGreenZone() && !user.isPolice()) {
@@ -3191,7 +3217,7 @@ menuList.showVehicleDoInvMenu = function(vehId) {
                 mp.game.ui.notifications.show('~r~Дядь, себя нельзя никак выкинуть из ТС');
                 return;
             }
-            mp.events.callRemote('server:vehicle:ejectByIdOut', methods.parseInt(id));
+            mp.events.callRemote('server:vehicle:ejectByIdOut', methods.parseInt(vehicle.remoteId), methods.parseInt(id));
         }
         else if (item.doName == 'close') {
             vehicles.setTrunkStateById(vehicle.remoteId, false);
@@ -3428,7 +3454,6 @@ menuList.showVehicleMenu = function(data) {
 
     if (vInfo.class_name != 'Cycles') {
         UIMenu.Menu.AddMenuItem("~g~Вкл~s~ / ~r~выкл~s~ двигатель").eventName = 'server:vehicle:engineStatus';
-        UIMenu.Menu.AddMenuItem("Пристегнуть ремень").doName = 'belt';
     }
     if (vInfo.class_name == 'Boats')
         UIMenu.Menu.AddMenuItem("~g~Вкл~s~ / ~r~выкл~s~ якорь").eventName = 'server:vehicleFreeze';
@@ -3480,6 +3505,7 @@ menuList.showVehicleMenu = function(data) {
                 UIMenu.Menu.AddMenuItem("~b~Инструменты (Красный маркер)").doName = 'tree:take0';
                 UIMenu.Menu.AddMenuItem("~b~Инструменты (Зеленый маркер)").doName = 'tree:take1';
                 UIMenu.Menu.AddMenuItem("~y~Завершить досрочно", "~r~Штраф $100 в случае если\nвы не взяли хотя-бы 1 маркер").doName = 'tree:stop';
+                UIMenu.Menu.AddMenuItem("~y~Завершить аренду").doName = 'stopRent';
                 break;
             case 2:
                 UIMenu.Menu.AddMenuItem("~g~Получить задание").doName = 'builder:find';
@@ -3487,23 +3513,28 @@ menuList.showVehicleMenu = function(data) {
                 UIMenu.Menu.AddMenuItem("~b~Инструменты (Зеленый маркер)").doName = 'builder:take1';
                 UIMenu.Menu.AddMenuItem("~b~Инструменты (Синий маркер)").doName = 'builder:take2';
                 UIMenu.Menu.AddMenuItem("~y~Завершить досрочно", "~r~Штраф $100 в случае если\nвы не взяли хотя-бы 1 маркер").doName = 'builder:stop';
+                UIMenu.Menu.AddMenuItem("~y~Завершить аренду").doName = 'stopRent';
                 break;
             case 3:
                 UIMenu.Menu.AddMenuItem("~g~Получить задание").doName = 'photo:find';
                 UIMenu.Menu.AddMenuItem("~g~Напомнить задание").doName = 'photo:ask';
                 UIMenu.Menu.AddMenuItem("~b~Справка").sendChatMessage = 'Внимательно смотрите на задание вашего начальника и выставите позицию персонажа так, чтобы он смотрел в ту точку, которую необходимо сфотографировать, тогда вы получите премию';
+                UIMenu.Menu.AddMenuItem("~y~Завершить аренду").doName = 'stopRent';
                 break;
             case 6:
                 UIMenu.Menu.AddMenuItem("~g~Начать рейс").doName = 'bus:start1';
                 UIMenu.Menu.AddMenuItem("~y~Завершить рейс", "Завершение рейса досрочно").doName = 'bus:stop';
+                UIMenu.Menu.AddMenuItem("~y~Завершить аренду").doName = 'stopRent';
                 break;
             case 7:
                 UIMenu.Menu.AddMenuItem("~g~Начать рейс").doName = 'bus:start2';
                 UIMenu.Menu.AddMenuItem("~y~Завершить рейс", "Завершение рейса досрочно").doName = 'bus:stop';
+                UIMenu.Menu.AddMenuItem("~y~Завершить аренду").doName = 'stopRent';
                 break;
             case 8:
                 UIMenu.Menu.AddMenuItem("~g~Начать рейс").doName = 'bus:start3';
                 UIMenu.Menu.AddMenuItem("~y~Завершить рейс", "Завершение рейса досрочно").doName = 'bus:stop';
+                UIMenu.Menu.AddMenuItem("~y~Завершить аренду").doName = 'stopRent';
                 break;
             case 10:
                 UIMenu.Menu.AddMenuItem("~g~Получить задание").doName = 'gr6:start';
@@ -3515,6 +3546,7 @@ menuList.showVehicleMenu = function(data) {
             case 4:
                 UIMenu.Menu.AddMenuItem("~g~Взять почту из транспорта").doName = 'mail:take';
                 UIMenu.Menu.AddMenuItem("~b~Справка").sendChatMessage = 'Возьмите почту из транспорта, далее езжай к любым жилым домам, подходи к дому нажимай E и кладите туда почту.';
+                UIMenu.Menu.AddMenuItem("~y~Завершить аренду").doName = 'stopRent';
                 break;
         }
     }
@@ -3525,7 +3557,7 @@ menuList.showVehicleMenu = function(data) {
     }
 
     if (veh.getVariable('rentOwner') == user.getCache('id')) {
-        UIMenu.Menu.AddMenuItem("~y~Закончить аренду").doName = 'stopRent';
+        UIMenu.Menu.AddMenuItem("~y~Завершить аренду").doName = 'stopRent';
     }
 
     if (data.get('is_neon')) {
@@ -3630,11 +3662,6 @@ menuList.showVehicleMenu = function(data) {
         }
         else if (item.doName == 'showVehicleDoMenu') {
             menuList.showVehicleDoMenu();
-        }
-        else if (item.doName == 'belt') {
-            mp.players.local.setConfigFlag(32, false);
-            mp.game.ui.notifications.show('~g~Вы пристегнули ремень безопасности');
-            chat.sendMeCommand('пристегнул ремень безопасности');
         }
         else if (item.doName == 'eject') {
             let id = methods.parseInt(await UIMenu.Menu.GetUserInput("ID Игрока", "", 3));
@@ -3745,8 +3772,8 @@ menuList.showVehicleMenu = function(data) {
             if (b > 255)
                 b = 255;
 
-            if (r < 1 || g < 1 || b < 1) {
-                mp.game.ui.notifications.show('~r~Цвет не должен быть меньше 1');
+            if (r < 0 || g < 0 || b < 0) {
+                mp.game.ui.notifications.show('~r~Цвет не должен быть меньше 0');
                 return;
             }
             mp.events.callRemote(item.eventName, methods.parseInt(r), methods.parseInt(g), methods.parseInt(b));
@@ -7039,19 +7066,19 @@ menuList.showLscColorMenu = function(shopId, price, lscBanner1) {
     if (sale > 0)
         saleLabel = `\n~s~Скидка: ~r~${sale}%`;
 
-    let color1Item = UIMenu.Menu.AddMenuItem("Основной цвет", 'Цена: ~g~$' + (3000 * price) + saleLabel);
+    let color1Item = UIMenu.Menu.AddMenuItem("Основной цвет", 'Цена: ~g~' + methods.moneyFormat((3000 * price) + saleLabel));
     if (sale > 0)
         color1Item.SetLeftBadge(27);
 
-    let color2Item = UIMenu.Menu.AddMenuItem("Дополнительный цвет", 'Цена: ~g~$' + (1000 * price) + saleLabel);
+    let color2Item = UIMenu.Menu.AddMenuItem("Дополнительный цвет", 'Цена: ~g~' + methods.moneyFormat((1000 * price) + saleLabel));
     if (sale > 0)
         color2Item.SetLeftBadge(27);
 
-    let color3Item = UIMenu.Menu.AddMenuItem("Перламутровый цвет", 'Цена: ~g~$' + (5000 * price) + saleLabel);
+    let color3Item = UIMenu.Menu.AddMenuItem("Перламутровый цвет", 'Цена: ~g~$' + methods.moneyFormat((5000 * price) + saleLabel));
     if (sale > 0)
         color3Item.SetLeftBadge(27);
 
-    let color4Item = UIMenu.Menu.AddMenuItem("Цвет колёс", 'Цена: ~g~$' + (500 * price) + saleLabel);
+    let color4Item = UIMenu.Menu.AddMenuItem("Цвет колёс", 'Цена: ~g~$' + methods.moneyFormat((500 * price) + saleLabel));
     if (sale > 0)
         color4Item.SetLeftBadge(27);
 
@@ -7660,6 +7687,8 @@ menuList.showLscTunningListMenu = async function(modType, shopId, price, lscBann
                     }
 
                     let itemPrice = enums.lscNames[modType][1] * (i / 20 + price);
+                    if (modType === 14)
+                        itemPrice = enums.lscNames[modType][1];
                     let label = mp.game.ui.getLabelText(veh.getModTextLabel(modType, i));
                     if (label == "NULL")
                         label = `${enums.lscNames[modType][0]} #${(i + 1)}`;
@@ -9177,6 +9206,24 @@ menuList.showSapdArsenalGunModMenu = function() {
             else
                 inventory.takeNewWeaponItem(item.itemId, `{"owner": "LSPD", "userName": "${user.getCache('name')}"}`, 'Выдан предмет').then();
         }
+    });
+};
+
+menuList.showEduAskMenu = function() {
+
+    let menu = UIMenu.Menu.Create("Обучение", "~b~Вы хотите посмотреть обучение?");
+
+    UIMenu.Menu.AddMenuItem("Посмотреть обучение", "Займёт ~g~5~s~ минут твоего времени").full = true;
+    UIMenu.Menu.AddMenuItem("Посмотреть все фишки проекта", "Займёт ~g~2~s~ минуты твоего времени").short = true;
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = "closeButton";
+
+    menu.ItemSelect.on(async (item, index) => {
+        UIMenu.Menu.HideMenu();
+        if (item.full)
+            edu.startLong();
+        if (item.short)
+            edu.startShort();
     });
 };
 

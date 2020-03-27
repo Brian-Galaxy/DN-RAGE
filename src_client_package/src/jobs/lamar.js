@@ -218,19 +218,19 @@ lamar.finish = function() {
 };
 
 mp.events.add("playerEnterCheckpoint", (checkpoint) => {
-    if (!mp.players.local.vehicle)
-        return;
     try {
+        if (!mp.players.local.vehicle)
+            return;
         if (!mp.players.local.vehicle.getVariable('lamar'))
             return;
+        if (_checkpointId == -1 || _checkpointId == undefined)
+            return;
+        if (checkpoint.id == _checkpointId)
+            lamar.finish();
     }
     catch (e) {
-
+        
     }
-    if (_checkpointId == -1 || _checkpointId == undefined)
-        return;
-    if (checkpoint.id == _checkpointId)
-        lamar.finish();
 });
 
 export default lamar;

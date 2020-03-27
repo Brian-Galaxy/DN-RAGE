@@ -34,7 +34,7 @@ pickups.BotRoleAll = new mp.Vector3(-1374.5379638671875, -503.15283203125, 32.15
 pickups.QuestBotGang = new mp.Vector3(-219.3651123046875, -1367.4730224609375, 30.25823402404785);
 
 pickups.PrintShopPos = new mp.Vector3(-1234.7786865234375, -1477.7230224609375, 3.324739933013916);
-pickups.MazeBankLobby = new mp.Vector3(-265.6993713378906, -2017.7603759765625, 29.14558219909668);
+pickups.MazeBankLobby = new mp.Vector3(-252.2621, -2003.149, 29.1459);
 
 pickups.BankMazeLiftOfficePos = new mp.Vector3(-77.77799, -829.6542, 242.3859);
 pickups.BankMazeLiftStreetPos = new mp.Vector3(-66.66476, -802.0474, 43.22729);

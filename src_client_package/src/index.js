@@ -60,9 +60,8 @@ try {
 
     ui.create();
 
-    hosp.timer();
-    jail.timer();
-
+    setInterval(hosp.timer, 1000);
+    setInterval(jail.timer, 1000);
     setInterval(voiceRage.timer, 10);
 
     user.init();
@@ -89,7 +88,7 @@ try {
 
     weather.secSyncTimer();
 
-    phone.findNetworkTimer();
+    setInterval(phone.findNetworkTimer, 1000);
 
     if(!mp.game.streaming.isIplActive("int_magazel1_milo_"))
     {

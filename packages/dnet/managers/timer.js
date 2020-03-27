@@ -73,7 +73,7 @@ timer.min60Timer = function() {
     }*/
 
     try {
-        mysql.executeQuery(`INSERT INTO stats_online (online) VALUES ('${mp.players.length}'])`)
+        mysql.executeQuery(`INSERT INTO stats_online (online) VALUES ('${mp.players.length}')`)
     }
     catch (e) {
 
@@ -116,6 +116,8 @@ timer.min60Timer = function() {
         'Администрация желает вам хорошего настроения, улыбнитесь ;)',
         'Администрация желает вам приятной игры :3',
         'Администрация желает вам приятной игры c:',
+        'Напоминаем, у вас есть возможность кастомизировать чат (M - Настройки - Текстовый чат)',
+        'Напоминаем, у вас есть возможность интерфейс (M - Настройки - Текстовый чат)',
     ];
 
     methods.notifyWithPictureToAll('Ув. игроки', 'Администрация', arrayRandom[methods.getRandomInt(0, arrayRandom.length)], 'CHAR_ACTING_UP');

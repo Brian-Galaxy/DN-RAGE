@@ -320,12 +320,17 @@ bus.stop = function(isNotify = true) {
 };
 
 mp.events.add("playerEnterCheckpoint", (checkpoint) => {
-    if (!mp.players.local.vehicle)
-        return;
-    if (_checkpointId == -1 || _checkpointId == undefined)
-        return;
-    if (checkpoint.id == _checkpointId)
-        bus.nextCheckpoint();
+    try {
+        if (!mp.players.local.vehicle)
+            return;
+        if (_checkpointId == -1 || _checkpointId == undefined)
+            return;
+        if (checkpoint.id == _checkpointId)
+            bus.nextCheckpoint();
+    }
+    catch (e) {
+        
+    }
 });
 
 export default bus;

@@ -13,6 +13,7 @@ require('./managers/attachWeapons');
 let mysql = require('./modules/mysql');
 let methods = require('./modules/methods');
 let vehicleInfo = require('./modules/vehicleInfo');
+let ctos = require('./modules/ctos');
 
 let cloth = require('./business/cloth');
 let tattoo = require('./business/tattoo');
@@ -57,6 +58,7 @@ function init() {
             weapons.hashesMap[i][1] *= 2;
 
         vehicleInfo.loadAll();
+        ctos.loadAll();
 
         houses.loadAll();
         condos.loadAll();

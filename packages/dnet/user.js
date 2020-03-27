@@ -2,6 +2,7 @@ let mysql = require('./modules/mysql');
 let methods = require('./modules/methods');
 let Container = require('./modules/data');
 let chat = require('./modules/chat');
+let ctos = require('./modules/ctos');
 
 let enums = require('./enums');
 let coffer = require('./coffer');
@@ -462,6 +463,7 @@ user.spawnByName = function(player, spawn = 'Стандарт') {
             let userId = user.getId(player);
             player.spawn(new mp.Vector3(user.getById(userId, 'pos_x'), user.getById(userId, 'pos_y'), user.getById(userId, 'pos_z')));
             player.heading = user.getById(userId, 'rot');
+            player.dimension = 0;
             //player.dimension = user.getById(userId, 'dimension');
         }
         else if (spawn == 'Дом') {
@@ -1239,6 +1241,11 @@ user.ready = function(player) {
     weather.setPlayerCurrentWeather(player);
 
     user.updateVehicleInfo(player);
+
+    if (ctos.isBlackout())
+        player.call('client:ctos:setBlackout', [true]);
+    if (ctos.isDisableNetwork())
+        player.call('client:ctos:setNoNetwork', [true]);
 
     player.dimension = player.id + 1;
     try {

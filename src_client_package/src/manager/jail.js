@@ -44,10 +44,7 @@ jail.timer = function() {
     catch (e) {
         methods.debug(e);
     }
-
-    setTimeout(jail.timer, 1000);
 };
-
 
 jail.freePlayer = function() {
     user.teleportv(jail.posFree);

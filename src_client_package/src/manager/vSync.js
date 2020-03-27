@@ -22,14 +22,14 @@ vSync.radio = function(entity) {
                             if (vehSyncData.RadioState != currentSound)
                                 mp.events.callRemote('s:vSync:radioChange', entity.remoteId, currentSound);
                         } else {
-                            /*if (vehSyncData.RadioState == 255)
+                            if (vehSyncData.RadioState == 255)
                                 mp.game.audio.setRadioToStationName("OFF");
                             else {
                                 if (vehSyncData.RadioState != currentSound) {
                                     mp.game.invoke(methods.SET_FRONTEND_RADIO_ACTIVE, true);
                                     mp.game.invoke(methods.SET_RADIO_TO_STATION_INDEX, vehSyncData.RadioState);
                                 }
-                            }*/
+                            }
                         }
                     }
                 }
@@ -83,11 +83,11 @@ vSync.updateValues = function(entity) {
                 entity.setIndicatorLights(1, actualData.IndicatorLeftToggle);
                 entity.setIndicatorLights(0, actualData.IndicatorRightToggle);
 
-                if (actualData.RadioState == 255) mp.game.audio.setRadioToStationName("OFF");
+                /*if (actualData.RadioState == 255) mp.game.audio.setRadioToStationName("OFF");
                 else {
                     mp.game.invoke(methods.SET_FRONTEND_RADIO_ACTIVE, true);
                     mp.game.invoke(methods.SET_RADIO_TO_STATION_INDEX, actualData.RadioState);
-                }
+                }*/
 
                 entity.setInteriorlight(actualData.InteriorLight);
                 entity.setTaxiLights(actualData.TaxiLight);
@@ -241,7 +241,7 @@ mp.events.add("vSync:setVehicleWindowStatus", (vehId, windw, state) => {
 });
 
 mp.events.add("vSync:radioChange", (vehId, state) => {
-    try {
+    /*try {
         let veh = mp.vehicles.atRemoteId(vehId);
         if (veh !== undefined && mp.vehicles.exists(veh)) {
             if (state == 255) mp.game.audio.setRadioToStationName("OFF");
@@ -253,7 +253,7 @@ mp.events.add("vSync:radioChange", (vehId, state) => {
     }
     catch (e) {
         methods.debug(e);
-    }
+    }*/
 });
 
 /*mp.events.add("vSync:setVehicleWheelMod", (vehId, state, isShowLabel) => {
@@ -550,7 +550,7 @@ mp.keys.bind(0x45, true, function() {
     if (!user.isLogin())
         return;
     let veh = mp.players.local.vehicle;
-    if (!methods.isBlockKeys() && veh && vehicles.isVehicleSirenValid(veh.model)) {
+    if (!methods.isBlockKeys() && veh && veh.getPedInSeat(-1) === mp.players.local.handle && vehicles.isVehicleSirenValid(veh.model)) {
         //mp.game.invoke(methods.PLAY_SOUND_FROM_ENTITY, 9999, vehicles.getWarningSound(mp.players.local.vehicle.model), mp.players.local.vehicle.handle, 0, 0, 0);
         mp.events.callRemote("s:vSync:playSound", veh, 'wrng', vehicles.getWarningSound(mp.players.local.vehicle.model));
     }

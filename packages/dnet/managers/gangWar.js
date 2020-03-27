@@ -2,6 +2,8 @@ let mysql = require('../modules/mysql');
 let methods = require('../modules/methods');
 let Container = require('../modules/data');
 
+let dispatcher = require('./dispatcher');
+
 let user = require('../user');
 let weather = require('./weather');
 
@@ -106,6 +108,7 @@ gangWar.startWar = function(zoneId, attack, def, isArmor, count) {
             methods.notifyWithPictureToFraction2('Война за улицу', `ВНИМАНИЕ!`, 'Начался захват улицы ~y~#' + zoneId, 'CHAR_DEFAULT', i);
         }
     }
+    dispatcher.sendPos('Война банд', `(( Начался захват улицы ~y~#${zoneId}~s~ ))`, warPos);
 };
 
 gangWar.addWar = function(player, zoneId, count, armorIndex, gunIndex, timeIndex) {

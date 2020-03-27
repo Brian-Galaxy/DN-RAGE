@@ -1488,6 +1488,9 @@ mp.events.addRemoteCounted('server:sendAnswerAsk', (player, id, msg) => {
         p.outputChatBoxNew(`!{#FFC107}Ответ от хелпера ${user.getRpName(player)}:!{#FFFFFF} ${msg}`);
         //methods.saveLog('AnswerAsk', `${user.getRpName(player)} (${user.getId(player)}) to ${id}: ${msg}`);
         user.set(player, 'count_hask', user.get(player, 'count_hask') + 1);
+
+        player.notify(`~g~Вы получили премию за ответ на вопрос ~s~${methods.moneyFormat(msg.length / 2)}`)
+        user.addCashMoney(player, msg.length / 2, `Ответ на вопрос (${methods.removeQuotes(methods.removeQuotes2(msg)).substring(0, 230)})`)
     });
 });
 
@@ -2279,6 +2282,7 @@ mp.events.addRemoteCounted('server:vehicles:spawnLamarCar', (player, x, y, z, he
                 vehicles.set(veh.getVariable('container'), 'owner_id', user.getId(player));
                 veh.setVariable('owner_id', user.getId(player));
                 veh.setVariable('lamar', true);
+                veh.locked = true;
                 if (methods.getRandomInt(0, 100) < 5) {
                     try {
                         let rare = 0;
@@ -4990,21 +4994,30 @@ mp.events.addRemoteCounted('server:vehicle:ejectById', (player, id) => {
     })
 });
 
-mp.events.addRemoteCounted('server:vehicle:ejectByIdOut', (player, id) => {
+mp.events.addRemoteCounted('server:vehicle:ejectByIdOut', (player, vid, id) => {
     if (!user.isLogin(player))
         return;
-    player.vehicle.getOccupants().forEach(p => {
-        if (user.isLogin(p) && p.id === id) {
+    
+    try {
+        let veh = mp.vehicles.at(vid);
+        if (vehicles.exists(veh)) {
+            veh.getOccupants().forEach(p => {
+                if (user.isLogin(p) && p.id === id) {
 
-            if (p.health > 1 && !user.isCuff(p) && !user.isTie(p)) {
-                player.notify('~r~Игрок должен быть в наручниках, связан или мертв');
-                return;
-            }
+                    if (p.health > 1 && !user.isCuff(p) && !user.isTie(p)) {
+                        player.notify('~r~Игрок должен быть в наручниках, связан или мертв');
+                        return;
+                    }
 
-            p.notify('~r~Вас выкинули из транспорта');
-            p.removeFromVehicle();
+                    p.notify('~r~Вас выкинули из транспорта');
+                    p.removeFromVehicle();
+                }
+            })
         }
-    })
+    }
+    catch (e) {
+        
+    }
 });
 
 mp.events.addRemoteCounted('server:vehicle:setNeonColor', (player, r, g, b) => {

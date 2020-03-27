@@ -78,8 +78,8 @@ let checkShooting = function () {
     if (!user.isLogin())
         return;
 
-    if (mp.players.local.isInAnyVehicle(false))
-        return;
+    /*if (mp.players.local.isInAnyVehicle(false))
+        return;*/
 
     try {
         if (mp.players.local.isShooting() && user.getCache('stats_shooting') < 99) {

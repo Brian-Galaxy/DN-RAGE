@@ -12,6 +12,7 @@ import inventory from "../inventory";
 
 import pSync from "./pSync";
 import heliCam from "./heliCam";
+import chat from "../chat";
 
 let bind = {};
 
@@ -295,6 +296,13 @@ for(let code in keyCodes) {
         if (user.getCache('s_bind_engine') == parseInt(code)) {
             if (!methods.isBlockKeys())
                 vehicles.engineVehicle();
+        }
+        if (user.getCache('s_bind_belt') == parseInt(code)) {
+            if (!methods.isBlockKeys() && mp.players.local.vehicle) {
+                mp.players.local.setConfigFlag(32, false);
+                mp.game.ui.notifications.show('~g~Вы пристегнули ремень безопасности');
+                chat.sendMeCommand('пристегнул ремень безопасности');
+            }
         }
         if (user.getCache('s_bind_pnv') == parseInt(code)) {
             if (!methods.isBlockKeys()) {

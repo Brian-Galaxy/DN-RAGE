@@ -87,7 +87,7 @@ voiceRage.generateVolume = (localPlayerPosition, targetPlayer, voiceDistance, di
 
     if (volume > 0) {
         if (!localPlayer.hasClearLosTo(targetPlayer.handle, 17)) {
-            volume = volume / 10;
+            volume = volume / 15;
         }
 
         if (localPlayer.vehicle && targetPlayer.vehicle) {

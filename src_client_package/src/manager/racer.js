@@ -7,6 +7,11 @@ import inventory from "../inventory";
 import phone from "../phone";
 import menuList from "../menuList";
 import user from "../user";
+import UIMenu from "../modules/menu";
+import hosp from "./hosp";
+import ui from "../modules/ui";
+import Container from "../modules/data";
+import timer from "./timer";
 
 let racer = {};
 
@@ -57,8 +62,13 @@ racer.nextCpDestroy = function() {
 };
 
 mp.events.add("client:raceUpdate", (json) => {
-    racer.currentCpDestroy();
-    racer.nextCpDestroy();
+    try {
+        racer.currentCpDestroy();
+        racer.nextCpDestroy();
+    }
+    catch (e) {
+
+    }
     try {
 
         currentCpId = 0;
@@ -72,19 +82,30 @@ mp.events.add("client:raceUpdate", (json) => {
         menuList.hide();
 
         methods.blockKeys(true);
+        mp.players.local.setConfigFlag(32, false);
 
         let posCurrent = currentRace.posList[currentCpId];
         let posNext = currentRace.posList[currentCpId + 1];
 
         racer.createCurrentCp(0, new mp.Vector3(posCurrent[0], posCurrent[1], posCurrent[2] + currentRace.offsetZ), new mp.Vector3(posNext[0], posNext[1], posNext[2]));
     } catch (e) {
+
+        inRace = false;
+        mp.events.callRemote('server:race:exit');
+        user.addCashMoney(1000, 'Возврат средств');
+        mp.game.ui.notifications.show(`~r~Произошла ошибка, взнос был возвращен`);
+
         methods.debug(e);
     }
 });
 
 mp.events.add("playerEnterCheckpoint", (checkpoint) => {
+    if (!inRace)
+        return;
+
     if (!mp.players.local.vehicle)
         return;
+
     currentCpId++;
     try {
         let posCurrent = currentRace.posList[currentCpId];
@@ -114,8 +135,19 @@ mp.events.add("playerEnterCheckpoint", (checkpoint) => {
     }
     catch (e) {
         methods.debug(e);
-        methods.debug(e);
-        methods.debug(e);
+    }
+});
+
+mp.events.add("playerDeath", function (player, reason, killer) {
+    if (!user.isLogin() || !inRace)
+        return;
+    try {
+        inRace = false;
+        mp.events.callRemote('server:race:exit');
+        methods.blockKeys(false);
+    }
+    catch (e) {
+
     }
 });
 
@@ -135,7 +167,8 @@ mp.keys.bind(0x46, true, function() {
         return;
     try {
         let posCurrent = currentRace.posList[currentCpId - 1];
-        user.teleportVeh(posCurrent[0], posCurrent[1], posCurrent[2], posCurrent[3])
+        user.teleportVeh(posCurrent[0], posCurrent[1], posCurrent[2], posCurrent[3]);
+        mp.events.callRemote('server:user:fixNearestVehicle');
     }
     catch (e) {
         
@@ -157,7 +190,9 @@ mp.keys.bind(0x1B, true, function() {
     if (!user.isLogin() || !inRace)
         return;
     try {
+        inRace = false;
         mp.events.callRemote('server:race:exit');
+        methods.blockKeys(false);
     }
     catch (e) {
 

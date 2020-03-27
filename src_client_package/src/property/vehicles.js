@@ -318,7 +318,7 @@ vehicles.getSpeedMax = (model) => {
 };
 
 vehicles.spawnJobCar = (x, y, z, heading, name, job) => {
-    mp.game.ui.notifications.show('Нажмите ~g~L~s~ чтобы открыть или закрыть ТС');
+    mp.game.ui.notifications.show('~r~Подсказка!\n~g~Чтобы начать работу, нажмите ~s~M - Транспорт - Начать задание\n\nНажмите ~g~L~s~ чтобы открыть или закрыть ТС');
     mp.events.callRemote('server:vehicles:spawnJobCar', x, y, z, heading, name, job);
 };
 

@@ -723,7 +723,8 @@ racer.finish = function (player) {
     if (user.isLogin(player)) {
 
         vehicles.respawn(player.vehicle);
-        user.teleport(player, -255.0441, -2026.709, 29.14638);
+        user.teleport(player, -253.9224, -1993.057, 30.14611);
+        player.dimension = 0;
 
         finishNumber++;
 
@@ -758,7 +759,8 @@ racer.finish = function (player) {
 racer.exit = function (player) {
     if (user.isLogin(player)) {
         vehicles.respawn(player.vehicle);
-        user.teleport(player, -255.0441, -2026.709, 29.14638);
+        user.teleport(player, -253.9224, -1993.057, 30.14611);
+        player.dimension = 0;
     }
 };
 
@@ -789,6 +791,18 @@ racer.startRace = function () {
     if (currentLobby < 5) {
         isCreate = false;
         methods.notifyWithPictureToAll('Arena RaceClub', '~r~' + racerList[currentRace].title, 'Гонка была отменена из-за нехватки участников', 'CHAR_CARSITE4');
+
+        mp.players.forEach(p => {
+            if (user.isLogin(p)) {
+                if (methods.isInPoint(p.position, greenZone)) {
+                    if (user.has(p, 'isRaceLobby')) {
+                        user.addCashMoney(p, 1000, 'Возврат средств');
+                        p.notify('~g~Вам вернули деньги за внос');
+                        user.reset(p, 'isRaceLobby');
+                    }
+                }
+            }
+        });
         return;
     }
 
@@ -796,7 +810,7 @@ racer.startRace = function () {
     isStart = true;
     startTimer = 10;
 
-    methods.notifyWithPictureToAll('Arena RaceClub', '~g~' + racerList[currentRace].title, `Гонка началась, количество участников: ~g~${currentRace}`, 'CHAR_CARSITE4');
+    methods.notifyWithPictureToAll('Arena RaceClub', '~g~' + racerList[currentRace].title, `Гонка началась\n${racerList[currentRace].desc}`, 'CHAR_CARSITE4');
 
     let currentSpawn = 0;
     mp.players.forEach(p => {
@@ -813,7 +827,7 @@ racer.startRace = function () {
 
                     user.teleport(p, spawnArray[0], spawnArray[1], spawnArray[2]);
 
-                    p.outputChatBoxNew(`Кнопка !{2196F3}F!{FFFFFF} чтобы перевернуть автомобиль`);
+                    p.outputChatBoxNew(`Кнопка !{2196F3}F!{FFFFFF} чтобы зареспавнить автомобиль`);
                     p.outputChatBoxNew(`Кнопка !{2196F3}ESC!{FFFFFF} выйти из гонки`);
 
                     setTimeout(function () {
@@ -838,7 +852,7 @@ racer.startRace = function () {
                                 user.putInVehicle(p, veh, -1);
 
                         }, spawnPos, spawnRot, currentVehicle);
-                    }, 600);
+                    }, 1000);
                 }
             }
         }
@@ -873,7 +887,7 @@ racer.timer = function () {
         if (user.isLogin(p)) {
             if (user.has(p, 'isRaceLobby') && methods.isInPoint(p.position, greenZone)) {
                 currentLobby++;
-                p.notifyWithPicture('Arena RaceClub', '~g~' + racerList[currentRace].title, `~b~В лобби:~s~ ${currentLobby}\nОжидайте начала гонки в 12:00\nНе покидайте помещение, иначе вы выйдете лобби`, 'CHAR_CARSITE4');
+                p.notifyWithPicture('Arena RaceClub', '~g~' + racerList[currentRace].title, `~b~В лобби:~s~ ${currentLobby}\nОжидайте начала гонки в 12:00\nНе покидайте помещение, иначе вы покините лобби`, 'CHAR_CARSITE4');
             }
             if(user.has(p, 'isRaceLobby') && !methods.isInPoint(p.position, greenZone)) {
                 user.reset(p, 'isRaceLobby');
@@ -887,12 +901,18 @@ racer.enterLobby = function (p) {
     if (user.isLogin(p)) {
         if (methods.isInPoint(p.position, greenZone)) {
 
-            if (currentLobby > 20) {
+            if (currentLobby >= 20) {
                 if (!user.has(p, 'isRaceLobby')) {
-                    p.notifyWithPicture('Arena RaceClub', '~g~' + racerList[currentRace].title, `~r~Лобби переполнено, участие было отклонено администратором гонки`, 'CHAR_CARSITE4');
+                    p.notifyWithPicture('Arena RaceClub', '~g~' + racerList[currentRace].title, `~r~В связи с большим наплывом участников, заявка на участие была отклонена. Извините за неудобства. В следующий раз приезжайте заранее.`, 'CHAR_CARSITE4');
                 }
             }
             else {
+
+                if (user.has(p, 'isRaceLobby')) {
+                    p.notifyWithPicture('Arena RaceClub', '~g~' + racerList[currentRace].title, `~r~Вы уже являетесь участником гонки.`, 'CHAR_CARSITE4');
+                    return;
+                }
+
                 if (user.getCashMoney(p) < 1000) {
                     p.notifyWithPicture('Arena RaceClub', '~g~' + racerList[currentRace].title, `~r~Недостаточно средств для взноса, необходимо $1000`, 'CHAR_CARSITE4');
                     return;

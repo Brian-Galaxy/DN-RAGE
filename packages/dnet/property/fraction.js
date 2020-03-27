@@ -818,6 +818,7 @@ fraction.save = function(id) {
 
         sql = sql + " name = '" + methods.removeQuotes(fraction.get(id, "name")) + "'";
         sql = sql + ", money = '" + methods.parseInt(fraction.get(id, "money")) + "'";
+        sql = sql + ", owner_id = '" + methods.parseInt(fraction.get(id, "owner_id")) + "'";
         sql = sql + ", is_bank = '" + methods.parseInt(fraction.get(id, "is_bank")) + "'";
         sql = sql + ", is_shop = '" + methods.parseInt(fraction.get(id, "is_shop")) + "'";
         sql = sql + ", is_war = '" + methods.parseInt(fraction.get(id, "is_war")) + "'";

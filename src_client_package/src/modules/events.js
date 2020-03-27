@@ -534,6 +534,9 @@ mp.events.add('client:events:custom:choiceRole', function(roleIndex) {
                 case 0:
                     inventory.takeNewItemJust(15, "{}", 2);
                     inventory.takeNewItemJust(242, "{}", 4);
+
+                    user.showCustomNotify('Телефон находиться в инвентаре, экипируйте его', 0, 5, 10000);
+                    mp.events.callRemote('server:shop:buy', 29, 0, 0);
                     break;
                 case 1:
                     inventory.takeNewItemJust(242, "{}", 1);
@@ -560,6 +563,10 @@ mp.events.add('client:events:custom:choiceRole', function(roleIndex) {
             user.save();
 
             user.teleport(enums.spawnByRole[roleIndex][0], enums.spawnByRole[roleIndex][1], enums.spawnByRole[roleIndex][2], enums.spawnByRole[roleIndex][3]);
+
+            setTimeout(function () {
+                menuList.showEduAskMenu();
+            }, 2000)
         }
         catch (e) {
             methods.debug(e);
@@ -1828,11 +1835,17 @@ mp.events.add('client:inventory:giveItem', function(id, itemId, playerId) {
     inventory.giveItem(id, itemId, playerId)
 });
 
-mp.events.add('client:inventory:moveFrom', function(id, ownerType) {
+mp.events.add('client:inventory:moveFrom', function(id, itemId, ownerType) {
 
     if (ownerType == 0) {
         inventory.deleteItemProp(id);
         user.playAnimation("pickup_object","pickup_low", 8);
+    }
+    else if (ownerType == inventory.types.Vehicle) {
+        chat.sendMeCommand(`взял "${items.getItemNameById(itemId)}" из багажника транспорта`)
+    }
+    else {
+        chat.sendMeCommand(`взял "${items.getItemNameById(itemId)}"`)
     }
 
     inventory.updateOwnerId(id, user.getCache('id'), inventory.types.Player);
@@ -2678,15 +2691,20 @@ mp.events.add('client:ui:checker', () => {
 });
 
 mp.events.add("playerEnterCheckpoint", (checkpoint) => {
-    if (user.hasCache('isSellCar')) {
-        user.reset('isSellCar');
-        jobPoint.delete();
-        mp.events.callRemote('server:sellVeh');
+    try {
+        if (user.hasCache('isSellCar')) {
+            user.reset('isSellCar');
+            jobPoint.delete();
+            mp.events.callRemote('server:sellVeh')
+        }
+        if (user.hasCache('isSellMoney')) {
+            user.reset('isSellMoney');
+            jobPoint.delete();
+            mp.events.callRemote('server:sellMoney');
+        }
     }
-    if (user.hasCache('isSellMoney')) {
-        user.reset('isSellMoney');
-        jobPoint.delete();
-        mp.events.callRemote('server:sellMoney');
+    catch (e) {
+        
     }
 });
 
@@ -2719,11 +2737,12 @@ mp.events.add('playerMaybeTakeShot', (shootEntityId) => {
         //methods.debug('playerMaybeTakeShot', damage, currentWeapon, shootEntityId);
     }
     catch (e) {
-        mp.game.ped.setAiMeleeWeaponDamageModifier(1);
-        mp.game.player.setMeleeWeaponDefenseModifier(1);
-        mp.game.player.setWeaponDefenseModifier(1);
+        mp.game.ped.setAiMeleeWeaponDamageModifier(1.5);
+        mp.game.player.setMeleeWeaponDefenseModifier(1.5);
+        mp.game.player.setWeaponDefenseModifier(1.5);
 
         methods.debug(e);
+        methods.saveFile('shootError1', e.toString())
     }
 
     try {
@@ -2731,13 +2750,13 @@ mp.events.add('playerMaybeTakeShot', (shootEntityId) => {
             clearTimeout(timeoutShoot);
 
         timeoutShoot = setTimeout(function () {
-            mp.game.ped.setAiMeleeWeaponDamageModifier(1);
-            mp.game.player.setMeleeWeaponDefenseModifier(1);
-            mp.game.player.setWeaponDefenseModifier(1);
+            mp.game.ped.setAiMeleeWeaponDamageModifier(1.5);
+            mp.game.player.setMeleeWeaponDefenseModifier(1.5);
+            mp.game.player.setWeaponDefenseModifier(1.5);
         }, 30000);
     }
     catch (e) {
-        
+        methods.saveFile('shootError2', e.toString());
     }
 });
 
@@ -2767,7 +2786,7 @@ mp.events.add("playerDeath", function (player, reason, killer) {
 
     mp.game.graphics.startScreenEffect('DeathFailMPDark', 0, true);
     timer.setDeathTimer(300);
-    if (player.getVariable('enableAdmin'))
+    if (mp.players.local.getVariable('enableAdmin'))
         timer.setDeathTimer(10);
     else {
         mp.game.graphics.setNoiseoveride(true);

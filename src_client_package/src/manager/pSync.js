@@ -101,7 +101,6 @@ mp.events.add('client:syncAnimation', async (playerId, dict, anim, flag) => {
             //remotePlayer.clearTasksImmediately();
             //remotePlayer.clearSecondaryTask();
 
-
             if (dict == 'amb@prop_human_seat_chair@male@generic@base' ||
                 dict == 'amb@prop_human_seat_chair@male@right_foot_out@base' ||
                 dict == 'amb@prop_human_seat_chair@male@left_elbow_on_knee@base' ||

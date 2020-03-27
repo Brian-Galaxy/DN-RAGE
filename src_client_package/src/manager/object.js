@@ -25,6 +25,34 @@ object.load = function () {
     object.delete(648185618, -153.6201, -577.7612, 31.42653);
     object.delete(-1784486639, -153.2719, -578.2529, 31.5959);
 
+    // Интерьер Maze Bank Arena
+    object.create(1566872341, new mp.Vector3(-252.0165, -2002.122, 29.6), new mp.Vector3(0, 0, -15.59995), false, false);
+    object.create(-219578277, new mp.Vector3(-252.43, -2001.81, 29.9), new mp.Vector3(1.001791E-05, 5.008957E-06, -47.99999), false, false);
+    object.create(-4948487, new mp.Vector3(-251.5906, -2002.142, 29.875), new mp.Vector3(0, 0, -159.3997), false, false);
+    object.create(1152367621, new mp.Vector3(-252.0588, -2002.212, 29.8819), new mp.Vector3(0, 0, -25.99998), false, false);
+    object.create(-1814932629, new mp.Vector3(-252.0211, -2002.322, 29.8819), new mp.Vector3(0, 0, -52.99994), false, false);
+    object.create(-297480469, new mp.Vector3(-252.2355, -2001.898, 29.8819), new mp.Vector3(0, 0, 140.9996), false, false);
+    object.create(-870868698, new mp.Vector3(-258.2263, -2003.512, 29.14564), new mp.Vector3(0, 0, 73.69981), false, false);
+    object.create(-870868698, new mp.Vector3(-262.8799, -2013.098, 29.14559), new mp.Vector3(0, 0, 51.59959), false, false);
+    object.create(-870868698, new mp.Vector3(-272.8145, -2023.988, 29.14559), new mp.Vector3(0, 0, 36.89944), false, false);
+    object.create(144995201, new mp.Vector3(-251.3681, -2001.986, 29.8819), new mp.Vector3(0, 0, -55.99997), false, false);
+    object.create(-1510803822, new mp.Vector3(-248.836, -2021.721, 28.94604), new mp.Vector3(0, 0, -40.19993), false, false);
+    object.create(-1510803822, new mp.Vector3(-250.8559, -2024.124, 28.94604), new mp.Vector3(0, 0, -40.19996), false, false);
+    object.create(-1510803822, new mp.Vector3(-251.765, -2025.206, 28.94604), new mp.Vector3(0, 0, -40.19996), false, false);
+    object.create(-1510803822, new mp.Vector3(-249.7391, -2022.783, 28.94604), new mp.Vector3(0, 0, -38.99994), false, false);
+    object.create(-1510803822, new mp.Vector3(-252.8401, -2026.481, 28.94604), new mp.Vector3(0, 0, -40.19996), false, false);
+    object.create(-1510803822, new mp.Vector3(-254.8995, -2028.932, 28.94604), new mp.Vector3(0, 0, -40.19996), false, false);
+    object.create(-1510803822, new mp.Vector3(-253.8613, -2027.697, 28.94604), new mp.Vector3(0, 0, -40.19996), false, false);
+    object.create(-1510803822, new mp.Vector3(-255.9588, -2030.205, 28.94604), new mp.Vector3(0, 0, -40.19996), false, false);
+    object.create(-1510803822, new mp.Vector3(-258.904, -2033.69, 28.94604), new mp.Vector3(0, 0, -40.19996), false, false);
+    object.create(-1510803822, new mp.Vector3(-258.0022, -2032.617, 28.94604), new mp.Vector3(0, 0, -40.19996), false, false);
+    object.create(-1510803822, new mp.Vector3(-256.8669, -2031.278, 28.94604), new mp.Vector3(0, 0, -40.19996), false, false);
+    object.create(446117594, new mp.Vector3(-252.6071, -2002.094, 29.8819), new mp.Vector3(0, 0, 18.99996), false, false);
+    object.create(419741070, new mp.Vector3(-251.5574, -2002.397, 29.8819), new mp.Vector3(0, 0, -35.99998), false, false);
+
+    object.delete(-1126237515, -262.3608, -2012.054, 29.16964);
+    object.delete(-1126237515, -273.3665, -2024.208, 29.16964);
+
     // Стройка на DownTown (Cеверное здание)
     object.create(667319138, new mp.Vector3(-152.5572, -973.0461, 268.1352), new mp.Vector3(0, 0, 70.00006), false, false);
     object.create(667319138, new mp.Vector3(-143.19, -946.334, 263.1339), new mp.Vector3(1.017777E-13, -5.008956E-06, 160), false, false);

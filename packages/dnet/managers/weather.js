@@ -320,7 +320,7 @@ weather.timeSyncTimer = function() {
                         let countr = rows[0]['countr'];
                         mysql.executeQuery(`SELECT COUNT(*) as countl FROM users WHERE login_date >= ${methods.getTimeStamp() - 86400}`, function (rows2) {
                             let countl = rows2[0]['countl'];
-                            mysql.executeQuery(`INSERT INTO stats_users (reg, auth) VALUES ('${countr}','${countl}'])`)
+                            mysql.executeQuery(`INSERT INTO stats_users (reg, auth) VALUES ('${countr}','${countl}')`)
                         })
                     })
                 }

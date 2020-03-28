@@ -5,7 +5,7 @@ let discord = exports;
 discord.report = "https://discordapp.com/api/webhooks/682573681415028740/l0tkdhaVqlCLa_JZQ6xnAE1lE2aZejqq8Zj_x8QvUlAH8hoIB6frc6uZpUPfx3C7K8Ah";
 discord.deadlist = "https://discordapp.com/api/webhooks/682680284789211162/OicTpLvtwIVENmFJxs_bOl7fVmiRCPwqOdQvDc34D_6yDFVZZ4Cps-67fbtrj--NYeyQ";
 discord.invaderAd = "https://discordapp.com/api/webhooks/682694382238957636/fglcxTfyJ2NS-Nzr1dxNW2IJmVKjCpErvmzXkEKHxU4lzuUYrZ3dmD9fjZdwiJDgHz9O";
-discord.invaderNews = "https://discordapp.com/api/webhooks/682694382238957636/fglcxTfyJ2NS-Nzr1dxNW2IJmVKjCpErvmzXkEKHxU4lzuUYrZ3dmD9fjZdwiJDgHz9O";
+discord.invaderNews = "https://discordapp.com/api/webhooks/682694685805903912/0-VByP6Nd_3xH3yrgs5DAOFpGnMXUHuLX1NmiCc-QlaMhBCLPcuf4BXr87VO7pbwu3Ck";
 discord.fractionNews = "https://discordapp.com/api/webhooks/682956739792076838/xnKY61UPcvyakdcRkMIFEsaFCMGKuK9u4wT7KK4lN_Spo1EdA_ySlzMOSLtfyW44QWMb";
 
 discord.dednetImg = "https://sun9-51.userapi.com/c858132/v858132444/cc443/c30JAqqT_bc.jpg";

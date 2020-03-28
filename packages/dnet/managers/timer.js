@@ -84,6 +84,8 @@ timer.min60Timer = function() {
             try {
                 if (user.hasById(user.getId(p), 'grabLamar'))
                     user.resetById(user.getId(p), 'grabLamar');
+                if (user.hasById(user.getId(p), 'atmTimeout'))
+                    user.resetById(user.getId(p), 'atmTimeout');
             }
             catch (e) {
                 

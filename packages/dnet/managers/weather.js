@@ -308,9 +308,13 @@ weather.timeSyncTimer = function() {
         if (dateTime.getHours() == 5 && dateTime.getMinutes() == 3)
         {
             mp.players.forEach(function (p) {
-                if (mp.players.exists(p))
+                if (mp.players.exists(p)) {
+                    user.set(p, 'online_wheel', 0);
                     user.kick(p, 'Рестарт');
+                }
             });
+
+            mysql.executeQuery('UPDATE users SET online_wheel=\'0\' WHERE 1');
 
             if (!isSaveStats) {
                 isSaveStats = true;

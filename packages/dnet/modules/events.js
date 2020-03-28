@@ -358,6 +358,17 @@ mp.events.addRemoteCounted('server:user:kickAntiCheat', (player, reason) => {
     user.kickAntiCheat(player, reason);
 });
 
+mp.events.addRemoteCounted('server:user:warnAntiCheat', (player, reason) => {
+    if (user.isLogin(player)) {
+        mp.players.forEach(function (p) {
+            if (!user.isLogin(p))
+                return;
+            if (user.isAdmin(p))
+                p.outputChatBoxNew(`!{#f44336}Подозрение в читерстве ${user.getRpName(player)} (${player.id}):!{#FFFFFF} ${reason}`);
+        });
+    }
+});
+
 mp.events.addRemoteCounted('server:user:banAntiCheat', (player, type, reason) => {
     admin.banByAnticheat(0, player.id, type, reason);
 });
@@ -1769,7 +1780,7 @@ mp.events.addRemoteCounted('server:invader:sendAd', (player, id, title, name, te
     user.addPayDayMoney(player, 100, 'Отредактировал объявление');
     player.notify('~g~Вы получили премию в $100 за отредактированное объявление');
 
-    discord.sendAd(title, name, text, phone, editor, player.socialClub);
+    discord.sendAd(title, name, text, methods.phoneFormat(phone), editor, player.socialClub);
 
     mp.players.forEach(p => {
         user.sendPhoneNotify(p, 'Life Invader', '~g~Реклама | ' + title, text, 'CHAR_LIFEINVADER');
@@ -2614,6 +2625,18 @@ mp.events.addRemoteCounted('server:phone:getUserInfo', (player, text) => {
     phone.getUserInfo(player, text);
 });
 
+mp.events.addRemoteCounted('server:phone:getVehInfo', (player, text) => {
+    if (!user.isLogin(player))
+        return;
+    phone.getVehInfo(player, text);
+});
+
+mp.events.addRemoteCounted('server:phone:getGunInfo', (player, text) => {
+    if (!user.isLogin(player))
+        return;
+    phone.getGunInfo(player, text);
+});
+
 mp.events.addRemoteCounted('server:phone:inviteFraction2', (player, id) => {
     if (!user.isLogin(player))
         return;
@@ -2870,6 +2893,27 @@ mp.events.addRemoteCounted("server:showVehMenu", (player) => {
         player.call('client:menuList:showVehicleMenu', [Array.from(vehicles.getData(player.vehicle.getVariable('container')))]);
     else
         player.notify('~r~Вы должны находиться в транспорте');
+});
+
+mp.events.addRemoteCounted("server:vehicle:lockStatus:hack", (player, vId) => {
+    let veh = mp.vehicles.at(vId);
+    if (!user.isLogin(player))
+        return;
+    if (!vehicles.exists(veh))
+        return;
+
+    veh.locked = false;
+    vSync.setLockStatus(veh, veh.locked);
+});
+
+mp.events.addRemoteCounted("server:vehicle:engineStatus:hack", (player, vId) => {
+    let veh = mp.vehicles.at(vId);
+    if (!user.isLogin(player))
+        return;
+    if (!vehicles.exists(veh))
+        return;
+
+    vSync.setEngineState(veh, true);
 });
 
 mp.events.addRemoteCounted("server:vehicle:lockStatus", (player) => {
@@ -6151,7 +6195,6 @@ mp.events.add('playerReady', player => {
     );
 
     player.spawn(new mp.Vector3(8.243752, 527.4373, 171.6173));
-    ///seval mp.players.forEach(p => {  p.call("client:chat:sendMessage", ['RESTART, WAIT 1 MIN']); p.kick('Restart') });
     player.outputChatBoxNew = function(message) {
         try {
             this.call("client:chat:sendMessage", [message]);

@@ -564,6 +564,22 @@ timer.isOtherAtm = function () {
     return user.getCache('bank_card') > 0 && (EntityOther1 != 0 || EntityOther2 != 0 || EntityOther3 != 0);
 };
 
+timer.isAtm = function () {
+    return timer.isOtherAtm() || timer.isFleecaAtm();
+};
+
+timer.getAtmHandle = function () {
+    if (EntityFleeca)
+        return EntityFleeca;
+    if (EntityOther1)
+        return EntityOther1;
+    if (EntityOther2)
+        return EntityOther2;
+    if (EntityOther3)
+        return EntityOther3;
+    return 0;
+};
+
 timer.isFuel = function () {
     return EntityFuel != 0;
 };

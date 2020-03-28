@@ -10,11 +10,15 @@ let isBlackout = false;
 let isNetwork = false;
 
 ctos.bashFileList = [
-    ''
+    'vunlocker',
+    'vengine',
 ];
 
 ctos.pythonFileList = [
-    'vscanner'
+    'atmbackdoor',
+    'alone',
+    'lmh',
+    'deadinside',
 ];
 
 ctos.enableBlackout = async function() {
@@ -92,10 +96,10 @@ ctos.generateCode = function (length = 4) {
     return text;
 };
 
-ctos.generateLoad = function (length = 1) {
+ctos.generateLoad = function (length = 100) {
     methods.debug('ctos.generateLoad');
     let text = "";
-    for (let i = 0; i < length; i++)
+    for (let i = 0; i < length / 10; i++)
         text += '|';
     return text;
 };

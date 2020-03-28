@@ -67,6 +67,7 @@ enums.userData = [
     "wanted_reason",
 
     "online_time",
+    "online_wheel",
     "reg_status",
     "skin",
     "login_date",

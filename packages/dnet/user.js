@@ -2404,6 +2404,7 @@ user.payDay = async function (player) {
     methods.debug('user.payDay', user.getRpName(player));
 
     user.set(player, 'online_time', user.get(player, 'online_time') + 1);
+    user.set(player, 'online_wheel', user.get(player, 'online_wheel') + 1);
 
     /*if (user.getVipStatus() != "YouTube" && user.getVipStatus() != "Turbo" && user.getVipStatus() != "none" && user.get(player, 'exp_age') % 4 == 0)
         user.set(player, 'exp_age', user.get(player, 'exp_age') + 1);

@@ -16,6 +16,7 @@ import bind from "./manager/bind";
 import jobPoint from "./manager/jobPoint";
 
 import fraction from "./property/fraction";
+import timer from "./manager/timer";
 
 let phone = {};
 
@@ -1002,6 +1003,28 @@ phone.showAppFraction = function() {
                     type: 8,
                     clickable: true,
                     params: { name: "getUserInfo" }
+                }
+            );
+
+            titleMenu.umenu.push(
+                {
+                    title: "Информация о транспорте",
+                    modalTitle: 'Номер транспорта',
+                    modalButton: ['Отмена', 'Поиск'],
+                    type: 8,
+                    clickable: true,
+                    params: { name: "getVehInfo" }
+                }
+            );
+
+            titleMenu.umenu.push(
+                {
+                    title: "Информация о оружии",
+                    modalTitle: 'Серийный номер',
+                    modalButton: ['Отмена', 'Поиск'],
+                    type: 8,
+                    clickable: true,
+                    params: { name: "getGunInfo" }
                 }
             );
         }
@@ -2626,6 +2649,19 @@ phone.consoleWget = async function(text, delay = 200) {
     return true;
 };
 
+phone.consoleLoad = async function(text, delay = 200) {
+    for (let i = 0; i < 100; i++) {
+        let network = 6 - phone.network;
+        if (phone.network === 0) {
+            phone.addConsoleCommand('Connection closed');
+            return;
+        }
+        await methods.sleep(methods.getRandomInt(1, delay + network * 100));
+        phone.addConsoleCommand(`${text} ${ctos.generateLoad(i + 1)} (${i + 1}%)`);
+    }
+    return true;
+};
+
 phone.consoleCallback = async function(command) {
 
     try {
@@ -2637,6 +2673,10 @@ phone.consoleCallback = async function(command) {
             phone.addConsoleCommand('No internet connection');
             return;
         }
+        if (mp.players.local.dimension > 0) {
+            phone.addConsoleCommand('You cant use it in dimension (Virtual World)');
+            return;
+        }
 
         if (cmd === 'help') {
             if (user.getCache('stats_darknet') > 0)
@@ -2646,14 +2686,16 @@ phone.consoleCallback = async function(command) {
             phone.addConsoleCommand(' ');
             phone.addConsoleCommand('help');
             phone.addConsoleCommand('ecorp -h');
-            /*phone.addConsoleCommand('apt-get update');
+            phone.addConsoleCommand('trust');
+            phone.addConsoleCommand('apt-get update');
             phone.addConsoleCommand('apt-get install [package]');
             phone.addConsoleCommand('ls');
             phone.addConsoleCommand('bash [filename] [params]');
+            phone.addConsoleCommand('wget [url]');
             if (user.getCache('stats_darknet') > 1)
-                phone.addConsoleCommand('python [filename] [params]');*/
+                phone.addConsoleCommand('python [filename] [params]');
         }
-        /*else if (cmd === 'apt-get') {
+        else if (cmd === 'apt-get') {
             if (args.length === 0 || args[0] === '-h') {
                 phone.addConsoleCommand('Usage: apt-get [options]');
                 phone.addConsoleCommand(' ');
@@ -2727,11 +2769,11 @@ phone.consoleCallback = async function(command) {
                     phone.addConsoleCommand('python');
                     phone.addConsoleCommand('arp-scan');
                     phone.addConsoleCommand('route');
-                    phone.addConsoleCommand('wget');
                 }
                 else if (args[1] === 'python') {
 
                     if (user.getCache('stats_darknet') > 1) {
+                        phone.addConsoleCommand('Look up');
                         phone.addConsoleCommand('Package has been installed');
                         return;
                     }
@@ -2776,6 +2818,278 @@ phone.consoleCallback = async function(command) {
                 }
             }
         }
+        else if (cmd === 'wget') {
+            if (args.length === 0 || args[0] === '-h') {
+                phone.addConsoleCommand('Usage: wget [url]');
+                phone.addConsoleCommand('For example: wget https://example.com/');
+                phone.addConsoleCommand('For example: wget https://example.com/path/');
+            }
+            else if (args[0] === 'https://dednet.ru/' || args[0] === 'https://dednet.ru') {
+                await phone.consoleWget('Dwnld vunlocker.sh', 10);
+                phone.addConsoleCommand(`File vunlocker.sh has been downloaded`);
+                user.set('file-' + 'vunlocker.sh', true);
+                await phone.consoleWget('Dwnld vengine.sh', 10);
+                phone.addConsoleCommand(`File vengine.sh has been downloaded`);
+                user.set('file-' + 'vengine.sh', true);
+            }
+            else if (args[0] === 'https://fsoc.sh/' || args[0] === 'https://fsoc.sh') {
+                await phone.consoleWget('Dwnld atmbackdoor.py', 50);
+                phone.addConsoleCommand(`File atmbackdoor.py has been downloaded`);
+                user.set('file-' + 'atmbackdoor.py', true);
+            }
+            else if (args[0] === 'https://i239.bxjyb2jvda.net/' || args[0] === 'https://i239.bxjyb2jvda.net') {
+                if (user.getCache('stats_darknet') < 35) {
+                    phone.addConsoleCommand('Look up');
+                    phone.addConsoleCommand('Access Denied');
+                    return;
+                }
+                await phone.consoleWget('Dwnld lmh.py', 50);
+                phone.addConsoleCommand(`File lmh.py has been downloaded`);
+                user.set('file-' + 'lmh.py', true);
+            }
+            else if (args[0] === 'https://4C4F4F4B205550.com/' || args[0] === 'https://4C4F4F4B205550.com') {
+                if (user.getCache('stats_darknet') < 35) {
+                    phone.addConsoleCommand('Look up');
+                    phone.addConsoleCommand('Access Denied');
+                    return;
+                }
+                await phone.consoleWget('Dwnld alone.py', 50);
+                phone.addConsoleCommand(`File alone.py has been downloaded`);
+                user.set('file-' + 'alone.py', true);
+            }
+            else if (args[0] === 'https://retell.in/' || args[0] === 'https://retell.in') {
+                if (user.getCache('stats_darknet') < 35) {
+                    phone.addConsoleCommand('Look up');
+                    phone.addConsoleCommand('Access Denied');
+                    return;
+                }
+                await phone.consoleWget('Dwnld deadinside.py', 50);
+                phone.addConsoleCommand(`File deadinside.py has been downloaded`);
+                user.set('file-' + 'deadinside.py', true);
+            }
+            else {
+                phone.addConsoleCommand('Access denied');
+            }
+        }
+        else if (cmd === 'ls') {
+            ctos.bashFileList.forEach(file => {
+                if (user.hasCache(`file-${file}.sh`))
+                    phone.addConsoleCommand(`${file}.sh`);
+            });
+            ctos.pythonFileList.forEach(file => {
+                if (user.hasCache(`file-${file}.py`))
+                    phone.addConsoleCommand(`${file}.py`);
+            });
+        }
+        else if (cmd === 'dn' || cmd === 'dednet') {
+            phone.addConsoleCommand(`You are not alone`);
+        }
+        else if (cmd === 'trust') {
+            phone.addConsoleCommand(`DARKNET trust level: ${user.getCache('stats_darknet')}%`);
+            phone.addConsoleCommand(`You need update trust level, if you want hack the fucking world`);
+        }
+        else if (cmd === 'python') {
+            if (args.length === 0 || args[0] === '-h') {
+                phone.addConsoleCommand('Usage: python [file] [params]');
+            }
+            else if (args[0] === 'alone.py' && user.hasCache('file-alone.py')) {
+                if (args.length !== 3) {
+                    phone.addConsoleCommand('Usage: python alone.py [key] [id]');
+                    return;
+                }
+                if (args[1] === 'AABABBAAABABBABAAABAAAABBABBABBAABABAAABAABBB') {
+                    await phone.consoleLoad('You are not alone', 500);
+                    mp.events.callRemote('server:phone:getUserInfo', methods.removeQuotes2(methods.removeQuotes(args[2])));
+                }
+                else {
+                    phone.addConsoleCommand('Access denied');
+                }
+            }
+            else if (args[0] === 'lmh.py' && user.hasCache('file-lmh.py')) {
+                if (args.length !== 3) {
+                    phone.addConsoleCommand('Usage: python lmh.py [key] [id]');
+                    return;
+                }
+                if (args[1] === 'WARISGONE') {
+                    await phone.consoleLoad('War is over', 500);
+                    mp.events.callRemote('server:phone:getGunInfo', methods.removeQuotes2(methods.removeQuotes(args[2])));
+                }
+                else {
+                    phone.addConsoleCommand('Access denied');
+                }
+            }
+            else if (args[0] === 'deadinside.py' && user.hasCache('file-deadinside.py')) {
+                if (args.length !== 3) {
+                    phone.addConsoleCommand('Usage: python deadinside.py [key] [id]');
+                    return;
+                }
+                if (args[1] === 'MR.DEADINSIDE') {
+                    await phone.consoleLoad('You are dead', 500);
+                    mp.events.callRemote('server:phone:getVehInfo', methods.removeQuotes2(methods.removeQuotes(args[2])));
+                }
+                else {
+                    phone.addConsoleCommand('Access denied');
+                }
+            }
+            else if (args[0] === 'atmbackdoor.py' && user.hasCache('file-atmbackdoor.py')) {
+                if (args.length !== 5) {
+                    phone.addConsoleCommand('Usage: python atmbackdoor.py [hash1] [hash2] [hash3] [hash4]');
+                    return;
+                }
+
+                if (await user.hasById('atmTimeout')) {
+                    await phone.consoleLoad('Timeout: update system patches. Please wait.');
+                    return;
+                }
+
+                let userHash1 = args[1];
+                let userHash2 = args[2];
+                let userHash3 = args[3];
+                let userHash4 = args[4];
+
+                let atmHandle = timer.getAtmHandle();
+                let hash1 = methods.md5(atmHandle.toString()).slice(0, 3);
+                let hash2 = methods.md5(atmHandle.toString()).slice(4, 7);
+                let hash3 = methods.md5(atmHandle.toString()).slice(8, 11);
+                let hash4 = methods.md5(atmHandle.toString()).slice(12, 15);
+
+                await phone.consoleLoad('Installing backdoor');
+                await phone.consoleAwait('Scanning hashes ');
+                await phone.consoleAwait('Send package ', 100, 100);
+
+                if (userHash1 !== hash1 || userHash2 !== hash2 || userHash3 !== hash3 || userHash4 !== hash4) {
+                    phone.addConsoleCommand('Hacking attempt, access denied');
+                    user.setById('atmTimeout', true);
+                    dispatcher.sendPos('Код 3', `Сработала система безопасности банкомата, взлом происходил с телефона: ${methods.phoneFormat(user.getCache('phone'))}`, mp.players.local.position);
+                    return;
+                }
+
+                if (!timer.isAtm()) {
+                    phone.addConsoleCommand('Connection closed by timeout. Maybe you are too far');
+                    return;
+                }
+
+                if (methods.getRandomInt(0, 100) < user.getCache('stats_darknet')) {
+
+                    await phone.consoleLoad('Download keys', 50);
+
+                    let money = methods.getRandomInt(1000, 5000) / 1000;
+
+                    phone.addConsoleCommand('Success. The wallet was replenished in the amount of ' + methods.cryptoFormat(money));
+                    user.setById('atmTimeout', true);
+
+                    user.addCryptoMoney(money, 'Взлом банкомата');
+
+                    if (user.getCache('stats_darknet') < 40 && user.getCache('stats_darknet') >= 20) {
+                        user.set('stats_darknet', user.getCache('stats_darknet') + 1);
+                    }
+                }
+                else {
+                    phone.addConsoleCommand('Error, try again');
+                }
+            }
+        }
+        else if (cmd === 'bash') {
+            if (args.length === 0 || args[0] === '-h') {
+                phone.addConsoleCommand('Usage: bash [file] [params]');
+            }
+            else if (args[0] === 'vunlocker.sh' && user.hasCache('file-vunlocker.sh')) {
+                if (args.length === 1) {
+                    phone.addConsoleCommand('Usage: bash vunlocker.sh [hash]');
+                    return;
+                }
+                let hash = args[1];
+                let isFind = false;
+
+                mp.vehicles.forEachInStreamRange(async (v, i) => {
+                    if (phone.network === 0) {
+                        phone.addConsoleCommand('Connection closed');
+                        return;
+                    }
+
+                    let dist = methods.distanceToPos(v.position, mp.players.local.position);
+                    if (dist > 30)
+                        return;
+
+                    if (methods.md5(v.remoteId.toString()).slice(0, 6) === hash) {
+                        isFind = true;
+                        let vInfo = methods.getVehicleInfo(v.model);
+                        if (vInfo.fuel_type === 3 || vInfo.class_name === "Super") {
+                            dispatcher.sendPos('Код 3', `Сработала система безопасности на транспорте ${vInfo.display_name} (${v.getNumberPlateText()})`, v.position);
+                            await phone.consoleAwait('Send package ');
+                            if (methods.getRandomInt(0, 100) < 30 + user.getCache('stats_darknet')) {
+                                mp.events.callRemote('server:vehicle:lockStatus:hack', v.remoteId);
+                                phone.addConsoleCommand('Success');
+
+                                if (user.getCache('stats_darknet') < 20) {
+                                    user.set('stats_darknet', user.getCache('stats_darknet') + 1);
+                                }
+                            }
+                            else {
+                                phone.addConsoleCommand('Error, try again');
+                            }
+                        }
+                        else {
+                            phone.addConsoleCommand('You cant unlock this vehicle type');
+                        }
+                    }
+                });
+
+                if (!isFind)
+                    phone.addConsoleCommand('Hash not found');
+            }
+            else if (args[0] === 'vengine.sh' && user.hasCache('file-vengine.sh')) {
+                if (args.length === 1) {
+                    phone.addConsoleCommand('Usage: bash vengine.sh [hash]');
+                    return;
+                }
+                let hash = args[1];
+                let isFind = false;
+
+                mp.vehicles.forEachInStreamRange(async (v, i) => {
+                    if (phone.network === 0) {
+                        phone.addConsoleCommand('Connection closed');
+                        return;
+                    }
+
+                    let dist = methods.distanceToPos(v.position, mp.players.local.position);
+                    if (dist > 30)
+                        return;
+
+                    if (methods.md5(v.remoteId.toString()).slice(0, 6) === hash) {
+                        let vInfo = methods.getVehicleInfo(v.model);
+                        isFind = true;
+                        if (vInfo.fuel_type === 3 || vInfo.class_name === "Super") {
+                            dispatcher.sendPos('Код 3', `Сработала система безопасности на транспорте ${vInfo.display_name} (${v.getNumberPlateText()})`, v.position);
+                            await phone.consoleAwait('Send package ', 50);
+                            if (methods.getRandomInt(0, 100) < 10 + user.getCache('stats_darknet')) {
+                                mp.events.callRemote('server:vehicle:engineStatus:hack', v.remoteId);
+                                phone.addConsoleCommand('Success');
+
+                                if (user.getCache('stats_darknet') < 10) {
+                                    user.set('stats_darknet', user.getCache('stats_darknet') + 1);
+                                }
+                            }
+                            else {
+                                phone.addConsoleCommand('Error, try again');
+                            }
+                        }
+                        else {
+                            phone.addConsoleCommand('You cant unlock this vehicle');
+                        }
+                    }
+                });
+
+                if (!isFind)
+                    phone.addConsoleCommand('Hash not found');
+            }
+            else {
+                phone.addConsoleCommand('Access denied');
+            }
+        }
+        else if (cmd === 'route') {
+            phone.addConsoleCommand('Access denied');
+        }
         else if (cmd === 'arp-scan') {
 
             if (!user.hasCache('package-' + cmd)) {
@@ -2787,6 +3101,7 @@ phone.consoleCallback = async function(command) {
                 phone.addConsoleCommand('Usage: arp-scan [options]');
                 phone.addConsoleCommand(' ');
                 phone.addConsoleCommand('arp-scan vehicles');
+                phone.addConsoleCommand('arp-scan atm');
             }
             else if (args[0] === 'vehicles') {
                 mp.vehicles.forEachInStreamRange(async (v, i) => {
@@ -2803,7 +3118,25 @@ phone.consoleCallback = async function(command) {
                     phone.addConsoleCommand(`Scanning ${mp.game.vehicle.getDisplayNameFromVehicleModel(v.model)} | HASH: ${methods.md5(v.remoteId.toString()).slice(0, 6)} | DIST: ${dist.toFixed(2)}m`);
                 });
             }
-        }*/
+            else if (args[0] === 'atm') {
+                if (phone.network === 0) {
+                    phone.addConsoleCommand('Connection closed');
+                    return;
+                }
+                await phone.consoleAwait('Search nearest atm hashes | ');
+                if (!timer.isAtm()) {
+                    phone.addConsoleCommand('ATM Not found');
+                    return;
+                }
+                dispatcher.sendPos('Код 3', `Сработала система безопасности банкомата, взлом происходил с телефона: ${methods.phoneFormat(user.getCache('phone'))}`, mp.players.local.position);
+                phone.addConsoleCommand('ATM has been found');
+                let atmHandle = timer.getAtmHandle();
+                phone.addConsoleCommand(`Hash1: ${methods.md5(atmHandle.toString()).slice(0, 3)}`);
+                phone.addConsoleCommand(`Hash2: ${methods.md5(atmHandle.toString()).slice(4, 7)}`);
+                phone.addConsoleCommand(`Hash3: ${methods.md5(atmHandle.toString()).slice(8, 11)}`);
+                phone.addConsoleCommand(`Hash4: ${methods.md5(atmHandle.toString()).slice(12, 15)}`);
+            }
+        }
         else if (cmd === 'ecorp') {
             if (args.length === 0 || args[0] === '-h') {
                 phone.addConsoleCommand('Usage: ecorp [options]');
@@ -3117,6 +3450,12 @@ phone.callBackModalInput = async function(paramsJson, text) {
         }
         if (params.name == 'getUserInfo') {
             mp.events.callRemote('server:phone:getUserInfo', text);
+        }
+        if (params.name == 'getVehInfo') {
+            mp.events.callRemote('server:phone:getVehInfo', text);
+        }
+        if (params.name == 'getGunInfo') {
+            mp.events.callRemote('server:phone:getGunInfo', text);
         }
         if (params.name == 'changeBg') {
 

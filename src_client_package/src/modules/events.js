@@ -2730,16 +2730,16 @@ mp.events.add('playerMaybeTakeShot', (shootEntityId) => {
         if (damage < 1)
             damage = 1;
 
-        mp.game.ped.setAiMeleeWeaponDamageModifier(damage);
-        mp.game.player.setMeleeWeaponDefenseModifier(damage);
+        //mp.game.ped.setAiMeleeWeaponDamageModifier(damage);
+        //mp.game.player.setMeleeWeaponDefenseModifier(damage);
         mp.game.player.setWeaponDefenseModifier(damage);
 
         //methods.debug('playerMaybeTakeShot', damage, currentWeapon, shootEntityId);
     }
     catch (e) {
-        mp.game.ped.setAiMeleeWeaponDamageModifier(1.5);
-        mp.game.player.setMeleeWeaponDefenseModifier(1.5);
-        mp.game.player.setWeaponDefenseModifier(1.5);
+        //mp.game.ped.setAiMeleeWeaponDamageModifier(1);
+        //mp.game.player.setMeleeWeaponDefenseModifier(1);
+        mp.game.player.setWeaponDefenseModifier(1);
 
         methods.debug(e);
         methods.saveFile('shootError1', e.toString())
@@ -2750,9 +2750,9 @@ mp.events.add('playerMaybeTakeShot', (shootEntityId) => {
             clearTimeout(timeoutShoot);
 
         timeoutShoot = setTimeout(function () {
-            mp.game.ped.setAiMeleeWeaponDamageModifier(1.5);
-            mp.game.player.setMeleeWeaponDefenseModifier(1.5);
-            mp.game.player.setWeaponDefenseModifier(1.5);
+            //mp.game.ped.setAiMeleeWeaponDamageModifier(1);
+            //mp.game.player.setMeleeWeaponDefenseModifier(1);
+            mp.game.player.setWeaponDefenseModifier(1);
         }, 30000);
     }
     catch (e) {

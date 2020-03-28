@@ -21,7 +21,7 @@ phone.getUserInfo = function(player, text) {
 
     text = methods.removeQuotes(text);
 
-    mysql.executeQuery(`SELECT * FROM users WHERE id = '${methods.parseInt(text)}' OR name = '${text}'`, (err, rows, fields) => {
+    mysql.executeQuery(`SELECT * FROM users WHERE id = '${methods.parseInt(text)}' OR name = '${methods.removeQuotes2(methods.removeQuotes(text))}'`, (err, rows, fields) => {
 
         rows.forEach(row => {
             let subItems = [];
@@ -265,6 +265,121 @@ phone.getUserInfo = function(player, text) {
                 )
             ]));
             phone.showMenu(player, 'userInfo', 'База данных', items);
+        }
+    });
+};
+
+phone.getVehInfo = function(player, text) {
+    if (!user.isLogin(player))
+        return;
+
+    methods.debug('phone.getVehInfo');
+
+    text = methods.removeQuotes(text);
+
+    mysql.executeQuery(`SELECT * FROM cars WHERE id = '${methods.parseInt(text)}' OR number = '${methods.removeQuotes2(methods.removeQuotes(text))}'`, (err, rows, fields) => {
+
+        rows.forEach(row => {
+            let subItems = [];
+            let items = [];
+
+            subItems.push(phone.getMenuItem(
+                row['name'],
+                '' + row['number'],
+                { name: 'none' },
+                0,
+                '',
+                false,
+                enums.getVehicleImg(row['name']),
+            ));
+
+            if (row['user_id'] > 0) {
+                subItems.push(phone.getMenuItemButton(
+                    'Владелец',
+                    `${row['user_name']} (${row['id']})`,
+                    { name: 'none' },
+                ));
+            } else {
+                subItems.push(phone.getMenuItemButton(
+                    'Владелец',
+                    `Отсуствует`,
+                    { name: 'none' },
+                ));
+            }
+
+            items.push(phone.getMenuMainItem('Транспорт', subItems));
+            phone.showMenu(player, 'vehInfo', 'База данных', items);
+        });
+
+        if (rows.length == 0) {
+            let items = [];
+            items.push(phone.getMenuMainItem(`Список пуст`, [
+                phone.getMenuItemButton(
+                    `Поиск ничего не нашел`,
+                    ``
+                )
+            ]));
+            phone.showMenu(player, 'vehInfo', 'База данных', items);
+        }
+    });
+};
+
+phone.getGunInfo = function(player, text) {
+    if (!user.isLogin(player))
+        return;
+
+    methods.debug('phone.getGunInfo');
+
+    text = methods.removeQuotes(methods.removeQuotes2(text));
+
+    mysql.executeQuery(`SELECT * FROM items WHERE params LIKE '%${text}%'`, (err, rows, fields) => {
+
+        rows.forEach(row => {
+            let subItems = [];
+            let items = [];
+
+            try {
+                let params = JSON.parse(row['params']);
+
+                if (params.owner) {
+                    subItems.push(phone.getMenuItemButton(
+                        'Организация',
+                        `${params.owner.toString()}`,
+                        {name: 'none'},
+                    ));
+                }
+                if (params.userName) {
+                    subItems.push(phone.getMenuItemButton(
+                        'Владелец',
+                        `${params.userName.toString()}`,
+                        {name: 'none'},
+                    ));
+                }
+                if (params.serial) {
+                    subItems.push(phone.getMenuItemButton(
+                        'Серийный номер',
+                        `${params.serial.toString()}`,
+                        {name: 'none'},
+                    ));
+                }
+                items.push(phone.getMenuMainItem('Оружие', subItems));
+            }
+            catch (e) {
+                
+            }
+
+            phone.showMenu(player, 'gunInfo', 'База данных', items);
+        });
+
+        if (rows.length == 0) {
+            let items = [];
+            items.push(phone.getMenuMainItem(`Список пуст`, [
+                phone.getMenuItemButton(
+                    `Поиск ничего не нашел`,
+                    ``
+                )
+            ]));
+            phone.showMenu(player, 'gunInfo', 'База данных', items);
         }
     });
 };

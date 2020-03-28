@@ -96,7 +96,7 @@ gun.buy = function(player, itemId, price, count, superTint, tint, shopId) {
     let paramsObject = {
         userName: user.getRpName(player),
         serial: serial,
-        superTint: superTint,
+        superTint: methods.parseInt(superTint),
         tint: tint,
     };
 

@@ -16,6 +16,8 @@ let barberShop = require('../business/barberShop');
 let bank = require('../business/bank');
 let shop = require('../business/shop');
 
+let wheel = require('../casino/wheel');
+
 let business = require('../property/business');
 let vehicles = require('../property/vehicles');
 
@@ -35,6 +37,7 @@ pickups.QuestBotGang = new mp.Vector3(-219.3651123046875, -1367.4730224609375, 3
 
 pickups.PrintShopPos = new mp.Vector3(-1234.7786865234375, -1477.7230224609375, 3.324739933013916);
 pickups.MazeBankLobby = new mp.Vector3(-252.2621, -2003.149, 29.1459);
+pickups.WheelLuckyPos = new mp.Vector3(1109.76, 227.89, -49.64);
 
 pickups.BankMazeLiftOfficePos = new mp.Vector3(-77.77799, -829.6542, 242.3859);
 pickups.BankMazeLiftStreetPos = new mp.Vector3(-66.66476, -802.0474, 43.22729);
@@ -343,6 +346,8 @@ pickups.checkPressE = function(player) {
         player.call('client:menuList:showPrintShopMenu');
     if (methods.distanceToPos(pickups.MazeBankLobby, playerPos) < distanceCheck)
         player.call('client:menuList:showMazeBankLobbyMenu');
+    if (methods.distanceToPos(pickups.WheelLuckyPos, playerPos) < distanceCheck)
+        wheel.start(player)
 
     if (methods.distanceToPos(pickups.BotRole0, playerPos) < distanceCheck)
         player.call('client:menuList:showBotQuestRole0Menu');
@@ -518,6 +523,7 @@ pickups.createAll = function() {
     methods.createCpVector(pickups.QuestBotGang, 'Нажмите ~g~E~s~ чтобы взаимодействовать с NPC', 1, -1, pickups.Yellow);
 
     methods.createCpVector(pickups.MazeBankLobby, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.WheelLuckyPos, 'Нажмите ~g~E~s~ чтобы крутить колесо', 1, -1, [33, 150, 243, 0]);
 
     methods.createCpVector(pickups.LifeInvaderShopPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
 

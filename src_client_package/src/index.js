@@ -30,6 +30,8 @@ import weather from "./manager/weather";
 import hosp from "./manager/hosp";
 import jail from "./manager/jail";
 
+import wheel from "./casino/wheel";
+
 import user from "./user";
 import enums from "./enums";
 import phone from "./phone";
@@ -52,9 +54,11 @@ try {
         object.createIpl(item[0], new mp.Vector3(item[1], item[2], item[3]), item[4]);
     });*/
 
-    mp.game.ped.setAiMeleeWeaponDamageModifier(1.5);
-    mp.game.player.setMeleeWeaponDefenseModifier(1.5);
-    mp.game.player.setWeaponDefenseModifier(1.5);
+    mp.game.ped.setAiMeleeWeaponDamageModifier(1);
+    mp.game.player.setMeleeWeaponDefenseModifier(1);
+    mp.game.player.setWeaponDefenseModifier(1);
+    mp.game.player.setVehicleDefenseModifier(.1);
+    mp.game.player.setVehicleDamageModifier(.1);
 
     mp.gui.cursor.show(true, true);
 
@@ -79,6 +83,8 @@ try {
     object.load();
     npc.loadAll();
     skill.loadAll();
+
+    wheel.loadAll();
 
     attach.init();
     attachItems.registerAttaches();

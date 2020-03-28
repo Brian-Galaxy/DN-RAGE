@@ -10,6 +10,8 @@ require('./managers/wpSync');
 require('./managers/attach');
 require('./managers/attachWeapons');
 
+require('./casino/wheel');
+
 let mysql = require('./modules/mysql');
 let methods = require('./modules/methods');
 let vehicleInfo = require('./modules/vehicleInfo');

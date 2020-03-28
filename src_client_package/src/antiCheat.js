@@ -126,6 +126,7 @@ antiCheat.secTimer = function() {
                 user.kickAntiCheat('GodMode');
             }
             if (mp.game.player.getInvincible()) {
+                user.warnAntiCheat(`GodMode`);
                 try {
                     mp.players.local.setInvincible(false);
                     mp.game.player.setInvincible(false);
@@ -154,14 +155,15 @@ antiCheat.secTimer = function() {
             }
         });
 
-        /*let newPos = mp.players.local.position;
+        let newPos = mp.players.local.position;
         let dist = mp.players.local.vehicle ? methods.getCurrentSpeed() + 50 : 50;
-        if (methods.distanceToPos(prevPos, newPos) > dist && !mp.players.local.isFalling() && !mp.players.local.isRagdoll()) {
+        let distNew = methods.distanceToPos(prevPos, newPos);
+        if (distNew > dist && !mp.players.local.isFalling() && !mp.players.local.isRagdoll()) {
             if (!user.isTeleport() && !methods.isBlockKeys())
-                user.kickAntiCheat(`Teleport`);
+                user.warnAntiCheat(`Teleport (${distNew.toFixed(2)}m)`);
             user.setTeleport(false);
         }
-        prevPos = newPos;*/
+        prevPos = newPos;
 
         /*if (mp.players.local.isSittingInAnyVehicle())
         {

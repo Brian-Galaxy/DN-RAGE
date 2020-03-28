@@ -94,7 +94,7 @@ vSync.updateValues = function(entity) {
 
                 mp.game.invoke(methods.SET_BOAT_FROZEN_WHEN_ANCHORED, entity.handle, true);
                 entity.setBoatAnchor(actualData.Anchor);
-                entity.setCollision(actualData.Collision, true);
+                //entity.setCollision(actualData.Collision, true);
                 entity.freezePosition(actualData.Freeze);
 
                 entity.setSearchlight(actualData.SpotLight, false);
@@ -407,7 +407,7 @@ mp.events.add("vSync:setCollisionState", (vehId, status) => {
     try {
         let veh = mp.vehicles.atRemoteId(vehId);
         if (veh !== undefined && mp.vehicles.exists(veh)) {
-            veh.setCollision(status, true)
+            //veh.setCollision(status, true)
         }
     } catch (e) {
         methods.debug(e);

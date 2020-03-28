@@ -964,6 +964,10 @@ user.kickAntiCheat = function(reason) {
     mp.events.callRemote('server:user:kickAntiCheat', reason);
 };
 
+user.warnAntiCheat = function(reason) {
+    mp.events.callRemote('server:user:warnAntiCheat', reason);
+};
+
 user.banAntiCheat = function(type, reason) {
     mp.events.callRemote('server:user:banAntiCheat', type, reason);
 };

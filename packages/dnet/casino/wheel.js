@@ -20,8 +20,14 @@ wheel.start = function (player) {
             return;
         }
         wheel.isBlock = true;
-        player.call('client:casino:wheel:start');
-        user.setById(user.getId(player), 'isWheel', true);
+
+        try {
+            player.call('client:casino:wheel:start');
+            user.setById(user.getId(player), 'isWheel', true);
+        }
+        catch (e) {
+            
+        }
 
         setTimeout(function () {
             wheel.isBlock = false;
@@ -32,7 +38,16 @@ wheel.start = function (player) {
 mp.events.add('server:casino:wheel:doRoll', (player) => {
     let userWin = methods.getRandomInt(0, 20);
     user.set(player, 'wheelWin', userWin);
-    player.call('client:casino:wheel:doRoll', [userWin]);
+    mp.players.callInRange(player.position, 200, 'client:casino:wheel:doRoll', [userWin, player.id]);
+    //player.call('client:casino:wheel:doRoll', [userWin]);
+});
+
+mp.events.add('server:casino:wheel:block', (player) => {
+    wheel.isBlock = true;
+});
+
+mp.events.add('server:casino:wheel:unblock', (player) => {
+    wheel.isBlock = false;
 });
 
 mp.events.add('server:casino:wheel:finalRoll', (player) => {

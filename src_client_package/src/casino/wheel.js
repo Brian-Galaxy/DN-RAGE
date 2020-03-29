@@ -74,7 +74,7 @@ mp.events.add("client:casino:wheel:start", async () => {
     wheel.userRoll();
 });
 
-mp.events.add("client:casino:wheel:doRoll", async (priceIndex) => {
+mp.events.add("client:casino:wheel:doRoll", async (priceIndex, playerId) => {
     try {
         _wheel.setHeading(-30.0);
         _wheel.setRotation(0, 0, 0, 1, true);
@@ -104,7 +104,8 @@ mp.events.add("client:casino:wheel:doRoll", async (priceIndex) => {
             _wheel.setRotation(0.0, _y, 0.0, 1, true);
             await methods.sleep(1);
         }
-        mp.events.callRemote('server:casino:wheel:finalRoll');
+        if (mp.players.local.remoteId === playerId)
+            mp.events.callRemote('server:casino:wheel:finalRoll');
     }
     catch (e) {
         methods.debug('DO_ROLL');

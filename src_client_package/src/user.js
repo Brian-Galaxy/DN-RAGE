@@ -103,14 +103,17 @@ user.timerRayCast = function() {
     catch (e) {
 
     }
-
-    setTimeout(user.timerRayCast, 200);
 };
 
 user.timer1sec = function() {
 
-    ui.updateZoneAndStreet();
-    ui.updateDirectionText();
+    try {
+        ui.updateZoneAndStreet();
+        ui.updateDirectionText();
+    }
+    catch (e) {
+        
+    }
 
     try {
         for (let n = 54; n < 138; n++)
@@ -135,8 +138,6 @@ user.timer1sec = function() {
     catch (e) {
         methods.debug(e);
     }
-
-    setTimeout(user.timer1sec, 1000);
 };
 
 user.getTargetEntity = function() {
@@ -521,8 +522,10 @@ user.init = function() {
     try {
         mp.nametags.enabled = false;
         mp.game.graphics.transitionFromBlurred(false);
-        user.timerRayCast();
-        user.timer1sec();
+
+        setInterval(user.timerRayCast, 200);
+        setInterval(user.timer1sec, 1000);
+
         user.stopAllScreenEffect();
         user.hideLoadDisplay();
         user.clearChat();

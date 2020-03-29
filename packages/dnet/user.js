@@ -173,8 +173,7 @@ user.loginAccount = function(player, login, pass) {
 
                         let spawnList = [];
 
-                        let userId = row['id'];
-                        if (user.hasById(userId, 'timestamp') && (user.getById(userId, 'timestamp') + 60 * 15) > methods.getTimeStamp())
+                        if (row['pos_x'] !== 0)
                             spawnList.push('Точка выхода');
 
                         if (row['house_id'])
@@ -460,10 +459,17 @@ user.spawnByName = function(player, spawn = 'Стандарт') {
             user.setHealth(player, user.getById(user.getId(player), 'hp'));
 
         if (spawn == 'Точка выхода') {
-            let userId = user.getId(player);
-            player.spawn(new mp.Vector3(user.getById(userId, 'pos_x'), user.getById(userId, 'pos_y'), user.getById(userId, 'pos_z')));
-            player.heading = user.getById(userId, 'rot');
-            player.dimension = 0;
+            //let userId = user.getId(player);
+            player.spawn(new mp.Vector3(user.get(player, 'pos_x'), user.get(player, 'pos_y'), user.get(player, 'pos_z')));
+            player.heading = user.get(player, 'rot');
+            setTimeout(function () {
+                try {
+                    player.dimension = 0;
+                }
+                catch (e) {
+                    
+                }
+            }, 10000);
             //player.dimension = user.getById(userId, 'dimension');
         }
         else if (spawn == 'Дом') {

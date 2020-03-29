@@ -2739,7 +2739,15 @@ menuList.showSettingsKeyMenu = function() {
 
     let menu = UIMenu.Menu.Create(`Настройки`, `~b~Настройки управления`);
 
-    let menuItem = UIMenu.Menu.AddMenuItem("Инвентарь", "Нажмите ~g~Enter~s~ чтобы изменить");
+    let menuItem = UIMenu.Menu.AddMenuItem("Меню транспорта", "Нажмите ~g~Enter~s~ чтобы изменить");
+    menuItem.doName = 's_bind_veh_menu';
+    menuItem.SetRightLabel(`~h~~m~[${bind.getKeyName(user.getCache(menuItem.doName))}]`);
+
+    menuItem = UIMenu.Menu.AddMenuItem("Меню персонажа", "Нажмите ~g~Enter~s~ чтобы изменить");
+    menuItem.doName = 's_bind_player_menu';
+    menuItem.SetRightLabel(`~h~~m~[${bind.getKeyName(user.getCache(menuItem.doName))}]`);
+
+    menuItem = UIMenu.Menu.AddMenuItem("Инвентарь", "Нажмите ~g~Enter~s~ чтобы изменить");
     menuItem.doName = 's_bind_inv';
     menuItem.SetRightLabel(`~h~~m~[${bind.getKeyName(user.getCache(menuItem.doName))}]`);
 
@@ -2811,10 +2819,61 @@ menuList.showSettingsKeyMenu = function() {
     menuItem.doName = 's_bind_helilight';
     menuItem.SetRightLabel(`~h~~m~[${bind.getKeyName(user.getCache(menuItem.doName))}]`);
 
-    /*UIMenu.Menu.AddMenuItem("keyPressToggleHeliCam").keyPressToggleHeliCam = true;
-    UIMenu.Menu.AddMenuItem("keyPressToggleSpotLight").keyPressToggleSpotLight = true;
-    UIMenu.Menu.AddMenuItem("keyPressToggleVision").keyPressToggleVision = true;
-    UIMenu.Menu.AddMenuItem("keyPressToggleLockVehicle").keyPressToggleLockVehicle = true;*/
+    menuItem = UIMenu.Menu.AddMenuItem("Убрать оружие", "Нажмите ~g~Enter~s~ чтобы изменить");
+    menuItem.doName = 's_bind_weapon_slot0';
+    menuItem.SetRightLabel(`~h~~m~[${bind.getKeyName(user.getCache(menuItem.doName))}]`);
+
+    menuItem = UIMenu.Menu.AddMenuItem("Взять основное оружие", "Нажмите ~g~Enter~s~ чтобы изменить");
+    menuItem.doName = 's_bind_weapon_slot1';
+    menuItem.SetRightLabel(`~h~~m~[${bind.getKeyName(user.getCache(menuItem.doName))}]`);
+
+    menuItem = UIMenu.Menu.AddMenuItem("Взять дробовик", "Нажмите ~g~Enter~s~ чтобы изменить");
+    menuItem.doName = 's_bind_weapon_slot2';
+    menuItem.SetRightLabel(`~h~~m~[${bind.getKeyName(user.getCache(menuItem.doName))}]`);
+
+    menuItem = UIMenu.Menu.AddMenuItem("Взять метательное оружие", "Нажмите ~g~Enter~s~ чтобы изменить");
+    menuItem.doName = 's_bind_weapon_slot3';
+    menuItem.SetRightLabel(`~h~~m~[${bind.getKeyName(user.getCache(menuItem.doName))}]`);
+
+    menuItem = UIMenu.Menu.AddMenuItem("Взять пистолет", "Нажмите ~g~Enter~s~ чтобы изменить");
+    menuItem.doName = 's_bind_weapon_slot4';
+    menuItem.SetRightLabel(`~h~~m~[${bind.getKeyName(user.getCache(menuItem.doName))}]`);
+
+    menuItem = UIMenu.Menu.AddMenuItem("Взять ручное оружие", "Нажмите ~g~Enter~s~ чтобы изменить");
+    menuItem.doName = 's_bind_weapon_slot5';
+    menuItem.SetRightLabel(`~h~~m~[${bind.getKeyName(user.getCache(menuItem.doName))}]`);
+
+    menuItem = UIMenu.Menu.AddMenuItem("Списое всех анимаций", "Нажмите ~g~Enter~s~ чтобы изменить");
+    menuItem.doName = 's_bind_animations_all';
+    menuItem.SetRightLabel(`~h~~m~[${bind.getKeyName(user.getCache(menuItem.doName))}]`);
+
+    menuItem = UIMenu.Menu.AddMenuItem("Анимации действий", "Нажмите ~g~Enter~s~ чтобы изменить");
+    menuItem.doName = 's_bind_animations_0';
+    menuItem.SetRightLabel(`~h~~m~[${bind.getKeyName(user.getCache(menuItem.doName))}]`);
+
+    menuItem = UIMenu.Menu.AddMenuItem("Позирующие анимации", "Нажмите ~g~Enter~s~ чтобы изменить");
+    menuItem.doName = 's_bind_animations_1';
+    menuItem.SetRightLabel(`~h~~m~[${bind.getKeyName(user.getCache(menuItem.doName))}]`);
+
+    menuItem = UIMenu.Menu.AddMenuItem("Анимации положительных эмоций", "Нажмите ~g~Enter~s~ чтобы изменить");
+    menuItem.doName = 's_bind_animations_2';
+    menuItem.SetRightLabel(`~h~~m~[${bind.getKeyName(user.getCache(menuItem.doName))}]`);
+
+    menuItem = UIMenu.Menu.AddMenuItem("Анимации негативных эмоций", "Нажмите ~g~Enter~s~ чтобы изменить");
+    menuItem.doName = 's_bind_animations_3';
+    menuItem.SetRightLabel(`~h~~m~[${bind.getKeyName(user.getCache(menuItem.doName))}]`);
+
+    menuItem = UIMenu.Menu.AddMenuItem("Анимации танцев", "Нажмите ~g~Enter~s~ чтобы изменить");
+    menuItem.doName = 's_bind_animations_4';
+    menuItem.SetRightLabel(`~h~~m~[${bind.getKeyName(user.getCache(menuItem.doName))}]`);
+
+    menuItem = UIMenu.Menu.AddMenuItem("Анимации взаимодействия", "Нажмите ~g~Enter~s~ чтобы изменить");
+    menuItem.doName = 's_bind_animations_5';
+    menuItem.SetRightLabel(`~h~~m~[${bind.getKeyName(user.getCache(menuItem.doName))}]`);
+
+    menuItem = UIMenu.Menu.AddMenuItem("Остальные анимации", "Нажмите ~g~Enter~s~ чтобы изменить");
+    menuItem.doName = 's_bind_animations_6';
+    menuItem.SetRightLabel(`~h~~m~[${bind.getKeyName(user.getCache(menuItem.doName))}]`);
 
     let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
 
@@ -6429,8 +6488,9 @@ menuList.showMazeBankLobbyMenu = function()
 
     let menu = UIMenu.Menu.Create("Arena", "~b~MazeBank Arena");
 
-    let menuListItem = UIMenu.Menu.AddMenuItem('~g~Приять участие $1,000');
-    menuListItem.doName = 'start';
+    UIMenu.Menu.AddMenuItem('~g~Приять участие $1,000').doName = 'start';
+
+    UIMenu.Menu.AddMenuItem('Таблица рейтинга').doName = 'rating';
 
     UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = "closeButton";
 
@@ -6438,6 +6498,8 @@ menuList.showMazeBankLobbyMenu = function()
         UIMenu.Menu.HideMenu();
         if(item.doName == 'start')
             mp.events.callRemote('server:race:toLobby');
+        if(item.doName == 'rating')
+            mp.events.callRemote('server:race:rating');
     });
 };
 
@@ -9888,10 +9950,10 @@ menuList.showAdminDevMenu = function() {
         if (item.doName == 'server:user:getPlayerPos') {
             mp.events.callRemote('server:user:getPlayerPos');
         }
-        if (item.doName == 'server:user:saveAllAcc') {
+        if (item.doName == 'saveAllAcc') {
             mp.events.callRemote('server:saveAllAcc');
         }
-        if (item.doName == 'server:user:saveAll') {
+        if (item.doName == 'saveAll') {
             mp.events.callRemote('server:saveAll');
         }
         if (item.doName == 'server:user:getPlayerPos2') {

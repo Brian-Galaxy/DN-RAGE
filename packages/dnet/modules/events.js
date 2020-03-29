@@ -53,8 +53,8 @@ mp.events.add = (eventName, eventCallback) => {
 
             const callText = entityName !== null ? `${entityName} call event ${eventName}` : `Event ${eventName} called`;
 
-            if (eventName != 'server:clientDebug')
-                methods.debug(callText, argumentsList.slice(1));
+            //if (eventName != 'server:clientDebug')
+            //    methods.debug(callText, argumentsList.slice(1));
 
             target.apply(thisArg, argumentsList);
             return;
@@ -249,6 +249,32 @@ mp.events.addRemoteCounted('server:race:exit', (player) => {
 mp.events.addRemoteCounted('server:race:toLobby', (player) => {
     try {
         racer.enterLobby(player);
+    } catch (e) {
+        console.log(e);
+    }
+});
+
+mp.events.addRemoteCounted('server:race:rating', (player) => {
+    try {
+        if (!user.isLogin(player))
+            return;
+
+        mysql.executeQuery(`SELECT name, rating_racer_mmr, rating_racer_count, rating_racer_win FROM users ORDER BY rating_racer_mmr DESC LIMIT 10`, function (err, rows, fields) {
+            try {
+                let menuData = new Map();
+                let idx = 1;
+                rows.forEach(function(item) {
+                    menuData.set(`#${idx++}. ~s~${item['name']}`, `~g~${item['rating_racer_mmr']}~s~ | ~q~${item['rating_racer_count']}~s~ | ~y~${item['rating_racer_win']}`);
+                });
+
+                menuData.set('~s~...', ``);
+                menuData.set('~s~Ваша статистика', `~g~${user.get(player, 'rating_racer_mmr')}~s~ | ~q~${user.get(player, 'rating_racer_count')}~s~ | ~y~${user.get(player, 'rating_racer_win')}`);
+                user.showMenu(player, 'Рейтинг', '~g~MMR~s~ | ~q~Заезды~s~ | ~y~Победы', menuData);
+            }
+            catch (e) {
+                methods.debug(e);
+            }
+        });
     } catch (e) {
         console.log(e);
     }

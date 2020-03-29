@@ -2894,11 +2894,14 @@ phone.consoleCallback = async function(command) {
             }
             else if (args[0] === 'alone.py' && user.hasCache('file-alone.py')) {
                 if (args.length !== 3) {
-                    phone.addConsoleCommand('Usage: python alone.py [key] [id]');
+                    phone.addConsoleCommand('Usage: python alone.py [key] [name/id]');
                     return;
                 }
                 if (args[1] === 'AABABBAAABABBABAAABAAAABBABBABBAABABAAABAABBB') {
                     await phone.consoleLoad('You are not alone', 500);
+                    phone.toMainUMenu();
+                    phone.showLoad();
+                    await methods.sleep(100);
                     mp.events.callRemote('server:phone:getUserInfo', methods.removeQuotes2(methods.removeQuotes(args[2])));
                 }
                 else {
@@ -2907,11 +2910,14 @@ phone.consoleCallback = async function(command) {
             }
             else if (args[0] === 'lmh.py' && user.hasCache('file-lmh.py')) {
                 if (args.length !== 3) {
-                    phone.addConsoleCommand('Usage: python lmh.py [key] [id]');
+                    phone.addConsoleCommand('Usage: python lmh.py [key] [serial]');
                     return;
                 }
                 if (args[1] === 'WARISGONE') {
                     await phone.consoleLoad('War is over', 500);
+                    phone.toMainUMenu();
+                    phone.showLoad();
+                    await methods.sleep(100);
                     mp.events.callRemote('server:phone:getGunInfo', methods.removeQuotes2(methods.removeQuotes(args[2])));
                 }
                 else {
@@ -2920,11 +2926,14 @@ phone.consoleCallback = async function(command) {
             }
             else if (args[0] === 'deadinside.py' && user.hasCache('file-deadinside.py')) {
                 if (args.length !== 3) {
-                    phone.addConsoleCommand('Usage: python deadinside.py [key] [id]');
+                    phone.addConsoleCommand('Usage: python deadinside.py [key] [numberplate]');
                     return;
                 }
                 if (args[1] === 'MR.DEADINSIDE') {
                     await phone.consoleLoad('You are dead', 500);
+                    phone.toMainUMenu();
+                    phone.showLoad();
+                    await methods.sleep(100);
                     mp.events.callRemote('server:phone:getVehInfo', methods.removeQuotes2(methods.removeQuotes(args[2])));
                 }
                 else {
@@ -2938,7 +2947,7 @@ phone.consoleCallback = async function(command) {
                 }
 
                 if (await user.hasById('atmTimeout')) {
-                    await phone.consoleLoad('Timeout: update system patches. Please wait.');
+                    phone.addConsoleCommand('Timeout: update system patches. Please wait.');
                     return;
                 }
 
@@ -3015,7 +3024,7 @@ phone.consoleCallback = async function(command) {
                         isFind = true;
                         let vInfo = methods.getVehicleInfo(v.model);
                         if (vInfo.fuel_type === 3 || vInfo.class_name === "Super") {
-                            dispatcher.sendPos('Код 3', `Сработала система безопасности на транспорте ${vInfo.display_name} (${v.getNumberPlateText()})`, v.position);
+                            //dispatcher.sendPos('Код 3', `Сработала система безопасности на транспорте ${vInfo.display_name} (${v.getNumberPlateText()})`, v.position);
                             await phone.consoleAwait('Send package ');
                             if (methods.getRandomInt(0, 100) < 30 + user.getCache('stats_darknet')) {
                                 mp.events.callRemote('server:vehicle:lockStatus:hack', v.remoteId);
@@ -3060,7 +3069,7 @@ phone.consoleCallback = async function(command) {
                         let vInfo = methods.getVehicleInfo(v.model);
                         isFind = true;
                         if (vInfo.fuel_type === 3 || vInfo.class_name === "Super") {
-                            dispatcher.sendPos('Код 3', `Сработала система безопасности на транспорте ${vInfo.display_name} (${v.getNumberPlateText()})`, v.position);
+                            //dispatcher.sendPos('Код 3', `Сработала система безопасности на транспорте ${vInfo.display_name} (${v.getNumberPlateText()})`, v.position);
                             await phone.consoleAwait('Send package ', 50);
                             if (methods.getRandomInt(0, 100) < 10 + user.getCache('stats_darknet')) {
                                 mp.events.callRemote('server:vehicle:engineStatus:hack', v.remoteId);

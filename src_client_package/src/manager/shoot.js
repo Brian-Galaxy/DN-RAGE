@@ -71,10 +71,7 @@ shoot.getWeaponRecoil = function (wpHash) {
     return 0.1;
 };
 
-// load mp audio for the click sound
-mp.game.audio.setAudioFlag("LoadMPData", true);
-
-let isAimActive = false;
+/*let isAimActive = false;
 mp.events.add("render", async () => {
     try {
         if (mp.game.player.isFreeAiming() && !isAimActive) {
@@ -88,7 +85,7 @@ mp.events.add("render", async () => {
     }
     catch (e) {
     }
-});
+});*/
 
 mp.events.add("render", () => {
     try {

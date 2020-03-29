@@ -113,7 +113,6 @@ mp.events.add('client:user:auth:register', function(mail, login, passwordReg, pa
 });
 
 mp.events.add('client:user:auth:login', function(login, password) {
-    methods.debug(`'${login} ${password}'`);
     try {
         let usingEmail = false;
         if(login.includes('@')) {
@@ -137,7 +136,6 @@ mp.events.add('client:user:auth:login', function(login, password) {
         }
         //user.showCustomNotify('Пожалуйста подождите...');
         //methods.storage.set('login', login);
-        methods.debug('START_LOGIN');
         mp.events.callRemote('server:user:loginAccount', login, password, usingEmail);
     }
     catch (e) {

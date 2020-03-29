@@ -99,7 +99,7 @@ let updateStats = function(){
     try {
         mp.game.gameplay.terminateAllScriptsWithThisName('stats_controller﻿');
 
-        //mp.players.local.setAccuracy(user.getCache('stats_shooting'));
+        mp.players.local.setAccuracy(user.getCache('stats_shooting'));
 
         mp.game.stats.statSetInt(mp.game.joaat("MP0_STAMINA"), user.getCache('stats_endurance'), true);
         mp.game.stats.statSetInt(mp.game.joaat("MP0_STRENGTH"), user.getCache('stats_strength'), true);
@@ -158,7 +158,7 @@ let updateStats = function(){
 
 skill.loadAll = function() {
     setInterval(checkStats, 180000);
-    setInterval(checkShooting, 3000);
+    setInterval(checkShooting, 5000);
     setInterval(updateStats, 10000);
 };
 

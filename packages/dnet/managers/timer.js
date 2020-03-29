@@ -118,8 +118,9 @@ timer.min60Timer = function() {
         'Администрация желает вам хорошего настроения, улыбнитесь ;)',
         'Администрация желает вам приятной игры :3',
         'Администрация желает вам приятной игры c:',
-        'Напоминаем, у вас есть возможность кастомизировать чат (M - Настройки - Текстовый чат)',
-        'Напоминаем, у вас есть возможность интерфейс (M - Настройки - Текстовый чат)',
+        'Напоминаем, у вас есть возможность кастомизировать чат\n(M - Настройки - Текстовый чат)',
+        'Напоминаем, у вас есть возможность кастомизировать интерфейс\n(M - Настройки - Интерфейс)',
+        'Напоминаем, у вас есть использовать бинды клавиш\n(M - Настройки - Назначение клавиш)',
     ];
 
     methods.notifyWithPictureToAll('Ув. игроки', 'Администрация', arrayRandom[methods.getRandomInt(0, arrayRandom.length)], 'CHAR_ACTING_UP');
@@ -157,13 +158,11 @@ timer.sec10Timer = function() {
             if (p.dimension > 0)
                 return;
 
-            user.setById(userId, 'pos_x', p.position.x);
-            user.setById(userId, 'pos_y', p.position.y);
-            user.setById(userId, 'pos_z', p.position.z);
-            user.setById(userId, 'rot', p.heading);
+            user.set(p, 'pos_x', p.position.x);
+            user.set(p, 'pos_y', p.position.y);
+            user.set(p, 'pos_z', p.position.z);
+            user.set(p, 'rotation', p.heading);
             user.setById(userId, 'hp', p.health);
-            //user.setById(userId, 'dimension', p.dimension);
-            user.setById(userId, 'timestamp', methods.getTimeStamp());
         }
     });
 

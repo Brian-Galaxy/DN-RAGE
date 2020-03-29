@@ -13,11 +13,13 @@ import inventory from "../inventory";
 import pSync from "./pSync";
 import heliCam from "./heliCam";
 import chat from "../chat";
+import weapons from "../weapons";
+import menuList from "../menuList";
 
 let bind = {};
 
 const keyCodes = {
-    0: 'Unk',
+    0: 'None',
     3: 'Break',
     //8: 'backspace',
     9: 'Tab',
@@ -215,7 +217,7 @@ bind.bindNewKey = function(key) {
 };
 
 bind.getKeyName = function(key) {
-    return keyCodes[methods.parseInt(key)];
+    return keyCodes[methods.parseInt(key)] ? keyCodes[methods.parseInt(key)] : 'None';
 };
 
 bind.getChangeKey = async function(data) {
@@ -236,7 +238,7 @@ for(let code in keyCodes) {
             return;
 
         if (mp.gui.chat.enabled)
-            return;;
+            return;
 
         if (user.getCache('s_bind_do') == parseInt(code)) {
             if (user.isCuff() || user.isTie()) {
@@ -288,6 +290,107 @@ for(let code in keyCodes) {
         if (user.getCache('s_bind_stopanim') == parseInt(code)) {
             if (!methods.isBlockKeys())
                 user.stopAllAnimation();
+        }
+        if (user.getCache('s_bind_veh_menu') == parseInt(code)) {
+            if (!methods.isBlockKeys())
+                mp.events.callRemote('server:showVehMenu');
+        }
+        if (user.getCache('s_bind_player_menu') == parseInt(code)) {
+            if (!methods.isBlockKeys())
+                menuList.showPlayerMenu();
+        }
+        if (user.getCache('s_bind_weapon_slot0') == parseInt(code)) {
+            if (!methods.isBlockKeys())
+            {
+                user.setCurrentWeapon('weapon_unarmed');
+            }
+        }
+        if (user.getCache('s_bind_weapon_slot1') == parseInt(code)) {
+            if (!methods.isBlockKeys())
+            {
+                weapons.getMapList().forEach(item => {
+                    if (mp.game.invoke(methods.HAS_PED_GOT_WEAPON, mp.players.local.handle, (item[1] / 2), false)) {
+                        if (weapons.getGunSlotId(item[0]) === 1)
+                            user.setCurrentWeapon(item[0]);
+                    }
+                });
+            }
+        }
+        if (user.getCache('s_bind_weapon_slot2') == parseInt(code)) {
+            if (!methods.isBlockKeys())
+            {
+                weapons.getMapList().forEach(item => {
+                    if (mp.game.invoke(methods.HAS_PED_GOT_WEAPON, mp.players.local.handle, (item[1] / 2), false)) {
+                        if (weapons.getGunSlotId(item[0]) === 2)
+                            user.setCurrentWeapon(item[0]);
+                    }
+                });
+            }
+        }
+        if (user.getCache('s_bind_weapon_slot3') == parseInt(code)) {
+            if (!methods.isBlockKeys())
+            {
+                weapons.getMapList().forEach(item => {
+                    if (mp.game.invoke(methods.HAS_PED_GOT_WEAPON, mp.players.local.handle, (item[1] / 2), false)) {
+                        if (weapons.getGunSlotId(item[0]) === 3)
+                            user.setCurrentWeapon(item[0]);
+                    }
+                });
+            }
+        }
+        if (user.getCache('s_bind_weapon_slot4') == parseInt(code)) {
+            if (!methods.isBlockKeys())
+            {
+                weapons.getMapList().forEach(item => {
+                    if (mp.game.invoke(methods.HAS_PED_GOT_WEAPON, mp.players.local.handle, (item[1] / 2), false)) {
+                        if (weapons.getGunSlotId(item[0]) === 4)
+                            user.setCurrentWeapon(item[0]);
+                    }
+                });
+            }
+        }
+        if (user.getCache('s_bind_weapon_slot5') == parseInt(code)) {
+            if (!methods.isBlockKeys())
+            {
+                weapons.getMapList().forEach(item => {
+                    if (mp.game.invoke(methods.HAS_PED_GOT_WEAPON, mp.players.local.handle, (item[1] / 2), false)) {
+                        if (weapons.getGunSlotId(item[0]) === 5)
+                            user.setCurrentWeapon(item[0]);
+                    }
+                });
+            }
+        }
+        if (user.getCache('s_bind_animations_all') == parseInt(code)) {
+            if (!methods.isBlockKeys())
+                menuList.showAnimationTypeListMenu();
+        }
+        if (user.getCache('s_bind_animations_0') == parseInt(code)) {
+            if (!methods.isBlockKeys())
+                menuList.showAnimationListMenu('Анимации действий', enums.animActions);
+        }
+        if (user.getCache('s_bind_animations_1') == parseInt(code)) {
+            if (!methods.isBlockKeys())
+                menuList.showAnimationListMenu('Позирующие анимации', enums.animPose);
+        }
+        if (user.getCache('s_bind_animations_2') == parseInt(code)) {
+            if (!methods.isBlockKeys())
+                menuList.showAnimationListMenu('Положительные эмоции', enums.animPositive);
+        }
+        if (user.getCache('s_bind_animations_3') == parseInt(code)) {
+            if (!methods.isBlockKeys())
+                menuList.showAnimationListMenu('Негативные эмоции', enums.animNegative);
+        }
+        if (user.getCache('s_bind_animations_4') == parseInt(code)) {
+            if (!methods.isBlockKeys())
+                menuList.showAnimationListMenu('Танцы', enums.animDance);
+        }
+        if (user.getCache('s_bind_animations_5') == parseInt(code)) {
+            if (!methods.isBlockKeys())
+                menuList.showAnimationSyncListMenu();
+        }
+        if (user.getCache('s_bind_animations_6') == parseInt(code)) {
+            if (!methods.isBlockKeys())
+                menuList.showAnimationOtherListMenu();
         }
         if (user.getCache('s_bind_lock') == parseInt(code)) {
             if (!methods.isBlockKeys())

@@ -6488,9 +6488,10 @@ menuList.showMazeBankLobbyMenu = function()
 
     let menu = UIMenu.Menu.Create("Arena", "~b~MazeBank Arena");
 
-    UIMenu.Menu.AddMenuItem('~g~Приять участие $1,000').doName = 'start';
-
-    UIMenu.Menu.AddMenuItem('Таблица рейтинга').doName = 'rating';
+    UIMenu.Menu.AddMenuItem('~g~Приять участие в гонке', 'Взнос: ~g~$1,000').doName = 'start';
+    UIMenu.Menu.AddMenuItem('~g~Пригласить на дуэль', 'Взнос: ~g~$1,000').doName = 'duel';
+    UIMenu.Menu.AddMenuItem('Таблица рейтинга гонок').doName = 'rating';
+    UIMenu.Menu.AddMenuItem('Таблица рейтинга дуэлей').doName = 'drating';
 
     UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = "closeButton";
 
@@ -6500,6 +6501,87 @@ menuList.showMazeBankLobbyMenu = function()
             mp.events.callRemote('server:race:toLobby');
         if(item.doName == 'rating')
             mp.events.callRemote('server:race:rating');
+        if(item.doName == 'drating')
+            mp.events.callRemote('server:duel:rating');
+        if(item.doName == 'duel')
+            menuList.showMazeBankLobbyCreateDuoMenu();
+    });
+};
+
+menuList.showMazeBankLobbyCreateDuoMenu = function(bet = 0, death = 3)
+{
+    UIMenu.Menu.HideMenu();
+
+    let menu = UIMenu.Menu.Create("Arena", "~b~MazeBank Arena");
+
+    UIMenu.Menu.AddMenuItem(`Ставка ~g~${methods.moneyFormat(bet)}`, 'Нажмите ~g~Enter~s~ чтобы изменить').doName = 'setBet';
+    UIMenu.Menu.AddMenuItem(`До ~b~${death}~s~ смертей`, 'Нажмите ~g~Enter~s~ чтобы изменить').doName = 'setDeath';
+    UIMenu.Menu.AddMenuItem('~g~Пригласить', 'Взнос: ~g~$1,000').doName = 'duel';
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = "closeButton";
+
+    menu.ItemSelect.on(async (item, index) => {
+        if(item.doName == 'setBet')
+        {
+            let name = methods.parseInt(await UIMenu.Menu.GetUserInput("Сумма ставки", "", 9));
+            if (name > 25000) {
+                mp.game.ui.notifications.show(`~r~Значение не должно быть больше 25000`);
+                return;
+            }
+            if (name < 0) {
+                mp.game.ui.notifications.show(`~r~Значение не должно быть меньше 0`);
+                return;
+            }
+            menuList.showMazeBankLobbyCreateDuoMenu(name, death)
+        }
+        if(item.doName == 'setDeath')
+        {
+            let name = methods.parseInt(await UIMenu.Menu.GetUserInput("Кол-во смертей", "", 9));
+            if (name > 5) {
+                mp.game.ui.notifications.show(`~r~Значение не должно быть больше 5`);
+                return;
+            }
+            if (name < 2) {
+                mp.game.ui.notifications.show(`~r~Значение не должно быть меньше 2`);
+                return;
+            }
+            menuList.showMazeBankLobbyCreateDuoMenu(bet, name)
+        }
+        if(item.doName == 'duel') {
+            UIMenu.Menu.HideMenu();
+            let name = methods.parseInt(await UIMenu.Menu.GetUserInput("Введите ID игрока", "", 9));
+            if (name === mp.players.local.remoteId) {
+                mp.game.ui.notifications.show(`~r~Нельзя самого себя позвать на дуэль`);
+                return;
+            }
+            mp.events.callRemote('server:duel:toLobby', name, bet, death);
+        }
+        if(item.doName == 'closeButton') {
+            UIMenu.Menu.HideMenu();
+        }
+    });
+};
+
+menuList.showMazeBankLobbyAskDuoMenu = function(playerId, bet = 0, death = 3)
+{
+    UIMenu.Menu.HideMenu();
+
+    let menu = UIMenu.Menu.Create("Arena", "~b~MazeBank Arena");
+
+    UIMenu.Menu.AddMenuItem(`Ставка ~g~${methods.moneyFormat(bet)}`);
+    UIMenu.Menu.AddMenuItem(`До ~b~${death}~s~ смертей`);
+    UIMenu.Menu.AddMenuItem('~g~Принять', 'Взнос: ~g~$1,000').doName = 'duel';
+    UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = "closeButton";
+
+    menu.ItemSelect.on(async (item, index) => {
+
+        if(item.doName == 'duel') {
+            UIMenu.Menu.HideMenu();
+            mp.events.callRemote('server:duel:accept', playerId, bet, death);
+        }
+        if(item.doName == 'closeButton') {
+            UIMenu.Menu.HideMenu();
+        }
     });
 };
 
@@ -9716,7 +9798,7 @@ menuList.showAdminGangZoneMenu = function(zone) {
                 let name = await UIMenu.Menu.GetUserInput("Число", "", 9);
                 mp.events.callRemote('server:admin:gangZone:edit', zone.get('gangWarid'), item.doName, methods.parseInt(name));
             }
-            if (item.doName == 'zone' || item.doName == 'street' || item.doName == 'fraction_name') {
+            if (item.doName == 'zone' || item.doNaВme == 'street' || item.doName == 'fraction_name') {
                 let name = await UIMenu.Menu.GetUserInput("Название", "", 120);
                 mp.events.callRemote('server:admin:gangZone:edit', zone.get('gangWarid'), item.doName, name);
             }

@@ -722,59 +722,69 @@ racer.loadAll = function () {
 racer.finish = function (player) {
     if (user.isLogin(player)) {
 
-        vehicles.respawn(player.vehicle);
-        user.teleport(player, -253.9224, -1993.057, 30.14611);
-        player.dimension = 0;
+        try {
+            vehicles.respawn(player.vehicle);
+            user.teleport(player, -253.9224, -1993.057, 30.14611);
+            player.dimension = 0;
 
-        finishNumber++;
+            finishNumber++;
 
-        user.set(player, 'rating_racer_count', user.get(player, 'rating_racer_count') + 1);
+            user.set(player, 'rating_racer_count', user.get(player, 'rating_racer_count') + 1);
 
-        if (finishNumber === 1) {
-            let money = racerList[currentRace].prize1;
-            methods.notifyWithPictureToAll('Arena RaceClub', '~g~' + racerList[currentRace].title, `~g~${user.getRpName(player)}~s~ занял ~g~1-ое~s~ место и выиграл ~g~${methods.moneyFormat(money)}`, 'CHAR_CARSITE4');
-            user.addCashMoney(player, money, finishNumber + ' место в гонке ' + racerList[currentRace].title);
+            if (finishNumber === 1) {
+                let money = racerList[currentRace].prize1;
+                methods.notifyWithPictureToAll('Arena RaceClub', '~g~' + racerList[currentRace].title, `~g~${user.getRpName(player)}~s~ занял ~g~1-ое~s~ место и выиграл ~g~${methods.moneyFormat(money)}`, 'CHAR_CARSITE4');
+                user.addCashMoney(player, money, finishNumber + ' место в гонке ' + racerList[currentRace].title);
 
-            user.set(player, 'rating_racer_mmr', user.get(player, 'rating_racer_mmr') + 25);
-            user.set(player, 'rating_racer_win', user.get(player, 'rating_racer_win') + 1);
+                user.set(player, 'rating_racer_mmr', user.get(player, 'rating_racer_mmr') + 25);
+                user.set(player, 'rating_racer_win', user.get(player, 'rating_racer_win') + 1);
+            }
+            else if (finishNumber === 2) {
+                let money = racerList[currentRace].prize2;
+                methods.notifyWithPictureToAll('Arena RaceClub', '~g~' + racerList[currentRace].title, `~g~${user.getRpName(player)}~s~ занял ~g~2-ое~s~ место и выиграл ~g~${methods.moneyFormat(money)}`, 'CHAR_CARSITE4');
+                user.addCashMoney(player, money, finishNumber + ' место в гонке ' + racerList[currentRace].title);
+
+                user.set(player, 'rating_racer_mmr', user.get(player, 'rating_racer_mmr') + 20);
+                user.set(player, 'rating_racer_win', user.get(player, 'rating_racer_win') + 1);
+            }
+            else if (finishNumber === 3) {
+                let money = racerList[currentRace].prize3;
+                methods.notifyWithPictureToAll('Arena RaceClub', '~g~' + racerList[currentRace].title, `~g~${user.getRpName(player)}~s~ занял ~g~3-ое~s~ место и выиграл ~g~${methods.moneyFormat(money)}`, 'CHAR_CARSITE4');
+                user.addCashMoney(player, money, finishNumber + ' место в гонке ' + racerList[currentRace].title);
+
+                user.set(player, 'rating_racer_mmr', user.get(player, 'rating_racer_mmr') + 15);
+                user.set(player, 'rating_racer_win', user.get(player, 'rating_racer_win') + 1);
+            }
+            else if (finishNumber > 3 && finishNumber <= 10) {
+
+                user.set(player, 'rating_racer_mmr', user.get(player, 'rating_racer_mmr') + 5);
+
+                let money = racerList[currentRace].prize4to10;
+                player.notifyWithPicture('Arena RaceClub', '~g~' + racerList[currentRace].title, `~g~${user.getRpName(player)}~s~ занял ~g~${finishNumber}-ое~s~ место и выиграл ~g~${methods.moneyFormat(money)}`, 'CHAR_CARSITE4');
+                user.addCashMoney(player, money, finishNumber + ' место в гонке ' + racerList[currentRace].title);
+            }
+            else {
+                if (finishNumber === 18)
+                    user.set(player, 'rating_racer_mmr', user.get(player, 'rating_racer_mmr') - 15);
+                else if (finishNumber === 19)
+                    user.set(player, 'rating_racer_mmr', user.get(player, 'rating_racer_mmr') - 20);
+                else if (finishNumber === 20)
+                    user.set(player, 'rating_racer_mmr', user.get(player, 'rating_racer_mmr') - 25);
+                else
+                    user.set(player, 'rating_racer_mmr', user.get(player, 'rating_racer_mmr') - 5);
+
+                if (user.get(player, 'rating_racer_mmr') < 0)
+                    user.set(player, 'rating_racer_mmr', 0);
+
+                let money = racerList[currentRace].prizeAll / 2;
+                player.notifyWithPicture('Arena RaceClub', '~g~' + racerList[currentRace].title, `~g~${user.getRpName(player)}~s~ занял ~g~${finishNumber}-ое~s~ место и выиграл ~g~${methods.moneyFormat(money)}`, 'CHAR_CARSITE4');
+                user.addCashMoney(player, money, finishNumber + ' место в гонке ' + racerList[currentRace].title);
+            }
+
+            user.save(player);
         }
-        else if (finishNumber === 2) {
-            let money = racerList[currentRace].prize2;
-            methods.notifyWithPictureToAll('Arena RaceClub', '~g~' + racerList[currentRace].title, `~g~${user.getRpName(player)}~s~ занял ~g~2-ое~s~ место и выиграл ~g~${methods.moneyFormat(money)}`, 'CHAR_CARSITE4');
-            user.addCashMoney(player, money, finishNumber + ' место в гонке ' + racerList[currentRace].title);
-
-            user.set(player, 'rating_racer_mmr', user.get(player, 'rating_racer_mmr') + 20);
-            user.set(player, 'rating_racer_win', user.get(player, 'rating_racer_win') + 1);
-        }
-        else if (finishNumber === 3) {
-            let money = racerList[currentRace].prize3;
-            methods.notifyWithPictureToAll('Arena RaceClub', '~g~' + racerList[currentRace].title, `~g~${user.getRpName(player)}~s~ занял ~g~3-ое~s~ место и выиграл ~g~${methods.moneyFormat(money)}`, 'CHAR_CARSITE4');
-            user.addCashMoney(player, money, finishNumber + ' место в гонке ' + racerList[currentRace].title);
-
-            user.set(player, 'rating_racer_mmr', user.get(player, 'rating_racer_mmr') + 15);
-            user.set(player, 'rating_racer_win', user.get(player, 'rating_racer_win') + 1);
-        }
-        else if (finishNumber > 3 && finishNumber <= 10) {
-
-            user.set(player, 'rating_racer_mmr', user.get(player, 'rating_racer_mmr') + 5);
-
-            let money = racerList[currentRace].prize4to10;
-            player.notifyWithPicture('Arena RaceClub', '~g~' + racerList[currentRace].title, `~g~${user.getRpName(player)}~s~ занял ~g~${finishNumber}-ое~s~ место и выиграл ~g~${methods.moneyFormat(money)}`, 'CHAR_CARSITE4');
-            user.addCashMoney(player, money, finishNumber + ' место в гонке ' + racerList[currentRace].title);
-        }
-        else {
-            if (finishNumber === 18)
-                user.set(player, 'rating_racer_mmr', user.get(player, 'rating_racer_mmr') - 15);
-            else if (finishNumber === 19)
-                user.set(player, 'rating_racer_mmr', user.get(player, 'rating_racer_mmr') - 20);
-            else if (finishNumber === 20)
-                user.set(player, 'rating_racer_mmr', user.get(player, 'rating_racer_mmr') - 25);
-            else
-                user.set(player, 'rating_racer_mmr', user.get(player, 'rating_racer_mmr') - 5);
-
-            let money = racerList[currentRace].prizeAll;
-            player.notifyWithPicture('Arena RaceClub', '~g~' + racerList[currentRace].title, `~g~${user.getRpName(player)}~s~ занял ~g~${finishNumber}-ое~s~ место и выиграл ~g~${methods.moneyFormat(money)}`, 'CHAR_CARSITE4');
-            user.addCashMoney(player, money, finishNumber + ' место в гонке ' + racerList[currentRace].title);
+        catch (e) {
+            methods.debug(e);
         }
     }
 };
@@ -888,6 +898,10 @@ racer.timer = function () {
         mp.players.forEach(p => {
             if (user.isLogin(p)) {
                 if (user.has(p, 'isRaceLobby')) {
+
+                    if (startTimer > 0) {
+                        vSync.setFreezeState(p.vehicle, true);
+                    }
 
                     if (startTimer === 0) {
                         p.notifyWithPicture('Arena RaceClub', '~g~' + racerList[currentRace].title, `~g~СТАРТ!!!\nСТАРТ!!!\nСТАРТ!!!`, 'CHAR_CARSITE4');

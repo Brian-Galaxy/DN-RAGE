@@ -226,12 +226,14 @@ gangWar.timer = function() {
         mp.players.forEachInRange(warPos, 500, p => {
             if (!user.isLogin(p))
                 return;
-            let fId = user.get(p, 'fraction_id2');
+            let fId = methods.parseInt(user.get(p, 'fraction_id2'));
+            if (fId === 0)
+                return;
             if (gangWar.isInZone(p, currentZone)) {
                 if (p.health == 0) return;
-                if (currentDef == fId)
+                if (currentDef === fId)
                     defC++;
-                if (currentAttack == fId)
+                if (currentAttack === fId)
                     attC++;
             }
         });
@@ -290,12 +292,12 @@ gangWar.timer = function() {
                     return;
                 if (!gangWar.isInZone(p, currentZone))
                     return;
-                let fId = user.get(p, 'fraction_id2');
-                if (currentDef == fId || currentAttack == fId) {
-
+                let fId = methods.parseInt(user.get(p, 'fraction_id2'));
+                if (fId === 0)
+                    return;
+                if (currentDef === fId || currentAttack === fId) {
                     if (!canArmor && p.armour > 0)
                         user.setArmour(p, 0);
-
                     p.call("client:gangWar:sendInfo", [attC, defC, timerCounter]);
                 }
             });

@@ -138,9 +138,9 @@ antiCheat.secTimer = function() {
             /*if (!mp.players.local.isVisible()) {
                 user.kickAntiCheat('Invision');
             }*/
-            /*if (!mp.players.local.canRagdoll()) {
-                user.kickAntiCheat('Ragdoll');
-            }*/
+            if (!mp.players.local.canRagdoll()) {
+                user.warnAntiCheat(`Disalbe Ragdoll`);
+            }
         }
 
         let isKick = false;
@@ -156,10 +156,10 @@ antiCheat.secTimer = function() {
         });
 
         let newPos = mp.players.local.position;
-        let dist = mp.players.local.vehicle ? methods.getCurrentSpeed() + 50 : 50;
+        let dist = mp.players.local.vehicle ? methods.getCurrentSpeed() + 100 : 40;
         let distNew = methods.distanceToPos(prevPos, newPos);
-        if (distNew > dist && !mp.players.local.isFalling() && !mp.players.local.isRagdoll()) {
-            if (!user.isTeleport() && !methods.isBlockKeys())
+        if (distNew > dist && !mp.players.local.isFalling() && !mp.players.local.isRagdoll() && !methods.isBlockKeys()) {
+            if (!user.isTeleport())
                 user.warnAntiCheat(`Teleport (${distNew.toFixed(2)}m)`);
             user.setTeleport(false);
         }

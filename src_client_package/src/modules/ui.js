@@ -206,7 +206,7 @@ ui.updateValues = function() {
 
             isGreenZone = false;
             enums.zoneGreenList.forEach(item => {
-                if (methods.isInPoint(mp.players.local.position, item))
+                if (methods.isInPoint(mp.players.local.position, item) && mp.players.local.dimension === 0)
                     isGreenZone = true;
             });
 

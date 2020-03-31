@@ -241,6 +241,40 @@ user.removeAllWeapons = function() {
     inventory.deleteItemsRange(54, 136);
 };
 
+user.unequipAllWeapons = function() {
+    weapons.getMapList().forEach(item => {
+        try {
+            if (mp.game.invoke(methods.HAS_PED_GOT_WEAPON, mp.players.local.handle, (item[1] / 2), false)) {
+                let wpName = item[0];
+                let wpHash = weapons.getHashByName(wpName);
+                let slot = weapons.getGunSlotId(wpName);
+
+                let ammoId = weapons.getGunAmmoId(wpName);
+
+                if (ammoId >= 0) {
+                    inventory.addItemSql(ammoId, 1, inventory.types.Player, user.getCache('id'), user.getAmmoByHash(wpHash));
+                }
+
+                user.setAmmo(wpName, 0);
+                mp.game.invoke(methods.REMOVE_WEAPON_FROM_PED, mp.players.local.handle, wpHash);
+
+                user.set('weapon_' + slot, '');
+                user.set('weapon_' + slot + '_ammo', -1);
+
+                inventory.updateItemsEquipByItemId(items.getWeaponIdByName(wpName), inventory.types.Player, user.getCache('id'), 0);
+
+                mp.attachmentMngr.removeLocal('WDSP_' + wpName.toUpperCase());
+            }
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    });
+
+    user.save();
+    user.setCurrentWeapon('weapon_unarmed');
+};
+
 user.giveWeaponByHash = function(model, pt) {
     try {
         if (pt < 0)

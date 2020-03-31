@@ -254,6 +254,104 @@ mp.events.addRemoteCounted('server:race:toLobby', (player) => {
     }
 });
 
+mp.events.addRemoteCounted('server:duel:toLobby', (player, targetId, bet, death) => {
+    try {
+        if (!user.isLogin(player))
+            return;
+        let target = mp.players.at(targetId);
+        if (mp.players.exists(target)) {
+            if (methods.distanceToPos(target.position, player.position) > 3) {
+                player.notify('~r~Вы слишком далеко');
+                return;
+            }
+            if (bet + 1000 > user.getCashMoney(player)) {
+                player.notify('~r~У вас нет такой суммы');
+                return;
+            }
+            if (bet > user.getCashMoney(target)) {
+                player.notify('~r~У игрока нет такой суммы');
+                return;
+            }
+            if (user.get(player, 'rating_duel_mmr') > user.get(target, 'rating_duel_mmr') + 900 || user.get(target, 'rating_duel_mmr') > user.get(player, 'rating_duel_mmr') + 900) {
+                player.notify('~r~Ваш рейтинг слишком сильно отличается');
+                return;
+            }
+            target.call('client:duel:askLobby', [player.id, bet, death])
+        }
+        else
+            player.notify('~r~Рядом с вами никого нет');
+    } catch (e) {
+        console.log(e);
+    }
+});
+
+mp.events.addRemoteCounted('server:duel:accept', (player, targetId, bet, death) => {
+    try {
+        if (!user.isLogin(player))
+            return;
+        let target = mp.players.at(targetId);
+        if (mp.players.exists(target)) {
+            try {
+                if (bet + 1000 > user.getCashMoney(player)) {
+                    player.notify('~r~У вас нет такой суммы');
+                    return;
+                }
+                if (bet > user.getCashMoney(target)) {
+                    player.notify('~r~У игрока нет такой суммы');
+                    return;
+                }
+
+                user.removeCashMoney(target, 1000, 'Дуэль с игроком ' + user.getRpName(player));
+                user.removeCashMoney(player, 1000, 'Дуэль с игроком ' + user.getRpName(target));
+
+                user.set(player, 'duelBet', bet);
+                user.set(player, 'duelTarget', target.id);
+                user.set(player, 'duelCount', death);
+
+                user.set(target, 'duelBet', bet);
+                user.set(target, 'duelTarget', player.id);
+                user.set(target, 'duelCount', death);
+
+                player.dimension = player.id + 1;
+                target.dimension = player.id + 1;
+
+                player.setVariable('duel', true);
+                target.setVariable('duel', true);
+
+                user.setHealth(player, 100);
+                user.setHealth(target, 100);
+
+                user.setArmour(player, 0);
+                user.setArmour(target, 0);
+
+                user.blockKeys(player, true);
+                user.blockKeys(target, true);
+
+                user.unequipAllWeapons(player);
+                user.unequipAllWeapons(target);
+
+                if (bet > 0) {
+                    user.removeCashMoney(player, bet, 'Ставка дуэли');
+                    user.removeCashMoney(target, bet, 'Ставка дуэли');
+                }
+
+                user.duelTimer(player);
+                user.duelTimer(target);
+
+                user.teleport(player, -27.21993637084961, -701.0771484375, 250.4136505126953, 291.64434814453125);
+                user.teleport(target, 21.959980010986328, -678.0928955078125, 250.41363525390625, 112.96465301513672);
+            }
+            catch (e) {
+                
+            }
+        }
+        else
+            player.notify('~r~Рядом с вами никого нет');
+    } catch (e) {
+        console.log(e);
+    }
+});
+
 mp.events.addRemoteCounted('server:race:rating', (player) => {
     try {
         if (!user.isLogin(player))
@@ -261,6 +359,10 @@ mp.events.addRemoteCounted('server:race:rating', (player) => {
 
         mysql.executeQuery(`SELECT name, rating_racer_mmr, rating_racer_count, rating_racer_win FROM users ORDER BY rating_racer_mmr DESC LIMIT 10`, function (err, rows, fields) {
             try {
+
+                if (!user.isLogin(player))
+                    return;
+
                 let menuData = new Map();
                 let idx = 1;
                 rows.forEach(function(item) {
@@ -270,6 +372,36 @@ mp.events.addRemoteCounted('server:race:rating', (player) => {
                 menuData.set('~s~...', ``);
                 menuData.set('~s~Ваша статистика', `~g~${user.get(player, 'rating_racer_mmr')}~s~ | ~q~${user.get(player, 'rating_racer_count')}~s~ | ~y~${user.get(player, 'rating_racer_win')}`);
                 user.showMenu(player, 'Рейтинг', '~g~MMR~s~ | ~q~Заезды~s~ | ~y~Победы', menuData);
+            }
+            catch (e) {
+                methods.debug(e);
+            }
+        });
+    } catch (e) {
+        console.log(e);
+    }
+});
+
+mp.events.addRemoteCounted('server:duel:rating', (player) => {
+    try {
+        if (!user.isLogin(player))
+            return;
+
+        mysql.executeQuery(`SELECT name, rating_duel_mmr, rating_duel_count, rating_duel_win FROM users ORDER BY rating_duel_mmr DESC LIMIT 10`, function (err, rows, fields) {
+            try {
+
+                if (!user.isLogin(player))
+                    return;
+
+                let menuData = new Map();
+                let idx = 1;
+                rows.forEach(function(item) {
+                    menuData.set(`#${idx++}. ~s~${item['name']}`, `~g~${item['rating_duel_mmr']}~s~ | ~q~${item['rating_duel_count']}~s~ | ~y~${item['rating_duel_win']}`);
+                });
+
+                menuData.set('~s~...', ``);
+                menuData.set('~s~Ваша статистика', `~g~${user.get(player, 'rating_duel_mmr')}~s~ | ~q~${user.get(player, 'rating_duel_count')}~s~ | ~y~${user.get(player, 'rating_duel_win')}`);
+                user.showMenu(player, 'Рейтинг', '~g~MMR~s~ | ~q~Дуэлей~s~ | ~y~Победы', menuData);
             }
             catch (e) {
                 methods.debug(e);
@@ -6145,7 +6277,105 @@ mp.events.add("playerDeath", (player, reason, killer) => {
 
     if (user.isLogin(player)) {
 
-        inventory.deleteItemsRange(player, 138, 141);
+        if (user.has(player, 'duelTarget'))
+        {
+            let targetId = user.get(player, 'duelTarget');
+            let bet = user.get(player, 'duelBet');
+            let target = mp.players.at(targetId);
+
+            let countDeath = user.get(player, 'duelCount') - 1;
+
+            user.set(player, 'duelCount', countDeath);
+
+            if (countDeath === 0) {
+
+                user.setHealth(player, 100);
+                player.spawn(new mp.Vector3(21.959980010986328, -678.0928955078125, 249.41363525390625), 112.96465301513672);
+                setTimeout(function () {
+                    try {
+                        player.outputChatBoxNew(`!{#FF9800}ВЫ ПРОИГРАЛИ ДУЭЛЬ`);
+
+                        user.reset(player, 'duelBet');
+                        user.reset(player, 'duelTarget');
+                        user.reset(player, 'duelCount');
+                        player.dimension = 0;
+                        player.removeAllWeapons();
+
+                        user.blockKeys(player, false);
+
+                        player.setVariable('duel', false);
+
+                        user.teleport(player, -253.9224, -1993.057, 30.14611);
+                        if (user.isLogin(target)) {
+                            user.teleport(target, -253.9224, -1993.057, 30.14611);
+                            target.dimension = 0;
+                            target.removeAllWeapons();
+                            target.setVariable('duel', false);
+
+                            user.reset(target, 'duelBet');
+                            user.reset(target, 'duelTarget');
+                            user.reset(target, 'duelCount');
+
+                            user.blockKeys(target, false);
+                            target.outputChatBoxNew(`!{#4CAF50}ВЫ ВЫИГРАЛИ ДУЭЛЬ`);
+
+                            let rating = methods.parseInt((100 - ((user.get(target, 'rating_duel_mmr') - user.get(player, 'rating_duel_mmr')) * 0.1)) / 10);
+                            if (rating > 0)
+                                user.set(player, 'rating_duel_mmr', user.get(player, 'rating_duel_mmr') - rating);
+                            user.set(target, 'rating_duel_mmr', user.get(target, 'rating_duel_mmr') + rating);
+
+                            user.set(target, 'rating_duel_win', user.get(target, 'rating_duel_win') + 1);
+                            user.set(target, 'rating_duel_count', user.get(target, 'rating_duel_count') + 1);
+                            user.set(player, 'rating_duel_count', user.get(player, 'rating_duel_count') + 1);
+
+                            if (bet > 0) {
+                                user.addCashMoney(target, bet * 2, 'Победа в дуэли');
+                            }
+
+                            user.save(player);
+                            user.save(target);
+                        }
+                    }
+                    catch (e) {
+                        
+                    }
+                }, 1000);
+                return;
+            }
+
+            user.setHealth(player, 100);
+            player.spawn(new mp.Vector3(21.959980010986328, -678.0928955078125, 249.41363525390625), 112.96465301513672);
+            if (user.isLogin(target)) {
+                user.setHealth(target, 100);
+                target.spawn(new mp.Vector3(-27.21993637084961, -701.0771484375, 249.4136505126953), 291.64434814453125);
+
+                player.outputChatBoxNew(`!{#03A9F4}НАЧАЛО РАУНДА`);
+                target.outputChatBoxNew(`!{#03A9F4}НАЧАЛО РАУНДА`);
+
+                user.duelTimer(player);
+                user.duelTimer(target);
+
+                player.outputChatBoxNew(`!{#f44336}Осталось смертей у Вас:!{#FFFFFF} ${user.get(player, 'duelCount')}`);
+                player.outputChatBoxNew(`!{#f44336}Осталось смертей у противника:!{#FFFFFF} ${user.get(target, 'duelCount')}`);
+                target.outputChatBoxNew(`!{#f44336}Осталось смертей у Вас:!{#FFFFFF} ${user.get(target, 'duelCount')}`);
+                target.outputChatBoxNew(`!{#f44336}Осталось смертей у противника:!{#FFFFFF} ${user.get(player, 'duelCount')}`);
+            }
+            else {
+                user.addCashMoney(player, bet * 2, 'Победа в дуэли');
+                user.reset(player, 'duelBet');
+                user.reset(player, 'duelTarget');
+                user.reset(player, 'duelCount');
+                player.dimension = 0;
+                player.removeAllWeapons();
+                user.blockKeys(player, false);
+                user.teleport(player, -253.9224, -1993.057, 30.14611);
+
+                player.setVariable('duel', false);
+            }
+            return;
+        }
+
+        //inventory.deleteItemsRange(player, 138, 141);
         user.set(player, 'killerInJail', false);
 
         try {

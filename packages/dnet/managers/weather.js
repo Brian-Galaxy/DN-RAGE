@@ -190,9 +190,9 @@ weather.timeSyncTimer = function() {
         if (_hour === 6 && _minute === 0)
             fraction.stopCargoWar();
 
-        if (_hour === 8 && _minute === 0)
+        if (_hour === 10 && _minute === 0)
             racer.createRace();
-        if ((_hour === 9 || _hour === 10 || _hour === 11) && _minute === 0)
+        if (_hour === 11 && _minute === 0)
             racer.notifyRace();
         if (_hour === 11 && _minute === 30)
             racer.notifyRace();

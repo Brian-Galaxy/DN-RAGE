@@ -36,7 +36,7 @@ timer.min10Timer = function() {
 
     mp.vehicles.forEach(function (v) {
         try {
-            if (vehicles.exists(v) && (vehicles.getFuel(v) == 0 && v.getOccupants().length == 0 || v.dead)) {
+            if (vehicles.exists(v) && v.dead) {
                 if (!v.getVariable('trId'))
                     vehicles.respawn(v);
             }
@@ -132,37 +132,75 @@ timer.sec10Timer = function() {
 
     mp.players.forEach(function (p) {
         if (user.isLogin(p)) {
-            let userId = user.getId(p);
+            try {
+                let userId = user.getId(p);
 
-            if (p.ping > 500)
-                user.kickAntiCheat(p, `Ping: ${p.ping}ms`);
+                if (p.ping > 500)
+                    user.kickAntiCheat(p, `Ping: ${p.ping}ms`);
 
-            if (user.has(p, 'afkLastPos')) {
-                if (methods.distanceToPos(user.get(p, 'afkLastPos'), p.position) < 1) {
+                if (user.has(p, 'afkLastPos')) {
+                    if (methods.distanceToPos(user.get(p, 'afkLastPos'), p.position) < 1) {
 
-                    let timer = methods.parseInt(user.get(p, 'afkTimer'));
-                    user.set(p, 'afkTimer', timer + 10);
+                        let timer = methods.parseInt(user.get(p, 'afkTimer'));
+                        user.set(p, 'afkTimer', timer + 10);
 
-                    if (timer > 600 && p.getVariable('isAfk') !== true)
-                        p.setVariable('isAfk', true);
+                        if (timer > 600 && p.getVariable('isAfk') !== true)
+                            p.setVariable('isAfk', true);
+                    }
+                    else {
+                        if (p.getVariable('isAfk') === true)
+                            p.setVariable('isAfk', false);
+                        user.set(p, 'afkTimer', 0);
+                    }
                 }
-                else {
-                    if (p.getVariable('isAfk') === true)
-                        p.setVariable('isAfk', false);
-                    user.set(p, 'afkTimer', 0);
-                }
+
+                user.set(p, 'afkLastPos', p.position);
+
+                if (p.dimension > 0)
+                    return;
+
+                user.set(p, 'pos_x', p.position.x);
+                user.set(p, 'pos_y', p.position.y);
+                user.set(p, 'pos_z', p.position.z);
+                user.set(p, 'rotation', p.heading);
+                user.setById(userId, 'hp', p.health);
             }
+            catch (e) {
+                
+            }
+        }
+    });
 
-            user.set(p, 'afkLastPos', p.position);
+    mp.vehicles.forEach(function (v) {
+        if (vehicles.exists(v)) {
 
-            if (p.dimension > 0)
-                return;
+            try {
+                if (v.getVariable('fraction_id') || v.getVariable('user_id') || v.getVariable('useless') || v.getOccupants().length > 0)
+                    return;
 
-            user.set(p, 'pos_x', p.position.x);
-            user.set(p, 'pos_y', p.position.y);
-            user.set(p, 'pos_z', p.position.z);
-            user.set(p, 'rotation', p.heading);
-            user.setById(userId, 'hp', p.health);
+                if (vehicles.has(v.id, 'afkLastPos')) {
+                    if (methods.distanceToPos(vehicles.get(v.id, 'afkLastPos'), v.position) < 2) {
+
+                        let timer = methods.parseInt(vehicles.get(v.id, 'afkTimer'));
+                        vehicles.set(v.id, 'afkTimer', timer + 10);
+
+                        if (timer > 900) {
+                            vehicles.reset(v.id, 'afkTimer');
+                            vehicles.reset(v.id, 'afkLastPos');
+                            vehicles.respawn(v);
+                            return;
+                        }
+                    }
+                    else {
+                        vehicles.set(v.id, 'afkTimer', 0);
+                    }
+                }
+
+                vehicles.set(v.id, 'afkLastPos', v.position);
+            }
+            catch (e) {
+                methods.debug(e);
+            }
         }
     });
 

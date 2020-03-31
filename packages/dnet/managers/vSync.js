@@ -323,8 +323,17 @@ vSync.setBodyHealth = function(v, health) {
 };
 
 mp.events.add("playerEnterVehicle", function (player, vehicle) {
-    if (vehicles.exists(vehicle) && !vSync.has(vehicle))
+    if (vehicles.exists(vehicle) && !vSync.has(vehicle)) {
         vSync.updateVehicleSyncData(vehicle, vSync.VehicleSyncData);
+        try {
+            if (vehicle.getVariable('fraction_id') || vehicle.getVariable('user_id') || vehicle.getVariable('useless'))
+                return;
+            vehicles.set(vehicle.id, 'afkTimer', 0);
+        }
+        catch (e) {
+            
+        }
+    }
 });
 
 mp.events.add("playerExitVehicle", function (player, vehicle) {

@@ -15,7 +15,7 @@ wheel.start = function (player) {
             player.notify(`~r~Вы еще не отыграли 3 часа на сервере\nВам осталось: ${((21 - user.get(player, 'online_wheel')) * 8.5).toFixed(1)} мин.`);
             return;
         }
-        if (user.hasById(user.getId(player), 'isWheel')) {
+        if (user.get(player, 'online_wheel') > 999) {
             player.notify(`~r~Вы уже крутили колесо сегодня.`);
             return;
         }
@@ -23,7 +23,7 @@ wheel.start = function (player) {
 
         try {
             player.call('client:casino:wheel:start');
-            user.setById(user.getId(player), 'isWheel', true);
+            user.set(player, 'online_wheel', 1000);
         }
         catch (e) {
             
@@ -36,9 +36,16 @@ wheel.start = function (player) {
 };
 
 mp.events.add('server:casino:wheel:doRoll', (player) => {
-    let userWin = methods.getRandomInt(0, 20);
-    user.set(player, 'wheelWin', userWin);
-    mp.players.callInRange(player.position, 200, 'client:casino:wheel:doRoll', [userWin, player.id]);
+    if (!user.isLogin(player))
+        return;
+    try {
+        let userWin = methods.getRandomInt(0, 20);
+        user.set(player, 'wheelWin', userWin);
+        mp.players.callInRange(player.position, 100, 'client:casino:wheel:doRoll', [userWin, player.id]);
+    }
+    catch (e) {
+        
+    }
     //player.call('client:casino:wheel:doRoll', [userWin]);
 });
 
@@ -54,21 +61,26 @@ mp.events.add('server:casino:wheel:finalRoll', (player) => {
     if (!user.isLogin(player) || !user.has(player, 'wheelWin'))
         return;
 
-    let win = user.get(player, 'wheelWin');
-    if (win < 1) {
-        user.addCashMoney(player, 20000, 'Колесо удачи');
-        player.notifyWithPicture('Diamond Casino', '~g~Колесо Удачи', `Вы выиграли ~g~$20,000`, 'CHAR_CASINO');
+    try {
+        let win = user.get(player, 'wheelWin');
+        if (win < 1) {
+            user.addCashMoney(player, 20000, 'Колесо удачи');
+            player.notifyWithPicture('Diamond Casino', '~g~Колесо Удачи', `Вы выиграли ~g~$20,000`, 'CHAR_CASINO');
+        }
+        else if (win < 5) {
+            user.addCashMoney(player, 10000, 'Колесо удачи');
+            player.notifyWithPicture('Diamond Casino', '~g~Колесо Удачи', `Вы выиграли ~g~$10,000`, 'CHAR_CASINO');
+        }
+        else if (win < 15) {
+            user.addCashMoney(player, 3000, 'Колесо удачи');
+            player.notifyWithPicture('Diamond Casino', '~g~Колесо Удачи', `Вы выиграли ~g~$3,000`, 'CHAR_CASINO');
+        }
+        else {
+            user.addCashMoney(player, 1000, 'Колесо удачи');
+            player.notifyWithPicture('Diamond Casino', '~g~Колесо Удачи', `Вы выиграли ~g~$1,000`, 'CHAR_CASINO');
+        }
     }
-    else if (win < 5) {
-        user.addCashMoney(player, 10000, 'Колесо удачи');
-        player.notifyWithPicture('Diamond Casino', '~g~Колесо Удачи', `Вы выиграли ~g~$10,000`, 'CHAR_CASINO');
-    }
-    else if (win < 15) {
-        user.addCashMoney(player, 3000, 'Колесо удачи');
-        player.notifyWithPicture('Diamond Casino', '~g~Колесо Удачи', `Вы выиграли ~g~$3,000`, 'CHAR_CASINO');
-    }
-    else {
-        user.addCashMoney(player, 1000, 'Колесо удачи');
-        player.notifyWithPicture('Diamond Casino', '~g~Колесо Удачи', `Вы выиграли ~g~$1,000`, 'CHAR_CASINO');
+    catch (e) {
+        
     }
 });

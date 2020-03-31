@@ -302,62 +302,116 @@ for(let code in keyCodes) {
         if (user.getCache('s_bind_weapon_slot0') == parseInt(code)) {
             if (!methods.isBlockKeys())
             {
+                if (Container.Data.HasLocally(mp.players.local.remoteId, "isGunTimeout"))
+                {
+                    mp.game.ui.notifications.show("~r~Таймаут 3 сек");
+                    return;
+                }
+                Container.Data.SetLocally(mp.players.local.remoteId, "isGunTimeout", true);
                 user.setCurrentWeapon('weapon_unarmed');
+                setTimeout(function () {
+                    Container.Data.ResetLocally(mp.players.local.remoteId, "isGunTimeout");
+                }, 3000);
             }
         }
         if (user.getCache('s_bind_weapon_slot1') == parseInt(code)) {
             if (!methods.isBlockKeys())
             {
+                if (Container.Data.HasLocally(mp.players.local.remoteId, "isGunTimeout"))
+                {
+                    mp.game.ui.notifications.show("~r~Таймаут 3 сек");
+                    return;
+                }
+                Container.Data.SetLocally(mp.players.local.remoteId, "isGunTimeout", true);
                 weapons.getMapList().forEach(item => {
                     if (mp.game.invoke(methods.HAS_PED_GOT_WEAPON, mp.players.local.handle, (item[1] / 2), false)) {
                         if (weapons.getGunSlotId(item[0]) === 1)
                             user.setCurrentWeapon(item[0]);
                     }
                 });
+                setTimeout(function () {
+                    Container.Data.ResetLocally(mp.players.local.remoteId, "isGunTimeout");
+                }, 3000);
             }
         }
         if (user.getCache('s_bind_weapon_slot2') == parseInt(code)) {
             if (!methods.isBlockKeys())
             {
+                if (Container.Data.HasLocally(mp.players.local.remoteId, "isGunTimeout"))
+                {
+                    mp.game.ui.notifications.show("~r~Таймаут 3 сек");
+                    return;
+                }
+                Container.Data.SetLocally(mp.players.local.remoteId, "isGunTimeout", true);
                 weapons.getMapList().forEach(item => {
                     if (mp.game.invoke(methods.HAS_PED_GOT_WEAPON, mp.players.local.handle, (item[1] / 2), false)) {
                         if (weapons.getGunSlotId(item[0]) === 2)
                             user.setCurrentWeapon(item[0]);
                     }
                 });
+                setTimeout(function () {
+                    Container.Data.ResetLocally(mp.players.local.remoteId, "isGunTimeout");
+                }, 3000);
             }
         }
         if (user.getCache('s_bind_weapon_slot3') == parseInt(code)) {
             if (!methods.isBlockKeys())
             {
+                if (Container.Data.HasLocally(mp.players.local.remoteId, "isGunTimeout"))
+                {
+                    mp.game.ui.notifications.show("~r~Таймаут 3 сек");
+                    return;
+                }
+                Container.Data.SetLocally(mp.players.local.remoteId, "isGunTimeout", true);
                 weapons.getMapList().forEach(item => {
                     if (mp.game.invoke(methods.HAS_PED_GOT_WEAPON, mp.players.local.handle, (item[1] / 2), false)) {
                         if (weapons.getGunSlotId(item[0]) === 3)
                             user.setCurrentWeapon(item[0]);
                     }
                 });
+                setTimeout(function () {
+                    Container.Data.ResetLocally(mp.players.local.remoteId, "isGunTimeout");
+                }, 3000);
             }
         }
         if (user.getCache('s_bind_weapon_slot4') == parseInt(code)) {
             if (!methods.isBlockKeys())
             {
+                if (Container.Data.HasLocally(mp.players.local.remoteId, "isGunTimeout"))
+                {
+                    mp.game.ui.notifications.show("~r~Таймаут 3 сек");
+                    return;
+                }
+                Container.Data.SetLocally(mp.players.local.remoteId, "isGunTimeout", true);
                 weapons.getMapList().forEach(item => {
                     if (mp.game.invoke(methods.HAS_PED_GOT_WEAPON, mp.players.local.handle, (item[1] / 2), false)) {
                         if (weapons.getGunSlotId(item[0]) === 4)
                             user.setCurrentWeapon(item[0]);
                     }
                 });
+                setTimeout(function () {
+                    Container.Data.ResetLocally(mp.players.local.remoteId, "isGunTimeout");
+                }, 3000);
             }
         }
         if (user.getCache('s_bind_weapon_slot5') == parseInt(code)) {
             if (!methods.isBlockKeys())
             {
+                if (Container.Data.HasLocally(mp.players.local.remoteId, "isGunTimeout"))
+                {
+                    mp.game.ui.notifications.show("~r~Таймаут 3 сек");
+                    return;
+                }
+                Container.Data.SetLocally(mp.players.local.remoteId, "isGunTimeout", true);
                 weapons.getMapList().forEach(item => {
                     if (mp.game.invoke(methods.HAS_PED_GOT_WEAPON, mp.players.local.handle, (item[1] / 2), false)) {
                         if (weapons.getGunSlotId(item[0]) === 5)
                             user.setCurrentWeapon(item[0]);
                     }
                 });
+                setTimeout(function () {
+                    Container.Data.ResetLocally(mp.players.local.remoteId, "isGunTimeout");
+                }, 3000);
             }
         }
         if (user.getCache('s_bind_animations_all') == parseInt(code)) {

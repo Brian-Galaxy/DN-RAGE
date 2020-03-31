@@ -722,6 +722,34 @@ mp.events.add('client:user:blockKeys', (enable) => {
     methods.blockKeys(enable);
 });
 
+mp.events.add('client:user:unequipAllWeapons', () => {
+    methods.debug('Event: client:user:unequipAllWeapons');
+    user.unequipAllWeapons();
+});
+
+mp.events.add('client:user:freeze', (enable) => {
+    methods.debug('Event: client:user:freeze', enable);
+    mp.players.local.freezePosition(enable);
+});
+
+mp.events.add('client:duel:askLobby', (playerId, bet, death) => {
+    methods.debug('Event: client:duel:start');
+    menuList.showMazeBankLobbyAskDuoMenu(playerId, bet, death);
+});
+
+mp.events.add('client:duel:start', () => {
+    methods.debug('Event: client:duel:start');
+    inventory.hide();
+    phone.hide();
+    menuList.hide();
+    //mp.players.local.removeAllWeapons();
+});
+
+mp.events.add('client:duel:giveWeapon', () => {
+    methods.debug('Event: client:duel:giveWeapon');
+    user.giveWeapon('weapon_revolver', 15);
+});
+
 mp.events.add('client:user:setWaypoint', (x, y) => {
     methods.debug('Event: client:user:setWaypoint');
     user.setWaypoint(x, y);
@@ -2503,6 +2531,8 @@ mp.events.add('render', () => {
 
                     if (user.isAdmin())
                         remoteId = `${remoteId} (${player.getVariable('idLabel')} | ~g~${player.getHealth()} ~s~|~b~ ${player.getArmour()}~s~)`;
+                    if (player.getVariable('duel'))
+                        remoteId = `${remoteId} (~g~${player.getHealth()} ~s~|~b~ ${player.getArmour()}~s~)`;
 
                     const entity = player.vehicle ? player.vehicle : player;
                     const vector = entity.getVelocity();
@@ -2758,7 +2788,18 @@ mp.events.add('playerMaybeTakeShot', (shootEntityId) => {
     }
 });
 
-mp.events.add("playerDeath", function (player, reason, killer) {
+mp.events.add("playerDeath", async function (player, reason, killer) {
+
+    mp.game.gameplay.disableAutomaticRespawn(true);
+    mp.game.gameplay.ignoreNextRestart(true);
+    mp.game.gameplay.setFadeInAfterDeathArrest(true);
+    mp.game.gameplay.setFadeOutAfterDeath(false);
+
+    user.stopAllScreenEffect();
+
+    if (mp.players.local.getVariable('duel'))
+        return;
+
     UIMenu.Menu.HideMenu();
     inventory.hide();
     phone.hide();
@@ -2768,13 +2809,6 @@ mp.events.add("playerDeath", function (player, reason, killer) {
 
     ui.callCef('license', JSON.stringify({type: 'hide'}));
     ui.callCef('certificate', JSON.stringify({type: 'hide'}));
-
-    mp.game.gameplay.disableAutomaticRespawn(true);
-    mp.game.gameplay.ignoreNextRestart(true);
-    mp.game.gameplay.setFadeInAfterDeathArrest(true);
-    mp.game.gameplay.setFadeOutAfterDeath(false);
-
-    user.stopAllScreenEffect();
 
     mp.players.local.freezePosition(false);
     mp.players.local.setCollision(true, true);
@@ -2793,6 +2827,11 @@ mp.events.add("playerDeath", function (player, reason, killer) {
         user.showCustomNotify('Нажмите Y чтобы вызвать медиков', 0, 5, 15000);
         user.showCustomNotify('Нажмите N чтобы отказаться от помощи', 0, 5, 15000);
     }
+});
+
+mp.events.add("playerDamaged", function (damageName, lost) {
+    if (damageName === 'vehicle')
+        user.setHealth(mp.players.local.getHealth() + lost);
 });
 
 let gate = null;
@@ -3021,6 +3060,30 @@ mp.events.add('render', () => {
         }
     }
 });
+
+/*let lastDamageState = 0;
+mp.events.add('render', () => {
+    if(user.isLogin()) {
+        let localPlayer = mp.players.local;
+        const lastDamage = localPlayer.getHealth();
+        if (lastDamage !== lastDamageState) {
+            const _lastDamageState = lastDamageState;
+            lastDamageState = lastDamage;
+            if (lastDamage) {
+                let damageName;
+                if (localPlayer.hasBeenDamagedByAnyObject()) {
+                    damageName = 'object';
+                } else if (localPlayer.hasBeenDamagedByAnyPed()) {
+                    damageName = 'ped';
+                } else if (localPlayer.hasBeenDamagedByAnyVehicle()) {
+                    damageName = 'vehicle';
+                }
+                if (!damageName) return;
+                mp.events.call('playerDamaged', damageName, _lastDamageState - lastDamage);
+            }
+        }
+    }
+});*/
 
 mp.events.add('render', () => {
     try {
@@ -3351,7 +3414,7 @@ mp.events.add('render', () => {
 mp.events.add('render', () => {
     try {
         let vehicle = mp.players.local.vehicle;
-        if (vehicle && mp.players.local.isInAnyVehicle(false)) {
+        if (mp.vehicles.exists(vehicle) && mp.players.local.isInAnyVehicle(false)) {
             // And fix max speed
             vehicle.setMaxSpeed(maxSpeed / 3.6); // fix max speed
             if (vehicle.getVariable('boost') > 0) {

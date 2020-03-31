@@ -23,6 +23,8 @@ let phone = {};
 let hidden = true;
 phone.network = 5;
 
+let isAtmHack = false;
+
 phone.show = function() {
     let pType = phone.getType();
     if (user.isCuff() || user.isTie()) {
@@ -2894,7 +2896,7 @@ phone.consoleCallback = async function(command) {
             }
             else if (args[0] === 'alone.py' && user.hasCache('file-alone.py')) {
                 if (args.length !== 3) {
-                    phone.addConsoleCommand('Usage: python alone.py [key] [name/id]');
+                    phone.addConsoleCommand('Usage: python alone.py [key] [id]');
                     return;
                 }
                 if (args[1] === 'AABABBAAABABBABAAABAAAABBABBABBAABABAAABAABBB') {
@@ -2902,7 +2904,7 @@ phone.consoleCallback = async function(command) {
                     phone.toMainUMenu();
                     phone.showLoad();
                     await methods.sleep(100);
-                    mp.events.callRemote('server:phone:getUserInfo', methods.removeQuotes2(methods.removeQuotes(args[2])));
+                    mp.events.callRemote('server:phone:getUserInfo', methods.parseInt(args[2]));
                 }
                 else {
                     phone.addConsoleCommand('Access denied');
@@ -2950,6 +2952,16 @@ phone.consoleCallback = async function(command) {
                     phone.addConsoleCommand('Timeout: update system patches. Please wait.');
                     return;
                 }
+                if (isAtmHack) {
+                    phone.addConsoleCommand('Just wait.');
+                    return;
+                }
+                if (mp.players.local.vehicle) {
+                    phone.addConsoleCommand('Access denied');
+                    return;
+                }
+
+                isAtmHack = true;
 
                 let userHash1 = args[1];
                 let userHash2 = args[2];
@@ -2970,11 +2982,13 @@ phone.consoleCallback = async function(command) {
                     phone.addConsoleCommand('Hacking attempt, access denied');
                     user.setById('atmTimeout', true);
                     dispatcher.sendPos('Код 3', `Сработала система безопасности банкомата, взлом происходил с телефона: ${methods.phoneFormat(user.getCache('phone'))}`, mp.players.local.position);
+                    isAtmHack = false;
                     return;
                 }
 
                 if (!timer.isAtm()) {
                     phone.addConsoleCommand('Connection closed by timeout. Maybe you are too far');
+                    isAtmHack = false;
                     return;
                 }
 
@@ -2996,6 +3010,7 @@ phone.consoleCallback = async function(command) {
                 else {
                     phone.addConsoleCommand('Error, try again');
                 }
+                isAtmHack = false;
             }
         }
         else if (cmd === 'bash') {
@@ -3015,6 +3030,9 @@ phone.consoleCallback = async function(command) {
                         phone.addConsoleCommand('Connection closed');
                         return;
                     }
+
+                    if (v.getVariable('useless'))
+                        return;
 
                     let dist = methods.distanceToPos(v.position, mp.players.local.position);
                     if (dist > 30)
@@ -3060,6 +3078,9 @@ phone.consoleCallback = async function(command) {
                         phone.addConsoleCommand('Connection closed');
                         return;
                     }
+
+                    if (v.getVariable('useless'))
+                        return;
 
                     let dist = methods.distanceToPos(v.position, mp.players.local.position);
                     if (dist > 30)

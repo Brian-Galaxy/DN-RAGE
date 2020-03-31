@@ -255,8 +255,8 @@ npc.loadAll = function() {
 //Церковь
     npc.create(mp.game.joaat("ig_priest"), new mp.Vector3(-787.1298828125, -708.8898315429688, 30.32028579711914), 265.47149658203125);
 
-    npc.timer();
-    npc.timer500();
+    setInterval(npc.timer, 5000);
+    setInterval(npc.timer500, 500);
 };
 
 npc.timer = function() {
@@ -324,8 +324,6 @@ npc.timer = function() {
             }
         }
     });
-
-    setTimeout(npc.timer, 5000);
 };
 
 npc.timer500 = function() {
@@ -359,8 +357,6 @@ npc.timer500 = function() {
     catch (e) {
         methods.debug(e);
     }
-
-    setTimeout(npc.timer500, 500);
 };
 
 npc.create = function(model, pos, heading, empty = false, scenario = "", animation1 = "", animation2 = "", flag = 9, speechRadius = 5, speech1 = 'GENERIC_HI', speech2 = 'GENERIC_BYE') {

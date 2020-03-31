@@ -460,8 +460,13 @@ user.spawnByName = function(player, spawn = 'Стандарт') {
 
         if (spawn == 'Точка выхода') {
             //let userId = user.getId(player);
-            player.spawn(new mp.Vector3(user.get(player, 'pos_x'), user.get(player, 'pos_y'), user.get(player, 'pos_z')));
-            player.heading = user.get(player, 'rot');
+            try {
+                player.spawn(new mp.Vector3(user.get(player, 'pos_x'), user.get(player, 'pos_y'), user.get(player, 'pos_z')));
+                player.heading = user.get(player, 'rot');
+            }
+            catch (e) {
+                
+            }
             setTimeout(function () {
                 try {
                     player.dimension = 0;
@@ -1830,6 +1835,88 @@ user.blockKeys = function(player, enable) {
     if (!mp.players.exists(player))
         return false;
     player.call('client:user:blockKeys', [enable])
+};
+
+user.unequipAllWeapons = function(player) {
+    methods.debug('user.unequipAllWeapons');
+    if (!mp.players.exists(player))
+        return false;
+    player.call('client:user:unequipAllWeapons')
+};
+
+user.freeze = function(player, enable) {
+    methods.debug('user.blockKeys');
+    if (!mp.players.exists(player))
+        return false;
+    player.call('client:user:freeze', [enable])
+};
+
+user.duelTimer = function(player) {
+    methods.debug('user.blockKeys');
+    if (!mp.players.exists(player))
+        return false;
+
+    player.call('client:duel:start');
+    user.freeze(player, true);
+    player.notify('~g~Старт через 5сек');
+
+    setTimeout(function () {
+        try {
+            player.notify('~g~Старт через 5сек');
+        }
+        catch (e) {
+
+        }
+    }, 1000);
+    setTimeout(function () {
+        try {
+            player.notify('~g~Старт через 4сек');
+        }
+        catch (e) {
+
+        }
+    }, 2000);
+    setTimeout(function () {
+        try {
+            player.notify('~g~Старт через 3сек');
+        }
+        catch (e) {
+
+        }
+    }, 3000);
+    setTimeout(function () {
+        try {
+            player.notify('~g~Старт через 2сек');
+        }
+        catch (e) {
+
+        }
+    }, 4000);
+    setTimeout(function () {
+        try {
+            player.notify('~g~Старт через 1сек');
+        }
+        catch (e) {
+
+        }
+    }, 5000);
+    setTimeout(function () {
+        try {
+            player.call('client:duel:giveWeapon');
+        }
+        catch (e) {
+
+        }
+    }, 5500);
+    setTimeout(function () {
+        try {
+            player.notify('~g~Старт через GO');
+            user.freeze(player, false);
+        }
+        catch (e) {
+
+        }
+    }, 6000);
 };
 
 user.heading = function(player, rot) {

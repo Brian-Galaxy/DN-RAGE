@@ -10,28 +10,33 @@ let checkpoint = {};
 
 checkpoint.checkPosition = function() {
 
-    let playerPos = mp.players.local.position;
-    //methods.debug('Execute: checkpoint.checkPosition');
-    itemList.forEach((item, idx) => {
-        try {
-            if (methods.distanceToPos(playerPos, new mp.Vector3(item.x, item.y, item.z)) <= item.scale + 0.4) {
-                if (!entityList.has(idx)) {
-                    entityList.set(idx, true);
-                    mp.events.callRemote('client:enterStaticCheckpoint', item.id);
+    try {
+        let playerPos = mp.players.local.position;
+        //methods.debug('Execute: checkpoint.checkPosition');
+        itemList.forEach((item, idx) => {
+            try {
+                if (methods.distanceToPos(playerPos, new mp.Vector3(item.x, item.y, item.z)) <= item.scale + 0.4) {
+                    if (!entityList.has(idx)) {
+                        entityList.set(idx, true);
+                        mp.events.callRemote('client:enterStaticCheckpoint', item.id);
+                    }
                 }
-            }
-            else {
-                if (entityList.has(idx)) {
-                    entityList.delete(idx);
-                    UIMenu.Menu.HideMenu();
-                    mp.events.callRemote('client:exitStaticCheckpoint', item.id);
+                else {
+                    if (entityList.has(idx)) {
+                        entityList.delete(idx);
+                        UIMenu.Menu.HideMenu();
+                        mp.events.callRemote('client:exitStaticCheckpoint', item.id);
+                    }
                 }
+            } catch (e) {
+                methods.debug('Exception: checkpoint.checkPosition.forEach IDX:' + idx);
+                methods.debug(e);
             }
-        } catch (e) {
-            methods.debug('Exception: checkpoint.checkPosition.forEach IDX:' + idx);
-            methods.debug(e);
-        }
-    });
+        });
+    }
+    catch (e) {
+        
+    }
 
     if (itemList.length < 1000) { //TODO
         checkpoint.fixCheckpointList();

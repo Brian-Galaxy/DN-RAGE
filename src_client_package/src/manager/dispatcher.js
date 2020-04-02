@@ -18,7 +18,9 @@ dispatcher.sendLocal = function (title, desc, withCoord = true) {
     dispatcher.sendLocalPos(title, desc, mp.players.local.position, user.getCache('fraction_id'), withCoord);
 };
 
-dispatcher.sendLocalPos = function (title, desc, pos, fractionId, withCoord = true) {
+dispatcher.sendLocalPos = function (title, desc, pos, fractionId = 0, withCoord = true) {
+    if (fractionId === 0)
+        return;
     mp.events.callRemote("server:dispatcher:sendLocalPos", title, desc, pos.x, pos.y, pos.z, fractionId, withCoord);
 };
 

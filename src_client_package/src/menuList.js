@@ -3659,7 +3659,8 @@ menuList.showVehicleMenu = function(data) {
         else if (item.doName == 'gr6:grab')
             gr6.grab();
         else if (item.doName == 'gr6:getHelp') {
-            dispatcher.send(`Код 0`, `${user.getCache('name')} - инкассация требует поддержки`);
+            dispatcher.sendLocalPos('Код 0', `${user.getCache('name')} - инкассация требует поддержки`, mp.players.local.position, 2);
+            dispatcher.sendLocalPos('Код 0', `${user.getCache('name')} - инкассация требует поддержки`, mp.players.local.position, 5);
             mp.game.ui.notifications.show('~b~Вызов был отправлен');
         }
         else if (item.doName == 'stopRent') {
@@ -3886,6 +3887,20 @@ menuList.showVehicleDoMenu = function() {
         listItem.doName = 'trunk';
         listItem.Index = actualData.Trunk === true ? 1 : 0;
 
+        let vInfo = methods.getVehicleInfo(mp.players.local.vehicle.model);
+
+        if (user.getCache('s_hud_speed_type')) {
+            listItem = UIMenu.Menu.AddMenuItem("Круиз контроль");
+            listItem.SetRightLabel(`${methods.parseInt(vehicles.getSpeedMax(mp.players.local.vehicle.model))}km/h`);
+            listItem.doName = 'cruise';
+        }
+        else
+        {
+            listItem = UIMenu.Menu.AddMenuItem("Круиз контроль");
+            listItem.SetRightLabel(`${methods.parseInt(vehicles.getSpeedMax(mp.players.local.vehicle.model) / 1.609)}mp/h`);
+            listItem.doName = 'cruise';
+        }
+
         let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
 
         let listIndex = 0;
@@ -3907,9 +3922,25 @@ menuList.showVehicleDoMenu = function() {
             }
         });
 
-        menu.ItemSelect.on((item, index) => {
+        menu.ItemSelect.on(async (item, index) => {
             if (item == closeItem)
                 UIMenu.Menu.HideMenu();
+            if (item.doName == 'cruise') {
+                UIMenu.Menu.HideMenu();
+                let speed = methods.parseInt(await UIMenu.Menu.GetUserInput("Введите скорость", "", 4));
+                if (user.getCache('s_hud_speed_type')) {
+                    let vSpeed = methods.parseInt(vehicles.getSpeedMax(mp.players.local.vehicle.model));
+                    if (speed > vSpeed || speed < 0)
+                        speed = 0;
+                }
+                else
+                {
+                    let vSpeed = methods.parseInt(vehicles.getSpeedMax(mp.players.local.vehicle.model) / 1.609);
+                    if (speed > vSpeed || speed < 0)
+                        speed = 0;
+                }
+                mp.events.call('client:setNewMaxSpeed', speed);
+            }
         });
     }
     catch (e) {
@@ -6489,7 +6520,7 @@ menuList.showMazeBankLobbyMenu = function()
     let menu = UIMenu.Menu.Create("Arena", "~b~MazeBank Arena");
 
     UIMenu.Menu.AddMenuItem('~g~Приять участие в гонке', 'Взнос: ~g~$1,000').doName = 'start';
-    UIMenu.Menu.AddMenuItem('~g~Пригласить на дуэль', 'Взнос: ~g~$1,000').doName = 'duel';
+    UIMenu.Menu.AddMenuItem('~g~Пригласить на дуэль', 'Взнос: ~g~$250').doName = 'duel';
     UIMenu.Menu.AddMenuItem('Таблица рейтинга гонок').doName = 'rating';
     UIMenu.Menu.AddMenuItem('Таблица рейтинга дуэлей').doName = 'drating';
 
@@ -6516,7 +6547,7 @@ menuList.showMazeBankLobbyCreateDuoMenu = function(bet = 0, death = 3)
 
     UIMenu.Menu.AddMenuItem(`Ставка ~g~${methods.moneyFormat(bet)}`, 'Нажмите ~g~Enter~s~ чтобы изменить').doName = 'setBet';
     UIMenu.Menu.AddMenuItem(`До ~b~${death}~s~ смертей`, 'Нажмите ~g~Enter~s~ чтобы изменить').doName = 'setDeath';
-    UIMenu.Menu.AddMenuItem('~g~Пригласить', 'Взнос: ~g~$1,000').doName = 'duel';
+    UIMenu.Menu.AddMenuItem('~g~Пригласить', 'Взнос: ~g~$250').doName = 'duel';
 
     UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = "closeButton";
 
@@ -6562,15 +6593,16 @@ menuList.showMazeBankLobbyCreateDuoMenu = function(bet = 0, death = 3)
     });
 };
 
-menuList.showMazeBankLobbyAskDuoMenu = function(playerId, bet = 0, death = 3)
+menuList.showMazeBankLobbyAskDuoMenu = function(playerId, bet, death, name, mmr, count, win)
 {
     UIMenu.Menu.HideMenu();
 
     let menu = UIMenu.Menu.Create("Arena", "~b~MazeBank Arena");
 
+    UIMenu.Menu.AddMenuItem(`${name} (${playerId}): ~g~${mmr}~s~ | ~q~${count}~s~ | ~y~${win}`);
     UIMenu.Menu.AddMenuItem(`Ставка ~g~${methods.moneyFormat(bet)}`);
     UIMenu.Menu.AddMenuItem(`До ~b~${death}~s~ смертей`);
-    UIMenu.Menu.AddMenuItem('~g~Принять', 'Взнос: ~g~$1,000').doName = 'duel';
+    UIMenu.Menu.AddMenuItem('~g~Принять', 'Взнос: ~g~$250').doName = 'duel';
     UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = "closeButton";
 
     menu.ItemSelect.on(async (item, index) => {
@@ -8101,7 +8133,10 @@ menuList.showGunShopWeaponMenu = function(shopId, itemId, price = 1)
                     mp.game.ui.notifications.show("~r~У Вас нет лицензии на оружие");
                     return;
                 }
-                mp.events.callRemote('server:gun:buy', item.itemId, item.price, 1, item.superTint, tintListId[listIndex], shopId);
+                if (item.superTint)
+                    mp.events.callRemote('server:gun:buy', item.itemId, item.price, 1, item.superTint, tintListId[listIndex], shopId);
+                else
+                    mp.events.callRemote('server:gun:buy', item.itemId, item.price, 1, 0, 0, shopId);
             }
             else if (item.doName == 'backButton') {
                 UIMenu.Menu.HideMenu();
@@ -9520,8 +9555,10 @@ menuList.showAdminMenu = function() {
             UIMenu.Menu.AddMenuItem("Действие над игроком").doName = 'playerMenu';
             UIMenu.Menu.AddMenuItem("Транспорт").doName = 'vehicleMenu';
             UIMenu.Menu.AddMenuItem("Телепорт").doName = 'teleportMenu';
-            if (user.isAdmin(2))
+            if (user.isAdmin(2)) {
                 UIMenu.Menu.AddMenuItem("Режим No Clip").doName = 'noClip';
+                UIMenu.Menu.AddMenuItem("Режим Free Cam").doName = 'freeCam';
+            }
             //if (user.isAdmin(2))
             UIMenu.Menu.AddMenuItem("Режим GodMode").doName = 'godMode';
 
@@ -9597,6 +9634,13 @@ menuList.showAdminMenu = function() {
         }
         if (item.doName == 'noClip')
             admin.noClip(true);
+        if (item.doName == 'freeCam')
+        {
+            if (!admin.isFreeCam())
+                admin.startFreeCam();
+            else
+                admin.stopFreeCam();
+        }
         if (item.doName == 'invise') {
             let val = methods.parseInt(await UIMenu.Menu.GetUserInput("От 0 до 255", "", 3));
             user.setAlpha(val);

@@ -232,7 +232,7 @@ bind.getChangeKey = async function(data) {
 };
 
 for(let code in keyCodes) {
-    mp.keys.bind(parseInt(code), true, function() {
+    mp.keys.bind(parseInt(code), true, async function() {
 
         if (!user.isLogin())
             return;
@@ -499,7 +499,7 @@ for(let code in keyCodes) {
         if (user.getCache('s_bind_megaphone') == parseInt(code)) {
             if (!methods.isBlockKeys()) {
                 let veh = mp.players.local.vehicle;
-                if (veh && veh.getPedInSeat(0) == mp.players.local.handle) {
+                if (veh && (veh.getPedInSeat(0) == mp.players.local.handle || veh.getPedInSeat(-1) == mp.players.local.handle)) {
                     if (methods.getVehicleInfo(veh.model).class_name == 'Emergency') {
                         user.setVariable('voice.distance', 7000);
                         voiceRage.enableMic();
@@ -511,10 +511,27 @@ for(let code in keyCodes) {
             voiceRage.enableMic();
         }
         if (user.getCache('s_bind_seat') == parseInt(code)) {
-            if (user.getClipset() === 'move_ped_crouched')
+            if (Container.Data.HasLocally(mp.players.local.remoteId, "isSeatTimeout"))
+            {
+                mp.game.ui.notifications.show("~r~Таймаут на действие 2 секунды");
+                return;
+            }
+            Container.Data.SetLocally(mp.players.local.remoteId, "isSeatTimeout", true);
+            if (user.getClipset() === 'move_ped_crouched') {
+                user.playAnimation("amb@medic@standing@tendtodead@exit", "exit", 8);
+                await methods.sleep(200);
+                await methods.sleep(mp.players.local.getAnimTotalTime("amb@medic@standing@tendtodead@enter", "enter") - 200);
                 user.setClipset(user.getCache('clipset'));
-            else
+            }
+            else {
+                user.playAnimation("amb@medic@standing@tendtodead@enter", "enter", 8);
+                await methods.sleep(200);
+                await methods.sleep(mp.players.local.getAnimTotalTime("amb@medic@standing@tendtodead@exit", "exit") - 200);
                 user.setClipset('move_ped_crouched');
+            }
+            setTimeout(function () {
+                Container.Data.ResetLocally(mp.players.local.remoteId, "isSeatTimeout");
+            }, 2000);
         }
         if (user.getCache('s_bind_firemod') == parseInt(code)) {
             mp.events.call('client:changeFireMod');

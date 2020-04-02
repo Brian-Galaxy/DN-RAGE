@@ -2679,6 +2679,10 @@ phone.consoleCallback = async function(command) {
             phone.addConsoleCommand('You cant use it in dimension (Virtual World)');
             return;
         }
+        if (ui.isGreenZone()) {
+            phone.addConsoleCommand('You cant use it in GreenZone');
+            return;
+        }
 
         if (cmd === 'help') {
             if (user.getCache('stats_darknet') > 0)
@@ -2981,7 +2985,8 @@ phone.consoleCallback = async function(command) {
                 if (userHash1 !== hash1 || userHash2 !== hash2 || userHash3 !== hash3 || userHash4 !== hash4) {
                     phone.addConsoleCommand('Hacking attempt, access denied');
                     user.setById('atmTimeout', true);
-                    dispatcher.sendPos('Код 3', `Сработала система безопасности банкомата, взлом происходил с телефона: ${methods.phoneFormat(user.getCache('phone'))}`, mp.players.local.position);
+                    dispatcher.sendLocalPos('Код 3', `Сработала система безопасности банкомата, взлом происходил с телефона: ${methods.phoneFormat(user.getCache('phone'))}`, mp.players.local.position, 2);
+                    dispatcher.sendLocalPos('Код 3', `Сработала система безопасности банкомата, взлом происходил с телефона: ${methods.phoneFormat(user.getCache('phone'))}`, mp.players.local.position, 5);
                     isAtmHack = false;
                     return;
                 }
@@ -2995,6 +3000,9 @@ phone.consoleCallback = async function(command) {
                 if (methods.getRandomInt(0, 100) < user.getCache('stats_darknet')) {
 
                     await phone.consoleLoad('Download keys', 50);
+
+                    if (phone.getType() === 0)
+                        return;
 
                     let money = methods.getRandomInt(1000, 5000) / 1000;
 
@@ -3158,7 +3166,8 @@ phone.consoleCallback = async function(command) {
                     phone.addConsoleCommand('ATM Not found');
                     return;
                 }
-                dispatcher.sendPos('Код 3', `Сработала система безопасности банкомата, взлом происходил с телефона: ${methods.phoneFormat(user.getCache('phone'))}`, mp.players.local.position);
+                dispatcher.sendLocalPos('Код 3', `Сработала система безопасности банкомата, взлом происходил с телефона: ${methods.phoneFormat(user.getCache('phone'))}`, mp.players.local.position, 2);
+                dispatcher.sendLocalPos('Код 3', `Сработала система безопасности банкомата, взлом происходил с телефона: ${methods.phoneFormat(user.getCache('phone'))}`, mp.players.local.position, 5);
                 phone.addConsoleCommand('ATM has been found');
                 let atmHandle = timer.getAtmHandle();
                 phone.addConsoleCommand(`Hash1: ${methods.md5(atmHandle.toString()).slice(0, 3)}`);
@@ -3282,10 +3291,10 @@ phone.consoleCallback = async function(command) {
                         return;
                     }
 
-                    if (await user.hasById('grabLamar')) {
+                    /*if (await user.hasById('grabLamar')) {
                         mp.game.ui.notifications.show('~r~Вы не можете сейчас сбыть транспорт, т.к. вы выполняете заказ Ламара');
                         return;
-                    }
+                    }*/
 
                     if (user.getCache('job') === 10) {
                         mp.game.ui.notifications.show('~r~Инкассаторам запрещено это действие');

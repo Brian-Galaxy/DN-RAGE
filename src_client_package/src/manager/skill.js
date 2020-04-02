@@ -15,14 +15,14 @@ let checkStats = function()
         if (mp.players.local.isSprinting() && user.getCache('stats_endurance') < 99) {
             mp.game.ui.notifications.show(`~g~Навык "Выносливость" был повышен`);
             user.set('stats_endurance', user.getCache('stats_endurance') + 1);
-            if (user.isUsmc())
+            if (user.isUsmc() || user.getCache('vip_type') > 0)
                 user.set('stats_endurance', user.getCache('stats_endurance') + 1);
         }
 
         if (mp.players.local.isSprinting() && user.getCache('stats_strength') < 99) {
             mp.game.ui.notifications.show(`~g~Навык "Сила" был повышен`);
             user.set('stats_strength', user.getCache('stats_strength') + 1);
-            if (user.isUsmc())
+            if (user.isUsmc() || user.getCache('vip_type') > 0)
                 user.set('stats_strength', user.getCache('stats_strength') + 1);
         }
 
@@ -40,7 +40,7 @@ let checkStats = function()
                     mp.game.ui.notifications.show(`~g~Навык вождения был повышен`);
 
                     user.set('stats_driving', user.getCache('stats_driving') + 1);
-                    if (user.isUsmc())
+                    if (user.isUsmc() || user.getCache('vip_type') > 0)
                         user.set('stats_driving', user.getCache('stats_driving') + 1);
                 }
             }
@@ -55,7 +55,7 @@ let checkStats = function()
                     mp.game.ui.notifications.show(`~g~Навык пилота был повышен`);
 
                     user.set('stats_flying', user.getCache('stats_flying') + 1);
-                    if (user.isUsmc())
+                    if (user.isUsmc() || user.getCache('vip_type') > 0)
                         user.set('stats_flying', user.getCache('stats_flying') + 1);
                 }
             }
@@ -85,6 +85,8 @@ let checkShooting = function () {
         if (mp.players.local.isShooting() && user.getCache('stats_shooting') < 99) {
             mp.game.ui.notifications.show(`~g~Навык стрельбы был повышен`);
             user.set('stats_shooting', user.getCache('stats_shooting') + 1);
+            if (user.getCache('vip_type') > 0)
+                user.set('stats_shooting', user.getCache('stats_shooting') + 1);
         }
     }
     catch (e) {

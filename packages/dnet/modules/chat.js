@@ -184,6 +184,11 @@ mp.events.add('playerCommand', (player, command) => {
                 return;
             racer.startRace();
         }
+        else if (command.toLowerCase() === "racern") {
+            if (!user.isAdmin(player))
+                return;
+            racer.notifyRace();
+        }
         else if (command.slice(0, 6) === "seval ") {
             if (!user.isLogin(player))
                 return;

@@ -563,15 +563,15 @@ enums.fractionList = {
         fractionNameShort: "BCSD",
         hash: "sheriff",
         leaderName: "Sheriff",
-        subLeaderName: "Deputy Sheriff",
+        subLeaderName: "Undersheriff",
         vehicleList: ["Sheriff", "Sheriff2", "Police4", "FBI", "FBI2", "Pranger", "Insurgent2"],
         departmentList: ["Sheriff Academy", "Regular", "HighWay Patrol", "Park Ranger", "Detective Bureau", "AirSupport Division", "Tactical Division"],
         departmentPayDay: [40, 90, 100, 110, 180, 170, 180],
         rankPayDay: [
             [1200, 1000, 760, 690, 200, 150], //0
-            [1200, 1000, 700, 600, 500, 400, 300], //1
-            [1200, 1000, 700, 600, 500, 400, 300], //2
-            [1200, 1000, 700, 600, 500, 400, 300], //3
+            [1200, 1000, 700, 600, 500, 450, 400, 350, 300], //1
+            [1200, 1000, 700, 600, 500, 450, 400, 350, 300], //2
+            [1200, 1000, 700, 600, 500, 450, 400, 350, 300], //3
             [1200, 1000, 700, 600, 500, 400], //4
             [1200, 1000, 700, 600, 500, 400], //5
             [1450, 1350, 1200, 700, 600, 500, 400], //6
@@ -580,9 +580,9 @@ enums.fractionList = {
         subLeaderPayDay: 1600,
         rankList: [
             ["Captain", "Deputy Captain", "Instructor", "Junior Instructor", "Senior Cadet", "Cadet"], //0
-            ["Captain", "Deputy Captain", "Lieutenant II", "Lieutenant I", "Sergeant II", "Sergeant I", "Corporal"], //1
-            ["Captain", "Deputy Captain", "Lieutenant II", "Lieutenant I", "Sergeant II", "Sergeant I", "Corporal"], //2
-            ["Captain", "Deputy Captain", "Lieutenant II", "Lieutenant I", "Sergeant II", "Sergeant I", "Corporal"], //3
+            ["Captain", "Deputy Captain", "Lieutenant II", "Lieutenant I", "Sergeant II", "Sergeant I", "Deputy Sheriff III", "Deputy Sheriff II", "Deputy Sheriff I"], //1
+            ["Captain", "Deputy Captain", "Lieutenant II", "Lieutenant I", "Sergeant II", "Sergeant I", "Deputy Sheriff III", "Deputy Sheriff II", "Deputy Sheriff I"], //2
+            ["Captain", "Deputy Captain", "Lieutenant II", "Lieutenant I", "Sergeant II", "Sergeant I", "Deputy Sheriff III", "Deputy Sheriff II", "Deputy Sheriff I"], //3
             ["Captain", "Deputy Captain", "Lieutenant II", "Lieutenant I", "Sergeant II", "Sergeant I"], //4
             ["Captain", "Deputy Captain", "Lieutenant II", "Lieutenant I", "Sergeant II", "Sergeant I"], //5
             ["Commander", "Deputy Commander", "Captain", "Lieutenant II", "Lieutenant I", "Sergeant II", "Sergeant I"], //6

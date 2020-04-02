@@ -64,20 +64,20 @@ mp.events.add('server:casino:wheel:finalRoll', (player) => {
     try {
         let win = user.get(player, 'wheelWin');
         if (win < 1) {
+            user.addCashMoney(player, 40000, 'Колесо удачи');
+            player.notifyWithPicture('Diamond Casino', '~g~Колесо Удачи', `Вы выиграли ~g~$40,000`, 'CHAR_CASINO');
+        }
+        else if (win < 3) {
             user.addCashMoney(player, 20000, 'Колесо удачи');
             player.notifyWithPicture('Diamond Casino', '~g~Колесо Удачи', `Вы выиграли ~g~$20,000`, 'CHAR_CASINO');
         }
-        else if (win < 5) {
-            user.addCashMoney(player, 10000, 'Колесо удачи');
-            player.notifyWithPicture('Diamond Casino', '~g~Колесо Удачи', `Вы выиграли ~g~$10,000`, 'CHAR_CASINO');
-        }
-        else if (win < 15) {
-            user.addCashMoney(player, 3000, 'Колесо удачи');
-            player.notifyWithPicture('Diamond Casino', '~g~Колесо Удачи', `Вы выиграли ~g~$3,000`, 'CHAR_CASINO');
+        else if (win < 10) {
+            user.addCashMoney(player, 5000, 'Колесо удачи');
+            player.notifyWithPicture('Diamond Casino', '~g~Колесо Удачи', `Вы выиграли ~g~$5,000`, 'CHAR_CASINO');
         }
         else {
-            user.addCashMoney(player, 1000, 'Колесо удачи');
-            player.notifyWithPicture('Diamond Casino', '~g~Колесо Удачи', `Вы выиграли ~g~$1,000`, 'CHAR_CASINO');
+            user.addCashMoney(player, 2000, 'Колесо удачи');
+            player.notifyWithPicture('Diamond Casino', '~g~Колесо Удачи', `Вы выиграли ~g~$2,000`, 'CHAR_CASINO');
         }
     }
     catch (e) {

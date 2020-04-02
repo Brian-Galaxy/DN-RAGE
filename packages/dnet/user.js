@@ -173,8 +173,8 @@ user.loginAccount = function(player, login, pass) {
 
                         let spawnList = [];
 
-                        if (row['pos_x'] !== 0)
-                            spawnList.push('Точка выхода');
+                        //if (row['pos_x'] !== 0)
+                        //    spawnList.push('Точка выхода');
 
                         if (row['house_id'])
                             spawnList.push('Дом');
@@ -461,20 +461,12 @@ user.spawnByName = function(player, spawn = 'Стандарт') {
         if (spawn == 'Точка выхода') {
             //let userId = user.getId(player);
             try {
-                player.spawn(new mp.Vector3(user.get(player, 'pos_x'), user.get(player, 'pos_y'), user.get(player, 'pos_z')));
-                player.heading = user.get(player, 'rot');
+                player.spawn(new mp.Vector3(methods.parseFloat(user.get(player, 'pos_x')), methods.parseFloat(user.get(player, 'pos_y')), methods.parseFloat(user.get(player, 'pos_z'))));
+                player.heading = methods.parseFloat(user.get(player, 'rot'));
             }
             catch (e) {
                 
             }
-            setTimeout(function () {
-                try {
-                    player.dimension = 0;
-                }
-                catch (e) {
-                    
-                }
-            }, 10000);
             //player.dimension = user.getById(userId, 'dimension');
         }
         else if (spawn == 'Дом') {
@@ -492,6 +484,16 @@ user.spawnByName = function(player, spawn = 'Стандарт') {
             player.spawn(new mp.Vector3(enums.spawnByRole[roleId][0], enums.spawnByRole[roleId][1], enums.spawnByRole[roleId][2]));
             player.heading = enums.spawnByRole[roleId][3];
         }
+
+        setTimeout(function () {
+            try {
+                if (user.isLogin(player))
+                    player.dimension = 0;
+            }
+            catch (e) {
+
+            }
+        }, 5000);
 
         setTimeout(function () {
             user.hideLoadDisplay(player);
@@ -2305,6 +2307,9 @@ user.giveWanted = function(player, level, reason) {
     }
     else {
 
+        if (level < 0)
+            return;
+
         let currentLvl = user.get(player, 'wanted_level');
         if (currentLvl + level >= 50) {
             //methods.notifyWithPictureToAll('Федеральный розыск', 'Police Department', `${user.getRpName(player)} был объявлен в розыск`, 'WEB_LOSSANTOSPOLICEDEPT', 2);
@@ -2588,11 +2593,22 @@ user.payDay = async function (player) {
                 user.sendSmsBankOperation(player, `~r~В бюджете организации не достаточно средств для выплаты зарплаты`, 'Зарплата');
             }
             else {
+
+                let desc = '';
+                if (user.get(player, 'vip_type') === 1) {
+                    desc = '\n~y~Прибавка VIP LIGHT 5% от зарплаты';
+                    nalog = nalog * 1.05;
+                }
+                if (user.get(player, 'vip_type') === 2) {
+                    desc = '\n~y~Прибавка VIP HARD 10% от зарплаты';
+                    nalog = nalog * 1.1;
+                }
+
                 let ben = coffer.getBenefit(coffer.getIdByFraction(user.get(player, 'fraction_id')));
                 if (ben > 0)
-                    user.sendSmsBankOperation(player, `Зачисление: ~g~${methods.moneyFormat(nalog)}\n~s~Прибавка к зарплате: ~g~${methods.moneyFormat(ben)}`, 'Зарплата');
+                    user.sendSmsBankOperation(player, `Зачисление: ~g~${methods.moneyFormat(nalog)}\n~s~Прибавка к зарплате: ~g~${methods.moneyFormat(ben)}${desc}`, 'Зарплата');
                 else
-                    user.sendSmsBankOperation(player, `Зачисление: ~g~${methods.moneyFormat(nalog)}`, 'Зарплата');
+                    user.sendSmsBankOperation(player, `Зачисление: ~g~${methods.moneyFormat(nalog)}${desc}`, 'Зарплата');
                 user.addPayDayMoney(player, nalog + ben);
                 coffer.removeMoney(frId, nalog)
             }

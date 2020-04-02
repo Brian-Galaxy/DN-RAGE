@@ -138,13 +138,19 @@ timer.sec10Timer = function() {
                 if (p.ping > 500)
                     user.kickAntiCheat(p, `Ping: ${p.ping}ms`);
 
+                let afkTime = 600;
+                if (user.get(p, 'vip_type') === 1)
+                    afkTime = 1200;
+                if (user.get(p, 'vip_type') === 2)
+                    afkTime = 1800;
+
                 if (user.has(p, 'afkLastPos')) {
                     if (methods.distanceToPos(user.get(p, 'afkLastPos'), p.position) < 1) {
 
                         let timer = methods.parseInt(user.get(p, 'afkTimer'));
                         user.set(p, 'afkTimer', timer + 10);
 
-                        if (timer > 600 && p.getVariable('isAfk') !== true)
+                        if (timer > afkTime && p.getVariable('isAfk') !== true)
                             p.setVariable('isAfk', true);
                     }
                     else {
@@ -184,7 +190,7 @@ timer.sec10Timer = function() {
                         let timer = methods.parseInt(vehicles.get(v.id, 'afkTimer'));
                         vehicles.set(v.id, 'afkTimer', timer + 10);
 
-                        if (timer > 900) {
+                        if (timer > 1800) {
                             vehicles.reset(v.id, 'afkTimer');
                             vehicles.reset(v.id, 'afkLastPos');
                             vehicles.respawn(v);

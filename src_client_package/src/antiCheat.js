@@ -138,9 +138,9 @@ antiCheat.secTimer = function() {
             /*if (!mp.players.local.isVisible()) {
                 user.kickAntiCheat('Invision');
             }*/
-            if (!mp.players.local.canRagdoll()) {
+            /*if (!mp.players.local.canRagdoll()) {
                 user.warnAntiCheat(`Disalbe Ragdoll`);
-            }
+            }*/
         }
 
         let isKick = false;

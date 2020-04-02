@@ -1355,13 +1355,23 @@ user.giveJobMoney = function(money) {
     //if (user.getCache('skill_' + user.getCache('job')) >= 500)
     //    money = methods.parseInt(money * 1.5);
 
+    let desc = '';
+    if (user.getCache('vip_type') === 1) {
+        desc = '\n~y~Прибавка VIP LIGHT 5% от зарплаты';
+        money = money * 1.05;
+    }
+    if (user.getCache('vip_type') === 2) {
+        desc = '\n~y~Прибавка VIP HARD 10% от зарплаты';
+        money = money * 1.1;
+    }
+
     if (user.getCache('bank_card') == 0) {
         user.addCashMoney(money, 'Зарплата');
-        mp.game.ui.notifications.show('~y~Оформите банковскую карту');
+        mp.game.ui.notifications.show('~y~Оформите банковскую карту' + desc);
     }
     else {
         user.addBankMoney(money, 'Зарплата');
-        user.sendSmsBankOperation(`Зачисление средств: ~g~${methods.moneyFormat(money)}`);
+        user.sendSmsBankOperation(`Зачисление средств: ~g~${methods.moneyFormat(money)}${desc}`);
     }
 };
 

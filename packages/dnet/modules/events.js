@@ -264,7 +264,7 @@ mp.events.addRemoteCounted('server:duel:toLobby', (player, targetId, bet, death)
                 player.notify('~r~Вы слишком далеко');
                 return;
             }
-            if (bet + 1000 > user.getCashMoney(player)) {
+            if (bet + 250 > user.getCashMoney(player)) {
                 player.notify('~r~У вас нет такой суммы');
                 return;
             }
@@ -276,7 +276,7 @@ mp.events.addRemoteCounted('server:duel:toLobby', (player, targetId, bet, death)
                 player.notify('~r~Ваш рейтинг слишком сильно отличается');
                 return;
             }
-            target.call('client:duel:askLobby', [player.id, bet, death])
+            target.call('client:duel:askLobby', [player.id, bet, death, user.getRpName(player), user.get(player, 'rating_duel_mmr'), user.get(player, 'rating_duel_count'), user.get(player, 'rating_duel_win')])
         }
         else
             player.notify('~r~Рядом с вами никого нет');
@@ -292,7 +292,7 @@ mp.events.addRemoteCounted('server:duel:accept', (player, targetId, bet, death) 
         let target = mp.players.at(targetId);
         if (mp.players.exists(target)) {
             try {
-                if (bet + 1000 > user.getCashMoney(player)) {
+                if (bet + 250 > user.getCashMoney(player)) {
                     player.notify('~r~У вас нет такой суммы');
                     return;
                 }
@@ -301,8 +301,8 @@ mp.events.addRemoteCounted('server:duel:accept', (player, targetId, bet, death) 
                     return;
                 }
 
-                user.removeCashMoney(target, 1000, 'Дуэль с игроком ' + user.getRpName(player));
-                user.removeCashMoney(player, 1000, 'Дуэль с игроком ' + user.getRpName(target));
+                user.removeCashMoney(target, 250, 'Дуэль с игроком ' + user.getRpName(player));
+                user.removeCashMoney(player, 250, 'Дуэль с игроком ' + user.getRpName(target));
 
                 user.set(player, 'duelBet', bet);
                 user.set(player, 'duelTarget', target.id);
@@ -318,6 +318,9 @@ mp.events.addRemoteCounted('server:duel:accept', (player, targetId, bet, death) 
                 player.setVariable('duel', true);
                 target.setVariable('duel', true);
 
+                user.unequipAllWeapons(player);
+                user.unequipAllWeapons(target);
+
                 user.setHealth(player, 100);
                 user.setHealth(target, 100);
 
@@ -326,9 +329,6 @@ mp.events.addRemoteCounted('server:duel:accept', (player, targetId, bet, death) 
 
                 user.blockKeys(player, true);
                 user.blockKeys(target, true);
-
-                user.unequipAllWeapons(player);
-                user.unequipAllWeapons(target);
 
                 if (bet > 0) {
                     user.removeCashMoney(player, bet, 'Ставка дуэли');
@@ -1203,7 +1203,10 @@ mp.events.addRemoteCounted('server:user:unCuffById', (player, targetId) => {
             player.notify('~r~Вы слишком далеко');
             return;
         }
-        //user.stopAnimation(target);
+        if (!user.isPolice(player) && user.isGov(player)) {
+            player.notify('~r~Вам данное действие запрещено');
+            return;
+        }
 
         if (user.isCuff(target)) {
             user.playAnimation(player, "mp_arresting", "a_uncuff", 8);
@@ -1951,7 +1954,7 @@ mp.events.addRemoteCounted('server:invader:delAd', (player, id) => {
 
     user.addPayDayMoney(player, 100, 'Отредактировал объявление');
 
-    mysql.executeQuery(`DELETE FROM rp_inv_ad WHERE id = ${methods.parseInt(id)}`);
+    mysql.executeQuery(`DELETE FROM rp_inv_ad_temp WHERE id = ${methods.parseInt(id)}`);
     player.notify('~b~Вы удалили объявление #' + id);
     player.notify('~g~Вы получили премию в $100 за отредактированное объявление');
 });
@@ -2324,9 +2327,19 @@ mp.events.addRemoteCounted('server:gr6:unload', (player) => {
                         if (user.has(p, 'gr6') && user.get(p, 'gr6') === v.id) {
                             let currentMoney = methods.parseFloat(money / countOcc);
 
+                            let desc = '';
+                            if (user.get(p, 'vip_type') === 1) {
+                                desc = '\n~y~Прибавка VIP LIGHT 5% от зарплаты';
+                                money = money * 1.05;
+                            }
+                            if (user.get(p, 'vip_type') === 2) {
+                                desc = '\n~y~Прибавка VIP HARD 10% от зарплаты';
+                                money = money * 1.1;
+                            }
+
                             user.addMoney(p, currentMoney, 'Зарплата инкассатора');
                             coffer.removeMoney(currentMoney + methods.parseFloat(currentMoney / 10));
-                            p.notify('~g~Вы заработали: ~s~' + methods.moneyFormat(currentMoney));
+                            p.notify('~g~Вы заработали: ~s~' + methods.moneyFormat(currentMoney) + desc);
                             user.reset(p, 'gr6');
                             user.giveJobSkill(p);
 
@@ -5207,7 +5220,7 @@ mp.events.addRemoteCounted('server:vehicle:ejectByIdOut', (player, vid, id) => {
                 if (user.isLogin(p) && p.id === id) {
 
                     if (p.health > 1 && !user.isCuff(p) && !user.isTie(p)) {
-                        player.notify('~r~Игрок должен быть в наручниках, связан или мертв');
+                        player.notify('~r~Игрок должен быть в наручниках, связан');
                         return;
                     }
 
@@ -5771,7 +5784,8 @@ mp.events.addRemoteCounted('server:uniform:sheriff', (player, idx) => {
                     user.setComponentVariation(player, 8, 160, 0);
                     user.setComponentVariation(player, 3, 18, 0);
                     user.setComponentVariation(player, 11, 46, 2);
-                    user.setComponentVariation(player, 9, 13, 2);
+                    user.setComponentVariation(player, 9, 2, 2);
+                    user.setComponentVariation(player, 10, 70, 1);
                     user.setComponentVariation(player, 4, 61, 7);
                     user.setComponentVariation(player, 6, 24, 0);
                 }
@@ -5782,7 +5796,8 @@ mp.events.addRemoteCounted('server:uniform:sheriff', (player, idx) => {
                     user.setComponentVariation(player, 8, 130, 0);
                     user.setComponentVariation(player, 3, 17, 0);
                     user.setComponentVariation(player, 11, 53, 2);
-                    user.setComponentVariation(player, 9, 12, 2);
+                    user.setComponentVariation(player, 10, 70, 1);
+                    user.setComponentVariation(player, 9, 2, 2);
                     user.setComponentVariation(player, 4, 59, 7);
                     user.setComponentVariation(player, 6, 24, 0);
                 }

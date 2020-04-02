@@ -50,6 +50,7 @@ mp.events.add('chatEnabled', (isEnabled) => {
 });
 
 let maxSpeed = 500;
+let newMaxSpeed = 0;
 let _playerDisableAllControls = false;
 let _playerDisableDefaultControls = false;
 
@@ -732,22 +733,24 @@ mp.events.add('client:user:freeze', (enable) => {
     mp.players.local.freezePosition(enable);
 });
 
-mp.events.add('client:duel:askLobby', (playerId, bet, death) => {
+mp.events.add('client:duel:askLobby', (playerId, bet, death, name, mmr, count, win) => {
     methods.debug('Event: client:duel:start');
-    menuList.showMazeBankLobbyAskDuoMenu(playerId, bet, death);
+    menuList.showMazeBankLobbyAskDuoMenu(playerId, bet, death, name, mmr, count, win);
 });
 
 mp.events.add('client:duel:start', () => {
     methods.debug('Event: client:duel:start');
-    inventory.hide();
-    phone.hide();
+    if (!phone.isHide())
+        phone.hide();
+    if (!inventory.isHide())
+        inventory.hide();
     menuList.hide();
-    //mp.players.local.removeAllWeapons();
+    mp.players.local.removeAllWeapons();
 });
 
 mp.events.add('client:duel:giveWeapon', () => {
     methods.debug('Event: client:duel:giveWeapon');
-    user.giveWeapon('weapon_revolver', 15);
+    user.giveWeapon('weapon_revolver', 30);
 });
 
 mp.events.add('client:user:setWaypoint', (x, y) => {
@@ -2450,7 +2453,28 @@ mp.events.add("client:vehicle:checker", function () {
                 vehicle.setEnginePowerMultiplier(vehicle.getVariable('boost') + boost);
             else if (boost > 1)
                 vehicle.setEnginePowerMultiplier(boost);
+
+            if (newMaxSpeed > 0)
+                maxSpeed = newMaxSpeed;
         }
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.add("client:setNewMaxSpeed", function (speed) {
+    try {
+        newMaxSpeed = speed;
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.add("playerLeaveVehicle", function (entity) {
+    try {
+        newMaxSpeed = 0;
     }
     catch (e) {
         methods.debug(e);
@@ -2607,6 +2631,11 @@ mp.keys.bind(0x4D, true, function() {
         menuList.showMainMenu();
 });
 
+//F2
+mp.keys.bind(0x4D, true, function() {
+    mp.gui.cursor.show(false, !mp.gui.cursor.visible);
+});
+
 //ESC
 mp.keys.bind(0x1B, true, function() {
     if (!user.isLogin())
@@ -2683,7 +2712,7 @@ mp.keys.bind(0x59, true, function() {
             return;
         }
 
-        dispatcher.send(`[EMS] Код 3`, `Человек без сознания`);
+        dispatcher.sendLocalPos('Код 3', `Человек без сознания`, mp.players.local.position, 6);
         mp.game.ui.notifications.show("~b~Вызов был отправлен медикам, ожидайте");
 
         Container.Data.SetLocally(mp.players.local.remoteId, "isEmsTimeout", true);
@@ -2758,6 +2787,11 @@ mp.events.add('playerMaybeTakeShot', (shootEntityId) => {
         if (damage < 1)
             damage = 1;
 
+        if (ui.isGreenZone())
+            mp.game.player.setWeaponDefenseModifier(0);
+        else
+            mp.game.player.setWeaponDefenseModifier(damage);
+
         //mp.game.ped.setAiMeleeWeaponDamageModifier(damage);
         //mp.game.player.setMeleeWeaponDefenseModifier(damage);
         mp.game.player.setWeaponDefenseModifier(damage);
@@ -2780,7 +2814,10 @@ mp.events.add('playerMaybeTakeShot', (shootEntityId) => {
         timeoutShoot = setTimeout(function () {
             //mp.game.ped.setAiMeleeWeaponDamageModifier(1);
             //mp.game.player.setMeleeWeaponDefenseModifier(1);
-            mp.game.player.setWeaponDefenseModifier(1);
+            if (ui.isGreenZone())
+                mp.game.player.setWeaponDefenseModifier(0);
+            else
+                mp.game.player.setWeaponDefenseModifier(1);
         }, 30000);
     }
     catch (e) {
@@ -3147,7 +3184,9 @@ mp.events.add('render', () => {
             mp.game.controls.disableControlAction(2, 70, true);
             mp.game.controls.disableControlAction(2, 140, true);
             mp.game.controls.disableControlAction(2, 141, true);
+            mp.game.controls.disableControlAction(2, 142, true);
             mp.game.controls.disableControlAction(2, 143, true);
+            mp.game.controls.disableControlAction(2, 257, true);
             mp.game.controls.disableControlAction(2, 263, true);
         }
         if(ui.DisableMouseControl /*|| ui.isShowMenu()*/) {

@@ -17,8 +17,8 @@ let racerList = [
         repeat: 0,
         allowVehicle: ['Hotring', 'Adder', 'Autarch', 'Bullet', 'Cheetah', 'Cyclone', 'Entity2', 'Entityxf', 'emerus', 'fmj', 'furia', 'gp1', 'infernus', 'italigtb2', 'krieger', 'le7b', 'nero', 'nero2', 'osiris', 'pfister811', 'prototipo', 'reaper', 's80', 'sc1', 'sheava', 't20', 'taipan', 'tempesta', 'tezeract', 'thrax', 'turismor', 'tyrant', 'tyrus', 'vacca', 'vagner', 'visione', 'xa21', 'zentorno', 'zorrusso', 'formula', 'formula2'],
         offsetZ: -5,
-        prize1: 30000,
-        prize2: 20000,
+        prize1: 20000,
+        prize2: 15000,
         prize3: 10000,
         prize4to10: 5000,
         prizeAll: 1000,
@@ -119,8 +119,8 @@ let racerList = [
         repeat: 0,
         allowVehicle: ['Hotring', 'Adder', 'Autarch', 'Bullet', 'Cheetah', 'Cyclone', 'Entity2', 'Entityxf', 'emerus', 'fmj', 'furia', 'gp1', 'infernus', 'italigtb2', 'krieger', 'le7b', 'nero', 'nero2', 'osiris', 'pfister811', 'prototipo', 'reaper', 's80', 'sc1', 'sheava', 't20', 'taipan', 'tempesta', 'tezeract', 'thrax', 'turismor', 'tyrant', 'tyrus', 'vacca', 'vagner', 'visione', 'xa21', 'zentorno', 'zorrusso', 'formula', 'formula2'],
         offsetZ: -5,
-        prize1: 30000,
-        prize2: 20000,
+        prize1: 20000,
+        prize2: 15000,
         prize3: 10000,
         prize4to10: 5000,
         prizeAll: 1000,
@@ -224,8 +224,8 @@ let racerList = [
         repeat: 0,
         allowVehicle: ['comet3', 'comet5', 'drafter', 'elegy', 'elegy2', 'feltzer2', 'komoda', 'imorgon', 'italigto', 'jugular', 'jester3', 'jester', 'kuruma', 'locust', 'lynx', 'massacro', 'neo', 'neon', 'ninef', 'paragon', 'pariah', 'revolter', 'schlagen', 'schwarzer', 'seven70', 'specter2', 'sugoi', 'sultan2', 'surano', 'vstr'],
         offsetZ: -5,
-        prize1: 30000,
-        prize2: 20000,
+        prize1: 20000,
+        prize2: 15000,
         prize3: 10000,
         prize4to10: 5000,
         prizeAll: 1000,
@@ -321,8 +321,8 @@ let racerList = [
         repeat: 0,
         allowVehicle: ['comet3', 'comet5', 'drafter', 'elegy', 'elegy2', 'feltzer2', 'komoda', 'imorgon', 'italigto', 'jugular', 'jester3', 'jester', 'kuruma', 'locust', 'lynx', 'massacro', 'neo', 'neon', 'ninef', 'paragon', 'pariah', 'revolter', 'schlagen', 'schwarzer', 'seven70', 'specter2', 'sugoi', 'sultan2', 'surano', 'vstr'],
         offsetZ: -5,
-        prize1: 30000,
-        prize2: 20000,
+        prize1: 20000,
+        prize2: 15000,
         prize3: 10000,
         prize4to10: 5000,
         prizeAll: 1000,
@@ -412,10 +412,10 @@ let racerList = [
         title: 'Внедорожный округ Блейн',
         desc: 'Покажите себя во всей красе во внедорожном соревнование округа Блейн',
         repeat: 0,
-        allowVehicle: ['Bfinjection', 'Blazer', 'Brawler', 'Brutus', 'Caracara2', 'Dubsta3', 'Everon', 'Freecrawler', 'Hellion', 'Kamacho', 'Mesa3', 'Outlaw', 'Riata', 'Sandking2', 'Trophytruck', 'Trophytruck2', 'Manchez', 'Sanchez', 'Sanchez2', 'Enduro'],
+        allowVehicle: ['Bfinjection', 'Brawler', 'Brutus', 'Caracara2', 'Dubsta3', 'Everon', 'Freecrawler', 'Hellion', 'Kamacho', 'Mesa3', 'Outlaw', 'Riata', 'Sandking2', 'Trophytruck', 'Trophytruck2', 'Enduro'],
         offsetZ: -5,
-        prize1: 30000,
-        prize2: 20000,
+        prize1: 20000,
+        prize2: 15000,
         prize3: 10000,
         prize4to10: 5000,
         prizeAll: 1000,
@@ -507,10 +507,10 @@ let racerList = [
         title: 'Рёв мотора',
         desc: 'Покажите себя во всей красе во внедорожном соревнование округа Блейн',
         repeat: 0,
-        allowVehicle: ['Bfinjection', 'Blazer', 'Brawler', 'Brutus', 'Caracara2', 'Dubsta3', 'Everon', 'Freecrawler', 'Hellion', 'Kamacho', 'Mesa3', 'Outlaw', 'Riata', 'Sandking2', 'Trophytruck', 'Trophytruck2', 'Manchez', 'Sanchez', 'Sanchez2', 'Enduro'],
+        allowVehicle: ['Bfinjection', 'Brawler', 'Brutus', 'Caracara2', 'Dubsta3', 'Everon', 'Freecrawler', 'Hellion', 'Kamacho', 'Mesa3', 'Outlaw', 'Riata', 'Sandking2', 'Trophytruck', 'Trophytruck2', 'Enduro'],
         offsetZ: -5,
-        prize1: 30000,
-        prize2: 20000,
+        prize1: 20000,
+        prize2: 15000,
         prize3: 10000,
         prize4to10: 5000,
         prizeAll: 1000,
@@ -611,10 +611,10 @@ let racerList = [
         title: 'Пыль и Грязь',
         desc: 'Покажите себя во всей красе во внедорожном соревнование округа Блейн',
         repeat: 0,
-        allowVehicle: ['Bfinjection', 'Blazer', 'Brawler', 'Brutus', 'Caracara2', 'Dubsta3', 'Everon', 'Freecrawler', 'Hellion', 'Kamacho', 'Mesa3', 'Outlaw', 'Riata', 'Sandking2', 'Trophytruck', 'Trophytruck2', 'Manchez', 'Sanchez', 'Sanchez2', 'Enduro'],
+        allowVehicle: ['Bfinjection', 'Brawler', 'Brutus', 'Caracara2', 'Dubsta3', 'Everon', 'Freecrawler', 'Hellion', 'Kamacho', 'Mesa3', 'Outlaw', 'Riata', 'Sandking2', 'Trophytruck', 'Trophytruck2', 'Enduro'],
         offsetZ: -5,
-        prize1: 30000,
-        prize2: 20000,
+        prize1: 20000,
+        prize2: 15000,
         prize3: 10000,
         prize4to10: 5000,
         prizeAll: 1000,
@@ -924,6 +924,13 @@ racer.timer = function () {
         if (user.isLogin(p)) {
             if (user.has(p, 'isRaceLobby') && methods.isInPoint(p.position, greenZone)) {
                 currentLobby++;
+            }
+        }
+    });
+
+    mp.players.forEach(p => {
+        if (user.isLogin(p)) {
+            if (user.has(p, 'isRaceLobby') && methods.isInPoint(p.position, greenZone)) {
                 p.notifyWithPicture('Arena RaceClub', '~g~' + racerList[currentRace].title, `~b~В лобби:~s~ ${currentLobby}\nОжидайте начала гонки в 12:00\nНе покидайте помещение, иначе вы покините лобби`, 'CHAR_CARSITE4');
             }
             if(user.has(p, 'isRaceLobby') && !methods.isInPoint(p.position, greenZone)) {

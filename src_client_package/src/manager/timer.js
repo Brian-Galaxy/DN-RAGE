@@ -135,7 +135,8 @@ timer.twoMinTimer = function() {
     if (veh && mp.vehicles.exists(veh) && veh.getClass() == 18 && !user.isGos()) {
         if (veh.getPedInSeat(-1) == mp.players.local.handle) {
             user.giveWanted(50, 'Угон служебного ТС');
-            dispatcher.send(`Код 0`, `Неизвестный угнал служебный трансопрт`);
+            dispatcher.sendLocalPos('Код 0', `Неизвестный угнал служебный трансопрт`, mp.players.local.position, 2);
+            dispatcher.sendLocalPos('Код 0', `Неизвестный угнал служебный трансопрт`, mp.players.local.position, 5);
         }
     }
 
@@ -173,13 +174,6 @@ timer.min15Timer = function() {
 timer.ms50Timer = function() {
 
     try {
-        ui.updateVehValues();
-        ui.updateValues();
-    }
-    catch (e) {
-    }
-
-    try {
         isDisableControl = vehicles.checkerControl();
     }
     catch (e) {
@@ -191,6 +185,16 @@ timer.ms50Timer = function() {
             mp.players.local.freezePosition(true);
             mp.players.local.setCollision(false, false);
         }
+    }
+    catch (e) {
+    }
+};
+
+timer.ms100Timer = function() {
+
+    try {
+        ui.updateVehValues();
+        ui.updateValues();
     }
     catch (e) {
     }
@@ -546,6 +550,12 @@ timer.loadAll = function () {
     }
     catch (e) {
         
+    }
+    try {
+        setInterval(timer.ms100Timer, 100);
+    }
+    catch (e) {
+
     }
     try {
         setInterval(timer.secTimer, 1000);

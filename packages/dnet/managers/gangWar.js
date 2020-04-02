@@ -178,7 +178,7 @@ gangWar.addWar = function(player, zoneId, count, armorIndex, gunIndex, timeIndex
 
     gangWar.set(id, 'timestamp', methods.getTimeStamp());
 
-    let gunLabel = ['Любое', 'Ближнее', 'Пистолеты', 'Дробовики', 'SMG', 'Автоматы'];
+    let gunLabel = ['Любое', 'Пистолеты', 'Дробовики', 'SMG', 'Автоматы'];
     let timeLabel = ['17:00', '17:30', '18:00', '18:30', '19:00', '19:30', '20:00', '20:30', '21:00', '21:30', '22:00', '22:30', '23:00', '23:30'];
 
     let data = {
@@ -332,17 +332,17 @@ gangWar.timerMoney = function() {
     for (let i = 1; i <= countZone; i++) {
         if (gangWar.get(i, 'fraction_id') > 0) {
 
-            let money = methods.getRandomInt(90, 140) / 1000;
+            let money = methods.getRandomInt(80, 130) / 1000;
             let id = methods.parseInt(gangWar.get(i, 'fraction_id'));
             fraction.setMoney(id, fraction.getMoney(id) + methods.parseFloat(money));
 
             if (moneyToUser.has(gangWar.get(i, 'fraction_id').toString())) {
                 let cMoney = moneyToUser.get(gangWar.get(i, 'fraction_id').toString());
-                cMoney += methods.getRandomInt(90, 140) / 1000;
+                cMoney += methods.getRandomInt(80, 130) / 1000;
                 moneyToUser.set(gangWar.get(i, 'fraction_id').toString(), cMoney);
             }
             else {
-                moneyToUser.set(gangWar.get(i, 'fraction_id').toString(), methods.getRandomInt(90, 140) / 1000);
+                moneyToUser.set(gangWar.get(i, 'fraction_id').toString(), methods.getRandomInt(80, 130) / 1000);
             }
         }
     }
@@ -350,9 +350,14 @@ gangWar.timerMoney = function() {
     mp.players.forEach(p => {
         if (user.isLogin(p) && user.get(p, 'fraction_id2') > 0) {
             if (moneyToUser.has(user.get(p, 'fraction_id2').toString())) {
-                let cMoney = moneyToUser.get(user.get(p, 'fraction_id2').toString());
-                p.notify(`~g~Вы получили ${methods.cryptoFormat(cMoney)} за ваши захваченные территории`);
-                user.addCryptoMoney(p, cMoney, 'Прибыль с территорий');
+                if (p.getVariable('isAfk') === true) {
+                    p.notify('~r~Зарплату вы не получили, связи с тем, что вы AFK');
+                }
+                else {
+                    let cMoney = moneyToUser.get(user.get(p, 'fraction_id2').toString());
+                    p.notify(`~g~Вы получили ${methods.cryptoFormat(cMoney)} за ваши захваченные территории`);
+                    user.addCryptoMoney(p, cMoney, 'Прибыль с территорий');
+                }
             }
         }
     });

@@ -28,6 +28,12 @@ timer.min30Timer = function() {
                 user.resetById(user.getId(p), 'grabVeh');
         }
     });
+    mp.players.forEach(function (p) {
+        if (user.isLogin(p)) {
+            if (user.hasById(user.getId(p), 'sellUser'))
+                user.resetById(user.getId(p), 'sellUser');
+        }
+    });
 
     setTimeout(timer.min30Timer, 1000 * 60 * 30);
 };

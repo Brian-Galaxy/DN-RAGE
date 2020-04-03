@@ -252,6 +252,13 @@ npc.loadAll = function() {
 // Работодатель на Инкассаторе
     npc.create(mp.game.joaat("ig_casey"), new mp.Vector3(3.112391, -660.4219, 33.4508), -49.89936, false, "WORLD_HUMAN_CLIPBOARD");
 
+    // Полицейский на выдаче оружия Mission-Row
+    npc.create(mp.game.joaat("s_m_y_cop_01"), new mp.Vector3(454.2837829589844, -980.0394287109375, 30.689321517944336), 89.98814392089844, false, "WORLD_HUMAN_CLIPBOARD");
+// Шериф на выдаче оружия Sandy Shores
+    npc.create(mp.game.joaat("s_m_y_sheriff_01"), new mp.Vector3(1844.3907470703125, 3692.18701171875, 34.26704788208008), 284.88543701171875, false, "WORLD_HUMAN_CLIPBOARD");
+// Шериф на выдаче оружия Paleto Bay
+    npc.create(mp.game.joaat("csb_cop"), new mp.Vector3(-436.1072998046875, 5999.68603515625, 31.716081619262695), 33.66008377075195, false, "WORLD_HUMAN_CLIPBOARD");
+
 //Церковь
     npc.create(mp.game.joaat("ig_priest"), new mp.Vector3(-787.1298828125, -708.8898315429688, 30.32028579711914), 265.47149658203125);
 

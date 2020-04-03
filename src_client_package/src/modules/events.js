@@ -104,9 +104,23 @@ mp.events.add('client:user:auth:register', function(mail, login, passwordReg, pa
             user.showCustomNotify('Вы не согласились с правилами сервера', 1);
             return;
         }
+
+        if (Container.Data.HasLocally(mp.players.local.remoteId, "isRegTimeout"))
+        {
+            user.showCustomNotify('Таймаут 10 сек');
+            return;
+        }
+        Container.Data.SetLocally(mp.players.local.remoteId, "isRegTimeout", true);
+
+        mp.events.callRemote('server:user:createAccount', login, passwordReg, mail);
+
+        setTimeout(function () {
+            Container.Data.ResetLocally(mp.players.local.remoteId, "isRegTimeout");
+        }, 10000);
+
         //user.showCustomNotify('~b~Пожалуйста подождите...');
         //methods.storage.set('login', login);
-        mp.events.callRemote('server:user:createAccount', login, passwordReg, mail);
+        //mp.events.callRemote('server:user:createAccount', login, passwordReg, mail);
     }
     catch (e) {
         methods.debug(e);
@@ -135,9 +149,19 @@ mp.events.add('client:user:auth:login', function(login, password) {
             user.showCustomNotify('Пароль - поле не заполнено');
             return;
         }
-        //user.showCustomNotify('Пожалуйста подождите...');
-        //methods.storage.set('login', login);
+
+        if (Container.Data.HasLocally(mp.players.local.remoteId, "isLoginTimeout"))
+        {
+            user.showCustomNotify('Таймаут 5 сек');
+            return;
+        }
+        Container.Data.SetLocally(mp.players.local.remoteId, "isLoginTimeout", true);
+
         mp.events.callRemote('server:user:loginAccount', login, password, usingEmail);
+
+        setTimeout(function () {
+            Container.Data.ResetLocally(mp.players.local.remoteId, "isLoginTimeout");
+        }, 5000);
     }
     catch (e) {
         methods.debug(e);
@@ -234,7 +258,18 @@ mp.events.add('client:events:createNewPlayer', function() {
 
 mp.events.add('client:events:selectPlayer', function(name, spawnName) {
     try {
+        if (Container.Data.HasLocally(mp.players.local.remoteId, "isSelectTimeout"))
+        {
+            user.showCustomNotify('Таймаут 10 сек');
+            return;
+        }
+        Container.Data.SetLocally(mp.players.local.remoteId, "isSelectTimeout", true);
+
         user.login(name, spawnName);
+
+        setTimeout(function () {
+            Container.Data.ResetLocally(mp.players.local.remoteId, "isSelectTimeout");
+        }, 10000);
     }
     catch (e) {
         methods.debug(e);
@@ -1460,6 +1495,10 @@ mp.events.add('client:user:askDatingToPlayerId', (playerId, nick) => {
     menuList.showPlayerDatingAskMenu(playerId, nick);
 });
 
+mp.events.add('client:user:askDiceToPlayerId', (playerId, sum) => {
+    menuList.showPlayerDiceAskMenu(playerId, sum);
+});
+
 mp.events.add('client:user:setDating', (key, val) => {
     user.setDating(key, val);
 });
@@ -1815,14 +1854,42 @@ mp.events.add('client:inventory:giveItemMenu', function() {
     }
 });
 
-mp.events.add('client:inventory:use', function(id, itemId) {
+mp.events.add('client:inventory:use', async function(id, itemId) {
     if (ui.isGreenZone()) {
         if (itemId === 4) {
             mp.game.ui.notifications.show("~r~В зелёной зоне это действие запрещено");
             return;
         }
     }
-    inventory.useItem(id, itemId);
+
+    if (itemId === 253) {
+        inventory.hide();
+        let id = methods.parseInt(await menuList.getUserInput("Введите ID игрока", "", 5));
+        let sum = methods.parseInt(await menuList.getUserInput("Введите ставку", "", 9));
+
+        let max = 25000;
+        if (methods.distanceToPos(mp.players.local.position, new mp.Vector3(1110.3431396484375, 219.14230346679688, -50.440086364746094)) < 80)
+            max = 100000;
+
+        if (sum < 1) {
+            mp.game.ui.notifications.show("~r~Ставка не может быть менее $1");
+            return;
+        }
+        if (sum > max) {
+            mp.game.ui.notifications.show("~r~Ставка не может быть менее $25,000");
+            mp.game.ui.notifications.show("~y~В казино максимальная ставка $100,000");
+            return;
+        }
+        if (user.getCashMoney() < sum) {
+            mp.game.ui.notifications.show("~r~У Вас нет такой суммы на руках");
+            return;
+        }
+
+        mp.events.callRemote('server:dice:askById', id, sum);
+    }
+    else {
+        inventory.useItem(id, itemId);
+    }
 });
 
 mp.events.add('client:inventory:usePlayer', function(id, itemId) {
@@ -2632,7 +2699,7 @@ mp.keys.bind(0x4D, true, function() {
 });
 
 //F2
-mp.keys.bind(0x4D, true, function() {
+mp.keys.bind(113, true, function() {
     mp.gui.cursor.show(false, !mp.gui.cursor.visible);
 });
 
@@ -2753,6 +2820,11 @@ mp.events.add("playerEnterCheckpoint", (checkpoint) => {
             user.reset('isSellCar');
             jobPoint.delete();
             mp.events.callRemote('server:sellVeh')
+        }
+        if (user.hasCache('isSellUser')) {
+            user.reset('isSellUser');
+            jobPoint.delete();
+            mp.events.callRemote('server:sellUser')
         }
         if (user.hasCache('isSellMoney')) {
             user.reset('isSellMoney');

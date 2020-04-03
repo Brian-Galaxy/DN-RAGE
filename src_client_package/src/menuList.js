@@ -1304,8 +1304,8 @@ menuList.showBusinessMenu = async function(data) {
     let menu = UIMenu.Menu.Create(`Arcadius`, `~b~Владелец: ~s~${(data.get('user_id') < 1 ? "Государство" : data.get('user_name'))}`);
 
     let nalogOffset = bankTarif;
-    /*if (data.get('type') == 1 || data.get('type') == 11) //TODO
-        nalogOffset += 30;*/
+    if (data.get('type') === 1) //TODO
+        nalogOffset += 10;
 
     nalog = nalog + nalogOffset;
 
@@ -1465,9 +1465,9 @@ menuList.showBusinessSettingsMenu = async function(data) {
     let menu = UIMenu.Menu.Create(`Arcadius`, `~b~Панель вашего бизнеса`);
 
     let nalogOffset = 0;
-    /*if (data.get('type') == 3) //TODO
-        nalogOffset += 35;
-    if (data.get('type') == 11)
+    if (data.get('type') === 1) //TODO
+        nalogOffset += 10;
+    /*if (data.get('type') == 11)
         nalogOffset += 20;*/
 
     nalog = nalog + nalogOffset;
@@ -3462,6 +3462,30 @@ menuList.showPlayerDatingAskMenu = function(playerId, name) {
                 }
                 mp.events.callRemote('server:user:askDatingToPlayerIdYes', playerId, name, nameAnswer);
                 user.playAnimationWithUser(player.remoteId, 0);
+            }
+        });
+    }
+};
+
+menuList.showPlayerDiceAskMenu = function(playerId, sum) {
+
+    let player = mp.players.atRemoteId(playerId);
+
+    if (mp.players.exists(player)) {
+        let menu = UIMenu.Menu.Create(`Кости`, `~b~${player.remoteId} хочет поиграть в кости`);
+
+        UIMenu.Menu.AddMenuItem('~g~Принять ставку ' + methods.moneyFormat(sum)).doName = 'yes';
+        UIMenu.Menu.AddMenuItem('~r~Отказать');
+
+        UIMenu.Menu.AddMenuItem("~r~Закрыть");
+        menu.ItemSelect.on(async (item, index) => {
+            UIMenu.Menu.HideMenu();
+            if (item.doName) {
+                if (user.getCashMoney() < sum) {
+                    return;
+                }
+                mp.game.ui.notifications.show('~b~У вас нет такой суммы на руках');
+                mp.events.callRemote('server:user:askDiceToPlayerIdYes', playerId, sum);
             }
         });
     }
@@ -10354,6 +10378,10 @@ menuList.showAdminClothMenu = function() {
 
 menuList.hide = function() {
     UIMenu.Menu.HideMenu();
+};
+
+menuList.getUserInput = async function(title, value = "", count = 20) {
+    return await UIMenu.Menu.GetUserInput(title, value, count);
 };
 
 mp.events.add("vSync:playerExitVehicle", (vehId) => {

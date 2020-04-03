@@ -1,4 +1,5 @@
 import methods from '../modules/methods';
+import enums from '../enums';
 
 let object = {};
 
@@ -9,6 +10,10 @@ let objectDelList = [];
 
 object.load = function () {
     const start = new Date().getTime();
+
+    enums.customIpl.forEach(item => {
+        object.createIpl(item[0], new mp.Vector3(item[1], item[2], item[3]), item[4]);
+    });
 
     // Колонки на заправке LTD Grapeseed
     object.create(-164877493, new mp.Vector3(1690.1, 4927.81, 41.23172), new mp.Vector3(0, 0, -125), false, false);

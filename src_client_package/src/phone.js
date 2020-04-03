@@ -3193,6 +3193,7 @@ phone.consoleCallback = async function(command) {
                 phone.addConsoleCommand('ecorp -fraction -create');
                 phone.addConsoleCommand('ecorp -fraction -list');
                 phone.addConsoleCommand('ecorp -car -getpos');
+                phone.addConsoleCommand('ecorp -user -getpos');
                 phone.addConsoleCommand('ecorp -money -clear');
 
             }
@@ -3314,12 +3315,54 @@ phone.consoleCallback = async function(command) {
                     setTimeout(function () {
                         if (user.hasCache('isSellCar')) {
                             jobPoint.delete();
-                            mp.game.ui.notifications.show(`~r~Метка на сдачу ТС денег была удалена`);
+                            mp.game.ui.notifications.show(`~r~Метка на сдачу ТС была удалена`);
                         }
                     }, 600 * 1000);
                 }
                 else {
                     phone.addConsoleCommand('Usage: ecorp -car -getpos');
+                }
+            }
+            else if (args[0] === '-user') {
+                if (args[1] === '-getpos') {
+                    /*if (weather.getHour() < 22 && weather.getHour() > 4) {
+                        mp.game.ui.notifications.show('~r~Доступно только с 22 до 4 утра игрового времени');
+                        return;
+                    }*/
+
+                    /*if (await user.hasById('grabLamar')) {
+                        mp.game.ui.notifications.show('~r~Вы не можете сейчас сбыть транспорт, т.к. вы выполняете заказ Ламара');
+                        return;
+                    }*/
+
+                    if (user.getCache('job') === 10) {
+                        mp.game.ui.notifications.show('~r~Инкассаторам запрещено это действие');
+                        return;
+                    }
+                    if (user.getCache('fraction_id2') === 0) {
+                        mp.game.ui.notifications.show('~r~Доступно только для крайм организаций');
+                        return;
+                    }
+
+                    if (user.hasCache('isSellUser')) {
+                        mp.game.ui.notifications.show(`~r~Вы уже получили задание на угон`);
+                        return;
+                    }
+
+                    user.set('isSellUser', true);
+                    let posId = methods.getRandomInt(0, enums.spawnSellCar.length);
+                    jobPoint.create(new mp.Vector3(enums.spawnSellCar[posId][0], enums.spawnSellCar[posId][1], enums.spawnSellCar[posId][2]), true, 3);
+                    mp.game.ui.notifications.show(`~g~Метка была установлена`);
+
+                    setTimeout(function () {
+                        if (user.hasCache('isSellUser')) {
+                            jobPoint.delete();
+                            mp.game.ui.notifications.show(`~r~Метка на сдачу игрока была удалена`);
+                        }
+                    }, 600 * 1000);
+                }
+                else {
+                    phone.addConsoleCommand('Usage: ecorp -user -getpos');
                 }
             }
             else if (args[0] === '-money') {

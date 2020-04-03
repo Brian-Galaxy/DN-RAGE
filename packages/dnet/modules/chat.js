@@ -68,7 +68,12 @@ chat.sendMeCommand = function(player, text) {
 chat.sendDiceCommand = function(player) {
     if (user.isLogin(player)) {
         let dice = methods.getRandomInt(1, 7);
+        chat.sendDiceCommandNumber(player, dice);
+    }
+};
 
+chat.sendDiceCommandNumber = function(player, dice = 1) {
+    if (user.isLogin(player)) {
         mp.players.forEach(p => {
             if (user.isLogin(p) && p.dimension === player.dimension && methods.distanceToPos(player.position, p.position) <= range)
                 p.outputChatBoxNew(`[${chat.getTime()}] !{FF9800}[Игра в кости] !{C2A2DA}${user.getSvId(player)} бросил кости !{FF9800}(( Выпало ${dice} ))`);

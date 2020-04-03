@@ -138,12 +138,14 @@ business.getMoney = function(id) {
 business.addMoneyTax = function(id, money) {
     if (id === 0 || business.get(id, 'user_id') === 0)
         return;
+    business.addHistoryTax(id, money);
     business.setMoneyTax(id, business.getMoneyTax(id) + methods.parseFloat(money));
 };
 
 business.removeMoneyTax = function(id, money) {
     if (id === 0 || business.get(id, 'user_id') === 0)
         return;
+    business.addHistoryTax(id, money * -1);
     business.setMoneyTax(id, business.getMoneyTax(id) - methods.parseFloat(money));
 };
 
@@ -171,6 +173,17 @@ business.addHistory = function(id, name, price) {
     mysql.executeQuery(`INSERT INTO log_business (business_id, product, price, timestamp, rp_datetime) VALUES ('${id}', '${name}', '${price}', '${timestamp}', '${rpDateTime}')`);
 };
 
+business.addHistoryTax = function(id, price) {
+
+    id = methods.parseInt(id);
+    price = methods.parseFloat(price);
+
+    let rpDateTime = weather.getRpDateTime();
+    let timestamp = methods.getTimeStamp();
+
+    mysql.executeQuery(`INSERT INTO log_business_tax (business_id, price, timestamp, rp_datetime) VALUES ('${id}', '${price}', '${timestamp}', '${rpDateTime}')`);
+};
+
 business.updateOwnerInfo = function (bId, userId, userName) {
     methods.debug('business.updateOwnerInfo');
     business.set(bId, 'user_id', userId);
@@ -195,6 +208,7 @@ business.sell = function (player) {
 
     business.set(hInfo.get('id'), 'user_id', 0);
     business.set(hInfo.get('id'), 'user_name', '');
+    business.set(hInfo.get('id'), 'price_product', 2);
 
     coffer.removeMoney(1, nalog);
     user.addMoney(player, nalog, 'Продажа бизнеса ' + hInfo.get('name'));

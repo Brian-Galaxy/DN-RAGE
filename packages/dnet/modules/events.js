@@ -1510,6 +1510,20 @@ mp.events.addRemoteCounted('server:user:askDatingToPlayerId', (player, playerRem
     }
 });
 
+mp.events.addRemoteCounted('server:dice:askById', (player, playerRemoteId, sum) => {
+    if (!user.isLogin(player))
+        return;
+
+    let remotePlayer = mp.players.at(playerRemoteId);
+    if (user.isLogin(remotePlayer)) {
+        if (methods.distanceToPos(remotePlayer.position, player.position) > 3) {
+            player.notify('~r~Вы слишком далеко');
+            return;
+        }
+        remotePlayer.call('client:user:askDiceToPlayerId', [player.id, sum]);
+    }
+});
+
 mp.events.addRemoteCounted('server:user:askDatingToPlayerIdYes', (player, playerRemoteId, name, nameAnswer) => {
     if (!user.isLogin(player))
         return;
@@ -1533,6 +1547,42 @@ mp.events.addRemoteCounted('server:user:askDatingToPlayerIdYes', (player, player
 
         user.setDating(player, user.getId(remotePlayer), name);
         user.setDating(remotePlayer, user.getId(player), nameAnswer);
+    }
+});
+
+mp.events.addRemoteCounted('server:user:askDiceToPlayerIdYes', (player, playerRemoteId, sum) => {
+    if (!user.isLogin(player))
+        return;
+    let remotePlayer = mp.players.at(playerRemoteId);
+    if (user.isLogin(remotePlayer)) {
+
+        if (methods.distanceToPos(remotePlayer.position, player.position) > 3) {
+            player.notify('~r~Вы слишком далеко');
+            return;
+        }
+
+        let generateTarget = methods.getRandomInt(1, 7);
+        let generatePlayer = methods.getRandomInt(1, 7);
+
+        chat.sendDiceCommandNumber(player, generatePlayer);
+        chat.sendDiceCommandNumber(remotePlayer, generateTarget);
+
+        if (generateTarget > generatePlayer) {
+            user.addCashMoney(remotePlayer, sum, 'Победа в кости');
+            user.removeCashMoney(player, sum, 'Проигрыш в кости');
+            remotePlayer.notify('~g~Вы выиграли ' + methods.moneyFormat(sum));
+            player.notify('~y~Вы проиграли ' + methods.moneyFormat(sum));
+        }
+        else if (generateTarget < generatePlayer) {
+            user.addCashMoney(player, sum, 'Победа в кости');
+            user.removeCashMoney(remotePlayer, sum, 'Проигрыш в кости');
+            player.notify('~g~Вы выиграли ' + methods.moneyFormat(sum));
+            remotePlayer.notify('~y~Вы проиграли ' + methods.moneyFormat(sum));
+        }
+        else {
+            player.notify('~y~Вы сыграли в ничью');
+            remotePlayer.notify('~y~Вы сыграли в ничью');
+        }
     }
 });
 
@@ -4975,6 +5025,43 @@ mp.events.addRemoteCounted('server:sellVeh', (player) => {
     }, 1000);
 });
 
+mp.events.addRemoteCounted('server:sellUser', (player) => {
+    if (!user.isLogin(player))
+        return;
+    let veh = player.vehicle;
+    if (!vehicles.exists(veh))
+        return;
+
+    veh.getOccupants().forEach(p => {
+        if (user.isLogin(p) && (user.isTie(p) || user.isCuff(p))) {
+            try {
+
+                if (user.hasById(user.getId(p), 'sellUser')) {
+                    player.notify('~r~Игрок не давно был ограблен');
+                    return;
+                }
+
+                let money = user.getCashMoney(p) / 2;
+                if (money > 5000)
+                    money = 5000;
+                user.removeCashMoney(p, money);
+                p.removeFromVehicle();
+
+                user.setHealth(p, 15);
+
+                user.addCashMoney(player, money);
+                p.notify('~r~Вас ограбили на сумму ~s~' + methods.moneyFormat(money));
+                player.notify('~r~Вы ограбили на сумму ~s~' + methods.moneyFormat(money));
+
+                user.setById(user.getId(p), 'sellUser', true);
+            }
+            catch (e) {
+                
+            }
+        }
+    })
+});
+
 mp.events.addRemoteCounted('server:sellMoney', (player) => {
     if (!user.isLogin(player))
         return;
@@ -6327,10 +6414,6 @@ mp.events.add("playerDeath", (player, reason, killer) => {
                             target.removeAllWeapons();
                             target.setVariable('duel', false);
 
-                            user.reset(target, 'duelBet');
-                            user.reset(target, 'duelTarget');
-                            user.reset(target, 'duelCount');
-
                             user.blockKeys(target, false);
                             target.outputChatBoxNew(`!{#4CAF50}ВЫ ВЫИГРАЛИ ДУЭЛЬ`);
 
@@ -6343,9 +6426,13 @@ mp.events.add("playerDeath", (player, reason, killer) => {
                             user.set(target, 'rating_duel_count', user.get(target, 'rating_duel_count') + 1);
                             user.set(player, 'rating_duel_count', user.get(player, 'rating_duel_count') + 1);
 
-                            if (bet > 0) {
+                            if (bet > 0 && user.has(target, 'duelBet')) {
                                 user.addCashMoney(target, bet * 2, 'Победа в дуэли');
                             }
+
+                            user.reset(target, 'duelBet');
+                            user.reset(target, 'duelTarget');
+                            user.reset(target, 'duelCount');
 
                             user.save(player);
                             user.save(target);
@@ -6354,7 +6441,7 @@ mp.events.add("playerDeath", (player, reason, killer) => {
                     catch (e) {
                         
                     }
-                }, 1000);
+                }, methods.getRandomInt(1000, 2000));
                 return;
             }
 
@@ -6376,7 +6463,8 @@ mp.events.add("playerDeath", (player, reason, killer) => {
                 target.outputChatBoxNew(`!{#f44336}Осталось смертей у противника:!{#FFFFFF} ${user.get(player, 'duelCount')}`);
             }
             else {
-                user.addCashMoney(player, bet * 2, 'Победа в дуэли');
+                if (bet > 0)
+                    user.addCashMoney(player, bet * 2, 'Победа в дуэли');
                 user.reset(player, 'duelBet');
                 user.reset(player, 'duelTarget');
                 user.reset(player, 'duelCount');

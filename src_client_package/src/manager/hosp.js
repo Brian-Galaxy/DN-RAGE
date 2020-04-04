@@ -137,6 +137,9 @@ hosp.toHosp = function() {
         user.unTie();
         user.setVirtualWorld(0);
 
+        if (!user.isPolice())
+            user.updateCharacterCloth();
+
         mp.game.ui.displayRadar(true);
         mp.game.ui.displayHud(true);
         mp.players.local.freezePosition(false);

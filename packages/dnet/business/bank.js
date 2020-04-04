@@ -372,7 +372,7 @@ bank.withdraw = function(player, money, procent = 0) {
         return;
 
     if (money < 1) {
-        player.notify('~r~Сумам должна быть больше нуля');
+        player.notify('~r~Сумма должна быть больше нуля');
         return;
     }
 
@@ -406,7 +406,7 @@ bank.deposit = function(player, money, procent = 0) {
         return;
 
     if (money < 1) {
-        player.notify('~r~Сумам должна быть больше нуля');
+        player.notify('~r~Сумма должна быть больше нуля');
         return;
     }
 

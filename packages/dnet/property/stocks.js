@@ -196,7 +196,7 @@ stocks.boxList =  [
     ['Малый ящик фальшивых купюр', -1155316904, 36, 0, false, 5000, 'Контрафактные товары', 0 ], //37
     ['Большой ящик наркотиков', 1016837103, 37, 0, false, 15000, 'Наркотики', 1 ], //38
     ['Малый ящик наркотиков', 1863514296, 38, 0, false, 5000, 'Наркотики', 0 ], //39
-    ['Яйцо фабирже', 562429577, 39, 0, false, 35000, 'Уникальный груз', 2 ], //40
+    ['Яйцо фаберже', 562429577, 39, 0, false, 35000, 'Уникальный груз', 2 ], //40
     ['Большой ящик лекарств', 1914690987, 40, -0.12, false, 15000, 'Медикаменты', 1 ], //41
     ['Малый ящик лекарств', -824154829, 41, 0, false, 5000, 'Медикаменты', 0 ], //42
     ['Костюм Етти', -495810123, 42, 0, false, 25000, 'Уникальный груз', 2 ], //43
@@ -963,7 +963,15 @@ stocks.enterv = function (player, id) {
     }
 
     player.dimension = id + enums.offsets.stock;
-    if (vehicles.exists(player.vehicle))
+    if (vehicles.exists(player.vehicle)) {
         player.vehicle.dimension = id + enums.offsets.stock;
+        /*player.vehicle.getOccupants().forEach(p => {
+            if (user.isLogin(p) && p.id !== player.id)
+            {
+                p.dimension = 0;
+                p.removeFromVehicle();
+            }
+        });*/
+    }
     user.teleportVeh(player, stocks.interiorList[intId][4], stocks.interiorList[intId][5], stocks.interiorList[intId][6], stocks.interiorList[intId][7]);
 };

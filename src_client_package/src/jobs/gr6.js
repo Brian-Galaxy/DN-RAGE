@@ -171,6 +171,8 @@ gr6.workProcess = function() {
 
 mp.events.add("playerEnterCheckpoint", (checkpoint) => {
     try {
+        if (!isProcess)
+            return;
         if (_checkpointId == -1 || _checkpointId == undefined)
             return;
         if (checkpoint.id == _checkpointId)

@@ -69,15 +69,18 @@ admin.noClip = function(enable) {
     }
 };
 
-admin.godmode= function(enable) {
+admin.godmode = function(enable, notify = true) {
     try {
         methods.debug('Execute: admin.godmode');
         godmodeEnabled = enable;
 
-        if (godmodeEnabled)
-            mp.game.ui.notifications.show(`~q~GodeMode был активирован`);
-        else
-            mp.game.ui.notifications.show(`~q~GodeMode был деактивирован`);
+        if (notify)
+        {
+            if (godmodeEnabled)
+                mp.game.ui.notifications.show(`~q~GodeMode был активирован`);
+            else
+                mp.game.ui.notifications.show(`~q~GodeMode был деактивирован`);
+        }
 
         mp.players.local.setInvincible(enable);
         mp.players.local.setCanBeDamaged(!enable);

@@ -3292,10 +3292,10 @@ phone.consoleCallback = async function(command) {
                         return;
                     }
 
-                    /*if (await user.hasById('grabLamar')) {
+                    if (user.getCache('isSellLamar')) {
                         mp.game.ui.notifications.show('~r~Вы не можете сейчас сбыть транспорт, т.к. вы выполняете заказ Ламара');
                         return;
-                    }*/
+                    }
 
                     if (user.getCache('job') === 10) {
                         mp.game.ui.notifications.show('~r~Инкассаторам запрещено это действие');
@@ -3378,8 +3378,8 @@ phone.consoleCallback = async function(command) {
                         return;
                     }
 
-                    if (weather.getHour() < 22 && weather.getHour() > 4) {
-                        mp.game.ui.notifications.show('~r~Доступно только с 22 до 4 утра игрового времени');
+                    if (weather.getHour() < 22 && weather.getHour() > 8) {
+                        mp.game.ui.notifications.show('~r~Доступно только с 22 до 8 утра игрового времени');
                         return;
                     }
 

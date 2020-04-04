@@ -222,7 +222,7 @@ user.isTeleport = function() {
 };
 
 user.removeAllWeapons = function() {
-    mp.players.local.removeAllWeapons();
+    /*mp.players.local.removeAllWeapons();
 
     weapons.getMapList().forEach(item => {
         try {
@@ -235,10 +235,11 @@ user.removeAllWeapons = function() {
         catch (e) {
             methods.debug(e);
         }
-    });
+    });*/
 
     user.setCurrentWeapon('weapon_unarmed');
-    inventory.deleteItemsRange(54, 136);
+    /*inventory.deleteItemsRange(54, 136);
+    inventory.deleteItemsRange(146, 147);*/
 };
 
 user.unequipAllWeapons = function() {

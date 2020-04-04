@@ -102,6 +102,12 @@ gangWar.startWar = function(zoneId, attack, def, isArmor, count) {
 
     methods.notifyWithPictureToFraction2('Улица под угрзой', `ВНИМАНИЕ!`, 'Начался захват улицы ~y~#' + zoneId, 'CHAR_DEFAULT', def);
 
+    mp.players.forEach(p => {
+        if (user.isLogin(p)) {
+            user.createBlip(p, 887, warPos.x, warPos.y, warPos.z, 84);
+        }
+    });
+
     for (let i = 1; i <= fraction.getCount(); i++) {
         if (def == i) continue;
         if (fraction.get(i, 'is_war')) {
@@ -260,6 +266,12 @@ gangWar.timer = function() {
             methods.notifyWithPictureToFraction2('Досрочное завершение', `Улица #${currentZone}`, 'Территория под контролем ' + fractionName + '\nСвязи с нарушением количества людей в территории', 'CHAR_DEFAULT', currentDef);
             methods.notifyWithPictureToFraction2('Досрочное завершение', `Улица #${currentZone}`, 'Территория под контролем ' + fractionName + '\nСвязи с нарушением количества людей в территории', 'CHAR_DEFAULT', currentAttack);
 
+            mp.players.forEach(p => {
+                if (user.isLogin(p)) {
+                    user.deleteBlip(p, 887);
+                }
+            });
+
             currentZone = 0;
             currentAttack = 0;
             currentDef = 0;
@@ -278,6 +290,12 @@ gangWar.timer = function() {
 
             methods.notifyWithPictureToFraction2('Досрочное завершение', `Улица #${currentZone}`, 'Территория под контролем ' + fractionName + '\nСвязи с нарушением количества людей в территории', 'CHAR_DEFAULT', currentDef);
             methods.notifyWithPictureToFraction2('Досрочное завершение', `Улица #${currentZone}`, 'Территория под контролем ' + fractionName + '\nСвязи с нарушением количества людей в территории', 'CHAR_DEFAULT', currentAttack);
+
+            mp.players.forEach(p => {
+                if (user.isLogin(p)) {
+                    user.deleteBlip(p, 887);
+                }
+            });
 
             currentZone = 0;
             currentAttack = 0;
@@ -313,6 +331,12 @@ gangWar.timer = function() {
 
                 methods.notifyWithPictureToFraction2('Итоги войны', `Улица #${currentZone}`, 'Территория под контролем ' + fractionName, 'CHAR_DEFAULT', currentDef);
                 methods.notifyWithPictureToFraction2('Итоги войны', `Улица #${currentZone}`, 'Территория под контролем ' + fractionName, 'CHAR_DEFAULT', currentAttack);
+
+                mp.players.forEach(p => {
+                    if (user.isLogin(p)) {
+                        user.deleteBlip(p, 887);
+                    }
+                });
 
                 currentZone = 0;
                 currentAttack = 0;

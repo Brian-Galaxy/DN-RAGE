@@ -107,6 +107,13 @@ mp.events.add("playerEnterCheckpoint", (checkpoint) => {
         return;
 
     currentCpId++;
+
+    try {
+        user.setHealth(100);
+    }
+    catch (e) {
+
+    }
     try {
         let posCurrent = currentRace.posList[currentCpId];
 

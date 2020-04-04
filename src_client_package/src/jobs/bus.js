@@ -201,7 +201,12 @@ bus.nextCheckpoint = function() {
     try {
         if (_isBus1 && bus.markers1[_currentId - 1][3] == 1 || _isBus2 && bus.markers2[_currentId - 1][3] == 1 || _isBus3 && bus.markers3[_currentId - 1][3] == 1) {
             mp.game.ui.notifications.show('~g~Ожидайте 10 секунд');
-            mp.players.local.vehicle.freezePosition(true);
+            try {
+                mp.players.local.vehicle.freezePosition(true);
+            }
+            catch (e) {
+                
+            }
             timeout = 10000;
         }
     }
@@ -210,7 +215,12 @@ bus.nextCheckpoint = function() {
     }
 
     setTimeout(function () {
-        mp.players.local.vehicle.freezePosition(false);
+        try {
+            mp.players.local.vehicle.freezePosition(false);
+        }
+        catch (e) {
+            
+        }
         try {
             methods.debug('Execute: bus.nextCheckpoint');
             if (mp.players.local.vehicle) {

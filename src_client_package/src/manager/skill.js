@@ -94,7 +94,7 @@ let checkShooting = function () {
     }
 };
 
-let updateStats = function(){
+let updateStats = function() {
     if (!user.isLogin())
         return;
 
@@ -102,6 +102,19 @@ let updateStats = function(){
         mp.game.gameplay.terminateAllScriptsWithThisName('stats_controller﻿');
 
         mp.players.local.setAccuracy(user.getCache('stats_shooting'));
+
+        if (user.getCache('stats_endurance') > 99)
+            user.set('stats_endurance', 99);
+        if (user.getCache('stats_strength') > 99)
+            user.set('stats_strength', 99);
+        if (user.getCache('stats_lung_capacity') > 99)
+            user.set('stats_lung_capacity', 99);
+        if (user.getCache('stats_driving') > 99)
+            user.set('stats_driving', 99);
+        if (user.getCache('stats_lucky') > 99)
+            user.set('stats_lucky', 99);
+        if (user.getCache('stats_shooting') > 99)
+            user.set('stats_shooting', 99);
 
         mp.game.stats.statSetInt(mp.game.joaat("MP0_STAMINA"), user.getCache('stats_endurance'), true);
         mp.game.stats.statSetInt(mp.game.joaat("MP0_STRENGTH"), user.getCache('stats_strength'), true);

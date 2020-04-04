@@ -726,6 +726,7 @@ racer.finish = function (player) {
             vehicles.respawn(player.vehicle);
             user.teleport(player, -253.9224, -1993.057, 30.14611);
             player.dimension = 0;
+            user.setHealth(player, 100);
 
             finishNumber++;
 
@@ -794,6 +795,7 @@ racer.exit = function (player) {
         vehicles.respawn(player.vehicle);
         user.teleport(player, -253.9224, -1993.057, 30.14611);
         player.dimension = 0;
+        user.setHealth(player, 100);
     }
 };
 
@@ -944,6 +946,12 @@ racer.timer = function () {
 racer.enterLobby = function (p) {
     if (user.isLogin(p)) {
         if (methods.isInPoint(p.position, greenZone)) {
+
+            if (isCreate === false)
+            {
+                p.notifyWithPicture('Arena RaceClub', '~r~Регистрация', `~b~На данный момент регистрация закрыта`, 'CHAR_CARSITE4');
+                return;
+            }
 
             if (currentLobby >= 20) {
                 if (!user.has(p, 'isRaceLobby')) {

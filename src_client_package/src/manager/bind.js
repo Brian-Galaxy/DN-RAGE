@@ -15,6 +15,7 @@ import heliCam from "./heliCam";
 import chat from "../chat";
 import weapons from "../weapons";
 import menuList from "../menuList";
+import enums from "../enums";
 
 let bind = {};
 
@@ -240,6 +241,9 @@ for(let code in keyCodes) {
         if (mp.gui.chat.enabled)
             return;
 
+        if (methods.isBlockKeys())
+            return;
+
         if (user.getCache('s_bind_do') == parseInt(code)) {
             if (user.isCuff() || user.isTie()) {
                 mp.game.ui.notifications.show("~r~Вы связаны или в наручниках");
@@ -304,14 +308,14 @@ for(let code in keyCodes) {
             {
                 if (Container.Data.HasLocally(mp.players.local.remoteId, "isGunTimeout"))
                 {
-                    mp.game.ui.notifications.show("~r~Таймаут 3 сек");
+                    mp.game.ui.notifications.show("~r~Таймаут 1 сек");
                     return;
                 }
                 Container.Data.SetLocally(mp.players.local.remoteId, "isGunTimeout", true);
                 user.setCurrentWeapon('weapon_unarmed');
                 setTimeout(function () {
                     Container.Data.ResetLocally(mp.players.local.remoteId, "isGunTimeout");
-                }, 3000);
+                }, 1000);
             }
         }
         if (user.getCache('s_bind_weapon_slot1') == parseInt(code)) {
@@ -319,7 +323,7 @@ for(let code in keyCodes) {
             {
                 if (Container.Data.HasLocally(mp.players.local.remoteId, "isGunTimeout"))
                 {
-                    mp.game.ui.notifications.show("~r~Таймаут 3 сек");
+                    mp.game.ui.notifications.show("~r~Таймаут 1 сек");
                     return;
                 }
                 Container.Data.SetLocally(mp.players.local.remoteId, "isGunTimeout", true);
@@ -331,7 +335,7 @@ for(let code in keyCodes) {
                 });
                 setTimeout(function () {
                     Container.Data.ResetLocally(mp.players.local.remoteId, "isGunTimeout");
-                }, 3000);
+                }, 1000);
             }
         }
         if (user.getCache('s_bind_weapon_slot2') == parseInt(code)) {
@@ -339,7 +343,7 @@ for(let code in keyCodes) {
             {
                 if (Container.Data.HasLocally(mp.players.local.remoteId, "isGunTimeout"))
                 {
-                    mp.game.ui.notifications.show("~r~Таймаут 3 сек");
+                    mp.game.ui.notifications.show("~r~Таймаут 1 сек");
                     return;
                 }
                 Container.Data.SetLocally(mp.players.local.remoteId, "isGunTimeout", true);
@@ -351,7 +355,7 @@ for(let code in keyCodes) {
                 });
                 setTimeout(function () {
                     Container.Data.ResetLocally(mp.players.local.remoteId, "isGunTimeout");
-                }, 3000);
+                }, 1000);
             }
         }
         if (user.getCache('s_bind_weapon_slot3') == parseInt(code)) {
@@ -359,7 +363,7 @@ for(let code in keyCodes) {
             {
                 if (Container.Data.HasLocally(mp.players.local.remoteId, "isGunTimeout"))
                 {
-                    mp.game.ui.notifications.show("~r~Таймаут 3 сек");
+                    mp.game.ui.notifications.show("~r~Таймаут 1 сек");
                     return;
                 }
                 Container.Data.SetLocally(mp.players.local.remoteId, "isGunTimeout", true);
@@ -371,7 +375,7 @@ for(let code in keyCodes) {
                 });
                 setTimeout(function () {
                     Container.Data.ResetLocally(mp.players.local.remoteId, "isGunTimeout");
-                }, 3000);
+                }, 1000);
             }
         }
         if (user.getCache('s_bind_weapon_slot4') == parseInt(code)) {
@@ -379,7 +383,7 @@ for(let code in keyCodes) {
             {
                 if (Container.Data.HasLocally(mp.players.local.remoteId, "isGunTimeout"))
                 {
-                    mp.game.ui.notifications.show("~r~Таймаут 3 сек");
+                    mp.game.ui.notifications.show("~r~Таймаут 1 сек");
                     return;
                 }
                 Container.Data.SetLocally(mp.players.local.remoteId, "isGunTimeout", true);
@@ -391,7 +395,7 @@ for(let code in keyCodes) {
                 });
                 setTimeout(function () {
                     Container.Data.ResetLocally(mp.players.local.remoteId, "isGunTimeout");
-                }, 3000);
+                }, 1000);
             }
         }
         if (user.getCache('s_bind_weapon_slot5') == parseInt(code)) {
@@ -399,7 +403,7 @@ for(let code in keyCodes) {
             {
                 if (Container.Data.HasLocally(mp.players.local.remoteId, "isGunTimeout"))
                 {
-                    mp.game.ui.notifications.show("~r~Таймаут 3 сек");
+                    mp.game.ui.notifications.show("~r~Таймаут 1 сек");
                     return;
                 }
                 Container.Data.SetLocally(mp.players.local.remoteId, "isGunTimeout", true);
@@ -411,7 +415,7 @@ for(let code in keyCodes) {
                 });
                 setTimeout(function () {
                     Container.Data.ResetLocally(mp.players.local.remoteId, "isGunTimeout");
-                }, 3000);
+                }, 1000);
             }
         }
         if (user.getCache('s_bind_animations_all') == parseInt(code)) {
@@ -501,7 +505,7 @@ for(let code in keyCodes) {
                 let veh = mp.players.local.vehicle;
                 if (veh && (veh.getPedInSeat(0) == mp.players.local.handle || veh.getPedInSeat(-1) == mp.players.local.handle)) {
                     if (methods.getVehicleInfo(veh.model).class_name == 'Emergency') {
-                        user.setVariable('voice.distance', 7000);
+                        user.setVariable('voice.distance', 8000);
                         voiceRage.enableMic();
                     }
                 }
@@ -511,6 +515,11 @@ for(let code in keyCodes) {
             voiceRage.enableMic();
         }
         if (user.getCache('s_bind_seat') == parseInt(code)) {
+
+            if (mp.players.local.isInAnyVehicle(true)) {
+                return;
+            }
+
             if (Container.Data.HasLocally(mp.players.local.remoteId, "isSeatTimeout"))
             {
                 mp.game.ui.notifications.show("~r~Таймаут на действие 2 секунды");

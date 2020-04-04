@@ -32,6 +32,7 @@ import vShop from "../business/vShop";
 import antiCheat from "../antiCheat";
 import hosp from "../manager/hosp";
 import edu from "../manager/edu";
+import gr6 from "../jobs/gr6";
 
 mp.gui.chat.enabled = false;
 
@@ -399,6 +400,9 @@ mp.events.add('client:events:custom:set', function(input_editor_face, input_edit
             user.set('SKIN_OVERLAY_9', faceLastEditor[7].index_help - 1);
             //user.set('SKIN_OVERLAY_COLOR_9', faceLastEditor[8].index_help);
 
+            user.set('SKIN_OVERLAY_4', -1);
+            user.set('SKIN_OVERLAY_COLOR_4', 0);
+
             /*user.set('SKIN_OVERLAY_1', faceLastEditor[8].index_help - 1);
             user.set('SKIN_OVERLAY_COLOR_1', faceLastEditor[9].index_help);*/
 
@@ -428,11 +432,16 @@ mp.events.add('client:events:custom:set', function(input_editor_face, input_edit
             user.setCache('SKIN_OVERLAY_9', faceLastEditor[7].index_help - 1);
             //user.setCache('SKIN_OVERLAY_COLOR_9', faceLastEditor[8].index_help);
 
+            user.setCache('SKIN_OVERLAY_4', -1);
+            user.setCache('SKIN_OVERLAY_COLOR_4', 0);
+
             /*user.set('SKIN_OVERLAY_1', faceLastEditor[8].index_help - 1);
             user.set('SKIN_OVERLAY_COLOR_1', faceLastEditor[9].index_help);*/
 
             user.updateCharacterFace(true);
         }
+
+        user.setHealth(100);
 
         timeout = setTimeout(function () {
             user.cameraBlockRotator(false);
@@ -1794,6 +1803,16 @@ mp.events.add('client:menuList:showVehicleMenu', (data) => {
     }
 });
 
+mp.events.add('client:gr6:stop', () => {
+    try {
+        gr6.stop();
+    }
+    catch (e) {
+        methods.debug('Exception: events:client:gr6:stop');
+        methods.debug(e);
+    }
+});
+
 mp.events.add('client:houses:sellToPlayer', (houseId, name, sum, userId) => {
     menuList.showHouseSellToPlayerMenu(houseId, name, sum, userId);
 });
@@ -2045,6 +2064,8 @@ mp.events.add('client:inventory:loadWeapon', function(id, itemId, loadItemId, co
         inventory.deleteItem(id);
         ui.callCef('inventory', JSON.stringify({ type: 'removeItemId', itemId: id }));
     }
+
+    //user.save();
 });
 
 mp.events.add('client:inventory:upgradeWeapon', function(id, itemId, weaponStr) {

@@ -185,6 +185,7 @@ lamar.start = async function() {
 
 lamar.findRandomPickup = function() {
     try {
+        user.setCache('isSellLamar', true);
         isProcess = true;
         pickupId = methods.getRandomInt(0, lamar.markers.length - 1);
         let pos = new mp.Vector3(lamar.markers[pickupId][0], lamar.markers[pickupId][1], lamar.markers[pickupId][2] - 1);
@@ -205,6 +206,11 @@ lamar.finish = function() {
         vehicles.destroy();
         user.addCryptoMoney(price / 1000, 'Помощь Ламару');
         mp.game.ui.notifications.show(`~b~Вы довезли груз и заработали ${methods.cryptoFormat(price / 1000)}`);
+        user.setCache('isSellLamar', null);
+
+        setTimeout(function () {
+            mp.events.callRemote('server:rent:buy', -1842748181, 0.1, 0);
+        }, 5000);
     }
     catch (e) {
         methods.debug(e);

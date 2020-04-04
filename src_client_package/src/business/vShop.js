@@ -32,11 +32,16 @@ vShop.createCamera = function() {
 
     user.showCustomNotify('Зажмите ЛКМ для смены положения камеры', 0, 1);
 
+    let pos = vPos;
+
+    if (currentShop === 9)
+        pos = new mp.Vector3(vPos.x, vPos.y, vPos.z + 1);
+
     camera = mp.cameras.new("vshop_camera");
     /*camera.setActive(true);
     camera.setCoord(-1500.3770751953125, -2998.169677734375, -81.15196990966797);
     camera.pointAtCoord(vPos.x, vPos.y, vPos.z);*/
-    cameraRotator.start(camera, vPos, vPos, new mp.Vector3(0, 10, 0), 360);
+    cameraRotator.start(camera, pos, pos, new mp.Vector3(0, 10, 0), 360);
     cameraRotator.setXBound(-360, 360);
 
     mp.game.cam.renderScriptCams(true, false, 0, false, false);

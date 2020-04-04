@@ -135,8 +135,8 @@ timer.twoMinTimer = function() {
     if (veh && mp.vehicles.exists(veh) && veh.getClass() == 18 && !user.isGos()) {
         if (veh.getPedInSeat(-1) == mp.players.local.handle) {
             user.giveWanted(50, 'Угон служебного ТС');
-            dispatcher.sendLocalPos('Код 0', `Неизвестный угнал служебный трансопрт`, mp.players.local.position, 2);
-            dispatcher.sendLocalPos('Код 0', `Неизвестный угнал служебный трансопрт`, mp.players.local.position, 5);
+            dispatcher.sendLocalPos('Код 0', `Неизвестный угнал служебный транспорт`, mp.players.local.position, 2);
+            dispatcher.sendLocalPos('Код 0', `Неизвестный угнал служебный транспорт`, mp.players.local.position, 5);
         }
     }
 

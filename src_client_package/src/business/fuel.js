@@ -68,7 +68,11 @@ fuel.fillVehTimer = async function(count) {
         let vInfo = methods.getVehicleInfo(veh.model);
 
         let pref = vehicles.getFuelPostfix(vInfo.fuel_type);
-        let wait = vInfo.fuel_type === 3 ? 1000 : 500;
+        let wait = 500;
+        if (vInfo.fuel_type === 3)
+            wait = 500;
+        if (vInfo.fuel_type === 4)
+            wait = 200;
 
         while (time <= allCount && !veh.getIsEngineRunning()) {
 
@@ -85,7 +89,7 @@ fuel.fillVehTimer = async function(count) {
                 return;
             }
 
-            ui.showSubtitle(`Осталось ~g~${time}${pref}~s~ из ~g~${allCount}${pref}`);
+            ui.showSubtitle(`Заправлено ~g~${time}${pref}~s~ из ~g~${allCount}${pref}`);
             time++;
             vehicles.addFuel(veh);
             await methods.sleep(wait);

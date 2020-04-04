@@ -3,7 +3,7 @@ import enums from '../enums';
 
 let object = {};
 
-let loadDist = 300;
+let loadDist = 150;
 let objectList = [];
 let iplList = [];
 let objectDelList = [];

@@ -357,11 +357,12 @@ user.loadUser = function(player, name, spawn = 'Стандарт') {
             if (user.get(player, 'is_online') == 1) {
                 user.resetAll(player);
                 user.showCustomNotify(player, 'Аккаунт уже авторизован', 1);
-                user.kick(player, 'Вы забанены');
+                user.kick(player, 'Вы были кикнуты');
                 return;
             }
 
             user.set(player, 'ping', player.ping);
+            user.set(player, 'is_online', 1);
 
             try {
                 user.set(player, 'login_date', methods.getTimeStamp());
@@ -440,7 +441,7 @@ user.loadUser = function(player, name, spawn = 'Стандарт') {
             //if (user.get(player, 'walkietalkie_num') && methods.parseInt(user.get(player, 'walkietalkie_num')) != 0)
             //    mp.events.call('voice.server.initRadio', player, user.get(player, 'walkietalkie_num'));
 
-        }, 1000);
+        }, methods.getRandomInt(1000, 3000));
     });
 };
 

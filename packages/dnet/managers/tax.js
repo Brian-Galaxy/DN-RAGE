@@ -34,7 +34,7 @@ tax.loadAll = function() {
 };
 
 tax.adLiveInvader = function(text) {
-    mysql.executeQuery(`INSERT INTO rp_inv_ad (title, name, text, phone, editor, timestamp, rp_datetime) VALUES ('Продажа', 'Государство', '${text}', 'gov.sa', 'Госурадство', '${methods.getTimeStamp()}', '${weather.getRpDateTime()}')`);
+    mysql.executeQuery(`INSERT INTO rp_inv_ad (title, name, text, phone, editor, timestamp, rp_datetime) VALUES ('Продажа', 'Государство', '${text}', 'gov.sa', 'Государство', '${methods.getTimeStamp()}', '${weather.getRpDateTime()}')`);
 
     mp.players.forEach(p => {
         user.sendPhoneNotify(p, 'Life Invader', '~g~Реклама | Продажа', text, 'CHAR_LIFEINVADER');

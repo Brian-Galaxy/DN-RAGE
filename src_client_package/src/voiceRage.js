@@ -17,7 +17,7 @@ let __CONFIG__ = {
 voiceRage.listeners = [];
 
 voiceRage.setConfig = function(key, value) {
-    __CONFIG__[key] = value;
+    //__CONFIG__[key] = value;
 };
 
 voiceRage.enableMic = function() {

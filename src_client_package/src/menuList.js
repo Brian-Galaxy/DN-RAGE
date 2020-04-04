@@ -200,11 +200,11 @@ menuList.showHouseOutMenu = async function(h) {
     let infoItem = UIMenu.Menu.AddMenuItem(`~b~Владелец:~s~ ${h.get('user_name')}`);
 
     let garage = 0;
-    if (h.get('ginterior1') > 0)
+    if (h.get('ginterior1') >= 0)
         garage++;
-    if (h.get('ginterior2') > 0)
+    if (h.get('ginterior2') >= 0)
         garage++;
-    if (h.get('ginterior3') > 0)
+    if (h.get('ginterior3') >= 0)
         garage++;
     if (garage > 0)
         UIMenu.Menu.AddMenuItem("~b~Кол-во гаражей: ~s~" + garage);
@@ -2031,7 +2031,7 @@ menuList.showMeriaJobListMenu = function() {
             jobPoint.delete();
             builder.stop();
             tree.stop();
-            bus.stop();
+            bus.stop(false);
             photo.stop();
             gr6.stop();
             user.set('job', 0);
@@ -2880,7 +2880,7 @@ menuList.showSettingsKeyMenu = function() {
     menu.MenuClose.on((sender) =>
     {
         if (bind.isChange)
-            bind.bindNewKey(user.getCache(bind.data));
+            bind.bindNewKey(0);
     });
 
     menu.ItemSelect.on(async (item, index) => {
@@ -3088,9 +3088,9 @@ menuList.showSettingsVoiceMenu = function() {
     //UIMenu.Menu.AddMenuItemList("Тип голосового чата", listVoiceType, "Нажмите ~g~Enter~s~ чтобы применить").doName = '';
     //UIMenu.Menu.AddMenuItemList("Объем голосового чата", listVoice3d, "Нажмите ~g~Enter~s~ чтобы применить").doName = '';
 
-    let listVoiceItem = UIMenu.Menu.AddMenuItemList("Громкость голосового чата", listVoiceVol, "Нажмите ~g~Enter~s~ чтобы применить");
+    /*let listVoiceItem = UIMenu.Menu.AddMenuItemList("Громкость голосового чата", listVoiceVol, "Нажмите ~g~Enter~s~ чтобы применить");
     listVoiceItem.doName = 'vol';
-    listVoiceItem.Index = methods.parseInt(user.getCache('s_voice_vol') * 10);
+    listVoiceItem.Index = methods.parseInt(user.getCache('s_voice_vol') * 10);*/
 
     UIMenu.Menu.AddMenuItem("~y~Перезагрузить голосовой чат (#1)", "Нажмите ~g~Enter~s~ чтобы применить").doName = 'restartVoice1';
     UIMenu.Menu.AddMenuItem("~y~Перезагрузить голосовой чат (#2)", "Нажмите ~g~Enter~s~ чтобы применить").doName = 'restartVoice2';
@@ -3146,7 +3146,8 @@ menuList.showPlayerDoMenu = function(playerId) {
 
     UIMenu.Menu.AddMenuItem("Передать деньги").doName = 'giveMoney';
     UIMenu.Menu.AddMenuItem("Познакомиться").doName = 'dating';
-    UIMenu.Menu.AddMenuItem("Снять наручники").eventName = 'server:user:unCuffById';
+    if (user.isPolice() || user.isGov())
+        UIMenu.Menu.AddMenuItem("Снять наручники").eventName = 'server:user:unCuffById';
     UIMenu.Menu.AddMenuItem("Снять стяжки").eventName = 'server:user:unTieById';
     UIMenu.Menu.AddMenuItem("Вырубить", "Чем больше у Вас сила, тем больше шанс").eventName = 'server:user:knockById';
     UIMenu.Menu.AddMenuItem("Затащить в ближайшее авто").eventName = 'server:user:inCarById';
@@ -4677,8 +4678,13 @@ menuList.showFuelMenu = async function() {
         UIMenu.Menu.HideMenu();
         if (item.type)
             fuel.fillVeh(item.price, shopId, item.type, listIndex);
-        if (item.itemId)
+        if (item.itemId) {
+            if (mp.players.local.vehicle) {
+                mp.game.ui.notifications.show(`~r~Вы не можете совершать покупку в транспорте`);
+                return;
+            }
             mp.events.callRemote('server:shop:buy', item.itemId, item.price, shopId);
+        }
     });
 };
 
@@ -6543,7 +6549,7 @@ menuList.showMazeBankLobbyMenu = function()
 
     let menu = UIMenu.Menu.Create("Arena", "~b~MazeBank Arena");
 
-    UIMenu.Menu.AddMenuItem('~g~Приять участие в гонке', 'Взнос: ~g~$1,000').doName = 'start';
+    UIMenu.Menu.AddMenuItem('~g~Принять участие в гонке', 'Взнос: ~g~$1,000').doName = 'start';
     UIMenu.Menu.AddMenuItem('~g~Пригласить на дуэль', 'Взнос: ~g~$250').doName = 'duel';
     UIMenu.Menu.AddMenuItem('Таблица рейтинга гонок').doName = 'rating';
     UIMenu.Menu.AddMenuItem('Таблица рейтинга дуэлей').doName = 'drating';
@@ -7186,11 +7192,11 @@ menuList.showLscMenu = function(shopId, price = 1)
             lscBanner1 = 'shopui_title_carmod';
             lscBanner2 = 'shopui_title_carmod';
             break;
-        case 9:
+        case 10:
             lscBanner1 = 'shopui_title_carmod2';
             lscBanner2 = 'shopui_title_carmod2';
             break;
-        case 10:
+        case 9:
             lscBanner1 = 'shopui_title_supermod';
             lscBanner2 = 'shopui_title_supermod';
             break;
@@ -7635,6 +7641,14 @@ menuList.showLscTunningMenu = function(shopId, price, lscBanner1) {
                     vehInfo.display_name == 'Savestra' ||
                     vehInfo.display_name == 'Deluxo' ||
                     vehInfo.display_name == 'Comet4')
+                    continue;
+            }
+            if (i == 9 || i == 10) {
+                if (vehInfo.display_name == 'JB7002')
+                    continue;
+            }
+            if (i == 40) {
+                if (vehInfo.display_name == 'Nexus')
                     continue;
             }
 

@@ -1296,7 +1296,7 @@ mp.events.addRemoteCounted('server:user:knockById', (player, targetId) => { //TO
             return;
         }
 
-        let random = methods.getRandomInt(0, 100);
+        let random = methods.getRandomInt(0, methods.parseInt(user.get(target, 'stats_strength') / 2));
         //let random2 = methods.getRandomInt(0, user.get(target, 'stats_strength') - 200);
 
         user.set(player, 'isKnockoutTimeout', true);
@@ -1311,7 +1311,7 @@ mp.events.addRemoteCounted('server:user:knockById', (player, targetId) => { //TO
             }
         }, 120000);
 
-        if (random < 25) {
+        if (random < 20) {
             user.set(target, 'isKnockout', true);
             target.setVariable('isKnockout', true);
             user.playAnimation(target, "amb@world_human_bum_slumped@male@laying_on_right_side@base", "base", 9);
@@ -2392,6 +2392,8 @@ mp.events.addRemoteCounted('server:gr6:unload', (player) => {
                             p.notify('~g~Вы заработали: ~s~' + methods.moneyFormat(currentMoney) + desc);
                             user.reset(p, 'gr6');
                             user.giveJobSkill(p);
+
+                            p.call('client:gr6:stop');
 
                             user.addRep(p, 50);
                             user.addWorkExp(p, 2);
@@ -4036,41 +4038,31 @@ mp.events.addRemoteCounted('server:car:sellToPlayer:accept', (player, houseId, s
         return;
 
     let slotBuy = 0;
-
     if (user.get(player, 'car_id1') == 0)
         slotBuy = 1;
     else if (user.get(player, 'car_id2') == 0) {
-        if (user.get(player, 'house_id') > 0 || user.get(player, 'condo_id') > 0 || user.get(player, 'apartment_id') > 0)
-            slotBuy = 2;
+        slotBuy = 2;
     }
     else if (user.get(player, 'car_id3') == 0) {
-        if (user.get(player, 'house_id') > 0) {
-            let hInfo = houses.getHouseData(user.get(player, 'house_id'));
-            if (hInfo.get('price') > 1000000)
-                slotBuy = 3;
-        }
+        slotBuy = 3;
     }
     else if (user.get(player, 'car_id4') == 0) {
-        if (user.get(player, 'house_id') > 0) {
-            let hInfo = houses.getHouseData(user.get(player, 'house_id'));
-            if (hInfo.get('price') > 2500000)
-                slotBuy = 4;
-        }
+        slotBuy = 4;
     }
     else if (user.get(player, 'car_id5') == 0) {
-        if (user.get(player, 'house_id') > 0) {
-            let hInfo = houses.getHouseData(user.get(player, 'house_id'));
-            if (hInfo.get('price') > 5000000)
-                slotBuy = 5;
-        }
+        slotBuy = 5;
     }
-    else if (user.get(player, 'car_id6') == 0) {
-        if (user.get(player, 'house_id') > 0) {
-            let hInfo = houses.getHouseData(user.get(player, 'house_id'));
-            if (hInfo.get('price') > 7500000)
-                slotBuy = 6;
+    /*else if (user.get(player, 'car_id6') == 0) {
+        slotBuy = 6;
+    }*/
+
+    /*let slotBuy = 0;
+    for (let i = 1; i <= 10; i++) {
+        if (user.get(player, 'car_id' + i) == 0 && freeSlot == 0) {
+            slotBuy = 1;
+            break;
         }
-    }
+    }*/
 
     if (slotBuy == 0) {
         player.notify('~r~У Вас нет доступных слотов');
@@ -5066,8 +5058,8 @@ mp.events.addRemoteCounted('server:sellMoney', (player) => {
     if (!user.isLogin(player))
         return;
 
-    if (weather.getHour() < 22 && weather.getHour() > 4) {
-        player.notify('~r~Доступно только с 22 до 4 утра игрового времени');
+    if (weather.getHour() < 22 && weather.getHour() > 8) {
+        player.notify('~r~Доступно только с 22 до 8 утра игрового времени');
         return;
     }
 
@@ -6402,6 +6394,7 @@ mp.events.add("playerDeath", (player, reason, killer) => {
                         user.reset(player, 'duelCount');
                         player.dimension = 0;
                         player.removeAllWeapons();
+                        user.setHealth(player, 100);
 
                         user.blockKeys(player, false);
 
@@ -6433,6 +6426,7 @@ mp.events.add("playerDeath", (player, reason, killer) => {
                             user.reset(target, 'duelBet');
                             user.reset(target, 'duelTarget');
                             user.reset(target, 'duelCount');
+                            user.setHealth(target, 100);
 
                             user.save(player);
                             user.save(target);
@@ -6478,7 +6472,7 @@ mp.events.add("playerDeath", (player, reason, killer) => {
             return;
         }
 
-        //inventory.deleteItemsRange(player, 138, 141);
+        inventory.deleteItemsRange(player, 138, 141);
         user.set(player, 'killerInJail', false);
 
         try {

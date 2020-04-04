@@ -24,6 +24,7 @@ let promise = {};
 mp.events.add('client:modalinput:callBack', (data) => {
     _isShowInput = false;
     chat.activate(true);
+    methods.blockKeys(false);
     mp.gui.cursor.show(false, false);
     user.setVariable('isTyping', false);
     promise.resolve(data);
@@ -122,6 +123,7 @@ class Menu {
     static async GetUserInput(title, defaultText = '', maxInputLength = 20) {
         return new Promise((resolve, reject) => {
             _isShowInput = true;
+            methods.blockKeys(true);
             chat.activate(false);
             mp.gui.cursor.show(true, true);
             user.setVariable('isTyping', true);

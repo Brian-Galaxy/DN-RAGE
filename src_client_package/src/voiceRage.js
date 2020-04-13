@@ -34,6 +34,20 @@ voiceRage.disableMic = function() {
     //user.setVariable('voiceMic', mp.voiceChat.muted);
 };
 
+voiceRage.enableRadioMic = function() {
+    if (user.isDead())
+        return;
+    voiceRage.enableMic();
+    mp.events.callRemote('voice.toggleMicrophoneRadio', true);
+    user.playAnimation("random@arrests", "generic_radio_chatter", 49);
+};
+
+voiceRage.disableRadioMic = function() {
+    voiceRage.disableMic();
+    mp.events.callRemote('voice.toggleMicrophoneRadio', false);
+    user.stopAllAnimation();
+};
+
 voiceRage.isEnable = function() {
     return !mp.voiceChat.muted;
 };
@@ -46,6 +60,7 @@ voiceRage.add = (player) => {
     voiceRage.listeners.push(player);
 
     player.isListening = true;
+    player.isWalkieTalking = false;
     mp.events.callRemote("addVoiceListener", player);
 
     if(UseAutoVolume)
@@ -80,7 +95,7 @@ voiceRage.remove = (player, notify) => {
 voiceRage.generateVolume = (localPlayerPosition, targetPlayer, voiceDistance, distanceToPlayer) => {
     const calcVoiceDistance = voiceDistance * voiceDistance;
     const calcDublDist = distanceToPlayer * distanceToPlayer;
-    const maxVolume = __CONFIG__.voiceVolume || 1;
+    const maxVolume = methods.parseFloat(user.getCache('s_voice_vol'));
     let volume = voiceRage.clamp(0, maxVolume, -(calcDublDist - calcVoiceDistance) / (calcDublDist * calcDublDist + calcVoiceDistance));
 
     let localPlayer = mp.players.local;
@@ -215,19 +230,27 @@ voiceRage.timer = () => {
         let localPlayer = mp.players.local;
         let localPos = localPlayer.position;
 
-        mp.players.forEachInStreamRange(player =>
+        mp.players.forEach(player =>
         {
             try {
-                if(player != localPlayer && player.dimension === localPlayer.dimension)
+                if(player != localPlayer)
                 {
                     if(!player.isListening)
                     {
-                        const playerPos = player.position;
-                        let dist = mp.game.system.vdist(playerPos.x, playerPos.y, playerPos.z, localPos.x, localPos.y, localPos.z);
-
-                        if(dist <= MaxRange)
-                        {
+                        let walk = player.getVariable('walkie');
+                        if (walk === localPlayer.getVariable('walkie')) {
                             voiceRage.add(player);
+                            return;
+                        }
+
+                        if (player.dimension === localPlayer.dimension) {
+                            const playerPos = player.position;
+                            //let dist = mp.game.system.vdist(playerPos.x, playerPos.y, playerPos.z, localPos.x, localPos.y, localPos.z);
+                            let dist = methods.distanceToPos(playerPos, localPos);
+                            if(dist <= MaxRange)
+                            {
+                                voiceRage.add(player);
+                            }
                         }
                     }
                 }
@@ -243,24 +266,51 @@ voiceRage.timer = () => {
                 if(player.handle !== 0)
                 {
                     const playerPos = player.position;
-                    let dist = mp.game.system.vdist(playerPos.x, playerPos.y, playerPos.z, localPos.x, localPos.y, localPos.z);
+                    //let dist = mp.game.system.vdist(playerPos.x, playerPos.y, playerPos.z, localPos.x, localPos.y, localPos.z);
+                    let dist = methods.distanceToPos(playerPos, localPos);
 
                     if(dist > MaxRange + 30)
                     {
+                        let walk = player.getVariable('walkie');
+                        if (walk === localPlayer.getVariable('walkie')) {
+                            return;
+                        }
                         voiceRage.remove(player, true);
                     }
                     else if(!UseAutoVolume)
                     {
-                        const distanceToPlayer = voiceRage.vdist(localPos, playerPos);
+                        const distanceToPlayer = methods.distanceToPos(localPos, playerPos);
                         const voiceDistance = voiceRage.clamp(3, 7000, player.getVariable('voice.distance') || __CONFIG__.defaultDistance);
                         //const voiceDistance = voiceRage.clamp(3, 50, __CONFIG__.defaultDistance);
-                        player.voiceVolume = voiceRage.generateVolume(localPos, player, voiceDistance, distanceToPlayer);
+
+
+                        if (player.isWalkieTalking) {
+                            //player.voiceVolume = 1;
+                            return;
+                        }
+
+                        if (distanceToPlayer >= MaxRange)
+                            player.voiceVolume = 0;
+                        else
+                            player.voiceVolume = voiceRage.generateVolume(localPos, player, voiceDistance, distanceToPlayer);
+
                         //player.voiceVolume = 1 - (dist / MaxRange);
                     }
                 }
                 else
                 {
-                    voiceRage.remove(player, true);
+                    try {
+                        let walk = player.getVariable('walkie');
+                        if (walk === localPlayer.getVariable('walkie')) {
+                            if (!player.isWalkieTalking)
+                                player.voiceVolume = 0;
+                            return;
+                        }
+                        voiceRage.remove(player, true);
+                    }
+                    catch (e) {
+                        voiceRage.remove(player, true);
+                    }
                 }
             }
             catch (e) {
@@ -297,6 +347,18 @@ mp.events.add('voice.toggleMicrophone', async (playerId, isEnabled) => {
             player.playFacialAnim("mic_chatter", "mp_facial");
         else
             player.playFacialAnim("mood_normal_1", "facials@gen_male@variations@normal");
+    }
+});
+
+mp.events.add('voice.toggleMicrophoneRadio', async (playerId, isEnabled) => {
+    const player = mp.players.atRemoteId(playerId);
+
+    if (player && mp.players.exists(player)) {
+        player.isWalkieTalking = isEnabled;
+        if (isEnabled)
+            player.voiceVolume = user.getCache('walkie_vol') / 10;
+        else
+            player.voiceVolume = 0;
     }
 });
 

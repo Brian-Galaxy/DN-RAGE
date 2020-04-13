@@ -14,6 +14,7 @@ let discord = require('./managers/discord');
 let vehicles = require('./property/vehicles');
 let houses = require('./property/houses');
 let condos = require('./property/condos');
+let fraction = require('./property/fraction');
 
 let user = exports;
 
@@ -148,7 +149,7 @@ user.loginAccount = function(player, login, pass) {
     methods.debug('user.loginAccount');
     if (!mp.players.exists(player))
         return false;
-    user.validateAccount(login, pass, function (callback) {
+    user.validateAccount(player, login, pass, function (callback) {
 
         //user.showCustomNotify(player, 'Проверяем данные...', 0);
 
@@ -161,7 +162,7 @@ user.loginAccount = function(player, login, pass) {
         {
             let players = [];
 
-            mysql.executeQuery(`SELECT * FROM users WHERE social = ? LIMIT 3`, player.socialClub, function (err, rows, fields) {
+            mysql.executeQuery(`SELECT * FROM users WHERE social = ? LIMIT 3`, player.accSocial, function (err, rows, fields) {
                 if (!mp.players.exists(player))
                     return;
                 if (err) {
@@ -173,8 +174,11 @@ user.loginAccount = function(player, login, pass) {
 
                         let spawnList = [];
 
-                        //if (row['pos_x'] !== 0)
-                        //    spawnList.push('Точка выхода');
+                        if (fraction.isMafia(row['fraction_id2']) || fraction.isGang(row['fraction_id2']))
+                            spawnList.push('Спавн организации');
+
+                        if (row['pos_x'] !== 0)
+                            spawnList.push('Точка выхода');
 
                         if (row['house_id'])
                             spawnList.push('Дом');
@@ -290,6 +294,7 @@ user.save = function(player, withReset = false) {
             if (element === 'id') return;
             else if (element === 'name') return;
             else if (element === 'is_online') return;
+            else if (element === 'skin') return;
 
             if (user.has(player, element)) {
                 if (typeof user.get(player, element) == 'boolean')
@@ -317,7 +322,7 @@ user.save = function(player, withReset = false) {
 
 user.loadUser = function(player, name, spawn = 'Стандарт') {
 
-    methods.debug('user.loadAccount');
+    methods.debug('user.loadUser');
     if (!mp.players.exists(player))
         return false;
     let selectSql = 'id';
@@ -342,9 +347,21 @@ user.loadUser = function(player, name, spawn = 'Стандарт') {
             if (!mp.players.exists(player))
                 return false;
 
-            JSON.parse(user.get(player, 'skin'), function(k, v) {
-                user.set(player, k, v);
-            });
+            try {
+                JSON.parse(user.get(player, 'skin'), function(k, v) {
+                    user.set(player, k, v);
+                });
+            }
+            catch (e) {
+
+                methods.saveFile('customError', `${player.socialClub}: ${e}`);
+
+                user.resetAll(player);
+                //user.showCustomNotify(player, 'Аккаунт забанен до: ' + methods.unixTimeStampToDateTime(user.get(player, 'date_ban')), 1);
+                user.showCustomNotify(player, 'Произошла ошибка ', 1);
+                user.kick(player, 'У Вас произошла магическая ошибка, логи отправлены разработчикам, просто перезайдите');
+                return;
+            }
 
             if (user.get(player, 'date_ban') > methods.getTimeStamp()) {
                 user.resetAll(player);
@@ -378,6 +395,16 @@ user.loadUser = function(player, name, spawn = 'Стандарт') {
                 if (!mp.players.exists(player))
                     return false;
 
+                try {
+                    if (user.get(player, 'SKIN_SEX') === 1)
+                        player.model =  mp.joaat('mp_f_freemode_01');
+                    else
+                        player.model =  mp.joaat('mp_m_freemode_01');
+                }
+                catch (e) {
+
+                }
+
                 user.updateCharacterFace(player);
                 setTimeout(function () {
                     user.updateCharacterCloth(player);
@@ -386,6 +413,7 @@ user.loadUser = function(player, name, spawn = 'Стандарт') {
 
                 player.setVariable('idLabel', user.get(player, 'id'));
                 player.setVariable('name', user.get(player, 'name'));
+                player.setVariable('walkie', user.get(player, 'walkie_' + (user.get(player, 'walkie_current') + 1)));
                 player.dimension = 0;
 
                 setTimeout(function () {
@@ -429,6 +457,27 @@ user.loadUser = function(player, name, spawn = 'Стандарт') {
                     user.spawnByName(player, spawn);
                 }
 
+                setTimeout(function () {
+                    try {
+                        mp.players.forEach(p => {
+                            try {
+                                if (user.isLogin(p)) {
+                                    if (p.getVariable('idLabel') === player.getVariable('idLabel') && p.id !== player.id) {
+                                        user.kickAntiCheat(p, 'Buguse');
+                                        user.kickAntiCheat(player, 'Buguse');
+                                    }
+                                }
+                            }
+                            catch (e) {
+
+                            }
+                        });
+                    }
+                    catch (e) {
+                        
+                    }
+                }, methods.getRandomInt(1000, 3000));
+
                 methods.saveLog('log_connect',
                     ['type', 'social', 'serial', 'address', 'game_id', 'account_id'],
                     ['LOGIN', player.socialClub, player.serial, player.ip, player.id, userId]
@@ -454,36 +503,50 @@ user.spawnByName = function(player, spawn = 'Стандарт') {
         if (!user.isLogin(player))
             return false;
 
-        player.dimension = 0;
+        try {
+            player.dimension = 0;
+        }
+        catch (e) {
+            
+        }
 
-        if (user.hasById(user.getId(player), 'hp'))
-            user.setHealth(player, user.getById(user.getId(player), 'hp'));
+        try {
+            if (spawn == 'Точка выхода') {
+                player.spawn(new mp.Vector3(user.get(player, 'pos_x'), user.get(player, 'pos_y'), user.get(player, 'pos_z')));
+                player.heading = user.get(player, 'rotation');
+            }
+            else if (spawn == 'Спавн организации') {
+                let fData = fraction.getData(user.get(player, 'fraction_id2'));
+                player.spawn(new mp.Vector3(fData.get('spawn_x'), fData.get('spawn_y'), fData.get('spawn_z')));
+                player.heading = fData.get('spawn_rot');
+            }
+            else if (spawn == 'Дом') {
+                let hData = houses.getHouseData(user.get(player, 'house_id'));
+                player.spawn(new mp.Vector3(hData.get('x'), hData.get('y'), hData.get('z')));
+                player.heading = hData.get('rot');
+            }
+            else if (spawn == 'Квартира') {
+                let hData = condos.getHouseData(user.get(player, 'condo_id'));
+                player.spawn(new mp.Vector3(hData.get('x'), hData.get('y'), hData.get('z')));
+                player.heading = hData.get('rot');
+            }
+            else {
+                let roleId = user.get(player, 'role') - 1;
+                player.spawn(new mp.Vector3(enums.spawnByRole[roleId][0], enums.spawnByRole[roleId][1], enums.spawnByRole[roleId][2]));
+                player.heading = enums.spawnByRole[roleId][3];
+            }
+        }
+        catch (e) {
+            methods.debug(e);
 
-        if (spawn == 'Точка выхода') {
-            //let userId = user.getId(player);
             try {
-                player.spawn(new mp.Vector3(methods.parseFloat(user.get(player, 'pos_x')), methods.parseFloat(user.get(player, 'pos_y')), methods.parseFloat(user.get(player, 'pos_z'))));
-                player.heading = methods.parseFloat(user.get(player, 'rot'));
+                let roleId = user.get(player, 'role') - 1;
+                player.spawn(new mp.Vector3(enums.spawnByRole[roleId][0], enums.spawnByRole[roleId][1], enums.spawnByRole[roleId][2]));
+                player.heading = enums.spawnByRole[roleId][3];
             }
             catch (e) {
                 
             }
-            //player.dimension = user.getById(userId, 'dimension');
-        }
-        else if (spawn == 'Дом') {
-            let hData = houses.getHouseData(user.get(player, 'house_id'));
-            player.spawn(new mp.Vector3(hData.get('x'), hData.get('y'), hData.get('z')));
-            player.heading = hData.get('rot');
-        }
-        else if (spawn == 'Квартира') {
-            let hData = condos.getHouseData(user.get(player, 'condo_id'));
-            player.spawn(new mp.Vector3(hData.get('x'), hData.get('y'), hData.get('z')));
-            player.heading = hData.get('rot');
-        }
-        else {
-            let roleId = user.get(player, 'role') - 1;
-            player.spawn(new mp.Vector3(enums.spawnByRole[roleId][0], enums.spawnByRole[roleId][1], enums.spawnByRole[roleId][2]));
-            player.heading = enums.spawnByRole[roleId][3];
         }
 
         setTimeout(function () {
@@ -494,7 +557,7 @@ user.spawnByName = function(player, spawn = 'Стандарт') {
             catch (e) {
 
             }
-        }, 5000);
+        }, 2000);
 
         setTimeout(function () {
             user.hideLoadDisplay(player);
@@ -609,14 +672,97 @@ user.updateCharacterFace = function(player) {
         skin.SKIN_FACE_SPECIFICATIONS = user.get(player, "SKIN_FACE_SPECIFICATIONS");
         skin.SKIN_SEX = methods.parseInt(user.get(player, "SKIN_SEX"));
 
-        if (user.getSex(player) != skin.SKIN_SEX) {
-            if (skin.SKIN_SEX == 1)
+        if (user.getSex(player) !== skin.SKIN_SEX) {
+            if (skin.SKIN_SEX === 1)
                 player.model =  mp.joaat('mp_f_freemode_01');
             else
                 player.model =  mp.joaat('mp_m_freemode_01');
         }
 
-        if (!user.has(player, 'hasMask')) {
+        if (user.has(player, 'maskId')) {
+            let mask = enums.maskList[user.get(player, 'maskId')];
+
+            if (mask[10]) {
+                player.setHeadBlend(
+                    0,
+                    0,
+                    0,
+                    skin.SKIN_MOTHER_SKIN,
+                    skin.SKIN_FATHER_SKIN,
+                    0,
+                    0,
+                    0,
+                    0
+                );
+
+                for (let i = 0; i < 20; i++)
+                    player.setFaceFeature(methods.parseInt(i), 0);
+            }
+            else if (mask[11]) {
+                player.setHeadBlend(
+                    skin.SKIN_MOTHER_FACE,
+                    skin.SKIN_FATHER_FACE,
+                    0,
+                    skin.SKIN_MOTHER_SKIN,
+                    skin.SKIN_FATHER_SKIN,
+                    0,
+                    skin.SKIN_PARENT_FACE_MIX,
+                    skin.SKIN_PARENT_SKIN_MIX,
+                    0
+                );
+
+                player.setFaceFeature(0, -1.0);
+                player.setFaceFeature(1, 1.0);
+                player.setFaceFeature(2, 1.0);
+                player.setFaceFeature(3, 1.0);
+                player.setFaceFeature(4, 1.0);
+                player.setFaceFeature(9, -1.0);
+                player.setFaceFeature(10, 1.0);
+                player.setFaceFeature(13, -1.0);
+                player.setFaceFeature(14, -1.0);
+                player.setFaceFeature(15, -1.0);
+                player.setFaceFeature(16, -1.0);
+                player.setFaceFeature(17, -1.0);
+                player.setFaceFeature(18, -1.0);
+                player.setFaceFeature(19, -1.0);
+            }
+            else {
+                player.setHeadBlend(
+                    skin.SKIN_MOTHER_FACE,
+                    skin.SKIN_FATHER_FACE,
+                    0,
+                    skin.SKIN_MOTHER_SKIN,
+                    skin.SKIN_FATHER_SKIN,
+                    0,
+                    skin.SKIN_PARENT_FACE_MIX,
+                    skin.SKIN_PARENT_SKIN_MIX,
+                    0
+                );
+
+                if (skin.SKIN_FACE_SPECIFICATIONS) {
+                    try {
+                        JSON.parse(skin.SKIN_FACE_SPECIFICATIONS).forEach((item, i) => {
+                            try {
+                                player.setFaceFeature(methods.parseInt(i), methods.parseFloat(item));
+                            }
+                            catch (e) {
+                                methods.debug(e);
+                            }
+                        })
+                    } catch(e) {
+                        methods.debug('skin.SKIN_FACE_SPECIFICATIONS', e);
+                        methods.debug(skin.SKIN_FACE_SPECIFICATIONS);
+                    }
+                }
+            }
+            if (mask[6]) {
+                player.setClothes(2, 0, 0, 0);
+            }
+            else {
+                player.setClothes(2, skin.SKIN_HAIR, 0, 0);
+            }
+        }
+        else {
             player.setHeadBlend(
                 skin.SKIN_MOTHER_FACE,
                 skin.SKIN_FATHER_FACE,
@@ -628,42 +774,28 @@ user.updateCharacterFace = function(player) {
                 skin.SKIN_PARENT_SKIN_MIX,
                 0
             );
-        }
-        else {
-            player.setHeadBlend(
-                0,
-                0,
-                0,
-                skin.SKIN_MOTHER_SKIN,
-                skin.SKIN_FATHER_SKIN,
-                0,
-                0,
-                0,
-                0
-            );
+            player.setClothes(2, skin.SKIN_HAIR, 0, 0);
+
+            if (skin.SKIN_FACE_SPECIFICATIONS) {
+                try {
+                    JSON.parse(skin.SKIN_FACE_SPECIFICATIONS).forEach((item, i) => {
+                        try {
+                            player.setFaceFeature(methods.parseInt(i), methods.parseFloat(item));
+                        }
+                        catch (e) {
+                            methods.debug(e);
+                        }
+                    })
+                } catch(e) {
+                    methods.debug('skin.SKIN_FACE_SPECIFICATIONS', e);
+                    methods.debug(skin.SKIN_FACE_SPECIFICATIONS);
+                }
+            }
         }
 
         player.setHairColor(skin.SKIN_HAIR_COLOR, skin.SKIN_HAIR_COLOR_2);
         player.setHeadOverlay(2, [skin.SKIN_EYEBROWS, 1, skin.SKIN_EYEBROWS_COLOR, 0]);
         player.eyeColor = skin.SKIN_EYE_COLOR;
-
-        player.setClothes(2, skin.SKIN_HAIR, 0, 0);
-
-        if (skin.SKIN_FACE_SPECIFICATIONS) {
-            try {
-                JSON.parse(skin.SKIN_FACE_SPECIFICATIONS).forEach((item, i) => {
-                    try {
-                        player.setFaceFeature(methods.parseInt(i), methods.parseFloat(item));
-                    }
-                    catch (e) {
-                        methods.debug(e);
-                    }
-                })
-            } catch(e) {
-                methods.debug('skin.SKIN_FACE_SPECIFICATIONS', e);
-                methods.debug(skin.SKIN_FACE_SPECIFICATIONS);
-            }
-        }
 
         user.updateTattoo(player);
 
@@ -727,11 +859,13 @@ user.updateCharacterFace = function(player) {
 
 user.getSex = function(player) {
     if (!mp.players.exists(player))
-        return 0;
+        return -1;
     if (player.model === mp.joaat('mp_f_freemode_01'))
         return 1;
-    else
+    else if (player.model === mp.joaat('mp_m_freemode_01'))
         return 0;
+    else
+        return -1;
 };
 
 user.updateCharacterCloth = function(player) {
@@ -792,20 +926,46 @@ user.updateCharacterCloth = function(player) {
         setTimeout(function () {
             if (!mp.players.exists(player))
                 return;
-            if (cloth_data['hat'] >= 0) {
-                user.setProp(player, 0, cloth_data['hat'], cloth_data['hat_color']);
-            }
-            if (cloth_data['glasses'] >= 0) {
-                user.setProp(player, 1, cloth_data['glasses'], cloth_data['glasses_color']);
-            }
-            if (cloth_data['ear'] >= 0) {
-                user.setProp(player, 2, cloth_data['ear'], cloth_data['ear_color']);
-            }
+
+            //TODO GET CURRENT
+
             if (cloth_data['watch'] >= 0) {
                 user.setProp(player, 6, cloth_data['watch'], cloth_data['watch_color']);
             }
             if (cloth_data['bracelet'] >= 0) {
                 user.setProp(player, 7, cloth_data['bracelet'], cloth_data['bracelet_color']);
+            }
+
+            if (user.has(player, 'maskId')) {
+                try {
+                    let mask = enums.maskList[user.get(player, 'maskId')];
+
+                    user.setComponentVariation(player, 1, mask[2], mask[3]);
+
+                    if (cloth_data['hat'] >= 0 && !mask[8]) {
+                        user.setProp(player, 0, cloth_data['hat'], cloth_data['hat_color']);
+                    }
+                    if (cloth_data['glasses'] >= 0 && !mask[7]) {
+                        user.setProp(player, 1, cloth_data['glasses'], cloth_data['glasses_color']);
+                    }
+                    if (cloth_data['ear'] >= 0 && !mask[9]) {
+                        user.setProp(player, 2, cloth_data['ear'], cloth_data['ear_color']);
+                    }
+                }
+                catch (e) {
+                    
+                }
+            }
+            else {
+                if (cloth_data['hat'] >= 0) {
+                    user.setProp(player, 0, cloth_data['hat'], cloth_data['hat_color']);
+                }
+                if (cloth_data['glasses'] >= 0) {
+                    user.setProp(player, 1, cloth_data['glasses'], cloth_data['glasses_color']);
+                }
+                if (cloth_data['ear'] >= 0) {
+                    user.setProp(player, 2, cloth_data['ear'], cloth_data['ear_color']);
+                }
             }
         }, 10); //TODO
 
@@ -886,9 +1046,9 @@ user.doesExistUser = function(name, callback) {
     });
 };
 
-user.validateAccount = function(login, pass, callback) {
+user.validateAccount = function(player, login, pass, callback) {
     methods.debug('user.validateAccount');
-    mysql.executeQuery(`SELECT password FROM accounts WHERE login = ? LIMIT 1`, login, function (err, rows, fields) {
+    mysql.executeQuery(`SELECT password, social FROM accounts WHERE login = ? LIMIT 1`, login, function (err, rows, fields) {
         if (err) {
             methods.debug('[DATABASE | ERROR]');
             methods.debug(err);
@@ -900,6 +1060,8 @@ user.validateAccount = function(login, pass, callback) {
         rows.forEach(function(item) {
             if (item.password !== methods.sha256(pass))
                 return callback(false);
+            if (mp.players.exists(player))
+                player.accSocial = item['social'];
             return callback(true);
         });
     });
@@ -2430,10 +2592,10 @@ user.revive = function(player, hp = 20) {
     player.call('client:user:revive', [hp]);
 };
 
-user.createBlip = function(player, id, x, y, z, blipId = 1, blipColor = 0, route = false) {
+user.createBlip = function(player, id, x, y, z, blipId = 1, blipColor = 0, route = false, shortRange = false, name = 'Цель', rot = 0) {
     if (!mp.players.exists(player))
         return false;
-    player.call('client:user:createBlip', [id, x, y, z, blipId, blipColor, route]);
+    player.call('client:user:createBlip', [id, x, y, z, blipId, blipColor, route, shortRange, name, rot]);
 };
 
 user.deleteBlip= function(player, id) {
@@ -2665,7 +2827,7 @@ user.isJobBuilder = function(player) {
 };
 
 user.isGos = function(player) {
-    methods.debug('user.isGos');
+    //methods.debug('user.isGos');
     return user.isLogin(player) && (user.isSapd(player) || user.isFib(player) || user.isUsmc(player) || user.isGov(player) || user.isEms(player) || user.isSheriff(player));
 };
 
@@ -2674,77 +2836,93 @@ user.isPolice = function(player) {
 };
 
 user.isGov = function(player) {
-    methods.debug('user.isGov');
+    //methods.debug('user.isGov');
     return user.isLogin(player) && user.get(player, 'fraction_id') == 1;
 };
 
 user.isSapd = function(player) {
-    methods.debug('user.isSapd');
+    //methods.debug('user.isSapd');
     return user.isLogin(player) && user.get(player, 'fraction_id') == 2;
 };
 
 user.isFib = function(player) {
-    methods.debug('user.isFib');
+    //methods.debug('user.isFib');
     return user.isLogin(player) && user.get(player, 'fraction_id') == 3;
 };
 
 user.isUsmc = function(player) {
-    methods.debug('user.isUsmc');
+    //methods.debug('user.isUsmc');
     return user.isLogin(player) && user.get(player, 'fraction_id') == 4;
 };
 
 user.isSheriff = function(player) {
-    methods.debug('user.isSheriff');
+    //methods.debug('user.isSheriff');
     return user.isLogin(player) && user.get(player, 'fraction_id') == 5;
 };
 
 user.isEms = function(player) {
-    methods.debug('user.isEms');
+    //methods.debug('user.isEms');
     return user.isLogin(player) && user.get(player, 'fraction_id') == 6;
 };
 
 user.isNews = function(player) {
-    methods.debug('user.isNews');
+    //methods.debug('user.isNews');
     return user.isLogin(player) && user.get(player, 'fraction_id') == 7;
 };
 
+user.isCosaNostra = function(player) {
+    return user.isLogin(player) && user.get(player, 'fraction_id2') == 17; //TODO
+};
+
+user.isRussianMafia = function(player) {
+    return user.isLogin(player) && user.get(player, 'fraction_id2') == 16;
+};
+
+user.isYakuza = function(player) {
+    return user.isLogin(player) && user.get(player, 'fraction_id2') == 18;
+};
+
+user.isMafia = function(player) {
+    return user.isLogin(player) && (user.isCosaNostra(player) || user.isRussianMafia(player) || user.isYakuza(player));
+};
+
 user.isLeader = function(player) {
-    methods.debug('user.isLeader');
+    //methods.debug('user.isLeader');
     return user.isLogin(player) && user.get(player, 'is_leader');
 };
 
 user.isSubLeader = function(player) {
-    methods.debug('user.isSubLeader');
+    //methods.debug('user.isSubLeader');
     return user.isLogin(player) && user.get(player, 'is_sub_leader');
 };
 
 user.isDepLeader = function(player) {
-    methods.debug('user.isDepLeader');
+    //methods.debug('user.isDepLeader');
     return user.isLogin(player) && user.get(player, 'fraction_id') > 0 && user.get(player, 'rank') === 0;
 };
 
 user.isDepSubLeader = function(player) {
-    methods.debug('user.isDepSubLeader');
+    //methods.debug('user.isDepSubLeader');
     return user.isLogin(player) && user.get(player, 'fraction_id') > 0 && user.get(player, 'rank') === 1;
 };
 
 user.isLeader2 = function(player) {
-    methods.debug('user.isLeader2');
+    //methods.debug('user.isLeader2');
     return user.isLogin(player) && user.get(player, 'is_leader2');
 };
 
 user.isSubLeader2 = function(player) {
-    methods.debug('user.isSubLeader2');
+    //methods.debug('user.isSubLeader2');
     return user.isLogin(player) && user.get(player, 'is_sub_leader2');
 };
 
 user.isDepLeader2 = function(player) {
-    methods.debug('user.isDepLeader2');
+    //methods.debug('user.isDepLeader2');
     return user.isLogin(player) && user.get(player, 'fraction_id2') > 0 && user.get(player, 'rank2') === 0;
 };
 
 user.isDepSubLeader2 = function(player) {
-    methods.debug('user.isDepSubLeader2');
+    //methods.debug('user.isDepSubLeader2');
     return user.isLogin(player) && user.get(player, 'fraction_id2') > 0 && user.get(player, 'rank2') === 1;
 };
 

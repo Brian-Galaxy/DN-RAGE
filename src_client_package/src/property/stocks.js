@@ -2,6 +2,7 @@ import user from '../user';
 import Container from '../modules/data';
 import methods from '../modules/methods';
 import enums from '../enums';
+import vehicles from "./vehicles";
 
 let stocks = {};
 
@@ -21,7 +22,7 @@ stocks.boxList = [
     ['Большой ящик серебра', 2014503631, 10, 0, false, 15000, 'Контрафактные товары', 1 ], //11
     ['Малый ящик серебра', -333302011, 11, 0, false, 5000, 'Контрафактные товары', 0 ], //12
     ['Малый ящик медикоментов', 2092857693, 12, 0, false, 5000, 'Медикаменты', 0 ], //13
-    ['Оружейный ящик Merryweather', -994309865, 13, 0, false, 30000, 'Оружие и патроны', 2 ], //14
+    ['Ящик сигарет Redwood', -1958, 14, 0, false, 5000, 'Алкоголь и табак', 0 ], //14
     ['Ящик сигарет Redwood', -1958, 14, 0, false, 5000, 'Алкоголь и табак', 0 ], //15
     ['Большой ящик кожаных сумок', 12824223, 15, 0, false, 15000, 'Трофеи браконьеров', 1 ], //16
     ['Малый ящик кожаных сумок', -270239139, 16, 0, false, 5000, 'Трофеи браконьеров', 0 ], //17
@@ -57,6 +58,7 @@ stocks.boxList = [
     ['Большой ящик слоновых бивней', -2033482115, 46, -0.12, false, 15000, 'Трофеи браконьеров', 1 ], //47
     ['Малый ящик слоновых бивней', 588496643, 47, -0.12, false, 5000, 'Трофеи браконьеров', 0 ], //48
     ['Бриллиант 64 карата', 926762619, 48, 0, false, 50000, 'Уникальный груз', 2 ], //49
+    ['Оружейный ящик Merryweather', -994309865, 13, 0, false, 30000, 'Оружие и патроны', 2 ], //50
 ];
 
 stocks.enter = function (id) {
@@ -72,9 +74,20 @@ stocks.exit = function (x, y, z, rot) {
     user.teleport(x, y, z + 1, rot);
 };
 
-stocks.exitv = function (x, y, z, rot) {
+stocks.exitv = async function (x, y, z, rot) {
     user.setVirtualWorld(0);
     user.setVirtualWorldVeh(0);
+    /*if (mp.vehicles.exists(mp.players.local.vehicle) && await vehicles.hasSync(mp.players.local.vehicle.remoteId, 'lastStockPos')) {
+        try {
+            let pos = JSON.parse(await vehicles.getSync(mp.players.local.vehicle.remoteId, 'lastStockPos'));
+            let rot = await vehicles.getSync(mp.players.local.vehicle.remoteId, 'lastStockRot');
+            user.teleportVehV(pos, rot);
+        }
+        catch (e) {
+            user.teleportVeh(x, y, z, rot);
+        }
+    }
+    else*/
     user.teleportVeh(x, y, z, rot);
 };
 

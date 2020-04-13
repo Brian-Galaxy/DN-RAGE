@@ -119,7 +119,7 @@ vehicles.loadUserVehicleByRow = (row) => {
         let pos = vehicles.getParkPosition(row['class']);
         parkPos = pos.pos;
         parkRot = pos.rot;
-        vehicles.park(row['id'], parkPos.x, parkPos.y, parkPos.z, parkRot);
+        //vehicles.park(row['id'], parkPos.x, parkPos.y, parkPos.z, parkRot);
     }
 
     vehicles.set(row['id'], 'id', row['id']);
@@ -134,6 +134,7 @@ vehicles.loadUserVehicleByRow = (row) => {
     vehicles.set(row['id'], 'color3', row['color3']);
     vehicles.set(row['id'], 'colorwheel', row['colorwheel']);
     vehicles.set(row['id'], 'livery', row['livery']);
+    vehicles.set(row['id'], 'extra', row['extra']);
     vehicles.set(row['id'], 'is_neon', row['is_neon']);
     vehicles.set(row['id'], 'neon_r', row['neon_r']);
     vehicles.set(row['id'], 'neon_g', row['neon_g']);
@@ -330,55 +331,41 @@ vehicles.spawnFractionCar = (id) => {
                 livery = methods.getRandomInt(0, 6);
                 numberStyle = 4;
 
-                switch (model)
+                switch (info.name)
                 {
-                    case -590854301:
-                    case 1982188179:
-                    case -1286617882:
-                    case -118239187:
-                    case 376094636:
-                    {
-                        livery = methods.getRandomInt(3, 6);
-                        break;
-                    }
-                    case 353883353: {
+                    case 'Polmav': {
                         livery = 0;
                         break;
                     }
-                    case -561505450:
-                    case -271532569:
-                    case -660061144:
+                    case 'Police2':
+                    case 'Police3':
                     {
-                        livery = methods.getRandomInt(2, 4);
+                        livery = methods.getRandomInt(0, 8);
                         break;
                     }
-                    case 1162796823:
-                    case -595004596:
-                    case -1973172295:
+                    case 'Police4':
                     {
-                        let colors = [0, 2, 141, 7, 34, 134, 146];
+                        let colors = [0, 2, 7, 34, 75, 134, 141, 146];
 
-                        color1 = colors[methods.getRandomInt(0, 6)];
+                        color1 = colors[methods.getRandomInt(0, colors.length)];
                         color2 = color1;
                         break;
                     }
-                    case 1127131465:
+                    case 'FBI':
+                    case 'FBI2':
                     {
                         let colors = [0, 3, 6, 131, 134];
-                        color1 = colors[methods.getRandomInt(0, 4)];
+                        color1 = colors[methods.getRandomInt(0, colors.length)];
                         color2 = color1;
                         break;
                     }
-                    case -1647941228:
-                        color1 = 112;
-                        color2 = 112;
-                        break;
-                    case 837858166:
-                    case 745926877:
+                    case 'Annihilator':
+                    case 'Buzzard':
+                    case 'Buzzard2':
                         color1 = 0;
                         color2 = 0;
                         break;
-                    case 2071877360:
+                    case 'Insurgent2':
                         color1 = 3;
                         color2 = 3;
                         break;
@@ -390,51 +377,31 @@ vehicles.spawnFractionCar = (id) => {
                 livery = methods.getRandomInt(0, 6);
                 numberStyle = 4;
 
-                switch (model)
+                switch (info.name)
                 {
-                    case -590854301:
-                    case 1982188179:
-                    case -1286617882:
-                    case -118239187:
-                    case 376094636:
+                    case 'Police4':
                     {
-                        livery = methods.getRandomInt(3, 6);
-                        break;
-                    }
-                    case -561505450:
-                    case -271532569:
-                    case -660061144:
-                    {
-                        livery = methods.getRandomInt(2, 4);
-                        break;
-                    }
-                    case 1162796823:
-                    case -595004596:
-                    case -1973172295:
-                    {
-                        let colors = [0, 2, 141, 7, 34, 134, 146];
+                        let colors = [0, 2, 7, 34, 75, 134, 141, 146];
 
-                        color1 = colors[methods.getRandomInt(0, 6)];
+                        color1 = colors[methods.getRandomInt(0, colors.length)];
                         color2 = color1;
                         break;
                     }
-                    case 1127131465:
+                    case 'FBI':
+                    case 'FBI2':
                     {
                         let colors = [0, 3, 6, 131, 134];
-                        color1 = colors[methods.getRandomInt(0, 4)];
+                        color1 = colors[methods.getRandomInt(0, colors.length)];
                         color2 = color1;
                         break;
                     }
-                    case -1647941228:
-                        color1 = 112;
-                        color2 = 112;
-                        break;
-                    case 837858166:
-                    case 745926877:
+                    case 'Annihilator':
+                    case 'Buzzard':
+                    case 'Buzzard2':
                         color1 = 0;
                         color2 = 0;
                         break;
-                    case 2071877360:
+                    case 'Insurgent2':
                         color1 = 152;
                         color2 = 152;
                         break;
@@ -542,6 +509,13 @@ vehicles.spawnFractionCar = (id) => {
                     veh.setMod(18, 0);
                     veh.setMod(16, 2);
                     veh.setVariable('boost', 1.79);
+
+                    if (info.name === 'Police' || info.name === 'Sheriff') {
+                        vSync.setExtraState(veh, methods.getRandomInt(0, 3));
+                    }
+                    if (info.name === 'Police2' || info.name === 'Police3' || info.name === 'Police4') {
+                        vSync.setExtraState(veh, methods.getRandomInt(0, 2));
+                    }
                 }
                 catch (e) {
                     methods.debug(e);
@@ -626,6 +600,7 @@ vehicles.save = (id) => {
         sql = sql + ", cop_park_name = '" + vehicles.get(id, "cop_park_name") + "'";
         sql = sql + ", s_mp = '" + methods.parseFloat(vehicles.get(id, "s_mp")) + "'";
         sql = sql + ", livery = '" + methods.parseInt(vehicles.get(id, "livery")) + "'";
+        sql = sql + ", extra = '" + methods.parseInt(vehicles.get(id, "extra")) + "'";
         /*sql = sql + ", x = '" + methods.parseFloat(vehicles.get(id, "x")) + "'";
         sql = sql + ", y = '" + methods.parseFloat(vehicles.get(id, "y")) + "'";
         sql = sql + ", z = '" + methods.parseFloat(vehicles.get(id, "z")) + "'";
@@ -713,17 +688,41 @@ vehicles.respawn = (vehicle) => {
     try {
         if (vehicle.getVariable('useless'))
             return;
-        methods.debug('vehicles.respawn');
-        let containerId = vehicle.getVariable('container');
-        if (containerId != undefined && vehicle.getVariable('user_id') > 0)
-            vehicles.spawnPlayerCar(containerId);
-        let fractionId = vehicle.getVariable('fraction_id');
-        if (fractionId > 0) {
-            let info = vehicles.getFractionVehicleInfo(vehicle.getVariable('veh_id'));
-            if (info.is_default)
-                vehicles.spawnFractionCar(info.id);
+
+        try {
+            vehicle._attachments.forEach(attach => {
+                try {
+                    vehicle.addAttachment(attach, true);
+                }
+                catch (e) {
+                    
+                }
+            });
         }
-        vehicle.destroy();
+        catch (e) {
+            
+        }
+        
+        setTimeout(function () {
+            if (!vehicles.exists(vehicle))
+                return;
+           try {
+               methods.debug('vehicles.respawn');
+               let containerId = vehicle.getVariable('container');
+               if (containerId != undefined && vehicle.getVariable('user_id') > 0)
+                   vehicles.spawnPlayerCar(containerId);
+               let fractionId = vehicle.getVariable('fraction_id');
+               if (fractionId > 0) {
+                   let info = vehicles.getFractionVehicleInfo(vehicle.getVariable('veh_id'));
+                   if (info.is_default)
+                       vehicles.spawnFractionCar(info.id);
+               }
+               vehicle.destroy();
+           }
+           catch (e) {
+               
+           }
+        }, 100)
     }
     catch (e) {
         methods.debug(e);
@@ -914,7 +913,7 @@ vehicles.updateOwnerInfo = function (id, userId, userName) {
 
     if (userId == 0) {
         vehicles.park(id, 0, 0, 0, 0);
-        mysql.executeQuery("UPDATE cars SET user_name = '" + userName + "', user_id = '" + userId + "', number = '" + vehicles.generateNumber() + "', tax_money = '0', s_mp = '0', is_neon = '0', neon_r = '0', neon_g = '0', neon_b = '0', upgrade = '{\"18\":-1}' where id = '" + id + "'");
+        mysql.executeQuery("UPDATE cars SET user_name = '" + userName + "', user_id = '" + userId + "', number = '" + vehicles.generateNumber() + "', tax_money = '0', s_mp = '0', is_neon = '0', neon_r = '0', neon_g = '0', neon_b = '0', extra = '0', upgrade = '{\"18\":-1}' where id = '" + id + "'");
     }
 };
 
@@ -1003,6 +1002,10 @@ vehicles.setTunning = (veh) => {
                     veh.setNeonColor(car.get('neon_r'), car.get('neon_g'), car.get('neon_b'));
 
                 veh.livery = car.get('livery');
+                /*for(let i = 0; i < 10; i++)
+                    veh.setExtra(i, false);
+                veh.setExtra(car.get('extra'), true);*/
+                vSync.setExtraState(veh, car.get('extra'));
 
                 if (car.has('upgrade')) {
 
@@ -1236,6 +1239,21 @@ vehicles.lockStatus = (player, vehicle) => {
             player.notify('Вы ~g~открыли~s~ транспорт');
         else
             player.notify('Вы ~r~закрыли~s~ транспорт');
+
+        if (!player.vehicle) {
+            user.playAnimation(player, "anim@mp_player_intmenu@key_fob@", "fob_click", 48);
+            player.addAttachment('pickPick');
+            setTimeout(function () {
+                try {
+                    if (!user.isLogin(player))
+                        return;
+                    player.addAttachment('pickPick', true);
+                }
+                catch (e) {
+
+                }
+            }, 2500)
+        }
     }
     catch (e) {
         console.log(e);

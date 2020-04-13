@@ -10,6 +10,7 @@ enums.shopList = [];
 enums.overlays = [];
 enums.tprint = [];
 enums.tattooList = [];
+enums.maskList = [];
 enums.vehicleInfo = [];
 
 enums.get = function(_enum){
@@ -22,6 +23,7 @@ enums.get = function(_enum){
         case 'vehicleInfo': return enums.vehicleInfo;
         case 'overlays': return enums.overlays;
         case 'printList': return enums.tprint;
+        case 'maskList': return enums.maskList;
         case 'tattooList': return enums.tattooList;
         case 'fractionList': return enums.fractionListId;
         default: return undefined;
@@ -49,6 +51,16 @@ mp.events.add('client:enums:updateCloth1', (requestID, tattooList, printList, fr
         if (pendingRequests[requestID]) {
             pendingRequests[requestID]([tattooList, printList, fractionList]);
         }
+    } catch (e) {
+        console.log(e);
+        throw e;
+    }
+});
+
+// должно быть тут, иначе никак
+mp.events.add('client:enums:updateMask', (maskList) => {
+    try {
+        enums.maskList = enums.maskList.concat(maskList);
     } catch (e) {
         console.log(e);
         throw e;
@@ -93,9 +105,38 @@ enums.offsets = { //TODO
     business: 600000,
     stock: 700000,
     fraction: 800000,
+    fractionMafia: 850000,
 };
 
 enums.dispatchItemList = [];
+enums.dispatchMarkedList = [ //http://www.lapdonline.org/lapd_manual/volume_4.htm
+    'Adam',
+    'Boy',
+    'Charles',
+    'David',
+    'Edward',
+    'Frank',
+    'George',
+    'Henry',
+    'Ida',
+    'John',
+    'King',
+    'Lincoln',
+    'Mary',
+    'Nora',
+    'Ocean',
+    'Paul',
+    'Queen',
+    'Robert',
+    'Sam',
+    'Tom',
+    'Union',
+    'Victor',
+    'William',
+    'X-ray',
+    'Young',
+    'Zebra',
+];
 
 enums.networkList = [
     [-338.7884, -579.6178, 48.09489],
@@ -652,6 +693,30 @@ enums.garageNames = [
     'Многоуровневый',
 ];
 
+enums.maskClasses = [
+    "Байкер", //0
+    "Балаклавы", //1
+    "Битва на арене", //2
+    "Головные платки", //3
+    "День Св.Валентина", //4
+    "Животные", //5
+    "Запугивание", //6
+    "Зомби", //7
+    "Клоуны", //8
+    "Лыжные маски", //9
+    "Монстры", //10
+    "Казино", //11
+    "Пакеты", //12
+    "Персонажи", //13
+    "Преступления", //14
+    "Противогазы", //15
+    "Спортивные", //16
+    "Тактические", //17
+    "Традиционные", //18
+    "Рождество", //19
+    "Хеллуин", //20
+];
+
 enums.lscClassPrice = [
     ['Commercials', 1.2],
     ['Compacts', 1],
@@ -750,6 +815,7 @@ enums.lscNames = [
     ['Колёса', 0],
     ['Колёса', 1000],
     ['Крутящий момент', 5000],
+    ['Экстра тюнинг', 5000],
 ];
 
 enums.lscSNames = [
@@ -1128,6 +1194,1313 @@ enums.customIpl = [
 
 enums.fractionListId = [];
 
+enums.interiorProps = [
+    {
+        name: 'Arcade',
+        ipl: 'ch_DLC_Arcade',
+        radius: 300,
+        pos: new mp.Vector3(2730.000, -380.000, -49.000),
+        props: [
+            'Entity_set_arcade_set_ceiling_beams',
+            'Entity_set_arcade_set_ceiling_flat',
+            'Entity_set_arcade_set_ceiling_mirror',
+            'Entity_set_arcade_set_derelict',
+            'Entity_set_arcade_set_derelict_carpet',
+            'Entity_set_arcade_set_derelict_clean_up',
+            'Entity_set_arcade_set_streetx4',
+            'Entity_set_arcade_set_trophy_brawler',
+            'Entity_set_arcade_set_trophy_cabs',
+            'Entity_set_arcade_set_trophy_claw',
+            'Entity_set_arcade_set_trophy_gunner',
+            'Entity_set_arcade_set_trophy_king',
+            'Entity_set_arcade_set_trophy_love',
+            'Entity_set_arcade_set_trophy_monkey',
+            'Entity_set_arcade_set_trophy_patriot',
+            'Entity_set_arcade_set_trophy_racer',
+            'Entity_set_arcade_set_trophy_retro',
+            'Entity_set_arcade_set_trophy_strife',
+            'Entity_set_arcade_set_trophy_teller',
+            'Entity_set_big_screen',
+            'Entity_set_constant_geometry',
+            'Entity_set_floor_option_01',
+            'Entity_set_floor_option_02',
+            'Entity_set_floor_option_03',
+            'Entity_set_floor_option_04',
+            'Entity_set_floor_option_05',
+            'Entity_set_floor_option_06',
+            'Entity_set_floor_option_07',
+            'Entity_set_floor_option_08',
+            'Entity_set_hip_light_no_neon',
+            'Entity_set_mural_neon_option_01',
+            'Entity_set_mural_neon_option_02',
+            'Entity_set_mural_neon_option_03',
+            'Entity_set_mural_neon_option_04',
+            'Entity_set_mural_neon_option_05',
+            'Entity_set_mural_neon_option_06',
+            'Entity_set_mural_neon_option_07',
+            'Entity_set_mural_neon_option_08',
+            'Entity_set_mural_option_01',
+            'Entity_set_mural_option_02',
+            'Entity_set_mural_option_03',
+            'Entity_set_mural_option_04',
+            'Entity_set_mural_option_05',
+            'Entity_set_mural_option_06',
+            'Entity_set_mural_option_07',
+            'Entity_set_mural_option_08',
+            'Entity_set_ret_light_no_neon',
+            'Entity_set_screens'
+        ]
+    },
+    {
+        name: 'Arcade Garage',
+        ipl: 'ch_DLC_Plan',
+        radius: 500,
+        pos: new mp.Vector3(2722.300, -360.000, -53.500),
+        props: [
+            'Entity_Set_Plushie_01',
+            'Entity_Set_Plushie_02',
+            'Entity_Set_Plushie_03',
+            'Entity_Set_Plushie_04',
+            'Entity_Set_Plushie_05',
+            'Entity_Set_Plushie_06',
+            'Entity_Set_Plushie_07',
+            'Entity_Set_Plushie_08',
+            'Entity_Set_Plushie_09',
+            'Set_Plan_Cockroaches',
+            'Set_Plan_Drone_Parts',
+            'Set_Plan_Electric_Drill',
+            'Set_Plan_Fireman_Helmet',
+            'Set_Plan_Gruppe_Sechs_Outfits',
+            'Set_Plan_Hacking_Device',
+            'Set_Plan_Plastic_Explosives',
+            'Set_Plan_Stealth_Outfits',
+            'Set_Plan_Swipe_Card_01a',
+            'Set_Plan_Swipe_Card_01b',
+            'Set_Plan_Vault_Drill',
+            'Set_Plan_Vault_Drill_Alt',
+            'Set_Plan_Vault_KeyCard_01a',
+            'Set_Plan_Vault_Laser',
+            'Set_Plan_Vault_Laser_Alt',
+            'set_plan_arcade_x4',
+            'set_plan_bed',
+            'set_plan_casino',
+            'set_plan_computer',
+            'set_plan_garage',
+            'set_plan_hacker',
+            'set_plan_keypad',
+            'set_plan_mechanic',
+            'set_plan_no_bed',
+            'set_plan_plans',
+            'set_plan_pre_setup',
+            'set_plan_scribbles',
+            'set_plan_setup',
+            'set_plan_vault',
+            'set_plan_wall',
+            'set_plan_weapons'
+        ]
+    },
+    {
+        name: 'Penthouse Casino',
+        ipl: 'vw_casino_penthouse',
+        radius: 600,
+        pos: new mp.Vector3(976.636, 70.295, 115.164),
+        props: [
+            'Set_Pent_Tint_Shell',
+            'Set_Pent_Pattern_01',
+            'Set_Pent_Pattern_02',
+            'Set_Pent_Pattern_03',
+            'Set_Pent_Pattern_04',
+            'Set_Pent_Pattern_05',
+            'Set_Pent_Pattern_06',
+            'Set_Pent_Pattern_07',
+            'Set_Pent_Pattern_08',
+            'Set_Pent_Pattern_09',
+            'Set_Pent_Spa_Bar_Open',
+            'Set_Pent_Spa_Bar_Closed',
+            'Set_Pent_Media_Bar_Open',
+            'Set_Pent_Media_Bar_Closed',
+            'Set_Pent_Dealer',
+            'Set_Pent_NoDealer',
+            'Set_Pent_Arcade_Retro',
+            'Set_Pent_Arcade_Modern',
+            'Set_Pent_Bar_Clutter',
+            'Set_Pent_Clutter_01',
+            'Set_Pent_Clutter_02',
+            'Set_Pent_Clutter_03',
+            'Set_pent_bar_light_0',
+            'Set_pent_bar_light_01',
+            'Set_pent_bar_light_02',
+            'Set_pent_bar_party_0',
+            'Set_pent_bar_party_1',
+            'Set_pent_bar_party_2',
+            'Set_pent_bar_party_after',
+            'Set_Pent_GUEST_BLOCKER',
+            'Set_Pent_LOUNGE_BLOCKER',
+            'Set_Pent_OFFICE_BLOCKER',
+            'Set_Pent_CINE_BLOCKER',
+            'Set_Pent_SPA_BLOCKER',
+            'Set_Pent_BAR_BLOCKER',
+        ]
+    },
+    {
+        name: 'Casino',
+        ipl: 'vw_casino_main',
+        radius: 500,
+        pos: new mp.Vector3(1100.000, 220.000, -50.000),
+        props: [
+            'casino_manager_default',
+            'casino_manager_workout'
+        ]
+    },
+    {
+        name: 'Casino Garage',
+        ipl: 'vw_casino_garage',
+        radius: 500,
+        pos: new mp.Vector3(1295.000, 230.000, -50.000),
+        props: []
+    },
+    {
+        name: 'Casino Car Park',
+        ipl: 'vw_casino_carpark',
+        radius: 500,
+        pos: new mp.Vector3(1380.000, 200.000, -50.000),
+        props: []
+    },
+    {
+        name: 'Arena interior 1',
+        ipl: 'xs_arena_interior',
+        radius: 500,
+        pos: new mp.Vector3(2800.000, -3800.000, 100.000),
+        props: [
+            'Set_Pit_Fence_Closed',
+            'Set_Pit_Fence_Demolition',
+            'Set_Pit_Fence_Oval',
+            'set_pit_fence_ovala',
+            'set_pit_fence_ovalb',
+            'Set_Pit_Fence_Wall',
+            'set_wall_no_pit',
+            'set_centreline_dystopian_05',
+            'set_centreline_scifi_05',
+            'Set_CentreLine_Wasteland_05',
+            'Set_Turrets',
+            'set_turrets_scifi',
+            'set_turrets_wasteland',
+            'Set_Team_Band_A',
+            'Set_Team_Band_B',
+            'Set_Team_Band_C',
+            'Set_Team_Band_D',
+            'Set_Lights_atlantis',
+            'Set_Lights_evening',
+            'Set_Lights_hell',
+            'Set_Lights_midday',
+            'Set_Lights_morning',
+            'Set_Lights_night',
+            'set_lights_sfnight',
+            'Set_Lights_saccharine',
+            'Set_Lights_sandstorm',
+            'Set_Lights_storm',
+            'Set_Lights_toxic',
+            'Set_Dystopian_01',
+            'Set_Dystopian_02',
+            'Set_Dystopian_03',
+            'Set_Dystopian_04',
+            'Set_Dystopian_05',
+            'Set_Dystopian_06',
+            'Set_Dystopian_07',
+            'Set_Dystopian_08',
+            'Set_Dystopian_09',
+            'Set_Dystopian_10',
+            'Set_Dystopian_11',
+            'Set_Dystopian_12',
+            'Set_Dystopian_13',
+            'Set_Dystopian_14',
+            'Set_Dystopian_15',
+            'Set_Dystopian_16',
+            'Set_Dystopian_17',
+            'Set_Scifi_01',
+            'Set_Scifi_02',
+            'Set_Scifi_03',
+            'Set_Scifi_04',
+            'Set_Scifi_05',
+            'Set_Scifi_06',
+            'Set_Scifi_07',
+            'Set_Scifi_08',
+            'Set_Scifi_09',
+            'Set_Scifi_10',
+            'Set_Wasteland_01',
+            'Set_Wasteland_02',
+            'Set_Wasteland_03',
+            'Set_Wasteland_04',
+            'Set_Wasteland_05',
+            'Set_Wasteland_06',
+            'Set_Wasteland_07',
+            'Set_Wasteland_08',
+            'Set_Wasteland_09',
+            'Set_Wasteland_10',
+            'Set_Dystopian_Scene',
+            'Set_Scifi_Scene',
+            'Set_Wasteland_Scene',
+            'Set_Crowd_A',
+            'Set_Crowd_B',
+            'Set_Crowd_C',
+            'Set_Crowd_D'
+        ]
+    },
+    {
+        name: 'Arena Interior Mod',
+        ipl: 'xs_arena_interior_mod',
+        radius: 500,
+        pos: new mp.Vector3(205.000, 5180.000, -90.000),
+        props: [
+            'Set_Int_MOD_SHELL_DEF',
+            'Set_Int_MOD2_B1',
+            'Set_Int_MOD2_B2',
+            'Set_Int_MOD2_B_TINT',
+            'Set_Int_MOD_BOOTH_DEF',
+            'Set_Int_MOD_BOOTH_BEN',
+            'Set_Int_MOD_BOOTH_WP',
+            'Set_Int_MOD_BOOTH_COMBO',
+            'Set_Int_MOD_BEDROOM_BLOCKER',
+            'Set_Int_MOD_CONSTRUCTION_01',
+            'Set_Int_MOD_CONSTRUCTION_02',
+            'Set_Int_MOD_CONSTRUCTION_03',
+            'SET_OFFICE_STANDARD',
+            'SET_OFFICE_INDUSTRIAL',
+            'SET_OFFICE_HITECH',
+            'Set_Mod1_Style_01',
+            'Set_Mod1_Style_02',
+            'Set_Mod1_Style_03',
+            'Set_Mod1_Style_04',
+            'Set_Mod1_Style_05',
+            'Set_Mod1_Style_06',
+            'Set_Mod1_Style_07',
+            'Set_Mod1_Style_08',
+            'Set_Mod1_Style_09',
+            'Set_Mod2_Style_01',
+            'Set_Mod2_Style_02',
+            'Set_Mod2_Style_03',
+            'Set_Mod2_Style_04',
+            'Set_Mod2_Style_05',
+            'Set_Mod2_Style_06',
+            'Set_Mod2_Style_07',
+            'Set_Mod2_Style_08',
+            'Set_Mod2_Style_09',
+            'set_arena_peds',
+            'set_arena_no peds',
+            'SET_XMAS_DECORATIONS',
+            'Set_Int_MOD_TROPHY_CAREER',
+            'Set_Int_MOD_TROPHY_SCORE',
+            'Set_Int_MOD_TROPHY_WAGEWORKER',
+            'Set_Int_MOD_TROPHY_TIME_SERVED',
+            'Set_Int_MOD_TROPHY_GOT_ONE',
+            'Set_Int_MOD_TROPHY_OUTTA_HERE',
+            'Set_Int_MOD_TROPHY_SHUNT',
+            'Set_Int_MOD_TROPHY_BOBBY',
+            'Set_Int_MOD_TROPHY_KILLED',
+            'Set_Int_MOD_TROPHY_CROWD',
+            'Set_Int_MOD_TROPHY_DUCK',
+            'Set_Int_MOD_TROPHY_BANDITO',
+            'Set_Int_MOD_TROPHY_SPINNER',
+            'Set_Int_MOD_TROPHY_LENS',
+            'Set_Int_MOD_TROPHY_WAR',
+            'Set_Int_MOD_TROPHY_UNSTOPPABLE',
+            'Set_Int_MOD_TROPHY_CONTACT',
+            'Set_Int_MOD_TROPHY_TOWER',
+            'Set_Int_MOD_TROPHY_STEP',
+            'Set_Int_MOD_TROPHY_PEGASUS',
+            'SET_BANDITO_RC',
+            'SET_OFFICE_TRINKET_07',
+            'SET_OFFICE_TRINKET_06',
+            'SET_OFFICE_TRINKET_03',
+            'SET_OFFICE_TRINKET_04',
+            'SET_OFFICE_TRINKET_02',
+            'SET_OFFICE_TRINKET_01'
+        ]
+    },
+    {
+        name: 'Arena Interior Mod 2',
+        ipl: 'xs_arena_interior_mod_2',
+        radius: 500,
+        pos: new mp.Vector3(170.000, 5190.000, 10.000),
+        props: []
+    },
+    {
+        name: 'Arena Interior Vip',
+        ipl: 'xs_arena_interior_vip',
+        radius: 500,
+        pos: new mp.Vector3(2799.529, -3930.539, 184.000),
+        props: [
+            'VIP_XMAS_DECS'
+        ]
+    },
+    {
+        name: 'Nightclub',
+        ipl: '',
+        radius: 300,
+        pos: new mp.Vector3(-1604.664, -3012.583, -78.000),
+        props: [
+            'Int01_ba_security_upgrade',
+            'Int01_ba_equipment_setup',
+            'Int01_ba_Style01',
+            'Int01_ba_Style02',
+            'Int01_ba_Style03',
+            'Int01_ba_style01_podium',
+            'Int01_ba_style02_podium',
+            'Int01_ba_style03_podium',
+            'int01_ba_lights_screen',
+            'Int01_ba_Screen',
+            'Int01_ba_bar_content',
+            'Int01_ba_booze_01',
+            'Int01_ba_booze_02',
+            'Int01_ba_booze_03',
+            'Int01_ba_dj01',
+            'Int01_ba_dj02',
+            'Int01_ba_dj03',
+            'Int01_ba_dj04',
+            'DJ_01_Lights_01',
+            'DJ_01_Lights_02',
+            'DJ_01_Lights_03',
+            'DJ_01_Lights_04',
+            'DJ_02_Lights_01',
+            'DJ_02_Lights_02',
+            'DJ_02_Lights_03',
+            'DJ_02_Lights_04',
+            'DJ_03_Lights_01',
+            'DJ_03_Lights_02',
+            'DJ_03_Lights_03',
+            'DJ_03_Lights_04',
+            'DJ_04_Lights_01',
+            'DJ_04_Lights_02',
+            'DJ_04_Lights_03',
+            'DJ_04_Lights_04',
+            'light_rigs_off',
+            'Int01_ba_lightgrid_01',
+            'Int01_ba_Clutter',
+            'Int01_ba_equipment_upgrade',
+            'Int01_ba_clubname_01',
+            'Int01_ba_clubname_02',
+            'Int01_ba_clubname_03',
+            'Int01_ba_clubname_04',
+            'Int01_ba_clubname_05',
+            'Int01_ba_clubname_06',
+            'Int01_ba_clubname_07',
+            'Int01_ba_clubname_08',
+            'Int01_ba_clubname_09',
+            'Int01_ba_dry_ice',
+            'Int01_ba_deliverytruck',
+            'Int01_ba_trophy04',
+            'Int01_ba_trophy05',
+            'Int01_ba_trophy07',
+            'Int01_ba_trophy09',
+            'Int01_ba_trophy08',
+            'Int01_ba_trophy11',
+            'Int01_ba_trophy10',
+            'Int01_ba_trophy03',
+            'Int01_ba_trophy01',
+            'Int01_ba_trophy02',
+            'Int01_ba_trad_lights',
+            'Int01_ba_Worklamps'
+        ]
+    },
+    {
+        name: 'Nightclub Warehouse',
+        ipl: '',
+        radius: 500,
+        pos: new mp.Vector3(-1505.783, -3012.587, -80.000),
+        props: [
+            'Int02_ba_floor01',
+            'Int02_ba_floor02',
+            'Int02_ba_floor03',
+            'Int02_ba_floor04',
+            'Int02_ba_floor05',
+            'Int02_ba_sec_upgrade_grg',
+            'Int02_ba_sec_upgrade_strg',
+            'Int02_ba_sec_upgrade_desk',
+            'Int02_ba_storage_blocker',
+            'Int02_ba_garage_blocker',
+            'Int02_ba_FanBlocker01',
+            'Int02_ba_equipment_upgrade',
+            'Int02_ba_coke01',
+            'Int02_ba_coke02',
+            'Int02_ba_meth01',
+            'Int02_ba_meth02',
+            'Int02_ba_meth03',
+            'Int02_ba_meth04',
+            'Int02_ba_Weed01',
+            'Int02_ba_Weed02',
+            'Int02_ba_Weed03',
+            'Int02_ba_Weed04',
+            'Int02_ba_Weed05',
+            'Int02_ba_Weed06',
+            'Int02_ba_Weed07',
+            'Int02_ba_Weed08',
+            'Int02_ba_Weed09',
+            'Int02_ba_Weed10',
+            'Int02_ba_Weed11',
+            'Int02_ba_Weed12',
+            'Int02_ba_Weed13',
+            'Int02_ba_Weed14',
+            'Int02_ba_Weed15',
+            'Int02_ba_Weed16',
+            'Int02_ba_Forged01',
+            'Int02_ba_Forged02',
+            'Int02_ba_Forged03',
+            'Int02_ba_Forged04',
+            'Int02_ba_Forged05',
+            'Int02_ba_Forged06',
+            'Int02_ba_Forged07',
+            'Int02_ba_Forged08',
+            'Int02_ba_Forged09',
+            'Int02_ba_Forged10',
+            'Int02_ba_Forged11',
+            'Int02_ba_Forged12',
+            'Int02_ba_Cash01',
+            'Int02_ba_Cash02',
+            'Int02_ba_Cash03',
+            'Int02_ba_Cash04',
+            'Int02_ba_Cash05',
+            'Int02_ba_Cash06',
+            'Int02_ba_Cash07',
+            'Int02_ba_Cash08',
+            'Int02_ba_truckmod',
+            'Int02_ba_truckmod',
+            'Int02_ba_coke_EQP',
+            'Int02_ba_Cash_EQP',
+            'Int02_ba_Forged_EQP',
+            'Int02_ba_meth_EQP',
+            'Int02_ba_Weed_EQP',
+            'Int02_ba_DeskPC',
+            'Int02_ba_sec_desks_L1',
+            'Int02_ba_sec_desks_L2345',
+            'Int02_ba_sec_upgrade_desk02',
+            'Int02_ba_clutterstuff'
+        ]
+    },
+    {
+        name: 'Terrorbyte Interior',
+        ipl: '',
+        radius: 200,
+        pos: new mp.Vector3(-1421.015, -3012.587, -80.000),
+        props: [
+            'Int_03_ba_weapons_mod',
+            'Int_03_ba_drone',
+            'Int_03_ba_Design_01',
+            'Int_03_ba_Design_02',
+            'Int_03_ba_Design_03',
+            'Int_03_ba_Design_04',
+            'Int_03_ba_Design_05',
+            'Int_03_ba_Design_06',
+            'Int_03_ba_Design_07',
+            'Int_03_ba_Design_08',
+            'Int_03_ba_Design_09',
+            'Int_03_ba_Design_10',
+            'Int_03_ba_Design_11',
+            'Int_03_ba_Design_12',
+            'Int_03_ba_Design_13',
+            'Int_03_ba_Design_14',
+            'Int_03_ba_Design_15',
+            'Int_03_ba_Design_16',
+            'Int_03_ba_Design_17',
+            'Int_03_ba_Design_18',
+            'Int_03_ba_Design_19',
+            'Int_03_ba_Design_20',
+            'Int_03_ba_Design_21',
+            'Int_03_ba_Design_22',
+            'Int_03_ba_Design_23',
+            'Int_03_ba_Design_24',
+            'Int_03_ba_Design_25',
+            'Int_03_ba_bikemod',
+            'Int_03_ba_Tint',
+            'Int_03_ba_Light_Rig1',
+            'Int_03_ba_Light_Rig2',
+            'Int_03_ba_Light_Rig3',
+            'Int_03_ba_Light_Rig4',
+            'Int_03_ba_Light_Rig5',
+            'Int_03_ba_Light_Rig6',
+            'Int_03_ba_Light_Rig7',
+            'Int_03_ba_Light_Rig8',
+            'Int_03_ba_Light_Rig9'
+        ]
+    },
+    {
+        name: 'Facility',
+        ipl: '',
+        radius: 700,
+        pos: new mp.Vector3(345.0041, 4842.001, -59.9997),
+        props: [
+            'set_int_02_shell',
+            'set_int_02_lounge1',
+            'set_int_02_lounge2',
+            'set_int_02_lounge3',
+            'set_int_02_no_sleep',
+            'set_int_02_sleep',
+            'set_int_02_sleep2',
+            'set_int_02_sleep3',
+            'set_int_02_no_security',
+            'set_int_02_security',
+            'set_int_02_no_cannon',
+            'set_int_02_cannon',
+            'set_int_02_decal_01',
+            'set_int_02_decal_02',
+            'set_int_02_decal_03',
+            'set_int_02_decal_04',
+            'set_int_02_decal_05',
+            'set_int_02_decal_06',
+            'set_int_02_decal_07',
+            'set_int_02_decal_08',
+            'set_int_02_decal_09',
+            'set_int_02_trophy1',
+            'set_int_02_trophy_iaa',
+            'set_int_02_trophy_sub',
+            'Set_Int_02_Parts_Panther1',
+            'Set_Int_02_Parts_Panther2',
+            'Set_Int_02_Parts_Panther3',
+            'Set_Int_02_Parts_Riot1',
+            'Set_Int_02_Parts_Riot2',
+            'Set_Int_02_Parts_Riot3',
+            'Set_Int_02_Parts_Cheno1',
+            'Set_Int_02_Parts_Cheno2',
+            'Set_Int_02_Parts_Cheno3',
+            'Set_Int_02_Parts_Thruster1',
+            'Set_Int_02_Parts_Thruster2',
+            'Set_Int_02_Parts_Thruster3',
+            'Set_Int_02_Parts_Avenger1',
+            'Set_Int_02_Parts_Avenger2',
+            'Set_Int_02_Parts_Avenger3',
+            'set_int_02_clutter1',
+            'set_int_02_clutter2',
+            'set_int_02_clutter3',
+            'set_int_02_clutter4',
+            'set_int_02_clutter5',
+            'set_int_02_crewemblem',
+            'set_int_02_paramedic_complete',
+            'set_int_02_forcedentry_complete',
+            'set_int_02_aqualungs_complete',
+            'set_int_02_daylightrob_complete',
+            'set_int_02_burglary_complete',
+            'set_int_02_flightrecord_complete',
+            'Set_Int_02_outfit_paramedic',
+            'Set_Int_02_outfit_morgue',
+            'Set_Int_02_outfit_serverfarm',
+            'Set_Int_02_outfit_iaa',
+            'Set_Int_02_outfit_steal_avenger',
+            'Set_Int_02_outfit_foundry',
+            'Set_Int_02_outfit_riot_van',
+            'Set_Int_02_outfit_stromberg',
+            'Set_Int_02_outfit_sub_finale',
+            'Set_Int_02_outfit_predator',
+            'Set_Int_02_outfit_khanjali',
+            'Set_Int_02_outfit_volatol'
+        ]
+    },
+    {
+        name: 'Avenger Interior',
+        ipl: '',
+        radius: 300,
+        pos: new mp.Vector3(520.0, 4750.0, -70.0),
+        props: [
+            'shell_tint',
+            'control_1',
+            'control_2',
+            'control_3',
+            'weapons_mod',
+            'vehicle_mod',
+            'gold_bling'
+        ]
+    },
+    {
+        name: 'IAA Facility',
+        ipl: 'Name',
+        radius: 300,
+        pos: new mp.Vector3(2147.91, 2921.0, -61.9),
+        props: []
+    },
+    {
+        name: 'Submarine',
+        ipl: '',
+        radius: 500,
+        pos: new mp.Vector3(514.33, 4886.18, -62.59),
+        props: []
+    },
+    {
+        name: 'Server Farm',
+        ipl: '',
+        radius: 300,
+        pos: new mp.Vector3(2168.0, 2920.0, -84.0),
+        props: []
+    },
+    {
+        name: 'Smugglers Run Hangar',
+        ipl: '',
+        radius: 600,
+        pos: new mp.Vector3(-1266.802, -3014.837, -49.000),
+        props: [
+            'set_tint_shell',
+            'set_crane_tint',
+            'set_bedroom_tint',
+            'set_lighting_tint_props',
+            'set_modarea',
+            'set_office_basic',
+            'set_office_traditional',
+            'set_office_modern',
+            'set_bedroom_traditional',
+            'set_bedroom_modern',
+            'set_bedroom_clutter',
+            'set_bedroom_blinds_closed',
+            'set_bedroom_blinds_open',
+            'set_floor_1',
+            'set_floor_2',
+            'set_floor_decal_1',
+            'set_floor_decal_2',
+            'set_floor_decal_3',
+            'set_floor_decal_4',
+            'set_floor_decal_5',
+            'set_floor_decal_6',
+            'set_floor_decal_7',
+            'set_floor_decal_8',
+            'set_floor_decal_9',
+            'set_lighting_hangar_a',
+            'set_lighting_hangar_b',
+            'set_lighting_hangar_c',
+            'set_lighting_wall_neutral',
+            'set_lighting_wall_tint01',
+            'set_lighting_wall_tint02',
+            'set_lighting_wall_tint03',
+            'set_lighting_wall_tint04',
+            'set_lighting_wall_tint05',
+            'set_lighting_wall_tint06',
+            'set_lighting_wall_tint07',
+            'set_lighting_wall_tint08',
+            'set_lighting_wall_tint09'
+        ]
+    },
+    {
+        name: 'Bunker Interior',
+        ipl: '',
+        radius: 500,
+        pos: new mp.Vector3(899.5518,-3246.038, -98.04907),
+        props: [
+            'bunker_style_a',
+            'bunker_style_b',
+            'bunker_style_c',
+            'standard_bunker_set',
+            'upgrade_bunker_set',
+            'standard_security_set',
+            'security_upgrade',
+            'office_blocker_set',
+            'office_upgrade_set',
+            'gun_locker_upgrade',
+            'gun_range_blocker_set',
+            'gun_wall_blocker',
+            'gun_range_lights',
+            'Gun_schematic_set'
+        ]
+    },
+    {
+        name: 'Vehicle Warehouse',
+        ipl: 'imp_impexp_interior_placement_interior_1_impexp_intwaremed_milo_',
+        radius: 500,
+        pos: new mp.Vector3(994.5925, -3002.594, -39.64699),
+        props: [
+            'basic_style_set',
+            'urban_style_set',
+            'branded_style_set',
+            'door_blocker',
+            'car_floor_hatch'
+        ]
+    },
+    {
+        name: 'Warehouse Large',
+        ipl: 'ex_exec_warehouse_placement_interior_2_int_warehouse_l_dlc_milo',
+        radius: 500,
+        pos: new mp.Vector3(1006.967, -3102.079, -39.0035),
+        props: []
+    },
+    {
+        name: 'Warehouse Medium',
+        ipl: 'ex_exec_warehouse_placement_interior_0_int_warehouse_m_dlc_milo',
+        radius: 500,
+        pos: new mp.Vector3(1056.486, -3105.724, -39.00439),
+        props: []
+    },
+    {
+        name: 'Warehouse Small',
+        ipl: 'ex_exec_warehouse_placement_interior_1_int_warehouse_s_dlc_milo',
+        radius: 500,
+        pos: new mp.Vector3(1094.988, -3101.776, -39.00363),
+        props: []
+    },
+    {
+        name: 'Document Forgery Office',
+        ipl: 'bkr_biker_interior_placement_interior_6_biker_dlc_int_ware05_milo',
+        radius: 200,
+        pos: new mp.Vector3(1165, -3196.6, -39.01306),
+        props: [
+            'set_up',
+            'production',
+            'clutter',
+            'equipment_basic',
+            'security_low',
+            'interior_basic',
+            'equipment_upgrade',
+            'security_high',
+            'interior_upgrade',
+            'chair01',
+            'chair02',
+            'chair03',
+            'chair04',
+            'chair05',
+            'chair06',
+            'chair07'
+        ]
+    },
+    {
+        name: 'Counterfeit Cash Factory',
+        ipl: 'bkr_biker_interior_placement_interior_5_biker_dlc_int_ware04_milo',
+        radius: 200,
+        pos: new mp.Vector3(1121.897, -3195.338, -40.4025),
+        props: [
+            'counterfeit_setup',
+            'counterfeit_standard_equip',
+            'counterfeit_standard_equip_no_prod',
+            'counterfeit_low_security',
+            'counterfeit_security',
+            'counterfeit_upgrade_equip',
+            'counterfeit_upgrade_equip_no_prod',
+            'money_cutter',
+            'special_chairs',
+            'dryera_off',
+            'dryera_on',
+            'dryera_open',
+            'dryerb_off',
+            'dryerb_on',
+            'dryerb_open',
+            'dryerc_off',
+            'dryerc_on',
+            'dryerc_open',
+            'dryerd_off',
+            'dryerd_on',
+            'dryerd_open',
+            'counterfeit_cashpile10a',
+            'counterfeit_cashpile10b',
+            'counterfeit_cashpile10c',
+            'counterfeit_cashpile10d',
+            'counterfeit_cashpile20a',
+            'counterfeit_cashpile20b',
+            'counterfeit_cashpile20c',
+            'counterfeit_cashpile20d',
+            'counterfeit_cashpile100a',
+            'counterfeit_cashpile100b',
+            'counterfeit_cashpile100c',
+            'counterfeit_cashpile100d'
+        ]
+    },
+    {
+        name: 'Cocaine Lockup',
+        ipl: 'bkr_biker_interior_placement_interior_4_biker_dlc_int_ware03_milo',
+        radius: 300,
+        pos: new mp.Vector3(1093.6, -3196.6, -38.99841),
+        props: [
+            'set_up',
+            'security_low',
+            'equipment_basic',
+            'production_basic',
+            'coke_press_basic',
+            'table_equipment',
+            'security_high',
+            'equipment_upgrade',
+            'production_upgrade',
+            'coke_press_upgrade',
+            'table_equipment_upgrade',
+            'coke_cut_01',
+            'coke_cut_02',
+            'coke_cut_03',
+            'coke_cut_04',
+            'coke_cut_05'
+        ]
+    },
+    {
+        name: 'Weed Farm',
+        ipl: 'bkr_biker_interior_placement_interior_3_biker_dlc_int_ware02_milo',
+        radius: 300,
+        pos: new mp.Vector3(1051.491, -3196.536, -39.14842),
+        props: [
+            'weed_standard_equip',
+            'weed_upgrade_equip',
+            'weed_low_security',
+            'weed_security_upgrade',
+            'weed_set_up',
+            'weed_chairs',
+            'weed_production',
+            'weed_drying',
+            'weed_hosea',
+            'weed_hoseb',
+            'weed_hosec',
+            'weed_hosed',
+            'weed_hosee',
+            'weed_hosef',
+            'weed_hoseg',
+            'weed_hoseh',
+            'weed_hosei',
+            'weed_growtha_stage1',
+            'weed_growtha_stage2',
+            'weed_growtha_stage3',
+            'weed_growthb_stage1',
+            'weed_growthb_stage2',
+            'weed_growthb_stage3',
+            'weed_growthc_stage1',
+            'weed_growthc_stage2',
+            'weed_growthc_stage3',
+            'weed_growthd_stage1',
+            'weed_growthd_stage2',
+            'weed_growthd_stage3',
+            'weed_growthe_stage1',
+            'weed_growthe_stage2',
+            'weed_growthe_stage3',
+            'weed_growthf_stage1',
+            'weed_growthf_stage2',
+            'weed_growthf_stage3',
+            'weed_growthg_stage1',
+            'weed_growthg_stage2',
+            'weed_growthg_stage3',
+            'weed_growthh_stage1',
+            'weed_growthh_stage2',
+            'weed_growthh_stage3',
+            'weed_growthi_stage1',
+            'weed_growthi_stage2',
+            'weed_growthi_stage3',
+            'light_growtha_stage23_standard',
+            'light_growthb_stage23_standard',
+            'light_growthc_stage23_standard',
+            'light_growthd_stage23_standard',
+            'light_growthe_stage23_standard',
+            'light_growthf_stage23_standard',
+            'light_growthg_stage23_standard',
+            'light_growthh_stage23_standard',
+            'light_growthi_stage23_standard',
+            'light_growtha_stage23_upgrade',
+            'light_growthb_stage23_upgrade',
+            'light_growthc_stage23_upgrade',
+            'light_growthd_stage23_upgrade',
+            'light_growthe_stage23_upgrade',
+            'light_growthf_stage23_upgrade',
+            'light_growthg_stage23_upgrade',
+            'light_growthh_stage23_upgrade',
+            'light_growthi_stage23_upgrade'
+        ]
+    },
+    {
+        name: 'Meth Lab',
+        ipl: 'bkr_biker_interior_placement_interior_2_biker_dlc_int_ware01_milo',
+        radius: 300,
+        pos: new mp.Vector3(1009.5, -3196.6, -38.99682),
+        props: [
+            'meth_lab_basic',
+            'meth_lab_upgrade',
+            'meth_lab_production',
+            'meth_lab_security_high',
+            'meth_lab_setup',
+            'meth_lab_empty'
+        ]
+    },
+    {
+        name: 'Clubhouse 2',
+        ipl: 'bkr_biker_interior_placement_interior_1_biker_dlc_int_02_milo',
+        radius: 300,
+        pos: new mp.Vector3(998.4809, -3164.711, -38.90733),
+        props: [
+            'Walls_01',
+            'Walls_02',
+            'Furnishings_01',
+            'Furnishings_02',
+            'Decorative_01',
+            'Decorative_02',
+            'Mural_01',
+            'Mural_02',
+            'Mural_03',
+            'Mural_04',
+            'Mural_05',
+            'Mural_06',
+            'Mural_07',
+            'Mural_08',
+            'Mural_09',
+            'lower_walls_default',
+            'Mod_Booth',
+            'NO_MOD_BOOTH',
+            'Gun_Locker',
+            'NO_Gun_Locker',
+            'Cash_small',
+            'Cash_medium',
+            'Cash_large',
+            'Weed_small',
+            'Weed_medium',
+            'Weed_large',
+            'id_small',
+            'id_medium',
+            'id_large',
+            'coke_small',
+            'coke_medium',
+            'coke_large',
+            'meth_small',
+            'meth_medium',
+            'meth_large',
+            'counterfeit_small',
+            'counterfeit_medium',
+            'counterfeit_large'
+        ]
+    },
+    {
+        name: 'Clubhouse 1',
+        ipl: 'bkr_biker_interior_placement_interior_0_biker_dlc_int_01_milo',
+        radius: 300,
+        pos: new mp.Vector3(1107.04, -3157.399, -37.51859),
+        props: [
+            'Walls_01',
+            'Walls_02',
+            'Furnishings_01',
+            'Furnishings_02',
+            'Decorative_01',
+            'Decorative_02',
+            'Mural_01',
+            'Mural_02',
+            'Mural_03',
+            'Mural_04',
+            'Mural_05',
+            'Mural_06',
+            'Mural_07',
+            'Mural_08',
+            'Mural_09',
+            'Mod_Booth',
+            'NO_MOD_BOOTH',
+            'Gun_Locker',
+            'NO_Gun_Locker',
+            'Cash_stash1',
+            'Cash_stash2',
+            'Cash_stash3',
+            'Weed_stash1',
+            'Weed_stash2',
+            'Weed_stash3',
+            'id_stash1',
+            'id_stash2',
+            'id_stash3',
+            'coke_stash1',
+            'coke_stash2',
+            'coke_stash3',
+            'meth_stash1',
+            'meth_stash2',
+            'meth_stash3',
+            'counterfeit_stash1',
+            'counterfeit_stash2',
+            'counterfeit_stash3'
+        ]
+    },
+    {
+        name: 'Michaels house',
+        ipl: '',
+        radius: 300,
+        pos: new mp.Vector3(-803.5875, 178.61, 71.84795),
+        props: [
+            'V_Michael_M_items',
+            'V_Michael_D_items',
+            'V_Michael_S_items',
+            'V_Michael_L_Items',
+            'V_Michael_M_moved',
+            'V_Michael_D_Moved',
+            'V_Michael_S_items_swap',
+            'V_Michael_L_Moved',
+            'V_Michael_M_items_swap',
+            'V_Michael_FameShame',
+            'V_Michael_JewelHeist',
+            'Michael_premier',
+            'V_Michael_plane_ticket',
+            'burgershot_yoga',
+            'V_Michael_bed_Messy',
+            'V_Michael_bed_tidy'
+        ]
+    },
+    {
+        name: 'Franklins aunts house',
+        ipl: '',
+        radius: 300,
+        pos: new mp.Vector3(-12.29968, -1436.287, 30.46845),
+        props: [
+            'V_57_GangBandana',
+            'V_57_Safari',
+            'V_57_FranklinStuff',
+            'V_57_Franklin_LEFT'
+        ]
+    },
+    {
+        name: 'Franklins house',
+        ipl: '',
+        radius: 300,
+        pos: new mp.Vector3(-5.178349, 527.028, 174.0297),
+        props: [
+            'showhome_only',
+            'franklin_unpacking',
+            'franklin_settled',
+            'progress_tshirt',
+            'bong_and_wine',
+            'progress_flyer',
+            'progress_tux',
+            'locked',
+            'unlocked'
+        ]
+    },
+    {
+        name: 'Floyds house',
+        ipl: '',
+        radius: 300,
+        pos: new mp.Vector3(-1152.682, -1519.319, 11.03756),
+        props: [
+            'swap_clean_apt',
+            'layer_mess_A',
+            'layer_mess_B',
+            'layer_mess_C',
+            'layer_sextoys_a',
+            'layer_wade_sh*t',
+            'swap_wade_sofa_A',
+            'layer_debra_pic',
+            'layer_torture',
+            'swap_sofa_A',
+            'swap_sofa_B',
+            'layer_whiskey',
+            'swap_mrJam_A',
+            'swap_mrJam_B',
+            'swap_mrJam_C'
+        ]
+    },
+    {
+        name: 'Simeons dealership',
+        ipl: '',
+        radius: 300,
+        pos: new mp.Vector3(-46.84232, -1096.113, 26.06662),
+        props: [
+            'csr_beforeMission',
+            'csr_afterMissionA',
+            'csr_afterMissionB',
+            'csr_inMission',
+            'shutter_open',
+            'shutter_closed'
+        ]
+    },
+    {
+        name: 'Trevors Trailer Clean',
+        ipl: 'TrevorsTrailerTidy',
+        radius: 300,
+        pos: new mp.Vector3(1975.552, 3820.538, 33.44833),
+        props: [
+            'V_26_Trevor_Helmet1',
+            'V_26_Trevor_Helmet2',
+            'V_26_Trevor_Helmet3',
+            'V_24_Trevor_Briefcase1',
+            'V_24_Trevor_Briefcase2',
+            'V_24_Trevor_Briefcase3',
+            'V_26_Michael_Stay1',
+            'V_26_Michael_Stay2',
+            'V_26_Michael_Stay3'
+        ]
+    },
+    {
+        name: 'Stilt houses',
+        ipl: '',
+        radius: 300,
+        pos: new mp.Vector3(2.289937, -0.3508005, 0.3171616),
+        props: [
+            'Stilts_Kitchen_Window'
+        ]
+    },
+    {
+        name: 'CharCreator',
+        ipl: '',
+        radius: 300,
+        pos: new mp.Vector3(402.5164, -1002.847, -99.2587),
+        props: []
+    },
+    {
+        name: 'Mission Carpark',
+        ipl: '',
+        radius: 300,
+        pos: new mp.Vector3(405.9228, -954.1149, -99.6627),
+        props: []
+    },
+    {
+        name: 'Torture Room',
+        ipl: '',
+        radius: 300,
+        pos: new mp.Vector3(136.5146, -2203.149, 7.30914),
+        props: []
+    },
+    {
+        name: 'Solomons Office',
+        ipl: '',
+        radius: 300,
+        pos: new mp.Vector3(-1005.84, -478.92, 50.02733),
+        props: []
+    },
+    {
+        name: 'Psychiatriss Office',
+        ipl: '',
+        radius: 300,
+        pos: new mp.Vector3(-1908.024, -573.4244, 19.09722),
+        props: []
+    },
+    {
+        name: 'Omegas Garage',
+        ipl: '',
+        radius: 300,
+        pos: new mp.Vector3(2331.344, 2574.073, 46.68137),
+        props: []
+    },
+    {
+        name: 'Movie Theatre',
+        ipl: '',
+        radius: 300,
+        pos: new mp.Vector3(-1427.299, -245.1012, 16.8039),
+        props: []
+    },
+    {
+        name: 'Motel',
+        ipl: '',
+        radius: 300,
+        pos: new mp.Vector3(152.2605, -1004.471, -98.99999),
+        props: []
+    },
+    {
+        name: 'Madrazos Ranch',
+        ipl: '',
+        radius: 300,
+        pos: new mp.Vector3(1399, 1150, 115),
+        props: []
+    },
+    {
+        name: 'Life Invader Office',
+        ipl: '',
+        radius: 300,
+        pos: new mp.Vector3(-1044.193, -236.9535, 37.96496),
+        props: []
+    },
+    {
+        name: 'Lesters House',
+        ipl: '',
+        radius: 300,
+        pos: new mp.Vector3(1273.9, -1719.305, 54.77141),
+        props: []
+    },
+    {
+        name: 'FBI Top Floor',
+        ipl: '',
+        radius: 300,
+        pos: new mp.Vector3(134.5835, -749.339, 258.152),
+        props: []
+    },
+    {
+        name: 'FBI Floor 47',
+        ipl: '',
+        radius: 300,
+        pos: new mp.Vector3(134.5835, -766.486, 234.152),
+        props: []
+    },
+    {
+        name: 'FBI Floor 49',
+        ipl: '',
+        radius: 300,
+        pos: new mp.Vector3(134.635, -765.831, 242.152),
+        props: []
+    },
+    {
+        name: 'IAA Office',
+        ipl: '',
+        radius: 300,
+        pos: new mp.Vector3(117.22, -620.938, 206.1398),
+        props: []
+    },
+    {
+        name: 'Normal Cargo Ship',
+        ipl: 'cargoship',
+        radius: 600,
+        pos: new mp.Vector3(-163.3628, -2385.161, 5.999994),
+        props: []
+    },
+    {
+        name: 'Sunken Cargo Ship',
+        ipl: 'sunkcargoship',
+        radius: 600,
+        pos: new mp.Vector3(-163.3628, -2385.161, 5.999994),
+        props: []
+    },
+    {
+        name: 'Burning Cargo Ship',
+        ipl: 'SUNK_SHIP_FIRE',
+        radius: 600,
+        pos: new mp.Vector3(-163.3628, -2385.161, 5.999994),
+        props: []
+    },
+    {
+        name: 'Red Carpet',
+        ipl: 'redCarpet',
+        radius: 300,
+        pos: new mp.Vector3(300.5927, 300.5927, 104.3776),
+        props: []
+    },
+    {
+        name: 'Rekt Stilthouse Destroyed',
+        ipl: 'DES_StiltHouse_imapend',
+        radius: 500,
+        pos: new mp.Vector3(-1020.518, 663.27, 153.5167),
+        props: []
+    },
+    {
+        name: 'Rekt Stilthouse Rebuild',
+        ipl: 'DES_stilthouse_rebuild',
+        radius: 500,
+        pos: new mp.Vector3(-1020.518, 663.27, 153.5167),
+        props: []
+    },
+    {
+        name: 'Union Depository',
+        ipl: 'FINBANK',
+        radius: 400,
+        pos: new mp.Vector3(2.6968, -667.0166, 16.13061),
+        props: []
+    },
+    {
+        name: 'Stadium',
+        ipl: 'SP1_10_real_interior',
+        radius: 400,
+        pos: new mp.Vector3(-248.6731, -2010.603, 30.14562),
+        props: []
+    },
+    {
+        name: 'Max Renda Shop',
+        ipl: 'refit_unload',
+        radius: 300,
+        pos: new mp.Vector3(-585.8247, -282.72, 35.45475),
+        props: []
+    },
+    {
+        name: 'Jewel Store',
+        ipl: 'post_hiest_unload',
+        radius: 400,
+        pos: new mp.Vector3(-630.07, -236.332, 38.05704),
+        props: []
+    },
+    {
+        name: 'FIB Lobby',
+        ipl: 'FIBlobby',
+        radius: 300,
+        pos: new mp.Vector3(110.4, -744.2, 45.7496),
+        props: []
+    },
+    {
+        name: 'Lost MC Clubhouse',
+        ipl: 'bkr_bi_hw1_13_int',
+        radius: 300,
+        pos: new mp.Vector3(982.0083, -100.8747, 74.84512),
+        props: []
+    },
+];
+
 enums.animActions = [
     ["Поднять руки", "random@mugging3", "handsup_standing_base", 49],
     ["Поднять руки стоя на коленях", "random@arrests", "kneeling_arrest_idle", 9],
@@ -1325,68 +2698,212 @@ enums.animRemain = [
     ["Качаться", "anim@mp_player_intcelebrationmale@peace", "peace", 9]
 ];
 
-/*enums.scenarios = [
-    ["Сесть", "PROP_HUMAN_SEAT_BENCH"],
+//anim, disc, flag, time
+enums.scenarioList = {
+    "CODE_HUMAN_MEDIC_TIME_OF_DEATH": {
+        attachObject: true,
+        animationList: [
+            ["amb@medic@standing@timeofdeath@enter", "enter", 8, 0],
+            ["amb@medic@standing@timeofdeath@base", "base", 9, 0],
+        ],
+    },
+    "CODE_HUMAN_MEDIC_TIME_OF_DEATH_STOP": {
+        attachObject: true,
+        animationList: [
+            ["amb@medic@standing@timeofdeath@exit", "exit", 8, 0],
+        ],
+    },
+    "CODE_HUMAN_POLICE_CROWD_CONTROL": {
+        attachObject: false,
+        animationList: [
+            ["amb@code_human_police_crowd_control@idle_intro", "idle_intro", 8, 0],
+            ["amb@code_human_police_crowd_control@idle_a", "idle_a", 8, 0],
+        ],
+    },
+    "WORLD_HUMAN_AA_COFFEE": {
+        attachObject: true,
+        animationList: [
+            ["amb@world_human_aa_coffee@base", "base", 9, 0],
+        ],
+    },
+    "WORLD_HUMAN_AA_SMOKE": {
+        attachObject: true,
+        animationList: [
+            ["amb@world_human_aa_smoke@male@idle_a", "idle_a", 9, 0],
+        ],
+    },
+    "WORLD_HUMAN_DRUG_DEALER": {
+        attachObject: true,
+        animationList: [
+            ["amb@world_human_drug_dealer_hard@male@enter", "enter", 8, 0],
+            ["amb@world_human_drug_dealer_hard@male@idle_a", "idle_a", 9, 0],
+        ],
+    },
+    "WORLD_HUMAN_BINOCULARS": {
+        attachObject: true,
+        animationList: [
+            ["amb@world_human_binoculars@male@enter", "enter", 8, 0],
+            ["amb@world_human_binoculars@male@idle_a", "idle_b", 9, 0],
+        ],
+    },
+    "WORLD_HUMAN_BUM_FREEWAY": {
+        attachObject: true,
+        animationList: [
+            ["amb@world_human_bum_freeway@male@base", "base", 9, 0],
+        ],
+    },
+    "WORLD_HUMAN_CAR_PARK_ATTENDANT": {
+        attachObject: true,
+        animationList: [
+            ["amb@world_human_car_park_attendant@male@base", "base", 9, 0],
+        ],
+    },
+    "WORLD_HUMAN_CLIPBOARD": {
+        attachObject: true,
+        animationList: [
+            ["amb@world_human_clipboard@male@base", "base", 9, 0],
+        ],
+    },
+    "WORLD_HUMAN_DRINKING": {
+        attachObject: true,
+        animationList: [
+            ["amb@world_human_drinking@beer@male@enter", "enter", 8, 0],
+            ["amb@world_human_drinking@beer@male@base", "base", 9, 0],
+        ],
+    },
+    "WORLD_HUMAN_PROSTITUTE_HIGH_CLASS": {
+        attachObject: true,
+        animationList: [
+            ["amb@world_human_prostitute@hooker@enter", "enter", 8, 0],
+            ["amb@world_human_prostitute@hooker@base", "base", 9, 0],
+        ],
+    },
+    "WORLD_HUMAN_PUSH_UPS": {
+        attachObject: false,
+        animationList: [
+            ["amb@world_human_push_ups@male@enter", "enter", 8, 0],
+            ["amb@world_human_push_ups@male@base", "base", 9, 0],
+        ],
+    },
+    "WORLD_HUMAN_SIT_UPS": {
+        attachObject: false,
+        animationList: [
+            ["amb@world_human_sit_ups@male@enter", "enter", 8, 0],
+            ["amb@world_human_sit_ups@male@base", "base", 9, 0],
+        ],
+    },
+    "WORLD_HUMAN_SMOKING": {
+        attachObject: true,
+        animationList: [
+            ["amb@world_human_smoking@male@male_a@enter", "enter", 8, 0],
+            ["amb@world_human_smoking@male@male_a@base", "base", 9, 0],
+        ],
+    },
+    "WORLD_HUMAN_SMOKING_POT": {
+        attachObject: true,
+        animationList: [
+            ["amb@world_human_smoking_pot@male@base", "base", 9, 0],
+        ],
+    },
+    "WORLD_HUMAN_TOURIST_MAP": {
+        attachObject: true,
+        animationList: [
+            ["amb@world_human_tourist_map@male@base", "base", 9, 0],
+        ],
+    },
+    "WORLD_HUMAN_HAMMERING": {
+        attachObject: true,
+        animationList: [
+            ["amb@world_human_hammering@male@base", "base", 9, 0],
+        ],
+    },
+    "WORLD_HUMAN_WELDING": {
+        attachObject: true,
+        animationList: [
+            ["amb@world_human_welding@male@base", "base", 9, 0],
+        ],
+    },
+    "WORLD_HUMAN_CONST_DRILL": {
+        attachObject: true,
+        animationList: [
+            ["amb@world_human_const_drill@male@drill@base", "base", 9, 0],
+        ],
+    },
+    "WORLD_HUMAN_WORK_DIRT": {
+        attachObject: true,
+        animationList: [
+            ["missmic1leadinoutmic_1_mcs_2", "_leadin_trevor", 9, 0],
+        ],
+    },
+    "WORLD_HUMAN_GARDENER_LEAF_BLOWER": {
+        attachObject: true,
+        animationList: [
+            ["amb@world_human_gardener_leaf_blower@base", "base", 9, 0],
+        ],
+    },
+    "WORLD_HUMAN_GARDENER_PLANT": {
+        attachObject: true,
+        animationList: [
+            ["amb@world_human_gardener_plant@male@enter", "enter", 8, 0],
+            ["amb@world_human_gardener_plant@male@base", "base", 9, 0],
+        ],
+    },
+    "WORLD_HUMAN_STAND_FISHING": {
+        attachObject: true,
+        animationList: [
+            ["amb@world_human_stand_fishing@base", "base", 9, 0],
+        ],
+    },
+    "WORLD_HUMAN_PAPARAZZI": {
+        attachObject: true,
+        animationList: [
+            ["amb@world_human_paparazzi@male@enter", "enter", 8, 0],
+            ["amb@world_human_paparazzi@male@idle_a", "idle_c", 9, 0],
+        ],
+    },
+    "WORLD_HUMAN_MUSICIAN_1": {
+        attachObject: true,
+        animationList: [
+            ["amb@world_human_musician@bongos@male@base", "base", 9, 0],
+        ],
+    },
+    "WORLD_HUMAN_MUSICIAN_2": {
+        attachObject: true,
+        animationList: [
+            ["amb@world_human_musician@guitar@male@base", "base", 9, 0],
+        ],
+    },
+};
+
+enums.scenarios = [
     ["Записать в блокнот", "CODE_HUMAN_MEDIC_TIME_OF_DEATH"],
+    ["Читать документ", "WORLD_HUMAN_CLIPBOARD"],
     ["Регулировщик (Полиция)", "CODE_HUMAN_POLICE_CROWD_CONTROL"],
-    ["Осмотреть землю (Полиция)", "CODE_HUMAN_POLICE_INVESTIGATE"],
-    ["Фоткать на фотоаппарат", "WORLD_HUMAN_PAPARAZZI"],
-    ["Осмотреть труп", "CODE_HUMAN_MEDIC_TEND_TO_DEAD"],
     ["Кофе в руках", "WORLD_HUMAN_AA_COFFEE"],
-    ["Курить сигарету", "WORLD_HUMAN_AA_SMOKE"],
-    ["Курить траву", "WORLD_HUMAN_DRUG_DEALER"],
     ["Смотреть в бинокль", "WORLD_HUMAN_BINOCULARS"],
     ["Стоять с табличкой", "WORLD_HUMAN_BUM_FREEWAY"],
-    ["Спать", "WORLD_HUMAN_BUM_SLUMPED"],
-    ["Мыть руки в озере", "WORLD_HUMAN_BUM_WASH"],
     ["Регулировщик", "WORLD_HUMAN_CAR_PARK_ATTENDANT"],
-    ["Хлопать", "WORLD_HUMAN_CHEERING"],
-    ["Читать документ", "WORLD_HUMAN_CLIPBOARD"],
-    ["Руки на поясе", "WORLD_HUMAN_COP_IDLES"],
-    ["Пить пиво", "WORLD_HUMAN_DRINKING"],
-    ["Сфоткать на телефон", "WORLD_HUMAN_MOBILE_FILM_SHOCKING"],
-    ["Садовник - Убирать листья", "WORLD_HUMAN_GARDENER_LEAF_BLOWER"],
-    ["Садовник - Сажать", "WORLD_HUMAN_GARDENER_PLANT"],
-    ["Высматривать", "WORLD_HUMAN_GUARD_PATROL"],
-    ["Охрана", "WORLD_HUMAN_GUARD_STAND"],
-    ["Смотреть", "WORLD_HUMAN_HANG_OUT_STREET"],
-    ["Позировать", "WORLD_HUMAN_HUMAN_STATUE"],
-    ["Со шваброй", "WORLD_HUMAN_JANITOR"],
-    ["Бежать на месте", "WORLD_HUMAN_JOG_STANDING"],
-    ["Облокотиться на стену", "WORLD_HUMAN_LEANING"],
-    ["Мыть", "WORLD_HUMAN_MAID_CLEAN"],
-    ["Качок", "WORLD_HUMAN_MUSCLE_FLEX"],
-    ["Играть на инструменте", "WORLD_HUMAN_MUSICIAN"],
-    ["Фоткать на фотоаппарат", "WORLD_HUMAN_PAPARAZZI"],
-    ["Пить пиво", "WORLD_HUMAN_PARTYING"],
-    ["Сесть (Полулёжа)", "WORLD_HUMAN_PICNIC"],
-    ["Проститутка - Курить", "WORLD_HUMAN_PROSTITUTE_HIGH_CLASS"],
-    ["Проститутка", "WORLD_HUMAN_PROSTITUTE_LOW_CLASS"],
     ["Отжиматься", "WORLD_HUMAN_PUSH_UPS"],
-    ["Искать с фонариком", "WORLD_HUMAN_SECURITY_SHINE_TORCH"],
     ["Делать пресс", "WORLD_HUMAN_SIT_UPS"],
-    ["Курить 1", "WORLD_HUMAN_SMOKING"],
-    ["Курить 2", "WORLD_HUMAN_SMOKING_POT"],
-    ["Греться у костра", "WORLD_HUMAN_STAND_FIRE"],
-    ["Стоять покачиваясь 1", "WORLD_HUMAN_STAND_IMPATIENT"],
-    ["Стоять покачиваясь 2", "WORLD_HUMAN_STAND_IMPATIENT_UPRIGHT"],
-    ["Лазить в телефоне 1", "WORLD_HUMAN_STAND_MOBILE"],
-    ["Лазить в телефоне 2", "WORLD_HUMAN_STAND_MOBILE_UPRIGHT"],
-    ["Танцевать", "WORLD_HUMAN_STRIP_WATCH_STAND"],
-    ["Сесть полулёжа", "WORLD_HUMAN_STUPOR"],
-    ["Лечь на живот", "WORLD_HUMAN_SUNBATHE"],
-    ["Лечь на спину", "WORLD_HUMAN_SUNBATHE_BACK"],
-    ["Теннис", "WORLD_HUMAN_TENNIS_PLAYER"],
+    ["Пить пиво", "WORLD_HUMAN_DRINKING"],
+    ["Курить #1", "WORLD_HUMAN_AA_SMOKE"],
+    ["Курить #2", "WORLD_HUMAN_SMOKING"],
+    ["Курить #3", "WORLD_HUMAN_SMOKING_POT"],
+    ["Курить траву", "WORLD_HUMAN_DRUG_DEALER"],
+    ["Проститутка - Курить", "WORLD_HUMAN_PROSTITUTE_HIGH_CLASS"],
     ["Смотреть карту", "WORLD_HUMAN_TOURIST_MAP"],
-    ["Смотреть в телефон", "WORLD_HUMAN_TOURIST_MOBILE"],
-    ["Смотреть", "WORLD_HUMAN_WINDOW_SHOP_BROWSE"],
-    ["Йога", "WORLD_HUMAN_YOGA"],
-    ["Готовить на гриле", "PROP_HUMAN_BBQ"],
-    ["Что-то искать в ящике", "PROP_HUMAN_BUM_BIN"],
-    ["Оплатить за парковку", "PROP_HUMAN_PARKING_METER"],
-    ["Смотреть по сторонам", "CODE_HUMAN_CROSS_ROAD_WAIT"],
-    ["Высматривать", "CODE_HUMAN_MEDIC_KNEEL"]
-];*/
+    ["Играть на инструменте #1", "WORLD_HUMAN_MUSICIAN_1"],
+    ["Играть на инструменте #2", "WORLD_HUMAN_MUSICIAN_2"],
+
+    /*["Строитель 1", "WORLD_HUMAN_HAMMERING"],
+    ["Строитель 2", "WORLD_HUMAN_WELDING"],
+    ["Строитель 3", "WORLD_HUMAN_CONST_DRILL"],*/
+    ["Копать лопатой", "WORLD_HUMAN_WORK_DIRT"],
+    //["Садовник - Убирать листья", "WORLD_HUMAN_GARDENER_LEAF_BLOWER"],
+    ["Копать лопаткой", "WORLD_HUMAN_GARDENER_PLANT"],
+    //["Рыбачить", "WORLD_HUMAN_STAND_FISHING"],
+    ["Фоткать на фотоаппарат", "WORLD_HUMAN_PAPARAZZI"],
+];
 
 enums.getVehicleImg = (name) => {
     return 'https://dednet.ru/client/images/cars/' + name + '_1.jpg';

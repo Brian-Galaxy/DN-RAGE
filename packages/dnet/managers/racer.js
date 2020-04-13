@@ -781,7 +781,7 @@ racer.finish = function (player) {
                 player.notifyWithPicture('Arena RaceClub', '~g~' + racerList[currentRace].title, `~g~${user.getRpName(player)}~s~ занял ~g~${finishNumber}-ое~s~ место и выиграл ~g~${methods.moneyFormat(money)}`, 'CHAR_CARSITE4');
                 user.addCashMoney(player, money, finishNumber + ' место в гонке ' + racerList[currentRace].title);
             }
-
+            user.reset(player, 'isRaceLobby');
             user.save(player);
         }
         catch (e) {
@@ -796,6 +796,10 @@ racer.exit = function (player) {
         user.teleport(player, -253.9224, -1993.057, 30.14611);
         player.dimension = 0;
         user.setHealth(player, 100);
+
+        user.set(player, 'rating_racer_mmr', user.get(player, 'rating_racer_mmr') - 20);
+
+        user.reset(player, 'isRaceLobby');
     }
 };
 

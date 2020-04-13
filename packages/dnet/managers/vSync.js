@@ -36,9 +36,10 @@ vSync.VehicleSyncData = {
     InteriorLight: false,
     TaxiLight: false,
     SpotLight: false,
-    Anchor: false,
+    Anchor: true,
     Freeze: false,
     Collision: true,
+    Extra: 1,
 };
 
 let streamDist = 250;
@@ -294,6 +295,19 @@ vSync.getCollisionState = function(v) {
     return vSync.getVehicleSyncData(v).Collision;
 };
 
+vSync.setExtraState = function(v, status) {
+    if (!vehicles.exists(v))
+        return;
+    let data = vSync.getVehicleSyncData(v);
+    data.Extra = status;
+    vSync.updateVehicleSyncData(v, data);
+    mp.players.callInRange(v.position, streamDist, "vSync:setExtraState", [v.id, status]);
+};
+
+vSync.getExtraState = function(v) {
+    return vSync.getVehicleSyncData(v).Extra;
+};
+
 vSync.setSpotLightState = function(v, status) {
     if (!vehicles.exists(v))
         return;
@@ -390,6 +404,12 @@ mp.events.add('s:vSync:setCollisionState', (player, vId, status) => {
     let veh = mp.vehicles.at(vId);
     if (mp.players.exists(player) && vehicles.exists(veh))
         vSync.setCollisionState(veh, status);
+});
+
+mp.events.add('s:vSync:setExtraState', (player, vId, status) => {
+    let veh = mp.vehicles.at(vId);
+    if (mp.players.exists(player) && vehicles.exists(veh))
+        vSync.setExtraState(veh, status);
 });
 
 mp.events.add('s:vSync:setSpotLightState', (player, vId, status) => {

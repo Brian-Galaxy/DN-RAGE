@@ -39,6 +39,34 @@ let deathTimer = 0;
 
 let timer = {};
 
+let intervalMap = new Map();
+
+timer.createInterval = function(key, func, delay) {
+    if (intervalMap.has(key))
+        return null;
+    try {
+        let value = setInterval(func, delay);
+        intervalMap.set(key, value);
+    }
+    catch (e) {
+        methods.debug('TIMER_ERROR', key, e);
+    }
+};
+
+timer.deleteInterval = function(key) {
+    if (!intervalMap.has(key))
+        return false;
+    try {
+        clearInterval(intervalMap.get(key));
+        intervalMap.delete(key);
+        return true;
+    }
+    catch (e) {
+        
+    }
+    return false;
+};
+
 timer.setDeathTimer = function(sec) {
     deathTimer = sec;
     if (sec > 0)
@@ -172,13 +200,6 @@ timer.min15Timer = function() {
 };
 
 timer.ms50Timer = function() {
-
-    try {
-        isDisableControl = vehicles.checkerControl();
-    }
-    catch (e) {
-    }
-
     try {
 
         if (Container.Data.HasLocally(mp.players.local.remoteId, 'hasSeat')) {
@@ -191,6 +212,12 @@ timer.ms50Timer = function() {
 };
 
 timer.ms100Timer = function() {
+
+    try {
+        isDisableControl = vehicles.checkerControl();
+    }
+    catch (e) {
+    }
 
     try {
         ui.updateVehValues();
@@ -522,43 +549,43 @@ timer.secTimer = function() {
 
 timer.loadAll = function () {
     try {
-        setInterval(timer.min15Timer, 1000 * 60 * 16);
+        timer.createInterval('timer.min15Timer', timer.secTimer, 1000 * 60 * 15);
     }
     catch (e) {
         
     }
     try {
-        setInterval(timer.twoMinTimer, 1000 * 60 * 2);
+        timer.createInterval('timer.twoMinTimer', timer.secTimer, 1000 * 60 * 2);
     }
     catch (e) {
         
     }
     try {
-        setInterval(timer.twoSecTimer, 2000);
+        timer.createInterval('timer.twoSecTimer', timer.twoSecTimer, 2000);
     }
     catch (e) {
         
     }
     try {
-        setInterval(timer.tenSecTimer, 10000);
+        timer.createInterval('timer.tenSecTimer', timer.secTimer, 10000);
     }
     catch (e) {
         
     }
     try {
-        setInterval(timer.ms50Timer, 50);
+        timer.createInterval('timer.ms50Timer', timer.ms50Timer, 50);
     }
     catch (e) {
         
     }
     try {
-        setInterval(timer.ms100Timer, 100);
+        timer.createInterval('timer.ms100Timer', timer.ms100Timer, 100);
     }
     catch (e) {
 
     }
     try {
-        setInterval(timer.secTimer, 1000);
+        timer.createInterval('timer.secTimer', timer.secTimer, 1000);
     }
     catch (e) {
         

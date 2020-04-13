@@ -6,6 +6,7 @@ let fraction = require('../property/fraction');
 let user = require('../user');
 
 let gangWar = require('../managers/gangWar');
+let mafiaWar = require('../managers/mafiaWar');
 let racer = require('../managers/racer');
 
 let ems = require('./ems');
@@ -241,6 +242,29 @@ weather.timeSyncTimer = function() {
                 ems.createSmallRandom();
             }
         }
+
+        if (dateTime.getDate() % 3) {
+            if (dateTime.getHours() === 20 && dateTime.getMinutes() === 0)
+                mafiaWar.startWar(0);
+            if (dateTime.getHours() === 20 && dateTime.getMinutes() === 1)
+                mafiaWar.startWar(1);
+            if (dateTime.getHours() === 20 && dateTime.getMinutes() === 2)
+                mafiaWar.startWar(2);
+        }
+
+        if (dateTime.getDate() % 4) {
+            if (dateTime.getHours() === 20 && dateTime.getMinutes() === 0)
+                fraction.createCargoBigWar();
+            if (dateTime.getHours() === 20 && dateTime.getMinutes() === 10)
+                fraction.createCargoBigWar();
+            if (dateTime.getHours() === 20 && dateTime.getMinutes() === 20)
+                fraction.createCargoBigWar();
+        }
+
+        if (dateTime.getHours() === 20 && dateTime.getMinutes() === 30)
+            fraction.createCargoMafiaWar();
+        if (dateTime.getHours() === 21 && dateTime.getMinutes() === 0)
+            fraction.createCargoMafiaWar();
 
         if (dateTime.getHours() === 17 && dateTime.getMinutes() === 1 && gangWar.hasWar(0)) {
             let war = gangWar.getWar(0);

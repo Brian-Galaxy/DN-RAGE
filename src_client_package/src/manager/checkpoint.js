@@ -111,7 +111,7 @@ mp.events.add('render', () => {
             }
         });
     }
-    if (markerList.length > 0) {
+    /*if (markerList.length > 0) {
         markerList.forEach(function (item, idx) {
             if (methods.distanceToPos(playerPos, new mp.Vector3(item.x, item.y, item.z)) <= 100) {
                 mp.game.graphics.drawMarker(
@@ -126,7 +126,7 @@ mp.events.add('render', () => {
                 );
             }
         });
-    }
+    }*/
 });
 
 export default checkpoint;

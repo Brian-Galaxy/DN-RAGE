@@ -172,19 +172,34 @@ vShop.buy = function(player, model, color1, color2, shopId) {
     }
 
     let freeSlot = 0;
-    if (user.get(player, 'car_id1') == 0)
+    if (user.get(player, 'car_id1') === 0)
         freeSlot = 1;
-    else if (user.get(player, 'car_id2') == 0) {
+    else if (user.get(player, 'car_id2') === 0) {
         freeSlot = 2;
     }
-    else if (user.get(player, 'car_id3') == 0) {
+    else if (user.get(player, 'car_id3') === 0) {
         freeSlot = 3;
     }
-    else if (user.get(player, 'car_id4') == 0) {
+    else if (user.get(player, 'car_id4') === 0) {
         freeSlot = 4;
     }
-    else if (user.get(player, 'car_id5') == 0) {
+    else if (user.get(player, 'car_id5') === 0) {
         freeSlot = 5;
+    }
+    else if (user.get(player, 'car_id6') === 0 && user.get(player, 'car_id6_free')) {
+        freeSlot = 6;
+    }
+    else if (user.get(player, 'car_id7') === 0 && user.get(player, 'car_id7_free')) {
+        freeSlot = 7;
+    }
+    else if (user.get(player, 'car_id8') === 0 && user.get(player, 'car_id8_free')) {
+        freeSlot = 8;
+    }
+    else if (user.get(player, 'car_id9') === 0 && user.get(player, 'car_id9_free')) {
+        freeSlot = 9;
+    }
+    else if (user.get(player, 'car_id10') === 0 && user.get(player, 'car_id10_free')) {
+        freeSlot = 10;
     }
     /*else if (user.get(player, 'car_id6') == 0) {
         freeSlot = 6;
@@ -198,7 +213,7 @@ vShop.buy = function(player, model, color1, color2, shopId) {
         }
     }*/
 
-    if (freeSlot == 0) {
+    if (freeSlot === 0) {
         player.notify('~r~У Вас нет свободных слотов под транспорт');
         return;
     }
@@ -231,6 +246,8 @@ vShop.buy = function(player, model, color1, color2, shopId) {
                         vShop.sendNotify(player, shopId, 'Поздравляем', `Поздравляем с покупкой электрокара ~g~${vInfo.display_name}~s~.\n\nСпасибо за то, что сохраняете экологию ;)`);
                     else
                         vShop.sendNotify(player, shopId, 'Поздравляем', `Поздравляем с покупкой транспорта ~b~${vInfo.display_name}~s~.`);
+
+                    vShop.sendNotify(player, shopId, '~r~Налог', `Учтите, что за ваш транспорт необходимо платить налог в здании правительства.`);
 
                     let serverId = vehicles.get(id, 'serverId');
                     let veh = mp.vehicles.at(serverId);

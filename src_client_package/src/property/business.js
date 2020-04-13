@@ -2,6 +2,7 @@ import Container from '../modules/data';
 import methods from '../modules/methods';
 import ui from '../modules/ui';
 import enums from '../enums';
+import timer from "../manager/timer";
 
 let business = {};
 
@@ -164,7 +165,7 @@ business.loadScaleform = async function() {
         methods.debug(e);
     }
 
-    setInterval(business.updateTarget, 5000);
+    timer.createInterval('business.updateTarget', business.updateTarget, 5000);
 };
 
 business.setScaleformName = function(scName) {

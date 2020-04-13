@@ -802,6 +802,21 @@ phone.showAppFraction2 = async function() {
     };
     menu.items.push(titleMenu);
 
+    let titleMenu1 = {
+        title: 'Связь',
+        umenu: [
+            {
+                title: "Написать членам организации",
+                modalTitle: 'Введите текст',
+                modalButton: ['Отмена', 'Отправить'],
+                type: 8,
+                clickable: true,
+                params: { name: "sendFractionMessage2" }
+            },
+        ],
+    };
+    menu.items.push(titleMenu1);
+
     if (!user.isLeader2()) {
         let titleMenu2 = {
             title: 'Покинуть организацию',
@@ -894,7 +909,7 @@ phone.showAppFraction2 = async function() {
         menu.items.push(titleMenu);
     }
 
-    if (user.isLeader2()) {
+    if ((user.isLeader2() && !fData.get('is_war') && !fData.get('is_mafia')) || user.isAdmin(3)) {
         let titleMenu = {
             title: 'Раздел для лидера',
             umenu: [
@@ -940,6 +955,21 @@ phone.showAppFraction = function() {
         ],
     };
 
+    let titleMenu1 = {
+        title: 'Связь',
+        umenu: [
+            {
+                title: "Написать членам организации",
+                modalTitle: 'Введите текст',
+                modalButton: ['Отмена', 'Отправить'],
+                type: 8,
+                clickable: true,
+                params: { name: "sendFractionMessage" }
+            },
+        ],
+    };
+    menu.items.push(titleMenu1);
+
     if (user.isGos()) {
         let titleMenu = {
             title: 'Служебный раздел',
@@ -961,14 +991,6 @@ phone.showAppFraction = function() {
                     type: 1,
                     clickable: true,
                     params: { name: "dispatcherDep" }
-                },
-                {
-                    title: "Написать членам организации",
-                    modalTitle: 'Введите текст',
-                    modalButton: ['Отмена', 'Отправить'],
-                    type: 8,
-                    clickable: true,
-                    params: { name: "sendFractionMessage" }
                 },
             ],
         };
@@ -1918,7 +1940,7 @@ phone.showAppFractionHierarchy2 = async function() {
                     {
                         title: 'Основной раздел',
                         umenu: [
-                            {
+                            /*{
                                 title: fractionItem.get('name'),
                                 modalTitle: 'Введите название организации',
                                 modalValue: fractionItem.get('name'),
@@ -1926,7 +1948,7 @@ phone.showAppFractionHierarchy2 = async function() {
                                 type: 8,
                                 params: { name: "editFractionName" },
                                 clickable: true,
-                            },
+                            },*/
                             {
                                 title: 'Создать новый раздел',
                                 modalTitle: 'Введите название раздела',
@@ -1962,6 +1984,19 @@ phone.showAppFractionHierarchy2 = async function() {
                     }
                 ]
             };
+
+            if ((!fractionItem.get('is_war') && !fractionItem.get('is_mafia')) || user.isAdmin(3)) {
+                let titleMenu = {
+                    title: fractionItem.get('name'),
+                    modalTitle: 'Введите название организации',
+                    modalValue: fractionItem.get('name'),
+                    modalButton: ['Отмена', 'Переименовать'],
+                    type: 8,
+                    params: { name: "editFractionName" },
+                    clickable: true,
+                };
+                menu.items[0].umenu.push(titleMenu);
+            }
 
             fractionItemDep.forEach((item, i) => {
                 let menuItem = {
@@ -2702,6 +2737,12 @@ phone.consoleCallback = async function(command) {
                 phone.addConsoleCommand('python [filename] [params]');
         }
         else if (cmd === 'apt-get') {
+
+            if (user.isGos()) {
+                phone.addConsoleCommand('Access Denied');
+                return;
+            }
+
             if (args.length === 0 || args[0] === '-h') {
                 phone.addConsoleCommand('Usage: apt-get [options]');
                 phone.addConsoleCommand(' ');
@@ -2825,6 +2866,10 @@ phone.consoleCallback = async function(command) {
             }
         }
         else if (cmd === 'wget') {
+            if (user.isGos()) {
+                phone.addConsoleCommand('Access Denied');
+                return;
+            }
             if (args.length === 0 || args[0] === '-h') {
                 phone.addConsoleCommand('Usage: wget [url]');
                 phone.addConsoleCommand('For example: wget https://example.com/');
@@ -2895,6 +2940,10 @@ phone.consoleCallback = async function(command) {
             phone.addConsoleCommand(`You need update trust level, if you want hack the fucking world`);
         }
         else if (cmd === 'python') {
+            if (user.isGos()) {
+                phone.addConsoleCommand('Access Denied');
+                return;
+            }
             if (args.length === 0 || args[0] === '-h') {
                 phone.addConsoleCommand('Usage: python [file] [params]');
             }
@@ -2978,6 +3027,9 @@ phone.consoleCallback = async function(command) {
                 let hash3 = methods.md5(atmHandle.toString()).slice(8, 11);
                 let hash4 = methods.md5(atmHandle.toString()).slice(12, 15);
 
+                dispatcher.sendLocalPos('Код 3', `Сработала система безопасности банкомата, взлом происходил с телефона: ${methods.phoneFormat(user.getCache('phone'))}`, mp.players.local.position, 2);
+                dispatcher.sendLocalPos('Код 3', `Сработала система безопасности банкомата, взлом происходил с телефона: ${methods.phoneFormat(user.getCache('phone'))}`, mp.players.local.position, 5);
+
                 await phone.consoleLoad('Installing backdoor');
                 await phone.consoleAwait('Scanning hashes ');
                 await phone.consoleAwait('Send package ', 100, 100);
@@ -2985,8 +3037,6 @@ phone.consoleCallback = async function(command) {
                 if (userHash1 !== hash1 || userHash2 !== hash2 || userHash3 !== hash3 || userHash4 !== hash4) {
                     phone.addConsoleCommand('Hacking attempt, access denied');
                     user.setById('atmTimeout', true);
-                    dispatcher.sendLocalPos('Код 3', `Сработала система безопасности банкомата, взлом происходил с телефона: ${methods.phoneFormat(user.getCache('phone'))}`, mp.players.local.position, 2);
-                    dispatcher.sendLocalPos('Код 3', `Сработала система безопасности банкомата, взлом происходил с телефона: ${methods.phoneFormat(user.getCache('phone'))}`, mp.players.local.position, 5);
                     isAtmHack = false;
                     return;
                 }
@@ -3022,6 +3072,10 @@ phone.consoleCallback = async function(command) {
             }
         }
         else if (cmd === 'bash') {
+            if (user.isGos()) {
+                phone.addConsoleCommand('Access Denied');
+                return;
+            }
             if (args.length === 0 || args[0] === '-h') {
                 phone.addConsoleCommand('Usage: bash [file] [params]');
             }
@@ -3129,7 +3183,10 @@ phone.consoleCallback = async function(command) {
             phone.addConsoleCommand('Access denied');
         }
         else if (cmd === 'arp-scan') {
-
+            if (user.isGos()) {
+                phone.addConsoleCommand('Access Denied');
+                return;
+            }
             if (!user.hasCache('package-' + cmd)) {
                 phone.addConsoleCommand(`${cmd}: command not found. Maybe do you want apt-get install ${cmd}? `);
                 return;
@@ -3166,8 +3223,6 @@ phone.consoleCallback = async function(command) {
                     phone.addConsoleCommand('ATM Not found');
                     return;
                 }
-                dispatcher.sendLocalPos('Код 3', `Сработала система безопасности банкомата, взлом происходил с телефона: ${methods.phoneFormat(user.getCache('phone'))}`, mp.players.local.position, 2);
-                dispatcher.sendLocalPos('Код 3', `Сработала система безопасности банкомата, взлом происходил с телефона: ${methods.phoneFormat(user.getCache('phone'))}`, mp.players.local.position, 5);
                 phone.addConsoleCommand('ATM has been found');
                 let atmHandle = timer.getAtmHandle();
                 phone.addConsoleCommand(`Hash1: ${methods.md5(atmHandle.toString()).slice(0, 3)}`);
@@ -3345,7 +3400,7 @@ phone.consoleCallback = async function(command) {
                     }
 
                     if (user.hasCache('isSellUser')) {
-                        mp.game.ui.notifications.show(`~r~Вы уже получили задание на угон`);
+                        mp.game.ui.notifications.show(`~r~Вы уже получили задание на похищение`);
                         return;
                     }
 
@@ -3560,6 +3615,7 @@ phone.callBackModalInput = async function(paramsJson, text) {
                 mp.game.ui.notifications.show(`~r~Вы не ввели слово "да"`);
         }
         if (params.name == 'editFractionName') {
+
             mp.events.callRemote('server:phone:editFractionName', text);
             setTimeout(phone.showAppFractionHierarchy2, 300);
         }
@@ -3741,6 +3797,10 @@ phone.callBackModalInput = async function(paramsJson, text) {
                     methods.notifyWithPictureToFraction(title, `Организация`, text, 'CHAR_DEFAULT', user.getCache('fraction_id'));
                     break;
             }
+        }
+        if (params.name == 'sendFractionMessage2') {
+            let title = user.getCache('name');
+            methods.notifyWithPictureToFraction2(title, `Организация`, text, 'CHAR_DEFAULT', user.getCache('fraction_id2'));
         }
         if (params.name == 'sendFractionNews') {
             let title = user.getCache('name');

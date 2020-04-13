@@ -1,6 +1,8 @@
 import methods from '../modules/methods';
 import user from '../user';
+
 import weather from "./weather";
+import timer from "./timer";
 
 let skill = {};
 
@@ -172,9 +174,9 @@ let updateStats = function() {
 };
 
 skill.loadAll = function() {
-    setInterval(checkStats, 180000);
-    setInterval(checkShooting, 5000);
-    setInterval(updateStats, 10000);
+    timer.createInterval('checkStats', checkStats, 180000);
+    timer.createInterval('checkShooting', checkShooting, 5000);
+    timer.createInterval('updateStats', updateStats, 10000);
 };
 
 export default skill;

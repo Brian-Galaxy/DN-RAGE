@@ -97,6 +97,28 @@ vSync.updateValues = function(entity) {
                 //entity.setCollision(actualData.Collision, true);
                 entity.freezePosition(actualData.Freeze);
 
+                try {
+                    if (entity.getClass() === 15 || entity.getClass() === 16 || entity.model === mp.game.joaat('polmav'))
+                    {
+
+                    }
+                    else {
+                        for(let i = 0; i < 10; i++)
+                            entity.setExtra(i, 1);
+                        entity.setExtra(actualData.Extra, 0);
+                    }
+                }
+                catch (e) {
+                    
+                }
+
+                if (entity.getVariable('markAsDrone')) {
+                    entity.setAlpha(0);
+                    vSync.playSound(entity.remoteId, 'drone', "Flight_Loop", "DLC_Arena_Drone_Sounds");
+                    entity.setCanBeDamaged(false);
+                    entity.setInvincible(true);
+                }
+
                 entity.setSearchlight(actualData.SpotLight, false);
 
                 if (actualData.Trunk)
@@ -123,7 +145,7 @@ vSync.updateValues = function(entity) {
     }
 };
 
-vSync.playSound = function(vehId, prefix, name) {
+vSync.playSound = function(vehId, prefix, name, ref = "") {
 
     try {
         let veh = mp.vehicles.atRemoteId(vehId);
@@ -136,7 +158,8 @@ vSync.playSound = function(vehId, prefix, name) {
             }
 
             let sId = mp.game.invoke(methods.GET_SOUND_ID);
-            mp.game.invoke(methods.PLAY_SOUND_FROM_ENTITY, sId, name, veh.handle, 0, 0, 0);
+            //mp.game.invoke(methods.PLAY_SOUND_FROM_ENTITY, sId, name, veh.handle, ref, 0, 0);
+            mp.game.audio.playSoundFromEntity(sId, name, veh.handle, ref, true, 0);
             vehicles.set(veh.remoteId, prefix + 'currentSound', sId);
         }
     }
@@ -217,6 +240,21 @@ mp.events.add("vSync:playSound", (vehId, prefix, name) => {
 
 mp.events.add("vSync:stopSound", (vehId, prefix) => {
     vSync.stopSound(vehId, prefix);
+});
+
+mp.events.add("vSync:Sound", (vehId) => {
+    try {
+        let veh = mp.vehicles.atRemoteId(vehId);
+        if (veh !== undefined && mp.vehicles.exists(veh)) {
+            veh.setAlpha(0);
+            vSync.playSound(veh.remoteId, 'drone', "Flight_Loop", "DLC_Arena_Drone_Sounds");
+            veh.setCanBeDamaged(false);
+            veh.setInvincible(true);
+        }
+    }
+    catch (e) {
+
+    }
 });
 
 mp.events.add("vSync:setVehicleWindowStatus", (vehId, windw, state) => {
@@ -408,6 +446,23 @@ mp.events.add("vSync:setCollisionState", (vehId, status) => {
         let veh = mp.vehicles.atRemoteId(vehId);
         if (veh !== undefined && mp.vehicles.exists(veh)) {
             //veh.setCollision(status, true)
+        }
+    } catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.add("vSync:setExtraState", (vehId, status) => {
+    try {
+        let veh = mp.vehicles.atRemoteId(vehId);
+        if (veh !== undefined && mp.vehicles.exists(veh)) {
+
+            if (veh.getClass() === 15 || veh.getClass() === 16 || veh.model === mp.game.joaat('polmav'))
+                return;
+
+            for(let i = 0; i < 10; i++)
+                veh.setExtra(i, 1);
+            veh.setExtra(status, 0);
         }
     } catch (e) {
         methods.debug(e);
@@ -656,14 +711,13 @@ mp.keys.bind(0xBE, false, function() {
 mp.events.add('render', () => {
     try {
         let veh = mp.players.local.vehicle;
-        if (veh && veh.getClass() == 18) {
+        if (veh && (veh.getClass() == 18 || veh.model == mp.game.joaat('umkcara') || veh.model == mp.game.joaat('trucara'))) {
             mp.game.controls.disableControlAction(0,86,true);
             mp.game.controls.disableControlAction(0,81,true);
             mp.game.controls.disableControlAction(0,82,true);
             mp.game.controls.disableControlAction(0,85,true);
             mp.game.controls.disableControlAction(0,80,true);
             mp.game.controls.disableControlAction(0,19,true);
-
         }
     }
     catch (e) {

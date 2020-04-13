@@ -65,7 +65,7 @@ let setterChecker = () => {
     }
 };
 
-setInterval(setterChecker, 5000);
+//setInterval(setterChecker, 5000);
 
 mp.events.add('modules:client:data:Has', handlerHas);
 mp.events.add('modules:client:data:Get', handlerGet);

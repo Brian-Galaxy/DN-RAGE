@@ -24,6 +24,8 @@ let canArmor = false;
 let countUsers = 5;
 let warPos = new mp.Vector3(0, 0, 0);
 
+let blipCenter = null;
+
 let defC = 0;
 let attC = 0;
 
@@ -102,11 +104,16 @@ gangWar.startWar = function(zoneId, attack, def, isArmor, count) {
 
     methods.notifyWithPictureToFraction2('Улица под угрзой', `ВНИМАНИЕ!`, 'Начался захват улицы ~y~#' + zoneId, 'CHAR_DEFAULT', def);
 
-    mp.players.forEach(p => {
-        if (user.isLogin(p)) {
-            user.createBlip(p, 887, warPos.x, warPos.y, warPos.z, 84);
+    try {
+        if (mp.blips.exists(blipCenter)) {
+            blipCenter.destroy();
         }
-    });
+    }
+    catch (e) {
+
+    }
+
+    blipCenter = methods.createBlip(warPos, 84, 0, 0.8, 'Война за территорию');
 
     for (let i = 1; i <= fraction.getCount(); i++) {
         if (def == i) continue;
@@ -266,11 +273,14 @@ gangWar.timer = function() {
             methods.notifyWithPictureToFraction2('Досрочное завершение', `Улица #${currentZone}`, 'Территория под контролем ' + fractionName + '\nСвязи с нарушением количества людей в территории', 'CHAR_DEFAULT', currentDef);
             methods.notifyWithPictureToFraction2('Досрочное завершение', `Улица #${currentZone}`, 'Территория под контролем ' + fractionName + '\nСвязи с нарушением количества людей в территории', 'CHAR_DEFAULT', currentAttack);
 
-            mp.players.forEach(p => {
-                if (user.isLogin(p)) {
-                    user.deleteBlip(p, 887);
+            try {
+                if (mp.blips.exists(blipCenter)) {
+                    blipCenter.destroy();
                 }
-            });
+            }
+            catch (e) {
+
+            }
 
             currentZone = 0;
             currentAttack = 0;
@@ -291,11 +301,14 @@ gangWar.timer = function() {
             methods.notifyWithPictureToFraction2('Досрочное завершение', `Улица #${currentZone}`, 'Территория под контролем ' + fractionName + '\nСвязи с нарушением количества людей в территории', 'CHAR_DEFAULT', currentDef);
             methods.notifyWithPictureToFraction2('Досрочное завершение', `Улица #${currentZone}`, 'Территория под контролем ' + fractionName + '\nСвязи с нарушением количества людей в территории', 'CHAR_DEFAULT', currentAttack);
 
-            mp.players.forEach(p => {
-                if (user.isLogin(p)) {
-                    user.deleteBlip(p, 887);
+            try {
+                if (mp.blips.exists(blipCenter)) {
+                    blipCenter.destroy();
                 }
-            });
+            }
+            catch (e) {
+
+            }
 
             currentZone = 0;
             currentAttack = 0;
@@ -305,15 +318,18 @@ gangWar.timer = function() {
             warPos = new mp.Vector3(0, 0, 0);
         }
         else {
-            mp.players.forEachInRange(warPos, 500, p => {
+            mp.players.forEachInRange(warPos, 400, p => {
                 if (!user.isLogin(p))
                     return;
-                if (!gangWar.isInZone(p, currentZone))
-                    return;
                 let fId = methods.parseInt(user.get(p, 'fraction_id2'));
-                if (fId === 0)
-                    return;
-                if (currentDef === fId || currentAttack === fId) {
+                try {
+                    if (user.isAdmin(p) || fId > 0)
+                        p.call('client:gangWar:sendArray', [gangWar.get(currentZone, 'on_map')]);
+                }
+                catch (e) {}
+                /*if (!gangWar.isInZone(p, currentZone))
+                    return;*/
+                if (currentDef === fId || currentAttack === fId || user.isAdmin(p)) {
                     if (!canArmor && p.armour > 0)
                         user.setArmour(p, 0);
                     p.call("client:gangWar:sendInfo", [attC, defC, timerCounter]);
@@ -332,11 +348,14 @@ gangWar.timer = function() {
                 methods.notifyWithPictureToFraction2('Итоги войны', `Улица #${currentZone}`, 'Территория под контролем ' + fractionName, 'CHAR_DEFAULT', currentDef);
                 methods.notifyWithPictureToFraction2('Итоги войны', `Улица #${currentZone}`, 'Территория под контролем ' + fractionName, 'CHAR_DEFAULT', currentAttack);
 
-                mp.players.forEach(p => {
-                    if (user.isLogin(p)) {
-                        user.deleteBlip(p, 887);
+                try {
+                    if (mp.blips.exists(blipCenter)) {
+                        blipCenter.destroy();
                     }
-                });
+                }
+                catch (e) {
+                    
+                }
 
                 currentZone = 0;
                 currentAttack = 0;
@@ -362,11 +381,11 @@ gangWar.timerMoney = function() {
 
             if (moneyToUser.has(gangWar.get(i, 'fraction_id').toString())) {
                 let cMoney = moneyToUser.get(gangWar.get(i, 'fraction_id').toString());
-                cMoney += methods.getRandomInt(80, 130) / 1000;
+                cMoney += methods.getRandomInt(80, 120) / 1000;
                 moneyToUser.set(gangWar.get(i, 'fraction_id').toString(), cMoney);
             }
             else {
-                moneyToUser.set(gangWar.get(i, 'fraction_id').toString(), methods.getRandomInt(80, 130) / 1000);
+                moneyToUser.set(gangWar.get(i, 'fraction_id').toString(), methods.getRandomInt(80, 120) / 1000);
             }
         }
     }

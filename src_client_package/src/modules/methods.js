@@ -169,6 +169,10 @@ methods.setVehicleInfo = function (model, value) {
     }
 };
 
+methods.getFrameTime = function () {
+    return methods.parseFloatHex(mp.game.invoke('0x15C40837039FFAF7').toString(16));
+};
+
 methods.parseInt = function (str) {
     return parseInt(str) || 0;
 };
@@ -517,6 +521,24 @@ methods.iplMichaelDefault = function () {
     mp.game.interior.refreshInterior(garageId);
 };
 
+methods.iplGangDefault = function () {
+    let interiorId = mp.game.interior.getInteriorAtCoords(2730.000, -380.000, -49.000);
+    let garageId = mp.game.interior.getInteriorAtCoords(2701.593505859375, -360.7911376953125, -56.186683654785156);
+
+    methods.setIplPropState(interiorId, "Entity_set_arcade_set_ceiling_beams");
+    methods.setIplPropState(interiorId, "Entity_set_big_screen");
+    methods.setIplPropState(interiorId, "Entity_set_constant_geometry");
+    methods.setIplPropState(interiorId, "Entity_set_mural_neon_option_05");
+    mp.game.interior.refreshInterior(interiorId);
+
+    methods.setIplPropState(garageId, "Set_Plan_Electric_Drill");
+    methods.setIplPropState(garageId, "set_plan_bed");
+    methods.setIplPropState(garageId, "set_plan_garage");
+    methods.setIplPropState(garageId, "set_plan_mechanic");
+    methods.setIplPropState(garageId, "set_plan_setup");
+    mp.game.interior.refreshInterior(garageId);
+};
+
 methods.iplSimonDefault = function () {
     let interiorId = 7170;
     mp.game.streaming.requestIpl("shr_int");
@@ -548,6 +570,28 @@ methods.iplFloydDefault = function () {
     let interiorId = 171777;
     methods.setIplPropState(interiorId, "swap_clean_apt");
     methods.setIplPropState(interiorId, "swap_mrJam_A");
+    mp.game.interior.refreshInterior(interiorId);
+};
+
+methods.iplLabMethDefault = function () {
+    let interiorId = 247041;
+    //methods.setIplPropState(interiorId, "meth_lab_basic");
+    //methods.setIplPropState(interiorId, "meth_lab_upgrade");
+    methods.setIplPropState(interiorId, "meth_lab_production");
+    methods.setIplPropState(interiorId, "meth_lab_security_high");
+    methods.setIplPropState(interiorId, "meth_lab_setup");
+    mp.game.interior.refreshInterior(interiorId);
+};
+
+methods.iplLabCocaDefault = function () {
+    let interiorId = 247553;
+    methods.setIplPropState(interiorId, "set_up");
+    methods.setIplPropState(interiorId, "security_high");
+    methods.setIplPropState(interiorId, "equipment_basic");
+    methods.setIplPropState(interiorId, "production_basic");
+    methods.setIplPropState(interiorId, "coke_press_basic");
+    /*methods.setIplPropState(interiorId, "coke_cut_01");
+    methods.setIplPropState(interiorId, "coke_cut_02");*/
     mp.game.interior.refreshInterior(interiorId);
 };
 
@@ -611,6 +655,8 @@ methods.iplStripClubDefault = function () {
 methods.requestIpls = function () {
     //mp.game.streaming.requestIpl("RC12B_HospitalInterior");
 
+    methods.iplGangDefault();
+
     //Michael: -802.311, 175.056, 72.8446
     methods.iplMichaelDefault();
     //Simeon: -47.16170 -1115.3327 26.5
@@ -626,6 +672,8 @@ methods.requestIpls = function () {
     methods.iplAmmoDefault();
     methods.iplLesterFactoryDefault();
     methods.iplStripClubDefault();
+
+    methods.iplLabCocaDefault();
 
     //CASINO
     mp.game.streaming.requestIpl("vw_casino_main");

@@ -97,7 +97,7 @@ mp.events.add({
             mp.events.call('c.virtualStreamOut', player, 'quit');
         }
     },
-    'render': () => { // TODO: will be remove after 0.4
+    /*'render': () => { // TODO: will be remove after 0.4
         const localPlayerDimension = mp.players.local.dimension;
         const localPlayerPosition = mp.players.local.position;
         const localPlayerHandle = mp.players.local.handle;
@@ -136,7 +136,7 @@ mp.events.add({
                 }
             }
         });
-    }
+    }*/
 });
 
 mp.events.add('browserDomReady', (browser) => {
@@ -698,7 +698,7 @@ mp.events.add('enable-voice-debug', () => {
     __CONFIG__.debug = !__CONFIG__.debug;
 })
 
-mp.events.add('render', () => {
+/*mp.events.add('render', () => {
 
     if (__CONFIG__.debug) {
         drawText(`~r~DEBUG INFO~n~~w~global peers: ${__STORAGE__.globalPeers.size}~n~connected peers: ${__STORAGE__.currentConnectedPlayers.size}~n~streamed peers: ${__STORAGE__.streamedPlayers.size}~n~virtual peers: ${__STORAGE__.virtualStreamedPlayers.size}~n~Proximity peers: ${__STORAGE__.proximityPeers.size}~n~Phone call: ${(__PHONE__.target && mp.players.exists(__PHONE__.target)) && __PHONE__.target.name}`, [0.99, 0.5], {
@@ -784,7 +784,7 @@ mp.events.add('render', () => {
     } catch (e) {
         mp.game.graphics.notify(`Voice error #1 - ${e.toString()}`)
     }
-});
+});*/
 
 /*
   PROXIMITY FUNCTIONAL - end
@@ -1013,7 +1013,7 @@ const drawSprite = (dist, name, scale, heading, colour, x, y, layer) => {
     }
 }
 
-mp.events.add('render', () => {
+//mp.events.add('render', () => {
     /*const __localPlayerPosition__ = localPlayer.position;
 
     __STORAGE__.streamedPlayers.forEach(player => {
@@ -1066,7 +1066,7 @@ mp.events.add('render', () => {
       }
 
     });*/
-});
+//});
 
 /*
   EXAMPLE - MUTED STATUS - end

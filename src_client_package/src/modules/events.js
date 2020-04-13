@@ -15,6 +15,7 @@ import items from "../items";
 import phone from "../phone";
 import weapons from "../weapons";
 import chat from "../chat";
+import walkie from "../walkie";
 
 import ui from "./ui";
 
@@ -32,6 +33,7 @@ import vShop from "../business/vShop";
 import antiCheat from "../antiCheat";
 import hosp from "../manager/hosp";
 import edu from "../manager/edu";
+
 import gr6 from "../jobs/gr6";
 
 mp.gui.chat.enabled = false;
@@ -39,7 +41,7 @@ mp.gui.chat.enabled = false;
 mp.events.__add__ = mp.events.add;
 
 mp.events.add = (eventName, eventCallback) => {
-    methods.debug(`Event ${eventName} called`);
+    //methods.debug(`Event ${eventName} called`);
     mp.events.__add__(eventName, eventCallback);
 };
 
@@ -54,6 +56,8 @@ let maxSpeed = 500;
 let newMaxSpeed = 0;
 let _playerDisableAllControls = false;
 let _playerDisableDefaultControls = false;
+
+let gangArray = [];
 
 mp.events.add('client:cefDebug', function (message) {
     try {
@@ -108,7 +112,7 @@ mp.events.add('client:user:auth:register', function(mail, login, passwordReg, pa
 
         if (Container.Data.HasLocally(mp.players.local.remoteId, "isRegTimeout"))
         {
-            user.showCustomNotify('Таймаут 10 сек');
+            user.showCustomNotify('Нельзя нажмить так часто');
             return;
         }
         Container.Data.SetLocally(mp.players.local.remoteId, "isRegTimeout", true);
@@ -153,11 +157,12 @@ mp.events.add('client:user:auth:login', function(login, password) {
 
         if (Container.Data.HasLocally(mp.players.local.remoteId, "isLoginTimeout"))
         {
-            user.showCustomNotify('Таймаут 5 сек');
+            user.showCustomNotify('Нельзя нажмить так часто');
             return;
         }
         Container.Data.SetLocally(mp.players.local.remoteId, "isLoginTimeout", true);
 
+        //user.showCustomNotify('Пожалуйста подождите...');
         mp.events.callRemote('server:user:loginAccount', login, password, usingEmail);
 
         setTimeout(function () {
@@ -261,16 +266,17 @@ mp.events.add('client:events:selectPlayer', function(name, spawnName) {
     try {
         if (Container.Data.HasLocally(mp.players.local.remoteId, "isSelectTimeout"))
         {
-            user.showCustomNotify('Таймаут 10 сек');
+            user.showCustomNotify('Нельзя нажмить так часто');
             return;
         }
         Container.Data.SetLocally(mp.players.local.remoteId, "isSelectTimeout", true);
 
+        //user.showCustomNotify('Пожалуйста подождите...');
         user.login(name, spawnName);
 
         setTimeout(function () {
             Container.Data.ResetLocally(mp.players.local.remoteId, "isSelectTimeout");
-        }, 10000);
+        }, 5000);
     }
     catch (e) {
         methods.debug(e);
@@ -656,6 +662,9 @@ mp.events.add('client:events:custom:register', function(name, surname, age, prom
             user.showCustomNotify('Фамилия не может быть больше 32 символов', 1);
             return;
         }
+        if (promocode.trim() === '') {
+            promocode = 'REGISTER';
+        }
         mp.events.callRemote('server:user:createUser', methods.capitalizeFirstLetter(name.trim()), methods.capitalizeFirstLetter(surname.trim()), age, promocode, referer, national);
     }
     catch (e) {
@@ -711,9 +720,6 @@ mp.events.add('client:events:loginUser:success', async function() {
         chat.sendLocal('Добро пожаловать на DEDNET 💀');
         chat.sendLocal('Желаем приятной игры ;]');
         chat.updateSettings();
-
-        voiceRage.setConfig('voiceVolume', user.getCache('s_voice_vol'));
-
         antiCheat.load();
     }, 5000);
 });
@@ -734,8 +740,10 @@ mp.events.add('client:user:callCef', (name, params) => {
     ui.callCef(name, params);
 });
 
-let isZone = false;
 let gangWarTimeout = null;
+let gangWarTimeout2 = null;
+let mafiaWarTimeout = null;
+
 mp.events.add('client:gangWar:sendInfo', (atC, defC, timerCounter) => {
     if (gangWarTimeout) {
         clearTimeout(gangWarTimeout);
@@ -743,17 +751,52 @@ mp.events.add('client:gangWar:sendInfo', (atC, defC, timerCounter) => {
     }
 
     try {
-        isZone = true;
         ui.showGangInfo();
         ui.updateGangInfo(atC, defC, timerCounter);
         gangWarTimeout = setTimeout(function () {
             ui.hideGangInfo();
-            isZone = false;
         }, 3000);
     }
     catch (e) {
         methods.debug(e);
         ui.hideGangInfo();
+    }
+});
+
+mp.events.add('client:mafiaWar:sendInfo', (top1, top2, top3, timerCounter) => {
+    if (mafiaWarTimeout) {
+        clearTimeout(mafiaWarTimeout);
+        mafiaWarTimeout = null;
+    }
+
+    try {
+        ui.showMafiaInfo();
+        ui.updateMafiaInfo(top1, top2, top3, timerCounter);
+        mafiaWarTimeout = setTimeout(function () {
+            ui.hideMafiaInfo();
+        }, 3000);
+    }
+    catch (e) {
+        methods.debug(e);
+        ui.hideMafiaInfo();
+    }
+});
+
+mp.events.add('client:gangWar:sendArray', (array) => {
+    if (gangWarTimeout2) {
+        clearTimeout(gangWarTimeout2);
+        gangWarTimeout2 = null;
+    }
+
+    try {
+        gangArray = JSON.parse(array);
+        gangWarTimeout2 = setTimeout(function () {
+            gangArray = [];
+        }, 3000);
+    }
+    catch (e) {
+        methods.debug(e);
+        gangArray = [];
     }
 });
 
@@ -1450,8 +1493,43 @@ mp.events.add('client:user:revive', (hp) => {
     user.revive(hp);
 });
 
-mp.events.add('client:user:createBlip', (id, x, y, z, blipId, blipColor, route) => {
-    jobPoint.createBlipById(id, new mp.Vector3(x, y, z), blipId, blipColor, route);
+let blipTimeout = null;
+mp.events.add('client:updateBlips', (data) => {
+
+    if (blipTimeout) {
+        clearTimeout(blipTimeout);
+        blipTimeout = null;
+    }
+
+    try {
+
+        for (let i = 0; i < 1000; i++)
+            jobPoint.deleteBlipById(i + 10000);
+
+        try {
+            JSON.parse(data).forEach((item, i) => {
+                jobPoint.createBlipById(i + 10000, new mp.Vector3(item.px, item.py, item.pz), item.b, item.cl, false, true, 'U#' + item.d, item.h);
+            });
+        }
+        catch (e) {
+
+        }
+
+        blipTimeout = setTimeout(function () {
+            for (let i = 0; i < 1000; i++)
+                jobPoint.deleteBlipById(i + 10000);
+        }, 10000);
+    }
+    catch (e) {
+        methods.debug(e);
+        for (let i = 0; i < 1000; i++)
+            jobPoint.deleteBlipById(i + 10000);
+    }
+});
+
+mp.events.add('client:user:createBlip', (id, x, y, z, blipId, blipColor, route, shortRange, name, rot) => {
+    methods.debug('client:user:createBlip', id, x, y, z, blipId, blipColor, route, shortRange, name, rot);
+    jobPoint.createBlipById(id, new mp.Vector3(x, y, z), blipId, blipColor, route, shortRange, name, rot);
 });
 
 mp.events.add('client:user:deleteBlip', (id) => {
@@ -1459,6 +1537,7 @@ mp.events.add('client:user:deleteBlip', (id) => {
 });
 
 mp.events.add('client:user:createBlipByRadius', (id, x, y, z, radius, blipId, blipColor, route) => {
+    methods.debug('client:user:createBlipByRadius', id, x, y, z, radius, blipId, blipColor, route);
     jobPoint.createBlipByRadius(id, new mp.Vector3(x, y, z), radius, blipId, blipColor, route);
 });
 
@@ -2508,6 +2587,43 @@ mp.events.add('client:phone:favoriteContact', function(contJson) {
     mp.events.callRemote('server:phone:favoriteContact', contJson);
 });
 
+mp.events.add('client:walkietalkie:frqChange', function(status) {
+    walkie.setFrqStats(status);
+});
+
+mp.events.add('client:walkietalkie:color', function(status) {
+    walkie.setColor(status);
+});
+
+mp.events.add('client:walkietalkie:volume', function(status) {
+    walkie.setVol(status);
+});
+
+mp.events.add('client:walkietalkie:frq1', function(status) {
+    try {
+        walkie.setFrq1(JSON.parse(status));
+    }
+    catch (e) {
+        
+    }
+});
+
+mp.events.add('client:walkietalkie:frq2', function(status) {
+    try {
+        walkie.setFrq2(JSON.parse(status));
+    }
+    catch (e) {
+        
+    }
+});
+
+mp.events.add('client:walkietalkie:status', function(status) {
+    if (status)
+        walkie.show();
+    else
+        walkie.hide();
+});
+
 mp.events.add("client:vehicle:checker", function () {
 
     try {
@@ -2648,7 +2764,7 @@ mp.events.add('render', () => {
 
                     const entity = player.vehicle ? player.vehicle : player;
                     const vector = entity.getVelocity();
-                    const frameTime = methods.parseFloatHex(mp.game.invoke('0x15C40837039FFAF7').toString(16));
+                    const frameTime = methods.getFrameTime();
                     if (player.getAlpha() > 0)
                         ui.drawText3D( pref + name + remoteId + ' ' +  indicatorColor + typingLabel, headPosition.x + vector.x * frameTime, headPosition.y + vector.y * frameTime, headPosition.z + vector.z * frameTime + 0.1);
                 }
@@ -3191,6 +3307,30 @@ mp.events.add('render', () => {
     }
 });
 
+mp.events.add('render', () => {
+
+    if (gangArray.length < 2)
+        return;
+
+    let arr = gangArray;
+
+    try {
+        for (let j = 0; j < 30; j++)
+            mp.game.graphics.drawLine(arr[0][0], arr[0][1], j * 2, arr[arr.length - 1][0], arr[arr.length - 1][1], j * 2, 255, 0, 0, 255);
+    }
+    catch (e) {
+
+    }
+
+    for (let i = 0; i < arr.length; i++) {
+        try {
+            for (let j = 0; j < 30; j++)
+                mp.game.graphics.drawLine(arr[i][0], arr[i][1], j * 2, arr[i + 1][0], arr[i + 1][1], j * 2, 255, 0, 0, 255);
+        }catch (e) {
+        }
+    }
+});
+
 /*let lastDamageState = 0;
 mp.events.add('render', () => {
     if(user.isLogin()) {
@@ -3217,6 +3357,8 @@ mp.events.add('render', () => {
 
 mp.events.add('render', () => {
     try {
+        mp.game.controls.disableControlAction(0,36,true); //LEFT CONTROL
+
         mp.game.controls.disableControlAction(0,68,true); //ATTACK VEHICLE
         mp.game.controls.disableControlAction(0,350,true); //E JUMP
 
@@ -3410,7 +3552,7 @@ mp.events.add('render', () => {
     }
 });*/
 
-mp.events.add('render', () => {
+/*mp.events.add('render', () => {
     try {
         if (!user.isLogin())
             return;
@@ -3430,7 +3572,7 @@ mp.events.add('render', () => {
     catch (e) {
         
     }
-});
+});*/
 
 //TODO Переделать отдачу стрельбы, для начала переделав IS SHOOOTING, чтобы он после того как закончил стрелять , еще 1 секунду ждал, вдруг игрок снова начнет стрелять
 /*let isShootingActive = false;
@@ -3603,6 +3745,8 @@ mp.events.add('client:taskFollow', (nplayer) => {
             mp.game.ui.notifications.show("~r~Человек повел вас за собой");
             mp.events.callRemote("server:user:targetNotify", nplayer, `~g~Вы повели человека за собой (ID: ${mp.players.local.remoteId})`);
 
+            methods.blockKeys(true);
+
             taskFollowed = nplayer;
         }
         catch (e) {
@@ -3616,12 +3760,13 @@ mp.events.add('client:taskFollow', (nplayer) => {
                     mp.game.ui.notifications.show("~g~Вас отпустили");
                     mp.players.local.clearTasks();
                     taskFollowed = false;
+                    methods.blockKeys(false);
                     clearInterval(timerFollowedId);
                     return;
                 }
 
                 if (mp.players.local.dimension != taskFollowed.dimension) {
-
+                    methods.blockKeys(false);
                     mp.players.local.clearTasks();
                     mp.game.ui.notifications.show("~g~Вас отпустили");
                     mp.events.callRemote("server:user:targetNotify", nplayer, `~g~Вы отпустили человека (ID: ${mp.players.local.remoteId})`);
@@ -3660,6 +3805,7 @@ mp.events.add('client:taskFollow', (nplayer) => {
             mp.game.ui.notifications.show("~g~Вас отпустили");
             mp.events.callRemote("server:user:targetNotify", nplayer, `~g~Вы отпустили человека (ID: ${mp.players.local.remoteId})`);
             taskFollowed = false;
+            methods.blockKeys(false);
             clearInterval(timerFollowedId);
             if (user.isCuff() || user.isTie())
                 user.playAnimation("mp_arresting", "idle", 49);

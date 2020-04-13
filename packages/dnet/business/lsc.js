@@ -342,7 +342,7 @@ lsc.buyNumber = function(player, shopId, newNumber) {
 };
 
 lsc.showTun = function(player, modType, idx) {
-    methods.debug('lsc.showTun');
+    methods.debug('lsc.showTun', modType, idx);
     if (!user.isLogin(player))
         return;
     let veh = player.vehicle;
@@ -354,6 +354,13 @@ lsc.showTun = function(player, modType, idx) {
         veh.livery = idx;
     else if (modType == 78)
         veh.wheelType = idx;
+    else if (modType == 80)
+    {
+        /*for(let i = 0; i < 10; i++)
+            veh.setExtra(i, false);
+        veh.setExtra(idx, true);*/
+        vSync.setExtraState(veh, idx);
+    }
     else
         veh.setMod(modType, idx);
 };
@@ -387,6 +394,9 @@ lsc.buyTun = function(player, modType, idx, price, shopId, itemName) {
 
     if (modType == 76) {
         vehicles.set(veh.getVariable('container'), 'livery', idx);
+    }
+    else if (modType == 80) {
+        vehicles.set(veh.getVariable('container'), 'extra', idx);
     }
     else {
         let car = vehicles.getData(veh.getVariable('container'));

@@ -28,6 +28,40 @@ attachItems.registerAttaches = function () {
         mp.attachmentMngr.register("ems_1120812170", 1120812170, 'bodyshell', new mp.Vector3(0, -2.5, 0.4), new mp.Vector3(0, 0, 0)); // Разбитое авто 14
 
         mp.attachmentMngr.register(`loader`, mp.game.joaat("prop_cardbordbox_02a"), 28422, new mp.Vector3(0, -0.18, -0.18), new mp.Vector3(0, 0, 0));
+
+        mp.attachmentMngr.register(`pickPick`, mp.game.joaat("lr_prop_carkey_fob"), 28422, new mp.Vector3(0, 0, 0), new mp.Vector3(0, 0, 0));
+
+        mp.attachmentMngr.register(`spec1`, 1657647215, 'bodyshell', new mp.Vector3(0, 0, 0.0), new mp.Vector3(0, 0, 180));
+        mp.attachmentMngr.register(`spec2`, 442185650, 'bodyshell', new mp.Vector3(0, 0, 0.0), new mp.Vector3(0, 0, 180));
+        mp.attachmentMngr.register(`spec3`, -388213579, 'bodyshell', new mp.Vector3(0, 0, 0.0), new mp.Vector3(0, 0, 180));
+
+        mp.attachmentMngr.register("CODE_HUMAN_MEDIC_TIME_OF_DEATH", -334989242, 60309, new mp.Vector3(0, 0, 0), new mp.Vector3(0, 0, 0));
+        mp.attachmentMngr.register("WORLD_HUMAN_AA_COFFEE", -598185919, 28422, new mp.Vector3(0, 0, 0), new mp.Vector3(0, 0, 0));
+        mp.attachmentMngr.register("WORLD_HUMAN_AA_SMOKE", 175300549, 28422, new mp.Vector3(0, 0, 0), new mp.Vector3(0, 0, 0));
+        mp.attachmentMngr.register("WORLD_HUMAN_PROSTITUTE_HIGH_CLASS", 175300549, 28422, new mp.Vector3(0, 0, 0), new mp.Vector3(0, 0, 0));
+        mp.attachmentMngr.register("WORLD_HUMAN_SMOKING", 175300549, 28422, new mp.Vector3(0, 0, 0), new mp.Vector3(0, 0, 0));
+        mp.attachmentMngr.register("WORLD_HUMAN_SMOKING_POT", 175300549, 60309, new mp.Vector3(0, 0, 0), new mp.Vector3(0, 0, 0));
+        mp.attachmentMngr.register("WORLD_HUMAN_DRUG_DEALER", -1199910959, 28422, new mp.Vector3(0, 0, 0), new mp.Vector3(0, 0, 0));
+        mp.attachmentMngr.register("WORLD_HUMAN_BINOCULARS", 985101275, 28422, new mp.Vector3(0, 0, 0), new mp.Vector3(0, 0, 0));
+        mp.attachmentMngr.register("WORLD_HUMAN_BUM_FREEWAY", -801803927, 28422, new mp.Vector3(0, 0, 0), new mp.Vector3(0, 0, 0));
+        mp.attachmentMngr.register("WORLD_HUMAN_CAR_PARK_ATTENDANT", -839348691, 28422, new mp.Vector3(0, 0, 0), new mp.Vector3(0, 0, 0));
+        mp.attachmentMngr.register("WORLD_HUMAN_CLIPBOARD", -969349845, 60309, new mp.Vector3(0, 0, 0), new mp.Vector3(0, 0, 0));
+        mp.attachmentMngr.register("WORLD_HUMAN_DRINKING", 426102607, 28422, new mp.Vector3(0, 0, 0), new mp.Vector3(0, 0, 0));
+        mp.attachmentMngr.register("WORLD_HUMAN_PARTYING", 426102607, 28422, new mp.Vector3(0, 0, 0), new mp.Vector3(0, 0, 0));
+        mp.attachmentMngr.register("WORLD_HUMAN_TOURIST_MAP", -645296272, 28422, new mp.Vector3(0, 0, 0), new mp.Vector3(0, 0, 0));
+        mp.attachmentMngr.register("WORLD_HUMAN_MUSICIAN_1", 591916419, 60309, new mp.Vector3(0, 0, 0), new mp.Vector3(0, 0, 0)); //Играть музыку на бонге
+        mp.attachmentMngr.register("WORLD_HUMAN_MUSICIAN_2", -708789241, 60309, new mp.Vector3(0, 0, 0), new mp.Vector3(0, 0, 0)); //Играть музыку на гитаре
+
+        mp.attachmentMngr.register("WORLD_HUMAN_STAND_FISHING", -1910604593, 60309, new mp.Vector3(0, 0, 0), new mp.Vector3(0, 0, 0)); //Рыбачить удочкой
+        mp.attachmentMngr.register("WORLD_HUMAN_PAPARAZZI", 434102459, 28422, new mp.Vector3(0, 0, 0), new mp.Vector3(0, 0, 0)); //Фотографировать на фотоаппарат
+        mp.attachmentMngr.register("WORLD_HUMAN_GARDENER_LEAF_BLOWER", 1603835013, 28422, new mp.Vector3(0, 0, 0), new mp.Vector3(0, 0, 0)); //Работать ветродувом
+        mp.attachmentMngr.register("WORLD_HUMAN_GARDENER_PLANT", -1934174148, 28422, new mp.Vector3(0, 0, 0), new mp.Vector3(0, 0, 0)); //Копать садовой лопаткой
+        //mp.attachmentMngr.register("WORLD_HUMAN_WORK_DIRT", 2144550976, 60309, new mp.Vector3(0, -0.08, -0.7), new mp.Vector3(0, 0, 0)); //Копать лопатой
+        mp.attachmentMngr.register("WORLD_HUMAN_WORK_DIRT", 1594770590, 28422, new mp.Vector3(0, -0.08, -1.14), new mp.Vector3(0, 0, 0)); //Копать лопатой
+        mp.attachmentMngr.register("WORLD_HUMAN_HAMMERING", -127739306, 28422, new mp.Vector3(0, 0, 0), new mp.Vector3(0, 0, 0)); //Бить молотком по стене
+        mp.attachmentMngr.register("WORLD_HUMAN_WELDING", -1010290664, 28422, new mp.Vector3(0, 0, 0), new mp.Vector3(0, 0, 0)); //Варить сварочным аппаратом
+        mp.attachmentMngr.register("WORLD_HUMAN_CONST_DRILL", 1360563376, 28422, new mp.Vector3(0, 0, 0), new mp.Vector3(0, 0, 0)); //Разбивать отбойным молотком
+
     }
     catch (e) {
         methods.debug(e);

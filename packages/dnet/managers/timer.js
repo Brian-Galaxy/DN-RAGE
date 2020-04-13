@@ -4,6 +4,8 @@ let mysql = require('../modules/mysql');
 
 let vehicles = require('../property/vehicles');
 
+let pickups = require('../managers/pickups');
+
 let bank = require('../business/bank');
 
 let inventory = require('../inventory');
@@ -16,6 +18,7 @@ timer.loadAll = function() {
     timer.min30Timer();
     timer.min10Timer();
     timer.sec10Timer();
+    timer.sec5Timer();
 };
 
 timer.min30Timer = function() {
@@ -175,7 +178,6 @@ timer.sec10Timer = function() {
                 user.set(p, 'pos_y', p.position.y);
                 user.set(p, 'pos_z', p.position.z);
                 user.set(p, 'rotation', p.heading);
-                user.setById(userId, 'hp', p.health);
             }
             catch (e) {
                 
@@ -217,4 +219,75 @@ timer.sec10Timer = function() {
     });
 
     setTimeout(timer.sec10Timer, 1000 * 10);
+};
+
+timer.sec5Timer = function() {
+
+    let blips = [];
+
+    mp.vehicles.forEach(function (v) {
+        if (vehicles.exists(v)) {
+
+            try {
+
+                if (v.getVariable('dispatchMarked')) {
+                    if (v.getVariable('fraction_id') === 2 || v.getVariable('fraction_id') === 5 || v.getVariable('fraction_id') === 6) {
+
+                        let vInfo = methods.getVehicleInfo(v.model);
+
+                        let blipId = 672;
+                        let color = 0;
+
+                        if (vInfo.display_name === 'Insurgent' || vInfo.display_name === 'Insurgent2' || vInfo.display_name === 'Riot' || vInfo.display_name === 'PoliceT')
+                            blipId = 601;
+                        if (vInfo.display_name === 'Buzzard' || vInfo.display_name === 'Buzzard2' || vInfo.display_name === 'Polmav')
+                            blipId = 353;
+                        if (vInfo.display_name === 'Police4' || vInfo.display_name === 'FBI' || vInfo.display_name === 'FBI2')
+                            blipId = 724;
+
+                        if (v.getVariable('fraction_id') === 5)
+                            color = 16;
+                        if (v.getVariable('fraction_id') === 6)
+                            color = 1;
+
+                        blips.push({ cl: color, b: blipId, vid: v.id, d: v.getVariable('dispatchMarked'), px: v.position.x, py: v.position.y, pz: v.position.z, h: methods.parseInt(v.heading) })
+                    }
+                }
+            }
+            catch (e) {
+                methods.debug(e);
+            }
+        }
+    });
+
+    mp.players.forEach(p => {
+        if (user.isLogin(p) && user.isGos(p)) {
+
+            try {
+                let veh = p.vehicle;
+                if (!vehicles.exists(veh)) {
+                    if (
+                        methods.distanceToPos(p.position, pickups.DispatcherPos1) < 2 ||
+                        methods.distanceToPos(p.position, pickups.DispatcherPos2) < 2 ||
+                        methods.distanceToPos(p.position, pickups.DispatcherPos3) < 2 ||
+                        methods.distanceToPos(p.position, pickups.DispatcherPos4) < 2 ||
+                        methods.distanceToPos(p.position, pickups.DispatcherPos5) < 2 ||
+                        methods.distanceToPos(p.position, pickups.DispatcherPos6) < 2
+                    ) {
+                        p.call('client:updateBlips', [JSON.stringify(blips)]);
+                    }
+                    return;
+                }
+                if (p.seat > 0)
+                    return;
+                if (veh.getVariable('fraction_id') === 2 || veh.getVariable('fraction_id') === 5 || veh.getVariable('fraction_id') === 6)
+                    p.call('client:updateBlips', [JSON.stringify(blips)]);
+            }
+            catch (e) {
+                
+            }
+        }
+    });
+
+    setTimeout(timer.sec5Timer, 1000 * 5);
 };

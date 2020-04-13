@@ -15,6 +15,8 @@ import quest from "./manager/quest";
 import bind from "./manager/bind";
 import object from "./manager/object";
 import Camera from "./manager/cameraRotator";
+import timer from "./manager/timer";
+import UIMenu from "./modules/menu";
 
 let user = {};
 
@@ -40,6 +42,8 @@ let isGiveAmmo = true;
 
 let cam = null;
 let cameraRotator = new Camera.Rotator();
+
+let currentScenario = '';
 
 /*
 0 - Third Person Close
@@ -558,8 +562,8 @@ user.init = function() {
         mp.nametags.enabled = false;
         mp.game.graphics.transitionFromBlurred(false);
 
-        setInterval(user.timerRayCast, 200);
-        setInterval(user.timer1sec, 1000);
+        timer.createInterval('user.timerRayCast', user.timerRayCast, 200);
+        timer.createInterval('user.timer1sec', user.timer1sec, 1000);
 
         user.stopAllScreenEffect();
         user.hideLoadDisplay();
@@ -778,6 +782,15 @@ user.setCache = function(key, value) {
     userData.set(key, value);
 };
 
+user.resetCache = function(key) {
+    try {
+        userData.delete(key);
+    }
+    catch (e) {
+        
+    }
+};
+
 user.updateCache = async function() {
     userData = await Container.Data.GetAll(mp.players.local.remoteId);
 };
@@ -810,7 +823,7 @@ user.set = function(key, val) {
 };
 
 user.reset = function(key) {
-    user.setCache(key, null);
+    user.resetCache(key);
     Container.Data.Reset(mp.players.local.remoteId, key);
 };
 
@@ -1490,6 +1503,13 @@ user.stopAllAnimation = function() {
         return;
     }
 
+    if (currentScenario !== '') {
+        enums.scenarios.forEach(function (item, i, arr) {
+            mp.attachmentMngr.removeLocal(item[1]);
+        });
+        currentScenario = '';
+    }
+
     if (!mp.players.local.getVariable("isBlockAnimation")) {
         //mp.players.local.clearTasks();
         //mp.players.local.clearSecondaryTask();
@@ -1497,29 +1517,57 @@ user.stopAllAnimation = function() {
     }
 };
 
-user.playScenario = function(name) {
-    mp.events.callRemote('server:playScenario', name);
+user.playScenario = async function(name) {
+    //mp.events.callRemote('server:playScenario', name);
 
-    /*try {
-        let remotePlayer = mp.players.local;
-        remotePlayer.clearTasks();
-        if (name == 'PROP_HUMAN_SEAT_BENCH') {
-            let pos = remotePlayer.getOffsetFromInWorldCoords(0, -0.5, -0.5);
-            let heading = remotePlayer.getRotation(0).z;
-            remotePlayer.taskStartScenarioAtPosition(name, pos.x, pos.y, pos.z, heading, -1, true, false);
-        }
-        else {
-            remotePlayer.taskStartScenarioInPlace(name, 0, true);
+    if (currentScenario !== '') {
+        mp.attachmentMngr.removeLocal(currentScenario);
+        currentScenario = '';
+    }
+
+    try {
+        let scenario = enums.scenarioList[name];
+        if (scenario) {
+            currentScenario = name;
+
+            if (scenario.attachObject)
+                mp.attachmentMngr.addLocal(currentScenario);
+
+            let isLoop = false;
+
+            for (let i = 0; i < scenario.animationList.length; i++) {
+
+                if (currentScenario !== name)
+                    return;
+
+                let item = scenario.animationList[i];
+                user.playAnimation(item[0], item[1], item[2] + 100);
+
+                if (item[2] !== 9 && item[2] !== 49)
+                {
+                    await methods.sleep(200);
+                    await methods.sleep(mp.players.local.getAnimTotalTime(item[0], item[1]) - 200);
+                }
+                else
+                    isLoop = true;
+            }
+
+            if (!isLoop) {
+                currentScenario = '';
+                mp.attachmentMngr.removeLocal(currentScenario);
+            }
+
         }
     }
     catch (e) {
-        methods.debug(e);
-    }*/
+        
+    }
 };
 
 user.stopScenario = function() {
-    mp.events.callRemote('server:stopScenario');
+    //mp.events.callRemote('server:stopScenario');
     //mp.players.local.clearTasks();
+    user.stopAllAnimation();
 };
 
 let isOpenPhone = false;

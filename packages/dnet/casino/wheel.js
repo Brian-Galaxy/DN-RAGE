@@ -23,11 +23,8 @@ wheel.start = function (player) {
 
         try {
             player.call('client:casino:wheel:start');
-            user.set(player, 'online_wheel', 1000);
         }
-        catch (e) {
-            
-        }
+        catch (e) { }
 
         setTimeout(function () {
             wheel.isBlock = false;
@@ -62,6 +59,7 @@ mp.events.add('server:casino:wheel:finalRoll', (player) => {
         return;
 
     try {
+        user.set(player, 'online_wheel', 1000);
         let win = user.get(player, 'wheelWin');
         if (win < 1) {
             user.addCashMoney(player, 40000, 'Колесо удачи');

@@ -3,6 +3,7 @@ import weapons from "./weapons";
 
 import methods from "./modules/methods";
 import Container from "./modules/data";
+import timer from "./manager/timer";
 
 let antiCheat = {};
 
@@ -33,10 +34,11 @@ mp.events.add("playerLeaveVehicle", function () {
 
 antiCheat.load = function() {
     //setInterval(antiCheat.gmTimer, 1);
-    setInterval(antiCheat.healTimer, 1);
-    setInterval(antiCheat.secTimer, 1000);
-    setInterval(antiCheat.tenSecTimer, 10000);
-    setInterval(antiCheat.ten3SecTimer, 30000);
+
+    timer.createInterval('antiCheat.healTimer', antiCheat.healTimer, 1);
+    timer.createInterval('antiCheat.secTimer', antiCheat.secTimer, 1000);
+    timer.createInterval('antiCheat.tenSecTimer', antiCheat.tenSecTimer, 10000);
+    timer.createInterval('antiCheat.ten3SecTimer', antiCheat.ten3SecTimer, 30000);
 
     /*prevArrayConfig = [];
     for (let i = 0; i <= 27; i++) {
@@ -86,7 +88,7 @@ antiCheat.healTimer = function() {
         }*/
         autoHeal = mp.players.local.getHealth();
         autoArmor = mp.players.local.getArmour();
-        autoAmmo = user.getCurrentAmmo();
+        //autoAmmo = user.getCurrentAmmo();
     }
 };
 

@@ -51,7 +51,7 @@ jobPoint.create = function(pickupPos, route = false, radius = 1, color = ui.Mark
     return _checkpoint.id;
 };
 
-jobPoint.createBlipById = function(id, pickupPos, blipId = 1, blipColor = 0, route = false) {
+jobPoint.createBlipById = function(id, pickupPos, blipId = 1, blipColor = 0, route = false, shortRange = false, name = 'Цель', rot = 0) {
 
     jobPoint.deleteBlipById(id);
 
@@ -59,9 +59,14 @@ jobPoint.createBlipById = function(id, pickupPos, blipId = 1, blipColor = 0, rou
         {
             color: blipColor,
             scale: 0.8,
-            name: 'Цель',
+            name: name,
+            shortRange: shortRange,
             dimension: -1
         });
+
+    if (rot !== 0) {
+        blip.setRotation(rot);
+    }
 
     blip.setRoute(route);
 

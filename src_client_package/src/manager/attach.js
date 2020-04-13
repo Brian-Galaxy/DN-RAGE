@@ -1,5 +1,6 @@
 import methods from '../modules/methods';
 import attachItems from "./attachItems";
+import timer from "./timer";
 
 let attach = {};
 
@@ -53,7 +54,7 @@ mp.attachmentMngr =
                             object.attachTo(entity.handle, boneIndex,
                                 attInfo.offset.x, attInfo.offset.y, attInfo.offset.z,
                                 attInfo.rotation.x, attInfo.rotation.y, attInfo.rotation.z,
-                                false, false, false, false, 2, true);
+                                false, false, attInfo.collision, false, 2, true);
 
                             entity.__attachmentObjects[id] = object;
                         }
@@ -121,7 +122,7 @@ mp.attachmentMngr =
             }
         },
 
-        register: function(id, model, boneName, offset, rotation)
+        register: function(id, model, boneName, offset, rotation, collision = false)
         {
             try {
                 if(typeof(id) === 'string')
@@ -142,7 +143,8 @@ mp.attachmentMngr =
                             model: model,
                             offset: offset,
                             rotation: rotation,
-                            boneName: boneName
+                            boneName: boneName,
+                            collision: collision
                         };
                     /*if(mp.game.streaming.isModelInCdimage(model))
                     {
@@ -339,7 +341,7 @@ attach.init = function () {
             }
         });
 
-        setInterval(attach.timer, 5000);
+        timer.createInterval('attach.timer', attach.timer, 5000);
     }
     catch (e) {
         methods.debug(e);

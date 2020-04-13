@@ -53,6 +53,13 @@ pickups.Builder4Pos1 = new mp.Vector3(-159.4984, -944.1298, 29.07765);
 pickups.Builder4Pos2 = new mp.Vector3(-159.3199, -944.1606, 113.3277);
 pickups.Builder4Pos3 = new mp.Vector3(-159.5894, -944.1558, 268.2277);
 
+pickups.DispatcherPos1 = new mp.Vector3(443.6864013671875, -975.92333984375, 34.93109130859375);
+pickups.DispatcherPos2 = new mp.Vector3(437.31390380859375, -983.1475830078125, 34.93111038208008);
+pickups.DispatcherPos3 = new mp.Vector3(443.7832946777344, -983.318603515625, 34.931121826171875);
+pickups.DispatcherPos4 = new mp.Vector3(437.0284118652344, -975.5953369140625, 34.93110275268555);
+pickups.DispatcherPos5 = new mp.Vector3(-450.4728088378906, 6009.7578125, 35.50712966918945);
+pickups.DispatcherPos6 = new mp.Vector3(-449.068115234375, 6008.1572265625, 35.5079460144043);
+
 pickups.CasinoLiftStreetPos = new mp.Vector3(935.5374755859375, 46.44008255004883, 80.09577178955078);
 pickups.CasinoLiftBalconPos = new mp.Vector3(964.3539428710938, 58.81953048706055, 111.5530014038086);
 pickups.CasinoLiftRoofPos = new mp.Vector3(972.0299072265625, 52.14411163330078, 119.24087524414062);
@@ -172,6 +179,32 @@ pickups.ClubGalaxyVPos.rot = 176.21629333496094;
 pickups.ClubLsVPos = new mp.Vector3(-1169.167236328125, -1159.6075439453125, 4.643235683441162);
 pickups.ClubLsVPos.rot = 283.82879638671875;
 
+/*Gang*/
+pickups.GangUserPos1 = new mp.Vector3(-10.36269, -1827.974, 24.3937);
+pickups.GangUserPos2 = new mp.Vector3(-185.1627, -1702.005, 31.76884);
+pickups.GangUserPos3 = new mp.Vector3(1332.022, -1642.544, 51.1209);
+pickups.GangUserPos4 = new mp.Vector3(-1142.604, -1600.374, 3.391782);
+pickups.GangUserPos5 = new mp.Vector3(465.1705, -1672.832, 28.29149);
+pickups.GangUserPosInt = new mp.Vector3(2737.886, -374.227, -48.98799);
+
+pickups.GangVehPos1 = new mp.Vector3(7.4240, -1809.3, 25.01075, -50.742);
+pickups.GangVehPos1.rot = -50.742;
+
+pickups.GangVehPos2 = new mp.Vector3(-196.5648, -1717.631, 32.3554);
+pickups.GangVehPos2.rot = 134.5378;
+
+pickups.GangVehPos3 = new mp.Vector3(1329.077, -1661.631, 50.92767);
+pickups.GangVehPos3.rot = 125.741;
+
+pickups.GangVehPos4 = new mp.Vector3(-1143.952, -1592.591, 4.016691);
+pickups.GangVehPos4.rot = 48.040;
+
+pickups.GangVehPos5 = new mp.Vector3(476.4883, -1690.043, 28.9059);
+pickups.GangVehPos5.rot = 139.95;
+
+pickups.GangVehPosInt = new mp.Vector3(2681.32, -361.2303, -55.49273);
+pickups.GangVehPosInt.rot = -88.86639;
+
 /*Biz*/
 pickups.InvaderPos1 = new mp.Vector3(-1078.19, -254.3557, 43.02112);
 pickups.InvaderPos2 = new mp.Vector3(-1072.305, -246.3927, 53.00602);
@@ -236,6 +269,48 @@ pickups.checkPressLAlt = function(player) {
     methods.checkTeleport(player, pickups.Builder2Pos1, pickups.Builder2Pos2);
     methods.checkTeleport(player, pickups.EmsRoofPos1, pickups.EmsRoofPos2);
     methods.checkTeleport(player, pickups.InvaderPos2, pickups.InvaderPos1);
+
+    if (methods.distanceToPos(pickups.GangUserPosInt, playerPos) < distanceCheck && player.dimension === 1) {
+        player.dimension = 0;
+        user.teleport(player, pickups.GangUserPos1.x, pickups.GangUserPos1.y, pickups.GangUserPos1.z + 1);
+    }
+    if (methods.distanceToPos(pickups.GangUserPosInt, playerPos) < distanceCheck && player.dimension === 2) {
+        player.dimension = 0;
+        user.teleport(player, pickups.GangUserPos2.x, pickups.GangUserPos2.y, pickups.GangUserPos2.z + 1);
+    }
+    if (methods.distanceToPos(pickups.GangUserPosInt, playerPos) < distanceCheck && player.dimension === 3) {
+        player.dimension = 0;
+        user.teleport(player, pickups.GangUserPos3.x, pickups.GangUserPos3.y, pickups.GangUserPos3.z + 1);
+    }
+    if (methods.distanceToPos(pickups.GangUserPosInt, playerPos) < distanceCheck && player.dimension === 4) {
+        player.dimension = 0;
+        user.teleport(player, pickups.GangUserPos4.x, pickups.GangUserPos4.y, pickups.GangUserPos4.z + 1);
+    }
+    if (methods.distanceToPos(pickups.GangUserPosInt, playerPos) < distanceCheck && player.dimension === 5) {
+        player.dimension = 0;
+        user.teleport(player, pickups.GangUserPos5.x, pickups.GangUserPos5.y, pickups.GangUserPos5.z + 1);
+    }
+
+    if (methods.distanceToPos(pickups.GangUserPos1, playerPos) < distanceCheck) {
+        player.dimension = 1;
+        user.teleport(player, pickups.GangUserPosInt.x, pickups.GangUserPosInt.y, pickups.GangUserPosInt.z + 1);
+    }
+    if (methods.distanceToPos(pickups.GangUserPos2, playerPos) < distanceCheck) {
+        player.dimension = 2;
+        user.teleport(player, pickups.GangUserPosInt.x, pickups.GangUserPosInt.y, pickups.GangUserPosInt.z + 1);
+    }
+    if (methods.distanceToPos(pickups.GangUserPos3, playerPos) < distanceCheck) {
+        player.dimension = 3;
+        user.teleport(player, pickups.GangUserPosInt.x, pickups.GangUserPosInt.y, pickups.GangUserPosInt.z + 1);
+    }
+    if (methods.distanceToPos(pickups.GangUserPos4, playerPos) < distanceCheck) {
+        player.dimension = 4;
+        user.teleport(player, pickups.GangUserPosInt.x, pickups.GangUserPosInt.y, pickups.GangUserPosInt.z + 1);
+    }
+    if (methods.distanceToPos(pickups.GangUserPos5, playerPos) < distanceCheck) {
+        player.dimension = 5;
+        user.teleport(player, pickups.GangUserPosInt.x, pickups.GangUserPosInt.y, pickups.GangUserPosInt.z + 1);
+    }
 
     if (methods.distanceToPos(pickups.ClubUserPos, playerPos) < distanceCheck && player.dimension === 49) {
         player.dimension = 0;
@@ -565,6 +640,13 @@ pickups.createAll = function() {
     methods.createCpVector(pickups.SapdArrestPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
     methods.createCpVector(pickups.SapdKeyPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
 
+    methods.createCpVector(pickups.DispatcherPos1, 'Диспетчерская', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.DispatcherPos2, 'Диспетчерская', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.DispatcherPos3, 'Диспетчерская', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.DispatcherPos4, 'Диспетчерская', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.DispatcherPos5, 'Диспетчерская', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.DispatcherPos6, 'Диспетчерская', 1, -1, pickups.Blue);
+
     methods.createCpVector(pickups.SheriffKeyPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
     methods.createCpVector(pickups.InvaderKeyPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
     methods.createCpVector(pickups.SheriffClearPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
@@ -597,6 +679,13 @@ pickups.createAll = function() {
 
     methods.createCpVector(pickups.InvaderPos1, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
     methods.createCpVector(pickups.InvaderPos2, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
+
+    methods.createCpVector(pickups.GangUserPosInt, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
+    methods.createCpVector(pickups.GangUserPos1, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
+    methods.createCpVector(pickups.GangUserPos2, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
+    methods.createCpVector(pickups.GangUserPos3, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
+    methods.createCpVector(pickups.GangUserPos4, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
+    methods.createCpVector(pickups.GangUserPos5, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
 
     methods.createCpVector(pickups.Gr6Pos, 'Нажмите ~g~E~s~ чтобы открыть меню инкассатора', 1, -1, pickups.Blue);
     methods.createCpVector(pickups.MailPos, 'Нажмите ~g~E~s~ чтобы открыть меню почтальона', 1, -1, pickups.Blue);

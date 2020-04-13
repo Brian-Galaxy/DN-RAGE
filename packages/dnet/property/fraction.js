@@ -17,8 +17,21 @@ let fraction = exports;
 
 let count = 0;
 let timer = 0;
+let timerMafia = 0;
+let timerBig = 0;
 
 let isCargo = false;
+let isCargoMafia = false;
+let isCargoBig = false;
+
+let radius1 = 15;
+let radius2 = 60;
+
+let radiusMafia1 = 15;
+let radiusMafia2 = 60;
+
+let radiusBig1 = 25;
+let radiusBig2 = 120;
 
 fraction.shopList = [
     {
@@ -433,7 +446,12 @@ fraction.loadAll = function() {
             fraction.set(item['id'], 'is_bank', item['is_bank']);
             fraction.set(item['id'], 'is_shop', item['is_shop']);
             fraction.set(item['id'], 'is_war', item['is_war']);
+            fraction.set(item['id'], 'is_mafia', item['is_mafia']);
             fraction.set(item['id'], 'is_kill', item['is_kill']);
+            fraction.set(item['id'], 'spawn_x', item['spawn_x']);
+            fraction.set(item['id'], 'spawn_y', item['spawn_y']);
+            fraction.set(item['id'], 'spawn_z', item['spawn_z']);
+            fraction.set(item['id'], 'spawn_rot', item['spawn_rot']);
             fraction.set(item['id'], 'rank_leader', item['rank_leader']);
             fraction.set(item['id'], 'rank_sub_leader', item['rank_sub_leader']);
             fraction.set(item['id'], 'rank_list', item['rank_list']);
@@ -442,6 +460,15 @@ fraction.loadAll = function() {
         count = rows.length;
         methods.debug('All Fraction Loaded: ' + count);
     });
+
+    setTimeout(function () {
+        try {
+            fraction.removeTaxAndSave();
+        }
+        catch (e) {
+            
+        }
+    }, 20000);
 };
 
 fraction.removeTaxAndSave = function() {
@@ -451,6 +478,8 @@ fraction.removeTaxAndSave = function() {
         rows.forEach(function(item) {
             let sum = 5;
             if (item['is_war'])
+                sum += 10;
+            if (item['is_mafia'])
                 sum += 10;
             if (item['is_shop'])
                 sum += 5;
@@ -474,47 +503,50 @@ fraction.getCount = function() {
     return count;
 };
 
-fraction.createCargoWar = function() {
+fraction.isMafia = function(fractionId) {
+    return fraction.get(fractionId, 'is_mafia');
+};
+
+fraction.isGang = function(fractionId) {
+    return fraction.get(fractionId, 'is_war');
+};
+
+fraction.createCargoWar = function(count = 3) {
+
+    if (isCargo)
+        return;
+
     methods.notifyWithPictureToFractions2('Борьба за груз', `~r~ВНИМАНИЕ!`, 'Началась война за груз, груз отмечен на карте');
     isCargo = true;
 
-    currentWarPos = [];
+    //currentWarPos = [];
     let spawnList = [];
-    spawnList.push(methods.getRandomInt(0, fraction.warVehPos.length));
-    spawnList.push(methods.getRandomInt(0, fraction.warVehPos.length));
-    spawnList.push(methods.getRandomInt(0, fraction.warVehPos.length));
+
+    if (count > 5)
+        count = 5;
+    if (count < 1)
+        count = 1;
+
+    for (let i = 0; i < count; i++)
+        spawnList.push(methods.getRandomInt(0, fraction.warVehPos.length));
 
     timer = 600;
 
     spawnList.forEach((item, i) => {
         let posVeh = new mp.Vector3(fraction.warVehPos[item][0], fraction.warVehPos[item][1], fraction.warVehPos[item][2]);
 
-        currentWarPos.push(posVeh);
+        let b1 = methods.getRandomInt(1000, 2000);
+        let b2 = methods.getRandomInt(1000, 2000);
+        let b3 = methods.getRandomInt(1000, 2000);
+        currentWarPos.push({ type: 0, b1: b1, b2: b2, b3: b3, pos: posVeh, isActive: true });
 
         mp.players.forEach(p => {
             if (!user.isLogin(p))
                 return;
-            if (user.get(p, 'fraction_id2') > 0 && user.has(p, 'isCargo')) {
-                if (i === 1)
-                {
-                    user.createBlip(p, i, posVeh.x, posVeh.y, posVeh.z, 616, 1);
-
-                    user.createBlipByRadius(p, i, posVeh.x, posVeh.y, posVeh.z, 15, 9, 1);
-                    user.createBlipByRadius(p, i + 10, posVeh.x, posVeh.y, posVeh.z, 60, 9, 3);
-                }
-                else if (i === 2)
-                {
-                    user.createBlip(p, i, posVeh.x, posVeh.y, posVeh.z, 616, 2);
-
-                    user.createBlipByRadius(p, i, posVeh.x, posVeh.y, posVeh.z, 15, 9, 1);
-                    user.createBlipByRadius(p, i + 10, posVeh.x, posVeh.y, posVeh.z, 60, 9, 3);
-                }
-                else {
-                    user.createBlip(p, i, posVeh.x, posVeh.y, posVeh.z, 616, 3);
-
-                    user.createBlipByRadius(p, i, posVeh.x, posVeh.y, posVeh.z, 15, 9, 1);
-                    user.createBlipByRadius(p, i + 10, posVeh.x, posVeh.y, posVeh.z, 60, 9, 3);
-                }
+            if (user.get(p, 'fraction_id2') > 0 && user.has(p, 'isCargo') || user.isAdmin(p)) {
+                user.createBlip(p, b1, posVeh.x, posVeh.y, posVeh.z, 637, i + 1);
+                user.createBlipByRadius(p, b2, posVeh.x, posVeh.y, posVeh.z, radius1, 9, 1);
+                user.createBlipByRadius(p, b3, posVeh.x, posVeh.y, posVeh.z, radius2, 9, 3);
             }
         });
 
@@ -555,7 +587,7 @@ fraction.createCargoWar = function() {
 
                 veh.setVariable('box', JSON.stringify(boxes));
 
-                veh.setVariable('cargoId', i);
+                veh.setVariable('cargoId', b1);
             }
             catch (e) {
                 methods.debug(e);
@@ -567,20 +599,151 @@ fraction.createCargoWar = function() {
     setTimeout(fraction.timerCargoWar, 1000);
 };
 
+fraction.createCargoMafiaWar = function() {
+
+    if (isCargoMafia)
+        return;
+
+    for (let i = 0; i < enums.mafiaAllows.length; i++)
+        methods.notifyWithPictureToFraction2('Борьба за груз', `~r~МАФИИ!`, 'Началась война за груз, груз отмечен на карте', 'CHAR_DEFAULT', enums.mafiaAllows[i]);
+
+    isCargoMafia = true;
+
+    //currentWarPos = [];
+    let spawnList = [];
+    spawnList.push(methods.getRandomInt(0, fraction.warVehPos.length));
+    //spawnList.push(methods.getRandomInt(0, fraction.warVehPos.length));
+
+    timerMafia = 600;
+
+    spawnList.forEach((item, i) => {
+        let posVeh = new mp.Vector3(fraction.warVehPos[item][0], fraction.warVehPos[item][1], fraction.warVehPos[item][2]);
+
+        let b1 = methods.getRandomInt(1000, 20000);
+        let b2 = methods.getRandomInt(1000, 20000);
+        let b3 = methods.getRandomInt(1000, 20000);
+        currentWarPos.push({ type: 1, b1: b1, b2: b2, b3: b3, pos: posVeh, isActive: true });
+
+        mp.players.forEach(p => {
+            if (!user.isLogin(p))
+                return;
+            if (enums.mafiaAllows.includes(user.get(p, 'fraction_id2')) && user.has(p, 'isCargo') || user.isAdmin(p)) {
+                if (i === 1)
+                {
+                    user.createBlip(p, b1, posVeh.x, posVeh.y, posVeh.z, 636, 25);
+
+                    user.createBlipByRadius(p, b2, posVeh.x, posVeh.y, posVeh.z, radiusMafia1, 9, 1);
+                    user.createBlipByRadius(p, b3, posVeh.x, posVeh.y, posVeh.z, radiusMafia2, 9, 3);
+                }
+                else if (i === 2)
+                {
+                    user.createBlip(p, b1, posVeh.x, posVeh.y, posVeh.z, 636, 48);
+
+                    user.createBlipByRadius(p, b2, posVeh.x, posVeh.y, posVeh.z, radiusMafia1, 9, 1);
+                    user.createBlipByRadius(p, b3, posVeh.x, posVeh.y, posVeh.z, radiusMafia2, 9, 3);
+                }
+                else {
+                    user.createBlip(p, b1, posVeh.x, posVeh.y, posVeh.z, 636, 10);
+
+                    user.createBlipByRadius(p, b2, posVeh.x, posVeh.y, posVeh.z, radiusMafia1, 9, 1);
+                    user.createBlipByRadius(p, b3, posVeh.x, posVeh.y, posVeh.z, radiusMafia2, 9, 3);
+                }
+            }
+        });
+
+        vehicles.spawnCarCb(veh => {
+
+            if (!vehicles.exists(veh))
+                return;
+            try {
+                let color = methods.getRandomInt(0, 150);
+                veh.locked = false;
+                veh.setColor(color, color);
+                let boxes = [50, 50, 50, 50, 50, 50, 50, 50, 50, 50];
+                veh.setVariable('box', JSON.stringify(boxes));
+                veh.setVariable('cargoId', b1);
+            }
+            catch (e) {
+                methods.debug(e);
+            }
+
+        }, posVeh, fraction.warVehPos[item][3], 'Mule4');
+    });
+
+    setTimeout(fraction.timerCargoMafiaWar, 1000);
+};
+
+
+fraction.createCargoBigWar = function() {
+
+    if (isCargoBig)
+        return;
+
+    methods.notifyWithPictureToFractions2('Борьба за груз', `~r~ВНИМАНИЕ!`, 'Началась война за груз, груз отмечен на карте');
+
+    isCargoBig = true;
+    timerBig = 540;
+
+    let posVeh = new mp.Vector3(1040.296875, 2299.896240234375, 44.898162841796875);
+
+    let b1 = methods.getRandomInt(1000, 20000);
+    let b2 = methods.getRandomInt(1000, 20000);
+    let b3 = methods.getRandomInt(1000, 20000);
+    currentWarPos.push({ type: 3, b1: b1, b2: b2, b3: b3, pos: posVeh, isActive: true });
+
+    mp.players.forEach(p => {
+        if (!user.isLogin(p))
+            return;
+        if (user.get(p, 'fraction_id2') > 2 && user.has(p, 'isCargo') || user.isAdmin(p)) {
+            user.createBlip(p, b1, posVeh.x, posVeh.y, posVeh.z, 635, 7);
+
+            user.createBlipByRadius(p, b2, posVeh.x, posVeh.y, posVeh.z, radiusBig1, 9, 1);
+            user.createBlipByRadius(p, b3, posVeh.x, posVeh.y, posVeh.z, radiusBig2, 9, 3);
+        }
+    });
+
+    vehicles.spawnCarCb(veh => {
+
+        if (!vehicles.exists(veh))
+            return;
+        try {
+            let color = methods.getRandomInt(0, 150);
+            veh.locked = false;
+            veh.setColor(color, color);
+            let boxes = [];
+
+            for (let i = 0; i < 20; i++) {
+                let rare = 0;
+                if (methods.getRandomInt(0, 100) < 40)
+                    rare = 1;
+                if (methods.getRandomInt(0, 100) < 10)
+                    rare = 2;
+                let boxRandom = stocks.boxList.filter((item) => { return item[7] === rare; });
+                boxes.push(boxRandom[methods.getRandomInt(0, boxRandom.length)][2]);
+            }
+
+            if (methods.getRandomInt(0, 100) <= 50)
+                boxes.push(methods.getRandomInt(3, 5));
+            else
+                boxes.push(methods.getRandomInt(38, 40));
+
+            veh.setVariable('box', JSON.stringify(boxes));
+
+            veh.setVariable('cargoId', b1);
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+
+    }, posVeh, 90, 'Pounder2');
+
+    setTimeout(fraction.timerCargoBigWar, 1000);
+};
+
 fraction.stopCargoWar = function() {
 
-    //methods.notifyWithPictureToFractions2('Борьба за груз', `~r~ВНИМАНИЕ!`, 'Миссия была завершена');
     isCargo = false;
     timer = 0;
-
-    /*mp.vehicles.forEach(v => {
-        if (!vehicles.exists(v))
-            return;
-        if (v.getVariable('cargoId') !== null && v.getVariable('cargoId') !== undefined) {
-            if (v.getOccupants().length == 0)
-                vehicles.respawn(v);
-        }
-    });*/
 
     mp.players.forEach(p => {
         if (!user.isLogin(p))
@@ -588,9 +751,71 @@ fraction.stopCargoWar = function() {
 
         if (user.get(p, 'fraction_id2') > 0) {
             currentWarPos.forEach((item, i) => {
-                user.deleteBlip(p, i);
-                user.deleteBlipByRadius(p, i);
-                user.deleteBlipByRadius(p, i + 10);
+
+                if (!item.isActive)
+                    return;
+                if (item.type !== 0)
+                    return;
+
+                currentWarPos[i].isActive = false;
+
+                user.deleteBlip(p, item.b1);
+                user.deleteBlipByRadius(p, item.b2);
+                user.deleteBlipByRadius(p, item.b3);
+            });
+        }
+    });
+};
+
+fraction.stopCargoMafiaWar = function() {
+
+    isCargoMafia = false;
+    timerMafia = 0;
+
+    mp.players.forEach(p => {
+        if (!user.isLogin(p))
+            return;
+
+        if (user.get(p, 'fraction_id2') > 0) {
+            currentWarPos.forEach((item, i) => {
+
+                if (!item.isActive)
+                    return;
+                if (item.type !== 1)
+                    return;
+
+                currentWarPos[i].isActive = false;
+
+                user.deleteBlip(p, item.b1);
+                user.deleteBlipByRadius(p, item.b2);
+                user.deleteBlipByRadius(p, item.b3);
+            });
+        }
+    });
+};
+
+fraction.stopCargoBigWar = function() {
+
+    isCargoBig = false;
+    timerBig = 0;
+
+    mp.players.forEach(p => {
+        if (!user.isLogin(p))
+            return;
+
+        if (user.get(p, 'fraction_id2') > 0) {
+            currentWarPos.forEach((item, i) => {
+
+                if (!item.isActive)
+                    return;
+                if (item.type !== 2)
+                    return;
+
+                currentWarPos[i].isActive = false;
+
+                user.deleteBlip(p, item.b1);
+                user.deleteBlipByRadius(p, item.b2);
+                user.deleteBlipByRadius(p, item.b3);
             });
         }
     });
@@ -605,9 +830,11 @@ fraction.timerCargoWar = function() {
             if (!user.isLogin(p))
                 return;
 
-            if (user.get(p, 'fraction_id2') > 0 && user.has(p, 'isCargo')) {
+            if (user.get(p, 'fraction_id2') > 0 && user.has(p, 'isCargo') || user.isAdmin(p)) {
                 currentWarPos.forEach((item, i) => {
-                    user.deleteBlipByRadius(p, i);
+                    if (!item.isActive || item.type !== 0)
+                        return;
+                    user.deleteBlipByRadius(p, item.b2);
                 });
             }
         });
@@ -615,7 +842,13 @@ fraction.timerCargoWar = function() {
 
     if (timer > 120) {
         currentWarPos.forEach(item => {
-            mp.players.forEachInRange(item, 15, p => {
+
+            if (!item.isActive)
+                return;
+            if (item.type !== 0)
+                return;
+
+            mp.players.forEachInRange(item.pos, radius1, p => {
                 if (!user.isLogin(p))
                     return;
 
@@ -627,7 +860,13 @@ fraction.timerCargoWar = function() {
     }
 
     currentWarPos.forEach(item => {
-        mp.vehicles.forEachInRange(item, 60, v => {
+
+        if (!item.isActive)
+            return;
+        if (item.type !== 0)
+            return;
+
+        mp.vehicles.forEachInRange(item.pos, radius2, v => {
             if (!vehicles.exists(v))
                 return;
 
@@ -641,41 +880,147 @@ fraction.timerCargoWar = function() {
         });
     });
 
-    /*mp.vehicles.forEachInDimension(0, v => {
-        if (!vehicles.exists(v))
-            return;
-
-        if (v.bodyHealth === 0 || v.engineHealth === 0 || v.dead)
-            return;
-
-        if (v.getVariable('cargoId') !== null && v.getVariable('cargoId') !== undefined) {
-            let cargoId = methods.parseInt(v.getVariable('cargoId'));
-            let vPos = v.position;
-
-            isCargo = true;
-
-            mp.players.forEach(p => {
-                if (!user.isLogin(p))
-                    return;
-
-                if (user.get(p, 'fraction_id2') > 0 && user.has(p, 'isCargo')) {
-                    if (cargoId === 1)
-                        user.createBlip1(p, vPos.x, vPos.y, vPos.z, 616, 1);
-                    else if (cargoId === 2)
-                        user.createBlip2(p, vPos.x, vPos.y, vPos.z, 616, 2);
-                    else
-                        user.createBlip3(p, vPos.x, vPos.y, vPos.z, 616, 3);
-                }
-            });
-        }
-    });*/
-
     if (timer < 1) {
         fraction.stopCargoWar();
         return;
     }
 
     setTimeout(fraction.timerCargoWar, 1000);
+};
+
+fraction.timerCargoMafiaWar = function() {
+
+    timerMafia--;
+
+    if (timerMafia === 120) {
+        mp.players.forEach(p => {
+            if (!user.isLogin(p))
+                return;
+
+            if (enums.mafiaAllows.includes(user.get(p, 'fraction_id2')) && user.has(p, 'isCargo') || user.isAdmin(p)) {
+                currentWarPos.forEach((item, i) => {
+                    if (!item.isActive || item.type !== 1)
+                        return;
+                    user.deleteBlipByRadius(p, item.b2);
+                });
+            }
+        });
+    }
+
+    if (timerMafia > 120) {
+        currentWarPos.forEach(item => {
+
+            if (!item.isActive)
+                return;
+            if (item.type !== 1)
+                return;
+
+            mp.players.forEachInRange(item.pos, radiusMafia1, p => {
+                if (!user.isLogin(p))
+                    return;
+
+                if (p.health > 0) {
+                    user.setHealth(p, p.health - 25);
+                }
+            });
+        });
+    }
+
+    currentWarPos.forEach(item => {
+
+        if (!item.isActive)
+            return;
+        if (item.type !== 1)
+            return;
+
+        mp.vehicles.forEachInRange(item.pos, radiusMafia2, v => {
+            if (!vehicles.exists(v))
+                return;
+
+            if (v.getVariable('box') !== null && v.getVariable('box') !== undefined) {
+                //...
+            }
+            else {
+                if (v.getOccupants().length > 0)
+                    vehicles.respawn(v);
+            }
+        });
+    });
+
+    if (timerMafia < 1) {
+        fraction.stopCargoMafiaWar();
+        return;
+    }
+
+    setTimeout(fraction.timerCargoMafiaWar, 1000);
+};
+
+
+fraction.timerCargoBigWar = function() {
+
+    timerBig--;
+
+    if (timerBig === 120) {
+        mp.players.forEach(p => {
+            if (!user.isLogin(p))
+                return;
+
+            if (user.get(p, 'fraction_id2') > 0 && user.has(p, 'isCargo') || user.isAdmin(p)) {
+                currentWarPos.forEach((item, i) => {
+                    if (!item.isActive || item.type !== 2)
+                        return;
+                    user.deleteBlipByRadius(p, item.b2);
+                });
+            }
+        });
+    }
+
+    if (timerBig > 120) {
+        currentWarPos.forEach(item => {
+
+            if (!item.isActive)
+                return;
+            if (item.type !== 2)
+                return;
+
+            mp.players.forEachInRange(item.pos, radiusBig1, p => {
+                if (!user.isLogin(p))
+                    return;
+
+                if (p.health > 0) {
+                    user.setHealth(p, p.health - 25);
+                }
+            });
+        });
+    }
+
+    currentWarPos.forEach(item => {
+
+        if (!item.isActive)
+            return;
+        if (item.type !== 2)
+            return;
+
+        mp.vehicles.forEachInRange(item.pos, radiusBig2, v => {
+            if (!vehicles.exists(v))
+                return;
+
+            if (v.getVariable('box') !== null && v.getVariable('box') !== undefined) {
+                //...
+            }
+            else {
+                if (v.getOccupants().length > 0)
+                    vehicles.respawn(v);
+            }
+        });
+    });
+
+    if (timerBig < 1) {
+        fraction.stopCargoBigWar();
+        return;
+    }
+
+    setTimeout(fraction.timerCargoBigWar, 1000);
 };
 
 fraction.getShopGang = function(player) {
@@ -823,6 +1168,7 @@ fraction.save = function(id) {
         sql = sql + ", is_bank = '" + methods.parseInt(fraction.get(id, "is_bank")) + "'";
         sql = sql + ", is_shop = '" + methods.parseInt(fraction.get(id, "is_shop")) + "'";
         sql = sql + ", is_war = '" + methods.parseInt(fraction.get(id, "is_war")) + "'";
+        sql = sql + ", is_mafia = '" + methods.parseInt(fraction.get(id, "is_mafia")) + "'";
         sql = sql + ", is_kill = '" + methods.parseInt(fraction.get(id, "is_kill")) + "'";
         sql = sql + ", rank_leader = '" + methods.removeQuotes(fraction.get(id, "rank_leader")) + "'";
         sql = sql + ", rank_sub_leader = '" + methods.removeQuotes(fraction.get(id, "rank_sub_leader")) + "'";
@@ -1098,10 +1444,12 @@ fraction.destroy = function (player, id) {
 
     fraction.set(id, "name", 'Слот свободен');
     fraction.set(id, "money", 0);
-    fraction.set(id, "owner_id", 0);
+    if (!fraction.get(id, 'is_war') && !fraction.get(id, 'is_mafia'))
+        fraction.set(id, "owner_id", 0);
     fraction.set(id, "is_bank", false);
     fraction.set(id, "is_shop", false);
-    fraction.set(id, "is_war", false);
+    /*fraction.set(id, "is_war", false);
+    fraction.set(id, "is_mafia", false);*/
     fraction.set(id, "is_kill", false);
     fraction.set(id, "rank_leader", 'Лидер');
     fraction.set(id, "rank_sub_leader", 'Заместитель');

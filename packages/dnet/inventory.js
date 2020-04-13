@@ -951,13 +951,13 @@ inventory.useItem = function(player, id, itemId, isTargetable = false) {
                     let vehInfo = methods.getVehicleInfo(veh.model);
                     if (vehInfo.fuel_type == 3)
                     {
-                        player.notify("~r~Данный класс автомобиля взломать нельзя");
+                        player.notify("~r~Данный класс автомобиля можно взломать с помощью телефона");
                         return;
                     }
 
                     if (vehInfo.class_name == "Super")
                     {
-                        player.notify("~r~Данный класс автомобиля взломать нельзя");
+                        player.notify("~r~Данный класс автомобиля можно взломать с помощью телефона");
                         return;
                     }
 
@@ -1364,10 +1364,10 @@ inventory.useItem = function(player, id, itemId, isTargetable = false) {
                         return;
                     }
 
-                    if (target.health == 0) {
+                    /*if (target.health == 0) {
                         player.notify("~r~Нельзя надевать наручники на человека в коме");
                         return;
-                    }
+                    }*/
                     if (target.vehicle) {
                         player.notify("~r~Игрок находится в машине");
                         return;
@@ -1387,7 +1387,7 @@ inventory.useItem = function(player, id, itemId, isTargetable = false) {
                             catch (e) {
                                 methods.debug(e);
                             }
-                        }, 3760);
+                        }, 3800); //3760
                     }, 200);
                     break;
                 }
@@ -1424,9 +1424,14 @@ inventory.useItem = function(player, id, itemId, isTargetable = false) {
                         return;
                     }
 
-                    if (player.health < 1 && isTargetable) {
-                        user.revive(player);
+                    if (player.health < 1) {
+                        player.notify('~r~Нельзя использовать будучи мертвым');
+                        return;
                     }
+
+                    /*if (player.health < 1 && isTargetable) {
+                        user.revive(player);
+                    }*/
 
                     chat.sendMeCommand(player, "использовал аптечку");
                     user.setHealth(player, 100);

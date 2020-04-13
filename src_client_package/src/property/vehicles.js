@@ -30,24 +30,34 @@ vehicles.getData = async function(id) {
     return await Container.Data.GetAll(offset + methods.parseInt(id));
 };
 
-/*
-vehicles.setData = function(id, key, val) {
+
+vehicles.setSync = function(id, key, val) {
     Container.Data.Set(offset + id, key, val);
 };
 
-vehicles.resetData = function(id, key) {
+vehicles.resetSync = function(id, key) {
     Container.Data.Reset(offset + id, key);
 };
 
-vehicles.getData = async function(id, key) {
+vehicles.getSync = async function(id, key) {
     if (vehicles.has(id, key))
         return await Container.Data.Get(offset + id, key);
     return undefined;
 };
 
-vehicles.hasData = async function(id, key) {
+vehicles.hasSync = async function(id, key) {
     return await Container.Data.Has(offset + id, key);
-};*/
+};
+
+vehicles.setLivery = function(idx) {
+    if (mp.players.local.vehicle)
+        mp.events.callRemote('server:vehicle:setLivery', idx);
+};
+
+vehicles.setExtraState = function(state) {
+    if (mp.players.local.vehicle)
+        mp.events.callRemote('s:vSync:setExtraState', mp.players.local.vehicle.remoteId, state);
+};
 
 vehicles.setInteriorLightState = function(state) {
     if (mp.players.local.vehicle)
@@ -206,6 +216,25 @@ vehicles.isVehicleSirenValid = function (model) {
         case 'FireTruck':
         case 'PoliceOld1':
         case 'PoliceOld2':
+        case 'Bcfdscout':
+        case 'Lsfdscout':
+        case 'Lsfdscout2':
+        case 'Polscout':
+        case 'Polscout2':
+        case 'Sherscout':
+        case 'Sherscout2':
+        case 'Trucara':
+        case 'Umkcara':
+        case 'Polvacca':
+        case 'Polbullet':
+        case 'Polbullet2':
+        case 'Hwaybullet':
+        case 'Sherbullet':
+        case 'Shergauntlet':
+        case 'Intcept':
+        case 'Intcept2':
+        case 'Intcept3':
+        case 'Intcept4':
             return true;
     }
     return false;
@@ -219,6 +248,21 @@ vehicles.getSirenSound = function (model, state) {
         case 'Sheriff':
         case 'Sheriff2':
         case 'Pranger':
+        case 'Bcfdscout':
+        case 'Lsfdscout':
+        case 'Lsfdscout2':
+        case 'Polscout':
+        case 'Polscout2':
+        case 'Sherscout':
+        case 'Sherscout2':
+        case 'Trucara':
+        case 'Umkcara':
+        case 'Polvacca':
+        case 'Polbullet':
+        case 'Polbullet2':
+        case 'Hwaybullet':
+        case 'Sherbullet':
+        case 'Shergauntlet':
         {
             if (state == 2)
                 return 'RESIDENT_VEHICLES_SIREN_WAIL_03';
@@ -277,6 +321,12 @@ vehicles.getSirenSound = function (model, state) {
             break;
         }
     }
+    if (state == 2)
+        return 'VEHICLES_HORNS_SIREN_1';
+    if (state == 3)
+        return 'VEHICLES_HORNS_SIREN_2';
+    if (state == 4)
+        return 'VEHICLES_HORNS_POLICE_WARNING';
     return '';
 };
 
@@ -304,6 +354,7 @@ vehicles.getWarningSound = function (model) {
         case 'FireTruck':
             return 'VEHICLES_HORNS_FIRETRUCK_WARNING';
     }
+    return 'SIRENS_AIRHORN';
 };
 
 vehicles.getSpeedBoost = (model) => {

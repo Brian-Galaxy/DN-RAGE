@@ -1,4 +1,5 @@
 import methods from '../modules/methods';
+import timer from '../manager/timer';
 
 let npc = {};
 
@@ -262,8 +263,8 @@ npc.loadAll = function() {
 //Церковь
     npc.create(mp.game.joaat("ig_priest"), new mp.Vector3(-787.1298828125, -708.8898315429688, 30.32028579711914), 265.47149658203125);
 
-    setInterval(npc.timer, 5000);
-    setInterval(npc.timer500, 500);
+    timer.createInterval('npc.timer', npc.timer, 5000);
+    timer.createInterval('npc.timer500', npc.timer500, 500);
 };
 
 npc.timer = function() {

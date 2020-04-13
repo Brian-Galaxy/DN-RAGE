@@ -9,13 +9,15 @@ import phone from "../phone";
 import voiceRage from "../voiceRage";
 import user from '../user';
 import inventory from "../inventory";
-
-import pSync from "./pSync";
-import heliCam from "./heliCam";
 import chat from "../chat";
 import weapons from "../weapons";
 import menuList from "../menuList";
 import enums from "../enums";
+import walkie from "../walkie";
+
+import pSync from "./pSync";
+import heliCam from "./heliCam";
+
 
 let bind = {};
 
@@ -92,7 +94,7 @@ const keyCodes = {
     86: 'V',
     87: 'W',
     88: 'X',
-    89: 'U',
+    89: 'Y',
     90: 'Z',
     91: 'Windows Key',
     92: 'Right window key',
@@ -241,6 +243,13 @@ for(let code in keyCodes) {
         if (mp.gui.chat.enabled)
             return;
 
+        if (user.getCache('s_bind_voice') == parseInt(code)) {
+            voiceRage.enableMic();
+        }
+        if (user.getCache('s_bind_voice_radio') == parseInt(code)) {
+            voiceRage.enableRadioMic();
+        }
+
         if (methods.isBlockKeys())
             return;
 
@@ -270,9 +279,18 @@ for(let code in keyCodes) {
                 return;
             }
             if (!methods.isBlockKeys() && phone.isHide()) {
+
+                if (Container.Data.HasLocally(mp.players.local.remoteId, "isInventoryTimeout"))
+                {
+                    mp.game.ui.notifications.show("~r~Таймаут на действие 1 секунду");
+                    return;
+                }
+                Container.Data.SetLocally(mp.players.local.remoteId, "isInventoryTimeout", true);
+                ui.callCef('inventory', '{"type": "showOrHide"}');
                 setTimeout(function () {
-                    ui.callCef('inventory', '{"type": "showOrHide"}');
-                }, 100);
+                    Container.Data.ResetLocally(mp.players.local.remoteId, "isInventoryTimeout");
+                }, 1000);
+
             }
         }
         if (user.getCache('s_bind_inv_world') == parseInt(code)) {
@@ -288,8 +306,33 @@ for(let code in keyCodes) {
                 inventory.getItemList(0, 0);
         }
         if (user.getCache('s_bind_phone') == parseInt(code)) {
-            if (!methods.isBlockKeys() && !mp.gui.cursor.visible)
+            if (!methods.isBlockKeys() && !mp.gui.cursor.visible) {
+                if (Container.Data.HasLocally(mp.players.local.remoteId, "isPhoneTimeout"))
+                {
+                    mp.game.ui.notifications.show("~r~Таймаут на действие 0.5 секунд");
+                    return;
+                }
+                Container.Data.SetLocally(mp.players.local.remoteId, "isPhoneTimeout", true);
                 phone.showOrHide();
+                setTimeout(function () {
+                    Container.Data.ResetLocally(mp.players.local.remoteId, "isPhoneTimeout");
+                }, 500);
+            }
+        }
+        //if (user.getCache('s_bind_walkie') == parseInt(code)) {
+        if (user.getCache('s_bind_voice_walkie') == parseInt(code)) {
+            if (!methods.isBlockKeys() && !mp.gui.cursor.visible) {
+                if (Container.Data.HasLocally(mp.players.local.remoteId, "isWalkieTimeout"))
+                {
+                    mp.game.ui.notifications.show("~r~Таймаут на действие 0.5 секунд");
+                    return;
+                }
+                Container.Data.SetLocally(mp.players.local.remoteId, "isWalkieTimeout", true);
+                walkie.showOrHide();
+                setTimeout(function () {
+                    Container.Data.ResetLocally(mp.players.local.remoteId, "isWalkieTimeout");
+                }, 500);
+            }
         }
         if (user.getCache('s_bind_stopanim') == parseInt(code)) {
             if (!methods.isBlockKeys())
@@ -327,12 +370,17 @@ for(let code in keyCodes) {
                     return;
                 }
                 Container.Data.SetLocally(mp.players.local.remoteId, "isGunTimeout", true);
-                weapons.getMapList().forEach(item => {
-                    if (mp.game.invoke(methods.HAS_PED_GOT_WEAPON, mp.players.local.handle, (item[1] / 2), false)) {
-                        if (weapons.getGunSlotId(item[0]) === 1)
-                            user.setCurrentWeapon(item[0]);
-                    }
-                });
+                try {
+                    weapons.getMapList().forEach(item => {
+                        if (mp.game.invoke(methods.HAS_PED_GOT_WEAPON, mp.players.local.handle, (item[1] / 2), false)) {
+                            if (weapons.getGunSlotId(item[0]) === 1)
+                                user.setCurrentWeapon(item[0]);
+                        }
+                    });
+                }
+                catch (e) {
+                    
+                }
                 setTimeout(function () {
                     Container.Data.ResetLocally(mp.players.local.remoteId, "isGunTimeout");
                 }, 1000);
@@ -347,12 +395,17 @@ for(let code in keyCodes) {
                     return;
                 }
                 Container.Data.SetLocally(mp.players.local.remoteId, "isGunTimeout", true);
-                weapons.getMapList().forEach(item => {
-                    if (mp.game.invoke(methods.HAS_PED_GOT_WEAPON, mp.players.local.handle, (item[1] / 2), false)) {
-                        if (weapons.getGunSlotId(item[0]) === 2)
-                            user.setCurrentWeapon(item[0]);
-                    }
-                });
+                try {
+                    weapons.getMapList().forEach(item => {
+                        if (mp.game.invoke(methods.HAS_PED_GOT_WEAPON, mp.players.local.handle, (item[1] / 2), false)) {
+                            if (weapons.getGunSlotId(item[0]) === 2)
+                                user.setCurrentWeapon(item[0]);
+                        }
+                    });
+                }
+                catch (e) {
+                    
+                }
                 setTimeout(function () {
                     Container.Data.ResetLocally(mp.players.local.remoteId, "isGunTimeout");
                 }, 1000);
@@ -367,12 +420,17 @@ for(let code in keyCodes) {
                     return;
                 }
                 Container.Data.SetLocally(mp.players.local.remoteId, "isGunTimeout", true);
-                weapons.getMapList().forEach(item => {
-                    if (mp.game.invoke(methods.HAS_PED_GOT_WEAPON, mp.players.local.handle, (item[1] / 2), false)) {
-                        if (weapons.getGunSlotId(item[0]) === 3)
-                            user.setCurrentWeapon(item[0]);
-                    }
-                });
+                try {
+                    weapons.getMapList().forEach(item => {
+                        if (mp.game.invoke(methods.HAS_PED_GOT_WEAPON, mp.players.local.handle, (item[1] / 2), false)) {
+                            if (weapons.getGunSlotId(item[0]) === 3)
+                                user.setCurrentWeapon(item[0]);
+                        }
+                    });
+                }
+                catch (e) {
+                    
+                }
                 setTimeout(function () {
                     Container.Data.ResetLocally(mp.players.local.remoteId, "isGunTimeout");
                 }, 1000);
@@ -387,12 +445,17 @@ for(let code in keyCodes) {
                     return;
                 }
                 Container.Data.SetLocally(mp.players.local.remoteId, "isGunTimeout", true);
-                weapons.getMapList().forEach(item => {
-                    if (mp.game.invoke(methods.HAS_PED_GOT_WEAPON, mp.players.local.handle, (item[1] / 2), false)) {
-                        if (weapons.getGunSlotId(item[0]) === 4)
-                            user.setCurrentWeapon(item[0]);
-                    }
-                });
+                try {
+                    weapons.getMapList().forEach(item => {
+                        if (mp.game.invoke(methods.HAS_PED_GOT_WEAPON, mp.players.local.handle, (item[1] / 2), false)) {
+                            if (weapons.getGunSlotId(item[0]) === 4)
+                                user.setCurrentWeapon(item[0]);
+                        }
+                    });
+                }
+                catch (e) {
+                    
+                }
                 setTimeout(function () {
                     Container.Data.ResetLocally(mp.players.local.remoteId, "isGunTimeout");
                 }, 1000);
@@ -407,12 +470,17 @@ for(let code in keyCodes) {
                     return;
                 }
                 Container.Data.SetLocally(mp.players.local.remoteId, "isGunTimeout", true);
-                weapons.getMapList().forEach(item => {
-                    if (mp.game.invoke(methods.HAS_PED_GOT_WEAPON, mp.players.local.handle, (item[1] / 2), false)) {
-                        if (weapons.getGunSlotId(item[0]) === 5)
-                            user.setCurrentWeapon(item[0]);
-                    }
-                });
+                try {
+                    weapons.getMapList().forEach(item => {
+                        if (mp.game.invoke(methods.HAS_PED_GOT_WEAPON, mp.players.local.handle, (item[1] / 2), false)) {
+                            if (weapons.getGunSlotId(item[0]) === 5)
+                                user.setCurrentWeapon(item[0]);
+                        }
+                    });
+                }
+                catch (e) {
+                    
+                }
                 setTimeout(function () {
                     Container.Data.ResetLocally(mp.players.local.remoteId, "isGunTimeout");
                 }, 1000);
@@ -511,9 +579,6 @@ for(let code in keyCodes) {
                 }
             }
         }
-        if (user.getCache('s_bind_voice') == parseInt(code)) {
-            voiceRage.enableMic();
-        }
         if (user.getCache('s_bind_seat') == parseInt(code)) {
 
             if (mp.players.local.isInAnyVehicle(true)) {
@@ -585,6 +650,9 @@ for(let code in keyCodes) {
         }
         if (user.getCache('s_bind_voice') == parseInt(code)) {
             voiceRage.disableMic();
+        }
+        if (user.getCache('s_bind_voice_radio') == parseInt(code)) {
+            voiceRage.disableRadioMic();
         }
         if (user.getCache('s_bind_fingerpoint') == parseInt(code)) {
             pSync.pointing.stop();

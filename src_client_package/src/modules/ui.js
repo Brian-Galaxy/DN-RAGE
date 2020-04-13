@@ -112,7 +112,6 @@ ui.showSubtitle = function(message, duration = 5000) {
     }
 };
 
-
 ui.updateGangInfo = function(top1, top2, timerCounter) {
     if (uiBrowser) {
         try {
@@ -145,6 +144,46 @@ ui.hideGangInfo = function() {
     if (uiBrowser) {
         try {
             ui.callCef('hudg','{"type": "hideGangInfo"}');
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    }
+};
+
+ui.updateMafiaInfo = function(top1, top2, top3, timerCounter) {
+    if (uiBrowser) {
+        try {
+            let data = {
+                type: 'updateMafiaInfo',
+                top1 : top1,
+                top2 : top2,
+                top3 : top3,
+                timerCounter : timerCounter,
+            };
+            ui.callCef('hudg', JSON.stringify(data));
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    }
+};
+
+ui.showMafiaInfo = function() {
+    if (uiBrowser) {
+        try {
+            ui.callCef('hudg','{"type": "showMafiaInfo"}');
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    }
+};
+
+ui.hideMafiaInfo = function() {
+    if (uiBrowser) {
+        try {
+            ui.callCef('hudg','{"type": "hideMafiaInfo"}');
         }
         catch (e) {
             methods.debug(e);

@@ -4,6 +4,7 @@ let methods = require('./methods');
 let fraction = require('../property/fraction');
 
 let gangWar = require('../managers/gangWar');
+let mafiaWar = require('../managers/mafiaWar');
 let racer = require('../managers/racer');
 
 let chat = exports;
@@ -174,10 +175,27 @@ mp.events.add('playerCommand', (player, command) => {
         else if (command.toLowerCase() === "p" || command.toLowerCase() === "netstat") {
             player.notify("~g~Ping: " + player.ping + "ms\n~g~PacketLoss: " + player.packetLoss + "ms");
         }
-        else if (command.toLowerCase() === "crimewar") {
+        else if (command.toLowerCase() === "crimewar" || command.toLowerCase().slice(0, 9) === "crimewar ") {
             if (!user.isAdmin(player))
                 return;
-            fraction.createCargoWar();
+            fraction.createCargoWar(methods.parseInt(command.substring(9)));
+        }
+        else if (command.toLowerCase() === "crimemwar") {
+            if (!user.isAdmin(player))
+                return;
+            fraction.createCargoMafiaWar();
+        }
+        else if (command.toLowerCase() === "crimebwar") {
+            if (!user.isAdmin(player))
+                return;
+            fraction.createCargoBigWar();
+        }
+        else if (command.toLowerCase() === "zonet") {
+            if (!user.isAdmin(player))
+                return;
+            mafiaWar.startWar(1);
+            mafiaWar.startWar(2);
+            mafiaWar.startWar(3);
         }
         else if (command.toLowerCase() === "racerc") {
             if (!user.isAdmin(player))

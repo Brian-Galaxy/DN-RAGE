@@ -1,5 +1,6 @@
 import methods from '../modules/methods';
 import enums from '../enums';
+import timer from "./timer";
 
 let object = {};
 
@@ -1167,9 +1168,13 @@ object.load = function () {
     object.delete(-1080006443, 423.5486, -981.4382, 29.69661);
     object.delete(-97646180, 494.0963, -968.2924, 26.44581);
 
+    //VAGOS
+    object.delete(2977731501, -1145.499, -1600.087, 3.383656);
+
     const end = new Date().getTime();
     methods.debug('Count Objects Loaded: ' + objectList.length + '  | ' + (end - start) + 'ms');
-    setInterval(object.process, 5000);
+
+    timer.createInterval('object.process', object.process, 5000);
 };
 
 object.create = function (model, pos, rotation, dynamic, placeOnGround, invType = 0, safe = 0) {
@@ -1189,6 +1194,9 @@ object.delete = function (model, x, y, z) {
 };
 
 object.process = function () {
+    
+    object.openDoor(741314661, 1844.998, 2604.813, 44.63978, true); // Тюремные ворота
+    object.openDoor(741314661, 1818.543, 2604.813, 44.611, true); // Тюремные ворота
 
     // Банки
     object.openDoor(3941780146, -111.48, 6463.94, 31.98499, false); //Блейн Банк
@@ -1446,7 +1454,7 @@ object.process = function () {
     });
 
     objectList.forEach(async function(item) {
-        let dist = methods.distanceToPos(playerPos, item.pos);
+        let dist = methods.distanceToPos2D(playerPos, item.pos);
         if (dist < loadDist && !item.isCreate) {
             try {
                 if (mp.game.streaming.hasModelLoaded(item.model)) {

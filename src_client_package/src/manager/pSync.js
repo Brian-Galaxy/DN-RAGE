@@ -83,6 +83,12 @@ mp.events.add('client:syncAnimation', async (playerId, dict, anim, flag) => {
             if (remotePlayer === mp.players.local && dict == 'dead')
                 return;
 
+            let isScenario = false;
+            if (flag >= 50) {
+                isScenario = true;
+                flag = flag - 100;
+            }
+
             if (remotePlayer === mp.players.local)
                 remotePlayer = mp.players.local;
             else {
@@ -125,20 +131,12 @@ mp.events.add('client:syncAnimation', async (playerId, dict, anim, flag) => {
 
             remotePlayer.taskPlayAnim(dict, anim, 8, 0, -1, flag, 0.0, false, false, false);
 
-            if (flag != 1 && flag != 9 && flag != 49) {
+            if (flag != 1 && flag != 9 && flag != 49 && !isScenario) {
                 if (remotePlayer.remoteId === mp.players.local.remoteId) {
-                    setTimeout(async function () {
-                        try {
-                            /*while (mp.players.exists(remotePlayer) && remotePlayer.isPlayingAnim(dict, anim, 3) !== 0)
-                                await methods.sleep(10);*/
-                            await methods.sleep(remotePlayer.getAnimTotalTime(dict, anim));
-                            if (remotePlayer.getHealth() > 0)
-                                user.stopAllAnimation();
-                        }
-                        catch (e) {
-                            methods.debug(e);
-                        }
-                    }, 20);
+                    await methods.sleep(20);
+                    await methods.sleep(remotePlayer.getAnimTotalTime(dict, anim));
+                    if (remotePlayer.getHealth() > 0)
+                        user.stopAllAnimation();
                 }
             }
         }

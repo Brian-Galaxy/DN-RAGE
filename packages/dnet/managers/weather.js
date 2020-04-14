@@ -243,7 +243,7 @@ weather.timeSyncTimer = function() {
             }
         }
 
-        if (dateTime.getDate() % 3) {
+        if (dateTime.getDate() % 3 === 0) {
             if (dateTime.getHours() === 20 && dateTime.getMinutes() === 0)
                 mafiaWar.startWar(0);
             if (dateTime.getHours() === 20 && dateTime.getMinutes() === 1)
@@ -252,7 +252,7 @@ weather.timeSyncTimer = function() {
                 mafiaWar.startWar(2);
         }
 
-        if (dateTime.getDate() % 4) {
+        if (dateTime.getDate() % 4 === 0) {
             if (dateTime.getHours() === 20 && dateTime.getMinutes() === 0)
                 fraction.createCargoBigWar();
             if (dateTime.getHours() === 20 && dateTime.getMinutes() === 10)

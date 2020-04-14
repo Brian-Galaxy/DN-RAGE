@@ -772,12 +772,6 @@ builder.start = function() {
 };
 
 builder.take = function(type) {
-
-    if (!mp.players.local.vehicle) {
-        mp.game.ui.notifications.show('~r~Вы не в транспорте');
-        return;
-    }
-
     Container.Data.SetLocally(0, 'tool', type);
     if (type == 0)
         mp.game.ui.notifications.show('~r~Вы взяли набор инструментов');
@@ -863,7 +857,6 @@ builder.workProcess = function(id) {
             count++;
 
             methods.blockKeys(true);
-            pickupId = 0;
 
             mp.players.local.position = new mp.Vector3(item.pos.x, item.pos.y, item.pos.z + 1);
             mp.players.local.setRotation(0, 0, item.rot, 0, true);
@@ -900,6 +893,7 @@ builder.workProcess = function(id) {
         user.addWorkExp(builder.markers[pickupId].bonusExp);
 
         mp.game.ui.notifications.show('~g~Вы получили бонус за выполненое задание.');
+        pickupId = 0;
     }
 
     checkpointList = newList;

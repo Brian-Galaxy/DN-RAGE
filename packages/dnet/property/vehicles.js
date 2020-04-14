@@ -831,7 +831,7 @@ vehicles.checkVehiclesFuel = () => {
             return;
 
         let vInfo = methods.getVehicleInfo(veh.model);
-        if (vInfo.fuel_type == 0)
+        if (vInfo.fuel_type === 0)
             return;
 
         let velocity = veh.velocity;
@@ -843,6 +843,14 @@ vehicles.checkVehiclesFuel = () => {
         let speedMph = Math.round(speed * 2.23693629);
         let fuelMinute = vInfo.fuel_full;
         let fuel = vehicles.getFuel(veh);
+
+        if (vInfo.fuel_type === 3 && fuel <= 1) {
+            if (speedMph > 10)
+                vSync.setEngineState(veh, false);
+            if (vehicles.getFuel(veh) <= 0)
+                vehicles.setFuel(veh, 1);
+            return;
+        }
 
         if (fuel <= 0) {
             vehicles.setFuel(veh, 0);
@@ -1241,7 +1249,7 @@ vehicles.lockStatus = (player, vehicle) => {
             player.notify('Вы ~r~закрыли~s~ транспорт');
 
         if (!player.vehicle) {
-            user.playAnimation(player, "anim@mp_player_intmenu@key_fob@", "fob_click", 48);
+            //user.playAnimation(player, "anim@mp_player_intmenu@key_fob@", "fob_click", 48);
             player.addAttachment('pickPick');
             setTimeout(function () {
                 try {
@@ -1267,8 +1275,8 @@ vehicles.engineStatus = (player, vehicle) => {
     if (!vehicles.exists(vehicle))
         return;
     try {
-        if (vehicle.getVariable('fuel') == 0) {
-            player.notify('~r~В транспорте закончился бензин');
+        if (vehicle.getVariable('fuel') === 0) {
+            player.notify('~r~В транспорте закончилось топливо');
             player.notify('~b~Метка на заправку установлена');
             let pos = fuel.findNearest(player.position);
             user.setWaypoint(player, pos.x, pos.y);

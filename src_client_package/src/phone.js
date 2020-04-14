@@ -2738,10 +2738,10 @@ phone.consoleCallback = async function(command) {
         }
         else if (cmd === 'apt-get') {
 
-            if (user.isGos()) {
+            /*if (user.isGos()) {
                 phone.addConsoleCommand('Access Denied');
                 return;
-            }
+            }*/
 
             if (args.length === 0 || args[0] === '-h') {
                 phone.addConsoleCommand('Usage: apt-get [options]');
@@ -2866,10 +2866,10 @@ phone.consoleCallback = async function(command) {
             }
         }
         else if (cmd === 'wget') {
-            if (user.isGos()) {
+            /*if (user.isGos()) {
                 phone.addConsoleCommand('Access Denied');
                 return;
-            }
+            }*/
             if (args.length === 0 || args[0] === '-h') {
                 phone.addConsoleCommand('Usage: wget [url]');
                 phone.addConsoleCommand('For example: wget https://example.com/');
@@ -2940,10 +2940,10 @@ phone.consoleCallback = async function(command) {
             phone.addConsoleCommand(`You need update trust level, if you want hack the fucking world`);
         }
         else if (cmd === 'python') {
-            if (user.isGos()) {
+            /*if (user.isGos()) {
                 phone.addConsoleCommand('Access Denied');
                 return;
-            }
+            }*/
             if (args.length === 0 || args[0] === '-h') {
                 phone.addConsoleCommand('Usage: python [file] [params]');
             }
@@ -3072,10 +3072,10 @@ phone.consoleCallback = async function(command) {
             }
         }
         else if (cmd === 'bash') {
-            if (user.isGos()) {
+            /*if (user.isGos()) {
                 phone.addConsoleCommand('Access Denied');
                 return;
-            }
+            }*/
             if (args.length === 0 || args[0] === '-h') {
                 phone.addConsoleCommand('Usage: bash [file] [params]');
             }
@@ -3183,10 +3183,10 @@ phone.consoleCallback = async function(command) {
             phone.addConsoleCommand('Access denied');
         }
         else if (cmd === 'arp-scan') {
-            if (user.isGos()) {
+            /*if (user.isGos()) {
                 phone.addConsoleCommand('Access Denied');
                 return;
-            }
+            }*/
             if (!user.hasCache('package-' + cmd)) {
                 phone.addConsoleCommand(`${cmd}: command not found. Maybe do you want apt-get install ${cmd}? `);
                 return;
@@ -3357,8 +3357,18 @@ phone.consoleCallback = async function(command) {
                         return;
                     }
 
+                    if (user.hasCache('isSellUser')) {
+                        mp.game.ui.notifications.show(`~r~Вы уже получили задание на похищение`);
+                        return;
+                    }
+
                     if (user.hasCache('isSellCar')) {
                         mp.game.ui.notifications.show(`~r~Вы уже получили задание на угон`);
+                        return;
+                    }
+
+                    if (user.hasCache('isSellMoney')) {
+                        mp.game.ui.notifications.show(`~r~Вы уже получили задание отмыв денег`);
                         return;
                     }
 
@@ -3404,6 +3414,16 @@ phone.consoleCallback = async function(command) {
                         return;
                     }
 
+                    if (user.hasCache('isSellCar')) {
+                        mp.game.ui.notifications.show(`~r~Вы уже получили задание на угон`);
+                        return;
+                    }
+
+                    if (user.hasCache('isSellMoney')) {
+                        mp.game.ui.notifications.show(`~r~Вы уже получили задание отмыв денег`);
+                        return;
+                    }
+
                     user.set('isSellUser', true);
                     let posId = methods.getRandomInt(0, enums.spawnSellCar.length);
                     jobPoint.create(new mp.Vector3(enums.spawnSellCar[posId][0], enums.spawnSellCar[posId][1], enums.spawnSellCar[posId][2]), true, 3);
@@ -3435,6 +3455,16 @@ phone.consoleCallback = async function(command) {
 
                     if (weather.getHour() < 22 && weather.getHour() > 8) {
                         mp.game.ui.notifications.show('~r~Доступно только с 22 до 8 утра игрового времени');
+                        return;
+                    }
+
+                    if (user.hasCache('isSellUser')) {
+                        mp.game.ui.notifications.show(`~r~Вы уже получили задание на похищение`);
+                        return;
+                    }
+
+                    if (user.hasCache('isSellCar')) {
+                        mp.game.ui.notifications.show(`~r~Вы уже получили задание на угон`);
                         return;
                     }
 

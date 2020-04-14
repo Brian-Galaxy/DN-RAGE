@@ -93,6 +93,13 @@ try {
     vBreakLight.timer();
 
     weather.secSyncTimer();
+    
+    try {
+        mp.game.stats.statSetProfileSetting(0, 0);
+    }
+    catch (e) {
+        
+    }
 
     timer.createInterval('phone.findNetworkTimer', phone.findNetworkTimer, 1000);
 

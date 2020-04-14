@@ -91,7 +91,6 @@ voiceRage.remove = (player, notify) => {
     }
 };
 
-
 voiceRage.generateVolume = (localPlayerPosition, targetPlayer, voiceDistance, distanceToPlayer) => {
     const calcVoiceDistance = voiceDistance * voiceDistance;
     const calcDublDist = distanceToPlayer * distanceToPlayer;
@@ -238,7 +237,7 @@ voiceRage.timer = () => {
                     if(!player.isListening)
                     {
                         let walk = player.getVariable('walkie');
-                        if (walk === localPlayer.getVariable('walkie')) {
+                        if (walk === localPlayer.getVariable('walkie') && user.getCache('walkie_buy') && player.getVariable('walkieBuy')) {
                             voiceRage.add(player);
                             return;
                         }
@@ -272,7 +271,7 @@ voiceRage.timer = () => {
                     if(dist > MaxRange + 30)
                     {
                         let walk = player.getVariable('walkie');
-                        if (walk === localPlayer.getVariable('walkie')) {
+                        if (walk === localPlayer.getVariable('walkie') && user.getCache('walkie_buy') && player.getVariable('walkieBuy')) {
                             return;
                         }
                         voiceRage.remove(player, true);
@@ -301,7 +300,7 @@ voiceRage.timer = () => {
                 {
                     try {
                         let walk = player.getVariable('walkie');
-                        if (walk === localPlayer.getVariable('walkie')) {
+                        if (walk === localPlayer.getVariable('walkie') && user.getCache('walkie_buy') && player.getVariable('walkieBuy')) {
                             if (!player.isWalkieTalking)
                                 player.voiceVolume = 0;
                             return;
@@ -353,7 +352,7 @@ mp.events.add('voice.toggleMicrophone', async (playerId, isEnabled) => {
 mp.events.add('voice.toggleMicrophoneRadio', async (playerId, isEnabled) => {
     const player = mp.players.atRemoteId(playerId);
 
-    if (player && mp.players.exists(player)) {
+    if (player && mp.players.exists(player) && user.getCache('walkie_buy') && player.getVariable('walkieBuy')) {
         player.isWalkieTalking = isEnabled;
         if (isEnabled)
             player.voiceVolume = user.getCache('walkie_vol') / 10;

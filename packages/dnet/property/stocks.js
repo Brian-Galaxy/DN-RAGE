@@ -544,48 +544,45 @@ stocks.cargoUnload = function(player, bid = 1) {
             return;
         }
 
-        let isFind = false;
-        stocks.getAll().forEach((val, key, object) => {
-            if (methods.distanceToPos(player.position, val.vPos) < 4) {
-                let houseData = stocks.getData(key);
-                if (houseData.get('user_id') != 0) {
-                    isFind = true;
-                    let id = houseData.get('id');
-                    let upgradeStr = stocks.get(id, 'upgrade');
-                    let upgrade = upgradeStr.split('_');
+        let stockKey = stocks.getNearestVehWithCoords(player.position, 4);
+        if (stockKey) {
+            let houseData = stocks.getData(stockKey);
+            if (houseData.get('user_id') != 0) {
 
-                    let countLoad = 0;
+                let id = houseData.get('id');
+                let upgradeStr = stocks.get(id, 'upgrade');
+                let upgrade = upgradeStr.split('_');
 
-                    upgrade.forEach((item, i) => {
-                        if (item == -1 && countLoad == 0) {
-                            upgrade[i] = boxes[bid];
+                let countLoad = 0;
 
-                            boxes[bid] = -1;
+                upgrade.forEach((item, i) => {
+                    if (item == -1 && countLoad == 0) {
+                        upgrade[i] = boxes[bid];
 
-                            veh.setVariable('box', JSON.stringify(boxes));
-                            countLoad++;
-                        }
-                    });
+                        boxes[bid] = -1;
 
-                    let upgradeNew = '';
-                    upgrade.forEach(item => {
-                        upgradeNew += item + '_';
-                    });
-                    upgradeNew = upgradeNew.substring(0, upgradeNew.length - 1);
+                        veh.setVariable('box', JSON.stringify(boxes));
+                        countLoad++;
+                    }
+                });
 
-                    stocks.set(id, 'upgrade', upgradeNew);
-                    mysql.executeQuery(`UPDATE stocks SET upgrade = '${upgradeNew}' where id = '${id}'`);
-                    stocks.loadUpgrades(upgradeNew, id, stocks.get(id, 'interior'));
+                let upgradeNew = '';
+                upgrade.forEach(item => {
+                    upgradeNew += item + '_';
+                });
+                upgradeNew = upgradeNew.substring(0, upgradeNew.length - 1);
 
-                    if (countLoad > 0)
-                        player.notify(`~g~Вы разгрузили ящик`);
-                    else
-                        player.notify(`~r~На складе нет места`);
-                }
+                stocks.set(id, 'upgrade', upgradeNew);
+                mysql.executeQuery(`UPDATE stocks SET upgrade = '${upgradeNew}' where id = '${id}'`);
+                stocks.loadUpgrades(upgradeNew, id, stocks.get(id, 'interior'));
+
+                if (countLoad > 0)
+                    player.notify(`~g~Вы разгрузили ящик`);
+                else
+                    player.notify(`~r~На складе нет места`);
             }
-        });
-
-        if (!isFind) {
+        }
+        else {
             player.notify('~r~Необходимо возле склада');
         }
     }
@@ -839,6 +836,19 @@ stocks.addObject = function(boxId, slot, id, interior) {
 stocks.getAll = function() {
     methods.debug('stocks.getAll');
     return stockList;
+};
+
+stocks.getNearestVehWithCoords = function(pos, r) {
+    let nearest = undefined, dist;
+    let min = r;
+    stocks.getAll().forEach((st, key) => {
+        dist = methods.distanceToPos(pos, st.vPos);
+        if (dist < min) {
+            nearest = key;
+            min = dist;
+        }
+    });
+    return nearest;
 };
 
 stocks.updateOwnerInfo = function (id, userId, userName) {

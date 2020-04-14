@@ -870,9 +870,9 @@ menuList.showBuilder3TeleportMenu = function() {
 
     let menu = UIMenu.Menu.Create(`Лифт`, `~b~Лифт`);
 
-    let Builder3Pos1 = new mp.Vector3(-158.1335, -940.4475, 29.07765);
-    let Builder3Pos2 = new mp.Vector3(-158.1225, -940.4036, 113.3513);
-    let Builder3Pos3 = new mp.Vector3(-158.0644, -940.4244, 268.2277);
+    let Builder3Pos1 = new mp.Vector3(-158.3161, -940.3564, 29.07765);
+    let Builder3Pos2 = new mp.Vector3(-154.6761, -941.7026, 113.1366);
+    let Builder3Pos3 = new mp.Vector3(-154.7566, -941.5623, 268.1352);
 
     UIMenu.Menu.AddMenuItem("1 уровень").teleportPos = Builder3Pos1;
     UIMenu.Menu.AddMenuItem("2 уровень").teleportPos = Builder3Pos2;
@@ -896,9 +896,9 @@ menuList.showBuilder4TeleportMenu = function() {
 
     let menu = UIMenu.Menu.Create(`Лифт`, `~b~Лифт`);
 
-    let Builder4Pos1 = new mp.Vector3(-159.4984, -944.1298, 29.07765);
-    let Builder4Pos2 = new mp.Vector3(-159.3199, -944.1606, 113.3277);
-    let Builder4Pos3 = new mp.Vector3(-159.5894, -944.1558, 268.2277);
+    let Builder4Pos1 = new mp.Vector3(-159.6244, -944.085, 29.07765);
+    let Builder4Pos2 = new mp.Vector3(-155.9965, -945.4241, 113.1366);
+    let Builder4Pos3 = new mp.Vector3(-156.1506, -945.3331, 268.1352);
 
     UIMenu.Menu.AddMenuItem("1 уровень").teleportPos = Builder4Pos1;
     UIMenu.Menu.AddMenuItem("2 уровень").teleportPos = Builder4Pos2;
@@ -3993,15 +3993,36 @@ menuList.showVehicleDoMenu = function() {
         let vInfo = methods.getVehicleInfo(mp.players.local.vehicle.model);
 
         if (user.getCache('s_hud_speed_type')) {
-            listItem = UIMenu.Menu.AddMenuItem("Круиз контроль");
-            listItem.SetRightLabel(`${methods.parseInt(vehicles.getSpeedMax(mp.players.local.vehicle.model))}km/h`);
-            listItem.doName = 'cruise';
+
+            if (
+                vInfo.class_name == 'Helicopters' ||
+                vInfo.class_name == 'Planes' ||
+                vInfo.class_name == 'Cycles' ||
+                vInfo.class_name == 'Motorcycles' ||
+                vInfo.class_name == 'Boats'
+            ) {
+            }
+            else {
+                listItem = UIMenu.Menu.AddMenuItem("Круиз контроль");
+                listItem.SetRightLabel(`${methods.parseInt(vehicles.getSpeedMax(mp.players.local.vehicle.model))}km/h`);
+                listItem.doName = 'cruise';
+            }
         }
         else
         {
-            listItem = UIMenu.Menu.AddMenuItem("Круиз контроль");
-            listItem.SetRightLabel(`${methods.parseInt(vehicles.getSpeedMax(mp.players.local.vehicle.model) / 1.609)}mp/h`);
-            listItem.doName = 'cruise';
+            if (
+                vInfo.class_name == 'Helicopters' ||
+                vInfo.class_name == 'Planes' ||
+                vInfo.class_name == 'Cycles' ||
+                vInfo.class_name == 'Motorcycles' ||
+                vInfo.class_name == 'Boats'
+            ) {
+            }
+            else {
+                listItem = UIMenu.Menu.AddMenuItem("Круиз контроль");
+                listItem.SetRightLabel(`${methods.parseInt(vehicles.getSpeedMax(mp.players.local.vehicle.model) / 1.609)}mp/h`);
+                listItem.doName = 'cruise';
+            }
         }
 
         let closeItem = UIMenu.Menu.AddMenuItem("~r~Закрыть");
@@ -4521,6 +4542,7 @@ menuList.showInvaderShopMenu = function() {
                 return;
             }
 
+            user.removeMoney(price, 'Аренда рабочего ТС');
             vehicles.spawnJobCar(-1051.93359375, -249.95065307617188, 37.56923294067383, 203.91482543945312, 'Rebel2', 3);
         }
     });
@@ -4567,6 +4589,8 @@ menuList.showBankMenu = async function(bankId, price) {
                     if (mStr == '')
                         return;
                     let money = methods.parseFloat(mStr);
+                    if (user.getBankMoney() > money)
+                        user.setCache('money_bank', user.getBankMoney() - methods.parseFloat(money));
                     mp.events.callRemote(item.eventName, money, 0);
                 }
                 else if (item.eventName == 'server:bank:deposit') {
@@ -4657,6 +4681,8 @@ menuList.showAtmMenu = async function() {
         UIMenu.Menu.HideMenu();
         if (item.eventName == 'server:bank:withdraw') {
             let money = methods.parseFloat(await UIMenu.Menu.GetUserInput("Сумма снятия", "", 11));
+            if (user.getBankMoney() > money)
+                user.setCache('money_bank', user.getBankMoney() - methods.parseFloat(money));
             mp.events.callRemote(item.eventName, money, 1);
         }
         else if (item.eventName == 'server:bank:deposit') {
@@ -4755,13 +4781,19 @@ menuList.showFuelMenu = async function() {
     menu.ItemSelect.on((item, index) => {
         UIMenu.Menu.HideMenu();
         if (item.type)
-            fuel.fillVeh(item.price, shopId, item.type, listIndex);
+        {
+            if (mp.players.local.vehicle.getPedInSeat(-1) === mp.players.local.handle) {
+                fuel.fillVeh(item.price, shopId, item.type, listIndex);
+            }
+            else {
+                mp.game.ui.notifications.show(`~r~Вы не можете совершать покупку на пассажирском сиденье`);
+            }
+        }
         if (item.itemId) {
             if (mp.players.local.vehicle) {
                 mp.game.ui.notifications.show(`~r~Вы не можете совершать покупку в транспорте`);
                 return;
             }
-            mp.events.callRemote('server:shop:buy', item.itemId, item.price, shopId);
         }
     });
 };
@@ -5415,11 +5447,19 @@ menuList.showShopElMenu = function(shopId, price = 2)
                     mp.game.ui.notifications.show(`~g~У вас недостаточно средств`);
                     return;
                 }
-                user.set('walkie_buy', true);
-                user.removeCashMoney(item.price, 'Покупка Рации');
-                business.addMoney(shopId, item.price, 'Покупка рации');
-                business.removeMoneyTax(shopId, item.price / 2);
-                mp.game.ui.notifications.show(`~g~Поздравляем с покупкой рации`);
+                try {
+                    user.setVariable('walkieBuy', true);
+                    user.set('walkie_buy', true);
+                    setTimeout(function () {
+                        user.removeCashMoney(item.price, 'Покупка Рации');
+                        business.addMoney(shopId, item.price, 'Покупка рации');
+                        business.removeMoneyTax(shopId, item.price / 2);
+                        mp.game.ui.notifications.show(`~g~Поздравляем с покупкой рации`);
+                    }, 300);
+                }
+                catch (e) {
+                    
+                }
             }
             else if (item.price > 0)
                 mp.events.callRemote('server:shop:buy', item.itemId, item.price, shopId);

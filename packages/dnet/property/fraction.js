@@ -749,11 +749,11 @@ fraction.stopCargoWar = function() {
         if (!user.isLogin(p))
             return;
 
-        if (user.get(p, 'fraction_id2') > 0) {
+        if (user.get(p, 'fraction_id2') > 0 && user.has(p, 'isCargo')) {
             currentWarPos.forEach((item, i) => {
 
-                if (!item.isActive)
-                    return;
+                /*if (!item.isActive)
+                    return;*/
                 if (item.type !== 0)
                     return;
 
@@ -776,11 +776,11 @@ fraction.stopCargoMafiaWar = function() {
         if (!user.isLogin(p))
             return;
 
-        if (user.get(p, 'fraction_id2') > 0) {
+        if (user.get(p, 'fraction_id2') > 0 && user.has(p, 'isCargo')) {
             currentWarPos.forEach((item, i) => {
 
-                if (!item.isActive)
-                    return;
+                /*if (!item.isActive)
+                    return;*/
                 if (item.type !== 1)
                     return;
 
@@ -803,11 +803,11 @@ fraction.stopCargoBigWar = function() {
         if (!user.isLogin(p))
             return;
 
-        if (user.get(p, 'fraction_id2') > 0) {
+        if (user.get(p, 'fraction_id2') > 0 && user.has(p, 'isCargo')) {
             currentWarPos.forEach((item, i) => {
 
-                if (!item.isActive)
-                    return;
+                /*if (!item.isActive)
+                    return;*/
                 if (item.type !== 2)
                     return;
 
@@ -899,7 +899,7 @@ fraction.timerCargoMafiaWar = function() {
 
             if (enums.mafiaAllows.includes(user.get(p, 'fraction_id2')) && user.has(p, 'isCargo') || user.isAdmin(p)) {
                 currentWarPos.forEach((item, i) => {
-                    if (!item.isActive || item.type !== 1)
+                    if (item.type !== 1)
                         return;
                     user.deleteBlipByRadius(p, item.b2);
                 });
@@ -967,7 +967,7 @@ fraction.timerCargoBigWar = function() {
 
             if (user.get(p, 'fraction_id2') > 0 && user.has(p, 'isCargo') || user.isAdmin(p)) {
                 currentWarPos.forEach((item, i) => {
-                    if (!item.isActive || item.type !== 2)
+                    if (item.type !== 2)
                         return;
                     user.deleteBlipByRadius(p, item.b2);
                 });

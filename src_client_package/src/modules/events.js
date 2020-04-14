@@ -2624,6 +2624,7 @@ mp.events.add('client:walkietalkie:status', function(status) {
         walkie.hide();
 });
 
+let isSetHandling = false;
 mp.events.add("client:vehicle:checker", function () {
 
     try {
@@ -2643,6 +2644,16 @@ mp.events.add("client:vehicle:checker", function () {
             if (maxSpeed == 1)
                 maxSpeed = 350;
 
+            try {
+                if (!isSetHandling) {
+                    isSetHandling = true
+                    vehicles.setHandling(vehicle);
+                }
+            }
+            catch (e) {
+                
+            }
+
             if (vehicle.getMod(18) >= 0 || vehicle.getVariable('boost') > 0)
                 maxSpeed = maxSpeed + 10;
 
@@ -2661,6 +2672,8 @@ mp.events.add("client:vehicle:checker", function () {
             if (newMaxSpeed > 0)
                 maxSpeed = newMaxSpeed;
         }
+        else
+            isSetHandling = false;
     }
     catch (e) {
         methods.debug(e);
@@ -2670,6 +2683,8 @@ mp.events.add("client:vehicle:checker", function () {
 mp.events.add("client:setNewMaxSpeed", function (speed) {
     try {
         newMaxSpeed = speed;
+        if (newMaxSpeed < 10 && newMaxSpeed > 0)
+            newMaxSpeed = 10;
     }
     catch (e) {
         methods.debug(e);

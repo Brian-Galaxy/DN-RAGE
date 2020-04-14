@@ -368,6 +368,62 @@ vehicles.getSpeedMax = (model) => {
     return methods.parseInt(mp.game.vehicle.getVehicleModelMaxSpeed(model) * 3.6);
 };
 
+vehicles.setHandling = (vehicle) => {
+    try {
+        switch (vehicle.model) {
+            case mp.game.joaat('bcfdscout'):
+            case mp.game.joaat('lsfdscout'):
+            case mp.game.joaat('lsfdscout2'):
+            case mp.game.joaat('polscout'):
+            case mp.game.joaat('polscout2'):
+            case mp.game.joaat('sherscout'):
+            case mp.game.joaat('sherscout2'):
+                vehicle.setHandling('fSteeringLock', '0.7');
+                vehicle.setHandling('fBrakeForce','1.8');
+                vehicle.setHandling('fTractionCurveMax', '3.0');
+                vehicle.setHandling('fTractionCurveMin', '2.7');
+                break;
+            case mp.game.joaat('intcept'):
+            case mp.game.joaat('intcept1'):
+            case mp.game.joaat('intcept2'):
+            case mp.game.joaat('intcept3'):
+                vehicle.setHandling('fBrakeForce','1.15');
+                vehicle.setHandling('fTractionCurveMax', '3.0');
+                vehicle.setHandling('fTractionCurveMin', '2.7');
+                vehicle.setHandling('fDriveInertia', '1.0');
+                break;
+            case mp.game.joaat('scout'):
+                vehicle.setHandling('fSteeringLock', '0.7');
+                vehicle.setHandling('fBrakeForce','1.15');
+                vehicle.setHandling('fTractionCurveMax', '2.7');
+                vehicle.setHandling('fTractionCurveMin', '2.4');
+                break;
+            case mp.game.joaat('trucara'):
+                vehicle.setHandling('fTractionCurveMax', '2.8');
+                vehicle.setHandling('fTractionCurveMin', '2.5');
+                vehicle.setHandling('fBrakeForce','1.3');
+                break;
+            case mp.game.joaat('umkcara'):
+                vehicle.setHandling('fTractionCurveMax', '2.8');
+                vehicle.setHandling('fTractionCurveMin', '2.5');
+                vehicle.setHandling('fBrakeForce','1.3');
+                vehicle.setHandling('fTractionCurveLateral','16.6');
+                break;
+            case mp.game.joaat('shergauntlet'):
+            case mp.game.joaat('polvacca'):
+            case mp.game.joaat('polbullet'):
+            case mp.game.joaat('polbullet2'):
+            case mp.game.joaat('sherbullet'):
+            case mp.game.joaat('sherbullet2'):
+                vehicle.setHandling('fBrakeForce','1.4');
+                break;
+        }
+    }
+    catch (e) {
+
+    }
+};
+
 vehicles.spawnJobCar = (x, y, z, heading, name, job) => {
     mp.game.ui.notifications.show('~r~Подсказка!\n~g~Чтобы начать работу, нажмите ~s~M - Транспорт - Начать задание\n\nНажмите ~g~L~s~ чтобы открыть или закрыть ТС');
     mp.events.callRemote('server:vehicles:spawnJobCar', x, y, z, heading, name, job);

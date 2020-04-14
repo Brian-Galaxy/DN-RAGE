@@ -1504,7 +1504,7 @@ user.stopAllAnimation = function() {
     }
 
     if (currentScenario !== '') {
-        enums.scenarios.forEach(function (item, i, arr) {
+        enums.scenariosAll.forEach(function (item, i, arr) {
             mp.attachmentMngr.removeLocal(item[1]);
         });
         currentScenario = '';
@@ -1519,6 +1519,8 @@ user.stopAllAnimation = function() {
 
 user.playScenario = async function(name) {
     //mp.events.callRemote('server:playScenario', name);
+
+    if (mp.players.local.getVariable("isBlockAnimation") || mp.players.local.isInAnyVehicle(false) || user.isDead()) return;
 
     if (currentScenario !== '') {
         mp.attachmentMngr.removeLocal(currentScenario);
@@ -1567,6 +1569,8 @@ user.playScenario = async function(name) {
 user.stopScenario = function() {
     //mp.events.callRemote('server:stopScenario');
     //mp.players.local.clearTasks();
+
+    //str.substr(1, 2)
     user.stopAllAnimation();
 };
 

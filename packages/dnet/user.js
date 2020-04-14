@@ -294,7 +294,6 @@ user.save = function(player, withReset = false) {
             if (element === 'id') return;
             else if (element === 'name') return;
             else if (element === 'is_online') return;
-            else if (element === 'skin') return;
 
             if (user.has(player, element)) {
                 if (typeof user.get(player, element) == 'boolean')
@@ -414,6 +413,7 @@ user.loadUser = function(player, name, spawn = 'Стандарт') {
                 player.setVariable('idLabel', user.get(player, 'id'));
                 player.setVariable('name', user.get(player, 'name'));
                 player.setVariable('walkie', user.get(player, 'walkie_' + (user.get(player, 'walkie_current') + 1)));
+                player.setVariable('walkieBuy', user.get(player, 'walkie_buy'));
                 player.dimension = 0;
 
                 setTimeout(function () {

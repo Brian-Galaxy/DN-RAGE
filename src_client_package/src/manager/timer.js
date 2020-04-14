@@ -549,13 +549,13 @@ timer.secTimer = function() {
 
 timer.loadAll = function () {
     try {
-        timer.createInterval('timer.min15Timer', timer.secTimer, 1000 * 60 * 15);
+        timer.createInterval('timer.min15Timer', timer.min15Timer, 1000 * 60 * 15);
     }
     catch (e) {
         
     }
     try {
-        timer.createInterval('timer.twoMinTimer', timer.secTimer, 1000 * 60 * 2);
+        timer.createInterval('timer.twoMinTimer', timer.twoMinTimer, 1000 * 60 * 2);
     }
     catch (e) {
         
@@ -567,7 +567,7 @@ timer.loadAll = function () {
         
     }
     try {
-        timer.createInterval('timer.tenSecTimer', timer.secTimer, 10000);
+        timer.createInterval('timer.tenSecTimer', timer.tenSecTimer, 10000);
     }
     catch (e) {
         

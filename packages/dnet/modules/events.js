@@ -3319,9 +3319,12 @@ mp.events.addRemoteCounted("onKeyPress:E", (player) => {
                 player.call('client:showStockOutMenu', [Array.from(houseData)]);
         }
         if (methods.distanceToPos(player.position, val.vPos) < 4) {
-            let houseData = stocks.getData(key);
-            if (houseData.get('user_id') != 0)
-                player.call('client:showStockOutVMenu', [Array.from(houseData)]);
+            let stockKey = stocks.getNearestVehWithCoords(player.position, 4);
+            if (stockKey) {
+                let houseData = stocks.getData(stockKey);
+                if (houseData.get('user_id') != 0)
+                    player.call('client:showStockOutVMenu', [Array.from(houseData)]);
+            }
         }
     });
 
@@ -5106,7 +5109,7 @@ mp.events.addRemoteCounted('server:sellUser', (player) => {
             try {
 
                 if (user.hasById(user.getId(p), 'sellUser')) {
-                    player.notify('~r~Игрок не давно был ограблен');
+                    player.notify('~r~Игрок недавно был ограблен');
                     return;
                 }
 
@@ -6471,7 +6474,7 @@ mp.events.addRemoteCounted('server:uniform:ems', (player, idx) => {
                     user.setComponentVariation(player, 5, 0, 0);
                     user.setComponentVariation(player, 6, 72, 0);
                     user.setComponentVariation(player, 7, 0, 0);
-                    user.setComponentVariation(player, 8, 187, 0);
+                    user.setComponentVariation(player, 8, 0, 0);
                     user.setComponentVariation(player, 9, 0, 0);
                     user.setComponentVariation(player, 10, 73, 0);
                     user.setComponentVariation(player, 11, 325, 0);
@@ -6484,7 +6487,7 @@ mp.events.addRemoteCounted('server:uniform:ems', (player, idx) => {
                     user.setComponentVariation(player, 5, 0, 0);
                     user.setComponentVariation(player, 6, 51, 0);
                     user.setComponentVariation(player, 7, 0, 0);
-                    user.setComponentVariation(player, 8, 151, 0);
+                    user.setComponentVariation(player, 8, 0, 0);
                     user.setComponentVariation(player, 9, 0, 0);
                     user.setComponentVariation(player, 10, 0, 0);
                     user.setComponentVariation(player, 11, 314,  0);

@@ -176,7 +176,22 @@ lamar.start = async function() {
     }
 
     if (await user.hasById('grabLamar')) {
-        mp.game.ui.notifications.show('~r~Вы не давно уже возили фургон');
+        mp.game.ui.notifications.show('~r~Вы недавно уже возили фургон');
+        return;
+    }
+
+    if (user.hasCache('isSellUser')) {
+        mp.game.ui.notifications.show(`~r~Вы уже получили задание на похищение`);
+        return;
+    }
+
+    if (user.hasCache('isSellCar')) {
+        mp.game.ui.notifications.show(`~r~Вы уже получили задание на угон`);
+        return;
+    }
+
+    if (user.hasCache('isSellMoney')) {
+        mp.game.ui.notifications.show(`~r~Вы уже получили задание отмыв денег`);
         return;
     }
 

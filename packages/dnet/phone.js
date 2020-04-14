@@ -1784,7 +1784,7 @@ phone.updateContactList = function(player) {
         return;
 
     try {
-        mysql.executeQuery(`SELECT * FROM phone_contact WHERE phone = '${user.get(player, 'phone')}' LIMIT 50`, (err, rows, fields) => {
+        mysql.executeQuery(`SELECT * FROM phone_contact WHERE phone = '${user.get(player, 'phone')}' LIMIT 40`, (err, rows, fields) => {
 
             let array = [];
 

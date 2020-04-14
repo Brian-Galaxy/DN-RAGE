@@ -324,6 +324,7 @@ gangWar.timer = function() {
                 let fId = methods.parseInt(user.get(p, 'fraction_id2'));
                 try {
                     if (user.isAdmin(p) || fId > 0)
+
                         p.call('client:gangWar:sendArray', [gangWar.get(currentZone, 'on_map')]);
                 }
                 catch (e) {}

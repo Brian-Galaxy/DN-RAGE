@@ -5389,24 +5389,20 @@ mp.events.addRemoteCounted('server:vehicle:ejectByIdOut', (player, vid, id) => {
         let veh = mp.vehicles.at(vid);
         if (vehicles.exists(veh)) {
             veh.getOccupants().forEach(p => {
-                if (user.isLogin(p) && p.id === id) {
+                try {
+                    if (user.isLogin(p) && p.id == id) {
 
-                    if (p.health > 1 && !user.isCuff(p) && !user.isTie(p)) {
-                        player.notify('~r~Игрок должен быть в наручниках, связан или мертв');
-                        return;
-                    }
+                        if (p.health > 1 && !user.isCuff(p) && !user.isTie(p)) {
+                            player.notify('~r~Игрок должен быть в наручниках, связан или мертв');
+                            return;
+                        }
 
-                    p.notify('~r~Вас выкинули из транспорта');
-
-                    try {
-                        if (p.health < 1)
-                            p.position = player.position;
-                        else
-                            p.removeFromVehicle();
+                        p.notify('~r~Вас выкинули из транспорта');
+                        p.position = player.position;
                     }
-                    catch (e) {
-                        
-                    }
+                }
+                catch (e) {
+                    
                 }
             })
         }

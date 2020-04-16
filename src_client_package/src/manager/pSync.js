@@ -63,13 +63,23 @@ mp.events.add('client:syncComponentVariation', (playerId, component, drawableId,
 });
 
 mp.events.add("entityStreamIn", (entity) => {
-    if (entity.type !== "player") return;
-    setClipSet(entity, entity.getVariable("walkingStyle"));
+    try {
+        if (entity.type !== "player") return;
+        setClipSet(entity, entity.getVariable("walkingStyle"));
+    }
+    catch (e) {
+        
+    }
 });
 
 mp.events.addDataHandler("walkingStyle", (entity, value) => {
-    if (entity.type === "player")
-        setClipSet(entity, value);
+    try {
+        if (entity.type === "player")
+            setClipSet(entity, value);
+    }
+    catch (e) {
+        
+    }
 });
 
 mp.events.add('client:syncAnimation', async (playerId, dict, anim, flag) => {

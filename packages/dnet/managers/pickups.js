@@ -185,7 +185,7 @@ pickups.ClubLsVPos.rot = 283.82879638671875;
 pickups.GangUserPos1 = new mp.Vector3(-10.36269, -1827.974, 24.3937);
 pickups.GangUserPos2 = new mp.Vector3(-185.1627, -1702.005, 31.76884);
 pickups.GangUserPos3 = new mp.Vector3(1332.022, -1642.544, 51.1209);
-pickups.GangUserPos4 = new mp.Vector3(-1142.604, -1600.374, 3.391782);
+pickups.GangUserPos4 = new mp.Vector3(-1136.517, -1591.871, 3.397047);
 pickups.GangUserPos5 = new mp.Vector3(465.1705, -1672.832, 28.29149);
 pickups.GangUserPosInt = new mp.Vector3(2737.886, -374.227, -48.98799);
 

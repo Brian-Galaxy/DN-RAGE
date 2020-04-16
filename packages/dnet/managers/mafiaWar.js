@@ -357,9 +357,9 @@ mafiaWar.timerMoney = function() {
     let moneyToUser = new Map();
     for (let i = 1; i <= 3; i++) {
         try {
-            if (mafiaWar.get(i, 'owner_id') > 0) {
+            if (mafiaWar.get(i, 'ownerId') > 0) {
                 let money = (methods.getRandomInt(1000, 1200) * 3) / 1000;
-                let id = methods.parseInt(mafiaWar.get(i, 'owner_id'));
+                let id = methods.parseInt(mafiaWar.get(i, 'ownerId'));
                 fraction.addMoney(id, fraction.getMoney(id) + methods.parseFloat(money), 'Зачисление прибыли');
             }
         }

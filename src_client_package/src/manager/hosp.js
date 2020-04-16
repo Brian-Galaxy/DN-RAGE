@@ -151,9 +151,9 @@ hosp.toHosp = function() {
             return;
         }
 
-        if (user.getCache('med_lic')) {
-            prvTime = 200;
-            user.set('med_time', 200);
+        if (user.getCache('med_lic') || user.getCache('online_time') < 169) {
+            prvTime = 120;
+            user.set('med_time', 120);
         }
         else {
             prvTime = 500;

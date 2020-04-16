@@ -466,7 +466,7 @@ fraction.loadAll = function() {
             fraction.removeTaxAndSave();
         }
         catch (e) {
-            
+
         }
     }, 20000);
 };
@@ -689,12 +689,12 @@ fraction.createCargoBigWar = function() {
     let b1 = methods.getRandomInt(1000, 20000);
     let b2 = methods.getRandomInt(1000, 20000);
     let b3 = methods.getRandomInt(1000, 20000);
-    currentWarPos.push({ type: 3, b1: b1, b2: b2, b3: b3, pos: posVeh, isActive: true });
+    currentWarPos.push({ type: 2, b1: b1, b2: b2, b3: b3, pos: posVeh, isActive: true });
 
     mp.players.forEach(p => {
         if (!user.isLogin(p))
             return;
-        if (user.get(p, 'fraction_id2') > 2 && user.has(p, 'isCargo') || user.isAdmin(p)) {
+        if (user.get(p, 'fraction_id2') > 0 && user.has(p, 'isCargo') || user.isAdmin(p)) {
             user.createBlip(p, b1, posVeh.x, posVeh.y, posVeh.z, 635, 7);
 
             user.createBlipByRadius(p, b2, posVeh.x, posVeh.y, posVeh.z, radiusBig1, 9, 1);
@@ -707,9 +707,8 @@ fraction.createCargoBigWar = function() {
         if (!vehicles.exists(veh))
             return;
         try {
-            let color = methods.getRandomInt(0, 150);
             veh.locked = false;
-            veh.setColor(color, color);
+            veh.setColor(0, 0);
             let boxes = [];
 
             for (let i = 0; i < 20; i++) {
@@ -749,11 +748,11 @@ fraction.stopCargoWar = function() {
         if (!user.isLogin(p))
             return;
 
-        if (user.get(p, 'fraction_id2') > 0 && user.has(p, 'isCargo')) {
+        if (user.get(p, 'fraction_id2') > 0 && user.has(p, 'isCargo') || user.isAdmin(p)) {
             currentWarPos.forEach((item, i) => {
 
-                /*if (!item.isActive)
-                    return;*/
+                if (!item.isActive)
+                    return;
                 if (item.type !== 0)
                     return;
 
@@ -776,11 +775,11 @@ fraction.stopCargoMafiaWar = function() {
         if (!user.isLogin(p))
             return;
 
-        if (user.get(p, 'fraction_id2') > 0 && user.has(p, 'isCargo')) {
+        if (user.get(p, 'fraction_id2') > 0 && user.has(p, 'isCargo') || user.isAdmin(p)) {
             currentWarPos.forEach((item, i) => {
 
-                /*if (!item.isActive)
-                    return;*/
+                if (!item.isActive)
+                    return;
                 if (item.type !== 1)
                     return;
 
@@ -803,11 +802,11 @@ fraction.stopCargoBigWar = function() {
         if (!user.isLogin(p))
             return;
 
-        if (user.get(p, 'fraction_id2') > 0 && user.has(p, 'isCargo')) {
+        if (user.get(p, 'fraction_id2') > 0 && user.has(p, 'isCargo') || user.isAdmin(p)) {
             currentWarPos.forEach((item, i) => {
 
-                /*if (!item.isActive)
-                    return;*/
+                if (!item.isActive)
+                    return;
                 if (item.type !== 2)
                     return;
 
@@ -899,7 +898,7 @@ fraction.timerCargoMafiaWar = function() {
 
             if (enums.mafiaAllows.includes(user.get(p, 'fraction_id2')) && user.has(p, 'isCargo') || user.isAdmin(p)) {
                 currentWarPos.forEach((item, i) => {
-                    if (item.type !== 1)
+                    if (!item.isActive || item.type !== 1)
                         return;
                     user.deleteBlipByRadius(p, item.b2);
                 });
@@ -967,7 +966,7 @@ fraction.timerCargoBigWar = function() {
 
             if (user.get(p, 'fraction_id2') > 0 && user.has(p, 'isCargo') || user.isAdmin(p)) {
                 currentWarPos.forEach((item, i) => {
-                    if (item.type !== 2)
+                    if (!item.isActive || item.type !== 2)
                         return;
                     user.deleteBlipByRadius(p, item.b2);
                 });

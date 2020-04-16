@@ -4794,6 +4794,7 @@ menuList.showFuelMenu = async function() {
                 mp.game.ui.notifications.show(`~r~Вы не можете совершать покупку в транспорте`);
                 return;
             }
+            mp.events.callRemote('server:shop:buy', item.itemId, item.price, shopId);
         }
     });
 };

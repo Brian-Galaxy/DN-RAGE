@@ -339,23 +339,6 @@ weather.timeSyncTimer = function() {
             });
 
             mysql.executeQuery('UPDATE users SET online_wheel=\'0\' WHERE 1');
-
-            if (!isSaveStats) {
-                isSaveStats = true;
-
-                try {
-                    mysql.executeQuery(`SELECT COUNT(*) as countr FROM users WHERE reg_timestamp >= ${methods.getTimeStamp() - 86400}`, function (rows) {
-                        let countr = rows[0]['countr'];
-                        mysql.executeQuery(`SELECT COUNT(*) as countl FROM users WHERE login_date >= ${methods.getTimeStamp() - 86400}`, function (rows2) {
-                            let countl = rows2[0]['countl'];
-                            mysql.executeQuery(`INSERT INTO stats_users (reg, auth) VALUES ('${countr}','${countl}')`)
-                        })
-                    })
-                }
-                catch (e) {
-
-                }
-            }
         }
     } catch (e) {
         methods.debug(e);

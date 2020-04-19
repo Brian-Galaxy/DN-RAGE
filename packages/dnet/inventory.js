@@ -63,7 +63,7 @@ inventory.getItemList = function(player, ownerType, ownerId, isFrisk = false) {
 
         let addWhere = '';
         if (isFrisk)
-            addWhere = ' AND item_id <> 50 AND item_id <> 27 AND item_id <> 28 AND item_id <> 29 AND item_id <> 30';
+            addWhere = ' AND item_id <> 50 AND item_id <> 27 AND item_id <> 28 AND item_id <> 29 AND item_id <> 30 AND is_equip = 0';
 
         let sql = `SELECT * FROM items WHERE owner_id = '${ownerId}' AND owner_type = '${ownerType}'${addWhere} ORDER BY item_id DESC`;
         if (ownerId == 0 && ownerType == 0)

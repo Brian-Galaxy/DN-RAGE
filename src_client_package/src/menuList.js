@@ -2914,6 +2914,9 @@ menuList.showSettingsHudMenu = function() {
     UIMenu.Menu.AddMenuItem("Показывать HUD (~g~Вкл~s~/~r~Выкл~s~)", "Нажмите ~g~Enter~s~ чтобы применить").doName = 'showRadar';
     UIMenu.Menu.AddMenuItem("Показывать ID игроков (~g~Вкл~s~/~r~Выкл~s~)", "Нажмите ~g~Enter~s~ чтобы применить").doName = 'showId';
 
+    if (user.isAdmin())
+        UIMenu.Menu.AddMenuItem("Показывать ID транспорта (~g~Вкл~s~/~r~Выкл~s~)", "Нажмите ~g~Enter~s~ чтобы применить").doName = 'showvId';
+
     let listVoiceItem = UIMenu.Menu.AddMenuItemList("Спидометр", ['Стандартный', 'Цифровой']);
     listVoiceItem.doName = 'speed';
     listVoiceItem.Index = user.getCache('s_hud_speed') ? 1 : 0;
@@ -2974,6 +2977,9 @@ menuList.showSettingsHudMenu = function() {
             UIMenu.Menu.HideMenu();
         if (item.doName == 'showId') {
             mp.events.call('client:showId');
+        }
+        if (item.doName == 'showvId') {
+            mp.events.call('client:showvId');
         }
         if (item.doName == 'showRadar') {
             ui.showOrHideRadar();
@@ -3163,8 +3169,8 @@ menuList.showPlayerDoMenu = function(playerId) {
     UIMenu.Menu.AddMenuItem("Вести за собой").eventName = 'server:user:taskFollowById';
     //UIMenu.Menu.AddMenuItem("Снять маску с игрока").eventName = 'server:user:taskRemoveMaskById';
 
+    UIMenu.Menu.AddMenuItem("Обыск игрока").eventName = 'server:user:getInvById';
     if (user.isPolice()) {
-        UIMenu.Menu.AddMenuItem("Обыск игрока").eventName = 'server:user:getInvById';
         UIMenu.Menu.AddMenuItem("Установить личность").eventName = 'server:user:getPassById';
     }
 
@@ -10000,24 +10006,24 @@ menuList.showAdminPlayerMenu = function() {
                 mp.events.callRemote('server:admin:tptome', typeIndex, methods.parseInt(id));
             }
             if (item.doName == 'blacklist') {
-                let reason = await UIMenu.Menu.GetUserInput("Причина", "", 32);
+                let reason = await UIMenu.Menu.GetUserInput("Причина", "", 64);
                 mp.events.callRemote('server:admin:blacklist', typeIndex, id, methods.removeQuotes(reason));
             }
             if (item.doName == 'unban') {
-                let reason = await UIMenu.Menu.GetUserInput("Причина", "", 32);
+                let reason = await UIMenu.Menu.GetUserInput("Причина", "", 64);
                 mp.events.callRemote('server:admin:unban', typeIndex, id, methods.removeQuotes(reason))
             }
             if (item.doName == 'ban') {
-                let reason = await UIMenu.Menu.GetUserInput("Причина", "", 32);
+                let reason = await UIMenu.Menu.GetUserInput("Причина", "", 64);
                 mp.events.callRemote('server:admin:ban', typeIndex, id, listIndex, methods.removeQuotes(reason));
             }
             if (item.doName == 'kick') {
-                let reason = await UIMenu.Menu.GetUserInput("Причина", "", 32);
+                let reason = await UIMenu.Menu.GetUserInput("Причина", "", 64);
                 mp.events.callRemote('server:admin:kick', typeIndex, id, methods.removeQuotes(reason));
             }
             if (item.doName == 'jail') {
                 let num = methods.parseInt(await UIMenu.Menu.GetUserInput("Время в минутах", "", 5));
-                let reason = await UIMenu.Menu.GetUserInput("Причина", "", 32);
+                let reason = await UIMenu.Menu.GetUserInput("Причина", "", 64);
                 if (reason === '')
                     return;
                 mp.events.callRemote('server:admin:jail', typeIndex, id, num, methods.removeQuotes(reason));
@@ -10195,6 +10201,8 @@ menuList.showAdminTeleportMenu = function() {
     UIMenu.Menu.AddMenuItem("Телепортировать игрока к себе").doName = 'tptome';
     UIMenu.Menu.AddMenuItem("Телепорт по ID дома").doName = 'tptoh';
 
+    UIMenu.Menu.AddMenuItem("Телепортировать транспорт к себе").doName = 'tptov';
+
     UIMenu.Menu.AddMenuItem("~r~Закрыть").doName = 'close';
 
     let listIndex = 0;
@@ -10215,6 +10223,10 @@ menuList.showAdminTeleportMenu = function() {
         if (item.doName == 'tptome') {
             let id = await UIMenu.Menu.GetUserInput("ID Игрока", "", 10);
             mp.events.callRemote('server:admin:tptome', 0, methods.parseInt(id));
+        }
+        if (item.doName == 'tptov') {
+            let id = await UIMenu.Menu.GetUserInput("ID Транспорта", "", 10);
+            mp.events.callRemote('server:admin:tptov', methods.parseInt(id));
         }
         if (item.doName == 'tptoh') {
             let id = await UIMenu.Menu.GetUserInput("ID Дома", "", 10);
@@ -10535,91 +10547,6 @@ menuList.showAdminDebug2Menu = function() {
             heliCam.keyPressToggleLockVehicle();
     });
 };
-
-/*let objAttach = null;
-let bone = 28422; //Hand
-let x = 0;
-let y = 0;
-let z = 0;
-let rx = 0;
-let ry = 0;
-let rz = 0;
-
-menuList.showAdminDebug2Menu = function() {
-    let menu = UIMenu.Menu.Create(`Admin`, `~b~Debug`);
-
-    UIMenu.Menu.AddMenuItem("Create Attach").create = true;
-
-    UIMenu.Menu.AddMenuItem("bone " + bone).bone = true;
-
-    UIMenu.Menu.AddMenuItem("x" + x).px = true;
-    UIMenu.Menu.AddMenuItem("y" + y).py = true;
-    UIMenu.Menu.AddMenuItem("z" + z).pz = true;
-    UIMenu.Menu.AddMenuItem("rx" + rx).rpx = true;
-    UIMenu.Menu.AddMenuItem("ry" + ry).rpy = true;
-    UIMenu.Menu.AddMenuItem("rz" + rz).rpz = true;
-
-    UIMenu.Menu.AddMenuItem("Destroy").destroy = true;
-
-    UIMenu.Menu.AddMenuItem("~r~Закрыть");
-    menu.ItemSelect.on(async item => {
-
-        if (item.create) {
-            if (objAttach) {
-                objAttach.destroy();
-                objAttach = null;
-            }
-
-            objAttach = mp.objects.new(-1038739674, mp.players.local.position,
-                {rotation: new mp.Vector3(0, 0, 30), dimension: -1, }
-            );
-
-            objAttach.attachTo(mp.players.local.handle, mp.players.local.getBoneIndex(bone), x, y, z, rx, ry, rz,
-                false, false, false, false, 2, true);
-        }
-        if (item.bone) {
-            bone = methods.parseInt(await UIMenu.Menu.GetUserInput("Bone", "", 10));
-            objAttach.attachTo(mp.players.local.handle, mp.players.local.getBoneIndex(bone), x, y, z, rx, ry, rz,
-                false, false, false, false, 2, true);
-        }
-        if (item.px) {
-            x = methods.parseFloat(await UIMenu.Menu.GetUserInput("x", "", 10));
-            objAttach.attachTo(mp.players.local.handle, mp.players.local.getBoneIndex(bone), x, y, z, rx, ry, rz,
-                false, false, false, false, 2, true);
-        }
-        if (item.py) {
-            y = methods.parseFloat(await UIMenu.Menu.GetUserInput("y", "", 10));
-            objAttach.attachTo(mp.players.local.handle, mp.players.local.getBoneIndex(bone), x, y, z, rx, ry, rz,
-                false, false, false, false, 2, true);
-        }
-        if (item.pz) {
-            z = methods.parseFloat(await UIMenu.Menu.GetUserInput("z", "", 10));
-            objAttach.attachTo(mp.players.local.handle, mp.players.local.getBoneIndex(bone), x, y, z, rx, ry, rz,
-                false, false, false, false, 2, true);
-        }
-        if (item.rpx) {
-            rx = methods.parseFloat(await UIMenu.Menu.GetUserInput("rx", "", 10));
-            objAttach.attachTo(mp.players.local.handle, mp.players.local.getBoneIndex(bone), x, y, z, rx, ry, rz,
-                false, false, false, false, 2, true);
-        }
-        if (item.rpy) {
-            ry = methods.parseFloat(await UIMenu.Menu.GetUserInput("ry", "", 10));
-            objAttach.attachTo(mp.players.local.handle, mp.players.local.getBoneIndex(bone), x, y, z, rx, ry, rz,
-                false, false, false, false, 2, true);
-        }
-        if (item.rpz) {
-            rz = methods.parseFloat(await UIMenu.Menu.GetUserInput("rz", "", 10));
-            objAttach.attachTo(mp.players.local.handle, mp.players.local.getBoneIndex(bone), x, y, z, rx, ry, rz,
-                false, false, false, false, 2, true);
-        }
-        if (item.destroy) {
-            if (objAttach) {
-                objAttach.destroy();
-                objAttach = null;
-            }
-        }
-    });
-};*/
 
 menuList.showAdminClothMenu = function() {
     let menu = UIMenu.Menu.Create(`Admin`, `~b~Одежда`);

@@ -571,7 +571,7 @@ mp.events.addRemoteCounted('server:enums:getCloth1', (player, requestID) => {
 
     try {
         for (let i = 0; i < methods.parseInt(enums.maskList.length / 500) + 1; i++)
-            player.call('client:enums:updateMask', [enums.maskList.slice(i * 500, i * 500 + 499)]);
+            player.call('client:enums:updateMask', [enums.maskList.slice(i * 500, i * 500 + 500)]);
     }
     catch (e) {
         methods.debug(e);
@@ -1746,8 +1746,9 @@ mp.events.addRemoteCounted('server:sendAnswerAsk', (player, id, msg) => {
         //methods.saveLog('AnswerAsk', `${user.getRpName(player)} (${user.getId(player)}) to ${id}: ${msg}`);
         user.set(player, 'count_hask', user.get(player, 'count_hask') + 1);
 
-        player.notify(`~g~Вы получили премию за ответ на вопрос ~s~${methods.moneyFormat(msg.length / 2)}`)
-        user.addCashMoney(player, msg.length / 2, `Ответ на вопрос (${methods.removeQuotes(methods.removeQuotes2(msg)).substring(0, 230)})`)
+        let money = (msg.length / 2) * user.get(player, 'helper_level');
+        player.notify(`~g~Вы получили премию за ответ на вопрос ~s~${methods.moneyFormat(money)}`);
+        user.addCashMoney(player, money, `Ответ на вопрос (${methods.removeQuotes(methods.removeQuotes2(msg)).substring(0, 230)})`)
     });
 });
 
@@ -1929,6 +1930,20 @@ mp.events.addRemoteCounted('server:admin:tptoid', (player, type, id) => {
 
 mp.events.addRemoteCounted('server:admin:tptome', (player, type, id) => {
     admin.tpToAdmin(player, type, id);
+});
+
+mp.events.addRemoteCounted('server:admin:tptov', (player, id) => {
+    try {
+        if (!user.isAdmin(player))
+            return;
+        let v = mp.vehicles.at(id);
+        if (vehicles.exists(v)) {
+            v.position = player.position;
+        }
+    }
+    catch (e) {
+
+    }
 });
 
 mp.events.addRemoteCounted('server:admin:inviteMp', (player) => {

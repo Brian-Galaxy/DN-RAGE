@@ -151,7 +151,7 @@ user.loginAccount = function(player, login, pass) {
         return false;
     user.validateAccount(player, login, pass, function (callback) {
 
-        //user.showCustomNotify(player, 'Проверяем данные...', 0);
+        user.showCustomNotify(player, 'Проверяем данные...', 0);
 
         if (callback == false) {
             user.showCustomNotify(player, 'Ошибка пароля или аккаунт еще не был создан', 1);
@@ -162,13 +162,24 @@ user.loginAccount = function(player, login, pass) {
         {
             let players = [];
 
-            mysql.executeQuery(`SELECT * FROM users WHERE social = ? LIMIT 3`, player.accSocial, function (err, rows, fields) {
+            mysql.executeQuery(`SELECT skin, fraction_id2, fraction_id, pos_x, house_id, condo_id, apartment_id, yacht_id, name, online_time, money, money_bank, login_date FROM users WHERE social = ? LIMIT 3`, player.accSocial, function (err, rows, fields) {
                 if (!mp.players.exists(player))
                     return;
                 if (err) {
                     player.call('client:events:loginAccount:success', [JSON.stringify(players)]);
                 }
                 else {
+
+                    try {
+                        methods.saveLog('log_connect',
+                            ['type', 'social', 'serial', 'address', 'game_id', 'account_id'],
+                            ['LOGIN_ACC', player.socialClub, player.serial, player.ip, player.id, user.getId(player)]
+                        );
+                    }
+                    catch (e) {
+                        
+                    }
+
                     rows.forEach(row => {
                         let sex = methods.parseInt(JSON.parse(row['skin'])['SKIN_SEX']) == 0 ? "m" : "w";
 
@@ -1016,7 +1027,7 @@ user.updateTattoo = function(player) {
 };
 
 user.validateUser = function(name, callback) {
-    methods.debug('user.validateUser');
+    methods.debug('user.validateUser', name);
     mysql.executeQuery(`SELECT * FROM users WHERE name = ? LIMIT 1`, name, function (err, rows, fields) {
         if (err) {
             methods.debug('[DATABASE | ERROR]');
@@ -1047,7 +1058,7 @@ user.doesExistUser = function(name, callback) {
 };
 
 user.validateAccount = function(player, login, pass, callback) {
-    methods.debug('user.validateAccount');
+    methods.debug('user.validateAccount', login);
     mysql.executeQuery(`SELECT password, social FROM accounts WHERE login = ? LIMIT 1`, login, function (err, rows, fields) {
         if (err) {
             methods.debug('[DATABASE | ERROR]');

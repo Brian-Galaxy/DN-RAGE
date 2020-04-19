@@ -174,6 +174,9 @@ timer.sec10Timer = function() {
                 if (p.dimension > 0)
                     return;
 
+                if (methods.distanceToPos(new mp.Vector3(9.66692, 528.34783, 171.3), p.position) < 5)
+                    return;
+
                 user.set(p, 'pos_x', p.position.x);
                 user.set(p, 'pos_y', p.position.y);
                 user.set(p, 'pos_z', p.position.z);

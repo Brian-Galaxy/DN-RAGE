@@ -1723,7 +1723,7 @@ user.unTie = function() {
 };
 
 user.isTie = function() {
-    return mp.players.local.getVariable('isCuff') === true;
+    return mp.players.local.getVariable('isTie') === true;
 };
 
 user.isKnockout = function() {

@@ -530,7 +530,7 @@ fraction.createCargoWar = function(count = 3) {
     for (let i = 0; i < count; i++)
         spawnList.push(methods.getRandomInt(0, fraction.warVehPos.length));
 
-    timer = 600;
+    timer = 720;
 
     spawnList.forEach((item, i) => {
         let posVeh = new mp.Vector3(fraction.warVehPos[item][0], fraction.warVehPos[item][1], fraction.warVehPos[item][2]);
@@ -682,7 +682,7 @@ fraction.createCargoBigWar = function() {
     methods.notifyWithPictureToFractions2('Борьба за груз', `~r~ВНИМАНИЕ!`, 'Началась война за груз, груз отмечен на карте');
 
     isCargoBig = true;
-    timerBig = 540;
+    timerBig = 580;
 
     let posVeh = new mp.Vector3(1040.296875, 2299.896240234375, 44.898162841796875);
 
@@ -756,13 +756,21 @@ fraction.stopCargoWar = function() {
                 if (item.type !== 0)
                     return;
 
-                currentWarPos[i].isActive = false;
-
                 user.deleteBlip(p, item.b1);
                 user.deleteBlipByRadius(p, item.b2);
                 user.deleteBlipByRadius(p, item.b3);
             });
         }
+    });
+
+    currentWarPos.forEach((item, i) => {
+
+        if (!item.isActive)
+            return;
+        if (item.type !== 0)
+            return;
+
+        currentWarPos[i].isActive = false;
     });
 };
 
@@ -782,14 +790,21 @@ fraction.stopCargoMafiaWar = function() {
                     return;
                 if (item.type !== 1)
                     return;
-
-                currentWarPos[i].isActive = false;
-
                 user.deleteBlip(p, item.b1);
                 user.deleteBlipByRadius(p, item.b2);
                 user.deleteBlipByRadius(p, item.b3);
             });
         }
+    });
+
+    currentWarPos.forEach((item, i) => {
+
+        if (!item.isActive)
+            return;
+        if (item.type !== 1)
+            return;
+
+        currentWarPos[i].isActive = false;
     });
 };
 
@@ -810,13 +825,21 @@ fraction.stopCargoBigWar = function() {
                 if (item.type !== 2)
                     return;
 
-                currentWarPos[i].isActive = false;
-
                 user.deleteBlip(p, item.b1);
                 user.deleteBlipByRadius(p, item.b2);
                 user.deleteBlipByRadius(p, item.b3);
             });
         }
+    });
+
+    currentWarPos.forEach((item, i) => {
+
+        if (!item.isActive)
+            return;
+        if (item.type !== 2)
+            return;
+
+        currentWarPos[i].isActive = false;
     });
 };
 

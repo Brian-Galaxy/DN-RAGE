@@ -187,7 +187,7 @@ weather.timeSyncTimer = function() {
         }
 
         if (_hour === 2 && _minute === 0)
-            fraction.createCargoWar();
+            fraction.createCargoWar(5);
         if (_hour === 6 && _minute === 0)
             fraction.stopCargoWar();
 
@@ -245,11 +245,11 @@ weather.timeSyncTimer = function() {
 
         if (dateTime.getDate() % 3 === 0) {
             if (dateTime.getHours() === 20 && dateTime.getMinutes() === 0)
-                mafiaWar.startWar(0);
-            if (dateTime.getHours() === 20 && dateTime.getMinutes() === 1)
                 mafiaWar.startWar(1);
-            if (dateTime.getHours() === 20 && dateTime.getMinutes() === 2)
+            if (dateTime.getHours() === 20 && dateTime.getMinutes() === 1)
                 mafiaWar.startWar(2);
+            if (dateTime.getHours() === 20 && dateTime.getMinutes() === 2)
+                mafiaWar.startWar(3);
         }
 
         if (dateTime.getDate() % 4 === 0) {

@@ -190,6 +190,13 @@ mp.events.add('playerCommand', (player, command) => {
                 return;
             fraction.createCargoBigWar();
         }
+        else if (command.toLowerCase() === "bwar") {
+            if (!user.isAdmin(player))
+                return;
+            mafiaWar.startWar(1);
+            mafiaWar.startWar(2);
+            mafiaWar.startWar(3);
+        }
         else if (command.toLowerCase() === "racerc") {
             if (!user.isAdmin(player))
                 return;

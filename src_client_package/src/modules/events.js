@@ -2712,6 +2712,7 @@ mp.events.add('client:events:dialog:click', function () {
 
 let loadIndicatorDist = 15;
 let showIds = true;
+let showvIds = false;
 
 mp.events.add('client:showId', () => {
     showIds = !showIds;
@@ -2719,6 +2720,14 @@ mp.events.add('client:showId', () => {
         mp.game.ui.notifications.show("Вы ~g~включили~s~ ID игроков");
     else
         mp.game.ui.notifications.show("Вы ~r~отключили~s~ ID игроков");
+});
+
+mp.events.add('client:showvId', () => {
+    showvIds = !showvIds;
+    if (showvIds)
+        mp.game.ui.notifications.show("Вы ~g~включили~s~ ID транспорта");
+    else
+        mp.game.ui.notifications.show("Вы ~r~отключили~s~ ID транспорта");
 });
 
 mp.events.add('client:idDist', (val) => {
@@ -2786,6 +2795,33 @@ mp.events.add('render', () => {
             }
             catch (e) {
                 
+            }
+        });
+    }
+});
+
+mp.events.add('render', () => {
+    if (user.isLogin() && showvIds) {
+        let localPlayer = mp.players.local;
+        let __localPlayerPosition__ = mp.players.local.position;
+
+        mp.vehicles.forEach((v, i) => {
+            if (/*player === localPlayer || */!mp.vehicles.exists(v) || i > 50) {
+                return false;
+            }
+
+            try {
+                const loadIndicatorDistTemp = (i > 25) ? 5 : loadIndicatorDist;
+                const __playerPosition__ = v.position;
+                const distance = methods.distanceToPos(__localPlayerPosition__, __playerPosition__);
+
+                if (distance <= loadIndicatorDistTemp && v.dimension === localPlayer.dimension) {
+                    const vPosition = v.position;
+                    ui.drawText3D( 'ID: ' + v.remoteId, vPosition.x, vPosition.y, vPosition.z + 0.1);
+                }
+            }
+            catch (e) {
+
             }
         });
     }
@@ -2953,7 +2989,7 @@ mp.events.add('client:ui:checker', () => {
         uiTimeout = null;
     }
 
-    if (user.getCache('s_hud_restart') === 0 || user.getCache('s_hud_restart') === false)
+    if (!user.getCache('s_hud_restart'))
         return;
 
     try {

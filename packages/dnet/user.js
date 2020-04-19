@@ -1426,7 +1426,6 @@ user.ready = function(player) {
         return false;
 
     weather.setPlayerCurrentWeather(player);
-
     user.updateVehicleInfo(player);
 
     if (ctos.isBlackout())
@@ -1441,6 +1440,8 @@ user.ready = function(player) {
     catch (e) {
         methods.debug(e);
     }
+
+    player.call('playerReadyDone');
 };
 
 user.updateVehicleInfo = function(player) {

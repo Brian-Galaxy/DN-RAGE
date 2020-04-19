@@ -3380,6 +3380,7 @@ phone.consoleCallback = async function(command) {
                     setTimeout(function () {
                         if (user.hasCache('isSellCar')) {
                             jobPoint.delete();
+                            user.reset('isSellCar');
                             mp.game.ui.notifications.show(`~r~Метка на сдачу ТС была удалена`);
                         }
                     }, 600 * 1000);
@@ -3432,6 +3433,7 @@ phone.consoleCallback = async function(command) {
                     setTimeout(function () {
                         if (user.hasCache('isSellUser')) {
                             jobPoint.delete();
+                            user.reset('isSellUser');
                             mp.game.ui.notifications.show(`~r~Метка на сдачу игрока была удалена`);
                         }
                     }, 600 * 1000);
@@ -3481,6 +3483,7 @@ phone.consoleCallback = async function(command) {
                     setTimeout(function () {
                         if (user.hasCache('isSellMoney')) {
                             jobPoint.delete();
+                            user.reset('isSellMoney');
                             mp.game.ui.notifications.show(`~r~Метка на отмыв денег была удалена`);
                         }
                     }, 600 * 1000);

@@ -108,6 +108,21 @@ inventory.getItemList = function(player, ownerType, ownerId, isFrisk = false) {
 };
 
 
+inventory.equip = function(player, id, itemId) {
+    if (!user.isLogin(player))
+        return;
+
+    if (itemId === 50) {
+        let money = user.getBankMoney(player);
+        user.set(player, 'bank_card', 0);
+        user.set(player, 'bank_owner', '');
+        user.set(player, 'bank_pin', 0);
+        user.setBankMoney(player, 0);
+        inventory.updateItemCount(id, money);
+        user.save(player);
+    }
+};
+
 inventory.equip = function(player, id, itemId, count, aparams) {
 
     if (!user.isLogin(player))

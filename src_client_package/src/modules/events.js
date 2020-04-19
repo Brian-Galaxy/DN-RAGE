@@ -112,7 +112,7 @@ mp.events.add('client:user:auth:register', function(mail, login, passwordReg, pa
 
         if (Container.Data.HasLocally(mp.players.local.remoteId, "isRegTimeout"))
         {
-            user.showCustomNotify('Нельзя нажмить так часто');
+            user.showCustomNotify('Нельзя нажимать так часто');
             return;
         }
         Container.Data.SetLocally(mp.players.local.remoteId, "isRegTimeout", true);
@@ -157,7 +157,7 @@ mp.events.add('client:user:auth:login', function(login, password) {
 
         if (Container.Data.HasLocally(mp.players.local.remoteId, "isLoginTimeout"))
         {
-            user.showCustomNotify('Нельзя нажмить так часто');
+            user.showCustomNotify('Нельзя нажимать так часто');
             return;
         }
         Container.Data.SetLocally(mp.players.local.remoteId, "isLoginTimeout", true);
@@ -266,7 +266,7 @@ mp.events.add('client:events:selectPlayer', function(name, spawnName) {
     try {
         if (Container.Data.HasLocally(mp.players.local.remoteId, "isSelectTimeout"))
         {
-            user.showCustomNotify('Нельзя нажмить так часто');
+            user.showCustomNotify('Нельзя нажимать так часто');
             return;
         }
         Container.Data.SetLocally(mp.players.local.remoteId, "isSelectTimeout", true);
@@ -2274,13 +2274,7 @@ mp.events.add('client:inventory:unEquip', function(id, itemId) {
     );
 
     if (itemId == 50) {
-        let money = user.getBankMoney();
-        user.set('bank_card', 0);
-        user.set('bank_owner', '');
-        user.set('bank_pin', 0);
-        user.setBankMoney(0);
-        inventory.updateItemCount(id, money);
-        user.save();
+        mp.events.callRemote('server:inventory:unEquip', id, itemId);
     }
     else if (itemId >= 27 && itemId <= 30) {
         user.set('phone_type', 0);
@@ -2833,9 +2827,11 @@ mp.keys.bind(0xDB, true, function() {
     if (!user.isLogin())
         return;
     if (!methods.isBlockKeys() && mp.players.local.vehicle) {
-        let actualData = mp.players.local.vehicle.getVariable('vehicleSyncData');
-        vehicles.setIndicatorLeftState(!actualData.IndicatorLeftToggle);
-        vehicles.setIndicatorRightState(false);
+        if (mp.players.local.vehicle.getPedInSeat(-1) === mp.players.local.handle) {
+            let actualData = mp.players.local.vehicle.getVariable('vehicleSyncData');
+            vehicles.setIndicatorLeftState(!actualData.IndicatorLeftToggle);
+            vehicles.setIndicatorRightState(false);
+        }
     }
 });
 
@@ -2843,9 +2839,11 @@ mp.keys.bind(0xDD, true, function() {
     if (!user.isLogin())
         return;
     if (!methods.isBlockKeys() && mp.players.local.vehicle) {
-        let actualData = mp.players.local.vehicle.getVariable('vehicleSyncData');
-        vehicles.setIndicatorRightState(!actualData.IndicatorRightToggle);
-        vehicles.setIndicatorLeftState(false);
+        if (mp.players.local.vehicle.getPedInSeat(-1) === mp.players.local.handle) {
+            let actualData = mp.players.local.vehicle.getVariable('vehicleSyncData');
+            vehicles.setIndicatorRightState(!actualData.IndicatorRightToggle);
+            vehicles.setIndicatorLeftState(false);
+        }
     }
 });
 
@@ -3005,23 +3003,41 @@ mp.events.add('client:ui:checker', () => {
 mp.events.add("playerEnterCheckpoint", (checkpoint) => {
     try {
         if (user.hasCache('isSellCar')) {
+            mp.events.callRemote('server:sellVeh')
             user.reset('isSellCar');
             jobPoint.delete();
-            mp.events.callRemote('server:sellVeh')
         }
         if (user.hasCache('isSellUser')) {
+            mp.events.callRemote('server:sellUser')
             user.reset('isSellUser');
             jobPoint.delete();
-            mp.events.callRemote('server:sellUser')
         }
         if (user.hasCache('isSellMoney')) {
+            mp.events.callRemote('server:sellMoney');
             user.reset('isSellMoney');
             jobPoint.delete();
-            mp.events.callRemote('server:sellMoney');
         }
     }
     catch (e) {
         
+    }
+});
+
+mp.events.add("playerReadyDone", () => {
+    try {
+
+        mp.gui.chat.show(false);
+        mp.gui.chat.activate(false);
+        for (let i = 0; i < 50; i++)
+            mp.gui.chat.push('');
+
+        setTimeout(function () {
+            ui.create();
+            user.hideLoadDisplay();
+        }, 100);
+    }
+    catch (e) {
+
     }
 });
 

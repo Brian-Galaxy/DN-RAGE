@@ -2956,16 +2956,23 @@ enums.loadCloth = function () {
         }
     });
 
-    updateTattoo().then( (returnCloth) => {
+    setTimeout(function () {
         try {
-            enums.tattooList = returnCloth[0];
-            enums.tprint = returnCloth[1];
-            enums.fractionListId = JSON.parse(returnCloth[2]);
-        } catch (e) {
-            console.log(e);
-            throw e;
+            updateTattoo().then( (returnCloth) => {
+                try {
+                    enums.tattooList = returnCloth[0];
+                    enums.tprint = returnCloth[1];
+                    enums.fractionListId = JSON.parse(returnCloth[2]);
+                } catch (e) {
+                    console.log(e);
+                    throw e;
+                }
+            });
         }
-    });
+        catch (e) {
+            
+        }
+    }, 5000)
 };
 
 export default enums;

@@ -562,20 +562,24 @@ mp.events.addRemoteCounted('server:enums:getCloth1', (player, requestID) => {
         methods.debug(e);
     }
 
-    try {
-        player.call('client:updateItemList', [JSON.stringify(weapons.hashesMap), JSON.stringify(weapons.components), JSON.stringify(items.itemList)]);
-    }
-    catch (e) {
-        
-    }
+    setTimeout(function () {
+        try {
+            player.call('client:updateItemList', [JSON.stringify(weapons.hashesMap), JSON.stringify(weapons.components), JSON.stringify(items.itemList)]);
+        }
+        catch (e) {
 
-    try {
-        for (let i = 0; i < methods.parseInt(enums.maskList.length / 500) + 1; i++)
-            player.call('client:enums:updateMask', [enums.maskList.slice(i * 500, i * 500 + 500)]);
-    }
-    catch (e) {
-        methods.debug(e);
-    }
+        }
+    }, 1000);
+
+    setTimeout(function () {
+        try {
+            for (let i = 0; i < methods.parseInt(enums.maskList.length / 500) + 1; i++)
+                player.call('client:enums:updateMask', [enums.maskList.slice(i * 500, i * 500 + 500)]);
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    }, 2000);
 });
 
 mp.events.addRemoteCounted('server:playScenario', (player, name) => {
@@ -3127,6 +3131,13 @@ mp.events.addRemoteCounted('server:inventory:equip', (player, id, itemId, count,
     if (!user.isLogin(player))
         return;
     inventory.equip(player, id, itemId, count, aparams);
+});
+
+
+mp.events.addRemoteCounted('server:inventory:unEquip', (player, id, itemId) => {
+    if (!user.isLogin(player))
+        return;
+    inventory.unEquip(player, id, itemId);
 });
 
 mp.events.addRemoteCounted('server:inventory:updateEquipStatus', (player, id, status) => {
@@ -6761,6 +6772,7 @@ mp.events.add("__ragemp_cheat_detected", (player,  cheatCode) => {
 
 mp.events.add('playerJoin', player => {
     player.dimension = player.id + 1;
+
     player.countedTriggers = 0;
     player.countedTriggersSwap = 0;
 

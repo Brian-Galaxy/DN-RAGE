@@ -92,6 +92,10 @@ voiceRage.remove = (player, notify) => {
 };
 
 voiceRage.generateVolume = (localPlayerPosition, targetPlayer, voiceDistance, distanceToPlayer) => {
+
+    if (!user.isLogin())
+        return 0;
+
     const calcVoiceDistance = voiceDistance * voiceDistance;
     const calcDublDist = distanceToPlayer * distanceToPlayer;
     const maxVolume = methods.parseFloat(user.getCache('s_voice_vol'));

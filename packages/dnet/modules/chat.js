@@ -48,7 +48,7 @@ chat.sendDoCommand = function(player, text) {
 
         mp.players.forEach(p => {
             if (user.isLogin(p) && p.dimension === player.dimension && methods.distanceToPos(player.position, p.position) <= range)
-                p.outputChatBoxNew(`[${chat.getTime()}] !{C2A2DA} (( ${text} )) ${user.getSvId(player)}`);
+                p.outputChatBoxNew(`[${chat.getTime()}] !{C2A2DA} ${text} (( Незнакомец (${user.getSvId(player)}) ))`);
         });
         methods.saveLog('log_chat', ['text'], [`/do ${user.getRpName(player)} (${user.getId(player)}): ${methods.removeQuotes(methods.removeQuotes2(text))}`]);
     }
@@ -59,7 +59,7 @@ chat.sendMeCommand = function(player, text) {
 
         mp.players.forEach(p => {
             if (user.isLogin(p) && p.dimension === player.dimension && methods.distanceToPos(player.position, p.position) <= range)
-                p.outputChatBoxNew(`[${chat.getTime()}] !{C2A2DA}${user.getSvId(player)} ${text}`);
+                p.outputChatBoxNew(`[${chat.getTime()}] !{C2A2DA}* Незнакомец (${user.getSvId(player)}) ${text}`);
         });
 
         methods.saveLog('log_chat', ['text'], [`/me ${user.getRpName(player)} (${user.getId(player)}): ${methods.removeQuotes(methods.removeQuotes2(text))}`]);

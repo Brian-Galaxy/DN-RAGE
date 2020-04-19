@@ -1,5 +1,6 @@
 import methods from '../modules/methods';
 import enums from '../enums';
+import user from '../user';
 import timer from "./timer";
 
 let object = {};
@@ -1195,6 +1196,9 @@ object.delete = function (model, x, y, z) {
 };
 
 object.process = function () {
+
+    if (!user.isLogin())
+        return;
     
     object.openDoor(741314661, 1844.998, 2604.813, 44.63978, true); // Тюремные ворота
     object.openDoor(741314661, 1818.543, 2604.813, 44.611, true); // Тюремные ворота

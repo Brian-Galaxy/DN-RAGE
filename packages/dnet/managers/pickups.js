@@ -424,7 +424,14 @@ pickups.checkPressE = function(player) {
     if (methods.distanceToPos(pickups.MazeBankLobby, playerPos) < distanceCheck)
         player.call('client:menuList:showMazeBankLobbyMenu');
     if (methods.distanceToPos(pickups.WheelLuckyPos, playerPos) < distanceCheck)
-        wheel.start(player)
+    {
+        setTimeout(function () {
+            try {
+                wheel.start(player);
+            }
+            catch (e) {}
+        }, methods.getRandomInt(0, 500));
+    }
 
     if (methods.distanceToPos(pickups.BotRole0, playerPos) < distanceCheck)
         player.call('client:menuList:showBotQuestRole0Menu');

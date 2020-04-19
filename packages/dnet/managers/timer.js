@@ -54,7 +54,7 @@ timer.min10Timer = function() {
             methods.debug(e);
         }
     });
-    setTimeout(timer.min30Timer, 1000 * 60 * 10);
+    setTimeout(timer.min10Timer, 1000 * 60 * 10);
 };
 
 timer.min60Timer = function() {

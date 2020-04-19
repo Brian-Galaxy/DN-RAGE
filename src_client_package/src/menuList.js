@@ -1271,14 +1271,14 @@ menuList.showPlayerHistoryMenu = function(data) {
 
         if (item.text.length >= 33)
         {
-            let mItem = UIMenu.Menu.AddMenuItem(`~b~#${item.id}. ~s~${item.text.substring(0, 33)}...`, `~b~Дата:~s~ ${item.rp_datetime}\n~b~OOC: ~s~${dateTime}`);
+            let mItem = UIMenu.Menu.AddMenuItem(`~b~#${item.id}. ~s~${item.text.substring(0, 25)}...`, `~b~Дата:~s~ ${item.rp_datetime}\n~b~OOC: ~s~${dateTime}`);
             mItem.desc = item.text;
             mItem.id = item.id;
             mItem.datetime = dateTime;
             mItem.rp_datetime = item.rp_datetime;
         }
         else {
-            let mItem = UIMenu.Menu.AddMenuItem(`~b~#${item.id}. ~s~${item.text.substring(0, 33)}`, `~b~Дата:~s~ ${item.rp_datetime}\n~b~OOC: ~s~${dateTime}`);
+            let mItem = UIMenu.Menu.AddMenuItem(`~b~#${item.id}. ~s~${item.text.substring(0, 25)}`, `~b~Дата:~s~ ${item.rp_datetime}\n~b~OOC: ~s~${dateTime}`);
             mItem.desc = item.text;
             mItem.id = item.id;
             mItem.datetime = dateTime;
@@ -1510,9 +1510,11 @@ menuList.showBusinessSettingsMenu = async function(data) {
             priceItem.Index = data.get('price_product') - 1;
         }
         else {
-            let priceItem = UIMenu.Menu.AddMenuItem("~b~Цена на весь товар~s~");
-            priceItem.SetRightLabel(`${data.get('price_product') * 100}%`);
-            priceItem.doName = 'setPrice';
+            if (data.get('id') !== 70) {
+                let priceItem = UIMenu.Menu.AddMenuItem("~b~Цена на весь товар~s~");
+                priceItem.SetRightLabel(`${data.get('price_product') * 100}%`);
+                priceItem.doName = 'setPrice';
+            }
         }
     }
     catch (e) {
@@ -1925,7 +1927,7 @@ menuList.showMeriaTaxInfoMenu = async function(type, id) {
     UIMenu.Menu.AddMenuItem(`~b~Счёт:~s~ ${score}`, "Уникальный счёт вашего имущества");
     UIMenu.Menu.AddMenuItem(`~b~Ваша задолженность:~s~ ~r~${(tax == 0 ? "~g~Отсутствует" : `${methods.moneyFormat(tax)}`)}`, `Ваш текущий долг, при достижении ~r~$${taxLimit}~s~ ваше имущество будет изъято`);
     //UIMenu.Menu.AddMenuItem(`~b~Ваша задолженность:~s~ ~r~${(tax == 0 ? "~g~Отсутствует" : `${methods.moneyFormat(tax)}`)}`);
-    UIMenu.Menu.AddMenuItem(`~b~Налог в день (( ООС )):~s~ $${taxDay}`, "Индвивидуальная налоговая ставка");
+    UIMenu.Menu.AddMenuItem(`~b~Налог в день (( ООС )):~s~ $${taxDay}`, "Индивидуальная налоговая ставка");
     UIMenu.Menu.AddMenuItem(`~b~Допустимый лимит:~s~ $${taxLimit}`, "Допустимый лимит до обнуления имущества");
 
     UIMenu.Menu.AddMenuItem("Оплатить наличкой").payTaxType = 0;
@@ -2566,7 +2568,7 @@ menuList.showHelpMenu = function() {
 
     mItem = UIMenu.Menu.AddMenuItem("Где получить все лицензии?");
     mItem.textTitle = 'Лицензии';
-    mItem.text = 'Лицензии на вождение какого либо транспорта получаются в здание правительства. Лицензии на рыболовство/бизнес получаются исключительно у сотрудников правительства. Лицензию на оружие вы можете приобрести у сотрудников полицейского и шериф департамента.';
+    mItem.text = 'Лицензии на вождение какого либо транспорта получаются в здании правительства. Лицензии на рыболовство/бизнес получаются исключительно у сотрудников правительства. Лицензию на оружие вы можете приобрести у сотрудников полицейского и шериф департамента.';
 
     mItem = UIMenu.Menu.AddMenuItem("Где моя зарплата?");
     mItem.textTitle = 'Зарплатный счет';
@@ -2582,7 +2584,7 @@ menuList.showHelpMenu = function() {
 
     mItem = UIMenu.Menu.AddMenuItem("Как вступить в организацию?");
     mItem.textTitle = 'Организация';
-    mItem.text = 'Для вступления в организацию следите за новостям, лидеры и их замы частенько объявляют наборы с соответствующими критериями.';
+    mItem.text = 'Для вступления в организацию следите за новостями, лидеры и их замы частенько объявляют наборы с соответствующими критериями.';
 
     mItem = UIMenu.Menu.AddMenuItem("С чего начать криминальный путь?");
     mItem.textTitle = 'Криминальный путь';
@@ -9052,7 +9054,7 @@ menuList.showEmsArsenalMenu = function() {
     UIMenu.Menu.AddMenuItem("Сухпаёк").itemId = 32;
     UIMenu.Menu.AddMenuItem("Антипохмелин").itemId = 221;
     
-    if (user.getCache('rank_type') !== 0 || user.isLeader() || user.isSubLeader() || user.isDepLeader() || user.isSubLeader()) {
+    if (user.getCache('rank_type') !== 0 || user.isLeader() || user.isSubLeader() || user.isDepLeader() || user.isDepSubLeader()) {
         UIMenu.Menu.AddMenuItem("Большая Аптечка").itemId = 278;
         UIMenu.Menu.AddMenuItem("Дефибриллятор").itemId = 277;
         UIMenu.Menu.AddMenuItem("Полицейское огорождение").itemId = 199;

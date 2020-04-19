@@ -42,10 +42,14 @@ import "./antiCheat";
 
 try {
 
-    mp.gui.chat.show(false);
-    mp.gui.chat.activate(false);
+    user.showLoadDisplay();
+    user.setVirtualWorld(mp.players.local.remoteId);
+
     for (let i = 0; i < 50; i++)
         mp.gui.chat.push('');
+
+    mp.gui.chat.push('Добро пожаловать на DEDNET 💀');
+    mp.gui.chat.push('Подождите пожалуйста, выполняется загрузка всех необходимых пакетов для комфортной игры. Это займет меньше минуты.');
 
     chat.show(false);
     chat.activate(false);
@@ -61,8 +65,6 @@ try {
     mp.game.player.setVehicleDamageModifier(.1);
 
     mp.gui.cursor.show(true, true);
-
-    ui.create();
 
     timer.createInterval('hosp.timer', hosp.timer, 1000);
     timer.createInterval('jail.timer', jail.timer, 1000);

@@ -566,7 +566,7 @@ user.init = function() {
         timer.createInterval('user.timer1sec', user.timer1sec, 1000);
 
         user.stopAllScreenEffect();
-        user.hideLoadDisplay();
+        //user.hideLoadDisplay();
         user.clearChat();
         user.setAlpha(255);
 

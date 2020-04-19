@@ -1275,13 +1275,17 @@ vehicles.engineStatus = (player, vehicle) => {
     if (!vehicles.exists(vehicle))
         return;
     try {
-        if (vehicle.getVariable('fuel') === 0) {
-            player.notify('~r~В транспорте закончилось топливо');
-            player.notify('~b~Метка на заправку установлена');
-            let pos = fuel.findNearest(player.position);
-            user.setWaypoint(player, pos.x, pos.y);
-            vSync.setEngineState(vehicle, false);
-            return;
+        if (vehicles.getFuel(vehicle) === 0) {
+
+            let vInfo = methods.getVehicleInfo(veh.model);
+            if (vInfo.fuel_type !== 3) {
+                player.notify('~r~В транспорте закончилось топливо');
+                player.notify('~b~Метка на заправку установлена');
+                let pos = fuel.findNearest(player.position);
+                user.setWaypoint(player, pos.x, pos.y);
+                vSync.setEngineState(vehicle, false);
+                return;
+            }
         }
         //vehicle.engine = !vehicle.engine;
         let eStatus = !vSync.getEngineState(vehicle);

@@ -574,6 +574,9 @@ mp.events.add("vSync:setSirenState", (vehId, state) => {
 
 mp.events.add("playerEnterVehicle", (entity, seat) => {
 
+    if (!user.isLogin())
+        return;
+
     methods.debug('playerEnterVehicle' + seat);
 
     try {
@@ -728,6 +731,10 @@ mp.events.add('render', () => {
 //Sync data on stream in
 mp.events.add("entityStreamIn", (entity) => {
     try {
+
+        if (!user.isLogin())
+            return;
+
         if (entity.type === "vehicle") {
 
             if (!mp.vehicles.exists(entity))

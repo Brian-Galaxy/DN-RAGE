@@ -151,7 +151,7 @@ user.loginAccount = function(player, login, pass) {
         return false;
     user.validateAccount(player, login, pass, function (callback) {
 
-        user.showCustomNotify(player, 'Проверяем данные...', 0);
+        //user.showCustomNotify(player, 'Проверяем данные...', 0);
 
         if (callback == false) {
             user.showCustomNotify(player, 'Ошибка пароля или аккаунт еще не был создан', 1);

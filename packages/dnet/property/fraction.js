@@ -662,6 +662,7 @@ fraction.createCargoMafiaWar = function() {
                 let boxes = [50, 50, 50, 50, 50, 50, 50, 50, 50, 50];
                 veh.setVariable('box', JSON.stringify(boxes));
                 veh.setVariable('cargoId', b1);
+                veh.setVariable('isMafia', true);
             }
             catch (e) {
                 methods.debug(e);

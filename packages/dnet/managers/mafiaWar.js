@@ -358,9 +358,9 @@ mafiaWar.timerMoney = function() {
     for (let i = 1; i <= 3; i++) {
         try {
             if (mafiaWar.get(i, 'ownerId') > 0) {
-                let money = (methods.getRandomInt(1000, 1200) * 3) / 1000;
+                let money = (methods.getRandomInt(1000, 1200) * 3) / 50;
                 let id = methods.parseInt(mafiaWar.get(i, 'ownerId'));
-                fraction.addMoney(id, fraction.getMoney(id) + methods.parseFloat(money), 'Зачисление прибыли');
+                fraction.addMoney(id, methods.parseFloat(money), 'Зачисление прибыли');
             }
         }
         catch (e) {

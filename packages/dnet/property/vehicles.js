@@ -1277,7 +1277,7 @@ vehicles.engineStatus = (player, vehicle) => {
     try {
         if (vehicles.getFuel(vehicle) === 0) {
 
-            let vInfo = methods.getVehicleInfo(veh.model);
+            let vInfo = methods.getVehicleInfo(vehicle.model);
             if (vInfo.fuel_type !== 3) {
                 player.notify('~r~В транспорте закончилось топливо');
                 player.notify('~b~Метка на заправку установлена');

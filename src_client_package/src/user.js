@@ -1642,6 +1642,22 @@ user.isPolice = function() {
     return user.isLogin() && (user.isSapd() || user.isFib() || user.isUsmc() || user.isSheriff());
 };
 
+user.isCosaNostra = function() {
+    return user.isLogin() && user.getCache('fraction_id2') === 17; //TODO
+};
+
+user.isRussianMafia = function() {
+    return user.isLogin() && user.getCache('fraction_id2') === 16;
+};
+
+user.isYakuza = function() {
+    return user.isLogin() && user.getCache('fraction_id2') === 18;
+};
+
+user.isMafia = function() {
+    return user.isLogin() && (user.isCosaNostra() || user.isRussianMafia() || user.isYakuza());
+};
+
 user.isGov = function() {
     return user.isLogin() && user.getCache('fraction_id') == 1;
 };

@@ -3086,7 +3086,10 @@ mp.events.addRemoteCounted('server:phone:userGetPosById', (player, id) => {
         return;
     mp.vehicles.forEach(v => {
         if (v.getVariable('vid') == id) {
-            user.setWaypoint(player, v.position.x, v.position.y);
+            if  (v.dimension === 0)
+                user.setWaypoint(player, v.position.x, v.position.y);
+            else
+                player.notify('~g~Ваш транспорт стоит в гараже');
         }
     });
 });

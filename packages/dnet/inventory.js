@@ -108,7 +108,7 @@ inventory.getItemList = function(player, ownerType, ownerId, isFrisk = false) {
 };
 
 
-inventory.equip = function(player, id, itemId) {
+inventory.unEquip = function(player, id, itemId) {
     if (!user.isLogin(player))
         return;
 

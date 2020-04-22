@@ -3615,11 +3615,22 @@ menuList.showVehicleMenu = function(data) {
 
     if (user.getCache('fraction_id2') > 0) {
         if (veh.getVariable('cargoId') !== null && veh.getVariable('cargoId') !== undefined) {
-            let boxes = JSON.parse(veh.getVariable('box'));
-            boxes.forEach((item, i) => {
-                if (item >= 0)
-                    UIMenu.Menu.AddMenuItem(`~y~${stocks.boxList[item][0]}`, 'Нажмите ~g~Enter~s~ чтобы разгрузить').cargoUnloadId = i;
-            });
+            if (veh.getVariable('isMafia')) {
+                if (user.isMafia()) {
+                    let boxes = JSON.parse(veh.getVariable('box'));
+                    boxes.forEach((item, i) => {
+                        if (item >= 0)
+                            UIMenu.Menu.AddMenuItem(`~y~${stocks.boxList[item][0]}`, 'Нажмите ~g~Enter~s~ чтобы разгрузить').cargoUnloadId = i;
+                    });
+                }
+            }
+            else {
+                let boxes = JSON.parse(veh.getVariable('box'));
+                boxes.forEach((item, i) => {
+                    if (item >= 0)
+                        UIMenu.Menu.AddMenuItem(`~y~${stocks.boxList[item][0]}`, 'Нажмите ~g~Enter~s~ чтобы разгрузить').cargoUnloadId = i;
+                });
+            }
             //UIMenu.Menu.AddMenuItem(`~y~Разгрузить весь груз`, 'Доступно только внутри склада').cargoUnloadAll = true;
         }
     }
@@ -9966,7 +9977,7 @@ menuList.showAdminPlayerMenu = function() {
     UIMenu.Menu.AddMenuItem("Воскресить").doName = 'adrenalineById';
     UIMenu.Menu.AddMenuItem("Выписать из больницы").doName = 'freeHospById';
 
-    if (user.isAdmin(5))
+    if (user.isAdmin(4))
         UIMenu.Menu.AddMenuItemList("Лидер организации", ["None", "Gov", "LSPD", "FIB", "USMC", "BCSD", "EMS", "News"]).doName = 'giveLeader';
 
     UIMenu.Menu.AddMenuItem("Посадить в тюрьму").doName = 'jail';

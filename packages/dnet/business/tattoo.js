@@ -47,20 +47,20 @@ tattoo.checkPosForOpenMenu = function(player) {
         switch (shopId)
         {
             case 37:
-                player.call('client:menuList:showTattooShopMenu', ["shopui_title_tattoos", "shopui_title_tattoos", shopId, business.getPrice(shopId)]);
+                player.call('client:menuList:showTattooShopMenu', ["tt_blazing", "tt_blazing", shopId, business.getPrice(shopId)]);
                 break;
             case 38:
             case 39:
-                player.call('client:menuList:showTattooShopMenu', ["shopui_title_tattoos2", "shopui_title_tattoos2", shopId, business.getPrice(shopId)]);
+                player.call('client:menuList:showTattooShopMenu', ["tt_tattobp", "tt_tattobp", shopId, business.getPrice(shopId)]);
                 break;
             case 40:
-                player.call('client:menuList:showTattooShopMenu', ["shopui_title_tattoos3", "shopui_title_tattoos3", shopId, business.getPrice(shopId)]);
+                player.call('client:menuList:showTattooShopMenu', ["tt_pit", "tt_pit", shopId, business.getPrice(shopId)]);
                 break;
             case 41:
-                player.call('client:menuList:showTattooShopMenu', ["shopui_title_tattoos4", "shopui_title_tattoos4", shopId, business.getPrice(shopId)]);
+                player.call('client:menuList:showTattooShopMenu', ["tt_lstatoo", "tt_lstatoo", shopId, business.getPrice(shopId)]);
                 break;
             case 42:
-                player.call('client:menuList:showTattooShopMenu', ["shopui_title_tattoos5", "shopui_title_tattoos5", shopId, business.getPrice(shopId)]);
+                player.call('client:menuList:showTattooShopMenu', ["tt_inkinc", "tt_inkinc", shopId, business.getPrice(shopId)]);
                 break;
         }
     }

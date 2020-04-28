@@ -122,7 +122,7 @@ methods.debug = function (message, ...args) {
     let dateResult = methods.digitFormat(dateTime.getHours()) + ':' + methods.digitFormat(dateTime.getMinutes())+ ':' + methods.digitFormat(dateTime.getSeconds());
     //mp.gui.chat.push(`!{03A9F4}[DEBUG | ${dateResult}]!{FFFFFF} ${message.toString().replace('Exception: ', '!{f44336}Exception: ')}`);
     try {
-        //mp.events.callRemote('server:clientDebug', `${message} | ${JSON.stringify(args)} | ${args.length}`)
+        mp.events.callRemote('server:clientDebug', `${message} | ${JSON.stringify(args)} | ${args.length}`)
     } catch (e) {
     }
 };
@@ -356,8 +356,17 @@ methods.removeQuotes2 = function(str) {
     //return text.toString().replace('"', '');
 };
 
+methods.replaceQuotes = function(str) {
+    try {
+        str = methods.replaceAll(str, '"', '`');
+        str = methods.replaceAll(str, '\'', '`');
+    }
+    catch (e) {}
+    return str;
+};
+
 methods.replaceAll = function(string, search, replace){
-    return string.split(search).join(replace);
+    return string.toString().split(search).join(replace);
 };
 
 methods.saveLog = function (table, cols, values) {

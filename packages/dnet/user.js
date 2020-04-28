@@ -185,7 +185,7 @@ user.loginAccount = function(player, login, pass) {
 
                         let spawnList = [];
 
-                        if (fraction.isMafia(row['fraction_id2']) || fraction.isGang(row['fraction_id2']))
+                        if (fraction.isGang(row['fraction_id2']))
                             spawnList.push('Спавн организации');
 
                         if (row['pos_x'] !== 0)
@@ -1740,6 +1740,14 @@ user.setWorkExp = function(player, rep) {
     if (rep >= user.getWorkLvl(player) * 500) {
         user.set(player, 'work_exp', 0);
         user.set(player, 'work_lvl', user.getWorkLvl(player) + 1);
+        try {
+            let sum = user.getWorkLvl(player) * 1000;
+            user.addMoney(player, sum);
+            user.sendSmsBankOperation(player, 'Зачисление премии за рабочий стаж: ~g~$' + methods.numberFormat(sum));
+        }
+        catch (e) {
+            
+        }
     }
     else if (rep < 0)
         user.set(player, 'work_exp', 0);

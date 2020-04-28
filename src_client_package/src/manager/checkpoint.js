@@ -1,5 +1,6 @@
 import methods from '../modules/methods';
 import ui from '../modules/ui';
+import user from '../user';
 import UIMenu from '../modules/menu';
 
 let itemList = [];
@@ -37,7 +38,7 @@ checkpoint.checkPosition = function() {
         }
     }
     catch (e) {
-        
+        methods.debug(e, "CP_ERROR");
     }
 
     if (itemList.length < 1000) { //TODO

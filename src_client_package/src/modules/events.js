@@ -3,6 +3,7 @@
 import UIMenu from './menu';
 import Container from './data';
 import methods from './methods';
+import cefMenu from './cefMenu';
 
 import cloth from '../business/cloth';
 
@@ -2920,6 +2921,10 @@ mp.keys.bind(0x1B, true, function() {
 mp.keys.bind(0x08, true, function() {
     if (!user.isLogin())
         return;
+
+    if (cefMenu.isShow())
+        cefMenu.hide();
+
     ui.callCef('license', JSON.stringify({type: 'hide'}));
     ui.callCef('certificate', JSON.stringify({type: 'hide'}));
     ui.callCef('dialog', JSON.stringify({type: 'hide'}));
@@ -3033,8 +3038,11 @@ mp.events.add("playerReadyDone", () => {
 
         setTimeout(function () {
             ui.create();
-            user.hideLoadDisplay();
+
         }, 100);
+        setTimeout(function () {
+            user.hideLoadDisplay();
+        }, 1000);
     }
     catch (e) {
 

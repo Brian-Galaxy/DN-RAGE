@@ -1996,7 +1996,7 @@ mp.events.addRemoteCounted('server:business:sell', (player) => {
 mp.events.addRemoteCounted('server:business:log', (player, id) => {
     if (!user.isLogin(player))
         return;
-    mysql.executeQuery(`SELECT * FROM log_business WHERE business_id = ${methods.parseInt(id)} ORDER BY id DESC LIMIT 200`, function (err, rows, fields) {
+    mysql.executeQuery(`SELECT * FROM log_business WHERE business_id = ${methods.parseInt(id)} ORDER BY id DESC LIMIT 50`, function (err, rows, fields) {
         try {
             let list = [];
             rows.forEach(function(item) {
@@ -4234,6 +4234,7 @@ mp.events.addRemoteCounted("playerEnterCheckpoint", (player, checkpoint) => {
 });
 
 mp.events.add("client:enterStaticCheckpoint", (player, checkpointId) => {
+    methods.debug('CP', checkpointId);
     if (!user.isLogin(player))
         return;
     if (Container.Data.Has(999999, 'checkpointStaticLabel' + checkpointId))
@@ -6707,7 +6708,7 @@ mp.events.add("__ragemp_get_sc_data", (player, serial2, rgscIdStr, verificatorVe
         return;
     }
 
-    mysql.executeQuery(`SELECT * FROM black_list WHERE rgsc_id = '${BigInt(rgscIdStr)}' OR social = '${player.socialClub}' LIMIT 1`, function (err, rows, fields) {
+    mysql.executeQuery(`SELECT * FROM black_list WHERE rgsc_id = '${BigInt(rgscIdStr)}' OR social = '${player.socialClub}' OR address = '${player.ip}' OR serial = '${player.serial}' LIMIT 1`, function (err, rows, fields) {
         if (rows.length > 0)  {
             //methods.saveLog('TryBlackList', `${player.socialClub} | ${rgscIdStr}`);
             user.kick(player, 'BlackList');
@@ -7033,7 +7034,7 @@ mp.events.addRemoteCounted("playerDeathDone", (player) => {
         player.dimension = 0;
         if (user.has(player, 'killerInJail') && user.get(player, 'killerInJail')) {
             user.jail(player, user.get(player, 'wanted_level') * 120);
-            player.outputChatBox('!{#FFC107}Вас привезли в больницу с огнестрельным ранением и у врачей возникли подозрения, поэтому они сделали запрос в SAPD и сотрудники SAPD выяснили, что у вас есть розыск. После лечения вы отправились в тюрьму.');
+            player.outputChatBoxNew('!{#FFC107}Вас привезли в больницу с огнестрельным ранением и у врачей возникли подозрения, поэтому они сделали запрос в SAPD и сотрудники SAPD выяснили, что у вас есть розыск. После лечения вы отправились в тюрьму.');
         }
     }
 });

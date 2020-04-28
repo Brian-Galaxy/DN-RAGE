@@ -456,7 +456,7 @@ methods.createCp = function (x, y, z, message, scale = 1, dimension = -1, color 
 
     let checkpointID = checkPointStaticList.length;
     checkPointStaticList.push({id: checkpointID, x: parseFloat(x), y: parseFloat(y), z: parseFloat(z), color: color, scale: scale, height: height});
-    if (message != undefined)
+    if (message)
         Container.Data.Set(999999, 'checkpointStaticLabel' + checkpointID, message);
     return checkpointID;
 };

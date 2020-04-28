@@ -31,7 +31,6 @@ let EntityFuel = 0;
 
 let isDisableControl = false;
 let allModelLoader = false;
-let allVehiclesLoader = false;
 let afkTimer = 0;
 let afkLastPos = new mp.Vector3(0, 0, 0);
 
@@ -276,14 +275,6 @@ timer.allModelLoader = function() {
         mp.game.ui.notifications.show("Прогрузка моделей ~r~выключена");
 };
 
-timer.allVehiclesLoader = function() {
-    allVehiclesLoader = !allVehiclesLoader;
-    if (allVehiclesLoader)
-        mp.game.ui.notifications.show("Прогрузка моделей транспорта ~g~включена");
-    else
-        mp.game.ui.notifications.show("Прогрузка моделей транспорта ~r~выключена");
-};
-
 timer.tenSecTimer = function() {
 
     if (user.isLogin())
@@ -300,19 +291,6 @@ timer.tenSecTimer = function() {
         }
         catch (e) {
             methods.debug(e);
-        }
-    }
-
-    if (allVehiclesLoader) {
-        let vehInfo = enums.vehicleInfo;
-        for (let item in vehInfo) {
-            try {
-                let vItem = vehInfo[item];
-                mp.game.streaming.requestModel(mp.game.joaat(vItem.display_name.toString().toLowerCase()));
-            }
-            catch (e) {
-                methods.debug(e);
-            }
         }
     }
 

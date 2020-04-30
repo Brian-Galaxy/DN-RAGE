@@ -2005,16 +2005,6 @@ user.getPlayerById = function(id) {
     return player;
 };
 
-user.getVehicleDriver = function(vehicle) {
-    let driver;
-    vehicle.getOccupants().forEach((p) => {
-        if (p.seat == -1) {
-            driver = p;
-        }
-    });
-    return driver;
-};
-
 user.blockKeys = function(player, enable) {
     methods.debug('user.blockKeys');
     if (!mp.players.exists(player))

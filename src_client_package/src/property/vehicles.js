@@ -49,6 +49,21 @@ vehicles.hasSync = async function(id, key) {
     return await Container.Data.Has(offset + id, key);
 };
 
+vehicles.setInteriorColor = function(color) {
+    if (mp.players.local.vehicle)
+        mp.events.callRemote('s:vSync:setVehicleInteriorColor', mp.players.local.vehicle.remoteId, color);
+};
+
+vehicles.setDashboardColor = function(color) {
+    if (mp.players.local.vehicle)
+        mp.events.callRemote('s:vSync:setVehicleDashboardColor', mp.players.local.vehicle.remoteId, color);
+};
+
+vehicles.setTyreSmokeColor = function(r, g, b) {
+    if (mp.players.local.vehicle)
+        mp.events.callRemote('s:vSync:setVehicleTyreSmokeColor', mp.players.local.vehicle.remoteId, r, g, b);
+};
+
 vehicles.setLivery = function(idx) {
     if (mp.players.local.vehicle)
         mp.events.callRemote('server:vehicle:setLivery', idx);

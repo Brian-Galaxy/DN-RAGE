@@ -68,7 +68,7 @@ tax.sell = function() {
             stock.updateOwnerInfo(methods.parseInt(row['id']), 0, '');
             mysql.executeQuery("UPDATE users SET money = money + '" + price + "', stock_id = '0' WHERE id = '" + methods.parseInt(row["user_id"]) + "'");
 
-            mysql.executeQuery("UPDATE stocks SET tax_money = '0' WHERE id = '" + item['id'] + "'");
+            mysql.executeQuery("UPDATE stocks SET tax_money = '0' WHERE id = '" + row['id'] + "'");
 
             methods.saveLog('log_sell_inactive',
                 ['text'],
@@ -104,7 +104,7 @@ tax.sell = function() {
             houses.updateOwnerInfo(methods.parseInt(row['id']), 0, '');
             mysql.executeQuery("UPDATE users SET money = money + '" + price + "', house_id = '0' WHERE id = '" + methods.parseInt(row["user_id"]) + "'");
 
-            mysql.executeQuery("UPDATE houses SET tax_money = '0' WHERE id = '" + item['id'] + "'");
+            mysql.executeQuery("UPDATE houses SET tax_money = '0' WHERE id = '" + row['id'] + "'");
 
             methods.saveLog('log_sell_inactive',
                 ['text'],
@@ -140,7 +140,7 @@ tax.sell = function() {
             condo.updateOwnerInfo(methods.parseInt(row['id']), 0, '');
             mysql.executeQuery("UPDATE users SET money = money + '" + price + "', condo_id = '0' WHERE id = '" + methods.parseInt(row["user_id"]) + "'");
 
-            mysql.executeQuery("UPDATE condos SET tax_money = '0' WHERE id = '" + item['id'] + "'");
+            mysql.executeQuery("UPDATE condos SET tax_money = '0' WHERE id = '" + row['id'] + "'");
 
             methods.saveLog('log_sell_inactive',
                 ['text'],
@@ -177,7 +177,7 @@ tax.sell = function() {
             mysql.executeQuery("UPDATE users SET money = money + '" + price + "', business_id = '0' WHERE id = '" + methods.parseInt(row["user_id"]) + "'");
 
             tax.adLiveInvader(`Бизнес ${row["name"]} поступил в продажу`);
-            mysql.executeQuery("UPDATE business SET tax_money = '0' WHERE id = '" + item['id'] + "'");
+            mysql.executeQuery("UPDATE business SET tax_money = '0' WHERE id = '" + row['id'] + "'");
 
             methods.saveLog('log_sell_inactive',
                 ['text'],
@@ -185,8 +185,8 @@ tax.sell = function() {
             );
         });
 
-        if (rows.length > 0)
-            tax.adLiveInvader(`Бизнесы поступили в продажу`);
+        //if (rows.length > 0)
+        //    tax.adLiveInvader(`Бизнесы поступили в продажу`);
     });
 
     //=============================
@@ -268,7 +268,7 @@ tax.sell = function() {
                 mysql.executeQuery("UPDATE users SET money = money + '" + price + "', car_id" + carId + " = '0' WHERE id = '" + methods.parseInt(row["user_id"]) + "'");
 
 
-                mysql.executeQuery("UPDATE cars SET tax_money = '0' WHERE id = '" + item['id'] + "'");
+                mysql.executeQuery("UPDATE cars SET tax_money = '0' WHERE id = '" + row['id'] + "'");
 
                 methods.saveLog('log_sell_inactive',
                     ['text'],

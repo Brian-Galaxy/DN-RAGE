@@ -376,7 +376,7 @@ gangWar.timerMoney = function() {
     for (let i = 1; i <= countZone; i++) {
         if (gangWar.get(i, 'fraction_id') > 0) {
 
-            let money = methods.getRandomInt(300, 450) / 1000;
+            let money = methods.getRandomInt(600, 800) / 1000;
             let id = methods.parseInt(gangWar.get(i, 'fraction_id'));
             fraction.setMoney(id, fraction.getMoney(id) + methods.parseFloat(money));
 

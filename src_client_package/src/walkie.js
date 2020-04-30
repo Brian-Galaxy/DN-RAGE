@@ -90,14 +90,22 @@ walkie.isHide = function() {
 };
 
 walkie.setFrq1 = function(value) {
-    methods.debug('walkie.setFrq1', value);
+    if (value[0] >= 900 && !user.isGos()) {
+        mp.game.ui.notifications.show('~r~Только гос. организациям разрешено ставить каналы в диапазоне от 900 до 999');
+        walkie.show();
+        return;
+    }
     user.set('walkie_1', `${value[0]}.${value[1]}`);
     user.setVariable('walkie', `${value[0]}.${value[1]}`);
-    user.updateCache();
 };
 
 walkie.setFrq2 = function(value) {
-    methods.debug('walkie.setFrq2', value);
+
+    if (value[0] >= 900 && !user.isGos()) {
+        mp.game.ui.notifications.show('~r~Только гос. организациям разрешено ставить каналы в диапазоне от 900 до 999');
+        walkie.show();
+        return;
+    }
     user.set('walkie_2', `${value[0]}.${value[1]}`);
     user.setVariable('walkie', `${value[0]}.${value[1]}`);
 };

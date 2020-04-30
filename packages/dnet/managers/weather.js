@@ -187,7 +187,7 @@ weather.timeSyncTimer = function() {
         }
 
         if (_hour === 2 && _minute === 0)
-            fraction.createCargoWar(5);
+            fraction.createCargoWar(3);
         if (_hour === 6 && _minute === 0)
             fraction.stopCargoWar();
 

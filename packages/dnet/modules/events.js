@@ -3311,6 +3311,7 @@ mp.events.addRemoteCounted("onKeyPress:E", (player) => {
         return;
 
     pickups.checkPressE(player);
+    pickups.checkPressLAlt(player);
 
     houses.getAllHouses().forEach((val, key, object) => {
         if (methods.distanceToPos(player.position, val.position) < 1.5) {
@@ -5134,7 +5135,7 @@ mp.events.addRemoteCounted('server:sellUser', (player) => {
     if (!vehicles.exists(veh))
         return;
 
-    veh.getOccupants().forEach(p => {
+    vehicles.getOccupants(veh).forEach(p => {
         if (user.isLogin(p) && (user.isTie(p) || user.isCuff(p))) {
             try {
 
@@ -5158,7 +5159,7 @@ mp.events.addRemoteCounted('server:sellUser', (player) => {
                 user.setById(user.getId(p), 'sellUser', true);
             }
             catch (e) {
-                
+                methods.debug(e);
             }
         }
     })
@@ -5285,6 +5286,18 @@ mp.events.addRemoteCounted('server:lsc:showColor4', (player, idx) => {
     lsc.showColor4(player, idx);
 });
 
+mp.events.addRemoteCounted('server:lsc:showColor5', (player, idx) => {
+    if (!user.isLogin(player))
+        return;
+    lsc.showColor5(player, idx);
+});
+
+mp.events.addRemoteCounted('server:lsc:showColor6', (player, idx) => {
+    if (!user.isLogin(player))
+        return;
+    lsc.showColor6(player, idx);
+});
+
 mp.events.addRemoteCounted('server:lsc:buyColor1', (player, idx, price, shopId, itemName) => {
     if (!user.isLogin(player))
         return;
@@ -5309,6 +5322,18 @@ mp.events.addRemoteCounted('server:lsc:buyColor4', (player, idx, price, shopId, 
     lsc.buyColor4(player, idx, methods.parseInt(price), shopId, itemName);
 });
 
+mp.events.addRemoteCounted('server:lsc:buyColor5', (player, idx, price, shopId, itemName) => {
+    if (!user.isLogin(player))
+        return;
+    lsc.buyColor5(player, idx, methods.parseInt(price), shopId, itemName);
+});
+
+mp.events.addRemoteCounted('server:lsc:buyColor6', (player, idx, price, shopId, itemName) => {
+    if (!user.isLogin(player))
+        return;
+    lsc.buyColor6(player, idx, methods.parseInt(price), shopId, itemName);
+});
+
 mp.events.addRemoteCounted('server:lsc:buyNumber', (player, shopId, newNumber) => {
     if (!user.isLogin(player))
         return;
@@ -5327,26 +5352,16 @@ mp.events.addRemoteCounted('server:lsc:buyNeon', (player, shopId, price) => {
     lsc.buyNeon(player, price, shopId);
 });
 
+mp.events.addRemoteCounted('server:lsc:buyLight', (player, shopId, price) => {
+    if (!user.isLogin(player))
+        return;
+    lsc.buyLight(player, price, shopId);
+});
+
 mp.events.addRemoteCounted('server:lsc:buySpecial', (player, shopId, price) => {
     if (!user.isLogin(player))
         return;
     lsc.buySpecial(player, price, shopId);
-});
-
-mp.events.addRemoteCounted('server:vehicle:occ', (player) => {
-    if (!user.isLogin(player))
-        return;
-    try {
-        if (player.vehicle && player.seat == -1) {
-
-            player.vehicle.getOccupants().forEach(function (pl) {
-                console.log(user.getRpName(pl));
-            })
-        }
-    }
-    catch (e) {
-        methods.debug(e);
-    }
 });
 
 mp.events.addRemoteCounted('server:vehicle:park', (player) => {
@@ -5403,7 +5418,7 @@ mp.events.addRemoteCounted('server:vehicle:setDispatchMarked', (player, id, name
 mp.events.addRemoteCounted('server:vehicle:ejectById', (player, id) => {
     if (!user.isLogin(player))
         return;
-    player.vehicle.getOccupants().forEach(p => {
+    vehicles.getOccupants(player.vehicle).forEach(p => {
         if (user.isLogin(p) && p.id === id) {
             p.notify('~r~Вас выкинули из транспорта');
             p.removeFromVehicle();
@@ -5418,7 +5433,7 @@ mp.events.addRemoteCounted('server:vehicle:ejectByIdOut', (player, vid, id) => {
     try {
         let veh = mp.vehicles.at(vid);
         if (vehicles.exists(veh)) {
-            veh.getOccupants().forEach(p => {
+            vehicles.getOccupants(veh).forEach(p => {
                 try {
                     if (user.isLogin(p) && p.id == id) {
 
@@ -5432,7 +5447,7 @@ mp.events.addRemoteCounted('server:vehicle:ejectByIdOut', (player, vid, id) => {
                     }
                 }
                 catch (e) {
-                    
+                    methods.debug(e);
                 }
             })
         }
@@ -5451,6 +5466,20 @@ mp.events.addRemoteCounted('server:vehicle:setNeonColor', (player, r, g, b) => {
             vehicles.set(player.vehicle.getVariable('container'), 'neon_r', r);
             vehicles.set(player.vehicle.getVariable('container'), 'neon_g', g);
             vehicles.set(player.vehicle.getVariable('container'), 'neon_b', b);
+        }
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.addRemoteCounted('server:vehicle:setLight', (player, cl) => {
+    if (!user.isLogin(player))
+        return;
+    try {
+        if (player.vehicle && player.seat == -1) {
+            player.vehicle.data.headlightColor = cl;
+            vehicles.set(player.vehicle.getVariable('container'), 'colorl', cl);
         }
     }
     catch (e) {

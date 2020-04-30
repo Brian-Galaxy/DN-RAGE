@@ -51,7 +51,7 @@ vSync.radio = function(entity) {
     }
 };
 
-vSync.updateValues = function(entity) {
+vSync.updateValues = function(entity, byEnter = false) {
     if (entity && mp.vehicles.exists(entity)) {
         let actualData = entity.getVariable('vehicleSyncData');
         if (typeof actualData !== 'undefined') {
@@ -97,15 +97,29 @@ vSync.updateValues = function(entity) {
                 //entity.setCollision(actualData.Collision, true);
                 entity.freezePosition(actualData.Freeze);
 
+                entity.toggleMod(20, actualData.SmokeR !== 255 || actualData.SmokeG !== 255 || actualData.SmokeB !== 255);
+                entity.setTyreSmokeColor(actualData.SmokeR, actualData.SmokeG, actualData.SmokeB);
+                
                 try {
-                    if (entity.getClass() === 15 || entity.getClass() === 16 || entity.model === mp.game.joaat('polmav'))
-                    {
+                    mp.game.invoke(methods.SET_VEHICLE_INTERIOR_COLOUR, entity.handle, actualData.IntColor);
+                    mp.game.invoke(methods.SET_VEHICLE_DASHBOARD_COLOUR, entity.handle, actualData.DbColor);
+                }
+                catch (e) {
+                    
+                }
 
-                    }
-                    else {
-                        for(let i = 0; i < 10; i++)
-                            entity.setExtra(i, 1);
-                        entity.setExtra(actualData.Extra, 0);
+                try {
+
+                    if (!byEnter) {
+                        if (entity.getClass() === 15 || entity.getClass() === 16 || entity.model === mp.game.joaat('polmav'))
+                        {
+
+                        }
+                        else {
+                            for(let i = 0; i < 10; i++)
+                                entity.setExtra(i, 1);
+                            entity.setExtra(actualData.Extra, 0);
+                        }
                     }
                 }
                 catch (e) {
@@ -363,6 +377,43 @@ mp.events.add("vSync:setVehicleDirt", (vehId, dirt) => {
     }
 });
 
+mp.events.add("vSync:setVehicleInteriorColor", (vehId, color) => {
+    try {
+        let veh = mp.vehicles.atRemoteId(vehId);
+        if (veh !== undefined && mp.vehicles.exists(veh)) {
+            mp.game.invoke(methods.SET_VEHICLE_INTERIOR_COLOUR, veh.handle, color);
+        }
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.add("vSync:setVehicleDashboardColor", (vehId, color) => {
+    try {
+        let veh = mp.vehicles.atRemoteId(vehId);
+        if (veh !== undefined && mp.vehicles.exists(veh)) {
+            mp.game.invoke(methods.SET_VEHICLE_DASHBOARD_COLOUR, veh.handle, color);
+        }
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.add("vSync:setVehicleTyreSmokeColor", (vehId, r, g, b) => {
+    try {
+        let veh = mp.vehicles.atRemoteId(vehId);
+        if (veh !== undefined && mp.vehicles.exists(veh)) {
+            veh.toggleMod(20, true);
+            veh.setTyreSmokeColor(r, g, b);
+        }
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
 mp.events.add("vSync:setVehicleDoorState", (vehId, door, state) => {
     try {
         let veh = mp.vehicles.atRemoteId(vehId);
@@ -592,7 +643,7 @@ mp.events.add("playerEnterVehicle", (entity, seat) => {
     }
 
     if (entity !== undefined && mp.vehicles.exists(entity)) {
-        vSync.updateValues(entity);
+        vSync.updateValues(entity, true);
     }
 });
 
@@ -728,6 +779,28 @@ mp.events.add('render', () => {
     }
 });
 
+function setHeadlightsColor(vehicle, color) {
+    try {
+        if (typeof color !== "number" || isNaN(color) || color < 0 || color === 255) {
+            // Disable
+            vehicle.toggleMod(22, false);
+            mp.game.invoke("0xE41033B25D003A07", vehicle.handle, 255); //_SET_VEHICLE_XENON_LIGHTS_COLOUR
+        } else {
+            // Enable
+            vehicle.toggleMod(22, true);
+            mp.game.invoke("0xE41033B25D003A07", vehicle.handle, color); //_SET_VEHICLE_XENON_LIGHTS_COLOUR
+        }
+    }
+    catch (e) {
+        
+    }
+}
+
+mp.events.addDataHandler("headlightColor", (entity, value) => {
+    if (entity.type === "vehicle")
+        setHeadlightsColor(entity, value);
+});
+
 //Sync data on stream in
 mp.events.add("entityStreamIn", (entity) => {
     try {
@@ -741,6 +814,10 @@ mp.events.add("entityStreamIn", (entity) => {
                 return;
 
             try {
+
+                if (entity.type === "vehicle")
+                    setHeadlightsColor(entity, parseInt(entity.getVariable("headlightColor")));
+
                 entity.trackVisibility();
                 entity.setTyresCanBurst(true);
 

@@ -172,7 +172,59 @@ lsc.buyNeon = function(player, price, shopId) {
     business.addMoney(shopId, price, 'Неоновая подсветка');
     business.removeMoneyTax(shopId, price / 2);
 
-    player.notify('~g~Вы установили неон');
+    player.notify('~g~Вы установили неон, теперь можете открыть М - Транспорт и воспользоваться им');
+
+    user.save(player);
+    vehicles.save(veh.getVariable('container'));
+};
+
+lsc.buyLight = function(player, price, shopId) {
+    methods.debug('lsc.buyLight');
+    if (!user.isLogin(player))
+        return;
+    let veh = player.vehicle;
+    if (!vehicles.exists(veh))
+        return;
+
+    if (user.getMoney(player) < price) {
+        player.notify('~r~У вас недостаточно средств');
+        return;
+    }
+
+    if (price < 0)
+        return;
+
+    if (veh.getVariable('user_id') < 1) {
+        player.notify('~r~Транспорт должен быть личный');
+        return;
+    }
+    if (veh.getVariable('user_id') != user.getId(player)) {
+        player.notify('~r~Это должен быть ваш транспорт');
+        return;
+    }
+
+    if (veh.getVariable('user_id') < 1) {
+        player.notify('~r~Транспорт должен быть личный');
+        return;
+    }
+    if (veh.getVariable('user_id') != user.getId(player)) {
+        player.notify('~r~Это должен быть ваш транспорт');
+        return;
+    }
+    if (vehicles.get(veh.getVariable('container'), 'colorl') >= 0) {
+        player.notify('~r~На транспорте уже установлен модуль');
+        return;
+    }
+
+    vehicles.set(veh.getVariable('container'), 'colorl', 0);
+
+    veh.data.headlightColor = 0;
+
+    user.removeMoney(player, price, 'Цветные фары');
+    business.addMoney(shopId, price, 'Цветные фары');
+    business.removeMoneyTax(shopId, price / 2);
+
+    player.notify('~g~Вы установили модуль цветных фар, теперь можете открыть М - Транспорт и воспользоваться им');
 
     user.save(player);
     vehicles.save(veh.getVariable('container'));
@@ -471,6 +523,32 @@ lsc.showColor4 = function(player, idx) {
     veh.wheelColor = idx;
 };
 
+lsc.showColor5 = function(player, idx) {
+    if (!user.isLogin(player))
+        return;
+    let veh = player.vehicle;
+    if (!vehicles.exists(veh))
+        return;
+    if (veh.getVariable('user_id') < 1) {
+        player.notify('~r~Транспорт должен быть личный');
+        return;
+    }
+    vSync.setVehicleDashboardColor(veh, idx);
+};
+
+lsc.showColor6 = function(player, idx) {
+    if (!user.isLogin(player))
+        return;
+    let veh = player.vehicle;
+    if (!vehicles.exists(veh))
+        return;
+    if (veh.getVariable('user_id') < 1) {
+        player.notify('~r~Транспорт должен быть личный');
+        return;
+    }
+    vSync.setVehicleInteriorColor(veh, idx);
+};
+
 lsc.buyColor1 = function(player, idx, price, shopId, itemName) {
     methods.debug('lsc.buyColor1');
     if (!user.isLogin(player))
@@ -603,6 +681,76 @@ lsc.buyColor4 = function(player, idx, price, shopId, itemName) {
     vehicles.set(veh.getVariable('container'), 'colorwheel', idx);
 
     user.removeMoney(player, price, 'Цвет колёс ' + itemName);
+    business.addMoney(shopId, price, itemName);
+    business.removeMoneyTax(shopId, price / business.getPrice(shopId));
+
+    player.notify('~g~Вы изменили цвет колёс транспорта');
+
+    vehicles.setTunning(veh);
+    vehicles.save(veh.getVariable('container'));
+};
+
+lsc.buyColor5 = function(player, idx, price, shopId, itemName) {
+    methods.debug('lsc.buyColor5');
+    if (!user.isLogin(player))
+        return;
+    if (user.getMoney(player) < price) {
+        player.notify('~r~У вас недостаточно средств');
+        return;
+    }
+
+    if (price < 0)
+        return;
+
+    let veh = player.vehicle;
+
+    if (!vehicles.exists(veh))
+        return;
+
+    if (veh.getVariable('user_id') < 1) {
+        player.notify('~r~Транспорт должен быть личный');
+        return;
+    }
+
+    vSync.setVehicleDashboardColor(veh, idx);
+    vehicles.set(veh.getVariable('container'), 'colord', idx);
+
+    user.removeMoney(player, price, 'Цвет приборной панели ' + itemName);
+    business.addMoney(shopId, price, itemName);
+    business.removeMoneyTax(shopId, price / business.getPrice(shopId));
+
+    player.notify('~g~Вы изменили цвет колёс транспорта');
+
+    vehicles.setTunning(veh);
+    vehicles.save(veh.getVariable('container'));
+};
+
+lsc.buyColor6 = function(player, idx, price, shopId, itemName) {
+    methods.debug('lsc.buyColor6');
+    if (!user.isLogin(player))
+        return;
+    if (user.getMoney(player) < price) {
+        player.notify('~r~У вас недостаточно средств');
+        return;
+    }
+
+    if (price < 0)
+        return;
+
+    let veh = player.vehicle;
+
+    if (!vehicles.exists(veh))
+        return;
+
+    if (veh.getVariable('user_id') < 1) {
+        player.notify('~r~Транспорт должен быть личный');
+        return;
+    }
+
+    vSync.setVehicleInteriorColor(veh, idx);
+    vehicles.set(veh.getVariable('container'), 'colori', idx);
+
+    user.removeMoney(player, price, 'Цвет салона ' + itemName);
     business.addMoney(shopId, price, itemName);
     business.removeMoneyTax(shopId, price / business.getPrice(shopId));
 

@@ -3716,13 +3716,13 @@ phone.callBackModalInput = async function(paramsJson, text) {
             }, 300000);
         }
         if (params.name == 'call9111') {
-            dispatcher.send(`Диспетчер | Police`, text);
+            dispatcher.send(`~b~Диспетчер | Police`, text);
         }
         if (params.name == 'call9112') {
-            dispatcher.send(`Диспетчер | Med`, text);
+            dispatcher.send(`~r~Диспетчер | Med`, text);
         }
         if (params.name == 'call9113') {
-            dispatcher.send(`Диспетчер | Fire`, text);
+            dispatcher.send(`~y~Диспетчер | Fire`, text);
         }
         if (params.name == 'getPayDay') {
             let sum = methods.parseFloat(text);

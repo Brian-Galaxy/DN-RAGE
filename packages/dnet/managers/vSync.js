@@ -30,6 +30,13 @@ vSync.VehicleSyncData = {
     Hood: false,
     Trunk: false,
 
+    SmokeR: 255,
+    SmokeG: 255,
+    SmokeB: 255,
+
+    DbColor: 0,
+    IntColor: 0,
+
     //(Not synced)
     IndicatorLeftToggle: false,
     IndicatorRightToggle: false,
@@ -57,7 +64,7 @@ vSync.get = function(vehicle, key) {
     return vSync.VehicleSyncData;
 };
 
-vSync.has = function(vehicle, key) {
+vSync.has = function(vehicle, key = 'vehicleSyncData') {
     if (vehicles.exists(vehicle))
         return vehicle.getVariable(key) !== undefined && vehicle.getVariable(key) !== null;
     return false;
@@ -85,6 +92,51 @@ vSync.setVehicleWindowState = function(v, window, state) {
 
 vSync.getVehicleWindowState = function(v, window) {
     return methods.parseInt(vSync.getVehicleSyncData(v).Window[window]);
+};
+
+vSync.setVehicleInteriorColor = function(v, color) {
+    if (!vehicles.exists(v))
+        return;
+    let data = vSync.getVehicleSyncData(v);
+    data.IntColor = color;
+    vSync.updateVehicleSyncData(v, data);
+    mp.players.callInRange(v.position, streamDist, "vSync:setVehicleInteriorColor", [v.id, color]);
+};
+
+vSync.getVehicleInteriorColor = function(v) {
+    return methods.parseInt(vSync.getVehicleSyncData(v).IntColor);
+};
+
+vSync.setVehicleDashboardColor = function(v, color) {
+    if (!vehicles.exists(v))
+        return;
+    let data = vSync.getVehicleSyncData(v);
+    data.DbColor = color;
+    vSync.updateVehicleSyncData(v, data);
+    mp.players.callInRange(v.position, streamDist, "vSync:setVehicleDashboardColor", [v.id, color]);
+};
+
+vSync.getVehicleDashboardColor = function(v) {
+    return methods.parseInt(vSync.getVehicleSyncData(v).DbColor);
+};
+
+vSync.setVehicleTyreSmokeColor = function(v, r, g, b) {
+    if (!vehicles.exists(v))
+        return;
+    let data = vSync.getVehicleSyncData(v);
+    data.SmokeR = r;
+    data.SmokeG = g;
+    data.SmokeB = b;
+    vSync.updateVehicleSyncData(v, data);
+    mp.players.callInRange(v.position, streamDist, "vSync:setVehicleTyreSmokeColor", [v.id, r, g, b]);
+};
+
+vSync.getVehicleTyreSmokeColor = function(v) {
+    return {
+        r: vSync.getVehicleSyncData(v).SmokeR,
+        g: vSync.getVehicleSyncData(v).SmokeG,
+        b: vSync.getVehicleSyncData(v).SmokeB
+    };
 };
 
 vSync.setVehicleWheelMod = function(v, state, isShowLabel) {
@@ -337,8 +389,11 @@ vSync.setBodyHealth = function(v, health) {
 };
 
 mp.events.add("playerEnterVehicle", function (player, vehicle) {
-    if (vehicles.exists(vehicle) && !vSync.has(vehicle)) {
-        vSync.updateVehicleSyncData(vehicle, vSync.VehicleSyncData);
+    if (vehicles.exists(vehicle)) {
+
+        if (!vSync.has(vehicle))
+            vSync.updateVehicleSyncData(vehicle, vSync.VehicleSyncData);
+
         try {
             if (vehicle.getVariable('fraction_id') || vehicle.getVariable('user_id') || vehicle.getVariable('useless'))
                 return;
@@ -410,6 +465,24 @@ mp.events.add('s:vSync:setExtraState', (player, vId, status) => {
     let veh = mp.vehicles.at(vId);
     if (mp.players.exists(player) && vehicles.exists(veh))
         vSync.setExtraState(veh, status);
+});
+
+mp.events.add('s:vSync:setVehicleInteriorColor', (player, vId, color) => {
+    let veh = mp.vehicles.at(vId);
+    if (mp.players.exists(player) && vehicles.exists(veh))
+        vSync.setVehicleInteriorColor(veh, color);
+});
+
+mp.events.add('s:vSync:setVehicleDashboardColor', (player, vId, color) => {
+    let veh = mp.vehicles.at(vId);
+    if (mp.players.exists(player) && vehicles.exists(veh))
+        vSync.setVehicleDashboardColor(veh, color);
+});
+
+mp.events.add('s:vSync:setVehicleTyreSmokeColor', (player, vId, r, g, b) => {
+    let veh = mp.vehicles.at(vId);
+    if (mp.players.exists(player) && vehicles.exists(veh))
+        vSync.setVehicleTyreSmokeColor(veh, r, g, b);
 });
 
 mp.events.add('s:vSync:setSpotLightState', (player, vId, status) => {

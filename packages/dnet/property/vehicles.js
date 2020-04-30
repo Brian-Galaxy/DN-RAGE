@@ -133,12 +133,19 @@ vehicles.loadUserVehicleByRow = (row) => {
     vehicles.set(row['id'], 'color2', row['color2']);
     vehicles.set(row['id'], 'color3', row['color3']);
     vehicles.set(row['id'], 'colorwheel', row['colorwheel']);
+    vehicles.set(row['id'], 'colord', row['colord']);
+    vehicles.set(row['id'], 'colori', row['colori']);
+    vehicles.set(row['id'], 'colorl', row['colorl']);
     vehicles.set(row['id'], 'livery', row['livery']);
     vehicles.set(row['id'], 'extra', row['extra']);
     vehicles.set(row['id'], 'is_neon', row['is_neon']);
     vehicles.set(row['id'], 'neon_r', row['neon_r']);
     vehicles.set(row['id'], 'neon_g', row['neon_g']);
     vehicles.set(row['id'], 'neon_b', row['neon_b']);
+    vehicles.set(row['id'], 'is_tyre', row['is_tyre']);
+    vehicles.set(row['id'], 'tyre_r', row['neon_r']);
+    vehicles.set(row['id'], 'tyre_g', row['tyre_g\'']);
+    vehicles.set(row['id'], 'tyre_b', row['tyre_b']);
     vehicles.set(row['id'], 'number', row['number']);
     vehicles.set(row['id'], 'is_special', row['is_special']);
     vehicles.set(row['id'], 's_mp', row['s_mp']);
@@ -590,11 +597,18 @@ vehicles.save = (id) => {
         sql = sql + ", color2 = '" + methods.parseInt(vehicles.get(id, "color2")) + "'";
         sql = sql + ", color3 = '" + methods.parseInt(vehicles.get(id, "color3")) + "'";
         sql = sql + ", colorwheel = '" + methods.parseInt(vehicles.get(id, "colorwheel")) + "'";
+        sql = sql + ", colord = '" + methods.parseInt(vehicles.get(id, "colori")) + "'";
+        sql = sql + ", colori = '" + methods.parseInt(vehicles.get(id, "colord")) + "'";
+        sql = sql + ", colorl = '" + methods.parseInt(vehicles.get(id, "colorl")) + "'";
         sql = sql + ", is_special = '" + methods.parseInt(vehicles.get(id, "is_special")) + "'";
         sql = sql + ", is_neon = '" + methods.parseInt(vehicles.get(id, "is_neon")) + "'";
         sql = sql + ", neon_r = '" + methods.parseInt(vehicles.get(id, "neon_r")) + "'";
         sql = sql + ", neon_g = '" + methods.parseInt(vehicles.get(id, "neon_g")) + "'";
         sql = sql + ", neon_b = '" + methods.parseInt(vehicles.get(id, "neon_b")) + "'";
+        sql = sql + ", is_tyre = '" + methods.parseInt(vehicles.get(id, "is_tyre")) + "'";
+        sql = sql + ", tyre_r = '" + methods.parseInt(vehicles.get(id, "tyre_r")) + "'";
+        sql = sql + ", tyre_g = '" + methods.parseInt(vehicles.get(id, "tyre_g")) + "'";
+        sql = sql + ", tyre_b = '" + methods.parseInt(vehicles.get(id, "tyre_b")) + "'";
         sql = sql + ", number = '" + methods.removeQuotes(vehicles.get(id, "number")) + "'";
         sql = sql + ", is_cop_park = '" + methods.parseInt(vehicles.get(id, "is_cop_park")) + "'";
         sql = sql + ", cop_park_name = '" + vehicles.get(id, "cop_park_name") + "'";
@@ -786,6 +800,22 @@ vehicles.findVehicleByNumber = (number) => {
             returnVehicle = vehicle;
     });
     return returnVehicle;
+};
+
+vehicles.getOccupants = (vehicle) => {
+    methods.debug('vehicles.getOccupants');
+    let players = [];
+    mp.players.forEach((p) => {
+        try {
+            let playerVeh = p.vehicle;
+            if (!vehicles.exists(vehicle) || !vehicles.exists(playerVeh))
+                return;
+            if (playerVeh.id === vehicle.id)
+                players.push(p);
+        }
+        catch (e) {}
+    });
+    return players;
 };
 
 vehicles.setFuel = (veh, fuel) => {
@@ -1006,8 +1036,17 @@ vehicles.setTunning = (veh) => {
                 veh.pearlescentColor = car.get('color3');
                 veh.wheelColor = car.get('colorwheel');
 
+                vSync.setVehicleDashboardColor(veh, car.get('colord'));
+                vSync.setVehicleInteriorColor(veh, car.get('colori'));
+
                 if (car.get('is_neon'))
                     veh.setNeonColor(car.get('neon_r'), car.get('neon_g'), car.get('neon_b'));
+
+                if (car.get('is_tyre'))
+                    vSync.setVehicleTyreSmokeColor(veh, car.get('tyre_r'), car.get('tyre_g'), car.get('tyre_b'));
+
+                if (car.get('colorl') >= 0)
+                    veh.data.headlightColor = car.get('colorl');
 
                 veh.livery = car.get('livery');
                 /*for(let i = 0; i < 10; i++)

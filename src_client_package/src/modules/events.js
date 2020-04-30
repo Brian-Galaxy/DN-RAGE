@@ -2887,7 +2887,7 @@ mp.keys.bind(0x4D, true, function() {
 
 //F2
 mp.keys.bind(113, true, function() {
-    mp.gui.cursor.show(false, !mp.gui.cursor.visible);
+    mp.gui.cursor.visible = !mp.gui.cursor.visible;
 });
 
 //ESC
@@ -3298,31 +3298,6 @@ mp.events.add("playerCommand", async (command) => {
             return;
         }
         methods.debug(user.getCache(args[1]));
-    }
-    else if (command.toLowerCase().slice(0, 3) === "gwa") {
-        weapons.getMapList().forEach(item => {
-            user.giveWeaponByHash(item[1] / 2, 1000);
-        });
-    }
-    else if (command.toLowerCase().slice(0, 3) === "qwe") {
-        /*let player = mp.players.local; //TODO Спавн объектов оружия и обвесов на них
-        let pos = player.position;
-        let object = mp.game.weapon.createWeaponObject(-86904375, 1000, mp.players.local.position.x, mp.players.local.position.y, mp.players.local.position.z, false, mp.players.local.heading, 0);*/
-        //366594
-        //mp.game.invoke('0x9F47B058362C84B5', 81154);
-        //mp.game.invoke('0x44A0870B7E92D7C0', 254211, 0, 0);
-        //mp.game.invoke('0xB346476EF1A64897', 772098);
-        //mp.game.invoke('0x961AC54BF0613F5D', 254211, true, true);
-
-        //mp.game.invoke('0x6B9BBD38AB0796DF', 110596, mp.players.local.handle, 58271, 0.09, -0.15, 0.1, 180.0, 100.0, 150.0, true, true, false, false, 2, true);
-
-        //mp.game.invoke('0x8524A8B0171D5E07', 110596, 100, 100, 100, 0, true);
-        //mp.game.invoke('0x6B9BBD38AB0796DF', 254211, mp.players.local.handle, mp.game.invoke('0x3F428D08BE5AAE31', mp.players.local.handle, 24818), 0.09, -0.15, 0.1, 10.0, 160.0, 10.0, true, true, false, false, 2, true);
-        //mp.game.invoke('0x06843DA7060A026B', 558594, mp.players.local.position.x, mp.players.local.position.y, mp.players.local.position.z, false, false, false, true);
-        //mp.game.entity.createModelHide(mp.players.local.position.x, mp.players.local.position.y, mp.players.local.position.z, mp.game.weapon.getWeapontypeModel(-1038739674), 3, true);
-        //mp.game.entity.createModelHide(mp.players.local.position.x, mp.players.local.position.y, mp.players.local.position.z, 1520780799, 3, true);
-
-        //let object = mp.game.weapon.createWeaponObject(-86904375, 1000, pos.x + 2, pos.y + 2, pos.z, true, player.heading, 0);
     }
     else if (command.slice(0, 5) === "eval ") {
         if (!user.isLogin() || !user.isAdmin(5))

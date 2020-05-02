@@ -39,6 +39,7 @@ ui.MarkerWhite = [255, 255, 255, 100];
 ui.DisableMouseControl = false;
 
 let showRadar = true;
+let canEdit = false;
 let showHud = true;
 let showMenu = false;
 let isGreenZone = false;
@@ -218,6 +219,18 @@ ui.showOrHideRadar = function() {
         ui.hideHud();
     else
         ui.showHud();
+};
+
+ui.showOrHideEdit = function() {
+    canEdit = !canEdit;
+    if (!canEdit) {
+        ui.callCef('hud','{"type": "hideEdit"}');
+        mp.game.ui.notifications.show('~g~Вы закончили редактирование интерфейса');
+    }
+    else {
+        ui.callCef('hud','{"type": "showEdit"}');
+        mp.game.ui.notifications.show('~g~Вы включили редактирование интерфейса');
+    }
 };
 
 ui.hideHud = function() {

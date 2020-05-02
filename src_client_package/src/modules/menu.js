@@ -4,20 +4,17 @@ import methods from './methods';
 import user from '../user';
 import chat from '../chat';
 import ui from './ui';
-
-let NativeUI = eval('require(\'nativeui\')');
-const NMenu = NativeUI.Menu;
-const MenuItem = NativeUI.UIMenuItem;
-const MenuCheckboxItem = NativeUI.UIMenuCheckboxItem;
-const MenuListItem = NativeUI.UIMenuListItem;
-const MenuSliderItem = NativeUI.UIMenuSliderItem;
-const Point = NativeUI.Point;
-const Size = NativeUI.Size;
-const ItemsCollection = NativeUI.ItemsCollection;
+import cefMenu from "./cefMenu";
+import houses from "../property/houses";
 
 let _isShowInput;
 let menuItem = null;
+let menuName = '';
 
+let _title = '';
+let _subtitle = '';
+let _banner = '';
+let _menuName = '';
 
 let promise = {};
 
@@ -30,90 +27,166 @@ mp.events.add('client:modalinput:callBack', (data) => {
     promise.resolve(data);
 });
 
+class EventManager {
+
+    handlers = {};
+    eventName = '';
+
+    constructor(menuName) {
+        this.eventName = menuName;
+    }
+
+    Add(handler) {
+        try {
+            if (this.eventName in this.handlers) {
+                this.handlers[this.eventName] = null;
+                delete this.handlers[this.eventName];
+            }
+
+            this.handlers[this.eventName] = handler;
+        }
+        catch (e) {
+            methods.debug(e, this.eventName);
+        }
+    }
+
+    Remove() {
+        if (this.eventName in this.handlers) {
+            this.handlers[this.eventName] = null;
+            delete this.handlers[this.eventName];
+        }
+    }
+
+    Emit(...args) {
+        methods.debug(this.eventName, this.handlers.length);
+        if (this.eventName in this.handlers)
+            this.handlers[this.eventName](...args);
+    }
+}
+
+mp.events.add("client:menuList:callBack:btn", async (menuName, id, jparams) => {
+    try {
+        methods.debug('OnSelect', menuName, id, jparams);
+        if (methods.isValidJSON(jparams))
+            Menu.OnSelect.Emit(JSON.parse(jparams), id, menuName);
+        else
+            Menu.OnSelect.Emit({}, id, menuName);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.add("client:menuList:onClose", async () => {
+    try {
+        Menu.OnClose.Emit();
+
+        Menu.OnClose.Remove();
+        Menu.OnList.Remove();
+        Menu.OnCheckbox.Remove();
+        Menu.OnSelect.Remove();
+        Menu.OnIndexSelect.Remove();
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.add("client:menuList:callBack:check", async (menuName, id, jparams, checked) => {
+    try {
+        methods.debug('OnCheckbox', menuName, id, jparams, checked);
+        if (methods.isValidJSON(jparams))
+            Menu.OnCheckbox.Emit(JSON.parse(jparams), checked, id, menuName);
+        else
+            Menu.OnCheckbox.Emit({}, checked, id, menuName);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.add("client:menuList:callBack:list", async (menuName, id, jparams, index) => {
+    try {
+        methods.debug('OnList', menuName, id, jparams, index, methods.isValidJSON(jparams));
+        if (methods.isValidJSON(jparams))
+            Menu.OnList.Emit(JSON.parse(jparams), index, id, menuName);
+        else
+            Menu.OnList.Emit({}, index, id, menuName);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.add("client:menuList:callBack:select", async (menuName, idx) => {
+    try {
+        methods.debug('OnIndexSelect', menuName, idx);
+        Menu.OnIndexSelect.Emit(idx, menuName);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
 class Menu {
-    static Create(title, subtitle, isResetBackKey, isDisableAllControls, DisableAllControlsOnClose, spriteLib = 'commonmenu', spriteName = 'interaction_bgd') {
+    static OnClose = new EventManager('OnClose');
+    static OnList = new EventManager('OnList');
+    static OnCheckbox = new EventManager('OnCheckbox');
+    static OnSelect = new EventManager('OnSelect');
+    static OnIndexSelect = new EventManager('OnIndexSelect');
+
+    static Create(title, subtitle, menuName = 'Unknown', isDisableAllControls = false, DisableAllControlsOnClose = false, banner = '') {
         try {
             this.HideMenu();
-
-            //if (user.isCuff() || user.isTie() || user.isDead()) TODO
-            //    return;
 
             if (isDisableAllControls) {
                 mp.players.local.freezePosition(true);
                 methods.disableAllControls(true);
             }
 
-            menuItem = new NMenu(title.toUpperCase(), subtitle, new Point(this.GetScreenResolutionMantainRatio().Width - 450, 180), spriteLib, spriteName);
+            _title = title;
+            _subtitle = subtitle;
+            _banner = banner;
+            _menuName = menuName;
+
+            menuItem = [];
 
             if (isDisableAllControls && !DisableAllControlsOnClose) {
-                menuItem.MenuClose.on( () => {
+                new EventManager('OnCloseSpec').Add( () => {
                     mp.players.local.freezePosition(false);
                     methods.disableAllControls(false);
                     chat.activate(true);
                 });
             }
 
-            menuItem.MouseControlsEnabled = false;
-            menuItem.MouseEdgeEnabled = false;
-            menuItem.Visible = true;
-            menuItem.RefreshIndex();
         } catch (e) {
             console.log(e);
         }
-        /*
-                if (isResetBackKey === true)
-                    menu.Reset(Menu.Controls.BACK);
-        */
-        return menuItem;
     }
 
-    static GetScreenResolutionMantainRatio() {
-        const gameScreen = mp.game.graphics.getScreenActiveResolution(0, 0);
-        const screenw = gameScreen.x;
-        const screenh = gameScreen.y;
-        const height = 1080.0;
-        const ratio = screenw / screenh;
-        var width = height * ratio;
-
-        return new Size(width, height);
+    static AddMenuItem(title, subtitle, params, rightLabel = '', icon = '', iconRight = '', divider = false) {
+        title = methods.replaceQuotes(title);
+        subtitle = methods.replaceQuotes(subtitle);
+        menuItem.push(cefMenu.getMenuItem(title, subtitle, params, rightLabel, icon, iconRight, divider));
     }
 
-    static ItemsCollection(items) {
-        return new ItemsCollection(items);
+    static AddMenuItemList(title, list, subtitle, params, index = 0, rightLabel = '', icon = '', iconRight = '', divider = false) {
+        if (index < 0)
+            index = 0;
+        title = methods.replaceQuotes(title);
+        subtitle = methods.replaceQuotes(subtitle);
+        menuItem.push(cefMenu.getMenuItemList(title, subtitle, params, list, index, rightLabel, icon, iconRight, divider));
     }
 
-    static AddMenuItem(title, subtitle) {
-        let item = new MenuItem(title, subtitle);
-        menuItem.AddItem(item);
-        return item;
+    static AddMenuItemCheckbox(title, subtitle, params, isChecked = false, rightLabel = '', icon = '', iconRight = '', divider = false) {
+        title = methods.replaceQuotes(title);
+        subtitle = methods.replaceQuotes(subtitle);
+        menuItem.push(cefMenu.getMenuItemCheckbox(title, subtitle, params, isChecked, rightLabel, icon, iconRight, divider));
     }
 
-    static AddMenuItemList(title, list, subtitle) {
-        let item = new MenuListItem(title, subtitle, new ItemsCollection(list));
-        menuItem.AddItem(item);
-        return item;
-    }
-
-    static AddMenuItemCheckbox(title, subtitle, isChecked) {
-        if (isChecked === undefined || isChecked == null)
-            isChecked = false;
-
-        let item = new MenuCheckboxItem(title, isChecked, subtitle);
-        menuItem.AddItem(item);
-        return item;
-    }
-
-    static AddMenuItemSlider(title, items, subtitle, startIndex, divider) {
-        if (divider === undefined || divider == null)
-            divider = false;
-
-        let item = new MenuSliderItem(title, items, startIndex, subtitle, divider);
-        menuItem.AddItem(item);
-        return item;
-    }
-
-    static GetCurrentMenu() {
-        return menuItem;
+    static Draw() {
+        cefMenu.showFull(_title, _subtitle, menuItem, _menuName, _banner);
+        ui.updatePositionSettings();
     }
 
     static IsShowInput() {
@@ -142,49 +215,27 @@ class Menu {
         });
     }
 
-    /*static async GetUserInput(title, defaultText, maxInputLength = 20) {
-        user.setVariable('isTyping', true);
-        try {
-            mp.game.ui.notifications.show("~b~Введите: ~s~" + title);
-            _isShowInput = true;
-            chat.activate(false);
-            mp.game.gameplay.displayOnscreenKeyboard(1, 'FMMC_KEY_TIP8', "", defaultText, "", "", "", maxInputLength);
-            while (mp.game.gameplay.updateOnscreenKeyboard() != 1 && mp.game.gameplay.updateOnscreenKeyboard() != 2 && mp.game.gameplay.updateOnscreenKeyboard() != 3)
-                await methods.sleep(1);
-            if (mp.game.gameplay.updateOnscreenKeyboard() == 1) {
-                _isShowInput = false;
-                chat.activate(true);
-                user.setVariable('isTyping', false);
-                return mp.game.gameplay.getOnscreenKeyboardResult();
-            }
-            _isShowInput = false;
-            chat.activate(true);
-        }
-        catch (e) {
-            methods.debug(e);
-        }
-        user.setVariable('isTyping', false);
-        return '';
-    }*/
-
     static HideMenu() {
         if (menuItem != null) {
+
+            /*try {
+                delete this.OnClose;
+                delete this.OnList;
+                delete this.OnCheckbox;
+                delete this.OnSelect;
+                delete this.OnIndexSelect;
+            }
+            catch (e) {
+
+            }*/
 
             mp.players.local.freezePosition(false);
             methods.disableAllControls(false);
             chat.activate(true);
 
-            /*MenuItem.ItemSelect.clear();
-            menuItem.IndexChange.clear();
-            menuItem.ListChange.clear();
-            menuItem.SliderChange.clear();
-            menuItem.SliderSelect.clear();
-            menuItem.CheckboxChange.clear();
-            //menuItem.MenuOpen.clear();
-            menuItem.MenuClose.clear();
-            menuItem.MenuChange.clear();*/
-            menuItem.Close();
+            cefMenu.hide();
             menuItem = null;
+            menuName = '';
         }
     }
 }

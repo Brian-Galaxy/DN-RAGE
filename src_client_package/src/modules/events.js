@@ -3005,6 +3005,28 @@ mp.events.add('client:ui:checker', () => {
     }
 });
 
+mp.events.add('client:ui:saveHudDrag', (id, x, y) => {
+    try {
+        let list = JSON.parse(user.getCache('s_pos'));
+        list.push([id, x, y]);
+        user.set('s_pos', JSON.stringify(list));
+    }
+    catch (e) {}
+});
+
+mp.events.add('client:ui:saveHudDefault', (id) => {
+    try {
+        let list = [];
+        JSON.parse(user.getCache('s_pos')).forEach(item => {
+            if (item[0] === id)
+                return;
+            list.push(item);
+        });
+        user.set('s_pos', JSON.stringify(list));
+    }
+    catch (e) {}
+});
+
 mp.events.add("playerEnterCheckpoint", (checkpoint) => {
     try {
         if (user.hasCache('isSellCar')) {

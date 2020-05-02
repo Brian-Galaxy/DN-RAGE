@@ -16,20 +16,16 @@ let _subtitle = '';
 let _banner = '';
 let _menuName = '';
 
-let eventList = {};
-
-//cefMenu.showFull(`#${h.get('number')}`, `~b~Адрес: ~s~${h.get('address')} ${h.get('number')}`, menuArray, 'showHouseInMenu');
-
 let promise = {};
 
-/*mp.events.add('client:modalinput:callBack', (data) => {
+mp.events.add('client:modalinput:callBack', (data) => {
     _isShowInput = false;
     chat.activate(true);
     methods.blockKeys(false);
     mp.gui.cursor.show(false, false);
     user.setVariable('isTyping', false);
     promise.resolve(data);
-});*/
+});
 
 class EventManager {
 
@@ -190,6 +186,7 @@ class Menu {
 
     static Draw() {
         cefMenu.showFull(_title, _subtitle, menuItem, _menuName, _banner);
+        ui.updatePositionSettings();
     }
 
     static IsShowInput() {

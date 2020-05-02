@@ -133,6 +133,7 @@ ui.showGangInfo = function() {
     if (uiBrowser) {
         try {
             ui.callCef('hudg','{"type": "showGangInfo"}');
+            ui.updatePositionSettings();
         }
         catch (e) {
             methods.debug(e);
@@ -173,6 +174,7 @@ ui.showMafiaInfo = function() {
     if (uiBrowser) {
         try {
             ui.callCef('hudg','{"type": "showMafiaInfo"}');
+            ui.updatePositionSettings();
         }
         catch (e) {
             methods.debug(e);
@@ -184,6 +186,24 @@ ui.hideMafiaInfo = function() {
     if (uiBrowser) {
         try {
             ui.callCef('hudg','{"type": "hideMafiaInfo"}');
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    }
+};
+
+ui.updatePositionSettings = function() {
+    if (uiBrowser) {
+        try {
+            JSON.parse(user.getCache('s_pos')).forEach(item => {
+                let data = {
+                    id: item[0],
+                    x: item[1],
+                    y: item[2],
+                };
+                ui.callCef('hud-draggable', JSON.stringify(data));
+            });
         }
         catch (e) {
             methods.debug(e);
@@ -224,6 +244,7 @@ ui.showHud = function() {
         try {
             //TODO
             ui.callCef('hud','{"type": "show"}');
+            ui.updatePositionSettings();
             setTimeout(function () {
                 chat.updateSettings();
             }, 100)
@@ -514,7 +535,7 @@ mp.events.add('client:ui:callCef', (event, value) => {
 // Эвенты на cef только через эту функцию
 ui.callCef = function(event, value) {
     try {
-        if (event === 'hudm')
+        if (event === 'hud-draggable')
             methods.debug(event, JSON.parse(value));
         if(uiBrowser && methods.isValidJSON(value))
             uiBrowser.execute(`trigger('${event}', '${value}')`);

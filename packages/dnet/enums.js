@@ -266,6 +266,7 @@ enums.userData = [
     "s_bind_animations_6",
     "s_bind_veh_menu",
     "s_bind_player_menu",
+    "s_pos",
 
     "pos_x",
     "pos_y",

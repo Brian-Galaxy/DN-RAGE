@@ -67,9 +67,7 @@ admin.blacklist = function(player, type, id, reason) {
             }
 
             mysql.executeQuery(`INSERT INTO black_list (social, serial, address, reason) VALUES ('${target.socialClub}', '${target.serial}', '${target.ip}', '${reason}')`);
-
             chat.sendToAll(`Администратор ${user.getRpName(player)}`, `${user.getRpName(target)}!{${chat.clRed}} был занесён в чёрный список проекта с причиной!{${chat.clWhite}} ${reason}`, chat.clRed);
-
             user.kick(target, reason, 'BlackList');
         }
         else {

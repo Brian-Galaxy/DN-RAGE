@@ -22,6 +22,7 @@ methods.ADD_AMMO_TO_PED = '0x78F0424C34306220';
 methods.SET_PED_AMMO = '0x14E56BC5B5DB6A19';
 methods.SET_CURRENT_PED_WEAPON = '0xADF692B254977C0C';
 methods.GET_FOLLOW_PED_CAM_VIEW_MODE = '0x8D4D46230B2C353A';
+methods.SET_FOLLOW_PED_CAM_VIEW_MODE = '0x5A4F9EDF1673F704';
 methods.GET_GAMEPLAY_CAM_RELATIVE_PITCH = '0x3A6867B4845BEDA2';
 methods.GET_FOLLOW_VEHICLE_CAM_VIEW_MODE = '0xA4FF579AC0E3AAAE';
 methods.SET_FOLLOW_VEHICLE_CAM_VIEW_MODE = '0xAC253D7842768F48';
@@ -80,6 +81,8 @@ methods.SET_ENTITY_ALPHA = '0x44A0870B7E92D7C0';
 methods.SET_BLIP_ALPHA = '0x45FF974EEE1C8734';
 methods.SET_BLIP_COLOUR = '0x03D7FB09E75D6B7E';
 methods.SET_BLIP_SPRITE = '0xDF735600A4696DAF';
+
+methods.DISABLE_FIRST_PERSON_CAM_THIS_FRAME = '0xDE2EF5DA284CC8DF';
 
 methods.REQUEST_TASK_MOVE_NETWORK_STATE_TRANSITION = '0xD01015C7316AE176';
 methods.SET_PED_CURRENT_WEAPON_VISIBLE = '0x0725A4CCFDED9A70';
@@ -174,6 +177,19 @@ methods.setVehicleInfo = function (model, value) {
 
 methods.getFrameTime = function () {
     return methods.parseFloatHex(mp.game.invoke('0x15C40837039FFAF7').toString(16));
+};
+
+methods.getCountMask = function (slot, shopId) {
+    let count = 0;
+    for (let i = 0; i < enums.maskList.length; i++) {
+        let maskItem = enums.maskList[i];
+        if (maskItem[0] !== slot)
+            continue;
+        if (maskItem[13] !== shopId)
+            continue;
+        count++;
+    }
+    return count;
 };
 
 methods.parseInt = function (str) {

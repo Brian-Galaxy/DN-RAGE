@@ -59,9 +59,9 @@ cloth.changeMask = function(cloth, color){
     mp.events.callRemote('server:business:cloth:changeMask', cloth, color);
 };
 
-cloth.buyMask = function(price, cloth, color, itemName = "Маска", shopId = 0) {
+cloth.buyMask = function(price, maskId, shopId = 0) {
     checkInit();
-    mp.events.callRemote('server:business:cloth:buyMask', price, cloth, color, itemName, shopId);
+    mp.events.callRemote('server:business:cloth:buyMask', price, maskId, shopId);
 };
 
 cloth.change = function(body, cloth, color, torso, torsoColor, parachute, parachuteColor) {

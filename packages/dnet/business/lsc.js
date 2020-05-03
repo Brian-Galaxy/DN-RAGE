@@ -4,6 +4,7 @@ let Container = require('../modules/data');
 
 let user = require('../user');
 let inventory = require('../inventory');
+let enums = require('../enums');
 
 let vSync = require('../managers/vSync');
 
@@ -173,6 +174,59 @@ lsc.buyNeon = function(player, price, shopId) {
     business.removeMoneyTax(shopId, price / 2);
 
     player.notify('~g~Вы установили неон, теперь можете открыть М - Транспорт и воспользоваться им');
+
+    user.save(player);
+    vehicles.save(veh.getVariable('container'));
+};
+
+lsc.buyTyreColor = function(player, price, idx, shopId) {
+    methods.debug('lsc.buyNeon');
+    if (!user.isLogin(player))
+        return;
+    let veh = player.vehicle;
+    if (!vehicles.exists(veh))
+        return;
+
+    if (user.getMoney(player) < price) {
+        player.notify('~r~У вас недостаточно средств');
+        return;
+    }
+
+    if (price < 0)
+        return;
+
+    if (veh.getVariable('user_id') < 1) {
+        player.notify('~r~Транспорт должен быть личный');
+        return;
+    }
+    if (veh.getVariable('user_id') != user.getId(player)) {
+        player.notify('~r~Это должен быть ваш транспорт');
+        return;
+    }
+
+    if (veh.getVariable('user_id') < 1) {
+        player.notify('~r~Транспорт должен быть личный');
+        return;
+    }
+    if (veh.getVariable('user_id') != user.getId(player)) {
+        player.notify('~r~Это должен быть ваш транспорт');
+        return;
+    }
+
+    user.removeMoney(player, price, 'Установка спец. покрышек');
+    business.addMoney(shopId, price, 'Установка спец. покрышек');
+    business.removeMoneyTax(shopId, price / 2);
+
+    player.notify('~g~Вы установили напыление покрышек');
+
+    let rgb = enums.rgbColors[idx];
+
+    vehicles.set(veh.getVariable('container'), 'is_tyre', 1);
+    vehicles.set(veh.getVariable('container'), 'tyre_r', rgb[0]);
+    vehicles.set(veh.getVariable('container'), 'tyre_g', rgb[1]);
+    vehicles.set(veh.getVariable('container'), 'tyre_b', rgb[2]);
+
+    vSync.setVehicleTyreSmokeColor(veh, rgb[0], rgb[1], rgb[2]);
 
     user.save(player);
     vehicles.save(veh.getVariable('container'));

@@ -690,8 +690,8 @@ user.updateCharacterFace = function(player) {
                 player.model =  mp.joaat('mp_m_freemode_01');
         }
 
-        if (user.has(player, 'maskId')) {
-            let mask = enums.maskList[user.get(player, 'maskId')];
+        if (user.get(player, 'mask') >= 0 && user.get(player, 'mask_color') >= 1) {
+            let mask = enums.maskList[user.get(player, 'mask')];
 
             if (mask[10]) {
                 player.setHeadBlend(
@@ -923,7 +923,7 @@ user.updateCharacterCloth = function(player) {
             user.setComponentVariation(player, 1, cloth_data['mask'], cloth_data['mask_color'], 2);
         }*/
 
-        user.setComponentVariation(player, 1, cloth_data['mask'], cloth_data['mask_color'], 2);
+        user.setComponentVariation(player, 1, 0, 0, 2);
         user.setComponentVariation(player, 3, cloth_data['torso'], cloth_data['torso_color'], 2);
         user.setComponentVariation(player, 4, cloth_data['leg'], cloth_data['leg_color'], 2);
         user.setComponentVariation(player, 5, cloth_data['hand'], cloth_data['hand_color'], 2);
@@ -947,9 +947,9 @@ user.updateCharacterCloth = function(player) {
                 user.setProp(player, 7, cloth_data['bracelet'], cloth_data['bracelet_color']);
             }
 
-            if (user.has(player, 'maskId')) {
+            if (user.get(player, 'mask') >= 0 && user.get(player, 'mask_color') >= 1) {
                 try {
-                    let mask = enums.maskList[user.get(player, 'maskId')];
+                    let mask = enums.maskList[user.get(player, 'mask')];
 
                     user.setComponentVariation(player, 1, mask[2], mask[3]);
 

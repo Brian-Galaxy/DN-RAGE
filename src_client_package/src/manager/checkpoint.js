@@ -114,22 +114,22 @@ mp.events.add('render', () => {
             }
         });
     }
-    /*if (markerList.length > 0) {
+    if (markerList.length > 0) {
         markerList.forEach(function (item, idx) {
             if (methods.distanceToPos(playerPos, new mp.Vector3(item.x, item.y, item.z)) <= 100) {
                 mp.game.graphics.drawMarker(
                     item.type,
                     item.x, item.y, item.z,
                     0, 0, 0,
-                    0, 0, 0,
+                    0, 180, 277,
                     item.scale, item.scale, item.height,
                     item.color[0], item.color[1], item.color[2], item.color[3],
-                    false, false, 2,
+                    true, false, 2,
                     false, "", "",false
                 );
             }
         });
-    }*/
+    }
 });
 
 export default checkpoint;

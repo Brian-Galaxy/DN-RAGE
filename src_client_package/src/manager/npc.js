@@ -1,5 +1,6 @@
 import methods from '../modules/methods';
 import timer from '../manager/timer';
+import checkpoint from "./checkpoint";
 
 let npc = {};
 
@@ -11,7 +12,8 @@ npc.loadAll = function() {
     npc.create(mp.game.joaat("s_m_y_dockwork_01"), new mp.Vector3(-415.9264831542969, -2645.4287109375, 6.000219345092773), 316.27508544921875, false, "WORLD_HUMAN_CLIPBOARD");
 
 //Quest BotSpawn All
-    npc.create(mp.game.joaat("a_f_y_business_02"), new mp.Vector3(-1373.781494140625, -501.8981018066406, 33.157405853271484), 151.9842071533203, false, "WORLD_HUMAN_CLIPBOARD");
+    checkpoint.addMarker(-1380.45458984375, -527.6905517578125, 31.9591854095459, 2, 0.5, 0.5);
+    npc.create(mp.game.joaat("a_f_y_business_02"), new mp.Vector3(-1380.45458984375, -527.6905517578125, 30.6591854095459), 277.5157775878906, false, "WORLD_HUMAN_CLIPBOARD");
 
 //Quest Gang
     npc.create(mp.game.joaat("ig_lamardavis"), new mp.Vector3(-218.75608825683594, -1368.4576416015625, 31.25823402404785), 43.398406982421875, false, "WORLD_HUMAN_SMOKING");

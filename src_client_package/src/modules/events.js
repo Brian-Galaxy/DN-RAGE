@@ -754,6 +754,10 @@ mp.events.add('client:gangWar:sendInfo', (atC, defC, timerCounter) => {
     try {
         ui.showGangInfo();
         ui.updateGangInfo(atC, defC, timerCounter);
+
+        if (mp.game.invoke(methods.GET_FOLLOW_PED_CAM_VIEW_MODE) === 4)
+            mp.game.invoke(methods.SET_FOLLOW_PED_CAM_VIEW_MODE, 2);
+
         gangWarTimeout = setTimeout(function () {
             ui.hideGangInfo();
         }, 3000);
@@ -2411,9 +2415,10 @@ mp.events.add('client:inventory:unEquip', function(id, itemId) {
         user.save();
     }
     else if (itemId == 274) {
-        user.set("mask", 0);
+        user.set("mask", -1);
         user.set("mask_color", 0);
         user.updateCharacterCloth();
+        user.updateCharacterFace();
         user.save();
     }
     //inventory.updateEquipStatus(id, false);
@@ -3007,8 +3012,18 @@ mp.events.add('client:ui:checker', () => {
 
 mp.events.add('client:ui:saveHudDrag', (id, x, y) => {
     try {
-        let list = JSON.parse(user.getCache('s_pos'));
+        let list = [];
+        JSON.parse(user.getCache('s_pos')).forEach(item => {
+            if (item[0] === id)
+                return;
+            list.push(item);
+        });
+
         list.push([id, x, y]);
+
+        methods.debug('DEBUG2', id, x, y);
+        methods.debug('DEBUG', list);
+
         user.set('s_pos', JSON.stringify(list));
     }
     catch (e) {}
@@ -3386,6 +3401,9 @@ mp.events.add('render', () => {
 
     let arr = gangArray;
 
+    /*if (gangWarTimeout)
+        mp.game.invoke(methods.DISABLE_FIRST_PERSON_CAM_THIS_FRAME);*/
+
     try {
         for (let j = 0; j < 30; j++)
             mp.game.graphics.drawLine(arr[0][0], arr[0][1], j * 2, arr[arr.length - 1][0], arr[arr.length - 1][1], j * 2, 255, 0, 0, 255);
@@ -3576,12 +3594,12 @@ mp.events.add('render', () => {
     }
 });
 
-/*mp.events.add('render', () => {
+mp.events.add('render', () => {
     try {
         let veh = mp.players.local.vehicle;
-        if (veh && veh.getClass() != 8) {
+        if (veh && mp.vehicles.exists(veh)) {
             if (veh.getPedInSeat(-1) === mp.players.local.handle) {
-                if (user.getCache('stats_shooting') < 99 && !user.isPolice() && methods.getCurrentSpeed() > 30) {
+                if (!user.isPolice() && methods.getCurrentSpeed() > 30) {
                     mp.game.controls.disableControlAction(2, 24, true);
                     mp.game.controls.disableControlAction(2, 25, true);
                     mp.game.controls.disableControlAction(2, 66, true);
@@ -3596,33 +3614,8 @@ mp.events.add('render', () => {
             }
         }
     }
-    catch (e) {
-        
-    }
+    catch (e) {}
 });
-
-mp.events.add('render', () => {
-    try {
-        if (!user.isLogin())
-            return;
-        let veh = mp.players.local.vehicle;
-        if (veh && veh.getClass() == 8 && methods.getCurrentSpeed() > 50) {
-            mp.game.controls.disableControlAction(2, 24, true);
-            mp.game.controls.disableControlAction(2, 25, true);
-            mp.game.controls.disableControlAction(2, 66, true);
-            mp.game.controls.disableControlAction(2, 67, true);
-            mp.game.controls.disableControlAction(2, 69, true);
-            mp.game.controls.disableControlAction(2, 70, true);
-            mp.game.controls.disableControlAction(2, 140, true);
-            mp.game.controls.disableControlAction(2, 141, true);
-            mp.game.controls.disableControlAction(2, 143, true);
-            mp.game.controls.disableControlAction(2, 263, true);
-        }
-    }
-    catch (e) {
-        
-    }
-});*/
 
 /*mp.events.add('render', () => {
     try {

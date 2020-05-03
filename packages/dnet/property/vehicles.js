@@ -143,8 +143,8 @@ vehicles.loadUserVehicleByRow = (row) => {
     vehicles.set(row['id'], 'neon_g', row['neon_g']);
     vehicles.set(row['id'], 'neon_b', row['neon_b']);
     vehicles.set(row['id'], 'is_tyre', row['is_tyre']);
-    vehicles.set(row['id'], 'tyre_r', row['neon_r']);
-    vehicles.set(row['id'], 'tyre_g', row['tyre_g\'']);
+    vehicles.set(row['id'], 'tyre_r', row['tyre_r']);
+    vehicles.set(row['id'], 'tyre_g', row['tyre_g']);
     vehicles.set(row['id'], 'tyre_b', row['tyre_b']);
     vehicles.set(row['id'], 'number', row['number']);
     vehicles.set(row['id'], 'is_special', row['is_special']);

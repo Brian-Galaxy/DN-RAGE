@@ -708,10 +708,10 @@ mp.events.addRemoteCounted('server:business:cloth:changeMask', (player, clothId,
     cloth.changeMask(player, clothId, color);
 });
 
-mp.events.addRemoteCounted('server:business:cloth:buyMask', (player, price, clothId, color, itemName, shopId) => {
+mp.events.addRemoteCounted('server:business:cloth:buyMask', (player, price, maskId, shopId) => {
     if (!user.isLogin(player))
         return;
-    cloth.buyMask(player, price, clothId, color, itemName, shopId);
+    cloth.buyMask(player, price, maskId, shopId);
 });
 
 mp.events.addRemoteCounted('server:business:cloth:changeProp', (player, body, clothId, color) => {
@@ -5350,6 +5350,12 @@ mp.events.addRemoteCounted('server:lsc:buyNeon', (player, shopId, price) => {
     if (!user.isLogin(player))
         return;
     lsc.buyNeon(player, price, shopId);
+});
+
+mp.events.addRemoteCounted('server:lsc:buyTyreColor', (player, idx, price, shopId) => {
+    if (!user.isLogin(player))
+        return;
+    lsc.buyTyreColor(player, price, idx, shopId);
 });
 
 mp.events.addRemoteCounted('server:lsc:buyLight', (player, shopId, price) => {

@@ -1206,7 +1206,7 @@ menuList.showBusinessMenu = async function(data) {
 
     let nalogOffset = bankTarif;
     if (data.get('type') === 1) //TODO
-        nalogOffset += 10;
+        nalogOffset += 25;
 
     nalog = nalog + nalogOffset;
 
@@ -1367,7 +1367,7 @@ menuList.showBusinessSettingsMenu = async function(data) {
 
     let nalogOffset = 0;
     if (data.get('type') === 1) //TODO
-        nalogOffset += 10;
+        nalogOffset += 25;
     /*if (data.get('type') == 11)
         nalogOffset += 20;*/
 
@@ -3543,26 +3543,26 @@ menuList.showVehicleMenu = function(data) {
 
     if (data.get('is_neon')) {
         UIMenu.Menu.AddMenuItem("~g~Вкл~s~ / ~r~выкл~s~ неон", "", {eventName: "server:vehicle:neonStatus"});
-        UIMenu.Menu.AddMenuItem("~b~Цвет неона", "", {eventName: "server:vehicle:setNeonColor"});
+        UIMenu.Menu.AddMenuItemList("~b~Цвет неона", enums.rgbNames, "", {eventName: "server:vehicle:setNeonColor"});
+        UIMenu.Menu.AddMenuItem("~b~Цвет неона RGB", "", {eventName: "server:vehicle:setNeonColor"});
     }
 
-    let colorList = [
-        'White',
-        'Blue',
-        'Light Blue',
-        'Green',
-        'Light Green',
-        'Light Yellow',
-        'Yellow',
-        'Orange',
-        'Red',
-        'Light Pink',
-        'Pink',
-        'Purple',
-        'Light Purple',
-    ];
-
     if (data.get('colorl') >= 0) {
+        let colorList = [
+            'White',
+            'Blue',
+            'Light Blue',
+            'Green',
+            'Light Green',
+            'Light Yellow',
+            'Yellow',
+            'Orange',
+            'Red',
+            'Light Pink',
+            'Pink',
+            'Purple',
+            'Light Purple',
+        ];
         UIMenu.Menu.AddMenuItemList("Сменить цвет фар", colorList, "", {doName: "setLight"}, data.get('colorl'));
     }
 
@@ -3570,13 +3570,14 @@ menuList.showVehicleMenu = function(data) {
     UIMenu.Menu.Draw();
 
     let listIndex = 0;
-    UIMenu.Menu.OnList.Add((item, index) => {
-        listIndex = index;
-    });
-
     UIMenu.Menu.OnList.Add(async (item, index) => {
+        listIndex = index;
         if (item.doName == 'setLight') {
             mp.events.callRemote('server:vehicle:setLight', index);
+        }
+        else if (item.eventName == 'server:vehicle:setNeonColor') {
+            let rgb = enums.rgbColors[index];
+            mp.events.callRemote(item.eventName, methods.parseInt(rgb[0]), methods.parseInt(rgb[1]), methods.parseInt(rgb[2]));
         }
     });
 
@@ -5302,7 +5303,7 @@ menuList.showShopMedMenu = function(shopId, price = 2)
         return;
     }
 
-    UIMenu.Menu.Create(" ", "~b~Аптека", 'showShopMedMenu', false, false, 'ph');
+    UIMenu.Menu.Create(" ", "~b~Аптека", 'showShopMedMenu', false, false, 'ph2');
 
     let saleLabel = '';
     let sale = business.getSale(price);
@@ -6336,7 +6337,111 @@ menuList.showShopPropMoreMenu = function (shopId, type, menuType, price, id1, id
 };
 
 menuList.showShopMaskMenu = function (shopId) {
-    //TODO
+    UIMenu.Menu.Create(` `, `~b~Магазин масок`, 'mask', false, false, 's_mask');
+
+    for (let i = 0; i < enums.maskClasses.length; i++) {
+        if (methods.getCountMask(i, shopId) > 0) {
+            if (i === 4) {
+                if (weather.getMonth() === 1)
+                    UIMenu.Menu.AddMenuItem(`${enums.maskClasses[i]}`, '', {slotId: i});
+                else
+                    UIMenu.Menu.AddMenuItem(`~c~${enums.maskClasses[i]}`, 'Доступно для покупки, только в Феврале', {});
+            }
+            else if (i === 19) {
+                if (weather.getMonth() === 11)
+                    UIMenu.Menu.AddMenuItem(`${enums.maskClasses[i]}`, '', {slotId: i});
+                else
+                    UIMenu.Menu.AddMenuItem(`~c~${enums.maskClasses[i]}`, 'Доступно для покупки, только в Декабре', {});
+            }
+            else if (i === 20) {
+                if (weather.getMonth() === 9)
+                    UIMenu.Menu.AddMenuItem(`${enums.maskClasses[i]}`, '', {slotId: i});
+                else
+                    UIMenu.Menu.AddMenuItem(`~c~${enums.maskClasses[i]}`, 'Доступно для покупки, только в Октябре', {});
+            }
+            else
+                UIMenu.Menu.AddMenuItem(`${enums.maskClasses[i]}`, '', {slotId: i});
+        }
+    }
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
+    UIMenu.Menu.Draw();
+
+    UIMenu.Menu.OnSelect.Add(item => {
+        UIMenu.Menu.HideMenu();
+        if (item.slotId >= 0) {
+            menuList.showMaskListMenu(item.slotId, shopId);
+        }
+    });
+};
+
+menuList.showMaskListMenu = function (slot, shopId) {
+    try {
+
+        let maskPrev = user.getCache('mask');
+
+        if (enums.maskList.length < 1)
+            return;
+
+        UIMenu.Menu.Create(` `, `~b~Магазин масок`, 'mask', false, false, 's_mask');
+
+        let list = [];
+        for (let i = 0; i < enums.maskList.length; i++) {
+            let maskItem = enums.maskList[i];
+            if (maskItem[0] !== slot)
+                continue;
+            if (maskItem[13] !== shopId)
+                continue;
+
+            //[ClassID, "Name", MaskID, MaxColor, Price, NetCoin, УбратьПричёску, УбратьОчки, УбратьШляпу, УбратьСерьги, СтандартноеЛицо, УбратьСкулы, Скрытность, МагазинID, ШансВыпасть],
+
+            let mItem = {};
+            mItem.maskId = maskItem[2];
+            mItem.maskColor = maskItem[3];
+            mItem.maskHair = maskItem[6];
+            mItem.maskGlass = maskItem[7];
+            mItem.maskHat = maskItem[8];
+            mItem.maskAcc = maskItem[9];
+            mItem.maskFaceDef = maskItem[10];
+            mItem.maskFace = maskItem[11];
+            mItem.maskPrice = maskItem[4] + 0.01;
+            mItem.idxFull = i;
+            list.push(mItem);
+            UIMenu.Menu.AddMenuItem(`${maskItem[1]}`, `Цена: ~g~${methods.moneyFormat(maskItem[4])}~br~~s~Цена: ~y~${methods.numberFormat(maskItem[5])}nc`, mItem)
+        }
+
+        UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
+        UIMenu.Menu.Draw();
+
+        UIMenu.Menu.OnIndexSelect.Add((index) => {
+            if (index >= list.length)
+                return;
+            //user.setComponentVariation(1, list[index].maskId, list[index].maskColor);
+            user.set('mask', list[index].idxFull);
+            user.set('mask_color', 1);
+            //user.updateCharacterFace();
+            user.updateCharacterCloth();
+        });
+
+        UIMenu.Menu.OnSelect.Add((item) => {
+            if (item.idxFull >= 0) {
+                setTimeout(function () {
+                    cloth.buyMask(item.maskPrice, item.idxFull, shopId);
+                    maskPrev = item.idxFull;
+                }, 200);
+            }
+        });
+
+        UIMenu.Menu.OnClose.Add((index) => {
+            user.set('mask', maskPrev);
+            user.set('mask_color', 1);
+            user.updateCharacterFace();
+            user.updateCharacterCloth();
+        });
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 };
 
 menuList.showPrintShopMenu = function()
@@ -6351,7 +6456,7 @@ menuList.showPrintShopMenu = function()
         mp.game.ui.notifications.show(`~r~В городе отсутствует свет`);
         return;
     }
-    UIMenu.Menu.Create("Магазин", "~b~Магазин принтов"); //TODO BANNER
+    UIMenu.Menu.Create(" ", "~b~Магазин принтов", 'print', false, false, 's_print'); //TODO BANNER
 
     let list = [];
 
@@ -7067,11 +7172,11 @@ menuList.showLscSTunningMenu = function(shopId, price, lscBanner1) {
     menuItem.doName = 'setLight';
     UIMenu.Menu.AddMenuItem("Цветные фары", `Цена: ~g~${methods.moneyFormat(methods.parseInt(itemPrice))}`, menuItem);
 
-    /*itemPrice = 500000 + 0.001;
+    itemPrice = 500000 + 0.001;
     menuItem = {};
     menuItem.price = itemPrice;
     menuItem.doName = 'setSmoke';
-    UIMenu.Menu.AddMenuItem("Специальные покрышки с напылением", `Цена: ~g~${methods.moneyFormat(methods.parseInt(itemPrice))}~br~~s~Если вы уже купили покрышки, то стоимость смены цвета стоит ~g~$1.000`, menuItem);*/
+    UIMenu.Menu.AddMenuItem("Специальные покрышки с напылением", `Цена: ~g~${methods.moneyFormat(methods.parseInt(itemPrice))}~br~~s~Если вы уже купили покрышки, то стоимость смены цвета стоит ~g~$1.000`, menuItem);
 
     itemPrice = 10000 + 0.001;
     menuItem = {};
@@ -7115,6 +7220,19 @@ menuList.showLscSTunningMenu = function(shopId, price, lscBanner1) {
 
             mp.events.callRemote('server:lsc:buyLight', shopId, methods.parseInt(item.price));
         }
+        if (item.doName == 'setSmoke') {
+            if (
+                vehInfo.class_name == 'Helicopters' ||
+                vehInfo.class_name == 'Planes' ||
+                vehInfo.class_name == 'Cycles' ||
+                vehInfo.class_name == 'Utility' ||
+                vehInfo.class_name == 'Boats'
+            ) {
+                mp.game.ui.notifications.show(`~r~Данный класс транспорта нельзя ставить модификацию`);
+                return;
+            }
+            menuList.showLscTyreColorChoiseMenu(shopId, price, lscBanner1);
+        }
         if (item.doName == 'setSpecial') {
             if (vehInfo.class_name == 'Cycles') {
                 mp.game.ui.notifications.show(`~r~Данный класс транспорта нельзя ставить модификацию`);
@@ -7122,6 +7240,48 @@ menuList.showLscSTunningMenu = function(shopId, price, lscBanner1) {
             }
             mp.events.callRemote('server:lsc:buySpecial', shopId, methods.parseInt(item.price));
         }
+    });
+};
+
+menuList.showLscTyreColorChoiseMenu = async function(shopId, price, lscBanner1, price2 = 500000.01) {
+
+    let veh = mp.players.local.vehicle;
+
+    if (!veh) {
+        mp.game.ui.notifications.show(`~r~Необходимо находиться в личном транспорте`);
+        return;
+    }
+
+    let car = await vehicles.getData(veh.getVariable('container'));
+
+    UIMenu.Menu.Create(` `, `~b~Установка специального напыления`, 'false', false, false, lscBanner1);
+
+    for (let i = 0; i < enums.rgbNames.length; i++) {
+        try {
+            let label = enums.rgbNames[i];
+            let listItem = {};
+            listItem.modType = i;
+            if (car.get('is_tyre'))
+                UIMenu.Menu.AddMenuItem(`${label}`,`Смена цвета. Цена: ~g~$1.000`, listItem);
+            else
+                UIMenu.Menu.AddMenuItem(`${label}`,`Цена: ~g~${methods.moneyFormat(price2)}`, listItem);
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    }
+
+    //UIMenu.Menu.AddMenuItem("~g~Назад", "", {doName: "backMenu"});
+    UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
+    UIMenu.Menu.Draw();
+
+    UIMenu.Menu.OnSelect.Add(item => {
+        UIMenu.Menu.HideMenu();
+        if (item.doName === 'closeMenu') {
+            return;
+        }
+        mp.events.callRemote('server:lsc:buyTyreColor', item.modType, car.get('is_tyre') ? 1000 : price2, shopId);
+        menuList.showLscMenu(shopId, price);
     });
 };
 
@@ -9971,7 +10131,8 @@ menuList.showAdminMaskListMenu = function(slot) {
             if (index >= list.length)
                 return;
             //user.setComponentVariation(1, list[index].maskId, list[index].maskColor);
-            user.set('maskId', list[index].idxFull);
+            user.set('mask', list[index].idxFull);
+            user.set('mask_color', 1);
             user.updateCharacterFace();
             user.updateCharacterCloth();
         });

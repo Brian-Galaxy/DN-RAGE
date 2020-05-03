@@ -98,6 +98,7 @@ ui.fixInterface = function() {
 
     setTimeout(function () {
         ui.showHud();
+        ui.DisableMouseControl = false;
     }, 1000);
 };
 
@@ -203,7 +204,7 @@ ui.updatePositionSettings = function() {
                     x: item[1],
                     y: item[2],
                 };
-                ui.callCef('hud-draggable', JSON.stringify(data));
+                ui.callCef('hud-draggable-' + item[0], JSON.stringify(data));
             });
         }
         catch (e) {
@@ -344,6 +345,7 @@ ui.updateValues = function() {
     }
 };
 
+let prevCarState = false;
 ui.updateVehValues = function() {
     //return; //TODO ВАЖНО
     if (uiBrowser && user.isLogin()) {
@@ -396,6 +398,10 @@ ui.updateVehValues = function() {
                 background: user.getCache('s_hud_bg'),
             };
             ui.callCef('hudc', JSON.stringify(data));
+
+            if (prevCarState !== isShowSpeed && phone.isHide() && showRadar)
+                ui.updatePositionSettings();
+            prevCarState = isShowSpeed && phone.isHide() && showRadar;
         }
         catch (e) {
             methods.debug(e);

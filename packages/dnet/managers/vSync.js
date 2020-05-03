@@ -124,9 +124,9 @@ vSync.setVehicleTyreSmokeColor = function(v, r, g, b) {
     if (!vehicles.exists(v))
         return;
     let data = vSync.getVehicleSyncData(v);
-    data.SmokeR = r;
-    data.SmokeG = g;
-    data.SmokeB = b;
+    data.SmokeR = methods.parseInt(r);
+    data.SmokeG = methods.parseInt(g);
+    data.SmokeB = methods.parseInt(b);
     vSync.updateVehicleSyncData(v, data);
     mp.players.callInRange(v.position, streamDist, "vSync:setVehicleTyreSmokeColor", [v.id, r, g, b]);
 };

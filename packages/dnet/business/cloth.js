@@ -66,8 +66,6 @@ cloth.checkPosForOpenMenu = function (player) {
         let playerPos = player.position;
 
         if (methods.distanceToPos(cloth.maskShop, playerPos) < 2) {
-            player.notify('~r~К сожалению магазин сейчас на реконструкции');
-            return;
             if (!business.isOpen(69)) {
                 player.notify('~r~К сожалению магазин сейчас не работает');
                 return;
@@ -330,8 +328,8 @@ cloth.changeMask = function (player, clothId, color) {
     user.setComponentVariation(player, 1, clothId, color);
 };
 
-cloth.buyMask = function (player, price, clothId, color, itemName, shopId) {
-    methods.debug('barberShop.buy');
+cloth.buyMask = function (player, price, maskId, shopId) {
+    methods.debug('barberShop.buy', price, maskId, shopId);
     if (!user.isLogin(player))
         return;
 
@@ -347,14 +345,16 @@ cloth.buyMask = function (player, price, clothId, color, itemName, shopId) {
         return;
     inventory.updateItemsEquipByItemId(274, user.getId(player), inventory.types.Player, 0);
 
-    user.set(player, 'mask', clothId);
-    user.set(player, 'mask_color', color);
+    let itemName = enums.maskList[maskId][1];
 
-    let params = `{"name": "${itemName}", "mask": ${clothId}, "mask_color": ${color}}`;
+    user.set(player, 'mask', maskId);
+    user.set(player, 'mask_color', 1);
+
+    let params = `{"name": "${itemName}", "mask": ${maskId}}`;
     inventory.addItem(274, 1, inventory.types.Player, user.getId(player), 1, 1, params, 100);
 
+    user.updateCharacterFace(player);
     user.updateCharacterCloth(player);
-    user.setComponentVariation(player, 1, clothId, color);
 
     if (shopId == 0)
         return;

@@ -18,13 +18,17 @@ let racer = {};
 let currentRace = null;
 let currentCpId = 0;
 let currentCp = null;
+let currentBlip = null;
+let currentBlipSmall = null;
 let nextCp = null;
 let inRace = false;
+let racerSize = 12;
 
 racer.createCurrentCp = function(type, pos, dir) {
     try {
         racer.currentCpDestroy();
-        currentCp = mp.checkpoints.new(type, pos, 12,{direction: dir, color: [ 255, 235, 59, 150 ], visible: true, dimension: 9999});
+        currentCp = mp.checkpoints.new(type, pos, racerSize,{direction: dir, color: [ 255, 235, 59, 150 ], visible: true, dimension: 9999});
+        currentBlip = mp.blips.new(1, new mp.Vector3(pos.x, pos.y, pos.z - currentRace.offsetZ), { color: 5, scale: 0.9, ame: 'Гонка', drawDistance: 100, shortRange: false, dimension: -1 });
     }
     catch (e) {
         console.log(e);
@@ -34,7 +38,8 @@ racer.createCurrentCp = function(type, pos, dir) {
 racer.createNextCp = function(type, pos, dir) {
     try {
         racer.nextCpDestroy();
-        nextCp = mp.checkpoints.new(type, pos, 5,{direction: dir, color: [ 255, 235, 59, 70 ], visible: true, dimension: 9999});
+        nextCp = mp.checkpoints.new(type, pos, racerSize / 2 + 1,{direction: dir, color: [ 255, 235, 59, 70 ], visible: true, dimension: 9999});
+        currentBlipSmall = mp.blips.new(1, new mp.Vector3(pos.x, pos.y, pos.z - currentRace.offsetZ), { color: 5, scale: 0.4, ame: 'Гонка', drawDistance: 100, shortRange: true, dimension: -1 });
     }
     catch (e) {
         console.log(e);
@@ -45,6 +50,8 @@ racer.currentCpDestroy = function() {
     try {
         if (typeof currentCp == 'object' && mp.checkpoints.exists(currentCp))
             currentCp.destroy();
+        if (typeof currentBlip == 'object' && mp.blips.exists(currentBlip))
+            currentBlip.destroy();
     }
     catch (e) {
         console.log(e);
@@ -55,10 +62,16 @@ racer.nextCpDestroy = function() {
     try {
         if (typeof nextCp == 'object' && mp.checkpoints.exists(nextCp))
             nextCp.destroy();
+        if (typeof currentBlipSmall == 'object' && mp.blips.exists(currentBlipSmall))
+            currentBlipSmall.destroy();
     }
     catch (e) {
         console.log(e);
     }
+};
+
+racer.isInRace = function() {
+    return inRace;
 };
 
 mp.events.add("client:raceUpdate", (json) => {
@@ -73,9 +86,17 @@ mp.events.add("client:raceUpdate", (json) => {
 
         currentCpId = 0;
         currentCp = null;
+        currentBlip = null;
         nextCp = null;
         inRace = true;
         currentRace = JSON.parse(json);
+
+        try {
+            racerSize = currentRace.size;
+        }
+        catch (e) {
+            racerSize = 12;
+        }
 
         inventory.hide();
         phone.hide();
@@ -133,7 +154,7 @@ mp.events.add("playerEnterCheckpoint", (checkpoint) => {
             if (currentCpId < currentRace.posList.length - 1) {
                 let posNext = currentRace.posList[currentCpId + 1];
                 racer.createCurrentCp(0, new mp.Vector3(posCurrent[0], posCurrent[1], posCurrent[2] + currentRace.offsetZ), new mp.Vector3(posNext[0], posNext[1], posNext[2]));
-                racer.createNextCp(0, new mp.Vector3(posNext[0], posNext[1], posNext[2] + currentRace.offsetZ), new mp.Vector3(posNext[0], posNext[1], posNext[2]));
+                racer.createNextCp(0, new mp.Vector3(posNext[0], posNext[1], posNext[2] + currentRace.offsetZ - 5), new mp.Vector3(posNext[0], posNext[1], posNext[2]));
             }
             else {
                 racer.createCurrentCp(4, new mp.Vector3(posCurrent[0], posCurrent[1], posCurrent[2] + currentRace.offsetZ), new mp.Vector3(0, 0, 0));
@@ -197,6 +218,8 @@ mp.keys.bind(0x1B, true, function() {
     if (!user.isLogin() || !inRace)
         return;
     try {
+        racer.currentCpDestroy();
+        racer.nextCpDestroy();
         inRace = false;
         mp.events.callRemote('server:race:exit');
         methods.blockKeys(false);

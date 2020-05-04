@@ -4,6 +4,8 @@ import Container from "../modules/data";
 
 import enums from "../enums";
 
+import racer from "../manager/racer";
+
 let vehicles = {};
 
 let offset = enums.offsets.vehicle;
@@ -146,6 +148,8 @@ vehicles.addFuel = (veh, fuel = 1) => {
 
 vehicles.checkerControl = function() {
     try {
+        if (racer.isInRace())
+            return false;
         let veh = mp.players.local.vehicle;
         if (veh) {
             let vInfo = methods.getVehicleInfo(veh.model);

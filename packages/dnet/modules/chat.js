@@ -197,10 +197,12 @@ mp.events.add('playerCommand', (player, command) => {
             mafiaWar.startWar(2);
             mafiaWar.startWar(3);
         }
-        else if (command.toLowerCase() === "racerc") {
+        else if (command.slice(0, 7) === "racerc ") {
             if (!user.isAdmin(player))
                 return;
-            racer.createRace();
+
+            let args = command.toLowerCase().split(' ');
+            racer.createRace(methods.parseInt(args[1]), methods.parseInt(args[2]));
         }
         else if (command.toLowerCase() === "racers") {
             if (!user.isAdmin(player))

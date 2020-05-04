@@ -191,13 +191,22 @@ weather.timeSyncTimer = function() {
         if (_hour === 6 && _minute === 0)
             fraction.stopCargoWar();
 
-        if (_hour === 10 && _minute === 0)
+        if (_hour === 9 && _minute === 0)
             racer.createRace();
+        if (_hour === 10 && _minute === 0)
+            racer.notifyRace();
+        if (_hour === 10 && _minute === 30)
+            racer.notifyRace();
         if (_hour === 11 && _minute === 0)
+            racer.startRace();
+
+        if (_hour === 19 && _minute === 0)
+            racer.createRace();
+        if (_hour === 20 && _minute === 0)
             racer.notifyRace();
-        if (_hour === 11 && _minute === 30)
+        if (_hour === 20 && _minute === 30)
             racer.notifyRace();
-        if (_hour === 12 && _minute === 0)
+        if (_hour === 21 && _minute === 0)
             racer.startRace();
 
         let dateTime = new Date();

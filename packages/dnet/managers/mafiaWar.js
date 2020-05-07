@@ -56,7 +56,7 @@ mafiaWar.loadAll = function() {
 
     setTimeout(function () {
         mafiaWar.timer();
-        mafiaWar.timerMoney();
+        //mafiaWar.timerMoney();
     }, 10000);
 };
 
@@ -353,22 +353,39 @@ mafiaWar.timer = function() {
 };
 
 mafiaWar.timerMoney = function() {
-
     let moneyToUser = new Map();
     for (let i = 1; i <= 3; i++) {
-        try {
-            if (mafiaWar.get(i, 'ownerId') > 0) {
-                let money = (methods.getRandomInt(1000, 1200) * 3) / 50;
-                let id = methods.parseInt(mafiaWar.get(i, 'ownerId'));
-                fraction.addMoney(id, methods.parseFloat(money), 'Зачисление прибыли');
+        if (mafiaWar.get(i, 'ownerId') > 0) {
+
+            let money = methods.getRandomInt(4000, 7000) / 1000;
+            let id = methods.parseInt(mafiaWar.get(i, 'ownerId'));
+            fraction.setMoney(id, fraction.getMoney(id) + methods.parseFloat(money));
+
+            if (moneyToUser.has(mafiaWar.get(i, 'ownerId').toString())) {
+                let cMoney = moneyToUser.get(mafiaWar.get(i, 'ownerId').toString());
+                cMoney += methods.getRandomInt(400, 700) / 1000;
+                moneyToUser.set(mafiaWar.get(i, 'ownerId').toString(), cMoney);
             }
-        }
-        catch (e) {
-            
+            else {
+                moneyToUser.set(mafiaWar.get(i, 'ownerId').toString(), methods.getRandomInt(400, 700) / 1000);
+            }
         }
     }
 
-    setTimeout(mafiaWar.timerMoney, 8500 * 180);
+    mp.players.forEach(p => {
+        if (user.isLogin(p) && user.get(p, 'fraction_id2') > 0) {
+            if (moneyToUser.has(user.get(p, 'fraction_id2').toString())) {
+                if (p.getVariable('isAfk') === true) {
+                    p.notify('~r~Зарплату вы не получили, связи с тем, что вы AFK');
+                }
+                else {
+                    let cMoney = moneyToUser.get(user.get(p, 'fraction_id2').toString());
+                    p.notify(`~g~Вы получили ${methods.cryptoFormat(cMoney)} за ваши захваченные бизнесы`);
+                    user.addCryptoMoney(p, cMoney, 'Прибыль с бизнесов');
+                }
+            }
+        }
+    });
 };
 
 mafiaWar.getMaxCounterFractionId = function(rm, trd, lcn) {
@@ -405,6 +422,10 @@ mafiaWar.reset = function(id, key, val) {
 
 mafiaWar.get = function(id, key) {
     return Container.Data.Get(offset + methods.parseInt(id), keyPrefix + key);
+};
+
+mafiaWar.getAll = function(id) {
+    return Container.Data.GetAll(offset + methods.parseInt(id));
 };
 
 mafiaWar.has = function(id, key) {

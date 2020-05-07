@@ -156,6 +156,7 @@ weather.timeSyncTimer = function() {
 
         if (_minute === 30) {
             gangWar.timerMoney();
+            mafiaWar.timerMoney();
         }
 
         if (_minute > 59)
@@ -252,6 +253,21 @@ weather.timeSyncTimer = function() {
             }
         }
 
+        if (dateTime.getHours() === 20 && dateTime.getMinutes() === 0) {
+            if (!isCreateEms) {
+                isCreateEms = true;
+                try {
+                    let player = methods.getRandomPlayer();
+                    if (user.isLogin(player)) {
+                        user.giveVehicle(player, enums.vehWinList[methods.getRandomInt(0, enums.vehWinList.length)], 1, true);
+                    }
+                }
+                catch (e) {
+
+                }
+            }
+        }
+
         if (dateTime.getDate() % 3 === 0) {
             if (dateTime.getHours() === 20 && dateTime.getMinutes() === 0)
                 mafiaWar.startWar(1);
@@ -340,6 +356,8 @@ weather.timeSyncTimer = function() {
             methods.saveAll();
         if (dateTime.getHours() == 5 && dateTime.getMinutes() == 3)
         {
+            fraction.removeTaxAndSave();
+
             mp.players.forEach(function (p) {
                 if (mp.players.exists(p)) {
                     user.set(p, 'online_wheel', 0);

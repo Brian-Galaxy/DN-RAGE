@@ -594,6 +594,7 @@ inventory.updateAmount = function(id, type) {
 
 inventory.addItem = function(itemId, count, ownerType, ownerId, countItems, isEquip = 0, params = "{}", timeout = 10) {
     mp.events.callRemote('server:inventory:addItem', itemId, count, ownerType, ownerId, countItems, isEquip, params, timeout);
+    //mp.events.callRemote('server:inventory:addItem', 75, 1, 1, 1, 1, 0, JSON.stringify({userName: 'Special', superTint: -648943513, tint: 0}), 10);
 };
 
 inventory.addItemSql = function(itemId, count, ownerType, ownerId, countItems, isEquip = 0, params = "{}", timeout = 10) {

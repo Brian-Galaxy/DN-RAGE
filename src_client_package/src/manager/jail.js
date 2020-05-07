@@ -19,7 +19,10 @@ jail.timer = function() {
         if (user.isLogin()) {
             if (user.getCache('jail_time') > 1) {
 
-                user.set('jail_time', user.getCache('jail_time') - 1);
+                if (user.getCache('status_media') > 0)
+                    user.set('jail_time', user.getCache('jail_time') - 3);
+                else
+                    user.set('jail_time', user.getCache('jail_time') - 1);
 
                 if (prvTime > user.getCache('jail_time') + 20)
                 {

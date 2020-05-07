@@ -96,18 +96,24 @@ pickups.Bcsd2StockPos = new mp.Vector3(1855.5472412109375, 3699.1943359375, 33.2
 
 pickups.SheriffGarderobPos = new mp.Vector3(-452.945, 6013.818, 30.716);
 pickups.SheriffGarderobPos2 = new mp.Vector3(1849.775390625, 3695.501953125, 33.26706314086914);
+pickups.SheriffGarderobPos3 = new mp.Vector3(381.8980407714844, -1610.0821533203125, 28.29205322265625);
 pickups.SheriffArsenalPos = new mp.Vector3(-437.330, 6001.264, 30.716);
 pickups.SheriffArsenalPos2 = new mp.Vector3(1845.992431640625, 3692.927734375, 33.26704406738281);
+pickups.SheriffArsenalPos3 = new mp.Vector3(370.192626953125, -1597.8590087890625, 28.29205894470215);
 
 pickups.SheriffClearPos = new mp.Vector3(-448.6859, 6012.703, 30.71638);
+pickups.SheriffClearPos2 = new mp.Vector3(370.0141906738281, -1585.6617431640625, 28.29206085205078);
 pickups.SheriffArrestPos = new mp.Vector3(-441.605, 6012.786, 26.985);
 pickups.SheriffArrestPos2 = new mp.Vector3(1856.632080078125, 3685.5849609375, 29.259225845336914);
+pickups.SheriffArrestPos3 = new mp.Vector3(360.8938293457031, -1597.5963134765625, 28.292055130004883);
 
 pickups.PrisonArrestPos = new mp.Vector3(1690.606, 2591.926, 44.83793);
 
 pickups.EmsArsenalPos = new mp.Vector3(311.363037109375, -563.9005737304688, 42.28398895263672);
 pickups.EmsArsenalPos2 = new mp.Vector3(-258.50933837890625, 6308.8623046875, 31.426040649414062);
 pickups.EmsArsenalPos3 = new mp.Vector3(1206.7628173828125, -1478.664794921875, 33.85951614379883);
+pickups.EmsArsenalPos4 = new mp.Vector3(1822.641357421875, 3676.248046875, 33.270057678222656);
+pickups.EmsArsenalPos5 = new mp.Vector3(-377.16534423828125, 6110.66552734375, 30.44953155517578);
 
 /*Keys*/
 pickups.GovKeyPos = new mp.Vector3(-1397.35693359375, -464.54345703125, 33.4775505065918);
@@ -135,7 +141,12 @@ pickups.InvaderWorkPos4 = new mp.Vector3(-1056.6370849609375, -245.4740447998047
 pickups.EmsGarderobPos1 = new mp.Vector3(299.0457458496094, -598.6067504882812, 42.28403091430664);
 pickups.EmsGarderobPos2 = new mp.Vector3(-244.68588256835938, 6318.1396484375, 31.44457244873047);
 pickups.EmsGarderobPos3 = new mp.Vector3(1206.7554931640625, -1465.3013916015625, 33.85951614379883);
-pickups.EmsTakeMedPos = new mp.Vector3(251.6622, -1346.598, 23.53781);
+pickups.EmsGarderobPos4 = new mp.Vector3(1838.8011474609375, 3689.89111328125, 33.27003479003906);
+pickups.EmsGarderobPos5 = new mp.Vector3(-372.43133544921875, 6106.17626953125, 30.449552536010742);
+
+pickups.EmsFreePos1 = new mp.Vector3(1835.09423828125, 3683.8740234375, 33.2700309753418);
+pickups.EmsFreePos2 = new mp.Vector3(-248.40432739257812, 6321.85546875, 31.420692443847656);
+pickups.EmsFreePos3 = new mp.Vector3(309.707275390625, -594.0407104492188, 42.284034729003906);
 
 pickups.EmsElevatorRoofPos = new mp.Vector3(334.7327, -1432.775, 45.51179);
 pickups.EmsElevatorParkPos = new mp.Vector3(406.5373, -1347.918, 40.05356);
@@ -504,12 +515,6 @@ pickups.checkPressE = function(player) {
     if (user.isSapd(player)) {
         if (methods.distanceToPos(pickups.SapdGarderobPos, playerPos) < distanceCheck)
             player.call('client:menuList:showSapdGarderobMenu');
-        if (methods.distanceToPos(pickups.SapdClearPos, playerPos) < distanceCheck)
-            player.call('client:menuList:showSapdClearMenu');
-        if (methods.distanceToPos(pickups.SapdArrestPos, playerPos) < distanceCheck)
-            player.call('client:menuList:showSapdArrestMenu');
-        if (methods.distanceToPos(pickups.SapdArsenalPos, playerPos) < distanceCheck)
-            player.call('client:menuList:showSapdArsenalMenu');
     }
     if (user.isEms(player)) {
         if (methods.distanceToPos(pickups.EmsGarderobPos1, playerPos) < distanceCheck)
@@ -518,34 +523,62 @@ pickups.checkPressE = function(player) {
             player.call('client:menuList:showEmsGarderobMenu');
         if (methods.distanceToPos(pickups.EmsGarderobPos3, playerPos) < distanceCheck)
             player.call('client:menuList:showEmsGarderobMenu');
+        if (methods.distanceToPos(pickups.EmsGarderobPos4, playerPos) < distanceCheck)
+            player.call('client:menuList:showEmsGarderobMenu');
+        if (methods.distanceToPos(pickups.EmsGarderobPos5, playerPos) < distanceCheck)
+            player.call('client:menuList:showEmsGarderobMenu');
         if (methods.distanceToPos(pickups.EmsArsenalPos, playerPos) < distanceCheck)
             player.call('client:menuList:showEmsArsenalMenu');
         if (methods.distanceToPos(pickups.EmsArsenalPos2, playerPos) < distanceCheck)
             player.call('client:menuList:showEmsArsenalMenu');
         if (methods.distanceToPos(pickups.EmsArsenalPos3, playerPos) < distanceCheck)
             player.call('client:menuList:showEmsArsenalMenu');
+        if (methods.distanceToPos(pickups.EmsArsenalPos4, playerPos) < distanceCheck)
+            player.call('client:menuList:showEmsArsenalMenu');
+        if (methods.distanceToPos(pickups.EmsArsenalPos5, playerPos) < distanceCheck)
+            player.call('client:menuList:showEmsArsenalMenu');
+        if (methods.distanceToPos(pickups.EmsFreePos1, playerPos) < distanceCheck)
+            player.call('client:menuList:showEmsFreeMenu');
+        if (methods.distanceToPos(pickups.EmsFreePos2, playerPos) < distanceCheck)
+            player.call('client:menuList:showEmsFreeMenu');
+        if (methods.distanceToPos(pickups.EmsFreePos3, playerPos) < distanceCheck)
+            player.call('client:menuList:showEmsFreeMenu');
     }
     if (user.isSheriff(player)) {
         if (methods.distanceToPos(pickups.SheriffGarderobPos, playerPos) < distanceCheck)
             player.call('client:menuList:showSheriffGarderobMenu');
         if (methods.distanceToPos(pickups.SheriffGarderobPos2, playerPos) < distanceCheck)
             player.call('client:menuList:showSheriffGarderobMenu');
+        if (methods.distanceToPos(pickups.SheriffGarderobPos3, playerPos) < distanceCheck)
+            player.call('client:menuList:showSheriffGarderobMenu');
         if (methods.distanceToPos(pickups.SheriffArsenalPos, playerPos) < distanceCheck)
             player.call('client:menuList:showSheriffArsenalMenu');
         if (methods.distanceToPos(pickups.SheriffArsenalPos2, playerPos) < distanceCheck)
             player.call('client:menuList:showSheriffArsenalMenu');
+        if (methods.distanceToPos(pickups.SheriffArsenalPos3, playerPos) < distanceCheck)
+            player.call('client:menuList:showSheriffArsenalMenu');
+    }
+    if (user.isSheriff(player) || user.isFib(player) || user.isSapd(player)) {
+        if (methods.distanceToPos(pickups.PrisonArrestPos, playerPos) < distanceCheck)
+            player.call('client:menuList:showSapdArrestMenu');
         if (methods.distanceToPos(pickups.SapdClearPos, playerPos) < distanceCheck)
             player.call('client:menuList:showSapdClearMenu');
         if (methods.distanceToPos(pickups.SheriffClearPos, playerPos) < distanceCheck)
+            player.call('client:menuList:showSapdClearMenu');
+        if (methods.distanceToPos(pickups.SheriffClearPos2, playerPos) < distanceCheck)
             player.call('client:menuList:showSapdClearMenu');
         if (methods.distanceToPos(pickups.SheriffArrestPos, playerPos) < distanceCheck)
             player.call('client:menuList:showSapdArrestMenu');
         if (methods.distanceToPos(pickups.SheriffArrestPos2, playerPos) < distanceCheck)
             player.call('client:menuList:showSapdArrestMenu');
-    }
-    if (user.isSheriff(player) || user.isFib(player) || user.isSapd(player)) {
-        if (methods.distanceToPos(pickups.PrisonArrestPos, playerPos) < distanceCheck)
+        if (methods.distanceToPos(pickups.SheriffArrestPos3, playerPos) < distanceCheck)
             player.call('client:menuList:showSapdArrestMenu');
+        if (methods.distanceToPos(pickups.SapdClearPos, playerPos) < distanceCheck)
+            player.call('client:menuList:showSapdClearMenu');
+        if (methods.distanceToPos(pickups.SapdArrestPos, playerPos) < distanceCheck)
+            player.call('client:menuList:showSapdArrestMenu');
+        if (methods.distanceToPos(pickups.SapdArsenalPos, playerPos) < distanceCheck)
+            player.call('client:menuList:showSapdArsenalMenu');
     }
 
     try {
@@ -576,6 +609,12 @@ pickups.createAll = function() {
     methods.createCpVector(pickups.EmsGarderobPos1, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
     methods.createCpVector(pickups.EmsGarderobPos2, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
     methods.createCpVector(pickups.EmsGarderobPos3, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.EmsGarderobPos4, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.EmsGarderobPos5, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
+
+    methods.createCpVector(pickups.EmsFreePos1, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.EmsFreePos2, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.EmsFreePos3, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
 
     //methods.createStaticCheckpointV(pickups.TheLostPos1, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
     //methods.createStaticCheckpointV(pickups.TheLostPos2, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
@@ -664,16 +703,22 @@ pickups.createAll = function() {
     methods.createCpVector(pickups.SheriffKeyPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
     methods.createCpVector(pickups.InvaderKeyPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
     methods.createCpVector(pickups.SheriffClearPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.SheriffClearPos2, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
     methods.createCpVector(pickups.SheriffGarderobPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
     methods.createCpVector(pickups.SheriffGarderobPos2, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.SheriffGarderobPos3, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
     methods.createCpVector(pickups.SheriffArrestPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
     methods.createCpVector(pickups.SheriffArrestPos2, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.SheriffArrestPos3, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
     methods.createCpVector(pickups.SheriffArsenalPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
     methods.createCpVector(pickups.SheriffArsenalPos2, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.SheriffArsenalPos3, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
 
     methods.createCpVector(pickups.EmsArsenalPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
     methods.createCpVector(pickups.EmsArsenalPos2, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
     methods.createCpVector(pickups.EmsArsenalPos3, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.EmsArsenalPos4, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.EmsArsenalPos5, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
 
     methods.createCpVector(pickups.PrisonArrestPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
 

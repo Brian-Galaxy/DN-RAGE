@@ -13,8 +13,26 @@ let hosp = {};
 
 hosp.pos1 = new mp.Vector3(320.7169494628906, -584.0098876953125, 42.28400802612305);
 hosp.pos2 = new mp.Vector3(-259.3686218261719, 6327.6416015625, 31.420677185058594);
+hosp.pos3 = new mp.Vector3(1827.4207763671875, 3676.67138671875, 33.27007293701172);
+
+let hospList = [
+    hosp.pos1,
+    hosp.pos2,
+    hosp.pos3,
+];
 
 let prvTime = 0;
+
+hosp.findNearest = function(pos) {
+    methods.debug('shop.findNearest');
+    let prevPos = new mp.Vector3(9999, 9999, 9999);
+    hospList.forEach(function (item) {
+        let shopPos = item;
+        if (methods.distanceToPos(shopPos, pos) < methods.distanceToPos(prevPos, pos))
+            prevPos = shopPos;
+    });
+    return prevPos;
+};
 
 hosp.timer = function() {
 
@@ -42,6 +60,12 @@ hosp.timer = function() {
                     if (methods.distanceToPos(mp.players.local.position, hosp.pos2) > 30) {
                         mp.game.ui.notifications.show("~r~Вам необходимо проходить лечение");
                         user.teleportv(hosp.pos2);
+                    }
+                }
+                else if (user.getCache('med_type') == 2) {
+                    if (methods.distanceToPos(mp.players.local.position, hosp.pos3) > 20) {
+                        mp.game.ui.notifications.show("~r~Вам необходимо проходить лечение");
+                        user.teleportv(hosp.pos3);
                     }
                 }
                 else {
@@ -104,6 +128,9 @@ hosp.toHospCache = function() {
         if (user.getCache('med_type') == 1) {
             user.respawn(hosp.pos2.x, hosp.pos2.y, hosp.pos2.z);
         }
+        else if (user.getCache('med_type') == 2) {
+            user.respawn(hosp.pos3.x, hosp.pos3.y, hosp.pos3.z);
+        }
         else {
             user.set('med_type', 0);
             user.respawn(hosp.pos1.x, hosp.pos1.y, hosp.pos1.z);
@@ -120,9 +147,16 @@ hosp.toHosp = function() {
         timer.setDeathTimer(0);
 
         if (user.getCache('jail_time') == 0) {
-            if (methods.distanceToPos(mp.players.local.position, hosp.pos1) > methods.distanceToPos(mp.players.local.position, hosp.pos2)) {
+
+            let pos = hosp.findNearest(mp.players.local.position);
+
+            if (methods.distanceToPos(pos, hosp.pos2) < 50) {
                 user.set('med_type', 1);
                 user.respawn(hosp.pos2.x, hosp.pos2.y, hosp.pos2.z);
+            }
+            else if (methods.distanceToPos(pos, hosp.pos3) < 50) {
+                user.set('med_type', 2);
+                user.respawn(hosp.pos3.x, hosp.pos3.y, hosp.pos3.z);
             }
             else {
                 user.set('med_type', 0);

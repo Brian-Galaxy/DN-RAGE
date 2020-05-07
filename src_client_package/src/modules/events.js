@@ -1817,6 +1817,11 @@ mp.events.add('client:menuList:showEmsArsenalMenu', () => {
     menuList.showEmsArsenalMenu();
 });
 
+mp.events.add('client:menuList:showEmsFreeMenu', () => {
+    methods.debug('Event: client:menuList:showEmsFreeMenu');
+    menuList.showEmsFreeMenu();
+});
+
 mp.events.add('client:menuList:showSheriffGarderobMenu', () => {
     methods.debug('Event: client:menuList:showSheriffGarderobMenu');
     menuList.showSheriffGarderobMenu();
@@ -2096,7 +2101,19 @@ mp.events.add('client:inventory:unloadW', function(itemId) {
     if (user.getAmmoByHash(wpHash) === 0)
         return;
 
-    inventory.addItemSql(ammoId, 1, inventory.types.Player, user.getCache('id'), user.getAmmoByHash(wpHash));
+    let count = user.getAmmoByHash(wpHash);
+    if (count > items.getAmmoCount(ammoId))
+    {
+        try {
+            methods.saveLog('log_anticheat',
+                ['name', 'do'],
+                [`${user.getCache('name')} (${user.getCache('id')})`, `AMMO MAX_COUNT: ${count} | ${items.getAmmoCount(ammoId)} | ${items.getItemNameById(ammoId)}`],
+            );
+        }
+        catch (e) {}
+    }
+
+    inventory.addItemSql(ammoId, 1, inventory.types.Player, user.getCache('id'), count);
 
     user.setAmmo(wpName, 0);
     user.set('weapon_' + slot + '_ammo', -1);
@@ -2153,67 +2170,7 @@ mp.events.add('client:inventory:loadWeapon', function(id, itemId, loadItemId, co
 });
 
 mp.events.add('client:inventory:upgradeWeapon', function(id, itemId, weaponStr) {
-
-    let weapon = JSON.parse(weaponStr);
-
-    let wpName = items.getItemNameHashById(weapon.item_id);
-    let wpHash = weapons.getHashByName(wpName);
-
-    let wpModifer = items.getItemNameHashById(itemId);
-    let hashModifer = items.getItemHashModiferById(itemId);
-
-    if (wpModifer != wpName) {
-        mp.game.ui.notifications.show(`~r~Данная модификация не подходит к этому оружию`);
-        return;
-    }
-
-    let wpSlot = weapons.getUpgradeSlot(wpName, hashModifer);
-
-    if (wpSlot == 1) {
-        if (weapon.params.slot1) {
-            mp.game.ui.notifications.show(`~r~Слот уже занят`);
-            return;
-        }
-        weapon.params.slot1 = true;
-        weapon.params.slot1hash = hashModifer;
-    }
-    if (wpSlot == 2) {
-        if (weapon.params.slot2) {
-            mp.game.ui.notifications.show(`~r~Слот уже занят`);
-            return;
-        }
-        weapon.params.slot2 = true;
-        weapon.params.slot2hash = hashModifer;
-    }
-    if (wpSlot == 3) {
-        if (weapon.params.slot3) {
-            mp.game.ui.notifications.show(`~r~Слот уже занят`);
-            return;
-        }
-        weapon.params.slot3 = true;
-        weapon.params.slot3hash = hashModifer;
-    }
-    if (wpSlot == 4) {
-        if (weapon.params.slot4) {
-            mp.game.ui.notifications.show(`~r~Слот уже занят`);
-            return;
-        }
-        weapon.params.slot4 = true;
-        weapon.params.slot4hash = hashModifer;
-    }
-
-    if (wpSlot == -1) {
-        mp.game.ui.notifications.show(`~r~Произошла неизвестная ошибка #weapon`);
-        return;
-    }
-
-    user.giveWeaponComponentByHash(wpHash, hashModifer);
-
-    inventory.updateItemParams(weapon.id, JSON.stringify(weapon.params));
-    inventory.deleteItem(id);
-
-    ui.callCef('inventory', JSON.stringify({ type: 'removeItemId', itemId: id }));
-    ui.callCef('inventory', JSON.stringify({ type: 'updateWeaponParams', itemId: weapon.id, params: weapon.params }));
+    mp.events.callRemote('server:inventory:upgradeWeapon', id, itemId, weaponStr);
 });
 
 mp.events.add('client:inventory:unEquipWeaponUpgrade', function(id, itemId, paramsJson, wpSlot) {
@@ -3045,12 +3002,12 @@ mp.events.add('client:ui:saveHudDefault', (id) => {
 mp.events.add("playerEnterCheckpoint", (checkpoint) => {
     try {
         if (user.hasCache('isSellCar')) {
-            mp.events.callRemote('server:sellVeh')
+            mp.events.callRemote('server:sellVeh');
             user.reset('isSellCar');
             jobPoint.delete();
         }
         if (user.hasCache('isSellUser')) {
-            mp.events.callRemote('server:sellUser')
+            mp.events.callRemote('server:sellUser');
             user.reset('isSellUser');
             jobPoint.delete();
         }

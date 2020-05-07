@@ -512,6 +512,10 @@ mp.events.addRemoteCounted('server:user:updateCharacterFace', (player) => {
     user.updateCharacterFace(player);
 });
 
+mp.events.addRemoteCounted('server:user:updateTattoo', (player) => {
+    user.updateTattoo(player);
+});
+
 mp.events.addRemoteCounted('server:user:setComponentVariation', (player, component, drawableId, textureId) => {
     user.setComponentVariation(player, component, drawableId, textureId);
 });
@@ -522,6 +526,10 @@ mp.events.addRemoteCounted('server:user:setProp', (player, slot, type, color) =>
 
 mp.events.addRemoteCounted('server:user:clearAllProp', (player) => {
     user.clearAllProp(player);
+});
+
+mp.events.addRemoteCounted('server:user:giveUniform', (player, id) => {
+    user.giveUniform(player, id);
 });
 
 mp.events.addRemoteCounted('server:user:kick', (player, reason) => {
@@ -680,14 +688,6 @@ mp.events.addRemoteCounted('server:players:notifyToFraction', (player, message, 
 
 mp.events.addRemoteCounted('server:players:notifyToAll', (player, message) => {
     methods.notifyToAll(message);
-});
-
-mp.events.addRemoteCounted('server:user:setComponentVariation', (player, component, drawableId, textureId) => {
-    user.setComponentVariation(player, component, drawableId, textureId);
-});
-
-mp.events.addRemoteCounted('server:user:updateTattoo', (player) => {
-    user.updateTattoo(player);
 });
 
 mp.events.addRemoteCounted('server:business:cloth:change', (player, body, clothId, color, torso, torsoColor, parachute, parachuteColor) => {
@@ -1384,8 +1384,8 @@ mp.events.addRemoteCounted('server:user:getInvById', (player, targetId) => {
             player.notify('~r~Вы слишком далеко');
             return;
         }
-        if (pl.health == 0) {
-            player.notify("~r~Нельзя обыскивать человека в коме");
+        if (user.isPolice(pl) && !user.isPolice(player)) {
+            player.notify("~r~Нельзя обыскивать сотрудников полиции");
             return;
         }
         inventory.getItemList(player, inventory.types.Player, user.getId(pl), true);
@@ -1726,10 +1726,10 @@ mp.events.addRemoteCounted('server:sendReport', (player, message) => {
         if (!user.isLogin(p))
             return;
         if (user.isAdmin(p)) {
-            /*if (user.getVipStatus(player) == 'YouTube')
+            if (user.get(player, 'status_media') > 0)
                 p.outputChatBoxNew(`!{#3F51B5}[MEDIA] Жалоба от ${user.getRpName(player)} (${player.id}):!{#FFFFFF} ${message}`);
-            else*/
-            p.outputChatBoxNew(`!{#f44336}Жалоба от ${user.getRpName(player)} (${player.id}):!{#FFFFFF} ${message}`);
+            else
+                p.outputChatBoxNew(`!{#f44336}Жалоба от ${user.getRpName(player)} (${player.id}):!{#FFFFFF} ${message}`);
         }
     });
 });
@@ -1890,6 +1890,14 @@ mp.events.addRemoteCounted('server:admin:kick', (player, type, id, reason) => {
 
 mp.events.addRemoteCounted('server:admin:unban', (player, type, id, reason) => {
     admin.unban(player, type, id, reason);
+});
+
+mp.events.addRemoteCounted('server:admin:warn', (player, type, id, reason) => {
+    admin.warn(player, type, id, reason);
+});
+
+mp.events.addRemoteCounted('server:admin:unwarn', (player, type, id, reason) => {
+    admin.unwarn(player, type, id, reason);
 });
 
 mp.events.addRemoteCounted('server:admin:ban', (player, type, id, idx, reason) => {
@@ -2340,28 +2348,7 @@ mp.events.addRemoteCounted('server:changeWaypointPos', (player, x, y) => {
 });
 
 mp.events.addRemoteCounted('server:uniform:gr6', (player) => {
-    if (user.getSex(player) == 1) {
-        user.setComponentVariation(player, 3, 14, 0);
-        user.setComponentVariation(player, 4, 34, 0);
-        user.setComponentVariation(player, 5, 0, 0);
-        user.setComponentVariation(player, 6, 25, 0);
-        user.setComponentVariation(player, 7, 0, 0);
-        user.setComponentVariation(player, 8, 152, 0);
-        user.setComponentVariation(player, 9, 6, 1);
-        user.setComponentVariation(player, 10, 0, 0);
-        user.setComponentVariation(player, 11, 85, 0);
-    }
-    else {
-        user.setComponentVariation(player, 3, 11, 0);
-        user.setComponentVariation(player, 4, 13, 0);
-        user.setComponentVariation(player, 5, 0, 0);
-        user.setComponentVariation(player, 6, 25, 0);
-        user.setComponentVariation(player, 7, 0, 0);
-        user.setComponentVariation(player, 8, 122, 0);
-        user.setComponentVariation(player, 9, 7, 1);
-        user.setComponentVariation(player, 10, 71, 0);
-        user.setComponentVariation(player, 11, 318, 1);
-    }
+    user.giveUniform(player, 99);
 });
 
 mp.events.addRemoteCounted('server:gr6:findPickup', (player, x, y, z) => {
@@ -3136,6 +3123,11 @@ mp.events.addRemoteCounted('server:inventory:equip', (player, id, itemId, count,
     inventory.equip(player, id, itemId, count, aparams);
 });
 
+mp.events.addRemoteCounted('server:inventory:upgradeWeapon', (player, id, itemId, weaponStr) => {
+    if (!user.isLogin(player))
+        return;
+    inventory.upgradeWeapon(player, id, itemId, weaponStr);
+});
 
 mp.events.addRemoteCounted('server:inventory:unEquip', (player, id, itemId) => {
     if (!user.isLogin(player))
@@ -3753,6 +3745,16 @@ mp.events.addRemoteCounted('server:houses:sellToPlayer:accept', (player, houseId
         seller.notify('~b~Вы продали дом за ~s~' + methods.moneyFormat(sum));
         player.notify('~b~Вы купили дом за ~s~' + methods.moneyFormat(sum));
 
+        if (methods.parseInt(sum) < 1000) {
+            try {
+                methods.saveLog('log_warning',
+                    ['name', 'do'],
+                    [`${user.getRpName(player)} (${user.getId(player)})`, `BUY HOUSE: ${hId} | PRICE: $${sum} | SELLER: ${user.getRpName(seller)} (${user.getId(seller)})`],
+                );
+            }
+            catch (e) {}
+        }
+
         user.save(player);
         user.save(seller);
 
@@ -3824,6 +3826,16 @@ mp.events.addRemoteCounted('server:condo:sellToPlayer:accept', (player, houseId,
 
         seller.notify('~b~Вы продали квартиру за ~s~' + methods.moneyFormat(sum));
         player.notify('~b~Вы купили квартиру за ~s~' + methods.moneyFormat(sum));
+
+        if (methods.parseInt(sum) < 1000) {
+            try {
+                methods.saveLog('log_warning',
+                    ['name', 'do'],
+                    [`${user.getRpName(player)} (${user.getId(player)})`, `BUY CONDO: ${hId} | PRICE: $${sum} | SELLER: ${user.getRpName(seller)} (${user.getId(seller)})`],
+                );
+            }
+            catch (e) {}
+        }
 
         user.save(player);
         user.save(seller);
@@ -3921,6 +3933,16 @@ mp.events.addRemoteCounted('server:business:sellToPlayer:accept', (player, house
 
         seller.notify('~b~Вы продали бизнес за ~s~' + methods.moneyFormat(sum));
         player.notify('~b~Вы купили бизнес за ~s~' + methods.moneyFormat(sum));
+
+        if (methods.parseInt(sum) < 1000) {
+            try {
+                methods.saveLog('log_warning',
+                    ['name', 'do'],
+                    [`${user.getRpName(player)} (${user.getId(player)})`, `BUY BUSINESS: ${hId} | PRICE: $${sum} | SELLER: ${user.getRpName(seller)} (${user.getId(seller)})`],
+                );
+            }
+            catch (e) {}
+        }
 
         user.save(player);
         user.save(seller);
@@ -4062,6 +4084,16 @@ mp.events.addRemoteCounted('server:stock:sellToPlayer:accept', (player, houseId,
 
         seller.notify('~b~Вы продали склад за ~s~' + methods.moneyFormat(sum));
         player.notify('~b~Вы купили склад за ~s~' + methods.moneyFormat(sum));
+
+        if (methods.parseInt(sum) < 1000) {
+            try {
+                methods.saveLog('log_warning',
+                    ['name', 'do'],
+                    [`${user.getRpName(player)} (${user.getId(player)})`, `BUY STOCK: ${hId} | PRICE: $${sum} | SELLER: ${user.getRpName(seller)} (${user.getId(seller)})`],
+                );
+            }
+            catch (e) {}
+        }
 
         user.save(player);
         user.save(seller);
@@ -4206,6 +4238,16 @@ mp.events.addRemoteCounted('server:car:sellToPlayer:accept', (player, houseId, s
 
         seller.notify('~b~Вы продали ТС за ~s~' + methods.moneyFormat(sum));
         player.notify('~b~Вы купили ТС за ~s~' + methods.moneyFormat(sum));
+
+        if (methods.parseInt(sum) < 1000) {
+            try {
+                methods.saveLog('log_warning',
+                    ['name', 'do'],
+                    [`${user.getRpName(player)} (${user.getId(player)})`, `BUY CAR: ${hId} | PRICE: $${sum} | SELLER: ${user.getRpName(seller)} (${user.getId(seller)})`],
+                );
+            }
+            catch (e) {}
+        }
 
         user.save(player);
         user.save(seller);
@@ -4672,6 +4714,10 @@ mp.events.addRemoteCounted('server:user:arrest', (player, id) => {
                 player.notify('~r~У игрока нет розыска');
                 return;
             }
+            if (user.get(p, 'jail_time') > 0) {
+                player.notify('~r~Игрок уже в тюрьме');
+                return;
+            }
             coffer.addMoney(coffer.getIdByFraction(user.get(player, 'fraction_id'), 1500));
             user.addMoney(player, 1500, 'Премия');
             player.notify('~g~Вы произвели арест. Премия: ~s~$1,500');
@@ -4684,6 +4730,37 @@ mp.events.addRemoteCounted('server:user:arrest', (player, id) => {
             );
 
             user.arrest(p);
+        }
+        else
+            player.notify('~r~Игрок не найден');
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.addRemoteCounted('server:med:free', (player, id) => {
+    if (!user.isLogin(player))
+        return;
+    try {
+        let p = mp.players.at(id);
+        if (user.isLogin(p)) {
+
+            if (methods.distanceToPos(p.position, player.position) > 10) {
+                player.notify('~r~Вы слишком далеко друг от друга');
+                return;
+            }
+
+            if (!user.isLogin(p) || user.get(p, 'med_time') <= 0) {
+                player.notify('~r~У игрок не проходит лечение');
+                return;
+            }
+
+            coffer.addMoney(coffer.getIdByFraction(user.get(player, 'fraction_id'), 500));
+            user.addMoney(player, 100, 'Премия');
+            player.notify('~g~Вы выписали игрока. Премия: ~s~$100');
+
+            p.call('client:hosp:free');
         }
         else
             player.notify('~r~Игрок не найден');
@@ -5113,6 +5190,9 @@ mp.events.addRemoteCounted('server:sellVeh', (player) => {
 
     user.showLoadDisplay(player);
 
+    if (user.get(player, 'fraction_id2') > 0)
+        fraction.addMoney(user.get(player, 'fraction_id2'), money / 5000, `Угон транспорта (${user.get(player, 'name')})`);
+
     user.addCryptoMoney(player, money / 1000);
     user.removeRep(player, 50);
     user.setById(user.getId(player), 'grabVeh', true);
@@ -5507,499 +5587,7 @@ mp.events.addRemoteCounted('server:shop:buy', (player, itemId, price, shopId) =>
 
 mp.events.addRemoteCounted('server:uniform:sapd', (player, idx) => {
     try {
-        switch (idx)
-        {
-            case 0:
-
-                user.reset(player, "hasMask");
-
-                user.setComponentVariation(player, 1, 0, 0);
-                user.setComponentVariation(player, 7, 0, 0);
-                user.setComponentVariation(player, 9, 0, 0);
-                user.setComponentVariation(player, 10, 0, 0);
-                user.clearAllProp(player);
-
-                user.updateCharacterCloth(player);
-                user.updateCharacterFace(player);
-                break;
-            case 1:
-                user.clearAllProp(player);
-
-                if (user.getSex(player) == 1) {
-                    user.setComponentVariation(player, 3, 0, 0);
-                    user.setComponentVariation(player, 4, 37, 0);
-                    user.setComponentVariation(player, 5, 0, 0);
-                    user.setComponentVariation(player, 6, 29, 0);
-                    user.setComponentVariation(player, 7, 0, 0);
-                    user.setComponentVariation(player, 8, 35, 0);
-                    user.setComponentVariation(player, 9, 0, 0);
-                    user.setComponentVariation(player, 10, 0, 0);
-                    user.setComponentVariation(player, 11, 86, 0);
-                }
-                else {
-                    user.setComponentVariation(player, 0, 1, 0);
-                    user.setComponentVariation(player, 1, 0, 0);
-                    user.setComponentVariation(player, 3, 11, 0);
-                    user.setComponentVariation(player, 4, 35, 0);
-                    user.setComponentVariation(player, 5, 0, 0);
-                    user.setComponentVariation(player, 6, 54, 0);
-                    user.setComponentVariation(player, 7, 38, 0);
-                    user.setComponentVariation(player, 8, 58, 0);
-                    user.setComponentVariation(player, 9, 0, 0);
-                    user.setComponentVariation(player, 10, 0, 0);
-                    user.setComponentVariation(player, 11, 13, 3);
-                }
-                break;
-            case 2:
-                user.clearAllProp(player);
-
-                if (user.getSex(player) == 1) {
-                    user.setComponentVariation(player, 0, 1, 0);
-                    user.setComponentVariation(player, 1, 0, 0);
-                    user.setComponentVariation(player, 3, 14, 0);
-                    user.setComponentVariation(player, 4, 34, 0);
-                    user.setComponentVariation(player, 5, 0, 0);
-                    user.setComponentVariation(player, 6, 52, 0);
-                    user.setComponentVariation(player, 7, 0, 0);
-                    user.setComponentVariation(player, 8, 35, 0);
-                    user.setComponentVariation(player, 10, 0, 0);
-                    user.setComponentVariation(player, 11, 48, 0);
-
-                    if (user.get(player, 'rank') == 3)
-                        user.setComponentVariation(player, 10, 7, 1);
-                    else if (user.get(player, 'rank') == 4)
-                        user.setComponentVariation(player, 10, 7, 2);
-                    else if (user.get(player, 'rank') > 4)
-                        user.setComponentVariation(player, 10, 7, 3);
-                }
-                else {
-                    user.setComponentVariation(player, 0, 1, 0);
-                    user.setComponentVariation(player, 1, 0, 0);
-                    user.setComponentVariation(player, 3, 0, 0);
-                    user.setComponentVariation(player, 4, 35, 0);
-                    user.setComponentVariation(player, 5, 0, 0);
-                    user.setComponentVariation(player, 6, 54, 0);
-                    user.setComponentVariation(player, 7, 0, 0);
-                    user.setComponentVariation(player, 8, 58, 0);
-                    user.setComponentVariation(player, 10, 0, 0);
-                    user.setComponentVariation(player, 11, 55, 0);
-
-                    if (user.get(player, 'rank') == 3)
-                        user.setComponentVariation(player, 10, 8, 1);
-                    else if (user.get(player, 'rank') == 4)
-                        user.setComponentVariation(player, 10, 8, 2);
-                    else if (user.get(player, 'rank') > 4)
-                        user.setComponentVariation(player, 10, 8, 3);
-                }
-
-                user.setComponentVariation(player, 9, 0, 0);
-                break;
-            case 3:
-                user.clearAllProp(player);
-
-                if (user.getSex(player) == 1) {
-                    user.setComponentVariation(player, 0, 1, 0);
-                    user.setComponentVariation(player, 1, 0, 0);
-                    user.setComponentVariation(player, 3, 14, 0);
-                    user.setComponentVariation(player, 4, 34, 0);
-                    user.setComponentVariation(player, 5, 0, 0);
-                    user.setComponentVariation(player, 6, 52, 0);
-                    user.setComponentVariation(player, 7, 0, 0);
-                    user.setComponentVariation(player, 8, 35, 0);
-                    user.setComponentVariation(player, 9, 6, 1);
-                    user.setComponentVariation(player, 10, 70, 1);
-                    user.setComponentVariation(player, 11, 48, 0);
-                }
-                else {
-                    user.setComponentVariation(player, 0, 1, 0);
-                    user.setComponentVariation(player, 1, 0, 0);
-                    user.setComponentVariation(player, 3, 0, 0);
-                    user.setComponentVariation(player, 4, 35, 0);
-                    user.setComponentVariation(player, 5, 0, 0);
-                    user.setComponentVariation(player, 6, 54, 0);
-                    user.setComponentVariation(player, 7, 0, 0);
-                    user.setComponentVariation(player, 8, 58, 0);
-                    user.setComponentVariation(player, 9, 4, 1);
-                    user.setComponentVariation(player, 10, 70, 1);
-                    user.setComponentVariation(player, 11, 55, 0);
-                }
-                break;
-            case 4:
-
-                try {
-                    player.setHeadBlend(
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0
-                    );
-                }
-                catch (e) {
-                    console.log(e);
-                }
-                user.set(player, "hasMask", true);
-
-                if (user.getSex(player) == 1) {
-                    user.setComponentVariation(player, 1, 56, 1);
-                    user.setComponentVariation(player, 3, 18, 0);
-                    user.setComponentVariation(player, 4, 32, 0);
-                    user.setComponentVariation(player, 5, 0, 0);
-                    user.setComponentVariation(player, 6, 25, 0);
-                    user.setComponentVariation(player, 7, 0, 0);
-                    user.setComponentVariation(player, 8, 152, 0);
-                    user.setComponentVariation(player, 9, 6, 1);
-                    user.setComponentVariation(player, 10, 70, 1);
-                    user.setComponentVariation(player, 11, 46, 0);
-
-                    user.setProp(player, 0, 116, 0);
-                }
-                else {
-                    user.setComponentVariation(player, 1, 52, 0);
-                    user.setComponentVariation(player, 3, 17, 0);
-                    user.setComponentVariation(player, 4, 33, 0);
-                    user.setComponentVariation(player, 5, 0, 0);
-                    user.setComponentVariation(player, 6, 25, 0);
-                    user.setComponentVariation(player, 7, 0, 0);
-                    user.setComponentVariation(player, 8, 122, 0);
-                    user.setComponentVariation(player, 9, 1, 1);
-                    user.setComponentVariation(player, 10, 70, 1);
-                    user.setComponentVariation(player, 11, 53, 0);
-
-                    user.setProp(player, 0, 117, 0);
-                }
-                break;
-            case 5:
-
-                try {
-                    player.setHeadBlend(
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0
-                    );
-                }
-                catch (e) {
-                    console.log(e);
-                }
-                user.set(player, "hasMask", true);
-
-                if (user.getSex(player) == 1) {
-                    user.setComponentVariation(player, 1, 56, 1);
-                    user.setComponentVariation(player, 3, 18, 0);
-                    user.setComponentVariation(player, 4, 32, 0);
-                    user.setComponentVariation(player, 5, 0, 0);
-                    user.setComponentVariation(player, 6, 25, 0);
-                    user.setComponentVariation(player, 7, 0, 0);
-                    user.setComponentVariation(player, 8, 152, 0);
-                    user.setComponentVariation(player, 9, 6, 1);
-                    user.setComponentVariation(player, 10, 70, 1);
-                    user.setComponentVariation(player, 11, 46, 0);
-
-                    user.setProp(player, 0, 116, 24);
-                }
-                else {
-                    user.setComponentVariation(player, 1, 52, 0);
-                    user.setComponentVariation(player, 3, 17, 0);
-                    user.setComponentVariation(player, 4, 33, 0);
-                    user.setComponentVariation(player, 5, 0, 0);
-                    user.setComponentVariation(player, 6, 25, 0);
-                    user.setComponentVariation(player, 7, 0, 0);
-                    user.setComponentVariation(player, 8, 122, 0);
-                    user.setComponentVariation(player, 9, 1, 1);
-                    user.setComponentVariation(player, 10, 70, 1);
-                    user.setComponentVariation(player, 11, 53, 0);
-
-                    user.setProp(player, 0, 117, 24);
-                }
-                break;
-            case 6:
-
-                try {
-                    player.setHeadBlend(
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0
-                    );
-                }
-                catch (e) {
-                    console.log(e);
-                }
-                user.set(player, "hasMask", true);
-
-                if (user.getSex(player) == 1) {
-                    user.setComponentVariation(player, 1, 56, 1);
-                    user.setComponentVariation(player, 3, 18, 0);
-                    user.setComponentVariation(player, 4, 32, 0);
-                    user.setComponentVariation(player, 5, 0, 0);
-                    user.setComponentVariation(player, 6, 25, 0);
-                    user.setComponentVariation(player, 7, 0, 0);
-                    user.setComponentVariation(player, 8, 152, 0);
-                    user.setComponentVariation(player, 9, 0, 0);
-                    user.setComponentVariation(player, 10, 79, 1);
-                    user.setComponentVariation(player, 11, 331, 0);
-
-                    user.setProp(player, 0, 140, 0);
-                }
-                else {
-                    user.setComponentVariation(player, 1, 52, 0);
-                    user.setComponentVariation(player, 3, 17, 0);
-                    user.setComponentVariation(player, 4, 33, 0);
-                    user.setComponentVariation(player, 5, 0, 0);
-                    user.setComponentVariation(player, 6, 25, 0);
-                    user.setComponentVariation(player, 7, 0, 0);
-                    user.setComponentVariation(player, 8, 122, 0);
-                    user.setComponentVariation(player, 9, 1, 1);
-                    user.setComponentVariation(player, 10, 70, 1);
-                    user.setComponentVariation(player, 11, 320, 0);
-
-                    user.setProp(player, 0, 141, 0);
-                }
-                break;
-            case 7:
-
-                try {
-                    player.setHeadBlend(
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0
-                    );
-                }
-                catch (e) {
-                    console.log(e);
-                }
-                user.set(player, "hasMask", true);
-
-                if (user.getSex(player) == 1) {
-                    user.setComponentVariation(player, 1, 56, 1);
-                    user.setComponentVariation(player, 3, 18, 0);
-                    user.setComponentVariation(player, 4, 32, 0);
-                    user.setComponentVariation(player, 5, 0, 0);
-                    user.setComponentVariation(player, 6, 25, 0);
-                    user.setComponentVariation(player, 7, 0, 0);
-                    user.setComponentVariation(player, 8, 152, 0);
-                    user.setComponentVariation(player, 9, 0, 0);
-                    user.setComponentVariation(player, 10, 79, 1);
-                    user.setComponentVariation(player, 11, 331, 0);
-
-                    user.setProp(player, 0, 116, 0);
-                }
-                else {
-                    user.setComponentVariation(player, 1, 52, 0);
-                    user.setComponentVariation(player, 3, 17, 0);
-                    user.setComponentVariation(player, 4, 33, 0);
-                    user.setComponentVariation(player, 5, 0, 0);
-                    user.setComponentVariation(player, 6, 25, 0);
-                    user.setComponentVariation(player, 7, 0, 0);
-                    user.setComponentVariation(player, 8, 122, 0);
-                    user.setComponentVariation(player, 9, 1, 1);
-                    user.setComponentVariation(player, 10, 70, 1);
-                    user.setComponentVariation(player, 11, 320, 0);
-
-                    user.setProp(player, 0, 117, 0);
-                }
-                break;
-            case 8:
-
-                user.reset(player, "hasMask");
-
-                user.updateCharacterCloth(player);
-                user.updateCharacterFace(player);
-
-                if (user.getSex(player) == 1) {
-                    user.setComponentVariation(player, 1, 0, 0);
-                    user.setComponentVariation(player, 3, 18, 0);
-                    user.setComponentVariation(player, 4, 30, 0);
-                    user.setComponentVariation(player, 5, 0, 0);
-                    user.setComponentVariation(player, 6, 25, 0);
-                    user.setComponentVariation(player, 7, 0, 0);
-                    user.setComponentVariation(player, 8, 152, 0);
-                    user.setComponentVariation(player, 9, 6, 1);
-                    user.setComponentVariation(player, 10, 70, 1);
-                    user.setComponentVariation(player, 11, 103, 4);
-
-                    user.setProp(player, 0, 58, 2);
-                }
-                else {
-                    user.setComponentVariation(player, 1, 0, 0);
-                    user.setComponentVariation(player, 3, 17, 0);
-                    user.setComponentVariation(player, 4, 31, 0);
-                    user.setComponentVariation(player, 5, 0, 0);
-                    user.setComponentVariation(player, 6, 25, 0);
-                    user.setComponentVariation(player, 7, 0, 0);
-                    user.setComponentVariation(player, 8, 122, 0);
-                    user.setComponentVariation(player, 9, 1, 1);
-                    user.setComponentVariation(player, 10, 70, 1);
-                    user.setComponentVariation(player, 11, 111, 4);
-
-                    user.setProp(player, 0, 58, 2);
-                }
-                break;
-            case 9:
-                user.reset(player, "hasMask");
-
-                user.setComponentVariation(player, 1, 0, 0);
-                user.setComponentVariation(player, 7, 0, 0);
-                user.setComponentVariation(player, 9, 0, 0);
-
-                user.updateCharacterCloth(player);
-                user.updateCharacterFace(player);
-
-                if (user.getSex(player) == 1) {
-                    user.setComponentVariation(player, 1, 121, 0);
-                    user.setComponentVariation(player, 3, 0, 0);
-                    user.setComponentVariation(player, 4, 6, 0);
-                    user.setComponentVariation(player, 5, 0, 0);
-                    user.setComponentVariation(player, 6, 29, 0);
-                    user.setComponentVariation(player, 7, 0, 0);
-                    user.setComponentVariation(player, 8, 160, 0);
-                    user.setComponentVariation(player, 9, 6, 1);
-                    user.setComponentVariation(player, 10, 70, 1);
-                    user.setComponentVariation(player, 11, 27, 5);
-
-                    user.setProp(player, 0, 120, 0);
-                }
-                else {
-                    user.setComponentVariation(player, 1, 121, 0);
-                    user.setComponentVariation(player, 3, 11, 0);
-                    user.setComponentVariation(player, 4, 10, 0);
-                    user.setComponentVariation(player, 5, 0, 0);
-                    user.setComponentVariation(player, 6, 40, 9);
-                    user.setComponentVariation(player, 7, 0, 0);
-                    user.setComponentVariation(player, 8, 130, 0);
-                    user.setComponentVariation(player, 9, 1, 1);
-                    user.setComponentVariation(player, 10, 70, 1);
-                    user.setComponentVariation(player, 11, 95, 0);
-
-                    user.setProp(player, 0, 121, 0);
-                }
-                break;
-            case 10:
-                user.reset(player, "hasMask");
-
-                user.setComponentVariation(player, 1, 0, 0);
-                user.setComponentVariation(player, 7, 0, 0);
-                user.setComponentVariation(player, 9, 0, 0);
-
-                user.updateCharacterCloth(player);
-                user.updateCharacterFace(player);
-
-                if (user.getSex(player) == 1) {
-                    user.setComponentVariation(player, 1, 121, 0);
-                    user.setComponentVariation(player, 3, 0, 0);
-                    user.setComponentVariation(player, 4, 6, 0);
-                    user.setComponentVariation(player, 5, 0, 0);
-                    user.setComponentVariation(player, 6, 29, 0);
-                    user.setComponentVariation(player, 7, 0, 0);
-                    user.setComponentVariation(player, 8, 160, 0);
-                    user.setComponentVariation(player, 9, 0, 0);
-                    user.setComponentVariation(player, 10, 0, 0);
-                    user.setComponentVariation(player, 11, 27, 5);
-
-                    user.setProp(player, 0, 120, 0);
-                }
-                else {
-                    user.setComponentVariation(player, 1, 121, 0);
-                    user.setComponentVariation(player, 3, 11, 0);
-                    user.setComponentVariation(player, 4, 10, 0);
-                    user.setComponentVariation(player, 5, 0, 0);
-                    user.setComponentVariation(player, 6, 40, 9);
-                    user.setComponentVariation(player, 7, 0, 0);
-                    user.setComponentVariation(player, 8, 130, 0);
-                    user.setComponentVariation(player, 9, 0, 0);
-                    user.setComponentVariation(player, 10, 0, 0);
-                    user.setComponentVariation(player, 11, 95, 0);
-
-                    user.setProp(player, 0, 121, 0);
-                }
-                break;
-            case 11:
-
-                user.reset(player, "hasMask");
-                user.updateCharacterFace(player);
-
-                user.setProp(player, 0, 19, 0);
-
-                if (user.getSex(player) == 1) {
-                    user.setComponentVariation(player, 0, 1, 0);
-                    user.setComponentVariation(player, 1, 0, 0);
-                    user.setComponentVariation(player, 3, 19, 0);
-                    user.setComponentVariation(player, 4, 38, 2);
-                    user.setComponentVariation(player, 5, 57, 9);
-                    user.setComponentVariation(player, 6, 52, 0);
-                    user.setComponentVariation(player, 7, 0, 0);
-                    user.setComponentVariation(player, 8, 35, 0);
-                    user.setComponentVariation(player, 9, 0, 0);
-                    user.setComponentVariation(player, 10, 0, 0);
-                    user.setComponentVariation(player, 11, 59, 2);
-                }
-                else {
-                    user.setComponentVariation(player, 0, 1, 0);
-                    user.setComponentVariation(player, 1, 0, 0);
-                    user.setComponentVariation(player, 3, 18, 4);
-                    user.setComponentVariation(player, 4, 9, 0);
-                    user.setComponentVariation(player, 5, 0, 0);
-                    user.setComponentVariation(player, 6, 24, 0);
-                    user.setComponentVariation(player, 7, 0, 0);
-                    user.setComponentVariation(player, 8, 57, 0);
-                    user.setComponentVariation(player, 9, 0, 0);
-                    user.setComponentVariation(player, 10, 0, 0);
-                    user.setComponentVariation(player, 11, 48, 0);
-                }
-                break;
-            case 12:
-                user.clearAllProp(player);
-
-                if (user.getSex(player) == 1) {
-                    user.setComponentVariation(player, 0, 0, 0);
-                    user.setComponentVariation(player, 1, 0, 0);
-                    user.setComponentVariation(player, 3, 5, 0);
-                    user.setComponentVariation(player, 4, 6, 2);
-                    user.setComponentVariation(player, 5, 0, 0);
-                    user.setComponentVariation(player, 6, 29, 0);
-                    user.setComponentVariation(player, 7, 86, 0);
-                    user.setComponentVariation(player, 8, 38, 0);
-                    user.setComponentVariation(player, 9, 0, 0);
-                    user.setComponentVariation(player, 10, 0, 0);
-                    user.setComponentVariation(player, 11, 6, 2);
-                }
-                else {
-                    user.setComponentVariation(player, 0, 0, 0);
-                    user.setComponentVariation(player, 1, 0, 0);
-                    user.setComponentVariation(player, 3, 4, 0);
-                    user.setComponentVariation(player, 4, 10, 2);
-                    user.setComponentVariation(player, 5, 0, 0);
-                    user.setComponentVariation(player, 6, 10, 0);
-                    user.setComponentVariation(player, 7, 115, 0);
-                    user.setComponentVariation(player, 8, 10, 0);
-                    user.setComponentVariation(player, 9, 0, 0);
-                    user.setComponentVariation(player, 10, 0, 0);
-                    user.setComponentVariation(player, 11, 28, 2);
-                }
-                break;
-        }
-        user.updateTattoo(player);
+        user.giveUniform(player, idx);
     }
     catch (e) {
         methods.debug(e);
@@ -6008,389 +5596,10 @@ mp.events.addRemoteCounted('server:uniform:sapd', (player, idx) => {
 
 mp.events.addRemoteCounted('server:uniform:sheriff', (player, idx) => {
     try {
-        switch (idx) {
-            case 0:
-
-                user.reset(player, "hasMask");
-
-                user.setComponentVariation(player, 1, 0, 0);
-                user.setComponentVariation(player, 7, 0, 0);
-                user.setComponentVariation(player, 9, 0, 0);
-                user.setComponentVariation(player, 10, 0, 0);
-                user.clearAllProp(player);
-
-                user.updateCharacterCloth(player);
-                user.updateCharacterFace(player);
-                break;
-            case 1: //CADET
-
-                user.reset(player, "hasMask");
-
-                user.clearAllProp(player);
-                user.updateCharacterCloth(player);
-                user.updateCharacterFace(player);
-
-                if (user.getSex(player) == 1)
-                {
-                    user.setComponentVariation(player, 8, 35, 0);
-                    user.setComponentVariation(player, 3, 0, 0);
-                    user.setComponentVariation(player, 11, 27, 1);
-                    user.setComponentVariation(player, 4, 64, 2);
-                    user.setComponentVariation(player, 6, 55, 0);
-                }
-                else
-                {
-                    user.setProp(player, 0, 13, 4);
-                    user.setComponentVariation(player, 8, 58, 0);
-                    user.setComponentVariation(player, 3, 11, 0);
-                    user.setComponentVariation(player, 11, 26, 1);
-                    user.setComponentVariation(player, 7, 10, 2);
-                    user.setComponentVariation(player, 4, 23, 1);
-                    user.setComponentVariation(player, 6, 54, 0);
-                }
-                break;
-            case 2:
-
-                user.reset(player, "hasMask");
-
-                user.clearAllProp(player);
-                user.updateCharacterCloth(player);
-                user.updateCharacterFace(player);
-
-                if (user.getSex(player) == 1)
-                {
-                    user.setComponentVariation(player, 8, 35, 0);
-                    user.setComponentVariation(player, 3, 0, 0);
-                    user.setComponentVariation(player, 11, 27, 2);
-                    user.setComponentVariation(player, 4, 64, 2);
-                    user.setComponentVariation(player, 6, 55, 0);
-                }
-                else
-                {
-                    user.setProp(player, 0, 13, 7);
-                    user.setComponentVariation(player, 8, 58, 0);
-                    user.setComponentVariation(player, 3, 11, 0);
-                    user.setComponentVariation(player, 11, 13, 1);
-                    user.setComponentVariation(player, 7, 10, 2);
-                    user.setComponentVariation(player, 4, 23, 1);
-                    user.setComponentVariation(player, 6, 54, 0);
-                }
-                break;
-            case 3:
-
-                user.reset(player, "hasMask");
-
-                user.clearAllProp(player);
-                user.updateCharacterCloth(player);
-                user.updateCharacterFace(player);
-
-                if (user.getSex(player) == 1)
-                {
-                    user.setComponentVariation(player, 8, 35, 0);
-                    user.setComponentVariation(player, 3, 0, 0);
-                    user.setComponentVariation(player, 11, 27, 5);
-                    user.setComponentVariation(player, 4, 64, 2);
-                    user.setComponentVariation(player, 6, 55, 0);
-                }
-                else
-                {
-                    user.setProp(player, 0, 13, 3);
-                    user.setComponentVariation(player, 8, 58, 0);
-                    user.setComponentVariation(player, 3, 11, 0);
-                    user.setComponentVariation(player, 11, 13, 0);
-                    user.setComponentVariation(player, 7, 10, 2);
-                    user.setComponentVariation(player, 4, 23, 1);
-                    user.setComponentVariation(player, 6, 54, 0);
-                }
-                break;
-            case 4:
-
-                user.reset(player, "hasMask");
-
-                user.clearAllProp(player);
-                user.updateCharacterCloth(player);
-                user.updateCharacterFace(player);
-
-                if (user.getSex(player) == 1)
-                {
-                    user.setComponentVariation(player, 0, 1, 0);
-                    user.setComponentVariation(player, 1, 0, 0);
-                    user.setComponentVariation(player, 3, 14, 0);
-                    user.setComponentVariation(player, 4, 64, 1);
-                    user.setComponentVariation(player, 5, 0, 0);
-                    user.setComponentVariation(player, 6, 55, 0);
-                    user.setComponentVariation(player, 7, 0, 0);
-                    user.setComponentVariation(player, 8, 159, 0);
-                    user.setComponentVariation(player, 9, 0, 0);
-                    user.setComponentVariation(player, 10, 0, 0);
-                    user.setComponentVariation(player, 11, 329, 0);
-                }
-                else
-                {
-                    user.setProp(player, 0, 13, 2);
-                    user.setComponentVariation(player, 8, 58, 0);
-                    user.setComponentVariation(player, 3, 11, 0);
-                    user.setComponentVariation(player, 11, 13, 2);
-                    user.setComponentVariation(player, 7, 10, 2);
-                    user.setComponentVariation(player, 4, 23, 1);
-                    user.setComponentVariation(player, 6, 54, 0);
-                }
-                break;
-            case 5:
-
-                user.reset(player, "hasMask");
-
-                user.clearAllProp(player);
-                user.updateCharacterCloth(player);
-                user.updateCharacterFace(player);
-
-                if (user.getSex(player) == 1)
-                {
-                    user.setComponentVariation(player, 0, 1, 0);
-                    user.setComponentVariation(player, 1, 0, 0);
-                    user.setComponentVariation(player, 3, 14, 0);
-                    user.setComponentVariation(player, 4, 64, 1);
-                    user.setComponentVariation(player, 5, 0, 0);
-                    user.setComponentVariation(player, 6, 55, 0);
-                    user.setComponentVariation(player, 7, 0, 0);
-                    user.setComponentVariation(player, 8, 159, 0);
-                    user.setComponentVariation(player, 9, 0, 0);
-                    user.setComponentVariation(player, 10, 0, 0);
-                    user.setComponentVariation(player, 11, 329, 4);
-                }
-                else
-                {
-                    user.setComponentVariation(player, 0, 1, 0);
-                    user.setComponentVariation(player, 1, 0, 0);
-                    user.setComponentVariation(player, 3, 11, 0);
-                    user.setComponentVariation(player, 4, 25, 6);
-                    user.setComponentVariation(player, 5, 0, 0);
-                    user.setComponentVariation(player, 6, 54, 0);
-                    user.setComponentVariation(player, 7, 38, 7);
-                    user.setComponentVariation(player, 8, 58, 0);
-                    user.setComponentVariation(player, 9, 0, 0);
-                    user.setComponentVariation(player, 10, 0, 0);
-                    user.setComponentVariation(player, 11, 26, 4);
-                }
-                break;
-            case 6:
-
-                user.reset(player, "hasMask");
-
-                user.clearAllProp(player);
-                user.updateCharacterCloth(player);
-                user.updateCharacterFace(player);
-
-                if (user.getSex(player) == 1)
-                {
-                    user.setComponentVariation(player, 0, 1, 0);
-                    user.setComponentVariation(player, 1, 0, 0);
-                    user.setComponentVariation(player, 3, 14, 0);
-                    user.setComponentVariation(player, 4, 64, 1);
-                    user.setComponentVariation(player, 5, 0, 0);
-                    user.setComponentVariation(player, 6, 55, 0);
-                    user.setComponentVariation(player, 7, 0, 0);
-                    user.setComponentVariation(player, 8, 159, 0);
-                    user.setComponentVariation(player, 9, 0, 0);
-                    user.setComponentVariation(player, 10, 0, 0);
-                    user.setComponentVariation(player, 11, 329, 2);
-                }
-                else
-                {
-                    user.setComponentVariation(player, 0, 1, 0);
-                    user.setComponentVariation(player, 1, 0, 0);
-                    user.setComponentVariation(player, 3, 11, 0);
-                    user.setComponentVariation(player, 4, 25, 6);
-                    user.setComponentVariation(player, 5, 0, 0);
-                    user.setComponentVariation(player, 6, 54, 0);
-                    user.setComponentVariation(player, 7, 38, 7);
-                    user.setComponentVariation(player, 8, 58, 0);
-                    user.setComponentVariation(player, 9, 0, 0);
-                    user.setComponentVariation(player, 10, 0, 0);
-                    user.setComponentVariation(player, 11, 26, 1);
-                }
-                break;
-            case 7:
-
-                user.reset(player, "hasMask");
-
-                user.clearAllProp(player);
-                user.updateCharacterCloth(player);
-                user.updateCharacterFace(player);
-
-                if (user.getSex(player) == 1)
-                {
-                    user.setComponentVariation(player, 0, 1, 0);
-                    user.setComponentVariation(player, 1, 0, 0);
-                    user.setComponentVariation(player, 3, 14, 0);
-                    user.setComponentVariation(player, 4, 64, 1);
-                    user.setComponentVariation(player, 5, 0, 0);
-                    user.setComponentVariation(player, 6, 55, 0);
-                    user.setComponentVariation(player, 7, 0, 0);
-                    user.setComponentVariation(player, 8, 159, 0);
-                    user.setComponentVariation(player, 9, 0, 0);
-                    user.setComponentVariation(player, 10, 0, 0);
-                    user.setComponentVariation(player, 11, 329, 1);
-                }
-                else
-                {
-                    user.setComponentVariation(player, 0, 1, 0);
-                    user.setComponentVariation(player, 1, 0, 0);
-                    user.setComponentVariation(player, 3, 11, 0);
-                    user.setComponentVariation(player, 4, 25, 6);
-                    user.setComponentVariation(player, 5, 0, 0);
-                    user.setComponentVariation(player, 6, 54, 0);
-                    user.setComponentVariation(player, 7, 38, 7);
-                    user.setComponentVariation(player, 8, 58, 0);
-                    user.setComponentVariation(player, 9, 0, 0);
-                    user.setComponentVariation(player, 10, 0, 0);
-                    user.setComponentVariation(player, 11, 26, 2);
-                }
-                break;
-            case 8:
-
-                user.reset(player, "hasMask");
-
-                user.clearAllProp(player);
-                user.updateCharacterCloth(player);
-                user.updateCharacterFace(player);
-
-                if (user.getSex(player) == 1)
-                {
-                    user.setComponentVariation(player, 0, 1, 0);
-                    user.setComponentVariation(player, 1, 0, 0);
-                    user.setComponentVariation(player, 3, 14, 0);
-                    user.setComponentVariation(player, 4, 64, 1);
-                    user.setComponentVariation(player, 5, 0, 0);
-                    user.setComponentVariation(player, 6, 55, 0);
-                    user.setComponentVariation(player, 7, 0, 0);
-                    user.setComponentVariation(player, 8, 159, 0);
-                    user.setComponentVariation(player, 9, 6, 1);
-                    user.setComponentVariation(player, 10, 0, 0);
-                    user.setComponentVariation(player, 11, 329, 4);
-                }
-                else
-                {
-                    user.setComponentVariation(player, 0, 1, 0);
-                    user.setComponentVariation(player, 1, 0, 0);
-                    user.setComponentVariation(player, 3, 11, 0);
-                    user.setComponentVariation(player, 4, 25, 6);
-                    user.setComponentVariation(player, 5, 0, 0);
-                    user.setComponentVariation(player, 6, 54, 0);
-                    user.setComponentVariation(player, 7, 38, 7);
-                    user.setComponentVariation(player, 8, 58, 0);
-                    user.setComponentVariation(player, 9, 4, 1);
-                    user.setComponentVariation(player, 10, 70, 1);
-                    user.setComponentVariation(player, 11, 26, 2);
-                }
-                break;
-            case 9:
-
-                user.reset(player, "hasMask");
-                user.updateCharacterFace(player);
-
-                user.setProp(player, 0, 19, 0);
-
-                if (user.getSex(player) == 1) {
-                    user.setComponentVariation(player, 0, 1, 0);
-                    user.setComponentVariation(player, 1, 0, 0);
-                    user.setComponentVariation(player, 3, 19, 0);
-                    user.setComponentVariation(player, 4, 38, 2);
-                    user.setComponentVariation(player, 5, 57, 9);
-                    user.setComponentVariation(player, 6, 52, 0);
-                    user.setComponentVariation(player, 7, 0, 0);
-                    user.setComponentVariation(player, 8, 152, 0);
-                    user.setComponentVariation(player, 9, 0, 0);
-                    user.setComponentVariation(player, 10, 0, 0);
-                    user.setComponentVariation(player, 11, 59, 2);
-                }
-                else {
-                    user.setComponentVariation(player, 0, 1, 0);
-                    user.setComponentVariation(player, 1, 0, 0);
-                    user.setComponentVariation(player, 3, 18, 4);
-                    user.setComponentVariation(player, 4, 9, 0);
-                    user.setComponentVariation(player, 5, 0, 0);
-                    user.setComponentVariation(player, 6, 24, 0);
-                    user.setComponentVariation(player, 7, 0, 0);
-                    user.setComponentVariation(player, 8, 122, 0);
-                    user.setComponentVariation(player, 9, 0, 0);
-                    user.setComponentVariation(player, 10, 0, 0);
-                    user.setComponentVariation(player, 11, 48, 0);
-                }
-                break;
-            case 10:
-
-                user.reset(player, "hasMask");
-
-                user.clearAllProp(player);
-                user.updateCharacterCloth(player);
-                user.updateCharacterFace(player);
-
-                if (user.getSex(player) == 1)
-                {
-                    user.setProp(player, 0, 116, 1);
-                    user.setComponentVariation(player, 6, 52, 0);
-                    user.setComponentVariation(player, 0, 21, 0);
-                    user.setComponentVariation(player, 8, 160, 0);
-                    user.setComponentVariation(player, 3, 18, 0);
-                    user.setComponentVariation(player, 11, 46, 2);
-                    user.setComponentVariation(player, 9, 6, 2);
-                    user.setComponentVariation(player, 10, 70, 1);
-                    user.setComponentVariation(player, 4, 61, 7);
-                    user.setComponentVariation(player, 6, 24, 0);
-                }
-                else
-                {
-                    user.setProp(player, 0, 117, 1);
-                    user.setComponentVariation(player, 6, 52, 0);
-                    user.setComponentVariation(player, 8, 130, 0);
-                    user.setComponentVariation(player, 3, 17, 0);
-                    user.setComponentVariation(player, 11, 53, 2);
-                    user.setComponentVariation(player, 10, 70, 1);
-                    user.setComponentVariation(player, 9, 1, 2);
-                    user.setComponentVariation(player, 4, 59, 7);
-                    user.setComponentVariation(player, 6, 24, 0);
-                }
-                break;
-            case 11:
-
-                user.reset(player, "hasMask");
-
-                user.clearAllProp(player);
-                user.updateCharacterCloth(player);
-                user.updateCharacterFace(player);
-
-                if (user.getSex(player) == 1)
-                {
-                    user.setComponentVariation(player, 0, 0, 0);
-                    user.setComponentVariation(player, 1, 0, 0);
-                    user.setComponentVariation(player, 3, 5, 0);
-                    user.setComponentVariation(player, 4, 6, 1);
-                    user.setComponentVariation(player, 5, 0, 0);
-                    user.setComponentVariation(player, 6, 29, 0);
-                    user.setComponentVariation(player, 7, 86, 0);
-                    user.setComponentVariation(player, 8, 38, 0);
-                    user.setComponentVariation(player, 9, 0, 0);
-                    user.setComponentVariation(player, 10, 0, 0);
-                    user.setComponentVariation(player, 11, 6, 1);
-                }
-                else
-                {
-                    user.setComponentVariation(player, 0, 0, 0);
-                    user.setComponentVariation(player, 1, 0, 0);
-                    user.setComponentVariation(player, 3, 4, 0);
-                    user.setComponentVariation(player, 4, 10, 1);
-                    user.setComponentVariation(player, 5, 0, 0);
-                    user.setComponentVariation(player, 6, 10, 0);
-                    user.setComponentVariation(player, 7, 115, 0);
-                    user.setComponentVariation(player, 8, 10, 0);
-                    user.setComponentVariation(player, 9, 0, 0);
-                    user.setComponentVariation(player, 10, 0, 0);
-                    user.setComponentVariation(player, 11, 28, 1);
-                }
-                break;
-        }
-        user.updateTattoo(player);
+        if (idx === 0)
+            user.giveUniform(player, idx);
+        else
+            user.giveUniform(player, idx + 12);
     }
     catch (e) {
         methods.debug(e);
@@ -6399,221 +5608,10 @@ mp.events.addRemoteCounted('server:uniform:sheriff', (player, idx) => {
 
 mp.events.addRemoteCounted('server:uniform:ems', (player, idx) => {
     try {
-        switch (idx)
-        {
-            case 0:
-
-                user.setComponentVariation(player, 1, 0, 0);
-                user.setComponentVariation(player, 7, 0, 0);
-                user.setComponentVariation(player, 9, 0, 0);
-                user.setComponentVariation(player, 10, 0, 0);
-                user.clearAllProp(player);
-
-                user.updateCharacterCloth(player);
-                user.updateCharacterFace(player);
-                break;
-            case 1:
-                user.clearAllProp(player);
-
-                if (user.getSex(player) == 1) {
-                    user.setComponentVariation(player, 1, 0, 0);
-                    user.setComponentVariation(player, 3, 109, 0);
-                    user.setComponentVariation(player, 4, 99, 0);
-                    user.setComponentVariation(player, 5, 0, 0);
-                    user.setComponentVariation(player, 6, 72, 0);
-                    user.setComponentVariation(player, 7, 96, 0);
-                    user.setComponentVariation(player, 8, 159, 0);
-                    user.setComponentVariation(player, 9, 0, 0);
-                    user.setComponentVariation(player, 10, 0, 0);
-                    user.setComponentVariation(player, 11, 258, 0);
-                }
-                else {
-                    user.setComponentVariation(player, 1, 0, 0);
-                    user.setComponentVariation(player, 3, 85, 0);
-                    user.setComponentVariation(player, 4, 96, 0);
-                    user.setComponentVariation(player, 5, 0, 0);
-                    user.setComponentVariation(player, 6, 51, 0);
-                    user.setComponentVariation(player, 7, 127, 0);
-                    user.setComponentVariation(player, 8, 129, 0);
-                    user.setComponentVariation(player, 9, 0, 0);
-                    user.setComponentVariation(player, 10, 58, 0);
-                    user.setComponentVariation(player, 11, 250, 0);
-                }
-                break;
-            case 2:
-                user.clearAllProp(player);
-
-                if (user.getSex(player) == 1) {
-                    user.setComponentVariation(player, 1, 0, 0);
-                    user.setComponentVariation(player, 3, 109, 0);
-                    user.setComponentVariation(player, 4, 99, 1);
-                    user.setComponentVariation(player, 5, 0, 0);
-                    user.setComponentVariation(player, 6, 72, 0);
-                    user.setComponentVariation(player, 7, 97, 0);
-                    user.setComponentVariation(player, 8, 159, 0);
-                    user.setComponentVariation(player, 9, 0, 0);
-                    user.setComponentVariation(player, 10, 0, 0);
-                    user.setComponentVariation(player, 11, 258, 1);
-                }
-                else {
-                    user.setComponentVariation(player, 1, 0, 0);
-                    user.setComponentVariation(player, 3, 85, 0);
-                    user.setComponentVariation(player, 4, 96,  1);
-                    user.setComponentVariation(player, 5, 0, 0);
-                    user.setComponentVariation(player, 6, 51, 0);
-                    user.setComponentVariation(player, 7, 126, 0);
-                    user.setComponentVariation(player, 8, 129, 0);
-                    user.setComponentVariation(player, 9, 0, 0);
-                    user.setComponentVariation(player, 10, 58, 0);
-                    user.setComponentVariation(player, 11, 250,  1);
-                }
-                break;
-            case 3:
-                user.clearAllProp(player);
-
-                if (user.getSex(player) == 1) {
-                    user.setComponentVariation(player, 1, 0, 0);
-                    user.setComponentVariation(player, 3, 104, 0);
-                    user.setComponentVariation(player, 4, 99, 1);
-                    user.setComponentVariation(player, 5, 0, 0);
-                    user.setComponentVariation(player, 6, 72, 0);
-                    user.setComponentVariation(player, 7, 96, 0);
-                    user.setComponentVariation(player, 8, 15, 0);
-                    user.setComponentVariation(player, 9, 0, 0);
-                    user.setComponentVariation(player, 10, 0, 0);
-                    user.setComponentVariation(player, 11, 257, 0);
-                }
-                else {
-                    user.setComponentVariation(player, 1, 0, 0);
-                    user.setComponentVariation(player, 3, 85, 0);
-                    user.setComponentVariation(player, 4, 96,  0);
-                    user.setComponentVariation(player, 5, 0, 0);
-                    user.setComponentVariation(player, 6, 51, 0);
-                    user.setComponentVariation(player, 7, 127, 0);
-                    user.setComponentVariation(player, 8, 15, 0);
-                    user.setComponentVariation(player, 9, 0, 0);
-                    user.setComponentVariation(player, 10, 57, 0);
-                    user.setComponentVariation(player, 11, 249,  0);
-                }
-                break;
-            case 4:
-                user.clearAllProp(player);
-
-                if (user.getSex(player) == 1) {
-                    user.setComponentVariation(player, 1, 0, 0);
-                    user.setComponentVariation(player, 3, 104, 0);
-                    user.setComponentVariation(player, 4, 99, 1);
-                    user.setComponentVariation(player, 5, 0, 0);
-                    user.setComponentVariation(player, 6, 72, 0);
-                    user.setComponentVariation(player, 7, 97, 0);
-                    user.setComponentVariation(player, 8, 15, 0);
-                    user.setComponentVariation(player, 9, 0, 0);
-                    user.setComponentVariation(player, 10, 0, 0);
-                    user.setComponentVariation(player, 11, 257, 1);
-                }
-                else {
-                    user.setComponentVariation(player, 1, 0, 0);
-                    user.setComponentVariation(player, 3, 85, 0);
-                    user.setComponentVariation(player, 4, 96,  1);
-                    user.setComponentVariation(player, 5, 0, 0);
-                    user.setComponentVariation(player, 6, 51, 0);
-                    user.setComponentVariation(player, 7, 126, 0);
-                    user.setComponentVariation(player, 8, 15, 0);
-                    user.setComponentVariation(player, 9, 0, 0);
-                    user.setComponentVariation(player, 10, 57, 0);
-                    user.setComponentVariation(player, 11, 249,  1);
-                }
-                break;
-            case 5:
-                user.clearAllProp(player);
-
-                if (user.getSex(player) == 1) {
-                    user.setProp(player, 0, 136, 0);
-                    user.setComponentVariation(player, 1, 0, 0);
-                    user.setComponentVariation(player, 3, 127, 3);
-                    user.setComponentVariation(player, 4, 126, 0);
-                    user.setComponentVariation(player, 5, 0, 0);
-                    user.setComponentVariation(player, 6, 72, 0);
-                    user.setComponentVariation(player, 7, 0, 0);
-                    user.setComponentVariation(player, 8, 0, 0);
-                    user.setComponentVariation(player, 9, 0, 0);
-                    user.setComponentVariation(player, 10, 73, 0);
-                    user.setComponentVariation(player, 11, 325, 0);
-                }
-                else {
-                    user.setProp(player, 0, 137, 0);
-                    user.setComponentVariation(player, 1, 0, 0);
-                    user.setComponentVariation(player, 3, 110, 3);
-                    user.setComponentVariation(player, 4, 120,  0);
-                    user.setComponentVariation(player, 5, 0, 0);
-                    user.setComponentVariation(player, 6, 51, 0);
-                    user.setComponentVariation(player, 7, 0, 0);
-                    user.setComponentVariation(player, 8, 0, 0);
-                    user.setComponentVariation(player, 9, 0, 0);
-                    user.setComponentVariation(player, 10, 0, 0);
-                    user.setComponentVariation(player, 11, 314,  0);
-                }
-                break;
-            case 6:
-                user.clearAllProp(player);
-
-                if (user.getSex(player) == 1) {
-                    user.setProp(player, 0, 137, 0);
-                    user.setComponentVariation(player, 1, 0, 0);
-                    user.setComponentVariation(player, 3, 127, 3);
-                    user.setComponentVariation(player, 4, 126, 1);
-                    user.setComponentVariation(player, 5, 0, 0);
-                    user.setComponentVariation(player, 6, 72, 0);
-                    user.setComponentVariation(player, 7, 0, 0);
-                    user.setComponentVariation(player, 8, 187, 0);
-                    user.setComponentVariation(player, 9, 0, 0);
-                    user.setComponentVariation(player, 10, 73, 0);
-                    user.setComponentVariation(player, 11, 325, 1);
-                }
-                else {
-                    user.setProp(player, 0, 138, 0);
-                    user.setComponentVariation(player, 1, 0, 0);
-                    user.setComponentVariation(player, 3, 110, 3);
-                    user.setComponentVariation(player, 4, 120,  1);
-                    user.setComponentVariation(player, 5, 0, 0);
-                    user.setComponentVariation(player, 6, 51, 0);
-                    user.setComponentVariation(player, 7, 0, 0);
-                    user.setComponentVariation(player, 8, 151, 0);
-                    user.setComponentVariation(player, 9, 0, 0);
-                    user.setComponentVariation(player, 10, 0, 0);
-                    user.setComponentVariation(player, 11, 314,  1);
-                }
-                break;
-            case 7:
-                user.clearAllProp(player);
-
-                if (user.getSex(player) == 1) {
-                    user.setComponentVariation(player, 1, 0, 0);
-                    user.setComponentVariation(player, 3, 109, 0);
-                    user.setComponentVariation(player, 4, 23, 0);
-                    user.setComponentVariation(player, 5, 0, 0);
-                    user.setComponentVariation(player, 6, 72, 0);
-                    user.setComponentVariation(player, 7, 97, 0);
-                    user.setComponentVariation(player, 8, 15, 0);
-                    user.setComponentVariation(player, 9, 0, 0);
-                    user.setComponentVariation(player, 10, 0, 0);
-                    user.setComponentVariation(player, 11, 333, 0);
-                }
-                else {
-                    user.setComponentVariation(player, 1, 0, 0);
-                    user.setComponentVariation(player, 3, 85, 0);
-                    user.setComponentVariation(player, 4, 28,  8);
-                    user.setComponentVariation(player, 5, 0, 0);
-                    user.setComponentVariation(player, 6, 42, 0);
-                    user.setComponentVariation(player, 7, 126, 0);
-                    user.setComponentVariation(player, 8, 15, 0);
-                    user.setComponentVariation(player, 9, 0, 0);
-                    user.setComponentVariation(player, 10, 0, 0);
-                    user.setComponentVariation(player, 11, 321,  0);
-                }
-                break;
-        }
-        user.updateTattoo(player);
+        if (idx === 0)
+            user.giveUniform(player, idx);
+        else
+            user.giveUniform(player, idx + 23);
     }
     catch (e) {
         methods.debug(e);
@@ -6856,9 +5854,10 @@ mp.events.add('playerQuit', player => {
         try {
             if (user.isCuff(player)) {
                 user.addHistory(player, 1, 'Был посажен в тюрьму');
-                user.set(player, 'jail_time', 120 * 60);
+                user.warn(player, 1, 'Выход из игры во время ареста');
+                /*user.set(player, 'jail_time', 120 * 60);
                 user.set(player, 'wanted_level', 0);
-                chat.sendToAll('Anti-Cheat System', `${user.getRpName(player)} (${player.id})!{${chat.clRed}} был посажен в тюрьму с причиной:!{${chat.clWhite}} выход из игры во время ареста`, chat.clRed);
+                chat.sendToAll('Anti-Cheat System', `${user.getRpName(player)} (${player.id})!{${chat.clRed}} был посажен в тюрьму с причиной:!{${chat.clWhite}} выход из игры во время ареста`, chat.clRed);*/
             }
         }
         catch (e) {
@@ -6867,9 +5866,10 @@ mp.events.add('playerQuit', player => {
         try {
             if (user.isTie(player)) {
                 user.addHistory(player, 1, 'Был посажен в тюрьму');
-                user.set(player, 'jail_time', 120 * 60);
+                user.warn(player, 1, 'Выход из игры во время похищения');
+                /*user.set(player, 'jail_time', 120 * 60);
                 user.set(player, 'wanted_level', 0);
-                chat.sendToAll('Anti-Cheat System', `${user.getRpName(player)} (${player.id})!{${chat.clRed}} был посажен в тюрьму с причиной:!{${chat.clWhite}} выход из игры во время похищения`, chat.clRed);
+                chat.sendToAll('Anti-Cheat System', `${user.getRpName(player)} (${player.id})!{${chat.clRed}} был посажен в тюрьму с причиной:!{${chat.clWhite}} выход из игры во время похищения`, chat.clRed);*/
             }
         }
         catch (e) {

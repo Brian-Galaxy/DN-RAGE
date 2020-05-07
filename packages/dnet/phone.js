@@ -735,6 +735,18 @@ phone.fractionMoney = function(player) {
         true
     ));
 
+    items.push(phone.getMenuItemModalInput(
+        'Снять средства',
+        '',
+        'Введите значение',
+        0,
+        'Применить',
+        'Отмена',
+        { name: 'fractionTake' },
+        '',
+        true
+    ));
+
     phone.showMenu(player, 'fractionMoney', 'Управление бюджетом', [phone.getMenuMainItem(`Основной раздел`, items)]);
 };
 

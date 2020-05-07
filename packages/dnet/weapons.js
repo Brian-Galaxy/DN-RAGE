@@ -144,7 +144,7 @@ weapons.components = [
     ["weapon_heavypistol", "Suppressor", -1023114086, 1, "COMPONENT_AT_PI_SUPP"],
     ["weapon_heavypistol", "Etched Wood Grip", 2053798779, 0, "COMPONENT_HEAVYPISTOL_VARMOD_LUXE"],
 
-    ["weapon_revolver_mk2", "Default Rounds", -1172055874, 4, "COMPONENT_REVOLVER_MK2_CLIP_01"],
+    ["weapon_revolver_mk2", "Deflog_anticheatault Rounds", -1172055874, 4, "COMPONENT_REVOLVER_MK2_CLIP_01"],
     ["weapon_revolver_mk2", "Tracer Rounds", -958864266, 4, "COMPONENT_REVOLVER_MK2_CLIP_TRACER"],
     ["weapon_revolver_mk2", "Incendiary Rounds", 15712037, 4, "COMPONENT_REVOLVER_MK2_CLIP_INCENDIARY"],
     ["weapon_revolver_mk2", "Hollow Point Rounds", 284438159, 4, "COMPONENT_REVOLVER_MK2_CLIP_HOLLOWPOINT"],

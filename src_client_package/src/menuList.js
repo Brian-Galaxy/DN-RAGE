@@ -6736,7 +6736,7 @@ menuList.showTattooShopShortMenu = function(title1, title2, zone, shopId, price)
         ) && title1 == "shopui_title_tattoos4")
             continue;
 
-        let price = methods.parseFloat(methods.parseFloat(tattooList[i][5]) / 8);
+        let price = methods.parseFloat(methods.parseFloat(tattooList[i][5]) / 5);
 
         let saleLabel = '';
         let sale = business.getSale(price);
@@ -8535,19 +8535,13 @@ menuList.showGovGarderobMenu = function() {
 
     UIMenu.Menu.OnList.Add((item, index) => {
         if (index == 0) {
-            user.updateCharacterCloth();
+            user.giveUniform(0);
         }
         else if (index == 1) {
-            if (user.getSex() == 1)
-                user.setComponentVariation(7, 86, 1);
-            else
-                user.setComponentVariation(7, 115, 1);
+            user.giveUniform(31);
         }
         else if (index == 2) {
-            if (user.getSex() == 1)
-                user.setComponentVariation(7, 86, 0);
-            else
-                user.setComponentVariation(7, 115, 0);
+            user.giveUniform(32);
         }
     });
 
@@ -8630,6 +8624,21 @@ menuList.showEmsArsenalMenu = function() {
                 inventory.takeNewWeaponItem(item.itemId, `{"owner": "EMS", "userName": "${user.getCache('name')}"}`, 'Выдано оружие').then();
             else
                 inventory.takeNewWeaponItem(item.itemId, `{"owner": "EMS", "userName": "${user.getCache('name')}"}`, 'Выдан предмет').then();
+        }
+    });
+};
+
+menuList.showEmsFreeMenu = function() {
+    UIMenu.Menu.Create(`EMS`, `~b~Выписка`);
+    UIMenu.Menu.AddMenuItem("Введите ID", "", {doName: 'free'});
+    UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
+    UIMenu.Menu.Draw();
+
+    UIMenu.Menu.OnSelect.Add(async item => {
+        UIMenu.Menu.HideMenu();
+        if (item.doName === 'free') {
+            let id = await UIMenu.Menu.GetUserInput("ID Игрока", "", 10);
+            mp.events.callRemote('server:med:free', methods.parseInt(id));
         }
     });
 };
@@ -9355,7 +9364,7 @@ menuList.showAdminMenu = function() {
             UIMenu.Menu.AddMenuItem("Телепорт", "", {doName: "teleportMenu"});
             if (user.isAdmin(2)) {
                 UIMenu.Menu.AddMenuItem("Режим No Clip", "", {doName: "noClip"});
-                UIMenu.Menu.AddMenuItem("Режим Free Cam", "", {doName: "noClip"});
+                UIMenu.Menu.AddMenuItem("Режим Free Cam", "", {doName: "freeCam"});
                 UIMenu.Menu.AddMenuItem("Режим Drone", "", {doName: "drone"});
             }
             //if (user.isAdmin(2))
@@ -9536,6 +9545,8 @@ menuList.showAdminPlayerMenu = function(id) {
         UIMenu.Menu.AddMenuItem("Кикнуть", "", {doName: "kick"});
         UIMenu.Menu.AddMenuItemList("~y~Забанить", ['1h', '6h', '12h', '1d', '3d', '7d', '14d', '30d', '60d', '90d', 'Permanent'], "", {doName: "ban"});
         UIMenu.Menu.AddMenuItem("~y~Разбанить", "", {doName: "unban"});
+        UIMenu.Menu.AddMenuItem("~y~Выдать предуп.", "", {doName: "warn"});
+        UIMenu.Menu.AddMenuItem("~y~Снять предуп.", "", {doName: "unwarn"});
     }
 
     if (user.isAdmin(5))
@@ -9575,6 +9586,14 @@ menuList.showAdminPlayerMenu = function(id) {
             if (item.doName == 'unban') {
                 let reason = await UIMenu.Menu.GetUserInput("Причина", "", 64);
                 mp.events.callRemote('server:admin:unban', typeIndex, id, methods.removeQuotes(reason))
+            }
+            if (item.doName == 'warn') {
+                let reason = await UIMenu.Menu.GetUserInput("Причина", "", 64);
+                mp.events.callRemote('server:admin:warn', typeIndex, id, methods.removeQuotes(reason))
+            }
+            if (item.doName == 'unwarn') {
+                let reason = await UIMenu.Menu.GetUserInput("Причина", "", 64);
+                mp.events.callRemote('server:admin:unwarn', typeIndex, id, methods.removeQuotes(reason))
             }
             if (item.doName == 'ban') {
                 let reason = await UIMenu.Menu.GetUserInput("Причина", "", 64);

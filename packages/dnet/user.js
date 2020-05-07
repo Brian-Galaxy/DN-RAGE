@@ -6,6 +6,8 @@ let ctos = require('./modules/ctos');
 
 let enums = require('./enums');
 let coffer = require('./coffer');
+let inventory = require('./inventory');
+let admin = require('./admin');
 
 let wpSync = require('./managers/wpSync');
 let weather = require('./managers/weather');
@@ -978,10 +980,17 @@ user.updateCharacterCloth = function(player) {
                     user.setProp(player, 2, cloth_data['ear'], cloth_data['ear_color']);
                 }
             }
+
+            try {
+                if (user.has(player, 'uniform'))
+                    user.giveUniform(player, user.get(player, 'uniform'));
+            }
+            catch (e) {}
         }, 10); //TODO
 
         user.updateTattoo(player);
         user.clearAllProp(player); //TODO переделать
+
     } catch (e) {
         methods.debug(e);
     }
@@ -1017,6 +1026,8 @@ user.updateTattoo = function(player) {
         user.setDecoration(player, data[0], data[1]);
 
         if (user.get(player, 'body') == player.getVariable('topsDraw')) {
+            if (user.has(player, 'uniform'))
+                return;
             if (user.get(player, 'tprint_c') != "" && user.get(player, 'tprint_o') != "")
                 user.setDecoration(player, user.get(player, 'tprint_c'), user.get(player, 'tprint_o'));
         }
@@ -1137,20 +1148,30 @@ user.setComponentVariation = function(player, component, drawableId, textureId) 
 
     if (component == 11) {
         let pos = player.position;
-        mp.players.forEach((p) => {
-            try {
-                if (methods.distanceToPos(pos, p.position) < 300)
-                    p.call('client:syncComponentVariation', [player.id, component, drawableId, textureId])
-            }
-            catch (e) {
-                methods.debug(e);
-            }
-        });
-        player.setVariable('topsDraw', drawableId);
-        player.setVariable('topsColor', textureId);
+
+        if (player.getVariable('topsDraw') !== drawableId || player.getVariable('topsColor') !== textureId) {
+            mp.players.forEach((p) => {
+                try {
+                    if (methods.distanceToPos(pos, p.position) < 300)
+                        p.call('client:syncComponentVariation', [player.id, component, drawableId, textureId])
+                }
+                catch (e) {
+                    methods.debug(e);
+                }
+            });
+        }
+
+        if (player.getVariable('topsDraw') !== drawableId)
+            player.setVariable('topsDraw', drawableId);
+
+        if (player.getVariable('topsColor') !== textureId)
+            player.setVariable('topsColor', textureId);
     }
-    else
-        player.setClothes(component, drawableId, textureId, 2);
+    else {
+        let clothes = player.getClothes(component);
+        if (clothes.drawable !== drawableId || clothes.texture !== textureId)
+            player.setClothes(component, drawableId, textureId, 2);
+    }
     //player.call('client:user:setComponentVariation', [component, drawableId, textureId]);
 };
 
@@ -1163,10 +1184,14 @@ user.setProp = function(player, slot, type, color) {
     type = methods.parseInt(type);
     color = methods.parseInt(color);
 
-    player.setVariable('propType' + slot, type);
-    player.setVariable('propColor' + slot, color);
+    if (player.getVariable('propType' + slot) !== type || player.getVariable('propColor' + slot) !== color)
+        player.setProp(slot, type, color);
 
-    player.setProp(slot, type, color);
+    if (player.getVariable('propType' + slot) !== type)
+        player.setVariable('propType' + slot, type);
+
+    if (player.getVariable('propColor' + slot) !== color)
+        player.setVariable('propColor' + slot, color);
 };
 
 user.clearDecorations = function(player) {
@@ -1174,7 +1199,6 @@ user.clearDecorations = function(player) {
     if (!mp.players.exists(player))
         return false;
     player.clearDecorations();
-
 };
 
 user.setDecoration = function(player, slot, overlay) {
@@ -1183,7 +1207,6 @@ user.setDecoration = function(player, slot, overlay) {
         return false;
     player.setDecoration(mp.joaat(slot), mp.joaat(overlay));
 };
-
 
 user.hideLoadDisplay = function(player) {
     methods.debug('user.hideLoadDisplay');
@@ -2453,6 +2476,7 @@ user.jail = function(player, sec, withIzol = false) {
     methods.debug('user.jail');
     if (!user.isLogin(player))
         return false;
+    user.set(player, 'jail_time', sec);
     player.call('client:jail:jailPlayer', [sec, withIzol]);
 };
 
@@ -2690,8 +2714,8 @@ user.payDay = async function (player) {
     if (user.get(player, 'online_time') === 169) {
         if (user.get(player, 'referer') !== "") {
 
-            user.addCashMoney(player, 24000, 'Бонус от государства');
-            player.notify(`~g~Вы получили $24,000 по реферальной системе`);
+            user.addCashMoney(player, 12000, 'Бонус от государства');
+            player.notify(`~g~Вы получили $12,000 по реферальной системе`);
             player.notify(`~g~Пригласивший ${user.get(player, 'referer')} получил 200nc на личный счёт`);
             mysql.executeQuery(`UPDATE users SET money_donate = money_donate + '200' WHERE name ='${user.get(player, 'referer')}'`);
             mysql.executeQuery(`INSERT INTO log_referrer (name, referrer, money, timestamp) VALUES ('${user.getRpName(player)}', '${user.get(player, 'referer')}', '200', '${methods.getTimeStamp()}')`);
@@ -2741,49 +2765,55 @@ user.payDay = async function (player) {
         }
         else if (user.get(player, 'fraction_id') > 0) {
 
-            user.addWorkExp(player, 10);
-            user.addRep(player, 5);
-
-            let money = methods.getFractionPayDay(user.get(player, 'fraction_id'), user.get(player, 'rank'), user.get(player, 'rank_type'));
-
-            if (user.isLeader(player))
+            if (!user.has(player, 'uniform') && !user.isNews(player))
             {
-                let frItem = methods.getFractionById(user.get(player, 'fraction_id'));
-                money = frItem.leaderPayDay;
-            }
-            if (user.isSubLeader(player))
-            {
-                let frItem = methods.getFractionById(user.get(player, 'fraction_id'));
-                money = frItem.subLeaderPayDay;
-            }
-
-            let nalog = money * (100 - coffer.getTaxPayDay()) / 100;
-
-            let frId = coffer.getIdByFraction(user.get(player, 'fraction_id'));
-            let currentCofferMoney = coffer.getMoney(frId);
-
-            if (currentCofferMoney < nalog) {
-                user.sendSmsBankOperation(player, `~r~В бюджете организации не достаточно средств для выплаты зарплаты`, 'Зарплата');
+                //player.notify('~r~Для того, чтобы получать зарплату, вам необходимо выйти на дежурство (Надеть форму)');
             }
             else {
+                user.addWorkExp(player, 10);
+                user.addRep(player, 5);
 
-                let desc = '';
-                if (user.get(player, 'vip_type') === 1) {
-                    desc = '\n~y~Прибавка VIP LIGHT 5% от зарплаты';
-                    nalog = nalog * 1.05;
+                let money = methods.getFractionPayDay(user.get(player, 'fraction_id'), user.get(player, 'rank'), user.get(player, 'rank_type'));
+
+                if (user.isLeader(player))
+                {
+                    let frItem = methods.getFractionById(user.get(player, 'fraction_id'));
+                    money = frItem.leaderPayDay;
                 }
-                if (user.get(player, 'vip_type') === 2) {
-                    desc = '\n~y~Прибавка VIP HARD 10% от зарплаты';
-                    nalog = nalog * 1.1;
+                if (user.isSubLeader(player))
+                {
+                    let frItem = methods.getFractionById(user.get(player, 'fraction_id'));
+                    money = frItem.subLeaderPayDay;
                 }
 
-                let ben = coffer.getBenefit(coffer.getIdByFraction(user.get(player, 'fraction_id')));
-                if (ben > 0)
-                    user.sendSmsBankOperation(player, `Зачисление: ~g~${methods.moneyFormat(nalog)}\n~s~Прибавка к зарплате: ~g~${methods.moneyFormat(ben)}${desc}`, 'Зарплата');
-                else
-                    user.sendSmsBankOperation(player, `Зачисление: ~g~${methods.moneyFormat(nalog)}${desc}`, 'Зарплата');
-                user.addPayDayMoney(player, nalog + ben);
-                coffer.removeMoney(frId, nalog)
+                let nalog = money * (100 - coffer.getTaxPayDay()) / 100;
+
+                let frId = coffer.getIdByFraction(user.get(player, 'fraction_id'));
+                let currentCofferMoney = coffer.getMoney(frId);
+
+                if (currentCofferMoney < nalog) {
+                    user.sendSmsBankOperation(player, `~r~В бюджете организации не достаточно средств для выплаты зарплаты`, 'Зарплата');
+                }
+                else {
+
+                    let desc = '';
+                    if (user.get(player, 'vip_type') === 1) {
+                        desc = '\n~y~Прибавка VIP LIGHT 5% от зарплаты';
+                        nalog = nalog * 1.05;
+                    }
+                    if (user.get(player, 'vip_type') === 2) {
+                        desc = '\n~y~Прибавка VIP HARD 10% от зарплаты';
+                        nalog = nalog * 1.1;
+                    }
+
+                    let ben = coffer.getBenefit(coffer.getIdByFraction(user.get(player, 'fraction_id')));
+                    if (ben > 0)
+                        user.sendSmsBankOperation(player, `Зачисление: ~g~${methods.moneyFormat(nalog)}\n~s~Прибавка к зарплате: ~g~${methods.moneyFormat(ben)}${desc}`, 'Зарплата');
+                    else
+                        user.sendSmsBankOperation(player, `Зачисление: ~g~${methods.moneyFormat(nalog)}${desc}`, 'Зарплата');
+                    user.addPayDayMoney(player, nalog + ben);
+                    coffer.removeMoney(frId, nalog)
+                }
             }
         }
         else if (user.get(player, 'job') == 0) {
@@ -2942,4 +2972,1083 @@ user.isAdmin = function(player, level = 1) {
 
 user.isHelper = function(player, level = 1) {
     return user.isLogin(player) && user.get(player, 'helper_level') >= level;
+};
+
+user.warn = function(player, count, reason, notify = true) {
+    if (!user.isLogin(player))
+        return;
+
+    if (notify) {
+        discord.sendDeadList(user.getRpName(player), 'Было выдано предупреждение', reason, 'Anti-Cheat Protection');
+        chat.sendToAll(`Anti-Cheat Protection`, `${user.getRpName(player)}!{${chat.clRed}} было выдано предупреждение с причиной!{${chat.clWhite}} ${reason}`, chat.clRed);
+    }
+
+    if (count < 0) {
+        mysql.executeQuery(`INSERT INTO ban_list (ban_from, ban_to, count, datetime, reason) VALUES ('Server', '${user.getRpName(player)}', 'Снято предупреждение', '${methods.getTimeStamp()}', '${reason}')`);
+
+        if (user.get(player, 'warns') > 0) {
+            user.set(player, 'warns', user.get(player, 'warns') - 1);
+        }
+        else {
+            user.set(player, 'warns', 0);
+        }
+    }
+    else {
+        mysql.executeQuery(`INSERT INTO ban_list (ban_from, ban_to, count, datetime, reason) VALUES ('Server', '${user.getRpName(player)}', 'Предупреждение', '${methods.getTimeStamp()}', '${reason}')`);
+
+        user.jail(player, 120 * 60);
+
+        if (user.get(player, 'warns') < 2) {
+            user.set(player, 'warns', user.get(player, 'warns') + 1);
+        }
+        else {
+            user.set(player, 'warns', 0);
+            user.ban(player, 5, 'Был забанен (3 предупреждения)')
+        }
+    }
+};
+
+//['1h', '6h', '12h', '1d', '3d', '7d', '14d', '30d', '60d', '90d', 'Permanent'];
+user.ban = function(player, count, reason) {
+    if (!user.isLogin(player))
+        return;
+    admin.banByAnticheat(0, player.id, count, reason);
+};
+
+user.giveVip = function(player, days = 7, type = 2, withChat = false) {
+    if (!user.isLogin(player))
+        return;
+
+    let vipTime = 0;
+    let vipType = methods.parseInt(type);
+    if (methods.parseInt(days) > 0 && user.get(player, 'vip_type') > 0 && user.get(player, 'vip_time') > 0)
+        vipTime = methods.parseInt(days* 86400) + user.set(player, 'vip_time');
+    else if (methods.parseInt(days) > 0)
+        vipTime = methods.parseInt(days * 86400) + methods.getTimeStamp();
+
+    user.set(player, 'vip_time', vipTime);
+    user.set(player, 'vip_type', vipType);
+
+    player.notify(`~g~Вам была выдана VIP HARD на ~s~${days}д.`);
+    if (withChat)
+        chat.sendToAll(`Server`, `${user.getRpName(player)} (${player.id})!{${chat.clBlue}} получил!{${chat.clWhite}} VIP HARD на ${days}д.`, chat.clBlue);
+};
+
+//Процент выпадения, Это типа, от какого процента начнет падать маска
+user.giveRandomMask = function(player, proc = 50, withChat = false) {
+    if (!user.isLogin(player))
+        return;
+
+    let maskList = [];
+    enums.maskList.forEach((item, i) => {
+        if (item[14] > proc)
+            maskList.push(i);
+    });
+
+    let maskId = maskList[methods.getRandomInt(0, maskList.length)];
+    let mask = enums.maskList[maskId];
+    let itemName = mask[1];
+
+    let params = `{"name": "${itemName}", "mask": ${maskId}}`;
+    inventory.addItem(274, 1, inventory.types.Player, user.getId(player), 1, 0, params, 100);
+
+    player.notify(`~g~Вы выиграли маску "${itemName}", она у вас в инвентаре.`);
+
+    if (withChat)
+        chat.sendToAll(`Server`, `${user.getRpName(player)} (${player.id})!{${chat.clBlue}} выиграл маску!{${chat.clWhite}} ${itemName}`, chat.clBlue);
+};
+
+user.giveVehicle = function(player, vName, withDelete = 1, withChat = false) {
+    if (!user.isLogin(player))
+        return;
+
+    let vInfo = methods.getVehicleInfo(vName);
+    if (user.get(player, 'car_id10') === 0 && vInfo.display_name !== 'Unknown') {
+        
+        mysql.executeQuery(`INSERT INTO cars (user_id, user_name, name, class, price, fuel, number, with_delete) VALUES ('${user.getId(player)}', '${user.getRpName(player)}', '${vInfo.display_name}', '${vInfo.class_name}', '${vInfo.price}', '${vInfo.fuel_full}', '${vehicles.generateNumber()}', '${withDelete}')`);
+
+        setTimeout(function () {
+            try {
+                mysql.executeQuery(`SELECT id FROM cars WHERE user_id = '${user.getId(player)}' ORDER BY id DESC LIMIT 1`, function (err, rows) {
+                    try {
+                        user.set(player, 'car_id10', rows[0]['id']);
+                        user.save(player);
+                    }
+                    catch (e) {
+                        methods.debug(e);
+                    }
+                });
+            }
+            catch (e) {
+                
+            }
+        }, 100);
+
+        player.notify(`~g~Вы выиграли автомобиль ${vInfo.display_name}.`);
+        if (withChat)
+            chat.sendToAll(`Server`, `${user.getRpName(player)} (${player.id})!{${chat.clBlue}} выиграл транспорт!{${chat.clWhite}} ${vInfo.display_name}`, chat.clBlue);
+    }
+    else {
+        user.addMoney(player, vInfo.price, 'Выигрыш приза');
+        player.notify(`~g~Связи с тем, что у вас был занят 10 слот под автомобиль, мы выдали вам денежный приз в размере ~s~${methods.moneyFormat(vInfo.price)}.`);
+        user.save(player);
+    }
+};
+
+user.giveUniform = function(player, id = 0) {
+    if (!user.isLogin(player))
+        return;
+
+    if (id > 0) {
+        user.set(player, 'uniform', id);
+        user.updateTattoo(player);
+    }
+
+    if (id === 0) { //default
+        user.reset(player, 'uniform');
+        user.updateCharacterCloth(player);
+        user.updateCharacterFace(player);
+    }
+    else if (id === 1) { //SAPD 1 (Cadet)
+        user.clearAllProp(player);
+
+        if (user.getSex(player) == 1) {
+            user.setComponentVariation(player, 3, 0, 0);
+            user.setComponentVariation(player, 4, 37, 0);
+            user.setComponentVariation(player, 5, 0, 0);
+            user.setComponentVariation(player, 6, 29, 0);
+            user.setComponentVariation(player, 7, 0, 0);
+            user.setComponentVariation(player, 8, 35, 0);
+            user.setComponentVariation(player, 9, 0, 0);
+            user.setComponentVariation(player, 10, 0, 0);
+            user.setComponentVariation(player, 11, 86, 0);
+        }
+        else {
+            user.setComponentVariation(player, 0, 1, 0);
+            user.setComponentVariation(player, 1, 0, 0);
+            user.setComponentVariation(player, 3, 11, 0);
+            user.setComponentVariation(player, 4, 35, 0);
+            user.setComponentVariation(player, 5, 0, 0);
+            user.setComponentVariation(player, 6, 54, 0);
+            user.setComponentVariation(player, 7, 38, 0);
+            user.setComponentVariation(player, 8, 58, 0);
+            user.setComponentVariation(player, 9, 0, 0);
+            user.setComponentVariation(player, 10, 0, 0);
+            user.setComponentVariation(player, 11, 13, 3);
+        }
+    }
+    else if (id === 2) { //SAPD 2 (Officer)
+        user.clearAllProp(player);
+
+        if (user.getSex(player) == 1) {
+            user.setComponentVariation(player, 0, 1, 0);
+            user.setComponentVariation(player, 1, 0, 0);
+            user.setComponentVariation(player, 3, 14, 0);
+            user.setComponentVariation(player, 4, 34, 0);
+            user.setComponentVariation(player, 5, 0, 0);
+            user.setComponentVariation(player, 6, 52, 0);
+            user.setComponentVariation(player, 7, 0, 0);
+            user.setComponentVariation(player, 8, 35, 0);
+            user.setComponentVariation(player, 10, 0, 0);
+            user.setComponentVariation(player, 11, 48, 0);
+
+            if (user.get(player, 'rank') === 2 && user.get(player, 'rank_type') > 0)
+                user.setComponentVariation(player, 10, 7, 1);
+            else if (user.get(player, 'rank') === 1)
+                user.setComponentVariation(player, 10, 7, 2);
+            else if (user.get(player, 'rank') === 0)
+                user.setComponentVariation(player, 10, 7, 3);
+        }
+        else {
+            user.setComponentVariation(player, 0, 1, 0);
+            user.setComponentVariation(player, 1, 0, 0);
+            user.setComponentVariation(player, 3, 0, 0);
+            user.setComponentVariation(player, 4, 35, 0);
+            user.setComponentVariation(player, 5, 0, 0);
+            user.setComponentVariation(player, 6, 54, 0);
+            user.setComponentVariation(player, 7, 0, 0);
+            user.setComponentVariation(player, 8, 58, 0);
+            user.setComponentVariation(player, 10, 0, 0);
+            user.setComponentVariation(player, 11, 55, 0);
+
+            if (user.get(player, 'rank') === 2 && user.get(player, 'rank_type') > 0)
+                user.setComponentVariation(player, 10, 8, 1);
+            else if (user.get(player, 'rank') === 1)
+                user.setComponentVariation(player, 10, 8, 2);
+            else if (user.get(player, 'rank') === 0)
+                user.setComponentVariation(player, 10, 8, 3);
+        }
+
+        user.setComponentVariation(player, 9, 0, 0);
+    }
+    else if (id === 3) { //SAPD 3 (Officer Armour)
+        user.clearAllProp(player);
+
+        if (user.getSex(player) == 1) {
+            user.setComponentVariation(player, 0, 1, 0);
+            user.setComponentVariation(player, 1, 0, 0);
+            user.setComponentVariation(player, 3, 14, 0);
+            user.setComponentVariation(player, 4, 34, 0);
+            user.setComponentVariation(player, 5, 0, 0);
+            user.setComponentVariation(player, 6, 52, 0);
+            user.setComponentVariation(player, 7, 0, 0);
+            user.setComponentVariation(player, 8, 35, 0);
+            user.setComponentVariation(player, 9, 6, 1);
+            user.setComponentVariation(player, 10, 70, 1);
+            user.setComponentVariation(player, 11, 48, 0);
+
+            if (user.get(player, 'rank') === 2 && user.get(player, 'rank_type') > 0)
+                user.setComponentVariation(player, 10, 7, 1);
+            else if (user.get(player, 'rank') === 1)
+                user.setComponentVariation(player, 10, 7, 2);
+            else if (user.get(player, 'rank') === 0)
+                user.setComponentVariation(player, 10, 7, 3);
+        }
+        else {
+            user.setComponentVariation(player, 0, 1, 0);
+            user.setComponentVariation(player, 1, 0, 0);
+            user.setComponentVariation(player, 3, 0, 0);
+            user.setComponentVariation(player, 4, 35, 0);
+            user.setComponentVariation(player, 5, 0, 0);
+            user.setComponentVariation(player, 6, 54, 0);
+            user.setComponentVariation(player, 7, 0, 0);
+            user.setComponentVariation(player, 8, 58, 0);
+            user.setComponentVariation(player, 9, 4, 1);
+            user.setComponentVariation(player, 10, 70, 1);
+            user.setComponentVariation(player, 11, 55, 0);
+
+            if (user.get(player, 'rank') === 2 && user.get(player, 'rank_type') > 0)
+                user.setComponentVariation(player, 10, 8, 1);
+            else if (user.get(player, 'rank') === 1)
+                user.setComponentVariation(player, 10, 8, 2);
+            else if (user.get(player, 'rank') === 0)
+                user.setComponentVariation(player, 10, 8, 3);
+        }
+    }
+    else if (id === 4) { //SAPD 4 (Tactical)
+        if (user.getSex(player) == 1) {
+            user.setComponentVariation(player, 1, 0, 0);
+            user.setComponentVariation(player, 3, 18, 0);
+            user.setComponentVariation(player, 4, 32, 0);
+            user.setComponentVariation(player, 5, 0, 0);
+            user.setComponentVariation(player, 6, 25, 0);
+            user.setComponentVariation(player, 7, 0, 0);
+            user.setComponentVariation(player, 8, 152, 0);
+            user.setComponentVariation(player, 9, 6, 1);
+            user.setComponentVariation(player, 10, 70, 1);
+            user.setComponentVariation(player, 11, 46, 0);
+
+            user.setProp(player, 0, 116, 0);
+        }
+        else {
+            user.setComponentVariation(player, 1, 0, 0);
+            user.setComponentVariation(player, 3, 17, 0);
+            user.setComponentVariation(player, 4, 33, 0);
+            user.setComponentVariation(player, 5, 0, 0);
+            user.setComponentVariation(player, 6, 25, 0);
+            user.setComponentVariation(player, 7, 0, 0);
+            user.setComponentVariation(player, 8, 122, 0);
+            user.setComponentVariation(player, 9, 1, 1);
+            user.setComponentVariation(player, 10, 70, 1);
+            user.setComponentVariation(player, 11, 53, 0);
+
+            user.setProp(player, 0, 117, 0);
+        }
+    }
+    else if (id === 5) { //SAPD 5 (Tactical)
+        if (user.getSex(player) == 1) {
+            user.setComponentVariation(player, 1, 0, 0);
+            user.setComponentVariation(player, 3, 18, 0);
+            user.setComponentVariation(player, 4, 32, 0);
+            user.setComponentVariation(player, 5, 0, 0);
+            user.setComponentVariation(player, 6, 25, 0);
+            user.setComponentVariation(player, 7, 0, 0);
+            user.setComponentVariation(player, 8, 152, 0);
+            user.setComponentVariation(player, 9, 6, 1);
+            user.setComponentVariation(player, 10, 70, 1);
+            user.setComponentVariation(player, 11, 46, 0);
+
+            user.setProp(player, 0, 116, 24);
+        }
+        else {
+            user.setComponentVariation(player, 1, 0, 0);
+            user.setComponentVariation(player, 3, 17, 0);
+            user.setComponentVariation(player, 4, 33, 0);
+            user.setComponentVariation(player, 5, 0, 0);
+            user.setComponentVariation(player, 6, 25, 0);
+            user.setComponentVariation(player, 7, 0, 0);
+            user.setComponentVariation(player, 8, 122, 0);
+            user.setComponentVariation(player, 9, 1, 1);
+            user.setComponentVariation(player, 10, 70, 1);
+            user.setComponentVariation(player, 11, 53, 0);
+
+            user.setProp(player, 0, 117, 24);
+        }
+    }
+    else if (id === 6) { //SAPD 6 (Tactical)
+        if (user.getSex(player) == 1) {
+            user.setComponentVariation(player, 1, 0, 0);
+            user.setComponentVariation(player, 3, 18, 0);
+            user.setComponentVariation(player, 4, 32, 0);
+            user.setComponentVariation(player, 5, 0, 0);
+            user.setComponentVariation(player, 6, 25, 0);
+            user.setComponentVariation(player, 7, 0, 0);
+            user.setComponentVariation(player, 8, 152, 0);
+            user.setComponentVariation(player, 9, 0, 0);
+            user.setComponentVariation(player, 10, 79, 1);
+            user.setComponentVariation(player, 11, 331, 0);
+
+            user.setProp(player, 0, 140, 0);
+        }
+        else {
+            user.setComponentVariation(player, 1, 0, 0);
+            user.setComponentVariation(player, 3, 17, 0);
+            user.setComponentVariation(player, 4, 33, 0);
+            user.setComponentVariation(player, 5, 0, 0);
+            user.setComponentVariation(player, 6, 25, 0);
+            user.setComponentVariation(player, 7, 0, 0);
+            user.setComponentVariation(player, 8, 122, 0);
+            user.setComponentVariation(player, 9, 1, 1);
+            user.setComponentVariation(player, 10, 70, 1);
+            user.setComponentVariation(player, 11, 320, 0);
+
+            user.setProp(player, 0, 141, 0);
+        }
+    }
+    else if (id === 7) { //SAPD 7 (Tactical)
+        if (user.getSex(player) == 1) {
+            user.setComponentVariation(player, 1, 0, 0);
+            user.setComponentVariation(player, 3, 18, 0);
+            user.setComponentVariation(player, 4, 32, 0);
+            user.setComponentVariation(player, 5, 0, 0);
+            user.setComponentVariation(player, 6, 25, 0);
+            user.setComponentVariation(player, 7, 0, 0);
+            user.setComponentVariation(player, 8, 152, 0);
+            user.setComponentVariation(player, 9, 0, 0);
+            user.setComponentVariation(player, 10, 79, 1);
+            user.setComponentVariation(player, 11, 331, 0);
+
+            user.setProp(player, 0, 116, 0);
+        }
+        else {
+            user.setComponentVariation(player, 1, 0, 0);
+            user.setComponentVariation(player, 3, 17, 0);
+            user.setComponentVariation(player, 4, 33, 0);
+            user.setComponentVariation(player, 5, 0, 0);
+            user.setComponentVariation(player, 6, 25, 0);
+            user.setComponentVariation(player, 7, 0, 0);
+            user.setComponentVariation(player, 8, 122, 0);
+            user.setComponentVariation(player, 9, 1, 1);
+            user.setComponentVariation(player, 10, 70, 1);
+            user.setComponentVariation(player, 11, 320, 0);
+
+            user.setProp(player, 0, 117, 0);
+        }
+    }
+    else if (id === 8) { //SAPD 8 (Tactical)
+        if (user.getSex(player) == 1) {
+            user.setComponentVariation(player, 1, 0, 0);
+            user.setComponentVariation(player, 3, 18, 0);
+            user.setComponentVariation(player, 4, 30, 0);
+            user.setComponentVariation(player, 5, 0, 0);
+            user.setComponentVariation(player, 6, 25, 0);
+            user.setComponentVariation(player, 7, 0, 0);
+            user.setComponentVariation(player, 8, 152, 0);
+            user.setComponentVariation(player, 9, 6, 1);
+            user.setComponentVariation(player, 10, 70, 1);
+            user.setComponentVariation(player, 11, 103, 4);
+
+            user.setProp(player, 0, 58, 2);
+        }
+        else {
+            user.setComponentVariation(player, 1, 0, 0);
+            user.setComponentVariation(player, 3, 17, 0);
+            user.setComponentVariation(player, 4, 31, 0);
+            user.setComponentVariation(player, 5, 0, 0);
+            user.setComponentVariation(player, 6, 25, 0);
+            user.setComponentVariation(player, 7, 0, 0);
+            user.setComponentVariation(player, 8, 122, 0);
+            user.setComponentVariation(player, 9, 1, 1);
+            user.setComponentVariation(player, 10, 70, 1);
+            user.setComponentVariation(player, 11, 111, 4);
+
+            user.setProp(player, 0, 58, 2);
+        }
+    }
+    else if (id === 9) { //SAPD 9 (Tactical)
+        user.setComponentVariation(player, 1, 0, 0);
+        user.setComponentVariation(player, 7, 0, 0);
+        user.setComponentVariation(player, 9, 0, 0);
+
+        if (user.getSex(player) == 1) {
+            user.setComponentVariation(player, 1, 0, 0);
+            user.setComponentVariation(player, 3, 0, 0);
+            user.setComponentVariation(player, 4, 6, 0);
+            user.setComponentVariation(player, 5, 0, 0);
+            user.setComponentVariation(player, 6, 29, 0);
+            user.setComponentVariation(player, 7, 0, 0);
+            user.setComponentVariation(player, 8, 160, 0);
+            user.setComponentVariation(player, 9, 6, 1);
+            user.setComponentVariation(player, 10, 70, 1);
+            user.setComponentVariation(player, 11, 27, 5);
+
+            user.setProp(player, 0, 120, 0);
+        }
+        else {
+            user.setComponentVariation(player, 1, 0, 0);
+            user.setComponentVariation(player, 3, 11, 0);
+            user.setComponentVariation(player, 4, 10, 0);
+            user.setComponentVariation(player, 5, 0, 0);
+            user.setComponentVariation(player, 6, 40, 9);
+            user.setComponentVariation(player, 7, 0, 0);
+            user.setComponentVariation(player, 8, 130, 0);
+            user.setComponentVariation(player, 9, 1, 1);
+            user.setComponentVariation(player, 10, 70, 1);
+            user.setComponentVariation(player, 11, 95, 0);
+
+            user.setProp(player, 0, 121, 0);
+        }
+    }
+    else if (id === 10) { //SAPD 10 (Tactical)
+        user.setComponentVariation(player, 1, 0, 0);
+        user.setComponentVariation(player, 7, 0, 0);
+        user.setComponentVariation(player, 9, 0, 0);
+
+        if (user.getSex(player) == 1) {
+            user.setComponentVariation(player, 1, 0, 0);
+            user.setComponentVariation(player, 3, 0, 0);
+            user.setComponentVariation(player, 4, 6, 0);
+            user.setComponentVariation(player, 5, 0, 0);
+            user.setComponentVariation(player, 6, 29, 0);
+            user.setComponentVariation(player, 7, 0, 0);
+            user.setComponentVariation(player, 8, 160, 0);
+            user.setComponentVariation(player, 9, 0, 0);
+            user.setComponentVariation(player, 10, 0, 0);
+            user.setComponentVariation(player, 11, 27, 5);
+
+            user.setProp(player, 0, 120, 0);
+        }
+        else {
+            user.setComponentVariation(player, 1, 0, 0);
+            user.setComponentVariation(player, 3, 11, 0);
+            user.setComponentVariation(player, 4, 10, 0);
+            user.setComponentVariation(player, 5, 0, 0);
+            user.setComponentVariation(player, 6, 40, 9);
+            user.setComponentVariation(player, 7, 0, 0);
+            user.setComponentVariation(player, 8, 130, 0);
+            user.setComponentVariation(player, 9, 0, 0);
+            user.setComponentVariation(player, 10, 0, 0);
+            user.setComponentVariation(player, 11, 95, 0);
+
+            user.setProp(player, 0, 121, 0);
+        }
+    }
+    else if (id === 11) { //SAPD 11 (Tactical)
+        user.setProp(player, 0, 19, 0);
+
+        if (user.getSex(player) == 1) {
+            user.setComponentVariation(player, 0, 1, 0);
+            user.setComponentVariation(player, 1, 0, 0);
+            user.setComponentVariation(player, 3, 19, 0);
+            user.setComponentVariation(player, 4, 38, 2);
+            user.setComponentVariation(player, 5, 57, 9);
+            user.setComponentVariation(player, 6, 52, 0);
+            user.setComponentVariation(player, 7, 0, 0);
+            user.setComponentVariation(player, 8, 35, 0);
+            user.setComponentVariation(player, 9, 0, 0);
+            user.setComponentVariation(player, 10, 0, 0);
+            user.setComponentVariation(player, 11, 59, 2);
+        }
+        else {
+            user.setComponentVariation(player, 0, 1, 0);
+            user.setComponentVariation(player, 1, 0, 0);
+            user.setComponentVariation(player, 3, 18, 4);
+            user.setComponentVariation(player, 4, 9, 0);
+            user.setComponentVariation(player, 5, 0, 0);
+            user.setComponentVariation(player, 6, 24, 0);
+            user.setComponentVariation(player, 7, 0, 0);
+            user.setComponentVariation(player, 8, 57, 0);
+            user.setComponentVariation(player, 9, 0, 0);
+            user.setComponentVariation(player, 10, 0, 0);
+            user.setComponentVariation(player, 11, 48, 0);
+        }
+    }
+    else if (id === 12) { //SAPD 12 (Tactical)
+        user.clearAllProp(player);
+
+        if (user.getSex(player) == 1) {
+            user.setComponentVariation(player, 0, 0, 0);
+            user.setComponentVariation(player, 1, 0, 0);
+            user.setComponentVariation(player, 3, 5, 0);
+            user.setComponentVariation(player, 4, 6, 2);
+            user.setComponentVariation(player, 5, 0, 0);
+            user.setComponentVariation(player, 6, 29, 0);
+            user.setComponentVariation(player, 7, 86, 0);
+            user.setComponentVariation(player, 8, 38, 0);
+            user.setComponentVariation(player, 9, 0, 0);
+            user.setComponentVariation(player, 10, 0, 0);
+            user.setComponentVariation(player, 11, 6, 2);
+        }
+        else {
+            user.setComponentVariation(player, 0, 0, 0);
+            user.setComponentVariation(player, 1, 0, 0);
+            user.setComponentVariation(player, 3, 4, 0);
+            user.setComponentVariation(player, 4, 10, 2);
+            user.setComponentVariation(player, 5, 0, 0);
+            user.setComponentVariation(player, 6, 10, 0);
+            user.setComponentVariation(player, 7, 115, 0);
+            user.setComponentVariation(player, 8, 10, 0);
+            user.setComponentVariation(player, 9, 0, 0);
+            user.setComponentVariation(player, 10, 0, 0);
+            user.setComponentVariation(player, 11, 28, 2);
+        }
+    }
+    else if (id === 13) { //BCSD 1 (Cadet)
+        user.clearAllProp(player);
+        if (user.getSex(player) == 1)
+        {
+            user.setComponentVariation(player, 8, 35, 0);
+            user.setComponentVariation(player, 3, 0, 0);
+            user.setComponentVariation(player, 11, 27, 1);
+            user.setComponentVariation(player, 4, 64, 2);
+            user.setComponentVariation(player, 6, 55, 0);
+        }
+        else
+        {
+            user.setProp(player, 0, 13, 4);
+            user.setComponentVariation(player, 8, 58, 0);
+            user.setComponentVariation(player, 3, 11, 0);
+            user.setComponentVariation(player, 11, 26, 1);
+            user.setComponentVariation(player, 7, 10, 2);
+            user.setComponentVariation(player, 4, 23, 1);
+            user.setComponentVariation(player, 6, 54, 0);
+        }
+    }
+    else if (id === 14) { //BCSD 2 (Cadet)
+        user.clearAllProp(player);
+        if (user.getSex(player) == 1)
+        {
+            user.setComponentVariation(player, 8, 35, 0);
+            user.setComponentVariation(player, 3, 0, 0);
+            user.setComponentVariation(player, 11, 27, 2);
+            user.setComponentVariation(player, 4, 64, 2);
+            user.setComponentVariation(player, 6, 55, 0);
+        }
+        else
+        {
+            user.setProp(player, 0, 13, 7);
+            user.setComponentVariation(player, 8, 58, 0);
+            user.setComponentVariation(player, 3, 11, 0);
+            user.setComponentVariation(player, 11, 13, 1);
+            user.setComponentVariation(player, 7, 10, 2);
+            user.setComponentVariation(player, 4, 23, 1);
+            user.setComponentVariation(player, 6, 54, 0);
+        }
+    }
+    else if (id === 15) { //BCSD 3 (Cadet)
+        user.clearAllProp(player);
+        if (user.getSex(player) == 1)
+        {
+            user.setComponentVariation(player, 8, 35, 0);
+            user.setComponentVariation(player, 3, 0, 0);
+            user.setComponentVariation(player, 11, 27, 5);
+            user.setComponentVariation(player, 4, 64, 2);
+            user.setComponentVariation(player, 6, 55, 0);
+        }
+        else
+        {
+            user.setProp(player, 0, 13, 3);
+            user.setComponentVariation(player, 8, 58, 0);
+            user.setComponentVariation(player, 3, 11, 0);
+            user.setComponentVariation(player, 11, 13, 0);
+            user.setComponentVariation(player, 7, 10, 2);
+            user.setComponentVariation(player, 4, 23, 1);
+            user.setComponentVariation(player, 6, 54, 0);
+        }
+    }
+    else if (id === 16) { //BCSD 4 (Cadet)
+        user.clearAllProp(player);
+        if (user.getSex(player) == 1)
+        {
+            user.setComponentVariation(player, 0, 1, 0);
+            user.setComponentVariation(player, 1, 0, 0);
+            user.setComponentVariation(player, 3, 14, 0);
+            user.setComponentVariation(player, 4, 64, 1);
+            user.setComponentVariation(player, 5, 0, 0);
+            user.setComponentVariation(player, 6, 55, 0);
+            user.setComponentVariation(player, 7, 0, 0);
+            user.setComponentVariation(player, 8, 159, 0);
+            user.setComponentVariation(player, 9, 0, 0);
+            user.setComponentVariation(player, 10, 0, 0);
+            user.setComponentVariation(player, 11, 329, 0);
+        }
+        else
+        {
+            user.setProp(player, 0, 13, 2);
+            user.setComponentVariation(player, 8, 58, 0);
+            user.setComponentVariation(player, 3, 11, 0);
+            user.setComponentVariation(player, 11, 13, 2);
+            user.setComponentVariation(player, 7, 10, 2);
+            user.setComponentVariation(player, 4, 23, 1);
+            user.setComponentVariation(player, 6, 54, 0);
+        }
+    }
+    else if (id === 17) { //BCSD 5 (Cadet)
+        user.clearAllProp(player);
+        if (user.getSex(player) == 1)
+        {
+            user.setComponentVariation(player, 0, 1, 0);
+            user.setComponentVariation(player, 1, 0, 0);
+            user.setComponentVariation(player, 3, 14, 0);
+            user.setComponentVariation(player, 4, 64, 1);
+            user.setComponentVariation(player, 5, 0, 0);
+            user.setComponentVariation(player, 6, 55, 0);
+            user.setComponentVariation(player, 7, 0, 0);
+            user.setComponentVariation(player, 8, 159, 0);
+            user.setComponentVariation(player, 9, 0, 0);
+            user.setComponentVariation(player, 10, 0, 0);
+            user.setComponentVariation(player, 11, 329, 4);
+        }
+        else
+        {
+            user.setComponentVariation(player, 0, 1, 0);
+            user.setComponentVariation(player, 1, 0, 0);
+            user.setComponentVariation(player, 3, 11, 0);
+            user.setComponentVariation(player, 4, 25, 6);
+            user.setComponentVariation(player, 5, 0, 0);
+            user.setComponentVariation(player, 6, 54, 0);
+            user.setComponentVariation(player, 7, 38, 7);
+            user.setComponentVariation(player, 8, 58, 0);
+            user.setComponentVariation(player, 9, 0, 0);
+            user.setComponentVariation(player, 10, 0, 0);
+            user.setComponentVariation(player, 11, 26, 4);
+        }
+    }
+    else if (id === 18) { //BCSD 6 (Cadet)
+        user.clearAllProp(player);
+        if (user.getSex(player) == 1)
+        {
+            user.setComponentVariation(player, 0, 1, 0);
+            user.setComponentVariation(player, 1, 0, 0);
+            user.setComponentVariation(player, 3, 14, 0);
+            user.setComponentVariation(player, 4, 64, 1);
+            user.setComponentVariation(player, 5, 0, 0);
+            user.setComponentVariation(player, 6, 55, 0);
+            user.setComponentVariation(player, 7, 0, 0);
+            user.setComponentVariation(player, 8, 159, 0);
+            user.setComponentVariation(player, 9, 0, 0);
+            user.setComponentVariation(player, 10, 0, 0);
+            user.setComponentVariation(player, 11, 329, 2);
+        }
+        else
+        {
+            user.setComponentVariation(player, 0, 1, 0);
+            user.setComponentVariation(player, 1, 0, 0);
+            user.setComponentVariation(player, 3, 11, 0);
+            user.setComponentVariation(player, 4, 25, 6);
+            user.setComponentVariation(player, 5, 0, 0);
+            user.setComponentVariation(player, 6, 54, 0);
+            user.setComponentVariation(player, 7, 38, 7);
+            user.setComponentVariation(player, 8, 58, 0);
+            user.setComponentVariation(player, 9, 0, 0);
+            user.setComponentVariation(player, 10, 0, 0);
+            user.setComponentVariation(player, 11, 26, 1);
+        }
+    }
+    else if (id === 19) { //BCSD 7 (Cadet)
+        user.clearAllProp(player);
+        if (user.getSex(player) == 1)
+        {
+            user.setComponentVariation(player, 0, 1, 0);
+            user.setComponentVariation(player, 1, 0, 0);
+            user.setComponentVariation(player, 3, 14, 0);
+            user.setComponentVariation(player, 4, 64, 1);
+            user.setComponentVariation(player, 5, 0, 0);
+            user.setComponentVariation(player, 6, 55, 0);
+            user.setComponentVariation(player, 7, 0, 0);
+            user.setComponentVariation(player, 8, 159, 0);
+            user.setComponentVariation(player, 9, 0, 0);
+            user.setComponentVariation(player, 10, 0, 0);
+            user.setComponentVariation(player, 11, 329, 1);
+        }
+        else
+        {
+            user.setComponentVariation(player, 0, 1, 0);
+            user.setComponentVariation(player, 1, 0, 0);
+            user.setComponentVariation(player, 3, 11, 0);
+            user.setComponentVariation(player, 4, 25, 6);
+            user.setComponentVariation(player, 5, 0, 0);
+            user.setComponentVariation(player, 6, 54, 0);
+            user.setComponentVariation(player, 7, 38, 7);
+            user.setComponentVariation(player, 8, 58, 0);
+            user.setComponentVariation(player, 9, 0, 0);
+            user.setComponentVariation(player, 10, 0, 0);
+            user.setComponentVariation(player, 11, 26, 2);
+        }
+    }
+    else if (id === 20) { //BCSD 8 (Cadet)
+        user.clearAllProp(player);
+        if (user.getSex(player) == 1)
+        {
+            user.setComponentVariation(player, 0, 1, 0);
+            user.setComponentVariation(player, 1, 0, 0);
+            user.setComponentVariation(player, 3, 14, 0);
+            user.setComponentVariation(player, 4, 64, 1);
+            user.setComponentVariation(player, 5, 0, 0);
+            user.setComponentVariation(player, 6, 55, 0);
+            user.setComponentVariation(player, 7, 0, 0);
+            user.setComponentVariation(player, 8, 159, 0);
+            user.setComponentVariation(player, 9, 6, 1);
+            user.setComponentVariation(player, 10, 0, 0);
+            user.setComponentVariation(player, 11, 329, 4);
+        }
+        else
+        {
+            user.setComponentVariation(player, 0, 1, 0);
+            user.setComponentVariation(player, 1, 0, 0);
+            user.setComponentVariation(player, 3, 11, 0);
+            user.setComponentVariation(player, 4, 25, 6);
+            user.setComponentVariation(player, 5, 0, 0);
+            user.setComponentVariation(player, 6, 54, 0);
+            user.setComponentVariation(player, 7, 38, 7);
+            user.setComponentVariation(player, 8, 58, 0);
+            user.setComponentVariation(player, 9, 4, 1);
+            user.setComponentVariation(player, 10, 70, 1);
+            user.setComponentVariation(player, 11, 26, 2);
+        }
+    }
+    else if (id === 21) { //BCSD 9 (Cadet)
+        user.clearAllProp(player);
+        user.setProp(player, 0, 19, 0);
+
+        if (user.getSex(player) == 1) {
+            user.setComponentVariation(player, 0, 1, 0);
+            user.setComponentVariation(player, 1, 0, 0);
+            user.setComponentVariation(player, 3, 19, 0);
+            user.setComponentVariation(player, 4, 38, 2);
+            user.setComponentVariation(player, 5, 57, 9);
+            user.setComponentVariation(player, 6, 52, 0);
+            user.setComponentVariation(player, 7, 0, 0);
+            user.setComponentVariation(player, 8, 152, 0);
+            user.setComponentVariation(player, 9, 0, 0);
+            user.setComponentVariation(player, 10, 0, 0);
+            user.setComponentVariation(player, 11, 59, 2);
+        }
+        else {
+            user.setComponentVariation(player, 0, 1, 0);
+            user.setComponentVariation(player, 1, 0, 0);
+            user.setComponentVariation(player, 3, 18, 4);
+            user.setComponentVariation(player, 4, 9, 0);
+            user.setComponentVariation(player, 5, 0, 0);
+            user.setComponentVariation(player, 6, 24, 0);
+            user.setComponentVariation(player, 7, 0, 0);
+            user.setComponentVariation(player, 8, 122, 0);
+            user.setComponentVariation(player, 9, 0, 0);
+            user.setComponentVariation(player, 10, 0, 0);
+            user.setComponentVariation(player, 11, 48, 0);
+        }
+    }
+    else if (id === 22) { //BCSD 10 (Tactical)
+        user.clearAllProp(player);
+        user.setComponentVariation(player, 7, 0, 0);
+        if (user.getSex(player) == 1)
+        {
+            user.setProp(player, 0, 116, 1);
+            user.setComponentVariation(player, 6, 52, 0);
+            user.setComponentVariation(player, 0, 21, 0);
+            user.setComponentVariation(player, 8, 160, 0);
+            user.setComponentVariation(player, 3, 18, 0);
+            user.setComponentVariation(player, 11, 46, 2);
+            user.setComponentVariation(player, 9, 6, 2);
+            user.setComponentVariation(player, 10, 70, 1);
+            user.setComponentVariation(player, 4, 61, 7);
+            user.setComponentVariation(player, 6, 24, 0);
+        }
+        else
+        {
+            user.setProp(player, 0, 117, 1);
+            user.setComponentVariation(player, 6, 52, 0);
+            user.setComponentVariation(player, 8, 130, 0);
+            user.setComponentVariation(player, 3, 17, 0);
+            user.setComponentVariation(player, 11, 53, 2);
+            user.setComponentVariation(player, 10, 70, 1);
+            user.setComponentVariation(player, 9, 1, 2);
+            user.setComponentVariation(player, 4, 59, 7);
+            user.setComponentVariation(player, 6, 24, 0);
+        }
+    }
+    else if (id === 23) { //BCSD 11 (Cadet)
+        user.clearAllProp(player);
+
+        if (user.getSex(player) == 1)
+        {
+            user.setComponentVariation(player, 0, 0, 0);
+            user.setComponentVariation(player, 1, 0, 0);
+            user.setComponentVariation(player, 3, 5, 0);
+            user.setComponentVariation(player, 4, 6, 1);
+            user.setComponentVariation(player, 5, 0, 0);
+            user.setComponentVariation(player, 6, 29, 0);
+            user.setComponentVariation(player, 7, 86, 0);
+            user.setComponentVariation(player, 8, 38, 0);
+            user.setComponentVariation(player, 9, 0, 0);
+            user.setComponentVariation(player, 10, 0, 0);
+            user.setComponentVariation(player, 11, 6, 1);
+        }
+        else
+        {
+            user.setComponentVariation(player, 0, 0, 0);
+            user.setComponentVariation(player, 1, 0, 0);
+            user.setComponentVariation(player, 3, 4, 0);
+            user.setComponentVariation(player, 4, 10, 1);
+            user.setComponentVariation(player, 5, 0, 0);
+            user.setComponentVariation(player, 6, 10, 0);
+            user.setComponentVariation(player, 7, 115, 0);
+            user.setComponentVariation(player, 8, 10, 0);
+            user.setComponentVariation(player, 9, 0, 0);
+            user.setComponentVariation(player, 10, 0, 0);
+            user.setComponentVariation(player, 11, 28, 1);
+        }
+    }
+    else if (id === 24) { //EMS 1
+        user.clearAllProp(player);
+
+        if (user.getSex(player) == 1) {
+            user.setComponentVariation(player, 1, 0, 0);
+            user.setComponentVariation(player, 3, 109, 0);
+            user.setComponentVariation(player, 4, 99, 0);
+            user.setComponentVariation(player, 5, 0, 0);
+            user.setComponentVariation(player, 6, 72, 0);
+            user.setComponentVariation(player, 7, 96, 0);
+            user.setComponentVariation(player, 8, 159, 0);
+            user.setComponentVariation(player, 9, 0, 0);
+            user.setComponentVariation(player, 10, 0, 0);
+            user.setComponentVariation(player, 11, 258, 0);
+        }
+        else {
+            user.setComponentVariation(player, 1, 0, 0);
+            user.setComponentVariation(player, 3, 85, 0);
+            user.setComponentVariation(player, 4, 96, 0);
+            user.setComponentVariation(player, 5, 0, 0);
+            user.setComponentVariation(player, 6, 51, 0);
+            user.setComponentVariation(player, 7, 127, 0);
+            user.setComponentVariation(player, 8, 129, 0);
+            user.setComponentVariation(player, 9, 0, 0);
+            user.setComponentVariation(player, 10, 58, 0);
+            user.setComponentVariation(player, 11, 250, 0);
+        }
+    }
+    else if (id === 25) { //EMS 2
+        user.clearAllProp(player);
+
+        if (user.getSex(player) == 1) {
+            user.setComponentVariation(player, 1, 0, 0);
+            user.setComponentVariation(player, 3, 109, 0);
+            user.setComponentVariation(player, 4, 99, 1);
+            user.setComponentVariation(player, 5, 0, 0);
+            user.setComponentVariation(player, 6, 72, 0);
+            user.setComponentVariation(player, 7, 97, 0);
+            user.setComponentVariation(player, 8, 159, 0);
+            user.setComponentVariation(player, 9, 0, 0);
+            user.setComponentVariation(player, 10, 0, 0);
+            user.setComponentVariation(player, 11, 258, 1);
+        }
+        else {
+            user.setComponentVariation(player, 1, 0, 0);
+            user.setComponentVariation(player, 3, 85, 0);
+            user.setComponentVariation(player, 4, 96,  1);
+            user.setComponentVariation(player, 5, 0, 0);
+            user.setComponentVariation(player, 6, 51, 0);
+            user.setComponentVariation(player, 7, 126, 0);
+            user.setComponentVariation(player, 8, 129, 0);
+            user.setComponentVariation(player, 9, 0, 0);
+            user.setComponentVariation(player, 10, 58, 0);
+            user.setComponentVariation(player, 11, 250,  1);
+        }
+    }
+    else if (id === 26) { //EMS 3
+        user.clearAllProp(player);
+
+        if (user.getSex(player) == 1) {
+            user.setComponentVariation(player, 1, 0, 0);
+            user.setComponentVariation(player, 3, 104, 0);
+            user.setComponentVariation(player, 4, 99, 1);
+            user.setComponentVariation(player, 5, 0, 0);
+            user.setComponentVariation(player, 6, 72, 0);
+            user.setComponentVariation(player, 7, 96, 0);
+            user.setComponentVariation(player, 8, 15, 0);
+            user.setComponentVariation(player, 9, 0, 0);
+            user.setComponentVariation(player, 10, 0, 0);
+            user.setComponentVariation(player, 11, 257, 0);
+        }
+        else {
+            user.setComponentVariation(player, 1, 0, 0);
+            user.setComponentVariation(player, 3, 85, 0);
+            user.setComponentVariation(player, 4, 96,  0);
+            user.setComponentVariation(player, 5, 0, 0);
+            user.setComponentVariation(player, 6, 51, 0);
+            user.setComponentVariation(player, 7, 127, 0);
+            user.setComponentVariation(player, 8, 15, 0);
+            user.setComponentVariation(player, 9, 0, 0);
+            user.setComponentVariation(player, 10, 57, 0);
+            user.setComponentVariation(player, 11, 249,  0);
+        }
+    }
+    else if (id === 27) { //EMS 4
+        user.clearAllProp(player);
+
+        if (user.getSex(player) == 1) {
+            user.setComponentVariation(player, 1, 0, 0);
+            user.setComponentVariation(player, 3, 104, 0);
+            user.setComponentVariation(player, 4, 99, 1);
+            user.setComponentVariation(player, 5, 0, 0);
+            user.setComponentVariation(player, 6, 72, 0);
+            user.setComponentVariation(player, 7, 97, 0);
+            user.setComponentVariation(player, 8, 15, 0);
+            user.setComponentVariation(player, 9, 0, 0);
+            user.setComponentVariation(player, 10, 0, 0);
+            user.setComponentVariation(player, 11, 257, 1);
+        }
+        else {
+            user.setComponentVariation(player, 1, 0, 0);
+            user.setComponentVariation(player, 3, 85, 0);
+            user.setComponentVariation(player, 4, 96,  1);
+            user.setComponentVariation(player, 5, 0, 0);
+            user.setComponentVariation(player, 6, 51, 0);
+            user.setComponentVariation(player, 7, 126, 0);
+            user.setComponentVariation(player, 8, 15, 0);
+            user.setComponentVariation(player, 9, 0, 0);
+            user.setComponentVariation(player, 10, 57, 0);
+            user.setComponentVariation(player, 11, 249,  1);
+        }
+    }
+    else if (id === 28) { //EMS 5
+        user.clearAllProp(player);
+
+        if (user.getSex(player) == 1) {
+            user.setProp(player, 0, 136, 0);
+            user.setComponentVariation(player, 1, 0, 0);
+            user.setComponentVariation(player, 3, 127, 3);
+            user.setComponentVariation(player, 4, 126, 0);
+            user.setComponentVariation(player, 5, 0, 0);
+            user.setComponentVariation(player, 6, 72, 0);
+            user.setComponentVariation(player, 7, 0, 0);
+            user.setComponentVariation(player, 8, 0, 0);
+            user.setComponentVariation(player, 9, 0, 0);
+            user.setComponentVariation(player, 10, 73, 0);
+            user.setComponentVariation(player, 11, 325, 0);
+        }
+        else {
+            user.setProp(player, 0, 137, 0);
+            user.setComponentVariation(player, 1, 0, 0);
+            user.setComponentVariation(player, 3, 110, 3);
+            user.setComponentVariation(player, 4, 120,  0);
+            user.setComponentVariation(player, 5, 0, 0);
+            user.setComponentVariation(player, 6, 51, 0);
+            user.setComponentVariation(player, 7, 0, 0);
+            user.setComponentVariation(player, 8, 0, 0);
+            user.setComponentVariation(player, 9, 0, 0);
+            user.setComponentVariation(player, 10, 0, 0);
+            user.setComponentVariation(player, 11, 314,  0);
+        }
+    }
+    else if (id === 29) { //EMS 6
+        user.clearAllProp(player);
+
+        if (user.getSex(player) == 1) {
+            user.setProp(player, 0, 137, 0);
+            user.setComponentVariation(player, 1, 0, 0);
+            user.setComponentVariation(player, 3, 127, 3);
+            user.setComponentVariation(player, 4, 126, 1);
+            user.setComponentVariation(player, 5, 0, 0);
+            user.setComponentVariation(player, 6, 72, 0);
+            user.setComponentVariation(player, 7, 0, 0);
+            user.setComponentVariation(player, 8, 187, 0);
+            user.setComponentVariation(player, 9, 0, 0);
+            user.setComponentVariation(player, 10, 73, 0);
+            user.setComponentVariation(player, 11, 325, 1);
+        }
+        else {
+            user.setProp(player, 0, 138, 0);
+            user.setComponentVariation(player, 1, 0, 0);
+            user.setComponentVariation(player, 3, 110, 3);
+            user.setComponentVariation(player, 4, 120,  1);
+            user.setComponentVariation(player, 5, 0, 0);
+            user.setComponentVariation(player, 6, 51, 0);
+            user.setComponentVariation(player, 7, 0, 0);
+            user.setComponentVariation(player, 8, 151, 0);
+            user.setComponentVariation(player, 9, 0, 0);
+            user.setComponentVariation(player, 10, 0, 0);
+            user.setComponentVariation(player, 11, 314,  1);
+        }
+    }
+    else if (id === 30) { //EMS 7
+        user.clearAllProp(player);
+
+        if (user.getSex(player) == 1) {
+            user.setComponentVariation(player, 1, 0, 0);
+            user.setComponentVariation(player, 3, 109, 0);
+            user.setComponentVariation(player, 4, 23, 0);
+            user.setComponentVariation(player, 5, 0, 0);
+            user.setComponentVariation(player, 6, 72, 0);
+            user.setComponentVariation(player, 7, 97, 0);
+            user.setComponentVariation(player, 8, 15, 0);
+            user.setComponentVariation(player, 9, 0, 0);
+            user.setComponentVariation(player, 10, 0, 0);
+            user.setComponentVariation(player, 11, 333, 0);
+        }
+        else {
+            user.setComponentVariation(player, 1, 0, 0);
+            user.setComponentVariation(player, 3, 85, 0);
+            user.setComponentVariation(player, 4, 28,  8);
+            user.setComponentVariation(player, 5, 0, 0);
+            user.setComponentVariation(player, 6, 42, 0);
+            user.setComponentVariation(player, 7, 126, 0);
+            user.setComponentVariation(player, 8, 15, 0);
+            user.setComponentVariation(player, 9, 0, 0);
+            user.setComponentVariation(player, 10, 0, 0);
+            user.setComponentVariation(player, 11, 321,  0);
+        }
+    }
+    else if (id === 31) { //Gov1 1
+        if (user.getSex(player) == 1) {
+            user.setComponentVariation(player, 7, 86, 1);
+        }
+        else {
+            user.setComponentVariation(player, 7, 115, 1);
+        }
+    }
+    else if (id === 32) { //Gov1 1
+        if (user.getSex(player) == 1) {
+            user.setComponentVariation(player, 7, 86, 0);
+        }
+        else {
+            user.setComponentVariation(player, 7, 115, 0);
+        }
+    }
+    else if (id === 99) { //GR6 1
+        user.clearAllProp(player);
+
+        if (user.getSex(player) == 1) {
+            user.setComponentVariation(player, 3, 14, 0);
+            user.setComponentVariation(player, 4, 34, 0);
+            user.setComponentVariation(player, 5, 0, 0);
+            user.setComponentVariation(player, 6, 25, 0);
+            user.setComponentVariation(player, 7, 0, 0);
+            user.setComponentVariation(player, 8, 152, 0);
+            user.setComponentVariation(player, 9, 6, 1);
+            user.setComponentVariation(player, 10, 0, 0);
+            user.setComponentVariation(player, 11, 85, 0);
+        }
+        else {
+            user.setComponentVariation(player, 3, 11, 0);
+            user.setComponentVariation(player, 4, 13, 0);
+            user.setComponentVariation(player, 5, 0, 0);
+            user.setComponentVariation(player, 6, 25, 0);
+            user.setComponentVariation(player, 7, 0, 0);
+            user.setComponentVariation(player, 8, 122, 0);
+            user.setComponentVariation(player, 9, 7, 1);
+            user.setComponentVariation(player, 10, 71, 0);
+            user.setComponentVariation(player, 11, 318, 1);
+        }
+    }
 };

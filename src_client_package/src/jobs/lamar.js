@@ -4,6 +4,7 @@ import user from '../user';
 
 import jobPoint from '../manager/jobPoint';
 import vehicles from "../property/vehicles";
+import fraction from "../property/fraction";
 
 let lamar = {};
 
@@ -204,7 +205,7 @@ lamar.findRandomPickup = function() {
         isProcess = true;
         pickupId = methods.getRandomInt(0, lamar.markers.length - 1);
         let pos = new mp.Vector3(lamar.markers[pickupId][0], lamar.markers[pickupId][1], lamar.markers[pickupId][2] - 1);
-        price = methods.getRandomInt(3000, 4000);
+        price = methods.getRandomInt(400, 700);
         _checkpointId = jobPoint.create(pos, true, 3);
         vehicles.spawnLamarCar(-216.03062438964844, -1363.7830810546875, 31.010269165039062, 29.823272705078125, "Speedo4");
         user.setById('grabLamar', true);
@@ -216,10 +217,14 @@ lamar.findRandomPickup = function() {
 
 lamar.finish = function() {
     try {
-        user.removeRep(20);
+        user.removeRep(5);
         isProcess = false;
         vehicles.destroy();
         user.addCryptoMoney(price / 1000, 'Помощь Ламару');
+
+        if (user.getCache('fraction_id2') > 0)
+            fraction.addMoney(user.getCache('fraction_id'), price / 5000, `Доля от фургона Ламара (${user.getCache('name')})`);
+
         mp.game.ui.notifications.show(`~b~Вы довезли груз и заработали ${methods.cryptoFormat(price / 1000)}`);
         user.setCache('isSellLamar', null);
 

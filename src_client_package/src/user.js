@@ -1007,6 +1007,10 @@ user.clearAllProp = function() {
     mp.events.callRemote('server:user:clearAllProp');
 };
 
+user.giveUniform = function(id) {
+    mp.events.callRemote('server:user:giveUniform', id);
+};
+
 user.kick = function(reason) {
     mp.events.callRemote('server:user:kick', reason);
 };

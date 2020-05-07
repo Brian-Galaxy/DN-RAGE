@@ -2403,6 +2403,16 @@ phone.showAppFractionDispatcherDep = function() {
     menuItem.umenu.push(item);
 
     item = phone.getMenuItem(
+        'Код 0 | EMS',
+        'Необходима немедленная поддержка сотрудников EMS',
+        { name: "codeDep", code: 0, codeDesc: `${user.getCache('name')} - запрашивает поддержку сотрудников EMS` },
+        1,
+        '',
+        true,
+    );
+    menuItem.umenu.push(item);
+
+    item = phone.getMenuItem(
         'Код 1',
         'Офицер в бедственном положении',
         { name: "codeDep", code: 1, codeDesc: `${user.getCache('name')} - в бедственном положении` },
@@ -3694,6 +3704,30 @@ phone.callBackModalInput = async function(paramsJson, text) {
             mp.events.callRemote('server:phone:fractionMoney');
             phone.showLoad();
         }
+        if (params.name == 'fractionTake') {
+            let price = methods.parseFloat(text);
+
+            if (price < 0) {
+                mp.game.ui.notifications.show(`~r~Значение не может быть меньше нуля`);
+                return;
+            }
+            if (price > 50000) {
+                mp.game.ui.notifications.show(`~r~Значение не может быть больше 50000`);
+                return;
+            }
+
+            coffer.removeMoney(coffer.getIdByFraction(user.getCache('fraction_id')), methods.parseInt(text));
+            user.addBankMoney(methods.parseInt(text), 'Снял деньги с организации');
+            user.sendSmsBankOperation('Зачисление средств: ~g~' + methods.moneyFormat(methods.parseInt(text)));
+            phone.showAppFraction();
+
+            methods.saveFractionLog(
+                user.getCache('name'),
+                `Снял средства`,
+                `Сумма: ${methods.moneyFormat(methods.parseInt(text))}`,
+                user.getCache('fraction_id')
+            );
+        }
         if (params.name == 'sendAd') {
             if (Container.Data.HasLocally(mp.players.local.remoteId, "isAdTimeout"))
             {
@@ -3716,13 +3750,13 @@ phone.callBackModalInput = async function(paramsJson, text) {
             }, 300000);
         }
         if (params.name == 'call9111') {
-            dispatcher.send(`~b~Диспетчер | Police`, text);
+            dispatcher.send(`~b~PD | ${methods.phoneFormat(user.getCache('phone'))}`, text);
         }
         if (params.name == 'call9112') {
-            dispatcher.send(`~r~Диспетчер | Med`, text);
+            dispatcher.send(`~r~EMS | ${methods.phoneFormat(user.getCache('phone'))}`, text);
         }
         if (params.name == 'call9113') {
-            dispatcher.send(`~y~Диспетчер | Fire`, text);
+            dispatcher.send(`~y~FD | ${methods.phoneFormat(user.getCache('phone'))}`, text);
         }
         if (params.name == 'getPayDay') {
             let sum = methods.parseFloat(text);

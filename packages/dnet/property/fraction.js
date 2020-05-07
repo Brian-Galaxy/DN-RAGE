@@ -460,20 +460,17 @@ fraction.loadAll = function() {
         count = rows.length;
         methods.debug('All Fraction Loaded: ' + count);
     });
-
-    setTimeout(function () {
-        try {
-            fraction.removeTaxAndSave();
-        }
-        catch (e) {
-
-        }
-    }, 20000);
 };
 
+let isRemove = false;
 fraction.removeTaxAndSave = function() {
+
+    if (isRemove)
+        return;
+
     methods.debug('fraction.removeTax');
 
+    isRemove = true;
     mysql.executeQuery(`SELECT * FROM fraction_list`, function (err, rows, fields) {
         rows.forEach(function(item) {
             let sum = 5;

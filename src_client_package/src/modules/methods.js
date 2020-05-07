@@ -146,7 +146,7 @@ methods.getVehicleInfo = function (model) {
         let vehInfo = enums.vehicleInfo;
         for (let item in vehInfo) {
             let vItem = vehInfo[item];
-            if (vItem.hash == model || vItem.display_name == model || mp.game.joaat(vItem.display_name.toString().toLowerCase()) == model)
+            if (vItem.hash == model || vItem.display_name == model || vItem.display_name.toLowerCase() == model.toString().toLowerCase() || mp.game.joaat(vItem.display_name.toString().toLowerCase()) == model)
                 return vItem;
         }
 
@@ -538,6 +538,11 @@ methods.iplMichaelDefault = function () {
 
     methods.setIplPropState(interiorId, "V_Michael_bed_tidy");
     methods.setIplPropState(interiorId, "V_Michael_bed_Messy");
+    methods.setIplPropState(interiorId, "V_Michael_M_items");
+    methods.setIplPropState(interiorId, "V_Michael_D_items");
+    methods.setIplPropState(interiorId, "V_Michael_S_items");
+    methods.setIplPropState(interiorId, "V_Michael_L_Items");
+    methods.setIplPropState(interiorId, "V_Michael_bed_tidy");
     methods.setIplPropState(interiorId, "Michael_premier", false);
     methods.setIplPropState(interiorId, "V_Michael_FameShame", false);
     methods.setIplPropState(interiorId, "V_Michael_plane_ticket", false);
@@ -568,7 +573,7 @@ methods.iplGangDefault = function () {
 };
 
 methods.iplSimonDefault = function () {
-    let interiorId = 7170;
+    let interiorId = mp.game.interior.getInteriorAtCoords(-46.84232, -1096.113, 26.06662);
     mp.game.streaming.requestIpl("shr_int");
     methods.setIplPropState(interiorId, "csr_beforeMission");
     methods.setIplPropState(interiorId, "shutter_open");
@@ -576,17 +581,21 @@ methods.iplSimonDefault = function () {
 };
 
 methods.iplFranklinAuntDefault = function () {
-    let interiorId = 197889;
+    let interiorId = mp.game.interior.getInteriorAtCoords(-12.29968, -1436.287, 30.46845);
     methods.setIplPropState(interiorId, "");
+    methods.setIplPropState(interiorId, "V_57_FranklinStuff", true);
     methods.setIplPropState(interiorId, "V_57_GangBandana", false);
     methods.setIplPropState(interiorId, "V_57_Safari", false);
     mp.game.interior.refreshInterior(interiorId);
 };
 
 methods.iplFranklinDefault = function () {
-    let interiorId = 206849;
+    let interiorId = mp.game.interior.getInteriorAtCoords(-5.178349, 527.028, 174.0297);
     methods.setIplPropState(interiorId, "");
-    methods.setIplPropState(interiorId, "unlocked");
+    methods.setIplPropState(interiorId, "locked");
+    methods.setIplPropState(interiorId, "bong_and_wine");
+    methods.setIplPropState(interiorId, "franklin_unpacking");
+    methods.setIplPropState(interiorId, "franklin_settled");
     methods.setIplPropState(interiorId, "progress_flyer", false);
     methods.setIplPropState(interiorId, "progress_tux", false);
     methods.setIplPropState(interiorId, "progress_tshirt", false);
@@ -595,9 +604,10 @@ methods.iplFranklinDefault = function () {
 };
 
 methods.iplFloydDefault = function () {
-    let interiorId = 171777;
+    let interiorId = mp.game.interior.getInteriorAtCoords(-1152.682, -1519.319, 11.03756);
     methods.setIplPropState(interiorId, "swap_clean_apt");
     methods.setIplPropState(interiorId, "swap_mrJam_A");
+    methods.setIplPropState(interiorId, "swap_sofa_A");
     mp.game.interior.refreshInterior(interiorId);
 };
 

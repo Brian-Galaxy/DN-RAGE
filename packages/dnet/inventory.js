@@ -123,6 +123,86 @@ inventory.unEquip = function(player, id, itemId) {
     }
 };
 
+inventory.upgradeWeapon = function(player, id, itemId, weaponStr) {
+
+    if (!user.isLogin(player))
+        return;
+    try {
+
+        let sql = `SELECT * FROM items WHERE id = ${id} AND owner_id = ${user.getId(player)} AND owner_type = ${inventory.types.Player}`;
+
+        mysql.executeQuery(sql, function (err, rows, fields) {
+            if (rows.length === 0) {
+                player.notify('~r~Этот предмет Вам не принадлежит');
+                return;
+            }
+
+            let weapon = JSON.parse(weaponStr);
+
+            let wpName = items.getItemNameHashById(weapon.item_id);
+            let wpHash = weapons.getHashByName(wpName);
+
+            let wpModifer = items.getItemNameHashById(itemId);
+            let hashModifer = items.getItemHashModiferById(itemId);
+
+            if (wpModifer != wpName) {
+                player.notify(`~r~Данная модификация не подходит к этому оружию`);
+                return;
+            }
+
+            let wpSlot = weapons.getUpgradeSlot(wpName, hashModifer);
+
+            if (wpSlot == 1) {
+                if (weapon.params.slot1) {
+                    player.notify(`~r~Слот уже занят`);
+                    return;
+                }
+                weapon.params.slot1 = true;
+                weapon.params.slot1hash = hashModifer;
+            }
+            if (wpSlot == 2) {
+                if (weapon.params.slot2) {
+                    player.notify(`~r~Слот уже занят`);
+                    return;
+                }
+                weapon.params.slot2 = true;
+                weapon.params.slot2hash = hashModifer;
+            }
+            if (wpSlot == 3) {
+                if (weapon.params.slot3) {
+                    player.notify(`~r~Слот уже занят`);
+                    return;
+                }
+                weapon.params.slot3 = true;
+                weapon.params.slot3hash = hashModifer;
+            }
+            if (wpSlot == 4) {
+                if (weapon.params.slot4) {
+                    player.notify(`~r~Слот уже занят`);
+                    return;
+                }
+                weapon.params.slot4 = true;
+                weapon.params.slot4hash = hashModifer;
+            }
+
+            if (wpSlot == -1) {
+                player.notify(`~r~Произошла неизвестная ошибка #weapon`);
+                return;
+            }
+
+            user.giveWeaponComponent(player, methods.parseInt(wpHash), methods.parseInt(hashModifer));
+
+            inventory.updateItemParams(weapon.id, JSON.stringify(weapon.params));
+            inventory.deleteItem(id);
+
+            user.callCef(player, 'inventory', JSON.stringify({ type: 'removeItemId', itemId: id }));
+            user.callCef(player, 'inventory', JSON.stringify({ type: 'updateWeaponParams', itemId: weapon.id, params: weapon.params }));
+        });
+    } catch (e) {
+
+    }
+};
+
 inventory.equip = function(player, id, itemId, count, aparams) {
 
     if (!user.isLogin(player))
@@ -1454,10 +1534,6 @@ inventory.useItem = function(player, id, itemId, isTargetable = false) {
                     inventory.deleteItem(id);
                     user.playDrugAnimation(player);
                     user.set(player, 'useHeal', true);
-
-                    if (isTargetable && user.get(player, 'med_time') > 0) {
-                        player.call('client:hosp:free');
-                    }
 
                     setTimeout(function () {
                         if (user.isLogin(player))

@@ -280,8 +280,11 @@ ui.updateValues = function() {
 
             isGreenZone = false;
             enums.zoneGreenList.forEach(item => {
-                if (methods.isInPoint(mp.players.local.position, item) && mp.players.local.dimension === 0)
-                    isGreenZone = true;
+                if (methods.isInPoint(mp.players.local.position, item[2]) && mp.players.local.dimension === 0)
+                {
+                    if (mp.players.local.position.z > item[0] && mp.players.local.position.z < item[1])
+                        isGreenZone = true;
+                }
             });
 
             let data = {

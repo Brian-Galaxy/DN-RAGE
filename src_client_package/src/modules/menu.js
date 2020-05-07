@@ -236,6 +236,12 @@ class Menu {
             cefMenu.hide();
             menuItem = null;
             menuName = '';
+
+            if (_isShowInput) {
+                methods.blockKeys(true);
+                chat.activate(false);
+                mp.gui.cursor.show(true, true);
+            }
         }
     }
 }

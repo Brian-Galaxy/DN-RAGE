@@ -81,7 +81,7 @@ mp.events.add("client:casino:wheel:doRoll", async (priceIndex, playerId) => {
 
         let speedIntCnt = 1;
         let rollspeed = 1.0;
-        let _winAngle = (priceIndex - 1) * 18;
+        let _winAngle = (priceIndex - 1) * 18; //TODO -1
         let _rollAngle = _winAngle + (360 * 8);
         let _midLength = (_rollAngle / 2);
         let intCnt = 0;
@@ -99,9 +99,12 @@ mp.events.add("client:casino:wheel:doRoll", async (priceIndex, playerId) => {
             intCnt = intCnt + 1;
             rollspeed = speedIntCnt / 10;
 
-            let _y = retval.y - rollspeed;
-            _rollAngle = _rollAngle - rollspeed;
-            _wheel.setRotation(0.0, _y, 0.0, 1, true);
+            try {
+                let _y = retval.y - rollspeed;
+                _rollAngle = _rollAngle - rollspeed;
+                _wheel.setRotation(0.0, _y, 0.0, 1, true);
+            }
+            catch (e) {}
             await methods.sleep(1);
         }
         if (mp.players.local.remoteId === playerId)

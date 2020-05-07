@@ -119,7 +119,7 @@ methods.getVehicleInfo = function (model) {
     let vehInfo = enums.vehicleInfo;
     for (let item in vehInfo) {
         let vItem = vehInfo[item];
-        if (vItem.hash == model || vItem.display_name == model || mp.joaat(vItem.display_name.toString().toLowerCase()) == model)
+        if (vItem.hash == model || vItem.display_name == model || vItem.display_name.toLowerCase() == model.toString().toLowerCase() || mp.joaat(vItem.display_name.toString().toLowerCase()) == model)
             return vItem;
     }
     return {id: 0, hash: model, display_name: 'Unknown', class_name: 'Unknown', class_name_ru: 'Unknown', stock: 378000, stock_full: 205000, price: 50000, fuel_full: 75, fuel_min: 8, fuel_type: 0, type: 0, sb: 1, sm: 200};
@@ -149,6 +149,16 @@ methods.getRandomPhone = function (prefix = 0) {
         prefix = methods.getRandomInt(100, 999);
     let num = methods.getRandomInt(100000, 9999999);
     return methods.parseInt(`${prefix}${num}`);
+};
+
+methods.getRandomPlayer = function () {
+    let playerList = [];
+    mp.players.forEach(p => {
+        if (user.isLogin(p)) {
+            playerList.push(p);
+        }
+    });
+    return playerList[methods.getRandomInt(0, playerList.length - 1)];
 };
 
 methods.unixTimeStampToDateTime = function (timestamp) {
@@ -772,12 +782,15 @@ methods.loadAllBlips = function () {
     methods.createBlip(new mp.Vector3(450.0621337890625, -984.3471069335938, 43.69164276123047), 60, 0, 0.8, 'Police Department');
     methods.createBlip(new mp.Vector3(-448.6859, 6012.703, 30.71638), 60, 16, 0.8, 'Sheriff Department');
     methods.createBlip(new mp.Vector3(1853.22, 3686.6796875, 33.2670), 60, 16, 0.8, 'Sheriff Department');
+    methods.createBlip(new mp.Vector3(366.2178955078125, -1593.1396484375, 28.29206085205078), 60, 16, 0.8, 'Sheriff Department');
     methods.createBlip(new mp.Vector3(-158.44952392578125, -605.221923828125, 48.23460388183594), 535, 67, 0.8, 'Arcadius - Бизнес Центр');
     //methods.createBlip(new mp.Vector3(2484.16748046875, -384.5539245605469, 93.9015121459961), 498, 0, 0.8, 'Здание NOOSE');
     methods.createBlip(new mp.Vector3(1830.489, 2603.093, 45.8891), 238, 0, 0.8, 'Федеральная тюрьма');
     methods.createBlip(new mp.Vector3(-1379.659, -499.748, 33.15739), 419, 0, 0.8, 'Здание правительства');
+
     methods.createBlip(new mp.Vector3(311.9224853515625, -583.9681396484375, 44.299190521240234), 489, 59, 0.8, 'Здание больницы');
     methods.createBlip(new mp.Vector3(-253.9735565185547, 6320.83935546875, 37.61736297607422), 489, 59, 0.8, 'Здание больницы');
+    methods.createBlip(new mp.Vector3(1836.8359375, 3676.784912109375, 33.27006912231445), 489, 59, 0.8, 'Здание больницы');
 
     methods.createBlip(new mp.Vector3(-759.5448608398438, -709.0863037109375, 29.0616512298584), 305, 60, 0.6, 'Церковь');
 
@@ -787,6 +800,7 @@ methods.loadAllBlips = function () {
 
     methods.createBlip(new mp.Vector3(956.8535766601562, 34.93609619140625, 122.11998748779297), 679, 0, 0.8);
     methods.createBlip(new mp.Vector3(1200.6854248046875, -1474.0303955078125, 33.85951614379883), 436, 60, 0.8, 'Здание Fire Department');
+    methods.createBlip(new mp.Vector3(-369.2587890625, 6114.552734375, 30.446975708007812), 436, 60, 0.8, 'Здание Fire Department');
     //methods.createBlip(new mp.Vector3(-1581.689, -557.913, 34.95288), 545, 0, 0.8, 'Здание автошколы');
 
     //methods.createBlip(new mp.Vector3(46.947, -1753.859, 46.508), 78, 68, 0.4, 'Торговый центр MegaMoll');

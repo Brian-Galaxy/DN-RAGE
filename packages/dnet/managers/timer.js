@@ -15,6 +15,8 @@ let timer = exports;
 
 timer.loadAll = function() {
     timer.min60Timer();
+    timer.min59Timer();
+    timer.min2hTimer();
     timer.min30Timer();
     timer.min10Timer();
     timer.sec10Timer();
@@ -54,6 +56,19 @@ timer.min10Timer = function() {
             methods.debug(e);
         }
     });
+
+    mp.players.forEach(function (p) {
+        if (user.isLogin(p)) {
+            try {
+                if (user.hasById(user.getId(p), 'grabLamar'))
+                    user.resetById(user.getId(p), 'grabLamar');
+            }
+            catch (e) {
+
+            }
+        }
+    });
+
     setTimeout(timer.min10Timer, 1000 * 60 * 10);
 };
 
@@ -135,6 +150,32 @@ timer.min60Timer = function() {
     methods.notifyWithPictureToAll('Ув. игроки', 'Администрация', arrayRandom[methods.getRandomInt(0, arrayRandom.length)], 'CHAR_ACTING_UP');
 
     setTimeout(timer.min60Timer, 1000 * 60 * 60);
+};
+
+timer.min59Timer = function() {
+    try {
+        let player = methods.getRandomPlayer();
+        if (user.isLogin(player)) {
+            user.giveVip(player, methods.getRandomInt(1, 7), 2, true);
+        }
+    }
+    catch (e) {
+        
+    }
+    setTimeout(timer.min59Timer, 1000 * 60 * 59);
+};
+
+timer.min2hTimer = function() {
+    try {
+        let player = methods.getRandomPlayer();
+        if (user.isLogin(player)) {
+            user.giveRandomMask(player, 0, true);
+        }
+    }
+    catch (e) {
+
+    }
+    setTimeout(timer.min2hTimer, 1000 * 120 * 59);
 };
 
 timer.sec10Timer = function() {

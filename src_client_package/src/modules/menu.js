@@ -238,9 +238,11 @@ class Menu {
             menuName = '';
 
             if (_isShowInput) {
-                methods.blockKeys(true);
-                chat.activate(false);
-                mp.gui.cursor.show(true, true);
+                setTimeout(function () {
+                    methods.blockKeys(true);
+                    chat.activate(false);
+                    mp.gui.cursor.show(true, true);
+                }, 100);
             }
         }
     }

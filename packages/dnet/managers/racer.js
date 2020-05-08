@@ -6525,7 +6525,7 @@ racer.timer = function () {
     mp.players.forEach(p => {
         if (user.isLogin(p)) {
             if (user.has(p, 'isRaceLobby') && methods.isInPoint(p.position, greenZone)) {
-                p.notifyWithPicture('Arena RaceClub', '~g~' + racerList[currentRace].title, `~b~В лобби:~s~ ${currentLobby}\nОжидайте начала гонки в 12:00\nНе покидайте помещение, иначе вы покините лобби\nПризовой фонд: ~g~${methods.moneyFormat(currentPrize)}`, 'CHAR_CARSITE4');
+                p.notifyWithPicture('Arena RaceClub', '~g~' + racerList[currentRace].title, `~b~В лобби:~s~ ${currentLobby}\nОжидайте начала гонки\nНе покидайте помещение, иначе вы покините лобби\nПризовой фонд: ~g~${methods.moneyFormat(currentPrize)}`, 'CHAR_CARSITE4');
             }
             if(user.has(p, 'isRaceLobby') && !methods.isInPoint(p.position, greenZone)) {
                 user.reset(p, 'isRaceLobby');

@@ -26,6 +26,7 @@ let _windSpeed = 0;
 let _windDir = 0;
 
 let isCreateEms = false;
+let isCreateVeh = false;
 let isSaveStats = false;
 
 weather.loadAll = function() {
@@ -254,8 +255,8 @@ weather.timeSyncTimer = function() {
         }
 
         if (dateTime.getHours() === 20 && dateTime.getMinutes() === 0) {
-            if (!isCreateEms) {
-                isCreateEms = true;
+            if (!isCreateVeh) {
+                isCreateVeh = true;
                 try {
                     let player = methods.getRandomPlayer();
                     if (user.isLogin(player)) {

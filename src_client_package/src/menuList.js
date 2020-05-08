@@ -2760,7 +2760,7 @@ menuList.showSettingsHudMenu = function() {
 
     UIMenu.Menu.AddMenuItem("Изменить позицию элементов интерфейса", "Нажмите ~g~ПКМ~s~ чтобы вернуть в исходное положение", {doName: "canEdit"});
 
-    UIMenu.Menu.AddMenuItem("Показывать HUD (~g~Вкл~s~/~r~Выкл~s~)", "Нажмите ~g~Enter~s~ чтобы применить", {doName: "showRadar"});
+    UIMenu.Menu.AddMenuItem("Показывать HUD (~g~Вкл~s~/~r~Выкл~s~)", "Чтобы включить худ, нажмите F2", {doName: "showRadar"});
     UIMenu.Menu.AddMenuItem("Показывать ID игроков (~g~Вкл~s~/~r~Выкл~s~)", "Нажмите ~g~Enter~s~ чтобы применить", {doName: "showId"});
 
     if (user.isAdmin())
@@ -3233,6 +3233,9 @@ menuList.showPlayerStatsMenu = function() {
         UIMenu.Menu.AddMenuItem("~b~Мобильный телефон:", "", {}, `${methods.phoneFormat(user.getCache('phone'))}`);
 
     UIMenu.Menu.AddMenuItem("~b~Вы играли:~r~", "", {}, `${methods.parseFloat(user.getCache('online_time') * 8.5 / 60).toFixed(1)}ч.`);
+
+    if (user.getCache('online_cont') < 100)
+        UIMenu.Menu.AddMenuItem("~b~Отыграли (Конкурс 50k):~r~", "", {}, `${methods.parseFloat(user.getCache('online_cont') * 8.5 / 60).toFixed(1)}ч.`);
 
     if (user.getCache('vip_type') === 1)
         UIMenu.Menu.AddMenuItem("~b~VIP:", "", {}, `LIGHT`);
@@ -6385,6 +6388,11 @@ menuList.showMaskListMenu = function (slot, shopId) {
 
         let maskPrev = user.getCache('mask');
 
+        if (maskPrev >= 0) {
+            mp.game.ui.notifications.show("~r~Для начала снимите старую маску");
+            return;
+        }
+
         if (enums.maskList.length < 1)
             return;
 
@@ -6435,11 +6443,17 @@ menuList.showMaskListMenu = function (slot, shopId) {
                     maskPrev = item.idxFull;
                 }, 200);
             }
+            if (item.doName === 'closeMenu') {
+                user.set('mask', -1);
+                user.set('mask_color', 0);
+                user.updateCharacterFace();
+                user.updateCharacterCloth();
+            }
         });
 
         UIMenu.Menu.OnClose.Add((index) => {
-            user.set('mask', maskPrev);
-            user.set('mask_color', 1);
+            user.set('mask', -1);
+            user.set('mask_color', 0);
             user.updateCharacterFace();
             user.updateCharacterCloth();
         });

@@ -2845,6 +2845,7 @@ mp.keys.bind(0x4D, true, function() {
         return;
     if (!methods.isBlockKeys())
         menuList.showMainMenu();
+    ui.showHud();
 });
 
 //F2
@@ -2865,6 +2866,7 @@ mp.keys.bind(0x1B, true, function() {
 
     if (edu.isShort() || edu.isLong())
         edu.stopAll();
+    ui.showHud();
 
     if (methods.isBlockKeys())
         return;
@@ -3457,7 +3459,7 @@ mp.events.add('render', () => {
             mp.game.controls.disableControlAction(0,35,true); // disable move right
             mp.game.controls.disableControlAction(0,271,true)
         }
-        if(ui.isGreenZone() && !user.isPolice()) {
+        if(ui.isGreenZone() && !user.isPolice() && !user.isGov()) {
             mp.game.controls.disableControlAction(2, 24, true);
             mp.game.controls.disableControlAction(2, 25, true);
             mp.game.controls.disableControlAction(2, 66, true);

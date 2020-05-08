@@ -55,6 +55,7 @@ mp.events.add('server:casino:wheel:doRoll', (player) => {
         else if (methods.getRandomInt(0, 40) < 1)
             userWin = 3;
 
+        user.set(player, 'wheelWin', userWin);
         mp.players.callInRange(player.position, 100, 'client:casino:wheel:doRoll', [userWin, player.id]);
     }
     catch (e) {

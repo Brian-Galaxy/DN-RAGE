@@ -1238,7 +1238,7 @@ mp.events.addRemoteCounted('server:user:unCuffById', (player, targetId) => {
             player.notify('~r~Вы слишком далеко');
             return;
         }
-        if (!user.isPolice(player) && user.isGov(player)) {
+        if (!user.isPolice(player) && !user.isGov(player)) {
             player.notify('~r~Вам данное действие запрещено');
             return;
         }

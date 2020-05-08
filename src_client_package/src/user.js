@@ -429,6 +429,7 @@ user.teleportv = function(pos, rot, isHud = true) {
     user.showLoadDisplay(500, isHud);
     //methods.wait(500);
     setTimeout(function () {
+        isTeleport = true;
         mp.attachmentMngr.shutdownFor(mp.players.local);
         mp.players.local.position = pos;
         if (rot != undefined)
@@ -451,6 +452,7 @@ user.teleportVehV = function(pos, rot) {
     //methods.wait(500);
     setTimeout(function () {
         try {
+            isTeleport = true;
             mp.attachmentMngr.shutdownFor(mp.players.local);
             mp.game.streaming.requestAdditionalCollisionAtCoord(pos.x, pos.y, pos.z);
             mp.game.streaming.requestCollisionAtCoord(pos.x, pos.y, pos.z);
@@ -1632,6 +1634,10 @@ user.isDead = function() {
 
 user.isAdmin = function(level = 1) {
     return user.getCache('admin_level') >= level;
+};
+
+user.isAdminRp = function() {
+    return user.getCache('status_rp') > 0;
 };
 
 user.isHelper = function(level = 1) {

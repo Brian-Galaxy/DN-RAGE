@@ -1325,6 +1325,74 @@ phone.showAppGps = function() {
                 ],
             },
             {
+                title: 'Авторынки',
+                umenu: [
+                    {
+                        title: "Sandy Cars",
+                        text: "Дешевый транспорт",
+                        type: 1,
+                        clickable: true,
+                        params: {x: 1661, y: 3820}
+                    },
+                    {
+                        title: "Albany",
+                        text: "Средний стоимости транспорт",
+                        type: 1,
+                        clickable: true,
+                        params: {x: -41, y: -1675}
+                    },
+                    {
+                        title: "Premium Deluxe",
+                        text: "Премиум транспорт",
+                        type: 1,
+                        clickable: true,
+                        params: {x: -57, y: -1096}
+                    },
+                    {
+                        title: "Luxury Cars",
+                        text: "Люкс транспорт",
+                        type: 1,
+                        clickable: true,
+                        params: {x: -796, y: -220}
+                    },
+                    {
+                        title: "Vans & Trucker",
+                        text: "Фургоны и тягочи",
+                        type: 1,
+                        clickable: true,
+                        params: {x: 1010, y: -2289}
+                    },
+                    {
+                        title: "Sandres Motorcycles",
+                        text: "Мотоциклы",
+                        type: 1,
+                        clickable: true,
+                        params: {x: 284, y: -1163}
+                    },
+                    {
+                        title: "Heli Shop",
+                        text: "Вертолеты",
+                        type: 1,
+                        clickable: true,
+                        params: {x: -753, y: -1511}
+                    },
+                    {
+                        title: "Plane Shop",
+                        text: "Самолеты",
+                        type: 1,
+                        clickable: true,
+                        params: {x: -1242, y: -3392}
+                    },
+                    {
+                        title: "Boat Shop",
+                        text: "Водный транспорт",
+                        type: 1,
+                        clickable: true,
+                        params: {x: -712, y: -1298}
+                    },
+                ],
+            },
+            {
                 title: 'Магазины и прочее',
                 umenu: [
                     {

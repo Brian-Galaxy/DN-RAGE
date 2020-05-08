@@ -408,6 +408,22 @@ methods.getLicName = function (lic) {
     return licName;
 };
 
+methods.getRareName = function (proc) {
+    if (proc === 0)
+        return 'Обычная';
+    if (proc < 10)
+        return 'Легендарная';
+    if (proc < 30)
+        return 'Мистическая';
+    if (proc < 50)
+        return 'Невероятно редкая';
+    if (proc < 70)
+        return 'Очень Редкая';
+    if (proc < 90)
+        return 'Редкая';
+    return 'Обычная';
+};
+
 methods.saveFile = function (name, log) {
     fs.appendFile("" + name + ".log", `${log}\n`, function (err) {
         if(err) {

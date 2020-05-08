@@ -4042,7 +4042,7 @@ let racerList = [
         desc: 'Не рекомендуем участвовать всем тем, кто боится, что его размажут по стенам форда Занкудо',
         repeat: 2,
         class: 6,
-        allowVehicle: ['ID транспорта'],
+        allowVehicle: ['Deviant', 'Dominator', 'Dominator3', 'Dominator4', 'Dukes2', 'Ellie', 'Gauntlet', 'Gauntlet4', 'Gauntlets', 'Imperator', 'Nightshade', 'Sabregt2', 'Tulip'],
         offsetZ: -8,
         size: 12,
         prize: 20000,
@@ -6401,7 +6401,12 @@ racer.createRace = function (id = -1, currentVeh = -1) {
 };
 
 racer.notifyRace = function () {
-    methods.notifyWithPictureToAll('Arena RaceClub', '~b~' + racerList[currentRace].title, `Скоро состоится гонка на транспорте ~g~${currentVehicle}~s~ с призовым фондом ~g~${methods.moneyFormat(currentPrize)}\n~s~Свободных мест: ~b~${lobbyMax - currentLobby}`, 'CHAR_CARSITE4');
+
+    let desc = '';
+    if (racerList[currentRace].repeat > 0)
+        desc = `\n~s~Кругов: ~b~${racerList[currentRace].repeat + 1}`;
+
+    methods.notifyWithPictureToAll('Arena RaceClub', '~b~' + racerList[currentRace].title, `Скоро состоится гонка на транспорте ~g~${currentVehicle}~s~ с призовым фондом ~g~${methods.moneyFormat(currentPrize)}\n~s~Свободных мест: ~b~${lobbyMax - currentLobby}${desc}`, 'CHAR_CARSITE4');
 };
 
 racer.startRace = function () {
@@ -6463,6 +6468,7 @@ racer.startRace = function () {
                                 p.call('client:raceUpdate', [JSON.stringify(racerList[currentRace])]);
 
                                 vSync.setEngineState(veh, true);
+                                vSync.setAnchorState(veh, false);
                             }
                             catch (e) {
                                 methods.debug(e);
@@ -6493,6 +6499,7 @@ racer.timer = function () {
                     if (startTimer === 0) {
                         p.notifyWithPicture('Arena RaceClub', '~g~' + racerList[currentRace].title, `~g~СТАРТ!!!\nСТАРТ!!!\nСТАРТ!!!`, 'CHAR_CARSITE4');
                         vSync.setFreezeState(p.vehicle, false);
+                        vSync.setAnchorState(p.vehicle, false);
                     }
                     else if (startTimer > 0 && startTimer <= 3) {
                         p.notifyWithPicture('Arena RaceClub', '~g~' + racerList[currentRace].title, `До старта ~g~${startTimer}сек`, 'CHAR_CARSITE4');

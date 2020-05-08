@@ -926,22 +926,24 @@ user.updateCharacterCloth = function(player) {
         }*/
 
         user.setComponentVariation(player, 1, 0, 0, 2);
-        user.setComponentVariation(player, 3, cloth_data['torso'], cloth_data['torso_color'], 2);
-        user.setComponentVariation(player, 4, cloth_data['leg'], cloth_data['leg_color'], 2);
-        user.setComponentVariation(player, 5, cloth_data['hand'], cloth_data['hand_color'], 2);
-        user.setComponentVariation(player, 6, cloth_data['foot'], cloth_data['foot_color'], 2);
-        user.setComponentVariation(player, 7, cloth_data['accessorie'], cloth_data['accessorie_color'], 2);
-        user.setComponentVariation(player, 8, cloth_data['parachute'], cloth_data['parachute_color'], 2);
-        user.setComponentVariation(player, 9, cloth_data['armor'], cloth_data['armor_color'], 2);
-        user.setComponentVariation(player, 10, cloth_data['decal'], cloth_data['decal_color'], 2);
-        user.setComponentVariation(player, 11, cloth_data['body'], cloth_data['body_color'], 2);
+
+        if (!user.has(player, 'uniform')) {
+            user.setComponentVariation(player, 3, cloth_data['torso'], cloth_data['torso_color'], 2);
+            user.setComponentVariation(player, 4, cloth_data['leg'], cloth_data['leg_color'], 2);
+            user.setComponentVariation(player, 5, cloth_data['hand'], cloth_data['hand_color'], 2);
+            user.setComponentVariation(player, 6, cloth_data['foot'], cloth_data['foot_color'], 2);
+            user.setComponentVariation(player, 7, cloth_data['accessorie'], cloth_data['accessorie_color'], 2);
+            user.setComponentVariation(player, 8, cloth_data['parachute'], cloth_data['parachute_color'], 2);
+            user.setComponentVariation(player, 9, cloth_data['armor'], cloth_data['armor_color'], 2);
+            user.setComponentVariation(player, 10, cloth_data['decal'], cloth_data['decal_color'], 2);
+            user.setComponentVariation(player, 11, cloth_data['body'], cloth_data['body_color'], 2);
+        }
 
         setTimeout(function () {
             if (!mp.players.exists(player))
                 return;
 
             //TODO GET CURRENT
-
             if (cloth_data['watch'] >= 0) {
                 user.setProp(player, 6, cloth_data['watch'], cloth_data['watch_color']);
             }
@@ -2700,6 +2702,8 @@ user.payDay = async function (player) {
 
     user.set(player, 'online_time', user.get(player, 'online_time') + 1);
     user.set(player, 'online_wheel', user.get(player, 'online_wheel') + 1);
+    user.set(player, 'online_cont', user.get(player, 'online_cont') + 1); //TODO
+    user.set(player, 'online_contall', user.get(player, 'online_contall') + 1); //TODO
 
     /*if (user.getVipStatus() != "YouTube" && user.getVipStatus() != "Turbo" && user.getVipStatus() != "none" && user.get(player, 'exp_age') % 4 == 0)
         user.set(player, 'exp_age', user.get(player, 'exp_age') + 1);
@@ -2710,6 +2714,11 @@ user.payDay = async function (player) {
     if (user.getVipStatus() == "YouTube")
         user.set(player, 'exp_age', user.get(player, 'exp_age') + 1);*/
 
+    if (user.get(player, 'online_cont') === 56) {
+        user.addCashMoney(player, 50000, 'Бонус от государства');
+        player.notify(`~g~Вы получили $50,000 отыграв 8 часов на сервере`);
+        user.set(player, 'online_cont', 999);
+    }
 
     if (user.get(player, 'online_time') === 169) {
         if (user.get(player, 'referer') !== "") {
@@ -3049,7 +3058,7 @@ user.giveRandomMask = function(player, proc = 50, withChat = false) {
     let mask = enums.maskList[maskId];
     let itemName = mask[1];
 
-    let params = `{"name": "${itemName}", "mask": ${maskId}}`;
+    let params = `{"name": "${methods.removeQuotes(methods.removeQuotes2(itemName))}", "mask": ${maskId}, "desc": "${methods.getRareName(mask[14])}"}`;
     inventory.addItem(274, 1, inventory.types.Player, user.getId(player), 1, 0, params, 100);
 
     player.notify(`~g~Вы выиграли маску "${itemName}", она у вас в инвентаре.`);
@@ -3102,6 +3111,16 @@ user.giveUniform = function(player, id = 0) {
     if (id > 0) {
         user.set(player, 'uniform', id);
         user.updateTattoo(player);
+    }
+
+    if (user.get(player, 'mask') >= 0 && user.get(player, 'mask_color') >= 1) {
+        try {
+            let mask = enums.maskList[user.get(player, 'mask')];
+            user.setComponentVariation(player, 1, mask[2], mask[3]);
+        }
+        catch (e) {
+
+        }
     }
 
     if (id === 0) { //default
@@ -3227,7 +3246,6 @@ user.giveUniform = function(player, id = 0) {
     }
     else if (id === 4) { //SAPD 4 (Tactical)
         if (user.getSex(player) == 1) {
-            user.setComponentVariation(player, 1, 0, 0);
             user.setComponentVariation(player, 3, 18, 0);
             user.setComponentVariation(player, 4, 32, 0);
             user.setComponentVariation(player, 5, 0, 0);
@@ -3241,7 +3259,6 @@ user.giveUniform = function(player, id = 0) {
             user.setProp(player, 0, 116, 0);
         }
         else {
-            user.setComponentVariation(player, 1, 0, 0);
             user.setComponentVariation(player, 3, 17, 0);
             user.setComponentVariation(player, 4, 33, 0);
             user.setComponentVariation(player, 5, 0, 0);
@@ -3257,7 +3274,6 @@ user.giveUniform = function(player, id = 0) {
     }
     else if (id === 5) { //SAPD 5 (Tactical)
         if (user.getSex(player) == 1) {
-            user.setComponentVariation(player, 1, 0, 0);
             user.setComponentVariation(player, 3, 18, 0);
             user.setComponentVariation(player, 4, 32, 0);
             user.setComponentVariation(player, 5, 0, 0);
@@ -3271,7 +3287,6 @@ user.giveUniform = function(player, id = 0) {
             user.setProp(player, 0, 116, 24);
         }
         else {
-            user.setComponentVariation(player, 1, 0, 0);
             user.setComponentVariation(player, 3, 17, 0);
             user.setComponentVariation(player, 4, 33, 0);
             user.setComponentVariation(player, 5, 0, 0);
@@ -3287,7 +3302,6 @@ user.giveUniform = function(player, id = 0) {
     }
     else if (id === 6) { //SAPD 6 (Tactical)
         if (user.getSex(player) == 1) {
-            user.setComponentVariation(player, 1, 0, 0);
             user.setComponentVariation(player, 3, 18, 0);
             user.setComponentVariation(player, 4, 32, 0);
             user.setComponentVariation(player, 5, 0, 0);
@@ -3301,7 +3315,6 @@ user.giveUniform = function(player, id = 0) {
             user.setProp(player, 0, 140, 0);
         }
         else {
-            user.setComponentVariation(player, 1, 0, 0);
             user.setComponentVariation(player, 3, 17, 0);
             user.setComponentVariation(player, 4, 33, 0);
             user.setComponentVariation(player, 5, 0, 0);
@@ -3317,7 +3330,6 @@ user.giveUniform = function(player, id = 0) {
     }
     else if (id === 7) { //SAPD 7 (Tactical)
         if (user.getSex(player) == 1) {
-            user.setComponentVariation(player, 1, 0, 0);
             user.setComponentVariation(player, 3, 18, 0);
             user.setComponentVariation(player, 4, 32, 0);
             user.setComponentVariation(player, 5, 0, 0);
@@ -3331,7 +3343,6 @@ user.giveUniform = function(player, id = 0) {
             user.setProp(player, 0, 116, 0);
         }
         else {
-            user.setComponentVariation(player, 1, 0, 0);
             user.setComponentVariation(player, 3, 17, 0);
             user.setComponentVariation(player, 4, 33, 0);
             user.setComponentVariation(player, 5, 0, 0);
@@ -3347,7 +3358,6 @@ user.giveUniform = function(player, id = 0) {
     }
     else if (id === 8) { //SAPD 8 (Tactical)
         if (user.getSex(player) == 1) {
-            user.setComponentVariation(player, 1, 0, 0);
             user.setComponentVariation(player, 3, 18, 0);
             user.setComponentVariation(player, 4, 30, 0);
             user.setComponentVariation(player, 5, 0, 0);
@@ -3361,7 +3371,6 @@ user.giveUniform = function(player, id = 0) {
             user.setProp(player, 0, 58, 2);
         }
         else {
-            user.setComponentVariation(player, 1, 0, 0);
             user.setComponentVariation(player, 3, 17, 0);
             user.setComponentVariation(player, 4, 31, 0);
             user.setComponentVariation(player, 5, 0, 0);
@@ -3376,12 +3385,10 @@ user.giveUniform = function(player, id = 0) {
         }
     }
     else if (id === 9) { //SAPD 9 (Tactical)
-        user.setComponentVariation(player, 1, 0, 0);
         user.setComponentVariation(player, 7, 0, 0);
         user.setComponentVariation(player, 9, 0, 0);
 
         if (user.getSex(player) == 1) {
-            user.setComponentVariation(player, 1, 0, 0);
             user.setComponentVariation(player, 3, 0, 0);
             user.setComponentVariation(player, 4, 6, 0);
             user.setComponentVariation(player, 5, 0, 0);
@@ -3395,7 +3402,6 @@ user.giveUniform = function(player, id = 0) {
             user.setProp(player, 0, 120, 0);
         }
         else {
-            user.setComponentVariation(player, 1, 0, 0);
             user.setComponentVariation(player, 3, 11, 0);
             user.setComponentVariation(player, 4, 10, 0);
             user.setComponentVariation(player, 5, 0, 0);
@@ -3749,7 +3755,7 @@ user.giveUniform = function(player, id = 0) {
         }
     }
     else if (id === 22) { //BCSD 10 (Tactical)
-        user.clearAllProp(player);
+        //user.clearAllProp(player);
         user.setComponentVariation(player, 7, 0, 0);
         if (user.getSex(player) == 1)
         {

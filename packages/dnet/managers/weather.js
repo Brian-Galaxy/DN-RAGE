@@ -366,6 +366,7 @@ weather.timeSyncTimer = function() {
             });
 
             mysql.executeQuery('UPDATE users SET online_wheel=\'0\' WHERE 1');
+            mysql.executeQuery('UPDATE users SET online_cont=\'0\' WHERE 1');
         }
     } catch (e) {
         methods.debug(e);

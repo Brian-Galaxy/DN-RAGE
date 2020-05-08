@@ -223,7 +223,7 @@ cloth.buy = function (player, price, body, cloth, color, torso, torsoColor, para
     let params = `{"name": "${itemName}"}`;
 
     switch (body) {
-        case 1:
+        /*case 1:
             inventory.updateItemsEquipByItemId(274, user.getId(player), inventory.types.Player, 0);
 
             user.set(player, 'mask', cloth);
@@ -231,7 +231,7 @@ cloth.buy = function (player, price, body, cloth, color, torso, torsoColor, para
 
             params = `{"name": "${itemName}", "sex": ${user.getSex(player)}, "mask": ${cloth}, "mask_color": ${color}}`;
             inventory.addItem(274, 1, inventory.types.Player, user.getId(player), 1, 1, params, 100);
-            break;
+            break;*/
         case 4:
             inventory.updateItemsEquipByItemId(266, user.getId(player), inventory.types.Player, 0);
 
@@ -350,7 +350,7 @@ cloth.buyMask = function (player, price, maskId, shopId) {
     user.set(player, 'mask', maskId);
     user.set(player, 'mask_color', 1);
 
-    let params = `{"name": "${itemName}", "mask": ${maskId}}`;
+    let params = `{"name": "${methods.removeQuotes(methods.removeQuotes2(itemName))}", "mask": ${maskId}, "desc": "${methods.getRareName(enums.maskList[maskId][14])}"}`;
     inventory.addItem(274, 1, inventory.types.Player, user.getId(player), 1, 1, params, 100);
 
     user.updateCharacterFace(player);

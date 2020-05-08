@@ -23,6 +23,7 @@ let currentBlipSmall = null;
 let nextCp = null;
 let inRace = false;
 let racerSize = 12;
+let repeat = 0;
 
 racer.createCurrentCp = function(type, pos, dir) {
     try {
@@ -97,6 +98,12 @@ mp.events.add("client:raceUpdate", (json) => {
         catch (e) {
             racerSize = 12;
         }
+        try {
+            repeat = currentRace.repeat;
+        }
+        catch (e) {
+            repeat = 0;
+        }
 
         inventory.hide();
         phone.hide();
@@ -140,7 +147,18 @@ mp.events.add("playerEnterCheckpoint", (checkpoint) => {
 
         if (currentCpId === currentRace.posList.length) {
             racer.nextCpDestroy();
-            racer.createCurrentCp(4, new mp.Vector3(posCurrent[0], posCurrent[1], posCurrent[2] + currentRace.offsetZ), new mp.Vector3(0, 0, 0));
+
+            if (repeat > 0) {
+                currentCpId = 0;
+                repeat--;
+
+                let posNext = currentRace.posList[currentCpId + 1];
+                racer.createCurrentCp(0, new mp.Vector3(posCurrent[0], posCurrent[1], posCurrent[2] + currentRace.offsetZ), new mp.Vector3(posNext[0], posNext[1], posNext[2]));
+                racer.createNextCp(0, new mp.Vector3(posNext[0], posNext[1], posNext[2] + currentRace.offsetZ - 5), new mp.Vector3(posNext[0], posNext[1], posNext[2]));
+            }
+            else {
+                racer.createCurrentCp(4, new mp.Vector3(posCurrent[0], posCurrent[1], posCurrent[2] + currentRace.offsetZ), new mp.Vector3(0, 0, 0));
+            }
         }
         else if (currentCpId > currentRace.posList.length) {
             racer.currentCpDestroy();
@@ -157,7 +175,17 @@ mp.events.add("playerEnterCheckpoint", (checkpoint) => {
                 racer.createNextCp(0, new mp.Vector3(posNext[0], posNext[1], posNext[2] + currentRace.offsetZ - 5), new mp.Vector3(posNext[0], posNext[1], posNext[2]));
             }
             else {
-                racer.createCurrentCp(4, new mp.Vector3(posCurrent[0], posCurrent[1], posCurrent[2] + currentRace.offsetZ), new mp.Vector3(0, 0, 0));
+                if (repeat > 0) {
+                    currentCpId = 0;
+                    repeat--;
+
+                    let posNext = currentRace.posList[currentCpId + 1];
+                    racer.createCurrentCp(0, new mp.Vector3(posCurrent[0], posCurrent[1], posCurrent[2] + currentRace.offsetZ), new mp.Vector3(posNext[0], posNext[1], posNext[2]));
+                    racer.createNextCp(0, new mp.Vector3(posNext[0], posNext[1], posNext[2] + currentRace.offsetZ - 5), new mp.Vector3(posNext[0], posNext[1], posNext[2]));
+                }
+                else {
+                    racer.createCurrentCp(4, new mp.Vector3(posCurrent[0], posCurrent[1], posCurrent[2] + currentRace.offsetZ), new mp.Vector3(0, 0, 0));
+                }
             }
         }
     }

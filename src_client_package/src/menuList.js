@@ -4157,6 +4157,8 @@ menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId) {
                 }
                 else if (item.item_id === 274 || item.item_id === 266 || item.item_id === 262) {
                     itemName = params.name;
+                    if (params.desc)
+                        desc = 'Редкость: ' + params.desc;
                 }
                 else if (item.item_id <= 473 && item.item_id >= 293) {
                     desc = 'Используется для: ' + items.getWeaponNameByName(items.getItemNameHashById(item.item_id));
@@ -4589,27 +4591,30 @@ menuList.showFuelMenu = async function() {
 
     let itemPrice = 1.5 * price;
     let listItem = {};
-    listItem.type = 1;
-    listItem.price = itemPrice;
-    UIMenu.Menu.AddMenuItemList("Бензин", list, `Цена: ~g~${methods.moneyFormat(itemPrice)}~s~ за 1л.${saleLabel}`, listItem, 0, '', (sale > 0) ? 'sale' : '');
 
-    itemPrice = 1.1 * price;
-    listItem = {};
-    listItem.type = 2;
-    listItem.price = itemPrice;
-    UIMenu.Menu.AddMenuItemList("Дизель", list, `Цена: ~g~${methods.moneyFormat(itemPrice)}~s~ за 1л.${saleLabel}`, listItem, 0, '', (sale > 0) ? 'sale' : '');
+    if (mp.players.local.isInAnyVehicle(true)) {
+        listItem.type = 1;
+        listItem.price = itemPrice;
+        UIMenu.Menu.AddMenuItemList("Бензин", list, `Цена: ~g~${methods.moneyFormat(itemPrice)}~s~ за 1л.${saleLabel}`, listItem, 0, '', (sale > 0) ? 'sale' : '');
 
-    itemPrice = 0.5 * price;
-    listItem = {};
-    listItem.type = 3;
-    listItem.price = itemPrice;
-    UIMenu.Menu.AddMenuItemList("Электричество", list2, `Цена: ~g~${methods.moneyFormat(itemPrice)}~s~ за 1%${saleLabel}`, listItem, 0, '', (sale > 0) ? 'sale' : '');
+        itemPrice = 1.1 * price;
+        listItem = {};
+        listItem.type = 2;
+        listItem.price = itemPrice;
+        UIMenu.Menu.AddMenuItemList("Дизель", list, `Цена: ~g~${methods.moneyFormat(itemPrice)}~s~ за 1л.${saleLabel}`, listItem, 0, '', (sale > 0) ? 'sale' : '');
 
-    itemPrice = 3 * price;
-    listItem = {};
-    listItem.type = 4;
-    listItem.price = itemPrice;
-    UIMenu.Menu.AddMenuItemList("Авиатопливо", list, `Цена: ~g~${methods.moneyFormat(itemPrice)}~s~ за 1л.${saleLabel}`, listItem, 0, '', (sale > 0) ? 'sale' : '');
+        itemPrice = 0.5 * price;
+        listItem = {};
+        listItem.type = 3;
+        listItem.price = itemPrice;
+        UIMenu.Menu.AddMenuItemList("Электричество", list2, `Цена: ~g~${methods.moneyFormat(itemPrice)}~s~ за 1%${saleLabel}`, listItem, 0, '', (sale > 0) ? 'sale' : '');
+
+        itemPrice = 3 * price;
+        listItem = {};
+        listItem.type = 4;
+        listItem.price = itemPrice;
+        UIMenu.Menu.AddMenuItemList("Авиатопливо", list, `Цена: ~g~${methods.moneyFormat(itemPrice)}~s~ за 1л.${saleLabel}`, listItem, 0, '', (sale > 0) ? 'sale' : '');
+    }
 
     itemPrice = items.getItemPrice(8) * price;
     let menuItem = {};
@@ -9368,9 +9373,11 @@ menuList.showAdminMenu = function() {
                 UIMenu.Menu.AddMenuItem("Режим Drone", "", {doName: "drone"});
             }
             //if (user.isAdmin(2))
+
             UIMenu.Menu.AddMenuItem("Режим GodMode", "", {doName: "godMode"});
 
-            UIMenu.Menu.AddMenuItem("Лидер крайма", "Значение 0 убирает оргу", {doName: "giveLeader"});
+            if (!user.isAdminRp())
+                UIMenu.Menu.AddMenuItem("Лидер крайма", "Значение 0 убирает оргу", {doName: "giveLeader"});
 
             UIMenu.Menu.AddMenuItem("Режим невидимки", "", {doName: "invise"});
             UIMenu.Menu.AddMenuItem("Прогрузка ID", "", {doName: "idDist"});
@@ -9379,14 +9386,14 @@ menuList.showAdminMenu = function() {
                 UIMenu.Menu.AddMenuItem("Выбор одежды", "", {doName: "clothMenu"});
             if (user.isAdmin(6))
                 UIMenu.Menu.AddMenuItem("Выбор масок", "", {doName: "maskMenu"});
-            if (user.isAdmin(2))
+            if (user.isAdmin(2) && !user.isAdminRp())
                 UIMenu.Menu.AddMenuItem("Уведомление", "", {doName: "notify"});
-            if (user.isAdmin(2))
+            if (user.isAdmin(2) && !user.isAdminRp())
                 UIMenu.Menu.AddMenuItem("Уведомление для крайма", "", {doName: "notifyCrime"});
-            if (user.isAdmin(2))
+            if (user.isAdmin(2) && !user.isAdminRp())
                 UIMenu.Menu.AddMenuItem("Меропритие", "", {doName: "eventMenu"});
 
-            if (user.isAdmin(3))
+            if (user.isAdmin(3) && !user.isAdminRp())
                 UIMenu.Menu.AddMenuItem("Управление ганг. зонами", "", {doName: "gangZone"});
 
             UIMenu.Menu.AddMenuItem("~y~Выключить админку", "", {doName: "disableAdmin"});
@@ -9412,7 +9419,9 @@ menuList.showAdminMenu = function() {
         UIMenu.Menu.HideMenu();
         if (item.doName == 'enableAdmin') {
             user.setVariable('enableAdmin', true);
-            if (user.getCache('admin_level') < 4)
+            if (user.isAdminRp())
+                user.setVariable('adminRole', 'RP Maker');
+            else if (user.getCache('admin_level') < 4)
                 user.setVariable('adminRole', 'Game Admin');
             else if (user.getCache('admin_level') === 4)
                 user.setVariable('adminRole', 'Admin');
@@ -9535,22 +9544,24 @@ menuList.showAdminPlayerMenu = function(id) {
     UIMenu.Menu.AddMenuItem("Воскресить", "", {doName: "adrenalineById"});
     UIMenu.Menu.AddMenuItem("Выписать из больницы", "", {doName: "freeHospById"});
 
-    if (user.isAdmin(4))
+    if (user.isAdmin(4) && !user.isAdminRp())
         UIMenu.Menu.AddMenuItemList("Лидер организации", ["None", "Gov", "LSPD", "FIB", "USMC", "BCSD", "EMS", "News"], "", {doName: "giveLeader"});
 
-    UIMenu.Menu.AddMenuItem("Посадить в тюрьму", "", {doName: "jail"});
+    if (!user.isAdminRp()) {
+        UIMenu.Menu.AddMenuItem("Посадить в тюрьму", "", {doName: "jail"});
 
-    if (user.isAdmin(2))
-    {
-        UIMenu.Menu.AddMenuItem("Кикнуть", "", {doName: "kick"});
-        UIMenu.Menu.AddMenuItemList("~y~Забанить", ['1h', '6h', '12h', '1d', '3d', '7d', '14d', '30d', '60d', '90d', 'Permanent'], "", {doName: "ban"});
-        UIMenu.Menu.AddMenuItem("~y~Разбанить", "", {doName: "unban"});
-        UIMenu.Menu.AddMenuItem("~y~Выдать предуп.", "", {doName: "warn"});
-        UIMenu.Menu.AddMenuItem("~y~Снять предуп.", "", {doName: "unwarn"});
+        if (user.isAdmin(2))
+        {
+            UIMenu.Menu.AddMenuItem("Кикнуть", "", {doName: "kick"});
+            UIMenu.Menu.AddMenuItemList("~y~Забанить", ['1h', '6h', '12h', '1d', '3d', '7d', '14d', '30d', '60d', '90d', 'Permanent'], "", {doName: "ban"});
+            UIMenu.Menu.AddMenuItem("~y~Разбанить", "", {doName: "unban"});
+            UIMenu.Menu.AddMenuItem("~y~Выдать предуп.", "", {doName: "warn"});
+            UIMenu.Menu.AddMenuItem("~y~Снять предуп.", "", {doName: "unwarn"});
+        }
+
+        if (user.isAdmin(5))
+            UIMenu.Menu.AddMenuItem("~r~Занести в черный список", "", {doName: "blacklist"});
     }
-
-    if (user.isAdmin(5))
-        UIMenu.Menu.AddMenuItem("~r~Занести в черный список", "", {doName: "blacklist"});
 
     UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
     UIMenu.Menu.Draw();

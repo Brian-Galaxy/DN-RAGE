@@ -1376,6 +1376,10 @@ mp.events.addRemoteCounted('server:user:getInvById', (player, targetId) => {
         return;
     let pl = mp.players.at(targetId);
     if (pl && mp.players.exists(pl)) {
+        if (pl.health <= 0) {
+            player.notify('~r~Нельзя обыскивать мертвых');
+            return;
+        }
         if (!user.isTie(pl) && !user.isCuff(pl)) {
             player.notify('~r~Игрок должен быть связан или в наручниках');
             return;
@@ -1384,8 +1388,8 @@ mp.events.addRemoteCounted('server:user:getInvById', (player, targetId) => {
             player.notify('~r~Вы слишком далеко');
             return;
         }
-        if (user.isPolice(pl) && !user.isPolice(player)) {
-            player.notify("~r~Нельзя обыскивать сотрудников полиции");
+        if (user.isPolice(pl) && !user.isTie(pl)) {
+            player.notify("~r~Нельзя обыскивать сотрудников полиции в наручниках, только через стяжки");
             return;
         }
         inventory.getItemList(player, inventory.types.Player, user.getId(pl), true);

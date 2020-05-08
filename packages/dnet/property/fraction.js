@@ -37,8 +37,8 @@ fraction.shopList = [
     {
         bId: 76,
         name: "Ammu-Nation Cypress Flats",
-        sumMax: 120000,
-        sumMin: 110000,
+        sumMax: 240000,
+        sumMin: 220000,
         pos: [
             [808.8968, -2159.189, 28.61901, 6.53001],
         ]
@@ -46,8 +46,8 @@ fraction.shopList = [
     {
         bId: 41,
         name: "Los Santos Tattoo",
-        sumMax: 120000,
-        sumMin: 110000,
+        sumMax: 240000,
+        sumMin: 220000,
         pos: [
             [1325.094, -1650.716, 51.27528, 133.9299],
         ]
@@ -55,8 +55,8 @@ fraction.shopList = [
     {
         bId: 94,
         name: "Robs Liquor Murrieta Heights",
-        sumMax: 120000,
-        sumMin: 110000,
+        sumMax: 240000,
+        sumMin: 220000,
         pos: [
             [1134.14, -982.4875, 45.41582, 284.5632],
         ]
@@ -64,8 +64,8 @@ fraction.shopList = [
     {
         bId: 30,
         name: "Herr Kutz Devis",
-        sumMax: 120000,
-        sumMin: 110000,
+        sumMax: 240000,
+        sumMin: 220000,
         pos: [
             [134.455, -1707.691, 28.29161, 151.1897],
         ]
@@ -73,8 +73,8 @@ fraction.shopList = [
     {
         bId: 104,
         name: "LTD Gasoline Davis",
-        sumMax: 64000,
-        sumMin: 56000,
+        sumMax: 128000,
+        sumMin: 112000,
         pos: [
             [-47.89329, -1759.359, 28.42101, 87.38793],
             [-46.6761, -1758.042, 28.42101, 58.77755],
@@ -83,8 +83,8 @@ fraction.shopList = [
     {
         bId: 64,
         name: "Discount Store Strawberry",
-        sumMax: 58000,
-        sumMin: 38000,
+        sumMax: 120000,
+        sumMin: 80000,
         pos: [
             [73.85292, -1392.154, 28.37614, 283.6447],
             [74.91823, -1387.565, 28.37614, 185.8019],
@@ -94,8 +94,8 @@ fraction.shopList = [
     {
         bId: 89,
         name: "24/7 Strawberry",
-        sumMax: 64000,
-        sumMin: 56000,
+        sumMax: 128000,
+        sumMin: 112000,
         pos: [
             [24.31314, -1347.342, 28.49703, 274.6689],
             [24.29523, -1345, 28.49703, 271.7999],
@@ -104,8 +104,8 @@ fraction.shopList = [
     {
         bId: 40,
         name: "The Pit Tattoo",
-        sumMax: 120000,
-        sumMin: 110000,
+        sumMax: 240000,
+        sumMin: 220000,
         pos: [
             [-1151.652, -1424.404, 3.954463, 132.5959],
         ]
@@ -113,8 +113,8 @@ fraction.shopList = [
     {
         bId: 33,
         name: "Beachcombover",
-        sumMax: 120000,
-        sumMin: 110000,
+        sumMax: 240000,
+        sumMin: 220000,
         pos: [
             [-1151.652, -1424.404, 3.954463, 132.5959],
         ]
@@ -122,8 +122,8 @@ fraction.shopList = [
     {
         bId: 67,
         name: "Binco Vespucci Canals",
-        sumMax: 58000,
-        sumMin: 38000,
+        sumMax: 120000,
+        sumMin: 80000,
         pos: [
             [-822.4609, -1071.843, 10.32811, 216.5726],
             [-817.9464, -1070.503, 10.32811, 120.5435],
@@ -133,8 +133,8 @@ fraction.shopList = [
     {
         bId: 95,
         name: "Robs Liquor Vespucci Canals",
-        sumMax: 120000,
-        sumMin: 110000,
+        sumMax: 240000,
+        sumMin: 220000,
         pos: [
             [-1222.079, -908.4241, 11.32635, 26.30677],
         ]
@@ -142,8 +142,8 @@ fraction.shopList = [
     {
         bId: 106,
         name: "LTD Gasoline Little Seoul",
-        sumMax: 64000,
-        sumMin: 56000,
+        sumMax: 128000,
+        sumMin: 112000,
         pos: [
             [-706.0416, -915.4315, 18.2156, 121.0112],
             [-705.9542, -913.6546, 18.2156, 91.24891],
@@ -152,8 +152,8 @@ fraction.shopList = [
     {
         bId: 74,
         name: "Ammu-Nation Little Seoul",
-        sumMax: 120000,
-        sumMin: 110000,
+        sumMax: 240000,
+        sumMin: 220000,
         pos: [
             [-660.9584, -933.4232, 20.82923, 182.273],
         ]
@@ -161,8 +161,8 @@ fraction.shopList = [
     {
         bId: 92,
         name: "-660.9584, -933.4232, 20.82923, 182.273",
-        sumMax: 120000,
-        sumMin: 110000,
+        sumMax: 240000,
+        sumMin: 220000,
         pos: [
             [-2966.386, 390.7784, 14.04331, 73.20607],
         ]
@@ -170,8 +170,8 @@ fraction.shopList = [
     {
         bId: 82,
         name: "24/7 Banham Canyon",
-        sumMax: 64000,
-        sumMin: 56000,
+        sumMax: 128000,
+        sumMin: 112000,
         pos: [
             [-3039.08, 584.3269, 6.908932, 358.8096],
             [-3041.149, 583.6489, 6.908932, 22.88623],
@@ -180,8 +180,8 @@ fraction.shopList = [
     {
         bId: 83,
         name: "24/7 Chumash",
-        sumMax: 64000,
-        sumMin: 56000,
+        sumMax: 128000,
+        sumMin: 112000,
         pos: [
             [-3244.603, 1000.006, 11.83071, 355.5228],
             [-3242.168, 999.9278, 11.83075, 359.23],
@@ -190,8 +190,8 @@ fraction.shopList = [
     {
         bId: 58,
         name: "Suburban Chumash",
-        sumMax: 58000,
-        sumMin: 38000,
+        sumMax: 120000,
+        sumMin: 80000,
         pos: [
             [-3170.013, 1041.548, 19.86322, 75.12622],
             [-3169.305, 1043.154, 19.86322, 74.92207],
@@ -201,8 +201,8 @@ fraction.shopList = [
     {
         bId: 42,
         name: "Ink Inc Tattoo",
-        sumMax: 120000,
-        sumMin: 110000,
+        sumMax: 240000,
+        sumMin: 220000,
         pos: [
             [-3171.197, 1073.201, 19.82917, 343.623],
         ]
@@ -210,8 +210,8 @@ fraction.shopList = [
     {
         bId: 78,
         name: "Ammu-Nation Chumash",
-        sumMax: 120000,
-        sumMin: 110000,
+        sumMax: 240000,
+        sumMin: 220000,
         pos: [
             [-3173.123, 1089.66, 19.83874, 247.4527],
         ]
@@ -219,8 +219,8 @@ fraction.shopList = [
     {
         bId: 108,
         name: "LTD Gasoline Richman Glen",
-        sumMax: 64000,
-        sumMin: 56000,
+        sumMax: 128000,
+        sumMin: 112000,
         pos: [
             [-1818.927, 792.9451, 137.0822, 169.9128],
             [-1820.002, 794.2521, 137.0863, 134.8464],
@@ -229,8 +229,8 @@ fraction.shopList = [
     {
         bId: 79,
         name: "Ammu-Nation Great Chaparral",
-        sumMax: 120000,
-        sumMin: 110000,
+        sumMax: 240000,
+        sumMin: 220000,
         pos: [
             [-1118.094, 2700.753, 17.55414, 225.373],
         ]
@@ -238,8 +238,8 @@ fraction.shopList = [
     {
         bId: 65,
         name: "Discount Store Great Chaparral",
-        sumMax: 58000,
-        sumMin: 38000,
+        sumMax: 120000,
+        sumMin: 80000,
         pos: [
             [-1101.912, 2712.19, 18.10786, 229.5424],
             [-1097.746, 2714.485, 18.10786, 138.8698],
@@ -249,8 +249,8 @@ fraction.shopList = [
     {
         bId: 86,
         name: "24/7 Harmony",
-        sumMax: 64000,
-        sumMin: 56000,
+        sumMax: 128000,
+        sumMin: 112000,
         pos: [
             [549.2157, 2671.359, 41.15651, 100.8311],
             [549.5192, 2669.066, 41.15651, 100.3135],
@@ -259,8 +259,8 @@ fraction.shopList = [
     {
         bId: 60,
         name: "Suburban Harmony",
-        sumMax: 58000,
-        sumMin: 38000,
+        sumMax: 120000,
+        sumMin: 80000,
         pos: [
             [612.6832, 2764.496, 41.08812, 276.5388],
             [612.8069, 2762.66, 41.08812, 283.3486],
@@ -270,8 +270,8 @@ fraction.shopList = [
     {
         bId: 96,
         name: "Scoops Liquor Barn",
-        sumMax: 120000,
-        sumMin: 110000,
+        sumMax: 240000,
+        sumMin: 220000,
         pos: [
             [1165.981, 2710.884, 37.15769, 180.4475],
         ]
@@ -279,8 +279,8 @@ fraction.shopList = [
     {
         bId: 61,
         name: "Discount Store Grand Senora Desert",
-        sumMax: 58000,
-        sumMin: 38000,
+        sumMax: 120000,
+        sumMin: 80000,
         pos: [
             [1197.434, 2711.755, 37.22262, 188.5901],
             [1202.03, 2710.732, 37.22262, 101.2999],
@@ -290,8 +290,8 @@ fraction.shopList = [
     {
         bId: 77,
         name: "Ammu-Nation Tataviam Mountains",
-        sumMax: 120000,
-        sumMin: 110000,
+        sumMax: 240000,
+        sumMin: 220000,
         pos: [
             [2566.637, 292.4502, 107.7349, 4.131579],
         ]
@@ -299,8 +299,8 @@ fraction.shopList = [
     {
         bId: 90,
         name: "24/7 Tataviam Mountains",
-        sumMax: 64000,
-        sumMin: 56000,
+        sumMax: 128000,
+        sumMin: 112000,
         pos: [
             [2554.851, 380.7508, 107.623, 358.886],
             [2557.135, 380.7416, 107.623, 357.6542],
@@ -309,8 +309,8 @@ fraction.shopList = [
     {
         bId: 85,
         name: "24/7 Grand Senora Desert",
-        sumMax: 64000,
-        sumMin: 56000,
+        sumMax: 128000,
+        sumMin: 112000,
         pos: [
             [2675.927, 3280.391, 54.24115, 332.3407],
             [2677.966, 3279.257, 54.24115, 333.0592],
@@ -319,8 +319,8 @@ fraction.shopList = [
     {
         bId: 62,
         name: "Discount Store Grapeseed",
-        sumMax: 58000,
-        sumMin: 38000,
+        sumMax: 120000,
+        sumMin: 80000,
         pos: [
             [1695.544, 4822.227, 41.0631, 106.2861],
             [1695.11, 4817.554, 41.0631, 13.15722],
@@ -330,8 +330,8 @@ fraction.shopList = [
     {
         bId: 105,
         name: "LTD Gasoline Grapeseed",
-        sumMax: 64000,
-        sumMin: 56000,
+        sumMax: 128000,
+        sumMin: 112000,
         pos: [
             [1696.593, 4923.86, 41.06366, 6.185347],
             [1697.936, 4922.814, 41.06366, 327.2919],
@@ -340,8 +340,8 @@ fraction.shopList = [
     {
         bId: 87,
         name: "24/7 Mount Chiliad",
-        sumMax: 64000,
-        sumMin: 56000,
+        sumMax: 128000,
+        sumMin: 112000,
         pos: [
             [1728.755, 6417.411, 34.03724, 245.723],
             [1727.664, 6415.288, 34.03724, 245.5537],
@@ -1147,7 +1147,7 @@ fraction.startGrabShopGang = function(player, itemId = 0) {
                     fraction.reset(frId, 'currentGrabShopActive' + i);
 
                     if (methods.getRandomInt(0, 100) < 40) {
-                        inventory.addItem(141, 1, inventory.types.Player, user.getId(player), methods.getRandomInt(shopItem.sumMax, shopItem.sumMin), 0, "{}", 2);
+                        inventory.addItem(141, 1, inventory.types.Player, user.getId(player), methods.getRandomInt(shopItem.sumMax, shopItem.sumMin) * 2, 0, "{}", 2);
                         mp.players.forEach(p => {
                             if (user.isLogin(p) && user.get(p, 'fraction_id2') === frId) {
                                 user.deleteBlip(p, i + 1000);

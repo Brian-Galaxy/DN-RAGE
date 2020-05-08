@@ -3132,7 +3132,7 @@ phone.consoleCallback = async function(command) {
                     if (phone.getType() === 0)
                         return;
 
-                    let money = methods.getRandomInt(1000, 5000) / 1000;
+                    let money = methods.getRandomInt(6000, 7000) / 1000;
 
                     phone.addConsoleCommand('Success. The wallet was replenished in the amount of ' + methods.cryptoFormat(money));
                     user.setById('atmTimeout', true);

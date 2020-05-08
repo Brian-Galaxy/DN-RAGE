@@ -2843,8 +2843,7 @@ mp.keys.bind(0x45, true, function() {
 mp.keys.bind(0x4D, true, function() {
     if (!user.isLogin())
         return;
-    if (!methods.isBlockKeys())
-        menuList.showMainMenu();
+    menuList.showMainMenu();
     ui.showHud();
 });
 

@@ -6290,7 +6290,7 @@ racer.finish = function (player) {
             user.set(player, 'rating_racer_count', user.get(player, 'rating_racer_count') + 1);
 
             if (finishNumber === 1) {
-                let money = currentPrize * 0.4;
+                let money = currentPrize * 0.2;
                 methods.notifyWithPictureToAll('Arena RaceClub', '~g~' + racerList[currentRace].title, `~g~${user.getRpName(player)}~s~ занял ~g~1-ое~s~ место и выиграл ~g~${methods.moneyFormat(money)}`, 'CHAR_CARSITE4');
                 user.addCashMoney(player, money, finishNumber + ' место в гонке ' + racerList[currentRace].title);
 
@@ -6298,7 +6298,7 @@ racer.finish = function (player) {
                 user.set(player, 'rating_racer_win', user.get(player, 'rating_racer_win') + 1);
             }
             else if (finishNumber === 2) {
-                let money = currentPrize * 0.2;
+                let money = currentPrize * 0.15;
                 methods.notifyWithPictureToAll('Arena RaceClub', '~g~' + racerList[currentRace].title, `~g~${user.getRpName(player)}~s~ занял ~g~2-ое~s~ место и выиграл ~g~${methods.moneyFormat(money)}`, 'CHAR_CARSITE4');
                 user.addCashMoney(player, money, finishNumber + ' место в гонке ' + racerList[currentRace].title);
 
@@ -6317,7 +6317,7 @@ racer.finish = function (player) {
 
                 user.set(player, 'rating_racer_mmr', user.get(player, 'rating_racer_mmr') + 5);
 
-                let money = currentPrize * 0.05;
+                let money = currentPrize * 0.08;
                 player.notifyWithPicture('Arena RaceClub', '~g~' + racerList[currentRace].title, `~g~${user.getRpName(player)}~s~ занял ~g~${finishNumber}-ое~s~ место и выиграл ~g~${methods.moneyFormat(money)}`, 'CHAR_CARSITE4');
                 user.addCashMoney(player, money, finishNumber + ' место в гонке ' + racerList[currentRace].title);
             }
@@ -6325,7 +6325,7 @@ racer.finish = function (player) {
 
                 user.set(player, 'rating_racer_mmr', user.get(player, 'rating_racer_mmr') + 5);
 
-                let money = currentPrize * 0.025;
+                let money = currentPrize * 0.05;
                 player.notifyWithPicture('Arena RaceClub', '~g~' + racerList[currentRace].title, `~g~${user.getRpName(player)}~s~ занял ~g~${finishNumber}-ое~s~ место и выиграл ~g~${methods.moneyFormat(money)}`, 'CHAR_CARSITE4');
                 user.addCashMoney(player, money, finishNumber + ' место в гонке ' + racerList[currentRace].title);
             }
@@ -6333,7 +6333,7 @@ racer.finish = function (player) {
 
                 user.set(player, 'rating_racer_mmr', user.get(player, 'rating_racer_mmr') + 5);
 
-                let money = currentPrize * 0.015;
+                let money = currentPrize * 0.03;
                 player.notifyWithPicture('Arena RaceClub', '~g~' + racerList[currentRace].title, `~g~${user.getRpName(player)}~s~ занял ~g~${finishNumber}-ое~s~ место и выиграл ~g~${methods.moneyFormat(money)}`, 'CHAR_CARSITE4');
                 user.addCashMoney(player, money, finishNumber + ' место в гонке ' + racerList[currentRace].title);
             }
@@ -6411,7 +6411,7 @@ racer.notifyRace = function () {
 
 racer.startRace = function () {
 
-    if (currentLobby < 0) { //TODO
+    if (currentLobby < 5) {
         isCreate = false;
         methods.notifyWithPictureToAll('Arena RaceClub', '~r~' + racerList[currentRace].title, 'Гонка была отменена из-за нехватки участников', 'CHAR_CARSITE4');
 

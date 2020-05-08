@@ -2327,13 +2327,19 @@ menuList.showBusinessSellToPlayerMenu = function(houseId, name, sum, userId) {
 menuList.showMainMenu = function() {
 
     UIMenu.Menu.Create('Меню', 'Главное меню', 'showMainMenu');
-    UIMenu.Menu.AddMenuItem("Персонаж", "", {doName: "showPlayerMenu"});
-    UIMenu.Menu.AddMenuItem("Транспорт", "", {eventName: "server:showVehMenu"});
-    UIMenu.Menu.AddMenuItem("Помощь", "", {doName: "showHelpMenu"});
-    UIMenu.Menu.AddMenuItem("Настройки", "", {doName: "showSettingsMenu"});
-    UIMenu.Menu.AddMenuItem("Список квестов", "", {doName: "showQuestMenu"});
-    UIMenu.Menu.AddMenuItem("~y~Задать вопрос", "", {doName: "sendAsk"});
-    UIMenu.Menu.AddMenuItem("~r~Жалоба", "", {doName: "sendReport"});
+    if (methods.isBlockKeys()) {
+        UIMenu.Menu.AddMenuItem("~y~Задать вопрос", "", {doName: "sendAsk"});
+        UIMenu.Menu.AddMenuItem("~r~Жалоба", "", {doName: "sendReport"});
+    }
+    else {
+        UIMenu.Menu.AddMenuItem("Персонаж", "", {doName: "showPlayerMenu"});
+        UIMenu.Menu.AddMenuItem("Транспорт", "", {eventName: "server:showVehMenu"});
+        UIMenu.Menu.AddMenuItem("Помощь", "", {doName: "showHelpMenu"});
+        UIMenu.Menu.AddMenuItem("Настройки", "", {doName: "showSettingsMenu"});
+        UIMenu.Menu.AddMenuItem("Список квестов", "", {doName: "showQuestMenu"});
+        UIMenu.Menu.AddMenuItem("~y~Задать вопрос", "", {doName: "sendAsk"});
+        UIMenu.Menu.AddMenuItem("~r~Жалоба", "", {doName: "sendReport"});
+    }
     UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
     UIMenu.Menu.Draw();
 
@@ -9792,7 +9798,7 @@ menuList.showAdminTeleportMenu = function() {
 
     UIMenu.Menu.AddMenuItem("Телепорт на метку", "", {doName: "teleportToWaypoint"});
     UIMenu.Menu.AddMenuItem("Телепортироваться к игроку", "", {doName: "tptoid"});
-    UIMenu.Menu.AddMenuItem("Телепортировать игрока к себе", "", {doName: "tptoh"});
+    UIMenu.Menu.AddMenuItem("Телепортировать игрока к себе", "", {doName: "tptome"});
     UIMenu.Menu.AddMenuItem("Телепорт по ID дома", "", {doName: "tptoh"});
 
     UIMenu.Menu.AddMenuItem("Телепортировать транспорт к себе", "", {doName: "tptov"});

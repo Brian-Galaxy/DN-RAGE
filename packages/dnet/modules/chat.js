@@ -1,4 +1,6 @@
 let user = require('../user');
+let enums = require('../enums');
+
 let methods = require('./methods');
 
 let fraction = require('../property/fraction');
@@ -196,6 +198,30 @@ mp.events.add('playerCommand', (player, command) => {
             mafiaWar.startWar(1);
             mafiaWar.startWar(2);
             mafiaWar.startWar(3);
+        }
+        else if (command.toLowerCase() === "randmask") {
+            if (!user.isAdmin(player, 5))
+                return;
+            let winner = methods.getRandomPlayer();
+            if (user.isLogin(winner)) {
+                user.giveRandomMask(winner, 0, true);
+            }
+        }
+        else if (command.toLowerCase() === "randvip") {
+            if (!user.isAdmin(player, 5))
+                return;
+            let winner = methods.getRandomPlayer();
+            if (user.isLogin(winner)) {
+                user.giveVip(winner, methods.getRandomInt(1, 8), 2, true);
+            }
+        }
+        else if (command.toLowerCase() === "randveh") {
+            if (!user.isAdmin(player, 5))
+                return;
+            let winner = methods.getRandomPlayer();
+            if (user.isLogin(winner)) {
+                user.giveVehicle(winner, enums.vehWinList[methods.getRandomInt(0, enums.vehWinList.length)], 1, true);
+            }
         }
         else if (command.slice(0, 7) === "racerc ") {
             if (!user.isAdmin(player))

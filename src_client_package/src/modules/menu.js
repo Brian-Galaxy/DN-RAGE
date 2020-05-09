@@ -229,9 +229,11 @@ class Menu {
 
             }*/
 
-            mp.players.local.freezePosition(false);
-            methods.disableAllControls(false);
-            chat.activate(true);
+            if (user.getCache('s_hud_cursor')) {
+                mp.players.local.freezePosition(false);
+                methods.disableAllControls(false);
+                chat.activate(true);
+            }
 
             cefMenu.hide();
             menuItem = null;

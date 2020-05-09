@@ -95,6 +95,8 @@ voiceRage.generateVolume = (localPlayerPosition, targetPlayer, voiceDistance, di
 
     if (!user.isLogin())
         return 0;
+    if (targetPlayer.handle === 0)
+        return 0;
 
     const calcVoiceDistance = voiceDistance * voiceDistance;
     const calcDublDist = distanceToPlayer * distanceToPlayer;

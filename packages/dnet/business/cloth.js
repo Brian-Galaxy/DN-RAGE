@@ -347,11 +347,11 @@ cloth.buyMask = function (player, price, maskId, shopId) {
 
     let itemName = enums.maskList[maskId][1];
 
-    user.set(player, 'mask', maskId);
-    user.set(player, 'mask_color', 1);
+    user.set(player, 'mask', -1);
+    user.set(player, 'mask_color', 0);
 
     let params = `{"name": "${methods.removeQuotes(methods.removeQuotes2(itemName))}", "mask": ${maskId}, "desc": "${methods.getRareName(enums.maskList[maskId][14])}"}`;
-    inventory.addItem(274, 1, inventory.types.Player, user.getId(player), 1, 1, params, 100);
+    inventory.addItem(274, 1, inventory.types.Player, user.getId(player), 1, 0, params, 100);
 
     user.updateCharacterFace(player);
     user.updateCharacterCloth(player);

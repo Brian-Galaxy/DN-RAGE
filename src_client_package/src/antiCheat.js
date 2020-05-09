@@ -158,7 +158,7 @@ antiCheat.secTimer = function() {
         });
 
         let newPos = mp.players.local.position;
-        let dist = mp.players.local.vehicle ? methods.getCurrentSpeed() + 100 : 40;
+        let dist = mp.players.local.vehicle ? methods.getCurrentSpeed() + 100 : 80;
         let distNew = methods.distanceToPos(prevPos, newPos);
         if (distNew > dist && !mp.players.local.isFalling() && !mp.players.local.isRagdoll() && !methods.isBlockKeys()) {
             if (!user.isTeleport())

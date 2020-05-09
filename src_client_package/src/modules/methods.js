@@ -299,6 +299,10 @@ methods.isBlockKeys = function() { //TODO
     return Menu.Menu.IsShowInput() || user.isCuff() || user.isTie() || user.isDead() || user.isKnockout() || _isBlockKeys/* || mp.gui.cursor.visible*/;
 };
 
+methods.isShowInput = function() {
+    return Menu.Menu.IsShowInput();
+};
+
 methods.distanceToPos = function (v1, v2) {
     return Math.abs(Math.sqrt(Math.pow((v2.x - v1.x),2) +
         Math.pow((v2.y - v1.y),2)+

@@ -2106,6 +2106,17 @@ mp.events.addRemoteCounted('server:invader:delAd', (player, id) => {
 
     user.addPayDayMoney(player, 100, 'Отредактировал объявление');
 
+    mysql.executeQuery(`DELETE FROM rp_inv_ad WHERE id = ${methods.parseInt(id)}`);
+    player.notify('~b~Вы удалили объявление #' + id);
+    player.notify('~g~Вы получили премию в $100 за отредактированное объявление');
+});
+
+mp.events.addRemoteCounted('server:invader:delAdT', (player, id) => {
+    if (!user.isLogin(player))
+        return;
+
+    user.addPayDayMoney(player, 100, 'Отредактировал объявление');
+
     mysql.executeQuery(`DELETE FROM rp_inv_ad_temp WHERE id = ${methods.parseInt(id)}`);
     player.notify('~b~Вы удалили объявление #' + id);
     player.notify('~g~Вы получили премию в $100 за отредактированное объявление');

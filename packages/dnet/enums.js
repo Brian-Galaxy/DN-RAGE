@@ -229,6 +229,8 @@ enums.userData = [
     "s_hud_bg",
     "s_hud_raycast",
     "s_hud_restart",
+    "s_hud_cursor",
+    "s_hud_notify",
     "s_voice_vol",
     "s_clipset",
 

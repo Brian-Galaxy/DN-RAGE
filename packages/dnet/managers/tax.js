@@ -314,6 +314,19 @@ tax.payTax = function(player, type, sum, score) {
                 return;
             }
 
+            if (type == 0) {
+                if (user.getCashMoney(player) < sum) {
+                    player.notify(`~r~У вас недостаточно средств`);
+                    return;
+                }
+            }
+            else {
+                if (user.getBankMoney(player) < sum) {
+                    player.notify(`~r~У вас недостаточно средств`);
+                    return;
+                }
+            }
+
             if (type == 0)
                 user.removeCashMoney(player, sum, 'Оплата налогов');
             else

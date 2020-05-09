@@ -7,30 +7,41 @@ import UIMenu from "./menu";
 import menuList from "../menuList";
 import houses from "../property/houses";
 import mail from "../jobs/mail";
+import user from "../user";
+import chat from "../chat";
 
 let cefMenu = {};
 
 let isShow = false;
 
 cefMenu.showFull = function(headerText, headerDesc = '', menuList = [], menuName = '', banner = '', header = true, opacity = 0.8, selected = 0) {
-    mp.gui.cursor.show(false, true);
+
+    if (user.getCache('s_hud_cursor')) {
+        mp.gui.cursor.show(false, true);
+        ui.DisableMouseControl = true;
+    }
     isShow = true;
-    ui.DisableMouseControl = true;
     ui.callCef('hudm', JSON.stringify({type: 'updateInfo', header: header, opacity: opacity, headerText: headerText, headerDesc: headerDesc, menuList: menuList, banner: banner, menuName: menuName, selected: selected}));
 };
 
 cefMenu.show = function() {
-    mp.gui.cursor.show(false, true);
+    if (user.getCache('s_hud_cursor')) {
+        mp.gui.cursor.show(false, true);
+        ui.DisableMouseControl = true;
+    }
     isShow = true;
-    ui.DisableMouseControl = true;
     ui.callCef('hudm', JSON.stringify({type: 'show'}));
 };
 
 cefMenu.hide = function() {
     mp.events.call('client:menuList:onClose');
-    mp.gui.cursor.show(false, false);
+
+    if (user.getCache('s_hud_cursor')) {
+        mp.gui.cursor.show(false, false);
+        ui.DisableMouseControl = false;
+    }
+
     isShow = false;
-    ui.DisableMouseControl = false;
     ui.callCef('hudm', JSON.stringify({type: 'hide'}));
 };
 

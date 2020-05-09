@@ -4,6 +4,7 @@ let methods = require('../modules/methods');
 let fraction = require('../property/fraction');
 
 let user = require('../user');
+let enums = require('../enums');
 
 let gangWar = require('../managers/gangWar');
 let mafiaWar = require('../managers/mafiaWar');
@@ -254,7 +255,7 @@ weather.timeSyncTimer = function() {
             }
         }
 
-        if (dateTime.getHours() === 20 && dateTime.getMinutes() === 0) {
+        if (dateTime.getHours() === 20 && dateTime.getMinutes() === 1) {
             if (!isCreateVeh) {
                 isCreateVeh = true;
                 try {

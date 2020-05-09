@@ -1124,7 +1124,7 @@ menuList.showInvaderAdDelMenu = function(id, title, name, phone) {
     UIMenu.Menu.OnSelect.Add((item, index) => {
         UIMenu.Menu.HideMenu();
         if (item.delete)
-            mp.events.callRemote('server:invader:delNews', id);
+            mp.events.callRemote('server:invader:delAd', id);
     });
 };
 
@@ -1189,7 +1189,7 @@ menuList.showInvaderAdTempEditMenu = function(id, text, name, phone) {
         }
         if (item.delete) {
             UIMenu.Menu.HideMenu();
-            mp.events.callRemote('server:invader:delAd', id);
+            mp.events.callRemote('server:invader:delAdT', id);
         }
     });
 };
@@ -1205,8 +1205,8 @@ menuList.showBusinessMenu = async function(data) {
     UIMenu.Menu.Create(` `, `~b~Владелец: ~s~${(data.get('user_id') < 1 ? "Государство" : data.get('user_name'))}`, '', false, false, 'arcadius');
 
     let nalogOffset = bankTarif;
-    if (data.get('type') === 1) //TODO
-        nalogOffset += 25;
+    /*if (data.get('type') === 1) //TODO
+        nalogOffset += 25;*/
 
     nalog = nalog + nalogOffset;
 
@@ -1366,8 +1366,8 @@ menuList.showBusinessSettingsMenu = async function(data) {
     UIMenu.Menu.Create(` `, `~b~Панель вашего бизнеса`, '', false, false, 'arcadius');
 
     let nalogOffset = 0;
-    if (data.get('type') === 1) //TODO
-        nalogOffset += 25;
+    /*if (data.get('type') === 1) //TODO
+        nalogOffset += 25;*/
     /*if (data.get('type') == 11)
         nalogOffset += 20;*/
 
@@ -2780,6 +2780,9 @@ menuList.showSettingsHudMenu = function() {
 
     UIMenu.Menu.AddMenuItemList("Взаимодействие", ['Стандартное', 'Над объектом'], "", {doName: "raycast"}, user.getCache('s_hud_raycast') ? 1 : 0);
 
+    UIMenu.Menu.AddMenuItemList("Курсор в меню", ['Выкл', 'Вкл'], "", {doName: "crus"}, user.getCache('s_hud_cursor') ? 1 : 0);
+    UIMenu.Menu.AddMenuItemList("Уведомления над картой", ['Выкл', 'Вкл'], "", {doName: "notify"}, user.getCache('s_hud_notify') ? 1 : 0);
+
     UIMenu.Menu.AddMenuItemList("Авто. перезагрузка интерфейса", ['Выкл', 'Вкл'], "В случае если у вас он завис~br~или не работает", {doName: "restart"}, user.getCache('s_hud_restart') ? 1 : 0);
 
     let listVoiceVol = ["0%", "10%", "20%", "30%", "40%", "50%", "60%", "70%", "80%", "90%", "100%"];
@@ -2809,6 +2812,23 @@ menuList.showSettingsHudMenu = function() {
         }
         if (item.doName === 'restart') {
             user.set('s_hud_restart', index === 1);
+            mp.game.ui.notifications.show('~b~Настройки были сохранены');
+        }
+        if (item.doName === 'crus') {
+            user.set('s_hud_cursor', index === 1);
+            mp.game.ui.notifications.show('~b~Настройки были сохранены');
+
+            if (user.getCache('s_hud_cursor')) {
+                mp.gui.cursor.show(false, true);
+                ui.DisableMouseControl = true;
+            }
+            else {
+                mp.gui.cursor.show(false, false);
+                ui.DisableMouseControl = false;
+            }
+        }
+        if (item.doName === 'notify') {
+            user.set('s_hud_notify', index === 1);
             mp.game.ui.notifications.show('~b~Настройки были сохранены');
         }
         if (item.doName == 'bg') {
@@ -3251,6 +3271,7 @@ menuList.showPlayerStatsMenu = function() {
         UIMenu.Menu.AddMenuItem("~b~VIP:~r~", "", {}, `Отсутствует`);
 
     UIMenu.Menu.AddMenuItem("~b~Розыск:", "", {}, `${user.getCache('wanted_level') > 0 ? '~r~В розыске' : '~g~Нет'}`);
+    UIMenu.Menu.AddMenuItem("~b~Предупреждений:", "", {}, `${user.getCache('warns')}`);
     //UIMenu.Menu.AddMenuItem("~b~Рецепт марихуаны:", "", {}, `${user.get('allow_marg') ? 'Есть' : '~r~Нет'}`);
 
     let label = '';
@@ -3425,7 +3446,7 @@ menuList.showVehicleMenu = function(data) {
     if (vInfo.class_name != 'Cycles') {
         UIMenu.Menu.AddMenuItem("~g~Вкл~s~ / ~r~выкл~s~ двигатель", "", {eventName: "server:vehicle:engineStatus"});
     }
-    if (vInfo.class_name == 'Boats')
+    if (vInfo.class_name == 'Boats' || vInfo.display_name == 'Dodo' || vInfo.display_name == 'Seasparrow')
         UIMenu.Menu.AddMenuItem("~g~Вкл~s~ / ~r~выкл~s~ якорь", "", {eventName: "server:vehicleFreeze"});
 
     if (vInfo.class_name != 'Cycles' || vInfo.class_name != 'Planes' || vInfo.class_name != 'Helicopters' || vInfo.class_name != 'Boats')
@@ -3997,6 +4018,8 @@ menuList.showSpawnJobGr6Menu = function() {
             mp.events.callRemote('server:uniform:gr6');
             Container.Data.SetLocally(0, 'is6Duty', true);
 
+            user.setArmour(20);
+
             mp.game.ui.notifications.show("~g~Вы вышли на дежурство");
         }
         if (item.doName == 'getMore0') {
@@ -4013,7 +4036,7 @@ menuList.showSpawnJobGr6Menu = function() {
 
             mp.events.callRemote('server:gun:buy', 77, 2250, 1, 0, 5, 0);
             mp.events.callRemote('server:gun:buy', 280, 850, 1, 0, 5, 0);
-            user.setArmour(20);
+            user.setArmour(40);
 
             mp.game.ui.notifications.show("~g~Вы взяли стандартное вооружение");
         }
@@ -6394,7 +6417,7 @@ menuList.showMaskListMenu = function (slot, shopId) {
 
         let maskPrev = user.getCache('mask');
 
-        if (maskPrev >= 0) {
+        if (maskPrev > 0) {
             mp.game.ui.notifications.show("~r~Для начала снимите старую маску");
             return;
         }
@@ -8193,7 +8216,7 @@ menuList.showFractionInvaderMenu = function() {
 
     UIMenu.Menu.Create(`Организация`, `~b~Ваша органзация`);
 
-    if (!user.isLeader() && !user.isSubLeader() && user.getCache('rank_type') === 0) {
+    if (!user.isLeader() && !user.isSubLeader() && !user.isDepLeader() && !user.isDepSubLeader() && user.getCache('rank_type') === 0) {
         UIMenu.Menu.AddMenuItem(`~y~Не доступно для стажеров`);
     }
     if (user.isLeader() || user.isSubLeader() || user.getCache('rank_type') > 0) {
@@ -9547,9 +9570,8 @@ menuList.showAdminMenu = function() {
 menuList.showAdminPlayerMenu = function(id) {
     UIMenu.Menu.Create(`ADMIN`, `~b~Админ меню`);
 
-    UIMenu.Menu.AddMenuItemList("Тип ID", ['Dynamic', 'Static'], "", {doName: "type"});
-
     UIMenu.Menu.AddMenuItem("~b~Введите ID", "", {doName: 'changeId'}, id.toString());
+    UIMenu.Menu.AddMenuItemList("Тип ID", ['Dynamic', 'Static'], "", {doName: "type"});
 
     UIMenu.Menu.AddMenuItem("Изменить виртуальный мир", "", {doName: "changeDimension"});
     UIMenu.Menu.AddMenuItem("Телепортироваться к игроку", "", {doName: "tptoid"});

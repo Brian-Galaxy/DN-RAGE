@@ -250,9 +250,7 @@ for(let code in keyCodes) {
             voiceRage.enableRadioMic();
         }
 
-
-
-        if (methods.isBlockKeys()) {}
+        if (methods.isBlockKeys())
             return;
 
         if (user.getCache('s_bind_do') == parseInt(code)) {

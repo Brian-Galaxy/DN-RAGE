@@ -773,7 +773,7 @@ lsc.buyColor5 = function(player, idx, price, shopId, itemName) {
     business.addMoney(shopId, price, itemName);
     business.removeMoneyTax(shopId, price / business.getPrice(shopId));
 
-    player.notify('~g~Вы изменили цвет колёс транспорта');
+    player.notify('~g~Вы изменили цвет приборной панели транспорта');
 
     vehicles.setTunning(veh);
     vehicles.save(veh.getVariable('container'));
@@ -808,7 +808,7 @@ lsc.buyColor6 = function(player, idx, price, shopId, itemName) {
     business.addMoney(shopId, price, itemName);
     business.removeMoneyTax(shopId, price / business.getPrice(shopId));
 
-    player.notify('~g~Вы изменили цвет колёс транспорта');
+    player.notify('~g~Вы изменили цвет салона транспорта');
 
     vehicles.setTunning(veh);
     vehicles.save(veh.getVariable('container'));

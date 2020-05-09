@@ -439,7 +439,7 @@ user.loadUser = function(player, name, spawn = 'Стандарт') {
                     catch (e) {
 
                     }
-                }, 10000);
+                }, 2000);
 
                 if (user.get(player, 'vip_time') > 0 && user.get(player, 'vip_time') < methods.getTimeStamp()) {
                     player.outputChatBox(`!{#f44336}Срок действия вашего VIP статуса подошел к концу`);
@@ -704,7 +704,7 @@ user.updateCharacterFace = function(player) {
                     skin.SKIN_FATHER_SKIN,
                     0,
                     0,
-                    0,
+                    skin.SKIN_PARENT_SKIN_MIX,
                     0
                 );
 

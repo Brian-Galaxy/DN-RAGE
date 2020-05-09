@@ -563,11 +563,24 @@ mp.events.add('client:events:custom:choiceRole', function(roleIndex) {
             if (idTorso >= 0)
                 cloth.buy(0, clothList[idTorso][1], clothList[idTorso][2], cl1 < 0 ? 0 : cl1, clothList[idTorso][4], clothList[idTorso][5], clothList[idTorso][6], clothList[idTorso][7], clothList[idTorso][9], 0, true);
 
-            if (idLeg >= 0)
-                cloth.buy(0, clothList[idLeg][1], clothList[idLeg][2], cl2 < 0 ? 0 : cl2, clothList[idLeg][4], clothList[idLeg][5], clothList[idLeg][6], clothList[idLeg][7], clothList[idLeg][9], 0, true);
+            setTimeout(function () {
+                try {
+                    if (idLeg >= 0)
+                        cloth.buy(0, clothList[idLeg][1], clothList[idLeg][2], cl2 < 0 ? 0 : cl2, clothList[idLeg][4], clothList[idLeg][5], clothList[idLeg][6], clothList[idLeg][7], clothList[idLeg][9], 0, true);
+                }
+                catch (e) {
+                    
+                }
+            }, 500);
 
-            if (idFoot >= 0)
-                cloth.buy(0, clothList[idFoot][1], clothList[idFoot][2], cl3 < 0 ? 0 : cl3, clothList[idFoot][4], clothList[idFoot][5], clothList[idFoot][6], clothList[idFoot][7], clothList[idFoot][9], 0, true);
+            setTimeout(function () {
+                try {
+                    if (idFoot >= 0)
+                        cloth.buy(0, clothList[idFoot][1], clothList[idFoot][2], cl3 < 0 ? 0 : cl3, clothList[idFoot][4], clothList[idFoot][5], clothList[idFoot][6], clothList[idFoot][7], clothList[idFoot][9], 0, true);
+                } catch (e) {
+                    
+                }
+            }, 500);
 
             if (user.getCache('role') > 0) {
                 user.set('is_custom', true);
@@ -2843,8 +2856,10 @@ mp.keys.bind(0x45, true, function() {
 mp.keys.bind(0x4D, true, function() {
     if (!user.isLogin())
         return;
-    menuList.showMainMenu();
-    ui.showHud();
+    if (!methods.isShowInput())
+        menuList.showMainMenu();
+    if (!ui.isShowHud())
+        ui.showHud();
 });
 
 //F2
@@ -2865,7 +2880,8 @@ mp.keys.bind(0x1B, true, function() {
 
     if (edu.isShort() || edu.isLong())
         edu.stopAll();
-    ui.showHud();
+    if (!ui.isShowHud())
+        ui.showHud();
 
     if (methods.isBlockKeys())
         return;

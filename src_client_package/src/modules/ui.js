@@ -269,6 +269,10 @@ ui.showHud = function() {
     }
 };
 
+ui.isShowHud = function() {
+    return showRadar;
+};
+
 ui.isGreenZone = function() {
     return isGreenZone;
 };

@@ -1,4 +1,5 @@
 import methods from "../modules/methods";
+import user from "../user";
 
 const _SET_NOTIFICATION_COLOR_NEXT = "0x39BBF623FC803EAC";
 const _SET_NOTIFICATION_BACKGROUND_COLOR = "0x92F0DA1E27DB96DC";
@@ -9,6 +10,15 @@ let sleep = function(ms) {
 };
 
 mp.events.add("BN_Show", (message, flashing = false, textColor = -1, bgColor = -1, flashColor = [77, 77, 77, 200]) => {
+
+    try {
+        if (!user.getCache('s_hud_notify'))
+            return ;
+    }
+    catch (e) {
+
+    }
+
     try {
         if (textColor > -1) mp.game.invoke(_SET_NOTIFICATION_COLOR_NEXT, textColor);
         if (bgColor > -1) mp.game.invoke(_SET_NOTIFICATION_BACKGROUND_COLOR, bgColor);
@@ -25,6 +35,14 @@ mp.events.add("BN_Show", (message, flashing = false, textColor = -1, bgColor = -
 });
 
 mp.events.add("BN_ShowWithPicture", async (title, sender, message, notifPic, icon = 0, flashing = false, textColor = -1, bgColor = -1, flashColor = [77, 77, 77, 200]) => {
+
+    try {
+        if (!user.getCache('s_hud_notify'))
+            return ;
+    }
+    catch (e) {
+
+    }
 
     try {
         switch (notifPic) {

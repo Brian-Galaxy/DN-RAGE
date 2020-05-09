@@ -156,7 +156,7 @@ timer.min59Timer = function() {
     try {
         let player = methods.getRandomPlayer();
         if (user.isLogin(player)) {
-            user.giveVip(player, methods.getRandomInt(1, 7), 2, true);
+            user.giveVip(player, methods.getRandomInt(1, 8), 2, true);
         }
     }
     catch (e) {

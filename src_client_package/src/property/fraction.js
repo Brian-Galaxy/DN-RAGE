@@ -31,6 +31,8 @@ fraction.unloadCargoVehTimer = async function(id) {
             return;
         }
 
+        mp.players.local.vehicle.freezePosition(true);
+
         isUnload = true;
         await methods.sleep(500);
 
@@ -60,6 +62,10 @@ fraction.unloadCargoVehTimer = async function(id) {
             if (veh.getIsEngineRunning()) {
                 mp.game.ui.notifications.show(`~r~Вы завели транспорт, разгрузка была отменена`);
                 isUnload = false;
+                try {
+                    mp.players.local.vehicle.freezePosition(false);
+                }
+                catch (e) {}
                 return;
             }
 
@@ -71,6 +77,10 @@ fraction.unloadCargoVehTimer = async function(id) {
         mp.events.callRemote('server:vehicle:cargoUnload', id);
         //mp.game.ui.notifications.show(`~g~Транспорт был разгружен`);
         isUnload = false;
+        try {
+            mp.players.local.vehicle.freezePosition(false);
+        }
+        catch (e) {}
     }
     catch (e) {
         methods.debug(e);

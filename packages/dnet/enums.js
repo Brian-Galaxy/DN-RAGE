@@ -712,11 +712,11 @@ enums.fractionList = {
         departmentList: ["Отдел кадров", "Отдел объявлений", "Отдел новостей", "Отдел радио", "Отдел мероприятий"],
         departmentPayDay: [80, 200, 200, 200],
         rankPayDay: [
-            [800, 600, 175, 125], //0
-            [800, 600, 400, 350, 250], //1
-            [800, 600, 400, 350, 250], //2
-            [800, 600, 400, 350, 250], //3
-            [800, 600, 400, 350, 250], //4
+            [900, 700, 220, 125], //0
+            [900, 700, 500, 450, 350], //1
+            [900, 700, 500, 450, 350], //2
+            [900, 700, 500, 450, 350], //3
+            [900, 700, 500, 450, 350], //4
         ],
         leaderPayDay: 1500,
         subLeaderPayDay: 1200,
@@ -898,9 +898,9 @@ enums.maskList = [
     [16, "Хоккейная Dust Devils", 4, 3, 6370, 0, false, true, true, false, false, true, 100, 0, 80],
 
     [5, "Охровая маска гориллы", 5, 0, 6910, 0, true, true, true, true, true, true, 100, 69, 0],
-    [5, "Коричневая маска гориллы", 5, 0, 6950, 0, true, true, true, true, true, true, 100, 69, 0],
-    [5, "Зелёная маска гориллы", 5, 0, 6940, 0, true, true, true, true, true, true, 100, 0, 0],
-    [5, "Розовая маска гориллы", 5, 0, 6980, 0, true, true, true, true, true, true, 100, 0, 0],
+    [5, "Коричневая маска гориллы", 5, 1, 6950, 0, true, true, true, true, true, true, 100, 69, 0],
+    [5, "Зелёная маска гориллы", 5, 2, 6940, 0, true, true, true, true, true, true, 100, 0, 0],
+    [5, "Розовая маска гориллы", 5, 3, 6980, 0, true, true, true, true, true, true, 100, 0, 0],
 
     [18, "Зелёная карнавальная", 6, 0, 8330, 0, false, true, true, false, false, true, 100, 0, 90],
     [18, "Белая карнавальная", 6, 1, 8390, 0, false, true, true, false, false, true, 100, 0, 90],
@@ -976,8 +976,8 @@ enums.maskList = [
     [5, "Бурый медведь", 21, 0, 16500, 0, true, true, true, true, true, true, 100, 0, 40],
     [5, "Белый медведь", 21, 1, 16500, 0, true, true, true, true, true, true, 100, 0, 40],
 
-    [5, "Черный бизон", 22, 0, 12100, 0, true, true, true, true, true, true, 100, 69, 40],
-    [5, "Коричневый бизон", 22, 1, 12100, 0, true, true, true, true, true, true, 100, 69, 40],
+    [5, "Черный бизон", 22, 0, 12100, 0, true, true, true, true, true, true, 100, 69, 0],
+    [5, "Коричневый бизон", 22, 1, 12100, 0, true, true, true, true, true, true, 100, 69, 0],
 
     [5, "Чёрный бык", 23, 0, 12700, 0, true, true, true, true, true, true, 100, 0, 40],
     [5, "Серый бык", 23, 1, 12700, 0, true, true, true, true, true, true, 100, 0, 40],
@@ -1110,9 +1110,7 @@ enums.maskList = [
     [9, "Пепельная балаклава-капюшон", 53, 5, 6500, 0, true, true, true, true, true, true, 100, 69, 0],
     [9, "Лесная балаклава-капюшон", 53, 6, 6500, 0, true, true, true, true, true, true, 100, 69, 0],
     [9, "Городская балаклава-капюшон", 53, 7, 6500, 0, true, true, true, true, true, true, 100, 69, 0],
-    [9, "Синяя балаклава-капюшон", 53, 8, 6500, 0, true, true, true, true, true, true, 100, 69, 0],
-    [9, "Жёлтая балаклава-капюшон", 53, 9, 6500, 0, true, true, true, true, true, true, 100, 69, 0],
-    [9, "Балаклава-капюшон с черепом", 53, 10, 6500, 0, true, true, true, true, true, true, 100, 0, 40],
+    [9, "Балаклава-капюшон с черепом", 53, 8, 6500, 0, true, true, true, true, true, true, 100, 0, 40],
 
     [14, "Черная маска из футболки", 54, 0, 8100, 0, true, true, true, true, true, true, 100, 69, 0],
     [14, "Белая маска из футболки", 54, 1, 8100, 0, true, true, true, true, true, true, 100, 69, 0],
@@ -1152,9 +1150,9 @@ enums.maskList = [
     [1, "Полос. балаклава Perseus Band", 57, 13, 6900, 0, true, true, true, true, true, true, 100, 0, 60],
     [1, "Полос. балаклава Perseus", 57, 14, 6900, 0, true, true, true, true, true, true, 100, 0, 60],
     [1, "Полос. балаклава Sessanta Nova", 57, 15, 6900, 0, true, true, true, true, true, true, 100, 0, 60],
-    [1, "Белая полос. балаклава", 57, 0, 6900, 16, true, true, true, true, true, true, 100, 0, 0],
-    [1, "Синяя полос. балаклава", 57, 0, 6900, 17, true, true, true, true, true, true, 100, 0, 0],
-    [1, "Ярко-красная полос. балаклава", 57, 0, 6900, 18, true, true, true, true, true, true, 100, 0, 0],
+    [1, "Белая полос. балаклава", 57, 16, 6900, 0, true, true, true, true, true, true, 100, 0, 0],
+    [1, "Синяя полос. балаклава", 57, 17, 6900, 0, true, true, true, true, true, true, 100, 0, 0],
+    [1, "Ярко-красная полос. балаклава", 57, 18, 6900, 0, true, true, true, true, true, true, 100, 0, 0],
     [1, "Зелёная полос. балаклава", 57, 19, 6900, 0, true, true, true, true, true, true, 100, 0, 0],
     [1, "Оранжевая полос. балаклава", 57, 20, 6900, 0, true, true, true, true, true, true, 100, 0, 0],
     [1, "Фиолетовая полос. балаклава", 57, 21, 6900, 0, true, true, true, true, true, true, 100, 0, 0],

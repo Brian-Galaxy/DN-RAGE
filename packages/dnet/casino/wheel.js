@@ -52,7 +52,7 @@ mp.events.add('server:casino:wheel:doRoll', (player) => {
             userWin = 5;
         else if (methods.getRandomInt(0, 50) < 1)
             userWin = 4;
-        else if (methods.getRandomInt(0, 40) < 1)
+        else if (methods.getRandomInt(0, 30) < 1)
             userWin = 3;
 
         user.set(player, 'wheelWin', userWin);
@@ -87,7 +87,7 @@ mp.events.add('server:casino:wheel:finalRoll', (player) => {
         let win = user.get(player, 'wheelWin');
 
         if (win === 19) {
-            user.giveVehicle(player, enums.vehLuckyList[methods.getRandomInt(0, enums.vehLuckyList.length)], 1);
+            user.giveVehicle(player, enums.vehLuckyList[methods.getRandomInt(0, enums.vehLuckyList.length)], 1, true, ' в колесе удачи');
         }
         /*else if (win === 1) {
             user.addCashMoney(player, 2500, 'Колесо удачи');
@@ -114,11 +114,11 @@ mp.events.add('server:casino:wheel:finalRoll', (player) => {
             player.notifyWithPicture('Diamond Casino', '~g~Колесо Удачи', `Вы выиграли ~g~$50,000`, 'CHAR_CASINO');
         }
         else if (win === 5) {
-            user.giveVip(player, methods.getRandomInt(3, 7), 2);
+            user.giveVip(player, methods.getRandomInt(30, 60), 2, true);
             player.notifyWithPicture('Diamond Casino', '~g~Колесо Удачи', `Вы выиграли VIP HARD`, 'CHAR_CASINO');
         }
         else if (win === 9) {
-            user.giveRandomMask(player, 0, false);
+            user.giveRandomMask(player, 0, true);
             player.notifyWithPicture('Diamond Casino', '~g~Колесо Удачи', `Вы выиграли маску`, 'CHAR_CASINO');
         }
         else if (win === 11) {

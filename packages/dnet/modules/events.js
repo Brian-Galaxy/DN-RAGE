@@ -5206,7 +5206,7 @@ mp.events.addRemoteCounted('server:sellVeh', (player) => {
     user.showLoadDisplay(player);
 
     if (user.get(player, 'fraction_id2') > 0)
-        fraction.addMoney(user.get(player, 'fraction_id2'), money / 5000, `Угон транспорта (${user.get(player, 'name')})`);
+        fraction.addMoney(user.get(player, 'fraction_id2'), money / 2000, `Угон транспорта (${user.get(player, 'name')})`);
 
     user.addCryptoMoney(player, money / 1000);
     user.removeRep(player, 50);

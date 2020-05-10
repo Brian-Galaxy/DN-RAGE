@@ -19,7 +19,7 @@ let racerList = [
         allowVehicle: ['Seashark'],
         offsetZ: -8,
         size: 12,
-        prize: 20000,
+        prize: 30000,
         posList: [
             [-1819.899, -992.9232, 0.4541778, -63.06045],
             [-1711.524, -943.7681, -0.07310319, -67.67833],
@@ -90,7 +90,7 @@ let racerList = [
         allowVehicle: ['Seashark'],
         offsetZ: -8,
         size: 12,
-        prize: 20000,
+        prize: 30000,
         posList: [
             [682.2701, -1639.012, 8.356587, 176.2828],
             [664.803, -1820.716, 8.313707, 174.2529],
@@ -178,7 +178,7 @@ let racerList = [
         allowVehicle: ['Seashark'],
         offsetZ: -8,
         size: 12,
-        prize: 20000,
+        prize: 30000,
         posList: [
             [2431.478, -2209.926, 0.5039154, -110.3318],
             [2573.783, -2195.636, 2.624341, -48.7127],
@@ -285,7 +285,7 @@ let racerList = [
         allowVehicle: ['Seashark'],
         offsetZ: -8,
         size: 12,
-        prize: 20000,
+        prize: 30000,
         posList: [
             [3572.626, 4958.426, 1.097981, 53.22799],
             [3501.834, 5018.012, 1.858261, 55.22401],
@@ -358,7 +358,7 @@ let racerList = [
         allowVehicle: ['Seashark'],
         offsetZ: -8,
         size: 12,
-        prize: 20000,
+        prize: 30000,
         posList: [
             [-1512.95, 1584.294, 103.7429, 8.241531],
             [-1525.957, 1645.126, 95.95205, -2.28224],
@@ -450,7 +450,7 @@ let racerList = [
         allowVehicle: ['Seashark'],
         offsetZ: -8,
         size: 12,
-        prize: 20000,
+        prize: 30000,
         posList: [
             [-1753.774, 4512.28, -0.1410793, -132.7666],
             [-1640.593, 4464.084, -0.1752518, -127.3911],
@@ -537,7 +537,7 @@ let racerList = [
         allowVehicle: ['Seashark'],
         offsetZ: -8,
         size: 12,
-        prize: 20000,
+        prize: 30000,
         posList: [
             [-2043.291, 4797.866, 1.318432, 84.69915],
             [-2127.713, 4817.257, 1.025514, 33.69315],
@@ -605,7 +605,7 @@ let racerList = [
         allowVehicle: ['Dune4', 'Dune5'],
         offsetZ: -8,
         size: 12,
-        prize: 20000,
+        prize: 30000,
         posList: [
             [1252.404, 168.0871, 81.34314, -31.00195],
             [1247.817, 279.4447, 81.34312, 63.53554],
@@ -655,7 +655,7 @@ let racerList = [
         allowVehicle: ['Voltic2'],
         offsetZ: -8,
         size: 12,
-        prize: 20000,
+        prize: 30000,
         posList: [
             [-2440.029, 3108.225, 32.38409, -119.5677],
             [-2244.362, 2995.12, 32.37085, -120.1974],
@@ -716,7 +716,7 @@ let racerList = [
         allowVehicle: ['Marshall', 'Monster'],
         offsetZ: -8,
         size: 12,
-        prize: 20000,
+        prize: 30000,
         posList: [
             [2539.636, 1504.549, 31.31532, -8.427833],
             [2541.176, 1696.359, 27.53983, 3.228853],
@@ -805,7 +805,7 @@ let racerList = [
         allowVehicle: ['Blazer5'],
         offsetZ: -8,
         size: 12,
-        prize: 20000,
+        prize: 30000,
         posList: [
             [-2765.325, 2541.77, 1.976987, -113.683],
             [-2657.108, 2510.755, 2.504658, -96.30959],
@@ -928,7 +928,7 @@ let racerList = [
         allowVehicle: ['Vigilante'],
         offsetZ: -8,
         size: 12,
-        prize: 20000,
+        prize: 30000,
         posList: [
             [1855.716, 3238.05, 44.41318, -141.4665],
             [2043.66, 3073.674, 46.24613, -152.2192],
@@ -1061,7 +1061,7 @@ let racerList = [
         allowVehicle: ['Phantom2'],
         offsetZ: -8,
         size: 12,
-        prize: 20000,
+        prize: 30000,
         posList: [
             [-1159.804, -3059.181, 14.01771, 73.96721],
             [-1260.907, -3040.84, 14.01772, 89.91862],
@@ -1123,7 +1123,7 @@ let racerList = [
         allowVehicle: ['Technical2'],
         offsetZ: -8,
         size: 12,
-        prize: 20000,
+        prize: 30000,
         posList: [
             [-1746.73, -809.8067, 8.495465, 179.4897],
             [-1751.07, -901.6669, 7.269242, -155.8253],
@@ -1225,7 +1225,7 @@ let racerList = [
         allowVehicle: ['Alpha', 'Banshee', 'Buffalo2', 'Comet3', 'Comet5', 'Drafter', 'Elegy', 'Elegy2', 'Feltzer2', 'Furoregt', 'Komoda', 'Imorgon', 'Jugular', 'Jester', 'Jester3', 'Khamelion', 'Kuruma', 'Locust', 'Lynx', 'Massacro', 'Neo', 'Ninef2', 'Paragon', 'Sentinel3', 'Seven70', 'Specter', 'Specter2', 'Sugoi', 'Sultan', 'Sultan2', 'Surano', 'Verlierer2', 'Tampa2', 'Yosemite2', 'Zr380'],
         offsetZ: -8,
         size: 12,
-        prize: 20000,
+        prize: 30000,
         posList: [
             [-1078.958, -217.5009, 37.19059, 117.1404],
             [-1210.829, -289.916, 37.15907, 116.7492],
@@ -1313,13 +1313,13 @@ let racerList = [
     },
     {
         title: 'Портовый договор',
-        desc: 'Не ведитесь на дешёвую рыбу и свежих кальмаров, педь в пол и никогда не возвращайтесь',
+        desc: 'Не ведитесь на дешёвую рыбу и свежих кальмаров, педаль в пол и никогда не возвращайтесь',
         repeat: 0,
         class: 2,
         allowVehicle: ['Alpha', 'Banshee', 'Buffalo2', 'Comet3', 'Comet5', 'Drafter', 'Elegy', 'Elegy2', 'Feltzer2', 'Furoregt', 'Komoda', 'Imorgon', 'Jugular', 'Jester', 'Jester3', 'Khamelion', 'Kuruma', 'Locust', 'Lynx', 'Massacro', 'Neo', 'Ninef2', 'Paragon', 'Sentinel3', 'Seven70', 'Specter', 'Specter2', 'Sugoi', 'Sultan', 'Sultan2', 'Surano', 'Verlierer2', 'Tampa2', 'Yosemite2', 'Zr380'],
         offsetZ: -8,
         size: 12,
-        prize: 20000,
+        prize: 30000,
         posList: [
             [-323.2138, -2574.19, 5.330016, 139.0068],
             [-388.5814, -2638.951, 5.317495, 133.9759],
@@ -1457,7 +1457,7 @@ let racerList = [
         allowVehicle: ['Alpha', 'Banshee', 'Buffalo2', 'Comet3', 'Comet5', 'Drafter', 'Elegy', 'Elegy2', 'Feltzer2', 'Furoregt', 'Komoda', 'Imorgon', 'Jugular', 'Jester', 'Jester3', 'Khamelion', 'Kuruma', 'Locust', 'Lynx', 'Massacro', 'Neo', 'Ninef2', 'Paragon', 'Sentinel3', 'Seven70', 'Specter', 'Specter2', 'Sugoi', 'Sultan', 'Sultan2', 'Surano', 'Verlierer2', 'Tampa2', 'Yosemite2', 'Zr380'],
         offsetZ: -8,
         size: 12,
-        prize: 20000,
+        prize: 30000,
         posList: [
             [331.5221, -659.3214, 28.63656, 73.31587],
             [237.3722, -616.306, 27.97899, 61.22763],
@@ -1550,7 +1550,7 @@ let racerList = [
         allowVehicle: ['Alpha', 'Banshee', 'Buffalo2', 'Comet3', 'Comet5', 'Drafter', 'Elegy', 'Elegy2', 'Feltzer2', 'Furoregt', 'Komoda', 'Imorgon', 'Jugular', 'Jester', 'Jester3', 'Khamelion', 'Kuruma', 'Locust', 'Lynx', 'Massacro', 'Neo', 'Ninef2', 'Paragon', 'Sentinel3', 'Seven70', 'Specter', 'Specter2', 'Sugoi', 'Sultan', 'Sultan2', 'Surano', 'Verlierer2', 'Tampa2', 'Yosemite2', 'Zr380'],
         offsetZ: -8,
         size: 12,
-        prize: 20000,
+        prize: 30000,
         posList: [
             [-215.0464, -1461.729, 30.69028, -132.7738],
             [-176.4669, -1504.771, 32.0242, 141.4871],
@@ -1630,12 +1630,12 @@ let racerList = [
     {
         title: 'Звёзды Вайнвуда',
         desc: 'Какого быть звездой? Спросите у Лазло, а мы предложим вам потрепать нервы всем безмозглым туристам, что рассматривают звёзды на Вайнвуде',
-        repeat: 0,
+        repeat: 1,
         class: 2,
         allowVehicle: ['Alpha', 'Banshee', 'Buffalo2', 'Comet3', 'Comet5', 'Drafter', 'Elegy', 'Elegy2', 'Feltzer2', 'Furoregt', 'Komoda', 'Imorgon', 'Jugular', 'Jester', 'Jester3', 'Khamelion', 'Kuruma', 'Locust', 'Lynx', 'Massacro', 'Neo', 'Ninef2', 'Paragon', 'Sentinel3', 'Seven70', 'Specter', 'Specter2', 'Sugoi', 'Sultan', 'Sultan2', 'Surano', 'Verlierer2', 'Tampa2', 'Yosemite2', 'Zr380'],
         offsetZ: -8,
         size: 12,
-        prize: 20000,
+        prize: 30000,
         posList: [
             [372.8559, 167.0112, 102.4425, -18.99322],
             [387.1628, 252.7728, 102.3269, 69.12106],
@@ -1722,7 +1722,7 @@ let racerList = [
         allowVehicle: ['Alpha', 'Banshee', 'Buffalo2', 'Comet3', 'Comet5', 'Drafter', 'Elegy', 'Elegy2', 'Feltzer2', 'Furoregt', 'Komoda', 'Imorgon', 'Jugular', 'Jester', 'Jester3', 'Khamelion', 'Kuruma', 'Locust', 'Lynx', 'Massacro', 'Neo', 'Ninef2', 'Paragon', 'Sentinel3', 'Seven70', 'Specter', 'Specter2', 'Sugoi', 'Sultan', 'Sultan2', 'Surano', 'Verlierer2', 'Tampa2', 'Yosemite2', 'Zr380'],
         offsetZ: -8,
         size: 12,
-        prize: 20000,
+        prize: 30000,
         posList: [
             [777.7144, -2451.678, 19.71324, -76.19273],
             [826.2726, -2442.667, 24.73869, -4.447937],
@@ -1801,7 +1801,7 @@ let racerList = [
         allowVehicle: ['Alpha', 'Banshee', 'Buffalo2', 'Comet3', 'Comet5', 'Drafter', 'Elegy', 'Elegy2', 'Feltzer2', 'Furoregt', 'Komoda', 'Imorgon', 'Jugular', 'Jester', 'Jester3', 'Khamelion', 'Kuruma', 'Locust', 'Lynx', 'Massacro', 'Neo', 'Ninef2', 'Paragon', 'Sentinel3', 'Seven70', 'Specter', 'Specter2', 'Sugoi', 'Sultan', 'Sultan2', 'Surano', 'Verlierer2', 'Tampa2', 'Yosemite2', 'Zr380'],
         offsetZ: -8,
         size: 12,
-        prize: 20000,
+        prize: 30000,
         posList: [
             [-1068.607, 396.5883, 68.29923, -91.59023],
             [-994.1854, 404.2531, 72.8526, -73.34553],
@@ -1907,7 +1907,7 @@ let racerList = [
         allowVehicle: ['Italigto', 'Pariah', 'Autarch', 'Banshee2', 'Bullet', 'Cheetah', 'Cyclone', 'Entity2', 'Entityxf', 'Emerus', 'Fmj', 'Furia', 'Gp1', 'Infernus', 'Italigtb', 'Italigtb2', 'Krieger', 'Osiris', 'Penetrator', 'Pfister811', 'Reaper', 'Sc1', 'Sheava', 'Sultanrs', 'T20', 'Taipan', 'Tempesta', 'Turismor', 'Tyrant', 'Vacca', 'Voltic', 'Xa21', 'Zentorno', 'Zorrusso'],
         offsetZ: -8,
         size: 12,
-        prize: 20000,
+        prize: 30000,
         posList: [
             [118.9491, 640.9103, 207.1223, -34.96926],
             [116.3684, 712.0807, 208.65, 7.469594],
@@ -1978,7 +1978,7 @@ let racerList = [
         allowVehicle: ['Italigto', 'Pariah', 'Autarch', 'Banshee2', 'Bullet', 'Cheetah', 'Cyclone', 'Entity2', 'Entityxf', 'Emerus', 'Fmj', 'Furia', 'Gp1', 'Infernus', 'Italigtb', 'Italigtb2', 'Krieger', 'Osiris', 'Penetrator', 'Pfister811', 'Reaper', 'Sc1', 'Sheava', 'Sultanrs', 'T20', 'Taipan', 'Tempesta', 'Turismor', 'Tyrant', 'Vacca', 'Voltic', 'Xa21', 'Zentorno', 'Zorrusso'],
         offsetZ: -8,
         size: 12,
-        prize: 20000,
+        prize: 30000,
         posList: [
             [876.1493, -526.0291, 56.94903, 143.6756],
             [880.2924, -572.42, 56.94711, -123.47],
@@ -2042,7 +2042,7 @@ let racerList = [
         allowVehicle: ['Italigto', 'Pariah', 'Autarch', 'Banshee2', 'Bullet', 'Cheetah', 'Cyclone', 'Entity2', 'Entityxf', 'Emerus', 'Fmj', 'Furia', 'Gp1', 'Infernus', 'Italigtb', 'Italigtb2', 'Krieger', 'Osiris', 'Penetrator', 'Pfister811', 'Reaper', 'Sc1', 'Sheava', 'Sultanrs', 'T20', 'Taipan', 'Tempesta', 'Turismor', 'Tyrant', 'Vacca', 'Voltic', 'Xa21', 'Zentorno', 'Zorrusso'],
         offsetZ: -8,
         size: 12,
-        prize: 20000,
+        prize: 30000,
         posList: [
             [259.5928, -850.4153, 29.03604, 68.77563],
             [152.9556, -811.0173, 30.76646, 69.24293],
@@ -2104,7 +2104,7 @@ let racerList = [
         allowVehicle: ['Italigto', 'Pariah', 'Autarch', 'Banshee2', 'Bullet', 'Cheetah', 'Cyclone', 'Entity2', 'Entityxf', 'Emerus', 'Fmj', 'Furia', 'Gp1', 'Infernus', 'Italigtb', 'Italigtb2', 'Krieger', 'Osiris', 'Penetrator', 'Pfister811', 'Reaper', 'Sc1', 'Sheava', 'Sultanrs', 'T20', 'Taipan', 'Tempesta', 'Turismor', 'Tyrant', 'Vacca', 'Voltic', 'Xa21', 'Zentorno', 'Zorrusso'],
         offsetZ: -8,
         size: 12,
-        prize: 20000,
+        prize: 30000,
         posList: [
             [-1606.797, -620.5112, 31.15103, -128.82],
             [-1546.942, -667.3023, 28.497, -128.5484],
@@ -2186,7 +2186,7 @@ let racerList = [
         allowVehicle: ['Italigto', 'Pariah', 'Autarch', 'Banshee2', 'Bullet', 'Cheetah', 'Cyclone', 'Entity2', 'Entityxf', 'Emerus', 'Fmj', 'Furia', 'Gp1', 'Infernus', 'Italigtb', 'Italigtb2', 'Krieger', 'Osiris', 'Penetrator', 'Pfister811', 'Reaper', 'Sc1', 'Sheava', 'Sultanrs', 'T20', 'Taipan', 'Tempesta', 'Turismor', 'Tyrant', 'Vacca', 'Voltic', 'Xa21', 'Zentorno', 'Zorrusso'],
         offsetZ: -8,
         size: 12,
-        prize: 20000,
+        prize: 30000,
         posList: [
             [1550.715, -1437.832, 75.87809, -45.37471],
             [1618.601, -1360.88, 81.78575, -48.6971],
@@ -2265,7 +2265,6 @@ let racerList = [
             [-782.8575, 1524.621, 223.8496, 150.9632],
             [-808.5158, 1369.424, 250.4653, 178.5148],
             [-774.3584, 1215.151, 261.3529, -168.9487],
-            [-709.0905, 1115.968, 258.9935, -163.1157],
             [-729.488, 1158.678, 262.7015, -45.40185],
             [-673.2605, 1281.77, 277.8771, 7.941135],
             [-619.1467, 1354.889, 294.4433, -108.0021],
@@ -2315,7 +2314,7 @@ let racerList = [
         allowVehicle: ['Italigto', 'Pariah', 'Autarch', 'Banshee2', 'Bullet', 'Cheetah', 'Cyclone', 'Entity2', 'Entityxf', 'Emerus', 'Fmj', 'Furia', 'Gp1', 'Infernus', 'Italigtb', 'Italigtb2', 'Krieger', 'Osiris', 'Penetrator', 'Pfister811', 'Reaper', 'Sc1', 'Sheava', 'Sultanrs', 'T20', 'Taipan', 'Tempesta', 'Turismor', 'Tyrant', 'Vacca', 'Voltic', 'Xa21', 'Zentorno', 'Zorrusso'],
         offsetZ: -8,
         size: 12,
-        prize: 20000,
+        prize: 30000,
         posList: [
             [2880.206, 4746.864, 48.25607, -115.4711],
             [2946.17, 4716.739, 50.2005, -143.5982],
@@ -2457,7 +2456,7 @@ let racerList = [
         allowVehicle: ['Italigto', 'Pariah', 'Autarch', 'Banshee2', 'Bullet', 'Cheetah', 'Cyclone', 'Entity2', 'Entityxf', 'Emerus', 'Fmj', 'Furia', 'Gp1', 'Infernus', 'Italigtb', 'Italigtb2', 'Krieger', 'Osiris', 'Penetrator', 'Pfister811', 'Reaper', 'Sc1', 'Sheava', 'Sultanrs', 'T20', 'Taipan', 'Tempesta', 'Turismor', 'Tyrant', 'Vacca', 'Voltic', 'Xa21', 'Zentorno', 'Zorrusso'],
         offsetZ: -8,
         size: 12,
-        prize: 20000,
+        prize: 30000,
         posList: [
             [-2001.135, 700.06, 143.534, 86.43886],
             [-2024.95, 777.7751, 157.0053, -3.255344],
@@ -2583,12 +2582,12 @@ let racerList = [
     {
         title: 'Борьба с ветряными мельницами',
         desc: 'Сможете ли вы изменить мир и победить ветряную мельницу? Никому не удавалось, может вам по силам?',
-        repeat: 2,
+        repeat: 1,
         class: 4,
         allowVehicle: ['Comet4', 'Flashgt', 'Gb200', 'Issi7', 'Omnis', 'Streiter', 'Tropos', 'Issi4', 'Bifta', 'Brawler', 'Brutus', 'Caracara2', 'Dubsta3', 'Everon', 'Freecrawler', 'Hellion', 'Kamacho', 'Outlaw', 'Riata', 'Trophytruck', 'Trophytruck2'],
         offsetZ: -8,
         size: 12,
-        prize: 20000,
+        prize: 30000,
         posList: [
             [2528.277, 1606.927, 29.86226, 128.3667],
             [2487.678, 1551.93, 33.53555, 135.4184],
@@ -2679,12 +2678,12 @@ let racerList = [
     {
         title: 'Свет Редвуда',
         desc: 'Трасса ещё не достроена, но кто мешает, провести на ней серию гонок?',
-        repeat: 4,
+        repeat: 2,
         class: 4,
-        allowVehicle: ['Comet4', 'Flashgt', 'Gb200', 'Issi7', 'Omnis', 'Streiter', 'Tropos', 'Issi4', 'Bifta', 'Brawler', 'Brutus', 'Caracara2', 'Dubsta3', 'Everon', 'Freecrawler', 'Hellion', 'Kamacho', 'Outlaw', 'Riata', 'Trophytruck', 'Trophytruck2'],
+        allowVehicle: ['Comet4', 'Flashgt', 'Gb200', 'Issi7', 'Omnis', 'Tropos', 'Issi4', 'Bifta', 'Brawler', 'Freecrawler', 'Outlaw', 'Riata'],
         offsetZ: -8,
         size: 12,
-        prize: 20000,
+        prize: 30000,
         posList: [
             [1163.674, 2262.844, 49.69246, 147.0045],
             [1079.846, 2412.003, 50.43896, 106.2143],
@@ -2752,7 +2751,7 @@ let racerList = [
         allowVehicle: ['Comet4', 'Flashgt', 'Gb200', 'Issi7', 'Omnis', 'Streiter', 'Tropos', 'Issi4', 'Bifta', 'Brawler', 'Brutus', 'Caracara2', 'Dubsta3', 'Everon', 'Freecrawler', 'Hellion', 'Kamacho', 'Outlaw', 'Riata', 'Trophytruck', 'Trophytruck2'],
         offsetZ: -8,
         size: 12,
-        prize: 20000,
+        prize: 30000,
         posList: [
             [-2256.439, 4322.484, 44.99957, 5.131855],
             [-2251.949, 4420.567, 39.20475, -44.53147],
@@ -2860,12 +2859,12 @@ let racerList = [
     {
         title: 'Призыв НЛО',
         desc: 'Матая круги возле горы Сэнди-Шорс есть шанс увидиеть НЛО, смотрите в оба!',
-        repeat: 3,
+        repeat: 2,
         class: 4,
         allowVehicle: ['Comet4', 'Flashgt', 'Gb200', 'Issi7', 'Omnis', 'Streiter', 'Tropos', 'Issi4', 'Bifta', 'Brawler', 'Brutus', 'Caracara2', 'Dubsta3', 'Everon', 'Freecrawler', 'Hellion', 'Kamacho', 'Outlaw', 'Riata', 'Trophytruck', 'Trophytruck2'],
         offsetZ: -8,
         size: 12,
-        prize: 20000,
+        prize: 30000,
         posList: [
             [2767.639, 3412.698, 55.89231, 67.43624],
             [2675.996, 3432.66, 55.7076, 158.5392],
@@ -2930,7 +2929,7 @@ let racerList = [
         allowVehicle: ['Comet4', 'Flashgt', 'Gb200', 'Issi7', 'Omnis', 'Streiter', 'Tropos', 'Issi4', 'Bifta', 'Brawler', 'Brutus', 'Caracara2', 'Dubsta3', 'Everon', 'Freecrawler', 'Hellion', 'Kamacho', 'Outlaw', 'Riata', 'Trophytruck', 'Trophytruck2'],
         offsetZ: -8,
         size: 12,
-        prize: 20000,
+        prize: 30000,
         posList: [
             [2276.563, 4990.843, 42.27855, -129.8331],
             [2372.789, 4897.546, 41.82211, -137.7217],
@@ -3003,7 +3002,7 @@ let racerList = [
         allowVehicle: ['Comet4', 'Flashgt', 'Gb200', 'Issi7', 'Omnis', 'Streiter', 'Tropos', 'Issi4', 'Bifta', 'Brawler', 'Brutus', 'Caracara2', 'Dubsta3', 'Everon', 'Freecrawler', 'Hellion', 'Kamacho', 'Outlaw', 'Riata', 'Trophytruck', 'Trophytruck2'],
         offsetZ: -8,
         size: 12,
-        prize: 20000,
+        prize: 30000,
         posList: [
             [154.3122, 4431.531, 76.9135, 50.6895],
             [94.86066, 4552.245, 94.73276, 38.36357],
@@ -3126,12 +3125,12 @@ let racerList = [
     {
         title: 'По грязи Палето-Бэй',
         desc: 'Малое число туристов знает тайные пути Палето-Бэй, но мы покажем вам каждую дорожку и каждый камень, который останется у вас в ботинке',
-        repeat: 2,
+        repeat: 1,
         class: 4,
         allowVehicle: ['Comet4', 'Flashgt', 'Gb200', 'Issi7', 'Omnis', 'Streiter', 'Tropos', 'Issi4', 'Bifta', 'Brawler', 'Brutus', 'Caracara2', 'Dubsta3', 'Everon', 'Freecrawler', 'Hellion', 'Kamacho', 'Outlaw', 'Riata', 'Trophytruck', 'Trophytruck2'],
         offsetZ: -8,
         size: 12,
-        prize: 20000,
+        prize: 30000,
         posList: [
             [-453.587, 6072.601, 31.26448, 101.3317],
             [-555.0892, 6054.484, 20.16257, 37.97256],
@@ -3213,7 +3212,7 @@ let racerList = [
         allowVehicle: ['Ardent', 'Casco', 'Cheetah2', 'Coquette2', 'Deluxo', 'Feltzer3', 'Gt500', 'Infernus2', 'Jb7002', 'Mamba', 'Monroe', 'Rapidgt3', 'Retinue2', 'Savestra', 'Stinger', 'Stingergt', 'Swinger', 'Torero', 'Turismo2', 'Viseris', 'Z190', 'Ztype', 'Zion3'],
         offsetZ: -8,
         size: 12,
-        prize: 20000,
+        prize: 30000,
         posList: [
             [141.4542, 6542.235, 31.0773, 42.87384],
             [66.71604, 6601.576, 30.81488, 134.1769],
@@ -3279,7 +3278,7 @@ let racerList = [
         allowVehicle: ['Ardent', 'Casco', 'Cheetah2', 'Coquette2', 'Deluxo', 'Feltzer3', 'Gt500', 'Infernus2', 'Jb7002', 'Mamba', 'Monroe', 'Rapidgt3', 'Retinue2', 'Savestra', 'Stinger', 'Stingergt', 'Swinger', 'Torero', 'Turismo2', 'Viseris', 'Z190', 'Ztype', 'Zion3'],
         offsetZ: -8,
         size: 12,
-        prize: 20000,
+        prize: 30000,
         posList: [
             [1739.601, 4592.11, 39.93736, 42.63195],
             [1695.716, 4658.386, 42.93192, -0.2226291],
@@ -3358,12 +3357,12 @@ let racerList = [
     {
         title: 'Туннель и свет',
         desc: 'Небольшие круги вокруг холма обсерватории Галилео, тесно, но постарайтесь быть первым',
-        repeat: 4,
+        repeat: 3,
         class: 5,
         allowVehicle: ['Ardent', 'Casco', 'Cheetah2', 'Coquette2', 'Deluxo', 'Feltzer3', 'Gt500', 'Infernus2', 'Jb7002', 'Mamba', 'Monroe', 'Rapidgt3', 'Retinue2', 'Savestra', 'Stinger', 'Stingergt', 'Swinger', 'Torero', 'Turismo2', 'Viseris', 'Z190', 'Ztype', 'Zion3'],
         offsetZ: -8,
         size: 12,
-        prize: 20000,
+        prize: 30000,
         posList: [
             [-354.7556, 1171.298, 324.8599, -79.01267],
             [-283.8585, 1216.75, 317.6296, -41.77596],
@@ -3413,12 +3412,12 @@ let racerList = [
     {
         title: 'Членство клуба',
         desc: 'Всегда хотели поиграть в самом лучшем гольф-клубе западного побережья? Лучше покатайтесь вокруг него, советуем',
-        repeat: 4,
+        repeat: 3,
         class: 5,
         allowVehicle: ['Ardent', 'Casco', 'Cheetah2', 'Coquette2', 'Deluxo', 'Feltzer3', 'Gt500', 'Infernus2', 'Jb7002', 'Mamba', 'Monroe', 'Rapidgt3', 'Retinue2', 'Savestra', 'Stinger', 'Stingergt', 'Swinger', 'Torero', 'Turismo2', 'Viseris', 'Z190', 'Ztype', 'Zion3'],
         offsetZ: -8,
         size: 12,
-        prize: 20000,
+        prize: 30000,
         posList: [
             [-1050.114, -174.1801, 37.09451, 73.39405],
             [-1188.907, -107.0451, 40.01661, 65.04186],
@@ -3472,12 +3471,12 @@ let racerList = [
     {
         title: 'Гламурный Лос-Сантос',
         desc: 'Пробегитесь по модным бутикам, посмотрите на каналы и зайдите на киностудию, в общем, советуем',
-        repeat: 2,
+        repeat: 1,
         class: 5,
         allowVehicle: ['Ardent', 'Casco', 'Cheetah2', 'Coquette2', 'Deluxo', 'Feltzer3', 'Gt500', 'Infernus2', 'Jb7002', 'Mamba', 'Monroe', 'Rapidgt3', 'Retinue2', 'Savestra', 'Stinger', 'Stingergt', 'Swinger', 'Torero', 'Turismo2', 'Viseris', 'Z190', 'Ztype', 'Zion3'],
         offsetZ: -8,
         size: 12,
-        prize: 20000,
+        prize: 30000,
         posList: [
             [-1465.37, -729.0669, 24.28789, 46.06768],
             [-1524.97, -663.6319, 28.31578, -24.8963],
@@ -3548,7 +3547,7 @@ let racerList = [
         allowVehicle: ['Ardent', 'Casco', 'Cheetah2', 'Coquette2', 'Deluxo', 'Feltzer3', 'Gt500', 'Infernus2', 'Jb7002', 'Mamba', 'Monroe', 'Rapidgt3', 'Retinue2', 'Savestra', 'Stinger', 'Stingergt', 'Swinger', 'Torero', 'Turismo2', 'Viseris', 'Z190', 'Ztype', 'Zion3'],
         offsetZ: -8,
         size: 12,
-        prize: 20000,
+        prize: 30000,
         posList: [
             [1977.339, -928.8092, 78.63919, -152.9994],
             [2002.65, -978.519, 81.06312, 167.7852],
@@ -3683,7 +3682,7 @@ let racerList = [
         allowVehicle: ['Ardent', 'Casco', 'Cheetah2', 'Coquette2', 'Deluxo', 'Feltzer3', 'Gt500', 'Infernus2', 'Jb7002', 'Mamba', 'Monroe', 'Rapidgt3', 'Retinue2', 'Savestra', 'Stinger', 'Stingergt', 'Swinger', 'Torero', 'Turismo2', 'Viseris', 'Z190', 'Ztype', 'Zion3'],
         offsetZ: -8,
         size: 12,
-        prize: 20000,
+        prize: 30000,
         posList: [
             [-1301.659, 2524.894, 19.44742, -170.4433],
             [-1345.576, 2420.52, 28.27892, -179.9767],
@@ -3815,7 +3814,7 @@ let racerList = [
         allowVehicle: ['Deviant', 'Dominator', 'Dominator3', 'Dominator4', 'Dukes2', 'Ellie', 'Gauntlet', 'Gauntlet4', 'Gauntlets', 'Imperator', 'Nightshade', 'Sabregt2', 'Tulip'],
         offsetZ: -8,
         size: 12,
-        prize: 20000,
+        prize: 30000,
         posList: [
             [1495.025, 3620.025, 34.29599, -68.77401],
             [1616.394, 3675.214, 33.89252, -62.8603],
@@ -3890,7 +3889,7 @@ let racerList = [
         allowVehicle: ['Deviant', 'Dominator', 'Dominator3', 'Dominator4', 'Dukes2', 'Ellie', 'Gauntlet', 'Gauntlet4', 'Gauntlets', 'Imperator', 'Nightshade', 'Sabregt2', 'Tulip'],
         offsetZ: -8,
         size: 12,
-        prize: 20000,
+        prize: 30000,
         posList: [
             [243.8324, 3395.266, 37.59674, 99.99223],
             [170.4439, 3401.695, 37.90248, 66.09563],
@@ -3985,12 +3984,12 @@ let racerList = [
     {
         title: 'Побег из Болингброука',
         desc: 'Как бы вы не хотели, но от правосудия не сбежать, сколько бы кругов вы не наматали',
-        repeat: 9,
+        repeat: 5,
         class: 6,
         allowVehicle: ['Deviant', 'Dominator', 'Dominator3', 'Dominator4', 'Dukes2', 'Ellie', 'Gauntlet', 'Gauntlet4', 'Gauntlets', 'Imperator', 'Nightshade', 'Sabregt2', 'Tulip'],
         offsetZ: -8,
         size: 12,
-        prize: 20000,
+        prize: 30000,
         posList: [
             [1853.94, 2717.712, 45.37464, 46.30199],
             [1771.344, 2777.131, 45.37762, 93.45187],
@@ -4040,12 +4039,12 @@ let racerList = [
     {
         title: 'В тесноте и обиде',
         desc: 'Не рекомендуем участвовать всем тем, кто боится, что его размажут по стенам форда Занкудо',
-        repeat: 2,
+        repeat: 1,
         class: 6,
         allowVehicle: ['Deviant', 'Dominator', 'Dominator3', 'Dominator4', 'Dukes2', 'Ellie', 'Gauntlet', 'Gauntlet4', 'Gauntlets', 'Imperator', 'Nightshade', 'Sabregt2', 'Tulip'],
-        offsetZ: -8,
-        size: 12,
-        prize: 20000,
+        offsetZ: -6,
+        size: 8,
+        prize: 30000,
         posList: [
             [-1860.331, 3340.4, 32.38696, 59.83031],
             [-1971.573, 3390.011, 30.3402, 120.0924],
@@ -4118,12 +4117,12 @@ let racerList = [
     {
         title: 'Гнев Чумаша',
         desc: 'Если хоть раз вы проезжали мимо Чумаша, то знайте, что это прекрасное место для гонках на маслкарах',
-        repeat: 2,
+        repeat: 1,
         class: 6,
         allowVehicle: ['Deviant', 'Dominator', 'Dominator3', 'Dominator4', 'Dukes2', 'Ellie', 'Gauntlet', 'Gauntlet4', 'Gauntlets', 'Imperator', 'Nightshade', 'Sabregt2', 'Tulip'],
         offsetZ: -8,
         size: 12,
-        prize: 20000,
+        prize: 30000,
         posList: [
             [-3111.349, 1320.33, 19.57353, 87.38805],
             [-3167.099, 1284.48, 13.08679, 162.7534],
@@ -4191,7 +4190,7 @@ let racerList = [
         allowVehicle: ['Deviant', 'Dominator', 'Dominator3', 'Dominator4', 'Dukes2', 'Ellie', 'Gauntlet', 'Gauntlet4', 'Gauntlets', 'Imperator', 'Nightshade', 'Sabregt2', 'Tulip'],
         offsetZ: -8,
         size: 12,
-        prize: 20000,
+        prize: 30000,
         posList: [
             [-1990.461, -524.4188, 11.08222, -130.925],
             [-1944.297, -563.9577, 11.07775, -129.9058],
@@ -4314,7 +4313,7 @@ let racerList = [
         allowVehicle: ['Deviant', 'Dominator', 'Dominator3', 'Dominator4', 'Dukes2', 'Ellie', 'Gauntlet', 'Gauntlet4', 'Gauntlets', 'Imperator', 'Nightshade', 'Sabregt2', 'Tulip'],
         offsetZ: -8,
         size: 12,
-        prize: 20000,
+        prize: 30000,
         posList: [
             [2542.833, 1651.414, 28.32563, 1.896365],
             [2537.858, 1924.408, 19.79318, -2.576019],
@@ -4442,12 +4441,12 @@ let racerList = [
     {
         title: 'Нефтяная игла',
         desc: 'Кто бы знал, что в начале 21 века столько возни будет на нефтяной бирже, а ведь мы могли как раньше кататься на лошадях и стрелять по людям',
-        repeat: 2,
+        repeat: 1,
         class: 7,
         allowVehicle: ['Baller3', 'Dubsta2', 'Huntley', 'Patriot', 'Rebla', 'Rocoto', 'Serrano', 'Toros', 'Xls', 'Dubstag'],
         offsetZ: -8,
         size: 12,
-        prize: 20000,
+        prize: 30000,
         posList: [
             [1586.876, -2520.363, 66.69338, -74.51722],
             [1617.466, -2478.943, 78.81094, 18.84051],
@@ -4521,12 +4520,12 @@ let racerList = [
     {
         title: 'Татавиамский водоём',
         desc: 'Чудесный водоём, что объят вниманием туристов и инженеров предоставили нам для проведения жестоких гонок на Кроссоверах',
-        repeat: 2,
+        repeat: 1,
         class: 7,
         allowVehicle: ['Baller3', 'Dubsta2', 'Huntley', 'Patriot', 'Rebla', 'Rocoto', 'Serrano', 'Toros', 'Xls', 'Dubstag'],
         offsetZ: -8,
         size: 12,
-        prize: 20000,
+        prize: 30000,
         posList: [
             [1567.728, 897.6194, 78.03597, -72.79068],
             [1630.589, 1000.342, 104.7066, -30.92823],
@@ -4610,7 +4609,7 @@ let racerList = [
         allowVehicle: ['Baller3', 'Dubsta2', 'Huntley', 'Patriot', 'Rebla', 'Rocoto', 'Serrano', 'Toros', 'Xls', 'Dubstag'],
         offsetZ: -8,
         size: 12,
-        prize: 20000,
+        prize: 30000,
         posList: [
             [925.5717, 1743.422, 165.4523, 17.26051],
             [837.7336, 1771.625, 150.2642, 21.55521],
@@ -4697,7 +4696,7 @@ let racerList = [
         allowVehicle: ['Baller3', 'Dubsta2', 'Huntley', 'Patriot', 'Rebla', 'Rocoto', 'Serrano', 'Toros', 'Xls', 'Dubstag'],
         offsetZ: -8,
         size: 12,
-        prize: 20000,
+        prize: 30000,
         posList: [
             [-252.4467, 3921.613, 40.31656, 43.66088],
             [-333.5097, 4013.01, 46.47273, 89.70811],
@@ -4783,7 +4782,7 @@ let racerList = [
         allowVehicle: ['Baller3', 'Dubsta2', 'Huntley', 'Patriot', 'Rebla', 'Rocoto', 'Serrano', 'Toros', 'Xls', 'Dubstag'],
         offsetZ: -8,
         size: 12,
-        prize: 20000,
+        prize: 30000,
         posList: [
             [960.4788, 3084.668, 41.37635, -120.025],
             [1029.023, 2981.834, 40.82228, -119.9764],
@@ -4842,7 +4841,7 @@ let racerList = [
         allowVehicle: ['Baller3', 'Dubsta2', 'Huntley', 'Patriot', 'Rebla', 'Rocoto', 'Serrano', 'Toros', 'Xls', 'Dubstag'],
         offsetZ: -8,
         size: 12,
-        prize: 20000,
+        prize: 30000,
         posList: [
             [2677.631, 3966.513, 44.35901, 46.66912],
             [2558.487, 4000.486, 40.29303, 107.0649],
@@ -4945,7 +4944,7 @@ let racerList = [
         allowVehicle: ['Baller3', 'Dubsta2', 'Huntley', 'Patriot', 'Rebla', 'Rocoto', 'Serrano', 'Toros', 'Xls', 'Dubstag'],
         offsetZ: -8,
         size: 12,
-        prize: 20000,
+        prize: 30000,
         posList: [
             [-580.3101, 5061.774, 134.7509, -141.7582],
             [-513.0233, 5013.941, 137.7348, -136.0632],
@@ -5013,12 +5012,12 @@ let racerList = [
     {
         title: 'Жажда скорости',
         desc: 'Федеральная трасса, что может быть лучше, чем огромная скорость и относительно безопасная дорога?',
-        repeat: 4,
+        repeat: 3,
         class: 8,
-        allowVehicle: ['Formula', 'Formula2', 'Deveste', 'Adder', 'Le7b', 'Nero', 'Nero2', 'Prototipo', 'S80', 'Tezeract', 'Tyrus', 'Vagner', 'Visione', 'Hotring'],
-        offsetZ: -8,
-        size: 12,
-        prize: 20000,
+        allowVehicle: ['Formula', 'Formula2', 'Deveste', 'Adder', 'Le7b', 'Nero', 'Nero2', 'Prototipo', 'S80', 'Vagner', 'Visione'],
+        offsetZ: -10,
+        size: 16,
+        prize: 30000,
         posList: [
             [-264.2065, -2438.609, 57.82902, -125.0484],
             [-36.82261, -2595.603, 31.06467, -118.0518],
@@ -5082,12 +5081,12 @@ let racerList = [
     {
         title: 'Быстрый и яростный',
         desc: 'Надело разгоняться до 70 миль на своём японском хетчбэке, что достался от мамы? Залезай в скоростной автомобиль и вырывай победу бабушкиными зубами',
-        repeat: 4,
+        repeat: 3,
         class: 8,
-        allowVehicle: ['Formula', 'Formula2', 'Deveste', 'Adder', 'Le7b', 'Nero', 'Nero2', 'Prototipo', 'S80', 'Tezeract', 'Tyrus', 'Vagner', 'Visione', 'Hotring'],
-        offsetZ: -8,
-        size: 12,
-        prize: 20000,
+        allowVehicle: ['Formula', 'Formula2', 'Deveste', 'Adder', 'Le7b', 'Nero', 'Nero2', 'Prototipo', 'S80', 'Vagner', 'Visione'],
+        offsetZ: -10,
+        size: 16,
+        prize: 30000,
         posList: [
             [-308.1193, -1183.585, 36.79704, 79.64052],
             [-386.4802, -996.2748, 36.6141, 9.161516],
@@ -5142,12 +5141,12 @@ let racerList = [
     {
         title: 'Обитель скорости',
         desc: 'Да, современные магистрали строили так, будто хотели, чтобы автолюбители их воненавидели, но мы используем их в лучших целях',
-        repeat: 2,
+        repeat: 1,
         class: 8,
-        allowVehicle: ['Formula', 'Formula2', 'Deveste', 'Adder', 'Le7b', 'Nero', 'Nero2', 'Prototipo', 'S80', 'Tezeract', 'Tyrus', 'Vagner', 'Visione', 'Hotring'],
-        offsetZ: -8,
-        size: 12,
-        prize: 20000,
+        allowVehicle: ['Formula', 'Formula2', 'Deveste', 'Adder', 'Le7b', 'Nero', 'Nero2', 'Prototipo', 'S80', 'Vagner', 'Visione'],
+        offsetZ: -10,
+        size: 16,
+        prize: 30000,
         posList: [
             [-172.6918, -482.7268, 27.49427, 76.7349],
             [-412.7001, -631.9327, 37.17037, -177.4221],
@@ -5249,12 +5248,12 @@ let racerList = [
     {
         title: 'Очевидный исход',
         desc: 'Вся жизнь, это круговорот, в котором происходят одни и тежи вещи, так что мешает нам промчатся на огромной скорости по этим кругам?',
-        repeat: 3,
+        repeat: 2,
         class: 8,
-        allowVehicle: ['Formula', 'Formula2', 'Deveste', 'Adder', 'Le7b', 'Nero', 'Nero2', 'Prototipo', 'S80', 'Tezeract', 'Tyrus', 'Vagner', 'Visione', 'Hotring'],
-        offsetZ: -8,
-        size: 12,
-        prize: 20000,
+        allowVehicle: ['Formula', 'Formula2', 'Deveste', 'Adder', 'Le7b', 'Nero', 'Nero2', 'Prototipo', 'S80', 'Vagner', 'Visione'],
+        offsetZ: -10,
+        size: 16,
+        prize: 30000,
         posList: [
             [-431.2269, -1549.2, 37.87976, 154.5744],
             [-650.4598, -1715.766, 36.99675, 91.30602],
@@ -5321,10 +5320,10 @@ let racerList = [
         desc: 'Промчистесь по всему острову несколько раз и только попробуйте не восхетиться тому, как похорошел весь округ при...',
         repeat: 1,
         class: 8,
-        allowVehicle: ['Formula', 'Formula2', 'Deveste', 'Adder', 'Le7b', 'Nero', 'Nero2', 'Prototipo', 'S80', 'Tezeract', 'Tyrus', 'Vagner', 'Visione', 'Hotring'],
-        offsetZ: -8,
-        size: 12,
-        prize: 20000,
+        allowVehicle: ['Formula', 'Formula2', 'Deveste', 'Adder', 'Le7b', 'Nero', 'Nero2', 'Prototipo', 'S80', 'Vagner', 'Visione', 'Hotring'],
+        offsetZ: -10,
+        size: 16,
+        prize: 30000,
         posList: [
             [1638.345, 1146.85, 83.16886, -15.15557],
             [1712.175, 1488.988, 84.50255, -11.58407],
@@ -5429,12 +5428,12 @@ let racerList = [
     {
         title: 'Обратный реквием по Лос-Сантосу',
         desc: 'Круто осознавать, что ты самый быстрый гонщик в Сан-Андреас, а ещё круче стать им',
-        repeat: 1,
+        repeat: 0,
         class: 8,
-        allowVehicle: ['Formula', 'Formula2', 'Deveste', 'Adder', 'Le7b', 'Nero', 'Nero2', 'Prototipo', 'S80', 'Tezeract', 'Tyrus', 'Vagner', 'Visione', 'Hotring'],
-        offsetZ: -8,
-        size: 12,
-        prize: 20000,
+        allowVehicle: ['Formula', 'Formula2', 'Deveste', 'Adder', 'Le7b', 'Nero', 'Nero2', 'Prototipo', 'S80', 'Vagner', 'Visione', 'Hotring'],
+        offsetZ: -10,
+        size: 16,
+        prize: 30000,
         posList: [
             [1700.082, 6357.362, 32.54305, -106.4256],
             [1924.403, 6276.844, 42.30622, -147.7323],
@@ -5550,10 +5549,10 @@ let racerList = [
         desc: 'Обширные магистрали и холодное пиво с хот-догами на ближайшей заправки, что может быть лучше? Только педаль в пол на огромной скорости!',
         repeat: 0,
         class: 8,
-        allowVehicle: ['Formula', 'Formula2', 'Deveste', 'Adder', 'Le7b', 'Nero', 'Nero2', 'Prototipo', 'S80', 'Tezeract', 'Tyrus', 'Vagner', 'Visione', 'Hotring'],
-        offsetZ: -8,
-        size: 12,
-        prize: 20000,
+        allowVehicle: ['Formula', 'Formula2', 'Deveste', 'Adder', 'Le7b', 'Nero', 'Nero2', 'Prototipo', 'S80', 'Vagner', 'Visione', 'Hotring'],
+        offsetZ: -10,
+        size: 16,
+        prize: 30000,
         posList: [
             [2567.694, 107.6423, 96.67799, -17.23391],
             [2631.186, 427.4513, 95.96574, -2.205246],
@@ -5667,12 +5666,12 @@ let racerList = [
     {
         title: 'Война спец.служб',
         desc: 'В обеденный перерыв сотрудники FIB и IAA очень любят погонять на изъятом радиоупровляемом транспорте, но кто их запретит?',
-        repeat: 4,
+        repeat: 2,
         class: 9,
         allowVehicle: ['Rcbandito'],
         offsetZ: -1,
-        size: 2,
-        prize: 20000,
+        size: 3,
+        prize: 30000,
         posList: [
             [214.3312, -696.8926, 46.24262, 6.655156],
             [211.4812, -645.4543, 46.2431, 30.04299],
@@ -5736,12 +5735,12 @@ let racerList = [
     {
         title: 'Погром в деловом районе',
         desc: 'Достали все эти пижоны с завышенным сомнением? Выбесите их в наших круговых гонках на радиоупровляемом транспорте',
-        repeat: 2,
+        repeat: 1,
         class: 9,
         allowVehicle: ['Rcbandito'],
         offsetZ: -1,
-        size: 2,
-        prize: 20000,
+        size: 3,
+        prize: 30000,
         posList: [
             [-72.367, -682.9965, 40.33151, 116.6009],
             [-92.55118, -687.5256, 39.68105, 70.69627],
@@ -5831,12 +5830,12 @@ let racerList = [
     {
         title: 'Добро пожаловать в Лос-Сантос',
         desc: 'На кароблях перевозят не только иммигрантов, но и милые радиоуправляемые машинки, на которых можно устроить беспредел',
-        repeat: 2,
+        repeat: 1,
         class: 9,
         allowVehicle: ['Rcbandito'],
         offsetZ: -1,
         size: 2,
-        prize: 20000,
+        prize: 30000,
         posList: [
             [1188.367, -2981.718, 5.067777, 79.11238],
             [1161.591, -2980.763, 5.067759, 101.5417],
@@ -5908,12 +5907,12 @@ let racerList = [
     {
         title: 'Война на каналах',
         desc: 'Доставайте джостик и включайте радиоуправляемый автомобиль, подъезжайте к старту и постарайтесь не упать в каналы',
-        repeat: 2,
+        repeat: 1,
         class: 9,
         allowVehicle: ['Rcbandito'],
         offsetZ: -1,
-        size: 2,
-        prize: 20000,
+        size: 3,
+        prize: 30000,
         posList: [
             [-1140.085, -1072.079, 1.315813, 25.3945],
             [-1158.565, -1037.817, 1.315813, -56.46919],
@@ -5986,12 +5985,12 @@ let racerList = [
     {
         title: 'Режиссерский стиль',
         desc: 'Разгромите всё на съёмочной площадке на студии Ричарда Маджестика, ему всё равно, а вам точно будет весело!',
-        repeat: 2,
+        repeat: 1,
         class: 9,
         allowVehicle: ['Rcbandito'],
         offsetZ: -1,
-        size: 2,
-        prize: 20000,
+        size: 3,
+        prize: 30000,
         posList: [
             [-1182.645, -495.3168, 34.72916, 97.6851],
             [-1193.302, -499.0427, 34.73198, 158.6108],
@@ -6069,12 +6068,12 @@ let racerList = [
     {
         title: 'Игра в гольф',
         desc: 'Нет, мы не предоставляем возможность понудеть со стариками пиная мячи, но мы даём возможность выбесить их!',
-        repeat: 2,
+        repeat: 1,
         class: 9,
         allowVehicle: ['Rcbandito'],
         offsetZ: -1,
-        size: 2,
-        prize: 20000,
+        size: 3,
+        prize: 30000,
         posList: [
             [-1344.972, 122.6379, 55.4211, -178.3652],
             [-1343.122, 106.5323, 55.32955, -170.9049],
@@ -6168,7 +6167,7 @@ let racerList = [
         allowVehicle: ['Rcbandito'],
         offsetZ: -1,
         size: 2,
-        prize: 20000,
+        prize: 30000,
         posList: [
             [-2329.419, 280.1384, 168.6328, -73.11245],
             [-2312.518, 270.2497, 168.7677, -134.2503],

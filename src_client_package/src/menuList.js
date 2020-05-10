@@ -10193,7 +10193,7 @@ menuList.showAdminMaskListMenu = function(slot) {
             mItem.maskFace = maskItem[11];
             mItem.idxFull = i;
             list.push(mItem);
-            UIMenu.Menu.AddMenuItem(`${maskItem[1]}`, `Цена: ~g~${methods.moneyFormat(maskItem[4])}~br~~s~Цена: ~y~${methods.numberFormat(maskItem[5])}nc`, mItem)
+            UIMenu.Menu.AddMenuItem(`${maskItem[1]}`, `Цена: ~g~${methods.moneyFormat(maskItem[4])}~br~~s~Цена: ~y~${methods.numberFormat(maskItem[5])}nc~br~~s~ID: ${i}`, mItem)
         }
 
         UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});

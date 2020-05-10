@@ -33,9 +33,6 @@ user.createAccount = function(player, login, pass, email) {
     }*/
 
     user.doesExistAccount(login, email, player.socialClub, function (cb) {
-
-        methods.debug(cb);
-
         if (cb == 1) {
             user.showCustomNotify(player, 'Аккаунт с такими SocialClub уже существует', 1);
             return;
@@ -49,8 +46,12 @@ user.createAccount = function(player, login, pass, email) {
             return;
         }
 
+        let social = player.socialClub;
+        if (player.accSocial)
+            social = player.accSocial;
+
         let sql = "INSERT INTO accounts (login, email, social, serial, password, reg_ip, reg_timestamp) VALUES ('" + login +
-            "', '" + email + "', '" + player.socialClub + "', '" + player.serial + "', '" + methods.sha256(pass) + "', '" + player.ip + "', '" + methods.getTimeStamp() + "')";
+            "', '" + email + "', '" + social + "', '" + player.serial + "', '" + methods.sha256(pass) + "', '" + player.ip + "', '" + methods.getTimeStamp() + "')";
         mysql.executeQuery(sql);
 
         setTimeout(function () {
@@ -1067,6 +1068,22 @@ user.doesExistUser = function(name, callback) {
         if (rows.length === 0)
             return callback(false);
         return callback(true);
+    });
+};
+
+user.doesLimitUser = function(serial, callback) {
+    methods.debug('user.doesLimitUser');
+    mysql.executeQuery(`SELECT id FROM users WHERE social = ?`, serial, function (err, rows, fields) {
+        if (err) {
+            methods.debug('[DATABASE | ERROR]');
+            methods.debug(err);
+            return callback(true);
+        }
+
+        if (rows.length < 3)
+            return callback(false);
+        else
+            return callback(true);
     });
 };
 
@@ -3064,10 +3081,10 @@ user.giveRandomMask = function(player, proc = 50, withChat = false) {
     player.notify(`~g~Вы выиграли маску "${itemName}", она у вас в инвентаре.`);
 
     if (withChat)
-        chat.sendToAll(`Server`, `${user.getRpName(player)} (${player.id})!{${chat.clBlue}} выиграл маску!{${chat.clWhite}} ${itemName}`, chat.clBlue);
+        chat.sendToAll(`Server`, `${user.getRpName(player)} (${player.id})!{${chat.clBlue}} выиграл маску!{${chat.clWhite}} ${itemName}!{${chat.clBlue}} редкость!{${chat.clWhite}} ${methods.getRareName(mask[14])}`, chat.clBlue);
 };
 
-user.giveVehicle = function(player, vName, withDelete = 1, withChat = false) {
+user.giveVehicle = function(player, vName, withDelete = 1, withChat = false, desc = '') {
     if (!user.isLogin(player))
         return;
 
@@ -3095,7 +3112,7 @@ user.giveVehicle = function(player, vName, withDelete = 1, withChat = false) {
 
         player.notify(`~g~Вы выиграли автомобиль ${vInfo.display_name}.`);
         if (withChat)
-            chat.sendToAll(`Server`, `${user.getRpName(player)} (${player.id})!{${chat.clBlue}} выиграл транспорт!{${chat.clWhite}} ${vInfo.display_name}`, chat.clBlue);
+            chat.sendToAll(`Server`, `${user.getRpName(player)} (${player.id})!{${chat.clBlue}} выиграл транспорт${desc}!{${chat.clWhite}} ${vInfo.display_name}`, chat.clBlue);
     }
     else {
         user.addMoney(player, vInfo.price, 'Выигрыш приза');

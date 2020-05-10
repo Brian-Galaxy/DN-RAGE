@@ -2901,7 +2901,7 @@ mp.keys.bind(0x08, true, function() {
     if (!user.isLogin())
         return;
 
-    if (cefMenu.isShow())
+    if (cefMenu.isShow() && !UIMenu.Menu.IsShowInput())
         cefMenu.hide();
 
     ui.callCef('license', JSON.stringify({type: 'hide'}));

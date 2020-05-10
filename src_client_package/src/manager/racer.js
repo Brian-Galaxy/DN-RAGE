@@ -218,13 +218,19 @@ mp.events.add('render', () => {
     }
 });
 
-mp.keys.bind(0x46, true, function() {
+mp.keys.bind(0x46, true, async function() {
     if (!user.isLogin() || !inRace)
         return;
     try {
         let posCurrent = currentRace.posList[currentCpId - 1];
-        user.teleportVeh(posCurrent[0], posCurrent[1], posCurrent[2], posCurrent[3]);
+        mp.game.ui.notifications.show('~b~Спавн через ~s~3 сек');
+        await methods.sleep(1000);
+        mp.game.ui.notifications.show('~b~Спавн через ~s~2 сек');
+        await methods.sleep(1000);
+        mp.game.ui.notifications.show('~b~Спавн через ~s~1 сек');
+        await methods.sleep(1000);
         mp.events.callRemote('server:user:fixNearestVehicle');
+        user.teleportVeh(posCurrent[0], posCurrent[1], posCurrent[2], posCurrent[3]);
     }
     catch (e) {
         

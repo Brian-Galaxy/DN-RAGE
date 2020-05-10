@@ -818,18 +818,20 @@ phone.showAppFraction2 = async function() {
     menu.items.push(titleMenu1);
 
     if (!user.isLeader2()) {
-        let titleMenu2 = {
-            title: 'Покинуть организацию',
-            umenu: [
-                {
-                    title: "Покинуть организацию",
-                    type: 1,
-                    clickable: true,
-                    params: { name: "uninviteMe" }
-                },
-            ],
-        };
-        menu.items.push(titleMenu2);
+        if (!user.isMafia()) {
+            let titleMenu2 = {
+                title: 'Покинуть организацию',
+                umenu: [
+                    {
+                        title: "Покинуть организацию",
+                        type: 1,
+                        clickable: true,
+                        params: { name: "uninviteMe" }
+                    },
+                ],
+            };
+            menu.items.push(titleMenu2);
+        }
     }
 
     if (fData.get('is_war')) {

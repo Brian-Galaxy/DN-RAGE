@@ -3141,6 +3141,9 @@ phone.consoleCallback = async function(command) {
 
                     user.addCryptoMoney(money, 'Взлом банкомата');
 
+                    if (user.getCache('fraction_id2') > 0)
+                        fraction.addMoney(user.getCache('fraction_id2'), money / 10, `Взлом с банкомата (${user.getCache('name')})`);
+
                     if (user.getCache('stats_darknet') < 40 && user.getCache('stats_darknet') >= 20) {
                         user.set('stats_darknet', user.getCache('stats_darknet') + 1);
                     }

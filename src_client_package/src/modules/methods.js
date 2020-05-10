@@ -299,6 +299,10 @@ methods.isBlockKeys = function() { //TODO
     return Menu.Menu.IsShowInput() || user.isCuff() || user.isTie() || user.isDead() || user.isKnockout() || _isBlockKeys/* || mp.gui.cursor.visible*/;
 };
 
+methods.isBlockJustKeys = function() { //TODO
+    return _isBlockKeys/* || mp.gui.cursor.visible*/;
+};
+
 methods.isShowInput = function() {
     return Menu.Menu.IsShowInput();
 };

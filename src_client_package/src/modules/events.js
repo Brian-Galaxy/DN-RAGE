@@ -2856,7 +2856,7 @@ mp.keys.bind(0x45, true, function() {
 mp.keys.bind(0x4D, true, function() {
     if (!user.isLogin())
         return;
-    if (!methods.isShowInput())
+    if (!methods.isShowInput() && !methods.isBlockJustKeys())
         menuList.showMainMenu();
     if (!ui.isShowHud())
         ui.showHud();

@@ -386,7 +386,7 @@ gangWar.timerMoney = function() {
                 moneyToUser.set(gangWar.get(i, 'fraction_id').toString(), cMoney);
             }
             else {
-                moneyToUser.set(gangWar.get(i, 'fraction_id').toString(), methods.getRandomInt(30, 60) / 1000);
+                moneyToUser.set(gangWar.get(i, 'fraction_id').toString(), methods.getRandomInt(300, 600) / 1000);
             }
         }
     }

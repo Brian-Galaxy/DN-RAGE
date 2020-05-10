@@ -37,8 +37,10 @@ cefMenu.hide = function() {
     mp.events.call('client:menuList:onClose');
 
     if (user.getCache('s_hud_cursor')) {
-        mp.gui.cursor.show(false, false);
-        ui.DisableMouseControl = false;
+        if (isShow) {
+            mp.gui.cursor.show(false, false);
+            ui.DisableMouseControl = false;
+        }
     }
 
     isShow = false;

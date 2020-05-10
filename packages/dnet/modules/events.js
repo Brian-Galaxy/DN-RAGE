@@ -1392,6 +1392,14 @@ mp.events.addRemoteCounted('server:user:getInvById', (player, targetId) => {
             player.notify("~r~Нельзя обыскивать сотрудников полиции в наручниках, только через стяжки");
             return;
         }
+
+        if (user.isTie(pl)) {
+            if (!user.hasById(user.getId(pl), 'sellUser')) {
+                player.notify('~r~Для того, чтобы обыскивать в стяжках, необходимо для начала сдать игрока через ecorp -user -getpos, после связать его в стяжки (если не связан) и обыскать');
+                return;
+            }
+        }
+
         inventory.getItemList(player, inventory.types.Player, user.getId(pl), true);
     }
     else

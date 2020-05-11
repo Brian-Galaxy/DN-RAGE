@@ -814,9 +814,7 @@ mp.events.add("entityStreamIn", (entity) => {
                 return;
 
             try {
-
-                if (entity.type === "vehicle")
-                    setHeadlightsColor(entity, parseInt(entity.getVariable("headlightColor")));
+                setHeadlightsColor(entity, parseInt(entity.getVariable("headlightColor")));
 
                 entity.trackVisibility();
                 entity.setTyresCanBurst(true);

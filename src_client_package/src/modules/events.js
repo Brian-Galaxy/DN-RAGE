@@ -733,8 +733,18 @@ mp.events.add('client:events:loginUser:success', async function() {
         quest.loadAllBlip();
         chat.sendLocal('Добро пожаловать на DEDNET 💀');
         chat.sendLocal('Желаем приятной игры ;]');
+        chat.sendLocal(' ');
+        chat.sendLocal(`!{${chat.clBlue}}На сервере действует конкурс`);
+        chat.sendLocal(`!{${chat.clBlue}}1. !{${chat.clWhite}}Каждый час разыгрывается VIP HARD на рандомное колличество дней.`);
+        chat.sendLocal(`!{${chat.clBlue}}2. !{${chat.clWhite}}Каждые два часа игры на сервере разыгрывается редкая Маска.`);
+        chat.sendLocal(`!{${chat.clBlue}}3. !{${chat.clWhite}}Каждые 24 часа В 20:00 по МСК вы сможете выйграть транспорта.`);
+        chat.sendLocal(`!{${chat.clBlue}}4. !{${chat.clWhite}}Отыграв 8 часов на сервере, вы получите $50.000 но 1 раз в сутки.`);
         chat.updateSettings();
         antiCheat.load();
+
+        setTimeout(function () {
+            user.setCurrentWeapon('weapon_unarmed');
+        }, 1000);
     }, 5000);
 });
 

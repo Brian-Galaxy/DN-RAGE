@@ -248,6 +248,9 @@ voiceRage.timer = () => {
                             return;
                         }
 
+                        if (player.handle === 0)
+                            return;
+
                         if (player.dimension === localPlayer.dimension) {
                             const playerPos = player.position;
                             //let dist = mp.game.system.vdist(playerPos.x, playerPos.y, playerPos.z, localPos.x, localPos.y, localPos.z);

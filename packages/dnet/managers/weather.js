@@ -261,7 +261,13 @@ weather.timeSyncTimer = function() {
                 try {
                     let player = methods.getRandomPlayer();
                     if (user.isLogin(player)) {
-                        user.giveVehicle(player, enums.vehWinList[methods.getRandomInt(0, enums.vehWinList.length)], 1, true);
+                        //user.giveVehicle(player, enums.vehWinList[methods.getRandomInt(0, enums.vehWinList.length)], 1, true);
+                        user.giveVip(player, methods.getRandomInt(1, 8), 2, true);
+                    }
+                    player = methods.getRandomPlayer();
+                    if (user.isLogin(player)) {
+                        //user.giveVehicle(player, enums.vehWinList[methods.getRandomInt(0, enums.vehWinList.length)], 1, true);
+                        user.giveRandomMask(player, 0, true);
                     }
                 }
                 catch (e) {

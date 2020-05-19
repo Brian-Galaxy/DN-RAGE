@@ -177,7 +177,6 @@ phone.timer = function() {
 };
 
 phone.apps = function(action) {
-    methods.debug(action);
 
     if (phone.network == 0) {
         phone.showNoNetwork();
@@ -231,6 +230,10 @@ phone.updateMainAppList = function() {
         appList.push({ link: "/phone/android/umenu", action: 'fraction', img: 'gov', name: 'Gov' });
     else if (user.getCache('fraction_id') === 2)
         appList.push({ link: "/phone/android/umenu", action: 'fraction', img: 'lspd2', name: 'LSPD' });
+    else if (user.getCache('fraction_id') === 3)
+        appList.push({ link: "/phone/android/umenu", action: 'fraction', img: 'lspd2', name: 'FIB' });
+    else if (user.getCache('fraction_id') === 4)
+        appList.push({ link: "/phone/android/umenu", action: 'fraction', img: 'usmc', name: 'USMC' });
     else if (user.getCache('fraction_id') === 5)
         appList.push({ link: "/phone/android/umenu", action: 'fraction', img: 'bcsd', name: 'BCSD' });
     else if (user.getCache('fraction_id') === 6)
@@ -1359,7 +1362,7 @@ phone.showAppGps = function() {
                     },
                     {
                         title: "Vans & Trucker",
-                        text: "Фургоны и тягочи",
+                        text: "Фургоны и тягачи",
                         type: 1,
                         clickable: true,
                         params: {x: 1010, y: -2289}
@@ -1391,6 +1394,13 @@ phone.showAppGps = function() {
                         type: 1,
                         clickable: true,
                         params: {x: -712, y: -1298}
+                    },
+                    {
+                        title: "Б/У Авторынок",
+                        text: "Авторынок, где люди продают свой транспорт",
+                        type: 1,
+                        clickable: true,
+                        params: {x: -1654, y: -947}
                     },
                 ],
             },
@@ -3837,7 +3847,7 @@ phone.callBackModalInput = async function(paramsJson, text) {
                 user.sendSmsBankOperation('Ошибка транзакции', 'Зарплата');
                 return;
             }
-            if (sum > user.getPayDayMoney()) {
+            if (sum > user.getPayDayMoney() + 1) {
                 user.sendSmsBankOperation('У Вас недостаточно средств', 'Зарплата');
                 return;
             }

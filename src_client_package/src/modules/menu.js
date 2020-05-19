@@ -171,7 +171,9 @@ class Menu {
     }
 
     static AddMenuItemList(title, list, subtitle, params, index = 0, rightLabel = '', icon = '', iconRight = '', divider = false) {
-        if (index < 0)
+        if (list.length >= index)
+            index = list.length - 1;
+        else if (index <= 0)
             index = 0;
         title = methods.replaceQuotes(title);
         subtitle = methods.replaceQuotes(subtitle);

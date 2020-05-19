@@ -6499,6 +6499,7 @@ racer.timer = function () {
                         p.notifyWithPicture('Arena RaceClub', '~g~' + racerList[currentRace].title, `~g~СТАРТ!!!\nСТАРТ!!!\nСТАРТ!!!`, 'CHAR_CARSITE4');
                         vSync.setFreezeState(p.vehicle, false);
                         vSync.setAnchorState(p.vehicle, false);
+                        p.vehicle.engine = true;
                     }
                     else if (startTimer > 0 && startTimer <= 3) {
                         p.notifyWithPicture('Arena RaceClub', '~g~' + racerList[currentRace].title, `До старта ~g~${startTimer}сек`, 'CHAR_CARSITE4');

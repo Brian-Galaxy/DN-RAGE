@@ -19,7 +19,10 @@ npc.loadAll = function() {
     npc.create(mp.game.joaat("ig_lamardavis"), new mp.Vector3(-218.75608825683594, -1368.4576416015625, 31.25823402404785), 43.398406982421875, false, "WORLD_HUMAN_SMOKING");
 
     //Мейз Банк Арена
-    npc.create(mp.game.joaat("s_m_y_grip_01"), new mp.Vector3(-251.922, -2001.531, 30.14596), 178.7984, -49.89936, false, "WORLD_HUMAN_CLIPBOARD");
+    npc.create(mp.game.joaat("s_m_y_grip_01"), new mp.Vector3(-251.922, -2001.531, 30.14596), 178.7984, false, "WORLD_HUMAN_CLIPBOARD");
+
+    //Bot SellVeh
+    npc.create(mp.game.joaat("s_m_y_grip_01"), new mp.Vector3(-1654.792236328125, -948.4613037109375, 7.716407775878906), 323.9862365722656, false, "WORLD_HUMAN_CLIPBOARD");
 
 // 24/7 - Гора Чиллиад - Шоссе Сенора
     npc.create(mp.game.joaat("s_f_y_sweatshop_01"), new mp.Vector3(1728.476, 6416.668, 35.03724), -109.9557, false, "WORLD_HUMAN_STAND_IMPATIENT");

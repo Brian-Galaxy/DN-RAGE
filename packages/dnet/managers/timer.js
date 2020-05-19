@@ -153,7 +153,7 @@ timer.min60Timer = function() {
 };
 
 timer.min59Timer = function() {
-    try {
+    /*try {
         let player = methods.getRandomPlayer();
         if (user.isLogin(player)) {
             user.giveVip(player, methods.getRandomInt(1, 8), 2, true);
@@ -161,12 +161,12 @@ timer.min59Timer = function() {
     }
     catch (e) {
         
-    }
+    }*/
     setTimeout(timer.min59Timer, 1000 * 60 * 59);
 };
 
 timer.min2hTimer = function() {
-    try {
+    /*try {
         let player = methods.getRandomPlayer();
         if (user.isLogin(player)) {
             user.giveRandomMask(player, 0, true);
@@ -174,7 +174,7 @@ timer.min2hTimer = function() {
     }
     catch (e) {
 
-    }
+    }*/
     setTimeout(timer.min2hTimer, 1000 * 120 * 59);
 };
 

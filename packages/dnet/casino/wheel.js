@@ -1,4 +1,5 @@
 let user = require('../user');
+let enums = require('../enums');
 let methods = require('../modules/methods');
 
 let wheel = exports;
@@ -40,8 +41,6 @@ mp.events.add('server:casino:wheel:doRoll', (player) => {
 
         if (methods.getRandomInt(0, 500) < 1)
             userWin = 19;
-        else if (methods.getRandomInt(0, 400) < 1)
-            userWin = 9;
         else if (methods.getRandomInt(0, 300) < 1)
             userWin = 0;
         else if (methods.getRandomInt(0, 200) < 1)
@@ -50,10 +49,12 @@ mp.events.add('server:casino:wheel:doRoll', (player) => {
             userWin = 7;
         else if (methods.getRandomInt(0, 100) < 1)
             userWin = 5;
-        else if (methods.getRandomInt(0, 50) < 1)
+        else if (methods.getRandomInt(0, 40) < 1)
             userWin = 4;
         else if (methods.getRandomInt(0, 30) < 1)
             userWin = 3;
+        else if (methods.getRandomInt(0, 15) < 1)
+            userWin = 9;
 
         user.set(player, 'wheelWin', userWin);
         mp.players.callInRange(player.position, 100, 'client:casino:wheel:doRoll', [userWin, player.id]);
@@ -114,11 +115,11 @@ mp.events.add('server:casino:wheel:finalRoll', (player) => {
             player.notifyWithPicture('Diamond Casino', '~g~Колесо Удачи', `Вы выиграли ~g~$50,000`, 'CHAR_CASINO');
         }
         else if (win === 5) {
-            user.giveVip(player, methods.getRandomInt(7, 14), 2, true);
+            user.giveVip(player, methods.getRandomInt(7, 14), 2, true, ' с колеса удачи');
             player.notifyWithPicture('Diamond Casino', '~g~Колесо Удачи', `Вы выиграли VIP HARD`, 'CHAR_CASINO');
         }
         else if (win === 9) {
-            user.giveRandomMask(player, 0, true);
+            user.giveRandomMask(player, 0, true, ' в колесе удачи');
             player.notifyWithPicture('Diamond Casino', '~g~Колесо Удачи', `Вы выиграли маску`, 'CHAR_CASINO');
         }
         else if (win === 11) {
@@ -165,6 +166,6 @@ mp.events.add('server:casino:wheel:finalRoll', (player) => {
         }*/
     }
     catch (e) {
-        
+        methods.debug(e);
     }
 });

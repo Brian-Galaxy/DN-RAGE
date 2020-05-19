@@ -572,7 +572,7 @@ for(let code in keyCodes) {
                 let veh = mp.players.local.vehicle;
                 if (veh && (veh.getPedInSeat(0) == mp.players.local.handle || veh.getPedInSeat(-1) == mp.players.local.handle)) {
                     if (methods.getVehicleInfo(veh.model).class_name == 'Emergency') {
-                        user.setVariable('voice.distance', 8000);
+                        user.setVariable('voice.distance', 150);
                         voiceRage.enableMic();
                     }
                 }

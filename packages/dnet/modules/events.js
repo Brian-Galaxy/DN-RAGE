@@ -1331,6 +1331,11 @@ mp.events.addRemoteCounted('server:user:knockById', (player, targetId) => { //TO
             return;
         }
 
+        if (user.get(player, 'online_time') < 170) {
+            player.notify("~r~Данный игрок новичок, по отношению к нему запрещены такие действия");
+            return;
+        }
+
         let random = methods.getRandomInt(0, methods.parseInt(user.get(target, 'stats_strength') / 2));
         //let random2 = methods.getRandomInt(0, user.get(target, 'stats_strength') - 200);
 
@@ -1976,6 +1981,15 @@ mp.events.addRemoteCounted('server:admin:inviteMp', (player) => {
 
 mp.events.addRemoteCounted('server:ems:removeObject', (player, id) => {
     try {
+
+        try {
+            user.addMoney(player, 200);
+            user.sendSmsBankOperation(player, `Зачисление премии ${methods.moneyFormat(200)}`);
+        }
+        catch (e) {
+            
+        }
+        
         ems.removeObject(id);
     }
     catch (e) {
@@ -2048,9 +2062,11 @@ mp.events.addRemoteCounted('server:invader:sendNews', (player, title, text) => {
     let rpDateTime = weather.getRpDateTime();
     let timestamp = methods.getTimeStamp();
 
-    mysql.executeQuery(`INSERT INTO rp_inv_news (title, name, text, timestamp, rp_datetime) VALUES ('${title}', '${name}', '${text}', '${timestamp}', '${rpDateTime}')`);
+    let textRemove = methods.replaceAllGtaSymb(text);
 
-    discord.sendNews(title, text, name, player.socialClub);
+    mysql.executeQuery(`INSERT INTO rp_inv_news (title, name, text, timestamp, rp_datetime) VALUES ('${title}', '${name}', '${textRemove}', '${timestamp}', '${rpDateTime}')`);
+
+    discord.sendNews(title, textRemove, name, player.socialClub);
 
     mp.players.forEach(p => {
         user.sendPhoneNotify(p, 'Life Invader', title, text, 'CHAR_LIFEINVADER');
@@ -2095,13 +2111,15 @@ mp.events.addRemoteCounted('server:invader:sendAd', (player, id, title, name, te
     let rpDateTime = weather.getRpDateTime();
     let timestamp = methods.getTimeStamp();
 
+    let textRemove = methods.replaceAllGtaSymb(text);
+
     mysql.executeQuery(`DELETE FROM rp_inv_ad_temp WHERE id = ${methods.parseInt(id)}`);
-    mysql.executeQuery(`INSERT INTO rp_inv_ad (title, name, text, phone, editor, timestamp, rp_datetime) VALUES ('${title}', '${name}', '${text}', '${phone}', '${editor}', '${timestamp}', '${rpDateTime}')`);
+    mysql.executeQuery(`INSERT INTO rp_inv_ad (title, name, text, phone, editor, timestamp, rp_datetime) VALUES ('${title}', '${name}', '${textRemove}', '${phone}', '${editor}', '${timestamp}', '${rpDateTime}')`);
 
     user.addPayDayMoney(player, 100, 'Отредактировал объявление');
     player.notify('~g~Вы получили премию в $100 за отредактированное объявление');
 
-    discord.sendAd(title, name, text, methods.phoneFormat(phone), editor, player.socialClub);
+    discord.sendAd(title, name, textRemove, methods.phoneFormat(phone), editor, player.socialClub);
 
     mp.players.forEach(p => {
         user.sendPhoneNotify(p, 'Life Invader', '~g~Реклама | ' + title, text, 'CHAR_LIFEINVADER');
@@ -2159,6 +2177,8 @@ mp.events.addRemoteCounted('server:invader:sendAdTemp', (player, text) => {
     text = methods.removeQuotes(methods.replaceAll(text, '"', '`'));
     let phone = methods.removeQuotes(user.get(player, 'phone'));
     let name = methods.removeQuotes(user.getRpName(player).split(' ')[0]);
+
+    text = methods.replaceAllGtaSymb(text);
 
     user.removeBankMoney(player, 500, 'Подача объявления');
     coffer.addMoney(8, 400);
@@ -3696,6 +3716,239 @@ mp.events.addRemoteCounted('server:car10:sell', (player) => {
     if (!user.isLogin(player))
         return;
     vehicles.sell(player, 10);
+});
+
+mp.events.addRemoteCounted('server:houses:addUser', (player, buyerId) => {
+    if (!user.isLogin(player))
+        return;
+    if (user.get(player, 'house_id') === 0) {
+        player.notify('~r~У Вас нет дома');
+        return;
+    }
+
+    if (user.getCashMoney(player) < 10000) {
+        player.notify('~r~У Вас недостаточно средств на руках');
+        return;
+    }
+
+    let hInfo = houses.getHouseData(user.get(player, 'house_id'));
+    if (hInfo.get('user_id') != user.get(player, 'id')) {
+        player.notify('~r~Этот дом вам не пренадлежит');
+        return;
+    }
+
+    let buyer = user.getPlayerById(buyerId);
+    if (user.isLogin(buyer)) {
+
+        if (methods.distanceToPos(buyer.position, player.position) > 2) {
+            player.notify('~r~Вы слишком далеко');
+            return;
+        }
+
+        if (user.get(buyer, 'house_id') > 0) {
+            player.notify('~r~У игрока уже есть дом');
+            buyer.notify('~r~У Вас уже есть дом');
+            return;
+        }
+
+        houses.getCountLiveUser(user.get(player, 'house_id'), function (count) {
+            if (!user.isLogin(player))
+                return;
+            if (!user.isLogin(buyer))
+                return;
+
+            --count;
+            if (count == hInfo.get('max_roommate')) {
+                player.notify('~r~В вашем доме не осталось места\nЧтобы посделить больше друзей, нужен дом побольше');
+                return;
+            }
+
+            user.removeCashMoney(player, 10000);
+            coffer.addMoney(10000);
+            user.set(buyer, 'house_id', user.get(player, 'house_id'));
+            player.notify('~b~Вы подселили игрока');
+            buyer.notify('~b~Вас подселили в дом');
+
+            user.save(player);
+            user.save(buyer);
+        });
+    }
+});
+
+mp.events.addRemoteCounted('server:houses:lawyer:tryaddUser', (player, ownerId, buyerId) => {
+
+    let owner = user.getPlayerById(ownerId);
+    if (user.isLogin(owner) && user.isLogin(player)) {
+        if (user.get(owner, 'house_id') === 0) {
+            owner.notify('~r~У Вас нет дома');
+            player.notify('~r~У игрока нет дома');
+            return;
+        }
+
+        if (user.getCashMoney(owner) < 10000) {
+            owner.notify('~r~У Вас недостаточно средств на руках');
+            player.notify('~r~У игрока недостаточно средств на руках');
+            return;
+        }
+
+        if (methods.distanceToPos(owner.position, player.position) > 2) {
+            player.notify('~r~Вы слишком далеко');
+            return;
+        }
+
+        owner.call('client:lawyer:house:accept', [buyerId, user.getId(player)])
+    }
+});
+
+mp.events.addRemoteCounted('server:houses:userList', (player) => {
+    if (!user.isLogin(player))
+        return;
+
+    if (user.get(player, 'house_id') === 0) {
+        player.notify('~r~У Вас нет дома');
+        return;
+    }
+
+    let hInfo = houses.getHouseData(user.get(player, 'house_id'));
+    if (hInfo.get('user_id') != user.get(player, 'id')) {
+        player.notify('~r~Этот дом вам не пренадлежит');
+        return;
+    }
+
+    let houseId = user.get(player, 'house_id');
+
+    mysql.executeQuery(`SELECT name, is_online, id FROM users WHERE house_id = ${houseId} ORDER BY is_online DESC, name ASC`, function (err, rows, fields) {
+        let resultData = new Map();
+        rows.forEach(function(item) {
+            if (item['is_online'])
+                resultData.set(item["id"].toString(), "~g~*~s~ " + item["name"]);
+            else
+                resultData.set(item["id"].toString(), "~r~*~s~ " + item["name"]);
+        });
+        player.call('client:showMazeBankHousePeopleListMenu', [Array.from(resultData)]);
+    });
+});
+
+mp.events.addRemoteCounted('server:houses:lawyer:addUser', (player, lawyerId, buyerId) => {
+
+    let buyer = user.getPlayerById(buyerId);
+    let lawyer = user.getPlayerById(lawyerId);
+    let owner = player;
+    if (user.isLogin(buyer) && user.isLogin(owner) && user.isLogin(lawyer)) {
+
+        if (user.get(owner, 'house_id') === 0) {
+            owner.notify('~r~У Вас нет дома');
+            return;
+        }
+
+        if (user.getCashMoney(owner) < 10000) {
+            owner.notify('~r~У Вас недостаточно средств на руках');
+            return;
+        }
+
+        let hInfo = houses.getHouseData(user.get(owner, 'house_id'));
+        if (hInfo.get('user_id') != user.get(owner, 'id')) {
+            owner.notify('~r~Этот дом вам не пренадлежит');
+            return;
+        }
+
+        if (methods.distanceToPos(buyer.position, owner.position) > 2) {
+            owner.notify('~r~Вы слишком далеко');
+            return;
+        }
+
+        if (user.get(buyer, 'house_id') > 0) {
+            owner.notify('~r~У игрока уже есть дом');
+            buyer.notify('~r~У Вас уже есть дом');
+            return;
+        }
+
+        houses.getCountLiveUser(user.get(owner, 'house_id'), function (count) {
+            if (!user.isLogin(owner))
+                return;
+            if (!user.isLogin(buyer))
+                return;
+
+            --count;
+            if (count == hInfo.get('max_roommate')) {
+                owner.notify('~r~В вашем доме не осталось места\nЧтобы посделить больше друзей, нужен дом побольше');
+                return;
+            }
+
+            user.removeCashMoney(owner, 10000);
+            user.addCashMoney(lawyer, 8000);
+            coffer.addMoney(1, 2000);
+
+            user.set(buyer, 'house_id', user.get(owner, 'house_id'));
+            owner.notify('~b~Вы подселили игрока');
+            buyer.notify('~b~Вас подселили в дом');
+            lawyer.notify('~b~Вы совершили сделку, заработав ~g~$8.000');
+
+            user.save(player);
+            user.save(buyer);
+        });
+    }
+});
+
+mp.events.addRemoteCounted('server:houses:removeMe', (player) => {
+    if (!user.isLogin(player))
+        return;
+    if (user.get(player, 'house_id') === 0) {
+        player.notify('~r~Вы нигде не живете');
+        return;
+    }
+
+    if (user.getCashMoney(player) < 1000) {
+        player.notify('~r~У Вас недостаточно средств на руках');
+        return;
+    }
+
+    let hInfo = houses.getHouseData(user.get(player, 'house_id'));
+    if (hInfo.get('user_id') == user.get(player, 'id')) {
+        player.notify('~r~Это ваш дом, его можно только продать');
+        return;
+    }
+
+    user.removeCashMoney(player, 1000);
+    coffer.addMoney(1000);
+    user.set(player, 'house_id', 0);
+    player.notify('~r~Вы выселились из дома');
+    user.save(player);
+});
+
+mp.events.addRemoteCounted('server:house:removeId', (player, userId) => {
+    if (!user.isLogin(player))
+        return;
+    if (user.get(player, 'house_id') === 0) {
+        player.notify('~r~Вы нигде не живете');
+        return;
+    }
+
+    if (user.getCashMoney(player) < 1000) {
+        player.notify('~r~У Вас недостаточно средств на руках');
+        return;
+    }
+
+    let hInfo = houses.getHouseData(user.get(player, 'house_id'));
+    if (hInfo.get('user_id') != user.get(player, 'id')) {
+        player.notify('~r~Этот дом вам не пренадлежит');
+        return;
+    }
+
+    user.removeCashMoney(player, 1000);
+    coffer.addMoney(1000);
+
+    player.notify('~r~Вы выселили из дома ' + userId);
+
+    let seller = user.getPlayerById(userId);
+    if (user.isLogin(seller)) {
+        user.set(seller, 'house_id', 0);
+        seller.notify('~r~Вас выселил из дома владелец');
+        user.save(seller);
+    }
+    else {
+        mysql.executeQuery(`UPDATE users SET house_id = '0' where id = '${userId}'`);
+    }
 });
 
 mp.events.addRemoteCounted('server:houses:sellToPlayer', (player, buyerId, sum) => {
@@ -5247,6 +5500,11 @@ mp.events.addRemoteCounted('server:sellUser', (player) => {
                     return;
                 }
 
+                if (p.health <= 0) {
+                    player.notify('~r~Игрок мертв');
+                    return;
+                }
+
                 let money = user.getCashMoney(p) / 2;
                 if (money > 5000)
                     money = 5000;
@@ -5693,7 +5951,7 @@ mp.events.addRemoteCounted("server:activatePromocode", (player, promocode) => {
                                     let vipTime = 0;
                                     let vipType = methods.parseInt(paramsStart.vipt);
                                     if (methods.parseInt(paramsStart.vip) > 0 && user.get(player, 'vip_type') > 0 && user.get(player, 'vip_time') > 0)
-                                        vipTime = methods.parseInt(paramsStart.vip * 86400) + user.set(player, 'vip_time');
+                                        vipTime = methods.parseInt(paramsStart.vip * 86400) + user.get(player, 'vip_time');
                                     else if (methods.parseInt(paramsStart.vip) > 0)
                                         vipTime = methods.parseInt(paramsStart.vip * 86400) + methods.getTimeStamp();
 

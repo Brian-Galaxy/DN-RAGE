@@ -1124,8 +1124,8 @@ fraction.startGrabShopGang = function(player, itemId = 0) {
                 return;
             }
 
-            dispatcher.sendLocalPos('Код 0', `Срочно, всем патрулям, происходит ограбление магазина ${shopItem.name}`, mp.players.local.position, 2);
-            dispatcher.sendLocalPos('Код 0', `Срочно, всем патрулям, происходит ограбление магазина ${shopItem.name}`, mp.players.local.position, 5);
+            dispatcher.sendLocalPos('Код 0', `Срочно, всем патрулям, происходит ограбление магазина ${shopItem.name}`, player.position, 2);
+            dispatcher.sendLocalPos('Код 0', `Срочно, всем патрулям, происходит ограбление магазина ${shopItem.name}`, player.position, 5);
 
             player.position = new mp.Vector3(pos[0], pos[1], pos[2]);
             player.heading = pos[3];

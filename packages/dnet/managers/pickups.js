@@ -35,6 +35,8 @@ pickups.BotRole0 = new mp.Vector3(-414.9725036621094, -2644.56201171875, 5.00021
 pickups.BotRoleAll = new mp.Vector3(-1379.2901611328125, -527.3419189453125, 29.61183738708496);
 pickups.QuestBotGang = new mp.Vector3(-219.3651123046875, -1367.4730224609375, 30.25823402404785);
 
+pickups.SellVehicle = new mp.Vector3(-1654.048583984375, -947.2221069335938, 6.747209548950195);
+
 pickups.PrintShopPos = new mp.Vector3(-1234.7786865234375, -1477.7230224609375, 3.324739933013916);
 pickups.MazeBankLobby = new mp.Vector3(-252.2621, -2003.149, 29.1459);
 pickups.WheelLuckyPos = new mp.Vector3(1109.76, 227.89, -49.64);
@@ -432,6 +434,8 @@ pickups.checkPressE = function(player) {
 
     if (methods.distanceToPos(pickups.PrintShopPos, playerPos) < distanceCheck)
         player.call('client:menuList:showPrintShopMenu');
+    if (methods.distanceToPos(pickups.SellVehicle, playerPos) < distanceCheck)
+        player.call('client:menuList:showSellVehMenu');
     if (methods.distanceToPos(pickups.MazeBankLobby, playerPos) < distanceCheck)
         player.call('client:menuList:showMazeBankLobbyMenu');
     if (methods.distanceToPos(pickups.WheelLuckyPos, playerPos) < distanceCheck)
@@ -654,6 +658,7 @@ pickups.createAll = function() {
     methods.createCpVector(pickups.WheelLuckyPos, 'Нажмите ~g~E~s~ чтобы крутить колесо', 1, -1, [33, 150, 243, 0]);
 
     methods.createCpVector(pickups.LifeInvaderShopPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.SellVehicle, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
 
     methods.createCpVector(pickups.EmsElevatorPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
     methods.createCpVector(pickups.EmsElevatorParkPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);

@@ -634,11 +634,11 @@ enums.fractionList = {
         departmentList: ["USMC Academy", "Regular", "Sea Division", "AirSupport Division", "Special Forces"],
         departmentPayDay: [40, 45, 45, 100, 150],
         rankPayDay: [
-            ["Captain", "Deputy Captain", "Senior Cadet", "Cadet"], //0
-            ["Captain", "Deputy Captain", "Lieutenant I", "Lieutenant II", "Master Sergeant", "Staff Sergeant", "Sergeant", "Corporal", "1st Private", "Private"], //1
-            ["Captain", "Deputy Captain", "Lieutenant I", "Lieutenant II", "Master Sergeant", "Staff Sergeant", "Sergeant", "Corporal", "1st Private", "Private"], //2
-            ["Captain", "Deputy Captain", "Lieutenant I", "Lieutenant II", "Master Sergeant", "Staff Sergeant", "Sergeant"], //3
-            ["Commander", "Deputy Commander", "Captain", "Lieutenant II", "Lieutenant I", "Sergeant II", "Sergeant I"], //4
+            [900, 800, 120, 70], //0
+            [900, 800, 500, 450, 400, 350, 300, 250, 200, 150], //1
+            [900, 800, 500, 450, 400, 350, 300, 250, 200, 150], //2
+            [900, 800, 500, 450, 400, 350, 300], //3
+            [1100, 1000, 800, 700, 600, 500, 400], //4
         ],
         leaderPayDay: 3000,
         subLeaderPayDay: 2500,
@@ -1110,6 +1110,8 @@ enums.maskList = [
     [9, "Пепельная балаклава-капюшон", 53, 5, 6500, 0, true, true, true, true, true, true, 100, 69, 0],
     [9, "Лесная балаклава-капюшон", 53, 6, 6500, 0, true, true, true, true, true, true, 100, 69, 0],
     [9, "Городская балаклава-капюшон", 53, 7, 6500, 0, true, true, true, true, true, true, 100, 69, 0],
+    [9, "Синяя балаклава-капюшон", 53, 8, 6500, 0, true, true, true, true, true, true, 100, 0, 0],
+    [9, "Жёлтая балаклава-капюшон", 53, 9, 6500, 0, true, true, true, true, true, true, 100, 0, 0],
     [9, "Балаклава-капюшон с черепом", 53, 8, 6500, 0, true, true, true, true, true, true, 100, 0, 40],
 
     [14, "Черная маска из футболки", 54, 0, 8100, 0, true, true, true, true, true, true, 100, 69, 0],

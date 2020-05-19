@@ -1,6 +1,7 @@
 let mysql = require('../modules/mysql');
 let methods = require('../modules/methods');
 let Container = require('../modules/data');
+let chat = require('../modules/chat');
 
 let dispatcher = require('./dispatcher');
 
@@ -102,7 +103,7 @@ gangWar.startWar = function(zoneId, attack, def, isArmor, count) {
     countUsers = count;
     canArmor = isArmor;
 
-    methods.notifyWithPictureToFraction2('Улица под угрзой', `ВНИМАНИЕ!`, 'Начался захват улицы ~y~#' + zoneId, 'CHAR_DEFAULT', def);
+    methods.notifyWithPictureToFraction2('Улица под угрозой', `ВНИМАНИЕ!`, 'Начался захват улицы ~y~#' + zoneId, 'CHAR_DEFAULT', def);
 
     try {
         if (mp.blips.exists(blipCenter)) {
@@ -208,7 +209,7 @@ gangWar.addWar = function(player, zoneId, count, armorIndex, gunIndex, timeIndex
 
     warPool.set(timeIndex.toString(), data);
 
-    methods.notifyWithPictureToFraction2('Улица под угрзой', `ВНИМАНИЕ!`, `Захват ~y~#${zoneId}~s~ начнется в ${timeLabel[timeIndex]} (( ООС МСК ))`, 'CHAR_DEFAULT', ownerId);
+    methods.notifyWithPictureToFraction2('Улица под угрозой', `ВНИМАНИЕ!`, `Захват ~y~#${zoneId}~s~ начнется в ${timeLabel[timeIndex]} (( ООС МСК ))`, 'CHAR_DEFAULT', ownerId);
     methods.notifyWithPictureToFraction2('Война за улицу', `ВНИМАНИЕ!`, `Захват ~y~#${zoneId}~s~ начнется в ${timeLabel[timeIndex]} (( ООС МСК ))`, 'CHAR_DEFAULT', user.get(player, 'fraction_id2'));
 };
 
@@ -323,8 +324,7 @@ gangWar.timer = function() {
                     return;
                 let fId = methods.parseInt(user.get(p, 'fraction_id2'));
                 try {
-                    if (user.isAdmin(p) || fId > 0)
-
+                    if (user.isAdmin(p) || currentDef === fId || currentAttack === fId)
                         p.call('client:gangWar:sendArray', [gangWar.get(currentZone, 'on_map')]);
                 }
                 catch (e) {}
@@ -440,6 +440,22 @@ gangWar.getPos = function(id) {
     let pos = new mp.Vector3(gangWar.get(id, 'x'), gangWar.get(id, 'y'), gangWar.get(id, 'z'));
     return pos;
 };
+
+mp.events.add("playerDeath", (player, reason, killer) => {
+
+    if (!isStartTimer)
+        return;
+
+    if (user.isLogin(killer) && user.isGang(player)) {
+        mp.players.forEachInRange(warPos, 400, p => {
+            if (!user.isGang(p) && !user.isAdmin(p))
+                return;
+            if (gangWar.isInZone(p, currentZone)) {
+                p.outputChatBoxNew(`[${chat.getTime()}] !{${chat.clBlue}}${user.getRpName(killer)} (${killer.id}) !{${chat.clWhite}}убил игрока !{${chat.clBlue}}${user.getRpName(player)} (${player.id})`);
+            }
+        });
+    }
+});
 
 gangWar.isInZone = function(player, id) {
     try {

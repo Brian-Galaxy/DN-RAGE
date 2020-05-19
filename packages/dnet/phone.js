@@ -296,7 +296,7 @@ phone.getVehInfo = function(player, text) {
             if (row['user_id'] > 0) {
                 subItems.push(phone.getMenuItemButton(
                     'Владелец',
-                    `${row['user_name']} (${row['id']})`,
+                    `${row['user_name']} (${row['user_id']})`,
                     { name: 'none' },
                 ));
             } else {
@@ -1866,7 +1866,7 @@ phone.updateDialogList = function(player) {
                         last_login: '01.01.1990',
                         new_messages: newMessages,
                         message: [
-                            {type: messageType, text: row['text'], date: row['date'], time: row['time'] + ':00'},
+                            {type: messageType, text: methods.replaceAll(methods.replaceAll(row['text'], '\n', ''), '"', '`'), date: row['date'], time: row['time'] + ':00'},
                         ]
                     },
                 );
@@ -1876,7 +1876,6 @@ phone.updateDialogList = function(player) {
                 type: 'updateMessenger',
                 chats: array
             };
-
             user.callCef(player, 'phone' + user.get(player, 'phone_type'), JSON.stringify(contacts));
         });
     }
@@ -1904,7 +1903,7 @@ phone.selectChat = function(player, phoneNumber, chat) {
                 messageType = 2;
 
             array.push(
-                {type: messageType, text: row['text'], date: row['date'], time: row['time'] + ':00'},
+                {type: messageType, text: methods.replaceAll(methods.replaceAll(row['text'], '\n', ''), '"', '`'), date: row['date'], time: row['time'] + ':00'},
             );
         });
 

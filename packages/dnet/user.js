@@ -2857,6 +2857,12 @@ user.payDay = async function (player) {
                 coffer.removeMoney(1, sum);
             }
         }
+
+        if (player.getVariable('enableAdmin')) {
+            let sum = user.get(player, 'admin_level') * 500;
+            user.sendSmsBankOperation(player, `Зачисление: ~g~${methods.moneyFormat(sum)}`, '~r~Админ Зарплата');
+            user.addBankMoney(player, sum, 'Пособие по безработицы');
+        }
     }
     else {
         player.notify(`~y~Оформите банковскую карту`);
@@ -2952,6 +2958,10 @@ user.isMafia = function(player) {
     return user.isLogin(player) && (user.isCosaNostra(player) || user.isRussianMafia(player) || user.isYakuza(player));
 };
 
+user.isGang = function(player) {
+    return user.isLogin(player) && (fraction.isGang(user.get(player, 'fraction_id2')));
+};
+
 user.isLeader = function(player) {
     //methods.debug('user.isLeader');
     return user.isLogin(player) && user.get(player, 'is_leader');
@@ -3041,14 +3051,14 @@ user.ban = function(player, count, reason) {
     admin.banByAnticheat(0, player.id, count, reason);
 };
 
-user.giveVip = function(player, days = 7, type = 2, withChat = false) {
+user.giveVip = function(player, days = 7, type = 2, withChat = false, desc = '') {
     if (!user.isLogin(player))
         return;
 
     let vipTime = 0;
     let vipType = methods.parseInt(type);
     if (methods.parseInt(days) > 0 && user.get(player, 'vip_type') > 0 && user.get(player, 'vip_time') > 0)
-        vipTime = methods.parseInt(days* 86400) + user.set(player, 'vip_time');
+        vipTime = methods.parseInt(days * 86400) + user.get(player, 'vip_time');
     else if (methods.parseInt(days) > 0)
         vipTime = methods.parseInt(days * 86400) + methods.getTimeStamp();
 
@@ -3057,11 +3067,11 @@ user.giveVip = function(player, days = 7, type = 2, withChat = false) {
 
     player.notify(`~g~Вам была выдана VIP HARD на ~s~${days}д.`);
     if (withChat)
-        chat.sendToAll(`Server`, `${user.getRpName(player)} (${player.id})!{${chat.clBlue}} получил!{${chat.clWhite}} VIP HARD на ${days}д.`, chat.clBlue);
+        chat.sendToAll(`Server`, `${user.getRpName(player)} (${player.id})!{${chat.clBlue}} получил${desc}!{${chat.clWhite}} VIP HARD на ${days}д.`, chat.clBlue);
 };
 
 //Процент выпадения, Это типа, от какого процента начнет падать маска
-user.giveRandomMask = function(player, proc = 50, withChat = false) {
+user.giveRandomMask = function(player, proc = 50, withChat = false, desc = '') {
     if (!user.isLogin(player))
         return;
 
@@ -3081,7 +3091,7 @@ user.giveRandomMask = function(player, proc = 50, withChat = false) {
     player.notify(`~g~Вы выиграли маску "${itemName}", она у вас в инвентаре.`);
 
     if (withChat)
-        chat.sendToAll(`Server`, `${user.getRpName(player)} (${player.id})!{${chat.clBlue}} выиграл маску!{${chat.clWhite}} ${itemName}!{${chat.clBlue}} редкость!{${chat.clWhite}} ${methods.getRareName(mask[14])}`, chat.clBlue);
+        chat.sendToAll(`Server`, `${user.getRpName(player)} (${player.id})!{${chat.clBlue}} выиграл маску${desc}!{${chat.clWhite}} ${itemName}!{${chat.clBlue}} редкость!{${chat.clWhite}} ${methods.getRareName(mask[14])}`, chat.clBlue);
 };
 
 user.giveVehicle = function(player, vName, withDelete = 1, withChat = false, desc = '') {
@@ -3097,6 +3107,7 @@ user.giveVehicle = function(player, vName, withDelete = 1, withChat = false, des
             try {
                 mysql.executeQuery(`SELECT id FROM cars WHERE user_id = '${user.getId(player)}' ORDER BY id DESC LIMIT 1`, function (err, rows) {
                     try {
+                        //TODO LOAD VEH ROW
                         user.set(player, 'car_id10', rows[0]['id']);
                         user.save(player);
                     }
@@ -3106,7 +3117,7 @@ user.giveVehicle = function(player, vName, withDelete = 1, withChat = false, des
                 });
             }
             catch (e) {
-                
+                methods.debug(e);
             }
         }, 100);
 

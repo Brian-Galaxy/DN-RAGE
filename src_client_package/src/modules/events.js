@@ -36,6 +36,7 @@ import hosp from "../manager/hosp";
 import edu from "../manager/edu";
 
 import gr6 from "../jobs/gr6";
+import coffer from "../coffer";
 
 mp.gui.chat.enabled = false;
 
@@ -733,12 +734,15 @@ mp.events.add('client:events:loginUser:success', async function() {
         quest.loadAllBlip();
         chat.sendLocal('Добро пожаловать на DEDNET 💀');
         chat.sendLocal('Желаем приятной игры ;]');
-        chat.sendLocal(' ');
+        /*chat.sendLocal(' ');
         chat.sendLocal(`!{${chat.clBlue}}На сервере действует конкурс`);
-        chat.sendLocal(`!{${chat.clBlue}}1. !{${chat.clWhite}}Каждый час разыгрывается VIP HARD на рандомное колличество дней.`);
+        chat.sendLocal(`!{${chat.clBlue}}1. !{${chat.clWhite}}Каждый час разыгрывается VIP HARD на рандомное количество дней.`);
         chat.sendLocal(`!{${chat.clBlue}}2. !{${chat.clWhite}}Каждые два часа игры на сервере разыгрывается редкая Маска.`);
-        chat.sendLocal(`!{${chat.clBlue}}3. !{${chat.clWhite}}Каждые 24 часа В 20:00 по МСК вы сможете выйграть транспорта.`);
-        chat.sendLocal(`!{${chat.clBlue}}4. !{${chat.clWhite}}Отыграв 8 часов на сервере, вы получите $50.000 но 1 раз в сутки.`);
+        chat.sendLocal(`!{${chat.clBlue}}3. !{${chat.clWhite}}Каждые 24 часа В 20:00 по МСК вы сможете выиграть транспорт.`);
+        chat.sendLocal(`!{${chat.clBlue}}4. !{${chat.clWhite}}Отыграв 8 часов на сервере, вы получите $50.000, но 1 раз в сутки.`);*/
+        chat.sendLocal('  ');
+        chat.sendLocal(`!{${chat.clBlue}}Колесо удачи`);
+        chat.sendLocal(`Отыграв 3 часа на сервере, у вас есть возможность прокрутить колесо удачи и один из главных призов это дорогой автомобиль, маска или VIP HARD.`);
         chat.updateSettings();
         antiCheat.load();
 
@@ -941,6 +945,14 @@ mp.events.add('client:updateItemList', (weaponList, componentList, itemList) => 
     }
 });
 
+mp.events.add('client:lawyer:house:accept', (buyerId, id) => {
+    menuList.showLawyerHouseOffersMenu(buyerId, id);
+});
+
+mp.events.add('client:showMazeBankHousePeopleListMenu', (data) => {
+    menuList.showMazeBankHousePeopleListMenu(data);
+});
+
 mp.events.add('client:showHouseOutMenu', (item) => {
     try {
         methods.debug('Event: client:menuList:showHouseOutMenu');
@@ -1140,6 +1152,16 @@ mp.events.add('client:menuList:showPrintShopMenu', () => {
     try {
         methods.debug('Event: client:menuList:showPrintShopMenu');
         menuList.showPrintShopMenu();
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.add('client:menuList:showSellVehMenu', async () => {
+    try {
+        methods.debug('Event: client:menuList:showSellVehMenu');
+        menuList.showMeriaSellVehHvbMenu(await coffer.getAllData());
     }
     catch (e) {
         methods.debug(e);
@@ -2000,15 +2022,15 @@ mp.events.add('client:inventory:use', async function(id, itemId) {
 
         let max = 25000;
         if (methods.distanceToPos(mp.players.local.position, new mp.Vector3(1110.3431396484375, 219.14230346679688, -50.440086364746094)) < 80)
-            max = 100000;
+            max = 1000000;
 
         if (sum < 1) {
             mp.game.ui.notifications.show("~r~Ставка не может быть менее $1");
             return;
         }
         if (sum > max) {
-            mp.game.ui.notifications.show("~r~Ставка не может быть менее $25,000");
-            mp.game.ui.notifications.show("~y~В казино максимальная ставка $100,000");
+            mp.game.ui.notifications.show("~r~Ставка не может быть более $25,000");
+            mp.game.ui.notifications.show("~y~В казино максимальная ставка $1,000,000");
             return;
         }
         if (user.getCashMoney() < sum) {
@@ -2872,9 +2894,29 @@ mp.keys.bind(0x4D, true, function() {
         ui.showHud();
 });
 
+let f1Enable = false;
+let canDisalbeBlockKeys = false;
+
+//F1
+mp.keys.bind(112, true, function() {
+    f1Enable = !f1Enable;
+    if (f1Enable && !methods.isBlockKeys()) {
+        canDisalbeBlockKeys = true;
+        methods.blockKeys(f1Enable);
+    }
+    if (canDisalbeBlockKeys && !f1Enable)
+    {
+        canDisalbeBlockKeys = false;
+        methods.blockKeys(f1Enable);
+    }
+});
+
 //F2
 mp.keys.bind(113, true, function() {
-    mp.gui.cursor.visible = !mp.gui.cursor.visible;
+    if (!ui.isShowHud())
+        ui.showHud();
+    if (!f1Enable)
+        mp.gui.cursor.visible = !mp.gui.cursor.visible;
 });
 
 //ESC
@@ -3795,6 +3837,7 @@ mp.events.add('client:taskFollow', (nplayer) => {
             mp.events.callRemote("server:user:targetNotify", nplayer, `~g~Вы повели человека за собой (ID: ${mp.players.local.remoteId})`);
 
             methods.blockKeys(true);
+            methods.disableDefaultControls(true);
 
             taskFollowed = nplayer;
         }
@@ -3810,12 +3853,14 @@ mp.events.add('client:taskFollow', (nplayer) => {
                     mp.players.local.clearTasks();
                     taskFollowed = false;
                     methods.blockKeys(false);
+                    methods.disableDefaultControls(false);
                     clearInterval(timerFollowedId);
                     return;
                 }
 
-                if (mp.players.local.dimension != taskFollowed.dimension) {
+                if (mp.players.local.dimension != taskFollowed.dimension || taskFollowed.handle === 0 || taskFollowed.getHealth() <= 0) {
                     methods.blockKeys(false);
+                    methods.disableDefaultControls(false);
                     mp.players.local.clearTasks();
                     mp.game.ui.notifications.show("~g~Вас отпустили");
                     mp.events.callRemote("server:user:targetNotify", nplayer, `~g~Вы отпустили человека (ID: ${mp.players.local.remoteId})`);
@@ -3855,6 +3900,7 @@ mp.events.add('client:taskFollow', (nplayer) => {
             mp.events.callRemote("server:user:targetNotify", nplayer, `~g~Вы отпустили человека (ID: ${mp.players.local.remoteId})`);
             taskFollowed = false;
             methods.blockKeys(false);
+            methods.disableDefaultControls(false);
             clearInterval(timerFollowedId);
             if (user.isCuff() || user.isTie())
                 user.playAnimation("mp_arresting", "idle", 49);

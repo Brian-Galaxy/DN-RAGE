@@ -508,7 +508,7 @@ mp.events.add("vSync:setExtraState", (vehId, status) => {
         let veh = mp.vehicles.atRemoteId(vehId);
         if (veh !== undefined && mp.vehicles.exists(veh)) {
 
-            if (veh.getClass() === 15 || veh.getClass() === 16 || veh.model === mp.game.joaat('polmav'))
+            if (veh.getClass() === 15 || veh.getClass() === 16 || veh.getClass() === 22 || veh.model === mp.game.joaat('polmav'))
                 return;
 
             for(let i = 0; i < 10; i++)

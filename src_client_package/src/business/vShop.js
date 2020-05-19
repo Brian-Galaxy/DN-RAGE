@@ -35,7 +35,7 @@ vShop.createCamera = function() {
     let pos = vPos;
 
     if (currentShop === 9)
-        pos = new mp.Vector3(vPos.x, vPos.y, vPos.z + 1);
+        pos = new mp.Vector3(vPos.x, vPos.y, vPos.z + 1.6);
 
     camera = mp.cameras.new("vshop_camera");
     /*camera.setActive(true);

@@ -77,9 +77,9 @@ admin.godmode = function(enable, notify = true) {
         if (notify)
         {
             if (godmodeEnabled)
-                mp.game.ui.notifications.show(`~q~GodeMode был активирован`);
+                mp.game.ui.notifications.show(`~q~GodMode был активирован`);
             else
-                mp.game.ui.notifications.show(`~q~GodeMode был деактивирован`);
+                mp.game.ui.notifications.show(`~q~GodMode был деактивирован`);
         }
 
         mp.players.local.setInvincible(enable);

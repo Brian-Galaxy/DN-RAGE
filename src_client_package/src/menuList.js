@@ -61,6 +61,8 @@ menuList.showHouseBuyMenu = async function(h) {
     if (h.get('ginterior3') >= 0)
         garage++;
 
+    UIMenu.Menu.AddMenuItem("~b~Кол-во жилых мест: ~s~" + h.get('max_roommate'));
+
     if (garage > 0)
         UIMenu.Menu.AddMenuItem("~b~Кол-во гаражей: ~s~" + garage);
 
@@ -203,6 +205,8 @@ menuList.showHouseOutMenu = async function(h) {
 
     UIMenu.Menu.Create(` `, `~b~Адрес: ~s~${h.get('address')} ${h.get('number')}`, 'hm', false, false, 'h1');
     UIMenu.Menu.AddMenuItem(`~b~Владелец:~s~ ${h.get('user_name')}`);
+
+    UIMenu.Menu.AddMenuItem("~b~Кол-во жилых мест: ~s~" + h.get('max_roommate'));
 
     let garage = 0;
     if (h.get('ginterior1') >= 0)
@@ -709,12 +713,16 @@ menuList.showStockOutMenu = async function(h) {
                         return;
                     }
 
-                    mp.game.ui.notifications.show('~r~Введите пинкод');
                     let pass = methods.parseInt(await UIMenu.Menu.GetUserInput("Пароль", "", 5));
+
+                    if (pass === 0) {
+                        mp.game.ui.notifications.show('~r~Вы ввели не правильный пинкод');
+                        return;
+                    }
 
                     Container.Data.SetLocally(mp.players.local.remoteId, "isPassTimeout", true);
 
-                    if (pass == h.get('pin')) {
+                    if (pass === h.get('pin')) {
                         stocks.enter(h.get('id'));
                         Container.Data.ResetLocally(mp.players.local.remoteId, "isPassTimeout");
                     }
@@ -778,12 +786,15 @@ menuList.showStockOutVMenu = async function(h) {
                         return;
                     }
 
-                    mp.game.ui.notifications.show('~r~Введите пинкод');
                     let pass = methods.parseInt(await UIMenu.Menu.GetUserInput("Пароль", "", 5));
+                    if (pass === 0) {
+                        mp.game.ui.notifications.show('~r~Вы ввели не правильный пинкод');
+                        return;
+                    }
 
                     Container.Data.SetLocally(mp.players.local.remoteId, "isPassTimeout", true);
 
-                    if (pass == h.get('pin')) {
+                    if (pass === h.get('pin')) {
                         stocks.enterv(h.get('id'));
                         Container.Data.ResetLocally(mp.players.local.remoteId, "isPassTimeout");
                     }
@@ -1577,6 +1588,9 @@ menuList.showMeriaMainMenu = function() {
     UIMenu.Menu.AddMenuItem("Имущество", "Операции с вашим имуществом", {doName: 'showMeriaSellHvbMenu'});
     UIMenu.Menu.AddMenuItem("Налоговый кабинет", "", {doName: 'showMeriaTaxMenu'});
 
+    if (user.getCache('house_id') > 0)
+        UIMenu.Menu.AddMenuItem("Подселение", "", {doName: 'showMeriaHousePeopleMenu'});
+
     UIMenu.Menu.AddMenuItem("Экономика штата", "", {doName: 'showMeriaInfoMenu'});
 
     UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: 'closeMenu'});
@@ -1593,6 +1607,8 @@ menuList.showMeriaMainMenu = function() {
             menuList.showMeriaInfoMenu(await coffer.getAllData());
         if (item.doName == 'showMeriaJobListMenu')
             menuList.showMeriaJobListMenu();
+        if (item.doName == 'showMeriaHousePeopleMenu')
+            menuList.showMazeBankHousePeopleMenu();
         if (item.doName == 'showLicBuyMenu')
             menuList.showLicBuyMenu();
         if (item.doName == 'getRegister') {
@@ -1828,6 +1844,113 @@ menuList.showMeriaTaxInfoMenu = async function(type, id) {
     });
 };
 
+menuList.showLawyerOffersMenu = function(price, id, rpName) {
+
+    UIMenu.Menu.Create('Юрист', `~b~${rpName}`);
+
+    UIMenu.Menu.AddMenuItem("~g~Согласиться", `Цена: ~g~${methods.moneyFormat(price)}`, {eventName: 'server:user:lawyer:accept'});
+    UIMenu.Menu.AddMenuItem("~r~Отказаться");
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: 'closeMenu'});
+    UIMenu.Menu.Draw();
+
+    UIMenu.Menu.OnSelect.Add(async (item, index) => {
+        UIMenu.Menu.HideMenu();
+        if (item.eventName)
+            mp.events.callRemote(item.eventName, id);
+    });
+};
+
+menuList.showLawyerHouseOffersMenu = function(buyerId, id) {
+
+    UIMenu.Menu.Create('Юрист', `~b~Подселение`);
+
+    UIMenu.Menu.AddMenuItem("~g~Согласиться", `Цена: ~g~$10,000`, {eventName: 'server:houses:lawyer:addUser'});
+    UIMenu.Menu.AddMenuItem("~r~Отказаться");
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: 'closeMenu'});
+    UIMenu.Menu.Draw();
+
+    UIMenu.Menu.OnSelect.Add(async (item, index) => {
+        UIMenu.Menu.HideMenu();
+        if (item.eventName)
+            mp.events.callRemote(item.eventName, id, buyerId);
+    });
+};
+
+menuList.showMazeBankHousePeopleMenu = function() {
+    //TODO BLACKOUT
+
+    user.updateCache().then(function () {
+        UIMenu.Menu.Create(` `, `~b~Жилищный вопрос`, 'gov', false, false, 'gov');
+
+        if (user.getCache('house_id') > 0) {
+            UIMenu.Menu.AddMenuItem("Подселить игрока в дом", 'Стоимость ~g~$10.000', {eventName: 'server:houses:addUser'});
+            UIMenu.Menu.AddMenuItem("Список жильцов", "", {eventName: 'server:houses:userList'});
+            UIMenu.Menu.AddMenuItem("~y~Выселиться", "Стоимость ~g~$1.000", {eventName: 'server:houses:removeMe'});
+        }
+
+        UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: 'closeMenu'});
+        UIMenu.Menu.Draw();
+
+        UIMenu.Menu.OnSelect.Add(async (item, index) => {
+            UIMenu.Menu.HideMenu();
+
+            if (item.eventName == 'server:houses:addUser') {
+                let playerId = methods.parseInt(await UIMenu.Menu.GetUserInput("ID Игрока", "", 9));
+                if (playerId < 0) {
+                    mp.game.ui.notifications.show("~r~ID Игркоа не может быть меньше нуля");
+                    return;
+                }
+                mp.events.callRemote(item.eventName, playerId);
+            }
+            else if (item.eventName) {
+                mp.events.callRemote(item.eventName);
+            }
+        });
+    });
+};
+
+menuList.showMazeBankHousePeopleListMenu = function(data) {
+    //TODO BLACKOUT
+    UIMenu.Menu.Create(` `, `~b~Список жильцов`, 'gov', false, false, 'gov');
+
+    data.forEach(function (item) {
+        let userId = methods.parseInt(item[0]);
+        if (userId == user.get('id'))
+            UIMenu.Menu.AddMenuItem(`${item[1]}`);
+        else
+            UIMenu.Menu.AddMenuItem(`${item[1]}`, "", {eventParam: userId});
+    });
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: 'closeMenu'});
+    UIMenu.Menu.Draw();
+
+    UIMenu.Menu.OnSelect.Add(item => {
+        UIMenu.Menu.HideMenu();
+        if (item.eventParam)
+            menuList.showMazeBankHousePeopleListDoMenu(item.eventParam);
+    });
+
+};
+
+menuList.showMazeBankHousePeopleListDoMenu = function(id) {
+
+    UIMenu.Menu.Create(` `, `~b~` + id, 'gov', false, false, 'gov');
+
+    UIMenu.Menu.AddMenuItem(`~r~Выселить по цене $1.000`, "", {eventName: 'server:house:removeId'});
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: 'closeMenu'});
+    UIMenu.Menu.Draw();
+
+    UIMenu.Menu.OnSelect.Add(item => {
+        UIMenu.Menu.HideMenu();
+        if (item.eventName == 'server:house:removeId') {
+            mp.events.callRemote(item.eventName, id);
+        }
+    });
+};
+
 menuList.showLicBuyMenu = function()
 {
     UIMenu.Menu.Create(" ", "~b~Покупка лицензий", 'gov', false, false, 'gov');
@@ -1927,6 +2050,11 @@ menuList.showMeriaJobListMenu = function() {
 
             if ((item.jobName === 6 || item.jobName === 7 || item.jobName === 8) && user.getCache('work_lvl') < 2) {
                 mp.game.ui.notifications.show("~r~Вам необходим 2 уровень рабочего стажа");
+                return;
+            }
+
+            if ((item.jobName === 6 || item.jobName === 7 || item.jobName === 8) && !user.getCache('taxi_lic')) {
+                mp.game.ui.notifications.show("~r~Вам необходима лицензия на перевозку пассажиров");
                 return;
             }
 
@@ -2712,7 +2840,7 @@ menuList.showSettingsKeyMenu = function() {
     UIMenu.Menu.AddMenuItem("Взять ручное оружие", "Нажмите ~g~Enter~s~ чтобы изменить", menuItem, `~m~[${bind.getKeyName(user.getCache(menuItem.doName))}]`);
 
     menuItem = {doName: "s_bind_animations_all"};
-    UIMenu.Menu.AddMenuItem("Списое всех анимаций", "Нажмите ~g~Enter~s~ чтобы изменить", menuItem, `~m~[${bind.getKeyName(user.getCache(menuItem.doName))}]`);
+    UIMenu.Menu.AddMenuItem("Список всех анимаций", "Нажмите ~g~Enter~s~ чтобы изменить", menuItem, `~m~[${bind.getKeyName(user.getCache(menuItem.doName))}]`);
 
     menuItem = {doName: "s_bind_animations_0"};
     UIMenu.Menu.AddMenuItem("Анимации действий", "Нажмите ~g~Enter~s~ чтобы изменить", menuItem, `~m~[${bind.getKeyName(user.getCache(menuItem.doName))}]`);
@@ -3015,7 +3143,9 @@ menuList.showPlayerDoMenu = function(playerId) {
     if (user.isPolice() || user.isGov())
         UIMenu.Menu.AddMenuItem("Снять наручники", "", {eventName: "server:user:unCuffById"});
     UIMenu.Menu.AddMenuItem("Снять стяжки", "", {eventName: "server:user:unTieById"});
+
     UIMenu.Menu.AddMenuItem("Вырубить", "Чем больше у Вас сила, тем больше шанс", {eventName: "server:user:knockById"});
+
     UIMenu.Menu.AddMenuItem("Затащить в ближайшее авто", "", {eventName: "server:user:inCarById"});
     //UIMenu.Menu.AddMenuItem("Вытащить из тс").eventName = 'server:user:removeCarById';
     UIMenu.Menu.AddMenuItem("Вести за собой", "", {eventName: "server:user:taskFollowById"});
@@ -3446,7 +3576,7 @@ menuList.showVehicleMenu = function(data) {
     if (vInfo.class_name != 'Cycles') {
         UIMenu.Menu.AddMenuItem("~g~Вкл~s~ / ~r~выкл~s~ двигатель", "", {eventName: "server:vehicle:engineStatus"});
     }
-    if (vInfo.class_name == 'Boats' || vInfo.display_name == 'Dodo' || vInfo.display_name == 'Seasparrow')
+    if (vInfo.class_name == 'Boats' || vInfo.display_name == 'Dodo' || vInfo.display_name == 'Seasparrow' || vInfo.display_name == 'Seabreeze')
         UIMenu.Menu.AddMenuItem("~g~Вкл~s~ / ~r~выкл~s~ якорь", "", {eventName: "server:vehicleFreeze"});
 
     if (vInfo.class_name != 'Cycles' || vInfo.class_name != 'Planes' || vInfo.class_name != 'Helicopters' || vInfo.class_name != 'Boats')
@@ -3499,7 +3629,7 @@ menuList.showVehicleMenu = function(data) {
     if (veh.getVariable('fraction_id') === 2 || veh.getVariable('fraction_id') === 5 || veh.getVariable('fraction_id') === 6) {
         UIMenu.Menu.AddMenuItemList(`Маркировка`, enums.dispatchMarkedList, '~y~Номер необходимо указать тот,~br~который на крыше LSPD/BCSD', {dispatchMark: true});
         if (veh.getVariable('dispatchMarked'))
-            UIMenu.Menu.AddMenuItem(`Маркировка: ~b~`).SetRightLabel(`${veh.getVariable('dispatchMarked')}`);
+            UIMenu.Menu.AddMenuItem(`Маркировка: ~b~`, '', {}, `${veh.getVariable('dispatchMarked')}`);
         else
             UIMenu.Menu.AddMenuItem(`Маркировка отсуствует`);
     }
@@ -5295,13 +5425,62 @@ menuList.showShopElMenu = function(shopId, price = 2)
     menuItem.radio = true;
     UIMenu.Menu.AddMenuItem('Рация', `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`, menuItem, '', (sale > 0) ? 'sale' : '');
 
+    if (user.getCache('house_id') > 0) {
+        itemPrice = 7500 * price;
+        menuItem = {};
+        menuItem.price = itemPrice;
+        menuItem.pinHouse = true;
+        UIMenu.Menu.AddMenuItem('Дверь с пинкодом (Дом)', `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`, menuItem, '', (sale > 0) ? 'sale' : '');
+    }
+    if (user.getCache('condo_id') > 0) {
+        itemPrice = 3250 * price;
+        menuItem = {};
+        menuItem.price = itemPrice;
+        menuItem.pinCondo = true;
+        UIMenu.Menu.AddMenuItem('Дверь с пинкодом (Квартира)', `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`, menuItem, '', (sale > 0) ? 'sale' : '');
+    }
+
     UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
     UIMenu.Menu.Draw();
 
     UIMenu.Menu.OnSelect.Add(async (item, index) => {
         UIMenu.Menu.HideMenu();
         try {
-            if (item.radio > 0)
+            if (item.pinHouse)
+            {
+                if (user.getCashMoney() < item.price) {
+                    mp.game.ui.notifications.show(`~g~У вас недостаточно средств`);
+                    return;
+                }
+                try {
+                    user.removeCashMoney(item.price, 'Покупка двери с пинкодом');
+                    business.addMoney(shopId, item.price, 'Покупка двери с пинкодом');
+                    business.removeMoneyTax(shopId, item.price / 2);
+                    mp.game.ui.notifications.show(`~g~Поздравляем с покупкой`);
+                    houses.updatePin(user.getCache('house_id'), 1234);
+                }
+                catch (e) {
+                    
+                }
+            }
+            else if (item.pinCondo)
+            {
+                if (user.getCashMoney() < item.price) {
+                    mp.game.ui.notifications.show(`~g~У вас недостаточно средств`);
+                    return;
+                }
+                try {
+                    user.removeCashMoney(item.price, 'Покупка двери с пинкодом');
+                    business.addMoney(shopId, item.price, 'Покупка двери с пинкодом');
+                    business.removeMoneyTax(shopId, item.price / 2);
+                    mp.game.ui.notifications.show(`~g~Поздравляем с покупкой`);
+                    condos.updatePin(user.getCache('condo_id'), 1234);
+                }
+                catch (e) {
+
+                }
+            }
+            else if (item.radio)
             {
                 if (user.getCashMoney() < item.price) {
                     mp.game.ui.notifications.show(`~g~У вас недостаточно средств`);
@@ -5318,7 +5497,7 @@ menuList.showShopElMenu = function(shopId, price = 2)
                     }, 300);
                 }
                 catch (e) {
-                    
+
                 }
             }
             else if (item.price > 0)
@@ -6379,19 +6558,19 @@ menuList.showShopMaskMenu = function (shopId) {
     for (let i = 0; i < enums.maskClasses.length; i++) {
         if (methods.getCountMask(i, shopId) > 0) {
             if (i === 4) {
-                if (weather.getMonth() === 1)
+                if (weather.getMonth() === 2)
                     UIMenu.Menu.AddMenuItem(`${enums.maskClasses[i]}`, '', {slotId: i});
                 else
                     UIMenu.Menu.AddMenuItem(`~c~${enums.maskClasses[i]}`, 'Доступно для покупки, только в Феврале', {});
             }
             else if (i === 19) {
-                if (weather.getMonth() === 11)
+                if (weather.getMonth() === 12)
                     UIMenu.Menu.AddMenuItem(`${enums.maskClasses[i]}`, '', {slotId: i});
                 else
                     UIMenu.Menu.AddMenuItem(`~c~${enums.maskClasses[i]}`, 'Доступно для покупки, только в Декабре', {});
             }
             else if (i === 20) {
-                if (weather.getMonth() === 9)
+                if (weather.getMonth() === 10)
                     UIMenu.Menu.AddMenuItem(`${enums.maskClasses[i]}`, '', {slotId: i});
                 else
                     UIMenu.Menu.AddMenuItem(`~c~${enums.maskClasses[i]}`, 'Доступно для покупки, только в Октябре', {});
@@ -7636,7 +7815,7 @@ menuList.showLscTunningListMenu = async function(modType, shopId, price, lscBann
                     let isBuy = '';
 
                     try {
-                        if ((upgradeList[modType.toString()] - 1) === i)
+                        if ((upgradeList[modType.toString()]) === i)
                             isBuy = 'done';
                     }
                     catch (e) {
@@ -7721,11 +7900,11 @@ menuList.showLscTunningListMenu = async function(modType, shopId, price, lscBann
                     mp.events.callRemote('server:lsc:showTun', modType, list[index].modType);
                 }
                 catch (e) {
-                    mp.events.callRemote('server:lsc:showTun', modType, index - 1);
+                    mp.events.callRemote('server:lsc:showTun', modType, list[index].modType);
                 }
             }
             else
-                mp.events.callRemote('server:lsc:showTun', modType, index - 1);
+                mp.events.callRemote('server:lsc:showTun', modType, list[index].modType);
         });
 
         UIMenu.Menu.OnSelect.Add(item => {
@@ -8076,7 +8255,7 @@ menuList.showAnimationOtherListMenu = function() {
             UIMenu.Menu.HideMenu();
             return;
         }
-        mp.game.ui.notifications.show("~b~Нажмите ~s~F10~b~ чтобы отменить анимацию");
+        mp.game.ui.notifications.show(`~b~Нажмите ~s~${bind.getKeyName(user.getCache('s_bind_stopanim'))}~b~ чтобы отменить анимацию`);
         if (item.scenario)
             user.playScenario(item.scenario);
         else
@@ -8088,8 +8267,8 @@ menuList.showAnimationSyncListMenu = function() {
 
     UIMenu.Menu.Create(`Анимации`, `~b~Взаимодействие`);
 
-    UIMenu.Menu.AddMenuItem(`Подзороваться 1`, "", {animId: 0});
-    UIMenu.Menu.AddMenuItem(`Подзороваться 2`, "", {animId: 2});
+    UIMenu.Menu.AddMenuItem(`Поздороваться 1`, "", {animId: 0});
+    UIMenu.Menu.AddMenuItem(`Поздороваться 2`, "", {animId: 2});
     UIMenu.Menu.AddMenuItem(`Дать пять`, "", {animId: 1});
     UIMenu.Menu.AddMenuItem(`Поцелуй`, "", {animId: 3});
     //UIMenu.Menu.AddMenuItem(`Минет`).animId = 4;

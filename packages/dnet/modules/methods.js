@@ -298,6 +298,26 @@ methods.replaceAll = function(str, find, replace) {
     return str.toString().replace(new RegExp(methods.escapeRegExp(find), 'g'), replace);
 };
 
+methods.replaceAllGtaSymb = function(str) {
+    let textRemove = methods.replaceAll(str, '~s~', '');
+    textRemove = methods.replaceAll(textRemove, '~r~', '');
+    textRemove = methods.replaceAll(textRemove, '~g~', '');
+    textRemove = methods.replaceAll(textRemove, '~b~', '');
+    textRemove = methods.replaceAll(textRemove, '~y~', '');
+    textRemove = methods.replaceAll(textRemove, '~p~', '');
+    textRemove = methods.replaceAll(textRemove, '~q~', '');
+    textRemove = methods.replaceAll(textRemove, '~o~', '');
+    textRemove = methods.replaceAll(textRemove, '~c~', '');
+    textRemove = methods.replaceAll(textRemove, '~m~', '');
+    textRemove = methods.replaceAll(textRemove, '~u~', '');
+    textRemove = methods.replaceAll(textRemove, '~n~', '');
+    textRemove = methods.replaceAll(textRemove, '~w~', '');
+    textRemove = methods.replaceAll(textRemove, '~h~', '');
+    textRemove = methods.replaceAll(textRemove, '<C>', '');
+    textRemove = methods.replaceAll(textRemove, '</C>', '');
+    return textRemove;
+};
+
 methods.debug = function (message, ...args) {
     try {
         console.log(`[DEBUG-SERVER] [${methods.getTime()}]: ${message}`, args);
@@ -411,7 +431,7 @@ methods.getLicName = function (lic) {
 methods.getRareName = function (proc) {
     if (proc === 0)
         return 'Обычная';
-    if (proc < 10)
+    if (proc < 11)
         return 'Легендарная';
     if (proc < 30)
         return 'Мистическая';
@@ -798,7 +818,7 @@ methods.loadAllBlips = function () {
     methods.createBlip(new mp.Vector3(450.0621337890625, -984.3471069335938, 43.69164276123047), 60, 0, 0.8, 'Police Department');
     methods.createBlip(new mp.Vector3(-448.6859, 6012.703, 30.71638), 60, 16, 0.8, 'Sheriff Department');
     methods.createBlip(new mp.Vector3(1853.22, 3686.6796875, 33.2670), 60, 16, 0.8, 'Sheriff Department');
-    methods.createBlip(new mp.Vector3(366.2178955078125, -1593.1396484375, 28.29206085205078), 60, 16, 0.8, 'Sheriff Department');
+    //methods.createBlip(new mp.Vector3(366.2178955078125, -1593.1396484375, 28.29206085205078), 60, 16, 0.8, 'Sheriff Department');
     methods.createBlip(new mp.Vector3(-158.44952392578125, -605.221923828125, 48.23460388183594), 535, 67, 0.8, 'Arcadius - Бизнес Центр');
     //methods.createBlip(new mp.Vector3(2484.16748046875, -384.5539245605469, 93.9015121459961), 498, 0, 0.8, 'Здание NOOSE');
     methods.createBlip(new mp.Vector3(1830.489, 2603.093, 45.8891), 238, 0, 0.8, 'Федеральная тюрьма');
@@ -817,6 +837,8 @@ methods.loadAllBlips = function () {
     methods.createBlip(new mp.Vector3(956.8535766601562, 34.93609619140625, 122.11998748779297), 679, 0, 0.8);
     methods.createBlip(new mp.Vector3(1200.6854248046875, -1474.0303955078125, 33.85951614379883), 436, 60, 0.8, 'Здание Fire Department');
     methods.createBlip(new mp.Vector3(-369.2587890625, 6114.552734375, 30.446975708007812), 436, 60, 0.8, 'Здание Fire Department');
+
+    methods.createBlip(new mp.Vector3(-1654.792236328125, -948.4613037109375, 7.716407775878906), 225, 2, 0.8, 'Б/У Авторынок');
     //methods.createBlip(new mp.Vector3(-1581.689, -557.913, 34.95288), 545, 0, 0.8, 'Здание автошколы');
 
     //methods.createBlip(new mp.Vector3(46.947, -1753.859, 46.508), 78, 68, 0.4, 'Торговый центр MegaMoll');

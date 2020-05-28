@@ -282,6 +282,8 @@ ui.isYellowZone = function() {
     return isYellowZone;
 };
 
+let speed = false;
+
 ui.updateValues = function() {
     //return; //TODO ВАЖНО
     if (user.isLogin()) {
@@ -295,6 +297,17 @@ ui.updateValues = function() {
                         isGreenZone = true;
                 }
             });
+
+            if (mp.players.local.dimension === 0) {
+                if (isGreenZone) {
+                    speed = true;
+                    mp.events.call('client:setNewMaxSpeed', 60);
+                }
+                else if (speed) {
+                    speed = false;
+                    mp.events.call('client:setNewMaxSpeed', 0);
+                }
+            }
 
             isYellowZone = weather.getHour() >= 6 && weather.getHour() < 22 && enums.zoneYellowList.indexOf(mp.game.zone.getNameOfZone(mp.players.local.position.x, mp.players.local.position.y, mp.players.local.position.z)) >= 0;
 

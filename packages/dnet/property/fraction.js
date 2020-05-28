@@ -572,7 +572,7 @@ fraction.createCargoWar = function(count = 3) {
 
                 let boxes = [];
 
-                for (let i = 0; i < 5; i++) {
+                for (let i = 0; i < 3; i++) {
                     let rare = 0;
                     if (methods.getRandomInt(0, 100) < 40)
                         rare = 1;

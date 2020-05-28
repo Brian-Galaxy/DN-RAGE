@@ -2722,6 +2722,8 @@ mp.events.add("client:setNewMaxSpeed", function (speed) {
         newMaxSpeed = speed;
         if (newMaxSpeed < 10 && newMaxSpeed > 0)
             newMaxSpeed = 10;
+
+        mp.events.call('client:vehicle:checker');
     }
     catch (e) {
         methods.debug(e);

@@ -111,7 +111,7 @@ vSync.updateValues = function(entity, byEnter = false) {
                 try {
 
                     if (!byEnter) {
-                        if (entity.getClass() === 15 || entity.getClass() === 16 || entity.getClass() === 22 || entity.getClass() === 11 || entity.model === mp.game.joaat('polmav'))
+                        if (entity.getClass() === 15 || entity.getClass() === 16 || entity.getClass() === 22 || entity.getClass() === 11  || entity.getClass() === 20 || entity.model === mp.game.joaat('polmav'))
                         {
 
                         }
@@ -508,7 +508,7 @@ mp.events.add("vSync:setExtraState", (vehId, status) => {
         let veh = mp.vehicles.atRemoteId(vehId);
         if (veh !== undefined && mp.vehicles.exists(veh)) {
 
-            if (veh.getClass() === 15 || veh.getClass() === 16 || veh.getClass() === 22 || veh.getClass() === 11 || veh.model === mp.game.joaat('polmav'))
+            if (veh.getClass() === 15 || veh.getClass() === 16 || veh.getClass() === 22 || veh.getClass() === 11 || veh.getClass() === 20 || veh.model === mp.game.joaat('polmav'))
                 return;
 
             for(let i = 0; i < 10; i++)

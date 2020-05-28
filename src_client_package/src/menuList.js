@@ -3685,7 +3685,6 @@ menuList.showTruckerOfferInfoMenu = function(idx) {
     });
 };
 
-
 menuList.showVehicleMenu = function(data) {
 
     let vInfo = methods.getVehicleInfo(mp.players.local.vehicle.model);

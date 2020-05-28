@@ -232,7 +232,7 @@ vehicles.isVehicleSirenValid = function (model) {
         case 'Lguard':
         case 'Pranger':
         case 'Ambulance':
-        case 'FireTruck':
+        case 'Firetruk':
         case 'PoliceOld1':
         case 'PoliceOld2':
         case 'Bcfdscout':
@@ -330,7 +330,7 @@ vehicles.getSirenSound = function (model, state) {
                 return 'VEHICLES_HORNS_POLICE_WARNING';
             break;
         }
-        case 'FireTruck': {
+        case 'Firetruk': {
             if (state == 2)
                 return 'RESIDENT_VEHICLES_SIREN_FIRETRUCK_QUICK_01';
             if (state == 3)
@@ -370,7 +370,7 @@ vehicles.getWarningSound = function (model) {
         case 'PoliceOld1':
         case 'PoliceOld2':
             return 'SIRENS_AIRHORN';
-        case 'FireTruck':
+        case 'Firetruk':
             return 'VEHICLES_HORNS_FIRETRUCK_WARNING';
     }
     return 'SIRENS_AIRHORN';

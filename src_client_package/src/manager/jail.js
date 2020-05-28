@@ -40,7 +40,7 @@ jail.timer = function() {
                 ui.showSubtitle(`Время в тюрьме~g~ ${user.getCache('jail_time')} ~s~сек.`);
             }
 
-            if (user.getCache('jail_time') == 1)
+            if (user.getCache('jail_time') <= 1 && user.getCache('jail_time') !== 0)
                 jail.freePlayer();
         }
     }

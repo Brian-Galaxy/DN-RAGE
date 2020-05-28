@@ -66,7 +66,7 @@ weapons.getDamageByHash = function(hash) {
 
 weapons.getTintName = function(wpName, tint) {
     tint = methods.parseInt(tint);
-    let tintList = ['','Green','Gold','Pink','BCSD','LSPD','Orange','Platinum'];
+    let tintList = ['','Green','Gold','Pink','Desert','Tactical','Orange','Platinum'];
     let tintList2 = ['','Classic Gray','Classic Two-Tone','Classic White','Classic Beige','Classic Green','Classic Blue','Classic Earth','Classic Brown & Black','Red Contrast','Blue Contrast','Yellow Contrast','Orange Contrast','Bold Pink','Bord Purple & Yellow','Bold Orange','Bold Green & Purple','Bold Red Features','Bold Green Features','Bold Cyan Features','Bold Yellow Features','Bold Red & White','Bold Blue & White','Metallic Gold','Metallic Platinum','Metallic Gray & Lilac','Metallic Purple & Lime','Metallic Red','Metallic Green','Metallic Blue','Metallic White & Aqua','Metallic Red & Yellow'];
     if (wpName.indexOf('_mk2') >= 0)
         return tintList2[tint];

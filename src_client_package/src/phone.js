@@ -17,6 +17,7 @@ import jobPoint from "./manager/jobPoint";
 
 import fraction from "./property/fraction";
 import timer from "./manager/timer";
+import tree from "./jobs/tree";
 
 let phone = {};
 
@@ -803,6 +804,87 @@ phone.showAppFraction2 = async function() {
             },
         ],
     };
+    menu.items.push(titleMenu);
+
+    let orderLamar = await fraction.get(user.getCache('fraction_id2'), 'orderLamar');
+    let orderAtm = await fraction.get(user.getCache('fraction_id2'), 'orderAtm');
+    //let orderFuel = await fraction.get(user.getCache('fraction_id2'), 'orderFuel');
+    let orderDrug = await fraction.get(user.getCache('fraction_id2'), 'orderDrug');
+
+    titleMenu = {
+        title: 'Контракты',
+        umenu: [],
+    };
+
+    if (orderLamar > 5000) {
+        titleMenu.umenu.push(
+            {
+                title: "Грузы Ламара",
+                text: `Задание выполнено`,
+                type: 1,
+                clickable: false,
+                params: { name: "none" }
+            },
+        )
+    }
+    else {
+        titleMenu.umenu.push(
+            {
+                title: "Грузы Ламара",
+                text: `Перевезите ${orderLamar}/1000 грузов ламара и получите груз`,
+                type: 1,
+                clickable: true,
+                params: { name: "getLamar" }
+            },
+        )
+    }
+
+    if (orderAtm > 5000) {
+        titleMenu.umenu.push(
+            {
+                title: "Кража банкоматов",
+                text: `Задание выполнено`,
+                type: 1,
+                clickable: false,
+                params: { name: "none" }
+            },
+        )
+    }
+    else {
+        titleMenu.umenu.push(
+            {
+                title: "Кража банкоматов",
+                text: `Взломайте ${orderAtm}/50 банкоматов и получите 100ec на счет организации`,
+                type: 1,
+                clickable: true,
+                params: { name: "getAtm" }
+            },
+        )
+    }
+
+    if (orderDrug > 5000) {
+        titleMenu.umenu.push(
+            {
+                title: "Закладки",
+                text: `Задание выполнено`,
+                type: 1,
+                clickable: false,
+                params: { name: "none" }
+            },
+        )
+    }
+    else {
+        titleMenu.umenu.push(
+            {
+                title: "Закладки",
+                text: `Разнесите ${orderDrug}/2000 закладок и получите груз с наркотиками`,
+                type: 1,
+                clickable: true,
+                params: { name: "getDrug" }
+            },
+        )
+    }
+
     menu.items.push(titleMenu);
 
     let titleMenu1 = {
@@ -3154,6 +3236,9 @@ phone.consoleCallback = async function(command) {
                     if (user.getCache('fraction_id2') > 0)
                         fraction.addMoney(user.getCache('fraction_id2'), money / 10, `Взлом с банкомата (${user.getCache('name')})`);
 
+                    if (user.getCache('fraction_id2') > 0)
+                        fraction.set(user.getCache('fraction_id2'), 'orderAtm', await fraction.get(user.getCache('fraction_id2'), 'orderAtm') + 1);
+
                     if (user.getCache('stats_darknet') < 40 && user.getCache('stats_darknet') >= 20) {
                         user.set('stats_darknet', user.getCache('stats_darknet') + 1);
                     }
@@ -3190,7 +3275,7 @@ phone.consoleCallback = async function(command) {
                         return;
 
                     let dist = methods.distanceToPos(v.position, mp.players.local.position);
-                    if (dist > 30)
+                    if (dist > 11)
                         return;
 
                     if (methods.md5(v.remoteId.toString()).slice(0, 6) === hash) {
@@ -3299,7 +3384,7 @@ phone.consoleCallback = async function(command) {
                     }
 
                     let dist = methods.distanceToPos(v.position, mp.players.local.position);
-                    if (dist > 30)
+                    if (dist > 10)
                         return;
 
                     await methods.sleep(methods.getRandomInt(1, 100));
@@ -3342,6 +3427,7 @@ phone.consoleCallback = async function(command) {
                 phone.addConsoleCommand('ecorp -fraction -list');
                 phone.addConsoleCommand('ecorp -car -getpos');
                 phone.addConsoleCommand('ecorp -user -getpos');
+                phone.addConsoleCommand('ecorp -drug -getpos');
                 phone.addConsoleCommand('ecorp -money -clear');
 
             }
@@ -3480,6 +3566,74 @@ phone.consoleCallback = async function(command) {
                 }
                 else {
                     phone.addConsoleCommand('Usage: ecorp -car -getpos');
+                }
+            }
+            else if (args[0] === '-drug') {
+                if (args[1] === '-getpos') {
+                    /*if (weather.getHour() < 22 && weather.getHour() > 4) {
+                        mp.game.ui.notifications.show('~r~Доступно только с 22 до 4 утра игрового времени');
+                        return;
+                    }*/
+
+                    if (await user.hasById('grabDrug')) {
+                        mp.game.ui.notifications.show('~r~Вы не можете сейчас выполнить задание');
+                        return;
+                    }
+
+                    if (user.getCache('isSellLamar')) {
+                        mp.game.ui.notifications.show('~r~Вы не можете сейчас сбыть транспорт, т.к. вы выполняете заказ Ламара');
+                        return;
+                    }
+
+                    if (user.getCache('job') === 10) {
+                        mp.game.ui.notifications.show('~r~Инкассаторам запрещено это действие');
+                        return;
+                    }
+
+                    if (user.hasCache('isSellUser')) {
+                        mp.game.ui.notifications.show(`~r~Вы уже получили задание на похищение`);
+                        return;
+                    }
+
+                    if (user.hasCache('isSellCar')) {
+                        mp.game.ui.notifications.show(`~r~Вы уже получили задание на угон`);
+                        return;
+                    }
+
+                    if (user.hasCache('isSellDrug')) {
+                        mp.game.ui.notifications.show(`~r~Вы уже получили задание`);
+                        return;
+                    }
+
+                    if (user.hasCache('isSellMoney')) {
+                        mp.game.ui.notifications.show(`~r~Вы уже получили задание отмыв денег`);
+                        return;
+                    }
+
+                    user.set('isSellDrug', true);
+                    let posId = methods.getRandomInt(0, tree.markers.length);
+                    let posId2 = methods.getRandomInt(0, tree.markers[posId].list.length);
+                    let pos = new mp.Vector3(tree.markers[posId].list[posId2][0], tree.markers[posId].list[posId2][1], tree.markers[posId].list[posId2][2] - 1);
+
+                    let price = methods.distanceToPos(pos, mp.players.local.position) / 25;
+                    if (price > 200)
+                        price = 200 + methods.getRandomInt(0, 50);
+
+                    user.set('drugPrice', price);
+
+                    jobPoint.create(pos, true, 3);
+                    mp.game.ui.notifications.show(`~g~Метка была установлена`);
+
+                    setTimeout(function () {
+                        if (user.hasCache('isSellDrug')) {
+                            jobPoint.delete();
+                            user.reset('isSellDrug');
+                            mp.game.ui.notifications.show(`~r~Метка была удалена`);
+                        }
+                    }, 600 * 1000);
+                }
+                else {
+                    phone.addConsoleCommand('Usage: ecorp -drug -getpos');
                 }
             }
             else if (args[0] === '-user') {
@@ -4249,6 +4403,73 @@ phone.callBackButton = async function(menu, id, ...args) {
                 mp.game.ui.notifications.show(`~g~Вы успешно наладили связи и теперь вам доступны наводки на ограбления магазинов`);
                 phone.showLoad();
                 setTimeout(phone.showAppFraction2, 500);
+            }
+            else if (params.name == 'getDrug') {
+
+                let orderDrug = await fraction.get(user.getCache('fraction_id2'), 'orderDrug');
+                if (orderDrug >= 9999) {
+                    mp.game.ui.notifications.show(`~r~Вы уже получали фургон сегодня`);
+                    return;
+                }
+                if (orderDrug < 2000) {
+                    mp.game.ui.notifications.show(`~r~Необходимо положить ${orderDrug} закладок, для выполнения контракта`);
+                    return;
+                }
+
+                if (user.isLeader2() || user.isSubLeader2()) {
+                    mp.events.callRemote('server:fraction:getDrugSpeedo');
+                    fraction.set(user.getCache('fraction_id2'), 'orderDrug', 9999);
+                    phone.showLoad();
+                    setTimeout(phone.showAppFraction2, 500);
+                }
+                else {
+                    mp.game.ui.notifications.show(`~r~Доступно только для лидера или замов`);
+                }
+            }
+            else if (params.name == 'getLamar') {
+
+               let orderLamar = await fraction.get(user.getCache('fraction_id2'), 'orderLamar');
+               if (orderLamar >= 9999) {
+                   mp.game.ui.notifications.show(`~r~Вы уже получали фургон сегодня`);
+                   return;
+               }
+               if (orderLamar < 1000) {
+                   mp.game.ui.notifications.show(`~r~Необходимо перевести ${orderLamar} грузов, для выполнения контракта`);
+                   return;
+               }
+
+                if (user.isLeader2() || user.isSubLeader2()) {
+                    mp.events.callRemote('server:fraction:getLamarSpeedo');
+                    fraction.set(user.getCache('fraction_id2'), 'orderLamar', 9999);
+                    phone.showLoad();
+                    setTimeout(phone.showAppFraction2, 500);
+                }
+                else {
+                    mp.game.ui.notifications.show(`~r~Доступно только для лидера или замов`);
+                }
+            }
+            else if (params.name == 'getAtm') {
+
+                let orderAtm = await fraction.get(user.getCache('fraction_id2'), 'orderAtm');
+                if (orderAtm >= 9999) {
+                    mp.game.ui.notifications.show(`~r~Вы уже получали фургон сегодня`);
+                    return;
+                }
+                if (orderAtm < 50) {
+                    mp.game.ui.notifications.show(`~r~Необходимо ограбить ${orderAtm} банкоматов, для выполнения контракта`);
+                    return;
+                }
+
+                if (user.isLeader2() || user.isSubLeader2()) {
+
+                    fraction.addMoney(user.getCache('fraction_id2'), 100, 'Бонус за выполненный контракт');
+                    fraction.set(user.getCache('fraction_id2'), 'orderAtm', 9999);
+                    phone.showLoad();
+                    setTimeout(phone.showAppFraction2, 500);
+                }
+                else {
+                    mp.game.ui.notifications.show(`~r~Доступно только для лидера или замов`);
+                }
             }
         }
     }

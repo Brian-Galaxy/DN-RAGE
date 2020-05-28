@@ -36,7 +36,10 @@ import hosp from "../manager/hosp";
 import edu from "../manager/edu";
 
 import gr6 from "../jobs/gr6";
+import trucker from "../jobs/trucker";
+
 import coffer from "../coffer";
+import fraction from "../property/fraction";
 
 mp.gui.chat.enabled = false;
 
@@ -562,7 +565,9 @@ mp.events.add('client:events:custom:choiceRole', function(roleIndex) {
             let cl3 = methods.getRandomInt(0, clothList[idFoot][3] - 1);
 
             if (idTorso >= 0)
+            {
                 cloth.buy(0, clothList[idTorso][1], clothList[idTorso][2], cl1 < 0 ? 0 : cl1, clothList[idTorso][4], clothList[idTorso][5], clothList[idTorso][6], clothList[idTorso][7], clothList[idTorso][9], 0, true);
+            }
 
             setTimeout(function () {
                 try {
@@ -572,7 +577,7 @@ mp.events.add('client:events:custom:choiceRole', function(roleIndex) {
                 catch (e) {
                     
                 }
-            }, 500);
+            }, 1000);
 
             setTimeout(function () {
                 try {
@@ -581,7 +586,11 @@ mp.events.add('client:events:custom:choiceRole', function(roleIndex) {
                 } catch (e) {
                     
                 }
-            }, 500);
+            }, 2000);
+
+            setTimeout(function () {
+               user.updateCharacterFace();
+            }, 5000);
 
             if (user.getCache('role') > 0) {
                 user.set('is_custom', true);
@@ -1666,6 +1675,21 @@ mp.events.add('client:menuList:showMenu', (title, desc, menuData) => {
     menuList.showMenu(title, desc, new Map(menuData));
 });
 
+mp.events.add('client:menuList:showTruckerOffersMenu', (menuData) => {
+    methods.debug('Event: client:menuList:showTruckerOffersMenu');
+    menuList.showTruckerOffersMenu(menuData);
+});
+
+mp.events.add('client:trucker:acceptOffer1', (id, name, company, x, y, z, px, py, pz, price) => {
+    methods.debug('Event: client:trucker:acceptOffer1');
+    trucker.acceptOffer1(id, name, company, x, y, z, px, py, pz, price);
+});
+
+mp.events.add('client:trucker:acceptOffer2', (id, name, company, trName, cl1, cl2, liv, x, y, z, rot, px, py, pz, price) => {
+    methods.debug('Event: client:trucker:acceptOffer2');
+    trucker.acceptOffer2(id, name, company, trName, cl1, cl2, liv, x, y, z, rot, px, py, pz, price);
+});
+
 mp.events.add('client:menuList:showMazeOfficeTeleportMenu', () => {
     methods.debug('Event: client:menuList:showMazeOfficeTeleportMenu');
     menuList.showMazeOfficeTeleportMenu();
@@ -1825,6 +1849,16 @@ mp.events.add('client:menuList:showGovGarderobMenu', () => {
 mp.events.add('client:menuList:showSapdArsenalMenu', () => {
     methods.debug('Event: client:menuList:showSapdArsenalMenu');
     menuList.showSapdArsenalMenu();
+});
+
+mp.events.add('client:menuList:showUsmcArsenalMenu', () => {
+    methods.debug('Event: client:menuList:showUsmcArsenalMenu');
+    menuList.showUsmcArsenalMenu();
+});
+
+mp.events.add('client:menuList:showFibArsenalMenu', () => {
+    methods.debug('Event: client:menuList:showFibArsenalMenu');
+    menuList.showFibArsenalMenu();
 });
 
 mp.events.add('client:menuList:showSapdArrestMenu', () => {
@@ -2525,6 +2559,7 @@ mp.events.add('client:phone:showMenu', function(data) {
     }
 });
 
+
 mp.events.add('client:phone:inputModal', function(state) {
     chat.show(!state);
     chat.activate(!state);
@@ -3074,6 +3109,30 @@ mp.events.add("playerEnterCheckpoint", (checkpoint) => {
             mp.events.callRemote('server:sellVeh');
             user.reset('isSellCar');
             jobPoint.delete();
+        }
+        if (user.hasCache('isSellDrug')) {
+            mp.players.local.freezePosition(true);
+            methods.blockKeys(true);
+            user.playScenario("WORLD_HUMAN_GARDENER_PLANT");
+            user.reset('isSellDrug');
+            jobPoint.delete();
+
+            setTimeout(async function () {
+
+                let price = user.getCache('drugPrice');
+
+                user.addCryptoMoney(price / 1000, 'Помощь Ламару');
+                if (user.getCache('fraction_id2') > 0) {
+                    fraction.addMoney(user.getCache('fraction_id2'), price / 1000, `Доля от закладок (${user.getCache('name')})`);
+                    let val = await fraction.get(user.getCache('fraction_id2'), 'orderDrug');
+                    fraction.set(user.getCache('fraction_id2'), 'orderDrug', val + 1);
+                }
+
+                mp.game.ui.notifications.show(`~b~Вы заработали ${methods.cryptoFormat(price / 1000)}`);
+                mp.players.local.freezePosition(false);
+                methods.blockKeys(false);
+                user.stopScenario();
+            }, 10000);
         }
         if (user.hasCache('isSellUser')) {
             mp.events.callRemote('server:sellUser');
@@ -3807,6 +3866,7 @@ mp.events.add('render', () => {
 mp.events.add('render', () => {
     try {
         mp.game.player.setHealthRechargeMultiplier(0.0);
+        mp.game.player.setLockonRangeOverride(0.0);
     }
     catch (e) {
         
@@ -3870,8 +3930,12 @@ mp.events.add('client:taskFollow', (nplayer) => {
                     if (user.isCuff() || user.isTie())
                         user.playAnimation("mp_arresting", "idle", 49);
                 }
-                if (taskFollowed && methods.distanceToPos(mp.players.local.position, taskFollowed.position) > 50.0) {
+                if (taskFollowed && methods.distanceToPos(mp.players.local.position, taskFollowed.position) > 10.0) {
                     user.teleportv(taskFollowed.position);
+
+                    mp.game.invoke(methods.TASK_FOLLOW_TO_OFFSET_OF_ENTITY, mp.players.local.handle, nplayer.handle, 1, 1, 1, 10.0, -1, 0.5, 1);
+                    mp.game.invoke(methods.SET_PED_KEEP_TASK, mp.players.local.handle, true);
+
                     if (user.isCuff() || user.isTie())
                         user.playAnimation("mp_arresting", "idle", 49);
                 }

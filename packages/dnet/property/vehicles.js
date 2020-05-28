@@ -423,10 +423,12 @@ vehicles.spawnFractionCar = (id) => {
             }
             case 4:
             {
+                numberStyle = 4;
+
                 color1 = 154;
                 color2 = 154;
 
-                if (model == -823509173 || model == 321739290 || model == 1074326203 || model == 630371791)
+                if (info.name === 'Barracks' || info.name === 'Barracks2' || info.name === 'Barracks3' || info.name === 'Crusader' || info.name === 'Cargobob')
                 {
                     color1 = 111;
                     color2 = 111;
@@ -469,6 +471,10 @@ vehicles.spawnFractionCar = (id) => {
                 case 2:
                     spawnPos = new mp.Vector3(432.25347900390625, -1014.165771484375, 28.466196060180664);
                     spawnRot = methods.parseFloat(158.577392578125);
+                    break;
+                case 4:
+                    spawnPos = new mp.Vector3(466.7912902832031, -3193.000732421875, 6.302977085113525);
+                    spawnRot = methods.parseFloat(273.5457763671875);
                     break;
                 case 5:
                     spawnPos = new mp.Vector3(-472.1729431152344, 6034.9501953125, 30.960887908935547);
@@ -529,9 +535,9 @@ vehicles.spawnFractionCar = (id) => {
                 }
             }
 
-            if (fractionId == 4 && model == -808457413)
-                veh.setMod(48, methods.getRandomInt(0, 2) == 0 ? 8 : 18);
-            if (fractionId == 4 && model == -121446169)
+            if (fractionId === 4 && info.name === 'Patriot')
+                veh.setMod(48, methods.getRandomInt(0, 2) === 0 ? 8 : 18);
+            if (fractionId === 4 && info.name === 'Kamacho')
                 veh.setMod(48, 4);
 
         }, spawnPos, spawnRot, info.name);
@@ -1096,10 +1102,10 @@ vehicles.addNew = (model, count) => {
     }
 };
 
-vehicles.addNewFraction = (model, count, fractionId) => {
+vehicles.addNewFraction = (model, count, fractionId, x = 0, y = 0, z = 0, rot = 0) => {
     let vInfo = methods.getVehicleInfo(model);
     for (let i = 0; i < count; i++) {
-        mysql.executeQuery(`INSERT INTO cars_fraction (name, price, fuel, number, fraction_id) VALUES ('${vInfo.display_name}', '${vInfo.price}', '${vInfo.fuel_full}', '${vehicles.generateNumber()}', '${fractionId}')`);
+        mysql.executeQuery(`INSERT INTO cars_fraction (name, price, fuel, number, fraction_id, x, y, z, rot) VALUES ('${vInfo.display_name}', '${vInfo.price}', '${vInfo.fuel_full}', '${vehicles.generateNumber()}', '${fractionId}', '${x}', '${y}', '${z}', '${rot}')`);
     }
 };
 

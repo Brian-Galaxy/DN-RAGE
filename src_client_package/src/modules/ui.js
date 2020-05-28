@@ -43,6 +43,7 @@ let canEdit = false;
 let showHud = true;
 let showMenu = false;
 let isGreenZone = false;
+let isYellowZone = false;
 
 let maxStringLength = 50;
 
@@ -277,6 +278,10 @@ ui.isGreenZone = function() {
     return isGreenZone;
 };
 
+ui.isYellowZone = function() {
+    return isYellowZone;
+};
+
 ui.updateValues = function() {
     //return; //TODO ВАЖНО
     if (user.isLogin()) {
@@ -291,6 +296,8 @@ ui.updateValues = function() {
                 }
             });
 
+            isYellowZone = weather.getHour() >= 6 && weather.getHour() < 22 && enums.zoneYellowList.indexOf(mp.game.zone.getNameOfZone(mp.players.local.position.x, mp.players.local.position.y, mp.players.local.position.z)) >= 0;
+
             let data = {
                 type: 'updateValues',
                 isShow: user.getCache("is_clock"),
@@ -298,7 +305,7 @@ ui.updateValues = function() {
                 date: weather.getFullRpDate(),
                 time: weather.getFullRpTime(),
                 showGreen: isGreenZone,
-                showYellow: weather.getHour() >= 6 && weather.getHour() < 22 && enums.zoneYellowList.indexOf(mp.game.zone.getNameOfZone(mp.players.local.position.x, mp.players.local.position.y, mp.players.local.position.z)) >= 0,
+                showYellow: isYellowZone,
                 background: user.getCache('s_hud_bg'),
             };
             ui.callCef('hudw', JSON.stringify(data));
@@ -339,7 +346,7 @@ ui.updateValues = function() {
                 online: mp.players.length,
                 max_player: "1000",
                 id: mp.players.local.remoteId,
-                showAmmo: !shoot.isIgnoreWeapon(),
+                showAmmo: !shoot.isIgnoreWeapon() && !mp.players.local.isInAnyVehicle(true),
                 ammoMode: shoot.getCurrentModeName(),
                 ammoCount: `${user.getCurrentAmmo()}`,
                 background: user.getCache('s_hud_bg'),

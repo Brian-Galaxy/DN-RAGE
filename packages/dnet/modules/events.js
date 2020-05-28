@@ -41,6 +41,7 @@ let ems = require('../managers/ems');
 let tax = require('../managers/tax');
 let discord = require('../managers/discord');
 let racer = require('../managers/racer');
+let trucker = require('../managers/trucker');
 
 mp.events.__add__ = mp.events.add;
 
@@ -530,6 +531,36 @@ mp.events.addRemoteCounted('server:user:clearAllProp', (player) => {
 
 mp.events.addRemoteCounted('server:user:giveUniform', (player, id) => {
     user.giveUniform(player, id);
+});
+
+mp.events.addRemoteCounted('server:trucker:showMenu', (player, id) => {
+    if (!user.isLogin(player))
+        return;
+    trucker.showMenu(player, id);
+});
+
+mp.events.addRemoteCounted('server:tucker:acceptOffer', (player, offerId) => {
+    if (!user.isLogin(player))
+        return;
+    trucker.acceptOffer(player, offerId);
+});
+
+mp.events.addRemoteCounted('server:trucker:doneOffer', (player, offerId) => {
+    if (!user.isLogin(player))
+        return;
+    trucker.doneOffer(player, offerId);
+});
+
+mp.events.addRemoteCounted('server:trucker:stop', (player, offerId) => {
+    if (!user.isLogin(player))
+        return;
+    trucker.stop(player, offerId);
+});
+
+mp.events.addRemoteCounted('server:trucker:trySpawnTrailer', (player, offerId) => {
+    if (!user.isLogin(player))
+        return;
+    trucker.trySpawnTrailer(player, offerId);
 });
 
 mp.events.addRemoteCounted('server:user:kick', (player, reason) => {
@@ -2684,7 +2715,8 @@ mp.events.addRemoteCounted('server:vehicles:addNew', (player, model, count) => {
 
 mp.events.addRemoteCounted('server:vehicles:addNewFraction', (player, model, count, fractionId) => {
     if (user.isAdmin(player)) {
-        vehicles.addNewFraction(model, count, fractionId);
+        let pos = player.vehicle.position;
+        vehicles.addNewFraction(model, count, fractionId, pos.x, pos.y, pos.z, player.vehicle.heading);
         player.notify('~g~Транспорт на авторынок был добавлен. Кол-во: ~s~' + count)
     }
 });
@@ -4586,6 +4618,18 @@ mp.events.add("server:pSync:fpUpdate", (player, camPitch, camHeading) => {
     }
 });
 
+mp.events.addRemoteCounted('server:fraction:getDrugSpeedo', (player) => {
+    if (!user.isLogin(player))
+        return;
+    fraction.spawnNearCargo(player, true);
+});
+
+mp.events.addRemoteCounted('server:fraction:getLamarSpeedo', (player) => {
+    if (!user.isLogin(player))
+        return;
+    fraction.spawnNearCargo(player);
+});
+
 mp.events.addRemoteCounted('server:fraction:vehicleNewRank', (player, id, rank) => {
 
     if (!user.isLogin(player))
@@ -5866,39 +5910,6 @@ mp.events.addRemoteCounted('server:shop:buy', (player, itemId, price, shopId) =>
     shop.buy(player, itemId, price, shopId);
 });
 
-mp.events.addRemoteCounted('server:uniform:sapd', (player, idx) => {
-    try {
-        user.giveUniform(player, idx);
-    }
-    catch (e) {
-        methods.debug(e);
-    }
-});
-
-mp.events.addRemoteCounted('server:uniform:sheriff', (player, idx) => {
-    try {
-        if (idx === 0)
-            user.giveUniform(player, idx);
-        else
-            user.giveUniform(player, idx + 12);
-    }
-    catch (e) {
-        methods.debug(e);
-    }
-});
-
-mp.events.addRemoteCounted('server:uniform:ems', (player, idx) => {
-    try {
-        if (idx === 0)
-            user.giveUniform(player, idx);
-        else
-            user.giveUniform(player, idx + 23);
-    }
-    catch (e) {
-        methods.debug(e);
-    }
-});
-
 mp.events.addRemoteCounted('server:addFractionLog', (player, name, doName, text, fractionId) => {
     methods.saveFractionLog(name, doName, text, fractionId);
 });
@@ -5919,14 +5930,40 @@ mp.events.addRemoteCounted("server:activatePromocode", (player, promocode) => {
     if (!user.isLogin(player))
         return;
     promocode = promocode.toUpperCase();
+    promocode = methods.removeQuotes(methods.removeQuotes2(promocode));
     mysql.executeQuery(`SELECT id FROM promocode_using WHERE user_id = '${user.getId(player)}' AND promocode_name = '${promocode}' LIMIT 1`, function (err, rows, fields) {
         if (rows.length == 0) {
-            mysql.executeQuery(`SELECT bonus FROM promocode_list WHERE code = '${promocode}' LIMIT 1`, function (err, rows, fields) {
+            mysql.executeQuery(`SELECT bonus, bonus2, is_one, is_use FROM promocode_list WHERE code = '${promocode}' LIMIT 1`, function (err, rows, fields) {
                 if (rows.length >= 1) {
                     rows.forEach(row => {
-                        user.addMoney(player, methods.parseInt(row['bonus']));
-                        player.notify(`~g~Промокод: ${promocode} активирован, вы получили $${methods.numberFormat(row['bonus'])}`);
+
+                        if (row['is_use']) {
+                            player.notify(`~g~Промокод уже был активирован`);
+                            return;
+                        }
+
+                        if (methods.parseInt(row['bonus']) > 0) {
+                            user.addMoney(player, methods.parseInt(row['bonus']));
+                            player.notify(`~g~Промокод: ${promocode} активирован, вы получили $${methods.numberFormat(row['bonus'])}`);
+                        }
                         mysql.executeQuery(`INSERT INTO promocode_using (user_id, promocode_name) VALUES ('${user.getId(player)}', '${promocode}')`);
+
+
+                        if (row['is_one'])
+                            mysql.executeQuery(`UPDATE promocode_list SET is_use='1' WHERE code = '${promocode}'`);
+
+                        try {
+                            let json = JSON.parse(row['bonus2']);
+                            if (json.mask) {
+                                user.giveMask(player, json.mask);
+                            }
+                            if (json.vip) {
+                                user.giveVip(player, json.vip);
+                            }
+                        }
+                        catch (e) {
+
+                        }
                     });
                 } else {
                     mysql.executeQuery(`SELECT * FROM promocode_top_list WHERE promocode = '${promocode}' AND is_use = 0 LIMIT 1`, function (err, rows, fields) {
@@ -5966,7 +6003,7 @@ mp.events.addRemoteCounted("server:activatePromocode", (player, promocode) => {
                                 player.notify("~r~Вы отыграли более 24 часа, промокод не доступен");
                                 return;
                             }
-                            player.notify("~r~Вы уже активировали промокод");
+                            player.notify("~r~Данный промокод можно активировать только при регистрации персонажа");
                         } else {
                             player.notify("~r~Такого промокода не существует");
                         }

@@ -78,7 +78,13 @@ pickups.MeriaGarderobPos = new mp.Vector3(-1380.995, -470.7387, 71.04216);
 pickups.MeriaHelpPos = new mp.Vector3(-1381.844, -477.9523, 71.04205);
 //pickups.MeriaKeyPos = new mp.Vector3(-1381.507, -466.2556, 71.04215);
 
-pickups.SapdDutyPos = new mp.Vector3(457.5687, -992.9395, 29.69);
+pickups.FibArsenalPos = new mp.Vector3(130.9275665283203, -762.3977661132812, 241.15185546875);
+pickups.FibLift0StationPos = new mp.Vector3(122.9873, -741.1865, 32.13323);
+pickups.FibLift1StationPos = new mp.Vector3(136.2213, -761.6816, 44.75201);
+pickups.FibLift2StationPos = new mp.Vector3(136.2213, -761.6816, 241.152);
+pickups.FibLift3StationPos = new mp.Vector3(114.9807, -741.8279, 257.1521);
+pickups.FibLift4StationPos = new mp.Vector3(141.4099, -735.3376, 261.8516);
+
 pickups.SapdGarderobPos = new mp.Vector3(455.5185, -988.6027, 29.6896);
 pickups.SapdArsenalPos = new mp.Vector3(452.057, -980.2347, 29.6896);
 pickups.SapdClearPos = new mp.Vector3(440.5925, -975.6348, 29.69);
@@ -91,6 +97,8 @@ pickups.SapdToBalcon2Pos = new mp.Vector3(428.4888, -995.2952, 34.68689);
 pickups.SapdFromBalcon2Pos = new mp.Vector3(464.1708, -984.0346, 38.89184);
 pickups.SapdToInterrogationPos = new mp.Vector3(404.0302, -997.302, -100.004);
 pickups.SapdFromInterrogationPos = new mp.Vector3(446.7996, -985.8127, 25.67422);
+
+pickups.UsmcArsenalPos = new mp.Vector3(467.41082763671875, -3212.53857421875, 6.056998729705816);
 
 pickups.SapdStockPos = new mp.Vector3(472.8161315917969, -990.1664428710938, 23.91470718383789);
 pickups.Bcsd1StockPos = new mp.Vector3(-439.0313720703125, 6010.5322265625, 26.985639572143555);
@@ -123,6 +131,7 @@ pickups.SapdKeyPos = new mp.Vector3(458.65, -1007.944, 27.27073);
 pickups.SheriffKeyPos = new mp.Vector3(-453.48065185546875, 6031.2314453125, 30.340538024902344);
 pickups.InvaderKeyPos = new mp.Vector3(-1095.8746337890625, -254.6504669189453, 36.68137741088867);
 pickups.EmsKeyPos = new mp.Vector3(319.167236328125, -559.7047119140625, 27.743427276611328);
+pickups.UsmcKeyPos = new mp.Vector3(468.67388916015625, -3205.725830078125, 5.069557189941406);
 
 /*Info*/
 pickups.GovInfoPos = new mp.Vector3(-1372.4476318359375, -464.2900695800781, 71.05709075927734);
@@ -272,6 +281,13 @@ pickups.checkPressLAlt = function(player) {
         methods.distanceToPos(pickups.CasinoLiftCondoPos, playerPos) < distanceCheck ||
         methods.distanceToPos(pickups.CasinoLiftRoofPos, playerPos) < distanceCheck)
         player.call('client:menuList:showCasinoLiftTeleportMenu');
+
+    if (methods.distanceToPos(pickups.FibLift0StationPos, playerPos) < distanceCheck ||
+        methods.distanceToPos(pickups.FibLift1StationPos, playerPos) < distanceCheck ||
+        methods.distanceToPos(pickups.FibLift2StationPos, playerPos) < distanceCheck ||
+        methods.distanceToPos(pickups.FibLift3StationPos, playerPos) < distanceCheck ||
+        methods.distanceToPos(pickups.FibLift4StationPos, playerPos) < distanceCheck)
+        player.call('client:menuList:showFibOfficeTeleportMenu');
 
     if (methods.distanceToPos(pickups.MeriaDownPos, playerPos) < distanceCheck ||
         methods.distanceToPos(pickups.MeriaGarPos, playerPos) < distanceCheck ||
@@ -494,6 +510,9 @@ pickups.checkPressE = function(player) {
     else if (methods.distanceToPos(pickups.SapdKeyPos, playerPos) < distanceCheck && user.isSapd(player))
         player.call('client:menuList:showFractionKeyMenu', [vehicles.getFractionAllowCarList(2, user.isLeader(player) || user.isSubLeader(player) ? -1 : user.get(player, 'rank_type'))]);
 
+    else if (methods.distanceToPos(pickups.UsmcKeyPos, playerPos) < distanceCheck && user.isUsmc(player))
+        player.call('client:menuList:showFractionKeyMenu', [vehicles.getFractionAllowCarList(4, user.isLeader(player) || user.isSubLeader(player) ? -1 : user.get(player, 'rank_type'))]);
+
     else if (methods.distanceToPos(pickups.SheriffKeyPos, playerPos) < distanceCheck && user.isSheriff(player))
         player.call('client:menuList:showFractionKeyMenu', [vehicles.getFractionAllowCarList(5, user.isLeader(player) || user.isSubLeader(player) ? -1 : user.get(player, 'rank_type'))]);
 
@@ -584,6 +603,14 @@ pickups.checkPressE = function(player) {
         if (methods.distanceToPos(pickups.SapdArsenalPos, playerPos) < distanceCheck)
             player.call('client:menuList:showSapdArsenalMenu');
     }
+    if (user.isUsmc(player)) {
+        if (methods.distanceToPos(pickups.UsmcArsenalPos, playerPos) < distanceCheck)
+            player.call('client:menuList:showUsmcArsenalMenu');
+    }
+    if (user.isFib(player)) {
+        if (methods.distanceToPos(pickups.FibArsenalPos, playerPos) < distanceCheck)
+            player.call('client:menuList:showFibArsenalMenu');
+    }
 
     try {
         if (user.isJobMail(player) && methods.distanceToPos(pickups.MailPos, playerPos) < distanceCheck)
@@ -636,6 +663,7 @@ pickups.createAll = function() {
 
     methods.createCpVector(pickups.EmsKeyPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
     methods.createCpVector(pickups.GovKeyPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.UsmcKeyPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
 
     methods.createCpVector(pickups.GovInfoPos, 'Нажмите ~g~E~s~ чтобы открыть меню руководства', 1, -1, pickups.Blue);
     methods.createCpVector(pickups.SapdInfoPos, 'Нажмите ~g~E~s~ чтобы открыть меню руководства', 1, -1, pickups.Blue);
@@ -684,6 +712,13 @@ pickups.createAll = function() {
     methods.createCpVector(pickups.Builder3Pos2, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
     methods.createCpVector(pickups.Builder3Pos3, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
 
+    methods.createCpVector(pickups.FibLift0StationPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
+    methods.createCpVector(pickups.FibLift1StationPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
+    methods.createCpVector(pickups.FibLift2StationPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
+    methods.createCpVector(pickups.FibLift3StationPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
+    methods.createCpVector(pickups.FibLift4StationPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
+    methods.createCpVector(pickups.FibArsenalPos, 'Нажмите ~g~E~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue);
+
     methods.createCpVector(pickups.MeriaUpPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
     methods.createCpVector(pickups.MeriaDownPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
     methods.createCpVector(pickups.MeriaRoofPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
@@ -697,6 +732,8 @@ pickups.createAll = function() {
     methods.createCpVector(pickups.SapdClearPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
     methods.createCpVector(pickups.SapdArrestPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
     methods.createCpVector(pickups.SapdKeyPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
+
+    methods.createCpVector(pickups.UsmcArsenalPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
 
     methods.createCpVector(pickups.DispatcherPos1, 'Диспетчерская', 1, -1, pickups.Blue);
     methods.createCpVector(pickups.DispatcherPos2, 'Диспетчерская', 1, -1, pickups.Blue);

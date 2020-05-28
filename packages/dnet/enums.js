@@ -36,6 +36,8 @@ enums.whiteList = [
     "TripleDu", "LockeStone", "yadedinside", "Rodjer011", "MaLoYKUN", "sntnt4", "ArtStepy", "Tony_Morreti", "BlackPrima", "Maraboou", "saivori", "WHAREISMAZ", "Asselom", "Annhax", "lForeverAlone", "-Patrakeev-", "stiv15", "ArtStepy", "VIVA_DISEDES", "m0rpeh", "m7Name", "Piligrimius", "ElusiveMen", "JohnLeeYT", ".Slip.", "Mikzu1337"
 ];
 
+enums.blackListVehicle = ['submersible', 'submersible2', 'phantom2', 'cerberus', 'cerberus2', 'cerberus3', 'hauler2', 'terbyte', 'ambulance', 'fbi', 'fbi2', 'firetruk', 'lguard', 'pbus', 'police', 'police2', 'police3', 'police4', 'policeb', 'polmav', 'policeold1', 'policeold2', 'policet', 'pranger', 'predator', 'riot', 'riot2', 'sheriff', 'sheriff2', 'akula', 'annihilator', 'buzzard', 'buzzard2', 'cargobob', 'cargobob2', 'cargobob3', 'cargobob4', 'frogger', 'frogger2', 'havok', 'hunter', 'maverick', 'savage', 'seasparrow', 'skylift', 'supervolito', 'supervolito2', 'swift', 'swift2', 'valkyrie', 'valkyrie2', 'volatus', 'bulldozer', 'cutter', 'dump', 'handler', 'apc', 'barracks', 'barracks2', 'barracks3', 'barrage', 'chernobog', 'crusader', 'halftrack', 'khanjali', 'minitank', 'rhino', 'scarab', 'scarab2', 'scarab3', 'thruster', 'trailersmall2', 'oppressor', 'oppressor2', 'blazer2', 'blazer5', 'dune3', 'dune4', 'dune5', 'insurgent', 'insurgent2', 'insurgent3', 'marshall', 'monster', 'monster3', 'monster4', 'monster5', 'bruiser', 'bruiser2', 'bruiser3', 'menacer', 'nightshark', 'rcbandito', 'technical', 'technical2', 'technical3', 'zhaba', 'alphaz1', 'avenger', 'avenger2', 'besra', 'blimp', 'blimp2', 'blimp3', 'bombushka', 'cargoplane', 'cuban800', 'dodo', 'duster', 'howard', 'hydra', 'jet', 'lazer', 'luxor', 'luxor2', 'mammatus', 'microlight', 'miljet', 'mogul', 'molotok', 'nimbus', 'nokota', 'pyro', 'rogue', 'seabreeze', 'shamal', 'starling', 'strikeforce', 'stunt', 'titan', 'tula', 'velum', 'velum2', 'vestra', 'volatol', 'limo2', 'vigilante', 'voltic2', 'armytanker', 'armytrailer', 'armytrailer2', 'baletrailer', 'boattrailer', 'cablecar', 'docktrailer', 'freighttrailer', 'graintrailer', 'proptrailer', 'raketrailer', 'tr2', 'tr3', 'tr4', 'trflat', 'tvtrailer', 'tanker', 'tanker2', 'tanker2', 'trailerlarge', 'trailerlogs', 'trailersmall', 'trailers', 'trailers2', 'trailers3', 'trailers4', 'freight', 'freightcar', 'freightcont1', 'freightcont2', 'freightgrain', 'metrotrain', 'tankercar', 'bison2', 'bison3', 'boxville5', 'Polbuzz2', 'Sherbuzz2', 'Newsmav', 'Maverick2', 'Bcfdscout', 'Lsfdscout', 'Lsfdscout2', 'Polscout', 'Polscout2', 'Sherscout', 'Sherscout2', 'Trucara', 'Umkcara', 'Polvacca', 'Polbullet', 'Polbullet2', 'Hwaybullet', 'Sherbullet', 'Shergauntlet', 'Intcept', 'Intcept2', 'Intcept3', 'Intcept4'];
+
 enums.userData = [
     "id",
     "social",
@@ -680,26 +682,20 @@ enums.fractionList = {
         fractionName: "Федеральное бюро расследований",
         fractionNameShort: "FIB",
         hash: "fib",
-        leaderName: "Глава департамента",
-        subLeaderName: "Зам. главы департамента",
+        leaderName: "Директор FIB",
+        subLeaderName: "Зам. директора FIB",
         vehicleList: ["Police4", "FBI", "FBI2"],
-        departmentList: ["Отдел кадров", "Регулярная группа", "Наземная группа", "Воздушная группа", "Спасательная группа"],
+        departmentList: ["Отдел кадров", "CJIS"],
         departmentPayDay: [80, 150, 200, 200, 250],
         rankPayDay: [
-            ["Директор", "Зам. директора", "Старший стажер", "Стажер"], //0
-            ["Директор", "Зам. директора", "Старший специалист", "Младший специалист", "Интерн"], //1
-            ["Директор", "Зам. директора", "Старший специалист", "Младший специалист"], //2
-            ["Директор", "Зам. директора", "Старший специалист", "Младший специалист"], //3
-            ["Директор", "Зам. директора", "Старший офицер", "Младший офицер"], //4
+            [1500, 1300, 500, 300], //0
+            [1500, 1300, 1000, 800, 600], //1
         ],
-        leaderPayDay: 3350,
-        subLeaderPayDay: 2750,
+        leaderPayDay: 2100,
+        subLeaderPayDay: 2000,
         rankList: [
             ["Директор", "Зам. директора", "Старший стажер", "Стажер"], //0
-            ["Директор", "Зам. директора", "Старший специалист", "Младший специалист", "Интерн"], //1
-            ["Директор", "Зам. директора", "Старший специалист", "Младший специалист"], //2
-            ["Директор", "Зам. директора", "Старший специалист", "Младший специалист"], //3
-            ["Директор", "Зам. директора", "Старший офицер", "Младший офицер"], //4
+            ["Директор", "Зам. директора", "Старший агент", "Агент", "Младший агент"], //1
         ]
     },
     invader: {

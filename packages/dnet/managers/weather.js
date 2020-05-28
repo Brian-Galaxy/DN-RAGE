@@ -190,7 +190,7 @@ weather.timeSyncTimer = function() {
         }
 
         if (_hour === 2 && _minute === 0)
-            fraction.createCargoWar(3);
+            fraction.createCargoWar(5);
         if (_hour === 6 && _minute === 0)
             fraction.stopCargoWar();
 
@@ -253,6 +253,15 @@ weather.timeSyncTimer = function() {
                 isCreateEms = true;
                 ems.createSmallRandom();
             }
+        }
+        if (dateTime.getHours() === 21 && dateTime.getMinutes() === 1) {
+            if (!isCreateEms) {
+                isCreateEms = true;
+                ems.createSmallRandom();
+            }
+        }
+        if (dateTime.getHours() === 19 && dateTime.getMinutes() === 1) {
+            isCreateEms = false
         }
 
         if (dateTime.getHours() === 20 && dateTime.getMinutes() === 1) {

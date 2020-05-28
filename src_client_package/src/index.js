@@ -40,6 +40,8 @@ import voiceRage from "./voiceRage";
 
 import "./antiCheat";
 
+import trucker from "./jobs/trucker";
+
 try {
 
     user.showLoadDisplay();
@@ -87,6 +89,8 @@ try {
     skill.loadAll();
 
     wheel.loadAll();
+
+    trucker.loadAll();
 
     attach.init();
     attachItems.registerAttaches();

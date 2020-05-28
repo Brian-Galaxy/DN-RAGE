@@ -44,6 +44,7 @@ import tree from "./jobs/tree";
 import builder from "./jobs/builder";
 import loader from "./jobs/loader";
 import lamar from "./jobs/lamar";
+import trucker from "./jobs/trucker";
 
 let menuList = {};
 
@@ -273,7 +274,7 @@ menuList.showHouseOutVMenu = async function(h) {
                     mp.game.ui.notifications.show('~r~Введите пинкод');
                     let pass = methods.parseInt(await UIMenu.Menu.GetUserInput("Пароль", "", 5));
                     if (pass == h.get('pin'))
-                        houses.enter(h.get('id'));
+                        houses.enterv(h.get('id'));
                     else
                         mp.game.ui.notifications.show('~r~Вы ввели не правильный пинкод');
                 }
@@ -481,7 +482,7 @@ menuList.showStockPanelMenu = function(h) {
         UIMenu.Menu.HideMenu();
 
         if (item.doName == 'setPin') {
-            let pass = methods.parseInt(await UIMenu.Menu.GetUserInput("Пароль", "", 5));
+            let pass = methods.parseInt(await UIMenu.Menu.GetUserInput("Пароль", "", 10));
             if (pass < 1) {
                 mp.game.ui.notifications.show('~r~Пароль должен быть больше нуля');
                 return false;
@@ -713,7 +714,7 @@ menuList.showStockOutMenu = async function(h) {
                         return;
                     }
 
-                    let pass = methods.parseInt(await UIMenu.Menu.GetUserInput("Пароль", "", 5));
+                    let pass = methods.parseInt(await UIMenu.Menu.GetUserInput("Пароль", "", 10));
 
                     if (pass === 0) {
                         mp.game.ui.notifications.show('~r~Вы ввели не правильный пинкод');
@@ -786,7 +787,7 @@ menuList.showStockOutVMenu = async function(h) {
                         return;
                     }
 
-                    let pass = methods.parseInt(await UIMenu.Menu.GetUserInput("Пароль", "", 5));
+                    let pass = methods.parseInt(await UIMenu.Menu.GetUserInput("Пароль", "", 10));
                     if (pass === 0) {
                         mp.game.ui.notifications.show('~r~Вы ввели не правильный пинкод');
                         return;
@@ -2465,6 +2466,7 @@ menuList.showMainMenu = function() {
         UIMenu.Menu.AddMenuItem("Помощь", "", {doName: "showHelpMenu"});
         UIMenu.Menu.AddMenuItem("Настройки", "", {doName: "showSettingsMenu"});
         UIMenu.Menu.AddMenuItem("Список квестов", "", {doName: "showQuestMenu"});
+        UIMenu.Menu.AddMenuItem("~b~Чит-код", "", {doName: "enterPromocode"});
         UIMenu.Menu.AddMenuItem("~y~Задать вопрос", "", {doName: "sendAsk"});
         UIMenu.Menu.AddMenuItem("~r~Жалоба", "", {doName: "sendReport"});
     }
@@ -2474,6 +2476,11 @@ menuList.showMainMenu = function() {
     UIMenu.Menu.OnSelect.Add(async (item) => {
         UIMenu.Menu.HideMenu();
 
+        if (item.doName == 'enterPromocode') {
+            let promocode = await UIMenu.Menu.GetUserInput("Введите промокод", "", 128);
+            if (promocode == '') return;
+            mp.events.callRemote("server:activatePromocode", promocode);
+        }
         if (item.doName == 'sendReport') {
             let text = await UIMenu.Menu.GetUserInput("Опишите жалобу", "", 300);
             if (text !== '' && text !== undefined)
@@ -2696,7 +2703,6 @@ menuList.showSettingsMenu = function() {
 
     UIMenu.Menu.AddMenuItem("~y~Пофиксить кастомизацию", "", {doName: "fixCustom"});
     UIMenu.Menu.AddMenuItem("~y~Вкл. / Выкл. доп. прогрузку моделей", "~r~Возможно слегка повлияет на FPS", {doName: "loadAllModels"});
-    UIMenu.Menu.AddMenuItem("~b~Промокод", "Нажмите ~g~Enter~s~ чтобы применить", {doName: "enterPromocode"});
 
     UIMenu.Menu.AddMenuItem("Интерфейс", "", {doName: "showSettingsHudMenu"});
     UIMenu.Menu.AddMenuItem("Текстовый чат", "", {doName: "showSettingsTextMenu"});
@@ -2715,15 +2721,6 @@ menuList.showSettingsMenu = function() {
         }
         if (item.doName == 'exit') {
             user.kick('Выход с сервера');
-        }
-        if (item.doName == 'enterPromocode') {
-            let promocode = await UIMenu.Menu.GetUserInput("Введите промокод", "", 20);
-            if (promocode == '') return;
-            mp.events.callRemote("server:activatePromocode", promocode);
-        }
-        if (item.doName == 'enterPromocode2') {
-            let promocode = await UIMenu.Menu.GetUserInput("Введите промокод", "", 20);
-            mp.events.callRemote("server:activatePromocodeTop", promocode);
         }
         if (item.doName == 'fixCustom') {
             UIMenu.Menu.HideMenu();
@@ -3170,6 +3167,12 @@ menuList.showPlayerDoMenu = function(playerId) {
                 return;
             }
         }
+        if (ui.isYellowZone()) {
+            if (item.eventName === 'server:user:knockById') {
+                mp.game.ui.notifications.show("~r~В Желтой зоне данное действие запрещено");
+                return;
+            }
+        }
 
         if (item.doName == 'giveMoney') {
             let money = methods.parseFloat(await UIMenu.Menu.GetUserInput("Сумма", "", 9));
@@ -3391,7 +3394,7 @@ menuList.showPlayerStatsMenu = function() {
     UIMenu.Menu.AddMenuItem("~b~Вы играли:~r~", "", {}, `${methods.parseFloat(user.getCache('online_time') * 8.5 / 60).toFixed(1)}ч.`);
 
     if (user.getCache('online_cont') < 100)
-        UIMenu.Menu.AddMenuItem("~b~Отыграли (Конкурс 50k):~r~", "", {}, `${methods.parseFloat(user.getCache('online_cont') * 8.5 / 60).toFixed(1)}ч.`);
+        UIMenu.Menu.AddMenuItem("~b~Вы играли сегодня:~r~", "", {}, `${methods.parseFloat(user.getCache('online_cont') * 8.5 / 60).toFixed(1)}ч.`);
 
     if (user.getCache('vip_type') === 1)
         UIMenu.Menu.AddMenuItem("~b~VIP:", "", {}, `LIGHT`);
@@ -3564,6 +3567,125 @@ menuList.showMenu = function(title, desc, menuData) {
     UIMenu.Menu.Draw();
 };
 
+let lastOffers = null;
+
+menuList.showTruckerOffersMenu = function(menuData) {
+
+    try {
+        UIMenu.Menu.Create('Грузоперевозки', `~b~Список заказов`);
+
+        lastOffers = menuData;
+
+        menuData.forEach((item, idx) => {
+            try {
+                let x = 0;
+                let y = 0;
+                let z = 0;
+                let tx = 0;
+                let ty = 0;
+                let tz = 0;
+                if (item.length == 10) {
+                    x = item[3];
+                    y = item[4];
+                    z = item[5];
+                    tx = item[6];
+                    ty = item[7];
+                    tz = item[8];
+                }
+                else {
+                    x = item[7];
+                    y = item[8];
+                    z = item[9];
+                    tx = item[11];
+                    ty = item[12];
+                    tz = item[13];
+                }
+                let dist = mp.game.pathfind.calculateTravelDistanceBetweenPoints(x, y, z, tx, ty, tz);
+                if (dist > 10000)
+                    dist = methods.parseInt(methods.distanceToPos(new mp.Vector3(x, y, z), new mp.Vector3(tx, ty, tz)));
+                UIMenu.Menu.AddMenuItem(`~b~№${item[0]}.~s~ ${item[1]}`, `~y~Расстояние: ~s~${dist}m~br~~y~Место загрузки: ~s~${mp.game.ui.getLabelText(mp.game.zone.getNameOfZone(x, y, z))}`, {offerId: idx}, `~g~${methods.moneyFormat(item[item.length - 1])}`);
+            }
+            catch (e) {
+                methods.debug(e);
+            }
+        });
+
+        UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
+        UIMenu.Menu.Draw();
+
+        UIMenu.Menu.OnSelect.Add(async (item, index) => {
+            UIMenu.Menu.HideMenu();
+            if (item.offerId >= 0)
+                menuList.showTruckerOfferInfoMenu(item.offerId);
+        });
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+};
+
+menuList.showTruckerOfferInfoMenu = function(idx) {
+
+    //id, name, company, x, y, z, px, py, pz, price
+    //id, name, company, trName, cl1, cl2, liv, x, y, z, rot, px, py, pz, price
+
+    let item = lastOffers[idx];
+
+    let x = 0;
+    let y = 0;
+    let z = 0;
+    let tx = 0;
+    let ty = 0;
+    let tz = 0;
+    if (item.length == 10) {
+        x = item[3];
+        y = item[4];
+        z = item[5];
+        tx = item[6];
+        ty = item[7];
+        tz = item[8];
+    }
+    else {
+        x = item[7];
+        y = item[8];
+        z = item[9];
+        tx = item[11];
+        ty = item[12];
+        tz = item[13];
+    }
+
+    UIMenu.Menu.Create(`Грузоперевозки`, `~b~Информация о заказе`);
+
+    let dist = mp.game.pathfind.calculateTravelDistanceBetweenPoints(x, y, z, tx, ty, tz);
+
+    if (dist > 10000)
+        dist = methods.parseInt(methods.distanceToPos(new mp.Vector3(x, y, z), new mp.Vector3(tx, ty, tz)));
+
+    UIMenu.Menu.AddMenuItem("~y~Номер заказа:~s~", '', {}, `${item[0]}`);
+    UIMenu.Menu.AddMenuItem("~y~Груз:~s~", '', {}, `${item[1]}`);
+    UIMenu.Menu.AddMenuItem("~y~Компания:~s~", '', {}, `${item[2]}`);
+    UIMenu.Menu.AddMenuItem("~y~Стоимость:~s~", '', {}, `${methods.moneyFormat(item[item.length - 1])}`);
+    UIMenu.Menu.AddMenuItem("~y~Место загрузки:~s~", '', {}, `${mp.game.ui.getLabelText(mp.game.zone.getNameOfZone(x, y, z))}`);
+    UIMenu.Menu.AddMenuItem("~y~Место разгрузки:~s~", '', {}, `${mp.game.ui.getLabelText(mp.game.zone.getNameOfZone(tx, ty, tz))}`);
+    UIMenu.Menu.AddMenuItem("~y~Расстояние:~s~", '', {}, `${dist}m`);
+    UIMenu.Menu.AddMenuItem("~g~Принять заказ", '', {accept: item[0]});
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
+    UIMenu.Menu.Draw();
+
+    UIMenu.Menu.OnSelect.Add(async (item, index) => {
+        UIMenu.Menu.HideMenu();
+        if (item.accept) {
+            if (await user.get('uniform')) {
+                mp.game.ui.notifications.show('~r~Прежде чем принимать заказы, надо снять форму');
+                return;
+            }
+            mp.events.callRemote('server:tucker:acceptOffer', item.accept);
+        }
+    });
+};
+
+
 menuList.showVehicleMenu = function(data) {
 
     let vInfo = methods.getVehicleInfo(mp.players.local.vehicle.model);
@@ -3637,6 +3759,40 @@ menuList.showVehicleMenu = function(data) {
     UIMenu.Menu.AddMenuItem("~y~Выкинуть из транспорта", "", {doName: "eject"});
     UIMenu.Menu.AddMenuItem("Характеристики", "", {doName: "showVehicleStatsMenu"});
     //UIMenu.Menu.AddMenuItem("Управление транспортом").eventName = 'server:vehicle:engineStatus';
+
+    if (vInfo.class_name === 'Vans') {
+        if (user.getCache('work_lvl') >= 4) {
+            UIMenu.Menu.AddMenuItem("~g~Список заказов", "", {doName: "trucker:getList0"});
+            UIMenu.Menu.AddMenuItem("~b~Частота рации:~s~ ", '', {}, '300.001');
+            if (trucker.isProcess())
+                UIMenu.Menu.AddMenuItem("~r~Завершить досрочно рейс", 'Штраф ~r~$500', {doName: "trucker:stop"});
+        }
+        else {
+            UIMenu.Menu.AddMenuItem("~r~Чтобы работать на этом автомобиле дальнобойщиком, необходимо иметь навык рабочего от 4 уровня");
+        }
+    }
+    if (vInfo.display_name === 'Benson' || vInfo.display_name === 'Mule' || vInfo.display_name === 'Mule2' || vInfo.display_name === 'Mule3' || vInfo.display_name === 'Pounder') {
+        if (user.getCache('work_lvl') >= 8) {
+            UIMenu.Menu.AddMenuItem("~g~Список заказов", "", {doName: "trucker:getList1"});
+            UIMenu.Menu.AddMenuItem("~b~Частота рации:~s~ ", '', {}, '300.002');
+            if (trucker.isProcess())
+                UIMenu.Menu.AddMenuItem("~r~Завершить досрочно рейс", 'Штраф ~r~$500', {doName: "trucker:stop"});
+        }
+        else {
+            UIMenu.Menu.AddMenuItem("~r~Чтобы работать на этом автомобиле дальнобойщиком, необходимо иметь навык рабочего от 8 уровня");
+        }
+    }
+    if (vInfo.display_name === 'Hauler' || vInfo.display_name === 'Packer' || vInfo.display_name === 'Phantom') {
+        if (user.getCache('work_lvl') >= 12) {
+            UIMenu.Menu.AddMenuItem("~g~Список заказов", "", {doName: "trucker:getList2"});
+            UIMenu.Menu.AddMenuItem("~b~Частота рации:~s~ ", '', {}, '300.003');
+            if (trucker.isProcess())
+                UIMenu.Menu.AddMenuItem("~r~Завершить досрочно рейс", 'Штраф ~r~$500', {doName: "trucker:stop"});
+        }
+        else {
+            UIMenu.Menu.AddMenuItem("~r~Чтобы работать на этом автомобиле дальнобойщиком, необходимо иметь навык рабочего от 12 уровня");
+        }
+    }
 
     if (user.getCache('job') == veh.getVariable('jobId')) {
         switch (veh.getVariable('jobId')) {
@@ -3791,6 +3947,14 @@ menuList.showVehicleMenu = function(data) {
             dispatcher.sendLocalPos('Код 0', `${user.getCache('name')} - инкассация требует поддержки`, mp.players.local.position, 5);
             mp.game.ui.notifications.show('~b~Вызов был отправлен');
         }
+        else if (item.doName == 'trucker:getList0')
+            mp.events.callRemote('server:trucker:showMenu', 0);
+        else if (item.doName == 'trucker:getList1')
+            mp.events.callRemote('server:trucker:showMenu', 1);
+        else if (item.doName == 'trucker:getList2')
+            mp.events.callRemote('server:trucker:showMenu', 2);
+        else if (item.doName == 'trucker:stop')
+            trucker.stop();
         else if (item.doName == 'stopRent') {
             vehicles.destroy();
         }
@@ -8481,6 +8645,8 @@ menuList.showCofferInfoMenu = function(data) {
     UIMenu.Menu.AddMenuItem("Финансировать бюджет правительства", "", {doName: "cofferGiveGov"});
     UIMenu.Menu.AddMenuItem("Финансировать бюджет LSPD", "", {doName: "cofferGiveLspd"});
     UIMenu.Menu.AddMenuItem("Финансировать бюджет BCSD", "", {doName: "cofferGiveSheriff"});
+    UIMenu.Menu.AddMenuItem("Финансировать бюджет USMC", "", {doName: "cofferGiveUsmc"});
+    UIMenu.Menu.AddMenuItem("Финансировать бюджет FIB", "", {doName: "cofferGiveFib"});
     UIMenu.Menu.AddMenuItem("Финансировать бюджет EMS", "", {doName: "cofferGiveEms"});
     UIMenu.Menu.AddMenuItem("Финансировать бюджет Invader News", "", {doName: "cofferGiveInvader"});
 
@@ -8558,6 +8724,54 @@ menuList.showCofferInfoMenu = function(data) {
             methods.saveLog('log_coffer',
                 ['name', 'text'],
                 [user.getCache('name'), `Перевёл ${methods.moneyFormat(price)} из казны на счёт BCSD.`],
+            );
+            mp.game.ui.notifications.show(`~g~Вы перевели денежные средства`);
+        }
+        if (item.doName == 'cofferGiveFib') {
+            let price = methods.parseFloat(await UIMenu.Menu.GetUserInput("Введите сумму", '', 10));
+
+            if (price < 0) {
+                mp.game.ui.notifications.show(`~r~Значение не может быть меньше нуля`);
+                return;
+            }
+            if (price > await coffer.getMoney()) {
+                mp.game.ui.notifications.show(`~r~В Бюджете недостаточно средств`);
+                return;
+            }
+            if (price > 1000000) {
+                mp.game.ui.notifications.show(`~r~Значение не может быть больше 1,000,000`);
+                return;
+            }
+            coffer.removeMoney(1, price);
+            coffer.addMoney(5, price);
+
+            methods.saveLog('log_coffer',
+                ['name', 'text'],
+                [user.getCache('name'), `Перевёл ${methods.moneyFormat(price)} из казны на счёт FIB.`],
+            );
+            mp.game.ui.notifications.show(`~g~Вы перевели денежные средства`);
+        }
+        if (item.doName == 'cofferGiveUsmc') {
+            let price = methods.parseFloat(await UIMenu.Menu.GetUserInput("Введите сумму", '', 10));
+
+            if (price < 0) {
+                mp.game.ui.notifications.show(`~r~Значение не может быть меньше нуля`);
+                return;
+            }
+            if (price > await coffer.getMoney()) {
+                mp.game.ui.notifications.show(`~r~В Бюджете недостаточно средств`);
+                return;
+            }
+            if (price > 1000000) {
+                mp.game.ui.notifications.show(`~r~Значение не может быть больше 1,000,000`);
+                return;
+            }
+            coffer.removeMoney(1, price);
+            coffer.addMoney(7, price);
+
+            methods.saveLog('log_coffer',
+                ['name', 'text'],
+                [user.getCache('name'), `Перевёл ${methods.moneyFormat(price)} из казны на счёт USMC.`],
             );
             mp.game.ui.notifications.show(`~g~Вы перевели денежные средства`);
         }
@@ -8765,10 +8979,10 @@ menuList.showGovGarderobMenu = function() {
             user.giveUniform(0);
         }
         else if (index == 1) {
-            user.giveUniform(31);
+            user.giveUniform(36);
         }
         else if (index == 2) {
-            user.giveUniform(32);
+            user.giveUniform(37);
         }
     });
 
@@ -8798,7 +9012,23 @@ menuList.showEmsGarderobMenu = function() {
 
     UIMenu.Menu.Create(`Гардероб`, `~b~Гардероб EMS`);
 
-    let listGarderob = ["Повседневная одежда", "Форма парамедика #1", "Форма парамедика #2", "Зимняя форма парамедика #1", "Зимняя форма парамедика #2", "Форма спасателя #1", "Форма спасателя #2", "Форма врача"];
+    let listGarderob = [
+        "Повседневная одежда",
+        "Форма парамедика #1",
+        "Форма парамедика #2",
+        "Зимняя форма парамедика #1",
+        "Зимняя форма парамедика #2",
+        "Форма спасателя #1",
+        "Форма спасателя #2",
+        "Форма врача #1",
+        "Форма врача #2",
+        "Форма врача #3",
+        "Форма врача #4",
+        "Форма врача #5",
+        "Форма врача #6",
+        "Форма врача #7",
+        "Форма врача #8",
+    ];
 
     for (let i = 0; i < listGarderob.length; i++) {
         try {
@@ -8815,7 +9045,10 @@ menuList.showEmsGarderobMenu = function() {
     UIMenu.Menu.OnIndexSelect.Add((index) => {
         if (index >= listGarderob.length)
             return;
-        mp.events.callRemote('server:uniform:ems', index);
+        if (index === 0)
+            user.giveUniform(index);
+        else
+            user.giveUniform(index + 23);
     });
 };
 
@@ -8891,7 +9124,10 @@ menuList.showSheriffGarderobMenu = function() {
     UIMenu.Menu.OnIndexSelect.Add((index) => {
         if (index >= listGarderob.length)
             return;
-        mp.events.callRemote('server:uniform:sheriff', index);
+        if (index === 0)
+            user.giveUniform(index);
+        else
+            user.giveUniform(index + 12);
     });
 };
 
@@ -9147,7 +9383,45 @@ menuList.showSapdGarderobMenu = function() {
     UIMenu.Menu.OnIndexSelect.Add((index) => {
         if (index >= listGarderob.length)
             return;
-        mp.events.callRemote('server:uniform:sapd', index);
+        user.giveUniform(index);
+    });
+};
+
+menuList.showUsmcGarderobMenu = function() {
+
+    UIMenu.Menu.Create(`Гардероб`, `~b~Гардероб USMC`);
+
+    let listGarderob = [
+        "Повседневная одежда",
+        "Регулярная форма #1",
+        "Регулярная форма #2",
+        "Регулярная форма #3",
+        "Special Forces #1",
+        "Special Forces #2",
+        "Air Support Division #1",
+        "Air Support Division #2",
+        "Представительская форма"
+    ];
+
+    for (let i = 0; i < listGarderob.length; i++) {
+        try {
+            UIMenu.Menu.AddMenuItem(`${listGarderob[i]}`);
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    }
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
+    UIMenu.Menu.Draw();
+
+    UIMenu.Menu.OnIndexSelect.Add((index) => {
+        if (index >= listGarderob.length)
+            return;
+        if (index === 0)
+            user.giveUniform(index);
+        else
+            user.giveUniform(index + 37);
     });
 };
 
@@ -9412,6 +9686,386 @@ menuList.showSapdArsenalGunModMenu = function() {
                 inventory.takeNewWeaponItem(item.itemId, `{"owner": "LSPD", "userName": "${user.getCache('name')}", "tint": 5}`, 'Выдано оружие').then();
             else
                 inventory.takeNewWeaponItem(item.itemId, `{"owner": "LSPD", "userName": "${user.getCache('name')}"}`, 'Выдан предмет').then();
+        }
+    });
+};
+
+menuList.showUsmcArsenalMenu = function() {
+    UIMenu.Menu.Create(`Арсенал`, `~b~Арсенал`);
+
+    UIMenu.Menu.AddMenuItem("Сухпаёк", "", {itemId: 32});
+    if (user.getCache('rank_type') !== 0 || user.isLeader() || user.isSubLeader() || user.isDepLeader() || user.isSubLeader()) {
+        UIMenu.Menu.AddMenuItem("Большая Аптечка", "", {itemId: 278});
+        UIMenu.Menu.AddMenuItem("Полицейское огорождение", "", {itemId: 199});
+        UIMenu.Menu.AddMenuItem("Полосатый конус", "", {itemId: 201});
+        UIMenu.Menu.AddMenuItem("Красный конус", "", {itemId: 202});
+    }
+
+    UIMenu.Menu.AddMenuItem("~b~Оружие", "", {showGun: true});
+    UIMenu.Menu.AddMenuItem("~b~Модули на оружие", "", {showGunMod: true});
+    UIMenu.Menu.AddMenuItem("~b~Гардероб", "", {showGarderob: true});
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
+    UIMenu.Menu.Draw();
+
+    UIMenu.Menu.OnSelect.Add(async item => {
+        UIMenu.Menu.HideMenu();
+        if (item.armor) {
+            user.setArmour(100);
+            mp.game.ui.notifications.show("~b~Вы взяли броню");
+        }
+        if (item.showGarderob) {
+            menuList.showUsmcGarderobMenu();
+        }
+        if (item.showGun) {
+            menuList.showUsmcArsenalGunMenu();
+        }
+        if (item.showGunMod) {
+            menuList.showUsmcArsenalGunModMenu();
+        }
+        if (item.itemId) {
+            let moneyFraction = await coffer.getMoney(coffer.getIdByFraction(user.getCache('fraction_id')));
+            let itemPrice = items.getItemPrice(item.itemId);
+
+            if (moneyFraction < itemPrice) {
+                mp.game.ui.notifications.show(`~r~В бюджете организации не достаточно средств`);
+                return;
+            }
+
+            if (items.isWeapon(item.itemId))
+                inventory.takeNewWeaponItem(item.itemId, `{"owner": "USMC", "userName": "${user.getCache('name')}", "tint": 4}`, 'Выдано оружие').then();
+            else
+                inventory.takeNewWeaponItem(item.itemId, `{"owner": "USMC", "userName": "${user.getCache('name')}"}`, 'Выдан предмет').then();
+        }
+    });
+};
+
+menuList.showUsmcArsenalGunMenu = function() {
+    UIMenu.Menu.Create(`Арсенал`, `~b~Оружие`);
+
+    UIMenu.Menu.AddMenuItem("Наручники", "", {itemId: 40});
+    UIMenu.Menu.AddMenuItem("Фонарик", "", {itemId: 59});
+    UIMenu.Menu.AddMenuItem("Полицейская дубинка", "", {itemId: 66});
+    UIMenu.Menu.AddMenuItem("Электрошокер", "", {itemId: 82});
+
+    if (user.getCache('rank_type') === 0) {
+        UIMenu.Menu.AddMenuItem("Beretta 90Two", "", {itemId: 78});
+        UIMenu.Menu.AddMenuItem("Коробка патронов 9mm", "", {itemId: 280});
+    }
+
+    if (user.getCache('rank_type') === 1 || user.getCache('rank_type') === 2) {
+        UIMenu.Menu.AddMenuItem("Beretta 90Two", "", {itemId: 78});
+        UIMenu.Menu.AddMenuItem("Glock 17", "", {itemId: 146});
+        UIMenu.Menu.AddMenuItem("Benelli M3", "", {itemId: 90});
+        UIMenu.Menu.AddMenuItem("Benelli M4", "", {itemId: 91});
+        UIMenu.Menu.AddMenuItem("HK-416", "", {itemId: 110});
+
+        UIMenu.Menu.AddMenuItem("Коробка патронов 9mm", "", {itemId: 280});
+        UIMenu.Menu.AddMenuItem("Коробка патронов 12 калибра", "", {itemId: 281});
+        UIMenu.Menu.AddMenuItem("Коробка патронов 5.56mm", "", {itemId: 284});
+    }
+    if (user.getCache('rank_type') === 3) {
+        UIMenu.Menu.AddMenuItem("Beretta 90Two", "", {itemId: 78});
+        UIMenu.Menu.AddMenuItem("Glock 17", "", {itemId: 146});
+        UIMenu.Menu.AddMenuItem("MP5A3", "", {itemId: 103});
+
+        UIMenu.Menu.AddMenuItem("Коробка патронов 9mm", "", {itemId: 280});
+    }
+    if (user.getCache('rank_type') === 4 || user.isLeader() || user.isSubLeader()) {
+        UIMenu.Menu.AddMenuItem("Beretta 90Two", "", {itemId: 78});
+        UIMenu.Menu.AddMenuItem("Glock 17", "", {itemId: 146});
+        UIMenu.Menu.AddMenuItem("Benelli M3", "", {itemId: 90});
+        UIMenu.Menu.AddMenuItem("Benelli M4", "", {itemId: 91});
+        UIMenu.Menu.AddMenuItem("HK-416", "", {itemId: 110});
+        UIMenu.Menu.AddMenuItem("HK-416A5", "", {itemId: 111});
+
+        UIMenu.Menu.AddMenuItem("Коробка патронов 9mm", "", {itemId: 280});
+        UIMenu.Menu.AddMenuItem("Коробка патронов 12 калибра", "", {itemId: 281});
+        UIMenu.Menu.AddMenuItem("Коробка патронов 5.56mm", "", {itemId: 284});
+    }
+
+    UIMenu.Menu.AddMenuItem("Бронежилет", "", {armor: 100});
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
+    UIMenu.Menu.Draw();
+
+    UIMenu.Menu.OnSelect.Add(async item => {
+        UIMenu.Menu.HideMenu();
+        if (item.armor) {
+            user.setArmour(100);
+            mp.game.ui.notifications.show("~b~Вы взяли броню");
+        }
+        if (item.itemId) {
+            let moneyFraction = await coffer.getMoney(coffer.getIdByFraction(user.getCache('fraction_id')));
+            let itemPrice = items.getItemPrice(item.itemId);
+
+            if (moneyFraction < itemPrice) {
+                mp.game.ui.notifications.show(`~r~В бюджете организации не достаточно средств`);
+                return;
+            }
+
+            if (items.isWeapon(item.itemId))
+                inventory.takeNewWeaponItem(item.itemId, `{"owner": "USMC", "userName": "${user.getCache('name')}", "tint": 4}`, 'Выдано оружие').then();
+            else
+                inventory.takeNewWeaponItem(item.itemId, `{"owner": "USMC", "userName": "${user.getCache('name')}"}`, 'Выдан предмет').then();
+        }
+    });
+};
+
+menuList.showUsmcArsenalGunModMenu = function() {
+    UIMenu.Menu.Create(`Арсенал`, `~b~Модули на оружие`);
+
+    if (user.getCache('rank_type') === 1 || user.getCache('rank_type') === 2) {
+        UIMenu.Menu.AddMenuItem("Фонарик Beretta 90Two", "", {itemId: 311});
+        UIMenu.Menu.AddMenuItem("Оптический прицел Beretta 90Two", "", {itemId: 312});
+        UIMenu.Menu.AddMenuItem("Глушитель Beretta 90Two", "", {itemId: 313});
+        UIMenu.Menu.AddMenuItem("Компенсатор Beretta 90Two", "", {itemId: 314});
+
+        UIMenu.Menu.AddMenuItem(" ");
+        UIMenu.Menu.AddMenuItem("Глушитель Glock 17", "", {itemId: 316});
+
+        UIMenu.Menu.AddMenuItem(" ");
+        UIMenu.Menu.AddMenuItem("Фонарик Benelli M3", "", {itemId: 341});
+        UIMenu.Menu.AddMenuItem("Глушитель Benelli M3", "", {itemId: 342});
+
+        UIMenu.Menu.AddMenuItem(" ");
+        UIMenu.Menu.AddMenuItem("Голографический прицел Benelli M4", "", {itemId: 349});
+        UIMenu.Menu.AddMenuItem("Прицел малой кратности Benelli M4", "", {itemId: 350});
+        UIMenu.Menu.AddMenuItem("Прицел средней кратности Benelli M4", "", {itemId: 351});
+        UIMenu.Menu.AddMenuItem("Фонарик Benelli M4", "", {itemId: 352});
+        UIMenu.Menu.AddMenuItem("Глушитель Benelli M4", "", {itemId: 353});
+        UIMenu.Menu.AddMenuItem("Дульный тормоз Benelli M4", "", {itemId: 354});
+
+        UIMenu.Menu.AddMenuItem(" ");
+        UIMenu.Menu.AddMenuItem("Фонарик HK-416", "", {itemId: 362});
+        UIMenu.Menu.AddMenuItem("Рукоятка HK-416", "", {itemId: 363});
+        UIMenu.Menu.AddMenuItem("Глушитель HK-416", "", {itemId: 364});
+        UIMenu.Menu.AddMenuItem("Прицел HK-416", "", {itemId: 365});
+    }
+    else if (user.getCache('rank_type') === 3) {
+        UIMenu.Menu.AddMenuItem("Фонарик Beretta 90Two", "", {itemId: 311});
+        UIMenu.Menu.AddMenuItem("Оптический прицел Beretta 90Two", "", {itemId: 312});
+        UIMenu.Menu.AddMenuItem("Глушитель Beretta 90Two", "", {itemId: 313});
+        UIMenu.Menu.AddMenuItem("Компенсатор Beretta 90Two", "", {itemId: 314});
+
+        UIMenu.Menu.AddMenuItem(" ");
+        UIMenu.Menu.AddMenuItem("Глушитель Glock 17", "", {itemId: 316});
+    }
+    else if (user.getCache('rank_type') === 4 || user.isLeader() || user.isSubLeader()) {
+        UIMenu.Menu.AddMenuItem("Фонарик Beretta 90Two", "", {itemId: 311});
+        UIMenu.Menu.AddMenuItem("Оптический прицел Beretta 90Two", "", {itemId: 312});
+        UIMenu.Menu.AddMenuItem("Глушитель Beretta 90Two", "", {itemId: 313});
+        UIMenu.Menu.AddMenuItem("Компенсатор Beretta 90Two", "", {itemId: 314});
+
+        UIMenu.Menu.AddMenuItem(" ");
+        UIMenu.Menu.AddMenuItem("Глушитель Glock 17", "", {itemId: 316});
+
+        UIMenu.Menu.AddMenuItem(" ");
+        UIMenu.Menu.AddMenuItem("Фонарик Benelli M3", "", {itemId: 341});
+        UIMenu.Menu.AddMenuItem("Глушитель Benelli M3", "", {itemId: 342});
+
+        UIMenu.Menu.AddMenuItem(" ");
+        UIMenu.Menu.AddMenuItem("Голографический прицел Benelli M4", "", {itemId: 349});
+        UIMenu.Menu.AddMenuItem("Прицел малой кратности Benelli M4", "", {itemId: 350});
+        UIMenu.Menu.AddMenuItem("Прицел средней кратности Benelli M4", "", {itemId: 351});
+        UIMenu.Menu.AddMenuItem("Фонарик Benelli M4", "", {itemId: 352});
+        UIMenu.Menu.AddMenuItem("Глушитель Benelli M4", "", {itemId: 353});
+        UIMenu.Menu.AddMenuItem("Дульный тормоз Benelli M4", "", {itemId: 354});
+
+        UIMenu.Menu.AddMenuItem(" ");
+        UIMenu.Menu.AddMenuItem("Фонарик HK-416", "", {itemId: 362});
+        UIMenu.Menu.AddMenuItem("Рукоятка HK-416", "", {itemId: 363});
+        UIMenu.Menu.AddMenuItem("Глушитель HK-416", "", {itemId: 364});
+        UIMenu.Menu.AddMenuItem("Прицел HK-416", "", {itemId: 365});
+
+        UIMenu.Menu.AddMenuItem(" ");
+        UIMenu.Menu.AddMenuItem("Фонарик HK-416A5", "", {itemId: 416});
+        UIMenu.Menu.AddMenuItem("Голографический прицел HK-416A5", "", {itemId: 417});
+        UIMenu.Menu.AddMenuItem("Прицел малой кратности HK-416A5", "", {itemId: 418});
+        UIMenu.Menu.AddMenuItem("Прицел большой кратности HK-416A5", "", {itemId: 419});
+        UIMenu.Menu.AddMenuItem("Глушитель HK-416A5", "", {itemId: 420});
+        UIMenu.Menu.AddMenuItem("Тактический дульный тормоз HK-416A5", "", {itemId: 422});
+        UIMenu.Menu.AddMenuItem("Рукоятка HK-416A5", "", {itemId: 428});
+    }
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
+    UIMenu.Menu.Draw();
+
+    UIMenu.Menu.OnSelect.Add(async item => {
+        UIMenu.Menu.HideMenu();
+        if (item.itemId) {
+            let moneyFraction = await coffer.getMoney(coffer.getIdByFraction(user.getCache('fraction_id')));
+            let itemPrice = items.getItemPrice(item.itemId);
+
+            if (moneyFraction < itemPrice) {
+                mp.game.ui.notifications.show(`~r~В бюджете организации не достаточно средств`);
+                return;
+            }
+
+            if (items.isWeapon(item.itemId))
+                inventory.takeNewWeaponItem(item.itemId, `{"owner": "USMC", "userName": "${user.getCache('name')}", "tint": 4}`, 'Выдано оружие').then();
+            else
+                inventory.takeNewWeaponItem(item.itemId, `{"owner": "USMC", "userName": "${user.getCache('name')}"}`, 'Выдан предмет').then();
+        }
+    });
+};
+
+menuList.showFibArsenalMenu = function() {
+    UIMenu.Menu.Create(`Арсенал`, `~b~Арсенал`);
+
+    UIMenu.Menu.AddMenuItem("Сухпаёк", "", {itemId: 32});
+    if (user.getCache('rank_type') !== 0 || user.isLeader() || user.isSubLeader() || user.isDepLeader() || user.isSubLeader()) {
+        UIMenu.Menu.AddMenuItem("Большая Аптечка", "", {itemId: 278});
+        UIMenu.Menu.AddMenuItem("Полицейское огорождение", "", {itemId: 199});
+        UIMenu.Menu.AddMenuItem("Полосатый конус", "", {itemId: 201});
+        UIMenu.Menu.AddMenuItem("Красный конус", "", {itemId: 202});
+    }
+
+    UIMenu.Menu.AddMenuItem("~b~Оружие", "", {showGun: true});
+    UIMenu.Menu.AddMenuItem("~b~Модули на оружие", "", {showGunMod: true});
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
+    UIMenu.Menu.Draw();
+
+    UIMenu.Menu.OnSelect.Add(async item => {
+        UIMenu.Menu.HideMenu();
+        if (item.armor) {
+            user.setArmour(100);
+            mp.game.ui.notifications.show("~b~Вы взяли броню");
+        }
+        if (item.showGun) {
+            menuList.showFibArsenalGunMenu();
+        }
+        if (item.showGunMod) {
+            menuList.showFibArsenalGunModMenu();
+        }
+        if (item.itemId) {
+            let moneyFraction = await coffer.getMoney(coffer.getIdByFraction(user.getCache('fraction_id')));
+            let itemPrice = items.getItemPrice(item.itemId);
+
+            if (moneyFraction < itemPrice) {
+                mp.game.ui.notifications.show(`~r~В бюджете организации не достаточно средств`);
+                return;
+            }
+
+            if (items.isWeapon(item.itemId))
+                inventory.takeNewWeaponItem(item.itemId, `{"owner": "FIB", "userName": "${user.getCache('name')}"}`, 'Выдано оружие').then();
+            else
+                inventory.takeNewWeaponItem(item.itemId, `{"owner": "FIB", "userName": "${user.getCache('name')}"}`, 'Выдан предмет').then();
+        }
+    });
+};
+
+menuList.showFibArsenalGunMenu = function() {
+    UIMenu.Menu.Create(`Арсенал`, `~b~Оружие`);
+
+    UIMenu.Menu.AddMenuItem("Наручники", "", {itemId: 40});
+    UIMenu.Menu.AddMenuItem("Фонарик", "", {itemId: 59});
+    UIMenu.Menu.AddMenuItem("Полицейская дубинка", "", {itemId: 66});
+    UIMenu.Menu.AddMenuItem("Электрошокер", "", {itemId: 82});
+
+    if (user.getCache('rank_type') === 0) {
+        UIMenu.Menu.AddMenuItem("Beretta 90Two", "", {itemId: 78});
+        UIMenu.Menu.AddMenuItem("Коробка патронов 9mm", "", {itemId: 280});
+    }
+    if (user.getCache('rank_type') === 2 || user.isLeader() || user.isSubLeader()) {
+        UIMenu.Menu.AddMenuItem("Beretta 90Two", "", {itemId: 78});
+        UIMenu.Menu.AddMenuItem("Glock 17", "", {itemId: 146});
+        UIMenu.Menu.AddMenuItem("Benelli M3", "", {itemId: 90});
+        UIMenu.Menu.AddMenuItem("Benelli M4", "", {itemId: 91});
+        UIMenu.Menu.AddMenuItem("HK-416", "", {itemId: 110});
+        UIMenu.Menu.AddMenuItem("HK-416A5", "", {itemId: 111});
+
+        UIMenu.Menu.AddMenuItem("Коробка патронов 9mm", "", {itemId: 280});
+        UIMenu.Menu.AddMenuItem("Коробка патронов 12 калибра", "", {itemId: 281});
+        UIMenu.Menu.AddMenuItem("Коробка патронов 5.56mm", "", {itemId: 284});
+    }
+
+    UIMenu.Menu.AddMenuItem("Бронежилет", "", {armor: 100});
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
+    UIMenu.Menu.Draw();
+
+    UIMenu.Menu.OnSelect.Add(async item => {
+        UIMenu.Menu.HideMenu();
+        if (item.armor) {
+            user.setArmour(100);
+            mp.game.ui.notifications.show("~b~Вы взяли броню");
+        }
+        if (item.itemId) {
+            let moneyFraction = await coffer.getMoney(coffer.getIdByFraction(user.getCache('fraction_id')));
+            let itemPrice = items.getItemPrice(item.itemId);
+
+            if (moneyFraction < itemPrice) {
+                mp.game.ui.notifications.show(`~r~В бюджете организации не достаточно средств`);
+                return;
+            }
+
+            if (items.isWeapon(item.itemId))
+                inventory.takeNewWeaponItem(item.itemId, `{"owner": "FIB", "userName": "${user.getCache('name')}"}`, 'Выдано оружие').then();
+            else
+                inventory.takeNewWeaponItem(item.itemId, `{"owner": "FIB", "userName": "${user.getCache('name')}"}`, 'Выдан предмет').then();
+        }
+    });
+};
+
+menuList.showFibArsenalGunModMenu = function() {
+    UIMenu.Menu.Create(`Арсенал`, `~b~Модули на оружие`);
+    if (user.getCache('rank_type') === 1 || user.isLeader() || user.isSubLeader()) {
+        UIMenu.Menu.AddMenuItem("Фонарик Beretta 90Two", "", {itemId: 311});
+        UIMenu.Menu.AddMenuItem("Оптический прицел Beretta 90Two", "", {itemId: 312});
+        UIMenu.Menu.AddMenuItem("Глушитель Beretta 90Two", "", {itemId: 313});
+        UIMenu.Menu.AddMenuItem("Компенсатор Beretta 90Two", "", {itemId: 314});
+
+        UIMenu.Menu.AddMenuItem(" ");
+        UIMenu.Menu.AddMenuItem("Глушитель Glock 17", "", {itemId: 316});
+
+        UIMenu.Menu.AddMenuItem(" ");
+        UIMenu.Menu.AddMenuItem("Фонарик Benelli M3", "", {itemId: 341});
+        UIMenu.Menu.AddMenuItem("Глушитель Benelli M3", "", {itemId: 342});
+
+        UIMenu.Menu.AddMenuItem(" ");
+        UIMenu.Menu.AddMenuItem("Голографический прицел Benelli M4", "", {itemId: 349});
+        UIMenu.Menu.AddMenuItem("Прицел малой кратности Benelli M4", "", {itemId: 350});
+        UIMenu.Menu.AddMenuItem("Прицел средней кратности Benelli M4", "", {itemId: 351});
+        UIMenu.Menu.AddMenuItem("Фонарик Benelli M4", "", {itemId: 352});
+        UIMenu.Menu.AddMenuItem("Глушитель Benelli M4", "", {itemId: 353});
+        UIMenu.Menu.AddMenuItem("Дульный тормоз Benelli M4", "", {itemId: 354});
+
+        UIMenu.Menu.AddMenuItem(" ");
+        UIMenu.Menu.AddMenuItem("Фонарик HK-416", "", {itemId: 362});
+        UIMenu.Menu.AddMenuItem("Рукоятка HK-416", "", {itemId: 363});
+        UIMenu.Menu.AddMenuItem("Глушитель HK-416", "", {itemId: 364});
+        UIMenu.Menu.AddMenuItem("Прицел HK-416", "", {itemId: 365});
+
+        UIMenu.Menu.AddMenuItem(" ");
+        UIMenu.Menu.AddMenuItem("Фонарик HK-416A5", "", {itemId: 416});
+        UIMenu.Menu.AddMenuItem("Голографический прицел HK-416A5", "", {itemId: 417});
+        UIMenu.Menu.AddMenuItem("Прицел малой кратности HK-416A5", "", {itemId: 418});
+        UIMenu.Menu.AddMenuItem("Прицел большой кратности HK-416A5", "", {itemId: 419});
+        UIMenu.Menu.AddMenuItem("Глушитель HK-416A5", "", {itemId: 420});
+        UIMenu.Menu.AddMenuItem("Тактический дульный тормоз HK-416A5", "", {itemId: 422});
+        UIMenu.Menu.AddMenuItem("Рукоятка HK-416A5", "", {itemId: 428});
+    }
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
+    UIMenu.Menu.Draw();
+
+    UIMenu.Menu.OnSelect.Add(async item => {
+        UIMenu.Menu.HideMenu();
+        if (item.itemId) {
+            let moneyFraction = await coffer.getMoney(coffer.getIdByFraction(user.getCache('fraction_id')));
+            let itemPrice = items.getItemPrice(item.itemId);
+
+            if (moneyFraction < itemPrice) {
+                mp.game.ui.notifications.show(`~r~В бюджете организации не достаточно средств`);
+                return;
+            }
+
+            if (items.isWeapon(item.itemId))
+                inventory.takeNewWeaponItem(item.itemId, `{"owner": "FIB", "userName": "${user.getCache('name')}"}`, 'Выдано оружие').then();
+            else
+                inventory.takeNewWeaponItem(item.itemId, `{"owner": "FIB", "userName": "${user.getCache('name')}"}`, 'Выдан предмет').then();
         }
     });
 };
@@ -9904,7 +10558,7 @@ menuList.showAdminGangZoneMenu = function(zone) {
                 let name = await UIMenu.Menu.GetUserInput("Число", "", 9);
                 mp.events.callRemote('server:admin:gangZone:edit', zone.get('gangWarid'), item.doName, methods.parseInt(name));
             }
-            if (item.doName == 'zone' || item.doNaВme == 'street' || item.doName == 'fraction_name') {
+            if (item.doName == 'zone' || item.doName == 'street' || item.doName == 'fraction_name') {
                 let name = await UIMenu.Menu.GetUserInput("Название", "", 120);
                 mp.events.callRemote('server:admin:gangZone:edit', zone.get('gangWarid'), item.doName, name);
             }

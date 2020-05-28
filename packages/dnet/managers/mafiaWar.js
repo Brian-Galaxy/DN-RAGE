@@ -120,6 +120,10 @@ mafiaWar.startWar = function(id) {
                 return;
             }
 
+            lcn1 = 0;
+            rm1 = 0;
+            yk1 = 0;
+
             isStartTimer1 = true;
             timerCounter1 = 900;
             methods.notifyWithPictureToFraction('Война за территорию', `Организация`, 'Начался захват территории ~y~Порт', 'CHAR_DEFAULT', mafiaId1);
@@ -131,6 +135,10 @@ mafiaWar.startWar = function(id) {
                 return;
             }
 
+            lcn2 = 0;
+            rm2 = 0;
+            yk2 = 0;
+
             isStartTimer2 = true;
             timerCounter2 = 900;
             methods.notifyWithPictureToFraction('Война за территорию', `Организация`, 'Начался захват территории ~y~Свалка', 'CHAR_DEFAULT', mafiaId1);
@@ -141,6 +149,10 @@ mafiaWar.startWar = function(id) {
             if (isStartTimer3) {
                 return;
             }
+
+            lcn3 = 0;
+            rm3 = 0;
+            yk3 = 0;
 
             isStartTimer3 = true;
             timerCounter3 = 900;
@@ -164,13 +176,25 @@ let lcn3 = 0;
 let rm3 = 0;
 let yk3 = 0;
 
+let lcn1l = 0;
+let rm1l = 0;
+let yk1l = 0;
+
+let lcn2l = 0;
+let rm2l = 0;
+let yk2l = 0;
+
+let lcn3l = 0;
+let rm3l = 0;
+let yk3l = 0;
+
 mafiaWar.timer = function() {
     if (isStartTimer1) {
         timerCounter1--;
 
-        lcn1 = 0;
-        rm1 = 0;
-        yk1 = 0;
+        lcn1l = 0;
+        rm1l = 0;
+        yk1l = 0;
 
         mp.players.forEachInRange(warPos1, warPosRadius1, p => {
             if (!user.isLogin(p))
@@ -183,19 +207,22 @@ mafiaWar.timer = function() {
             if (user.isRussianMafia(p))
             {
                 rm1++;
-                if (rm1 > limitUser)
+                rm1l++;
+                if (rm1l > limitUser)
                     user.setHealth(p, -1);
             }
             if (user.isYakuza(p))
             {
                 yk1++;
-                if (yk1 > limitUser)
+                yk1l++;
+                if (yk1l > limitUser)
                     user.setHealth(p, -1);
             }
             if (user.isCosaNostra(p))
             {
                 lcn1++;
-                if (lcn1 > limitUser)
+                lcn1l++;
+                if (lcn1l > limitUser)
                     user.setHealth(p, -1);
             }
         });
@@ -229,9 +256,9 @@ mafiaWar.timer = function() {
     if (isStartTimer2) {
         timerCounter2--;
 
-        lcn2 = 0;
-        rm2 = 0;
-        yk2 = 0;
+        lcn2l = 0;
+        rm2l = 0;
+        yk2l = 0;
 
         mp.players.forEachInRange(warPos2, warPosRadius2, p => {
             if (!user.isLogin(p))
@@ -244,19 +271,22 @@ mafiaWar.timer = function() {
             if (user.isRussianMafia(p))
             {
                 rm2++;
-                if (rm2 > limitUser)
+                rm2l++;
+                if (rm2l > limitUser)
                     user.setHealth(p, -1);
             }
             if (user.isYakuza(p))
             {
                 yk2++;
-                if (yk2 > limitUser)
+                yk2l++;
+                if (yk2l > limitUser)
                     user.setHealth(p, -1);
             }
             if (user.isCosaNostra(p))
             {
                 lcn2++;
-                if (lcn2 > limitUser)
+                lcn2l++;
+                if (lcn2l > limitUser)
                     user.setHealth(p, -1);
             }
         });
@@ -290,9 +320,9 @@ mafiaWar.timer = function() {
     if (isStartTimer3) {
         timerCounter3--;
 
-        lcn3 = 0;
-        rm3 = 0;
-        yk3 = 0;
+        lcn3l = 0;
+        rm3l = 0;
+        yk3l = 0;
 
         mp.players.forEachInRange(warPos3, warPosRadius3, p => {
             if (!user.isLogin(p))
@@ -305,19 +335,22 @@ mafiaWar.timer = function() {
             if (user.isRussianMafia(p))
             {
                 rm3++;
-                if (rm3 > limitUser)
+                rm3l++;
+                if (rm3l > limitUser)
                     user.setHealth(p, -1);
             }
             if (user.isYakuza(p))
             {
                 yk3++;
-                if (yk3 > limitUser)
+                yk3l++;
+                if (yk3l > limitUser)
                     user.setHealth(p, -1);
             }
             if (user.isCosaNostra(p))
             {
                 lcn3++;
-                if (lcn3 > limitUser)
+                lcn3l++;
+                if (lcn3l > limitUser)
                     user.setHealth(p, -1);
             }
         });

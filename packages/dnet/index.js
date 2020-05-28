@@ -46,6 +46,7 @@ let ems = require('./managers/ems');
 let tax = require('./managers/tax');
 let discord = require('./managers/discord');
 let racer = require('./managers/racer');
+let trucker = require('./managers/trucker');
 
 let coffer = require('./coffer');
 let inventory = require('./inventory');
@@ -73,6 +74,8 @@ function init() {
         mafiaWar.loadAll();
         timer.loadAll();
         tax.loadAll();
+
+        trucker.loadAll();
 
         weather.loadAll();
         racer.loadAll();

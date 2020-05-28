@@ -456,6 +456,11 @@ fraction.loadAll = function() {
             fraction.set(item['id'], 'rank_sub_leader', item['rank_sub_leader']);
             fraction.set(item['id'], 'rank_list', item['rank_list']);
             fraction.set(item['id'], 'rank_type_list', item['rank_type_list']);
+
+            fraction.set(item['id'], 'orderLamar', 0);
+            fraction.set(item['id'], 'orderAtm', 0);
+            fraction.set(item['id'], 'orderFuel', 0);
+            fraction.set(item['id'], 'orderDrug', 0);
         });
         count = rows.length;
         methods.debug('All Fraction Loaded: ' + count);
@@ -567,7 +572,7 @@ fraction.createCargoWar = function(count = 3) {
 
                 let boxes = [];
 
-                for (let i = 0; i < 7; i++) {
+                for (let i = 0; i < 5; i++) {
                     let rare = 0;
                     if (methods.getRandomInt(0, 100) < 40)
                         rare = 1;
@@ -594,6 +599,76 @@ fraction.createCargoWar = function(count = 3) {
     });
 
     setTimeout(fraction.timerCargoWar, 1000);
+};
+
+fraction.getNearSpawn = function(pos) {
+    let prevPos = new mp.Vector3(9999, 9999, 9999);
+    fraction.warVehPos.forEach(function (item,) {
+        let shopPos = new mp.Vector3(item[0], item[1], item[2]);
+        if (methods.distanceToPos(shopPos, pos) < methods.distanceToPos(prevPos, pos))
+            prevPos = shopPos;
+    });
+    return prevPos;
+};
+
+fraction.spawnNearCargo = function(player, isDrug = false) {
+
+    if (!user.isLogin(player))
+        return;
+
+    let posVeh = fraction.getNearSpawn(player.position);
+
+    user.setWaypoint(player, posVeh.x, posVeh.y);
+    player.notify('~g~Метка на фургон была установлена');
+
+    vehicles.spawnCarCb(veh => {
+
+        if (!vehicles.exists(veh))
+            return;
+
+        let rare = 0;
+        if (methods.getRandomInt(0, 100) < 40)
+            rare = 1;
+        if (methods.getRandomInt(0, 100) < 15)
+            rare = 2;
+
+        try {
+            let color = methods.getRandomInt(0, 150);
+            veh.locked = false;
+            veh.setColor(color, color);
+
+            let boxes = [];
+
+            for (let i = 0; i < 3; i++) {
+
+                if (isDrug) {
+                    boxes.push(39);
+                }
+                else {
+                    let rare = 0;
+                    if (methods.getRandomInt(0, 100) < 40)
+                        rare = 1;
+                    if (methods.getRandomInt(0, 100) < 10)
+                        rare = 2;
+                    let boxRandom = stocks.boxList.filter((item) => { return item[7] === rare; });
+                    boxes.push(boxRandom[methods.getRandomInt(0, boxRandom.length)][2]);
+                }
+            }
+
+            if (methods.getRandomInt(0, 100) <= 50)
+                boxes.push(methods.getRandomInt(3, 5));
+            else
+                boxes.push(methods.getRandomInt(38, 40));
+
+            veh.setVariable('box', JSON.stringify(boxes));
+
+            veh.setVariable('cargoId', 999);
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+
+    }, posVeh, 0, 'Speedo4');
 };
 
 fraction.createCargoMafiaWar = function() {

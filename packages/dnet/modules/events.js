@@ -42,6 +42,7 @@ let tax = require('../managers/tax');
 let discord = require('../managers/discord');
 let racer = require('../managers/racer');
 let trucker = require('../managers/trucker');
+let vSync = require('../managers/vSync');
 
 mp.events.__add__ = mp.events.add;
 
@@ -5459,6 +5460,58 @@ mp.events.addRemoteCounted('server:vehicle:setColor', (player, color1, color2) =
     try {
         if (player.vehicle && player.seat == -1) {
             player.vehicle.setColor(color1, color2);
+        }
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.addRemoteCounted('server:vehicle:setColorP', (player, color) => {
+    if (!user.isLogin(player))
+        return;
+    try {
+        if (player.vehicle && player.seat == -1) {
+            player.vehicle.pearlescentColor = color;
+        }
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.addRemoteCounted('server:vehicle:setColorW', (player, color) => {
+    if (!user.isLogin(player))
+        return;
+    try {
+        if (player.vehicle && player.seat == -1) {
+            player.vehicle.wheelColor = color;
+        }
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.addRemoteCounted('server:vehicle:setColorI', (player, color) => {
+    if (!user.isLogin(player))
+        return;
+    try {
+        if (player.vehicle && player.seat == -1) {
+            vSync.setVehicleInteriorColor(player.vehicle, color);
+        }
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.addRemoteCounted('server:vehicle:setColorD', (player, color) => {
+    if (!user.isLogin(player))
+        return;
+    try {
+        if (player.vehicle && player.seat == -1) {
+            vSync.setVehicleDashboardColor(player.vehicle, color);
         }
     }
     catch (e) {

@@ -308,6 +308,10 @@ ui.updateValues = function() {
                     mp.events.call('client:setNewMaxSpeed', 0);
                 }
             }
+            else if (speed) {
+                speed = false;
+                mp.events.call('client:setNewMaxSpeed', 0);
+            }
 
             isYellowZone = weather.getHour() >= 6 && weather.getHour() < 22 && enums.zoneYellowList.indexOf(mp.game.zone.getNameOfZone(mp.players.local.position.x, mp.players.local.position.y, mp.players.local.position.z)) >= 0;
 

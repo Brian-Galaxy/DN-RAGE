@@ -831,7 +831,7 @@ phone.showAppFraction2 = async function() {
         titleMenu.umenu.push(
             {
                 title: "Грузы Ламара",
-                text: `Перевезите ${orderLamar}/1000 грузов ламара и получите груз`,
+                text: `Перевезите ${orderLamar}/500 грузов ламара и получите груз`,
                 type: 1,
                 clickable: true,
                 params: { name: "getLamar" }
@@ -877,7 +877,7 @@ phone.showAppFraction2 = async function() {
         titleMenu.umenu.push(
             {
                 title: "Закладки",
-                text: `Разнесите ${orderDrug}/2000 закладок и получите груз с наркотиками`,
+                text: `Разнесите ${orderDrug}/1000 закладок и получите груз с наркотиками`,
                 type: 1,
                 clickable: true,
                 params: { name: "getDrug" }
@@ -4411,8 +4411,8 @@ phone.callBackButton = async function(menu, id, ...args) {
                     mp.game.ui.notifications.show(`~r~Вы уже получали фургон сегодня`);
                     return;
                 }
-                if (orderDrug < 2000) {
-                    mp.game.ui.notifications.show(`~r~Необходимо положить ${orderDrug} закладок, для выполнения контракта`);
+                if (orderDrug < 1000) {
+                    mp.game.ui.notifications.show(`~r~Необходимо положить ${1000 - orderDrug} закладок, для выполнения контракта`);
                     return;
                 }
 
@@ -4433,8 +4433,8 @@ phone.callBackButton = async function(menu, id, ...args) {
                    mp.game.ui.notifications.show(`~r~Вы уже получали фургон сегодня`);
                    return;
                }
-               if (orderLamar < 1000) {
-                   mp.game.ui.notifications.show(`~r~Необходимо перевести ${orderLamar} грузов, для выполнения контракта`);
+               if (orderLamar < 500) {
+                   mp.game.ui.notifications.show(`~r~Необходимо перевести ${500 - orderLamar} грузов, для выполнения контракта`);
                    return;
                }
 
@@ -4456,7 +4456,7 @@ phone.callBackButton = async function(menu, id, ...args) {
                     return;
                 }
                 if (orderAtm < 50) {
-                    mp.game.ui.notifications.show(`~r~Необходимо ограбить ${orderAtm} банкоматов, для выполнения контракта`);
+                    mp.game.ui.notifications.show(`~r~Необходимо ограбить ${50 - orderAtm} банкоматов, для выполнения контракта`);
                     return;
                 }
 

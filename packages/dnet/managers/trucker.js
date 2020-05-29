@@ -1420,7 +1420,7 @@ trucker.acceptOffer = function (player, offerId) {
 
     try {
         trucker.set('accept' + offerId, user.getId(player));
-        methods.notifyWithPictureToJob(user.getRpName(player), `Статус заказа`, `~y~Принял заказ ~s~#${offerId}.\n~y~Заказчик:~s~ ${offer[2]}`, 'DIA_DRIVER', user.get(player, 'job'));
+        trucker.notify(player, `~y~Принял заказ ~s~#${offerId}.\n~y~Заказчик:~s~ ${offer[2]}\nЗаберите груз в указанной точке`, `Статус заказа`);
         user.set(player, 'isStartTrucker', true);
 
         if (offer.length == 10)

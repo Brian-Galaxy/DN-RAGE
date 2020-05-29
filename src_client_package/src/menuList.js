@@ -3340,7 +3340,7 @@ menuList.showPlayerDocMenu = function(playerId) {
 
     UIMenu.Menu.AddMenuItem("Work ID", "~c~Это ваше разрешение на работу", {doName: "work_lic"});
 
-    if (user.isGov() || user.isSheriff() || user.isEms() || user.isSapd() || user.isFib())
+    if (user.isGov() || user.isSheriff() || user.isEms() || user.isSapd() || user.isFib() || user.isUsmc())
         UIMenu.Menu.AddMenuItem("Удостоверение", "", {doName: "gos_lic"});
 
     UIMenu.Menu.AddMenuItem("Мед. страховка", "~c~Эта штука нужна для того~br~чтобы лечение было дешевле", {doName: "med_lic"});
@@ -7584,7 +7584,7 @@ menuList.showLscSTunningMenu = function(shopId, price, lscBanner1) {
                 vehInfo.class_name == 'Helicopters' ||
                 vehInfo.class_name == 'Planes' ||
                 vehInfo.class_name == 'Cycles' ||
-                vehInfo.class_name == 'Vans' ||
+                //vehInfo.class_name == 'Vans' ||
                 vehInfo.class_name == 'Commercials' ||
                 vehInfo.class_name == 'Motorcycles' ||
                 vehInfo.class_name == 'Utility' ||
@@ -7784,7 +7784,7 @@ menuList.showLscTunningListMenu = async function(modType, shopId, price, lscBann
                 vehInfo.class_name == 'Helicopters' ||
                 vehInfo.class_name == 'Planes' ||
                 vehInfo.class_name == 'Cycles' ||
-                vehInfo.class_name == 'Vans' ||
+                //vehInfo.class_name == 'Vans' ||
                 vehInfo.class_name == 'Commercials' ||
                 vehInfo.class_name == 'Utility' ||
                 vehInfo.class_name == 'Boats'
@@ -8046,7 +8046,7 @@ menuList.showLscTunningListMenu = async function(modType, shopId, price, lscBann
         UIMenu.Menu.Draw();
 
         UIMenu.Menu.OnIndexSelect.Add((index) => {
-            /*if (index == 0) {
+            if (index === 0) {
                 if (modType === 78) {
                     mp.game.ui.notifications.show(`~r~Для этого типа тюнинга не доступно`);
                     return;
@@ -8055,7 +8055,7 @@ menuList.showLscTunningListMenu = async function(modType, shopId, price, lscBann
                     mp.events.callRemote('server:lsc:showTun', modType, -1);
                 }
                 return;
-            }*/
+            }
             if (index >= list.length)
                 return;
             if (modType === 80) {
@@ -10573,6 +10573,7 @@ menuList.showAdminVehicleMenu = function() {
 
     UIMenu.Menu.AddMenuItem("Заспавнить транспорт", "", {doName: "spawn"});
     UIMenu.Menu.AddMenuItem("Цвет транспорта", "", {doName: "colorVeh"});
+    UIMenu.Menu.AddMenuItem("Тюнинг", "", {doName: "tunning"});
     UIMenu.Menu.AddMenuItem("Ремонт транспорта", "", {doName: "fixvehicle"});
     UIMenu.Menu.AddMenuItem("Зареспавнить ближайший транспорт", "", {doName: "respvehicle"});
     UIMenu.Menu.AddMenuItem("Перевернуть ближайший транспорт", "", {doName: "flipVehicle"});
@@ -10594,6 +10595,9 @@ menuList.showAdminVehicleMenu = function() {
     UIMenu.Menu.OnSelect.Add(async item => {
         if (item.doName == 'colorVeh') {
             menuList.showAdminColorVehMenu();
+        }
+        if (item.doName == 'tunning') {
+            menuList.showAdminTunningMenu();
         }
         if (item.doName === 'spawn') {
             let vName = await UIMenu.Menu.GetUserInput("Название ТС", "", 20);
@@ -10775,11 +10779,15 @@ menuList.showAdminColorVehMenu = function() {
     let color2 = 0;
 
     let list = [];
-    for (let j = 0; j < 156; j++)
+    for (let j = 0; j <= 160; j++)
         list.push(j + '');
 
     UIMenu.Menu.AddMenuItemList("Цвет 1", list, "", {doName: "list1Item"});
     UIMenu.Menu.AddMenuItemList("Цвет 2", list, "", {doName: "list2Item"});
+    UIMenu.Menu.AddMenuItemList("Цвет перламутра", list, "", {doName: "list5Item"});
+    UIMenu.Menu.AddMenuItemList("Цвет колес", list, "", {doName: "list6Item"});
+    UIMenu.Menu.AddMenuItemList("Цвет салона", list, "", {doName: "list7Item"});
+    UIMenu.Menu.AddMenuItemList("Цвет приб. панели", list, "", {doName: "list8Item"});
 
     try {
         if (mp.players.local.vehicle.getLiveryCount() > 1) {
@@ -10819,6 +10827,22 @@ menuList.showAdminColorVehMenu = function() {
             vehicles.setExtraState(index);
             return;
         }
+        if ('list5Item' == item.doName) {
+            mp.events.callRemote('server:vehicle:setColorP', index);
+            return;
+        }
+        if ('list6Item' == item.doName) {
+            mp.events.callRemote('server:vehicle:setColorW', index);
+            return;
+        }
+        if ('list7Item' == item.doName) {
+            mp.events.callRemote('server:vehicle:setColorI', index);
+            return;
+        }
+        if ('list8Item' == item.doName) {
+            mp.events.callRemote('server:vehicle:setColorD', index);
+            return;
+        }
         if ('list1Item' == item.doName)
             color1 = index;
         if ('list2Item' == item.doName)
@@ -10837,6 +10861,44 @@ menuList.showAdminDebugMenu = function() {
     UIMenu.Menu.OnList.Add((item, index) => {
         user.stopAllScreenEffect();
         mp.game.graphics.startScreenEffect(enums.screenEffectList[index], 0, false);
+    });
+};
+
+menuList.showAdminTunningMenu = function() {
+    UIMenu.Menu.Create(`Admin`, `~b~Tunning`);
+
+    let veh = mp.players.local.vehicle;
+
+    for (let i = 0; i < 100; i++) {
+        try {
+            if (veh.getNumMods(i) === 0) continue;
+
+            if (veh.getNumMods(i) > 0 && enums.lscNames[i][1] > 0) {
+                let label = mp.game.ui.getLabelText(veh.getModSlotName(i));
+                if (label == "NULL" || label == "")
+                    label = `${enums.lscNames[i][0]}`;
+
+                let list = ['Стандарт'];
+                for (let j = 0; j < veh.getNumMods(i); j++)
+                    list.push(j + '');
+
+                UIMenu.Menu.AddMenuItemList(`${i}. ${label}`, list,``, {modType: i});
+            }
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    }
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
+    UIMenu.Menu.Draw();
+
+    UIMenu.Menu.OnList.Add((item, idx) => {
+        if (item.modType >= 0)
+            mp.events.callRemote('server:lsc:showTun', item.modType, idx - 1);
+    });
+    UIMenu.Menu.OnSelect.Add(item => {
+        UIMenu.Menu.HideMenu();
     });
 };
 

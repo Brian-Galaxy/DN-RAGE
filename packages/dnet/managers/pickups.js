@@ -141,6 +141,8 @@ pickups.SheriffInfo2Pos = new mp.Vector3(1861.929931640625, 3689.359375, 33.2670
 pickups.InvaderInfoPos = new mp.Vector3(-1082.346923828125, -245.2889404296875, 36.763282775878906);
 pickups.EmsInfo1Pos = new mp.Vector3(334.723876953125, -594.0081176757812, 42.28398895263672);
 pickups.EmsInfo2Pos = new mp.Vector3(-268.90997314453125, 6321.72802734375, 31.47595977783203);
+pickups.FibInfoPos = new mp.Vector3(155.91026306152344, -738.9337768554688, 241.15208435058594);
+pickups.UsmcInfoPos = new mp.Vector3(562.8510131835938, -3124.137939453125, 17.768630981445312);
 
 /*Invader*/
 pickups.InvaderWorkPos1 = new mp.Vector3(-1055.5491943359375, -242.51651000976562, 43.021060943603516);
@@ -491,6 +493,10 @@ pickups.checkPressE = function(player) {
             player.call('client:menuList:showFractionInfoMenu');
         if (methods.distanceToPos(pickups.EmsInfo2Pos, playerPos) < distanceCheck)
             player.call('client:menuList:showFractionInfoMenu');
+        if (methods.distanceToPos(pickups.UsmcInfoPos, playerPos) < distanceCheck)
+            player.call('client:menuList:showFractionInfoMenu');
+        if (methods.distanceToPos(pickups.FibInfoPos, playerPos) < distanceCheck)
+            player.call('client:menuList:showFractionInfoMenu');
     }
 
     if (user.isNews(player)) {
@@ -505,22 +511,22 @@ pickups.checkPressE = function(player) {
     }
 
     if (methods.distanceToPos(pickups.GovKeyPos, playerPos) < distanceCheck && user.isGov(player))
-        player.call('client:menuList:showFractionKeyMenu', [vehicles.getFractionAllowCarList(1, user.isLeader(player) || user.isSubLeader(player) ? -1 : user.get(player, 'rank_type'))]);
+        player.call('client:menuList:showFractionKeyMenu', [vehicles.getFractionAllowCarList(1, user.isLeader(player) || user.isSubLeader(player) || user.isDepLeader(player) || user.isSubLeader(player) ? -1 : user.get(player, 'rank_type'))]);
 
     else if (methods.distanceToPos(pickups.SapdKeyPos, playerPos) < distanceCheck && user.isSapd(player))
-        player.call('client:menuList:showFractionKeyMenu', [vehicles.getFractionAllowCarList(2, user.isLeader(player) || user.isSubLeader(player) ? -1 : user.get(player, 'rank_type'))]);
+        player.call('client:menuList:showFractionKeyMenu', [vehicles.getFractionAllowCarList(2, user.isLeader(player) || user.isSubLeader(player) || user.isDepLeader(player) || user.isSubLeader(player) ? -1 : user.get(player, 'rank_type'))]);
 
     else if (methods.distanceToPos(pickups.UsmcKeyPos, playerPos) < distanceCheck && user.isUsmc(player))
-        player.call('client:menuList:showFractionKeyMenu', [vehicles.getFractionAllowCarList(4, user.isLeader(player) || user.isSubLeader(player) ? -1 : user.get(player, 'rank_type'))]);
+        player.call('client:menuList:showFractionKeyMenu', [vehicles.getFractionAllowCarList(4, user.isLeader(player) || user.isSubLeader(player) || user.isDepLeader(player) || user.isSubLeader(player) ? -1 : user.get(player, 'rank_type'))]);
 
     else if (methods.distanceToPos(pickups.SheriffKeyPos, playerPos) < distanceCheck && user.isSheriff(player))
-        player.call('client:menuList:showFractionKeyMenu', [vehicles.getFractionAllowCarList(5, user.isLeader(player) || user.isSubLeader(player) ? -1 : user.get(player, 'rank_type'))]);
+        player.call('client:menuList:showFractionKeyMenu', [vehicles.getFractionAllowCarList(5, user.isLeader(player) || user.isSubLeader(player) || user.isDepLeader(player) || user.isSubLeader(player) ? -1 : user.get(player, 'rank_type'))]);
 
     else if (methods.distanceToPos(pickups.EmsKeyPos, playerPos) < distanceCheck && user.isEms(player))
-        player.call('client:menuList:showFractionKeyMenu', [vehicles.getFractionAllowCarList(6, user.isLeader(player) || user.isSubLeader(player) ? -1 : user.get(player, 'rank_type'))]);
+        player.call('client:menuList:showFractionKeyMenu', [vehicles.getFractionAllowCarList(6, user.isLeader(player) || user.isSubLeader(player) || user.isDepLeader(player) || user.isSubLeader(player) ? -1 : user.get(player, 'rank_type'))]);
 
     else if (methods.distanceToPos(pickups.InvaderKeyPos, playerPos) < distanceCheck && user.isNews(player))
-        player.call('client:menuList:showFractionKeyMenu', [vehicles.getFractionAllowCarList(7, user.isLeader(player) || user.isSubLeader(player) ? -1 : user.get(player, 'rank_type'))]);
+        player.call('client:menuList:showFractionKeyMenu', [vehicles.getFractionAllowCarList(7, user.isLeader(player) || user.isSubLeader(player) || user.isDepLeader(player) || user.isSubLeader(player) ? -1 : user.get(player, 'rank_type'))]);
 
     if (player.dimension > 0) {
         if (methods.distanceToPos(business.BusinessBotPos, playerPos) < distanceCheck)
@@ -665,6 +671,8 @@ pickups.createAll = function() {
     methods.createCpVector(pickups.GovKeyPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
     methods.createCpVector(pickups.UsmcKeyPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
 
+    methods.createCpVector(pickups.FibInfoPos, 'Нажмите ~g~E~s~ чтобы открыть меню руководства', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.UsmcInfoPos, 'Нажмите ~g~E~s~ чтобы открыть меню руководства', 1, -1, pickups.Blue);
     methods.createCpVector(pickups.GovInfoPos, 'Нажмите ~g~E~s~ чтобы открыть меню руководства', 1, -1, pickups.Blue);
     methods.createCpVector(pickups.SapdInfoPos, 'Нажмите ~g~E~s~ чтобы открыть меню руководства', 1, -1, pickups.Blue);
     methods.createCpVector(pickups.SheriffInfo1Pos, 'Нажмите ~g~E~s~ чтобы открыть меню руководства', 1, -1, pickups.Blue);

@@ -26,7 +26,6 @@ trucker.loadAll = function() {
 
 trucker.acceptOffer1 = function(id, name, company, x, y, z, px, py, pz, price) {
     type = 1;
-    trucker.notify('Заберите груз в указанной точке');
     _checkpointId = jobPoint.create(new mp.Vector3(x, y, z), true, 5);
 
     offerId = id;
@@ -37,7 +36,6 @@ trucker.acceptOffer1 = function(id, name, company, x, y, z, px, py, pz, price) {
 
 trucker.acceptOffer2 = function(id, name, company, trName, cl1, cl2, liv, x, y, z, rot, px, py, pz, price) {
     type = 2;
-    trucker.notify('Заберите груз в указанной точке');
     _checkpointId = jobPoint.create(new mp.Vector3(x, y, z - 3), true, 5);
 
     offerId = id;

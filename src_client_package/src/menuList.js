@@ -1347,9 +1347,9 @@ menuList.showBusinessMenu = async function(data) {
 
             business.removeMoney(data.get('id'), money, 'Вывод средств на карту ' + methods.bankFormat(user.getCache('bank_card')));
             business.save(data.get('id'));
-            user.addBankMoney(money * (100 - nalog - bankTarif) / 100, 'Вывод со счета бизнеса ' + data.get('name'));
+            user.addBankMoney(money * (100 - nalog) / 100, 'Вывод со счета бизнеса ' + data.get('name'));
             coffer.addMoney(1, money * nalog / 100);
-            mp.game.ui.notifications.show(`~b~Вы сняли ~s~${methods.moneyFormat(money * (100 - nalog + bankTarif) / 100)} ~b~со счёта с учётом налога`);
+            mp.game.ui.notifications.show(`~b~Вы сняли ~s~${methods.moneyFormat(money * (100 - nalog) / 100)} ~b~со счёта с учётом налога`);
             mp.game.ui.notifications.show(`~b~${bankTarif}% от суммы отправлен банку который вас обслуживает`);
         }
     });
@@ -1879,6 +1879,23 @@ menuList.showLawyerHouseOffersMenu = function(buyerId, id) {
     });
 };
 
+menuList.showAcceptClearWantedMenu = function(id, price) {
+
+    UIMenu.Menu.Create('Мафия', `~b~Снять розыск`);
+
+    UIMenu.Menu.AddMenuItem("~g~Согласиться", `Цена: ~g~${methods.moneyFormat(price)}`, {eventName: 'server:user:clearByMafia'});
+    UIMenu.Menu.AddMenuItem("~r~Отказаться");
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: 'closeMenu'});
+    UIMenu.Menu.Draw();
+
+    UIMenu.Menu.OnSelect.Add(async (item, index) => {
+        UIMenu.Menu.HideMenu();
+        if (item.eventName)
+            mp.events.callRemote(item.eventName, id, price);
+    });
+};
+
 menuList.showMazeBankHousePeopleMenu = function() {
     //TODO BLACKOUT
 
@@ -1918,7 +1935,7 @@ menuList.showMazeBankHousePeopleListMenu = function(data) {
 
     data.forEach(function (item) {
         let userId = methods.parseInt(item[0]);
-        if (userId == user.get('id'))
+        if (userId === user.getCache('id'))
             UIMenu.Menu.AddMenuItem(`${item[1]}`);
         else
             UIMenu.Menu.AddMenuItem(`${item[1]}`, "", {eventParam: userId});
@@ -3055,11 +3072,11 @@ menuList.showSettingsTextMenu = function() {
             user.set('s_chat_opacity', num);
             mp.game.ui.notifications.show('~b~Настройки были сохранены');
         }
-        //ui.hideHud();
+        chat.show(false);
         chat.updateSettings();
-        /*setTimeout(function () {
-            ui.showHud();
-        }, 200);*/
+        setTimeout(function () {
+            chat.show(true);
+        }, 200);
     });
 
     UIMenu.Menu.OnSelect.Add(async (item, index) => {
@@ -3146,7 +3163,7 @@ menuList.showPlayerDoMenu = function(playerId) {
     UIMenu.Menu.AddMenuItem("Затащить в ближайшее авто", "", {eventName: "server:user:inCarById"});
     //UIMenu.Menu.AddMenuItem("Вытащить из тс").eventName = 'server:user:removeCarById';
     UIMenu.Menu.AddMenuItem("Вести за собой", "", {eventName: "server:user:taskFollowById"});
-    //UIMenu.Menu.AddMenuItem("Снять маску с игрока").eventName = 'server:user:taskRemoveMaskById';
+    UIMenu.Menu.AddMenuItem("Снять маску с игрока").eventName = 'server:user:taskRemoveMaskById';
 
     UIMenu.Menu.AddMenuItem("Обыск игрока", "", {eventName: "server:user:getInvById"});
     if (user.isPolice()) {
@@ -3545,8 +3562,10 @@ menuList.showInviteMpMenu = function(x, y, z) {
 
     UIMenu.Menu.OnSelect.Add(async (item, index) => {
         UIMenu.Menu.HideMenu();
-        if (item.doName === 'yes')
+        if (item.doName === 'yes') {
+            user.setVirtualWorld(0);
             user.teleport(x, y, z);
+        }
     });
 };
 
@@ -8498,6 +8517,13 @@ menuList.showFractionInfoMenu = function() {
 
     if (user.isSapd() || user.isSheriff() || user.isFib()) {
         UIMenu.Menu.AddMenuItem(`Выдать лицензию на оружие`, "Стоимость: ~g~$30,000", {licName: "gun_lic"});
+
+        UIMenu.Menu.AddMenuItem(`Забрать лицензию категории А`, "", {licRName: "a_lic"});
+        UIMenu.Menu.AddMenuItem(`Забрать лицензию категории B`, "", {licRName: "b_lic"});
+        UIMenu.Menu.AddMenuItem(`Забрать лицензию категории C`, "", {licRName: "c_lic"});
+        UIMenu.Menu.AddMenuItem(`Забрать лицензию пилота`, "", {licRName: "air_lic"});
+        UIMenu.Menu.AddMenuItem(`Забрать лицензию на перевозку пассажиров`, "", {licRName: "taxi_lic"});
+        UIMenu.Menu.AddMenuItem(`Забрать лицензию на оружие`, "", {licRName: "gun_lic"});
     }
     if (user.isGov()) {
 
@@ -8507,6 +8533,10 @@ menuList.showFractionInfoMenu = function() {
         UIMenu.Menu.AddMenuItem(`Выдать лицензию юриста`, "Стоимость: ~g~$20,000", {licName: "law_lic"});
         UIMenu.Menu.AddMenuItem(`Выдать лицензию на предпринимательство`, "Стоимость: ~g~$20,000", {licName: "biz_lic"});
         UIMenu.Menu.AddMenuItem(`Выдать разрешение на рыбаловство`, "Стоимость: ~g~$5,000", {licName: "fish_lic"});
+
+        UIMenu.Menu.AddMenuItem(`Забрать лицензию юриста`, "", {licRName: "law_lic"});
+        UIMenu.Menu.AddMenuItem(`Забрать лицензию на предпринимательство`, "", {licRName: "biz_lic"});
+        UIMenu.Menu.AddMenuItem(`Забрать лицензию на рыбаловство`, "", {licRName: "fish_lic"});
     }
     if (user.isEms()) {
         UIMenu.Menu.AddMenuItem(`Выдать мед. страховку`, "Стоимость: ~g~$20,000", {licName: "med_lic"});
@@ -8536,6 +8566,15 @@ menuList.showFractionInfoMenu = function() {
                 mp.events.callRemote('server:user:askSellLic', id, item.licName, 20000);
             if (item.licName == 'fish_lic')
                 mp.events.callRemote('server:user:askSellLic', id, item.licName, 5000);
+        }
+        if (item.licRName) {
+
+            let id = methods.parseInt(await UIMenu.Menu.GetUserInput("Card ID Игрока", "", 9));
+            if (id < 0) {
+                mp.game.ui.notifications.show("~r~ID Игркоа не может быть меньше нуля");
+                return;
+            }
+            mp.events.callRemote('server:user:askSellRLic', id, item.licName);
         }
 
         if (item.invite) {

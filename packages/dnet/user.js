@@ -1280,10 +1280,18 @@ user.cuff = function(player) {
     methods.debug('user.cuff');
     if (!mp.players.exists(player))
         return false;
-    user.playAnimation(player, "mp_arresting", "idle", 49);
-    player.call("client:handcuffs", [true]);
-    player.setVariable("isBlockAnimation", true);
+    user.stopAnimation(player);
     player.setVariable("isCuff", true);
+    setTimeout(function () {
+        try {
+            user.playAnimation(player, "mp_arresting", "idle", 49);
+            player.call("client:handcuffs", [true]);
+            player.setVariable("isBlockAnimation", true);
+        }
+        catch (e) {
+            
+        }
+    }, 500);
 };
 
 user.unCuff = function(player) {
@@ -2492,7 +2500,7 @@ user.arrest = function(player) {
     user.jail(player, methods.parseInt(user.get(player, 'wanted_level')) * 120);
 };
 
-user.giveWanted = function(player, level, reason) {
+user.giveWanted = function(player, level, reason, officer = 'Система') {
     methods.debug('user.giveWanted');
     if (!user.isLogin(player))
         return false;
@@ -2501,7 +2509,7 @@ user.giveWanted = function(player, level, reason) {
         user.set(player, 'wanted_level', 0);
         user.set(player, 'wanted_reason', '');
         player.notifyWithPicture('Уведомление', 'Police Department', 'Вы больше не находитесь в розыске', 'WEB_LOSSANTOSPOLICEDEPT', 2);
-        user.addHistory(player, 1, 'Был очищен розыск');
+        user.addHistory(player, 1, `Был очищен розыск (${officer})`);
     }
     else {
 
@@ -2518,7 +2526,7 @@ user.giveWanted = function(player, level, reason) {
         user.set(player, 'wanted_reason', reason);
         player.notifyWithPicture('Уведомление', 'Police Department', 'Просим Вас явиться в участок Los Santos Police Department', 'WEB_LOSSANTOSPOLICEDEPT', 2);
 
-        user.addHistory(player, 1, 'Был выдан розыск ' + level + '. Причина: ' + reason);
+        user.addHistory(player, 1, `Был выдан розыск ${level}. Причина: ${reason}. (${officer})`);
     }
     user.updateClientCache(player);
 };
@@ -2764,6 +2772,15 @@ user.payDay = async function (player) {
                 mysql.executeQuery(`UPDATE users SET money_donate = money_donate + '50' WHERE parthner_promocode = '${user.get(player, 'promocode')}'`);
             });
         }
+    }
+
+    if (user.get(player, 'vip_type') === 1) {
+        user.addWorkExp(player, 10);
+        player.notify('~g~Вы получили 10 опыта рабочего стажа, связи с тем, что у вас VIP LIGHT');
+    }
+    if (user.get(player, 'vip_type') === 2) {
+        user.addWorkExp(player, 10);
+        player.notify('~g~Вы получили 20 опыта рабочего стажа, связи с тем, что у вас VIP HARD');
     }
 
     if (user.get(player, 'bank_card') > 0) {

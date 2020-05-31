@@ -301,7 +301,10 @@ ui.updateValues = function() {
             if (mp.players.local.dimension === 0) {
                 if (isGreenZone) {
                     speed = true;
-                    mp.events.call('client:setNewMaxSpeed', 60);
+                    if (user.isGos())
+                        mp.events.call('client:setNewMaxSpeed', 100);
+                    else
+                        mp.events.call('client:setNewMaxSpeed', 60);
                 }
                 else if (speed) {
                     speed = false;

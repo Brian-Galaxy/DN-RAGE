@@ -1127,7 +1127,11 @@ fraction.getShopGang = function(player) {
         return;
     }
     if (fraction.get(user.get(player, 'fraction_id2'), 'cantGrab')) {
-        player.notify('~r~Вы уже сегодня совершали ограбление');
+        player.notify('~r~Вы уже сегодня совершали ограбление недавно');
+        return;
+    }
+    if (fraction.get(user.get(player, 'fraction_id2'), 'cantGrab2') >= 1) {
+        player.notify('~r~Вы уже сегодня совершали ограбление сегодня');
         return;
     }
     if (!user.isLeader2(player) && !user.isSubLeader2(player)) {
@@ -1149,6 +1153,9 @@ fraction.getShopGang = function(player) {
     let frId = user.get(player, 'fraction_id2');
 
     fraction.set(frId, 'cantGrab', true);
+
+    if (fraction.has(user.get(player, 'fraction_id2'), 'cantGrab2'))
+        fraction.set(user.get(player, 'fraction_id2'), 'cantGrab2', 1);
 
     let shopItem = fraction.shopList[methods.getRandomInt(0, fraction.shopList.length)];
 
@@ -1222,7 +1229,7 @@ fraction.startGrabShopGang = function(player, itemId = 0) {
                     fraction.reset(frId, 'currentGrabShopActive' + i);
 
                     if (methods.getRandomInt(0, 100) < 40) {
-                        inventory.addItem(141, 1, inventory.types.Player, user.getId(player), methods.getRandomInt(shopItem.sumMax, shopItem.sumMin) * 2, 0, "{}", 2);
+                        inventory.addItem(141, 1, inventory.types.Player, user.getId(player), methods.getRandomInt(shopItem.sumMax, shopItem.sumMin), 0, "{}", 2);
                         mp.players.forEach(p => {
                             if (user.isLogin(p) && user.get(p, 'fraction_id2') === frId) {
                                 user.deleteBlip(p, i + 1000);

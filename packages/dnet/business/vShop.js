@@ -31,7 +31,6 @@ vShop.loadAllShop = () => {
     enums.carShopList.forEach(item => {
         if (item.id == 0)
             return;
-
         let blip = methods.createBlip(new mp.Vector3(item.buyPos[0], item.buyPos[1], item.buyPos[2]), item.blipId, item.blipColor, 0.8, item.name);
         methods.createCp(blip.position.x, blip.position.y, blip.position.z - 1, "Нажмите ~g~Е~s~ чтобы открыть меню");
     });

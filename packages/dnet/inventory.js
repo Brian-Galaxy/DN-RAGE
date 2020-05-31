@@ -63,7 +63,7 @@ inventory.getItemList = function(player, ownerType, ownerId, isFrisk = false) {
 
         let addWhere = '';
         if (isFrisk)
-            addWhere = ' AND (item_id <> 50 AND item_id <> 27 AND item_id <> 28 AND item_id <> 29 AND item_id <> 30 AND item_id <> 265 AND item_id <> 266 AND item_id <> 267 AND item_id <> 268 AND item_id <> 269 AND item_id <> 270 AND item_id <> 271 AND item_id <> 272 AND item_id <> 273)';
+            addWhere = ' AND (item_id <> 50 AND item_id <> 27 AND item_id <> 28 AND item_id <> 29 AND item_id <> 30 AND item_id <> 265 AND item_id <> 266 AND item_id <> 267 AND item_id <> 268 AND item_id <> 269 AND item_id <> 270 AND item_id <> 271 AND item_id <> 272 AND item_id <> 273 AND item_id <> 274)';
 
         let sql = `SELECT * FROM items WHERE owner_id = '${ownerId}' AND owner_type = '${ownerType}'${addWhere} ORDER BY item_id DESC LIMIT 400`;
         if (ownerId == 0 && ownerType == 0)

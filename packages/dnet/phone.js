@@ -100,6 +100,16 @@ phone.getUserInfo = function(player, text) {
                 { name: 'none' },
             ));
 
+            let wanted = 'Нет';
+            if (row['wanted_level'] > 0)
+                wanted = 'Уровень опасности: ' + row['wanted_level'];
+
+            subItems.push(phone.getMenuItemButton(
+                'Розыск',
+                wanted,
+                { name: 'none' },
+            ));
+
             if (row['phone'] != '') {
                 subItems.push(phone.getMenuItemButton(
                     'Мобильный телефон',

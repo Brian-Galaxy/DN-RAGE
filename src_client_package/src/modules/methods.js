@@ -383,6 +383,11 @@ methods.removeQuotes2 = function(str) {
     //return text.toString().replace('"', '');
 };
 
+methods.removeQuotesAll = function(str) {
+    return methods.replaceQuotes(str);
+    //return text.toString().replace('"', '');
+};
+
 methods.replaceQuotes = function(str) {
     try {
         str = methods.replaceAll(str, '"', '`');

@@ -15,6 +15,7 @@ let range = 15;
 
 chat.clRed = '#f44336';
 chat.clBlue = '#03A9F4';
+chat.clGreen = '#8BC34A';
 chat.clOrange = '#FFC107';
 chat.clWhite = '#FFFFFF';
 chat.clBlack = '#000000';
@@ -34,11 +35,11 @@ chat.sendBCommand = function(player, text) {
 chat.sendTryCommand = function(player, text) {
     if (user.isLogin(player)) {
 
-        let label = methods.getRandomInt(0, 2) === 0 ? 'Не удачно' : 'Удачно';
+        let label = methods.getRandomInt(0, 2) === 0 ? `!{${chat.clRed}}Не удачно` : `!{${chat.clGreen}}Удачно`;
 
         mp.players.forEach(p => {
             if (user.isLogin(p) && p.dimension === player.dimension && methods.distanceToPos(player.position, p.position) <= range)
-                p.outputChatBoxNew(`[${chat.getTime()}] !{C2A2DA} ${label} ${user.getSvId(player)} ${text}`);
+                p.outputChatBoxNew(`[${chat.getTime()}] ${label} !{C2A2DA}${user.getSvId(player)} ${text}`);
         });
 
         methods.saveLog('log_chat', ['text'], [`/try ${user.getRpName(player)} (${user.getId(player)}): ${label} ${methods.removeQuotes(methods.removeQuotes2(text))}`]);

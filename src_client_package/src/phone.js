@@ -961,6 +961,24 @@ phone.showAppFraction2 = async function() {
         }
     }
 
+    if (fData.get('is_mafia') && (user.isLeader2() || user.isSubLeader2() || user.isDepLeader2() || user.isDepSubLeader2())) {
+        let titleMenu = {
+            title: 'Спец. раздел',
+            umenu: [
+                {
+                    title: "Снять розыск",
+                    text: "Цена за 1 уровень: $300",
+                    modalTitle: 'Введите ID',
+                    modalButton: ['Отмена', 'Принять'],
+                    type: 8,
+                    clickable: true,
+                    params: { name: "mafiaClearWanted" }
+                },
+            ],
+        };
+        menu.items.push(titleMenu);
+    }
+
     if (user.isLeader2() || user.isSubLeader2()) {
         let titleMenu = {
             title: 'Раздел для руководства',
@@ -2432,9 +2450,9 @@ phone.showAppFractionDispatcherList = function() {
                 return;
             try {
                 let itemSmall = phone.getMenuItem(
-                    `${i}. ${item.title} [${item.time}]`,
-                    `Район: ${item.street1}`,
-                    { name: "dispatcherAccept", title: item.title, desc: item.desc, street1: item.street1, withCoord: item.withCoord, posX: item.x, posY: item.y },
+                    `${i}. ${methods.removeQuotesAll(item.title)} [${item.time}]`,
+                    `Район: ${methods.removeQuotesAll(item.street1)}`,
+                    { name: "dispatcherAccept", title: methods.removeQuotesAll(item.title), desc: methods.removeQuotesAll(item.desc), street1: methods.removeQuotesAll(item.street1), withCoord: item.withCoord, posX: item.x, posY: item.y },
                     1,
                     '',
                     true,
@@ -3623,14 +3641,6 @@ phone.consoleCallback = async function(command) {
 
                     jobPoint.create(pos, true, 3);
                     mp.game.ui.notifications.show(`~g~Метка была установлена`);
-
-                    setTimeout(function () {
-                        if (user.hasCache('isSellDrug')) {
-                            jobPoint.delete();
-                            user.reset('isSellDrug');
-                            mp.game.ui.notifications.show(`~r~Метка была удалена`);
-                        }
-                    }, 600 * 1000);
                 }
                 else {
                     phone.addConsoleCommand('Usage: ecorp -drug -getpos');
@@ -3887,6 +3897,9 @@ phone.callBackModalInput = async function(paramsJson, text) {
         }
         if (params.name == 'inviteFraction2') {
             mp.events.callRemote('server:phone:inviteFraction2', methods.parseInt(text));
+        }
+        if (params.name == 'mafiaClearWanted') {
+            mp.events.callRemote('server:phone:mafiaClearWanted', methods.parseInt(text));
         }
         if (params.name == 'destroyFraction') {
             if (text.toLowerCase() === 'да')

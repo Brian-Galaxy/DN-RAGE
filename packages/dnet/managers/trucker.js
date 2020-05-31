@@ -35,8 +35,6 @@ trucker.w1 = [
     ['Майки', 'Bikini Universe', 1248.18, -3148.986, 4.76891, -1217.006, -1526.73, 3.282896, 300, 400, 0],
     ['Напитки', 'Bishop’s Chicken', 1246.994, -3272.652, 4.826261, 159.6689, -1646.977, 28.29167, 300, 400, 0],
     ['Соусы, Специи', 'Bishop’s Chicken', 1246.994, -3272.652, 4.826261, 159.6689, -1646.977, 28.29167, 300, 400, 0],
-    ['Напитки', 'Bite!', 1246.994, -3272.652, 4.826261, 4.842545, -1010.669, 28.32071, 300, 400, 0],
-    ['Соусы, Специи', 'Bite!', 1246.994, -3272.652, 4.826261, 4.842545, -1010.669, 28.32071, 300, 400, 0],
     ['Напитки', 'Bite!', 1246.994, -3272.652, 4.826261, 1146.081, -466.439, 65.56268, 300, 400, 0],
     ['Соусы, Специи', 'Bite!', 1246.994, -3272.652, 4.826261, 1146.081, -466.439, 65.56268, 300, 400, 0],
     ['Напитки', 'Bite!', 1246.994, -3272.652, 4.826261, 83.31238, -672.2915, 43.11325, 300, 400, 0],
@@ -1463,7 +1461,7 @@ trucker.doneOffer = function (player, offerId) {
         trucker.notify(player, `Вы доставили груз и заработали ~g~${methods.moneyFormat(price)}`, 'Доставка');
         user.giveJobSkill(player);
         user.giveJobMoney(player, price);
-        user.addWorkExp(player, 5);
+        user.addWorkExp(player, 7);
     }
     else {
 
@@ -1494,7 +1492,7 @@ trucker.doneOffer = function (player, offerId) {
         trucker.notify(player, `Вы доставили груз и заработали ~g~${methods.moneyFormat(price * heal)}\n~s~Состояние вашего груза: ~b~${heal * 100}%`, 'Доставка');
         if (heal * 100 < 100)
             player.notify(`~y~Штраф: ~s~${methods.moneyFormat(price - (price * heal))}`);
-        user.addWorkExp(player, 10);
+        user.addWorkExp(player, 15);
         vehicles.respawn(trailer);
         user.giveJobSkill(player);
         user.giveJobMoney(player, price * heal);

@@ -1494,6 +1494,26 @@ mp.events.addRemoteCounted('server:user:taskFollowById', (player, targetId) => {
     nplayer.call("client:taskFollow", [player]);
 });
 
+mp.events.addRemoteCounted('server:user:taskRemoveMaskById', (player, targetId) => {
+    if (!user.isLogin(player))
+        return;
+    let nplayer = mp.players.at(targetId);
+    if (!user.isLogin(nplayer))
+        return;
+    if (!user.isTie(nplayer) && !user.isCuff(nplayer)) {
+        player.notify('~r~Игрок должен быть связан или в наручниках');
+        return;
+    }
+    if (methods.distanceToPos(nplayer.position, player.position) > 3) {
+        player.notify('~r~Вы слишком далеко');
+        return;
+    }
+    mysql.executeQuery(`UPDATE items SET owner_type = '1', owner_id = '${user.getId(player)}', is_equip='0' WHERE item_id = '274' AND owner_id='${user.getId(nplayer)}' AND owner_type='1' AND is_equip='1'`);
+    user.set(nplayer, 'mask', -1);
+    user.set(nplayer, 'mask_color', -1);
+    player.notify('~b~Вы сняли маску с игрока');
+});
+
 mp.events.addRemoteCounted('server:user:inCarById', (player, targetId) => {
     if (!user.isLogin(player))
         return;
@@ -2738,7 +2758,7 @@ mp.events.addRemoteCounted('server:phone:editContact', (player, json) => {
         let contact = JSON.parse(json);
         methods.debug(json);
         mysql.executeQuery(`UPDATE phone_contact SET name = '${methods.removeQuotes(methods.removeQuotes2(contact.name))}', numbers = '${JSON.stringify(contact.numbers)}' WHERE id = '${contact.id}'`);
-        player.notify('~y~Контакнт отредактирован');
+        player.notify('~y~Контакт отредактирован');
     }
     catch (e) {
         methods.debug(e);
@@ -2752,7 +2772,7 @@ mp.events.addRemoteCounted('server:phone:favoriteContact', (player, json) => {
     try {
         let contact = JSON.parse(json);
         mysql.executeQuery(`UPDATE phone_contact SET is_fav = '${contact.isFavorite ? 0 : 1}' WHERE id = '${contact.id}'`);
-        player.notify('~y~Контакнт добавлен в избранное');
+        player.notify('~y~Контакт добавлен в избранное');
     }
     catch (e) {
         methods.debug(e);
@@ -2766,7 +2786,7 @@ mp.events.addRemoteCounted('server:phone:deleteContact', (player, json) => {
     try {
         let contact = JSON.parse(json);
         mysql.executeQuery(`DELETE FROM phone_contact WHERE id = '${contact.id}'`);
-        player.notify('~y~Контакнт удалён');
+        player.notify('~y~Контакт удалён');
     }
     catch (e) {
         methods.debug(e);
@@ -3054,6 +3074,79 @@ mp.events.addRemoteCounted('server:phone:inviteFraction2', (player, id) => {
         player.notify('~b~Вы приняли: ~s~' + user.getRpName(target));
 
         user.save(target);
+    }
+    else {
+        player.notify('~r~Игрок не найден');
+    }
+});
+
+mp.events.addRemoteCounted('server:phone:mafiaClearWanted', (player, id) => {
+    if (!user.isLogin(player))
+        return;
+
+    id = methods.parseInt(id);
+    let target = mp.players.at(id);
+    if (user.isLogin(target)) {
+
+        if (methods.distanceToPos(target.position, player.position) > 5) {
+            player.notify('~r~Вы слишком далеко друг от друга');
+            return;
+        }
+
+        if (user.get(target, 'wanted_level') === 0) {
+            player.notify('~r~У игрока нет розыска');
+            return;
+        }
+
+        let price = user.get(target, 'wanted_level') * 300;
+
+        if (user.getCashMoney(target) < price) {
+            player.notify('~r~У игрока недостаточно средств');
+            return;
+        }
+
+        target.call('client:menuList:showAcceptClearWantedMenu', [player.id, price])
+    }
+    else {
+        player.notify('~r~Игрок не найден');
+    }
+});
+
+mp.events.addRemoteCounted('server:user:clearByMafia', (player, id, price) => {
+    if (!user.isLogin(player))
+        return;
+
+    id = methods.parseInt(id);
+    let target = mp.players.at(id);
+    if (user.isLogin(target)) {
+
+        if (methods.distanceToPos(target.position, player.position) > 5) {
+            player.notify('~r~Вы слишком далеко друг от друга');
+            return;
+        }
+
+        if (user.get(player, 'wanted_level') === 0) {
+            player.notify('~r~У вас нет розыска');
+            return;
+        }
+
+        let price = user.get(player, 'wanted_level') * 300;
+
+        if (user.getCashMoney(player) < price) {
+            player.notify('~r~У вас недостаточно средств');
+            return;
+        }
+
+        target.notify(`~g~Вы очистили розыск и заработали ${methods.moneyFormat(price / 2)}`);
+
+        fraction.addMoney(user.get(target, 'fraction_id2', (price / 2 / 1000)), `Прибыль со снятия розыска (${user.getRpName(target)})`);
+        user.addMoney(target, price / 2, 'Заработок с очистки розыска');
+        user.removeMoney(player, price, 'Очистка розыска');
+
+        user.set(player, 'wanted_level', 0);
+        user.set(player, 'wanted_reason', '');
+        player.notifyWithPicture('Уведомление', 'Police Department', 'Вы больше не находитесь в розыске', 'WEB_LOSSANTOSPOLICEDEPT', 2);
+        user.addHistory(player, 1, 'Был очищен розыск');
     }
     else {
         player.notify('~r~Игрок не найден');
@@ -4938,6 +5031,72 @@ mp.events.addRemoteCounted('server:user:askSellLic', (player, id, lic, price) =>
     }
 });
 
+mp.events.addRemoteCounted('server:user:askSellRLic', (player, id, lic) => {
+
+    if (!user.isLogin(player))
+        return;
+
+    id = methods.parseInt(id);
+
+    let target = user.getPlayerById(id);
+    if (user.isLogin(target)) {
+
+        let licName = '';
+        switch (lic) {
+            case 'a_lic':
+                licName = 'Лицензия категории А';
+                break;
+            case 'b_lic':
+                licName = 'Лицензия категории B';
+                break;
+            case 'c_lic':
+                licName = 'Лицензия категории C';
+                break;
+            case 'air_lic':
+                licName = 'Лицензия на воздушный транспорт';
+                break;
+            case 'ship_lic':
+                licName = 'Лицензия на водный транспорт';
+                break;
+            case 'taxi_lic':
+                licName = 'Лицензия на перевозку пассажиров';
+                break;
+            case 'law_lic':
+                licName = 'Лицензия юриста';
+                break;
+            case 'gun_lic':
+                licName = 'Лицензия на оружие';
+                break;
+            case 'biz_lic':
+                licName = 'Лицензия на предпринимательство';
+                break;
+            case 'fish_lic':
+                licName = 'Разрешение на рыбаловство';
+                break;
+            case 'med_lic':
+                licName = 'Мед. страховка';
+                break;
+        }
+
+        user.set(target, lic, false);
+
+        methods.saveFractionLog(
+            user.getRpName(target),
+            `Изъял "${methods.getLicName(lic)}" гражданина ${user.getRpName(player)}`,
+            ``,
+            user.get(target, 'fraction_id')
+        );
+        user.addHistory(player, 4, `Изъяли ${methods.getLicName(lic)} (${user.getRpName(player)})`);
+
+        player.notify('~g~Вы изъяли лицензию');
+    }
+    else {
+        mysql.executeQuery(`UPDATE users SET ${lic} = '0' WHERE id ='${methods.parseInt(id)}'`);
+        user.addHistoryById(id, 4, `Изъяли ${methods.getLicName(lic)} (${user.getRpName(player)})`);
+        player.notify('~g~Вы изъяли лицензию');
+    }
+});
+
 mp.events.addRemoteCounted('server:user:buyLicensePlayer', (player, id, lic, price) => {
 
     if (!user.isLogin(player))
@@ -5003,13 +5162,20 @@ mp.events.addRemoteCounted('server:user:giveWanted', (player, id, level, reason)
             }
             else {
                 player.notify('~g~Вы выдали розыск');
+
+                methods.saveFractionLog(
+                    user.getRpName(player),
+                    `Выдал розыск гражданину ${user.getRpName(p)}`,
+                    ``,
+                    user.get(player, 'fraction_id')
+                );
             }
 
             methods.saveLog('log_give_wanted',
                 ['user_from', 'user_to', 'lvl', 'reason'],
                 [`${user.getRpName(player)} (${user.getId(player)})`, `${user.getRpName(p)} (${user.getId(p)})`, level, methods.removeQuotes(methods.removeQuotes2(reason))],
             );
-            user.giveWanted(p, level, reason);
+            user.giveWanted(p, level, reason, user.getRpName(player));
         }
         else
             player.notify('~r~Игрок не найден');
@@ -6226,6 +6392,7 @@ mp.events.add('playerQuit', player => {
             if (user.isCuff(player)) {
                 user.addHistory(player, 1, 'Был посажен в тюрьму');
                 user.warn(player, 1, 'Выход из игры во время ареста');
+
                 /*user.set(player, 'jail_time', 120 * 60);
                 user.set(player, 'wanted_level', 0);
                 chat.sendToAll('Anti-Cheat System', `${user.getRpName(player)} (${player.id})!{${chat.clRed}} был посажен в тюрьму с причиной:!{${chat.clWhite}} выход из игры во время ареста`, chat.clRed);*/
@@ -6425,22 +6592,24 @@ mp.events.add("playerDeath", (player, reason, killer) => {
     }
 
     if (user.isLogin(killer)) {
-        weapons.hashesMap.forEach(function (item) {
-            if ((item[1] / 2) == reason) {
-                if (user.get(player, 'wanted_level') > 0) {
-                    user.set(player, 'killerInJail', true);
-                }
-            }
-        });
+        if (user.get(player, 'wanted_level') > 0 && user.isPolice(killer)) {
+            user.set(player, 'killerInJail', true);
+        }
     }
 });
 
 mp.events.addRemoteCounted("playerDeathDone", (player) => {
     if (user.isLogin(player)) {
-        player.dimension = 0;
+        try {
+            player.dimension = 0;
+        }
+        catch (e) {}
         if (user.has(player, 'killerInJail') && user.get(player, 'killerInJail')) {
             user.jail(player, user.get(player, 'wanted_level') * 120);
             player.outputChatBoxNew('!{#FFC107}Вас привезли в больницу с огнестрельным ранением и у врачей возникли подозрения, поэтому они сделали запрос в SAPD и сотрудники SAPD выяснили, что у вас есть розыск. После лечения вы отправились в тюрьму.');
+
+            inventory.deleteItemsRange(player, 54, 136);
+            inventory.deleteItemsRange(player, 146, 147);
         }
     }
 });

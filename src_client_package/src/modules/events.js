@@ -958,6 +958,10 @@ mp.events.add('client:lawyer:house:accept', (buyerId, id) => {
     menuList.showLawyerHouseOffersMenu(buyerId, id);
 });
 
+mp.events.add('client:menuList:showAcceptClearWantedMenu', (id, price) => {
+    menuList.showAcceptClearWantedMenu(id, price);
+});
+
 mp.events.add('client:showMazeBankHousePeopleListMenu', (data) => {
     menuList.showMazeBankHousePeopleListMenu(data);
 });
@@ -3932,11 +3936,13 @@ mp.events.add('client:taskFollow', (nplayer) => {
                     if (user.isCuff() || user.isTie())
                         user.playAnimation("mp_arresting", "idle", 49);
                 }
-                if (taskFollowed && methods.distanceToPos(mp.players.local.position, taskFollowed.position) > 10.0) {
+                if (taskFollowed && methods.distanceToPos(mp.players.local.position, taskFollowed.position) > 5.0) {
                     user.teleportv(taskFollowed.position);
 
-                    mp.game.invoke(methods.TASK_FOLLOW_TO_OFFSET_OF_ENTITY, mp.players.local.handle, nplayer.handle, 1, 1, 1, 10.0, -1, 0.5, 1);
-                    mp.game.invoke(methods.SET_PED_KEEP_TASK, mp.players.local.handle, true);
+                    setTimeout(function () {
+                        mp.game.invoke(methods.TASK_FOLLOW_TO_OFFSET_OF_ENTITY, mp.players.local.handle, nplayer.handle, 1, 1, 1, 10.0, -1, 0.5, 1);
+                        mp.game.invoke(methods.SET_PED_KEEP_TASK, mp.players.local.handle, true);
+                    }, 500);
 
                     if (user.isCuff() || user.isTie())
                         user.playAnimation("mp_arresting", "idle", 49);

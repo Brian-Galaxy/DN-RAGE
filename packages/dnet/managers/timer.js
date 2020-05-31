@@ -3,6 +3,7 @@ let Container = require('../modules/data');
 let mysql = require('../modules/mysql');
 
 let vehicles = require('../property/vehicles');
+let fraction = require('../property/fraction');
 
 let pickups = require('../managers/pickups');
 
@@ -95,6 +96,13 @@ timer.min60Timer = function() {
             methods.debug(e);
         }
     }*/
+    for (let i = 1; i < 50; i++)
+    {
+        if (fraction.has(i, 'cantGrab')) {
+            fraction.reset(i, 'cantGrab');
+            fraction.set(i, 'cantGrab2', 0);
+        }
+    }
 
     try {
         mysql.executeQuery(`INSERT INTO stats_online (online) VALUES ('${mp.players.length}')`)

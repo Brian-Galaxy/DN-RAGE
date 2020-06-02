@@ -831,7 +831,7 @@ phone.showAppFraction2 = async function() {
         titleMenu.umenu.push(
             {
                 title: "Грузы Ламара",
-                text: `Перевезите ${orderLamar}/500 грузов ламара и получите груз`,
+                text: `Перевезите ${orderLamar}/300 грузов ламара и получите груз`,
                 type: 1,
                 clickable: true,
                 params: { name: "getLamar" }
@@ -854,7 +854,7 @@ phone.showAppFraction2 = async function() {
         titleMenu.umenu.push(
             {
                 title: "Кража банкоматов",
-                text: `Взломайте ${orderAtm}/50 банкоматов и получите 100ec на счет организации`,
+                text: `Взломайте ${orderAtm}/30 банкоматов и получите 100ec на счет организации`,
                 type: 1,
                 clickable: true,
                 params: { name: "getAtm" }
@@ -877,7 +877,7 @@ phone.showAppFraction2 = async function() {
         titleMenu.umenu.push(
             {
                 title: "Закладки",
-                text: `Разнесите ${orderDrug}/1000 закладок и получите груз с наркотиками`,
+                text: `Разнесите ${orderDrug}/700 закладок и получите груз с наркотиками`,
                 type: 1,
                 clickable: true,
                 params: { name: "getDrug" }
@@ -3633,9 +3633,9 @@ phone.consoleCallback = async function(command) {
                     let posId2 = methods.getRandomInt(0, tree.markers[posId].list.length);
                     let pos = new mp.Vector3(tree.markers[posId].list[posId2][0], tree.markers[posId].list[posId2][1], tree.markers[posId].list[posId2][2] - 1);
 
-                    let price = methods.distanceToPos(pos, mp.players.local.position) / 25;
-                    if (price > 200)
-                        price = 200 + methods.getRandomInt(0, 50);
+                    let price = methods.distanceToPos(pos, mp.players.local.position) / 20;
+                    if (price > 400)
+                        price = 400 + methods.getRandomInt(0, 50);
 
                     user.set('drugPrice', price);
 
@@ -4424,8 +4424,8 @@ phone.callBackButton = async function(menu, id, ...args) {
                     mp.game.ui.notifications.show(`~r~Вы уже получали фургон сегодня`);
                     return;
                 }
-                if (orderDrug < 1000) {
-                    mp.game.ui.notifications.show(`~r~Необходимо положить ${1000 - orderDrug} закладок, для выполнения контракта`);
+                if (orderDrug < 700) {
+                    mp.game.ui.notifications.show(`~r~Необходимо положить ${700 - orderDrug} закладок, для выполнения контракта`);
                     return;
                 }
 
@@ -4446,8 +4446,8 @@ phone.callBackButton = async function(menu, id, ...args) {
                    mp.game.ui.notifications.show(`~r~Вы уже получали фургон сегодня`);
                    return;
                }
-               if (orderLamar < 500) {
-                   mp.game.ui.notifications.show(`~r~Необходимо перевести ${500 - orderLamar} грузов, для выполнения контракта`);
+               if (orderLamar < 300) {
+                   mp.game.ui.notifications.show(`~r~Необходимо перевести ${300 - orderLamar} грузов, для выполнения контракта`);
                    return;
                }
 
@@ -4468,8 +4468,8 @@ phone.callBackButton = async function(menu, id, ...args) {
                     mp.game.ui.notifications.show(`~r~Вы уже получали фургон сегодня`);
                     return;
                 }
-                if (orderAtm < 50) {
-                    mp.game.ui.notifications.show(`~r~Необходимо ограбить ${50 - orderAtm} банкоматов, для выполнения контракта`);
+                if (orderAtm < 30) {
+                    mp.game.ui.notifications.show(`~r~Необходимо ограбить ${30 - orderAtm} банкоматов, для выполнения контракта`);
                     return;
                 }
 

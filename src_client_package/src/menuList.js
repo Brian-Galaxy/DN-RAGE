@@ -2931,6 +2931,7 @@ menuList.showSettingsHudMenu = function() {
     UIMenu.Menu.AddMenuItemList("Прозрачность интерфейса", listVoiceVol, "", {doName: "bg"}, methods.parseInt(user.getCache('s_hud_bg') * 10));
 
     UIMenu.Menu.AddMenuItem("~y~Перезапустить интерфейс", 'В случае если у вас он завис~br~или не работает', {doName: "fixInterface"});
+    UIMenu.Menu.AddMenuItem("~y~Установить настройки по умолчанию", "", {doName: "resetEdit"});
 
     UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
     UIMenu.Menu.Draw();
@@ -2991,6 +2992,13 @@ menuList.showSettingsHudMenu = function() {
         }
         if (item.doName == 'canEdit') {
             ui.showOrHideEdit();
+        }
+        if (item.doName == 'resetEdit') {
+            user.set('s_pos', '[]');
+            ui.hideHud();
+            setTimeout(function () {
+                ui.showHud();
+            }, 100);
         }
         if (item.doName == 'fixInterface') {
             ui.fixInterface();
@@ -3163,7 +3171,7 @@ menuList.showPlayerDoMenu = function(playerId) {
     UIMenu.Menu.AddMenuItem("Затащить в ближайшее авто", "", {eventName: "server:user:inCarById"});
     //UIMenu.Menu.AddMenuItem("Вытащить из тс").eventName = 'server:user:removeCarById';
     UIMenu.Menu.AddMenuItem("Вести за собой", "", {eventName: "server:user:taskFollowById"});
-    UIMenu.Menu.AddMenuItem("Снять маску с игрока").eventName = 'server:user:taskRemoveMaskById';
+    UIMenu.Menu.AddMenuItem("Снять маску с игрока", '', {eventName: 'server:user:taskRemoveMaskById'});
 
     UIMenu.Menu.AddMenuItem("Обыск игрока", "", {eventName: "server:user:getInvById"});
     if (user.isPolice()) {
@@ -8522,6 +8530,7 @@ menuList.showFractionInfoMenu = function() {
         UIMenu.Menu.AddMenuItem(`Забрать лицензию категории B`, "", {licRName: "b_lic"});
         UIMenu.Menu.AddMenuItem(`Забрать лицензию категории C`, "", {licRName: "c_lic"});
         UIMenu.Menu.AddMenuItem(`Забрать лицензию пилота`, "", {licRName: "air_lic"});
+        UIMenu.Menu.AddMenuItem(`Забрать лицензию на водный ТС`, "", {licRName: "ship_lic"});
         UIMenu.Menu.AddMenuItem(`Забрать лицензию на перевозку пассажиров`, "", {licRName: "taxi_lic"});
         UIMenu.Menu.AddMenuItem(`Забрать лицензию на оружие`, "", {licRName: "gun_lic"});
     }
@@ -8574,7 +8583,7 @@ menuList.showFractionInfoMenu = function() {
                 mp.game.ui.notifications.show("~r~ID Игркоа не может быть меньше нуля");
                 return;
             }
-            mp.events.callRemote('server:user:askSellRLic', id, item.licName);
+            mp.events.callRemote('server:user:askSellRLic', id, item.licRName);
         }
 
         if (item.invite) {

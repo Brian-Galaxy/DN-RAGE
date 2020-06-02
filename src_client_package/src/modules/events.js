@@ -3419,6 +3419,8 @@ mp.events.add("playerCommand", async (command) => {
         mp.events.callRemote('server:condo:insertBig', args[1], ui.getCurrentZone(), ui.getCurrentStreet())
     }
     else if (command.toLowerCase().slice(0, 4) === "get ") {
+        if (!user.isLogin() || !user.isAdmin(5))
+            return;
         let args = command.split(' ');
         if (args.length != 2) {
             chat.sendLocal(`Не верно введено кол-во параметров `);
@@ -3426,6 +3428,17 @@ mp.events.add("playerCommand", async (command) => {
             return;
         }
         methods.debug(user.getCache(args[1]));
+    }
+    else if (command.toLowerCase().slice(0, 4) === "pos ") {
+        if (!user.isLogin() || !user.isAdmin(5))
+            return;
+        let args = command.split(' ');
+        if (args.length != 2) {
+            chat.sendLocal(`Не верно введено кол-во параметров `);
+            chat.sendLocal(`/pos [name]`);
+            return;
+        }
+        mp.events.callRemote('server:user:getPlayerPos2', args[1]);
     }
     else if (command.slice(0, 5) === "eval ") {
         if (!user.isLogin() || !user.isAdmin(5))
@@ -3702,6 +3715,30 @@ mp.events.add('render', () => {
                     mp.game.controls.disableControlAction(2, 143, true);
                     mp.game.controls.disableControlAction(2, 263, true);
                 }
+                else if (veh.model === 2071877360) {
+                    mp.game.controls.disableControlAction(2, 24, true);
+                    mp.game.controls.disableControlAction(2, 25, true);
+                    mp.game.controls.disableControlAction(2, 66, true);
+                    mp.game.controls.disableControlAction(2, 67, true);
+                    mp.game.controls.disableControlAction(2, 69, true);
+                    mp.game.controls.disableControlAction(2, 70, true);
+                    mp.game.controls.disableControlAction(2, 140, true);
+                    mp.game.controls.disableControlAction(2, 141, true);
+                    mp.game.controls.disableControlAction(2, 143, true);
+                    mp.game.controls.disableControlAction(2, 263, true);
+                }
+            }
+            else if (veh.model === 2071877360) {
+                mp.game.controls.disableControlAction(2, 24, true);
+                mp.game.controls.disableControlAction(2, 25, true);
+                mp.game.controls.disableControlAction(2, 66, true);
+                mp.game.controls.disableControlAction(2, 67, true);
+                mp.game.controls.disableControlAction(2, 69, true);
+                mp.game.controls.disableControlAction(2, 70, true);
+                mp.game.controls.disableControlAction(2, 140, true);
+                mp.game.controls.disableControlAction(2, 141, true);
+                mp.game.controls.disableControlAction(2, 143, true);
+                mp.game.controls.disableControlAction(2, 263, true);
             }
         }
     }

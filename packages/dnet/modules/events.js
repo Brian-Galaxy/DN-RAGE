@@ -1508,10 +1508,17 @@ mp.events.addRemoteCounted('server:user:taskRemoveMaskById', (player, targetId) 
         player.notify('~r~Вы слишком далеко');
         return;
     }
+    if (nplayer.health <= 1) {
+        player.notify('~r~Игрок в коме');
+        return;
+    }
     mysql.executeQuery(`UPDATE items SET owner_type = '1', owner_id = '${user.getId(player)}', is_equip='0' WHERE item_id = '274' AND owner_id='${user.getId(nplayer)}' AND owner_type='1' AND is_equip='1'`);
     user.set(nplayer, 'mask', -1);
     user.set(nplayer, 'mask_color', -1);
     player.notify('~b~Вы сняли маску с игрока');
+
+    user.updateCharacterFace(nplayer);
+    user.updateCharacterCloth(nplayer);
 });
 
 mp.events.addRemoteCounted('server:user:inCarById', (player, targetId) => {
@@ -5040,44 +5047,6 @@ mp.events.addRemoteCounted('server:user:askSellRLic', (player, id, lic) => {
 
     let target = user.getPlayerById(id);
     if (user.isLogin(target)) {
-
-        let licName = '';
-        switch (lic) {
-            case 'a_lic':
-                licName = 'Лицензия категории А';
-                break;
-            case 'b_lic':
-                licName = 'Лицензия категории B';
-                break;
-            case 'c_lic':
-                licName = 'Лицензия категории C';
-                break;
-            case 'air_lic':
-                licName = 'Лицензия на воздушный транспорт';
-                break;
-            case 'ship_lic':
-                licName = 'Лицензия на водный транспорт';
-                break;
-            case 'taxi_lic':
-                licName = 'Лицензия на перевозку пассажиров';
-                break;
-            case 'law_lic':
-                licName = 'Лицензия юриста';
-                break;
-            case 'gun_lic':
-                licName = 'Лицензия на оружие';
-                break;
-            case 'biz_lic':
-                licName = 'Лицензия на предпринимательство';
-                break;
-            case 'fish_lic':
-                licName = 'Разрешение на рыбаловство';
-                break;
-            case 'med_lic':
-                licName = 'Мед. страховка';
-                break;
-        }
-
         user.set(target, lic, false);
 
         methods.saveFractionLog(

@@ -639,7 +639,11 @@ fraction.spawnNearCargo = function(player, isDrug = false) {
 
             let boxes = [];
 
-            for (let i = 0; i < 3; i++) {
+            let count = 6;
+            if (isDrug)
+                count = 3;
+
+            for (let i = 0; i < count; i++) {
 
                 if (isDrug) {
                     boxes.push(39);
@@ -1229,7 +1233,7 @@ fraction.startGrabShopGang = function(player, itemId = 0) {
                     fraction.reset(frId, 'currentGrabShopActive' + i);
 
                     if (methods.getRandomInt(0, 100) < 40) {
-                        inventory.addItem(141, 1, inventory.types.Player, user.getId(player), methods.getRandomInt(shopItem.sumMax, shopItem.sumMin), 0, "{}", 2);
+                        inventory.addItem(141, 1, inventory.types.Player, user.getId(player), methods.getRandomInt(shopItem.sumMax, shopItem.sumMin) * 1.2, 0, "{}", 2);
                         mp.players.forEach(p => {
                             if (user.isLogin(p) && user.get(p, 'fraction_id2') === frId) {
                                 user.deleteBlip(p, i + 1000);

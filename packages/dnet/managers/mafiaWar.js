@@ -250,7 +250,7 @@ mafiaWar.timer = function() {
             }
             catch (e) {}
             if (user.isMafia(p) || user.isAdmin(p))
-                p.call("client:mafiaWar:sendInfo", [lcn1, rm1, yk1, timerCounter1]);
+                p.call("client:mafiaWar:sendInfo", [`${lcn1} (${lcn1l})`, `${rm1} (${rm1l})`, `${yk1} (${yk1l})`, timerCounter1]);
         });
     }
     if (isStartTimer2) {
@@ -314,7 +314,8 @@ mafiaWar.timer = function() {
             }
             catch (e) {}
             if (user.isMafia(p) || user.isAdmin(p))
-                p.call("client:mafiaWar:sendInfo", [lcn2, rm2, yk2, timerCounter2]);
+                p.call("client:mafiaWar:sendInfo", [`${lcn2} (${lcn2l})`, `${rm2} (${rm2l})`, `${yk2} (${yk2l})`, timerCounter2]);
+                //p.call("client:mafiaWar:sendInfo", [lcn2, rm2, yk2, timerCounter2]);
         });
     }
     if (isStartTimer3) {
@@ -379,7 +380,8 @@ mafiaWar.timer = function() {
             }
             catch (e) {}
             if (user.isMafia(p) || user.isAdmin(p))
-                p.call("client:mafiaWar:sendInfo", [lcn3, rm3, yk3, timerCounter3]);
+                p.call("client:mafiaWar:sendInfo", [`${lcn3} (${lcn3l})`, `${rm3} (${rm3l})`, `${yk3} (${yk3l})`, timerCounter3]);
+                //p.call("client:mafiaWar:sendInfo", [lcn3, rm3, yk3, timerCounter3]);
         });
     }
     setTimeout(mafiaWar.timer, 1000);

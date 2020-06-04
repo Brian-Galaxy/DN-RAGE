@@ -276,9 +276,6 @@ inventory.equip = function(player, id, itemId, count, aparams) {
                         user.set(player, 'weapon_' + slot, params.serial);
                         user.set(player, 'weapon_' + slot + '_ammo', 0);
 
-                        methods.debug(user.get(player, 'weapon_' + slot));
-                        methods.debug(user.get(player, 'weapon_' + slot + '_ammo'));
-
                         user.giveWeapon(player, items.getItemNameHashById(itemId), 0);
                         user.callCef(player, 'inventory', JSON.stringify({type: "updateSelectWeapon", selectId: id}));
 
@@ -1066,6 +1063,11 @@ inventory.useItem = function(player, id, itemId, isTargetable = false) {
                     if (!veh.locked)
                     {
                         player.notify("~r~Транспорт уже открыт");
+                        return;
+                    }
+                    if (veh.getVariable('fraction_id') > 0)
+                    {
+                        player.notify("~r~Вы не можете взломать это транспортное средство");
                         return;
                     }
                     if(user.has(player, 'usingLockpick')) {

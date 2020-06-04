@@ -179,7 +179,7 @@ mp.events.add("playerEnterCheckpoint", (checkpoint) => {
                     currentCpId = 0;
                     repeat--;
 
-                    let posNext = currentRace.posList[currentCpId + 1];
+                    let posNext = currentRace.posList[currentCpId];
                     racer.createCurrentCp(0, new mp.Vector3(posCurrent[0], posCurrent[1], posCurrent[2] + currentRace.offsetZ), new mp.Vector3(posNext[0], posNext[1], posNext[2]));
                     racer.createNextCp(0, new mp.Vector3(posNext[0], posNext[1], posNext[2] + currentRace.offsetZ - 5), new mp.Vector3(posNext[0], posNext[1], posNext[2]));
                 }
@@ -229,6 +229,8 @@ mp.keys.bind(0x46, true, async function() {
         await methods.sleep(1000);
         mp.game.ui.notifications.show('~b~Спавн через ~s~1 сек');
         await methods.sleep(1000);
+        if (!inRace)
+            return;
         mp.events.callRemote('server:user:fixNearestVehicle');
         user.teleportVeh(posCurrent[0], posCurrent[1], posCurrent[2], posCurrent[3]);
     }

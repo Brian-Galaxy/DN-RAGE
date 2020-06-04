@@ -6375,13 +6375,13 @@ racer.exit = function (player) {
     }
 };
 
-racer.createRace = function (id = -1, currentVeh = -1) {
+racer.createRace = function (id = -1, currentVeh = undefined) {
     if (id < 0 || id === undefined)
         id = methods.getRandomInt(0, racerList.length);
 
     currentRace = id;
 
-    if (currentVeh < 0 || currentVeh === undefined)
+    if (currentVeh === undefined)
         currentVeh = racerList[currentRace].allowVehicle[methods.getRandomInt(0, racerList[currentRace].allowVehicle.length)];
 
     currentVehicle = currentVeh;
@@ -6408,9 +6408,27 @@ racer.notifyRace = function () {
     methods.notifyWithPictureToAll('Arena RaceClub', '~b~' + racerList[currentRace].title, `Скоро состоится гонка на транспорте ~g~${currentVehicle}~s~ с призовым фондом ~g~${methods.moneyFormat(currentPrize)}\n~s~Свободных мест: ~b~${lobbyMax - currentLobby}${desc}`, 'CHAR_CARSITE4');
 };
 
+racer.getLobbyName = function () {
+    if (isCreate)
+        return racerList[currentRace].title;
+    return 'Ожидание гонки';
+};
+
+racer.getLobbyVehicle = function () {
+    if (isCreate)
+        return currentVehicle;
+    return 'Неизвестно';
+};
+
+racer.getLobbyCount = function () {
+    if (isCreate)
+        return currentLobby;
+    return 0;
+};
+
 racer.startRace = function () {
 
-    if (currentLobby < 5) {
+    if (currentLobby < 1) {
         isCreate = false;
         methods.notifyWithPictureToAll('Arena RaceClub', '~r~' + racerList[currentRace].title, 'Гонка была отменена из-за нехватки участников', 'CHAR_CARSITE4');
 

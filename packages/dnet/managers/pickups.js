@@ -16,6 +16,9 @@ let barberShop = require('../business/barberShop');
 let bank = require('../business/bank');
 let shop = require('../business/shop');
 
+let gangZone = require('./gangZone');
+let racer = require('./racer');
+
 let wheel = require('../casino/wheel');
 
 let business = require('../property/business');
@@ -98,7 +101,8 @@ pickups.SapdFromBalcon2Pos = new mp.Vector3(464.1708, -984.0346, 38.89184);
 pickups.SapdToInterrogationPos = new mp.Vector3(404.0302, -997.302, -100.004);
 pickups.SapdFromInterrogationPos = new mp.Vector3(446.7996, -985.8127, 25.67422);
 
-pickups.UsmcArsenalPos = new mp.Vector3(467.41082763671875, -3212.53857421875, 6.056998729705816);
+pickups.UsmcArsenalPos1 = new mp.Vector3(467.41082763671875, -3212.53857421875, 6.056998729705816);
+pickups.UsmcArsenalPos2 = new mp.Vector3(3095.942626953125, -4707.86181640625, 11.244044303894043);
 
 pickups.SapdStockPos = new mp.Vector3(472.8161315917969, -990.1664428710938, 23.91470718383789);
 pickups.Bcsd1StockPos = new mp.Vector3(-439.0313720703125, 6010.5322265625, 26.985639572143555);
@@ -455,7 +459,7 @@ pickups.checkPressE = function(player) {
     if (methods.distanceToPos(pickups.SellVehicle, playerPos) < distanceCheck)
         player.call('client:menuList:showSellVehMenu');
     if (methods.distanceToPos(pickups.MazeBankLobby, playerPos) < distanceCheck)
-        player.call('client:menuList:showMazeBankLobbyMenu');
+        player.call('client:menuList:showMazeBankLobbyMenu', [gangZone.currentLobby(), gangZone.currentWeapon(), racer.getLobbyCount(), racer.getLobbyName(), racer.getLobbyVehicle()]);
     if (methods.distanceToPos(pickups.WheelLuckyPos, playerPos) < distanceCheck)
     {
         setTimeout(function () {
@@ -610,7 +614,9 @@ pickups.checkPressE = function(player) {
             player.call('client:menuList:showSapdArsenalMenu');
     }
     if (user.isUsmc(player)) {
-        if (methods.distanceToPos(pickups.UsmcArsenalPos, playerPos) < distanceCheck)
+        if (methods.distanceToPos(pickups.UsmcArsenalPos1, playerPos) < distanceCheck)
+            player.call('client:menuList:showUsmcArsenalMenu');
+        if (methods.distanceToPos(pickups.UsmcArsenalPos2, playerPos) < distanceCheck)
             player.call('client:menuList:showUsmcArsenalMenu');
     }
     if (user.isFib(player)) {
@@ -741,7 +747,8 @@ pickups.createAll = function() {
     methods.createCpVector(pickups.SapdArrestPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
     methods.createCpVector(pickups.SapdKeyPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
 
-    methods.createCpVector(pickups.UsmcArsenalPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.UsmcArsenalPos1, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.UsmcArsenalPos2, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
 
     methods.createCpVector(pickups.DispatcherPos1, 'Диспетчерская', 1, -1, pickups.Blue);
     methods.createCpVector(pickups.DispatcherPos2, 'Диспетчерская', 1, -1, pickups.Blue);

@@ -260,6 +260,7 @@ enums.userData = [
     "s_bind_voice",
     "s_bind_voice_radio",
     "s_bind_voice_walkie",
+    "s_bind_voice_reload",
     "s_bind_pnv",
     "s_bind_megaphone",
     "s_bind_firemod",
@@ -286,6 +287,14 @@ enums.userData = [
     "s_bind_veh_menu",
     "s_bind_player_menu",
     "s_pos",
+
+    "s_menu_sound",
+    "s_menu_font",
+    "s_menu_border",
+    "s_menu_opacity",
+    "s_menu_color",
+    "s_menu_width",
+    "s_menu_height",
 
     "pos_x",
     "pos_y",
@@ -636,7 +645,7 @@ enums.fractionList = {
         departmentList: ["USMC Academy", "Regular", "Sea Division", "AirSupport Division", "Special Forces"],
         departmentPayDay: [40, 45, 45, 100, 150],
         rankPayDay: [
-            [900, 800, 120, 70], //0
+            [900, 800, 400, 120, 70], //0
             [900, 800, 500, 450, 400, 350, 300, 250, 200, 150], //1
             [900, 800, 500, 450, 400, 350, 300, 250, 200, 150], //2
             [900, 800, 500, 450, 400, 350, 300], //3
@@ -645,7 +654,7 @@ enums.fractionList = {
         leaderPayDay: 1900,
         subLeaderPayDay: 1600,
         rankList: [
-            ["Captain", "Deputy Captain", "Senior Cadet", "Cadet"], //0
+            ["Captain", "Deputy Captain", "Instructor", "Senior Cadet", "Cadet"], //0
             ["Captain", "Deputy Captain", "Lieutenant I", "Lieutenant II", "Master Sergeant", "Staff Sergeant", "Sergeant", "Corporal", "1st Private", "Private"], //1
             ["Captain", "Deputy Captain", "Lieutenant I", "Lieutenant II", "Master Sergeant", "Staff Sergeant", "Sergeant", "Corporal", "1st Private", "Private"], //2
             ["Captain", "Deputy Captain", "Lieutenant I", "Lieutenant II", "Master Sergeant", "Staff Sergeant", "Sergeant"], //3

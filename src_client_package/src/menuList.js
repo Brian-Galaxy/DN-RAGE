@@ -2722,8 +2722,9 @@ menuList.showSettingsMenu = function() {
     UIMenu.Menu.AddMenuItem("~y~Вкл. / Выкл. доп. прогрузку моделей", "~r~Возможно слегка повлияет на FPS", {doName: "loadAllModels"});
 
     UIMenu.Menu.AddMenuItem("Интерфейс", "", {doName: "showSettingsHudMenu"});
-    UIMenu.Menu.AddMenuItem("Текстовый чат", "", {doName: "showSettingsTextMenu"});
+    UIMenu.Menu.AddMenuItem("Текстовый чат", "Настройка дизайна текстового чата", {doName: "showSettingsTextMenu"});
     UIMenu.Menu.AddMenuItem("Голосовой чат", "", {doName: "showSettingsVoiceMenu"});
+    UIMenu.Menu.AddMenuItem("Дизайн меню", "Настройка дизайна меню", {doName: "showSettingsMenuMenu"});
     UIMenu.Menu.AddMenuItem("Назначение клавиш", "", {doName: "showSettingsKeyMenu"});
 
     //UIMenu.Menu.AddMenuItem("~r~Выйти с сервера", "Нажмите ~g~Enter~s~ чтобы применить").doName = 'exit';
@@ -2759,6 +2760,9 @@ menuList.showSettingsMenu = function() {
         if (item.doName == 'showSettingsTextMenu') {
             menuList.showSettingsTextMenu();
         }
+        if (item.doName == 'showSettingsMenuMenu') {
+            menuList.showSettingsMenuMenu();
+        }
         if (item.doName == 'showSettingsHudMenu') {
             menuList.showSettingsHudMenu();
         }
@@ -2792,6 +2796,9 @@ menuList.showSettingsKeyMenu = function() {
 
     menuItem = {doName: "s_bind_voice"};
     UIMenu.Menu.AddMenuItem("Голосовой чат", "Нажмите ~g~Enter~s~ чтобы изменить", menuItem, `~m~[${bind.getKeyName(user.getCache(menuItem.doName))}]`);
+
+    menuItem = {doName: "s_bind_voice_reload"};
+    UIMenu.Menu.AddMenuItem("Перезагрузить голосовой чат", "Нажмите ~g~Enter~s~ чтобы изменить", menuItem, `~m~[${bind.getKeyName(user.getCache(menuItem.doName))}]`);
 
     menuItem = {doName: "s_bind_voice_walkie"};
     UIMenu.Menu.AddMenuItem("Рация", "Нажмите ~g~Enter~s~ чтобы изменить", menuItem, `~m~[${bind.getKeyName(user.getCache(menuItem.doName))}]`);
@@ -2906,7 +2913,7 @@ menuList.showSettingsHudMenu = function() {
 
     UIMenu.Menu.Create(`Настройки`, `~b~Настройки интерфейса`);
 
-    UIMenu.Menu.AddMenuItem("Изменить позицию элементов интерфейса", "Нажмите ~g~ПКМ~s~ чтобы вернуть в исходное положение", {doName: "canEdit"});
+    UIMenu.Menu.AddMenuItem("Позиция элементов интерфейса", "Нажмите ~g~ПКМ~s~ чтобы вернуть в исходное положение", {doName: "canEdit"});
 
     UIMenu.Menu.AddMenuItem("Показывать HUD (~g~Вкл~s~/~r~Выкл~s~)", "Чтобы включить худ, нажмите F2", {doName: "showRadar"});
     UIMenu.Menu.AddMenuItem("Показывать ID игроков (~g~Вкл~s~/~r~Выкл~s~)", "Нажмите ~g~Enter~s~ чтобы применить", {doName: "showId"});
@@ -3014,7 +3021,7 @@ menuList.showSettingsTextMenu = function() {
     let lineSizeList = ['10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30'];
     let bgStateList = ['Выкл', 'Вкл', 'Всегда вкл'];
     let bgOpacity = ["0%", "10%", "20%", "30%", "40%", "50%", "60%", "70%", "80%", "90%", "100%"];
-    let timeoutList = ['1s', '3s', '5s', '10s', '15s', '20s', '30s', 'Never'];
+    let timeoutList = ['1s', '3s', '5s', '10s', '15s', '20s', '30s', 'Никогда'];
 
     UIMenu.Menu.AddMenuItem("~y~Очистить чат", "", {doName: "clearChat"});
 
@@ -3090,6 +3097,62 @@ menuList.showSettingsTextMenu = function() {
     UIMenu.Menu.OnSelect.Add(async (item, index) => {
         if (item.doName == 'clearChat')
             user.clearChat();
+    });
+};
+
+menuList.showSettingsMenuMenu = function() {
+
+    UIMenu.Menu.Create(`Настройки`, `~b~Настройки меню`);
+
+    let bgOpacity = ["0%", "10%", "20%", "30%", "40%", "50%", "60%", "70%", "80%", "90%", "100%"];
+    let width = [];
+    let border = [];
+    for (let i = 0; i <= 30; i++)
+        border.push(`${i}px`);
+    for (let i = 0; i <= 20; i++)
+        width.push(`${350 + (i * 10)}px`);
+
+    UIMenu.Menu.AddMenuItemList("Шрифт", enums.fontList, "", {doName: "font"}, enums.fontList.indexOf(user.getCache('s_menu_font')));
+    UIMenu.Menu.AddMenuItemList("Прозрачность фона", bgOpacity, "", {doName: "bgOpacity"}, methods.parseInt(user.getCache('s_menu_opacity') * 10));
+    UIMenu.Menu.AddMenuItemList("Цвет фона", enums.rgbNamesB, "", {doName: "bgColor"}, methods.parseInt(user.getCache('s_menu_color')));
+    UIMenu.Menu.AddMenuItemList("Ширина", width, "", {doName: "width"}, methods.parseInt((user.getCache('s_menu_width') - 350) / 10));
+    //UIMenu.Menu.AddMenuItemList("Максимальная высота", bgOpacity, "", {doName: "height"}, methods.parseInt(user.getCache('s_chat_height') / 10));
+    UIMenu.Menu.AddMenuItemList("Закругление краёв", border, "", {doName: "border"}, methods.parseInt(user.getCache('s_menu_border')));
+    UIMenu.Menu.AddMenuItemList("Звук", ['Выкл', 'Вкл'], "", {doName: "sound"}, user.getCache('s_menu_sound'));
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
+    UIMenu.Menu.Draw();
+
+    UIMenu.Menu.OnList.Add(async (item, index) => {
+        if (item.doName == 'sound') {
+            user.set('s_menu_sound', index);
+            mp.game.ui.notifications.show('~b~Настройки были сохранены');
+        }
+        if (item.doName == 'font') {
+            user.set('s_menu_font', enums.fontList[index]);
+            mp.game.ui.notifications.show('~b~Настройки были сохранены');
+        }
+        if (item.doName == 'bgOpacity') {
+            let num = index / 10;
+            user.set('s_menu_opacity', num);
+            mp.game.ui.notifications.show('~b~Настройки были сохранены');
+        }
+        if (item.doName == 'bgColor') {
+            user.set('s_menu_color', index);
+            mp.game.ui.notifications.show('~b~Настройки были сохранены');
+        }
+        if (item.doName == 'width') {
+            user.set('s_menu_width', 350 + index * 10);
+            mp.game.ui.notifications.show('~b~Настройки были сохранены');
+        }
+        if (item.doName == 'border') {
+            user.set('s_menu_border', index);
+            mp.game.ui.notifications.show('~b~Настройки были сохранены');
+        }
+        ui.updateMenuSettings();
+
+        if (item.doName == 'font')
+            menuList.showSettingsMenuMenu();
     });
 };
 
@@ -3417,9 +3480,7 @@ menuList.showPlayerStatsMenu = function() {
         UIMenu.Menu.AddMenuItem("~b~Мобильный телефон:", "", {}, `${methods.phoneFormat(user.getCache('phone'))}`);
 
     UIMenu.Menu.AddMenuItem("~b~Вы играли:~r~", "", {}, `${methods.parseFloat(user.getCache('online_time') * 8.5 / 60).toFixed(1)}ч.`);
-
-    if (user.getCache('online_cont') < 100)
-        UIMenu.Menu.AddMenuItem("~b~Вы играли сегодня:~r~", "", {}, `${methods.parseFloat(user.getCache('online_cont') * 8.5 / 60).toFixed(1)}ч.`);
+    UIMenu.Menu.AddMenuItem("~b~Вы играли сегодня:~r~", "", {}, `${methods.parseFloat(user.getCache('online_cont') * 8.5 / 60).toFixed(1)}ч.`);
 
     if (user.getCache('vip_type') === 1)
         UIMenu.Menu.AddMenuItem("~b~VIP:", "", {}, `LIGHT`);
@@ -6927,12 +6988,15 @@ menuList.showPrintShopMenu = function()
     });
 };
 
-menuList.showMazeBankLobbyMenu = function()
+menuList.showMazeBankLobbyMenu = function(inGame, weapon, raceCount, raceName, raceVeh)
 {
+    weapon = items.getWeaponNameByName(weapon);
+
     UIMenu.Menu.Create(" ", "~b~MazeBank Arena", 'arena', false, false, 'mba');
 
-    UIMenu.Menu.AddMenuItem('~g~Принять участие в гонке', 'Взнос: ~g~$1,000', {doName: "start"});
+    UIMenu.Menu.AddMenuItem('~g~Принять участие в гонке', `Взнос: ~g~$1,000~s~~br~Игроков в лобби: ~g~${raceCount}~s~~br~Транспорт: ~g~${raceVeh}~s~~br~Название: ~g~${raceName}`, {doName: "start"});
     UIMenu.Menu.AddMenuItem('~g~Пригласить на дуэль', 'Взнос: ~g~$250', {doName: "duel"});
+    UIMenu.Menu.AddMenuItem('~g~Принять участие в GunZone', `Игроков в лобби: ~g~${inGame}~s~~br~Оружие: ~g~${weapon}`, {doName: "startGangZone"});
     UIMenu.Menu.AddMenuItem('Таблица рейтинга гонок', "", {doName: "rating"});
     UIMenu.Menu.AddMenuItem('Таблица рейтинга дуэлей', "", {doName: "drating"});
 
@@ -6943,6 +7007,8 @@ menuList.showMazeBankLobbyMenu = function()
         UIMenu.Menu.HideMenu();
         if(item.doName == 'start')
             mp.events.callRemote('server:race:toLobby');
+        if(item.doName == 'startGangZone')
+            mp.events.callRemote('server:gangZone:toLobby');
         if(item.doName == 'rating')
             mp.events.callRemote('server:race:rating');
         if(item.doName == 'drating')
@@ -9256,7 +9322,7 @@ menuList.showSheriffArsenalGunMenu = function() {
 
         UIMenu.Menu.AddMenuItem("Коробка патронов 9mm", "", {itemId: 280});
     }
-    if (user.getCache('rank_type') === 6 || user.isLeader() || user.isSubLeader()) {
+    if (user.getCache('rank_type') === 6 || user.isLeader() || user.isSubLeader() || user.isDepLeader() || user.isDepSubLeader()) {
         UIMenu.Menu.AddMenuItem("Beretta 90Two", "", {itemId: 78});
         UIMenu.Menu.AddMenuItem("Glock 17", "", {itemId: 146});
         UIMenu.Menu.AddMenuItem("Benelli M3", "", {itemId: 90});
@@ -9336,7 +9402,7 @@ menuList.showSheriffArsenalGunModMenu = function() {
         UIMenu.Menu.AddMenuItem(" ");
         UIMenu.Menu.AddMenuItem("Глушитель Glock 17", "", {itemId: 316});
     }
-    else if (user.getCache('rank_type') === 6 || user.isLeader() || user.isSubLeader()) {
+    else if (user.getCache('rank_type') === 6 || user.isLeader() || user.isSubLeader() || user.isDepLeader() || user.isDepSubLeader()) {
         UIMenu.Menu.AddMenuItem("Фонарик Beretta 90Two", "", {itemId: 311});
         UIMenu.Menu.AddMenuItem("Оптический прицел Beretta 90Two", "", {itemId: 312});
         UIMenu.Menu.AddMenuItem("Глушитель Beretta 90Two", "", {itemId: 313});
@@ -9598,7 +9664,7 @@ menuList.showSapdArsenalGunMenu = function() {
 
         UIMenu.Menu.AddMenuItem("Коробка патронов 9mm", "", {itemId: 280});
     }
-    if (user.getCache('rank_type') === 4 || user.isLeader() || user.isSubLeader()) {
+    if (user.getCache('rank_type') === 4 || user.isLeader() || user.isSubLeader() || user.isDepLeader() || user.isDepSubLeader()) {
         UIMenu.Menu.AddMenuItem("Beretta 90Two", "", {itemId: 78});
         UIMenu.Menu.AddMenuItem("Glock 17", "", {itemId: 146});
         UIMenu.Menu.AddMenuItem("Benelli M3", "", {itemId: 90});
@@ -9678,7 +9744,7 @@ menuList.showSapdArsenalGunModMenu = function() {
         UIMenu.Menu.AddMenuItem(" ");
         UIMenu.Menu.AddMenuItem("Глушитель Glock 17", "", {itemId: 316});
     }
-    else if (user.getCache('rank_type') === 4 || user.isLeader() || user.isSubLeader()) {
+    else if (user.getCache('rank_type') === 4 || user.isLeader() || user.isSubLeader() || user.isDepLeader() || user.isDepSubLeader()) {
         UIMenu.Menu.AddMenuItem("Фонарик Beretta 90Two", "", {itemId: 311});
         UIMenu.Menu.AddMenuItem("Оптический прицел Beretta 90Two", "", {itemId: 312});
         UIMenu.Menu.AddMenuItem("Глушитель Beretta 90Two", "", {itemId: 313});
@@ -9818,7 +9884,7 @@ menuList.showUsmcArsenalGunMenu = function() {
 
         UIMenu.Menu.AddMenuItem("Коробка патронов 9mm", "", {itemId: 280});
     }
-    if (user.getCache('rank_type') === 4 || user.isLeader() || user.isSubLeader()) {
+    if (user.getCache('rank_type') === 4 || user.isLeader() || user.isSubLeader() || user.isDepLeader() || user.isDepSubLeader()) {
         UIMenu.Menu.AddMenuItem("Beretta 90Two", "", {itemId: 78});
         UIMenu.Menu.AddMenuItem("Glock 17", "", {itemId: 146});
         UIMenu.Menu.AddMenuItem("Benelli M3", "", {itemId: 90});
@@ -9898,7 +9964,7 @@ menuList.showUsmcArsenalGunModMenu = function() {
         UIMenu.Menu.AddMenuItem(" ");
         UIMenu.Menu.AddMenuItem("Глушитель Glock 17", "", {itemId: 316});
     }
-    else if (user.getCache('rank_type') === 4 || user.isLeader() || user.isSubLeader()) {
+    else if (user.getCache('rank_type') === 4 || user.isLeader() || user.isSubLeader() || user.isDepLeader() || user.isDepSubLeader()) {
         UIMenu.Menu.AddMenuItem("Фонарик Beretta 90Two", "", {itemId: 311});
         UIMenu.Menu.AddMenuItem("Оптический прицел Beretta 90Two", "", {itemId: 312});
         UIMenu.Menu.AddMenuItem("Глушитель Beretta 90Two", "", {itemId: 313});
@@ -10015,7 +10081,7 @@ menuList.showFibArsenalGunMenu = function() {
         UIMenu.Menu.AddMenuItem("Beretta 90Two", "", {itemId: 78});
         UIMenu.Menu.AddMenuItem("Коробка патронов 9mm", "", {itemId: 280});
     }
-    if (user.getCache('rank_type') === 2 || user.isLeader() || user.isSubLeader()) {
+    if (user.getCache('rank_type') === 2 || user.getCache('rank_type') === 1 || user.isLeader() || user.isSubLeader() || user.isDepLeader() || user.isDepSubLeader()) {
         UIMenu.Menu.AddMenuItem("Beretta 90Two", "", {itemId: 78});
         UIMenu.Menu.AddMenuItem("Glock 17", "", {itemId: 146});
         UIMenu.Menu.AddMenuItem("Benelli M3", "", {itemId: 90});
@@ -10058,7 +10124,7 @@ menuList.showFibArsenalGunMenu = function() {
 
 menuList.showFibArsenalGunModMenu = function() {
     UIMenu.Menu.Create(`Арсенал`, `~b~Модули на оружие`);
-    if (user.getCache('rank_type') === 1 || user.isLeader() || user.isSubLeader()) {
+    if (user.getCache('rank_type') === 1 || user.getCache('rank_type') === 2 || user.isLeader() || user.isSubLeader() || user.isDepLeader() || user.isDepSubLeader()) {
         UIMenu.Menu.AddMenuItem("Фонарик Beretta 90Two", "", {itemId: 311});
         UIMenu.Menu.AddMenuItem("Оптический прицел Beretta 90Two", "", {itemId: 312});
         UIMenu.Menu.AddMenuItem("Глушитель Beretta 90Two", "", {itemId: 313});

@@ -214,10 +214,21 @@ weather.syncWeatherWind = function(windSpeed, windDir) {
     WindSpeed = windSpeed;
     WindDir = windDir;
 
-    if (WindSpeed > 6)
-        mp.game.water.setWavesIntensity(WindSpeed / 1.5);
-    else
-        mp.game.water.setWavesIntensity(0);
+    if (
+        methods.distanceToPos(new mp.Vector3(580.6460571289062, -3118.20849609375, 17.76861572265625), mp.players.local.position) < 120 ||
+        methods.distanceToPos(new mp.Vector3(3095.786865234375, -4701.69873046875, 11.244027137756348), mp.players.local.position) < 120
+    ) {
+        if (WindSpeed > 6)
+            mp.game.water.setWavesIntensity(WindSpeed / 10);
+        else
+            mp.game.water.setWavesIntensity(0);
+    }
+    else {
+        if (WindSpeed > 6)
+            mp.game.water.setWavesIntensity(WindSpeed / 1.5);
+        else
+            mp.game.water.setWavesIntensity(0);
+    }
 
     mp.game.gameplay.setWindSpeed(WindSpeed);
     mp.game.gameplay.setWindDirection(WindDir);

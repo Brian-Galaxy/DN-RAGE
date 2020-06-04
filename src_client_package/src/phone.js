@@ -1100,6 +1100,18 @@ phone.showAppFraction = function() {
             ],
         };
 
+        if (user.isUsmc()) {
+            titleMenu.umenu.push(
+                {
+                    title: "Эвакуировать ближайший транспорт",
+                    type: 1,
+                    clickable: true,
+                    params: { name: "destroyVehicle" }
+                }
+            );
+
+        }
+
         if (user.isSapd() || user.isSheriff() || user.isFib()) {
             titleMenu.umenu.push(
                 {
@@ -3568,7 +3580,6 @@ phone.consoleCallback = async function(command) {
                         mp.game.ui.notifications.show(`~r~Вы уже получили задание отмыв денег`);
                         return;
                     }
-
                     user.set('isSellCar', true);
                     let posId = methods.getRandomInt(0, enums.spawnSellCar.length);
                     jobPoint.create(new mp.Vector3(enums.spawnSellCar[posId][0], enums.spawnSellCar[posId][1], enums.spawnSellCar[posId][2]), true, 3);

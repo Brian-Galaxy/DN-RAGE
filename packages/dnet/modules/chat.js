@@ -229,7 +229,7 @@ mp.events.add('playerCommand', (player, command) => {
                 return;
 
             let args = command.toLowerCase().split(' ');
-            racer.createRace(methods.parseInt(args[1]), methods.parseInt(args[2]));
+            racer.createRace(methods.parseInt(args[1]), args[2]);
         }
         else if (command.toLowerCase() === "racers") {
             if (!user.isAdmin(player))

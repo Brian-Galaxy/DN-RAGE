@@ -40,6 +40,7 @@ let fraction = require('./property/fraction');
 let weather = require('./managers/weather');
 let pickups = require('./managers/pickups');
 let gangWar = require('./managers/gangWar');
+let gangZone = require('./managers/gangZone');
 let mafiaWar = require('./managers/mafiaWar');
 let timer = require('./managers/timer');
 let ems = require('./managers/ems');
@@ -79,6 +80,7 @@ function init() {
 
         weather.loadAll();
         racer.loadAll();
+        gangZone.loadAll();
 
         carWash.loadAll();
         rent.loadAll();

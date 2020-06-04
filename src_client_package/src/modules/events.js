@@ -40,6 +40,7 @@ import trucker from "../jobs/trucker";
 
 import coffer from "../coffer";
 import fraction from "../property/fraction";
+import racer from "../manager/racer";
 
 mp.gui.chat.enabled = false;
 
@@ -753,6 +754,7 @@ mp.events.add('client:events:loginUser:success', async function() {
         chat.sendLocal(`!{${chat.clBlue}}Колесо удачи`);
         chat.sendLocal(`Отыграв 3 часа на сервере, у вас есть возможность прокрутить колесо удачи и один из главных призов это дорогой автомобиль, маска или VIP HARD.`);
         chat.updateSettings();
+        ui.updateMenuSettings();
         antiCheat.load();
 
         setTimeout(function () {
@@ -828,7 +830,6 @@ mp.events.add('client:gangWar:sendArray', (array) => {
         clearTimeout(gangWarTimeout2);
         gangWarTimeout2 = null;
     }
-
     try {
         gangArray = JSON.parse(array);
         gangWarTimeout2 = setTimeout(function () {
@@ -1181,10 +1182,10 @@ mp.events.add('client:menuList:showSellVehMenu', async () => {
     }
 });
 
-mp.events.add('client:menuList:showMazeBankLobbyMenu', () => {
+mp.events.add('client:menuList:showMazeBankLobbyMenu', (inGame, weapon, raceCount, raceName, raceVeh) => {
     try {
         methods.debug('Event: client:menuList:showMazeBankLobbyMenu');
-        menuList.showMazeBankLobbyMenu();
+        menuList.showMazeBankLobbyMenu(inGame, weapon, raceCount, raceName, raceVeh);
     }
     catch (e) {
         methods.debug(e);
@@ -2826,7 +2827,7 @@ mp.events.add('render', () => {
 
                     if (user.isAdmin())
                         remoteId = `${remoteId} (${player.getVariable('idLabel')} | ~g~${player.getHealth()} ~s~|~b~ ${player.getArmour()}~s~)`;
-                    if (player.getVariable('duel'))
+                    if (player.getVariable('duel') || player.getVariable('blockDeath'))
                         remoteId = `${remoteId} (~g~${player.getHealth()} ~s~|~b~ ${player.getArmour()}~s~)`;
 
                     const entity = player.vehicle ? player.vehicle : player;
@@ -2964,6 +2965,9 @@ mp.keys.bind(113, true, function() {
 mp.keys.bind(0x1B, true, function() {
     if (!user.isLogin())
         return;
+
+    if (mp.players.local.dimension === 9999 && mp.players.local.getVariable('blockDeath'))
+        mp.events.callRemote('server:gangZone:exitLobby');
 
     ui.callCef('license', JSON.stringify({type: 'hide'}));
     ui.callCef('certificate', JSON.stringify({type: 'hide'}));
@@ -3247,6 +3251,8 @@ mp.events.add("playerDeath", async function (player, reason, killer) {
     user.stopAllScreenEffect();
 
     if (mp.players.local.getVariable('duel'))
+        return;
+    if (mp.players.local.getVariable('blockDeath'))
         return;
 
     UIMenu.Menu.HideMenu();
@@ -3554,6 +3560,8 @@ mp.events.add('render', () => {
         mp.game.controls.disableControlAction(0,36,true); //LEFT CONTROL
 
         mp.game.controls.disableControlAction(0,68,true); //ATTACK VEHICLE
+        mp.game.controls.disableControlAction(0,114,true); //ATTACK FLY
+        mp.game.controls.disableControlAction(0,331,true); //ATTACK FLY
         mp.game.controls.disableControlAction(0,350,true); //E JUMP
 
         mp.game.controls.disableControlAction(0,243,true);

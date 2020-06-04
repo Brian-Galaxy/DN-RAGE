@@ -249,6 +249,10 @@ for(let code in keyCodes) {
         if (user.getCache('s_bind_voice_radio') == parseInt(code)) {
             voiceRage.enableRadioMic();
         }
+        if (user.getCache('s_bind_voice_reload') == parseInt(code)) {
+            mp.voiceChat.cleanupAndReload(true, true, true);
+            mp.game.ui.notifications.show('~b~Голосовой чат был перезагружен');
+        }
 
         if (methods.isBlockKeys())
             return;

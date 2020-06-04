@@ -1074,13 +1074,13 @@ vehicles.setTunning = (veh) => {
                             for (let tune in upgrade) {
                                 if (methods.parseInt(tune) >= 100)
                                     continue;
+                                if (methods.parseInt(tune) === 18)
+                                    veh.setVariable('boost', 1.3);
                                 if (methods.parseInt(tune) === 69)
                                     veh.windowTint = methods.parseInt(upgrade[tune]);
                                 else
                                     veh.setMod(methods.parseInt(tune), methods.parseInt(upgrade[tune]));
                             }
-                            if (veh.getMod(18) === 0)
-                                veh.setVariable('boost', 1.3);
                         }
                         catch (e) {
                             methods.debug('vehicles.setTunning1', e);

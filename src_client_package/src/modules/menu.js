@@ -71,6 +71,9 @@ mp.events.add("client:menuList:callBack:btn", async (menuName, id, jparams) => {
             Menu.OnSelect.Emit(JSON.parse(jparams), id, menuName);
         else
             Menu.OnSelect.Emit({}, id, menuName);
+
+        if (user.getCache('s_menu_sound'))
+            mp.game.audio.playSoundFrontend(-1, "MP_RANK_UP", "HUD_FRONTEND_DEFAULT_SOUNDSET", false);
     }
     catch (e) {
         methods.debug(e);
@@ -86,6 +89,9 @@ mp.events.add("client:menuList:onClose", async () => {
         Menu.OnCheckbox.Remove();
         Menu.OnSelect.Remove();
         Menu.OnIndexSelect.Remove();
+
+        if (user.getCache('s_menu_sound'))
+            mp.game.audio.playSoundFrontend(-1, "ATM_WINDOW", "HUD_FRONTEND_DEFAULT_SOUNDSET", false);
     }
     catch (e) {
         methods.debug(e);
@@ -99,6 +105,9 @@ mp.events.add("client:menuList:callBack:check", async (menuName, id, jparams, ch
             Menu.OnCheckbox.Emit(JSON.parse(jparams), checked, id, menuName);
         else
             Menu.OnCheckbox.Emit({}, checked, id, menuName);
+
+        if (user.getCache('s_menu_sound'))
+            mp.game.audio.playSoundFrontend(-1, "MP_RANK_UP", "HUD_FRONTEND_DEFAULT_SOUNDSET", false);
     }
     catch (e) {
         methods.debug(e);
@@ -112,6 +121,9 @@ mp.events.add("client:menuList:callBack:list", async (menuName, id, jparams, ind
             Menu.OnList.Emit(JSON.parse(jparams), index, id, menuName);
         else
             Menu.OnList.Emit({}, index, id, menuName);
+
+        if (user.getCache('s_menu_sound'))
+            mp.game.audio.playSoundFrontend(-1, "HIGHLIGHT_NAV_UP_DOWN", "HUD_FRONTEND_DEFAULT_SOUNDSET", false);
     }
     catch (e) {
         methods.debug(e);
@@ -120,6 +132,8 @@ mp.events.add("client:menuList:callBack:list", async (menuName, id, jparams, ind
 
 mp.events.add("client:menuList:callBack:select", async (menuName, idx) => {
     try {
+        if (user.getCache('s_menu_sound'))
+            mp.game.audio.playSoundFrontend(-1, "HIGHLIGHT_NAV_UP_DOWN", "HUD_FRONTEND_DEFAULT_SOUNDSET", false);
         methods.debug('OnIndexSelect', menuName, idx);
         Menu.OnIndexSelect.Emit(idx, menuName);
     }

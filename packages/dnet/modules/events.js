@@ -41,6 +41,7 @@ let ems = require('../managers/ems');
 let tax = require('../managers/tax');
 let discord = require('../managers/discord');
 let racer = require('../managers/racer');
+let gangZone = require('../managers/gangZone');
 let trucker = require('../managers/trucker');
 let vSync = require('../managers/vSync');
 
@@ -267,6 +268,22 @@ mp.events.addRemoteCounted('server:race:exit', (player) => {
 mp.events.addRemoteCounted('server:race:toLobby', (player) => {
     try {
         racer.enterLobby(player);
+    } catch (e) {
+        console.log(e);
+    }
+});
+
+mp.events.addRemoteCounted('server:gangZone:toLobby', (player) => {
+    try {
+        gangZone.playerToLobby(player);
+    } catch (e) {
+        console.log(e);
+    }
+});
+
+mp.events.addRemoteCounted('server:gangZone:exitLobby', (player) => {
+    try {
+        gangZone.playerExitLobby(player);
     } catch (e) {
         console.log(e);
     }
@@ -1363,7 +1380,7 @@ mp.events.addRemoteCounted('server:user:knockById', (player, targetId) => { //TO
             return;
         }
 
-        if (user.get(player, 'online_time') < 170) {
+        if (user.get(target, 'online_time') < 170) {
             player.notify("~r~Данный игрок новичок, по отношению к нему запрещены такие действия");
             return;
         }
@@ -3069,7 +3086,7 @@ mp.events.addRemoteCounted('server:phone:inviteFraction2', (player, id) => {
 
         let fractionId = user.get(player, 'fraction_id2');
 
-        let rank = JSON.parse(fraction.getData(fractionId).get('rank_list')).length - 1;
+        let rank = JSON.parse(fraction.getData(fractionId).get('rank_list')).length;
 
         user.set(target, 'rank2', rank);
         user.set(target, 'rank_type2', 0);
@@ -6390,6 +6407,8 @@ mp.events.add("playerDeath", (player, reason, killer) => {
 
     if (user.isLogin(killer) && user.isLogin(player)) {
         try {
+            if (player.dimension === 9999)
+                return;
             let killerPos = killer.position;
             methods.saveLog('log_user_death',
                 ['user', 'reason'],
@@ -6402,6 +6421,8 @@ mp.events.add("playerDeath", (player, reason, killer) => {
     }
     else if (user.isLogin(player)) {
         try {
+            if (player.dimension === 9999)
+                return;
             methods.saveLog('log_user_death',
                 ['user', 'reason'],
                 [`${user.getRpName(player)} (${user.getId(player)})`, methods.removeQuotes(methods.removeQuotes2(reason))],
@@ -6423,6 +6444,9 @@ mp.events.add("playerDeath", (player, reason, killer) => {
     }, 10000);
 
     if (user.isLogin(player)) {
+
+        if (player.getVariable('blockDeath'))
+            return;
 
         if (user.has(player, 'duelTarget'))
         {

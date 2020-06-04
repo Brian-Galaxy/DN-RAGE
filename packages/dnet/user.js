@@ -188,11 +188,6 @@ user.loginAccount = function(player, login, pass) {
 
                         let spawnList = [];
 
-                        if (fraction.isGang(row['fraction_id2']))
-                            spawnList.push('Спавн организации');
-                        if (row['fraction_id'] === 4)
-                            spawnList.push('Спавн в казарме');
-
                         if (row['pos_x'] !== 0)
                             spawnList.push('Точка выхода');
 
@@ -207,6 +202,13 @@ user.loginAccount = function(player, login, pass) {
 
                         if (row['yacht_id'])
                             spawnList.push('Яхта');
+
+                        if (fraction.isGang(row['fraction_id2']))
+                            spawnList.push('Спавн организации');
+                        if (row['fraction_id'] === 4) {
+                            spawnList.push('Спавн в казарме');
+                            spawnList.push('Спавн на авианосце');
+                        }
 
                         spawnList.push('Стандарт');
 
@@ -539,6 +541,10 @@ user.spawnByName = function(player, spawn = 'Стандарт') {
             else if (spawn == 'Спавн в казарме') {
                 player.spawn(new mp.Vector3(580.6460571289062, -3118.20849609375, 17.76861572265625));
                 player.heading = 84.13103485107422;
+            }
+            else if (spawn == 'Спавн на авианосце') {
+                player.spawn(new mp.Vector3(3095.786865234375, -4701.69873046875, 11.244027137756348));
+                player.heading = 106.51812744140625;
             }
             else if (spawn == 'Дом') {
                 let hData = houses.getHouseData(user.get(player, 'house_id'));
@@ -2779,7 +2785,7 @@ user.payDay = async function (player) {
         player.notify('~g~Вы получили 10 опыта рабочего стажа, связи с тем, что у вас VIP LIGHT');
     }
     if (user.get(player, 'vip_type') === 2) {
-        user.addWorkExp(player, 10);
+        user.addWorkExp(player, 20);
         player.notify('~g~Вы получили 20 опыта рабочего стажа, связи с тем, что у вас VIP HARD');
     }
 

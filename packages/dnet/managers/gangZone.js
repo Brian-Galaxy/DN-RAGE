@@ -49,14 +49,136 @@ let zoneSpawnList = [
 
 gangZone.loadAll = function() {
     methods.debug('gangZone.loadAll');
+    gangZone.generateLobby();
+};
 
-    setTimeout(function () {
-        gangZone.timer();
-    }, 10000);
+
+gangZone.currentWeapon = function() {
+    return currentWeapon;
+};
+
+gangZone.currentLobby = function() {
+    let count = 0;
+    mp.players.forEach(p => {
+        if (user.isLogin(p) && user.has(p, 'gangZoneKills')) {
+            count++;
+        }
+    });
+    return count;
 };
 
 gangZone.generateLobby = function() {
     methods.debug('gangZone.generateLobby');
     currentZone = 0;
     currentWeapon = weaponList[methods.getRandomInt(0, weaponList.length)];
+
+    mp.players.forEach(p => {
+        if (user.isLogin(p) && user.has(p, 'gangZoneKills')) {
+            p.removeAllWeapons();
+            user.giveWeapon(p, currentWeapon, 9999);
+
+            user.set(p, 'gangZoneKills', 0);
+            user.set(p, 'gangZoneDeath', 0);
+
+            user.setHealth(p, 100);
+
+            let spawnIdx = methods.getRandomInt(0, zoneSpawnList[currentZone].length);
+            user.teleport(p, zoneSpawnList[currentZone][spawnIdx][0], zoneSpawnList[currentZone][spawnIdx][1], zoneSpawnList[currentZone][spawnIdx][2], zoneSpawnList[currentZone][spawnIdx][3]);
+
+            p.outputChatBoxNew(`[${chat.getTime()}] Запуск нового раунда.`);
+        }
+    });
 };
+
+gangZone.playerToLobby = function(player) {
+    methods.debug('gangZone.playerToLobby');
+    if (user.isLogin(player)) {
+        if (user.has(player, 'uniform')) {
+            player.notify('~r~В форме запрещено учавствовать в GangZone');
+            return;
+        }
+
+        user.blockKeys(player, true);
+        player.removeAllWeapons();
+
+        player.dimension = 9999;
+        player.setVariable('blockDeath', true);
+        user.set(player, 'gangZoneKills', 0);
+        user.set(player, 'gangZoneDeath', 0);
+
+        let spawnIdx = methods.getRandomInt(0, zoneSpawnList[currentZone].length);
+        user.teleport(player, zoneSpawnList[currentZone][spawnIdx][0], zoneSpawnList[currentZone][spawnIdx][1], zoneSpawnList[currentZone][spawnIdx][2], zoneSpawnList[currentZone][spawnIdx][3]);
+        user.giveWeapon(player, currentWeapon, 9999);
+
+        player.outputChatBoxNew(`Кнопка !{2196F3}ESC!{FFFFFF} выйти из лобби`);
+    }
+};
+
+gangZone.playerExitLobby = function(player) {
+    methods.debug('gangZone.playerToLobby');
+    if (user.isLogin(player)) {
+        if (user.has(player, 'uniform')) {
+            player.notify('~r~В форме запрещено учавствовать в GangZone');
+            return;
+        }
+
+        user.blockKeys(player, false);
+
+        player.removeAllWeapons();
+        player.dimension = 0;
+        player.setVariable('blockDeath', undefined);
+        user.reset(player, 'gangZoneKills');
+        user.reset(player, 'gangZoneDeath');
+
+        user.teleport(player, -253.9224, -1993.057, 30.14611);
+        user.setHealth(player, 100);
+    }
+};
+
+mp.events.add("playerDeath", (player, reason, killer) => {
+
+    if (user.isLogin(killer) && user.isLogin(player)) {
+        try {
+            if (user.has(player, 'gangZoneKills') && user.has(killer, 'gangZoneKills')) {
+                let kills = methods.parseInt(user.get(killer, 'gangZoneKills'));
+                let killsPlayer = methods.parseInt(user.get(player, 'gangZoneKills'));
+                let deaths = methods.parseInt(user.get(player, 'gangZoneDeath'));
+
+                user.set(killer, 'gangZoneKills', ++kills);
+                user.set(player, 'gangZoneDeath', ++deaths);
+
+                if (kills >= 25) {
+                    gangZone.generateLobby();
+                    user.addMoney(killer, 2000, 'Награда за 1 место GangZone');
+                    mp.players.forEach(p => {
+                        if (user.isLogin(p) && user.has(p, 'gangZoneKills')) {
+                            p.outputChatBoxNew(`[${chat.getTime()}] Игрок !{${chat.clBlue}}${user.getRpName(killer)} (${killer.id})!{${chat.clWhite}} сделал 25 убийств, получил приз в $2000.`);
+                        }
+                    });
+                    return;
+                }
+
+                player.removeAllWeapons();
+
+                user.setHealth(player, 100);
+                let spawnIdx = methods.getRandomInt(0, zoneSpawnList[currentZone].length);
+                player.spawn(new mp.Vector3(zoneSpawnList[currentZone][spawnIdx][0], zoneSpawnList[currentZone][spawnIdx][1], zoneSpawnList[currentZone][spawnIdx][2]), zoneSpawnList[currentZone][spawnIdx][3]);
+
+                setTimeout(function () {
+                    try {
+                        user.giveWeapon(player, currentWeapon, 9999);
+                    }
+                    catch (e) {}
+                }, 250);
+
+                mp.players.forEach(p => {
+                    if (user.isLogin(p) && user.has(p, 'gangZoneKills')) {
+                        p.outputChatBoxNew(`[${chat.getTime()}] !{${chat.clBlue}}${user.getRpName(killer)} (${killer.id} | ${kills} убийств) !{${chat.clWhite}}убил игрока !{${chat.clBlue}}${user.getRpName(player)} (${player.id} | ${killsPlayer} убийств)`);
+                    }
+                });
+            }
+        } catch (e) {
+            methods.debug(e);
+        }
+    }
+});

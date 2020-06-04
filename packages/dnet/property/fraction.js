@@ -44,15 +44,6 @@ fraction.shopList = [
         ]
     },
     {
-        bId: 41,
-        name: "Los Santos Tattoo",
-        sumMax: 240000,
-        sumMin: 220000,
-        pos: [
-            [1325.094, -1650.716, 51.27528, 133.9299],
-        ]
-    },
-    {
         bId: 94,
         name: "Robs Liquor Murrieta Heights",
         sumMax: 240000,
@@ -160,7 +151,7 @@ fraction.shopList = [
     },
     {
         bId: 92,
-        name: "-660.9584, -933.4232, 20.82923, 182.273",
+        name: "Liquor Chumash",
         sumMax: 240000,
         sumMin: 220000,
         pos: [
@@ -1149,8 +1140,8 @@ fraction.getShopGang = function(player) {
     }
 
     let dateTime = new Date();
-    if (dateTime.getHours() < 18) {
-        player.notify('~r~Доступно только с 18 до 24 ночи ООС времени');
+    if (dateTime.getHours() < 16) {
+        player.notify('~r~Доступно только с 16 до 24 ночи ООС времени');
         return;
     }
 

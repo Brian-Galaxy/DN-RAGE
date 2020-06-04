@@ -529,6 +529,7 @@ user.tpToWaypoint = function() { //TODO машина
 user.setWaypoint = function(x, y) {
     mp.game.ui.setNewWaypoint(methods.parseInt(x), methods.parseInt(y));
     ui.showSubtitle('Метка в ~g~GPS~s~ была установлена');
+    mp.game.audio.playSoundFrontend(-1, "WAYPOINT_SET", "HUD_FRONTEND_DEFAULT_SOUNDSET", false);
 };
 
 user.removeWaypoint = function() {

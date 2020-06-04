@@ -214,6 +214,21 @@ ui.updatePositionSettings = function() {
     }
 };
 
+ui.updateMenuSettings = function() {
+    let rgb = enums.rgbColorsB[user.getCache('s_menu_color')];
+    ui.callCef('hudm', JSON.stringify({
+        type: 'updateStyle',
+        style: {
+            font: user.getCache('s_menu_font'),
+            fontOffset: 2,
+            borderRadius: user.getCache('s_menu_border'),
+            bgColor: `rgb(${rgb[0]},${rgb[1]},${rgb[2]},${user.getCache('s_menu_opacity')}`,
+            width: user.getCache('s_menu_width') + 'px',
+            height: '350px',
+        },
+    }));
+};
+
 ui.showOrHideRadar = function() {
     showRadar = !showRadar;
     mp.game.ui.displayRadar(showRadar);

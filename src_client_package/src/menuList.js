@@ -3481,6 +3481,7 @@ menuList.showPlayerStatsMenu = function() {
 
     UIMenu.Menu.AddMenuItem("~b~Вы играли:~r~", "", {}, `${methods.parseFloat(user.getCache('online_time') * 8.5 / 60).toFixed(1)}ч.`);
     UIMenu.Menu.AddMenuItem("~b~Вы играли сегодня:~r~", "", {}, `${methods.parseFloat(user.getCache('online_cont') * 8.5 / 60).toFixed(1)}ч.`);
+    UIMenu.Menu.AddMenuItem("~b~Вы играли (Конкурс):~r~", "", {}, `${methods.parseFloat(user.getCache('online_contall') * 8.5 / 60).toFixed(1)}ч.`);
 
     if (user.getCache('vip_type') === 1)
         UIMenu.Menu.AddMenuItem("~b~VIP:", "", {}, `LIGHT`);

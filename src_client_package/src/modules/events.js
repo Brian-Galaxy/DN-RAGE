@@ -751,6 +751,9 @@ mp.events.add('client:events:loginUser:success', async function() {
         chat.sendLocal(`!{${chat.clBlue}}3. !{${chat.clWhite}}Каждые 24 часа В 20:00 по МСК вы сможете выиграть транспорт.`);
         chat.sendLocal(`!{${chat.clBlue}}4. !{${chat.clWhite}}Отыграв 8 часов на сервере, вы получите $50.000, но 1 раз в сутки.`);*/
         chat.sendLocal('  ');
+        chat.sendLocal(`!{${chat.clBlue}}На сервере действует конкурс`);
+        chat.sendLocal(`Конкурс очень крутой, на 50 призовых мест и у тебя есть шанс победить, все подробности на сайте!`);
+        chat.sendLocal('  ');
         chat.sendLocal(`!{${chat.clBlue}}Колесо удачи`);
         chat.sendLocal(`Отыграв 3 часа на сервере, у вас есть возможность прокрутить колесо удачи и один из главных призов это дорогой автомобиль, маска или VIP HARD.`);
         chat.updateSettings();
@@ -880,6 +883,10 @@ mp.events.add('client:duel:start', () => {
 mp.events.add('client:duel:giveWeapon', () => {
     methods.debug('Event: client:duel:giveWeapon');
     user.giveWeapon('weapon_revolver', 30);
+});
+
+mp.events.add('client:user:removeAllWeapons', () => {
+    mp.players.local.removeAllWeapons();
 });
 
 mp.events.add('client:user:setWaypoint', (x, y) => {

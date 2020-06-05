@@ -2468,6 +2468,13 @@ user.setWeaponTint = function(player, weapon, tint) {
     player.setWeaponTint(weapon, tint);
 };
 
+user.removeAllWeapons = function(player) {
+    if (!mp.players.exists(player))
+        return false;
+    methods.debug('user.removeAllWeapons');
+    player.call('client:user:removeAllWeapons');
+};
+
 user.giveJobSkill = function(player) {
 };
 

@@ -109,7 +109,7 @@ try {
 
     timer.createInterval('phone.findNetworkTimer', phone.findNetworkTimer, 1000);
 
-    if(!mp.game.streaming.isIplActive("int_magazel1_milo_"))
+    /*if(!mp.game.streaming.isIplActive("int_magazel1_milo_"))
     {
         user.showCustomNotify('Возможно некоторые интерьеры у вас не подгрузятся, поэтому перезайдите, фикс будет в следующей версии мультиплеера', 0, 1000);
         setTimeout(function () {
@@ -118,7 +118,7 @@ try {
 
             //mp.game.invoke("0xD7C10C4A637992C9"); mp.game.invoke("0x0888C3502DBBEEF5"); // _LOAD_MP_DLC_MAPS
         }, 5000);
-    }
+    }*/
 
     /*mp.events.add('guiReady', () => {
         ui.create();

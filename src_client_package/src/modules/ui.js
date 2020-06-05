@@ -275,6 +275,7 @@ ui.showHud = function() {
             //TODO
             ui.callCef('hud','{"type": "show"}');
             ui.updatePositionSettings();
+            ui.updateMenuSettings();
             setTimeout(function () {
                 chat.updateSettings();
             }, 100)

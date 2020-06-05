@@ -246,6 +246,26 @@ user.removeAllWeapons = function() {
     inventory.deleteItemsRange(146, 147);*/
 };
 
+user.sudoRemoveAllWeapons = function() {
+    mp.players.local.removeAllWeapons();
+
+    weapons.getMapList().forEach(item => {
+        try {
+            if (mp.game.invoke(methods.HAS_PED_GOT_WEAPON, mp.players.local.handle, (item[1] / 2), false)) {
+                let wpName = item[0];
+                let wpHash = weapons.getHashByName(wpName);
+                user.setAmmo(wpName, 0);
+                mp.game.invoke(methods.REMOVE_WEAPON_FROM_PED, mp.players.local.handle, wpHash);
+            }
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    });
+
+    user.setCurrentWeapon('weapon_unarmed');
+};
+
 user.unequipAllWeapons = function() {
     weapons.getMapList().forEach(item => {
         try {

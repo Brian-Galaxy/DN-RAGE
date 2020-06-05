@@ -43,6 +43,42 @@ object.load = function () {
 
     object.delete(-1126237515, -821.8936, -1081.555, 10.13664); // Удалённый банкомат возле BINCO на каналах веспуччи
 
+    // Столбики возле дверей в государственные офисы
+    object.create(-994492850, new mp.Vector3(1838.105, 3670.664, 33.27806), new mp.Vector3(0, 0, 30.99991), false, false);// EMS|Sheriff Sandy Shores
+    object.create(-994492850, new mp.Vector3(1839.35, 3671.394, 33.27798), new mp.Vector3(0, 0, 27.99991), false, false);// EMS|Sheriff Sandy Shores
+    object.create(-994492850, new mp.Vector3(1840.611, 3672.125, 33.2782), new mp.Vector3(0, 0, 29.99988), false, false);// EMS|Sheriff Sandy Shores
+    object.create(-994492850, new mp.Vector3(1841.846, 3672.826, 33.27814), new mp.Vector3(0, 0, 26.99986), false, false);// EMS|Sheriff Sandy Shores
+    object.create(-994492850, new mp.Vector3(1857.097, 3681.638, 33.26824), new mp.Vector3(0, 0, 27.99987), false, false);// EMS|Sheriff Sandy Shores
+    object.create(-994492850, new mp.Vector3(1822.152, 3662.325, 33.27676), new mp.Vector3(0, 0, 27.99987), false, false);// EMS|Sheriff Sandy Shores
+    object.create(-994492850, new mp.Vector3(1821.534, 3663.4, 33.27676), new mp.Vector3(0, 0, 31.99986), false, false);// EMS|Sheriff Sandy Shores
+    object.create(-994492850, new mp.Vector3(1856.261, 3706.938, 33.26958), new mp.Vector3(0, 0, 31.99986), false, false);// EMS|Sheriff Sandy Shores
+    object.create(-994492850, new mp.Vector3(1837.482, 3696.075, 33.26939), new mp.Vector3(0, 0, 29.99983), false, false);// EMS|Sheriff Sandy Shores
+    object.create(-994492850, new mp.Vector3(1855.819, 3680.898, 33.26824), new mp.Vector3(0, 0, 31.99982), false, false);// EMS|Sheriff Sandy Shores
+    object.create(-994492850, new mp.Vector3(1855.152, 3706.314, 33.27112), new mp.Vector3(0, 0, 31.99986), false, false);// EMS|Sheriff Sandy Shores
+    object.create(-994492850, new mp.Vector3(1836.203, 3695.357, 33.26764), new mp.Vector3(0, 0, 29.99983), false, false);// EMS|Sheriff Sandy Shores
+    object.create(-994492850, new mp.Vector3(-379.5988, 6120.939, 30.47954), new mp.Vector3(0, 0, -41.99983), false, false);// BCFD Paleto Bay
+    object.create(-994492850, new mp.Vector3(-380.9047, 6119.624, 30.47954), new mp.Vector3(0, 0, -45.9998), false, false);// BCFD Paleto Bay
+    object.create(-994492850, new mp.Vector3(-382.3091, 6118.244, 30.47954), new mp.Vector3(0, 0, -42.99979), false, false);// BCFD Paleto Bay
+    object.create(-994492850, new mp.Vector3(-378.1894, 6120.577, 30.47954), new mp.Vector3(0, 0, -41.9998), false, false);// BCFD Paleto Bay
+    object.create(-994492850, new mp.Vector3(-381.8523, 6116.917, 30.47954), new mp.Vector3(0, 0, -44.99976), false, false);// BCFD Paleto Bay
+    object.create(-994492850, new mp.Vector3(-236.3165, 6317.708, 30.50773), new mp.Vector3(0, 0, -42.99979), false, false);// EMS Paleto Bay
+    object.create(-994492850, new mp.Vector3(-233.9889, 6320.019, 30.50628), new mp.Vector3(0, 0, -45.99974), false, false);// EMS Paleto Bay
+    object.create(-994492850, new mp.Vector3(-235.1488, 6318.874, 30.50822), new mp.Vector3(0, 0, -43.99972), false, false);// EMS Paleto Bay
+    object.create(-994492850, new mp.Vector3(-439.34, 6017.82, 30.49012), new mp.Vector3(0, 0, -42.99992), false, false);// Sheriff Paleto Bay
+    object.create(-994492850, new mp.Vector3(-441.84, 6020.34, 30.49012), new mp.Vector3(0, 0, -46.9999), false, false);// Sheriff Paleto Bay
+    object.create(-994492850, new mp.Vector3(-440.61, 6019.08, 30.49012), new mp.Vector3(0, 0, -46.99987), false, false);// Sheriff Paleto Bay
+    object.create(-994492850, new mp.Vector3(-454.4348, 6006.975, 30.49012), new mp.Vector3(0, 0, -46.99981), false, false);// Sheriff Paleto Bay
+    object.create(-994492850, new mp.Vector3(-453.3648, 6008.031, 30.49012), new mp.Vector3(0, 0, -46.9998), false, false);// Sheriff Paleto Bay
+    object.create(-994492850, new mp.Vector3(-445.3816, 6000.079, 30.49012), new mp.Vector3(0, 0, -46.99977), false, false);// Sheriff Paleto Bay
+    object.create(-994492850, new mp.Vector3(-446.4504, 5999.008, 30.49012), new mp.Vector3(0, 0, 43.00021), false, false);// Sheriff Paleto Bay
+    object.create(-903362261, new mp.Vector3(-1082.703, -262.0022, 36.79493), new mp.Vector3(0, 0, 25.99997), false, false);// Life Invader
+    object.create(-903362261, new mp.Vector3(-1080.106, -260.6477, 36.80637), new mp.Vector3(0, 0, 27.99996), false, false);// Life Invader
+    object.create(-903362261, new mp.Vector3(-1081.396, -261.3129, 36.80052), new mp.Vector3(0, 0, 27.99996), false, false);// Life Invader
+    object.create(-994492850, new mp.Vector3(-1041.645, -242.063, 36.84607), new mp.Vector3(0, 0, 25.9999), false, false);// Life Invader
+    object.create(-994492850, new mp.Vector3(-1040.093, -241.2755, 36.84407), new mp.Vector3(0, 0, 27.99987), false, false);// Life Invader
+    object.create(-903362261, new mp.Vector3(-1041.572, -222.8321, 36.78766), new mp.Vector3(0, 0, 27.99996), false, false);// Life Invader
+    object.create(-903362261, new mp.Vector3(-1039.792, -222.0281, 36.76735), new mp.Vector3(0, 0, 113.9996), false, false);// Life Invader
+
     // Удалённые объекты USMC
 
     object.delete(-1186441238, 494.1839, -3172.116, 5.878304);

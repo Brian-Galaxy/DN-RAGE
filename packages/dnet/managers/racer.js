@@ -6428,7 +6428,7 @@ racer.getLobbyCount = function () {
 
 racer.startRace = function () {
 
-    if (currentLobby < 1) {
+    if (currentLobby < 5) {
         isCreate = false;
         methods.notifyWithPictureToAll('Arena RaceClub', '~r~' + racerList[currentRace].title, 'Гонка была отменена из-за нехватки участников', 'CHAR_CARSITE4');
 

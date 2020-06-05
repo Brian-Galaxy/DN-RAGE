@@ -94,7 +94,7 @@ pickups.SapdClearPos = new mp.Vector3(440.5925, -975.6348, 29.69);
 pickups.SapdArrestPos = new mp.Vector3(459.6778, -989.071, 23.91487);
 pickups.SapdToCyberRoomPos = new mp.Vector3(464.357, -983.8818, 34.89194);
 pickups.SapdFromCyberRoomPos = new mp.Vector3(463.7193, -1003.186, 31.7847);
-pickups.SapdToBalconPos = new mp.Vector3(463.0852, -1009.47, 31.78511);
+pickups.SapdToBalconPos = new mp.Vector3(464.63787841796875, -983.9490966796875, 34.891876220703125);
 pickups.SapdFromBalconPos = new mp.Vector3(463.5898, -1012.111, 31.9835);
 pickups.SapdToBalcon2Pos = new mp.Vector3(428.4888, -995.2952, 34.68689);
 pickups.SapdFromBalcon2Pos = new mp.Vector3(464.1708, -984.0346, 38.89184);
@@ -104,7 +104,7 @@ pickups.SapdFromInterrogationPos = new mp.Vector3(446.7996, -985.8127, 25.67422)
 pickups.UsmcArsenalPos1 = new mp.Vector3(467.41082763671875, -3212.53857421875, 6.056998729705816);
 pickups.UsmcArsenalPos2 = new mp.Vector3(3095.942626953125, -4707.86181640625, 11.244044303894043);
 
-pickups.SapdStockPos = new mp.Vector3(472.8161315917969, -990.1664428710938, 23.91470718383789);
+pickups.SapdStockPos = new mp.Vector3(458.4720764160156, -993.0488891601562, 29.689321517944336);
 pickups.Bcsd1StockPos = new mp.Vector3(-439.0313720703125, 6010.5322265625, 26.985639572143555);
 pickups.Bcsd2StockPos = new mp.Vector3(1855.5472412109375, 3699.1943359375, 33.267086029052734);
 
@@ -306,6 +306,10 @@ pickups.checkPressLAlt = function(player) {
     methods.checkTeleport(player, pickups.Builder2Pos1, pickups.Builder2Pos2);
     methods.checkTeleport(player, pickups.EmsRoofPos1, pickups.EmsRoofPos2);
     methods.checkTeleport(player, pickups.InvaderPos2, pickups.InvaderPos1);
+
+    methods.checkTeleport(player, pickups.SapdFromInterrogationPos, pickups.SapdToInterrogationPos);
+    methods.checkTeleport(player, pickups.SapdFromBalconPos, pickups.SapdToBalconPos);
+    methods.checkTeleport(player, pickups.SapdFromBalcon2Pos, pickups.SapdToBalcon2Pos);
 
     if (methods.distanceToPos(pickups.GangUserPosInt, playerPos) < distanceCheck && player.dimension === 1) {
         player.dimension = 0;
@@ -663,6 +667,13 @@ pickups.createAll = function() {
     //methods.createStaticCheckpointV(pickups.TheLostPos2, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
    /* methods.createCpVector(pickups.BahamaPos1, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
     methods.createCpVector(pickups.BahamaPos2, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);*/
+
+    methods.createCpVector(pickups.SapdToInterrogationPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
+    methods.createCpVector(pickups.SapdFromInterrogationPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
+    methods.createCpVector(pickups.SapdToBalconPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
+    methods.createCpVector(pickups.SapdFromBalconPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
+    methods.createCpVector(pickups.SapdToBalcon2Pos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
+    methods.createCpVector(pickups.SapdFromBalcon2Pos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
 
     methods.createCpVector(pickups.Builder1Pos1, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
     methods.createCpVector(pickups.Builder1Pos2, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);

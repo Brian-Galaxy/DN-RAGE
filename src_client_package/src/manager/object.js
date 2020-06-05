@@ -842,6 +842,18 @@ object.load = function () {
     //Sheriff LS
     object.delete(mp.game.joaat("prop_sec_gate_01c"), 375.9481, -1632.531, 27.24899);
 
+    //SAPD Dopros
+    object.create(995767216, new mp.Vector3(404.63, -997.86, -98.86), new mp.Vector3(1.001789E-05, -5.008956E-06, -89.99954), false, false);
+    object.create(995767216, new mp.Vector3(401.1, -996.57, -98.86), new mp.Vector3(1.001787E-05, -5.008956E-06, 70.12512), false, false);
+    object.create(96868307, new mp.Vector3(401.1658, -1002.111, -100.0041), new mp.Vector3(0, 0, 106.0001), false, false);
+    object.create(-171943901, new mp.Vector3(399.9799, -1004.958, -99.47), new mp.Vector3(1.00179E-05, -5.008955E-06, -93.74994), false, false);
+    object.create(-380698483, new mp.Vector3(398.53, -1004.88, -99.61), new mp.Vector3(0, 0, 0), false, false);
+    object.create(-171943901, new mp.Vector3(397.15, -1005.16, -99.49), new mp.Vector3(1.00179E-05, 5.008956E-06, 90.99986), false, false);
+    object.create(-1609037443, new mp.Vector3(398.7716, -1003.399, -98.50414), new mp.Vector3(0, 0, 0), false, false);
+    object.create(-171943901, new mp.Vector3(397.14, -1004.47, -99.49), new mp.Vector3(1.00179E-05, 5.008956E-06, 90.99986), false, false);
+    object.create(-598185919, new mp.Vector3(398.8338, -1005.316, -99.15), new mp.Vector3(0, 0, 0), false, false);
+    object.create(-598185919, new mp.Vector3(398.3087, -1004.545, -99.15), new mp.Vector3(0, 0, 0), false, false);
+
     //SAPD Банкомат
     object.create(-870868698, new mp.Vector3(436.36, -988.04, 29.68959), new mp.Vector3(0, 0, 179.8003), false, false);
 

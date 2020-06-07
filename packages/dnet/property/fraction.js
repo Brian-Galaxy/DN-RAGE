@@ -956,7 +956,26 @@ fraction.timerCargoWar = function() {
         if (item.type !== 0)
             return;
 
-        mp.vehicles.forEachInRange(item.pos, radius2, v => {
+        mp.players.forEachInRange(item.pos, radius2, p => {
+            if (!user.isLogin(p))
+                return;
+
+            let v = p.vehicle;
+            if (vehicles.exists(v)) {
+                if (v.getVariable('box') !== null && v.getVariable('box') !== undefined) {
+                    //...
+                }
+                else {
+                    user.setMaxSpeed(p, 10)
+                }
+            }
+            else if (user.has(p, 'maxSpeed')) {
+                user.setMaxSpeed(p, 0);
+                user.reset(p, 'maxSpeed');
+            }
+        });
+
+        /*mp.vehicles.forEachInRange(item.pos, radius2, v => {
             if (!vehicles.exists(v))
                 return;
 
@@ -967,7 +986,7 @@ fraction.timerCargoWar = function() {
                 if (v.getOccupants().length > 0)
                     vehicles.respawn(v);
             }
-        });
+        });*/
     });
 
     if (timer < 1) {
@@ -1023,7 +1042,26 @@ fraction.timerCargoMafiaWar = function() {
         if (item.type !== 1)
             return;
 
-        mp.vehicles.forEachInRange(item.pos, radiusMafia2, v => {
+        mp.players.forEachInRange(item.pos, radiusMafia2, p => {
+            if (!user.isLogin(p))
+                return;
+
+            let v = p.vehicle;
+            if (vehicles.exists(v)) {
+                if (v.getVariable('box') !== null && v.getVariable('box') !== undefined) {
+                    //...
+                }
+                else {
+                    user.setMaxSpeed(p, 10)
+                }
+            }
+            else if (user.has(p, 'maxSpeed')) {
+                user.setMaxSpeed(p, 0);
+                user.reset(p, 'maxSpeed');
+            }
+        });
+
+        /*mp.vehicles.forEachInRange(item.pos, radiusMafia2, v => {
             if (!vehicles.exists(v))
                 return;
 
@@ -1034,7 +1072,7 @@ fraction.timerCargoMafiaWar = function() {
                 if (v.getOccupants().length > 0)
                     vehicles.respawn(v);
             }
-        });
+        });*/
     });
 
     if (timerMafia < 1) {
@@ -1091,7 +1129,26 @@ fraction.timerCargoBigWar = function() {
         if (item.type !== 2)
             return;
 
-        mp.vehicles.forEachInRange(item.pos, radiusBig2, v => {
+        mp.players.forEachInRange(item.pos, radiusBig2, p => {
+            if (!user.isLogin(p))
+                return;
+
+            let v = p.vehicle;
+            if (vehicles.exists(v)) {
+                if (v.getVariable('box') !== null && v.getVariable('box') !== undefined) {
+                    //...
+                }
+                else {
+                    user.setMaxSpeed(p, 10)
+                }
+            }
+            else if (user.has(p, 'maxSpeed')) {
+                user.setMaxSpeed(p, 0);
+                user.reset(p, 'maxSpeed');
+            }
+        });
+
+        /*mp.vehicles.forEachInRange(item.pos, radiusBig2, v => {
             if (!vehicles.exists(v))
                 return;
 
@@ -1102,7 +1159,7 @@ fraction.timerCargoBigWar = function() {
                 if (v.getOccupants().length > 0)
                     vehicles.respawn(v);
             }
-        });
+        });*/
     });
 
     if (timerBig < 1) {

@@ -280,7 +280,7 @@ gangZone.playerExitLobby = function(player) {
 
 mp.events.add("playerDeath", (player, reason, killer) => {
 
-    if (user.isLogin(killer) && user.isLogin(player)) {
+    if (user.isLogin(killer) && user.isLogin(player)) { //TODO Самоубийство пофиксить
         try {
             if (user.has(player, 'gangZoneKills') && user.has(killer, 'gangZoneKills')) {
                 let kills = methods.parseInt(user.get(killer, 'gangZoneKills'));
@@ -313,9 +313,11 @@ mp.events.add("playerDeath", (player, reason, killer) => {
 
                 setTimeout(function () {
                     try {
-                        user.setHealth(player, 100);
-                        let spawnIdx = methods.getRandomInt(0, zoneSpawnList[currentZone].length);
-                        player.spawn(new mp.Vector3(zoneSpawnList[currentZone][spawnIdx][0], zoneSpawnList[currentZone][spawnIdx][1], zoneSpawnList[currentZone][spawnIdx][2]), zoneSpawnList[currentZone][spawnIdx][3]);
+                        if (user.has(player, 'gangZoneKills')) {
+                            user.setHealth(player, 100);
+                            let spawnIdx = methods.getRandomInt(0, zoneSpawnList[currentZone].length);
+                            player.spawn(new mp.Vector3(zoneSpawnList[currentZone][spawnIdx][0], zoneSpawnList[currentZone][spawnIdx][1], zoneSpawnList[currentZone][spawnIdx][2]), zoneSpawnList[currentZone][spawnIdx][3]);
+                        }
                     }
                     catch (e) {
                         
@@ -324,10 +326,11 @@ mp.events.add("playerDeath", (player, reason, killer) => {
 
                 setTimeout(function () {
                     try {
-                        user.giveWeapon(player, currentWeapon, 9999);
+                        if (user.has(player, 'gangZoneKills'))
+                            user.giveWeapon(player, currentWeapon, 9999);
                     }
                     catch (e) {}
-                }, 250);
+                }, 3250);
 
                 mp.players.forEach(p => {
                     if (user.isLogin(p) && user.has(p, 'gangZoneKills')) {

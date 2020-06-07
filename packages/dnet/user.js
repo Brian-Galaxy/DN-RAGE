@@ -512,6 +512,23 @@ user.loadUser = function(player, name, spawn = 'Стандарт') {
     });
 };
 
+user.loadUserSkin = function(player) {
+    methods.debug('user.loadUser');
+    if (!mp.players.exists(player))
+        return false;
+    try {
+        JSON.parse(user.get(player, 'skin'), function(k, v) {
+            user.set(player, k, v);
+        });
+        user.updateCharacterFace(player);
+        setTimeout(function () {
+            user.updateCharacterCloth(player);
+        }, 200);
+        user.updateClientCache(player);
+    }
+    catch (e) {}
+};
+
 user.spawnByName = function(player, spawn = 'Стандарт') {
     methods.debug('user.spawnByName', spawn);
     if (!user.isLogin(player))
@@ -527,6 +544,8 @@ user.spawnByName = function(player, spawn = 'Стандарт') {
         catch (e) {
             
         }
+
+        user.set(player, 'spawnName', spawn);
 
         try {
             if (spawn == 'Точка выхода') {
@@ -703,6 +722,10 @@ user.updateCharacterFace = function(player) {
                 player.model =  mp.joaat('mp_f_freemode_01');
             else
                 player.model =  mp.joaat('mp_m_freemode_01');
+        }
+
+        if (skin.SKIN_MOTHER_FACE === 0 && skin.SKIN_FATHER_FACE === 0 && skin.SKIN_MOTHER_SKIN === 0 && skin.SKIN_FATHER_SKIN === 0 && skin.SKIN_HAIR === 0) {
+            user.loadUserSkin(player);
         }
 
         if (user.get(player, 'mask') >= 0 && user.get(player, 'mask_color') >= 1) {
@@ -1941,11 +1964,22 @@ user.clearChat = function(player) {
 };
 
 user.setHealth = function(player, level) {
+    if (!mp.players.exists(player))
+        return false;
     player.call('client:setHealth', [level]);
 };
 
 user.setArmour = function(player, level) {
+    if (!mp.players.exists(player))
+        return false;
     player.call('client:setArmour', [level]);
+};
+
+user.setMaxSpeed = function(player, speed) {
+    if (!mp.players.exists(player))
+        return false;
+    user.set(player, 'maxSpeed', speed);
+    player.call('client:setNewMaxSpeed', [speed]);
 };
 
 user.teleport = function(player, x, y, z, rot = 0.1) {

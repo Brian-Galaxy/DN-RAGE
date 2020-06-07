@@ -2973,7 +2973,7 @@ mp.keys.bind(0x1B, true, function() {
     if (!user.isLogin())
         return;
 
-    if (mp.players.local.dimension === 9999 && mp.players.local.getVariable('blockDeath'))
+    if (mp.players.local.dimension === 99999 && mp.players.local.getVariable('blockDeath'))
         mp.events.callRemote('server:gangZone:exitLobby');
 
     ui.callCef('license', JSON.stringify({type: 'hide'}));

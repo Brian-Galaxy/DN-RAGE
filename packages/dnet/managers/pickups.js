@@ -245,6 +245,7 @@ pickups.MailPos = new mp.Vector3(78.78807067871094, 111.90670013427734, 80.16815
 pickups.Bus1Pos = new mp.Vector3(461.0713806152344, -573.357666015625, 27.499807357788086);
 pickups.Bus2Pos = new mp.Vector3(471.4545593261719, -576.7513427734375, 27.499744415283203);
 pickups.Bus3Pos = new mp.Vector3(466.4013671875, -576.0244140625, 27.499794006347656);
+pickups.TaxiPos = new mp.Vector3(895.2080078125, -179.82662963867188, 73.69615936279297);
 pickups.TreePos = new mp.Vector3(-1585.625, -234.0653, 53.35091);
 pickups.BuilderPos = new mp.Vector3(-1159.201, -740.0846, 18.88993);
 
@@ -631,6 +632,8 @@ pickups.checkPressE = function(player) {
     try {
         if (user.isJobMail(player) && methods.distanceToPos(pickups.MailPos, playerPos) < distanceCheck)
             player.call('client:menuList:showSpawnJobCarMailMenu');
+        if (methods.distanceToPos(pickups.TaxiPos, playerPos) < distanceCheck)
+            player.call('client:menuList:showSpawnJobCarTaxiMenu');
         if (user.isJobGr6(player) && methods.distanceToPos(pickups.Gr6Pos, playerPos) < distanceCheck)
             player.call('client:menuList:showSpawnJobGr6Menu');
         if (user.isJobBus1(player) && methods.distanceToPos(pickups.Bus1Pos, playerPos) < distanceCheck)
@@ -817,6 +820,7 @@ pickups.createAll = function() {
 
     methods.createCpVector(pickups.Gr6Pos, 'Нажмите ~g~E~s~ чтобы открыть меню инкассатора', 1, -1, pickups.Blue);
     methods.createCpVector(pickups.MailPos, 'Нажмите ~g~E~s~ чтобы открыть меню почтальона', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.TaxiPos, 'Нажмите ~g~E~s~ чтобы открыть меню почтальона', 1, -1, pickups.Blue);
     methods.createCpVector(pickups.Bus1Pos, 'Нажмите ~g~E~s~ чтобы открыть меню городского маршрута', 1, -1, pickups.Blue);
     methods.createCpVector(pickups.Bus2Pos, 'Нажмите ~g~E~s~ чтобы открыть меню трансферного маршрута', 1, -1, pickups.Blue);
     methods.createCpVector(pickups.Bus3Pos, 'Нажмите ~g~E~s~ чтобы открыть меню рейсового маршрута', 1, -1, pickups.Blue);

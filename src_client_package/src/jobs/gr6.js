@@ -161,7 +161,7 @@ gr6.stop = function() {
 
 gr6.workProcess = function() {
     jobPoint.delete();
-    Container.Data.SetLocally(0, 'gr6Money', price + methods.getRandomInt(120, 300));
+    Container.Data.SetLocally(0, 'gr6Money', price + methods.getRandomInt(250, 500));
     Container.Data.SetLocally(0, 'gr6MoneyBag', true);
     if (user.getCache('hand') > 0)
         user.setComponentVariation(5, 45, 0);

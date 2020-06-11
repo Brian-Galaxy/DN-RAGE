@@ -41,6 +41,7 @@ import voiceRage from "./voiceRage";
 import "./antiCheat";
 
 import trucker from "./jobs/trucker";
+import taxi from "./jobs/taxi";
 
 try {
 
@@ -91,6 +92,7 @@ try {
     wheel.loadAll();
 
     trucker.loadAll();
+    taxi.loadAll();
 
     attach.init();
     attachItems.registerAttaches();

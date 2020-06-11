@@ -837,6 +837,10 @@ builder.findRandomPickup = function() {
     }
 };
 
+builder.isProcess = function() {
+    return isProcess;
+};
+
 builder.workProcess = function(id) {
 
     let newList = [];

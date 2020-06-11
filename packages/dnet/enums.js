@@ -584,8 +584,8 @@ enums.fractionList = {
         leaderName: "Chief of Police",
         subLeaderName: "Deputy Chief of Police",
         vehicleList: ["Police", "Police2", "Police3", "Police4", "FBI", "FBI2", "Policeb", "Insurgent2", "Riot", "Riot2", "PoliceT"],
-        departmentList: ["Police Academy", "Regular", "Detective Bureau", "AirSupport Division", "Tactical Division", "CyberSecurity Division"],
-        departmentPayDay: [40, 90, 180, 160, 180, 170],
+        departmentList: ["Police Academy", "Regular", "Detective Bureau", "AirSupport Division", "Tactical Division", "CyberSecurity Division", "Regular RGT"],
+        departmentPayDay: [40, 90, 180, 160, 180, 170, 170],
         rankPayDay: [
             [900, 700, 600, 550, 150, 100], //0
             [900, 700, 550, 500, 450, 400, 350, 300, 250, 200], //1
@@ -593,6 +593,7 @@ enums.fractionList = {
             [900, 700, 550, 500, 450, 400], //3
             [1050, 800, 650, 550, 500, 450, 400], //4
             [900, 700, 550, 500, 450, 400], //5
+            [900, 700, 550, 500, 450, 400, 350, 300, 250, 200], //6
         ],
         leaderPayDay: 1900,
         subLeaderPayDay: 1600,
@@ -603,6 +604,7 @@ enums.fractionList = {
             ["Captain", "Deputy Captain", "Lieutenant II", "Lieutenant I", "Sergeant II", "Sergeant I"], //3
             ["Commander", "Deputy Commander", "Captain", "Lieutenant II", "Lieutenant I", "Sergeant II", "Sergeant I"], //4
             ["Captain", "Deputy Captain", "Lieutenant II", "Lieutenant I", "Sergeant II", "Sergeant I"], //5
+            ["Captain", "Deputy Captain", "Lieutenant II", "Lieutenant I", "Sergeant II", "Sergeant I", "Police Officier III+1", "Police Officier III", "Police Officier II", "Police Officier I"], //6
         ]
     },
     sheriff: {

@@ -3,6 +3,7 @@ import methods from '../modules/methods';
 import user from '../user';
 
 import jobPoint from '../manager/jobPoint';
+import builder from "./builder";
 
 let photo = {};
 
@@ -273,6 +274,10 @@ photo.getDirectionPosition = function(rot) {
     if (dgr >= 292.5 && dgr < 337.5)
         return "SW";
     return "S";
+};
+
+photo.isProcess = function() {
+    return isProcess;
 };
 
 photo.workProcess = function() { //TODO

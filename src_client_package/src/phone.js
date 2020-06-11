@@ -17,7 +17,11 @@ import jobPoint from "./manager/jobPoint";
 
 import fraction from "./property/fraction";
 import timer from "./manager/timer";
+
 import tree from "./jobs/tree";
+import builder from "./jobs/builder";
+import photo from "./jobs/photo";
+import loader from "./jobs/loader";
 
 let phone = {};
 
@@ -1438,6 +1442,13 @@ phone.showAppGps = function() {
                         type: 1,
                         clickable: true,
                         params: {x: -20, y: -660}
+                    },
+                    {
+                        title: "Таксопарк",
+                        text: "",
+                        type: 1,
+                        clickable: true,
+                        params: {x: 903, y: -165}
                     },
                 ],
             },
@@ -3636,6 +3647,11 @@ phone.consoleCallback = async function(command) {
 
                     if (user.hasCache('isSellMoney')) {
                         mp.game.ui.notifications.show(`~r~Вы уже получили задание отмыв денег`);
+                        return;
+                    }
+
+                    if (tree.isProcess() || builder.isProcess() || photo.isProcess() || loader.isProcess()) {
+                        mp.game.ui.notifications.show(`~r~Вы не можете сейчас получить задание , т.к. вы работаете`);
                         return;
                     }
 

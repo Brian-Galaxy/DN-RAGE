@@ -517,14 +517,19 @@ user.loadUserSkin = function(player) {
     if (!mp.players.exists(player))
         return false;
     try {
-        JSON.parse(user.get(player, 'skin'), function(k, v) {
-            user.set(player, k, v);
+        mysql.executeQuery(`SELECT skin FROM users WHERE name = ? LIMIT 1`, user.getRpName(player), function (err, rows, fields) {
+
+            user.set(player, 'skin', rows[0]['skin']);
+
+            JSON.parse(user.get(player, 'skin'), function(k, v) {
+                user.set(player, k, v);
+            });
+            user.updateCharacterFace(player);
+            setTimeout(function () {
+                user.updateCharacterCloth(player);
+            }, 200);
+            user.updateClientCache(player);
         });
-        user.updateCharacterFace(player);
-        setTimeout(function () {
-            user.updateCharacterCloth(player);
-        }, 200);
-        user.updateClientCache(player);
     }
     catch (e) {}
 };
@@ -724,8 +729,11 @@ user.updateCharacterFace = function(player) {
                 player.model =  mp.joaat('mp_m_freemode_01');
         }
 
-        if (skin.SKIN_MOTHER_FACE === 0 && skin.SKIN_FATHER_FACE === 0 && skin.SKIN_MOTHER_SKIN === 0 && skin.SKIN_FATHER_SKIN === 0 && skin.SKIN_HAIR === 0) {
-            user.loadUserSkin(player);
+        if (skin.SKIN_MOTHER_FACE === 0 && skin.SKIN_FATHER_FACE === 0 && skin.SKIN_MOTHER_SKIN === 0 && skin.SKIN_FATHER_SKIN === 0 && skin.SKIN_HAIR === 0 && skin.SKIN_SEX === 0) {
+            if (!user.has(player, 'hasLoaded')) {
+                user.loadUserSkin(player);
+                user.set(player, 'hasLoaded', true);
+            }
         }
 
         if (user.get(player, 'mask') >= 0 && user.get(player, 'mask_color') >= 1) {
@@ -4163,6 +4171,7 @@ user.giveUniform = function(player, id = 0) {
             user.setComponentVariation(player, 9, 0, 0);
             user.setComponentVariation(player, 10, 0, 0);
 
+            user.setComponentVariation(player, 3, 88, 0);
             user.setComponentVariation(player, 6, 75, 25);
             user.setComponentVariation(player, 4, 47, 1);
             user.setComponentVariation(player, 11, 139, 4);
@@ -4264,8 +4273,9 @@ user.giveUniform = function(player, id = 0) {
             user.setComponentVariation(player, 9, 0, 0);
             user.setComponentVariation(player, 10, 0, 0);
 
+            user.setComponentVariation(player, 3, 1, 0);
             user.setComponentVariation(player, 11, 31, 7);
-            user.setComponentVariation(player, 4, 112, 5);
+            user.setComponentVariation(player, 4, 28, 8);
             user.setComponentVariation(player, 6, 42, 2);
             user.setComponentVariation(player, 8, 31, 0);
         }

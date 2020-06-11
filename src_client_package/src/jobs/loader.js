@@ -2,6 +2,7 @@ import Container from '../modules/data';
 import methods from '../modules/methods';
 import jobPoint from '../manager/jobPoint';
 import user from '../user';
+import photo from "./photo";
 
 let loader = {};
 
@@ -73,6 +74,10 @@ loader.startOrEnd = function() {
         methods.debug('Exception: builder.startOrEnd');
         methods.debug(e);
     }
+};
+
+loader.isProcess = function() {
+    return isProcess;
 };
 
 loader.workProcess = function() {

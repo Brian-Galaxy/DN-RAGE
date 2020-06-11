@@ -839,7 +839,7 @@ methods.loadAllBlips = function () {
     methods.createBlip(new mp.Vector3(-369.2587890625, 6114.552734375, 30.446975708007812), 436, 60, 0.8, 'Здание Fire Department');
 
     methods.createBlip(new mp.Vector3(-1654.792236328125, -948.4613037109375, 7.716407775878906), 225, 2, 0.8, 'Б/У Авторынок');
-    //methods.createBlip(new mp.Vector3(-1581.689, -557.913, 34.95288), 545, 0, 0.8, 'Здание автошколы');
+    methods.createBlip(new mp.Vector3(903.91162109375, -165.71511840820312, 73.09003448486328), 225, 5, 0.8, 'Таксопарк');
 
     //methods.createBlip(new mp.Vector3(46.947, -1753.859, 46.508), 78, 68, 0.4, 'Торговый центр MegaMoll');
 

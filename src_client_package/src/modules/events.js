@@ -1972,6 +1972,17 @@ mp.events.add('client:menuList:showSpawnJobCarMailMenu', () => {
     }
 });
 
+mp.events.add('client:menuList:showSpawnJobCarTaxiMenu', () => {
+    try {
+        methods.debug('Event: client:menuList:showSpawnJobCarTaxiMenu');
+        menuList.showSpawnJobCarTaxiMenu();
+    }
+    catch (e) {
+        methods.debug('Exception: events:client:showSpawnJobCarTaxiMenu');
+        methods.debug(e);
+    }
+});
+
 mp.events.add('client:menuList:showVehicleMenu', (data) => {
     try {
         methods.debug('Event: client:menuList:showVehicleMenu');

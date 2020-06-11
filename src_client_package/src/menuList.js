@@ -45,6 +45,7 @@ import builder from "./jobs/builder";
 import loader from "./jobs/loader";
 import lamar from "./jobs/lamar";
 import trucker from "./jobs/trucker";
+import taxi from "./jobs/taxi";
 
 let menuList = {};
 
@@ -177,10 +178,10 @@ menuList.showHouseInGMenu = function(h) {
     UIMenu.Menu.OnSelect.Add(async item => {
         UIMenu.Menu.HideMenu();
         if (item.doName === 'enterHouse') {
-            houses.exit(h.get('x'), h.get('y'), h.get('z'), h.get('rot'));
+            houses.enter(h.get('id'));
         }
         if (item.doName === 'exitGarage') {
-            houses.enter(h.get('id'));
+            houses.exit(h.get('x'), h.get('y'), h.get('z'), h.get('rot'));
         }
     });
 };
@@ -1984,8 +1985,8 @@ menuList.showLicBuyMenu = function()
     }
     UIMenu.Menu.AddMenuItem("Категория C", "Цена: ~g~$500", {doName: 'c_lic'});
     UIMenu.Menu.AddMenuItem("Водный транспорт", "Цена: ~g~$990", {doName: 'ship_lic'});
-    UIMenu.Menu.AddMenuItem("Перевозка пассажиров", "Цена: ~g~$1500", {doName: 'taxi_lic'});
     UIMenu.Menu.AddMenuItem("Авиатранспорт", "Цена: ~g~$5000", {doName: 'air_lic'});
+    UIMenu.Menu.AddMenuItem("Перевозка пассажиров", "Цена: ~g~$10,000", {doName: 'taxi_lic'});
 
     UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: 'closeMenu'});
     UIMenu.Menu.Draw();
@@ -2010,8 +2011,13 @@ menuList.showLicBuyMenu = function()
             user.buyLicense('air_lic', 5000);
         else if (item.doName == "ship_lic")
             user.buyLicense('ship_lic', 990);
-        else if (item.doName == "taxi_lic")
-            user.buyLicense('taxi_lic', 1500);
+        else if (item.doName == "taxi_lic") {
+            if (user.getCache('work_lvl') < 2) {
+                mp.game.ui.notifications.show("~r~Вам необходим 2 уровень рабочего стажа");
+                return;
+            }
+            user.buyLicense('taxi_lic', 10000);
+        }
     });
 };
 
@@ -3802,7 +3808,7 @@ menuList.showVehicleMenu = function(data) {
             UIMenu.Menu.AddMenuItem("~y~Оплатить штраф", "Штраф: ~r~" + methods.moneyFormat(price) + "~br~~s~Припарковал: ~r~" + data.get('cop_park_name'), {eventName: "server:vehicle:park2"});
         }
         else {
-            UIMenu.Menu.AddMenuItem("Припарковать", "ТС будет спавниться на месте парковки", {eventName: "server:vehicle:park"});
+            UIMenu.Menu.AddMenuItem("Припарковать", "Транспорт будет спавниться на этом месте, если вы ее припаркуете", {eventName: "server:vehicle:park"});
         }
     }
 
@@ -3941,6 +3947,11 @@ menuList.showVehicleMenu = function(data) {
         UIMenu.Menu.AddMenuItem("~y~Ограбить транспорт", "", {doName: "gr6:grab"});
     }
 
+    if (veh.getVariable('taxi')) {
+        UIMenu.Menu.AddMenuItem("~g~Получить заказ", "На перевозку NPC", {doName: "taxi:take"});
+        UIMenu.Menu.AddMenuItem("~b~Справка", 'Вы можете перевозить NPC или игроков.');
+    }
+
     if (veh.getVariable('rentOwner') == user.getCache('id')) {
         UIMenu.Menu.AddMenuItem("~y~Завершить аренду", "", {doName: "stopRent"});
     }
@@ -4008,8 +4019,8 @@ menuList.showVehicleMenu = function(data) {
             chat.push(`${item.sendChatMessage}`);
         else if (item.doName == 'mail:take')
             mail.takeMail();
-        else if (item.doName == 'taxi:start')
-            taxi.start();
+        else if (item.doName == 'taxi:take')
+            taxi.take();
         else if (item.doName == 'bus:start1')
             bus.start(1);
         else if (item.doName == 'bus:start2')
@@ -4491,6 +4502,58 @@ menuList.showSpawnJobCarMailMenu = function() {
             }
             user.removeMoney(500, 'Аренда рабочего ТС');
             vehicles.spawnJobCar(61.768699645996094, 125.43084716796875, 78.99858856201172, 158.8726806640625, "Pony", 4);
+        }
+    });
+};
+
+menuList.showSpawnJobCarTaxiMenu = function() {
+
+    UIMenu.Menu.Create(`Работа`, `~b~Меню рабочего ТС`);
+
+    UIMenu.Menu.AddMenuItem("Dynasty", "Стоимость: ~g~" + methods.moneyFormat(100), {doName: "spawnCar1"});
+    UIMenu.Menu.AddMenuItem("Issi", "Стоимость: ~g~" + methods.moneyFormat(200), {doName: "spawnCar2"});
+    UIMenu.Menu.AddMenuItem("Stanier", "Стоимость: ~g~" + methods.moneyFormat(500), {doName: "spawnCar3"});
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
+    UIMenu.Menu.Draw();
+
+    UIMenu.Menu.OnSelect.Add(async (item, index) => {
+        UIMenu.Menu.HideMenu();
+        if (item.doName == 'spawnCar1') {
+            if (!user.getCache('taxi_lic')) {
+                mp.game.ui.notifications.show(`~r~У Вас нет лицензии на перевозку пассажиров`);
+                return;
+            }
+            if (user.getMoney() < 100) {
+                mp.game.ui.notifications.show(`~r~У Вас недостаточно средств`);
+                return;
+            }
+            user.removeMoney(100, 'Аренда рабочего ТС');
+            vehicles.spawnJobCar(897.9505615234375, -183.98391723632812, 73.38378143310547, 241.78759765625, "Dynasty", 99);
+        }
+        if (item.doName == 'spawnCar2') {
+            if (!user.getCache('taxi_lic')) {
+                mp.game.ui.notifications.show(`~r~У Вас нет лицензии на перевозку пассажиров`);
+                return;
+            }
+            if (user.getMoney() < 200) {
+                mp.game.ui.notifications.show(`~r~У Вас недостаточно средств`);
+                return;
+            }
+            user.removeMoney(200, 'Аренда рабочего ТС');
+            vehicles.spawnJobCar(897.9505615234375, -183.98391723632812, 73.38378143310547, 241.78759765625, "Issi3", 99);
+        }
+        if (item.doName == 'spawnCar3') {
+            if (!user.getCache('taxi_lic')) {
+                mp.game.ui.notifications.show(`~r~У Вас нет лицензии на перевозку пассажиров`);
+                return;
+            }
+            if (user.getMoney() < 500) {
+                mp.game.ui.notifications.show(`~r~У Вас недостаточно средств`);
+                return;
+            }
+            user.removeMoney(500, 'Аренда рабочего ТС');
+            vehicles.spawnJobCar(897.9505615234375, -183.98391723632812, 73.38378143310547, 241.78759765625, "Taxi", 99);
         }
     });
 };
@@ -8598,7 +8661,7 @@ menuList.showFractionInfoMenu = function() {
         UIMenu.Menu.AddMenuItem(`Забрать лицензию категории C`, "", {licRName: "c_lic"});
         UIMenu.Menu.AddMenuItem(`Забрать лицензию пилота`, "", {licRName: "air_lic"});
         UIMenu.Menu.AddMenuItem(`Забрать лицензию на водный ТС`, "", {licRName: "ship_lic"});
-        UIMenu.Menu.AddMenuItem(`Забрать лицензию на перевозку пассажиров`, "", {licRName: "taxi_lic"});
+        UIMenu.Menu.AddMenuItem(`Забрать лицензию на перевозку пассажиров`, "Купив эту лицензию, у вас появляется возможность работать в такси (Достаточно иметь транспорт)", {licRName: "taxi_lic"});
         UIMenu.Menu.AddMenuItem(`Забрать лицензию на оружие`, "", {licRName: "gun_lic"});
     }
     if (user.isGov()) {
@@ -8754,7 +8817,7 @@ menuList.showCofferInfoMenu = function(data) {
     UIMenu.Menu.AddMenuItem("Налог на имущество", `Текущая ставка: ~g~${data.get('cofferTaxProperty')}%`, {doName: "cofferTaxProperty"});
     UIMenu.Menu.AddMenuItem("Налог на зарплату", `Текущая ставка: ~g~${data.get('cofferTaxPayDay')}%`, {doName: "cofferTaxPayDay"});
     UIMenu.Menu.AddMenuItem("Налог на бизнес", `Текущая ставка: ~g~${data.get('cofferTaxBusiness')}%`, {doName: "cofferTaxBusiness"});
-    UIMenu.Menu.AddMenuItem("Промежуточный налог", `Текущая ставка: ~g~${data.get('cofferTaxIntermediate')}%`, {doName: "cofferTaxBusiness"});
+    UIMenu.Menu.AddMenuItem("Промежуточный налог", `Текущая ставка: ~g~${data.get('cofferTaxIntermediate')}%`, {doName: "cofferTaxIntermediate"});
 
     UIMenu.Menu.AddMenuItem("Финансировать бюджет правительства", "", {doName: "cofferGiveGov"});
     UIMenu.Menu.AddMenuItem("Финансировать бюджет LSPD", "", {doName: "cofferGiveLspd"});
@@ -9139,9 +9202,7 @@ menuList.showEmsGarderobMenu = function() {
         "Форма врача #3",
         "Форма врача #4",
         "Форма врача #5",
-        "Форма врача #6",
-        "Форма врача #7",
-        "Форма врача #8",
+        "Форма врача #6"
     ];
 
     for (let i = 0; i < listGarderob.length; i++) {
@@ -9647,7 +9708,7 @@ menuList.showSapdArsenalGunMenu = function() {
         UIMenu.Menu.AddMenuItem("Коробка патронов 9mm", "", {itemId: 280});
     }
 
-    if (user.getCache('rank_type') === 1 || user.getCache('rank_type') === 2) {
+    if (user.getCache('rank_type') === 1 || user.getCache('rank_type') === 6 || user.getCache('rank_type') === 2) {
         UIMenu.Menu.AddMenuItem("Beretta 90Two", "", {itemId: 78});
         UIMenu.Menu.AddMenuItem("Glock 17", "", {itemId: 146});
         UIMenu.Menu.AddMenuItem("Benelli M3", "", {itemId: 90});
@@ -9709,7 +9770,7 @@ menuList.showSapdArsenalGunMenu = function() {
 menuList.showSapdArsenalGunModMenu = function() {
     UIMenu.Menu.Create(`Арсенал`, `~b~Модули на оружие`);
 
-    if (user.getCache('rank_type') === 1 || user.getCache('rank_type') === 2) {
+    if (user.getCache('rank_type') === 1 || user.getCache('rank_type') === 6 || user.getCache('rank_type') === 2) {
         UIMenu.Menu.AddMenuItem("Фонарик Beretta 90Two", "", {itemId: 311});
         UIMenu.Menu.AddMenuItem("Оптический прицел Beretta 90Two", "", {itemId: 312});
         UIMenu.Menu.AddMenuItem("Глушитель Beretta 90Two", "", {itemId: 313});
@@ -10191,6 +10252,8 @@ menuList.showEduAskMenu = function() {
     UIMenu.Menu.AddMenuItem("Посмотреть обучение", "Займёт ~g~5~s~ минут твоего времени", {full: true});
     UIMenu.Menu.AddMenuItem("Посмотреть все фишки проекта", "Займёт ~g~2~s~ минуты твоего времени", {short: true});
 
+    UIMenu.Menu.AddMenuItem("~b~Вы всегда можете задать вопрос через М - Задать вопрос", "", {});
+
     UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
     UIMenu.Menu.Draw();
 
@@ -10220,6 +10283,8 @@ menuList.showBotQuestRole0Menu = function()
     UIMenu.Menu.AddMenuItem("Посмотреть обучение", "Займёт ~g~5~s~ минут твоего времени", {full: true});
     UIMenu.Menu.AddMenuItem("Посмотреть все фишки проекта", "Займёт ~g~2~s~ минуты твоего времени", {short: true});
 
+    UIMenu.Menu.AddMenuItem("~b~Вы всегда можете задать вопрос через М - Задать вопрос", "", {});
+
     UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
     UIMenu.Menu.Draw();
 
@@ -10246,6 +10311,7 @@ menuList.showBotQuestRoleAllMenu = function()
     }
     UIMenu.Menu.AddMenuItem("Посмотреть обучение", "Займёт ~g~5~s~ минут твоего времени", {full: true});
     UIMenu.Menu.AddMenuItem("Посмотреть все фишки проекта", "Займёт ~g~2~s~ минуты твоего времени", {short: true});
+    UIMenu.Menu.AddMenuItem("~b~Вы всегда можете задать вопрос через М - Задать вопрос", "", {});
 
     UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
     UIMenu.Menu.Draw();
@@ -10374,7 +10440,7 @@ menuList.showAdminMenu = function() {
 
             if (user.isAdmin(3))
                 UIMenu.Menu.AddMenuItem("Выбор одежды", "", {doName: "clothMenu"});
-            if (user.isAdmin(6))
+            if (user.isAdmin(5))
                 UIMenu.Menu.AddMenuItem("Выбор масок", "", {doName: "maskMenu"});
             if (user.isAdmin(2) && !user.isAdminRp())
                 UIMenu.Menu.AddMenuItem("Уведомление", "", {doName: "notify"});

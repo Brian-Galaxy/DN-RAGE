@@ -128,7 +128,7 @@ methods.debug = function (message, ...args) {
     let dateResult = methods.digitFormat(dateTime.getHours()) + ':' + methods.digitFormat(dateTime.getMinutes())+ ':' + methods.digitFormat(dateTime.getSeconds());
     //mp.gui.chat.push(`!{03A9F4}[DEBUG | ${dateResult}]!{FFFFFF} ${message.toString().replace('Exception: ', '!{f44336}Exception: ')}`);
     try {
-        mp.events.callRemote('server:clientDebug', `${message} | ${JSON.stringify(args)} | ${args.length}`)
+        //mp.events.callRemote('server:clientDebug', `${message} | ${JSON.stringify(args)} | ${args.length}`)
     } catch (e) {
     }
 };
@@ -316,6 +316,22 @@ methods.distanceToPos = function (v1, v2) {
 methods.distanceToPos2D = function (v1, v2) {
     return Math.abs(Math.sqrt(Math.pow((v2.x - v1.x),2) +
         Math.pow((v2.y - v1.y),2)));
+};
+
+methods.getNearestHousePos = function(pos, r) {
+    let nearest, dist;
+    let min = r;
+    mp.blips.forEach(b => {
+        if (b.getSprite() !== 40 && b.getSprite() !== 492)
+            return;
+
+        dist = methods.distanceToPos(pos, b.getCoords());
+        if (dist < min) {
+            nearest = b.getCoords();
+            min = dist;
+        }
+    });
+    return nearest || new mp.Vector3(0, 0, 70);
 };
 
 methods.getNearestPlayerWithCoords = function(pos, r) {

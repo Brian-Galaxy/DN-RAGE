@@ -1259,9 +1259,8 @@ vehicles.spawnJobCar = (cb2, position, heading, nameOrModel, jobId = 0) => {
                 }
                 break;
             }
-            case 9: {
+            case 99: {
                 veh.numberPlate = 'DTC' + jobId + veh.getVariable('vid');
-                veh.setColor(42, 42);
                 break;
             }
             case 10: {

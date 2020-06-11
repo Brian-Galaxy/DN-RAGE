@@ -2685,7 +2685,27 @@ mp.events.addRemoteCounted('server:vehicles:spawnJobCar', (player, x, y, z, head
                 user.putInVehicle(player, veh, -1);
                 vehicles.set(veh.getVariable('container'), 'owner_id', user.getId(player));
                 veh.setVariable('owner_id', user.getId(player));
-                veh.setVariable('job', job);
+
+                if (job === 99) {
+
+                    veh.setVariable('taxi', true);
+                    if (name === 'Dynasty') {
+                        veh.setMod(10, 3);
+                        veh.setColor(88, 0);
+                    }
+                    if (name === 'Issi3') {
+                        veh.setMod(48, 2);
+                        veh.setColor(88, 0);
+                    }
+                    if (name === 'Taxi') {
+                        vSync.setExtraState(veh, methods.getRandomInt(3, 7));
+                        veh.setColor(0, 88);
+                    }
+                }
+                else {
+                    veh.setVariable('job', job);
+                }
+
             }, new mp.Vector3(x, y, z), heading, name, job);
         }
         catch (e) {
@@ -3163,7 +3183,7 @@ mp.events.addRemoteCounted('server:user:clearByMafia', (player, id, price) => {
 
         target.notify(`~g~Вы очистили розыск и заработали ${methods.moneyFormat(price / 2)}`);
 
-        fraction.addMoney(user.get(target, 'fraction_id2', (price / 2 / 1000)), `Прибыль со снятия розыска (${user.getRpName(target)})`);
+        fraction.addMoney(user.get(target, 'fraction_id2'), (price / 2 / 1000), `Прибыль со снятия розыска (${user.getRpName(target)})`);
         user.addMoney(target, price / 2, 'Заработок с очистки розыска');
         user.removeMoney(player, price, 'Очистка розыска');
 

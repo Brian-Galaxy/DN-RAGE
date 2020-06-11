@@ -1219,6 +1219,10 @@ tree.findRandomPickup = function() {
     }
 };
 
+tree.isProcess = function() {
+    return isProcess;
+};
+
 tree.workProcess = function(id) {
 
     let newList = [];

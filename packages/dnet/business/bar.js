@@ -44,7 +44,7 @@ bar.loadAll = function() {
                 methods.createBlip(new mp.Vector3(4.723007, 220.3487, 106.7251), 614, 0, 0.6, 'Клуб');
                 break;
             case 130:
-                methods.createBlip(new mp.Vector3(346.0204772949219, -977.866943359375, 28.369871139526367), 614, 0, 0.6, 'Клуб');
+                methods.createBlip(new mp.Vector3(371.3487243652344, 253.2999725341797, 102.00971984863281), 614, 0, 0.6, 'Клуб');
                 break;
             case 131:
                 methods.createBlip(new mp.Vector3(-1173.9403076171875, -1153.419189453125, 4.657954216003418), 614, 0, 0.6, 'Клуб');

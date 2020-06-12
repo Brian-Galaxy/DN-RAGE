@@ -215,7 +215,7 @@ taxi.checkPos = function() {
                     posEnd = new mp.Vector3(0, 0, 0);
 
                     let rating = 5;
-                    if (mp.players.local.vehicle.getBodyHealth() < health - 50) {
+                    if (mp.players.local.vehicle.getBodyHealth() < health - 30) {
                         price = price * 0.7;
                         rating = methods.getRandomInt(1, 5);
                         mp.game.ui.notifications.showWithPicture('Заказ завершен', "Диспетчер", `Клиент оценил поездку в ~y~${rating}зв.\n~c~Из-за ДТП у вас был списан штраф в размере 30% от стоимости заказа`, 'CHAR_TAXI', 1);

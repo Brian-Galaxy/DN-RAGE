@@ -599,12 +599,12 @@ enums.fractionList = {
         subLeaderPayDay: 1600,
         rankList: [
             ["Captain", "Deputy Captain", "Instructor", "Junior Instructor", "Senior Cadet", "Cadet"], //0
-            ["Captain", "Deputy Captain", "Lieutenant II", "Lieutenant I", "Sergeant II", "Sergeant I", "Police Officier III+1", "Police Officier III", "Police Officier II", "Police Officier I"], //1
+            ["Captain", "Deputy Captain", "Lieutenant II", "Lieutenant I", "Sergeant II", "Sergeant I", "Police Officer III+1", "Police Officer III", "Police Officer II", "Police Officer I"], //1
             ["Captain", "Deputy Captain", "Lieutenant II", "Lieutenant I", "Sergeant II", "Sergeant I"], //2
             ["Captain", "Deputy Captain", "Lieutenant II", "Lieutenant I", "Sergeant II", "Sergeant I"], //3
             ["Commander", "Deputy Commander", "Captain", "Lieutenant II", "Lieutenant I", "Sergeant II", "Sergeant I"], //4
             ["Captain", "Deputy Captain", "Lieutenant II", "Lieutenant I", "Sergeant II", "Sergeant I"], //5
-            ["Captain", "Deputy Captain", "Lieutenant II", "Lieutenant I", "Sergeant II", "Sergeant I", "Police Officier III+1", "Police Officier III", "Police Officier II", "Police Officier I"], //6
+            ["Captain", "Deputy Captain", "Lieutenant II", "Lieutenant I", "Sergeant II", "Sergeant I", "Police Officer III+1", "Police Officer III", "Police Officer II", "Police Officer I"], //6
         ]
     },
     sheriff: {

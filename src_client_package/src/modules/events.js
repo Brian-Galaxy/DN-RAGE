@@ -520,6 +520,23 @@ mp.events.add('client:events:custom:choiceRole', function(roleIndex) {
             ui.callCef('customization','{"type": "hide"}');
             user.destroyCam();
 
+            try {
+                ui.DisableMouseControl = false;
+            }
+            catch (e) {}
+
+            try {
+                methods.disableAllControls(false);
+                methods.disableDefaultControls(false);
+                methods.blockKeys(false);
+            }
+            catch (e) {}
+            
+            try {
+                menuList.hide();
+            }
+            catch (e) {}
+
             mp.players.local.freezePosition(false);
             mp.players.local.setCollision(true, true);
             mp.gui.cursor.show(false, false);

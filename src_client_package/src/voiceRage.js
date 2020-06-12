@@ -106,7 +106,7 @@ voiceRage.generateVolume = (localPlayerPosition, targetPlayer, voiceDistance, di
     let localPlayer = mp.players.local;
 
     if (volume > 0) {
-        if (!localPlayer.hasClearLosTo(targetPlayer.handle, 17)) {
+        if (!targetPlayer.iSeeYou) {
             volume = volume / 15;
         }
 
@@ -285,12 +285,15 @@ voiceRage.timer = () => {
                         }
                         voiceRage.remove(player, true);
                     }
+                    else if(dist > MaxRange)
+                    {
+                        player.voiceVolume = 0;
+                    }
                     else if(!UseAutoVolume)
                     {
                         const distanceToPlayer = methods.distanceToPos(localPos, playerPos);
                         const voiceDistance = voiceRage.clamp(3, 7000, player.getVariable('voice.distance') || __CONFIG__.defaultDistance);
                         //const voiceDistance = voiceRage.clamp(3, 50, __CONFIG__.defaultDistance);
-
 
                         if (player.isWalkieTalking) {
                             //player.voiceVolume = 1;
@@ -303,6 +306,9 @@ voiceRage.timer = () => {
                             player.voiceVolume = voiceRage.generateVolume(localPos, player, voiceDistance, distanceToPlayer);
 
                         //player.voiceVolume = 1 - (dist / MaxRange);
+                    }
+                    else {
+                        player.voiceVolume = 0;
                     }
                 }
                 else

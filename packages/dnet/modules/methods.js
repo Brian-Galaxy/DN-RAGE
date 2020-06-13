@@ -816,6 +816,8 @@ methods.loadAllBlips = function () {
 
     methods.createBlip(new mp.Vector3(536.4715576171875, -3126.484375, 5.073556900024414), 598, 0, 0.8, 'United States Marine Corps');
     methods.createBlip(new mp.Vector3(450.0621337890625, -984.3471069335938, 43.69164276123047), 60, 0, 0.8, 'Police Department');
+    methods.createBlip(new mp.Vector3(-1625.726318359375, -1020.4765625, 12.158555030822754), 60, 0, 0.8, 'Police Department');
+    methods.createBlip(new mp.Vector3(-1089.6976318359375, -835.5410766601562, 21.003822326660156), 60, 0, 0.8, 'Police Department');
     methods.createBlip(new mp.Vector3(-448.6859, 6012.703, 30.71638), 60, 16, 0.8, 'Sheriff Department');
     methods.createBlip(new mp.Vector3(1853.22, 3686.6796875, 33.2670), 60, 16, 0.8, 'Sheriff Department');
     //methods.createBlip(new mp.Vector3(366.2178955078125, -1593.1396484375, 28.29206085205078), 60, 16, 0.8, 'Sheriff Department');

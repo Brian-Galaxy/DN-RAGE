@@ -5,7 +5,6 @@ import user from '../user';
 import chat from '../chat';
 import ui from './ui';
 import cefMenu from "./cefMenu";
-import houses from "../property/houses";
 
 let _isShowInput;
 let menuItem = null;
@@ -15,6 +14,7 @@ let _title = '';
 let _subtitle = '';
 let _banner = '';
 let _menuName = '';
+let _currentIdx = 0;
 
 let promise = {};
 
@@ -25,6 +25,13 @@ mp.events.add('client:modalinput:callBack', (data) => {
     mp.gui.cursor.show(false, false);
     user.setVariable('isTyping', false);
     promise.resolve(data);
+
+    if (menuItem) {
+        setTimeout(function () {
+            cefMenu.showFull(_title, _subtitle, menuItem, _menuName, _banner, true, 0.8, _currentIdx);
+            ui.updatePositionSettings();
+        }, 100);
+    }
 });
 
 class EventManager {
@@ -90,6 +97,8 @@ mp.events.add("client:menuList:onClose", async () => {
         Menu.OnSelect.Remove();
         Menu.OnIndexSelect.Remove();
 
+        _currentIdx = 0;
+
         if (user.getCache('s_menu_sound'))
             mp.game.audio.playSoundFrontend(-1, "ATM_WINDOW", "HUD_FRONTEND_DEFAULT_SOUNDSET", false);
     }
@@ -136,6 +145,8 @@ mp.events.add("client:menuList:callBack:select", async (menuName, idx) => {
             mp.game.audio.playSoundFrontend(-1, "HIGHLIGHT_NAV_UP_DOWN", "HUD_FRONTEND_DEFAULT_SOUNDSET", false);
         methods.debug('OnIndexSelect', menuName, idx);
         Menu.OnIndexSelect.Emit(idx, menuName);
+
+        _currentIdx = idx;
     }
     catch (e) {
         methods.debug(e);
@@ -201,7 +212,7 @@ class Menu {
     }
 
     static Draw() {
-        cefMenu.showFull(_title, _subtitle, menuItem, _menuName, _banner);
+        cefMenu.showFull(_title, _subtitle, menuItem, _menuName, _banner, true, 0.8, _currentIdx);
         ui.updatePositionSettings();
     }
 
@@ -254,6 +265,8 @@ class Menu {
             cefMenu.hide();
             menuItem = null;
             menuName = '';
+
+            _currentIdx = 0;
 
             if (_isShowInput) {
                 setTimeout(function () {

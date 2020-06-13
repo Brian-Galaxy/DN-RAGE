@@ -3231,8 +3231,10 @@ menuList.showPlayerDoMenu = function(playerId) {
 
     UIMenu.Menu.AddMenuItem("Передать деньги", "", {doName: "giveMoney"});
     UIMenu.Menu.AddMenuItem("Познакомиться", "", {doName: "dating"});
-    if (user.isPolice() || user.isGov())
+    if (user.isPolice() || user.isGov()) {
+        UIMenu.Menu.AddMenuItem("Надеть наручники", "", {eventName: "server:user:cuffItemById"});
         UIMenu.Menu.AddMenuItem("Снять наручники", "", {eventName: "server:user:unCuffById"});
+    }
     UIMenu.Menu.AddMenuItem("Снять стяжки", "", {eventName: "server:user:unTieById"});
 
     UIMenu.Menu.AddMenuItem("Вырубить", "Чем больше у Вас сила, тем больше шанс", {eventName: "server:user:knockById"});
@@ -5226,7 +5228,7 @@ menuList.showBarberShopMenu = function (shopId, price) {
     menuListItem.doName = 'SKIN_HAIR_2';
     menuListItem.price = itemPrice + 0.01;
     menuListItem.label = "Тип причёски";
-    UIMenu.Menu.AddMenuItemCheckbox('Тип причёски', `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`, menuListItem, skin.SKIN_HAIR_2 === 1, '', (sale > 0) ? 'sale' : '');
+    UIMenu.Menu.AddMenuItemList('Тип причёски', ['Выкл', 'Вкл'], `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`, menuListItem, skin.SKIN_HAIR_2, '', (sale > 0) ? 'sale' : '');
 
     list = [];
     for (let j = 0; j < 64; j++) {
@@ -5425,22 +5427,6 @@ menuList.showBarberShopMenu = function (shopId, price) {
     let currentListChangeItem = '';
     let currentListChangeItemIndex = 0;
 
-    UIMenu.Menu.OnCheckbox.Add((item, checked) => {
-        if (user.getMoney() < item.price) {
-            mp.game.ui.notifications.show("~r~У Вас недостаточно денег");
-            return;
-        }
-
-        if (item.price < 0)
-            return;
-
-        user.removeMoney(methods.parseInt(item.price), 'Услуги барбершопа ' + item.label);
-        business.addMoney(shopId, methods.parseInt(item.price), item.label);
-        user.set(item.doName, checked ? 1 : 0);
-        mp.game.ui.notifications.show("~g~Вы изменили внешность по цене: ~s~$" + methods.parseInt(item.price));
-        user.updateCharacterFace();
-    });
-
     UIMenu.Menu.OnList.Add((item, index) => {
         try {
             currentListChangeItem = item.doName;
@@ -5467,6 +5453,13 @@ menuList.showBarberShopMenu = function (shopId, price) {
 
                     let data2 = JSON.parse(enums.overlays)[user.getSex()][skin.SKIN_HAIR_3];
                     user.setDecoration(data[0], data[1], true);
+                    break;
+                case 'SKIN_HAIR_2':
+                    user.removeMoney(methods.parseInt(item.price), 'Услуги барбершопа ' + item.label);
+                    business.addMoney(shopId, methods.parseInt(item.price), item.label);
+                    user.set(item.doName, index);
+                    mp.game.ui.notifications.show("~g~Вы изменили внешность по цене: ~s~$" + methods.parseInt(item.price));
+                    user.updateCharacterFace();
                     break;
                 case 'SKIN_HAIR_3':
 
@@ -9708,7 +9701,7 @@ menuList.showSapdArsenalGunMenu = function() {
         UIMenu.Menu.AddMenuItem("Коробка патронов 9mm", "", {itemId: 280});
     }
 
-    if (user.getCache('rank_type') === 1 || user.getCache('rank_type') === 6 || user.getCache('rank_type') === 2) {
+    if (user.getCache('rank_type') === 1 || user.getCache('rank_type') === 6 || user.getCache('rank_type') === 10 || user.getCache('rank_type') === 7 || user.getCache('rank_type') === 2) {
         UIMenu.Menu.AddMenuItem("Beretta 90Two", "", {itemId: 78});
         UIMenu.Menu.AddMenuItem("Glock 17", "", {itemId: 146});
         UIMenu.Menu.AddMenuItem("Benelli M3", "", {itemId: 90});
@@ -9719,14 +9712,14 @@ menuList.showSapdArsenalGunMenu = function() {
         UIMenu.Menu.AddMenuItem("Коробка патронов 12 калибра", "", {itemId: 281});
         UIMenu.Menu.AddMenuItem("Коробка патронов 5.56mm", "", {itemId: 284});
     }
-    if (user.getCache('rank_type') === 3 || user.getCache('rank_type') === 5) {
+    if (user.getCache('rank_type') === 3 || user.getCache('rank_type') === 5 || user.getCache('rank_type') === 8) {
         UIMenu.Menu.AddMenuItem("Beretta 90Two", "", {itemId: 78});
         UIMenu.Menu.AddMenuItem("Glock 17", "", {itemId: 146});
         UIMenu.Menu.AddMenuItem("MP5A3", "", {itemId: 103});
 
         UIMenu.Menu.AddMenuItem("Коробка патронов 9mm", "", {itemId: 280});
     }
-    if (user.getCache('rank_type') === 4 || user.isLeader() || user.isSubLeader() || user.isDepLeader() || user.isDepSubLeader()) {
+    if (user.getCache('rank_type') === 4 || user.getCache('rank_type') === 9 || user.isLeader() || user.isSubLeader() || user.isDepLeader() || user.isDepSubLeader()) {
         UIMenu.Menu.AddMenuItem("Beretta 90Two", "", {itemId: 78});
         UIMenu.Menu.AddMenuItem("Glock 17", "", {itemId: 146});
         UIMenu.Menu.AddMenuItem("Benelli M3", "", {itemId: 90});
@@ -9770,7 +9763,7 @@ menuList.showSapdArsenalGunMenu = function() {
 menuList.showSapdArsenalGunModMenu = function() {
     UIMenu.Menu.Create(`Арсенал`, `~b~Модули на оружие`);
 
-    if (user.getCache('rank_type') === 1 || user.getCache('rank_type') === 6 || user.getCache('rank_type') === 2) {
+    if (user.getCache('rank_type') === 1 || user.getCache('rank_type') === 6 || user.getCache('rank_type') === 10 || user.getCache('rank_type') === 7 || user.getCache('rank_type') === 2) {
         UIMenu.Menu.AddMenuItem("Фонарик Beretta 90Two", "", {itemId: 311});
         UIMenu.Menu.AddMenuItem("Оптический прицел Beretta 90Two", "", {itemId: 312});
         UIMenu.Menu.AddMenuItem("Глушитель Beretta 90Two", "", {itemId: 313});
@@ -9797,7 +9790,7 @@ menuList.showSapdArsenalGunModMenu = function() {
         UIMenu.Menu.AddMenuItem("Глушитель HK-416", "", {itemId: 364});
         UIMenu.Menu.AddMenuItem("Прицел HK-416", "", {itemId: 365});
     }
-    else if (user.getCache('rank_type') === 3 || user.getCache('rank_type') === 5) {
+    else if (user.getCache('rank_type') === 3 || user.getCache('rank_type') === 5 || user.getCache('rank_type') === 8) {
         UIMenu.Menu.AddMenuItem("Фонарик Beretta 90Two", "", {itemId: 311});
         UIMenu.Menu.AddMenuItem("Оптический прицел Beretta 90Two", "", {itemId: 312});
         UIMenu.Menu.AddMenuItem("Глушитель Beretta 90Two", "", {itemId: 313});
@@ -9806,7 +9799,7 @@ menuList.showSapdArsenalGunModMenu = function() {
         UIMenu.Menu.AddMenuItem(" ");
         UIMenu.Menu.AddMenuItem("Глушитель Glock 17", "", {itemId: 316});
     }
-    else if (user.getCache('rank_type') === 4 || user.isLeader() || user.isSubLeader() || user.isDepLeader() || user.isDepSubLeader()) {
+    else if (user.getCache('rank_type') === 4 || user.getCache('rank_type') === 9 || user.isLeader() || user.isSubLeader() || user.isDepLeader() || user.isDepSubLeader()) {
         UIMenu.Menu.AddMenuItem("Фонарик Beretta 90Two", "", {itemId: 311});
         UIMenu.Menu.AddMenuItem("Оптический прицел Beretta 90Two", "", {itemId: 312});
         UIMenu.Menu.AddMenuItem("Глушитель Beretta 90Two", "", {itemId: 313});
@@ -11106,19 +11099,18 @@ menuList.showAdminInteriorInfoMenu = function(ipl) {
     enums.interiorProps.forEach(item => {
 
         if (item.name === ipl) {
-            let intId = mp.game.interior.getInteriorAtCoords(item.pos.x, item.pos.y, item.pos.z);
-
+            let intId = mp.game.interior.getInteriorAtCoords(item.pos.x, item.pos.y, item.pos.z); //269313
             UIMenu.Menu.AddMenuItem('Телепорт во внутрь', item.ipl, {pos: item.pos});
 
             if (item.ipl) {
-                UIMenu.Menu.AddMenuItemCheckbox('Подгрузить IPL', "", {ipl: item.ipl}, mp.game.streaming.isIplActive(item.ipl));
+                UIMenu.Menu.AddMenuItemList('Подгрузить IPL', ['Выкл', 'Вкл'], "", {ipl: item.ipl}, mp.game.streaming.isIplActive(item.ipl) ? 1 : 0);
             }
 
             item.props.forEach(prop => {
                 let pItem = {};
                 pItem.propName = prop;
                 pItem.int = intId;
-                UIMenu.Menu.AddMenuItemCheckbox(prop, "", pItem, mp.game.interior.isInteriorPropEnabled(intId, prop))
+                UIMenu.Menu.AddMenuItemList(prop, ['Выкл', 'Вкл'], "", pItem, mp.game.interior.isInteriorPropEnabled(intId, prop) ? 1 : 0)
 
                 /*pItem = UIMenu.Menu.AddMenuItemList('Цвет', [0,1,2,3,4,5,6,7,8,9,10], "");
                 pItem.propName = prop;
@@ -11130,17 +11122,18 @@ menuList.showAdminInteriorInfoMenu = function(ipl) {
     UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
     UIMenu.Menu.Draw();
 
-    UIMenu.Menu.OnCheckbox.Add((item, checked) => {
+    UIMenu.Menu.OnList.Add((item, idx) => {
         if (item.ipl)
         {
-            if (checked)
+            if (idx === 1)
                 mp.game.streaming.requestIpl(item.ipl);
             else
                 mp.game.streaming.removeIpl(item.ipl);
         }
         else {
-            methods.setIplPropState(item.int, item.propName, checked);
+            methods.setIplPropState(item.int, item.propName, idx === 1); //269313
             mp.game.invoke(methods.SET_INTERIOR_PROP_COLOR, item.int, item.propName, 1);
+            mp.game.invoke('0xC1F1920BAF281317', 269313, 'set_int_02_shell', 1); mp.game.interior.refreshInterior(269313);
             mp.game.interior.refreshInterior(item.int);
         }
     });

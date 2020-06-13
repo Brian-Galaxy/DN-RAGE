@@ -1306,6 +1306,50 @@ mp.events.addRemoteCounted('server:user:unCuffById', (player, targetId) => {
         player.notify('~r~Рядом с вами никого нет');
 });
 
+mp.events.addRemoteCounted('server:user:cuffItemById', (player, targetId) => {
+    if (!user.isLogin(player))
+        return;
+
+    let target = mp.players.at(targetId);
+
+    if (mp.players.exists(target)) {
+        if (methods.distanceToPos(target.position, player.position) > 3) {
+            player.notify('~r~Вы слишком далеко');
+            return;
+        }
+        if (!user.isPolice(player) && !user.isGov(player)) {
+            player.notify('~r~Вам данное действие запрещено');
+            return;
+        }
+
+        mysql.executeQuery('SELECT id FROM items WHERE item_id = 40 AND owner_type = 1 AND owner_id = ' + user.getId(player), function (err, rows, fields) {
+            if (rows.length === 0) {
+                player.notify('~r~У вас нет наручников');
+                return;
+            }
+
+            user.heading(target, player.heading);
+
+            setTimeout(function () {
+                user.playAnimation(target, 'mp_arrest_paired', 'crook_p2_back_right', 8);
+                user.playAnimation(player, 'mp_arrest_paired', 'cop_p2_back_right', 8);
+
+                setTimeout(function () {
+                    user.cuff(target);
+                    try {
+                        inventory.deleteItem(rows[0]['id']);
+                    }
+                    catch (e) {
+                        methods.debug(e);
+                    }
+                }, 3800); //3760
+            }, 200);
+        });
+    }
+    else
+        player.notify('~r~Рядом с вами никого нет');
+});
+
 mp.events.addRemoteCounted('server:user:tieById', (player, targetId) => {
     if (!user.isLogin(player))
         return;

@@ -33,6 +33,10 @@ cefMenu.show = function() {
     ui.callCef('hudm', JSON.stringify({type: 'show'}));
 };
 
+cefMenu.focus = function() {
+    ui.callCef('hudm', JSON.stringify({type: 'focus'}));
+};
+
 cefMenu.hide = function() {
     mp.events.call('client:menuList:onClose');
 

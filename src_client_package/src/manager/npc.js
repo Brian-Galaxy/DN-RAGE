@@ -268,6 +268,10 @@ npc.loadAll = function() {
 //Церковь
     npc.create(mp.game.joaat("ig_priest"), new mp.Vector3(-787.1298828125, -708.8898315429688, 30.32028579711914), 265.47149658203125);
 
+    // House 532
+    npc.create(mp.game.joaat("s_m_m_highsec_01"), new mp.Vector3(-632.0056, 398.0607, 101.2304), 16.52335, false, "WORLD_HUMAN_GUARD_STAND");
+    npc.create(mp.game.joaat("s_m_m_highsec_02"), new mp.Vector3(-624.1522, 398.4064, 101.2321), 10.33697, false, "WORLD_HUMAN_GUARD_STAND");
+
     timer.createInterval('npc.timer', npc.timer, 5000);
     timer.createInterval('npc.timer500', npc.timer500, 500);
 };

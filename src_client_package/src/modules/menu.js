@@ -26,12 +26,12 @@ mp.events.add('client:modalinput:callBack', (data) => {
     user.setVariable('isTyping', false);
     promise.resolve(data);
 
-    if (menuItem) {
+    /*if (menuItem) {
         setTimeout(function () {
             cefMenu.showFull(_title, _subtitle, menuItem, _menuName, _banner, true, 0.8, _currentIdx);
             ui.updatePositionSettings();
         }, 100);
-    }
+    }*/
 });
 
 class EventManager {

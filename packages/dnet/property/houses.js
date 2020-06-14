@@ -244,6 +244,8 @@ houses.loadLast = function() {
             houses.set(item['id'], 'gz3', item['gz3']);
             houses.set(item['id'], 'grot3', item['grot3']);
 
+            houses.set(item['id'], 'max_roommate', item['max_roommate']);
+
             houses.set(item['id'], 'tax_money', item['tax_money']);
             houses.set(item['id'], 'tax_score', item['tax_score']);
 

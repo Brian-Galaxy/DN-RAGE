@@ -5325,11 +5325,6 @@ mp.events.addRemoteCounted('server:med:heal', (player, id) => {
                 return;
             }
 
-            if (!user.isLogin(p) || user.get(p, 'med_time') <= 0) {
-                player.notify('~r~У игрок не проходит лечение');
-                return;
-            }
-
             player.notify('~g~Вы вылечили игрока.');
             user.setHealth(p, 100);
         }

@@ -4026,11 +4026,11 @@ menuList.showVehicleMenu = function(data) {
         }
         else if (item.localCode)
         {
-
+            menuList.showLocalCodeMenu();
         }
         else if (item.depCode)
         {
-
+            menuList.showDepCodeMenu();
         }
         else if (item.sendChatMessage)
             chat.push(`${item.sendChatMessage}`);

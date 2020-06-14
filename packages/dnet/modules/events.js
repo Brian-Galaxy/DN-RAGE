@@ -3150,7 +3150,7 @@ mp.events.addRemoteCounted('server:phone:inviteFraction2', (player, id) => {
 
         let fractionId = user.get(player, 'fraction_id2');
 
-        let rank = JSON.parse(fraction.getData(fractionId).get('rank_list')).length;
+        let rank = JSON.parse(fraction.getData(fractionId).get('rank_list'))[0].length - 1;
 
         user.set(target, 'rank2', rank);
         user.set(target, 'rank_type2', 0);
@@ -3277,16 +3277,22 @@ mp.events.addRemoteCounted('server:phone:editFractionRank', (player, text, rankI
     fraction.editFractionRank(player, text, rankId, depId);
 });
 
+mp.events.addRemoteCounted('server:phone:deleteFractionRank', (player, rankId, depId) => {
+    if (!user.isLogin(player))
+        return;
+    fraction.deleteFractionRank(player, rankId, depId);
+});
+
 mp.events.addRemoteCounted('server:phone:editFractionDep', (player, text, depId) => {
     if (!user.isLogin(player))
         return;
     fraction.editFractionDep(player, text, depId);
 });
 
-mp.events.addRemoteCounted('server:phone:deleteFractionDep', (player) => {
+mp.events.addRemoteCounted('server:phone:deleteFractionDep', (player, depId) => {
     if (!user.isLogin(player))
         return;
-    fraction.deleteFractionDep(player);
+    fraction.deleteFractionDep(player, depId);
 });
 
 mp.events.addRemoteCounted('server:phone:addFractionRank', (player, text, depId) => {
@@ -5307,6 +5313,34 @@ mp.events.addRemoteCounted('server:med:free', (player, id) => {
     }
 });
 
+mp.events.addRemoteCounted('server:med:heal', (player, id) => {
+    if (!user.isLogin(player))
+        return;
+    try {
+        let p = mp.players.at(id);
+        if (user.isLogin(p)) {
+
+            if (methods.distanceToPos(p.position, player.position) > 10) {
+                player.notify('~r~Вы слишком далеко друг от друга');
+                return;
+            }
+
+            if (!user.isLogin(p) || user.get(p, 'med_time') <= 0) {
+                player.notify('~r~У игрок не проходит лечение');
+                return;
+            }
+
+            player.notify('~g~Вы вылечили игрока.');
+            user.setHealth(p, 100);
+        }
+        else
+            player.notify('~r~Игрок не найден');
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
 mp.events.addRemoteCounted('server:user:giveSubLeader', (player, id) => {
 
     if (!user.isLogin(player))
@@ -5447,7 +5481,7 @@ mp.events.addRemoteCounted('server:user:takeSubLeader2', (player, id) => {
     id = methods.parseInt(id);
     let target = user.getPlayerById(id);
 
-    let rank = JSON.parse(fraction.getData(user.get(player, 'fraction_id2')).get('rank_list')).length - 1;
+    let rank = JSON.parse(fraction.getData(user.get(player, 'fraction_id2')).get('rank_list'))[0].length - 1;
 
     if (user.isLogin(target)) {
 
@@ -5571,7 +5605,7 @@ mp.events.addRemoteCounted('server:user:newDep2', (player, id, dep) => {
     id = methods.parseInt(id);
     dep = methods.parseInt(dep);
 
-    let rank = JSON.parse(fraction.getData(user.get(player, 'fraction_id2')).get('rank_list')).length - 1;
+    let rank = JSON.parse(fraction.getData(user.get(player, 'fraction_id2')).get('rank_list'))[dep].length - 1;
 
     let target = user.getPlayerById(id);
     if (user.isLogin(target)) {
@@ -6052,6 +6086,28 @@ mp.events.addRemoteCounted('server:vehicle:park', (player) => {
         if (veh) {
             let pos = veh.position;
             vehicles.park(veh.getVariable('container'), pos.x, pos.y, pos.z, veh.heading, veh.dimension);
+            player.notify('~b~Вы припарковали свой транспорт');
+        }
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.addRemoteCounted('server:vehicle:parkFraction', (player) => {
+    if (!user.isLogin(player))
+        return;
+    try {
+        let veh = player.vehicle;
+        if (veh) {
+
+            if (veh.dimension > 0) {
+                player.notify('~b~Запрещено припарковывать транспорт в интерьере');
+                return;
+            }
+
+            let pos = veh.position;
+            vehicles.parkFraction(veh.getVariable('veh_id'), pos.x, pos.y, pos.z, veh.heading, veh.dimension);
             player.notify('~b~Вы припарковали свой транспорт');
         }
     }

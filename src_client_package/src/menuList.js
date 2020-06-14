@@ -1904,7 +1904,7 @@ menuList.showMazeBankHousePeopleMenu = function() {
         UIMenu.Menu.Create(` `, `~b~Жилищный вопрос`, 'gov', false, false, 'gov');
 
         if (user.getCache('house_id') > 0) {
-            UIMenu.Menu.AddMenuItem("Подселить игрока в дом", 'Стоимость ~g~$10.000', {eventName: 'server:houses:addUser'});
+            UIMenu.Menu.AddMenuItem("Подселить игрока в дом", 'Стоимость ~g~$10.000~s~~br~Необходимо ввести CARD ID игрока (Тот который в документах)', {eventName: 'server:houses:addUser'});
             UIMenu.Menu.AddMenuItem("Список жильцов", "", {eventName: 'server:houses:userList'});
             UIMenu.Menu.AddMenuItem("~y~Выселиться", "Стоимость ~g~$1.000", {eventName: 'server:houses:removeMe'});
         }
@@ -3844,13 +3844,20 @@ menuList.showVehicleMenu = function(data) {
         UIMenu.Menu.AddMenuItem(`~y~Разгрузить транспорт`, "", {emsUnloadAll: true});
     }
 
-    if (veh.getVariable('fraction_id') === 2 || veh.getVariable('fraction_id') === 5 || veh.getVariable('fraction_id') === 6) {
+    if (veh.getVariable('fraction_id') === 2 || veh.getVariable('fraction_id') === 3 || veh.getVariable('fraction_id') === 4 || veh.getVariable('fraction_id') === 5 || veh.getVariable('fraction_id') === 6) {
         UIMenu.Menu.AddMenuItemList(`Маркировка`, enums.dispatchMarkedList, '~y~Номер необходимо указать тот,~br~который на крыше LSPD/BCSD', {dispatchMark: true});
         if (veh.getVariable('dispatchMarked'))
             UIMenu.Menu.AddMenuItem(`Маркировка: ~b~`, '', {}, `${veh.getVariable('dispatchMarked')}`);
         else
             UIMenu.Menu.AddMenuItem(`Маркировка отсуствует`);
+
+        UIMenu.Menu.AddMenuItem(`Локальные коды`, '', {localCode: true});
+        UIMenu.Menu.AddMenuItem(`Локальные департамента`, '', {depCode: true});
     }
+
+    /*if (veh.getVariable('fraction_id') === user.getCache('fraction_id') && user.isLeader()) {
+        UIMenu.Menu.AddMenuItem("Припарковать", "Транспорт будет спавниться на этом месте, если вы ее припаркуете", {eventName: "server:vehicle:parkFraction"});
+    }*/
 
     UIMenu.Menu.AddMenuItem("~y~Выкинуть из транспорта", "", {doName: "eject"});
     UIMenu.Menu.AddMenuItem("Характеристики", "", {doName: "showVehicleStatsMenu"});
@@ -4016,6 +4023,14 @@ menuList.showVehicleMenu = function(data) {
             catch (e) {
                 methods.debug(e);
             }
+        }
+        else if (item.localCode)
+        {
+
+        }
+        else if (item.depCode)
+        {
+
         }
         else if (item.sendChatMessage)
             chat.push(`${item.sendChatMessage}`);
@@ -4185,6 +4200,26 @@ menuList.showVehicleMenu = function(data) {
 
             mp.events.callRemote(item.eventName);
         }
+        else if (item.eventName == 'server:vehicle:parkFraction') {
+            UIMenu.Menu.HideMenu();
+
+            if (vehicles.checkerControl()) {
+                mp.game.ui.notifications.show('~y~В таком положении транспорт не паркуется');
+                return;
+            }
+
+            if (methods.getCurrentSpeed() > 10) {
+                mp.game.ui.notifications.show('~y~Нельзя это делать на скорости');
+                return;
+            }
+            let vInfo = methods.getVehicleInfo(mp.players.local.vehicle.model);
+            if (mp.players.local.vehicle.isInWater() && vInfo.class_name !== 'Boats') {
+                mp.game.ui.notifications.show('~y~Ты точно понимаешь адекватность этого поступка?');
+                return;
+            }
+
+            mp.events.callRemote(item.eventName);
+        }
         else if (item.cargoUnloadId >= 0) {
             UIMenu.Menu.HideMenu();
             fraction.unloadCargoVehTimer(item.cargoUnloadId);
@@ -4233,6 +4268,59 @@ menuList.showVehicleMenu = function(data) {
             }
             mp.events.callRemote(item.eventName, methods.parseInt(r), methods.parseInt(g), methods.parseInt(b));
         }
+    });
+};
+
+
+menuList.showLocalCodeMenu = function() {
+
+    UIMenu.Menu.Create("Коды", "~b~Локальные коды");
+
+    UIMenu.Menu.AddMenuItem("Код 0", "Необходима немедленная поддержка", {code: 0});
+    UIMenu.Menu.AddMenuItem("Код 1", "Информация подтверждена", {code: 1});
+    UIMenu.Menu.AddMenuItem("Код 2", "Приоритетный вызов~br~(без сирен/со стобоскопами)", {code: 2});
+    UIMenu.Menu.AddMenuItem("Код 3", "Срочный вызов~br~(сирены, стробоскопы)", {code: 3});
+    UIMenu.Menu.AddMenuItem("Код 4", "Помощь не требуется.~br~Все спокойно", {code: 4});
+    UIMenu.Menu.AddMenuItem("Код 5", "Держаться подальше", {code: 5});
+    UIMenu.Menu.AddMenuItem("Код 6", "Задерживаюсь на месте", {code: 6});
+    UIMenu.Menu.AddMenuItem("Код 7", "Перерыв на обед", {code: 7});
+    //UIMenu.Menu.AddMenuItem("Код 8", "Необходим сотрудник пожарного департамента", {code: 87});
+    //UIMenu.Menu.AddMenuItem("Код 9", "Необходим сотрудник EMS", {code: 9});
+    UIMenu.Menu.AddMenuItem("Код 77", "Осторожно, возможна засада", {code: 77});
+    UIMenu.Menu.AddMenuItem("Код 99", "Черезвычайная ситуация", {code: 99});
+    UIMenu.Menu.AddMenuItem("Код 100", "В состоянии перехвата", {code: 100});
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
+    UIMenu.Menu.Draw();
+    
+    UIMenu.Menu.OnSelect.Add(async (item, index) => {
+        dispatcher.codeLocal(item.code, user.getCache('name'));
+    });
+};
+
+menuList.showDepCodeMenu = function() {
+
+    UIMenu.Menu.Create("Коды", "~b~Коды департамента");
+
+    UIMenu.Menu.AddMenuItem("Код 0", "Необходима немедленная поддержка", {code: 0});
+    UIMenu.Menu.AddMenuItem("Код 1", "Информация подтверждена", {code: 1});
+    UIMenu.Menu.AddMenuItem("Код 2", "Приоритетный вызов~br~(без сирен/со стобоскопами)", {code: 2});
+    UIMenu.Menu.AddMenuItem("Код 3", "Срочный вызов~br~(сирены, стробоскопы)", {code: 3});
+    UIMenu.Menu.AddMenuItem("Код 4", "Помощь не требуется.~br~Все спокойно", {code: 4});
+    UIMenu.Menu.AddMenuItem("Код 5", "Держаться подальше", {code: 5});
+    UIMenu.Menu.AddMenuItem("Код 6", "Задерживаюсь на месте", {code: 6});
+    UIMenu.Menu.AddMenuItem("Код 7", "Перерыв на обед", {code: 7});
+    UIMenu.Menu.AddMenuItem("Код 8", "Необходим сотрудник пожарного департамента", {code: 87});
+    UIMenu.Menu.AddMenuItem("Код 9", "Необходим сотрудник EMS", {code: 9});
+    UIMenu.Menu.AddMenuItem("Код 77", "Осторожно, возможна засада", {code: 77});
+    UIMenu.Menu.AddMenuItem("Код 99", "Черезвычайная ситуация", {code: 99});
+    UIMenu.Menu.AddMenuItem("Код 100", "В состоянии перехвата", {code: 100});
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
+    UIMenu.Menu.Draw();
+
+    UIMenu.Menu.OnSelect.Add(async (item, index) => {
+        dispatcher.codeDep(item.code, user.getCache('name'));
     });
 };
 
@@ -9257,8 +9345,9 @@ menuList.showEmsArsenalMenu = function() {
 };
 
 menuList.showEmsFreeMenu = function() {
-    UIMenu.Menu.Create(`EMS`, `~b~Выписка`);
-    UIMenu.Menu.AddMenuItem("Введите ID", "", {doName: 'free'});
+    UIMenu.Menu.Create(`EMS`, `~b~Мед. панель`);
+    UIMenu.Menu.AddMenuItem("Выписать человека", "", {doName: 'free'});
+    UIMenu.Menu.AddMenuItem("Вылечить человека", "", {doName: 'heal'});
     UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
     UIMenu.Menu.Draw();
 
@@ -9267,6 +9356,10 @@ menuList.showEmsFreeMenu = function() {
         if (item.doName === 'free') {
             let id = await UIMenu.Menu.GetUserInput("ID Игрока", "", 10);
             mp.events.callRemote('server:med:free', methods.parseInt(id));
+        }
+        if (item.doName === 'heal') {
+            let id = await UIMenu.Menu.GetUserInput("ID Игрока", "", 10);
+            mp.events.callRemote('server:med:heal', methods.parseInt(id));
         }
     });
 };

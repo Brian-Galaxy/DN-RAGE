@@ -310,6 +310,23 @@ vehicles.getFractionVehicleInfo = (id) => {
     return veh;
 };
 
+vehicles.getFractionVehicleIdx = (id) => {
+    let vId = -1;
+    id = methods.parseInt(id);
+    vehicles.fractionList.forEach((item, idx) => {
+        if (item.id == id)
+            vId = idx;
+    });
+    return vId;
+};
+
+vehicles.updateFractionVehicleInfo = (id, newItem) => {
+    let vId = vehicles.getFractionVehicleIdx(id);
+    if (vId >= 0) {
+        vehicles.fractionList[vId] = newItem;
+    }
+};
+
 vehicles.spawnFractionCar = (id) => {
 
     let info = vehicles.getFractionVehicleInfo(id);
@@ -533,7 +550,7 @@ vehicles.spawnFractionCar = (id) => {
                     if (info.name === 'Police' || info.name === 'Sheriff') {
                         vSync.setExtraState(veh, methods.getRandomInt(0, 3));
                     }
-                    if (info.name === 'Police2' || info.name === 'Police3' || info.name === 'Police4') {
+                    if (info.name === 'Police2' || info.name === 'Police3' || info.name === 'Police4' || info.name === 'Intcept' || info.name === 'Intcept3') {
                         vSync.setExtraState(veh, methods.getRandomInt(0, 2));
                     }
                 }
@@ -707,6 +724,28 @@ vehicles.park = function(id, x, y, z, rot, dimension) {
     vehicles.set(id, 'dimension', methods.parseInt(dimension));
     mysql.executeQuery("UPDATE cars SET x = '" + methods.parseFloat(x) + "', y = '" + methods.parseFloat(y) + "', z = '" + methods.parseFloat(z) + "', rot = '" + methods.parseFloat(rot) + "', dimension = '" + methods.parseInt(dimension) + "' where id = '" + methods.parseInt(id) + "'");
 };
+
+/*vehicles.parkFraction = function(id, x, y, z, rot, dimension) {
+    methods.debug('vehicles.parkFraction');
+    rot = methods.parseFloat(rot);
+    vehicles.set(id, 'x', methods.parseFloat(x));
+    vehicles.set(id, 'y', methods.parseFloat(y));
+    vehicles.set(id, 'z', methods.parseFloat(z));
+    vehicles.set(id, 'rot', methods.parseFloat(rot));
+    vehicles.set(id, 'dimension', methods.parseInt(dimension));
+
+    mysql.executeQuery("UPDATE cars_fraction SET x = '" + methods.parseFloat(x) + "', y = '" + methods.parseFloat(y) + "', z = '" + methods.parseFloat(z) + "', rot = '" + methods.parseFloat(rot) + "', dimension = '" + methods.parseInt(dimension) + "' where id = '" + methods.parseInt(id) + "'");
+
+    vehicles.fractionList.forEach((item, i) => {
+        if (item.id == id) {
+            vehicles.fractionList[i].rank_type = dep;
+            vehicles.fractionList[i].rank = rank;
+        }
+    });
+
+    mysql.executeQuery(`UPDATE cars_fraction SET rank = '${rank}', rank_type = '${dep}' where id = '${id}'`);
+    player.notify('~b~Вы перевели транспорт в другой отдел');
+};*/
 
 vehicles.respawn = (vehicle) => {
     if (!vehicles.exists(vehicle))

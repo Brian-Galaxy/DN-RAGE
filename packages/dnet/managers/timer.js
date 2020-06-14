@@ -283,7 +283,7 @@ timer.sec5Timer = function() {
             try {
 
                 if (v.getVariable('dispatchMarked')) {
-                    if (v.getVariable('fraction_id') === 2 || v.getVariable('fraction_id') === 5 || v.getVariable('fraction_id') === 6) {
+                    if (v.getVariable('fraction_id') === 2 || v.getVariable('fraction_id') === 3 || v.getVariable('fraction_id') === 4 || v.getVariable('fraction_id') === 5 || v.getVariable('fraction_id') === 6) {
 
                         let vInfo = methods.getVehicleInfo(v.model);
 
@@ -292,11 +292,23 @@ timer.sec5Timer = function() {
 
                         if (vInfo.display_name === 'Insurgent' || vInfo.display_name === 'Insurgent2' || vInfo.display_name === 'Riot' || vInfo.display_name === 'PoliceT')
                             blipId = 601;
-                        if (vInfo.display_name === 'Buzzard' || vInfo.display_name === 'Buzzard2' || vInfo.display_name === 'Polmav')
+                        if (vInfo.class_name === 'Helicopters')
                             blipId = 353;
-                        if (vInfo.display_name === 'Police4' || vInfo.display_name === 'FBI' || vInfo.display_name === 'FBI2')
+                        if (vInfo.class_name === 'Planes')
+                            blipId = 575;
+                        if (vInfo.display_name === 'Police4' ||
+                            vInfo.display_name === 'Intcept2' ||
+                            vInfo.display_name === 'Intcept4' ||
+                            vInfo.display_name === 'Polscout2' ||
+                            vInfo.display_name === 'Polscout4' ||
+                            vInfo.display_name === 'FBI' ||
+                            vInfo.display_name === 'FBI2')
                             blipId = 724;
 
+                        if (v.getVariable('fraction_id') === 3)
+                            color = 39;
+                        if (v.getVariable('fraction_id') === 4)
+                            color = 25;
                         if (v.getVariable('fraction_id') === 5)
                             color = 16;
                         if (v.getVariable('fraction_id') === 6)
@@ -332,7 +344,7 @@ timer.sec5Timer = function() {
                 }
                 if (p.seat > 0)
                     return;
-                if (veh.getVariable('fraction_id') === 2 || veh.getVariable('fraction_id') === 5 || veh.getVariable('fraction_id') === 6)
+                if (veh.getVariable('fraction_id') === 2 || veh.getVariable('fraction_id') === 3 || veh.getVariable('fraction_id') === 4 || veh.getVariable('fraction_id') === 5 || veh.getVariable('fraction_id') === 6)
                     p.call('client:updateBlips', [JSON.stringify(blips)]);
             }
             catch (e) {

@@ -369,6 +369,8 @@ ui.updateValues = function() {
             let dateLabel = '';
             if (mp.players.local.getVariable('enableAdmin'))
                 dateLabel = 'ADMIN MOD | ';
+            if (mp.players.local.getVariable('isAfk'))
+                dateLabel = 'AFK | ';
 
             if (user.getCache('med_time') > 1)
                 dateLabel = `Время лечения ${user.getCache('med_time')} сек.`;

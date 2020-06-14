@@ -1438,6 +1438,57 @@ fraction.editFractionRank = function(player, text, rankId, depId) {
     fraction.save(id);
 };
 
+fraction.deleteFractionRank = function(player, rankId, depId) {
+    if (!user.isLogin(player))
+        return;
+
+    let id = user.get(player, 'fraction_id2');
+
+    let depList = JSON.parse(fraction.get(id, 'rank_type_list'));
+    let rankList = JSON.parse(fraction.get(id, 'rank_list'));
+
+    let rank = JSON.parse(fraction.getData(id).get('rank_list'))[depId].length - 1;
+
+    mp.players.forEach(p => {
+        if (user.isLogin(p)) {
+            if (user.get(p, 'fraction_id2') === id && user.get(p, 'rank_type2') === depId) {
+
+                if (user.get(p, 'rank2') === rankId) {
+                    user.set(p, 'rank2', rank - 1);
+                }
+                if (user.get(p, 'rank2') > rankId) {
+                    user.set(p, 'rank2', user.get(p, 'rank2') - 1);
+                }
+            }
+        }
+    });
+
+    mysql.executeQuery(`UPDATE users SET rank_type2 = rank2 - 1 where fraction_id2 = '${id}' AND rank_type2 = '${depId}' AND rank2 > '${rank}'`);
+    mysql.executeQuery(`UPDATE users SET rank2 = '${rank - 1}' where fraction_id2 = '${id}' AND rank_type2 = '${depId}' AND rank2 = '${rank}'`);
+
+    let newRankList = [];
+    let newRankListLocal = [];
+
+    rankList[depId].forEach((item, idx) => {
+        if (idx === rankId)
+            return;
+        newRankListLocal.push(rankList[depId][idx]);
+    });
+
+    depList.forEach((item, idx) => {
+        if (idx === depId)
+            newRankList.push(newRankListLocal);
+        else
+            newRankList.push(rankList[idx]);
+    });
+
+    fraction.set(id, "rank_list", JSON.stringify(newRankList));
+
+    player.notify('~g~Вы удалили должность');
+
+    fraction.save(id);
+};
+
 fraction.editFractionDep = function(player, text, depId) {
     if (!user.isLogin(player))
         return;
@@ -1454,7 +1505,7 @@ fraction.editFractionDep = function(player, text, depId) {
     fraction.save(id);
 };
 
-fraction.deleteFractionDep = function(player) {
+fraction.deleteFractionDep = function(player, depId) {
     if (!user.isLogin(player))
         return;
 
@@ -1462,11 +1513,38 @@ fraction.deleteFractionDep = function(player) {
 
     let depList = JSON.parse(fraction.get(id, 'rank_type_list'));
     let rankList = JSON.parse(fraction.get(id, 'rank_list'));
-    depList.pop();
-    rankList.pop();
 
-    fraction.set(id, "rank_type_list", JSON.stringify(depList));
-    fraction.set(id, "rank_list", JSON.stringify(rankList));
+    let rank = JSON.parse(fraction.getData(id).get('rank_list'))[0].length - 1;
+
+    mp.players.forEach(p => {
+        if (user.isLogin(p)) {
+            if (user.get(p, 'fraction_id2') === id) {
+
+                if (user.get(p, 'rank_type2') === depId) {
+                    user.set(p, 'rank2', rank);
+                    user.set(p, 'rank_type2', 0);
+                }
+                if (user.get(p, 'rank_type2') > depId) {
+                    user.set(p, 'rank_type2', user.get(p, 'rank_type2') - 1);
+                }
+            }
+        }
+    });
+
+    mysql.executeQuery(`UPDATE users SET rank2 = '${rank}', rank_type2 = '0' where fraction_id2 = '${id}' AND rank_type2 = '${depId}'`);
+    mysql.executeQuery(`UPDATE users SET rank_type2 = rank_type2 - 1 where fraction_id2 = '${id}' AND rank_type2 > '${depId}'`);
+
+    let newDepList = [];
+    let newRankList = [];
+    depList.forEach((item, idx) => {
+        if (idx === depId)
+            return;
+        newDepList.push(item);
+        newRankList.push(rankList[idx]);
+    });
+
+    fraction.set(id, "rank_type_list", JSON.stringify(newDepList));
+    fraction.set(id, "rank_list", JSON.stringify(newRankList));
 
     player.notify('~g~Вы удалили раздел');
 

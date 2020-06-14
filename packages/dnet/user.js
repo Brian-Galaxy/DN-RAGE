@@ -3500,7 +3500,7 @@ user.giveUniform = function(player, id = 0) {
             user.setComponentVariation(player, 3, 11, 0);
             user.setComponentVariation(player, 4, 10, 0);
             user.setComponentVariation(player, 5, 0, 0);
-            user.setComponentVariation(player, 6, 40, 9);
+            user.setComponentVariation(player, 6, 54, 0);
             user.setComponentVariation(player, 7, 0, 0);
             user.setComponentVariation(player, 8, 130, 0);
             user.setComponentVariation(player, 9, 1, 1);

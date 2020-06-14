@@ -24,6 +24,60 @@ dispatcher.sendLocalPos = function (title, desc, pos, fractionId = 0, withCoord 
     mp.events.callRemote("server:dispatcher:sendLocalPos", title, desc, pos.x, pos.y, pos.z, fractionId, withCoord);
 };
 
+dispatcher.codeDep = function (code, name, withCoord = true) {
+    if (code === 0 || code === 2 || code === 3)
+        dispatcher.send(`Код ${code}`, `${name} - запрашивает поддержку по коду ${code}`, withCoord);
+    else if (code === 1)
+        dispatcher.send(`Код ${code}`, `${name} - информацию принял`, withCoord);
+    else if (code === 4)
+        dispatcher.send(`Код ${code}`, `${name} - помощь не требуется/все спокойно`, withCoord);
+    else if (code === 5)
+        dispatcher.send(`Код ${code}`, `${name} - просит держаться подальше`, withCoord);
+    else if (code === 6)
+        dispatcher.send(`Код ${code}`, `${name} - задерживается на месте`, withCoord);
+    else if (code === 7)
+        dispatcher.send(`Код ${code}`, `${name} - вышел на перерыв`, withCoord);
+    else if (code === 8)
+        dispatcher.send(`Код ${code}`, `${name} - необходимы сотрудники пожарного департамента`, withCoord);
+    else if (code === 9)
+        dispatcher.send(`Код ${code}`, `${name} - необходимы сотрудники EMS`, withCoord);
+    else if (code === 77)
+        dispatcher.send(`Код ${code}`, `${name} - осторожно, возможна засада`, withCoord);
+    else if (code === 99)
+        dispatcher.send(`Код ${code}`, `${name} - докладывает о черезвычайной ситуации`, withCoord);
+    else if (code === 100)
+        dispatcher.send(`Код ${code}`, `${name} - находится в состоянии перехвата`, withCoord);
+    else
+        dispatcher.send(`Код ${code}`, `${name} - запрашивает поддержку`, withCoord);
+};
+
+dispatcher.codeLocal = function (code, name, withCoord = true) {
+    if (code === 0 || code === 2 || code === 3)
+        dispatcher.sendLocal(`Код ${code}`, `${name} - запрашивает поддержку по коду ${code}`, withCoord);
+    else if (code === 1)
+        dispatcher.sendLocal(`Код ${code}`, `${name} - информацию принял`, withCoord);
+    else if (code === 4)
+        dispatcher.sendLocal(`Код ${code}`, `${name} - помощь не требуется/все спокойно`, withCoord);
+    else if (code === 5)
+        dispatcher.sendLocal(`Код ${code}`, `${name} - просит держаться подальше`, withCoord);
+    else if (code === 6)
+        dispatcher.sendLocal(`Код ${code}`, `${name} - задерживается на месте`, withCoord);
+    else if (code === 7)
+        dispatcher.sendLocal(`Код ${code}`, `${name} - вышел на перерыв`, withCoord);
+    else if (code === 8)
+        dispatcher.sendLocal(`Код ${code}`, `${name} - необходимы сотрудники пожарного департамента`, withCoord);
+    else if (code === 9)
+        dispatcher.sendLocal(`Код ${code}`, `${name} - необходимы сотрудники EMS`, withCoord);
+    else if (code === 77)
+        dispatcher.sendLocal(`Код ${code}`, `${name} - осторожно, возможна засада`, withCoord);
+    else if (code === 99)
+        dispatcher.sendLocal(`Код ${code}`, `${name} - докладывает о черезвычайной ситуации`, withCoord);
+    else if (code === 100)
+        dispatcher.sendLocal(`Код ${code}`, `${name} - находится в состоянии перехвата`, withCoord);
+    else
+        dispatcher.sendLocal(`Код ${code}`, `${name} - запрашивает поддержку`, withCoord);
+};
+
 dispatcher.addDispatcherList = function (title, desc, time, x, y, z, withCoord) {
     let getStreet = mp.game.pathfind.getStreetNameAtCoord(x, y, z, 0, 0);
     let street1 = mp.game.ui.getLabelText(mp.game.zone.getNameOfZone(x, y, z));

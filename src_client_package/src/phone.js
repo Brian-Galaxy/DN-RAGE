@@ -305,6 +305,12 @@ phone.showAppList = function() {
                         params: { name: "null" }
                     },
                     {
+                        title: 'Ваш номер',
+                        text: `${methods.phoneFormat(user.getCache('phone'))}`,
+                        type: 1,
+                        params: { name: 'none' }
+                    },
+                    {
                         title: 'Личная история',
                         type: 1,
                         params: { name: 'myHistory' },
@@ -2128,6 +2134,45 @@ phone.showAppFractionHierarchy = function() {
     phone.showMenu(menu);
 };
 
+phone.showAppFractionEditRankMenu = async function(rank, dep) {
+
+    let fractionItem = await fraction.getData(user.getCache('fraction_id2'));
+    let fractionItemRanks = JSON.parse(fractionItem.get('rank_list'));
+
+    let menu = {
+        UUID: 'fraction_hierarchy2',
+        title: `Редактирование - ${fractionItemRanks[dep][rank]}`,
+        items: [
+            {
+                title: 'Основной раздел',
+                umenu: [
+                    {
+                        title: 'Редактировать',
+                        text: '',
+                        modalTitle: 'Введите название ранга',
+                        modalValue: rank,
+                        modalButton: ['Отмена', 'Редактировать'],
+                        type: 8,
+                        params: { name: "editFractionRank", depId: dep, rankId: rank },
+                        clickable: true,
+                    },
+                    {
+                        title: 'Удалить',
+                        text: '',
+                        modalTitle: 'Вы точно хотите удалить?',
+                        modalButton: ['Отмена', 'Удалить'],
+                        type: 7,
+                        params: { name: "deleteFractionRank", depId: dep, rankId: rank },
+                        clickable: true,
+                    },
+                ],
+            }
+        ]
+    };
+
+    phone.showMenu(menu);
+};
+
 phone.showAppFractionHierarchy2 = async function() {
 
     let fractionItem = await fraction.getData(user.getCache('fraction_id2'));
@@ -2217,11 +2262,8 @@ phone.showAppFractionHierarchy2 = async function() {
                         {
                             title: rank,
                             text: desc,
-                            modalTitle: 'Введите название ранга',
-                            modalValue: rank,
-                            modalButton: ['Отмена', 'Редактировать'],
-                            type: 8,
-                            params: { name: "editFractionRank", rankId: ri, depId: i },
+                            type: 1,
+                            params: { name: "editFractionRankMenu", rankId: ri, depId: i },
                             clickable: true,
                         },
                     );
@@ -2252,19 +2294,42 @@ phone.showAppFractionHierarchy2 = async function() {
                         },
                     );
 
-                    if (i == (fractionItemDep.length - 1)) {
-                        menuItem.umenu.push(
-                            {
-                                title: 'Удалить раздел',
-                                text: '',
-                                modalTitle: 'Вы точно хотите удалить?',
-                                modalButton: ['Отмена', 'Удалить'],
-                                type: 7,
-                                params: { name: "deleteFractionDep" },
-                                clickable: true,
-                            },
-                        );
-                    }
+                    menuItem.umenu.push(
+                        {
+                            title: 'Удалить раздел',
+                            text: '',
+                            modalTitle: 'Вы точно хотите удалить?',
+                            modalButton: ['Отмена', 'Удалить'],
+                            type: 7,
+                            params: { name: "deleteFractionDep", depId: i },
+                            clickable: true,
+                        },
+                    );
+                }
+                else {
+                    menuItem.umenu.push(
+                        {
+                            title: 'Добавить должность',
+                            text: '',
+                            modalTitle: 'Введите название ранга',
+                            modalButton: ['Отмена', 'Добавить'],
+                            type: 8,
+                            params: { name: "addFractionRank", depId: i },
+                            clickable: true,
+                        },
+                    );
+                    menuItem.umenu.push(
+                        {
+                            title: 'Редактировать название раздела',
+                            text: '',
+                            modalTitle: 'Введите название раздела',
+                            modalValue: item,
+                            modalButton: ['Отмена', 'Добавить'],
+                            type: 8,
+                            params: { name: "editFractionDep", depId: i },
+                            clickable: true,
+                        },
+                    );
                 }
 
                 menu.items.push(menuItem);
@@ -2511,7 +2576,7 @@ phone.showAppFractionDispatcherLoc = function() {
     let item = phone.getMenuItem(
         'Код 0',
         'Необходима немедленная поддержка',
-        { name: "codeLoc", code: 0, codeDesc: `${user.getCache('name')} - запрашивает поддержку` },
+        { name: "codeLoc", code: 0},
         1,
         '',
         true,
@@ -2520,8 +2585,8 @@ phone.showAppFractionDispatcherLoc = function() {
 
     item = phone.getMenuItem(
         'Код 1',
-        'Офицер в бедственном положении',
-        { name: "codeLoc", code: 1, codeDesc: `${user.getCache('name')} - в бедственном положении` },
+        'Информация подтверждена',
+        { name: "codeLoc", code: 1},
         1,
         '',
         true,
@@ -2531,7 +2596,7 @@ phone.showAppFractionDispatcherLoc = function() {
     item = phone.getMenuItem(
         'Код 2',
         'Приоритетный вызов (Без сирен / Со стобоскопами)',
-        { name: "codeLoc", code: 2, codeDesc: `${user.getCache('name')} - запрашивает поддержку` },
+        { name: "codeLoc", code: 2},
         1,
         '',
         true,
@@ -2541,7 +2606,7 @@ phone.showAppFractionDispatcherLoc = function() {
     item = phone.getMenuItem(
         'Код 3',
         'Срочный вызов (Сирены, Стробоскопы)',
-        { name: "codeLoc", code: 3, codeDesc: `${user.getCache('name')} - запрашивает поддержку` },
+        { name: "codeLoc", code: 3},
         1,
         '',
         true,
@@ -2551,7 +2616,17 @@ phone.showAppFractionDispatcherLoc = function() {
     item = phone.getMenuItem(
         'Код 4',
         'Помощь не требуется. Все спокойно.',
-        { name: "codeLoc", code: 4, codeDesc: `${user.getCache('name')} - все спокойно` },
+        { name: "codeLoc", code: 4},
+        1,
+        '',
+        true,
+    );
+    menuItem.umenu.push(item);
+
+    item = phone.getMenuItem(
+        'Код 5',
+        'Попросить держаться подальше.',
+        { name: "codeLoc", code: 5},
         1,
         '',
         true,
@@ -2561,7 +2636,7 @@ phone.showAppFractionDispatcherLoc = function() {
     item = phone.getMenuItem(
         'Код 6',
         'Задерживаюсь на месте',
-        { name: "codeLoc", code: 6, codeDesc: `${user.getCache('name')} - задерживается на месте` },
+        { name: "codeLoc", code: 6},
         1,
         '',
         true,
@@ -2571,7 +2646,57 @@ phone.showAppFractionDispatcherLoc = function() {
     item = phone.getMenuItem(
         'Код 7',
         'Перерыв на обед',
-        { name: "codeLoc", code: 7, codeDesc: `${user.getCache('name')} - вышел на обед` },
+        { name: "codeLoc", code: 7},
+        1,
+        '',
+        true,
+    );
+    menuItem.umenu.push(item);
+
+    /*item = phone.getMenuItem(
+        'Код 8',
+        'Необходим сотрудник пожарного департамента',
+        { name: "codeLoc", code: 8},
+        1,
+        '',
+        true,
+    );
+    menuItem.umenu.push(item);
+
+    item = phone.getMenuItem(
+        'Код 9',
+        'Необходим сотрудник EMS',
+        { name: "codeLoc", code: 9},
+        1,
+        '',
+        true,
+    );
+    menuItem.umenu.push(item);*/
+
+    item = phone.getMenuItem(
+        'Код 77',
+        'Осторожно, возможна засада',
+        { name: "codeLoc", code: 77},
+        1,
+        '',
+        true,
+    );
+    menuItem.umenu.push(item);
+
+    item = phone.getMenuItem(
+        'Код 99',
+        'Черезвычайная ситуация',
+        { name: "codeLoc", code: 99},
+        1,
+        '',
+        true,
+    );
+    menuItem.umenu.push(item);
+
+    item = phone.getMenuItem(
+        'Код 100',
+        'В состоянии перехвата',
+        { name: "codeLoc", code: 100},
         1,
         '',
         true,
@@ -2598,17 +2723,7 @@ phone.showAppFractionDispatcherDep = function() {
     let item = phone.getMenuItem(
         'Код 0',
         'Необходима немедленная поддержка',
-        { name: "codeDep", code: 0, codeDesc: `${user.getCache('name')} - запрашивает поддержку` },
-        1,
-        '',
-        true,
-    );
-    menuItem.umenu.push(item);
-
-    item = phone.getMenuItem(
-        'Код 0 | EMS',
-        'Необходима немедленная поддержка сотрудников EMS',
-        { name: "codeDep", code: 0, codeDesc: `${user.getCache('name')} - запрашивает поддержку сотрудников EMS` },
+        { name: "codeDep", code: 0},
         1,
         '',
         true,
@@ -2617,8 +2732,8 @@ phone.showAppFractionDispatcherDep = function() {
 
     item = phone.getMenuItem(
         'Код 1',
-        'Офицер в бедственном положении',
-        { name: "codeDep", code: 1, codeDesc: `${user.getCache('name')} - в бедственном положении` },
+        'Информация подтверждена',
+        { name: "codeDep", code: 1},
         1,
         '',
         true,
@@ -2628,7 +2743,7 @@ phone.showAppFractionDispatcherDep = function() {
     item = phone.getMenuItem(
         'Код 2',
         'Приоритетный вызов (Без сирен / Со стобоскопами)',
-        { name: "codeDep", code: 2, codeDesc: `${user.getCache('name')} - запрашивает поддержку` },
+        { name: "codeDep", code: 2},
         1,
         '',
         true,
@@ -2638,7 +2753,7 @@ phone.showAppFractionDispatcherDep = function() {
     item = phone.getMenuItem(
         'Код 3',
         'Срочный вызов (Сирены, Стробоскопы)',
-        { name: "codeDep", code: 3, codeDesc: `${user.getCache('name')} - запрашивает поддержку` },
+        { name: "codeDep", code: 3},
         1,
         '',
         true,
@@ -2648,7 +2763,17 @@ phone.showAppFractionDispatcherDep = function() {
     item = phone.getMenuItem(
         'Код 4',
         'Помощь не требуется. Все спокойно.',
-        { name: "codeDep", code: 4, codeDesc: `${user.getCache('name')} - все спокойно` },
+        { name: "codeDep", code: 4},
+        1,
+        '',
+        true,
+    );
+    menuItem.umenu.push(item);
+
+    item = phone.getMenuItem(
+        'Код 5',
+        'Попросить держаться подальше.',
+        { name: "codeDep", code: 5},
         1,
         '',
         true,
@@ -2658,7 +2783,7 @@ phone.showAppFractionDispatcherDep = function() {
     item = phone.getMenuItem(
         'Код 6',
         'Задерживаюсь на месте',
-        { name: "codeDep", code: 6, codeDesc: `${user.getCache('name')} - задерживается на месте` },
+        { name: "codeDep", code: 6},
         1,
         '',
         true,
@@ -2668,7 +2793,57 @@ phone.showAppFractionDispatcherDep = function() {
     item = phone.getMenuItem(
         'Код 7',
         'Перерыв на обед',
-        { name: "codeDep", code: 7, codeDesc: `${user.getCache('name')} - вышел на обед` },
+        { name: "codeDep", code: 7},
+        1,
+        '',
+        true,
+    );
+    menuItem.umenu.push(item);
+
+    item = phone.getMenuItem(
+        'Код 8',
+        'Необходим сотрудник пожарного департамента',
+        { name: "codeDep", code: 8},
+        1,
+        '',
+        true,
+    );
+    menuItem.umenu.push(item);
+
+    item = phone.getMenuItem(
+        'Код 9',
+        'Необходим сотрудник EMS',
+        { name: "codeDep", code: 9},
+        1,
+        '',
+        true,
+    );
+    menuItem.umenu.push(item);
+
+    item = phone.getMenuItem(
+        'Код 77',
+        'Осторожно, возможна засада',
+        { name: "codeDep", code: 77},
+        1,
+        '',
+        true,
+    );
+    menuItem.umenu.push(item);
+
+    item = phone.getMenuItem(
+        'Код 99',
+        'Черезвычайная ситуация',
+        { name: "codeDep", code: 99},
+        1,
+        '',
+        true,
+    );
+    menuItem.umenu.push(item);
+
+    item = phone.getMenuItem(
+        'Код 100',
+        'В состоянии перехвата',
+        { name: "codeDep", code: 100},
         1,
         '',
         true,
@@ -3882,7 +4057,16 @@ phone.callBackModal = function(paramsJson) {
             phone.showAppFraction();
         }
         if (params.name == 'deleteFractionDep') {
-            mp.events.callRemote('server:phone:deleteFractionDep');
+            mp.events.callRemote('server:phone:deleteFractionDep', params.depId);
+            setTimeout(phone.showAppFractionHierarchy2, 300);
+        }
+        if (params.name == 'deleteFractionRank') {
+            if (params.rankId === 0) {
+                mp.game.ui.notifications.show(`~r~Данную должность удалить невозможно`);
+                setTimeout(phone.showAppFractionHierarchy2, 300);
+                return;
+            }
+            mp.events.callRemote('server:phone:deleteFractionRank', params.rankId, params.depId);
             setTimeout(phone.showAppFractionHierarchy2, 300);
         }
     }
@@ -3988,8 +4172,8 @@ phone.callBackModalInput = async function(paramsJson, text) {
                 mp.game.ui.notifications.show(`~r~Значение не может быть меньше нуля`);
                 return;
             }
-            if (price > 50000) {
-                mp.game.ui.notifications.show(`~r~Значение не может быть больше 50000`);
+            if (price > 250000) {
+                mp.game.ui.notifications.show(`~r~Значение не может быть больше 250000`);
                 return;
             }
 
@@ -4117,25 +4301,25 @@ phone.callBackModalInput = async function(paramsJson, text) {
             let title = user.getCache('name');
             switch (user.getCache('fraction_id')) {
                 case 1:
-                    methods.notifyWithPictureToFraction(title, `Правительство`, text, 'CHAR_FLOYD', user.getCache('fraction_id'));
+                    methods.notifyWithPictureToFraction(title, `${user.getRankName()}`, text, 'CHAR_FLOYD', user.getCache('fraction_id'));
                     break;
                 case 2:
-                    methods.notifyWithPictureToFraction(title, `LSPD`, text, 'WEB_LOSSANTOSPOLICEDEPT', user.getCache('fraction_id'));
+                    methods.notifyWithPictureToFraction(title, `${user.getRankName()}`, text, 'WEB_LOSSANTOSPOLICEDEPT', user.getCache('fraction_id'));
                     break;
                 case 3:
-                    methods.notifyWithPictureToFraction(title, `FIB`, text, 'CHAR_DR_FRIEDLANDER', user.getCache('fraction_id'));
+                    methods.notifyWithPictureToFraction(title, `${user.getRankName()}`, text, 'CHAR_DR_FRIEDLANDER', user.getCache('fraction_id'));
                     break;
                 case 4:
-                    methods.notifyWithPictureToFraction(title, `USMC`, text, 'DIA_ARMY', user.getCache('fraction_id'));
+                    methods.notifyWithPictureToFraction(title, `${user.getRankName()}`, text, 'DIA_ARMY', user.getCache('fraction_id'));
                     break;
                 case 5:
-                    methods.notifyWithPictureToFraction(title, `SHERIFF`, text, 'DIA_POLICE', user.getCache('fraction_id'));
+                    methods.notifyWithPictureToFraction(title, `${user.getRankName()}`, text, 'DIA_POLICE', user.getCache('fraction_id'));
                     break;
                 case 6:
-                    methods.notifyWithPictureToFraction(title, `EMS`, text, 'CHAR_CRIS', user.getCache('fraction_id'));
+                    methods.notifyWithPictureToFraction(title, `${user.getRankName()}`, text, 'CHAR_CRIS', user.getCache('fraction_id'));
                     break;
                 case 7:
-                    methods.notifyWithPictureToFraction(title, `Life Invader`, text, 'CHAR_LIFEINVADER', user.getCache('fraction_id'));
+                    methods.notifyWithPictureToFraction(title, `${user.getRankName()}`, text, 'CHAR_LIFEINVADER', user.getCache('fraction_id'));
                     break;
                 default:
                     methods.notifyWithPictureToFraction(title, `Организация`, text, 'CHAR_DEFAULT', user.getCache('fraction_id'));
@@ -4252,10 +4436,10 @@ phone.callBackButton = async function(menu, id, ...args) {
                 phone.showLoad();
             }
             else if (params.name == 'codeLoc') {
-                dispatcher.sendLocal(`Код ${params.code}`, params.codeDesc);
+                dispatcher.codeLocal(params.code, user.getCache('name'));
             }
             else if (params.name == 'codeDep') {
-                dispatcher.send(`Код ${params.code}`, params.codeDesc);
+                dispatcher.codeDep(params.code, user.getCache('name'));
             }
         }
         if (menu == 'uvehicle') {
@@ -4510,6 +4694,11 @@ phone.callBackButton = async function(menu, id, ...args) {
                 else {
                     mp.game.ui.notifications.show(`~r~Доступно только для лидера или замов`);
                 }
+            }
+        }
+        if (menu === 'fraction_hierarchy2') {
+            if (params.name == 'editFractionRankMenu') {
+                phone.showAppFractionEditRankMenu(params.rankId, params.depId);
             }
         }
     }

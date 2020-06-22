@@ -980,7 +980,7 @@ phone.showAppFraction2 = async function() {
     };
     menu.items.push(titleMenu1);
 
-    if (!user.isLeader2()) {
+    if (!user.isLeader2() && !user.isSubLeader2()) {
         if (!user.isMafia()) {
             let titleMenu2 = {
                 title: 'Покинуть организацию',

@@ -630,6 +630,10 @@ inventory.getItemList = function(ownerType, ownerId) {
     mp.events.callRemote('server:inventory:getItemList', ownerType, ownerId.toString());
 };
 
+inventory.getItemListSell = function() {
+    mp.events.callRemote('server:inventory:getItemListSell');
+};
+
 inventory.data = function(id, itemId, prop, model, pos, rot, ownerType, ownerId, count, isCreate, isDelete) {
     this.id = id;
     this.itemId = itemId;

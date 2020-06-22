@@ -190,7 +190,7 @@ weather.timeSyncTimer = function() {
         }
 
         if (_hour === 2 && _minute === 0)
-            fraction.createCargoWar(5);
+            fraction.createCargoWar(4);
         if (_hour === 6 && _minute === 0)
             fraction.stopCargoWar();
 
@@ -295,8 +295,10 @@ weather.timeSyncTimer = function() {
         }
 
         if (dateTime.getDate() % 4 === 0) {
-            if (dateTime.getHours() === 20 && dateTime.getMinutes() === 0)
+            if (dateTime.getHours() === 20 && dateTime.getMinutes() === 0) {
+                inventory.deleteItemsByItemId(49);
                 fraction.createCargoBigWar();
+            }
             if (dateTime.getHours() === 20 && dateTime.getMinutes() === 10)
                 fraction.createCargoBigWar();
             if (dateTime.getHours() === 20 && dateTime.getMinutes() === 20)

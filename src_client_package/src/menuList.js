@@ -4788,6 +4788,115 @@ menuList.showSpawnJobCarTaxiMenu = function() {
     });
 };
 
+menuList.showSellItemsMenu = function(data) {
+
+    try {
+        UIMenu.Menu.Create('Конфискат', `~b~Сдача конфиската`);
+
+        data.forEach((item, idx) => {
+            let params = {};
+
+            try {
+                params = JSON.parse(item.params);
+            }
+            catch (e) {
+                methods.debug(e);
+            }
+
+            let itemName = items.getItemNameById(item.item_id);
+            let desc = "";
+
+            if (item.item_id >= 265 && item.item_id <= 273 && item.label.toString() != "")
+                itemName = item.label;
+            else if (item.label.toString() != "")
+                desc += item.label;
+
+            if (item.item_id === 140 || item.item_id === 141)
+                desc = `В пачке: ${methods.moneyFormat(item.count)}`;
+            if (item.item_id === 49)
+                desc = `${params.desc}`;
+
+            if (items.isWeapon(item.item_id)) {
+
+                let wpName = items.getItemNameHashById(item.item_id);
+                itemName = items.getItemNameById(item.item_id);
+
+                try {
+                    if (params.superTint && params.superTint != 0)
+                        itemName = itemName + ' ' + weapons.getWeaponComponentName(wpName, params.superTint);
+                    else if (params.tint && params.tint != 0)
+                        itemName = itemName + ' ' + weapons.getTintName(wpName, params.tint);
+                }
+                catch (e) {
+                    methods.debug(e);
+                }
+
+                desc = params.serial;
+            }
+            else if (item.item_id <= 292 && item.item_id >= 279) {
+                if (methods.parseInt(item.count) == 0)
+                    desc = "Пустая";
+                else
+                    desc = `Количество патрон: ${item.count}шт.`;
+            }
+            else if (item.item_id <= 273 && item.item_id >= 265) {
+                itemName = params.name;
+                desc = params.sex === 1 ? 'Женская одежда' : 'Мужская одежда';
+            }
+            else if (item.item_id === 274 || item.item_id === 266) {
+                itemName = params.name;
+                if (params.desc)
+                    desc = 'Редкость: ' + params.desc;
+            }
+            else if (item.item_id <= 473 && item.item_id >= 293) {
+                desc = 'Используется для: ' + items.getWeaponNameByName(items.getItemNameHashById(item.item_id));
+            }
+            else if (item.item_id == 50) {
+                itemName = items.getItemNameById(item.item_id);
+                desc = methods.bankFormat(params.number);
+            }
+            else if (item.item_id <= 30 && item.item_id >= 27) {
+                itemName = items.getItemNameById(item.item_id);
+                desc = methods.phoneFormat(params.number);
+            }
+
+            let price = items.getItemPrice(item.item_id);
+            if (price === 111111)
+                price = 100;
+
+            UIMenu.Menu.AddMenuItem(`~b~${itemName}`, `${desc}~br~Цена: ~g~${methods.moneyFormat(price)}`, {itemId: item.item_id, id: item.id, price: price});
+        });
+
+        UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
+        UIMenu.Menu.Draw();
+
+        UIMenu.Menu.OnSelect.Add(async (item, index) => {
+            UIMenu.Menu.HideMenu();
+            if (item.itemId >= 0) {
+                try {
+                    coffer.addMoney(coffer.getIdByFraction(user.getCache('fraction_id')), item.price);
+                    inventory.deleteItem(item.id);
+
+                    methods.saveFractionLog(
+                        user.getCache('name'),
+                        `Сдал ${items.getItemNameById(item.itemId)}`,
+                        `Пополнено: ${methods.moneyFormat(item.price)}`,
+                        user.getCache('fraction_id')
+                    );
+
+                    mp.game.ui.notifications.show("~r~Вы сдали конфискат, бюджет организации был пополнен");
+                }
+                catch (e) {
+                    methods.debug(e);
+                }
+            }
+        });
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+};
+
 menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId) {
 
     if (user.isDead()) {
@@ -9541,6 +9650,7 @@ menuList.showSheriffArsenalMenu = function() {
         UIMenu.Menu.AddMenuItem("Красный конус", "", {itemId: 202});
     }
 
+    UIMenu.Menu.AddMenuItem("~b~Сдача конфиската", "", {sellItems: true});
     UIMenu.Menu.AddMenuItem("~b~Сдать грязные деньги", "", {getMoneyPolice: true});
     UIMenu.Menu.AddMenuItem("~b~Оружие", "", {showGun: true});
     UIMenu.Menu.AddMenuItem("~b~Модули на оружие", "", {showGunMod: true});
@@ -9556,6 +9666,9 @@ menuList.showSheriffArsenalMenu = function() {
         }
         if (item.showGunMod) {
             menuList.showSheriffArsenalGunModMenu();
+        }
+        if (item.sellItems) {
+            inventory.getItemListSell();
         }
         if (item.getMoneyPolice) {
             mp.events.callRemote('server:sellMoneyPolice');
@@ -9879,6 +9992,7 @@ menuList.showSapdArsenalMenu = function() {
         UIMenu.Menu.AddMenuItem("Красный конус", "", {itemId: 202});
     }
 
+    UIMenu.Menu.AddMenuItem("~b~Сдача конфиската", "", {sellItems: true});
     UIMenu.Menu.AddMenuItem("~b~Сдать грязные деньги", "", {getMoneyPolice: true});
     UIMenu.Menu.AddMenuItem("~b~Оружие", "", {showGun: true});
     UIMenu.Menu.AddMenuItem("~b~Модули на оружие", "", {showGunMod: true});
@@ -9897,6 +10011,9 @@ menuList.showSapdArsenalMenu = function() {
         }
         if (item.showGunMod) {
             menuList.showSapdArsenalGunModMenu();
+        }
+        if (item.sellItems) {
+            inventory.getItemListSell();
         }
         if (item.getMoneyPolice) {
             mp.events.callRemote('server:sellMoneyPolice');
@@ -10099,6 +10216,7 @@ menuList.showUsmcArsenalMenu = function() {
         UIMenu.Menu.AddMenuItem("Красный конус", "", {itemId: 202});
     }
 
+    UIMenu.Menu.AddMenuItem("~b~Сдача конфиската", "", {sellItems: true});
     UIMenu.Menu.AddMenuItem("~b~Оружие", "", {showGun: true});
     UIMenu.Menu.AddMenuItem("~b~Модули на оружие", "", {showGunMod: true});
     UIMenu.Menu.AddMenuItem("~b~Гардероб", "", {showGarderob: true});
@@ -10117,6 +10235,9 @@ menuList.showUsmcArsenalMenu = function() {
         }
         if (item.showGun) {
             menuList.showUsmcArsenalGunMenu();
+        }
+        if (item.sellItems) {
+            inventory.getItemListSell();
         }
         if (item.showGunMod) {
             menuList.showUsmcArsenalGunModMenu();
@@ -10319,6 +10440,7 @@ menuList.showFibArsenalMenu = function() {
         UIMenu.Menu.AddMenuItem("Красный конус", "", {itemId: 202});
     }
 
+    UIMenu.Menu.AddMenuItem("~b~Сдача конфиската", "", {sellItems: true});
     UIMenu.Menu.AddMenuItem("~b~Оружие", "", {showGun: true});
     UIMenu.Menu.AddMenuItem("~b~Модули на оружие", "", {showGunMod: true});
 
@@ -10333,6 +10455,9 @@ menuList.showFibArsenalMenu = function() {
         }
         if (item.showGun) {
             menuList.showFibArsenalGunMenu();
+        }
+        if (item.sellItems) {
+            inventory.getItemListSell();
         }
         if (item.showGunMod) {
             menuList.showFibArsenalGunModMenu();

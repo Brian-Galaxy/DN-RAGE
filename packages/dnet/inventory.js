@@ -108,6 +108,52 @@ inventory.getItemList = function(player, ownerType, ownerId, isFrisk = false) {
     }
 };
 
+inventory.getItemListSell = function(player) {
+    if (!user.isLogin(player))
+        return;
+    try {
+
+        let data = [];
+        //let data2 = new Map();
+
+        let sql = `SELECT * FROM items WHERE owner_id = '${user.getId(player)}' AND owner_type = '1' AND is_equip = 0 ORDER BY item_id DESC LIMIT 400`;
+
+        mysql.executeQuery(sql, function (err, rows, fields) {
+            rows.forEach(row => {
+
+                let label = "";
+
+                if (row['prefix'] > 0 && row['number'] > 0 && row['key_id'] <= 0) {
+                    label = row['prefix'] + "-" + row['number'];
+                } else if (row['key_id'] > 0) {
+
+                    if (row['item_id'] >= 265 && row['item_id'] <= 268) {
+
+                        if (row['prefix'] == 1)
+                            label = enums.clothF[row['key_id']][9];
+                        else
+                            label = enums.clothM[row['key_id']][9];
+                    }
+                    else if (row['item_id'] >= 269 && row['item_id'] <= 273) {
+                        if (row['prefix'] == 1)
+                            label = enums.propF[row['key_id']][5];
+                        else
+                            label = enums.propM[row['key_id']][5];
+                    }
+                    else {
+                        label = "#" + row['key_id'];
+                    }
+                }
+
+                data.push({id: row['id'], label: label, item_id: row['item_id'], count: row['count'], is_equip: row['is_equip'], params: row['params']});
+            });
+
+            player.call('client:showSellItemsMenu', [data]);
+        });
+    } catch(e) {
+        methods.debug(e);
+    }
+};
 
 inventory.unEquip = function(player, id, itemId) {
     if (!user.isLogin(player))
@@ -720,6 +766,14 @@ inventory.deleteItemsRange = function(player, itemIdFrom, itemIdTo) {
     }
 };
 
+inventory.deleteItemsByItemId = function(itemId) {
+    try {
+        mysql.executeQuery(`DELETE FROM items WHERE item_id = ${itemId}`);
+    } catch(e) {
+        methods.debug(e);
+    }
+};
+
 inventory.addItem = function(itemId, count, ownerType, ownerId, countItems, isEquip, params, timeout = 1) {
     if (items.isWeapon(itemId))
         inventory.addWeaponItem(itemId, count, ownerType, ownerId, countItems, isEquip, params, timeout);
@@ -1038,7 +1092,7 @@ inventory.useItem = function(player, id, itemId, isTargetable = false) {
                         fraction.set(user.get(player,'fraction_id2'), 'grabBankFleecaOt', 2);
                         fraction.set(user.get(player,'fraction_id2'), 'grabBankFleecaTimer', 60);
                         player.notify('~g~Подготовка к ограблению началась');
-                        //inventory.deleteItem(id);
+                        inventory.deleteItem(id);
                     }
                     catch (e) {
                         player.notify('~g~Произошла ошибка');

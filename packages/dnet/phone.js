@@ -1003,7 +1003,7 @@ phone.fractionList = function(player) {
 
     let fractionId = user.get(player, 'fraction_id');
 
-    mysql.executeQuery(`SELECT id, social, name, fraction_id, rank, rank_type, is_leader, is_sub_leader, is_online FROM users WHERE fraction_id = '${fractionId}' ORDER BY is_leader ASC, is_sub_leader ASC, rank_type ASC, is_online DESC, rank ASC, name ASC`, (err, rows, fields) => {
+    mysql.executeQuery(`SELECT id, social, name, fraction_id, rank, rank_type, is_leader, is_sub_leader, is_online, login_date FROM users WHERE fraction_id = '${fractionId}' ORDER BY is_leader ASC, is_sub_leader ASC, rank_type ASC, is_online DESC, rank ASC, name ASC`, (err, rows, fields) => {
         let items = [];
         let depName = '';
         let depList = [];
@@ -1022,10 +1022,14 @@ phone.fractionList = function(player) {
 
         rows.forEach(row => {
 
+            let desc = '';
+            if (row['is_online'] === 0)
+                desc = ` (${methods.unixTimeStampToDateTimeShort(row['login_date'])})`;
+
             if (row['is_leader']) {
                 leaderItem.push(phone.getMenuItemUser(
                     row['name'],
-                    fractionItem.leaderName,
+                    fractionItem.leaderName + desc,
                     row['is_online'] === 1,
                     { name: 'none' },
                     'https://a.rsg.sc//n/' + row['social'].toLowerCase(),
@@ -1035,7 +1039,7 @@ phone.fractionList = function(player) {
                 if (isLeader) {
                     subLeaderItem.push(phone.getMenuItemUser(
                         row['name'],
-                        fractionItem.subLeaderName,
+                        fractionItem.subLeaderName + desc,
                         row['is_online'] === 1,
                         { name: 'memberAction', memberId: row['id'] },
                         'https://a.rsg.sc//n/' + row['social'].toLowerCase(),
@@ -1045,7 +1049,7 @@ phone.fractionList = function(player) {
                 else {
                     subLeaderItem.push(phone.getMenuItemUser(
                         row['name'],
-                        fractionItem.subLeaderName,
+                        fractionItem.subLeaderName + 'desc',
                         row['is_online'] === 1,
                         { name: 'none' },
                         'https://a.rsg.sc//n/' + row['social'].toLowerCase()
@@ -1064,7 +1068,7 @@ phone.fractionList = function(player) {
                 if (isLeader || isSubLeader || (canEdit && rankType == row['rank_type'])) {
                     depList.push(phone.getMenuItemUser(
                         row['name'],
-                        fractionItem.rankList[row['rank_type']][row['rank']],
+                        fractionItem.rankList[row['rank_type']][row['rank']] + desc,
                         row['is_online'] === 1,
                         { name: 'memberAction', memberId: row['id'] },
                         'https://a.rsg.sc//n/' + row['social'].toLowerCase(),
@@ -1074,7 +1078,7 @@ phone.fractionList = function(player) {
                 else {
                     depList.push(phone.getMenuItemUser(
                         row['name'],
-                        fractionItem.rankList[row['rank_type']][row['rank']],
+                        fractionItem.rankList[row['rank_type']][row['rank']] + desc,
                         row['is_online'] === 1,
                         { name: 'none' },
                         'https://a.rsg.sc//n/' + row['social'].toLowerCase()
@@ -1109,7 +1113,7 @@ phone.fractionList2 = function(player) {
 
     let fractionId = user.get(player, 'fraction_id2');
 
-    mysql.executeQuery(`SELECT id, social, name, fraction_id2, rank2, rank_type2, is_leader2, is_sub_leader2, is_online FROM users WHERE fraction_id2 = '${fractionId}' ORDER BY is_leader2 ASC, is_sub_leader2 ASC, rank_type2 ASC, is_online DESC, rank2 ASC, name ASC`, (err, rows, fields) => {
+    mysql.executeQuery(`SELECT id, social, name, fraction_id2, rank2, rank_type2, is_leader2, is_sub_leader2, login_date, is_online FROM users WHERE fraction_id2 = '${fractionId}' ORDER BY is_leader2 ASC, is_sub_leader2 ASC, rank_type2 ASC, is_online DESC, rank2 ASC, name ASC`, (err, rows, fields) => {
         let items = [];
         let depName = '';
         let depList = [];
@@ -1131,10 +1135,15 @@ phone.fractionList2 = function(player) {
         rows.forEach(row => {
 
             try {
+
+                let desc = '';
+                if (row['is_online'] === 0)
+                    desc = ` (${methods.unixTimeStampToDateTimeShort(row['login_date'])})`;
+
                 if (row['is_leader2']) {
                     leaderItem.push(phone.getMenuItemUser(
                         row['name'],
-                        fractionItem.get('rank_leader'),
+                        fractionItem.get('rank_leader') + desc,
                         row['is_online'] === 1,
                         { name: 'none' },
                         'https://a.rsg.sc//n/' + row['social'].toLowerCase(),
@@ -1144,7 +1153,7 @@ phone.fractionList2 = function(player) {
                     if (isLeader) {
                         subLeaderItem.push(phone.getMenuItemUser(
                             row['name'],
-                            fractionItem.get('rank_sub_leader'),
+                            fractionItem.get('rank_sub_leader') + desc,
                             row['is_online'] === 1,
                             { name: 'memberAction', memberId: row['id'] },
                             'https://a.rsg.sc//n/' + row['social'].toLowerCase(),
@@ -1154,7 +1163,7 @@ phone.fractionList2 = function(player) {
                     else {
                         subLeaderItem.push(phone.getMenuItemUser(
                             row['name'],
-                            fractionItem.get('rank_sub_leader'),
+                            fractionItem.get('rank_sub_leader') + desc,
                             row['is_online'] === 1,
                             { name: 'none' },
                             'https://a.rsg.sc//n/' + row['social'].toLowerCase()
@@ -1173,7 +1182,7 @@ phone.fractionList2 = function(player) {
                     if (isLeader || isSubLeader || (canEdit && rankType == row['rank_type2'])) {
                         depList.push(phone.getMenuItemUser(
                             row['name'],
-                            fractionItemRanks[row['rank_type2']][row['rank2']],
+                            fractionItemRanks[row['rank_type2']][row['rank2']] + desc,
                             row['is_online'] === 1,
                             { name: 'memberAction', memberId: row['id'] },
                             'https://a.rsg.sc//n/' + row['social'].toLowerCase(),
@@ -1183,7 +1192,7 @@ phone.fractionList2 = function(player) {
                     else {
                         depList.push(phone.getMenuItemUser(
                             row['name'],
-                            fractionItemRanks[row['rank_type2']][row['rank2']],
+                            fractionItemRanks[row['rank_type2']][row['rank2']] + desc,
                             row['is_online'] === 1,
                             { name: 'none' },
                             'https://a.rsg.sc//n/' + row['social'].toLowerCase()

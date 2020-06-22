@@ -1428,6 +1428,16 @@ mp.events.add('client:showToPlayerItemListMenu', (data, ownerType, ownerId) => {
     }
 });
 
+mp.events.add('client:showSellItemsMenu', (data) => {
+    try {
+        methods.debug('Event: client:showSellItemsMenu');
+        menuList.showSellItemsMenu(data)
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
 mp.events.add('client:clearChat', () => {
     user.clearChat();
 });

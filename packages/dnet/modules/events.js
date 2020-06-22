@@ -3480,6 +3480,12 @@ mp.events.addRemoteCounted('server:inventory:getItemList', (player, ownerType, o
     inventory.getItemList(player, ownerType, ownerId);
 });
 
+mp.events.addRemoteCounted('server:inventory:getItemListSell', (player) => {
+    if (!user.isLogin(player))
+        return;
+    inventory.getItemListSell(player);
+});
+
 mp.events.addRemoteCounted('server:inventory:equip', (player, id, itemId, count, aparams) => {
     if (!user.isLogin(player))
         return;

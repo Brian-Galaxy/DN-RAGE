@@ -16,16 +16,23 @@ let checkStats = function()
 
         if (mp.players.local.isSprinting() && user.getCache('stats_endurance') < 99) {
             mp.game.ui.notifications.show(`~g~Навык "Выносливость" был повышен`);
+
+            let last = user.getCache('stats_endurance');
+
             user.set('stats_endurance', user.getCache('stats_endurance') + 1);
             if (user.isUsmc() || user.getCache('vip_type') > 0)
                 user.set('stats_endurance', user.getCache('stats_endurance') + 1);
+
+            mp.game.ui.notifications.showWithStats('PSF_ENDURANCE', last + 1, user.getCache('stats_endurance'));
         }
 
         if (mp.players.local.isSprinting() && user.getCache('stats_strength') < 99) {
             mp.game.ui.notifications.show(`~g~Навык "Сила" был повышен`);
+            let last = user.getCache('stats_strength');
             user.set('stats_strength', user.getCache('stats_strength') + 1);
             if (user.isUsmc() || user.getCache('vip_type') > 0)
                 user.set('stats_strength', user.getCache('stats_strength') + 1);
+            mp.game.ui.notifications.showWithStats('PSF_STRENGTH', last + 1, user.getCache('stats_strength'));
         }
 
         /*if (mp.players.local.isSwimming() && user.getCache('stats_lung_capacity') < 99) {
@@ -40,10 +47,11 @@ let checkStats = function()
                 let veh = mp.players.local.vehicle;
                 if (veh.getPedInSeat(-1) == localPlayer.handle && !veh.isInAir() && methods.getCurrentSpeed() > 10) {
                     mp.game.ui.notifications.show(`~g~Навык вождения был повышен`);
-
+                    let last = user.getCache('stats_driving');
                     user.set('stats_driving', user.getCache('stats_driving') + 1);
                     if (user.isUsmc() || user.getCache('vip_type') > 0)
                         user.set('stats_driving', user.getCache('stats_driving') + 1);
+                    mp.game.ui.notifications.showWithStats('PSF_DRIVING', last + 1, user.getCache('stats_driving'));
                 }
             }
         }
@@ -55,10 +63,11 @@ let checkStats = function()
                 let veh = mp.players.local.vehicle;
                 if (veh.getPedInSeat(-1) == localPlayer.handle && veh.isInAir()) {
                     mp.game.ui.notifications.show(`~g~Навык пилота был повышен`);
-
+                    let last = user.getCache('stats_flying');
                     user.set('stats_flying', user.getCache('stats_flying') + 1);
                     if (user.isUsmc() || user.getCache('vip_type') > 0)
                         user.set('stats_flying', user.getCache('stats_flying') + 1);
+                    mp.game.ui.notifications.showWithStats('PSF_FLYING', last + 1, user.getCache('stats_flying'));
                 }
             }
         }
@@ -66,9 +75,11 @@ let checkStats = function()
         if (mp.players.local.isSwimmingUnderWater() && user.getCache('stats_lung_capacity') < 99)
         {
             mp.game.ui.notifications.show(`~g~Навык "Объем легких" был повышен`);
+            let last = user.getCache('stats_lung_capacity');
             user.set('stats_lung_capacity', user.getCache('stats_lung_capacity') + 2);
             if(user.getCache('stats_lung_capacity') > 99)
                 user.set('stats_lung_capacity', 99);
+            mp.game.ui.notifications.showWithStats('PSF_LUNG_CAPACITY', last + 1, user.getCache('stats_lung_capacity'));
         }
     }
     catch (e) {
@@ -86,9 +97,11 @@ let checkShooting = function () {
     try {
         if (mp.players.local.isShooting() && user.getCache('stats_shooting') < 99) {
             mp.game.ui.notifications.show(`~g~Навык стрельбы был повышен`);
+            let last = user.getCache('stats_shooting');
             user.set('stats_shooting', user.getCache('stats_shooting') + 1);
             if (user.getCache('vip_type') > 0)
                 user.set('stats_shooting', user.getCache('stats_shooting') + 1);
+            mp.game.ui.notifications.showWithStats('PSF_SHOOTING', last + 1, user.getCache('stats_shooting'));
         }
     }
     catch (e) {
@@ -107,14 +120,22 @@ let updateStats = function() {
 
         if (user.getCache('stats_endurance') > 99)
             user.set('stats_endurance', 99);
+
         if (user.getCache('stats_strength') > 99)
             user.set('stats_strength', 99);
+
         if (user.getCache('stats_lung_capacity') > 99)
             user.set('stats_lung_capacity', 99);
+
         if (user.getCache('stats_driving') > 99)
             user.set('stats_driving', 99);
+
+        if (user.getCache('stats_flying') > 99)
+            user.set('stats_flying', 99);
+
         if (user.getCache('stats_lucky') > 99)
             user.set('stats_lucky', 99);
+
         if (user.getCache('stats_shooting') > 99)
             user.set('stats_shooting', 99);
 

@@ -56,6 +56,10 @@ mp.attachmentMngr =
                                 attInfo.rotation.x, attInfo.rotation.y, attInfo.rotation.z,
                                 false, false, attInfo.collision, false, 2, true);
 
+                            if (attInfo.freeze) {
+                                object.freezePosition(true);
+                            }
+
                             entity.__attachmentObjects[id] = object;
                         }
                     }
@@ -122,7 +126,7 @@ mp.attachmentMngr =
             }
         },
 
-        register: function(id, model, boneName, offset, rotation, collision = false)
+        register: function(id, model, boneName, offset, rotation, collision = false, freeze = false)
         {
             try {
                 if(typeof(id) === 'string')
@@ -144,7 +148,8 @@ mp.attachmentMngr =
                             offset: offset,
                             rotation: rotation,
                             boneName: boneName,
-                            collision: collision
+                            collision: collision,
+                            freeze: freeze
                         };
                     /*if(mp.game.streaming.isModelInCdimage(model))
                     {

@@ -20,6 +20,7 @@ timer.loadAll = function() {
     timer.min2hTimer();
     timer.min30Timer();
     timer.min10Timer();
+    timer.min1Timer();
     timer.sec10Timer();
     timer.sec5Timer();
 };
@@ -71,6 +72,34 @@ timer.min10Timer = function() {
     });
 
     setTimeout(timer.min10Timer, 1000 * 60 * 10);
+};
+
+timer.min1Timer = function() {
+    for (let i = 0; i < 50; i++) {
+        if (fraction.has(i, 'grabBankFleecaTimer', 60)) {
+
+            if (!fraction.has(i, 'grabBankFleecaDone')) {
+                let count = fraction.get(i, 'grabBankFleecaTimer');
+                fraction.set(i, 'grabBankFleecaTimer', count - 1);
+
+                let pt = fraction.get(i, 'grabBankFleecaPt');
+                let hp = fraction.get(i, 'grabBankFleecaHp');
+                let ot = fraction.get(i, 'grabBankFleecaOt');
+
+                if (ot === 0 && hp === 0 && pt === 0) {
+                    fraction.set(i, 'grabBankFleecaDone', true);
+                } else if (count < 1) {
+                    fraction.reset(i, 'grabBankFleeca', true);
+                    fraction.reset(i, 'grabBankFleecaCar', 2);
+                    fraction.reset(i, 'grabBankFleecaPt', 2);
+                    fraction.reset(i, 'grabBankFleecaHp', 2);
+                    fraction.reset(i, 'grabBankFleecaOt', 2);
+                    fraction.reset(i, 'grabBankFleecaTimer', 60);
+                }
+            }
+        }
+    }
+    setTimeout(timer.min1Timer, 1000 * 60);
 };
 
 timer.min60Timer = function() {

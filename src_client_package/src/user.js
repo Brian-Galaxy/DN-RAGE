@@ -226,6 +226,7 @@ user.isTeleport = function() {
 };
 
 user.removeAllWeapons = function() {
+    mp.players.local.removeAllWeapons();
     /*mp.players.local.removeAllWeapons();
 
     weapons.getMapList().forEach(item => {
@@ -298,6 +299,16 @@ user.unequipAllWeapons = function() {
 
     user.save();
     user.setCurrentWeapon('weapon_unarmed');
+};
+
+user.hasGotAnyWeapon = function() {
+    let hasWeapon = false;
+    weapons.getMapList().forEach(item => {
+        let hash = item[1] / 2;
+        if (!mp.game.invoke(methods.HAS_PED_GOT_WEAPON, mp.players.local.handle, hash, false))
+            hasWeapon = true;
+    });
+    return hasWeapon;
 };
 
 user.giveWeaponByHash = function(model, pt) {

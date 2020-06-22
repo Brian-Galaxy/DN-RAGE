@@ -303,6 +303,8 @@ weather.timeSyncTimer = function() {
                 fraction.createCargoBigWar();
         }
 
+        if (dateTime.getHours() === 19 && dateTime.getMinutes() === 0)
+            fraction.createCargoArmyWar();
         if (dateTime.getHours() === 20 && dateTime.getMinutes() === 30)
             fraction.createCargoMafiaWar();
         if (dateTime.getHours() === 21 && dateTime.getMinutes() === 0)

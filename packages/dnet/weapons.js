@@ -74,7 +74,7 @@ weapons.hashesMap = [
     ["weapon_combatmg", 2144741730, 1],
     ["weapon_combatmg_mk2", -608341376, 1],
     ["weapon_gusenberg", 1627465347, 1],
-    ["weapon_sniperrifle", 100416529, 1.3],
+    ["weapon_sniperrifle", 100416529, 2.5],
     ["weapon_heavysniper", 205991906, 1.2],
     ["weapon_heavysniper_mk2", 177293209, 1.3],
     ["weapon_marksmanrifle", -952879014, 1.2],

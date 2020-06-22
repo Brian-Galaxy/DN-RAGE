@@ -35,7 +35,7 @@ voiceRage.disableMic = function() {
 };
 
 voiceRage.enableRadioMic = function() {
-    if (user.isDead())
+    if (user.isDead() || methods.isBlockKeys())
         return;
     voiceRage.enableMic();
     mp.events.callRemote('voice.toggleMicrophoneRadio', true);
@@ -45,7 +45,8 @@ voiceRage.enableRadioMic = function() {
 voiceRage.disableRadioMic = function() {
     voiceRage.disableMic();
     mp.events.callRemote('voice.toggleMicrophoneRadio', false);
-    user.stopAllAnimation();
+    if (!methods.isBlockKeys())
+        user.stopAllAnimation();
 };
 
 voiceRage.isEnable = function() {

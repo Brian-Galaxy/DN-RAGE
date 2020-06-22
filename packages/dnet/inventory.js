@@ -5,7 +5,7 @@ let chat = require('./modules/chat');
 
 let weather = require('./managers/weather');
 let vSync = require('./managers/vSync');
-//let dispatcher = require('./managers/dispatcher');
+let dispatcher = require('./managers/dispatcher');
 
 let user = require('./user');
 let enums = require('./enums');
@@ -15,7 +15,8 @@ let weapons = require('./weapons');
 let vehicles = require('./property/vehicles');
 let fraction = require('./property/fraction');
 
-//let bank = require('./business/bank');
+let bank = require('./business/bank');
+
 let inventory = exports;
 let props = new Map();
 
@@ -1012,6 +1013,38 @@ inventory.useItem = function(player, id, itemId, isTargetable = false) {
                     }, 10000);
                     break;
                 }
+                case 49:
+                {
+                    if (user.get(player,'fraction_id2') === 0) {
+                        player.notify('~r~Необходимо состоять в крайм организации');
+                        return;
+                    }
+                    if (user.isGang(player)) {
+                        player.notify('~r~Гетто организации не могут использовать чертежи');
+                        return;
+                    }
+
+                    let dateTime = new Date();
+                    if (dateTime.getHours() < 18 || dateTime.getHours() > 19) {
+                        player.notify('~r~Доступно только с 18 до 19 вечера ООС времени');
+                        return;
+                    }
+
+                    try {
+                        fraction.set(user.get(player,'fraction_id2'), 'grabBankFleeca', true);
+                        fraction.set(user.get(player,'fraction_id2'), 'grabBankFleecaCar', 2);
+                        fraction.set(user.get(player,'fraction_id2'), 'grabBankFleecaPt', 2);
+                        fraction.set(user.get(player,'fraction_id2'), 'grabBankFleecaHp', 2);
+                        fraction.set(user.get(player,'fraction_id2'), 'grabBankFleecaOt', 2);
+                        fraction.set(user.get(player,'fraction_id2'), 'grabBankFleecaTimer', 60);
+                        player.notify('~g~Подготовка к ограблению началась');
+                        //inventory.deleteItem(id);
+                    }
+                    catch (e) {
+                        player.notify('~g~Произошла ошибка');
+                    }
+                    break;
+                }
                 case 3:
                 {
                     if (user.has(player, 'useHeal')) {
@@ -1113,7 +1146,168 @@ inventory.useItem = function(player, id, itemId, isTargetable = false) {
                 }
                 case 5:
                 {
-                    fraction.startGrabShopGang(player, id);
+                    if (player.dimension > 0) {
+                        player.notify('~r~Нельзя совершить ограбление');
+                        return;
+                    }
+
+                    let grabId2 = bank.getBombInRadius(player.position, 50);
+                    if (grabId2 === -1) {
+                        fraction.startGrabShopGang(player, id);
+                        return;
+                    }
+
+                    let grabId = bank.getGrabInRadius(player.position);
+                    if (user.isGos(player)) {
+                        player.notify('~r~Вы состоите в гос. организации');
+                        return;
+                    }
+
+                    let frId = user.get(player, 'fraction_id2');
+                    if (frId === 0) {
+                        player.notify("~r~Вы не состоите в крайм организации");
+                        return;
+                    }
+
+                    if (!fraction.has(frId, 'bankGrabId')) {
+                        player.notify("~r~Вы не можете этот грабить банк");
+                        return;
+                    }
+
+                    if (fraction.get(frId, 'bankGrabId') !== grabId2) {
+                        player.notify("~r~Вы не можете этот грабить банк");
+                        return;
+                    }
+
+                    let dateTime = new Date();
+                    if (dateTime.getHours() < 19 || dateTime.getHours() > 22) {
+                        player.notify('~r~Доступно только с 19 до 22 вечера ООС времени');
+                        return;
+                    }
+
+                    if (user.has(player, 'isGrab')) {
+                        player.notify('~r~Это действие сейчас не доступно');
+                        return;
+                    }
+                    let count = bank.grabPos[grabId][4];
+                    if (count === 0) {
+                        player.notify('~r~Все ячейки пустые');
+                        return;
+                    }
+
+                    user.heading(player, bank.grabPos[grabId][3]);
+
+                    user.set(player, 'isGrab', true);
+                    user.playAnimation(player, "missheistfbisetup1", "unlock_loop_janitor", 9);
+                    user.blockKeys(player, true);
+                    bank.grabPos[grabId][4] = count - 1;
+
+                    setTimeout(function () {
+                        user.playAnimation(player, "anim@heists@ornate_bank@grab_cash", "grab", 9);
+                        player.addAttachment('bagGrab');
+                        player.addAttachment('cash');
+                    }, 5000);
+
+                    setTimeout(function () {
+                        if (!user.isLogin(player))
+                            return;
+
+                        player.addAttachment('bagGrab', true);
+                        player.addAttachment('cash', true);
+
+                        if (methods.getRandomInt(0, 100) < 20) {
+                            player.notify(`~y~Ячейка оказалась пуста`);
+                        }
+                        else {
+                            inventory.addItem(141, 1, inventory.types.Player, user.getId(player), methods.getRandomInt(6000, 8000) * 2, 0, "{}", 2);
+                        }
+
+                        user.blockKeys(player, false);
+                        player.notify(`~y~Осталось ячеек ~s~${count - 1}`);
+
+                        user.giveWanted(player, 10, 'Ограбление банка');
+
+                        user.reset(player, 'isGrab');
+                        user.stopAnimation(player);
+                        if (methods.getRandomInt(0, 2) === 0) {
+                            inventory.deleteItem(id);
+                            player.notify('~r~Вы сломали отмычку');
+                        }
+                    }, 10000);
+                    break;
+                }
+                case 262:
+                {
+                    if (user.isGos(player)) {
+                        player.notify('~r~Вы состоите в гос. организации');
+                        return;
+                    }
+
+                    let grabId = bank.getBombInRadius(player.position);
+                    if (grabId === -1) {
+                        player.notify('~r~Вы слишком далеко от двери');
+                        return;
+                    }
+
+                    let frId = user.get(player, 'fraction_id2');
+                    if (frId === 0) {
+                        player.notify("~r~Вы не состоите в крайм организации");
+                        return;
+                    }
+
+                    if (!fraction.has(frId, 'grabBankFleecaDone')) {
+                        player.notify("~r~Вы не выполнили задание, чтобы совершить ограбление");
+                        return;
+                    }
+
+                    if (fraction.has(frId, 'bankGrabId')) {
+                        player.notify("~r~Вы не можете этот грабить банк");
+                        return;
+                    }
+
+                    let dateTime = new Date();
+                    if (dateTime.getHours() < 19 || dateTime.getHours() > 22) {
+                        player.notify('~r~Доступно только с 19 до 22 вечера ООС времени');
+                        return;
+                    }
+
+                    if (player.dimension !== 0) {
+                        player.notify("~r~Нельзя грабить в интерьере");
+                        return;
+                    }
+
+                    fraction.set(frId, 'bankGrabId', grabId);
+
+                    inventory.deleteItem(id);
+                    user.playAnimation(player, "mp_arresting", "a_uncuff", 8);
+
+                    setTimeout(function () {
+                        player.notify("~y~Взрыв произойдет через ~s~10~y~ сек");
+
+                        setTimeout(function () {
+                            if (!user.isLogin(player))
+                                return;
+                            player.notify("~y~Взрыв произойдет через ~s~5~y~ сек");
+                        }, 5000);
+
+                        setTimeout(function () {
+                            if (!user.isLogin(player))
+                                return;
+                            player.notify("~y~Взрыв произойдет через ~s~3~y~ сек");
+                        }, 7000);
+
+                        setTimeout(function () {
+                            try {
+                                dispatcher.sendPos("Код 0", "В банке сработала сигнализация", player.position);
+                                methods.explodeObject(bank.doorPos[grabId][1], bank.doorPos[grabId][2], bank.doorPos[grabId][3]);
+                                methods.deleteObject(bank.doorPos[grabId][1], bank.doorPos[grabId][2], bank.doorPos[grabId][3], bank.doorPos[grabId][0]);
+                            }
+                            catch (e) {
+                                methods.debug(e);
+                            }
+                        }, 10000);
+                    }, 5000);
+
                     break;
                 }
                 case 6:
@@ -1502,13 +1696,44 @@ inventory.useItem = function(player, id, itemId, isTargetable = false) {
                     }
 
                     chat.sendMeCommand(player, "использовал аптечку");
-                    if (player.health >= 60)
+                    if (player.health >= 40)
                         user.setHealth(player, 100);
                     else
-                        user.setHealth(player, player.health + 40);
+                        user.setHealth(player, player.health + 60);
                     inventory.deleteItem(id);
                     user.playDrugAnimation(player);
                     user.set(player, 'useHeal', true);
+                    setTimeout(function () {
+                        if (user.isLogin(player))
+                            user.reset(player, 'useHeal');
+                    }, 20000);
+                    break;
+                }
+                case 216:
+                {
+                    if (user.has(player, 'useHeal')) {
+                        player.notify('~r~Нельзя так часто употреблять аптечки');
+                        return;
+                    }
+
+                    if (player.health < 1) {
+                        player.notify('~r~Нельзя использовать будучи мертвым');
+                        return;
+                    }
+
+                    /*if (player.health < 1 && isTargetable) {
+                        user.revive(player);
+                    }*/
+
+                    chat.sendMeCommand(player, "использовал бинт");
+                    if (player.health >= 80)
+                        user.setHealth(player, 100);
+                    else
+                        user.setHealth(player, player.health + 20);
+                    inventory.deleteItem(id);
+                    user.playDrugAnimation(player);
+                    user.set(player, 'useHeal', true);
+
                     setTimeout(function () {
                         if (user.isLogin(player))
                             user.reset(player, 'useHeal');

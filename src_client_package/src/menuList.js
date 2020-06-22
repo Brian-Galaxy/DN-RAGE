@@ -536,16 +536,19 @@ menuList.showStockPanelUpgradeMenu = function(h) {
 
     UIMenu.Menu.Create(` `, `~b~Адрес: ~s~${h.get('address')} ${h.get('number')}`, 'hm', false, false, 'h1');
 
+    if (h.get('interior') > 1 && !h.get('upgrade_g'))
+        UIMenu.Menu.AddMenuItem(`~y~Расширенный гараж и жилой офис`, "Стоимость: ~g~$2.500.000~s~~br~Благодаря этому лучшению, вы можете сделать ваш склад спавном для вашей организации~br~Бонусом выступает, что в гараже можно хранить грузовики и больой транспорт", {buyGarage: true});
+
     h.get('upgrade').split('_').forEach((uItem, idx) => {
         uItem = methods.parseInt(uItem);
-        if (uItem == -1) {
+        if (uItem === -1) {
             UIMenu.Menu.AddMenuItem(`${(idx + 1)}. ~g~Слот свободен`, "", {buySlot: idx});
         }
         else {
             let rare = 'Стандарт';
-            if (stocks.boxList[uItem][7] == 1)
+            if (stocks.boxList[uItem][7] === 1)
                 rare = '~b~Редкий';
-            if (stocks.boxList[uItem][7] == 2)
+            if (stocks.boxList[uItem][7] === 2)
                 rare = '~p~Очень редкий';
 
             UIMenu.Menu.AddMenuItem(`${(idx + 1)}. ${stocks.boxList[uItem][0]}`, `Редкость: ${rare}~br~~s~Класс: ~b~${stocks.boxList[uItem][6]}`, {sellSlot: idx});
@@ -559,6 +562,8 @@ menuList.showStockPanelUpgradeMenu = function(h) {
         UIMenu.Menu.HideMenu();
         if (item.buySlot >= 0)
             menuList.showStockPanelUpgradeBuySlotMenu(h, item.buySlot);
+        if (item.buyGarage >= 0)
+            menuList.showStockPanelUpgradeBuyGarageMenu(h);
     });
 };
 
@@ -580,6 +585,34 @@ menuList.showStockPanelUpgradeBuySlotMenu = function(h, slot) {
             UIMenu.Menu.HideMenu();
             if (item.buyBox >= 0)
                 stocks.upgradeAdd(h.get('id'), slot, item.buyBox);
+        });
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+};
+
+menuList.showStockPanelUpgradeBuyGarageMenu = function(h) {
+
+    try {
+        UIMenu.Menu.Create(` `, `~b~Выберите ящик для покупки`, 'hm', false, false, 'h1');
+
+        UIMenu.Menu.AddMenuItem("Купить за ~g~$2.500.000", "", {doName: 'yes'});
+
+        UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: 'closeMenu'});
+        UIMenu.Menu.Draw();
+
+        UIMenu.Menu.OnSelect.Add(async item => {
+            UIMenu.Menu.HideMenu();
+            if (item.doName === 'yes') {
+                if (user.getBankMoney() < 2500000) {
+                    mp.game.ui.notifications.show('~r~На вашем банковском счету не хватает средств');
+                    return;
+                }
+                user.removeBankMoney(2500000, 'Улучшение для склада #' + h.get('id'));
+                stocks.upgradeGarage(h.get('id'));
+                mp.game.ui.notifications.show('~g~Поздравляем с покупкой улучшения, теперь при входе на склад, вам будет предложение войти во второе помещение');
+            }
         });
     }
     catch (e) {
@@ -675,7 +708,7 @@ menuList.showStockPanelBoxInfoMoreMenu = function(h, item, slot, price, boxId) {
 
     UIMenu.Menu.Create(` `, `~b~${item[0]}`, 'hm', false, false, 'h1');
 
-    if (boxId === 3 || boxId === 4 || boxId === 38 || boxId === 39 || boxId === 50)
+    if (boxId === 3 || boxId === 4 || boxId === 38 || boxId === 39 || boxId === 50 || boxId === 51 || boxId === 52)
         UIMenu.Menu.AddMenuItem(`~g~Открыть ящик`, "", {isOpen: true});
 
     if (item[7] < 0)
@@ -698,7 +731,9 @@ menuList.showStockOutMenu = async function(h) {
 
     UIMenu.Menu.Create(` `, `~b~Адрес: ~s~${h.get('address')} ${h.get('number')}`, 'hm', false, false, 'h1');
     UIMenu.Menu.AddMenuItem(`~b~Владелец:~s~ ${h.get('user_name')}`);
-    UIMenu.Menu.AddMenuItem("~g~Войти", "", {doName: 'enterStock'});
+    UIMenu.Menu.AddMenuItem("~g~Войти на склад", "", {doName: 'enterStock'});
+    if (h.get('upgrade_g'))
+        UIMenu.Menu.AddMenuItem("~g~Войти в офис", "", {doName: 'enterStock1'});
 
     UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: 'closeMenu'});
     UIMenu.Menu.Draw();
@@ -750,6 +785,51 @@ menuList.showStockOutMenu = async function(h) {
                 methods.debug(e);
             }
         }
+        if (item.doName === 'enterStock1') {
+            try {
+                if (user.getCache('id') != h.get('user_id')) {
+
+                    if (Container.Data.HasLocally(mp.players.local.remoteId, "isPassTimeout"))
+                    {
+                        mp.game.ui.notifications.show("~r~Таймаут 10 сек");
+                        return;
+                    }
+
+                    let pass = methods.parseInt(await UIMenu.Menu.GetUserInput("Пароль", "", 10));
+
+                    if (pass === 0) {
+                        mp.game.ui.notifications.show('~r~Вы ввели не правильный пинкод');
+                        return;
+                    }
+
+                    Container.Data.SetLocally(mp.players.local.remoteId, "isPassTimeout", true);
+
+                    if (pass === h.get('pin')) {
+                        stocks.enter1(h.get('id'));
+                        Container.Data.ResetLocally(mp.players.local.remoteId, "isPassTimeout");
+                    }
+                    else {
+
+                        mp.game.ui.notifications.show('~r~Вы ввели не правильный пинкод');
+                        setTimeout(function () {
+                            Container.Data.ResetLocally(mp.players.local.remoteId, "isPassTimeout");
+                        }, 10000);
+                    }
+
+                    /*mp.game.ui.notifications.show('~r~Введите пинкод');
+                    let pass = methods.parseInt(await UIMenu.Menu.GetUserInput("Введите пинкод", "", 5));
+                    if (pass == h.get('pin'))
+                        stocks.enter(h.get('id'));
+                    else
+                        mp.game.ui.notifications.show('~r~Вы ввели не правильный пинкод');*/
+                }
+                else
+                    stocks.enter1(h.get('id'));
+            }
+            catch (e) {
+                methods.debug(e);
+            }
+        }
     });
 };
 
@@ -772,7 +852,9 @@ menuList.showStockOutVMenu = async function(h) {
 
     UIMenu.Menu.Create(` `, `~b~Адрес: ~s~${h.get('address')} ${h.get('number')}`, 'hm', false, false, 'h1');
     UIMenu.Menu.AddMenuItem(`~b~Владелец:~s~ ${h.get('user_name')}`);
-    UIMenu.Menu.AddMenuItem("~g~Войти", "", {doName: 'enter'});
+    UIMenu.Menu.AddMenuItem("~g~Войти на склад", "", {doName: 'enter'});
+    if (h.get('upgrade_g'))
+        UIMenu.Menu.AddMenuItem("~g~Войти в офис", "", {doName: 'enter1'});
     UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: 'closeMenu'});
     UIMenu.Menu.Draw();
 
@@ -810,6 +892,43 @@ menuList.showStockOutVMenu = async function(h) {
                 }
                 else
                     stocks.enterv(h.get('id'));
+            }
+            catch (e) {
+                methods.debug(e);
+            }
+        }
+        if (item.doName === 'enter1') {
+            try {
+                if (user.getCache('id') != h.get('user_id')) {
+
+                    if (Container.Data.HasLocally(mp.players.local.remoteId, "isPassTimeout"))
+                    {
+                        mp.game.ui.notifications.show("~r~Таймаут 10 сек");
+                        return;
+                    }
+
+                    let pass = methods.parseInt(await UIMenu.Menu.GetUserInput("Пароль", "", 10));
+                    if (pass === 0) {
+                        mp.game.ui.notifications.show('~r~Вы ввели не правильный пинкод');
+                        return;
+                    }
+
+                    Container.Data.SetLocally(mp.players.local.remoteId, "isPassTimeout", true);
+
+                    if (pass === h.get('pin')) {
+                        stocks.enterv1(h.get('id'));
+                        Container.Data.ResetLocally(mp.players.local.remoteId, "isPassTimeout");
+                    }
+                    else {
+
+                        mp.game.ui.notifications.show('~r~Вы ввели не правильный пинкод');
+                        setTimeout(function () {
+                            Container.Data.ResetLocally(mp.players.local.remoteId, "isPassTimeout");
+                        }, 10000);
+                    }
+                }
+                else
+                    stocks.enterv1(h.get('id'));
             }
             catch (e) {
                 methods.debug(e);
@@ -3304,6 +3423,8 @@ menuList.showVehicleDoInvMenu = function(vehId) {
         mp.game.ui.notifications.show("~g~Ошибка взаимодействия с транспортом");
         return;
     }
+    
+    let vInfo = methods.getVehicleInfo(vehicle.model);
 
     UIMenu.Menu.Create(`Транспорт`, `~b~Взаимодействие с транспортом`);
 
@@ -3316,6 +3437,9 @@ menuList.showVehicleDoInvMenu = function(vehId) {
 
         UIMenu.Menu.AddMenuItem("~g~Взять микрофон", "", {doName: "takeMic"});
         UIMenu.Menu.AddMenuItem("~y~Положить микрофон", "", {doName: "putMic"});
+    }
+    if (vehicle.getVariable('fraction_id') === 2 && user.isSapd() && vInfo.display_name === 'Riot') {
+        UIMenu.Menu.AddMenuItem("~g~Войти в режим дрона", "", {doName: "drone"});
     }
 
     if (user.getCache('job') == vehicle.getVariable('jobId')) {
@@ -3360,6 +3484,9 @@ menuList.showVehicleDoInvMenu = function(vehId) {
         if (item.doName == 'putMic') {
             mp.attachmentMngr.removeLocal('mic');
             user.stopAllAnimation();
+        }
+        if (item.doName == 'drone') {
+            drone.enterLspd(vehicle.remoteId);
         }
         if (item.doName == 'photo:ask')
             photo.ask();
@@ -3821,7 +3948,7 @@ menuList.showVehicleMenu = function(data) {
                     let boxes = JSON.parse(veh.getVariable('box'));
                     boxes.forEach((item, i) => {
                         if (item >= 0)
-                            UIMenu.Menu.AddMenuItem(`~y~${stocks.boxList[item][0]}`, 'Нажмите ~g~Enter~s~ чтобы разгрузить', {cargoUnloadId: i});
+                            UIMenu.Menu.AddMenuItem(`~y~${stocks.boxList[item][0]}`, 'Нажмите ~g~Enter~s~ чтобы разгрузить', {cargoUnloadId: i, cargoId: item});
                     });
                 }
             }
@@ -3829,11 +3956,20 @@ menuList.showVehicleMenu = function(data) {
                 let boxes = JSON.parse(veh.getVariable('box'));
                 boxes.forEach((item, i) => {
                     if (item >= 0)
-                        UIMenu.Menu.AddMenuItem(`~y~${stocks.boxList[item][0]}`, 'Нажмите ~g~Enter~s~ чтобы разгрузить', {cargoUnloadId: i});
+                        UIMenu.Menu.AddMenuItem(`~y~${stocks.boxList[item][0]}`, 'Нажмите ~g~Enter~s~ чтобы разгрузить', {cargoUnloadId: i, cargoId: item});
                 });
             }
             //UIMenu.Menu.AddMenuItem(`~y~Разгрузить весь груз`, 'Доступно только внутри склада').cargoUnloadAll = true;
         }
+    }
+
+    if (user.isUsmc() && (veh.getVariable('cargoId') === 99999 || veh.getVariable('cargoId') === 99998)) {
+        try {
+            let boxes = JSON.parse(veh.getVariable('box'));
+            if (boxes[0] === 52)
+                UIMenu.Menu.AddMenuItem(`~y~Разгрузить транспорт`, "", {usmcUnloadAll: true});
+        }
+        catch (e) {}
     }
 
     if (veh.getVariable('lamar')) {
@@ -4222,9 +4358,9 @@ menuList.showVehicleMenu = function(data) {
         }
         else if (item.cargoUnloadId >= 0) {
             UIMenu.Menu.HideMenu();
-            fraction.unloadCargoVehTimer(item.cargoUnloadId);
+            fraction.unloadCargoVehTimer(item.cargoUnloadId, item.cargoId);
         }
-        else if (item.cargoUnloadAll) {
+        /*else if (item.cargoUnloadAll) {
             UIMenu.Menu.HideMenu();
             try {
                 if (user.getCache('fraction_id2') > 0) {
@@ -4244,10 +4380,14 @@ menuList.showVehicleMenu = function(data) {
             catch (e) {
                 
             }
-        }
+        }*/
         else if (item.emsUnloadAll) {
             UIMenu.Menu.HideMenu();
             mp.events.callRemote('server:ems:vehicleUnload');
+        }
+        else if (item.usmcUnloadAll) {
+            UIMenu.Menu.HideMenu();
+            mp.events.callRemote('server:usmc:vehicleUnload');
         }
         else if (item.eventName == 'server:vehicle:setNeonColor') {
             UIMenu.Menu.HideMenu();
@@ -4694,6 +4834,8 @@ menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId) {
 
                 if (item.item_id === 140 || item.item_id === 141)
                     desc = `В пачке: ${methods.moneyFormat(item.count)}`;
+                if (item.item_id === 49)
+                    desc = `${params.desc}`;
 
                 if (items.isWeapon(item.item_id)) {
 
@@ -4722,7 +4864,7 @@ menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId) {
                     itemName = params.name;
                     desc = params.sex === 1 ? 'Женская одежда' : 'Мужская одежда';
                 }
-                else if (item.item_id === 274 || item.item_id === 266 || item.item_id === 262) {
+                else if (item.item_id === 274 || item.item_id === 266) {
                     itemName = params.name;
                     if (params.desc)
                         desc = 'Редкость: ' + params.desc;
@@ -5426,83 +5568,78 @@ menuList.showBarberShopMenu = function (shopId, price) {
         menuListItem.label = "Волосы на груди";
         UIMenu.Menu.AddMenuItemList('Волосы на груди', list, `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`, menuListItem, skin.SKIN_OVERLAY_10 + 1, '', (sale > 0) ? 'sale' : '');
     }
-    else {
-        list = ['~r~Нет'];
-        for (let j = 0; j < mp.game.ped.getNumHeadOverlayValues(8) + 1; j++) {
-            list.push(j + '');
-        }
 
-        itemPrice = 250 * price;
-        menuListItem = {};
-        menuListItem.doName = 'SKIN_OVERLAY_8';
-        menuListItem.price = itemPrice + 0.01;
-        menuListItem.label = "Помада";
-        UIMenu.Menu.AddMenuItemList('Помада', list, `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`, menuListItem, skin.SKIN_OVERLAY_8 + 1, '', (sale > 0) ? 'sale' : '');
-
-        list = [];
-        for (let j = 0; j < 60; j++) {
-            list.push(j + '');
-        }
-
-        itemPrice = 110 * price;
-        menuListItem = {};
-        menuListItem.doName = 'SKIN_OVERLAY_COLOR_8';
-        menuListItem.price = itemPrice + 0.01;
-        menuListItem.label = "Цвет помады";
-        UIMenu.Menu.AddMenuItemList('Цвет помады', list, `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`, menuListItem, skin.SKIN_OVERLAY_COLOR_8, '', (sale > 0) ? 'sale' : '')
-
-        list = ['~r~Нет'];
-        for (let j = 0; j < 7; j++) {
-            list.push(j + '');
-        }
-
-        itemPrice = 250 * price;
-        menuListItem = {};
-        menuListItem.doName = 'SKIN_OVERLAY_5';
-        menuListItem.price = itemPrice + 0.01;
-        menuListItem.label = "Румянец";
-        UIMenu.Menu.AddMenuItemList('Румянец', list, `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`, menuListItem, skin.SKIN_OVERLAY_5 + 1, '', (sale > 0) ? 'sale' : '')
-        if (sale > 0)
-            menuListItem.SetLeftBadge(27);
-
-        list = [];
-        for (let j = 0; j < 60; j++) {
-            list.push(j + '');
-        }
-
-        itemPrice = 110 * price;
-        menuListItem = {};
-        menuListItem.doName = 'SKIN_OVERLAY_COLOR_5';
-        menuListItem.price = itemPrice + 0.01;
-        menuListItem.label = "Цвет румянца";
-        UIMenu.Menu.AddMenuItemList('Цвет румянца', list, `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`, menuListItem, skin.SKIN_OVERLAY_COLOR_5, '', (sale > 0) ? 'sale' : '')
-        if (sale > 0)
-            menuListItem.SetLeftBadge(27);
-
-        list = ['~r~Нет'];
-        for (let j = 0; j < mp.game.ped.getNumHeadOverlayValues(8) + 1; j++) {
-            list.push(j + '');
-        }
-
-        itemPrice = 300 * price;
-        menuListItem = {};
-        menuListItem.doName = 'SKIN_OVERLAY_4';
-        menuListItem.price = itemPrice + 0.01;
-        menuListItem.label = "Макияж";
-        UIMenu.Menu.AddMenuItemList('Макияж', list, `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`, menuListItem, skin.SKIN_OVERLAY_4 + 1, '', (sale > 0) ? 'sale' : '');
-
-        list = [];
-        for (let j = 0; j < 10; j++) {
-            list.push(j + '');
-        }
-
-        itemPrice = 150 * price;
-        menuListItem = {};
-        menuListItem.doName = 'SKIN_OVERLAY_COLOR_4';
-        menuListItem.price = itemPrice + 0.01;
-        menuListItem.label = "Цвет макияжа";
-        UIMenu.Menu.AddMenuItemList('Цвет макияжа', list, `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`, menuListItem, skin.SKIN_OVERLAY_COLOR_4, '', (sale > 0) ? 'sale' : '');
+    list = ['~r~Нет'];
+    for (let j = 0; j < mp.game.ped.getNumHeadOverlayValues(8) + 1; j++) {
+        list.push(j + '');
     }
+
+    itemPrice = 250 * price;
+    menuListItem = {};
+    menuListItem.doName = 'SKIN_OVERLAY_8';
+    menuListItem.price = itemPrice + 0.01;
+    menuListItem.label = "Помада";
+    UIMenu.Menu.AddMenuItemList('Помада', list, `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`, menuListItem, skin.SKIN_OVERLAY_8 + 1, '', (sale > 0) ? 'sale' : '');
+
+    list = [];
+    for (let j = 0; j < 60; j++) {
+        list.push(j + '');
+    }
+
+    itemPrice = 110 * price;
+    menuListItem = {};
+    menuListItem.doName = 'SKIN_OVERLAY_COLOR_8';
+    menuListItem.price = itemPrice + 0.01;
+    menuListItem.label = "Цвет помады";
+    UIMenu.Menu.AddMenuItemList('Цвет помады', list, `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`, menuListItem, skin.SKIN_OVERLAY_COLOR_8, '', (sale > 0) ? 'sale' : '')
+
+    list = ['~r~Нет'];
+    for (let j = 0; j < 7; j++) {
+        list.push(j + '');
+    }
+
+    itemPrice = 250 * price;
+    menuListItem = {};
+    menuListItem.doName = 'SKIN_OVERLAY_5';
+    menuListItem.price = itemPrice + 0.01;
+    menuListItem.label = "Румянец";
+    UIMenu.Menu.AddMenuItemList('Румянец', list, `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`, menuListItem, skin.SKIN_OVERLAY_5 + 1, '', (sale > 0) ? 'sale' : '')
+
+    list = [];
+    for (let j = 0; j < 60; j++) {
+        list.push(j + '');
+    }
+
+    itemPrice = 110 * price;
+    menuListItem = {};
+    menuListItem.doName = 'SKIN_OVERLAY_COLOR_5';
+    menuListItem.price = itemPrice + 0.01;
+    menuListItem.label = "Цвет румянца";
+    UIMenu.Menu.AddMenuItemList('Цвет румянца', list, `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`, menuListItem, skin.SKIN_OVERLAY_COLOR_5, '', (sale > 0) ? 'sale' : '')
+
+    list = ['~r~Нет'];
+    for (let j = 0; j < mp.game.ped.getNumHeadOverlayValues(4) + 1; j++) {
+        list.push(j + '');
+    }
+
+    itemPrice = 1000 * price;
+    menuListItem = {};
+    menuListItem.doName = 'SKIN_OVERLAY_4';
+    menuListItem.price = itemPrice + 0.01;
+    menuListItem.label = "Макияж";
+    UIMenu.Menu.AddMenuItemList('Макияж', list, `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`, menuListItem, skin.SKIN_OVERLAY_4 + 1, '', (sale > 0) ? 'sale' : '');
+
+    list = [];
+    for (let j = 0; j < 10; j++) {
+        list.push(j + '');
+    }
+
+    itemPrice = 150 * price;
+    menuListItem = {};
+    menuListItem.doName = 'SKIN_OVERLAY_COLOR_4';
+    menuListItem.price = itemPrice + 0.01;
+    menuListItem.label = "Цвет макияжа";
+    UIMenu.Menu.AddMenuItemList('Цвет макияжа', list, `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`, menuListItem, skin.SKIN_OVERLAY_COLOR_4, '', (sale > 0) ? 'sale' : '');
 
     UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
     UIMenu.Menu.Draw();

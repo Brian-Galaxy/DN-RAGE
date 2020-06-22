@@ -9,6 +9,7 @@ let loadDist = 150;
 let objectList = [];
 let iplList = [];
 let objectDelList = [];
+let doorList = [];
 
 object.load = function () {
     const start = new Date().getTime();
@@ -1385,33 +1386,19 @@ object.load = function () {
     object.create(-728539053, new mp.Vector3(478.93, -1686.76, 29.93), new mp.Vector3(1.001791E-05, 5.008955E-06, -39.99978), false, false); //Гаражная дверь Bloods
     object.create(-1635579193, new mp.Vector3(-1135.72, -1591.91, 4.47611), new mp.Vector3(1.001788E-05, 5.008956E-06, 35.05999), false, false); //Входная дверь для Vagos
 
-    const end = new Date().getTime();
-    methods.debug('Count Objects Loaded: ' + objectList.length + '  | ' + (end - start) + 'ms');
+    // Ворота на Занкудо
+    object.delete(1304936454, -2292.463, 3379.086, 32.77634); // Западный ворота
+    object.delete(1688333754, -1600.301, 2806.731, 18.65778); // Восточные ворота
 
-    timer.createInterval('object.process', object.process, 5000);
-};
+    // Закрытые окна в гараже неофок
+    object.create(-984871726, new mp.Vector3(224.87, 5180.12, -87.53218), new mp.Vector3(16.12494, 5.075419E-06, 89.99923), false, false);
 
-object.create = function (model, pos, rotation, dynamic, placeOnGround, invType = 0, safe = 0) {
-    //if (mp.game.streaming.isModelValid(model)) {
-    //mp.game.streaming.requestModel(model);
-    objectList.push({model: model, pos: pos, rotation: rotation, dynamic: dynamic, placeOnGround: placeOnGround, isCreate: false, handle: -1, invType: invType, safe: safe});
-    //}
-};
+    //DOORS
+    //DOORS
+    //DOORS
+    //DOORS
 
-object.createIpl = function (ipl, pos, radius) {
-    mp.game.streaming.removeIpl(ipl);
-    iplList.push({ipl: ipl, pos: pos, radius: radius, isLoad: false});
-};
 
-object.delete = function (model, x, y, z) {
-    objectDelList.push({model: model, x: x, y: y, z: z});
-};
-
-object.process = function () {
-
-    if (!user.isLogin())
-        return;
-    
     object.openDoor(741314661, 1844.998, 2604.813, 44.63978, true); // Тюремные ворота
     object.openDoor(741314661, 1818.543, 2604.813, 44.611, true); // Тюремные ворота
 
@@ -1657,12 +1644,97 @@ object.process = function () {
 
     object.openDoor(961976194, 255.2283, 223.976, 102.3932, false);
 
+    //Fleeca
+    object.openDoor(2703963187, -2956.116, 485.4206, 15.99531, true);
+    object.openDoor(2703963187, -1207.328, -335.1289, 38.07925, true);
+    object.openDoor(2703963187, -350.4144, -56.79705, 49.3348, true);
+    object.openDoor(2703963187, 314.6238, -285.9945, 54.46301, true);
+    object.openDoor(2703963187, 150.2913, -1047.629, 29.6663, true);
+    object.openDoor(2703963187, 1172.291, 2713.146, 38.38625, true);
+
+    //seval player.call('client:user:changeDoor', [-350.4144, -56.79705, 49.3348, false, 10]);
+
+    const end = new Date().getTime();
+    methods.debug('Count Objects Loaded: ' + objectList.length + '  | ' + (end - start) + 'ms');
+
+    timer.createInterval('object.process', object.process, 5000);
+};
+
+object.create = function (model, pos, rotation, dynamic, placeOnGround, invType = 0, safe = 0) {
+    //if (mp.game.streaming.isModelValid(model)) {
+    //mp.game.streaming.requestModel(model);
+    objectList.push({model: model, pos: pos, rotation: rotation, dynamic: dynamic, placeOnGround: placeOnGround, isCreate: false, handle: -1, invType: invType, safe: safe});
+    //}
+};
+
+object.createIpl = function (ipl, pos, radius) {
+    mp.game.streaming.removeIpl(ipl);
+    iplList.push({ipl: ipl, pos: pos, radius: radius, isLoad: false});
+};
+
+object.delete = function (model, x, y, z) {
+    objectDelList.push({model: model, x: x, y: y, z: z, isDelete: false});
+};
+
+object.openDoor = function (hash, x, y, z, isClose = false) {
+    doorList.push({hash: hash, x: x, y: y, z: z, isClose: isClose, isLoad: false});
+    /*try {
+        if (methods.distanceToPos(mp.players.local.position, new mp.Vector3(x, y, z)) < loadDist) {
+            mp.game.object.doorControl(hash, x, y, z, isClose, 0.0, 50.0, 0);
+            if (isClose == true)
+                mp.game.invoke(methods.FREEZE_ENTITY_POSITION, mp.game.object.getClosestObjectOfType(x, y, z, 1, hash, false, false, false));
+        }
+    }
+    catch (e) {
+        methods.debug(e);
+    }*/
+};
+
+object.changeDoor = function (x, y, z, isClose = false, distChecker = 10) {
+
+    let door = {};
+    let id = -1;
+    doorList.forEach((item, idx) => {
+        let dist = methods.distanceToPos(mp.players.local.position, new mp.Vector3(item.x, item.y, item.z));
+        if (dist < distChecker) {
+            door = item;
+            id = idx;
+        }
+    });
+
+    if (door && id >= 0) {
+        door.x = x;
+        door.y = y;
+        door.z = z;
+        door.isClose = isClose;
+        door.isLoad = false;
+        doorList[id] = door;
+
+        if (methods.distanceToPos(mp.players.local.position, new mp.Vector3(x, y, z)) < distChecker) {
+            mp.game.object.doorControl(door.hash, x, y, z, isClose, 0.0, 50.0, 0);
+            if (isClose)
+                mp.game.invoke(methods.FREEZE_ENTITY_POSITION, mp.game.object.getClosestObjectOfType(x, y, z, distChecker, door.hash, false, false, false));
+        }
+    }
+};
+
+object.process = function () {
+
+    if (!user.isLogin())
+        return;
+
     let playerPos = mp.players.local.position;
 
-    objectDelList.forEach(function(item) {
+    objectDelList.forEach(item => {
         try {
-            if (methods.distanceToPos(playerPos, new mp.Vector3(item.x, item.y, item.z)) < loadDist)
+            let dist = methods.distanceToPos(playerPos, new mp.Vector3(item.x, item.y, item.z));
+            if (dist < loadDist && !item.isDelete) {
                 mp.game.entity.createModelHide(item.x, item.y, item.z, 2, item.model, true);
+                item.isDelete = true;
+            }
+            else if (dist > loadDist + 50 && item.isDelete) {
+                item.isDelete = false;
+            }
         }
         catch (e) {
             methods.debug(e);
@@ -1687,6 +1759,25 @@ object.process = function () {
         }
     });
 
+    doorList.forEach(item => {
+        try {
+            let dist = methods.distanceToPos(playerPos, new mp.Vector3(item.x, item.y, item.z));
+
+            if (dist < loadDist && !item.isLoad) {
+                mp.game.object.doorControl(item.hash, item.x, item.y, item.z, item.isClose, 0.0, 50.0, 0);
+                if (item.isClose)
+                    mp.game.invoke(methods.FREEZE_ENTITY_POSITION, mp.game.object.getClosestObjectOfType(item.x, item.y, item.z, 1, item.hash, false, false, false));
+                item.isLoad = true;
+            }
+            else if (dist > loadDist + 50 && item.isLoad) {
+                item.isLoad = false;
+            }
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    });
+
     objectList.forEach(async function(item) {
         let dist = methods.distanceToPos2D(playerPos, item.pos);
         if (dist < loadDist && !item.isCreate) {
@@ -1698,6 +1789,10 @@ object.process = function () {
                             alpha: 255,
                             dimension: -1
                         });
+
+                    //prop_trials_seesaw
+
+                    //mp.objects.new(mp.game.joaat('prop_rub_tyre_01'), mp.players.local.position, {rotation: item.rotation, alpha: 255, dimension: -1}).handle;
 
                     if (item.invType > 0)
                         item.handle.invType = item.invType;
@@ -1734,19 +1829,6 @@ object.process = function () {
             }
         }
     });
-};
-
-object.openDoor = function (hash, x, y, z, isClose = false) {
-    try {
-        if (methods.distanceToPos(mp.players.local.position, new mp.Vector3(x, y, z)) < loadDist) {
-            mp.game.object.doorControl(hash, x, y, z, isClose, 0.0, 50.0, 0);
-            if (isClose == true)
-                mp.game.invoke(methods.FREEZE_ENTITY_POSITION, mp.game.object.getClosestObjectOfType(x, y, z, 1, hash, false, false, false));
-        }
-    }
-    catch (e) {
-        methods.debug(e);
-    }
 };
 
 export default object;

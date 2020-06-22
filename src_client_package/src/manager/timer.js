@@ -226,6 +226,8 @@ timer.ms100Timer = function() {
     }
 };
 
+let warning = 0;
+
 timer.twoSecTimer = function() {
 
     try {
@@ -238,10 +240,13 @@ timer.twoSecTimer = function() {
         EntityOther2 = mp.game.object.getClosestObjectOfType(plPos.x, plPos.y, plPos.z, 0.68, -1364697528, false, false, false);
         EntityOther3 = mp.game.object.getClosestObjectOfType(plPos.x, plPos.y, plPos.z, 0.68, -870868698, false, false, false);
 
+        //mp.game.object.getClosestObjectOfType(538.3007, 2671.711, 44.749, 1, mp.game.joaat('prop_cctv_cam_01a'), false, false, false);
+        //'prop_cctv_cam_01a', -191.7636, 618.1489, 201.4
+
         EntityFuel = 0;
 
         fuel.hashList.forEach(hash => {
-            if (EntityFuel == 0)
+            if (EntityFuel === 0)
                 EntityFuel = mp.game.object.getClosestObjectOfType(plPos.x, plPos.y, plPos.z, 3, hash, false, false, false);
         });
 
@@ -293,6 +298,48 @@ timer.tenSecTimer = function() {
             methods.debug(e);
         }
     }
+
+    let plPos = mp.players.local.position;
+    let isGive = false;
+
+    enums.cctvProps.forEach(prop => {
+        if (mp.players.local.weapon !== 2725352035 && !user.isGos()) {
+
+            enums.cctvProps.forEach(prop => {
+
+                try {
+                    let entity = mp.game.object.getClosestObjectOfType(plPos.x, plPos.y, plPos.z, 10, mp.game.joaat(prop), false, false, false);
+                    if (
+                        entity !== 0 &&
+                        mp.game.invoke('0xEEF059FAD016D209', entity) > 950 && //GET_ENTITY_HEALTH
+                        mp.game.invoke('0xFCDFF7B72D23A1AC', entity, mp.players.local.handle, 17)// HAS_ENTITY_CLEAR_LOS_TO_ENTITY
+                    ) {
+                        if (!isGive) {
+                            isGive = true;
+                            warning++;
+                        }
+
+                        if (warning >= 4) {
+                            user.giveWanted(1, 'Оружие в публичном месте');
+                            warning = 0;
+                        }
+                        else {
+                            mp.game.ui.notifications.show("~y~Вас заметила камера\nУберите оружие или вы будете получать розыск");
+                        }
+                    }
+                    /*else {
+                        warning = 0;
+                    }*/
+                }
+                catch (e) {
+                    methods.debug(e);
+                }
+            });
+        }
+        else {
+            warning = 0;
+        }
+    });
 
     weapons.getMapList().forEach(item => {
         let hash = item[1] / 2;

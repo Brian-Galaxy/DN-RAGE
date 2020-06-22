@@ -115,7 +115,7 @@ mp.events.add('server:casino:wheel:finalRoll', (player) => {
             player.notifyWithPicture('Diamond Casino', '~g~Колесо Удачи', `Вы выиграли ~g~$50,000`, 'CHAR_CASINO');
         }
         else if (win === 5) {
-            user.giveVip(player, methods.getRandomInt(7, 14), 2, true, ' с колеса удачи');
+            user.giveVip(player, methods.getRandomInt(1, 5), 2, true, ' с колеса удачи');
             player.notifyWithPicture('Diamond Casino', '~g~Колесо Удачи', `Вы выиграли VIP HARD`, 'CHAR_CASINO');
         }
         else if (win === 9) {

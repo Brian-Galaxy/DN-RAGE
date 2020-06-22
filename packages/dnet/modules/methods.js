@@ -431,17 +431,78 @@ methods.getLicName = function (lic) {
 methods.getRareName = function (proc) {
     if (proc === 0)
         return 'Обычная';
-    if (proc < 11)
+    if (proc <= 10)
         return 'Легендарная';
-    if (proc < 30)
+    if (proc <= 20)
+        return 'Засекреченная';
+    if (proc <= 30)
         return 'Мистическая';
-    if (proc < 50)
+    if (proc <= 40)
+        return 'Элитная';
+    if (proc <= 50)
         return 'Невероятно редкая';
-    if (proc < 70)
-        return 'Очень Редкая';
-    if (proc < 90)
+    if (proc <= 60)
+        return 'Очень редкая';
+    if (proc <= 70)
         return 'Редкая';
+    if (proc <= 80)
+        return 'Необычная';
+    if (proc <= 90)
+        return 'Ширпотреб';
     return 'Обычная';
+};
+
+let delList = [];
+let openList = [];
+
+methods.deleteObject = function(x, y, z, hash) {
+    delList.push([x, y, z, hash]);
+    mp.players.forEach(p => {
+        if (!mp.players.exists(p))
+            return false;
+        p.call('client:user:deleteObject', [x, y, z, hash]);
+    });
+};
+
+methods.loadDeleteObject = function(player) {
+    player.call('client:user:deleteObjectArray', [JSON.stringify(delList)]);
+};
+
+methods.openObject = function(x, y, z, isClose, radius = 10) {
+
+    try {
+        let id = -1;
+        openList.forEach((item, idx) => {
+            let dist = methods.distanceToPos(new mp.Vector3(x, y, z), new mp.Vector3(item.x, item.y, item.z));
+            if (dist < radius) {
+                id = idx;
+            }
+        });
+
+        if (id >= 0)
+            openList[id] = [x, y, z, isClose, radius];
+        else
+            openList.push([x, y, z, isClose, radius]);
+
+        mp.players.forEach(p => {
+            if (!mp.players.exists(p))
+                return false;
+            p.call('client:user:changeDoor', [x, y, z, isClose, radius]);
+        });
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+};
+
+methods.loadOpenObject = function(player) {
+    player.call('client:user:changeDoorArray', [JSON.stringify(openList)]);
+};
+
+methods.explodeObject = function(x, y, z, rangeLoad = 200, type = 34, damage = 30, audio = true, cameraShake = 2) {
+    mp.players.forEachInRange(new mp.Vector3(x, y, z), rangeLoad, p => {
+        user.addExplode(p, x, y, z, type, damage, audio, false, cameraShake, 1);
+    });
 };
 
 methods.saveFile = function (name, log) {

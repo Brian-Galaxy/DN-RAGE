@@ -15,6 +15,8 @@ hosp.pos1 = new mp.Vector3(320.7169494628906, -584.0098876953125, 42.28400802612
 hosp.pos2 = new mp.Vector3(-259.3686218261719, 6327.6416015625, 31.420677185058594);
 hosp.pos3 = new mp.Vector3(1827.4207763671875, 3676.67138671875, 33.27007293701172);
 
+hosp.posArmy = new mp.Vector3(556.9434204101562, -3125.037841796875, 17.76858139038086);
+
 let hospList = [
     hosp.pos1,
     hosp.pos2,
@@ -31,6 +33,9 @@ hosp.findNearest = function(pos) {
         if (methods.distanceToPos(shopPos, pos) < methods.distanceToPos(prevPos, pos))
             prevPos = shopPos;
     });
+
+    if (user.isUsmc())
+        return hosp.posArmy;
     return prevPos;
 };
 
@@ -56,16 +61,22 @@ hosp.timer = function() {
                 }
                 prvTime = user.getCache('med_time') + methods.getRandomInt(1, 5);
 
-                if (user.getCache('med_type') == 1) {
+                if (user.getCache('med_type') === 1) {
                     if (methods.distanceToPos(mp.players.local.position, hosp.pos2) > 30) {
                         mp.game.ui.notifications.show("~r~Вам необходимо проходить лечение");
                         user.teleportv(hosp.pos2);
                     }
                 }
-                else if (user.getCache('med_type') == 2) {
+                else if (user.getCache('med_type') === 2) {
                     if (methods.distanceToPos(mp.players.local.position, hosp.pos3) > 20) {
                         mp.game.ui.notifications.show("~r~Вам необходимо проходить лечение");
                         user.teleportv(hosp.pos3);
+                    }
+                }
+                else if (user.getCache('med_type') === 3) {
+                    if (methods.distanceToPos(mp.players.local.position, hosp.posArmy) > 20) {
+                        mp.game.ui.notifications.show("~r~Вам необходимо проходить лечение");
+                        user.teleportv(hosp.posArmy);
                     }
                 }
                 else {
@@ -125,11 +136,14 @@ hosp.reset = function() {
 
 hosp.toHospCache = function() {
     try {
-        if (user.getCache('med_type') == 1) {
+        if (user.getCache('med_type') === 1) {
             user.respawn(hosp.pos2.x, hosp.pos2.y, hosp.pos2.z);
         }
-        else if (user.getCache('med_type') == 2) {
+        else if (user.getCache('med_type') === 2) {
             user.respawn(hosp.pos3.x, hosp.pos3.y, hosp.pos3.z);
+        }
+        else if (user.getCache('med_type') === 3) {
+            user.respawn(hosp.posArmy.x, hosp.posArmy.y, hosp.posArmy.z);
         }
         else {
             user.set('med_type', 0);
@@ -157,6 +171,10 @@ hosp.toHosp = function() {
             else if (methods.distanceToPos(pos, hosp.pos3) < 50) {
                 user.set('med_type', 2);
                 user.respawn(hosp.pos3.x, hosp.pos3.y, hosp.pos3.z);
+            }
+            else if (methods.distanceToPos(pos, hosp.posArmy) < 50) {
+                user.set('med_type', 3);
+                user.respawn(hosp.posArmy.x, hosp.posArmy.y, hosp.posArmy.z);
             }
             else {
                 user.set('med_type', 0);

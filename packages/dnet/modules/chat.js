@@ -193,6 +193,11 @@ mp.events.add('playerCommand', (player, command) => {
                 return;
             fraction.createCargoBigWar();
         }
+        else if (command.toLowerCase() === "crimeawar") {
+            if (!user.isAdmin(player))
+                return;
+            fraction.createCargoArmyWar();
+        }
         else if (command.toLowerCase() === "bwar") {
             if (!user.isAdmin(player))
                 return;

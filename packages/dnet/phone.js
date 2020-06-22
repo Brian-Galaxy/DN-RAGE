@@ -2082,9 +2082,10 @@ phone.getMenuItemTable = function(title, columns, data, readonly = true, params 
     };
 };
 
-phone.getMenuMainItem = function(title, items) {
+phone.getMenuMainItem = function(title, items, hidden = false) {
     return {
         title: title,
+        hidden: hidden,
         umenu: items,
     };
 };

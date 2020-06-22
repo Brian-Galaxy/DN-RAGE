@@ -17,6 +17,7 @@ import walkie from "../walkie";
 
 import pSync from "./pSync";
 import heliCam from "./heliCam";
+import drone from "./drone";
 
 
 let bind = {};
@@ -252,6 +253,11 @@ for(let code in keyCodes) {
         if (user.getCache('s_bind_voice_reload') == parseInt(code)) {
             mp.voiceChat.cleanupAndReload(true, true, true);
             mp.game.ui.notifications.show('~b~Голосовой чат был перезагружен');
+        }
+
+        if (user.getCache('s_bind_helicam_vision') == parseInt(code)) {
+            heliCam.keyPressToggleVision();
+            drone.keyPressToggleVision();
         }
 
         if (methods.isBlockKeys())
@@ -620,10 +626,6 @@ for(let code in keyCodes) {
         if (user.getCache('s_bind_helicam') == parseInt(code)) {
             if (!methods.isBlockKeys())
                 heliCam.keyPressToggleHeliCam();
-        }
-        if (user.getCache('s_bind_helicam_vision') == parseInt(code)) {
-            if (!methods.isBlockKeys())
-                heliCam.keyPressToggleVision();
         }
         if (user.getCache('s_bind_helicam_lock') == parseInt(code)) {
             if (!methods.isBlockKeys())

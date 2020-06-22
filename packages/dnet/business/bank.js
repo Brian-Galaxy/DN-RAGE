@@ -45,31 +45,70 @@ bank.mazePos = new mp.Vector3(-66.66476, -802.0474, 44.22729);
 let pos1 = new mp.Vector3(592.0863037109375, -3280.79931640625, 5.069560527801514);
 
 bank.grabPos = [
-    [265.7952, 213.5179, 100.6834, 1000],
-    [148.2362, -1050.56, 28.34637, 200],
-    [312.5701, -288.8269, 53.14306, 200],
-    [ -352.3924, -59.68721, 48.01485, 200],
-    //[-2952.724, 484.4081, 14.67539, 500],
-    [1173.16, 2716.468, 37.0663, 200],
-    [591.1983642578125, -3276.912353515625, 5.069560527801514, 500]
+    //[265.7952, 213.5179, 100.6834, 1000],
+    [149.7346954345703, -1045.0836181640625, 28.346284866333008, 340.3794250488281, 50], //1 Fleeca
+    [150.78562927246094, -1046.550048828125, 28.3463134765625, 253.30227661132812, 50], //1 Fleeca
+    [150.3111114501953, -1049.879150390625, 28.346399307250977, 256.7460632324219, 50], //1 Fleeca
+    [148.34864807128906, -1050.489501953125, 28.34636878967285, 158.39613342285156, 50], //1 Fleeca
+    [147.0778045654297, -1048.675537109375, 28.34629249572754, 69.17208099365234, 50], //1 Fleeca
+
+    [311.414794921875, -286.997314453125, 53.14303207397461, 65.65191650390625, 50], //2 Fleeca
+    [312.6293640136719, -288.9345397949219, 53.14309310913086, 160.13775634765625, 50], //2 Fleeca
+    [314.7052001953125, -288.172119140625, 53.14309310913086, 246.85928344726562, 50], //2 Fleeca
+    [315.2232360839844, -284.9268798828125, 53.14301681518555, 246.265380859375, 50], //2 Fleeca
+    [314.11553955078125, -283.5606994628906, 53.143001556396484, 342.7865905761719, 50], //2 Fleeca
+
+    [-353.5682678222656, -57.798828125, 48.01482009887695, 68.28033447265625, 50], //3 Fleeca
+    [-352.33209228515625, -59.58372116088867, 48.01487731933594, 161.0061492919922, 50], //3 Fleeca
+    [-350.3403625488281, -59.01103591918945, 48.01487731933594, 250.86105346679688, 50], //3 Fleeca
+    [-349.85052490234375, -55.66060256958008, 48.014801025390625, 249.18411254882812, 50], //3 Fleeca
+    [-351.1510925292969, -54.277156829833984, 48.01478958129883, 329.4079284667969, 50], //3 Fleeca
+
+    [-2954.10498046875, 482.6646423339844, 14.675313949584961, 172.8809356689453, 50], //4 Fleeca
+    [-2952.712646484375, 484.362548828125, 14.675384521484375, 264.9574890136719, 50], //4 Fleeca
+    [-2953.955322265625, 486.13299560546875, 14.675411224365234, 356.767333984375, 50], //4 Fleeca
+    [-2957.267333984375, 485.6308288574219, 14.675328254699707, 353.3204345703125, 50], //4 Fleeca
+    [-2958.415283203125, 484.1565246582031, 14.675297737121582, 106.96119689941406, 50], //4 Fleeca
+
+    [1174.9677734375, 2715.234619140625, 37.06627655029297, 266.14385986328125, 50], //5 Fleeca
+    [1173.0654296875, 2716.480712890625, 37.06633377075195, 354.5975341796875, 50], //5 Fleeca
+    [1171.5247802734375, 2715.162353515625, 37.06633377075195, 89.02828979492188, 50], //5 Fleeca
+    [1172.1947021484375, 2711.862060546875, 37.066253662109375, 87.42176818847656, 50], //5 Fleeca
+    [1173.611572265625, 2711.01904296875, 37.06624984741211, 175.1178436279297, 50], //5 Fleeca
+
+    [-1209.4210205078125, -333.86944580078125, 36.759246826171875, 35.28739547729492, 50], //6 Fleeca
+    [-1207.6424560546875, -333.9707336425781, 36.759254455566406, 295.8665771484375, 50], //6 Fleeca
+    [-1205.712646484375, -336.59283447265625, 36.759334564208984, 296.6121826171875, 50], //6 Fleeca
+    [-1206.6063232421875, -338.58599853515625, 36.759334564208984, 206.62356567382812, 50], //6 Fleeca
+    [-1208.793212890625, -338.1792907714844, 36.759273529052734, 117.29550170898438, 50], //6 Fleeca
 ];
 
 bank.doorPos = [
-    [961976194, 255.2283, 223.976, 102.3932],
-    [2121050683, 148.0266, -1044.364, 29.506930],
-    [2121050683, 312.358, -282.7301, 54.30365],
-    [2121050683, -352.7365, -53.57248, 49.17543],
-    //[2121050683, -2958.538, 482.2705, 15.83594],
-    [2121050683, 1175.542, 2710.861, 38.22689]
+    //[961976194, 255.2283, 223.976, 102.3932],
+    [2121050683, 148.0266, -1044.364, 29.506930], //1 Fleeca
+    [2121050683, 312.358, -282.7301, 54.30365], //2 Fleeca
+    [2121050683, -352.7365, -53.57248, 49.17543], //3 Fleeca
+    [-63539571, -2958.539, 482.2706, 15.83594], //4 Fleeca
+    [2121050683, 1175.542, 2710.861, 38.22689], //5 Fleeca
+    [2121050683, -1211.4628, -334.9701, 36.7809], //6 Fleeca
 ];
 
-bank.bombPos = [
-    [254.0034, 225.1687, 100.8757],
-    [147.2123, -1044.969, 28.36802],
-    [311.5067, -283.4736, 53.16475],
-    [-353.559, -54.34758, 48.03654],
-    //[-2957.552, 481.6652, 14.69703],
-    [1175.989, 2711.895, 37.088]
+bank.doorPos2 = [
+    [148.70309448242188, -1045.873779296875, 28.346275329589844, 162.990478515625], //1 Fleeca
+    [313.0599060058594, -284.15972900390625, 53.143001556396484, 156.33438110351562], //2 Fleeca
+    [-352.0060119628906, -55.08885955810547, 48.01478958129883, 156.97299194335938], //3 Fleeca
+    [-2957.24072265625, 483.4284362792969, 14.675286293029785, 267.50872802734375], //4 Fleeca
+    [1174.3895263671875, 2712.03759765625, 37.06624984741211, 2.002439260482788], //5 Fleeca
+    [-1209.6844482421875, -335.0898742675781, 36.75924301147461, 202.06007385253906], //6 Fleeca
+];
+
+bank.doorPosExplode = [
+    [150.2913, -1047.629, 29.6663], //1 Fleeca
+    [314.6238, -285.9945, 54.46301], //2 Fleeca
+    [-350.4144, -56.79705, 49.3348], //3 Fleeca
+    [-2956.116, 485.4206, 15.99531], //4 Fleeca
+    [1172.291, 2713.146, 38.38625], //5 Fleeca
+    [-1207.328, -335.1289, 38.07925], //6 Fleeca
 ];
 
 bank.loadAll = function() {
@@ -78,8 +117,6 @@ bank.loadAll = function() {
     methods.createBlip(bank.pacificPos, 374, 65, 0.8, 'Bank - Pacific Standard');
     methods.createBlip(bank.blainePos, 374, 67, 0.8, 'Bank - Blaine County Savings');
     methods.createBlip(bank.mazePos, 374, 59, 0.8, 'Bank - Maze');
-
-    //methods.createStaticCheckpointV(pos1, "~y~Место для ограбления C4", 2, -1, [33, 150, 243, 100], 0.3);
 
     bank.fleecaMarkers.forEach(function (item) {
         let bankPos = new mp.Vector3(item[0], item[1], item[2]);
@@ -91,39 +128,29 @@ bank.loadAll = function() {
         methods.createCpVector(bankPos, "Нажмите ~g~Е~s~ чтобы открыть меню");
     });
 
-    /*bank.bombPos.forEach(function (item) {
+    bank.doorPos.forEach(function (item) {
+        let bankPos = new mp.Vector3(item[1], item[2], item[3]);
+        methods.createCpVector(bankPos, "~y~Место для установки взрывчатки", 1.7, -1, [0,0,0,0]);
+    });
+
+    bank.doorPos2.forEach(function (item) {
         let bankPos = new mp.Vector3(item[0], item[1], item[2]);
-        methods.createStaticCheckpointV(bankPos, "~y~Место для установки взрывчатки", 1, -1, [0,0,0,0]);
+        methods.createCpVector(bankPos, "~y~Нажмите ~s~E~y~ чтобы воспользоваться панелью", 1, -1, [0,0,0,0]);
     });
 
     let idx = 0;
     bank.grabPos.forEach(function (item) {
         try {
             let bankPos = new mp.Vector3(item[0], item[1], item[2]);
-            methods.createStaticCheckpointV(bankPos, "~y~Место для ограбления", 2, -1, [33, 150, 243, 100], 0.3);
+            methods.createCpVector(bankPos, "~y~Место для ограбления ячеек", 1.7, -1, [0,0,0,0]);
             idx++;
         }
         catch (e) {
             methods.debug(e);
         }
-    });*/
+    });
 
     methods.debug('LOAD ALL BANKS');
-};
-
-bank.loadGrabCounts = function() {
-    try {
-        for (let i = 0; i < 5; i++)
-            if (i == 0)
-                bank.grabPos[i][3] = 1000;
-            else if (i == 5)
-                bank.grabPos[i][3] = 500;
-            else
-                bank.grabPos[i][3] = 200;
-    }
-    catch (e) {
-        methods.debug(e);
-    }
 };
 
 bank.addBankHistory = function(userId, card, text, price) {
@@ -542,7 +569,7 @@ bank.getInRadius = function(pos, radius = 2) {
     return stationId;
 };
 
-bank.getGrabInRadius = function(pos, radius = 5) {
+bank.getGrabInRadius = function(pos, radius = 1.7) {
     let idx = 0;
     let result = -1;
     bank.grabPos.forEach(function (item) {
@@ -554,16 +581,65 @@ bank.getGrabInRadius = function(pos, radius = 5) {
     return result;
 };
 
-bank.getBombInRadius = function(pos, radius = 2) {
+bank.getBombInRadius = function(pos, radius = 1.7) {
     let idx = 0;
     let result = -1;
-    bank.bombPos.forEach(function (item) {
+    bank.doorPos.forEach(function (item) {
+        let fuelStationShopPos = new mp.Vector3(item[1], item[2], item[3]);
+        if (methods.distanceToPos(pos, fuelStationShopPos) < radius)
+            result = idx;
+        idx++;
+    });
+    return result;
+};
+
+bank.getHackDoorInRadius = function(pos, radius = 1.2) {
+    let idx = 0;
+    let result = -1;
+    bank.doorPos2.forEach(function (item) {
         let fuelStationShopPos = new mp.Vector3(item[0], item[1], item[2]);
         if (methods.distanceToPos(pos, fuelStationShopPos) < radius)
             result = idx;
         idx++;
     });
     return result;
+};
+
+bank.hackFleecaDoor = function(player) {
+    if (!user.isLogin(player))
+        return;
+
+    let doorId = bank.getHackDoorInRadius(player.position);
+    if (doorId >= 0) {
+
+        let pos = bank.doorPos2[doorId];
+        let pos2 = bank.doorPosExplode[doorId];
+
+        player.position = new mp.Vector3(pos[0], pos[1], pos[2] + 1);
+        user.heading(player, pos[3]);
+        user.blockKeys(player, true);
+        user.playAnimation(player, 'anim@heists@ornate_bank@hack','hack_enter', 8);
+        setTimeout(function () {
+            if (!user.isLogin(player))
+                return;
+            user.playAnimation(player, 'anim@heists@ornate_bank@hack','hack_loop', 9);
+            player.addAttachment('laptop');
+
+            setTimeout(function () {
+                if (!user.isLogin(player))
+                    return;
+                user.stopAnimation(player);
+                user.blockKeys(player, false);
+                player.addAttachment('laptop', true);
+
+                methods.explodeObject(pos2[0], pos2[1], pos2[2] - 0.5, 200, 18, 0.1, false, 0);
+                methods.explodeObject(pos2[0], pos2[1], pos2[2] + 0.5, 200, 18, 0.1, false, 0);
+                methods.explodeObject(pos2[0], pos2[1], pos2[2], 200, 18, 0.1, false, 0);
+
+                methods.openObject(pos2[0], pos2[1], pos2[2], false, 5);
+            }, 30000);
+        }, 7500);
+    }
 };
 
 bank.checkPosForOpenMenu = function(player) {

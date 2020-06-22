@@ -190,6 +190,12 @@ stocks.openCase = {
         [74, 74, 74, 74, 287, 287, 287, 287, 287, 287, 287, 287],
         [75, 287, 287, 304, 305, 306],
     ],
+    51: [
+        [49],
+    ],
+    52: [
+        [262, 262, 262, 262, 262],
+    ],
 };
 
 //Имя, Model, Объем, OffsetZ, Можно ли юзать, Цена
@@ -245,7 +251,9 @@ stocks.boxList = [
     ['Большой ящик слоновых бивней', -2033482115, 46, -0.12, false, 15000, 'Трофеи браконьеров', 1 ], //47
     ['Малый ящик слоновых бивней', 588496643, 47, -0.12, false, 5000, 'Трофеи браконьеров', 0 ], //48
     ['Бриллиант 64 карата', 926762619, 48, 0, false, 50000, 'Уникальный груз', 2 ], //49
-    ['Оружейный ящик Merryweather', -994309865, 13, 0, false, 30000, 'Оружие и патроны', 2 ], //50
+    ['Оружейный ящик Merryweather', -994309865, 49, 0, false, 30000, 'Оружие и патроны', 2 ], //50
+    ['Ящик с документами банков Fleeca', -994309865, 50, 0, false, 50000, 'Уникальный груз', 2 ], //51
+    ['Ящик с C4', -1853019218, 51, 0, false, 200000, 'Оружие и патроны', 2 ], //52
 ];
 
 stocks.boxPosList = [
@@ -412,6 +420,7 @@ stocks.loadAll = function() {
             stocks.set(item['id'], 'vz', item['vz']);
             stocks.set(item['id'], 'vrot', item['vrot']);
             stocks.set(item['id'], 'upgrade', item['upgrade']);
+            stocks.set(item['id'], 'upgrade_g', item['upgrade_g']);
             stocks.set(item['id'], 'tax_money', item['tax_money']);
             stocks.set(item['id'], 'tax_score', item['tax_score']);
 
@@ -473,6 +482,7 @@ stocks.loadLast = function() {
             stocks.set(item['id'], 'vz', item['vz']);
             stocks.set(item['id'], 'vrot', item['vrot']);
             stocks.set(item['id'], 'upgrade', item['upgrade']);
+            stocks.set(item['id'], 'upgrade_g', item['upgrade_g']);
             stocks.set(item['id'], 'tax_money', item['tax_money']);
             stocks.set(item['id'], 'tax_score', item['tax_score']);
 
@@ -686,7 +696,10 @@ stocks.openBySlot = function (player, slot, boxId) {
 
     stocks.openCase[boxId][caseId].forEach(async item => {
         setTimeout(function () {
-            inventory.addItem(item, 1, slot + inventory.types.UserStock, id + enums.offsets.stock, 1, 0, "{}", 1);
+            if (boxId === 51)
+                inventory.addItem(item, 1, slot + inventory.types.UserStock, id + enums.offsets.stock, 1, 0, "{\"desc\":\"Расписание банков Fleeca\",\"type\":1}", 1);
+            else
+                inventory.addItem(item, 1, slot + inventory.types.UserStock, id + enums.offsets.stock, 1, 0, "{}", 1);
         }, methods.getRandomInt(0, 1000))
     });
 
@@ -858,15 +871,30 @@ stocks.updateOwnerInfo = function (id, userId, userName) {
 
     stocks.set(id, "user_name", userName);
     stocks.set(id, "user_id", userId);
+    stocks.set(id, "upgrade_g", 0);
 
-    if (userId == 0) {
-        stocks.updatePin(id, 1);
-        stocks.updatePin1(id, 1);
-        stocks.updatePin2(id, 1);
-        stocks.updatePin3(id, 1);
+    if (userId === 0) {
+        stocks.updatePin(id, 0);
+        stocks.updatePin1(id, 0);
+        stocks.updatePin2(id, 0);
+        stocks.updatePin3(id, 0);
     }
 
-    mysql.executeQuery("UPDATE stocks SET user_name = '" + userName + "', user_id = '" + userId + "', tax_money = '0' where id = '" + id + "'");
+    mysql.executeQuery("UPDATE stocks SET user_name = '" + userName + "', user_id = '" + userId + "', upgrade_g = '0', tax_money = '0' where id = '" + id + "'");
+};
+
+stocks.updateUpgradeG = function (id, status) {
+    methods.debug('stocks.updateUpgradeG');
+    if (typeof status === "boolean") {
+        if (status)
+            status = 1;
+        else
+            status = 0;
+    }
+    id = methods.parseInt(id);
+    status = methods.parseInt(status);
+    stocks.set(id, 'upgrade_g', status);
+    mysql.executeQuery("UPDATE stocks SET upgrade_g = '" + status + "' where id = '" + id + "'");
 };
 
 stocks.updatePin = function (id, pin) {
@@ -986,6 +1014,18 @@ stocks.enter = function (player, id) {
     user.teleport(player, stocks.interiorList[intId][0], stocks.interiorList[intId][1], stocks.interiorList[intId][2] + 1, stocks.interiorList[intId][3]);
 };
 
+stocks.enter1 = function (player, id) {
+    methods.debug('stocks.enter', id);
+
+    if (!user.isLogin(player))
+        return;
+    id = methods.parseInt(id);
+
+    let hInfo = stocks.getData(id);
+    player.dimension = id + enums.offsets.stock;
+    user.teleport(player, 174.17990112304688, 5207.748046875, -88.07341613769531, 89.15861511230469);
+};
+
 stocks.enterv = function (player, id) {
     methods.debug('stocks.enter', id);
 
@@ -1046,4 +1086,66 @@ stocks.enterv = function (player, id) {
         });*/
     }
     user.teleportVeh(player, stocks.interiorList[intId][4], stocks.interiorList[intId][5], stocks.interiorList[intId][6], stocks.interiorList[intId][7]);
+};
+
+stocks.enterv1 = function (player, id) {
+    methods.debug('stocks.enter', id);
+
+    if (!user.isLogin(player))
+        return;
+
+    let hInfo = stocks.getData(id);
+
+    if (vehicles.exists(player.vehicle)) {
+        let vInfo = methods.getVehicleInfo(player.vehicle.model);
+        if ((vInfo.class_name == 'Planes' ||
+            vInfo.class_name == 'Boats' ||
+            vInfo.class_name == 'Helicopters' ||
+            vInfo.class_name == 'Emergency' ||
+            vInfo.class_name == 'Military') /*&& vInfo.display_name !== 'Mule4' && vInfo.display_name !== 'Pounder2'*/)
+        {
+            player.notify('~r~Данному классу авто запрещено заезжать в гараж');
+            return;
+        }
+
+        if (player.vehicle.getVariable('cargoId'))
+        {
+            player.notify('~r~Транспорту с грузом запрещено заезжать в гараж');
+            return;
+        }
+
+        /*if (hInfo.get('interior') === 0 && vInfo.display_name !== 'Mule4' && vInfo.display_name !== 'Pounder2') {
+            player.notify('~r~Данному авто запрещено заезжать в гараж маленького склада, только большой средний');
+            return;
+        }*/
+    }
+
+    let intId = hInfo.get('interior');
+    id = methods.parseInt(id);
+
+    let pos = new mp.Vector3(169.47637939453125, 5206.49951171875, -89.1696548461914);
+    let v = methods.getNearestVehicleWithCoords(pos, 5, id + enums.offsets.stock);
+
+    if (vehicles.exists(v) && player.vehicle) {
+        player.notify('~r~К сожалению, сейчас у ворот уже стоит транспорт, необходимо чтобы он отъехал');
+        return;
+    }
+
+    player.dimension = id + enums.offsets.stock;
+    if (vehicles.exists(player.vehicle)) {
+        player.vehicle.dimension = id + enums.offsets.stock;
+        /*vehicles.set(player.vehicle.id, 'lastStockPos', JSON.stringify(player.vehicle.position));
+        vehicles.set(player.vehicle.id, 'lastStockRot', player.vehicle.heading);*/
+        /*player.vehicle.getOccupants().forEach(p => {
+            if (user.isLogin(p) && p.id !== player.id)
+            {
+                p.dimension = 0;
+                p.removeFromVehicle();
+            }
+        });*/
+    }
+    if (player.vehicle)
+        user.teleportVeh(player, 169.47637939453125, 5206.49951171875, -88.0696548461914, 180.1299591064453);
+    else
+        user.teleport(player, 174.17990112304688, 5207.748046875, -88.07341613769531, 89.15861511230469);
 };

@@ -23,6 +23,7 @@ let timerBig = 0;
 let isCargo = false;
 let isCargoMafia = false;
 let isCargoBig = false;
+let isCargoArmy = false;
 
 let radius1 = 15;
 let radius2 = 60;
@@ -121,7 +122,7 @@ fraction.shopList = [
             [-816.4236, -1073.197, 10.32811, 122.9058],
         ]
     },
-    {
+    /*{
         bId: 95,
         name: "Robs Liquor Vespucci Canals",
         sumMax: 240000,
@@ -129,7 +130,7 @@ fraction.shopList = [
         pos: [
             [-1222.079, -908.4241, 11.32635, 26.30677],
         ]
-    },
+    },*/
     {
         bId: 106,
         name: "LTD Gasoline Little Seoul",
@@ -423,6 +424,109 @@ fraction.warVehPos = [
     [564.9754, 2278.31, 60.52063, -1.453646],  // West BC
 ];
 
+fraction.spawnSellCar = [
+    [890.7494, -887.1849, 25.84651],
+    [766.4, -1260.555, 25.37186],
+    [851.8011, -1831.602, 28.06896],
+    [851.6774, -1158.151, 24.3023],
+    [847.5076, -1069.428, 26.92109],
+    [699.4786, -1128.382, 22.24945],
+    [577.7948, 126.9853, 97.04148],
+    [323.1581, 266.567, 103.414],
+    [253.3774, 377.4038, 104.5283],
+    [178.6812, 306.8284, 104.3724],
+    [230.8467, 129.6978, 101.5997],
+    [194.7888, -158.9859, 55.49936],
+    [216.3271, -168.5611, 55.3541],
+    [148.8967, -248.5904, 50.4516],
+    [82.71505, -236.2534, 50.39946],
+    [-27.13595, -194.1181, 51.35989],
+    [3.520691, -205.3572, 51.74189],
+    [-95.4155, -67.6993, 55.53669],
+    [-168.475, -34.71078, 51.4754],
+    [-360.5042, -76.62489, 44.66393],
+    [-458.4943, -52.30092, 43.52047],
+    [363.5428, -819.1024, 28.29422],
+    [322.06, -1003.798, 28.29926],
+    [141.5507, -1082.443, 28.19286],
+    [42.70964, -1042.73, 28.59591],
+    [-26.0413, -1056.122, 27.21913],
+    [-206.9192, -1179.181, 22.02565],
+    [-155.4755, -1302.916, 30.29429],
+    [-163.9829, -1294.986, 30.18624],
+    [167.7018, -1271.769, 28.11567],
+    [165.4078, -1283.638, 28.29859],
+    [150.1237, -1337.773, 28.2023],
+    [181.1786, -1268.827, 28.19847],
+    [349.2975, -1245.632, 31.50902],
+    [473.5204, -1277.482, 28.53934],
+    [501.6826, -1337.755, 28.31747],
+    [489.5869, -1470.616, 28.14251],
+    [204.1818, -1470.338, 28.14609],
+    [137.0424, -1491.959, 28.14161],
+    [161.3926, -1535.993, 28.14277],
+    [140.9424, -1662.967, 28.34746],
+    [138.9199, -1693.797, 28.29168],
+    [180.7571, -1839.156, 27.10101],
+    [126.1626, -2200.372, 5.033323],
+    [-416.027, -2182.174, 9.318065],
+    [-1109, -1633.801, 3.615957],
+    [-1160.825, -1567.497, 3.402748],
+    [-1200.51, -1475.458, 3.379667],
+    [-1202.092, -1488.313, 3.368478],
+    [-1169.796, -1390.268, 3.905849],
+    [-1224.043, -1325.96, 3.280814],
+    [-1321.365, -1252.643, 3.598371],
+    [-1355.841, -888.1062, 12.88378],
+    [-1320.76, -1050.598, 6.395164],
+    [-1322.497, -1163.263, 3.778337],
+    [-688.3421, -884.9573, 23.49907],
+    [-606.6516, -1031.485, 20.78754],
+    [-621.3337, -1130.681, 21.17824],
+    [-675.5823, -1177.249, 9.612634],
+    [-716.4938, -1117.794, 9.638943],
+    [-1370.031, -330.7177, 38.04632],
+    [-1410.545, -275.7105, 45.36698],
+    [-1323.405, -238.9408, 41.6163],
+    [-1288.583, -275.9117, 37.74124],
+    [-1242.971, -257.9161, 37.96944],
+    [-1307.487, -165.5989, 43.31689],
+    [-1375.376, -640.7664, 27.67338],
+    [-1318.818, -592.7297, 27.70128],
+    [-1302.734, -614.6133, 26.37872],
+    [-1262.802, -656.7431, 25.66081],
+    [-1204.121, -714.222, 20.62428],
+    [-1263.289, -821.7017, 16.09917],
+    [-1286.903, -794.5048, 16.59557],
+    [-1325.62, -755.705, 19.36698],
+    [-993.6166, -296.0273, 36.81883],
+    [-975.684, -267.8478, 37.30238],
+    [-952.3403, -181.6185, 35.9865],
+    [-1242.613, 381.5071, 74.34577],
+    [18.9639, -2470.025, 5.006779],
+    [17.50936, -2500.126, 5.006742],
+    [-1.310199, -2641.652, 5.02572],
+    [65.85783, -2394.83, 4.999991],
+    [571.9922, -2615.65, 5.082719],
+    [512.1475, -3002.872, 5.044459],
+    [586.5938, -3000.016, 5.045214],
+    [601.0622, -2969.064, 5.045213],
+    [813.8008, -3085.608, 4.900832],
+    [907.441, -3085.644, 4.900764],
+    [1003.035, -3090.569, 4.901042],
+    [1046.298, -2979.327, 4.901042],
+    [1119.263, -3031.792, 4.901042],
+    [1167.046, -2976.289, 4.902107],
+    [893.0602, -3082.885, 4.900764],
+    [949.7615, -3086.139, 4.900764],
+    [894.3501, -3031.693, 4.902038],
+    [893.3064, -2968.881, 4.900779],
+    [990.4277, -2971.079, 4.900827],
+    [1135.723, -3230.098, 4.898733],
+    [865.5045, -3207.119, 4.900659],
+    [585.8919, -2831.814, 5.054844],
+];
+
 let currentWarPos = [];
 
 fraction.loadAll = function() {
@@ -452,6 +556,11 @@ fraction.loadAll = function() {
             fraction.set(item['id'], 'orderAtm', 0);
             fraction.set(item['id'], 'orderFuel', 0);
             fraction.set(item['id'], 'orderDrug', 0);
+
+            if (item['is_war']) {
+                //fraction.isGang
+                methods.createBlip(new mp.Vector3(item['spawn_x'], item['spawn_y'], item['spawn_z']), 310, 39, 0.6, 'Титульная тер.');
+            }
         });
         count = rows.length;
         methods.debug('All Fraction Loaded: ' + count);
@@ -502,6 +611,10 @@ fraction.isMafia = function(fractionId) {
 
 fraction.isGang = function(fractionId) {
     return fraction.get(fractionId, 'is_war');
+};
+
+fraction.canSpawn = function(fractionId) {
+    return fraction.get(fractionId, 'spawn_x') !== 0;
 };
 
 fraction.createCargoWar = function(count = 3) {
@@ -602,12 +715,27 @@ fraction.getNearSpawn = function(pos) {
     return prevPos;
 };
 
+fraction.getNearSpawnGarage = function(pos) {
+    let prevPos = new mp.Vector3(9999, 9999, 9999);
+    fraction.spawnSellCar.forEach(function (item,) {
+        let shopPos = new mp.Vector3(item[0], item[1], item[2]);
+        if (methods.distanceToPos(shopPos, pos) < methods.distanceToPos(prevPos, pos))
+            prevPos = shopPos;
+    });
+    return prevPos;
+};
+
+fraction.getRandomSpawnGarage = function() {
+    let item = fraction.spawnSellCar[methods.getRandomInt(0, fraction.spawnSellCar.length)];
+    return new mp.Vector3(item[0], item[1], item[2]);
+};
+
 fraction.spawnNearCargo = function(player, isDrug = false) {
 
     if (!user.isLogin(player))
         return;
 
-    let posVeh = fraction.getNearSpawn(player.position);
+    let posVeh = fraction.getNearSpawnGarage(player.position);
 
     user.setWaypoint(player, posVeh.x, posVeh.y);
     player.notify('~g~Метка на фургон была установлена');
@@ -630,7 +758,7 @@ fraction.spawnNearCargo = function(player, isDrug = false) {
 
             let boxes = [];
 
-            let count = 6;
+            let count = 9;
             if (isDrug)
                 count = 3;
 
@@ -664,6 +792,84 @@ fraction.spawnNearCargo = function(player, isDrug = false) {
         }
 
     }, posVeh, 0, 'Speedo4');
+};
+
+fraction.spawnCargo = function(name, boxes, x, y, z, heading = 0, cargoId = 999, color = -1) {
+    vehicles.spawnCarCb(veh => {
+        if (!vehicles.exists(veh))
+            return;
+        try {
+            if (color < 0)
+                color = methods.getRandomInt(0, 150);
+
+            veh.locked = false;
+            veh.setColor(color, color);
+            veh.setVariable('box', JSON.stringify(boxes));
+            veh.setVariable('cargoId', cargoId);
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+
+    }, new mp.Vector3(x, y, z), heading, name);
+};
+
+fraction.spawnNearBank = function(player, type = 0) {
+
+    if (!user.isLogin(player))
+        return;
+
+    /*let posVeh = fraction.getNearSpawnGarage(player.position);
+    if (type === 0 || type === 99)
+        posVeh = fraction.getRandomSpawnGarage();*/
+
+    let posVeh = fraction.getRandomSpawnGarage();
+
+    user.setWaypoint(player, posVeh.x, posVeh.y);
+    player.notify('~g~Метка на транспорт была установлена');
+
+    let vehList = ['Emperor', 'Emperor2', 'Oracle', 'Bodhi2', 'Blista2', 'Stratum', 'Primo', 'Minivan', 'Intruder', 'RancherXL'];
+    let veh = vehList[methods.getRandomInt(0, vehList.length)];
+
+    if (type === 99)
+        veh = 'Baller5';
+
+    vehicles.spawnCarCb(veh => {
+
+        if (!vehicles.exists(veh))
+            return;
+
+        try {
+            let color = methods.getRandomInt(0, 160);
+            if (type === 99)
+                color = 0;
+
+            veh.locked = true;
+            veh.setColor(color, color);
+            veh.windowTint = 1;
+
+            if (type === 0)
+                inventory.addItem(262, 1, inventory.types.Vehicle, mp.joaat(veh.numberPlate), 1, 0, "{}");
+            if (type === 1) {
+                inventory.addAmmoItem(280, 5, inventory.types.Vehicle, mp.joaat(veh.numberPlate), 1, 0, "{}");
+                inventory.addAmmoItem(281, 5, inventory.types.Vehicle, mp.joaat(veh.numberPlate), 1, 0, "{}");
+                inventory.addAmmoItem(282, 5, inventory.types.Vehicle, mp.joaat(veh.numberPlate), 1, 0, "{}");
+                inventory.addAmmoItem(283, 5, inventory.types.Vehicle, mp.joaat(veh.numberPlate), 1, 0, "{}");
+                inventory.addAmmoItem(284, 5, inventory.types.Vehicle, mp.joaat(veh.numberPlate), 1, 0, "{}");
+            }
+            if (type === 2) {
+                inventory.addAmmoItem(216, 10, inventory.types.Vehicle, mp.joaat(veh.numberPlate), 1, 0, "{}");
+                inventory.addAmmoItem(215, 5, inventory.types.Vehicle, mp.joaat(veh.numberPlate), 1, 0, "{}");
+            }
+            if (type === 3) {
+                inventory.addAmmoItem(5, 20, inventory.types.Vehicle, mp.joaat(veh.numberPlate), 1, 0, "{}");
+            }
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+
+    }, posVeh, 0, veh);
 };
 
 fraction.createCargoMafiaWar = function() {
@@ -777,7 +983,7 @@ fraction.createCargoBigWar = function() {
         try {
             veh.locked = false;
             veh.setColor(0, 0);
-            let boxes = [];
+            let boxes = [51];
 
             for (let i = 0; i < 20; i++) {
                 let rare = 0;
@@ -805,6 +1011,16 @@ fraction.createCargoBigWar = function() {
     }, posVeh, 90, 'Pounder2');
 
     setTimeout(fraction.timerCargoBigWar, 1000);
+};
+
+fraction.createCargoArmyWar = function() {
+    if (isCargoArmy)
+        return;
+    methods.notifyWithPictureToFractions2('Борьба за груз Армии', `~r~ВНИМАНИЕ!`, 'Началась война за груз армии, груз скоро будет отмечен на карте');
+    isCargoArmy = true;
+    fraction.spawnCargo("Brickade", [52], 489.89801025390625, -3149.06201171875, 6.418020725250244, 359.25390625, 99999, 154);
+    fraction.spawnCargo("Brickade", [52], 490.11376953125, -3132.896484375, 6.417043685913086, 359.23504638671875,  99998, 154);
+    setTimeout(fraction.timerCargoArmyWar, 30000);
 };
 
 fraction.stopCargoWar = function() {
@@ -908,6 +1124,19 @@ fraction.stopCargoBigWar = function() {
             return;
 
         currentWarPos[i].isActive = false;
+    });
+};
+
+fraction.stopCargoArmyWar = function() {
+    isCargoArmy = false;
+    mp.players.forEach(p => {
+        if (!user.isLogin(p))
+            return;
+
+        if (user.get(p, 'fraction_id2') > 0 && user.has(p, 'isCargo') || user.isAdmin(p) || user.isAdmin(p)) {
+            user.deleteBlip(p, 99999);
+            user.deleteBlip(p, 99998);
+        }
     });
 };
 
@@ -1170,6 +1399,48 @@ fraction.timerCargoBigWar = function() {
     setTimeout(fraction.timerCargoBigWar, 1000);
 };
 
+fraction.timerCargoArmyWar = function() {
+
+    let pos1 = null;
+    let pos2 = null;
+
+    mp.vehicles.forEach(v => {
+        try {
+            if (v.dimension === 0 && (v.getVariable('cargoId') === 99999 || v.getVariable('cargoId') === 99998) && !v.dead) {
+
+                if (JSON.parse(v.getVariable('box'))[0] === 52) {
+                    if (v.getVariable('cargoId') === 99999)
+                        pos1 = v.position;
+                    else
+                        pos2 = v.position;
+                }
+            }
+        }
+        catch (e) {}
+    });
+
+    mp.players.forEach(p => {
+        try {
+            if (!user.isLogin(p))
+                return;
+
+            if (user.get(p, 'fraction_id2') > 0 && user.has(p, 'isCargo') || user.isAdmin(p) || user.isAdmin(p)) {
+                if (pos1)
+                    user.createBlip(p, 99999, pos1.x, pos1.y, pos1.z, 636, 52);
+                if (pos2)
+                    user.createBlip(p, 99998, pos2.x, pos2.y, pos2.z, 636, 52);
+            }
+        }
+        catch (e) {}
+    });
+
+    if (!pos1 && !pos2)
+        fraction.stopCargoArmyWar();
+
+    if (isCargoArmy)
+        setTimeout(fraction.timerCargoArmyWar, 5000);
+};
+
 fraction.getShopGang = function(player) {
     if (!user.isLogin(player))
         return;
@@ -1178,10 +1449,10 @@ fraction.getShopGang = function(player) {
         player.notify('~r~Вы не состоите в организации');
         return;
     }
-    if (fraction.get(user.get(player, 'fraction_id2'), 'cantGrab')) {
+    /*if (fraction.get(user.get(player, 'fraction_id2'), 'cantGrab')) {
         player.notify('~r~Вы уже сегодня совершали ограбление недавно');
         return;
-    }
+    }*/
     if (fraction.get(user.get(player, 'fraction_id2'), 'cantGrab2') >= 1) {
         player.notify('~r~Вы уже сегодня совершали ограбление сегодня');
         return;
@@ -1206,7 +1477,7 @@ fraction.getShopGang = function(player) {
 
     fraction.set(frId, 'cantGrab', true);
 
-    if (fraction.has(user.get(player, 'fraction_id2'), 'cantGrab2'))
+    //if (fraction.has(user.get(player, 'fraction_id2'), 'cantGrab2'))
         fraction.set(user.get(player, 'fraction_id2'), 'cantGrab2', 1);
 
     let shopItem = fraction.shopList[methods.getRandomInt(0, fraction.shopList.length)];
@@ -1265,7 +1536,7 @@ fraction.startGrabShopGang = function(player, itemId = 0) {
             player.heading = pos[3];
 
             user.playAnimation(player, "missheistfbisetup1", "unlock_loop_janitor", 9);
-            user.blockKeys(player, true);
+            //user.blockKeys(player, true);
 
             fraction.set(frId, 'currentGrabShopActive' + i, true);
 
@@ -1275,13 +1546,18 @@ fraction.startGrabShopGang = function(player, itemId = 0) {
                     return;
 
                 try {
-                    user.blockKeys(player, false);
+                    //user.blockKeys(player, false);
                     user.stopAnimation(player);
 
                     fraction.reset(frId, 'currentGrabShopActive' + i);
 
+                    if (methods.distanceToPos(new mp.Vector3(pos[0], pos[1], pos[2]), player.position) > 5) {
+                        player.notify('~r~Вы слишком далеко');
+                        return;
+                    }
+
                     if (methods.getRandomInt(0, 100) < 40) {
-                        inventory.addItem(141, 1, inventory.types.Player, user.getId(player), methods.getRandomInt(shopItem.sumMax, shopItem.sumMin) * 1.2, 0, "{}", 2);
+                        inventory.addItem(141, 1, inventory.types.Player, user.getId(player), methods.getRandomInt(shopItem.sumMax, shopItem.sumMin) * 2.2, 0, "{}", 2);
                         mp.players.forEach(p => {
                             if (user.isLogin(p) && user.get(p, 'fraction_id2') === frId) {
                                 user.deleteBlip(p, i + 1000);
@@ -1324,6 +1600,10 @@ fraction.save = function(id) {
         sql = sql + ", is_war = '" + methods.parseInt(fraction.get(id, "is_war")) + "'";
         sql = sql + ", is_mafia = '" + methods.parseInt(fraction.get(id, "is_mafia")) + "'";
         sql = sql + ", is_kill = '" + methods.parseInt(fraction.get(id, "is_kill")) + "'";
+        sql = sql + ", spawn_x = '" + methods.parseInt(fraction.get(id, "spawn_x")) + "'";
+        sql = sql + ", spawn_y = '" + methods.parseInt(fraction.get(id, "spawn_y")) + "'";
+        sql = sql + ", spawn_z = '" + methods.parseInt(fraction.get(id, "spawn_z")) + "'";
+        sql = sql + ", spawn_rot = '" + methods.parseInt(fraction.get(id, "spawn_rot")) + "'";
         sql = sql + ", rank_leader = '" + methods.removeQuotes(fraction.get(id, "rank_leader")) + "'";
         sql = sql + ", rank_sub_leader = '" + methods.removeQuotes(fraction.get(id, "rank_sub_leader")) + "'";
         sql = sql + ", rank_list = '" + methods.removeQuotes(fraction.get(id, "rank_list")) + "'";

@@ -132,6 +132,7 @@ pickups.SapdStockPos2 = new mp.Vector3(-1622.5550537109375, -1035.54931640625, 1
 pickups.SapdStockPos3 = new mp.Vector3(-1086.5660400390625, -835.6643676757812, 18.497018814086914);
 pickups.Bcsd1StockPos = new mp.Vector3(-439.0313720703125, 6010.5322265625, 26.985639572143555);
 pickups.Bcsd2StockPos = new mp.Vector3(1855.5472412109375, 3699.1943359375, 33.267086029052734);
+pickups.UsmcStockPos = new mp.Vector3(467.45806884765625, -3220.532958984375, 6.056998252868652);
 
 pickups.SheriffGarderobPos = new mp.Vector3(-452.945, 6013.818, 30.716);
 pickups.SheriffGarderobPos2 = new mp.Vector3(1849.775390625, 3695.501953125, 33.26706314086914);
@@ -487,6 +488,7 @@ pickups.checkPressE = function(player) {
     bar.checkPosForOpenMenu(player);
     barberShop.checkPosForOpenMenu(player);
     bank.checkPosForOpenMenu(player);
+    bank.hackFleecaDoor(player);
     shop.checkPosForOpenMenu(player);
 
     if (methods.distanceToPos(pickups.LifeInvaderShopPos, playerPos) < distanceCheck)
@@ -587,6 +589,7 @@ pickups.checkPressE = function(player) {
     if (methods.distanceToPos(pickups.SapdStockPos, playerPos) < distanceCheck ||
         methods.distanceToPos(pickups.SapdStockPos2, playerPos) < distanceCheck ||
         methods.distanceToPos(pickups.SapdStockPos3, playerPos) < distanceCheck ||
+        methods.distanceToPos(pickups.UsmcStockPos, playerPos) < distanceCheck ||
         methods.distanceToPos(pickups.Bcsd1StockPos, playerPos) < distanceCheck ||
         methods.distanceToPos(pickups.Bcsd2StockPos, playerPos) < distanceCheck
     )
@@ -828,6 +831,7 @@ pickups.createAll = function() {
     methods.createCpVector(pickups.SapdStockPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
     methods.createCpVector(pickups.SapdStockPos2, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
     methods.createCpVector(pickups.SapdStockPos3, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.UsmcStockPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
     methods.createCpVector(pickups.SapdGarderobPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
     methods.createCpVector(pickups.SapdGarderobPos2, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
     methods.createCpVector(pickups.SapdGarderobPos3, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);

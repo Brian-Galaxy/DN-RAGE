@@ -34,7 +34,11 @@ heliCam.keyPressToggleHeliCam = async function () {
             locked_on_vehicle = null;
 
             if (!enableCam) {
-                if ((mp.players.local.vehicle.getVariable('fraction_id') == 2 || mp.players.local.vehicle.getVariable('fraction_id') == 5) &&  (
+                if ((mp.players.local.vehicle.getVariable('fraction_id') == 2 ||
+                    mp.players.local.vehicle.getVariable('fraction_id') == 3 ||
+                    mp.players.local.vehicle.getVariable('fraction_id') == 4 ||
+                    mp.players.local.vehicle.getVariable('fraction_id') == 5
+                ) &&  (
                     mp.players.local.vehicle.model === mp.game.joaat('polmav') ||
                     mp.players.local.vehicle.model === mp.game.joaat('buzzard') ||
                     mp.players.local.vehicle.model === mp.game.joaat('buzzard2')
@@ -105,8 +109,6 @@ heliCam.keyPressToggleVision = function () {
             }
             mp.game.audio.playSoundFrontend(-1, "SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET", false);
         }
-        else
-            mp.game.ui.notifications.show('~y~Необходимо включить режим камеры на вертолете, либо функция на данном ТС не доступна.');
     }
     catch (e) {
         
@@ -129,8 +131,6 @@ heliCam.keyPressToggleLockVehicle = function () {
                 }
             }
         }
-        else
-            mp.game.ui.notifications.show('~y~Необходимо включить режим камеры на вертолете, либо функция на данном ТС не доступна.');
     }
     catch (e) {
 

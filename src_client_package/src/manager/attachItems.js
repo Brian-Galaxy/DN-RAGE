@@ -11,6 +11,16 @@ attachItems.registerAttaches = function () {
         mp.attachmentMngr.register("mic", mp.game.joaat("p_ing_microphonel_01"), 60309, new mp.Vector3(0.055, 0.05, 0.0), new mp.Vector3(240.0, 0.0, 0.0));
         mp.attachmentMngr.register("cam", mp.game.joaat("prop_v_cam_01"), 28422, new mp.Vector3(0.0, 0.0, 0.0), new mp.Vector3(0.0, 0.0, 0.0));
 
+        mp.attachmentMngr.register("bagGrab", mp.game.joaat("p_ld_heist_bag_s_pro_o"), 57005, new mp.Vector3(0.1, 0, 0.15), new mp.Vector3(300.0, 200.0, 250));
+        mp.attachmentMngr.register("cash", mp.game.joaat("hei_prop_heist_cash_pile"), 18905, new mp.Vector3(0.1, 0, 0.05), new mp.Vector3(160, 0, 0));
+
+        //mp.attachmentMngr.register("laptop", mp.game.joaat("prop_laptop_lester"), 0x49D9, new mp.Vector3(0.20, 0.00, 0.05), new mp.Vector3(0.0, 180.0, 240), false, true);
+        mp.attachmentMngr.register("laptop", mp.game.joaat("xm_prop_x17_laptop_lester_01"), 0x49D9, new mp.Vector3(0.20, 0.00, 0.05), new mp.Vector3(0.0, 180.0, 240), false, true);
+
+        mp.attachmentMngr.register("WORLD_HUMAN_PROTEST_1", mp.game.joaat("prop_cs_protest_sign_01"), 28422, new mp.Vector3(0.0, 0.0, 0.0), new mp.Vector3(0.0, 0.0, 180));
+        mp.attachmentMngr.register("WORLD_HUMAN_PROTEST_2", mp.game.joaat("prop_cs_protest_sign_02"), 28422, new mp.Vector3(0.0, 0.0, 0.0), new mp.Vector3(0.0, 0.0, 180));
+        mp.attachmentMngr.register("WORLD_HUMAN_PROTEST_3", mp.game.joaat("prop_cs_protest_sign_03"), 28422, new mp.Vector3(0.0, 0.0, 0.0), new mp.Vector3(0.0, 0.0, 180));
+
         mp.attachmentMngr.register("ems_-1903396261", -1903396261, 'bodyshell', new mp.Vector3(0, -2.5, 0), new mp.Vector3(0, 0, 0)); // Разбитый вертолёт
         mp.attachmentMngr.register("ems_1898296526", 1898296526, 'bodyshell', new mp.Vector3(0, -2.0, 0.3), new mp.Vector3(0, 0, 0)); // Разбитое авто 1
         mp.attachmentMngr.register("ems_1069797899", 1069797899, 'bodyshell', new mp.Vector3(0, -2.5, 0.4), new mp.Vector3(0, 0, 0)); // Разбитое авто 2

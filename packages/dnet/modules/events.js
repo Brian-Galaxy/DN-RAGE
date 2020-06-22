@@ -1930,7 +1930,7 @@ mp.events.addRemoteCounted('server:startSpecMission', (player) => {
             user.putInVehicle(player, v, -1);
             v.alpha = 0;
             v.locked = true;
-            v.addAttachment('spec3');
+            v.addAttachment('spec1');
 
             setTimeout(function () {
                 try {
@@ -1948,9 +1948,69 @@ mp.events.addRemoteCounted('server:startSpecMission', (player) => {
     }
 });
 
+mp.events.addRemoteCounted('server:startSpecMissionLspd', (player, vId) => {
+    try {
+        if (user.isAdmin(player)) {
+
+            let canUse = 0;
+            mp.vehicles.forEach(v => {
+                if (v.getVariable('riotId'))
+                    canUse++;
+            });
+
+            if (canUse >= 2) {
+                player.notify('~r~Доступно только 2 дрона одновременно');
+                return;
+            }
+            
+            player.call('client:drone:status', [true]);
+
+            let v = vehicles.spawnCar(player.position, player.heading, 'rcbandito');
+            user.putInVehicle(player, v, -1);
+            v.alpha = 0;
+            v.locked = true;
+            v.addAttachment('spec1');
+
+            let riot = mp.vehicles.at(vId);
+
+            setTimeout(function () {
+                try {
+                    mp.players.callInRange(v.position, 200, "vSync:Sound", [v.id]);
+                    v.setVariable('markAsDrone', true);
+                    if (mp.vehicles.exists(riot))
+                        v.setVariable('riotId', riot.numberPlate);
+                }
+                catch (e) {
+
+                }
+            }, 1000)
+        }
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
 mp.events.addRemoteCounted('server:stopSpecMission', (player) => {
     try {
+        if (user.isLogin(player))
+            vehicles.respawn(player.vehicle);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.addRemoteCounted('server:stopSpecMissionLspd', (player) => {
+    try {
         if (user.isLogin(player)) {
+            mp.vehicles.forEach(v => {
+                if (player.vehicle.getVariable('riotId') === v.numberPlate)
+                {
+                    let pos = v.position;
+                    user.teleport(player, pos.x + 2, pos.y + 2, pos.z)
+                }
+            });
             vehicles.respawn(player.vehicle);
         }
     }
@@ -2129,6 +2189,42 @@ mp.events.addRemoteCounted('server:ems:attachObject', (player, id) => {
 mp.events.addRemoteCounted('server:ems:vehicleUnload', (player) => {
     try {
         ems.vehicleUnload(player);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.addRemoteCounted('server:usmc:vehicleUnload', (player) => {
+    try {
+        if (!user.isLogin(player))
+            return;
+
+        if (methods.distanceToPos(player.position, new mp.Vector3(-1802.54638671875, 3097.65625, 33.18984603881836)) > 30) {
+            player.notify('~g~Разгрузить можно только в специальном месте, маркер был поставлен в GPS');
+            user.setWaypoint(player, -1802.54638671875, 3097.65625);
+            return;
+        }
+
+        let v = player.vehicle;
+        if (vehicles.exists(v)) {
+            v.setVariable('cargoId', undefined);
+            v.setVariable('box', undefined);
+            player.notify('~g~Вы разгрузили транспорт. Вам была выдана премия в $1000');
+            user.addRep(player, 10);
+            user.addMoney(player, 1000, 'Премия USMC');
+            coffer.addMoney(coffer.getIdByFraction(4), 500000);
+
+            mp.players.forEach(p => {
+                if (user.isUsmc(p)) {
+                    user.addMoney(player, 2500, 'Премия USMC');
+                    player.notify('~g~Вам была выдана премия в размере $2500, за доставленный грузовик');
+                }
+            })
+        }
+        else {
+            player.notify('~r~Рядом с вами нет транспорта')
+        }
     }
     catch (e) {
         methods.debug(e);
@@ -2407,6 +2503,10 @@ mp.events.addRemoteCounted('server:fraction:removeMoney', (player, id, money, it
 
 mp.events.addRemoteCounted('server:fraction:setMoney', (player, id, money, itemName) => {
     fraction.setMoney(id, money, itemName);
+});
+
+mp.events.addRemoteCounted('server:fraction:save', (player, id) => {
+    fraction.save(id);
 });
 
 mp.events.addRemoteCounted('server:user:addMoney', (player, money, text) => {
@@ -3647,6 +3747,12 @@ mp.events.addRemoteCounted("onKeyPress:E", (player) => {
                 player.call('client:showStockInVMenu', [Array.from(houseData)]);
             }
         });
+
+        if (methods.distanceToPos(player.position, new mp.Vector3(169.47637939453125, 5206.49951171875, -89.1696548461914)) < 4) {
+            let houseData = stocks.getData(player.dimension - enums.offsets.stock);
+            player.call('client:showStockInVMenu', [Array.from(houseData)]);
+        }
+
         stocks.pcList.forEach(function(item) {
             let x = item[0];
             let y = item[1];
@@ -3762,10 +3868,28 @@ mp.events.addRemoteCounted("server:stocks:enterv", (player, id) => {
     stocks.enterv(player, id);
 });
 
+mp.events.addRemoteCounted("server:stocks:enter1", (player, id) => {
+    if (!user.isLogin(player))
+        return;
+    stocks.enter1(player, id);
+});
+
+mp.events.addRemoteCounted("server:stocks:enterv1", (player, id) => {
+    if (!user.isLogin(player))
+        return;
+    stocks.enterv1(player, id);
+});
+
 mp.events.addRemoteCounted("server:stocks:buy", (player, id) => {
     if (!user.isLogin(player))
         return;
     stocks.buy(player, id);
+});
+
+mp.events.addRemoteCounted("server:stocks:updateGarage", (player, id, status) => {
+    if (!user.isLogin(player))
+        return;
+    stocks.updateUpgradeG(id, status);
 });
 
 mp.events.addRemoteCounted("server:stocks:updatePin", (player, id, pin) => {
@@ -4816,6 +4940,12 @@ mp.events.addRemoteCounted('server:fraction:getLamarSpeedo', (player) => {
     if (!user.isLogin(player))
         return;
     fraction.spawnNearCargo(player);
+});
+
+mp.events.addRemoteCounted('server:fraction:getBankVeh', (player, type) => {
+    if (!user.isLogin(player))
+        return;
+    fraction.spawnNearBank(player, type);
 });
 
 mp.events.addRemoteCounted('server:fraction:vehicleNewRank', (player, id, rank) => {
@@ -6421,6 +6551,12 @@ mp.events.add("__ragemp_cheat_detected", (player,  cheatCode) => {
         case 14:
             cheatName = 'Cheat Engine ByPass';
             break;
+        case 15:
+            cheatName = 'GodMode';
+            break;
+        case 18:
+            cheatName = 'Cheat #18';
+            break;
     }
 
     switch (cheatCode) {
@@ -6437,7 +6573,7 @@ mp.events.add("__ragemp_cheat_detected", (player,  cheatCode) => {
                 if (!user.isLogin(p))
                     return;
                 if (user.isAdmin(p))
-                    p.outputChatBoxNew(`!{#f44336}Подозрение в читерстве ${user.getRpName(player)} (${player.id}):!{#FFFFFF} ${cheatName}`);
+                    p.outputChatBoxNew(`!{#f44336}Подозрение в читерстве ${user.getRpName(player)} (${player.id}):!{#FFFFFF} ${cheatName} #${cheatCode}`);
             });
         }
     }
@@ -6524,6 +6660,8 @@ mp.events.add("playerDeath", (player, reason, killer) => {
         try {
             if (player.dimension === 9999)
                 return;
+            if (player.dimension === 99999)
+                return;
             let killerPos = killer.position;
             methods.saveLog('log_user_death',
                 ['user', 'reason'],
@@ -6537,6 +6675,8 @@ mp.events.add("playerDeath", (player, reason, killer) => {
     else if (user.isLogin(player)) {
         try {
             if (player.dimension === 9999)
+                return;
+            if (player.dimension === 99999)
                 return;
             methods.saveLog('log_user_death',
                 ['user', 'reason'],

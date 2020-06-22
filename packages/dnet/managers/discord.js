@@ -4,7 +4,8 @@ let discord = exports;
 
 discord.report = "https://discordapp.com/api/webhooks/682573681415028740/l0tkdhaVqlCLa_JZQ6xnAE1lE2aZejqq8Zj_x8QvUlAH8hoIB6frc6uZpUPfx3C7K8Ah";
 discord.deadlist = "https://discordapp.com/api/webhooks/682680284789211162/OicTpLvtwIVENmFJxs_bOl7fVmiRCPwqOdQvDc34D_6yDFVZZ4Cps-67fbtrj--NYeyQ";
-discord.invaderAd = "https://discordapp.com/api/webhooks/682694382238957636/fglcxTfyJ2NS-Nzr1dxNW2IJmVKjCpErvmzXkEKHxU4lzuUYrZ3dmD9fjZdwiJDgHz9O";
+discord.invaderAd = "https://discordapp.com/api/webhooks/710593652170424380/u3gR3RERbhHso4uionfo8gW99rlOYM87VMFTrGQ1InKhYynJUaswQAiMgdZun1Fa9ore";
+discord.invaderAd2 = "https://discordapp.com/api/webhooks/724169171025395743/tcUiRFj776_KxogjYDjlJNGxqIkGjMzMmDe5Rk5ypOCwDNJBbG5J_4g-K9T5CwhtzVH4";
 discord.invaderNews = "https://discordapp.com/api/webhooks/682694685805903912/0-VByP6Nd_3xH3yrgs5DAOFpGnMXUHuLX1NmiCc-QlaMhBCLPcuf4BXr87VO7pbwu3Ck";
 discord.fractionNews = "https://discordapp.com/api/webhooks/682956739792076838/xnKY61UPcvyakdcRkMIFEsaFCMGKuK9u4wT7KK4lN_Spo1EdA_ySlzMOSLtfyW44QWMb";
 
@@ -59,6 +60,7 @@ discord.sendDeadList = function (target, desc, reason, sender = 'Server', sender
 
 discord.sendAd = function (title, name, text, phone, editor, editorImg) {
     const Hook = new webhook.Webhook(discord.invaderAd);
+    const Hook2 = new webhook.Webhook(discord.invaderAd2);
     let color = "#607D8B";
     if (title === 'Покупка')
         color = "#03A9F4";
@@ -68,15 +70,18 @@ discord.sendAd = function (title, name, text, phone, editor, editorImg) {
         color = "#FFEB3B";
 
     const msg = new webhook.MessageBuilder()
+        .setName('Рекламное объявление')
         .setTitle(title)
-        .setColor(color)
-        .addField("Отправитель", name)
-        .addField("Номер для связи", phone)
-        .setDescription(text)
+        .setAvatar(discord.imgInvader)
+        .addField(`Phone Number`, `\`\`\`${phone}\`\`\``, true)
+        .addField(`Customer`, `\`\`\`${name}\`\`\``, true)
+        .setDescription(`\`\`\`fix\n${text}\`\`\``)
         .setFooter(editor, 'https://a.rsg.sc//n/' + editorImg.toLowerCase())
+        .setColor(color)
         .setTime();
 
     Hook.send(msg);
+    Hook2.send(msg);
 };
 
 discord.sendNews = function (title, text, editor, editorImg) {

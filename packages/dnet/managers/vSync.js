@@ -1,6 +1,7 @@
 let vehicles = require('../property/vehicles');
 let Container = require('../modules/data');
 let methods = require('../modules/methods');
+let user = require('../user');
 
 let vSync = exports;
 
@@ -602,5 +603,15 @@ mp.events.add('server:vehicles:addFuel', (player, vId, fuel) => {
     let veh = mp.vehicles.at(vId);
     if (mp.players.exists(player) && vehicles.exists(veh)) {
         vehicles.addFuel(veh, fuel)
+    }
+});
+
+mp.events.add('server:vehicles:speedLimit', (player, vId, speed) => {
+    let veh = mp.vehicles.at(vId);
+    if (mp.players.exists(player) && vehicles.exists(veh)) {
+        vehicles.getOccupants(veh).forEach(p => {
+            if (user.isLogin(p) && p.seat === -1)
+                p.call('client:setNewMaxSpeed', [speed]);
+        });
     }
 });

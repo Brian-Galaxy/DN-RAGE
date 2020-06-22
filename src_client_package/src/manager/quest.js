@@ -80,14 +80,26 @@ quest.loadAllBlip = function() {
         if (user.getCache(item) >= quest.getQuestLineMax(item))
             return;
 
-        mp.blips.new(280, quest.getQuestPos(item),
-        {
-            color: 5,
-            scale: 0.6,
-            drawDistance: 100,
-            shortRange: true,
-            dimension: -1
-        });
+        if (user.getCache(item) > 0) {
+            mp.blips.new(280, quest.getQuestPos(item),
+                {
+                    color: 5,
+                    scale: 0.6,
+                    drawDistance: 100,
+                    shortRange: true,
+                    dimension: -1
+                });
+        }
+        else {
+            mp.blips.new(280, quest.getQuestPos(item),
+                {
+                    color: 5,
+                    scale: 0.6,
+                    drawDistance: 100,
+                    shortRange: false,
+                    dimension: -1
+                });
+        }
     });
 };
 

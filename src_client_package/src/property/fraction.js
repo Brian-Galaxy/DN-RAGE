@@ -20,9 +20,13 @@ fraction.setMoney = function(id, money) {
     mp.events.callRemote('server:fraction:setMoney', id, money);
 };
 
+fraction.save = function(id) {
+    mp.events.callRemote('server:fraction:save', id);
+};
+
 let isUnload = false;
 
-fraction.unloadCargoVehTimer = async function(id) {
+fraction.unloadCargoVehTimer = async function(id, cargoId) {
     try {
 
         if (isUnload)
@@ -49,6 +53,8 @@ fraction.unloadCargoVehTimer = async function(id) {
             vehicles.engineVehicle();
 
         let wait = 1000;
+        if (cargoId === 52)
+            allCount = 30;
 
         while (time <= allCount) {
 
@@ -107,6 +113,10 @@ fraction.set = function(id, key, value) {
 
 fraction.get = async function(id, key) {
     return await Container.Data.Get(enums.offsets.fraction + methods.parseInt(id), key);
+};
+
+fraction.has = async function(id, key) {
+    return await Container.Data.Has(enums.offsets.fraction + methods.parseInt(id), key);
 };
 
 fraction.getData = async function(id) {

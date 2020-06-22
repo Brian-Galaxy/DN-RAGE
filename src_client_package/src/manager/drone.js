@@ -1,9 +1,11 @@
 import user from '../user';
 import methods from "../modules/methods";
+import ui from "../modules/ui";
 
 let drone = {};
 
 let isInDrone = false;
+let isLspd = false;
 
 //CONTROL
 let contRcRatePR = 1.5;
@@ -21,7 +23,9 @@ drone.enter = function() {
 
 drone.exit = function() {
     isInDrone = false;
+    vision_state = 0;
     mp.events.callRemote('server:stopSpecMission');
+    user.stopAllScreenEffect();
 };
 
 drone.startOrEnd = function() {
@@ -29,6 +33,26 @@ drone.startOrEnd = function() {
         drone.exit();
     else
         drone.enter();
+};
+
+drone.enterLspd = function(vId) {
+    mp.events.callRemote('server:startSpecMissionLspd', vId);
+};
+
+drone.exitLspd = function() {
+    isInDrone = false;
+    isLspd = false;
+    vision_state = 0;
+    methods.blockKeys(false);
+    mp.events.callRemote('server:stopSpecMissionLspd');
+    user.stopAllScreenEffect();
+};
+
+drone.startOrEndLspd = function() {
+    if (isInDrone)
+        drone.exitLspd();
+    else
+        drone.enterLspd();
 };
 
 drone.calculateDegSec = function(input, rcRate, gRate, expo) {
@@ -63,6 +87,52 @@ let currentSpeed = 0;
 let currentSpeedZ = 0;
 let speedOffset = 0.4;
 let speedLeftRight = 0.9;
+let vision_state = 0;
+
+drone.keyPressToggleVision = function () {
+    try {
+        if (isInDrone) {
+            if (vision_state === 0) {
+                mp.game.graphics.setNightvision(true);
+                vision_state = 1;
+            }
+            else if (vision_state === 1) {
+                mp.game.graphics.setNightvision(false);
+                mp.game.graphics.setSeethrough(true);
+                vision_state = 2;
+            }
+            else {
+                mp.game.graphics.setNightvision(false);
+                mp.game.graphics.setSeethrough(false);
+                vision_state = 0;
+            }
+            mp.game.audio.playSoundFrontend(-1, "SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET", false);
+        }
+    }
+    catch (e) {
+
+    }
+};
+
+mp.events.add('client:drone:status', (status) => {
+    isInDrone = status;
+    isLspd = status;
+    methods.blockKeys(status);
+    if (status)
+        ui.callCef('hud','{"type": "hide"}');
+});
+
+//ESC
+mp.keys.bind(0x1B, true, function() {
+    if (!user.isLogin())
+        return;
+    if (isInDrone) {
+        if (isLspd)
+            drone.exitLspd();
+        else
+            drone.exit();
+    }
+});
 
 mp.events.add('render', () => {
     if (!isInDrone)

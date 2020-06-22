@@ -583,6 +583,24 @@ methods.iplMichaelDefault = function () {
     mp.game.interior.refreshInterior(garageId);
 };
 
+methods.iplArenaModDefault = function () {
+    let interiorId = mp.game.interior.getInteriorAtCoords(170.000, 5190.000, 10.000);
+
+    mp.game.streaming.requestIpl('xs_arena_interior_mod');
+    mp.game.streaming.requestIpl('xs_arena_interior_mod_2');
+
+    methods.setIplPropState(interiorId, "Set_Int_MOD_SHELL_DEF");
+    methods.setIplPropState(interiorId, "Set_Int_MOD2_B1");
+    methods.setIplPropState(interiorId, "Set_Int_MOD_BOOTH_BEN");
+    methods.setIplPropState(interiorId, "Set_Int_MOD_BEDROOM_BLOCKER");
+    methods.setIplPropState(interiorId, "Set_Int_MOD_CONSTRUCTION_01");
+    methods.setIplPropState(interiorId, "SET_OFFICE_STANDARD");
+    methods.setIplPropState(interiorId, "Set_Mod1_Style_02");
+    methods.setIplPropState(interiorId, "SET_BANDITO_RC");
+    methods.setIplPropState(interiorId, "set_arena_no peds"); //???
+    mp.game.interior.refreshInterior(interiorId);
+};
+
 methods.iplGangDefault = function () {
     let interiorId = mp.game.interior.getInteriorAtCoords(2730.000, -380.000, -49.000);
     let garageId = mp.game.interior.getInteriorAtCoords(2701.593505859375, -360.7911376953125, -56.186683654785156);
@@ -723,6 +741,7 @@ methods.requestIpls = function () {
     //mp.game.streaming.requestIpl("RC12B_HospitalInterior");
 
     methods.iplGangDefault();
+    methods.iplArenaModDefault();
 
     //Michael: -802.311, 175.056, 72.8446
     methods.iplMichaelDefault();

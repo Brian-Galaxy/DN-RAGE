@@ -41,6 +41,7 @@ import trucker from "../jobs/trucker";
 import coffer from "../coffer";
 import fraction from "../property/fraction";
 import racer from "../manager/racer";
+import object from "../manager/object";
 
 mp.gui.chat.enabled = false;
 
@@ -922,8 +923,29 @@ mp.events.add('client:user:showLoadDisplay', () => {
 });
 
 mp.events.add('client:user:addExplode', (x, y, z, explosionType, damageScale, isAudible, isInvisible, cameraShake) => {
-    methods.debug('Event: client:user:showLoadDisplay');
     mp.game.fire.addExplosion(x, y, z, explosionType, damageScale, isAudible, isInvisible, cameraShake);
+});
+
+mp.events.add('client:user:deleteObject', (x, y, z, hash) => {
+    mp.game.entity.createModelHide(x, y, z, 2, hash, true);
+    object.delete(hash, x, y, z);
+});
+
+mp.events.add('client:user:deleteObjectArray', (json) => {
+    JSON.parse(json).forEach(item => {
+        mp.game.entity.createModelHide(item[0], item[1], item[2], 2, item[3], true);
+        object.delete(item[3], item[0], item[1], item[2]);
+    });
+});
+
+mp.events.add('client:user:changeDoor', (x, y, z, isClose, radius) => {
+    object.changeDoor(x, y, z, isClose, radius);
+});
+
+mp.events.add('client:user:changeDoorArray', (json) => {
+    JSON.parse(json).forEach(item => {
+        object.changeDoor(item[0], item[1], item[2], item[3], item[4]);
+    });
 });
 
 mp.events.add('client:dispatcher:addDispatcherList', (title, desc, time, x, y, z, withCoord) => {
@@ -2217,7 +2239,7 @@ mp.events.add('client:inventory:unloadW', function(itemId) {
         return;
     }
 
-    if (user.getAmmoByHash(wpHash) === 0)
+    if (user.getAmmoByHash(wpHash) < 1)
         return;
 
     let count = user.getAmmoByHash(wpHash);
@@ -2372,7 +2394,8 @@ mp.events.add('client:inventory:unEquip', function(id, itemId) {
         let ammoId = weapons.getGunAmmoNameByItemId(itemId);
 
         if (ammoId >= 0) {
-            inventory.addItemSql(ammoId, 1, inventory.types.Player, user.getCache('id'), user.getAmmoByHash(wpHash));
+            if (user.getAmmoByHash(wpHash) > 0)
+                inventory.addItemSql(ammoId, 1, inventory.types.Player, user.getCache('id'), user.getAmmoByHash(wpHash));
         }
 
         user.setAmmo(wpName, 0);
@@ -2723,8 +2746,14 @@ mp.events.add("client:vehicle:checker", function () {
 
             try {
                 if (!isSetHandling) {
-                    isSetHandling = true
+                    isSetHandling = true;
                     vehicles.setHandling(vehicle);
+                    if (vehicle.getMod(12) === 0)
+                        vehicle.setHandling('fBrakeForce', '1.3');
+                    if (vehicle.getMod(12) === 1)
+                        vehicle.setHandling('fBrakeForce', '1.6');
+                    if (vehicle.getMod(12) === 2)
+                        vehicle.setHandling('fBrakeForce', '1.9');
                 }
             }
             catch (e) {
@@ -3001,8 +3030,10 @@ mp.keys.bind(0x1B, true, function() {
     if (!user.isLogin())
         return;
 
-    if (mp.players.local.dimension === 99999 && mp.players.local.getVariable('blockDeath'))
+    if (mp.players.local.dimension === 99999 && mp.players.local.getVariable('blockDeath')) {
+        user.removeAllWeapons()
         mp.events.callRemote('server:gangZone:exitLobby');
+    }
 
     ui.callCef('license', JSON.stringify({type: 'hide'}));
     ui.callCef('certificate', JSON.stringify({type: 'hide'}));

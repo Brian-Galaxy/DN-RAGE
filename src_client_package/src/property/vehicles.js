@@ -196,20 +196,14 @@ vehicles.getSpecialModName = function(id) {
         case 0:
             return 'fDriveBiasFront';
         case 1:
-            return 'fInitialDriveForce';
-        case 2:
-            return 'fDriveInertia';
-        case 3:
-            return 'fBrakeForce';
-        case 4:
             return 'fBrakeBiasFront';
-        case 5:
+        case 2:
             return 'fHandBrakeForce';
-        case 6:
+        case 3:
             return 'fSteeringLock';
-        case 7:
+        case 4:
             return 'fTractionCurveMax';
-        case 8:
+        case 5:
             return 'fTractionCurveMin';
     }
 };

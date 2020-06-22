@@ -432,7 +432,7 @@ pSync.pointing =
                 mp.game.invoke(methods.SET_TASK_MOVE_NETWORK_SIGNAL_BOOL, mp.players.local.handle, "isBlocked", 0);
                 mp.game.invoke(methods.SET_TASK_MOVE_NETWORK_SIGNAL_BOOL, mp.players.local.handle, "isFirstPerson", mp.game.invoke(methods.GET_FOLLOW_PED_CAM_VIEW_MODE) == 4);
 
-                if ((Date.now() - this.lastSent) > 100) {
+                if ((Date.now() - this.lastSent) > 10) {
                     this.lastSent = Date.now();
                     mp.events.callRemote("server:pSync:fpUpdate", camPitch, camHeading);
                 }

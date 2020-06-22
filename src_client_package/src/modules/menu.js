@@ -26,12 +26,12 @@ mp.events.add('client:modalinput:callBack', (data) => {
     user.setVariable('isTyping', false);
     promise.resolve(data);
 
-    /*if (menuItem) {
-        setTimeout(function () {
+    setTimeout(function () {
+        if (menuItem && !user.getCache('s_hud_cursor')) {
             cefMenu.showFull(_title, _subtitle, menuItem, _menuName, _banner, true, 0.8, _currentIdx);
             ui.updatePositionSettings();
-        }, 100);
-    }*/
+        }
+    }, 150);
 });
 
 class EventManager {
@@ -196,10 +196,12 @@ class Menu {
     }
 
     static AddMenuItemList(title, list, subtitle, params, index = 0, rightLabel = '', icon = '', iconRight = '', divider = false) {
+        index = methods.parseInt(index);
         if (list.length <= index)
             index = list.length - 1;
         else if (index <= 0)
             index = 0;
+
         title = methods.replaceQuotes(title);
         subtitle = methods.replaceQuotes(subtitle);
         menuItem.push(cefMenu.getMenuItemList(title, subtitle, params, list, index, rightLabel, icon, iconRight, divider));

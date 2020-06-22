@@ -23,6 +23,8 @@ import builder from "./jobs/builder";
 import photo from "./jobs/photo";
 import loader from "./jobs/loader";
 
+import stocks from "./property/stocks";
+
 let phone = {};
 
 let hidden = true;
@@ -806,7 +808,7 @@ phone.showAppFraction2 = async function() {
         title: 'Борьба за груз',
         umenu: [
             {
-                title: "Учавствовать в операции",
+                title: "Участвовать в операции",
                 text: "Груз будет отмечен на карте",
                 type: 1,
                 clickable: true,
@@ -815,6 +817,72 @@ phone.showAppFraction2 = async function() {
         ],
     };
     menu.items.push(titleMenu);
+
+    try {
+        if (await fraction.has(user.getCache('fraction_id2'), 'grabBankFleeca')) {
+
+            let car = await fraction.get(user.getCache('fraction_id2'), 'grabBankFleecaCar');
+            let pt = await fraction.get(user.getCache('fraction_id2'), 'grabBankFleecaPt');
+            let hp = await fraction.get(user.getCache('fraction_id2'), 'grabBankFleecaHp');
+            let ot = await fraction.get(user.getCache('fraction_id2'), 'grabBankFleecaOt');
+            let timer = await fraction.get(user.getCache('fraction_id2'), 'grabBankFleecaTimer');
+
+            if (pt === 0 && pt === 0 && hp === 0 && ot === 0) {
+                let titleMenu = {
+                    title: 'Ограбление банка',
+                    umenu: [
+                        {
+                            title: "Задание завершено",
+                            text: "Теперь езжайте к любому Fleeca банку и начинайте ограбление",
+                            type: 1,
+                            clickable: false,
+                            params: { name: "none" }
+                        },
+                    ],
+                };
+                menu.items.push(titleMenu);
+            }
+            else {
+                let titleMenu = {
+                    title: `Подготовка к оргаблению (${timer}мин.)`,
+                    umenu: [
+                        {
+                            title: "Забрать транспорт с патронами",
+                            text: `Осталось ${pt}шт.`,
+                            type: 1,
+                            clickable: true,
+                            params: { name: "fleecaGoPt" }
+                        },
+                        {
+                            title: "Забрать транспорт с аптечками",
+                            text: `Осталось ${hp}шт.`,
+                            type: 1,
+                            clickable: true,
+                            params: { name: "fleecaGoHp" }
+                        },
+                        {
+                            title: "Забрать транспорт со спец. отмычки",
+                            text: `Осталось ${ot}шт.`,
+                            type: 1,
+                            clickable: true,
+                            params: { name: "fleecaGoOt" }
+                        },
+                        {
+                            title: "Забрать бронированный Baller",
+                            text: `Осталось ${car}шт. (Не обязательное)`,
+                            type: 1,
+                            clickable: true,
+                            params: { name: "fleecaGoBaller" }
+                        },
+                    ],
+                };
+                menu.items.push(titleMenu);
+            }
+        }
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 
     let orderLamar = await fraction.get(user.getCache('fraction_id2'), 'orderLamar');
     let orderAtm = await fraction.get(user.getCache('fraction_id2'), 'orderAtm');
@@ -2404,31 +2472,17 @@ phone.showAppFractionUpgrade2 = async function() {
         items: []
     };
 
-    if (fData.get('is_war')) {
-        menu.items.push(
-            {
-                title: '...',
-                umenu: [
-                    {
-                        title: 'Не доступно для гетто организаций',
-                        type: 1,
-                        params: { name: "none" }
-                    }
-                ],
-            }
-        );
-    }
-    else {
-        if (fData.get('is_shop')) {
+    if (!fData.get('is_war')) {
+        if (fData.get('spawn_x') !== 0) {
             menu.items.push(
                 {
-                    title: 'Ограбления магазинов',
+                    title: 'Спавн организации',
                     umenu: [
                         {
                             title: 'Отказаться от улучшения',
                             type: 1,
                             clickable: true,
-                            params: { name: "unsetShop" }
+                            params: { name: "unsetSpawn" }
                         }
                     ],
                 }
@@ -2438,14 +2492,14 @@ phone.showAppFractionUpgrade2 = async function() {
             if (fData.get('money') >= 50) {
                 menu.items.push(
                     {
-                        title: 'Ограбления магазинов',
+                        title: 'Спавн организации',
                         umenu: [
                             {
                                 title: `Улучшить за ${methods.cryptoFormat(50, 0)}`,
-                                text: `Обслуживание в 1 реальный день ${methods.cryptoFormat(5, 0)}`,
+                                text: `Доступно только, если есть большой склад с улучшением`,
                                 type: 1,
                                 clickable: true,
-                                params: { name: "setShop" }
+                                params: { name: "setSpawn" }
                             }
                         ],
                     }
@@ -2454,7 +2508,7 @@ phone.showAppFractionUpgrade2 = async function() {
             else {
                 menu.items.push(
                     {
-                        title: 'Ограбления магазинов',
+                        title: 'Спавн организации',
                         umenu: [
                             {
                                 title: `Не хватает ${methods.cryptoFormat(50 - fData.get('money'), 0)} для улучшения`,
@@ -2467,6 +2521,55 @@ phone.showAppFractionUpgrade2 = async function() {
             }
         }
     }
+
+    if (fData.get('is_shop')) {
+        menu.items.push(
+            {
+                title: 'Ограбления магазинов',
+                umenu: [
+                    {
+                        title: 'Отказаться от улучшения',
+                        type: 1,
+                        clickable: true,
+                        params: { name: "unsetShop" }
+                    }
+                ],
+            }
+        );
+    }
+    else {
+        if (fData.get('money') >= 50) {
+            menu.items.push(
+                {
+                    title: 'Ограбления магазинов',
+                    umenu: [
+                        {
+                            title: `Улучшить за ${methods.cryptoFormat(50, 0)}`,
+                            text: `Обслуживание в 1 реальный день ${methods.cryptoFormat(5, 0)}`,
+                            type: 1,
+                            clickable: true,
+                            params: { name: "setShop" }
+                        }
+                    ],
+                }
+            );
+        }
+        else {
+            menu.items.push(
+                {
+                    title: 'Ограбления магазинов',
+                    umenu: [
+                        {
+                            title: `Не хватает ${methods.cryptoFormat(50 - fData.get('money'), 0)} для улучшения`,
+                            type: 1,
+                            params: { name: "none" }
+                        }
+                    ],
+                }
+            );
+        }
+    }
+
 
     /*if (fData.get('is_war')) {
         menu.items.push(
@@ -3041,9 +3144,10 @@ phone.getMenuItemTable = function(title, columns, data, readonly = true, params 
     };
 };
 
-phone.getMenuMainItem = function(title, items) {
+phone.getMenuMainItem = function(title, items, hidden = false) {
     return {
         title: title,
+        hidden: hidden,
         umenu: items,
     };
 };
@@ -3270,6 +3374,9 @@ phone.consoleCallback = async function(command) {
                 await phone.consoleWget('Dwnld vengine.sh', 10);
                 phone.addConsoleCommand(`File vengine.sh has been downloaded`);
                 user.set('file-' + 'vengine.sh', true);
+                await phone.consoleWget('Dwnld vslower.sh', 10);
+                phone.addConsoleCommand(`File vslower.sh has been downloaded`);
+                user.set('file-' + 'vslower.sh', true);
             }
             else if (args[0] === 'https://fsoc.sh/' || args[0] === 'https://fsoc.sh') {
                 await phone.consoleWget('Dwnld atmbackdoor.py', 50);
@@ -3568,6 +3675,62 @@ phone.consoleCallback = async function(command) {
 
                 if (!isFind)
                     phone.addConsoleCommand('Hash not found');
+            }
+            else if (args[0] === 'vslower.sh' && user.hasCache('file-vslower.sh')) {
+                if (args.length === 1) {
+                    phone.addConsoleCommand('Usage: bash vslower.sh [vname]');
+                    return;
+                }
+                let hash = args[1];
+
+                let currentVeh = null;
+
+                mp.vehicles.forEachInStreamRange(async (v, i) => {
+                    if (phone.network === 0) {
+                        phone.addConsoleCommand('Connection closed');
+                        return;
+                    }
+
+                    if (v.getVariable('useless'))
+                        return;
+
+                    let dist = methods.distanceToPos(v.position, mp.players.local.position);
+                    if (dist > 30)
+                        return;
+
+                    let displayName = mp.game.vehicle.getDisplayNameFromVehicleModel(v.model);
+                    if (displayName.toUpperCase() === hash.toUpperCase()) {
+                        currentVeh = v;
+                    }
+                });
+
+                if (mp.vehicles.exists(currentVeh)) {
+
+                    for (let i = 0; i < 25; i++) {
+                        if (mp.vehicles.exists(currentVeh)) {
+                            let dist = methods.distanceToPos(currentVeh.position, mp.players.local.position);
+                            if (dist > 10) {
+                                phone.addConsoleCommand('Max range 10m');
+                                mp.events.callRemote('server:vehicles:speedLimit', currentVeh.remoteId, 0);
+                                return;
+                            }
+                            let velocity = currentVeh.getVelocity();
+                            let speed = Math.sqrt(velocity.x * velocity.x + velocity.y * velocity.y + velocity.z * velocity.z);
+                            speed = Math.round(speed * 3.6) - 1;
+                            if (speed < 20)
+                                speed = 20;
+                            phone.addConsoleCommand(`Slowdown process ${(i + 1) * 4}%`);
+                            mp.events.callRemote('server:vehicles:speedLimit', currentVeh.remoteId, speed);
+                            await methods.sleep(1000);
+                        }
+                    }
+
+                    if (mp.vehicles.exists(currentVeh))
+                        mp.events.callRemote('server:vehicles:speedLimit', currentVeh.remoteId, 0);
+                }
+                else {
+                    phone.addConsoleCommand('You can use this script for Stockade or Brickade vehicle');
+                }
             }
             else {
                 phone.addConsoleCommand('Access denied');
@@ -4625,6 +4788,86 @@ phone.callBackButton = async function(menu, id, ...args) {
                 fraction.set(user.getCache('fraction_id2'), 'is_shop', 1);
                 fraction.removeMoney(user.getCache('fraction_id2'), 50, 'Возможность ограбления магазина');
                 mp.game.ui.notifications.show(`~g~Вы успешно наладили связи и теперь вам доступны наводки на ограбления магазинов`);
+                fraction.save(user.getCache('fraction_id2'));
+                phone.showLoad();
+                setTimeout(phone.showAppFraction2, 500);
+            }
+
+            else if (params.name == 'unsetSpawn') {
+                fraction.set(user.getCache('fraction_id2'), 'spawn_x', 0);
+                fraction.set(user.getCache('fraction_id2'), 'spawn_y', 0);
+                fraction.set(user.getCache('fraction_id2'), 'spawn_z', 0);
+                fraction.set(user.getCache('fraction_id2'), 'spawn_rot', 0);
+                mp.game.ui.notifications.show(`~g~Вы отказались от улучшения`);
+                phone.showLoad();
+                setTimeout(phone.showAppFraction2, 500);
+            }
+            else if (params.name == 'setSpawn') {
+
+                if (user.getCache('stock_id') === 0) {
+                    mp.game.ui.notifications.show(`~g~У вас нет склада`);
+                    return;
+                }
+
+                let stockData = await stocks.getData(user.getCache('stock_id'));
+                if (!stockData.get('upgrade_g')) {
+                    mp.game.ui.notifications.show(`~g~У вас нет улучшения для склада`);
+                    return;
+                }
+
+                fraction.set(user.getCache('fraction_id2'), 'spawn_x', stockData.get('x'));
+                fraction.set(user.getCache('fraction_id2'), 'spawn_y', stockData.get('y'));
+                fraction.set(user.getCache('fraction_id2'), 'spawn_z', stockData.get('z'));
+                fraction.set(user.getCache('fraction_id2'), 'spawn_rot', stockData.get('rot'));
+
+                fraction.removeMoney(user.getCache('fraction_id2'), 50, 'Спавн организации');
+                mp.game.ui.notifications.show(`~g~Теперь у вашей организации есть спавн`);
+
+                fraction.save(user.getCache('fraction_id2'));
+                phone.showLoad();
+                setTimeout(phone.showAppFraction2, 500);
+            }
+            else if (params.name == 'fleecaGoPt') {
+                let order = await fraction.get(user.getCache('fraction_id2'), 'grabBankFleecaPt');
+                if (order === 0) {
+                    mp.game.ui.notifications.show(`~r~Задание уже выполнено`);
+                    return;
+                }
+                mp.events.callRemote('server:fraction:getBankVeh', 1);
+                fraction.set(user.getCache('fraction_id2'), 'grabBankFleecaPt', order - 1);
+                phone.showLoad();
+                setTimeout(phone.showAppFraction2, 500);
+            }
+            else if (params.name == 'fleecaGoHp') {
+                let order = await fraction.get(user.getCache('fraction_id2'), 'grabBankFleecaHp');
+                if (order === 0) {
+                    mp.game.ui.notifications.show(`~r~Задание уже выполнено`);
+                    return;
+                }
+                mp.events.callRemote('server:fraction:getBankVeh', 2);
+                fraction.set(user.getCache('fraction_id2'), 'grabBankFleecaHp', order - 1);
+                phone.showLoad();
+                setTimeout(phone.showAppFraction2, 500);
+            }
+            else if (params.name == 'fleecaGoOt') {
+                let order = await fraction.get(user.getCache('fraction_id2'), 'grabBankFleecaOt');
+                if (order === 0) {
+                    mp.game.ui.notifications.show(`~r~Задание уже выполнено`);
+                    return;
+                }
+                mp.events.callRemote('server:fraction:getBankVeh', 3);
+                fraction.set(user.getCache('fraction_id2'), 'grabBankFleecaOt', order - 1);
+                phone.showLoad();
+                setTimeout(phone.showAppFraction2, 500);
+            }
+            else if (params.name == 'fleecaGoBaller') {
+                let order = await fraction.get(user.getCache('fraction_id2'), 'grabBankFleecaCar');
+                if (order === 0) {
+                    mp.game.ui.notifications.show(`~r~Задание уже выполнено`);
+                    return;
+                }
+                mp.events.callRemote('server:fraction:getBankVeh', 99);
+                fraction.set(user.getCache('fraction_id2'), 'grabBankFleecaCar', order - 1);
                 phone.showLoad();
                 setTimeout(phone.showAppFraction2, 500);
             }

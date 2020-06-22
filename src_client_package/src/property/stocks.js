@@ -58,7 +58,9 @@ stocks.boxList = [
     ['Большой ящик слоновых бивней', -2033482115, 46, -0.12, false, 15000, 'Трофеи браконьеров', 1 ], //47
     ['Малый ящик слоновых бивней', 588496643, 47, -0.12, false, 5000, 'Трофеи браконьеров', 0 ], //48
     ['Бриллиант 64 карата', 926762619, 48, 0, false, 50000, 'Уникальный груз', 2 ], //49
-    ['Оружейный ящик Merryweather', -994309865, 13, 0, false, 30000, 'Оружие и патроны', 2 ], //50
+    ['Оружейный ящик Merryweather', -994309865, 49, 0, false, 30000, 'Оружие и патроны', 2 ], //50
+    ['Ящик с документами банков Fleeca', -994309865, 50, 0, false, 50000, 'Уникальный груз', 2 ], //51
+    ['Ящик с C4', -1853019218, 51, 0, false, 200000, 'Оружие и патроны', 2 ], //52
 ];
 
 stocks.enter = function (id) {
@@ -67,6 +69,14 @@ stocks.enter = function (id) {
 
 stocks.enterv = function (id) {
     mp.events.callRemote('server:stocks:enterv', id);
+};
+
+stocks.enter1 = function (id) {
+    mp.events.callRemote('server:stocks:enter1', id);
+};
+
+stocks.enterv1 = function (id) {
+    mp.events.callRemote('server:stocks:enterv1', id);
 };
 
 stocks.exit = function (x, y, z, rot) {
@@ -102,6 +112,10 @@ stocks.buy = function (id) {
     }
     mp.events.callRemote('server:stocks:buy', id);
     return true;
+};
+
+stocks.upgradeGarage = function (id) {
+    mp.events.callRemote('server:stocks:updateGarage', id, 1);
 };
 
 stocks.updatePin = function (id, pin) {

@@ -3,6 +3,7 @@ import user from "../user";
 
 const _SET_NOTIFICATION_COLOR_NEXT = "0x39BBF623FC803EAC";
 const _SET_NOTIFICATION_BACKGROUND_COLOR = "0x92F0DA1E27DB96DC";
+const _END_TEXT_COMMAND_THEFEED_POST_STATS = "0x2B7E9A4EAAA93C89";
 const maxStringLength = 50;
 
 let sleep = function(ms) {
@@ -80,7 +81,36 @@ mp.events.add("BN_ShowWithPicture", async (title, sender, message, notifPic, ico
     }
 });
 
+mp.events.add("BN_ShowWithStats", async (title = "PSF_STAMINA", lastProgress = 25, newProgress = 50) => {
+
+    try {
+        if (!user.getCache('s_hud_notify'))
+            return ;
+    }
+    catch (e) {
+
+    }
+
+    try {
+        let pedHeadShot = mp.players.local.registerheadshot();
+        if (mp.game.ped.isPedheadshotValid(pedHeadShot)) {
+            //while (!mp.game.ped.isPedheadshotReady(pedHeadShot))
+            await sleep(100);
+            let txd = mp.game.ped.getPedheadshotTxdString(pedHeadShot);
+            mp.game.ui.setNotificationTextEntry("PS_UPDATE");
+            mp.game.ui.addTextComponentInteger(newProgress);
+            mp.game.invoke(_END_TEXT_COMMAND_THEFEED_POST_STATS, title, 14, true, lastProgress, false, txd, txd);
+            mp.game.ui.drawNotification(false, true);
+            mp.players.local.unregisterheadshot();
+        }
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
 mp.game.ui.notifications = {
     show: (message, flashing = false, textColor = -1, bgColor = -1, flashColor = [77, 77, 77, 200]) => mp.events.call("BN_Show", message, flashing, textColor, bgColor, flashColor),
-    showWithPicture: (title, sender, message, notifPic, icon = 0, flashing = false, textColor = -1, bgColor = -1, flashColor = [77, 77, 77, 200]) => mp.events.call("BN_ShowWithPicture", title, sender, message, notifPic, icon, flashing, textColor, bgColor, flashColor)
+    showWithPicture: (title, sender, message, notifPic, icon = 0, flashing = false, textColor = -1, bgColor = -1, flashColor = [77, 77, 77, 200]) => mp.events.call("BN_ShowWithPicture", title, sender, message, notifPic, icon, flashing, textColor, bgColor, flashColor),
+    showWithStats: (title = "PSF_STAMINA", lastProgress = 25, newProgress = 50) => mp.events.call("BN_ShowWithStats", title, lastProgress, newProgress)
 };

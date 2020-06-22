@@ -17,6 +17,7 @@ let vehicles = require('./property/vehicles');
 let houses = require('./property/houses');
 let condos = require('./property/condos');
 let fraction = require('./property/fraction');
+let stocks = require('./property/stocks');
 
 let user = exports;
 
@@ -165,7 +166,7 @@ user.loginAccount = function(player, login, pass) {
         {
             let players = [];
 
-            mysql.executeQuery(`SELECT skin, fraction_id2, fraction_id, pos_x, house_id, condo_id, apartment_id, yacht_id, name, online_time, money, money_bank, login_date FROM users WHERE social = ? LIMIT 3`, player.accSocial, function (err, rows, fields) {
+            mysql.executeQuery(`SELECT skin, fraction_id2, fraction_id, pos_x, house_id, condo_id, apartment_id, yacht_id, stock_id, name, online_time, money, money_bank, login_date FROM users WHERE social = ? LIMIT 3`, player.accSocial, function (err, rows, fields) {
                 if (!mp.players.exists(player))
                     return;
                 if (err) {
@@ -203,7 +204,12 @@ user.loginAccount = function(player, login, pass) {
                         if (row['yacht_id'])
                             spawnList.push('Яхта');
 
-                        if (fraction.isGang(row['fraction_id2']))
+                        if (row['stock_id']) {
+                            if (stocks.get(row['stock_id'], 'upgrade_g'))
+                                spawnList.push('Склад');
+                        }
+
+                        if (fraction.canSpawn(row['fraction_id2']))
                             spawnList.push('Спавн организации');
                         if (row['fraction_id'] === 4) {
                             spawnList.push('Спавн в казарме');
@@ -434,6 +440,8 @@ user.loadUser = function(player, name, spawn = 'Стандарт') {
                 player.setVariable('walkieBuy', user.get(player, 'walkie_buy'));
                 player.dimension = 0;
 
+                methods.loadDeleteObject(player);
+
                 setTimeout(function () {
                     try {
                         user.setArmour(player, user.get(player, 'ap'));
@@ -575,6 +583,11 @@ user.spawnByName = function(player, spawn = 'Стандарт') {
                 player.spawn(new mp.Vector3(hData.get('x'), hData.get('y'), hData.get('z')));
                 player.heading = hData.get('rot');
             }
+            else if (spawn == 'Склад') {
+                let hData = stocks.getData(user.get(player, 'stock_id'));
+                player.spawn(new mp.Vector3(hData.get('x'), hData.get('y'), hData.get('z')));
+                player.heading = hData.get('rot');
+            }
             else if (spawn == 'Квартира') {
                 let hData = condos.getHouseData(user.get(player, 'condo_id'));
                 player.spawn(new mp.Vector3(hData.get('x'), hData.get('y'), hData.get('z')));
@@ -671,7 +684,6 @@ user.updateClientCache = function(player) {
         methods.debug(e);
     }
 };
-
 
 user.updateCharacterFace = function(player) {
 
@@ -896,14 +908,14 @@ user.updateCharacterFace = function(player) {
             if (skin.SKIN_OVERLAY_1 != undefined)
                 player.setHeadOverlay(1, [skin.SKIN_OVERLAY_1, 1, skin.SKIN_OVERLAY_COLOR_1, 0]);
         }
-        else if (skin.SKIN_SEX == 1) {
-            if (skin.SKIN_OVERLAY_4 != undefined)
-                player.setHeadOverlay(4, [skin.SKIN_OVERLAY_4, 1, skin.SKIN_OVERLAY_COLOR_4, skin.SKIN_OVERLAY_COLOR_4]);
-            if (skin.SKIN_OVERLAY_5 != undefined)
-                player.setHeadOverlay(5, [skin.SKIN_OVERLAY_5, 1, skin.SKIN_OVERLAY_COLOR_5, skin.SKIN_OVERLAY_COLOR_5]);
-            if (skin.SKIN_OVERLAY_8 != undefined)
-                player.setHeadOverlay(8, [skin.SKIN_OVERLAY_8, 1, skin.SKIN_OVERLAY_COLOR_8, skin.SKIN_OVERLAY_COLOR_8]);
-        }
+
+        if (skin.SKIN_OVERLAY_4 != undefined)
+            player.setHeadOverlay(4, [skin.SKIN_OVERLAY_4, 1, skin.SKIN_OVERLAY_COLOR_4, skin.SKIN_OVERLAY_COLOR_4]);
+        if (skin.SKIN_OVERLAY_5 != undefined)
+            player.setHeadOverlay(5, [skin.SKIN_OVERLAY_5, 1, skin.SKIN_OVERLAY_COLOR_5, skin.SKIN_OVERLAY_COLOR_5]);
+        if (skin.SKIN_OVERLAY_8 != undefined)
+            player.setHeadOverlay(8, [skin.SKIN_OVERLAY_8, 1, skin.SKIN_OVERLAY_COLOR_8, skin.SKIN_OVERLAY_COLOR_8]);
+
 
     } catch (e) {
         methods.debug('Exception: user.updateCharacterFace');
@@ -1285,11 +1297,12 @@ user.showLoadDisplay = function(player) {
 };
 
 user.addExplode = function(player, x, y, z, explosionType, damageScale, isAudible, isInvisible, cameraShake, timeout = 1) {
-    if (!mp.players.exists(player))
-        return false;
     setTimeout(function () {
+        if (!mp.players.exists(player))
+            return false;
         player.call('client:user:addExplode', [x, y, z, explosionType, damageScale, isAudible, isInvisible, cameraShake]);
     }, timeout);
+    //seval player.call('client:user:addExplode', [-2956.116, 485.4206, 15.99531, 18, 0.1, true, false, 0]);
 };
 
 user.removeWaypoint = function(player) {
@@ -1974,6 +1987,8 @@ user.clearChat = function(player) {
 user.setHealth = function(player, level) {
     if (!mp.players.exists(player))
         return false;
+    if (level > 100)
+        level = 100;
     player.call('client:setHealth', [level]);
 };
 

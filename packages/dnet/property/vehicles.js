@@ -369,7 +369,9 @@ vehicles.spawnFractionCar = (id) => {
                     }
                     case 'Police4':
                     case 'Polscout2':
+                    case 'Polscout4':
                     case 'Intcept2':
+                    case 'Intcept4':
                     {
                         let colors = [0, 2, 7, 34, 75, 134, 141, 146];
 
@@ -411,6 +413,12 @@ vehicles.spawnFractionCar = (id) => {
                 switch (info.name)
                 {
                     case 'Police4':
+                    case 'Polscout2':
+                    case 'Sherscout2':
+                    case 'Intcept2':
+                    case 'Intcept4':
+                    case 'Umkcara':
+                    case 'Trucara':
                     {
                         let colors = [0, 2, 7, 34, 75, 134, 141, 146];
 
@@ -419,11 +427,16 @@ vehicles.spawnFractionCar = (id) => {
                         break;
                     }
                     case 'FBI':
-                    case 'FBI2':
                     {
                         let colors = [0, 3, 6, 131, 134];
                         color1 = colors[methods.getRandomInt(0, colors.length)];
                         color2 = color1;
+                        break;
+                    }
+                    case 'FBI2':
+                    {
+                        color1 = 0;
+                        color2 = 0;
                         break;
                     }
                     case 'Annihilator':

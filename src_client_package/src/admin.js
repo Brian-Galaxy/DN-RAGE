@@ -127,6 +127,11 @@ admin.startFreeCam = function() {
     user.setAlpha(0);
 };
 
+admin.setPos = function(x, y, z) {
+    if (noClipCamera)
+        noClipCamera.setCoord(x, y, z);
+};
+
 admin.stopFreeCam = function() {
     mp.game.graphics.notify('FreeCam ~r~disabled');
     if (noClipCamera) {

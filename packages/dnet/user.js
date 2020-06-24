@@ -209,7 +209,7 @@ user.loginAccount = function(player, login, pass) {
                                 spawnList.push('Склад');
                         }
 
-                        if (fraction.canSpawn(row['fraction_id2']))
+                        if (fraction.canSpawn(row['fraction_id2']) && row['fraction_id2'] > 0)
                             spawnList.push('Спавн организации');
                         if (row['fraction_id'] === 4) {
                             spawnList.push('Спавн в казарме');

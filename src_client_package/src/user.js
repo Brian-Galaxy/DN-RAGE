@@ -1516,8 +1516,10 @@ user.playAnimationWithUser = function(toId, animType) {
     mp.events.callRemote('server:playAnimationWithUser', toId, animType);
 };
 
+let lastFlag = 0;
 user.playAnimation = function(dict, anim, flag = 49, sendEventToServer = true) {
     if (mp.players.local.getVariable("isBlockAnimation") || mp.players.local.isInAnyVehicle(false) || user.isDead()) return;
+    lastFlag = flag;
     mp.events.callRemote('server:playAnimation', dict, anim, methods.parseInt(flag));
     /*
         8 = нормально играть
@@ -1525,6 +1527,11 @@ user.playAnimation = function(dict, anim, flag = 49, sendEventToServer = true) {
         48 = нормально играть только верхнюю часть тела
         49 = цикл только верхняя часть тела
     */
+};
+
+
+user.getLastFlag = function() {
+    return lastFlag;
 };
 
 user.setRagdoll = function(timeout = 1000) {

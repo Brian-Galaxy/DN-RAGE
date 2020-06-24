@@ -247,7 +247,7 @@ methods.getRandomBankCard = function (prefix = 0) {
 methods.getRandomPhone = function (prefix = 0) {
     if (prefix == 0)
         prefix = methods.getRandomInt(100, 999);
-    let num = methods.getRandomInt(100000, 9999999);
+    let num = methods.getRandomInt(1000000, 9999999);
     return methods.parseInt(`${prefix}${num}`);
 };
 
@@ -584,7 +584,7 @@ methods.iplMichaelDefault = function () {
 };
 
 methods.iplArenaModDefault = function () {
-    let interiorId = mp.game.interior.getInteriorAtCoords(170.000, 5190.000, 10.000);
+    let interiorId = mp.game.interior.getInteriorAtCoords(205.000, 5180.000, -90.000);
 
     mp.game.streaming.requestIpl('xs_arena_interior_mod');
     mp.game.streaming.requestIpl('xs_arena_interior_mod_2');
@@ -835,6 +835,8 @@ methods.requestIpls = function () {
     //FIB lobby: 105.4557, -745.4835, 44.7548
     mp.game.streaming.requestIpl("FIBlobby");
     mp.game.streaming.requestIpl("dt1_05_fib2_normal");
+
+    mp.game.streaming.removeIpl("CS3_07_MPGates"); //Zancudo
 
     mp.game.streaming.removeIpl("hei_bi_hw1_13_door");
     mp.game.streaming.requestIpl("hei_hw1_blimp_interior_v_comedy_milo_");

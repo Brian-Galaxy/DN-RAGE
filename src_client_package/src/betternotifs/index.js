@@ -83,7 +83,7 @@ mp.events.add("BN_ShowWithPicture", async (title, sender, message, notifPic, ico
 
 mp.events.add("BN_ShowWithStats", async (title = "PSF_STAMINA", lastProgress = 25, newProgress = 50) => {
 
-    try {
+    /*try {
         if (!user.getCache('s_hud_notify'))
             return ;
     }
@@ -106,7 +106,7 @@ mp.events.add("BN_ShowWithStats", async (title = "PSF_STAMINA", lastProgress = 2
     }
     catch (e) {
         methods.debug(e);
-    }
+    }*/
 });
 
 mp.game.ui.notifications = {

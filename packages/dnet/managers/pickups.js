@@ -222,7 +222,7 @@ pickups.ElShopPos12 = new mp.Vector3(1136.156, -470.4759, 65.70986);
 /*Club*/
 pickups.ClubUserPos = new mp.Vector3(-1569.33, -3016.98, -75.40616);
 pickups.ClubTehUserPos = new mp.Vector3(4.723007, 220.3487, 106.7251);
-pickups.ClubGalaxyUserPos = new mp.Vector3(371.3487243652344, 253.2999725341797, 102.00971984863281);
+pickups.ClubGalaxyUserPos = new mp.Vector3(355.362, 302.1856, 102.7556);
 pickups.ClubLsUserPos = new mp.Vector3(-1173.9403076171875, -1153.419189453125, 4.657954216003418);
 
 pickups.ClubVPos = new mp.Vector3(-1640.193, -2989.592, -78.22095);
@@ -231,8 +231,8 @@ pickups.ClubVPos.rot = 267.697265625;
 pickups.ClubTehVPos = new mp.Vector3(-22.223295211791992, 216.72283935546875, 105.57382202148438);
 pickups.ClubTehVPos.rot = 170.98104858398438;
 
-pickups.ClubGalaxyVPos = new mp.Vector3(380.9332275390625, 226.37841796875, 102.69832611083984);
-pickups.ClubGalaxyVPos.rot = 234.72959899902344;
+pickups.ClubGalaxyVPos = new mp.Vector3(336.3491, 267.4991, 102.684);
+pickups.ClubGalaxyVPos.rot = 132.8008;
 
 pickups.ClubLsVPos = new mp.Vector3(-1169.167236328125, -1159.6075439453125, 4.643235683441162);
 pickups.ClubLsVPos.rot = 283.82879638671875;

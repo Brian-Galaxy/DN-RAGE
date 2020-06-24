@@ -44,6 +44,7 @@ timer.createInterval = function(key, func, delay) {
     if (intervalMap.has(key))
         return null;
     try {
+        methods.debug('CREATE_INTERVAL', key, delay);
         let value = setInterval(func, delay);
         intervalMap.set(key, value);
     }
@@ -302,44 +303,46 @@ timer.tenSecTimer = function() {
     let plPos = mp.players.local.position;
     let isGive = false;
 
-    enums.cctvProps.forEach(prop => {
-        if (mp.players.local.weapon !== 2725352035 && !user.isGos()) {
+    if (mp.players.local.dimension === 0) {
+        enums.cctvProps.forEach(prop => {
+            if (mp.players.local.weapon !== 2725352035 && !user.isGos()) {
 
-            enums.cctvProps.forEach(prop => {
+                enums.cctvProps.forEach(prop => {
 
-                try {
-                    let entity = mp.game.object.getClosestObjectOfType(plPos.x, plPos.y, plPos.z, 10, mp.game.joaat(prop), false, false, false);
-                    if (
-                        entity !== 0 &&
-                        mp.game.invoke('0xEEF059FAD016D209', entity) > 950 && //GET_ENTITY_HEALTH
-                        mp.game.invoke('0xFCDFF7B72D23A1AC', entity, mp.players.local.handle, 17)// HAS_ENTITY_CLEAR_LOS_TO_ENTITY
-                    ) {
-                        if (!isGive) {
-                            isGive = true;
-                            warning++;
+                    try {
+                        let entity = mp.game.object.getClosestObjectOfType(plPos.x, plPos.y, plPos.z, 10, mp.game.joaat(prop), false, false, false);
+                        if (
+                            entity !== 0 &&
+                            mp.game.invoke('0xEEF059FAD016D209', entity) > 950 && //GET_ENTITY_HEALTH
+                            mp.game.invoke('0xFCDFF7B72D23A1AC', entity, mp.players.local.handle, 17)// HAS_ENTITY_CLEAR_LOS_TO_ENTITY
+                        ) {
+                            if (!isGive) {
+                                isGive = true;
+                                warning++;
+                            }
+
+                            if (warning >= 4) {
+                                user.giveWanted(1, 'Оружие в публичном месте');
+                                warning = 0;
+                            }
+                            else {
+                                mp.game.ui.notifications.show("~y~Вас заметила камера\nУберите оружие или вы будете получать розыск");
+                            }
                         }
-
-                        if (warning >= 4) {
-                            user.giveWanted(1, 'Оружие в публичном месте');
+                        /*else {
                             warning = 0;
-                        }
-                        else {
-                            mp.game.ui.notifications.show("~y~Вас заметила камера\nУберите оружие или вы будете получать розыск");
-                        }
+                        }*/
                     }
-                    /*else {
-                        warning = 0;
-                    }*/
-                }
-                catch (e) {
-                    methods.debug(e);
-                }
-            });
-        }
-        else {
-            warning = 0;
-        }
-    });
+                    catch (e) {
+                        methods.debug(e);
+                    }
+                });
+            }
+            else {
+                warning = 0;
+            }
+        });
+    }
 
     weapons.getMapList().forEach(item => {
         let hash = item[1] / 2;
@@ -429,7 +432,7 @@ timer.secTimer = function() {
                 user.setHealth(0); //TODO
             }
 
-            /*if (!mp.game.graphics.getScreenEffectIsActive("DrugsMichaelAliensFightIn"))
+            if (!mp.game.graphics.getScreenEffectIsActive("DrugsMichaelAliensFightIn"))
                 mp.game.graphics.startScreenEffect("DrugsMichaelAliensFightIn", 0, true);
 
             if (user.getDrugLevel(drugId) < 1) {
@@ -438,7 +441,7 @@ timer.secTimer = function() {
                 setTimeout(function () {
                     mp.game.graphics.stopScreenEffect("DrugsMichaelAliensFightOut");
                 }, 10000);
-            }*/
+            }
         }
 
         drugId = 1;
@@ -450,7 +453,7 @@ timer.secTimer = function() {
                 user.setHealth(0); //TODO
             }
 
-            /*if (!mp.game.graphics.getScreenEffectIsActive("DrugsTrevorClownsFightIn"))
+            if (!mp.game.graphics.getScreenEffectIsActive("DrugsTrevorClownsFightIn"))
                 mp.game.graphics.startScreenEffect("DrugsTrevorClownsFightIn", 0, true);
 
             if (user.getDrugLevel(drugId) < 1) {
@@ -459,7 +462,7 @@ timer.secTimer = function() {
                 setTimeout(function () {
                     mp.game.graphics.stopScreenEffect("DrugsTrevorClownsFightOut");
                 }, 10000);
-            }*/
+            }
         }
 
         drugId = 2;
@@ -471,12 +474,12 @@ timer.secTimer = function() {
                 user.setHealth(0); //TODO
             }
 
-            /*if (!mp.game.graphics.getScreenEffectIsActive("DMT_flight"))
+            if (!mp.game.graphics.getScreenEffectIsActive("DMT_flight"))
                 mp.game.graphics.startScreenEffect("DMT_flight", 0, true);
 
             if (user.getDrugLevel(drugId) < 1) {
                 mp.game.graphics.stopScreenEffect("DMT_flight");
-            }*/
+            }
         }
 
         drugId = 3;
@@ -488,12 +491,12 @@ timer.secTimer = function() {
                 user.setHealth(0); //TODO
             }
 
-            /*if (!mp.game.graphics.getScreenEffectIsActive("Rampage"))
+            if (!mp.game.graphics.getScreenEffectIsActive("Rampage"))
                 mp.game.graphics.startScreenEffect("Rampage", 0, true);
 
             if (user.getDrugLevel(drugId) < 1) {
                 mp.game.graphics.stopScreenEffect("Rampage");
-            }*/
+            }
         }
 
         drugId = 4;
@@ -505,7 +508,7 @@ timer.secTimer = function() {
                 user.setHealth(0); //TODO
             }
 
-            /*if (!mp.game.graphics.getScreenEffectIsActive("DrugsDrivingIn"))
+            if (!mp.game.graphics.getScreenEffectIsActive("DrugsDrivingIn"))
                 mp.game.graphics.startScreenEffect("DrugsDrivingIn", 0, true);
 
             if (user.getDrugLevel(drugId) < 1) {
@@ -514,7 +517,7 @@ timer.secTimer = function() {
                 setTimeout(function () {
                     mp.game.graphics.stopScreenEffect("DrugsDrivingOut");
                 }, 10000);
-            }*/
+            }
         }
 
         drugId = 5;
@@ -526,7 +529,7 @@ timer.secTimer = function() {
                 user.setHealth(0); //TODO
             }
 
-            /*if (!mp.game.graphics.getScreenEffectIsActive("PeyoteEndIn"))
+            if (!mp.game.graphics.getScreenEffectIsActive("PeyoteEndIn"))
                 mp.game.graphics.startScreenEffect("PeyoteEndIn", 0, true);
 
             if (user.getDrugLevel(drugId) < 1) {
@@ -535,7 +538,7 @@ timer.secTimer = function() {
                 setTimeout(function () {
                     mp.game.graphics.stopScreenEffect("PeyoteEndOut");
                 }, 10000);
-            }*/
+            }
         }
 
         drugId = 99;

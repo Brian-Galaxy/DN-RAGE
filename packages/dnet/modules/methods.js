@@ -147,7 +147,7 @@ methods.getRandomBankCard = function (prefix = 0) {
 methods.getRandomPhone = function (prefix = 0) {
     if (prefix == 0)
         prefix = methods.getRandomInt(100, 999);
-    let num = methods.getRandomInt(100000, 9999999);
+    let num = methods.getRandomInt(1000000, 9999999);
     return methods.parseInt(`${prefix}${num}`);
 };
 

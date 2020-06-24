@@ -1018,8 +1018,8 @@ fraction.createCargoArmyWar = function() {
         return;
     methods.notifyWithPictureToFractions2('Борьба за груз Армии', `~r~ВНИМАНИЕ!`, 'Началась война за груз армии, груз скоро будет отмечен на карте');
     isCargoArmy = true;
-    fraction.spawnCargo("Brickade", [52], 489.89801025390625, -3149.06201171875, 6.418020725250244, 359.25390625, 99999, 154);
-    fraction.spawnCargo("Brickade", [52], 490.11376953125, -3132.896484375, 6.417043685913086, 359.23504638671875,  99998, 154);
+    fraction.spawnCargo("Brickade", [52], 477.1816101074219, -3352.23486328125, 6.417909622192383, 270.78851318359375, 99999, 154);
+    fraction.spawnCargo("Brickade", [52], 477.202392578125, -3345.884765625, 6.4177117347717285, 270.76654052734375,  99998, 154);
     setTimeout(fraction.timerCargoArmyWar, 30000);
 };
 
@@ -1542,14 +1542,14 @@ fraction.startGrabShopGang = function(player, itemId = 0) {
 
             setTimeout(function () {
 
+                fraction.reset(frId, 'currentGrabShopActive' + i);
+                
                 if (!user.isLogin(player))
                     return;
 
                 try {
                     //user.blockKeys(player, false);
                     user.stopAnimation(player);
-
-                    fraction.reset(frId, 'currentGrabShopActive' + i);
 
                     if (methods.distanceToPos(new mp.Vector3(pos[0], pos[1], pos[2]), player.position) > 5) {
                         player.notify('~r~Вы слишком далеко');

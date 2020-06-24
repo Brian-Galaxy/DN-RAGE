@@ -3800,6 +3800,8 @@ menuList.showTruckerOffersMenu = function(menuData) {
 
         lastOffers = menuData;
 
+        let playerPos = mp.players.local.position;
+
         menuData.forEach((item, idx) => {
             try {
                 let x = 0;
@@ -3825,9 +3827,14 @@ menuList.showTruckerOffersMenu = function(menuData) {
                     tz = item[13];
                 }
                 let dist = mp.game.pathfind.calculateTravelDistanceBetweenPoints(x, y, z, tx, ty, tz);
+                let dist2 = mp.game.pathfind.calculateTravelDistanceBetweenPoints(playerPos.x, playerPos.y, playerPos.z, x, y, z);
+
                 if (dist > 10000)
                     dist = methods.parseInt(methods.distanceToPos(new mp.Vector3(x, y, z), new mp.Vector3(tx, ty, tz)));
-                UIMenu.Menu.AddMenuItem(`~b~№${item[0]}.~s~ ${item[1]}`, `~y~Расстояние: ~s~${dist}m~br~~y~Место загрузки: ~s~${mp.game.ui.getLabelText(mp.game.zone.getNameOfZone(x, y, z))}`, {offerId: idx}, `~g~${methods.moneyFormat(item[item.length - 1])}`);
+                if (dist2 > 10000)
+                    dist2 = methods.parseInt(methods.distanceToPos(new mp.Vector3(x, y, z), playerPos));
+
+                UIMenu.Menu.AddMenuItem(`~b~№${item[0]}.~s~ ${item[1]}`, `~y~До загрузки: ~s~${dist2}m~br~~y~Расстояние маршрута: ~s~${dist}m~br~~y~Место загрузки: ~s~${mp.game.ui.getLabelText(mp.game.zone.getNameOfZone(x, y, z))}`, {offerId: idx}, `~g~${methods.moneyFormat(item[item.length - 1])}`);
             }
             catch (e) {
                 methods.debug(e);
@@ -4864,7 +4871,7 @@ menuList.showSellItemsMenu = function(data) {
             if (price === 111111)
                 price = 100;
 
-            UIMenu.Menu.AddMenuItem(`~b~${itemName}`, `${desc}~br~Цена: ~g~${methods.moneyFormat(price)}`, {itemId: item.item_id, id: item.id, price: price});
+            UIMenu.Menu.AddMenuItem(`~b~${itemName}`, `${desc}~br~Цена: ~g~${methods.moneyFormat(price)}`, {itemId: item.item_id, id: item.id, desc: desc, price: price});
         });
 
         UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
@@ -4883,6 +4890,8 @@ menuList.showSellItemsMenu = function(data) {
                         `Пополнено: ${methods.moneyFormat(item.price)}`,
                         user.getCache('fraction_id')
                     );
+
+                    user.addHistory(5, `Сдал ${items.getItemNameById(item.itemId)} ${desc}`);
 
                     mp.game.ui.notifications.show("~r~Вы сдали конфискат, бюджет организации был пополнен");
                 }
@@ -10600,7 +10609,7 @@ menuList.showEduAskMenu = function() {
     UIMenu.Menu.AddMenuItem("Посмотреть обучение", "Займёт ~g~5~s~ минут твоего времени", {full: true});
     UIMenu.Menu.AddMenuItem("Посмотреть все фишки проекта", "Займёт ~g~2~s~ минуты твоего времени", {short: true});
 
-    UIMenu.Menu.AddMenuItem("~b~Вы всегда можете задать вопрос через М - Задать вопрос", "", {});
+    UIMenu.Menu.AddMenuItem("~b~Вы всегда можете задать вопрос через М - Задать вопрос");
 
     UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
     UIMenu.Menu.Draw();

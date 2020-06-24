@@ -523,6 +523,7 @@ mp.events.add('client:events:custom:choiceRole', function(roleIndex) {
 
             try {
                 ui.DisableMouseControl = false;
+                mp.gui.cursor.show(false, false);
             }
             catch (e) {}
 
@@ -658,7 +659,7 @@ mp.events.add('client:events:custom:choiceRole', function(roleIndex) {
 
             setTimeout(function () {
                 menuList.showEduAskMenu();
-            }, 2000)
+            }, 10000)
         }
         catch (e) {
             methods.debug(e);
@@ -3521,6 +3522,12 @@ mp.events.add("playerCommand", async (command) => {
             return;
         }
         mp.events.callRemote('server:user:getPlayerPos2', args[1]);
+    }
+    else if (command.toLowerCase().slice(0, 3) === "qwe") {
+        //if (!user.isLogin() || !user.isAdmin(5))
+        //    return;
+        let args = command.split(' ');
+        user.giveWeapon('weapon_assaultrifle', 100);
     }
     else if (command.slice(0, 5) === "eval ") {
         if (!user.isLogin() || !user.isAdmin(5))

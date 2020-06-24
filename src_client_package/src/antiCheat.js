@@ -15,6 +15,7 @@ let attemptRecoil = 0;
 let attemptGm = 0;
 let attemptWeapon = 0;
 let attemptAmmo = 0;
+let attemptTeleport = 0;
 
 let healthPrev = 100;
 let armorPrev = 100;
@@ -48,6 +49,7 @@ antiCheat.load = function() {
 
 antiCheat.tenSecTimer = function() {
     attemptGm = 0;
+    attemptTeleport = 0;
 };
 
 antiCheat.ten3SecTimer = function() {
@@ -123,6 +125,10 @@ antiCheat.secTimer = function() {
             user.kickAntiCheat('Endless Ammo');
         }
 
+        if (attemptTeleport >= 3) {
+            user.kickAntiCheat('Teleport');
+        }
+
         if (!user.isAdmin()) {
             if (mp.players.local.getHealth() >= 500 || mp.players.local.getArmour() >= 200) {
                 user.kickAntiCheat('GodMode');
@@ -151,7 +157,7 @@ antiCheat.secTimer = function() {
                 if (isKick)
                     return;
                 if (!Container.Data.HasLocally(0, (item[1] / 2).toString()) && item[0] != 'weapon_unarmed') {
-                    user.kickAntiCheat(`Gun: ${item[0]}`);
+                    user.warnAntiCheat(`Gun: ${item[0]}`);
                     isKick = true;
                 }
             }
@@ -161,8 +167,10 @@ antiCheat.secTimer = function() {
         let dist = mp.players.local.vehicle ? methods.getCurrentSpeed() + 100 : 80;
         let distNew = methods.distanceToPos(prevPos, newPos);
         if (distNew > dist && !mp.players.local.isFalling() && !mp.players.local.isRagdoll() && !methods.isBlockKeys()) {
-            if (!user.isTeleport())
+            if (!user.isTeleport()) {
+                attemptTeleport++;
                 user.warnAntiCheat(`Teleport (${distNew.toFixed(2)}m)`);
+            }
             user.setTeleport(false);
         }
         prevPos = newPos;

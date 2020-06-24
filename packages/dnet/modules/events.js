@@ -490,6 +490,7 @@ mp.events.addRemoteCounted('server:user:setVirtualWorldVeh', (player, vwId) => {
 mp.events.addRemoteCounted('server:user:setAlpha', (player, alpha) => {
     try {
         player.alpha = alpha;
+        mp.players.call('client:pSync:alpha', [player.id, alpha]);
     } catch (e) {
         console.log(e);
     }
@@ -594,7 +595,7 @@ mp.events.addRemoteCounted('server:user:warnAntiCheat', (player, reason) => {
         mp.players.forEach(function (p) {
             if (!user.isLogin(p))
                 return;
-            if (user.isAdmin(p))
+            //if (user.isAdmin(p))
                 p.outputChatBoxNew(`!{#f44336}Подозрение в читерстве ${user.getRpName(player)} (${player.id}):!{#FFFFFF} ${reason}`);
         });
     }
@@ -1950,7 +1951,7 @@ mp.events.addRemoteCounted('server:startSpecMission', (player) => {
 
 mp.events.addRemoteCounted('server:startSpecMissionLspd', (player, vId) => {
     try {
-        if (user.isAdmin(player)) {
+        if (user.isLogin(player)) {
 
             let canUse = 0;
             mp.vehicles.forEach(v => {
@@ -2217,8 +2218,8 @@ mp.events.addRemoteCounted('server:usmc:vehicleUnload', (player) => {
 
             mp.players.forEach(p => {
                 if (user.isUsmc(p)) {
-                    user.addMoney(player, 2500, 'Премия USMC');
-                    player.notify('~g~Вам была выдана премия в размере $2500, за доставленный грузовик');
+                    user.addMoney(player, 5000, 'Премия USMC');
+                    player.notify('~g~Вам была выдана премия в размере $5000, за доставленный грузовик');
                 }
             })
         }

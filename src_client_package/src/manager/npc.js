@@ -10,20 +10,15 @@ let _loadDist = 100;
 npc.loadAll = function() {
     //Quest BotSpawn Role0
     npc.create(mp.game.joaat("s_m_y_dockwork_01"), new mp.Vector3(-415.9264831542969, -2645.4287109375, 6.000219345092773), 316.27508544921875, false, "WORLD_HUMAN_CLIPBOARD");
-
 //Quest BotSpawn All
     checkpoint.addMarker(-1380.45458984375, -527.6905517578125, 31.9591854095459, 2, 0.5, 0.5);
     npc.create(mp.game.joaat("a_f_y_business_02"), new mp.Vector3(-1380.45458984375, -527.6905517578125, 30.6591854095459), 277.5157775878906, false, "WORLD_HUMAN_CLIPBOARD");
-
 //Quest Gang
     npc.create(mp.game.joaat("ig_lamardavis"), new mp.Vector3(-218.75608825683594, -1368.4576416015625, 31.25823402404785), 43.398406982421875, false, "WORLD_HUMAN_SMOKING");
-
-    //Мейз Банк Арена
-    npc.create(mp.game.joaat("s_m_y_grip_01"), new mp.Vector3(-251.922, -2001.531, 30.14596), 178.7984, false, "WORLD_HUMAN_CLIPBOARD");
-
-    //Bot SellVeh
-    npc.create(mp.game.joaat("s_m_y_grip_01"), new mp.Vector3(-1654.792236328125, -948.4613037109375, 7.716407775878906), 323.9862365722656, false, "WORLD_HUMAN_CLIPBOARD");
-
+//Мейз Банк Арена
+    npc.create(mp.game.joaat("csb_bryony"), new mp.Vector3(-251.922, -2001.531, 30.14596), 178.7984, false, "CODE_HUMAN_MEDIC_TIME_OF_DEATH");
+//Автобазар
+    npc.create(mp.game.joaat("u_m_y_ushi"), new mp.Vector3(-1654.792236328125, -948.4613037109375, 7.716407775878906), 323.9862365722656, false, "WORLD_HUMAN_CLIPBOARD");
 // 24/7 - Гора Чиллиад - Шоссе Сенора
     npc.create(mp.game.joaat("s_f_y_sweatshop_01"), new mp.Vector3(1728.476, 6416.668, 35.03724), -109.9557, false, "WORLD_HUMAN_STAND_IMPATIENT");
 // LTD Gasoline - Грейпсид - Грейпсид-Пейн-стрит
@@ -175,45 +170,69 @@ npc.loadAll = function() {
 // Los Santos Customs LSIA - Международный аэропорт Лос-Сантос - Гринвич-Парквэй
     npc.create(mp.game.joaat("s_m_m_autoshop_01"), new mp.Vector3(-1145.874, -2003.389, 13.18026), 94.71597, false, "WORLD_HUMAN_CLIPBOARD");
 // Bike rent - Елизиан Айланд - Нью-Эмпайр-вэй
-    npc.create(mp.game.joaat("a_f_y_skater_01"), new mp.Vector3(-394.2759, -2670.96, 6.000217), 79.09959, false, "CODE_HUMAN_MEDIC_TIME_OF_DEATH");
+    npc.create(mp.game.joaat("a_f_y_skater_01"), new mp.Vector3(-394.2759, -2670.96, 6.000217), 79.09959, false, "WORLD_HUMAN_SMOKING");
 // Bike rent - Строберри - Элгин-авеню
-    npc.create(mp.game.joaat("a_m_m_skater_01"), new mp.Vector3(102.7933, -1388.645, 29.29153), -7.799984, false, "WORLD_HUMAN_AA_COFFEE");
+    npc.create(mp.game.joaat("a_m_m_skater_01"), new mp.Vector3(102.7933, -1388.645, 29.29153), -7.799984, false, "WORLD_HUMAN_SMOKING");
 // Bike rent - Центр Вайнвуда - Бульвар Ванйвуд
     npc.create(mp.game.joaat("a_m_y_skater_01"), new mp.Vector3(180.926, 180.4024, 105.5414), -14.19996, false, "WORLD_HUMAN_CLIPBOARD");
 // Bike rent - Дель-Перро - Магеллан-авеню
-    npc.create(mp.game.joaat("a_f_y_skater_01"), new mp.Vector3(-1407.697, -560.1698, 30.26969), -49.99975, false, "WORLD_HUMAN_AA_COFFEE");
+    npc.create(mp.game.joaat("a_f_y_skater_01"), new mp.Vector3(-1407.697, -560.1698, 30.26969), -49.99975, false, "WORLD_HUMAN_AA_COFFEE ");
 // Bike rent - Чумаш - Барбарено-роуд
-    npc.create(mp.game.joaat("a_m_m_skater_01"), new mp.Vector3(-3155.155, 1099.27, 20.85335), -101.9993, false, "WORLD_HUMAN_CLIPBOARD");
+    npc.create(mp.game.joaat("a_m_m_skater_01"), new mp.Vector3(-3155.155, 1099.27, 20.85335), -101.9993, false, "CODE_HUMAN_MEDIC_TIME_OF_DEATH");
 // Bike rent - Палето-Бэй - Бульвар Палето
-    npc.create(mp.game.joaat("a_m_y_skater_01"), new mp.Vector3(-232.3245, 6320.706, 31.48291), -128.9995, false, "WORLD_HUMAN_SMOKING");
+    npc.create(mp.game.joaat("a_m_y_skater_01"), new mp.Vector3(-232.3245, 6320.706, 31.48291), -128.9995, false, "WORLD_HUMAN_CLIPBOARD");
 // Bike rent - Грейпсид - Грейпсид-Мэйн-стрит
     npc.create(mp.game.joaat("a_f_y_skater_01"), new mp.Vector3(1679.077, 4861.357, 42.06063), 117.3989, false, "CODE_HUMAN_MEDIC_TIME_OF_DEATH");
 // Bike rent - Сэнди-Шорс - Альгамбра-драйв
-    npc.create(mp.game.joaat("a_m_m_skater_01"), new mp.Vector3(1806.736, 3676.029, 34.27676), -39.58422, false, "WORLD_HUMAN_CLIPBOARD");
+    npc.create(mp.game.joaat("a_m_m_skater_01"), new mp.Vector3(1806.736, 3676.029, 34.27676), -39.58422, false, "WORLD_HUMAN_SMOKING");
 // Bike rent - Болингброк - Шоссе 68
-    npc.create(mp.game.joaat("a_m_y_skater_01"), new mp.Vector3(1852.597, 2594.885, 45.67204), -80.29984, false, "WORLD_HUMAN_CLIPBOARD");
+    npc.create(mp.game.joaat("a_m_y_skater_01"), new mp.Vector3(1852.597, 2594.885, 45.67204), -80.29984, false, "WORLD_HUMAN_AA_COFFEE");
 // Bike rent - Текстайл-Сити - Элгин-авеню
-    npc.create(mp.game.joaat("a_f_y_skater_01"), new mp.Vector3(297.7727, -607.1932, 43.37174), 88.88361, false, "WORLD_HUMAN_AA_COFFEE");
+    npc.create(mp.game.joaat("a_f_y_skater_01"), new mp.Vector3(297.7727, -607.1932, 43.37174), 88.88361, false, "CODE_HUMAN_MEDIC_TIME_OF_DEATH");
 // Bike rent - Миррор-Парк - Никола-авеню
-    npc.create(mp.game.joaat("a_m_m_skater_01"), new mp.Vector3(1153.488, -454.4688, 66.98437), 170.2867, false, "CODE_HUMAN_MEDIC_TIME_OF_DEATH");
+    npc.create(mp.game.joaat("a_m_m_skater_01"), new mp.Vector3(1153.488, -454.4688, 66.98437), 170.2867, false, "WORLD_HUMAN_AA_COFFEE");
 // Bike rent - Пиллбокс-Хилл - Бульвар Веспуччи
-    npc.create(mp.game.joaat("a_m_y_skater_01"), new mp.Vector3(-71.90009, -636.4031, 36.26555), 75.59978, false, "WORLD_HUMAN_CLIPBOARD");
+    npc.create(mp.game.joaat("a_m_y_skater_01"), new mp.Vector3(-71.90009, -636.4031, 36.26555), 75.59978, false, "WORLD_HUMAN_AA_COFFEE");
 // Bike rent - Маленький Сеул - Декер-стрит
     npc.create(mp.game.joaat("a_f_y_skater_01"), new mp.Vector3(-673.8143, -854.3931, 24.16787), 15.29996, false, "WORLD_HUMAN_AA_COFFEE");
 // Bike rent - Рокфорд-Хиллз - Южный бульвар Дель-Перро
-    npc.create(mp.game.joaat("a_m_m_skater_01"), new mp.Vector3(-734.7107, -229.2012, 37.25011), -146.5325, false, "WORLD_HUMAN_SMOKING");
+    npc.create(mp.game.joaat("a_m_m_skater_01"), new mp.Vector3(-734.7107, -229.2012, 37.25011), -146.5325, false, "CODE_HUMAN_MEDIC_TIME_OF_DEATH");
 // Bike rent - Ла-Пуэрта - Гома-стрит
-    npc.create(mp.game.joaat("a_m_y_skater_01"), new mp.Vector3(-1086.856, -1345.369, 5.071685), -145.5996, false, "WORLD_HUMAN_CLIPBOARD");
+    npc.create(mp.game.joaat("a_m_y_skater_01"), new mp.Vector3(-1086.856, -1345.369, 5.071685), -145.5996, false, "WORLD_HUMAN_SMOKING");
 // Bike rent - Хармони - Сенора-роуд
     npc.create(mp.game.joaat("a_f_y_skater_01"), new mp.Vector3(609.6804, 2745.572, 41.98055), -155.9992, false, "WORLD_HUMAN_SMOKING");
 // Bike rent - Мишн-Роу - Алти-стрит
-    npc.create(mp.game.joaat("a_f_y_skater_01"), new mp.Vector3(388.1663, -981.5941, 29.42357), -75.40633, false, "WORLD_HUMAN_AA_COFFEE");
+    npc.create(mp.game.joaat("a_f_y_skater_01"), new mp.Vector3(388.1663, -981.5941, 29.42357), -75.40633, false, "CODE_HUMAN_MEDIC_TIME_OF_DEATH");
 // Boat rent - Ла-Пуэрта - Шэнк-стрит
-    //npc.create(mp.game.joaat("a_m_y_runner_01"), new mp.Vector3(-790.4313, -1453.044, 1.596039), -38.84312, false, "CODE_HUMAN_MEDIC_TIME_OF_DEATH");
+    //npc.create(mp.game.joaat("a_m_y_runner_01"), new mp.Vector3(-790.4313, -1453.044, 1.596039), -38.84312, false, "WORLD_HUMAN_AA_COFFEE ");
 // Boat rent - Бухта Палето - Шоссе Грейт-Оушн
     //npc.create(mp.game.joaat("a_f_y_runner_01"), new mp.Vector3(-1603.928, 5251.08, 3.974748), 108.5822, false, "WORLD_HUMAN_SMOKING");
 // Boat rent - Сан-Шаньский горный хребет - Кэтфиш-Вью
     //npc.create(mp.game.joaat("a_m_y_runner_01"), new mp.Vector3(3867.177, 4463.583, 2.727666), 73.1316, false, "WORLD_HUMAN_CLIPBOARD");
+// Bike Rent - Calafia Bridge
+    npc.create(mp.game.joaat("a_f_y_hippie_01"), new mp.Vector3(-206.4295, 4227.988, 44.86481), -168.9843, false, "WORLD_HUMAN_SMOKING");
+// Bike Rent - East Elysian Islands
+    npc.create(mp.game.joaat("mp_m_exarmy_01"), new mp.Vector3(644.5712, -3009.586, 6.22769), -2.310211, false, "WORLD_HUMAN_SMOKING");
+// Bike Rent - El Burro Heists
+    npc.create(mp.game.joaat("g_m_y_mexgoon_02"), new mp.Vector3(1136.107, -1484.797, 34.84342), -65.9995, false, "WORLD_HUMAN_AA_COFFEE ");
+// Bike Rent - Great Chaparral
+    npc.create(mp.game.joaat("a_m_m_farmer_01"), new mp.Vector3(-1088.656, 2716.905, 19.07619), -131.9994, false, "CODE_HUMAN_MEDIC_TIME_OF_DEATH");
+// Bike Rent - Maze Bank Arena
+    npc.create(mp.game.joaat("a_m_y_eastsa_02"), new mp.Vector3(-248.7172, -2057.083, 27.75543), -56.26459, false, "WORLD_HUMAN_AA_COFFEE");
+// Bike Rent - Mount Chiliad
+    npc.create(mp.game.joaat("a_m_y_dhill_01"), new mp.Vector3(462.4398, 5581.525, 781.1671), 6.832367, false, "WORLD_HUMAN_CLIPBOARD");
+// Bike Rent - Mount Gordo
+    npc.create(mp.game.joaat("u_m_y_hippie_01"), new mp.Vector3(1579.635, 6456.885, 25.31715), 72.05165, false, "WORLD_HUMAN_SMOKING");
+// Bike Rent - North Chumash
+    npc.create(mp.game.joaat("a_m_m_salton_04"), new mp.Vector3(-2508.011, 3622.828, 13.60635), -136.1273, false, "WORLD_HUMAN_CLIPBOARD");
+// Bike Rent - Paleto Forest
+    npc.create(mp.game.joaat("a_m_y_skater_02"), new mp.Vector3(-777.0889, 5593.67, 33.63668), -115.9992, false, "WORLD_HUMAN_AA_COFFEE");
+// Bike Rent - Rancho
+    npc.create(mp.game.joaat("g_f_importexport_01"), new mp.Vector3(186.2505, -2028.593, 18.27061), 163.7489, false, "CODE_HUMAN_MEDIC_TIME_OF_DEATH");
+// Bike Rent - Tataviam Mountains
+    npc.create(mp.game.joaat("a_m_y_vinewood_03"), new mp.Vector3(2560.841, 393.5162, 108.6209), -72.99976, false, "WORLD_HUMAN_CLIPBOARD");
+// Bike Rent - Vinewood Racetrack
+    npc.create(mp.game.joaat("a_f_y_skater_01"), new mp.Vector3(964.2814, 122.494, 80.99068), -20.63669, false, "CODE_HUMAN_MEDIC_TIME_OF_DEATH");
 // Fleeca - Морнингвуд
     npc.create(mp.game.joaat("a_m_y_busicas_01"), new mp.Vector3(-1211.917, -332.0083, 37.78095), 32.20013, false, "WORLD_HUMAN_STAND_IMPATIENT");
     npc.create(mp.game.joaat("a_f_y_business_01"), new mp.Vector3(-1213.227, -332.6803, 37.7809), 29.04985, false, "WORLD_HUMAN_STAND_IMPATIENT");
@@ -244,7 +263,6 @@ npc.loadAll = function() {
     npc.create(mp.game.joaat("a_f_y_business_01"), new mp.Vector3(254.011, 222.395, 106.2868), 172.9996, false, "WORLD_HUMAN_STAND_IMPATIENT");
 // Maze Bank
     npc.create(mp.game.joaat("a_f_y_business_04"), new mp.Vector3(-72.27431, -814.5317, 243.3859), 162.9991, false, "WORLD_HUMAN_STAND_IMPATIENT");
-
 // Работодатель на Садовнике
     npc.create(mp.game.joaat("s_m_m_gardener_01"), new mp.Vector3(-1585.051, -234.8312, 54.33006), 43.62775, false, "WORLD_HUMAN_CLIPBOARD");
 // Работодатель на Разнорабочем
@@ -257,18 +275,17 @@ npc.loadAll = function() {
     npc.create(mp.game.joaat("ig_jimmyboston"), new mp.Vector3(454.2171, -596.1467, 28.53182), -36.12801, false, "WORLD_HUMAN_CLIPBOARD");
 // Работодатель на Инкассаторе
     npc.create(mp.game.joaat("ig_casey"), new mp.Vector3(3.112391, -660.4219, 33.4508), -49.89936, false, "WORLD_HUMAN_CLIPBOARD");
-
-    // Полицейский на выдаче оружия Mission-Row
+// Полицейский на выдаче оружия Mission-Row
     npc.create(mp.game.joaat("s_m_y_cop_01"), new mp.Vector3(454.2837829589844, -980.0394287109375, 30.689321517944336), 89.98814392089844, false, "WORLD_HUMAN_CLIPBOARD");
 // Шериф на выдаче оружия Sandy Shores
     npc.create(mp.game.joaat("s_m_y_sheriff_01"), new mp.Vector3(1844.3907470703125, 3692.18701171875, 34.26704788208008), 284.88543701171875, false, "WORLD_HUMAN_CLIPBOARD");
 // Шериф на выдаче оружия Paleto Bay
     npc.create(mp.game.joaat("csb_cop"), new mp.Vector3(-436.1072998046875, 5999.68603515625, 31.716081619262695), 33.66008377075195, false, "WORLD_HUMAN_CLIPBOARD");
-
 //Церковь
-    npc.create(mp.game.joaat("ig_priest"), new mp.Vector3(-787.1298828125, -708.8898315429688, 30.32028579711914), 265.47149658203125);
+    npc.create(mp.game.joaat("ig_priest"), new mp.Vector3(-787.1298828125, -708.8898315429688, 30.32028579711914), 265.47149658203125, false, "WORLD_HUMAN_GUARD_STAND");
 
-    // House 532
+
+// House 532
     npc.create(mp.game.joaat("s_m_m_highsec_01"), new mp.Vector3(-632.0056, 398.0607, 101.2304), 16.52335, false, "WORLD_HUMAN_GUARD_STAND");
     npc.create(mp.game.joaat("s_m_m_highsec_02"), new mp.Vector3(-624.1522, 398.4064, 101.2321), 10.33697, false, "WORLD_HUMAN_GUARD_STAND");
 

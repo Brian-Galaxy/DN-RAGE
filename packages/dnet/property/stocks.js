@@ -252,8 +252,8 @@ stocks.boxList = [
     ['Малый ящик слоновых бивней', 588496643, 47, -0.12, false, 5000, 'Трофеи браконьеров', 0 ], //48
     ['Бриллиант 64 карата', 926762619, 48, 0, false, 50000, 'Уникальный груз', 2 ], //49
     ['Оружейный ящик Merryweather', -994309865, 49, 0, false, 30000, 'Оружие и патроны', 2 ], //50
-    ['Ящик с документами банков Fleeca', -994309865, 50, 0, false, 50000, 'Уникальный груз', 2 ], //51
-    ['Ящик с C4', -1853019218, 51, 0, false, 200000, 'Оружие и патроны', 2 ], //52
+    ['Ящик с документами банков Fleeca', -994309865, 50, 0, false, 50000, 'Уникальный груз', 3 ], //51
+    ['Ящик с C4', -1853019218, 51, 0, false, 200000, 'Оружие и патроны', 3 ], //52
 ];
 
 stocks.boxPosList = [
@@ -871,16 +871,19 @@ stocks.updateOwnerInfo = function (id, userId, userName) {
 
     stocks.set(id, "user_name", userName);
     stocks.set(id, "user_id", userId);
-    stocks.set(id, "upgrade_g", 0);
 
     if (userId === 0) {
         stocks.updatePin(id, 0);
         stocks.updatePin1(id, 0);
         stocks.updatePin2(id, 0);
         stocks.updatePin3(id, 0);
+        stocks.set(id, "upgrade_g", 0);
+        mysql.executeQuery("UPDATE stocks SET user_name = '" + userName + "', user_id = '" + userId + "', upgrade_g = '0', tax_money = '0' where id = '" + id + "'");
+    }
+    else {
+        mysql.executeQuery("UPDATE stocks SET user_name = '" + userName + "', user_id = '" + userId + "', tax_money = '0' where id = '" + id + "'");
     }
 
-    mysql.executeQuery("UPDATE stocks SET user_name = '" + userName + "', user_id = '" + userId + "', upgrade_g = '0', tax_money = '0' where id = '" + id + "'");
 };
 
 stocks.updateUpgradeG = function (id, status) {

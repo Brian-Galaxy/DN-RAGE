@@ -22,6 +22,9 @@ mp.events.add('entityStreamIn', (entity) => {
     if (entity.type === 'player') {
         let remotePlayer = entity;
         if (mp.players.exists(remotePlayer)) {
+
+            remotePlayer.setVisible(remotePlayer.getAlpha() > 0, false);
+
             for(let i = 0; i < 8; i++) {
                 try {
                     let propType = remotePlayer.getVariable('propType' + i);
@@ -54,6 +57,19 @@ mp.events.add('client:syncComponentVariation', (playerId, component, drawableId,
         let remotePlayer = mp.players.atRemoteId(playerId);
         if (remotePlayer && mp.players.exists(remotePlayer)) {
             remotePlayer.setComponentVariation(component, drawableId, textureId, 2);
+        }
+    }
+    catch (e) {
+        methods.debug('Exception: client:syncComponentVariation');
+        methods.debug(e);
+    }
+});
+
+mp.events.add('client:pSync:alpha', (playerId, alpha) => {
+    try {
+        let remotePlayer = mp.players.atRemoteId(playerId);
+        if (remotePlayer && mp.players.exists(remotePlayer)) {
+            remotePlayer.setVisible(alpha > 0, false);
         }
     }
     catch (e) {
@@ -117,6 +133,8 @@ mp.events.add('client:syncAnimation', async (playerId, dict, anim, flag) => {
             //remotePlayer.clearTasksImmediately();
             //remotePlayer.clearSecondaryTask();
 
+            remotePlayer.lastFlag = flag;
+
             if (dict == 'amb@prop_human_seat_chair@male@generic@base' ||
                 dict == 'amb@prop_human_seat_chair@male@right_foot_out@base' ||
                 dict == 'amb@prop_human_seat_chair@male@left_elbow_on_knee@base' ||
@@ -139,15 +157,20 @@ mp.events.add('client:syncAnimation', async (playerId, dict, anim, flag) => {
                     await methods.sleep(10);
             }
 
-            remotePlayer.taskPlayAnim(dict, anim, 8, 0, -1, flag, 0.0, false, false, false);
+            //remotePlayer.taskPlayAnim(dict, anim, 8, 0, -1, flag, 0.0, false, false, false);
 
-            if (flag != 1 && flag != 9 && flag != 49 && !isScenario) {
-                if (remotePlayer.remoteId === mp.players.local.remoteId) {
+            if (flag != 1 && flag != 9/* && flag != 49*/) {
+
+                remotePlayer.taskPlayAnim(dict, anim, 8, -8, -1, flag, 0.0, false, false, false);
+                /*if (remotePlayer.remoteId === mp.players.local.remoteId) {
                     await methods.sleep(20);
                     await methods.sleep(remotePlayer.getAnimTotalTime(dict, anim));
                     if (remotePlayer.getHealth() > 0)
                         user.stopAllAnimation();
-                }
+                }*/
+            }
+            else {
+                remotePlayer.taskPlayAnim(dict, anim, 8, 0, -1, flag, 0.0, false, false, false);
             }
         }
     }
@@ -184,8 +207,10 @@ mp.events.add('client:syncStopAnimation', (playerId) => {
             )
                 return;
 
-            if (!remotePlayer.isInAir() && !remotePlayer.vehicle && remotePlayer.getHealth() > 0)
-                remotePlayer.clearTasksImmediately();
+            if (!remotePlayer.isInAir() && !remotePlayer.vehicle && remotePlayer.getHealth() > 0) {
+                if (remotePlayer.lastFlag === 1 || remotePlayer.lastFlag === 9)
+                    remotePlayer.clearTasksImmediately();
+            }
         }
     }
     catch (e) {

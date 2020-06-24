@@ -164,7 +164,6 @@ object.load = function () {
     object.delete(415536433, 442.2275, -3020.884, 5.076187);
     object.delete(-46303329, 461.049, -3147.45, 5.075378);
     object.delete(364445978, 445.5908, -3037.615, 5.070641);
-    object.delete(649665061, 475.4654, -3332.5, 5.099434);
     object.delete(3440696416, 569.093, -3199.545, -3.183331);
     object.delete(3440696416, 559.9204, -3206.241, 1.2113);
 
@@ -815,20 +814,6 @@ object.load = function () {
     object.create(2079702193, new mp.Vector3(-796.46, 343.54, 202.16), new mp.Vector3(0, 0, 0), false, false);
     object.create(2079702193, new mp.Vector3(-796.46, 343.54, 203.26), new mp.Vector3(0, 0, 0), false, false);
 
-    //Clubs
-    object.create(-1964135416, new mp.Vector3(-1178.14, -1195.98, 9.233026), new mp.Vector3(2.035555E-13, 5.008956E-06, 10.00001), false, false);
-    object.create(-1964135416, new mp.Vector3(-1173.33, -1173.46, 9.965003), new mp.Vector3(1.00179E-05, 5.008956E-06, 15), false, false);
-    object.create(-1964135416, new mp.Vector3(-1175.2, -1152.501, 11.08638), new mp.Vector3(1.424888E-12, 5.008948E-06, 105.0995), false, false);
-    object.create(1873958683, new mp.Vector3(345.16, -966.5164, 33.99652), new mp.Vector3(5.97114E-13, -5.008956E-06, 89.99999), false, false);
-    object.create(1873958683, new mp.Vector3(345.16, -978.5415, 32.49959), new mp.Vector3(1.384231E-12, -5.008955E-06, 89.99998), false, false);
-    object.create(1873958683, new mp.Vector3(345.1865, -992.3479, 34), new mp.Vector3(1.384231E-12, -5.008955E-06, 89.99998), false, false);
-    object.create(1873958683, new mp.Vector3(332.75, -994.23, 32.69476), new mp.Vector3(5.008951E-06, -5.008956E-06, -5.008955E-06), false, false);
-    object.create(-1874162628, new mp.Vector3(-1173.742, -1152.158, 8.116696), new mp.Vector3(-58.75011, 0.07550914, -75.86123), false, false);
-    object.create(-1874162628, new mp.Vector3(-1173.221, -1173.51, 12.67857), new mp.Vector3(13.74995, -4.834294E-06, 16.00003), false, false);
-    object.create(-1874162628, new mp.Vector3(-1178.13, -1196, 11.73), new mp.Vector3(13.74994, 5.273774E-06, 9.875067), false, false);
-    object.create(1449564591, new mp.Vector3(5.06, 221.26, 110.7812), new mp.Vector3(1.001791E-05, 5.008956E-06, 69.95999), false, false);
-    object.create(1449564591, new mp.Vector3(-21.69, 219.83, 110.0739), new mp.Vector3(1.001787E-05, 5.008956E-06, -8.999997), false, false);
-
     //Dock Mapping
     object.create(1524671283, new mp.Vector3(-426.3395, -2638.948, 7.62), new mp.Vector3(0, 0, 28.9998), false, false);
     object.create(1576342596, new mp.Vector3(-428.1002, -2640.67, 7.5), new mp.Vector3(0, 0, 50.99985), false, false);
@@ -1386,12 +1371,18 @@ object.load = function () {
     object.create(-728539053, new mp.Vector3(478.93, -1686.76, 29.93), new mp.Vector3(1.001791E-05, 5.008955E-06, -39.99978), false, false); //Гаражная дверь Bloods
     object.create(-1635579193, new mp.Vector3(-1135.72, -1591.91, 4.47611), new mp.Vector3(1.001788E-05, 5.008956E-06, 35.05999), false, false); //Входная дверь для Vagos
 
-    // Ворота на Занкудо
-    object.delete(1304936454, -2292.463, 3379.086, 32.77634); // Западный ворота
-    object.delete(1688333754, -1600.301, 2806.731, 18.65778); // Восточные ворота
-
     // Закрытые окна в гараже неофок
     object.create(-984871726, new mp.Vector3(224.87, 5180.12, -87.53218), new mp.Vector3(16.12494, 5.075419E-06, 89.99923), false, false);
+
+    object.delete(1524671283, 867.6826, -1065.49, 28.02717); // мусор у склада 130
+    object.delete(1576342596, 868.6109, -1067.281, 27.91837); // мусор у склада 130
+    object.delete(1524671283, 868.1902, -1071.921, 27.96341); // мусор у склада 131
+    object.delete(1576342596, 992.3291, -1553.072, 29.75762); // мусор у склада 107
+    object.delete(1935071027, 992.4012, -1547.438, 29.77039); // мусор у склада 107
+    object.delete(4236481708, 930.6436, -1545.578, 29.86438); // мусор у склада98
+    object.delete(4242234993, 930.0823, -1548.232, 30.11697); // мусор у склада 98
+    object.delete(897494494, 928.9025, -1545.953, 29.85506); // мусор у склада 98
+    object.delete(364445978, 334.8166, 269.0989, 103.104); // мусор у выезда Galaxy
 
     //DOORS
     //DOORS

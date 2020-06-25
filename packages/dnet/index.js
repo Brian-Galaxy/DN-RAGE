@@ -9,6 +9,7 @@ require('./managers/vSync');
 require('./managers/wpSync');
 require('./managers/attach');
 require('./managers/attachWeapons');
+require('./managers/dispatcher');
 
 require('./casino/wheel');
 

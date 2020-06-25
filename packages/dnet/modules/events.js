@@ -595,7 +595,7 @@ mp.events.addRemoteCounted('server:user:warnAntiCheat', (player, reason) => {
         mp.players.forEach(function (p) {
             if (!user.isLogin(p))
                 return;
-            //if (user.isAdmin(p))
+            if (user.isAdmin(p))
                 p.outputChatBoxNew(`!{#f44336}Подозрение в читерстве ${user.getRpName(player)} (${player.id}):!{#FFFFFF} ${reason}`);
         });
     }
@@ -1933,13 +1933,15 @@ mp.events.addRemoteCounted('server:startSpecMission', (player) => {
             v.locked = true;
             v.addAttachment('spec1');
 
+            setTimeout(function () { try { v.alpha = 0;} catch (e) {} }, 100);
+            setTimeout(function () { try { v.alpha = 0;} catch (e) {} }, 500);
             setTimeout(function () {
                 try {
                     mp.players.callInRange(v.position, 200, "vSync:Sound", [v.id]);
                     v.setVariable('markAsDrone', true);
                 }
                 catch (e) {
-                    
+
                 }
             }, 1000)
         }
@@ -1974,6 +1976,8 @@ mp.events.addRemoteCounted('server:startSpecMissionLspd', (player, vId) => {
 
             let riot = mp.vehicles.at(vId);
 
+            setTimeout(function () { try { v.alpha = 0;} catch (e) {} }, 100);
+            setTimeout(function () { try { v.alpha = 0;} catch (e) {} }, 500);
             setTimeout(function () {
                 try {
                     mp.players.callInRange(v.position, 200, "vSync:Sound", [v.id]);
@@ -2931,8 +2935,32 @@ mp.events.addRemoteCounted('server:vehicles:addNewFraction', (player, model, cou
     }
 });
 
-mp.events.addRemoteCounted('server:dispatcher:sendPos', (player, title, desc, x, y, z, withCoord) => {
-    dispatcher.sendPos(title, desc, new mp.Vector3(x, y, z), withCoord);
+mp.events.addRemoteCounted('server:dispatcher:sendPos', (player, title, desc, x, y, z, withCoord, phone) => {
+    dispatcher.sendPos(title, desc, new mp.Vector3(x, y, z), withCoord, phone);
+});
+
+mp.events.addRemoteCounted('server:dispatcher:sendTaxiPos', (player, title, desc, x, y, z, wx, wy, wz, price, phone) => {
+    dispatcher.sendTaxiPos(title, desc, new mp.Vector3(x, y, z), new mp.Vector3(wx, wy, wz), price, phone);
+});
+
+mp.events.addRemoteCounted('server:dispatcher:sendMechPos', (player, title, desc, x, y, z, phone) => {
+    dispatcher.sendMechPos(title, desc, new mp.Vector3(x, y, z), phone);
+});
+
+mp.events.addRemoteCounted('server:dispatcher:getTaxiMenu', (player) => {
+    dispatcher.getTaxiMenu(player);
+});
+
+mp.events.addRemoteCounted('server:dispatcher:getMechMenu', (player) => {
+    dispatcher.getMechMenu(player);
+});
+
+mp.events.addRemoteCounted('server:taxi:accept', (player, id) => {
+    dispatcher.acceptTaxi(player, id);
+});
+
+mp.events.addRemoteCounted('server:mech:accept', (player, id) => {
+    dispatcher.acceptMech(player, id);
 });
 
 mp.events.addRemoteCounted('server:dispatcher:sendLocalPos', (player, title, desc, x, y, z, fractionId, withCoord) => {
@@ -3023,7 +3051,7 @@ mp.events.addRemoteCounted('server:phone:sendMessage', (player, phoneNumber, mes
 
                 let msg = {
                     type: 'addMessengerMessage',
-                    phone: phoneNumber.toString(),
+                    phone: user.get(player, 'phone').toString(),
                     text: message,
                     date: date,
                     time: weather.getFullRpTime() + ':00',
@@ -3044,6 +3072,10 @@ mp.events.addRemoteCounted('server:phone:sendMessage', (player, phoneNumber, mes
     catch (e) {
         methods.debug(e);
     }
+});
+
+mp.events.addRemoteCounted('server:phone:sendMessageNumber', (player, numberFrom, phoneNumber, message) => {
+    phone.sendMessageByNumber(numberFrom, phoneNumber, message);
 });
 
 mp.events.addRemoteCounted('server:phone:updateContactList', (player) => {
@@ -3812,6 +3844,177 @@ mp.events.addRemoteCounted("onKeyPress:E", (player) => {
                 player.call('client:showHouseInVMenu', [Array.from(houseData)]);
             }
         });
+    }
+});
+
+mp.events.addRemoteCounted('server:mechanic:fuel', (player, id, count, price) => {
+    if (!user.isLogin(player))
+        return;
+    let target = mp.players.at(id);
+    if (!user.isLogin(target)) {
+        player.notify('~r~Игрок не найден');
+        return;
+    }
+    if (!target.vehicle) {
+        player.notify('~r~Игрок должен находится в транспорте');
+        return;
+    }
+    if (methods.distanceToPos(player.position, target.position) > 10) {
+        player.notify('~r~Вы слишком далеко');
+        return;
+    }
+    player.call('client:menuList:showMechanicAcceptFuelMenu', [player.id, count, price]);
+});
+
+mp.events.addRemoteCounted('server:mechanic:fuel:accept', (player, id, count, price) => {
+    try {
+        if (!user.isLogin(player))
+            return;
+        let target = mp.players.at(id);
+        if (!user.isLogin(target)) {
+            player.notify('~r~Игрок не найден');
+            return;
+        }
+        if (methods.distanceToPos(player.position, target.position) > 10) {
+            player.notify('~r~Вы слишком далеко');
+            return;
+        }
+        if (!player.vehicle) {
+            player.notify('~r~Вы не в транспорте');
+            return;
+        }
+        if (!target.vehicle) {
+            player.notify('~r~Механик не в транспорте');
+            return;
+        }
+        user.removeMoney(player, price, 'Услуги механика');
+        user.addMoney(target, price, 'Услуги механика');
+
+        let vInfo = methods.getVehicleInfo(player.vehicle.model);
+        if (vInfo.fuel_type === 0) {
+            player.notify(`~r~Данный вид транспорта не использует топливо`);
+            return;
+        }
+
+        if (vInfo.fuel_full <= vehicles.getFuel(player.vehicle) + count) {
+            player.notify('~r~Транспорт уже заправлен');
+            return;
+        }
+
+        let fuel = vehicles.get(target.vehicle.getVariable('container'), 'mechFuel');
+        vehicles.set(target.vehicle.getVariable('container'), 'mechFuel', fuel - count);
+
+        player.notify(`~g~Вам заправили транспорт на ~s~${count} ед.~g~ топлива по цене ~s~${methods.moneyFormat(price)}`);
+        target.notify(`~g~Вы заправили транспорт на ~s~${count} ед.~g~ топлива по цене ~s~${methods.moneyFormat(price)}`);
+
+        vehicles.addFuel(player.vehicle, count);
+    }
+    catch (e) {
+        
+    }
+});
+
+mp.events.addRemoteCounted('server:mechanic:fix', (player, id, price) => {
+    if (!user.isLogin(player))
+        return;
+    let target = mp.players.at(id);
+    if (!user.isLogin(target)) {
+        player.notify('~r~Игрок не найден');
+        return;
+    }
+    if (!target.vehicle) {
+        player.notify('~r~Игрок должен находится в транспорте');
+        return;
+    }
+    if (methods.distanceToPos(player.position, target.position) > 10) {
+        player.notify('~r~Вы слишком далеко');
+        return;
+    }
+    player.call('client:menuList:showMechanicAcceptFixMenu', [player.id, price]);
+});
+
+mp.events.addRemoteCounted('server:mechanic:fix:accept', (player, id, price) => {
+    try {
+        if (!user.isLogin(player))
+            return;
+        let target = mp.players.at(id);
+        if (!user.isLogin(target)) {
+            player.notify('~r~Игрок не найден');
+            return;
+        }
+        if (methods.distanceToPos(player.position, target.position) > 10) {
+            player.notify('~r~Вы слишком далеко');
+            return;
+        }
+        if (!player.vehicle) {
+            player.notify('~r~Вы не в транспорте');
+            return;
+        }
+        if (!target.vehicle) {
+            player.notify('~r~Механик не в транспорте');
+            return;
+        }
+        user.removeMoney(player, price, 'Услуги механика');
+        user.addMoney(target, price, 'Услуги механика');
+
+        player.notify(`~g~Вам починили транспорт по цене ~s~${methods.moneyFormat(price)}`);
+        target.notify(`~g~Вы починили транспорт по цене ~s~${methods.moneyFormat(price)}`);
+
+        player.vehicle.repair();
+    }
+    catch (e) {
+
+    }
+});
+
+mp.events.addRemoteCounted('server:mechanic:flip', (player, id, price) => {
+    if (!user.isLogin(player))
+        return;
+    let target = mp.players.at(id);
+    if (!user.isLogin(target)) {
+        player.notify('~r~Игрок не найден');
+        return;
+    }
+    if (methods.distanceToPos(player.position, target.position) > 10) {
+        player.notify('~r~Вы слишком далеко');
+        return;
+    }
+    player.call('client:menuList:showMechanicAcceptFlipMenu', [player.id, price]);
+});
+
+mp.events.addRemoteCounted('server:mechanic:flip:accept', (player, id, price) => {
+    try {
+        if (!user.isLogin(player))
+            return;
+        let target = mp.players.at(id);
+        if (!user.isLogin(target)) {
+            player.notify('~r~Игрок не найден');
+            return;
+        }
+        if (methods.distanceToPos(player.position, target.position) > 10) {
+            player.notify('~r~Вы слишком далеко');
+            return;
+        }
+
+        let veh = methods.getNearestVehicleWithCoords(player.position, 5);
+        if (!mp.vehicles.exists(veh)) {
+            player.notify('~r~Рядом с вами нет транспорта');
+            return;
+        }
+        if (!target.vehicle) {
+            player.notify('~r~Механик не в транспорте');
+            return;
+        }
+        user.removeMoney(player, price, 'Услуги механика');
+        user.addMoney(target, price, 'Услуги механика');
+
+        player.notify(`~g~Вам перевернули транспорт по цене ~s~${methods.moneyFormat(price)}`);
+        target.notify(`~g~Вы перевернули транспорт по цене ~s~${methods.moneyFormat(price)}`);
+
+        veh.rotation = new mp.Vector3(0, 0, veh.heading);
+    }
+    catch (e) {
+
     }
 });
 

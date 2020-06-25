@@ -219,6 +219,41 @@ fuel.fillVeh = function(price, shopId, type, idx) {
     }
 };
 
+fuel.fillMech = async function(price, shopId, count) {
+    methods.debug('fuel.fillMech');
+    try {
+        let veh = mp.players.local.vehicle;
+        if (!veh) {
+            mp.game.ui.notifications.show(`~r~Вы должны находиться в транспорте`);
+            return;
+        }
+
+        let container = veh.getVariable('container');
+        let currentFuel = methods.parseInt(await vehicles.get(container, 'mechFuel'));
+        let offsetFuel = 500 - currentFuel;
+        if (offsetFuel < count)
+            count = offsetFuel;
+
+        if (count === 0) {
+            mp.game.ui.notifications.show(`~r~Транспорт уже заправлен`);
+            return;
+        }
+
+        let money = methods.parseFloat(count * price) / 2;
+        if (user.getMoney() < money) {
+            mp.game.ui.notifications.show(`~r~У Вас недостаточно средств (Необходимо: ${methods.moneyFormat(money)})`);
+            return;
+        }
+        business.addMoney(shopId, money, 'Заправка транспорта механика');
+        user.removeMoney(money, 'Заправка транспорта');
+        vehicles.set(container, 'mechFuel', currentFuel + count);
+        mp.game.ui.notifications.show(`Вы заправили транспорт по цене: ~g~${methods.moneyFormat(money)}`);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+};
+
 fuel.getInRadius = function(pos, radius = 2) {
     methods.debug('fuel.fuel');
     let shopId = -1;

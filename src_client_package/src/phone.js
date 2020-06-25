@@ -292,6 +292,17 @@ phone.updateMainAppList = function() {
 
 phone.showAppList = function() {
 
+    let desc = 'Для начала установите метку';
+    if (methods.isWaypointPosition()) {
+        let pos = methods.getWaypointPosition();
+        let playerPos = mp.players.local.position;
+        let dist = mp.game.pathfind.calculateTravelDistanceBetweenPoints(pos.x, pos.y, pos.z, playerPos.x, playerPos.y, playerPos.z);
+        if (dist > 10000)
+            dist = methods.parseInt(methods.distanceToPos(pos, playerPos));
+        let price = dist / 15;
+        desc = `Сумма поездки до метки ${methods.moneyFormat(price)}`;
+    }
+
     let menu = {
         UUID: 'apps',
         title: 'Установленные приложения',
@@ -344,6 +355,24 @@ phone.showAppList = function() {
                         type: 8,
                         clickable: true,
                         params: {name: "call9113"}
+                    },
+                    {
+                        title: 'Такси',
+                        text: `${desc}`,
+                        modalTitle: 'Введите текст',
+                        modalButton: ['Закрыть', 'Отправить'],
+                        type: 8,
+                        clickable: true,
+                        params: {name: "callTaxi"}
+                    },
+                    {
+                        title: 'Механик',
+                        text: `Вызов механика`,
+                        modalTitle: 'Введите текст',
+                        modalButton: ['Закрыть', 'Отправить'],
+                        type: 8,
+                        clickable: true,
+                        params: {name: "callMeh"}
                     },
                     {
                         title: 'Настройки',
@@ -1504,6 +1533,13 @@ phone.showAppGps = function() {
                         params: {x: 78, y: 111}
                     },
                     {
+                        title: "Механик",
+                        text: "",
+                        type: 1,
+                        clickable: true,
+                        params: {x: 548, y: -172}
+                    },
+                    {
                         title: "Автобусный парк",
                         text: "",
                         type: 1,
@@ -2643,7 +2679,7 @@ phone.showAppFractionDispatcherList = function() {
                 let itemSmall = phone.getMenuItem(
                     `${i}. ${methods.removeQuotesAll(item.title)} [${item.time}]`,
                     `Район: ${methods.removeQuotesAll(item.street1)}`,
-                    { name: "dispatcherAccept", title: methods.removeQuotesAll(item.title), desc: methods.removeQuotesAll(item.desc), street1: methods.removeQuotesAll(item.street1), withCoord: item.withCoord, posX: item.x, posY: item.y },
+                    { name: "dispatcherAccept", title: methods.removeQuotesAll(item.title), desc: methods.removeQuotesAll(item.desc), street1: methods.removeQuotesAll(item.street1), withCoord: item.withCoord, posX: item.x, posY: item.y, p: item.phone },
                     1,
                     '',
                     true,
@@ -4374,13 +4410,41 @@ phone.callBackModalInput = async function(paramsJson, text) {
             }, 300000);
         }
         if (params.name == 'call9111') {
-            dispatcher.send(`~b~PD | ${methods.phoneFormat(user.getCache('phone'))}`, text);
+            dispatcher.send(`~b~PD | ${methods.phoneFormat(user.getCache('phone'))}`, text, true, user.getCache('phone'));
         }
         if (params.name == 'call9112') {
-            dispatcher.send(`~r~EMS | ${methods.phoneFormat(user.getCache('phone'))}`, text);
+            dispatcher.send(`~r~EMS | ${methods.phoneFormat(user.getCache('phone'))}`, text, true, user.getCache('phone'));
         }
         if (params.name == 'call9113') {
-            dispatcher.send(`~y~FD | ${methods.phoneFormat(user.getCache('phone'))}`, text);
+            dispatcher.send(`~y~FD | ${methods.phoneFormat(user.getCache('phone'))}`, text, true, user.getCache('phone'));
+        }
+        if (params.name == 'callTaxi') {
+
+            if (methods.isWaypointPosition()) {
+
+                let pos = methods.getWaypointPosition();
+                let playerPos = mp.players.local.position;
+
+                let dist = mp.game.pathfind.calculateTravelDistanceBetweenPoints(pos.x, pos.y, pos.z, playerPos.x, playerPos.y, playerPos.z);
+                if (dist > 10000)
+                    dist = methods.parseInt(methods.distanceToPos(pos, playerPos));
+
+                let price = dist / 15;
+                if (price > user.getMoney()) {
+                    mp.game.ui.notifications.show("~y~У Вас нет денег на поездку");
+                    return ;
+                }
+
+                user.set('waitTaxi', true);
+                dispatcher.sendTaxi(`${methods.phoneFormat(user.getCache('phone'))}`, text, pos, price, user.getCache('phone'));
+                mp.game.ui.notifications.show(`~y~Вы взвали такси\nИтоговая цена поездки: ~s~${methods.moneyFormat(price)}`);
+            }
+            else {
+                mp.game.ui.notifications.show("~y~Прежде чем вызвать такси, вам необходимо установить на карте метку, куда вы хотите поехать");
+            }
+        }
+        if (params.name == 'callMeh') {
+            dispatcher.sendMech(`${methods.phoneFormat(user.getCache('phone'))}`, text, user.getCache('phone'));
         }
         if (params.name == 'getPayDay') {
             let sum = methods.parseFloat(text);
@@ -4583,6 +4647,8 @@ phone.callBackButton = async function(menu, id, ...args) {
                 );
                 if (params.posX)
                     user.setWaypoint(params.posX, params.posY);
+                if (methods.parseInt(params.p))
+                    mp.events.callRemote('server:phone:sendMessageNumber', '911', params.p.toString(), `Ваш вызов был принят сотрудником ${user.getFractionName()}`);
             }
             else if (params.name == 'dispatcherLoc') {
                 phone.showAppFractionDispatcherLoc();

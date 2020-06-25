@@ -273,6 +273,7 @@ pickups.MailPos = new mp.Vector3(78.78807067871094, 111.90670013427734, 80.16815
 pickups.Bus1Pos = new mp.Vector3(461.0713806152344, -573.357666015625, 27.499807357788086);
 pickups.Bus2Pos = new mp.Vector3(471.4545593261719, -576.7513427734375, 27.499744415283203);
 pickups.Bus3Pos = new mp.Vector3(466.4013671875, -576.0244140625, 27.499794006347656);
+pickups.Mech3Pos = new mp.Vector3(548.5404052734375, -172.61703491210938, 53.4813346862793);
 pickups.TaxiPos = new mp.Vector3(895.2080078125, -179.82662963867188, 73.69615936279297);
 pickups.TreePos = new mp.Vector3(-1585.625, -234.0653, 53.35091);
 pickups.BuilderPos = new mp.Vector3(-1159.201, -740.0846, 18.88993);
@@ -697,6 +698,8 @@ pickups.checkPressE = function(player) {
             player.call('client:menuList:showSpawnJobCarTaxiMenu');
         if (user.isJobGr6(player) && methods.distanceToPos(pickups.Gr6Pos, playerPos) < distanceCheck)
             player.call('client:menuList:showSpawnJobGr6Menu');
+        if (user.isJobMech(player) && methods.distanceToPos(pickups.Mech3Pos, playerPos) < distanceCheck)
+            player.call('client:menuList:showSpawnJobCarMenu', [150, 534.3485107421875, -170.06861877441406, 54.39955139160156, 180.3535614013672, 'Sadler', 5]);
         if (user.isJobBus1(player) && methods.distanceToPos(pickups.Bus1Pos, playerPos) < distanceCheck)
             player.call('client:menuList:showSpawnJobCarMenu', [150, 459.72247314453125, -582.0006103515625, 28.495769500732422, 170.3814697265625, 'Bus', 6]);
         if (user.isJobBus2(player) && methods.distanceToPos(pickups.Bus2Pos, playerPos) < distanceCheck)
@@ -904,8 +907,9 @@ pickups.createAll = function() {
     methods.createCpVector(pickups.GangUserPos5, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
 
     methods.createCpVector(pickups.Gr6Pos, 'Нажмите ~g~E~s~ чтобы открыть меню инкассатора', 1, -1, pickups.Blue);
-    methods.createCpVector(pickups.MailPos, 'Нажмите ~g~E~s~ чтобы открыть меню почтальона', 1, -1, pickups.Blue);
-    methods.createCpVector(pickups.TaxiPos, 'Нажмите ~g~E~s~ чтобы открыть меню почтальона', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.Mech3Pos, 'Нажмите ~g~E~s~ чтобы открыть меню аренды транспорта', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.MailPos, 'Нажмите ~g~E~s~ чтобы открыть меню аренты транспорта', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.TaxiPos, 'Нажмите ~g~E~s~ чтобы открыть меню аренды такси', 1, -1, pickups.Blue);
     methods.createCpVector(pickups.Bus1Pos, 'Нажмите ~g~E~s~ чтобы открыть меню городского маршрута', 1, -1, pickups.Blue);
     methods.createCpVector(pickups.Bus2Pos, 'Нажмите ~g~E~s~ чтобы открыть меню трансферного маршрута', 1, -1, pickups.Blue);
     methods.createCpVector(pickups.Bus3Pos, 'Нажмите ~g~E~s~ чтобы открыть меню рейсового маршрута', 1, -1, pickups.Blue);

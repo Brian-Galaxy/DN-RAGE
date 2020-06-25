@@ -949,14 +949,19 @@ mp.events.add('client:user:changeDoorArray', (json) => {
     });
 });
 
-mp.events.add('client:dispatcher:addDispatcherList', (title, desc, time, x, y, z, withCoord) => {
-    methods.debug('Event: client:dispatcher:addDispatcherList', title, desc, time, x, y, z, withCoord);
-    dispatcher.addDispatcherList(title, desc, time, x, y, z, withCoord);
+mp.events.add('client:dispatcher:addDispatcherList', (title, desc, time, x, y, z, withCoord, phone) => {
+    methods.debug('Event: client:dispatcher:addDispatcherList', title, desc, time, x, y, z, withCoord, phone);
+    dispatcher.addDispatcherList(title, desc, time, x, y, z, withCoord, phone);
 });
 
 mp.events.add('client:dispatcher:addDispatcherTaxiList', (count, title, desc, time, price, x, y, z) => {
     methods.debug('Event: client:dispatcher:addDispatcherTaxiList', count, title, desc, time, price, x, y, z);
     dispatcher.addDispatcherTaxiList(count, title, desc, time, price, x, y, z);
+});
+
+mp.events.add('client:dispatcher:addDispatcherMechList', (count, title, desc, time, price, x, y, z) => {
+    methods.debug('Event: client:dispatcher:addDispatcherMechList', count, title, desc, time, price, x, y, z);
+    dispatcher.addDispatcherMechList(count, title, desc, time, price, x, y, z);
 });
 
 mp.events.add('client:updateCheckpointList', (data) => {
@@ -1008,6 +1013,18 @@ mp.events.add('client:lawyer:house:accept', (buyerId, id) => {
 
 mp.events.add('client:menuList:showAcceptClearWantedMenu', (id, price) => {
     menuList.showAcceptClearWantedMenu(id, price);
+});
+
+mp.events.add('client:menuList:showMechanicAcceptFuelMenu', (id, count, price) => {
+    menuList.showMechanicAcceptFuelMenu(id, count, price);
+});
+
+mp.events.add('client:menuList:showMechanicAcceptFixMenu', (id, price) => {
+    menuList.showMechanicAcceptFixMenu(id, price);
+});
+
+mp.events.add('client:menuList:showMechanicAcceptFlipMenu', (id, price) => {
+    menuList.showMechanicAcceptFlipMenu(id, price);
 });
 
 mp.events.add('client:showMazeBankHousePeopleListMenu', (data) => {
@@ -1740,6 +1757,16 @@ mp.events.add('client:menuList:showMenu', (title, desc, menuData) => {
 mp.events.add('client:menuList:showTruckerOffersMenu', (menuData) => {
     methods.debug('Event: client:menuList:showTruckerOffersMenu');
     menuList.showTruckerOffersMenu(menuData);
+});
+
+mp.events.add('client:menuList:showDispatcherTaxiMenu', (menuData) => {
+    methods.debug('Event: client:menuList:showDispatcherTaxiMenu');
+    menuList.showDispatcherTaxiMenu(menuData);
+});
+
+mp.events.add('client:menuList:showDispatcherMechMenu', (menuData) => {
+    methods.debug('Event: client:menuList:showDispatcherMechMenu');
+    menuList.showDispatcherMechMenu(menuData);
 });
 
 mp.events.add('client:trucker:acceptOffer1', (id, name, company, x, y, z, px, py, pz, price) => {

@@ -56,9 +56,9 @@ drone.startOrEndLspd = function() {
 };
 
 drone.calculateDegSec = function(input, rcRate, gRate, expo) {
-    let RPY_useRates = 1.0 - Math.abs(input) * gRate; // ?
-    let input2 = ((input*input*input)*expo + input*(1 - expo)); //First order and thrid order
-    return 200.0 / RPY_useRates * input2 * rcRate; //why 200? standard?
+    let RPY_useRates = 1.0 - Math.abs(input) * gRate;
+    let input2 = ((input*input*input)*expo + input*(1 - expo));
+    return 200.0 / RPY_useRates * input2 * rcRate;
 };
 
 drone.calculateDegSecPitch = function(inputP) {

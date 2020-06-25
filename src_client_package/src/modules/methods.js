@@ -484,13 +484,17 @@ methods.getLicName = function (lic) {
 
 methods.getWaypointPosition = function () {
     let pos = new mp.Vector3(0, 0, 0);
-    if (mp.game.invoke('0x1DD1F58F493F1DA5')) {
+    if (methods.isWaypointPosition()) {
         let blipInfoIdIterator = mp.game.invoke('0x186E5D252FA50E7D');
         for (let index = mp.game.invoke('0x1BEDE233E6CD2A1F', blipInfoIdIterator); mp.game.invoke('0xA6DB27D19ECBB7DA', index); index = mp.game.invoke('0x14F96AA50D6FBEA7', blipInfoIdIterator))
             if (mp.game.invoke('0xBE9B0959FFD0779B', index) == 4)
                 pos = mp.game.ui.getBlipInfoIdCoord(index);
     }
     return pos;
+};
+
+methods.isWaypointPosition = function () {
+    return mp.game.invoke(methods.IS_WAYPOINT_ACTIVE);
 };
 
 methods.numerToK = function (num) {
@@ -836,8 +840,6 @@ methods.requestIpls = function () {
     mp.game.streaming.requestIpl("FIBlobby");
     mp.game.streaming.requestIpl("dt1_05_fib2_normal");
 
-    mp.game.streaming.removeIpl("CS3_07_MPGates"); //Zancudo
-
     mp.game.streaming.removeIpl("hei_bi_hw1_13_door");
     mp.game.streaming.requestIpl("hei_hw1_blimp_interior_v_comedy_milo_");
     mp.game.streaming.requestIpl("apa_ss1_11_interior_v_rockclub_milo_");
@@ -925,7 +927,7 @@ methods.requestIpls = function () {
     mp.game.streaming.requestIpl("CanyonRvrShallow");
 
     //Zancudo Gates (GTAO like): -1600.30100000, 2806.73100000, 18.79683000
-    mp.game.streaming.requestIpl("CS3_07_MPGates");
+    mp.game.streaming.removeIpl("CS3_07_MPGates");
 
     //Pillbox hospital:
     try {

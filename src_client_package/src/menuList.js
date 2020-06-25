@@ -13,6 +13,7 @@ import jobPoint from "./manager/jobPoint";
 import vSync from "./manager/vSync";
 import dispatcher from "./manager/dispatcher";
 import drone from "./manager/drone";
+import timer from "./manager/timer";
 
 import fraction from "./property/fraction";
 
@@ -2016,6 +2017,57 @@ menuList.showAcceptClearWantedMenu = function(id, price) {
     });
 };
 
+menuList.showMechanicAcceptFuelMenu = function(id, count, price) {
+
+    UIMenu.Menu.Create('Механик', `~b~Заправка транспорта`);
+
+    UIMenu.Menu.AddMenuItem("~g~Согласиться", `Количество:~g~${count}ед.~br~Цена: ~g~${methods.moneyFormat(price)}`, {eventName: 'server:mechanic:fuel:accept'});
+    UIMenu.Menu.AddMenuItem("~r~Отказаться");
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: 'closeMenu'});
+    UIMenu.Menu.Draw();
+
+    UIMenu.Menu.OnSelect.Add(async (item, index) => {
+        UIMenu.Menu.HideMenu();
+        if (item.eventName)
+            mp.events.callRemote(item.eventName, id, count, price);
+    });
+};
+
+menuList.showMechanicAcceptFixMenu = function(id, price) {
+
+    UIMenu.Menu.Create('Механик', `~b~Починка транспорта`);
+
+    UIMenu.Menu.AddMenuItem("~g~Согласиться", `Цена: ~g~${methods.moneyFormat(price)}`, {eventName: 'server:mechanic:fix:accept'});
+    UIMenu.Menu.AddMenuItem("~r~Отказаться");
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: 'closeMenu'});
+    UIMenu.Menu.Draw();
+
+    UIMenu.Menu.OnSelect.Add(async (item, index) => {
+        UIMenu.Menu.HideMenu();
+        if (item.eventName)
+            mp.events.callRemote(item.eventName, id, price);
+    });
+};
+
+menuList.showMechanicAcceptFlipMenu = function(id, price) {
+
+    UIMenu.Menu.Create('Механик', `~b~Перевернуть транспорт`);
+
+    UIMenu.Menu.AddMenuItem("~g~Согласиться", `Цена: ~g~${methods.moneyFormat(price)}~br~~s~Учтите, что надо находится рядом с транспортом или в нем`, {eventName: 'server:mechanic:flip:accept'});
+    UIMenu.Menu.AddMenuItem("~r~Отказаться");
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: 'closeMenu'});
+    UIMenu.Menu.Draw();
+
+    UIMenu.Menu.OnSelect.Add(async (item, index) => {
+        UIMenu.Menu.HideMenu();
+        if (item.eventName)
+            mp.events.callRemote(item.eventName, id, price);
+    });
+};
+
 menuList.showMazeBankHousePeopleMenu = function() {
     //TODO BLACKOUT
 
@@ -2150,6 +2202,8 @@ menuList.showMeriaJobListMenu = function() {
     UIMenu.Menu.AddMenuItem("Водитель автобуса-1", "Городской автобус", {jobName: 6});
     UIMenu.Menu.AddMenuItem("Водитель автобуса-2", "Трансферный автобус", {jobName: 7});
     UIMenu.Menu.AddMenuItem("Водитель автобуса-3", "Рейсовый автобус", {jobName: 8});
+    
+    UIMenu.Menu.AddMenuItem("Механик", "", {jobName: 5});
 
     UIMenu.Menu.AddMenuItem("Фотограф", "", {jobName: 3});
     UIMenu.Menu.AddMenuItem("Почтальон", "", {jobName: 4});
@@ -2201,7 +2255,7 @@ menuList.showMeriaJobListMenu = function() {
                 return;
             }
 
-            if ((item.jobName === 3 || item.jobName === 4) && user.getCache('work_lvl') < 3) {
+            if ((item.jobName === 3 || item.jobName === 4 || item.jobName === 5) && user.getCache('work_lvl') < 3) {
                 mp.game.ui.notifications.show("~r~Вам необходим 3 уровень рабочего стажа");
                 return;
             }
@@ -2238,6 +2292,10 @@ menuList.showMeriaJobListMenu = function() {
             if (item.jobName === 10) {
                 chat.sendLocal(`!{${chat.clBlue}}Справка по работе Инкассатор`);
                 chat.sendLocal(`Для начала Вам необходимо арендовать транспорт, далее найти напарника и работать, всё работает через меню транспорта.`);
+            }
+            if (item.jobName === 5) {
+                chat.sendLocal(`!{${chat.clBlue}}Справка по работе Механик`);
+                chat.sendLocal(`Для начала Вам необходимо арендовать транспорт, арендуйте транспорт и через М -> Транспорт и выполняйте заказы.`);
             }
 
             user.set('job', item.jobName);
@@ -3834,7 +3892,7 @@ menuList.showTruckerOffersMenu = function(menuData) {
                 if (dist2 > 10000)
                     dist2 = methods.parseInt(methods.distanceToPos(new mp.Vector3(x, y, z), playerPos));
 
-                UIMenu.Menu.AddMenuItem(`~b~№${item[0]}.~s~ ${item[1]}`, `~y~До загрузки: ~s~${dist2}m~br~~y~Расстояние маршрута: ~s~${dist}m~br~~y~Место загрузки: ~s~${mp.game.ui.getLabelText(mp.game.zone.getNameOfZone(x, y, z))}`, {offerId: idx}, `~g~${methods.moneyFormat(item[item.length - 1])}`);
+                UIMenu.Menu.AddMenuItem(`~b~#${item[0]}.~s~ ${item[1]}`, `~y~До загрузки: ~s~${dist2}m~br~~y~Расстояние маршрута: ~s~${dist}m~br~~y~Место загрузки: ~s~${mp.game.ui.getLabelText(mp.game.zone.getNameOfZone(x, y, z))}`, {offerId: idx}, `~g~${methods.moneyFormat(item[item.length - 1])}`);
             }
             catch (e) {
                 methods.debug(e);
@@ -3848,6 +3906,75 @@ menuList.showTruckerOffersMenu = function(menuData) {
             UIMenu.Menu.HideMenu();
             if (item.offerId >= 0)
                 menuList.showTruckerOfferInfoMenu(item.offerId);
+        });
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+};
+
+menuList.showDispatcherTaxiMenu = function(menuData) {
+
+    try {
+        UIMenu.Menu.Create('Такси', `~b~Список заказов`);
+
+        let playerPos = mp.players.local.position;
+        JSON.parse(menuData).forEach((item, idx) => {
+            try {
+                let dist = mp.game.pathfind.calculateTravelDistanceBetweenPoints(item.pos.x, item.pos.y, item.pos.z, playerPos.x, playerPos.y, playerPos.z);
+                if (dist > 10000)
+                    dist = methods.parseInt(methods.distanceToPos(item.pos, playerPos));
+                let dist2 = mp.game.pathfind.calculateTravelDistanceBetweenPoints(item.pos.x, item.pos.y, item.pos.z, item.wpos.x, item.wpos.y, item.wpos.z);
+                if (dist2 > 10000)
+                    dist2 = methods.parseInt(methods.distanceToPos(item.pos, item.wpos));
+                UIMenu.Menu.AddMenuItem(`Заказ ~y~#${item.id}`, `~y~До клиента: ~s~${dist}m~br~~y~Расстояние маршрута: ~s~${dist2}m~br~~y~Цена: ~g~${methods.moneyFormat(item.price)}`, {id: item.id});
+            }
+            catch (e) {
+                methods.debug(e);
+            }
+        });
+
+        UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
+        UIMenu.Menu.Draw();
+
+        UIMenu.Menu.OnSelect.Add(async (item, index) => {
+            UIMenu.Menu.HideMenu();
+            if (item.id > 0) {
+                mp.events.callRemote('server:taxi:accept', item.id);
+            }
+        });
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+};
+
+menuList.showDispatcherMechMenu = function(menuData) {
+
+    try {
+        UIMenu.Menu.Create('Механик', `~b~Список заказов`);
+
+        let playerPos = mp.players.local.position;
+        JSON.parse(menuData).forEach((item, idx) => {
+            try {
+                let dist = mp.game.pathfind.calculateTravelDistanceBetweenPoints(item.pos.x, item.pos.y, item.pos.z, playerPos.x, playerPos.y, playerPos.z);
+                if (dist > 10000)
+                    dist = methods.parseInt(methods.distanceToPos(item.pos, playerPos));
+                UIMenu.Menu.AddMenuItem(`Заказ ~y~#${item.id}`, `~y~До клиента: ~s~${dist}m`, {id: item.id});
+            }
+            catch (e) {
+                methods.debug(e);
+            }
+        });
+
+        UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
+        UIMenu.Menu.Draw();
+
+        UIMenu.Menu.OnSelect.Add(async (item, index) => {
+            UIMenu.Menu.HideMenu();
+            if (item.id > 0) {
+                mp.events.callRemote('server:mech:accept', item.id);
+            }
         });
     }
     catch (e) {
@@ -3916,7 +4043,7 @@ menuList.showTruckerOfferInfoMenu = function(idx) {
     });
 };
 
-menuList.showVehicleMenu = function(data) {
+menuList.showVehicleMenu = async function(data) {
 
     let vInfo = methods.getVehicleInfo(mp.players.local.vehicle.model);
     let veh = mp.players.local.vehicle;
@@ -4064,6 +4191,14 @@ menuList.showVehicleMenu = function(data) {
                 UIMenu.Menu.AddMenuItem("~b~Справка", 'Внимательно смотрите на задание вашего начальника и выставите позицию персонажа так, чтобы он смотрел в ту точку, которую необходимо сфотографировать, тогда вы получите премию');
                 UIMenu.Menu.AddMenuItem("~y~Завершить аренду", "", {doName: "stopRent"});
                 break;
+            case 5:
+                let currentFuel = methods.parseInt(await vehicles.get(veh.getVariable('container'), 'mechFuel'));
+                UIMenu.Menu.AddMenuItem("~g~Заправить транспорт", "Игрок, которому вы предлагаете, должен сидеть в ТС", {doName: "mech:fuel"});
+                UIMenu.Menu.AddMenuItem("~g~Починить транспорт", "Игрок, которому вы предлагаете, должен сидеть в ТС", {doName: "mech:fix"});
+                UIMenu.Menu.AddMenuItem("~g~Перевернуть транспорт", "Игрок, которому вы предлагаете, должен сидеть в ТС или находится рядом с ним", {doName: "mech:flip"});
+                UIMenu.Menu.AddMenuItem("~g~Диспетчерская", "", {doName: "mech:dispatch"});
+                UIMenu.Menu.AddMenuItem(`~b~Топливо: ~s~${methods.parseInt(currentFuel)}/500ед.`, "Нажмите Enter чтобы заправить топиво~br~~c~Доступно только на заправке", {doName: "mech:fuel:1"});
+                break;
             case 6:
                 UIMenu.Menu.AddMenuItem("~g~Начать рейс", "", {doName: "bus:start1"});
                 UIMenu.Menu.AddMenuItem("~y~Завершить рейс", "Завершение рейса досрочно", {doName: "bus:stop"});
@@ -4101,7 +4236,17 @@ menuList.showVehicleMenu = function(data) {
 
     if (veh.getVariable('taxi')) {
         UIMenu.Menu.AddMenuItem("~g~Получить заказ", "На перевозку NPC", {doName: "taxi:take"});
+        UIMenu.Menu.AddMenuItem("~g~Диспетчерская", "", {doName: "taxi:dispatch"});
         UIMenu.Menu.AddMenuItem("~b~Справка", 'Вы можете перевозить NPC или игроков.');
+    }
+    else if (user.getCache('taxi_lic') && !veh.getVariable('jobId')) {
+        if (user.getCache('isTaxi')) {
+            UIMenu.Menu.AddMenuItem("~g~Диспетчерская", "", {doName: "taxi:dispatch"});
+            UIMenu.Menu.AddMenuItem("~y~Закончить принимать заказы", "", {doName: "taxi:stop"});
+        }
+        else {
+            UIMenu.Menu.AddMenuItem("~g~Начать принимать заказы", "", {doName: "taxi:start"});
+        }
     }
 
     if (veh.getVariable('rentOwner') == user.getCache('id')) {
@@ -4181,6 +4326,12 @@ menuList.showVehicleMenu = function(data) {
             mail.takeMail();
         else if (item.doName == 'taxi:take')
             taxi.take();
+        else if (item.doName == 'taxi:dispatch')
+            dispatcher.getTaxiMenu();
+        else if (item.doName == 'taxi:start')
+            user.set('isTaxi', true);
+        else if (item.doName == 'taxi:stop')
+            user.reset('isTaxi');
         else if (item.doName == 'bus:start1')
             bus.start(1);
         else if (item.doName == 'bus:start2')
@@ -4194,6 +4345,96 @@ menuList.showVehicleMenu = function(data) {
         else if (item.doName == 'gr6:unload') {
             UIMenu.Menu.HideMenu();
             gr6.unload();
+        }
+        else if (item.doName == 'mech:dispatch')
+            dispatcher.getMechMenu();
+        else if (item.doName == 'mech:fuel') {
+            UIMenu.Menu.HideMenu();
+            let currentFuel = methods.parseInt(await vehicles.get(veh.getVariable('container'), 'mechFuel'));
+            let id = methods.parseInt(await UIMenu.Menu.GetUserInput("Введите ID", "", 3));
+            if (id < 0) {
+                mp.game.ui.notifications.show('~r~Значение не может быть меньше 0');
+                return;
+            }
+            let count = methods.parseInt(await UIMenu.Menu.GetUserInput("Введите количество", "", 3));
+            if (count < 0) {
+                mp.game.ui.notifications.show('~r~Значение не может быть меньше 0');
+                return;
+            }
+            if (currentFuel === 0) {
+                mp.game.ui.notifications.show(`~r~В транспорте нет топлива`);
+                return;
+            }
+            if (count > currentFuel) {
+                mp.game.ui.notifications.show(`~r~Значение не может быть больше ${currentFuel}`);
+                return;
+            }
+
+            let price = methods.parseInt(await UIMenu.Menu.GetUserInput("Введите цену", "", 3));
+            if (price < 1) {
+                mp.game.ui.notifications.show('~r~Значение не может быть меньше 1');
+                return;
+            }
+            if (price > 5000) {
+                mp.game.ui.notifications.show('~r~Значение не может быть больше 5000');
+                return;
+            }
+            mp.events.callRemote('server:mechanic:fuel', id, count, price);
+        }
+        else if (item.doName == 'mech:fix') {
+            UIMenu.Menu.HideMenu();
+            let id = methods.parseInt(await UIMenu.Menu.GetUserInput("Введите ID", "", 3));
+            if (id < 0) {
+                mp.game.ui.notifications.show('~r~Значение не может быть меньше 0');
+                return;
+            }
+            let price = methods.parseInt(await UIMenu.Menu.GetUserInput("Введите цену", "", 3));
+            if (price < 1) {
+                mp.game.ui.notifications.show('~r~Значение не может быть меньше 1');
+                return;
+            }
+            if (price > 2000) {
+                mp.game.ui.notifications.show('~r~Значение не может быть больше 2000');
+                return;
+            }
+            mp.events.callRemote('server:mechanic:fix', id, price);
+        }
+        else if (item.doName == 'mech:flip') {
+            UIMenu.Menu.HideMenu();
+            let id = methods.parseInt(await UIMenu.Menu.GetUserInput("Введите ID", "", 3));
+            if (id < 0) {
+                mp.game.ui.notifications.show('~r~Значение не может быть меньше 0');
+                return;
+            }
+            let price = methods.parseInt(await UIMenu.Menu.GetUserInput("Введите цену", "", 3));
+            if (price < 1) {
+                mp.game.ui.notifications.show('~r~Значение не может быть меньше 1');
+                return;
+            }
+            if (price > 2000) {
+                mp.game.ui.notifications.show('~r~Значение не может быть больше 2000');
+                return;
+            }
+            mp.events.callRemote('server:mechanic:flip', id, price);
+        }
+        else if (item.doName == 'mech:fuel:1') {
+            UIMenu.Menu.HideMenu();
+            if (!timer.isFuel()) {
+                mp.game.ui.notifications.show('~b~Вы должны находится на заправке');
+                return;
+            }
+            let count = methods.parseInt(await UIMenu.Menu.GetUserInput("Количество", "", 3));
+            if (count < 0) {
+                mp.game.ui.notifications.show('~r~Значение не может быть меньше 0');
+                return;
+            }
+            if (count > 500) {
+                mp.game.ui.notifications.show('~r~Значение не может быть больше 500');
+                return;
+            }
+            let shopId = fuel.findNearestId(mp.players.local.position);
+            let price = await business.getPrice(shopId);
+            fuel.fillMech(price, shopId, count);
         }
         else if (item.doName == 'gr6:delete') {
             UIMenu.Menu.HideMenu();
@@ -4891,7 +5132,7 @@ menuList.showSellItemsMenu = function(data) {
                         user.getCache('fraction_id')
                     );
 
-                    user.addHistory(5, `Сдал ${items.getItemNameById(item.itemId)} ${desc}`);
+                    user.addHistory(5, `Сдал ${items.getItemNameById(item.itemId)} ${item.desc}`);
 
                     mp.game.ui.notifications.show("~r~Вы сдали конфискат, бюджет организации был пополнен");
                 }

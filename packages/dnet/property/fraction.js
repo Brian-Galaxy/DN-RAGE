@@ -259,7 +259,7 @@ fraction.shopList = [
             [612.9492, 2760.931, 41.08812, 279.4291],
         ]
     },
-    {
+    /*{
         bId: 96,
         name: "Scoops Liquor Barn",
         sumMax: 240000,
@@ -267,7 +267,7 @@ fraction.shopList = [
         pos: [
             [1165.981, 2710.884, 37.15769, 180.4475],
         ]
-    },
+    },*/
     {
         bId: 61,
         name: "Discount Store Grand Senora Desert",
@@ -1020,7 +1020,7 @@ fraction.createCargoArmyWar = function() {
     isCargoArmy = true;
     fraction.spawnCargo("Brickade", [52], 477.1816101074219, -3352.23486328125, 6.417909622192383, 270.78851318359375, 99999, 154);
     fraction.spawnCargo("Brickade", [52], 477.202392578125, -3345.884765625, 6.4177117347717285, 270.76654052734375,  99998, 154);
-    setTimeout(fraction.timerCargoArmyWar, 30000);
+    setTimeout(fraction.timerCargoArmyWar, 60000);
 };
 
 fraction.stopCargoWar = function() {

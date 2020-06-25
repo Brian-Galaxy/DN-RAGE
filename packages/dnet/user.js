@@ -1958,7 +1958,6 @@ user.sendSms = function(player, sender, title, text, pic) {
     if (!user.isLogin(player))
         return;
 
-
     player.notifyWithPicture(sender, title, text, pic, 2);
 
     let time = methods.getTimeWithoutSec();
@@ -2053,14 +2052,12 @@ user.setClipset = function(player, style) {
 user.sendPhoneNotify = function(player, sender, title, message, pic = 'CHAR_BLANK_ENTRY') {
     if (!user.isLogin(player))
         return;
-
     player.call('client:user:sendPhoneNotify', [sender, title, message, pic]);
 };
 
 user.sendPhoneSms = function(player, sender, title, message, pic = 'CHAR_BLANK_ENTRY') {
     if (!user.isLogin(player))
         return;
-
     user.sendPhoneNotify(player, sender, title, message, pic);
     //TODO
 };
@@ -2945,31 +2942,35 @@ user.payDay = async function (player) {
 };
 
 user.isJobMail = function(player) {
-    return user.isLogin(player) && user.get(player, 'job') == 4;
+    return user.isLogin(player) && user.get(player, 'job') === 4;
 };
 
 user.isJobGr6 = function(player) {
-    return user.isLogin(player) && user.get(player, 'job') == 10;
+    return user.isLogin(player) && user.get(player, 'job') === 10;
+};
+
+user.isJobMech = function(player) {
+    return user.isLogin(player) && user.get(player, 'job') === 5;
 };
 
 user.isJobBus1 = function(player) {
-    return user.isLogin(player) && user.get(player, 'job') == 6;
+    return user.isLogin(player) && user.get(player, 'job') === 6;
 };
 
 user.isJobBus2 = function(player) {
-    return user.isLogin(player) && user.get(player, 'job') == 7;
+    return user.isLogin(player) && user.get(player, 'job') === 7;
 };
 
 user.isJobBus3 = function(player) {
-    return user.isLogin(player) && user.get(player, 'job') == 8;
+    return user.isLogin(player) && user.get(player, 'job') === 8;
 };
 
 user.isJobTree = function(player) {
-    return user.isLogin(player) && user.get(player, 'job') == 1;
+    return user.isLogin(player) && user.get(player, 'job') === 1;
 };
 
 user.isJobBuilder = function(player) {
-    return user.isLogin(player) && user.get(player, 'job') == 2;
+    return user.isLogin(player) && user.get(player, 'job') === 2;
 };
 
 user.isGos = function(player) {

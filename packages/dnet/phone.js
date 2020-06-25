@@ -5,6 +5,7 @@ let vehicles = require('./property/vehicles');
 let fraction = require('./property/fraction');
 
 let gangWar = require('./managers/gangWar');
+let weather = require('./managers/weather');
 
 let user = require('./user');
 let enums = require('./enums');
@@ -1943,6 +1944,33 @@ phone.deleteChat = function(player, phoneNumber) {
     let myPhone = methods.parseInt(user.get(player, 'phone'));
     mysql.executeQuery(`DELETE FROM phone_sms WHERE (number_from = '${myPhone}' AND number_to = '${phoneNumber}') OR (number_to = '${myPhone}' AND number_from = '${phoneNumber}')`);
     player.notify('~b~Чат был удалён');
+};
+
+phone.sendMessageByNumber = function(numberFrom, phoneNumber, message) {
+    try {
+        message = methods.removeQuotes(methods.removeQuotes2(message));
+        let date = weather.getFullRpDate().replace('/', '.').replace('/', '.');
+        mysql.executeQuery(`INSERT INTO phone_sms (number_from, number_to, text, date, time) VALUES ('${numberFrom.toString()}', '${phoneNumber}', '${message}', '${date}', '${weather.getFullRpTime()}')`);
+
+        mp.players.forEach(p => {
+            if (user.isLogin(p) && user.get(p, 'phone_type') > 0 && user.get(p, 'phone') === methods.parseInt(phoneNumber)) {
+                user.sendPhoneNotify(p, methods.phoneFormat(numberFrom), '~b~Новое сообщение', message);
+
+                let msg = {
+                    type: 'addMessengerMessage',
+                    phone: numberFrom.toString(),
+                    text: message,
+                    date: date,
+                    time: weather.getFullRpTime() + ':00',
+                };
+
+                user.callCef(p, 'phone' + user.get(p, 'phone_type'), JSON.stringify(msg));
+            }
+        });
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 };
 
 phone.showMenu = function(player, uuid, title, items) {

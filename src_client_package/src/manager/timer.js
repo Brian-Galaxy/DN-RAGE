@@ -646,7 +646,7 @@ timer.getAtmHandle = function () {
 };
 
 timer.isFuel = function () {
-    return EntityFuel != 0;
+    return EntityFuel !== 0;
 };
 
 mp.events.add('render', () => {

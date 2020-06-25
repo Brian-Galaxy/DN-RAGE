@@ -1205,7 +1205,7 @@ inventory.useItem = function(player, id, itemId, isTargetable = false) {
                         return;
                     }
 
-                    let grabId2 = bank.getBombInRadius(player.position, 50);
+                    let grabId2 = bank.getBombInRadius(player.position, 30);
                     if (grabId2 === -1) {
                         fraction.startGrabShopGang(player, id);
                         return;
@@ -1224,7 +1224,7 @@ inventory.useItem = function(player, id, itemId, isTargetable = false) {
                     }
 
                     if (!fraction.has(frId, 'bankGrabId')) {
-                        player.notify("~r~Вы не можете этот грабить банк");
+                        player.notify("~r~Вы не можете грабить этот банк");
                         return;
                     }
 

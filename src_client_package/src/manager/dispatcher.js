@@ -5,13 +5,30 @@ let dispatcher = {};
 
 let itemList = [];
 let itemTaxiList = [];
+let itemMehList = [];
 
-dispatcher.send = function (title, desc, withCoord = true) {
-    dispatcher.sendPos(title, desc, mp.players.local.position, withCoord);
+dispatcher.send = function (title, desc, withCoord = true, phone = 0) {
+    dispatcher.sendPos(title, desc, mp.players.local.position, withCoord, phone);
 };
 
-dispatcher.sendPos = function (title, desc, pos, withCoord = true) {
-    mp.events.callRemote("server:dispatcher:sendPos", title, desc, pos.x, pos.y, pos.z, withCoord);
+dispatcher.sendPos = function (title, desc, pos, withCoord = true, phone = 0) {
+    mp.events.callRemote("server:dispatcher:sendPos", title, desc, pos.x, pos.y, pos.z, withCoord, phone.toString());
+};
+
+dispatcher.sendTaxi = function (title, desc, wpPos, price, phone = 0) {
+    dispatcher.sendTaxiPos(title, desc, mp.players.local.position, wpPos, price, phone);
+};
+
+dispatcher.sendTaxiPos = function (title, desc, pos, wpPos, price, phone = 0) {
+    mp.events.callRemote("server:dispatcher:sendTaxiPos", title, desc, pos.x, pos.y, pos.z, wpPos.x, wpPos.y, wpPos.z, price, phone.toString());
+};
+
+dispatcher.sendMech = function (title, desc, phone = 0) {
+    dispatcher.sendMechPos(title, desc, mp.players.local.position, phone);
+};
+
+dispatcher.sendMechPos = function (title, desc, pos, phone = 0) {
+    mp.events.callRemote("server:dispatcher:sendMechPos", title, desc, pos.x, pos.y, pos.z, phone.toString());
 };
 
 dispatcher.sendLocal = function (title, desc, withCoord = true) {
@@ -78,15 +95,14 @@ dispatcher.codeLocal = function (code, name, withCoord = true) {
         dispatcher.sendLocal(`Код ${code}`, `${name} - запрашивает поддержку`, withCoord);
 };
 
-dispatcher.addDispatcherList = function (title, desc, time, x, y, z, withCoord) {
+dispatcher.addDispatcherList = function (title, desc, time, x, y, z, withCoord, phone) {
     let getStreet = mp.game.pathfind.getStreetNameAtCoord(x, y, z, 0, 0);
     let street1 = mp.game.ui.getLabelText(mp.game.zone.getNameOfZone(x, y, z));
     let street2 = mp.game.ui.getStreetNameFromHashKey(getStreet.streetName);
 
-    itemList.push({title: title, desc: desc, street1: street1, street2: street2, time: time, x: x, y: y, z: z,  withCoord: withCoord});
+    itemList.push({title: title, desc: desc, street1: street1, street2: street2, time: time, x: x, y: y, z: z,  withCoord: withCoord, phone: phone});
 
     let subLabel = `\n~y~Район:~s~ ${street1}\n~y~Улица:~s~ ${street2}`;
-
     user.sendPhoneNotify(`Диспетчер [${time}]`, title, desc + subLabel, "CHAR_CALL911");
 };
 
@@ -94,12 +110,14 @@ dispatcher.addDispatcherTaxiList = function (count, title, desc, time, price, x,
     let getStreet = mp.game.pathfind.getStreetNameAtCoord(x, y, z, 0, 0);
     let street1 = mp.game.ui.getLabelText(mp.game.zone.getNameOfZone(x, y, z));
     let street2 = mp.game.ui.getStreetNameFromHashKey(getStreet.streetName);
+    user.sendPhoneNotify(`Диспетчер [#${count}]`, title, desc + `\n~y~Район:~s~ ${street1}\n~y~Улица:~s~ ${street2}`, 'CHAR_TAXI');
+};
 
-    itemTaxiList.push({count: count, title: title, desc: desc, street1: street1, street2: street2, time: time, price: price, x: x, y: y, z: z});
-
-    let icon = user.getCache('job') == 'taxi1' ? 'CHAR_TAXI' : 'CHAR_TAXI_LIZ';
-
-    user.sendPhoneNotify(`Диспетчер [${time}]`, title, desc + `\n~y~Район:~s~ ${street1}\n~y~Улица:~s~ ${street2}`, icon);
+dispatcher.addDispatcherMechList = function (count, title, desc, time, price, x, y, z) {
+    let getStreet = mp.game.pathfind.getStreetNameAtCoord(x, y, z, 0, 0);
+    let street1 = mp.game.ui.getLabelText(mp.game.zone.getNameOfZone(x, y, z));
+    let street2 = mp.game.ui.getStreetNameFromHashKey(getStreet.streetName);
+    user.sendPhoneNotify(`Диспетчер [#${count}]`, title, desc + `\n~y~Район:~s~ ${street1}\n~y~Улица:~s~ ${street2}`, 'CHAR_LS_CUSTOMS');
 };
 
 dispatcher.sendNotification = function (title, desc, desc2, desc3) {
@@ -113,12 +131,16 @@ dispatcher.sendNotificationFraction = function (title, desc, desc2, desc3, fract
     methods.notifyWithPictureToFraction(title, "Диспетчер", `${desc}\n${desc2}\n${desc3}`, "CHAR_CALL911", fractionId, 1);
 };
 
-dispatcher.getItemList = function () {
-    return itemList.reverse();
+dispatcher.getTaxiMenu = function () {
+    mp.events.callRemote("server:dispatcher:getTaxiMenu");
 };
 
-dispatcher.getItemTaxiList = function () {
-    return itemTaxiList.reverse();
+dispatcher.getMechMenu = function () {
+    mp.events.callRemote("server:dispatcher:getMechMenu");
+};
+
+dispatcher.getItemList = function () {
+    return itemList.reverse();
 };
 
 export default dispatcher;

@@ -2,6 +2,8 @@ let Container = require('../modules/data');
 let mysql = require('../modules/mysql');
 let methods = require('../modules/methods');
 
+let fraction = require('../property/fraction');
+
 let user = require('../user');
 
 let graffiti = exports;
@@ -91,8 +93,8 @@ let colorList = {
 let objectList = {
     0: 'ballas',
     2: 'marabunta',
-    5: 'bloodstreet',
-    10: 'ballas',
+    5: 'ballas',
+    10: 'bloodstreet',
     12: 'vagos',
     14: 'families',
 };
@@ -156,6 +158,8 @@ graffiti.stopWar = function() {
     isWar = false;
     timer = 0;
 
+    methods.notifyWithPictureToFractions2('Борьба за граффити', `~r~ВНИМАНИЕ!`, 'Закончилась война за граффити');
+
     let moneyToUser = new Map();
     graffiti.position.forEach((item, idx) => {
         let frId = graffiti.reset(idx + 1, 'owner_id');
@@ -198,7 +202,7 @@ graffiti.stopWar = function() {
 graffiti.timerWar = function() {
     timer--;
     if (timer < 1) {
-        fraction.stopWar();
+        graffiti.stopWar();
         return;
     }
     setTimeout(graffiti.timerWar, 1000);
@@ -241,6 +245,10 @@ graffiti.changeGraffiti = function(player) {
     }
     if (!isWar) {
         player.notify('~r~Сейчас не идёт война за граффити');
+        return;
+    }
+    if (player.vehicle) {
+        player.notify('~r~Вы сидите в ТС');
         return;
     }
 

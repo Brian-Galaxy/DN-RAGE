@@ -949,7 +949,7 @@ menuList.showStockOutVMenu = async function(h) {
 
                     Container.Data.SetLocally(mp.players.local.remoteId, "isPassTimeout", true);
 
-                    if (pass === h.get('pin_o')) {
+                    if (pass === h.get('pin')) {
                         stocks.enterv(h.get('id'));
                         Container.Data.ResetLocally(mp.players.local.remoteId, "isPassTimeout");
                     }
@@ -986,7 +986,7 @@ menuList.showStockOutVMenu = async function(h) {
 
                     Container.Data.SetLocally(mp.players.local.remoteId, "isPassTimeout", true);
 
-                    if (pass === h.get('pin')) {
+                    if (pass === h.get('pin_o')) {
                         stocks.enterv1(h.get('id'));
                         Container.Data.ResetLocally(mp.players.local.remoteId, "isPassTimeout");
                     }
@@ -5291,7 +5291,7 @@ menuList.showSellGunMenu = function(data) {
                     }
                     user.removeMoney(100, 'Обмен стали');
                     inventory.deleteItem(item.id);
-                    inventory.addItem(476, item.count, user.getCache('id'), 1, 1);
+                    inventory.addItem(476, item.count, 1, user.getCache('id'), 1);
                     mp.game.ui.notifications.show("~b~Вы обменяли оружие на стальную пластину");
                 }
                 catch (e) {
@@ -5365,7 +5365,7 @@ menuList.showSellClothMenu = function(data) {
                     }
                     user.removeMoney(50, 'Обмен ткани');
                     inventory.deleteItem(item.id);
-                    inventory.addItem(475, item.count, user.getCache('id'), 1, 1);
+                    inventory.addItem(475, item.count, 1, user.getCache('id'), 1);
                     mp.game.ui.notifications.show("~b~Вы обменяли одежду на ткань");
                 }
                 catch (e) {
@@ -6733,7 +6733,7 @@ menuList.showShopElMenu = function(shopId, price = 2)
 
                 }
             }
-            else if (item.price > 0)
+            else if (item.price > 0 && item.itemId > 0)
                 mp.events.callRemote('server:shop:buy', item.itemId, item.price, shopId);
             if (item.doName == 'grab') {
                 user.grab(shopId);

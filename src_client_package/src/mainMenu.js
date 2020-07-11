@@ -446,7 +446,7 @@ mainMenu.updateInfoGeneral = function() {
     data.push({title: 'Лицензия на предпринимательство', subtitle: `${user.getCache('biz_lic') ? 'Есть' : 'Нет'}`});
     data.push({title: 'Лицензия на рыболовство', subtitle: `${user.getCache('fish_lic') ? 'Есть' : 'Нет'}`});
 
-    data.push({title: 'Work ID', subtitle: `${user.getCache('work_lic') != '' ? user.getCache('work_lic') : '~r~Нет'}`});
+    data.push({title: 'Work ID', subtitle: `${user.getCache('work_lic') != '' ? user.getCache('work_lic') : 'Нет'}`});
     data.push({title: 'Уровень рабочего', subtitle: `${user.getCache('work_lvl')}`});
     data.push({title: 'Опыт рабочего', subtitle: `${user.getCache('work_exp')}/${user.getCache('work_lvl') * 500}`});
 
@@ -597,6 +597,7 @@ mp.events.add('client:mainMenu:settings:updateCheckbox', async function(btn, act
     }
     else if (btn === "ui:curs") {
         user.set('s_hud_cursor', active);
+        ui.DisableMouseControl = false;
         mp.game.ui.notifications.show('~b~Настройки были сохранены');
     }
     else if (btn === "ui:notify") {

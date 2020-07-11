@@ -16,6 +16,7 @@ let attemptGm = 0;
 let attemptWeapon = 0;
 let attemptAmmo = 0;
 let attemptTeleport = 0;
+let attemptFly = 0;
 
 let healthPrev = 100;
 let armorPrev = 100;
@@ -50,6 +51,7 @@ antiCheat.load = function() {
 antiCheat.tenSecTimer = function() {
     attemptGm = 0;
     attemptTeleport = 0;
+    attemptFly = 0;
 };
 
 antiCheat.ten3SecTimer = function() {
@@ -180,7 +182,9 @@ antiCheat.secTimer = function() {
                 if (!mp.players.local.vehicle.isInAir() && !mp.players.local.vehicle.isInWater()) {
                     let zPos = mp.game.gameplay.getGroundZFor3dCoord(mp.players.local.position.x, mp.players.local.position.y, mp.players.local.position.z, parseFloat(0), false);
                     if (zPos + 10 < mp.players.local.vehicle.position.z) {
-                        user.kickAntiCheat('FlyHack');
+                        attemptFly++;
+                        if (attemptFly > 2)
+                            user.kickAntiCheat('FlyHack');
                     }
                 }
             }
@@ -188,7 +192,9 @@ antiCheat.secTimer = function() {
                 if (!mp.players.local.isFalling() && !mp.players.local.isRagdoll() && !methods.isBlockKeys() && !mp.players.local.isInAir() && mp.players.local.getParachuteState() === -1) {
                     let zPos = mp.game.gameplay.getGroundZFor3dCoord(mp.players.local.position.x, mp.players.local.position.y, mp.players.local.position.z, parseFloat(0), false);
                     if (zPos + 10 < mp.players.local.position.z) {
-                        user.kickAntiCheat('FlyHack');
+                        attemptFly++;
+                        if (attemptFly > 2)
+                            user.kickAntiCheat('FlyHack');
                     }
                 }
             }

@@ -1000,7 +1000,7 @@ inventory.addWeaponItem = function(itemId, count, ownerType, ownerId, countItems
     let serial = weapons.getWeaponSerial(itemId);
     let paramsObject = JSON.parse(params);
     paramsObject.serial = serial;
-    inventory.addItemSql(itemId, count, ownerType, ownerId, countItems, isEquip, JSON.stringify(paramsObject), timeout);
+    inventory.addItemSql(itemId, count, ownerType, ownerId, 100, isEquip, JSON.stringify(paramsObject), timeout);
 };
 
 inventory.addArmourItem = function(itemId, count, ownerType, ownerId, countItems, isEquip, params, timeout = 1) {
@@ -1009,7 +1009,6 @@ inventory.addArmourItem = function(itemId, count, ownerType, ownerId, countItems
     let armor = 12;
     let color = methods.getRandomInt(0, 5);
     if (methods.getRandomInt(0, 2) === 0) {
-        armourNames = ['Зелёный', 'Оранжевый', 'Фиолетовый', 'Розовый', 'Красный', 'Синий', 'Серый', 'Бежевый', 'Белый', 'Чёрный'];
         armor = 28;
         color = methods.getRandomInt(0, 10);
     }
@@ -1017,11 +1016,15 @@ inventory.addArmourItem = function(itemId, count, ownerType, ownerId, countItems
     if (paramsObject.armor)
         armor = paramsObject.armor;
     if (paramsObject.armor_color >= 0)
-        armor = paramsObject.armor_color;
+        color = paramsObject.armor_color;
 
-    paramsObject.name = `${armourNames[color]} бронежилет`;
     paramsObject.armor = armor;
     paramsObject.armor_color = color;
+
+    if (armor === 28)
+        armourNames = ['Зелёный', 'Оранжевый', 'Фиолетовый', 'Розовый', 'Красный', 'Синий', 'Серый', 'Бежевый', 'Белый', 'Чёрный'];
+
+    paramsObject.name = `${armourNames[color]} бронежилет`;
     inventory.addItemSql(itemId, count, ownerType, ownerId, countItems, isEquip, JSON.stringify(paramsObject), timeout);
 };
 

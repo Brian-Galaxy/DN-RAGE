@@ -242,7 +242,7 @@ timer.twoSecTimer = function() {
 
     try {
         
-        if (mp.players.local.isInAnyVehicle(true)) {
+        if (mp.players.local.isInAnyVehicle(true) && mp.players.local.dimension === 0) {
             /*//0xDB89591E290D9182 | GET_TIME_SINCE_PLAYER_DROVE_AGAINST_TRAFFIC
             //0xD559D2BE9E37853B | GET_TIME_SINCE_PLAYER_DROVE_ON_PAVEMENT
             //0x4F5070AA58F69279 | GET_VEHICLE_NODE_IS_SWITCHED_OFF | _GET_IS_SLOW_ROAD_FLAG
@@ -282,6 +282,9 @@ timer.twoSecTimer = function() {
                     desc = 'Едешь по встречке';
                 chat.sendLocal(`${isSetSpeed} | ${value.flags} | ${desc}`);*/
             }
+        } else if (isSetSpeed) {
+            isSetSpeed = false;
+            mp.events.call('client:setNewMaxSpeedServer', 0);
         }
 
         if (!user.hasCache('uniform')) {

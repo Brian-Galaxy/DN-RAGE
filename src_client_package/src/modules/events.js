@@ -3310,7 +3310,7 @@ mp.keys.bind(0x1B, true, function() {
         return;
 
     if (mp.players.local.dimension === 99999 && mp.players.local.getVariable('blockDeath')) {
-        user.removeAllWeapons()
+        user.removeAllWeapons();
         mp.events.callRemote('server:gangZone:exitLobby');
     }
 
@@ -3332,7 +3332,7 @@ mp.keys.bind(0x1B, true, function() {
         phone.hide();
 
     if (!mainMenu.isHide())
-        mainMenu.hide();
+        mainMenu.showOrHide();
 
     if (!inventory.isHide())
         inventory.hide();

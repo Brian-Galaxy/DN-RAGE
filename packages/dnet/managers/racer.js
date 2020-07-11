@@ -6269,7 +6269,7 @@ let currentLobby = 0;
 let lobbyMax = 30;
 let finishNumber = 0;
 let startTimer = 10;
-let currentPrize = 20000;
+let currentPrize = 40000;
 
 racer.loadAll = function () {
     setInterval(racer.timer, 1000);

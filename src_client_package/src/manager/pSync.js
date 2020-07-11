@@ -73,7 +73,20 @@ mp.events.add('client:pSync:alpha', (playerId, alpha) => {
         }
     }
     catch (e) {
-        methods.debug('Exception: client:syncComponentVariation');
+        methods.debug('Exception: client:pSync:alpha');
+        methods.debug(e);
+    }
+});
+
+mp.events.add('client:pSync:shoot', (playerId) => {
+    try {
+        let remotePlayer = mp.players.atRemoteId(playerId);
+        if (remotePlayer && mp.players.exists(remotePlayer)) {
+            remotePlayer.setShootsAtCoord(0, 0, 0, true);
+        }
+    }
+    catch (e) {
+        methods.debug('Exception: client:pSync:shoot');
         methods.debug(e);
     }
 });
@@ -121,8 +134,10 @@ mp.events.add('client:syncAnimation', async (playerId, dict, anim, flag) => {
                 remotePlayer.setAsMission(false, true);
                 /*if (flag == 8 || flag == 9)
                     flag = 32;*/
+                /*if (flag == 8)
+                    flag = 0;*/
                 if (flag == 8)
-                    flag = 0;
+                    flag = 32;
                 if (flag == 9)
                     flag = 1;
             }

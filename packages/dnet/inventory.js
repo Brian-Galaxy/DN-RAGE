@@ -6,6 +6,7 @@ let chat = require('./modules/chat');
 let weather = require('./managers/weather');
 let vSync = require('./managers/vSync');
 let dispatcher = require('./managers/dispatcher');
+let graffiti = require('./managers/graffiti');
 
 let user = require('./user');
 let enums = require('./enums');
@@ -51,7 +52,7 @@ inventory.deleteWorldItems = function() {
     });
 };
 
-inventory.getItemList = function(player, ownerType, ownerId, isFrisk = false) {
+inventory.getItemList = function(player, ownerType, ownerId, isFrisk = false, isTie = false) {
 
     ownerId = methods.parseInt(ownerId);
 
@@ -97,10 +98,10 @@ inventory.getItemList = function(player, ownerType, ownerId, isFrisk = false) {
                     }
                 }
 
+                if (isTie && items.isWeapon(row['item_id']) && row['is_equip'])
+                    return;
                 data.push({id: row['id'], label: label, item_id: row['item_id'], count: row['count'], is_equip: row['is_equip'], params: row['params']});
             });
-
-            //id, itemId, ownerType, ownerId, countItems, prefix, number, keyId
             player.call('client:showToPlayerItemListMenu', [data, ownerType, ownerId.toString()]);
         });
     } catch(e) {
@@ -149,6 +150,194 @@ inventory.getItemListSell = function(player) {
             });
 
             player.call('client:showSellItemsMenu', [data]);
+        });
+    } catch(e) {
+        methods.debug(e);
+    }
+};
+
+inventory.getItemListGunTranferSell = function(player) {
+    if (!user.isLogin(player))
+        return;
+    try {
+
+        let data = [];
+        //let data2 = new Map();
+
+        let sql = `SELECT * FROM items WHERE owner_id = '${user.getId(player)}' AND owner_type = '1' AND is_equip = 0 AND (item_id > 69 AND item_id < 127 OR item_id = 146 OR item_id = 147)  ORDER BY item_id DESC LIMIT 400`;
+
+        mysql.executeQuery(sql, function (err, rows, fields) {
+            rows.forEach(row => {
+
+                let label = "";
+
+                if (row['prefix'] > 0 && row['number'] > 0 && row['key_id'] <= 0) {
+                    label = row['prefix'] + "-" + row['number'];
+                } else if (row['key_id'] > 0) {
+
+                    if (row['item_id'] >= 265 && row['item_id'] <= 268) {
+
+                        if (row['prefix'] == 1)
+                            label = enums.clothF[row['key_id']][9];
+                        else
+                            label = enums.clothM[row['key_id']][9];
+                    }
+                    else if (row['item_id'] >= 269 && row['item_id'] <= 273) {
+                        if (row['prefix'] == 1)
+                            label = enums.propF[row['key_id']][5];
+                        else
+                            label = enums.propM[row['key_id']][5];
+                    }
+                    else {
+                        label = "#" + row['key_id'];
+                    }
+                }
+
+                data.push({id: row['id'], label: label, item_id: row['item_id'], count: row['count'], is_equip: row['is_equip'], params: row['params']});
+            });
+
+            player.call('client:showSellGunMenu', [data]);
+        });
+    } catch(e) {
+        methods.debug(e);
+    }
+};
+
+inventory.getItemListGunFix = function(player) {
+    if (!user.isLogin(player))
+        return;
+    try {
+
+        let data = [];
+        //let data2 = new Map();
+
+        let sql = `SELECT * FROM items WHERE owner_id = '${user.getId(player)}' AND owner_type = '1' AND is_equip = 0 AND (item_id > 69 AND item_id < 127 OR item_id = 146 OR item_id = 147 OR item_id = 252)  ORDER BY item_id DESC LIMIT 400`;
+
+        mysql.executeQuery(sql, function (err, rows, fields) {
+            rows.forEach(row => {
+
+                let label = "";
+
+                if (row['prefix'] > 0 && row['number'] > 0 && row['key_id'] <= 0) {
+                    label = row['prefix'] + "-" + row['number'];
+                } else if (row['key_id'] > 0) {
+
+                    if (row['item_id'] >= 265 && row['item_id'] <= 268) {
+
+                        if (row['prefix'] == 1)
+                            label = enums.clothF[row['key_id']][9];
+                        else
+                            label = enums.clothM[row['key_id']][9];
+                    }
+                    else if (row['item_id'] >= 269 && row['item_id'] <= 273) {
+                        if (row['prefix'] == 1)
+                            label = enums.propF[row['key_id']][5];
+                        else
+                            label = enums.propM[row['key_id']][5];
+                    }
+                    else {
+                        label = "#" + row['key_id'];
+                    }
+                }
+
+                data.push({id: row['id'], label: label, item_id: row['item_id'], count: row['count'], is_equip: row['is_equip'], params: row['params']});
+            });
+
+            player.call('client:showFixGunMenu', [data]);
+        });
+    } catch(e) {
+        methods.debug(e);
+    }
+};
+
+inventory.getItemListClothTranferSell = function(player) {
+    if (!user.isLogin(player))
+        return;
+    try {
+
+        let data = [];
+        //let data2 = new Map();
+
+        let sql = `SELECT * FROM items WHERE owner_id = '${user.getId(player)}' AND owner_type = '1' AND is_equip = 0 AND (item_id = 265 OR item_id = 266 OR item_id = 267 OR item_id = 269 OR item_id = 274) ORDER BY item_id DESC LIMIT 400`;
+
+        mysql.executeQuery(sql, function (err, rows, fields) {
+            rows.forEach(row => {
+
+                let label = "";
+
+                if (row['prefix'] > 0 && row['number'] > 0 && row['key_id'] <= 0) {
+                    label = row['prefix'] + "-" + row['number'];
+                } else if (row['key_id'] > 0) {
+
+                    if (row['item_id'] >= 265 && row['item_id'] <= 268) {
+
+                        if (row['prefix'] == 1)
+                            label = enums.clothF[row['key_id']][9];
+                        else
+                            label = enums.clothM[row['key_id']][9];
+                    }
+                    else if (row['item_id'] >= 269 && row['item_id'] <= 273) {
+                        if (row['prefix'] == 1)
+                            label = enums.propF[row['key_id']][5];
+                        else
+                            label = enums.propM[row['key_id']][5];
+                    }
+                    else {
+                        label = "#" + row['key_id'];
+                    }
+                }
+
+                data.push({id: row['id'], label: label, item_id: row['item_id'], count: row['count'], is_equip: row['is_equip'], params: row['params']});
+            });
+
+            player.call('client:showSellClothMenu', [data]);
+        });
+    } catch(e) {
+        methods.debug(e);
+    }
+};
+
+inventory.getItemListSellFish = function(player, shopId) {
+    if (!user.isLogin(player))
+        return;
+    try {
+
+        let data = [];
+        //let data2 = new Map();
+
+        let sql = `SELECT * FROM items WHERE owner_id = '${user.getId(player)}' AND owner_type = '1' AND is_equip = 0 AND (item_id > 486 AND item_id < 537) ORDER BY item_id DESC LIMIT 400`;
+
+        mysql.executeQuery(sql, function (err, rows, fields) {
+            rows.forEach(row => {
+
+                let label = "";
+
+                if (row['prefix'] > 0 && row['number'] > 0 && row['key_id'] <= 0) {
+                    label = row['prefix'] + "-" + row['number'];
+                } else if (row['key_id'] > 0) {
+
+                    if (row['item_id'] >= 265 && row['item_id'] <= 268) {
+
+                        if (row['prefix'] == 1)
+                            label = enums.clothF[row['key_id']][9];
+                        else
+                            label = enums.clothM[row['key_id']][9];
+                    }
+                    else if (row['item_id'] >= 269 && row['item_id'] <= 273) {
+                        if (row['prefix'] == 1)
+                            label = enums.propF[row['key_id']][5];
+                        else
+                            label = enums.propM[row['key_id']][5];
+                    }
+                    else {
+                        label = "#" + row['key_id'];
+                    }
+                }
+
+                data.push({id: row['id'], label: label, item_id: row['item_id'], count: row['count'], is_equip: row['is_equip'], params: row['params']});
+            });
+
+            player.call('client:showSellFishMenu', [data, shopId]);
         });
     } catch(e) {
         methods.debug(e);
@@ -250,6 +439,25 @@ inventory.upgradeWeapon = function(player, id, itemId, weaponStr) {
     }
 };
 
+inventory.fixItem = function(player, id) {
+    if (!user.isLogin(player))
+        return;
+    try {
+        let sql = `SELECT * FROM items WHERE item_id = 476 AND owner_id = ${user.getId(player)} AND owner_type = ${inventory.types.Player} LIMIT 1`;
+        mysql.executeQuery(sql, function (err, rows, fields) {
+            if (rows.length === 0) {
+                player.notify('~r~У вас нет стальных пластин');
+                return;
+            }
+            inventory.updateItemCount(id, 100);
+            inventory.deleteItem(rows[0]['id']);
+            player.notify('~y~Вы выполнили починку');
+        });
+    } catch (e) {
+
+    }
+};
+
 inventory.equip = function(player, id, itemId, count, aparams) {
 
     if (!user.isLogin(player))
@@ -257,7 +465,7 @@ inventory.equip = function(player, id, itemId, count, aparams) {
     try {
 
         let sql = `SELECT * FROM items WHERE id = ${id} AND owner_id = ${user.getId(player)} AND owner_type = ${inventory.types.Player}`;
-        if (itemId === 264 || itemId === 263)
+        if (itemId === 264 || itemId === 263 || itemId === 252)
             sql = `SELECT * FROM items WHERE id = ${id}`;
 
         mysql.executeQuery(sql, function (err, rows, fields) {
@@ -375,24 +583,21 @@ inventory.equip = function(player, id, itemId, count, aparams) {
                     return;
                 }
 
-                if (user.get(player, 'torso') == 15) {
-                    user.set(player, "torso", params.torso);
-                    user.set(player, "torso_color", params.torso_color);
-                    user.set(player, "body", params.body);
-                    user.set(player, "body_color", params.body_color);
-                    user.set(player, "parachute", params.parachute);
-                    user.set(player, "parachute_color", params.parachute_color);
-                    user.set(player, "decal", 0);
-                    user.set(player, "decal_color", 0);
-                    user.set(player, "tprint_o", params.tprint_o);
-                    user.set(player, "tprint_c", params.tprint_c);
-                    user.updateCharacterCloth(player);
-                    user.updateTattoo(player);
-                }
-                else {
-                    player.notify("~r~Одежда уже экипирована, для начала снимите текущую");
-                    return;
-                }
+                inventory.updateItemsEquipByItemId(itemId, user.getId(player), inventory.types.Player, 0);
+
+                user.set(player, "torso", params.torso);
+                user.set(player, "torso_color", params.torso_color);
+                user.set(player, "body", params.body);
+                user.set(player, "body_color", params.body_color);
+                user.set(player, "parachute", params.parachute);
+                user.set(player, "parachute_color", params.parachute_color);
+                user.set(player, "decal", 0);
+                user.set(player, "decal_color", 0);
+                user.set(player, "tprint_o", params.tprint_o);
+                user.set(player, "tprint_c", params.tprint_c);
+
+                user.updateCharacterCloth(player);
+                user.updateTattoo(player);
             }
             else if (itemId == 266) {
 
@@ -400,16 +605,10 @@ inventory.equip = function(player, id, itemId, count, aparams) {
                     player.notify("~r~Одежда подходит только для противоположного");
                     return;
                 }
-
-                if (user.get(player, 'leg') == 61 && user.getSex(player) == 0 || user.get(player, 'leg') == 15 && user.getSex(player) == 1) {
-                    user.set(player, "leg", params.leg);
-                    user.set(player, "leg_color", params.leg_color);
-                    user.updateCharacterCloth(player);
-                }
-                else {
-                    player.notify("~r~Одежда уже экипирована, для начала снимите текущую");
-                    return;
-                }
+                inventory.updateItemsEquipByItemId(itemId, user.getId(player), inventory.types.Player, 0);
+                user.set(player, "leg", params.leg);
+                user.set(player, "leg_color", params.leg_color);
+                user.updateCharacterCloth(player);
             }
             else if (itemId == 267) {
 
@@ -418,15 +617,10 @@ inventory.equip = function(player, id, itemId, count, aparams) {
                     return;
                 }
 
-                if (user.get(player, 'foot') == 34 && user.getSex(player) == 0 || user.get(player, 'foot') == 35 && user.getSex(player) == 1) {
-                    user.set(player, "foot", params.foot);
-                    user.set(player, "foot_color", params.foot_color);
-                    user.updateCharacterCloth(player);
-                }
-                else {
-                    player.notify("~r~Одежда уже экипирована, для начала снимите текущую");
-                    return;
-                }
+                inventory.updateItemsEquipByItemId(itemId, user.getId(player), inventory.types.Player, 0);
+                user.set(player, "foot", params.foot);
+                user.set(player, "foot_color", params.foot_color);
+                user.updateCharacterCloth(player);
             }
             else if (itemId == 268) {
 
@@ -435,15 +629,10 @@ inventory.equip = function(player, id, itemId, count, aparams) {
                     return;
                 }
 
-                if (user.get(player, 'accessorie') == 0) {
-                    user.set(player, "accessorie", params.accessorie);
-                    user.set(player, "accessorie_color", params.accessorie_color);
-                    user.updateCharacterCloth(player);
-                }
-                else {
-                    player.notify("~r~Одежда уже экипирована, для начала снимите текущую");
-                    return;
-                }
+                inventory.updateItemsEquipByItemId(itemId, user.getId(player), inventory.types.Player, 0);
+                user.set(player, "accessorie", params.accessorie);
+                user.set(player, "accessorie_color", params.accessorie_color);
+                user.updateCharacterCloth(player);
             }
             else if (itemId == 269) {
 
@@ -452,15 +641,10 @@ inventory.equip = function(player, id, itemId, count, aparams) {
                     return;
                 }
 
-                if (user.get(player, 'hat') == -1) {
-                    user.set(player, "hat", params.hat);
-                    user.set(player, "hat_color", params.hat_color);
-                    user.updateCharacterCloth(player);
-                }
-                else {
-                    player.notify("~r~Одежда уже экипирована, для начала снимите текущую");
-                    return;
-                }
+                inventory.updateItemsEquipByItemId(itemId, user.getId(player), inventory.types.Player, 0);
+                user.set(player, "hat", params.hat);
+                user.set(player, "hat_color", params.hat_color);
+                user.updateCharacterCloth(player);
             }
             else if (itemId == 270) {
 
@@ -469,15 +653,10 @@ inventory.equip = function(player, id, itemId, count, aparams) {
                     return;
                 }
 
-                if (user.get(player, 'glasses') == -1) {
-                    user.set(player, "glasses", params.glasses);
-                    user.set(player, "glasses_color", params.glasses_color);
-                    user.updateCharacterCloth(player);
-                }
-                else {
-                    player.notify("~r~Одежда уже экипирована, для начала снимите текущую");
-                    return;
-                }
+                inventory.updateItemsEquipByItemId(itemId, user.getId(player), inventory.types.Player, 0);
+                user.set(player, "glasses", params.glasses);
+                user.set(player, "glasses_color", params.glasses_color);
+                user.updateCharacterCloth(player);
             }
             else if (itemId == 271) {
 
@@ -486,15 +665,10 @@ inventory.equip = function(player, id, itemId, count, aparams) {
                     return;
                 }
 
-                if (user.get(player, 'ear') == -1) {
-                    user.set(player, "ear", params.ear);
-                    user.set(player, "ear_color", params.ear_color);
-                    user.updateCharacterCloth(player);
-                }
-                else {
-                    player.notify("~r~Одежда уже экипирована, для начала снимите текущую");
-                    return;
-                }
+                inventory.updateItemsEquipByItemId(itemId, user.getId(player), inventory.types.Player, 0);
+                user.set(player, "ear", params.ear);
+                user.set(player, "ear_color", params.ear_color);
+                user.updateCharacterCloth(player);
             }
             else if (itemId == 272) {
 
@@ -503,15 +677,10 @@ inventory.equip = function(player, id, itemId, count, aparams) {
                     return;
                 }
 
-                if (user.get(player, 'watch') == -1) {
-                    user.set(player, "watch", params.watch);
-                    user.set(player, "watch_color", params.watch_color);
-                    user.updateCharacterCloth(player);
-                }
-                else {
-                    player.notify("~r~Одежда уже экипирована, для начала снимите текущую");
-                    return;
-                }
+                inventory.updateItemsEquipByItemId(itemId, user.getId(player), inventory.types.Player, 0);
+                user.set(player, "watch", params.watch);
+                user.set(player, "watch_color", params.watch_color);
+                user.updateCharacterCloth(player);
             }
             else if (itemId == 273) {
 
@@ -520,15 +689,10 @@ inventory.equip = function(player, id, itemId, count, aparams) {
                     return;
                 }
 
-                if (user.get(player, 'bracelet') == -1) {
-                    user.set(player, "bracelet", params.bracelet);
-                    user.set(player, "bracelet_color", params.bracelet_color);
-                    user.updateCharacterCloth(player);
-                }
-                else {
-                    player.notify("~r~Одежда уже экипирована, для начала снимите текущую");
-                    return;
-                }
+                inventory.updateItemsEquipByItemId(itemId, user.getId(player), inventory.types.Player, 0);
+                user.set(player, "bracelet", params.bracelet);
+                user.set(player, "bracelet_color", params.bracelet_color);
+                user.updateCharacterCloth(player);
             }
             else if (itemId == 274) {
                 if (user.get(player, 'mask') == -1) {
@@ -536,18 +700,30 @@ inventory.equip = function(player, id, itemId, count, aparams) {
                     user.set(player, "mask_color", 1);
                     user.updateCharacterCloth(player);
                     user.updateCharacterFace(player);
+                    user.playAnimation(player, 'mp_masks@on_foot', 'put_on_mask', 48);
                 }
                 else {
                     player.notify("~r~Одежда уже экипирована, для начала снимите текущую");
                     return;
                 }
             }
+            else if (itemId == 252) {
+                user.set(player, "armor", params.armor);
+                user.set(player, "armor_color", params.armor_color);
+                user.setComponentVariation(player, 9, params.armor, params.armor_color);
+                user.setArmour(player, methods.parseInt(rows[0]['count']));
+            }
             else {
                 return;
             }
 
             user.updateClientCache(player);
-            inventory.updateEquipStatus(id, true);
+            setTimeout(function () {
+                try {
+                    inventory.updateEquipStatus(id, true);
+                }
+                catch (e) {}
+            }, 100)
         });
     } catch(e) {
         methods.debug(e);
@@ -566,9 +742,12 @@ inventory.updateEquipStatus = function(id, status) {
     }
 };
 
-inventory.updateItemsEquipByItemId = function(itemId, ownerId, ownerType, equip) {
+inventory.updateItemsEquipByItemId = function(itemId, ownerId, ownerType, equip, count = -1) {
     try {
-        mysql.executeQuery(`UPDATE items SET is_equip = '${equip}' where item_id = '${itemId}' AND owner_type = '${ownerType}' AND owner_id = '${ownerId}'`);
+        if (count >= 0)
+            mysql.executeQuery(`UPDATE items SET is_equip = '${equip}', count = '${count}' where item_id = '${itemId}' AND owner_type = '${ownerType}' AND owner_id = '${ownerId}'`);
+        else
+            mysql.executeQuery(`UPDATE items SET is_equip = '${equip}' where item_id = '${itemId}' AND owner_type = '${ownerType}' AND owner_id = '${ownerId}'`);
     } catch(e) {
         methods.debug(e);
     }
@@ -621,21 +800,25 @@ inventory.updateItemCount = function(id, count) {
     }
 };
 
+inventory.getPlayerInvAmountMax = function(player) {
+    if (user.isLogin(player) && user.get(player, 'vip_type') === 2)
+        return 35001;
+    return 30001;
+};
+
 inventory.updateAmount = function(player, ownerId, ownerType) { // Фикс хуйни, котороая просто поломала все, заметочка никогда не писать код когда ты очень сильно хочешь спать.
 
     if (!user.isLogin(player))
         return;
+
     ownerId = methods.parseInt(ownerId);
     let data = new Map();
-    //console.log(ownerId, ownerType, "update <");
-    mysql.executeQuery(`SELECT * FROM items WHERE owner_id = '${ownerId}' AND owner_type = '${ownerType}' ORDER BY id DESC`, function (err, rows, fields) {
+    mysql.executeQuery(`SELECT * FROM items WHERE owner_id = '${ownerId}' AND owner_type = '${ownerType}' AND is_equip = 0`, function (err, rows, fields) {
         rows.forEach(row => {
             data.set(row['id'].toString(), row["item_id"]);
-            //console.log(row['id'].toString(), row["item_id"], "< rows");
         });
-        //console.log(data, ownerId, ownerType, "< data");
         try {
-            player.call('client:sendToPlayerItemListUpdateAmountMenu', [Array.from(data), ownerType, ownerId]);
+            player.call('client:inventory:sendToPlayerItemListUpdateAmountMenu', [Array.from(data), ownerType, ownerId]);
         }
         catch (e) {
             methods.debug(e);
@@ -656,11 +839,20 @@ inventory.dropItem = function(player, id, itemId, posX, posY, posZ, rotX, rotY, 
             player.notify('~r~Вы не должны прыгать');
             return;
         }
+        inventory.dropItemJust(id, itemId, posX, posY, posZ, rotX, rotY, player.heading);
 
+    } catch(e) {
+        methods.debug(e);
+    }
+};
+
+inventory.dropItemJust = function(id, itemId, posX, posY, posZ, rotX, rotY, rotZ) {
+
+    try {
         if (props.has(id.toString()))
             return;
 
-        let heading = player.heading;
+        let heading = rotZ;
         let rot = new mp.Vector3(0, 0, heading);
 
         switch (itemId) {
@@ -710,7 +902,7 @@ inventory.dropItem = function(player, id, itemId, posX, posY, posZ, rotX, rotY, 
         rotZ = rot.z;
 
         props.set(id.toString(), obj);
-        mysql.executeQuery(`UPDATE items SET item_id = ${itemId}, owner_type = 0, owner_id = 0, pos_x = ${posX}, pos_y = ${posY}, pos_z = ${posZ}, rot_x = ${rotX}, rot_y = ${rotY}, rot_z = ${rotZ}, timestamp_update = ${methods.getTimeStamp()} where id = ${id}`);
+        mysql.executeQuery(`UPDATE items SET item_id = ${itemId}, owner_type = 0, owner_id = 0, is_equip = 0, pos_x = ${posX}, pos_y = ${posY}, pos_z = ${posZ}, rot_x = ${rotX}, rot_y = ${rotY}, rot_z = ${rotZ}, timestamp_update = ${methods.getTimeStamp()} where id = ${id}`);
 
     } catch(e) {
         methods.debug(e);
@@ -739,6 +931,14 @@ inventory.deleteItem = function(id) {
         mysql.executeQuery(`DELETE FROM items WHERE id = ${id}`);
         inventory.deleteDropItem(id);
         inventory.deleteItemByUsers(id);
+    } catch(e) {
+        methods.debug(e);
+    }
+};
+
+inventory.deleteItemByItemId = function(id, isEquip = 0) {
+    try {
+        mysql.executeQuery(`DELETE FROM items WHERE item_id = ${id} AND is_equip = ${isEquip}`);
     } catch(e) {
         methods.debug(e);
     }
@@ -779,6 +979,8 @@ inventory.addItem = function(itemId, count, ownerType, ownerId, countItems, isEq
         inventory.addWeaponItem(itemId, count, ownerType, ownerId, countItems, isEquip, params, timeout);
     else if (items.isAmmo(itemId))
         inventory.addAmmoItem(itemId, count, ownerType, ownerId, countItems, isEquip, params, timeout);
+    else if (itemId === 252)
+        inventory.addArmourItem(itemId, count, ownerType, ownerId, countItems, isEquip, params, timeout);
     else
         inventory.addItemSql(itemId, count, ownerType, ownerId, countItems, isEquip, params, timeout);
 };
@@ -798,6 +1000,28 @@ inventory.addWeaponItem = function(itemId, count, ownerType, ownerId, countItems
     let serial = weapons.getWeaponSerial(itemId);
     let paramsObject = JSON.parse(params);
     paramsObject.serial = serial;
+    inventory.addItemSql(itemId, count, ownerType, ownerId, countItems, isEquip, JSON.stringify(paramsObject), timeout);
+};
+
+inventory.addArmourItem = function(itemId, count, ownerType, ownerId, countItems, isEquip, params, timeout = 1) {
+    let paramsObject = JSON.parse(params);
+    let armourNames = ['Серый', 'Чёрный', 'Зелёный', 'Камуфляжный', 'Зел. камуфляжный'];
+    let armor = 12;
+    let color = methods.getRandomInt(0, 5);
+    if (methods.getRandomInt(0, 2) === 0) {
+        armourNames = ['Зелёный', 'Оранжевый', 'Фиолетовый', 'Розовый', 'Красный', 'Синий', 'Серый', 'Бежевый', 'Белый', 'Чёрный'];
+        armor = 28;
+        color = methods.getRandomInt(0, 10);
+    }
+
+    if (paramsObject.armor)
+        armor = paramsObject.armor;
+    if (paramsObject.armor_color >= 0)
+        armor = paramsObject.armor_color;
+
+    paramsObject.name = `${armourNames[color]} бронежилет`;
+    paramsObject.armor = armor;
+    paramsObject.armor_color = color;
     inventory.addItemSql(itemId, count, ownerType, ownerId, countItems, isEquip, JSON.stringify(paramsObject), timeout);
 };
 
@@ -821,6 +1045,48 @@ inventory.addItemSql = function(itemId, count, ownerType, ownerId, countItems, i
             methods.debug(e);
         }
     }, timeout);
+};
+
+inventory.addWorldItem = function(itemId, count, countItems, posx, posy, posz, rotx, roty, rotz, params, timeout = 1) {
+
+    setTimeout(function () {
+        try {
+            for (let i = 0; i < count; i++) {
+                let timeStamp = methods.getTimeStamp();
+                mysql.executeQuery(`INSERT INTO items (item_id, owner_type, owner_id, count, is_equip, params, timestamp_update) VALUES ('${itemId}', '0', '0', '${countItems}', '0', '${params}', '${timeStamp}')`);
+
+                setTimeout(function () {
+                    mysql.executeQuery(`SELECT id FROM items WHERE owner_type='0' AND owner_id='0' AND item_id='${itemId}' AND timestamp_update='${timeStamp}' ORDER BY item_id DESC`, function (err, rows, fields) {
+                        rows.forEach(row => {
+                            inventory.dropItemJust(row['id'], itemId, posx, posy, posz, rotx, roty, rotz);
+                        });
+                    });
+                })
+            }
+
+            methods.saveLog('log_inventory',
+                ['type', 'text'],
+                ['ADD_NEW', `itemId:${itemId}, count:${count}, ownerType:${0}, ownerId:${0}, countItems:${countItems}, params:${params}`],
+            );
+        } catch(e) {
+            methods.debug(e);
+        }
+    }, timeout);
+};
+
+inventory.dropWeaponItem = function(player, itemId, posx, posy, posz, rotx, roty, rotz) {
+
+    setTimeout(function () {
+
+        if (!user.isLogin(player))
+            return;
+
+        mysql.executeQuery(`SELECT id FROM items WHERE owner_type='1' AND owner_id='${user.getId(player)}' AND item_id='${itemId}' AND is_equip='1' ORDER BY item_id DESC`, function (err, rows, fields) {
+            rows.forEach(row => {
+                inventory.dropItem(player, row['id'], itemId, posx, posy, posz, rotx, roty, rotz);
+            });
+        });
+    })
 };
 
 inventory.getInvAmount = function(player, id, type) {
@@ -881,13 +1147,21 @@ inventory.useItem = function(player, id, itemId, isTargetable = false) {
         );
 
         let sql = `SELECT * FROM items WHERE id = ${id} AND owner_id = ${user.getId(player)} AND owner_type = ${inventory.types.Player}`;
-        if (itemId === 264 || itemId === 263 || isTargetable)
+        if (itemId === 264 || itemId === 263 || itemId === 252 || isTargetable)
             sql = `SELECT * FROM items WHERE id = ${id}`;
 
         mysql.executeQuery(sql, function (err, rows, fields) {
             if (rows.length === 0) {
                 player.notify('~r~Чтобы использовать предмет, он должен находится у Вас в инвентаре');
                 return;
+            }
+
+            let params = {};
+            try {
+                params = JSON.parse(rows[0]['params']);
+            }
+            catch (e) {
+
             }
 
             switch (itemId)
@@ -942,9 +1216,45 @@ inventory.useItem = function(player, id, itemId, isTargetable = false) {
                     chat.sendDiceCommand(player);
                     break;
                 }
+                case 477:
+                {
+                    graffiti.changeGraffiti(player);
+                    break;
+                }
+                case 474:
+                {
+                    try {
+                        let recipes = JSON.parse(user.get(player, 'recepts'));
+                        if (recipes.includes(params.id)) {
+                            player.notify('~r~У Вас уже использован этот рецепт');
+                            return;
+                        }
+                        recipes.push(params.id);
+                        user.set(player, 'recepts', JSON.stringify(recipes));
+                        inventory.deleteItem(id);
+                        player.notify('~g~Вы изучили рецепт');
+                        user.updateClientCache(player);
+                    }
+                    catch (e) {
+                        methods.debug(e);
+                    }
+                    break;
+                }
                 case 251:
                 {
-                    player.call('client:startFishing');
+                    player.call('client:startFishing', [params.upg]);
+                    /*if (user.has(player, 'useFish')) {
+                        player.notify('~r~Вы уже рыбачите');
+                        return;
+                    }
+                    user.playScenario(player, 'WORLD_HUMAN_STAND_FISHING');
+                    user.set(player, 'useFish', true);
+                    setTimeout(function () {
+                        if (user.isLogin(player)) {
+                            player.call('client:startFishing', [params.upg]);
+                            user.reset(player, 'useFish');
+                        }
+                    }, methods.getRandomInt(10000, 20000));*/
                     break;
                 }
                 case 2:
@@ -1071,10 +1381,6 @@ inventory.useItem = function(player, id, itemId, isTargetable = false) {
                 {
                     if (user.get(player,'fraction_id2') === 0) {
                         player.notify('~r~Необходимо состоять в крайм организации');
-                        return;
-                    }
-                    if (user.isGang(player)) {
-                        player.notify('~r~Гетто организации не могут использовать чертежи');
                         return;
                     }
 
@@ -1687,8 +1993,8 @@ inventory.useItem = function(player, id, itemId, isTargetable = false) {
                 }
                 case 26:
                 {
-                    user.removeWaterLevel(player, 50);
                     chat.sendMeCommand(player, "выкуривает сигарету");
+                    user.playScenario(player, 'WORLD_HUMAN_AA_SMOKE');
                     inventory.deleteItem(id);
                     break;
                 }
@@ -1785,7 +2091,7 @@ inventory.useItem = function(player, id, itemId, isTargetable = false) {
                     else
                         user.setHealth(player, player.health + 20);
                     inventory.deleteItem(id);
-                    user.playDrugAnimation(player);
+                    user.playAnimation(player, 'oddjobs@bailbond_hobotwitchy', 'base', 48);
                     user.set(player, 'useHeal', true);
 
                     setTimeout(function () {
@@ -1861,8 +2167,8 @@ inventory.useItem = function(player, id, itemId, isTargetable = false) {
 inventory.types = {
     World : 0,
     Player : 1,
-    VehicleOwner : 2,
-    VehicleServer : 3,
+    BagArm : 2,
+    Condo : 3,
     BagSmall : 4,
     House : 5,
     Apartment : 6,

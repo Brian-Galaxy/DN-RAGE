@@ -9,6 +9,7 @@ import coffer from './coffer';
 import chat from './chat';
 import inventory from './inventory';
 import menuList from './menuList';
+import items from './items';
 
 import weather from "./manager/weather";
 import dispatcher from "./manager/dispatcher";
@@ -330,6 +331,17 @@ phone.showAppList = function() {
                         clickable: true
                     },
                     {
+                        title: 'Настройки',
+                        type: 1,
+                        params: { name: 'settings' },
+                        clickable: true
+                    },
+                ],
+            },
+            {
+                title: 'Службы',
+                umenu: [
+                    {
                         title: 'Полиция',
                         text: `Вызов сотрудников полиции`,
                         modalTitle: 'Введите текст',
@@ -374,35 +386,20 @@ phone.showAppList = function() {
                         clickable: true,
                         params: {name: "callMeh"}
                     },
+                ],
+            },
+            {
+                title: 'Биржа',
+                umenu: [
                     {
-                        title: 'Настройки',
+                        title: 'Биржа рыбаков',
+                        text: 'Полная информация о рыбах и их ценах',
                         type: 1,
-                        params: { name: 'settings' },
+                        params: { name: 'fishing' },
                         clickable: true
                     },
                 ],
             },
-            /*{
-                title: 'Приложения',
-                umenu: [
-                    {
-                        title: "UVehicle",
-                        text: "Управление вашим транспортом",
-                        img: 'car',
-                        type: 1,
-                        clickable: true,
-                        params: { name: "car" }
-                    },
-                    {
-                        title: "Life Invader",
-                        text: "Доступная и качественная реклама",
-                        img: 'invader',
-                        type: 1,
-                        clickable: true,
-                        params: { name: "invader" }
-                    },
-                ],
-            },*/
         ],
     };
 
@@ -649,7 +646,7 @@ phone.showAppEcorp= function() {
         menu.items[0].umenu.push(item);
     }
 
-    if (user.getCache('quest_gang') > 4) {
+    if (user.getQuestCount('gang') > 4) {
         let item = {
             title: 'Получить задание на угон',
             text: ``,
@@ -778,6 +775,117 @@ phone.showAppSettings = function() {
     });
 
     phone.showMenu(menu);
+};
+
+phone.showAppFishing = async function() {
+
+    try {
+        let tradeList = JSON.parse(await Container.Data.Get(-99, 'fishTrade'));
+
+        let tradeMenu = [];
+        tradeList.forEach(item => {
+            let rare = 'Очень частая';
+            let type = 'Пресные воды';
+            let day = 'И днём и ночью';
+
+            if (item[1] === 1)
+                rare = 'Частая';
+            else if (item[1] === 2)
+                rare = 'Немного редкая';
+            else if (item[1] === 3)
+                rare = 'Редкая';
+            else if (item[1] === 4)
+                rare = 'Очень редкая';
+            else if (item[1] === 5)
+                rare = 'Невероятно редкая';
+
+            if (item[2] === 1)
+                type = 'Солёные воды';
+            if (item[3] === 1)
+                day = 'Только днем';
+            if (item[3] === 2)
+                day = 'Только ночью';
+
+            let money = 'Средняя';
+            if (items.getItemPrice(item[0]) * 1.5 < item[4])
+                money = 'Выше среднего';
+            else if (items.getItemPrice(item[0]) * 2 < item[4])
+                money = 'Очень высокая';
+            else if (items.getItemPrice(item[0]) * 0.5 > item[4])
+                money = 'Низкая';
+
+            tradeMenu.push(
+                {
+                    title: items.getItemNameById(item[0]),
+                    text: `${rare} | ${type} | ${day} | ${money} (${methods.moneyFormat(item[4])})`,
+                    type: 1,
+                    clickable: false,
+                    params: {name: "none" }
+                }
+            )
+        });
+
+        let menu = {
+            UUID: 'fishing',
+            title: 'Рыба и всё о ней',
+            items: [
+                {
+                    title: 'Информация',
+                    umenu: [
+                        {
+                            title: "Как ловить?",
+                            text: "Рыбу ловить можно где угодно, например на лодке в океане или зайти слегка в любой водоём и начать ловить.",
+                            type: 1,
+                            clickable: false,
+                            params: {name: "none"}
+                        },
+                        {
+                            title: "Как продать?",
+                            text: "Продать рыбу можно в любом магазине 24/7.",
+                            type: 1,
+                            clickable: false,
+                            params: {name: "none"}
+                        },
+                        /*{
+                            title: "Могу ли я использовать рыбацкое судно?",
+                            text: "Да, для этого нажмите М -> Транспорт - Начать рыбалку и просто плавайте по окенау и собирайте рыбу.",
+                            type: 1,
+                            clickable: false,
+                            params: {name: "none"}
+                        },*/
+                    ],
+                },
+                {
+                    title: 'Места для рыбалки',
+                    umenu: [
+                        {
+                            title: "Пирс Alamo",
+                            text: "Здесь больше шансов поймать редкую рыбу",
+                            type: 1,
+                            clickable: true,
+                            params: {x: 1299, y: 4216}
+                        },
+                        {
+                            title: "Пирс на берегу океана",
+                            text: "Здесь больше шансов поймать редкую рыбу",
+                            type: 1,
+                            clickable: true,
+                            params: {x: -1612, y: 5262}
+                        },
+                    ],
+                },
+                {
+                    title: 'Список всех рыб',
+                    umenu: tradeMenu,
+                },
+            ],
+        };
+
+        phone.showMenu(menu);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 };
 
 phone.showAppFraction2 = async function() {
@@ -914,6 +1022,7 @@ phone.showAppFraction2 = async function() {
     }
 
     let orderLamar = await fraction.get(user.getCache('fraction_id2'), 'orderLamar');
+    let orderLamarM = await fraction.get(user.getCache('fraction_id2'), 'orderLamarM');
     let orderAtm = await fraction.get(user.getCache('fraction_id2'), 'orderAtm');
     //let orderFuel = await fraction.get(user.getCache('fraction_id2'), 'orderFuel');
     let orderDrug = await fraction.get(user.getCache('fraction_id2'), 'orderDrug');
@@ -937,11 +1046,34 @@ phone.showAppFraction2 = async function() {
     else {
         titleMenu.umenu.push(
             {
-                title: "Грузы Ламара",
-                text: `Перевезите ${orderLamar}/300 грузов ламара и получите груз`,
+                title: "Грузы Ламара (Speedo)",
+                text: `Перевезите ${orderLamar}/150 грузов ламара и получите Speedo`,
                 type: 1,
                 clickable: true,
                 params: { name: "getLamar" }
+            },
+        )
+    }
+
+    if (orderLamarM > 5000) {
+        titleMenu.umenu.push(
+            {
+                title: "Грузы Ламара (Mule)",
+                text: `Задание выполнено`,
+                type: 1,
+                clickable: false,
+                params: { name: "none" }
+            },
+        )
+    }
+    else {
+        titleMenu.umenu.push(
+            {
+                title: "Грузы Ламара",
+                text: `Перевезите ${orderLamarM}/300 грузов ламара и получите Mule`,
+                type: 1,
+                clickable: true,
+                params: { name: "getLamarM" }
             },
         )
     }
@@ -961,7 +1093,7 @@ phone.showAppFraction2 = async function() {
         titleMenu.umenu.push(
             {
                 title: "Кража банкоматов",
-                text: `Взломайте ${orderAtm}/30 банкоматов и получите 100ec на счет организации`,
+                text: `Взломайте ${orderAtm}/20 банкоматов и получите 100ec на счет организации`,
                 type: 1,
                 clickable: true,
                 params: { name: "getAtm" }
@@ -984,7 +1116,7 @@ phone.showAppFraction2 = async function() {
         titleMenu.umenu.push(
             {
                 title: "Закладки",
-                text: `Разнесите ${orderDrug}/700 закладок и получите груз с наркотиками`,
+                text: `Разнесите ${orderDrug}/200 закладок и получите груз с наркотиками`,
                 type: 1,
                 clickable: true,
                 params: { name: "getDrug" }
@@ -1048,23 +1180,22 @@ phone.showAppFraction2 = async function() {
         };
         menu.items.push(titleMenu);
     }
-    else {
-        if (user.isLeader2() || user.isSubLeader2()) {
-            if (fData.get('is_shop')) {
-                let titleMenu = {
-                    title: 'Ограбление магазинов',
-                    umenu: [
-                        {
-                            title: "Получить наводку на магазин",
-                            text: "",
-                            type: 1,
-                            clickable: true,
-                            params: { name: "getShopGang" }
-                        },
-                    ],
-                };
-                menu.items.push(titleMenu);
-            }
+
+    if (user.isLeader2() || user.isSubLeader2()) {
+        if (fData.get('is_shop')) {
+            let titleMenu = {
+                title: 'Ограбление магазинов',
+                umenu: [
+                    {
+                        title: "Получить наводку на магазин",
+                        text: "",
+                        type: 1,
+                        clickable: true,
+                        params: { name: "getShopGang" }
+                    },
+                ],
+            };
+            menu.items.push(titleMenu);
         }
     }
 
@@ -1182,6 +1313,36 @@ phone.showAppFraction = function() {
     };
     menu.items.push(titleMenu1);
 
+    if (user.isNews()) {
+        let titleMenu = {
+            title: 'Служебный раздел',
+            umenu: [
+                {
+                    title: "Статистика объявлений",
+                    text: "За 1 день",
+                    type: 1,
+                    clickable: true,
+                    params: { name: "showInvaderStats", days: 1 }
+                },
+                {
+                    title: "Статистика объявлений",
+                    text: "За 7 дней",
+                    type: 1,
+                    clickable: true,
+                    params: { name: "showInvaderStats", days: 7 }
+                },
+                {
+                    title: "Статистика объявлений",
+                    text: "За 30 дней",
+                    type: 1,
+                    clickable: true,
+                    params: { name: "showInvaderStats", days: 30 }
+                },
+            ],
+        };
+        menu.items.push(titleMenu);
+    }
+
     if (user.isGos()) {
         let titleMenu = {
             title: 'Служебный раздел',
@@ -1207,7 +1368,7 @@ phone.showAppFraction = function() {
             ],
         };
 
-        if (user.isUsmc()) {
+        if (user.isUsmc() || user.isGov()) {
             titleMenu.umenu.push(
                 {
                     title: "Эвакуировать ближайший транспорт",
@@ -1216,7 +1377,6 @@ phone.showAppFraction = function() {
                     params: { name: "destroyVehicle" }
                 }
             );
-
         }
 
         if (user.isSapd() || user.isSheriff() || user.isFib()) {
@@ -1451,11 +1611,18 @@ phone.showAppGps = function() {
                         params: {x: -139, y: -631}
                     },
                     {
-                        title: "Полицейский участок",
+                        title: "Полицейский участок Vespucci",
                         text: "",
                         type: 1,
                         clickable: true,
-                        params: {x: 437, y: -982}
+                        params: {x: -1089, y: -835}
+                    },
+                    {
+                        title: "Полицейский участок Mission Row",
+                        text: "",
+                        type: 1,
+                        clickable: true,
+                        params: {x: 450, y: -984}
                     },
                     {
                         title: "Шериф департамент Палето-Бей",
@@ -1498,6 +1665,20 @@ phone.showAppGps = function() {
                         type: 1,
                         clickable: true,
                         params: {x: -1041, y: -241}
+                    },
+                    {
+                        title: "Швейная фабрика",
+                        text: "Для обмена одежды на ткань",
+                        type: 1,
+                        clickable: true,
+                        params: {x: 707, y: -966}
+                    },
+                    {
+                        title: "Литейный завод",
+                        text: "Для обмена оружия на стальные пластины",
+                        type: 1,
+                        clickable: true,
+                        params: {x: 1073, y: -2008}
                     },
                 ],
             },
@@ -1695,6 +1876,13 @@ phone.showAppGps = function() {
                         type: 1,
                         clickable: true,
                         params: { event: 'server:gps:findGunShop' }
+                    },
+                    {
+                        title: "Найти ближайший магазин одежды",
+                        text: "",
+                        type: 1,
+                        clickable: true,
+                        params: { event: 'server:gps:findClothShop' }
                     },
                     {
                         title: "Найти ближайший тату салон",
@@ -3740,21 +3928,24 @@ phone.consoleCallback = async function(command) {
                     }
                 });
 
-                if (mp.vehicles.exists(currentVeh)) {
+                if (mp.vehicles.exists(currentVeh) && (hash.toUpperCase() === 'BRICKADE' || hash.toUpperCase() === 'STOCKADE')) {
 
                     for (let i = 0; i < 25; i++) {
                         if (mp.vehicles.exists(currentVeh)) {
                             let dist = methods.distanceToPos(currentVeh.position, mp.players.local.position);
-                            if (dist > 10) {
-                                phone.addConsoleCommand('Max range 10m');
+                            if (dist > 30) {
+                                phone.addConsoleCommand('Max range 30m');
                                 mp.events.callRemote('server:vehicles:speedLimit', currentVeh.remoteId, 0);
                                 return;
                             }
                             let velocity = currentVeh.getVelocity();
                             let speed = Math.sqrt(velocity.x * velocity.x + velocity.y * velocity.y + velocity.z * velocity.z);
-                            speed = Math.round(speed * 3.6) - 1;
-                            if (speed < 20)
-                                speed = 20;
+                            if (hash.toUpperCase() === 'BRICKADE')
+                                speed = Math.round(speed * 3.6) - 20;
+                            else
+                                speed = Math.round(speed * 3.6) - 3;
+                            if (speed < 10)
+                                speed = 10;
                             phone.addConsoleCommand(`Slowdown process ${(i + 1) * 4}%`);
                             mp.events.callRemote('server:vehicles:speedLimit', currentVeh.remoteId, speed);
                             await methods.sleep(1000);
@@ -4410,17 +4601,80 @@ phone.callBackModalInput = async function(paramsJson, text) {
             }, 300000);
         }
         if (params.name == 'call9111') {
+            if (Container.Data.HasLocally(mp.players.local.remoteId, "is911Timeout"))
+            {
+                mp.game.ui.notifications.show("~r~Таймаут 1 минута");
+                return;
+            }
+
+            if (text.trim() === '') {
+                mp.game.ui.notifications.show("~r~Для начала надо ввести текст");
+                return;
+            }
+
             dispatcher.send(`~b~PD | ${methods.phoneFormat(user.getCache('phone'))}`, text, true, user.getCache('phone'));
+
+            Container.Data.SetLocally(mp.players.local.remoteId, "is911Timeout", true);
+            setTimeout(function () {
+                Container.Data.ResetLocally(mp.players.local.remoteId, "is911Timeout");
+                //user.stopScenario();
+            }, 60000);
         }
         if (params.name == 'call9112') {
+            if (Container.Data.HasLocally(mp.players.local.remoteId, "is911Timeout"))
+            {
+                mp.game.ui.notifications.show("~r~Таймаут 1 минута");
+                return;
+            }
+
+            if (text.trim() === '') {
+                mp.game.ui.notifications.show("~r~Для начала надо ввести текст");
+                return;
+            }
+
             dispatcher.send(`~r~EMS | ${methods.phoneFormat(user.getCache('phone'))}`, text, true, user.getCache('phone'));
+
+            Container.Data.SetLocally(mp.players.local.remoteId, "is911Timeout", true);
+            setTimeout(function () {
+                Container.Data.ResetLocally(mp.players.local.remoteId, "is911Timeout");
+                //user.stopScenario();
+            }, 60000);
         }
         if (params.name == 'call9113') {
+
+            if (Container.Data.HasLocally(mp.players.local.remoteId, "is911Timeout"))
+            {
+                mp.game.ui.notifications.show("~r~Таймаут 1 минута");
+                return;
+            }
+
+            if (text.trim() === '') {
+                mp.game.ui.notifications.show("~r~Для начала надо ввести текст");
+                return;
+            }
+
             dispatcher.send(`~y~FD | ${methods.phoneFormat(user.getCache('phone'))}`, text, true, user.getCache('phone'));
+
+            Container.Data.SetLocally(mp.players.local.remoteId, "is911Timeout", true);
+            setTimeout(function () {
+                Container.Data.ResetLocally(mp.players.local.remoteId, "is911Timeout");
+                //user.stopScenario();
+            }, 60000);
         }
         if (params.name == 'callTaxi') {
 
             if (methods.isWaypointPosition()) {
+
+                if (Container.Data.HasLocally(mp.players.local.remoteId, "isTaxiTimeout"))
+                {
+                    mp.game.ui.notifications.show("~r~Таймаут 1 минута");
+                    return;
+                }
+
+                if (text.trim() === '') {
+                    mp.game.ui.notifications.show("~r~Для начала надо ввести текст");
+                    return;
+                }
 
                 let pos = methods.getWaypointPosition();
                 let playerPos = mp.players.local.position;
@@ -4438,13 +4692,37 @@ phone.callBackModalInput = async function(paramsJson, text) {
                 user.set('waitTaxi', true);
                 dispatcher.sendTaxi(`${methods.phoneFormat(user.getCache('phone'))}`, text, pos, price, user.getCache('phone'));
                 mp.game.ui.notifications.show(`~y~Вы взвали такси\nИтоговая цена поездки: ~s~${methods.moneyFormat(price)}`);
+
+                Container.Data.SetLocally(mp.players.local.remoteId, "isTaxiTimeout", true);
+                setTimeout(function () {
+                    Container.Data.ResetLocally(mp.players.local.remoteId, "isTaxiTimeout");
+                    //user.stopScenario();
+                }, 60000);
             }
             else {
                 mp.game.ui.notifications.show("~y~Прежде чем вызвать такси, вам необходимо установить на карте метку, куда вы хотите поехать");
             }
         }
         if (params.name == 'callMeh') {
+
+            if (Container.Data.HasLocally(mp.players.local.remoteId, "isMechTimeout"))
+            {
+                mp.game.ui.notifications.show("~r~Таймаут 1 минута");
+                return;
+            }
+
+            if (text.trim() === '') {
+                mp.game.ui.notifications.show("~r~Для начала надо ввести текст");
+                return;
+            }
+
             dispatcher.sendMech(`${methods.phoneFormat(user.getCache('phone'))}`, text, user.getCache('phone'));
+
+            Container.Data.SetLocally(mp.players.local.remoteId, "isMechTimeout", true);
+            setTimeout(function () {
+                Container.Data.ResetLocally(mp.players.local.remoteId, "isMechTimeout");
+                //user.stopScenario();
+            }, 60000);
         }
         if (params.name == 'getPayDay') {
             let sum = methods.parseFloat(text);
@@ -4660,6 +4938,10 @@ phone.callBackButton = async function(menu, id, ...args) {
                 mp.events.callRemote('server:phone:memberAction', params.memberId);
                 phone.showLoad();
             }
+            else if (params.name == 'showInvaderStats') {
+                mp.events.callRemote('server:phone:openInvaderStatsList', params.days);
+                phone.showLoad();
+            }
             else if (params.name == 'fractionVehicleAction') {
                 mp.events.callRemote('server:phone:fractionVehicleAction', params.vehId);
                 phone.showLoad();
@@ -4696,6 +4978,8 @@ phone.callBackButton = async function(menu, id, ...args) {
                 phone.showAppInvader();
             if (params.name == 'settings')
                 phone.showAppSettings();
+            if (params.name == 'fishing')
+                phone.showAppFishing();
             if (params.name == 'car') {
                 mp.events.callRemote('server:phone:userVehicleAppMenu');
                 phone.showLoad();
@@ -4706,6 +4990,12 @@ phone.callBackButton = async function(menu, id, ...args) {
             }
         }
         if (menu == 'gps') {
+            if (params.x)
+                user.setWaypoint(params.x, params.y);
+            if (params.event)
+                mp.events.callRemote(params.event);
+        }
+        if (menu == 'fishing') {
             if (params.x)
                 user.setWaypoint(params.x, params.y);
             if (params.event)
@@ -4944,8 +5234,8 @@ phone.callBackButton = async function(menu, id, ...args) {
                     mp.game.ui.notifications.show(`~r~Вы уже получали фургон сегодня`);
                     return;
                 }
-                if (orderDrug < 700) {
-                    mp.game.ui.notifications.show(`~r~Необходимо положить ${700 - orderDrug} закладок, для выполнения контракта`);
+                if (orderDrug < 200) {
+                    mp.game.ui.notifications.show(`~r~Необходимо положить ${200 - orderDrug} закладок, для выполнения контракта`);
                     return;
                 }
 
@@ -4966,14 +5256,36 @@ phone.callBackButton = async function(menu, id, ...args) {
                    mp.game.ui.notifications.show(`~r~Вы уже получали фургон сегодня`);
                    return;
                }
-               if (orderLamar < 300) {
-                   mp.game.ui.notifications.show(`~r~Необходимо перевести ${300 - orderLamar} грузов, для выполнения контракта`);
+               if (orderLamar < 150) {
+                   mp.game.ui.notifications.show(`~r~Необходимо перевести ${150 - orderLamar} грузов, для выполнения контракта`);
                    return;
                }
 
                 if (user.isLeader2() || user.isSubLeader2()) {
                     mp.events.callRemote('server:fraction:getLamarSpeedo');
                     fraction.set(user.getCache('fraction_id2'), 'orderLamar', 9999);
+                    phone.showLoad();
+                    setTimeout(phone.showAppFraction2, 500);
+                }
+                else {
+                    mp.game.ui.notifications.show(`~r~Доступно только для лидера или замов`);
+                }
+            }
+            else if (params.name == 'getLamarM') {
+
+               let orderLamarM = await fraction.get(user.getCache('fraction_id2'), 'orderLamarM');
+               if (orderLamarM >= 9999) {
+                   mp.game.ui.notifications.show(`~r~Вы уже получали фургон сегодня`);
+                   return;
+               }
+               if (orderLamarM < 300) {
+                   mp.game.ui.notifications.show(`~r~Необходимо перевести ${300 - orderLamarM} грузов, для выполнения контракта`);
+                   return;
+               }
+
+                if (user.isLeader2() || user.isSubLeader2()) {
+                    mp.events.callRemote('server:fraction:getLamarMule');
+                    fraction.set(user.getCache('fraction_id2'), 'orderLamarM', 9999);
                     phone.showLoad();
                     setTimeout(phone.showAppFraction2, 500);
                 }
@@ -4988,8 +5300,8 @@ phone.callBackButton = async function(menu, id, ...args) {
                     mp.game.ui.notifications.show(`~r~Вы уже получали фургон сегодня`);
                     return;
                 }
-                if (orderAtm < 30) {
-                    mp.game.ui.notifications.show(`~r~Необходимо ограбить ${30 - orderAtm} банкоматов, для выполнения контракта`);
+                if (orderAtm < 20) {
+                    mp.game.ui.notifications.show(`~r~Необходимо ограбить ${20 - orderAtm} банкоматов, для выполнения контракта`);
                     return;
                 }
 

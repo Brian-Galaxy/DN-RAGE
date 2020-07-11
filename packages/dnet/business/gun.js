@@ -87,7 +87,7 @@ gun.buy = function(player, itemId, price, count, superTint, tint, shopId) {
         return;
 
     let amount = inventory.getInvAmount(player, user.getId(player), 1);
-    if (amount + items.getItemAmountById(itemId) > 30000) {
+    if (amount + items.getItemAmountById(itemId) > inventory.getPlayerInvAmountMax(player)) {
         player.notify('~r~В инвентаре нет места');
         return;
     }

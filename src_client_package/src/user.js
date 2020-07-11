@@ -18,6 +18,13 @@ import Camera from "./manager/cameraRotator";
 import timer from "./manager/timer";
 import UIMenu from "./modules/menu";
 
+import houses from "./property/houses";
+import business from "./property/business";
+import stocks from "./property/stocks";
+import condos from "./property/condos";
+import vehicles from "./property/vehicles";
+import yachts from "./property/yachts";
+
 let user = {};
 
 let _isLogin = false;
@@ -181,6 +188,18 @@ user.getTargetEntityValidate = function() {
             user.targetEntity &&
             user.targetEntity.entity &&
             user.targetEntity.entity.getVariable('stockId')
+        )
+            return user.targetEntity.entity;
+        else if (
+            user.targetEntity &&
+            user.targetEntity.entity &&
+            user.targetEntity.entity.getVariable('houseSafe')
+        )
+            return user.targetEntity.entity;
+        else if (
+            user.targetEntity &&
+            user.targetEntity.entity &&
+            user.targetEntity.entity.getVariable('condoSafe')
         )
             return user.targetEntity.entity;
     }
@@ -435,6 +454,24 @@ user.getCurrentAmmo = function() {
 
 user.getCurrentWeapon = function() {
     return mp.game.invoke(methods.GET_SELECTED_PED_WEAPON, mp.players.local.handle);
+};
+
+let lastWeapon = 0;
+user.getLastWeapon = function() {
+    return lastWeapon;
+};
+
+user.setLastWeapon = function(hash) {
+    lastWeapon = hash;
+};
+
+let invWeapons = [];
+user.getInvEquipWeapon = function() {
+    return invWeapons;
+};
+
+user.setInvEquipWeapon = function(list) {
+    invWeapons = list;
 };
 
 user.revive = function(hp = 20) {
@@ -720,6 +757,10 @@ user.getClipset = function() {
     return mp.players.local.getVariable("walkingStyle");
 };
 
+user.shoot = function() {
+    mp.events.callRemote('server:user:shoot');
+};
+
 user.setHealth = function(level) {
     isHeal = true;
     if (level === 0)
@@ -730,6 +771,13 @@ user.setHealth = function(level) {
 user.setArmour = function(level) {
     isArmor = true;
     mp.players.local.setArmour(level);
+
+    /*if (!user.hasCache('uniform')) {
+        if (level > 0)
+            user.setComponentVariation( 9, 12, 1, 2);
+        else
+            user.setComponentVariation( 9, 0, 0, 2);
+    }*/
 };
 
 user.setHealthFalse = function() {
@@ -907,6 +955,12 @@ user.getSex = function() {
     }
 
     return 0;
+};
+
+user.getSexName = function() {
+    if (!user.isLogin())
+        return 'Мужской';
+    return user.getSex() === 1 ? 'Женский' : 'Мужской';
 };
 
 user.updateCharacterFace = function(isLocal = false) {
@@ -1328,6 +1382,34 @@ user.isLogin = function(){
 
 user.setLogin = function(value){
     _isLogin = value;
+};
+
+user.isInOcean = function() {
+    let pos = mp.players.local.position;
+    return (mp.game.zone.getNameOfZone(pos.x, pos.y, pos.z) === "OCEANA");
+};
+
+user.isCanFishingPearceOcean = function() {
+    let pos = mp.players.local.position;
+    if (methods.distanceToPos(pos, new mp.Vector3(-1612.2333984375, 5262.416015625, 2.9741017818450928)) < 10)
+        return true;
+    return false;
+};
+
+user.isCanFishingPearceAlamo = function() {
+    let pos = mp.players.local.position;
+    if (
+        methods.distanceToPos(pos, new mp.Vector3(1299.1312255859375, 4216.794921875, 32.90868377685547)) < 10 ||
+        methods.distanceToPos(pos, new mp.Vector3(1315.7747802734375, 4229.9892578125, 32.915531158447266)) < 7 ||
+        methods.distanceToPos(pos, new mp.Vector3(1337.7982177734375, 4225.47119140625, 32.915531158447266)) < 7 ||
+        methods.distanceToPos(pos, new mp.Vector3(1326.87109375, 4227.64599609375, 32.915531158447266)) < 7
+    )
+        return true;
+    return false;
+};
+
+user.isCanFishing = function() {
+    return user.isInOcean() || mp.players.local.isInWater() || user.isCanFishingPearceOcean() || user.isCanFishingPearceAlamo();
 };
 
 user.isJobMail = function() {
@@ -1793,6 +1875,124 @@ user.isTie = function() {
 
 user.isKnockout = function() {
     return mp.players.local.getVariable('isKnockout') === true;
+};
+
+user.getHouseData = function() {
+    if (user.getCache('house_id') > 0)
+        return houses.getData(user.getCache('house_id'));
+    return null;
+};
+
+user.getCondoData = async function() {
+    if (user.getCache('condo_id') > 0)
+        return await condos.getData(user.getCache('condo_id'));
+    return null;
+};
+
+user.getYachtData = async function() {
+    if (user.getCache('yacht_id') > 0)
+        return await yachts.getData(user.getCache('yacht_id'));
+    return null;
+};
+
+user.getBusinessData = async function() {
+    if (user.getCache('business_id') > 0)
+        return await business.getData(user.getCache('business_id'));
+    return null;
+};
+
+user.getStockData = async function() {
+    if (user.getCache('stock_id') > 0)
+        return await stocks.getData(user.getCache('stock_id'));
+    return null;
+};
+
+user.getCarsData = async function() {
+    let cars = [];
+    for (let i = 1; i < 11; i++) {
+        if (user.getCache('car_id' + i) > 0)
+            cars.push(await vehicles.getData(user.getCache('car_id' + i)));
+    }
+    return cars;
+};
+
+user.getQuest = function(name) {
+    try {
+        let questList = user.getQuestAll();
+        let qItem = questList[name];
+        if (qItem == null || qItem == undefined || Object.keys(qItem).length === 0) {
+            user.setQuest(name, 0, []);
+            return {c: 0, p: []};
+        }
+        return qItem;
+    }
+    catch (e) {
+        methods.debug('user.getQuest', name, e.toString())
+    }
+    return {c: 0, p: []};
+};
+
+user.getQuestAll = function() {
+    try {
+        let questsJson = user.getCache('quests');
+        if (!methods.isValidJSON(questsJson) || questsJson === null || questsJson === undefined || questsJson === "{}")
+            return user.resetQuestAll();
+        return JSON.parse(questsJson);
+    }
+    catch (e) {
+        methods.debug('user.getQuestAll', e);
+    }
+    return user.resetQuestAll();
+};
+
+user.resetQuestAll = function() {
+    let quests = {};
+    quest.getQuestAllNames().forEach(name => {
+        try {
+            quests[name] = {c: 0, p: []};
+        }
+        catch (e) {
+            methods.debug('user.getQuestAll', e.toString())
+        }
+    });
+    user.set('quests', JSON.stringify(quests));
+    return quests;
+};
+
+user.getQuestCount = function(name) {
+    try {
+        return methods.parseInt(user.getQuest(name).c);
+    }
+    catch (e) {
+        methods.debug('user.getQuestCount', name, e.toString())
+    }
+    return 0;
+};
+
+user.getQuestParams = function(name) {
+    try {
+        return user.getQuest(name).p;
+    }
+    catch (e) {
+        methods.debug('user.getQuestParams', name, e.toString())
+    }
+    return [];
+};
+
+user.setQuest = function(name, num, params = null) {
+    try {
+        let qAll = user.getQuestAll();
+        let qItem = qAll[name];
+        if (qItem == null || qItem == undefined || Object.keys(qItem).length === 0)
+            qItem = {c: 0, p: []};
+        qItem.c = num;
+        if (params)
+            qItem.p = params;
+        qAll[name] = qItem;
+        user.set('quests', JSON.stringify(qAll));
+    } catch (e) {
+        methods.debug(e);
+    }
 };
 
 mp.events.add("render", () => {

@@ -18,12 +18,6 @@ loader.startOrEnd = function() {
     try {
         methods.debug('Execute: builder.startOrEnd');
 
-
-        if (user.getCache('role') != 1) {
-            mp.game.ui.notifications.show('~r~Доступно только для иммигрантов');
-            return;
-        }
-
         if (user.getCache('job') > 0) {
             mp.game.ui.notifications.show('~r~Вы не можете работать на этой работе сейчас');
             return;
@@ -31,10 +25,10 @@ loader.startOrEnd = function() {
 
         if (isStart) {
 
-            if (count >= 30 && user.getCache('quest_role_0') === 0) {
-                mp.game.ui.notifications.show('~b~Вы выполнили задание от Каспера, в награду получили $100');
-                user.addCashMoney(100, 'Работа от Каспера');
-                user.set('quest_role_0', 1);
+            if (count >= 20 && user.getQuestCount('role_0') === 0) {
+                mp.game.ui.notifications.show('~b~Вы выполнили задание от Каспера, в награду получили $200');
+                user.addCashMoney(200, 'Работа от Каспера');
+                user.setQuest('role_0', 1);
             }
 
             user.addCashMoney(count, 'Работа от Каспера');

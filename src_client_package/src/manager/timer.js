@@ -69,8 +69,11 @@ timer.deleteInterval = function(key) {
 
 timer.setDeathTimer = function(sec) {
     deathTimer = sec;
+    let desc = '';
+    if (!Container.Data.HasLocally(mp.players.local.remoteId, "isEmsTimeout"))
+        desc = '~br~Нажмите Y чтобы вызвать медиков~br~Нажмите N чтобы отказаться от помощи и сбросить таймер';
     if (sec > 0)
-        ui.showDialog(`Время до возрождения ${deathTimer} сек.`, '', 'none', [], ui.dialogTypes.centerBottom, 0, false, false);
+        ui.showDialog(`Время до возрождения ${deathTimer} сек.${desc}`, '', 'none', [], ui.dialogTypes.centerBottom, 0, false, false);
     else {
         user.stopAllScreenEffect();
         ui.hideDialog();
@@ -228,10 +231,73 @@ timer.ms100Timer = function() {
 };
 
 let warning = 0;
+let isSetSpeed = false;
 
 timer.twoSecTimer = function() {
+    
+    try {
+        user.setLastWeapon(user.getCurrentWeapon());
+    }
+    catch (e) {}
 
     try {
+        
+        if (mp.players.local.isInAnyVehicle(true)) {
+            /*//0xDB89591E290D9182 | GET_TIME_SINCE_PLAYER_DROVE_AGAINST_TRAFFIC
+            //0xD559D2BE9E37853B | GET_TIME_SINCE_PLAYER_DROVE_ON_PAVEMENT
+            //0x4F5070AA58F69279 | GET_VEHICLE_NODE_IS_SWITCHED_OFF | _GET_IS_SLOW_ROAD_FLAG
+            let drove = mp.game.invoke('0xDB89591E290D9182'); //Если 0, то ты едешь по встерчке как мудак
+
+            /eval JSON.stringify(mp.game.pathfind.getVehicleNodeProperties(mp.players.local.vehicle.position.x, mp.players.local.vehicle.position.y, mp.players.local.vehicle.position.z, 1, 1));
+            */
+
+            let veh = mp.players.local.vehicle;
+            if (
+                veh.getClass() === 0 ||
+                veh.getClass() === 1 ||
+                veh.getClass() === 3 ||
+                veh.getClass() === 4 ||
+                veh.getClass() === 5 ||
+                veh.getClass() === 6 ||
+                veh.getClass() === 7 ||
+                veh.getClass() === 11 ||
+                veh.getClass() === 12 ||
+                veh.getClass() === 17 ||
+                veh.getClass() === 20
+            ) {
+                let value = mp.game.pathfind.getVehicleNodeProperties(mp.players.local.vehicle.position.x, mp.players.local.vehicle.position.y, mp.players.local.vehicle.position.z, 1, 1);
+                //let desc = 'Едешь как поц';
+                if (value.flags >= 8 && value.flags <= 12 || value.flags === 0 || value.flags === 3 || value.flags >= 40 && value.flags <= 47) {
+                    let vSpeed = vehicles.getSpeedMax(mp.players.local.vehicle.model) / 2.5;
+                    let currentSpeed = methods.getCurrentSpeedKmh();
+                    isSetSpeed = true;
+                    if (vSpeed < currentSpeed)
+                        mp.events.call('client:setNewMaxSpeedServer', currentSpeed - 4);
+                }
+                else if (isSetSpeed) {
+                    isSetSpeed = false;
+                    mp.events.call('client:setNewMaxSpeedServer', 0);
+                }
+                /*if (mp.game.invoke('0xDB89591E290D9182', mp.players.local) === 0)
+                    desc = 'Едешь по встречке';
+                chat.sendLocal(`${isSetSpeed} | ${value.flags} | ${desc}`);*/
+            }
+        }
+
+        if (!user.hasCache('uniform')) {
+            if (mp.players.local.getArmour() > 0 && mp.players.local.getDrawableVariation(9) === 0) {
+                user.set('armor', 12);
+                user.set('armor_color', 1);
+                user.setComponentVariation( 9, 12, 1);
+            }
+            if (mp.players.local.getArmour() < 1 && mp.players.local.getDrawableVariation(9) > 0) {
+                user.set('armor', 0);
+                user.set('armor_color', 0);
+                inventory.updateItemsEquipByItemId(252, user.getCache('id'), 1, 0, 0);
+                user.setComponentVariation( 9, 0, 0);
+            }
+        }
+
         discord.checker();
 
         let plPos = mp.players.local.position;
@@ -274,85 +340,80 @@ timer.twoSecTimer = function() {
 };
 
 timer.allModelLoader = function() {
-    allModelLoader = !allModelLoader;
-    if (allModelLoader)
-        mp.game.ui.notifications.show("Прогрузка моделей ~g~включена");
-    else
-        mp.game.ui.notifications.show("Прогрузка моделей ~r~выключена");
+    allModelLoader = user.getCache('s_load_model');
 };
 
 timer.tenSecTimer = function() {
 
-    if (user.isLogin())
-        vSync.syncToServer();
-
-    mp.events.call('client:vehicle:checker');
-
-    if (!mp.game.streaming.isIplActive("ex_sm_15_office_03b"))
-        methods.requestIpls();
-
-    if (allModelLoader) {
-        try {
-            mp.game.invoke("0xBD6E84632DD4CB3F");
-        }
-        catch (e) {
-            methods.debug(e);
-        }
-    }
-
-    let plPos = mp.players.local.position;
-    let isGive = false;
-
-    if (mp.players.local.dimension === 0) {
-        enums.cctvProps.forEach(prop => {
-            if (mp.players.local.weapon !== 2725352035 && !user.isGos()) {
-
-                enums.cctvProps.forEach(prop => {
-
-                    try {
-                        let entity = mp.game.object.getClosestObjectOfType(plPos.x, plPos.y, plPos.z, 10, mp.game.joaat(prop), false, false, false);
-                        if (
-                            entity !== 0 &&
-                            mp.game.invoke('0xEEF059FAD016D209', entity) > 950 && //GET_ENTITY_HEALTH
-                            mp.game.invoke('0xFCDFF7B72D23A1AC', entity, mp.players.local.handle, 17)// HAS_ENTITY_CLEAR_LOS_TO_ENTITY
-                        ) {
-                            if (!isGive) {
-                                isGive = true;
-                                warning++;
-                            }
-
-                            if (warning >= 4) {
-                                user.giveWanted(1, 'Оружие в публичном месте');
-                                warning = 0;
-                            }
-                            else {
-                                mp.game.ui.notifications.show("~y~Вас заметила камера\nУберите оружие или вы будете получать розыск");
-                            }
-                        }
-                        /*else {
-                            warning = 0;
-                        }*/
-                    }
-                    catch (e) {
-                        methods.debug(e);
-                    }
-                });
-            }
-            else {
-                warning = 0;
+    if (user.isLogin()) {
+        weapons.getMapList().forEach(item => {
+            let hash = item[1] / 2;
+            if (!mp.game.invoke(methods.HAS_PED_GOT_WEAPON, mp.players.local.handle, hash, false)) {
+                if (Container.Data.HasLocally(0, hash.toString())) {
+                    Container.Data.ResetLocally(0, hash.toString());
+                    Container.Data.Reset(mp.players.local.remoteId, hash.toString());
+                }
             }
         });
+        vSync.syncToServer();
+        mp.events.call('client:vehicle:checker');
     }
 
-    weapons.getMapList().forEach(item => {
-        let hash = item[1] / 2;
-        if (!mp.game.invoke(methods.HAS_PED_GOT_WEAPON, mp.players.local.handle, hash, false)) {
-            if (Container.Data.HasLocally(0, hash.toString())) {
-                Container.Data.ResetLocally(0, hash.toString());
-                Container.Data.Reset(mp.players.local.remoteId, hash.toString());
+    try {
+        if (!mp.game.streaming.isIplActive("ex_sm_15_office_03b"))
+            methods.requestIpls();
+
+        if (allModelLoader) {
+            try {
+                mp.game.invoke("0xBD6E84632DD4CB3F");
+            }
+            catch (e) {
+                methods.debug(e);
             }
         }
-    });
+    }
+    catch (e) {
+        
+    }
+
+    /*let plPos = mp.players.local.position;
+    let isGive = false;
+
+    if (mp.players.local.dimension === 0 && !mp.players.local.isInAnyVehicle(true)) { //TODO Возможно вырезать это говно
+        if (mp.players.local.weapon !== 2725352035 && !user.isGos()) {
+
+            enums.cctvProps.forEach(prop => {
+
+                try {
+                    let entity = mp.game.object.getClosestObjectOfType(plPos.x, plPos.y, plPos.z, 10, mp.game.joaat(prop), false, false, false);
+                    if (
+                        entity !== 0 &&
+                        mp.game.invoke('0xEEF059FAD016D209', entity) > 950 && //GET_ENTITY_HEALTH
+                        mp.game.invoke('0xFCDFF7B72D23A1AC', entity, mp.players.local.handle, 17)// HAS_ENTITY_CLEAR_LOS_TO_ENTITY
+                    ) {
+                        if (!isGive) {
+                            isGive = true;
+                            warning++;
+                        }
+
+                        if (warning >= 4) {
+                            user.giveWanted(1, 'Оружие в публичном месте');
+                            warning = 0;
+                        }
+                        else {
+                            mp.game.ui.notifications.show("~y~Вас заметила камера\nУберите оружие или вы будете получать розыск");
+                        }
+                    }
+                }
+                catch (e) {
+                    methods.debug(e);
+                }
+            });
+        }
+        else {
+            warning = 0;
+        }
+    }*/
 };
 
 let prevWpPos = new mp.Vector3(0, 0, 0);

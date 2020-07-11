@@ -51,14 +51,14 @@ jobPoint.create = function(pickupPos, route = false, radius = 1, color = ui.Mark
     return _checkpoint.id;
 };
 
-jobPoint.createBlipById = function(id, pickupPos, blipId = 1, blipColor = 0, route = false, shortRange = false, name = 'Цель', rot = 0) {
+jobPoint.createBlipById = function(id, pickupPos, blipId = 1, blipColor = 0, route = false, shortRange = false, name = 'Цель', rot = 0, scale = 0.8) {
 
     jobPoint.deleteBlipById(id);
 
     let blip = mp.blips.new(blipId, pickupPos,
         {
             color: blipColor,
-            scale: 0.8,
+            scale: scale,
             name: name,
             shortRange: shortRange,
             dimension: -1

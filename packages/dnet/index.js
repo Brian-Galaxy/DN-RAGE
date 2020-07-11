@@ -7,6 +7,7 @@ require('./modules/chat');
 require('./voice/voice');
 require('./managers/vSync');
 require('./managers/wpSync');
+require('./managers/ptxSync');
 require('./managers/attach');
 require('./managers/attachWeapons');
 require('./managers/dispatcher');
@@ -37,6 +38,7 @@ let business = require('./property/business');
 let vehicles = require('./property/vehicles');
 let stocks = require('./property/stocks');
 let fraction = require('./property/fraction');
+let yachts = require('./property/yachts');
 
 let weather = require('./managers/weather');
 let pickups = require('./managers/pickups');
@@ -49,6 +51,8 @@ let tax = require('./managers/tax');
 let discord = require('./managers/discord');
 let racer = require('./managers/racer');
 let trucker = require('./managers/trucker');
+let graffiti = require('./managers/graffiti');
+let fishing = require('./managers/fishing');
 
 let coffer = require('./coffer');
 let inventory = require('./inventory');
@@ -65,8 +69,11 @@ function init() {
 
         vehicleInfo.loadAll();
         ctos.loadAll();
+        graffiti.loadAll();
+        fishing.loadAll();
 
         houses.loadAll();
+        yachts.loadAll();
         condos.loadAll();
         condos.loadBigAll();
         business.loadAll();

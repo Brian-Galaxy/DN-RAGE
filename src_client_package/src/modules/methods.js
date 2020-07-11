@@ -124,6 +124,8 @@ methods.sleep = function(ms) {
 };
 
 methods.debug = function (message, ...args) {
+    if (!user.isAdmin(5))
+        return;
     let dateTime = new Date();
     let dateResult = methods.digitFormat(dateTime.getHours()) + ':' + methods.digitFormat(dateTime.getMinutes())+ ':' + methods.digitFormat(dateTime.getSeconds());
     //mp.gui.chat.push(`!{03A9F4}[DEBUG | ${dateResult}]!{FFFFFF} ${message.toString().replace('Exception: ', '!{f44336}Exception: ')}`);
@@ -413,8 +415,13 @@ methods.replaceQuotes = function(str) {
     return str;
 };
 
-methods.replaceAll = function(string, search, replace){
-    return string.toString().split(search).join(replace);
+methods.escapeRegExp = function(str) {
+    return str.toString().replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
+};
+
+methods.replaceAll = function(str, find, replace){
+    return str.toString().replace(new RegExp(methods.escapeRegExp(find), 'g'), replace);
+    //return string.toString().split(search).join(replace);
 };
 
 methods.saveLog = function (table, cols, values) {
@@ -545,15 +552,30 @@ methods.capitalizeFirstLetter  = function (string) {
 };
 
 methods.getCurrentSpeed = function () {
+    if (user.getCache('s_hud_speed_type'))
+        return methods.getCurrentSpeedKmh();
+    else
+        return methods.getCurrentSpeedMph();
+};
+
+methods.getCurrentSpeedKmh = function () {
     const player = mp.players.local;
     let speed = 0;
     if (player.isSittingInAnyVehicle()) {
         let velocity = player.vehicle.getVelocity();
         speed = Math.sqrt(velocity.x * velocity.x + velocity.y * velocity.y + velocity.z * velocity.z);
-        if (user.getCache('s_hud_speed_type'))
-            speed = Math.round(speed * 3.6);
-        else
-            speed = Math.round(speed * 2.23693629);
+        speed = Math.round(speed * 3.6);
+    }
+    return speed;
+};
+
+methods.getCurrentSpeedMph = function () {
+    const player = mp.players.local;
+    let speed = 0;
+    if (player.isSittingInAnyVehicle()) {
+        let velocity = player.vehicle.getVelocity();
+        speed = Math.sqrt(velocity.x * velocity.x + velocity.y * velocity.y + velocity.z * velocity.z);
+        speed = Math.round(speed * 2.23693629);
     }
     return speed;
 };
@@ -602,6 +624,11 @@ methods.iplArenaModDefault = function () {
     methods.setIplPropState(interiorId, "Set_Mod1_Style_02");
     methods.setIplPropState(interiorId, "SET_BANDITO_RC");
     methods.setIplPropState(interiorId, "set_arena_no peds"); //???
+    mp.game.interior.refreshInterior(interiorId);
+};
+
+methods.iplArenaModDefaultRefresh = function () {
+    let interiorId = mp.game.interior.getInteriorAtCoords(205.000, 5180.000, -90.000);
     mp.game.interior.refreshInterior(interiorId);
 };
 
@@ -1018,11 +1045,6 @@ methods.requestIpls = function () {
     mp.game.streaming.requestIpl("ba_barriers_case1");
     mp.game.streaming.requestIpl("ba_barriers_case3");
     mp.game.streaming.requestIpl("ba_barriers_case9");
-};
-
-methods.isPlayerInOcean = function() {
-    let pos = mp.players.local.position;
-    return (mp.game.zone.getNameOfZone(pos.x, pos.y, pos.z) === "OCEANA");
 };
 
 methods.sendDiscordServerNews = function (title, sender, message) {

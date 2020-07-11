@@ -1,6 +1,10 @@
 import methods from '../modules/methods';
 import timer from '../manager/timer';
+
 import checkpoint from "./checkpoint";
+import quest from "./quest";
+
+import user from "../user";
 
 let npc = {};
 
@@ -8,14 +12,33 @@ let _npcList = [];
 let _loadDist = 100;
 
 npc.loadAll = function() {
-    //Quest BotSpawn Role0
-    npc.create(mp.game.joaat("s_m_y_dockwork_01"), new mp.Vector3(-415.9264831542969, -2645.4287109375, 6.000219345092773), 316.27508544921875, false, "WORLD_HUMAN_CLIPBOARD");
-//Quest BotSpawn All
+
+    try {
+        let npcList = Object.entries(quest.getQuestAll());
+        if (npcList.length > 0) {
+            for (const [key, item] of npcList) {
+                npc.create(mp.game.joaat(item.skin), item.pos, item.skinRot, false, item.anim);
+            }
+        }
+    }
+    catch (e) {
+        methods.debug('npc.loadAll', e);
+    }
     checkpoint.addMarker(-1380.45458984375, -527.6905517578125, 31.9591854095459, 2, 0.5, 0.5);
+
+    /*//Quest BotSpawn Role0
+    npc.create(mp.game.joaat("s_m_y_dockwork_01"), new mp.Vector3(-415.9264831542969, -2645.4287109375, 6.000219345092773), 316.27508544921875, false, "WORLD_HUMAN_CLIPBOARD");
+    //Quest BotSpawn All
     npc.create(mp.game.joaat("a_f_y_business_02"), new mp.Vector3(-1380.45458984375, -527.6905517578125, 30.6591854095459), 277.5157775878906, false, "WORLD_HUMAN_CLIPBOARD");
 //Quest Gang
     npc.create(mp.game.joaat("ig_lamardavis"), new mp.Vector3(-218.75608825683594, -1368.4576416015625, 31.25823402404785), 43.398406982421875, false, "WORLD_HUMAN_SMOKING");
-//Мейз Банк Арена
+
+*/
+    //Сдача железа
+    npc.create(mp.game.joaat("s_m_y_dockwork_01"), new mp.Vector3(1074.1737060546875, -2009.465576171875, 32.08498764038086), 53.97209548950195, false, "WORLD_HUMAN_CLIPBOARD");
+    //Сдача одежды
+    npc.create(mp.game.joaat("u_m_m_doa_01"), new mp.Vector3(706.1729125976562, -966.6583251953125, 30.412853240966797), 298.7783508300781, false, "WORLD_HUMAN_CLIPBOARD");
+    //Мейз Банк Арена
     npc.create(mp.game.joaat("csb_bryony"), new mp.Vector3(-251.922, -2001.531, 30.14596), 178.7984, false, "CODE_HUMAN_MEDIC_TIME_OF_DEATH");
 //Автобазар
     npc.create(mp.game.joaat("u_m_y_ushi"), new mp.Vector3(-1654.792236328125, -948.4613037109375, 7.716407775878906), 323.9862365722656, false, "WORLD_HUMAN_CLIPBOARD");

@@ -4,6 +4,7 @@ import './modules/events';
 import './manager/vSync';
 import './manager/pSync';
 import './manager/wpSync';
+import './manager/ptxSync';
 import './manager/shoot';
 import './manager/heliCam';
 import './manager/attachWeapons';
@@ -39,6 +40,7 @@ import chat from "./chat";
 import voiceRage from "./voiceRage";
 
 import "./antiCheat";
+import "./mainMenu";
 
 import trucker from "./jobs/trucker";
 import taxi from "./jobs/taxi";

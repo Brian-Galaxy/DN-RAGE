@@ -611,7 +611,7 @@ mp.events.add('server:vehicles:speedLimit', (player, vId, speed) => {
     if (mp.players.exists(player) && vehicles.exists(veh)) {
         vehicles.getOccupants(veh).forEach(p => {
             if (user.isLogin(p) && p.seat === -1)
-                p.call('client:setNewMaxSpeed', [speed]);
+                p.call('client:setNewMaxSpeedServer', [speed]);
         });
     }
 });

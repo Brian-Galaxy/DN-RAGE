@@ -468,15 +468,108 @@ enums.screenEffectList = [
     'BeastIntroScene','BeastLaunch','BeastTransition','BikerFilter','BikerFilterOut','BikerFormation','BikerFormationOut','CamPushInFranklin','CamPushInMichael','CamPushInNeutral','CamPushInTrevor','ChopVision','CrossLine','CrossLineOut','DeadlineNeon','DeathFailFranklinIn','DeathFailMichaelIn','DeathFailMPDark','DeathFailMPIn','DeathFailNeutralIn','DeathFailOut','DeathFailTrevorIn','DefaultFlash','DMT_flight','DMT_flight_intro','Dont_tazeme_bro','DrugsDrivingIn','DrugsDrivingOut','DrugsMichaelAliensFight','DrugsMichaelAliensFightIn','DrugsMichaelAliensFightOut','DrugsTrevorClownsFight','DrugsTrevorClownsFightIn','DrugsTrevorClownsFightOut','ExplosionJosh3','FocusIn','FocusOut','HeistCelebEnd','HeistCelebPass','HeistCelebPassBW','HeistCelebToast','HeistLocate','HeistTripSkipFade','InchOrange','InchOrangeOut','InchPickup','InchPickupOut','InchPurple','InchPurpleOut','LostTimeDay','LostTimeNight','MenuMGHeistIn','MenuMGHeistIntro','MenuMGHeistOut','MenuMGHeistTint','MenuMGIn','MenuMGSelectionIn','MenuMGSelectionTint','MenuMGTournamentIn','MenuMGTournamentTint','MinigameEndFranklin','MinigameEndMichael','MinigameEndNeutral','MinigameEndTrevor','MinigameTransitionIn','MinigameTransitionOut','MP_Bull_tost','MP_Bull_tost_Out','MP_Celeb_Lose','MP_Celeb_Lose_Out','MP_Celeb_Preload','MP_Celeb_Preload_Fade','MP_Celeb_Win','MP_Celeb_Win_Out','MP_corona_switch','MP_intro_logo','MP_job_load','MP_Killstreak','MP_Killstreak_Out','MP_Loser_Streak_Out','MP_OrbitalCannon','MP_Powerplay','MP_Powerplay_Out','MP_race_crash','MP_SmugglerCheckpoint','MP_TransformRaceFlash','MP_WarpCheckpoint','PauseMenuOut','pennedIn','PennedInOut','PeyoteEndIn','PeyoteEndOut','PeyoteIn','PeyoteOut','PPFilter','PPFilterOut','PPGreen','PPGreenOut','PPOrange','PPOrangeOut','PPPink','PPPinkOut','PPPurple','PPPurpleOut','RaceTurbo','Rampage','RampageOut','SniperOverlay','SuccessFranklin','SuccessMichael','SuccessNeutral','SuccessTrevor','switch_cam_1','switch_cam_2','SwitchHUDFranklinIn','SwitchHUDFranklinOut','SwitchHUDIn','SwitchHUDMichaelIn','SwitchHUDMichaelOut','SwitchHUDOut','SwitchHUDTrevorIn','SwitchHUDTrevorOut','SwitchOpenFranklin','SwitchOpenFranklinIn','SwitchOpenFranklinOut','SwitchOpenMichaelIn','SwitchOpenMichaelMid','SwitchOpenMichaelOut','SwitchOpenNeutralFIB5','SwitchOpenNeutralOutHeist','SwitchOpenTrevorIn','SwitchOpenTrevorOut','SwitchSceneFranklin','SwitchSceneMichael','SwitchSceneNeutral','SwitchSceneTrevor','SwitchShortFranklinIn','SwitchShortFranklinMid','SwitchShortMichaelIn','SwitchShortMichaelMid','SwitchShortNeutralIn','SwitchShortNeutralMid','SwitchShortTrevorIn','SwitchShortTrevorMid','TinyRacerGreen','TinyRacerGreenOut','TinyRacerIntroCam','TinyRacerPink','TinyRacerPinkOut','WeaponUpgrade'
 ];
 
-enums.fractionArsenalItems = [
-    [], //0
-    [40, 79], //1 GOV
-    [], //2 SAPD
-    [], //3 FIB
-    [], //4 USMC
-    [], //5 SHERIFF
-    [], //6 EMS
-    [], //7 NEWS
+enums.swtichMaleCloth = [
+    [205, 202],
+    [200, 203],
+    [187, 204],
+    [206, 207],
+    [210, 211],
+    [217, 218],
+    [251, 253],
+    [262, 263],
+    [279, 280],
+    [296, 297],
+    [301, 302],
+    [305, 306],
+    [330, 331],
+];
+
+enums.swtichFemaleCloth = [
+    [207, 204],
+    [202, 206],
+    [189, 206],
+    [210, 211],
+    [214, 215],
+    [227, 228],
+    [259, 261],
+    [271, 272],
+    [307, 308],
+    [312, 313],
+    [316, 317],
+    [345, 346],
+];
+
+enums.swtichMaleCloth2 = [
+    [29, 30, 31, 4],
+    [31, 32, 31, 4],
+    [42, 43, -1, 11],
+    [59, 60, 64, 0],
+    [74, 75, -1, 4],
+    [88, 87, -1, 4],
+    [99, 100, 31, 4],
+    [101, 102, 31, 4],
+    [103, 104, 31, 4],
+    [127, 126, -1, 4],
+    [130, 129, -1, 4],
+    [185, 184, -1, 4],
+    [189, 188, -1, 4],
+    [212, 210, -1, 4],
+    [230, 229, -1, 4],
+    [233, 232, 0, 4],
+    [261, 256, -1, 4],
+    [266, 265, -1, 4],
+    [268, 267, 0, 4],
+    [292, 293, 31, 4],
+    [294, 295, 31, 4],
+    [303, 301, -1, 4],
+    [311, 312, 31, 4],
+    [93, 94, -1, 11],
+    [131, 132, -1, 11],
+    [194, 195, -1, 6],
+    [196, 197, -1, 6],
+    [198, 199, -1, 6],
+    [221, 222, -1, 11],
+    [235, 236, -1, 11],
+    [241, 242, -1, 11],
+    [314, 315, -1, 4],
+    [316, 317, -1, 4],
+    [318, 319, -1, 11],
+    [322, 321, -1, 4],
+];
+
+enums.swtichFemaleCloth2 = [
+    [57, 58, 41, 1],
+    [84, 85, -1, 14],
+    [90, 91, 1, 6],
+    [92, 93, 1, 5],
+    [94, 95, 1, 5],
+    [118, 117, -1, 11],
+    [120, 121, -1, 3],
+    [128, 129, -1, 14],
+    [187, 186, -1, 3],
+    [191, 190, -1, 3],
+    [196, 197, -1, 9],
+    [198, 198, -1, 9],
+    [200, 201, -1, 9],
+    [209, 208, -1, 11],
+    [216, 214, -1, 3],
+    [225, 224, -1, 11],
+    [231, 232, -1, 2],
+    [240, 239, -1, 3],
+    [243, 242, 51, 6],
+    [245, 246, -1, 11],
+    [249, 250, -1, 11],
+    [270, 265, -1, 3],
+    [275, 275, -3, 3],
+    [277, 276, 51, 6],
+    [280, 281, -1, 14],
+    [305, 306, 1, 6],
+    [314, 312, -1, 3],
+    [325, 326, -1, 3],
+    [327, 328, -1, 3],
+    [329, 330, -1, 14],
+    [333, 332, -1, 1],
+    [339, 340, 1, 5],
 ];
 
 enums.gunShopItems = [
@@ -486,15 +579,15 @@ enums.gunShopItems = [
 
 enums.shopItems = [
     11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 241, 242,
-    26, 4, 6, 253
+    26, 4, 6, 253, 477, 484
 ];
 
 enums.shopAlcItems = [
-    11, 241, 242, 26, 243, 244, 245, 246, 247, 248, 249, 250
+    11, 241, 242, 26, 243, 244, 245, 246, 247, 248, 249, 250, 484
 ];
 
 enums.shopElItems = [
-    29, 59
+    29, 59, 477, 484
 ];
 
 enums.shopMedItems = [
@@ -502,11 +595,11 @@ enums.shopMedItems = [
 ];
 
 enums.shopFishItems = [
-    0, /*1, 251, */253, 59, 241, 242, 11, 13, 26
+    0, /*1, */251, 253, 59, 241, 242, 11, 13, 26, 477, 484, /*485, 486, */482, 478, 479
 ];
 
 enums.shopHuntItems = [
-    0, /*1, */59, 63, 241, 242, 11, 13, 26, 4, 5, 6
+    0, /*1, */59, 63, 241, 242, 11, 13, 26, 4, 5, 6, 477, 484, /*485, 486, */482
 ];
 
 enums.zoneGreenList = [
@@ -847,12 +940,12 @@ enums.lscNames = [
 ];
 
 enums.lscSNames = [
-    ['Привод', 10000],
-    ['Распределение силы торм.', 50],
-    ['Ручной тормоз', 50],
-    ['Угол поворота колёс', 200],
-    ['Сцепление колес на повороте', 50],
-    ['Пробуксовка колес', 50],
+    ['Привод', 300000, 0, ''], //0
+    ['Распределение силы торм.', 20000, 10, 'Значение 0.0 увеличивает силу торможения только для задней оси; 1.0 – для передней оси; 0.5 – равномерно'], //1
+    ['Ручной тормоз', 30000, 9, 'Мощность ручного тормоза (0.9 очень мощный)'], //2
+    ['Угол поворота колёс', 5000, 16, 'Множитель максимального угла поворота руля'], //3
+    ['Сцепление колес на повороте', 1000, 30, 'Сцепление колес на повороте'], //4
+    ['Пробуксовка колес', 1000, 30, 'Параметр, отвечающий за пробуксовку колес'], //5
 ];
 
 enums.lscColors = [
@@ -2579,7 +2672,9 @@ enums.animActions = [
     ["Греться у костра", "amb@world_human_stand_fire@male@base", "base", 9],
     ["Принимать душ", "mp_safehouseshower@male@", "male_shower_idle_d", 8],
     ["Секс (Мужчина)", "rcmpaparazzo_2", "shag_action_a", 8],
-    ["Секс (Женщина)", "rcmpaparazzo_2", "shag_action_poppy", 8]
+    ["Секс (Женщина)", "rcmpaparazzo_2", "shag_action_poppy", 8],
+    ["Дрочить #1", "anim@mp_player_intupperwank", "idle_a", 49],
+    ["Дрочить #2", "anim@mp_player_intcelebrationmale@wank", "wank", 8],
 ];
 enums.animPose = [
     ["Руки вверх", "anim@move_hostages@male", "male_idle", 9],
@@ -2877,6 +2972,33 @@ enums.scenarioList = {
     "WORLD_HUMAN_STAND_FISHING": {
         attachObject: true,
         animationList: [
+            ["amb@world_human_stand_fishing@idle_a", "idle_a", 9, 0],
+            /*["amb@world_human_stand_fishing@idle_a", "idle_b", 8, 0],
+            ["amb@world_human_stand_fishing@idle_a", "idle_c", 8, 0],
+            ["amb@world_human_stand_fishing@base", "base", 9, 0],*/
+        ],
+    },
+    "WORLD_HUMAN_STAND_FISHING_0": {
+        attachObject: true,
+        animationList: [
+            ["amb@world_human_stand_fishing@idle_a", "idle_a", 9, 0],
+        ],
+    },
+    "WORLD_HUMAN_STAND_FISHING_1": {
+        attachObject: true,
+        animationList: [
+            ["amb@world_human_stand_fishing@idle_a", "idle_c", 9, 0],
+        ],
+    },
+    "WORLD_HUMAN_STAND_FISHING_2": {
+        attachObject: true,
+        animationList: [
+            ["amb@world_human_stand_fishing@idle_a", "idle_c", 9, 0],
+        ],
+    },
+    "WORLD_HUMAN_STAND_FISHING_3": {
+        attachObject: true,
+        animationList: [
             ["amb@world_human_stand_fishing@base", "base", 9, 0],
         ],
     },
@@ -2917,6 +3039,18 @@ enums.scenarioList = {
             ["amb@code_human_wander_drinking@beer@male@base", "static", 49, 0],
         ],
     },
+    "WORLD_HUMAN_BONG": {
+        attachObject: true,
+        animationList: [
+            ["anim@safehouse@bong", "bong_stage1", 48, 0],
+        ],
+    },
+    "WORLD_HUMAN_UMBRELLA": {
+        attachObject: true,
+        animationList: [
+            ["amb@code_human_wander_drinking@beer@male@base", "static", 49, 0],
+        ],
+    },
 };
 
 enums.scenarios = [
@@ -2939,6 +3073,7 @@ enums.scenarios = [
     ["Играть на инструменте #1", "WORLD_HUMAN_MUSICIAN_1"],
     ["Играть на инструменте #2", "WORLD_HUMAN_MUSICIAN_2"],
     ["Протест", "WORLD_HUMAN_PROTEST_1"],
+    ["Зонтик", "WORLD_HUMAN_UMBRELLA"],
 
     /*["Строитель 1", "WORLD_HUMAN_HAMMERING"],
     ["Строитель 2", "WORLD_HUMAN_WELDING"],
@@ -2970,6 +3105,11 @@ enums.scenariosAll = [
     ["Играть на инструменте #1", "WORLD_HUMAN_MUSICIAN_1"],
     ["Играть на инструменте #2", "WORLD_HUMAN_MUSICIAN_2"],
     ["Протест", "WORLD_HUMAN_PROTEST_1"],
+    ["Протест", "WORLD_HUMAN_PROTEST_2"],
+    ["Протест", "WORLD_HUMAN_PROTEST_3"],
+    ["Зонтик", "WORLD_HUMAN_UMBRELLA"],
+
+    ["Бонг", "WORLD_HUMAN_BONG"],
 
     ["Строитель 1", "WORLD_HUMAN_HAMMERING"],
     ["Строитель 2", "WORLD_HUMAN_WELDING"],
@@ -2978,6 +3118,10 @@ enums.scenariosAll = [
     ["Садовник - Убирать листья", "WORLD_HUMAN_GARDENER_LEAF_BLOWER"],
     ["Копать лопаткой", "WORLD_HUMAN_GARDENER_PLANT"],
     ["Рыбачить", "WORLD_HUMAN_STAND_FISHING"],
+    ["Рыбачить", "WORLD_HUMAN_STAND_FISHING_0"],
+    ["Рыбачить", "WORLD_HUMAN_STAND_FISHING_1"],
+    ["Рыбачить", "WORLD_HUMAN_STAND_FISHING_2"],
+    ["Рыбачить", "WORLD_HUMAN_STAND_FISHING_3"],
     ["Фоткать на фотоаппарат", "WORLD_HUMAN_PAPARAZZI"],
 ];
 

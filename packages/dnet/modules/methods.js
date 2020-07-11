@@ -877,7 +877,7 @@ methods.loadAllBlips = function () {
 
     methods.createBlip(new mp.Vector3(536.4715576171875, -3126.484375, 5.073556900024414), 598, 0, 0.8, 'United States Marine Corps');
     methods.createBlip(new mp.Vector3(450.0621337890625, -984.3471069335938, 43.69164276123047), 60, 0, 0.8, 'Police Department');
-    methods.createBlip(new mp.Vector3(-1625.726318359375, -1020.4765625, 12.158555030822754), 60, 0, 0.8, 'Police Department');
+    //methods.createBlip(new mp.Vector3(-1625.726318359375, -1020.4765625, 12.158555030822754), 60, 0, 0.8, 'Police Department');
     methods.createBlip(new mp.Vector3(-1089.6976318359375, -835.5410766601562, 21.003822326660156), 60, 0, 0.8, 'Police Department');
     methods.createBlip(new mp.Vector3(-448.6859, 6012.703, 30.71638), 60, 16, 0.8, 'Sheriff Department');
     methods.createBlip(new mp.Vector3(1853.22, 3686.6796875, 33.2670), 60, 16, 0.8, 'Sheriff Department');
@@ -892,17 +892,21 @@ methods.loadAllBlips = function () {
     methods.createBlip(new mp.Vector3(1836.8359375, 3676.784912109375, 33.27006912231445), 489, 59, 0.8, 'Здание больницы');
 
     methods.createBlip(new mp.Vector3(-759.5448608398438, -709.0863037109375, 29.0616512298584), 305, 60, 0.6, 'Церковь');
+    //methods.createBlip(new mp.Vector3(-1682.297607421875, -279.4432678222656, 50.8623161315918), 305, 60, 0.6, 'Церковь');
 
     methods.createBlip(new mp.Vector3(-1081.0628662109375, -251.57298278808594, 37.763275146484375), 744, 0, 0.8, 'Life Invader');
 
     methods.createBlip(new mp.Vector3(-255.0441, -2026.709, 29.14638), 546, 71, 0.8, 'Maze Bank Arena');
 
     methods.createBlip(new mp.Vector3(956.8535766601562, 34.93609619140625, 122.11998748779297), 679, 0, 0.8);
-    methods.createBlip(new mp.Vector3(1200.6854248046875, -1474.0303955078125, 33.85951614379883), 436, 60, 0.8, 'Здание Fire Department');
-    methods.createBlip(new mp.Vector3(-369.2587890625, 6114.552734375, 30.446975708007812), 436, 60, 0.8, 'Здание Fire Department');
+    methods.createBlip(new mp.Vector3(1200.6854248046875, -1474.0303955078125, 33.85951614379883), 436, 60, 0.8, 'Fire Department');
+    methods.createBlip(new mp.Vector3(-369.2587890625, 6114.552734375, 30.446975708007812), 436, 60, 0.8, 'Fire Department');
 
     methods.createBlip(new mp.Vector3(-1654.792236328125, -948.4613037109375, 7.716407775878906), 225, 2, 0.8, 'Б/У Авторынок');
     methods.createBlip(new mp.Vector3(903.91162109375, -165.71511840820312, 73.09003448486328), 225, 5, 0.8, 'Таксопарк');
+
+    methods.createBlip(new mp.Vector3(1074.1737060546875, -2009.465576171875, 31.08498764038086), 728, 5, 0.8, 'Литейный Завод');
+    methods.createBlip(new mp.Vector3(706.1729125976562, -966.6583251953125, 29.412853240966797), 728, 3, 0.8, 'Швейная Фабрика');
 
     //methods.createBlip(new mp.Vector3(46.947, -1753.859, 46.508), 78, 68, 0.4, 'Торговый центр MegaMoll');
 

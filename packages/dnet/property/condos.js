@@ -42,7 +42,13 @@ condos.loadAll = function() {
 
             let hBlip = {position: new mp.Vector3(parseFloat(item['x']), parseFloat(item['y']), parseFloat(item['z']))};
             methods.createCp(hBlip.position.x, hBlip.position.y, hBlip.position.z, "Нажмите ~g~Е~s~ чтобы открыть меню", 0.8, -1, [33, 150, 243, 100], 0.3);
+            hBlip.safe = null;
+            hBlip.safeDoor = null;
             hBlips.set(item['id'], hBlip);
+
+            if (item['is_safe']) {
+                condos.updateSafe(item['id'], item['is_safe'], true);
+            }
         });
         count = rows.length;
         methods.debug('All Condos Loaded: ' + count);
@@ -100,7 +106,13 @@ condos.loadLast = function() {
 
             let hBlip = {position: new mp.Vector3(parseFloat(item['x']), parseFloat(item['y']), parseFloat(item['z']))};
             methods.createCp(hBlip.position.x, hBlip.position.y, hBlip.position.z, "Нажмите ~g~Е~s~ чтобы открыть меню", 0.8, -1, [33, 150, 243, 100], 0.3);
+            hBlip.safe = null;
+            hBlip.safeDoor = null;
             hBlips.set(item['id'], hBlip);
+
+            if (item['is_safe']) {
+                condos.updateSafe(item['id'], item['is_safe'], true);
+            }
 
             chat.sendToAll(`Квартира загружена. ID: ${item['id']}. HID: ${item['condo_big_id']}. Name: ${item['number']}. Int: ${item['interior']}. Price: ${methods.moneyFormat(item['price'])}`);
 
@@ -185,6 +197,7 @@ condos.updateOwnerInfo = function (id, userId, userName) {
 
     if (userId == 0) {
         condos.updatePin(id, 0);
+        condos.updateSafe(id, 0);
         condos.lockStatus(id, false);
     }
 
@@ -197,6 +210,53 @@ condos.updatePin = function (id, pin) {
     pin = methods.parseInt(pin);
     condos.set(id, 'pin', pin);
     mysql.executeQuery("UPDATE condos SET pin = '" + pin + "' where id = '" + id + "'");
+};
+
+condos.updateSafe = function (id, pin, isLoad = false) {
+    methods.debug('condos.updateSafe');
+
+    pin = methods.parseInt(pin);
+
+    if (pin > 0) {
+        let intId = condos.get(id, "interior");
+
+        let safeItem = houses.safeList[intId];
+        if (!mp.objects.exists(hBlips.get(id).safe)) {
+            hBlips.get(id).safe = mp.objects.new(884736502, new mp.Vector3(safeItem[0], safeItem[1], safeItem[2]),
+                {
+                    rotation: new mp.Vector3(safeItem[3], safeItem[4], safeItem[5]),
+                    alpha: 255,
+                    dimension: id + enums.offsets.condo
+                });
+        }
+        if (!mp.objects.exists(hBlips.get(id).safeDoor))
+        {
+            hBlips.get(id).safeDoor = mp.objects.new(-1992154984, new mp.Vector3(safeItem[6], safeItem[7], safeItem[8]),
+                {
+                    rotation: new mp.Vector3(safeItem[9], safeItem[10], safeItem[11]),
+                    alpha: 255,
+                    dimension: id + enums.offsets.condo
+                });
+            hBlips.get(id).safeDoor.setVariable('condoSafe', id);
+        }
+        if (!isLoad) {
+            condos.set(id, "is_safe", pin);
+            mysql.executeQuery("UPDATE condos SET is_safe = '" + pin + "' where id = '" + id + "'");
+        }
+    }
+    else {
+        try {
+            hBlips.get(id).safe.destroy();
+            hBlips.get(id).safeDoor.destroy();
+        }
+        catch (e) {
+
+        }
+        if (!isLoad) {
+            mysql.executeQuery("UPDATE condos SET is_safe = '0' where id = '" + id + "'");
+            condos.set(id, "is_safe", 0);
+        }
+    }
 };
 
 condos.lockStatus = function (id, lockStatus) {

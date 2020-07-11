@@ -202,6 +202,53 @@ bind.isChange = false;
 bind.data = '';
 bind.lastKey = 0;
 
+bind.allowKeyList = [
+    ['Меню транспорта', 's_bind_veh_menu'],
+    ['Меню персонажа', 's_bind_player_menu'],
+    ['Скрыть/Показать худ', 's_bind_show_hud'],
+    ['Изменить позицию элементов интерфейса', 's_bind_hud_pos'],
+
+    ['Инвентарь', 's_bind_inv'],
+    ['Предметы рядом', 's_bind_inv_world'],
+    ['Взаимодействие', 's_bind_do'],
+    ['Телефон', 's_bind_phone'],
+    ['Походка сидя', 's_bind_seat'],
+    ['Голосовой чат', 's_bind_voice'],
+    ['Перезагрузить голосовой чат', 's_bind_voice_reload'],
+    ['Управление рацией', 's_bind_voice_walkie'],
+    ['Говорить в рацию', 's_bind_voice_radio'],
+    ['Запуск двигателя', 's_bind_engine'],
+    ['Закрыть/открыть ТС', 's_bind_lock'],
+    ['Пристегнуть ремень', 's_bind_belt'],
+    ['Режим стрельбы', 's_bind_firemod'],
+    ['Показывать пальцем', 's_bind_fingerpoint'],
+    ['Прибор ночного видения', 's_bind_pnv'],
+    ['Надесть/Снять капюшон', 's_bind_cloth'],
+    ['Застегнуть/Расстегнуть куртку', 's_bind_cloth2'],
+    ['Полицейский мегафон', 's_bind_megaphone'],
+    ['Режим камеры на вертолете', 's_bind_helicam'],
+    ['Эффект камеры на вертолете', 's_bind_helicam_vision'],
+    ['Преследование ТС на вертолете', 's_bind_helicam_lock'],
+    ['Фонарь на вертолете', 's_bind_helilight'],
+
+    ['Убрать оружие', 's_bind_weapon_slot0'],
+    ['Взять основное оружие', 's_bind_weapon_slot1'],
+    ['Взять дробовик', 's_bind_weapon_slot2'],
+    ['Взять метательное оружие', 's_bind_weapon_slot3'],
+    ['Взять пистолет', 's_bind_weapon_slot4'],
+    ['Взять ручное оружие', 's_bind_weapon_slot5'],
+
+    ['Остановить анимацию', 's_bind_stopanim'],
+    ['Список всех анимаций', 's_bind_animations_all'],
+    ['Анимации действий', 's_bind_animations_0'],
+    ['Позирующие анимации', 's_bind_animations_1'],
+    ['Анимации положительных эмоций', 's_bind_animations_2'],
+    ['Анимации негативных эмоций', 's_bind_animations_3'],
+    ['Анимации танцев', 's_bind_animations_4'],
+    ['Анимации взаимодействия', 's_bind_animations_5'],
+    ['Остальные анимации', 's_bind_animations_6'],
+];
+
 bind.isKeyValid = function(keyCode) {
     for(let code in keyCodes) {
         if (methods.parseInt(code) === keyCode)
@@ -247,6 +294,12 @@ for(let code in keyCodes) {
         if (user.getCache('s_bind_voice') == parseInt(code)) {
             voiceRage.enableMic();
         }
+        if (user.getCache('s_bind_show_hud') == parseInt(code)) {
+            ui.showOrHideRadar();
+        }
+        if (user.getCache('s_bind_hud_pos') == parseInt(code)) {
+            ui.showOrHideEdit();
+        }
         if (user.getCache('s_bind_voice_radio') == parseInt(code)) {
             voiceRage.enableRadioMic();
         }
@@ -259,6 +312,9 @@ for(let code in keyCodes) {
             heliCam.keyPressToggleVision();
             drone.keyPressToggleVision();
         }
+
+        if (bind.isChange)
+            bind.bindNewKey(parseInt(code));
 
         if (methods.isBlockKeys())
             return;
@@ -577,6 +633,128 @@ for(let code in keyCodes) {
                 }
             }
         }
+        if (user.getCache('s_bind_cloth') == parseInt(code)) {
+            if (!methods.isBlockKeys()) {
+
+                let allowIdx = -1;
+                let drawId = mp.players.local.getDrawableVariation(11);
+                let colorId = mp.players.local.getTextureVariation(11);
+
+                if (user.getSex() == 1) {
+                    enums.swtichFemaleCloth.forEach((item, idx) => {
+                        if (item[0] === drawId || item[1] === drawId)
+                            allowIdx = idx;
+                    });
+                    if (allowIdx >= 0) {
+                        let item = enums.swtichFemaleCloth[allowIdx];
+                        let newDraw = item[1];
+                        if (item[1] === drawId) {
+                            newDraw = item[0];
+                            user.playAnimation("anim@mp_helmets@on_foot", "visor_up", 48);
+                        }
+                        else
+                            user.playAnimation("anim@mp_helmets@on_foot", "visor_down", 48);
+
+                        setTimeout(function () {
+                            user.setComponentVariation(11, newDraw, colorId);
+                        }, 400);
+                    }
+                    else {
+                        mp.game.ui.notifications.show("~r~На этот элемент одежды нельзя надеть капюшон :c");
+                    }
+                }
+                else {
+                    enums.swtichMaleCloth.forEach((item, idx) => {
+                        if (item[0] === drawId || item[1] === drawId)
+                            allowIdx = idx;
+                    });
+                    if (allowIdx >= 0) {
+                        let item = enums.swtichMaleCloth[allowIdx];
+                        let newDraw = item[1];
+                        if (item[1] === drawId) {
+                            newDraw = item[0];
+                            user.playAnimation("anim@mp_helmets@on_foot", "visor_up", 48);
+                        }
+                        else
+                            user.playAnimation("anim@mp_helmets@on_foot", "visor_down", 48);
+
+                        setTimeout(function () {
+                            user.setComponentVariation(11, newDraw, colorId);
+                        }, 400);
+                    }
+                    else {
+                        mp.game.ui.notifications.show("~r~На этот элемент одежды нельзя надеть капюшон :c");
+                    }
+                }
+            }
+        }
+        if (user.getCache('s_bind_cloth2') == parseInt(code)) {
+            if (!methods.isBlockKeys()) {
+
+                let allowIdx = -1;
+                let drawId = mp.players.local.getDrawableVariation(11);
+                let colorId = mp.players.local.getTextureVariation(11);
+
+                if (user.getSex() == 1) {
+                    enums.swtichFemaleCloth2.forEach((item, idx) => {
+                        if (item[0] === drawId || item[1] === drawId)
+                            allowIdx = idx;
+                    });
+                    if (allowIdx >= 0) {
+                        let item = enums.swtichFemaleCloth2[allowIdx];
+                        let newDraw = item[1];
+                        user.playAnimation("clothingtie", "try_tie_neutral_b", 48);
+                        setTimeout(function () {
+                            if (item[1] === drawId) {
+                                newDraw = item[0];
+                                user.setComponentVariation(3, user.getCache('torso'), user.getCache('torso_color'));
+                                user.setComponentVariation(8, user.getCache('parachute'), user.getCache('parachute_color'));
+                            }
+                            else {
+                                user.setComponentVariation(3, item[3], 0);
+                                if (item[2] < 0)
+                                    user.setComponentVariation(8, 0, -1);
+                                else
+                                    user.setComponentVariation(8, item[2], user.getCache('parachute_color'));
+                            }
+                            user.setComponentVariation(11, newDraw, colorId);
+                        }, 1800)
+                    }
+                    else {
+                        mp.game.ui.notifications.show("~r~С этим элементом одежды нельзя взаимодействовать :c");
+                    }
+                }
+                else {
+                    enums.swtichMaleCloth2.forEach((item, idx) => {
+                        if (item[0] === drawId || item[1] === drawId)
+                            allowIdx = idx;
+                    });
+                    if (allowIdx >= 0) {
+                        let item = enums.swtichMaleCloth2[allowIdx];
+                        let newDraw = item[1];
+                        user.playAnimation("clothingtie", "try_tie_neutral_b", 48);
+                        setTimeout(function () {
+                            if (item[1] === drawId) {
+                                newDraw = item[0];
+                                user.setComponentVariation(3, user.getCache('torso'), user.getCache('torso_color'));
+                                user.setComponentVariation(8, user.getCache('parachute'), user.getCache('parachute_color'));
+                            }
+                            else {
+                                user.setComponentVariation(3, item[3], 0);
+                                if (item[2] < 0)
+                                    user.setComponentVariation(8, 0, -1);
+                                else
+                                    user.setComponentVariation(8, item[2], user.getCache('parachute_color'));
+                            }
+                            user.setComponentVariation(11, newDraw, colorId);
+                        }, 1800)
+                    }
+                    else {
+                        mp.game.ui.notifications.show("~r~С этим элементом одежды нельзя взаимодействовать :c");
+                    }
+                }
+            }
+        }
         if (user.getCache('s_bind_megaphone') == parseInt(code)) {
             if (!methods.isBlockKeys()) {
                 let veh = mp.players.local.vehicle;
@@ -635,8 +813,6 @@ for(let code in keyCodes) {
             if (!methods.isBlockKeys())
                 heliCam.keyPressToggleSpotLight();
         }
-        if (bind.isChange)
-            bind.bindNewKey(parseInt(code));
     });
 
     mp.keys.bind(parseInt(code), false, function() {

@@ -55,6 +55,15 @@ weapons.getHashByName = function(name) {
     return hash;
 };
 
+weapons.getNameByHash = function(hash) {
+    let name = '';
+    weapons.getMapList().forEach(item => {
+        if (item[1] / 2 == hash)
+            name = item[0];
+    });
+    return name;
+};
+
 weapons.getDamageByHash = function(hash) {
     let damage = 1;
     weapons.getMapList().forEach(item => {

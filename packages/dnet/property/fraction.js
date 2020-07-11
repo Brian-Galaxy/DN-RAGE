@@ -268,7 +268,7 @@ fraction.shopList = [
             [1165.981, 2710.884, 37.15769, 180.4475],
         ]
     },*/
-    {
+    /*{
         bId: 61,
         name: "Discount Store Grand Senora Desert",
         sumMax: 120000,
@@ -278,7 +278,7 @@ fraction.shopList = [
             [1202.03, 2710.732, 37.22262, 101.2999],
             [1202.06, 2707.603, 37.22262, 98.07609],
         ]
-    },
+    },*/
     {
         bId: 77,
         name: "Ammu-Nation Tataviam Mountains",
@@ -553,13 +553,26 @@ fraction.loadAll = function() {
             fraction.set(item['id'], 'rank_type_list', item['rank_type_list']);
 
             fraction.set(item['id'], 'orderLamar', 0);
+            fraction.set(item['id'], 'orderLamarM', 0);
             fraction.set(item['id'], 'orderAtm', 0);
             fraction.set(item['id'], 'orderFuel', 0);
             fraction.set(item['id'], 'orderDrug', 0);
 
             if (item['is_war']) {
                 //fraction.isGang
-                methods.createBlip(new mp.Vector3(item['spawn_x'], item['spawn_y'], item['spawn_z']), 310, 39, 0.6, 'Титульная тер.');
+                let color = 0;
+                if (item['id'] === 2)
+                    color = 77;
+                else if (item['id'] === 5)
+                    color = 83;
+                else if (item['id'] === 10)
+                    color = 59;
+                else if (item['id'] === 12)
+                    color = 60;
+                else if (item['id'] === 14)
+                    color = 69;
+
+                methods.createBlip(new mp.Vector3(item['spawn_x'], item['spawn_y'], item['spawn_z']), 310, color, 0.6, 'Титульная тер.');
             }
         });
         count = rows.length;
@@ -692,7 +705,6 @@ fraction.createCargoWar = function(count = 3) {
                     boxes.push(methods.getRandomInt(38, 40));
 
                 veh.setVariable('box', JSON.stringify(boxes));
-
                 veh.setVariable('cargoId', b1);
             }
             catch (e) {
@@ -730,7 +742,7 @@ fraction.getRandomSpawnGarage = function() {
     return new mp.Vector3(item[0], item[1], item[2]);
 };
 
-fraction.spawnNearCargo = function(player, isDrug = false) {
+fraction.spawnNearCargo = function(player, isDrug = false, name = 'Speedo4', count = 9) {
 
     if (!user.isLogin(player))
         return;
@@ -758,7 +770,6 @@ fraction.spawnNearCargo = function(player, isDrug = false) {
 
             let boxes = [];
 
-            let count = 9;
             if (isDrug)
                 count = 3;
 
@@ -766,6 +777,9 @@ fraction.spawnNearCargo = function(player, isDrug = false) {
 
                 if (isDrug) {
                     boxes.push(39);
+                }
+                else if (name === 'Mule4') {
+                    boxes.push(50);
                 }
                 else {
                     let rare = 0;
@@ -791,7 +805,7 @@ fraction.spawnNearCargo = function(player, isDrug = false) {
             methods.debug(e);
         }
 
-    }, posVeh, 0, 'Speedo4');
+    }, posVeh, 0, name);
 };
 
 fraction.spawnCargo = function(name, boxes, x, y, z, heading = 0, cargoId = 999, color = -1) {
@@ -1445,15 +1459,13 @@ fraction.getShopGang = function(player) {
     if (!user.isLogin(player))
         return;
 
-    if (user.get(player, 'fraction_id2') < 1) {
+    let frId = user.get(player, 'fraction_id2');
+    if (frId < 1) {
         player.notify('~r~Вы не состоите в организации');
         return;
     }
-    /*if (fraction.get(user.get(player, 'fraction_id2'), 'cantGrab')) {
-        player.notify('~r~Вы уже сегодня совершали ограбление недавно');
-        return;
-    }*/
-    if (fraction.get(user.get(player, 'fraction_id2'), 'cantGrab2') >= 1) {
+
+    if (fraction.get(frId, 'cantGrab')) {
         player.notify('~r~Вы уже сегодня совершали ограбление сегодня');
         return;
     }
@@ -1473,12 +1485,7 @@ fraction.getShopGang = function(player) {
         return;
     }
 
-    let frId = user.get(player, 'fraction_id2');
-
     fraction.set(frId, 'cantGrab', true);
-
-    //if (fraction.has(user.get(player, 'fraction_id2'), 'cantGrab2'))
-        fraction.set(user.get(player, 'fraction_id2'), 'cantGrab2', 1);
 
     let shopItem = fraction.shopList[methods.getRandomInt(0, fraction.shopList.length)];
 
@@ -1503,12 +1510,11 @@ fraction.startGrabShopGang = function(player, itemId = 0) {
     if (!user.isLogin(player))
         return;
 
-    if (user.get(player, 'fraction_id2') < 1) {
+    let frId = user.get(player, 'fraction_id2');
+    if (frId < 1) {
         player.notify('~r~Вы не состоите в организации');
         return;
     }
-
-    let frId = user.get(player, 'fraction_id2');
 
     if (!fraction.has(frId, 'currentGrabShop')) {
         player.notify('~r~Необходимо начать задание');
@@ -1526,6 +1532,10 @@ fraction.startGrabShopGang = function(player, itemId = 0) {
             }
             if (fraction.get(frId, 'currentGrabShop' + i)) {
                 player.notify('~r~Эту кассу уже взламывали');
+                return;
+            }
+            if (player.vehicle) {
+                player.notify('~r~Вы в транспорте');
                 return;
             }
 
@@ -1551,13 +1561,17 @@ fraction.startGrabShopGang = function(player, itemId = 0) {
                     //user.blockKeys(player, false);
                     user.stopAnimation(player);
 
+                    if (player.vehicle) {
+                        player.notify('~r~Вы в транспорте');
+                        return;
+                    }
                     if (methods.distanceToPos(new mp.Vector3(pos[0], pos[1], pos[2]), player.position) > 5) {
                         player.notify('~r~Вы слишком далеко');
                         return;
                     }
 
                     if (methods.getRandomInt(0, 100) < 40) {
-                        inventory.addItem(141, 1, inventory.types.Player, user.getId(player), methods.getRandomInt(shopItem.sumMax, shopItem.sumMin) * 2.2, 0, "{}", 2);
+                        inventory.addItem(141, 1, inventory.types.Player, user.getId(player), methods.getRandomInt(shopItem.sumMax, shopItem.sumMin) * 1.9, 0, "{}", 2);
                         mp.players.forEach(p => {
                             if (user.isLogin(p) && user.get(p, 'fraction_id2') === frId) {
                                 user.deleteBlip(p, i + 1000);

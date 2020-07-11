@@ -201,6 +201,7 @@ mp.events.add("client:createGr6Checkpoint", (x, y, z) => {
 mp.events.add("playerEnterVehicle", function (vehicle, seat) {
 
     mp.events.call('client:setNewMaxSpeed', 0);
+    mp.events.call('client:setNewMaxSpeedServer', 0);
 
     if (user.getCache('job') != 10)
         return;

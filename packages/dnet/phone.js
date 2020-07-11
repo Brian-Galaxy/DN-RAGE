@@ -1507,6 +1507,62 @@ phone.bankHistory = function(player, bankCard) {
     });
 };
 
+phone.openInvaderStatsList = function(player, days = 30) {
+    if (!user.isLogin(player))
+        return;
+    try {
+        mysql.executeQuery(`SELECT editor, count(*) as c FROM rp_inv_ad WHERE timestamp > ${(methods.getTimeStamp() - days * 86400)} GROUP BY (editor) ORDER BY c DESC`, (err, rows, fields) => {
+
+            let idx = 1;
+            let items = [];
+
+            if (rows.length > 0) {
+                try {
+                    let columns = [
+                        { title: '№', field: 'id' },
+                        { title: 'Имя', field: 'n' },
+                        { title: 'Проверено', field: 'c' },
+                    ];
+                    let data = [];
+
+                    rows.forEach(row => {
+                        data.push({
+                            id: idx++, n: row['editor'], c: `${row['c']}`
+                        });
+                    });
+
+                    let item = phone.getMenuItemTable('Редактирование обявлений', columns, data);
+                    items.push(phone.getMenuMainItem(`Статистика за ${days}д.`, [item]));
+                }
+                catch (e) {
+
+                    items.push(phone.getMenuMainItem(`Список пуст`, [
+                        phone.getMenuItemButton(
+                            `Произошла ошибка, попробуйте еще раз`,
+                            ``
+                        )
+                    ]));
+
+                    methods.debug(e);
+                }
+            }
+            else {
+                items.push(phone.getMenuMainItem(`Список пуст`, [
+                    phone.getMenuItemButton(
+                        `Список пуст`,
+                        ``
+                    )
+                ]));
+            }
+
+            phone.showMenu(player, 'lifeHistory', `Личная история`, items);
+        });
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+};
+
 phone.userHistory = function(player, id) {
     if (!user.isLogin(player))
         return;

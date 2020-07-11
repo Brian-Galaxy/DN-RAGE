@@ -147,6 +147,7 @@ vehicles.loadUserVehicleByRow = (row) => {
     vehicles.set(row['id'], 'tyre_g', row['tyre_g']);
     vehicles.set(row['id'], 'tyre_b', row['tyre_b']);
     vehicles.set(row['id'], 'number', row['number']);
+    vehicles.set(row['id'], 'number_type', row['number_type']);
     vehicles.set(row['id'], 'is_special', row['is_special']);
     vehicles.set(row['id'], 's_mp', row['s_mp']);
     vehicles.set(row['id'], 'x', parkPos.x);
@@ -506,8 +507,8 @@ vehicles.spawnFractionCar = (id) => {
                     spawnRot = methods.parseFloat(97.86029052734375);
                     break;
                 case 2:
-                    spawnPos = new mp.Vector3(432.25347900390625, -1014.165771484375, 28.466196060180664);
-                    spawnRot = methods.parseFloat(158.577392578125);
+                    spawnPos = new mp.Vector3(-1071.622802734375, -856.7847900390625, 4.528593063354492);
+                    spawnRot = methods.parseFloat(215.44134521484375);
                     break;
                 case 4:
                     spawnPos = new mp.Vector3(466.7912902832031, -3193.000732421875, 6.302977085113525);
@@ -653,6 +654,7 @@ vehicles.save = (id) => {
         sql = sql + ", tyre_g = '" + methods.parseInt(vehicles.get(id, "tyre_g")) + "'";
         sql = sql + ", tyre_b = '" + methods.parseInt(vehicles.get(id, "tyre_b")) + "'";
         sql = sql + ", number = '" + methods.removeQuotes(vehicles.get(id, "number")) + "'";
+        sql = sql + ", number_type = '" + methods.removeQuotes(vehicles.get(id, "number_type")) + "'";
         sql = sql + ", is_cop_park = '" + methods.parseInt(vehicles.get(id, "is_cop_park")) + "'";
         sql = sql + ", cop_park_name = '" + vehicles.get(id, "cop_park_name") + "'";
         sql = sql + ", s_mp = '" + methods.parseFloat(vehicles.get(id, "s_mp")) + "'";
@@ -1037,9 +1039,10 @@ vehicles.sell = function (player, slot) {
         if (!vehicles.exists(veh))
             return;
 
+        let taxOffset = 0;
         if (veh.getVariable('container') == containerId) {
             let vInfo = vehicles.getData(user.get(player, 'car_id' + slot));
-            let nalog = methods.parseInt(vInfo.get('price') * (100 - (coffer.getTaxIntermediate() + 20)) / 100);
+            let nalog = methods.parseInt(vInfo.get('price') * (100 - (coffer.getTaxIntermediate() + taxOffset)) / 100);
 
             user.set(player, 'car_id' + slot, 0);
 
@@ -1061,7 +1064,7 @@ vehicles.sell = function (player, slot) {
                     return;
 
                 user.addHistory(player, 3, 'Продал транспорт ' + vInfo.get('name') + '. Цена: ' + methods.moneyFormat(nalog));
-                player.notify(`~g~Вы продали транспорт\nНалог:~s~ ${(coffer.getTaxIntermediate() + 20)}%\n~g~Получено:~s~ ${methods.moneyFormat(nalog)}`);
+                player.notify(`~g~Вы продали транспорт\nНалог:~s~ ${(coffer.getTaxIntermediate() + taxOffset)}%\n~g~Получено:~s~ ${methods.moneyFormat(nalog)}`);
                 user.save(player);
             }, 1000);
         }
@@ -1087,15 +1090,7 @@ vehicles.setTunning = (veh) => {
                 if (!car.has('color1'))
                     return;
 
-                let numberStyle = 0;
-                if (vid % 3 === 0)
-                    numberStyle = 1;
-                else if (vid % 4 === 0)
-                    numberStyle = 2;
-                else if (vid % 5 === 0)
-                    numberStyle = 3;
-
-                veh.numberPlateType = numberStyle;
+                veh.numberPlateType = car.get('number_type');
 
                 veh.setColor(car.get('color1'), car.get('color2'));
                 veh.pearlescentColor = car.get('color3');
@@ -1325,6 +1320,11 @@ vehicles.spawnJobCar = (cb2, position, heading, nameOrModel, jobId = 0) => {
             case 10: {
                 veh.numberPlate = 'GRP' + jobId + veh.getVariable('vid');
                 veh.setColor(111, 0);
+                break;
+            }
+            case 12: {
+                veh.numberPlate = 'CH' + jobId + veh.getVariable('vid');
+                veh.setColor(0, 0);
                 break;
             }
         }

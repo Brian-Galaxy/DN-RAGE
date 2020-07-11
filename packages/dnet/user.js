@@ -18,6 +18,7 @@ let houses = require('./property/houses');
 let condos = require('./property/condos');
 let fraction = require('./property/fraction');
 let stocks = require('./property/stocks');
+let yachts = require('./property/yachts');
 
 let user = exports;
 
@@ -171,6 +172,7 @@ user.loginAccount = function(player, login, pass) {
                     return;
                 if (err) {
                     player.call('client:events:loginAccount:success', [JSON.stringify(players)]);
+                    methods.debug(err);
                 }
                 else {
 
@@ -590,6 +592,11 @@ user.spawnByName = function(player, spawn = 'Стандарт') {
             }
             else if (spawn == 'Квартира') {
                 let hData = condos.getHouseData(user.get(player, 'condo_id'));
+                player.spawn(new mp.Vector3(hData.get('x'), hData.get('y'), hData.get('z')));
+                player.heading = hData.get('rot');
+            }
+            else if (spawn == 'Яхта') {
+                let hData = yachts.getHouseData(user.get(player, 'yacht_id'));
                 player.spawn(new mp.Vector3(hData.get('x'), hData.get('y'), hData.get('z')));
                 player.heading = hData.get('rot');
             }
@@ -1208,7 +1215,7 @@ user.clearAllProp = function(player) {
 };
 
 user.setComponentVariation = function(player, component, drawableId, textureId) {
-    methods.debug('user.setComponentVariation');
+    methods.debug('user.setComponentVariation', component, drawableId, textureId);
     if (!mp.players.exists(player))
         return false;
     component = methods.parseInt(component);
@@ -1300,9 +1307,10 @@ user.addExplode = function(player, x, y, z, explosionType, damageScale, isAudibl
     setTimeout(function () {
         if (!mp.players.exists(player))
             return false;
+
         player.call('client:user:addExplode', [x, y, z, explosionType, damageScale, isAudible, isInvisible, cameraShake]);
     }, timeout);
-    //seval player.call('client:user:addExplode', [-2956.116, 485.4206, 15.99531, 18, 0.1, true, false, 0]);
+    //seval player.call('client:user:addExplode', [player.position.x, player.position.y, player.position.z, 20, 0.3, true, false, 0]);
 };
 
 user.removeWaypoint = function(player) {
@@ -1994,6 +2002,8 @@ user.setHealth = function(player, level) {
 user.setArmour = function(player, level) {
     if (!mp.players.exists(player))
         return false;
+    if (level > 0)
+        user.setComponentVariation(player, 9, user.get(player, "armor"), user.get(player, "armor_color"));
     player.call('client:setArmour', [level]);
 };
 
@@ -2702,10 +2712,10 @@ user.revive = function(player, hp = 20) {
     player.call('client:user:revive', [hp]);
 };
 
-user.createBlip = function(player, id, x, y, z, blipId = 1, blipColor = 0, route = false, shortRange = false, name = 'Цель', rot = 0) {
+user.createBlip = function(player, id, x, y, z, blipId = 1, blipColor = 0, route = false, shortRange = false, name = 'Цель', rot = 0, scale = 0.8) {
     if (!mp.players.exists(player))
         return false;
-    player.call('client:user:createBlip', [id, x, y, z, blipId, blipColor, route, shortRange, name, rot]);
+    player.call('client:user:createBlip', [id, x, y, z, blipId, blipColor, route, shortRange, name, rot, scale]);
 };
 
 user.deleteBlip= function(player, id) {
@@ -2776,8 +2786,16 @@ user.payDay = async function (player) {
 
     user.set(player, 'online_time', user.get(player, 'online_time') + 1);
     user.set(player, 'online_wheel', user.get(player, 'online_wheel') + 1);
-    user.set(player, 'online_cont', user.get(player, 'online_cont') + 1); //TODO
-    user.set(player, 'online_contall', user.get(player, 'online_contall') + 1); //TODO
+    user.set(player, 'online_cont', user.get(player, 'online_cont') + 1);
+
+    if (user.get(player, 'warns') > 0) {
+        user.set(player, 'online_warn', user.get(player, 'online_warn') + 1);
+        if (user.get(player, 'online_warn') >= 339) {
+            user.set(player, 'warns', user.get(player, 'warns') - 1);
+            user.set(player, 'online_warn', 0);
+            player.notify(`~g~Сервер вам снял 1 предупреждение`);
+        }
+    }
 
     /*if (user.getVipStatus() != "YouTube" && user.getVipStatus() != "Turbo" && user.getVipStatus() != "none" && user.get(player, 'exp_age') % 4 == 0)
         user.set(player, 'exp_age', user.get(player, 'exp_age') + 1);
@@ -2903,7 +2921,7 @@ user.payDay = async function (player) {
                         user.sendSmsBankOperation(player, `Зачисление: ~g~${methods.moneyFormat(nalog)}\n~s~Прибавка к зарплате: ~g~${methods.moneyFormat(ben)}${desc}`, 'Зарплата');
                     else
                         user.sendSmsBankOperation(player, `Зачисление: ~g~${methods.moneyFormat(nalog)}${desc}`, 'Зарплата');
-                    user.addPayDayMoney(player, nalog + ben);
+                    user.addPayDayMoney(player, nalog);
                     coffer.removeMoney(frId, nalog)
                 }
             }
@@ -2967,6 +2985,10 @@ user.isJobBus3 = function(player) {
 
 user.isJobTree = function(player) {
     return user.isLogin(player) && user.get(player, 'job') === 1;
+};
+
+user.isJobAve = function(player) {
+    return user.isLogin(player) && user.get(player, 'job') === 12;
 };
 
 user.isJobBuilder = function(player) {
@@ -4650,4 +4672,6 @@ user.giveUniform = function(player, id = 0) {
             user.setComponentVariation(player, 11, 318, 1);
         }
     }
+
+    user.updateClientCache(player);
 };

@@ -228,8 +228,10 @@ lamar.finish = async function() {
         mp.game.ui.notifications.show(`~b~Вы довезли груз и заработали ${methods.cryptoFormat(price / 1000)}`);
         user.setCache('isSellLamar', null);
 
-        if (user.getCache('fraction_id2') > 0)
+        if (user.getCache('fraction_id2') > 0) {
             fraction.set(user.getCache('fraction_id2'), 'orderLamar', await fraction.get(user.getCache('fraction_id2'), 'orderLamar') + 1);
+            fraction.set(user.getCache('fraction_id2'), 'orderLamarM', await fraction.get(user.getCache('fraction_id2'), 'orderLamarM') + 1);
+        }
 
         setTimeout(function () {
             mp.events.callRemote('server:rent:buy', -1842748181, 0.1, 0);

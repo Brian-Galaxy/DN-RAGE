@@ -5,10 +5,12 @@ let fraction = require('../property/fraction');
 
 let user = require('../user');
 let enums = require('../enums');
+let inventory = require('../inventory');
 
 let gangWar = require('../managers/gangWar');
 let mafiaWar = require('../managers/mafiaWar');
 let racer = require('../managers/racer');
+let graffiti = require('../managers/graffiti');
 
 let ems = require('./ems');
 
@@ -194,6 +196,9 @@ weather.timeSyncTimer = function() {
         if (_hour === 6 && _minute === 0)
             fraction.stopCargoWar();
 
+        if (_hour === 16 && _minute === 0)
+            graffiti.createWar();
+
         if (_hour === 9 && _minute === 0)
             racer.createRace();
         if (_hour === 10 && _minute === 0)
@@ -201,15 +206,6 @@ weather.timeSyncTimer = function() {
         if (_hour === 10 && _minute === 30)
             racer.notifyRace();
         if (_hour === 11 && _minute === 0)
-            racer.startRace();
-
-        if (_hour === 19 && _minute === 0)
-            racer.createRace();
-        if (_hour === 20 && _minute === 0)
-            racer.notifyRace();
-        if (_hour === 20 && _minute === 30)
-            racer.notifyRace();
-        if (_hour === 21 && _minute === 0)
             racer.startRace();
 
         let dateTime = new Date();

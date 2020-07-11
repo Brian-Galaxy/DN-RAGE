@@ -73,10 +73,16 @@ stocks.enterv = function (id) {
 
 stocks.enter1 = function (id) {
     mp.events.callRemote('server:stocks:enter1', id);
+    setTimeout(function () {
+        methods.iplArenaModDefault();
+    }, 1500);
 };
 
 stocks.enterv1 = function (id) {
     mp.events.callRemote('server:stocks:enterv1', id);
+    setTimeout(function () {
+        methods.iplArenaModDefault();
+    }, 1500);
 };
 
 stocks.exit = function (x, y, z, rot) {
@@ -132,6 +138,10 @@ stocks.updatePin2 = function (id, pin) {
 
 stocks.updatePin3 = function (id, pin) {
     mp.events.callRemote('server:stocks:updatePin3', id, pin);
+};
+
+stocks.updatePinO = function (id, pin) {
+    mp.events.callRemote('server:stocks:updatePinO', id, pin);
 };
 
 stocks.upgradeAdd = function (id, slot, box) {

@@ -31,6 +31,10 @@ condos.updatePin = function (id, pin) {
     mp.events.callRemote('server:condos:updatePin', id, pin);
 };
 
+condos.updateSafe = function (id, pin) {
+    mp.events.callRemote('server:condos:updateSafe', id, pin);
+};
+
 condos.lockStatus = function (id, lockStatus) {
     mp.events.callRemote('server:condos:lockStatus', id, lockStatus);
 };

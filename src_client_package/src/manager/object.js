@@ -1753,14 +1753,13 @@ object.process = function () {
     doorList.forEach(item => {
         try {
             let dist = methods.distanceToPos(playerPos, new mp.Vector3(item.x, item.y, item.z));
-
-            if (dist < loadDist && !item.isLoad) {
+            if (dist < 20 && !item.isLoad) {
                 mp.game.object.doorControl(item.hash, item.x, item.y, item.z, item.isClose, 0.0, 50.0, 0);
                 if (item.isClose)
                     mp.game.invoke(methods.FREEZE_ENTITY_POSITION, mp.game.object.getClosestObjectOfType(item.x, item.y, item.z, 1, item.hash, false, false, false));
                 item.isLoad = true;
             }
-            else if (dist > loadDist + 50 && item.isLoad) {
+            else if (dist > 30 && item.isLoad) {
                 item.isLoad = false;
             }
         }
@@ -1780,10 +1779,6 @@ object.process = function () {
                             alpha: 255,
                             dimension: -1
                         });
-
-                    //prop_trials_seesaw
-
-                    //mp.objects.new(mp.game.joaat('prop_rub_tyre_01'), mp.players.local.position, {rotation: item.rotation, alpha: 255, dimension: -1}).handle;
 
                     if (item.invType > 0)
                         item.handle.invType = item.invType;

@@ -19,6 +19,7 @@ let condos = require('../property/condos');
 let business = require('../property/business');
 let vehicles = require('../property/vehicles');
 let fraction = require('../property/fraction');
+let yachts = require('../property/yachts');
 
 let cloth = require('../business/cloth');
 let tattoo = require('../business/tattoo');
@@ -44,6 +45,7 @@ let racer = require('../managers/racer');
 let gangZone = require('../managers/gangZone');
 let trucker = require('../managers/trucker');
 let vSync = require('../managers/vSync');
+let ptxSync = require('../managers/ptxSync');
 
 mp.events.__add__ = mp.events.add;
 
@@ -458,6 +460,16 @@ mp.events.addRemoteCounted('server:user:setPlayerModel', (player, model) => {
 
 mp.events.addRemoteCounted('server:user:setClipset', (player, style) => {
     user.setClipset(player, style);
+});
+
+mp.events.addRemoteCounted('server:user:shoot', (player) => {
+    try {
+        if (mp.players.exists(player)) {
+            mp.players.callInRange(player.position, 100, 'client:pSync:shoot', [player.id])
+        }
+    } catch (e) {
+        console.log(e);
+    }
 });
 
 mp.events.addRemoteCounted('server:user:setHeal', (player, level) => {
@@ -920,6 +932,13 @@ mp.events.addRemoteCounted('server:gps:findFleeca', (player) => {
     user.setWaypoint(player, pos.x, pos.y);
 });
 
+mp.events.addRemoteCounted('server:gps:findBank', (player) => {
+    if (!user.isLogin(player))
+        return;
+    let pos = bank.findNearest(player.position);
+    user.setWaypoint(player, pos.x, pos.y);
+});
+
 mp.events.addRemoteCounted('server:gps:find247', (player) => {
     if (!user.isLogin(player))
         return;
@@ -959,6 +978,13 @@ mp.events.addRemoteCounted('server:gps:findGunShop', (player) => {
     if (!user.isLogin(player))
         return;
     let pos = gun.findNearest(player.position);
+    user.setWaypoint(player, pos.x, pos.y);
+});
+
+mp.events.addRemoteCounted('server:gps:findClothShop', (player) => {
+    if (!user.isLogin(player))
+        return;
+    let pos = cloth.findNearest(player.position);
     user.setWaypoint(player, pos.x, pos.y);
 });
 
@@ -1487,9 +1513,11 @@ mp.events.addRemoteCounted('server:user:getInvById', (player, targetId) => {
             player.notify('~r~Вы слишком далеко');
             return;
         }
-        if (user.isPolice(pl) && !user.isTie(pl)) {
-            player.notify("~r~Нельзя обыскивать сотрудников полиции в наручниках, только через стяжки");
-            return;
+        if (!user.isFib(player)) {
+            if (user.isPolice(pl) && !user.isTie(pl)) {
+                player.notify("~r~Нельзя обыскивать сотрудников полиции в наручниках, только через стяжки");
+                return;
+            }
         }
 
         if (user.isTie(pl)) {
@@ -1499,7 +1527,7 @@ mp.events.addRemoteCounted('server:user:getInvById', (player, targetId) => {
             }
         }
 
-        inventory.getItemList(player, inventory.types.Player, user.getId(pl), true);
+        inventory.getItemList(player, inventory.types.Player, user.getId(pl), true, user.isTie(pl));
     }
     else
         player.notify('~r~Рядом с вами никого нет');
@@ -1574,7 +1602,7 @@ mp.events.addRemoteCounted('server:user:taskRemoveMaskById', (player, targetId) 
         player.notify('~r~Игрок в коме');
         return;
     }
-    mysql.executeQuery(`UPDATE items SET owner_type = '1', owner_id = '${user.getId(player)}', is_equip='0' WHERE item_id = '274' AND owner_id='${user.getId(nplayer)}' AND owner_type='1' AND is_equip='1'`);
+    mysql.executeQuery(`UPDATE items SET is_equip='0' WHERE item_id = '274' AND owner_id='${user.getId(nplayer)}' AND owner_type='1' AND is_equip='1'`);
     user.set(nplayer, 'mask', -1);
     user.set(nplayer, 'mask_color', -1);
     player.notify('~b~Вы сняли маску с игрока');
@@ -1888,6 +1916,8 @@ mp.events.addRemoteCounted('server:sendAnswerAsk', (player, id, msg) => {
         //methods.saveLog('AnswerAsk', `${user.getRpName(player)} (${user.getId(player)}) to ${id}: ${msg}`);
         user.set(player, 'count_hask', user.get(player, 'count_hask') + 1);
 
+        p.call('client:mainMenu:addAsk', [msg, `${user.getRpName(player)} (${player.id})`]);
+
         let money = (msg.length / 2) * user.get(player, 'helper_level');
         player.notify(`~g~Вы получили премию за ответ на вопрос ~s~${methods.moneyFormat(money)}`);
         user.addCashMoney(player, money, `Ответ на вопрос (${methods.removeQuotes(methods.removeQuotes2(msg)).substring(0, 230)})`)
@@ -1906,6 +1936,7 @@ mp.events.addRemoteCounted('server:sendAnswerReport', (player, id, msg) => {
             p.outputChatBoxNew(`!{#f44336}Ответ от администратора ${user.getRpName(player)} игроку ${id}:!{#FFFFFF} ${msg}`);
         if (p.id != id)
             return;
+        p.call('client:mainMenu:addReport', [msg, `${user.getRpName(player)} (${player.id})`]);
         p.outputChatBoxNew(`!{#f44336}Ответ от администратора ${user.getRpName(player)}:!{#FFFFFF} ${msg}`);
         //methods.saveLog('AnswerReport', `${user.getRpName(player)} (${user.getId(player)}) to ${id}: ${msg}`);
         user.set(player, 'count_aask', user.get(player, 'count_aask') + 1);
@@ -1939,6 +1970,8 @@ mp.events.addRemoteCounted('server:startSpecMission', (player) => {
                 try {
                     mp.players.callInRange(v.position, 200, "vSync:Sound", [v.id]);
                     v.setVariable('markAsDrone', true);
+                    v.setVariable('fraction_id', user.get(player, 'fraction_id'));
+                    v.setVariable('dispatchMarked', 'X-' + player.remoteId);
                 }
                 catch (e) {
 
@@ -3202,6 +3235,12 @@ mp.events.addRemoteCounted('server:phone:userHistory', (player, id) => {
     phone.userHistory(player, id);
 });
 
+mp.events.addRemoteCounted('server:phone:openInvaderStatsList', (player, days) => {
+    if (!user.isLogin(player))
+        return;
+    phone.openInvaderStatsList(player, days);
+});
+
 mp.events.addRemoteCounted('server:phone:changeBg', (player, id) => {
     if (!user.isLogin(player))
         return;
@@ -3519,10 +3558,22 @@ mp.events.addRemoteCounted('server:inventory:getItemListSell', (player) => {
     inventory.getItemListSell(player);
 });
 
+mp.events.addRemoteCounted('server:inventory:getItemListSellFish', (player, shopId) => {
+    if (!user.isLogin(player))
+        return;
+    inventory.getItemListSellFish(player, shopId);
+});
+
 mp.events.addRemoteCounted('server:inventory:equip', (player, id, itemId, count, aparams) => {
     if (!user.isLogin(player))
         return;
     inventory.equip(player, id, itemId, count, aparams);
+});
+
+mp.events.addRemoteCounted('server:inventory:fixItem', (player, id) => {
+    if (!user.isLogin(player))
+        return;
+    inventory.fixItem(player, id);
 });
 
 mp.events.addRemoteCounted('server:inventory:upgradeWeapon', (player, id, itemId, weaponStr) => {
@@ -3541,8 +3592,8 @@ mp.events.addRemoteCounted('server:inventory:updateEquipStatus', (player, id, st
     inventory.updateEquipStatus(id, status);
 });
 
-mp.events.addRemoteCounted('server:inventory:updateItemsEquipByItemId', (player, itemId, ownerId, ownerType, equip) => {
-    inventory.updateItemsEquipByItemId(itemId, ownerId, ownerType, equip);
+mp.events.addRemoteCounted('server:inventory:updateItemsEquipByItemId', (player, itemId, ownerId, ownerType, equip, count) => {
+    inventory.updateItemsEquipByItemId(itemId, ownerId, ownerType, equip, count);
 });
 
 mp.events.addRemoteCounted('server:inventory:updateOwnerId', (player, id, ownerId, ownerType) => {
@@ -3567,10 +3618,26 @@ mp.events.addRemoteCounted('server:inventory:addItem', (player, itemId, count, o
     inventory.addItem(itemId, count, ownerType, ownerId, countItems, isEquip, params, timeout);
 });
 
+mp.events.addRemoteCounted('server:inventory:updateAmount', (player, id, type) => {
+    inventory.updateAmount(player, id, type);
+});
+
 mp.events.addRemoteCounted('server:inventory:addItemSql', (player, itemId, count, ownerType, ownerId, countItems, isEquip, params, timeout) => {
     if (!user.isLogin(player))
         return;
     inventory.addItemSql(itemId, count, ownerType, ownerId, countItems, isEquip, params, timeout);
+});
+
+mp.events.addRemoteCounted('server:inventory:addWorldItem', (player, itemId, count, countItems, posx, posy, posz, rotx, roty, rotz, params, timeout) => {
+    if (!user.isLogin(player))
+        return;
+    inventory.addWorldItem(itemId, count, countItems, posx, posy, posz, rotx, roty, rotz, params, timeout);
+});
+
+mp.events.addRemoteCounted('server:inventory:dropWeaponItem', (player, itemId, posx, posy, posz, rotx, roty, rotz) => {
+    if (!user.isLogin(player))
+        return;
+    inventory.dropWeaponItem(player, itemId, posx, posy, posz, rotx, roty, rotz);
 });
 
 mp.events.addRemoteCounted('server:inventory:addPlayerWeaponItem', (player, itemId, count, ownerType, ownerId, countItems, isEquip, params, text, timeout) => {
@@ -3589,6 +3656,10 @@ mp.events.addRemoteCounted('server:inventory:deleteDropItem', (player, id) => {
 
 mp.events.addRemoteCounted('server:inventory:deleteItem', (player, id) => {
     inventory.deleteItem(id);
+});
+
+mp.events.addRemoteCounted('server:inventory:deleteItemByItemId', (player, id, isEquip) => {
+    inventory.deleteItemByItemId(id, isEquip);
 });
 
 mp.events.addRemoteCounted('server:inventory:deleteItemsRange', (player, itemIdFrom, itemIdTo) => {
@@ -3734,6 +3805,17 @@ mp.events.addRemoteCounted("onKeyPress:E", (player) => {
         }
     });
 
+    yachts.getAll().forEach((val, key, object) => {
+        if (methods.distanceToPos(player.position, val.position) < 1.5) {
+            let houseData = yachts.getHouseData(key);
+            if (houseData.get('user_id') == 0)
+                player.call('client:showYachtBuyMenu', [Array.from(houseData)]);
+            else {
+                player.call('client:showYachtOutMenu', [Array.from(houseData)]);
+            }
+        }
+    });
+
     stocks.getAll().forEach((val, key, object) => {
         if (methods.distanceToPos(player.position, val.pos) < 1.5) {
             let houseData = stocks.getData(key);
@@ -3863,7 +3945,7 @@ mp.events.addRemoteCounted('server:mechanic:fuel', (player, id, count, price) =>
         player.notify('~r~Вы слишком далеко');
         return;
     }
-    player.call('client:menuList:showMechanicAcceptFuelMenu', [player.id, count, price]);
+    target.call('client:menuList:showMechanicAcceptFuelMenu', [player.id, count, price]);
 });
 
 mp.events.addRemoteCounted('server:mechanic:fuel:accept', (player, id, count, price) => {
@@ -3930,7 +4012,7 @@ mp.events.addRemoteCounted('server:mechanic:fix', (player, id, price) => {
         player.notify('~r~Вы слишком далеко');
         return;
     }
-    player.call('client:menuList:showMechanicAcceptFixMenu', [player.id, price]);
+    target.call('client:menuList:showMechanicAcceptFixMenu', [player.id, price]);
 });
 
 mp.events.addRemoteCounted('server:mechanic:fix:accept', (player, id, price) => {
@@ -3952,6 +4034,10 @@ mp.events.addRemoteCounted('server:mechanic:fix:accept', (player, id, price) => 
         }
         if (!target.vehicle) {
             player.notify('~r~Механик не в транспорте');
+            return;
+        }
+        if (player.vehicle.dead) {
+            player.notify('~r~Транспорт взорван');
             return;
         }
         user.removeMoney(player, price, 'Услуги механика');
@@ -3979,7 +4065,7 @@ mp.events.addRemoteCounted('server:mechanic:flip', (player, id, price) => {
         player.notify('~r~Вы слишком далеко');
         return;
     }
-    player.call('client:menuList:showMechanicAcceptFlipMenu', [player.id, price]);
+    target.call('client:menuList:showMechanicAcceptFlipMenu', [player.id, price]);
 });
 
 mp.events.addRemoteCounted('server:mechanic:flip:accept', (player, id, price) => {
@@ -4059,6 +4145,12 @@ mp.events.addRemoteCounted("server:houses:updatePin", (player, id, pin) => {
     houses.updatePin(id, pin);
 });
 
+mp.events.addRemoteCounted("server:houses:updateSafe", (player, id, pin) => {
+    if (!user.isLogin(player))
+        return;
+    houses.updateSafe(id, pin);
+});
+
 mp.events.addRemoteCounted("server:houses:lockStatus", (player, id, lockStatus) => {
     if (!user.isLogin(player))
         return;
@@ -4126,6 +4218,12 @@ mp.events.addRemoteCounted("server:stocks:updatePin3", (player, id, pin) => {
     stocks.updatePin3(id, pin);
 });
 
+mp.events.addRemoteCounted("server:stocks:updatePinO", (player, id, pin) => {
+    if (!user.isLogin(player))
+        return;
+    stocks.updatePinO(id, pin);
+});
+
 mp.events.addRemoteCounted("server:stocks:upgradeAdd", (player, id, slot, box) => {
     if (!user.isLogin(player))
         return;
@@ -4151,12 +4249,31 @@ mp.events.addRemoteCounted("server:condos:updatePin", (player, id, pin) => {
     condos.updatePin(id, pin);
 });
 
+mp.events.addRemoteCounted("server:condos:updateSafe", (player, id, pin) => {
+    if (!user.isLogin(player))
+        return;
+    condos.updateSafe(id, pin);
+});
+
 mp.events.addRemoteCounted("server:condos:lockStatus", (player, id, lockStatus) => {
     if (!user.isLogin(player))
         return;
     condos.lockStatus(id, lockStatus);
 });
 
+//Yachts
+
+mp.events.addRemoteCounted("server:yachts:buy", (player, id) => {
+    if (!user.isLogin(player))
+        return;
+    yachts.buy(player, id);
+});
+
+mp.events.addRemoteCounted("server:yachts:updateName", (player, id, name) => {
+    if (!user.isLogin(player))
+        return;
+    yachts.updateName(id, name);
+});
 //Sell
 mp.events.addRemoteCounted('server:houses:sell', (player) => {
     if (!user.isLogin(player))
@@ -4168,6 +4285,12 @@ mp.events.addRemoteCounted('server:condo:sell', (player) => {
     if (!user.isLogin(player))
         return;
     condos.sell(player);
+});
+
+mp.events.addRemoteCounted('server:yachts:sell', (player) => {
+    if (!user.isLogin(player))
+        return;
+    yachts.sell(player);
 });
 
 mp.events.addRemoteCounted('server:stock:sell', (player) => {
@@ -4675,6 +4798,88 @@ mp.events.addRemoteCounted('server:condo:sellToPlayer:accept', (player, houseId,
     }
 });
 
+mp.events.addRemoteCounted('server:yacht:sellToPlayer', (player, buyerId, sum) => {
+    if (!user.isLogin(player))
+        return;
+    if (user.get(player, 'yacht_id') === 0) {
+        player.notify('~r~У Вас нет яхты');
+        return;
+    }
+
+    let buyer = mp.players.at(buyerId);
+    if (user.isLogin(buyer)) {
+
+        if (methods.distanceToPos(buyer.position, player.position) > 2) {
+            player.notify('~r~Вы слишком далеко');
+            return;
+        }
+
+        if (user.get(buyer, 'yacht_id') > 0) {
+            player.notify('~r~У игрока уже есть яхта');
+            buyer.notify('~r~У Вас уже есть яхта');
+            return;
+        }
+
+        let hInfo = yachts.getHouseData(user.get(player, 'yacht_id'));
+        buyer.call('client:yacht:sellToPlayer', [user.get(player, 'yacht_id'), `${hInfo.get('name')} #${hInfo.get('id')}`, sum, player.id]);
+        buyer.notify('~b~Вам предложили купить квартиру за ~s~' + methods.moneyFormat(sum));
+        player.notify('~b~Вы предложили купить квартиру игроку');
+    }
+});
+
+mp.events.addRemoteCounted('server:yacht:sellToPlayer:accept', (player, houseId, sum, sellerId) => {
+    if (!user.isLogin(player))
+        return;
+    if (user.get(player, 'yacht_id') > 0) {
+        player.notify('~r~У Вас есть яхта');
+        return;
+    }
+
+    if (user.getCashMoney(player) < sum) {
+        player.notify('~r~У Вас нет столько денег');
+        return;
+    }
+
+    let seller = mp.players.at(sellerId);
+    if (user.isLogin(seller)) {
+
+        let hId = user.get(seller, 'yacht_id');
+        if (hId === 0) {
+            player.notify('~r~У игрока уже нет яхты');
+            seller.notify('~r~У Вас нет яхты');
+            return;
+        }
+
+        let hInfo = yachts.getHouseData(hId);
+
+        yachts.updateOwnerInfo(hId, user.getId(player), user.getRpName(player));
+        user.set(player, 'yacht_id', hId);
+        user.set(seller, 'yacht_id', 0);
+
+        user.addCashMoney(seller, sum);
+        user.removeCashMoney(player, sum);
+
+        seller.notify('~b~Вы продали яхту за ~s~' + methods.moneyFormat(sum));
+        player.notify('~b~Вы купили яхту за ~s~' + methods.moneyFormat(sum));
+
+        if (methods.parseInt(sum) < 1000) {
+            try {
+                methods.saveLog('log_warning',
+                    ['name', 'do'],
+                    [`${user.getRpName(player)} (${user.getId(player)})`, `BUY YACHT: ${hId} | PRICE: $${sum} | SELLER: ${user.getRpName(seller)} (${user.getId(seller)})`],
+                );
+            }
+            catch (e) {}
+        }
+
+        user.save(player);
+        user.save(seller);
+
+        user.addHistory(seller, 3, 'Продал яхту ' + hInfo.get('name') + ' №' + hInfo.get('id') + '. Цена: ' + methods.moneyFormat(sum));
+        user.addHistory(player, 3, 'Купил яхту ' + hInfo.get('name') + ' №' + hInfo.get('id') + '. Цена: ' + methods.moneyFormat(sum));
+    }
+});
+
 mp.events.addRemoteCounted('server:business:sellToPlayer', (player, buyerId, sum) => {
     if (!user.isLogin(player))
         return;
@@ -5150,6 +5355,12 @@ mp.events.addRemoteCounted('server:fraction:getLamarSpeedo', (player) => {
     if (!user.isLogin(player))
         return;
     fraction.spawnNearCargo(player);
+});
+
+mp.events.addRemoteCounted('server:fraction:getLamarMule', (player) => {
+    if (!user.isLogin(player))
+        return;
+    fraction.spawnNearCargo(player, false, 'Mule4', 5);
 });
 
 mp.events.addRemoteCounted('server:fraction:getBankVeh', (player, type) => {
@@ -6188,8 +6399,8 @@ mp.events.addRemoteCounted('server:sellUser', (player) => {
                 }
 
                 let money = user.getCashMoney(p) / 2;
-                if (money > 5000)
-                    money = 5000;
+                if (money > 25000)
+                    money = 25000;
                 user.removeCashMoney(p, money);
                 p.removeFromVehicle();
 
@@ -6303,6 +6514,30 @@ mp.events.addRemoteCounted('server:lsc:buyTun', (player, modType, idx, price, sh
     if (!user.isLogin(player))
         return;
     lsc.buyTun(player, modType, idx, price, shopId, itemName);
+});
+
+mp.events.addRemoteCounted('server:lsc:buySTun', (player, modType, idx, price, shopId, itemName) => {
+    if (!user.isLogin(player))
+        return;
+    lsc.buySTun(player, modType, idx, price, shopId, itemName);
+});
+
+mp.events.addRemoteCounted('server:lsc:resetSTun', (player, modType) => {
+    if (!user.isLogin(player))
+        return;
+    lsc.resetSTun(player, modType);
+});
+
+mp.events.addRemoteCounted('server:lsc:showNumberType', (player, idx) => {
+    if (!user.isLogin(player))
+        return;
+    lsc.showNumberType(player, idx);
+});
+
+mp.events.addRemoteCounted('server:lsc:buyNumberType', (player, idx, price, shopId) => {
+    if (!user.isLogin(player))
+        return;
+    lsc.buyNumberType(player, idx, methods.parseInt(price), shopId);
 });
 
 mp.events.addRemoteCounted('server:lsc:showColor1', (player, idx) => {
@@ -6697,6 +6932,7 @@ mp.events.add("__ragemp_get_sc_data", (player, serial2, rgscIdStr, verificatorVe
         mysql.executeQuery(`SELECT * FROM black_list WHERE serial = '${serial2}' LIMIT 1`, function (err, rows, fields) {
             if (rows.length > 0)  {
                 //methods.saveLog('BlackList', `${player.socialClub} | ${serial2}`);
+                player.outputChatBoxNew(`!{#f44336}Вы внесены в чёрный список проекта 👽`);
                 user.kick(player, 'BlackList');
             }
         });
@@ -6722,6 +6958,7 @@ mp.events.add("__ragemp_get_sc_data", (player, serial2, rgscIdStr, verificatorVe
     mysql.executeQuery(`SELECT * FROM black_list WHERE rgsc_id = '${BigInt(rgscIdStr)}' OR social = '${player.socialClub}' OR address = '${player.ip}' OR serial = '${player.serial}' LIMIT 1`, function (err, rows, fields) {
         if (rows.length > 0)  {
             //methods.saveLog('TryBlackList', `${player.socialClub} | ${rgscIdStr}`);
+            player.outputChatBoxNew(`!{#f44336}Вы внесены в чёрный список проекта 👽`);
             user.kick(player, 'BlackList');
         }
     });
@@ -6803,6 +7040,25 @@ mp.events.add('playerJoin', player => {
     );
 
     player.outputChatBox("RAGE_Multiplayer HAS BEEN STARTED.");
+
+    player.call('particleFx:setup', [ptxSync.toArray()]);
+});
+
+mp.events.add('onPlayerParticleFxStreamIn', (player, particleId) => {
+
+});
+
+mp.events.add('onPlayerParticleFxStreamOut', (player, particleId) => {
+
+});
+
+mp.events.add('onParticleFxEntityDisconnect', (player, particleId) => {
+    try {
+        const particle = ptxSync.get(particleId);
+        if(particles)
+            particle.destroy();
+    }
+    catch (e) {}
 });
 
 mp.events.add('server:playerWeaponShot', (player, targetId) => {

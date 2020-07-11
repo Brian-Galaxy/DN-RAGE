@@ -382,7 +382,7 @@ gangWar.timerMoney = function() {
 
             if (moneyToUser.has(gangWar.get(i, 'fraction_id').toString())) {
                 let cMoney = moneyToUser.get(gangWar.get(i, 'fraction_id').toString());
-                cMoney += methods.getRandomInt(30, 60) / 1000;
+                cMoney += methods.getRandomInt(20, 40) / 1000;
                 moneyToUser.set(gangWar.get(i, 'fraction_id').toString(), cMoney);
             }
             else {
@@ -420,8 +420,8 @@ gangWar.set = function(id, key, val) {
     Container.Data.Set(offset + methods.parseInt(id), keyPrefix + key, val);
 };
 
-gangWar.reset = function(id, key, val) {
-    Container.Data.Reset(offset + methods.parseInt(id), keyPrefix + key, val);
+gangWar.reset = function(id, key) {
+    Container.Data.Reset(offset + methods.parseInt(id), keyPrefix + key);
 };
 
 gangWar.get = function(id, key) {

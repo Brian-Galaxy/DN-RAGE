@@ -11,6 +11,7 @@ let houses = require('../property/houses');
 let business = require('../property/business');
 let vehicles = require('../property/vehicles');
 let stock = require('../property/stocks');
+let yachts = require('../property/yachts');
 
 let weather = require('./weather');
 
@@ -27,6 +28,7 @@ tax.loadAll = function() {
 
     mysql.executeQuery("UPDATE houses SET tax_score = (RAND(90000000) * 10000000) + 50000000");
     mysql.executeQuery("UPDATE condos SET tax_score = (RAND(90000000) * 10000000) + 40000000");
+    mysql.executeQuery("UPDATE yachts SET tax_score = (RAND(90000000) * 10000000) + 80000000");
     //mysql.executeQuery("UPDATE apartment SET tax_score = (RAND(90000000) * 10000000) + 70000000");
     mysql.executeQuery("UPDATE business SET tax_score = (RAND(90000000) * 10000000) + 10000000");
     mysql.executeQuery("UPDATE stocks SET tax_score = (RAND(90000000) * 10000000) + 90000000");
@@ -150,6 +152,42 @@ tax.sell = function() {
 
         if (rows.length > 0)
             tax.adLiveInvader(`Квартиры поступили в продажу`);
+    });
+
+    //=============================
+    //============Яхта=============
+    //=============================
+    mysql.executeQuery("SELECT * FROM yachts WHERE tax_money <= (round(price * '" + _currentTax + "' + '" + _taxMin + "', 0) * '" + _taxDays + "') * '-1' AND user_id > '0' LIMIT 20", function (err, rows, fields) {
+        rows.forEach(row => {
+
+            let price = methods.parseInt(row['price']);
+
+            if (methods.parseInt(row["tax_money"]) < -100000)
+                price = methods.parseInt(price * 1.3);
+
+            mp.players.forEach(function (p) {
+                if (user.isLogin(p) && user.getId(p) == methods.parseInt(row["user_id"])) {
+                    user.set(p, 'yacht_id', 0);
+                    user.addBankMoney(p, price);
+                    user.sendSmsBankOperation(p, `Зачисление: $${methods.numberFormat(price)}`);
+                    p.notify('~r~Ваша квартира была изъята государством за неуплату');
+                    user.save(p);
+                }
+            });
+
+            yachts.updateOwnerInfo(methods.parseInt(row['id']), 0, '');
+            mysql.executeQuery("UPDATE users SET money = money + '" + price + "', yacht_id = '0' WHERE id = '" + methods.parseInt(row["user_id"]) + "'");
+
+            mysql.executeQuery("UPDATE yachts SET tax_money = '0' WHERE id = '" + row['id'] + "'");
+
+            methods.saveLog('log_sell_inactive',
+                ['text'],
+                [`USER: ${row["user_id"]} YACHT ${row["id"]}`],
+            );
+        });
+
+        if (rows.length > 0)
+            tax.adLiveInvader(`Яхта поступила в продажу`);
     });
 
     //=============================
@@ -306,6 +344,8 @@ tax.payTax = function(player, type, sum, score) {
         table = 'apartment';*/
     else if (score.toString()[0] == "9")
         table = 'stocks';
+    else if (score.toString()[0] == "8")
+        table = 'yachts';
 
     mysql.executeQuery("SELECT * FROM " + table + " WHERE tax_score = '" + score + "'", function (err, rows, fields) {
         rows.forEach(row => {
@@ -349,6 +389,7 @@ tax.removeTax = function() {
 
     mysql.executeQuery("UPDATE houses SET tax_money = tax_money - (round((price * '" + _currentTax + "' + '" + _taxMin +  "') / '7', 0)) WHERE user_id > 0");
     mysql.executeQuery("UPDATE condos SET tax_money = tax_money - (round((price * '" + _currentTax + "' + '" + _taxMin +  "') / '7', 0)) WHERE user_id > 0");
+    mysql.executeQuery("UPDATE yachts SET tax_money = tax_money - (round((price * '" + _currentTax + "' + '" + _taxMin +  "') / '7', 0)) WHERE user_id > 0");
     //mysql.executeQuery("UPDATE apartment SET tax_money = tax_money - (round((price * '" + _currentTax + "' + '" + _taxMin +  "') / '7', 0)) WHERE user_id > 0");
     mysql.executeQuery("UPDATE business SET tax_money = tax_money - (round((price * '" + _currentTax + "' + '" + _taxMin +  "') / '7', 0)) WHERE user_id > 0");
     mysql.executeQuery("UPDATE stocks SET tax_money = tax_money - (round((price * '" + _currentTax + "' + '" + _taxMin +  "') / '7', 0)) WHERE user_id > 0");
@@ -367,6 +408,13 @@ tax.updateTax = function() {
         rows.forEach(item => {
             condo.set(item['id'], 'tax_money', item['tax_money']);
             condo.set(item['id'], 'tax_score', item['tax_score']);
+        });
+    });
+
+    mysql.executeQuery(`SELECT * FROM yachts WHERE user_id > '0'`, function (err, rows, fields) {
+        rows.forEach(item => {
+            yachts.set(item['id'], 'tax_money', item['tax_money']);
+            yachts.set(item['id'], 'tax_score', item['tax_score']);
         });
     });
 

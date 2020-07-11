@@ -154,6 +154,8 @@ houses.loadAll = function() {
             let hBlip = {
                 blip: blip,
                 position: pos,
+                safe: null,
+                safeDoor: null,
                 g1: { int: item['ginterior1'], position: new mp.Vector3(parseFloat(item['gx1']), parseFloat(item['gy1']), parseFloat(item['gz1'])), rot: item['grot1'] },
                 g2: { int: item['ginterior2'], position: new mp.Vector3(parseFloat(item['gx2']), parseFloat(item['gy2']), parseFloat(item['gz2'])), rot: item['grot2'] },
                 g3: { int: item['ginterior3'], position: new mp.Vector3(parseFloat(item['gx3']), parseFloat(item['gy3']), parseFloat(item['gz3'])), rot: item['grot3'] },
@@ -167,8 +169,12 @@ houses.loadAll = function() {
                 methods.createCpVector(hBlip.g2.position, "Нажмите ~g~Е~s~ чтобы открыть меню гаража", 3, -1, [33, 150, 243, 0]);
             if (hBlip.g3.int >= 0)
                 methods.createCpVector(hBlip.g3.position, "Нажмите ~g~Е~s~ чтобы открыть меню гаража", 3, -1, [33, 150, 243, 0]);
-
             hBlips.set(item['id'], hBlip);
+
+            if (item['is_safe']) {
+                houses.updateSafe(item['id'], item['is_safe'], true);
+            }
+
         });
         count = rows.length;
         methods.debug('All Houses Loaded: ' + count);
@@ -255,6 +261,8 @@ houses.loadLast = function() {
             let hBlip = {
                 blip: blip,
                 position: pos,
+                safe: null,
+                safeDoor: null,
                 g1: { int: item['ginterior1'], position: new mp.Vector3(parseFloat(item['gx1']), parseFloat(item['gy1']), parseFloat(item['gz1'])), rot: item['grot1'] },
                 g2: { int: item['ginterior2'], position: new mp.Vector3(parseFloat(item['gx2']), parseFloat(item['gy2']), parseFloat(item['gz2'])), rot: item['grot2'] },
                 g3: { int: item['ginterior3'], position: new mp.Vector3(parseFloat(item['gx3']), parseFloat(item['gy3']), parseFloat(item['gz3'])), rot: item['grot3'] },
@@ -265,6 +273,10 @@ houses.loadLast = function() {
             hBlips.set(item['id'], hBlip);
 
             chat.sendToAll(`Дом добавлен. ID: ${item['id']}. Name: ${item['number']}. Int: ${item['interior']}. Price: ${methods.moneyFormat(item['price'])}`);
+
+            if (item['is_safe']) {
+                houses.updateSafe(item['id'], item['is_safe'], true);
+            }
 
             mp.players.forEach(p => {
                 methods.updateCheckpointList(p);
@@ -358,9 +370,64 @@ houses.updateOwnerInfo = function (id, userId, userName) {
     if (userId == 0) {
         houses.updatePin(id, 0);
         houses.lockStatus(id, false);
+        houses.updateSafe(id, 0);
     }
 
     mysql.executeQuery("UPDATE houses SET user_name = '" + userName + "', user_id = '" + userId + "', tax_money = '0' where id = '" + id + "'");
+};
+
+houses.updateSafe = function (id, pin, isLoad = false) {
+    try {
+        methods.debug('houses.updateSafe');
+
+        pin = methods.parseInt(pin);
+
+        if (pin > 0) {
+            let intId = houses.get(id, "interior");
+
+            let safeItem = houses.safeList[intId];
+            if (!mp.objects.exists(hBlips.get(id).safe)) {
+                hBlips.get(id).safe = mp.objects.new(884736502, new mp.Vector3(safeItem[0], safeItem[1], safeItem[2]),
+                    {
+                        rotation: new mp.Vector3(safeItem[3], safeItem[4], safeItem[5]),
+                        alpha: 255,
+                        dimension: id
+                    });
+            }
+            if (!mp.objects.exists(hBlips.get(id).safeDoor))
+            {
+                hBlips.get(id).safeDoor = mp.objects.new(-1992154984, new mp.Vector3(safeItem[6], safeItem[7], safeItem[8]),
+                    {
+                        rotation: new mp.Vector3(safeItem[9], safeItem[10], safeItem[11]),
+                        alpha: 255,
+                        dimension: id
+                    });
+                hBlips.get(id).safeDoor.setVariable('houseSafe', id);
+            }
+            if (!isLoad) {
+                houses.set(id, "is_safe", pin);
+                mysql.executeQuery("UPDATE houses SET is_safe = '" + pin + "' where id = '" + id + "'");
+            }
+        }
+        else {
+            try {
+                hBlips.get(id).safe.destroy();
+                hBlips.get(id).safeDoor.destroy();
+            }
+            catch (e) {
+
+            }
+            if (!isLoad) {
+                mysql.executeQuery("UPDATE houses SET is_safe = '0' where id = '" + id + "'");
+                houses.set(id, "is_safe", 0);
+            }
+        }
+    }
+    catch (e) {
+        methods.debug(e);
+        methods.debug(e);
+        methods.debug(e);
+    }
 };
 
 houses.updatePin = function (id, pin) {

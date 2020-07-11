@@ -125,7 +125,7 @@ antiCheat.secTimer = function() {
             user.kickAntiCheat('Endless Ammo');
         }
 
-        if (attemptTeleport >= 3) {
+        if (attemptTeleport >= 2) {
             user.kickAntiCheat('Teleport');
         }
 
@@ -157,7 +157,7 @@ antiCheat.secTimer = function() {
                 if (isKick)
                     return;
                 if (!Container.Data.HasLocally(0, (item[1] / 2).toString()) && item[0] != 'weapon_unarmed') {
-                    user.warnAntiCheat(`Gun: ${item[0]}`);
+                    user.kickAntiCheat(`Gun: ${item[0]}`);
                     isKick = true;
                 }
             }
@@ -166,7 +166,7 @@ antiCheat.secTimer = function() {
         let newPos = mp.players.local.position;
         let dist = mp.players.local.vehicle ? methods.getCurrentSpeed() + 100 : 80;
         let distNew = methods.distanceToPos(prevPos, newPos);
-        if (distNew > dist && !mp.players.local.isFalling() && !mp.players.local.isRagdoll() && !methods.isBlockKeys()) {
+        if (distNew > dist && !mp.players.local.isFalling() && !mp.players.local.isRagdoll() && !methods.isBlockKeys() && mp.players.local.getParachuteState() === -1) {
             if (!user.isTeleport()) {
                 attemptTeleport++;
                 user.warnAntiCheat(`Teleport (${distNew.toFixed(2)}m)`);
@@ -174,6 +174,25 @@ antiCheat.secTimer = function() {
             user.setTeleport(false);
         }
         prevPos = newPos;
+
+        if (!user.isAdmin()) {
+            if (mp.players.local.isInAnyVehicle(true) && mp.players.local.handle === mp.players.local.vehicle.getPedInSeat(-1)) {
+                if (!mp.players.local.vehicle.isInAir() && !mp.players.local.vehicle.isInWater()) {
+                    let zPos = mp.game.gameplay.getGroundZFor3dCoord(mp.players.local.position.x, mp.players.local.position.y, mp.players.local.position.z, parseFloat(0), false);
+                    if (zPos + 10 < mp.players.local.vehicle.position.z) {
+                        user.kickAntiCheat('FlyHack');
+                    }
+                }
+            }
+            else {
+                if (!mp.players.local.isFalling() && !mp.players.local.isRagdoll() && !methods.isBlockKeys() && !mp.players.local.isInAir() && mp.players.local.getParachuteState() === -1) {
+                    let zPos = mp.game.gameplay.getGroundZFor3dCoord(mp.players.local.position.x, mp.players.local.position.y, mp.players.local.position.z, parseFloat(0), false);
+                    if (zPos + 10 < mp.players.local.position.z) {
+                        user.kickAntiCheat('FlyHack');
+                    }
+                }
+            }
+        }
 
         /*if (mp.players.local.isSittingInAnyVehicle())
         {

@@ -1,6 +1,6 @@
 import UIMenu from './modules/menu';
 import methods from './modules/methods';
-import container from './modules/data';
+import Container from './modules/data';
 import ui from "./modules/ui";
 
 import chat from './chat';
@@ -12,9 +12,13 @@ import phone from "./phone";
 
 import vehicles from "./property/vehicles";
 import stocks from "./property/stocks";
+import houses from "./property/houses";
+import condos from "./property/condos";
 
 import bind from "./manager/bind";
 import coffer from "./coffer";
+import weather from "./manager/weather";
+import quest from "./manager/quest";
 
 let inventory = {};
 
@@ -72,8 +76,8 @@ inventory.updateItemCount = function(id, count) { //TODO, подумать ка�
     mp.events.callRemote('server:inventory:updateItemCount', id, count);
 };
 
-inventory.updateItemsEquipByItemId = function(itemId, ownerId, ownerType, equip) {
-    mp.events.callRemote('server:inventory:updateItemsEquipByItemId', itemId, ownerId, ownerType, equip);
+inventory.updateItemsEquipByItemId = function(itemId, ownerId, ownerType, equip, count = -1) {
+    mp.events.callRemote('server:inventory:updateItemsEquipByItemId', itemId, ownerId, ownerType, equip, count);
 };
 
 inventory.updateOwnerId = function(id, ownerId, ownerType) {
@@ -166,6 +170,22 @@ inventory.openInventoryByEntity = async function(entity) {
             }
             else if (entity.getVariable('stockId'))
                 inventory.getItemList(entity.getVariable('stockId'), mp.players.local.dimension);
+            else if (entity.getVariable('houseSafe')) {
+                let data = await houses.getData(mp.players.local.dimension);
+                let pass = methods.parseInt(await UIMenu.Menu.GetUserInput("Введите пинкод", "", 5));
+                if (pass === data.get('is_safe'))
+                    inventory.getItemList(inventory.types.House, entity.getVariable('houseSafe'));
+                else
+                    mp.game.ui.notifications.show('~r~Вы ввели не правильный пинкод');
+            }
+            else if (entity.getVariable('condoSafe')) {
+                let data = await condos.getData(mp.players.local.dimension - enums.offsets.condo);
+                let pass = methods.parseInt(await UIMenu.Menu.GetUserInput("Введите пинкод", "", 5));
+                if (pass === data.get('is_safe'))
+                    inventory.getItemList(inventory.types.Condo, entity.getVariable('condoSafe'));
+                else
+                    mp.game.ui.notifications.show('~r~Вы ввели не правильный пинкод');
+            }
             else if (entity.invType) {
                 if (entity.safe) {
                     let data = await stocks.getData(mp.players.local.dimension - enums.offsets.stock);
@@ -219,6 +239,10 @@ inventory.deleteItemProp = function(id) {
 
 inventory.deleteItem = function(id) {
     mp.events.callRemote('server:inventory:deleteItem', id);
+};
+
+inventory.deleteItemByItemId = function(itemId, isEquip = 0) {
+    mp.events.callRemote('server:inventory:deleteItemByItemId', itemId, isEquip);
 };
 
 inventory.deleteItemsRange = function(itemIdFrom, itemIdTo) {
@@ -455,86 +479,46 @@ inventory.takeDrugItem = async function(id, itemId, countItems, notify = true, t
     chat.sendMeCommand(`взял ${takeCount}гр наркотиков`);
 };
 
-inventory.takeCountItem = async function(id, itemId, countItems, notify = true, takeCount = 1) {
-    countItems = countItems - takeCount;
-
-    let user_id = user.getCache('id');
-    let amount = await inventory.getInvAmount(user_id, inventory.types.Player);
-    let amountMax = await inventory.getInvAmountMax(user_id, inventory.types.Player);
-
-    let newItemId = 2;
-
-    switch (itemId)
-    {
-        case 275:
-            if (takeCount == 1)
-                newItemId = 4;
-            break;
-        case 276:
-            if (takeCount == 1)
-                newItemId = 263;
-            break;
-    }
-
-    if (items.getItemAmountById(itemId) + amount > amountMax) {
-        mp.game.ui.notifications.show("~r~Инвентарь заполнен");
-        return;
-    }
-
-    inventory.addItemServer(newItemId, 1, inventory.types.Player, user_id, takeCount, -1, -1, -1);
-    inventory.updateAmount(user_id, inventory.types.Player);
-
-    if (countItems <= 0)
-        inventory.deleteItemServer(id);
-    else
-    {
-        inventory.updateItemCountServer(id, countItems);
-        inventory.getInfoItem(id);
-    }
-
-    if (!notify) return;
-    mp.game.ui.notifications.show(`~g~Вы взяли \"${items.getItemNameById(newItemId)}\"`);
-    chat.sendMeCommand(`взял ${takeCount}шт предмета`);
-};
-
 inventory.getInvAmount = async function(id, type) {
-    //return await container.Data.Get(id, "invAmount:" + type);
-    if (container.Data.HasLocally(id, "invAmount:" + type))
-        return container.Data.GetLocally(id, "invAmount:" + type);
+    //return await Container.Data.Get(id, "invAmount:" + type);
+    if (Container.Data.HasLocally(id, "invAmount:" + type))
+        return Container.Data.GetLocally(id, "invAmount:" + type);
 
-    if (await container.Data.Has(id, "invAmount:" + type))
-        return await container.Data.Get(id, "invAmount:" + type);
+    if (await Container.Data.Has(id, "invAmount:" + type))
+        return await Container.Data.Get(id, "invAmount:" + type);
 
     inventory.updateAmount(id, type);
     await methods.sleep(1000);
-    return container.Data.GetLocally(id, "invAmount:" + type);
+    return Container.Data.GetLocally(id, "invAmount:" + type);
 };
 
 inventory.setInvAmount = function(id, type, data) {
-    container.Data.Set(id, "invAmount:" + type, data);
-    container.Data.SetLocally(id, "invAmount:" + type, data);
+    Container.Data.Set(id, "invAmount:" + type, data);
+    Container.Data.SetLocally(id, "invAmount:" + type, data);
 };
 
 inventory.getInvAmountMax = async function(id, type) {
-    if (container.Data.HasLocally(id, "invAmountMax:" + type)) {
-        return container.Data.GetLocally(id, "invAmountMax:" + type);
+    if (Container.Data.HasLocally(id, "invAmountMax:" + type)) {
+        return Container.Data.GetLocally(id, "invAmountMax:" + type);
     }
-    if (await container.Data.Has(id, "invAmountMax:" + type)) {
-        let maxVal = await container.Data.Get(id, "invAmountMax:" + type);
+    if (await Container.Data.Has(id, "invAmountMax:" + type)) {
+        let maxVal = await Container.Data.Get(id, "invAmountMax:" + type);
         inventory.setInvAmountMax(id, type, maxVal);
         return maxVal;
     }
     inventory.updateAmountMax(id, type);
     await methods.sleep(1000);
-    return container.Data.GetLocally(id, "invAmountMax:" + type);
+    return Container.Data.GetLocally(id, "invAmountMax:" + type);
 };
 
 inventory.setInvAmountMax = function(id, type, data) {
-    container.Data.Set(id, "invAmountMax:" + type, data);
-    container.Data.SetLocally(id, "invAmountMax:" + type, data);
+    Container.Data.Set(id, "invAmountMax:" + type, data);
+    Container.Data.SetLocally(id, "invAmountMax:" + type, data);
 };
 
 inventory.calculatePlayerInvAmountMax = function() {
+    if (user.getCache('vip_type') === 2)
+        return 35001;
     return 30001;
 };
 
@@ -556,13 +540,15 @@ inventory.updateAmountMax = function(id, type) {
         else if (type == inventory.types.Apartment)
             invAmountMax = 200000;
         else if (type == inventory.types.House)
-            invAmountMax = 200000;
+            invAmountMax = 600000;
         else if (type == inventory.types.Player)
             invAmountMax = inventory.calculatePlayerInvAmountMax();
         else if (type == inventory.types.Bag)
             invAmountMax = 50000;
         else if (type == inventory.types.BagSmall)
             invAmountMax = 20000;
+        else if (type == inventory.types.BagArm)
+            invAmountMax = 10000;
         else if (type == inventory.types.StockGov)
             invAmountMax = 999999999;
         else if (type == inventory.types.Fridge)
@@ -589,17 +575,25 @@ inventory.sendToPlayerItemListUpdateAmountMenu = function(data, ownerType, owner
 };
 
 inventory.updateAmount = function(id, type) {
-    //mp.events.callRemote('server:inventory:updateAmount', id, type); //TODO
+    mp.events.callRemote('server:inventory:updateAmount', id, type); //TODO
 };
 
 inventory.addItem = function(itemId, count, ownerType, ownerId, countItems, isEquip = 0, params = "{}", timeout = 10) {
     mp.events.callRemote('server:inventory:addItem', itemId, count, ownerType, ownerId, countItems, isEquip, params, timeout);
 
-    //mp.events.callRemote('server:inventory:addItem', 75, 1, 1, 1, 1, 0, JSON.stringify({userName: 'Special', superTint: -648943513}), 10);
+    // mp.events.callRemote('server:inventory:addItem', 474, 1, 1, 1, 1, 0, JSON.stringify({id:3}), 10);
 };
 
 inventory.addItemSql = function(itemId, count, ownerType, ownerId, countItems, isEquip = 0, params = "{}", timeout = 10) {
     mp.events.callRemote('server:inventory:addItemSql', itemId, count, ownerType, ownerId, countItems, isEquip, params, timeout);
+};
+
+inventory.addWorldItem = function(itemId, count, countItems, pos, rot, params = "{}", timeout = 10) {
+    mp.events.callRemote('server:inventory:addWorldItem', itemId, count, countItems, pos.x, pos.y, pos.z + 1, rot.x, rot.y, rot.z, params, timeout);
+};
+
+inventory.dropWeaponItem = function(itemId, pos, rot) {
+    mp.events.callRemote('server:inventory:dropWeaponItem', itemId, pos.x, pos.y, pos.z, rot.x, rot.y, rot.z);
 };
 
 inventory.addPlayerWeaponItem = function(itemId, count, ownerType, ownerId, countItems, isEquip = 0, params = "{}", text = 'Получено оружие', timeout = 10) {
@@ -634,6 +628,92 @@ inventory.getItemListSell = function() {
     mp.events.callRemote('server:inventory:getItemListSell');
 };
 
+inventory.getItemListSellFish = function(shopId = 0) {
+    mp.events.callRemote('server:inventory:getItemListSellFish', shopId);
+};
+
+inventory.startFishing = function(isUpgrade) {
+
+    if (!user.isCanFishing())
+    {
+        mp.game.ui.notifications.show("~r~Вы должны быть в океане, озёрах, реках или на рыбацких причалах");
+        return;
+    }
+    if (mp.players.local.isSwimming())
+    {
+        mp.game.ui.notifications.show("~r~Вы не должны плавать");
+        return;
+    }
+    if (mp.players.local.vehicle)
+    {
+        mp.game.ui.notifications.show("~r~Вы не должны быть в транспорте");
+        return;
+    }
+    if (Container.Data.HasLocally(0, 'fish'))
+    {
+        mp.game.ui.notifications.show("~r~Вы уже рыбачите");
+        return;
+    }
+
+    Container.Data.SetLocally(0, 'fish', true);
+    user.playScenario("WORLD_HUMAN_STAND_FISHING_" + methods.getRandomInt(0, 4));
+    setTimeout(async function () {
+
+        try {
+            let offset = 0;
+            if (user.isCanFishingPearceOcean() || user.isCanFishingPearceAlamo())
+                offset = 7;
+
+            let rare = 0;
+            if (methods.getRandomInt(0, 100) < 50 + offset)
+                rare = 1;
+
+            let type = 0;
+            if (user.isInOcean() || user.isCanFishingPearceOcean())
+                type = 1;
+            let day = 2;
+            if (weather.getHour() > 7)
+                day = 1;
+
+            if (isUpgrade) {
+                if (methods.getRandomInt(0, 100) < 40 + offset)
+                    rare = 2;
+                if (methods.getRandomInt(0, 100) < 30 + offset)
+                    rare = 3;
+                if (methods.getRandomInt(0, 100) < 20 + offset)
+                    rare = 4;
+                if (methods.getRandomInt(0, 100) < 10 + offset)
+                    rare = 5;
+            }
+
+            let tradeList = JSON.parse(await Container.Data.Get(-99, 'fishTrade'));
+            let fishRandom = [];
+            tradeList.forEach((item, idx) => {
+                if (item[1] === rare && item[2] === type && (item[3] === day || item[3] === 0))
+                    fishRandom.push(idx);
+            });
+
+            let fishId = tradeList[fishRandom[methods.getRandomInt(0, fishRandom.length)]][0];
+            if (fishId === 488)
+                quest.fish(false, -1, 4);
+            if (fishId === 528)
+                quest.fish(false, -1, 6);
+            if (fishId === 519)
+                quest.fish(false, -1, 7);
+
+            quest.fish(false, -1, 2);
+            user.stopScenario();
+            Container.Data.ResetLocally(0, 'fish');
+
+            inventory.takeNewItem(fishId);
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    }, methods.getRandomInt(15000, 30000))
+};
+
+
 inventory.data = function(id, itemId, prop, model, pos, rot, ownerType, ownerId, count, isCreate, isDelete) {
     this.id = id;
     this.itemId = itemId;
@@ -651,8 +731,8 @@ inventory.data = function(id, itemId, prop, model, pos, rot, ownerType, ownerId,
 inventory.types = {
     World : 0,
     Player : 1,
-    VehicleOwner : 2,
-    VehicleServer : 3,
+    BagArm : 2,
+    Condo : 3,
     BagSmall : 4,
     House : 5,
     Apartment : 6,

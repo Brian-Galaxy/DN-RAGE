@@ -43,6 +43,10 @@ houses.updatePin = function (id, pin) {
     mp.events.callRemote('server:houses:updatePin', id, pin);
 };
 
+houses.updateSafe = function (id, pin = 1) {
+    mp.events.callRemote('server:houses:updateSafe', id, pin);
+};
+
 houses.lockStatus = function (id, lockStatus) {
     mp.events.callRemote('server:houses:lockStatus', id, lockStatus);
 };

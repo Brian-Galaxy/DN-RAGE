@@ -471,6 +471,103 @@ lsc.showTun = function(player, modType, idx) {
         veh.setMod(modType, idx);
 };
 
+lsc.buySTun = function(player, modType, idx, price, shopId, itemName) {
+    methods.debug('lsc.buySTun');
+    if (!user.isLogin(player))
+        return;
+
+    if (user.getMoney(player) < price) {
+        player.notify('~r~У вас недостаточно средств');
+        return;
+    }
+
+    if (price < 0)
+        return;
+
+    let veh = player.vehicle;
+
+    if (!vehicles.exists(veh))
+        return;
+
+    if (veh.getVariable('user_id') != user.getId(player)) {
+        player.notify('~r~Это должен быть ваш транспорт');
+        return;
+    }
+
+    if (veh.getVariable('user_id') < 1) {
+        player.notify('~r~Транспорт должен быть личный');
+        return;
+    }
+
+    if (modType === 0) {
+        switch (idx) {
+            case 0:
+                idx = -1;
+                break;
+            case 1:
+                idx = 0;
+                break;
+            case 2:
+                idx = 0.25;
+                break;
+            case 3:
+                idx = 0.5;
+                break;
+            case 4:
+                idx = 0.75;
+                break;
+            case 5:
+                idx = 1;
+                break;
+        }
+    }
+
+    modType = modType + 100;
+
+    let car = vehicles.getData(veh.getVariable('container'));
+    let upgrade = JSON.parse(car.get('upgrade'));
+    upgrade[modType.toString()] = idx;
+    vehicles.set(veh.getVariable('container'), 'upgrade', JSON.stringify(upgrade));
+
+    user.removeMoney(player, price, itemName);
+    business.addMoney(shopId, price, itemName);
+    business.removeMoneyTax(shopId, price / 3);
+
+    player.call('client:vehicle:resetHandling');
+    player.notify('~g~Вы обновили ваш транспорт по цене: ~s~' + methods.moneyFormat(price));
+    vehicles.save(veh.getVariable('container'));
+};
+
+lsc.resetSTun = function(player, modType) {
+    methods.debug('lsc.resetSTun');
+    if (!user.isLogin(player))
+        return;
+
+    let veh = player.vehicle;
+
+    if (!vehicles.exists(veh))
+        return;
+
+    if (veh.getVariable('user_id') < 1) {
+        player.notify('~r~Транспорт должен быть личный');
+        return;
+    }
+    if (veh.getVariable('user_id') != user.getId(player)) {
+        player.notify('~r~Это должен быть ваш транспорт');
+        return;
+    }
+
+    modType = modType + 100;
+
+    let car = vehicles.getData(veh.getVariable('container'));
+    let upgrade = JSON.parse(car.get('upgrade'));
+    upgrade[modType.toString()] = -1;
+    vehicles.set(veh.getVariable('container'), 'upgrade', JSON.stringify(upgrade));
+
+    player.notify('~g~Вы обновили ТС, на стандартные настройки');
+    vehicles.save(veh.getVariable('container'));
+};
+
 lsc.buyTun = function(player, modType, idx, price, shopId, itemName) {
     methods.debug('lsc.buyTun');
     if (!user.isLogin(player))
@@ -522,6 +619,55 @@ lsc.buyTun = function(player, modType, idx, price, shopId, itemName) {
     }
 
     //vehicles.setTunning(veh);
+    vehicles.save(veh.getVariable('container'));
+};
+
+lsc.showNumberType = function(player, idx) {
+    if (!user.isLogin(player))
+        return;
+    let veh = player.vehicle;
+    if (!vehicles.exists(veh))
+        return;
+    if (veh.getVariable('user_id') < 1) {
+        player.notify('~r~Транспорт должен быть личный');
+        return;
+    }
+    veh.numberPlateType = idx;
+};
+
+lsc.buyNumberType = function(player, idx, price, shopId) {
+    methods.debug('lsc.buyColor1');
+    if (!user.isLogin(player))
+        return;
+
+    if (user.getMoney(player) < price) {
+        player.notify('~r~У вас недостаточно средств');
+        return;
+    }
+
+    if (price < 0)
+        return;
+
+    let veh = player.vehicle;
+
+    if (!vehicles.exists(veh))
+        return;
+
+    if (veh.getVariable('user_id') < 1) {
+        player.notify('~r~Транспорт должен быть личный');
+        return;
+    }
+
+    veh.numberPlateType = idx;
+    vehicles.set(veh.getVariable('container'), 'number_type', idx);
+
+    user.removeMoney(player, price, 'Дизайн таблички номера');
+    business.addMoney(shopId, price, 'Дизайн таблички номера');
+    business.removeMoneyTax(shopId, price / business.getPrice(shopId));
+
+    player.notify('~g~Вы установили деталь');
+
+    vehicles.setTunning(veh);
     vehicles.save(veh.getVariable('container'));
 };
 

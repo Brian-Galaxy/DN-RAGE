@@ -17,10 +17,6 @@ attachItems.registerAttaches = function () {
         //mp.attachmentMngr.register("laptop", mp.game.joaat("prop_laptop_lester"), 0x49D9, new mp.Vector3(0.20, 0.00, 0.05), new mp.Vector3(0.0, 180.0, 240), false, true);
         mp.attachmentMngr.register("laptop", mp.game.joaat("xm_prop_x17_laptop_lester_01"), 0x49D9, new mp.Vector3(0.20, 0.00, 0.05), new mp.Vector3(0.0, 180.0, 240), false, true);
 
-        mp.attachmentMngr.register("WORLD_HUMAN_PROTEST_1", mp.game.joaat("prop_cs_protest_sign_01"), 28422, new mp.Vector3(0.0, 0.0, 0.0), new mp.Vector3(0.0, 0.0, 180));
-        mp.attachmentMngr.register("WORLD_HUMAN_PROTEST_2", mp.game.joaat("prop_cs_protest_sign_02"), 28422, new mp.Vector3(0.0, 0.0, 0.0), new mp.Vector3(0.0, 0.0, 180));
-        mp.attachmentMngr.register("WORLD_HUMAN_PROTEST_3", mp.game.joaat("prop_cs_protest_sign_03"), 28422, new mp.Vector3(0.0, 0.0, 0.0), new mp.Vector3(0.0, 0.0, 180));
-
         mp.attachmentMngr.register("ems_-1903396261", -1903396261, 'bodyshell', new mp.Vector3(0, -2.5, 0), new mp.Vector3(0, 0, 0)); // Разбитый вертолёт
         mp.attachmentMngr.register("ems_1898296526", 1898296526, 'bodyshell', new mp.Vector3(0, -2.0, 0.3), new mp.Vector3(0, 0, 0)); // Разбитое авто 1
         mp.attachmentMngr.register("ems_1069797899", 1069797899, 'bodyshell', new mp.Vector3(0, -2.5, 0.4), new mp.Vector3(0, 0, 0)); // Разбитое авто 2
@@ -62,7 +58,20 @@ attachItems.registerAttaches = function () {
         mp.attachmentMngr.register("WORLD_HUMAN_MUSICIAN_1", 591916419, 60309, new mp.Vector3(0, 0, 0), new mp.Vector3(0, 0, 0)); //Играть музыку на бонге
         mp.attachmentMngr.register("WORLD_HUMAN_MUSICIAN_2", -708789241, 60309, new mp.Vector3(0, 0, 0), new mp.Vector3(0, 0, 0)); //Играть музыку на гитаре
 
+        mp.attachmentMngr.register("WORLD_HUMAN_PROTEST_1", mp.game.joaat("prop_cs_protest_sign_01"), 28422, new mp.Vector3(0.0, 0.0, 0.0), new mp.Vector3(0.0, 0.0, 180));
+        mp.attachmentMngr.register("WORLD_HUMAN_PROTEST_2", mp.game.joaat("prop_cs_protest_sign_02"), 28422, new mp.Vector3(0.0, 0.0, 0.0), new mp.Vector3(0.0, 0.0, 180));
+        mp.attachmentMngr.register("WORLD_HUMAN_PROTEST_3", mp.game.joaat("prop_cs_protest_sign_03"), 28422, new mp.Vector3(0.0, 0.0, 0.0), new mp.Vector3(0.0, 0.0, 180));
+
+        mp.attachmentMngr.register("WORLD_HUMAN_UMBRELLA", mp.game.joaat("p_amb_brolly_01"), 28422, new mp.Vector3(0.0, 0.0, 0.0), new mp.Vector3(0.0, 0.0, 180));
+        //mp.attachmentMngr.register("WORLD_HUMAN_BONG", mp.game.joaat("hei_heist_sh_bong_01"), 18905, new mp.Vector3(0,0,0.0), new mp.Vector3(95.0,190.0,180.0));
+        mp.attachmentMngr.register("WORLD_HUMAN_BONG", mp.game.joaat("hei_heist_sh_bong_01"), 18905, new mp.Vector3(0.2,-0.2,0.02), new mp.Vector3(85.0,210.0,-10));
+
+
         mp.attachmentMngr.register("WORLD_HUMAN_STAND_FISHING", -1910604593, 60309, new mp.Vector3(0, 0, 0), new mp.Vector3(0, 0, 0)); //Рыбачить удочкой
+        mp.attachmentMngr.register("WORLD_HUMAN_STAND_FISHING_0", -1910604593, 60309, new mp.Vector3(0, 0, 0), new mp.Vector3(0, 0, 0)); //Рыбачить удочкой
+        mp.attachmentMngr.register("WORLD_HUMAN_STAND_FISHING_1", -1910604593, 60309, new mp.Vector3(0, 0, 0), new mp.Vector3(0, 0, 0)); //Рыбачить удочкой
+        mp.attachmentMngr.register("WORLD_HUMAN_STAND_FISHING_2", -1910604593, 60309, new mp.Vector3(0, 0, 0), new mp.Vector3(0, 0, 0)); //Рыбачить удочкой
+        mp.attachmentMngr.register("WORLD_HUMAN_STAND_FISHING_3", -1910604593, 60309, new mp.Vector3(0, 0, 0), new mp.Vector3(0, 0, 0)); //Рыбачить удочкой
         mp.attachmentMngr.register("WORLD_HUMAN_PAPARAZZI", 434102459, 28422, new mp.Vector3(0, 0, 0), new mp.Vector3(0, 0, 0)); //Фотографировать на фотоаппарат
         mp.attachmentMngr.register("WORLD_HUMAN_GARDENER_LEAF_BLOWER", 1603835013, 28422, new mp.Vector3(0, 0, 0), new mp.Vector3(0, 0, 0)); //Работать ветродувом
         mp.attachmentMngr.register("WORLD_HUMAN_GARDENER_PLANT", -1934174148, 28422, new mp.Vector3(0, 0, 0), new mp.Vector3(0, 0, 0)); //Копать садовой лопаткой

@@ -318,21 +318,21 @@ ui.updateValues = function() {
                 if (isGreenZone) {
                     speed = true;
                     if (user.isGos())
-                        mp.events.call('client:setNewMaxSpeed', 100);
+                        mp.events.call('client:setNewMaxSpeedServer', 100);
                     else
-                        mp.events.call('client:setNewMaxSpeed', 60);
+                        mp.events.call('client:setNewMaxSpeedServer', 60);
                 }
                 else if (speed) {
                     speed = false;
-                    mp.events.call('client:setNewMaxSpeed', 0);
+                    mp.events.call('client:setNewMaxSpeedServer', 0);
                 }
             }
             else if (speed) {
                 speed = false;
-                mp.events.call('client:setNewMaxSpeed', 0);
+                mp.events.call('client:setNewMaxSpeedServer', 0);
             }
 
-            isYellowZone = weather.getHour() >= 6 && weather.getHour() < 22 && enums.zoneYellowList.indexOf(mp.game.zone.getNameOfZone(mp.players.local.position.x, mp.players.local.position.y, mp.players.local.position.z)) >= 0;
+            /*isYellowZone = weather.getHour() >= 6 && weather.getHour() < 22 && enums.zoneYellowList.indexOf(mp.game.zone.getNameOfZone(mp.players.local.position.x, mp.players.local.position.y, mp.players.local.position.z)) >= 0;*/
 
             let data = {
                 type: 'updateValues',

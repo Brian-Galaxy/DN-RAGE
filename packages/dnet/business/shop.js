@@ -195,13 +195,12 @@ shop.buy = function(player, itemId, price, shopId) {
         return;
 
     let amount = inventory.getInvAmount(player, user.getId(player), 1);
-    if (amount + items.getItemAmountById(itemId) > 30000) {
+    if (amount + items.getItemAmountById(itemId) > inventory.getPlayerInvAmountMax(player)) {
         player.notify('~r~В инвентаре нет места');
         return;
     }
 
     let params = { userName: user.getRpName(player) };
-
     if (itemId >= 27 && itemId <= 30)
         params = { userName: user.getRpName(player), type: itemId - 26, number: methods.getRandomPhone(), bg: 'https://i.imgur.com/v4aju8F.jpg' };
 

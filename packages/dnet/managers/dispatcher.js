@@ -188,11 +188,14 @@ mp.events.add("playerExitVehicle", (player, vehicle) => {
         if (vehicle.getVariable('taxiOrderId') && user.has(player, 'waitTaxi') && vehicle.getVariable('taxiOrderId') == user.get(player, 'phone') && user.isLogin(player) && user.isLogin(driver)) {
 
             let pos = JSON.parse(user.get(driver, 'taxiPoint'));
-            let pos2 = JSON.parse(user.get(driver, 'taxiPointFrom'));
-
             let price = user.get(driver, 'taxiPrice');
-            if (methods.distanceToPos(pos, driver.position) > 50)
-                price = methods.distanceToPos(pos2, driver.position) / 15;
+            try {
+                if (methods.distanceToPos(pos, driver.position) > 50)
+                    price = methods.distanceToPos(JSON.parse(user.get(driver, 'taxiPointFrom')), driver.position) / 15;
+            }
+            catch (e) {
+                
+            }
 
             user.reset(player, 'waitTaxi');
             user.removeMoney(player, price, 'Услуги такси');

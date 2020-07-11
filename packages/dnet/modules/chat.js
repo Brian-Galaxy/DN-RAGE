@@ -8,6 +8,8 @@ let fraction = require('../property/fraction');
 let gangWar = require('../managers/gangWar');
 let mafiaWar = require('../managers/mafiaWar');
 let racer = require('../managers/racer');
+let ptxSync = require('../managers/ptxSync');
+let graffiti = require('../managers/graffiti');
 
 let chat = exports;
 
@@ -183,6 +185,11 @@ mp.events.add('playerCommand', (player, command) => {
                 return;
             fraction.createCargoWar(methods.parseInt(command.substring(9)));
         }
+        else if (command.toLowerCase() === "graffwar") {
+            if (!user.isAdmin(player))
+                return;
+            graffiti.createWar();
+        }
         else if (command.toLowerCase() === "crimemwar") {
             if (!user.isAdmin(player))
                 return;
@@ -204,6 +211,25 @@ mp.events.add('playerCommand', (player, command) => {
             mafiaWar.startWar(1);
             mafiaWar.startWar(2);
             mafiaWar.startWar(3);
+        }
+        else if (command.toLowerCase().slice(0, 3) === "ptx") {
+            if (!user.isAdmin(player))
+                return;
+            let args = command.toLowerCase().split(' ');
+            const
+                id = 'car.cut_rcepsilon',
+                fxName = args[1],
+                effectName = args[2],
+                position = { x: player.position.x, y: player.position.y, z: player.position.z },
+                rotation = { x: 0, y: 0, z: 0 },
+                scale = 15.0,
+                xAxis = true,
+                yAxis = true,
+                zAxis = true
+            ;
+
+            let fx = ptxSync.addLoopedAtCoord(id, fxName, effectName, position, rotation, scale, xAxis, yAxis, zAxis);
+            setTimeout(() => fx.destroy(), 9000);
         }
         else if (command.toLowerCase() === "randmask") {
             if (!user.isAdmin(player, 5))

@@ -125,13 +125,6 @@ timer.min60Timer = function() {
             methods.debug(e);
         }
     }*/
-    for (let i = 1; i < 50; i++)
-    {
-        if (fraction.has(i, 'cantGrab')) {
-            fraction.reset(i, 'cantGrab');
-            fraction.set(i, 'cantGrab2', 0);
-        }
-    }
 
     try {
         mysql.executeQuery(`INSERT INTO stats_online (online) VALUES ('${mp.players.length}')`)
@@ -323,6 +316,8 @@ timer.sec5Timer = function() {
                             blipId = 601;
                         if (vInfo.class_name === 'Helicopters')
                             blipId = 353;
+                        if (vInfo.display_name === 'Rcbandito')
+                            blipId = 741;
                         if (vInfo.class_name === 'Planes')
                             blipId = 575;
                         if (vInfo.display_name === 'Police4' ||

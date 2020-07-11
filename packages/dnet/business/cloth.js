@@ -99,6 +99,19 @@ cloth.checkPosForOpenMenu = function (player) {
     }
 };
 
+cloth.findNearest = function(pos) {
+    methods.debug('cloth.findNearest');
+    let prevPos = new mp.Vector3(9999, 9999, 9999);
+    shopList.forEach(function (item,) {
+        if (item[0] === 3 || item[0] === 4 || item[0] === 999)
+            return;
+        let shopPos = new mp.Vector3(item[3], item[4], item[5]);
+        if (methods.distanceToPos(shopPos, pos) < methods.distanceToPos(prevPos, pos))
+            prevPos = shopPos;
+    });
+    return prevPos;
+};
+
 cloth.changeProp = function (player, body, clothId, color) {
     methods.debug('barberShop.changeProp');
     try {
@@ -254,7 +267,7 @@ cloth.buy = function (player, price, body, cloth, color, torso, torsoColor, para
                 params = `{"name": "${itemName} (${names[color]})", "sex": ${user.getSex(player)}, "hand": ${cloth}, "hand_color": ${color}}`;
             }
 
-            if (cloth == 41 || cloth == 45 || cloth == 82)
+            if (cloth == 41 || cloth == 45 || cloth == 82 || cloth == 22)
                 inventory.addItem(264, 1, inventory.types.Player, user.getId(player), 1, 1, params, 100);
             else
                 inventory.addItem(263, 1, inventory.types.Player, user.getId(player), 1, 1, params, 100);

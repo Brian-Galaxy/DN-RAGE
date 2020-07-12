@@ -723,7 +723,7 @@ inventory.equip = function(player, id, itemId, count, aparams) {
                     inventory.updateEquipStatus(id, true);
                 }
                 catch (e) {}
-            }, 100)
+            }, 1000)
         });
     } catch(e) {
         methods.debug(e);

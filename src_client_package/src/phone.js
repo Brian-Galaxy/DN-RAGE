@@ -1035,7 +1035,7 @@ phone.showAppFraction2 = async function() {
     if (orderLamar > 5000) {
         titleMenu.umenu.push(
             {
-                title: "Грузы Ламара",
+                title: "Грузы Ламара (Speedo)",
                 text: `Задание выполнено`,
                 type: 1,
                 clickable: false,
@@ -1069,7 +1069,7 @@ phone.showAppFraction2 = async function() {
     else {
         titleMenu.umenu.push(
             {
-                title: "Грузы Ламара",
+                title: "Грузы Ламара (Mule)",
                 text: `Перевезите ${orderLamarM}/300 грузов ламара и получите Mule`,
                 type: 1,
                 clickable: true,

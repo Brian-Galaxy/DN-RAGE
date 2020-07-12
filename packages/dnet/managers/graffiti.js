@@ -281,6 +281,12 @@ graffiti.changeGraffiti = function(player) {
                 try {
                     graffiti.reset(idx + 1, 'resmoke');
                     user.blockKeys(player, false);
+
+                    if (methods.distanceToPos(obj.position, player.position) > 4) {
+                        player.notify('~r~Вы слишком далеко');
+                        return;
+                    }
+
                     let newOwner = user.get(player, 'fraction_id2');
                     let objNew = mp.objects.new(graffiti.getType(graffiti.position[idx][0], newOwner), graffiti.position[idx][1],
                         {

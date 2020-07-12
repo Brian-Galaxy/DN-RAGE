@@ -200,31 +200,36 @@ mp.events.add("client:createGr6Checkpoint", (x, y, z) => {
 
 mp.events.add("playerEnterVehicle", function (vehicle, seat) {
 
-    mp.events.call('client:setNewMaxSpeed', 0);
-    mp.events.call('client:setNewMaxSpeedServer', 0);
+    try {
+        mp.events.call('client:setNewMaxSpeed', 0);
+        mp.events.call('client:setNewMaxSpeedServer', 0);
 
-    if (user.getCache('job') != 10)
-        return;
-    if (vehicle.getVariable('job') == 10) {
-        if (Container.Data.HasLocally(0, 'gr6Money') && Container.Data.HasLocally(0, 'gr6MoneyBag')) {
-            let money = Container.Data.GetLocally(0, 'gr6Money');
-            mp.events.callRemote('server:gr6:dropCar', money * 100, vehicle.remoteId);
-            if (user.getCache('hand') > 0)
-                user.setComponentVariation(5, 0, 0);
+        if (user.getCache('job') != 10)
+            return;
+        if (vehicle.getVariable('job') == 10) {
+            if (Container.Data.HasLocally(0, 'gr6Money') && Container.Data.HasLocally(0, 'gr6MoneyBag')) {
+                let money = Container.Data.GetLocally(0, 'gr6Money');
+                mp.events.callRemote('server:gr6:dropCar', money * 100, vehicle.remoteId);
+                if (user.getCache('hand') > 0)
+                    user.setComponentVariation(5, 0, 0);
 
+                Container.Data.ResetLocally(0, 'gr6Money');
+                Container.Data.ResetLocally(0, 'gr6MoneyBag');
+                mp.game.ui.notifications.show('~g~Вы загрузили деньги в транспорт');
+                user.giveJobSkill();
+            }
+        }
+        else if (Container.Data.HasLocally(0, 'gr6Money') && Container.Data.HasLocally(0, 'gr6MoneyBag')) {
             Container.Data.ResetLocally(0, 'gr6Money');
             Container.Data.ResetLocally(0, 'gr6MoneyBag');
-            mp.game.ui.notifications.show('~g~Вы загрузили деньги в транспорт');
-            user.giveJobSkill();
+            mp.game.ui.notifications.show('~r~Вы сели в не тот транспорт, деньги были удалены.');
+
+            if (user.getCache('hand') > 0)
+                user.setComponentVariation(5, 0, 0);
         }
     }
-    else if (Container.Data.HasLocally(0, 'gr6Money') && Container.Data.HasLocally(0, 'gr6MoneyBag')) {
-        Container.Data.ResetLocally(0, 'gr6Money');
-        Container.Data.ResetLocally(0, 'gr6MoneyBag');
-        mp.game.ui.notifications.show('~r~Вы сели в не тот транспорт, деньги были удалены.');
-
-        if (user.getCache('hand') > 0)
-            user.setComponentVariation(5, 0, 0);
+    catch (e) {
+        
     }
 });
 

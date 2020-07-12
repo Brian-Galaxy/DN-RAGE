@@ -178,25 +178,30 @@ antiCheat.secTimer = function() {
         prevPos = newPos;
 
         if (!user.isAdmin()) {
-            if (mp.players.local.isInAnyVehicle(true) && mp.players.local.handle === mp.players.local.vehicle.getPedInSeat(-1)) {
-                if (!mp.players.local.vehicle.isInAir() && !mp.players.local.vehicle.isInWater()) {
-                    let zPos = mp.game.gameplay.getGroundZFor3dCoord(mp.players.local.position.x, mp.players.local.position.y, mp.players.local.position.z, parseFloat(0), false);
-                    if (zPos + 10 < mp.players.local.vehicle.position.z) {
-                        attemptFly++;
-                        if (attemptFly > 2)
-                            user.kickAntiCheat('FlyHack');
+            try {
+                /*if (mp.players.local.isInAnyVehicle(true) && mp.players.local.handle === mp.players.local.vehicle.getPedInSeat(-1)) {
+                    if (!mp.players.local.vehicle.isInAir() && !mp.players.local.vehicle.isInWater()) {
+                        let zPos = mp.game.gameplay.getGroundZFor3dCoord(mp.players.local.position.x, mp.players.local.position.y, mp.players.local.position.z, parseFloat(0), false);
+                        if (zPos + 10 < mp.players.local.vehicle.position.z) {
+                            attemptFly++;
+                            if (attemptFly > 2)
+                                user.kickAntiCheat('FlyHack');
+                        }
                     }
                 }
+                else {
+                    if (!mp.players.local.isFalling() && !mp.players.local.isRagdoll() && !methods.isBlockKeys() && !mp.players.local.isInAir() && mp.players.local.getParachuteState() === -1) {
+                        let zPos = mp.game.gameplay.getGroundZFor3dCoord(mp.players.local.position.x, mp.players.local.position.y, mp.players.local.position.z, parseFloat(0), false);
+                        if (zPos + 10 < mp.players.local.position.z) {
+                            attemptFly++;
+                            if (attemptFly > 2)
+                                user.kickAntiCheat('FlyHack');
+                        }
+                    }
+                }*/
             }
-            else {
-                if (!mp.players.local.isFalling() && !mp.players.local.isRagdoll() && !methods.isBlockKeys() && !mp.players.local.isInAir() && mp.players.local.getParachuteState() === -1) {
-                    let zPos = mp.game.gameplay.getGroundZFor3dCoord(mp.players.local.position.x, mp.players.local.position.y, mp.players.local.position.z, parseFloat(0), false);
-                    if (zPos + 10 < mp.players.local.position.z) {
-                        attemptFly++;
-                        if (attemptFly > 2)
-                            user.kickAntiCheat('FlyHack');
-                    }
-                }
+            catch (e) {
+                methods.debug(e);
             }
         }
 

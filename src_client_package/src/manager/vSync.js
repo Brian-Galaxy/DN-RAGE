@@ -642,9 +642,12 @@ mp.events.add("playerEnterVehicle", (entity, seat) => {
         methods.debug(e);
     }
 
-    if (entity !== undefined && mp.vehicles.exists(entity)) {
-        vSync.updateValues(entity, true);
+    try {
+        if (entity !== undefined && mp.vehicles.exists(entity)) {
+            vSync.updateValues(entity, true);
+        }
     }
+    catch (e) {}
 });
 
 mp.events.add("playerLeaveVehicle", (entity) => {

@@ -207,7 +207,7 @@ shop.buy = function(player, itemId, price, shopId) {
     inventory.addItem(itemId, 1, 1, user.getId(player), 1, 0, JSON.stringify(params), 1);
 
     if (shopId > 0) {
-        player.notify('~g~Вы купили ' + items.getItemNameById(itemId) +  ' по цене: ~s~' + methods.moneyFormat(price));
+        player.notify('~g~Вы купили ' + items.getItemNameById(itemId) +  '. Цена за 1 ед. товара: ~s~' + methods.moneyFormat(price));
         user.removeMoney(player, price, 'Покупка ' + items.getItemNameById(itemId));
         business.addMoney(shopId, price, items.getItemNameById(itemId));
         business.removeMoneyTax(shopId, price / business.getPrice(shopId));

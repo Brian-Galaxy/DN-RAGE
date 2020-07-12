@@ -630,7 +630,7 @@ mp.events.add('client:events:custom:choiceRole', function(roleIndex) {
                     inventory.takeNewItemJust(15, "{}", 2);
                     inventory.takeNewItemJust(242, "{}", 4);
 
-                    user.showCustomNotify('Телефон находиться в инвентаре, экипируйте его', 0, 5, 10000);
+                    user.showCustomNotify('Телефон находится в инвентаре, экипируйте его', 0, 5, 10000);
                     mp.events.callRemote('server:shop:buy', 29, 0, 0);
                     break;
                 case 1:
@@ -641,7 +641,7 @@ mp.events.add('client:events:custom:choiceRole', function(roleIndex) {
                     user.addHistory(0, 'Получил гражданство');
 
                     user.addCashMoney(methods.getRandomInt(900, 1100));
-                    user.showCustomNotify('Телефон находиться в инвентаре, экипируйте его', 0, 5, 10000);
+                    user.showCustomNotify('Телефон находится в инвентаре, экипируйте его', 0, 5, 10000);
 
                     mp.events.callRemote('server:shop:buy', 29, 0, 0);
                     break;
@@ -3264,7 +3264,7 @@ mp.keys.bind(0x45, true, function() {
 mp.keys.bind(0x4D, true, function() {
     if (!user.isLogin())
         return;
-    if (!methods.isShowInput())
+    if (!methods.isShowInput() && mainMenu.isHide())
         mainMenu.showOrHide();
 });
 

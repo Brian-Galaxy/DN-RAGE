@@ -5420,6 +5420,7 @@ menuList.showSellFishMenu = async function(data, shopId) {
                 }
 
                 try {
+                    quest.fish(false, -1, 3);
                     business.addMoney(shopId, item.price / procent, 'Доля с продажи рыбы');
                     user.addMoney(item.price - (item.price / procent), 'Продажа рыбы');
                     inventory.deleteItem(item.id);
@@ -5435,6 +5436,7 @@ menuList.showSellFishMenu = async function(data, shopId) {
                     return;
                 }
                 try {
+                    quest.fish(false, -1, 3);
                     business.addMoney(shopId, item.price / 10, 'Доля с продажи рыбы');
                     user.addMoney(item.price, 'Продажа всей рыбы');
                     inventory.deleteItemsRange(487, 536);
@@ -6511,6 +6513,9 @@ menuList.showShopMenu = function(shopId, price = 2, type = 0)
                 quest.standart(false, -1, 4);
                 for (let i = 0; i < currentIndex + 1; i++)
                     mp.events.callRemote('server:shop:buy', item.itemId, item.price, shopId);
+                if (currentIndex > 0) {
+                    mp.game.ui.notifications.show(`~g~Стоимость всего товара: ~s~${methods.moneyFormat(item.price * (currentIndex + 1))}`);
+                }
             }
             if (item.doName === 'sellFish') {
                 inventory.getItemListSellFish(shopId);
@@ -6570,6 +6575,9 @@ menuList.showShopAlcMenu = function(shopId, price = 2, type = 0)
                 for (let i = 0; i < currentIndex + 1; i++)
                     mp.events.callRemote('server:shop:buy', item.itemId, item.price, shopId);
                 quest.standart(false, -1, 4);
+                if (currentIndex > 0) {
+                    mp.game.ui.notifications.show(`~g~Стоимость всего товара: ~s~${methods.moneyFormat(item.price * (currentIndex + 1))}`);
+                }
             }
             if (item.doName == 'grab') {
                 user.grab(shopId);
@@ -6798,6 +6806,9 @@ menuList.showShopMedMenu = function(shopId, price = 2)
             else if (item.price > 0) {
                 for (let i = 0; i < currentIndex + 1; i++)
                     mp.events.callRemote('server:shop:buy', item.itemId, item.price, shopId);
+                if (currentIndex > 0) {
+                    mp.game.ui.notifications.show(`~g~Стоимость всего товара: ~s~${methods.moneyFormat(item.price * (currentIndex + 1))}`);
+                }
             }
             else if (item.doName == 'grab') {
                 user.grab(shopId);
@@ -6853,6 +6864,9 @@ menuList.showShopFishMenu = function(shopId, price = 2)
                 }
                 for (let i = 0; i < currentIndex + 1; i++)
                     mp.events.callRemote('server:shop:buy', item.itemId, item.price, shopId);
+                if (currentIndex > 0) {
+                    mp.game.ui.notifications.show(`~g~Стоимость всего товара: ~s~${methods.moneyFormat(item.price * (currentIndex + 1))}`);
+                }
             }
             if (item.doName == 'grab') {
                 user.grab(shopId);
@@ -6905,6 +6919,9 @@ menuList.showShopHuntMenu = function(shopId, price = 2)
             if (item.price > 0) {
                 for (let i = 0; i < currentIndex + 1; i++)
                     mp.events.callRemote('server:shop:buy', item.itemId, item.price, shopId);
+                if (currentIndex > 0) {
+                    mp.game.ui.notifications.show(`~g~Стоимость всего товара: ~s~${methods.moneyFormat(item.price * (currentIndex + 1))}`);
+                }
             }
             if (item.doName == 'grab') {
                 user.grab(shopId);

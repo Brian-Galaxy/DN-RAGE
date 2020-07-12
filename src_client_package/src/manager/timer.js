@@ -252,35 +252,47 @@ timer.twoSecTimer = function() {
             */
 
             let veh = mp.players.local.vehicle;
+
             if (
-                veh.getClass() === 0 ||
-                veh.getClass() === 1 ||
-                veh.getClass() === 3 ||
-                veh.getClass() === 4 ||
-                veh.getClass() === 5 ||
-                veh.getClass() === 6 ||
-                veh.getClass() === 7 ||
-                veh.getClass() === 11 ||
-                veh.getClass() === 12 ||
-                veh.getClass() === 17 ||
-                veh.getClass() === 20
+                veh.model !== mp.game.joaat('issi3') &&
+                veh.model !== mp.game.joaat('issi4') &&
+                veh.model !== mp.game.joaat('issi5') &&
+                veh.model !== mp.game.joaat('issi6') &&
+                veh.model !== mp.game.joaat('patriot') &&
+                veh.model !== mp.game.joaat('patriotc') &&
+                veh.model !== mp.game.joaat('comet4') &&
+                veh.model !== mp.game.joaat('rumpo3')
             ) {
-                let value = mp.game.pathfind.getVehicleNodeProperties(mp.players.local.vehicle.position.x, mp.players.local.vehicle.position.y, mp.players.local.vehicle.position.z, 1, 1);
-                //let desc = 'Едешь как поц';
-                if (value.flags >= 8 && value.flags <= 12 || value.flags === 0 || value.flags === 3 || value.flags >= 40 && value.flags <= 47) {
-                    let vSpeed = vehicles.getSpeedMax(mp.players.local.vehicle.model) / 2.5;
-                    let currentSpeed = methods.getCurrentSpeedKmh();
-                    isSetSpeed = true;
-                    if (vSpeed < currentSpeed)
-                        mp.events.call('client:setNewMaxSpeedServer', currentSpeed - 4);
+                if (
+                    veh.getClass() === 0 ||
+                    veh.getClass() === 1 ||
+                    veh.getClass() === 3 ||
+                    veh.getClass() === 4 ||
+                    veh.getClass() === 5 ||
+                    veh.getClass() === 6 ||
+                    veh.getClass() === 7 ||
+                    veh.getClass() === 11 ||
+                    veh.getClass() === 12 ||
+                    veh.getClass() === 17 ||
+                    veh.getClass() === 20
+                ) {
+                    let value = mp.game.pathfind.getVehicleNodeProperties(mp.players.local.vehicle.position.x, mp.players.local.vehicle.position.y, mp.players.local.vehicle.position.z, 1, 1);
+                    //let desc = 'Едешь как поц';
+                    if (value.flags >= 8 && value.flags <= 12 || value.flags === 0 || value.flags === 3 || value.flags >= 40 && value.flags <= 47) {
+                        let vSpeed = vehicles.getSpeedMax(mp.players.local.vehicle.model) / 2.5;
+                        let currentSpeed = methods.getCurrentSpeedKmh();
+                        isSetSpeed = true;
+                        if (vSpeed < currentSpeed)
+                            mp.events.call('client:setNewMaxSpeedServer', currentSpeed - 4);
+                    }
+                    else if (isSetSpeed) {
+                        isSetSpeed = false;
+                        mp.events.call('client:setNewMaxSpeedServer', 0);
+                    }
+                    /*if (mp.game.invoke('0xDB89591E290D9182', mp.players.local) === 0)
+                        desc = 'Едешь по встречке';
+                    chat.sendLocal(`${isSetSpeed} | ${value.flags} | ${desc}`);*/
                 }
-                else if (isSetSpeed) {
-                    isSetSpeed = false;
-                    mp.events.call('client:setNewMaxSpeedServer', 0);
-                }
-                /*if (mp.game.invoke('0xDB89591E290D9182', mp.players.local) === 0)
-                    desc = 'Едешь по встречке';
-                chat.sendLocal(`${isSetSpeed} | ${value.flags} | ${desc}`);*/
             }
         } else if (isSetSpeed) {
             isSetSpeed = false;

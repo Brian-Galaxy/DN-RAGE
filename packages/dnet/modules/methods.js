@@ -883,13 +883,13 @@ methods.loadAllBlips = function () {
     methods.createBlip(new mp.Vector3(1853.22, 3686.6796875, 33.2670), 60, 16, 0.8, 'Sheriff Department');
     //methods.createBlip(new mp.Vector3(366.2178955078125, -1593.1396484375, 28.29206085205078), 60, 16, 0.8, 'Sheriff Department');
     methods.createBlip(new mp.Vector3(-158.44952392578125, -605.221923828125, 48.23460388183594), 535, 67, 0.8, 'Arcadius - Бизнес Центр');
-    methods.createBlip(new mp.Vector3(111.5687, -749.9395, 30.69), 498, 0, 0.8, 'Здание FIB');
+    //methods.createBlip(new mp.Vector3(111.5687, -749.9395, 30.69), 498, 0, 0.8, 'Здание FIB');
     methods.createBlip(new mp.Vector3(1830.489, 2603.093, 45.8891), 238, 0, 0.8, 'Федеральная тюрьма');
-    methods.createBlip(new mp.Vector3(-1379.659, -499.748, 33.15739), 419, 0, 0.8, 'Здание правительства');
+    methods.createBlip(new mp.Vector3(-1379.659, -499.748, 33.15739), 419, 0, 0.8, 'Правительство');
 
-    methods.createBlip(new mp.Vector3(311.9224853515625, -583.9681396484375, 44.299190521240234), 489, 59, 0.8, 'Здание больницы');
-    methods.createBlip(new mp.Vector3(-253.9735565185547, 6320.83935546875, 37.61736297607422), 489, 59, 0.8, 'Здание больницы');
-    methods.createBlip(new mp.Vector3(1836.8359375, 3676.784912109375, 33.27006912231445), 489, 59, 0.8, 'Здание больницы');
+    methods.createBlip(new mp.Vector3(311.9224853515625, -583.9681396484375, 44.299190521240234), 489, 59, 0.8, 'Больница');
+    methods.createBlip(new mp.Vector3(-253.9735565185547, 6320.83935546875, 37.61736297607422), 489, 59, 0.8, 'Больница');
+    methods.createBlip(new mp.Vector3(1836.8359375, 3676.784912109375, 33.27006912231445), 489, 59, 0.8, 'Больница');
 
     methods.createBlip(new mp.Vector3(-759.5448608398438, -709.0863037109375, 29.0616512298584), 305, 60, 0.6, 'Церковь');
     //methods.createBlip(new mp.Vector3(-1682.297607421875, -279.4432678222656, 50.8623161315918), 305, 60, 0.6, 'Церковь');

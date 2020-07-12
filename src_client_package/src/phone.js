@@ -84,6 +84,8 @@ phone.showOrHide = function() {
         mp.game.ui.notifications.show("~r~У Вас нет телефона");
         return;
     }
+    if (!phone.isHide() && mp.gui.cursor.visible) //TODO 1.1 Возможно придется исрпавить в 1.1
+        return;
 
     ui.callCef('phone', '{"type": "showOrHide"}');
 };

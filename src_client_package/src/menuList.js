@@ -12343,6 +12343,7 @@ menuList.showAdminClothMenu = function() {
 menuList.showAdminMaskMenu = function() {
     UIMenu.Menu.Create(`Admin`, `~b~Маски`);
 
+    UIMenu.Menu.AddMenuItem("~b~Все категории", "", {doName: "all"});
     for (let i = 0; i < enums.maskClasses.length; i++) {
         UIMenu.Menu.AddMenuItem(`${enums.maskClasses[i]}`, '', {slotId: i});
     }
@@ -12354,6 +12355,9 @@ menuList.showAdminMaskMenu = function() {
         UIMenu.Menu.HideMenu();
         if (item.slotId >= 0) {
             menuList.showAdminMaskListMenu(item.slotId);
+        }
+        if (item.doName === 'all') {
+            menuList.showAdminMaskListMenu(-1);
         }
     });
 };
@@ -12369,12 +12373,16 @@ menuList.showAdminMaskListMenu = function(slot) {
         let list = [];
         for (let i = 0; i < enums.maskList.length; i++) {
             let maskItem = enums.maskList[i];
-            if (maskItem[0] !== slot)
-                continue;
+
+            if (slot >= 0) {
+                if (maskItem[0] !== slot)
+                    continue;
+            }
 
             //[ClassID, "Name", MaskID, MaxColor, Price, NetCoin, УбратьПричёску, УбратьОчки, УбратьШляпу, УбратьСерьги, СтандартноеЛицо, УбратьСкулы, Скрытность, МагазинID, ШансВыпасть],
 
             let mItem = {};
+            mItem.maskn = methods.removeQuotesAll(maskItem[1]);
             mItem.maskId = maskItem[2];
             mItem.maskColor = maskItem[3];
             mItem.maskHair = maskItem[6];
@@ -12383,6 +12391,7 @@ menuList.showAdminMaskListMenu = function(slot) {
             mItem.maskAcc = maskItem[9];
             mItem.maskFaceDef = maskItem[10];
             mItem.maskFace = maskItem[11];
+            mItem.maskr = maskItem[14];
             mItem.idxFull = i;
             list.push(mItem);
             UIMenu.Menu.AddMenuItem(`${maskItem[1]}`, `Цена: ~g~${methods.moneyFormat(maskItem[4])}~br~~s~Цена: ~y~${methods.numberFormat(maskItem[5])}nc~br~~s~ID: ${i}`, mItem)
@@ -12399,6 +12408,18 @@ menuList.showAdminMaskListMenu = function(slot) {
             user.set('mask_color', 1);
             user.updateCharacterFace();
             user.updateCharacterCloth();
+        });
+
+        UIMenu.Menu.OnSelect.Add(async item => {
+            UIMenu.Menu.HideMenu();
+            if (item.idxFull >= 0) {
+                let str = await UIMenu.Menu.GetUserInput("Имя", "", 200);
+                let name = item.maskn;
+                if (str !== '')
+                    name = str;
+                let params = `{"name": "${methods.removeQuotes(methods.removeQuotes2(name))}", "mask": ${item.idxFull}, "desc": "${methods.getRareName(item.maskr)}"}`;
+                inventory.addItem(274, 1, inventory.types.Player, user.getCache('id'), 1, 0, params, 100);
+            }
         });
     }
     catch (e) {

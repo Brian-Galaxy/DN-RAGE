@@ -1071,6 +1071,30 @@ methods.notifyToAll = function (message) {
     mp.events.callRemote('server:players:notifyToAll', message);
 };
 
+methods.getRareName = function (proc) {
+    if (proc === 0)
+        return 'Обычная';
+    if (proc <= 10)
+        return 'Легендарная';
+    if (proc <= 20)
+        return 'Засекреченная';
+    if (proc <= 30)
+        return 'Мистическая';
+    if (proc <= 40)
+        return 'Элитная';
+    if (proc <= 50)
+        return 'Невероятно редкая';
+    if (proc <= 60)
+        return 'Очень редкая';
+    if (proc <= 70)
+        return 'Редкая';
+    if (proc <= 80)
+        return 'Необычная';
+    if (proc <= 90)
+        return 'Ширпотреб';
+    return 'Обычная';
+};
+
 methods.sortBy = function (arr, p) {
     return arr.slice(0).sort(function(a,b) {
         return (a[p] > b[p]) ? 1 : (a[p] < b[p]) ? -1 : 0;

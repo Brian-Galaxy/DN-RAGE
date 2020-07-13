@@ -477,6 +477,17 @@ mp.events.add('client:mainMenu:status', function(status) {
         mainMenu.hide();
 });
 
+mp.events.add('client:mainMenu:hide', function(status) {
+    methods.blockKeys(false);
+    mp.gui.cursor.show(false, false);
+    hidden = true;
+    ui.showHud();
+    mp.game.graphics.transitionFromBlurred(100);
+
+    if (bind.isChange)
+        bind.bindNewKey(0);
+});
+
 mp.events.add('client:mainMenu:sendReportOrAsk', function(text, type) {
     if (text !== '' && text !== undefined) {
         if (type === 1) {

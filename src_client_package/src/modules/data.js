@@ -151,6 +151,8 @@ class Data {
 
             //dataSetterList.push({id: id, key: key, value: value, isInt: isInt});
             mp.events.callRemote('modules:server:data:Set', id, key, value, isInt);
+            //mp.events.callRemote('modules:server:data:Set', 800000 + 30, 'orderLamarM', 100, true);
+
         } catch (e) {
             methods.debug(`CLNT: [SET] ERR: ${e}`);
         }

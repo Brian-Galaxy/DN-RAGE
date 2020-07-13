@@ -1007,11 +1007,12 @@ mp.events.add('client:updateVehicleInfo', (idx, data) => {
     }
 });
 
-mp.events.add('client:updateItemList', (weaponList, componentList, itemList) => {
+mp.events.add('client:updateItemList', (weaponList, componentList, itemList, craftList) => {
     methods.debug('Event: client:updateItemList');
 
     try {
         items.updateItems(JSON.parse(itemList));
+        items.updateCraft(JSON.parse(craftList));
         weapons.setComponentList(JSON.parse(componentList));
         weapons.setMapList(JSON.parse(weaponList));
     }
@@ -2295,10 +2296,12 @@ mp.events.add('client:inventory:craft', function(id) {
     }
     if (itemId === 252)
         count = 100;
-    inventory.addItem(itemId, countItems, inventory.types.Player, user.getCache('id'), count, 0, JSON.stringify(params));
+
+    mp.events.callRemote('server:inventory:craft', id, itemId, countItems, count, JSON.stringify(params));
+    /*inventory.addItem(itemId, countItems, inventory.types.Player, user.getCache('id'), count, 0, JSON.stringify(params));
     setTimeout(function () {
         inventory.getItemList(inventory.types.Player, user.getCache('id'));
-    }, 500);
+    }, 500);*/
 });
 
 mp.events.add('client:inventory:removeItemInInventory', function(id) {
@@ -3325,14 +3328,14 @@ mp.keys.bind(0x1B, true, function() {
     if (!ui.isShowHud())
         ui.showHud();
 
+    if (!mainMenu.isHide())
+        mainMenu.hide();
+
     if (methods.isBlockKeys())
         return;
 
     if (!phone.isHide())
         phone.hide();
-
-    if (!mainMenu.isHide())
-        mainMenu.showOrHide();
 
     if (!inventory.isHide())
         inventory.hide();

@@ -694,22 +694,22 @@ inventory.startFishing = function(isUpgrade) {
             });
 
             let fishId = tradeList[fishRandom[methods.getRandomInt(0, fishRandom.length)]][0];
+            inventory.takeNewItem(fishId);
+
             if (fishId === 488)
                 quest.fish(false, -1, 4);
             if (fishId === 528)
                 quest.fish(false, -1, 6);
             if (fishId === 519)
                 quest.fish(false, -1, 7);
-
             quest.fish(false, -1, 2);
-            user.stopScenario();
-            Container.Data.ResetLocally(0, 'fish');
-
-            inventory.takeNewItem(fishId);
         }
         catch (e) {
             methods.debug(e);
         }
+
+        user.stopScenario();
+        Container.Data.ResetLocally(0, 'fish');
     }, methods.getRandomInt(15000, 30000))
 };
 

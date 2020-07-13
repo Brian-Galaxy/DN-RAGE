@@ -634,7 +634,7 @@ mp.events.addRemoteCounted('server:enums:getCloth1', (player, requestID) => {
 
     setTimeout(function () {
         try {
-            player.call('client:updateItemList', [JSON.stringify(weapons.hashesMap), JSON.stringify(weapons.components), JSON.stringify(items.itemList)]);
+            player.call('client:updateItemList', [JSON.stringify(weapons.hashesMap), JSON.stringify(weapons.components), JSON.stringify(items.itemList), JSON.stringify(items.recipes)]);
         }
         catch (e) {
 
@@ -3568,6 +3568,12 @@ mp.events.addRemoteCounted('server:inventory:equip', (player, id, itemId, count,
     if (!user.isLogin(player))
         return;
     inventory.equip(player, id, itemId, count, aparams);
+});
+
+mp.events.addRemoteCounted('server:inventory:craft', (player, id, itemId, countItems, count, params) => {
+    if (!user.isLogin(player))
+        return;
+    inventory.craft(player, id, itemId, countItems, count, params);
 });
 
 mp.events.addRemoteCounted('server:inventory:fixItem', (player, id) => {

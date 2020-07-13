@@ -162,7 +162,7 @@ graffiti.stopWar = function() {
 
     let moneyToUser = new Map();
     graffiti.position.forEach((item, idx) => {
-        let frId = graffiti.reset(idx + 1, 'owner_id');
+        let frId = graffiti.get(idx + 1, 'owner_id');
         if (frId > 0) {
             fraction.setMoney(frId, fraction.getMoney(frId) + 1);
             if (moneyToUser.has(frId.toString()))

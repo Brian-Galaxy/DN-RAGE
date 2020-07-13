@@ -1,5 +1,6 @@
 import user from '../user';
 import phone from "../phone";
+import inventory from "../inventory";
 
 import ui from "../modules/ui";
 
@@ -518,7 +519,7 @@ quest.fish = function(isBot = false, start = -1, done = 0) {
                     else {
                         qParams[1] = methods.parseInt(qParams[1]) + 1;
                         user.setQuest(qName, start, qParams);
-                        mp.game.ui.notifications.show(`Квест\n~b~Вы поймали: ${qParams[0]}шт американская палии`);
+                        mp.game.ui.notifications.show(`Квест\n~b~Вы поймали: ${qParams[1]}шт американская палии`);
                     }
                     return;
                 }
@@ -535,29 +536,29 @@ quest.fish = function(isBot = false, start = -1, done = 0) {
             }
             case 6: {
                 let qParams = user.getQuestParams(qName);
-                if (methods.parseInt(qParams[1]) === 5) {
+                if (methods.parseInt(qParams[2]) === 5) {
                     mp.game.ui.notifications.show(`~b~Вы выполнили квест ~s~"${quest.getQuestLineName(qName, start)}"~b~, вы получили награду ~s~${quest.getQuestLinePrize(qName, start)}`);
                     user.setQuest(qName, start + 1);
                     user.addCashMoney(1500);
                 }
                 else {
-                    qParams[1] = methods.parseInt(qParams[1]) + 1;
+                    qParams[2] = methods.parseInt(qParams[2]) + 1;
                     user.setQuest(qName, start, qParams);
-                    mp.game.ui.notifications.show(`Квест\n~b~Вы поймали: ${qParams[0]}шт американская палии`);
+                    mp.game.ui.notifications.show(`Квест\n~b~Вы поймали: ${qParams[2]}шт американская палии`);
                 }
                 break;
             }
             case 7: {
                 let qParams = user.getQuestParams(qName);
-                if (methods.parseInt(qParams[1]) === 5) {
+                if (methods.parseInt(qParams[3]) === 5) {
                     mp.game.ui.notifications.show(`~b~Вы выполнили квест ~s~"${quest.getQuestLineName(qName, start)}"~b~, вы получили награду ~s~${quest.getQuestLinePrize(qName, start)}`);
                     user.setQuest(qName, start + 1);
                     user.addCashMoney(5000);
                 }
                 else {
-                    qParams[1] = methods.parseInt(qParams[1]) + 1;
+                    qParams[3] = methods.parseInt(qParams[3]) + 1;
                     user.setQuest(qName, start, qParams);
-                    mp.game.ui.notifications.show(`Квест\n~b~Вы поймали: ${qParams[0]}шт американская палии`);
+                    mp.game.ui.notifications.show(`Квест\n~b~Вы поймали: ${qParams[3]}шт американская палии`);
                 }
                 break;
             }

@@ -510,6 +510,10 @@ vehicles.spawnFractionCar = (id) => {
                     spawnPos = new mp.Vector3(-1071.622802734375, -856.7847900390625, 4.528593063354492);
                     spawnRot = methods.parseFloat(215.44134521484375);
                     break;
+                case 3:
+                    spawnPos = new mp.Vector3(118.83748626708984, -736.296630859375, 32.45846939086914);
+                    spawnRot = methods.parseFloat(341.29473876953125);
+                    break;
                 case 4:
                     spawnPos = new mp.Vector3(466.7912902832031, -3193.000732421875, 6.302977085113525);
                     spawnRot = methods.parseFloat(273.5457763671875);

@@ -110,144 +110,151 @@ inventory.getItemList = function(player, ownerType, ownerId, isFrisk = false, is
 };
 
 inventory.getItemListSell = function(player) {
-    if (!user.isLogin(player))
-        return;
-    try {
 
-        let data = [];
-        //let data2 = new Map();
+    setTimeout(function () {
+        if (!user.isLogin(player))
+            return;
+        try {
 
-        let sql = `SELECT * FROM items WHERE owner_id = '${user.getId(player)}' AND owner_type = '1' AND is_equip = 0 ORDER BY item_id DESC LIMIT 400`;
+            let data = [];
+            //let data2 = new Map();
 
-        mysql.executeQuery(sql, function (err, rows, fields) {
-            rows.forEach(row => {
+            let sql = `SELECT * FROM items WHERE owner_id = '${user.getId(player)}' AND owner_type = '1' AND is_equip = 0 ORDER BY item_id DESC LIMIT 400`;
 
-                let label = "";
+            mysql.executeQuery(sql, function (err, rows, fields) {
+                rows.forEach(row => {
 
-                if (row['prefix'] > 0 && row['number'] > 0 && row['key_id'] <= 0) {
-                    label = row['prefix'] + "-" + row['number'];
-                } else if (row['key_id'] > 0) {
+                    let label = "";
 
-                    if (row['item_id'] >= 265 && row['item_id'] <= 268) {
+                    if (row['prefix'] > 0 && row['number'] > 0 && row['key_id'] <= 0) {
+                        label = row['prefix'] + "-" + row['number'];
+                    } else if (row['key_id'] > 0) {
 
-                        if (row['prefix'] == 1)
-                            label = enums.clothF[row['key_id']][9];
-                        else
-                            label = enums.clothM[row['key_id']][9];
+                        if (row['item_id'] >= 265 && row['item_id'] <= 268) {
+
+                            if (row['prefix'] == 1)
+                                label = enums.clothF[row['key_id']][9];
+                            else
+                                label = enums.clothM[row['key_id']][9];
+                        }
+                        else if (row['item_id'] >= 269 && row['item_id'] <= 273) {
+                            if (row['prefix'] == 1)
+                                label = enums.propF[row['key_id']][5];
+                            else
+                                label = enums.propM[row['key_id']][5];
+                        }
+                        else {
+                            label = "#" + row['key_id'];
+                        }
                     }
-                    else if (row['item_id'] >= 269 && row['item_id'] <= 273) {
-                        if (row['prefix'] == 1)
-                            label = enums.propF[row['key_id']][5];
-                        else
-                            label = enums.propM[row['key_id']][5];
-                    }
-                    else {
-                        label = "#" + row['key_id'];
-                    }
-                }
 
-                data.push({id: row['id'], label: label, item_id: row['item_id'], count: row['count'], is_equip: row['is_equip'], params: row['params']});
+                    data.push({id: row['id'], label: label, item_id: row['item_id'], count: row['count'], is_equip: row['is_equip'], params: row['params']});
+                });
+
+                player.call('client:showSellItemsMenu', [data]);
             });
-
-            player.call('client:showSellItemsMenu', [data]);
-        });
-    } catch(e) {
-        methods.debug(e);
-    }
+        } catch(e) {
+            methods.debug(e);
+        }
+    }, 1000);
 };
 
 inventory.getItemListGunTranferSell = function(player) {
-    if (!user.isLogin(player))
-        return;
-    try {
+    setTimeout(function () {
+        if (!user.isLogin(player))
+            return;
+        try {
 
-        let data = [];
-        //let data2 = new Map();
+            let data = [];
+            //let data2 = new Map();
 
-        let sql = `SELECT * FROM items WHERE owner_id = '${user.getId(player)}' AND owner_type = '1' AND is_equip = 0 AND (item_id > 69 AND item_id < 127 OR item_id = 146 OR item_id = 147)  ORDER BY item_id DESC LIMIT 400`;
+            let sql = `SELECT * FROM items WHERE owner_id = '${user.getId(player)}' AND owner_type = '1' AND is_equip = 0 AND (item_id > 69 AND item_id < 127 OR item_id = 146 OR item_id = 147)  ORDER BY item_id DESC LIMIT 400`;
 
-        mysql.executeQuery(sql, function (err, rows, fields) {
-            rows.forEach(row => {
+            mysql.executeQuery(sql, function (err, rows, fields) {
+                rows.forEach(row => {
 
-                let label = "";
+                    let label = "";
 
-                if (row['prefix'] > 0 && row['number'] > 0 && row['key_id'] <= 0) {
-                    label = row['prefix'] + "-" + row['number'];
-                } else if (row['key_id'] > 0) {
+                    if (row['prefix'] > 0 && row['number'] > 0 && row['key_id'] <= 0) {
+                        label = row['prefix'] + "-" + row['number'];
+                    } else if (row['key_id'] > 0) {
 
-                    if (row['item_id'] >= 265 && row['item_id'] <= 268) {
+                        if (row['item_id'] >= 265 && row['item_id'] <= 268) {
 
-                        if (row['prefix'] == 1)
-                            label = enums.clothF[row['key_id']][9];
-                        else
-                            label = enums.clothM[row['key_id']][9];
+                            if (row['prefix'] == 1)
+                                label = enums.clothF[row['key_id']][9];
+                            else
+                                label = enums.clothM[row['key_id']][9];
+                        }
+                        else if (row['item_id'] >= 269 && row['item_id'] <= 273) {
+                            if (row['prefix'] == 1)
+                                label = enums.propF[row['key_id']][5];
+                            else
+                                label = enums.propM[row['key_id']][5];
+                        }
+                        else {
+                            label = "#" + row['key_id'];
+                        }
                     }
-                    else if (row['item_id'] >= 269 && row['item_id'] <= 273) {
-                        if (row['prefix'] == 1)
-                            label = enums.propF[row['key_id']][5];
-                        else
-                            label = enums.propM[row['key_id']][5];
-                    }
-                    else {
-                        label = "#" + row['key_id'];
-                    }
-                }
 
-                data.push({id: row['id'], label: label, item_id: row['item_id'], count: row['count'], is_equip: row['is_equip'], params: row['params']});
+                    data.push({id: row['id'], label: label, item_id: row['item_id'], count: row['count'], is_equip: row['is_equip'], params: row['params']});
+                });
+
+                player.call('client:showSellGunMenu', [data]);
             });
-
-            player.call('client:showSellGunMenu', [data]);
-        });
-    } catch(e) {
-        methods.debug(e);
-    }
+        } catch(e) {
+            methods.debug(e);
+        }
+    }, 1000);
 };
 
 inventory.getItemListGunFix = function(player) {
-    if (!user.isLogin(player))
-        return;
-    try {
+    setTimeout(function () {
+        if (!user.isLogin(player))
+            return;
+        try {
 
-        let data = [];
-        //let data2 = new Map();
+            let data = [];
+            //let data2 = new Map();
 
-        let sql = `SELECT * FROM items WHERE owner_id = '${user.getId(player)}' AND owner_type = '1' AND is_equip = 0 AND (item_id > 69 AND item_id < 127 OR item_id = 146 OR item_id = 147 OR item_id = 252)  ORDER BY item_id DESC LIMIT 400`;
+            let sql = `SELECT * FROM items WHERE owner_id = '${user.getId(player)}' AND owner_type = '1' AND is_equip = 0 AND (item_id > 69 AND item_id < 127 OR item_id = 146 OR item_id = 147 OR item_id = 252)  ORDER BY item_id DESC LIMIT 400`;
 
-        mysql.executeQuery(sql, function (err, rows, fields) {
-            rows.forEach(row => {
+            mysql.executeQuery(sql, function (err, rows, fields) {
+                rows.forEach(row => {
 
-                let label = "";
+                    let label = "";
 
-                if (row['prefix'] > 0 && row['number'] > 0 && row['key_id'] <= 0) {
-                    label = row['prefix'] + "-" + row['number'];
-                } else if (row['key_id'] > 0) {
+                    if (row['prefix'] > 0 && row['number'] > 0 && row['key_id'] <= 0) {
+                        label = row['prefix'] + "-" + row['number'];
+                    } else if (row['key_id'] > 0) {
 
-                    if (row['item_id'] >= 265 && row['item_id'] <= 268) {
+                        if (row['item_id'] >= 265 && row['item_id'] <= 268) {
 
-                        if (row['prefix'] == 1)
-                            label = enums.clothF[row['key_id']][9];
-                        else
-                            label = enums.clothM[row['key_id']][9];
+                            if (row['prefix'] == 1)
+                                label = enums.clothF[row['key_id']][9];
+                            else
+                                label = enums.clothM[row['key_id']][9];
+                        }
+                        else if (row['item_id'] >= 269 && row['item_id'] <= 273) {
+                            if (row['prefix'] == 1)
+                                label = enums.propF[row['key_id']][5];
+                            else
+                                label = enums.propM[row['key_id']][5];
+                        }
+                        else {
+                            label = "#" + row['key_id'];
+                        }
                     }
-                    else if (row['item_id'] >= 269 && row['item_id'] <= 273) {
-                        if (row['prefix'] == 1)
-                            label = enums.propF[row['key_id']][5];
-                        else
-                            label = enums.propM[row['key_id']][5];
-                    }
-                    else {
-                        label = "#" + row['key_id'];
-                    }
-                }
 
-                data.push({id: row['id'], label: label, item_id: row['item_id'], count: row['count'], is_equip: row['is_equip'], params: row['params']});
+                    data.push({id: row['id'], label: label, item_id: row['item_id'], count: row['count'], is_equip: row['is_equip'], params: row['params']});
+                });
+
+                player.call('client:showFixGunMenu', [data]);
             });
-
-            player.call('client:showFixGunMenu', [data]);
-        });
-    } catch(e) {
-        methods.debug(e);
-    }
+        } catch(e) {
+            methods.debug(e);
+        }
+    }, 1000);
 };
 
 inventory.getItemListClothTranferSell = function(player) {
@@ -452,6 +459,39 @@ inventory.fixItem = function(player, id) {
             inventory.updateItemCount(id, 100);
             inventory.deleteItem(rows[0]['id']);
             player.notify('~y~Вы выполнили починку');
+        });
+    } catch (e) {
+
+    }
+};
+
+inventory.craft = function(player, id, itemId, countItems, count, params) {
+
+    if (!user.isLogin(player))
+        return;
+    try {
+        let sql2 = '';
+
+        items.recipes[id].craft.forEach(item => {
+            sql2 += ` OR item_id=${item}`;
+        });
+
+        let sql = `SELECT * FROM items WHERE owner_id = ${user.getId(player)} AND owner_type = ${inventory.types.Player} AND (item_id = '-1' ${sql2})`;
+        mysql.executeQuery(sql, function (err, rows, fields) {
+            if (rows.length === 0) {
+                player.notify('~r~У вас нет всех компонентов для крафта');
+                inventory.getItemList(player, inventory.types.Player, user.getId(player));
+                return;
+            }
+
+            items.recipes[id].craft.forEach(item => {
+                inventory.deleteUserItemByItemId(inventory.types.Player, user.getId(player), item, 0, 1);
+            });
+
+            inventory.addItem(itemId, countItems, inventory.types.Player, user.getId(player), count, 0, params);
+            setTimeout(function () {
+                inventory.getItemList(player, inventory.types.Player, user.getId(player));
+            }, 500);
         });
     } catch (e) {
 
@@ -936,9 +976,33 @@ inventory.deleteItem = function(id) {
     }
 };
 
-inventory.deleteItemByItemId = function(id, isEquip = 0) {
+inventory.deleteItemByItemId = function(id, isEquip = 0, limit = -1) {
     try {
-        mysql.executeQuery(`DELETE FROM items WHERE item_id = ${id} AND is_equip = ${isEquip}`);
+        if (limit > 0) {
+            mysql.executeQuery(`SELECT * FROM items WHERE item_id = ${id} AND is_equip = ${isEquip} LIMIT ${limit}`, function (err, rows, fields) {
+                rows.forEach(row => {
+                    mysql.executeQuery(`DELETE FROM items WHERE id = ${row['id']}`);
+                })
+            });
+        }
+        else
+            mysql.executeQuery(`DELETE FROM items WHERE item_id = ${id} AND is_equip = ${isEquip}`);
+    } catch(e) {
+        methods.debug(e);
+    }
+};
+
+inventory.deleteUserItemByItemId = function(ownerType, ownerId, id, isEquip = 0, limit = -1) {
+    try {
+        if (limit > 0) {
+            mysql.executeQuery(`SELECT * FROM items WHERE owner_id = ${ownerId} AND owner_type = ${ownerType} AND item_id = ${id} AND is_equip = ${isEquip} LIMIT ${limit}`, function (err, rows, fields) {
+                rows.forEach(row => {
+                    mysql.executeQuery(`DELETE FROM items WHERE id = ${row['id']}`);
+                })
+            });
+        }
+        else
+            mysql.executeQuery(`DELETE FROM items WHERE owner_id = ${ownerId} AND owner_type = ${ownerType} AND item_id = ${id} AND is_equip = ${isEquip}`);
     } catch(e) {
         methods.debug(e);
     }

@@ -7,7 +7,6 @@ require('./modules/chat');
 require('./voice/voice');
 require('./managers/vSync');
 require('./managers/wpSync');
-require('./managers/ptxSync');
 require('./managers/attach');
 require('./managers/attachWeapons');
 require('./managers/dispatcher');

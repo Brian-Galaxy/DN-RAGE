@@ -4,7 +4,6 @@ import './modules/events';
 import './manager/vSync';
 import './manager/pSync';
 import './manager/wpSync';
-import './manager/ptxSync';
 import './manager/shoot';
 import './manager/heliCam';
 import './manager/attachWeapons';

@@ -45,7 +45,6 @@ let racer = require('../managers/racer');
 let gangZone = require('../managers/gangZone');
 let trucker = require('../managers/trucker');
 let vSync = require('../managers/vSync');
-let ptxSync = require('../managers/ptxSync');
 
 mp.events.__add__ = mp.events.add;
 
@@ -7049,25 +7048,6 @@ mp.events.add('playerJoin', player => {
     );
 
     player.outputChatBox("RAGE_Multiplayer HAS BEEN STARTED.");
-
-    player.call('particleFx:setup', [ptxSync.toArray()]);
-});
-
-mp.events.add('onPlayerParticleFxStreamIn', (player, particleId) => {
-
-});
-
-mp.events.add('onPlayerParticleFxStreamOut', (player, particleId) => {
-
-});
-
-mp.events.add('onParticleFxEntityDisconnect', (player, particleId) => {
-    try {
-        const particle = ptxSync.get(particleId);
-        if(particles)
-            particle.destroy();
-    }
-    catch (e) {}
 });
 
 mp.events.add('server:playerWeaponShot', (player, targetId) => {

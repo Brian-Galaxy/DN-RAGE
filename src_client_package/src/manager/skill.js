@@ -260,10 +260,15 @@ let updateStats = function() {
 };
 
 mp.events.add('render', () => {
-    if (!fireMod) {
-        mp.game.player.disableFiring(false);
-        if (mp.game.controls.isDisabledControlJustPressed(0, 24))
-            mp.game.audio.playSoundFrontend(-1, "Faster_Click", "RESPAWN_ONLINE_SOUNDSET", true);
+    try {
+        if (!fireMod) {
+            mp.game.player.disableFiring(false);
+            if (mp.game.controls.isDisabledControlJustPressed(0, 24))
+                mp.game.audio.playSoundFrontend(-1, "Faster_Click", "RESPAWN_ONLINE_SOUNDSET", true);
+        }
+    }
+    catch (e) {
+        
     }
 });
 

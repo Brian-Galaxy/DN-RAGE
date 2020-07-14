@@ -1236,11 +1236,37 @@ phone.showAppFraction2 = async function() {
                     params: { name: "none" }
                 },
                 {
+                    title: "Процент отмыва организации",
+                    text: `${fData.get('proc_clear')}%`,
+                    modalTitle: 'Введите число',
+                    modalButton: ['Отмена', 'Принять'],
+                    type: 8,
+                    clickable: true,
+                    params: { name: "changeClear" }
+                },
+                {
                     title: "Модернизация",
                     type: 1,
                     clickable: true,
                     params: { name: "upgrade" }
                 },
+                {
+                    title: "Принять в организацию",
+                    modalTitle: 'Введите ID',
+                    modalButton: ['Отмена', 'Принять'],
+                    type: 8,
+                    clickable: true,
+                    params: { name: "inviteFraction2" }
+                },
+            ],
+        };
+        menu.items.push(titleMenu);
+    }
+
+    if ((user.isDepLeader2() || user.isDepSubLeader2()) && user.getCache('rank_type') === 0) {
+        let titleMenu = {
+            title: 'Раздел для руководства',
+            umenu: [
                 {
                     title: "Принять в организацию",
                     modalTitle: 'Введите ID',
@@ -4500,6 +4526,20 @@ phone.callBackModalInput = async function(paramsJson, text) {
         }
         if (params.name == 'inviteFraction2') {
             mp.events.callRemote('server:phone:inviteFraction2', methods.parseInt(text));
+        }
+        if (params.name == 'changeClear') {
+            let prc = methods.parseInt(text);
+            if (prc < 0) {
+                mp.game.ui.notifications.show(`~r~Нелья вводить число меньше 0`);
+                return;
+            }
+            if (prc > 100) {
+                mp.game.ui.notifications.show(`~r~Нелья вводить число больше 100`);
+                return;
+            }
+            fraction.set(user.getCache('fraction_id2'), 'proc_clear', prc);
+            mp.game.ui.notifications.show(`~b~Вы изменили процент отмыва`);
+            setTimeout(phone.showAppFraction2, 500);
         }
         if (params.name == 'mafiaClearWanted') {
             mp.events.callRemote('server:phone:mafiaClearWanted', methods.parseInt(text));

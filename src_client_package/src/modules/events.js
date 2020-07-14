@@ -2385,9 +2385,14 @@ mp.events.add('client:inventory:moveTo', function(id, itemId, ownerId, ownerType
 
         inventory.dropItem(id, itemId, mp.players.local.position, mp.players.local.getRotation(0));
     }
-    else if (ownerType !== 1 && (itemId === 141 || itemId === 140)) {
-        inventory.deleteItem(id);
-        mp.game.ui.notifications.show("~r~Пачка была удалена");
+    else if (ownerType === inventory.types.Bag && (itemId === 141 || itemId === 140)) {
+        mp.game.ui.notifications.show("~r~Пачку денег нельзя сюда переложить");
+    }
+    else if (ownerType === inventory.types.BagArm && (itemId === 141 || itemId === 140)) {
+        mp.game.ui.notifications.show("~r~Пачку денег нельзя сюда переложить");
+    }
+    else if (ownerType === inventory.types.BagSmall && (itemId === 141 || itemId === 140)) {
+        mp.game.ui.notifications.show("~r~Пачку денег нельзя сюда переложить");
     }
     else if (ownerType === inventory.types.BagSmall && itemId === 263 || ownerType === inventory.types.Bag && itemId === 264 || ownerType === inventory.types.BagArm && itemId === 252) {
         mp.game.ui.notifications.show("~r~Нельзя ложить сумку в сумку, образуется черная дыра и нам всем придёт ТАРКОВ");

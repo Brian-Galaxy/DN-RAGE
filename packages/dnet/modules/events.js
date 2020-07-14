@@ -6450,19 +6450,22 @@ mp.events.addRemoteCounted('server:sellMoney', (player) => {
 
         if (count > 0) {
 
-            let moneyHalf = money / 2 / 1000;
             let frId = user.get(player, 'fraction_id2');
+            let procent = fraction.get(frId, 'proc_clear');
+            let moneyHalf = money / 1000;
             let currentOnline = methods.getCurrentOnlineFraction2(frId);
 
-            fraction.addMoney(frId, moneyHalf, 'Отмыв средств');
+            fraction.addMoney(frId, moneyHalf * (procent / 100), 'Отмыв средств');
 
-            mp.players.forEach(p => {
-                if (user.isLogin(p) && user.get(p, 'fraction_id2') === frId) {
-                    user.addCryptoMoney(p, moneyHalf / currentOnline, 'Отмыв средств');
-                    p.notify(`~g~К вам на счет поступило: ~s~${methods.cryptoFormat(moneyHalf / currentOnline)}`);
-                }
-            });
-            player.notify('~b~Деньги с отмыва были разделены следующим образом. 50% идёт на счет организации, 50% разделяется над всеми, кто в сети');
+            if (procent > 99) {
+                mp.players.forEach(p => {
+                    if (user.isLogin(p) && user.get(p, 'fraction_id2') === frId) {
+                        user.addCryptoMoney(p, moneyHalf * ((100 - procent) / 100) / currentOnline, 'Отмыв средств');
+                        p.notify(`~g~К вам на счет поступило: ~s~${methods.cryptoFormat(moneyHalf / currentOnline)}`);
+                    }
+                });
+            }
+            player.notify(`~b~Деньги с отмыва были разделены следующим образом. ${procent}% идёт на счет организации, ${100 - procent}% разделяется над всеми, кто в сети`);
         }
         else {
             player.notify('~r~У Вас нет денег для отмыва');

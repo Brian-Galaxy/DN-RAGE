@@ -114,13 +114,13 @@ bank.doorPosExplode = [
 bank.loadAll = function() {
     methods.debug('bank.loadAll');
 
-    methods.createBlip(bank.pacificPos, 374, 65, 0.8, 'Bank - Pacific Standard');
-    methods.createBlip(bank.blainePos, 374, 67, 0.8, 'Bank - Blaine County Savings');
-    methods.createBlip(bank.mazePos, 374, 59, 0.8, 'Bank - Maze');
+    methods.createBlip(bank.pacificPos, 500, 65, 0.9, 'Bank - Pacific Standard');
+    methods.createBlip(bank.blainePos, 500, 67, 0.9, 'Bank - Blaine County Savings');
+    methods.createBlip(bank.mazePos, 500, 59, 0.9, 'Bank - Maze');
 
     bank.fleecaMarkers.forEach(function (item) {
         let bankPos = new mp.Vector3(item[0], item[1], item[2]);
-        methods.createBlip(bankPos, 374, 69, 0.8, 'Bank - Fleeca');
+        methods.createBlip(bankPos, 500, 69, 0.9, 'Bank - Fleeca');
     });
 
     bank.markers.forEach(function (item) {

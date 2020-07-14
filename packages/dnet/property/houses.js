@@ -149,7 +149,7 @@ houses.loadAll = function() {
             }
 
             let pos = new mp.Vector3(parseFloat(item['x']), parseFloat(item['y']), parseFloat(item['z']));
-            let blip = methods.createBlip(pos, sprite, item['user_id'] > 0 ? 59 : 69, scale, name);
+            let blip = methods.createBlip(pos, sprite, item['user_id'] > 0 ? 59 : 69, scale - (item['user_id'] > 0 ? 0.15 : 0), name);
 
             let hBlip = {
                 blip: blip,

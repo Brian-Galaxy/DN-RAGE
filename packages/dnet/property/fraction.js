@@ -543,6 +543,7 @@ fraction.loadAll = function() {
             fraction.set(item['id'], 'is_war', item['is_war']);
             fraction.set(item['id'], 'is_mafia', item['is_mafia']);
             fraction.set(item['id'], 'is_kill', item['is_kill']);
+            fraction.set(item['id'], 'proc_clear', item['proc_clear']);
             fraction.set(item['id'], 'spawn_x', item['spawn_x']);
             fraction.set(item['id'], 'spawn_y', item['spawn_y']);
             fraction.set(item['id'], 'spawn_z', item['spawn_z']);
@@ -573,6 +574,9 @@ fraction.loadAll = function() {
                     color = 69;
 
                 methods.createBlip(new mp.Vector3(item['spawn_x'], item['spawn_y'], item['spawn_z']), 310, color, 0.6, 'Титульная тер.');
+            }
+            else if (item['spawn_x'] !== 0) {
+                methods.createBlip(new mp.Vector3(item['spawn_x'], item['spawn_y'], item['spawn_z']), 565, 37, 0.6, 'Spawn орг.');
             }
         });
         count = rows.length;
@@ -1571,7 +1575,7 @@ fraction.startGrabShopGang = function(player, itemId = 0) {
                     }
 
                     if (methods.getRandomInt(0, 100) < 40) {
-                        inventory.addItem(141, 1, inventory.types.Player, user.getId(player), methods.getRandomInt(shopItem.sumMax, shopItem.sumMin) * 1.9, 0, "{}", 2);
+                        inventory.addItem(141, 1, inventory.types.Player, user.getId(player), methods.getRandomInt(shopItem.sumMax, shopItem.sumMin) * 5, 0, "{}", 2);
                         mp.players.forEach(p => {
                             if (user.isLogin(p) && user.get(p, 'fraction_id2') === frId) {
                                 user.deleteBlip(p, i + 1000);
@@ -1614,6 +1618,7 @@ fraction.save = function(id) {
         sql = sql + ", is_war = '" + methods.parseInt(fraction.get(id, "is_war")) + "'";
         sql = sql + ", is_mafia = '" + methods.parseInt(fraction.get(id, "is_mafia")) + "'";
         sql = sql + ", is_kill = '" + methods.parseInt(fraction.get(id, "is_kill")) + "'";
+        sql = sql + ", proc_clear = '" + methods.parseInt(fraction.get(id, "proc_clear")) + "'";
         sql = sql + ", spawn_x = '" + methods.parseInt(fraction.get(id, "spawn_x")) + "'";
         sql = sql + ", spawn_y = '" + methods.parseInt(fraction.get(id, "spawn_y")) + "'";
         sql = sql + ", spawn_z = '" + methods.parseInt(fraction.get(id, "spawn_z")) + "'";

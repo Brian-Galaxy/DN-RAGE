@@ -485,13 +485,15 @@ inventory.craft = function(player, id, itemId, countItems, count, params) {
             }
 
             items.recipes[id].craft.forEach(item => {
-                inventory.deleteUserItemByItemId(inventory.types.Player, user.getId(player), item, 0, 1);
+                setTimeout(function () {
+                    inventory.deleteUserItemByItemId(inventory.types.Player, user.getId(player), item, 0, 1);
+                }, methods.getRandomInt(1, 500))
             });
 
             inventory.addItem(itemId, countItems, inventory.types.Player, user.getId(player), count, 0, params);
             setTimeout(function () {
                 inventory.getItemList(player, inventory.types.Player, user.getId(player));
-            }, 500);
+            }, 1000);
         });
     } catch (e) {
 

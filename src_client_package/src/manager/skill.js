@@ -173,6 +173,10 @@ let updateStats = function() {
         return;
 
     try {
+
+        if (user.getCache('online_time') < 100)
+            user.setCache('stats_endurance', 70);
+
         mp.game.gameplay.terminateAllScriptsWithThisName('stats_controller﻿');
 
         mp.game.stats.statSetInt(mp.game.joaat("SP0_TOTAL_CASH"), user.getCashMoney() + user.getBankMoney(), false);

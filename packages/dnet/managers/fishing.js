@@ -34,4 +34,12 @@ fishing.trade = function () {
     });
     Container.Data.Set(-99, 'fishTrade', JSON.stringify(prices));
     setTimeout(fishing.trade, methods.getRandomInt(30, 45) * 1000 * 60);
+
+    methods.notifyWithPictureToAll(
+        `Биржа рыбаков`,
+        "~y~Новости биржи",
+        `Цены на рыбу были изменены`,
+        "CHAR_LIFEINVADER",
+        1
+    );
 };

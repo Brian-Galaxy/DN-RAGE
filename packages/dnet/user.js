@@ -444,6 +444,9 @@ user.loadUser = function(player, name, spawn = 'Стандарт') {
 
                 methods.loadDeleteObject(player);
 
+                user.setArmour(player, user.get(player, 'ap'));
+                user.setHealth(player, user.get(player, 'hp'));
+
                 setTimeout(function () {
                     try {
                         user.setArmour(player, user.get(player, 'ap'));
@@ -1610,8 +1613,15 @@ user.showCustomNotify = function(player, text, style = 0, layout = 5, time = 500
     methods.debug('user.showCustomNotify', text);
     if (!mp.players.exists(player))
         return;
+    player.call('client:user:showCustomNotify', [text, style, layout, time]);
+    //user.callCef(player, 'notify', JSON.stringify({type: style, layout: layout, text: text, time: time}))
+};
 
-    user.callCef(player, 'notify', JSON.stringify({type: style, layout: layout, text: text, time: time}))
+user.playSound = function(player, name, ref) {
+    methods.debug('user.playSound', name, ref);
+    if (!mp.players.exists(player))
+        return;
+    player.call('client:user:playSound', [name, ref]);
 };
 
 user.setDating = function(player, key, value) {
@@ -1720,19 +1730,30 @@ user.getVehicleDriver = function(vehicle) {
     return driver;
 };
 
-user.addMoney = function(player, money, text = 'Финансовая операция') {
-    user.addCashMoney(player, money, text);
+user.addMoney = function(player, money, text = 'Финансовая операция', payType = 0) {
+    if (payType === 1)
+        user.addBankMoney(player, money, text);
+    else
+        user.addCashMoney(player, money, text);
 };
 
-user.removeMoney = function(player, money, text = 'Финансовая операция') {
-    user.removeCashMoney(player, money, text);
+user.removeMoney = function(player, money, text = 'Финансовая операция', payType = 0) {
+    if (payType === 1)
+        user.removeBankMoney(player, money, text);
+    else
+        user.removeCashMoney(player, money, text);
 };
 
-user.setMoney = function(player, money) {
-    user.setCashMoney(player, money);
+user.setMoney = function(player, money, payType = 0) {
+    if (payType === 1)
+        user.setBankMoney(player, money);
+    else
+        user.setCashMoney(player, money);
 };
 
-user.getMoney = function(player) {
+user.getMoney = function(player, payType = 0) {
+    if (payType === 1)
+        return user.getBankMoney(player);
     return user.getCashMoney(player);
 };
 
@@ -2669,7 +2690,7 @@ user.giveLic = function (player, lic, monthEnd = 12, desc = '') {
     user.addHistory(player, 4, `Получил лицензию ${licName} на ${monthEnd} мес. ` + desc);
 };
 
-user.buyLicense = function (player, type, price, month) {
+user.buyLicense = function (player, type, price, month, typePay = 0) {
     if (!user.isLogin(player))
         return;
     methods.debug('licenseCenter.buy');
@@ -2686,12 +2707,22 @@ user.buyLicense = function (player, type, price, month) {
 
         if (!user.get(player, type))
         {
-            if (user.getMoney(player) < price)
-            {
-                player.notify("~r~У Вас недостаточно средств");
-                return;
+            if (typePay === 1) {
+                if (user.getBankMoney(player) < price)
+                {
+                    player.notify("~r~У Вас недостаточно средств");
+                    return;
+                }
+                user.removeBankMoney(player, price, 'Покупка лицензии');
             }
-            user.removeMoney(player, price, 'Покупка лицензии');
+            else {
+                if (user.getMoney(player) < price)
+                {
+                    player.notify("~r~У Вас недостаточно средств");
+                    return;
+                }
+                user.removeMoney(player, price, 'Покупка лицензии');
+            }
             coffer.addMoney(price);
 
             user.giveLic(player, type, month);

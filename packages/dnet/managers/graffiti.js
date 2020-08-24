@@ -166,9 +166,9 @@ graffiti.stopWar = function() {
         if (frId > 0) {
             fraction.setMoney(frId, fraction.getMoney(frId) + 1);
             if (moneyToUser.has(frId.toString()))
-                moneyToUser.set(frId.toString(), moneyToUser.get(frId.toString()) + 0.1);
+                moneyToUser.set(frId.toString(), moneyToUser.get(frId.toString()) + 0.2);
             else
-                moneyToUser.set(frId.toString(), 0.1);
+                moneyToUser.set(frId.toString(), 0.2);
         }
     });
 

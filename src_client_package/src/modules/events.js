@@ -6,6 +6,7 @@ import methods from './methods';
 import cefMenu from './cefMenu';
 
 import cloth from '../business/cloth';
+import vShop from "../business/vShop";
 
 import user from '../user';
 import menuList from '../menuList';
@@ -15,9 +16,12 @@ import inventory from "../inventory";
 import items from "../items";
 import phone from "../phone";
 import mainMenu from "../mainMenu";
+import shopMenu from "../shopMenu";
 import weapons from "../weapons";
 import chat from "../chat";
 import walkie from "../walkie";
+import antiCheat from "../antiCheat";
+import coffer from "../coffer";
 
 import ui from "./ui";
 
@@ -28,21 +32,17 @@ import dispatcher from "../manager/dispatcher";
 import jobPoint from "../manager/jobPoint";
 import quest from "../manager/quest";
 import jail from "../manager/jail";
+import object from "../manager/object";
+import hosp from "../manager/hosp";
+import edu from "../manager/edu";
 
 import vehicles from "../property/vehicles";
 import business from "../property/business";
-import vShop from "../business/vShop";
-import antiCheat from "../antiCheat";
-import hosp from "../manager/hosp";
-import edu from "../manager/edu";
+import fraction from "../property/fraction";
 
 import gr6 from "../jobs/gr6";
 import trucker from "../jobs/trucker";
 
-import coffer from "../coffer";
-import fraction from "../property/fraction";
-import racer from "../manager/racer";
-import object from "../manager/object";
 
 mp.gui.chat.enabled = false;
 
@@ -624,6 +624,12 @@ mp.events.add('client:events:custom:choiceRole', function(roleIndex) {
                 user.teleport(enums.spawnByRole[roleIdx][0], enums.spawnByRole[roleIdx][1], enums.spawnByRole[roleIdx][2], enums.spawnByRole[roleIdx][3]);
                 return;
             }
+
+            setTimeout(function () {
+                user.set('work_lic', methods.getRandomWorkID());
+                user.set('work_date', weather.getFullRpDate());
+                user.addHistory(0, 'Получил WorkID');
+            }, 5000);
 
             switch (roleIndex) {
                 case 0:
@@ -1805,6 +1811,14 @@ mp.events.add('client:user:setDating', (key, val) => {
     user.setDating(key, val);
 });
 
+mp.events.add('client:user:showCustomNotify', (text, style, layout, time) => {
+    user.showCustomNotify(text, style, layout, time);
+});
+
+mp.events.add('client:user:playSound', (name, ref) => {
+    user.playSound(name, ref);
+});
+
 mp.events.add('client:user:updateDating', (datingList) => {
     try {
         JSON.parse(datingList).forEach(item => {
@@ -1858,6 +1872,16 @@ mp.events.add('client:trucker:acceptOffer2', (id, name, company, trName, cl1, cl
 mp.events.add('client:menuList:showMazeOfficeTeleportMenu', () => {
     methods.debug('Event: client:menuList:showMazeOfficeTeleportMenu');
     menuList.showMazeOfficeTeleportMenu();
+});
+
+mp.events.add('client:menuList:showGovLift1OfficeTeleportMenu', () => {
+    methods.debug('Event: client:menuList:showMazeOfficeTeleportMenu');
+    menuList.showGovLift1OfficeTeleportMenu();
+});
+
+mp.events.add('client:menuList:showGovLift2OfficeTeleportMenu', () => {
+    methods.debug('Event: client:menuList:showMazeOfficeTeleportMenu');
+    menuList.showGovLift2OfficeTeleportMenu();
 });
 
 mp.events.add('client:menuList:showBuilder3TeleportMenu', () => {
@@ -2373,7 +2397,11 @@ mp.events.add('client:inventory:usePlayer', function(id, itemId) {
 mp.events.add('client:inventory:moveTo', function(id, itemId, ownerId, ownerType) {
     if (ownerType === 0) {
         if (mp.players.local.dimension > 0) {
-            mp.game.ui.notifications.show("~r~Нельзя выкидывать предметы в интерьере");
+            mp.game.ui.notifications.show("~r~Нельзя выбрасывать предметы в интерьере");
+            return;
+        }
+        if (ui.isGreenZone()) {
+            mp.game.ui.notifications.show("~r~Нельзя выбрасывать предметы в зелёной зоне");
             return;
         }
 
@@ -2970,9 +2998,9 @@ mp.events.add('client:walkietalkie:status', function(status) {
         walkie.hide();
 });
 
-let isSetHandling = false;
+let isSetHandling = 0;
 mp.events.add("client:vehicle:resetHandling", function () {
-    isSetHandling = false;
+    isSetHandling = 0;
 });
 
 mp.events.add("client:vehicle:checker", async function () {
@@ -2995,8 +3023,8 @@ mp.events.add("client:vehicle:checker", async function () {
                 maxSpeed = 350;
 
             try {
-                if (!isSetHandling) {
-                    isSetHandling = true;
+                if (isSetHandling > 1) {
+                    isSetHandling++;
                     vehicles.setHandling(vehicle);
                     if (vehicle.getMod(12) === 0)
                         vehicle.setHandling('fBrakeForce', '1.3');
@@ -3033,7 +3061,7 @@ mp.events.add("client:vehicle:checker", async function () {
             if (vehicle.getMod(18) >= 0 || vehicle.getVariable('boost') > 0)
                 maxSpeed = maxSpeed + 10;
 
-            for (let i = 0; i < 4; i++) {
+            for (let i = 0; i < 5; i++) {
                 if (vehicle.getMod(11) === i) {
                     boost = boost + (i + 1);
                     maxSpeed = maxSpeed + 5 * (i + 1);
@@ -3051,7 +3079,7 @@ mp.events.add("client:vehicle:checker", async function () {
                 maxSpeed = newMaxSpeedServer;
         }
         else
-            isSetHandling = false;
+            isSetHandling = 0;
     }
     catch (e) {
         methods.debug(e);
@@ -3242,7 +3270,7 @@ mp.keys.bind(0xDD, true, function() {
 mp.keys.bind(0x38, true, function() {
     if (!user.isLogin() || (!user.isAdmin() && !user.isHelper()))
         return;
-    if (!methods.isBlockKeys())
+    if (!methods.isBlockInputKeys())
         menuList.showAdminMenu();
 });
 
@@ -3272,7 +3300,7 @@ mp.keys.bind(0x45, true, function() {
 mp.keys.bind(0x4D, true, function() {
     if (!user.isLogin())
         return;
-    if (!methods.isShowInput() && mainMenu.isHide())
+    if (!methods.isShowInput() && phone.isHide() && inventory.isHide())
         mainMenu.showOrHide();
 });
 
@@ -3335,6 +3363,9 @@ mp.keys.bind(0x1B, true, function() {
 
     if (!mainMenu.isHide())
         mainMenu.hide();
+
+    if (!shopMenu.isHide())
+        shopMenu.hideAll();
 
     if (methods.isBlockKeys())
         return;
@@ -3697,6 +3728,24 @@ mp.events.add("playerCommand", async (command) => {
             return;
         let args = command.toLowerCase().split(' ');
         user.teleport(parseFloat(args[1]), parseFloat(args[2]), parseFloat(args[3]));
+    }
+    else if (command.toLowerCase().slice(0, 5) === "help ") {
+        if (!user.isLogin())
+            return;
+        mp.events.callRemote('server:sendAsk', command.substring(5));
+        mp.events.callRemote('client:mainMenu:addAsk', command.substring(5));
+    }
+    else if (command.toLowerCase().slice(0, 7) === "report ") {
+        if (!user.isLogin())
+            return;
+        mp.events.callRemote('server:sendReport', command.substring(7));
+        mp.events.callRemote('client:mainMenu:addReport', command.substring(7));
+    }
+    else if (command.toLowerCase().slice(0, 4) === "help") {
+        if (!user.isLogin())
+            return;
+        chat.sendLocal(`!{FFC107}Помощь`);
+        chat.sendLocal('Для того чтобы получить справку по серверу, вы можете задать вопрос через М - Обращения или воспользоваться FAQ через М - FAQ');
     }
     else if (command.toLowerCase().slice(0, 1) === "a") {
         if (!user.isLogin() || !user.isAdmin())

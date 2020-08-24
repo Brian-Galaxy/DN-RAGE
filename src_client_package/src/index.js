@@ -40,6 +40,7 @@ import voiceRage from "./voiceRage";
 
 import "./antiCheat";
 import "./mainMenu";
+import "./shopMenu";
 
 import trucker from "./jobs/trucker";
 import taxi from "./jobs/taxi";

@@ -305,6 +305,10 @@ methods.isBlockJustKeys = function() { //TODO
     return _isBlockKeys/* || mp.gui.cursor.visible*/;
 };
 
+methods.isBlockInputKeys = function() { //TODO
+    return Menu.Menu.IsShowInput() || _isBlockKeys/* || mp.gui.cursor.visible*/;
+};
+
 methods.isShowInput = function() {
     return Menu.Menu.IsShowInput();
 };
@@ -720,6 +724,139 @@ methods.iplTrevorDefault = function () {
     mp.game.interior.refreshInterior(interiorId);
 };
 
+methods.iplTrevorDefault = function () {
+    let interiorId = 2562;
+    mp.game.streaming.requestIpl("trevorstrailertidy");
+    methods.setIplPropState(interiorId, "V_26_Trevor_Helmet3", false);
+    methods.setIplPropState(interiorId, "V_24_Trevor_Briefcase3", false);
+    methods.setIplPropState(interiorId, "V_26_Michael_Stay3", false);
+    mp.game.interior.refreshInterior(interiorId);
+};
+
+methods.iplVecpPdDefault = function () {
+    /*DEFAULT*/
+    //mp.game.invoke('0x0888C3502DBBEEF5');
+    //mp.game.gameplay.enableMpDlcMaps(true);
+
+    mp.game.streaming.removeIpl("int_vesp_01_1_milo_");
+    mp.game.streaming.requestIpl("vesp_ipl_01_1");
+    mp.game.streaming.requestIpl("vesp_lod_01_1");
+
+    mp.game.streaming.removeIpl("int_vesp_01_2_milo_");
+    mp.game.streaming.requestIpl("vesp_ipl_01_2");
+
+    mp.game.streaming.removeIpl("int_vesp_02_1_milo_");
+    mp.game.streaming.requestIpl("vesp_ipl_02_1");
+
+    mp.game.streaming.removeIpl("int_vesp_02_2_milo_");
+    mp.game.streaming.requestIpl("vesp_ipl_02_2");
+
+    mp.game.streaming.removeIpl("int_vesp_03_1_milo_");
+    mp.game.streaming.requestIpl("vesp_ipl_03_1");
+    mp.game.streaming.requestIpl("vesp_lod_03_1");
+
+    mp.game.streaming.removeIpl("int_vesp_2_1_milo_");
+    mp.game.streaming.requestIpl("vesp_ipl_2_1");
+    mp.game.streaming.requestIpl("vesp_lod_2_1");
+
+    mp.game.streaming.removeIpl("int_vesp_3_1_milo_");
+    mp.game.streaming.requestIpl("vesp_ipl_3_1");
+    mp.game.streaming.requestIpl("vesp_lod_3_1");
+
+    mp.game.streaming.removeIpl("int_vesp_3_2_milo_");
+    mp.game.streaming.requestIpl("vesp_ipl_3_2");
+    mp.game.streaming.requestIpl("vesp_lod_3_2");
+
+    mp.game.streaming.removeIpl("int_vesp_4_2_milo_");
+    mp.game.streaming.requestIpl("vesp_ipl_4_2");
+    mp.game.streaming.requestIpl("vesp_lod_4_2");
+
+    mp.game.streaming.removeIpl("int_vesp_5_2_milo_");
+    mp.game.streaming.requestIpl("vesp_ipl_5_2");
+    mp.game.streaming.requestIpl("vesp_lod_5_2");
+
+    mp.game.streaming.requestIpl("int_vesp_1_1_milo_");
+    mp.game.streaming.requestIpl("int_vesp_1_2_milo_");
+    mp.game.streaming.requestIpl("int_vesp_big_lift_milo_");
+    mp.game.streaming.requestIpl("int_vesp_big_stair_milo_");
+    mp.game.streaming.requestIpl("int_vesp_slift_milo_");
+    mp.game.streaming.requestIpl("int_vesp_smole_stair_milo_");
+
+    /*vesp01_1*/
+    mp.game.streaming.requestIpl("int_vesp_01_1_milo_");
+    mp.game.streaming.removeIpl("vesp_ipl_01_1");
+    mp.game.streaming.removeIpl("vesp_lod_01_1");
+
+    /*vesp01_2*/
+    mp.game.streaming.removeIpl("int_vesp_01_2_milo_");
+    mp.game.streaming.requestIpl("vesp_ipl_01_2");
+    mp.game.streaming.requestIpl("vesp_lod_01_2");
+
+    /*vesp02_1*/
+    mp.game.streaming.requestIpl("int_vesp_02_1_milo_");
+    mp.game.streaming.removeIpl("vesp_ipl_02_1");
+    mp.game.streaming.removeIpl("vesp_lod_02_1");
+
+    /*vesp02_2*/
+    mp.game.streaming.removeIpl("int_vesp_02_2_milo_");
+    mp.game.streaming.requestIpl("vesp_ipl_02_2");
+    mp.game.streaming.requestIpl("vesp_lod_02_2");
+
+    /*vesp03_1*/
+    mp.game.streaming.requestIpl("int_vesp_03_1_milo_");
+    mp.game.streaming.removeIpl("vesp_ipl_03_1");
+    mp.game.streaming.removeIpl("vesp_lod_03_1");
+
+    /*vesp2_1*/
+    mp.game.streaming.removeIpl("int_vesp_2_1_milo_");
+    mp.game.streaming.requestIpl("vesp_ipl_2_1");
+    mp.game.streaming.requestIpl("vesp_lod_2_1");
+
+    /*vesp3_1*/
+    mp.game.streaming.removeIpl("int_vesp_3_1_milo_");
+    mp.game.streaming.requestIpl("vesp_ipl_3_1");
+    mp.game.streaming.requestIpl("vesp_lod_3_1");
+
+    /*vesp3_2*/
+    mp.game.streaming.removeIpl("int_vesp_3_2_milo_");
+    mp.game.streaming.requestIpl("vesp_ipl_3_2");
+    mp.game.streaming.requestIpl("vesp_lod_3_2");
+
+    /*vesp4_2*/
+    mp.game.streaming.removeIpl("int_vesp_4_2_milo_");
+    mp.game.streaming.requestIpl("vesp_ipl_4_2");
+    mp.game.streaming.requestIpl("vesp_lod_4_2");
+
+    /*vesp5_2*/
+    mp.game.streaming.removeIpl("int_vesp_5_2_milo_");
+    mp.game.streaming.requestIpl("vesp_ipl_5_2");
+    mp.game.streaming.requestIpl("vesp_lod_5_2");
+
+    /*vesp5_2*/
+    mp.game.streaming.removeIpl("int_vesp_01_1_milo_");
+    mp.game.streaming.requestIpl("vesp_ipl_01_1");
+    mp.game.streaming.requestIpl("vesp_lod_01_1");
+
+    let vesp2_1ipl = mp.game.interior.getInteriorAtCoordsWithType(-1096.445,-831.962,23.033,"int_vesp_1_2");
+    let vesp3_1ipl = mp.game.interior.getInteriorAtCoordsWithType(-1091.963,-831.206,26.827,"int_vesp_3_2");
+    let vesp02_2ipl = mp.game.interior.getInteriorAtCoordsWithType(-1095.002,-838.586,10.276,"int_vesp_02_1");
+    let vesp02_1ipl = mp.game.interior.getInteriorAtCoordsWithType(-1095.002,-838.586,10.276,"int_vesp_02_2");
+    let vesp01_2ipl = mp.game.interior.getInteriorAtCoordsWithType(-1088.377,-832.352,5.479,"int_vesp_01_1");
+    let vesp01_1ipl = mp.game.interior.getInteriorAtCoordsWithType(-1097.205,-839.141,4.878,"int_vesp_01_2");
+    methods.setIplPropState(vesp2_1ipl, "vesp1_2");
+    mp.game.interior.refreshInterior(vesp2_1ipl);
+    methods.setIplPropState(vesp3_1ipl, "vesp3_2");
+    mp.game.interior.refreshInterior(vesp3_1ipl);
+    methods.setIplPropState(vesp02_2ipl, "vesp02_1");
+    mp.game.interior.refreshInterior(vesp02_2ipl);
+    methods.setIplPropState(vesp02_1ipl, "vesp02_2");
+    mp.game.interior.refreshInterior(vesp02_1ipl);
+    methods.setIplPropState(vesp01_2ipl, "vesp01_1");
+    mp.game.interior.refreshInterior(vesp01_2ipl);
+    methods.setIplPropState(vesp01_1ipl, "vesp01_2");
+    mp.game.interior.refreshInterior(vesp01_1ipl);
+};
+
 methods.iplAmmoDefault = function () {
 
     let ammunationsId = [
@@ -792,6 +929,7 @@ methods.requestIpls = function () {
 
     methods.iplLabCocaDefault();
 
+    methods.iplVecpPdDefault();
     //CASINO
     mp.game.streaming.requestIpl("vw_casino_main");
 
@@ -924,6 +1062,28 @@ methods.requestIpls = function () {
     mp.game.streaming.requestIpl("gr_heist_yacht2_enginrm");
     mp.game.streaming.requestIpl("gr_heist_yacht2_lounge");
     mp.game.streaming.requestIpl("gr_grdlc_interior_placement_interior_0_grdlc_int_01_milo_");
+
+    /*//Яхта3
+    mp.game.streaming.requestIpl("sum_lost_yacht");
+    mp.game.streaming.requestIpl("sum_lost_yacht_lod");
+    mp.game.streaming.requestIpl("sum_lost_yacht_int");
+
+    phIntID = mp.game.interior.getInteriorAtCoords(3638.799, -4780.567, 5.500);
+    phPropList = [
+        "apart_hi_booze_a",
+    ];
+
+    for (const propName of phPropList) {
+        mp.game.interior.enableInteriorProp(phIntID, propName);
+        mp.game.invoke(methods.SET_INTERIOR_PROP_COLOR, phIntID, propName, 1);
+    }
+    mp.game.interior.refreshInterior(phIntID);
+
+    mp.game.interior.enableInteriorProp(279041, 'sum_mp_apa_yacht');
+    mp.game.invoke('0xC1F1920BAF281317', 279041, 'sum_mp_apa_yacht', 1);
+    mp.game.interior.refreshInterior(279041);*/
+
+    //0xC1F1920BAF281317
 
     //Tunnels
     mp.game.streaming.requestIpl("v_tunnel_hole");

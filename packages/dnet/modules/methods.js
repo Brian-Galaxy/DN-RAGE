@@ -885,7 +885,7 @@ methods.loadAllBlips = function () {
     methods.createBlip(new mp.Vector3(-158.44952392578125, -605.221923828125, 48.23460388183594), 535, 67, 0.8, 'Arcadius - Бизнес Центр');
     //methods.createBlip(new mp.Vector3(111.5687, -749.9395, 30.69), 498, 0, 0.8, 'Здание FIB');
     methods.createBlip(new mp.Vector3(1830.489, 2603.093, 45.8891), 238, 0, 0.8, 'Тюрьма');
-    methods.createBlip(new mp.Vector3(-1379.659, -499.748, 33.15739), 419, 0, 1, 'Правительство');
+    methods.createBlip(new mp.Vector3(-1290.544, -571.1852, 29.57288), 419, 0, 1, 'Правительство');
 
     methods.createBlip(new mp.Vector3(311.9224853515625, -583.9681396484375, 44.299190521240234), 489, 59, 0.8, 'Больница');
     methods.createBlip(new mp.Vector3(-253.9735565185547, 6320.83935546875, 37.61736297607422), 489, 59, 0.8, 'Больница');

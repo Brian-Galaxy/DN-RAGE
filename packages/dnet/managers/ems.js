@@ -13,6 +13,7 @@ let currentIndex = 0;
 let currentType = 0;
 
 let rangeLoad = 400;
+let blipCenter = null;
 
 let emsList = {
     small: [
@@ -789,6 +790,12 @@ ems.createSmall = function (id = 0) {
         emsList.small[id].afterLoadEffects();
 
         dispatcher.sendPos(emsList.small[id].title, emsList.small[id].desc, emsList.small[id].pos);
+        try {
+            blipCenter = methods.createBlip(emsList.small[id].pos, 436, 1, 0.8, 'Авария');
+        }
+        catch (e) {
+            
+        }
     }
     catch (e) {
         methods.debug(e);
@@ -814,6 +821,11 @@ ems.removeObject = function (id) {
                     user.sendSmsBankOperation(p, `Зачисление премии ${methods.moneyFormat(emsList.small[currentIndex].moneyToUser)}`);
                 }
             });
+
+            try {
+                blipCenter.destroy();
+            }
+            catch (e) {}
         }
     }
     catch (e) {

@@ -32,6 +32,9 @@ let isCreateEms = false;
 let isCreateVeh = false;
 let isSaveStats = false;
 
+let ems1 = 1;
+let ems2 = 1;
+
 weather.loadAll = function() {
     methods.debug('weather.loadAll');
     mysql.executeQuery(`SELECT * FROM daynight WHERE id = 1`, function (err, rows, fields) {
@@ -45,6 +48,8 @@ weather.loadAll = function() {
         methods.debug('WEATHER', rows[0]);
 
         weather.load();
+        ems1 = methods.getRandomInt(1, 59);
+        ems2 = methods.getRandomInt(1, 59);
     });
 };
 
@@ -191,6 +196,8 @@ weather.timeSyncTimer = function() {
             }
         }
 
+        if (_hour === 1 && _minute === 0)
+            methods.notifyWithPictureToFractions2('Борьба за груз', `~r~ВНИМАНИЕ!`, 'Через час начнется война за груз!');
         if (_hour === 2 && _minute === 0)
             fraction.createCargoWar(4);
         if (_hour === 6 && _minute === 0)
@@ -244,13 +251,13 @@ weather.timeSyncTimer = function() {
             }
         }*/
 
-        if (dateTime.getHours() === 18 && dateTime.getMinutes() === 1) {
+        if (dateTime.getHours() === 18 && dateTime.getMinutes() === ems1) {
             if (!isCreateEms) {
                 isCreateEms = true;
                 ems.createSmallRandom();
             }
         }
-        if (dateTime.getHours() === 21 && dateTime.getMinutes() === 1) {
+        if (dateTime.getHours() === 21 && dateTime.getMinutes() === ems2) {
             if (!isCreateEms) {
                 isCreateEms = true;
                 ems.createSmallRandom();

@@ -325,6 +325,31 @@ object.load = function () {
     object.delete(1605769687, 1019.028, -1870.899, 29.87857);
     object.delete(1605769687, 1025.969, -1854.496, 29.87857);
 
+    // Stock 73 (Склад)
+    object.delete(666561306, 909.3621, -1796.512, 29.61789);
+    object.delete(-1186441238, 908.9841, -1812.387, 29.64365);
+    object.delete(-1186441238, 906.8782, -1815.909, 29.64603);
+
+// Respawn Vagos
+    object.delete(1120812170, 464.8118, -1878.996, 25.88975);
+    object.delete(1120812170, 460.934, -1879.938, 25.86355);
+
+// Respawn Families
+    object.delete(666561306, 0.376709, -1824.403, 24.36003);
+    object.delete(666561306, 1.928772, -1822.495, 24.35666);
+
+// Respawn Ballas
+    object.delete(388197031, -175.7925, -1729.39, 29.51634);
+    object.delete(388197031, -213.5844, -1718.681, 31.68086);
+
+// Respawn Marabunta
+    object.delete(666561306, 1318.073, -1670.691, 50.23988);
+    object.delete(218085040, 1316.676, -1672.521, 50.23988);
+    object.delete(666561306, 1315.009, -1673.674, 50.23988);
+    object.delete(1369811908, 1332.215, -1652.59, 56.43007);
+    object.delete(1369811908, 1329.432, -1648.819, 56.43007);
+    object.delete(-2129526670, 1342.168, -1649.839, 52.03609);
+
     // Интерьер Maze Bank Arena
     object.create(1566872341, new mp.Vector3(-252.0165, -2002.122, 29.6), new mp.Vector3(0, 0, -15.59995), false, false);
     object.create(-219578277, new mp.Vector3(-252.43, -2001.81, 29.9), new mp.Vector3(1.001791E-05, 5.008957E-06, -47.99999), false, false);
@@ -1872,7 +1897,6 @@ object.process = function () {
                             alpha: 255,
                             dimension: -1
                         });
-
                     if (item.invType > 0)
                         item.handle.invType = item.invType;
                     if (item.safe > 0)

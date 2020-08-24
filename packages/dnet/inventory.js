@@ -67,9 +67,10 @@ inventory.getItemList = function(player, ownerType, ownerId, isFrisk = false, is
         if (isFrisk)
             addWhere = ' AND (item_id <> 50 AND item_id <> 27 AND item_id <> 28 AND item_id <> 29 AND item_id <> 30 AND item_id <> 265 AND item_id <> 266 AND item_id <> 267 AND item_id <> 268 AND item_id <> 269 AND item_id <> 270 AND item_id <> 271 AND item_id <> 272 AND item_id <> 273 AND item_id <> 274)';
 
-        let sql = `SELECT * FROM items WHERE owner_id = '${ownerId}' AND owner_type = '${ownerType}'${addWhere} ORDER BY item_id DESC LIMIT 400`;
+        //SELECT * FROM items WHERE owner_id = '1' AND owner_type = '1' ORDER BY is_equip DESC, item_id DESC LIMIT 400
+        let sql = `SELECT * FROM items WHERE owner_id = '${ownerId}' AND owner_type = '${ownerType}'${addWhere} ORDER BY is_equip DESC, item_id DESC LIMIT 400`; //TODO сортировку, сначала эквип
         if (ownerId == 0 && ownerType == 0)
-            sql = `SELECT * FROM items WHERE DISTANCE(POINT(pos_x, pos_y), POINT(${player.position.x}, ${player.position.y})) < 2 AND owner_type = 0 ORDER BY item_id DESC LIMIT 400`;
+            sql = `SELECT * FROM items WHERE DISTANCE(POINT(pos_x, pos_y), POINT(${player.position.x}, ${player.position.y})) < 2 AND owner_type = 0 ORDER BY is_equip DESC, item_id DESC LIMIT 400`;
 
         mysql.executeQuery(sql, function (err, rows, fields) {
             rows.forEach(row => {
@@ -914,6 +915,7 @@ inventory.dropItemJust = function(id, itemId, posX, posY, posZ, rotX, rotY, rotZ
             case 177:
             case 178:
             case 251:
+            case 252:
                 rot = new mp.Vector3(-90, 0, heading);
                 break;
         }
@@ -922,10 +924,15 @@ inventory.dropItemJust = function(id, itemId, posX, posY, posZ, rotX, rotY, rotZ
             rot = new mp.Vector3(-90, 0, heading);
         if(itemId >= 54 && itemId <= 126)
             rot = new mp.Vector3(-90, 0, heading);
+        if(itemId === 252)
+            rot = new mp.Vector3(-90, -90, heading);
+
+        //eval mp.game.invoke('0x5006D96C995A5827', -50000.0,-50000.0,-100.0); mp.game.invoke('0x5006D96C995A5827', 50000.0,50000.0,10000.0);
+        //eval mp.game.invoke('0x5006D96C995A5827', -5000.0,-5000.0,-10.0); mp.game.invoke('0x5006D96C995A5827', 5000.0,5000.0,100.0);
 
         let obj = mp.objects.new(
             items.getItemHashById(itemId),
-            new mp.Vector3(posX + (methods.getRandomInt(-100, 100) / 300), posY + (methods.getRandomInt(-100, 100) / 400), posZ - 0.98),
+            new mp.Vector3(posX + (methods.getRandomInt(-100, 100) / 200), posY + (methods.getRandomInt(-100, 100) / 200), posZ - 0.98),
             {
                 rotation: rot,
                 alpha: 255,
@@ -1527,7 +1534,7 @@ inventory.useItem = function(player, id, itemId, isTargetable = false) {
                         player.notify("~r~Транспорт уже открыт");
                         return;
                     }
-                    if (veh.getVariable('fraction_id') > 0)
+                    if (veh.getVariable('fraction_id') > 0 || veh.getVariable('isAdmin'))
                     {
                         player.notify("~r~Вы не можете взломать это транспортное средство");
                         return;
@@ -1648,7 +1655,7 @@ inventory.useItem = function(player, id, itemId, isTargetable = false) {
                             player.notify(`~y~Ячейка оказалась пуста`);
                         }
                         else {
-                            inventory.addItem(141, 1, inventory.types.Player, user.getId(player), methods.getRandomInt(6000, 8000) * 2, 0, "{}", 2);
+                            inventory.addItem(141, 1, inventory.types.Player, user.getId(player), methods.getRandomInt(6000, 8000) * 3, 0, "{}", 2);
                         }
 
                         user.blockKeys(player, false);
@@ -2095,6 +2102,7 @@ inventory.useItem = function(player, id, itemId, isTargetable = false) {
                     }
 
                     user.heading(target, player.heading);
+                    user.cuff(target);
 
                     setTimeout(function () {
                         user.playAnimation(target, 'mp_arrest_paired', 'crook_p2_back_right', 8);

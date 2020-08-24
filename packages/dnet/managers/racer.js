@@ -6466,6 +6466,7 @@ racer.startRace = function () {
                     currentSpawn++;
 
                     user.teleport(p, spawnArray[0], spawnArray[1], spawnArray[2]);
+                    user.playSound(p, '10s', 'MP_MISSION_COUNTDOWN_SOUNDSET');
 
                     p.outputChatBoxNew(`Кнопка !{2196F3}F!{FFFFFF} чтобы зареспавнить автомобиль`);
                     p.outputChatBoxNew(`Кнопка !{2196F3}ESC!{FFFFFF} выйти из гонки`);

@@ -411,7 +411,7 @@ edu.stopAll = async function() {
 edu.createCamera = function() {
     camera = mp.cameras.new("edu_camera");
     camera.setActive(true);
-    camera.shake("HAND_SHAKE", 0.2);
+    camera.shake("HAND_SHAKE", 0.3);
     mp.game.cam.renderScriptCams(true, false, 0, false, false);
 };
 

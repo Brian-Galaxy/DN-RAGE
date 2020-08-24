@@ -5,6 +5,7 @@ import ui from "../modules/ui";
 import vehicles from "../property/vehicles";
 
 import phone from "../phone";
+import mainMenu from "../mainMenu";
 //import voice from "../voice";
 import voiceRage from "../voiceRage";
 import user from '../user';
@@ -18,7 +19,6 @@ import walkie from "../walkie";
 import pSync from "./pSync";
 import heliCam from "./heliCam";
 import drone from "./drone";
-
 
 let bind = {};
 
@@ -344,7 +344,7 @@ for(let code in keyCodes) {
                 mp.game.ui.notifications.show("~r~Нельзя пользоваться инвентарем, в тюрьме");
                 return;
             }
-            if (!methods.isBlockKeys() && phone.isHide()) {
+            if (!methods.isBlockKeys() && phone.isHide() && mainMenu.isHide()) {
 
                 if (Container.Data.HasLocally(mp.players.local.remoteId, "isInventoryTimeout"))
                 {
@@ -368,7 +368,7 @@ for(let code in keyCodes) {
                 mp.game.ui.notifications.show("~r~Нельзя пользоваться инвентарем, в тюрьме");
                 return;
             }
-            if (!methods.isBlockKeys() && phone.isHide())
+            if (!methods.isBlockKeys() && phone.isHide() && mainMenu.isHide())
                 inventory.getItemList(0, 0);
         }
         if (user.getCache('s_bind_phone') == parseInt(code)) {

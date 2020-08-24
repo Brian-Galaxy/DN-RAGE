@@ -1352,8 +1352,8 @@ trucker.generateOffer = function (type) {
                     let price = methods.parseInt(methods.getRandomInt(item[8], item[9]));
 
                     let dist = methods.distanceToPos(new mp.Vector3(item[2], item[3], item[4]), new mp.Vector3(item[5], item[6], item[7])) / 15;
-                    if (dist > 600)
-                        dist = 600;
+                    if (dist > 700)
+                        dist = 700;
                     price = dist + price;
 
                     trucker.offersPool1.push([count, item[0], item[1], item[2], item[3], item[4], item[5], item[6], item[7], price]);
@@ -1367,8 +1367,8 @@ trucker.generateOffer = function (type) {
                     let price = methods.parseInt(methods.getRandomInt(item[8], item[9]) * 0.8);
 
                     let dist = methods.distanceToPos(new mp.Vector3(item[2], item[3], item[4]), new mp.Vector3(item[5], item[6], item[7])) / 10;
-                    if (dist > 800)
-                        dist = 800;
+                    if (dist > 1000)
+                        dist = 1000;
                     price = dist + price;
 
                     trucker.offersPool2.push([count, item[0], item[1], item[2], item[3], item[4], item[5], item[6], item[7], price]);
@@ -1382,8 +1382,8 @@ trucker.generateOffer = function (type) {
                     let price = methods.parseInt(methods.getRandomInt(item[13], item[14]) * 0.8);
 
                     let dist = methods.distanceToPos(new mp.Vector3(item[6], item[7], item[8]), new mp.Vector3(item[10], item[11], item[12])) / 5;
-                    if (dist > 1200)
-                        dist = 1200;
+                    if (dist > 1500)
+                        dist = 1500;
                     price = dist + price;
 
                     trucker.offersPool3.push([count, item[0], item[1], item[2], item[3], item[4], item[5], item[6], item[7], item[8], item[9], item[10], item[11], item[12], price]);

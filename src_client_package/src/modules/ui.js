@@ -62,7 +62,8 @@ ui.create = function() {
 };
 
 ui.showDialog = function(text, title = '', icon = 'none', buttons = ['Ок'], position = ui.dialogTypes.center, dtype = 1, isShowClose = true, cursor = true) {
-    mp.gui.cursor.show(cursor, cursor);
+    if (!mp.gui.cursor.visible)
+        mp.gui.cursor.show(cursor, cursor);
     ui.callCef('dialog', JSON.stringify({type: 'updateValues', isShow: true, isShowClose: isShowClose, position: position, text: text, buttons: buttons, icon: icon, title: title, dtype: dtype}));
 };
 
@@ -606,7 +607,7 @@ mp.events.add('client:ui:callCef', (event, value) => {
 // Эвенты на cef только через эту функцию
 ui.callCef = function(event, value) {
     try {
-        if (event === 'hud-draggable')
+        if (event === 'tattooshop')
             methods.debug(event, JSON.parse(value));
         if(uiBrowser && methods.isValidJSON(value))
             uiBrowser.execute(`trigger('${event}', '${value}')`);

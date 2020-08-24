@@ -14,7 +14,7 @@ rent.listBike = [
     [-395.6397, -2670.683, 5.000217, 13],
     [103.2589, -1386.775, 28.29154, 14],
     [181.4407, 182.3093, 104.5404, 15],
-    [-1406.061, -558.9191, 29.24111, 16],
+    [-1261.574, -608.3995, 26.16681, 16],
     [-3153.494, 1098.751, 19.85638, 17],
     [-230.6698, 6319.512, 30.47869, 18],
     [1677.378, 4860.828, 41.05925, 19],
@@ -96,15 +96,26 @@ rent.findNearest = function(pos) {
     return prevPos;
 };
 
-rent.buy = function(player, hash, price, shopId) {
+rent.buy = function(player, hash, price, shopId, payType) {
     methods.debug('rent.buy');
     if (!user.isLogin(player))
         return;
-    if (user.getMoney(player) < price)
-    {
-        player.notify('~r~У вас недостаточно средств');
-        return;
+
+    if (payType === 1) {
+        if (user.getBankMoney(player) < price)
+        {
+            player.notify('~r~У вас недостаточно средств');
+            return;
+        }
     }
+    else {
+        if (user.getCashMoney(player) < price)
+        {
+            player.notify('~r~У вас недостаточно средств');
+            return;
+        }
+    }
+
 
     if (price < 0)
         return;
@@ -171,11 +182,15 @@ rent.buy = function(player, hash, price, shopId) {
         return;
     }
 
-    user.removeMoney(player, price, 'Аренда ТС ' + vInfo.display_name);
+    if (payType === 1)
+        user.removeBankMoney(player, price, 'Аренда ТС ' + vInfo.display_name);
+    else
+        user.removeCashMoney(player, price, 'Аренда ТС ' + vInfo.display_name);
     business.addMoney(shopId, price, 'Аренда ' + vInfo.display_name);
     business.removeMoneyTax(shopId, price / business.getPrice(shopId));
 
-    player.notify('~g~Вы арендовали транспорт\nДля того чтобы его закрыть, нажмите ~s~L~g~\nЧтобы завершить аренду нажмите ~s~M -> Транспорт -> Завершить аренду');
+    user.showCustomNotify(player, 'Для того чтобы его закрыть, нажмите L', 0, 9);
+    user.showCustomNotify(player, 'Чтобы завершить аренду нажмите 2 -> Завершить аренду', 0, 9);
 
     vehicles.spawnCarCb(veh => {
 

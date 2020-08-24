@@ -80,7 +80,7 @@ mp.events.add("client:menuList:callBack:btn", async (menuName, id, jparams) => {
             Menu.OnSelect.Emit({}, id, menuName);
 
         if (user.getCache('s_menu_sound'))
-            mp.game.audio.playSoundFrontend(-1, "MP_RANK_UP", "HUD_FRONTEND_DEFAULT_SOUNDSET", false);
+            mp.game.audio.playSoundFrontend(-1, "MP_RANK_UP", "HUD_FRONTEND_DEFAULT_SOUNDSET", false)
     }
     catch (e) {
         methods.debug(e);

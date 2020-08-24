@@ -7,7 +7,7 @@ cameraRotator.data = '';
 cameraRotator.lastKey = 0;
 
 class CameraRotator {
-    start(camera, basePosition, lookAtPosition, offsetVector, heading, fov = undefined) {
+    start(camera, basePosition, lookAtPosition, offsetVector, heading = 0, fov = undefined) {
         this.camera = camera;
         this.basePosition = basePosition;
         this.lookAtPosition = lookAtPosition;

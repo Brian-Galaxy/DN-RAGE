@@ -19,7 +19,7 @@ loader.startOrEnd = function() {
         methods.debug('Execute: builder.startOrEnd');
 
         if (user.getCache('job') > 0) {
-            mp.game.ui.notifications.show('~r~Вы не можете работать на этой работе сейчас');
+            mp.game.ui.notifications.show('~r~Для начала необходимо уволиться с работы в здании правительства');
             return;
         }
 

@@ -121,7 +121,7 @@ mp.events.add('render', () => {
                     item.type,
                     item.x, item.y, item.z,
                     0, 0, 0,
-                    0, 180, 277,
+                    0, 180, -46 + 90,
                     item.scale, item.scale, item.height,
                     item.color[0], item.color[1], item.color[2], item.color[3],
                     true, false, 2,

@@ -122,7 +122,7 @@ cloth.changeProp = function (player, body, clothId, color) {
     }
 };
 
-cloth.buyProp = function (player, price, body, clothId, color, itemName, shopId, isFree) {
+cloth.buyProp = function (player, price, body, clothId, color, itemName, shopId, isFree, payType = 0) {
     methods.debug('barberShop.buyProp');
 
     if (price < 0)
@@ -131,10 +131,19 @@ cloth.buyProp = function (player, price, body, clothId, color, itemName, shopId,
     if (!user.isLogin(player))
         return;
 
-    if (user.getCashMoney(player) < price && !isFree) {
-        player.notify('~r~У Вас недостаточно денег');
-        user.updateCharacterCloth(player);
-        return;
+    if (payType === 1) {
+        if (user.getBankMoney(player) < price && !isFree) {
+            user.showCustomNotify(player, 'У вас недостаточно средств', 1, 9);
+            user.updateCharacterCloth(player);
+            return;
+        }
+    }
+    else {
+        if (user.getCashMoney(player) < price && !isFree) {
+            user.showCustomNotify(player, 'У вас недостаточно средств', 1, 9);
+            user.updateCharacterCloth(player);
+            return;
+        }
     }
 
     let params = `{"name": "${itemName}", "sex": ${user.getSex(player)}}`;
@@ -188,10 +197,14 @@ cloth.buyProp = function (player, price, body, clothId, color, itemName, shopId,
     }
 
     if (!isFree) {
-        user.removeCashMoney(player, price, 'Покупка аксессуара ' + itemName);
+        if (payType === 1)
+            user.removeBankMoney(player, price, 'Покупка аксессуара ' + itemName);
+        else
+            user.removeCashMoney(player, price, 'Покупка аксессуара ' + itemName);
         business.addMoney(shopId, price, itemName);
         business.removeMoneyTax(shopId, price / business.getPrice(shopId));
-        player.notify("~g~Вы купили аксессуар");
+
+        user.showCustomNotify(player, 'Вы купили аксессуар', 2, 9);
     }
 
     user.updateCharacterCloth(player);
@@ -220,14 +233,24 @@ cloth.getClothBagName = function (idx) {
     return names[idx];
 };
 
-cloth.buy = function (player, price, body, cloth, color, torso, torsoColor, parachute, parachuteColor, itemName = "Одежда", shopId = 0, isFree = false) {
+cloth.buy = function (player, price, body, cloth, color, torso, torsoColor, parachute, parachuteColor, itemName = "Одежда", shopId = 0, isFree = false, payType = 0) {
     methods.debug('cloth.buy');
     if (!user.isLogin(player))
         return;
-    if (user.getCashMoney(player) < price && !isFree) {
-        player.notify('~r~У Вас недостаточно денег');
-        user.updateCharacterCloth(player);
-        return;
+
+    if (payType === 1) {
+        if (user.getBankMoney(player) < price && !isFree) {
+            user.showCustomNotify(player, 'У вас недостаточно средств', 1, 9);
+            user.updateCharacterCloth(player);
+            return;
+        }
+    }
+    else {
+        if (user.getCashMoney(player) < price && !isFree) {
+            user.showCustomNotify(player, 'У вас недостаточно средств', 1, 9);
+            user.updateCharacterCloth(player);
+            return;
+        }
     }
 
     if (price < 0)
@@ -261,11 +284,11 @@ cloth.buy = function (player, price, body, cloth, color, torso, torsoColor, para
             user.set(player, 'hand_color', color);
 
             params = `{"name": "${itemName}", "sex": ${user.getSex(player)}, "hand": ${cloth}, "hand_color": ${color}}`;
-            if (cloth == 82)
+            /*if (cloth == 82)
             {
                 let names = ['Черная', 'Синяя', 'Желтая', 'Розовая', 'Зелёная', 'Оранжевая', 'Фиолетовая', 'Светло-розовая', 'Красно-синяя', 'Голубая', 'Цифра', 'Флора', 'Синяя флора', 'Узор', 'Пустынная', 'Камо', 'Белая'];
                 params = `{"name": "${itemName} (${names[color]})", "sex": ${user.getSex(player)}, "hand": ${cloth}, "hand_color": ${color}}`;
-            }
+            }*/
 
             if (cloth == 41 || cloth == 45 || cloth == 82 || cloth == 22)
                 inventory.addItem(264, 1, inventory.types.Player, user.getId(player), 1, 1, params, 100);
@@ -323,10 +346,13 @@ cloth.buy = function (player, price, body, cloth, color, torso, torsoColor, para
     }
 
     if (!isFree) {
-        user.removeCashMoney(player, price, 'Покупка одежды ' + itemName);
+        if (payType === 1)
+            user.removeBankMoney(player, price, 'Покупка одежды ' + itemName);
+        else
+            user.removeCashMoney(player, price, 'Покупка одежды ' + itemName);
         business.addMoney(shopId, price, itemName);
         business.removeMoneyTax(shopId, price / business.getPrice(shopId));
-        player.notify("~g~Вы купили одежду, старая одежда находится в инвентаре");
+        user.showCustomNotify(player, 'Вы купили одежду, старая одежда находится в инвентаре', 2, 9);
     }
 
     user.updateCharacterCloth(player);
@@ -341,14 +367,14 @@ cloth.changeMask = function (player, clothId, color) {
     user.setComponentVariation(player, 1, clothId, color);
 };
 
-cloth.buyMask = function (player, price, maskId, shopId) {
+cloth.buyMask = function (player, price, maskId, shopId, payType = 0) {
     methods.debug('barberShop.buy', price, maskId, shopId);
     if (!user.isLogin(player))
         return;
 
     if (price > 10) {
-        if (user.getCashMoney(player) < price) {
-            player.notify('~r~У Вас недостаточно денег');
+        if (user.getMoney(player, payType) < price) {
+            user.showCustomNotify(player, 'У вас недостаточно средств', 1, 9);
             user.updateCharacterCloth(player);
             return;
         }
@@ -371,10 +397,10 @@ cloth.buyMask = function (player, price, maskId, shopId) {
 
     if (shopId == 0)
         return;
-    user.removeCashMoney(player, price, 'Покупка маски ' + itemName);
+    user.removeMoney(player, price, 'Покупка маски ' + itemName, payType);
     business.addMoney(shopId, price, itemName);
     business.removeMoneyTax(shopId, price / business.getPrice(shopId));
-    player.notify("~g~Вы купили маску");
+    user.showCustomNotify(player, 'Вы купили маску', 2, 9);
     user.save(player);
 };
 
@@ -383,7 +409,7 @@ cloth.buyPrint = function(player, collection, overlay, price) {
         return;
 
     if (user.getMoney(player) < price) {
-        player.notify('~r~У вас недостаточно средств');
+        user.showCustomNotify(player, 'У вас недостаточно средств', 1, 9);
         return;
     }
 
@@ -391,7 +417,7 @@ cloth.buyPrint = function(player, collection, overlay, price) {
         return;
 
     if (user.get(player, 'tprint_c').toString().trim() != '') {
-        player.notify("~r~На данном предмете одежды уже есть принт");
+        user.showCustomNotify(player, 'На данном предмете одежды уже есть принт', 1, 9);
         user.updateTattoo(player);
         return;
     }
@@ -402,7 +428,7 @@ cloth.buyPrint = function(player, collection, overlay, price) {
     user.removeMoney(player, price, 'Принт на одежду');
     business.addMoney(70, price, 'Покупка принта');
     business.removeMoneyTax(70, price / business.getPrice(70));
-    player.notify('~g~Вы купили принт');
+    user.showCustomNotify(player, 'Вы купили принт', 2, 9);
     user.updateTattoo(player);
 
     mysql.executeQuery(`SELECT * FROM items WHERE owner_id = '${user.getId(player)}' AND owner_type = '1' AND item_id = '265' AND is_equip = '1' ORDER BY id DESC`, function (err, rows, fields) {

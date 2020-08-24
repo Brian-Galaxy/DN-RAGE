@@ -161,12 +161,12 @@ gangWar.addWar = function(player, zoneId, count, armorIndex, gunIndex, timeIndex
 
     let ownerId = gangWar.get(id, 'fraction_id');
     if (ownerId > 0) {
-        if (methods.getTimeStamp() < (gangWar.get(id, 'timestamp') + 244800)) {
+        /*if (methods.getTimeStamp() < (gangWar.get(id, 'timestamp') + 244800)) {
             let date = new Date(methods.parseInt(gangWar.get(id, 'timestamp') + 244800) * 1000);
             player.notify('~r~Доступно каждые 3 дня (ООС)');
             player.notify(`~r~А именно:~s~ ${date.getDate()}/${(date.getMonth() + 1)}/${date.getFullYear()}`);
             return;
-        }
+        }*/
     }
     else {
         let newOwnerId = user.get(player, 'fraction_id2');
@@ -178,7 +178,6 @@ gangWar.addWar = function(player, zoneId, count, armorIndex, gunIndex, timeIndex
     }
 
     let idxToHour = [17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23];
-
     let dateTime = new Date(); //TODO
     if (dateTime.getHours() + 1 >= idxToHour[timeIndex]) {
         player.notify('~r~Назначеное время не доступно, попробуйте выбрать на час-два позже');
@@ -239,6 +238,8 @@ gangWar.timer = function() {
 
         mp.players.forEachInRange(warPos, 500, p => {
             if (!user.isLogin(p))
+                return;
+            if (user.isAdmin(p))
                 return;
             let fId = methods.parseInt(user.get(p, 'fraction_id2'));
             if (fId === 0)

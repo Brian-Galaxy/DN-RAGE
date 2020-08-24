@@ -258,7 +258,7 @@ business.updateTarget = function()
 {
     try {
         if (methods.distanceToPos(mp.players.local.position, cityHall) < 50) {
-            business.setScaleformName('City Hall');
+            business.setScaleformName('Maze Bank');
             business.setScaleformParams(2, 15, 1);
         }
         else if (methods.distanceToPos(mp.players.local.position, mazeBank) < 50) {

@@ -72,15 +72,23 @@ gun.findNearest = function(pos) {
     return prevPos;
 };
 
-gun.buy = function(player, itemId, price, count, superTint, tint, shopId) {
+gun.buy = function(player, itemId, price, count, superTint, tint, shopId, payType) {
     methods.debug('gun.buy');
 
     if (!user.isLogin(player))
         return;
 
-    if (user.getCashMoney(player) < price) {
-        player.notify('~r~У вас недостаточно средств');
-        return;
+    if (payType === 1) {
+        if (user.getBankMoney(player) < price) {
+            user.showCustomNotify(player, 'У вас недостаточно средств', 1, 9);
+            return;
+        }
+    }
+    else {
+        if (user.getCashMoney(player) < price) {
+            user.showCustomNotify(player, 'У вас недостаточно средств', 1, 9);
+            return;
+        }
     }
 
     if (price < 0)
@@ -88,7 +96,7 @@ gun.buy = function(player, itemId, price, count, superTint, tint, shopId) {
 
     let amount = inventory.getInvAmount(player, user.getId(player), 1);
     if (amount + items.getItemAmountById(itemId) > inventory.getPlayerInvAmountMax(player)) {
-        player.notify('~r~В инвентаре нет места');
+        user.showCustomNotify(player, 'В инвентаре нет места', 1, 9);
         return;
     }
 
@@ -104,9 +112,16 @@ gun.buy = function(player, itemId, price, count, superTint, tint, shopId) {
         inventory.addItemSql(itemId, 1, 1, user.getId(player), 100, 0, JSON.stringify(paramsObject), 1);
     else
         inventory.addItem(itemId, 1, 1, user.getId(player), -1, 0, `{"userName": "${user.getRpName(player)}"}`, 1);
-    player.notify('~g~Вы купили ' + items.getItemNameById(itemId) +  ' по цене: ~s~' + methods.moneyFormat(price));
+
+    user.showCustomNotify(player, 'Вы купили ' + items.getItemNameById(itemId) +  ' по цене: ' + methods.moneyFormat(price), 2, 9);
+
     user.addHistory(player, 5, `Покупка оружия ${items.getItemNameById(itemId)} (${serial})`);
-    user.removeCashMoney(player, price, `Покупка оружия ${items.getItemNameById(itemId)} (${serial})`);
+    if (payType === 1) {
+        user.removeBankMoney(player, price, `Покупка оружия ${items.getItemNameById(itemId)} (${serial})`);
+    }
+    else {
+        user.removeCashMoney(player, price, `Покупка оружия ${items.getItemNameById(itemId)} (${serial})`);
+    }
     business.addMoney(shopId, price, items.getItemNameById(itemId));
     business.removeMoneyTax(shopId, price / business.getPrice(shopId));
     inventory.updateAmount(player, user.getId(player), 1);

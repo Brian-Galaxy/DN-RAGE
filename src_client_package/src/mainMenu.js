@@ -34,10 +34,12 @@ let reportList = [];
 let askList = [];
 
 let hidden = true;
+let cantClose = false;
 
 mainMenu.show = function() {
 
-    mp.gui.cursor.show(true, true);
+    mp.gui.cursor.show(false, true);
+    ui.DisableMouseControl = true;
     hidden = false;
     ui.hideHud();
     mp.game.graphics.transitionToBlurred(100);
@@ -58,7 +60,8 @@ mainMenu.show = function() {
 };
 
 mainMenu.showOrHide = function() {
-    ui.callCef('accmain', '{"type": "showOrHide"}');
+    if (!cantClose)
+        ui.callCef('accmain', '{"type": "showOrHide"}');
 };
 
 mainMenu.hide = function() {
@@ -66,6 +69,7 @@ mainMenu.hide = function() {
 
     methods.blockKeys(false);
     mp.gui.cursor.show(false, false);
+    ui.DisableMouseControl = false;
     hidden = true;
     ui.showHud();
     mp.game.graphics.transitionFromBlurred(100);
@@ -480,6 +484,7 @@ mp.events.add('client:mainMenu:status', function(status) {
 mp.events.add('client:mainMenu:hide', function(status) {
     methods.blockKeys(false);
     mp.gui.cursor.show(false, false);
+    ui.DisableMouseControl = false;
     hidden = true;
     ui.showHud();
     mp.game.graphics.transitionFromBlurred(100);
@@ -512,6 +517,11 @@ mp.events.add('client:mainMenu:addReport', function(text, name) {
     if (text !== '' && text !== undefined) {
         reportList.push({type: 1, text: text, time: `${weather.getRealTime()}`, name: name});
     }
+});
+
+mp.events.add('client:mainMenu:sendReportOrAsk:focus', function(status) {
+    cantClose = status;
+    mp.gui.cursor.show(status, true);
 });
 
 mp.events.add('client:mainMenu:sendPos', function(x, y) {

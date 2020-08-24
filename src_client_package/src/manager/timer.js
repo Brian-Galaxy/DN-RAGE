@@ -234,6 +234,8 @@ let warning = 0;
 let isSetSpeed = false;
 
 timer.twoSecTimer = function() {
+
+    Container.Data.ResetLocally(mp.players.local.remoteId, "isGunTimeout");
     
     try {
         user.setLastWeapon(user.getCurrentWeapon());
@@ -241,75 +243,20 @@ timer.twoSecTimer = function() {
     catch (e) {}
 
     try {
-        
-        if (mp.players.local.isInAnyVehicle(true) && mp.players.local.dimension === 0) {
-            /*//0xDB89591E290D9182 | GET_TIME_SINCE_PLAYER_DROVE_AGAINST_TRAFFIC
-            //0xD559D2BE9E37853B | GET_TIME_SINCE_PLAYER_DROVE_ON_PAVEMENT
-            //0x4F5070AA58F69279 | GET_VEHICLE_NODE_IS_SWITCHED_OFF | _GET_IS_SLOW_ROAD_FLAG
-            let drove = mp.game.invoke('0xDB89591E290D9182'); //Если 0, то ты едешь по встерчке как мудак
 
-            /eval JSON.stringify(mp.game.pathfind.getVehicleNodeProperties(mp.players.local.vehicle.position.x, mp.players.local.vehicle.position.y, mp.players.local.vehicle.position.z, 1, 1));
-            */
-
-            let veh = mp.players.local.vehicle;
-
-            if (
-                veh.model !== mp.game.joaat('issi3') &&
-                veh.model !== mp.game.joaat('issi4') &&
-                veh.model !== mp.game.joaat('issi5') &&
-                veh.model !== mp.game.joaat('issi6') &&
-                veh.model !== mp.game.joaat('patriot') &&
-                veh.model !== mp.game.joaat('patriotc') &&
-                veh.model !== mp.game.joaat('comet4') &&
-                veh.model !== mp.game.joaat('rumpo3')
-            ) {
-                if (
-                    veh.getClass() === 0 ||
-                    veh.getClass() === 1 ||
-                    veh.getClass() === 3 ||
-                    veh.getClass() === 4 ||
-                    veh.getClass() === 5 ||
-                    veh.getClass() === 6 ||
-                    veh.getClass() === 7 ||
-                    veh.getClass() === 11 ||
-                    veh.getClass() === 12 ||
-                    veh.getClass() === 17 ||
-                    veh.getClass() === 20
-                ) {
-                    let value = mp.game.pathfind.getVehicleNodeProperties(mp.players.local.vehicle.position.x, mp.players.local.vehicle.position.y, mp.players.local.vehicle.position.z, 1, 1);
-                    //let desc = 'Едешь как поц';
-                    if (value.flags >= 8 && value.flags <= 12 || value.flags === 0 || value.flags === 3 || value.flags >= 40 && value.flags <= 47) {
-                        let vSpeed = vehicles.getSpeedMax(mp.players.local.vehicle.model) / 2.5;
-                        let currentSpeed = methods.getCurrentSpeedKmh();
-                        isSetSpeed = true;
-                        if (vSpeed < currentSpeed)
-                            mp.events.call('client:setNewMaxSpeedServer', currentSpeed - 4);
-                    }
-                    else if (isSetSpeed) {
-                        isSetSpeed = false;
-                        mp.events.call('client:setNewMaxSpeedServer', 0);
-                    }
-                    /*if (mp.game.invoke('0xDB89591E290D9182', mp.players.local) === 0)
-                        desc = 'Едешь по встречке';
-                    chat.sendLocal(`${isSetSpeed} | ${value.flags} | ${desc}`);*/
+        if (user.isLogin()) {
+            if (!user.hasCache('uniform') && user.hasCache('id')) {
+                if (mp.players.local.getArmour() > 0 && mp.players.local.getDrawableVariation(9) === 0) {
+                    user.set('armor', 12);
+                    user.set('armor_color', 1);
+                    user.setComponentVariation( 9, 12, 1);
                 }
-            }
-        } else if (isSetSpeed) {
-            isSetSpeed = false;
-            mp.events.call('client:setNewMaxSpeedServer', 0);
-        }
-
-        if (!user.hasCache('uniform')) {
-            if (mp.players.local.getArmour() > 0 && mp.players.local.getDrawableVariation(9) === 0) {
-                user.set('armor', 12);
-                user.set('armor_color', 1);
-                user.setComponentVariation( 9, 12, 1);
-            }
-            if (mp.players.local.getArmour() < 1 && mp.players.local.getDrawableVariation(9) > 0) {
-                user.set('armor', 0);
-                user.set('armor_color', 0);
-                inventory.updateItemsEquipByItemId(252, user.getCache('id'), 1, 0, 0);
-                user.setComponentVariation( 9, 0, 0);
+                if (mp.players.local.getArmour() < 1 && mp.players.local.getDrawableVariation(9) > 0) {
+                    user.set('armor', 0);
+                    user.set('armor_color', 0);
+                    inventory.updateItemsEquipByItemId(252, user.getCache('id'), 1, 0, 0);
+                    user.setComponentVariation( 9, 0, 0);
+                }
             }
         }
 
@@ -359,6 +306,68 @@ timer.allModelLoader = function() {
 };
 
 timer.tenSecTimer = function() {
+
+    try {
+        if (mp.players.local.isInAnyVehicle(true) && mp.players.local.dimension === 0) { //TODO ПЕРЕПИСАТь
+            /*//0xDB89591E290D9182 | GET_TIME_SINCE_PLAYER_DROVE_AGAINST_TRAFFIC
+            //0xD559D2BE9E37853B | GET_TIME_SINCE_PLAYER_DROVE_ON_PAVEMENT
+            //0x4F5070AA58F69279 | GET_VEHICLE_NODE_IS_SWITCHED_OFF | _GET_IS_SLOW_ROAD_FLAG
+            let drove = mp.game.invoke('0xDB89591E290D9182'); //Если 0, то ты едешь по встерчке как мудак
+
+            /eval JSON.stringify(mp.game.pathfind.getVehicleNodeProperties(mp.players.local.vehicle.position.x, mp.players.local.vehicle.position.y, mp.players.local.vehicle.position.z, 1, 1));
+            */
+
+            let veh = mp.players.local.vehicle;
+
+            if (
+                veh.model !== mp.game.joaat('issi3') &&
+                veh.model !== mp.game.joaat('issi4') &&
+                veh.model !== mp.game.joaat('issi5') &&
+                veh.model !== mp.game.joaat('issi6') &&
+                veh.model !== mp.game.joaat('patriot') &&
+                veh.model !== mp.game.joaat('patriotc') &&
+                veh.model !== mp.game.joaat('comet4') &&
+                veh.model !== mp.game.joaat('rumpo3')
+            ) {
+                if (
+                    veh.getClass() === 0 ||
+                    veh.getClass() === 1 ||
+                    veh.getClass() === 3 ||
+                    veh.getClass() === 4 ||
+                    veh.getClass() === 5 ||
+                    veh.getClass() === 6 ||
+                    veh.getClass() === 7 ||
+                    veh.getClass() === 11 ||
+                    veh.getClass() === 12 ||
+                    veh.getClass() === 17 ||
+                    veh.getClass() === 20
+                ) {
+                    /*let value = mp.game.pathfind.getVehicleNodeProperties(mp.players.local.vehicle.position.x, mp.players.local.vehicle.position.y, mp.players.local.vehicle.position.z, 1, 1);
+                    //let desc = 'Едешь как поц';
+                    if (value.flags >= 8 && value.flags <= 12 || value.flags === 0 || value.flags === 3 || value.flags >= 40 && value.flags <= 47) {
+                        let vSpeed = vehicles.getSpeedMax(mp.players.local.vehicle.model) / 2.5;
+                        let currentSpeed = methods.getCurrentSpeedKmh();
+                        isSetSpeed = true;
+                        if (vSpeed < currentSpeed)
+                            mp.events.call('client:setNewMaxSpeedServer', currentSpeed - (4 * 5));
+                    }
+                    else if (isSetSpeed) {
+                        isSetSpeed = false;
+                        mp.events.call('client:setNewMaxSpeedServer', 0);
+                    }*/
+                    /*if (mp.game.invoke('0xDB89591E290D9182', mp.players.local) === 0)
+                        desc = 'Едешь по встречке';
+                    chat.sendLocal(`${isSetSpeed} | ${value.flags} | ${desc}`);*/
+                }
+            }
+        } else if (isSetSpeed) {
+            isSetSpeed = false;
+            mp.events.call('client:setNewMaxSpeedServer', 0);
+        }
+    }
+    catch (e) {
+
+    }
 
     if (user.isLogin()) {
         weapons.getMapList().forEach(item => {
@@ -432,8 +441,38 @@ timer.tenSecTimer = function() {
 };
 
 let prevWpPos = new mp.Vector3(0, 0, 0);
+let isLoaded = false;
 
 timer.secTimer = function() {
+
+    /*if (!isLoaded && methods.distanceToPos(mp.players.local.position, new mp.Vector3(-1096.445,-831.962,23.033)) < 100) {
+        try {
+            let vesp2_1ipl = mp.game.interior.getInteriorAtCoordsWithType(-1096.445,-831.962,23.033,"int_vesp_1_2");
+            //let vesp3_1ipl = mp.game.interior.getInteriorAtCoordsWithType(-1091.963,-831.206,26.827,"int_vesp_3_2");
+            let vesp02_2ipl = mp.game.interior.getInteriorAtCoordsWithType(-1095.002,-838.586,10.276,"int_vesp_02_1");
+            //let vesp02_1ipl = mp.game.interior.getInteriorAtCoordsWithType(-1095.002,-838.586,10.276,"int_vesp_02_2");
+            let vesp01_2ipl = mp.game.interior.getInteriorAtCoordsWithType(-1088.377,-832.352,5.479,"int_vesp_01_1");
+            let vesp01_1ipl = mp.game.interior.getInteriorAtCoordsWithType(-1097.205,-839.141,4.878,"int_vesp_01_2");
+            methods.setIplPropState(vesp2_1ipl, "vesp1_2");
+            mp.game.interior.refreshInterior(vesp2_1ipl);
+            //methods.setIplPropState(vesp3_1ipl, "vesp3_2");
+            //mp.game.interior.refreshInterior(vesp3_1ipl);
+            methods.setIplPropState(vesp02_2ipl, "vesp02_1");
+            mp.game.interior.refreshInterior(vesp02_2ipl);
+            //methods.setIplPropState(vesp02_1ipl, "vesp02_2");
+            //mp.game.interior.refreshInterior(vesp02_1ipl);
+            methods.setIplPropState(vesp01_2ipl, "vesp01_1");
+            mp.game.interior.refreshInterior(vesp01_2ipl);
+            methods.setIplPropState(vesp01_1ipl, "vesp01_2");
+            mp.game.interior.refreshInterior(vesp01_1ipl);
+
+        }
+        catch(e) { methods.debug(e) }
+        isLoaded = true;
+    }
+    else if(isLoaded && methods.distanceToPos(mp.players.local.position) > 110) {
+        isLoaded = false;
+    }*/
 
     try {
         methods.getStreamPlayerList().forEach((player, i) => {

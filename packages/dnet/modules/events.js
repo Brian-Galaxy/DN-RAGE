@@ -757,10 +757,10 @@ mp.events.addRemoteCounted('server:business:cloth:change', (player, body, clothI
     cloth.change(player, body, clothId, color, torso, torsoColor, parachute, parachuteColor);
 });
 
-mp.events.addRemoteCounted('server:business:cloth:buy', (player, price, body, clothId, color, torso, torsoColor, parachute, parachuteColor, itemName, shopId, isFree) => {
+mp.events.addRemoteCounted('server:business:cloth:buy', (player, price, body, clothId, color, torso, torsoColor, parachute, parachuteColor, itemName, shopId, isFree, payType) => {
     if (!user.isLogin(player))
         return;
-    cloth.buy(player, price, body, clothId, color, torso, torsoColor, parachute, parachuteColor, itemName, shopId, isFree);
+    cloth.buy(player, price, body, clothId, color, torso, torsoColor, parachute, parachuteColor, itemName, shopId, isFree, payType);
 });
 
 mp.events.addRemoteCounted('server:business:cloth:changeMask', (player, clothId, color) => {
@@ -769,10 +769,10 @@ mp.events.addRemoteCounted('server:business:cloth:changeMask', (player, clothId,
     cloth.changeMask(player, clothId, color);
 });
 
-mp.events.addRemoteCounted('server:business:cloth:buyMask', (player, price, maskId, shopId) => {
+mp.events.addRemoteCounted('server:business:cloth:buyMask', (player, price, maskId, shopId, payType) => {
     if (!user.isLogin(player))
         return;
-    cloth.buyMask(player, price, maskId, shopId);
+    cloth.buyMask(player, price, maskId, shopId, payType);
 });
 
 mp.events.addRemoteCounted('server:business:cloth:changeProp', (player, body, clothId, color) => {
@@ -781,10 +781,10 @@ mp.events.addRemoteCounted('server:business:cloth:changeProp', (player, body, cl
     cloth.changeProp(player, body, clothId, color);
 });
 
-mp.events.addRemoteCounted('server:business:cloth:buyProp', (player, price, body, clothId, color, itemName, shopId, isFree) => {
+mp.events.addRemoteCounted('server:business:cloth:buyProp', (player, price, body, clothId, color, itemName, shopId, isFree, payType) => {
     if (!user.isLogin(player))
         return;
-    cloth.buyProp(player, price, body, clothId, color, itemName, shopId, isFree);
+    cloth.buyProp(player, price, body, clothId, color, itemName, shopId, isFree, payType);
 });
 
 mp.events.addRemoteCounted('server:print:buy', (player, slot, type, price) => {
@@ -793,20 +793,20 @@ mp.events.addRemoteCounted('server:print:buy', (player, slot, type, price) => {
     cloth.buyPrint(player, slot, type, price);
 });
 
-mp.events.addRemoteCounted('server:tattoo:buy', (player, slot, type, zone, price, itemName, shopId) => {
+mp.events.addRemoteCounted('server:tattoo:buy', (player, slot, type, zone, price, itemName, shopId, payType) => {
     if (!user.isLogin(player))
         return;
-    tattoo.buy(player, slot, type, zone, price, itemName, shopId);
+    tattoo.buy(player, slot, type, zone, price, itemName, shopId, payType);
 });
 
-mp.events.addRemoteCounted('server:tattoo:destroy', (player, slot, type, zone, price, itemName, shopId) => {
+mp.events.addRemoteCounted('server:tattoo:destroy', (player, slot, type, zone, price, itemName, shopId, payType) => {
     if (!user.isLogin(player))
         return;
-    tattoo.destroy(player, slot, type, zone, price, itemName, shopId);
+    tattoo.destroy(player, slot, type, zone, price, itemName, shopId, payType);
 });
 
-mp.events.addRemoteCounted('server:user:buyLicense', (player, type, price, month) => {
-    user.buyLicense(player, type, price, month);
+mp.events.addRemoteCounted('server:user:buyLicense', (player, type, price, month, typePay) => {
+    user.buyLicense(player, type, price, month, typePay);
 });
 
 mp.events.addRemoteCounted('server:user:sendSms', (player, sender, title, text, pic) => {
@@ -896,10 +896,10 @@ mp.events.addRemoteCounted('server:bank:openCard', (player, bankId, priceCard) =
     bank.openCard(player, bankId, priceCard);
 });
 
-mp.events.addRemoteCounted('server:rent:buy', (player, hash, price, shopId) => {
+mp.events.addRemoteCounted('server:rent:buy', (player, hash, price, shopId, payType) => {
     if (!user.isLogin(player))
         return;
-    rent.buy(player, hash, price, shopId);
+    rent.buy(player, hash, price, shopId, payType);
 });
 
 mp.events.addRemoteCounted('server:user:showPlayerHistory', (player,) => {
@@ -1947,6 +1947,7 @@ mp.events.addRemoteCounted('server:admin:spawnVeh', (player, vName) => {
         if (user.isAdmin(player)) {
             let v = vehicles.spawnCar(player.position, player.heading, vName);
             user.putInVehicle(player, v, -1);
+            v.setVariable('isAdmin', true);
         }
     }
     catch (e) {
@@ -3747,6 +3748,9 @@ mp.events.addRemoteCounted("server:vehicle:lockStatus", (player) => {
                     vehicles.lockStatus(player, vehicle);
                 else
                     player.notify('~r~У Вас нет ключей от транспорта');
+            }
+            else if (vehicle.getVariable('isAdmin')) {
+                player.notify('~r~У Вас нет ключей от транспорта');
             }
             else if (vehicle.getVariable('cargoId')) {
                 if (vehicle.getVariable('fraction_id2') > 0)
@@ -6456,11 +6460,11 @@ mp.events.addRemoteCounted('server:sellMoney', (player) => {
 
             fraction.addMoney(frId, moneyHalf * (procent / 100), 'Отмыв средств');
 
-            if (procent > 99) {
+            if (procent < 100) {
                 mp.players.forEach(p => {
                     if (user.isLogin(p) && user.get(p, 'fraction_id2') === frId) {
                         user.addCryptoMoney(p, moneyHalf * ((100 - procent) / 100) / currentOnline, 'Отмыв средств');
-                        p.notify(`~g~К вам на счет поступило: ~s~${methods.cryptoFormat(moneyHalf / currentOnline)}`);
+                        p.notify(`~g~К вам на счет поступило: ~s~${methods.cryptoFormat(moneyHalf * ((100 - procent) / 100) / currentOnline)}`);
                     }
                 });
             }
@@ -6518,16 +6522,16 @@ mp.events.addRemoteCounted('server:lsc:showTun', (player, modType, idx) => {
     lsc.showTun(player, modType, idx);
 });
 
-mp.events.addRemoteCounted('server:lsc:buyTun', (player, modType, idx, price, shopId, itemName) => {
+mp.events.addRemoteCounted('server:lsc:buyTun', (player, modType, idx, price, shopId, itemName, payType) => {
     if (!user.isLogin(player))
         return;
-    lsc.buyTun(player, modType, idx, price, shopId, itemName);
+    lsc.buyTun(player, modType, idx, price, shopId, itemName, payType);
 });
 
-mp.events.addRemoteCounted('server:lsc:buySTun', (player, modType, idx, price, shopId, itemName) => {
+mp.events.addRemoteCounted('server:lsc:buySTun', (player, modType, idx, price, shopId, itemName, payType) => {
     if (!user.isLogin(player))
         return;
-    lsc.buySTun(player, modType, idx, price, shopId, itemName);
+    lsc.buySTun(player, modType, idx, price, shopId, itemName, payType);
 });
 
 mp.events.addRemoteCounted('server:lsc:resetSTun', (player, modType) => {
@@ -6542,10 +6546,10 @@ mp.events.addRemoteCounted('server:lsc:showNumberType', (player, idx) => {
     lsc.showNumberType(player, idx);
 });
 
-mp.events.addRemoteCounted('server:lsc:buyNumberType', (player, idx, price, shopId) => {
+mp.events.addRemoteCounted('server:lsc:buyNumberType', (player, idx, price, shopId, payType) => {
     if (!user.isLogin(player))
         return;
-    lsc.buyNumberType(player, idx, methods.parseInt(price), shopId);
+    lsc.buyNumberType(player, idx, methods.parseInt(price), shopId, payType);
 });
 
 mp.events.addRemoteCounted('server:lsc:showColor1', (player, idx) => {
@@ -6584,76 +6588,76 @@ mp.events.addRemoteCounted('server:lsc:showColor6', (player, idx) => {
     lsc.showColor6(player, idx);
 });
 
-mp.events.addRemoteCounted('server:lsc:buyColor1', (player, idx, price, shopId, itemName) => {
+mp.events.addRemoteCounted('server:lsc:buyColor1', (player, idx, price, shopId, itemName, payType) => {
     if (!user.isLogin(player))
         return;
-    lsc.buyColor1(player, idx, methods.parseInt(price), shopId, itemName);
+    lsc.buyColor1(player, idx, methods.parseInt(price), shopId, itemName, payType);
 });
 
-mp.events.addRemoteCounted('server:lsc:buyColor2', (player, idx, price, shopId, itemName) => {
+mp.events.addRemoteCounted('server:lsc:buyColor2', (player, idx, price, shopId, itemName, payType) => {
     if (!user.isLogin(player))
         return;
-    lsc.buyColor2(player, idx, methods.parseInt(price), shopId, itemName);
+    lsc.buyColor2(player, idx, methods.parseInt(price), shopId, itemName, payType);
 });
 
-mp.events.addRemoteCounted('server:lsc:buyColor3', (player, idx, price, shopId, itemName) => {
+mp.events.addRemoteCounted('server:lsc:buyColor3', (player, idx, price, shopId, itemName, payType) => {
     if (!user.isLogin(player))
         return;
-    lsc.buyColor3(player, idx, methods.parseInt(price), shopId, itemName);
+    lsc.buyColor3(player, idx, methods.parseInt(price), shopId, itemName, payType);
 });
 
-mp.events.addRemoteCounted('server:lsc:buyColor4', (player, idx, price, shopId, itemName) => {
+mp.events.addRemoteCounted('server:lsc:buyColor4', (player, idx, price, shopId, itemName, payType) => {
     if (!user.isLogin(player))
         return;
-    lsc.buyColor4(player, idx, methods.parseInt(price), shopId, itemName);
+    lsc.buyColor4(player, idx, methods.parseInt(price), shopId, itemName, payType);
 });
 
-mp.events.addRemoteCounted('server:lsc:buyColor5', (player, idx, price, shopId, itemName) => {
+mp.events.addRemoteCounted('server:lsc:buyColor5', (player, idx, price, shopId, itemName, payType) => {
     if (!user.isLogin(player))
         return;
-    lsc.buyColor5(player, idx, methods.parseInt(price), shopId, itemName);
+    lsc.buyColor5(player, idx, methods.parseInt(price), shopId, itemName, payType);
 });
 
-mp.events.addRemoteCounted('server:lsc:buyColor6', (player, idx, price, shopId, itemName) => {
+mp.events.addRemoteCounted('server:lsc:buyColor6', (player, idx, price, shopId, itemName, payType) => {
     if (!user.isLogin(player))
         return;
-    lsc.buyColor6(player, idx, methods.parseInt(price), shopId, itemName);
+    lsc.buyColor6(player, idx, methods.parseInt(price), shopId, itemName, payType);
 });
 
-mp.events.addRemoteCounted('server:lsc:buyNumber', (player, shopId, newNumber) => {
+mp.events.addRemoteCounted('server:lsc:buyNumber', (player, shopId, newNumber, payType) => {
     if (!user.isLogin(player))
         return;
-    lsc.buyNumber(player, shopId, newNumber);
+    lsc.buyNumber(player, shopId, newNumber, payType);
 });
 
-mp.events.addRemoteCounted('server:lsc:repair', (player, shopId, price) => {
+mp.events.addRemoteCounted('server:lsc:repair', (player, shopId, price, payType) => {
     if (!user.isLogin(player))
         return;
-    lsc.repair(player, price, shopId);
+    lsc.repair(player, price, shopId, payType);
 });
 
-mp.events.addRemoteCounted('server:lsc:buyNeon', (player, shopId, price) => {
+mp.events.addRemoteCounted('server:lsc:buyNeon', (player, shopId, price, payType) => {
     if (!user.isLogin(player))
         return;
-    lsc.buyNeon(player, price, shopId);
+    lsc.buyNeon(player, price, shopId, payType);
 });
 
-mp.events.addRemoteCounted('server:lsc:buyTyreColor', (player, idx, price, shopId) => {
+mp.events.addRemoteCounted('server:lsc:buyTyreColor', (player, idx, price, shopId, payType) => {
     if (!user.isLogin(player))
         return;
-    lsc.buyTyreColor(player, price, idx, shopId);
+    lsc.buyTyreColor(player, price, idx, shopId, payType);
 });
 
-mp.events.addRemoteCounted('server:lsc:buyLight', (player, shopId, price) => {
+mp.events.addRemoteCounted('server:lsc:buyLight', (player, shopId, price, payType) => {
     if (!user.isLogin(player))
         return;
-    lsc.buyLight(player, price, shopId);
+    lsc.buyLight(player, price, shopId, payType);
 });
 
-mp.events.addRemoteCounted('server:lsc:buySpecial', (player, shopId, price) => {
+mp.events.addRemoteCounted('server:lsc:buySpecial', (player, shopId, price, payType) => {
     if (!user.isLogin(player))
         return;
-    lsc.buySpecial(player, price, shopId);
+    lsc.buySpecial(player, price, shopId, payType);
 });
 
 mp.events.addRemoteCounted('server:vehicle:park', (player) => {
@@ -6801,16 +6805,22 @@ mp.events.addRemoteCounted('server:vehicle:setLight', (player, cl) => {
     }
 });
 
-mp.events.addRemoteCounted('server:gun:buy', (player, itemId, price, count, superTint, tint, shopId) => {
+mp.events.addRemoteCounted('server:gun:buy', (player, itemId, price, count, superTint, tint, shopId, payType) => {
     if (!user.isLogin(player))
         return;
-    gun.buy(player, itemId, price, count, superTint, tint, shopId);
+    gun.buy(player, itemId, price, count, superTint, tint, shopId, payType);
 });
 
 mp.events.addRemoteCounted('server:shop:buy', (player, itemId, price, shopId) => {
     if (!user.isLogin(player))
         return;
     shop.buy(player, itemId, price, shopId);
+});
+
+mp.events.addRemoteCounted('server:shop:buyCard', (player, itemId, price, shopId) => {
+    if (!user.isLogin(player))
+        return;
+    shop.buyCard(player, itemId, price, shopId);
 });
 
 mp.events.addRemoteCounted('server:addFractionLog', (player, name, doName, text, fractionId) => {

@@ -37,6 +37,10 @@ user.godmode = false;
 user.currentId = 0;
 user.targetEntity = undefined;
 user.socialClub = 'socialclub';
+user.btnCamera = 238;
+
+user.camOffsetLeft = 0;
+user.camOffsetRight = 0;
 
 let currentCamDist = 0.2;
 let currentCamRot = -2;
@@ -683,6 +687,9 @@ user.init2 = function() {
 
 user.destroyCam = function() {
     try {
+        user.camOffsetLeft = 0;
+        user.camOffsetRight = 0;
+
         cameraRotator.stop();
         cameraRotator.reset();
         if (cam) {
@@ -695,6 +702,27 @@ user.destroyCam = function() {
     }
 
     mp.game.cam.renderScriptCams(false, true, 500, true, true);
+};
+
+user.createCam = function(vPos, vRot, zUp = 1, offsetMin = 0.4, offsetMax = 1.5, offsetZMin = -0.8, offsetZMax = 1, shake = false) {
+    try {
+        if (cam)
+            user.destroyCam();
+
+        cam = mp.cameras.new('customization');
+        cameraRotator.start(cam, vPos, vPos, new mp.Vector3(0, 3, 0), vRot);
+        cameraRotator.setXBound(-360, 360);
+        cameraRotator.setZBound(offsetZMin, offsetZMax);
+        cameraRotator.setOffsetBound(offsetMin, offsetMax);
+        cameraRotator.setZUpMultipler(zUp);
+        //if (shake)
+            cam.shake("HAND_SHAKE", 0.3);
+
+        mp.game.cam.renderScriptCams(true, false, 500, false, false);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 };
 
 user.getCam = function() {
@@ -1134,14 +1162,14 @@ user.stopAllScreenEffect = function() {
     user.setDrugLevel(99, 0);
 };
 
-user.buyLicense = function(type, price, month = 12)
+user.buyLicense = function(type, price, month = 12, typePay = 0)
 {
     if (type === "b_lic") {
         setTimeout(function () {
             quest.standart();
         }, 5000);
     }
-    mp.events.callRemote('server:user:buyLicense', type, price, month);
+    mp.events.callRemote('server:user:buyLicense', type, price, month, typePay);
 };
 
 user.addHistory = function(type, reason) {
@@ -1746,7 +1774,12 @@ user.hidePhone = function() {
 *
 * */
 user.showCustomNotify = function(text, style = 0, layout = 5, time = 5000) {
+    mp.game.audio.playSoundFrontend(-1, "Boss_Blipped", "GTAO_Magnate_Hunt_Boss_SoundSet", false);
     ui.callCef('notify', JSON.stringify({type: style, layout: layout, text: text, time: time}));
+};
+
+user.playSound = function(name, ref) {
+    mp.game.audio.playSoundFrontend(-1, name, ref, false);
 };
 
 user.isDead = function() {
@@ -2015,13 +2048,17 @@ mp.events.add("render", () => {
         const dX = currentPoint.x - x;
         const dY = currentPoint.y - y;
 
-        cameraRotator.setPoint(x, y);
+        //ui.drawText(`${currentPoint.x} | ${currentPoint.y} | ${x} | ${y}`, 0, 0, 1, 255,255,255, 255,1);
 
-        if (mp.game.controls.isDisabledControlPressed(2, 238)) {
-            cameraRotator.onMouseMove(dX, dY);
+        if (x > user.camOffsetLeft) {
+            cameraRotator.setPoint(x, y);
+
+            if (mp.game.controls.isDisabledControlPressed(2, user.btnCamera)) {
+                cameraRotator.onMouseMove(dX, dY);
+            }
+
+            cameraRotator.onMouseScroll(su, sd);
         }
-
-        cameraRotator.onMouseScroll(su, sd);
     }
     catch (e) {
     }

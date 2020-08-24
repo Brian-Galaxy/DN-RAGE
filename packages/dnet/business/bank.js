@@ -40,7 +40,8 @@ bank.fleecaMarkers = [
 ];
 bank.blainePos = new mp.Vector3(-110.9777, 6470.198, 31.62671);
 bank.pacificPos = new mp.Vector3(235.5093, 216.8752, 106.2867);
-bank.mazePos = new mp.Vector3(-66.66476, -802.0474, 44.22729);
+bank.mazePos1 = new mp.Vector3(-66.66476, -802.0474, 44.22729);
+bank.mazePos2 = new mp.Vector3(-1381.6627197265625, -477.76763916015625, 71.04210662841797);
 
 let pos1 = new mp.Vector3(592.0863037109375, -3280.79931640625, 5.069560527801514);
 
@@ -116,7 +117,8 @@ bank.loadAll = function() {
 
     methods.createBlip(bank.pacificPos, 500, 65, 0.9, 'Bank - Pacific Standard');
     methods.createBlip(bank.blainePos, 500, 67, 0.9, 'Bank - Blaine County Savings');
-    methods.createBlip(bank.mazePos, 500, 59, 0.9, 'Bank - Maze');
+    methods.createBlip(bank.mazePos1, 500, 59, 0.9, 'Bank - Maze');
+    methods.createBlip(bank.mazePos2, 500, 59, 0.9, 'Bank - Maze');
 
     bank.fleecaMarkers.forEach(function (item) {
         let bankPos = new mp.Vector3(item[0], item[1], item[2]);

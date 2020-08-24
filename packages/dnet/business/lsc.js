@@ -14,14 +14,14 @@ let business = require('../property/business');
 let lsc = exports;
 
 lsc.carPos = [
-    [-1159.827,-2015.182,12.16598,338.3167],
-    [-330.8568,-137.6985,38.00612,95.85743],
-    [732.1998,-1088.71,21.15658,89.10553],
-    [-222.6972,-1329.915,29.87796,269.8108],
-    [1174.876,2640.67,36.7454,0.5306945],
-    [110.3291,6626.977,30.7735,223.695],
-    //[-147.4434,-599.0691,166.0058,315.3235],
-    [481.2153,-1317.698,28.09073,296.715]
+    [-1159.827, -2015.182, 12.16598, 338.3167],
+    [-330.8568, -137.6985, 38.00612, 95.85743],
+    [732.1998, -1088.71, 21.15658, 89.10553],
+    [-222.6972, -1329.915, 29.87796, 269.8108],
+    [1174.876, 2640.67, 36.7454, 0.5306945],
+    [110.3291, 6626.977, 30.7735, 223.695],
+    //[-147.4434, -599.0691, 166.0058, 315.3235],
+    [481.2153, -1317.698, 28.09073, 296.715]
 ];
 lsc.list = [
     [-1148.878, -2000.123, 12.18026, 5],
@@ -67,7 +67,7 @@ lsc.checkPosForOpenMenu = function(player) {
         let shopId = -1;
         lsc.carPos.forEach(function (item, i) {
             let shopPos = new mp.Vector3(item[0], item[1], item[2]);
-            if (methods.distanceToPos(playerPos, shopPos) < 2) {
+            if (methods.distanceToPos(playerPos, shopPos) < 3.9) {
                 shopId = methods.parseInt(lsc.list[i][3]);
 
                 try {
@@ -99,7 +99,7 @@ lsc.findNearest = function(pos) {
     return prevPos;
 };
 
-lsc.repair = function(player, price, shopId) {
+lsc.repair = function(player, price, shopId, payType) {
     methods.debug('lsc.repair');
     if (!user.isLogin(player))
         return;
@@ -107,23 +107,34 @@ lsc.repair = function(player, price, shopId) {
     if (!vehicles.exists(veh))
         return;
 
-    if (user.getMoney(player) < price) {
-        player.notify('~r~У вас недостаточно средств');
-        return;
+    if (payType === 1) {
+        if (user.getBankMoney(player) < price) {
+            user.showCustomNotify(player, 'У вас недостаточно средств', 1, 9);
+            return;
+        }
+    }
+    else {
+        if (user.getCashMoney(player) < price) {
+            user.showCustomNotify(player, 'У вас недостаточно средств', 1, 9);
+            return;
+        }
     }
 
     if (price < 0)
         return;
 
     veh.repair();
-    user.removeMoney(player, price, 'Ремонт транспорта');
+    if (payType === 1)
+        user.removeBankMoney(player, price, 'Ремонт транспорта');
+    else
+        user.removeCashMoney(player, price, 'Ремонт транспорта');
     business.addMoney(shopId, price, 'Ремонт транспорта');
     business.removeMoneyTax(shopId, price / business.getPrice(shopId));
 
-    player.notify('~g~Вы отремонтировали трансопрт');
+    user.showCustomNotify(player, 'Вы отремонтировали трансопрт', 2, 9);
 };
 
-lsc.buyNeon = function(player, price, shopId) {
+lsc.buyNeon = function(player, price, shopId, payType) {
     methods.debug('lsc.buyNeon');
     if (!user.isLogin(player))
         return;
@@ -131,8 +142,8 @@ lsc.buyNeon = function(player, price, shopId) {
     if (!vehicles.exists(veh))
         return;
 
-    if (user.getMoney(player) < price) {
-        player.notify('~r~У вас недостаточно средств');
+    if (user.getMoney(player, payType) < price) {
+        user.showCustomNotify(player, 'У вас недостаточно средств', 1, 9);
         return;
     }
 
@@ -140,24 +151,16 @@ lsc.buyNeon = function(player, price, shopId) {
         return;
 
     if (veh.getVariable('user_id') < 1) {
-        player.notify('~r~Транспорт должен быть личный');
+        user.showCustomNotify(player, 'Транспорт должен быть личный', 1, 9);
         return;
     }
     if (veh.getVariable('user_id') != user.getId(player)) {
-        player.notify('~r~Это должен быть ваш транспорт');
+        user.showCustomNotify(player, 'Транспорт должен быть личный', 1, 9);
         return;
     }
 
-    if (veh.getVariable('user_id') < 1) {
-        player.notify('~r~Транспорт должен быть личный');
-        return;
-    }
-    if (veh.getVariable('user_id') != user.getId(player)) {
-        player.notify('~r~Это должен быть ваш транспорт');
-        return;
-    }
     if (vehicles.get(veh.getVariable('container'), 'is_neon')) {
-        player.notify('~r~На транспорте уже установлен неон');
+        user.showCustomNotify(player, 'На транспорте уже установлен неон', 1, 9);
         return;
     }
 
@@ -169,17 +172,17 @@ lsc.buyNeon = function(player, price, shopId) {
     vehicles.neonStatus(player, veh);
     veh.neonEnabled = true;
 
-    user.removeMoney(player, price, 'Неоновая подсветка');
+    user.removeMoney(player, price, 'Неоновая подсветка', payType);
     business.addMoney(shopId, price, 'Неоновая подсветка');
     business.removeMoneyTax(shopId, price / 2);
 
-    player.notify('~g~Вы установили неон, теперь можете открыть М - Транспорт и воспользоваться им');
+    user.showCustomNotify(player, 'Вы установили неон, теперь можете открыть меню транспорта (2) и воспользоваться им', 2, 9);
 
     user.save(player);
     vehicles.save(veh.getVariable('container'));
 };
 
-lsc.buyTyreColor = function(player, price, idx, shopId) {
+lsc.buyTyreColor = function(player, price, idx, shopId, payType) {
     methods.debug('lsc.buyNeon');
     if (!user.isLogin(player))
         return;
@@ -187,8 +190,8 @@ lsc.buyTyreColor = function(player, price, idx, shopId) {
     if (!vehicles.exists(veh))
         return;
 
-    if (user.getMoney(player) < price) {
-        player.notify('~r~У вас недостаточно средств');
+    if (user.getMoney(player, payType) < price) {
+        user.showCustomNotify(player, 'У вас недостаточно средств', 1, 9);
         return;
     }
 
@@ -196,28 +199,19 @@ lsc.buyTyreColor = function(player, price, idx, shopId) {
         return;
 
     if (veh.getVariable('user_id') < 1) {
-        player.notify('~r~Транспорт должен быть личный');
+        user.showCustomNotify(player, 'Транспорт должен быть личный', 1, 9);
         return;
     }
     if (veh.getVariable('user_id') != user.getId(player)) {
-        player.notify('~r~Это должен быть ваш транспорт');
+        user.showCustomNotify(player, 'Транспорт должен быть личный', 1, 9);
         return;
     }
 
-    if (veh.getVariable('user_id') < 1) {
-        player.notify('~r~Транспорт должен быть личный');
-        return;
-    }
-    if (veh.getVariable('user_id') != user.getId(player)) {
-        player.notify('~r~Это должен быть ваш транспорт');
-        return;
-    }
-
-    user.removeMoney(player, price, 'Установка спец. покрышек');
+    user.removeMoney(player, price, 'Установка спец. покрышек', payType);
     business.addMoney(shopId, price, 'Установка спец. покрышек');
     business.removeMoneyTax(shopId, price / 2);
 
-    player.notify('~g~Вы установили напыление покрышек');
+    user.showCustomNotify(player, 'Вы установили напыление покрышек', 2, 9);
 
     let rgb = enums.rgbColors[idx];
 
@@ -232,7 +226,7 @@ lsc.buyTyreColor = function(player, price, idx, shopId) {
     vehicles.save(veh.getVariable('container'));
 };
 
-lsc.buyLight = function(player, price, shopId) {
+lsc.buyLight = function(player, price, shopId, payType) {
     methods.debug('lsc.buyLight');
     if (!user.isLogin(player))
         return;
@@ -240,8 +234,8 @@ lsc.buyLight = function(player, price, shopId) {
     if (!vehicles.exists(veh))
         return;
 
-    if (user.getMoney(player) < price) {
-        player.notify('~r~У вас недостаточно средств');
+    if (user.getMoney(player, payType) < price) {
+        user.showCustomNotify(player, 'У вас недостаточно средств', 1, 9);
         return;
     }
 
@@ -249,24 +243,16 @@ lsc.buyLight = function(player, price, shopId) {
         return;
 
     if (veh.getVariable('user_id') < 1) {
-        player.notify('~r~Транспорт должен быть личный');
+        user.showCustomNotify(player, 'Транспорт должен быть личный', 1, 9);
         return;
     }
     if (veh.getVariable('user_id') != user.getId(player)) {
-        player.notify('~r~Это должен быть ваш транспорт');
+        user.showCustomNotify(player, 'Транспорт должен быть личный', 1, 9);
         return;
     }
 
-    if (veh.getVariable('user_id') < 1) {
-        player.notify('~r~Транспорт должен быть личный');
-        return;
-    }
-    if (veh.getVariable('user_id') != user.getId(player)) {
-        player.notify('~r~Это должен быть ваш транспорт');
-        return;
-    }
     if (vehicles.get(veh.getVariable('container'), 'colorl') >= 0) {
-        player.notify('~r~На транспорте уже установлен модуль');
+        user.showCustomNotify(player, 'На транспорте уже установлен модуль', 1, 9);
         return;
     }
 
@@ -274,17 +260,17 @@ lsc.buyLight = function(player, price, shopId) {
 
     veh.data.headlightColor = 0;
 
-    user.removeMoney(player, price, 'Цветные фары');
+    user.removeMoney(player, price, 'Цветные фары', payType);
     business.addMoney(shopId, price, 'Цветные фары');
     business.removeMoneyTax(shopId, price / 2);
 
-    player.notify('~g~Вы установили модуль цветных фар, теперь можете открыть М - Транспорт и воспользоваться им');
+    user.showCustomNotify(player, 'Вы установили модуль цветных фар, теперь можете открыть Меню Транспорт и воспользоваться им', 2, 9);
 
     user.save(player);
     vehicles.save(veh.getVariable('container'));
 };
 
-lsc.buySpecial = function(player, price, shopId) {
+lsc.buySpecial = function(player, price, shopId, payType) {
     methods.debug('lsc.buyNeon');
     if (!user.isLogin(player))
         return;
@@ -292,8 +278,8 @@ lsc.buySpecial = function(player, price, shopId) {
     if (!vehicles.exists(veh))
         return;
 
-    if (user.getMoney(player) < price) {
-        player.notify('~r~У вас недостаточно средств');
+    if (user.getMoney(player, payType) < price) {
+        user.showCustomNotify(player, 'У вас недостаточно средств', 1, 9);
         return;
     }
 
@@ -301,40 +287,30 @@ lsc.buySpecial = function(player, price, shopId) {
         return;
 
     if (veh.getVariable('user_id') < 1) {
-        player.notify('~r~Транспорт должен быть личный');
+        user.showCustomNotify(player, 'Транспорт должен быть личный', 1, 9);
         return;
     }
     if (veh.getVariable('user_id') != user.getId(player)) {
-        player.notify('~r~Это должен быть ваш транспорт');
-        return;
-    }
-
-    if (veh.getVariable('user_id') < 1) {
-        player.notify('~r~Транспорт должен быть личный');
-        return;
-    }
-    if (veh.getVariable('user_id') != user.getId(player)) {
-        player.notify('~r~Это должен быть ваш транспорт');
+        user.showCustomNotify(player, 'Транспорт должен быть личный', 1, 9);
         return;
     }
     if (vehicles.get(veh.getVariable('container'), 'is_special') > 0) {
-        player.notify('~r~На транспорте уже установлена модификация');
+        user.showCustomNotify(player, 'На транспорте уже установлена модификация', 1, 9);
         return;
     }
 
     vehicles.set(veh.getVariable('container'), 'is_special', 1);
-    vehicles.neonStatus(player, veh);
-    user.removeMoney(player, price, 'Дистанционное управление');
+    user.removeMoney(player, price, 'Дистанционное управление', payType);
     business.addMoney(shopId, price, 'Дистанционное управление');
     business.removeMoneyTax(shopId, price / 2);
 
-    player.notify('~g~Вы установили модификацию');
+    user.showCustomNotify(player, 'Вы установили модификацию', 2, 9);
 
     user.save(player);
     vehicles.save(veh.getVariable('container'));
 };
 
-lsc.buyNumber = function(player, shopId, newNumber) {
+lsc.buyNumber = function(player, shopId, newNumber, payType) {
     methods.debug('lsc.buyNumber');
     if (!user.isLogin(player))
         return;
@@ -343,43 +319,66 @@ lsc.buyNumber = function(player, shopId, newNumber) {
         return;
 
     if (veh.getVariable('user_id') < 1) {
-        player.notify('~r~Транспорт должен быть личный');
+        user.showCustomNotify(player, 'Транспорт должен быть личный', 1, 9);
         return;
     }
     if (veh.getVariable('user_id') != user.getId(player)) {
-        player.notify('~r~Это должен быть ваш транспорт');
+        user.showCustomNotify(player, 'Транспорт должен быть личный', 1, 9);
         return;
     }
     if (newNumber.length < 1) {
-        player.notify('~r~Минимум 1 символ');
+        user.showCustomNotify(player, 'Минимум 1 символ', 1, 9);
         return;
     }
 
     if (!lsc.checkValidNumber(newNumber)) {
-        player.notify('~r~Вы не правильно ввели номер');
-        player.notify('~r~Только цифры (0-9) и буквы на англ. (A-Z)');
+        user.showCustomNotify(player, 'Только цифры (0-9) и буквы на англ. (A-Z)', 1, 9);
         return;
     }
 
-    if (newNumber.length == 1 && user.getMoney(player) < 1000000) {
-        player.notify('~r~Номер из 1 символа стоит $1.000.000');
-        return;
+    if (payType === 1) {
+        if (newNumber.length == 1 && user.getBankMoney(player) < 1000000) {
+            user.showCustomNotify(player, 'Номер из 1 символа стоит $1.000.000', 1, 9);
+            return;
+        }
+        else if (newNumber.length == 2 && user.getBankMoney(player) < 500000) {
+            user.showCustomNotify(player, 'Номер из 1 символа стоит $500.000', 1, 9);
+            return;
+        }
+        else if (newNumber.length == 3 && user.getBankMoney(player) < 250000) {
+            user.showCustomNotify(player, 'Номер из 1 символа стоит $250.000', 1, 9);
+            return;
+        }
+        else if (newNumber.length == 4 && user.getBankMoney(player) < 100000) {
+            user.showCustomNotify(player, 'Номер из 1 символа стоит $100.000', 1, 9);
+            return;
+        }
+        else if(user.getBankMoney(player) < 40000) {
+            user.showCustomNotify(player, 'Номер из 1 символа стоит $40.000', 1, 9);
+            return;
+        }
     }
-    else if (newNumber.length == 2 && user.getMoney(player) < 500000) {
-        player.notify('~r~Номер из 2 символов стоит $500.000');
-        return;
-    }
-    else if (newNumber.length == 3 && user.getMoney(player) < 250000) {
-        player.notify('~r~Номер из 3 символов стоит $250.000');
-        return;
-    }
-    else if (newNumber.length == 4 && user.getMoney(player) < 100000) {
-        player.notify('~r~Номер из 4 символов стоит $100.000');
-        return;
-    }
-    else if(user.getMoney(player) < 40000) {
-        player.notify('~r~Номер сстоит $40.000');
-        return;
+    else {
+        if (newNumber.length == 1 && user.getCashMoney(player) < 1000000) {
+            user.showCustomNotify(player, 'Номер из 1 символа стоит $1.000.000', 1, 9);
+            return;
+        }
+        else if (newNumber.length == 2 && user.getCashMoney(player) < 500000) {
+            user.showCustomNotify(player, 'Номер из 1 символа стоит $500.000', 1, 9);
+            return;
+        }
+        else if (newNumber.length == 3 && user.getCashMoney(player) < 250000) {
+            user.showCustomNotify(player, 'Номер из 1 символа стоит $250.000', 1, 9);
+            return;
+        }
+        else if (newNumber.length == 4 && user.getCashMoney(player) < 100000) {
+            user.showCustomNotify(player, 'Номер из 1 символа стоит $100.000', 1, 9);
+            return;
+        }
+        else if(user.getCashMoney(player) < 40000) {
+            user.showCustomNotify(player, 'Номер из 1 символа стоит $40.000', 1, 9);
+            return;
+        }
     }
 
     mysql.executeQuery(`SELECT id FROM cars WHERE number = ? LIMIT 1`, newNumber, function (err, rows, fields) {
@@ -396,36 +395,26 @@ lsc.buyNumber = function(player, shopId, newNumber) {
             if (valid) {
 
                 try {
+                    let price = 40000;
                     if (newNumber.length == 1) {
-                        let price = 1000000;
-                        user.removeMoney(player, price, 'Смена номера на транспорте');
-                        business.addMoney(shopId, price, 'Смена номера');
-                        business.removeMoneyTax(shopId, price / 2);
+                        price = 1000000;
                     }
                     else if (newNumber.length == 2) {
-                        let price = 500000;
-                        user.removeMoney(player, price, 'Смена номера на транспорте');
-                        business.addMoney(shopId, price, 'Смена номера');
-                        business.removeMoneyTax(shopId, price / 2);
+                        price = 500000;
                     }
                     else if (newNumber.length == 3) {
-                        let price = 250000;
-                        user.removeMoney(player, price, 'Смена номера на транспорте');
-                        business.addMoney(shopId, price, 'Смена номера');
-                        business.removeMoneyTax(shopId, price / 2);
+                        price = 250000
                     }
                     else if (newNumber.length == 4) {
-                        let price = 100000;
-                        user.removeMoney(player, price, 'Смена номера на транспорте');
-                        business.addMoney(shopId, price, 'Смена номера');
-                        business.removeMoneyTax(shopId, price / 2);
+                        price = 100000;
                     }
-                    else {
-                        let price = 40000;
-                        user.removeMoney(player, price, 'Смена номера на транспорте');
-                        business.addMoney(shopId, price, 'Смена номера');
-                        business.removeMoneyTax(shopId, price / 2);
-                    }
+
+                    if (payType === 1)
+                        user.removeBankMoney(player, price, 'Смена номера на транспорте');
+                    else
+                        user.removeCashMoney(player, price, 'Смена номера на транспорте');
+                    business.addMoney(shopId, price, 'Смена номера');
+                    business.removeMoneyTax(shopId, price / 2);
 
                     mysql.executeQuery(`UPDATE items SET owner_id = '${mp.joaat(newNumber.trim())}' where owner_id = '${mp.joaat(veh.numberPlate.trim())}' and owner_type = '${inventory.types.Vehicle}'`);
 
@@ -435,7 +424,7 @@ lsc.buyNumber = function(player, shopId, newNumber) {
                     user.save(player);
                     vehicles.save(veh.getVariable('container'));
 
-                    player.notify('~g~Вы изменили номер');
+                    user.showCustomNotify(player, 'Вы изменили номер', 2, 9);
                 }
                 catch (e) {
                     methods.debug(e);
@@ -443,7 +432,7 @@ lsc.buyNumber = function(player, shopId, newNumber) {
                 return;
             }
         }
-        player.notify('~r~Номер уже занят');
+        user.showCustomNotify(player, 'Номер уже занят', 1, 9);
     });
 };
 
@@ -471,13 +460,13 @@ lsc.showTun = function(player, modType, idx) {
         veh.setMod(modType, idx);
 };
 
-lsc.buySTun = function(player, modType, idx, price, shopId, itemName) {
+lsc.buySTun = function(player, modType, idx, price, shopId, itemName, payType) {
     methods.debug('lsc.buySTun');
     if (!user.isLogin(player))
         return;
 
-    if (user.getMoney(player) < price) {
-        player.notify('~r~У вас недостаточно средств');
+    if (user.getMoney(player, payType) < price) {
+        user.showCustomNotify(player, 'У вас недостаточно средств', 1, 9);
         return;
     }
 
@@ -490,12 +479,12 @@ lsc.buySTun = function(player, modType, idx, price, shopId, itemName) {
         return;
 
     if (veh.getVariable('user_id') != user.getId(player)) {
-        player.notify('~r~Это должен быть ваш транспорт');
+        user.showCustomNotify(player, 'Транспорт должен быть личный', 1, 9);
         return;
     }
 
     if (veh.getVariable('user_id') < 1) {
-        player.notify('~r~Транспорт должен быть личный');
+        user.showCustomNotify(player, 'Транспорт должен быть личный', 1, 9);
         return;
     }
 
@@ -529,12 +518,12 @@ lsc.buySTun = function(player, modType, idx, price, shopId, itemName) {
     upgrade[modType.toString()] = idx;
     vehicles.set(veh.getVariable('container'), 'upgrade', JSON.stringify(upgrade));
 
-    user.removeMoney(player, price, itemName);
+    user.removeMoney(player, price, itemName, payType);
     business.addMoney(shopId, price, itemName);
     business.removeMoneyTax(shopId, price / 3);
 
     player.call('client:vehicle:resetHandling');
-    player.notify('~g~Вы обновили ваш транспорт по цене: ~s~' + methods.moneyFormat(price));
+    user.showCustomNotify(player, 'Вы обновили ваш транспорт по цене: ' + methods.moneyFormat(price), 2, 9);
     vehicles.save(veh.getVariable('container'));
 };
 
@@ -549,11 +538,11 @@ lsc.resetSTun = function(player, modType) {
         return;
 
     if (veh.getVariable('user_id') < 1) {
-        player.notify('~r~Транспорт должен быть личный');
+        user.showCustomNotify(player, 'У вас недостаточно средств', 1, 9);
         return;
     }
     if (veh.getVariable('user_id') != user.getId(player)) {
-        player.notify('~r~Это должен быть ваш транспорт');
+        user.showCustomNotify(player, 'Транспорт должен быть личный', 1, 9);
         return;
     }
 
@@ -564,17 +553,17 @@ lsc.resetSTun = function(player, modType) {
     upgrade[modType.toString()] = -1;
     vehicles.set(veh.getVariable('container'), 'upgrade', JSON.stringify(upgrade));
 
-    player.notify('~g~Вы обновили ТС, на стандартные настройки');
+    user.showCustomNotify(player, 'Вы обновили ТС, на стандартные настройки', 0, 9);
     vehicles.save(veh.getVariable('container'));
 };
 
-lsc.buyTun = function(player, modType, idx, price, shopId, itemName) {
+lsc.buyTun = function(player, modType, idx, price, shopId, itemName, payType) {
     methods.debug('lsc.buyTun');
     if (!user.isLogin(player))
         return;
 
-    if (user.getMoney(player) < price) {
-        player.notify('~r~У вас недостаточно средств');
+    if (user.getMoney(player, payType) < price) {
+        user.showCustomNotify(player, 'У вас недостаточно средств', 1, 9);
         return;
     }
 
@@ -587,11 +576,11 @@ lsc.buyTun = function(player, modType, idx, price, shopId, itemName) {
         return;
 
     if (veh.getVariable('user_id') < 1) {
-        player.notify('~r~Транспорт должен быть личный');
+        user.showCustomNotify(player, 'Транспорт должен быть личный', 1, 9);
         return;
     }
     if (veh.getVariable('user_id') != user.getId(player)) {
-        player.notify('~r~Это должен быть ваш транспорт');
+        user.showCustomNotify(player, 'Транспорт должен быть личный', 1, 9);
         return;
     }
 
@@ -611,10 +600,10 @@ lsc.buyTun = function(player, modType, idx, price, shopId, itemName) {
     }
 
     if (price > 5) {
-        user.removeMoney(player, price, 'Тюнинг транспорта. Деталь: ' + itemName);
+        user.removeMoney(player, price, 'Тюнинг транспорта. Деталь: ' + itemName, payType);
         business.addMoney(shopId, price, itemName);
         business.removeMoneyTax(shopId, price / business.getPrice(shopId));
-        player.notify('~g~Вы установили деталь, цена: ~s~' + methods.moneyFormat(price));
+        user.showCustomNotify(player, 'Вы установили деталь, цена: ' + methods.moneyFormat(price), 2, 9);
         //veh.setMod(modType, -1);
     }
 
@@ -629,7 +618,7 @@ lsc.showNumberType = function(player, idx) {
     if (!vehicles.exists(veh))
         return;
     if (veh.getVariable('user_id') < 1) {
-        player.notify('~r~Транспорт должен быть личный');
+        user.showCustomNotify(player, 'Транспорт должен быть личный', 1, 9);
         return;
     }
     veh.numberPlateType = idx;
@@ -640,8 +629,8 @@ lsc.buyNumberType = function(player, idx, price, shopId) {
     if (!user.isLogin(player))
         return;
 
-    if (user.getMoney(player) < price) {
-        player.notify('~r~У вас недостаточно средств');
+    if (user.getMoney(player, payType) < price) {
+        user.showCustomNotify(player, 'У вас недостаточно средств', 1, 9);
         return;
     }
 
@@ -654,18 +643,18 @@ lsc.buyNumberType = function(player, idx, price, shopId) {
         return;
 
     if (veh.getVariable('user_id') < 1) {
-        player.notify('~r~Транспорт должен быть личный');
+        user.showCustomNotify(player, 'Транспорт должен быть личный', 1, 9);
         return;
     }
 
     veh.numberPlateType = idx;
     vehicles.set(veh.getVariable('container'), 'number_type', idx);
 
-    user.removeMoney(player, price, 'Дизайн таблички номера');
+    user.removeMoney(player, price, 'Дизайн таблички номера', payType);
     business.addMoney(shopId, price, 'Дизайн таблички номера');
     business.removeMoneyTax(shopId, price / business.getPrice(shopId));
 
-    player.notify('~g~Вы установили деталь');
+    user.showCustomNotify(player, 'Вы установили деталь', 2, 9);
 
     vehicles.setTunning(veh);
     vehicles.save(veh.getVariable('container'));
@@ -678,7 +667,7 @@ lsc.showColor1 = function(player, idx) {
     if (!vehicles.exists(veh))
         return;
     if (veh.getVariable('user_id') < 1) {
-        player.notify('~r~Транспорт должен быть личный');
+        user.showCustomNotify(player, 'Транспорт должен быть личный', 1, 9);
         return;
     }
     veh.setColor(idx, veh.getColor(1));
@@ -691,7 +680,7 @@ lsc.showColor2 = function(player, idx) {
     if (!vehicles.exists(veh))
         return;
     if (veh.getVariable('user_id') < 1) {
-        player.notify('~r~Транспорт должен быть личный');
+        user.showCustomNotify(player, 'Транспорт должен быть личный', 1, 9);
         return;
     }
     veh.setColor(veh.getColor(0), idx);
@@ -704,7 +693,7 @@ lsc.showColor3 = function(player, idx) {
     if (!vehicles.exists(veh))
         return;
     if (veh.getVariable('user_id') < 1) {
-        player.notify('~r~Транспорт должен быть личный');
+        user.showCustomNotify(player, 'Транспорт должен быть личный', 1, 9);
         return;
     }
     veh.pearlescentColor = idx;
@@ -717,7 +706,7 @@ lsc.showColor4 = function(player, idx) {
     if (!vehicles.exists(veh))
         return;
     if (veh.getVariable('user_id') < 1) {
-        player.notify('~r~Транспорт должен быть личный');
+        user.showCustomNotify(player, 'Транспорт должен быть личный', 1, 9);
         return;
     }
     veh.wheelColor = idx;
@@ -730,7 +719,7 @@ lsc.showColor5 = function(player, idx) {
     if (!vehicles.exists(veh))
         return;
     if (veh.getVariable('user_id') < 1) {
-        player.notify('~r~Транспорт должен быть личный');
+        user.showCustomNotify(player, 'Транспорт должен быть личный', 1, 9);
         return;
     }
     vSync.setVehicleDashboardColor(veh, idx);
@@ -743,19 +732,19 @@ lsc.showColor6 = function(player, idx) {
     if (!vehicles.exists(veh))
         return;
     if (veh.getVariable('user_id') < 1) {
-        player.notify('~r~Транспорт должен быть личный');
+        user.showCustomNotify(player, 'Транспорт должен быть личный', 1, 9);
         return;
     }
     vSync.setVehicleInteriorColor(veh, idx);
 };
 
-lsc.buyColor1 = function(player, idx, price, shopId, itemName) {
+lsc.buyColor1 = function(player, idx, price, shopId, itemName, payType) {
     methods.debug('lsc.buyColor1');
     if (!user.isLogin(player))
         return;
 
-    if (user.getMoney(player) < price) {
-        player.notify('~r~У вас недостаточно средств');
+    if (user.getMoney(player, payType) < price) {
+        user.showCustomNotify(player, 'У вас недостаточно средств', 1, 9);
         return;
     }
 
@@ -768,29 +757,29 @@ lsc.buyColor1 = function(player, idx, price, shopId, itemName) {
         return;
 
     if (veh.getVariable('user_id') < 1) {
-        player.notify('~r~Транспорт должен быть личный');
+        user.showCustomNotify(player, 'Транспорт должен быть личный', 1, 9);
         return;
     }
 
     veh.setColor(veh.getColor(0), idx);
     vehicles.set(veh.getVariable('container'), 'color1', idx);
 
-    user.removeMoney(player, price, 'Цвет транспорта ' + itemName);
+    user.removeMoney(player, price, 'Цвет транспорта ' + itemName, payType);
     business.addMoney(shopId, price, itemName);
     business.removeMoneyTax(shopId, price / business.getPrice(shopId));
 
-    player.notify('~g~Вы изменили цвет транспорта');
+    user.showCustomNotify(player, 'Вы изменили цвет транспорта', 2, 9);
 
     vehicles.setTunning(veh);
     vehicles.save(veh.getVariable('container'));
 };
 
-lsc.buyColor2 = function(player, idx, price, shopId, itemName) {
+lsc.buyColor2 = function(player, idx, price, shopId, itemName, payType) {
     methods.debug('lsc.buyColor2');
     if (!user.isLogin(player))
         return;
-    if (user.getMoney(player) < price) {
-        player.notify('~r~У вас недостаточно средств');
+    if (user.getMoney(player, payType) < price) {
+        user.showCustomNotify(player, 'У вас недостаточно средств', 1, 9);
         return;
     }
 
@@ -803,29 +792,29 @@ lsc.buyColor2 = function(player, idx, price, shopId, itemName) {
         return;
 
     if (veh.getVariable('user_id') < 1) {
-        player.notify('~r~Транспорт должен быть личный');
+        user.showCustomNotify(player, 'Транспорт должен быть личный', 1, 9);
         return;
     }
 
     veh.setColor(veh.getColor(0), idx);
     vehicles.set(veh.getVariable('container'), 'color2', idx);
 
-    user.removeMoney(player, price, 'Цвет транспорта ' + itemName);
+    user.removeMoney(player, price, 'Цвет транспорта ' + itemName, payType);
     business.addMoney(shopId, price, itemName);
     business.removeMoneyTax(shopId, price / business.getPrice(shopId));
 
-    player.notify('~g~Вы изменили цвет транспорта');
+    user.showCustomNotify(player, 'Вы изменили цвет транспорта', 2, 9);
 
     vehicles.setTunning(veh);
     vehicles.save(veh.getVariable('container'));
 };
 
-lsc.buyColor3 = function(player, idx, price, shopId, itemName) {
+lsc.buyColor3 = function(player, idx, price, shopId, itemName, payType) {
     methods.debug('lsc.buyColor3');
     if (!user.isLogin(player))
         return;
-    if (user.getMoney(player) < price) {
-        player.notify('~r~У вас недостаточно средств');
+    if (user.getMoney(player, payType) < price) {
+        user.showCustomNotify(player, 'У вас недостаточно средств', 1, 9);
         return;
     }
 
@@ -838,29 +827,29 @@ lsc.buyColor3 = function(player, idx, price, shopId, itemName) {
         return;
 
     if (veh.getVariable('user_id') < 1) {
-        player.notify('~r~Транспорт должен быть личный');
+        user.showCustomNotify(player, 'Транспорт должен быть личный', 1, 9);
         return;
     }
 
     veh.pearlescentColor = idx;
     vehicles.set(veh.getVariable('container'), 'color3', idx);
 
-    user.removeMoney(player, price, 'Цвет транспорта ' + itemName);
+    user.removeMoney(player, price, 'Цвет транспорта ' + itemName, payType);
     business.addMoney(shopId, price, itemName);
     business.removeMoneyTax(shopId, price / business.getPrice(shopId));
 
-    player.notify('~g~Вы изменили цвет транспорта');
+    user.showCustomNotify(player, 'Вы изменили цвет транспорта', 2, 9);
 
     vehicles.setTunning(veh);
     vehicles.save(veh.getVariable('container'));
 };
 
-lsc.buyColor4 = function(player, idx, price, shopId, itemName) {
+lsc.buyColor4 = function(player, idx, price, shopId, itemName, payType) {
     methods.debug('lsc.buyColor4');
     if (!user.isLogin(player))
         return;
-    if (user.getMoney(player) < price) {
-        player.notify('~r~У вас недостаточно средств');
+    if (user.getMoney(player, payType) < price) {
+        user.showCustomNotify(player, 'У вас недостаточно средств', 1, 9);
         return;
     }
 
@@ -873,29 +862,29 @@ lsc.buyColor4 = function(player, idx, price, shopId, itemName) {
         return;
 
     if (veh.getVariable('user_id') < 1) {
-        player.notify('~r~Транспорт должен быть личный');
+        user.showCustomNotify(player, 'Транспорт должен быть личный', 1, 9);
         return;
     }
 
     veh.wheelColor = idx;
     vehicles.set(veh.getVariable('container'), 'colorwheel', idx);
 
-    user.removeMoney(player, price, 'Цвет колёс ' + itemName);
+    user.removeMoney(player, price, 'Цвет колёс ' + itemName, payType);
     business.addMoney(shopId, price, itemName);
     business.removeMoneyTax(shopId, price / business.getPrice(shopId));
 
-    player.notify('~g~Вы изменили цвет колёс транспорта');
+    user.showCustomNotify(player, 'Вы изменили цвет колёс транспорта', 2, 9);
 
     vehicles.setTunning(veh);
     vehicles.save(veh.getVariable('container'));
 };
 
-lsc.buyColor5 = function(player, idx, price, shopId, itemName) {
+lsc.buyColor5 = function(player, idx, price, shopId, itemName, payType) {
     methods.debug('lsc.buyColor5');
     if (!user.isLogin(player))
         return;
-    if (user.getMoney(player) < price) {
-        player.notify('~r~У вас недостаточно средств');
+    if (user.getMoney(player, payType) < price) {
+        user.showCustomNotify(player, 'У вас недостаточно средств', 1, 9);
         return;
     }
 
@@ -908,29 +897,29 @@ lsc.buyColor5 = function(player, idx, price, shopId, itemName) {
         return;
 
     if (veh.getVariable('user_id') < 1) {
-        player.notify('~r~Транспорт должен быть личный');
+        user.showCustomNotify(player, 'Транспорт должен быть личный', 1, 9);
         return;
     }
 
     vSync.setVehicleDashboardColor(veh, idx);
     vehicles.set(veh.getVariable('container'), 'colord', idx);
 
-    user.removeMoney(player, price, 'Цвет приборной панели ' + itemName);
+    user.removeMoney(player, price, 'Цвет приборной панели ' + itemName, payType);
     business.addMoney(shopId, price, itemName);
     business.removeMoneyTax(shopId, price / business.getPrice(shopId));
 
-    player.notify('~g~Вы изменили цвет приборной панели транспорта');
+    user.showCustomNotify(player, 'Вы изменили цвет приборной панели транспорта', 2, 9);
 
     vehicles.setTunning(veh);
     vehicles.save(veh.getVariable('container'));
 };
 
-lsc.buyColor6 = function(player, idx, price, shopId, itemName) {
+lsc.buyColor6 = function(player, idx, price, shopId, itemName, payType) {
     methods.debug('lsc.buyColor6');
     if (!user.isLogin(player))
         return;
-    if (user.getMoney(player) < price) {
-        player.notify('~r~У вас недостаточно средств');
+    if (user.getMoney(player, payType) < price) {
+        user.showCustomNotify(player, 'У вас недостаточно средств', 1, 9);
         return;
     }
 
@@ -943,18 +932,18 @@ lsc.buyColor6 = function(player, idx, price, shopId, itemName) {
         return;
 
     if (veh.getVariable('user_id') < 1) {
-        player.notify('~r~Транспорт должен быть личный');
+        user.showCustomNotify(player, 'Транспорт должен быть личный', 1, 9);
         return;
     }
 
     vSync.setVehicleInteriorColor(veh, idx);
     vehicles.set(veh.getVariable('container'), 'colori', idx);
 
-    user.removeMoney(player, price, 'Цвет салона ' + itemName);
+    user.removeMoney(player, price, 'Цвет салона ' + itemName, payType);
     business.addMoney(shopId, price, itemName);
     business.removeMoneyTax(shopId, price / business.getPrice(shopId));
 
-    player.notify('~g~Вы изменили цвет салона транспорта');
+    user.showCustomNotify(player, 'Вы изменили цвет салона транспорта', 2, 9);
 
     vehicles.setTunning(veh);
     vehicles.save(veh.getVariable('container'));

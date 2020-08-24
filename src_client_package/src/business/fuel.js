@@ -71,8 +71,10 @@ fuel.fillVehTimer = async function(count) {
         let wait = 500;
         if (vInfo.fuel_type === 3)
             wait = 500;
+        if (vInfo.fuel_type === 2)
+            wait = 250;
         if (vInfo.fuel_type === 4)
-            wait = 200;
+            wait = 50;
 
         while (time <= allCount && !veh.getIsEngineRunning()) {
 

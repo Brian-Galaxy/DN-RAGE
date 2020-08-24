@@ -187,7 +187,7 @@ shop.buy = function(player, itemId, price, shopId) {
         return;
 
     if (user.getMoney(player) < price) {
-        player.notify('~r~У вас недостаточно средств');
+        user.showCustomNotify(player, 'У вас недостаточно средств', 1, 9);
         return;
     }
 
@@ -209,6 +209,41 @@ shop.buy = function(player, itemId, price, shopId) {
     if (shopId > 0) {
         player.notify('~g~Вы купили ' + items.getItemNameById(itemId) +  '. Цена за 1 ед. товара: ~s~' + methods.moneyFormat(price));
         user.removeMoney(player, price, 'Покупка ' + items.getItemNameById(itemId));
+        business.addMoney(shopId, price, items.getItemNameById(itemId));
+        business.removeMoneyTax(shopId, price / business.getPrice(shopId));
+    }
+    inventory.updateAmount(player, user.getId(player), 1);
+};
+
+shop.buyCard = function(player, itemId, price, shopId) {
+    methods.debug('shop.buyCard');
+
+    if (!user.isLogin(player))
+        return;
+
+    if (user.getBankMoney(player) < price) {
+        user.showCustomNotify(player, 'У вас недостаточно средств', 1, 9);
+        return;
+    }
+
+    if (price < 0)
+        return;
+
+    let amount = inventory.getInvAmount(player, user.getId(player), 1);
+    if (amount + items.getItemAmountById(itemId) > inventory.getPlayerInvAmountMax(player)) {
+        player.notify('~r~В инвентаре нет места');
+        return;
+    }
+
+    let params = { userName: user.getRpName(player) };
+    if (itemId >= 27 && itemId <= 30)
+        params = { userName: user.getRpName(player), type: itemId - 26, number: methods.getRandomPhone(), bg: 'https://i.imgur.com/v4aju8F.jpg' };
+
+    inventory.addItem(itemId, 1, 1, user.getId(player), 1, 0, JSON.stringify(params), 1);
+
+    if (shopId > 0) {
+        player.notify('~g~Вы купили ' + items.getItemNameById(itemId) +  '. Цена за 1 ед. товара: ~s~' + methods.moneyFormat(price));
+        user.removeBankMoney(player, price, 'Покупка ' + items.getItemNameById(itemId));
         business.addMoney(shopId, price, items.getItemNameById(itemId));
         business.removeMoneyTax(shopId, price / business.getPrice(shopId));
     }

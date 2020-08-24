@@ -918,7 +918,7 @@ phone.showAppFraction2 = async function() {
         ],
     };
 
-    if (user.getCache('fraction_id2') > 0) {
+    /*if (user.getCache('fraction_id2') > 0) {
         let item ={
             title: "Перевести E-Coin",
             text: 'Перевод E-Coin на счет вашей организации',
@@ -929,7 +929,7 @@ phone.showAppFraction2 = async function() {
             params: {name: "cryptoToFraction"}
         };
         menu.items[0].umenu.push(item);
-    }
+    }*/
     if (user.getCache('fraction_id2') > 0 && user.isLeader2()) {
         let item ={
             title: "Перевести E-Coin",
@@ -1604,11 +1604,18 @@ phone.showAppGps = function() {
                         params: {x: -1379, y: -499}
                     },
                     {
-                        title: "Частный банк Maze Bank",
+                        title: "Частный банк Maze Bank №1",
                         text: "",
                         type: 1,
                         clickable: true,
                         params: {x: -75, y: -826}
+                    },
+                    {
+                        title: "Частный банк Maze Bank №2",
+                        text: "",
+                        type: 1,
+                        clickable: true,
+                        params: {x: -1381, y: -477}
                     },
                     {
                         title: "Частный банк Pacific Standard",
@@ -3775,6 +3782,7 @@ phone.consoleCallback = async function(command) {
                 let hash4 = methods.md5(atmHandle.toString()).slice(12, 15);
 
                 dispatcher.sendLocalPos('Код 3', `Сработала система безопасности банкомата, взлом происходил с телефона: ${methods.phoneFormat(user.getCache('phone'))}`, mp.players.local.position, 2);
+                dispatcher.sendLocalPos('Код 3', `Сработала система безопасности банкомата, взлом происходил с телефона: ${methods.phoneFormat(user.getCache('phone'))}`, mp.players.local.position, 3);
                 dispatcher.sendLocalPos('Код 3', `Сработала система безопасности банкомата, взлом происходил с телефона: ${methods.phoneFormat(user.getCache('phone'))}`, mp.players.local.position, 5);
 
                 await phone.consoleLoad('Installing backdoor');

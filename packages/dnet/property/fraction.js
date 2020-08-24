@@ -592,18 +592,23 @@ fraction.removeTaxAndSave = function() {
 
     methods.debug('fraction.removeTax');
 
+    let dateTime = new Date();
+    if (dateTime.getHours() >= 1 && dateTime.getHours() > 6)
+        return;
+
     isRemove = true;
     mysql.executeQuery(`SELECT * FROM fraction_list`, function (err, rows, fields) {
         rows.forEach(function(item) {
-            let sum = 5;
-            if (item['is_war'])
-                sum += 10;
-            if (item['is_mafia'])
-                sum += 10;
+            let sum = 35;
             if (item['is_shop'])
-                sum += 5;
+                sum += 15;
             fraction.removeMoney(item['id'], sum, 'Взнос за существование');
-            fraction.save(item['id']);
+            if (fraction.getMoney(item['id']) < 0 && !item['is_mafia'] && !item['is_war']) {
+                fraction.destroyJust(item['id']);
+            }
+            else {
+                fraction.save(item['id']);
+            }
         });
     });
 };
@@ -1542,6 +1547,17 @@ fraction.startGrabShopGang = function(player, itemId = 0) {
                 player.notify('~r~Вы в транспорте');
                 return;
             }
+            let dateTime = new Date();
+            if (dateTime.getHours() >= 1 && dateTime.getHours() < 6) {
+                player.notify('~r~Время вышло, сейчас невозможно ограбить магазин');
+
+                mp.players.forEach(p => {
+                    if (user.isLogin(p) && user.get(p, 'fraction_id2') === frId) {
+                        user.deleteBlip(p, i + 1000);
+                    }
+                });
+                return;
+            }
 
             dispatcher.sendLocalPos('Код 0', `Срочно, всем патрулям, происходит ограбление магазина ${shopItem.name}`, player.position, 2);
             dispatcher.sendLocalPos('Код 0', `Срочно, всем патрулям, происходит ограбление магазина ${shopItem.name}`, player.position, 5);
@@ -1973,6 +1989,17 @@ fraction.destroy = function (player, id) {
         return;
     }
 
+
+    user.set(player, 'fraction_id2', 0);
+    user.set(player, 'is_leader2', false);
+
+    fraction.destroyJust(id);
+};
+
+fraction.destroyJust = function (id) {
+    id = methods.parseInt(id);
+    methods.debug('fraction.destroy');
+
     fraction.set(id, "name", 'Слот свободен');
     fraction.set(id, "money", 0);
     if (!fraction.get(id, 'is_war') && !fraction.get(id, 'is_mafia'))
@@ -1987,15 +2014,10 @@ fraction.destroy = function (player, id) {
     fraction.set(id, "rank_type_list", '["Основной состав"]');
     fraction.set(id, "rank_list", '[["Глава отдела", "Зам. главы отдела", "Соучастник"]]');
 
-    user.set(player, 'fraction_id2', 0);
-    user.set(player, 'is_leader2', false);
-
     fraction.updateOwnerInfo(id, 0);
-
     fraction.save(id);
 
     mysql.executeQuery("UPDATE users SET fraction_id2 = '" + 0 + "' where fraction_id2 = '" + id + "'");
-
     mp.players.forEach(p => {
         if (!user.isLogin(p))
             return;
@@ -2006,12 +2028,5 @@ fraction.destroy = function (player, id) {
             p.notify('~y~Организация была расфомирована');
         }
     });
-
-    setTimeout(function () {
-        if (!user.isLogin(player))
-            return;
-        user.save(player);
-        player.notify('~y~Организация была расфомирована');
-    }, 500);
 };
 

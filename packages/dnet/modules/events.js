@@ -1526,6 +1526,19 @@ mp.events.addRemoteCounted('server:user:getInvById', (player, targetId) => {
             }
         }
 
+        if (user.isCuff(pl)) {
+            let canFrisk = false;
+            enums.canFrisk.forEach(item => {
+                if (methods.distanceToPos(player.position, new mp.Vector3(item[0], item[1], item[2])) < 50)
+                    canFrisk = true;
+            });
+
+            if (canFrisk) {
+                player.notify('~r~Обыск можно проводить только в участках LSPD / BCSD');
+                return;
+            }
+        }
+
         inventory.getItemList(player, inventory.types.Player, user.getId(pl), true, user.isTie(pl));
     }
     else

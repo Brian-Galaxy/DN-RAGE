@@ -1489,8 +1489,8 @@ fraction.getShopGang = function(player) {
     }
 
     let dateTime = new Date();
-    if (dateTime.getHours() < 16) {
-        player.notify('~r~Доступно только с 16 до 24 ночи ООС времени');
+    if (dateTime.getHours() < 14) {
+        player.notify('~r~Доступно только с 14 до 24 ночи ООС времени');
         return;
     }
 

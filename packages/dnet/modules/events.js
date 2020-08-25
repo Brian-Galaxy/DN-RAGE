@@ -1533,8 +1533,8 @@ mp.events.addRemoteCounted('server:user:getInvById', (player, targetId) => {
                     canFrisk = true;
             });
 
-            if (canFrisk) {
-                player.notify('~r~Обыск можно проводить только в участках LSPD / BCSD');
+            if (!canFrisk) {
+                player.notify('~r~Обыск можно проводить только в участках LSPD / BCSD / FIB');
                 return;
             }
         }

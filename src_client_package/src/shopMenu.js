@@ -9,6 +9,7 @@ import quest from "./manager/quest";
 import edu from "./manager/edu";
 
 import loader from "./jobs/loader";
+import lamar from "./jobs/lamar";
 
 import cloth from "./business/cloth";
 

@@ -738,7 +738,7 @@ methods.iplVecpPdDefault = function () {
     //mp.game.invoke('0x0888C3502DBBEEF5');
     //mp.game.gameplay.enableMpDlcMaps(true);
 
-    mp.game.streaming.removeIpl("int_vesp_01_1_milo_");
+    /*mp.game.streaming.removeIpl("int_vesp_01_1_milo_");
     mp.game.streaming.requestIpl("vesp_ipl_01_1");
     mp.game.streaming.requestIpl("vesp_lod_01_1");
 
@@ -773,7 +773,7 @@ methods.iplVecpPdDefault = function () {
 
     mp.game.streaming.removeIpl("int_vesp_5_2_milo_");
     mp.game.streaming.requestIpl("vesp_ipl_5_2");
-    mp.game.streaming.requestIpl("vesp_lod_5_2");
+    mp.game.streaming.requestIpl("vesp_lod_5_2");*/
 
     mp.game.streaming.requestIpl("int_vesp_1_1_milo_");
     mp.game.streaming.requestIpl("int_vesp_1_2_milo_");
@@ -783,9 +783,9 @@ methods.iplVecpPdDefault = function () {
     mp.game.streaming.requestIpl("int_vesp_smole_stair_milo_");
 
     /*vesp01_1*/
-    mp.game.streaming.requestIpl("int_vesp_01_1_milo_");
-    mp.game.streaming.removeIpl("vesp_ipl_01_1");
-    mp.game.streaming.removeIpl("vesp_lod_01_1");
+    mp.game.streaming.removeIpl("int_vesp_01_1_milo_");
+    mp.game.streaming.requestIpl("vesp_ipl_01_1");
+    mp.game.streaming.requestIpl("vesp_lod_01_1");
 
     /*vesp01_2*/
     mp.game.streaming.removeIpl("int_vesp_01_2_milo_");
@@ -832,29 +832,24 @@ methods.iplVecpPdDefault = function () {
     mp.game.streaming.requestIpl("vesp_ipl_5_2");
     mp.game.streaming.requestIpl("vesp_lod_5_2");
 
-    /*vesp5_2*/
-    mp.game.streaming.removeIpl("int_vesp_01_1_milo_");
-    mp.game.streaming.requestIpl("vesp_ipl_01_1");
-    mp.game.streaming.requestIpl("vesp_lod_01_1");
-
-    let vesp2_1ipl = mp.game.interior.getInteriorAtCoordsWithType(-1096.445,-831.962,23.033,"int_vesp_1_2");
-    let vesp3_1ipl = mp.game.interior.getInteriorAtCoordsWithType(-1091.963,-831.206,26.827,"int_vesp_3_2");
+    //let vesp2_1ipl = mp.game.interior.getInteriorAtCoordsWithType(-1096.445,-831.962,23.033,"int_vesp_1_2");
+    //let vesp3_1ipl = mp.game.interior.getInteriorAtCoordsWithType(-1091.963,-831.206,26.827,"int_vesp_3_2");
     let vesp02_2ipl = mp.game.interior.getInteriorAtCoordsWithType(-1095.002,-838.586,10.276,"int_vesp_02_1");
-    let vesp02_1ipl = mp.game.interior.getInteriorAtCoordsWithType(-1095.002,-838.586,10.276,"int_vesp_02_2");
+    //let vesp02_1ipl = mp.game.interior.getInteriorAtCoordsWithType(-1095.002,-838.586,10.276,"int_vesp_02_2");
     let vesp01_2ipl = mp.game.interior.getInteriorAtCoordsWithType(-1088.377,-832.352,5.479,"int_vesp_01_1");
-    let vesp01_1ipl = mp.game.interior.getInteriorAtCoordsWithType(-1097.205,-839.141,4.878,"int_vesp_01_2");
-    methods.setIplPropState(vesp2_1ipl, "vesp1_2");
-    mp.game.interior.refreshInterior(vesp2_1ipl);
-    methods.setIplPropState(vesp3_1ipl, "vesp3_2");
-    mp.game.interior.refreshInterior(vesp3_1ipl);
+    //let vesp01_1ipl = mp.game.interior.getInteriorAtCoordsWithType(-1097.205,-839.141,4.878,"int_vesp_01_2");
+    /*methods.setIplPropState(vesp2_1ipl, "vesp1_2");
+    mp.game.interior.refreshInterior(vesp2_1ipl);*/
+   /* methods.setIplPropState(vesp3_1ipl, "vesp3_2");
+    mp.game.interior.refreshInterior(vesp3_1ipl);*/
     methods.setIplPropState(vesp02_2ipl, "vesp02_1");
     mp.game.interior.refreshInterior(vesp02_2ipl);
-    methods.setIplPropState(vesp02_1ipl, "vesp02_2");
-    mp.game.interior.refreshInterior(vesp02_1ipl);
+    /*methods.setIplPropState(vesp02_1ipl, "vesp02_2");
+    mp.game.interior.refreshInterior(vesp02_1ipl);*/
     methods.setIplPropState(vesp01_2ipl, "vesp01_1");
     mp.game.interior.refreshInterior(vesp01_2ipl);
-    methods.setIplPropState(vesp01_1ipl, "vesp01_2");
-    mp.game.interior.refreshInterior(vesp01_1ipl);
+    /*methods.setIplPropState(vesp01_1ipl, "vesp01_2");
+    mp.game.interior.refreshInterior(vesp01_1ipl);*/
 };
 
 methods.iplAmmoDefault = function () {
@@ -929,7 +924,10 @@ methods.requestIpls = function () {
 
     methods.iplLabCocaDefault();
 
-    methods.iplVecpPdDefault();
+    try {
+        methods.iplVecpPdDefault();
+    }
+    catch (e) {}
     //CASINO
     mp.game.streaming.requestIpl("vw_casino_main");
 

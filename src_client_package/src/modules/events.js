@@ -3023,7 +3023,7 @@ mp.events.add("client:vehicle:checker", async function () {
                 maxSpeed = 350;
 
             try {
-                if (isSetHandling > 1) {
+                if (isSetHandling < 2) {
                     isSetHandling++;
                     vehicles.setHandling(vehicle);
                     if (vehicle.getMod(12) === 0)

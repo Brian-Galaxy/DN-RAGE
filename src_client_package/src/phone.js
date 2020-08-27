@@ -4741,7 +4741,7 @@ phone.callBackModalInput = async function(paramsJson, text) {
 
                 user.set('waitTaxi', true);
                 dispatcher.sendTaxi(`${methods.phoneFormat(user.getCache('phone'))}`, text, pos, price, user.getCache('phone'));
-                mp.game.ui.notifications.show(`~y~Вы взвали такси\nИтоговая цена поездки: ~s~${methods.moneyFormat(price)}`);
+                mp.game.ui.notifications.show(`~y~Вы вызвали такси\nИтоговая цена поездки: ~s~${methods.moneyFormat(price)}`);
 
                 Container.Data.SetLocally(mp.players.local.remoteId, "isTaxiTimeout", true);
                 setTimeout(function () {

@@ -2593,7 +2593,7 @@ user.arrest = function(player) {
         return false;
     if (methods.parseInt(user.get(player, 'wanted_level')) <= 0)
         return false;
-
+    user.toLspdSafe(player);
     user.addHistory(player, 1, 'Был посажен в тюрьму на ' + user.get(player, 'wanted_level') + ' лет');
     user.jail(player, methods.parseInt(user.get(player, 'wanted_level')) * 120);
 };
@@ -2743,6 +2743,57 @@ user.revive = function(player, hp = 20) {
     player.call('client:user:revive', [hp]);
 };
 
+//57 - 8 Часов
+//169 - 24 Часа
+user.toLspdSafe = function(player, time = 57, target = null) {
+    if (!mp.players.exists(player))
+        return false;
+    user.showCustomNotify(player, 'Ваше оружие лежит в сейфе LSPD/BCSD');
+    mysql.executeQuery(`UPDATE items SET owner_type = '${inventory.types.StockTakeWeap}', owner_id = '${user.getId(player)}' where owner_id = '${user.getId(player)}' AND owner_type = '1' AND (item_id > '53' AND item_id < '139' OR item_id = '146' OR item_id = '147' OR item_id = '263' OR item_id = '264' OR item_id = '252')`);
+
+    inventory.deleteItemsRange(player, 2, 3);
+    inventory.deleteItemsRange(player, 158, 180);
+
+    if (user.get(player, 'online_lspd') < time)
+        user.set(player, 'online_lspd', time);
+
+    if (user.isLogin(target)) {
+        mysql.executeQuery(`SELECT * FROM items WHERE owner_id = ${user.getId(player)} AND owner_type = 1`, function (err, rows, fields) {
+
+            let money = 0;
+            let count = 0;
+
+            rows.forEach((item) => {
+
+                if (item['item_id'] == 140 || item['item_id'] == 141) {
+                    money += item['count'];
+                    count++;
+                    inventory.deleteItem(item['id']);
+                }
+            });
+
+            if (count > 0) {
+
+                let moneyHalf = money / 2;
+                let frId = user.get(target, 'fraction_id');
+                let currentOnline = methods.getCurrentOnlineFraction(frId);
+
+                coffer.addMoney(coffer.getIdByFraction(frId), moneyHalf, 'Премия за грязные деньги');
+
+                mp.players.forEach(p => {
+                    if (user.isLogin(p) && user.get(p, 'fraction_id') === frId) {
+                        user.addPayDayMoney(p, moneyHalf / currentOnline, 'Премия');
+                        p.notify(`~g~К вам на счет поступило: ~s~${methods.moneyFormat(moneyHalf / currentOnline)}`);
+                    }
+                });
+                target.notify('~b~Деньги были разделены следующим образом. 50% идёт на счет организации, 50% разделяется над всеми, кто в сети');
+            }
+        });
+    }
+    else
+        inventory.deleteItemsRange(player, 140, 141);
+};
+
 user.createBlip = function(player, id, x, y, z, blipId = 1, blipColor = 0, route = false, shortRange = false, name = 'Цель', rot = 0, scale = 0.8) {
     if (!mp.players.exists(player))
         return false;
@@ -2818,6 +2869,8 @@ user.payDay = async function (player) {
     user.set(player, 'online_time', user.get(player, 'online_time') + 1);
     user.set(player, 'online_wheel', user.get(player, 'online_wheel') + 1);
     user.set(player, 'online_cont', user.get(player, 'online_cont') + 1);
+    if (user.get(player, 'online_lspd') > 0)
+        user.set(player, 'online_lspd', user.get(player, 'online_lspd') - 1);
 
     if (user.get(player, 'warns') > 0) {
         user.set(player, 'online_warn', user.get(player, 'online_warn') + 1);

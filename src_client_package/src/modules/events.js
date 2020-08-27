@@ -1458,6 +1458,16 @@ mp.events.add('client:menuList:showBotQuestRole0Menu', () => {
     }
 });
 
+mp.events.add('client:menuList:showBotLspdMenu', (idx) => {
+    try {
+        methods.debug('Event: client:menuList:showBotLspdMenu');
+        menuList.showBotLspdMenu(idx);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
 mp.events.add('client:menuList:showBotQuestRoleAllMenu', () => {
     try {
         methods.debug('Event: client:menuList:showBotQuestRoleAllMenu');
@@ -2462,6 +2472,10 @@ mp.events.add('client:inventory:drop', function(id, itemId) {
         mp.game.ui.notifications.show("~r~Нельзя выкидывать предметы в интерьере");
         return;
     }
+    if (ui.isGreenZone()) {
+        mp.game.ui.notifications.show("~r~Нельзя выбрасывать предметы в зелёной зоне");
+        return;
+    }
     inventory.dropItem(id, itemId, mp.players.local.position, mp.players.local.getRotation(0));
 });
 
@@ -3025,7 +3039,7 @@ mp.events.add("client:vehicle:checker", async function () {
             try {
                 if (isSetHandling < 2) {
                     isSetHandling++;
-                    vehicles.setHandling(vehicle);
+                    //vehicles.setHandling(vehicle);
                     if (vehicle.getMod(12) === 0)
                         vehicle.setHandling('fBrakeForce', '1.3');
                     if (vehicle.getMod(12) === 1)
@@ -3041,8 +3055,10 @@ mp.events.add("client:vehicle:checker", async function () {
                                 try {
                                     let modType = methods.parseInt(tune);
                                     if (modType >= 100) {
-                                        if (methods.parseInt(upgrade[modType]) < 0)
+                                        if (methods.parseInt(upgrade[modType]) < 0) {
+                                            vehicle.setHandling(vehicles.getSpecialModName(modType), vehicles.getSpecialModDefault(modType).toString());
                                             continue;
+                                        }
                                         vehicle.setHandling(vehicles.getSpecialModName(modType), upgrade[modType].toString());
                                     }
                                 }
@@ -3120,6 +3136,13 @@ mp.events.add("playerLeaveVehicle", function (entity) {
     catch (e) {
         methods.debug(e);
     }
+    
+    try {
+        isSetHandling = 0;
+        for (let i = 1; i < 6; i++)
+            entity.setHandling(vehicles.getSpecialModName(i), vehicles.getSpecialModDefault(i).toString());
+    }
+    catch (e) {}
 });
 
 mp.events.add('client:events:dialog:onClose', function () {

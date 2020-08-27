@@ -208,6 +208,25 @@ vehicles.getSpecialModName = function(id) {
     }
 };
 
+vehicles.getSpecialModDefault = function(id) {
+    if (id >= 100)
+        id = id - 100;
+    switch (id) {
+        case 0:
+            return 0;
+        case 1:
+            return 0.3;
+        case 2:
+            return 0.5;
+        case 3:
+            return 1;
+        case 4:
+            return 1;
+        case 5:
+            return 1;
+    }
+};
+
 vehicles.isVehicleSirenValid = function (model) {
     let vInfo = methods.getVehicleInfo(model);
     switch (vInfo.display_name) {

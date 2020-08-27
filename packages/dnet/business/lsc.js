@@ -75,6 +75,10 @@ lsc.checkPosForOpenMenu = function(player) {
                         player.notify('~r~К сожалению автосервис сейчас не работает');
                         return;
                     }
+                    if (player.seat >= 0) {
+                        player.notify('~r~Доступно только на водительском');
+                        return;
+                    }
                     player.call('client:menuList:showLscMenu', [shopId, business.getPrice(shopId)]);
                 }
                 catch (e) {
@@ -624,7 +628,7 @@ lsc.showNumberType = function(player, idx) {
     veh.numberPlateType = idx;
 };
 
-lsc.buyNumberType = function(player, idx, price, shopId) {
+lsc.buyNumberType = function(player, idx, price, shopId, payType) {
     methods.debug('lsc.buyColor1');
     if (!user.isLogin(player))
         return;

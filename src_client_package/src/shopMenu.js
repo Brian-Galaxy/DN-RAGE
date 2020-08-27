@@ -569,14 +569,12 @@ mp.events.add('client:shopMenu:buyCash2', async function(json) {
         if(params.type == 'lsc:s:setLight')
             mp.events.callRemote('server:lsc:buyLight', params.shop, params.price, 0);
         if(params.type == 'lsc:s:setSpecial')
-            mp.events.callRemote('server:lsc:setSpecial', params.shop, params.price, 0);
+            mp.events.callRemote('server:lsc:buySpecial', params.shop, params.price, 0);
         if(params.type == 'lsc:s:setSmoke')
             menuList.showLscTyreColorChoiseMenu(params.shop)
         if(params.type == 'lsc:s:buySmoke')
             mp.events.callRemote('server:lsc:buyTyreColor', params.id, params.price, params.shop, 0);
         if(params.type == 'lsc:s:numberPlate')
-            mp.events.callRemote('server:lsc:buyNumberType', params.id, params.price, params.shop, 0);
-        if(params.type == 'lsc:s:mod:buy')
             mp.events.callRemote('server:lsc:buyNumberType', params.id, params.price, params.shop, 0);
         if(params.type == 'lsc:s:mod:reset')
             mp.events.callRemote('server:lsc:resetSTun', params.idx);
@@ -648,9 +646,9 @@ mp.events.add('client:shopMenu:buyCard2', async function(json) {
         if(params.type == 'lsc:s:setLight')
             mp.events.callRemote('server:lsc:buyLight', params.shop, params.price, 1);
         if(params.type == 'lsc:s:setSpecial')
-            mp.events.callRemote('server:lsc:setSpecial', params.shop, params.price, 1);
+            mp.events.callRemote('server:lsc:buySpecial', params.shop, params.price, 1);
         if(params.type == 'lsc:s:setSmoke')
-            menuList.showLscTyreColorChoiseMenu(params.shop)
+            menuList.showLscTyreColorChoiseMenu(params.shop);
         if(params.type == 'lsc:s:buySmoke')
             mp.events.callRemote('server:lsc:buyTyreColor', params.id, params.price, params.shop, 1);
         if(params.type == 'lsc:s:numberPlate')
@@ -737,10 +735,6 @@ mp.events.add('client:shopMenu:buyCash', async function(json) {
         if (params.doName == 'radio') {
             if (user.getCashMoney() < params.price) {
                 mp.game.ui.notifications.show(`~r~У вас недостаточно средств`);
-                return;
-            }
-            if (user.hasCache('walkie_buy')) {
-                mp.game.ui.notifications.show(`~r~У вас уже есть рация`);
                 return;
             }
             try {
@@ -866,8 +860,10 @@ mp.events.add('client:shopMenu:buyCash', async function(json) {
                 }
                 mp.events.callRemote('server:gun:buy', params.id, params.price, 1, 0, 0, params.shop, 0);
             }
-            else
+            else {
+                quest.standart(false, -1, 4);
                 mp.events.callRemote('server:shop:buy', params.id, params.price, params.shop);
+            }
         }
     }
     catch (e) {
@@ -886,10 +882,6 @@ mp.events.add('client:shopMenu:buyCard', async function(json) {
         if (params.doName === 'radio') {
             if (user.getBankMoney() < params.price) {
                 mp.game.ui.notifications.show(`~r~У вас недостаточно средств`);
-                return;
-            }
-            if (user.hasCache('walkie_buy')) {
-                mp.game.ui.notifications.show(`~r~У вас уже есть рация`);
                 return;
             }
             try {
@@ -1015,8 +1007,10 @@ mp.events.add('client:shopMenu:buyCard', async function(json) {
                 }
                 mp.events.callRemote('server:gun:buy', params.id, params.price, 1, 0, 0, params.shop, 1);
             }
-            else
+            else {
+                quest.standart(false, -1, 4);
                 mp.events.callRemote('server:shop:buyCard', params.id, params.price, params.shop);
+            }
         }
     }
     catch (e) {
@@ -1058,6 +1052,13 @@ mp.events.add('client:dialog:btn', function(json) {
         }
         if (params.doName === 'noob:startStop') {
             loader.startOrEnd();
+        }
+        if (params.doName === 'lspd:takeWeap') {
+            shopMenu.hideDialog();
+            mp.events.callRemote('server:user:toLspdSafe');
+        }
+        if (params.doName === 'lspd:toJail') {
+            mp.events.callRemote('server:user:arrest');
         }
         if (params.doName === 'lamar:car') {
             shopMenu.hideDialog();

@@ -740,6 +740,7 @@ inventory.types = {
     Vehicle : 8,
     StockGov : 9,
     Fridge : 10,
+    StockTakeWeap : 11,
     UserStockDef : 75,
     UserStock : 100,
     UserStockEnd : 200,

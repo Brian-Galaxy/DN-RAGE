@@ -3637,8 +3637,9 @@ menuList.showPlayerDoMenu = function(playerId) {
     UIMenu.Menu.AddMenuItem("Вести за собой", "", {eventName: "server:user:taskFollowById"});
     UIMenu.Menu.AddMenuItem("Снять маску с игрока", '', {eventName: 'server:user:taskRemoveMaskById'});
 
-    UIMenu.Menu.AddMenuItem("Обыск игрока", "", {eventName: "server:user:getInvById"});
+    //UIMenu.Menu.AddMenuItem("Обыск игрока", "", {eventName: "server:user:getInvById"});
     if (user.isPolice()) {
+        UIMenu.Menu.AddMenuItem("Обыск игрока", "", {eventName: "server:user:getInvById"});
         UIMenu.Menu.AddMenuItem("Установить личность", "", {eventName: "server:user:getPassById"});
     }
 
@@ -7210,7 +7211,7 @@ menuList.showMaskListMenu = function (slot, shopId) {
             list.push({name: methods.removeQuotesAll(maskItem[1]), price: methods.moneyFormat(maskItem[4]), sale: 0, params: mItem});
         }
 
-        shopMenu.updateShop2(list, 's_mask', '#000000', 1, 'Список маско');
+        shopMenu.updateShop2(list, 's_mask', '#000000', 1, 'Список масок');
     }
     catch (e) {
         methods.debug(e);
@@ -7919,9 +7920,9 @@ menuList.showLscS2MoreTunningMenu = async function(shopId, idx) {
         }
         ['Задний', 'З.75% / П.25%', 'Полный', 'З.25% / П.75%', 'Передний'].forEach((item, i) => {
             if (currentId === i)
-                list.push({name: item, price: methods.moneyFormat(enums.lscSNames[idx][1]), desc: 'Установлено', sale: 0, params: {type: 'lsc:s:mod:buy', idx: i + 1, price: enums.lscSNames[idx][1], shop: shopId}});
+                list.push({name: item, price: methods.moneyFormat(enums.lscSNames[idx][1]), desc: 'Установлено', sale: 0, params: {type: 'lsc:s:mod:buy', mod: idx, idx: i + 1, price: enums.lscSNames[idx][1], shop: shopId}});
             else
-                list.push({name: item, price: methods.moneyFormat(enums.lscSNames[idx][1]), sale: 0, params: {type: 'lsc:s:mod:buy', idx: i + 1, price: enums.lscSNames[idx][1], shop: shopId}});
+                list.push({name: item, price: methods.moneyFormat(enums.lscSNames[idx][1]), sale: 0, params: {type: 'lsc:s:mod:buy', idx: i + 1, mod: idx, price: enums.lscSNames[idx][1], shop: shopId}});
         })
     }
     else {
@@ -10476,6 +10477,43 @@ menuList.showEduAskMenu = function() {
         if (item.short)
             edu.startShort();
     });
+};
+
+menuList.showBotLspdMenu = function(idx = 0)
+{
+    let btn = [];
+    btn.push(
+        {
+            text: 'Забрать конфискат',
+            bgcolor: '',
+            params: {doName: 'lspd:takeWeap'}
+        }
+    );
+    if (user.getCache('wanted_level') > 0) {
+        btn.push(
+            {
+                text: 'Сдаться',
+                bgcolor: '',
+                params: {doName: 'lspd:toJail'}
+            }
+        );
+    }
+    btn.push(
+        {
+            text: 'Закрыть',
+            bgcolor: 'rgba(244,67,54,0.7)',
+            params: {doName: 'close'}
+        }
+    );
+
+    let listPos = [
+        [441.0511, -978.8251, 30.68959, 179.4316],
+        [-1097.457, -839.9836, 19.00159, 122.9423],
+        [1853.438, 3689.164, 34.26706, -145.6209],
+        [-448.6529, 6012.937, 31.71638, -45.47421],
+    ];
+    shopMenu.showDialog(new mp.Vector3(listPos[idx][0], listPos[idx][1], listPos[idx][2] + 0.6), listPos[idx][3]);
+    shopMenu.updateDialog(btn, 'Офицер', 'Сотрудник департамента', 'Здравствуйте, чем помочь?')
 };
 
 menuList.showBotQuestRole0Menu = function()

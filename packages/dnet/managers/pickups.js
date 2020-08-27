@@ -39,6 +39,11 @@ pickups.BotRole0 = new mp.Vector3(-414.9725036621094, -2644.56201171875, 5.00021
 pickups.BotRoleAll = new mp.Vector3(-1287.615, -561.1155, 30.71216);
 pickups.QuestBotGang = new mp.Vector3(-219.3651123046875, -1367.4730224609375, 30.25823402404785);
 
+pickups.BotLspd1 = new mp.Vector3(441.0574, -981.1564, 29.68959);
+pickups.BotLspd2 = new mp.Vector3(-1098.981, -841.2241, 18.00159);
+pickups.BotLspd3 = new mp.Vector3(1854.152, 3687.976, 33.26706);
+pickups.BotLspd4 = new mp.Vector3(-447.7569, 6013.977, 30.71638);
+
 pickups.BotSellGun = new mp.Vector3(1073.064453125, -2008.584228515625, 31.08465576171875);
 pickups.BotSellCloth = new mp.Vector3(707.1924438476562, -966.2482299804688, 29.412853240966797);
 
@@ -568,6 +573,15 @@ pickups.checkPressE = function(player) {
         }, methods.getRandomInt(0, 500));
     }
 
+    if (methods.distanceToPos(pickups.BotLspd1, playerPos) < distanceCheck)
+        player.call('client:menuList:showBotLspdMenu', [0]);
+    if (methods.distanceToPos(pickups.BotLspd2, playerPos) < distanceCheck)
+        player.call('client:menuList:showBotLspdMenu', [1]);
+    if (methods.distanceToPos(pickups.BotLspd3, playerPos) < distanceCheck)
+        player.call('client:menuList:showBotLspdMenu', [2]);
+    if (methods.distanceToPos(pickups.BotLspd4, playerPos) < distanceCheck)
+        player.call('client:menuList:showBotLspdMenu', [3]);
+
     if (methods.distanceToPos(pickups.BotRole0, playerPos) < distanceCheck)
         player.call('client:menuList:showBotQuestRole0Menu');
     if (methods.distanceToPos(pickups.BotRoleAll, playerPos) < distanceCheck)
@@ -860,6 +874,11 @@ pickups.createAll = function() {
     methods.createCpVector(pickups.BotRole0, 'Нажмите ~g~E~s~ чтобы взаимодействовать с NPC', 1, -1, pickups.Yellow);
     methods.createCpVector(pickups.BotRoleAll, 'Нажмите ~g~E~s~ чтобы взаимодействовать с NPC', 1, -1, pickups.Yellow);
     methods.createCpVector(pickups.QuestBotGang, 'Нажмите ~g~E~s~ чтобы взаимодействовать с NPC', 1, -1, pickups.Yellow);
+
+    methods.createCpVector(pickups.BotLspd1, 'Нажмите ~g~E~s~ чтобы взаимодействовать с NPC', 1, -1, pickups.Yellow);
+    methods.createCpVector(pickups.BotLspd2, 'Нажмите ~g~E~s~ чтобы взаимодействовать с NPC', 1, -1, pickups.Yellow);
+    methods.createCpVector(pickups.BotLspd3, 'Нажмите ~g~E~s~ чтобы взаимодействовать с NPC', 1, -1, pickups.Yellow);
+    methods.createCpVector(pickups.BotLspd4, 'Нажмите ~g~E~s~ чтобы взаимодействовать с NPC', 1, -1, pickups.Yellow);
 
     methods.createCpVector(pickups.MazeBankLobby, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
     methods.createCpVector(pickups.WheelLuckyPos, 'Нажмите ~g~E~s~ чтобы крутить колесо', 1, -1, [33, 150, 243, 0]);

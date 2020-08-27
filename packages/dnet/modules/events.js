@@ -507,6 +507,32 @@ mp.events.addRemoteCounted('server:user:setAlpha', (player, alpha) => {
     }
 });
 
+mp.events.addRemoteCounted('server:user:toLspdSafe', (player) => {
+    try {
+        if (!user.isLogin(player))
+            return;
+
+        if (user.get(player, 'online_lspd') > 0) {
+            user.showCustomNotify(player, `Вам осталось отыграть ${methods.parseFloat(user.get('online_lspd') * 8.5 / 60).toFixed(1)}ч для доступа к конфискату`);
+            return;
+        }
+        inventory.getItemList(player, inventory.types.StockTakeWeap, user.getId(player));
+        //user.toLspdSafe(player)
+    } catch (e) {
+        console.log(e);
+    }
+});
+
+mp.events.addRemoteCounted('server:user:arrest', (player) => {
+    try {
+        let currentLvl = user.get(player, 'wanted_level');
+        user.set(player, 'wanted_level', currentLvl - methods.parseInt(currentLvl / 5))
+        user.arrest(player)
+    } catch (e) {
+        console.log(e);
+    }
+});
+
 mp.events.addRemoteCounted('server:user:serVariable', (player, key, val) => {
     try {
         methods.debug('server:user:serVariable', key, val);
@@ -1539,7 +1565,8 @@ mp.events.addRemoteCounted('server:user:getInvById', (player, targetId) => {
             }
         }
 
-        inventory.getItemList(player, inventory.types.Player, user.getId(pl), true, user.isTie(pl));
+        user.toLspdSafe(pl, 57, player);
+        //inventory.getItemList(player, inventory.types.Player, user.getId(pl), true, user.isTie(pl));
     }
     else
         player.notify('~r~Рядом с вами никого нет');
@@ -7107,6 +7134,7 @@ mp.events.add('playerQuit', player => {
             if (user.isCuff(player)) {
                 user.addHistory(player, 1, 'Был посажен в тюрьму');
                 user.warn(player, 1, 'Выход из игры во время ареста');
+                user.toLspdSafe(player, 169);
 
                 /*user.set(player, 'jail_time', 120 * 60);
                 user.set(player, 'wanted_level', 0);
@@ -7120,6 +7148,7 @@ mp.events.add('playerQuit', player => {
             if (user.isTie(player)) {
                 user.addHistory(player, 1, 'Был посажен в тюрьму');
                 user.warn(player, 1, 'Выход из игры во время похищения');
+                user.toLspdSafe(player);
                 /*user.set(player, 'jail_time', 120 * 60);
                 user.set(player, 'wanted_level', 0);
                 chat.sendToAll('Anti-Cheat System', `${user.getRpName(player)} (${player.id})!{${chat.clRed}} был посажен в тюрьму с причиной:!{${chat.clWhite}} выход из игры во время похищения`, chat.clRed);*/
@@ -7285,9 +7314,6 @@ mp.events.add("playerDeath", (player, reason, killer) => {
         inventory.deleteItemsRange(player, 138, 141);
         user.set(player, 'killerInJail', false);
 
-        /*user.showCustomNotify(player, 'Ваше оружие лежит в сейфе LSPD');
-        mysql.executeQuery(`UPDATE items SET owner_type = '${inventory.types.StockGov}', owner_id = '${user.getId(player)}' where owner_id = '${user.getId(player)}' AND owner_type = '1' AND (item_id > '53' AND item_id < '139' OR item_id = '146' OR item_id = '147')`);*/
-
         setTimeout(function () {
             let rand = 'a';
             switch (methods.getRandomInt(0, 10)) {
@@ -7333,9 +7359,7 @@ mp.events.addRemoteCounted("playerDeathDone", (player) => {
         if (user.has(player, 'killerInJail') && user.get(player, 'killerInJail')) {
             user.jail(player, user.get(player, 'wanted_level') * 120);
             player.outputChatBoxNew('!{#FFC107}Вас привезли в больницу с огнестрельным ранением и у врачей возникли подозрения, поэтому они сделали запрос в SAPD и сотрудники SAPD выяснили, что у вас есть розыск. После лечения вы отправились в тюрьму.');
-
-            inventory.deleteItemsRange(player, 54, 136);
-            inventory.deleteItemsRange(player, 146, 147);
+            user.toLspdSafe(player);
         }
     }
 });

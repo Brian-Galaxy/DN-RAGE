@@ -34,6 +34,15 @@ npc.loadAll = function() {
     npc.create(mp.game.joaat("ig_lamardavis"), new mp.Vector3(-218.75608825683594, -1368.4576416015625, 31.25823402404785), 43.398406982421875, false, "WORLD_HUMAN_SMOKING");
 
 */
+    // Полицейский на ресепшане Misson Row
+    npc.create(mp.game.joaat("s_m_y_cop_01"), new mp.Vector3(441.0511, -978.8251, 30.68959), 179.4316, false, "WORLD_HUMAN_CLIPBOARD");
+// Полицейский на ресепшане Vespucci
+    npc.create(mp.game.joaat("s_f_y_cop_01"), new mp.Vector3(-1097.457, -839.9836, 19.00159), 122.9423, false, "WORLD_HUMAN_CLIPBOARD");
+// Помошник шерифа на ресепшане Sandy Shores
+    npc.create(mp.game.joaat("s_m_y_sheriff_01"), new mp.Vector3(1853.438, 3689.164, 34.26706), -145.6209, false, "WORLD_HUMAN_CLIPBOARD");
+// Помошник шерифа на ресепшане Paleto Bay
+    npc.create(mp.game.joaat("s_f_y_sheriff_01"), new mp.Vector3(-448.6529, 6012.937, 31.71638), -45.47421, false, "WORLD_HUMAN_CLIPBOARD");
+
     // Respawn Vagos
     npc.create(mp.game.joaat("ig_ortega"), new mp.Vector3(483.9583, -1875.324, 26.16094), -67.42773, false, "WORLD_HUMAN_GUARD_STAND");
     npc.create(mp.game.joaat("g_f_y_vagos_01"), new mp.Vector3(478.4626, -1897.894, 25.57264), -119.9996, false, "WORLD_HUMAN_PROSTITUTE_HIGH_CLASS");

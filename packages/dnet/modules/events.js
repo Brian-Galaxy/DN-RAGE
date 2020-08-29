@@ -513,7 +513,7 @@ mp.events.addRemoteCounted('server:user:toLspdSafe', (player) => {
             return;
 
         if (user.get(player, 'online_lspd') > 0) {
-            user.showCustomNotify(player, `Вам осталось отыграть ${methods.parseFloat(user.get('online_lspd') * 8.5 / 60).toFixed(1)}ч для доступа к конфискату`);
+            user.showCustomNotify(player, `Вам осталось отыграть ${methods.parseFloat(user.get('online_lspd') * 8.5 / 60).toFixed(2)}ч для доступа к конфискату`);
             return;
         }
         inventory.getItemList(player, inventory.types.StockTakeWeap, user.getId(player));
@@ -2173,6 +2173,10 @@ mp.events.addRemoteCounted('server:admin:warn', (player, type, id, reason) => {
 
 mp.events.addRemoteCounted('server:admin:unwarn', (player, type, id, reason) => {
     admin.unwarn(player, type, id, reason);
+});
+
+mp.events.addRemoteCounted('server:admin:untimer', (player, type, id, reason) => {
+    admin.untimer(player, type, id, reason);
 });
 
 mp.events.addRemoteCounted('server:admin:ban', (player, type, id, idx, reason) => {

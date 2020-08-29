@@ -1567,6 +1567,10 @@ menuList.showBusinessMenu = async function(data) {
                     mp.game.ui.notifications.show(`~r~На счету бизнеса нет столько денег`);
                     return;
                 }
+                if (money + data.get('bank_tax') > data.get('bank_max')) {
+                    mp.game.ui.notifications.show(`~r~Максимальный счет продуктов не может привышать ${data.get('bank_max')}`);
+                    return;
+                }
                 if (money < 1) {
                     mp.game.ui.notifications.show(`~r~Нельзя взять меньше 1$`);
                     return;
@@ -4976,7 +4980,7 @@ menuList.showVehicleDoMenu = function() {
         ) {
         }
         else {
-            UIMenu.Menu.AddMenuItem("Круиз контроль", "Введите значение", {doName: "cruise"});
+            UIMenu.Menu.AddMenuItem("Лимит контроль", "Введите значение", {doName: "cruise"});
         }
 
         UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
@@ -7761,11 +7765,16 @@ menuList.showLscMenu = function(shopId, price = 1)
     let list = [];
 
     list.push({name: `Ремонт`, price: '', sale: sale, params: {type: 'lsc:repair', price: price, shop: shopId}});
-    list.push({name: `Тюнинг`, price: '', sale: sale, params: {type: 'lsc:setTunning', price: price, shop: shopId}});
-    list.push({name: `Специальный тюнинг`, price: '', sale: sale, params: {type: 'lsc:setS2Tunning', price: price, shop: shopId}});
-    list.push({name: `Установка модулей`, price: '', sale: sale, params: {type: 'lsc:setSTunning', price: price, shop: shopId}});
-    list.push({name: `Сменить номер`, price: '', sale: sale, params: {type: 'lsc:setNumber', price: price, shop: shopId}});
-    list.push({name: `Покраска транспорта`, price: '', sale: sale, params: {type: 'lsc:setColor', price: price, shop: shopId}});
+    if (shopId === 145 || shopId === 146) {
+        list.push({name: `Внутренний тюнинг`, price: '', sale: sale, params: {type: 'lsc:setTunning2', price: price, shop: shopId}});
+        list.push({name: `Ходовые настройки`, price: '', sale: sale, params: {type: 'lsc:setS2Tunning', price: price, shop: shopId}});
+        list.push({name: `Установка модулей`, price: '', sale: sale, params: {type: 'lsc:setSTunning', price: price, shop: shopId}});
+    }
+    else {
+        list.push({name: `Визуальный тюнинг`, price: '', sale: sale, params: {type: 'lsc:setTunning', price: price, shop: shopId}});
+        list.push({name: `Покраска транспорта`, price: '', sale: sale, params: {type: 'lsc:setColor', price: price, shop: shopId}});
+        list.push({name: `Сменить номер`, price: '', sale: sale, params: {type: 'lsc:setNumber', price: price, shop: shopId}});
+    }
 
     shopMenu.showShop2(veh.position, veh.getRotation(0).z, 3.5, 3, 8, 0, 2);
     shopMenu.updateShop2(list, lscBanner1, color);
@@ -7870,14 +7879,14 @@ menuList.showLscS2TunningMenu = async function(shopId, price) {
         return;
     }
     let list = [];
-    list.push({name: `Привод`, price: methods.moneyFormat(enums.lscSNames[0][1]), desc: 'Смена привода автомобиля', sale: 0, params: {type: 'lsc:s:mod', idx: 0, shop: shopId}});
+    list.push({name: `Привод`, price: methods.moneyFormat(enums.lscSNames[0][1]), desc: 'Смена привода автомобиля', sale: 0, params: {type: 'lsc:s:mod', idx: 0, price: price, shop: shopId}});
     for (let i = 1; i < enums.lscSNames.length; i++) {
-        list.push({name: enums.lscSNames[i][0], price: methods.moneyFormat(enums.lscSNames[i][1]), desc: enums.lscSNames[i][3], sale: 0, params: {type: 'lsc:s:mod', idx: i, shop: shopId}});
+        list.push({name: enums.lscSNames[i][0], price: methods.moneyFormat(enums.lscSNames[i][1]), desc: enums.lscSNames[i][3], sale: 0, params: {type: 'lsc:s:mod', idx: i, price: price, shop: shopId}});
     }
     shopMenu.updateShop2(list, shopMenu.getLastSettings().banner, shopMenu.getLastSettings().bg, 0, 'Специальный тюнинг');
 };
 
-menuList.showLscS2MoreTunningMenu = async function(shopId, idx) {
+menuList.showLscS2MoreTunningMenu = async function(shopId, idx, price) {
 
     let veh = mp.players.local.vehicle;
 
@@ -7893,9 +7902,10 @@ menuList.showLscS2MoreTunningMenu = async function(shopId, idx) {
     if (car.has('upgrade'))
         upgrade = JSON.parse(car.get('upgrade'));
 
+    let sale = business.getSale(price);
     let list = [];
 
-    list.push({name: `Стандарт`, price: methods.moneyFormat(0), desc: 'После установки перереспавните ТС', sale: 0, params: {type: 'lsc:s:mod:reset', idx: idx, price: 0, shop: shopId}});
+    list.push({name: `Стандарт`, price: methods.moneyFormat(0), sale: 0, params: {type: 'lsc:s:mod:reset', idx: idx, price: 0, shop: shopId}});
 
     if (idx === 0) {
         let currentId = -1;
@@ -7920,9 +7930,9 @@ menuList.showLscS2MoreTunningMenu = async function(shopId, idx) {
         }
         ['Задний', 'З.75% / П.25%', 'Полный', 'З.25% / П.75%', 'Передний'].forEach((item, i) => {
             if (currentId === i)
-                list.push({name: item, price: methods.moneyFormat(enums.lscSNames[idx][1]), desc: 'Установлено', sale: 0, params: {type: 'lsc:s:mod:buy', mod: idx, idx: i + 1, price: enums.lscSNames[idx][1], shop: shopId}});
+                list.push({name: item, price: methods.moneyFormat(275000 + 25000 * price), desc: 'Установлено', sale: sale, params: {type: 'lsc:s:mod:buy', mod: idx, idx: i + 1, price: 275000 + 25000 * price, shop: shopId}});
             else
-                list.push({name: item, price: methods.moneyFormat(enums.lscSNames[idx][1]), sale: 0, params: {type: 'lsc:s:mod:buy', idx: i + 1, mod: idx, price: enums.lscSNames[idx][1], shop: shopId}});
+                list.push({name: item, price: methods.moneyFormat(275000 + 25000 * price), sale: sale, params: {type: 'lsc:s:mod:buy', idx: i + 1, mod: idx, price: 275000 + 25000 * price, shop: shopId}});
         })
     }
     else {
@@ -7935,9 +7945,9 @@ menuList.showLscS2MoreTunningMenu = async function(shopId, idx) {
             }
             catch (e) {}
             if (isSet)
-                list.push({name: (i / 10).toString(), price: methods.moneyFormat(enums.lscSNames[idx][1]), desc: 'Установлено', sale: 0, params: {type: 'lsc:s:mod:buy', mod: idx, idx: i, price: enums.lscSNames[idx][1], shop: shopId}});
+                list.push({name: (i / 10).toString(), price: methods.moneyFormat(enums.lscSNames[idx][1] * price), desc: 'Установлено', sale: sale, params: {type: 'lsc:s:mod:buy', mod: idx, idx: i, price: enums.lscSNames[idx][1] * price, shop: shopId}});
             else
-                list.push({name: (i / 10).toString(), price: methods.moneyFormat(enums.lscSNames[idx][1]), sale: 0, params: {type: 'lsc:s:mod:buy', mod: idx, idx: i, price: enums.lscSNames[idx][1], shop: shopId}});
+                list.push({name: (i / 10).toString(), price: methods.moneyFormat(enums.lscSNames[idx][1] * price), sale: sale, params: {type: 'lsc:s:mod:buy', mod: idx, idx: i, price: enums.lscSNames[idx][1] * price, shop: shopId}});
         }
     }
 
@@ -7955,6 +7965,7 @@ menuList.showLscSTunningMenu = async function(shopId, price) {
 
     let vehInfo = methods.getVehicleInfo(veh.model);
 
+    let sale = business.getSale(price);
     let list = [];
 
     if (
@@ -7965,20 +7976,20 @@ menuList.showLscSTunningMenu = async function(shopId, price) {
         vehInfo.class_name !== 'Boats'
     ) {
         if (vehInfo.class_name !== 'Commercials' && vehInfo.class_name !== 'Motorcycles') {
-            list.push({name: `Неоновая подсветка`, price: methods.moneyFormat(100000), sale: 0, params: {type: 'lsc:s:setNeon', price: 100000, shop: shopId}});
+            list.push({name: `Неоновая подсветка`, price: methods.moneyFormat(90000 + 10000 * price), sale: sale, params: {type: 'lsc:s:setNeon', price: 90000 + 10000 * price, shop: shopId}});
         }
 
-        list.push({name: `Цветные фары`, price: methods.moneyFormat(750000), sale: 0, params: {type: 'lsc:s:setLight', price: 750000, shop: shopId}});
-        list.push({name: `Специальные покрышки с напылением`, price: methods.moneyFormat(500000), sale: 0, params: {type: 'lsc:s:setSmoke', price: 500000, shop: shopId}});
+        list.push({name: `Цветные фары`, price: methods.moneyFormat(725000 + 25000 * price), sale: sale, params: {type: 'lsc:s:setLight', price: 725000 + 25000 * price, shop: shopId}});
+        list.push({name: `Специальные покрышки с напылением`, price: methods.moneyFormat(475000 + 25000 * price), sale: sale, params: {type: 'lsc:s:setSmoke', price: 475000 + 25000 * price, shop: shopId}});
     }
 
     if (vehInfo.class_name !== 'Cycles')
-        list.push({name: `Дистанционное управление`, price: methods.moneyFormat(10000), sale: 0, params: {type: 'lsc:s:setSpecial', price: 10000, shop: shopId}});
+        list.push({name: `Дистанционное управление`, price: methods.moneyFormat(10000 * price), sale: sale, params: {type: 'lsc:s:setSpecial', price: 10000 * price, shop: shopId}});
 
-    list.push({name: `Стандартный номер`, price: methods.moneyFormat(5000), sale: 0, params: {type: 'lsc:s:numberPlate', id: 0, price: 5000, shop: shopId}});
-    list.push({name: `Белый номер`, price: methods.moneyFormat(5000), sale: 0, params: {type: 'lsc:s:numberPlate', id: 3, price: 5000, shop: shopId}});
-    list.push({name: `Чёрный номер`, price: methods.moneyFormat(5000), sale: 0, params: {type: 'lsc:s:numberPlate', id: 1, price: 5000, shop: shopId}});
-    list.push({name: `Синий номер`, price: methods.moneyFormat(5000), sale: 0, params: {type: 'lsc:s:numberPlate', id: 2, price: 5000, shop: shopId}});
+    list.push({name: `Стандартный номер`, price: methods.moneyFormat(5000 * price), sale: sale, params: {type: 'lsc:s:numberPlate', id: 0, price: 5000 * price, shop: shopId}});
+    list.push({name: `Белый номер`, price: methods.moneyFormat(5000 * price), sale: sale, params: {type: 'lsc:s:numberPlate', id: 3, price: 5000 * price, shop: shopId}});
+    list.push({name: `Чёрный номер`, price: methods.moneyFormat(5000 * price), sale: sale, params: {type: 'lsc:s:numberPlate', id: 1, price: 5000 * price, shop: shopId}});
+    list.push({name: `Синий номер`, price: methods.moneyFormat(5000 * price), sale: sale, params: {type: 'lsc:s:numberPlate', id: 2, price: 5000 * price, shop: shopId}});
 
     shopMenu.updateShop2(list, shopMenu.getLastSettings().banner, shopMenu.getLastSettings().bg, 1, 'Установка модулей');
 };
@@ -8026,7 +8037,9 @@ menuList.showLscTunningMenu = function(shopId, price) {
     let list = [];
 
     for (let i = 0; i < 100; i++) {
-        if (i == 69 || i == 76 || i == 78)
+        if (i == 69 || i == 76 || i == 78 || i == 40)
+            continue;
+        if (i == 11 || i == 12 || i == 13 || i == 15 || i == 18)
             continue;
         try {
             if (veh.getNumMods(i) == 0) continue;
@@ -8065,9 +8078,9 @@ menuList.showLscTunningMenu = function(shopId, price) {
     }
 
     list.push({name: `Тонировка`, price: '', sale: sale, params: {type: 'lsc:list:show', modType: 69, shop: shopId}});
-    list.push({name: `Турбо`, price: '', sale: sale, params: {type: 'lsc:list:show', modType: 18, shop: shopId}});
+    //list.push({name: `Турбо`, price: '', sale: sale, params: {type: 'lsc:list:show', modType: 18, shop: shopId}});
     if (veh.getLiveryCount() > 1)
-        list.push({name: `Турбо`, price: '', sale: sale, params: {type: 'lsc:list:show', modType: 76, shop: shopId}});
+        list.push({name: `Специальная покраска`, price: '', sale: sale, params: {type: 'lsc:list:show', modType: 76, shop: shopId}});
 
     let isExtra = false;
     for (let i = 0; i < 10; i++) {
@@ -8081,6 +8094,42 @@ menuList.showLscTunningMenu = function(shopId, price) {
     if (vehInfo.class_name !== 'Motorcycles')
         list.push({name: `Колёса`, price: '', sale: sale, params: {type: 'lsc:list:show', modType: 78, shop: shopId}});
 
+    shopMenu.updateShop2(list, shopMenu.getLastSettings().banner, shopMenu.getLastSettings().bg, 0, 'Тюнинг');
+};
+
+menuList.showLscTunning2Menu = function(shopId, price) {
+
+    let veh = mp.players.local.vehicle;
+
+    if (!veh) {
+        mp.game.ui.notifications.show(`~r~Необходимо находиться в личном транспорте`);
+        return;
+    }
+
+    let sale = business.getSale(price);
+    let list = [];
+
+    for (let i = 0; i < 100; i++) {
+        if (i == 69 || i == 76 || i == 78 || i == 40)
+            continue;
+        if (i !== 11 && i !== 12 && i !== 13 && i !== 15 && i !== 18)
+            continue;
+        try {
+            if (veh.getNumMods(i) == 0) continue;
+            if (i == 23) continue;
+            if (veh.getNumMods(i) > 0 && enums.lscNames[i][1] > 0) {
+                let label = mp.game.ui.getLabelText(veh.getModSlotName(i));
+                if (label == "NULL" || label == "")
+                    label = `${enums.lscNames[i][0]}`;
+                list.push({name: enums.lscNames[i][0], price: '', sale: sale, params: {type: 'lsc:list:show', modType: i, shop: shopId}});
+            }
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    }
+
+    list.push({name: `Турбо`, price: '', sale: sale, params: {type: 'lsc:list:show', modType: 18, shop: shopId}});
     shopMenu.updateShop2(list, shopMenu.getLastSettings().banner, shopMenu.getLastSettings().bg, 0, 'Тюнинг');
 };
 
@@ -10908,6 +10957,7 @@ menuList.showAdminPlayerMenu = function(id) {
             UIMenu.Menu.AddMenuItem("~y~Разбанить", "", {doName: "unban"});
             UIMenu.Menu.AddMenuItem("~y~Выдать предуп.", "", {doName: "warn"});
             UIMenu.Menu.AddMenuItem("~y~Снять предуп.", "", {doName: "unwarn"});
+            UIMenu.Menu.AddMenuItem("~y~Сбросить таймер оружия", "", {doName: "untimer"});
         }
 
         if (user.isAdmin(5))
@@ -10956,6 +11006,10 @@ menuList.showAdminPlayerMenu = function(id) {
             if (item.doName == 'unwarn') {
                 let reason = await UIMenu.Menu.GetUserInput("Причина", "", 64);
                 mp.events.callRemote('server:admin:unwarn', typeIndex, id, methods.removeQuotes(reason))
+            }
+            if (item.doName == 'untimer') {
+                let reason = await UIMenu.Menu.GetUserInput("Причина", "", 64);
+                mp.events.callRemote('server:admin:untimer', typeIndex, id, methods.removeQuotes(reason))
             }
             if (item.doName == 'ban') {
                 let reason = await UIMenu.Menu.GetUserInput("Причина", "", 64);

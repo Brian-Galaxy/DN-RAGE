@@ -258,6 +258,9 @@ mp.events.add('client:shopMenu:changeSelect2', async function(json) {
         if (params.type === 'lsc:setTunning') {
             menuList.showLscTunningMenu(params.shop, params.price);
         }
+        if (params.type === 'lsc:setTunning2') {
+            menuList.showLscTunning2Menu(params.shop, params.price);
+        }
         if (params.type === 'lsc:list:show') {
             menuList.showLscTunningListMenu(params.modType, params.shop, params.price);
         }
@@ -289,7 +292,7 @@ mp.events.add('client:shopMenu:changeSelect2', async function(json) {
             menuList.showLscS2TunningMenu(params.shop, params.price);
         }
         if (params.type === 'lsc:s:mod') {
-            menuList.showLscS2MoreTunningMenu(params.shop, params.idx);
+            menuList.showLscS2MoreTunningMenu(params.shop, params.idx, params.price);
         }
         if (params.type === 'lsc:setColor') {
             menuList.showLscColorMenu(params.shop, params.price);

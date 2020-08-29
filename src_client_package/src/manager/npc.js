@@ -37,11 +37,11 @@ npc.loadAll = function() {
     // Полицейский на ресепшане Misson Row
     npc.create(mp.game.joaat("s_m_y_cop_01"), new mp.Vector3(441.0511, -978.8251, 30.68959), 179.4316, false, "WORLD_HUMAN_CLIPBOARD");
 // Полицейский на ресепшане Vespucci
-    npc.create(mp.game.joaat("s_f_y_cop_01"), new mp.Vector3(-1097.457, -839.9836, 19.00159), 122.9423, false, "WORLD_HUMAN_CLIPBOARD");
+    npc.create(mp.game.joaat("s_f_y_cop_01"), new mp.Vector3(-1097.457, -839.9836, 19.00159), 122.9423, false, "CODE_HUMAN_MEDIC_TIME_OF_DEATH");
 // Помошник шерифа на ресепшане Sandy Shores
     npc.create(mp.game.joaat("s_m_y_sheriff_01"), new mp.Vector3(1853.438, 3689.164, 34.26706), -145.6209, false, "WORLD_HUMAN_CLIPBOARD");
 // Помошник шерифа на ресепшане Paleto Bay
-    npc.create(mp.game.joaat("s_f_y_sheriff_01"), new mp.Vector3(-448.6529, 6012.937, 31.71638), -45.47421, false, "WORLD_HUMAN_CLIPBOARD");
+    npc.create(mp.game.joaat("s_f_y_sheriff_01"), new mp.Vector3(-448.6529, 6012.937, 31.71638), -45.47421, false, "CODE_HUMAN_MEDIC_TIME_OF_DEATH");
 
     // Respawn Vagos
     npc.create(mp.game.joaat("ig_ortega"), new mp.Vector3(483.9583, -1875.324, 26.16094), -67.42773, false, "WORLD_HUMAN_GUARD_STAND");
@@ -56,7 +56,7 @@ npc.loadAll = function() {
     npc.create(mp.game.joaat("a_m_m_afriamer_01"), new mp.Vector3(474.12, -1683.562, 29.29144), 174.0001, false, "WORLD_HUMAN_GUARD_STAND");
 
 // Respawn Families
-    npc.create(mp.game.joaat("famca_01"), new mp.Vector3(-12.11057, -1827.143, 25.47756), 151.9985, false, "WORLD_HUMAN_GUARD_STAND");
+    npc.create(mp.game.joaat("g_m_y_famca_01"), new mp.Vector3(-12.11057, -1827.143, 25.47756), 151.9985, false, "WORLD_HUMAN_GUARD_STAND");
     npc.create(mp.game.joaat("g_m_y_famdnf_01"), new mp.Vector3(2.439152, -1822.602, 25.35294), -177.999, false, "WORLD_HUMAN_TOURIST_MOBILE");
     npc.create(mp.game.joaat("g_f_y_families_01"), new mp.Vector3(1.891586, -1823.411, 25.35294), -74.99979, false, "CODE_HUMAN_CROSS_ROAD_WAIT");
     npc.create(mp.game.joaat("g_m_y_famfor_01"), new mp.Vector3(7.32425, -1814.006, 25.35294), -49.99983, false, "WORLD_HUMAN_SMOKING");
@@ -76,7 +76,7 @@ npc.loadAll = function() {
     // Секретарша в City Hall
     npc.create(mp.game.joaat("a_f_y_business_01"), new mp.Vector3(-1291.811, -572.3674, 30.57272), -40.99984, false, "WORLD_HUMAN_STAND_IMPATIENT");
 // Охранник слева в City Hall
-    npc.create(mp.game.joaat("s_m_m_highsec_01"), new mp.Vector3(-1285.467, -573.2753, 30.57479), 48.9999, false, "WORLD_HUMAN_GUARD_STAND");
+    npc.create(mp.game.joaat("s_m_m_highsec_01"), new mp.Vector3(-1295.207, -573.5434, 30.57015), 137.9987, false, "WORLD_HUMAN_GUARD_STAND");
 // Охранник справа в City Hall
     npc.create(mp.game.joaat("s_m_m_highsec_02"), new mp.Vector3(-1291.8, -565.9213, 30.57479), -132.9988, false, "WORLD_HUMAN_GUARD_STAND");
 

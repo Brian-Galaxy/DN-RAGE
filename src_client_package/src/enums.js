@@ -837,6 +837,8 @@ enums.zoneGreenList = [
     //[110, 117, [new mp.Vector3(-1525.691, 1491.103, 111.8151), new mp.Vector3(-1517.928, 1489.053, 111.7301), new mp.Vector3(-1517.899, 1496.596, 111.7301), new mp.Vector3(-1514.139, 1510.497, 114.2886), new mp.Vector3(-1511.016, 1524.367, 111.7458), new mp.Vector3(-1514.978, 1525.498, 111.7985), new mp.Vector3(-1522.253, 1498.158, 110.6261), new mp.Vector3(-1523.676, 1498.105, 111.8056)]],
 //
     //[-99, 99, [new mp.Vector3(xyz), new mp.Vector3(xyz), new mp.Vector3(xyz), new mp.Vector3(xyz)]],
+    //Парковка здания Правительства Лос-Сантоса
+    [19, 25, [new mp.Vector3(-1332.033, -592.2298, 20.88923), new mp.Vector3(-1298.693, -564.246, 20.91193), new mp.Vector3(-1323.389, -534.85, 20.89787), new mp.Vector3(-1356.696, -562.8257, 20.88923)]],
 ];
 
 enums.zoneYellowList = [

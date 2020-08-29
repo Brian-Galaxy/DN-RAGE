@@ -2869,7 +2869,7 @@ user.payDay = async function (player) {
     user.set(player, 'online_time', user.get(player, 'online_time') + 1);
     user.set(player, 'online_wheel', user.get(player, 'online_wheel') + 1);
     user.set(player, 'online_cont', user.get(player, 'online_cont') + 1);
-    if (user.get(player, 'online_lspd') > 0)
+    if (user.get(player, 'online_lspd') >= 0)
         user.set(player, 'online_lspd', user.get(player, 'online_lspd') - 1);
 
     if (user.get(player, 'warns') > 0) {

@@ -352,6 +352,39 @@ admin.unwarn = function(player, type, id, reason) {
     }
 };
 
+admin.untimer = function(player, type, id, reason) {
+    try {
+        if (!user.isAdmin(player))
+            return;
+
+        id = methods.parseInt(id);
+
+        if (type === 0) {
+            let target = mp.players.at(id);
+            if (!user.isLogin(target)) {
+                player.notify('~r~Игрок не найден на сервере.');
+                return;
+            }
+            chat.sendToAll(`Администратор ${user.getRpName(player)}`, `${user.getRpName(target)}!{${chat.clRed}} было снят таймаут на получения оружия с причиной!{${chat.clWhite}} ${reason}`, chat.clRed);
+            discord.sendDeadList(user.getRpName(target), 'Было снят таймаут на получения оружия', reason, user.getRpName(player), discord.socialClub + player.socialClub.toLowerCase(), "#FFEB3B");
+            user.set(target, 'online_lspd', 0);
+        }
+        else {
+            let target = user.getPlayerById(id);
+            if (!user.isLogin(target)) {
+                player.notify('~r~Игрок не найден на сервере.');
+                return;
+            }
+            chat.sendToAll(`Администратор ${user.getRpName(player)}`, `${user.getRpName(target)}!{${chat.clRed}} было снят таймаут на получения оружия с причиной!{${chat.clWhite}} ${reason}`, chat.clRed);
+            discord.sendDeadList(user.getRpName(target), 'Было снят таймаут на получения оружия', reason, user.getRpName(player), discord.socialClub + player.socialClub.toLowerCase(), "#FFEB3B");
+            user.set(target, 'online_lspd', 0);
+        }
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+};
+
 admin.kick = function(player, type, id, reason) {
     try {
         if (!user.isAdmin(player))

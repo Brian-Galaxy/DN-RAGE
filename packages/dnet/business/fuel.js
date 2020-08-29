@@ -29,6 +29,13 @@ fuel.list = [
     [-94.25557, 6419.677, 30.48929, 120],
     [2005.203, 3774.279, 31.40394, 121],
     [265.0568, -1262.188, 28.29296, 122],
+    [-1157.292, -2886.82, 12.94561, 147],
+    [-730.5557, -1450.97, 4.000523, 148],
+    [1770.153, 3239.807, 41.12265, 149],
+    [-745.0678, 5811.085, 18.23408, 150],
+    [-795.5038, -1501.708, -4.607107, 151],
+    [-2078.772, 2603.242, 1.035311, 152],
+    [3855.177, 4459.854, 0.8547667, 153],
 ];
 
 //1339433404
@@ -37,7 +44,12 @@ fuel.loadAll = function() {
     methods.debug('fuel.loadAll');
     fuel.list.forEach(function (item) {
         let shopPos = new mp.Vector3(item[0], item[1], item[2]);
-        methods.createBlip(shopPos, 415, 0, 0.6, 'Заправка');
+        if (item[3] === 147 || item[3] === 148 || item[3] === 149 || item[3] === 150)
+            methods.createBlip(shopPos, 415, 5, 0.6, 'Заправка');
+        else if (item[3] === 151 || item[3] === 152 || item[3] === 153)
+            methods.createBlip(shopPos, 415, 3, 0.6, 'Заправка');
+        else
+            methods.createBlip(shopPos, 415, 0, 0.6, 'Заправка');
     });
 };
 
@@ -57,6 +69,8 @@ fuel.findNearest = function(pos) {
     let prevPos = new mp.Vector3(9999, 9999, 9999);
     fuel.list.forEach(function (item) {
         let shopPos = new mp.Vector3(item[0], item[1], item[2]);
+        if (item[2] >= 147)
+            return;
         if (methods.distanceToPos(shopPos, pos) < methods.distanceToPos(prevPos, pos))
             prevPos = shopPos;
     });

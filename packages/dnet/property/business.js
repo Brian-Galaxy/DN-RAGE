@@ -25,6 +25,7 @@ business.loadAll = function() {
             business.set(item['id'], 'price', item['price']);
             business.set(item['id'], 'bank', item['bank']);
             business.set(item['id'], 'bank_tax', item['bank_tax']);
+            business.set(item['id'], 'bank_max', item['bank_max']);
             business.set(item['id'], 'bank_score', item['bank_score']);
             business.set(item['id'], 'bank_id', item['bank_id']);
             business.set(item['id'], 'user_name', item['user_name']);

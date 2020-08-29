@@ -3074,14 +3074,46 @@ mp.events.add("client:vehicle:checker", async function () {
                 
             }
 
-            if (vehicle.getMod(18) >= 0 || vehicle.getVariable('boost') > 0)
+            if (vehicle.getMod(18) >= 0 || vehicle.getVariable('boost') > 0) {
+                boost = boost + 2;
                 maxSpeed = maxSpeed + 10;
+            }
 
-            for (let i = 0; i < 5; i++) {
+            /*for (let i = 0; i < 5; i++) {
                 if (vehicle.getMod(11) === i) {
                     boost = boost + (i + 1);
                     maxSpeed = maxSpeed + 5 * (i + 1);
                 }
+            }*/
+
+            if (vehicle.getMod(11) === 0) {
+                maxSpeed = maxSpeed + 8;
+                boost = boost + 2;
+            }
+            else if (vehicle.getMod(11) === 1) {
+                maxSpeed = maxSpeed + 14;
+                boost = boost + 3;
+            }
+            else if (vehicle.getMod(11) === 2) {
+                maxSpeed = maxSpeed + 18;
+                boost = boost + 4;
+            }
+            else if (vehicle.getMod(11) === 3 || vehicle.getMod(11) === 4) {
+                maxSpeed = maxSpeed + 20;
+                boost = boost + 5;
+            }
+
+            if (vehicle.getMod(13) === 0) {
+                maxSpeed = maxSpeed + 5;
+                boost = boost + 2;
+            }
+            else if (vehicle.getMod(13) === 1) {
+                maxSpeed = maxSpeed + 8;
+                boost = boost + 3;
+            }
+            else if (vehicle.getMod(13) === 2 || vehicle.getMod(11) === 3) {
+                maxSpeed = maxSpeed + 10;
+                boost = boost + 4;
             }
 
             if (vehicle.getVariable('boost') > 0)
@@ -3128,21 +3160,35 @@ mp.events.add("client:setNewMaxSpeedServer", function (speed) {
     }
 });
 
-mp.events.add("playerLeaveVehicle", function (entity) {
+mp.events.add("playerLeaveVehicle", async function (entity) {
+    newMaxSpeed = 0;
+    newMaxSpeedServer = 0;
+    isSetHandling = 0;
+
+    let vehicle =  mp.players.local.vehicle;
     try {
-        newMaxSpeed = 0;
-        newMaxSpeedServer = 0;
+        if (vehicle.getVariable('container') != undefined && vehicle.getVariable('user_id') > 0) { //TODO
+            let car = await vehicles.getData(vehicle.getVariable('container'));
+            if (car.has('upgrade')) {
+                let upgrade = JSON.parse(car.get('upgrade'));
+                for (let tune in upgrade) {
+                    try {
+                        let modType = methods.parseInt(tune);
+                        if (modType >= 100) {
+                            vehicle.setHandling(vehicles.getSpecialModName(modType), vehicles.getSpecialModDefault(modType).toString());
+                            methods.debug(`${modType} | ${vehicles.getSpecialModName(modType)} | ${vehicles.getSpecialModDefault(modType)}`)
+                        }
+                    }
+                    catch (e) {
+                        methods.debug(e);
+                    }
+                }
+            }
+        }
     }
     catch (e) {
         methods.debug(e);
     }
-    
-    try {
-        isSetHandling = 0;
-        for (let i = 1; i < 6; i++)
-            entity.setHandling(vehicles.getSpecialModName(i), vehicles.getSpecialModDefault(i).toString());
-    }
-    catch (e) {}
 });
 
 mp.events.add('client:events:dialog:onClose', function () {

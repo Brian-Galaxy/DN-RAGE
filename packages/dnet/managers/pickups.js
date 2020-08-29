@@ -141,7 +141,7 @@ pickups.SapdArrestPos2 = new mp.Vector3(-1635.100830078125, -1025.2091064453125,
 pickups.SapdGarderobPos3 = new mp.Vector3(-1097.8690185546875, -831.8457641601562, 13.282807350158691);
 pickups.SapdArsenalPos3 = new mp.Vector3(-1102.858154296875, -829.5343627929688, 13.282805442810059);
 pickups.SapdClearPos3 = new mp.Vector3(-1097.077392578125, -818.5704956054688, 18.036235809326172);
-pickups.SapdArrestPos3 = new mp.Vector3(-1092.097900390625, -825.7545166015625, 18.0374774932861338);
+pickups.SapdArrestPos3 = new mp.Vector3(-1071.1585693359375, -822.966552734375, 4.479784965515137);
 
 pickups.SapdToCyberRoomPos = new mp.Vector3(464.357, -983.8818, 34.89194);
 pickups.SapdFromCyberRoomPos = new mp.Vector3(463.7193, -1003.186, 31.7847);

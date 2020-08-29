@@ -1789,7 +1789,7 @@ phone.showAppGps = function() {
                         params: {x: 1661, y: 3820}
                     },
                     {
-                        title: "Albany",
+                        title: "Mosley Auto",
                         text: "Средний стоимости транспорт",
                         type: 1,
                         clickable: true,
@@ -4064,7 +4064,7 @@ phone.consoleCallback = async function(command) {
                 phone.addConsoleCommand('ecorp -balance');
                 phone.addConsoleCommand('ecorp -coin -toBankCard [sum]');
                 phone.addConsoleCommand('ecorp -send [coin number] [sum]');
-                phone.addConsoleCommand('ecorp -send -fraction [sum]');
+                //phone.addConsoleCommand('ecorp -send -fraction [sum]');
                 phone.addConsoleCommand('ecorp -fraction -create');
                 phone.addConsoleCommand('ecorp -fraction -list');
                 phone.addConsoleCommand('ecorp -car -getpos');
@@ -4103,7 +4103,7 @@ phone.consoleCallback = async function(command) {
                     phone.addConsoleCommand('Usage: ecorp -coin -toBankCard [sum]');
                 }
             }
-            else if (args[0] === '-send') {
+            /*else if (args[0] === '-send') {
                 if (args[1] === '-fraction') {
                     let sum = methods.parseFloat(args[2]);
                     if (sum < 0) {
@@ -4133,7 +4133,7 @@ phone.consoleCallback = async function(command) {
                 else {
                     phone.addConsoleCommand('Usage: ecorp -fraction -create');
                 }
-            }
+            }*/
             else if (args[0] === '-fraction') {
                 if (args[1] === '-create') {
                     if (user.getCache('rep') < 100 && user.getCache('fraction_id2') == 0) {

@@ -245,6 +245,9 @@ vehicles.isVehicleSirenValid = function (model) {
         case 'Lguard':
         case 'Pranger':
         case 'Ambulance':
+        case 'Ambulance22':
+        case 'Ambulance4':
+        case 'Emsnspeedo':
         case 'Firetruk':
         case 'PoliceOld1':
         case 'PoliceOld2':
@@ -332,6 +335,9 @@ vehicles.getSirenSound = function (model, state) {
         case 'Riot':
         case 'Riot2':
         case 'Ambulance':
+        case 'Ambulance22':
+        case 'Ambulance4':
+        case 'Emsnspeedo':
         case 'PoliceOld1':
         case 'PoliceOld2':
         {
@@ -380,6 +386,9 @@ vehicles.getWarningSound = function (model) {
         case 'Lguard':
         case 'Pranger':
         case 'Ambulance':
+        case 'Ambulance22':
+        case 'Ambulance4':
+        case 'Emsnspeedo':
         case 'PoliceOld1':
         case 'PoliceOld2':
             return 'SIRENS_AIRHORN';
@@ -457,7 +466,7 @@ vehicles.setHandling = (vehicle) => {
 };
 
 vehicles.spawnJobCar = (x, y, z, heading, name, job) => {
-    mp.game.ui.notifications.show('~r~Подсказка!\n~g~Чтобы начать работу, нажмите ~s~M - Транспорт - Начать задание\n\nНажмите ~g~L~s~ чтобы открыть или закрыть ТС');
+    mp.game.ui.notifications.show('~r~Подсказка!\n~g~Чтобы начать работу, нажмите ~s~2 - Начать задание\n\nНажмите ~g~L~s~ чтобы открыть или закрыть ТС');
     mp.events.callRemote('server:vehicles:spawnJobCar', x, y, z, heading, name, job);
 };
 

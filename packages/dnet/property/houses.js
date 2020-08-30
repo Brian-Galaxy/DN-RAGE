@@ -2,9 +2,13 @@ let Container = require('../modules/data');
 let mysql = require('../modules/mysql');
 let methods = require('../modules/methods');
 let chat = require('../modules/chat');
+
+let discord = require('../managers/discord');
+
 let user = require('../user');
 let coffer = require('../coffer');
 let enums = require('../enums');
+
 let vehicles = require('../property/vehicles');
 let houses = exports;
 
@@ -272,6 +276,9 @@ houses.loadLast = function() {
 
             hBlips.set(item['id'], hBlip);
 
+            let id = item['id'];
+            discord.sendMarketProperty(`Дом #${houses.get(id, 'number')}`, `Адрес: ${houses.get(id, 'address')} / ${houses.get(id, 'street')} #${houses.get(id, 'number')}\nГос. стоимость: ${methods.moneyFormat(houses.get(id, 'price'))}\nЖилых мест: ${houses.get(id, 'max_roommate')}`);
+
             chat.sendToAll(`Дом добавлен. ID: ${item['id']}. Name: ${item['number']}. Int: ${item['interior']}. Price: ${methods.moneyFormat(item['price'])}`);
 
             if (item['is_safe']) {
@@ -371,6 +378,8 @@ houses.updateOwnerInfo = function (id, userId, userName) {
         houses.updatePin(id, 0);
         houses.lockStatus(id, false);
         houses.updateSafe(id, 0);
+
+        discord.sendMarketProperty(`Дом #${houses.get(id, 'number')}`, `Адрес: ${houses.get(id, 'address')} / ${houses.get(id, 'street')} #${houses.get(id, 'number')}\nГос. стоимость: ${methods.moneyFormat(houses.get(id, 'price'))}\nЖилых мест: ${houses.get(id, 'max_roommate')}`);
     }
 
     mysql.executeQuery("UPDATE houses SET user_name = '" + userName + "', user_id = '" + userId + "', tax_money = '0' where id = '" + id + "'");

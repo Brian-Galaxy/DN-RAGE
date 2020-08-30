@@ -10,6 +10,7 @@ const fuel = require('../business/fuel');
 const methods = require('../modules/methods');
 const vSync = require('../managers/vSync');
 const attach = require('../managers/attach');
+const discord = require('../managers/discord');
 const vehicles = exports;
 
 const offset = enums.offsets.vehicle;
@@ -1023,6 +1024,9 @@ vehicles.updateOwnerInfo = function (id, userId, userName) {
     if (userId == 0) {
         vehicles.park(id, 0, 0, 0, 0);
         mysql.executeQuery("UPDATE cars SET user_name = '" + userName + "', user_id = '" + userId + "', number = '" + vehicles.generateNumber() + "', tax_money = '0', s_mp = '0', is_neon = '0', neon_r = '0', neon_g = '0', neon_b = '0', extra = '0', upgrade = '{\"18\":-1}' where id = '" + id + "'");
+
+        let vehInfo = methods.getVehicleInfo(vehicles.set(id, 'name'));
+        discord.sendMarketVehicles(`${vehInfo.display_name}`, `Гос. стоимость: ${methods.moneyFormat(vehInfo.price)}\nМакс. скорость: ~${vehInfo.sm}км/ч\nКласс: ~${vehInfo.class_name}`, `https://dednet.ru/client/images/carssm/${vehInfo.display_name}_1.jpg`);
     }
 };
 
@@ -1158,6 +1162,8 @@ vehicles.addNew = (model, count) => {
     for (let i = 0; i < count; i++) {
         mysql.executeQuery(`INSERT INTO cars (name, class, price, fuel, number) VALUES ('${vInfo.display_name}', '${vInfo.class_name}', '${vInfo.price}', '${vInfo.fuel_full}', '${vehicles.generateNumber()}')`);
     }
+
+    discord.sendMarketVehicles(`${vInfo.display_name}`, `Гос. стоимость: ${methods.moneyFormat(vInfo.price)}\nМакс. скорость: ~${vInfo.sm}км/ч\nКласс: ~${vInfo.class_name}`, `https://dednet.ru/client/images/carssm/${vInfo.display_name}_1.jpg`);
 };
 
 vehicles.addNewFraction = (model, count, fractionId, x = 0, y = 0, z = 0, rot = 0) => {

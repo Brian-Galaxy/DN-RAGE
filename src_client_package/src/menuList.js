@@ -7768,11 +7768,11 @@ menuList.showLscMenu = function(shopId, price = 1)
     if (shopId === 145 || shopId === 146) {
         list.push({name: `Внутренний тюнинг`, price: '', sale: sale, params: {type: 'lsc:setTunning2', price: price, shop: shopId}});
         list.push({name: `Ходовые настройки`, price: '', sale: sale, params: {type: 'lsc:setS2Tunning', price: price, shop: shopId}});
-        list.push({name: `Установка модулей`, price: '', sale: sale, params: {type: 'lsc:setSTunning', price: price, shop: shopId}});
     }
     else {
         list.push({name: `Визуальный тюнинг`, price: '', sale: sale, params: {type: 'lsc:setTunning', price: price, shop: shopId}});
         list.push({name: `Покраска транспорта`, price: '', sale: sale, params: {type: 'lsc:setColor', price: price, shop: shopId}});
+        list.push({name: `Установка модулей`, price: '', sale: sale, params: {type: 'lsc:setSTunning', price: price, shop: shopId}});
         list.push({name: `Сменить номер`, price: '', sale: sale, params: {type: 'lsc:setNumber', price: price, shop: shopId}});
     }
 

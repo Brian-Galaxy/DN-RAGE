@@ -1,9 +1,13 @@
 let Container = require('../modules/data');
 let mysql = require('../modules/mysql');
 let methods = require('../modules/methods');
+
+let discord = require('../managers/discord');
+
 let user = require('../user');
 let coffer = require('../coffer');
 let enums = require('../enums');
+
 let chat = require('../modules/chat');
 
 let houses = require('./houses');
@@ -100,7 +104,7 @@ condos.loadLast = function() {
             condos.set(item['id'], 'x', item['x']);
             condos.set(item['id'], 'y', item['y']);
             condos.set(item['id'], 'z', item['z']);
-            stocks.set(item['id'], 'rot', item['rot']);
+            condos.set(item['id'], 'rot', item['rot']);
             condos.set(item['id'], 'tax_money', item['tax_money']);
             condos.set(item['id'], 'tax_score', item['tax_score']);
 
@@ -113,6 +117,9 @@ condos.loadLast = function() {
             if (item['is_safe']) {
                 condos.updateSafe(item['id'], item['is_safe'], true);
             }
+
+            let id = item['id'];
+            discord.sendMarketProperty(`Квартира #${condos.get(id, 'number')}`, `Адрес: ${condos.get(id, 'address')} / ${condos.get(id, 'street')} #${condos.get(id, 'number')}\nГос. стоимость: ${methods.moneyFormat(condos.get(id, 'price'))}`);
 
             chat.sendToAll(`Квартира загружена. ID: ${item['id']}. HID: ${item['condo_big_id']}. Name: ${item['number']}. Int: ${item['interior']}. Price: ${methods.moneyFormat(item['price'])}`);
 
@@ -199,6 +206,8 @@ condos.updateOwnerInfo = function (id, userId, userName) {
         condos.updatePin(id, 0);
         condos.updateSafe(id, 0);
         condos.lockStatus(id, false);
+
+        discord.sendMarketProperty(`Квартира #${condos.get(id, 'number')}`, `Адрес: ${condos.get(id, 'address')} / ${condos.get(id, 'street')} #${condos.get(id, 'number')}\nГос. стоимость: ${methods.moneyFormat(condos.get(id, 'price'))}`);
     }
 
     mysql.executeQuery("UPDATE condos SET user_name = '" + userName + "', user_id = '" + userId + "', tax_money = '0' where id = '" + id + "'");

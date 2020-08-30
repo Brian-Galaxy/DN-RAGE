@@ -3039,7 +3039,7 @@ mp.events.add("client:vehicle:checker", async function () {
             try {
                 if (isSetHandling < 2) {
                     isSetHandling++;
-                    //vehicles.setHandling(vehicle);
+                    vehicles.setHandling(vehicle);
                     if (vehicle.getMod(12) === 0)
                         vehicle.setHandling('fBrakeForce', '1.3');
                     if (vehicle.getMod(12) === 1)

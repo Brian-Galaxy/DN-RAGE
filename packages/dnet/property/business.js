@@ -7,6 +7,7 @@ let coffer = require('../coffer');
 let enums = require('../enums');
 
 let weather = require('../managers/weather');
+let discord = require('../managers/discord');
 let business = exports;
 
 business.BusinessOfficePos = new mp.Vector3(-140.7121, -617.3683, 167.8204);
@@ -190,6 +191,10 @@ business.updateOwnerInfo = function (bId, userId, userName) {
     business.set(bId, 'user_id', userId);
     business.set(bId, 'user_name', userName);
     business.save(bId);
+
+    if (userId === 0) {
+        discord.sendMarketProperty(`Бизнес | ${business.get(bId, 'name')}`, `Гос. стоимость: ${methods.moneyFormat(business.get(bId, 'price'))}`);
+    }
 };
 
 business.sell = function (player) {
@@ -213,6 +218,8 @@ business.sell = function (player) {
 
     coffer.removeMoney(1, nalog);
     user.addMoney(player, nalog, 'Продажа бизнеса ' + hInfo.get('name'));
+
+    discord.sendMarketProperty(`Бизнес | ${business.get(hInfo.get('id'), 'name')}`, `Гос. стоимость: ${methods.moneyFormat(business.get(hInfo.get('id'), 'price'))}`);
 
     setTimeout(function () {
 

@@ -3,6 +3,8 @@ let mysql = require('../modules/mysql');
 let methods = require('../modules/methods');
 let chat = require('../modules/chat');
 
+let discord = require('../managers/discord');
+
 let user = require('../user');
 let coffer = require('../coffer');
 let enums = require('../enums');
@@ -394,6 +396,12 @@ stocks.boxPosList = [
     ]
 ];
 
+stocks.types = [
+    'Малый',
+    'Средний',
+    'Большой',
+];
+
 stocks.loadAll = function() {
     methods.debug('stocks.loadAll');
 
@@ -497,6 +505,9 @@ stocks.loadLast = function() {
             methods.createCp(hBlip.pos.x, hBlip.pos.y, hBlip.pos.z, "Нажмите ~g~Е~s~ чтобы открыть меню");
             chat.sendToAll(`Склад добавлен. ID: ${item['id']}. Name: ${item['number']}. Int: ${item['interior']}. Price: ${methods.moneyFormat(item['price'])}`);
 
+            let id = item['id'];
+            discord.sendMarketProperty(`Склад #${stocks.get(id, 'number')}`, `Адрес: ${stocks.get(id, 'address')} / ${stocks.get(id, 'street')} #${stocks.get(id, 'number')}\nГос. стоимость: ${methods.moneyFormat(stocks.get(id, 'price'))}\nТип: ${stocks.types[stocks.get(id, 'type')]}`);
+
             mp.players.forEach(p => {
                 methods.updateCheckpointList(p);
             });
@@ -512,6 +523,7 @@ stocks.insert = function(player, number, street, zone, x, y, z, rot, interior, p
     methods.debug('stocks.insert');
 
     mysql.executeQuery(`INSERT INTO stocks (number, street, address, rot, x, y, z, interior, price) VALUES ('${number}', '${street}', '${zone}', '${rot}', '${x}', '${y}', '${z - 1}', '${interior}', '${price}')`);
+
     setTimeout(stocks.loadLast, 1000);
 };
 
@@ -888,6 +900,8 @@ stocks.updateOwnerInfo = function (id, userId, userName) {
         stocks.updatePinO(id, 0);
         stocks.set(id, "upgrade_g", 0);
         mysql.executeQuery("UPDATE stocks SET user_name = '" + userName + "', user_id = '" + userId + "', upgrade_g = '0', tax_money = '0' where id = '" + id + "'");
+
+        discord.sendMarketProperty(`Склад #${stocks.get(id, 'number')}`, `Адрес: ${stocks.get(id, 'address')} / ${stocks.get(id, 'street')} #${stocks.get(id, 'number')}\nГос. стоимость: ${methods.moneyFormat(stocks.get(id, 'price'))}\nТип: ${stocks.types[stocks.get(id, 'type')]}`);
     }
     else {
         mysql.executeQuery("UPDATE stocks SET user_name = '" + userName + "', user_id = '" + userId + "', tax_money = '0' where id = '" + id + "'");

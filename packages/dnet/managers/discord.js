@@ -9,6 +9,10 @@ discord.invaderAd2 = "https://discordapp.com/api/webhooks/724169171025395743/tcU
 discord.invaderNews = "https://discordapp.com/api/webhooks/682694685805903912/0-VByP6Nd_3xH3yrgs5DAOFpGnMXUHuLX1NmiCc-QlaMhBCLPcuf4BXr87VO7pbwu3Ck";
 discord.fractionNews = "https://discordapp.com/api/webhooks/682956739792076838/xnKY61UPcvyakdcRkMIFEsaFCMGKuK9u4wT7KK4lN_Spo1EdA_ySlzMOSLtfyW44QWMb";
 
+discord.marketProperty = "https://discordapp.com/api/webhooks/749763956205289622/Vj0e4iqTtJzNGRb3Pb8SUJ5vURW_CoWa2acTUIZ-2JcaDwVYDeL50IDDTQq5uBKjJ5DG";
+discord.marketBusiness = "https://discordapp.com/api/webhooks/749764058487455885/iAB-r3YOUVZ0WTrf5XDwua1l1uPhTtocyycFy4MQ3k63n565N5ZovZFFOfG9qTBMJQek";
+discord.marketVehicles = "https://discordapp.com/api/webhooks/749764141102923795/qMNyKmk58CkC6WfeivGdMan_Q332zs_ISFeutjhLtwRF2yyWOthHVp_ss92t_7WdOuez";
+
 discord.dednetImg = "https://sun9-51.userapi.com/c858132/v858132444/cc443/c30JAqqT_bc.jpg";
 discord.socialClub = "https://a.rsg.sc//n/";
 
@@ -93,5 +97,39 @@ discord.sendNews = function (title, text, editor, editorImg) {
         .setColor("#f44336")
         .setTime();
 
+    Hook.send(msg);
+};
+
+discord.sendMarketProperty = function (title, text) {
+    const Hook = new webhook.Webhook(discord.marketProperty);
+    const msg = new webhook.MessageBuilder()
+        .setTitle(title)
+        .setDescription('```ml\n' + text + '```')
+        .setFooter('Правительство', discord.imgGov)
+        .setColor("#f44336")
+        .setTime();
+    Hook.send(msg);
+};
+
+discord.sendMarketBusiness = function (title, text) {
+    const Hook = new webhook.Webhook(discord.marketBusiness);
+    const msg = new webhook.MessageBuilder()
+        .setTitle(title)
+        .setDescription('```ml\n' + text + '```')
+        .setFooter('Правительство', discord.imgGov)
+        .setColor("#f44336")
+        .setTime();
+    Hook.send(msg);
+};
+
+discord.sendMarketVehicles = function (title, text, imgUrl) {
+    const Hook = new webhook.Webhook(discord.marketVehicles);
+    const msg = new webhook.MessageBuilder()
+        .setTitle(title)
+        .setDescription('```ml\n' + text + '```')
+        .setImage(imgUrl)
+        .setFooter('Правительство', discord.imgGov)
+        .setColor("#f44336")
+        .setTime();
     Hook.send(msg);
 };

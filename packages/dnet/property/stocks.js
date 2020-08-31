@@ -506,7 +506,7 @@ stocks.loadLast = function() {
             chat.sendToAll(`Склад добавлен. ID: ${item['id']}. Name: ${item['number']}. Int: ${item['interior']}. Price: ${methods.moneyFormat(item['price'])}`);
 
             let id = item['id'];
-            discord.sendMarketProperty(`Склад #${stocks.get(id, 'number')}`, `Адрес: ${stocks.get(id, 'address')} / ${stocks.get(id, 'street')} #${stocks.get(id, 'number')}\nГос. стоимость: ${methods.moneyFormat(stocks.get(id, 'price'))}\nТип: ${stocks.types[stocks.get(id, 'type')]}`);
+            discord.sendMarketProperty(`Склад #${stocks.get(id, 'number')}`, `Адрес: ${stocks.get(id, 'address')} / ${stocks.get(id, 'street')} #${stocks.get(id, 'number')}\nГос. стоимость: ${methods.moneyFormat(stocks.get(id, 'price'))}\nТип: ${stocks.types[stocks.get(id, 'interior')]}`);
 
             mp.players.forEach(p => {
                 methods.updateCheckpointList(p);
@@ -901,7 +901,7 @@ stocks.updateOwnerInfo = function (id, userId, userName) {
         stocks.set(id, "upgrade_g", 0);
         mysql.executeQuery("UPDATE stocks SET user_name = '" + userName + "', user_id = '" + userId + "', upgrade_g = '0', tax_money = '0' where id = '" + id + "'");
 
-        discord.sendMarketProperty(`Склад #${stocks.get(id, 'number')}`, `Адрес: ${stocks.get(id, 'address')} / ${stocks.get(id, 'street')} #${stocks.get(id, 'number')}\nГос. стоимость: ${methods.moneyFormat(stocks.get(id, 'price'))}\nТип: ${stocks.types[stocks.get(id, 'type')]}`);
+        discord.sendMarketProperty(`Склад #${stocks.get(id, 'number')}`, `Адрес: ${stocks.get(id, 'address')} / ${stocks.get(id, 'street')} #${stocks.get(id, 'number')}\nГос. стоимость: ${methods.moneyFormat(stocks.get(id, 'price'))}\nТип: ${stocks.types[stocks.get(id, 'interior')]}`);
     }
     else {
         mysql.executeQuery("UPDATE stocks SET user_name = '" + userName + "', user_id = '" + userId + "', tax_money = '0' where id = '" + id + "'");

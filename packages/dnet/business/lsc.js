@@ -208,8 +208,8 @@ lsc.buyNeon = function(player, price, shopId, payType) {
     vehicles.neonStatus(player, veh);
     veh.neonEnabled = true;
 
-    price = price - 90000;
     user.removeMoney(player, price, 'Неоновая подсветка', payType);
+    price = price - 90000;
     business.addMoney(shopId, price, 'Неоновая подсветка');
     business.removeMoneyTax(shopId, price / business.getPrice(shopId));
 
@@ -244,8 +244,10 @@ lsc.buyTyreColor = function(player, price, idx, shopId, payType) {
         return;
     }
 
-    price = price - 475000;
     user.removeMoney(player, price, 'Установка спец. покрышек', payType);
+
+    if (price > 475000)
+        price = price - 475000;
     business.addMoney(shopId, price, 'Установка спец. покрышек');
     business.removeMoneyTax(shopId, price / business.getPrice(shopId));
 
@@ -298,8 +300,8 @@ lsc.buyLight = function(player, price, shopId, payType) {
 
     veh.data.headlightColor = 0;
 
-    price = price - 725000;
     user.removeMoney(player, price, 'Цветные фары', payType);
+    price = price - 725000;
     business.addMoney(shopId, price, 'Цветные фары');
     business.removeMoneyTax(shopId, price / business.getPrice(shopId));
 
@@ -549,8 +551,11 @@ lsc.buySTun = function(player, modType, idx, price, shopId, itemName, payType) {
                 break;
         }
 
+        user.removeMoney(player, price, itemName, payType);
         price = price - 275000;
     }
+    else
+        user.removeMoney(player, price, itemName, payType);
 
     modType = modType + 100;
 
@@ -559,7 +564,6 @@ lsc.buySTun = function(player, modType, idx, price, shopId, itemName, payType) {
     upgrade[modType.toString()] = idx;
     vehicles.set(veh.getVariable('container'), 'upgrade', JSON.stringify(upgrade));
 
-    user.removeMoney(player, price, itemName, payType);
     business.addMoney(shopId, price, itemName);
     business.removeMoneyTax(shopId, price / business.getPrice(shopId));
 

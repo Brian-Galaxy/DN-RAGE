@@ -6,7 +6,7 @@ discord.report = "https://discordapp.com/api/webhooks/682573681415028740/l0tkdha
 discord.deadlist = "https://discordapp.com/api/webhooks/682680284789211162/OicTpLvtwIVENmFJxs_bOl7fVmiRCPwqOdQvDc34D_6yDFVZZ4Cps-67fbtrj--NYeyQ";
 discord.invaderAd = "https://discordapp.com/api/webhooks/710593652170424380/u3gR3RERbhHso4uionfo8gW99rlOYM87VMFTrGQ1InKhYynJUaswQAiMgdZun1Fa9ore";
 discord.invaderAd2 = "https://discordapp.com/api/webhooks/724169171025395743/tcUiRFj776_KxogjYDjlJNGxqIkGjMzMmDe5Rk5ypOCwDNJBbG5J_4g-K9T5CwhtzVH4";
-discord.invaderNews = "https://discordapp.com/api/webhooks/682694685805903912/0-VByP6Nd_3xH3yrgs5DAOFpGnMXUHuLX1NmiCc-QlaMhBCLPcuf4BXr87VO7pbwu3Ck";
+discord.invaderNews = "https://discordapp.com/api/webhooks/749837863985610853/8TJa5mtY2hdq1_2NWXoJEiiXT9o4BsDaUgrTungw5xJ5l3BNBVclgXMIiQo8Pf1L1Dkj";
 discord.fractionNews = "https://discordapp.com/api/webhooks/682956739792076838/xnKY61UPcvyakdcRkMIFEsaFCMGKuK9u4wT7KK4lN_Spo1EdA_ySlzMOSLtfyW44QWMb";
 
 discord.marketProperty = "https://discordapp.com/api/webhooks/749763956205289622/Vj0e4iqTtJzNGRb3Pb8SUJ5vURW_CoWa2acTUIZ-2JcaDwVYDeL50IDDTQq5uBKjJ5DG";
@@ -65,6 +65,7 @@ discord.sendDeadList = function (target, desc, reason, sender = 'Server', sender
 discord.sendAd = function (title, name, text, phone, editor, editorImg) {
     const Hook = new webhook.Webhook(discord.invaderAd);
     const Hook2 = new webhook.Webhook(discord.invaderAd2);
+
     let color = "#607D8B";
     if (title === 'Покупка')
         color = "#03A9F4";
@@ -91,6 +92,7 @@ discord.sendAd = function (title, name, text, phone, editor, editorImg) {
 discord.sendNews = function (title, text, editor, editorImg) {
     const Hook = new webhook.Webhook(discord.invaderNews);
     const msg = new webhook.MessageBuilder()
+        .setName('Новости')
         .setTitle(title)
         .setDescription(text)
         .setFooter(editor, 'https://a.rsg.sc//n/' + editorImg)
@@ -103,8 +105,9 @@ discord.sendNews = function (title, text, editor, editorImg) {
 discord.sendMarketProperty = function (title, text) {
     const Hook = new webhook.Webhook(discord.marketProperty);
     const msg = new webhook.MessageBuilder()
+        .setName('Новости имущества')
         .setTitle(title)
-        .setDescription('```ml\n' + text + '```')
+        .setDescription(`\`\`\`ml\n${text}\`\`\``)
         .setFooter('Правительство', discord.imgGov)
         .setColor("#f44336")
         .setTime();
@@ -114,8 +117,9 @@ discord.sendMarketProperty = function (title, text) {
 discord.sendMarketBusiness = function (title, text) {
     const Hook = new webhook.Webhook(discord.marketBusiness);
     const msg = new webhook.MessageBuilder()
+        .setName('Новости имущества')
         .setTitle(title)
-        .setDescription('```ml\n' + text + '```')
+        .setDescription(`\`\`\`ml\n${text}\`\`\``)
         .setFooter('Правительство', discord.imgGov)
         .setColor("#f44336")
         .setTime();
@@ -125,8 +129,9 @@ discord.sendMarketBusiness = function (title, text) {
 discord.sendMarketVehicles = function (title, text, imgUrl) {
     const Hook = new webhook.Webhook(discord.marketVehicles);
     const msg = new webhook.MessageBuilder()
+        .setName('Новости имущества')
         .setTitle(title)
-        .setDescription('```ml\n' + text + '```')
+        .setDescription(`\`\`\`ml\n${text}\`\`\``)
         .setImage(imgUrl)
         .setFooter('Правительство', discord.imgGov)
         .setColor("#f44336")

@@ -366,7 +366,7 @@ admin.untimer = function(player, type, id, reason) {
                 return;
             }
             chat.sendToAll(`Администратор ${user.getRpName(player)}`, `${user.getRpName(target)}!{${chat.clRed}} было снят таймаут на получения оружия с причиной!{${chat.clWhite}} ${reason}`, chat.clRed);
-            discord.sendDeadList(user.getRpName(target), 'Было снят таймаут на получения оружия', reason, user.getRpName(player), discord.socialClub + player.socialClub.toLowerCase(), "#FFEB3B");
+            discord.sendDeadList(user.getRpName(target), 'Был снят таймаут на получения оружия', reason, user.getRpName(player), discord.socialClub + player.socialClub.toLowerCase(), "#FFEB3B");
             user.set(target, 'online_lspd', 0);
         }
         else {
@@ -376,7 +376,7 @@ admin.untimer = function(player, type, id, reason) {
                 return;
             }
             chat.sendToAll(`Администратор ${user.getRpName(player)}`, `${user.getRpName(target)}!{${chat.clRed}} было снят таймаут на получения оружия с причиной!{${chat.clWhite}} ${reason}`, chat.clRed);
-            discord.sendDeadList(user.getRpName(target), 'Было снят таймаут на получения оружия', reason, user.getRpName(player), discord.socialClub + player.socialClub.toLowerCase(), "#FFEB3B");
+            discord.sendDeadList(user.getRpName(target), 'Был снят таймаут на получения оружия', reason, user.getRpName(player), discord.socialClub + player.socialClub.toLowerCase(), "#FFEB3B");
             user.set(target, 'online_lspd', 0);
         }
     }

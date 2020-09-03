@@ -1,6 +1,7 @@
 import ui from '../modules/ui';
 import methods from '../modules/methods';
 import tree from "../jobs/tree";
+import user from "../user";
 
 let jobPoint = {};
 
@@ -95,7 +96,7 @@ jobPoint.createBlipByRadius = function(id, pickupPos, radius, blipId = 1, blipCo
     let blip = mp.game.ui.addBlipForRadius(pickupPos.x, pickupPos.y, pickupPos.z, radius);
     mp.game.invoke(methods.SET_BLIP_SPRITE, blip, blipId);
     mp.game.invoke(methods.SET_BLIP_COLOUR, blip, blipColor);
-    mp.game.invoke(methods.SET_BLIP_ALPHA, blip, 100);
+    mp.game.invoke(methods.SET_BLIP_ALPHA, blip, 90);
 
     //blip.setRoute(route);
 
@@ -109,6 +110,17 @@ jobPoint.deleteBlipByRadius = function(id) {
         if (!blipRadiusList.has(id.toString()))
             return;
         mp.game.ui.removeBlip(blipRadiusList.get(id.toString()));
+    }
+    catch (e) {
+        console.log(e);
+    }
+};
+
+jobPoint.flashBlipByRadius = function(id, flash) {
+    try {
+        if (!blipRadiusList.has(id.toString()))
+            return;
+        mp.game.invoke(methods.SET_BLIP_FLASH, blipRadiusList.get(id.toString()), flash);
     }
     catch (e) {
         console.log(e);
@@ -345,5 +357,13 @@ jobPoint.deleteById = function(id) {
         console.log(e);
     }
 };
+
+mp.events.add('render', () => {
+    if (user.isLogin()) {
+        blipRadiusList.forEach(blip => {
+            mp.game.invoke(methods.SET_BLIP_ROTATION, blip, 0);
+        })
+    }
+});
 
 export default jobPoint;

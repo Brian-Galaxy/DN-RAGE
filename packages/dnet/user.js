@@ -12,6 +12,7 @@ let admin = require('./admin');
 let wpSync = require('./managers/wpSync');
 let weather = require('./managers/weather');
 let discord = require('./managers/discord');
+let gangWar = require('./managers/gangWar');
 
 let vehicles = require('./property/vehicles');
 let houses = require('./property/houses');
@@ -345,6 +346,28 @@ user.save = function(player, withReset = false) {
 
 };
 
+user.saveName = function(player, newName) {
+    return new Promise(resolve => {
+        methods.debug('user.saveName');
+
+        if (!mp.players.exists(player)) {
+            resolve(false);
+            return;
+        }
+
+        if (!user.isLogin(player)) {
+            resolve(false);
+            return;
+        }
+        
+        user.set(player, 'name', methods.removeQuotes2(methods.removeQuotes(newName)));
+        mysql.executeQuery("UPDATE users SET name = '" + methods.removeQuotes2(methods.removeQuotes(newName)) + "' where id = '" + user.get(player, "id") + "'");
+        user.updateClientCache(player);
+        resolve(true);
+        return;
+    });
+};
+
 user.loadUser = function(player, name, spawn = 'Стандарт') {
 
     methods.debug('user.loadUser');
@@ -515,6 +538,7 @@ user.loadUser = function(player, name, spawn = 'Стандарт') {
                 );
 
                 player.call('client:events:loginUser:success');
+                player.call('client:addGangZoneBlip', [JSON.stringify(gangWar.getZoneList())]);
                 //user.setOnlineStatus(player, 1);
             }, 600);
 
@@ -1730,6 +1754,20 @@ user.getVehicleDriver = function(vehicle) {
     return driver;
 };
 
+user.getVehiclesInLspd = function(player, type = 0) {
+    if (!user.isLogin(player))
+        return;
+    let userId = user.getId(player);
+    let vehList = [];
+    mp.vehicles.forEach(v => {
+        if (vehicles.exists(v) && v.getVariable('user_id') === userId && v.dimension === 100000 + type) {
+            let vInfo = methods.getVehicleInfo(v.model);
+            vehList.push({id: v.id, number: v.numberPlate, name: vInfo.display_name})
+        }
+    });
+    return vehList;
+};
+
 user.addMoney = function(player, money, text = 'Финансовая операция', payType = 0) {
     if (payType === 1)
         user.addBankMoney(player, money, text);
@@ -2743,9 +2781,9 @@ user.revive = function(player, hp = 20) {
     player.call('client:user:revive', [hp]);
 };
 
-//57 - 8 Часов
+//42 - 6 Часов
 //169 - 24 Часа
-user.toLspdSafe = function(player, time = 57, target = null) {
+user.toLspdSafe = function(player, time = 42, target = null) {
     if (!mp.players.exists(player))
         return false;
     user.showCustomNotify(player, 'Ваше оружие лежит в сейфе LSPD/BCSD');
@@ -2816,6 +2854,12 @@ user.deleteBlipByRadius = function(player, id) {
     if (!mp.players.exists(player))
         return false;
     player.call('client:user:deleteBlipByRadius', [id]);
+};
+
+user.flashBlipByRadius = function(player, id, flash = false) {
+    if (!mp.players.exists(player))
+        return false;
+    player.call('client:user:flashBlipByRadius', [id, flash]);
 };
 
 user.createBlip1 = function(player, x, y, z, blipId = 1, blipColor = 0, route = false) {

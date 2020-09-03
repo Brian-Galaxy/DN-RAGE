@@ -878,7 +878,7 @@ mp.events.add('client:gangWar:sendArray', (array) => {
         }, 3000);
     }
     catch (e) {
-        methods.debug(e);
+        methods.debug('client:gangWar:sendArray', e, array);
         gangArray = [];
     }
 });
@@ -1037,6 +1037,14 @@ mp.events.add('client:menuList:showAcceptClearWantedMenu', (id, price) => {
 
 mp.events.add('client:menuList:showMechanicAcceptFuelMenu', (id, count, price) => {
     menuList.showMechanicAcceptFuelMenu(id, count, price);
+});
+
+mp.events.add('client:menuList:showAveAcceptMenu', (id, name) => {
+    menuList.showAveAcceptMenu(id, name);
+});
+
+mp.events.add('client:menuList:showNoAveAcceptMenu', (id, name) => {
+    menuList.showNoAveAcceptMenu(id, name);
 });
 
 mp.events.add('client:menuList:showMechanicAcceptFixMenu', (id, price) => {
@@ -1468,6 +1476,16 @@ mp.events.add('client:menuList:showBotLspdMenu', (idx) => {
     }
 });
 
+mp.events.add('client:menuList:showBotLspdCarMenu', (json, idx, x, y, z, rot) => {
+    try {
+        methods.debug('Event: client:menuList:showBotLspdCarMenu');
+        menuList.showBotLspdCarMen(JSON.parse(json), idx, x, y, z, rot);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
 mp.events.add('client:menuList:showBotQuestRoleAllMenu', () => {
     try {
         methods.debug('Event: client:menuList:showBotQuestRoleAllMenu');
@@ -1488,10 +1506,10 @@ mp.events.add('client:menuList:showBotQuestGangMenu', () => {
     }
 });
 
-mp.events.add('client:showToPlayerItemListMenu', (data, ownerType, ownerId) => {
+mp.events.add('client:showToPlayerItemListMenu', (data, ownerType, ownerId, isFrisk) => {
     try {
         methods.debug('Event: client:showToPlayerItemListMenu');
-        menuList.showToPlayerItemListMenu(data, ownerType, ownerId).then();
+        menuList.showToPlayerItemListMenu(data, ownerType, ownerId, isFrisk).then();
     }
     catch (e) {
         methods.debug(e);
@@ -1773,6 +1791,33 @@ mp.events.add('client:user:createBlipByRadius', (id, x, y, z, radius, blipId, bl
 
 mp.events.add('client:user:deleteBlipByRadius', (id) => {
     jobPoint.deleteBlipByRadius(id);
+});
+
+mp.events.add('client:user:flashBlipByRadius', (id, flash) => {
+    jobPoint.flashBlipByRadius(id, flash);
+});
+
+mp.events.add('client:addGangZoneBlip', (json) => {
+    methods.removeAllBlipById(5);
+    methods.removeAllBlipById(9);
+    methods.displayTypeAllBlipById(40, 8);
+    methods.displayTypeAllBlipById(492, 8);
+    setTimeout(function () {
+        try {
+            JSON.parse(json).forEach(item => {
+                jobPoint.createBlipByRadius(1000 + item.id, new mp.Vector3(item.x, item.y, item.z), 50, 5, enums.fractionColor[item.fid], false);
+            })
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    }, 1000);
+});
+
+mp.events.add('client:removeGangZoneBlip', (json) => {
+    JSON.parse(json).forEach(item => {
+        jobPoint.deleteBlipByRadius(1000 + item.id);
+    })
 });
 
 mp.events.add('client:user:createBlip1', (x, y, z, blipId, blipColor, route) => {

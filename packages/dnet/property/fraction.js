@@ -561,18 +561,7 @@ fraction.loadAll = function() {
 
             if (item['is_war']) {
                 //fraction.isGang
-                let color = 0;
-                if (item['id'] === 2)
-                    color = 77;
-                else if (item['id'] === 5)
-                    color = 83;
-                else if (item['id'] === 10)
-                    color = 59;
-                else if (item['id'] === 12)
-                    color = 60;
-                else if (item['id'] === 14)
-                    color = 69;
-
+                let color = enums.fractionColor[item['id']];
                 methods.createBlip(new mp.Vector3(item['spawn_x'], item['spawn_y'], item['spawn_z']), 310, color, 0.6, 'Титульная тер.');
             }
             else if (item['spawn_x'] !== 0) {

@@ -48,6 +48,7 @@ import loader from "./jobs/loader";
 import lamar from "./jobs/lamar";
 import trucker from "./jobs/trucker";
 import taxi from "./jobs/taxi";
+import npc from "./manager/npc";
 
 let menuList = {};
 
@@ -2010,7 +2011,7 @@ menuList.showMeriaTaxMenu = function() {
             UIMenu.Menu.AddMenuItem("Налог за склад", "", {itemId: user.getCache('stock_id'), type: 4});
         }
         if (user.getCache('yacht_id') > 0) {
-            UIMenu.Menu.AddMenuItem("Налог за склад", "", {itemId: user.getCache('yacht_id'), type: 6});
+            UIMenu.Menu.AddMenuItem("Налог за яхту", "", {itemId: user.getCache('yacht_id'), type: 6});
         }
 
         for (let i = 1; i < 11; i++) {
@@ -2223,6 +2224,40 @@ menuList.showMechanicAcceptFuelMenu = function(id, count, price) {
         UIMenu.Menu.HideMenu();
         if (item.eventName)
             mp.events.callRemote(item.eventName, id, count, price);
+    });
+};
+
+menuList.showAveAcceptMenu = function(id, name) {
+
+    UIMenu.Menu.Create('Брак', `~b~${name} предложил вступить в брак`);
+
+    UIMenu.Menu.AddMenuItem("~g~Согласиться", ``, {eventName: 'server:ave:accept'});
+    UIMenu.Menu.AddMenuItem("~r~Отказаться");
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: 'closeMenu'});
+    UIMenu.Menu.Draw();
+
+    UIMenu.Menu.OnSelect.Add(async (item, index) => {
+        UIMenu.Menu.HideMenu();
+        if (item.eventName)
+            mp.events.callRemote(item.eventName, id);
+    });
+};
+
+menuList.showNoAveAcceptMenu = function(id, name) {
+
+    UIMenu.Menu.Create('Брак', `~b~${name} предложил разорвать брак`);
+
+    UIMenu.Menu.AddMenuItem("~g~Согласиться", ``, {eventName: 'server:noave:accept'});
+    UIMenu.Menu.AddMenuItem("~r~Отказаться");
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: 'closeMenu'});
+    UIMenu.Menu.Draw();
+
+    UIMenu.Menu.OnSelect.Add(async (item, index) => {
+        UIMenu.Menu.HideMenu();
+        if (item.eventName)
+            mp.events.callRemote(item.eventName, id);
     });
 };
 
@@ -2664,7 +2699,9 @@ menuList.showMeriaSellVehHvbMenu = async function(cofferData) {
                 if (user.getCache(`car_id${i}`) > 0) {
                     let vehData = vehList[i - 1];
                     UIMenu.Menu.AddMenuItem(`Продать ТС ${vehData.get('name')} (${vehData.get('number')})`, "Продать транспорт государству.~br~Налог: ~g~" + (cofferData.get('cofferTaxIntermediate') + taxOffset) + "%", {eventName: `server:car${i}:sell`});
-                    UIMenu.Menu.AddMenuItem(`~y~Продать ТС ${vehData.get('name')} (${vehData.get('number')}) игроку`, "", {eventNameSellV: i});
+
+                    if (vehData.get('with_delete') < 2)
+                        UIMenu.Menu.AddMenuItem(`~y~Продать ТС ${vehData.get('name')} (${vehData.get('number')}) игроку`, "", {eventNameSellV: i});
                 }
             }
             catch (e) {
@@ -3642,8 +3679,10 @@ menuList.showPlayerDoMenu = function(playerId) {
     UIMenu.Menu.AddMenuItem("Снять маску с игрока", '', {eventName: 'server:user:taskRemoveMaskById'});
 
     //UIMenu.Menu.AddMenuItem("Обыск игрока", "", {eventName: "server:user:getInvById"});
+
     if (user.isPolice()) {
-        UIMenu.Menu.AddMenuItem("Обыск игрока", "", {eventName: "server:user:getInvById"});
+        UIMenu.Menu.AddMenuItem("Изъять конфискат", "", {eventName: "server:user:getInvById"});
+        UIMenu.Menu.AddMenuItem("Обыскать", "", {eventName: "server:user:getInvById2"});
         UIMenu.Menu.AddMenuItem("Установить личность", "", {eventName: "server:user:getPassById"});
     }
 
@@ -5067,8 +5106,7 @@ menuList.showVehicleStatsMenu = async function() {
         try {
             upgradeList = JSON.parse(car.get('upgrade'))
         }
-        catch (e) {
-        }
+        catch (e) {}
 
         for (const [key, value] of Object.entries(upgradeList)) {
             let mod = methods.parseInt(key);
@@ -5110,22 +5148,6 @@ menuList.showSpawnJobCarMenu = function(price, x, y, z, heading, name, job) {
             user.removeMoney(methods.parseFloat(price), 'Аренда рабочего ТС');
             vehicles.spawnJobCar(x, y, z, heading, name, job);
         }
-    });
-};
-
-menuList.showAveMenu = function() {
-
-    UIMenu.Menu.Create(`Работа`, `~b~Меню священника`);
-
-    UIMenu.Menu.AddMenuItem("Заключить брак", "Стоимость: ~g~10,000", {doName: "aveBrak"});
-    UIMenu.Menu.AddMenuItem("Разорвать брак", "Стоимость: ~g~1,000", {doName: "noAveBrak"});
-    UIMenu.Menu.AddMenuItem("РП смерть", "Стоимость: ~g~$500", {doName: "rpDeath"});
-
-    UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
-    UIMenu.Menu.Draw();
-
-    UIMenu.Menu.OnSelect.Add(async (item, index) => {
-        UIMenu.Menu.HideMenu();
     });
 };
 
@@ -5536,7 +5558,7 @@ menuList.showSellFishMenu = async function(data, shopId) {
     }
 };
 
-menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId) {
+menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId, isFrisk) {
 
     if (user.isDead()) {
         mp.game.ui.notifications.show("~r~Нельзя использовать инвентарь будучи мёртвым");
@@ -5763,18 +5785,29 @@ menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId) {
             ui.callCef('inventory', JSON.stringify(dataSend3));
         }
         else {
-            let dataSend = {
-                type: 'updateSubItems',
-                items: currentItems,
-                ownerId: ownerId,
-                ownerType: ownerType,
-                sum: sum,
-            };
-            ui.callCef('inventory', JSON.stringify(dataSend));
-            inventory.show();
-            mp.gui.cursor.show(true, true);
 
-            ui.callCef('inventory', JSON.stringify({type: "updateSubMax", maxSum: await inventory.getInvAmountMax(ownerId, ownerType)}));
+            if (isFrisk) {
+                UIMenu.Menu.Create(`Обыск`, `~b~Обыск игрока`);
+                currentItems.forEach(item => {
+                    UIMenu.Menu.AddMenuItem(`${item.name}`, `${item.desc}`, {});
+                });
+                UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
+                UIMenu.Menu.Draw();
+            }
+            else {
+                let dataSend = {
+                    type: 'updateSubItems',
+                    items: currentItems,
+                    ownerId: ownerId,
+                    ownerType: ownerType,
+                    sum: sum,
+                };
+                ui.callCef('inventory', JSON.stringify(dataSend));
+                inventory.show();
+                mp.gui.cursor.show(true, true);
+
+                ui.callCef('inventory', JSON.stringify({type: "updateSubMax", maxSum: await inventory.getInvAmountMax(ownerId, ownerType)}));
+            }
         }
 
         inventory.setInvAmount(ownerId, ownerType, sum);
@@ -8064,6 +8097,47 @@ menuList.showLscTunningMenu = function(shopId, price) {
                 if (vehInfo.display_name == 'Nexus')
                     continue;
             }
+            if (vehInfo.display_name == 'Vincent3' && (i === 10 || i === 40)) continue;
+            if (vehInfo.display_name == 'Thruster' && (i === 1 || i === 10 || i === 11 || i === 12 || i === 23)) continue;
+            if (vehInfo.display_name == 'Deathbike' && (i === 40 || i === 43 || i === 44)) continue;
+            if (vehInfo.display_name == 'Deathbike2' && (i === 40 || i === 43 || i === 44)) continue;
+            if (vehInfo.display_name == 'Deathbike3' && (i === 40 || i === 43 || i === 44)) continue;
+            if (vehInfo.display_name == 'Zr380s' && (i === 40)) continue;
+            if (vehInfo.display_name == 'Nexus' && (i === 40)) continue;
+            if (vehInfo.display_name == 'Mf1c' && (i === 40)) continue;
+            if (vehInfo.display_name == 'Sigma3' && (i === 40)) continue;
+            if (vehInfo.display_name == 'Stratumc' && (i === 40)) continue;
+            if (vehInfo.display_name == 'Sultan2c' && (i === 40)) continue;
+            if (vehInfo.display_name == 'Imperator' && (i === 9 || i === 10 || i === 40 || i === 43 || i === 44)) continue;
+            if (vehInfo.display_name == 'Imperator2' && (i === 9 || i === 10 || i === 40 || i === 43 || i === 44)) continue;
+            if (vehInfo.display_name == 'Imperator3' && (i === 9 || i === 10 || i === 40 || i === 43 || i === 44)) continue;
+            if (vehInfo.display_name == 'Issi4' && (i === 9 || i === 10 || i === 40 || i === 43)) continue;
+            if (vehInfo.display_name == 'Issi5' && (i === 9 || i === 10 || i === 40 || i === 43)) continue;
+            if (vehInfo.display_name == 'Issi6' && (i === 9 || i === 10 || i === 40 || i === 43)) continue;
+            if (vehInfo.display_name == 'Zr380' && (i === 9 || i === 40 || i === 43 || i === 44)) continue;
+            if (vehInfo.display_name == 'Zr3802' && (i === 9 || i === 40 || i === 43 || i === 44)) continue;
+            if (vehInfo.display_name == 'Zr3803' && (i === 9 || i === 40 || i === 43 || i === 44)) continue;
+            if (vehInfo.display_name == 'Slamvan4' && (i === 9 || i === 40 || i === 43 || i === 44)) continue;
+            if (vehInfo.display_name == 'Slamvan5' && (i === 9 || i === 40 || i === 43 || i === 44)) continue;
+            if (vehInfo.display_name == 'Slamvan6' && (i === 9 || i === 40 || i === 43 || i === 44)) continue;
+            if (vehInfo.display_name == 'Bruiser' && (i === 9 || i === 40 || i === 43)) continue;
+            if (vehInfo.display_name == 'Bruiser2' && (i === 9 || i === 40 || i === 43)) continue;
+            if (vehInfo.display_name == 'Bruiser3' && (i === 9 || i === 40 || i === 43)) continue;
+            if (vehInfo.display_name == 'Dominator4' && (i === 9 || i === 40 || i === 43)) continue;
+            if (vehInfo.display_name == 'Dominator5' && (i === 9 || i === 40 || i === 43)) continue;
+            if (vehInfo.display_name == 'Dominator6' && (i === 9 || i === 40 || i === 43)) continue;
+            if (vehInfo.display_name == 'Impaler2' && (i === 9 || i === 40 || i === 43)) continue;
+            if (vehInfo.display_name == 'Impaler3' && (i === 9 || i === 40 || i === 43)) continue;
+            if (vehInfo.display_name == 'Impaler4' && (i === 9 || i === 40 || i === 43)) continue;
+            if (vehInfo.display_name == 'Scarab' && (i === 9 || i === 40 || i === 43)) continue;
+            if (vehInfo.display_name == 'Scarab2' && (i === 9 || i === 40 || i === 43)) continue;
+            if (vehInfo.display_name == 'Scarab3' && (i === 9 || i === 40 || i === 43)) continue;
+            if (vehInfo.display_name == 'Brutus' && (i === 9 || i === 40 || i === 43)) continue;
+            if (vehInfo.display_name == 'Brutus2' && (i === 9 || i === 40 || i === 43)) continue;
+            if (vehInfo.display_name == 'Brutus3' && (i === 9 || i === 40 || i === 43)) continue;
+            if (vehInfo.display_name == 'Monster3' && (i === 9 || i === 40)) continue;
+            if (vehInfo.display_name == 'Monster4' && (i === 9 || i === 40)) continue;
+            if (vehInfo.display_name == 'Monster5' && (i === 9 || i === 40)) continue;
 
             if (veh.getNumMods(i) > 0 && enums.lscNames[i][1] > 0) {
                 let label = mp.game.ui.getLabelText(veh.getModSlotName(i));
@@ -10528,6 +10602,48 @@ menuList.showEduAskMenu = function() {
     });
 };
 
+menuList.showAveMenu = function() {
+
+    let btn = [];
+    btn.push(
+        {
+            text: 'Заключить брак ($10,000)',
+            bgcolor: '',
+            params: {doName: 'ave:brak'}
+        }
+    );
+    btn.push(
+        {
+            text: 'Разорвать брак ($1,000)',
+            bgcolor: '',
+            params: {doName: 'ave:nobrak'}
+        }
+    );
+    btn.push(
+        {
+            text: 'Закрыть',
+            bgcolor: 'rgba(244,67,54,0.7)',
+            params: {doName: 'close'}
+        }
+    );
+
+    shopMenu.showDialog(new mp.Vector3(-787.1298828125, -708.8898315429688, 30.32028579711914 + 0.6), 265.47149658203125);
+    shopMenu.updateDialog(btn, 'Джесси', 'Священник', 'Приветсвую сын божий, чем я могу тебе помочь?')
+
+    /*UIMenu.Menu.Create(`Работа`, `~b~Меню священника`);
+
+    UIMenu.Menu.AddMenuItem("Заключить брак", "Стоимость: ~g~10,000", {doName: "aveBrak"});
+    UIMenu.Menu.AddMenuItem("Разорвать брак", "Стоимость: ~g~1,000", {doName: "noAveBrak"});
+    //UIMenu.Menu.AddMenuItem("РП смерть", "Стоимость: ~g~$500", {doName: "rpDeath"});
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
+    UIMenu.Menu.Draw();
+
+    UIMenu.Menu.OnSelect.Add(async (item, index) => {
+        UIMenu.Menu.HideMenu();
+    });*/
+};
+
 menuList.showBotLspdMenu = function(idx = 0)
 {
     let btn = [];
@@ -10563,6 +10679,56 @@ menuList.showBotLspdMenu = function(idx = 0)
     ];
     shopMenu.showDialog(new mp.Vector3(listPos[idx][0], listPos[idx][1], listPos[idx][2] + 0.6), listPos[idx][3]);
     shopMenu.updateDialog(btn, 'Офицер', 'Сотрудник департамента', 'Здравствуйте, чем помочь?')
+};
+
+menuList.showBotLspdCarMen = function(array, idx, x, y, z, rot)
+{
+    let btn = [];
+
+    if (array.length > 0) {
+        array.forEach(item => {
+            btn.push(
+                {
+                    text: `${item.name} (${item.number})`,
+                    bgcolor: '',
+                    params: {doName: 'user:lspd:takeVehicle', x: x, y: y, z: z, rot: rot, vid: item.id}
+                }
+            );
+        });
+    }
+    else {
+        btn.push(
+            {
+                text: 'На штрафстоянке не найдено ваших авто',
+                bgcolor: '',
+                params: {doName: 'close'}
+            }
+        );
+    }
+
+    btn.push(
+        {
+            text: 'Закрыть',
+            bgcolor: 'rgba(244,67,54,0.7)',
+            params: {doName: 'close'}
+        }
+    );
+
+    let listPos = [
+        [392.0566, -1637.983, 29.29352, -83.97862], // Davis
+        [846.9775, -1319.681, 26.40563, -33.86766], // La Mesa
+        [482.4717, -1093.66, 29.40167, 136.061], // Mission Row
+        [-1129.329, -772.9122, 18.24211, 5.332124], // Del Perro
+        [1943.638, 3764.589, 32.21295, 55.02224], // Sandy Shores
+        [-291.2821, 6137.66, 31.47069, -147.1063], // Paleto Bay
+        [492.1434, -58.6371, 78.11255, 64.83295], // Vinewood
+        [-180.3634, -2557.411, 6.013849, -37.53494], // Vans
+        [-457.9996, -2268.136, 8.516481, -69.62789], // Boat
+        [-1856.256, -3119.711, 13.94436, 156.0192], // Helicopters
+        [-1071.75, -3457.185, 14.14418, -150.9734], // Plane
+    ];
+    shopMenu.showDialog(new mp.Vector3(listPos[idx][0], listPos[idx][1], listPos[idx][2] + 0.6), listPos[idx][3]);
+    shopMenu.updateDialog(btn, 'Офицер', 'Сотрудник департамента транспорта', 'Здравствуйте, чем помочь?')
 };
 
 menuList.showBotQuestRole0Menu = function()
@@ -10709,14 +10875,14 @@ menuList.showBotQuestGangMenu = function()
 menuList.showGangZoneAttackMenu = function(zone, count = 5) {
     UIMenu.Menu.Create(`Захват`, `~b~ID: ${zone.get('gangWarid')}`);
 
-    UIMenu.Menu.AddMenuItem(`~b~${zone.get('gangWarzone').toString()}`);
-    UIMenu.Menu.AddMenuItem(`~b~${zone.get('gangWarstreet').toString()}`);
+    /*UIMenu.Menu.AddMenuItem(`~b~${zone.get('gangWarzone').toString()}`);
+    UIMenu.Menu.AddMenuItem(`~b~${zone.get('gangWarstreet').toString()}`);*/
     UIMenu.Menu.AddMenuItem(`~b~${zone.get('gangWarfraction_name').toString()}`);
 
     UIMenu.Menu.AddMenuItem(`~b~Кол-во:~s~ ${count}vs${count}`, "", {doName: "count"});
     UIMenu.Menu.AddMenuItemList("~b~Броня~s~", ['~g~Да', '~r~Нет'], "", {doName: "armor"});
     UIMenu.Menu.AddMenuItemList("~b~Оружие~s~", ['Любое', 'Пистолеты', 'Дробовики', 'SMG', 'Автоматы'], "", {doName: "gun"});
-    UIMenu.Menu.AddMenuItemList("~b~Время~s~", ['17:00', '17:30', '18:00', '18:30', '19:00', '19:30', '20:00', '20:30', '21:00', '21:30', '22:00', '22:30', '23:00', '23:30'], "", {doName: "time"});
+    UIMenu.Menu.AddMenuItemList("~b~Время~s~", ['17:00', '17:15', '17:30', '17:45', '18:00', '18:15', '18:30', '18:45', '19:00', '19:15', '19:30', '19:45', '20:00', '20:15', '20:30', '20:45', '21:00', '21:15', '21:30', '21:45', '22:00', '22:15', '22:30', '22:45', '23:00'], "", {doName: "time"});
     UIMenu.Menu.AddMenuItem(`~g~Объявить захват`, "", {doName: "start"});
 
     UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
@@ -10739,8 +10905,8 @@ menuList.showGangZoneAttackMenu = function(zone, count = 5) {
         try {
             if (item.doName === 'count') {
                 let name = methods.parseInt(await UIMenu.Menu.GetUserInput("Число", "", 9));
-                if (name > 10) {
-                    mp.game.ui.notifications.show(`~r~Значение не должно быть больше 10`);
+                if (name > 20) {
+                    mp.game.ui.notifications.show(`~r~Значение не должно быть больше 20`);
                     return;
                 }
                 if (name < 1) {

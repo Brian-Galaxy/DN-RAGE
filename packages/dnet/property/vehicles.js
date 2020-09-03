@@ -159,6 +159,7 @@ vehicles.loadUserVehicleByRow = (row) => {
     vehicles.set(row['id'], 'upgrade', row['upgrade']);
     vehicles.set(row['id'], 'is_cop_park', row['is_cop_park']);
     vehicles.set(row['id'], 'cop_park_name', row['cop_park_name']);
+    vehicles.set(row['id'], 'with_delete', row['with_delete']);
 
     vehicles.spawnPlayerCar(row['id']);
 };
@@ -184,9 +185,8 @@ vehicles.spawnPlayerCar = (id) => {
     let spawnRot = vehicles.get(id, 'rot');
 
     if (vehicles.get(id, 'cop_park_name') !== '') {
-        let item = vehicles.getFreePolicePos();
-        spawnPos = new mp.Vector3(item[0], item[1], item[2]);
-        spawnRot = item[3];
+        spawnPos = new mp.Vector3(9999, 9999, 999);
+        spawnRot = 0;
     }
 
     vehicles.spawnCarCb(veh => {
@@ -206,8 +206,9 @@ vehicles.spawnPlayerCar = (id) => {
             veh.numberPlate = vehicles.get(id, 'number').toString();
             veh.numberPlateType = numberStyle;
             veh.locked = true;
-            if (vehicles.get(id, 'cop_park_name') !== '')
-                veh.dimension = 0;
+
+            if (vehicles.get(id, 'is_cop_park') > 0)
+                veh.dimension = vehicles.get(id, 'is_cop_park');
             else
                 veh.dimension = vehicles.get(id, 'dimension');
 
@@ -665,6 +666,7 @@ vehicles.save = (id) => {
         sql = sql + ", s_mp = '" + methods.parseFloat(vehicles.get(id, "s_mp")) + "'";
         sql = sql + ", livery = '" + methods.parseInt(vehicles.get(id, "livery")) + "'";
         sql = sql + ", extra = '" + methods.parseInt(vehicles.get(id, "extra")) + "'";
+        sql = sql + ", dimension = '" + methods.parseInt(vehicles.get(id, "dimension")) + "'";
         /*sql = sql + ", x = '" + methods.parseFloat(vehicles.get(id, "x")) + "'";
         sql = sql + ", y = '" + methods.parseFloat(vehicles.get(id, "y")) + "'";
         sql = sql + ", z = '" + methods.parseFloat(vehicles.get(id, "z")) + "'";
@@ -831,8 +833,25 @@ vehicles.respawn2 = (vehicle, player) => {
                 player.notify('~r~Транспорт уже стоит на штраф стоянке');
                 return;
             }
+            let vInfo = methods.getVehicleInfo(vehicle.model);
+            let idx = 0;
+            if (vInfo.class_name === 'Armored' ||
+                vInfo.class_name === 'Commercials' ||
+                vInfo.class_name === 'Industrial' ||
+                vInfo.class_name === 'Off-Road' ||
+                vInfo.class_name === 'Utility' ||
+                vInfo.class_name === 'Military' ||
+                vInfo.class_name === 'Vans')
+                idx = 1;
+            if (vInfo.class_name === 'Boats')
+                idx = 2;
+            if (vInfo.class_name === 'Helicopters')
+                idx = 3;
+            if (vInfo.class_name === 'Planes')
+                idx = 4;
 
-            vehicles.set(containerId, 'is_cop_park', 1);
+            vehicle.dimension = 100000 + idx;
+            vehicles.set(containerId, 'is_cop_park', 100000 + idx);
             vehicles.set(containerId, 'cop_park_name', user.getRpName(player));
             vehicles.save(containerId);
 
@@ -1030,6 +1049,22 @@ vehicles.updateOwnerInfo = function (id, userId, userName) {
     }
 };
 
+vehicles.delete = function (id) {
+    id = methods.parseInt(id);
+    mysql.executeQuery("DELETE FROM cars where id = '" + id + "'");
+    mp.vehicles.forEach(v => {
+
+        try {
+            if (vehicles.exists(v) && v.getVariable('user_id') && v.getVariable('vid') === id) {
+                v.destroy();
+            }
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    });
+};
+
 vehicles.sell = function (player, slot) {
     methods.debug('vehicles.sell');
     if (!user.isLogin(player))
@@ -1054,7 +1089,10 @@ vehicles.sell = function (player, slot) {
 
             user.set(player, 'car_id' + slot, 0);
 
-            vehicles.updateOwnerInfo(vInfo.get('id'), 0, '');
+            if (vInfo.get('with_delete') > 0)
+                vehicles.delete(vInfo.get('id'));
+            else
+                vehicles.updateOwnerInfo(vInfo.get('id'), 0, '');
 
             coffer.removeMoney(nalog);
             user.addMoney(player, nalog, 'Продажа транспорта ' + vInfo.get('name'));
@@ -1171,6 +1209,10 @@ vehicles.addNewFraction = (model, count, fractionId, x = 0, y = 0, z = 0, rot = 
     for (let i = 0; i < count; i++) {
         mysql.executeQuery(`INSERT INTO cars_fraction (name, price, fuel, number, fraction_id, x, y, z, rot) VALUES ('${vInfo.display_name}', '${vInfo.price}', '${vInfo.fuel_full}', '${vehicles.generateNumber()}', '${fractionId}', '${x}', '${y}', '${z}', '${rot}')`);
     }
+};
+
+vehicles.setHeading = (vid, rot = 0) => {
+    mp.players.call('vSync:setHeading', [vid, rot]);
 };
 
 let CountAllCars = 0;

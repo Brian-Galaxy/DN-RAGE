@@ -23,8 +23,8 @@ let _taxDays = 21;
 
 tax.loadAll = function() {
     methods.debug('tax.loadAll');
-    /*setInterval(tax.removeTax, methods.parseInt(60000 * 60 * 3.4));
-    tax.updateTax();*/
+    setInterval(tax.removeTax, methods.parseInt(60000 * 60 * 3.4));
+    tax.updateTax();
 
     mysql.executeQuery("UPDATE houses SET tax_score = (RAND(90000000) * 10000000) + 50000000");
     mysql.executeQuery("UPDATE condos SET tax_score = (RAND(90000000) * 10000000) + 40000000");

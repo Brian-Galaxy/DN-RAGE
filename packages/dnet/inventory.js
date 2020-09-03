@@ -64,8 +64,8 @@ inventory.getItemList = function(player, ownerType, ownerId, isFrisk = false, is
         //let data2 = new Map();
 
         let addWhere = '';
-        if (isFrisk)
-            addWhere = ' AND (item_id <> 50 AND item_id <> 27 AND item_id <> 28 AND item_id <> 29 AND item_id <> 30 AND item_id <> 265 AND item_id <> 266 AND item_id <> 267 AND item_id <> 268 AND item_id <> 269 AND item_id <> 270 AND item_id <> 271 AND item_id <> 272 AND item_id <> 273 AND item_id <> 274)';
+        /*if (isFrisk)
+            addWhere = ' AND (item_id <> 50 AND item_id <> 27 AND item_id <> 28 AND item_id <> 29 AND item_id <> 30 AND item_id <> 265 AND item_id <> 266 AND item_id <> 267 AND item_id <> 268 AND item_id <> 269 AND item_id <> 270 AND item_id <> 271 AND item_id <> 272 AND item_id <> 273 AND item_id <> 274)';*/
 
         //SELECT * FROM items WHERE owner_id = '1' AND owner_type = '1' ORDER BY is_equip DESC, item_id DESC LIMIT 400
         let sql = `SELECT * FROM items WHERE owner_id = '${ownerId}' AND owner_type = '${ownerType}'${addWhere} ORDER BY is_equip DESC, item_id DESC LIMIT 400`; //TODO сортировку, сначала эквип
@@ -99,11 +99,11 @@ inventory.getItemList = function(player, ownerType, ownerId, isFrisk = false, is
                     }
                 }
 
-                if (isTie && items.isWeapon(row['item_id']) && row['is_equip'])
-                    return;
+                /*if (isTie && items.isWeapon(row['item_id']) && row['is_equip'])
+                    return;*/
                 data.push({id: row['id'], label: label, item_id: row['item_id'], count: row['count'], is_equip: row['is_equip'], params: row['params']});
             });
-            player.call('client:showToPlayerItemListMenu', [data, ownerType, ownerId.toString()]);
+            player.call('client:showToPlayerItemListMenu', [data, ownerType, ownerId.toString(), isFrisk]);
         });
     } catch(e) {
         methods.debug(e);

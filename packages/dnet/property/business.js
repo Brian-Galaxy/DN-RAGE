@@ -193,7 +193,7 @@ business.updateOwnerInfo = function (bId, userId, userName) {
     business.save(bId);
 
     if (userId === 0) {
-        discord.sendMarketProperty(`Бизнес | ${business.get(bId, 'name')}`, `Гос. стоимость: ${methods.moneyFormat(business.get(bId, 'price'))}`);
+        discord.sendMarketBusiness(`${business.get(bId, 'name')}`, `Гос. стоимость: ${methods.moneyFormat(business.get(bId, 'price'))}`);
     }
 };
 
@@ -219,7 +219,7 @@ business.sell = function (player) {
     coffer.removeMoney(1, nalog);
     user.addMoney(player, nalog, 'Продажа бизнеса ' + hInfo.get('name'));
 
-    discord.sendMarketProperty(`Бизнес | ${business.get(hInfo.get('id'), 'name')}`, `Гос. стоимость: ${methods.moneyFormat(business.get(hInfo.get('id'), 'price'))}`);
+    discord.sendMarketBusiness(`${business.get(hInfo.get('id'), 'name')}`, `Гос. стоимость: ${methods.moneyFormat(business.get(hInfo.get('id'), 'price'))}`);
 
     setTimeout(function () {
 

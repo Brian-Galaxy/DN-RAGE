@@ -101,7 +101,7 @@ yachts.sell = function (player) {
 
     let nalog = methods.parseInt(hInfo.get('price') * (100 - coffer.getTaxIntermediate()) / 100);
 
-    user.set(player, 'condo_id', 0);
+    user.set(player, 'yacht_id', 0);
 
     yachts.updateOwnerInfo(hInfo.get('id'), 0, '');
 

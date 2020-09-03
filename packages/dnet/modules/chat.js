@@ -189,6 +189,12 @@ mp.events.add('playerCommand', (player, command) => {
                 return;
             graffiti.createWar();
         }
+        else if (command.toLowerCase() === "gwar") {
+            if (!user.isAdmin(player))
+                return;
+            let war = gangWar.getWar(0);
+            gangWar.startWar(war.zoneId, war.attack, war.def, war.armor === 0, war.count);
+        }
         else if (command.toLowerCase() === "crimemwar") {
             if (!user.isAdmin(player))
                 return;

@@ -513,7 +513,7 @@ mp.events.addRemoteCounted('server:user:toLspdSafe', (player) => {
             return;
 
         if (user.get(player, 'online_lspd') > 0) {
-            user.showCustomNotify(player, `Вам осталось отыграть ${methods.parseFloat(user.get('online_lspd') * 8.5 / 60).toFixed(2)}ч для доступа к конфискату`);
+            user.showCustomNotify(player, `Вам осталось отыграть ${methods.parseFloat(user.get('online_lspd') * 8.5 / 60).toFixed(3)}ч для доступа к конфискату`);
             return;
         }
         inventory.getItemList(player, inventory.types.StockTakeWeap, user.getId(player));
@@ -526,7 +526,7 @@ mp.events.addRemoteCounted('server:user:toLspdSafe', (player) => {
 mp.events.addRemoteCounted('server:user:arrest', (player) => {
     try {
         let currentLvl = user.get(player, 'wanted_level');
-        user.set(player, 'wanted_level', currentLvl - methods.parseInt(currentLvl / 5))
+        user.set(player, 'wanted_level', currentLvl - methods.parseInt(currentLvl / 5));
         user.arrest(player)
     } catch (e) {
         console.log(e);
@@ -1565,8 +1565,38 @@ mp.events.addRemoteCounted('server:user:getInvById', (player, targetId) => {
             }
         }
 
-        user.toLspdSafe(pl, 57, player);
+        user.toLspdSafe(pl, 42, player);
         //inventory.getItemList(player, inventory.types.Player, user.getId(pl), true, user.isTie(pl));
+    }
+    else
+        player.notify('~r~Рядом с вами никого нет');
+});
+
+mp.events.addRemoteCounted('server:user:getInvById2', (player, targetId) => {
+    if (!user.isLogin(player))
+        return;
+    let pl = mp.players.at(targetId);
+    if (pl && mp.players.exists(pl)) {
+        if (pl.health <= 0) {
+            player.notify('~r~Нельзя обыскивать мертвых');
+            return;
+        }
+        if (!user.isTie(pl) && !user.isCuff(pl)) {
+            player.notify('~r~Игрок должен быть связан или в наручниках');
+            return;
+        }
+        if (methods.distanceToPos(pl.position, player.position) > 3) {
+            player.notify('~r~Вы слишком далеко');
+            return;
+        }
+        if (!user.isFib(player)) {
+            if (user.isPolice(pl) && !user.isTie(pl)) {
+                player.notify("~r~Нельзя обыскивать сотрудников полиции в наручниках, только через стяжки");
+                return;
+            }
+        }
+
+        inventory.getItemList(player, inventory.types.Player, user.getId(pl), true, user.isTie(pl));
     }
     else
         player.notify('~r~Рядом с вами никого нет');
@@ -2119,6 +2149,8 @@ mp.events.addRemoteCounted('server:admin:gangZone:edit', (player, id, key, val) 
     try {
         let pos = player.position;
         gangWar.set(id, key, val);
+        if (key === 'timestamp' && val === 0)
+            gangWar.set(id, 'canWar', false);
         mysql.executeQuery("UPDATE gang_war SET " + key + " = '" + val + "' where id = '" + id + "'");
         player.notify(`~b~Значение ${key} было обновлено на ${val}`);
     }
@@ -3552,10 +3584,22 @@ mp.events.addRemoteCounted('server:phone:userGetPosById', (player, id) => {
         return;
     mp.vehicles.forEach(v => {
         if (v.getVariable('vid') == id) {
-            if  (v.dimension === 0)
+            if (v.dimension === 0)
                 user.setWaypoint(player, v.position.x, v.position.y);
+            else if (v.dimension >= 100000)
+            {
+                let list = [
+                    [847.5055, -1318.934, 25.41834], //La Mesa
+                    [-179.8415, -2556.748, 5.01313], //Vans
+                    [-457.1022, -2267.843, 7.520823], //Boat
+                    [-1856.601, -3120.497, 12.94436], //Heli
+                    [ -1071.382, -3457.909, 13.14841], //Plane
+                ];
+                user.setWaypoint(player, list[v.dimension - 100000][0], list[v.dimension - 100000][1]);
+                player.notify('~y~Ваш транспорт стоит на штраф-стоянке');
+            }
             else
-                player.notify('~g~Ваш транспорт стоит в гараже');
+                player.notify('~y~Ваш транспорт стоит в гараже');
         }
     });
 });
@@ -3588,6 +3632,27 @@ mp.events.addRemoteCounted('server:phone:userNeonById', (player, id) => {
             vehicles.neonStatus(player, v);
         }
     });
+});
+
+mp.events.addRemoteCounted('server:lspd:takeVehicle', (player, x, y, z, rot, vid) => {
+    if (!user.isLogin(player))
+        return;
+    try {
+        let veh = mp.vehicles.at(vid);
+        veh.position = new mp.Vector3(x, y, z);
+        veh.dimension = 0;
+        setTimeout(function () {
+            try {
+                vehicles.setHeading(vid, rot);
+                user.putInVehicle(player, veh, -1);
+                player.notify('~y~Не забудьте оплатить штраф через 2 - Транспорт');
+            }
+            catch (e) {}
+        }, 500)
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 });
 
 mp.events.addRemoteCounted('server:inventory:getItemList', (player, ownerType, ownerId) => {
@@ -3979,6 +4044,145 @@ mp.events.addRemoteCounted("onKeyPress:E", (player) => {
                 player.call('client:showHouseInVMenu', [Array.from(houseData)]);
             }
         });
+    }
+});
+
+mp.events.addRemoteCounted('server:user:askAve', (player, id) => {
+    if (!user.isLogin(player))
+        return;
+    try {
+        let target = mp.players.at(id);
+        if (!user.isLogin(target)) {
+            player.notify('~r~Игрок не найден');
+            return;
+        }
+        if (methods.distanceToPos(player.position, target.position) > 5) {
+            player.notify('~r~Вы слишком далеко');
+            return;
+        }
+        if (user.getCashMoney(player) < 10000) {
+            player.notify('~r~У вас нет при себе $10000');
+            return;
+        }
+        if (user.get(player, 'partner') !== '') {
+            player.notify('~r~Вы уже состоите в браке');
+            return;
+        }
+        if (user.get(target, 'partner') !== '') {
+            player.notify('~r~Игрок уже состоит в браке');
+            return;
+        }
+        target.call('client:menuList:showAveAcceptMenu', [player.id, user.getRpName(player)]);
+
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.addRemoteCounted('server:user:askNoAve', (player, id) => {
+    if (!user.isLogin(player))
+        return;
+    try {
+        let target = mp.players.at(id);
+        if (!user.isLogin(target)) {
+            player.notify('~r~Игрок не найден');
+            return;
+        }
+        if (methods.distanceToPos(player.position, target.position) > 5) {
+            player.notify('~r~Вы слишком далеко');
+            return;
+        }
+        if (user.getCashMoney(player) < 1000) {
+            player.notify('~r~У вас нет при себе $1000');
+            return;
+        }
+        if (user.getRpName(player) !== user.get(target, 'partner')) {
+            player.notify('~r~Вы не состите в браке с этим человеком');
+            return;
+        }
+        target.call('client:menuList:showNoAveAcceptMenu', [player.id, user.getRpName(player)]);
+
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.addRemoteCounted('server:ave:accept', (player, id) => {
+    if (!user.isLogin(player))
+        return;
+    try {
+        let target = mp.players.at(id);
+        if (!user.isLogin(target)) {
+            player.notify('~r~Игрок не найден');
+            return;
+        }
+        if (methods.distanceToPos(player.position, target.position) > 5) {
+            player.notify('~r~Вы слишком далеко');
+            return;
+        }
+        if (user.get(player, 'partner') !== '') {
+            player.notify('~r~Вы уже состоите в браке');
+            return;
+        }
+        if (user.get(target, 'partner') !== '') {
+            player.notify('~r~Игрок уже состоит в браке');
+            return;
+        }
+        user.removeMoney(target, 10000);
+        user.set(player, 'partner', user.getRpName(target));
+        user.set(target, 'partner', user.getRpName(player));
+        user.save(player);
+        user.save(target);
+        chat.sendToAll('Священник', `Поздравляем! Новую ячейку общества образовала пара ${user.getRpName(target)} и ${user.getRpName(player)}`,  chat.clGreen);
+
+        mysql.executeQuery(`SELECT * FROM users WHERE name = '${user.getRpName(player)}'`, function (err, rows, fields) {
+            if (rows.length === 0) {
+                try {
+                    let surname = methods.removeQuotes(user.getRpName(player).split(' ')[1]);
+                    let name = methods.removeQuotes(user.getRpName(target).split(' ')[0]);
+                    user.saveName(target, `${name} ${surname}`);
+                    target.notify(`~r~Фамилия была изменена на ${surname}`);
+                }
+                catch (e) {}
+            }
+            else {
+                target.notify('~r~Сочетание имени и фамилии уже занята, поэтому вам её не сменили')
+            }
+        });
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.addRemoteCounted('server:noave:accept', (player, id) => {
+    if (!user.isLogin(player))
+        return;
+    try {
+        let target = mp.players.at(id);
+        if (!user.isLogin(target)) {
+            player.notify('~r~Игрок не найден');
+            return;
+        }
+        if (methods.distanceToPos(player.position, target.position) > 5) {
+            player.notify('~r~Вы слишком далеко');
+            return;
+        }
+
+        user.removeMoney(target, 1000);
+        user.set(player, 'partner', '');
+        user.set(target, 'partner', '');
+
+        player.notify('~r~Вы разорвали брак');
+        target.notify('~r~Вы разорвали брак');
+
+        user.save(player);
+        user.save(target);
+    }
+    catch (e) {
+        methods.debug(e);
     }
 });
 
@@ -6405,7 +6609,24 @@ mp.events.addRemoteCounted('server:sellVeh', (player) => {
 
     let containerId = veh.getVariable('container');
     if (containerId != undefined && veh.getVariable('user_id') > 0) {
-        vehicles.set(containerId, 'is_cop_park', 1);
+        let vInfo = methods.getVehicleInfo(vehicle.model);
+        let idx = 0;
+        if (vInfo.class_name === 'Armored' ||
+            vInfo.class_name === 'Commercials' ||
+            vInfo.class_name === 'Industrial' ||
+            vInfo.class_name === 'Off-Road' ||
+            vInfo.class_name === 'Utility' ||
+            vInfo.class_name === 'Military' ||
+            vInfo.class_name === 'Vans')
+            idx = 1;
+        if (vInfo.class_name === 'Boats')
+            idx = 2;
+        if (vInfo.class_name === 'Helicopters')
+            idx = 3;
+        if (vInfo.class_name === 'Planes')
+            idx = 4;
+
+        vehicles.set(containerId, 'is_cop_park', 100000 + idx);
         vehicles.set(containerId, 'cop_park_name', 'В угоне');
         vehicles.save(containerId);
     }

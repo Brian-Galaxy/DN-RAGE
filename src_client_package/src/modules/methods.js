@@ -81,6 +81,9 @@ methods.SET_ENTITY_ALPHA = '0x44A0870B7E92D7C0';
 methods.SET_BLIP_ALPHA = '0x45FF974EEE1C8734';
 methods.SET_BLIP_COLOUR = '0x03D7FB09E75D6B7E';
 methods.SET_BLIP_SPRITE = '0xDF735600A4696DAF';
+methods.SET_BLIP_ROTATION = '0xF87683CDF73C3F6E';
+methods.SET_BLIP_FLASH = '0xB14552383D39CE3E';
+methods.GET_BLIP_SPRITE = '0x1FC877464A04FC4F';
 
 methods.DISABLE_FIRST_PERSON_CAM_THIS_FRAME = '0xDE2EF5DA284CC8DF';
 
@@ -160,7 +163,49 @@ methods.getVehicleInfo = function (model) {
     catch (e) {
         
     }
-    return {id: 0, hash: model, display_name: 'Unknown', class_name: 'Unknown', class_name_ru: 'Unknown', stock: 378000, stock_full: 205000, price: 50000, fuel_full: 75, fuel_min: 8, fuel_type: 0, type: 0, sb: 1, sm: 200};
+    return {
+        id: 0,
+        hash: model,
+        display_name: 'Unknown',
+        class_name: 'Unknown',
+        class_name_ru: 'Unknown',
+        m_name: 'Unknown',
+        n_name: 'Unknown',
+        stock: 378000,
+        stock_full: 205000,
+        price: 50000,
+        fuel_full: 75,
+        fuel_min: 8,
+        fuel_type: 0,
+        type: 0,
+        sb: 1,
+        sm: 200,
+        tm: 0,
+        temp: 1,
+        anchor: 0,
+        lck: 0,
+        sbag: 5000,
+        trucker: 0,
+        t_main: 0,
+        t_color: 1,
+        t_inside: 1,
+        t_chip: 1,
+        t_vis: 1,
+        t_module: 1,
+        t_extra: 1,
+        t_wheels: 1,
+        t_block: "{}",
+        t_neon: 1,
+        t_light: 1,
+        r_speed: 0,
+        a_spawn: 1,
+        s_park: 0,
+        ticket_z: 0,
+        lc: 1,
+        blt: 1,
+        siren: 0,
+        k_block: "[]",
+    };
 };
 
 methods.setVehicleInfo = function (model, value) {
@@ -502,6 +547,26 @@ methods.getWaypointPosition = function () {
                 pos = mp.game.ui.getBlipInfoIdCoord(index);
     }
     return pos;
+};
+
+methods.removeAllBlipById = function (blipId = 5) {
+    try {
+        for (let index = mp.game.invoke('0x1BEDE233E6CD2A1F', blipId); mp.game.invoke('0xA6DB27D19ECBB7DA', index); index = mp.game.invoke('0x14F96AA50D6FBEA7', blipId))
+                mp.game.ui.removeBlip(index);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+};
+
+methods.displayTypeAllBlipById = function (blipId, type) {
+    try {
+        for (let index = mp.game.invoke('0x1BEDE233E6CD2A1F', blipId); mp.game.invoke('0xA6DB27D19ECBB7DA', index); index = mp.game.invoke('0x14F96AA50D6FBEA7', blipId))
+            mp.game.invoke('0x9029B2F3DA924928', index, type);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 };
 
 methods.isWaypointPosition = function () {

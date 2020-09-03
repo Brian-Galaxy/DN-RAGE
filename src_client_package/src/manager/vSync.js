@@ -596,6 +596,17 @@ mp.events.add("vSync:setLockStatus", (vehId, status) => {
     }
 });
 
+mp.events.add("vSync:setHeading", (vehId, rot) => {
+    try {
+        let veh = mp.vehicles.atRemoteId(vehId);
+        if (veh !== undefined && mp.vehicles.exists(veh)) {
+            veh.setRotation(0,0, rot, 0, true);
+        }
+    } catch (e) {
+        methods.debug(e);
+    }
+});
+
 mp.events.add("vSync:setSirenState", (vehId, state) => {
     try {
         let veh = mp.vehicles.atRemoteId(vehId);

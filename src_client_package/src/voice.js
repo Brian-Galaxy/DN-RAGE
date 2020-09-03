@@ -941,6 +941,9 @@ const enableMicrophoneRadio = () => {
         if (user.isCuff() || user.isDead())
             return;
 
+        if (!user.getCache('walkie_buy'))
+            return;
+
         if (user.getCache('walkietalkie_num') != "0" && user.getCache('jail_time') == 0) {
             ui.radioSoundOn();
             enableMicrophone();

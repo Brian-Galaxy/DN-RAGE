@@ -883,12 +883,12 @@ phone.showGangList = function(player) {
     gangWar.getZoneList().forEach(zone => {
         let subItems = [];
 
-        subItems.push(
+        /*subItems.push(
             phone.getMenuItemButton(
                 `${gangWar.get(zone.id, 'zone')}`,
                 `${gangWar.get(zone.id, 'street')}`
             )
-        );
+        );*/
 
 
         let frName = gangWar.get(zone.id, 'fraction_name');
@@ -922,7 +922,7 @@ phone.showGangList = function(player) {
             );
         }
 
-        items.push(phone.getMenuMainItem(`#${zone.id} | ${gangWar.get(zone.id, 'zone')}`, subItems));
+        items.push(phone.getMenuMainItem(`#${zone.id}}`, subItems));
     });
     phone.showMenu(player, 'fraction2', `Список улиц`, items);
 };

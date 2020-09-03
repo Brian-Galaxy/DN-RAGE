@@ -122,7 +122,49 @@ methods.getVehicleInfo = function (model) {
         if (vItem.hash == model || vItem.display_name == model || vItem.display_name.toLowerCase() == model.toString().toLowerCase() || mp.joaat(vItem.display_name.toString().toLowerCase()) == model)
             return vItem;
     }
-    return {id: 0, hash: model, display_name: 'Unknown', class_name: 'Unknown', class_name_ru: 'Unknown', stock: 378000, stock_full: 205000, price: 50000, fuel_full: 75, fuel_min: 8, fuel_type: 0, type: 0, sb: 1, sm: 200};
+    return {
+        id: 0,
+        hash: model,
+        display_name: 'Unknown',
+        class_name: 'Unknown',
+        class_name_ru: 'Unknown',
+        m_name: 'Unknown',
+        n_name: 'Unknown',
+        stock: 378000,
+        stock_full: 205000,
+        price: 50000,
+        fuel_full: 75,
+        fuel_min: 8,
+        fuel_type: 0,
+        type: 0,
+        sb: 1,
+        sm: 200,
+        tm: 0,
+        temp: 1,
+        anchor: 0,
+        lck: 0,
+        sbag: 5000,
+        trucker: 0,
+        t_main: 0,
+        t_color: 1,
+        t_inside: 1,
+        t_chip: 1,
+        t_vis: 1,
+        t_module: 1,
+        t_extra: 1,
+        t_wheels: 1,
+        t_block: "{}",
+        t_neon: 1,
+        t_light: 1,
+        r_speed: 0,
+        a_spawn: 1,
+        s_park: 0,
+        ticket_z: 0,
+        lc: 1,
+        blt: 1,
+        siren: 0,
+        k_block: "[]",
+    };
 };
 
 methods.getRandomInt = function (min, max) {

@@ -43,17 +43,17 @@ npc.loadAll = function() {
 // Помошник шерифа на ресепшане Paleto Bay
     npc.create(mp.game.joaat("s_f_y_sheriff_01"), new mp.Vector3(-448.6529, 6012.937, 31.71638), -45.47421, false, "CODE_HUMAN_MEDIC_TIME_OF_DEATH");
 
-    // Respawn Vagos
-    npc.create(mp.game.joaat("ig_ortega"), new mp.Vector3(483.9583, -1875.324, 26.16094), -67.42773, false, "WORLD_HUMAN_GUARD_STAND");
-    npc.create(mp.game.joaat("g_f_y_vagos_01"), new mp.Vector3(478.4626, -1897.894, 25.57264), -119.9996, false, "WORLD_HUMAN_PROSTITUTE_HIGH_CLASS");
-    npc.create(mp.game.joaat("a_f_y_eastsa_03"), new mp.Vector3(478.9356, -1898.891, 25.5328), -19.00031, false, "WORLD_HUMAN_DRUG_DEALER");
-    npc.create(mp.game.joaat("g_m_y_mexgoon_01"), new mp.Vector3(460.676, -1880.949, 26.84649), -18.99998, false, "WORLD_HUMAN_SMOKING");
+// Respawn Vagos
+    npc.create(mp.game.joaat("ig_ortega"), new mp.Vector3(434.621, -2039.659, 23.44744), -32.99991, false, "WORLD_HUMAN_GUARD_STAND");
+    npc.create(mp.game.joaat("g_f_y_vagos_01"), new mp.Vector3(431.3778, -2033.259, 23.26118), 11.99974, false, "WORLD_HUMAN_PROSTITUTE_HIGH_CLASS");
+    npc.create(mp.game.joaat("a_f_y_eastsa_03"), new mp.Vector3(430.7873, -2032.742, 23.24662), -119.9994, false, "WORLD_HUMAN_DRUG_DEALER");
+    npc.create(mp.game.joaat("g_m_y_mexgoon_01"), new mp.Vector3(415.6351, -2055.993, 22.12321), 142.9995, false, "WORLD_HUMAN_SMOKING");
 
 // Respawn Bloods
-    npc.create(mp.game.joaat("ig_claypain"), new mp.Vector3(465.1042, -1671.076, 29.29151), 55.99957, false, "WORLD_HUMAN_SMOKING");
-    npc.create(mp.game.joaat("a_f_y_soucent_01"), new mp.Vector3(453.4677, -1685.941, 29.28194), 142.0002, false, "WORLD_HUMAN_TOURIST_MOBILE");
-    npc.create(mp.game.joaat("a_m_y_soucent_03"), new mp.Vector3(452.6291, -1686.808, 29.28194), -72.99976, false, "WORLD_HUMAN_DRINKING");
-    npc.create(mp.game.joaat("a_m_m_afriamer_01"), new mp.Vector3(474.12, -1683.562, 29.29144), 174.0001, false, "WORLD_HUMAN_GUARD_STAND");
+    npc.create(mp.game.joaat("ig_claypain"), new mp.Vector3(814.4373, -2398.871, 23.65801), -178.9996, false, "WORLD_HUMAN_SMOKING");
+    npc.create(mp.game.joaat("a_f_y_soucent_01"), new mp.Vector3(815.4818, -2413.801, 23.69544), 37.00063, false, "WORLD_HUMAN_TOURIST_MOBILE");
+    npc.create(mp.game.joaat("a_m_y_soucent_03"), new mp.Vector3(815.3779, -2412.904, 23.68834), 170.9996, false, "WORLD_HUMAN_DRINKING");
+    npc.create(mp.game.joaat("a_m_m_afriamer_01"), new mp.Vector3(819.4771, -2438.8, 24.5403), 159.9992, false, "WORLD_HUMAN_GUARD_STAND");
 
 // Respawn Families
     npc.create(mp.game.joaat("g_m_y_famca_01"), new mp.Vector3(-12.11057, -1827.143, 25.47756), 151.9985, false, "WORLD_HUMAN_GUARD_STAND");
@@ -353,6 +353,18 @@ npc.loadAll = function() {
 //Церковь
     npc.create(mp.game.joaat("ig_priest"), new mp.Vector3(-787.1298828125, -708.8898315429688, 30.32028579711914), 265.47149658203125, false, "WORLD_HUMAN_GUARD_STAND");
 
+    // Штрафстоянки
+    npc.create(mp.game.joaat("s_m_m_security_01"), new mp.Vector3(392.0566, -1637.983, 29.29352), -83.97862, false, "WORLD_HUMAN_CLIPBOARD"); // Davis
+    npc.create(mp.game.joaat("s_m_m_security_01"), new mp.Vector3(846.9775, -1319.681, 26.40563), -33.86766, false, "WORLD_HUMAN_CLIPBOARD"); // La Mesa
+    npc.create(mp.game.joaat("s_m_m_security_01"), new mp.Vector3(482.4717, -1093.66, 29.40167), 136.061, false, "WORLD_HUMAN_CLIPBOARD"); // Mission Row
+    npc.create(mp.game.joaat("s_m_m_security_01"), new mp.Vector3(-1129.329, -772.9122, 18.24211), 5.332124, false, "WORLD_HUMAN_CLIPBOARD"); // Del Perro
+    npc.create(mp.game.joaat("s_m_m_security_01"), new mp.Vector3(1943.638, 3764.589, 32.21295), 55.02224, false, "WORLD_HUMAN_CLIPBOARD"); // Sandy Shores
+    npc.create(mp.game.joaat("s_m_m_security_01"), new mp.Vector3(-291.2821, 6137.66, 31.47069), -147.1063, false, "WORLD_HUMAN_CLIPBOARD"); // Paleto Bay
+    npc.create(mp.game.joaat("s_m_m_security_01"), new mp.Vector3(492.1434, -58.6371, 78.11255), 64.83295, false, "WORLD_HUMAN_CLIPBOARD"); // Vinewood
+    npc.create(mp.game.joaat("s_m_m_security_01"), new mp.Vector3(-180.3634, -2557.411, 6.013849), -37.53494, false, "WORLD_HUMAN_CLIPBOARD"); // Vans
+    npc.create(mp.game.joaat("s_m_m_security_01"), new mp.Vector3(-457.9996, -2268.136, 8.516481), -69.62789, false, "WORLD_HUMAN_CLIPBOARD"); // Boat
+    npc.create(mp.game.joaat("s_m_m_security_01"), new mp.Vector3(-1856.256, -3119.711, 13.94436), 156.0192, false, "WORLD_HUMAN_CLIPBOARD"); // Helicopters
+    npc.create(mp.game.joaat("s_m_m_security_01"), new mp.Vector3(-1071.75, -3457.185, 14.14418), -150.9734, false, "WORLD_HUMAN_CLIPBOARD"); // Plane
 
 // House 532
     npc.create(mp.game.joaat("s_m_m_highsec_01"), new mp.Vector3(-632.0056, 398.0607, 101.2304), 16.52335, false, "WORLD_HUMAN_GUARD_STAND");

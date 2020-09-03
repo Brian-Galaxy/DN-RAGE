@@ -248,6 +248,7 @@ vehicles.isVehicleSirenValid = function (model) {
         case 'Ambulance22':
         case 'Ambulance4':
         case 'Emsnspeedo':
+        case 'Emsroamer':
         case 'Firetruk':
         case 'PoliceOld1':
         case 'PoliceOld2':
@@ -338,6 +339,7 @@ vehicles.getSirenSound = function (model, state) {
         case 'Ambulance22':
         case 'Ambulance4':
         case 'Emsnspeedo':
+        case 'Emsroamer':
         case 'PoliceOld1':
         case 'PoliceOld2':
         {
@@ -389,6 +391,7 @@ vehicles.getWarningSound = function (model) {
         case 'Ambulance22':
         case 'Ambulance4':
         case 'Emsnspeedo':
+        case 'Emsroamer':
         case 'PoliceOld1':
         case 'PoliceOld2':
             return 'SIRENS_AIRHORN';

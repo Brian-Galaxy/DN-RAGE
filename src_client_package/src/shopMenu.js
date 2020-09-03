@@ -864,7 +864,11 @@ mp.events.add('client:shopMenu:buyCash', async function(json) {
                 mp.events.callRemote('server:gun:buy', params.id, params.price, 1, 0, 0, params.shop, 0);
             }
             else {
-                quest.standart(false, -1, 4);
+                if (params.id === 251)
+                    quest.fish(false, -1, 1);
+                else
+                    quest.standart(false, -1, 4);
+
                 mp.events.callRemote('server:shop:buy', params.id, params.price, params.shop);
             }
         }
@@ -1035,7 +1039,7 @@ mp.events.add('client:shopMenu:doName', function(json) {
     }
 });
 
-mp.events.add('client:dialog:btn', function(json) {
+mp.events.add('client:dialog:btn', async function(json) {
     try {
         let params = JSON.parse(json);
         if (params.doName === 'close') {
@@ -1084,6 +1088,20 @@ mp.events.add('client:dialog:btn', function(json) {
         if (params.doName === 'edu:all') {
             shopMenu.hideDialog();
             edu.startLong();
+        }
+        if (params.doName === 'user:lspd:takeVehicle') {
+            shopMenu.hideDialog();
+            mp.events.callRemote('server:lspd:takeVehicle', params.x, params.y, params.z, params.rot, params.vid)
+        }
+        if (params.doName === 'ave:brak') {
+            shopMenu.hideDialog();
+            let id = methods.parseInt(await menuList.getUserInput('Введите ID игрока'));
+            mp.events.callRemote('server:user:askAve', id);
+        }
+        if (params.doName === 'ave:nobrak') {
+            shopMenu.hideDialog();
+            let id = methods.parseInt(await menuList.getUserInput('Введите ID игрока'));
+            mp.events.callRemote('server:user:askNoAve', id);
         }
         if (params.doName === 'work') {
             let btn = [];

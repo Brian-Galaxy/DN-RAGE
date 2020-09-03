@@ -213,14 +213,14 @@ graffiti.save = function(id) {
     return new Promise((resolve) => {
         methods.debug('graffiti.save');
 
-        if (!fraction.has(id, "id")) {
+        if (!graffiti.has(id, "id")) {
             resolve();
             return;
         }
 
         let sql = "UPDATE graffiti_war SET";
-        sql = sql + " owner_id = '" + methods.parseInt(fraction.get(id, "owner_id")) + "'";
-        sql = sql + " where id = '" + methods.parseInt(fraction.get(id, "id")) + "'";
+        sql = sql + " owner_id = '" + methods.parseInt(graffiti.get(id, "owner_id")) + "'";
+        sql = sql + " where id = '" + methods.parseInt(graffiti.get(id, "id")) + "'";
         mysql.executeQuery(sql, undefined, function () {
             resolve();
         });

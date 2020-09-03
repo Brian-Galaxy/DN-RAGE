@@ -9,6 +9,7 @@ import './manager/heliCam';
 import './manager/attachWeapons';
 import './manager/cameraRotator';
 import './manager/racer';
+import './manager/jobPoint';
 
 import './betternotifs';
 //import './voice';

@@ -607,7 +607,7 @@ mp.events.add('client:ui:callCef', (event, value) => {
 // Эвенты на cef только через эту функцию
 ui.callCef = function(event, value) {
     try {
-        if (event === 'tattooshop')
+        if (event === 'authMain:2')
             methods.debug(event, JSON.parse(value));
         if(uiBrowser && methods.isValidJSON(value))
             uiBrowser.execute(`trigger('${event}', '${value}')`);

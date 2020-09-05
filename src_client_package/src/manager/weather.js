@@ -37,6 +37,11 @@ weather.nextWeather = function(weatherName, delay) {
         SetWeatherTypeNowPersist(weatherList[idx].ToString());
         SetWeatherTypeNow(weatherList[idx].ToString());
         SetOverrideWeather(weatherList[idx].ToString());
+
+        mp.game.gameplay.setWeatherTypePersist("RAIN");
+        mp.game.gameplay.setWeatherTypeNowPersist("RAIN");
+        mp.game.gameplay.setWeatherTypeNow("RAIN");
+        mp.game.gameplay.setOverrideWeather("RAIN");
         */
 
         if (
@@ -48,6 +53,7 @@ weather.nextWeather = function(weatherName, delay) {
         {
             mp.game.graphics.setForceVehicleTrails(true);
             mp.game.graphics.setForcePedFootstepsTracks(true);
+
             //SetOverrideWeather("XMAS");
 
             //RequestScriptAudioBank("ICE_FOOTSTEPS", false);

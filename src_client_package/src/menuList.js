@@ -3759,6 +3759,9 @@ menuList.showVehicleDoInvMenu = function(vehId) {
     if (vehicle.getVariable('fraction_id') === 2 && user.isSapd() && vInfo.display_name === 'Riot') {
         UIMenu.Menu.AddMenuItem("~g~Войти в режим дрона", "", {doName: "drone"});
     }
+    if (vehicle.getVariable('fraction_id') === 3 && user.isFib() && vInfo.display_name === 'FBI2') {
+        UIMenu.Menu.AddMenuItem("~g~Войти в режим дрона", "", {doName: "drone"});
+    }
 
     if (user.getCache('job') == vehicle.getVariable('jobId')) {
         switch (vehicle.getVariable('jobId')) {
@@ -10430,8 +10433,26 @@ menuList.showFibArsenalMenu = function() {
     UIMenu.Menu.AddMenuItem("~b~Оружие", "", {showGun: true});
     UIMenu.Menu.AddMenuItem("~b~Модули на оружие", "", {showGunMod: true});
 
+    let list = ["Стандарт", "Бейджик", "Оперативная", "Тактическая"];
+    UIMenu.Menu.AddMenuItemList("Форма", list);
+
     UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
     UIMenu.Menu.Draw();
+
+    UIMenu.Menu.OnList.Add((item, index) => {
+        if (index == 0) {
+            user.giveUniform(0);
+        }
+        else if (index == 1) {
+            user.giveUniform(47);
+        }
+        else if (index == 2) {
+            user.giveUniform(48);
+        }
+        else if (index == 3) {
+            user.giveUniform(49);
+        }
+    });
 
     UIMenu.Menu.OnSelect.Add(async item => {
         UIMenu.Menu.HideMenu();

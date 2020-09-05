@@ -84,6 +84,7 @@ methods.SET_BLIP_SPRITE = '0xDF735600A4696DAF';
 methods.SET_BLIP_ROTATION = '0xF87683CDF73C3F6E';
 methods.SET_BLIP_FLASH = '0xB14552383D39CE3E';
 methods.GET_BLIP_SPRITE = '0x1FC877464A04FC4F';
+methods.GET_BLIP_COLOUR = '0xDF729E8D20CF7327';
 
 methods.DISABLE_FIRST_PERSON_CAM_THIS_FRAME = '0xDE2EF5DA284CC8DF';
 
@@ -127,7 +128,7 @@ methods.sleep = function(ms) {
 };
 
 methods.debug = function (message, ...args) {
-    if (!user.isAdmin(5))
+    if (user.isAdmin(5))
         return;
     let dateTime = new Date();
     let dateResult = methods.digitFormat(dateTime.getHours()) + ':' + methods.digitFormat(dateTime.getMinutes())+ ':' + methods.digitFormat(dateTime.getSeconds());
@@ -559,10 +560,17 @@ methods.removeAllBlipById = function (blipId = 5) {
     }
 };
 
-methods.displayTypeAllBlipById = function (blipId, type) {
+methods.displayTypeAllBlipById = function (blipId, type, color = -1) {
     try {
-        for (let index = mp.game.invoke('0x1BEDE233E6CD2A1F', blipId); mp.game.invoke('0xA6DB27D19ECBB7DA', index); index = mp.game.invoke('0x14F96AA50D6FBEA7', blipId))
-            mp.game.invoke('0x9029B2F3DA924928', index, type);
+        for (let index = mp.game.invoke('0x1BEDE233E6CD2A1F', blipId); mp.game.invoke('0xA6DB27D19ECBB7DA', index); index = mp.game.invoke('0x14F96AA50D6FBEA7', blipId)) {
+            if (color >= 0) {
+                if (color === mp.game.invoke(methods.GET_BLIP_COLOUR, index))
+                    mp.game.invoke('0x9029B2F3DA924928', index, type);
+            }
+            else {
+                mp.game.invoke('0x9029B2F3DA924928', index, type);
+            }
+        }
     }
     catch (e) {
         methods.debug(e);

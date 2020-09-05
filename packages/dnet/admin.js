@@ -66,9 +66,10 @@ admin.blacklist = function(player, type, id, reason) {
                 return;
             }
 
-            mysql.executeQuery(`INSERT INTO black_list (social, serial, address, reason) VALUES ('${target.socialClub}', '${target.serial}', '${target.ip}', '${reason}')`);
+            mysql.executeQuery(`INSERT INTO black_list (social, serial, rgsc_id, address, reason) VALUES ('${target.socialClub}', '${target.serial}', '${target._rgscId}', '${target.ip}', '${reason}')`);
             chat.sendToAll(`Администратор ${user.getRpName(player)}`, `${user.getRpName(target)}!{${chat.clRed}} был занесён в чёрный список проекта с причиной!{${chat.clWhite}} ${reason}`, chat.clRed);
             user.kick(target, reason, 'BlackList');
+            discord.sendDeadList(user.getRpName(target), 'Занесён в черный список проекта', reason, user.getRpName(player), discord.socialClub + player.socialClub.toLowerCase());
         }
         else {
             let target = user.getPlayerById(id);

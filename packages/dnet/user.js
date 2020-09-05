@@ -1760,9 +1760,14 @@ user.getVehiclesInLspd = function(player, type = 0) {
     let userId = user.getId(player);
     let vehList = [];
     mp.vehicles.forEach(v => {
-        if (vehicles.exists(v) && v.getVariable('user_id') === userId && v.dimension === 100000 + type) {
-            let vInfo = methods.getVehicleInfo(v.model);
-            vehList.push({id: v.id, number: v.numberPlate, name: vInfo.display_name})
+        if (!vehicles.exists(v))
+            return;
+        let containerId = v.getVariable('container');
+        if (containerId != undefined && v.getVariable('user_id') === userId) {
+            if (vehicles.get(containerId, 'is_cop_park') === 100000 + type || vehicles.get(containerId, 'is_cop_park') === 1 && type === 0) {
+                let vInfo = methods.getVehicleInfo(v.model);
+                vehList.push({id: v.id, number: v.numberPlate, name: vInfo.display_name})
+            }
         }
     });
     return vehList;
@@ -4772,6 +4777,63 @@ user.giveUniform = function(player, id = 0) {
             user.setComponentVariation(player, 11, 220, 3);
 
             user.setProp(player, 0, 107, 0);
+        }
+    }
+    else if (id === 47) { //FIB
+
+        user.clearAllProp(player);
+        if (user.getSex(player) == 1) {
+            user.setComponentVariation(player, 9, 55, 0);
+        }
+        else {
+            user.setComponentVariation(player, 9, 55, 0);
+        }
+    }
+    else if (id === 48) { //FIB
+        user.clearAllProp(player);
+
+        if (user.getSex(player) == 1) {
+            user.setComponentVariation(player, 3, 97, 1);
+            user.setComponentVariation(player, 8, 38, 0);
+            user.setComponentVariation(player, 9, 54, 0);
+            user.setComponentVariation(player, 11, 240, 6);
+
+        }
+        else {
+            user.setComponentVariation(player, 3, 94, 1);
+            user.setComponentVariation(player, 8, 10, 0);
+            user.setComponentVariation(player, 9, 54, 0);
+            user.setComponentVariation(player, 11, 3, 4);
+        }
+    }
+    else if (id === 49) { //FIB
+        user.clearAllProp(player);
+
+        if (user.getSex(player) == 1) {
+            user.setComponentVariation(player, 3, 18, 0);
+            user.setComponentVariation(player, 4, 32, 0);
+            user.setComponentVariation(player, 5, 0, 0);
+            user.setComponentVariation(player, 6, 25, 0);
+            user.setComponentVariation(player, 7, 0, 0);
+            user.setComponentVariation(player, 8, 152, 0);
+            user.setComponentVariation(player, 9, 6, 1);
+            user.setComponentVariation(player, 10, 0, 0);
+            user.setComponentVariation(player, 11, 46, 0);
+
+            user.setProp(player, 0, 116, 0);
+        }
+        else {
+            user.setComponentVariation(player, 3, 17, 0);
+            user.setComponentVariation(player, 4, 33, 0);
+            user.setComponentVariation(player, 5, 0, 0);
+            user.setComponentVariation(player, 6, 25, 0);
+            user.setComponentVariation(player, 7, 0, 0);
+            user.setComponentVariation(player, 8, 122, 0);
+            user.setComponentVariation(player, 9, 1, 1);
+            user.setComponentVariation(player, 10, 0, 0);
+            user.setComponentVariation(player, 11, 53, 0);
+
+            user.setProp(player, 0, 117, 0);
         }
     }
     else if (id === 99) { //GR6 1

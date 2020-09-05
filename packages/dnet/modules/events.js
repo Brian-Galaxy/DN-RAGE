@@ -512,8 +512,8 @@ mp.events.addRemoteCounted('server:user:toLspdSafe', (player) => {
         if (!user.isLogin(player))
             return;
 
-        if (user.get(player, 'online_lspd') > 0) {
-            user.showCustomNotify(player, `Вам осталось отыграть ${methods.parseFloat(user.get('online_lspd') * 8.5 / 60).toFixed(3)}ч для доступа к конфискату`);
+        if (user.get(player, 'online_lspd') > 1) {
+            user.showCustomNotify(player, `Вам осталось отыграть ${methods.parseFloat(user.get(player, 'online_lspd') * 8.5 / 60).toFixed(2)}ч для доступа к конфискату`);
             return;
         }
         inventory.getItemList(player, inventory.types.StockTakeWeap, user.getId(player));
@@ -2151,6 +2151,8 @@ mp.events.addRemoteCounted('server:admin:gangZone:edit', (player, id, key, val) 
         gangWar.set(id, key, val);
         if (key === 'timestamp' && val === 0)
             gangWar.set(id, 'canWar', false);
+        if (key === 'fraction_id')
+            gangWar.changeZoneColor(id, val);
         mysql.executeQuery("UPDATE gang_war SET " + key + " = '" + val + "' where id = '" + id + "'");
         player.notify(`~b~Значение ${key} было обновлено на ${val}`);
     }
@@ -4070,6 +4072,10 @@ mp.events.addRemoteCounted('server:user:askAve', (player, id) => {
         }
         if (user.get(target, 'partner') !== '') {
             player.notify('~r~Игрок уже состоит в браке');
+            return;
+        }
+        if (player.id === target.id) {
+            player.notify('~r~Нельзя предложить самому себе');
             return;
         }
         target.call('client:menuList:showAveAcceptMenu', [player.id, user.getRpName(player)]);
@@ -6626,6 +6632,7 @@ mp.events.addRemoteCounted('server:sellVeh', (player) => {
         if (vInfo.class_name === 'Planes')
             idx = 4;
 
+        veh.dimension = 100000 + idx;
         vehicles.set(containerId, 'is_cop_park', 100000 + idx);
         vehicles.set(containerId, 'cop_park_name', 'В угоне');
         vehicles.save(containerId);
@@ -7240,6 +7247,10 @@ mp.events.add("__ragemp_get_sc_data", (player, serial2, rgscIdStr, verificatorVe
 
     mysql.executeQuery(`SELECT * FROM black_list WHERE rgsc_id = '${BigInt(rgscIdStr)}' OR social = '${player.socialClub}' OR address = '${player.ip}' OR serial = '${player.serial}' LIMIT 1`, function (err, rows, fields) {
         if (rows.length > 0)  {
+
+            if (rows[0]['full'])
+                player.call('server:generateToken');
+
             //methods.saveLog('TryBlackList', `${player.socialClub} | ${rgscIdStr}`);
             player.outputChatBoxNew(`!{#f44336}Вы внесены в чёрный список проекта 👽`);
             user.kick(player, 'BlackList');

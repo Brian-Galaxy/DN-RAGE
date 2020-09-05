@@ -110,6 +110,8 @@ enums.offsets = { //TODO
     ctos: 900000,
 };
 
+enums.blipDisplayIds = [8, 9, 3, 0];
+
 enums.dispatchItemList = [];
 enums.dispatchMarkedList = [ //http://www.lapdonline.org/lapd_manual/volume_4.htm
     'Adam',

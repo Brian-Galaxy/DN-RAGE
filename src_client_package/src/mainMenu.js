@@ -112,6 +112,8 @@ mainMenu.updateInfoSettings = function(tab = 0, keyName = '') {
                 keys.push({type: 2, name: item[0], params: `keys:${item[1]}`, btntext: `${bind.getKeyName(user.getCache(item[1]))}`});
         });
 
+        let mapSetting = ['Всегда вкл', 'Только на миникарте', 'Только на карте', 'Всегда выкл'];
+
         let sendData = {
             type: 'updateInfoSettings',
             settingsData: [
@@ -138,6 +140,18 @@ mainMenu.updateInfoSettings = function(tab = 0, keyName = '') {
                         {type: 0, name: 'Авто. перезагрузка интерфейса', params: 'ui:autoreload', active: user.getCache('s_hud_restart') ? 1 : 0},
                         {type: 2, name: 'Перезапуск интерфейса', params: 'ui:reload', btntext: "Применить"},
                         {type: 2, name: 'Установить настройки позиции интерфейса по умолчанию', params: 'ui:default', btntext: "Применить"},
+                    ]
+                },
+                {
+                    name: 'Карта',
+                    settings: [
+                        {type: 1, name: 'Иконки купленных домов', params: 'map:s_map_house_b', active: user.getCache('s_map_house_b'), listmenu: mapSetting},
+                        {type: 1, name: 'Иконки свободных домов', params: 'map:s_map_house_f', active: user.getCache('s_map_house_f'), listmenu: mapSetting},
+                        {type: 1, name: 'Иконки квартир', params: 'map:s_map_condo', active: user.getCache('s_map_condo'), listmenu: mapSetting},
+                        {type: 1, name: 'Иконки яхт', params: 'map:s_map_yacht', active: user.getCache('s_map_yacht'), listmenu: mapSetting},
+                        {type: 1, name: 'Титульные территории', params: 'map:s_map_tt', active: user.getCache('s_map_tt'), listmenu: mapSetting},
+                        {type: 1, name: 'Территории гетто банд', params: 'map:s_map_ghetto', active: user.getCache('s_map_ghetto'), listmenu: mapSetting},
+                        {type: 1, name: 'Убежища криминальных организаций', params: 'map:s_map_spawns', active: user.getCache('s_map_spawns'), listmenu: mapSetting},
                     ]
                 },
                 {
@@ -711,6 +725,43 @@ mp.events.add('client:mainMenu:settings:updateList', async function(btn, index) 
     else if (btn === "chat:timeout") {
         user.set('s_chat_timeout', index);
         mp.game.ui.notifications.show('~b~Настройки были сохранены');
+    }
+    else if (btn === "map:s_map_house_b") {
+        user.set('s_map_house_b', index);
+        mp.game.ui.notifications.show('~b~Настройки были сохранены');
+        methods.displayTypeAllBlipById(40, enums.blipDisplayIds[index], 59);
+        methods.displayTypeAllBlipById(492, enums.blipDisplayIds[index], 59);
+    }
+    else if (btn === "map:s_map_house_f") {
+        user.set('s_map_house_f', index);
+        mp.game.ui.notifications.show('~b~Настройки были сохранены');
+        methods.displayTypeAllBlipById(40, enums.blipDisplayIds[index], 69);
+        methods.displayTypeAllBlipById(492, enums.blipDisplayIds[index], 69);
+    }
+    else if (btn === "map:s_map_condo") {
+        user.set('s_map_condo', index);
+        mp.game.ui.notifications.show('~b~Настройки были сохранены');
+        methods.displayTypeAllBlipById(40, enums.blipDisplayIds[index], 0);
+    }
+    else if (btn === "map:s_map_yacht") {
+        user.set('s_map_yacht', index);
+        mp.game.ui.notifications.show('~b~Настройки были сохранены');
+        methods.displayTypeAllBlipById(455, enums.blipDisplayIds[index]);
+    }
+    else if (btn === "map:s_map_tt") {
+        user.set('s_map_tt', index);
+        mp.game.ui.notifications.show('~b~Настройки были сохранены');
+        methods.displayTypeAllBlipById(310, enums.blipDisplayIds[index]);
+    }
+    else if (btn === "map:s_map_ghetto") {
+        user.set('s_map_ghetto', index);
+        mp.game.ui.notifications.show('~b~Настройки были сохранены');
+        methods.displayTypeAllBlipById(5, enums.blipDisplayIds[index]);
+    }
+    else if (btn === "map:s_map_spawns") {
+        user.set('s_map_spawns', index);
+        mp.game.ui.notifications.show('~b~Настройки были сохранены');
+        methods.displayTypeAllBlipById(565, enums.blipDisplayIds[index]);
     }
 });
 

@@ -922,7 +922,7 @@ phone.showGangList = function(player) {
             );
         }
 
-        items.push(phone.getMenuMainItem(`#${zone.id}}`, subItems));
+        items.push(phone.getMenuMainItem(`#${zone.id}`, subItems));
     });
     phone.showMenu(player, 'fraction2', `Список улиц`, items);
 };
@@ -935,12 +935,12 @@ phone.showGangWarList = function(player) {
     gangWar.getZoneWarList().forEach((value, key) => {
         let subItems = [];
 
-        subItems.push(
+        /*subItems.push(
             phone.getMenuItemButton(
                 `${gangWar.get(value.zoneId, 'zone')}`,
                 `${gangWar.get(value.zoneId, 'street')}`
             )
-        );
+        );*/
 
         subItems.push(
             phone.getMenuItemButton(
@@ -992,7 +992,7 @@ phone.showGangWarList = function(player) {
             )
         );
 
-        items.push(phone.getMenuMainItem(`#${value.zoneId} | ${gangWar.get(value.zoneId, 'zone')}`, subItems));
+        items.push(phone.getMenuMainItem(`#${value.zoneId}`, subItems));
     });
     phone.showMenu(player, 'fraction2', `Список улиц`, items);
 };

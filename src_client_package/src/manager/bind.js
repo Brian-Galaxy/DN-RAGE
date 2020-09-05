@@ -436,17 +436,20 @@ for(let code in keyCodes) {
                     return;
                 }
                 Container.Data.SetLocally(mp.players.local.remoteId, "isGunTimeout", true);
-                try {
-                    weapons.getMapList().forEach(item => {
-                        if (mp.game.invoke(methods.HAS_PED_GOT_WEAPON, mp.players.local.handle, (item[1] / 2), false)) {
-                            if (weapons.getGunSlotId(item[0]) === 1)
-                                user.setCurrentWeapon(item[0]);
-                        }
-                    });
-                }
-                catch (e) {
-                    
-                }
+                user.setCurrentWeapon('weapon_unarmed');
+                setTimeout(function () {
+                    try {
+                        weapons.getMapList().forEach(item => {
+                            if (mp.game.invoke(methods.HAS_PED_GOT_WEAPON, mp.players.local.handle, (item[1] / 2), false)) {
+                                if (weapons.getGunSlotId(item[0]) === 1)
+                                    user.setCurrentWeapon(item[0]);
+                            }
+                        });
+                    }
+                    catch (e) {
+
+                    }
+                }, 100);
                 setTimeout(function () {
                     Container.Data.ResetLocally(mp.players.local.remoteId, "isGunTimeout");
                 }, 1000);
@@ -461,17 +464,20 @@ for(let code in keyCodes) {
                     return;
                 }
                 Container.Data.SetLocally(mp.players.local.remoteId, "isGunTimeout", true);
-                try {
-                    weapons.getMapList().forEach(item => {
-                        if (mp.game.invoke(methods.HAS_PED_GOT_WEAPON, mp.players.local.handle, (item[1] / 2), false)) {
-                            if (weapons.getGunSlotId(item[0]) === 2)
-                                user.setCurrentWeapon(item[0]);
-                        }
-                    });
-                }
-                catch (e) {
-                    
-                }
+                user.setCurrentWeapon('weapon_unarmed');
+                setTimeout(function () {
+                    try {
+                        weapons.getMapList().forEach(item => {
+                            if (mp.game.invoke(methods.HAS_PED_GOT_WEAPON, mp.players.local.handle, (item[1] / 2), false)) {
+                                if (weapons.getGunSlotId(item[0]) === 2)
+                                    user.setCurrentWeapon(item[0]);
+                            }
+                        });
+                    }
+                    catch (e) {
+
+                    }
+                }, 100);
                 setTimeout(function () {
                     Container.Data.ResetLocally(mp.players.local.remoteId, "isGunTimeout");
                 }, 1000);
@@ -486,17 +492,20 @@ for(let code in keyCodes) {
                     return;
                 }
                 Container.Data.SetLocally(mp.players.local.remoteId, "isGunTimeout", true);
-                try {
-                    weapons.getMapList().forEach(item => {
-                        if (mp.game.invoke(methods.HAS_PED_GOT_WEAPON, mp.players.local.handle, (item[1] / 2), false)) {
-                            if (weapons.getGunSlotId(item[0]) === 3)
-                                user.setCurrentWeapon(item[0]);
-                        }
-                    });
-                }
-                catch (e) {
-                    
-                }
+                user.setCurrentWeapon('weapon_unarmed');
+                setTimeout(function () {
+                    try {
+                        weapons.getMapList().forEach(item => {
+                            if (mp.game.invoke(methods.HAS_PED_GOT_WEAPON, mp.players.local.handle, (item[1] / 2), false)) {
+                                if (weapons.getGunSlotId(item[0]) === 3)
+                                    user.setCurrentWeapon(item[0]);
+                            }
+                        });
+                    }
+                    catch (e) {
+
+                    }
+                }, 100);
                 setTimeout(function () {
                     Container.Data.ResetLocally(mp.players.local.remoteId, "isGunTimeout");
                 }, 1000);
@@ -511,17 +520,20 @@ for(let code in keyCodes) {
                     return;
                 }
                 Container.Data.SetLocally(mp.players.local.remoteId, "isGunTimeout", true);
-                try {
-                    weapons.getMapList().forEach(item => {
-                        if (mp.game.invoke(methods.HAS_PED_GOT_WEAPON, mp.players.local.handle, (item[1] / 2), false)) {
-                            if (weapons.getGunSlotId(item[0]) === 4)
-                                user.setCurrentWeapon(item[0]);
-                        }
-                    });
-                }
-                catch (e) {
-                    
-                }
+                user.setCurrentWeapon('weapon_unarmed');
+                setTimeout(function () {
+                    try {
+                        weapons.getMapList().forEach(item => {
+                            if (mp.game.invoke(methods.HAS_PED_GOT_WEAPON, mp.players.local.handle, (item[1] / 2), false)) {
+                                if (weapons.getGunSlotId(item[0]) === 4)
+                                    user.setCurrentWeapon(item[0]);
+                            }
+                        });
+                    }
+                    catch (e) {
+
+                    }
+                }, 100);
                 setTimeout(function () {
                     Container.Data.ResetLocally(mp.players.local.remoteId, "isGunTimeout");
                 }, 1000);
@@ -536,17 +548,20 @@ for(let code in keyCodes) {
                     return;
                 }
                 Container.Data.SetLocally(mp.players.local.remoteId, "isGunTimeout", true);
-                try {
-                    weapons.getMapList().forEach(item => {
-                        if (mp.game.invoke(methods.HAS_PED_GOT_WEAPON, mp.players.local.handle, (item[1] / 2), false)) {
-                            if (weapons.getGunSlotId(item[0]) === 5)
-                                user.setCurrentWeapon(item[0]);
-                        }
-                    });
-                }
-                catch (e) {
-                    
-                }
+                user.setCurrentWeapon('weapon_unarmed');
+                setTimeout(function () {
+                    try {
+                        weapons.getMapList().forEach(item => {
+                            if (mp.game.invoke(methods.HAS_PED_GOT_WEAPON, mp.players.local.handle, (item[1] / 2), false)) {
+                                if (weapons.getGunSlotId(item[0]) === 5)
+                                    user.setCurrentWeapon(item[0]);
+                            }
+                        });
+                    }
+                    catch (e) {
+
+                    }
+                }, 100);
                 setTimeout(function () {
                     Container.Data.ResetLocally(mp.players.local.remoteId, "isGunTimeout");
                 }, 1000);

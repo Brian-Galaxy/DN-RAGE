@@ -184,7 +184,7 @@ vehicles.spawnPlayerCar = (id) => {
     let spawnPos = new mp.Vector3(vehicles.get(id, 'x'), vehicles.get(id, 'y'), vehicles.get(id, 'z'));
     let spawnRot = vehicles.get(id, 'rot');
 
-    if (vehicles.get(id, 'cop_park_name') !== '') {
+    if (vehicles.get(id, 'is_cop_park') > 0) {
         spawnPos = new mp.Vector3(9999, 9999, 999);
         spawnRot = 0;
     }
@@ -829,7 +829,7 @@ vehicles.respawn2 = (vehicle, player) => {
         let containerId = vehicle.getVariable('container');
         if (containerId != undefined && vehicle.getVariable('user_id') > 0)
         {
-            if (vehicles.get(containerId, 'cop_park_name') !== '') {
+            if (vehicles.get(containerId, 'is_cop_park') > 0) {
                 player.notify('~r~Транспорт уже стоит на штраф стоянке');
                 return;
             }

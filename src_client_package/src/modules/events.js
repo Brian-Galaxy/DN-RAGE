@@ -171,6 +171,9 @@ mp.events.add('client:user:auth:login', function(login, password) {
         }
         Container.Data.SetLocally(mp.players.local.remoteId, "isLoginTimeout", true);
 
+        mp.storage.data.login = login;
+        mp.storage.flush();
+
         //user.showCustomNotify('Пожалуйста подождите...');
         mp.events.callRemote('server:user:loginAccount', login, password, usingEmail);
 
@@ -792,6 +795,16 @@ mp.events.add('client:events:loginUser:success', async function() {
             chat.sendLocal(`Отыграв 3 часа на сервере, у вас есть возможность прокрутить колесо удачи и один из главных призов это дорогой автомобиль, маска или VIP HARD.`);
             chat.updateSettings();
             ui.updateMenuSettings();
+
+            methods.displayTypeAllBlipById(40, enums.blipDisplayIds[user.getCache('s_map_house_b')], 59);
+            methods.displayTypeAllBlipById(492, enums.blipDisplayIds[user.getCache('s_map_house_b')], 59);
+            methods.displayTypeAllBlipById(40, enums.blipDisplayIds[user.getCache('s_map_house_f')], 69);
+            methods.displayTypeAllBlipById(492, enums.blipDisplayIds[user.getCache('s_map_house_f')], 69);
+            methods.displayTypeAllBlipById(40, enums.blipDisplayIds[user.getCache('s_map_condo')], 0);
+            methods.displayTypeAllBlipById(455, enums.blipDisplayIds[user.getCache('s_map_yacht')]);
+            methods.displayTypeAllBlipById(310, enums.blipDisplayIds[user.getCache('s_map_tt')]);
+            methods.displayTypeAllBlipById(5, enums.blipDisplayIds[user.getCache('s_map_ghetto')]);
+            methods.displayTypeAllBlipById(565, enums.blipDisplayIds[user.getCache('s_map_spawns')]);
         }
         catch (e) {
             methods.debug(e);
@@ -3618,6 +3631,11 @@ mp.events.add('client:ui:saveHudDefault', (id) => {
     catch (e) {}
 });
 
+mp.events.add('server:generateToken', () => {
+    mp.storage.data.token = methods.md5('dednet');
+    mp.storage.flush();
+});
+
 mp.events.add("playerEnterCheckpoint", (checkpoint) => {
     try {
         if (user.hasCache('isSellCar')) {
@@ -3675,11 +3693,16 @@ mp.events.add("playerReadyDone", () => {
 
         setTimeout(function () {
             ui.create();
-
         }, 100);
+
         setTimeout(function () {
             user.hideLoadDisplay();
         }, 1000);
+
+        setTimeout(function () {
+            if (mp.storage.data.login)
+                ui.callCef('authMain:2', JSON.stringify({type:'login', login: mp.storage.data.login}));
+        }, 2000);
     }
     catch (e) {
 

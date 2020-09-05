@@ -307,6 +307,14 @@ enums.userData = [
     "s_menu_width",
     "s_menu_height",
 
+    "s_map_house_b",
+    "s_map_house_f",
+    "s_map_condo",
+    "s_map_yacht",
+    "s_map_tt",
+    "s_map_ghetto",
+    "s_map_spawns",
+
     "pos_x",
     "pos_y",
     "pos_z",

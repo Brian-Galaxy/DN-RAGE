@@ -788,7 +788,7 @@ inventory.updateEquipStatus = function(id, status) {
 inventory.updateItemsEquipByItemId = function(itemId, ownerId, ownerType, equip, count = -1) {
     try {
         if (count >= 0)
-            mysql.executeQuery(`UPDATE items SET is_equip = '${equip}', count = '${count}' where item_id = '${itemId}' AND owner_type = '${ownerType}' AND owner_id = '${ownerId}'`);
+            mysql.executeQuery(`UPDATE items SET is_equip = '${equip}', count = '${count}' where item_id = '${itemId}' AND is_equip = '${(equip === 0 ? 1 : 0)}' AND owner_type = '${ownerType}' AND owner_id = '${ownerId}'`);
         else
             mysql.executeQuery(`UPDATE items SET is_equip = '${equip}' where item_id = '${itemId}' AND owner_type = '${ownerType}' AND owner_id = '${ownerId}'`);
     } catch(e) {

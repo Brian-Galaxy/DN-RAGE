@@ -79,10 +79,12 @@ class CameraRotator {
 
         let relativeHeading = this.getRelativeHeading();
 
-        if (relativeHeading > this.xBound[0] && relativeHeading < this.xBound[1]) {
-            relativeHeading = Math.abs(this.xBound[0] - relativeHeading) > Math.abs(this.xBound[1] - relativeHeading)
-                ? this.xBound[1]
-                : this.xBound[0];
+        if (this.xBound[0] !== -360 && this.xBound[1] !== 360) {
+            if (relativeHeading > this.xBound[0] && relativeHeading < this.xBound[1]) {
+                relativeHeading = Math.abs(this.xBound[0] - relativeHeading) > Math.abs(this.xBound[1] - relativeHeading)
+                    ? this.xBound[1]
+                    : this.xBound[0];
+            }
         }
 
         this.heading = this.normilizeHeading(-relativeHeading + this.baseHeading);

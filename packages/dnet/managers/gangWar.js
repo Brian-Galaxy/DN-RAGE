@@ -68,7 +68,13 @@ gangWar.save = function(id, ownerId, name) {
 };
 
 gangWar.getZoneList = function() {
-    return gangList;
+    let list = [];
+    gangList.forEach(item => {
+        let newItem = item;
+        newItem.fid = gangWar.get(item.id, 'fraction_id');
+        list.push(newItem)
+    });
+    return list;
 };
 
 gangWar.getZoneWarList = function() {
@@ -164,12 +170,8 @@ gangWar.addWar = function(player, zoneId, count, armorIndex, gunIndex, timeIndex
         gangWar.save(zoneId, newOwnerId, fractionName);
         gangWar.set(zoneId, 'canWar', false);
         player.notify('~g~Вы захватили территорию, т.к. ей никто не владел');
-        let _warPos = gangWar.getPos(zoneId);
-        mp.players.forEachInRange(_warPos, 400, p => {
-            if (!user.isLogin(p))
-                return;
-            user.createBlipByRadius(p, 1000 + zoneId, _warPos.x, _warPos.y, _warPos.z, 50, 5, enums.fractionColor[newOwnerId]);
-        });
+
+        gangWar.changeZoneColor(currentZone, newOwnerId);
         return;
     }
 
@@ -271,11 +273,10 @@ gangWar.timer = function() {
 
             methods.notifyWithPictureToFraction2('Досрочное завершение', `Улица #${currentZone}`, 'Территория под контролем ' + fractionName + '\nСвязи с нарушением количества людей в территории', 'CHAR_DEFAULT', currentDef);
             methods.notifyWithPictureToFraction2('Досрочное завершение', `Улица #${currentZone}`, 'Территория под контролем ' + fractionName + '\nСвязи с нарушением количества людей в территории', 'CHAR_DEFAULT', currentAttack);
-
+            gangWar.changeZoneColor(currentZone, ownerId);
             mp.players.forEachInRange(warPos, 400, p => {
                 if (!user.isLogin(p))
                     return;
-                user.createBlipByRadius(p, 1000 + currentZone, warPos.x, warPos.y, warPos.z, 50, 5, enums.fractionColor[ownerId]);
                 let fId = methods.parseInt(user.get(p, 'fraction_id2'));
                 if (currentDef === fId || currentAttack === fId || user.isAdmin(p)) {
                     if (p.dimension > 0)
@@ -283,19 +284,12 @@ gangWar.timer = function() {
                 }
             });
 
-            setTimeout(function () {
-                try {
-                    currentZone = 0;
-                    currentAttack = 0;
-                    currentDef = 0;
-                    defC = 0;
-                    attC = 0;
-                    warPos = new mp.Vector3(0, 0, 0);
-                }
-                catch (e) {
-
-                }
-            }, 2000);
+            currentZone = 0;
+            currentAttack = 0;
+            currentDef = 0;
+            defC = 0;
+            attC = 0;
+            warPos = new mp.Vector3(0, 0, 0);
         }
         else if (defC > countUsers) {
             timerCounter = 0;
@@ -309,11 +303,10 @@ gangWar.timer = function() {
             methods.notifyWithPictureToFraction2('Досрочное завершение', `Улица #${currentZone}`, 'Территория под контролем ' + fractionName + '\nСвязи с нарушением количества людей в территории', 'CHAR_DEFAULT', currentDef);
             methods.notifyWithPictureToFraction2('Досрочное завершение', `Улица #${currentZone}`, 'Территория под контролем ' + fractionName + '\nСвязи с нарушением количества людей в территории', 'CHAR_DEFAULT', currentAttack);
 
-
+            gangWar.changeZoneColor(currentZone, ownerId);
             mp.players.forEachInRange(warPos, 400, p => {
                 if (!user.isLogin(p))
                     return;
-                user.createBlipByRadius(p, 1000 + currentZone, warPos.x, warPos.y, warPos.z, 50, 5, enums.fractionColor[ownerId]);
                 let fId = methods.parseInt(user.get(p, 'fraction_id2'));
                 if (currentDef === fId || currentAttack === fId || user.isAdmin(p)) {
                     if (p.dimension > 0)
@@ -321,19 +314,12 @@ gangWar.timer = function() {
                 }
             });
 
-            setTimeout(function () {
-                try {
-                    currentZone = 0;
-                    currentAttack = 0;
-                    currentDef = 0;
-                    defC = 0;
-                    attC = 0;
-                    warPos = new mp.Vector3(0, 0, 0);
-                }
-                catch (e) {
-
-                }
-            }, 2000);
+            currentZone = 0;
+            currentAttack = 0;
+            currentDef = 0;
+            defC = 0;
+            attC = 0;
+            warPos = new mp.Vector3(0, 0, 0);
         }
         else {
             mp.players.forEachInRange(warPos, 400, p => {
@@ -364,6 +350,7 @@ gangWar.timer = function() {
             if (timerCounter < 1) {
                 timerCounter = 0;
                 isStartTimer = false;
+
                 let zoneId = currentZone;
                 let ownerId = gangWar.getMaxCounterFractionId(attC, defC);
                 let fractionName = fraction.getName(ownerId);
@@ -373,10 +360,10 @@ gangWar.timer = function() {
                 methods.notifyWithPictureToFraction2('Итоги войны', `Улица #${currentZone}`, 'Территория под контролем ' + fractionName, 'CHAR_DEFAULT', currentDef);
                 methods.notifyWithPictureToFraction2('Итоги войны', `Улица #${currentZone}`, 'Территория под контролем ' + fractionName, 'CHAR_DEFAULT', currentAttack);
 
+                gangWar.changeZoneColor(currentZone, ownerId);
                 mp.players.forEachInRange(warPos, 400, p => {
                     if (!user.isLogin(p))
                         return;
-                    user.createBlipByRadius(p, 1000 + currentZone, warPos.x, warPos.y, warPos.z, 50, 5, enums.fractionColor[ownerId]);
                     let fId = methods.parseInt(user.get(p, 'fraction_id2'));
                     if (currentDef === fId || currentAttack === fId || user.isAdmin(p)) {
                         if (p.dimension > 0)
@@ -384,19 +371,12 @@ gangWar.timer = function() {
                     }
                 });
 
-                setTimeout(function () {
-                    try {
-                        currentZone = 0;
-                        currentAttack = 0;
-                        currentDef = 0;
-                        defC = 0;
-                        attC = 0;
-                        warPos = new mp.Vector3(0, 0, 0);
-                    }
-                    catch (e) {
-
-                    }
-                }, 2000);
+                currentZone = 0;
+                currentAttack = 0;
+                currentDef = 0;
+                defC = 0;
+                attC = 0;
+                warPos = new mp.Vector3(0, 0, 0);
             }
         }
     }
@@ -442,10 +422,10 @@ gangWar.timerMoney = function() {
 
 gangWar.getMaxCounterFractionId = function(at, def) {
     let maxValue = Math.max(at, def);
-    if (at == maxValue)
-        return currentAttack;
     if (def == maxValue)
         return currentDef;
+    if (at == maxValue)
+        return currentAttack;
     return 0;
 };
 
@@ -518,4 +498,16 @@ gangWar.getZone = function(id) {
     catch (e) {
     }
     return [];
+};
+
+gangWar.changeZoneColor = function(id, fractionId) {
+    let _warPos = gangWar.getPos(id);
+    mp.players.forEach(p => {
+        try {
+            if (!user.isLogin(p))
+                return;
+            user.createBlipByRadius(p, 1000 + id, _warPos.x, _warPos.y, _warPos.z, 50, 5, enums.fractionColor[fractionId]);
+        }
+        catch (e) {}
+    });
 };

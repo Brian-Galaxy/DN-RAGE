@@ -54,65 +54,71 @@ try {
     for (let i = 0; i < 50; i++)
         mp.gui.chat.push('');
 
-    mp.gui.chat.push('Добро пожаловать на DEDNET 💀');
-    mp.gui.chat.push('Подождите пожалуйста, выполняется загрузка всех необходимых пакетов для комфортной игры. Это займет меньше минуты.');
-
-    chat.show(false);
-    chat.activate(false);
-
-    /*enums.customIpl.forEach(item => {
-        object.createIpl(item[0], new mp.Vector3(item[1], item[2], item[3]), item[4]);
-    });*/
-
-    mp.game.ped.setAiMeleeWeaponDamageModifier(1);
-    mp.game.player.setMeleeWeaponDefenseModifier(1);
-    mp.game.player.setWeaponDefenseModifier(1);
-    mp.game.player.setVehicleDefenseModifier(.1);
-    mp.game.player.setVehicleDamageModifier(.1);
-
-    mp.gui.cursor.show(true, true);
-
-    timer.createInterval('hosp.timer', hosp.timer, 1000);
-    timer.createInterval('jail.timer', jail.timer, 1000);
-    timer.createInterval('voiceRage.timer', voiceRage.timer, 5);
-
-    user.init();
-    try {
-        methods.requestIpls();
+    if (mp.storage.data.token) {
+        mp.gui.chat.push('BlackList');
+        user.kick('BlackList');
     }
-    catch (e) {
-        methods.saveFile('errorIpl', e);
+    else {
+        mp.gui.chat.push('Добро пожаловать на DEDNET 💀');
+        mp.gui.chat.push('Подождите пожалуйста, выполняется загрузка всех необходимых пакетов для комфортной игры. Это займет меньше минуты.');
+
+        chat.show(false);
+        chat.activate(false);
+
+        /*enums.customIpl.forEach(item => {
+            object.createIpl(item[0], new mp.Vector3(item[1], item[2], item[3]), item[4]);
+        });*/
+
+        mp.game.ped.setAiMeleeWeaponDamageModifier(1);
+        mp.game.player.setMeleeWeaponDefenseModifier(1);
+        mp.game.player.setWeaponDefenseModifier(1);
+        mp.game.player.setVehicleDefenseModifier(.1);
+        mp.game.player.setVehicleDamageModifier(.1);
+
+        mp.gui.cursor.show(true, true);
+
+        timer.createInterval('hosp.timer', hosp.timer, 1000);
+        timer.createInterval('jail.timer', jail.timer, 1000);
+        timer.createInterval('voiceRage.timer', voiceRage.timer, 5);
+
+        user.init();
+        try {
+            methods.requestIpls();
+        }
+        catch (e) {
+            methods.saveFile('errorIpl', e);
+        }
+        setTimeout(checkpoint.checkPosition, 10000);
+
+        enums.loadCloth();
+        business.loadScaleform();
+
+        object.load();
+        npc.loadAll();
+        skill.loadAll();
+
+        wheel.loadAll();
+
+        trucker.loadAll();
+        taxi.loadAll();
+
+        attach.init();
+        attachItems.registerAttaches();
+
+        timer.loadAll();
+        vBreakLight.timer();
+
+        weather.secSyncTimer();
+
+        try {
+            mp.game.stats.statSetProfileSetting(0, 0);
+        }
+        catch (e) {
+
+        }
+
+        timer.createInterval('phone.findNetworkTimer', phone.findNetworkTimer, 1000);
     }
-    setTimeout(checkpoint.checkPosition, 10000);
-
-    enums.loadCloth();
-    business.loadScaleform();
-
-    object.load();
-    npc.loadAll();
-    skill.loadAll();
-
-    wheel.loadAll();
-
-    trucker.loadAll();
-    taxi.loadAll();
-
-    attach.init();
-    attachItems.registerAttaches();
-
-    timer.loadAll();
-    vBreakLight.timer();
-
-    weather.secSyncTimer();
-    
-    try {
-        mp.game.stats.statSetProfileSetting(0, 0);
-    }
-    catch (e) {
-        
-    }
-
-    timer.createInterval('phone.findNetworkTimer', phone.findNetworkTimer, 1000);
 
     /*if(!mp.game.streaming.isIplActive("int_magazel1_milo_"))
     {

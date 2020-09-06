@@ -3324,7 +3324,7 @@ mp.events.add('render', () => {
 
                     if (user.isAdmin() && mp.players.local.getVariable('enableAdmin'))
                         remoteId = `${remoteId} (${player.getVariable('idLabel')} | ~g~${player.getHealth()} ~s~|~b~ ${player.getArmour()}~s~)`;
-                    if (player.getVariable('duel') || player.getVariable('blockDeath'))
+                    if (player.getVariable('duel') || player.getVariable('blockDeath') || gangWarTimeout)
                         remoteId = `${remoteId} (~g~${player.getHealth()} ~s~|~b~ ${player.getArmour()}~s~)`;
 
                     const entity = player.vehicle ? player.vehicle : player;
@@ -3854,217 +3854,170 @@ mp.events.add("playerDamaged", function (damageName, lost) {
 let gate = null;
 // Commands in 2020......
 mp.events.add("playerCommand", async (command) => {
-    if (command.toLowerCase().slice(0, 3) === "tph") {
-        if (!user.isLogin() || !user.isAdmin())
-            return;
-        let args = command.toLowerCase().split(' ');
-        mp.events.callRemote('server:houses:teleport', args[1]);
-    }
-    else if (command.toLowerCase().slice(0, 2) === "tp") {
-        if (!user.isLogin() || !user.isAdmin())
-            return;
-        let args = command.toLowerCase().split(' ');
-        user.teleport(parseFloat(args[1]), parseFloat(args[2]), parseFloat(args[3]));
-    }
-    else if (command.toLowerCase().slice(0, 5) === "help ") {
-        if (!user.isLogin())
-            return;
-        mp.events.callRemote('server:sendAsk', command.substring(5));
-        mp.events.callRemote('client:mainMenu:addAsk', command.substring(5));
-    }
-    else if (command.toLowerCase().slice(0, 7) === "report ") {
-        if (!user.isLogin())
-            return;
-        mp.events.callRemote('server:sendReport', command.substring(7));
-        mp.events.callRemote('client:mainMenu:addReport', command.substring(7));
-    }
-    else if (command.toLowerCase().slice(0, 4) === "help") {
-        if (!user.isLogin())
-            return;
-        chat.sendLocal(`!{FFC107}Помощь`);
-        chat.sendLocal('Для того чтобы получить справку по серверу, вы можете задать вопрос через М - Обращения или воспользоваться FAQ через М - FAQ');
-    }
-    else if (command.toLowerCase().slice(0, 1) === "a") {
-        if (!user.isLogin() || !user.isAdmin())
-            return;
-        let args = command.toLowerCase().split(' ');
-        user.playAnimation(args[1], args[2], args[3]);
-    }
-    else if (command.toLowerCase().slice(0, 1) === "s") {
-        if (!user.isLogin() || !user.isAdmin())
-            return;
-        let args = command.toLowerCase().split(' ');
-        user.playScenario(args[1]);
-    }
-    else if (command.toLowerCase().slice(0, 2) === "h ") {
-        if (!user.isLogin() || !user.isAdmin(5))
-            return;
-        let args = command.split(' ');
-        if (args.length != 4) {
-            chat.sendLocal(`Не верно введено кол-во параметров `);
-            chat.sendLocal(`/h [ID Интерьера] [№ Дома] [Цена] `);
-            return;
+    try {
+        if (command.toLowerCase().slice(0, 3) === "tph") {
+            if (!user.isLogin() || !user.isAdmin())
+                return;
+            let args = command.toLowerCase().split(' ');
+            mp.events.callRemote('server:houses:teleport', args[1]);
         }
-        mp.events.callRemote('server:houses:insert', args[1], args[2], args[3], ui.getCurrentZone(), ui.getCurrentStreet())
-    }
-    else if (command.toLowerCase().slice(0, 2) === "s ") {
-        if (!user.isLogin() || !user.isAdmin(5))
-            return;
-        let args = command.split(' ');
-        if (args.length != 4) {
-            chat.sendLocal(`Не верно введено кол-во параметров `);
-            chat.sendLocal(`/s [ID Интерьера] [№ Дома] [Цена] `);
-            return;
+        else if (command.toLowerCase().slice(0, 2) === "tp") {
+            if (!user.isLogin() || !user.isAdmin())
+                return;
+            let args = command.toLowerCase().split(' ');
+            user.teleport(parseFloat(args[1]), parseFloat(args[2]), parseFloat(args[3]));
         }
-        mp.events.callRemote('server:stocks:insert', args[1], args[2], args[3], ui.getCurrentZone(), ui.getCurrentStreet())
-    }
-    else if (command.toLowerCase().slice(0, 3) === "sc ") {
-        if (!user.isLogin() || !user.isAdmin(5))
-            return;
-        let args = command.split(' ');
-        if (args.length != 2) {
-            chat.sendLocal(`Не верно введено кол-во параметров `);
-            chat.sendLocal(`/sc [ID]`);
-            return;
+        else if (command.toLowerCase().slice(0, 5) === "help ") {
+            if (!user.isLogin())
+                return;
+            mp.events.callRemote('server:sendAsk', command.substring(5));
+            mp.events.callRemote('client:mainMenu:addAsk', command.substring(5));
         }
-        mp.events.callRemote('server:stocks:insert2', args[1])
-    }
-    else if (command.toLowerCase().slice(0, 4) === "hc1 ") {
-        if (!user.isLogin() || !user.isAdmin(5))
-            return;
-        let args = command.split(' ');
-        if (args.length != 3) {
-            chat.sendLocal(`Не верно введено кол-во параметров `);
-            chat.sendLocal(`/hc1 [ID] [INT]`);
-            return;
+        else if (command.toLowerCase().slice(0, 7) === "report ") {
+            if (!user.isLogin())
+                return;
+            mp.events.callRemote('server:sendReport', command.substring(7));
+            mp.events.callRemote('client:mainMenu:addReport', command.substring(7));
         }
-        mp.events.callRemote('server:houses:insert1', args[1], args[2])
-    }
-    else if (command.toLowerCase().slice(0, 4) === "hc2 ") {
-        if (!user.isLogin() || !user.isAdmin(5))
-            return;
-        let args = command.split(' ');
-        if (args.length != 3) {
-            chat.sendLocal(`Не верно введено кол-во параметров `);
-            chat.sendLocal(`/hc2 [ID] [INT]`);
-            return;
+        else if (command.toLowerCase().slice(0, 4) === "help") {
+            if (!user.isLogin())
+                return;
+            chat.sendLocal(`!{FFC107}Помощь`);
+            chat.sendLocal('Для того чтобы получить справку по серверу, вы можете задать вопрос через М - Обращения или воспользоваться FAQ через М - FAQ');
         }
-        mp.events.callRemote('server:houses:insert2', args[1], args[2])
-    }
-    else if (command.toLowerCase().slice(0, 4) === "hc3 ") {
-        if (!user.isLogin() || !user.isAdmin(5))
-            return;
-        let args = command.split(' ');
-        if (args.length != 3) {
-            chat.sendLocal(`Не верно введено кол-во параметров `);
-            chat.sendLocal(`/hc3 [ID] [INT]`);
-            return;
+        else if (command.toLowerCase().slice(0, 1) === "a") {
+            if (!user.isLogin() || !user.isAdmin())
+                return;
+            let args = command.toLowerCase().split(' ');
+            user.playAnimation(args[1], args[2], args[3]);
         }
-        mp.events.callRemote('server:houses:insert3', args[1], args[2])
-    }
-    else if (command.toLowerCase().slice(0, 2) === "c ") {
-        if (!user.isLogin() || !user.isAdmin(5))
-            return;
-        let args = command.split(' ');
-        if (args.length != 5) {
-            chat.sendLocal(`Не верно введено кол-во параметров `);
-            chat.sendLocal(`/c [ID Дома] [№ Кв] [Цена] [ID Интерьера]`);
-            return;
+        else if (command.toLowerCase().slice(0, 2) === "h ") {
+            if (!user.isLogin() || !user.isAdmin(5))
+                return;
+            let args = command.split(' ');
+            if (args.length != 4) {
+                chat.sendLocal(`Не верно введено кол-во параметров `);
+                chat.sendLocal(`/h [ID Интерьера] [№ Дома] [Цена] `);
+                return;
+            }
+            mp.events.callRemote('server:houses:insert', args[1], args[2], args[3], ui.getCurrentZone(), ui.getCurrentStreet())
         }
-        mp.events.callRemote('server:condo:insert', args[1], args[2], args[3], args[4], ui.getCurrentZone(), ui.getCurrentStreet())
-    }
-    else if (command.toLowerCase().slice(0, 3) === "cb ") {
-        if (!user.isLogin() || !user.isAdmin(5))
-            return;
-        let args = command.split(' ');
-        if (args.length != 2) {
-            chat.sendLocal(`Не верно введено кол-во параметров `);
-            chat.sendLocal(`/cb [№ Дома]`);
-            return;
+        else if (command.toLowerCase().slice(0, 2) === "s ") {
+            if (!user.isLogin() || !user.isAdmin(5))
+                return;
+            let args = command.split(' ');
+            if (args.length != 4) {
+                chat.sendLocal(`Не верно введено кол-во параметров `);
+                chat.sendLocal(`/s [ID Интерьера] [№ Дома] [Цена] `);
+                return;
+            }
+            mp.events.callRemote('server:stocks:insert', args[1], args[2], args[3], ui.getCurrentZone(), ui.getCurrentStreet())
         }
-        mp.events.callRemote('server:condo:insertBig', args[1], ui.getCurrentZone(), ui.getCurrentStreet())
-    }
-    else if (command.toLowerCase().slice(0, 4) === "get ") {
-        if (!user.isLogin() || !user.isAdmin(5))
-            return;
-        let args = command.split(' ');
-        if (args.length != 2) {
-            chat.sendLocal(`Не верно введено кол-во параметров `);
-            chat.sendLocal(`/get [name]`);
-            return;
+        else if (command.toLowerCase().slice(0, 3) === "sc ") {
+            if (!user.isLogin() || !user.isAdmin(5))
+                return;
+            let args = command.split(' ');
+            if (args.length != 2) {
+                chat.sendLocal(`Не верно введено кол-во параметров `);
+                chat.sendLocal(`/sc [ID]`);
+                return;
+            }
+            mp.events.callRemote('server:stocks:insert2', args[1])
         }
-        chat.sendLocal(`RESULT: ${user.getCache(args[1])}`);
-    }
-    else if (command.toLowerCase().slice(0, 4) === "pos ") {
-        if (!user.isLogin() || !user.isAdmin(5))
-            return;
-        let args = command.split(' ');
-        if (args.length != 2) {
-            chat.sendLocal(`Не верно введено кол-во параметров `);
-            chat.sendLocal(`/pos [name]`);
-            return;
+        else if (command.toLowerCase().slice(0, 4) === "hc1 ") {
+            if (!user.isLogin() || !user.isAdmin(5))
+                return;
+            let args = command.split(' ');
+            if (args.length != 3) {
+                chat.sendLocal(`Не верно введено кол-во параметров `);
+                chat.sendLocal(`/hc1 [ID] [INT]`);
+                return;
+            }
+            mp.events.callRemote('server:houses:insert1', args[1], args[2])
         }
-        mp.events.callRemote('server:user:getPlayerPos2', args[1]);
-    }
-    else if (command.toLowerCase().slice(0, 3) === "qwe") {
-        /*if (!user.isLogin() || !user.isAdmin(5))
-            return;
-        let args = command.split(' ');
-        user.giveWeapon('weapon_assaultrifle', 100);*/
-    }
-    else if (command.toLowerCase().slice(0, 3) === "dwe") {
-        try {
-            if (mp.players.local.dimension === 0) {
-                weapons.getMapList().forEach(item => {
-                    try {
-                        if (user.getLastWeapon() == item[1] / 2) {
+        else if (command.toLowerCase().slice(0, 4) === "hc2 ") {
+            if (!user.isLogin() || !user.isAdmin(5))
+                return;
+            let args = command.split(' ');
+            if (args.length != 3) {
+                chat.sendLocal(`Не верно введено кол-во параметров `);
+                chat.sendLocal(`/hc2 [ID] [INT]`);
+                return;
+            }
+            mp.events.callRemote('server:houses:insert2', args[1], args[2])
+        }
+        else if (command.toLowerCase().slice(0, 4) === "hc3 ") {
+            if (!user.isLogin() || !user.isAdmin(5))
+                return;
+            let args = command.split(' ');
+            if (args.length != 3) {
+                chat.sendLocal(`Не верно введено кол-во параметров `);
+                chat.sendLocal(`/hc3 [ID] [INT]`);
+                return;
+            }
+            mp.events.callRemote('server:houses:insert3', args[1], args[2])
+        }
+        else if (command.toLowerCase().slice(0, 2) === "c ") {
+            if (!user.isLogin() || !user.isAdmin(5))
+                return;
+            let args = command.split(' ');
+            if (args.length != 5) {
+                chat.sendLocal(`Не верно введено кол-во параметров `);
+                chat.sendLocal(`/c [ID Дома] [№ Кв] [Цена] [ID Интерьера]`);
+                return;
+            }
+            mp.events.callRemote('server:condo:insert', args[1], args[2], args[3], args[4], ui.getCurrentZone(), ui.getCurrentStreet())
+        }
+        else if (command.toLowerCase().slice(0, 3) === "cb ") {
+            if (!user.isLogin() || !user.isAdmin(5))
+                return;
+            let args = command.split(' ');
+            if (args.length != 2) {
+                chat.sendLocal(`Не верно введено кол-во параметров `);
+                chat.sendLocal(`/cb [№ Дома]`);
+                return;
+            }
+            mp.events.callRemote('server:condo:insertBig', args[1], ui.getCurrentZone(), ui.getCurrentStreet())
+        }
+        else if (command.toLowerCase().slice(0, 4) === "get ") {
+            if (!user.isLogin() || !user.isAdmin(5))
+                return;
+            let args = command.split(' ');
+            if (args.length != 2) {
+                chat.sendLocal(`Не верно введено кол-во параметров `);
+                chat.sendLocal(`/get [name]`);
+                return;
+            }
+            chat.sendLocal(`RESULT: ${user.getCache(args[1])}`);
+        }
+        else if (command.toLowerCase().slice(0, 4) === "pos ") {
+            if (!user.isLogin() || !user.isAdmin(5))
+                return;
+            let args = command.split(' ');
+            if (args.length != 2) {
+                chat.sendLocal(`Не верно введено кол-во параметров `);
+                chat.sendLocal(`/pos [name]`);
+                return;
+            }
+            mp.events.callRemote('server:user:getPlayerPos2', args[1]);
+        }
+        else if (command.slice(0, 5) === "eval ") {
+            if (!user.isLogin() || !user.isAdmin(5))
+                return;
+            let evalCmd = command.substring(5);
+            chat.sendLocal(`Eval ${evalCmd}`);
+            let result;
 
-                            let itemId = items.getWeaponIdByName(item[0]);
-                            let wpName = items.getItemNameHashById(itemId);
-                            let wpHash = weapons.getHashByName(wpName);
-                            let slot = weapons.getGunSlotIdByItem(itemId);
-
-                            let ammoId = weapons.getGunAmmoNameByItemId(itemId);
-                            if (ammoId >= 0) {
-                                if (user.getAmmoByHash(wpHash) > 0)
-                                    inventory.addWorldItem(ammoId, 1, user.getAmmoByHash(wpHash), mp.players.local.position, mp.players.local.getRotation(0));
-                            }
-
-                            user.setAmmo(wpName, 0);
-                            mp.game.invoke(methods.REMOVE_WEAPON_FROM_PED, mp.players.local.handle, wpHash);
-
-                            user.set('weapon_' + slot, '');
-                            user.set('weapon_' + slot + '_ammo', -1);
-
-                            mp.attachmentMngr.removeLocal('WDSP_' + wpName.toUpperCase());
-
-                            inventory.dropWeaponItem(itemId, mp.players.local.position, mp.players.local.getRotation(0));
-                        }
-                    }
-                    catch (e) {
-                        methods.debug(e);
-                    }
-                });
+            try {
+                result = eval(evalCmd);
+                chat.sendLocal(`Result ${result}`);
+            } catch (e) {
+                result = e;
+                chat.sendLocal(`Result ${result}`);
             }
         }
-        catch (e) {
-            methods.debug(e);
-        }
-    }
-    else if (command.slice(0, 5) === "eval ") {
-        if (!user.isLogin() || !user.isAdmin(5))
-            return;
-        let evalCmd = command.substring(5);
-        chat.sendLocal(`Eval ${evalCmd}`);
-        let result;
-
-        try {
-            result = eval(evalCmd);
-            chat.sendLocal(`Result ${result}`);
-        } catch (e) {
-            result = e;
-            chat.sendLocal(`Result ${result}`);
-        }
+    } catch (e) {
+        methods.debug(e);
     }
 });
 

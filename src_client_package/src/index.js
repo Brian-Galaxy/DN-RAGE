@@ -10,6 +10,7 @@ import './manager/attachWeapons';
 import './manager/cameraRotator';
 import './manager/racer';
 import './manager/jobPoint';
+//import './manager/seats';
 
 import './betternotifs';
 //import './voice';
@@ -30,6 +31,7 @@ import attachItems from "./manager/attachItems";
 import weather from "./manager/weather";
 import hosp from "./manager/hosp";
 import jail from "./manager/jail";
+import policeRadar from "./manager/policeRadar";
 
 import wheel from "./casino/wheel";
 
@@ -107,6 +109,7 @@ try {
 
         timer.loadAll();
         vBreakLight.timer();
+        policeRadar.load();
 
         weather.secSyncTimer();
 

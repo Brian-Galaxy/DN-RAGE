@@ -4003,6 +4003,8 @@ mp.events.addRemoteCounted("onKeyPress:E", (player) => {
                 let houseData = stocks.getData(player.dimension - enums.offsets.stock);
                 if (houseData.get('user_id') == user.getId(player))
                     player.call('client:showStockPanelMenu', [Array.from(houseData)]);
+                else if (houseData.get('user_id') < 0 && (houseData.get('user_id') * -1 === user.get(player, 'fraction_id2')) && user.isLeader2(player))
+                    player.call('client:showStockPanelMenu', [Array.from(houseData)]);
                 else
                     player.notify('~r~Вы не владелец склада');
             }

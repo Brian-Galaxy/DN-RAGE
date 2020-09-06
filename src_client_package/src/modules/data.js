@@ -154,7 +154,6 @@ class Data {
             /*for (let i = 1; i <= 50; i++) mp.events.callRemote('modules:server:data:Set', 800000 + i, 'orderLamarM', 150, true);
             for (let i = 1; i <= 50; i++) mp.events.callRemote('modules:server:data:Set', 800000 + i, 'orderLamar', 150, true);
             for (let i = 1; i <= 50; i++) mp.events.callRemote('modules:server:data:Set', 800000 + i, 'orderDrug', 100, true);*/
-            //mp.events.callRemote('modules:server:data:Set', 800000 + 30, 'orderLamarM', 100, true);
 
         } catch (e) {
             methods.debug(`CLNT: [SET] ERR: ${e}`);

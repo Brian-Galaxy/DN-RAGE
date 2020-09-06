@@ -14,6 +14,7 @@ import vSync from "./manager/vSync";
 import dispatcher from "./manager/dispatcher";
 import drone from "./manager/drone";
 import timer from "./manager/timer";
+import policeRadar from "./manager/policeRadar";
 
 import user from './user';
 import admin from './admin';
@@ -815,7 +816,9 @@ menuList.showStockOutMenu = async function(h) {
         UIMenu.Menu.HideMenu();
         if (item.doName === 'enterStock') {
             try {
-                if (user.getCache('id') != h.get('user_id')) {
+                if (user.getCache('fraction_id2') === (h.get('user_id') * -1) && user.isLeader2())
+                    stocks.enter(h.get('id'));
+                else if (user.getCache('id') != h.get('user_id')) {
 
                     if (Container.Data.HasLocally(mp.players.local.remoteId, "isPassTimeout"))
                     {
@@ -935,7 +938,9 @@ menuList.showStockOutVMenu = async function(h) {
         UIMenu.Menu.HideMenu();
         if (item.doName === 'enter') {
             try {
-                if (user.getCache('id') != h.get('user_id')) {
+                if (user.getCache('fraction_id2') === (h.get('user_id') * -1) && user.isLeader2())
+                    stocks.enter(h.get('id'));
+                else if (user.getCache('id') != h.get('user_id')) {
 
                     if (Container.Data.HasLocally(mp.players.local.remoteId, "isPassTimeout"))
                     {
@@ -4392,6 +4397,10 @@ menuList.showVehicleMenu = async function(data) {
         UIMenu.Menu.AddMenuItem("Припарковать", "Транспорт будет спавниться на этом месте, если вы ее припаркуете", {eventName: "server:vehicle:parkFraction"});
     }*/
 
+    if (vInfo.class_name !== 'Boats' && vInfo.class_name !== 'Helicopters' && vInfo.class_name !== 'Planes' && (veh.getVariable('fraction_id') === 2 || veh.getVariable('fraction_id') === 3 || veh.getVariable('fraction_id') === 5)) {
+        UIMenu.Menu.AddMenuItem("Радар", "Вкл/Выкл радар", {doName: "police:radar"});
+    }
+
     UIMenu.Menu.AddMenuItem("~y~Выкинуть из транспорта", "", {doName: "eject"});
     UIMenu.Menu.AddMenuItem("Характеристики", "", {doName: "showVehicleStatsMenu"});
     //UIMenu.Menu.AddMenuItem("Управление транспортом").eventName = 'server:vehicle:engineStatus';
@@ -4745,6 +4754,8 @@ menuList.showVehicleMenu = async function(data) {
             photo.start();
         else if (item.doName == 'photo:ask')
             photo.ask();
+        else if (item.doName == 'police:radar')
+            policeRadar.enableOrDisable();
         /*else if (item.doName == 'showVehicleAutopilotMenu')
             menuList.showVehicleAutopilotMenu();*/
         else if (item.doName == 'showVehicleStatsMenu')

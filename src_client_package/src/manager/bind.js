@@ -436,7 +436,6 @@ for(let code in keyCodes) {
                     return;
                 }
                 Container.Data.SetLocally(mp.players.local.remoteId, "isGunTimeout", true);
-                user.setCurrentWeapon('weapon_unarmed');
                 setTimeout(function () {
                     try {
                         weapons.getMapList().forEach(item => {
@@ -464,7 +463,6 @@ for(let code in keyCodes) {
                     return;
                 }
                 Container.Data.SetLocally(mp.players.local.remoteId, "isGunTimeout", true);
-                user.setCurrentWeapon('weapon_unarmed');
                 setTimeout(function () {
                     try {
                         weapons.getMapList().forEach(item => {
@@ -492,7 +490,6 @@ for(let code in keyCodes) {
                     return;
                 }
                 Container.Data.SetLocally(mp.players.local.remoteId, "isGunTimeout", true);
-                user.setCurrentWeapon('weapon_unarmed');
                 setTimeout(function () {
                     try {
                         weapons.getMapList().forEach(item => {
@@ -520,7 +517,6 @@ for(let code in keyCodes) {
                     return;
                 }
                 Container.Data.SetLocally(mp.players.local.remoteId, "isGunTimeout", true);
-                user.setCurrentWeapon('weapon_unarmed');
                 setTimeout(function () {
                     try {
                         weapons.getMapList().forEach(item => {
@@ -548,7 +544,6 @@ for(let code in keyCodes) {
                     return;
                 }
                 Container.Data.SetLocally(mp.players.local.remoteId, "isGunTimeout", true);
-                user.setCurrentWeapon('weapon_unarmed');
                 setTimeout(function () {
                     try {
                         weapons.getMapList().forEach(item => {

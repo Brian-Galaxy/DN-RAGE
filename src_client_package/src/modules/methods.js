@@ -128,7 +128,7 @@ methods.sleep = function(ms) {
 };
 
 methods.debug = function (message, ...args) {
-    if (user.isAdmin(5))
+    if (!user.isAdmin(5))
         return;
     let dateTime = new Date();
     let dateResult = methods.digitFormat(dateTime.getHours()) + ':' + methods.digitFormat(dateTime.getMinutes())+ ':' + methods.digitFormat(dateTime.getSeconds());
@@ -654,6 +654,19 @@ methods.getCurrentSpeedMph = function () {
         speed = Math.sqrt(velocity.x * velocity.x + velocity.y * velocity.y + velocity.z * velocity.z);
         speed = Math.round(speed * 2.23693629);
     }
+    return speed;
+};
+
+methods.getEntitySpeedMph = function (entity) {
+    let speed = 0;
+    try {
+        if (entity && mp.vehicles.exists(entity)) {
+            let velocity = entity.getVelocity();
+            speed = Math.sqrt(velocity.x * velocity.x + velocity.y * velocity.y + velocity.z * velocity.z);
+            speed = Math.round(speed * 2.23693629);
+        }
+    }
+    catch (e) {}
     return speed;
 };
 

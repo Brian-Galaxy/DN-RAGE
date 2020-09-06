@@ -1546,9 +1546,7 @@ object.load = function () {
     object.delete(-1211968443, 417.6379, -2057.798, 21.18262);
 
     // Gang Door
-    object.create(-728539053, new mp.Vector3(4.32, -1812.029, 25.96399), new mp.Vector3(1.001791E-05, 5.008957E-06, 139.9995), false, false); //Гаражная дверь Famil
     object.create(-728539053, new mp.Vector3(1332.45, -1659.1, 51.87618), new mp.Vector3(1.001791E-05, -5.008956E-06, -53.42999), false, false); //Гаражная дверь Mara
-    object.create(-728539053, new mp.Vector3(478.93, -1686.76, 29.93), new mp.Vector3(1.001791E-05, 5.008955E-06, -39.99978), false, false); //Гаражная дверь Bloods
     object.create(-1635579193, new mp.Vector3(-1135.72, -1591.91, 4.47611), new mp.Vector3(1.001788E-05, 5.008956E-06, 35.05999), false, false); //Входная дверь для Vagos
 
     // Закрытые окна в гараже неофок

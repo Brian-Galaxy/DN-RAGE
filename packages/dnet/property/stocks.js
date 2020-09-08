@@ -621,12 +621,9 @@ stocks.sellBySlot = function (player, slot) {
     if (!user.isLogin(player))
         return;
 
-    if (user.get(player, 'stock_id') == 0) {
-        player.notify('~r~У Вас нет склада');
-        return;
-    }
+    let stockId = player.dimension - enums.offsets.stock;
 
-    let hInfo = stocks.getData(user.get(player, 'stock_id'));
+    let hInfo = stocks.getData(stockId);
 
     if (hInfo.get('user_id') != user.get(player, 'id')) {
         player.notify('~r~Этот склад вам не пренадлежит');
@@ -679,12 +676,9 @@ stocks.openBySlot = function (player, slot, boxId) {
     if (!user.isLogin(player))
         return;
 
-    if (user.get(player, 'stock_id') == 0) {
-        player.notify('~r~У Вас нет склада');
-        return;
-    }
+    let stockId = player.dimension - enums.offsets.stock;
 
-    let hInfo = stocks.getData(user.get(player, 'stock_id'));
+    let hInfo = stocks.getData(stockId);
 
     if (hInfo.get('user_id') != user.get(player, 'id')) {
         player.notify('~r~Этот склад вам не пренадлежит');
@@ -733,12 +727,8 @@ stocks.sellAllByClass = function (player, className, price) {
     if (!user.isLogin(player))
         return;
 
-    if (user.get(player, 'stock_id') == 0) {
-        player.notify('~r~У Вас нет склада');
-        return;
-    }
-
-    let hInfo = stocks.getData(user.get(player, 'stock_id'));
+    let stockId = player.dimension - enums.offsets.stock;
+    let hInfo = stocks.getData(stockId);
 
     if (hInfo.get('user_id') != user.get(player, 'id')) {
         player.notify('~r~Этот склад вам не пренадлежит');
@@ -968,12 +958,9 @@ stocks.sell = function (player) {
     if (!user.isLogin(player))
         return;
 
-    if (user.get(player, 'stock_id') == 0) {
-        player.notify('~r~У Вас нет склада');
-        return;
-    }
+    let stockId = player.dimension - enums.offsets.stock;
 
-    let hInfo = stocks.getData(user.get(player, 'stock_id'));
+    let hInfo = stocks.getData(stockId);
 
     if (hInfo.get('user_id') != user.get(player, 'id')) {
         player.notify('~r~Этот склад вам не пренадлежит');

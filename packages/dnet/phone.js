@@ -5,6 +5,7 @@ let vehicles = require('./property/vehicles');
 let fraction = require('./property/fraction');
 
 let gangWar = require('./managers/gangWar');
+let canabisWar = require('./managers/canabisWar');
 let weather = require('./managers/weather');
 
 let user = require('./user');
@@ -995,6 +996,129 @@ phone.showGangWarList = function(player) {
         items.push(phone.getMenuMainItem(`#${value.zoneId}`, subItems));
     });
     phone.showMenu(player, 'fraction2', `Список улиц`, items);
+};
+
+
+phone.showCanabisList = function(player) {
+    if (!user.isLogin(player))
+        return;
+    methods.debug('phone.showCanabisList');
+    let items = [];
+    canabisWar.getZoneList().forEach(zone => {
+        let subItems = [];
+
+        /*subItems.push(
+            phone.getMenuItemButton(
+                `${canabisWar.get(zone.id, 'zone')}`,
+                `${canabisWar.get(zone.id, 'street')}`
+            )
+        );*/
+
+
+        let frName = canabisWar.get(zone.id, 'fraction_name');
+        subItems.push(
+            phone.getMenuItemButton(
+                `Зона под контролем`,
+                `${(frName == '' ? 'Государство' : frName)}`
+            )
+        );
+
+        subItems.push(
+            phone.getMenuItemButton(
+                `Узнать местоположение`,
+                ``,
+                { name: "getPos", x: zone.x, y: zone.y },
+                ``,
+                true,
+            )
+        );
+
+        if (user.isLeader2(player) || user.isSubLeader2(player) || user.isLeader(player) || user.isSubLeader(player))
+        {
+            subItems.push(
+                phone.getMenuItemButton(
+                    `Начать захват`,
+                    ``,
+                    { name: "attackCanabis", zone: zone.id },
+                    ``,
+                    true,
+                )
+            );
+        }
+
+        items.push(phone.getMenuMainItem(`#${zone.id}`, subItems));
+    });
+    phone.showMenu(player, 'fraction2', `Список территорий`, items);
+};
+
+phone.showCanabisWarList = function(player) {
+    if (!user.isLogin(player))
+        return;
+    methods.debug('phone.showCanabisWarList');
+    let items = [];
+    canabisWar.getZoneWarList().forEach((value, key) => {
+        let subItems = [];
+
+        /*subItems.push(
+            phone.getMenuItemButton(
+                `${canabisWar.get(value.zoneId, 'zone')}`,
+                `${canabisWar.get(value.zoneId, 'street')}`
+            )
+        );*/
+
+        subItems.push(
+            phone.getMenuItemButton(
+                `Атака`,
+                `${fraction.getName(value.attack)}`
+            )
+        );
+
+        let frName = canabisWar.get(value.zoneId, 'fraction_name');
+        subItems.push(
+            phone.getMenuItemButton(
+                `Оборона`,
+                `${(frName == '' ? 'Государство' : frName)}`
+            )
+        );
+
+        subItems.push(
+            phone.getMenuItemButton(
+                `Начало захвата`,
+                `${value.timeLabel}`
+            )
+        );
+        subItems.push(
+            phone.getMenuItemButton(
+                `Оружие`,
+                `${value.gunLabel}`
+            )
+        );
+        subItems.push(
+            phone.getMenuItemButton(
+                `Броня`,
+                `${value.armorLabel}`
+            )
+        );
+        subItems.push(
+            phone.getMenuItemButton(
+                `Количество`,
+                `${value.count} vs ${value.count}`
+            )
+        );
+
+        subItems.push(
+            phone.getMenuItemButton(
+                `Узнать местоположение`,
+                ``,
+                { name: "getPos", x: canabisWar.get(value.zoneId, 'x'), y: canabisWar.get(value.zoneId, 'y') },
+                ``,
+                true,
+            )
+        );
+
+        items.push(phone.getMenuMainItem(`#${value.zoneId}`, subItems));
+    });
+    phone.showMenu(player, 'fraction2', `Список территорий`, items);
 };
 
 phone.fractionList = function(player) {

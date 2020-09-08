@@ -38,6 +38,7 @@ let pickups = require('../managers/pickups');
 let dispatcher = require('../managers/dispatcher');
 let weather = require('../managers/weather');
 let gangWar = require('../managers/gangWar');
+let canabisWar = require('../managers/canabisWar');
 let ems = require('../managers/ems');
 let tax = require('../managers/tax');
 let discord = require('../managers/discord');
@@ -2161,6 +2162,40 @@ mp.events.addRemoteCounted('server:admin:gangZone:edit', (player, id, key, val) 
     }
 });
 
+mp.events.addRemoteCounted('server:admin:canabisZone:editPos', (player, id) => {
+    if (!user.isAdmin(player))
+        return;
+    try {
+        let pos = player.position;
+        canabisWar.set(id, 'x', pos.x);
+        canabisWar.set(id, 'y', pos.y);
+        canabisWar.set(id, 'z', pos.z);
+        mysql.executeQuery("UPDATE gang_war_2 SET x = '" + pos.x + "', y = '" + pos.y + "', z = '" + pos.z + "' where id = '" + id + "'");
+        player.notify('~b~Координаты были обновлены');
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.addRemoteCounted('server:admin:canabisZone:edit', (player, id, key, val) => {
+    if (!user.isAdmin(player))
+        return;
+    try {
+        let pos = player.position;
+        canabisWar.set(id, key, val);
+        if (key === 'timestamp' && val === 0)
+            canabisWar.set(id, 'canWar', false);
+        if (key === 'fraction_id')
+            canabisWar.changeZoneColor(id, val);
+        mysql.executeQuery("UPDATE gang_war_2 SET " + key + " = '" + val + "' where id = '" + id + "'");
+        player.notify(`~b~Значение ${key} было обновлено на ${val}`);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
 mp.events.addRemoteCounted('server:admin:vehicleSpeedBoost', (player, vName, num) => {
     if (!user.isAdmin(player))
         return;
@@ -3235,6 +3270,18 @@ mp.events.addRemoteCounted('server:phone:showGangWarList', (player) => {
     phone.showGangWarList(player);
 });
 
+mp.events.addRemoteCounted('server:phone:showCanabisList', (player) => {
+    if (!user.isLogin(player))
+        return;
+    phone.showCanabisList(player);
+});
+
+mp.events.addRemoteCounted('server:phone:showCanabisWarList', (player) => {
+    if (!user.isLogin(player))
+        return;
+    phone.showCanabisWarList(player);
+});
+
 mp.events.addRemoteCounted('server:phone:getShopGang', (player) => {
     if (!user.isLogin(player))
         return;
@@ -3251,6 +3298,18 @@ mp.events.addRemoteCounted('server:gangWar:addWar', (player, id, count, armorInd
     if (!user.isLogin(player))
         return;
     gangWar.addWar(player, id, count, armorIndex, gunIndex, timeIndex);
+});
+
+mp.events.addRemoteCounted('server:phone:attackCanabis', (player, id) => {
+    if (!user.isLogin(player))
+        return;
+    canabisWar.startWar(player, id);
+});
+
+mp.events.addRemoteCounted('server:canabisWar:addWar', (player, id, count, armorIndex, gunIndex, timeIndex) => {
+    if (!user.isLogin(player))
+        return;
+    canabisWar.addWar(player, id, count, armorIndex, gunIndex, timeIndex);
 });
 
 mp.events.addRemoteCounted('server:phone:fractionList2', (player) => {
@@ -5632,6 +5691,12 @@ mp.events.addRemoteCounted('server:fraction:getBankVeh', (player, type) => {
     if (!user.isLogin(player))
         return;
     fraction.spawnNearBank(player, type);
+});
+
+mp.events.addRemoteCounted('server:fraction:getDrugCanabisSpeedo', (player) => {
+    if (!user.isLogin(player))
+        return;
+    fraction.spawnNearCanabis(player);
 });
 
 mp.events.addRemoteCounted('server:fraction:vehicleNewRank', (player, id, rank) => {

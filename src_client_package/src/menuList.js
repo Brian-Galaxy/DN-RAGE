@@ -3707,7 +3707,7 @@ menuList.showPlayerDoMenu = function(playerId) {
         }
         if (ui.isYellowZone()) {
             if (item.eventName === 'server:user:knockById') {
-                mp.game.ui.notifications.show("~r~В Желтой зоне данное действие запрещено");
+                mp.game.ui.notifications.show("~r~Днём, в городах данное действие запрещено (Только в гетто и за городом)");
                 return;
             }
         }
@@ -5622,9 +5622,9 @@ menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId, isF
                             success = false;
                         }
                     }
-                    if (item.item_id == 252) {
+                    /*if (item.item_id == 252) {
                         user.setArmour(item.count)
-                    }
+                    }*/
                     if (item.item_id <= 30 && item.item_id >= 27) {
                         if (params.number != user.getCache('phone')) {
                             inventory.updateEquipStatus(item.id, false);
@@ -10956,6 +10956,58 @@ menuList.showGangZoneAttackMenu = function(zone, count = 5) {
     });
 };
 
+menuList.showCanabisZoneAttackMenu = function(zone, count = 5) {
+    UIMenu.Menu.Create(`Захват`, `~b~ID: ${zone.get('canabisWarid')}`);
+
+    /*UIMenu.Menu.AddMenuItem(`~b~${zone.get('canabisWarzone').toString()}`);
+    UIMenu.Menu.AddMenuItem(`~b~${zone.get('canabisWarstreet').toString()}`);*/
+    UIMenu.Menu.AddMenuItem(`~b~${zone.get('canabisWarfraction_name').toString()}`);
+
+    UIMenu.Menu.AddMenuItem(`~b~Кол-во:~s~ ${count}vs${count}`, "", {doName: "count"});
+    UIMenu.Menu.AddMenuItemList("~b~Броня~s~", ['~g~Да', '~r~Нет'], "", {doName: "armor"});
+    UIMenu.Menu.AddMenuItemList("~b~Оружие~s~", ['Любое', 'Пистолеты', 'Дробовики', 'SMG', 'Автоматы'], "", {doName: "gun"});
+    UIMenu.Menu.AddMenuItemList("~b~Время~s~", ['17:00', '17:15', '17:30', '17:45', '18:00', '18:15', '18:30', '18:45', '19:00', '19:15', '19:30', '19:45', '20:00', '20:15', '20:30'], "", {doName: "time"});
+    UIMenu.Menu.AddMenuItem(`~g~Объявить захват`, "", {doName: "start"});
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
+    UIMenu.Menu.Draw();
+
+    let armorIndex = 0;
+    let gunIndex = 0;
+    let timeIndex = 0;
+
+    UIMenu.Menu.OnList.Add((item, index) => {
+        if (item.doName === 'armor')
+            armorIndex = index;
+        if (item.doName === 'gun')
+            gunIndex = index;
+        if (item.doName === 'time')
+            timeIndex = index;
+    });
+
+    UIMenu.Menu.OnSelect.Add(async item => {
+        try {
+            if (item.doName === 'count') {
+                let name = methods.parseInt(await UIMenu.Menu.GetUserInput("Число", "", 9));
+                if (name > 20) {
+                    mp.game.ui.notifications.show(`~r~Значение не должно быть больше 20`);
+                    return;
+                }
+                if (name < 1) {
+                    mp.game.ui.notifications.show(`~r~Значение не должно быть меньше 1`);
+                    return;
+                }
+                menuList.showCanabisZoneAttackMenu(zone, name);
+            }
+            if (item.doName == 'start')
+                mp.events.callRemote('server:canabisWar:addWar', zone.get('canabisWarid'), count, armorIndex, gunIndex, timeIndex);
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    });
+};
+
 menuList.showAdminMenu = function() {
     UIMenu.Menu.Create(`ADMIN`, `~b~Админ меню`);
 
@@ -10991,8 +11043,10 @@ menuList.showAdminMenu = function() {
             if (user.isAdmin(2) && !user.isAdminRp())
                 UIMenu.Menu.AddMenuItem("Меропритие", "", {doName: "eventMenu"});
 
-            if (user.isAdmin(3) && !user.isAdminRp())
+            if (user.isAdmin(3) && !user.isAdminRp()) {
                 UIMenu.Menu.AddMenuItem("Управление ганг. зонами", "", {doName: "gangZone"});
+                UIMenu.Menu.AddMenuItem("Управление канабис зонами", "", {doName: "canabisZone"});
+            }
 
             UIMenu.Menu.AddMenuItem("~y~Выключить админку", "", {doName: "disableAdmin"});
             UIMenu.Menu.AddMenuItem("~y~Ответить на жалобу", "", {doName: "askReport"});
@@ -11050,6 +11104,10 @@ menuList.showAdminMenu = function() {
         if (item.doName == 'gangZone') {
             let id = await UIMenu.Menu.GetUserInput("Введите ID территори", "", 5);
             menuList.showAdminGangZoneMenu(await Container.Data.GetAll(600000 + methods.parseInt(id)));
+        }
+        if (item.doName == 'canabisZone') {
+            let id = await UIMenu.Menu.GetUserInput("Введите ID территори", "", 5);
+            menuList.showAdminCanabisZoneMenu(await Container.Data.GetAll(600000 + methods.parseInt(id)));
         }
         if (item.doName == 'noClip')
             admin.noClip(true);
@@ -11261,13 +11319,9 @@ menuList.showAdminPlayerMenu = function(id) {
 menuList.showAdminGangZoneMenu = function(zone) {
     UIMenu.Menu.Create(`ADMIN`, `~b~ID: ${zone.get('gangWarid')}`);
 
-    UIMenu.Menu.AddMenuItem("Zone", zone.get('gangWarzone').toString(), {doName: "zone"});
-    UIMenu.Menu.AddMenuItem("Street", zone.get('gangWarstreet').toString(), {doName: "street"});
     UIMenu.Menu.AddMenuItem("FractionId", zone.get('gangWarfraction_id').toString(), {doName: "fraction_id"});
     UIMenu.Menu.AddMenuItem("FractionName", zone.get('gangWarfraction_name').toString(), {doName: "fraction_name"});
     UIMenu.Menu.AddMenuItem("Timestamp", zone.get('gangWartimestamp').toString(), {doName: "timestamp"});
-    UIMenu.Menu.AddMenuItem("CantWar", zone.get('gangWarcant_war').toString(), {doName: "cant_war"});
-    UIMenu.Menu.AddMenuItem("Координаты", "", {doName: "pos"});
     UIMenu.Menu.AddMenuItem("Телепорт на центр", "", {doName: "tppos"});
 
     UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
@@ -11289,6 +11343,42 @@ menuList.showAdminGangZoneMenu = function(zone) {
             if (item.doName == 'zone' || item.doName == 'street' || item.doName == 'fraction_name') {
                 let name = await UIMenu.Menu.GetUserInput("Название", "", 120);
                 mp.events.callRemote('server:admin:gangZone:edit', zone.get('gangWarid'), item.doName, name);
+            }
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    });
+};
+
+
+menuList.showAdminCanabisZoneMenu = function(zone) {
+    UIMenu.Menu.Create(`ADMIN`, `~b~ID: ${zone.get('canabisWarid')}`);
+
+    UIMenu.Menu.AddMenuItem("FractionId", zone.get('canabisWarfraction_id').toString(), {doName: "fraction_id"});
+    UIMenu.Menu.AddMenuItem("FractionName", zone.get('canabisWarfraction_name').toString(), {doName: "fraction_name"});
+    UIMenu.Menu.AddMenuItem("Timestamp", zone.get('canabisWartimestamp').toString(), {doName: "timestamp"});
+    UIMenu.Menu.AddMenuItem("Телепорт на центр", "", {doName: "tppos"});
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
+    UIMenu.Menu.Draw();
+
+    UIMenu.Menu.OnSelect.Add(async item => {
+
+        try {
+            if (item.doName === 'tppos') {
+                user.teleport(zone.get('canabisWarx'), zone.get('canabisWary'), zone.get('canabisWarz'))
+            }
+            if (item.doName === 'pos') {
+                mp.events.callRemote('server:admin:canabisZone:editPos', zone.get('canabisWarid'));
+            }
+            if (item.doName === 'timestamp' || item.doName === 'fraction_id' || item.doName === 'cant_war') {
+                let name = await UIMenu.Menu.GetUserInput("Число", "", 9);
+                mp.events.callRemote('server:admin:canabisZone:edit', zone.get('canabisWarid'), item.doName, methods.parseInt(name));
+            }
+            if (item.doName == 'zone' || item.doName == 'street' || item.doName == 'fraction_name') {
+                let name = await UIMenu.Menu.GetUserInput("Название", "", 120);
+                mp.events.callRemote('server:admin:canabisZone:edit', zone.get('canabisWarid'), item.doName, name);
             }
         }
         catch (e) {

@@ -8,6 +8,7 @@ let enums = require('../enums');
 let inventory = require('../inventory');
 
 let gangWar = require('../managers/gangWar');
+let canabisWar = require('../managers/canabisWar');
 let mafiaWar = require('../managers/mafiaWar');
 let racer = require('../managers/racer');
 let graffiti = require('../managers/graffiti');
@@ -165,6 +166,7 @@ weather.timeSyncTimer = function() {
 
         if (_minute === 30) {
             gangWar.timerMoney();
+            canabisWar.timerMoney();
             mafiaWar.timerMoney();
         }
 
@@ -219,7 +221,7 @@ weather.timeSyncTimer = function() {
 
         mp.players.forEach(function (p) {
             p.call("client:managers:weather:syncDateTime", [_minute, _hour, _day, _month, _year]);
-            p.call("client:managers:weather:syncRealTime", [dateTime.getHours()]);
+            p.call("client:managers:weather:syncRealHour", [dateTime.getHours()]);
             p.call("client:managers:weather:syncWeatherTemp", [Math.round(_tempNew)]);
             p.call("client:managers:weather:syncWeatherWind", [_windSpeed, _windDir]);
             p.call("client:managers:weather:syncRealFullDateTime", [`${methods.digitFormat(dateTime.getDate())}/${methods.digitFormat(dateTime.getMonth()+1)} ${methods.digitFormat(dateTime.getHours())}:${methods.digitFormat(dateTime.getMinutes())}`]);
@@ -288,7 +290,7 @@ weather.timeSyncTimer = function() {
             }
         }
 
-        if (dateTime.getDate() % 3 === 0) {
+        if (dateTime.getDay() === 6) {
             if (dateTime.getHours() === 20 && dateTime.getMinutes() === 0)
                 mafiaWar.startWar(1);
             if (dateTime.getHours() === 20 && dateTime.getMinutes() === 1)
@@ -415,6 +417,107 @@ weather.timeSyncTimer = function() {
             let war = gangWar.getWar(24);
             gangWar.startWar(war.zoneId, war.attack, war.def, war.armor === 0, war.count);
         }
+
+        if (dateTime.getHours() === 17 && dateTime.getMinutes() === 1 && canabisWar.hasWar(0)) {
+            let war = canabisWar.getWar(0);
+            canabisWar.startWar(war.zoneId, war.attack, war.def, war.armor === 0, war.count);
+        }
+        if (dateTime.getHours() === 17 && dateTime.getMinutes() === 16 && canabisWar.hasWar(1)) {
+            let war = canabisWar.getWar(1);
+            canabisWar.startWar(war.zoneId, war.attack, war.def, war.armor === 0, war.count);
+        }
+        if (dateTime.getHours() === 17 && dateTime.getMinutes() === 31 && canabisWar.hasWar(2)) {
+            let war = canabisWar.getWar(2);
+            canabisWar.startWar(war.zoneId, war.attack, war.def, war.armor === 0, war.count);
+        }
+        if (dateTime.getHours() === 17 && dateTime.getMinutes() === 46 && canabisWar.hasWar(3)) {
+            let war = canabisWar.getWar(3);
+            canabisWar.startWar(war.zoneId, war.attack, war.def, war.armor === 0, war.count);
+        }
+        if (dateTime.getHours() === 18 && dateTime.getMinutes() === 1 && canabisWar.hasWar(4)) {
+            let war = canabisWar.getWar(4);
+            canabisWar.startWar(war.zoneId, war.attack, war.def, war.armor === 0, war.count);
+        }
+        if (dateTime.getHours() === 18 && dateTime.getMinutes() === 16 && canabisWar.hasWar(5)) {
+            let war = canabisWar.getWar(5);
+            canabisWar.startWar(war.zoneId, war.attack, war.def, war.armor === 0, war.count);
+        }
+        if (dateTime.getHours() === 18 && dateTime.getMinutes() === 31 && canabisWar.hasWar(6)) {
+            let war = canabisWar.getWar(6);
+            canabisWar.startWar(war.zoneId, war.attack, war.def, war.armor === 0, war.count);
+        }
+        if (dateTime.getHours() === 18 && dateTime.getMinutes() === 46 && canabisWar.hasWar(7)) {
+            let war = canabisWar.getWar(7);
+            canabisWar.startWar(war.zoneId, war.attack, war.def, war.armor === 0, war.count);
+        }
+        if (dateTime.getHours() === 19 && dateTime.getMinutes() === 1 && canabisWar.hasWar(8)) {
+            let war = canabisWar.getWar(8);
+            canabisWar.startWar(war.zoneId, war.attack, war.def, war.armor === 0, war.count);
+        }
+        if (dateTime.getHours() === 19 && dateTime.getMinutes() === 16 && canabisWar.hasWar(9)) {
+            let war = canabisWar.getWar(9);
+            canabisWar.startWar(war.zoneId, war.attack, war.def, war.armor === 0, war.count);
+        }
+        if (dateTime.getHours() === 19 && dateTime.getMinutes() === 31 && canabisWar.hasWar(10)) {
+            let war = canabisWar.getWar(10);
+            canabisWar.startWar(war.zoneId, war.attack, war.def, war.armor === 0, war.count);
+        }
+        if (dateTime.getHours() === 19 && dateTime.getMinutes() === 46 && canabisWar.hasWar(11)) {
+            let war = canabisWar.getWar(11);
+            canabisWar.startWar(war.zoneId, war.attack, war.def, war.armor === 0, war.count);
+        }
+        if (dateTime.getHours() === 20 && dateTime.getMinutes() === 1 && canabisWar.hasWar(12)) {
+            let war = canabisWar.getWar(12);
+            canabisWar.startWar(war.zoneId, war.attack, war.def, war.armor === 0, war.count);
+        }
+        if (dateTime.getHours() === 20 && dateTime.getMinutes() === 16 && canabisWar.hasWar(13)) {
+            let war = canabisWar.getWar(13);
+            canabisWar.startWar(war.zoneId, war.attack, war.def, war.armor === 0, war.count);
+        }
+        if (dateTime.getHours() === 20 && dateTime.getMinutes() === 31 && canabisWar.hasWar(14)) {
+            let war = canabisWar.getWar(14);
+            canabisWar.startWar(war.zoneId, war.attack, war.def, war.armor === 0, war.count);
+        }
+        /*if (dateTime.getHours() === 20 && dateTime.getMinutes() === 46 && canabisWar.hasWar(15)) {
+            let war = canabisWar.getWar(15);
+            canabisWar.startWar(war.zoneId, war.attack, war.def, war.armor === 0, war.count);
+        }
+        if (dateTime.getHours() === 21 && dateTime.getMinutes() === 1 && canabisWar.hasWar(16)) {
+            let war = canabisWar.getWar(16);
+            canabisWar.startWar(war.zoneId, war.attack, war.def, war.armor === 0, war.count);
+        }
+        if (dateTime.getHours() === 21 && dateTime.getMinutes() === 16 && canabisWar.hasWar(17)) {
+            let war = canabisWar.getWar(17);
+            canabisWar.startWar(war.zoneId, war.attack, war.def, war.armor === 0, war.count);
+        }
+        if (dateTime.getHours() === 21 && dateTime.getMinutes() === 31 && canabisWar.hasWar(18)) {
+            let war = canabisWar.getWar(18);
+            canabisWar.startWar(war.zoneId, war.attack, war.def, war.armor === 0, war.count);
+        }
+        if (dateTime.getHours() === 21 && dateTime.getMinutes() === 46 && canabisWar.hasWar(19)) {
+            let war = canabisWar.getWar(19);
+            canabisWar.startWar(war.zoneId, war.attack, war.def, war.armor === 0, war.count);
+        }
+        if (dateTime.getHours() === 22 && dateTime.getMinutes() === 1 && canabisWar.hasWar(20)) {
+            let war = canabisWar.getWar(20);
+            canabisWar.startWar(war.zoneId, war.attack, war.def, war.armor === 0, war.count);
+        }
+        if (dateTime.getHours() === 22 && dateTime.getMinutes() === 16 && canabisWar.hasWar(21)) {
+            let war = canabisWar.getWar(21);
+            canabisWar.startWar(war.zoneId, war.attack, war.def, war.armor === 0, war.count);
+        }
+        if (dateTime.getHours() === 22 && dateTime.getMinutes() === 31 && canabisWar.hasWar(22)) {
+            let war = canabisWar.getWar(22);
+            canabisWar.startWar(war.zoneId, war.attack, war.def, war.armor === 0, war.count);
+        }
+        if (dateTime.getHours() === 22 && dateTime.getMinutes() === 46 && canabisWar.hasWar(23)) {
+            let war = canabisWar.getWar(23);
+            canabisWar.startWar(war.zoneId, war.attack, war.def, war.armor === 0, war.count);
+        }
+        if (dateTime.getHours() === 23 && dateTime.getMinutes() === 1 && canabisWar.hasWar(24)) {
+            let war = canabisWar.getWar(24);
+            canabisWar.startWar(war.zoneId, war.attack, war.def, war.armor === 0, war.count);
+        }*/
 
         if (dateTime.getHours() == 4 && dateTime.getMinutes() == 50) //TODO
             methods.notifyToAll('Рестарт сервера через 15 минут');

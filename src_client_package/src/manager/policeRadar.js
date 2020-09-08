@@ -77,7 +77,10 @@ policeRadar.timer = function () {
             let fSpeed = '';
             let rSpeed = '';
             if (frontVehicle && mp.vehicles.exists(frontVehicle)) {
-                fSpeed = frontVehicle.getSpeed() * 2.236936;
+                if (user.getCache('s_hud_speed_type'))
+                    fSpeed = Math.round(frontVehicle.getSpeed() * 3.6);
+                else
+                    fSpeed = Math.round(frontVehicle.getSpeed() * 2.236936);
                 if (fSpeed > frontVehicleMax)
                     frontVehicleMax = fSpeed;
             }
@@ -85,7 +88,10 @@ policeRadar.timer = function () {
                 frontVehicleMax = 0;
             }
             if (rearVehicle && mp.vehicles.exists(rearVehicle)) {
-                rSpeed = rearVehicle.getSpeed() * 2.236936;
+                if (user.getCache('s_hud_speed_type'))
+                    rSpeed = Math.round(rearVehicle.getSpeed() * 3.6);
+                else
+                    rSpeed = Math.round(rearVehicle.getSpeed() * 2.236936);
                 if (rSpeed > rearVehicleMax)
                     rearVehicleMax = fSpeed;
             }
@@ -100,7 +106,7 @@ policeRadar.timer = function () {
                 radarRearSpeedMax: rearVehicleMax,
                 radarFrontSpeed: fSpeed,
                 radarFrontSpeedMax: frontVehicleMax,
-                radarPatrolSpeed: methods.getCurrentSpeedMph(),
+                radarPatrolSpeed: methods.getCurrentSpeed(),
             };
             ui.callCef('hudc', JSON.stringify(data))
         }

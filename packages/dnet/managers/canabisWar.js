@@ -11,11 +11,12 @@ let weather = require('./weather');
 
 let fraction = require('../property/fraction');
 
-let gangWar = exports;
+let canabisWar = exports;
 
 let zoneRadius = 50;
 let offset = 600000;
-let keyPrefix = 'gangWar';
+let blipOffset = 10000;
+let keyPrefix = 'canabisWar';
 
 let currentZone = 0;
 let currentAttack = 0;
@@ -33,107 +34,92 @@ let gangList = [];
 
 let warPool = new Map();
 
-gangWar.loadAll = function() {
-    methods.debug('gangWar.loadAll');
-    mysql.executeQuery(`SELECT * FROM gang_war`, function (err, rows, fields) {
+canabisWar.loadAll = function() {
+    methods.debug('canabisWar.loadAll');
+    mysql.executeQuery(`SELECT * FROM gang_war_2`, function (err, rows, fields) {
 
         rows.forEach(row => {
-            gangWar.set(row['id'], 'id', row['id']);
-            gangWar.set(row['id'], 'x', row['x']);
-            gangWar.set(row['id'], 'y', row['y']);
-            gangWar.set(row['id'], 'z', row['z']);
-            gangWar.set(row['id'], 'zone', row['zone']);
-            gangWar.set(row['id'], 'street', row['street']);
-            gangWar.set(row['id'], 'fraction_id', row['fraction_id']);
-            gangWar.set(row['id'], 'fraction_name', row['fraction_name']);
-            gangWar.set(row['id'], 'timestamp', row['timestamp']);
-            gangWar.set(row['id'], 'cant_war', row['cant_war']);
-            gangWar.set(row['id'], 'canWar', true);
+            canabisWar.set(row['id'], 'id', row['id']);
+            canabisWar.set(row['id'], 'x', row['x']);
+            canabisWar.set(row['id'], 'y', row['y']);
+            canabisWar.set(row['id'], 'z', row['z']);
+            canabisWar.set(row['id'], 'fraction_id', row['fraction_id']);
+            canabisWar.set(row['id'], 'fraction_name', row['fraction_name']);
+            canabisWar.set(row['id'], 'timestamp', row['timestamp']);
+            canabisWar.set(row['id'], 'canWar', true);
             gangList.push({ id: row['id'], x: row['x'], y: row['y'], z: row['z'], fid: row['fraction_id']});
         });
     });
 
-
-    /*let pos = new mp.Vector3(1633.73828125, 5264.57080078125, 0);
-    for (let i = 0; i < 15; i++) {
-        for (let j = 0; j < 10; j++) {
-            let x = 1633.73828125 + i * 100;
-            let y = 5264.57080078125 - j * 100;
-            mysql.executeQuery(`INSERT INTO gang_war_2 (x, y, z) VALUES ('${x}', '${y}', '${0}')`);
-        }
-    }*/
-    //mysql.executeQuery(`INSERT INTO houses (number, street, address, rot, x, y, z, interior, price) VALUES ('${number}', '${street}', '${zone}', '${rot}', '${x}', '${y}', '${z - 1}', '${interior}', '${price}')`);
-
     setTimeout(function () {
-        gangWar.timer();
-        //gangWar.timerMoney();
+        canabisWar.timer();
+        //canabisWar.timerMoney();
     }, 10000);
 };
 
-gangWar.save = function(id, ownerId, name) {
-    methods.debug('gangWar.save');
-    gangWar.set(id, 'fraction_id', ownerId);
-    gangWar.set(id, 'fraction_name', name);
-    gangWar.set(id, 'timestamp', methods.getTimeStamp());
-    mysql.executeQuery("UPDATE gang_war SET fraction_id = '" + ownerId + "',  fraction_name = '" + name + "',  timestamp = '" + methods.getTimeStamp() + "' where id = '" + id + "'");
+canabisWar.save = function(id, ownerId, name) {
+    methods.debug('canabisWar.save');
+    canabisWar.set(id, 'fraction_id', ownerId);
+    canabisWar.set(id, 'fraction_name', name);
+    canabisWar.set(id, 'timestamp', methods.getTimeStamp());
+    mysql.executeQuery("UPDATE gang_war_2 SET fraction_id = '" + ownerId + "',  fraction_name = '" + name + "',  timestamp = '" + methods.getTimeStamp() + "' where id = '" + id + "'");
 };
 
-gangWar.getZoneList = function() {
+canabisWar.getZoneList = function() {
     let list = [];
     gangList.forEach(item => {
         let newItem = item;
-        newItem.fid = gangWar.get(item.id, 'fraction_id');
+        newItem.fid = canabisWar.get(item.id, 'fraction_id');
         list.push(newItem)
     });
     return list;
 };
 
-gangWar.getZoneWarList = function() {
+canabisWar.getZoneWarList = function() {
     return warPool;
 };
 
-gangWar.hasWar = function(idx) {
+canabisWar.hasWar = function(idx) {
     return warPool.has(idx.toString());
 };
 
-gangWar.getWar = function(idx) {
+canabisWar.getWar = function(idx) {
     return warPool.get(idx.toString());
 };
 
-gangWar.startWar = function(zoneId, attack, def, isArmor, count) {
+canabisWar.startWar = function(zoneId, attack, def, isArmor, count) {
     if (isStartTimer)
         return;
 
-    methods.debug('gangWar.startWar');
+    methods.debug('canabisWar.startWar');
 
     isStartTimer = true;
     timerCounter = 600;
     currentZone = zoneId;
     currentAttack = attack;
     currentDef = def;
-    warPos = gangWar.getPos(zoneId);
+    warPos = canabisWar.getPos(zoneId);
 
     countUsers = count;
     canArmor = isArmor;
 
     mp.players.forEach(p => {
         if (user.isLogin(p))
-            user.flashBlipByRadius(p, 1000 + currentZone, true);
+            user.flashBlipByRadius(p, blipOffset + currentZone, true);
     });
 
-    methods.notifyWithPictureToFraction2('Улица под угрозой', `ВНИМАНИЕ!`, 'Начался захват улицы ~y~#' + zoneId, 'CHAR_DEFAULT', def);
+    methods.notifyWithPictureToCanabisWar('Улица под угрозой', `ВНИМАНИЕ!`, 'Начался захват улицы ~y~#' + zoneId, 'CHAR_DEFAULT', def);
 
     for (let i = 1; i <= fraction.getCount(); i++) {
         if (def == i) continue;
-        if (fraction.get(i, 'is_war')) {
-            methods.notifyWithPictureToFraction2('Война за улицу', `ВНИМАНИЕ!`, 'Начался захват улицы ~y~#' + zoneId, 'CHAR_DEFAULT', i);
+        if (fraction.get(i, 'is_mafia')) {
+            methods.notifyWithPictureToCanabisWar('Война за улицу', `ВНИМАНИЕ!`, 'Начался захват улицы ~y~#' + zoneId, 'CHAR_DEFAULT', i);
         }
     }
-    dispatcher.sendPos('Война банд', `(( Начался захват улицы ~y~#${zoneId}~s~ ))`, warPos);
 };
 
-gangWar.addWar = function(player, zoneId, count, armorIndex, gunIndex, timeIndex) {
-    methods.debug('gangWar.addWar');
+canabisWar.addWar = function(player, zoneId, count, armorIndex, gunIndex, timeIndex) {
+    methods.debug('canabisWar.addWar');
     if (!user.isLogin(player))
         return;
 
@@ -144,11 +130,11 @@ gangWar.addWar = function(player, zoneId, count, armorIndex, gunIndex, timeIndex
         return;
     }
 
-    if (!gangWar.get(id, 'canWar')) {
+    if (!canabisWar.get(id, 'canWar')) {
         player.notify('~r~Захват этой территории сейчас не доступен');
         return;
     }
-    if (gangWar.get(id, 'cant_war')) {
+    if (canabisWar.get(id, 'cant_war')) {
         player.notify('~r~Захват этой территории не доступен');
         return;
     }
@@ -166,25 +152,7 @@ gangWar.addWar = function(player, zoneId, count, armorIndex, gunIndex, timeIndex
         return;
     }
 
-    let ownerId = gangWar.get(id, 'fraction_id');
-    if (ownerId > 0) {
-        /*if (methods.getTimeStamp() < (gangWar.get(id, 'timestamp') + 244800)) {
-            let date = new Date(methods.parseInt(gangWar.get(id, 'timestamp') + 244800) * 1000);
-            player.notify('~r~Доступно каждые 3 дня (ООС)');
-            player.notify(`~r~А именно:~s~ ${date.getDate()}/${(date.getMonth() + 1)}/${date.getFullYear()}`);
-            return;
-        }*/
-    }
-    else {
-        let newOwnerId = user.get(player, 'fraction_id2');
-        let fractionName = fraction.getName(newOwnerId);
-        gangWar.save(zoneId, newOwnerId, fractionName);
-        gangWar.set(zoneId, 'canWar', false);
-        player.notify('~g~Вы захватили территорию, т.к. ей никто не владел');
-
-        gangWar.changeZoneColor(currentZone, newOwnerId);
-        return;
-    }
+    let ownerId = canabisWar.get(id, 'fraction_id');
 
     let idxToHour = [17, 17, 17, 17, 18, 18, 18, 18, 19, 19, 19, 19, 20, 20, 20, 20, 21, 21, 21, 21, 22, 22, 22, 22, 23, 23, 23, 23];
     let dateTime = new Date(); //TODO
@@ -198,7 +166,7 @@ gangWar.addWar = function(player, zoneId, count, armorIndex, gunIndex, timeIndex
         return;
     }
 
-    gangWar.set(id, 'timestamp', methods.getTimeStamp());
+    canabisWar.set(id, 'timestamp', methods.getTimeStamp());
 
     let gunLabel = ['Любое', 'Пистолеты', 'Дробовики', 'SMG', 'Автоматы'];
     let timeLabel = ['17:00', '17:15', '17:30', '17:45', '18:00', '18:15', '18:30', '18:45', '19:00', '19:15', '19:30', '19:45', '20:00', '20:15', '20:30', '20:45', '21:00', '21:15', '21:30', '21:45', '22:00', '22:15', '22:30', '22:45', '23:00'];
@@ -217,12 +185,12 @@ gangWar.addWar = function(player, zoneId, count, armorIndex, gunIndex, timeIndex
 
     warPool.set(timeIndex.toString(), data);
 
-    methods.notifyWithPictureToFraction2('Улица под угрозой', `ВНИМАНИЕ!`, `Захват ~y~#${zoneId}~s~ начнется в ${timeLabel[timeIndex]} (( ООС МСК ))`, 'CHAR_DEFAULT', ownerId);
-    methods.notifyWithPictureToFraction2('Война за улицу', `ВНИМАНИЕ!`, `Захват ~y~#${zoneId}~s~ начнется в ${timeLabel[timeIndex]} (( ООС МСК ))`, 'CHAR_DEFAULT', user.get(player, 'fraction_id2'));
+    methods.notifyWithPictureToCanabisWar('Улица под угрозой', `ВНИМАНИЕ!`, `Захват ~y~#${zoneId}~s~ начнется в ${timeLabel[timeIndex]} (( ООС МСК ))`, 'CHAR_DEFAULT', ownerId);
+    methods.notifyWithPictureToCanabisWar('Война за улицу', `ВНИМАНИЕ!`, `Захват ~y~#${zoneId}~s~ начнется в ${timeLabel[timeIndex]} (( ООС МСК ))`, 'CHAR_DEFAULT', user.get(player, 'fraction_id2'));
 };
 
-gangWar.dropTimer = function(player) {
-    methods.debug('gangWar.dropTimer');
+canabisWar.dropTimer = function(player) {
+    methods.debug('canabisWar.dropTimer');
     if (!user.isLogin(player) && !user.isAdmin(player))
         return;
 
@@ -238,7 +206,7 @@ gangWar.dropTimer = function(player) {
     player.notify('~b~Таймер сброшен');
 };
 
-gangWar.timer = function() {
+canabisWar.timer = function() {
     if (isStartTimer) {
         timerCounter--;
 
@@ -251,9 +219,9 @@ gangWar.timer = function() {
             if (user.isAdmin(p))
                 return;
             let fId = methods.parseInt(user.get(p, 'fraction_id2'));
-            if (fId === 0)
+            if (fId === 0 && !user.isUsmc(p) && !user.isAdmin(p))
                 return;
-            if (gangWar.isInZone(p, currentZone)) {
+            if (canabisWar.isInZone(p, currentZone)) {
                 if (p.health <= 0) return;
                 if (p.dimension === 0) return;
                 if (currentDef === fId)
@@ -269,7 +237,7 @@ gangWar.timer = function() {
                     timerCounter = timerCounter - 9;
             }
             catch (e) {
-                
+
             }
         }, 500);
 
@@ -279,16 +247,18 @@ gangWar.timer = function() {
             let zoneId = currentZone;
             let ownerId = defC;
             let fractionName = fraction.getName(ownerId);
-            gangWar.save(zoneId, ownerId, fractionName);
-            gangWar.set(zoneId, 'canWar', false);
+            canabisWar.save(zoneId, ownerId, fractionName);
+            canabisWar.set(zoneId, 'canWar', false);
 
-            methods.notifyWithPictureToFraction2('Досрочное завершение', `Улица #${currentZone}`, 'Территория под контролем ' + fractionName + '\nСвязи с нарушением количества людей в территории', 'CHAR_DEFAULT', currentDef);
-            methods.notifyWithPictureToFraction2('Досрочное завершение', `Улица #${currentZone}`, 'Территория под контролем ' + fractionName + '\nСвязи с нарушением количества людей в территории', 'CHAR_DEFAULT', currentAttack);
-            gangWar.changeZoneColor(currentZone, ownerId);
+            methods.notifyWithPictureToCanabisWar('Досрочное завершение', `Улица #${currentZone}`, 'Территория под контролем ' + fractionName + '\nСвязи с нарушением количества людей в территории', 'CHAR_DEFAULT', currentDef);
+            methods.notifyWithPictureToCanabisWar('Досрочное завершение', `Улица #${currentZone}`, 'Территория под контролем ' + fractionName + '\nСвязи с нарушением количества людей в территории', 'CHAR_DEFAULT', currentAttack);
+            canabisWar.changeZoneColor(currentZone, ownerId);
             mp.players.forEachInRange(warPos, 400, p => {
                 if (!user.isLogin(p))
                     return;
                 let fId = methods.parseInt(user.get(p, 'fraction_id2'));
+                if (fId === 0 && !user.isUsmc(p) && !user.isAdmin(p))
+                    return;
                 if (currentDef === fId || currentAttack === fId || user.isAdmin(p)) {
                     if (p.dimension > 0)
                         p.dimension = 0;
@@ -308,17 +278,19 @@ gangWar.timer = function() {
             let zoneId = currentZone;
             let ownerId = attC;
             let fractionName = fraction.getName(ownerId);
-            gangWar.save(zoneId, ownerId, fractionName);
-            gangWar.set(zoneId, 'canWar', false);
+            canabisWar.save(zoneId, ownerId, fractionName);
+            canabisWar.set(zoneId, 'canWar', false);
 
-            methods.notifyWithPictureToFraction2('Досрочное завершение', `Улица #${currentZone}`, 'Территория под контролем ' + fractionName + '\nСвязи с нарушением количества людей в территории', 'CHAR_DEFAULT', currentDef);
-            methods.notifyWithPictureToFraction2('Досрочное завершение', `Улица #${currentZone}`, 'Территория под контролем ' + fractionName + '\nСвязи с нарушением количества людей в территории', 'CHAR_DEFAULT', currentAttack);
+            methods.notifyWithPictureToCanabisWar('Досрочное завершение', `Улица #${currentZone}`, 'Территория под контролем ' + fractionName + '\nСвязи с нарушением количества людей в территории', 'CHAR_DEFAULT', currentDef);
+            methods.notifyWithPictureToCanabisWar('Досрочное завершение', `Улица #${currentZone}`, 'Территория под контролем ' + fractionName + '\nСвязи с нарушением количества людей в территории', 'CHAR_DEFAULT', currentAttack);
 
-            gangWar.changeZoneColor(currentZone, ownerId);
+            canabisWar.changeZoneColor(currentZone, ownerId);
             mp.players.forEachInRange(warPos, 400, p => {
                 if (!user.isLogin(p))
                     return;
                 let fId = methods.parseInt(user.get(p, 'fraction_id2'));
+                if (fId === 0 && !user.isUsmc(p) && !user.isAdmin(p))
+                    return;
                 if (currentDef === fId || currentAttack === fId || user.isAdmin(p)) {
                     if (p.dimension > 0)
                         p.dimension = 0;
@@ -337,17 +309,19 @@ gangWar.timer = function() {
                 if (!user.isLogin(p))
                     return;
                 let fId = methods.parseInt(user.get(p, 'fraction_id2'));
+                if (fId === 0 && !user.isUsmc(p) && !user.isAdmin(p))
+                    return;
                 try {
                     if (user.isAdmin(p) || currentDef === fId || currentAttack === fId)
-                        p.call('client:gangWar:sendArray', [JSON.stringify(gangWar.getZone(currentZone))]);
+                        p.call('client:canabisWar:sendArray', [JSON.stringify(canabisWar.getZone(currentZone))]);
                 }
                 catch (e) {}
-                /*if (!gangWar.isInZone(p, currentZone))
+                /*if (!canabisWar.isInZone(p, currentZone))
                     return;*/
                 if (currentDef === fId || currentAttack === fId || user.isAdmin(p)) {
                     if (!canArmor && p.armour > 0)
                         user.setArmour(p, 0);
-                    p.call("client:gangWar:sendInfo", [attC, defC, timerCounter]);
+                    p.call("client:canabisWar:sendInfo", [attC, defC, timerCounter]);
                     if (methods.distanceToPos(warPos, p.position) < 80)
                     {
                         if (p.dimension === 0)
@@ -363,19 +337,21 @@ gangWar.timer = function() {
                 isStartTimer = false;
 
                 let zoneId = currentZone;
-                let ownerId = gangWar.getMaxCounterFractionId(attC, defC);
+                let ownerId = canabisWar.getMaxCounterFractionId(attC, defC);
                 let fractionName = fraction.getName(ownerId);
-                gangWar.save(zoneId, ownerId, fractionName);
-                gangWar.set(zoneId, 'canWar', false);
+                canabisWar.save(zoneId, ownerId, fractionName);
+                canabisWar.set(zoneId, 'canWar', false);
 
-                methods.notifyWithPictureToFraction2('Итоги войны', `Улица #${currentZone}`, 'Территория под контролем ' + fractionName, 'CHAR_DEFAULT', currentDef);
-                methods.notifyWithPictureToFraction2('Итоги войны', `Улица #${currentZone}`, 'Территория под контролем ' + fractionName, 'CHAR_DEFAULT', currentAttack);
+                methods.notifyWithPictureToCanabisWar('Итоги войны', `Улица #${currentZone}`, 'Территория под контролем ' + fractionName, 'CHAR_DEFAULT', currentDef);
+                methods.notifyWithPictureToCanabisWar('Итоги войны', `Улица #${currentZone}`, 'Территория под контролем ' + fractionName, 'CHAR_DEFAULT', currentAttack);
 
-                gangWar.changeZoneColor(currentZone, ownerId);
+                canabisWar.changeZoneColor(currentZone, ownerId);
                 mp.players.forEachInRange(warPos, 400, p => {
                     if (!user.isLogin(p))
                         return;
                     let fId = methods.parseInt(user.get(p, 'fraction_id2'));
+                    if (fId === 0 && !user.isUsmc(p) && !user.isAdmin(p))
+                        return;
                     if (currentDef === fId || currentAttack === fId || user.isAdmin(p)) {
                         if (p.dimension > 0)
                             p.dimension = 0;
@@ -391,27 +367,32 @@ gangWar.timer = function() {
             }
         }
     }
-    setTimeout(gangWar.timer, 1000);
+    setTimeout(canabisWar.timer, 1000);
 };
 
-gangWar.timerMoney = function() {
+canabisWar.timerMoney = function() {
 
     let moneyToUser = new Map();
     for (let i = 1; i <= gangList.length; i++) {
-        if (gangWar.get(i, 'fraction_id') > 0) {
+        if (canabisWar.get(i, 'fraction_id') > 0) {
 
             let money = methods.getRandomInt(200, 300) / 1000;
-            let id = methods.parseInt(gangWar.get(i, 'fraction_id'));
+            let id = methods.parseInt(canabisWar.get(i, 'fraction_id'));
             fraction.setMoney(id, fraction.getMoney(id) + methods.parseFloat(money));
 
-            if (moneyToUser.has(gangWar.get(i, 'fraction_id').toString())) {
-                let cMoney = moneyToUser.get(gangWar.get(i, 'fraction_id').toString());
+            if (moneyToUser.has(canabisWar.get(i, 'fraction_id').toString())) {
+                let cMoney = moneyToUser.get(canabisWar.get(i, 'fraction_id').toString());
                 cMoney += methods.getRandomInt(10, 20) / 1000;
-                moneyToUser.set(gangWar.get(i, 'fraction_id').toString(), cMoney);
+                moneyToUser.set(canabisWar.get(i, 'fraction_id').toString(), cMoney);
             }
             else {
-                moneyToUser.set(gangWar.get(i, 'fraction_id').toString(), methods.getRandomInt(300, 600) / 1000);
+                moneyToUser.set(canabisWar.get(i, 'fraction_id').toString(), methods.getRandomInt(300, 600) / 1000);
             }
+        }
+        else {
+            let money = methods.getRandomInt(200, 300);
+            let id = coffer.getIdByFraction(4);
+            coffer.setMoney(id, coffer.getMoney(id) + methods.parseFloat(money));
         }
     }
 
@@ -431,7 +412,16 @@ gangWar.timerMoney = function() {
     });
 };
 
-gangWar.getMaxCounterFractionId = function(at, def) {
+canabisWar.getCountZones = function(fractionId = -1) {
+    let count = 0;
+    for (let i = 1; i <= gangList.length; i++) {
+        if (canabisWar.get(i, 'fraction_id') === fractionId)
+            count++;
+    }
+    return count;
+};
+
+canabisWar.getMaxCounterFractionId = function(at, def) {
     let maxValue = Math.max(at, def);
     if (def == maxValue)
         return currentDef;
@@ -440,54 +430,49 @@ gangWar.getMaxCounterFractionId = function(at, def) {
     return 0;
 };
 
-gangWar.set = function(id, key, val) {
+canabisWar.set = function(id, key, val) {
     Container.Data.Set(offset + methods.parseInt(id), keyPrefix + key, val);
 };
 
-gangWar.reset = function(id, key) {
+canabisWar.reset = function(id, key) {
     Container.Data.Reset(offset + methods.parseInt(id), keyPrefix + key);
 };
 
-gangWar.get = function(id, key) {
+canabisWar.get = function(id, key) {
     return Container.Data.Get(offset + methods.parseInt(id), keyPrefix + key);
 };
 
-gangWar.getData = function(id) {
+canabisWar.getData = function(id) {
     return Container.Data.GetAll(offset + methods.parseInt(id));
 };
 
-gangWar.has = function(id, key) {
+canabisWar.has = function(id, key) {
     return Container.Data.Has(offset + methods.parseInt(id), keyPrefix + key);
 };
 
-gangWar.getPos = function(id) {
-    let pos = new mp.Vector3(gangWar.get(id, 'x'), gangWar.get(id, 'y'), gangWar.get(id, 'z'));
+canabisWar.getPos = function(id) {
+    let pos = new mp.Vector3(canabisWar.get(id, 'x'), canabisWar.get(id, 'y'), canabisWar.get(id, 'z'));
     return pos;
 };
 
 mp.events.add("playerDeath", (player, reason, killer) => {
     if (!isStartTimer)
         return;
-    if (user.isLogin(killer) && user.isGang(player)) {
+    if (user.isLogin(killer) && (user.isMafia(player) || user.isUsmc(player))) {
         mp.players.forEachInRange(warPos, 400, p => {
-            if (!user.isGang(p) && !user.isAdmin(p))
+            if (!user.isUsmc(p) && !user.isMafia(p) && !user.isAdmin(p))
                 return;
-            if (gangWar.isInZone(p, currentZone)) {
+            if (canabisWar.isInZone(p, currentZone)) {
                 p.outputChatBoxNew(`[${chat.getTime()}] !{${chat.clBlue}}${user.getRpName(killer)} (${killer.id}) !{${chat.clWhite}}убил игрока !{${chat.clBlue}}${user.getRpName(player)} (${player.id})`);
             }
         });
     }
 });
 
-gangWar.isInZone = function(player, id) {
+canabisWar.isInZone = function(player, id) {
     try {
-        /*let list = [];
-        let json = JSON.parse(gangWar.get(id, 'on_map'));
-        json.forEach(item => {
-            list.push(new mp.Vector3(item[0], item[1], 0))
-        });*/
         let list = [];
-        gangWar.getZone(id).forEach(item => {
+        canabisWar.getZone(id).forEach(item => {
             list.push(new mp.Vector3(item[0], item[1], 0))
         });
         return methods.isInPoint(player.position, list);
@@ -497,13 +482,13 @@ gangWar.isInZone = function(player, id) {
     return false;
 };
 
-gangWar.getZone = function(id) {
+canabisWar.getZone = function(id) {
     try {
         let list = [];
-        list.push([gangWar.get(id, 'x') - zoneRadius, gangWar.get(id, 'y') - zoneRadius]);
-        list.push([gangWar.get(id, 'x') + zoneRadius, gangWar.get(id, 'y') - zoneRadius]);
-        list.push([gangWar.get(id, 'x') + zoneRadius, gangWar.get(id, 'y') + zoneRadius]);
-        list.push([gangWar.get(id, 'x') - zoneRadius, gangWar.get(id, 'y') + zoneRadius]);
+        list.push([canabisWar.get(id, 'x') - zoneRadius, canabisWar.get(id, 'y') - zoneRadius]);
+        list.push([canabisWar.get(id, 'x') + zoneRadius, canabisWar.get(id, 'y') - zoneRadius]);
+        list.push([canabisWar.get(id, 'x') + zoneRadius, canabisWar.get(id, 'y') + zoneRadius]);
+        list.push([canabisWar.get(id, 'x') - zoneRadius, canabisWar.get(id, 'y') + zoneRadius]);
         return list;
     }
     catch (e) {
@@ -511,13 +496,13 @@ gangWar.getZone = function(id) {
     return [];
 };
 
-gangWar.changeZoneColor = function(id, fractionId) {
-    let _warPos = gangWar.getPos(id);
+canabisWar.changeZoneColor = function(id, fractionId) {
+    let _warPos = canabisWar.getPos(id);
     mp.players.forEach(p => {
         try {
             if (!user.isLogin(p))
                 return;
-            user.createBlipByRadius(p, 1000 + id, _warPos.x, _warPos.y, _warPos.z, 50, 5, enums.fractionColor[fractionId]);
+            user.createBlipByRadius(p, blipOffset + id, _warPos.x, _warPos.y, _warPos.z, 50, 5, enums.fractionColor[fractionId]);
         }
         catch (e) {}
     });

@@ -23,6 +23,11 @@ mp.events.add('entityStreamIn', (entity) => {
         let remotePlayer = entity;
         if (mp.players.exists(remotePlayer)) {
 
+            if (remotePlayer.getVariable('blockDeath')) {
+                remotePlayer.blip = mp.game.invoke(methods.ADD_BLIP_FOR_ENTITY, remotePlayer.handle);
+                mp.game.invoke(methods.SET_BLIP_SPRITE, 1);
+            }
+
             remotePlayer.setVisible(remotePlayer.getAlpha() > 0, false);
 
             for(let i = 0; i < 8; i++) {
@@ -48,6 +53,22 @@ mp.events.add('entityStreamIn', (entity) => {
             catch (e) {
                 methods.debug(e);
             }
+        }
+    }
+});
+
+mp.events.add('entityStreamOut', (entity) => {
+    if (entity.type === 'player') {
+        let remotePlayer = entity;
+        if (mp.players.exists(remotePlayer)) {
+            try {
+                if (remotePlayer.blip)
+                {
+                    mp.game.ui.removeBlip(methods.parseInt(remotePlayer.blip));
+                    remotePlayer.blip = null;
+                }
+            }
+            catch (e) {}
         }
     }
 });

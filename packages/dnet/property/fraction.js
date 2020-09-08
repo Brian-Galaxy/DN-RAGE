@@ -9,6 +9,7 @@ let inventory = require('../inventory');
 
 let weather = require('../managers/weather');
 let dispatcher = require('../managers/dispatcher');
+let canabisWar = require('../managers/canabisWar');
 
 let vehicles = require('./vehicles');
 let stocks = require('./stocks');
@@ -884,6 +885,53 @@ fraction.spawnNearBank = function(player, type = 0) {
     }, posVeh, 0, veh);
 };
 
+
+fraction.spawnNearCanabis = function(player) {
+
+    if (!user.isLogin(player))
+        return;
+
+    /*let posVeh = fraction.getNearSpawnGarage(player.position);
+    if (type === 0 || type === 99)
+        posVeh = fraction.getRandomSpawnGarage();*/
+
+    let countZones = canabisWar.getCountZones(user.get(player,'fraction_id2'));
+    if (countZones === 0) {
+        player.notify('~g~У вас нет захваченых территоирй');
+        return;
+    }
+
+    let posVeh = fraction.getRandomSpawnGarage();
+
+    user.setWaypoint(player, posVeh.x, posVeh.y);
+    player.notify('~g~Метка на транспорт была установлена');
+
+    let vehList = ['Emperor', 'Emperor2', 'Oracle', 'Bodhi2', 'Blista2', 'Stratum', 'Primo', 'Minivan', 'Intruder', 'RancherXL'];
+    let veh = vehList[methods.getRandomInt(0, vehList.length)];
+
+    vehicles.spawnCarCb(veh => {
+
+        if (!vehicles.exists(veh))
+            return;
+
+        try {
+            let color = methods.getRandomInt(0, 160);
+            if (type === 99)
+                color = 0;
+
+            veh.locked = true;
+            veh.setColor(color, color);
+            veh.windowTint = 1;
+
+            inventory.addAmmoItem(3, countZones * 2, inventory.types.Vehicle, mp.joaat(veh.numberPlate), 1, 0, "{}");
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+
+    }, posVeh, 0, veh);
+};
+
 fraction.createCargoMafiaWar = function() {
 
     if (isCargoMafia)
@@ -1472,10 +1520,10 @@ fraction.getShopGang = function(player) {
         return;
     }
 
-    if (weather.getHour() < 23 && weather.getHour() > 4) {
+    /*if (weather.getHour() < 23 && weather.getHour() > 4) {
         player.notify('~r~Доступно только с 23 до 4 утра IC времени');
         return;
-    }
+    }*/
 
     let dateTime = new Date();
     if (dateTime.getHours() < 14) {
@@ -1661,6 +1709,8 @@ fraction.reset = function(id, key, val) {
 };
 
 fraction.getName = function(id) {
+    if (id === 0)
+        return 'Государство';
     return fraction.get(id, 'name');
 };
 

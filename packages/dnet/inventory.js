@@ -1488,17 +1488,15 @@ inventory.useItem = function(player, id, itemId, isTargetable = false) {
                         return;
                     }
                     chat.sendMeCommand(player, "употребил марихуану");
-                    if (player.health <= 90)
-                        user.setHealth(player, player.health + 10);
-                    else
-                        user.setHealth(player, 100);
+                    user.playAnimation(player, "amb@world_human_smoking_pot@male@base", "base", 48);
+                    user.setHealth(player, 100);
                     inventory.deleteItem(id);
 
                     user.set(player, 'useHeal', true);
                     setTimeout(function () {
                         if (user.isLogin(player))
                             user.reset(player, 'useHeal');
-                    }, 5000);
+                    }, 10000);
                     break;
                 }
                 case 4:
@@ -2143,7 +2141,7 @@ inventory.useItem = function(player, id, itemId, isTargetable = false) {
                     setTimeout(function () {
                         if (user.isLogin(player))
                             user.reset(player, 'useHeal');
-                    }, 20000);
+                    }, 30000);
                     break;
                 }
                 case 216:
@@ -2169,12 +2167,13 @@ inventory.useItem = function(player, id, itemId, isTargetable = false) {
                         user.setHealth(player, player.health + 20);
                     inventory.deleteItem(id);
                     user.playAnimation(player, 'oddjobs@bailbond_hobotwitchy', 'base', 48);
+
                     user.set(player, 'useHeal', true);
 
                     setTimeout(function () {
                         if (user.isLogin(player))
                             user.reset(player, 'useHeal');
-                    }, 20000);
+                    }, 30000);
                     break;
                 }
                 case 278:

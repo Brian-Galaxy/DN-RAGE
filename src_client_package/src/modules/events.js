@@ -852,6 +852,7 @@ mp.events.add('client:gangWar:sendInfo', (atC, defC, timerCounter) => {
 
         gangWarTimeout = setTimeout(function () {
             ui.hideGangInfo();
+            gangWarTimeout = null;
         }, 3000);
     }
     catch (e) {
@@ -1637,7 +1638,7 @@ mp.events.add('client:managers:weather:syncDateTime', (min, hour, day, month, ye
     }
 });
 
-mp.events.add('client:managers:weather:syncRealTime', (hour) => {
+mp.events.add('client:managers:weather:syncRealHour', (hour) => {
     try {
         //methods.debug('Event: client:user:syncRealTime', hour);
         weather.syncRealHour(hour);
@@ -1811,10 +1812,12 @@ mp.events.add('client:user:flashBlipByRadius', (id, flash) => {
 });
 
 mp.events.add('client:addGangZoneBlip', (json) => {
+
     methods.removeAllBlipById(5);
     methods.removeAllBlipById(9);
     methods.displayTypeAllBlipById(40, 8);
     methods.displayTypeAllBlipById(492, 8);
+
     setTimeout(function () {
         try {
             JSON.parse(json).forEach(item => {
@@ -1827,10 +1830,18 @@ mp.events.add('client:addGangZoneBlip', (json) => {
     }, 1000);
 });
 
-mp.events.add('client:removeGangZoneBlip', (json) => {
-    JSON.parse(json).forEach(item => {
-        jobPoint.deleteBlipByRadius(1000 + item.id);
-    })
+mp.events.add('client:addCanabisZoneBlip', (json) => {
+
+    setTimeout(function () {
+        try {
+            JSON.parse(json).forEach(item => {
+                jobPoint.createBlipByRadius(10000 + item.id, new mp.Vector3(item.x, item.y, item.z), 50, 5, enums.fractionColor[item.fid], false);
+            })
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    }, 1000);
 });
 
 mp.events.add('client:user:createBlip1', (x, y, z, blipId, blipColor, route) => {

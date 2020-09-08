@@ -826,21 +826,25 @@ enums.jobList = [
 ];
 
 enums.fractionColor = [
-    0,
+    16, //USMC
     1,
-    77,
+    77, //Mara
     3,
     4,
-    83,
+    83, //Ballas
     6,
     7,
     8,
     9,
-    59,
+    59, //Vagos
     11,
-    60,
+    60, //Bloods
     13,
-    69,
+    69, //Families
+    15,
+    40, //Russian Mafia
+    17, //LCN
+    4, //Yza
 ];
 
 enums.fishList = [

@@ -42,6 +42,7 @@ let yachts = require('./property/yachts');
 let weather = require('./managers/weather');
 let pickups = require('./managers/pickups');
 let gangWar = require('./managers/gangWar');
+let canabisWar = require('./managers/canabisWar');
 let gangZone = require('./managers/gangZone');
 let mafiaWar = require('./managers/mafiaWar');
 let timer = require('./managers/timer');
@@ -79,6 +80,7 @@ function init() {
         stocks.loadAll();
         fraction.loadAll();
         gangWar.loadAll();
+        canabisWar.loadAll();
         mafiaWar.loadAll();
         timer.loadAll();
         tax.loadAll();

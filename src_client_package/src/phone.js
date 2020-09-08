@@ -1183,6 +1183,54 @@ phone.showAppFraction2 = async function() {
         menu.items.push(titleMenu);
     }
 
+    if (fData.get('is_mafia')) {
+        let titleMenu = {
+            title: 'Война за поля',
+            umenu: [
+                {
+                    title: "Список территорий",
+                    text: "",
+                    type: 1,
+                    clickable: true,
+                    params: { name: "showCanabisList" }
+                },
+                {
+                    title: "Список захватов",
+                    text: "",
+                    type: 1,
+                    clickable: true,
+                    params: { name: "showCanabisWarList" }
+                },
+            ],
+        };
+        if (user.isLeader2() || user.isSubLeader2()) {
+
+            if (await fraction.has(user.getCache('fraction_id2'), 'orderDrugMarg')) {
+                titleMenu.umenu.push(
+                    {
+                        title: "Получить транспорт с марихуанной",
+                        text: "Вы уже получали транспорт сегодня",
+                        type: 1,
+                        clickable: true,
+                        params: { name: "none" }
+                    }
+                );
+            }
+            else {
+                titleMenu.umenu.push(
+                    {
+                        title: "Получить транспорт с марихуанной",
+                        text: "За каждую захваченную территорию, дается 2гр марихуаны. Доступно только до 17:00",
+                        type: 1,
+                        clickable: true,
+                        params: { name: "getMargCar" }
+                    }
+                );
+            }
+        }
+        menu.items.push(titleMenu);
+    }
+
     if (user.isLeader2() || user.isSubLeader2()) {
         if (fData.get('is_shop')) {
             let titleMenu = {
@@ -1405,6 +1453,29 @@ phone.showAppFraction = function() {
                     params: { name: "destroyVehicle" }
                 }
             );
+        }
+
+        if (user.isUsmc()) {
+            let titleMenu = {
+                title: 'Война за поля',
+                umenu: [
+                    {
+                        title: "Список территорий",
+                        text: "",
+                        type: 1,
+                        clickable: true,
+                        params: { name: "showCanabisList" }
+                    },
+                    {
+                        title: "Список захватов",
+                        text: "",
+                        type: 1,
+                        clickable: true,
+                        params: { name: "showCanabisWarList" }
+                    },
+                ],
+            };
+            menu.items.push(titleMenu);
         }
 
         if (user.isSapd() || user.isSheriff() || user.isFib()) {
@@ -5002,6 +5073,14 @@ phone.callBackButton = async function(menu, id, ...args) {
             else if (params.name == 'codeDep') {
                 dispatcher.codeDep(params.code, user.getCache('name'));
             }
+            else if (params.name == 'showCanabisList') {
+                mp.events.callRemote('server:phone:showCanabisList');
+                phone.showLoad();
+            }
+            else if (params.name == 'showCanabisWarList') {
+                mp.events.callRemote('server:phone:showCanabisWarList');
+                phone.showLoad();
+            }
         }
         if (menu == 'uvehicle') {
             if (params.name == 'respawn')
@@ -5146,6 +5225,14 @@ phone.callBackButton = async function(menu, id, ...args) {
                 mp.events.callRemote('server:phone:showGangWarList');
                 phone.showLoad();
             }
+            else if (params.name == 'showCanabisList') {
+                mp.events.callRemote('server:phone:showCanabisList');
+                phone.showLoad();
+            }
+            else if (params.name == 'showCanabisWarList') {
+                mp.events.callRemote('server:phone:showCanabisWarList');
+                phone.showLoad();
+            }
             else if (params.name == 'getShopGang') {
                 mp.events.callRemote('server:phone:getShopGang');
                 phone.showLoad();
@@ -5154,6 +5241,12 @@ phone.callBackButton = async function(menu, id, ...args) {
                 //mp.events.callRemote('server:phone:attackStreet', params.zone);
                 phone.hide();
                 menuList.showGangZoneAttackMenu(await Container.Data.GetAll(600000 + methods.parseInt(params.zone)))
+                //setTimeout(phone.showAppFraction2, 500);
+            }
+            else if (params.name == 'attackCanabis') {
+                //mp.events.callRemote('server:phone:attackStreet', params.zone);
+                phone.hide();
+                menuList.showCanabisZoneAttackMenu(await Container.Data.GetAll(600000 + methods.parseInt(params.zone)))
                 //setTimeout(phone.showAppFraction2, 500);
             }
             else if (params.name == 'getPos') {
@@ -5297,6 +5390,30 @@ phone.callBackButton = async function(menu, id, ...args) {
                 }
                 else {
                     mp.game.ui.notifications.show(`~r~Доступно только для лидера или замов`);
+                }
+            }
+            else if (params.name == 'getMargCar') {
+
+                let orderDrug = await fraction.has(user.getCache('fraction_id2'), 'orderDrugMarg');
+                if (orderDrug) {
+                    mp.game.ui.notifications.show(`~r~Вы уже получали фургон сегодня`);
+                    return;
+                }
+
+                if (weather.getRealHour() >= 6 && weather.getRealHour() < 17) {
+                    if (user.isLeader2() || user.isSubLeader2()) {
+                        mp.events.callRemote('server:fraction:getDrugCanabisSpeedo');
+                        fraction.set(user.getCache('fraction_id2'), 'orderDrugMarg', true);
+                        phone.showLoad();
+                        setTimeout(phone.showAppFraction2, 500);
+                    }
+                    else {
+                        mp.game.ui.notifications.show(`~r~Доступно только для лидера или замов`);
+                    }
+                }
+                else {
+
+                    mp.game.ui.notifications.show(`~r~Доступно с 6:00 и до 17:00`);
                 }
             }
             else if (params.name == 'getLamar') {

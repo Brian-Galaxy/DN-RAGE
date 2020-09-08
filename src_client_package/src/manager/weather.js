@@ -195,7 +195,7 @@ weather.getRealTime = function() {
     return RealTime;
 };
 
-weather.getRealTime = function() {
+weather.getRealHour = function() {
     return RealHour;
 };
 

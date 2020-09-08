@@ -650,6 +650,8 @@ methods.notifyWithPictureToFraction = function(title, sender, message, notifPic,
 };
 
 methods.notifyWithPictureToFraction2 = function(title, sender, message, notifPic = 'CHAR_DEFAULT', fractionId = 0, icon = 0, flashing = false, textColor = -1, bgColor = -1, flashColor = [77, 77, 77, 200]) {
+    if (fractionId === 0)
+        return;
     mp.players.forEach(function (p) {
         if (user.isLogin(p) && user.get(p, 'fraction_id2') == fractionId) {
             try {
@@ -660,6 +662,13 @@ methods.notifyWithPictureToFraction2 = function(title, sender, message, notifPic
             }
         }
     });
+};
+
+methods.notifyWithPictureToCanabisWar = function(title, sender, message, notifPic = 'CHAR_DEFAULT', fractionId = 0, icon = 0, flashing = false, textColor = -1, bgColor = -1, flashColor = [77, 77, 77, 200]) {
+    if (fractionId === 0)
+        methods.notifyWithPictureToFraction(title, sender, message, notifPic, 4);
+    else
+        methods.notifyWithPictureToFraction2(title, sender, message, notifPic, fractionId);
 };
 
 methods.notifyWithPictureToFractions2 = function(title, sender, message, notifPic = 'CHAR_DEFAULT', icon = 0, flashing = false, textColor = -1, bgColor = -1, flashColor = [77, 77, 77, 200]) {

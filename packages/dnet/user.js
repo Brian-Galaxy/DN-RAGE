@@ -13,6 +13,7 @@ let wpSync = require('./managers/wpSync');
 let weather = require('./managers/weather');
 let discord = require('./managers/discord');
 let gangWar = require('./managers/gangWar');
+let canabisWar = require('./managers/canabisWar');
 
 let vehicles = require('./property/vehicles');
 let houses = require('./property/houses');
@@ -467,14 +468,15 @@ user.loadUser = function(player, name, spawn = 'Стандарт') {
 
                 methods.loadDeleteObject(player);
 
-                user.setArmour(player, user.get(player, 'ap'));
+                inventory.updateItemsEquipByItemId(252, user.getId(player), 1, 0);
+
+                //user.setArmour(player, user.get(player, 'ap'));
                 user.setHealth(player, user.get(player, 'hp'));
 
                 setTimeout(function () {
                     try {
-                        user.setArmour(player, user.get(player, 'ap'));
+                        //user.setArmour(player, user.get(player, 'ap'));
                         user.setHealth(player, user.get(player, 'hp'));
-
                         user.setClipset(player, user.get(player, 'clipset'));
                     }
                     catch (e) {
@@ -539,6 +541,7 @@ user.loadUser = function(player, name, spawn = 'Стандарт') {
 
                 player.call('client:events:loginUser:success');
                 player.call('client:addGangZoneBlip', [JSON.stringify(gangWar.getZoneList())]);
+                player.call('client:addCanabisZoneBlip', [JSON.stringify(canabisWar.getZoneList())]);
                 //user.setOnlineStatus(player, 1);
             }, 600);
 

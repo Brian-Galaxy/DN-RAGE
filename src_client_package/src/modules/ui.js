@@ -333,7 +333,7 @@ ui.updateValues = function() {
                 mp.events.call('client:setNewMaxSpeedServer', 0);
             }
 
-            /*isYellowZone = weather.getHour() >= 6 && weather.getHour() < 22 && enums.zoneYellowList.indexOf(mp.game.zone.getNameOfZone(mp.players.local.position.x, mp.players.local.position.y, mp.players.local.position.z)) >= 0;*/
+            isYellowZone = weather.getHour() >= 6 && weather.getHour() < 22 && enums.zoneYellowList.indexOf(mp.game.zone.getNameOfZone(mp.players.local.position.x, mp.players.local.position.y, mp.players.local.position.z)) >= 0;
 
             let data = {
                 type: 'updateValues',
@@ -342,7 +342,7 @@ ui.updateValues = function() {
                 date: weather.getFullRpDate(),
                 time: weather.getFullRpTime(),
                 showGreen: isGreenZone,
-                showYellow: isYellowZone,
+                showYellow: false,
                 background: user.getCache('s_hud_bg'),
             };
             ui.callCef('hudw', JSON.stringify(data));

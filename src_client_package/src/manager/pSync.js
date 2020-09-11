@@ -23,10 +23,10 @@ mp.events.add('entityStreamIn', (entity) => {
         let remotePlayer = entity;
         if (mp.players.exists(remotePlayer)) {
 
-            if (remotePlayer.getVariable('blockDeath')) {
+            /*if (remotePlayer.getVariable('blockDeath')) {
                 remotePlayer.blip = mp.game.invoke(methods.ADD_BLIP_FOR_ENTITY, remotePlayer.handle);
                 mp.game.invoke(methods.SET_BLIP_SPRITE, 1);
-            }
+            }*/
 
             remotePlayer.setVisible(remotePlayer.getAlpha() > 0, false);
 
@@ -57,7 +57,7 @@ mp.events.add('entityStreamIn', (entity) => {
     }
 });
 
-mp.events.add('entityStreamOut', (entity) => {
+/*mp.events.add('entityStreamOut', (entity) => {
     if (entity.type === 'player') {
         let remotePlayer = entity;
         if (mp.players.exists(remotePlayer)) {
@@ -71,7 +71,7 @@ mp.events.add('entityStreamOut', (entity) => {
             catch (e) {}
         }
     }
-});
+});*/
 
 mp.events.add('client:syncComponentVariation', (playerId, component, drawableId, textureId) => {
     try {

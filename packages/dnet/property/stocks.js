@@ -958,7 +958,7 @@ stocks.sell = function (player) {
     if (!user.isLogin(player))
         return;
 
-    let stockId = player.dimension - enums.offsets.stock;
+    let stockId = user.get(player, 'stock_id');
 
     let hInfo = stocks.getData(stockId);
 

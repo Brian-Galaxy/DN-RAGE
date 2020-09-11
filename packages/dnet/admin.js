@@ -369,6 +369,8 @@ admin.untimer = function(player, type, id, reason) {
             chat.sendToAll(`Администратор ${user.getRpName(player)}`, `${user.getRpName(target)}!{${chat.clRed}} было снят таймаут на получения оружия с причиной!{${chat.clWhite}} ${reason}`, chat.clRed);
             discord.sendDeadList(user.getRpName(target), 'Был снят таймаут на получения оружия', reason, user.getRpName(player), discord.socialClub + player.socialClub.toLowerCase(), "#FFEB3B");
             user.set(target, 'online_lspd', 0);
+
+            methods.saveLog('log_admin', ['name', 'type', 'do'], [`${user.getRpName(player)}`, 'USER_REMOVE_TIMEOUT_LSPD', `${user.getRpName(target)}`]);
         }
         else {
             let target = user.getPlayerById(id);
@@ -379,6 +381,8 @@ admin.untimer = function(player, type, id, reason) {
             chat.sendToAll(`Администратор ${user.getRpName(player)}`, `${user.getRpName(target)}!{${chat.clRed}} было снят таймаут на получения оружия с причиной!{${chat.clWhite}} ${reason}`, chat.clRed);
             discord.sendDeadList(user.getRpName(target), 'Был снят таймаут на получения оружия', reason, user.getRpName(player), discord.socialClub + player.socialClub.toLowerCase(), "#FFEB3B");
             user.set(target, 'online_lspd', 0);
+
+            methods.saveLog('log_admin', ['name', 'type', 'do'], [`${user.getRpName(player)}`, 'USER_REMOVE_TIMEOUT_LSPD', `${user.getRpName(target)}`]);
         }
     }
     catch (e) {
@@ -480,6 +484,8 @@ admin.setArmorById = function(player, type, id, num) {
 
             target.notify(`~b~Администратор ${user.getRpName(player)} выдал ${num}% брони ${user.getRpName(target)}`);
             player.notify(`~b~Администратор ${user.getRpName(player)} выдал ${num}% брони ${user.getRpName(target)}`);
+
+            methods.saveLog('log_admin', ['name', 'type', 'do'], [`${user.getRpName(player)}`, 'USER_ARMOUR', `${user.getRpName(target)} | ${num}`]);
         }
         else {
             let target = user.getPlayerById(id);
@@ -492,6 +498,8 @@ admin.setArmorById = function(player, type, id, num) {
 
             target.notify(`~b~Администратор ${user.getRpName(player)} выдал ${num}% брони ${user.getRpName(target)}`);
             player.notify(`~b~Администратор ${user.getRpName(player)} выдал ${num}% брони ${user.getRpName(target)}`);
+
+            methods.saveLog('log_admin', ['name', 'type', 'do'], [`${user.getRpName(player)}`, 'USER_ARMOUR', `${user.getRpName(target)} | ${num}`]);
         }
     }
     catch (e) {
@@ -517,6 +525,8 @@ admin.setHpById = function(player, type, id, num) {
 
             target.notify(`~b~Администратор ${user.getRpName(player)} выдал ${num}% здоровья ${user.getRpName(target)}`);
             player.notify(`~b~Администратор ${user.getRpName(player)} выдал ${num}% здоровья ${user.getRpName(target)}`);
+
+            methods.saveLog('log_admin', ['name', 'type', 'do'], [`${user.getRpName(player)}`, 'USER_HEALTH', `${user.getRpName(target)} | ${num}`]);
         }
         else {
             let target = user.getPlayerById(id);
@@ -529,6 +539,8 @@ admin.setHpById = function(player, type, id, num) {
 
             target.notify(`~b~Администратор ${user.getRpName(player)} выдал ${num}% здоровья ${user.getRpName(target)}`);
             player.notify(`~b~Администратор ${user.getRpName(player)} выдал ${num}% здоровья ${user.getRpName(target)}`);
+
+            methods.saveLog('log_admin', ['name', 'type', 'do'], [`${user.getRpName(player)}`, 'USER_HEALTH', `${user.getRpName(target)} | ${num}`]);
         }
     }
     catch (e) {
@@ -557,6 +569,8 @@ admin.setSkinById = function(player, type, id, skin) {
 
             target.notify(`~b~Администратор ${user.getRpName(player)} выдал скин ${user.getRpName(target)}`);
             player.notify(`~b~Администратор ${user.getRpName(player)} выдал скин ${user.getRpName(target)}`);
+
+            methods.saveLog('log_admin', ['name', 'type', 'do'], [`${user.getRpName(player)}`, 'USER_SKIN', `${user.getRpName(target)} | ${skin}`]);
         }
         else {
             let target = user.getPlayerById(id);
@@ -572,6 +586,8 @@ admin.setSkinById = function(player, type, id, skin) {
 
             target.notify(`~b~Администратор ${user.getRpName(player)} выдал скин ${user.getRpName(target)}`);
             player.notify(`~b~Администратор ${user.getRpName(player)} выдал скин ${user.getRpName(target)}`);
+
+            methods.saveLog('log_admin', ['name', 'type', 'do'], [`${user.getRpName(player)}`, 'USER_SKIN', `${user.getRpName(target)} | ${skin}`]);
         }
     }
     catch (e) {
@@ -603,6 +619,8 @@ admin.resetSkinById = function(player, type, id) {
 
             target.notify(`~b~Администратор ${user.getRpName(player)} выдал скин ${user.getRpName(target)}`);
             player.notify(`~b~Администратор ${user.getRpName(player)} выдал скин ${user.getRpName(target)}`);
+
+            methods.saveLog('log_admin', ['name', 'type', 'do'], [`${user.getRpName(player)}`, 'USER_RESET_SKIN', `${user.getRpName(target)}`]);
         }
         else {
             let target = user.getPlayerById(id);
@@ -621,6 +639,8 @@ admin.resetSkinById = function(player, type, id) {
 
             target.notify(`~b~Администратор ${user.getRpName(player)} выдал скин ${user.getRpName(target)}`);
             player.notify(`~b~Администратор ${user.getRpName(player)} выдал скин ${user.getRpName(target)}`);
+
+            methods.saveLog('log_admin', ['name', 'type', 'do'], [`${user.getRpName(player)}`, 'USER_RESET_SKIN', `${user.getRpName(target)}`]);
         }
     }
     catch (e) {
@@ -646,6 +666,8 @@ admin.adrenalineById = function(player, type, id) {
 
             target.notify(`~b~Администратор ${user.getRpName(player)} использовал адреналин на ${user.getRpName(target)}`);
             player.notify(`~b~Администратор ${user.getRpName(player)} использовал адреналин на ${user.getRpName(target)}`);
+
+            methods.saveLog('log_admin', ['name', 'type', 'do'], [`${user.getRpName(player)}`, 'USER_ADRENALINE', `${user.getRpName(target)}`]);
         }
         else {
             let target = user.getPlayerById(id);
@@ -658,6 +680,8 @@ admin.adrenalineById = function(player, type, id) {
 
             target.notify(`~b~Администратор ${user.getRpName(player)} использовал адреналин на ${user.getRpName(target)}`);
             player.notify(`~b~Администратор ${user.getRpName(player)} использовал адреналин на ${user.getRpName(target)}`);
+
+            methods.saveLog('log_admin', ['name', 'type', 'do'], [`${user.getRpName(player)}`, 'USER_ADRENALINE', `${user.getRpName(target)}`]);
         }
     }
     catch (e) {
@@ -683,6 +707,8 @@ admin.freeHospById = function(player, type, id) {
 
             target.notify(`~b~Администратор ${user.getRpName(player)} выпустил из больницы ${user.getRpName(target)}`);
             player.notify(`~b~Администратор ${user.getRpName(player)} выпустил из больницы ${user.getRpName(target)}`);
+
+            methods.saveLog('log_admin', ['name', 'type', 'do'], [`${user.getRpName(player)}`, 'USER_FREE_HOSP', `${user.getRpName(target)}`]);
         }
         else {
             let target = user.getPlayerById(id);
@@ -695,6 +721,8 @@ admin.freeHospById = function(player, type, id) {
 
             target.notify(`~b~Администратор ${user.getRpName(player)} выпустил из больницы ${user.getRpName(target)}`);
             player.notify(`~b~Администратор ${user.getRpName(player)} выпустил из больницы ${user.getRpName(target)}`);
+
+            methods.saveLog('log_admin', ['name', 'type', 'do'], [`${user.getRpName(player)}`, 'USER_FREE_HOSP', `${user.getRpName(target)}`]);
         }
     }
     catch (e) {
@@ -716,11 +744,14 @@ admin.tpToAdmin = function(player, type, id) {
                 return;
             }
 
-            user.teleport(target, player.position.x, player.position.y, player.position.z);
+            let pos = player.position;
+            user.teleport(target, pos.x, pos.y, pos.z);
             target.dimension = player.dimension;
 
             target.notify(`~b~Администратор ${user.getRpName(player)} телепортировал игрока ${user.getRpName(target)} к себе`);
             player.notify(`~b~Администратор ${user.getRpName(player)} телепортировал игрока ${user.getRpName(target)} к себе`);
+
+            methods.saveLog('log_admin', ['name', 'type', 'do'], [`${user.getRpName(player)}`, 'USER_TP_TO_ADMIN', `${user.getRpName(target)} | ${methods.parseInt(pos.x)} | ${methods.parseInt(pos.y)} | ${methods.parseInt(pos.z)} | DIMENSION: ${player.dimension}`]);
         }
         else {
             let target = user.getPlayerById(id);
@@ -729,11 +760,14 @@ admin.tpToAdmin = function(player, type, id) {
                 return;
             }
 
-            user.teleport(target, player.position.x, player.position.y, player.position.z);
+            let pos = player.position;
+            user.teleport(target, pos.x, pos.y, pos.z);
             target.dimension = player.dimension;
 
             target.notify(`~b~Администратор ${user.getRpName(player)} телепортировал игрока ${user.getRpName(target)} к себе`);
             player.notify(`~b~Администратор ${user.getRpName(player)} телепортировал игрока ${user.getRpName(target)} к себе`);
+
+            methods.saveLog('log_admin', ['name', 'type', 'do'], [`${user.getRpName(player)}`, 'USER_TP_TO_ADMIN', `${user.getRpName(target)} | ${methods.parseInt(pos.x)} | ${methods.parseInt(pos.y)} | ${methods.parseInt(pos.z)} | DIMENSION: ${player.dimension}`]);
         }
     }
     catch (e) {
@@ -821,7 +855,9 @@ admin.inviteMp = function(player) {
             if (user.isLogin(p) && !user.isCuff(p) && !user.isTie(p)) {
                 p.call('client:menuList:showInviteMpMenu', [pos.x, pos.y, pos.z]);
             }
-        })
+        });
+
+        methods.saveLog('log_admin', ['name', 'type', 'do'], [`${user.getRpName(player)}`, 'INVITE_MP', ``]);
     }
     catch (e) {
         methods.debug(e);

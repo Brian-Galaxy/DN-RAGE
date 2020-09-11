@@ -1,6 +1,4 @@
-import Container from '../modules/data';
 import methods from '../modules/methods';
-import jobPoint from '../manager/jobPoint';
 import user from '../user';
 
 let wheel = {};

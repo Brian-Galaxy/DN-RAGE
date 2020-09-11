@@ -4,10 +4,11 @@ let Container = require('../modules/data');
 let chat = require('../modules/chat');
 
 let dispatcher = require('./dispatcher');
+let weather = require('./weather');
 
 let user = require('../user');
 let enums = require('../enums');
-let weather = require('./weather');
+let coffer = require('../coffer');
 
 let fraction = require('../property/fraction');
 
@@ -138,15 +139,6 @@ canabisWar.addWar = function(player, zoneId, count, armorIndex, gunIndex, timeIn
         player.notify('~r~Захват этой территории не доступен');
         return;
     }
-    if (user.get(player, 'fraction_id2') < 1) {
-        player.notify('~r~Вы не состоите в организации');
-        return;
-    }
-    if (!user.isLeader2(player) && !user.isSubLeader2(player)) {
-        player.notify('~r~Начать захват может только лидер или заместитель лидера');
-        return;
-    }
-
     if (warPool.has(timeIndex.toString())) {
         player.notify('~r~Данное время занято другими людьми, выберите другое');
         return;
@@ -313,7 +305,7 @@ canabisWar.timer = function() {
                     return;
                 try {
                     if (user.isAdmin(p) || currentDef === fId || currentAttack === fId)
-                        p.call('client:canabisWar:sendArray', [JSON.stringify(canabisWar.getZone(currentZone))]);
+                        p.call('client:gangWar:sendArray', [JSON.stringify(canabisWar.getZone(currentZone))]);
                 }
                 catch (e) {}
                 /*if (!canabisWar.isInZone(p, currentZone))
@@ -321,7 +313,7 @@ canabisWar.timer = function() {
                 if (currentDef === fId || currentAttack === fId || user.isAdmin(p)) {
                     if (!canArmor && p.armour > 0)
                         user.setArmour(p, 0);
-                    p.call("client:canabisWar:sendInfo", [attC, defC, timerCounter]);
+                    p.call("client:gangWar:sendInfo", [attC, defC, timerCounter]);
                     if (methods.distanceToPos(warPos, p.position) < 80)
                     {
                         if (p.dimension === 0)

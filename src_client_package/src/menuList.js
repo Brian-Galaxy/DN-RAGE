@@ -11424,17 +11424,24 @@ menuList.showAdminVehicleMenu = function() {
                 return;
             //methods.saveLog('AdminSpawnVehicle', `${user.getCache('rp_name')} - ${vName}`);
             mp.events.callRemote('server:admin:spawnVeh', vName);
+
+            let pos = mp.players.local.position;
+            methods.saveLog('log_admin', ['name', 'type', 'do'], [`${user.getCache('name')}`, 'VEH_SPAWN', `${vName} | ${methods.parseInt(pos.x)} | ${methods.parseInt(pos.y)} | ${methods.parseInt(pos.z)}`]);
         }
         if (item.doName == 'vehicleAdd') {
             let vInfo = methods.getVehicleInfo(mp.players.local.vehicle.model);
             let count = methods.parseInt(await UIMenu.Menu.GetUserInput("Кол-во", "", 8));
             mp.events.callRemote('server:vehicles:addNew', vInfo.display_name, count);
+
+            methods.saveLog('log_admin', ['name', 'type', 'do'], [`${user.getCache('name')}`, 'VEH_ADD', `${vInfo.display_name} | ${count}`]);
         }
         if (item.doName == 'vehicleAddFraction') {
             let vInfo = methods.getVehicleInfo(mp.players.local.vehicle.model);
             let count = methods.parseInt(await UIMenu.Menu.GetUserInput("Кол-во", "", 8));
             let fractionId = methods.parseInt(await UIMenu.Menu.GetUserInput("Fraction ID", "", 8));
             mp.events.callRemote('server:vehicles:addNewFraction', vInfo.display_name, count, fractionId);
+
+            methods.saveLog('log_admin', ['name', 'type', 'do'], [`${user.getCache('name')}`, 'VEH_ADD_FRACTION', `${vInfo.display_name} | COUNT: ${count} | FID: ${fractionId}`]);
         }
         if (item.doName === 'vehicleSpeedMax') {
             let vInfo = methods.getVehicleInfo(mp.players.local.vehicle.model);

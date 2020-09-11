@@ -76,9 +76,9 @@ npc.loadAll = function() {
     // Секретарша в City Hall
     npc.create(mp.game.joaat("a_f_y_business_01"), new mp.Vector3(-1291.811, -572.3674, 30.57272), -40.99984, false, "WORLD_HUMAN_STAND_IMPATIENT");
 // Охранник слева в City Hall
-    npc.create(mp.game.joaat("s_m_m_highsec_01"), new mp.Vector3(-1295.207, -573.5434, 30.57015), 137.9987, false, "WORLD_HUMAN_GUARD_STAND");
+    npc.create(mp.game.joaat("s_m_m_highsec_01"), new mp.Vector3(-1295.207, -573.5434, 30.57015), 137.9987, false, "WORLD_HUMAN_GUARD_STAND", '', '', 9, 0, '', '');
 // Охранник справа в City Hall
-    npc.create(mp.game.joaat("s_m_m_highsec_02"), new mp.Vector3(-1291.8, -565.9213, 30.57479), -132.9988, false, "WORLD_HUMAN_GUARD_STAND");
+    npc.create(mp.game.joaat("s_m_m_highsec_02"), new mp.Vector3(-1291.8, -565.9213, 30.57479), -132.9988, false, "WORLD_HUMAN_GUARD_STAND", '', '', 9, 0, '', '');
 
     //Сдача железа
     npc.create(mp.game.joaat("s_m_y_dockwork_01"), new mp.Vector3(1074.1737060546875, -2009.465576171875, 32.08498764038086), 53.97209548950195, false, "WORLD_HUMAN_CLIPBOARD");

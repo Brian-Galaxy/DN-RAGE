@@ -2638,14 +2638,19 @@ mp.events.add('client:inventory:loadWeapon', function(id, itemId, loadItemId, co
         mp.game.ui.notifications.show(`~r~Коробка пустая`);
         return;
     }
-
     if (ammo > 0) {
-        user.setAmmoByHash(wpHash, ammo + count);
+        /*user.setAmmoByHash(wpHash, ammo + count);
         inventory.deleteItem(id);
-        ui.callCef('inventory', JSON.stringify({ type: 'removeItemId', itemId: id }));
+        ui.callCef('inventory', JSON.stringify({ type: 'removeItemId', itemId: id }));*/
 
-        /*inventory.updateItemCount(id, count - newCount);
-        ui.callCef('inventory', JSON.stringify({ type: 'updateItemIdCount', itemId: id, count: count - newCount }));*/
+        let addCount = items.getAmmoCount(currentAmmoId) - ammo;
+        if (addCount > count)
+            addCount = count;
+
+        user.setAmmoByHash(wpHash, ammo + addCount);
+        inventory.updateItemCount(id, count - addCount);
+        //ui.callCef('inventory', JSON.stringify({ type: 'updateItemIdCount', itemId: id, count: count - addCount }));
+        ui.callCef('inventory', JSON.stringify({ type: 'removeItemId', itemId: id }));
     }
     else {
         user.setAmmoByHash(wpHash, count);

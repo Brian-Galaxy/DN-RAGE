@@ -2298,7 +2298,11 @@ mp.events.addRemoteCounted('server:admin:tptov', (player, id) => {
             return;
         let v = mp.vehicles.at(id);
         if (vehicles.exists(v)) {
-            v.position = player.position;
+            let pos = player.position;
+            v.position = pos;
+
+            let vehInfo = methods.getVehicleInfo(v.model);
+            methods.saveLog('log_admin', ['name', 'type', 'do'], [`${user.getRpName(player)}`, 'VEH_TP_TO_ADMIN', `${v.numberPlate} | ${vehInfo.display_name} | ${v.id} | ${methods.parseInt(pos.x)} | ${methods.parseInt(pos.y)} | ${methods.parseInt(pos.z)}`]);
         }
     }
     catch (e) {
@@ -6537,6 +6541,18 @@ mp.events.addRemoteCounted('server:respawnNearstVehicle', (player) => {
         return;
     let vehicle = methods.getNearestVehicleWithCoords(player.position, 5);
     vehicles.respawn(vehicle);
+
+    try {
+        if (user.isAdmin(player) && vehicles.exists(vehicle))
+        {
+            let pos = vehicle.position;
+            let vehInfo = methods.getVehicleInfo(vehicle.model);
+            methods.saveLog('log_admin', ['name', 'type', 'do'], [`${user.getRpName(player)}`, 'VEH_RESPAWN', `${vehicle.numberPlate} | ${vehInfo.display_name} | ${methods.parseInt(pos.x)} | ${methods.parseInt(pos.y)} | ${methods.parseInt(pos.z)}`]);
+        }
+    }
+    catch (e) {
+        
+    }
 });
 
 mp.events.addRemoteCounted('server:respawnNearstVehicle2', (player) => {

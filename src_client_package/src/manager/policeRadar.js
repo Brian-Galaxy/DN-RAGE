@@ -17,7 +17,7 @@ let rearVehicle = undefined;
 let rearVehicleMax = 0;
 
 policeRadar.load = function () {
-    timer.createInterval('policeRadar.timer', policeRadar.timer, 100);
+    timer.createInterval('policeRadar.timer', policeRadar.timer, 200);
 };
 
 policeRadar.enableOrDisable = function () {
@@ -68,7 +68,9 @@ policeRadar.getVehicle = function (offsetY) {
 policeRadar.timer = function () {
     try {
         let currentVeh = mp.players.local.vehicle;
-        if (!currentVeh)
+        if (!currentVeh && enableCam)
+            policeRadar.disable();
+        if (!mp.vehicles.exists(currentVeh) && enableCam)
             policeRadar.disable();
         if (enableCam) {
             frontVehicle = policeRadar.getVehicle(100);

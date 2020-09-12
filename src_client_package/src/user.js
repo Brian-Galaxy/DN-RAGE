@@ -781,6 +781,10 @@ user.setClipset = function(style) {
     mp.events.callRemote('server:user:setClipset', style);
 };
 
+user.setClipsetW = function(style) {
+    mp.events.callRemote('server:user:setClipsetW', style);
+};
+
 user.getClipset = function() {
     return mp.players.local.getVariable("walkingStyle");
 };

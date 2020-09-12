@@ -478,6 +478,7 @@ user.loadUser = function(player, name, spawn = 'Стандарт') {
                         //user.setArmour(player, user.get(player, 'ap'));
                         user.setHealth(player, user.get(player, 'hp'));
                         user.setClipset(player, user.get(player, 'clipset'));
+                        user.setClipsetW(player, user.get(player, 'clipset_w'));
                     }
                     catch (e) {
 
@@ -2120,6 +2121,18 @@ user.setClipset = function(player, style) {
         if (!mp.players.exists(player))
             return false;
         player.data.walkingStyle = style;
+    }
+    catch (e) {
+
+    }
+};
+
+user.setClipsetW = function(player, style) {
+    try {
+        methods.debug('user.setClipsetW');
+        if (!mp.players.exists(player))
+            return false;
+        player.data.walkingStyleW = style;
     }
     catch (e) {
 

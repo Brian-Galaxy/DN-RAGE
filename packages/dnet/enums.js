@@ -221,6 +221,7 @@ enums.userData = [
     "eat_level",
 
     "clipset",
+    "clipset_w",
     "hp",
     "ap",
 

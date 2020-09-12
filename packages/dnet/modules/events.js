@@ -462,6 +462,10 @@ mp.events.addRemoteCounted('server:user:setClipset', (player, style) => {
     user.setClipset(player, style);
 });
 
+mp.events.addRemoteCounted('server:user:setClipsetW', (player, style) => {
+    user.setClipsetW(player, style);
+});
+
 mp.events.addRemoteCounted('server:user:shoot', (player) => {
     try {
         if (mp.players.exists(player)) {
@@ -1833,6 +1837,15 @@ mp.events.addRemoteCounted('server:user:askDiceToPlayerIdYes', (player, playerRe
 
         if (methods.distanceToPos(remotePlayer.position, player.position) > 3) {
             player.notify('~r~Вы слишком далеко');
+            return;
+        }
+
+        if (user.getCashMoney(remotePlayer) < sum) {
+            remotePlayer.notify('~y~У вас нет при себе денег на ставку');
+            return;
+        }
+        if (user.getCashMoney(player) < sum) {
+            player.notify('~y~У вас нет при себе денег на ставку');
             return;
         }
 
@@ -4218,6 +4231,7 @@ mp.events.addRemoteCounted('server:ave:accept', (player, id) => {
                 try {
                     user.saveName(target, `${name} ${surname}`);
                     target.notify(`~r~Фамилия была изменена на ${surname}`);
+                    user.set(player, 'partner', user.getRpName(target));
                 }
                 catch (e) {}
             }

@@ -88,6 +88,7 @@ mainMenu.updateInfoSettings = function(tab = 0, keyName = '') {
         let timeoutList = ['1s', '3s', '5s', '10s', '15s', '20s', '30s', 'Никогда'];
 
         let cllist = [];
+        let cllistw = [];
         if (user.getSex() === 1) {
             enums.clopsetFemale.forEach(item => {
                 cllist.push(item[0]);
@@ -98,11 +99,23 @@ mainMenu.updateInfoSettings = function(tab = 0, keyName = '') {
                 cllist.push(item[0]);
             })
         }
+
+        enums.clipsetW.forEach(item => {
+            cllistw.push(item[0]);
+        })
+
         let clipsetIdx = 0;
+        let clipsetwIdx = 0;
+
         if (user.getCache('clipset') !== '')
             clipsetIdx = cllist.indexOf(user.getCache('clipset'));
+
+        clipsetwIdx = cllistw.indexOf(user.getCache('clipset_w'));
+
         if (clipsetIdx <= 0)
             clipsetIdx = 0;
+        if (clipsetwIdx <= 0)
+            clipsetwIdx = 0;
 
         let keys = [];
         bind.allowKeyList.forEach(item => {
@@ -122,6 +135,7 @@ mainMenu.updateInfoSettings = function(tab = 0, keyName = '') {
                     settings: [
                         {type: 2, name: 'Чит-код', params: 'main:promocode', btntext: "Ввести чит-код"},
                         {type: 1, name: 'Походка', params: 'main:clipset', active: clipsetIdx, listmenu: cllist},
+                        {type: 1, name: 'Стиль стрельбы', params: 'main:clipsetw', active: clipsetwIdx, listmenu: cllistw},
                         {type: 0, name: 'Доп. прогрузка моделей', params: 'main:loadmodel', active: user.getCache('s_load_model') ? 1 : 0},
                         {type: 0, name: 'Показывать ID игроков', params: 'main:showId', active: user.getCache('s_show_id') ? 1 : 0},
                         {type: 0, name: 'Показывать ID транспорта', params: 'main:showIdVeh', active: user.getCache('s_show_v_id') ? 1 : 0},
@@ -656,6 +670,11 @@ mp.events.add('client:mainMenu:settings:updateList', async function(btn, index) 
             user.set('clipset', enums.clopsetMale[index][1]);
             user.setClipset(enums.clopsetMale[index][1]);
         }
+        mp.game.ui.notifications.show('~b~Настройки были сохранены');
+    }
+    if (btn === "main:clipsetw") {
+        user.set('clipset', enums.clipsetW[index][1]);
+        user.setClipsetW(enums.clipsetW[index][1]);
         mp.game.ui.notifications.show('~b~Настройки были сохранены');
     }
     else if (btn === "ui:speedtype") {

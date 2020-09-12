@@ -1560,7 +1560,7 @@ phone.showAppFraction = function() {
         menu.items.push(titleMenu);
     }
 
-    if (user.isLeader() || user.isSubLeader() || user.isDepLeader()) {
+    if (user.isLeader() || user.isSubLeader() || user.isDepLeader() || user.isDepSubLeader()) {
         let titleMenu = {
             title: 'Раздел для руководства',
             umenu: [

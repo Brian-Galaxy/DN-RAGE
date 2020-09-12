@@ -116,6 +116,7 @@ mp.events.add("entityStreamIn", (entity) => {
     try {
         if (entity.type !== "player") return;
         setClipSet(entity, entity.getVariable("walkingStyle"));
+        setClipSetW(entity, entity.getVariable("walkingStyleW"));
     }
     catch (e) {
         
@@ -129,6 +130,16 @@ mp.events.addDataHandler("walkingStyle", (entity, value) => {
     }
     catch (e) {
         
+    }
+});
+
+mp.events.addDataHandler("walkingStyleW", (entity, value) => {
+    try {
+        if (entity.type === "player")
+            setClipSetW(entity, value);
+    }
+    catch (e) {
+
     }
 });
 
@@ -576,7 +587,21 @@ async function setClipSet(player, style) {
         }
     }
     catch (e) {
-        methods.debug('Exception: client:syncComponentVariation');
+        methods.debug('Exception: client:setClipSet');
+        methods.debug(e);
+    }
+}
+
+async function setClipSetW(player, style) {
+    try {
+        if (!style) {
+            mp.game.invoke('0x1055AC3A667F09D9', player.handle, mp.game.gameplay.getHashKey('default'));
+        } else {
+            mp.game.invoke('0x1055AC3A667F09D9', player.handle, mp.game.gameplay.getHashKey(style));
+        }
+    }
+    catch (e) {
+        methods.debug('Exception: client:setClipSetW');
         methods.debug(e);
     }
 }

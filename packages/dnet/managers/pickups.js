@@ -404,7 +404,7 @@ pickups.checkPressLAlt = function(player) {
         methods.distanceToPos(pickups.MeriaUpPos, playerPos) < distanceCheck)
         player.call('client:menuList:showGovOfficeTeleportMenu');
 
-    //methods.checkTeleport(player, pickups.BahamaPos1, pickups.BahamaPos2);
+    methods.checkTeleport(player, pickups.BahamaPos1, pickups.BahamaPos2);
     methods.checkTeleport(player, pickups.Builder1Pos1, pickups.Builder1Pos2);
     methods.checkTeleport(player, pickups.Builder2Pos1, pickups.Builder2Pos2);
     methods.checkTeleport(player, pickups.EmsRoofPos1, pickups.EmsRoofPos2);
@@ -858,8 +858,8 @@ pickups.createAll = function() {
 
     //methods.createStaticCheckpointV(pickups.TheLostPos1, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
     //methods.createStaticCheckpointV(pickups.TheLostPos2, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-   /* methods.createCpVector(pickups.BahamaPos1, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-    methods.createCpVector(pickups.BahamaPos2, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);*/
+    methods.createCpVector(pickups.BahamaPos1, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
+    methods.createCpVector(pickups.BahamaPos2, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
 
     methods.createCpVector(pickups.SapdToInterrogationPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
     methods.createCpVector(pickups.SapdFromInterrogationPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);

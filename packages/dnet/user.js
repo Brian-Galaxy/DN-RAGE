@@ -3243,6 +3243,49 @@ user.isHelper = function(player, level = 1) {
     return user.isLogin(player) && user.get(player, 'helper_level') >= level;
 };
 
+user.getVehicleFreeSlot = function(player) {
+    if (!user.isLogin(player))
+        return 0;
+    let freeSlot = 0;
+    try {
+        let hData = null;
+        if (user.get(player, 'house_id') > 0)
+            hData = houses.getHouseData(user.get(player, 'house_id'));
+
+        if (user.get(player, 'car_id1') === 0)
+            freeSlot = 1;
+        else if (user.get(player, 'car_id2') === 0 && (user.get(player, 'house_id') > 0 || user.get(player, 'condo_id') > 0 || user.get(player, 'yacht_id') > 0)) {
+            freeSlot = 2;
+        }
+        else if (user.get(player, 'car_id3') === 0 && user.get(player, 'house_id') > 0 && hData.get('price') >= 100000) {
+            freeSlot = 3;
+        }
+        else if (user.get(player, 'car_id4') === 0 && user.get(player, 'house_id') > 0 && hData.get('price') >= 500000) {
+            freeSlot = 4;
+        }
+        else if (user.get(player, 'car_id5') === 0 && user.get(player, 'house_id') > 0 && hData.get('price') >= 1000000) {
+            freeSlot = 5;
+        }
+        else if (user.get(player, 'car_id6') === 0 && user.get(player, 'car_id6_free')) {
+            freeSlot = 6;
+        }
+        else if (user.get(player, 'car_id7') === 0 && user.get(player, 'car_id7_free')) {
+            freeSlot = 7;
+        }
+        else if (user.get(player, 'car_id8') === 0 && user.get(player, 'car_id8_free')) {
+            freeSlot = 8;
+        }
+        else if (user.get(player, 'car_id9') === 0 && user.get(player, 'car_id9_free')) {
+            freeSlot = 9;
+        }
+        else if (user.get(player, 'car_id10') === 0 && user.get(player, 'car_id10_free')) {
+            freeSlot = 10;
+        }
+    }
+    catch (e) {}
+    return freeSlot;
+};
+
 user.warn = function(player, count, reason, notify = true) {
     if (!user.isLogin(player))
         return;
@@ -3415,7 +3458,7 @@ user.giveUniform = function(player, id = 0) {
             user.setComponentVariation(player, 0, 1, 0);
             user.setComponentVariation(player, 1, 0, 0);
             user.setComponentVariation(player, 3, 11, 0);
-            user.setComponentVariation(player, 4, 35, 0);
+            user.setComponentVariation(player, 4, 25, 2);
             user.setComponentVariation(player, 5, 0, 0);
             user.setComponentVariation(player, 6, 54, 0);
             user.setComponentVariation(player, 7, 38, 0);
@@ -3451,7 +3494,7 @@ user.giveUniform = function(player, id = 0) {
             user.setComponentVariation(player, 0, 1, 0);
             user.setComponentVariation(player, 1, 0, 0);
             user.setComponentVariation(player, 3, 0, 0);
-            user.setComponentVariation(player, 4, 35, 0);
+            user.setComponentVariation(player, 4, 25, 2);
             user.setComponentVariation(player, 5, 0, 0);
             user.setComponentVariation(player, 6, 54, 0);
             user.setComponentVariation(player, 7, 0, 0);
@@ -3496,7 +3539,7 @@ user.giveUniform = function(player, id = 0) {
             user.setComponentVariation(player, 0, 1, 0);
             user.setComponentVariation(player, 1, 0, 0);
             user.setComponentVariation(player, 3, 0, 0);
-            user.setComponentVariation(player, 4, 35, 0);
+            user.setComponentVariation(player, 4, 25, 2);
             user.setComponentVariation(player, 5, 0, 0);
             user.setComponentVariation(player, 6, 54, 0);
             user.setComponentVariation(player, 7, 0, 0);

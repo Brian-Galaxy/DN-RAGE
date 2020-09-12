@@ -901,7 +901,7 @@ fraction.spawnNearCanabis = function(player) {
         return;
     }
 
-    let posVeh = fraction.getRandomSpawnGarage();
+    let posVeh = fraction.getNearSpawnGarage(player.position);
 
     user.setWaypoint(player, posVeh.x, posVeh.y);
     player.notify('~g~Метка на транспорт была установлена');
@@ -916,13 +916,9 @@ fraction.spawnNearCanabis = function(player) {
 
         try {
             let color = methods.getRandomInt(0, 160);
-            if (type === 99)
-                color = 0;
-
             veh.locked = true;
             veh.setColor(color, color);
             veh.windowTint = 1;
-
             inventory.addAmmoItem(3, countZones * 2, inventory.types.Vehicle, mp.joaat(veh.numberPlate), 1, 0, "{}");
         }
         catch (e) {

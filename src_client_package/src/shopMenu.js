@@ -1015,7 +1015,10 @@ mp.events.add('client:shopMenu:buyCard', async function(json) {
                 mp.events.callRemote('server:gun:buy', params.id, params.price, 1, 0, 0, params.shop, 1);
             }
             else {
-                quest.standart(false, -1, 4);
+                if (params.id === 251)
+                    quest.fish(false, -1, 1);
+                else
+                    quest.standart(false, -1, 4);
                 mp.events.callRemote('server:shop:buyCard', params.id, params.price, params.shop);
             }
         }

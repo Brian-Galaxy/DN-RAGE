@@ -170,36 +170,7 @@ vShop.buy = function(player, model, color1, color2, shopId) {
             break;
     }
 
-    let freeSlot = 0;
-    if (user.get(player, 'car_id1') === 0)
-        freeSlot = 1;
-    else if (user.get(player, 'car_id2') === 0) {
-        freeSlot = 2;
-    }
-    else if (user.get(player, 'car_id3') === 0) {
-        freeSlot = 3;
-    }
-    else if (user.get(player, 'car_id4') === 0) {
-        freeSlot = 4;
-    }
-    else if (user.get(player, 'car_id5') === 0) {
-        freeSlot = 5;
-    }
-    else if (user.get(player, 'car_id6') === 0 && user.get(player, 'car_id6_free')) {
-        freeSlot = 6;
-    }
-    else if (user.get(player, 'car_id7') === 0 && user.get(player, 'car_id7_free')) {
-        freeSlot = 7;
-    }
-    else if (user.get(player, 'car_id8') === 0 && user.get(player, 'car_id8_free')) {
-        freeSlot = 8;
-    }
-    else if (user.get(player, 'car_id9') === 0 && user.get(player, 'car_id9_free')) {
-        freeSlot = 9;
-    }
-    else if (user.get(player, 'car_id10') === 0 && user.get(player, 'car_id10_free')) {
-        freeSlot = 10;
-    }
+    let freeSlot = user.getVehicleFreeSlot(player);
     /*else if (user.get(player, 'car_id6') == 0) {
         freeSlot = 6;
     }*/
@@ -216,6 +187,17 @@ vShop.buy = function(player, model, color1, color2, shopId) {
         player.notify('~r~У Вас нет свободных слотов под транспорт');
         return;
     }
+
+    if (user.has(player, 'buyCar')) {
+        player.notify('~r~Таймаут на покупку транспорта 2 минуты');
+        return;
+    }
+
+    user.set(player, 'buyCar', true);
+    setTimeout(function () {
+        if (user.isLogin(player))
+            user.reset(player, 'buyCar');
+    }, 120000);
 
     let shopItem = enums.carShopList[shopId];
 

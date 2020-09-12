@@ -392,17 +392,17 @@ mafiaWar.timerMoney = function() {
     for (let i = 1; i <= 3; i++) {
         if (mafiaWar.get(i, 'ownerId') > 0) {
 
-            let money = methods.getRandomInt(4000, 7000) / 1000;
+            let money = methods.getRandomInt(3000, 5000) / 1000;
             let id = methods.parseInt(mafiaWar.get(i, 'ownerId'));
             fraction.setMoney(id, fraction.getMoney(id) + methods.parseFloat(money));
 
             if (moneyToUser.has(mafiaWar.get(i, 'ownerId').toString())) {
                 let cMoney = moneyToUser.get(mafiaWar.get(i, 'ownerId').toString());
-                cMoney += methods.getRandomInt(400, 700) / 1000;
+                cMoney += methods.getRandomInt(300, 500) / 1000;
                 moneyToUser.set(mafiaWar.get(i, 'ownerId').toString(), cMoney);
             }
             else {
-                moneyToUser.set(mafiaWar.get(i, 'ownerId').toString(), methods.getRandomInt(400, 700) / 1000);
+                moneyToUser.set(mafiaWar.get(i, 'ownerId').toString(), methods.getRandomInt(300, 500) / 1000);
             }
         }
     }

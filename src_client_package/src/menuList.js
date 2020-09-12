@@ -6064,46 +6064,53 @@ menuList.showFuelMenu = async function() {
     let listItem = {};
 
     if (mp.players.local.isInAnyVehicle(true)) {
-        listItem.type = 1;
-        listItem.price = itemPrice;
-        UIMenu.Menu.AddMenuItemList("Бензин", list, `Цена: ~g~${methods.moneyFormat(itemPrice)}~s~ за 1л.${saleLabel}`, listItem, 0, '', (sale > 0) ? 'sale' : '');
+        if (shopId === 147 || shopId === 148 || shopId === 149 || shopId === 150) {
+            itemPrice = 3 * price;
+            listItem = {};
+            listItem.type = 4;
+            listItem.price = itemPrice;
+            UIMenu.Menu.AddMenuItemList("Авиатопливо", list, `Цена: ~g~${methods.moneyFormat(itemPrice)}~s~ за 1л.${saleLabel}`, listItem, 0, '', (sale > 0) ? 'sale' : '');
+        }
+        else {
+            listItem.type = 1;
+            listItem = {};
+            listItem.price = itemPrice;
+            UIMenu.Menu.AddMenuItemList("Бензин", list, `Цена: ~g~${methods.moneyFormat(itemPrice)}~s~ за 1л.${saleLabel}`, listItem, 0, '', (sale > 0) ? 'sale' : '');
 
-        itemPrice = 1.1 * price;
-        listItem = {};
-        listItem.type = 2;
-        listItem.price = itemPrice;
-        UIMenu.Menu.AddMenuItemList("Дизель", list, `Цена: ~g~${methods.moneyFormat(itemPrice)}~s~ за 1л.${saleLabel}`, listItem, 0, '', (sale > 0) ? 'sale' : '');
+            itemPrice = 1.1 * price;
+            listItem = {};
+            listItem.type = 2;
+            listItem.price = itemPrice;
+            UIMenu.Menu.AddMenuItemList("Дизель", list, `Цена: ~g~${methods.moneyFormat(itemPrice)}~s~ за 1л.${saleLabel}`, listItem, 0, '', (sale > 0) ? 'sale' : '');
 
-        itemPrice = 0.5 * price;
-        listItem = {};
-        listItem.type = 3;
-        listItem.price = itemPrice;
-        UIMenu.Menu.AddMenuItemList("Электричество", list2, `Цена: ~g~${methods.moneyFormat(itemPrice)}~s~ за 1%${saleLabel}`, listItem, 0, '', (sale > 0) ? 'sale' : '');
-
-        itemPrice = 3 * price;
-        listItem = {};
-        listItem.type = 4;
-        listItem.price = itemPrice;
-        UIMenu.Menu.AddMenuItemList("Авиатопливо", list, `Цена: ~g~${methods.moneyFormat(itemPrice)}~s~ за 1л.${saleLabel}`, listItem, 0, '', (sale > 0) ? 'sale' : '');
+            itemPrice = 0.5 * price;
+            listItem = {};
+            listItem.type = 3;
+            listItem.price = itemPrice;
+            UIMenu.Menu.AddMenuItemList("Электричество", list2, `Цена: ~g~${methods.moneyFormat(itemPrice)}~s~ за 1%${saleLabel}`, listItem, 0, '', (sale > 0) ? 'sale' : '');
+        }
     }
 
-    itemPrice = items.getItemPrice(8) * price;
-    let menuItem = {};
-    menuItem.price = itemPrice;
-    menuItem.itemId = 8;
-    UIMenu.Menu.AddMenuItem("Канистра (Авиатопливо)", `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`, menuItem, '', (sale > 0) ? 'sale' : '');
+    if (shopId === 147 || shopId === 148 || shopId === 149 || shopId === 150) {
+        itemPrice = items.getItemPrice(8) * price;
+        let menuItem = {};
+        menuItem.price = itemPrice;
+        menuItem.itemId = 8;
+        UIMenu.Menu.AddMenuItem("Канистра (Авиатопливо)", `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`, menuItem, '', (sale > 0) ? 'sale' : '');
+    }
+    else {
+        itemPrice = items.getItemPrice(9) * price;
+        let menuItem = {};
+        menuItem.price = itemPrice;
+        menuItem.itemId = 9;
+        UIMenu.Menu.AddMenuItem("Канистра (Бензин)", `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`, menuItem, '', (sale > 0) ? 'sale' : '');
 
-    itemPrice = items.getItemPrice(9) * price;
-    menuItem = {};
-    menuItem.price = itemPrice;
-    menuItem.itemId = 9;
-    UIMenu.Menu.AddMenuItem("Канистра (Бензин)", `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`, menuItem, '', (sale > 0) ? 'sale' : '');
-
-    itemPrice = items.getItemPrice(10) * price;
-    menuItem = {};
-    menuItem.price = itemPrice;
-    menuItem.itemId = 10;
-    UIMenu.Menu.AddMenuItem("Канистра (Дизель)", `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`, menuItem, '', (sale > 0) ? 'sale' : '');
+        itemPrice = items.getItemPrice(10) * price;
+        menuItem = {};
+        menuItem.price = itemPrice;
+        menuItem.itemId = 10;
+        UIMenu.Menu.AddMenuItem("Канистра (Дизель)", `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`, menuItem, '', (sale > 0) ? 'sale' : '');
+    }
 
     UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
     UIMenu.Menu.Draw();

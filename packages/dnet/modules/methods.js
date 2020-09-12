@@ -313,6 +313,11 @@ methods.removeQuotes2 = function(str) {
     //return text.toString().replace('"', '');
 };
 
+methods.removeSpecialChars = function(str) {
+    return str.toString().replace(/[\n\r\t]/g, '');
+    //return text.toString().replace('"', '');
+};
+
 /*methods.replaceAll = function(string, search, replace){
     return string.split(search).join(replace);
 };*/

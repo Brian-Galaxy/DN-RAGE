@@ -2030,7 +2030,7 @@ mp.events.add('client:showBusinessLogMenu', (data) => {
 
 mp.events.add('client:showInvaderNewsMenu', (data) => {
     try {
-        methods.debug('Event: client:showInvaderAdMenu');
+        methods.debug('Event: client:showInvaderNewsMenu');
         menuList.showInvaderNewsMenu(data);
     }
     catch (e) {
@@ -2050,7 +2050,7 @@ mp.events.add('client:showInvaderAdMenu', (data) => {
 
 mp.events.add('client:showInvaderAdTempMenu', (data) => {
     try {
-        methods.debug('Event: client:showInvaderAdMenu');
+        methods.debug('Event: client:showInvaderAdTempMenu');
         menuList.showInvaderAdTempMenu(data);
     }
     catch (e) {

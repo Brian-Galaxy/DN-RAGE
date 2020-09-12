@@ -2527,7 +2527,8 @@ mp.events.addRemoteCounted('server:invader:getAdList', (player) => {
             let list = [];
             rows.forEach(function(item) {
                 list.push({id: item['id'], title: item['title'], name: item['name'], phone: item['phone'], editor: item['editor']});
-            });
+            })
+
             player.call('client:showInvaderAdMenu', [JSON.stringify(list)]);
         }
         catch (e) {
@@ -2550,6 +2551,7 @@ mp.events.addRemoteCounted('server:invader:sendAdTemp', (player, text) => {
     let name = methods.removeQuotes(user.getRpName(player).split(' ')[0]);
 
     text = methods.replaceAllGtaSymb(text);
+    text = methods.removeSpecialChars(text);
 
     user.removeBankMoney(player, 500, 'Подача объявления');
     coffer.addMoney(8, 400);
@@ -2568,12 +2570,12 @@ mp.events.addRemoteCounted('server:invader:sendAdTemp', (player, text) => {
 mp.events.addRemoteCounted('server:invader:getAdTempList', (player) => {
     if (!user.isLogin(player))
         return;
-    mysql.executeQuery(`SELECT * FROM rp_inv_ad_temp ORDER BY id DESC LIMIT 30`, function (err, rows, fields) {
+    mysql.executeQuery(`SELECT * FROM rp_inv_ad_temp ORDER BY id DESC LIMIT 20`, function (err, rows, fields) {
         try {
             let list = [];
             rows.forEach(function(item) {
 
-                list.push({id: item['id'], name: item['name'], phone: item['phone'], text: item['text']});
+                list.push({id: item['id'], name: item['name'], phone: item['phone'], text: methods.removeSpecialChars(item['text'])});
             });
             player.call('client:showInvaderAdTempMenu', [JSON.stringify(list)]);
         }
@@ -4208,11 +4210,12 @@ mp.events.addRemoteCounted('server:ave:accept', (player, id) => {
         user.save(target);
         chat.sendToAll('Священник', `Поздравляем! Новую ячейку общества образовала пара ${user.getRpName(target)} и ${user.getRpName(player)}`,  chat.clGreen);
 
-        mysql.executeQuery(`SELECT * FROM users WHERE name = '${user.getRpName(player)}'`, function (err, rows, fields) {
+        let surname = methods.removeQuotes(user.getRpName(player).split(' ')[1]);
+        let name = methods.removeQuotes(user.getRpName(target).split(' ')[0]);
+
+        mysql.executeQuery(`SELECT * FROM users WHERE name = '${name} ${surname}'`, function (err, rows, fields) {
             if (rows.length === 0) {
                 try {
-                    let surname = methods.removeQuotes(user.getRpName(player).split(' ')[1]);
-                    let name = methods.removeQuotes(user.getRpName(target).split(' ')[0]);
                     user.saveName(target, `${name} ${surname}`);
                     target.notify(`~r~Фамилия была изменена на ${surname}`);
                 }
@@ -5483,37 +5486,7 @@ mp.events.addRemoteCounted('server:car:sellToPlayer', (player, buyerId, sum, slo
             return;
         }
 
-        let isValid = false;
-        if (user.get(buyer, 'car_id1') === 0)
-            isValid = true;
-        else if (user.get(buyer, 'car_id2') === 0) {
-            isValid = true;
-        }
-        else if (user.get(buyer, 'car_id3') === 0) {
-            isValid = true;
-        }
-        else if (user.get(buyer, 'car_id4') === 0) {
-            isValid = true;
-        }
-        else if (user.get(buyer, 'car_id5') === 0) {
-            isValid = true;
-        }
-        else if (user.get(buyer, 'car_id6') === 0 && user.get(buyer, 'car_id6_free')) {
-            isValid = true;
-        }
-        else if (user.get(buyer, 'car_id7') === 0 && user.get(buyer, 'car_id7_free')) {
-            isValid = true;
-        }
-        else if (user.get(buyer, 'car_id8') === 0 && user.get(buyer, 'car_id8_free')) {
-            isValid = true;
-        }
-        else if (user.get(buyer, 'car_id9') === 0 && user.get(buyer, 'car_id9_free')) {
-            isValid = true;
-        }
-        else if (user.get(buyer, 'car_id10') === 0 && user.get(buyer, 'car_id10_free')) {
-            isValid = true;
-        }
-
+        let isValid = user.getVehicleFreeSlot(player) > 0;
         if (isValid) {
             let vInfo = vehicles.getData(user.get(player, 'car_id' + slot));
             buyer.call('client:car:sellToPlayer', [user.get(player, 'car_id' + slot), vInfo.get('name'), sum, player.id, slot]);
@@ -5531,36 +5504,7 @@ mp.events.addRemoteCounted('server:car:sellToPlayer:accept', (player, houseId, s
     if (!user.isLogin(player))
         return;
 
-    let slotBuy = 0;
-    if (user.get(player, 'car_id1') === 0)
-        slotBuy = 1;
-    else if (user.get(player, 'car_id2') === 0) {
-        slotBuy = 2;
-    }
-    else if (user.get(player, 'car_id3') === 0) {
-        slotBuy = 3;
-    }
-    else if (user.get(player, 'car_id4') === 0) {
-        slotBuy = 4;
-    }
-    else if (user.get(player, 'car_id5') === 0) {
-        slotBuy = 5;
-    }
-    else if (user.get(player, 'car_id6') === 0 && user.get(player, 'car_id6_free')) {
-        slotBuy = 6;
-    }
-    else if (user.get(player, 'car_id7') === 0 && user.get(player, 'car_id7_free')) {
-        slotBuy = 7;
-    }
-    else if (user.get(player, 'car_id8') === 0 && user.get(player, 'car_id8_free')) {
-        slotBuy = 8;
-    }
-    else if (user.get(player, 'car_id9') === 0 && user.get(player, 'car_id9_free')) {
-        slotBuy = 9;
-    }
-    else if (user.get(player, 'car_id10') === 0 && user.get(player, 'car_id10_free')) {
-        slotBuy = 10;
-    }
+    let slotBuy = user.getVehicleFreeSlot(player);
 
     /*let slotBuy = 0;
     for (let i = 1; i <= 10; i++) {

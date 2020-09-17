@@ -151,9 +151,9 @@ class Data {
 
             //dataSetterList.push({id: id, key: key, value: value, isInt: isInt});
             mp.events.callRemote('modules:server:data:Set', id, key, value, isInt);
-            /*for (let i = 1; i <= 50; i++) mp.events.callRemote('modules:server:data:Set', 800000 + i, 'orderLamarM', 150, true);
-            for (let i = 1; i <= 50; i++) mp.events.callRemote('modules:server:data:Set', 800000 + i, 'orderLamar', 150, true);
-            for (let i = 1; i <= 50; i++) mp.events.callRemote('modules:server:data:Set', 800000 + i, 'orderDrug', 100, true);*/
+            /*for (let i = 1; i <= 50; i++) mp.events.callRemote('modules:server:data:Set', 800000 + i, 'orderLamarM', 50, true);
+            for (let i = 1; i <= 50; i++) mp.events.callRemote('modules:server:data:Set', 800000 + i, 'orderLamar', 50, true);
+            for (let i = 1; i <= 50; i++) mp.events.callRemote('modules:server:data:Set', 800000 + i, 'orderDrug', 50, true);*/
 
         } catch (e) {
             methods.debug(`CLNT: [SET] ERR: ${e}`);

@@ -625,10 +625,10 @@ stocks.sellBySlot = function (player, slot) {
 
     let hInfo = stocks.getData(stockId);
 
-    if (hInfo.get('user_id') != user.get(player, 'id')) {
+    /*if (hInfo.get('user_id') != user.get(player, 'id')) {
         player.notify('~r~Этот склад вам не пренадлежит');
         return;
-    }
+    }*/
 
     let id = hInfo.get('id');
 
@@ -680,10 +680,10 @@ stocks.openBySlot = function (player, slot, boxId) {
 
     let hInfo = stocks.getData(stockId);
 
-    if (hInfo.get('user_id') != user.get(player, 'id')) {
+    /*if (hInfo.get('user_id') != user.get(player, 'id')) {
         player.notify('~r~Этот склад вам не пренадлежит');
         return;
-    }
+    }*/
 
     let id = hInfo.get('id');
 
@@ -730,10 +730,10 @@ stocks.sellAllByClass = function (player, className, price) {
     let stockId = player.dimension - enums.offsets.stock;
     let hInfo = stocks.getData(stockId);
 
-    if (hInfo.get('user_id') != user.get(player, 'id')) {
+    /*if (hInfo.get('user_id') != user.get(player, 'id')) {
         player.notify('~r~Этот склад вам не пренадлежит');
         return;
-    }
+    }*/
 
     let id = hInfo.get('id');
     let upgradeStr = stocks.get(id, 'upgrade');
@@ -892,6 +892,8 @@ stocks.updateOwnerInfo = function (id, userId, userName) {
         mysql.executeQuery("UPDATE stocks SET user_name = '" + userName + "', user_id = '" + userId + "', upgrade_g = '0', tax_money = '0' where id = '" + id + "'");
 
         discord.sendMarketProperty(`Склад #${stocks.get(id, 'number')}`, `Адрес: ${stocks.get(id, 'address')} / ${stocks.get(id, 'street')} #${stocks.get(id, 'number')}\nГос. стоимость: ${methods.moneyFormat(stocks.get(id, 'price'))}\nТип: ${stocks.types[stocks.get(id, 'interior')]}`);
+
+        stocks.upgradeResetAll(id);
     }
     else {
         mysql.executeQuery("UPDATE stocks SET user_name = '" + userName + "', user_id = '" + userId + "', tax_money = '0' where id = '" + id + "'");

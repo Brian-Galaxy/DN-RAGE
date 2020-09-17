@@ -6072,8 +6072,8 @@ menuList.showFuelMenu = async function() {
             UIMenu.Menu.AddMenuItemList("Авиатопливо", list, `Цена: ~g~${methods.moneyFormat(itemPrice)}~s~ за 1л.${saleLabel}`, listItem, 0, '', (sale > 0) ? 'sale' : '');
         }
         else {
-            listItem.type = 1;
             listItem = {};
+            listItem.type = 1;
             listItem.price = itemPrice;
             UIMenu.Menu.AddMenuItemList("Бензин", list, `Цена: ~g~${methods.moneyFormat(itemPrice)}~s~ за 1л.${saleLabel}`, listItem, 0, '', (sale > 0) ? 'sale' : '');
 

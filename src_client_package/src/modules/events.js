@@ -3150,7 +3150,6 @@ mp.events.add("client:vehicle:checker", async function () {
 
             if (vehicle.getMod(18) >= 0 || vehicle.getVariable('boost') > 0) {
                 boost = boost + 2;
-                maxSpeed = maxSpeed + 10;
             }
 
             /*for (let i = 0; i < 5; i++) {

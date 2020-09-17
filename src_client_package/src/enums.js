@@ -1009,6 +1009,7 @@ mp.game.streaming.requestClipSet("hillbilly");
 * */
 enums.clipsetW = [
     ["Стандартная", "default"],
+    ["Деревенщина", "hillbilly"],
     ["Гангстер", "gang1h"],
 ];
 

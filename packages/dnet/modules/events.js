@@ -5500,7 +5500,7 @@ mp.events.addRemoteCounted('server:car:sellToPlayer', (player, buyerId, sum, slo
             return;
         }
 
-        let isValid = user.getVehicleFreeSlot(player) > 0;
+        let isValid = user.getVehicleFreeSlot(buyer) > 0;
         if (isValid) {
             let vInfo = vehicles.getData(user.get(player, 'car_id' + slot));
             buyer.call('client:car:sellToPlayer', [user.get(player, 'car_id' + slot), vInfo.get('name'), sum, player.id, slot]);

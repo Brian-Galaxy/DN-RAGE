@@ -3743,6 +3743,46 @@ phone.consoleCallback = async function(command) {
                 phone.addConsoleCommand(`File deadinside.py has been downloaded`);
                 user.set('file-' + 'deadinside.py', true);
             }
+            else if (args[0] === 'https://dednet.ru/publicApi' || args[0] === 'https://dednet.ru/publicApi') {
+                if (user.getCache('stats_darknet') < 35) {
+                    phone.addConsoleCommand('Look up');
+                    phone.addConsoleCommand('Access Denied');
+                    return;
+                }
+                await phone.consoleWget('Dwnld arptop.py', 50);
+                phone.addConsoleCommand(`File arptop.py has been downloaded`);
+                user.set('file-' + 'arptop.py', true);
+            }
+            else if (args[0] === 'https://shodan.io' || args[0] === 'https://shodan.io') {
+                if (user.getCache('stats_darknet') < 40) {
+                    phone.addConsoleCommand('Look up');
+                    phone.addConsoleCommand('Access Denied');
+                    return;
+                }
+                await phone.consoleWget('Dwnld traffic.py', 50);
+                phone.addConsoleCommand(`File traffic.py has been downloaded`);
+                user.set('file-' + 'traffic.py', true);
+            }
+            else if (args[0] === 'https://shodan.io/light' || args[0] === 'https://shodan.io/light') {
+                if (user.getCache('stats_darknet') < 90) {
+                    phone.addConsoleCommand('Look up');
+                    phone.addConsoleCommand('Access Denied');
+                    return;
+                }
+                await phone.consoleWget('Dwnld fsoc.py', 100);
+                phone.addConsoleCommand(`File fsoc.py has been downloaded`);
+                user.set('file-' + 'fsoc.py', true);
+            }
+            else if (args[0] === 'https://shodan.io/talk' || args[0] === 'https://shodan.io/talk') {
+                if (user.getCache('stats_darknet') < 90) {
+                    phone.addConsoleCommand('Look up');
+                    phone.addConsoleCommand('Access Denied');
+                    return;
+                }
+                await phone.consoleWget('Dwnld fnetwork.py', 100);
+                phone.addConsoleCommand(`File fnetwork.py has been downloaded`);
+                user.set('file-' + 'fnetwork.py', true);
+            }
             else {
                 phone.addConsoleCommand('Access denied');
             }
@@ -3815,6 +3855,22 @@ phone.consoleCallback = async function(command) {
                     phone.showLoad();
                     await methods.sleep(100);
                     mp.events.callRemote('server:phone:getVehInfo', methods.removeQuotes2(methods.removeQuotes(args[2])));
+                }
+                else {
+                    phone.addConsoleCommand('Access denied');
+                }
+            }
+            else if (args[0] === 'arptop.py' && user.hasCache('file-arptop.py')) {
+                if (args.length !== 3) {
+                    phone.addConsoleCommand('Usage: python arptop.py [key] [bid]');
+                    return;
+                }
+                if (args[1] === 'APPIRPTOP') {
+                    await phone.consoleLoad('OMG ITS REALLY', 500);
+                    phone.toMainUMenu();
+                    phone.showLoad();
+                    await methods.sleep(100);
+                    mp.events.callRemote('server:business:log', methods.parseInt(args[2]));
                 }
                 else {
                     phone.addConsoleCommand('Access denied');
@@ -3893,7 +3949,7 @@ phone.consoleCallback = async function(command) {
                     if (user.getCache('fraction_id2') > 0)
                         fraction.set(user.getCache('fraction_id2'), 'orderAtm', await fraction.get(user.getCache('fraction_id2'), 'orderAtm') + 1);
 
-                    if (user.getCache('stats_darknet') < 40 && user.getCache('stats_darknet') >= 20) {
+                    if (user.getCache('stats_darknet') < 60 && user.getCache('stats_darknet') >= 20) {
                         user.set('stats_darknet', user.getCache('stats_darknet') + 1);
                     }
                 }
@@ -3901,6 +3957,66 @@ phone.consoleCallback = async function(command) {
                     phone.addConsoleCommand('Error, try again');
                 }
                 isAtmHack = false;
+            }
+            else if (args[0] === 'traffic.py' && user.hasCache('file-traffic.py')) {
+                await phone.consoleAwait('Scanning hashes');
+                await phone.consoleAwait('Send package ', 100, 100);
+
+                if (methods.getRandomInt(0, 99) < user.getCache('stats_darknet')) {
+                    await phone.consoleLoad('Download keys', 50);
+                    if (phone.getType() === 0)
+                        return;
+                    let money = methods.getRandomInt(3000, 5000) / 1000;
+                    phone.addConsoleCommand('Success. The wallet was replenished in the amount of ' + methods.cryptoFormat(money));
+                    if (user.getCache('stats_darknet') < 100 && user.getCache('stats_darknet') >= 40) {
+                        user.set('stats_darknet', user.getCache('stats_darknet') + 1);
+                    }
+                    mp.events.callRemote('server:trafficDestroy')
+                }
+                else {
+                    user.giveWanted(50, 'Попытка взлома системы управления городом');
+                    phone.addConsoleCommand('Error, try again');
+                }
+            }
+            else if (args[0] === 'fsoc.py' && user.hasCache('file-fsoc.py')) {
+                await phone.consoleAwait('Scanning hashes');
+                await phone.consoleAwait('Send package ', 100, 100);
+
+                if (methods.getRandomInt(0, 101) < user.getCache('stats_darknet')) {
+                    await phone.consoleLoad('Download keys', 50);
+                    if (phone.getType() === 0)
+                        return;
+                    let money = methods.getRandomInt(3000, 5000) / 1000;
+                    phone.addConsoleCommand('Success. The wallet was replenished in the amount of ' + methods.cryptoFormat(money));
+                    if (user.getCache('stats_darknet') < 100 && user.getCache('stats_darknet') >= 90) {
+                        user.set('stats_darknet', user.getCache('stats_darknet') + 1);
+                    }
+                    mp.events.callRemote('server:cityDestroy')
+                }
+                else {
+                    user.giveWanted(50, 'Попытка взлома системы управления городом');
+                    phone.addConsoleCommand('Error, try again');
+                }
+            }
+            else if (args[0] === 'fnetwork.py' && user.hasCache('file-fnetwork.py')) {
+                await phone.consoleAwait('Scanning hashes');
+                await phone.consoleAwait('Send package ', 100, 100);
+
+                if (methods.getRandomInt(0, 101) < user.getCache('stats_darknet')) {
+                    await phone.consoleLoad('Download keys', 50);
+                    if (phone.getType() === 0)
+                        return;
+                    let money = methods.getRandomInt(3000, 5000) / 1000;
+                    phone.addConsoleCommand('Success. The wallet was replenished in the amount of ' + methods.cryptoFormat(money));
+                    if (user.getCache('stats_darknet') < 100 && user.getCache('stats_darknet') >= 90) {
+                        user.set('stats_darknet', user.getCache('stats_darknet') + 1);
+                    }
+                    mp.events.callRemote('server:networkDestroy')
+                }
+                else {
+                    user.giveWanted(50, 'Попытка взлома системы управления городом');
+                    phone.addConsoleCommand('Error, try again');
+                }
             }
         }
         else if (cmd === 'bash') {
@@ -4142,7 +4258,6 @@ phone.consoleCallback = async function(command) {
                 phone.addConsoleCommand('ecorp -user -getpos');
                 phone.addConsoleCommand('ecorp -drug -getpos');
                 phone.addConsoleCommand('ecorp -money -clear');
-
             }
             else if (args[0] === '-number') {
                 phone.addConsoleCommand('Number: ' + user.getCache('crypto_card'));
@@ -4174,8 +4289,8 @@ phone.consoleCallback = async function(command) {
                     phone.addConsoleCommand('Usage: ecorp -coin -toBankCard [sum]');
                 }
             }
-            /*else if (args[0] === '-send') {
-                if (args[1] === '-fraction') {
+            else if (args[0] === '-send') {
+                /*if (args[1] === '-fraction') {
                     let sum = methods.parseFloat(args[2]);
                     if (sum < 0) {
                         phone.addConsoleCommand('Usage: ecorp -send -fraction [sum]');
@@ -4189,7 +4304,7 @@ phone.consoleCallback = async function(command) {
                     user.removeCryptoMoney(sum, 'Перевод E-Coin');
                     fraction.addMoney(user.getCache('fraction_id2'), sum, 'Перевод E-Coin от ' + user.getCache('name'));
                 }
-                else if (args[1]) {
+                else */if (args[1]) {
                     let sum = methods.parseFloat(args[2]);
                     if (sum < 0) {
                         phone.addConsoleCommand('Usage: ecorp -send [coin number] [sum]');
@@ -4204,7 +4319,7 @@ phone.consoleCallback = async function(command) {
                 else {
                     phone.addConsoleCommand('Usage: ecorp -fraction -create');
                 }
-            }*/
+            }
             else if (args[0] === '-fraction') {
                 if (args[1] === '-create') {
                     if (user.getCache('rep') < 100 && user.getCache('fraction_id2') == 0) {
@@ -4274,7 +4389,7 @@ phone.consoleCallback = async function(command) {
                             user.reset('isSellCar');
                             mp.game.ui.notifications.show(`~r~Метка на сдачу ТС была удалена`);
                         }
-                    }, 600 * 1000);
+                    }, 900 * 1000);
                 }
                 else {
                     phone.addConsoleCommand('Usage: ecorp -car -getpos');
@@ -4443,6 +4558,101 @@ phone.consoleCallback = async function(command) {
                             mp.game.ui.notifications.show(`~r~Метка на отмыв денег была удалена`);
                         }
                     }, 600 * 1000);
+                }
+                else {
+                    phone.addConsoleCommand('Usage: ecorp -money -clear');
+                }
+            }
+            else if (args[0] === '-vehicle') {
+                if (args[1] === '-rifle') {
+
+                    if (user.getCache('fraction_id2') === 0) {
+                        mp.game.ui.notifications.show('~r~Доступно только крайм организациям');
+                        return;
+                    }
+
+                    if (user.getCache('stats_darknet') < 95) {
+                        mp.game.ui.notifications.show('~r~Ваш уровень доверия в даркнете слишком низок');
+                        return;
+                    }
+
+                    if (user.getCryptoMoney() < 150) {
+                        mp.game.ui.notifications.show('~r~Вам необходимо иметь 150ec для покупки этой услуги');
+                        return;
+                    }
+
+                    if (weather.getHour() < 22 && weather.getHour() > 8) {
+                        mp.game.ui.notifications.show('~r~Доступно только с 22 до 8 утра игрового времени');
+                        return;
+                    }
+                    if (await user.hasById('cantGetCarRifle')) {
+                        mp.game.ui.notifications.show('~r~Вы уже покупали товар сегодня');
+                        return;
+                    }
+
+                    user.removeCryptoMoney(150, 'Покупка автоматов');
+                    user.setById('cantGetCarRifle', true);
+                    mp.events.callRemote('server:fraction:getLamarRifle');
+                }
+                else if (args[1] === '-ammo') {
+
+                    if (user.getCache('fraction_id2') === 0) {
+                        mp.game.ui.notifications.show('~r~Доступно только крайм организациям');
+                        return;
+                    }
+
+                    if (user.getCache('stats_darknet') < 90) {
+                        mp.game.ui.notifications.show('~r~Ваш уровень доверия в даркнете слишком низок');
+                        return;
+                    }
+
+                    if (user.getCryptoMoney() < 50) {
+                        mp.game.ui.notifications.show('~r~Вам необходимо иметь 50ec для покупки этой услуги');
+                        return;
+                    }
+
+                    if (weather.getHour() < 22 && weather.getHour() > 8) {
+                        mp.game.ui.notifications.show('~r~Доступно только с 22 до 8 утра игрового времени');
+                        return;
+                    }
+                    if (await user.hasById('cantGetCarAmmo')) {
+                        mp.game.ui.notifications.show('~r~Вы уже покупали товар сегодня');
+                        return;
+                    }
+
+                    user.removeCryptoMoney(50, 'Покупка патрон');
+                    user.setById('cantGetCarAmmo', true);
+                    mp.events.callRemote('server:fraction:getLamarAmmo');
+                }
+                else if (args[1] === '-pistol') {
+
+                    if (user.getCache('fraction_id2') === 0) {
+                        mp.game.ui.notifications.show('~r~Доступно только крайм организациям');
+                        return;
+                    }
+
+                    if (user.getCache('stats_darknet') < 80) {
+                        mp.game.ui.notifications.show('~r~Ваш уровень доверия в даркнете слишком низок');
+                        return;
+                    }
+
+                    if (user.getCryptoMoney() < 50) {
+                        mp.game.ui.notifications.show('~r~Вам необходимо иметь 50ec для покупки этой услуги');
+                        return;
+                    }
+
+                    if (weather.getHour() < 22 && weather.getHour() > 8) {
+                        mp.game.ui.notifications.show('~r~Доступно только с 22 до 8 утра игрового времени');
+                        return;
+                    }
+
+                    if (await user.hasById('cantGetCarPistol')) {
+                        mp.game.ui.notifications.show('~r~Вы уже покупали товар сегодня');
+                        return;
+                    }
+                    user.removeCryptoMoney(50, 'Покупка пистолетов');
+                    user.setById('cantGetCarPistol', true);
+                    mp.events.callRemote('server:fraction:getLamarPistol');
                 }
                 else {
                     phone.addConsoleCommand('Usage: ecorp -money -clear');

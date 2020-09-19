@@ -146,7 +146,7 @@ shop.checkPosForOpenMenu = function(player) {
             return;
         let shopId = shopItem[3];
 
-        if (!business.isOpen(shopId)) {
+        if (!business.isOpen(shopId) && shopId > 0) {
             player.notify('~r~К сожалению магазин сейчас не работает');
             return;
         }

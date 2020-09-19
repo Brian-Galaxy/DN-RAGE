@@ -48,6 +48,10 @@ drone.exitLspd = function() {
     user.stopAllScreenEffect();
 };
 
+drone.enterSmall = function(vId) {
+    mp.events.callRemote('server:startSpecMissionSmall', vId);
+};
+
 drone.startOrEndLspd = function() {
     if (isInDrone)
         drone.exitLspd();

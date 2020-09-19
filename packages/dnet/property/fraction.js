@@ -885,7 +885,6 @@ fraction.spawnNearBank = function(player, type = 0) {
     }, posVeh, 0, veh);
 };
 
-
 fraction.spawnNearCanabis = function(player) {
 
     if (!user.isLogin(player))
@@ -919,7 +918,56 @@ fraction.spawnNearCanabis = function(player) {
             veh.locked = true;
             veh.setColor(color, color);
             veh.windowTint = 1;
-            inventory.addAmmoItem(3, countZones * 2, inventory.types.Vehicle, mp.joaat(veh.numberPlate), 1, 0, "{}");
+            inventory.addItem(3, countZones * 2, inventory.types.Vehicle, mp.joaat(veh.numberPlate), 1, 0, "{}");
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+
+    }, posVeh, 0, veh);
+};
+
+fraction.spawnNearGuns = function(player, type = 0) {
+
+    if (!user.isLogin(player))
+        return;
+
+    let posVeh = fraction.getNearSpawnGarage(player.position);
+    user.setWaypoint(player, posVeh.x, posVeh.y);
+    player.notify('~g~Метка на транспорт была установлена');
+
+    let vehList = ['Emperor', 'Emperor2', 'Oracle', 'Bodhi2', 'Blista2', 'Stratum', 'Primo', 'Minivan', 'Intruder', 'RancherXL'];
+    let veh = vehList[methods.getRandomInt(0, vehList.length)];
+
+    vehicles.spawnCarCb(veh => {
+
+        if (!vehicles.exists(veh))
+            return;
+
+        try {
+            let color = methods.getRandomInt(0, 160);
+            veh.locked = true;
+            veh.setColor(color, color);
+            veh.windowTint = 1;
+            if (type === 1) {
+                inventory.addItem(280, 2, inventory.types.Vehicle, mp.joaat(veh.numberPlate), 1, 0, "{}");
+                inventory.addItem(281, 2, inventory.types.Vehicle, mp.joaat(veh.numberPlate), 1, 0, "{}");
+                inventory.addItem(282, 2, inventory.types.Vehicle, mp.joaat(veh.numberPlate), 1, 0, "{}");
+                inventory.addItem(283, 2, inventory.types.Vehicle, mp.joaat(veh.numberPlate), 1, 0, "{}");
+                inventory.addItem(284, 2, inventory.types.Vehicle, mp.joaat(veh.numberPlate), 1, 0, "{}");
+                inventory.addItem(285, 2, inventory.types.Vehicle, mp.joaat(veh.numberPlate), 1, 0, "{}");
+            }
+            if (type === 2) {
+                inventory.addItem(106, 1, inventory.types.Vehicle, mp.joaat(veh.numberPlate), 100, 0, "{}");
+                inventory.addItem(108, 1, inventory.types.Vehicle, mp.joaat(veh.numberPlate), 100, 0, "{}");
+                inventory.addItem(110, 1, inventory.types.Vehicle, mp.joaat(veh.numberPlate), 100, 0, "{}");
+                inventory.addItem(113, 1, inventory.types.Vehicle, mp.joaat(veh.numberPlate), 100, 0, "{}");
+                inventory.addItem(284, 8, inventory.types.Vehicle, mp.joaat(veh.numberPlate), 1, 0, "{}");
+            }
+            else {
+                inventory.addItem(71, 2, inventory.types.Vehicle, mp.joaat(veh.numberPlate), 100, 0, "{}");
+                inventory.addItem(280, 2, inventory.types.Vehicle, mp.joaat(veh.numberPlate), 1, 0, "{}");
+            }
         }
         catch (e) {
             methods.debug(e);
@@ -1624,7 +1672,7 @@ fraction.startGrabShopGang = function(player, itemId = 0) {
                     }
 
                     if (methods.getRandomInt(0, 100) < 40) {
-                        inventory.addItem(141, 1, inventory.types.Player, user.getId(player), methods.getRandomInt(shopItem.sumMax, shopItem.sumMin) * 5, 0, "{}", 2);
+                        inventory.addItem(141, 1, inventory.types.Player, user.getId(player), methods.getRandomInt(shopItem.sumMax, shopItem.sumMin) * 4, 0, "{}", 2);
                         mp.players.forEach(p => {
                             if (user.isLogin(p) && user.get(p, 'fraction_id2') === frId) {
                                 user.deleteBlip(p, i + 1000);

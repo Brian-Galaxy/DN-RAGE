@@ -1520,6 +1520,11 @@ menuList.showBusinessMenu = async function(data) {
     UIMenu.Menu.AddMenuItem("~b~Название: ~s~", "", {}, `${data.get('name')}`);
     UIMenu.Menu.AddMenuItem("~b~Налог на прибыль: ~s~", 'Гос. налог + налог банка', {}, `${nalog}%`);
 
+    if (user.getCache('stats_darknet') >= 30)
+        UIMenu.Menu.AddMenuItem("~y~Отмыть деньги", '', {doName: 'moneyClear'});
+    if (user.isFib() || user.isSapd() || user.isSheriff())
+        UIMenu.Menu.AddMenuItem("Список транзакций", "", {doName: 'log'});
+
     if (user.getCache('id') == data.get('user_id')) {
 
         UIMenu.Menu.AddMenuItem("~b~Банк: ", "", {}, `~g~${methods.moneyFormat(data.get('bank'))}`);
@@ -1556,6 +1561,12 @@ menuList.showBusinessMenu = async function(data) {
         }
         if (item.doName == 'settings') {
             menuList.showBusinessSettingsMenu(data);
+        }
+        if (item.doName == 'moneyClear') {
+            let text = await UIMenu.Menu.GetUserInput("Введите название транзакции", "", 30);
+            if (text === '')
+                return ;
+            mp.events.callRemote('server:sellMoneyBusiness', data.get('id'), text);
         }
         if (item.doName == 'log') {
             mp.events.callRemote('server:business:log', data.get('id'));
@@ -1899,6 +1910,7 @@ menuList.showMeriaMainMenu = function() {
         UIMenu.Menu.AddMenuItem("Подселение", "", {doName: 'showMeriaHousePeopleMenu'});
 
     UIMenu.Menu.AddMenuItem("Экономика штата", "", {doName: 'showMeriaInfoMenu'});
+    UIMenu.Menu.AddMenuItem("Подать заявление на стажировку", "", {doName: 'govWork'});
 
     UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: 'closeMenu'});
     UIMenu.Menu.Draw();
@@ -1906,6 +1918,13 @@ menuList.showMeriaMainMenu = function() {
     UIMenu.Menu.OnSelect.Add(async (item, index) => {
         UIMenu.Menu.HideMenu();
 
+        if (item.doName == 'govWork')
+        {
+            let discord = await menuList.getUserInput('Введите ваш DISCORD', '', 30);
+            let text = await menuList.getUserInput('Почему вы хотите тут работать?', '', 100);
+            mp.game.ui.notifications.show(`~g~Заявление было отправлено, скоро с вами свяжуться в дискорде`);
+            mp.events.callRemote('server:discord:sendWorkGov', discord, text);
+        }
         if (item.doName == 'showMeriaSellHvbMenu')
             menuList.showMeriaSellHvbMenu(await coffer.getAllData());
         if (item.doName == 'showMeriaTaxMenu')
@@ -3767,6 +3786,9 @@ menuList.showVehicleDoInvMenu = function(vehId) {
     if (vehicle.getVariable('fraction_id') === 3 && user.isFib() && vInfo.display_name === 'FBI2') {
         UIMenu.Menu.AddMenuItem("~g~Войти в режим дрона", "", {doName: "drone"});
     }
+    if (vehicle.getVariable('fraction_id') === 7 && user.isNews() && vInfo.display_name === 'Rumpo') {
+        UIMenu.Menu.AddMenuItem("~g~Войти в режим дрона", "", {doName: "drone2"});
+    }
 
     if (user.getCache('job') == vehicle.getVariable('jobId')) {
         switch (vehicle.getVariable('jobId')) {
@@ -3813,6 +3835,9 @@ menuList.showVehicleDoInvMenu = function(vehId) {
         }
         if (item.doName == 'drone') {
             drone.enterLspd(vehicle.remoteId);
+        }
+        if (item.doName == 'drone2') {
+            drone.enterSmall(vehicle.remoteId);
         }
         if (item.doName == 'photo:ask')
             photo.ask();
@@ -4362,6 +4387,15 @@ menuList.showVehicleMenu = async function(data) {
                 });
             }
             //UIMenu.Menu.AddMenuItem(`~y~Разгрузить весь груз`, 'Доступно только внутри склада').cargoUnloadAll = true;
+        }
+    }
+    else {
+        if (veh.getVariable('cargoId') !== null && veh.getVariable('cargoId') !== undefined) {
+            let boxes = JSON.parse(veh.getVariable('box'));
+            boxes.forEach((item, i) => {
+                if (item >= 0)
+                    UIMenu.Menu.AddMenuItem(`~y~${stocks.boxList[item][0]}`, '~r~Разгрузка запрещена', {});
+            });
         }
     }
 
@@ -5829,36 +5863,6 @@ menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId, isF
     catch (e) {
        methods.debug('menuList.showToPlayerItemListMenu', e);
     }
-};
-
-menuList.showInvaderShopMenu = function() {
-
-    UIMenu.Menu.Create(`LifeInvader`, `~b~Меню LifeInvader`);
-
-    let price = 200;
-    UIMenu.Menu.AddMenuItem("Арендовать рабочий транспорт", "Стоимость: ~g~" + methods.moneyFormat(price), {doName: "spawnCar"});
-
-    UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
-    UIMenu.Menu.Draw();
-
-    UIMenu.Menu.OnSelect.Add(async (item, index) => {
-        UIMenu.Menu.HideMenu();
-        if (item.doName == 'spawnCar') {
-
-            if (user.getCache('job') != 3) {
-                mp.game.ui.notifications.show(`~r~Необходимо работать фотографом`);
-                return;
-            }
-
-            if (user.getMoney() < price) {
-                mp.game.ui.notifications.show(`~r~У Вас недостаточно средств`);
-                return;
-            }
-
-            user.removeMoney(price, 'Аренда рабочего ТС');
-            vehicles.spawnJobCar(-1051.93359375, -249.95065307617188, 37.56923294067383, 203.91482543945312, 'Rebel2', 3);
-        }
-    });
 };
 
 menuList.showBankMenu = async function(bankId, price) {
@@ -10683,6 +10687,88 @@ menuList.showAveMenu = function() {
     });*/
 };
 
+menuList.showInvaderShopMenu = function() {
+
+    let btn = [];
+    btn.push(
+        {
+            text: 'Арендовать рабочий ТС ($200)',
+            bgcolor: '',
+            params: {doName: 'inv:rentWorkCar'}
+        }
+    );
+
+    btn.push(
+        {
+            text: 'Подать заявление на стажировку',
+            bgcolor: '',
+            params: {doName: 'inv:wantWork'}
+        }
+    );
+
+    btn.push(
+        {
+            text: 'Закрыть',
+            bgcolor: 'rgba(244,67,54,0.7)',
+            params: {doName: 'close'}
+        }
+    );
+
+    shopMenu.showDialog(new mp.Vector3(-1083.9874267578125, -246.1114044189453, 37.763267517089844 + 0.6), 198.80426025390625);
+    shopMenu.updateDialog(btn, 'Секретарь', 'Сотрудник InvaderNews', 'Здравствуйте, чем помочь?')
+};
+
+menuList.showBotUsmcMenu = function() {
+
+    let btn = [];
+    btn.push(
+        {
+            text: 'Подать заявление в академию',
+            bgcolor: '',
+            params: {doName: 'usmc:wantWork'}
+        }
+    );
+
+    btn.push(
+        {
+            text: 'Закрыть',
+            bgcolor: 'rgba(244,67,54,0.7)',
+            params: {doName: 'close'}
+        }
+    );
+
+    shopMenu.showDialog(new mp.Vector3(486.37030029296875, -3027.28515625, 6.014427661895752 + 0.6), 275.48919677734375);
+    shopMenu.updateDialog(btn, 'Офицер', 'Офицер USMC', 'Здравствуйте, чем помочь?')
+};
+
+menuList.showBotEmsMenu = function(idx) {
+
+    let btn = [];
+    btn.push(
+        {
+            text: 'Подать заявление на стажировку',
+            bgcolor: '',
+            params: {doName: 'ems:wantWork'}
+        }
+    );
+
+    btn.push(
+        {
+            text: 'Закрыть',
+            bgcolor: 'rgba(244,67,54,0.7)',
+            params: {doName: 'close'}
+        }
+    );
+
+    let listPos = [
+        [309.55218505859375, -593.9552612304688, 43.28400802612305, 21.91470718383789],
+        [1838.4437255859375, 3682.33544921875, 34.27005386352539, 162.76380920410156],
+        [-246.97201538085938, 6320.427734375, 32.420734405517578, 312.1958923339844],
+    ];
+    shopMenu.showDialog(new mp.Vector3(listPos[idx][0], listPos[idx][1], listPos[idx][2] + 0.6), listPos[idx][3]);
+    shopMenu.updateDialog(btn, 'Врач', 'Сотрудник EMS', 'Здравствуйте, чем помочь?')
+};
+
 menuList.showBotLspdMenu = function(idx = 0)
 {
     let btn = [];
@@ -10702,6 +10788,26 @@ menuList.showBotLspdMenu = function(idx = 0)
             }
         );
     }
+
+    if (idx > 1) {
+        btn.push(
+            {
+                text: 'Подать заявление на стажировку',
+                bgcolor: '',
+                params: {doName: 'bcsd:wantWork'}
+            }
+        );
+    }
+    else {
+        btn.push(
+            {
+                text: 'Подать заявление в академию',
+                bgcolor: '',
+                params: {doName: 'lspd:wantWork'}
+            }
+        );
+    }
+
     btn.push(
         {
             text: 'Закрыть',

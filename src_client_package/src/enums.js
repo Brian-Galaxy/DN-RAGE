@@ -638,7 +638,7 @@ enums.shopItems = {
         {
             title: 'Техника',
             list: [
-                29, 59
+                29, 47, 59
             ]
         }
     ],
@@ -683,7 +683,7 @@ enums.shopAlcItems = [
 ];
 
 enums.shopElItems = [
-    29, 59, 477, 484
+    29, 47, 59, 477, 484
 ];
 
 enums.shopMedItems = [

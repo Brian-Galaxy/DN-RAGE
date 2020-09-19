@@ -673,7 +673,7 @@ mp.events.add('client:mainMenu:settings:updateList', async function(btn, index) 
         mp.game.ui.notifications.show('~b~Настройки были сохранены');
     }
     if (btn === "main:clipsetw") {
-        user.set('clipset', enums.clipsetW[index][1]);
+        user.set('clipset_w', enums.clipsetW[index][1]);
         user.setClipsetW(enums.clipsetW[index][1]);
         mp.game.ui.notifications.show('~b~Настройки были сохранены');
     }

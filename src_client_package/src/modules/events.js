@@ -1360,6 +1360,26 @@ mp.events.add('client:menuList:showInvaderShopMenu', () => {
     }
 });
 
+mp.events.add('client:menuList:showBotEmsMenu', (idx) => {
+    try {
+       methods.debug('Event: client:menuList:showBotEmsMenu');
+       menuList.showBotEmsMenu(idx);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.add('client:menuList:showBotUsmcMenu', () => {
+    try {
+       methods.debug('Event: client:menuList:showBotUsmcMenu');
+       menuList.showBotUsmcMenu();
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
 mp.events.add('client:menuList:showRentBikeMenu', (shopId, price) => {
     try {
         methods.debug('Event: client:menuList:showRentBikeMenu');

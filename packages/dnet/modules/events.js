@@ -12,6 +12,7 @@ let Container = require('./data');
 let methods = require('./methods');
 let mysql = require('./mysql');
 let chat = require('./chat');
+let ctos = require('./ctos');
 
 let houses = require('../property/houses');
 let stocks = require('../property/stocks');
@@ -2078,8 +2079,8 @@ mp.events.addRemoteCounted('server:startSpecMissionLspd', (player, vId) => {
                     canUse++;
             });
 
-            if (canUse >= 2) {
-                player.notify('~r~Доступно только 2 дрона одновременно');
+            if (canUse >= 3) {
+                player.notify('~r~Доступно только 3 дрона одновременно');
                 return;
             }
             
@@ -2113,6 +2114,51 @@ mp.events.addRemoteCounted('server:startSpecMissionLspd', (player, vId) => {
     }
 });
 
+mp.events.addRemoteCounted('server:startSpecMissionSmall', (player, vId) => {
+    try {
+        if (user.isLogin(player)) {
+
+            let canUse = 0;
+            mp.vehicles.forEach(v => {
+                if (v.getVariable('riotId2'))
+                    canUse++;
+            });
+
+            if (canUse >= 2) {
+                player.notify('~r~Доступно только 2 дрона одновременно');
+                return;
+            }
+
+            player.call('client:drone:status', [true]);
+
+            let v = vehicles.spawnCar(player.position, player.heading, 'rcbandito');
+            user.putInVehicle(player, v, -1);
+            v.alpha = 0;
+            v.locked = true;
+            v.addAttachment('spec2');
+
+            let riot = mp.vehicles.at(vId);
+
+            setTimeout(function () { try { v.alpha = 0;} catch (e) {} }, 100);
+            setTimeout(function () { try { v.alpha = 0;} catch (e) {} }, 500);
+            setTimeout(function () {
+                try {
+                    mp.players.callInRange(v.position, 200, "vSync:Sound", [v.id]);
+                    v.setVariable('markAsDrone', true);
+                    if (mp.vehicles.exists(riot))
+                        v.setVariable('riotId2', riot.numberPlate);
+                }
+                catch (e) {
+
+                }
+            }, 1000)
+        }
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
 mp.events.addRemoteCounted('server:stopSpecMission', (player) => {
     try {
         if (user.isLogin(player))
@@ -2128,6 +2174,11 @@ mp.events.addRemoteCounted('server:stopSpecMissionLspd', (player) => {
         if (user.isLogin(player)) {
             mp.vehicles.forEach(v => {
                 if (player.vehicle.getVariable('riotId') === v.numberPlate)
+                {
+                    let pos = v.position;
+                    user.teleport(player, pos.x + 2, pos.y + 2, pos.z)
+                }
+                if (player.vehicle.getVariable('riotId2') === v.numberPlate)
                 {
                     let pos = v.position;
                     user.teleport(player, pos.x + 2, pos.y + 2, pos.z)
@@ -2414,7 +2465,7 @@ mp.events.addRemoteCounted('server:business:sell', (player) => {
 mp.events.addRemoteCounted('server:business:log', (player, id) => {
     if (!user.isLogin(player))
         return;
-    mysql.executeQuery(`SELECT * FROM log_business WHERE business_id = ${methods.parseInt(id)} ORDER BY id DESC LIMIT 50`, function (err, rows, fields) {
+    mysql.executeQuery(`SELECT * FROM log_business WHERE business_id = ${methods.parseInt(id)} ORDER BY id DESC LIMIT 70`, function (err, rows, fields) {
         try {
             let list = [];
             rows.forEach(function(item) {
@@ -2433,6 +2484,42 @@ mp.events.addRemoteCounted('server:business:log', (player, id) => {
             methods.debug(e);
         }
     });
+});
+
+mp.events.addRemoteCounted('server:discord:sendWorkGov', (player, dscrd, text) => {
+    if (!user.isLogin(player))
+        return;
+    discord.sendWork(discord.workGov, player, dscrd, text);
+});
+
+mp.events.addRemoteCounted('server:discord:sendWorkEms', (player, dscrd, text) => {
+    if (!user.isLogin(player))
+        return;
+    discord.sendWork(discord.workEms, player, dscrd, text);
+});
+
+mp.events.addRemoteCounted('server:discord:sendWorkNews', (player, dscrd, text) => {
+    if (!user.isLogin(player))
+        return;
+    discord.sendWork(discord.workNews, player, dscrd, text);
+});
+
+mp.events.addRemoteCounted('server:discord:sendWorkBcsd', (player, dscrd, text) => {
+    if (!user.isLogin(player))
+        return;
+    discord.sendWork(discord.workBcsd, player, dscrd, text);
+});
+
+mp.events.addRemoteCounted('server:discord:sendWorkLspd', (player, dscrd, text) => {
+    if (!user.isLogin(player))
+        return;
+    discord.sendWork(discord.workLspd, player, dscrd, text);
+});
+
+mp.events.addRemoteCounted('server:discord:sendWorkUsmc', (player, dscrd, text) => {
+    if (!user.isLogin(player))
+        return;
+    discord.sendWork(discord.workUsmc, player, dscrd, text);
 });
 
 mp.events.addRemoteCounted('server:invader:sendNews', (player, title, text) => {
@@ -5661,6 +5748,25 @@ mp.events.addRemoteCounted('server:fraction:getDrugCanabisSpeedo', (player) => {
     fraction.spawnNearCanabis(player);
 });
 
+mp.events.addRemoteCounted('server:fraction:getLamarPistol', (player) => {
+    if (!user.isLogin(player))
+        return;
+    fraction.spawnNearGuns(player, 0);
+});
+
+mp.events.addRemoteCounted('server:fraction:getLamarAmmo', (player) => {
+    if (!user.isLogin(player))
+        return;
+    fraction.spawnNearGuns(player, 1);
+});
+
+
+mp.events.addRemoteCounted('server:fraction:getLamarRifle', (player) => {
+    if (!user.isLogin(player))
+        return;
+    fraction.spawnNearGuns(player, 2);
+});
+
 mp.events.addRemoteCounted('server:fraction:vehicleNewRank', (player, id, rank) => {
 
     if (!user.isLogin(player))
@@ -6632,6 +6738,33 @@ mp.events.addRemoteCounted('server:vehicle:setLivery', (player, liv) => {
     }
 });
 
+mp.events.addRemoteCounted('server:trafficDestroy', (player) => {
+    if (!user.isLogin(player))
+        return;
+    weather.setBrokeLight();
+});
+
+mp.events.addRemoteCounted('server:cityDestroy', (player) => {
+    if (!user.isLogin(player))
+        return;
+    if (ctos.canBlackout()) {
+        ctos.setBlackout(true);
+        ctos.setNoNetwork(true);
+    }
+    else
+        player.notify('~r~Hacking attempt');
+});
+
+mp.events.addRemoteCounted('server:networkDestroy', (player) => {
+    if (!user.isLogin(player))
+        return;
+    if (ctos.canNetwork()) {
+        ctos.setNoNetwork(true);
+    }
+    else
+        player.notify('~r~Hacking attempt');
+});
+
 mp.events.addRemoteCounted('server:sellVeh', (player) => {
     if (!user.isLogin(player))
         return;
@@ -6656,7 +6789,7 @@ mp.events.addRemoteCounted('server:sellVeh', (player) => {
 
     let containerId = veh.getVariable('container');
     if (containerId != undefined && veh.getVariable('user_id') > 0) {
-        let vInfo = methods.getVehicleInfo(vehicle.model);
+        let vInfo = methods.getVehicleInfo(veh.model);
         let idx = 0;
         if (vInfo.class_name === 'Armored' ||
             vInfo.class_name === 'Commercials' ||
@@ -6673,7 +6806,6 @@ mp.events.addRemoteCounted('server:sellVeh', (player) => {
         if (vInfo.class_name === 'Planes')
             idx = 4;
 
-        veh.dimension = 100000 + idx;
         vehicles.set(containerId, 'is_cop_park', 100000 + idx);
         vehicles.set(containerId, 'cop_park_name', 'В угоне');
         vehicles.save(containerId);
@@ -6745,11 +6877,6 @@ mp.events.addRemoteCounted('server:sellMoney', (player) => {
     if (!user.isLogin(player))
         return;
 
-    if (weather.getHour() < 22 && weather.getHour() > 8) {
-        player.notify('~r~Доступно только с 22 до 8 утра игрового времени');
-        return;
-    }
-
     mysql.executeQuery(`SELECT * FROM items WHERE owner_id = ${user.getId(player)} AND owner_type = 1`, function (err, rows, fields) {
 
         let money = 0;
@@ -6768,7 +6895,7 @@ mp.events.addRemoteCounted('server:sellMoney', (player) => {
 
             let frId = user.get(player, 'fraction_id2');
             let procent = fraction.get(frId, 'proc_clear');
-            let moneyHalf = money / 1000;
+            let moneyHalf = money / 1600; //800 * 2
             let currentOnline = methods.getCurrentOnlineFraction2(frId);
 
             fraction.addMoney(frId, moneyHalf * (procent / 100), 'Отмыв средств');
@@ -6782,6 +6909,40 @@ mp.events.addRemoteCounted('server:sellMoney', (player) => {
                 });
             }
             player.notify(`~b~Деньги с отмыва были разделены следующим образом. ${procent}% идёт на счет организации, ${100 - procent}% разделяется над всеми, кто в сети`);
+        }
+        else {
+            player.notify('~r~У Вас нет денег для отмыва');
+        }
+    });
+});
+
+mp.events.addRemoteCounted('server:sellMoneyBusiness', (player, bid, text) => {
+    if (!user.isLogin(player))
+        return;
+
+    mysql.executeQuery(`SELECT * FROM items WHERE owner_id = ${user.getId(player)} AND owner_type = 1`, function (err, rows, fields) {
+
+        let money = 0;
+        let count = 0;
+
+        rows.forEach((item) => {
+
+            if (item['item_id'] == 140 || item['item_id'] == 141) {
+                money += item['count'];
+                count++;
+                inventory.deleteItem(item['id']);
+            }
+        });
+
+        if (count > 0) {
+            business.addMoney(bid, money, methods.removeQuotes(methods.removeQuotes2(methods.removeSpecialChars(text))));
+            player.notify(`~b~Деньги были отмыты на счет бизнеса`);
+
+            if (methods.getRandomInt(0, user.get(player, 'stats_darknet')) < 5)
+                user.giveWanted(player, 50, 'Несанкционированная транзакция');
+            else if (user.get(player, 'stats_darknet') < 100) {
+                user.set(player, 'stats_darknet', user.get(player, 'stats_darknet') + 1);
+            }
         }
         else {
             player.notify('~r~У Вас нет денег для отмыва');

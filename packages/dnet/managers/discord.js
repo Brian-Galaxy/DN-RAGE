@@ -1,5 +1,9 @@
 const webhook = require("webhook-discord");
 
+let mysql = require('../modules/mysql');
+let methods = require('../modules/methods');
+let user = require('../user');
+
 let discord = exports;
 
 discord.report = "https://discordapp.com/api/webhooks/682573681415028740/l0tkdhaVqlCLa_JZQ6xnAE1lE2aZejqq8Zj_x8QvUlAH8hoIB6frc6uZpUPfx3C7K8Ah";
@@ -8,6 +12,13 @@ discord.invaderAd = "https://discordapp.com/api/webhooks/710593652170424380/u3gR
 discord.invaderAd2 = "https://discordapp.com/api/webhooks/724169171025395743/tcUiRFj776_KxogjYDjlJNGxqIkGjMzMmDe5Rk5ypOCwDNJBbG5J_4g-K9T5CwhtzVH4";
 discord.invaderNews = "https://discordapp.com/api/webhooks/749837863985610853/8TJa5mtY2hdq1_2NWXoJEiiXT9o4BsDaUgrTungw5xJ5l3BNBVclgXMIiQo8Pf1L1Dkj";
 discord.fractionNews = "https://discordapp.com/api/webhooks/682956739792076838/xnKY61UPcvyakdcRkMIFEsaFCMGKuK9u4wT7KK4lN_Spo1EdA_ySlzMOSLtfyW44QWMb";
+
+discord.workBcsd = "https://discordapp.com/api/webhooks/756863874031943772/ALxfZpn9UAbEpjMCmUGO9p5r3-iJbmVeohTflbUcnzTRNdfDCNWvmLhhzCaZZbkri50Q";
+discord.workLspd = "https://discordapp.com/api/webhooks/756864901296947342/ooy7wIUlXMIVerUjnptPR356BXqM3-56cg7A0SljbCh8iSSaBEL0QcYlrY-JmYK6LkU-";
+discord.workUsmc = "https://discordapp.com/api/webhooks/756865097674260532/86qvZmpKS9sHceYjwwEyxgitSleVXtsWtEJbFliDgEYyeDx76g38RB4UUcbQk5asjKjl";
+discord.workNews = "https://discordapp.com/api/webhooks/756864274034589708/hrJQzkZvcLAmW9D_AQ1aeWc3q8dJ7pB0k5oAytMJQ15Cz9MN07Icb0CfGNz6Yhc23BhC";
+discord.workEms = "https://discordapp.com/api/webhooks/756864424148729868/dvE9bel8EEuLr_w8lhor6FWDRQLTqF1JBZb1nq_-DonbPTUd5AMmWVac9GZpETGfciXZ";
+discord.workGov = "https://discordapp.com/api/webhooks/756864667233812531/KgEtvxABddRxRW7ppLql2kTy4ZPFhFx5cCpvsSVlfdtKmj6i-1A5cJ4LFya9g-xVwbUw";
 
 discord.marketProperty = "https://discordapp.com/api/webhooks/749763956205289622/Vj0e4iqTtJzNGRb3Pb8SUJ5vURW_CoWa2acTUIZ-2JcaDwVYDeL50IDDTQq5uBKjJ5DG";
 discord.marketBusiness = "https://discordapp.com/api/webhooks/749764058487455885/iAB-r3YOUVZ0WTrf5XDwua1l1uPhTtocyycFy4MQ3k63n565N5ZovZFFOfG9qTBMJQek";
@@ -100,6 +111,48 @@ discord.sendNews = function (title, text, editor, editorImg) {
         .setTime();
 
     Hook.send(msg);
+};
+
+discord.sendWork = function (url, player, dscrd, text) {
+
+    if (!user.isLogin(player))
+        return;
+
+    let history = '';
+    let sender = `${user.getRpName(player)} (${user.getId(player)})`;
+    let phone = methods.phoneFormat(user.get(player, 'phone'));
+    let senderImg = player.socialClub;
+
+    mysql.executeQuery(`SELECT * FROM log_player WHERE user_id = ${user.getId(player)} AND type = 1 ORDER BY id DESC LIMIT 5`, (err, rows, fields) => {
+        if (rows.length > 0) {
+            try {
+                rows.forEach(row => {
+                    history += `${methods.unixTimeStampToDateTimeShort(row['timestamp'])} | ${row['do']}\n`;
+                });
+            }
+            catch (e) {
+                methods.debug(e);
+            }
+        }
+
+        if (history === '')
+            history = 'Криминальной истории - нет';
+
+        const Hook = new webhook.Webhook(url);
+        const msg = new webhook.MessageBuilder()
+            .setName('Заявление')
+            .setTitle(sender)
+            .setDescription(text)
+            .addField(`Телефон`, `\`\`\`${phone}\`\`\``, true)
+            .addField(`Дискорд`, `\`\`\`${dscrd}\`\`\``, true)
+            .addField(`Work ID`, `\`\`\`${user.get(player, 'work_lvl')} / ${user.get(player, 'work_exp')}\`\`\``, true)
+            .addField(`История`, `\`\`\`${history}\`\`\``)
+            .setFooter(sender, 'https://a.rsg.sc//n/' + senderImg)
+            .setColor("#f44336")
+            .setTime();
+
+        Hook.send(msg);
+    });
 };
 
 discord.sendMarketProperty = function (title, text) {

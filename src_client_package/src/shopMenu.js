@@ -1067,6 +1067,56 @@ mp.events.add('client:dialog:btn', async function(json) {
             shopMenu.hideDialog();
             mp.events.callRemote('server:user:toLspdSafe');
         }
+        if (params.doName === 'lspd:takeWeap') {
+            shopMenu.hideDialog();
+            if (user.getCache('job') != 3) {
+                mp.game.ui.notifications.show(`~r~Необходимо работать фотографом`);
+                return;
+            }
+
+            if (user.getMoney() < 200) {
+                mp.game.ui.notifications.show(`~r~У Вас недостаточно средств`);
+                return;
+            }
+
+            user.removeMoney(200, 'Аренда рабочего ТС');
+            vehicles.spawnJobCar(-1051.93359375, -249.95065307617188, 37.56923294067383, 203.91482543945312, 'Rebel2', 3);
+        }
+        if (params.doName === 'inv:wantWork') {
+            shopMenu.hideDialog();
+            let discord = await menuList.getUserInput('Введите ваш DISCORD', '', 30);
+            let text = await menuList.getUserInput('Почему вы хотите тут работать?', '', 100);
+            mp.game.ui.notifications.show(`~g~Заявление было отправлено, скоро с вами свяжуться в дискорде`);
+            mp.events.callRemote('server:discord:sendWorkNews', discord, text);
+        }
+        if (params.doName === 'lspd:wantWork') {
+            shopMenu.hideDialog();
+            let discord = await menuList.getUserInput('Введите ваш DISCORD', '', 30);
+            let text = await menuList.getUserInput('Почему вы хотите тут работать?', '', 100);
+            mp.game.ui.notifications.show(`~g~Заявление было отправлено, скоро с вами свяжуться в дискорде`);
+            mp.events.callRemote('server:discord:sendWorkLspd', discord, text);
+        }
+        if (params.doName === 'bcsd:wantWork') {
+            shopMenu.hideDialog();
+            let discord = await menuList.getUserInput('Введите ваш DISCORD', '', 30);
+            let text = await menuList.getUserInput('Почему вы хотите тут работать?', '', 100);
+            mp.game.ui.notifications.show(`~g~Заявление было отправлено, скоро с вами свяжуться в дискорде`);
+            mp.events.callRemote('server:discord:sendWorkBcsd', discord, text);
+        }
+        if (params.doName === 'usmc:wantWork') {
+            shopMenu.hideDialog();
+            let discord = await menuList.getUserInput('Введите ваш DISCORD', '', 30);
+            let text = await menuList.getUserInput('Почему вы хотите тут служить?', '', 100);
+            mp.game.ui.notifications.show(`~g~Заявление было отправлено, скоро с вами свяжуться в дискорде`);
+            mp.events.callRemote('server:discord:sendWorkUsmc', discord, text);
+        }
+        if (params.doName === 'ems:wantWork') {
+            shopMenu.hideDialog();
+            let discord = await menuList.getUserInput('Введите ваш DISCORD', '', 30);
+            let text = await menuList.getUserInput('Почему вы хотите тут работать?', '', 100);
+            mp.game.ui.notifications.show(`~g~Заявление было отправлено, скоро с вами свяжуться в дискорде`);
+            mp.events.callRemote('server:discord:sendWorkEms', discord, text);
+        }
         if (params.doName === 'lspd:toJail') {
             mp.events.callRemote('server:user:arrest');
         }

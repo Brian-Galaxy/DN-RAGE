@@ -36,6 +36,10 @@ let isSaveStats = false;
 let ems1 = 1;
 let ems2 = 1;
 
+let isBrokeLight = false;
+let currentLightIdx = 0;
+let lightFlags = [0, 39, 88, 49, 88, 39];
+
 weather.loadAll = function() {
     methods.debug('weather.loadAll');
     mysql.executeQuery(`SELECT * FROM daynight WHERE id = 1`, function (err, rows, fields) {
@@ -52,6 +56,8 @@ weather.loadAll = function() {
         ems1 = methods.getRandomInt(1, 59);
         ems2 = methods.getRandomInt(1, 59);
     });
+
+    mp.world.trafficLights.locked = true;
 };
 
 weather.load = function() {
@@ -87,6 +93,7 @@ weather.load = function() {
     weather.randomTimer();
     weather.weatherTimer();
     weather.timeSyncTimer();
+    weather.trafficLightTimer();
     weather.saveTimer();
 };
 
@@ -156,6 +163,31 @@ weather.weatherTimer = function() {
         _windSpeed = methods.getRandomInt(8, 12);
 
     setTimeout(weather.weatherTimer, 30 * 60 * 1000);
+};
+
+weather.trafficLightTimer = function() {
+    mp.world.trafficLights.state = lightFlags[currentLightIdx];
+
+    if (isBrokeLight) {
+        setTimeout(weather.trafficLightTimer, 100);
+    }
+    else {
+        if (currentLightIdx === 1 || currentLightIdx === 2 || currentLightIdx === 4 || currentLightIdx === 5)
+            setTimeout(weather.trafficLightTimer, 1000);
+        else
+            setTimeout(weather.trafficLightTimer, 10000);
+    }
+    if (currentLightIdx === 5)
+        currentLightIdx = 0;
+    else
+        currentLightIdx++;
+};
+
+weather.setBrokeLight = function() {
+    isBrokeLight = true;
+    setTimeout(function () {
+        isBrokeLight = false;
+    }, 20000);
 };
 
 weather.timeSyncTimer = function() {

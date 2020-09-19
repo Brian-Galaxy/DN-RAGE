@@ -80,6 +80,15 @@ npc.loadAll = function() {
 // Охранник справа в City Hall
     npc.create(mp.game.joaat("s_m_m_highsec_02"), new mp.Vector3(-1291.8, -565.9213, 30.57479), -132.9988, false, "WORLD_HUMAN_GUARD_STAND", '', '', 9, 0, '', '');
 
+    //Больница PillBox
+    npc.create(mp.game.joaat("s_f_y_scrubs_01"), new mp.Vector3(309.55218505859375, -593.9552612304688, 43.28400802612305), 21.91470, false, "WORLD_HUMAN_STAND_IMPATIENT");
+    //Больница Sandy
+    npc.create(mp.game.joaat("s_f_y_scrubs_01"), new mp.Vector3(1838.4437255859375, 3682.33544921875, 34.27005386352539), 162.76380920410156, false, "WORLD_HUMAN_STAND_IMPATIENT");
+    //Больница Paleto
+    npc.create(mp.game.joaat("s_f_y_scrubs_01"), new mp.Vector3(-246.97201538085938, 6320.427734375, 32.420734405517578), 312.1958923339844, false, "WORLD_HUMAN_STAND_IMPATIENT");
+    //USMC
+    npc.create(mp.game.joaat("s_m_y_marine_03"), new mp.Vector3(486.37030029296875, -3027.28515625, 6.014427661895752), 275.48919677734375, false, "WORLD_HUMAN_CLIPBOARD");
+
     //Сдача железа
     npc.create(mp.game.joaat("s_m_y_dockwork_01"), new mp.Vector3(1074.1737060546875, -2009.465576171875, 32.08498764038086), 53.97209548950195, false, "WORLD_HUMAN_CLIPBOARD");
     //Сдача одежды
@@ -337,7 +346,7 @@ npc.loadAll = function() {
 // Работодатель на Разнорабочем
     npc.create(mp.game.joaat("s_m_y_construct_02"), new mp.Vector3(-1159.267, -739.1121, 19.88993), -171.2985, false, "WORLD_HUMAN_CLIPBOARD");
 // Работодатель на Фотографе LifeInvader
-    npc.create(mp.game.joaat("a_m_m_prolhost_01"), new mp.Vector3(-1075.676, -246.3934, 37.76327), 147.1302, false, "WORLD_HUMAN_CLIPBOARD");
+    npc.create(mp.game.joaat("a_m_m_prolhost_01"), new mp.Vector3(-1083.9874267578125, -246.1114044189453, 37.763267517089844), 198.80426025390625, false, "WORLD_HUMAN_CLIPBOARD");
 // Работодатель на Почте GoPostal
     npc.create(mp.game.joaat("s_m_m_janitor"), new mp.Vector3(136.4377, 92.83617, 83.5126), 40.21272, false, "WORLD_HUMAN_CLIPBOARD");
 // Работодатель на Автобусной станции

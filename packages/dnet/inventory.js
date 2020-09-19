@@ -2,6 +2,7 @@ let Container = require('./modules/data');
 let mysql = require('./modules/mysql');
 let methods = require('./modules/methods');
 let chat = require('./modules/chat');
+let ctos = require('./modules/ctos');
 
 let weather = require('./managers/weather');
 let vSync = require('./managers/vSync');
@@ -1885,6 +1886,12 @@ inventory.useItem = function(player, id, itemId, isTargetable = false) {
                     vehicles.setFuel(veh, currentFuel + 10);
                     player.notify("~g~Вы заправили транспорт на 10л.");
                     inventory.deleteItem(id);
+                    break;
+                }
+                case 47:
+                {
+                    if (ctos.setRadioBlackout(player) || ctos.setRadioNetwork(player))
+                        inventory.deleteItem(id);
                     break;
                 }
                 case 232:

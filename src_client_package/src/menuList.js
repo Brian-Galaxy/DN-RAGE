@@ -2722,10 +2722,18 @@ menuList.showMeriaSellVehHvbMenu = async function(cofferData) {
             try {
                 if (user.getCache(`car_id${i}`) > 0) {
                     let vehData = vehList[i - 1];
+                    let vehInfo = methods.getVehicleInfo(vehData.get('name'));
                     UIMenu.Menu.AddMenuItem(`Продать ТС ${vehData.get('name')} (${vehData.get('number')})`, "Продать транспорт государству.~br~Налог: ~g~" + (cofferData.get('cofferTaxIntermediate') + taxOffset) + "%", {eventName: `server:car${i}:sell`});
-
-                    if (vehData.get('with_delete') < 2)
-                        UIMenu.Menu.AddMenuItem(`~y~Продать ТС ${vehData.get('name')} (${vehData.get('number')}) игроку`, "", {eventNameSellV: i});
+                    if (vehInfo.price === vehData.get('price')) {
+                        if (vehData.get('with_delete') < 2)
+                            UIMenu.Menu.AddMenuItem(`~y~Продать ТС ${vehData.get('name')} (${vehData.get('number')}) игроку`, "", {eventNameSellV: i});
+                    }
+                    else {
+                        if (vehInfo.price > vehData.get('price'))
+                            UIMenu.Menu.AddMenuItem(`~y~Вы должны государству ${methods.moneyFormat(vehInfo.price - vehData.get('price'))} за ${vehData.get('name')} (${vehData.get('number')})`, `Вы не можете продавать ТС игроку, связи с тем что цена на автомобиль поменялась и вам неоходимо оплатить разницу.~br~~r~ВНИМАНИЕ!~s~ ~y~У вас спишется с рук ${methods.moneyFormat(vehInfo.price - vehData.get('price'))} либо продайте государству`, {eventNameVGiveMoney: i});
+                        else 
+                            UIMenu.Menu.AddMenuItem(`~y~Вам должно государство ${methods.moneyFormat(vehData.get('price') - vehInfo.price)} за ${vehData.get('name')} (${vehData.get('number')})`, "Вы не можете продавать ТС игроку, связи с тем что цена на автомобиль поменялась и вам необходимо получить разницу.", {eventNameVTakeMoney: i});
+                    }
                 }
             }
             catch (e) {
@@ -2740,6 +2748,13 @@ menuList.showMeriaSellVehHvbMenu = async function(cofferData) {
             UIMenu.Menu.HideMenu();
             if (item.eventName) {
                 menuList.showMeriaAcceptSellMenu(item.eventName);
+            }
+
+            if (item.eventNameVTakeMoney) {
+                mp.events.callRemote('server:car:takeOffsetMoney', item.eventNameVTakeMoney);
+            }
+            if (item.eventNameVGiveMoney) {
+                mp.events.callRemote('server:car:giveOffsetMoney', item.eventNameVGiveMoney);
             }
 
             if (item.eventNameSellV) {
@@ -3781,6 +3796,9 @@ menuList.showVehicleDoInvMenu = function(vehId) {
         UIMenu.Menu.AddMenuItem("~y~Положить микрофон", "", {doName: "putMic"});
     }
     if (vehicle.getVariable('fraction_id') === 2 && user.isSapd() && vInfo.display_name === 'Riot') {
+        UIMenu.Menu.AddMenuItem("~g~Войти в режим дрона", "", {doName: "drone"});
+    }
+    if (vehicle.getVariable('fraction_id') === 5 && user.isSheriff() && vInfo.display_name === 'Insurgent2') {
         UIMenu.Menu.AddMenuItem("~g~Войти в режим дрона", "", {doName: "drone"});
     }
     if (vehicle.getVariable('fraction_id') === 3 && user.isFib() && vInfo.display_name === 'FBI2') {
@@ -5758,7 +5776,7 @@ menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId, isF
                     });
                 }
             } catch (e) {
-                methods.debug('menuList.showToPlayerItemListMenu2', e);
+                methods.debug('menuList.showToPlayerItemListMenu2', e.toString());
             }
         });
 

@@ -221,10 +221,12 @@ vehicles.getSpecialModDefault = function(id) {
         case 3:
             return 1;
         case 4:
-            return 1;
+            return 2;
         case 5:
-            return 1;
+            return 4;
     }
+
+    //  /eval mp.players.local.vehicle.setHandling('fTractionCurveMin', '4');
 };
 
 vehicles.isVehicleSirenValid = function (model) {

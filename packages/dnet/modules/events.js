@@ -5570,6 +5570,44 @@ mp.events.addRemoteCounted('server:stock:sellToPlayer:accept', (player, houseId,
     }
 });
 
+mp.events.addRemoteCounted('server:car:takeOffsetMoney', (player, slot) => {
+    if (!user.isLogin(player))
+        return;
+
+    if (user.get(player, 'car_id' + slot) == 0) {
+        player.notify('~r~У Вас нет транспорта');
+        return;
+    }
+
+    let vData = vehicles.getData(user.get(player, 'car_id' + slot));
+    let vInfo = methods.getVehicleInfo(vData.get('name'));
+    let offset = vData.get('price') - vInfo.price;
+    user.addMoney(player, offset, 'Возмещение ущерба за транспорт');
+    vehicles.updatePrice(vData.get('id'), vInfo.price);
+    player.notify('~y~Вам возместили ущерб за измененную цену на транспорт в размере ' + methods.moneyFormat(offset));
+});
+
+mp.events.addRemoteCounted('server:car:giveOffsetMoney', (player, slot) => {
+    if (!user.isLogin(player))
+        return;
+
+    if (user.get(player, 'car_id' + slot) == 0) {
+        player.notify('~r~У Вас нет транспорта');
+        return;
+    }
+
+    let vData = vehicles.getData(user.get(player, 'car_id' + slot));
+    let vInfo = methods.getVehicleInfo(vData.get('name'));
+    let offset = vInfo.price - vData.get('price');
+    if (user.getMoney(player) < offset) {
+        player.notify(`~r~У Вас при себе ${methods.moneyFormat(offset)}`);
+        return;
+    }
+    user.removeMoney(player, offset, 'Возмещение ущерба за транспорт');
+    vehicles.updatePrice(vData.get('id'), vInfo.price);
+    player.notify('~y~Вы возсместили сумму, за измененную цену на транспорт в размере ' + methods.moneyFormat(offset) + '.\nТеперь вы можете продавать транспорт с рук');
+});
+
 mp.events.addRemoteCounted('server:car:sellToPlayer', (player, buyerId, sum, slot) => {
     if (!user.isLogin(player))
         return;
@@ -6750,6 +6788,7 @@ mp.events.addRemoteCounted('server:cityDestroy', (player) => {
     if (ctos.canBlackout()) {
         ctos.setBlackout(true);
         ctos.setNoNetwork(true);
+        ctos.set('cantBlackout', true);
     }
     else
         player.notify('~r~Hacking attempt');
@@ -6760,6 +6799,7 @@ mp.events.addRemoteCounted('server:networkDestroy', (player) => {
         return;
     if (ctos.canNetwork()) {
         ctos.setNoNetwork(true);
+        ctos.set('cantNetwork', true);
     }
     else
         player.notify('~r~Hacking attempt');

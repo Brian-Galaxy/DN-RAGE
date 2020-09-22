@@ -62,12 +62,15 @@ items.getItemFormat = function(item) {
     let itemName = items.getItemNameById(item.item_id);
     let desc = "";
 
-    if (item.label.toString() != "" && item.item_id >= 265 && item.item_id <= 273)
+    if (item.label.toString() !== "" && item.item_id >= 265 && item.item_id <= 273)
         itemName = item.label;
-    else if (item.label.toString() != "" && item.item_id === 251)
+    else if (item.label.toString() !== "" && item.item_id === 251)
         itemName = item.label;
-    else if (item.label.toString() != "")
-        desc += item.label;
+    else if (item.label.toString() !== "")
+        desc += params.label;
+
+    if (params.name && params.name.toString() !== "" && (item.item_id === 263 || item.item_id === 264))
+        itemName = params.name.toString();
 
     if (item.item_id === 140 || item.item_id === 141)
         desc = `В пачке: ${methods.moneyFormat(item.count)}`;

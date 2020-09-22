@@ -457,6 +457,11 @@ methods.removeQuotesAll = function(str) {
     //return text.toString().replace('"', '');
 };
 
+methods.removeSpecialChars = function(str) {
+    return str.toString().replace(/[\n\r\t]/g, '');
+    //return text.toString().replace('"', '');
+};
+
 methods.replaceQuotes = function(str) {
     try {
         str = methods.replaceAll(str, '"', '`');

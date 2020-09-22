@@ -3968,10 +3968,10 @@ phone.consoleCallback = async function(command) {
                         return;
                     let money = methods.getRandomInt(3000, 5000) / 1000;
                     phone.addConsoleCommand('Success. The wallet was replenished in the amount of ' + methods.cryptoFormat(money));
-                    if (user.getCache('stats_darknet') < 100 && user.getCache('stats_darknet') >= 40) {
+                    if (user.getCache('stats_darknet') < 50 && user.getCache('stats_darknet') >= 40) {
                         user.set('stats_darknet', user.getCache('stats_darknet') + 1);
                     }
-                    mp.events.callRemote('server:trafficDestroy')
+                    mp.events.callRemote('server:trafficDestroy');
                 }
                 else {
                     user.giveWanted(50, 'Попытка взлома системы управления городом');

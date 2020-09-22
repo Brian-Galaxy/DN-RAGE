@@ -210,7 +210,9 @@ vShop.buy = function(player, model, color1, color2, shopId) {
             row['user_name'] = user.getRpName(player);
             row['color1'] = color1;
             row['color2'] = color2;
+            row['price'] = price;
 
+            vehicles.updatePrice(id, price);
             vehicles.updateOwnerInfo(id, user.getId(player), user.getRpName(player));
             vehicles.loadUserVehicleByRow(row);
             user.set(player, 'car_id' + freeSlot, id);

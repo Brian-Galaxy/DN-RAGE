@@ -97,7 +97,7 @@ ctos.canBlackout = function() {
 };
 
 ctos.canNetwork = function() {
-    if (ctos.has('canNetwork'))
+    if (ctos.has('cantNetwork'))
         return false;
     let countBlackout = 0;
     for (let i = 0; i < 10; i++)

@@ -769,6 +769,12 @@ vehicles.park = function(id, x, y, z, rot, dimension) {
     player.notify('~b~Вы перевели транспорт в другой отдел');
 };*/
 
+vehicles.updatePrice = function(id, newPrice) {
+    methods.debug('vehicles.updatePrice');
+    mysql.executeQuery("UPDATE cars SET price = '" + methods.parseInt(newPrice) + "' where id = '" + methods.parseInt(id) + "'");
+    vehicles.set(id, 'price', methods.parseFloat(newPrice));
+};
+
 vehicles.respawn = (vehicle) => {
     if (!vehicles.exists(vehicle))
         return;
@@ -1046,6 +1052,11 @@ vehicles.updateOwnerInfo = function (id, userId, userName) {
 
         let vehInfo = methods.getVehicleInfo(vehicles.get(id, 'name'));
         discord.sendMarketVehicles(`${vehInfo.display_name}`, `Гос. стоимость: ${methods.moneyFormat(vehInfo.price)}\nМакс. скорость: ~${vehInfo.sm}км/ч\nКласс: ${vehInfo.class_name}`, `https://dednet.ru/client/images/carssm/${vehInfo.display_name}_1.jpg`);
+    }
+    else {
+        let vehInfo = methods.getVehicleInfo(vehicles.get(id, 'name'));
+        let pos = vehicles.getParkPosition(vehInfo.class_name);
+        vehicles.park(id, pos.pos.x, pos.pos.y, pos.pos.z, pos.rot);
     }
 };
 

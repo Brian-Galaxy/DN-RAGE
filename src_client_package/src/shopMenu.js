@@ -1067,7 +1067,7 @@ mp.events.add('client:dialog:btn', async function(json) {
             shopMenu.hideDialog();
             mp.events.callRemote('server:user:toLspdSafe');
         }
-        if (params.doName === 'lspd:takeWeap') {
+        if (params.doName === 'inv:wantWork') {
             shopMenu.hideDialog();
             if (user.getCache('job') != 3) {
                 mp.game.ui.notifications.show(`~r~Необходимо работать фотографом`);

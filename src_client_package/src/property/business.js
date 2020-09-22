@@ -99,12 +99,14 @@ business.getMoneyTax = async function(id) {
 };
 
 business.getPrice = async function(id) {
+    if (id === 0)
+        return 3;
     try {
         return methods.parseFloat(await Container.Data.Get(enums.offsets.business + id, 'price_product'));
     }
     catch (e) {
         methods.debug(e);
-        return 0;
+        return 3;
     }
 };
 

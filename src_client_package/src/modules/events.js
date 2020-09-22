@@ -2577,6 +2577,18 @@ mp.events.add('client:inventory:openBag', function(id, itemId) {
         inventory.getItemList(inventory.types.Bag, id);
 });
 
+mp.events.add('client:inventory:rename', async function(id, itemId, paramsJson) {
+    let params = JSON.parse(paramsJson);
+    let newName = methods.removeSpecialChars(methods.removeQuotesAll(await menuList.getUserInput('Введите новое имя', '', 32)));
+    if (newName === '') {
+        mp.game.ui.notifications.show("~r~Значение не может быть пустым");
+        return;
+    }
+    params.name = newName;
+    inventory.updateItemParams(id, JSON.stringify(params));
+    mp.game.ui.notifications.show("~g~Вы переименовали сумку");
+});
+
 mp.events.add('client:inventory:selectWeapon', function(id, itemId, serial) {
 
     let wpName = items.getItemNameHashById(itemId);

@@ -3265,6 +3265,11 @@ user.getVehicleFreeSlot = function(player) {
         if (user.get(player, 'house_id') > 0)
             hData = houses.getHouseData(user.get(player, 'house_id'));
 
+        let cData = null;
+        if (user.get(player, 'condo_id') > 0)
+            cData = condos.getHouseData(user.get(player, 'condo_id'));
+
+
         if (user.get(player, 'car_id1') === 0)
             freeSlot = 1;
         else if (user.get(player, 'car_id2') === 0 && (user.get(player, 'house_id') > 0 || user.get(player, 'condo_id') > 0 || user.get(player, 'yacht_id') > 0)) {
@@ -3277,6 +3282,24 @@ user.getVehicleFreeSlot = function(player) {
             freeSlot = 4;
         }
         else if (user.get(player, 'car_id5') === 0 && user.get(player, 'house_id') > 0 && hData.get('price') >= 1000000) {
+            freeSlot = 5;
+        }
+        else if (user.get(player, 'car_id3') === 0 && user.get(player, 'condo_id') > 0 && cData.get('price') >= 100000) {
+            freeSlot = 3;
+        }
+        else if (user.get(player, 'car_id4') === 0 && user.get(player, 'condo_id') > 0 && cData.get('price') >= 500000) {
+            freeSlot = 4;
+        }
+        else if (user.get(player, 'car_id5') === 0 && user.get(player, 'condo_id') > 0 && cData.get('price') >= 1000000) {
+            freeSlot = 5;
+        }
+        else if (user.get(player, 'car_id3') === 0 && user.get(player, 'yacht_id') > 0) {
+            freeSlot = 3;
+        }
+        else if (user.get(player, 'car_id4') === 0 && user.get(player, 'yacht_id') > 0) {
+            freeSlot = 4;
+        }
+        else if (user.get(player, 'car_id5') === 0 && user.get(player, 'yacht_id') > 0) {
             freeSlot = 5;
         }
         else if (user.get(player, 'car_id6') === 0 && user.get(player, 'car_id6_free')) {

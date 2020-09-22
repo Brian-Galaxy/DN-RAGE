@@ -276,7 +276,7 @@ timer.twoSecTimer = function() {
 
         fuel.hashList.forEach(hash => {
             if (EntityFuel === 0)
-                EntityFuel = mp.game.object.getClosestObjectOfType(plPos.x, plPos.y, plPos.z, 3, hash, false, false, false);
+                EntityFuel = mp.game.object.getClosestObjectOfType(plPos.x, plPos.y, plPos.z, 4, hash, false, false, false);
         });
 
         if (EntityFleeca != 0 || EntityOther1 != 0 || EntityOther2 != 0 || EntityOther3 != 0)

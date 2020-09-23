@@ -770,9 +770,19 @@ vehicles.park = function(id, x, y, z, rot, dimension) {
 };*/
 
 vehicles.updatePrice = function(id, newPrice) {
-    methods.debug('vehicles.updatePrice');
-    mysql.executeQuery("UPDATE cars SET price = '" + methods.parseInt(newPrice) + "' where id = '" + methods.parseInt(id) + "'");
-    vehicles.set(id, 'price', methods.parseFloat(newPrice));
+    try {
+        methods.debug('vehicles.updatePrice');
+        mysql.executeQuery("UPDATE cars SET price = '" + methods.parseInt(newPrice) + "' where id = '" + methods.parseInt(id) + "'");
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+    try {
+        vehicles.set(id, 'price', methods.parseInt(newPrice));
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 };
 
 vehicles.respawn = (vehicle) => {
@@ -1054,9 +1064,12 @@ vehicles.updateOwnerInfo = function (id, userId, userName) {
         discord.sendMarketVehicles(`${vehInfo.display_name}`, `Гос. стоимость: ${methods.moneyFormat(vehInfo.price)}\nМакс. скорость: ~${vehInfo.sm}км/ч\nКласс: ${vehInfo.class_name}`, `https://dednet.ru/client/images/carssm/${vehInfo.display_name}_1.jpg`);
     }
     else {
-        let vehInfo = methods.getVehicleInfo(vehicles.get(id, 'name'));
-        let pos = vehicles.getParkPosition(vehInfo.class_name);
-        vehicles.park(id, pos.pos.x, pos.pos.y, pos.pos.z, pos.rot);
+        try {
+            let vehInfo = methods.getVehicleInfo(vehicles.get(id, 'name'));
+            let pos = vehicles.getParkPosition(vehInfo.class_name);
+            vehicles.park(id, pos.pos.x, pos.pos.y, pos.pos.z, pos.rot);
+        }
+        catch (e) {}
     }
 };
 

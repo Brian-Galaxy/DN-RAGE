@@ -1,5 +1,6 @@
 import user from "./user";
 import weapons from "./weapons";
+import admin from "./admin";
 
 import methods from "./modules/methods";
 import Container from "./modules/data";
@@ -131,7 +132,7 @@ antiCheat.secTimer = function() {
             user.kickAntiCheat('Teleport');
         }
 
-        if (!user.isAdmin()) {
+        if (!admin.isGodModeEnable()) {
             if (mp.players.local.getHealth() >= 500 || mp.players.local.getArmour() >= 200) {
                 user.kickAntiCheat('GodMode');
             }

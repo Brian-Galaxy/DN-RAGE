@@ -204,44 +204,49 @@ vShop.buy = function(player, model, color1, color2, shopId) {
     mysql.executeQuery(`SELECT * FROM cars WHERE user_id = '0' AND name = '${vInfo.display_name}' ORDER BY rand() LIMIT 1`, function (err, rows, fields) {
 
         rows.forEach(row => {
-            let id = row['id'];
+            try {
+                let id = row['id'];
 
-            row['user_id'] = user.getId(player);
-            row['user_name'] = user.getRpName(player);
-            row['color1'] = color1;
-            row['color2'] = color2;
-            row['price'] = price;
+                row['user_id'] = user.getId(player);
+                row['user_name'] = user.getRpName(player);
+                row['color1'] = color1;
+                row['color2'] = color2;
+                row['price'] = price;
 
-            vehicles.updatePrice(id, price);
-            vehicles.updateOwnerInfo(id, user.getId(player), user.getRpName(player));
-            vehicles.loadUserVehicleByRow(row);
-            user.set(player, 'car_id' + freeSlot, id);
-            user.save(player);
-            vehicles.save(id);
+                vehicles.updatePrice(id, price);
+                vehicles.updateOwnerInfo(id, user.getId(player), user.getRpName(player));
+                vehicles.loadUserVehicleByRow(row);
+                user.set(player, 'car_id' + freeSlot, id);
+                user.save(player);
+                vehicles.save(id);
 
-            user.addHistory(player, 3, 'Покупка транспорта ' + model);
-            user.removeMoney(player, price, 'Покупка транспорта ' + model);
-            coffer.addMoney(1, price);
+                user.addHistory(player, 3, 'Покупка транспорта ' + model);
+                user.removeMoney(player, price, 'Покупка транспорта ' + model);
+                coffer.addMoney(1, price);
 
-            setTimeout(function () {
-                if (user.isLogin(player)) {
-                    if (vInfo.fuel_type == 3)
-                        vShop.sendNotify(player, shopId, 'Поздравляем', `Поздравляем с покупкой электрокара ~g~${vInfo.display_name}~s~.\n\nСпасибо за то, что сохраняете экологию ;)`);
-                    else
-                        vShop.sendNotify(player, shopId, 'Поздравляем', `Поздравляем с покупкой транспорта ~b~${vInfo.display_name}~s~.`);
+                setTimeout(function () {
+                    if (user.isLogin(player)) {
+                        if (vInfo.fuel_type == 3)
+                            vShop.sendNotify(player, shopId, 'Поздравляем', `Поздравляем с покупкой электрокара ~g~${vInfo.display_name}~s~.\n\nСпасибо за то, что сохраняете экологию ;)`);
+                        else
+                            vShop.sendNotify(player, shopId, 'Поздравляем', `Поздравляем с покупкой транспорта ~b~${vInfo.display_name}~s~.`);
 
-                    vShop.sendNotify(player, shopId, '~r~Налог', `Учтите, что за ваш транспорт необходимо платить налог в здании правительства.`);
+                        vShop.sendNotify(player, shopId, '~r~Налог', `Учтите, что за ваш транспорт необходимо платить налог в здании правительства.`);
 
-                    let serverId = vehicles.get(id, 'serverId');
-                    let veh = mp.vehicles.at(serverId);
-                    if (vehicles.exists(veh)) {
-                        veh.position = new mp.Vector3(shopItem.spawnPos[0], shopItem.spawnPos[1], shopItem.spawnPos[2]);
-                        veh.heading = shopItem.spawnPos[3] - 180;
-                        user.putInVehicle(player, veh, -1);
-                        vehicles.setFuel(veh, methods.getVehicleInfo(veh.model).fuel_full);
+                        let serverId = vehicles.get(id, 'serverId');
+                        let veh = mp.vehicles.at(serverId);
+                        if (vehicles.exists(veh)) {
+                            veh.position = new mp.Vector3(shopItem.spawnPos[0], shopItem.spawnPos[1], shopItem.spawnPos[2]);
+                            veh.heading = shopItem.spawnPos[3] - 180;
+                            user.putInVehicle(player, veh, -1);
+                            vehicles.setFuel(veh, methods.getVehicleInfo(veh.model).fuel_full);
+                        }
                     }
-                }
-            }, 2000);
+                }, 2000);
+            }
+            catch (e) {
+                methods.debug(e);
+            }
         });
     });
 };

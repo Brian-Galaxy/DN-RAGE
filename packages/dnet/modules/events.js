@@ -3424,6 +3424,12 @@ mp.events.addRemoteCounted('server:phone:fractionList2', (player) => {
     phone.fractionList2(player);
 });
 
+mp.events.addRemoteCounted('server:phone:fractionStList2', (player) => {
+    if (!user.isLogin(player))
+        return;
+    phone.fractionList2(player, true);
+});
+
 mp.events.addRemoteCounted('server:phone:fractionAll', (player) => {
     if (!user.isLogin(player))
         return;
@@ -7643,6 +7649,8 @@ mp.events.add("playerDeath", (player, reason, killer) => {
 
     if (user.isLogin(killer) && user.isLogin(player)) {
         try {
+            user.set(killer, 'st_kill', user.get(killer, 'st_kill') + 1);
+            user.set(player, 'st_death', user.get(player, 'st_death') + 1);
             if (player.dimension === 9999)
                 return;
             if (player.dimension === 99999)
@@ -7659,6 +7667,8 @@ mp.events.add("playerDeath", (player, reason, killer) => {
     }
     else if (user.isLogin(player)) {
         try {
+            user.set(player, 'st_death', user.get(player, 'st_death') + 1);
+
             if (player.dimension === 9999)
                 return;
             if (player.dimension === 99999)

@@ -252,8 +252,12 @@ canabisWar.timer = function() {
                 if (fId === 0 && !user.isUsmc(p) && !user.isAdmin(p))
                     return;
                 if (currentDef === fId || currentAttack === fId || user.isAdmin(p)) {
-                    if (p.dimension > 0)
+                    if (p.dimension > 0) {
+                        user.set(p, 'st_capt_m', user.get(p, 'st_capt_m') + 1);
+                        if (ownerId === fId)
+                            user.set(p, 'st_capt_m_win', user.get(p, 'st_capt_m_win') + 1);
                         p.dimension = 0;
+                    }
                 }
             });
 
@@ -284,8 +288,12 @@ canabisWar.timer = function() {
                 if (fId === 0 && !user.isUsmc(p) && !user.isAdmin(p))
                     return;
                 if (currentDef === fId || currentAttack === fId || user.isAdmin(p)) {
-                    if (p.dimension > 0)
+                    if (p.dimension > 0) {
+                        user.set(p, 'st_capt_m', user.get(p, 'st_capt_m') + 1);
+                        if (ownerId === fId)
+                            user.set(p, 'st_capt_m_win', user.get(p, 'st_capt_m_win') + 1);
                         p.dimension = 0;
+                    }
                 }
             });
 
@@ -345,8 +353,12 @@ canabisWar.timer = function() {
                     if (fId === 0 && !user.isUsmc(p) && !user.isAdmin(p))
                         return;
                     if (currentDef === fId || currentAttack === fId || user.isAdmin(p)) {
-                        if (p.dimension > 0)
+                        if (p.dimension > 0) {
+                            user.set(p, 'st_capt_m', user.get(p, 'st_capt_m') + 1);
+                            if (ownerId === fId)
+                                user.set(p, 'st_capt_m_win', user.get(p, 'st_capt_m_win') + 1);
                             p.dimension = 0;
+                        }
                     }
                 });
 

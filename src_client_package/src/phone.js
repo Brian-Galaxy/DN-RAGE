@@ -908,6 +908,12 @@ phone.showAppFraction2 = async function() {
                         params: {name: "list"}
                     },
                     {
+                        title: "Статистика членов организации",
+                        type: 1,
+                        clickable: true,
+                        params: {name: "slist"}
+                    },
+                    {
                         title: "Иерархия",
                         type: 1,
                         clickable: true,
@@ -3949,6 +3955,9 @@ phone.consoleCallback = async function(command) {
                     if (user.getCache('fraction_id2') > 0)
                         fraction.set(user.getCache('fraction_id2'), 'orderAtm', await fraction.get(user.getCache('fraction_id2'), 'orderAtm') + 1);
 
+                    user.set('st_order_atm_f', user.getCache('st_order_atm_f') + 1);
+                    user.set('st_order_atm_d', user.getCache('st_order_atm_d') + 1);
+
                     if (user.getCache('stats_darknet') < 60 && user.getCache('stats_darknet') >= 20) {
                         user.set('stats_darknet', user.getCache('stats_darknet') + 1);
                     }
@@ -5417,6 +5426,10 @@ phone.callBackButton = async function(menu, id, ...args) {
                 phone.showAppFractionUpgrade2();
             else if (params.name == 'list') {
                 mp.events.callRemote('server:phone:fractionList2');
+                phone.showLoad();
+            }
+            else if (params.name == 'slist') {
+                mp.events.callRemote('server:phone:fractionStList2');
                 phone.showLoad();
             }
             else if (params.name == 'log') {

@@ -954,6 +954,10 @@ user.has = async function(key) {
     return await Container.Data.Has(mp.players.local.remoteId, key);
 };
 
+user.getById = async function(key) {
+    return await Container.Data.Get(user.getCache('id'), key);
+};
+
 user.hasById = async function(key) {
     return await Container.Data.Has(user.getCache('id'), key);
 };

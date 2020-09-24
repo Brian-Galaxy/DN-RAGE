@@ -2497,10 +2497,12 @@ mp.events.add('client:inventory:moveTo', function(id, itemId, ownerId, ownerType
     if (ownerType === 0) {
         if (mp.players.local.dimension > 0) {
             mp.game.ui.notifications.show("~r~Нельзя выбрасывать предметы в интерьере");
+            inventory.getItemList(inventory.types.Player, user.getCache('id'));
             return;
         }
         if (ui.isGreenZone()) {
             mp.game.ui.notifications.show("~r~Нельзя выбрасывать предметы в зелёной зоне");
+            inventory.getItemList(inventory.types.Player, user.getCache('id'));
             return;
         }
 
@@ -2559,10 +2561,12 @@ mp.events.add('client:inventory:moveFrom', function(id, itemId, ownerType) {
 mp.events.add('client:inventory:drop', function(id, itemId) {
     if (mp.players.local.dimension > 0) {
         mp.game.ui.notifications.show("~r~Нельзя выкидывать предметы в интерьере");
+        inventory.getItemList(inventory.types.Player, user.getCache('id'));
         return;
     }
     if (ui.isGreenZone()) {
         mp.game.ui.notifications.show("~r~Нельзя выбрасывать предметы в зелёной зоне");
+        inventory.getItemList(inventory.types.Player, user.getCache('id'));
         return;
     }
     inventory.dropItem(id, itemId, mp.players.local.position, mp.players.local.getRotation(0));
@@ -3707,6 +3711,9 @@ mp.events.add("playerEnterCheckpoint", (checkpoint) => {
                     let val = await fraction.get(user.getCache('fraction_id2'), 'orderDrug');
                     fraction.set(user.getCache('fraction_id2'), 'orderDrug', val + 1);
                 }
+
+                user.set('st_order_drug_f', user.getCache('st_order_drug_f') + 1);
+                user.set('st_order_drug_d', user.getCache('st_order_drug_d') + 1);
 
                 mp.game.ui.notifications.show(`~b~Вы заработали ${methods.cryptoFormat(price / 1000)}`);
                 mp.players.local.freezePosition(false);

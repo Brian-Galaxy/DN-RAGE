@@ -1231,14 +1231,14 @@ phone.fractionList = function(player) {
     });
 };
 
-phone.fractionList2 = function(player) {
+phone.fractionList2 = function(player, showStats = false) {
     if (!user.isLogin(player))
         return;
     methods.debug('phone.fractionList2');
 
     let fractionId = user.get(player, 'fraction_id2');
 
-    mysql.executeQuery(`SELECT id, social, name, fraction_id2, rank2, rank_type2, is_leader2, is_sub_leader2, login_date, is_online FROM users WHERE fraction_id2 = '${fractionId}' ORDER BY is_leader2 ASC, is_sub_leader2 ASC, rank_type2 ASC, is_online DESC, rank2 ASC, name ASC`, (err, rows, fields) => {
+    mysql.executeQuery(`SELECT id, social, name, fraction_id2, rank2, rank_type2, is_leader2, is_sub_leader2, is_sub_leader2, st_order_atm_f, st_order_atm_d, st_order_drug_f, st_order_drug_d, st_order_lamar_f, st_order_lamar_d, login_date, is_online FROM users WHERE fraction_id2 = '${fractionId}' ORDER BY is_leader2 ASC, is_sub_leader2 ASC, rank_type2 ASC, is_online DESC, rank2 ASC, name ASC`, (err, rows, fields) => {
         let items = [];
         let depName = '';
         let depList = [];
@@ -1264,6 +1264,8 @@ phone.fractionList2 = function(player) {
                 let desc = '';
                 if (row['is_online'] === 0)
                     desc = ` (${methods.unixTimeStampToDateTimeShort(row['login_date'])})`;
+                if (showStats)
+                    desc = ` (З: ${row['st_order_drug_d']}/${row['st_order_drug_f']} | Б: ${row['st_order_atm_d']}/${row['st_order_atm_f']} | Л: ${row['st_order_lamar_d']}/${row['st_order_lamar_f']})`;
 
                 if (row['is_leader2']) {
                     leaderItem.push(phone.getMenuItemUser(

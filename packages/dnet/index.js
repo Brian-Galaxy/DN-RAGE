@@ -62,7 +62,7 @@ function init() {
     try {
         methods.debug('INIT GAMEMODE');
 
-        mysql.executeQuery('UPDATE users SET is_online=\'0\' WHERE 1');
+        mysql.executeQuery('UPDATE users SET is_online=\'0\', st_order_atm_d=\'0\', st_order_drug_d=\'0\', st_order_lamar_d=\'0\' WHERE 1');
 
         for (let i = 0; i < weapons.hashesMap.length; i++)
             weapons.hashesMap[i][1] *= 2;

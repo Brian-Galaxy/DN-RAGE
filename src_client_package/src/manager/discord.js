@@ -8,6 +8,8 @@ discord.checker = function() {
         if (user.isLogin()) {
             if (mp.players.local.isDiving())
                 label = 'Занимается дайвингом';
+            else if (mp.players.local.isSwimming() || mp.players.local.isSwimmingUnderWater())
+                label = 'Плавает';
             else if (mp.players.local.isFalling())
                 label = 'Падает с высоты';
             else if (mp.players.local.isRagdoll())

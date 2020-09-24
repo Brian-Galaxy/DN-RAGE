@@ -1654,7 +1654,7 @@ inventory.useItem = function(player, id, itemId, isTargetable = false) {
                             player.notify(`~y~Ячейка оказалась пуста`);
                         }
                         else {
-                            inventory.addItem(141, 1, inventory.types.Player, user.getId(player), methods.getRandomInt(6000, 8000) * 3, 0, "{}", 2);
+                            inventory.addItem(141, 1, inventory.types.Player, user.getId(player), methods.getRandomInt(6000, 8000) * 2, 0, "{}", 2);
                         }
 
                         user.blockKeys(player, false);

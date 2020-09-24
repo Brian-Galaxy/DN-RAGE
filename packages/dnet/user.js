@@ -2655,6 +2655,8 @@ user.arrest = function(player) {
     user.toLspdSafe(player);
     user.addHistory(player, 1, 'Был посажен в тюрьму на ' + user.get(player, 'wanted_level') + ' лет');
     user.jail(player, methods.parseInt(user.get(player, 'wanted_level')) * 120);
+
+    user.set(player, 'st_jail', user.get(player, 'st_jail') + 1);
 };
 
 user.giveWanted = function(player, level, reason, officer = 'Система') {
@@ -2684,6 +2686,7 @@ user.giveWanted = function(player, level, reason, officer = 'Система') {
         player.notifyWithPicture('Уведомление', 'Police Department', 'Просим Вас явиться в участок Los Santos Police Department', 'WEB_LOSSANTOSPOLICEDEPT', 2);
 
         user.addHistory(player, 1, `Был выдан розыск ${level}. Причина: ${reason}. (${officer})`);
+        user.set(player, 'st_crime', user.get(player, 'st_crime') + 1);
     }
     user.updateClientCache(player);
 };

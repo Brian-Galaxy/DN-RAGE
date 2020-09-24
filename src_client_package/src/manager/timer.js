@@ -234,8 +234,6 @@ let warning = 0;
 let isSetSpeed = false;
 
 timer.twoSecTimer = function() {
-
-    Container.Data.ResetLocally(mp.players.local.remoteId, "isGunTimeout");
     
     try {
         user.setLastWeapon(user.getCurrentWeapon());
@@ -400,6 +398,8 @@ timer.tenSecTimer = function() {
         
     }
 
+    Container.Data.ResetLocally(mp.players.local.remoteId, "isGunTimeout");
+
     /*let plPos = mp.players.local.position;
     let isGive = false;
 
@@ -442,8 +442,31 @@ timer.tenSecTimer = function() {
 
 let prevWpPos = new mp.Vector3(0, 0, 0);
 let isLoaded = false;
+let playerPrevPos = new mp.Vector3(0, 0, 0);
 
 timer.secTimer = function() {
+
+    try {
+        if (user.isLogin()) {
+            let dist = methods.distanceToPos(mp.players.local.position, playerPrevPos);
+            if (!mp.players.local.isInAnyVehicle(true) && dist < 100) {
+                if (mp.players.local.isWalking())
+                    user.set('st_walk', user.getCache('st_walk') + dist);
+                else if (mp.players.local.isDiving() || mp.players.local.isSwimming() || mp.players.local.isSwimmingUnderWater())
+                    user.set('st_swim', user.getCache('st_swim') + dist);
+                else
+                    user.set('st_run', user.getCache('st_run') + dist);
+            }
+            else if (mp.players.local.isInAnyVehicle(true)) {
+                if (mp.players.local.isInAir())
+                    user.set('st_fly', user.getCache('st_fly') + dist);
+                else
+                    user.set('st_drive', user.getCache('st_drive') + dist);
+            }
+            playerPrevPos = mp.players.local.position;
+        }
+    }
+    catch (e) {}
 
     /*if (!isLoaded && methods.distanceToPos(mp.players.local.position, new mp.Vector3(-1096.445,-831.962,23.033)) < 100) {
         try {

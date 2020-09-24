@@ -319,16 +319,12 @@ ui.updateValues = function() {
             if (mp.players.local.dimension === 0) {
                 if (isGreenZone) {
                     speed = true;
-                    if (!user.isAdmin())
-                        admin.godmode(true);
                     if (user.isGos())
                         mp.events.call('client:setNewMaxSpeedServer', 100);
                     else
                         mp.events.call('client:setNewMaxSpeedServer', 60);
                 }
                 else if (speed) {
-                    if (!user.isAdmin())
-                        admin.godmode(false);
                     speed = false;
                     mp.events.call('client:setNewMaxSpeedServer', 0);
                 }

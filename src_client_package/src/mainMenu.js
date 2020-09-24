@@ -483,6 +483,29 @@ mainMenu.updateInfoGeneral = function() {
     data.push({title: 'Уровень рабочего', subtitle: `${user.getCache('work_lvl')}`});
     data.push({title: 'Опыт рабочего', subtitle: `${user.getCache('work_exp')}/${user.getCache('work_lvl') * 500}`});
 
+    //data.push({title: 'Убийств', subtitle: `${user.getCache('st_kill')}`});
+    data.push({title: 'Контракты - Банкоматы', subtitle: `${user.getCache('st_order_atm_f')}`});
+    data.push({title: 'Контракты - Банкоматы (Сегодня)', subtitle: `${user.getCache('st_order_atm_d')}`});
+    data.push({title: 'Контракты - Закладки', subtitle: `${user.getCache('st_order_drug_f')}`});
+    data.push({title: 'Контракты - Закладки (Сегодня)', subtitle: `${user.getCache('st_order_drug_d')}`});
+    data.push({title: 'Контракты - Ламар', subtitle: `${user.getCache('st_order_lamar_f')}`});
+    data.push({title: 'Контракты - Ламар (Сегодня)', subtitle: `${user.getCache('st_order_lamar_d')}`});
+
+    data.push({title: 'Учавствовал в каптах', subtitle: `${user.getCache('st_capt')}`});
+    data.push({title: 'Учавствовал в каптах (Побед)', subtitle: `${user.getCache('st_capt_win')}`});
+
+    data.push({title: 'Учавствовал в каптах мафий/армии', subtitle: `${user.getCache('st_capt_m')}`});
+    data.push({title: 'Учавствовал в каптах мафий/армии (Побед)', subtitle: `${user.getCache('st_capt_m_win')}`});
+
+    data.push({title: 'Смертей', subtitle: `${user.getCache('st_death')}`});
+    data.push({title: 'Посиделок в тюрьме', subtitle: `${user.getCache('st_jail')}`});
+    data.push({title: 'Преступлений', subtitle: `${user.getCache('st_crime')}`});
+    data.push({title: 'Дистанция ходьбы', subtitle: `${methods.parseInt(user.getCache('st_walk'))}м.`});
+    data.push({title: 'Дистанция бега', subtitle: `${methods.parseInt(user.getCache('st_run'))}м.`});
+    data.push({title: 'Дистанция плавания', subtitle: `${methods.parseInt(user.getCache('st_swim'))}м.`});
+    data.push({title: 'Дистанция вождения', subtitle: `${methods.parseInt(user.getCache('st_drive'))}м.`});
+    data.push({title: 'Дистанция полёта', subtitle: `${methods.parseInt(user.getCache('st_fly'))}м.`});
+
     let sendData = {
         type: 'updateInfoGeneral',
         generalList: data,

@@ -417,14 +417,14 @@ for(let code in keyCodes) {
             {
                 if (Container.Data.HasLocally(mp.players.local.remoteId, "isGunTimeout"))
                 {
-                    mp.game.ui.notifications.show("~r~Таймаут 1 сек");
+                    mp.game.ui.notifications.show("~r~Таймаут 2 сек");
                     return;
                 }
                 Container.Data.SetLocally(mp.players.local.remoteId, "isGunTimeout", true);
                 user.setCurrentWeapon('weapon_unarmed');
                 setTimeout(function () {
                     Container.Data.ResetLocally(mp.players.local.remoteId, "isGunTimeout");
-                }, 1000);
+                }, 2000);
             }
         }
         if (user.getCache('s_bind_weapon_slot1') == parseInt(code)) {
@@ -432,7 +432,7 @@ for(let code in keyCodes) {
             {
                 if (Container.Data.HasLocally(mp.players.local.remoteId, "isGunTimeout"))
                 {
-                    mp.game.ui.notifications.show("~r~Таймаут 1 сек");
+                    mp.game.ui.notifications.show("~r~Таймаут 2 сек");
                     return;
                 }
                 Container.Data.SetLocally(mp.players.local.remoteId, "isGunTimeout", true);
@@ -451,7 +451,7 @@ for(let code in keyCodes) {
                 }, 100);
                 setTimeout(function () {
                     Container.Data.ResetLocally(mp.players.local.remoteId, "isGunTimeout");
-                }, 1000);
+                }, 2000);
             }
         }
         if (user.getCache('s_bind_weapon_slot2') == parseInt(code)) {
@@ -459,7 +459,7 @@ for(let code in keyCodes) {
             {
                 if (Container.Data.HasLocally(mp.players.local.remoteId, "isGunTimeout"))
                 {
-                    mp.game.ui.notifications.show("~r~Таймаут 1 сек");
+                    mp.game.ui.notifications.show("~r~Таймаут 2 сек");
                     return;
                 }
                 Container.Data.SetLocally(mp.players.local.remoteId, "isGunTimeout", true);
@@ -486,7 +486,7 @@ for(let code in keyCodes) {
             {
                 if (Container.Data.HasLocally(mp.players.local.remoteId, "isGunTimeout"))
                 {
-                    mp.game.ui.notifications.show("~r~Таймаут 1 сек");
+                    mp.game.ui.notifications.show("~r~Таймаут 2 сек");
                     return;
                 }
                 Container.Data.SetLocally(mp.players.local.remoteId, "isGunTimeout", true);
@@ -505,7 +505,7 @@ for(let code in keyCodes) {
                 }, 100);
                 setTimeout(function () {
                     Container.Data.ResetLocally(mp.players.local.remoteId, "isGunTimeout");
-                }, 1000);
+                }, 2000);
             }
         }
         if (user.getCache('s_bind_weapon_slot4') == parseInt(code)) {
@@ -513,7 +513,7 @@ for(let code in keyCodes) {
             {
                 if (Container.Data.HasLocally(mp.players.local.remoteId, "isGunTimeout"))
                 {
-                    mp.game.ui.notifications.show("~r~Таймаут 1 сек");
+                    mp.game.ui.notifications.show("~r~Таймаут 2 сек");
                     return;
                 }
                 Container.Data.SetLocally(mp.players.local.remoteId, "isGunTimeout", true);
@@ -532,7 +532,7 @@ for(let code in keyCodes) {
                 }, 100);
                 setTimeout(function () {
                     Container.Data.ResetLocally(mp.players.local.remoteId, "isGunTimeout");
-                }, 1000);
+                }, 2000);
             }
         }
         if (user.getCache('s_bind_weapon_slot5') == parseInt(code)) {
@@ -540,7 +540,7 @@ for(let code in keyCodes) {
             {
                 if (Container.Data.HasLocally(mp.players.local.remoteId, "isGunTimeout"))
                 {
-                    mp.game.ui.notifications.show("~r~Таймаут 1 сек");
+                    mp.game.ui.notifications.show("~r~Таймаут 2 сек");
                     return;
                 }
                 Container.Data.SetLocally(mp.players.local.remoteId, "isGunTimeout", true);
@@ -559,7 +559,7 @@ for(let code in keyCodes) {
                 }, 100);
                 setTimeout(function () {
                     Container.Data.ResetLocally(mp.players.local.remoteId, "isGunTimeout");
-                }, 1000);
+                }, 2000);
             }
         }
         if (user.getCache('s_bind_animations_all') == parseInt(code)) {

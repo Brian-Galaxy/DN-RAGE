@@ -1690,7 +1690,7 @@ fraction.startGrabShopGang = function(player, itemId = 0) {
                 catch (e) {
                     methods.debug(e);
                 }
-            }, 60000)
+            }, 120000)
         }
     });
 };

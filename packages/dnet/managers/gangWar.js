@@ -290,8 +290,12 @@ gangWar.timer = function() {
                     return;
                 let fId = methods.parseInt(user.get(p, 'fraction_id2'));
                 if (currentDef === fId || currentAttack === fId || user.isAdmin(p)) {
-                    if (p.dimension > 0)
+                    if (p.dimension > 0) {
+                        user.set(p, 'st_capt', user.get(p, 'st_capt') + 1);
+                        if (ownerId === fId)
+                            user.set(p, 'st_capt_win', user.get(p, 'st_capt_win') + 1);
                         p.dimension = 0;
+                    }
                 }
             });
 
@@ -320,8 +324,12 @@ gangWar.timer = function() {
                     return;
                 let fId = methods.parseInt(user.get(p, 'fraction_id2'));
                 if (currentDef === fId || currentAttack === fId || user.isAdmin(p)) {
-                    if (p.dimension > 0)
+                    if (p.dimension > 0) {
+                        user.set(p, 'st_capt', user.get(p, 'st_capt') + 1);
+                        if (ownerId === fId)
+                            user.set(p, 'st_capt_win', user.get(p, 'st_capt_win') + 1);
                         p.dimension = 0;
+                    }
                 }
             });
 
@@ -377,8 +385,12 @@ gangWar.timer = function() {
                         return;
                     let fId = methods.parseInt(user.get(p, 'fraction_id2'));
                     if (currentDef === fId || currentAttack === fId || user.isAdmin(p)) {
-                        if (p.dimension > 0)
+                        if (p.dimension > 0) {
+                            user.set(p, 'st_capt', user.get(p, 'st_capt') + 1);
+                            if (ownerId === fId)
+                                user.set(p, 'st_capt_win', user.get(p, 'st_capt_win') + 1);
                             p.dimension = 0;
+                        }
                     }
                 });
 

@@ -108,20 +108,6 @@ let checkShooting = function () {
                     user.set('stats_shooting', user.getCache('stats_shooting') + 1);
                 //mp.game.ui.notifications.showWithStats('PSF_SHOOTING', last + 1, user.getCache('stats_shooting'));
             }
-
-            user.getInvEquipWeapon().forEach(item => {
-                weapons.getMapList().forEach(wpItem => {
-                    try {
-                        if (user.getLastWeapon() == wpItem[1] / 2) {
-                            if (item.counti > 0)
-                                inventory.updateItemCount(item.id, item.counti - 1);
-                        }
-                    }
-                    catch (e) {
-                        methods.debug(e);
-                    }
-                });
-            });
         }
     }
     catch (e) {
@@ -171,6 +157,23 @@ let checkShooting2 = function () {
 let updateStats = function() {
     if (!user.isLogin())
         return;
+    
+    try {
+        user.getInvEquipWeapon().forEach(item => {
+            weapons.getMapList().forEach(wpItem => {
+                try {
+                    if (user.getLastWeapon() == wpItem[1] / 2) {
+                        if (item.counti > 0)
+                            inventory.updateItemCount(item.id, item.counti - 1);
+                    }
+                }
+                catch (e) {
+                    methods.debug(e);
+                }
+            });
+        });
+    }
+    catch (e) {}
 
     try {
 

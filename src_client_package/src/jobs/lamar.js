@@ -233,6 +233,9 @@ lamar.finish = async function() {
             fraction.set(user.getCache('fraction_id2'), 'orderLamarM', await fraction.get(user.getCache('fraction_id2'), 'orderLamarM') + 1);
         }
 
+        user.set('st_order_lamar_f', user.getCache('st_order_lamar_f') + 1);
+        user.set('st_order_lamar_d', user.getCache('st_order_lamar_d') + 1);
+
         setTimeout(function () {
             mp.events.callRemote('server:rent:buy', -1842748181, 0.1, 0);
         }, 5000);

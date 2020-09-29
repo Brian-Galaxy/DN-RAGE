@@ -1912,6 +1912,8 @@ menuList.showMeriaMainMenu = function() {
     UIMenu.Menu.AddMenuItem("Экономика штата", "", {doName: 'showMeriaInfoMenu'});
     UIMenu.Menu.AddMenuItem("Подать заявление на стажировку", "", {doName: 'govWork'});
 
+    UIMenu.Menu.AddMenuItem("Подать заявление на стажировку", "", {doName: 'govWork'});
+
     UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: 'closeMenu'});
     UIMenu.Menu.Draw();
 
@@ -2690,7 +2692,7 @@ menuList.showMeriaSellHvbMenu = function(cofferData) {
     });
 };
 
-menuList.showMeriaSellVehHvbMenu = async function(cofferData) {
+menuList.showMeriaSellVehHvbMenu = async function(cofferData, isNpc = false) {
     if (methods.isBlackout()) {
         mp.game.ui.notifications.show(`~r~В городе отсутствует свет`);
         return;
@@ -2713,7 +2715,7 @@ menuList.showMeriaSellVehHvbMenu = async function(cofferData) {
         }
     }
 
-    let taxOffset = 0;
+    let taxOffset = 10;
 
     user.updateCache().then(async function () {
         UIMenu.Menu.Create(` `, `~b~Текущая налоговая ставка: ~s~${cofferData.get('cofferTaxIntermediate')}%`, 'gov', false, false, 'gov');
@@ -2725,8 +2727,21 @@ menuList.showMeriaSellVehHvbMenu = async function(cofferData) {
                     let vehInfo = methods.getVehicleInfo(vehData.get('name'));
                     UIMenu.Menu.AddMenuItem(`Продать ТС ${vehData.get('name')} (${vehData.get('number')})`, "Продать транспорт государству.~br~Налог: ~g~" + (cofferData.get('cofferTaxIntermediate') + taxOffset) + "%", {eventName: `server:car${i}:sell`});
                     if (vehInfo.price === vehData.get('price')) {
-                        if (vehData.get('with_delete') < 2)
-                            UIMenu.Menu.AddMenuItem(`~y~Продать ТС ${vehData.get('name')} (${vehData.get('number')}) игроку`, "", {eventNameSellV: i});
+                        if (vehData.get('with_delete') < 2) {
+                            if (vehData.get('is_cop_park') > 0) {
+                                UIMenu.Menu.AddMenuItem(`~r~${vehData.get('name')} (${vehData.get('number')}) стоит на штрафстоянке, оплатите штраф`, "", {});
+                            }
+                            else {
+                                UIMenu.Menu.AddMenuItem(`~y~Продать ТС ${vehData.get('name')} (${vehData.get('number')}) игроку`, "", {eventNameSellV: i});
+                                if (isNpc)
+                                {
+                                    if(vehData.get('sell_price') < 1)
+                                        UIMenu.Menu.AddMenuItem(`~y~Выставить ТС ${vehData.get('name')} (${vehData.get('number')}) на БУ авторынок`, "Комиссия авторынка с продажи ТС 1%.~n~Взнос ~g~$1000", {eventNameSellVBu: i});
+                                    else
+                                        UIMenu.Menu.AddMenuItem(`~y~Снять ТС ${vehData.get('name')} (${vehData.get('number')}) с БУ авторынка`, "", {eventNameRemoveVBu: i});
+                                }
+                            }
+                        }
                     }
                     else {
                         if (vehInfo.price > vehData.get('price'))
@@ -2782,6 +2797,22 @@ menuList.showMeriaSellVehHvbMenu = async function(cofferData) {
                 setTimeout(function () {
                     Container.Data.ResetLocally(mp.players.local.remoteId, "isSellTimeout");
                 }, 1000 * 60);
+            }
+            if (item.eventNameSellVBu) {
+                if (user.getCacheData() < 1000) {
+                    mp.game.ui.notifications.show("~r~У вас нет при себе $1000");
+                    return ;
+                }
+                let sum = methods.parseFloat(await UIMenu.Menu.GetUserInput("Сумма", "", 12));
+                if (sum < 0) {
+                    mp.game.ui.notifications.show("~r~Сумма не может быть меньше нуля");
+                    return;
+                }
+                user.removeCashMoney(1000, 'Взнос за выставление ТС на БУ рынке');
+                mp.events.callRemote('server:car:sellToBu', sum, item.eventNameSellVBu);
+            }
+            if (item.eventNameRemoveVBu) {
+                mp.events.callRemote('server:car:sellFromBu', item.eventNameRemoveVBu);
             }
             if (item.eventNameSell) {
 
@@ -3917,6 +3948,57 @@ menuList.showVehicleDoInvMenu = function(vehId) {
     });
 };
 
+menuList.showVehicleDoSellMenu = async function(vehId) {
+
+    let vehicle = mp.vehicles.atRemoteId(vehId);
+
+    if (!mp.vehicles.exists(vehicle)) {
+        mp.game.ui.notifications.show("~g~Ошибка взаимодействия с транспортом");
+        return;
+    }
+
+    let vInfo = methods.getVehicleInfo(vehicle.model);
+    let vData = await vehicles.getData(vehicle.getVariable('container'));
+
+    UIMenu.Menu.Create(`Транспорт`, `~b~Информация о транспорте`);
+    UIMenu.Menu.AddMenuItem(`~g~Купить по цене ${methods.moneyFormat(vData.get('sell_price'))}`, "", {doName: 'buy'});
+    UIMenu.Menu.AddMenuItem("Характеристики", "", {doName: "stats"});
+    UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
+    UIMenu.Menu.Draw();
+
+    UIMenu.Menu.OnSelect.Add(async (item, index) => {
+        UIMenu.Menu.HideMenu();
+        if (item.doName === 'stats')
+            menuList.showVehicleStatsMenu(vehicle);
+        if (item.doName === 'buy')
+            menuList.showVehicleDoSellAcceptMenu(vehicle);
+    });
+};
+
+menuList.showVehicleDoSellAcceptMenu = async function(vehicle) {
+    if (!mp.vehicles.exists(vehicle)) {
+        mp.game.ui.notifications.show("~g~Ошибка взаимодействия с транспортом");
+        return;
+    }
+
+    let vInfo = methods.getVehicleInfo(vehicle.model);
+    let vData = await vehicles.getData(vehicle.getVariable('container'));
+
+    UIMenu.Menu.Create(`Транспорт`, `~b~Покупка`);
+    UIMenu.Menu.AddMenuItem(`~g~Купить по цене ${methods.moneyFormat(vData.get('sell_price'))} (Наличка)`, "", {doName: 'buyc'});
+    UIMenu.Menu.AddMenuItem(`~g~Купить по цене ${methods.moneyFormat(vData.get('sell_price'))} (Карта)`, "", {doName: 'buyb'});
+    UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
+    UIMenu.Menu.Draw();
+
+    UIMenu.Menu.OnSelect.Add(async (item, index) => {
+        UIMenu.Menu.HideMenu();
+        if (item.doName === 'buyc')
+            mp.events.callRemote('server:car:buyBot', vehicle.remoteId, vehicle.getVariable('container'), 0);
+        if (item.doName === 'buyb')
+            mp.events.callRemote('server:car:buyBot', vehicle.remoteId, vehicle.getVariable('container'), 1);
+    });
+};
+
 menuList.showPlayerDocMenu = function(playerId) {
 
     let target = mp.players.atRemoteId(playerId);
@@ -4811,7 +4893,7 @@ menuList.showVehicleMenu = async function(data) {
         /*else if (item.doName == 'showVehicleAutopilotMenu')
             menuList.showVehicleAutopilotMenu();*/
         else if (item.doName == 'showVehicleStatsMenu')
-            menuList.showVehicleStatsMenu();
+            menuList.showVehicleStatsMenu(mp.players.local.vehicle);
         else if (item.eventName == 'server:vehicle:neonStatus')
             mp.events.callRemote(item.eventName);
         else if (item.eventName == 'server:vehicle:lockStatus') {
@@ -5135,12 +5217,12 @@ menuList.showVehicleDoMenu = function() {
     }
 };
 
-menuList.showVehicleStatsMenu = async function() {
+menuList.showVehicleStatsMenu = async function(veh) {
 
-    let vInfo = methods.getVehicleInfo(mp.players.local.vehicle.model);
+    let vInfo = methods.getVehicleInfo(veh.model);
     UIMenu.Menu.Create(`Транспорт`, `~b~Характеристики транспорта`);
 
-    UIMenu.Menu.AddMenuItem("~b~Номер: ", "", {}, `${mp.players.local.vehicle.getNumberPlateText()}`);
+    UIMenu.Menu.AddMenuItem("~b~Номер: ", "", {}, `${veh.getNumberPlateText()}`);
     UIMenu.Menu.AddMenuItem("~b~Класс: ", "", {}, `${vInfo.class_name_ru}`);
     UIMenu.Menu.AddMenuItem("~b~Модель: ", "", {}, `${vInfo.display_name}`);
     if (vInfo.price > 0)
@@ -5164,10 +5246,18 @@ menuList.showVehicleStatsMenu = async function() {
         UIMenu.Menu.AddMenuItem("~b~Багажник: ", "", {}, `~r~Отсутствует`);
     }
 
-    if (mp.players.local.vehicle.getVariable('user_id') > 0) {
-        UIMenu.Menu.AddMenuItem("~b~Тюнинг: ", "", {}, ``);
+    if (veh.getVariable('user_id') > 0) {
+        let car = await vehicles.getData(veh.getVariable('container'));
 
-        let car = await vehicles.getData(mp.players.local.vehicle.getVariable('container'));
+        UIMenu.Menu.AddMenuItem("~y~Разное: ", "", {}, ``);
+
+        UIMenu.Menu.AddMenuItem("~b~Спец. покрышки: ", "", {}, `${car.get('is_tyre') ? '~y~Установлено' : '~r~Отсутствует'}`);
+        UIMenu.Menu.AddMenuItem("~b~Цветные фары: ", "", {}, `${car.get('colorl') >= 0 ? '~y~Установлено' : '~r~Отсутствует'}`);
+        UIMenu.Menu.AddMenuItem("~b~Неон: ", "", {}, `${car.get('is_neon') ? '~y~Установлено' : '~r~Отсутствует'}`);
+        UIMenu.Menu.AddMenuItem("~b~Удаленное управление: ", "", {}, `${car.get('is_special') ? '~y~Установлено' : '~r~Отсутствует'}`);
+
+        UIMenu.Menu.AddMenuItem("~y~Тюнинг: ", "", {}, ``);
+
         let upgradeList = {};
         try {
             upgradeList = JSON.parse(car.get('upgrade'))
@@ -5178,10 +5268,11 @@ menuList.showVehicleStatsMenu = async function() {
             let mod = methods.parseInt(key);
             let val = methods.parseInt(value);
             if (mod >= 100) {
-                UIMenu.Menu.AddMenuItem(`~b~${enums.lscSNames[mod - 100][0]}: `, "", {}, `${value}`);
+                if (value >= 0)
+                    UIMenu.Menu.AddMenuItem(`~b~${enums.lscSNames[mod - 100][0]}: `, "", {}, `${value}`);
             }
             else if (val >= 0) {
-                let label = mp.game.ui.getLabelText(mp.players.local.vehicle.getModTextLabel(mod, val));
+                let label = mp.game.ui.getLabelText(veh.getModTextLabel(mod, val));
                 if (label == "NULL" || label == "")
                     label = `${enums.lscNames[mod][0]} #${(val + 1)}`;
                 UIMenu.Menu.AddMenuItem(`~b~${enums.lscNames[mod][0]}: `, "", {}, `${label}`);
@@ -7937,7 +8028,7 @@ menuList.showLscColorChoiseMenu = async function(shopId, price, labelDesc = '', 
             listItem.shop = shopId;
             listItem.type = 'lsc:color:buy';
             listItem.ev = eventId;
-            list.push({name: label, price: methods.moneyFormat(price2 * price), desc: (car.get(carData) === i) ? 'Куплено' : '', sale: sale, params: listItem});
+            list.push({name: `${i}. ${label}`, price: methods.moneyFormat(price2 * price), desc: (car.get(carData) === i) ? 'Куплено' : '', sale: sale, params: listItem});
         }
         catch (e) {
             methods.debug(e);
@@ -9762,6 +9853,11 @@ menuList.showSheriffArsenalGunMenu = function() {
         UIMenu.Menu.AddMenuItem("Коробка патронов 5.56mm", "", {itemId: 284});
     }
 
+    if (user.isLeader()) {
+        UIMenu.Menu.AddMenuItem("L115", "", {itemId: 119});
+        UIMenu.Menu.AddMenuItem("Коробка патронов 7.62mm", "", {itemId: 282});
+    }
+
     UIMenu.Menu.AddMenuItem("Бронежилет", "", {armor: 100});
 
     UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
@@ -10106,6 +10202,11 @@ menuList.showSapdArsenalGunMenu = function() {
         UIMenu.Menu.AddMenuItem("Коробка патронов 9mm", "", {itemId: 280});
         UIMenu.Menu.AddMenuItem("Коробка патронов 12 калибра", "", {itemId: 281});
         UIMenu.Menu.AddMenuItem("Коробка патронов 5.56mm", "", {itemId: 284});
+    }
+
+    if (user.isLeader()) {
+        UIMenu.Menu.AddMenuItem("L115", "", {itemId: 119});
+        UIMenu.Menu.AddMenuItem("Коробка патронов 7.62mm", "", {itemId: 282});
     }
 
     UIMenu.Menu.AddMenuItem("Бронежилет", "", {armor: 100});
@@ -10759,7 +10860,7 @@ menuList.showBotUsmcMenu = function() {
     shopMenu.updateDialog(btn, 'Офицер', 'Офицер USMC', 'Здравствуйте, чем помочь?')
 };
 
-menuList.showBotEmsMenu = function(idx) {
+menuList.showBotEmsMenu = function(idx, canFree) {
 
     let btn = [];
     btn.push(
@@ -10769,6 +10870,36 @@ menuList.showBotEmsMenu = function(idx) {
             params: {doName: 'ems:wantWork'}
         }
     );
+
+    if (canFree) {
+        if (user.getCache('med_lic')) {
+            btn.push(
+                {
+                    text: 'Купить выписку за $800',
+                    bgcolor: '',
+                    params: {doName: 'ems:free'}
+                }
+            );
+        }
+        else {
+            btn.push(
+                {
+                    text: 'Купить выписку за $2000',
+                    bgcolor: '',
+                    params: {doName: 'ems:free'}
+                }
+            );
+        }
+    }
+    else {
+        btn.push(
+            {
+                text: 'Выписка сейчас не доступна',
+                bgcolor: '',
+                params: {}
+            }
+        );
+    }
 
     btn.push(
         {
@@ -10784,7 +10915,7 @@ menuList.showBotEmsMenu = function(idx) {
         [-246.97201538085938, 6320.427734375, 32.420734405517578, 312.1958923339844],
     ];
     shopMenu.showDialog(new mp.Vector3(listPos[idx][0], listPos[idx][1], listPos[idx][2] + 0.6), listPos[idx][3]);
-    shopMenu.updateDialog(btn, 'Врач', 'Сотрудник EMS', 'Здравствуйте, чем помочь?')
+    shopMenu.updateDialog(btn, 'Врач', 'Сотрудник EMS', 'Здравствуйте, чем помочь? Хочу вам напомнить что, при наличии мед. страховки стоимость услуг намного ниже')
 };
 
 menuList.showBotLspdMenu = function(idx = 0)
@@ -10847,7 +10978,6 @@ menuList.showBotLspdMenu = function(idx = 0)
 menuList.showBotLspdCarMen = function(array, idx, x, y, z, rot)
 {
     let btn = [];
-
     if (array.length > 0) {
         array.forEach(item => {
             btn.push(

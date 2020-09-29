@@ -2472,7 +2472,7 @@ user.playEatAnimation = function(player) {
 
 user.playDrugAnimation = function(player) {
     methods.debug('user.playDrugAnimation');
-    user.playAnimation(player, "move_m@drunk@transitions", "slightly_to_idle", 8);
+    user.playAnimation(player, "move_m@drunk@transitions", "slightly_to_idle", 48);
 };
 
 /*
@@ -2663,6 +2663,10 @@ user.giveWanted = function(player, level, reason, officer = 'Система') {
     methods.debug('user.giveWanted');
     if (!user.isLogin(player))
         return false;
+
+    if (user.get(player, 'jail_time') > 0) {
+        return;
+    }
 
     if (reason == 'clear') {
         user.set(player, 'wanted_level', 0);

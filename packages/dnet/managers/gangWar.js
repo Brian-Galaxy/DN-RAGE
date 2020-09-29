@@ -263,16 +263,6 @@ gangWar.timer = function() {
             }
         });
 
-        setTimeout(function () {
-            try {
-                if (attC === 0 || defC === 0)
-                    timerCounter = timerCounter - 9;
-            }
-            catch (e) {
-                
-            }
-        }, 500);
-
         if (attC > countUsers) {
             timerCounter = 0;
             isStartTimer = false;

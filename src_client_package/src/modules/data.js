@@ -156,6 +156,11 @@ class Data {
             for (let i = 1; i <= 50; i++) mp.events.callRemote('modules:server:data:Set', 800000 + i, 'orderDrug', 50, true);
             for (let i = 1; i <= 50; i++) mp.events.callRemote('modules:server:data:Set', 800000 + i, 'orderAtm', 10, true);*/
 
+            /*mp.events.callRemote('modules:server:data:Set', 800000 + 1, 'spawn_x', -1501.6224365234375, true);
+            mp.events.callRemote('modules:server:data:Set', 800000 + 1, 'spawn_y', 857.4970703125, true);
+            mp.events.callRemote('modules:server:data:Set', 800000 + 1, 'spawn_z', 180.59469604492188, true);
+            mp.events.callRemote('modules:server:data:Set', 800000 + 1, 'spawn_rot', 27.865131378173828, true);*/
+
         } catch (e) {
             methods.debug(`CLNT: [SET] ERR: ${e}`);
         }

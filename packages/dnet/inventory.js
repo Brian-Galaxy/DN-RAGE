@@ -877,10 +877,12 @@ inventory.dropItem = function(player, id, itemId, posX, posY, posZ, rotX, rotY, 
 
         if (vehicles.exists(player.vehicle)) {
             player.notify('~r~Вы находитесь в транспорте');
+            inventory.getItemList(inventory.types.Player, user.getId(player));
             return;
         }
         if (player.isJumping) {
             player.notify('~r~Вы не должны прыгать');
+            inventory.getItemList(inventory.types.Player, user.getId(player));
             return;
         }
         inventory.dropItemJust(id, itemId, posX, posY, posZ, rotX, rotY, player.heading);
@@ -1654,7 +1656,7 @@ inventory.useItem = function(player, id, itemId, isTargetable = false) {
                             player.notify(`~y~Ячейка оказалась пуста`);
                         }
                         else {
-                            inventory.addItem(141, 1, inventory.types.Player, user.getId(player), methods.getRandomInt(6000, 8000) * 2, 0, "{}", 2);
+                            inventory.addItem(141, 1, inventory.types.Player, user.getId(player), methods.parseInt(methods.getRandomInt(6000, 8000) * 1.5), 0, "{}", 2);
                         }
 
                         user.blockKeys(player, false);

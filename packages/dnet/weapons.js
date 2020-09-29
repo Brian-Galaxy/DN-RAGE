@@ -37,8 +37,8 @@ weapons.hashesMap = [
     ["weapon_vintagepistol", 137902532, 2], //7
     ["weapon_flaregun", 1198879012, 1],
     ["weapon_marksmanpistol", -598887786, 0.7], //70
-    ["weapon_revolver", -1045183535, 0.7], //50хп
-    ["weapon_revolver_mk2", -879347409, 0.8], //50хп
+    ["weapon_revolver", -1045183535, 0.8], //50хп
+    ["weapon_revolver_mk2", -879347409, 0.7], //50хп
     ["weapon_doubleaction", -1746263880, 1], //
     ["weapon_raypistol", -1355376991, 1],
     ["weapon_ceramicpistol", 727643628, 3],

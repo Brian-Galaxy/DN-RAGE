@@ -157,6 +157,7 @@ vehicles.loadUserVehicleByRow = (row) => {
     vehicles.set(row['id'], 'rot', parkRot);
     vehicles.set(row['id'], 'dimension', row['dimension']);
     vehicles.set(row['id'], 'upgrade', row['upgrade']);
+    vehicles.set(row['id'], 'sell_price', row['sell_price']);
     vehicles.set(row['id'], 'is_cop_park', row['is_cop_park']);
     vehicles.set(row['id'], 'cop_park_name', row['cop_park_name']);
     vehicles.set(row['id'], 'with_delete', row['with_delete']);
@@ -165,17 +166,24 @@ vehicles.loadUserVehicleByRow = (row) => {
 };
 
 vehicles.getFreePolicePos = () => {
-
     let freeItem = [818.2474, -1333.713, 25.41951, 179.2672];
-
     enums.lspdCarPark.forEach(item => {
         let spawnPos = new mp.Vector3(item[0], item[1], item[2]);
         if (vehicles.exists(methods.getNearestVehicleWithCoords(spawnPos, 3)))
             return;
-
         freeItem = item;
     });
+    return freeItem;
+};
 
+vehicles.getFreeSellAutoPos = () => {
+    let freeItem = [-1667.5948486328125, -951.959228515625, 7.008194446563721, 346.8691101074219];
+    enums.autoSell.forEach(item => {
+        let spawnPos = new mp.Vector3(item[0], item[1], item[2]);
+        if (vehicles.exists(methods.getNearestVehicleWithCoords(spawnPos, 2)))
+            return;
+        freeItem = item;
+    });
     return freeItem;
 };
 
@@ -184,6 +192,11 @@ vehicles.spawnPlayerCar = (id) => {
     let spawnPos = new mp.Vector3(vehicles.get(id, 'x'), vehicles.get(id, 'y'), vehicles.get(id, 'z'));
     let spawnRot = vehicles.get(id, 'rot');
 
+    if (vehicles.get(id, 'sell_price') > 0) {
+        let freePos = vehicles.getFreeSellAutoPos();
+        spawnPos = new mp.Vector3(freePos[0], freePos[1], freePos[2]);
+        spawnRot = freePos[3];
+    }
     if (vehicles.get(id, 'is_cop_park') > 0) {
         spawnPos = new mp.Vector3(9999, 9999, 999);
         spawnRot = 0;
@@ -207,7 +220,12 @@ vehicles.spawnPlayerCar = (id) => {
             veh.numberPlateType = numberStyle;
             veh.locked = true;
 
-            if (vehicles.get(id, 'is_cop_park') > 0)
+            if (vehicles.get(id, 'sell_price') > 0)
+            {
+                veh.dimension = 0;
+                veh.setVariable('useless', true);
+            }
+            else if (vehicles.get(id, 'is_cop_park') > 0)
                 veh.dimension = vehicles.get(id, 'is_cop_park');
             else
                 veh.dimension = vehicles.get(id, 'dimension');
@@ -667,6 +685,7 @@ vehicles.save = (id) => {
         sql = sql + ", livery = '" + methods.parseInt(vehicles.get(id, "livery")) + "'";
         sql = sql + ", extra = '" + methods.parseInt(vehicles.get(id, "extra")) + "'";
         sql = sql + ", dimension = '" + methods.parseInt(vehicles.get(id, "dimension")) + "'";
+        sql = sql + ", sell_price = '" + methods.parseInt(vehicles.get(id, "sell_price")) + "'";
         /*sql = sql + ", x = '" + methods.parseFloat(vehicles.get(id, "x")) + "'";
         sql = sql + ", y = '" + methods.parseFloat(vehicles.get(id, "y")) + "'";
         sql = sql + ", z = '" + methods.parseFloat(vehicles.get(id, "z")) + "'";
@@ -897,6 +916,14 @@ vehicles.removePlayerVehicle = (userId) => {
     })
 };
 
+vehicles.respawnById = (id) => {
+    mp.vehicles.forEach(function (v) {
+        if (vehicles.exists(v) && v.getVariable('container') == id) {
+            vehicles.respawn(v);
+        }
+    })
+};
+
 vehicles.findVehicleByNumber = (number) => {
     methods.debug('vehicles.findVehicleByNumber');
     let returnVehicle = null;
@@ -1037,6 +1064,7 @@ vehicles.updateOwnerInfo = function (id, userId, userName) {
 
     vehicles.set(id, 'user_name', methods.removeQuotes(userName));
     vehicles.set(id, 'user_id', methods.parseInt(userId));
+    vehicles.set(id, 'sell_price', 0);
 
     mp.vehicles.forEach(v => {
 
@@ -1048,6 +1076,8 @@ vehicles.updateOwnerInfo = function (id, userId, userName) {
                 else {
                     v.setVariable('user_id', methods.parseInt(userId));
                     v.setVariable('user_name', methods.removeQuotes(userName));
+                    if (v.getVariable('useless'))
+                        v.setVariable('useless', undefined)
                 }
             }
         }
@@ -1058,7 +1088,7 @@ vehicles.updateOwnerInfo = function (id, userId, userName) {
 
     if (userId == 0) {
         vehicles.park(id, 0, 0, 0, 0);
-        mysql.executeQuery("UPDATE cars SET user_name = '" + userName + "', user_id = '" + userId + "', number = '" + vehicles.generateNumber() + "', tax_money = '0', s_mp = '0', is_neon = '0', neon_r = '0', neon_g = '0', neon_b = '0', extra = '0', upgrade = '{\"18\":-1}' where id = '" + id + "'");
+        mysql.executeQuery("UPDATE cars SET user_name = '" + userName + "', user_id = '" + userId + "', number = '" + vehicles.generateNumber() + "', tax_money = '0', s_mp = '0', is_neon = '0', neon_r = '0', neon_g = '0', neon_b = '0', extra = '0', cop_park_name = '', is_cop_park = '0', sell_price = '0', upgrade = '{\"18\":-1}' where id = '" + id + "'");
 
         let vehInfo = methods.getVehicleInfo(vehicles.get(id, 'name'));
         discord.sendMarketVehicles(`${vehInfo.display_name}`, `Гос. стоимость: ${methods.moneyFormat(vehInfo.price)}\nМакс. скорость: ~${vehInfo.sm}км/ч\nКласс: ${vehInfo.class_name}`, `https://dednet.ru/client/images/carssm/${vehInfo.display_name}_1.jpg`);
@@ -1106,7 +1136,7 @@ vehicles.sell = function (player, slot) {
         if (!vehicles.exists(veh))
             return;
 
-        let taxOffset = 0;
+        let taxOffset = 10;
         if (veh.getVariable('container') == containerId) {
             let vInfo = vehicles.getData(user.get(player, 'car_id' + slot));
             let nalog = methods.parseInt(vInfo.get('price') * (100 - (coffer.getTaxIntermediate() + taxOffset)) / 100);

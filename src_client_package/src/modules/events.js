@@ -1303,7 +1303,7 @@ mp.events.add('client:menuList:showPrintShopMenu', () => {
 mp.events.add('client:menuList:showSellVehMenu', async () => {
     try {
         methods.debug('Event: client:menuList:showSellVehMenu');
-        menuList.showMeriaSellVehHvbMenu(await coffer.getAllData());
+        menuList.showMeriaSellVehHvbMenu(await coffer.getAllData(), true);
     }
     catch (e) {
         methods.debug(e);
@@ -1360,10 +1360,10 @@ mp.events.add('client:menuList:showInvaderShopMenu', () => {
     }
 });
 
-mp.events.add('client:menuList:showBotEmsMenu', (idx) => {
+mp.events.add('client:menuList:showBotEmsMenu', (idx, canFree) => {
     try {
        methods.debug('Event: client:menuList:showBotEmsMenu');
-       menuList.showBotEmsMenu(idx);
+       menuList.showBotEmsMenu(idx, canFree);
     }
     catch (e) {
         methods.debug(e);
@@ -3824,6 +3824,26 @@ mp.events.add('playerMaybeTakeShot', (shootEntityId) => {
 });
 
 mp.events.add("playerDeath", async function (player, reason, killer) {
+
+    try {
+        try {
+            user.getInvEquipWeapon().forEach(item => {
+                weapons.getMapList().forEach(wpItem => {
+                    try {
+                        if (user.getLastWeapon() == wpItem[1] / 2) {
+                            if (item.counti > 0)
+                                inventory.updateItemCount(item.id, item.counti - 1);
+                        }
+                    }
+                    catch (e) {
+                        methods.debug(e);
+                    }
+                });
+            });
+        }
+        catch (e) {}
+    }
+    catch (e) {}
 
     mp.game.gameplay.disableAutomaticRespawn(true);
     mp.game.gameplay.ignoreNextRestart(true);

@@ -576,11 +576,11 @@ pickups.checkPressE = function(player) {
     if (methods.distanceToPos(pickups.LifeInvaderShopPos, playerPos) < distanceCheck)
         player.call('client:menuList:showInvaderShopMenu');
     if (methods.distanceToPos(pickups.EmsBotPos1, playerPos) < distanceCheck)
-        player.call('client:menuList:showBotEmsMenu', [0]);
+        player.call('client:menuList:showBotEmsMenu', [0, methods.getCurrentOnlineFraction(6) < 4]);
     if (methods.distanceToPos(pickups.EmsBotPos2, playerPos) < distanceCheck)
-        player.call('client:menuList:showBotEmsMenu', [1]);
+        player.call('client:menuList:showBotEmsMenu', [1, methods.getCurrentOnlineFraction(6) < 4]);
     if (methods.distanceToPos(pickups.EmsBotPos3, playerPos) < distanceCheck)
-        player.call('client:menuList:showBotEmsMenu', [2]);
+        player.call('client:menuList:showBotEmsMenu', [2, methods.getCurrentOnlineFraction(6) < 4]);
     if (methods.distanceToPos(pickups.UsmcBotPos, playerPos) < distanceCheck)
         player.call('client:menuList:showBotUsmcMenu');
 

@@ -1679,7 +1679,6 @@ fraction.startGrabShopGang = function(player, itemId = 0) {
                             }
                         });
                         player.notify('~g~Вы успешно взломали кассу');
-
                         fraction.set(frId, 'currentGrabShop' + i, true);
                     }
                     else {

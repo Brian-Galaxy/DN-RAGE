@@ -7,6 +7,7 @@ import business from "./property/business";
 
 import quest from "./manager/quest";
 import edu from "./manager/edu";
+import hosp from "./manager/hosp";
 
 import loader from "./jobs/loader";
 import lamar from "./jobs/lamar";
@@ -1116,6 +1117,18 @@ mp.events.add('client:dialog:btn', async function(json) {
             let text = await menuList.getUserInput('Почему вы хотите тут работать?', '', 100);
             mp.game.ui.notifications.show(`~g~Заявление было отправлено, скоро с вами свяжуться в дискорде`);
             mp.events.callRemote('server:discord:sendWorkEms', discord, text);
+        }
+        if (params.doName === 'ems:free') {
+            shopMenu.hideDialog();
+            let price = 2000;
+            if (user.getCache('med_lic'))
+                price = 800;
+            if (user.getCashMoney() < price) {
+                mp.game.ui.notifications.show(`~r~У вас нет при себе денег на выписку`);
+                return ;
+            }
+            user.removeCashMoney(params, 'Выписка из больницы');
+            hosp.freePlayer();
         }
         if (params.doName === 'lspd:toJail') {
             mp.events.callRemote('server:user:arrest');

@@ -483,7 +483,7 @@ mainMenu.updateInfoGeneral = function() {
     data.push({title: 'Уровень рабочего', subtitle: `${user.getCache('work_lvl')}`});
     data.push({title: 'Опыт рабочего', subtitle: `${user.getCache('work_exp')}/${user.getCache('work_lvl') * 500}`});
 
-    //data.push({title: 'Убийств', subtitle: `${user.getCache('st_kill')}`});
+    data.push({title: 'Убийств', subtitle: `${user.getCache('st_kill')}`});
     data.push({title: 'Контракты - Банкоматы', subtitle: `${user.getCache('st_order_atm_f')}`});
     data.push({title: 'Контракты - Банкоматы (Сегодня)', subtitle: `${user.getCache('st_order_atm_d')}`});
     data.push({title: 'Контракты - Закладки', subtitle: `${user.getCache('st_order_drug_f')}`});

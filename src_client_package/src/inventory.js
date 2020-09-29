@@ -108,14 +108,14 @@ inventory.openInventoryByEntity = async function(entity) {
 
         try {
 
+            if (entity.getVariable('useless') === true && entity.getVariable('user_id') > 0) {
+                menuList.showVehicleDoSellMenu(entity.remoteId);
+                return;
+            }
             if (entity.isDead()) {
                 mp.game.ui.notifications.show("~r~Транспорт уничтожен");
             } else if (entity.getDoorLockStatus() !== 1) {
-                if (entity.getNumberPlateText() == "CAR SHOP")
-                    menuList.showVehShopModelInfoMenu(entity.model);
-                else
-                    mp.game.ui.notifications.show("~r~Транспорт закрыт");
-
+                mp.game.ui.notifications.show("~r~Транспорт закрыт");
             } else if (mp.players.local.isInAnyVehicle(false)) {
                 mp.game.ui.notifications.show("~g~Вы должны находиться около багажника");
             } else if (methods.getVehicleInfo(entity.model).stock == 0) {

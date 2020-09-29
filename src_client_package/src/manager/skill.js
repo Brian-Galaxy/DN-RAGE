@@ -152,12 +152,7 @@ let checkShooting1 = function () {
 };
 let checkShooting2 = function () {
     fireMod = true;
-};
 
-let updateStats = function() {
-    if (!user.isLogin())
-        return;
-    
     try {
         user.getInvEquipWeapon().forEach(item => {
             weapons.getMapList().forEach(wpItem => {
@@ -174,7 +169,11 @@ let updateStats = function() {
         });
     }
     catch (e) {}
+};
 
+let updateStats = function() {
+    if (!user.isLogin())
+        return;
     try {
 
         if (user.getCache('online_time') < 100)

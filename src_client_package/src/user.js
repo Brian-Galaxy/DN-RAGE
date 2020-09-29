@@ -171,6 +171,14 @@ user.getTargetEntityValidate = function() {
         else if (
             user.targetEntity &&
             user.targetEntity.entity &&
+            user.targetEntity.entity.getType() != 3 &&
+            user.targetEntity.entity.getVariable('useless') &&
+            user.targetEntity.entity.getVariable('user_id')
+        )
+            return user.targetEntity.entity;
+        else if (
+            user.targetEntity &&
+            user.targetEntity.entity &&
             user.targetEntity.entity.getVariable('isDrop')
         )
             return user.targetEntity.entity;

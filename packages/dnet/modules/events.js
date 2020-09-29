@@ -3814,14 +3814,16 @@ mp.events.addRemoteCounted('server:lspd:takeVehicle', (player, x, y, z, rot, vid
         let veh = mp.vehicles.at(vid);
         veh.position = new mp.Vector3(x, y, z);
         veh.dimension = 0;
+        user.showLoadDisplay(player);
         setTimeout(function () {
             try {
                 vehicles.setHeading(vid, rot);
                 user.putInVehicle(player, veh, -1);
                 player.notify('~y~Не забудьте оплатить штраф через 2 - Транспорт');
+                user.teleportVeh(player, x, y, z, rot);
             }
             catch (e) {}
-        }, 500)
+        }, 1000)
     }
     catch (e) {
         methods.debug(e);
@@ -5614,6 +5616,43 @@ mp.events.addRemoteCounted('server:car:giveOffsetMoney', (player, slot) => {
     player.notify('~y~Вы возсместили сумму, за измененную цену на транспорт в размере ' + methods.moneyFormat(offset) + '.\nТеперь вы можете продавать транспорт с рук');
 });
 
+mp.events.addRemoteCounted('server:car:sellToBu', (player, price, slot) => {
+    if (!user.isLogin(player))
+        return;
+
+    if (user.get(player, 'car_id' + slot) == 0) {
+        player.notify('~r~У Вас нет транспорта');
+        return;
+    }
+
+    let vId = user.get(player, 'car_id' + slot);
+    vehicles.set(vId, 'sell_price', price);
+    vehicles.respawnById(vId);
+    vehicles.save(vId);
+    player.notify('~y~Вы выставили транспорт на продажу');
+});
+
+mp.events.addRemoteCounted('server:car:sellFromBu', (player, slot) => {
+    if (!user.isLogin(player))
+        return;
+
+    if (user.get(player, 'car_id' + slot) == 0) {
+        player.notify('~r~У Вас нет транспорта');
+        return;
+    }
+
+    let vId = user.get(player, 'car_id' + slot);
+    vehicles.set(vId, 'sell_price', 0);
+    mp.vehicles.forEach(v => {
+        if (v.getVariable('vid') == vId) {
+            v.setVariable('useless', undefined);
+            vehicles.save(vId);
+            vehicles.respawn(v);
+            player.notify('~y~Вы убрали транспорт с продажи\n~g~Ваш транспорт скоро будет на парковочном месте');
+        }
+    });
+});
+
 mp.events.addRemoteCounted('server:car:sellToPlayer', (player, buyerId, sum, slot) => {
     if (!user.isLogin(player))
         return;
@@ -5706,6 +5745,72 @@ mp.events.addRemoteCounted('server:car:sellToPlayer:accept', (player, houseId, s
 
         user.addHistory(seller, 3, 'Продал транспорт ' + vInfo.get('name') + ' | ' + vInfo.get('number') + '. Цена: ' + methods.moneyFormat(sum));
         user.addHistory(player, 3, 'Купил транспорт ' + vInfo.get('name') + ' | ' + vInfo.get('number') + '. Цена: ' + methods.moneyFormat(sum));
+    }
+});
+
+mp.events.addRemoteCounted('server:car:buyBot', (player, remoteId, vid, payType) => {
+    if (!user.isLogin(player))
+        return;
+
+    let slotBuy = user.getVehicleFreeSlot(player);
+
+    if (slotBuy === 0) {
+        player.notify('~r~У Вас нет доступных слотов');
+        return;
+    }
+
+    let vData = vehicles.getData(vid);
+    let sum = vData.get('sell_price');
+
+    if (user.getMoney(player, payType) < sum) {
+        player.notify('~r~У Вас нет столько денег');
+        return;
+    }
+
+    let seller = user.getPlayerById(vData.get('user_id'));
+    if (user.isLogin(seller)) {
+
+        let slot = 0;
+        for (let i = 1; i <= 10; i++) {
+            if (user.get(seller, 'car_id' + i) === vid) {
+                slot = i;
+                break;
+            }
+        }
+        
+        if (slot === 0) {
+            player.notify('~r~Ошибка покупки транспорта');
+            return;
+        }
+
+        vehicles.updateOwnerInfo(vid, user.getId(player), user.getRpName(player));
+        user.set(player, 'car_id' + slotBuy, vid);
+        user.set(seller, 'car_id' + slot, 0);
+
+        user.addCashMoney(seller, sum * 0.99);
+        user.removeMoney(player, sum, payType);
+
+        seller.notify(`~b~Вы продали ${vData.get('name')} за ~s~` + methods.moneyFormat(sum * 0.99));
+        player.notify('~b~Вы купили ТС за ~s~' + methods.moneyFormat(sum));
+
+        if (methods.parseInt(sum) < 1000) {
+            try {
+                methods.saveLog('log_warning',
+                    ['name', 'do'],
+                    [`${user.getRpName(player)} (${user.getId(player)})`, `BUY CAR: ${vid} | PRICE: $${sum} | SELLER: ${user.getRpName(seller)} (${user.getId(seller)})`],
+                );
+            }
+            catch (e) {}
+        }
+
+        user.save(player);
+        user.save(seller);
+
+        user.addHistory(seller, 3, 'Продал транспорт ' + vData.get('name') + ' | ' + vData.get('number') + '. Цена: ' + methods.moneyFormat(sum));
+        user.addHistory(player, 3, 'Купил транспорт ' + vData.get('name') + ' | ' + vData.get('number') + '. Цена: ' + methods.moneyFormat(sum));
+    }
+    else {
+        player.notify('~r~Игрок не в сети');
     }
 });
 

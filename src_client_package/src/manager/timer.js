@@ -458,7 +458,7 @@ timer.secTimer = function() {
                     user.set('st_run', user.getCache('st_run') + dist);
             }
             else if (mp.players.local.isInAnyVehicle(true)) {
-                if (mp.players.local.isInAir())
+                if (mp.players.local.vehicle.isInAir())
                     user.set('st_fly', user.getCache('st_fly') + dist);
                 else
                     user.set('st_drive', user.getCache('st_drive') + dist);

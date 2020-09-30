@@ -162,7 +162,9 @@ vehicles.loadUserVehicleByRow = (row) => {
     vehicles.set(row['id'], 'cop_park_name', row['cop_park_name']);
     vehicles.set(row['id'], 'with_delete', row['with_delete']);
 
-    vehicles.spawnPlayerCar(row['id']);
+    setTimeout(function () {
+        vehicles.spawnPlayerCar(row['id']); //Нужен рандом
+    }, methods.getRandomInt(0, 2000));
 };
 
 vehicles.getFreePolicePos = () => {
@@ -177,8 +179,8 @@ vehicles.getFreePolicePos = () => {
 };
 
 vehicles.getFreeSellAutoPos = () => {
-    let freeItem = [-1667.5948486328125, -951.959228515625, 7.008194446563721, 346.8691101074219];
-    enums.autoSell.forEach(item => {
+    let freeItem = [0, 0, 0, 0];
+    enums.autoSell.reverse().forEach(item => {
         let spawnPos = new mp.Vector3(item[0], item[1], item[2]);
         if (vehicles.exists(methods.getNearestVehicleWithCoords(spawnPos, 2)))
             return;
@@ -193,9 +195,17 @@ vehicles.spawnPlayerCar = (id) => {
     let spawnRot = vehicles.get(id, 'rot');
 
     if (vehicles.get(id, 'sell_price') > 0) {
-        let freePos = vehicles.getFreeSellAutoPos();
-        spawnPos = new mp.Vector3(freePos[0], freePos[1], freePos[2]);
-        spawnRot = freePos[3];
+        try {
+            let freePos = vehicles.getFreeSellAutoPos();
+            if (freePos[0] !== 0) {
+                spawnPos = new mp.Vector3(freePos[0], freePos[1], freePos[2]);
+                spawnRot = freePos[3];
+            }
+            else {
+                vehicles.set(id, 'sell_price', 0);
+            }
+        }
+        catch (e) {}
     }
     if (vehicles.get(id, 'is_cop_park') > 0) {
         spawnPos = new mp.Vector3(9999, 9999, 999);
@@ -1139,7 +1149,7 @@ vehicles.sell = function (player, slot) {
         let taxOffset = 10;
         if (veh.getVariable('container') == containerId) {
             let vInfo = vehicles.getData(user.get(player, 'car_id' + slot));
-            let nalog = methods.parseInt(vInfo.get('price') * (100 - (coffer.getTaxIntermediate() + taxOffset)) / 100);
+            let nalog = methods.parseInt(vInfo.get('price') * (100 - (coffer.getTaxProperty() + taxOffset)) / 100);
 
             user.set(player, 'car_id' + slot, 0);
 
@@ -1164,7 +1174,7 @@ vehicles.sell = function (player, slot) {
                     return;
 
                 user.addHistory(player, 3, 'Продал транспорт ' + vInfo.get('name') + '. Цена: ' + methods.moneyFormat(nalog));
-                player.notify(`~g~Вы продали транспорт\nНалог:~s~ ${(coffer.getTaxIntermediate() + taxOffset)}%\n~g~Получено:~s~ ${methods.moneyFormat(nalog)}`);
+                player.notify(`~g~Вы продали транспорт\nНалог:~s~ ${(coffer.getTaxProperty() + taxOffset)}%\n~g~Получено:~s~ ${methods.moneyFormat(nalog)}`);
                 user.save(player);
             }, 1000);
         }

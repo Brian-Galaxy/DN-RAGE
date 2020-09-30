@@ -538,11 +538,14 @@ user.teleportVehV = function(pos, rot) {
             mp.game.streaming.requestCollisionAtCoord(pos.x, pos.y, pos.z);
             mp.game.invoke(methods.SET_FOLLOW_VEHICLE_CAM_VIEW_MODE, 4);
             if (mp.players.local.vehicle) {
+                mp.players.local.vehicle.freezePosition(true);
                 mp.players.local.vehicle.position = pos;
                 if (rot != undefined)
                     mp.players.local.vehicle.setRotation(0, 0, methods.parseInt(rot), 0, true);
                 setTimeout(function () {
-                    mp.players.local.vehicle.setOnGroundProperly();
+                    mp.players.local.vehicle.freezePosition(false);
+                    if (mp.players.local.dimension === 0)
+                        mp.players.local.vehicle.setOnGroundProperly();
                 }, 100);
             }
             else {

@@ -107,7 +107,7 @@ gangWar.startWar = function(zoneId, attack, def, isArmor, count) {
     methods.debug('gangWar.startWar');
 
     isStartTimer = true;
-    timerCounter = 600;
+    timerCounter = 300;
     currentZone = zoneId;
     currentAttack = attack;
     currentDef = def;
@@ -227,7 +227,7 @@ gangWar.dropTimer = function(player) {
         return;
 
     isStartTimer = false;
-    timerCounter = 600;
+    timerCounter = 300;
     currentZone = 0;
     currentAttack = 0;
     currentDef = 0;

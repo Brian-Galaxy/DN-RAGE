@@ -1420,6 +1420,16 @@ mp.events.add('client:menuList:showShopMenu', (shopId, price, type) => {
     }
 });
 
+mp.events.add('client:menuList:showShopTacoMenu', (shopId, price) => {
+    try {
+        methods.debug('Event: client:menuList:showShopTacoMenu');
+        menuList.showShopTacoMenu(shopId, price);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
 mp.events.add('client:menuList:showShopAlcMenu', (shopId, price, type) => {
     try {
         methods.debug('Event: client:menuList:showShopAlcMenu');
@@ -2078,20 +2088,10 @@ mp.events.add('client:showInvaderAdTempMenu', (data) => {
     }
 });
 
-mp.events.add('client:showBankLogMenu', (data) => {
+mp.events.add('client:showMeriaTicketMenu', (data) => {
     try {
-        methods.debug('Event: client:showBankLogMenu');
-        menuList.showBankLogMenu(data);
-    }
-    catch (e) {
-        methods.debug(e);
-    }
-});
-
-mp.events.add('client:showPlayerHistoryMenu', (data) => {
-    try {
-        methods.debug('Event: client:showPlayerHistoryMenu');
-        menuList.showPlayerHistoryMenu(data);
+        methods.debug('Event: client:showMeriaTicketMenu');
+        menuList.showMeriaTicketMenu(data);
     }
     catch (e) {
         methods.debug(e);

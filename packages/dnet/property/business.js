@@ -210,7 +210,7 @@ business.sell = function (player) {
     }
 
     let hInfo = business.getData(user.get(player, 'business_id'));
-    let nalog = methods.parseInt(hInfo.get('price') * (100 - coffer.getTaxIntermediate()) / 100);
+    let nalog = methods.parseInt(hInfo.get('price') * (100 - coffer.getTaxProperty()) / 100);
 
     user.set(player, 'business_id', 0);
 
@@ -229,7 +229,7 @@ business.sell = function (player) {
             return;
 
         user.addHistory(player, 3, 'Продал бизнес ' + hInfo.get('name') + ' №' + hInfo.get('id') + '. Цена: ' + methods.moneyFormat(nalog));
-        player.notify(`~g~Вы продали бизнес\nНалог:~s~ ${coffer.getTaxIntermediate()}%\n~g~Получено:~s~ ${methods.moneyFormat(nalog)}`);
+        player.notify(`~g~Вы продали бизнес\nНалог:~s~ ${coffer.getTaxProperty()}%\n~g~Получено:~s~ ${methods.moneyFormat(nalog)}`);
         user.save(player);
         user.updateClientCache(player);
         business.save(hInfo.get('id'));

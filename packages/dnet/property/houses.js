@@ -471,7 +471,7 @@ houses.sell = function (player) {
         return;
     }
 
-    let nalog = methods.parseInt(hInfo.get('price') * (100 - coffer.getTaxIntermediate()) / 100);
+    let nalog = methods.parseInt(hInfo.get('price') * (100 - coffer.getTaxProperty()) / 100);
 
     user.set(player, 'house_id', 0);
 
@@ -484,7 +484,7 @@ houses.sell = function (player) {
         if (!user.isLogin(player))
             return;
         user.addHistory(player, 3, 'Продал дом ' + hInfo.get('address') + ' №' + hInfo.get('number') + '. Цена: ' + methods.moneyFormat(nalog));
-        player.notify(`~g~Вы продали недвижимость\nНалог:~s~ ${coffer.getTaxIntermediate()}%\n~g~Получено:~s~ ${methods.moneyFormat(nalog)}`);
+        player.notify(`~g~Вы продали недвижимость\nНалог:~s~ ${coffer.getTaxProperty()}%\n~g~Получено:~s~ ${methods.moneyFormat(nalog)}`);
         user.save(player);
     }, 1000);
 };

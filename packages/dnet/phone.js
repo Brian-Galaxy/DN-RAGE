@@ -48,6 +48,14 @@ phone.getUserInfo = function(player, text) {
             ));
 
             subItems.push(phone.getMenuItemButton(
+                'Список штрафов',
+                '',
+                { name: 'tickets', id: row['id'] },
+                '',
+                true,
+            ));
+
+            subItems.push(phone.getMenuItemButton(
                 'Возраст',
                 row['age'],
                 { name: 'none' },
@@ -1681,7 +1689,7 @@ phone.openInvaderStatsList = function(player, days = 30) {
                 ]));
             }
 
-            phone.showMenu(player, 'lifeHistory', `Личная история`, items);
+            phone.showMenu(player, 'statsad', `Статистика`, items);
         });
     }
     catch (e) {
@@ -1692,7 +1700,7 @@ phone.openInvaderStatsList = function(player, days = 30) {
 phone.userHistory = function(player, id) {
     if (!user.isLogin(player))
         return;
-    methods.debug('phone.bankHistory');
+    methods.debug('phone.userHistory');
 
     if (id === undefined)
         id = user.get(player, 'id');
@@ -1741,6 +1749,64 @@ phone.userHistory = function(player, id) {
         }
 
         phone.showMenu(player, 'userHistory', `Личная история`, items);
+    });
+};
+
+phone.userTickets = function(player, id) {
+    if (!user.isLogin(player))
+        return;
+    methods.debug('phone.userTickets');
+
+    if (id === undefined)
+        id = user.getId(player);
+
+    mysql.executeQuery(`SELECT * FROM tickets WHERE user_id = ${methods.parseInt(id)} ORDER BY is_pay ASC, id DESC LIMIT 50`, (err, rows, fields) => {
+
+        let items = [];
+
+        if (rows.length > 0) {
+            try {
+                let columns = [
+                    { title: '№', field: 'id' },
+                    { title: 'Выдал', field: 'do' },
+                    { title: 'Отменил', field: 'do2' },
+                    { title: 'Сумма', field: 'price' },
+                    { title: 'Статус', field: 'status' },
+                    { title: 'Дата', field: 'datetime' },
+                ];
+                let data = [];
+
+                rows.forEach(row => {
+                    data.push({
+                        id: row['id'], do: row['do'], do2: row['do2'], price: methods.moneyFormat(row['price']), status: row['is_pay'] ? 'Оплачен' : 'Не оплачен', datetime: `${row['rp_datetime']} (( ${methods.unixTimeStampToDateTimeShort(row['timestamp'])} ))`
+                    });
+                });
+
+                let item = phone.getMenuItemTable('История штрафов', columns, data);
+                items.push(phone.getMenuMainItem(``, [item]));
+            }
+            catch (e) {
+
+                items.push(phone.getMenuMainItem(`Список пуст`, [
+                    phone.getMenuItemButton(
+                        `Произошла ошибка, попробуйте еще раз`,
+                        ``
+                    )
+                ]));
+
+                methods.debug(e);
+            }
+        }
+        else {
+            items.push(phone.getMenuMainItem(`Список пуст`, [
+                phone.getMenuItemButton(
+                    `Список пуст`,
+                    ``
+                )
+            ]));
+        }
+
+        phone.showMenu(player, 'userTickets', `История штрафов`, items);
     });
 };
 

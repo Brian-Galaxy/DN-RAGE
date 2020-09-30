@@ -350,17 +350,22 @@ mainMenu.updateInfoProperty = async function() {
         }
 
         (await user.getCarsData()).forEach(item => {
-            let vInfo = methods.getVehicleInfo(item.get('name'));
-            carsData.push(
-                {
-                    type: vInfo.class_name_ru,
-                    name: vInfo.display_name,
-                    vin: `${methods.moneyFormat(item.get('tax_money') * -1, 0)}`,
-                    carclass: item.get('is_cop_park') > 0 ? 'Есть' : 'Нет',
-                    def: item.get('fuel') > 0 ? 'Есть' : 'Нет',
-                    number: item.get('number')
-                },
-            )
+            try {
+                if (item) {
+                    let vInfo = methods.getVehicleInfo(item.get('name'));
+                    carsData.push(
+                        {
+                            type: vInfo.class_name_ru,
+                            name: vInfo.display_name,
+                            vin: `${methods.moneyFormat(item.get('tax_money') * -1, 0)}`,
+                            carclass: item.get('is_cop_park') > 0 ? 'Есть' : 'Нет',
+                            def: item.get('fuel') > 0 ? 'Есть' : 'Нет',
+                            number: item.get('number')
+                        },
+                    )
+                }
+            }
+            catch (e) {}
         });
 
         let sendData = {

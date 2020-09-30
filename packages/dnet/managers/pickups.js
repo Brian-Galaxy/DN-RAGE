@@ -125,6 +125,7 @@ pickups.MeriaDownPos = new mp.Vector3(-1379.659, -499.748, 32.15739);
 pickups.MeriaRoofPos = new mp.Vector3(-1369, -471.5994, 83.44699);
 pickups.MeriaGarPos = new mp.Vector3(-1360.679, -471.8841, 30.59572);
 pickups.MeriaGarderobPos = new mp.Vector3(-1300.886, -555.9606, 29.56678);
+pickups.MeriaClearPos = new mp.Vector3(-1291.0059814453125, -574.3822631835938, 29.572912216186523);
 pickups.MeriaHelpPos = new mp.Vector3(-1290.544, -571.1852, 29.57288);
 //pickups.MeriaKeyPos = new mp.Vector3(-1381.507, -466.2556, 71.04215);
 
@@ -720,6 +721,8 @@ pickups.checkPressE = function(player) {
     if (user.isGov(player)) {
         if (methods.distanceToPos(pickups.MeriaGarderobPos, playerPos) < distanceCheck)
             player.call('client:menuList:showGovGarderobMenu');
+        if (methods.distanceToPos(pickups.MeriaClearPos, playerPos) < distanceCheck)
+            player.call('client:menuList:showSapdClearMenu');
     }
 
 

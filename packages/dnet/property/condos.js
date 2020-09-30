@@ -292,12 +292,9 @@ condos.sell = function (player) {
         return;
     }
 
-    let nalog = methods.parseInt(hInfo.get('price') * (100 - coffer.getTaxIntermediate()) / 100);
-
+    let nalog = methods.parseInt(hInfo.get('price') * (100 - coffer.getTaxProperty()) / 100);
     user.set(player, 'condo_id', 0);
-
     condos.updateOwnerInfo(hInfo.get('id'), 0, '');
-
     coffer.removeMoney(1, nalog);
     user.addMoney(player, nalog, 'Продажа квартиры ' + hInfo.get('address') + ' №' + hInfo.get('number'));
 
@@ -305,7 +302,7 @@ condos.sell = function (player) {
         if (!user.isLogin(player))
             return;
         user.addHistory(player, 3, 'Продал квартиру ' + hInfo.get('address') + ' №' + hInfo.get('number') + '. Цена: ' + methods.moneyFormat(nalog));
-        player.notify(`~g~Вы продали квартиру\nНалог:~s~ ${coffer.getTaxIntermediate()}%\n~g~Получено:~s~ ${methods.moneyFormat(nalog)}`);
+        player.notify(`~g~Вы продали квартиру\nНалог:~s~ ${coffer.getTaxProperty()}%\n~g~Получено:~s~ ${methods.moneyFormat(nalog)}`);
         user.save(player);
     }, 1000);
 };

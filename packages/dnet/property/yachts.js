@@ -99,7 +99,7 @@ yachts.sell = function (player) {
         return;
     }
 
-    let nalog = methods.parseInt(hInfo.get('price') * (100 - coffer.getTaxIntermediate()) / 100);
+    let nalog = methods.parseInt(hInfo.get('price') * (100 - coffer.getTaxProperty()) / 100);
 
     user.set(player, 'yacht_id', 0);
 
@@ -112,7 +112,7 @@ yachts.sell = function (player) {
         if (!user.isLogin(player))
             return;
         user.addHistory(player, 3, 'Продал яхту ' + hInfo.get('name') + ' №' + hInfo.get('id') + '. Цена: ' + methods.moneyFormat(nalog));
-        player.notify(`~g~Вы продали яхту\nНалог:~s~ ${coffer.getTaxIntermediate()}%\n~g~Получено:~s~ ${methods.moneyFormat(nalog)}`);
+        player.notify(`~g~Вы продали яхту\nНалог:~s~ ${coffer.getTaxProperty()}%\n~g~Получено:~s~ ${methods.moneyFormat(nalog)}`);
         user.save(player);
     }, 1000);
 };

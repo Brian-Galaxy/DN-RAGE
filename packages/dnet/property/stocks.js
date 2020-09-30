@@ -408,41 +408,44 @@ stocks.loadAll = function() {
     mysql.executeQuery(`SELECT * FROM stocks`, function (err, rows, fields) {
         rows.forEach(function(item) {
 
-            stocks.set(item['id'], 'id', item['id']);
-            stocks.set(item['id'], 'number', item['number']);
-            stocks.set(item['id'], 'address', item['address']);
-            stocks.set(item['id'], 'street', item['street']);
-            stocks.set(item['id'], 'price', item['price']);
-            stocks.set(item['id'], 'user_id', item['user_id']);
-            stocks.set(item['id'], 'user_name', item['user_name']);
-            stocks.set(item['id'], 'pin', item['pin']);
-            stocks.set(item['id'], 'pin1', item['pin1']);
-            stocks.set(item['id'], 'pin2', item['pin2']);
-            stocks.set(item['id'], 'pin3', item['pin3']);
-            stocks.set(item['id'], 'pin_o', item['pin_o']);
-            stocks.set(item['id'], 'interior', item['interior']);
-            stocks.set(item['id'], 'x', item['x']);
-            stocks.set(item['id'], 'y', item['y']);
-            stocks.set(item['id'], 'z', item['z']);
-            stocks.set(item['id'], 'rot', item['rot']);
-            stocks.set(item['id'], 'vx', item['vx']);
-            stocks.set(item['id'], 'vy', item['vy']);
-            stocks.set(item['id'], 'vz', item['vz']);
-            stocks.set(item['id'], 'vrot', item['vrot']);
-            stocks.set(item['id'], 'upgrade', item['upgrade']);
-            stocks.set(item['id'], 'upgrade_g', item['upgrade_g']);
-            stocks.set(item['id'], 'tax_money', item['tax_money']);
-            stocks.set(item['id'], 'tax_score', item['tax_score']);
+            try {
+                stocks.set(item['id'], 'id', item['id']);
+                stocks.set(item['id'], 'number', item['number']);
+                stocks.set(item['id'], 'address', item['address']);
+                stocks.set(item['id'], 'street', item['street']);
+                stocks.set(item['id'], 'price', item['price']);
+                stocks.set(item['id'], 'user_id', item['user_id']);
+                stocks.set(item['id'], 'user_name', item['user_name']);
+                stocks.set(item['id'], 'pin', item['pin']);
+                stocks.set(item['id'], 'pin1', item['pin1']);
+                stocks.set(item['id'], 'pin2', item['pin2']);
+                stocks.set(item['id'], 'pin3', item['pin3']);
+                stocks.set(item['id'], 'pin_o', item['pin_o']);
+                stocks.set(item['id'], 'interior', item['interior']);
+                stocks.set(item['id'], 'x', item['x']);
+                stocks.set(item['id'], 'y', item['y']);
+                stocks.set(item['id'], 'z', item['z']);
+                stocks.set(item['id'], 'rot', item['rot']);
+                stocks.set(item['id'], 'vx', item['vx']);
+                stocks.set(item['id'], 'vy', item['vy']);
+                stocks.set(item['id'], 'vz', item['vz']);
+                stocks.set(item['id'], 'vrot', item['vrot']);
+                stocks.set(item['id'], 'upgrade', item['upgrade']);
+                stocks.set(item['id'], 'upgrade_g', item['upgrade_g']);
+                stocks.set(item['id'], 'tax_money', item['tax_money']);
+                stocks.set(item['id'], 'tax_score', item['tax_score']);
 
-            let hBlip = {
-                pos: new mp.Vector3(parseFloat(item['x']), parseFloat(item['y']), parseFloat(item['z'])),
-                vPos: new mp.Vector3(parseFloat(item['vx']), parseFloat(item['vy']), parseFloat(item['vz']))
-            };
-            methods.createCp(hBlip.pos.x, hBlip.pos.y, hBlip.pos.z, "Нажмите ~g~Е~s~ чтобы открыть меню");
-
-            stocks.loadUpgrades(item['upgrade'], item['id'], item['interior']);
-
-            stockList.set(item['id'], hBlip);
+                let hBlip = {
+                    pos: new mp.Vector3(parseFloat(item['x']), parseFloat(item['y']), parseFloat(item['z'])),
+                    vPos: new mp.Vector3(parseFloat(item['vx']), parseFloat(item['vy']), parseFloat(item['vz']))
+                };
+                methods.createCp(hBlip.pos.x, hBlip.pos.y, hBlip.pos.z, "Нажмите ~g~Е~s~ чтобы открыть меню");
+                stocks.loadUpgrades(item['upgrade'], item['id'], item['interior']);
+                stockList.set(item['id'], hBlip);
+            }
+            catch (e) {
+                
+            }
         });
         count = rows.length;
         methods.debug('All stocks Loaded: ' + count);
@@ -969,7 +972,7 @@ stocks.sell = function (player) {
         return;
     }
 
-    let nalog = methods.parseInt(hInfo.get('price') * (100 - coffer.getTaxIntermediate()) / 100);
+    let nalog = methods.parseInt(hInfo.get('price') * (100 - coffer.getTaxProperty()) / 100);
 
     user.set(player, 'stock_id', 0);
 
@@ -983,7 +986,7 @@ stocks.sell = function (player) {
         if (!user.isLogin(player))
             return;
         user.addHistory(player, 3, 'Продал склад ' + hInfo.get('address') + ' №' + hInfo.get('number') + '. Цена: ' + methods.moneyFormat(nalog));
-        player.notify(`~g~Вы продали недвижимость\nНалог:~s~ ${coffer.getTaxIntermediate()}%\n~g~Получено:~s~ ${methods.moneyFormat(nalog)}`);
+        player.notify(`~g~Вы продали недвижимость\nНалог:~s~ ${coffer.getTaxProperty()}%\n~g~Получено:~s~ ${methods.moneyFormat(nalog)}`);
         user.save(player);
     }, 1000);
 };

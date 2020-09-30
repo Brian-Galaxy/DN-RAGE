@@ -49,6 +49,17 @@ vShop.loadAllShopVehicles = () => {
         if (item[0] !== ' ')
             methods.createCp(item[1], item[2], item[3], `~b~Название:~s~ ${item[0]}\n~b~Цена: ~g~${methods.moneyFormat(methods.getVehicleInfo(item[0]).price)}`, 5, -1, [0, 0, 0, 0]);
     });
+
+    enums.carTacoVehicleList.forEach(item => {
+        vehicles.spawnCarCb(veh => {
+            if (!vehicles.exists(veh))
+                return;
+            veh.locked = true;
+            veh.engine = false;
+            veh.setVariable('useless', true);
+            vSync.setTrunkState(veh, true);
+        }, new mp.Vector3(item[1], item[2], item[3]), item[4], item[0]);
+    });
 };
 
 vShop.getInRadius = function(pos, radius = 2) {

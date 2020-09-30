@@ -53,7 +53,9 @@ shop.list = [
     [-252.5419, 6335.4926, 31.4260, 0, 6],
 
     [-1599.7724, 5202.06640625, 3.397307, 128, 7], //FISH
-    [-675.4125366210938, 5836.44140625, 16.34016227722168, 129, 8] //Охота
+    [-675.4125366210938, 5836.44140625, 16.34016227722168, 129, 8], //Охота
+
+    [-1649.739990234375, -952.7982177734375, 6.801215648651123, 0, 0], //Тако
 ];
 
 shop.loadAll = function() {
@@ -65,7 +67,8 @@ shop.loadAll = function() {
             switch (item[4]) {
                 case 0:
                 case 4:
-                    methods.createBlip(shopPos, 52, 0, 0.6, '24/7');
+                    if (item[4] > 0)
+                        methods.createBlip(shopPos, 52, 0, 0.6, '24/7');
                     break;
                 case 1:
                 case 2:
@@ -154,7 +157,10 @@ shop.checkPosForOpenMenu = function(player) {
         switch (shopItem[4]) {
             case 0:
             case 4:
-                player.call('client:menuList:showShopMenu', [shopId, business.getPrice(shopId), shopItem[4]]);
+                if (shopId === 0)
+                    player.call('client:menuList:showShopTacoMenu', [shopId, business.getPrice(shopId)]);
+                else
+                    player.call('client:menuList:showShopMenu', [shopId, business.getPrice(shopId), shopItem[4]]);
                 break;
             case 1:
             case 2:

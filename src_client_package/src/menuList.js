@@ -1911,8 +1911,8 @@ menuList.showMeriaMainMenu = function() {
 
     UIMenu.Menu.AddMenuItem("Экономика штата", "", {doName: 'showMeriaInfoMenu'});
     UIMenu.Menu.AddMenuItem("Подать заявление на стажировку", "", {doName: 'govWork'});
-
-    UIMenu.Menu.AddMenuItem("Подать заявление на стажировку", "", {doName: 'govWork'});
+    
+    UIMenu.Menu.AddMenuItem("~y~Оплата штрафов", "", {doName: 'showMeriaTicketMenu'});
 
     UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: 'closeMenu'});
     UIMenu.Menu.Draw();
@@ -1937,6 +1937,8 @@ menuList.showMeriaMainMenu = function() {
             menuList.showMeriaJobListMenu();
         if (item.doName == 'showMeriaHousePeopleMenu')
             menuList.showMazeBankHousePeopleMenu();
+        if (item.doName == 'showMeriaTicketMenu')
+            mp.events.callRemote('server:showMeriaTicketMenu');
         if (item.doName == 'showLicBuyMenu')
             menuList.showLicBuyMenu();
         if (item.doName == 'getRegister') {
@@ -2010,6 +2012,41 @@ menuList.showMeriaMainMenu = function() {
             catch (e) {
                 methods.error(e);
             }
+        }
+    });
+};
+
+menuList.showMeriaTicketMenu = function(data) {
+    UIMenu.Menu.Create(` `, `~b~Нажмите ~s~Enter~b~ чтобы оплатить`, 'gov', false, false, 'gov');
+
+    JSON.parse(data).forEach(function (item) {
+        let mItem = {};
+        mItem.id = item.id;
+        mItem.price = item.price;
+        UIMenu.Menu.AddMenuItem(`~b~#${item.id}. ~s~${methods.moneyFormat(item.price)}`, `${item.do}~br~${item.rp_datetime}`, mItem);
+    });
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: 'closeMenu'});
+    UIMenu.Menu.Draw();
+
+    UIMenu.Menu.OnSelect.Add((item, index) => {
+        if (item.id)
+            menuList.showMeriaTicketPayMenu(item.id, item.price);
+    });
+};
+
+menuList.showMeriaTicketPayMenu = function(id, price) {
+    UIMenu.Menu.Create(` `, `~b~Номер штрафа: ${id}`, 'gov', false, false, 'gov');
+
+    UIMenu.Menu.AddMenuItem(`~g~Оплатить по карте ${methods.moneyFormat(price)}`, "", {pay: true});
+    UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: 'closeMenu'});
+    UIMenu.Menu.Draw();
+
+    UIMenu.Menu.OnSelect.Add(async (item, index) => {
+
+        if (item.pay) {
+            UIMenu.Menu.HideMenu();
+            mp.events.callRemote('server:user:payTicket', id, price);
         }
     });
 };
@@ -2594,7 +2631,7 @@ menuList.showMeriaSellHvbMenu = function(cofferData) {
     }
 
     user.updateCache().then(function () {
-        UIMenu.Menu.Create(` `, `~b~Текущая налоговая ставка: ~s~${cofferData.get('cofferTaxIntermediate')}%`, 'gov', false, false, 'gov');
+        UIMenu.Menu.Create(` `, `~b~Текущая налоговая ставка: ~s~${cofferData.get('cofferTaxProperty')}%`, 'gov', false, false, 'gov');
 
         if (user.getCache('house_id') > 0) {
             UIMenu.Menu.AddMenuItem("Продать дом", "Продать дом государству.~br~С учетом налога", {eventName: 'server:houses:sell'});
@@ -2718,14 +2755,14 @@ menuList.showMeriaSellVehHvbMenu = async function(cofferData, isNpc = false) {
     let taxOffset = 10;
 
     user.updateCache().then(async function () {
-        UIMenu.Menu.Create(` `, `~b~Текущая налоговая ставка: ~s~${cofferData.get('cofferTaxIntermediate')}%`, 'gov', false, false, 'gov');
+        UIMenu.Menu.Create(` `, `~b~Текущая налоговая ставка: ~s~${cofferData.get('cofferTaxProperty')}%`, 'gov', false, false, 'gov');
 
         for (let i = 1; i < 11; i++) {
             try {
                 if (user.getCache(`car_id${i}`) > 0) {
                     let vehData = vehList[i - 1];
                     let vehInfo = methods.getVehicleInfo(vehData.get('name'));
-                    UIMenu.Menu.AddMenuItem(`Продать ТС ${vehData.get('name')} (${vehData.get('number')})`, "Продать транспорт государству.~br~Налог: ~g~" + (cofferData.get('cofferTaxIntermediate') + taxOffset) + "%", {eventName: `server:car${i}:sell`});
+                    UIMenu.Menu.AddMenuItem(`Продать ТС ${vehData.get('name')} (${vehData.get('number')})`, "Продать транспорт государству.~br~Налог: ~g~" + (cofferData.get('cofferTaxProperty') + taxOffset) + "%", {eventName: `server:car${i}:sell`});
                     if (vehInfo.price === vehData.get('price')) {
                         if (vehData.get('with_delete') < 2) {
                             if (vehData.get('is_cop_park') > 0) {
@@ -2733,7 +2770,11 @@ menuList.showMeriaSellVehHvbMenu = async function(cofferData, isNpc = false) {
                             }
                             else {
                                 UIMenu.Menu.AddMenuItem(`~y~Продать ТС ${vehData.get('name')} (${vehData.get('number')}) игроку`, "", {eventNameSellV: i});
-                                if (isNpc)
+                                if (isNpc && (vehData.get('class') === 'Planes' || vehData.get('class') === 'Boats' || vehData.get('class') === 'Helicopters'))
+                                {
+                                    UIMenu.Menu.AddMenuItem(`~y~Самолеты, лодки и вертолеты нельзя тут продавать`, "", {});
+                                }
+                                else if (isNpc)
                                 {
                                     if(vehData.get('sell_price') < 1)
                                         UIMenu.Menu.AddMenuItem(`~y~Выставить ТС ${vehData.get('name')} (${vehData.get('number')}) на БУ авторынок`, "Комиссия авторынка с продажи ТС 1%.~n~Взнос ~g~$1000", {eventNameSellVBu: i});
@@ -2804,8 +2845,8 @@ menuList.showMeriaSellVehHvbMenu = async function(cofferData, isNpc = false) {
                     return ;
                 }
                 let sum = methods.parseFloat(await UIMenu.Menu.GetUserInput("Сумма", "", 12));
-                if (sum < 0) {
-                    mp.game.ui.notifications.show("~r~Сумма не может быть меньше нуля");
+                if (sum < 1) {
+                    mp.game.ui.notifications.show("~r~Сумма не может быть меньше $1");
                     return;
                 }
                 user.removeCashMoney(1000, 'Взнос за выставление ТС на БУ рынке');
@@ -3962,6 +4003,7 @@ menuList.showVehicleDoSellMenu = async function(vehId) {
 
     UIMenu.Menu.Create(`Транспорт`, `~b~Информация о транспорте`);
     UIMenu.Menu.AddMenuItem(`~g~Купить по цене ${methods.moneyFormat(vData.get('sell_price'))}`, "", {doName: 'buy'});
+    UIMenu.Menu.AddMenuItem(`Владелец ${vData.get('user_name')}`, "", {});
     UIMenu.Menu.AddMenuItem("Характеристики", "", {doName: "stats"});
     UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
     UIMenu.Menu.Draw();
@@ -4527,6 +4569,11 @@ menuList.showVehicleMenu = async function(data) {
         UIMenu.Menu.AddMenuItem(`Локальные департамента`, '', {depCode: true});
     }
 
+    if (veh.getVariable('fraction_id') === 2 || veh.getVariable('fraction_id') === 3 || veh.getVariable('fraction_id') === 1 || veh.getVariable('fraction_id') === 5) {
+        UIMenu.Menu.AddMenuItem(`~y~Выписка штрафа`, '', {giveTicket: true});
+        UIMenu.Menu.AddMenuItem(`~y~Отменить штраф`, '', {takeTicket: true});
+    }
+
     /*if (veh.getVariable('fraction_id') === user.getCache('fraction_id') && user.isLeader()) {
         UIMenu.Menu.AddMenuItem("Припарковать", "Транспорт будет спавниться на этом месте, если вы ее припаркуете", {eventName: "server:vehicle:parkFraction"});
     }*/
@@ -4725,6 +4772,43 @@ menuList.showVehicleMenu = async function(data) {
         else if (item.depCode)
         {
             menuList.showDepCodeMenu();
+        }
+        else if (item.giveTicket)
+        {
+            let id = methods.parseInt(await UIMenu.Menu.GetUserInput("Введите Card ID", "", 10));
+            if (id < 0) {
+                mp.game.ui.notifications.show('~r~ID не может быть меньше 0');
+                return;
+            }
+            let price = methods.parseInt(await UIMenu.Menu.GetUserInput("Введите сумму штрафа", "", 10));
+            if (price < 0) {
+                mp.game.ui.notifications.show('~r~Не может быть меньше 0');
+                return;
+            }
+            if (price > 50000) {
+                mp.game.ui.notifications.show('~r~Не может быть больше 50000');
+                return;
+            }
+            let desc = await UIMenu.Menu.GetUserInput("Введите причину", "", 50);
+            if (desc === '') {
+                mp.game.ui.notifications.show('~r~Не может быть пустым');
+                return;
+            }
+            mp.events.callRemote('server:user:giveTicket', id, price, desc);
+        }
+        else if (item.takeTicket)
+        {
+            let id = methods.parseInt(await UIMenu.Menu.GetUserInput("Введите номер штрафа", "", 10));
+            if (id < 0) {
+                mp.game.ui.notifications.show('~r~ID не может быть меньше 0');
+                return;
+            }
+            let desc = await UIMenu.Menu.GetUserInput("Введите причину", "", 50);
+            if (desc === '') {
+                mp.game.ui.notifications.show('~r~Не может быть пустым');
+                return;
+            }
+            mp.events.callRemote('server:user:takeTicket', id, desc);
         }
         else if (item.sendChatMessage)
             chat.push(`${item.sendChatMessage}`);
@@ -5264,19 +5348,24 @@ menuList.showVehicleStatsMenu = async function(veh) {
         }
         catch (e) {}
 
-        for (const [key, value] of Object.entries(upgradeList)) {
-            let mod = methods.parseInt(key);
-            let val = methods.parseInt(value);
-            if (mod >= 100) {
-                if (value >= 0)
-                    UIMenu.Menu.AddMenuItem(`~b~${enums.lscSNames[mod - 100][0]}: `, "", {}, `${value}`);
+        try {
+            for (const [key, value] of Object.entries(upgradeList)) {
+                let mod = methods.parseInt(key);
+                let val = methods.parseInt(value);
+                if (mod >= 100) {
+                    if (value >= 0)
+                        UIMenu.Menu.AddMenuItem(`~b~${enums.lscSNames[mod - 100][0]}: `, "", {}, `${value}`);
+                }
+                else if (val >= 0) {
+                    let label = mp.game.ui.getLabelText(veh.getModTextLabel(mod, val));
+                    if (label == "NULL" || label == "")
+                        label = `${enums.lscNames[mod][0]} #${(val + 1)}`;
+                    UIMenu.Menu.AddMenuItem(`~b~${enums.lscNames[mod][0]}: `, "", {}, `${label}`);
+                }
             }
-            else if (val >= 0) {
-                let label = mp.game.ui.getLabelText(veh.getModTextLabel(mod, val));
-                if (label == "NULL" || label == "")
-                    label = `${enums.lscNames[mod][0]} #${(val + 1)}`;
-                UIMenu.Menu.AddMenuItem(`~b~${enums.lscNames[mod][0]}: `, "", {}, `${label}`);
-            }
+        }
+        catch (e) {
+            
         }
     }
 
@@ -6386,6 +6475,49 @@ menuList.showShopMenu = function(shopId, price = 2, type = 0)
             price: '',
             params: {doName: 'sellFish', shop: shopId}
         }]
+    });
+
+    shopMenu.showShop();
+    shopMenu.updateShop(list, title, color);
+};
+
+menuList.showShopTacoMenu = function(shopId, price = 2)
+{
+    if (methods.isBlackout()) {
+        mp.game.ui.notifications.show(`~r~В городе отсутствует свет`);
+        return;
+    }
+
+    let color = '#efb542';
+    let title = "s_taco";
+
+    let sale = business.getSale(price);
+
+    let list = [];
+    enums.shopItems.shop.forEach(item => {
+
+        let fullItem = {
+            title: item.title,
+            items: []
+        };
+
+        item.list.forEach(itemId => {
+            let itemPrice = items.getItemPrice(itemId) * price;
+
+            fullItem.items.push({ //Если кликаем сюда, то открывается меню справа (Там где покупка)
+                title: methods.removeQuotesAll(items.getItemNameById(itemId)),
+                desc: '',
+                desc2: '',
+                desc2t: '',
+                sale: sale,
+                img: `Item_${itemId}.png`,
+                price: methods.moneyFormat(itemPrice),
+                params: {id: itemId, price: itemPrice, shop: shopId}
+            })
+        });
+
+        list.push(fullItem);
+        //UIMenu.Menu.AddMenuItemList(items.getItemNameById(itemId), list, `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`, menuItem, '', (sale > 0) ? 'sale' : '')
     });
 
     shopMenu.showShop();
@@ -9437,8 +9569,8 @@ menuList.showCofferInfoMenu = function(data) {
         if (item.doName == 'cofferTaxIntermediate') {
             let price = methods.parseFloat(await UIMenu.Menu.GetUserInput("Введите число", '', 10));
 
-            if (price < 0) {
-                mp.game.ui.notifications.show(`~r~Значение не может быть меньше нуля`);
+            if (price < 1) {
+                mp.game.ui.notifications.show(`~r~Значение не может быть меньше 1`);
                 return;
             }
             if (price > 10) {
@@ -9457,12 +9589,12 @@ menuList.showCofferInfoMenu = function(data) {
         if (item.doName == 'cofferTaxBusiness') {
             let price = methods.parseFloat(await UIMenu.Menu.GetUserInput("Введите число", '', 10));
 
-            if (price < 0) {
-                mp.game.ui.notifications.show(`~r~Значение не может быть меньше нуля`);
+            if (price < 10) {
+                mp.game.ui.notifications.show(`~r~Значение не может быть меньше 10`);
                 return;
             }
-            if (price > 10) {
-                mp.game.ui.notifications.show(`~r~Значение не может быть больше 10`);
+            if (price > 20) {
+                mp.game.ui.notifications.show(`~r~Значение не может быть больше 20`);
                 return;
             }
 
@@ -9477,8 +9609,8 @@ menuList.showCofferInfoMenu = function(data) {
         if (item.doName == 'cofferTaxPayDay') {
             let price = methods.parseFloat(await UIMenu.Menu.GetUserInput("Введите число", '', 10));
 
-            if (price < 0) {
-                mp.game.ui.notifications.show(`~r~Значение не может быть меньше нуля`);
+            if (price < 1) {
+                mp.game.ui.notifications.show(`~r~Значение не может быть меньше 1`);
                 return;
             }
             if (price > 10) {
@@ -9497,12 +9629,12 @@ menuList.showCofferInfoMenu = function(data) {
         if (item.doName == 'cofferTaxProperty') {
             let price = methods.parseFloat(await UIMenu.Menu.GetUserInput("Введите число", '', 10));
 
-            if (price < 0) {
-                mp.game.ui.notifications.show(`~r~Значение не может быть меньше нуля`);
+            if (price < 1) {
+                mp.game.ui.notifications.show(`~r~Значение не может быть меньше 1`);
                 return;
             }
-            if (price > 2) {
-                mp.game.ui.notifications.show(`~r~Значение не может быть больше 2`);
+            if (price > 10) {
+                mp.game.ui.notifications.show(`~r~Значение не может быть больше 10`);
                 return;
             }
 
@@ -10086,8 +10218,20 @@ menuList.showSapdClearMenu = function() {
     }
 
     UIMenu.Menu.Create(`PC`, `~b~Меню`);
-    UIMenu.Menu.AddMenuItem("Выдать розыск", "", {eventName: "server:user:giveWanted"});
-    UIMenu.Menu.AddMenuItem("Очистить розыск", "", {eventName: "server:user:giveWantedClear"});
+    if (!user.isGov())
+    {
+        UIMenu.Menu.AddMenuItem("Выдать розыск", "", {eventName: "server:user:giveWanted"});
+        UIMenu.Menu.AddMenuItem("Очистить розыск", "", {eventName: "server:user:giveWantedClear"});
+        UIMenu.Menu.AddMenuItem(`~y~Выписка штрафа`, '', {giveTicket: true});
+        UIMenu.Menu.AddMenuItem(`~y~Отменить штраф`, '', {takeTicket: true});
+    }
+    else if (user.isGov() && (user.isLeader() || user.isSubLeader() || user.isDepLeader() || user.isDepSubLeader())) {
+        UIMenu.Menu.AddMenuItem(`~y~Выписка штрафа`, '', {giveTicket: true});
+        UIMenu.Menu.AddMenuItem(`~y~Отменить штраф`, '', {takeTicket: true});
+    }
+    else {
+        UIMenu.Menu.AddMenuItem(`~y~Нет доступа`, '', {});
+    }
     UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
     UIMenu.Menu.Draw();
 
@@ -10097,11 +10241,48 @@ menuList.showSapdClearMenu = function() {
             let id = await UIMenu.Menu.GetUserInput("Card ID", "", 10);
             mp.events.callRemote('server:user:giveWanted', methods.parseInt(id), 0, 'clear');
         }
-        if (item.eventName == 'server:user:giveWanted') {
+        else if (item.eventName == 'server:user:giveWanted') {
             let id = await UIMenu.Menu.GetUserInput("Card ID", "", 10);
             let count = await UIMenu.Menu.GetUserInput("Уровень", "", 10);
             let reason = await UIMenu.Menu.GetUserInput("Причина", "", 10);
             mp.events.callRemote('server:user:giveWanted', methods.parseInt(id), count, reason);
+        }
+        else if (item.giveTicket)
+        {
+            let id = methods.parseInt(await UIMenu.Menu.GetUserInput("Введите Card ID", "", 10));
+            if (id < 0) {
+                mp.game.ui.notifications.show('~r~ID не может быть меньше 0');
+                return;
+            }
+            let price = methods.parseInt(await UIMenu.Menu.GetUserInput("Введите сумму штрафа", "", 10));
+            if (price < 0) {
+                mp.game.ui.notifications.show('~r~Не может быть меньше 0');
+                return;
+            }
+            if (price > 50000) {
+                mp.game.ui.notifications.show('~r~Не может быть больше 50000');
+                return;
+            }
+            let desc = await UIMenu.Menu.GetUserInput("Введите причину", "", 50);
+            if (desc === '') {
+                mp.game.ui.notifications.show('~r~Не может быть пустым');
+                return;
+            }
+            mp.events.callRemote('server:user:giveTicket', id, price, desc);
+        }
+        else if (item.takeTicket)
+        {
+            let id = methods.parseInt(await UIMenu.Menu.GetUserInput("Введите номер штрафа", "", 10));
+            if (id < 0) {
+                mp.game.ui.notifications.show('~r~ID не может быть меньше 0');
+                return;
+            }
+            let desc = await UIMenu.Menu.GetUserInput("Введите причину", "", 50);
+            if (desc === '') {
+                mp.game.ui.notifications.show('~r~Не может быть пустым');
+                return;
+            }
+            mp.events.callRemote('server:user:takeTicket', id, desc);
         }
     });
 };

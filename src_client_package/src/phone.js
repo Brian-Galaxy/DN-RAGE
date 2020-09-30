@@ -333,6 +333,12 @@ phone.showAppList = function() {
                         clickable: true
                     },
                     {
+                        title: 'Список Штрафов',
+                        type: 1,
+                        params: { name: 'myTickets' },
+                        clickable: true
+                    },
+                    {
                         title: 'Настройки',
                         type: 1,
                         params: { name: 'settings' },
@@ -5070,13 +5076,15 @@ phone.callBackModalInput = async function(paramsJson, text) {
                 user.sendSmsBankOperation('Ошибка транзакции', 'Зарплата');
                 return;
             }
-            if (sum > user.getPayDayMoney() + 1) {
+            if (sum > user.getPayDayMoney()) {
                 user.sendSmsBankOperation('У Вас недостаточно средств', 'Зарплата');
                 return;
             }
-            user.removePayDayMoney(sum);
-            user.addBankMoney(sum, 'Перевод с зарплатного счёта');
-            user.sendSmsBankOperation(`Вы перевели ~g~${methods.moneyFormat(sum)}~s~ на ваш банковский счёт`, 'Зарплата');
+            let tax = await coffer.getTaxPayDay();
+            let money = methods.parseInt(sum * (100 - tax) / 100);
+            user.removePayDayMoney(money);
+            user.addBankMoney(money, 'Перевод с зарплатного счёта');
+            user.sendSmsBankOperation(`Вы перевели ~g~${methods.moneyFormat(money)}~s~ на ваш банковский счёт\nНалог: ~y~${tax}%`, 'Зарплата');
 
             setTimeout(phone.showAppBank, 500);
         }
@@ -5336,6 +5344,10 @@ phone.callBackButton = async function(menu, id, ...args) {
                 mp.events.callRemote('server:phone:userHistory', user.getCache('id'));
                 phone.showLoad();
             }
+            if (params.name == 'myTickets') {
+                mp.events.callRemote('server:phone:userTickets', user.getCache('id'));
+                phone.showLoad();
+            }
         }
         if (menu == 'gps') {
             if (params.x)
@@ -5373,6 +5385,10 @@ phone.callBackButton = async function(menu, id, ...args) {
         if (menu == 'userInfo') {
             if (params.name == 'history') {
                 mp.events.callRemote('server:phone:userHistory', params.id);
+                phone.showLoad();
+            }
+            if (params.name == 'tickets') {
+                mp.events.callRemote('server:phone:userTickets', params.id);
                 phone.showLoad();
             }
         }

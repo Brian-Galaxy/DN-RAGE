@@ -1068,7 +1068,7 @@ mp.events.add('client:dialog:btn', async function(json) {
             shopMenu.hideDialog();
             mp.events.callRemote('server:user:toLspdSafe');
         }
-        if (params.doName === 'inv:wantWork') {
+        if (params.doName === 'inv:rentWorkCar') {
             shopMenu.hideDialog();
             if (user.getCache('job') != 3) {
                 mp.game.ui.notifications.show(`~r~Необходимо работать фотографом`);

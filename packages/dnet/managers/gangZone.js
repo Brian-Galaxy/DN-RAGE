@@ -21,6 +21,7 @@ let weaponList = [
     'weapon_revolver_mk2',
     'weapon_revolver_mk2',
     'weapon_assaultrifle_mk2',
+    'weapon_carbinerifle_mk2',
 ];
 
 let zoneSpawnList = [

@@ -853,6 +853,44 @@ mp.events.addRemoteCounted('server:user:addHistory', (player, type, reason) => {
     user.addHistory(player, type, reason);
 });
 
+mp.events.addRemoteCounted('server:user:giveTicket', (player, id, price, reason) => {
+    if (!user.isLogin(player))
+        return;
+
+    reason = methods.removeSpecialChars(methods.removeQuotes2(methods.removeQuotes(reason)));
+    let rpDateTime = weather.getRpDateTime();
+    let timestamp = methods.getTimeStamp();
+    let desc = `${user.getRpName(player)} (${user.getFractionName(player)} | ${user.getDepartmentName(player)}) | Причина: ${reason}`;
+    mysql.executeQuery(`INSERT INTO tickets (user_id, price, do, rp_datetime, timestamp) VALUES ('${id}', '${price}', '${desc}', '${rpDateTime}', '${timestamp}')`);
+
+    let target = user.getPlayerById(id);
+    if (user.isLogin(target)) {
+        player.notify(`~r~Вам был выписан штраф на сумму ${price}\n${reason}`);
+    }
+});
+
+mp.events.addRemoteCounted('server:user:takeTicket', (player, id, reason) => {
+    if (!user.isLogin(player))
+        return;
+    reason = methods.removeSpecialChars(methods.removeQuotes2(methods.removeQuotes(reason)));
+    let rpDateTime = weather.getRpDateTime();
+    let timestamp = methods.getTimeStamp();
+    let desc = `${user.getRpName(player)} (${user.getFractionName(player)} | ${user.getDepartmentName(player)}) | Причина: ${reason}`;
+    mysql.executeQuery(`UPDATE tickets SET do2='${desc}' is_pay='1' WHERE id='${id}'`);
+});
+
+mp.events.addRemoteCounted('server:user:payTicket', (player, id, price) => {
+    if (!user.isLogin(player))
+        return;
+    if (user.getBankMoney(player) < price) {
+        player.notify('~r~У вас нет на карте средств для оплаты штрафа');
+        return;
+    }
+    user.removeBankMoney(player, player, 'Оплата штрафа #' + id);
+    mysql.executeQuery(`UPDATE tickets SET is_pay='1' WHERE id='${id}'`);
+    player.notify('~g~Вы оплатили штраф!');
+});
+
 mp.events.addRemoteCounted('server:bank:withdraw', (player, money, procent) => {
     if (!user.isLogin(player))
         return;
@@ -883,26 +921,17 @@ mp.events.addRemoteCounted('server:bank:changePin', (player, pin) => {
     bank.changePin(player, pin);
 });
 
-mp.events.addRemoteCounted('server:bank:history', (player,) => {
+mp.events.addRemoteCounted('server:showMeriaTicketMenu', (player,) => {
     if (!user.isLogin(player))
         return;
 
-    mysql.executeQuery(`SELECT * FROM log_bank_user WHERE card = ${methods.parseInt(user.get(player, 'bank_card'))} ORDER BY id DESC LIMIT 200`, function (err, rows, fields) {
+    mysql.executeQuery(`SELECT * FROM tickets WHERE is_pay = '0' AND user_id='${user.getId(player)}' LIMIT 100`, function (err, rows, fields) {
         try {
             let list = [];
             rows.forEach(function(item) {
-
-                let price = item['price'];
-                if (item['price'] < 0)
-                    price = '~r~' + methods.moneyFormat(item['price']);
-                else if (item['price'] == 0)
-                    price = '';
-                else
-                    price = '~g~' + methods.moneyFormat(item['price']);
-
-                list.push({id: item['id'], text: item['text'], price: price, timestamp: item['timestamp'], rp_datetime: item['rp_datetime']});
+                list.push({id: item['id'], do: item['do'], price: item['price'], rp_datetime: item['rp_datetime']});
             });
-            player.call('client:showBankLogMenu', [JSON.stringify(list)]);
+            player.call('client:showMeriaTicketMenu', [JSON.stringify(list)]);
         }
         catch (e) {
             methods.debug(e);
@@ -3484,6 +3513,12 @@ mp.events.addRemoteCounted('server:phone:userHistory', (player, id) => {
     phone.userHistory(player, id);
 });
 
+mp.events.addRemoteCounted('server:phone:userTickets', (player, id) => {
+    if (!user.isLogin(player))
+        return;
+    phone.userTickets(player, id);
+});
+
 mp.events.addRemoteCounted('server:phone:openInvaderStatsList', (player, days) => {
     if (!user.isLogin(player))
         return;
@@ -5625,6 +5660,13 @@ mp.events.addRemoteCounted('server:car:sellToBu', (player, price, slot) => {
         return;
     }
 
+    let freePos = vehicles.getFreeSellAutoPos();
+    if (freePos[0] === 0) {
+        player.notify('~y~Нет свободных мест на авторынке');
+        user.addCashMoney(player, 1000, 'Возврат средств БУ авторынка');
+        return;
+    }
+
     let vId = user.get(player, 'car_id' + slot);
     vehicles.set(vId, 'sell_price', price);
     vehicles.respawnById(vId);
@@ -5788,7 +5830,7 @@ mp.events.addRemoteCounted('server:car:buyBot', (player, remoteId, vid, payType)
         user.set(seller, 'car_id' + slot, 0);
 
         user.addCashMoney(seller, sum * 0.99);
-        user.removeMoney(player, sum, payType);
+        user.removeMoney(player, sum, `Покупка транспорта ${vData.get('name')}`, payType);
 
         seller.notify(`~b~Вы продали ${vData.get('name')} за ~s~` + methods.moneyFormat(sum * 0.99));
         player.notify('~b~Вы купили ТС за ~s~' + methods.moneyFormat(sum));

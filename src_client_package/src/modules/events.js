@@ -3752,11 +3752,6 @@ mp.events.add("playerReadyDone", () => {
         setTimeout(function () {
             user.hideLoadDisplay();
         }, 1000);
-
-        setTimeout(function () {
-            if (mp.storage.data.login)
-                ui.callCef('authMain:2', JSON.stringify({type:'login', login: mp.storage.data.login}));
-        }, 2000);
     }
     catch (e) {
 
@@ -3826,7 +3821,7 @@ mp.events.add('playerMaybeTakeShot', (shootEntityId) => {
 mp.events.add("playerDeath", async function (player, reason, killer) {
 
     try {
-        try {
+        if (mp.players.local.dimension === 0) {
             user.getInvEquipWeapon().forEach(item => {
                 weapons.getMapList().forEach(wpItem => {
                     try {
@@ -3841,7 +3836,6 @@ mp.events.add("playerDeath", async function (player, reason, killer) {
                 });
             });
         }
-        catch (e) {}
     }
     catch (e) {}
 
@@ -4188,24 +4182,8 @@ mp.events.add('render', () => {
 });*/
 
 mp.events.add('render', () => {
+
     try {
-        mp.game.controls.disableControlAction(0,36,true); //LEFT CONTROL
-
-        mp.game.controls.disableControlAction(0,68,true); //ATTACK VEHICLE
-        mp.game.controls.disableControlAction(0,114,true); //ATTACK FLY
-        mp.game.controls.disableControlAction(0,331,true); //ATTACK FLY
-        mp.game.controls.disableControlAction(0,350,true); //E JUMP
-
-        mp.game.controls.disableControlAction(0,243,true);
-
-        mp.game.controls.disableControlAction(0,44,true); //Q укрытие
-
-        mp.game.controls.disableControlAction(0,53,true); //Фонарик на оружие
-        mp.game.controls.disableControlAction(0,54,true);
-
-        //TODO DELUXO FIX
-        mp.game.controls.disableControlAction(0,357,true);
-
         if(_playerDisableAllControls) {
             mp.game.controls.disableAllControlActions(0);
             mp.game.controls.disableAllControlActions(1);
@@ -4244,20 +4222,7 @@ mp.events.add('render', () => {
             mp.game.controls.disableControlAction(0,35,true); // disable move right
             mp.game.controls.disableControlAction(0,271,true)
         }
-        if(ui.isGreenZone() && !user.isPolice() && !user.isGov()) {
-            mp.game.controls.disableControlAction(2, 24, true);
-            mp.game.controls.disableControlAction(2, 25, true);
-            mp.game.controls.disableControlAction(2, 66, true);
-            mp.game.controls.disableControlAction(2, 67, true);
-            mp.game.controls.disableControlAction(2, 69, true);
-            mp.game.controls.disableControlAction(2, 70, true);
-            mp.game.controls.disableControlAction(2, 140, true);
-            mp.game.controls.disableControlAction(2, 141, true);
-            mp.game.controls.disableControlAction(2, 142, true);
-            mp.game.controls.disableControlAction(2, 143, true);
-            mp.game.controls.disableControlAction(2, 257, true);
-            mp.game.controls.disableControlAction(2, 263, true);
-        }
+
         if(ui.DisableMouseControl /*|| ui.isShowMenu()*/) {
             mp.game.controls.disableControlAction(0,12,true); // disable sprint
             mp.game.controls.disableControlAction(0,13,true); // disable sprint

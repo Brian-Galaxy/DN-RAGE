@@ -4070,11 +4070,16 @@ phone.consoleCallback = async function(command) {
                             //dispatcher.sendPos('Код 3', `Сработала система безопасности на транспорте ${vInfo.display_name} (${v.getNumberPlateText()})`, v.position);
                             await phone.consoleAwait('Send package ');
                             if (methods.getRandomInt(0, 100) < 30 + user.getCache('stats_darknet')) {
-                                mp.events.callRemote('server:vehicle:lockStatus:hack', v.remoteId);
-                                phone.addConsoleCommand('Success');
+                                if (v.getVariable('fraction_id') > 0 || v.getVariable('isAdmin') || v.getVariable('useless')) {
+                                    phone.addConsoleCommand('You cant unlock this vehicle type');
+                                }
+                                else {
+                                    mp.events.callRemote('server:vehicle:lockStatus:hack', v.remoteId);
+                                    phone.addConsoleCommand('Success');
 
-                                if (user.getCache('stats_darknet') < 20) {
-                                    user.set('stats_darknet', user.getCache('stats_darknet') + 1);
+                                    if (user.getCache('stats_darknet') < 20) {
+                                        user.set('stats_darknet', user.getCache('stats_darknet') + 1);
+                                    }
                                 }
                             }
                             else {

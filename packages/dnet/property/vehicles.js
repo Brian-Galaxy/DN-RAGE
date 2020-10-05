@@ -180,7 +180,7 @@ vehicles.getFreePolicePos = () => {
 
 vehicles.getFreeSellAutoPos = () => {
     let freeItem = [0, 0, 0, 0];
-    enums.autoSell.reverse().forEach(item => {
+    enums.autoSell.forEach(item => {
         let spawnPos = new mp.Vector3(item[0], item[1], item[2]);
         if (vehicles.exists(methods.getNearestVehicleWithCoords(spawnPos, 2)))
             return;
@@ -895,7 +895,6 @@ vehicles.respawn2 = (vehicle, player) => {
             if (vInfo.class_name === 'Planes')
                 idx = 4;
 
-            vehicle.dimension = 100000 + idx;
             vehicles.set(containerId, 'is_cop_park', 100000 + idx);
             vehicles.set(containerId, 'cop_park_name', user.getRpName(player));
             vehicles.save(containerId);

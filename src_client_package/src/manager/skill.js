@@ -152,21 +152,23 @@ let checkShooting1 = function () {
 };
 let checkShooting2 = function () {
     fireMod = true;
-
+    if (!user.isLogin())
+        return;
     try {
-        user.getInvEquipWeapon().forEach(item => {
-            weapons.getMapList().forEach(wpItem => {
-                try {
-                    if (user.getLastWeapon() == wpItem[1] / 2) {
-                        if (item.counti > 0)
-                            inventory.updateItemCount(item.id, item.counti - 1);
+        if (mp.players.local.dimension === 0) {
+            user.getInvEquipWeapon().forEach(item => {
+                weapons.getMapList().forEach(wpItem => {
+                    try {
+                        if (user.getLastWeapon() == wpItem[1] / 2) {
+                            if (item.counti > 0)
+                                inventory.updateItemCount(item.id, item.counti - 1);
+                        }
+                    } catch (e) {
+                        methods.debug(e);
                     }
-                }
-                catch (e) {
-                    methods.debug(e);
-                }
+                });
             });
-        });
+        }
     }
     catch (e) {}
 };

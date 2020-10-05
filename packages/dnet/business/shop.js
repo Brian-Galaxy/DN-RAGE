@@ -67,7 +67,7 @@ shop.loadAll = function() {
             switch (item[4]) {
                 case 0:
                 case 4:
-                    if (item[4] > 0)
+                    if (item[3] > 0)
                         methods.createBlip(shopPos, 52, 0, 0.6, '24/7');
                     break;
                 case 1:

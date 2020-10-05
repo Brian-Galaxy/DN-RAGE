@@ -756,6 +756,63 @@ timer.loadAll = function () {
     catch (e) {
         
     }
+
+    timer.createInterval('event.renderControl', function () {
+        mp.game.controls.disableControlAction(0,36,true); //LEFT CONTROL
+
+        mp.game.controls.disableControlAction(0,68,true); //ATTACK VEHICLE
+        mp.game.controls.disableControlAction(0,114,true); //ATTACK FLY
+        mp.game.controls.disableControlAction(0,331,true); //ATTACK FLY
+        mp.game.controls.disableControlAction(0,350,true); //E JUMP
+
+        mp.game.controls.disableControlAction(0,243,true);
+
+        mp.game.controls.disableControlAction(0,44,true); //Q укрытие
+
+        mp.game.controls.disableControlAction(0,53,true); //Фонарик на оружие
+        mp.game.controls.disableControlAction(0,54,true);
+
+        //TODO DELUXO FIX
+        mp.game.controls.disableControlAction(0,357,true);
+
+        if (isDisableControl) {
+            mp.game.controls.disableControlAction(0, 21, true); //disable sprint
+            mp.game.controls.disableControlAction(0, 24, true); //disable attack
+            mp.game.controls.disableControlAction(0, 25, true); //disable aim
+            mp.game.controls.disableControlAction(0, 47, true); //disable weapon
+            mp.game.controls.disableControlAction(0, 58, true); //disable weapon
+            mp.game.controls.disableControlAction(0, 263, true); //disable melee
+            mp.game.controls.disableControlAction(0, 264, true); //disable melee
+            mp.game.controls.disableControlAction(0, 257, true); //disable melee
+            mp.game.controls.disableControlAction(0, 140, true); //disable melee
+            mp.game.controls.disableControlAction(0, 141, true); //disable melee
+            mp.game.controls.disableControlAction(0, 142, true); //disable melee
+            mp.game.controls.disableControlAction(0, 143, true); //disable melee
+            //mp.game.controls.disableControlAction(0, 75, true); //disable exit vehicle
+            //mp.game.controls.disableControlAction(27, 75, true); //disable exit vehicle
+            mp.game.controls.disableControlAction(0, 32, true); //move (w)
+            mp.game.controls.disableControlAction(0, 34, true); //move (a)
+            mp.game.controls.disableControlAction(0, 33, true); //move (s)
+            mp.game.controls.disableControlAction(0, 35, true); //move (d)
+            mp.game.controls.disableControlAction(0, 59, true);
+            mp.game.controls.disableControlAction(0, 60, true);
+        }
+
+        if(ui.isGreenZone() && !user.isPolice() && !user.isGov()) {
+            mp.game.controls.disableControlAction(2, 24, true);
+            mp.game.controls.disableControlAction(2, 25, true);
+            mp.game.controls.disableControlAction(2, 66, true);
+            mp.game.controls.disableControlAction(2, 67, true);
+            mp.game.controls.disableControlAction(2, 69, true);
+            mp.game.controls.disableControlAction(2, 70, true);
+            mp.game.controls.disableControlAction(2, 140, true);
+            mp.game.controls.disableControlAction(2, 141, true);
+            mp.game.controls.disableControlAction(2, 142, true);
+            mp.game.controls.disableControlAction(2, 143, true);
+            mp.game.controls.disableControlAction(2, 257, true);
+            mp.game.controls.disableControlAction(2, 263, true);
+        }
+    }, 1);
 };
 
 timer.isFleecaAtm = function () {
@@ -788,28 +845,7 @@ timer.isFuel = function () {
 };
 
 mp.events.add('render', () => {
-    if (isDisableControl) {
-        mp.game.controls.disableControlAction(0, 21, true); //disable sprint
-        mp.game.controls.disableControlAction(0, 24, true); //disable attack
-        mp.game.controls.disableControlAction(0, 25, true); //disable aim
-        mp.game.controls.disableControlAction(0, 47, true); //disable weapon
-        mp.game.controls.disableControlAction(0, 58, true); //disable weapon
-        mp.game.controls.disableControlAction(0, 263, true); //disable melee
-        mp.game.controls.disableControlAction(0, 264, true); //disable melee
-        mp.game.controls.disableControlAction(0, 257, true); //disable melee
-        mp.game.controls.disableControlAction(0, 140, true); //disable melee
-        mp.game.controls.disableControlAction(0, 141, true); //disable melee
-        mp.game.controls.disableControlAction(0, 142, true); //disable melee
-        mp.game.controls.disableControlAction(0, 143, true); //disable melee
-        //mp.game.controls.disableControlAction(0, 75, true); //disable exit vehicle
-        //mp.game.controls.disableControlAction(27, 75, true); //disable exit vehicle
-        mp.game.controls.disableControlAction(0, 32, true); //move (w)
-        mp.game.controls.disableControlAction(0, 34, true); //move (a)
-        mp.game.controls.disableControlAction(0, 33, true); //move (s)
-        mp.game.controls.disableControlAction(0, 35, true); //move (d)
-        mp.game.controls.disableControlAction(0, 59, true);
-        mp.game.controls.disableControlAction(0, 60, true);
-    }
+
 });
 
 export default timer;

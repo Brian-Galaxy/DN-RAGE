@@ -877,12 +877,12 @@ inventory.dropItem = function(player, id, itemId, posX, posY, posZ, rotX, rotY, 
 
         if (vehicles.exists(player.vehicle)) {
             player.notify('~r~Вы находитесь в транспорте');
-            inventory.getItemList(inventory.types.Player, user.getId(player));
+            inventory.getItemList(player, inventory.types.Player, user.getId(player));
             return;
         }
         if (player.isJumping) {
             player.notify('~r~Вы не должны прыгать');
-            inventory.getItemList(inventory.types.Player, user.getId(player));
+            inventory.getItemList(player, inventory.types.Player, user.getId(player));
             return;
         }
         inventory.dropItemJust(id, itemId, posX, posY, posZ, rotX, rotY, player.heading);
@@ -1535,11 +1535,12 @@ inventory.useItem = function(player, id, itemId, isTargetable = false) {
                         player.notify("~r~Транспорт уже открыт");
                         return;
                     }
-                    if (veh.getVariable('fraction_id') > 0 || veh.getVariable('isAdmin'))
+                    if (veh.getVariable('fraction_id') > 0 || veh.getVariable('isAdmin') || veh.getVariable('useless'))
                     {
                         player.notify("~r~Вы не можете взломать это транспортное средство");
                         return;
                     }
+
                     if(user.has(player, 'usingLockpick')) {
                         player.notify("~r~Вы уже используете отмычку");
                         return;

@@ -88,9 +88,12 @@ enums.resetVehicleInfo = function() {
 };
 
 enums.updateVehicleInfo = function(idx, data) {
-    if (idx == 0)
-        enums.vehicleInfo = [];
-    enums.vehicleInfo = enums.vehicleInfo.concat(data);
+    try {
+        if (idx == 0)
+            enums.vehicleInfo = [];
+        enums.vehicleInfo = enums.vehicleInfo.concat(data);
+    }
+    catch (e) {}
 };
 
 enums.fontList = ["Roboto", "Arial", "Century Gothic", "HACKED", "Choujikuu", "RobotoLight"];

@@ -52,6 +52,12 @@ mp.events.add('guiReady', () => {
     mp.events.add('browserDomReady', (browser) => {
         if (browser === uiBrowser) {
             ui.hideHud();
+
+            try {
+                if (mp.storage.data.login)
+                    ui.callCef('authMain:2', JSON.stringify({type:'login', login: mp.storage.data.login}));
+            }
+            catch (e) {}
         }
     });
 });

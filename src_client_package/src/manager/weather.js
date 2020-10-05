@@ -32,7 +32,8 @@ weather.nextWeather = function(weatherName, delay) {
 
     setTimeout(function () {
 
-        /* TODO чтобы снег лежал, ес че
+        try {
+            /* TODO чтобы снег лежал, ес че
         SetWeatherTypePersist(weatherList[idx].ToString());
         SetWeatherTypeNowPersist(weatherList[idx].ToString());
         SetWeatherTypeNow(weatherList[idx].ToString());
@@ -44,36 +45,40 @@ weather.nextWeather = function(weatherName, delay) {
         mp.game.gameplay.setOverrideWeather("RAIN");
         */
 
-        if (
-            weatherName == "XMAS" ||
-            weatherName == "SNOWLIGHT" ||
-            weatherName == "BLIZZARD" ||
-            weatherName == "SNOW"
-        )
-        {
-            mp.game.graphics.setForceVehicleTrails(true);
-            mp.game.graphics.setForcePedFootstepsTracks(true);
+            if (
+                weatherName == "XMAS" ||
+                weatherName == "SNOWLIGHT" ||
+                weatherName == "BLIZZARD" ||
+                weatherName == "SNOW"
+            )
+            {
+                mp.game.graphics.setForceVehicleTrails(true);
+                mp.game.graphics.setForcePedFootstepsTracks(true);
 
-            //SetOverrideWeather("XMAS");
+                //SetOverrideWeather("XMAS");
 
-            //RequestScriptAudioBank("ICE_FOOTSTEPS", false);
-            //RequestScriptAudioBank("SNOW_FOOTSTEPS", false);
+                //RequestScriptAudioBank("ICE_FOOTSTEPS", false);
+                //RequestScriptAudioBank("SNOW_FOOTSTEPS", false);
 
-            //N_0xc54a08c85ae4d410(3.0f);
+                //N_0xc54a08c85ae4d410(3.0f);
 
-            /*RequestNamedPtfxAsset("core_snow");
-            while (!HasNamedPtfxAssetLoaded("core_snow"))
-                await Delay(10);
-            UseParticleFxAssetNextCall("core_snow");*/
+                /*RequestNamedPtfxAsset("core_snow");
+                while (!HasNamedPtfxAssetLoaded("core_snow"))
+                    await Delay(10);
+                UseParticleFxAssetNextCall("core_snow");*/
+            }
+            else
+            {
+                //ReleaseNamedScriptAudioBank("ICE_FOOTSTEPS");
+                //ReleaseNamedScriptAudioBank("SNOW_FOOTSTEPS");
+                mp.game.graphics.setForceVehicleTrails(false);
+                mp.game.graphics.setForcePedFootstepsTracks(false);
+                //RemoveNamedPtfxAsset("core_snow");
+                //N_0xc54a08c85ae4d410(0.0f);
+            }
         }
-        else
-        {
-            //ReleaseNamedScriptAudioBank("ICE_FOOTSTEPS");
-            //ReleaseNamedScriptAudioBank("SNOW_FOOTSTEPS");
-            mp.game.graphics.setForceVehicleTrails(false);
-            mp.game.graphics.setForcePedFootstepsTracks(false);
-            //RemoveNamedPtfxAsset("core_snow");
-            //N_0xc54a08c85ae4d410(0.0f);
+        catch (e) {
+            
         }
     }, delay);
 };

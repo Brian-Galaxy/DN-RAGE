@@ -105,17 +105,27 @@ ctos.generateLoad = function (length = 100) {
 };
 
 mp.events.add('client:ctos:setBlackout', function(state) {
-    if (state)
-        ctos.enableBlackout();
-    else
-        ctos.disableBlackout();
+    try {
+        if (state)
+            ctos.enableBlackout();
+        else
+            ctos.disableBlackout();
+    }
+    catch (e) {
+        
+    }
 });
 
 mp.events.add('client:ctos:setNoNetwork', function(state) {
-    if (state)
-        ctos.enableNetwork();
-    else
-        ctos.disableNetwork();
+    try {
+        if (state)
+            ctos.enableNetwork();
+        else
+            ctos.disableNetwork();
+    }
+    catch (e) {
+        
+    }
 });
 
 export default ctos;

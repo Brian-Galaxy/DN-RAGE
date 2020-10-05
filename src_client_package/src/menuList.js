@@ -2449,6 +2449,9 @@ menuList.showLicBuyMenu = function()
     UIMenu.Menu.AddMenuItem("Авиатранспорт", "Цена: ~g~$5000", {doName: 'air_lic'});
     UIMenu.Menu.AddMenuItem("Перевозка пассажиров", "Цена: ~g~$10,000", {doName: 'taxi_lic'});
 
+    UIMenu.Menu.AddMenuItem(`Лицензия на предпринимательство`, "Стоимость: ~g~$60,000", {doName: "biz_lic"});
+    UIMenu.Menu.AddMenuItem(`Разрешение на рыбаловство`, "Стоимость: ~g~$30,000", {doName: "fish_lic"});
+
     UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: 'closeMenu'});
     UIMenu.Menu.Draw();
 
@@ -4569,9 +4572,11 @@ menuList.showVehicleMenu = async function(data) {
         UIMenu.Menu.AddMenuItem(`Локальные департамента`, '', {depCode: true});
     }
 
-    if (veh.getVariable('fraction_id') === 2 || veh.getVariable('fraction_id') === 3 || veh.getVariable('fraction_id') === 1 || veh.getVariable('fraction_id') === 5) {
-        UIMenu.Menu.AddMenuItem(`~y~Выписка штрафа`, '', {giveTicket: true});
-        UIMenu.Menu.AddMenuItem(`~y~Отменить штраф`, '', {takeTicket: true});
+    if (user.isSapd() || user.isFib() || user.isGov() || user.isSheriff()) {
+        if (veh.getVariable('fraction_id') === 2 || veh.getVariable('fraction_id') === 3 || veh.getVariable('fraction_id') === 1 || veh.getVariable('fraction_id') === 5) {
+            UIMenu.Menu.AddMenuItem(`~y~Выписка штрафа`, '', {giveTicket: true});
+            UIMenu.Menu.AddMenuItem(`~y~Отменить штраф`, '', {takeTicket: true});
+        }
     }
 
     /*if (veh.getVariable('fraction_id') === user.getCache('fraction_id') && user.isLeader()) {

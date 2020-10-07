@@ -1851,7 +1851,7 @@ mp.events.add('client:addGangZoneBlip', (json) => {
     setTimeout(function () {
         try {
             JSON.parse(json).forEach(item => {
-                jobPoint.createBlipByRadius(1000 + item.id, new mp.Vector3(item.x, item.y, item.z), 50, 5, enums.fractionColor[item.fid], false);
+                jobPoint.createBlipByRadius(1000 + item.id, new mp.Vector3(item.x, item.y, item.z), 75, 5, enums.fractionColor[item.fid], false);
             })
         }
         catch (e) {
@@ -1865,7 +1865,7 @@ mp.events.add('client:addCanabisZoneBlip', (json) => {
     setTimeout(function () {
         try {
             JSON.parse(json).forEach(item => {
-                jobPoint.createBlipByRadius(10000 + item.id, new mp.Vector3(item.x, item.y, item.z), 50, 5, enums.fractionColor[item.fid], false);
+                jobPoint.createBlipByRadius(10000 + item.id, new mp.Vector3(item.x, item.y, item.z), 75, 5, enums.fractionColor[item.fid], false);
             })
         }
         catch (e) {

@@ -4,6 +4,7 @@ import ui from "./modules/ui";
 import houses from "./property/houses";
 import condos from "./property/condos";
 import business from "./property/business";
+import vehicles from "./property/vehicles";
 
 import quest from "./manager/quest";
 import edu from "./manager/edu";

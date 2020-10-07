@@ -9026,7 +9026,7 @@ menuList.showGunShopWeaponMenu = function(shopId, itemId, price = 1)
             }
             else if (item.price > 0) {
                 if (isLic && !user.getCache('gun_lic')) {
-                    mp.game.ui.notifications.show("~r~У Вас нет лицензии на оружие");
+                    mp.game.ui.notifications.show("~r~У Вас нет лицензии на оружие\nКупить ее можно у сотрудников LSPD или BCSD");
                     return;
                 }
                 if (item.superTint)

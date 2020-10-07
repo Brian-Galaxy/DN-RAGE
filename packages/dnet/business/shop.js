@@ -218,6 +218,10 @@ shop.buy = function(player, itemId, price, shopId) {
         business.addMoney(shopId, price, items.getItemNameById(itemId));
         business.removeMoneyTax(shopId, price / business.getPrice(shopId));
     }
+    else {
+        player.notify('~g~Вы купили ' + items.getItemNameById(itemId) +  '. Цена за 1 ед. товара: ~s~' + methods.moneyFormat(price));
+        user.removeMoney(player, price, 'Покупка ' + items.getItemNameById(itemId));
+    }
     inventory.updateAmount(player, user.getId(player), 1);
 };
 
@@ -252,6 +256,10 @@ shop.buyCard = function(player, itemId, price, shopId) {
         user.removeBankMoney(player, price, 'Покупка ' + items.getItemNameById(itemId));
         business.addMoney(shopId, price, items.getItemNameById(itemId));
         business.removeMoneyTax(shopId, price / business.getPrice(shopId));
+    }
+    else {
+        player.notify('~g~Вы купили ' + items.getItemNameById(itemId) +  '. Цена за 1 ед. товара: ~s~' + methods.moneyFormat(price));
+        user.removeBankMoney(player, price, 'Покупка ' + items.getItemNameById(itemId));
     }
     inventory.updateAmount(player, user.getId(player), 1);
 };

@@ -368,8 +368,12 @@ for(let code in keyCodes) {
                 mp.game.ui.notifications.show("~r~Нельзя пользоваться инвентарем, в тюрьме");
                 return;
             }
-            if (!methods.isBlockKeys() && phone.isHide() && mainMenu.isHide())
-                inventory.getItemList(0, 0);
+            if (!methods.isBlockKeys() && phone.isHide() && mainMenu.isHide()) {
+                if (ui.isGreenZone() || mp.players.local.dimension > 0 || mp.players.local.isInAnyVehicle(true))
+                    ui.callCef('inventory', '{"type": "showOrHide"}');
+                else
+                    inventory.getItemList(0, 0);
+            }
         }
         if (user.getCache('s_bind_phone') == parseInt(code)) {
             if (!methods.isBlockKeys() && !mp.gui.cursor.visible) {

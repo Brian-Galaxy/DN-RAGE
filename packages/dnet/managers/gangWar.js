@@ -54,15 +54,14 @@ gangWar.loadAll = function() {
     });
 
 
-    /*let pos = new mp.Vector3(1633.73828125, 5264.57080078125, 0);
-    for (let i = 0; i < 15; i++) {
+    /*let pos = new mp.Vector3(1667.783203125, 5159.28125, 151.642578125);
+    for (let i = 0; i < 12; i++) {
         for (let j = 0; j < 10; j++) {
-            let x = 1633.73828125 + i * 100;
-            let y = 5264.57080078125 - j * 100;
+            let x = pos.x + i * 150;
+            let y = pos.y - j * 150;
             mysql.executeQuery(`INSERT INTO gang_war_2 (x, y, z) VALUES ('${x}', '${y}', '${0}')`);
         }
     }*/
-    //mysql.executeQuery(`INSERT INTO houses (number, street, address, rot, x, y, z, interior, price) VALUES ('${number}', '${street}', '${zone}', '${rot}', '${x}', '${y}', '${z - 1}', '${interior}', '${price}')`);
 
     setTimeout(function () {
         gangWar.timer();

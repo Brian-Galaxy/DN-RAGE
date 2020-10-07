@@ -440,8 +440,8 @@ stocks.loadAll = function() {
                     vPos: new mp.Vector3(parseFloat(item['vx']), parseFloat(item['vy']), parseFloat(item['vz']))
                 };
                 methods.createCp(hBlip.pos.x, hBlip.pos.y, hBlip.pos.z, "Нажмите ~g~Е~s~ чтобы открыть меню");
-                stocks.loadUpgrades(item['upgrade'], item['id'], item['interior']);
                 stockList.set(item['id'], hBlip);
+                stocks.loadUpgrades(item['upgrade'], item['id'], item['interior']);
             }
             catch (e) {
                 
@@ -841,22 +841,25 @@ stocks.loadUpgrades = function(upgradeString, id, interior) {
 };
 
 stocks.addObject = function(boxId, slot, id, interior) {
-    let int = interior;
-    let box = stocks.boxList[boxId];
-    let boxPos = new mp.Vector3(stocks.boxPosList[int][slot][0], stocks.boxPosList[int][slot][1], stocks.boxPosList[int][slot][2] + box[3]);
-    let boxRot = new mp.Vector3(stocks.boxPosList[int][slot][3], stocks.boxPosList[int][slot][4], stocks.boxPosList[int][slot][5]);
+    try {
+        let int = interior;
+        let box = stocks.boxList[boxId];
+        let boxPos = new mp.Vector3(stocks.boxPosList[int][slot][0], stocks.boxPosList[int][slot][1], stocks.boxPosList[int][slot][2] + box[3]);
+        let boxRot = new mp.Vector3(stocks.boxPosList[int][slot][3], stocks.boxPosList[int][slot][4], stocks.boxPosList[int][slot][5]);
 
-    let obj = mp.objects.new(box[1], boxPos,
-        {
-            rotation: boxRot,
-            alpha: 255,
-            dimension: id + enums.offsets.stock
-        });
+        let obj = mp.objects.new(box[1], boxPos,
+            {
+                rotation: boxRot,
+                alpha: 255,
+                dimension: id + enums.offsets.stock
+            });
 
-    if (box[4] === true) {
-        obj.setVariable('stockId', slot + inventory.types.UserStock);
-        Container.Data.Set(id + enums.offsets.stock, "invAmountMax:" + (slot + inventory.types.UserStock), box[2]);
+        if (box[4] === true) {
+            obj.setVariable('stockId', slot + inventory.types.UserStock);
+            Container.Data.Set(id + enums.offsets.stock, "invAmountMax:" + (slot + inventory.types.UserStock), box[2]);
+        }
     }
+    catch (e) {}
 };
 
 stocks.getAll = function() {

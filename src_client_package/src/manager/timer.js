@@ -812,7 +812,7 @@ timer.loadAll = function () {
             mp.game.controls.disableControlAction(2, 257, true);
             mp.game.controls.disableControlAction(2, 263, true);
         }
-    }, 1);
+    }, 5);
 };
 
 timer.isFleecaAtm = function () {

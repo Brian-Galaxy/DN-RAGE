@@ -464,6 +464,11 @@ timer.secTimer = function() {
                     user.set('st_drive', user.getCache('st_drive') + dist);
             }
             playerPrevPos = mp.players.local.position;
+
+            if (user.hasCache('rentTrade') && !ui.isGreenZone())
+                mp.events.callRemote('server:tradeMarket:unrentBeach', user.getCache('rentTrade'));
+            if (user.hasCache('rentTradeBlack') && !ui.isGreenZone())
+                mp.events.callRemote('server:tradeMarket:unrentBlack', user.getCache('rentTradeBlack'));
         }
     }
     catch (e) {}

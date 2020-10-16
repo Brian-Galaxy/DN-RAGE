@@ -1555,12 +1555,22 @@ fraction.getShopGang = function(player) {
         return;
     }
 
-    if (fraction.get(frId, 'cantGrab')) {
+    if (fraction.get(frId, 'cantGrab2')) {
         player.notify('~r~Вы уже сегодня совершали ограбление сегодня');
         return;
     }
+
+    if (fraction.get(frId, 'cantGrab')) {
+        fraction.set(frId, 'cantGrab2', true);
+    }
+
     if (!user.isLeader2(player) && !user.isSubLeader2(player)) {
         player.notify('~r~Начать захват может только лидер или заместитель лидера');
+        return;
+    }
+
+    if (fraction.has(frId, 'currentGrabShop')) {
+        player.notify('~r~Вы брали наводку на магазин недавно');
         return;
     }
 
@@ -1570,8 +1580,8 @@ fraction.getShopGang = function(player) {
     }*/
 
     let dateTime = new Date();
-    if (dateTime.getHours() < 14) {
-        player.notify('~r~Доступно только с 14 до 24 ночи ООС времени');
+    if (dateTime.getHours() < 17) {
+        player.notify('~r~Доступно только с 17 до 24 ночи ООС времени');
         return;
     }
 
@@ -1594,6 +1604,24 @@ fraction.getShopGang = function(player) {
     });
 
     player.notify('~b~Ламар скинул кооринаты на магазин');
+
+    setTimeout(function () {
+        try {
+            fraction.reset(frId, 'currentGrabShop');
+            mp.players.forEach(p => {
+                if (user.isLogin(p) && user.get(p, 'fraction_id2') === frId) {
+                    shopItem.pos.forEach((pos, i) => {
+                        user.deleteBlip(p, i + 1000);
+                    });
+                }
+            });
+            shopItem.pos.forEach((pos, i) => {
+                fraction.set(frId, 'currentGrabShop' + i, false);
+            });
+        }
+        catch (e) {}
+
+    }, 1000 * 60 * 60)
 };
 
 fraction.startGrabShopGang = function(player, itemId = 0) {
@@ -1667,13 +1695,17 @@ fraction.startGrabShopGang = function(player, itemId = 0) {
                         player.notify('~r~Вы в транспорте');
                         return;
                     }
+                    if (player.health < 1) {
+                        player.notify('~r~Вы в коме, взлом был отменен');
+                        return;
+                    }
                     if (methods.distanceToPos(new mp.Vector3(pos[0], pos[1], pos[2]), player.position) > 5) {
                         player.notify('~r~Вы слишком далеко');
                         return;
                     }
 
                     if (methods.getRandomInt(0, 100) < 40) {
-                        inventory.addItem(141, 1, inventory.types.Player, user.getId(player), methods.getRandomInt(shopItem.sumMax, shopItem.sumMin) * 4, 0, "{}", 2);
+                        inventory.addItem(141, 1, inventory.types.Player, user.getId(player), methods.getRandomInt(shopItem.sumMax, shopItem.sumMin) * 2, 0, "{}", 2);
                         mp.players.forEach(p => {
                             if (user.isLogin(p) && user.get(p, 'fraction_id2') === frId) {
                                 user.deleteBlip(p, i + 1000);

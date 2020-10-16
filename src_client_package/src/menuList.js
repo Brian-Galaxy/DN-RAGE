@@ -38,6 +38,7 @@ import fraction from "./property/fraction";
 import cloth from './business/cloth';
 import vShop from "./business/vShop";
 import fuel from "./business/fuel";
+import tradeMarket from "./business/tradeMarket";
 
 import bus from "./jobs/bus";
 import gr6 from "./jobs/gr6";
@@ -1585,7 +1586,7 @@ menuList.showBusinessMenu = async function(data) {
                     return;
                 }
                 if (money + data.get('bank_tax') > data.get('bank_max')) {
-                    mp.game.ui.notifications.show(`~r~Максимальный счет продуктов не может привышать ${data.get('bank_max')}`);
+                    mp.game.ui.notifications.show(`~r~Максимальный счет продуктов не может превышать ${data.get('bank_max')}`);
                     return;
                 }
                 if (money < 1) {
@@ -1912,6 +1913,8 @@ menuList.showMeriaMainMenu = function() {
     UIMenu.Menu.AddMenuItem("Экономика штата", "", {doName: 'showMeriaInfoMenu'});
     UIMenu.Menu.AddMenuItem("Подать заявление на стажировку", "", {doName: 'govWork'});
     
+    UIMenu.Menu.AddMenuItem("~y~Создать семью по цене $500,000", "", {doName: 'createFamily'});
+    
     UIMenu.Menu.AddMenuItem("~y~Оплата штрафов", "", {doName: 'showMeriaTicketMenu'});
 
     UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: 'closeMenu'});
@@ -1926,6 +1929,13 @@ menuList.showMeriaMainMenu = function() {
             let text = await menuList.getUserInput('Почему вы хотите тут работать?', '', 100);
             mp.game.ui.notifications.show(`~g~Заявление было отправлено, скоро с вами свяжуться в дискорде`);
             mp.events.callRemote('server:discord:sendWorkGov', discord, text);
+        }
+        if (item.doName == 'createFamily')
+        {
+            let text = await menuList.getUserInput('Введите название семьи', '', 30);
+            if (text === '') 
+                return;
+            mp.events.callRemote('server:family:create', text);
         }
         if (item.doName == 'showMeriaSellHvbMenu')
             menuList.showMeriaSellHvbMenu(await coffer.getAllData());
@@ -2475,6 +2485,10 @@ menuList.showLicBuyMenu = function()
             user.buyLicense('air_lic', 5000);
         else if (item.doName == "ship_lic")
             user.buyLicense('ship_lic', 990);
+        else if (item.doName == "biz_lic")
+            user.buyLicense('biz_lic', 60000);
+        else if (item.doName == "fish_lic")
+            user.buyLicense('fish_lic', 30000);
         else if (item.doName == "taxi_lic") {
             if (user.getCache('work_lvl') < 2) {
                 mp.game.ui.notifications.show("~r~Вам необходим 2 уровень рабочего стажа");
@@ -2780,7 +2794,7 @@ menuList.showMeriaSellVehHvbMenu = async function(cofferData, isNpc = false) {
                                 else if (isNpc)
                                 {
                                     if(vehData.get('sell_price') < 1)
-                                        UIMenu.Menu.AddMenuItem(`~y~Выставить ТС ${vehData.get('name')} (${vehData.get('number')}) на БУ авторынок`, "Комиссия авторынка с продажи ТС 1%.~n~Взнос ~g~$1000", {eventNameSellVBu: i});
+                                        UIMenu.Menu.AddMenuItem(`~y~Выставить ТС ${vehData.get('name')} (${vehData.get('number')}) на БУ авторынок`, "Комиссия авторынка с продажи ТС 1%.~br~Взнос ~g~$1000", {eventNameSellVBu: i});
                                     else
                                         UIMenu.Menu.AddMenuItem(`~y~Снять ТС ${vehData.get('name')} (${vehData.get('number')}) с БУ авторынка`, "", {eventNameRemoveVBu: i});
                                 }
@@ -4697,7 +4711,7 @@ menuList.showVehicleMenu = async function(data) {
         UIMenu.Menu.AddMenuItem("~g~Диспетчерская", "", {doName: "taxi:dispatch"});
         UIMenu.Menu.AddMenuItem("~b~Справка", 'Вы можете перевозить NPC или игроков.');
     }
-    else if (user.getCache('taxi_lic') && !veh.getVariable('jobId') && !veh.getVariable('fraction_id')) {
+    else if (user.getCache('taxi_lic') && !veh.getVariable('jobId') && !veh.getVariable('fraction_id') && !veh.getVariable('cargoId')) {
         if (user.getCache('isTaxi')) {
             UIMenu.Menu.AddMenuItem("~g~Диспетчерская", "", {doName: "taxi:dispatch"});
             UIMenu.Menu.AddMenuItem("~y~Закончить принимать заказы", "", {doName: "taxi:stop"});
@@ -5611,6 +5625,34 @@ menuList.showSellItemsMenu = function(data) {
                 catch (e) {
                     methods.debug(e);
                 }
+            }
+        });
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+};
+
+menuList.showTradeMenu = function(data, ownerId, ownerType) {
+
+    try {
+        UIMenu.Menu.Create(' ', `~b~Торговая площадка`, 'hm', false, false, 'h1');
+
+        data.forEach((item, idx) => {
+            let formatItem = items.getItemFormat(item);
+            let desc = formatItem.desc + '~br~' + items.getItemNameById(item.item_id);
+            let itemName = formatItem.name;
+            let price = item.price;
+            UIMenu.Menu.AddMenuItem(`${itemName}`, `${desc}~br~Цена: ~g~${methods.moneyFormat(price)}`, {itemId: item.item_id, id: item.id, desc: desc, price: price, name: itemName});
+        });
+
+        UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
+        UIMenu.Menu.Draw();
+
+        UIMenu.Menu.OnSelect.Add(async (item, index) => {
+            UIMenu.Menu.HideMenu();
+            if (item.itemId >= 0) {
+                mp.events.callRemote('server:tradeMarket:buy', item.id, item.price, item.name, ownerId);
             }
         });
     }
@@ -6978,6 +7020,94 @@ menuList.showBarFreeMenu = function()
                 user.addWaterLevel(200);
                 chat.sendMeCommand(`выпил ${item.label}`);
                 user.playAnimation("mp_player_intdrink", "loop_bottle", 48);
+            }
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    });
+};
+
+menuList.showTradeBeachCreateMenu = async function(idx)
+{
+    if (methods.isBlackout()) {
+        mp.game.ui.notifications.show(`~r~В городе отсутствует свет`);
+        return;
+    }
+
+    UIMenu.Menu.Create("Палатка", "~b~Меню палатки");
+
+    let rentId = await tradeMarket.getBeach(idx, 'rent');
+    if (rentId) {
+        if (rentId === user.getCache('id')) {
+            UIMenu.Menu.AddMenuItem("Инвентарь палатки", "", {doName: "drop"});
+            UIMenu.Menu.AddMenuItem("~r~Отменить аренду", "", {doName: "unrent"});
+        }
+        else
+            UIMenu.Menu.AddMenuItem("~y~Палатка уже арендована");
+    }
+    else {
+        UIMenu.Menu.AddMenuItem("Арендовать палатку за $1000", "Учтите, если вы выйдете за пределы рынка, то аренда будет анулирована", {doName: "rent"});
+    }
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
+    UIMenu.Menu.Draw();
+
+    UIMenu.Menu.OnSelect.Add(async (item, index) => {
+        UIMenu.Menu.HideMenu();
+        try {
+            if (item.doName === 'rent') {
+                mp.events.callRemote('server:tradeMarket:rentBeach', idx);
+            }
+            if (item.doName === 'unrent') {
+                mp.events.callRemote('server:tradeMarket:unrentBeach', idx);
+            }
+            if (item.doName === 'drop') {
+                inventory.getItemList(inventory.types.TradeBeach, user.getCache('id'));
+            }
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    });
+};
+
+menuList.showTradeBlackCreateMenu = async function(idx)
+{
+    if (methods.isBlackout()) {
+        mp.game.ui.notifications.show(`~r~В городе отсутствует свет`);
+        return;
+    }
+
+    UIMenu.Menu.Create("Палатка", "~b~Меню палатки");
+
+    let rentId = await tradeMarket.getBlack(idx, 'rent');
+    if (rentId) {
+        if (rentId === user.getCache('id')) {
+            UIMenu.Menu.AddMenuItem("Инвентарь палатки", "", {doName: "drop"});
+            UIMenu.Menu.AddMenuItem("~r~Отменить аренду", "", {doName: "unrent"});
+        }
+        else
+            UIMenu.Menu.AddMenuItem("~y~Палатка уже арендована");
+    }
+    else {
+        UIMenu.Menu.AddMenuItem("Арендовать палатку за $2000", "Учтите, если вы выйдете за пределы рынка, то аренда будет анулирована", {doName: "rent"});
+    }
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
+    UIMenu.Menu.Draw();
+
+    UIMenu.Menu.OnSelect.Add(async (item, index) => {
+        UIMenu.Menu.HideMenu();
+        try {
+            if (item.doName === 'rent') {
+                mp.events.callRemote('server:tradeMarket:rentBlack', idx);
+            }
+            if (item.doName === 'unrent') {
+                mp.events.callRemote('server:tradeMarket:unrentBlack', idx);
+            }
+            if (item.doName === 'drop') {
+                inventory.getItemList(inventory.types.TradeBlack, user.getCache('id'));
             }
         }
         catch (e) {
@@ -10609,6 +10739,7 @@ menuList.showUsmcArsenalGunMenu = function() {
     if (user.getCache('rank_type') === 4 || user.isLeader() || user.isSubLeader() || user.isDepLeader() || user.isDepSubLeader()) {
         UIMenu.Menu.AddMenuItem("Beretta 90Two", "", {itemId: 78});
         UIMenu.Menu.AddMenuItem("Glock 17", "", {itemId: 146});
+        UIMenu.Menu.AddMenuItem("Raging Bull", "", {itemId: 74});
         UIMenu.Menu.AddMenuItem("Benelli M3", "", {itemId: 90});
         UIMenu.Menu.AddMenuItem("Benelli M4", "", {itemId: 91});
         UIMenu.Menu.AddMenuItem("HK-416", "", {itemId: 110});
@@ -10617,6 +10748,7 @@ menuList.showUsmcArsenalGunMenu = function() {
         UIMenu.Menu.AddMenuItem("Коробка патронов 9mm", "", {itemId: 280});
         UIMenu.Menu.AddMenuItem("Коробка патронов 12 калибра", "", {itemId: 281});
         UIMenu.Menu.AddMenuItem("Коробка патронов 5.56mm", "", {itemId: 284});
+        UIMenu.Menu.AddMenuItem("Коробка патронов .44 Magnum", "", {itemId: 287});
     }
 
     UIMenu.Menu.AddMenuItem("Бронежилет", "", {armor: 100});
@@ -11465,7 +11597,8 @@ menuList.showAdminMenu = function() {
             UIMenu.Menu.AddMenuItem("Транспорт", "", {doName: "vehicleMenu"});
             UIMenu.Menu.AddMenuItem("Телепорт", "", {doName: "teleportMenu"});
             if (user.isAdmin(2)) {
-                UIMenu.Menu.AddMenuItem("Режим No Clip", "", {doName: "noClip"});
+                if (!user.isAdminRp())
+                    UIMenu.Menu.AddMenuItem("Режим No Clip", "", {doName: "noClip"});
                 UIMenu.Menu.AddMenuItem("Режим Free Cam", "", {doName: "freeCam"});
                 UIMenu.Menu.AddMenuItem("Режим Drone", "", {doName: "drone"});
             }
@@ -11473,10 +11606,14 @@ menuList.showAdminMenu = function() {
 
             UIMenu.Menu.AddMenuItem("Режим GodMode", "", {doName: "godMode"});
 
-            if (!user.isAdminRp())
-                UIMenu.Menu.AddMenuItem("Лидер крайма", "Значение 0 убирает оргу", {doName: "giveLeader"});
+            if (!user.isAdminRp()) {
 
-            UIMenu.Menu.AddMenuItem("Режим невидимки", "", {doName: "invise"});
+                UIMenu.Menu.AddMenuItem("Лидер крайма", "Значение 0 убирает оргу", {doName: "giveLeader"});
+                UIMenu.Menu.AddMenuItem("Лидер семьи", "Значение 0 убирает оргу", {doName: "giveLeaderFam"});
+            }
+
+            if (!user.isAdminRp())
+                UIMenu.Menu.AddMenuItem("Режим невидимки", "", {doName: "invise"});
             UIMenu.Menu.AddMenuItem("Прогрузка ID", "", {doName: "idDist"});
 
             if (user.isAdmin(3))
@@ -11574,12 +11711,20 @@ menuList.showAdminMenu = function() {
             user.setAlpha(val);
         }
         if (item.doName == 'giveLeader') {
-            let val = methods.parseInt(await UIMenu.Menu.GetUserInput("От 0 до 15", "", 3));
+            let val = methods.parseInt(await UIMenu.Menu.GetUserInput("Введите ID", "", 3));
             user.set('fraction_id2', val);
             user.set('is_leader2', val > 0);
             user.set('is_sub_leader2', false);
             user.set('rank2', 0);
             user.set('rank_type2', 0);
+        }
+        if (item.doName == 'giveLeaderFam') {
+            let val = methods.parseInt(await UIMenu.Menu.GetUserInput("Введите ID", "", 3));
+            user.set('family_id', val);
+            user.set('is_leaderf', val > 0);
+            user.set('is_sub_leaderf', false);
+            user.set('rankf', 0);
+            user.set('rank_typef', 0);
         }
         if (item.doName == 'idDist') {
             let val = methods.parseInt(await UIMenu.Menu.GetUserInput("От 10 до 200", "", 3));

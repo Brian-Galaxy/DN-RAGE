@@ -161,6 +161,56 @@ inventory.getItemListSell = function(player) {
     }, 1000);
 };
 
+inventory.getItemListTrade = function(player, ownerId, ownerType) {
+
+    setTimeout(function () {
+        if (!user.isLogin(player))
+            return;
+        try {
+
+            let data = [];
+            //let data2 = new Map();
+
+            let sql = `SELECT * FROM items WHERE owner_id = '${ownerId}' AND owner_type = '${ownerType}' AND price > 0 ORDER BY item_id DESC LIMIT 400`;
+
+            mysql.executeQuery(sql, function (err, rows, fields) {
+                rows.forEach(row => {
+
+                    let label = "";
+
+                    if (row['prefix'] > 0 && row['number'] > 0 && row['key_id'] <= 0) {
+                        label = row['prefix'] + "-" + row['number'];
+                    } else if (row['key_id'] > 0) {
+
+                        if (row['item_id'] >= 265 && row['item_id'] <= 268) {
+
+                            if (row['prefix'] == 1)
+                                label = enums.clothF[row['key_id']][9];
+                            else
+                                label = enums.clothM[row['key_id']][9];
+                        }
+                        else if (row['item_id'] >= 269 && row['item_id'] <= 273) {
+                            if (row['prefix'] == 1)
+                                label = enums.propF[row['key_id']][5];
+                            else
+                                label = enums.propM[row['key_id']][5];
+                        }
+                        else {
+                            label = "#" + row['key_id'];
+                        }
+                    }
+
+                    data.push({id: row['id'], label: label, item_id: row['item_id'], count: row['count'], price: row['price'], params: row['params']});
+                });
+
+                player.call('client:showTradeMenu', [data, ownerId, ownerType]);
+            });
+        } catch(e) {
+            methods.debug(e);
+        }
+    }, 10);
+};
+
 inventory.getItemListGunTranferSell = function(player) {
     setTimeout(function () {
         if (!user.isLogin(player))
@@ -804,6 +854,19 @@ inventory.updateOwnerId = function(id, ownerId, ownerType) {
         methods.saveLog('log_inventory',
             ['type', 'text'],
             ['UPDATE_OWNER', `id:${id}, ownerId:${ownerId}, ownerType:${ownerType}`],
+        );
+    } catch(e) {
+        methods.debug(e);
+    }
+};
+
+inventory.updateOwnerIdWithPrice = function(id, ownerId, ownerType, price) {
+    try {
+        mysql.executeQuery(`UPDATE items SET owner_type = '${ownerType}', owner_id = '${methods.parseInt(ownerId)}', price = '${methods.parseInt(price)}' where id = '${id}'`);
+
+        methods.saveLog('log_inventory',
+            ['type', 'text'],
+            ['UPDATE_OWNER', `id:${id}, ownerId:${ownerId}, ownerType:${ownerType}, price:${price}`],
         );
     } catch(e) {
         methods.debug(e);
@@ -1793,7 +1856,7 @@ inventory.useItem = function(player, id, itemId, isTargetable = false) {
                         player.notify("~r~Вы должны находиться около транспорта");
                         return;
                     }
-                    let veh = methods.getNearestVehicleWithCoords(player.position, 10);
+                    let veh = methods.getNearestVehicleWithCoords(player.position, 10, player.dimension);
                     if (!vehicles.exists(veh))
                     {
                         player.notify("~r~Нужно быть рядом с машиной");
@@ -2263,6 +2326,8 @@ inventory.types = {
     StockGov : 9,
     Fridge : 10,
     StockTakeWeap : 11,
+    TradeBeach : 12,
+    TradeBlack : 13,
     UserStockDef : 75,
     UserStock : 100,
     UserStockEnd : 200,

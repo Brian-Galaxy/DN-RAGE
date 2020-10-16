@@ -30,6 +30,7 @@ let barberShop = require('./business/barberShop');
 let bank = require('./business/bank');
 let fuel = require('./business/fuel');
 let shop = require('./business/shop');
+let tradeMarket = require('./business/tradeMarket');
 
 let houses = require('./property/houses');
 let condos = require('./property/condos');
@@ -37,6 +38,7 @@ let business = require('./property/business');
 let vehicles = require('./property/vehicles');
 let stocks = require('./property/stocks');
 let fraction = require('./property/fraction');
+let family = require('./property/family');
 let yachts = require('./property/yachts');
 
 let weather = require('./managers/weather');
@@ -79,6 +81,7 @@ function init() {
         business.loadAll();
         stocks.loadAll();
         fraction.loadAll();
+        family.loadAll();
         gangWar.loadAll();
         canabisWar.loadAll();
         mafiaWar.loadAll();
@@ -102,6 +105,7 @@ function init() {
         bank.loadAll();
         fuel.loadAll();
         shop.loadAll();
+        tradeMarket.loadAll();
 
         pickups.createAll();
 

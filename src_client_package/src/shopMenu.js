@@ -481,7 +481,7 @@ mp.events.add('client:shopMenu:changeSelect2', async function(json) {
                     }
 
                     let data3 = JSON.parse(enums.overlays)[user.getSex()][skin.SKIN_HAIR_3];
-                    user.setDecoration(data1[0], data1[1], true);
+                    user.setDecoration(data3[0], data3[1], true);
                     break;
                 case 'SKIN_EYE_COLOR':
                     skin.SKIN_EYE_COLOR = index;
@@ -1132,6 +1132,7 @@ mp.events.add('client:dialog:btn', async function(json) {
             hosp.freePlayer();
         }
         if (params.doName === 'lspd:toJail') {
+            shopMenu.hideDialog();
             mp.events.callRemote('server:user:arrest');
         }
         if (params.doName === 'lamar:car') {

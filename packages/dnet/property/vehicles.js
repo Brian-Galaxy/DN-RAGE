@@ -164,7 +164,7 @@ vehicles.loadUserVehicleByRow = (row) => {
 
     setTimeout(function () {
         vehicles.spawnPlayerCar(row['id']); //Нужен рандом
-    }, methods.getRandomInt(0, 2000));
+    }, methods.getRandomInt(0, 5000));
 };
 
 vehicles.getFreePolicePos = () => {
@@ -1099,8 +1099,11 @@ vehicles.updateOwnerInfo = function (id, userId, userName) {
         vehicles.park(id, 0, 0, 0, 0);
         mysql.executeQuery("UPDATE cars SET user_name = '" + userName + "', user_id = '" + userId + "', number = '" + vehicles.generateNumber() + "', tax_money = '0', s_mp = '0', is_neon = '0', neon_r = '0', neon_g = '0', neon_b = '0', extra = '0', cop_park_name = '', is_cop_park = '0', sell_price = '0', upgrade = '{\"18\":-1}' where id = '" + id + "'");
 
-        let vehInfo = methods.getVehicleInfo(vehicles.get(id, 'name'));
-        discord.sendMarketVehicles(`${vehInfo.display_name}`, `Гос. стоимость: ${methods.moneyFormat(vehInfo.price)}\nМакс. скорость: ~${vehInfo.sm}км/ч\nКласс: ${vehInfo.class_name}`, `https://dednet.ru/client/images/carssm/${vehInfo.display_name}_1.jpg`);
+        try {
+            let vehInfo = methods.getVehicleInfo(vehicles.get(id, 'name'));
+            discord.sendMarketVehicles(`${vehInfo.display_name}`, `Гос. стоимость: ${methods.moneyFormat(vehInfo.price)}\nМакс. скорость: ~${vehInfo.sm}км/ч\nКласс: ${vehInfo.class_name}`, `https://dednet.ru/client/images/carssm/${vehInfo.display_name}_1.jpg`);
+        }
+        catch (e) {}
     }
     else {
         try {

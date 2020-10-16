@@ -109,8 +109,10 @@ enums.offsets = { //TODO
     business: 600000,
     stock: 700000,
     fraction: 800000,
-    fractionMafia: 850000,
+    family: 850000,
     ctos: 900000,
+    trade: 910000,
+    tradeb: 915000,
 };
 
 enums.blipDisplayIds = [8, 9, 3, 0];
@@ -845,9 +847,9 @@ enums.zoneGreenList = [
 // Парковка здания Правительства Лос-Сантоса
     [19, 25 [new mp.Vector3(-1332.033, -592.2298, 20.88923), new mp.Vector3(-1298.693, -564.246, 20.91193), new mp.Vector3(-1323.389, -534.85, 20.89787), new mp.Vector3(-1356.696, -562.8257, 20.88923)]],
 // Рынок на пляже
-    //[8, 16, [new mp.Vector3(-1732.132, -704.0681, 9.093328), new mp.Vector3(-1628.435, -790.9984, 9.238795), new mp.Vector3(-1651.209, -819.7085, 9.189501), new mp.Vector3(-1753.757, -730.822, 9.23165)]],
+    [8, 16, [new mp.Vector3(-1732.132, -704.0681, 9.093328), new mp.Vector3(-1628.435, -790.9984, 9.238795), new mp.Vector3(-1651.209, -819.7085, 9.189501), new mp.Vector3(-1753.757, -730.822, 9.23165)]],
 // Чёрный рынок
-    //[23, 40, [new mp.Vector3(722.0095, -935.3246, 23.43034), new mp.Vector3(721.9091, -888.5373, 23.37463), new mp.Vector3(770.612, -888.6109, 24.13935), new mp.Vector3(774.1771, -934.101, 24.64214), new mp.Vector3(762.1752, -935.2737, 24.43943)]],
+    [23, 40, [new mp.Vector3(722.0095, -935.3246, 23.43034), new mp.Vector3(721.9091, -888.5373, 23.37463), new mp.Vector3(770.612, -888.6109, 24.13935), new mp.Vector3(774.1771, -934.101, 24.64214), new mp.Vector3(762.1752, -935.2737, 24.43943)]],
 ];
 
 enums.zoneYellowList = [
@@ -2876,7 +2878,7 @@ enums.animActions = [
     ["Сесть 3","amb@prop_human_seat_chair@male@left_elbow_on_knee@base", "base",9],
     ["Сесть 4","amb@prop_human_seat_chair@male@right_foot_out@base", "base",9],
     ["Свистнуть", "taxi_hail", "fp_hail_taxi", 8],
-    ["Выполнить воиское приветствие", "anim@mp_player_intincarsalutestd@ds@", "idle_a", 8],
+    ["Выполнить воинское приветствие", "anim@mp_player_intincarsalutestd@ds@", "idle_a", 8],
     ["Показать пальцем", "gestures@m@standing@casual", "gesture_point", 8],
     ["Согласиться-1", "gestures@m@standing@casual", "gesture_i_will", 8],
     ["Согласиться-2", "gestures@m@standing@fat", "gesture_bye_soft", 8],

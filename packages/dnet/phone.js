@@ -3,6 +3,7 @@ let mysql = require('./modules/mysql');
 
 let vehicles = require('./property/vehicles');
 let fraction = require('./property/fraction');
+let family = require('./property/family');
 
 let gangWar = require('./managers/gangWar');
 let canabisWar = require('./managers/canabisWar');
@@ -648,6 +649,137 @@ phone.memberAction2 = function(player, id) {
             }
 
             phone.showMenu(player, 'fraction2', 'Действия', [phone.getMenuMainItem('', items)]);
+        });
+    });
+};
+
+phone.memberActionF = function(player, id) {
+    if (!user.isLogin(player))
+        return;
+
+    if (user.getId(player) == id) {
+        player.notify('~r~Данный профиль для просмотра не доступен');
+        return;
+    }
+
+    methods.debug('phone.memberAction');
+    let fractionId = user.get(player, 'family_id');
+    mysql.executeQuery(`SELECT id, social, name, family_id, rankf, rank_typef, is_sub_leaderf FROM users WHERE id = '${methods.parseInt(id)}'`, (err, rows, fields) => {
+
+        rows.forEach(row => {
+
+            let fractionItem = family.getData(fractionId);
+            let fractionItemRanks = JSON.parse(fractionItem.get('rank_list'));
+            let fractionItemDep = JSON.parse(fractionItem.get('rank_type_list'));
+
+            let items = [];
+
+            items.push(phone.getMenuItem(
+                row['name'],
+                '',
+                { name: 'none' },
+                0,
+                '',
+                false,
+                'https://a.rsg.sc//n/' + row['social'].toLowerCase(),
+            ));
+
+            if (!row['is_sub_leaderf']) {
+                if (user.isLeaderF(player)) {
+                    items.push(phone.getMenuItemModal(
+                        'Выдать должность заместителя',
+                        '',
+                        'Заместитель',
+                        `Вы точно хотите выдать должность ${row['name']}?`,
+                        'Выдать',
+                        'Отмена',
+                        { name: 'memberGiveSubLeaderF', memberId: row['id'] },
+                        '',
+                        true
+                    ));
+                    items.push(phone.getMenuItemModal(
+                        'Передать организацию',
+                        '',
+                        'Передача',
+                        `Вы точно хотите передать организацию ${row['name']}?`,
+                        'Выдать',
+                        'Отмена',
+                        { name: 'memberGiveLeaderF', memberId: row['id'] },
+                        '',
+                        true
+                    ));
+                }
+
+                let rankList = [];
+                fractionItemRanks[row['rank_typef']].forEach((item, id) => {
+                    if (id == row['rankf'])
+                        rankList.push({title: item, checked: true, params: { name: 'memberNewRankF', memberId: row['id'], rankId: id }})
+                    else
+                        rankList.push({title: item, params: { name: 'memberNewRankF', memberId: row['id'], rankId: id }})
+                });
+
+                items.push(phone.getMenuItemRadio(
+                    'Изменить должность',
+                    'Текущая должность: ' + fractionItemRanks[row['rank_typef']][row['rankf']],
+                    'Выберите должность',
+                    rankList,
+                    { name: 'none' },
+                    '',
+                    true
+                ));
+
+                if (user.isLeaderF(player) || user.isSubLeaderF(player)) {
+                    let depList = [];
+
+                    fractionItemDep.forEach((item, id) => {
+                        if (id == row['rank_typef'])
+                            depList.push({title: item, checked: true, params: { name: 'memberNewDepF', memberId: row['id'], depId: id }})
+                        else
+                            depList.push({title: item, params: { name: 'memberNewDepF', memberId: row['id'], depId: id }})
+                    });
+
+                    items.push(phone.getMenuItemRadio(
+                        'Перевести в другой отдел',
+                        'Текущий отдел: ' + fractionItemDep[row['rank_typef']],
+                        'Выберите отдел',
+                        depList,
+                        { name: 'none' },
+                        '',
+                        true
+                    ));
+                }
+            }
+            else {
+                if (user.isLeaderF(player)) {
+                    items.push(phone.getMenuItemModal(
+                        'Снять с должности заместителя',
+                        '',
+                        'Заместитель',
+                        `Вы точно хотите снять с должности ${row['name']}?`,
+                        'Снять',
+                        'Отмена',
+                        { name: 'memberTakeSubLeader2', memberId: row['id'] },
+                        '',
+                        true
+                    ));
+                }
+            }
+
+            if (user.isLeaderF(player) || user.isSubLeaderF(player)) {
+                items.push(phone.getMenuItemModal(
+                    'Уволить',
+                    '',
+                    'Уволить',
+                    `Вы точно хотите уволить ${row['name']}?`,
+                    'Уволить',
+                    'Отмена',
+                    { name: 'memberUninviteF', memberId: row['id'] },
+                    '',
+                    true
+                ));
+            }
+
+            phone.showMenu(player, 'family', 'Действия', [phone.getMenuMainItem('', items)]);
         });
     });
 };
@@ -1357,6 +1489,132 @@ phone.fractionList2 = function(player, showStats = false) {
                 newItems.push(phone.getMenuMainItem('Руководство', leaderItems));
 
             phone.showMenu(player, 'fraction2', `Список членов организации | ${rows.length} чел.`, newItems.concat(items));
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    });
+};
+
+
+phone.fractionListF = function(player, showStats = false) {
+    if (!user.isLogin(player))
+        return;
+    methods.debug('phone.fractionListF');
+
+    let fractionId = user.get(player, 'family_id');
+
+    mysql.executeQuery(`SELECT id, social, name, family_id, rankf, rank_typef, is_leaderf, is_sub_leaderf, is_sub_leaderf, st_order_atm_f, st_order_atm_d, st_order_drug_f, st_order_drug_d, st_order_lamar_f, st_order_lamar_d, login_date, is_online FROM users WHERE family_id = '${fractionId}' ORDER BY is_leaderf ASC, is_sub_leaderf ASC, rank_typef ASC, is_online DESC, rankf ASC, name ASC`, (err, rows, fields) => {
+        let items = [];
+        let depName = '';
+        let depList = [];
+        let depPrev = -1;
+
+        let isLeader = user.isLeader2(player);
+        let isSubLeader = user.isSubLeader2(player);
+
+        let fractionItem = family.getData(fractionId);
+        let fractionItemRanks = JSON.parse(fractionItem.get('rank_list'));
+        let fractionItemDep = JSON.parse(fractionItem.get('rank_type_list'));
+
+        let leaderItem = [];
+        let subLeaderItem = [];
+
+        let rankType = user.get(player, 'rank_typef');
+        let canEdit = user.get(player, 'rankf') == 0 || user.get(player, 'rankf') == 1;
+
+        rows.forEach(row => {
+
+            try {
+
+                let desc = '';
+                if (row['is_online'] === 0)
+                    desc = ` (${methods.unixTimeStampToDateTimeShort(row['login_date'])})`;
+                if (showStats)
+                    desc = ` (З: ${row['st_order_drug_d']}/${row['st_order_drug_f']} | Б: ${row['st_order_atm_d']}/${row['st_order_atm_f']} | Л: ${row['st_order_lamar_d']}/${row['st_order_lamar_f']})`;
+
+                if (row['is_leaderf']) {
+                    leaderItem.push(phone.getMenuItemUser(
+                        row['name'],
+                        fractionItem.get('rank_leader') + desc,
+                        row['is_online'] === 1,
+                        { name: 'none' },
+                        'https://a.rsg.sc//n/' + row['social'].toLowerCase(),
+                    ));
+                }
+                else if (row['is_sub_leaderf']) {
+                    if (isLeader) {
+                        subLeaderItem.push(phone.getMenuItemUser(
+                            row['name'],
+                            fractionItem.get('rank_sub_leader') + desc,
+                            row['is_online'] === 1,
+                            { name: 'memberAction', memberId: row['id'] },
+                            'https://a.rsg.sc//n/' + row['social'].toLowerCase(),
+                            true,
+                        ));
+                    }
+                    else {
+                        subLeaderItem.push(phone.getMenuItemUser(
+                            row['name'],
+                            fractionItem.get('rank_sub_leader') + desc,
+                            row['is_online'] === 1,
+                            { name: 'none' },
+                            'https://a.rsg.sc//n/' + row['social'].toLowerCase()
+                        ));
+                    }
+
+                }
+                else {
+                    if (depPrev != row['rank_typef']) {
+                        if (depList.length > 0)
+                            items.push(phone.getMenuMainItem(`${depName} | ${depList.length} чел.`, depList));
+                        depName = fractionItemDep[row['rank_typef']];
+                        depList = [];
+                    }
+
+                    if (isLeader || isSubLeader || (canEdit && rankType == row['rank_typef'])) {
+                        depList.push(phone.getMenuItemUser(
+                            row['name'],
+                            fractionItemRanks[row['rank_typef']][row['rankf']] + desc,
+                            row['is_online'] === 1,
+                            { name: 'memberAction', memberId: row['id'] },
+                            'https://a.rsg.sc//n/' + row['social'].toLowerCase(),
+                            true,
+                        ));
+                    }
+                    else {
+                        depList.push(phone.getMenuItemUser(
+                            row['name'],
+                            fractionItemRanks[row['rank_typef']][row['rankf']] + desc,
+                            row['is_online'] === 1,
+                            { name: 'none' },
+                            'https://a.rsg.sc//n/' + row['social'].toLowerCase()
+                        ));
+                    }
+
+                    depPrev = row['rank_typef'];
+                }
+            }
+            catch (e) {
+                methods.debug(e);
+            }
+        });
+
+        try {
+            if (depList.length > 0)
+                items.push(phone.getMenuMainItem(`${depName} | ${depList.length} чел.`, depList));
+
+            let newItems = [];
+            let leaderItems = [];
+            if (leaderItem.length > 0)
+                leaderItems = leaderItems.concat(leaderItem);
+            if (subLeaderItem.length > 0)
+                leaderItems = leaderItems.concat(subLeaderItem);
+
+            if (leaderItems.length > 0)
+                newItems.push(phone.getMenuMainItem('Руководство', leaderItems));
+
+            phone.showMenu(player, 'fraction2', `Список членов семьи | ${rows.length} чел.`, newItems.concat(items));
         }
         catch (e) {
             methods.debug(e);

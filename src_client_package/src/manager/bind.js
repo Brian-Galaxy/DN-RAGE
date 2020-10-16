@@ -650,6 +650,10 @@ for(let code in keyCodes) {
         if (user.getCache('s_bind_cloth') == parseInt(code)) {
             if (!methods.isBlockKeys()) {
 
+                if (mp.game.player.isFreeAiming()) {
+                    return;
+                }
+
                 let allowIdx = -1;
                 let drawId = mp.players.local.getDrawableVariation(11);
                 let colorId = mp.players.local.getTextureVariation(11);
@@ -704,6 +708,10 @@ for(let code in keyCodes) {
         }
         if (user.getCache('s_bind_cloth2') == parseInt(code)) {
             if (!methods.isBlockKeys()) {
+
+                if (mp.game.player.isFreeAiming()) {
+                    return;
+                }
 
                 let allowIdx = -1;
                 let drawId = mp.players.local.getDrawableVariation(11);

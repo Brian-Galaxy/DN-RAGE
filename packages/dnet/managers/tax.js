@@ -265,7 +265,6 @@ tax.sell = function() {
         rows.forEach(row => {
 
             let price = methods.parseInt(row['price']);
-
             if (methods.parseInt(row["tax_money"]) < -100000)
                 price = methods.parseInt(price * 1.3);
 
@@ -295,18 +294,19 @@ tax.sell = function() {
                 mp.players.forEach(function (p) {
                     if (user.isLogin(p) && user.getId(p) == methods.parseInt(row["user_id"])) {
                         user.set(p, 'car_id' + carId, 0);
-                        user.addBankMoney(p, price);
-                        user.sendSmsBankOperation(p, `Зачисление: $${methods.numberFormat(price)}`);
+                        user.addBankMoney(p, price, `Изъятие ${row["name"]} по налогу`);
+                        user.sendSmsBankOperation(p, `Зачисление: ${methods.moneyFormat(price)}`);
                         p.notify('~r~Ваш транспорт были изъяты государством за неуплату');
                         user.save(p);
                     }
                 });
 
-                vehicles.updateOwnerInfo(methods.parseInt(row['id']), 0, '');
                 mysql.executeQuery("UPDATE users SET money = money + '" + price + "', car_id" + carId + " = '0' WHERE id = '" + methods.parseInt(row["user_id"]) + "'");
 
-
-                mysql.executeQuery("UPDATE cars SET tax_money = '0' WHERE id = '" + row['id'] + "'");
+                try {
+                    vehicles.updateOwnerInfo(methods.parseInt(row['id']), 0, '');
+                }
+                catch (e) {}
 
                 methods.saveLog('log_sell_inactive',
                     ['text'],

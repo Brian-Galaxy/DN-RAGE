@@ -2307,8 +2307,8 @@ let racerList = [
         ],
     },
     {
-        title: 'Теотральный беспредел',
-        desc: 'Шекспир снова ставит пьесы, а вы в Грейпсиде? Бросайте всё и мчитесь в Winewood Bowl',
+        title: 'Театральный беспредел',
+        desc: 'Шекспир снова ставит пьесы, а вы в Грейпсиде? Бросайте всё и мчитесь в Vinewood Bowl',
         repeat: 0,
         class: 3,
         allowVehicle: ['Italigto', 'Pariah', 'Autarch', 'Banshee2', 'Bullet', 'Cheetah', 'Cyclone', 'Entity2', 'Entityxf', 'Emerus', 'Fmj', 'Furia', 'Gp1', 'Infernus', 'Italigtb', 'Italigtb2', 'Krieger', 'Osiris', 'Penetrator', 'Pfister811', 'Reaper', 'Sc1', 'Sheava', 'Sultanrs', 'T20', 'Taipan', 'Tempesta', 'Turismor', 'Tyrant', 'Vacca', 'Voltic', 'Xa21', 'Zentorno', 'Zorrusso'],

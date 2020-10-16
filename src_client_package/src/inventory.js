@@ -85,6 +85,11 @@ inventory.updateOwnerId = function(id, ownerId, ownerType) {
     mp.events.callRemote('server:inventory:updateOwnerId', id, ownerId, ownerType);
 };
 
+inventory.updateOwnerIdWithPrice = function(id, ownerId, ownerType, price = 0) {
+    ownerId = ownerId.toString();
+    mp.events.callRemote('server:inventory:updateOwnerIdWithPrice', id, ownerId, ownerType, price);
+};
+
 inventory.updateOwnerAll = function(oldOwnerId, oldOwnerType, ownerId, ownerType) {
     ownerId = ownerId.toString();
     oldOwnerId = oldOwnerId.toString();
@@ -539,6 +544,10 @@ inventory.updateAmountMax = function(id, type) {
             invAmountMax = 999999999;
         else if (type == inventory.types.Apartment)
             invAmountMax = 200000;
+        else if (type == inventory.types.TradeBeach)
+            invAmountMax = 999999999;
+        else if (type == inventory.types.TradeBlack)
+            invAmountMax = 999999999;
         else if (type == inventory.types.House)
             invAmountMax = 600000;
         else if (type == inventory.types.Player)
@@ -741,6 +750,8 @@ inventory.types = {
     StockGov : 9,
     Fridge : 10,
     StockTakeWeap : 11,
+    TradeBeach : 12,
+    TradeBlack : 13,
     UserStockDef : 75,
     UserStock : 100,
     UserStockEnd : 200,

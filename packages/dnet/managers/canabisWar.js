@@ -14,7 +14,7 @@ let fraction = require('../property/fraction');
 
 let canabisWar = exports;
 
-let zoneRadius = 50;
+let zoneRadius = 75;
 let offset = 600000;
 let blipOffset = 10000;
 let keyPrefix = 'canabisWar';
@@ -312,7 +312,7 @@ canabisWar.timer = function() {
                     if (!canArmor && p.armour > 0)
                         user.setArmour(p, 0);
                     p.call("client:gangWar:sendInfo", [attC, defC, timerCounter]);
-                    if (methods.distanceToPos(warPos, p.position) < 80)
+                    if (methods.distanceToPos(warPos, p.position) < 150)
                     {
                         if (p.dimension === 0)
                             p.dimension = 9998;
@@ -376,7 +376,7 @@ canabisWar.timerMoney = function() {
 
             if (moneyToUser.has(canabisWar.get(i, 'fraction_id').toString())) {
                 let cMoney = moneyToUser.get(canabisWar.get(i, 'fraction_id').toString());
-                cMoney += methods.getRandomInt(10, 20) / 1000;
+                cMoney += methods.getRandomInt(13, 26) / 1000;
                 moneyToUser.set(canabisWar.get(i, 'fraction_id').toString(), cMoney);
             }
             else {
@@ -496,7 +496,7 @@ canabisWar.changeZoneColor = function(id, fractionId) {
         try {
             if (!user.isLogin(p))
                 return;
-            user.createBlipByRadius(p, blipOffset + id, _warPos.x, _warPos.y, _warPos.z, 50, 5, enums.fractionColor[fractionId]);
+            user.createBlipByRadius(p, blipOffset + id, _warPos.x, _warPos.y, _warPos.z, 75, 5, enums.fractionColor[fractionId]);
         }
         catch (e) {}
     });

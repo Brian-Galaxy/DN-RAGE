@@ -1313,6 +1313,10 @@ methods.notifyWithPictureToFraction2 = function (title, sender, message, notifPi
     mp.events.callRemote('server:players:notifyWithPictureToFraction2', title, sender, message, notifPic, fractionId, icon, flashing, textColor, bgColor, flashColor);
 };
 
+methods.notifyWithPictureToFractionF = function (title, sender, message, notifPic, fractionId = 0, icon = 0, flashing = false, textColor = -1, bgColor = -1, flashColor = [77, 77, 77, 200]) {
+    mp.events.callRemote('server:players:notifyWithPictureToFractionF', title, sender, message, notifPic, fractionId, icon, flashing, textColor, bgColor, flashColor);
+};
+
 methods.notifyToFraction = function (message, fractionId = 0) {
     mp.events.callRemote('server:players:notifyToFraction', message, fractionId);
 };

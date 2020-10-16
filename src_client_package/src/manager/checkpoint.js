@@ -101,6 +101,8 @@ mp.events.add('render', () => {
         //ui.drawText(`CP: ${itemList.length}`, 0, 0, 1, 255, 255, 255, 255, 0, 0, false, false);
         itemList.forEach(function (item, idx) {
             if (methods.distanceToPos(playerPos, new mp.Vector3(item.x, item.y, item.z)) <= 100) {
+                if (item.color[3] === 0)
+                    return;
                 mp.game.graphics.drawMarker(
                     1,
                     item.x, item.y, item.z,

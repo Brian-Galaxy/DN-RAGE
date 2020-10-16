@@ -1069,6 +1069,14 @@ mp.events.add('client:menuList:showMechanicAcceptFlipMenu', (id, price) => {
     menuList.showMechanicAcceptFlipMenu(id, price);
 });
 
+mp.events.add('client:menuList:showTradeBeachCreateMenu', (id) => {
+    menuList.showTradeBeachCreateMenu(id);
+});
+
+mp.events.add('client:menuList:showTradeBlackCreateMenu', (id) => {
+    menuList.showTradeBlackCreateMenu(id);
+});
+
 mp.events.add('client:showMazeBankHousePeopleListMenu', (data) => {
     menuList.showMazeBankHousePeopleListMenu(data);
 });
@@ -1564,6 +1572,16 @@ mp.events.add('client:showSellItemsMenu', (data) => {
     try {
         methods.debug('Event: client:showSellItemsMenu');
         menuList.showSellItemsMenu(data)
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.add('client:showTradeMenu', (data, ownerId, ownerType) => {
+    try {
+        methods.debug('Event: client:showTradeMenu');
+        menuList.showTradeMenu(data, ownerId, ownerType)
     }
     catch (e) {
         methods.debug(e);
@@ -2464,6 +2482,11 @@ mp.events.add('client:inventory:use', async function(id, itemId) {
         let id = methods.parseInt(await menuList.getUserInput("Введите ID игрока", "", 5));
         let sum = methods.parseInt(await menuList.getUserInput("Введите ставку", "", 9));
 
+        if (id === mp.players.local.remoteId) {
+            mp.game.ui.notifications.show("~r~Вы не можете играть в кости сами с собой");
+            return;
+        }
+
         let max = 25000;
         if (methods.distanceToPos(mp.players.local.position, new mp.Vector3(1110.3431396484375, 219.14230346679688, -50.440086364746094)) < 80)
             max = 1000000;
@@ -2493,7 +2516,7 @@ mp.events.add('client:inventory:usePlayer', function(id, itemId) {
     inventory.usePlayerItem(id, itemId);
 });
 
-mp.events.add('client:inventory:moveTo', function(id, itemId, ownerId, ownerType) {
+mp.events.add('client:inventory:moveTo', async function(id, itemId, ownerId, ownerType) {
     if (ownerType === 0) {
         if (mp.players.local.dimension > 0) {
             mp.game.ui.notifications.show("~r~Нельзя выбрасывать предметы в интерьере");
@@ -2514,6 +2537,12 @@ mp.events.add('client:inventory:moveTo', function(id, itemId, ownerId, ownerType
 
         inventory.dropItem(id, itemId, mp.players.local.position, mp.players.local.getRotation(0));
     }
+    else if (ownerType === inventory.types.TradeBeach && items.isTradeBeachInvalid(itemId)) {
+        mp.game.ui.notifications.show("~r~Вы не можете выставить на продажу этот предмет");
+    }
+    else if (ownerType === inventory.types.TradeBlack && items.isTradeBeachInvalid(itemId)) {
+        mp.game.ui.notifications.show("~r~Вы не можете выставить на продажу этот предмет");
+    }
     else if (ownerType === inventory.types.Bag && (itemId === 141 || itemId === 140)) {
         mp.game.ui.notifications.show("~r~Пачку денег нельзя сюда переложить");
     }
@@ -2526,8 +2555,21 @@ mp.events.add('client:inventory:moveTo', function(id, itemId, ownerId, ownerType
     else if (ownerType === inventory.types.BagSmall && itemId === 263 || ownerType === inventory.types.Bag && itemId === 264 || ownerType === inventory.types.BagArm && itemId === 252) {
         mp.game.ui.notifications.show("~r~Нельзя ложить сумку в сумку, образуется черная дыра и нам всем придёт ТАРКОВ");
     }
-    else
-        inventory.updateOwnerId(id, methods.parseInt(ownerId), ownerType);
+    else {
+        if (ownerType === inventory.types.TradeBeach || ownerType === inventory.types.TradeBlack) {
+            let price = methods.parseInt(await menuList.getUserInput('Цена', '', 10));
+            if (price < 1) {
+                mp.game.ui.notifications.show("~r~Цена не может быть меньше $1");
+                return ;
+            }
+            mp.game.ui.notifications.show("~g~Вы выставили предмет на продажу по цене: " + methods.moneyFormat(price));
+            inventory.updateOwnerIdWithPrice(id, methods.parseInt(ownerId), ownerType, price);
+            mp.gui.cursor.show(false, true);
+        }
+        else
+            inventory.updateOwnerId(id, methods.parseInt(ownerId), ownerType);
+
+    }
 });
 
 mp.events.add('client:inventory:moveToAll', function(ownerId, ownerType) {
@@ -3174,6 +3216,7 @@ mp.events.add("client:vehicle:checker", async function () {
                                 }
                                 catch (e) {
                                     methods.debug(e);
+                                    methods.saveFile('chip', e.toString());
                                 }
                             }
                         }
@@ -3181,7 +3224,7 @@ mp.events.add("client:vehicle:checker", async function () {
                 }
             }
             catch (e) {
-                
+                methods.saveFile('chip2', e.toString());
             }
 
             if (vehicle.getMod(18) >= 0 || vehicle.getVariable('boost') > 0) {
@@ -3509,6 +3552,8 @@ mp.keys.bind(113, true, function() {
 
 //F3
 mp.keys.bind(114, true, async function() {
+    if (ui.isGreenZone())
+        return ;
     let wpName = weapons.getNameByHash(user.getCurrentWeapon());
     if (weapons.getGunSlotId(wpName) === 4 && user.getAmmo(wpName) > 0) {
         user.playAnimation("mp_suicide", "pistol", 8);

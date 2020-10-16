@@ -1901,6 +1901,22 @@ user.isDepSubLeader2 = function() {
     return user.isLogin() && user.getCache('fraction_id2') > 0 && user.getCache('rank2') === 1;
 };
 
+user.isLeaderF = function() {
+    return user.isLogin() && user.getCache('is_leaderf');
+};
+
+user.isSubLeaderF = function() {
+    return user.isLogin() && user.getCache('is_sub_leaderf');
+};
+
+user.isDepLeaderF = function() {
+    return user.isLogin() && user.getCache('family_id') > 0 && user.getCache('rankf') === 0;
+};
+
+user.isDepSubLeaderF = function() {
+    return user.isLogin() && user.getCache('family_id') > 0 && user.getCache('rankf') === 1;
+};
+
 user.cuff = function() {
     mp.events.callRemote('server:user:cuff');
 };

@@ -669,6 +669,21 @@ methods.notifyWithPictureToFraction2 = function(title, sender, message, notifPic
     });
 };
 
+methods.notifyWithPictureToFractionF = function(title, sender, message, notifPic = 'CHAR_DEFAULT', fractionId = 0, icon = 0, flashing = false, textColor = -1, bgColor = -1, flashColor = [77, 77, 77, 200]) {
+    if (fractionId === 0)
+        return;
+    mp.players.forEach(function (p) {
+        if (user.isLogin(p) && user.get(p, 'family_id') == fractionId) {
+            try {
+                p.notifyWithPicture(title, sender, message, notifPic, icon, flashing, textColor, bgColor, flashColor);
+            }
+            catch (e) {
+
+            }
+        }
+    });
+};
+
 methods.notifyWithPictureToCanabisWar = function(title, sender, message, notifPic = 'CHAR_DEFAULT', fractionId = 0, icon = 0, flashing = false, textColor = -1, bgColor = -1, flashColor = [77, 77, 77, 200]) {
     if (fractionId === 0)
         methods.notifyWithPictureToFraction(title, sender, message, notifPic, 4);
@@ -963,6 +978,9 @@ methods.loadAllBlips = function () {
 
     methods.createBlip(new mp.Vector3(1074.1737060546875, -2009.465576171875, 31.08498764038086), 728, 5, 0.8, 'Литейный Завод');
     methods.createBlip(new mp.Vector3(706.1729125976562, -966.6583251953125, 29.412853240966797), 728, 3, 0.6, 'Швейная Фабрика');
+
+    methods.createBlip(new mp.Vector3(742.2985229492188, -925.4149780273438, 23.978235244750977), 728, 39, 0.6, 'Black Market');
+    methods.createBlip(new mp.Vector3(-1685.0235595703125, -763.0075073242188, 9.18997859954834), 728, 0, 0.6, 'Market');
 
     //methods.createBlip(new mp.Vector3(46.947, -1753.859, 46.508), 78, 68, 0.4, 'Торговый центр MegaMoll');
 

@@ -17,6 +17,7 @@ import bind from "./manager/bind";
 import jobPoint from "./manager/jobPoint";
 
 import fraction from "./property/fraction";
+import family from "./property/family";
 import timer from "./manager/timer";
 
 import tree from "./jobs/tree";
@@ -206,6 +207,9 @@ phone.apps = function(action) {
         case 'fraction2':
             phone.showAppFraction2();
             break;
+        case 'family':
+            phone.showAppFamily();
+            break;
         case 'invader':
             phone.showAppInvader();
             break;
@@ -253,6 +257,8 @@ phone.updateMainAppList = function() {
 
     if (user.getCache('fraction_id2') > 0)
         appList.push({ link: "/phone/android/umenu", action: 'fraction2', img: 'community', name: 'Орг.' });
+    if (user.getCache('family_id') > 0)
+        appList.push({ link: "/phone/android/umenu", action: 'family', img: 'community', name: 'Семья' });
 
     if (user.getCache('bank_card') > 0) {
 
@@ -1244,7 +1250,7 @@ phone.showAppFraction2 = async function() {
     }
 
     if (user.isLeader2() || user.isSubLeader2()) {
-        if (fData.get('is_shop')) {
+        if ((fData.get('is_mafia') || fData.get('is_war')) && fData.get('is_shop')) {
             let titleMenu = {
                 title: 'Ограбление магазинов',
                 umenu: [
@@ -1322,8 +1328,7 @@ phone.showAppFraction2 = async function() {
         };
         menu.items.push(titleMenu);
     }
-
-    if ((user.isDepLeader2() || user.isDepSubLeader2()) && user.getCache('rank_type') === 0) {
+    else if ((user.isDepLeader2() || user.isDepSubLeader2()) && user.getCache('rank_type') === 0) {
         let titleMenu = {
             title: 'Раздел для руководства',
             umenu: [
@@ -1351,6 +1356,159 @@ phone.showAppFraction2 = async function() {
                     type: 8,
                     clickable: true,
                     params: { name: "destroyFraction" }
+                },
+            ],
+        };
+        menu.items.push(titleMenu);
+    }
+
+    phone.showMenu(menu);
+};
+
+phone.showAppFamily = async function() {
+
+    let fData = await family.getData(user.getCache('family_id'));
+
+    let menu = {
+        UUID: 'family',
+        title: 'Ваша семья',
+        items: [
+            {
+                title: 'Основной раздел',
+                umenu: [
+                    {
+                        title: "Список членов семьи",
+                        type: 1,
+                        clickable: true,
+                        params: {name: "list"}
+                    },
+                    /*{
+                        title: "Статистика членов семьи",
+                        type: 1,
+                        clickable: true,
+                        params: {name: "slist"}
+                    },*/
+                    {
+                        title: "Иерархия",
+                        type: 1,
+                        clickable: true,
+                        params: {name: "hierarchy"}
+                    },
+                ],
+            },
+        ],
+    };
+
+    let item ={
+        title: "Перевести на счёт",
+        text: 'Перевод $ на счет вашей организации',
+        modalTitle: 'Сколько $ вы хотите перевести',
+        modalButton: ['Закрыть', 'Перевести'],
+        type: 8,
+        clickable: true,
+        params: {name: "moneyToFraction"}
+    };
+    menu.items[0].umenu.push(item);
+
+    if (user.isLeaderF()) {
+        item ={
+            title: "Перевести со счёта",
+            text: 'Перевод $ со счета вашей организации',
+            modalTitle: 'Сколько $ вы хотите перевести',
+            modalButton: ['Закрыть', 'Перевести'],
+            type: 8,
+            clickable: true,
+            params: {name: "fractionToMoney"}
+        };
+        menu.items[0].umenu.push(item);
+    }
+
+    let titleMenu1 = {
+        title: 'Связь',
+        umenu: [
+            {
+                title: "Написать членам семьи",
+                modalTitle: 'Введите текст',
+                modalButton: ['Отмена', 'Отправить'],
+                type: 8,
+                clickable: true,
+                params: { name: "sendFractionMessageF" }
+            },
+        ],
+    };
+    menu.items.push(titleMenu1);
+
+    if (!user.isLeaderF() && !user.isSubLeaderF()) {
+        let titleMenu2 = {
+            title: 'Покинуть семью',
+            umenu: [
+                {
+                    title: "Покинуть семью",
+                    type: 1,
+                    clickable: true,
+                    params: { name: "uninviteMe" }
+                },
+            ],
+        };
+        menu.items.push(titleMenu2);
+    }
+
+    if (user.isLeaderF() || user.isSubLeaderF()) {
+        let titleMenu = {
+            title: 'Раздел для руководства',
+            umenu: [
+                /*{
+                    title: "Лог семьи",
+                    type: 1,
+                    clickable: true,
+                    params: { name: "log" }
+                },*/
+                {
+                    title: "Текущее состояние бюджета",
+                    text: `${methods.moneyFormat(fData.get('money'))}`,
+                    type: 1,
+                    params: { name: "none" }
+                },
+                {
+                    title: "Принять в семью",
+                    modalTitle: 'Введите ID',
+                    modalButton: ['Отмена', 'Принять'],
+                    type: 8,
+                    clickable: true,
+                    params: { name: "inviteFamily" }
+                },
+            ],
+        };
+        menu.items.push(titleMenu);
+    }
+    else if ((user.isDepLeaderF() || user.isDepSubLeaderF())) {
+        let titleMenu = {
+            title: 'Раздел для руководства',
+            umenu: [
+                {
+                    title: "Принять в семью",
+                    modalTitle: 'Введите ID',
+                    modalButton: ['Отмена', 'Принять'],
+                    type: 8,
+                    clickable: true,
+                    params: { name: "inviteFamily" }
+                },
+            ],
+        };
+        menu.items.push(titleMenu);
+    }
+
+    if (user.isLeaderF() || user.isAdmin(3)) {
+        let titleMenu = {
+            title: 'Раздел для лидера',
+            umenu: [
+                {
+                    title: "Расформировать семью",
+                    modalTitle: 'Введите слово ДА',
+                    modalButton: ['Отмена', 'Расформировать'],
+                    type: 8,
+                    clickable: true,
+                    params: { name: "destroyFamily" }
                 },
             ],
         };
@@ -2583,6 +2741,45 @@ phone.showAppFractionEditRankMenu = async function(rank, dep) {
     phone.showMenu(menu);
 };
 
+phone.showAppFractionFEditRankMenu = async function(rank, dep) {
+
+    let fractionItem = await family.getData(user.getCache('family_id'));
+    let fractionItemRanks = JSON.parse(fractionItem.get('rank_list'));
+
+    let menu = {
+        UUID: 'fraction_hierarchyf',
+        title: `Редактирование - ${fractionItemRanks[dep][rank]}`,
+        items: [
+            {
+                title: 'Основной раздел',
+                umenu: [
+                    {
+                        title: 'Редактировать',
+                        text: '',
+                        modalTitle: 'Введите название ранга',
+                        modalValue: rank,
+                        modalButton: ['Отмена', 'Редактировать'],
+                        type: 8,
+                        params: { name: "editFractionRankF", depId: dep, rankId: rank },
+                        clickable: true,
+                    },
+                    {
+                        title: 'Удалить',
+                        text: '',
+                        modalTitle: 'Вы точно хотите удалить?',
+                        modalButton: ['Отмена', 'Удалить'],
+                        type: 7,
+                        params: { name: "deleteFractionRankF", depId: dep, rankId: rank },
+                        clickable: true,
+                    },
+                ],
+            }
+        ]
+    };
+
+    phone.showMenu(menu);
+};
+
 phone.showAppFractionHierarchy2 = async function() {
 
     let fractionItem = await fraction.getData(user.getCache('fraction_id2'));
@@ -2755,6 +2952,214 @@ phone.showAppFractionHierarchy2 = async function() {
 
         let menu = {
             UUID: 'fraction_hierarchy2',
+            title: `Иерархия - ${fractionItem.get('name')}`,
+            items: [
+                {
+                    title: 'Руководство',
+                    umenu: [
+                        {
+                            title: fractionItem.get('rank_leader'),
+                            type: 1,
+                            params: { name: "none" }
+                        },
+                        {
+                            title: fractionItem.get('rank_sub_leader'),
+                            type: 1,
+                            params: { name: "none" }
+                        },
+                    ],
+                }
+            ]
+        };
+
+        fractionItemDep.forEach((item, i) => {
+            let menuItem = {
+                title: item,
+                umenu: [],
+            };
+
+            fractionItemRanks[i].forEach((rank, ri) => {
+                let desc = '';
+                if (ri == 0)
+                    desc = 'Глава';
+                else if(ri == 1)
+                    desc = 'Зам. главы';
+                menuItem.umenu.push(
+                    {
+                        title: rank,
+                        text: desc,
+                        type: 1,
+                        params: { name: "none" }
+                    },
+                );
+            });
+
+            menu.items.push(menuItem);
+        });
+
+        phone.showMenu(menu);
+    }
+};
+
+phone.showAppFractionHierarchyF = async function() {
+
+    let fractionItem = await family.getData(user.getCache('family_id'));
+    let fractionItemRanks = JSON.parse(fractionItem.get('rank_list'));
+    let fractionItemDep = JSON.parse(fractionItem.get('rank_type_list'));
+
+    if (user.isLeader2()) {
+        try {
+            let menu = {
+                UUID: 'fraction_hierarchyf',
+                title: `Иерархия - ${fractionItem.get('name')}`,
+                items: [
+                    {
+                        title: 'Основной раздел',
+                        umenu: [
+                            /*{
+                                title: fractionItem.get('name'),
+                                modalTitle: 'Введите название организации',
+                                modalValue: fractionItem.get('name'),
+                                modalButton: ['Отмена', 'Переименовать'],
+                                type: 8,
+                                params: { name: "editFractionName" },
+                                clickable: true,
+                            },*/
+                            {
+                                title: 'Создать новый раздел',
+                                modalTitle: 'Введите название раздела',
+                                modalButton: ['Отмена', 'Создать'],
+                                type: 8,
+                                params: { name: "createFractionDepF" },
+                                clickable: true,
+                            },
+                        ],
+                    },
+                    {
+                        title: 'Руководство',
+                        umenu: [
+                            {
+                                title: fractionItem.get('rank_leader'),
+                                modalTitle: 'Введите название ранга',
+                                modalValue: fractionItem.get('rank_leader'),
+                                modalButton: ['Отмена', 'Редактировать'],
+                                type: 8,
+                                params: { name: "editFractionLeaderF" },
+                                clickable: true,
+                            },
+                            {
+                                title: fractionItem.get('rank_sub_leader'),
+                                modalTitle: 'Введите название ранга',
+                                modalValue: fractionItem.get('rank_sub_leader'),
+                                modalButton: ['Отмена', 'Редактировать'],
+                                type: 8,
+                                params: { name: "editFractionSubLeaderF" },
+                                clickable: true,
+                            },
+                        ],
+                    }
+                ]
+            };
+
+            fractionItemDep.forEach((item, i) => {
+                let menuItem = {
+                    title: item,
+                    umenu: [],
+                };
+
+                fractionItemRanks[i].forEach((rank, ri) => {
+                    let desc = '';
+                    if (ri == 0)
+                        desc = 'Глава';
+                    else if(ri == 1)
+                        desc = 'Зам. главы';
+                    menuItem.umenu.push(
+                        {
+                            title: rank,
+                            text: desc,
+                            type: 1,
+                            params: { name: "editFractionRankMenuF", rankId: ri, depId: i },
+                            clickable: true,
+                        },
+                    );
+                });
+
+                if (i > 0) {
+                    menuItem.umenu.push(
+                        {
+                            title: 'Добавить должность',
+                            text: '',
+                            modalTitle: 'Введите название ранга',
+                            modalButton: ['Отмена', 'Добавить'],
+                            type: 8,
+                            params: { name: "addFractionRankF", depId: i },
+                            clickable: true,
+                        },
+                    );
+                    menuItem.umenu.push(
+                        {
+                            title: 'Редактировать название раздела',
+                            text: '',
+                            modalTitle: 'Введите название раздела',
+                            modalValue: item,
+                            modalButton: ['Отмена', 'Добавить'],
+                            type: 8,
+                            params: { name: "editFractionDepF", depId: i },
+                            clickable: true,
+                        },
+                    );
+
+                    menuItem.umenu.push(
+                        {
+                            title: 'Удалить раздел',
+                            text: '',
+                            modalTitle: 'Вы точно хотите удалить?',
+                            modalButton: ['Отмена', 'Удалить'],
+                            type: 7,
+                            params: { name: "deleteFractionDepF", depId: i },
+                            clickable: true,
+                        },
+                    );
+                }
+                else {
+                    menuItem.umenu.push(
+                        {
+                            title: 'Добавить должность',
+                            text: '',
+                            modalTitle: 'Введите название ранга',
+                            modalButton: ['Отмена', 'Добавить'],
+                            type: 8,
+                            params: { name: "addFractionRankF", depId: i },
+                            clickable: true,
+                        },
+                    );
+                    menuItem.umenu.push(
+                        {
+                            title: 'Редактировать название раздела',
+                            text: '',
+                            modalTitle: 'Введите название раздела',
+                            modalValue: item,
+                            modalButton: ['Отмена', 'Добавить'],
+                            type: 8,
+                            params: { name: "editFractionDepF", depId: i },
+                            clickable: true,
+                        },
+                    );
+                }
+
+                menu.items.push(menuItem);
+            });
+
+            phone.showMenu(menu);
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    }
+    else {
+
+        let menu = {
+            UUID: 'fraction_hierarchyf',
             title: `Иерархия - ${fractionItem.get('name')}`,
             items: [
                 {
@@ -4730,6 +5135,14 @@ phone.callBackRadio = function(checked, id, ...args) {
             mp.events.callRemote('server:user:newDep2', params.memberId, params.depId);
             phone.showAppFraction2();
         }
+        if (params.name == 'memberNewRank2') {
+            mp.events.callRemote('server:user:newRankF', params.memberId, params.rankId);
+            phone.showAppFamily();
+        }
+        if (params.name == 'memberNewDep2') {
+            mp.events.callRemote('server:user:newDepF', params.memberId, params.depId);
+            phone.showAppFamily();
+        }
         if (params.name == 'vehicleNewRank') {
             mp.events.callRemote('server:fraction:vehicleNewRank', params.memberId, params.rankId);
             phone.showAppFraction();
@@ -4774,6 +5187,22 @@ phone.callBackModal = function(paramsJson) {
         if (params.name == 'memberTakeSubLeader2') {
             mp.events.callRemote('server:user:takeSubLeader2', params.memberId);
             phone.showAppFraction2();
+        }
+        if (params.name == 'memberUninviteF') {
+            mp.events.callRemote('server:user:uninviteF', params.memberId);
+            phone.showAppFamily();
+        }
+        if (params.name == 'memberGiveSubLeaderF') {
+            mp.events.callRemote('server:user:giveSubLeaderF', params.memberId);
+            phone.showAppFamily();
+        }
+        if (params.name == 'memberGiveLeaderF') {
+            mp.events.callRemote('server:user:giveLeaderF', params.memberId);
+            phone.showAppFamily();
+        }
+        if (params.name == 'memberTakeSubLeaderF') {
+            mp.events.callRemote('server:user:takeSubLeaderF', params.memberId);
+            phone.showAppFamily();
         }
         if (params.name == 'fractionVehicleBuy') {
             mp.events.callRemote('server:fraction:vehicleBuy', params.vehId, params.price);
@@ -4836,6 +5265,9 @@ phone.callBackModalInput = async function(paramsJson, text) {
         if (params.name == 'inviteFraction2') {
             mp.events.callRemote('server:phone:inviteFraction2', methods.parseInt(text));
         }
+        if (params.name == 'inviteFamily') {
+            mp.events.callRemote('server:phone:inviteFamily', methods.parseInt(text));
+        }
         if (params.name == 'changeClear') {
             let prc = methods.parseInt(text);
             if (prc < 0) {
@@ -4856,6 +5288,12 @@ phone.callBackModalInput = async function(paramsJson, text) {
         if (params.name == 'destroyFraction') {
             if (text.toLowerCase() === 'да')
                 mp.events.callRemote('server:phone:destroyFraction');
+            else
+                mp.game.ui.notifications.show(`~r~Вы не ввели слово "да"`);
+        }
+        if (params.name == 'destroyFamily') {
+            if (text.toLowerCase() === 'да')
+                mp.events.callRemote('server:phone:destroyFamily');
             else
                 mp.game.ui.notifications.show(`~r~Вы не ввели слово "да"`);
         }
@@ -4887,6 +5325,30 @@ phone.callBackModalInput = async function(paramsJson, text) {
         if (params.name == 'addFractionRank') {
             mp.events.callRemote('server:phone:addFractionRank', text, params.depId);
             setTimeout(phone.showAppFractionHierarchy2, 300);
+        }
+        if (params.name == 'createFractionDepF') {
+            mp.events.callRemote('server:phone:createFractionDepF', text);
+            setTimeout(phone.showAppFractionHierarchyF, 300);
+        }
+        if (params.name == 'editFractionLeaderF') {
+            mp.events.callRemote('server:phone:editFractionLeaderF', text);
+            setTimeout(phone.showAppFractionHierarchyF, 300);
+        }
+        if (params.name == 'editFractionSubLeaderF') {
+            mp.events.callRemote('server:phone:editFractionSubLeaderF', text);
+            setTimeout(phone.showAppFractionHierarchyF, 300);
+        }
+        if (params.name == 'editFractionRankF') {
+            mp.events.callRemote('server:phone:editFractionRankF', text, params.rankId, params.depId);
+            setTimeout(phone.showAppFractionHierarchyF, 300);
+        }
+        if (params.name == 'editFractionDepF') {
+            mp.events.callRemote('server:phone:editFractionDepF', text, params.depId);
+            setTimeout(phone.showAppFractionHierarchyF, 300);
+        }
+        if (params.name == 'addFractionRankF') {
+            mp.events.callRemote('server:phone:addFractionRankF', text, params.depId);
+            setTimeout(phone.showAppFractionHierarchyF, 300);
         }
         if (params.name == 'fractionBenefit') {
             let price = methods.parseFloat(text);
@@ -5076,7 +5538,9 @@ phone.callBackModalInput = async function(paramsJson, text) {
             }, 60000);
         }
         if (params.name == 'getPayDay') {
+            let tax = await coffer.getTaxPayDay();
             let sum = methods.parseFloat(text);
+
             if (sum < 0) {
                 user.sendSmsBankOperation('Ошибка транзакции', 'Зарплата');
                 return;
@@ -5085,7 +5549,6 @@ phone.callBackModalInput = async function(paramsJson, text) {
                 user.sendSmsBankOperation('У Вас недостаточно средств', 'Зарплата');
                 return;
             }
-            let tax = await coffer.getTaxPayDay();
             let money = methods.parseInt(sum * (100 - tax) / 100);
             user.removePayDayMoney(money);
             user.addBankMoney(money, 'Перевод с зарплатного счёта');
@@ -5155,6 +5618,36 @@ phone.callBackModalInput = async function(paramsJson, text) {
 
             setTimeout(phone.showAppEcorp, 200);
         }
+        if (params.name == 'moneyToFraction') {
+            let sum = methods.parseFloat(text);
+            if (sum < 0) {
+                user.sendSmsBankOperation('Ошибка транзакции', 'Ошибка');
+                return;
+            }
+            if (sum > user.getMoney()) {
+                user.sendSmsBankOperation('У Вас недостаточно средств', 'Ошибка');
+                return;
+            }
+            user.removeMoney(sum, 'Перевод $');
+            family.addMoney(user.getCache('family_id'), sum, 'Перевод $ от ' + user.getCache('name'));
+
+            //setTimeout(phone.showAppEcorp, 200);
+        }
+        if (params.name == 'fractionToMoney') {
+            let sum = methods.parseFloat(text);
+            if (sum < 0) {
+                user.sendSmsBankOperation('Ошибка транзакции', 'Ошибка');
+                return;
+            }
+            if (sum > await fraction.getMoney(user.getCache('family_id'))) {
+                user.sendSmsBankOperation('У Вас недостаточно средств', 'Ошибка');
+                return;
+            }
+            user.addMoney(sum, 'Перевод $');
+            family.removeMoney(user.getCache('family_id'), sum, 'Перевод из $ от ' + user.getCache('name'));
+
+            //setTimeout(phone.showAppEcorp, 200);
+        }
         if (params.name == 'sendFractionMessage') {
             let title = user.getCache('name');
             switch (user.getCache('fraction_id')) {
@@ -5187,6 +5680,10 @@ phone.callBackModalInput = async function(paramsJson, text) {
         if (params.name == 'sendFractionMessage2') {
             let title = user.getCache('name');
             methods.notifyWithPictureToFraction2(title, `Организация`, text, 'CHAR_DEFAULT', user.getCache('fraction_id2'));
+        }
+        if (params.name == 'sendFractionMessageF') {
+            let title = user.getCache('name');
+            methods.notifyWithPictureToFractionF(title, `СЕМЬЯ`, text, 'CHAR_DEFAULT', user.getCache('family_id'));
         }
         if (params.name == 'sendFractionNews') {
             let title = user.getCache('name');
@@ -5331,6 +5828,8 @@ phone.callBackButton = async function(menu, id, ...args) {
                 phone.showAppFraction();
             if (params.name == 'fraction2')
                 phone.showAppFraction2();
+            if (params.name == 'family')
+                phone.showAppFamily();
             if (params.name == 'bank')
                 phone.showAppBank();
             if (params.name == 'ecorp')
@@ -5728,9 +6227,42 @@ phone.callBackButton = async function(menu, id, ...args) {
                 }
             }
         }
+        if (menu == 'family') {
+            if (params.name == 'hierarchy')
+                phone.showAppFractionHierarchyF();
+            else if (params.name == 'list') {
+                mp.events.callRemote('server:phone:fractionListF');
+                phone.showLoad();
+            }
+            else if (params.name == 'slist') {
+                mp.events.callRemote('server:phone:fractionStListF');
+                phone.showLoad();
+            }
+            else if (params.name == 'log') {
+                mp.events.callRemote('server:phone:fractionLogF');
+                phone.showLoad();
+            }
+            else if (params.name == 'memberAction') {
+                mp.events.callRemote('server:phone:memberActionF', params.memberId);
+                phone.showLoad();
+            }
+            else if (params.name == 'uninviteMe') {
+                user.set('is_leaderf', 0);
+                user.set('is_sub_leaderf', 0);
+                user.set('family_id', 0);
+                user.set('rankf', 0);
+                user.set('rank_typef', 0);
+                mp.game.ui.notifications.show(`~g~Вы покинули семью`);
+            }
+        }
         if (menu === 'fraction_hierarchy2') {
             if (params.name == 'editFractionRankMenu') {
                 phone.showAppFractionEditRankMenu(params.rankId, params.depId);
+            }
+        }
+        if (menu === 'fraction_hierarchyf') {
+            if (params.name == 'editFractionRankMenu') {
+                phone.showAppFractionFEditRankMenu(params.rankId, params.depId);
             }
         }
     }

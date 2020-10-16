@@ -49,6 +49,18 @@ items.isAmmo = function(itemId) {
     return itemId >= 279 && itemId <= 292;
 };
 
+items.isDrug = function(itemId) {
+    return itemId >= 154 && itemId <= 180 || itemId === 2 && itemId === 3;
+};
+
+items.isTradeBeachInvalid = function(itemId) {
+    return items.isWeapon(itemId) || items.isAmmo(itemId) || items.isDrug(itemId) || itemId === 50 || itemId === 140 || itemId === 141 || itemId === 252;
+};
+
+items.isTradeBlackInvalid = function(itemId) {
+    return !items.isWeapon(itemId) && !items.isAmmo(itemId) && !items.isDrug(itemId) || itemId === 50 || itemId === 140 || itemId === 141;
+};
+
 items.getItemFormat = function(item) {
     let params = {};
 
@@ -143,20 +155,20 @@ items.getAmmoCount = function(itemId) {
         case 279:
         case 288:
         case 290:
-            return 10;
+            return 20;
         case 280:
-            return 140;
+            return 280;
         case 281:
-            return 120;
+            return 240;
         case 282:
-            return 130;
+            return 220;
         case 283:
         case 284:
-            return 260;
+            return 480;
         case 285:
         case 286:
         case 287:
-            return 60;
+            return 180;
         case 289:
         case 291:
         case 292:

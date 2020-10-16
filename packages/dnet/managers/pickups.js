@@ -15,6 +15,7 @@ let bar = require('../business/bar');
 let barberShop = require('../business/barberShop');
 let bank = require('../business/bank');
 let shop = require('../business/shop');
+let tradeMarket = require('../business/tradeMarket');
 
 let gangZone = require('./gangZone');
 let racer = require('./racer');
@@ -573,6 +574,7 @@ pickups.checkPressE = function(player) {
     bank.checkPosForOpenMenu(player);
     bank.hackFleecaDoor(player);
     shop.checkPosForOpenMenu(player);
+    tradeMarket.checkPosForOpenMenu(player);
 
     if (methods.distanceToPos(pickups.LifeInvaderShopPos, playerPos) < distanceCheck)
         player.call('client:menuList:showInvaderShopMenu');

@@ -111,6 +111,10 @@ lsc.checkPosForOpenMenu = function(player) {
                         player.notify('~r~Доступно только на водительском');
                         return;
                     }
+                    if (player.vehicle.getVariable('cargoId')) {
+                        player.notify('~r~Данное ТС запрещено тюнинговать');
+                        return;
+                    }
                     player.call('client:menuList:showLscMenu', [shopId, business.getPrice(shopId)]);
                 }
                 catch (e) {
@@ -568,7 +572,7 @@ lsc.buySTun = function(player, modType, idx, price, shopId, itemName, payType) {
     business.removeMoneyTax(shopId, price / business.getPrice(shopId));
 
     player.call('client:vehicle:resetHandling');
-    user.showCustomNotify(player, 'Вы обновили ваш транспорт по цене: ' + methods.moneyFormat(price), 2, 9);
+    user.showCustomNotify(player, 'Вы обновили ваш транспорт по цене', 2, 9);
     vehicles.save(veh.getVariable('container'));
 };
 

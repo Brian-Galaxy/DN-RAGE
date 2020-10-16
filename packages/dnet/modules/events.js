@@ -21,6 +21,7 @@ let business = require('../property/business');
 let vehicles = require('../property/vehicles');
 let fraction = require('../property/fraction');
 let yachts = require('../property/yachts');
+let family = require('../property/family');
 
 let cloth = require('../business/cloth');
 let tattoo = require('../business/tattoo');
@@ -34,6 +35,7 @@ let fuel = require('../business/fuel');
 let bar = require('../business/bar');
 let barberShop = require('../business/barberShop');
 let carWash = require('../business/carWash');
+let tradeMarket = require('../business/tradeMarket');
 
 let pickups = require('../managers/pickups');
 let dispatcher = require('../managers/dispatcher');
@@ -773,6 +775,10 @@ mp.events.addRemoteCounted('server:players:notifyWithPictureToFraction', (player
 
 mp.events.addRemoteCounted('server:players:notifyWithPictureToFraction2', (player, title, sender, message, notifPic, fractionId, icon, flashing, textColor, bgColor, flashColor) => {
     methods.notifyWithPictureToFraction2(title, sender, message, notifPic, fractionId, icon, flashing, textColor, bgColor, flashColor);
+});
+
+mp.events.addRemoteCounted('server:players:notifyWithPictureToFractionF', (player, title, sender, message, notifPic, fractionId, icon, flashing, textColor, bgColor, flashColor) => {
+    methods.notifyWithPictureToFractionF(title, sender, message, notifPic, fractionId, icon, flashing, textColor, bgColor, flashColor);
 });
 
 mp.events.addRemoteCounted('server:players:notifyToFraction', (player, message, fractionId) => {
@@ -2795,6 +2801,26 @@ mp.events.addRemoteCounted('server:fraction:save', (player, id) => {
     fraction.save(id);
 });
 
+mp.events.addRemoteCounted('server:family:addMoney', (player, id, money, itemName) => {
+    family.addMoney(id, money, itemName);
+});
+
+mp.events.addRemoteCounted('server:family:removeMoney', (player, id, money, itemName) => {
+    family.removeMoney(id, money, itemName);
+});
+
+mp.events.addRemoteCounted('server:family:setMoney', (player, id, money, itemName) => {
+    family.setMoney(id, money, itemName);
+});
+
+mp.events.addRemoteCounted('server:family:save', (player, id) => {
+    family.save(id);
+});
+
+mp.events.addRemoteCounted('server:family:create', (player, name) => {
+    family.create(player, name);
+});
+
 mp.events.addRemoteCounted('server:user:addMoney', (player, money, text) => {
     user.addMoney(player, money, text);
 });
@@ -3459,6 +3485,18 @@ mp.events.addRemoteCounted('server:phone:fractionStList2', (player) => {
     phone.fractionList2(player, true);
 });
 
+mp.events.addRemoteCounted('server:phone:fractionListF', (player) => {
+    if (!user.isLogin(player))
+        return;
+    phone.fractionListF(player);
+});
+
+mp.events.addRemoteCounted('server:phone:fractionStListF', (player) => {
+    if (!user.isLogin(player))
+        return;
+    phone.fractionListF(player, true);
+});
+
 mp.events.addRemoteCounted('server:phone:fractionAll', (player) => {
     if (!user.isLogin(player))
         return;
@@ -3559,6 +3597,12 @@ mp.events.addRemoteCounted('server:phone:memberAction2', (player, id) => {
     phone.memberAction2(player, id);
 });
 
+mp.events.addRemoteCounted('server:phone:memberActionF', (player, id) => {
+    if (!user.isLogin(player))
+        return;
+    phone.memberActionF(player, id);
+});
+
 mp.events.addRemoteCounted('server:phone:getUserInfo', (player, text) => {
     if (!user.isLogin(player))
         return;
@@ -3615,6 +3659,49 @@ mp.events.addRemoteCounted('server:phone:inviteFraction2', (player, id) => {
         user.set(target, 'is_sub_leader2', false);
 
         target.notify('~g~Вас приняли в организацию');
+        player.notify('~b~Вы приняли: ~s~' + user.getRpName(target));
+
+        user.save(target);
+    }
+    else {
+        player.notify('~r~Игрок не найден');
+    }
+});
+
+mp.events.addRemoteCounted('server:phone:inviteFamily', (player, id) => {
+    if (!user.isLogin(player))
+        return;
+
+    id = methods.parseInt(id);
+    let target = mp.players.at(id);
+    if (user.isLogin(target)) {
+
+        if (target.id == player.id) {
+            player.notify('~r~Здравствуйте, я хотел вставить сюда шутку, но я ее не придумал, в общем, как ты собрался самого себя принять в организацию в которой ты уже состоишь?');
+            return;
+        }
+
+        if (methods.distanceToPos(target.position, player.position) > 5) {
+            player.notify('~r~Вы слишком далеко друг от друга');
+            return;
+        }
+
+        if (user.get(target, 'family_id') > 0) {
+            player.notify('~r~Игрок уже состоит в семье');
+            return;
+        }
+
+        let fractionId = user.get(player, 'family_id');
+
+        let rank = JSON.parse(fraction.getData(fractionId).get('rank_list'))[0].length - 1;
+
+        user.set(target, 'rankf', rank);
+        user.set(target, 'rank_typef', 0);
+        user.set(target, 'family_id', fractionId);
+        user.set(target, 'is_leaderf', false);
+        user.set(target, 'is_sub_leaderf', false);
+
+        target.notify('~g~Вас приняли в семью');
         player.notify('~b~Вы приняли: ~s~' + user.getRpName(target));
 
         user.save(target);
@@ -3703,6 +3790,12 @@ mp.events.addRemoteCounted('server:phone:destroyFraction', (player) => {
     fraction.destroy(player, user.get(player, 'fraction_id2'));
 });
 
+mp.events.addRemoteCounted('server:phone:destroyFamily', (player) => {
+    if (!user.isLogin(player))
+        return;
+    family.destroy(player, user.get(player, 'family_id'));
+});
+
 mp.events.addRemoteCounted('server:phone:editFractionName', (player, text) => {
     if (!user.isLogin(player))
         return;
@@ -3755,6 +3848,54 @@ mp.events.addRemoteCounted('server:phone:addFractionRank', (player, text, depId)
     if (!user.isLogin(player))
         return;
     fraction.addFractionRank(player, text, depId);
+});
+
+mp.events.addRemoteCounted('server:phone:editFractionLeaderF', (player, text) => {
+    if (!user.isLogin(player))
+        return;
+    family.editFractionLeader(player, text);
+});
+
+mp.events.addRemoteCounted('server:phone:editFractionSubLeaderF', (player, text) => {
+    if (!user.isLogin(player))
+        return;
+    family.editFractionSubLeader(player, text);
+});
+
+mp.events.addRemoteCounted('server:phone:createFractionDepF', (player, text) => {
+    if (!user.isLogin(player))
+        return;
+    family.createFractionDep(player, text);
+});
+
+mp.events.addRemoteCounted('server:phone:editFractionRankF', (player, text, rankId, depId) => {
+    if (!user.isLogin(player))
+        return;
+    family.editFractionRank(player, text, rankId, depId);
+});
+
+mp.events.addRemoteCounted('server:phone:deleteFractionRankF', (player, rankId, depId) => {
+    if (!user.isLogin(player))
+        return;
+    family.deleteFractionRank(player, rankId, depId);
+});
+
+mp.events.addRemoteCounted('server:phone:editFractionDepF', (player, text, depId) => {
+    if (!user.isLogin(player))
+        return;
+    family.editFractionDep(player, text, depId);
+});
+
+mp.events.addRemoteCounted('server:phone:deleteFractionDepF', (player, depId) => {
+    if (!user.isLogin(player))
+        return;
+    family.deleteFractionDep(player, depId);
+});
+
+mp.events.addRemoteCounted('server:phone:addFractionRankF', (player, text, depId) => {
+    if (!user.isLogin(player))
+        return;
+    family.addFractionRank(player, text, depId);
 });
 
 mp.events.addRemoteCounted('server:phone:fractionVehicleAction', (player, id) => {
@@ -3817,6 +3958,8 @@ mp.events.addRemoteCounted('server:phone:userLockById', (player, id) => {
         return;
     mp.vehicles.forEach(v => {
         if (v.getVariable('vid') == id) {
+            if (v.getVariable('useless'))
+                return;
             vehicles.lockStatus(player, v);
         }
     });
@@ -3827,6 +3970,8 @@ mp.events.addRemoteCounted('server:phone:userEngineById', (player, id) => {
         return;
     mp.vehicles.forEach(v => {
         if (v.getVariable('vid') == id) {
+            if (v.getVariable('useless'))
+                return;
             vehicles.engineStatus(player, v);
         }
     });
@@ -3925,6 +4070,10 @@ mp.events.addRemoteCounted('server:inventory:updateOwnerId', (player, id, ownerI
     inventory.updateOwnerId(id, ownerId, ownerType);
 });
 
+mp.events.addRemoteCounted('server:inventory:updateOwnerIdWithPrice', (player, id, ownerId, ownerType, price) => {
+    inventory.updateOwnerIdWithPrice(id, ownerId, ownerType, price);
+});
+
 mp.events.addRemoteCounted('server:inventory:updateOwnerAll', (player, oldOwnerId, oldOwnerType, ownerId, ownerType) => {
     inventory.updateOwnerAll(oldOwnerId, oldOwnerType, ownerId, ownerType);
 });
@@ -3997,6 +4146,97 @@ mp.events.addRemoteCounted('server:inventory:useItem', (player, id, itemId) => {
 
 mp.events.addRemoteCounted('server:inventory:usePlayerItem', (player, id, itemId) => {
     inventory.usePlayerItem(player, id, itemId);
+});
+
+mp.events.addRemoteCounted('server:tradeMarket:rentBeach', (player, idx) => {
+    if (!user.isLogin(player))
+        return;
+    if (user.getCashMoney(player) < 1000) {
+        player.notify('~r~У вас нет при себе $1000');
+        return;
+    }
+    if (tradeMarket.getBeach(idx, 'rent')) {
+        player.notify('~r~Палатка уже арендована');
+        return;
+    }
+    if (user.has(player, 'rentTrade')) {
+        player.notify('~r~Вы уже арендовали палатку');
+        return;
+    }
+    user.set(player, 'rentTrade', idx);
+    user.removeCashMoney(player, 1000, 'Аренда палатки');
+    tradeMarket.setBeach(idx, 'rent', user.getId(player));
+    tradeMarket.getAllBeach().get(idx.toString()).marker.visible = true;
+    user.updateClientCache(player);
+    player.notify('~g~Вы арендовали палатку');
+});
+
+mp.events.addRemoteCounted('server:tradeMarket:unrentBeach', (player, idx) => {
+    if (!user.isLogin(player))
+        return;
+    user.reset(player, 'rentTrade', idx);
+    tradeMarket.setBeach(idx, 'rent', 0);
+    tradeMarket.getAllBeach().get(idx.toString()).marker.visible = false;
+    user.updateClientCache(player);
+    player.notify('~y~Вы завершили аренду');
+    inventory.updateOwnerAll(user.getId(player), inventory.types.TradeBeach, user.getId(player), inventory.types.Player);
+});
+
+mp.events.addRemoteCounted('server:tradeMarket:rentBlack', (player, idx) => {
+    if (!user.isLogin(player))
+        return;
+    if (user.getCashMoney(player) < 2000) {
+        player.notify('~r~У вас нет при себе $2000');
+        return;
+    }
+    if (tradeMarket.getBeach(idx, 'rent')) {
+        player.notify('~r~Палатка уже арендована');
+        return;
+    }
+    if (user.has(player, 'rentTrade')) {
+        player.notify('~r~Вы уже арендовали палатку');
+        return;
+    }
+    user.set(player, 'rentTrade', idx);
+    user.removeCashMoney(player, 2000, 'Аренда палатки');
+    tradeMarket.setBlack(idx, 'rent', user.getId(player));
+    tradeMarket.getAllBlack().get(idx.toString()).marker.visible = true;
+    user.updateClientCache(player);
+    player.notify('~g~Вы арендовали палатку');
+});
+
+mp.events.addRemoteCounted('server:tradeMarket:unrentBlack', (player, idx) => {
+    if (!user.isLogin(player))
+        return;
+    user.reset(player, 'rentTrade', idx);
+    tradeMarket.setBlack(idx, 'rent', 0);
+    tradeMarket.getAllBlack().get(idx.toString()).marker.visible = false;
+    user.updateClientCache(player);
+    player.notify('~y~Вы завершили аренду');
+    inventory.updateOwnerAll(user.getId(player), inventory.types.TradeBlack, user.getId(player), inventory.types.Player);
+});
+
+mp.events.addRemoteCounted('server:tradeMarket:buy', (player, id, price, name, ownerId) => {
+    if (!user.isLogin(player))
+        return;
+    if (user.getCashMoney(player) < price) {
+        player.notify('~r~У вас нет при себе ' + methods.moneyFormat(price));
+        return;
+    }
+    let seller = user.getPlayerById(ownerId);
+    if (!user.isLogin(seller))
+    {
+        player.notify('~r~Продавец не в сети');
+        return;
+    }
+
+    let priceWithTax = price * ((100 - coffer.getTaxIntermediate()) / 100);
+    inventory.updateOwnerId(id, user.getId(player), inventory.types.Player);
+    user.removeCashMoney(player, price, 'Покупка на рынке: ' + name);
+    user.addCashMoney(seller, priceWithTax, 'Продажа на рынке: ' + name);
+
+    seller.notify(`~g~Вы продали ~s~"${name}" ~g~по цене ~s~${methods.moneyFormat(priceWithTax)}~g~ с учетом налога ~s~${coffer.getTaxIntermediate()}%`);
+    player.notify(`~g~Вы купили ~s~"${name}"~g~ по цене ~s~${methods.moneyFormat(price)}`);
 });
 
 mp.events.addRemoteCounted("server:showVehMenu", (player) => {
@@ -5804,6 +6044,11 @@ mp.events.addRemoteCounted('server:car:buyBot', (player, remoteId, vid, payType)
     let vData = vehicles.getData(vid);
     let sum = vData.get('sell_price');
 
+    if (sum === 0) {
+        player.notify('~r~Транспорт был убран с продажи');
+        return;
+    }
+
     if (user.getMoney(player, payType) < sum) {
         player.notify('~r~У Вас нет столько денег');
         return;
@@ -6158,6 +6403,37 @@ mp.events.addRemoteCounted('server:user:uninvite2', (player, id) => {
     else {
         mysql.executeQuery(`UPDATE users SET rank2 = '0', rank_type2 = '0', fraction_id2 = '0', is_sub_leader2 = '0' where id = '${id}' AND is_leader2 <> 1`);
         player.notify('~b~Вы уволили сотрудника');
+    }
+});
+
+mp.events.addRemoteCounted('server:user:uninviteF', (player, id) => {
+
+    if (!user.isLogin(player))
+        return;
+
+    if (!user.isLeaderF(player) && !user.isSubLeaderF(player)) {
+        player.notify('~r~Вы не лидер чтобы уволнять или зам лидера');
+        return;
+    }
+
+    id = methods.parseInt(id);
+    let target = user.getPlayerById(id);
+    if (user.isLogin(target)) {
+
+        user.set(target, 'rankf', 0);
+        user.set(target, 'rank_typef', 0);
+        user.set(target, 'family_id', 0);
+        user.set(target, 'is_leaderf', false);
+        user.set(target, 'is_sub_leaderf', false);
+
+        target.notify('~r~Вас выгнали из семьи');
+        player.notify('~b~Вы уволили: ~s~' + user.getRpName(target));
+
+        user.save(target);
+    }
+    else {
+        mysql.executeQuery(`UPDATE users SET rankа = '0', rank_typeа = '0', family_id = '0', is_sub_leaderа = '0' where id = '${id}' AND is_leaderа <> 1`);
+        player.notify('~b~Вы уволили члена семьи');
     }
 });
 
@@ -6533,6 +6809,33 @@ mp.events.addRemoteCounted('server:user:giveSubLeader2', (player, id) => {
     }
 });
 
+mp.events.addRemoteCounted('server:user:giveSubLeaderF', (player, id) => {
+
+    if (!user.isLogin(player))
+        return;
+
+    if (!user.isLeaderF(player)) {
+        player.notify('~r~Вы не лидер чтобы выдавать такие полномочия');
+        return;
+    }
+
+    id = methods.parseInt(id);
+    let target = user.getPlayerById(id);
+    if (user.isLogin(target)) {
+
+        user.set(target, 'is_sub_leaderf', true);
+
+        target.notify('~g~Вам выдали полномочия заместителя');
+        player.notify('~b~Вы выдали полномочия заместителя: ~s~' + user.getRpName(target));
+
+        user.save(target);
+    }
+    else {
+        mysql.executeQuery(`UPDATE users SET is_sub_leaderf = '1' where id = '${id}' AND is_leaderf <> 1`);
+        player.notify('~b~Вы выдали полномочия заместителя');
+    }
+});
+
 mp.events.addRemoteCounted('server:user:giveLeader2', (player, id) => {
 
     if (!user.isLogin(player))
@@ -6564,6 +6867,41 @@ mp.events.addRemoteCounted('server:user:giveLeader2', (player, id) => {
         player.notify('~b~Вы выдали полномочия лидера');
         user.set(player, 'is_sub_leader2', true);
         user.set(player, 'is_leader2', false);
+        user.save(player);
+    }
+});
+
+mp.events.addRemoteCounted('server:user:giveLeaderF', (player, id) => {
+
+    if (!user.isLogin(player))
+        return;
+
+    if (!user.isLeaderF(player)) {
+        player.notify('~r~Вы не лидер чтобы выдавать такие полномочия');
+        return;
+    }
+
+    id = methods.parseInt(id);
+    let target = user.getPlayerById(id);
+    if (user.isLogin(target)) {
+
+        user.set(player, 'is_sub_leaderf', true);
+        user.set(target, 'is_sub_leaderf', false);
+
+        user.set(player, 'is_leaderf', false);
+        user.set(target, 'is_leaderf', true);
+
+        target.notify('~g~Вам выдали полномочия лидера');
+        player.notify('~b~Вы выдали полномочия лидера: ~s~' + user.getRpName(target));
+
+        user.save(target);
+        user.save(player);
+    }
+    else {
+        mysql.executeQuery(`UPDATE users SET is_sub_leaderf = '0', is_leaderf = '1' where id = '${id}' AND is_leaderf <> 1`);
+        player.notify('~b~Вы выдали полномочия лидера');
+        user.set(player, 'is_sub_leaderf', true);
+        user.set(player, 'is_leaderf', false);
         user.save(player);
     }
 });
@@ -6635,6 +6973,38 @@ mp.events.addRemoteCounted('server:user:takeSubLeader2', (player, id) => {
     }
 });
 
+mp.events.addRemoteCounted('server:user:takeSubLeaderF', (player, id) => {
+
+    if (!user.isLogin(player))
+        return;
+
+    if (!user.isLeaderF(player)) {
+        player.notify('~r~Вы не лидер чтобы выдавать такие полномочия');
+        return;
+    }
+
+    id = methods.parseInt(id);
+    let target = user.getPlayerById(id);
+
+    let rank = JSON.parse(family.getData(user.get(player, 'family_id')).get('rank_list'))[0].length - 1;
+
+    if (user.isLogin(target)) {
+
+        user.set(target, 'rankf', rank);
+        user.set(target, 'rank_typef', 0);
+        user.set(target, 'is_sub_leaderf', false);
+
+        target.notify('~r~У Вас изъяли полномочия заместителя');
+        player.notify('~b~Вы изъяли полномочия заместителя: ~s~' + user.getRpName(target));
+
+        user.save(target);
+    }
+    else {
+        mysql.executeQuery(`UPDATE users SET is_sub_leaderf = '0', rankf = '${rank}', rank_typef = '0' where id = '${id}' AND is_leaderf <> 1`);
+        player.notify('~b~Вы изъяли полномочия заместителя: ~s~' + id);
+    }
+});
+
 mp.events.addRemoteCounted('server:user:newRank', (player, id, rank) => {
 
     if (!user.isLogin(player))
@@ -6701,6 +7071,37 @@ mp.events.addRemoteCounted('server:user:newRank2', (player, id, rank) => {
     }
 });
 
+mp.events.addRemoteCounted('server:user:newRankF', (player, id, rank) => {
+
+    if (!user.isLogin(player))
+        return;
+
+    id = methods.parseInt(id);
+    rank = methods.parseInt(rank);
+
+    if (!user.isLeaderF(player) && !user.isSubLeaderF(player)) {
+        if (user.get(player, 'rankf') >= rank) {
+            player.notify('~r~У Вас нет полномочий чтобы выдавать данную должность');
+            return;
+        }
+    }
+
+    let target = user.getPlayerById(id);
+    if (user.isLogin(target)) {
+
+        user.set(target, 'rankf', rank);
+
+        target.notify('~g~Вам была выдана новая должность');
+        player.notify('~b~Вы выдали новую должность: ~s~' + user.getRpName(target));
+
+        user.save(target);
+    }
+    else {
+        mysql.executeQuery(`UPDATE users SET rankf = '${rank}' where id = '${id}' AND is_leaderf <> 1`);
+        player.notify('~b~Вы выдали новую должность');
+    }
+});
+
 mp.events.addRemoteCounted('server:user:newDep', (player, id, dep) => {
 
     if (!user.isLogin(player))
@@ -6755,6 +7156,33 @@ mp.events.addRemoteCounted('server:user:newDep2', (player, id, dep) => {
     }
     else {
         mysql.executeQuery(`UPDATE users SET rank2 = '${rank}', rank_type2 = '${dep}' where id = '${id}' AND is_leader2 <> 1`);
+        player.notify('~b~Вы перевели в другой отдел');
+    }
+});
+
+mp.events.addRemoteCounted('server:user:newDepF', (player, id, dep) => {
+
+    if (!user.isLogin(player))
+        return;
+
+    id = methods.parseInt(id);
+    dep = methods.parseInt(dep);
+
+    let rank = JSON.parse(family.getData(user.get(player, 'family_id')).get('rank_list'))[dep].length - 1;
+
+    let target = user.getPlayerById(id);
+    if (user.isLogin(target)) {
+
+        user.set(target, 'rankf', rank);
+        user.set(target, 'rank_typef', dep);
+
+        target.notify('~g~Вас перевели в другой отдел');
+        player.notify('~b~Вы перевели в другой отдел: ~s~' + user.getRpName(target));
+
+        user.save(target);
+    }
+    else {
+        mysql.executeQuery(`UPDATE users SET rankf = '${rank}', rank_typef = '${dep}' where id = '${id}' AND is_leaderf <> 1`);
         player.notify('~b~Вы перевели в другой отдел');
     }
 });

@@ -13,7 +13,7 @@ let fraction = require('../property/fraction');
 
 let gangWar = exports;
 
-let zoneRadius = 50;
+let zoneRadius = 75;
 let offset = 600000;
 let keyPrefix = 'gangWar';
 
@@ -345,7 +345,7 @@ gangWar.timer = function() {
                     if (!canArmor && p.armour > 0)
                         user.setArmour(p, 0);
                     p.call("client:gangWar:sendInfo", [attC, defC, timerCounter]);
-                    if (methods.distanceToPos(warPos, p.position) < 80)
+                    if (methods.distanceToPos(warPos, p.position) < 150)
                     {
                         if (p.dimension === 0)
                             p.dimension = 9998;
@@ -407,7 +407,7 @@ gangWar.timerMoney = function() {
 
             if (moneyToUser.has(gangWar.get(i, 'fraction_id').toString())) {
                 let cMoney = moneyToUser.get(gangWar.get(i, 'fraction_id').toString());
-                cMoney += methods.getRandomInt(10, 20) / 1000;
+                cMoney += methods.getRandomInt(12, 25) / 1000;
                 moneyToUser.set(gangWar.get(i, 'fraction_id').toString(), cMoney);
             }
             else {
@@ -518,7 +518,7 @@ gangWar.changeZoneColor = function(id, fractionId) {
         try {
             if (!user.isLogin(p))
                 return;
-            user.createBlipByRadius(p, 1000 + id, _warPos.x, _warPos.y, _warPos.z, 50, 5, enums.fractionColor[fractionId]);
+            user.createBlipByRadius(p, 1000 + id, _warPos.x, _warPos.y, _warPos.z, 75, 5, enums.fractionColor[fractionId]);
         }
         catch (e) {}
     });

@@ -11780,6 +11780,7 @@ menuList.showAdminPlayerMenu = function(id) {
     UIMenu.Menu.AddMenuItemList("Тип ID", ['Dynamic', 'Static'], "", {doName: "type"});
 
     UIMenu.Menu.AddMenuItem("Изменить виртуальный мир", "", {doName: "changeDimension"});
+    UIMenu.Menu.AddMenuItem("Узнать виртуальный мир", "", {doName: "getDimension"});
     UIMenu.Menu.AddMenuItem("Телепортироваться к игроку", "", {doName: "tptoid"});
     UIMenu.Menu.AddMenuItem("Телепортировать игрока к себе", "", {doName: "tptome"});
 
@@ -11832,6 +11833,9 @@ menuList.showAdminPlayerMenu = function(id) {
             if (item.doName == 'changeDimension') {
                 let num = methods.parseInt(await UIMenu.Menu.GetUserInput("ID", "", 32));
                 mp.events.callRemote('server:admin:changeDimension', typeIndex, methods.parseInt(id), num);
+            }
+            if (item.doName == 'getDimension') {
+                mp.events.callRemote('server:admin:getDimension', typeIndex, methods.parseInt(id));
             }
             if (item.doName == 'tptoid') {
                 mp.events.callRemote('server:admin:tptoid', typeIndex, methods.parseInt(id));

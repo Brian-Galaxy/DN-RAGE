@@ -845,6 +845,37 @@ admin.changeDimension = function(player, type, id, dim) {
     }
 };
 
+admin.getDimension = function(player, type, id) {
+    try {
+        if (!user.isAdmin(player))
+            return;
+
+        id = methods.parseInt(id);
+
+        if (type === 0) {
+            let target = mp.players.at(id);
+            if (!user.isLogin(target)) {
+                player.notify('~r~Игрок не найден на сервере.');
+                return;
+            }
+
+            player.notify(`~b~Виртуальный мир игрока ${user.getRpName(target)} равен ~s~${target.dimension}`);
+        }
+        else {
+            let target = user.getPlayerById(id);
+            if (!user.isLogin(target)) {
+                player.notify('~r~Игрок не найден на сервере.');
+                return;
+            }
+
+            player.notify(`~b~Виртуальный мир игрока ${user.getRpName(target)} равен ~s~${target.dimension}`);
+        }
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+};
+
 admin.inviteMp = function(player) {
     try {
         if (!user.isAdmin(player))

@@ -153,8 +153,8 @@ class Data {
             mp.events.callRemote('modules:server:data:Set', id, key, value, isInt);
             /*for (let i = 1; i <= 50; i++) mp.events.callRemote('modules:server:data:Set', 800000 + i, 'orderLamarM', 100, true);
             for (let i = 1; i <= 50; i++) mp.events.callRemote('modules:server:data:Set', 800000 + i, 'orderLamar', 100, true);
-            for (let i = 1; i <= 50; i++) mp.events.callRemote('modules:server:data:Set', 800000 + i, 'orderDrug', 50, true);
-            for (let i = 1; i <= 50; i++) mp.events.callRemote('modules:server:data:Set', 800000 + i, 'orderAtm', 10, true);*/
+            for (let i = 1; i <= 50; i++) mp.events.callRemote('modules:server:data:Set', 800000 + i, 'orderDrug', 100, true);
+            for (let i = 1; i <= 50; i++) mp.events.callRemote('modules:server:data:Set', 800000 + i, 'orderAtm', 5, true);*/
 
             /*mp.events.callRemote('modules:server:data:Set', 800000 + 1, 'spawn_x', -1501.6224365234375, true);
             mp.events.callRemote('modules:server:data:Set', 800000 + 1, 'spawn_y', 857.4970703125, true);

@@ -350,7 +350,7 @@ tax.payTax = function(player, type, sum, score) {
     mysql.executeQuery("SELECT * FROM " + table + " WHERE tax_score = '" + score + "'", function (err, rows, fields) {
         rows.forEach(row => {
             if (sum > methods.parseInt(row["tax_money"]) * -1) {
-                player.notify(`~r~Сумма оплаты не должна привышать суммы долга (#1)\nВаш долг равен: $${row["tax_money"]}`);
+                player.notify(`~r~Сумма оплаты не должна превышать суммы долга (#1)\nВаш долг равен: $${row["tax_money"]}`);
                 return;
             }
 

@@ -2540,7 +2540,7 @@ mp.events.add('client:inventory:moveTo', async function(id, itemId, ownerId, own
     else if (ownerType === inventory.types.TradeBeach && items.isTradeBeachInvalid(itemId)) {
         mp.game.ui.notifications.show("~r~Вы не можете выставить на продажу этот предмет");
     }
-    else if (ownerType === inventory.types.TradeBlack && items.isTradeBeachInvalid(itemId)) {
+    else if (ownerType === inventory.types.TradeBlack && items.isTradeBlackInvalid(itemId)) {
         mp.game.ui.notifications.show("~r~Вы не можете выставить на продажу этот предмет");
     }
     else if (ownerType === inventory.types.Bag && (itemId === 141 || itemId === 140)) {
@@ -3191,14 +3191,7 @@ mp.events.add("client:vehicle:checker", async function () {
             try {
                 if (isSetHandling < 2) {
                     isSetHandling++;
-                    vehicles.setHandling(vehicle);
-                    if (vehicle.getMod(12) === 0)
-                        vehicle.setHandling('fBrakeForce', '1.3');
-                    if (vehicle.getMod(12) === 1)
-                        vehicle.setHandling('fBrakeForce', '1.6');
-                    if (vehicle.getMod(12) === 2)
-                        vehicle.setHandling('fBrakeForce', '1.9');
-
+                    
                     if (vehicle.getVariable('container') != undefined && vehicle.getVariable('user_id') > 0) {
                         let car = await vehicles.getData(vehicle.getVariable('container'));
                         if (car.has('upgrade')) {
@@ -3221,6 +3214,17 @@ mp.events.add("client:vehicle:checker", async function () {
                             }
                         }
                     }
+                    
+                    try {
+                        vehicles.setHandling(vehicle);
+                        if (vehicle.getMod(12) === 0)
+                            vehicle.setHandling('fBrakeForce', '1.3');
+                        if (vehicle.getMod(12) === 1)
+                            vehicle.setHandling('fBrakeForce', '1.6');
+                        if (vehicle.getMod(12) === 2)
+                            vehicle.setHandling('fBrakeForce', '1.9');
+                    }
+                    catch (e) {}
                 }
             }
             catch (e) {

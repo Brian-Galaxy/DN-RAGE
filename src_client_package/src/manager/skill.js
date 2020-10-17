@@ -14,6 +14,9 @@ let checkStats = function()
     if (!user.isLogin())
         return;
 
+    if (mp.players.local.health <= 0)
+        return;
+
     try {
         let localPlayer = mp.players.local;
 

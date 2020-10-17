@@ -936,7 +936,7 @@ phone.showAppFraction2 = async function() {
         ],
     };
 
-    /*if (user.getCache('fraction_id2') > 0) {
+    if (user.getCache('fraction_id2') > 0 && user.isLeader2()) {
         let item ={
             title: "Перевести E-Coin",
             text: 'Перевод E-Coin на счет вашей организации',
@@ -947,7 +947,7 @@ phone.showAppFraction2 = async function() {
             params: {name: "cryptoToFraction"}
         };
         menu.items[0].umenu.push(item);
-    }*/
+    }
     if (user.getCache('fraction_id2') > 0 && user.isLeader2()) {
         let item ={
             title: "Перевести E-Coin",
@@ -1113,7 +1113,7 @@ phone.showAppFraction2 = async function() {
         titleMenu.umenu.push(
             {
                 title: "Кража банкоматов",
-                text: `Взломайте ${orderAtm}/20 банкоматов и получите 100ec на счет организации`,
+                text: `Взломайте ${orderAtm}/10 банкоматов и получите 100ec на счет организации`,
                 type: 1,
                 clickable: true,
                 params: { name: "getAtm" }
@@ -4325,9 +4325,9 @@ phone.consoleCallback = async function(command) {
                 let hash3 = methods.md5(atmHandle.toString()).slice(8, 11);
                 let hash4 = methods.md5(atmHandle.toString()).slice(12, 15);
 
-                dispatcher.sendLocalPos('Код 3', `Сработала система безопасности банкомата, взлом происходил с телефона: ${methods.phoneFormat(user.getCache('phone'))}`, mp.players.local.position, 2);
-                dispatcher.sendLocalPos('Код 3', `Сработала система безопасности банкомата, взлом происходил с телефона: ${methods.phoneFormat(user.getCache('phone'))}`, mp.players.local.position, 3);
-                dispatcher.sendLocalPos('Код 3', `Сработала система безопасности банкомата, взлом происходил с телефона: ${methods.phoneFormat(user.getCache('phone'))}`, mp.players.local.position, 5);
+                dispatcher.sendLocalPos('Код 3', `Сработала система безопасности банкомата, взлом происходил с телефона: ${methods.phoneFormat(user.getCache('phone'))}`, mp.players.local.position, 2, false);
+                dispatcher.sendLocalPos('Код 3', `Сработала система безопасности банкомата, взлом происходил с телефона: ${methods.phoneFormat(user.getCache('phone'))}`, mp.players.local.position, 3, false);
+                dispatcher.sendLocalPos('Код 3', `Сработала система безопасности банкомата, взлом происходил с телефона: ${methods.phoneFormat(user.getCache('phone'))}`, mp.players.local.position, 5, false);
 
                 await phone.consoleLoad('Installing backdoor');
                 await phone.consoleAwait('Scanning hashes ');
@@ -4873,8 +4873,8 @@ phone.consoleCallback = async function(command) {
                     let pos = new mp.Vector3(tree.markers[posId].list[posId2][0], tree.markers[posId].list[posId2][1], tree.markers[posId].list[posId2][2] - 1);
 
                     let price = methods.distanceToPos(pos, mp.players.local.position) / 20;
-                    if (price > 400)
-                        price = 400 + methods.getRandomInt(0, 50);
+                    if (price > 550)
+                        price = 550 + methods.getRandomInt(0, 50);
 
                     user.set('drugPrice', price);
 
@@ -5630,8 +5630,9 @@ phone.callBackModalInput = async function(paramsJson, text) {
             }
             user.removeMoney(sum, 'Перевод $');
             family.addMoney(user.getCache('family_id'), sum, 'Перевод $ от ' + user.getCache('name'));
+            user.sendSmsBankOperation('Операция успешно совершена', 'Успешно');
 
-            //setTimeout(phone.showAppEcorp, 200);
+            setTimeout(phone.phone.showAppFamily, 200);
         }
         if (params.name == 'fractionToMoney') {
             let sum = methods.parseFloat(text);
@@ -5645,8 +5646,9 @@ phone.callBackModalInput = async function(paramsJson, text) {
             }
             user.addMoney(sum, 'Перевод $');
             family.removeMoney(user.getCache('family_id'), sum, 'Перевод из $ от ' + user.getCache('name'));
+            user.sendSmsBankOperation('Операция успешно совершена', 'Успешно');
 
-            //setTimeout(phone.showAppEcorp, 200);
+            setTimeout(phone.phone.showAppFamily, 200);
         }
         if (params.name == 'sendFractionMessage') {
             let title = user.getCache('name');
@@ -5773,8 +5775,15 @@ phone.callBackButton = async function(menu, id, ...args) {
                     `~y~Детали: ~s~${params.desc}`, `~y~Район: ~s~${params.street1}`,
                     user.getCache('fraction_id')
                 );
-                if (params.posX)
-                    user.setWaypoint(params.posX, params.posY);
+
+                if (params.withCoord) {
+                    if (params.posX)
+                        user.setWaypoint(params.posX, params.posY);
+                }
+                else {
+                    if (params.posX)
+                        user.setWaypoint(params.posX + methods.getRandomInt(-20, 20), params.posY + methods.getRandomInt(-20, 20));
+                }
                 if (methods.parseInt(params.p))
                     mp.events.callRemote('server:phone:sendMessageNumber', '911', params.p.toString(), `Ваш вызов был принят сотрудником ${user.getFractionName()}`);
             }
@@ -6210,14 +6219,14 @@ phone.callBackButton = async function(menu, id, ...args) {
                     mp.game.ui.notifications.show(`~r~Вы уже получали фургон сегодня`);
                     return;
                 }
-                if (orderAtm < 20) {
-                    mp.game.ui.notifications.show(`~r~Необходимо ограбить ${20 - orderAtm} банкоматов, для выполнения контракта`);
+                if (orderAtm < 10) {
+                    mp.game.ui.notifications.show(`~r~Необходимо ограбить ${10 - orderAtm} банкоматов, для выполнения контракта`);
                     return;
                 }
 
                 if (user.isLeader2() || user.isSubLeader2()) {
 
-                    fraction.addMoney(user.getCache('fraction_id2'), 100, 'Бонус за выполненный контракт');
+                    fraction.addMoney(user.getCache('fraction_id2'), 200, 'Бонус за выполненный контракт');
                     fraction.set(user.getCache('fraction_id2'), 'orderAtm', 9999);
                     phone.showLoad();
                     setTimeout(phone.showAppFraction2, 500);
@@ -6242,7 +6251,7 @@ phone.callBackButton = async function(menu, id, ...args) {
                 mp.events.callRemote('server:phone:fractionLogF');
                 phone.showLoad();
             }
-            else if (params.name == 'memberAction') {
+            else if (params.name == 'memberActionF') {
                 mp.events.callRemote('server:phone:memberActionF', params.memberId);
                 phone.showLoad();
             }
@@ -6261,7 +6270,7 @@ phone.callBackButton = async function(menu, id, ...args) {
             }
         }
         if (menu === 'fraction_hierarchyf') {
-            if (params.name == 'editFractionRankMenu') {
+            if (params.name == 'editFractionRankMenuF') {
                 phone.showAppFractionFEditRankMenu(params.rankId, params.depId);
             }
         }

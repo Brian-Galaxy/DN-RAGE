@@ -89,9 +89,12 @@ vehicles.fractionList = [];
 
 vehicles.loadAllUserVehicles = (userId) => {
     mysql.executeQuery(`SELECT * FROM cars WHERE user_id = '${methods.parseInt(userId)}'`, function (err, rows, fields) {
+        let idx = 1;
         rows.forEach((item) => {
             try {
-                vehicles.loadUserVehicleByRow(item);
+                setTimeout(function () {
+                    vehicles.loadUserVehicleByRow(item);
+                }, 1500 * idx++);
             }
             catch (e) {
                 methods.debug('vehicles.loadUserById', e)
@@ -162,9 +165,7 @@ vehicles.loadUserVehicleByRow = (row) => {
     vehicles.set(row['id'], 'cop_park_name', row['cop_park_name']);
     vehicles.set(row['id'], 'with_delete', row['with_delete']);
 
-    setTimeout(function () {
-        vehicles.spawnPlayerCar(row['id']); //Нужен рандом
-    }, methods.getRandomInt(0, 5000));
+    vehicles.spawnPlayerCar(row['id']);
 };
 
 vehicles.getFreePolicePos = () => {

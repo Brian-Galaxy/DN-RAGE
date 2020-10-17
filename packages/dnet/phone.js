@@ -1548,7 +1548,7 @@ phone.fractionListF = function(player, showStats = false) {
                             row['name'],
                             fractionItem.get('rank_sub_leader') + desc,
                             row['is_online'] === 1,
-                            { name: 'memberAction', memberId: row['id'] },
+                            { name: 'memberActionF', memberId: row['id'] },
                             'https://a.rsg.sc//n/' + row['social'].toLowerCase(),
                             true,
                         ));
@@ -1577,7 +1577,7 @@ phone.fractionListF = function(player, showStats = false) {
                             row['name'],
                             fractionItemRanks[row['rank_typef']][row['rankf']] + desc,
                             row['is_online'] === 1,
-                            { name: 'memberAction', memberId: row['id'] },
+                            { name: 'memberActionF', memberId: row['id'] },
                             'https://a.rsg.sc//n/' + row['social'].toLowerCase(),
                             true,
                         ));
@@ -1614,7 +1614,7 @@ phone.fractionListF = function(player, showStats = false) {
             if (leaderItems.length > 0)
                 newItems.push(phone.getMenuMainItem('Руководство', leaderItems));
 
-            phone.showMenu(player, 'fraction2', `Список членов семьи | ${rows.length} чел.`, newItems.concat(items));
+            phone.showMenu(player, 'family', `Список членов семьи | ${rows.length} чел.`, newItems.concat(items));
         }
         catch (e) {
             methods.debug(e);

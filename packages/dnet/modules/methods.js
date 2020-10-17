@@ -12,6 +12,7 @@ let coffer = require('../coffer');
 let vehicles = require('../property/vehicles');
 let business = require('../property/business');
 let fraction = require('../property/fraction');
+let family = require('../property/family');
 
 let weather = require('../managers/weather');
 
@@ -43,6 +44,10 @@ methods.saveAllAnother = async function () {
     console.time('saveFractions');
     fraction.saveAll();
     console.timeEnd('saveFractions');
+
+    console.time('saveFamily');
+    family.saveAll();
+    console.timeEnd('saveFamily');
 
     console.time('saveBusiness');
     for (let i = 1; i < 300; i++)
@@ -863,13 +868,7 @@ methods.getNearestVehicleWithCoords = function(pos, r, dim = 0) {
     methods.getListOfVehicleInRadius(pos, r).forEach(vehicle => {
         dist = methods.distanceToPos(pos, vehicle.position);
         if (dist < min) {
-            if (dim != 0) {
-                if (dim == vehicle.dimension) {
-                    nearest = vehicle;
-                    min = dist;
-                }
-            }
-            else {
+            if (dim == vehicle.dimension) {
                 nearest = vehicle;
                 min = dist;
             }

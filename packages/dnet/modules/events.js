@@ -2383,6 +2383,10 @@ mp.events.addRemoteCounted('server:admin:changeDimension', (player, type, id, di
     admin.changeDimension(player, type, id, dim);
 });
 
+mp.events.addRemoteCounted('server:admin:getDimension', (player, type, id) => {
+    admin.getDimension(player, type, id);
+});
+
 mp.events.addRemoteCounted('server:admin:tptoid', (player, type, id) => {
     admin.tpToUser(player, type, id);
 });
@@ -4164,6 +4168,7 @@ mp.events.addRemoteCounted('server:tradeMarket:rentBeach', (player, idx) => {
         return;
     }
     user.set(player, 'rentTrade', idx);
+    user.set(player, 'rentTradeC', idx);
     user.removeCashMoney(player, 1000, 'Аренда палатки');
     tradeMarket.setBeach(idx, 'rent', user.getId(player));
     tradeMarket.getAllBeach().get(idx.toString()).marker.visible = true;
@@ -4174,7 +4179,8 @@ mp.events.addRemoteCounted('server:tradeMarket:rentBeach', (player, idx) => {
 mp.events.addRemoteCounted('server:tradeMarket:unrentBeach', (player, idx) => {
     if (!user.isLogin(player))
         return;
-    user.reset(player, 'rentTrade', idx);
+    user.reset(player, 'rentTrade');
+    user.reset(player, 'rentTradeC');
     tradeMarket.setBeach(idx, 'rent', 0);
     tradeMarket.getAllBeach().get(idx.toString()).marker.visible = false;
     user.updateClientCache(player);
@@ -4198,6 +4204,7 @@ mp.events.addRemoteCounted('server:tradeMarket:rentBlack', (player, idx) => {
         return;
     }
     user.set(player, 'rentTrade', idx);
+    user.set(player, 'rentTradeB', idx);
     user.removeCashMoney(player, 2000, 'Аренда палатки');
     tradeMarket.setBlack(idx, 'rent', user.getId(player));
     tradeMarket.getAllBlack().get(idx.toString()).marker.visible = true;
@@ -4208,7 +4215,8 @@ mp.events.addRemoteCounted('server:tradeMarket:rentBlack', (player, idx) => {
 mp.events.addRemoteCounted('server:tradeMarket:unrentBlack', (player, idx) => {
     if (!user.isLogin(player))
         return;
-    user.reset(player, 'rentTrade', idx);
+    user.reset(player, 'rentTrade');
+    user.reset(player, 'rentTradeB');
     tradeMarket.setBlack(idx, 'rent', 0);
     tradeMarket.getAllBlack().get(idx.toString()).marker.visible = false;
     user.updateClientCache(player);
@@ -8186,7 +8194,6 @@ mp.events.add('playerQuit', player => {
 
     if (user.isLogin(player)) {
         vehicles.removePlayerVehicle(user.getId(player));
-
         inventory.deleteItemsRange(player, 138, 141);
 
         try {
@@ -8215,6 +8222,24 @@ mp.events.add('playerQuit', player => {
         }
         catch (e) {
             methods.debug(e);
+        }
+
+        try {
+            if (user.has(player, 'rentTrade') && user.has(player, 'rentTradeC')) {
+                let idx = user.get(player, 'rentTrade');
+                tradeMarket.setBeach(idx, 'rent', 0);
+                tradeMarket.getAllBeach().get(idx.toString()).marker.visible = false;
+                inventory.updateOwnerAll(user.getId(player), inventory.types.TradeBeach, user.getId(player), inventory.types.Player);
+            }
+            if (user.has(player, 'rentTrade') && user.has(player, 'rentTradeB')) {
+                let idx = user.get(player, 'rentTrade');
+                tradeMarket.setBlack(idx, 'rent', 0);
+                tradeMarket.getAllBlack().get(idx.toString()).marker.visible = false;
+                inventory.updateOwnerAll(user.getId(player), inventory.types.TradeBlack, user.getId(player), inventory.types.Player);
+            }
+        }
+        catch (e) {
+
         }
         user.save(player, true);
     }

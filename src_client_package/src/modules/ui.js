@@ -302,6 +302,21 @@ ui.isGreenZone = function() {
     return isGreenZone;
 };
 
+ui.isGreenZoneByPos = function(pos) {
+    let isZone = false;
+    enums.zoneGreenList.forEach(item => {
+        try {
+            if (methods.isInPoint(pos, item[2]))
+            {
+                if (pos.z > item[0] && pos.z < item[1])
+                    isZone = true;
+            }
+        }
+        catch (e) {}
+    });
+    return isZone;
+};
+
 ui.isYellowZone = function() {
     return isYellowZone;
 };

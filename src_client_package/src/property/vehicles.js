@@ -146,6 +146,18 @@ vehicles.addFuel = (veh, fuel = 1) => {
     mp.events.callRemote('server:vehicles:addFuel', veh.remoteId, fuel);
 };
 
+vehicles.setNumberPlate = (veh, number) => {
+    if (!mp.vehicles.exists(veh))
+        return;
+    mp.events.callRemote('server:vehicles:setNumberPlate', veh.remoteId, number);
+};
+
+vehicles.getNumberPlate = (veh) => {
+    if (!mp.vehicles.exists(veh))
+        return '';
+    return veh.getVariable('numberPlate');
+};
+
 vehicles.checkerControl = function() {
     try {
         if (racer.isInRace())
@@ -492,7 +504,7 @@ vehicles.findVehicleByNumber = (number) => {
             try {
                 if (!vehicles.exists(vehicle))
                     return;
-                if (vehicle.numberPlate.trim() == number.trim())
+                if (vehicles.getNumberPlate(vehicle).trim() == number.trim())
                     returnVehicle = vehicle;
             }
             catch (e) {

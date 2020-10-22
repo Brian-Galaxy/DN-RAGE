@@ -605,16 +605,18 @@ houses.enterv = function (player, id) {
             return;
         }
 
-        player.dimension = id;
         if (vehicles.exists(player.vehicle))
             player.vehicle.dimension = id;
+        else
+            player.dimension = id;
         user.teleportVeh(player, houses.garageList[garageId][4], houses.garageList[garageId][5], houses.garageList[garageId][6], houses.garageList[garageId][7]);
         return;
     }
 
-    player.dimension = id;
     if (vehicles.exists(player.vehicle))
         player.vehicle.dimension = id;
+    else
+        player.dimension = id;
     user.teleportVeh(player, houses.garageList[garageId][0], houses.garageList[garageId][1], houses.garageList[garageId][2], houses.garageList[garageId][3]);
 };
 
@@ -683,8 +685,9 @@ houses.exitv = function (player, id) {
         return;
     }
 
-    player.dimension = 0;
     if (vehicles.exists(player.vehicle))
         player.vehicle.dimension = 0;
+    else
+        player.dimension = 0;
     user.teleportVeh(player, hInfo.get('gx' + garageId), hInfo.get('gy' + garageId), hInfo.get('gz' + garageId), hInfo.get('grot' + garageId));
 };

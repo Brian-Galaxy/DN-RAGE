@@ -795,15 +795,32 @@ methods.iplLabMethDefault = function () {
     mp.game.interior.refreshInterior(interiorId);
 };
 
-methods.iplLabCocaDefault = function () {
+methods.iplLabCocaDefault = function (state) {
     let interiorId = 247553;
     methods.setIplPropState(interiorId, "set_up");
     methods.setIplPropState(interiorId, "security_high");
-    methods.setIplPropState(interiorId, "equipment_basic");
+    //methods.setIplPropState(interiorId, "equipment_basic");
+    methods.setIplPropState(interiorId, "equipment_upgrade");
     methods.setIplPropState(interiorId, "production_basic");
     methods.setIplPropState(interiorId, "coke_press_basic");
+
+    for (let i = 1; i <= state; i++)
+        methods.setIplPropState(interiorId, "coke_cut_0" + i);
+
     /*methods.setIplPropState(interiorId, "coke_cut_01");
     methods.setIplPropState(interiorId, "coke_cut_02");*/
+    mp.game.interior.refreshInterior(interiorId);
+};
+
+methods.iplBunkerDefault = function () {
+    let interiorId = 258561;
+    methods.setIplPropState(interiorId, "bunker_style_a");
+    methods.setIplPropState(interiorId, "upgrade_bunker_set");
+    methods.setIplPropState(interiorId, "security_upgrade");
+    methods.setIplPropState(interiorId, "office_upgrade_set");
+    methods.setIplPropState(interiorId, "gun_locker_upgrade");
+    methods.setIplPropState(interiorId, "gun_range_lights");
+    methods.setIplPropState(interiorId, "Gun_schematic_set");
     mp.game.interior.refreshInterior(interiorId);
 };
 
@@ -1015,6 +1032,7 @@ methods.requestIpls = function () {
     methods.iplStripClubDefault();
 
     methods.iplLabCocaDefault();
+    methods.iplBunkerDefault();
 
     try {
         methods.iplVecpPdDefault();

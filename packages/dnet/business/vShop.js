@@ -352,7 +352,7 @@ vShop.rent = function(player, model, color1, color2, shopId) {
         if (!vehicles.exists(veh))
             return;
 
-        veh.numberPlate = ('RENT' + veh.getVariable('vid')).toString().trim();
+        vehicles.setNumberPlate(veh, ('RENT' + veh.getVariable('vid')).toString().trim());
         veh.setColor(color1, color2);
         vSync.setEngineState(veh, false);
         veh.locked = true;

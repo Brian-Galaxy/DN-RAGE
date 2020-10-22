@@ -1188,6 +1188,11 @@ user.buyLicense = function(type, price, month = 12, typePay = 0)
             quest.standart();
         }, 5000);
     }
+    if (type === "fish_lic") {
+        setTimeout(function () {
+            quest.fish(false, -1, 0);
+        }, 5000);
+    }
     mp.events.callRemote('server:user:buyLicense', type, price, month, typePay);
 };
 
@@ -1469,6 +1474,10 @@ user.isJobGr6 = function() {
 
 user.giveWanted = function(level, reason) {
     mp.events.callRemote('server:user:giveMeWanted', level, reason);
+};
+
+user.giveTicket = function(price, reason) {
+    mp.events.callRemote('server:user:giveTicket', user.getCache('id'), price, reason);
 };
 
 user.getRegStatusName = function() {

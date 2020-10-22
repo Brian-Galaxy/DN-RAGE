@@ -24,6 +24,7 @@ let wheel = require('../casino/wheel');
 
 let business = require('../property/business');
 let vehicles = require('../property/vehicles');
+let stocks = require('../property/stocks');
 
 let pickups = exports;
 let distanceCheck = 1.4;
@@ -63,6 +64,10 @@ pickups.SellVehicle = new mp.Vector3(-1654.048583984375, -947.2221069335938, 6.7
 
 pickups.FixWeapon1 = new mp.Vector3(2710.799560546875, -354.3301696777344, -56.18671798706055);
 pickups.FixWeapon2 = new mp.Vector3(203.61666870117188, 5192.0439453125, -89.5973129272461);
+pickups.FixWeapon3 = new mp.Vector3(896.9457397460938, -3217.528076171875, -99.22711944580078);
+
+pickups.StockLab = new mp.Vector3(1087.520751953125, -3194.3583984375, -39.99346160888672);
+pickups.StockBunk = new mp.Vector3(905.8906860351562, -3230.52001953125, -99.29435729980469);
 
 pickups.PrintShopPos = new mp.Vector3(-1234.7786865234375, -1477.7230224609375, 3.324739933013916);
 pickups.MazeBankLobby = new mp.Vector3(-252.2621, -2003.149, 29.1459);
@@ -579,11 +584,11 @@ pickups.checkPressE = function(player) {
     if (methods.distanceToPos(pickups.LifeInvaderShopPos, playerPos) < distanceCheck)
         player.call('client:menuList:showInvaderShopMenu');
     if (methods.distanceToPos(pickups.EmsBotPos1, playerPos) < distanceCheck)
-        player.call('client:menuList:showBotEmsMenu', [0, methods.getCurrentOnlineFraction(6) < 4]);
+        player.call('client:menuList:showBotEmsMenu', [0, methods.getCurrentOnlineFraction(6) < 6]);
     if (methods.distanceToPos(pickups.EmsBotPos2, playerPos) < distanceCheck)
-        player.call('client:menuList:showBotEmsMenu', [1, methods.getCurrentOnlineFraction(6) < 4]);
+        player.call('client:menuList:showBotEmsMenu', [1, methods.getCurrentOnlineFraction(6) < 10]);
     if (methods.distanceToPos(pickups.EmsBotPos3, playerPos) < distanceCheck)
-        player.call('client:menuList:showBotEmsMenu', [2, methods.getCurrentOnlineFraction(6) < 4]);
+        player.call('client:menuList:showBotEmsMenu', [2, methods.getCurrentOnlineFraction(6) < 10]);
     if (methods.distanceToPos(pickups.UsmcBotPos, playerPos) < distanceCheck)
         player.call('client:menuList:showBotUsmcMenu');
 
@@ -645,8 +650,23 @@ pickups.checkPressE = function(player) {
         inventory.getItemListGunTranferSell(player);
     if (methods.distanceToPos(pickups.BotSellCloth, playerPos) < distanceCheck)
         inventory.getItemListClothTranferSell(player);
-    if (methods.distanceToPos(pickups.FixWeapon1, playerPos) < distanceCheck || methods.distanceToPos(pickups.FixWeapon2, playerPos) < distanceCheck)
+    if (methods.distanceToPos(pickups.FixWeapon1, playerPos) < distanceCheck || methods.distanceToPos(pickups.FixWeapon2, playerPos) < distanceCheck || methods.distanceToPos(pickups.FixWeapon3, playerPos) < distanceCheck)
         inventory.getItemListGunFix(player);
+
+    if (methods.distanceToPos(pickups.StockLab, playerPos) < distanceCheck) {
+        try {
+            let houseData = stocks.getData(player.dimension - enums.offsets.stock);
+            player.call('client:showStockLabMenu', [Array.from(houseData)]);
+        }
+        catch (e) {}
+    }
+    if (methods.distanceToPos(pickups.StockBunk, playerPos) < distanceCheck) {
+        try {
+            let houseData = stocks.getData(player.dimension - enums.offsets.stock);
+            player.call('client:showStockBunkMenu', [Array.from(houseData)]);
+        }
+        catch (e) {}
+    }
 
     if (methods.distanceToPos(pickups.BankMazeOfficePos1, playerPos) < distanceCheck)
         player.call('client:menuList:showMazeOfficeMenu');
@@ -959,6 +979,9 @@ pickups.createAll = function() {
 
     methods.createCpVector(pickups.FixWeapon1, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
     methods.createCpVector(pickups.FixWeapon2, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.FixWeapon3, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.StockLab, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.StockBunk, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
 
     methods.createCpVector(pickups.EmsElevatorPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
     methods.createCpVector(pickups.EmsElevatorParkPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);

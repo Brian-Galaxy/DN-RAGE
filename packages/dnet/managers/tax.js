@@ -393,7 +393,7 @@ tax.removeTax = function() {
     //mysql.executeQuery("UPDATE apartment SET tax_money = tax_money - (round((price * '" + _currentTax + "' + '" + _taxMin +  "') / '7', 0)) WHERE user_id > 0");
     mysql.executeQuery("UPDATE business SET tax_money = tax_money - (round((price * '" + _currentTax + "' + '" + _taxMin +  "') / '7', 0)) WHERE user_id > 0");
     mysql.executeQuery("UPDATE stocks SET tax_money = tax_money - (round((price * '" + _currentTax + "' + '" + _taxMin +  "') / '7', 0)) WHERE user_id > 0");
-    mysql.executeQuery("UPDATE cars SET tax_money = tax_money - (round((price * '" + _currentTax + "' + '" + _taxMin +  "') / '7', 0)) WHERE user_id > 0 AND with_delete = 0");
+    mysql.executeQuery("UPDATE cars SET tax_money = tax_money - (round((price * '" + _currentTax + "' + '" + _taxMin +  "') / '7', 0)) WHERE user_id > 0 AND tax_sale = 0");
 
     methods.notifyWithPictureToAll('~y~Оплата налогов', 'Новости правительства', 'Не забудьте оплатить налог за ваше имущество и транспорт в здании правительства', 'CHAR_FLOYD');
 

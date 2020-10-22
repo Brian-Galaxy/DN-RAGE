@@ -11,8 +11,8 @@ stocks.boxList = [
     ['Средняя коробка', 1875981008, 600000, -0.12, true, 20000, 'Стандарт', -1], //1
     ['Большая коробка', -1322183878, 800000, -0.12, true, 30000, 'Стандарт', -1], //2
 
-    ['Большой ящик с оружием', 1790162299, 3, 0, false, 15000, 'Оружие и патроны', 1], //3
-    ['Малый ящик с оружием', 2055492359, 4, 0, false, 5000, 'Оружие и патроны', 0], //4
+    ['Большой ящик с оружием', 1790162299, 3, 0, false, 45000, 'Оружие и патроны', 1], //3
+    ['Малый ящик с оружием', 2055492359, 4, 0, false, 15000, 'Оружие и патроны', 0], //4
     ['Большой ящик антиквариата', 1815664890, 5, 0, false, 15000, 'Антиквариат', 1], //5
     ['Малый ящик антиквариата', 1397410834, 5, 0, false, 5000, 'Антиквариат', 0], //6
     ['Большой ящик антиквариата', 1057918179, 6, 0, false, 15000, 'Антиквариат', 1], //7
@@ -46,8 +46,8 @@ stocks.boxList = [
     ['Золотой Minigun', 1557324266, 34, 0, false, 40000, 'Уникальный груз', 2 ], //35
     ['Большой ящик фальшивых купюр', -80652213, 35, 0, false, 15000, 'Контрафактные товары', 1 ], //36
     ['Малый ящик фальшивых купюр', -1155316904, 36, 0, false, 5000, 'Контрафактные товары', 0 ], //37
-    ['Большой ящик наркотиков', 1016837103, 37, 0, false, 15000, 'Наркотики', 1 ], //38
-    ['Малый ящик наркотиков', 1863514296, 38, 0, false, 5000, 'Наркотики', 0 ], //39
+    ['Большой ящик наркотиков', 1016837103, 37, 0, false, 30000, 'Наркотики', 1 ], //38
+    ['Малый ящик наркотиков', 1863514296, 38, 0, false, 10000, 'Наркотики', 0 ], //39
     ['Яйцо фаберже', 562429577, 39, 0, false, 35000, 'Уникальный груз', 2 ], //40
     ['Большой ящик лекарств', 1914690987, 40, -0.12, false, 15000, 'Медикаменты', 1 ], //41
     ['Малый ящик лекарств', -824154829, 41, 0, false, 5000, 'Медикаменты', 0 ], //42
@@ -78,10 +78,33 @@ stocks.enter1 = function (id) {
     }, 1500);
 };
 
+stocks.enterl = function (id, state = 0) {
+    if (state > 5)
+        state = 5;
+    mp.events.callRemote('server:stocks:enterl', id);
+    setTimeout(function () {
+        methods.iplLabCocaDefault(state);
+    }, 1500);
+};
+
+stocks.enterb = function (id) {
+    mp.events.callRemote('server:stocks:enterb', id);
+    setTimeout(function () {
+        methods.iplBunkerDefault();
+    }, 1500);
+};
+
 stocks.enterv1 = function (id) {
     mp.events.callRemote('server:stocks:enterv1', id);
     setTimeout(function () {
         methods.iplArenaModDefault();
+    }, 1500);
+};
+
+stocks.entervb = function (id) {
+    mp.events.callRemote('server:stocks:entervb', id);
+    setTimeout(function () {
+        methods.iplBunkerDefault();
     }, 1500);
 };
 
@@ -124,6 +147,18 @@ stocks.upgradeGarage = function (id) {
     mp.events.callRemote('server:stocks:updateGarage', id, 1);
 };
 
+stocks.upgradeNumber = function (id) {
+    mp.events.callRemote('server:stocks:upgradeNumber', id, 1);
+};
+
+stocks.upgradeBunker = function (id) {
+    mp.events.callRemote('server:stocks:upgradeBunker', id, 1);
+};
+
+stocks.upgradeLab = function (id) {
+    mp.events.callRemote('server:stocks:upgradeLab', id, 1);
+};
+
 stocks.updatePin = function (id, pin) {
     mp.events.callRemote('server:stocks:updatePin', id, pin);
 };
@@ -142,6 +177,14 @@ stocks.updatePin3 = function (id, pin) {
 
 stocks.updatePinO = function (id, pin) {
     mp.events.callRemote('server:stocks:updatePinO', id, pin);
+};
+
+stocks.updatePinB = function (id, pin) {
+    mp.events.callRemote('server:stocks:updatePinB', id, pin);
+};
+
+stocks.updatePinL = function (id, pin) {
+    mp.events.callRemote('server:stocks:updatePinL', id, pin);
 };
 
 stocks.upgradeAdd = function (id, slot, box) {

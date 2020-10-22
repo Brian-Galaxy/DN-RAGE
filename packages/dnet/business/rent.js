@@ -197,7 +197,7 @@ rent.buy = function(player, hash, price, shopId, payType) {
         if (!vehicles.exists(veh))
             return;
 
-        veh.numberPlate = ('RENT' + veh.getVariable('vid')).toString().trim();
+        vehicles.setNumberPlate(veh, ('RENT' + veh.getVariable('vid')).toString().trim());
         veh.setColor(methods.getRandomInt(0, 150), methods.getRandomInt(0, 150));
         vSync.setEngineState(veh, false);
         veh.locked = true;

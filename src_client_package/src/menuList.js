@@ -538,6 +538,12 @@ menuList.showStockPanelMenu = function(h) {
     if (h.get('upgrade_g')) {
         UIMenu.Menu.AddMenuItem("Сменить пинкод от офиса", "", {doName: 'setPinO'});
     }
+    if (h.get('upgrade_l')) {
+        UIMenu.Menu.AddMenuItem("Сменить пинкод от лаборатории", "", {doName: 'setPinL'});
+    }
+    if (h.get('upgrade_b')) {
+        UIMenu.Menu.AddMenuItem("Сменить пинкод от бункера", "", {doName: 'setPinB'});
+    }
 
     //UIMenu.Menu.AddMenuItem("~y~Лог"); //TODO
     UIMenu.Menu.AddMenuItem("Руководство", "", {doName: 'about'});
@@ -593,6 +599,24 @@ menuList.showStockPanelMenu = function(h) {
             mp.game.ui.notifications.show('~g~Ваш новый пароль: ~s~' + pass);
             stocks.updatePinO(h.get('id'), pass);
         }
+        if (item.doName == 'setPinL') {
+            let pass = methods.parseInt(await UIMenu.Menu.GetUserInput("Пароль", "", 5));
+            if (pass < 1) {
+                mp.game.ui.notifications.show('~r~Пароль должен быть больше нуля');
+                return false;
+            }
+            mp.game.ui.notifications.show('~g~Ваш новый пароль: ~s~' + pass);
+            stocks.updatePinL(h.get('id'), pass);
+        }
+        if (item.doName == 'setPinB') {
+            let pass = methods.parseInt(await UIMenu.Menu.GetUserInput("Пароль", "", 5));
+            if (pass < 1) {
+                mp.game.ui.notifications.show('~r~Пароль должен быть больше нуля');
+                return false;
+            }
+            mp.game.ui.notifications.show('~g~Ваш новый пароль: ~s~' + pass);
+            stocks.updatePinB(h.get('id'), pass);
+        }
         if (item.doName == 'showStockPanelUpgradeMenu') {
             menuList.showStockPanelUpgradeMenu(h);
         }
@@ -607,12 +631,387 @@ menuList.showStockPanelMenu = function(h) {
     });
 };
 
+menuList.showStockLabMenu = function(h) {
+
+    UIMenu.Menu.Create(` `, `~b~Адрес: ~s~${h.get('address')} ${h.get('number')}`, 'hm', false, false, 'h1');
+
+    UIMenu.Menu.AddMenuItem(`~b~Химикаты:~s~ ${h.get('lab_1_count')}`, 'Нажмите ~g~Enter~s~ чтобы сделать заказ', {doName: 'showStockLabOfferMenu1'});
+    UIMenu.Menu.AddMenuItem(`~b~Стеклянные колбы:~s~ ${h.get('lab_2_count')}`, 'Нажмите ~g~Enter~s~ чтобы сделать заказ', {doName: 'showStockLabOfferMenu2'});
+    UIMenu.Menu.AddMenuItem(`~b~Респираторы:~s~ ${h.get('lab_3_count')}`, 'Нажмите ~g~Enter~s~ чтобы сделать заказ', {doName: 'showStockLabOfferMenu3'});
+    UIMenu.Menu.AddMenuItem(`~b~Упаковки:~s~ ${h.get('lab_4_count')}`, 'Нажмите ~g~Enter~s~ чтобы сделать заказ', {doName: 'showStockLabOfferMenu4'});
+    UIMenu.Menu.AddMenuItem("Произвести партию", "", {doName: 'showStockLabGetMenu'});
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: 'closeMenu'});
+    UIMenu.Menu.Draw();
+
+    UIMenu.Menu.OnSelect.Add(async item => {
+        UIMenu.Menu.HideMenu();
+        if (item.doName == 'showStockLabOfferMenu1') {
+            menuList.showStockLabOfferMenu(h, 1);
+        }
+        if (item.doName == 'showStockLabOfferMenu2') {
+            menuList.showStockLabOfferMenu(h, 2);
+        }
+        if (item.doName == 'showStockLabOfferMenu3') {
+            menuList.showStockLabOfferMenu(h, 3);
+        }
+        if (item.doName == 'showStockLabOfferMenu4') {
+            menuList.showStockLabOfferMenu(h, 4);
+        }
+        if (item.doName == 'showStockLabGetMenu') {
+            menuList.showStockLabGetMenu(h);
+        }
+    });
+};
+
+menuList.showStockLabGetMenu = function(h) {
+
+    UIMenu.Menu.Create(` `, `~b~Изготовление партии`, 'hm', false, false, 'h1');
+
+    if (h.get('lab_state') > 0) {
+        UIMenu.Menu.AddMenuItem(`Партия изготавливается... Осталось: ${(h.get('lab_state') / 6).toFixed(2)}ч.`); //10к малая
+    }
+    else {
+        UIMenu.Menu.AddMenuItem("Малая партия (1 час / 5ящ)", "Необходимо 2500 едениц каждого компонента~br~Учтите, если у вас не будет места для ящиков, они просто пропадут", {doName: 'createParty1'});
+        UIMenu.Menu.AddMenuItem("Средняя партия (2 часа / 10ящ)", "Необходимо 6250 едениц каждого компонента~br~Учтите, если у вас не будет места для ящиков, они просто пропадут", {doName: 'createParty2'});
+        UIMenu.Menu.AddMenuItem("Большая партия (3 часа / 20ящ)", "Необходимо 12500 едениц каждого компонента~br~Учтите, если у вас не будет места для ящиков, они просто пропадут", {doName: 'createParty3'});
+    }
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: 'closeMenu'});
+    UIMenu.Menu.Draw();
+
+    UIMenu.Menu.OnSelect.Add(async item => {
+        UIMenu.Menu.HideMenu();
+        if (item.doName == 'createParty1') {
+            let minCount = 2500;
+            if (h.get('lab_1_count') < minCount) {
+                mp.game.ui.notifications.show("~r~У вас недостаточно химикатов");
+                return;
+            }
+            if (h.get('lab_2_count') < minCount) {
+                mp.game.ui.notifications.show("~r~У вас недостаточно cтеклянных колб");
+                return;
+            }
+            if (h.get('lab_3_count') < minCount) {
+                mp.game.ui.notifications.show("~r~У вас недостаточно респираторов");
+                return;
+            }
+            if (h.get('lab_4_count') < minCount) {
+                mp.game.ui.notifications.show("~r~У вас недостаточно упаковок");
+                return;
+            }
+            mp.events.callRemote('server:stocks:labStart', h.get('id'), 1, minCount);
+            mp.game.ui.notifications.show("~g~Партия начала свое произвосдство");
+        }
+        if (item.doName == 'createParty2') {
+            let minCount = 6250;
+            if (h.get('lab_1_count') < minCount) {
+                mp.game.ui.notifications.show("~r~У вас недостаточно химикатов");
+                return;
+            }
+            if (h.get('lab_2_count') < minCount) {
+                mp.game.ui.notifications.show("~r~У вас недостаточно cтеклянных колб");
+                return;
+            }
+            if (h.get('lab_3_count') < minCount) {
+                mp.game.ui.notifications.show("~r~У вас недостаточно респираторов");
+                return;
+            }
+            if (h.get('lab_4_count') < minCount) {
+                mp.game.ui.notifications.show("~r~У вас недостаточно упаковок");
+                return;
+            }
+            mp.events.callRemote('server:stocks:labStart', h.get('id'), 2, minCount);
+            mp.game.ui.notifications.show("~g~Партия начала свое произвосдство");
+        }
+        if (item.doName == 'createParty3') {
+            let minCount = 12500;
+            if (h.get('lab_1_count') < minCount) {
+                mp.game.ui.notifications.show("~r~У вас недостаточно химикатов");
+                return;
+            }
+            if (h.get('lab_2_count') < minCount) {
+                mp.game.ui.notifications.show("~r~У вас недостаточно cтеклянных колб");
+                return;
+            }
+            if (h.get('lab_3_count') < minCount) {
+                mp.game.ui.notifications.show("~r~У вас недостаточно респираторов");
+                return;
+            }
+            if (h.get('lab_4_count') < minCount) {
+                mp.game.ui.notifications.show("~r~У вас недостаточно упаковок");
+                return;
+            }
+            mp.events.callRemote('server:stocks:labStart', h.get('id'), 3, minCount);
+            mp.game.ui.notifications.show("~g~Партия начала свое произвосдство");
+        }
+    });
+};
+
+menuList.showStockLabOfferMenu = function(h, type) {
+
+    let name = 'Химикаты';
+    if (type === 2)
+        name = 'Стеклянные колбы';
+    if (type === 3)
+        name = 'Респираторы';
+    if (type === 4)
+        name = 'Упаковки';
+
+    UIMenu.Menu.Create(` `, `~b~${name}`, 'hm', false, false, 'h1');
+
+    UIMenu.Menu.AddMenuItem("Малый заказ на 100 едениц", "Стоимость партии ~g~$500", {doName: 'giveOffer1'}); //10к малая
+    UIMenu.Menu.AddMenuItem("Средний заказ на 250 едениц", "Стоимость партии ~g~$900", {doName: 'giveOffer2'}); //25к средняя
+    UIMenu.Menu.AddMenuItem("Большой заказ на 500 едениц", "Стоимость партии ~g~$1800", {doName: 'giveOffer3'}); //50к большая партия
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: 'closeMenu'});
+    UIMenu.Menu.Draw();
+
+    UIMenu.Menu.OnSelect.Add(async item => {
+        UIMenu.Menu.HideMenu();
+        if (item.doName == 'giveOffer1') {
+            let money = methods.parseFloat(await UIMenu.Menu.GetUserInput("Сумма", "", 9));
+            if (money < 1) {
+                mp.game.ui.notifications.show("~r~Сумма не может быть меньше 1$");
+                return;
+            }
+            if (user.getBankMoney() < money + 500) {
+                mp.game.ui.notifications.show("~r~У вас нет столько денег на банковском счету");
+                return;
+            }
+            user.removeBankMoney(money + 500, 'Формирование заказа');
+            mp.events.callRemote('server:trucker:addOffer', 1, money, name, h.get('vx'), h.get('vy'), h.get('vz'));
+            mp.game.ui.notifications.show("~g~Ваш заказ был обработан");
+        }
+        if (item.doName == 'giveOffer2') {
+            let money = methods.parseFloat(await UIMenu.Menu.GetUserInput("Сумма", "", 9));
+            if (money < 1) {
+                mp.game.ui.notifications.show("~r~Сумма не может быть меньше 1$");
+                return;
+            }
+            if (user.getBankMoney() < money + 900) {
+                mp.game.ui.notifications.show("~r~У вас нет столько денег на банковском счету");
+                return;
+            }
+            user.removeBankMoney(money + 900, 'Формирование заказа');
+            mp.events.callRemote('server:trucker:addOffer', 2, money, name, h.get('vx'), h.get('vy'), h.get('vz'));
+            mp.game.ui.notifications.show("~g~Ваш заказ был обработан");
+        }
+        if (item.doName == 'giveOffer3') {
+            let money = methods.parseFloat(await UIMenu.Menu.GetUserInput("Сумма", "", 9));
+            if (money < 1) {
+                mp.game.ui.notifications.show("~r~Сумма не может быть меньше 1$");
+                return;
+            }
+            if (user.getBankMoney() < money + 1800) {
+                mp.game.ui.notifications.show("~r~У вас нет столько денег на банковском счету");
+                return;
+            }
+            user.removeBankMoney(money + 1800, 'Формирование заказа');
+            mp.events.callRemote('server:trucker:addOffer', 3, money, name, h.get('vx'), h.get('vy'), h.get('vz'));
+            mp.game.ui.notifications.show("~g~Ваш заказ был обработан");
+        }
+    });
+};
+
+menuList.showStockBunkMenu = function(h) {
+
+    UIMenu.Menu.Create(` `, `~b~Адрес: ~s~${h.get('address')} ${h.get('number')}`, 'hm', false, false, 'h1');
+
+    UIMenu.Menu.AddMenuItem(`~b~Сплавы:~s~ ${h.get('bunk_1_count')}`, 'Нажмите ~g~Enter~s~ чтобы сделать заказ', {doName: 'showStockBunkOfferMenu1'});
+    UIMenu.Menu.AddMenuItem(`~b~Порох:~s~ ${h.get('bunk_2_count')}`, 'Нажмите ~g~Enter~s~ чтобы сделать заказ', {doName: 'showStockBunkOfferMenu2'});
+    UIMenu.Menu.AddMenuItem(`~b~Униформа:~s~ ${h.get('bunk_3_count')}`, 'Нажмите ~g~Enter~s~ чтобы сделать заказ', {doName: 'showStockBunkOfferMenu3'});
+    UIMenu.Menu.AddMenuItem(`~b~Коробки:~s~ ${h.get('bunk_4_count')}`, 'Нажмите ~g~Enter~s~ чтобы сделать заказ', {doName: 'showStockBunkOfferMenu4'});
+    UIMenu.Menu.AddMenuItem("Произвести партию", "", {doName: 'showStockBunkGetMenu'});
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: 'closeMenu'});
+    UIMenu.Menu.Draw();
+
+    UIMenu.Menu.OnSelect.Add(async item => {
+        UIMenu.Menu.HideMenu();
+        if (item.doName == 'showStockBunkOfferMenu1') {
+            menuList.showStockBunkOfferMenu(h, 1);
+        }
+        if (item.doName == 'showStockBunkOfferMenu2') {
+            menuList.showStockBunkOfferMenu(h, 2);
+        }
+        if (item.doName == 'showStockBunkOfferMenu3') {
+            menuList.showStockBunkOfferMenu(h, 3);
+        }
+        if (item.doName == 'showStockBunkOfferMenu4') {
+            menuList.showStockBunkOfferMenu(h, 4);
+        }
+        if (item.doName == 'showStockBunkGetMenu') {
+            menuList.showStockBunkGetMenu(h);
+        }
+    });
+};
+
+menuList.showStockBunkGetMenu = function(h) {
+
+    UIMenu.Menu.Create(` `, `~b~Изготовление партии`, 'hm', false, false, 'h1');
+
+    if (h.get('bunk_state') > 0) {
+        UIMenu.Menu.AddMenuItem(`Партия изготавливается... Осталось: ${(h.get('bunk_state') / 6).toFixed(2)}ч.`); //10к малая
+    }
+    else {
+        UIMenu.Menu.AddMenuItem("Малая партия (1 час / 5ящ)", "Необходимо 2500 едениц каждого компонента~br~Учтите, если у вас не будет места для ящиков, они просто пропадут", {doName: 'createParty1'});
+        UIMenu.Menu.AddMenuItem("Средняя партия (2 часа / 10ящ)", "Необходимо 6250 едениц каждого компонента~br~Учтите, если у вас не будет места для ящиков, они просто пропадут", {doName: 'createParty2'});
+        UIMenu.Menu.AddMenuItem("Большая партия (3 часа / 20ящ)", "Необходимо 12500 едениц каждого компонента~br~Учтите, если у вас не будет места для ящиков, они просто пропадут", {doName: 'createParty3'});
+    }
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: 'closeMenu'});
+    UIMenu.Menu.Draw();
+
+    UIMenu.Menu.OnSelect.Add(async item => {
+        UIMenu.Menu.HideMenu();
+        if (item.doName == 'createParty1') {
+            let minCount = 2500;
+            if (h.get('bunk_1_count') < minCount) {
+                mp.game.ui.notifications.show("~r~У вас недостаточно сплавов");
+                return;
+            }
+            if (h.get('bunk_2_count') < minCount) {
+                mp.game.ui.notifications.show("~r~У вас недостаточно пороха");
+                return;
+            }
+            if (h.get('bunk_3_count') < minCount) {
+                mp.game.ui.notifications.show("~r~У вас недостаточно униформы");
+                return;
+            }
+            if (h.get('bunk_4_count') < minCount) {
+                mp.game.ui.notifications.show("~r~У вас недостаточно коробок");
+                return;
+            }
+            mp.events.callRemote('server:stocks:bunkStart', h.get('id'), 1, minCount);
+            mp.game.ui.notifications.show("~g~Партия начала свое произвосдство");
+        }
+        if (item.doName == 'createParty2') {
+            let minCount = 6250;
+            if (h.get('bunk_1_count') < minCount) {
+                mp.game.ui.notifications.show("~r~У вас недостаточно сплавов");
+                return;
+            }
+            if (h.get('bunk_2_count') < minCount) {
+                mp.game.ui.notifications.show("~r~У вас недостаточно пороха");
+                return;
+            }
+            if (h.get('bunk_3_count') < minCount) {
+                mp.game.ui.notifications.show("~r~У вас недостаточно униформы");
+                return;
+            }
+            if (h.get('bunk_4_count') < minCount) {
+                mp.game.ui.notifications.show("~r~У вас недостаточно коробок");
+                return;
+            }
+            mp.events.callRemote('server:stocks:bunkStart', h.get('id'), 2, minCount);
+            mp.game.ui.notifications.show("~g~Партия начала свое произвосдство");
+        }
+        if (item.doName == 'createParty3') {
+            let minCount = 12500;
+            if (h.get('bunk_1_count') < minCount) {
+                mp.game.ui.notifications.show("~r~У вас недостаточно сплавов");
+                return;
+            }
+            if (h.get('bunk_2_count') < minCount) {
+                mp.game.ui.notifications.show("~r~У вас недостаточно пороха");
+                return;
+            }
+            if (h.get('bunk_3_count') < minCount) {
+                mp.game.ui.notifications.show("~r~У вас недостаточно униформы");
+                return;
+            }
+            if (h.get('bunk_4_count') < minCount) {
+                mp.game.ui.notifications.show("~r~У вас недостаточно коробок");
+                return;
+            }
+            mp.events.callRemote('server:stocks:bunkStart', h.get('id'), 3, minCount);
+            mp.game.ui.notifications.show("~g~Партия начала свое произвосдство");
+        }
+    });
+};
+
+menuList.showStockBunkOfferMenu = function(h, type) {
+
+    let name = 'Сплавы';
+    if (type === 2)
+        name = 'Порох';
+    if (type === 3)
+        name = 'Униформа';
+    if (type === 4)
+        name = 'Корбки';
+
+    UIMenu.Menu.Create(` `, `~b~${name}`, 'hm', false, false, 'h1');
+
+    UIMenu.Menu.AddMenuItem("Малый заказ на 100 едениц", "Стоимость партии ~g~$500", {doName: 'giveOffer1'}); //10к малая
+    UIMenu.Menu.AddMenuItem("Средний заказ на 250 едениц", "Стоимость партии ~g~$900", {doName: 'giveOffer2'}); //25к средняя
+    UIMenu.Menu.AddMenuItem("Большой заказ на 500 едениц", "Стоимость партии ~g~$1800", {doName: 'giveOffer3'}); //50к большая партия
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: 'closeMenu'});
+    UIMenu.Menu.Draw();
+
+    UIMenu.Menu.OnSelect.Add(async item => {
+        UIMenu.Menu.HideMenu();
+        if (item.doName == 'giveOffer1') {
+            let money = methods.parseFloat(await UIMenu.Menu.GetUserInput("Сумма", "", 9));
+            if (money < 1) {
+                mp.game.ui.notifications.show("~r~Сумма не может быть меньше 1$");
+                return;
+            }
+            if (user.getBankMoney() < money + 500) {
+                mp.game.ui.notifications.show("~r~У вас нет столько денег на банковском счету");
+                return;
+            }
+            user.removeBankMoney(money + 500, 'Формирование заказа');
+            mp.events.callRemote('server:trucker:addOffer', 1, money, name, h.get('vx'), h.get('vy'), h.get('vz'));
+            mp.game.ui.notifications.show("~g~Ваш заказ был обработан");
+        }
+        if (item.doName == 'giveOffer2') {
+            let money = methods.parseFloat(await UIMenu.Menu.GetUserInput("Сумма", "", 9));
+            if (money < 1) {
+                mp.game.ui.notifications.show("~r~Сумма не может быть меньше 1$");
+                return;
+            }
+            if (user.getBankMoney() < money + 900) {
+                mp.game.ui.notifications.show("~r~У вас нет столько денег на банковском счету");
+                return;
+            }
+            user.removeBankMoney(money + 900, 'Формирование заказа');
+            mp.events.callRemote('server:trucker:addOffer', 2, money, name, h.get('vx'), h.get('vy'), h.get('vz'));
+            mp.game.ui.notifications.show("~g~Ваш заказ был обработан");
+        }
+        if (item.doName == 'giveOffer3') {
+            let money = methods.parseFloat(await UIMenu.Menu.GetUserInput("Сумма", "", 9));
+            if (money < 1) {
+                mp.game.ui.notifications.show("~r~Сумма не может быть меньше 1$");
+                return;
+            }
+            if (user.getBankMoney() < money + 1800) {
+                mp.game.ui.notifications.show("~r~У вас нет столько денег на банковском счету");
+                return;
+            }
+            user.removeBankMoney(money + 1800, 'Формирование заказа');
+            mp.events.callRemote('server:trucker:addOffer', 3, money, name, h.get('vx'), h.get('vy'), h.get('vz'));
+            mp.game.ui.notifications.show("~g~Ваш заказ был обработан");
+        }
+    });
+};
+
 menuList.showStockPanelUpgradeMenu = function(h) {
 
     UIMenu.Menu.Create(` `, `~b~Адрес: ~s~${h.get('address')} ${h.get('number')}`, 'hm', false, false, 'h1');
 
     if (h.get('interior') > 1 && !h.get('upgrade_g'))
         UIMenu.Menu.AddMenuItem(`~y~Расширенный гараж и жилой офис`, "Стоимость: ~g~$2.500.000~s~~br~Благодаря этому лучшению, вы можете сделать ваш склад спавном для вашей организации~br~Бонусом выступает, что в гараже можно хранить грузовики и больой транспорт", {buyGarage: true});
+
+    if (h.get('interior') > 1 && !h.get('upgrade_b'))
+        UIMenu.Menu.AddMenuItem(`~y~Бункер`, "Стоимость: ~g~$50.000.000~s~~br~Благодаря этому лучшению, вы можете заниматся изготовкой оружия~br~Бонусом выступает, что в гараже можно хранить грузовики и больой транспорт", {buyBunker: true});
+
+    if (h.get('interior') > 0 && !h.get('upgrade_l'))
+        UIMenu.Menu.AddMenuItem(`~y~Лаборатория`, "Стоимость: ~g~$5.000.000~s~~br~Благодаря этому лучшению, вы можете заниматся изготовкой наркотиков", {buyLab: true});
+
+    if (h.get('interior') > 1 && !h.get('upgrade_n'))
+        UIMenu.Menu.AddMenuItem(`~y~Снятие номеров`, "Стоимость: ~g~$10.000.000~s~~br~Благодаря этому лучшению, вы можете снимать номера с автомобилей", {buyNumber: true});
 
     h.get('upgrade').split('_').forEach((uItem, idx) => {
         uItem = methods.parseInt(uItem);
@@ -637,8 +1036,14 @@ menuList.showStockPanelUpgradeMenu = function(h) {
         UIMenu.Menu.HideMenu();
         if (item.buySlot >= 0)
             menuList.showStockPanelUpgradeBuySlotMenu(h, item.buySlot);
-        if (item.buyGarage >= 0)
+        if (item.buyGarage)
             menuList.showStockPanelUpgradeBuyGarageMenu(h);
+        if (item.buyNumber)
+            menuList.showStockPanelUpgradeBuyNumberMenu(h);
+        if (item.buyLab)
+            menuList.showStockPanelUpgradeBuyLabMenu(h);
+        if (item.buyBunker)
+            menuList.showStockPanelUpgradeBuyBunkerMenu(h);
     });
 };
 
@@ -670,7 +1075,7 @@ menuList.showStockPanelUpgradeBuySlotMenu = function(h, slot) {
 menuList.showStockPanelUpgradeBuyGarageMenu = function(h) {
 
     try {
-        UIMenu.Menu.Create(` `, `~b~Выберите ящик для покупки`, 'hm', false, false, 'h1');
+        UIMenu.Menu.Create(` `, `~b~Улучшение офиса`, 'hm', false, false, 'h1');
 
         UIMenu.Menu.AddMenuItem("Купить за ~g~$2.500.000", "", {doName: 'yes'});
 
@@ -687,6 +1092,98 @@ menuList.showStockPanelUpgradeBuyGarageMenu = function(h) {
                 user.removeBankMoney(2500000, 'Улучшение для склада #' + h.get('id'));
                 stocks.upgradeGarage(h.get('id'));
                 mp.game.ui.notifications.show('~g~Поздравляем с покупкой улучшения, теперь при входе на склад, вам будет предложение войти во второе помещение');
+            }
+        });
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+};
+
+menuList.showStockPanelUpgradeBuyNumberMenu = function(h) {
+
+    try {
+        UIMenu.Menu.Create(` `, `~b~Улучшение снятия номеров`, 'hm', false, false, 'h1');
+
+        UIMenu.Menu.AddMenuItem("Купить за ~g~$10.000.000", "", {doName: 'yes'});
+
+        UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: 'closeMenu'});
+        UIMenu.Menu.Draw();
+
+        UIMenu.Menu.OnSelect.Add(async item => {
+            UIMenu.Menu.HideMenu();
+            if (item.doName === 'yes') {
+                if (!h.get('upgrade_g')) {
+                    mp.game.ui.notifications.show('~r~У вас нет офиса для того, чтобы вы могли поставить это улучшение');
+                    return;
+                }
+                if (user.getBankMoney() < 10000000) {
+                    mp.game.ui.notifications.show('~r~На вашем банковском счету не хватает средств');
+                    return;
+                }
+                user.removeBankMoney(10000000, 'Улучшение для склада #' + h.get('id'));
+                stocks.upgradeNumber(h.get('id'));
+                mp.game.ui.notifications.show('~g~Поздравляем с покупкой улучшения, теперь заезжая в офис, нажимая на меню взаимодействия с ТС, можно снимать номера');
+            }
+        });
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+};
+
+menuList.showStockPanelUpgradeBuyBunkerMenu = function(h) {
+
+    try {
+        UIMenu.Menu.Create(` `, `~b~Улучшение бункера`, 'hm', false, false, 'h1');
+
+        UIMenu.Menu.AddMenuItem("Купить за ~g~$50.000.000", "", {doName: 'yes'});
+
+        UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: 'closeMenu'});
+        UIMenu.Menu.Draw();
+
+        UIMenu.Menu.OnSelect.Add(async item => {
+            UIMenu.Menu.HideMenu();
+            if (item.doName === 'yes') {
+                if (!h.get('upgrade_g')) {
+                    mp.game.ui.notifications.show('~r~У вас нет офиса для того, чтобы вы могли поставить это улучшение');
+                    return;
+                }
+                if (user.getBankMoney() < 50000000) {
+                    mp.game.ui.notifications.show('~r~На вашем банковском счету не хватает средств');
+                    return;
+                }
+                user.removeBankMoney(50000000, 'Улучшение для склада #' + h.get('id'));
+                stocks.upgradeBunker(h.get('id'));
+                mp.game.ui.notifications.show('~g~Поздравляем с покупкой улучшения, теперь вы можете крафить оружие');
+            }
+        });
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+};
+
+menuList.showStockPanelUpgradeBuyLabMenu = function(h) {
+
+    try {
+        UIMenu.Menu.Create(` `, `~b~Улучшение нарко лаборатории`, 'hm', false, false, 'h1');
+
+        UIMenu.Menu.AddMenuItem("Купить за ~g~$5.000.000", "", {doName: 'yes'});
+
+        UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: 'closeMenu'});
+        UIMenu.Menu.Draw();
+
+        UIMenu.Menu.OnSelect.Add(async item => {
+            UIMenu.Menu.HideMenu();
+            if (item.doName === 'yes') {
+                if (user.getBankMoney() < 5000000) {
+                    mp.game.ui.notifications.show('~r~На вашем банковском счету не хватает средств');
+                    return;
+                }
+                user.removeBankMoney(5000000, 'Улучшение для склада #' + h.get('id'));
+                stocks.upgradeLab(h.get('id'));
+                mp.game.ui.notifications.show('~g~Поздравляем с покупкой улучшения, теперь вы можете крафтить наркотики');
             }
         });
     }
@@ -790,6 +1287,7 @@ menuList.showStockPanelBoxInfoMoreMenu = function(h, item, slot, price, boxId) {
         UIMenu.Menu.AddMenuItem(`~y~Продать за ~s~${methods.moneyFormat(price)}`, "", {isSell: true});
     else
         UIMenu.Menu.AddMenuItem(`~y~Продать за ~s~${methods.numberFormat(price)}ec`, "", {isSell: true});
+
     UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: 'closeMenu'});
     UIMenu.Menu.Draw();
 
@@ -809,6 +1307,10 @@ menuList.showStockOutMenu = async function(h) {
     UIMenu.Menu.AddMenuItem("~g~Войти на склад", "", {doName: 'enterStock'});
     if (h.get('upgrade_g'))
         UIMenu.Menu.AddMenuItem("~g~Войти в офис", "", {doName: 'enterStock1'});
+    if (h.get('upgrade_l'))
+        UIMenu.Menu.AddMenuItem("~g~Войти в лабораторию", "", {doName: 'enterStockL'});
+    if (h.get('upgrade_b'))
+        UIMenu.Menu.AddMenuItem("~g~Войти в бункер", "", {doName: 'enterStockB'});
 
     UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: 'closeMenu'});
     UIMenu.Menu.Draw();
@@ -907,6 +1409,96 @@ menuList.showStockOutMenu = async function(h) {
                 methods.debug(e);
             }
         }
+        if (item.doName === 'enterStockL') {
+            try {
+                if (user.getCache('id') != h.get('user_id')) {
+
+                    if (Container.Data.HasLocally(mp.players.local.remoteId, "isPassTimeout"))
+                    {
+                        mp.game.ui.notifications.show("~r~Таймаут 10 сек");
+                        return;
+                    }
+
+                    let pass = methods.parseInt(await UIMenu.Menu.GetUserInput("Пароль", "", 10));
+
+                    if (pass === 0) {
+                        mp.game.ui.notifications.show('~r~Вы ввели не правильный пинкод');
+                        return;
+                    }
+
+                    Container.Data.SetLocally(mp.players.local.remoteId, "isPassTimeout", true);
+
+                    if (pass === h.get('pin_l')) {
+                        stocks.enterl(h.get('id'), h.get('lab_state'));
+                        Container.Data.ResetLocally(mp.players.local.remoteId, "isPassTimeout");
+                    }
+                    else {
+
+                        mp.game.ui.notifications.show('~r~Вы ввели не правильный пинкод');
+                        setTimeout(function () {
+                            Container.Data.ResetLocally(mp.players.local.remoteId, "isPassTimeout");
+                        }, 10000);
+                    }
+
+                    /*mp.game.ui.notifications.show('~r~Введите пинкод');
+                    let pass = methods.parseInt(await UIMenu.Menu.GetUserInput("Введите пинкод", "", 5));
+                    if (pass == h.get('pin'))
+                        stocks.enter(h.get('id'));
+                    else
+                        mp.game.ui.notifications.show('~r~Вы ввели не правильный пинкод');*/
+                }
+                else
+                    stocks.enterl(h.get('id'), h.get('lab_state'));
+            }
+            catch (e) {
+                methods.debug(e);
+            }
+        }
+        if (item.doName === 'enterStockB') {
+            try {
+                if (user.getCache('id') != h.get('user_id')) {
+
+                    if (Container.Data.HasLocally(mp.players.local.remoteId, "isPassTimeout"))
+                    {
+                        mp.game.ui.notifications.show("~r~Таймаут 10 сек");
+                        return;
+                    }
+
+                    let pass = methods.parseInt(await UIMenu.Menu.GetUserInput("Пароль", "", 10));
+
+                    if (pass === 0) {
+                        mp.game.ui.notifications.show('~r~Вы ввели не правильный пинкод');
+                        return;
+                    }
+
+                    Container.Data.SetLocally(mp.players.local.remoteId, "isPassTimeout", true);
+
+                    if (pass === h.get('pin_b')) {
+                        stocks.enterb(h.get('id'));
+                        Container.Data.ResetLocally(mp.players.local.remoteId, "isPassTimeout");
+                    }
+                    else {
+
+                        mp.game.ui.notifications.show('~r~Вы ввели не правильный пинкод');
+                        setTimeout(function () {
+                            Container.Data.ResetLocally(mp.players.local.remoteId, "isPassTimeout");
+                        }, 10000);
+                    }
+
+                    /*mp.game.ui.notifications.show('~r~Введите пинкод');
+                    let pass = methods.parseInt(await UIMenu.Menu.GetUserInput("Введите пинкод", "", 5));
+                    if (pass == h.get('pin'))
+                        stocks.enter(h.get('id'));
+                    else
+                        mp.game.ui.notifications.show('~r~Вы ввели не правильный пинкод');*/
+                }
+                else
+                    stocks.enterb(h.get('id'));
+            }
+            catch (e) {
+                methods.debug(e);
+            }
+        }
     });
 };
 
@@ -932,6 +1524,10 @@ menuList.showStockOutVMenu = async function(h) {
     UIMenu.Menu.AddMenuItem("~g~Войти на склад", "", {doName: 'enter'});
     if (h.get('upgrade_g'))
         UIMenu.Menu.AddMenuItem("~g~Войти в офис", "", {doName: 'enter1'});
+    if (h.get('upgrade_l'))
+        UIMenu.Menu.AddMenuItem("~g~Войти в лабораторию", "Доступно только пешком", {doName: 'enterl'});
+    if (h.get('upgrade_b'))
+        UIMenu.Menu.AddMenuItem("~g~Войти в бункер", "", {doName: 'enterb'});
     UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: 'closeMenu'});
     UIMenu.Menu.Draw();
 
@@ -1008,6 +1604,80 @@ menuList.showStockOutVMenu = async function(h) {
                 }
                 else
                     stocks.enterv1(h.get('id'));
+            }
+            catch (e) {
+                methods.debug(e);
+            }
+        }
+        if (item.doName === 'enterl') {
+            try {
+                if (user.getCache('id') != h.get('user_id')) {
+
+                    if (Container.Data.HasLocally(mp.players.local.remoteId, "isPassTimeout"))
+                    {
+                        mp.game.ui.notifications.show("~r~Таймаут 10 сек");
+                        return;
+                    }
+
+                    let pass = methods.parseInt(await UIMenu.Menu.GetUserInput("Пароль", "", 10));
+                    if (pass === 0) {
+                        mp.game.ui.notifications.show('~r~Вы ввели не правильный пинкод');
+                        return;
+                    }
+
+                    Container.Data.SetLocally(mp.players.local.remoteId, "isPassTimeout", true);
+
+                    if (pass === h.get('pin_l')) {
+                        stocks.enterl(h.get('id'), h.get('lab_state'));
+                        Container.Data.ResetLocally(mp.players.local.remoteId, "isPassTimeout");
+                    }
+                    else {
+
+                        mp.game.ui.notifications.show('~r~Вы ввели не правильный пинкод');
+                        setTimeout(function () {
+                            Container.Data.ResetLocally(mp.players.local.remoteId, "isPassTimeout");
+                        }, 10000);
+                    }
+                }
+                else
+                    stocks.enterl(h.get('id'), h.get('lab_state'));
+            }
+            catch (e) {
+                methods.debug(e);
+            }
+        }
+        if (item.doName === 'enterb') {
+            try {
+                if (user.getCache('id') != h.get('user_id')) {
+
+                    if (Container.Data.HasLocally(mp.players.local.remoteId, "isPassTimeout"))
+                    {
+                        mp.game.ui.notifications.show("~r~Таймаут 10 сек");
+                        return;
+                    }
+
+                    let pass = methods.parseInt(await UIMenu.Menu.GetUserInput("Пароль", "", 10));
+                    if (pass === 0) {
+                        mp.game.ui.notifications.show('~r~Вы ввели не правильный пинкод');
+                        return;
+                    }
+
+                    Container.Data.SetLocally(mp.players.local.remoteId, "isPassTimeout", true);
+
+                    if (pass === h.get('pin_b')) {
+                        stocks.entervb(h.get('id'));
+                        Container.Data.ResetLocally(mp.players.local.remoteId, "isPassTimeout");
+                    }
+                    else {
+
+                        mp.game.ui.notifications.show('~r~Вы ввели не правильный пинкод');
+                        setTimeout(function () {
+                            Container.Data.ResetLocally(mp.players.local.remoteId, "isPassTimeout");
+                        }, 10000);
+                    }
+                }
+                else
+                    stocks.entervb(h.get('id'));
             }
             catch (e) {
                 methods.debug(e);
@@ -3861,7 +4531,7 @@ menuList.showPlayerDoMenu = function(playerId) {
     });
 };
 
-menuList.showVehicleDoInvMenu = function(vehId) {
+menuList.showVehicleDoInvMenu = async function(vehId) {
 
     let vehicle = mp.vehicles.atRemoteId(vehId);
 
@@ -3919,6 +4589,19 @@ menuList.showVehicleDoInvMenu = function(vehId) {
     }
 
     UIMenu.Menu.AddMenuItem("Закрыть багажник", "", {doName: "close"});
+
+    try {
+        if (mp.players.local.dimension > enums.offsets.stock) {
+            let stockId = mp.players.local.dimension - enums.offsets.stock;
+            let stockData = await stocks.getData(stockId);
+            if (stockData.get('upgrade_n')) {
+                UIMenu.Menu.AddMenuItem("~y~Снять номера с транспорта", "Стоимость ~g~$15.000~s~~br~~y~Номера снимаются до респавна транспорта", {doName: "removeNumber"});
+            }
+        }
+    }
+    catch (e) {
+        methods.debug(e);
+    }
 
     UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
     UIMenu.Menu.Draw();
@@ -3979,7 +4662,7 @@ menuList.showVehicleDoInvMenu = function(vehId) {
                 return;
             }
 
-            inventory.getItemList(inventory.types.Vehicle, mp.game.joaat(vehicle.getNumberPlateText().trim()));
+            inventory.getItemList(inventory.types.Vehicle, mp.game.joaat(vehicles.getNumberPlate(vehicle).trim()));
             vehicles.setTrunkStateById(vehicle.remoteId, true);
         }
         if (item.doName == 'eject') {
@@ -4002,6 +4685,9 @@ menuList.showVehicleDoInvMenu = function(vehId) {
         }
         else if (item.doName == 'close') {
             vehicles.setTrunkStateById(vehicle.remoteId, false);
+        }
+        else if (item.doName == 'removeNumber') {
+            mp.events.callRemote('server:vehicle:removeNumber', methods.parseInt(vehicle.remoteId));
         }
     });
 };
@@ -4706,18 +5392,20 @@ menuList.showVehicleMenu = async function(data) {
         UIMenu.Menu.AddMenuItem("~y~Ограбить транспорт", "", {doName: "gr6:grab"});
     }
 
-    if (veh.getVariable('taxi')) {
-        UIMenu.Menu.AddMenuItem("~g~Получить заказ", "На перевозку NPC", {doName: "taxi:take"});
-        UIMenu.Menu.AddMenuItem("~g~Диспетчерская", "", {doName: "taxi:dispatch"});
-        UIMenu.Menu.AddMenuItem("~b~Справка", 'Вы можете перевозить NPC или игроков.');
-    }
-    else if (user.getCache('taxi_lic') && !veh.getVariable('jobId') && !veh.getVariable('fraction_id') && !veh.getVariable('cargoId')) {
-        if (user.getCache('isTaxi')) {
+    if (veh.getMaxNumberOfPassengers() > 0) {
+        if (veh.getVariable('taxi')) {
+            UIMenu.Menu.AddMenuItem("~g~Получить заказ", "На перевозку NPC", {doName: "taxi:take"});
             UIMenu.Menu.AddMenuItem("~g~Диспетчерская", "", {doName: "taxi:dispatch"});
-            UIMenu.Menu.AddMenuItem("~y~Закончить принимать заказы", "", {doName: "taxi:stop"});
+            UIMenu.Menu.AddMenuItem("~b~Справка", 'Вы можете перевозить NPC или игроков.');
         }
-        else {
-            UIMenu.Menu.AddMenuItem("~g~Начать принимать заказы", "", {doName: "taxi:start"});
+        else if (user.getCache('taxi_lic') && !veh.getVariable('jobId') && !veh.getVariable('fraction_id') && !veh.getVariable('cargoId')) {
+            if (user.getCache('isTaxi')) {
+                UIMenu.Menu.AddMenuItem("~g~Диспетчерская", "", {doName: "taxi:dispatch"});
+                UIMenu.Menu.AddMenuItem("~y~Закончить принимать заказы", "", {doName: "taxi:stop"});
+            }
+            else {
+                UIMenu.Menu.AddMenuItem("~g~Начать принимать заказы", "", {doName: "taxi:start"});
+            }
         }
     }
 
@@ -6104,6 +6792,179 @@ menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId, isF
         }
 
         inventory.setInvAmount(ownerId, ownerType, sum);
+    }
+    catch (e) {
+       methods.debug('menuList.showToPlayerItemListMenu', e);
+    }
+};
+
+
+menuList.showToPlayerItemListAddMenu = async function(data, ownerType, ownerId, isFrisk) {
+
+    if (user.isDead()) {
+        return;
+    }
+
+    ownerId = methods.parseInt(ownerId);
+
+    try {
+        //let invAmountMax = await inventory.getInvAmountMax(ownerId, ownerType);
+        let sum = 0;
+        let currentItems = [];
+        let equipItems = [];
+        let equipWeapons = [];
+
+        data.forEach((item, idx) => {
+            try {
+                let params = {};
+
+                try {
+                    params = JSON.parse(item.params);
+                }
+                catch (e) {
+                    methods.debug(e);
+                }
+
+                if (item.is_equip == 0)
+                    sum = sum + items.getItemAmountById(item.item_id);
+
+                let formatItem = items.getItemFormat(item);
+                let desc = formatItem.desc;
+                let itemName = formatItem.name;
+
+                if (item.is_equip == 1 && ownerType == 1 && ownerId == user.getCache('id')) {
+
+                    let success = true;
+
+                    if (item.item_id == 50) {
+                        if (params.number != user.getCache('bank_card')) {
+                            inventory.updateEquipStatus(item.id, false);
+                            success = false;
+                        }
+                    }
+                    /*if (item.item_id == 252) {
+                        user.setArmour(item.count)
+                    }*/
+                    if (item.item_id <= 30 && item.item_id >= 27) {
+                        if (params.number != user.getCache('phone')) {
+                            inventory.updateEquipStatus(item.id, false);
+                            success = false;
+                        }
+                    }
+
+                    if (items.isWeapon(item.item_id)) {
+
+                        let slot = weapons.getGunSlotIdByItem(item.item_id);
+
+                        if (params.serial != user.getCache('weapon_' + slot)) {
+                            inventory.updateEquipStatus(item.id, false);
+
+                            currentItems.push({
+                                id: item.id,
+                                item_id: item.item_id,
+                                name: itemName,
+                                counti: item.count,
+                                volume: items.getItemAmountById(item.item_id),
+                                desc: desc,
+                                params: params
+                            });
+                            return;
+                        }
+
+                        let wpName = items.getItemNameHashById(item.item_id);
+                        let wpHash = weapons.getHashByName(wpName);
+                        if (!mp.game.invoke(methods.HAS_PED_GOT_WEAPON, mp.players.local.handle, wpHash, false)) {
+                            user.giveWeapon(wpName, user.getCache('weapon_' + slot + '_ammo'));
+
+                            user.removeAllWeaponComponentsByHash(wpHash);
+                            user.setWeaponTintByHash(wpHash, 0);
+
+                            if (params.slot1)
+                                user.giveWeaponComponentByHash(wpHash, params.slot1hash);
+                            if (params.slot2)
+                                user.giveWeaponComponentByHash(wpHash, params.slot2hash);
+                            if (params.slot3)
+                                user.giveWeaponComponentByHash(wpHash, params.slot3hash);
+                            if (params.slot4)
+                                user.giveWeaponComponentByHash(wpHash, params.slot4hash);
+                            if (params.superTint)
+                                user.giveWeaponComponentByHash(wpHash, params.superTint);
+                            if (params.tint)
+                                user.setWeaponTintByHash(wpHash, params.tint);
+
+                            ui.callCef('inventory', JSON.stringify({type: "updateSelectWeapon", selectId: item.id}));
+
+                            mp.attachmentMngr.addLocal('WDSP_' + wpName.toUpperCase());
+                        }
+
+                        equipWeapons.push({
+                            id: item.id,
+                            item_id: item.item_id,
+                            name: itemName,
+                            counti: item.count < 0 ? 100 : item.count,
+                            volume: items.getItemAmountById(item.item_id),
+                            desc: desc,
+                            params: params
+                        });
+                        return;
+                    }
+
+                    if (success) {
+                        equipItems.push({
+                            id: item.id,
+                            item_id: item.item_id,
+                            name: itemName,
+                            counti: item.count,
+                            volume: items.getItemAmountById(item.item_id),
+                            desc: desc,
+                            params: params
+                        });
+                    }
+                    else {
+                        currentItems.push({
+                            id: item.id,
+                            item_id: item.item_id,
+                            name: itemName,
+                            counti: item.count,
+                            volume: items.getItemAmountById(item.item_id),
+                            desc: desc,
+                            params: params
+                        });
+                    }
+                }
+                else {
+                    currentItems.push({
+                        id: item.id,
+                        item_id: item.item_id,
+                        name: itemName,
+                        counti: item.count,
+                        volume: items.getItemAmountById(item.item_id),
+                        desc: desc,
+                        params: params
+                    });
+                }
+            } catch (e) {
+                methods.debug('menuList.showToPlayerItemListMenu2', e.toString());
+            }
+        });
+
+        if (ownerType == inventory.types.Player && user.getCache('id') == ownerId) {
+
+        }
+        else {
+            if (isFrisk) {
+            }
+            else {
+                let dataSend = {
+                    type: 'addSubItems',
+                    items: currentItems,
+                    ownerId: ownerId,
+                    ownerType: ownerType,
+                    sum: sum,
+                };
+                ui.callCef('inventory', JSON.stringify(dataSend));
+            }
+        }
     }
     catch (e) {
        methods.debug('menuList.showToPlayerItemListMenu', e);
@@ -11597,8 +12458,7 @@ menuList.showAdminMenu = function() {
             UIMenu.Menu.AddMenuItem("Транспорт", "", {doName: "vehicleMenu"});
             UIMenu.Menu.AddMenuItem("Телепорт", "", {doName: "teleportMenu"});
             if (user.isAdmin(2)) {
-                if (!user.isAdminRp())
-                    UIMenu.Menu.AddMenuItem("Режим No Clip", "", {doName: "noClip"});
+                UIMenu.Menu.AddMenuItem("Режим No Clip", "", {doName: "noClip"});
                 UIMenu.Menu.AddMenuItem("Режим Free Cam", "", {doName: "freeCam"});
                 UIMenu.Menu.AddMenuItem("Режим Drone", "", {doName: "drone"});
             }
@@ -11612,8 +12472,7 @@ menuList.showAdminMenu = function() {
                 UIMenu.Menu.AddMenuItem("Лидер семьи", "Значение 0 убирает оргу", {doName: "giveLeaderFam"});
             }
 
-            if (!user.isAdminRp())
-                UIMenu.Menu.AddMenuItem("Режим невидимки", "", {doName: "invise"});
+            UIMenu.Menu.AddMenuItem("Режим невидимки", "", {doName: "invise"});
             UIMenu.Menu.AddMenuItem("Прогрузка ID", "", {doName: "idDist"});
 
             if (user.isAdmin(3))
@@ -11624,7 +12483,7 @@ menuList.showAdminMenu = function() {
                 UIMenu.Menu.AddMenuItem("Уведомление", "", {doName: "notify"});
             if (user.isAdmin(2) && !user.isAdminRp())
                 UIMenu.Menu.AddMenuItem("Уведомление для крайма", "", {doName: "notifyCrime"});
-            if (user.isAdmin(2) && !user.isAdminRp())
+            if (user.isAdmin(2) || user.isAdminRp())
                 UIMenu.Menu.AddMenuItem("Меропритие", "", {doName: "eventMenu"});
 
             if (user.isAdmin(3) && !user.isAdminRp()) {

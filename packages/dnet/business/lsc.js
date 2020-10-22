@@ -433,7 +433,7 @@ lsc.buyNumber = function(player, shopId, newNumber, payType) {
             mp.vehicles.forEach(function (v) {
                 if (!vehicles.exists(v))
                     return;
-                if (v.numberPlate == newNumber)
+                if (vehicles.getNumberPlate(v) == newNumber)
                     valid = false;
             });
 
@@ -461,10 +461,10 @@ lsc.buyNumber = function(player, shopId, newNumber, payType) {
                     business.addMoney(shopId, price, 'Смена номера');
                     business.removeMoneyTax(shopId, price / 2);
 
-                    mysql.executeQuery(`UPDATE items SET owner_id = '${mp.joaat(newNumber.trim())}' where owner_id = '${mp.joaat(veh.numberPlate.trim())}' and owner_type = '${inventory.types.Vehicle}'`);
+                    mysql.executeQuery(`UPDATE items SET owner_id = '${mp.joaat(newNumber.trim())}' where owner_id = '${mp.joaat(vehicles.getNumberPlate(veh).trim())}' and owner_type = '${inventory.types.Vehicle}'`);
 
                     vehicles.set(veh.getVariable('container'), 'number', newNumber);
-                    veh.numberPlate = newNumber;
+                    vehicles.setNumberPlate(veh, newNumber);
 
                     user.save(player);
                     vehicles.save(veh.getVariable('container'));

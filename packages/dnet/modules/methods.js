@@ -11,6 +11,7 @@ let coffer = require('../coffer');
 
 let vehicles = require('../property/vehicles');
 let business = require('../property/business');
+let stocks = require('../property/stocks');
 let fraction = require('../property/fraction');
 let family = require('../property/family');
 
@@ -48,6 +49,10 @@ methods.saveAllAnother = async function () {
     console.time('saveFamily');
     family.saveAll();
     console.timeEnd('saveFamily');
+
+    console.time('saveStocks');
+    stocks.saveAll();
+    console.timeEnd('saveStocks');
 
     console.time('saveBusiness');
     for (let i = 1; i < 300; i++)
@@ -895,7 +900,7 @@ methods.getListOfVehicleNumberInRadius = function(pos, r) {
         (vehicle) => {
             if (!vehicles.exists(vehicle))
                 return;
-            returnVehicles.push(vehicle.numberPlate);
+            returnVehicles.push(vehicles.getNumberPlate(vehicle));
         }
     );
     return returnVehicles;

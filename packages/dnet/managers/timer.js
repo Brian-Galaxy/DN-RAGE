@@ -4,6 +4,7 @@ let mysql = require('../modules/mysql');
 
 let vehicles = require('../property/vehicles');
 let fraction = require('../property/fraction');
+let stocks = require('../property/stocks');
 
 let pickups = require('../managers/pickups');
 
@@ -46,6 +47,11 @@ timer.min30Timer = function() {
 };
 
 timer.min10Timer = function() {
+
+    try {
+        stocks.removeState();
+    }
+    catch (e) {}
 
     mp.vehicles.forEach(function (v) {
         try {
@@ -205,6 +211,20 @@ timer.min2hTimer = function() {
     catch (e) {
 
     }*/
+
+    /*for (let i = 1; i < 50; i++) {
+        let frId = i;
+        fraction.reset(frId, 'currentGrabShop');
+        mp.players.forEach(p => {
+            if (user.isLogin(p) && user.get(p, 'fraction_id2') === frId) {
+                for (let idx = 0; idx < 5; idx++)
+                    user.deleteBlip(p, idx + 1000);
+            }
+        });
+        for (let idx = 0; idx < 5; idx++)
+            fraction.set(frId, 'currentGrabShop' + idx, false);
+    }*/
+
     setTimeout(timer.min2hTimer, 1000 * 120 * 59);
 };
 
@@ -272,11 +292,21 @@ timer.sec10Timer = function() {
                         let timer = methods.parseInt(vehicles.get(v.id, 'afkTimer'));
                         vehicles.set(v.id, 'afkTimer', timer + 10);
 
-                        if (timer > 1800) {
-                            vehicles.reset(v.id, 'afkTimer');
-                            vehicles.reset(v.id, 'afkLastPos');
-                            vehicles.respawn(v);
-                            return;
+                        if (v.getVariable('isAdmin')) {
+                            if (timer > 3600 * 2) {
+                                vehicles.reset(v.id, 'afkTimer');
+                                vehicles.reset(v.id, 'afkLastPos');
+                                vehicles.respawn(v);
+                                return;
+                            }
+                        }
+                        else {
+                            if (timer > 1800) {
+                                vehicles.reset(v.id, 'afkTimer');
+                                vehicles.reset(v.id, 'afkLastPos');
+                                vehicles.respawn(v);
+                                return;
+                            }
                         }
                     }
                     else {

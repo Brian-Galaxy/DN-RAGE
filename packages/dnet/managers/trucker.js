@@ -3,6 +3,7 @@ let methods = require('../modules/methods');
 let Container = require('../modules/data');
 
 let vehicles = require('../property/vehicles');
+let stocks = require('../property/stocks');
 
 let trucker = exports;
 
@@ -1398,6 +1399,35 @@ trucker.generateOffer = function (type) {
     }
 };
 
+trucker.addOffer = function (type, price, name, x, y, z, tr = 'trailers4') {
+    try {
+        switch (type) {
+            case 1:
+            {
+                let item = [name, 'Частная организация', 141.3052, 6363.662, 30.37909, x, y, z];
+                trucker.offersPool1.push([count, item[0], item[1], item[2], item[3], item[4], item[5], item[6], item[7], price]);
+                break;
+            }
+            case 2:
+            {
+                let item = [name, 'Частная организация', 2891.095, 4380.791, 49.33619, x, y, z];
+                trucker.offersPool2.push([count, item[0], item[1], item[2], item[3], item[4], item[5], item[6], item[7], price]);
+                break;
+            }
+            case 3:
+            {
+                let item = [name, 'Частная организация', tr, -1, 111, 111, 184.9497, 6404.586, 33.25052, -42.45322, x, y, z];
+                trucker.offersPool3.push([count, item[0], item[1], item[2], item[3], item[4], item[5], item[6], item[7], item[8], item[9], item[10], item[11], item[12], price]);
+                break;
+            }
+        }
+        count++;
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+};
+
 trucker.acceptOffer = function (player, offerId) {
     if (!user.isLogin(player))
         return;
@@ -1462,6 +1492,49 @@ trucker.doneOffer = function (player, offerId) {
         user.giveJobSkill(player);
         user.giveJobMoney(player, price);
         user.addWorkExp(player, 25 + price / 50);
+
+        try {
+            let offer = trucker.getOffer(offerId);
+            if (offer[2] === 'Частная организация') {
+
+                let vInfo = methods.getVehicleInfo(player.vehicle.model);
+
+                let stockId = 0;
+                let pos = new mp.Vector3(offer[6], offer[7], offer[8]);
+                stocks.getAll().forEach((val, key, object) => {
+                    if (methods.distanceToPos(pos, val.vPos) < 4) {
+                        stockId = stocks.getNearestVehWithCoords(pos, 4);
+                    }
+                });
+
+                let offset = 100;
+                if (vInfo.display_name === 'Benson' || vInfo.display_name === 'Mule' || vInfo.display_name === 'Mule2' || vInfo.display_name === 'Mule3' || vInfo.display_name === 'Pounder')
+                    offset = 250;
+
+                if (stockId) {
+                    if (offer[1] === 'Химикаты')
+                        stocks.set(stockId, 'lab_1_count', stocks.get(stockId, 'lab_1_count') + offset);
+                    if (offer[1] === 'Стеклянные колбы')
+                        stocks.set(stockId, 'lab_2_count', stocks.get(stockId, 'lab_2_count') + offset);
+                    if (offer[1] === 'Респираторы')
+                        stocks.set(stockId, 'lab_3_count', stocks.get(stockId, 'lab_3_count') + offset);
+                    if (offer[1] === 'Упаковки')
+                        stocks.set(stockId, 'lab_4_count', stocks.get(stockId, 'lab_4_count') + offset);
+
+                    if (offer[1] === 'Сплавы')
+                        stocks.set(stockId, 'bunk_1_count', stocks.get(stockId, 'bunk_1_count') + offset);
+                    if (offer[1] === 'Порох')
+                        stocks.set(stockId, 'bunk_2_count', stocks.get(stockId, 'bunk_2_count') + offset);
+                    if (offer[1] === 'Униформа')
+                        stocks.set(stockId, 'bunk_3_count', stocks.get(stockId, 'bunk_3_count') + offset);
+                    if (offer[1] === 'Корбки')
+                        stocks.set(stockId, 'bunk_4_count', stocks.get(stockId, 'bunk_4_count') + offset);
+                }
+            }
+        }
+        catch (e) {
+            
+        }
     }
     else {
 
@@ -1496,6 +1569,34 @@ trucker.doneOffer = function (player, offerId) {
         vehicles.respawn(trailer);
         user.giveJobSkill(player);
         user.giveJobMoney(player, price * heal);
+
+        try {
+            let offer = trucker.getOffer(offerId);
+            if (offer[2] === 'Частная организация') {
+
+                let stockId = 0;
+                let pos = new mp.Vector3(offer[11], offer[12], offer[13]);
+                stocks.getAll().forEach((val, key, object) => {
+                    if (methods.distanceToPos(pos, val.vPos) < 4) {
+                        stockId = stocks.getNearestVehWithCoords(pos, 4);
+                    }
+                });
+
+                if (stockId) {
+                    if (offer[1] === 'Химикаты')
+                        stocks.set(stockId, 'lab_1_count', stocks.get(stockId, 'lab_1_count') + 500);
+                    if (offer[1] === 'Стеклянные колбы')
+                        stocks.set(stockId, 'lab_2_count', stocks.get(stockId, 'lab_2_count') + 500);
+                    if (offer[1] === 'Респираторы')
+                        stocks.set(stockId, 'lab_3_count', stocks.get(stockId, 'lab_3_count') + 500);
+                    if (offer[1] === 'Упаковки')
+                        stocks.set(stockId, 'lab_4_count', stocks.get(stockId, 'lab_4_count') + 500);
+                }
+            }
+        }
+        catch (e) {
+            
+        }
     }
 
     trucker.removeOffer(offerId);

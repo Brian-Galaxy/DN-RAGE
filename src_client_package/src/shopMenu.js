@@ -742,6 +742,10 @@ mp.events.add('client:shopMenu:buyCash', async function(json) {
                 mp.game.ui.notifications.show(`~r~У вас недостаточно средств`);
                 return;
             }
+            if (user.getCache('walkie_buy')) {
+                mp.game.ui.notifications.show(`~r~У вас уже есть рация`);
+                return;
+            }
             try {
                 user.setVariable('walkieBuy', true);
                 user.set('walkie_buy', true);
@@ -1128,7 +1132,7 @@ mp.events.add('client:dialog:btn', async function(json) {
                 mp.game.ui.notifications.show(`~r~У вас нет при себе денег на выписку`);
                 return ;
             }
-            user.removeCashMoney(params, 'Выписка из больницы');
+            user.removeCashMoney(price, 'Выписка из больницы');
             hosp.freePlayer();
         }
         if (params.doName === 'lspd:toJail') {

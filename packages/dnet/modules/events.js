@@ -615,6 +615,12 @@ mp.events.addRemoteCounted('server:trucker:doneOffer', (player, offerId) => {
     trucker.doneOffer(player, offerId);
 });
 
+mp.events.addRemoteCounted('server:trucker:addOffer', (player, type, price, name, x, y, z) => {
+    if (!user.isLogin(player))
+        return;
+    trucker.addOffer(type, price, name, x, y, z);
+});
+
 mp.events.addRemoteCounted('server:trucker:stop', (player, offerId) => {
     if (!user.isLogin(player))
         return;
@@ -867,11 +873,15 @@ mp.events.addRemoteCounted('server:user:giveTicket', (player, id, price, reason)
     let rpDateTime = weather.getRpDateTime();
     let timestamp = methods.getTimeStamp();
     let desc = `${user.getRpName(player)} (${user.getFractionName(player)} | ${user.getDepartmentName(player)}) | Причина: ${reason}`;
-    mysql.executeQuery(`INSERT INTO tickets (user_id, price, do, rp_datetime, timestamp) VALUES ('${id}', '${price}', '${desc}', '${rpDateTime}', '${timestamp}')`);
-
     let target = user.getPlayerById(id);
     if (user.isLogin(target)) {
         player.notify(`~r~Вам был выписан штраф на сумму ${price}\n${reason}`);
+        if (target.id === player.id)
+            desc = 'Система | Причина: ' + reason;
+        mysql.executeQuery(`INSERT INTO tickets (user_id, price, do, rp_datetime, timestamp) VALUES ('${id}', '${price}', '${desc}', '${rpDateTime}', '${timestamp}')`);
+    }
+    else {
+        mysql.executeQuery(`INSERT INTO tickets (user_id, price, do, rp_datetime, timestamp) VALUES ('${id}', '${price}', '${desc}', '${rpDateTime}', '${timestamp}')`);
     }
 });
 
@@ -2136,7 +2146,7 @@ mp.events.addRemoteCounted('server:startSpecMissionLspd', (player, vId) => {
                     mp.players.callInRange(v.position, 200, "vSync:Sound", [v.id]);
                     v.setVariable('markAsDrone', true);
                     if (mp.vehicles.exists(riot))
-                        v.setVariable('riotId', riot.numberPlate);
+                        v.setVariable('riotId', vehicles.getNumberPlate(riot));
                 }
                 catch (e) {
 
@@ -2181,7 +2191,7 @@ mp.events.addRemoteCounted('server:startSpecMissionSmall', (player, vId) => {
                     mp.players.callInRange(v.position, 200, "vSync:Sound", [v.id]);
                     v.setVariable('markAsDrone', true);
                     if (mp.vehicles.exists(riot))
-                        v.setVariable('riotId2', riot.numberPlate);
+                        v.setVariable('riotId2', vehicles.getNumberPlate(riot));
                 }
                 catch (e) {
 
@@ -4449,6 +4459,14 @@ mp.events.addRemoteCounted("onKeyPress:E", (player) => {
             let houseData = stocks.getData(player.dimension - enums.offsets.stock);
             player.call('client:showStockInVMenu', [Array.from(houseData)]);
         }
+        if (methods.distanceToPos(player.position, new mp.Vector3(890.7874755859375, -3245.426025390625, -98.6081771850586)) < 4) {
+            let houseData = stocks.getData(player.dimension - enums.offsets.stock);
+            player.call('client:showStockInVMenu', [Array.from(houseData)]);
+        }
+        if (methods.distanceToPos(player.position, new mp.Vector3(1088.6865234375, -3188.01025390625, -39.99346923828125)) < 2) {
+            let houseData = stocks.getData(player.dimension - enums.offsets.stock);
+            player.call('client:showStockInMenu', [Array.from(houseData)]);
+        }
 
         stocks.pcList.forEach(function(item) {
             let x = item[0];
@@ -4601,14 +4619,14 @@ mp.events.addRemoteCounted('server:ave:accept', (player, id) => {
         user.save(target);
         chat.sendToAll('Священник', `Поздравляем! Новую ячейку общества образовала пара ${user.getRpName(target)} и ${user.getRpName(player)}`,  chat.clGreen);
 
-        let surname = methods.removeQuotes(user.getRpName(player).split(' ')[1]);
-        let name = methods.removeQuotes(user.getRpName(target).split(' ')[0]);
+        let surname = methods.removeQuotes(user.getRpName(target).split(' ')[1]);
+        let name = methods.removeQuotes(user.getRpName(player).split(' ')[0]);
 
         mysql.executeQuery(`SELECT * FROM users WHERE name = '${name} ${surname}'`, function (err, rows, fields) {
             if (rows.length === 0) {
                 try {
-                    user.saveName(target, `${name} ${surname}`);
-                    target.notify(`~r~Фамилия была изменена на ${surname}`);
+                    user.saveName(player, `${name} ${surname}`);
+                    player.notify(`~r~Фамилия была изменена на ${surname}`);
                     user.set(player, 'partner', user.getRpName(target));
                 }
                 catch (e) {}
@@ -4899,10 +4917,28 @@ mp.events.addRemoteCounted("server:stocks:enter1", (player, id) => {
     stocks.enter1(player, id);
 });
 
+mp.events.addRemoteCounted("server:stocks:enterl", (player, id) => {
+    if (!user.isLogin(player))
+        return;
+    stocks.enterl(player, id);
+});
+
+mp.events.addRemoteCounted("server:stocks:enterb", (player, id) => {
+    if (!user.isLogin(player))
+        return;
+    stocks.enterb(player, id);
+});
+
 mp.events.addRemoteCounted("server:stocks:enterv1", (player, id) => {
     if (!user.isLogin(player))
         return;
     stocks.enterv1(player, id);
+});
+
+mp.events.addRemoteCounted("server:stocks:entervb", (player, id) => {
+    if (!user.isLogin(player))
+        return;
+    stocks.entervb(player, id);
 });
 
 mp.events.addRemoteCounted("server:stocks:buy", (player, id) => {
@@ -4915,6 +4951,24 @@ mp.events.addRemoteCounted("server:stocks:updateGarage", (player, id, status) =>
     if (!user.isLogin(player))
         return;
     stocks.updateUpgradeG(id, status);
+});
+
+mp.events.addRemoteCounted("server:stocks:upgradeNumber", (player, id, status) => {
+    if (!user.isLogin(player))
+        return;
+    stocks.updateUpgradeN(id, status);
+});
+
+mp.events.addRemoteCounted("server:stocks:upgradeLab", (player, id, status) => {
+    if (!user.isLogin(player))
+        return;
+    stocks.updateUpgradeL(id, status);
+});
+
+mp.events.addRemoteCounted("server:stocks:upgradeBunker", (player, id, status) => {
+    if (!user.isLogin(player))
+        return;
+    stocks.updateUpgradeB(id, status);
 });
 
 mp.events.addRemoteCounted("server:stocks:updatePin", (player, id, pin) => {
@@ -4947,10 +5001,34 @@ mp.events.addRemoteCounted("server:stocks:updatePinO", (player, id, pin) => {
     stocks.updatePinO(id, pin);
 });
 
+mp.events.addRemoteCounted("server:stocks:updatePinB", (player, id, pin) => {
+    if (!user.isLogin(player))
+        return;
+    stocks.updatePinB(id, pin);
+});
+
+mp.events.addRemoteCounted("server:stocks:updatePinL", (player, id, pin) => {
+    if (!user.isLogin(player))
+        return;
+    stocks.updatePinL(id, pin);
+});
+
 mp.events.addRemoteCounted("server:stocks:upgradeAdd", (player, id, slot, box) => {
     if (!user.isLogin(player))
         return;
     stocks.upgradeAdd(player, id, slot, box);
+});
+
+mp.events.addRemoteCounted("server:stocks:labStart", (player, id, type, count) => {
+    if (!user.isLogin(player))
+        return;
+    stocks.labStart(player, id, type, count);
+});
+
+mp.events.addRemoteCounted("server:stocks:bunkStart", (player, id, type, count) => {
+    if (!user.isLogin(player))
+        return;
+    stocks.bunkStart(player, id, type, count);
 });
 
 //Condos
@@ -7875,6 +7953,36 @@ mp.events.addRemoteCounted('server:vehicle:ejectByIdOut', (player, vid, id) => {
     }
     catch (e) {
         
+    }
+});
+
+mp.events.addRemoteCounted('server:vehicle:removeNumber', (player, vid) => {
+    if (!user.isLogin(player))
+        return;
+
+    try {
+        let veh = mp.vehicles.at(vid);
+        if (vehicles.exists(veh)) {
+            if (user.getCashMoney(player) < 15000) {
+                player.notify('~r~У вас нет $15000 на руках');
+                return;
+            }
+            if (veh.getVariable('user_id') > 0) {
+                let frId = user.get(player, 'fraction_id2');
+                user.removeCashMoney(player, 15000, 'Снятие номера с ТС');
+                if (frId > 0) {
+                    fraction.addMoney(frId, 5, 'Прибыль со снятия номеров');
+                }
+                veh.numberPlate = '';
+                player.notify('~y~Теперь штрафы на этот транспорт приходить не будут');
+            }
+            else {
+                player.notify('~y~Транспорт должен быть личный');
+            }
+        }
+    }
+    catch (e) {
+
     }
 });
 

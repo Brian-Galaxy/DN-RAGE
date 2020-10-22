@@ -1226,11 +1226,11 @@ mp.events.add('client:showStockBuyMenu', (item) => {
 
 mp.events.add('client:showStockInMenu', (item) => {
     try {
-        methods.debug('Event: client:menuList:showCondoInMenu');
+        methods.debug('Event: client:menuList:showStockInMenu');
         menuList.showStockInMenu(new Map(item));
     }
     catch (e) {
-        methods.debug('Exception: events:client:showCondoInMenu');
+        methods.debug('Exception: events:client:showStockInMenu');
         methods.debug(e);
     }
 });
@@ -1242,6 +1242,28 @@ mp.events.add('client:showStockPanelMenu', (item) => {
     }
     catch (e) {
         methods.debug('Exception: events:client:showCondoInMenu');
+        methods.debug(e);
+    }
+});
+
+mp.events.add('client:showStockLabMenu', (item) => {
+    try {
+        methods.debug('Event: client:menuList:showStockLabMenu');
+        menuList.showStockLabMenu(new Map(item));
+    }
+    catch (e) {
+        methods.debug('Exception: events:client:showStockLabMenu');
+        methods.debug(e);
+    }
+});
+
+mp.events.add('client:showStockBunkMenu', (item) => {
+    try {
+        methods.debug('Event: client:menuList:showStockBunkMenu');
+        menuList.showStockBunkMenu(new Map(item));
+    }
+    catch (e) {
+        methods.debug('Exception: events:client:showStockBunkMenu');
         methods.debug(e);
     }
 });
@@ -1562,6 +1584,16 @@ mp.events.add('client:showToPlayerItemListMenu', (data, ownerType, ownerId, isFr
     try {
         methods.debug('Event: client:showToPlayerItemListMenu');
         menuList.showToPlayerItemListMenu(data, ownerType, ownerId, isFrisk).then();
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.add('client:showToPlayerItemListAddMenu', (data, ownerType, ownerId, isFrisk) => {
+    try {
+        methods.debug('Event: client:showToPlayerItemListAddMenu');
+        menuList.showToPlayerItemListAddMenu(data, ownerType, ownerId, isFrisk).then();
     }
     catch (e) {
         methods.debug(e);
@@ -3428,7 +3460,7 @@ mp.events.add('render', () => {
                     const entity = player.vehicle ? player.vehicle : player;
                     const vector = entity.getVelocity();
                     const frameTime = methods.getFrameTime();
-                    if (player.getAlpha() > 0)
+                    if (player.getAlpha() > 0 || user.isAdmin())
                         ui.drawText3D( pref + name + remoteId + ' ' +  indicatorColor + typingLabel, headPosition.x + vector.x * frameTime, headPosition.y + vector.y * frameTime, headPosition.z + vector.z * frameTime + 0.1);
                 }
             }
@@ -3793,6 +3825,11 @@ mp.events.add("playerReadyDone", () => {
         mp.gui.chat.activate(false);
         for (let i = 0; i < 50; i++)
             mp.gui.chat.push('');
+
+        try {
+            mp.players.local.setCanRagdoll(true);
+        }
+        catch (e) {}
 
         setTimeout(function () {
             ui.create();

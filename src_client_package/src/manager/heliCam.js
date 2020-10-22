@@ -253,7 +253,7 @@ mp.events.add('render', async () => {
                 let speed = Math.sqrt(velocity.x * velocity.x + velocity.y * velocity.y + velocity.z * velocity.z);
                 speed = Math.round(speed * 2.23693629);
 
-                ui.drawText(`${vehname}\n${locked_on_vehicle.getNumberPlateText()}\n${speed}mp/h`, 0.5, 0.91, 0.4, 255, 255, 255, 180, 0, 1, false, false);
+                ui.drawText(`${vehname}\n${vehicles.getNumberPlate(locked_on_vehicle)}\n${speed}mp/h`, 0.5, 0.91, 0.4, 255, 255, 255, 180, 0, 1, false, false);
 
                 if (methods.distanceToPos2D(locked_on_vehicle.position, mp.players.local.position) > 90) {
                     heliCam.keyPressToggleLockVehicle();

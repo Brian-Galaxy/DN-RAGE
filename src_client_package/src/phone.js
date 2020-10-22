@@ -4468,6 +4468,10 @@ phone.consoleCallback = async function(command) {
                     if (dist > 11)
                         return;
 
+
+                    if (ui.isGreenZoneByPos(v.position))
+                        return;
+
                     if (methods.md5(v.remoteId.toString()).slice(0, 6) === hash) {
                         isFind = true;
                         let vInfo = methods.getVehicleInfo(v.model);

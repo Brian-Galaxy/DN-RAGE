@@ -383,7 +383,7 @@ family.create = function (player, name) {
         return;
     }
     if (user.getMoney(player) < 500000) {
-        player.notify('~r~У Вас не достаточно валюты денег для создания семьи');
+        player.notify('~r~У Вас не достаточно валюты для создания семьи');
         return;
     }
 

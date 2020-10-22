@@ -411,6 +411,12 @@ mp.events.add("playerExitVehicle", function (player, vehicle) {
     if (vehicles.exists(vehicle))
         vSync.setEngineState(vehicle, vSync.getEngineState(vehicle));
     }, 1500);
+
+    try {
+        for (let i = -1; i < 20; i++)
+            vehicle.setOccupant(i, null);
+    }
+    catch (e) {}
 });
 
 mp.events.add('s:vSync:setDirtLevel', (player, vId, level) => {
@@ -603,6 +609,13 @@ mp.events.add('server:vehicles:addFuel', (player, vId, fuel) => {
     let veh = mp.vehicles.at(vId);
     if (mp.players.exists(player) && vehicles.exists(veh)) {
         vehicles.addFuel(veh, fuel)
+    }
+});
+
+mp.events.add('server:vehicles:setNumberPlate', (player, vId, number) => {
+    let veh = mp.vehicles.at(vId);
+    if (mp.players.exists(player) && vehicles.exists(veh)) {
+        vehicles.setNumberPlate(veh, number)
     }
 });
 

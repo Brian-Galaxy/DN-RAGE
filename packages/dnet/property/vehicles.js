@@ -227,7 +227,7 @@ vehicles.spawnPlayerCar = (id) => {
             else if (id % 5 === 0)
                 numberStyle = 3;
 
-            veh.numberPlate = vehicles.get(id, 'number').toString();
+            vehicles.setNumberPlate(veh, vehicles.get(id, 'number').toString());
             veh.numberPlateType = numberStyle;
             veh.locked = true;
 
@@ -571,7 +571,7 @@ vehicles.spawnFractionCar = (id) => {
 
             let vInfo = methods.getVehicleInfo(info.name);
 
-            veh.numberPlate = number;
+            vehicles.setNumberPlate(veh, number);
             veh.numberPlateType = numberStyle;
             veh.livery = livery;
             veh.setColor(color1, color2);
@@ -940,7 +940,7 @@ vehicles.findVehicleByNumber = (number) => {
     mp.vehicles.forEach((vehicle) => {
         if (!vehicles.exists(vehicle))
             return;
-        if (vehicle.numberPlate == number)
+        if (vehicles.getNumberPlate(vehicle) == number)
             returnVehicle = vehicle;
     });
     return returnVehicle;
@@ -980,6 +980,25 @@ vehicles.setFuel = (veh, fuel) => {
     catch (e) {
         methods.debug('SetFUEL', e);
     }
+};
+
+
+vehicles.setNumberPlate = (veh, number) => {
+    if (!vehicles.exists(veh))
+        return;
+    try {
+        veh.numberPlate = number;
+        veh.setVariable('numberPlate', number);
+    }
+    catch (e) {
+        methods.debug('setNumberPlate', e);
+    }
+};
+
+vehicles.getNumberPlate = (veh) => {
+    if (!vehicles.exists(veh))
+        return '';
+    return veh.getVariable('numberPlate');
 };
 
 vehicles.addFuel = (veh, fuel) => {
@@ -1301,7 +1320,7 @@ vehicles.spawnCar = (position, heading, nameOrModel, number = undefined) => {
 
     attach.initFunctions(veh);
 
-    veh.numberPlate = number;
+    vehicles.setNumberPlate(veh, number);
     //veh.engine = false;
     methods.debug('spawnCar');
     vSync.setEngineState(veh, false);
@@ -1342,7 +1361,7 @@ vehicles.spawnCarCb = (cb, position, heading, nameOrModel, color1 = -1, color2 =
 
         let vInfo = methods.getVehicleInfo(model);
 
-        veh.numberPlate = number;
+        vehicles.setNumberPlate(veh, number);
         veh.numberPlateType = methods.getRandomInt(0, 4);
         //veh.engine = false;
         vSync.setEngineState(veh, false);
@@ -1448,6 +1467,7 @@ vehicles.spawnJobCar = (cb2, position, heading, nameOrModel, jobId = 0) => {
             }
         }
 
+        vehicles.setNumberPlate(veh, veh.numberPlate);
         veh.locked = true;
         veh.setVariable('jobId', jobId);
         cb2(veh);

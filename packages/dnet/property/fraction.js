@@ -698,11 +698,6 @@ fraction.createCargoWar = function(count = 3) {
                     boxes.push(boxRandom[methods.getRandomInt(0, boxRandom.length)][2]);
                 }
 
-                if (methods.getRandomInt(0, 100) <= 50)
-                    boxes.push(methods.getRandomInt(3, 5));
-                else
-                    boxes.push(methods.getRandomInt(38, 40));
-
                 veh.setVariable('box', JSON.stringify(boxes));
                 veh.setVariable('cargoId', b1);
             }
@@ -791,11 +786,6 @@ fraction.spawnNearCargo = function(player, isDrug = false, name = 'Speedo4', cou
                 }
             }
 
-            if (methods.getRandomInt(0, 100) <= 50)
-                boxes.push(methods.getRandomInt(3, 5));
-            else
-                boxes.push(methods.getRandomInt(38, 40));
-
             veh.setVariable('box', JSON.stringify(boxes));
 
             veh.setVariable('cargoId', 999);
@@ -862,20 +852,20 @@ fraction.spawnNearBank = function(player, type = 0) {
             veh.windowTint = 1;
 
             if (type === 0)
-                inventory.addItem(262, 1, inventory.types.Vehicle, mp.joaat(veh.numberPlate), 1, 0, "{}");
+                inventory.addItem(262, 1, inventory.types.Vehicle, mp.joaat(vehicles.getNumberPlate(veh)), 1, 0, "{}");
             if (type === 1) {
-                inventory.addAmmoItem(280, 5, inventory.types.Vehicle, mp.joaat(veh.numberPlate), 1, 0, "{}");
-                inventory.addAmmoItem(281, 5, inventory.types.Vehicle, mp.joaat(veh.numberPlate), 1, 0, "{}");
-                inventory.addAmmoItem(282, 5, inventory.types.Vehicle, mp.joaat(veh.numberPlate), 1, 0, "{}");
-                inventory.addAmmoItem(283, 5, inventory.types.Vehicle, mp.joaat(veh.numberPlate), 1, 0, "{}");
-                inventory.addAmmoItem(284, 5, inventory.types.Vehicle, mp.joaat(veh.numberPlate), 1, 0, "{}");
+                inventory.addAmmoItem(280, 5, inventory.types.Vehicle, mp.joaat(vehicles.getNumberPlate(veh)), 1, 0, "{}");
+                inventory.addAmmoItem(281, 5, inventory.types.Vehicle, mp.joaat(vehicles.getNumberPlate(veh)), 1, 0, "{}");
+                inventory.addAmmoItem(282, 5, inventory.types.Vehicle, mp.joaat(vehicles.getNumberPlate(veh)), 1, 0, "{}");
+                inventory.addAmmoItem(283, 5, inventory.types.Vehicle, mp.joaat(vehicles.getNumberPlate(veh)), 1, 0, "{}");
+                inventory.addAmmoItem(284, 5, inventory.types.Vehicle, mp.joaat(vehicles.getNumberPlate(veh)), 1, 0, "{}");
             }
             if (type === 2) {
-                inventory.addAmmoItem(216, 10, inventory.types.Vehicle, mp.joaat(veh.numberPlate), 1, 0, "{}");
-                inventory.addAmmoItem(215, 5, inventory.types.Vehicle, mp.joaat(veh.numberPlate), 1, 0, "{}");
+                inventory.addAmmoItem(216, 10, inventory.types.Vehicle, mp.joaat(vehicles.getNumberPlate(veh)), 1, 0, "{}");
+                inventory.addAmmoItem(215, 5, inventory.types.Vehicle, mp.joaat(vehicles.getNumberPlate(veh)), 1, 0, "{}");
             }
             if (type === 3) {
-                inventory.addAmmoItem(5, 20, inventory.types.Vehicle, mp.joaat(veh.numberPlate), 1, 0, "{}");
+                inventory.addAmmoItem(5, 20, inventory.types.Vehicle, mp.joaat(vehicles.getNumberPlate(veh)), 1, 0, "{}");
             }
         }
         catch (e) {
@@ -918,7 +908,7 @@ fraction.spawnNearCanabis = function(player) {
             veh.locked = true;
             veh.setColor(color, color);
             veh.windowTint = 1;
-            inventory.addItem(3, countZones * 2, inventory.types.Vehicle, mp.joaat(veh.numberPlate), 1, 0, "{}");
+            inventory.addItem(3, countZones * 2, inventory.types.Vehicle, mp.joaat(vehicles.getNumberPlate(veh)), 1, 0, "{}");
         }
         catch (e) {
             methods.debug(e);
@@ -950,23 +940,23 @@ fraction.spawnNearGuns = function(player, type = 0) {
             veh.setColor(color, color);
             veh.windowTint = 1;
             if (type === 1) {
-                inventory.addItem(280, 2, inventory.types.Vehicle, mp.joaat(veh.numberPlate), 1, 0, "{}");
-                inventory.addItem(281, 2, inventory.types.Vehicle, mp.joaat(veh.numberPlate), 1, 0, "{}");
-                inventory.addItem(282, 2, inventory.types.Vehicle, mp.joaat(veh.numberPlate), 1, 0, "{}");
-                inventory.addItem(283, 2, inventory.types.Vehicle, mp.joaat(veh.numberPlate), 1, 0, "{}");
-                inventory.addItem(284, 2, inventory.types.Vehicle, mp.joaat(veh.numberPlate), 1, 0, "{}");
-                inventory.addItem(285, 2, inventory.types.Vehicle, mp.joaat(veh.numberPlate), 1, 0, "{}");
+                inventory.addItem(280, 2, inventory.types.Vehicle, mp.joaat(vehicles.getNumberPlate(veh)), 1, 0, "{}");
+                inventory.addItem(281, 2, inventory.types.Vehicle, mp.joaat(vehicles.getNumberPlate(veh)), 1, 0, "{}");
+                inventory.addItem(282, 2, inventory.types.Vehicle, mp.joaat(vehicles.getNumberPlate(veh)), 1, 0, "{}");
+                inventory.addItem(283, 2, inventory.types.Vehicle, mp.joaat(vehicles.getNumberPlate(veh)), 1, 0, "{}");
+                inventory.addItem(284, 2, inventory.types.Vehicle, mp.joaat(vehicles.getNumberPlate(veh)), 1, 0, "{}");
+                inventory.addItem(285, 2, inventory.types.Vehicle, mp.joaat(vehicles.getNumberPlate(veh)), 1, 0, "{}");
             }
             if (type === 2) {
-                inventory.addItem(106, 1, inventory.types.Vehicle, mp.joaat(veh.numberPlate), 100, 0, "{}");
-                inventory.addItem(108, 1, inventory.types.Vehicle, mp.joaat(veh.numberPlate), 100, 0, "{}");
-                inventory.addItem(110, 1, inventory.types.Vehicle, mp.joaat(veh.numberPlate), 100, 0, "{}");
-                inventory.addItem(113, 1, inventory.types.Vehicle, mp.joaat(veh.numberPlate), 100, 0, "{}");
-                inventory.addItem(284, 8, inventory.types.Vehicle, mp.joaat(veh.numberPlate), 1, 0, "{}");
+                inventory.addItem(106, 1, inventory.types.Vehicle, mp.joaat(vehicles.getNumberPlate(veh)), 100, 0, "{}");
+                inventory.addItem(108, 1, inventory.types.Vehicle, mp.joaat(vehicles.getNumberPlate(veh)), 100, 0, "{}");
+                inventory.addItem(110, 1, inventory.types.Vehicle, mp.joaat(vehicles.getNumberPlate(veh)), 100, 0, "{}");
+                inventory.addItem(113, 1, inventory.types.Vehicle, mp.joaat(vehicles.getNumberPlate(veh)), 100, 0, "{}");
+                inventory.addItem(284, 8, inventory.types.Vehicle, mp.joaat(vehicles.getNumberPlate(veh)), 1, 0, "{}");
             }
             else {
-                inventory.addItem(71, 2, inventory.types.Vehicle, mp.joaat(veh.numberPlate), 100, 0, "{}");
-                inventory.addItem(280, 2, inventory.types.Vehicle, mp.joaat(veh.numberPlate), 1, 0, "{}");
+                inventory.addItem(71, 2, inventory.types.Vehicle, mp.joaat(vehicles.getNumberPlate(veh)), 100, 0, "{}");
+                inventory.addItem(280, 2, inventory.types.Vehicle, mp.joaat(vehicles.getNumberPlate(veh)), 1, 0, "{}");
             }
         }
         catch (e) {
@@ -1556,7 +1546,7 @@ fraction.getShopGang = function(player) {
     }
 
     if (fraction.get(frId, 'cantGrab2')) {
-        player.notify('~r~Вы уже сегодня совершали ограбление сегодня');
+        player.notify('~r~Вы уже сегодня совершали ограбление');
         return;
     }
 
@@ -1569,7 +1559,7 @@ fraction.getShopGang = function(player) {
         return;
     }
 
-    if (fraction.has(frId, 'currentGrabShop')) {
+    if (fraction.get(frId, 'currentGrabShop')) {
         player.notify('~r~Вы брали наводку на магазин недавно');
         return;
     }

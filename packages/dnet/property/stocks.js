@@ -207,8 +207,8 @@ stocks.boxList = [
     ['Средняя коробка', 1875981008, 600000, -0.12, true, 20000, 'Стандарт', -1], //1
     ['Большая коробка', -1322183878, 800000, -0.12, true, 30000, 'Стандарт', -1], //2
 
-    ['Большой ящик с оружием', 1790162299, 3, 0, false, 15000, 'Оружие и патроны', 1], //3
-    ['Малый ящик с оружием', 2055492359, 4, 0, false, 5000, 'Оружие и патроны', 0], //4
+    ['Большой ящик с оружием', 1790162299, 3, 0, false, 45000, 'Оружие и патроны', 1], //3
+    ['Малый ящик с оружием', 2055492359, 4, 0, false, 15000, 'Оружие и патроны', 0], //4
     ['Большой ящик антиквариата', 1815664890, 5, 0, false, 15000, 'Антиквариат', 1], //5
     ['Малый ящик антиквариата', 1397410834, 6, 0, false, 5000, 'Антиквариат', 0], //6
     ['Большой ящик антиквариата', 1057918179, 7, 0, false, 15000, 'Антиквариат', 1], //7
@@ -242,8 +242,8 @@ stocks.boxList = [
     ['Золотой Minigun', 1557324266, 35, 0, false, 40000, 'Уникальный груз', 2 ], //35
     ['Большой ящик фальшивых купюр', -80652213, 36, 0, false, 15000, 'Контрафактные товары', 1 ], //36
     ['Малый ящик фальшивых купюр', -1155316904, 37, 0, false, 5000, 'Контрафактные товары', 0 ], //37
-    ['Большой ящик наркотиков', 1016837103, 38, 0, false, 15000, 'Наркотики', 1 ], //38
-    ['Малый ящик наркотиков', 1863514296, 39, 0, false, 5000, 'Наркотики', 0 ], //39
+    ['Большой ящик наркотиков', 1016837103, 38, 0, false, 30000, 'Наркотики', 1 ], //38
+    ['Малый ящик наркотиков', 1863514296, 39, 0, false, 10000, 'Наркотики', 0 ], //39
     ['Яйцо фаберже', 562429577, 40, 0, false, 35000, 'Уникальный груз', 2 ], //40
     ['Большой ящик лекарств', 1914690987, 41, -0.12, false, 15000, 'Медикаменты', 1 ], //41
     ['Малый ящик лекарств', -824154829, 42, 0, false, 5000, 'Медикаменты', 0 ], //42
@@ -421,6 +421,8 @@ stocks.loadAll = function() {
                 stocks.set(item['id'], 'pin2', item['pin2']);
                 stocks.set(item['id'], 'pin3', item['pin3']);
                 stocks.set(item['id'], 'pin_o', item['pin_o']);
+                stocks.set(item['id'], 'pin_l', item['pin_l']);
+                stocks.set(item['id'], 'pin_b', item['pin_b']);
                 stocks.set(item['id'], 'interior', item['interior']);
                 stocks.set(item['id'], 'x', item['x']);
                 stocks.set(item['id'], 'y', item['y']);
@@ -432,6 +434,21 @@ stocks.loadAll = function() {
                 stocks.set(item['id'], 'vrot', item['vrot']);
                 stocks.set(item['id'], 'upgrade', item['upgrade']);
                 stocks.set(item['id'], 'upgrade_g', item['upgrade_g']);
+                stocks.set(item['id'], 'upgrade_n', item['upgrade_n']);
+                stocks.set(item['id'], 'upgrade_l', item['upgrade_l']);
+                stocks.set(item['id'], 'upgrade_b', item['upgrade_b']);
+                stocks.set(item['id'], 'lab_state', item['lab_state']);
+                stocks.set(item['id'], 'lab_1_count', item['lab_1_count']);
+                stocks.set(item['id'], 'lab_2_count', item['lab_2_count']);
+                stocks.set(item['id'], 'lab_3_count', item['lab_3_count']);
+                stocks.set(item['id'], 'lab_4_count', item['lab_4_count']);
+                stocks.set(item['id'], 'lab_type', item['lab_type']);
+                stocks.set(item['id'], 'bunk_type', item['bunk_type']);
+                stocks.set(item['id'], 'bunk_state', item['bunk_state']);
+                stocks.set(item['id'], 'bunk_1_count', item['bunk_1_count']);
+                stocks.set(item['id'], 'bunk_2_count', item['bunk_2_count']);
+                stocks.set(item['id'], 'bunk_3_count', item['bunk_3_count']);
+                stocks.set(item['id'], 'bunk_4_count', item['bunk_4_count']);
                 stocks.set(item['id'], 'tax_money', item['tax_money']);
                 stocks.set(item['id'], 'tax_score', item['tax_score']);
 
@@ -466,7 +483,6 @@ stocks.loadAll = function() {
     });
 };
 
-
 stocks.loadLast = function() {
     methods.debug('stocks.loadLast');
 
@@ -486,6 +502,8 @@ stocks.loadLast = function() {
             stocks.set(item['id'], 'pin2', item['pin2']);
             stocks.set(item['id'], 'pin3', item['pin3']);
             stocks.set(item['id'], 'pin_o', item['pin_o']);
+            stocks.set(item['id'], 'pin_l', item['pin_l']);
+            stocks.set(item['id'], 'pin_b', item['pin_b']);
             stocks.set(item['id'], 'interior', item['interior']);
             stocks.set(item['id'], 'x', item['x']);
             stocks.set(item['id'], 'y', item['y']);
@@ -497,6 +515,21 @@ stocks.loadLast = function() {
             stocks.set(item['id'], 'vrot', item['vrot']);
             stocks.set(item['id'], 'upgrade', item['upgrade']);
             stocks.set(item['id'], 'upgrade_g', item['upgrade_g']);
+            stocks.set(item['id'], 'upgrade_n', item['upgrade_n']);
+            stocks.set(item['id'], 'upgrade_l', item['upgrade_l']);
+            stocks.set(item['id'], 'upgrade_b', item['upgrade_b']);
+            stocks.set(item['id'], 'lab_state', item['lab_state']);
+            stocks.set(item['id'], 'lab_1_count', item['lab_1_count']);
+            stocks.set(item['id'], 'lab_2_count', item['lab_2_count']);
+            stocks.set(item['id'], 'lab_3_count', item['lab_3_count']);
+            stocks.set(item['id'], 'lab_4_count', item['lab_4_count']);
+            stocks.set(item['id'], 'lab_type', item['lab_type']);
+            stocks.set(item['id'], 'bunk_type', item['bunk_type']);
+            stocks.set(item['id'], 'bunk_state', item['bunk_state']);
+            stocks.set(item['id'], 'bunk_1_count', item['bunk_1_count']);
+            stocks.set(item['id'], 'bunk_2_count', item['bunk_2_count']);
+            stocks.set(item['id'], 'bunk_3_count', item['bunk_3_count']);
+            stocks.set(item['id'], 'bunk_4_count', item['bunk_4_count']);
             stocks.set(item['id'], 'tax_money', item['tax_money']);
             stocks.set(item['id'], 'tax_score', item['tax_score']);
 
@@ -543,6 +576,84 @@ stocks.insert2 = function(player, id, vx, vy, vz, vrot) {
     player.notify('~g~Склад успешно обновлен')
 };
 
+stocks.removeState = function() {
+    methods.debug('stocks.removeState');
+    mysql.executeQuery(`SELECT * FROM stocks`, function (err, rows, fields) {
+        rows.forEach(function(item) {
+            try {
+                let state = stocks.get(item['id'], 'lab_state');
+                if (state > 0) {
+                    stocks.set(item['id'], 'lab_state', state - 1);
+                    if (state === 1) {
+                        let count = 5;
+                        if (stocks.get(item['id'], 'lab_type') === 2)
+                            count = 10;
+                        if (stocks.get(item['id'], 'lab_type') === 3)
+                            count = 20;
+                        for (let i = 0; i < count; i++)
+                            stocks.addCargo(item['id'], 38);
+                    }
+                }
+
+                state = stocks.get(item['id'], 'bunk_state'); //БУНКЕР
+                if (state > 0) {
+                    stocks.set(item['id'], 'bunk_state', state - 1);
+                    if (state === 1) {
+                        let count = 5;
+                        if (stocks.get(item['id'], 'bunk_type') === 1)
+                            count = 10;
+                        if (stocks.get(item['id'], 'bunk_type') === 2)
+                            count = 20;
+                        for (let i = 0; i < count; i++)
+                            stocks.addCargo(item['id'], 3);
+                    }
+                }
+            }
+            catch (e) {}
+        });
+    });
+};
+
+stocks.saveAll = function() {
+    methods.debug('stocks.saveAll');
+    mysql.executeQuery(`SELECT * FROM stocks`, function (err, rows, fields) {
+        rows.forEach(function(item) {
+            stocks.save(item['id']);
+        });
+    });
+};
+
+stocks.save = function(id) {
+
+    return new Promise((resolve) => {
+        methods.debug('stocks.save');
+
+        if (!stocks.has(id, "id")) {
+            resolve();
+            return;
+        }
+
+        let sql = "UPDATE stocks SET";
+        sql = sql + " lab_state = '" + methods.parseInt(stocks.get(id, "lab_state")) + "'";
+        sql = sql + ", lab_1_count = '" + methods.parseInt(stocks.get(id, "lab_1_count")) + "'";
+        sql = sql + ", lab_2_count = '" + methods.parseInt(stocks.get(id, "lab_2_count")) + "'";
+        sql = sql + ", lab_3_count = '" + methods.removeQuotes(stocks.get(id, "lab_3_count")) + "'";
+        sql = sql + ", lab_4_count = '" + methods.removeQuotes(stocks.get(id, "lab_4_count")) + "'";
+        sql = sql + ", lab_type = '" + methods.removeQuotes(stocks.get(id, "lab_type")) + "'";
+        sql = sql + ", bunk_type = '" + methods.removeQuotes(stocks.get(id, "bunk_type")) + "'";
+        sql = sql + ", bunk_state = '" + methods.removeQuotes(stocks.get(id, "bunk_state")) + "'";
+        sql = sql + ", bunk_1_count = '" + methods.removeQuotes(stocks.get(id, "bunk_1_count")) + "'";
+        sql = sql + ", bunk_2_count = '" + methods.removeQuotes(stocks.get(id, "bunk_2_count")) + "'";
+        sql = sql + ", bunk_3_count = '" + methods.removeQuotes(stocks.get(id, "bunk_3_count")) + "'";
+        sql = sql + ", bunk_4_count = '" + methods.removeQuotes(stocks.get(id, "bunk_4_count")) + "'";
+        sql = sql + " where id = '" + methods.parseInt(stocks.get(id, "id")) + "'";
+
+        mysql.executeQuery(sql, undefined, function () {
+            resolve();
+        });
+    });
+};
+
 stocks.getData = function(id) {
     return Container.Data.GetAll(enums.offsets.stock + methods.parseInt(id));
 };
@@ -586,9 +697,7 @@ stocks.cargoUnload = function(player, bid = 1) {
                 upgrade.forEach((item, i) => {
                     if (item == -1 && countLoad == 0) {
                         upgrade[i] = boxes[bid];
-
                         boxes[bid] = -1;
-
                         veh.setVariable('box', JSON.stringify(boxes));
                         countLoad++;
                     }
@@ -617,6 +726,46 @@ stocks.cargoUnload = function(player, bid = 1) {
     catch (e) {
         
     }
+};
+
+stocks.addCargo = function(stockKey, bid = 1) {
+    bid = methods.parseInt(bid);
+    try {
+        if (stockKey) {
+            let houseData = stocks.getData(stockKey);
+            if (houseData.get('user_id') != 0) {
+
+                let id = houseData.get('id');
+                let upgradeStr = stocks.get(id, 'upgrade');
+                let upgrade = upgradeStr.split('_');
+
+                let countLoad = 0;
+
+                upgrade.forEach((item, i) => {
+                    if (item == -1 && countLoad == 0) {
+                        upgrade[i] = bid;
+                        countLoad++;
+                    }
+                });
+
+                let upgradeNew = '';
+                upgrade.forEach(item => {
+                    upgradeNew += item + '_';
+                });
+                upgradeNew = upgradeNew.substring(0, upgradeNew.length - 1);
+
+                stocks.set(id, 'upgrade', upgradeNew);
+                mysql.executeQuery(`UPDATE stocks SET upgrade = '${upgradeNew}' where id = '${id}'`);
+                stocks.loadUpgrades(upgradeNew, id, stocks.get(id, 'interior'));
+
+                return countLoad > 0;
+            }
+        }
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+    return false;
 };
 
 stocks.sellBySlot = function (player, slot) {
@@ -894,8 +1043,23 @@ stocks.updateOwnerInfo = function (id, userId, userName) {
         stocks.updatePin2(id, 0);
         stocks.updatePin3(id, 0);
         stocks.updatePinO(id, 0);
+        stocks.updatePinB(id, 0);
+        stocks.updatePinL(id, 0);
         stocks.set(id, "upgrade_g", 0);
-        mysql.executeQuery("UPDATE stocks SET user_name = '" + userName + "', user_id = '" + userId + "', upgrade_g = '0', tax_money = '0' where id = '" + id + "'");
+        stocks.set(id, 'upgrade_n', 0);
+        stocks.set(id, 'upgrade_l', 0);
+        stocks.set(id, 'upgrade_b', 0);
+        stocks.set(id, 'lab_state', 0);
+        stocks.set(id, 'lab_1_count', 0);
+        stocks.set(id, 'lab_2_count', 0);
+        stocks.set(id, 'lab_3_count', 0);
+        stocks.set(id, 'lab_4_count', 0);
+        stocks.set(id, 'bunk_state', 0);
+        stocks.set(id, 'bunk_1_count', 0);
+        stocks.set(id, 'bunk_2_count', 0);
+        stocks.set(id, 'bunk_3_count', 0);
+        stocks.set(id, 'bunk_4_count', 0);
+        mysql.executeQuery("UPDATE stocks SET user_name = '" + userName + "', user_id = '" + userId + "', upgrade_g = '0', upgrade_n = '0', upgrade_l = '0', upgrade_b = '0', lab_state = '0', bunk_state = '0', lab_1_count = '0', lab_2_count = '0', lab_3_count = '0', lab_4_count = '0', bunk_1_count = '0', bunk_2_count = '0', bunk_3_count = '0', bunk_4_count = '0', tax_money = '0' where id = '" + id + "'");
 
         discord.sendMarketProperty(`Склад #${stocks.get(id, 'number')}`, `Адрес: ${stocks.get(id, 'address')} / ${stocks.get(id, 'street')} #${stocks.get(id, 'number')}\nГос. стоимость: ${methods.moneyFormat(stocks.get(id, 'price'))}\nТип: ${stocks.types[stocks.get(id, 'interior')]}`);
 
@@ -919,6 +1083,48 @@ stocks.updateUpgradeG = function (id, status) {
     status = methods.parseInt(status);
     stocks.set(id, 'upgrade_g', status);
     mysql.executeQuery("UPDATE stocks SET upgrade_g = '" + status + "' where id = '" + id + "'");
+};
+
+stocks.updateUpgradeB = function (id, status) {
+    methods.debug('stocks.updateUpgradeB');
+    if (typeof status === "boolean") {
+        if (status)
+            status = 1;
+        else
+            status = 0;
+    }
+    id = methods.parseInt(id);
+    status = methods.parseInt(status);
+    stocks.set(id, 'upgrade_b', status);
+    mysql.executeQuery("UPDATE stocks SET upgrade_b = '" + status + "' where id = '" + id + "'");
+};
+
+stocks.updateUpgradeL = function (id, status) {
+    methods.debug('stocks.updateUpgradeL');
+    if (typeof status === "boolean") {
+        if (status)
+            status = 1;
+        else
+            status = 0;
+    }
+    id = methods.parseInt(id);
+    status = methods.parseInt(status);
+    stocks.set(id, 'upgrade_l', status);
+    mysql.executeQuery("UPDATE stocks SET upgrade_l = '" + status + "' where id = '" + id + "'");
+};
+
+stocks.updateUpgradeN = function (id, status) {
+    methods.debug('stocks.updateUpgradeN');
+    if (typeof status === "boolean") {
+        if (status)
+            status = 1;
+        else
+            status = 0;
+    }
+    id = methods.parseInt(id);
+    status = methods.parseInt(status);
+    stocks.set(id, 'upgrade_n', status);
+    mysql.executeQuery("UPDATE stocks SET upgrade_n = '" + status + "' where id = '" + id + "'");
 };
 
 stocks.updatePin = function (id, pin) {
@@ -959,6 +1165,44 @@ stocks.updatePinO = function (id, pin) {
     pin = methods.parseInt(pin);
     stocks.set(id, 'pin_o', pin);
     mysql.executeQuery("UPDATE stocks SET pin_o = '" + pin + "' where id = '" + id + "'");
+};
+
+stocks.updatePinL = function (id, pin) {
+    methods.debug('stocks.updatePinL');
+    id = methods.parseInt(id);
+    pin = methods.parseInt(pin);
+    stocks.set(id, 'pin_l', pin);
+    mysql.executeQuery("UPDATE stocks SET pin_l = '" + pin + "' where id = '" + id + "'");
+};
+
+stocks.updatePinB = function (id, pin) {
+    methods.debug('stocks.updatePinB');
+    id = methods.parseInt(id);
+    pin = methods.parseInt(pin);
+    stocks.set(id, 'pin_b', pin);
+    mysql.executeQuery("UPDATE stocks SET pin_b = '" + pin + "' where id = '" + id + "'");
+};
+
+stocks.labStart = function (id, type, count) {
+    methods.debug('stocks.labStart');
+    stocks.set(id, 'lab_state', type * 6);
+    stocks.set(id, 'lab_type', type);
+    stocks.set(id, 'lab_1_count', stocks.get(id, 'lab_1_count') - count);
+    stocks.set(id, 'lab_2_count', stocks.get(id, 'lab_2_count') - count);
+    stocks.set(id, 'lab_3_count', stocks.get(id, 'lab_3_count') - count);
+    stocks.set(id, 'lab_4_count', stocks.get(id, 'lab_4_count') - count);
+    stocks.save(id);
+};
+
+stocks.bunkStart = function (id, type, count) {
+    methods.debug('stocks.labStart');
+    stocks.set(id, 'bunk_state', type * 6);
+    stocks.set(id, 'bunk_type', type);
+    stocks.set(id, 'bunk_1_count', stocks.get(id, 'bunk_1_count') - count);
+    stocks.set(id, 'bunk_2_count', stocks.get(id, 'bunk_2_count') - count);
+    stocks.set(id, 'bunk_3_count', stocks.get(id, 'bunk_3_count') - count);
+    stocks.set(id, 'bunk_4_count', stocks.get(id, 'bunk_4_count') - count);
+    stocks.save(id);
 };
 
 stocks.sell = function (player) {
@@ -1055,6 +1299,30 @@ stocks.enter1 = function (player, id) {
     user.teleport(player, 174.17990112304688, 5207.748046875, -88.07341613769531, 89.15861511230469);
 };
 
+stocks.enterl = function (player, id) {
+    methods.debug('stocks.enter', id);
+
+    if (!user.isLogin(player))
+        return;
+    id = methods.parseInt(id);
+
+    let hInfo = stocks.getData(id);
+    player.dimension = id + enums.offsets.stock;
+    user.teleport(player, 1088.6865234375, -3188.01025390625, -39.99346923828125, 189.6532745361328);
+};
+
+stocks.enterb = function (player, id) {
+    methods.debug('stocks.enter', id);
+
+    if (!user.isLogin(player))
+        return;
+    id = methods.parseInt(id);
+
+    let hInfo = stocks.getData(id);
+    player.dimension = id + enums.offsets.stock;
+    user.teleport(player, 890.7874755859375, -3245.426025390625, -98.6081771850586, 88.59600830078125);
+};
+
 stocks.enterv = function (player, id) {
     methods.debug('stocks.enter', id);
 
@@ -1101,7 +1369,6 @@ stocks.enterv = function (player, id) {
         return;
     }
 
-    player.dimension = id + enums.offsets.stock;
     if (vehicles.exists(player.vehicle)) {
         player.vehicle.dimension = id + enums.offsets.stock;
         /*vehicles.set(player.vehicle.id, 'lastStockPos', JSON.stringify(player.vehicle.position));
@@ -1114,6 +1381,8 @@ stocks.enterv = function (player, id) {
             }
         });*/
     }
+    else
+        player.dimension = id + enums.offsets.stock;
     user.teleportVeh(player, stocks.interiorList[intId][4], stocks.interiorList[intId][5], stocks.interiorList[intId][6], stocks.interiorList[intId][7]);
 };
 
@@ -1160,9 +1429,12 @@ stocks.enterv1 = function (player, id) {
         return;
     }
 
-    player.dimension = id + enums.offsets.stock;
     if (vehicles.exists(player.vehicle)) {
         player.vehicle.dimension = id + enums.offsets.stock;
+        /*vehicles.getOccupants(player.vehicle).forEach(p => {
+            if (user.isLogin(p))
+                p.dimension = id + enums.offsets.stock;
+        });*/
         /*vehicles.set(player.vehicle.id, 'lastStockPos', JSON.stringify(player.vehicle.position));
         vehicles.set(player.vehicle.id, 'lastStockRot', player.vehicle.heading);*/
         /*player.vehicle.getOccupants().forEach(p => {
@@ -1173,8 +1445,79 @@ stocks.enterv1 = function (player, id) {
             }
         });*/
     }
+    else
+        player.dimension = id + enums.offsets.stock;
+
     if (player.vehicle)
         user.teleportVeh(player, 169.47637939453125, 5206.49951171875, -88.0696548461914, 180.1299591064453);
     else
         user.teleport(player, 174.17990112304688, 5207.748046875, -88.07341613769531, 89.15861511230469);
+};
+
+stocks.entervb = function (player, id) {
+    methods.debug('stocks.enter', id);
+
+    if (!user.isLogin(player))
+        return;
+
+    let hInfo = stocks.getData(id);
+
+    if (vehicles.exists(player.vehicle)) {
+        let vInfo = methods.getVehicleInfo(player.vehicle.model);
+        if ((vInfo.class_name == 'Planes' ||
+            vInfo.class_name == 'Boats' ||
+            vInfo.class_name == 'Helicopters' ||
+            vInfo.class_name == 'Emergency' ||
+            vInfo.class_name == 'Military') /*&& vInfo.display_name !== 'Mule4' && vInfo.display_name !== 'Pounder2'*/)
+        {
+            player.notify('~r~Данному классу авто запрещено заезжать в гараж');
+            return;
+        }
+
+        if (player.vehicle.getVariable('cargoId'))
+        {
+            player.notify('~r~Транспорту с грузом запрещено заезжать в гараж');
+            return;
+        }
+
+        /*if (hInfo.get('interior') === 0 && vInfo.display_name !== 'Mule4' && vInfo.display_name !== 'Pounder2') {
+            player.notify('~r~Данному авто запрещено заезжать в гараж маленького склада, только большой средний');
+            return;
+        }*/
+    }
+
+    let intId = hInfo.get('interior');
+    id = methods.parseInt(id);
+
+    let pos = new mp.Vector3(890.7874755859375, -3245.426025390625, -98.6081771850586);
+    let v = methods.getNearestVehicleWithCoords(pos, 5, id + enums.offsets.stock);
+
+    if (vehicles.exists(v) && player.vehicle) {
+        player.notify('~r~К сожалению, сейчас у ворот уже стоит транспорт, необходимо чтобы он отъехал');
+        return;
+    }
+
+    if (vehicles.exists(player.vehicle)) {
+        player.vehicle.dimension = id + enums.offsets.stock;
+        /*vehicles.getOccupants(player.vehicle).forEach(p => {
+            if (user.isLogin(p))
+                p.dimension = id + enums.offsets.stock;
+        });*/
+        /*vehicles.set(player.vehicle.id, 'lastStockPos', JSON.stringify(player.vehicle.position));
+        vehicles.set(player.vehicle.id, 'lastStockRot', player.vehicle.heading);*/
+        /*player.vehicle.getOccupants().forEach(p => {
+            if (user.isLogin(p) && p.id !== player.id)
+            {
+                p.dimension = 0;
+                p.removeFromVehicle();
+            }
+        });*/
+    }
+    else
+        player.dimension = id + enums.offsets.stock;
+
+    if (player.vehicle)
+        user.teleportVeh(player, 890.7874755859375, -3245.426025390625, -98.6081771850586, 88.59600830078125);
+    else
+        user.teleport(player, 890.7874755859375, -3245.426025390625, -98.6081771850586, 88.59600830078125);
 };

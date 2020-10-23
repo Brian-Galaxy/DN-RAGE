@@ -487,13 +487,13 @@ timer.secTimer = function() {
                                     let ticketPrice = 0;
                                     let ticketSpeed = methods.getCurrentSpeedKmh() - (maxSpeed - 10);
                                     if (methods.getCurrentSpeedKmh() > maxSpeed + 120)
-                                        ticketPrice = 3000;
-                                    else if (methods.getCurrentSpeedKmh() > maxSpeed + 80)
-                                        ticketPrice = 2000;
-                                    else if (methods.getCurrentSpeedKmh() > maxSpeed + 40)
                                         ticketPrice = 1000;
-                                    else if (methods.getCurrentSpeedKmh() > maxSpeed)
+                                    else if (methods.getCurrentSpeedKmh() > maxSpeed + 80)
                                         ticketPrice = 500;
+                                    else if (methods.getCurrentSpeedKmh() > maxSpeed + 40)
+                                        ticketPrice = 250;
+                                    else if (methods.getCurrentSpeedKmh() > maxSpeed)
+                                        ticketPrice = 100;
 
                                     if (ticketPrice > 0) {
                                         if (user.getBankMoney() > ticketPrice)

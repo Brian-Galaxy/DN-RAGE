@@ -1751,7 +1751,7 @@ trucker.loadAll = function () {
     });
 
     //setInterval(trucker.poolChecker, 60000);
-    setInterval(trucker.poolCleaner, 60000 * 60);
+    //setInterval(trucker.poolCleaner, 60000 * 60);
 };
 
 trucker.poolChecker = function () {

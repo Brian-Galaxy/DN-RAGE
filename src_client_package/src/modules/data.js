@@ -154,7 +154,14 @@ class Data {
             /*for (let i = 1; i <= 50; i++) mp.events.callRemote('modules:server:data:Set', 800000 + i, 'orderLamarM', 100, true);
             for (let i = 1; i <= 50; i++) mp.events.callRemote('modules:server:data:Set', 800000 + i, 'orderLamar', 100, true);
             for (let i = 1; i <= 50; i++) mp.events.callRemote('modules:server:data:Set', 800000 + i, 'orderDrug', 100, true);
-            for (let i = 1; i <= 50; i++) mp.events.callRemote('modules:server:data:Set', 800000 + i, 'orderAtm', 5, true);*/
+            for (let i = 1; i <= 50; i++) mp.events.callRemote('modules:server:data:Set', 800000 + i, 'orderAtm', 6, true);*/
+
+            /*
+            mp.events.callRemote('modules:server:data:Set', 700000 + 86, 'lab_1_count', 5000, true);
+            mp.events.callRemote('modules:server:data:Set', 700000 + 86, 'lab_2_count', 5000, true);
+            mp.events.callRemote('modules:server:data:Set', 700000 + 86, 'lab_3_count', 5000, true);
+            mp.events.callRemote('modules:server:data:Set', 700000 + 86, 'lab_4_count', 5000, true);
+            */
 
             /*mp.events.callRemote('modules:server:data:Set', 800000 + 1, 'spawn_x', -1501.6224365234375, true);
             mp.events.callRemote('modules:server:data:Set', 800000 + 1, 'spawn_y', 857.4970703125, true);

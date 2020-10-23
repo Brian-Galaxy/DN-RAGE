@@ -211,6 +211,7 @@ vehicles.spawnPlayerCar = (id) => {
     if (vehicles.get(id, 'is_cop_park') > 0) {
         spawnPos = new mp.Vector3(9999, 9999, 999);
         spawnRot = 0;
+        vehicles.reset(id, 'removeNumber');
     }
 
     vehicles.spawnCarCb(veh => {
@@ -228,6 +229,10 @@ vehicles.spawnPlayerCar = (id) => {
                 numberStyle = 3;
 
             vehicles.setNumberPlate(veh, vehicles.get(id, 'number').toString());
+
+            if (vehicles.has(id, 'removeNumber'))
+                veh.numberPlate = '';
+
             veh.numberPlateType = numberStyle;
             veh.locked = true;
 

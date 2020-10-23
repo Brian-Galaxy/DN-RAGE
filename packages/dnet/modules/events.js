@@ -5022,13 +5022,13 @@ mp.events.addRemoteCounted("server:stocks:upgradeAdd", (player, id, slot, box) =
 mp.events.addRemoteCounted("server:stocks:labStart", (player, id, type, count) => {
     if (!user.isLogin(player))
         return;
-    stocks.labStart(player, id, type, count);
+    stocks.labStart(id, type, count);
 });
 
 mp.events.addRemoteCounted("server:stocks:bunkStart", (player, id, type, count) => {
     if (!user.isLogin(player))
         return;
-    stocks.bunkStart(player, id, type, count);
+    stocks.bunkStart(id, type, count);
 });
 
 //Condos
@@ -7963,18 +7963,19 @@ mp.events.addRemoteCounted('server:vehicle:removeNumber', (player, vid) => {
     try {
         let veh = mp.vehicles.at(vid);
         if (vehicles.exists(veh)) {
-            if (user.getCashMoney(player) < 15000) {
-                player.notify('~r~У вас нет $15000 на руках');
+            if (user.getCashMoney(player) < 10000) {
+                player.notify('~r~У вас нет $10000 на руках');
                 return;
             }
             if (veh.getVariable('user_id') > 0) {
                 let frId = user.get(player, 'fraction_id2');
-                user.removeCashMoney(player, 15000, 'Снятие номера с ТС');
+                user.removeCashMoney(player, 10000, 'Снятие номера с ТС');
                 if (frId > 0) {
                     fraction.addMoney(frId, 5, 'Прибыль со снятия номеров');
                 }
                 veh.numberPlate = '';
                 player.notify('~y~Теперь штрафы на этот транспорт приходить не будут');
+                vehicles.set(veh.getVariable('container'), 'removeNumber', true);
             }
             else {
                 player.notify('~y~Транспорт должен быть личный');

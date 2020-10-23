@@ -637,15 +637,15 @@ stocks.save = function(id) {
         sql = sql + " lab_state = '" + methods.parseInt(stocks.get(id, "lab_state")) + "'";
         sql = sql + ", lab_1_count = '" + methods.parseInt(stocks.get(id, "lab_1_count")) + "'";
         sql = sql + ", lab_2_count = '" + methods.parseInt(stocks.get(id, "lab_2_count")) + "'";
-        sql = sql + ", lab_3_count = '" + methods.removeQuotes(stocks.get(id, "lab_3_count")) + "'";
-        sql = sql + ", lab_4_count = '" + methods.removeQuotes(stocks.get(id, "lab_4_count")) + "'";
-        sql = sql + ", lab_type = '" + methods.removeQuotes(stocks.get(id, "lab_type")) + "'";
-        sql = sql + ", bunk_type = '" + methods.removeQuotes(stocks.get(id, "bunk_type")) + "'";
-        sql = sql + ", bunk_state = '" + methods.removeQuotes(stocks.get(id, "bunk_state")) + "'";
-        sql = sql + ", bunk_1_count = '" + methods.removeQuotes(stocks.get(id, "bunk_1_count")) + "'";
-        sql = sql + ", bunk_2_count = '" + methods.removeQuotes(stocks.get(id, "bunk_2_count")) + "'";
-        sql = sql + ", bunk_3_count = '" + methods.removeQuotes(stocks.get(id, "bunk_3_count")) + "'";
-        sql = sql + ", bunk_4_count = '" + methods.removeQuotes(stocks.get(id, "bunk_4_count")) + "'";
+        sql = sql + ", lab_3_count = '" + methods.parseInt(stocks.get(id, "lab_3_count")) + "'";
+        sql = sql + ", lab_4_count = '" + methods.parseInt(stocks.get(id, "lab_4_count")) + "'";
+        sql = sql + ", lab_type = '" + methods.parseInt(stocks.get(id, "lab_type")) + "'";
+        sql = sql + ", bunk_type = '" + methods.parseInt(stocks.get(id, "bunk_type")) + "'";
+        sql = sql + ", bunk_state = '" + methods.parseInt(stocks.get(id, "bunk_state")) + "'";
+        sql = sql + ", bunk_1_count = '" + methods.parseInt(stocks.get(id, "bunk_1_count")) + "'";
+        sql = sql + ", bunk_2_count = '" + methods.parseInt(stocks.get(id, "bunk_2_count")) + "'";
+        sql = sql + ", bunk_3_count = '" + methods.parseInt(stocks.get(id, "bunk_3_count")) + "'";
+        sql = sql + ", bunk_4_count = '" + methods.parseInt(stocks.get(id, "bunk_4_count")) + "'";
         sql = sql + " where id = '" + methods.parseInt(stocks.get(id, "id")) + "'";
 
         mysql.executeQuery(sql, undefined, function () {
@@ -660,6 +660,10 @@ stocks.getData = function(id) {
 
 stocks.get = function(id, key) {
     return Container.Data.Get(enums.offsets.stock + methods.parseInt(id), key);
+};
+
+stocks.has = function(id, key) {
+    return Container.Data.Has(enums.offsets.stock + methods.parseInt(id), key);
 };
 
 stocks.set = function(id, key, val) {

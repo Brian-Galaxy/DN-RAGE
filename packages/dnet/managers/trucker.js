@@ -1591,6 +1591,14 @@ trucker.doneOffer = function (player, offerId) {
                         stocks.set(stockId, 'lab_3_count', stocks.get(stockId, 'lab_3_count') + 500);
                     if (offer[1] === 'Упаковки')
                         stocks.set(stockId, 'lab_4_count', stocks.get(stockId, 'lab_4_count') + 500);
+                    if (offer[1] === 'Сплавы')
+                        stocks.set(stockId, 'bunk_1_count', stocks.get(stockId, 'bunk_1_count') + 500);
+                    if (offer[1] === 'Порох')
+                        stocks.set(stockId, 'bunk_2_count', stocks.get(stockId, 'bunk_2_count') + 500);
+                    if (offer[1] === 'Униформа')
+                        stocks.set(stockId, 'bunk_3_count', stocks.get(stockId, 'bunk_3_count') + 500);
+                    if (offer[1] === 'Корбки')
+                        stocks.set(stockId, 'bunk_4_count', stocks.get(stockId, 'bunk_4_count') + 500);
                 }
             }
         }

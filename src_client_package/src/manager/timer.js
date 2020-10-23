@@ -243,6 +243,112 @@ timer.twoSecTimer = function() {
     try {
 
         if (user.isLogin()) {
+
+            if (giveTicketTimeout > 0)
+                giveTicketTimeout--;
+            if (mp.players.local.isInAnyVehicle(true) && mp.players.local.dimension === 0 && giveTicketTimeout === 0) {
+                /*//0xDB89591E290D9182 | GET_TIME_SINCE_PLAYER_DROVE_AGAINST_TRAFFIC
+                //0xD559D2BE9E37853B | GET_TIME_SINCE_PLAYER_DROVE_ON_PAVEMENT
+                //0x4F5070AA58F69279 | GET_VEHICLE_NODE_IS_SWITCHED_OFF | _GET_IS_SLOW_ROAD_FLAG
+                let drove = mp.game.invoke('0xDB89591E290D9182'); //Если 0, то ты едешь по встерчке как мудак
+
+                /eval JSON.stringify(mp.game.pathfind.getVehicleNodeProperties(mp.players.local.vehicle.position.x, mp.players.local.vehicle.position.y, mp.players.local.vehicle.position.z, 1, 1));
+                */
+
+                let veh = mp.players.local.vehicle;
+
+                try {
+                    if (veh.getVariable('user_id') === user.getCache('id') || veh.getVariable('rentOwner') === user.getCache('id')) {
+                        if (
+                            veh.getClass() === 0 ||
+                            veh.getClass() === 1 ||
+                            veh.getClass() === 2 ||
+                            veh.getClass() === 3 ||
+                            veh.getClass() === 4 ||
+                            veh.getClass() === 5 ||
+                            veh.getClass() === 6 ||
+                            veh.getClass() === 7 ||
+                            veh.getClass() === 11 ||
+                            veh.getClass() === 12 ||
+                            veh.getClass() === 17 ||
+                            veh.getClass() === 20
+                        ) {
+                            mp.vehicles.forEach(v => {
+                                try {
+                                    let maxSpeed = v.getVariable('radar');
+                                    if (!maxSpeed || maxSpeed < 120)
+                                        return;
+                                    let velocity = v.getVelocity();
+                                    let speed = Math.sqrt(velocity.x * velocity.x + velocity.y * velocity.y + velocity.z * velocity.z);
+                                    speed = Math.round(speed * 2.23693629);
+                                    if (speed > 5)
+                                        return;
+
+                                    let rPos = v.position;
+
+                                    if (veh.getNumberPlateText().trim() === vehicles.getNumberPlate(veh).trim() && methods.distanceToPos(rPos, veh.position) < 30) {
+                                        let ticketPrice = 0;
+                                        let ticketSpeed = methods.getCurrentSpeedKmh() - (maxSpeed - 10);
+                                        if (methods.getCurrentSpeedKmh() > maxSpeed + 120)
+                                            ticketPrice = 1000;
+                                        else if (methods.getCurrentSpeedKmh() > maxSpeed + 80)
+                                            ticketPrice = 500;
+                                        else if (methods.getCurrentSpeedKmh() > maxSpeed + 40)
+                                            ticketPrice = 250;
+                                        else if (methods.getCurrentSpeedKmh() > maxSpeed)
+                                            ticketPrice = 100;
+
+                                        if (ticketPrice > 0) {
+                                            if (user.getBankMoney() > ticketPrice) {
+                                                mp.events.callRemote('server:vehicle:radarCheck', ticketSpeed, ticketPrice, vehicles.getNumberPlate(veh), v.remoteId);
+                                                user.removeBankMoney(ticketPrice, `Штраф за превышение скорости на ${ticketSpeed}км/ч`);
+                                            }
+                                            else if (user.getCashMoney() > ticketPrice) {
+                                                mp.events.callRemote('server:vehicle:radarCheck', ticketSpeed, ticketPrice, vehicles.getNumberPlate(veh), v.remoteId);
+                                                user.removeCashMoney(ticketPrice, `Штраф за превышение скорости на ${ticketSpeed}км/ч`);
+                                            }
+                                            else
+                                                user.giveTicket(ticketPrice, `Штраф за превышение скорости на ${ticketSpeed}км/ч`);
+                                            mp.game.ui.notifications.show("~y~Вас заметила камера за превышением скорости на ~s~" + ticketSpeed + "км/ч~y~, вам был выписан штраф в размере ~s~" + methods.moneyFormat(ticketPrice));
+                                            giveTicketTimeout = 15;
+                                        }
+                                    }
+                                }
+                                catch (e) {
+
+                                }
+                            });
+                            /*if (getStreet.crossingRoad != 0) {
+
+                            }*/
+                            /*else {
+                                if (veh.getNumberPlateText().trim() === vehicles.getNumberPlate(veh).trim() && methods.getCurrentSpeedKmh() > 30) {
+                                    let drove = mp.game.invoke('0xDB89591E290D9182'); //Если 0, то ты едешь по встерчке как мудак | GET_TIME_SINCE_PLAYER_DROVE_AGAINST_TRAFFIC
+                                    if (drove === 0) {
+                                        if (warnDrove >= 3) {
+                                            if (user.getBankMoney() > 500)
+                                                user.removeBankMoney(500, 'Штраф за выезд на встречную полосу');
+                                            else if (user.getCashMoney() > 500)
+                                                user.removeCashMoney(500, 'Штраф за выезд на встречную полосу');
+                                            else
+                                                user.giveTicket(500, 'Штраф за выезд на встречную полосу');
+                                            mp.game.ui.notifications.show("~y~Вас заметила камера за выезд на встречную полосу, вам был выписан штраф в размере $500");
+                                            giveTicketTimeout = 30;
+                                            warnDrove = 0;
+                                        }
+                                        else
+                                            warnDrove++;
+                                    }
+                                    else
+                                        warnDrove = 0;
+                                }
+                            }*/
+                        }
+                    }
+                }
+                catch (e) {}
+            }
+
             if (!user.hasCache('uniform') && user.hasCache('id')) {
                 if (mp.players.local.getArmour() > 0 && mp.players.local.getDrawableVariation(9) === 0) {
                     user.set('armor', 12);
@@ -450,93 +556,6 @@ timer.secTimer = function() {
 
     try {
         if (user.isLogin()) {
-
-            if (giveTicketTimeout > 0)
-                giveTicketTimeout--;
-            if (mp.players.local.isInAnyVehicle(true) && mp.players.local.dimension === 0 && giveTicketTimeout === 0) {
-                /*//0xDB89591E290D9182 | GET_TIME_SINCE_PLAYER_DROVE_AGAINST_TRAFFIC
-                //0xD559D2BE9E37853B | GET_TIME_SINCE_PLAYER_DROVE_ON_PAVEMENT
-                //0x4F5070AA58F69279 | GET_VEHICLE_NODE_IS_SWITCHED_OFF | _GET_IS_SLOW_ROAD_FLAG
-                let drove = mp.game.invoke('0xDB89591E290D9182'); //Если 0, то ты едешь по встерчке как мудак
-
-                /eval JSON.stringify(mp.game.pathfind.getVehicleNodeProperties(mp.players.local.vehicle.position.x, mp.players.local.vehicle.position.y, mp.players.local.vehicle.position.z, 1, 1));
-                */
-
-                let veh = mp.players.local.vehicle;
-
-                try {
-                    if (veh.getVariable('user_id') === user.getCache('id') || veh.getVariable('rentOwner') === user.getCache('id')) {
-                        if (
-                            veh.getClass() === 0 ||
-                            veh.getClass() === 1 ||
-                            veh.getClass() === 3 ||
-                            veh.getClass() === 4 ||
-                            veh.getClass() === 5 ||
-                            veh.getClass() === 6 ||
-                            veh.getClass() === 7 ||
-                            veh.getClass() === 11 ||
-                            veh.getClass() === 12 ||
-                            veh.getClass() === 17 ||
-                            veh.getClass() === 20
-                        ) {
-                            enums.radarList.forEach(item => {
-                                let rPos = new mp.Vector3(item[0], item[1], item[2]);
-                                let maxSpeed = item[3];
-
-                                if (veh.getNumberPlateText().trim() === vehicles.getNumberPlate(veh).trim() && methods.distanceToPos(rPos, veh.position) < 30) {
-                                    let ticketPrice = 0;
-                                    let ticketSpeed = methods.getCurrentSpeedKmh() - (maxSpeed - 10);
-                                    if (methods.getCurrentSpeedKmh() > maxSpeed + 120)
-                                        ticketPrice = 1000;
-                                    else if (methods.getCurrentSpeedKmh() > maxSpeed + 80)
-                                        ticketPrice = 500;
-                                    else if (methods.getCurrentSpeedKmh() > maxSpeed + 40)
-                                        ticketPrice = 250;
-                                    else if (methods.getCurrentSpeedKmh() > maxSpeed)
-                                        ticketPrice = 100;
-
-                                    if (ticketPrice > 0) {
-                                        if (user.getBankMoney() > ticketPrice)
-                                            user.removeBankMoney(ticketPrice, `Штраф за превышение скорости на ${ticketSpeed}км/ч`);
-                                        else if (user.getCashMoney() > ticketPrice)
-                                            user.removeCashMoney(ticketPrice, `Штраф за превышение скорости на ${ticketSpeed}км/ч`);
-                                        else
-                                            user.giveTicket(ticketPrice, `Штраф за превышение скорости на ${ticketSpeed}км/ч`);
-                                        mp.game.ui.notifications.show("~y~Вас заметила камера за превышением скорости на ~s~" + ticketSpeed + "км/ч~y~, вам был выписан штраф в размере ~s~" + methods.moneyFormat(ticketPrice));
-                                        giveTicketTimeout = 30;
-                                    }
-                                }
-                            });
-                            /*if (getStreet.crossingRoad != 0) {
-
-                            }*/
-                            /*else {
-                                if (veh.getNumberPlateText().trim() === vehicles.getNumberPlate(veh).trim() && methods.getCurrentSpeedKmh() > 30) {
-                                    let drove = mp.game.invoke('0xDB89591E290D9182'); //Если 0, то ты едешь по встерчке как мудак | GET_TIME_SINCE_PLAYER_DROVE_AGAINST_TRAFFIC
-                                    if (drove === 0) {
-                                        if (warnDrove >= 3) {
-                                            if (user.getBankMoney() > 500)
-                                                user.removeBankMoney(500, 'Штраф за выезд на встречную полосу');
-                                            else if (user.getCashMoney() > 500)
-                                                user.removeCashMoney(500, 'Штраф за выезд на встречную полосу');
-                                            else
-                                                user.giveTicket(500, 'Штраф за выезд на встречную полосу');
-                                            mp.game.ui.notifications.show("~y~Вас заметила камера за выезд на встречную полосу, вам был выписан штраф в размере $500");
-                                            giveTicketTimeout = 30;
-                                            warnDrove = 0;
-                                        }
-                                        else
-                                            warnDrove++;
-                                    }
-                                    else
-                                        warnDrove = 0;
-                                }
-                            }*/
-                        }
-                    }
-                }
-                catch (e) {}
-            }
 
             let dist = methods.distanceToPos(mp.players.local.position, playerPrevPos);
             if (!mp.players.local.isInAnyVehicle(true) && dist < 100) {

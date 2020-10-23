@@ -7956,6 +7956,28 @@ mp.events.addRemoteCounted('server:vehicle:ejectByIdOut', (player, vid, id) => {
     }
 });
 
+mp.events.addRemoteCounted('server:vehicle:radar', (player, enable) => {
+    if (!user.isLogin(player))
+        return;
+    player.vehicle.setVariable('radar', enable);
+});
+
+mp.events.addRemoteCounted('server:vehicle:radarCheck', (player, ticketSpeed, ticketPrice, number, vid) => {
+    if (!user.isLogin(player))
+        return;
+    try {
+        let driver = user.getVehicleDriver(mp.vehicles.at(vid));
+        if (user.isLogin(driver)) {
+            user.addMoney(driver, ticketPrice / 2, 'Установка радара');
+            player.notify("~y~Транспорт ~s~" + number + "~y~ заметила камера за превышением скорости на ~s~" + ticketSpeed + "км/ч~y~, транспорту был выписан штраф в размере ~s~" + methods.moneyFormat(ticketPrice));
+            player.notify("~y~Вам зачислена премия в размере ~s~" + methods.moneyFormat(ticketPrice / 2));
+        }
+    }
+    catch (e) {
+        
+    }
+});
+
 mp.events.addRemoteCounted('server:vehicle:removeNumber', (player, vid) => {
     if (!user.isLogin(player))
         return;

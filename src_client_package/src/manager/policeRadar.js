@@ -27,15 +27,23 @@ policeRadar.enableOrDisable = function () {
         policeRadar.enable();
 };
 
-policeRadar.enable = function () {
+policeRadar.isEnable = function () {
+    return enableCam;
+};
+
+policeRadar.enable = function (speed) {
     enableCam = true;
-    frontVehicle = policeRadar.getVehicle();
-    rearVehicle = policeRadar.getVehicle(-105);
+    mp.events.callRemote('server:vehicle:radar', speed);
+    mp.game.ui.notifications.show('~g~Вы включили радар. Учите, рада работает только в том случае, если вы стоите на месте и в ней сидит водитель');
+    /*frontVehicle = policeRadar.getVehicle();
+    rearVehicle = policeRadar.getVehicle(-105);*/
 };
 
 policeRadar.disable = function () {
     enableCam = false;
-    let data = {
+    mp.events.callRemote('server:vehicle:radar', 0);
+    mp.game.ui.notifications.show('~r~Вы выключили радар');
+    /*let data = {
         type: 'updateRadarValues',
         showRadar: false,
         radarRearSpeed: '',
@@ -44,7 +52,7 @@ policeRadar.disable = function () {
         radarFrontSpeedMax: '',
         radarPatrolSpeed: '',
     };
-    ui.callCef('hudc', JSON.stringify(data))
+    ui.callCef('hudc', JSON.stringify(data))*/
 };
 
 policeRadar.getVehicle = function (offsetY) {

@@ -1011,7 +1011,7 @@ menuList.showStockPanelUpgradeMenu = function(h) {
         UIMenu.Menu.AddMenuItem(`~y~Лаборатория`, "Стоимость: ~g~$5.000.000~s~~br~Благодаря этому лучшению, вы можете заниматся изготовкой наркотиков", {buyLab: true});
 
     if (h.get('interior') > 1 && !h.get('upgrade_n'))
-        UIMenu.Menu.AddMenuItem(`~y~Снятие номеров`, "Стоимость: ~g~$5.000.000~s~~br~Благодаря этому лучшению, вы можете снимать номера с автомобилей", {buyNumber: true});
+        UIMenu.Menu.AddMenuItem(`~y~Снятие номеров`, "Стоимость: ~g~$1.000.000~s~~br~Благодаря этому лучшению, вы можете снимать номера с автомобилей", {buyNumber: true});
 
     h.get('upgrade').split('_').forEach((uItem, idx) => {
         uItem = methods.parseInt(uItem);
@@ -1105,7 +1105,7 @@ menuList.showStockPanelUpgradeBuyNumberMenu = function(h) {
     try {
         UIMenu.Menu.Create(` `, `~b~Улучшение снятия номеров`, 'hm', false, false, 'h1');
 
-        UIMenu.Menu.AddMenuItem("Купить за ~g~$5.000.000", "", {doName: 'yes'});
+        UIMenu.Menu.AddMenuItem("Купить за ~g~$1.000.000", "", {doName: 'yes'});
 
         UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: 'closeMenu'});
         UIMenu.Menu.Draw();
@@ -1117,11 +1117,11 @@ menuList.showStockPanelUpgradeBuyNumberMenu = function(h) {
                     mp.game.ui.notifications.show('~r~У вас нет офиса для того, чтобы вы могли поставить это улучшение');
                     return;
                 }
-                if (user.getBankMoney() < 5000000) {
+                if (user.getBankMoney() < 1000000) {
                     mp.game.ui.notifications.show('~r~На вашем банковском счету не хватает средств');
                     return;
                 }
-                user.removeBankMoney(5000000, 'Улучшение для склада #' + h.get('id'));
+                user.removeBankMoney(1000000, 'Улучшение для склада #' + h.get('id'));
                 stocks.upgradeNumber(h.get('id'));
                 mp.game.ui.notifications.show('~g~Поздравляем с покупкой улучшения, теперь заезжая в офис, нажимая на меню взаимодействия с ТС, можно снимать номера');
             }
@@ -5688,7 +5688,19 @@ menuList.showVehicleMenu = async function(data) {
         else if (item.doName == 'photo:ask')
             photo.ask();
         else if (item.doName == 'police:radar')
-            policeRadar.enableOrDisable();
+        {
+            if (policeRadar.isEnable())
+            {
+                let speed = methods.parseInt(await UIMenu.Menu.GetUserInput("Допустимая скорость", "", 3));
+                if (speed > 180 || speed < 120) {
+                    mp.game.ui.notifications.show('~r~Скорость должна быть больше 120 и меньше 180');
+                    return ;
+                }
+                policeRadar.enable(speed);
+            }
+            else
+                policeRadar.disable();
+        }
         /*else if (item.doName == 'showVehicleAutopilotMenu')
             menuList.showVehicleAutopilotMenu();*/
         else if (item.doName == 'showVehicleStatsMenu')

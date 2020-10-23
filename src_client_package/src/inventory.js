@@ -123,8 +123,6 @@ inventory.openInventoryByEntity = async function(entity) {
                 mp.game.ui.notifications.show("~r~Транспорт закрыт");
             } else if (mp.players.local.isInAnyVehicle(false)) {
                 mp.game.ui.notifications.show("~g~Вы должны находиться около багажника");
-            } else if (methods.getVehicleInfo(entity.model).stock == 0) {
-                mp.game.ui.notifications.show("~r~Багажник отсутсвует у этого ТС");
             } else if (entity.getVariable('useless') === true) {
                 mp.game.ui.notifications.show("~r~Данный транспорт не доступен");
             }

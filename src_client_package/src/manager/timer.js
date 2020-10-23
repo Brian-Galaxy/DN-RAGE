@@ -479,18 +479,20 @@ timer.secTimer = function() {
                             veh.getClass() === 17 ||
                             veh.getClass() === 20
                         ) {
-                            let getStreet = mp.game.pathfind.getStreetNameAtCoord(veh.position.x, veh.position.y, veh.position.z, 0, 0);
-                            if (getStreet.crossingRoad != 0) {
-                                if (veh.getNumberPlateText().trim() === vehicles.getNumberPlate(veh).trim()) {
+                            enums.radarList.forEach(item => {
+                                let rPos = new mp.Vector3(item[0], item[1], item[2]);
+                                let maxSpeed = item[3];
+
+                                if (veh.getNumberPlateText().trim() === vehicles.getNumberPlate(veh).trim() && methods.distanceToPos(rPos, veh.position) < 30) {
                                     let ticketPrice = 0;
-                                    let ticketSpeed = methods.getCurrentSpeedKmh() - 110;
-                                    if (methods.getCurrentSpeedKmh() > 240)
+                                    let ticketSpeed = methods.getCurrentSpeedKmh() - (maxSpeed - 10);
+                                    if (methods.getCurrentSpeedKmh() > maxSpeed + 120)
                                         ticketPrice = 3000;
-                                    else if (methods.getCurrentSpeedKmh() > 200)
+                                    else if (methods.getCurrentSpeedKmh() > maxSpeed + 80)
                                         ticketPrice = 2000;
-                                    else if (methods.getCurrentSpeedKmh() > 160)
+                                    else if (methods.getCurrentSpeedKmh() > maxSpeed + 40)
                                         ticketPrice = 1000;
-                                    else if (methods.getCurrentSpeedKmh() > 120)
+                                    else if (methods.getCurrentSpeedKmh() > maxSpeed)
                                         ticketPrice = 500;
 
                                     if (ticketPrice > 0) {
@@ -504,7 +506,10 @@ timer.secTimer = function() {
                                         giveTicketTimeout = 30;
                                     }
                                 }
-                            }
+                            });
+                            /*if (getStreet.crossingRoad != 0) {
+
+                            }*/
                             /*else {
                                 if (veh.getNumberPlateText().trim() === vehicles.getNumberPlate(veh).trim() && methods.getCurrentSpeedKmh() > 30) {
                                     let drove = mp.game.invoke('0xDB89591E290D9182'); //Если 0, то ты едешь по встерчке как мудак | GET_TIME_SINCE_PLAYER_DROVE_AGAINST_TRAFFIC

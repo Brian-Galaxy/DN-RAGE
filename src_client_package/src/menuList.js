@@ -4544,7 +4544,11 @@ menuList.showVehicleDoInvMenu = async function(vehId) {
 
     UIMenu.Menu.Create(`Транспорт`, `~b~Взаимодействие с транспортом`);
 
-    UIMenu.Menu.AddMenuItem("Открыть багажник", "", {doName: "openInv"});
+    if (vInfo.stock > 0) {
+        UIMenu.Menu.AddMenuItem("Открыть багажник", "", {doName: "openInv"});
+        UIMenu.Menu.AddMenuItem("Закрыть багажник", "", {doName: "close"});
+    }
+
     UIMenu.Menu.AddMenuItem("Выкинуть человека", "", {doName: "eject"});
 
     if (vehicle.getVariable('fraction_id') === 7 && user.isNews()) {
@@ -4588,7 +4592,7 @@ menuList.showVehicleDoInvMenu = async function(vehId) {
         }
     }
 
-    UIMenu.Menu.AddMenuItem("Закрыть багажник", "", {doName: "close"});
+    UIMenu.Menu.AddMenuItem("Перевернуть транспорт", "", {doName: "flip"});
 
     try {
         if (mp.players.local.dimension > enums.offsets.stock) {
@@ -4645,6 +4649,10 @@ menuList.showVehicleDoInvMenu = async function(vehId) {
             builder.take(1);
         else if (item.doName == 'builder:take2')
             builder.take(2);
+        else if (item.doName == 'flip') {
+            if (!mp.players.local.isInAnyVehicle(true))
+                mp.events.callRemote('server:flipNearstVehicle');
+        }
         if (item.doName == 'openInv') {
 
             if (ui.isGreenZone() && !user.isPolice()) {

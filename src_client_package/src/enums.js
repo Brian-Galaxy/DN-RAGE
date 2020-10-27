@@ -2925,6 +2925,10 @@ enums.animActions = [
     ["Секс (Женщина)", "rcmpaparazzo_2", "shag_action_poppy", 8],
     ["Дрочить #1", "anim@mp_player_intupperwank", "idle_a", 49],
     ["Дрочить #2", "anim@mp_player_intcelebrationmale@wank", "wank", 8],
+    ["Механик", "amb@world_human_vechicle_mechanic@male@base", "base", 8],
+    ["Печатать на компьютере", "anim@amb@board_room@stenographer@computer@", "base_right_amy_skater_01", 8],
+    ["Рассуждать - 1", "anim@amb@board_room@diagram_blueprints@", "idle_01_amy_skater_01", 8],
+    ["Рассуждать - 2", "anim@amb@board_room@diagram_blueprints@", "look_around_02_amy_skater_01", 8]
 ];
 enums.animPose = [
     ["Руки вверх", "anim@move_hostages@male", "male_idle", 9],
@@ -2943,6 +2947,7 @@ enums.animPose = [
     ["Палец вверх", "anim@mp_player_intincarthumbs_upbodhi@ds@", "enter_fp", 8],
     ["Скрестить руки-1", "rcmme_amanda1", "stand_loop_cop", 9],
     ["Скрестить руки-2", "amb@world_human_cop_idles@female@idle_b", "idle_e", 8],
+    ["Скрестить руки-3", "anim@amb@business@bgen@bgen_no_work@", "stand_phone_phoneputdown_idle_nowork", 9],
     ["Руки в боки", "amb@code_human_police_investigate@base", "base", 9],
     ["Поза охранника", "missfbi4mcs_2", "loop_sec_b", 9],
     ["Бег на месте разводя руки", "amb@world_human_jog_standing@female@idle_a", "idle_a", 8],
@@ -2959,7 +2964,11 @@ enums.animPose = [
     ["Медитировать-4", "missfam5_yoga", "start_to_c1", 8],
     ["Медитировать-5", "missfam5_yoga", "start_to_a1", 8],
     ["Медитировать-6", "missfam5_yoga", "a2_to_a3", 8],
-    ["Медитировать-7", "missfam5_yoga", "a3_fail_to_start", 8]
+    ["Медитировать-7", "missfam5_yoga", "a3_fail_to_start", 8],
+    ["Сидеть на земле - 1", "amb@world_human_stupor@male_looking_right@base", "base", 9],
+    ["Сидеть на земле - 2", "anim@amb@business@bgen@bgen_no_work@", "sit_phone_phoneputdown_idle_nowork", 9],
+    ["Лежать на земле", "amb@world_human_sunbathe@male@back@base", "base", 9],
+    ["Лежать на лежаке", "amb@prop_human_seat_sunlounge@male@base", "base", 9],
 ];
 enums.animPositive = [
     ["Радоваться-1", "missmic_4premiere", "movie_prem_01_f_a", 8],
@@ -2978,7 +2987,10 @@ enums.animPositive = [
     ["Поцеловать-2", "anim@mp_player_intcelebrationfemale@chin_brush", "chin_brush", 8],
     ["Поцеловать-3", "anim@mp_player_intcelebrationfemale@finger_kiss", "finger_kiss", 8],
     ["Успокоить", "amb@code_human_police_crowd_control@idle_a", "idle_c", 8],
-    ["Уважение", "anim@mp_player_intcelebrationfemale@bro_love", "bro_love", 8]
+    ["Уважение", "anim@mp_player_intcelebrationfemale@bro_love", "bro_love", 8],
+    ["Победа!", "anim@arena@celeb@flat@solo@no_props@", "slide_a_player_a", 8],
+    ["Сальто назад", "anim@arena@celeb@flat@solo@no_props@", "flip_a_player_a", 8],
+    //["Перфекто!", "anim@mp_player__incelebrationmale@finger_kiss", "finger_kiss", 8]
 ];
 enums.animNegative = [
     ["Размять кулаки-1", "anim@mp_player_intcelebrationfemale@knuckle_crunch", "knuckle_crunch", 8],
@@ -2993,7 +3005,13 @@ enums.animNegative = [
     ["Встать в стойку-1", "anim@deathmatch_intros@unarmed", "intro_male_unarmed_c", 8],
     ["Встать в стойку-2", "anim@deathmatch_intros@unarmed", "intro_male_unarmed_a", 8],
     ["Встать в стойку-3", "anim@deathmatch_intros@unarmed", "intro_male_unarmed_b", 8],
-    ["Встать в стойку-4", "anim@deathmatch_intros@unarmed", "intro_male_unarmed_d", 8]
+    ["Встать в стойку-4", "anim@deathmatch_intros@unarmed", "intro_male_unarmed_d", 8],
+    ["Насмехаться", "anim@arena@celeb@flat@solo@no_props@", "taunt_e_player_b", 8],
+    //["Медленно хлопать", "anim@mp_player_inticarslow_clapbodhi@ds@", "idle_a", 8],
+    ["Перезвоните", "anim@mp_player_intcelebrationmale@call_me", "call_me", 8],
+    ["В недоразумении", "anim@arena@celeb@flat@solo@no_props@", "wow_b_player_b", 8],
+    //["Показать Фак - 1", "anim@mp_player_incelebrationmale@finger", "finger", 8],
+    ["Показать Фак", "anim@mp_player_intupperfinger", "idle_a_fp", 8]
 ];
 enums.animDance = [
     ["DJ", "anim@mp_player_intcelebrationfemale@dj", "dj", 8],
@@ -3051,7 +3069,8 @@ enums.animDance = [
     ["Доп. Танец 38", "anim@amb@nightclub@dancers@crowddance_facedj@", "hi_dance_facedj_09_v1_female^6", 9],
     ["Доп. Танец 39", "anim@amb@nightclub@dancers@crowddance_groups@hi_intensity", "hi_dance_crowd_09_v1_female^6", 9],
     ["Доп. Танец 40", "anim@amb@nightclub@lazlow@hi_podium@", "danceidle_hi_06_base_laz", 9],
-    ["Доп. Танец 41", "special_ped@zombie@monologue_4@monologue_4l", "iamtheundead_11", 9]
+    ["Доп. Танец 41", "special_ped@zombie@monologue_4@monologue_4l", "iamtheundead_11", 9],
+    ["Доп. Танец 42", "anim@amb@nightclub@djs@black_madonna@", "dance_b_idle_a_blamadon", 9]
 ];
 enums.animRemain = [
     ["Секс-1", "anim@mp_player_intcelebrationfemale@air_shagging", "air_shagging", 8],

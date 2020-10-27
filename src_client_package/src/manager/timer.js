@@ -574,10 +574,10 @@ timer.secTimer = function() {
             }
             playerPrevPos = mp.players.local.position;
 
-            if (user.hasCache('rentTradeB') && !ui.isGreenZone())
+            /*if (user.hasCache('rentTradeB') && !ui.isGreenZone())
                 mp.events.callRemote('server:tradeMarket:unrentBlack', user.getCache('rentTradeB'));
             else if (user.hasCache('rentTrade') && !ui.isGreenZone())
-                mp.events.callRemote('server:tradeMarket:unrentBeach', user.getCache('rentTrade'));
+                mp.events.callRemote('server:tradeMarket:unrentBeach', user.getCache('rentTrade'));*/
         }
     }
     catch (e) {}

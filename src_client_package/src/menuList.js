@@ -5689,7 +5689,7 @@ menuList.showVehicleMenu = async function(data) {
             photo.ask();
         else if (item.doName == 'police:radar')
         {
-            if (policeRadar.isEnable())
+            if (!policeRadar.isEnable())
             {
                 let speed = methods.parseInt(await UIMenu.Menu.GetUserInput("Допустимая скорость", "", 3));
                 if (speed > 180 || speed < 120) {

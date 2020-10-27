@@ -81,7 +81,7 @@ policeRadar.timer = function () {
         if (!mp.vehicles.exists(currentVeh) && enableCam)
             policeRadar.disable();
         if (enableCam) {
-            frontVehicle = policeRadar.getVehicle(100);
+            /*frontVehicle = policeRadar.getVehicle(100);
             rearVehicle = policeRadar.getVehicle(-100);
 
             let fSpeed = '';
@@ -118,7 +118,7 @@ policeRadar.timer = function () {
                 radarFrontSpeedMax: frontVehicleMax,
                 radarPatrolSpeed: methods.getCurrentSpeed(),
             };
-            ui.callCef('hudc', JSON.stringify(data))
+            ui.callCef('hudc', JSON.stringify(data))*/
         }
     }
     catch (e) {

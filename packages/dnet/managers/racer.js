@@ -6381,7 +6381,7 @@ racer.createRace = function (id = -1, currentVeh = undefined) {
 
     currentRace = id;
 
-    if (currentVeh === undefined)
+    if (currentVeh === undefined || currentVeh === '-1')
         currentVeh = racerList[currentRace].allowVehicle[methods.getRandomInt(0, racerList[currentRace].allowVehicle.length)];
 
     currentVehicle = currentVeh;

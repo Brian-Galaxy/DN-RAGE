@@ -157,10 +157,12 @@ class Data {
             for (let i = 1; i <= 50; i++) mp.events.callRemote('modules:server:data:Set', 800000 + i, 'orderAtm', 6, true);*/
 
             /*
-            mp.events.callRemote('modules:server:data:Set', 700000 + 86, 'lab_1_count', 5000, true);
-            mp.events.callRemote('modules:server:data:Set', 700000 + 86, 'lab_2_count', 5000, true);
-            mp.events.callRemote('modules:server:data:Set', 700000 + 86, 'lab_3_count', 5000, true);
-            mp.events.callRemote('modules:server:data:Set', 700000 + 86, 'lab_4_count', 5000, true);
+            WORLD_HUMAN_UMBRELLA
+
+            mp.events.callRemote('modules:server:data:Set', 700000 + 44, 'bunk_1_count', 0, true);
+            mp.events.callRemote('modules:server:data:Set', 700000 + 44, 'bunk_2_count', 0, true);
+            mp.events.callRemote('modules:server:data:Set', 700000 + 44, 'bunk_3_count', 0, true);
+            mp.events.callRemote('modules:server:data:Set', 700000 + 44, 'bunk_4_count', 0, true);
             */
 
             /*mp.events.callRemote('modules:server:data:Set', 800000 + 1, 'spawn_x', -1501.6224365234375, true);

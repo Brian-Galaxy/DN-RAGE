@@ -134,7 +134,7 @@ let checkShooting1 = function () {
                         if (user.getLastWeapon() == wpItem[1] / 2) {
                             let itemId = items.getWeaponIdByName(wpItem[0]);
                             if (itemId === item.item_id) {
-                                if (item.counti > 90)
+                                if (item.counti > 60)
                                     return;
                                 let rand = methods.getRandomInt(0, methods.parseInt(item.counti / 5));
                                 if (rand < 1)

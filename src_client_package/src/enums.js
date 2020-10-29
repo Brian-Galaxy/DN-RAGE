@@ -2925,8 +2925,8 @@ enums.animActions = [
     ["Секс (Женщина)", "rcmpaparazzo_2", "shag_action_poppy", 8],
     ["Дрочить #1", "anim@mp_player_intupperwank", "idle_a", 49],
     ["Дрочить #2", "anim@mp_player_intcelebrationmale@wank", "wank", 8],
-    ["Механик", "amb@world_human_vechicle_mechanic@male@base", "base", 8],
-    ["Печатать на компьютере", "anim@amb@board_room@stenographer@computer@", "base_right_amy_skater_01", 8],
+    ["Механик", "amb@world_human_vechicle_mechanic@male@base", "base", 9],
+    ["Печатать на компьютере", "anim@amb@board_room@stenographer@computer@", "base_right_amy_skater_01", 9],
     ["Рассуждать - 1", "anim@amb@board_room@diagram_blueprints@", "idle_01_amy_skater_01", 8],
     ["Рассуждать - 2", "anim@amb@board_room@diagram_blueprints@", "look_around_02_amy_skater_01", 8]
 ];
@@ -2968,7 +2968,7 @@ enums.animPose = [
     ["Сидеть на земле - 1", "amb@world_human_stupor@male_looking_right@base", "base", 9],
     ["Сидеть на земле - 2", "anim@amb@business@bgen@bgen_no_work@", "sit_phone_phoneputdown_idle_nowork", 9],
     ["Лежать на земле", "amb@world_human_sunbathe@male@back@base", "base", 9],
-    ["Лежать на лежаке", "amb@prop_human_seat_sunlounge@male@base", "base", 9],
+    //["Лежать на лежаке", "amb@prop_human_seat_sunlounge@male@base", "base", 9],
 ];
 enums.animPositive = [
     ["Радоваться-1", "missmic_4premiere", "movie_prem_01_f_a", 8],

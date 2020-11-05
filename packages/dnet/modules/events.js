@@ -2007,6 +2007,7 @@ mp.events.addRemoteCounted('server:sendAsk', (player, message) => {
         if (user.isHelper(p))
             p.outputChatBoxNew(`!{#FFC107}Вопрос от ${user.getRpName(player)} (${player.id}):!{#FFFFFF} ${message}`);
     });
+    methods.saveLog('log_chat', ['text'], [`HELPER: ${user.getRpName(player)} (${user.getId(player)}): ${methods.removeQuotes(methods.removeQuotes2(message))}`]);
 });
 
 mp.events.addRemoteCounted('server:sendReport', (player, message) => {
@@ -2027,6 +2028,7 @@ mp.events.addRemoteCounted('server:sendReport', (player, message) => {
                 p.outputChatBoxNew(`!{#f44336}Жалоба от ${user.getRpName(player)} (${player.id}):!{#FFFFFF} ${message}`);
         }
     });
+    methods.saveLog('log_chat', ['text'], [`REPORT: ${user.getRpName(player)} (${user.getId(player)}): ${methods.removeQuotes(methods.removeQuotes2(message))}`]);
 });
 
 mp.events.addRemoteCounted('server:sendAnswerAsk', (player, id, msg) => {
@@ -2050,6 +2052,7 @@ mp.events.addRemoteCounted('server:sendAnswerAsk', (player, id, msg) => {
         let money = (msg.length / 2) * user.get(player, 'helper_level');
         player.notify(`~g~Вы получили премию за ответ на вопрос ~s~${methods.moneyFormat(money)}`);
         user.addCashMoney(player, money, `Ответ на вопрос (${methods.removeQuotes(methods.removeQuotes2(msg)).substring(0, 230)})`)
+        methods.saveLog('log_chat', ['text'], [`HELPER ASK: ${user.getRpName(player)} (${user.getId(player)}) to ${user.getRpName(p)} (${user.getId(p)}): ${methods.removeQuotes(methods.removeQuotes2(msg))}`]);
     });
 });
 
@@ -2069,6 +2072,7 @@ mp.events.addRemoteCounted('server:sendAnswerReport', (player, id, msg) => {
         p.outputChatBoxNew(`!{#f44336}Ответ от администратора ${user.getRpName(player)}:!{#FFFFFF} ${msg}`);
         //methods.saveLog('AnswerReport', `${user.getRpName(player)} (${user.getId(player)}) to ${id}: ${msg}`);
         user.set(player, 'count_aask', user.get(player, 'count_aask') + 1);
+        methods.saveLog('log_chat', ['text'], [`REPORT ASK: ${user.getRpName(player)} (${user.getId(player)}) to ${user.getRpName(p)} (${user.getId(p)}): ${methods.removeQuotes(methods.removeQuotes2(msg))}`]);
     });
 });
 
@@ -4058,6 +4062,18 @@ mp.events.addRemoteCounted('server:inventory:fixItem', (player, id) => {
     if (!user.isLogin(player))
         return;
     inventory.fixItem(player, id);
+});
+
+mp.events.addRemoteCounted('server:inventory:fixItemFree', (player, id) => {
+    if (!user.isLogin(player))
+        return;
+    inventory.fixItemFree(player, id);
+});
+
+mp.events.addRemoteCounted('server:inventory:fixItemFreeMenu', (player) => {
+    if (!user.isLogin(player))
+        return;
+    inventory.getItemListGunFixFree(player);
 });
 
 mp.events.addRemoteCounted('server:inventory:upgradeWeapon', (player, id, itemId, weaponStr) => {

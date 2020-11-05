@@ -758,7 +758,7 @@ phone.memberActionF = function(player, id) {
                         `Вы точно хотите снять с должности ${row['name']}?`,
                         'Снять',
                         'Отмена',
-                        { name: 'memberTakeSubLeader2', memberId: row['id'] },
+                        { name: 'memberTakeSubLeaderF', memberId: row['id'] },
                         '',
                         true
                     ));

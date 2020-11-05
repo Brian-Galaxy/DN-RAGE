@@ -867,7 +867,7 @@ mp.events.add('client:shopMenu:buyCash', async function(json) {
                     mp.game.ui.notifications.show("~r~У Вас нет лицензии на оружие");
                     return;
                 }
-                mp.events.callRemote('server:gun:buy', params.id, params.price, 1, 0, 0, params.shop, 0);
+                mp.events.callRemote('server:gun:buy', params.id, params.price, 1, methods.parseInt(params.superTint), methods.parseInt(params.tint), params.shop, 0);
             }
             else {
                 if (params.id === 251)
@@ -1018,7 +1018,7 @@ mp.events.add('client:shopMenu:buyCard', async function(json) {
                     mp.game.ui.notifications.show("~r~У Вас нет лицензии на оружие");
                     return;
                 }
-                mp.events.callRemote('server:gun:buy', params.id, params.price, 1, 0, 0, params.shop, 1);
+                mp.events.callRemote('server:gun:buy', params.id, params.price, 1,  methods.parseInt(params.superTint), methods.parseInt(params.tint), params.shop, 1);
             }
             else {
                 if (params.id === 251)

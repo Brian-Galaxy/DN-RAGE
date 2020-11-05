@@ -3449,7 +3449,14 @@ menuList.showMeriaSellVehHvbMenu = async function(cofferData, isNpc = false) {
                 if (user.getCache(`car_id${i}`) > 0) {
                     let vehData = vehList[i - 1];
                     let vehInfo = methods.getVehicleInfo(vehData.get('name'));
-                    UIMenu.Menu.AddMenuItem(`Продать ТС ${vehData.get('name')} (${vehData.get('number')})`, "Продать транспорт государству.~br~Налог: ~g~" + (cofferData.get('cofferTaxProperty') + taxOffset) + "%", {eventName: `server:car${i}:sell`});
+
+                    if (vehData.get('s_km') < 300) {
+                        UIMenu.Menu.AddMenuItem(`Продать ТС ${vehData.get('name')} (${vehData.get('number')})`, "Продать транспорт государству.~br~Налог: ~g~Отсутствует связи с тем, что пробег у транспорта менее 300км", {eventName: `server:car${i}:sell`});
+                    }
+                    else {
+                        UIMenu.Menu.AddMenuItem(`Продать ТС ${vehData.get('name')} (${vehData.get('number')})`, "Продать транспорт государству.~br~Налог: ~g~" + (cofferData.get('cofferTaxProperty') + taxOffset) + "%", {eventName: `server:car${i}:sell`});
+                    }
+
                     if (vehInfo.price === vehData.get('price')) {
                         if (vehData.get('with_delete') < 2) {
                             if (vehData.get('is_cop_park') > 0) {
@@ -4715,6 +4722,7 @@ menuList.showVehicleDoSellMenu = async function(vehId) {
     UIMenu.Menu.Create(`Транспорт`, `~b~Информация о транспорте`);
     UIMenu.Menu.AddMenuItem(`~g~Купить по цене ${methods.moneyFormat(vData.get('sell_price'))}`, "", {doName: 'buy'});
     UIMenu.Menu.AddMenuItem(`Владелец ${vData.get('user_name')}`, "", {});
+    UIMenu.Menu.AddMenuItem(`Пробег ${methods.parseFloat(vData.get('s_km')).toFixed(2)}км`, "", {});
     UIMenu.Menu.AddMenuItem("Характеристики", "", {doName: "stats"});
     UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
     UIMenu.Menu.Draw();
@@ -5692,8 +5700,8 @@ menuList.showVehicleMenu = async function(data) {
             if (!policeRadar.isEnable())
             {
                 let speed = methods.parseInt(await UIMenu.Menu.GetUserInput("Допустимая скорость", "", 3));
-                if (speed > 180 || speed < 120) {
-                    mp.game.ui.notifications.show('~r~Скорость должна быть больше 120 и меньше 180');
+                if (speed > 220 || speed < 120) {
+                    mp.game.ui.notifications.show('~r~Скорость должна быть больше 120 и меньше 220');
                     return ;
                 }
                 policeRadar.enable(speed);
@@ -6062,6 +6070,7 @@ menuList.showVehicleStatsMenu = async function(veh) {
 
         UIMenu.Menu.AddMenuItem("~y~Разное: ", "", {}, ``);
 
+        UIMenu.Menu.AddMenuItem("~b~Пробег: ", "", {}, `${methods.parseFloat(car.get('s_km')).toFixed(2)}км`);
         UIMenu.Menu.AddMenuItem("~b~Спец. покрышки: ", "", {}, `${car.get('is_tyre') ? '~y~Установлено' : '~r~Отсутствует'}`);
         UIMenu.Menu.AddMenuItem("~b~Цветные фары: ", "", {}, `${car.get('colorl') >= 0 ? '~y~Установлено' : '~r~Отсутствует'}`);
         UIMenu.Menu.AddMenuItem("~b~Неон: ", "", {}, `${car.get('is_neon') ? '~y~Установлено' : '~r~Отсутствует'}`);
@@ -6431,6 +6440,38 @@ menuList.showFixGunMenu = function(data) {
             if (item.id >= 0) {
                 try {
                     mp.events.callRemote('server:inventory:fixItem', item.id)
+                }
+                catch (e) {
+                    methods.debug(e);
+                }
+            }
+        });
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+};
+
+menuList.showFixGunFreeMenu = function(data) {
+
+    try {
+        UIMenu.Menu.Create('Починка', `~b~Починка оружия и бронежилетов`);
+
+        data.forEach((item, idx) => {
+            let formatItem = items.getItemFormat(item);
+            let desc = formatItem.desc;
+            let itemName = formatItem.name;
+            UIMenu.Menu.AddMenuItem(`${itemName}`, `${desc}.`, {id: item.id});
+        });
+
+        UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
+        UIMenu.Menu.Draw();
+
+        UIMenu.Menu.OnSelect.Add(async (item, index) => {
+            UIMenu.Menu.HideMenu();
+            if (item.id >= 0) {
+                try {
+                    mp.events.callRemote('server:inventory:fixItemFree', item.id)
                 }
                 catch (e) {
                     methods.debug(e);
@@ -9811,7 +9852,15 @@ menuList.showGunShopMenu = function(shopId, price = 1)
     let sale = business.getSale(price);
 
     let list = [];
-    [54, 63, 64, 65, 69, 77, 80, 71, 87, 90, 91, 94, 99, 103, 104].forEach(itemId => {
+    let gunList = [54, 63, 64, 65, 69, 77, 80, 71, 87, 90, 91, 94, 99, 103, 104];
+
+    if (user.isAdmin(5)) {
+        gunList = [];
+        for (let i = 54; i <= 126; i++)
+            gunList.push(i);
+    }
+
+    gunList.forEach(itemId => {
         let itemPrice = items.getItemPrice(itemId) * price;
 
         let shopItem = {
@@ -9848,6 +9897,50 @@ menuList.showGunShopMenu = function(shopId, price = 1)
 
             let wpName = items.getItemNameHashById(itemId);
             let componentList = weapons.getWeaponComponentList(wpName);
+
+            if (user.isAdmin(5)) {
+                weapons.getTintList(wpName).forEach((item, idx) => {
+                    if (idx > 0) {
+                        let itemPrice = items.getItemPrice(itemId) * price * 2;
+                        shopItem.items.push(
+                            { //Если кликаем сюда, то открывается меню справа (Там где покупка)
+                                title: methods.removeQuotesAll(`${items.getItemNameById(itemId)} ${item}`),
+                                desc: '',
+                                desc2: '',
+                                desc2t: '',
+                                sale: sale,
+                                img: `Item_${itemId}.png`,
+                                price: methods.moneyFormat(itemPrice),
+                                params: {id: itemId, price: itemPrice, tint: idx, shop: shopId}
+                            }
+                        )
+                    }
+                });
+
+                componentList.forEach(item => {
+                    if (item[3] == 0) {
+                        let itemPrice = items.getItemPrice(itemId) * price * 2;
+                        /*let menuItem = {};
+                        menuItem.price = itemPrice;
+                        menuItem.itemId = itemId;
+                        menuItem.superTint = item[2].toString();
+                        UIMenu.Menu.AddMenuItemList(`${items.getItemNameById(itemId)} ${item[1]}`, tintList, `Цена: ~g~${methods.moneyFormat(itemPrice)}`, menuItem);*/
+
+                        shopItem.items.push(
+                            { //Если кликаем сюда, то открывается меню справа (Там где покупка)
+                                title: methods.removeQuotesAll(`${items.getItemNameById(itemId)} ${item[1]}`),
+                                desc: '',
+                                desc2: '',
+                                desc2t: '',
+                                sale: sale,
+                                img: `Item_${itemId}.png`,
+                                price: methods.moneyFormat(itemPrice),
+                                params: {id: itemId, price: itemPrice, superTint: item[2].toString(), shop: shopId}
+                            }
+                        )
+                    }
+                });
+            }
 
             componentList.forEach(item => {
                 if (item[3] == 0) return;
@@ -10916,6 +11009,8 @@ menuList.showSheriffArsenalMenu = function() {
         UIMenu.Menu.AddMenuItem("Полицейское огорождение", "", {itemId: 199});
         UIMenu.Menu.AddMenuItem("Полосатый конус", "", {itemId: 201});
         UIMenu.Menu.AddMenuItem("Красный конус", "", {itemId: 202});
+
+        UIMenu.Menu.AddMenuItem("~b~Починка оружия", "", {gunFix: true});
     }
 
     UIMenu.Menu.AddMenuItem("~b~Сдача конфиската", "", {sellItems: true});
@@ -10940,6 +11035,9 @@ menuList.showSheriffArsenalMenu = function() {
         }
         if (item.getMoneyPolice) {
             mp.events.callRemote('server:sellMoneyPolice');
+        }
+        if (item.gunFix) {
+            mp.events.callRemote('server:inventory:fixItemFreeMenu');
         }
         if (item.itemId) {
             let moneyFraction = await coffer.getMoney(coffer.getIdByFraction(user.getCache('fraction_id')));
@@ -11312,6 +11410,7 @@ menuList.showSapdArsenalMenu = function() {
         UIMenu.Menu.AddMenuItem("Полицейское огорождение", "", {itemId: 199});
         UIMenu.Menu.AddMenuItem("Полосатый конус", "", {itemId: 201});
         UIMenu.Menu.AddMenuItem("Красный конус", "", {itemId: 202});
+        UIMenu.Menu.AddMenuItem("~b~Починка оружия", "", {gunFix: true});
     }
 
     UIMenu.Menu.AddMenuItem("~b~Сдача конфиската", "", {sellItems: true});
@@ -11333,6 +11432,9 @@ menuList.showSapdArsenalMenu = function() {
         }
         if (item.showGunMod) {
             menuList.showSapdArsenalGunModMenu();
+        }
+        if (item.gunFix) {
+            mp.events.callRemote('server:inventory:fixItemFreeMenu');
         }
         if (item.sellItems) {
             inventory.getItemListSell();
@@ -11541,6 +11643,7 @@ menuList.showUsmcArsenalMenu = function() {
         UIMenu.Menu.AddMenuItem("Полицейское огорождение", "", {itemId: 199});
         UIMenu.Menu.AddMenuItem("Полосатый конус", "", {itemId: 201});
         UIMenu.Menu.AddMenuItem("Красный конус", "", {itemId: 202});
+        UIMenu.Menu.AddMenuItem("~b~Починка оружия", "", {gunFix: true});
     }
 
     UIMenu.Menu.AddMenuItem("~b~Сдача конфиската", "", {sellItems: true});
@@ -11562,6 +11665,9 @@ menuList.showUsmcArsenalMenu = function() {
         }
         if (item.showGun) {
             menuList.showUsmcArsenalGunMenu();
+        }
+        if (item.gunFix) {
+            mp.events.callRemote('server:inventory:fixItemFreeMenu');
         }
         if (item.sellItems) {
             inventory.getItemListSell();
@@ -11767,6 +11873,7 @@ menuList.showFibArsenalMenu = function() {
         UIMenu.Menu.AddMenuItem("Полицейское огорождение", "", {itemId: 199});
         UIMenu.Menu.AddMenuItem("Полосатый конус", "", {itemId: 201});
         UIMenu.Menu.AddMenuItem("Красный конус", "", {itemId: 202});
+        UIMenu.Menu.AddMenuItem("~b~Починка оружия", "", {gunFix: true});
     }
 
     UIMenu.Menu.AddMenuItem("~b~Сдача конфиската", "", {sellItems: true});
@@ -11799,6 +11906,9 @@ menuList.showFibArsenalMenu = function() {
         if (item.armor) {
             user.setArmour(100);
             mp.game.ui.notifications.show("~b~Вы взяли броню");
+        }
+        if (item.gunFix) {
+            mp.events.callRemote('server:inventory:fixItemFreeMenu');
         }
         if (item.showGun) {
             menuList.showFibArsenalGunMenu();

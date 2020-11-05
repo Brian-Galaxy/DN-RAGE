@@ -185,7 +185,15 @@ mp.events.add('client:syncAnimation', async (playerId, dict, anim, flag) => {
             if (dict == 'amb@prop_human_seat_chair@male@generic@base' ||
                 dict == 'amb@prop_human_seat_chair@male@right_foot_out@base' ||
                 dict == 'amb@prop_human_seat_chair@male@left_elbow_on_knee@base' ||
-                dict == 'amb@prop_human_seat_chair@male@elbows_on_knees@base'
+                dict == 'amb@prop_human_seat_chair@male@elbows_on_knees@base' ||
+                dict == 'anim@amb@yacht@jacuzzi@seated@male@variation_01@' ||
+                dict == 'anim@amb@office@seating@male@var_e@base@' ||
+                dict == 'anim@amb@office@seating@male@var_d@base@' ||
+                dict == 'anim@amb@office@seating@female@var_d@base@' ||
+                dict == 'anim@amb@office@seating@female@var_c@base@' ||
+                dict == 'anim@amb@facility@briefing_room@seating@male@var_e@' ||
+                dict == 'anim@amb@office@boardroom@crew@male@var_c@base_r@' ||
+                dict == 'anim@amb@clubhouse@seating@male@var_c@base@'
             )
             {
                 remotePlayer.freezePosition(true);

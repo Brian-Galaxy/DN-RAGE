@@ -319,6 +319,55 @@ inventory.getItemListGunFix = function(player) {
     }, 1000);
 };
 
+inventory.getItemListGunFixFree = function(player) {
+    setTimeout(function () {
+        if (!user.isLogin(player))
+            return;
+        try {
+
+            let data = [];
+            //let data2 = new Map();
+
+            let sql = `SELECT * FROM items WHERE owner_id = '${user.getId(player)}' AND owner_type = '1' AND is_equip = 0 AND (item_id > 69 AND item_id < 127 OR item_id = 146 OR item_id = 147 OR item_id = 252)  ORDER BY item_id DESC LIMIT 400`;
+
+            mysql.executeQuery(sql, function (err, rows, fields) {
+                rows.forEach(row => {
+
+                    let label = "";
+
+                    if (row['prefix'] > 0 && row['number'] > 0 && row['key_id'] <= 0) {
+                        label = row['prefix'] + "-" + row['number'];
+                    } else if (row['key_id'] > 0) {
+
+                        if (row['item_id'] >= 265 && row['item_id'] <= 268) {
+
+                            if (row['prefix'] == 1)
+                                label = enums.clothF[row['key_id']][9];
+                            else
+                                label = enums.clothM[row['key_id']][9];
+                        }
+                        else if (row['item_id'] >= 269 && row['item_id'] <= 273) {
+                            if (row['prefix'] == 1)
+                                label = enums.propF[row['key_id']][5];
+                            else
+                                label = enums.propM[row['key_id']][5];
+                        }
+                        else {
+                            label = "#" + row['key_id'];
+                        }
+                    }
+
+                    data.push({id: row['id'], label: label, item_id: row['item_id'], count: row['count'], is_equip: row['is_equip'], params: row['params']});
+                });
+
+                player.call('client:showFixGunFreeMenu', [data]);
+            });
+        } catch(e) {
+            methods.debug(e);
+        }
+    }, 1000);
+};
+
 inventory.getItemListClothTranferSell = function(player) {
     if (!user.isLogin(player))
         return;
@@ -522,6 +571,17 @@ inventory.fixItem = function(player, id) {
             inventory.deleteItem(rows[0]['id']);
             player.notify('~y~Вы выполнили починку');
         });
+    } catch (e) {
+
+    }
+};
+
+inventory.fixItemFree = function(player, id) {
+    if (!user.isLogin(player))
+        return;
+    try {
+        inventory.updateItemCount(id, 100);
+        player.notify('~y~Вы выполнили починку');
     } catch (e) {
 
     }

@@ -160,6 +160,7 @@ vehicles.loadUserVehicleByRow = (row) => {
     vehicles.set(row['id'], 'rot', parkRot);
     vehicles.set(row['id'], 'dimension', row['dimension']);
     vehicles.set(row['id'], 'upgrade', row['upgrade']);
+    vehicles.set(row['id'], 's_km', row['s_km']);
     vehicles.set(row['id'], 'sell_price', row['sell_price']);
     vehicles.set(row['id'], 'is_cop_park', row['is_cop_park']);
     vehicles.set(row['id'], 'cop_park_name', row['cop_park_name']);
@@ -701,6 +702,7 @@ vehicles.save = (id) => {
         sql = sql + ", livery = '" + methods.parseInt(vehicles.get(id, "livery")) + "'";
         sql = sql + ", extra = '" + methods.parseInt(vehicles.get(id, "extra")) + "'";
         sql = sql + ", dimension = '" + methods.parseInt(vehicles.get(id, "dimension")) + "'";
+        sql = sql + ", s_km = '" + methods.parseInt(vehicles.get(id, "s_km")) + "'";
         sql = sql + ", sell_price = '" + methods.parseInt(vehicles.get(id, "sell_price")) + "'";
         /*sql = sql + ", x = '" + methods.parseFloat(vehicles.get(id, "x")) + "'";
         sql = sql + ", y = '" + methods.parseFloat(vehicles.get(id, "y")) + "'";
@@ -1122,7 +1124,7 @@ vehicles.updateOwnerInfo = function (id, userId, userName) {
 
     if (userId == 0) {
         vehicles.park(id, 0, 0, 0, 0);
-        mysql.executeQuery("UPDATE cars SET user_name = '" + userName + "', user_id = '" + userId + "', number = '" + vehicles.generateNumber() + "', tax_money = '0', s_mp = '0', is_neon = '0', neon_r = '0', neon_g = '0', neon_b = '0', extra = '0', cop_park_name = '', is_cop_park = '0', sell_price = '0', upgrade = '{\"18\":-1}' where id = '" + id + "'");
+        mysql.executeQuery("UPDATE cars SET user_name = '" + userName + "', user_id = '" + userId + "', number = '" + vehicles.generateNumber() + "', tax_money = '0', s_mp = '0', is_neon = '0', neon_r = '0', neon_g = '0', neon_b = '0', extra = '0', cop_park_name = '', is_cop_park = '0', sell_price = '0', s_km = '0', upgrade = '{\"18\":-1}' where id = '" + id + "'");
 
         try {
             let vehInfo = methods.getVehicleInfo(vehicles.get(id, 'name'));
@@ -1178,6 +1180,9 @@ vehicles.sell = function (player, slot) {
             let vInfo = vehicles.getData(user.get(player, 'car_id' + slot));
             let nalog = methods.parseInt(vInfo.get('price') * (100 - (coffer.getTaxProperty() + taxOffset)) / 100);
 
+            if (vInfo.get('s_km') < 300)
+                nalog = vInfo.get('price');
+
             user.set(player, 'car_id' + slot, 0);
 
             if (vInfo.get('with_delete') > 0)
@@ -1201,7 +1206,11 @@ vehicles.sell = function (player, slot) {
                     return;
 
                 user.addHistory(player, 3, 'Продал транспорт ' + vInfo.get('name') + '. Цена: ' + methods.moneyFormat(nalog));
-                player.notify(`~g~Вы продали транспорт\nНалог:~s~ ${(coffer.getTaxProperty() + taxOffset)}%\n~g~Получено:~s~ ${methods.moneyFormat(nalog)}`);
+
+                if (vInfo.get('s_km') < 300)
+                    player.notify(`~g~Вы продали транспорт\nНалог:~s~ Отсутствует\n~g~Получено:~s~ ${methods.moneyFormat(nalog)}`);
+                else
+                    player.notify(`~g~Вы продали транспорт\nНалог:~s~ ${(coffer.getTaxProperty() + taxOffset)}%\n~g~Получено:~s~ ${methods.moneyFormat(nalog)}`);
                 user.save(player);
             }, 1000);
         }

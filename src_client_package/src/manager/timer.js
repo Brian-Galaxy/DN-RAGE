@@ -551,6 +551,7 @@ let isLoaded = false;
 let playerPrevPos = new mp.Vector3(0, 0, 0);
 let giveTicketTimeout = 0;
 let warnDrove = 0;
+timer.distInVehicle = 0;
 
 timer.secTimer = function() {
 
@@ -571,6 +572,8 @@ timer.secTimer = function() {
                     user.set('st_fly', user.getCache('st_fly') + dist);
                 else
                     user.set('st_drive', user.getCache('st_drive') + dist);
+
+                timer.distInVehicle = timer.distInVehicle + dist;
             }
             playerPrevPos = mp.players.local.position;
 

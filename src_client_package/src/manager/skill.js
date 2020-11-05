@@ -3,6 +3,7 @@ import methods from '../modules/methods';
 import user from '../user';
 import weapons from "../weapons";
 import items from "../items";
+import inventory from "../inventory";
 
 import weather from "./weather";
 import timer from "./timer";
@@ -157,7 +158,7 @@ let checkShooting2 = function () {
     fireMod = true;
     if (!user.isLogin())
         return;
-    try {
+    /*try {
         if (mp.players.local.dimension === 0) {
             user.getInvEquipWeapon().forEach(item => {
                 weapons.getMapList().forEach(wpItem => {
@@ -173,7 +174,7 @@ let checkShooting2 = function () {
             });
         }
     }
-    catch (e) {}
+    catch (e) {}*/
 };
 
 let updateStats = function() {

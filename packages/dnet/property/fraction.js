@@ -688,6 +688,12 @@ fraction.createCargoWar = function(count = 3) {
 
                 let boxes = [];
 
+                /*if (methods.getRandomInt(0, 100) <= 50)
+                    boxes.push(methods.getRandomInt(3, 5));
+                else
+                    boxes.push(methods.getRandomInt(38, 40));*/
+                boxes.push(methods.getRandomInt(3, 5));
+
                 for (let i = 0; i < 3; i++) {
                     let rare = 0;
                     if (methods.getRandomInt(0, 100) < 40)
@@ -1712,7 +1718,7 @@ fraction.startGrabShopGang = function(player, itemId = 0) {
                 catch (e) {
                     methods.debug(e);
                 }
-            }, 120000)
+            }, 180000)
         }
     });
 };

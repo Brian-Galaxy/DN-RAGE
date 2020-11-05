@@ -1533,6 +1533,14 @@ enums.lscColorsEn = [
     'Gold',
 ];
 
+enums.emitters = [
+    [-1680.7501220703125, -767.4515380859375, 9.198209762573242],
+    [-1684.439697265625, -749.5093383789062, 9.20090389251709],
+    [-1710.4791259765625, -743.2738037109375, 9.190360069274902],
+    [-1702.24072265625, -764.5348510742188, 9.189990997314453],
+    [-1642.3565673828125, -804.6913452148438, 9.21811294555664],
+];
+
 enums.customIpl = [
     ['DN_Rent_Bike_ElysianIsland', -394.75262451171875, -2670.4599609375, 5.000214576721191, 90],
     ['DN_Rent_Bike_Strawberry', 103.71208953857422, -1388.542236328125, 28.291528701782227, 90],
@@ -2878,6 +2886,15 @@ enums.animActions = [
     ["Сесть 2","amb@prop_human_seat_chair@male@elbows_on_knees@base", "base",9],
     ["Сесть 3","amb@prop_human_seat_chair@male@left_elbow_on_knee@base", "base",9],
     ["Сесть 4","amb@prop_human_seat_chair@male@right_foot_out@base", "base",9],
+
+    ["Сидеть расслаблено - 1", "anim@amb@yacht@jacuzzi@seated@male@variation_01@", "base",9],
+    ["Сидеть расслаблено - 2", "anim@amb@office@seating@male@var_e@base@", "base",9],
+    ["Сидеть расслаблено - 3", "anim@amb@office@seating@male@var_d@base@", "base",9],
+    ["Сидеть расслаблено - 4", "anim@amb@office@seating@female@var_d@base@", "base",9],
+    ["Сидеть расслаблено - 5", "anim@amb@office@seating@female@var_c@base@", "base",9],
+    ["Сидеть на заборе", "anim@amb@facility@briefing_room@seating@male@var_e@", "base",9],
+    ["Сидеть сложа руки - 1", "anim@amb@office@boardroom@crew@male@var_c@base_r@", "base",9],
+    ["Сидеть сложа руки - 2", "anim@amb@clubhouse@seating@male@var_c@base@", "base",9],
     ["Свистнуть", "taxi_hail", "fp_hail_taxi", 8],
     ["Выполнить воинское приветствие", "anim@mp_player_intincarsalutestd@ds@", "idle_a", 8],
     ["Показать пальцем", "gestures@m@standing@casual", "gesture_point", 8],
@@ -2927,14 +2944,15 @@ enums.animActions = [
     ["Дрочить #2", "anim@mp_player_intcelebrationmale@wank", "wank", 8],
     ["Механик", "amb@world_human_vechicle_mechanic@male@base", "base", 9],
     ["Печатать на компьютере", "anim@amb@board_room@stenographer@computer@", "base_right_amy_skater_01", 9],
-    ["Рассуждать - 1", "anim@amb@board_room@diagram_blueprints@", "idle_01_amy_skater_01", 8],
-    ["Рассуждать - 2", "anim@amb@board_room@diagram_blueprints@", "look_around_02_amy_skater_01", 8]
+    ["Рассуждать - 1", "anim@amb@board_room@diagram_blueprints@", "idle_01_amy_skater_01", 9],
+    ["Рассуждать - 2", "anim@amb@board_room@diagram_blueprints@", "look_around_02_amy_skater_01", 9]
 ];
 enums.animPose = [
     ["Руки вверх", "anim@move_hostages@male", "male_idle", 9],
     ["Руки за голову", "anim@heists@ornate_bank@hostages@cashier_b@", "flinch_loop_underfire", 8],
     ["Руки за спину", "anim@miss@low@fin@vagos@", "idle_ped06", 8],
-    ["Просить пощады", "amb@code_human_cower@male@react_cowering", "base_front", 9],
+    ["Просить пощады #1", "amb@code_human_cower@male@react_cowering", "base_front", 9],
+    ["Просить пощады #2", "anim@heists@prison_heistunfinished_biz@popov_react", "popov_cower", 9],
     ["Присесть-1", "anim@miss@low@fin@lamar@", "idle", 9],
     ["Присесть-2", "amb@medic@standing@tendtodead@enter", "enter", 8],
     ["Присесть-3", "amb@medic@standing@kneel@base", "base", 9],
@@ -2968,6 +2986,8 @@ enums.animPose = [
     ["Сидеть на земле - 1", "amb@world_human_stupor@male_looking_right@base", "base", 9],
     ["Сидеть на земле - 2", "anim@amb@business@bgen@bgen_no_work@", "sit_phone_phoneputdown_idle_nowork", 9],
     ["Лежать на земле", "amb@world_human_sunbathe@male@back@base", "base", 9],
+    ["Прислонится к стене - 1", "amb@world_human_leaning@male@wall@back@foot_up@idle_b", "idle_d", 9],
+    ["Прислонится к стене - 2", "amb@world_human_leaning@male@wall@back@legs_crossed@idle_a", "idle_a", 9]
     //["Лежать на лежаке", "amb@prop_human_seat_sunlounge@male@base", "base", 9],
 ];
 enums.animPositive = [
@@ -3070,7 +3090,11 @@ enums.animDance = [
     ["Доп. Танец 39", "anim@amb@nightclub@dancers@crowddance_groups@hi_intensity", "hi_dance_crowd_09_v1_female^6", 9],
     ["Доп. Танец 40", "anim@amb@nightclub@lazlow@hi_podium@", "danceidle_hi_06_base_laz", 9],
     ["Доп. Танец 41", "special_ped@zombie@monologue_4@monologue_4l", "iamtheundead_11", 9],
-    ["Доп. Танец 42", "anim@amb@nightclub@djs@black_madonna@", "dance_b_idle_a_blamadon", 9]
+    ["Доп. Танец 42", "anim@amb@nightclub@djs@black_madonna@", "dance_b_idle_a_blamadon", 9],
+    ["Доп. Танец 44", "anim@amb@nightclub@dancers@crowddance_groups_transitions@from_hi_intensity", "trans_dance_crowd_hi_to_li_09_v1_male^3", 9],
+    ["Доп. Танец 45", "anim@amb@nightclub@dancers@crowddance_groups_transitions@from_hi_intensity", "trans_dance_crowd_hi_to_mi_09_v1_male^2", 9],
+    ["Доп. Танец 46", "anim@amb@nightclub@mini@dance@dance_solo@male@var_a@", "high_center_up", 9],
+    ["Доп. Танец 47", "anim@amb@nightclub@dancers@crowddance_facedj@", "hi_dance_facedj_09_v1_male^4", 9],
 ];
 enums.animRemain = [
     ["Секс-1", "anim@mp_player_intcelebrationfemale@air_shagging", "air_shagging", 8],

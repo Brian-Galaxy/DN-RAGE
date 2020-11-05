@@ -42,6 +42,7 @@ import fraction from "../property/fraction";
 
 import gr6 from "../jobs/gr6";
 import trucker from "../jobs/trucker";
+import heliCam from "../manager/heliCam";
 
 
 mp.gui.chat.enabled = false;
@@ -785,8 +786,8 @@ mp.events.add('client:events:loginUser:success', async function() {
             chat.sendLocal(`!{${chat.clBlue}}На сервере действует конкурс`);
             chat.sendLocal(`!{${chat.clBlue}}1. !{${chat.clWhite}}Каждый час разыгрывается VIP HARD на рандомное количество дней.`);
             chat.sendLocal(`!{${chat.clBlue}}2. !{${chat.clWhite}}Каждые два часа игры на сервере разыгрывается редкая Маска.`);
-            chat.sendLocal(`!{${chat.clBlue}}3. !{${chat.clWhite}}Каждые 24 часа В 20:00 по МСК вы сможете выиграть транспорт.`);
-            chat.sendLocal(`!{${chat.clBlue}}4. !{${chat.clWhite}}Отыграв 8 часов на сервере, вы получите $50.000, но 1 раз в сутки.`);*/
+            //chat.sendLocal(`!{${chat.clBlue}}3. !{${chat.clWhite}}Каждые 24 часа В 20:00 по МСК вы сможете выиграть транспорт.`);
+            chat.sendLocal(`!{${chat.clBlue}}3. !{${chat.clWhite}}Отыграв 8 часов на сервере, вы получите $30.000 и редкую маску, но 1 раз в сутки.`);*/
             /*chat.sendLocal('  ');
             chat.sendLocal(`!{${chat.clBlue}}На сервере действует конкурс`);
             chat.sendLocal(`Конкурс очень крутой, на 50 призовых мест и у тебя есть шанс победить, все подробности на сайте!`);*/
@@ -1634,6 +1635,16 @@ mp.events.add('client:showFixGunMenu', (data) => {
     try {
         methods.debug('Event: client:showFixGunMenu');
         menuList.showFixGunMenu(data)
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.add('client:showFixGunFreeMenu', (data) => {
+    try {
+        methods.debug('Event: client:showFixGunFreeMenu');
+        menuList.showFixGunFreeMenu(data)
     }
     catch (e) {
         methods.debug(e);
@@ -3221,7 +3232,7 @@ mp.events.add("client:vehicle:checker", async function () {
                 maxSpeed = 350;
 
             try {
-                if (isSetHandling < 2) {
+                if (isSetHandling < 50) {
                     isSetHandling++;
                     
                     if (vehicle.getVariable('container') != undefined && vehicle.getVariable('user_id') > 0) {
@@ -3357,6 +3368,11 @@ mp.events.add("playerLeaveVehicle", async function (entity) {
     try {
         if (vehicle.getVariable('container') != undefined && vehicle.getVariable('user_id') > 0) { //TODO
             let car = await vehicles.getData(vehicle.getVariable('container'));
+
+            if (car.has('s_km'))
+                vehicles.set(vehicle.getVariable('container'), 's_km', car.get('s_km') + timer.distInVehicle);
+            timer.distInVehicle = 0;
+
             if (car.has('upgrade')) {
                 let upgrade = JSON.parse(car.get('upgrade'));
                 for (let tune in upgrade) {

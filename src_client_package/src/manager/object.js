@@ -8,6 +8,7 @@ let object = {};
 let loadDist = 150;
 let objectList = [];
 let iplList = [];
+let emitterList = [];
 let objectDelList = [];
 let doorList = [];
 
@@ -17,6 +18,10 @@ object.load = function () {
     /*enums.customIpl.forEach(item => {
         object.createIpl(item[0], new mp.Vector3(item[1], item[2], item[3]), item[4]);
     });*/
+
+    enums.emitters.forEach(item => {
+        object.createEmitter(new mp.Vector3(item[0], item[1], item[2]));
+    });
 
     //LifeInvader интерьер
     object.create(1355733718, new mp.Vector3(-1079.415, -251.3165, 43.99629), new mp.Vector3(1.001787E-05, 5.008957E-06, -119.4992), false, false);
@@ -1902,6 +1907,10 @@ object.createIpl = function (ipl, pos, radius) {
     iplList.push({ipl: ipl, pos: pos, radius: radius, isLoad: false});
 };
 
+object.createEmitter = function (pos) {
+    emitterList.push({pos: pos, isLoad: false});
+};
+
 object.delete = function (model, x, y, z) {
     objectDelList.push({model: model, x: x, y: y, z: z, isDelete: false});
 };
@@ -1981,6 +1990,36 @@ object.process = function () {
             }
             else if (dist > radius + 50 && item.isLoad) {
                 mp.game.streaming.removeIpl(item.ipl);
+                item.isLoad = false;
+            }
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    });
+
+    emitterList.forEach(item => {
+        try {
+            let dist = methods.distanceToPos(playerPos, item.pos);
+            let radius = 100;
+            if (dist < radius && !item.isLoad) {
+                item.handle = mp.objects.new(mp.game.joaat('prop_boombox_01'), item.pos,
+                    {
+                        rotation: new mp.Vector3(0,0,0),
+                        alpha: 0,
+                        dimension: -1
+                    });
+                mp.game.invoke('0x651D3228960D08AF', "SE_Script_Placed_Prop_Emitter_Boombox", item.handle.handle);
+                mp.game.audio.setEmitterRadioStation("SE_Script_Placed_Prop_Emitter_Boombox", mp.game.audio.getRadioStationName(1));
+                mp.game.audio.setStaticEmitterEnabled("SE_Script_Placed_Prop_Emitter_Boombox", true);
+
+                item.isLoad = true;
+            }
+            else if (dist > radius + 50 && item.isLoad) {
+                if (mp.objects.exists(item.handle)) {
+                    item.handle.destroy();
+                    item.handle = -1;
+                }
                 item.isLoad = false;
             }
         }

@@ -2472,7 +2472,7 @@ user.playEatAnimation = function(player) {
 
 user.playDrugAnimation = function(player) {
     methods.debug('user.playDrugAnimation');
-    user.playAnimation(player, "move_m@drunk@transitions", "slightly_to_idle", 48);
+    user.playAnimation(player, "move_m@drunk@transitions", "slightly_to_idle", 8);
 };
 
 /*
@@ -2963,9 +2963,11 @@ user.payDay = async function (player) {
         user.set(player, 'exp_age', user.get(player, 'exp_age') + 1);*/
 
     /*if (user.get(player, 'online_cont') === 56) {
-        user.addCashMoney(player, 50000, 'Бонус от государства');
-        player.notify(`~g~Вы получили $50,000 отыграв 8 часов на сервере`);
-        user.set(player, 'online_cont', 999);
+        user.giveRandomMask(player, 30, true);
+        user.addCashMoney(player, 30000, 'Бонус от государства');
+        player.notify(`~g~Вы получили $30,000 отыграв 8 часов на сервере`);
+        user.set(player, 'online_cont', user.get(player, 'online_cont') + 1);
+        //user.set(player, 'online_cont', 999);
     }*/
 
     if (user.get(player, 'online_time') === 169) {
@@ -3371,7 +3373,7 @@ user.warn = function(player, count, reason, notify = true) {
     else {
         mysql.executeQuery(`INSERT INTO ban_list (ban_from, ban_to, count, datetime, reason) VALUES ('Server', '${user.getRpName(player)}', 'Предупреждение', '${methods.getTimeStamp()}', '${reason}')`);
 
-        user.jail(player, 120 * 60);
+        user.jail(player, 180 * 60);
 
         if (user.get(player, 'warns') < 2) {
             user.set(player, 'warns', user.get(player, 'warns') + 1);

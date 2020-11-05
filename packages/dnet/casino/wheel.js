@@ -47,11 +47,11 @@ mp.events.add('server:casino:wheel:doRoll', (player) => {
             userWin = 15;
         else if (methods.getRandomInt(0, 100) < 1)
             userWin = 7;
-        else if (methods.getRandomInt(0, 100) < 1)
+        else if (methods.getRandomInt(0, 50) < 1)
             userWin = 5;
-        else if (methods.getRandomInt(0, 30) < 1)
+        else if (methods.getRandomInt(0, 15) < 1)
             userWin = 4;
-        else if (methods.getRandomInt(0, 20) < 1)
+        else if (methods.getRandomInt(0, 5) < 1)
             userWin = 3;
         else if (methods.getRandomInt(0, 50) < 1)
             userWin = 9;

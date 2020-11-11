@@ -3057,6 +3057,18 @@ mp.events.addRemoteCounted('server:gr6:unload', (player) => {
                                 money = money * 1.1;
                             }
 
+                            let fId = user.get(p, 'family_id');
+                            if (fId > 0) {
+                                let fData = family.getData(fId);
+                                if (fData.get('level') > 4) {
+                                    currentMoney = currentMoney * 1.3;
+                                    desc = '\n~y~Прибавка семьи 30% от зарплаты';
+                                }
+                                if (fData.get('level') > 5) {
+                                    family.addMoney(fId, currentMoney * 0.3, 'Зачисление от работы инкассаторов');
+                                }
+                            }
+
                             user.addMoney(p, currentMoney, 'Зарплата инкассатора');
                             coffer.removeMoney(currentMoney + methods.parseFloat(currentMoney / 10));
                             p.notify('~g~Вы заработали: ~s~' + methods.moneyFormat(currentMoney) + desc);
@@ -6717,6 +6729,12 @@ mp.events.addRemoteCounted('server:user:giveMeWanted', (player, level, reason) =
     user.giveWanted(player, level, reason);
 });
 
+mp.events.addRemoteCounted('server:user:giveVehicle', (player, vName, withDelete, withChat, desc, isBroke) => {
+    if (!user.isLogin(player))
+        return;
+    user.giveVehicle(player, vName, withDelete, withChat, desc, isBroke);
+});
+
 mp.events.addRemoteCounted('server:user:giveWanted', (player, id, level, reason) => {
     if (!user.isLogin(player))
         return;
@@ -7355,12 +7373,12 @@ mp.events.addRemoteCounted('server:flipNearstVehicle', (player) => {
         vehicle.rotation = new mp.Vector3(0, 0, vehicle.heading);
 });
 
-mp.events.addRemoteCounted('server:vehicle:engineStatus', (player) => {
+mp.events.addRemoteCounted('server:vehicle:engineStatus', (player, status) => {
     if (!user.isLogin(player))
         return;
     try {
         if (player.vehicle && player.seat == -1) {
-            vehicles.engineStatus(player, player.vehicle);
+            vehicles.engineStatus(player, player.vehicle, status);
         }
     }
     catch (e) {
@@ -7729,6 +7747,12 @@ mp.events.addRemoteCounted('server:lsc:buySTun', (player, modType, idx, price, s
     if (!user.isLogin(player))
         return;
     lsc.buySTun(player, modType, idx, price, shopId, itemName, payType);
+});
+
+mp.events.addRemoteCounted('server:lsc:buySFix', (player, idx, price, shopId, itemName, payType) => {
+    if (!user.isLogin(player))
+        return;
+    lsc.buySFix(player, idx, price, shopId, itemName, payType);
 });
 
 mp.events.addRemoteCounted('server:lsc:resetSTun', (player, modType) => {

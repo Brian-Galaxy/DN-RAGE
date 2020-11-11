@@ -189,8 +189,9 @@ rent.buy = function(player, hash, price, shopId, payType) {
     business.addMoney(shopId, price, 'Аренда ' + vInfo.display_name);
     business.removeMoneyTax(shopId, price / business.getPrice(shopId));
 
-    user.showCustomNotify(player, 'Для того чтобы его закрыть, нажмите L', 0, 9);
-    user.showCustomNotify(player, 'Чтобы завершить аренду нажмите 2 -> Завершить аренду', 0, 9);
+    user.showCustomNotify(player, 'Для того чтобы запустить двигатель нажмите 2 -> Вкл/Выкл двигатель', 0, 9, 15000);
+    user.showCustomNotify(player, 'Для того чтобы его закрыть, нажмите L', 0, 9, 15000);
+    user.showCustomNotify(player, 'Чтобы завершить аренду нажмите 2 -> Завершить аренду', 0, 9, 15000);
 
     vehicles.spawnCarCb(veh => {
 

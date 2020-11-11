@@ -2962,13 +2962,28 @@ user.payDay = async function (player) {
     if (user.getVipStatus() == "YouTube")
         user.set(player, 'exp_age', user.get(player, 'exp_age') + 1);*/
 
-    /*if (user.get(player, 'online_cont') === 56) {
-        user.giveRandomMask(player, 30, true);
+    if (user.get(player, 'online_cont') === 56) {
+        /*user.giveRandomMask(player, 30, true);
         user.addCashMoney(player, 30000, 'Бонус от государства');
         player.notify(`~g~Вы получили $30,000 отыграв 8 часов на сервере`);
         user.set(player, 'online_cont', user.get(player, 'online_cont') + 1);
-        //user.set(player, 'online_cont', 999);
-    }*/
+        //user.set(player, 'online_cont', 999);*/
+
+        /*let caseId = 1;
+        if (methods.getRandomInt(0, 10) < 5)
+            caseId = 4;
+        if (methods.getRandomInt(0, 20) < 5)
+            caseId = 2;
+        if (methods.getRandomInt(0, 30) < 5)
+            caseId = 3;
+        if (methods.getRandomInt(0, 50) < 5)
+            caseId = 5;
+
+        let caseNames = ['Невероятный', 'Секретный', 'Легенадрный', 'Масочный', 'Транспортный'];
+        mysql.executeQuery(`UPDATE accounts SET case${caseId}_count = case${caseId}_count + '1' WHERE social ='${player.socialClub}'`);
+        user.set(player, 'online_cont', user.get(player, 'online_cont') + 1);
+        chat.sendToPlayer(player, '!{8BC34A} Вы получили бесплатный ' + caseNames[caseId - 1] + 'кейс за то, что отыграли 8 часов на сервере');*/
+    }
 
     if (user.get(player, 'online_time') === 169) {
         if (user.get(player, 'referer') !== "") {
@@ -3443,20 +3458,23 @@ user.giveMask = function(player, maskId, withChat = false, desc = '') {
         chat.sendToAll(`Server`, `${user.getRpName(player)} (${player.id})!{${chat.clBlue}} выиграл маску${desc}!{${chat.clWhite}} ${itemName}!{${chat.clBlue}} редкость!{${chat.clWhite}} ${methods.getRareName(mask[14])}`, chat.clBlue);
 };
 
-user.giveVehicle = function(player, vName, withDelete = 1, withChat = false, desc = '') {
+user.giveVehicle = function(player, vName, withDelete = 1, withChat = false, desc = '', isBroke = false) {
     if (!user.isLogin(player))
         return;
 
     let vInfo = methods.getVehicleInfo(vName);
     if (user.get(player, 'car_id10') === 0 && vInfo.display_name !== 'Unknown') {
-        
-        mysql.executeQuery(`INSERT INTO cars (user_id, user_name, name, class, price, fuel, number, with_delete) VALUES ('${user.getId(player)}', '${user.getRpName(player)}', '${vInfo.display_name}', '${vInfo.class_name}', '${vInfo.price}', '${vInfo.fuel_full}', '${vehicles.generateNumber()}', '${withDelete}')`);
+
+        if (isBroke)
+            mysql.executeQuery(`INSERT INTO cars (user_id, user_name, name, class, price, fuel, number, with_delete, s_km, s_eng, s_trans, s_fuel, s_whel, s_elec, s_break) VALUES ('${user.getId(player)}', '${user.getRpName(player)}', '${vInfo.display_name}', '${vInfo.class_name}', '${vInfo.price}', '${vInfo.fuel_full}', '${vehicles.generateNumber()}', '${withDelete}', '${methods.getRandomInt(140000, 200000)}', '${methods.getRandomInt(0, 40)}', '${methods.getRandomInt(0, 40)}', '${methods.getRandomInt(0, 40)}', '${methods.getRandomInt(0, 40)}', '${methods.getRandomInt(0, 40)}', '${methods.getRandomInt(0, 40)}')`);
+        else
+            mysql.executeQuery(`INSERT INTO cars (user_id, user_name, name, class, price, fuel, number, with_delete) VALUES ('${user.getId(player)}', '${user.getRpName(player)}', '${vInfo.display_name}', '${vInfo.class_name}', '${vInfo.price}', '${vInfo.fuel_full}', '${vehicles.generateNumber()}', '${withDelete}')`);
 
         setTimeout(function () {
             try {
-                mysql.executeQuery(`SELECT id FROM cars WHERE user_id = '${user.getId(player)}' ORDER BY id DESC LIMIT 1`, function (err, rows) {
+                mysql.executeQuery(`SELECT * FROM cars WHERE user_id = '${user.getId(player)}' ORDER BY id DESC LIMIT 1`, function (err, rows) {
                     try {
-                        //TODO LOAD VEH ROW
+                        vehicles.loadUserVehicleByRow(rows[0]);
                         user.set(player, 'car_id10', rows[0]['id']);
                         user.save(player);
                     }
@@ -3470,7 +3488,7 @@ user.giveVehicle = function(player, vName, withDelete = 1, withChat = false, des
             }
         }, 100);
 
-        player.notify(`~g~Вы выиграли автомобиль ${vInfo.display_name}.`);
+        player.notify(`~g~Вы получили автомобиль ${vInfo.display_name}.`);
         if (withChat)
             chat.sendToAll(`Server`, `${user.getRpName(player)} (${player.id})!{${chat.clBlue}} выиграл транспорт${desc}!{${chat.clWhite}} ${vInfo.display_name}`, chat.clBlue);
     }

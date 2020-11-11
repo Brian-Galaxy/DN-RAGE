@@ -6,6 +6,7 @@ import user from '../user';
 
 import jobPoint from '../manager/jobPoint';
 import tree from "./tree";
+import family from "../property/family";
 
 let builder = {};
 
@@ -872,17 +873,36 @@ builder.workProcess = function(id) {
             else
                 user.playScenario("WORLD_HUMAN_CONST_DRILL");
 
-            setTimeout(function () {
+            setTimeout(async function () {
 
                 mp.players.local.freezePosition(false);
                 methods.blockKeys(false);
                 user.stopScenario();
-                user.giveJobMoney(methods.getRandomInt(15, 20) + methods.getRandomFloat());
 
                 user.addWorkExp(2);
                 user.addRep(1);
 
                 user.giveJobSkill();
+
+                let offset = 0;
+                let fId = user.getCache('family_id');
+                if (fId > 0) {
+                    let fData = await family.getData(fId);
+                    if (fData.get('level') === 1) {
+                        if (fData.get('exp') > 2000) {
+                            family.addMoney(fId, 500000, 'Премия за достижения 2 уровня');
+                            family.set(fId, 'level', 2);
+                        }
+                        else
+                            family.set(fId, 'exp', fData.get('exp') + 1);
+                    }
+                    else
+                        offset = 5;
+                    if (fData.get('level') > 5) {
+                        family.addMoney(fId, (methods.getRandomInt(15, 20) + offset) * 0.3, 'Зачисление от работы разнорабочего');
+                    }
+                }
+                user.giveJobMoney(methods.getRandomInt(15, 20) + methods.getRandomFloat() + offset);
             }, 10000);
         }
         else

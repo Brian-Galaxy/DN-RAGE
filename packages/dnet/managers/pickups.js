@@ -340,7 +340,7 @@ pickups.TaxiPos = new mp.Vector3(895.2080078125, -179.82662963867188, 73.6961593
 pickups.TreePos = new mp.Vector3(-1585.625, -234.0653, 53.35091);
 pickups.AvePos = new mp.Vector3(-785.4522094726562, -708.9448852539062, 29.33340835571289);
 pickups.AveVehPos = new mp.Vector3(-1665.1044921875, -281.63458251953125, 50.85293197631836);
-pickups.BuilderPos = new mp.Vector3(-1159.201, -740.0846, 18.88993);
+pickups.BuilderPos = new mp.Vector3(-1585.625, -234.0653, 53.35091);
 
 pickups.checkPressLAlt = function(player) {
 
@@ -873,7 +873,7 @@ pickups.checkPressE = function(player) {
         if (user.isJobAve(player) && methods.distanceToPos(pickups.AveVehPos, playerPos) < distanceCheck)
             player.call('client:menuList:showSpawnJobCarMenu', [100, -1656.8006591796875, -289.6989440917969, 51.106414794921875, 229.14739990234375, 'Romero', 12]);
         if (user.isJobBuilder(player) && methods.distanceToPos(pickups.BuilderPos, playerPos) < distanceCheck)
-            player.call('client:menuList:showSpawnJobCarMenu', [100, -1201.99267578125, -729.6393432617188, 20.672805786132812, 308.53955078125, 'Bison2', 2]);
+            player.call('client:menuList:showSpawnJobCarMenu', [100, -1590.850341796875, -230.34060668945312, 53.86422348022461, 330.6097412109375, 'Bison2', 2]);
 
         if (methods.distanceToPos(pickups.AvePos, playerPos) < distanceCheck)
             player.call('client:menuList:showAveMenu');
@@ -1130,8 +1130,8 @@ pickups.createAll = function() {
     methods.createCpVector(pickups.Bus1Pos, 'Нажмите ~g~E~s~ чтобы открыть меню городского маршрута', 1, -1, pickups.Blue);
     methods.createCpVector(pickups.Bus2Pos, 'Нажмите ~g~E~s~ чтобы открыть меню трансферного маршрута', 1, -1, pickups.Blue);
     methods.createCpVector(pickups.Bus3Pos, 'Нажмите ~g~E~s~ чтобы открыть меню рейсового маршрута', 1, -1, pickups.Blue);
-    methods.createCpVector(pickups.TreePos, 'Нажмите ~g~E~s~ чтобы открыть меню садовника', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.TreePos, 'Нажмите ~g~E~s~ чтобы открыть меню садовника/разнорабочего', 1, -1, pickups.Blue);
     methods.createCpVector(pickups.AvePos, 'Нажмите ~g~E~s~ чтобы открыть меню священника', 1, -1, pickups.Yellow);
     //methods.createCpVector(pickups.AveVehPos, 'Нажмите ~g~E~s~ чтобы открыть меню священника', 1, -1, pickups.Blue);
-    methods.createCpVector(pickups.BuilderPos, 'Нажмите ~g~E~s~ чтобы открыть меню разнорабочего', 1, -1, pickups.Blue);
+    //methods.createCpVector(pickups.BuilderPos, 'Нажмите ~g~E~s~ чтобы открыть меню разнорабочего', 1, -1, pickups.Blue);
 };

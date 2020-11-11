@@ -5,6 +5,8 @@ import Container from "../modules/data";
 import enums from "../enums";
 
 import racer from "../manager/racer";
+import user from "../user";
+import vSync from "../manager/vSync";
 
 let vehicles = {};
 
@@ -518,12 +520,109 @@ vehicles.findVehicleByNumber = (number) => {
     return returnVehicle;
 };
 
-vehicles.engineVehicle = function() {
+vehicles.engineVehicle = function(status = null) {
     if (mp.players.local.vehicle) {
         let vInfo = methods.getVehicleInfo(mp.players.local.vehicle.model);
         if (vInfo.class_name != 'Cycles')
-            mp.events.callRemote('server:vehicle:engineStatus');
+            mp.events.callRemote('server:vehicle:engineStatus', status);
     }
 };
+
+vehicles.currentData = null;
+let currentBodyHp = 1000;
+let currentEngHp = 1000;
+let currentFuelHp = 1000;
+
+mp.events.add("playerEnterVehicle", async function (vehicle, seat) {
+    try {
+        if (vehicle.getVariable('container') != undefined && vehicle.getVariable('user_id') > 0) {
+            vehicles.currentData = await vehicles.getData(vehicle.getVariable('container'));
+        }
+    }
+    catch (e) {
+        methods.error('playerEnterVehicle', e.toString());
+    }
+
+    //  /eval mp.game.invoke('0xF271147EB7B40F12', mp.players.local.vehicle.handle);
+});
+
+mp.events.add("playerLeaveVehicle", function () {
+    vehicles.currentData = null;
+});
+
+mp.events.add("client:vehicle:checker", async function () {
+    try {
+        let vehicle = mp.players.local.vehicle;
+        if (vehicle && vehicles.currentData) {
+
+            let vClass = vehicle.getClass();
+
+            if (vClass < 13 || vClass > 16) {
+                let currentBodyHpNew = vehicle.getBodyHealth();
+                let currentEngHpNew = vehicle.getEngineHealth();
+                let currentFuelHpNew = vehicle.getPetrolTankHealth();
+
+                let s_eng = vehicles.currentData.get('s_eng');
+                let s_trans = vehicles.currentData.get('s_trans');
+                let s_fuel = vehicles.currentData.get('s_fuel');
+                let s_whel = vehicles.currentData.get('s_whel');
+                let s_elec = vehicles.currentData.get('s_elec');
+                let s_break = vehicles.currentData.get('s_break');
+
+                if (currentBodyHp - currentBodyHpNew > 100) {
+                    if (methods.getRandomInt(0, 100) < 50) {
+                        if (s_eng > 1) {
+                            vehicles.setSync(vehicle.getVariable('container'), 's_eng', s_eng - 1);
+                            vehicles.currentData.set('s_eng', s_eng - 1);
+                        }
+                    }
+                    if (methods.getRandomInt(0, 100) < 50) {
+                        if (s_trans > 1) {
+                            vehicles.setSync(vehicle.getVariable('container'), 's_trans', s_trans - 1);
+                            vehicles.currentData.set('s_trans', s_trans - 1);
+                        }
+                    }
+                    if (methods.getRandomInt(0, 100) < 50) {
+                        if (s_whel > 1) {
+                            vehicles.setSync(vehicle.getVariable('container'), 's_whel', s_whel - 1);
+                            vehicles.currentData.set('s_whel', s_whel - 1);
+                        }
+                    }
+                    if (methods.getRandomInt(0, 100) < 50) {
+                        if (s_elec > 1) {
+                            vehicles.setSync(vehicle.getVariable('container'), 's_elec', s_elec - 1);
+                            vehicles.currentData.set('s_elec', s_elec - 1);
+                        }
+                    }
+                    if (methods.getRandomInt(0, 100) < 50) {
+                        if (s_break > 1) {
+                            vehicles.setSync(vehicle.getVariable('container'), 's_break', s_break - 1);
+                            vehicles.currentData.set('s_break', s_break - 1);
+                        }
+                    }
+                }
+                if (currentEngHp - currentEngHpNew > 100) {
+                    if (s_eng > 1) {
+                        vehicles.setSync(vehicle.getVariable('container'), 's_eng', s_eng - 1);
+                        vehicles.currentData.set('s_eng', s_eng - 1);
+                    }
+                }
+                if (currentFuelHp - currentFuelHpNew > 100) {
+                    if (s_fuel > 1) {
+                        vehicles.setSync(vehicle.getVariable('container'), 's_fuel', s_fuel - 1);
+                        vehicles.currentData.set('s_fuel', s_fuel - 1);
+                    }
+                }
+
+                currentBodyHp = currentBodyHpNew;
+                currentEngHp = currentEngHpNew;
+                currentFuelHp = currentFuelHpNew;
+            }
+        }
+    }
+    catch (e) {
+        
+    }
+});
 
 export default vehicles;

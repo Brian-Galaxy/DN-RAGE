@@ -31,6 +31,9 @@ family.loadAll = function() {
             family.set(item['id'], 'rank_sub_leader', item['rank_sub_leader']);
             family.set(item['id'], 'rank_list', item['rank_list']);
             family.set(item['id'], 'rank_type_list', item['rank_type_list']);
+
+            family.set(item['id'], 'level', item['level']);
+            family.set(item['id'], 'exp', item['exp']);
         });
         count = rows.length;
         methods.debug('All Family Loaded: ' + count);
@@ -51,6 +54,9 @@ family.loadById = function(id) {
             family.set(item['id'], 'rank_sub_leader', item['rank_sub_leader']);
             family.set(item['id'], 'rank_list', item['rank_list']);
             family.set(item['id'], 'rank_type_list', item['rank_type_list']);
+
+            family.set(item['id'], 'level', item['level']);
+            family.set(item['id'], 'exp', item['exp']);
         });
         count++;
     });
@@ -89,6 +95,8 @@ family.save = function(id) {
         sql = sql + ", rank_sub_leader = '" + methods.removeQuotes(family.get(id, "rank_sub_leader")) + "'";
         sql = sql + ", rank_list = '" + methods.removeQuotes(family.get(id, "rank_list")) + "'";
         sql = sql + ", rank_type_list = '" + methods.removeQuotes(family.get(id, "rank_type_list")) + "'";
+        sql = sql + ", level = '" + methods.parseInt(family.get(id, "level")) + "'";
+        sql = sql + ", exp = '" + methods.parseInt(family.get(id, "exp")) + "'";
 
         sql = sql + " where id = '" + methods.parseInt(family.get(id, "id")) + "'";
         mysql.executeQuery(sql, undefined, function () {

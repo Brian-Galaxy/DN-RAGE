@@ -576,9 +576,18 @@ lsc.buySTun = function(player, modType, idx, price, shopId, itemName, payType) {
     vehicles.save(veh.getVariable('container'));
 };
 
-lsc.resetSTun = function(player, modType) {
-    methods.debug('lsc.resetSTun');
+
+lsc.buySFix = function(player, idx, price, shopId, itemName, payType) {
+    methods.debug('lsc.buySTun');
     if (!user.isLogin(player))
+        return;
+
+    if (user.getMoney(player, payType) < price) {
+        user.showCustomNotify(player, 'У вас недостаточно средств', 1, 9);
+        return;
+    }
+
+    if (price < 0)
         return;
 
     let veh = player.vehicle;
@@ -586,8 +595,42 @@ lsc.resetSTun = function(player, modType) {
     if (!vehicles.exists(veh))
         return;
 
+    if (veh.getVariable('user_id') != user.getId(player)) {
+        user.showCustomNotify(player, 'Транспорт должен быть личный', 1, 9);
+        return;
+    }
+
     if (veh.getVariable('user_id') < 1) {
-        user.showCustomNotify(player, 'У вас недостаточно средств', 1, 9);
+        user.showCustomNotify(player, 'Транспорт должен быть личный', 1, 9);
+        return;
+    }
+
+
+    player.call('client:vehicle:resetHandling');
+    player.call('client:setNewMaxSpeedServer', [0]);
+    user.removeMoney(player, price, itemName, payType);
+    vehicles.set(veh.getVariable('container'), idx, 100);
+    business.addMoney(shopId, price, itemName);
+    business.removeMoneyTax(shopId, price / business.getPrice(shopId));
+    player.call('client:vehicle:resetHandling');
+    user.showCustomNotify(player, 'Вы починили ваш транспорт', 2, 9);
+    vehicles.save(veh.getVariable('container'));
+};
+
+lsc.resetSTun = function(player, modType) {
+    methods.debug('lsc.resetSTun');
+    if (!user.isLogin(player))
+        return;
+
+    let veh = player.vehicle;
+
+    if (!vehicles.exists(veh)) {
+        user.showCustomNotify(player, 'Нужно находиьтся в транспорте', 1, 9);
+        return;
+    }
+
+    if (veh.getVariable('user_id') < 1) {
+        user.showCustomNotify(player, 'Транспорт должен быть личный', 1, 9);
         return;
     }
     if (veh.getVariable('user_id') != user.getId(player)) {
@@ -603,8 +646,12 @@ lsc.resetSTun = function(player, modType) {
     vehicles.set(veh.getVariable('container'), 'upgrade', JSON.stringify(upgrade));
 
     player.call('client:vehicle:resetHandling');
-    user.showCustomNotify(player, 'Вы обновили ТС, на стандартные настройки', 0, 9);
     vehicles.save(veh.getVariable('container'));
+
+    let lscSNames = [400000, 30000, 40000, 10000, 2000, 2000];
+    let money = lscSNames[modType - 100];
+    user.addCashMoney(player, money, 'Компенсация за ЧИП тюнинг VID: ' + veh.getVariable('container'));
+    user.showCustomNotify(player, 'Вы сняли деталь, вам было компенсировано ' + methods.moneyFormat(money), 0, 9);
 };
 
 lsc.buyTun = function(player, modType, idx, price, shopId, itemName, payType) {

@@ -9,6 +9,7 @@ import enums from "../enums";
 
 import weather from "../manager/weather";
 import shoot from "../manager/shoot";
+import quest from "../manager/quest";
 
 import vehicles from "../property/vehicles";
 import phone from "../phone";
@@ -414,6 +415,14 @@ ui.updateValues = function() {
                 ammoMode: shoot.getCurrentModeName(),
                 ammoCount: `${user.getCurrentAmmo()}`,
                 background: user.getCache('s_hud_bg'),
+            };
+            ui.callCef('hudl', JSON.stringify(data));
+
+            data = {
+                type: 'updateQuest', //TODO доделать
+                showQuest: user.getQuestCount('standart') < 11,
+                questTitle: 'Квестовое задание',
+                questText: quest.getQuestLineInfo('standart', user.getQuestCount('standart')),
             };
             ui.callCef('hudl', JSON.stringify(data));
         }

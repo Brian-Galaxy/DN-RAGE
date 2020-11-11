@@ -26,6 +26,7 @@ import photo from "./jobs/photo";
 import loader from "./jobs/loader";
 
 import stocks from "./property/stocks";
+import quest from "./manager/quest";
 
 let phone = {};
 
@@ -236,8 +237,10 @@ phone.updateMainAppList = function() {
         { link: "/phone/android/phonebook", action: 'cont', img: 'cont', name: 'Контакты' },
         { link: "/phone/android/messenger", action: 'sms', img: 'sms', name: 'SMS' },
         //{ link: "/phone/android/umenu", action: 'settings', img: 'settings' },
+        //{ link: "/phone/android/calls", action: 'calls', img: 'uveh', name: 'Звонки' },
         { link: "/phone/android/umenu", action: 'uveh', img: 'uveh', name: 'UVeh' },
         { link: "/phone/android/umenu", action: 'invader', img: 'invader', name: 'INews' },
+        //{ link: "/phone/android/achiev", action: 'achiev', img: 'trophy', name: 'Достижения' },
     ];
 
     if (user.getCache('fraction_id') === 1)
@@ -903,7 +906,7 @@ phone.showAppFishing = async function() {
 };
 
 phone.showAppFraction2 = async function() {
-
+    quest.gang(false, -1, 9);
     let fData = await fraction.getData(user.getCache('fraction_id2'));
 
     let menu = {
@@ -1394,6 +1397,12 @@ phone.showAppFamily = async function() {
                         clickable: true,
                         params: {name: "hierarchy"}
                     },
+                    {
+                        title: "Достижения",
+                        type: 1,
+                        clickable: true,
+                        params: {name: "avhive"}
+                    },
                 ],
             },
         ],
@@ -1519,7 +1528,7 @@ phone.showAppFamily = async function() {
 };
 
 phone.showAppFraction = function() {
-
+    quest.standart(false, -1, 13);
     let menu = {
         UUID: 'fraction',
         title: user.getFractionNameL(),
@@ -3209,6 +3218,124 @@ phone.showAppFractionHierarchyF = async function() {
     }
 };
 
+
+phone.showAppFractionAchiveF = async function() {
+
+    let fractionItem = await family.getData(user.getCache('family_id'));
+    let menu = {
+        UUID: 'family',
+        title: `Достижения - ${fractionItem.get('name')}`,
+        items: [
+            {
+                title: 'Текущий статус',
+                umenu: [
+                    {
+                        title: 'Ваш текущий уровень - ' + fractionItem.get('level'),
+                        type: 1,
+                        params: { name: "none" }
+                    },
+                    {
+                        title: 'Ваш текущий прогресс - ' + fractionItem.get('exp'),
+                        type: 1,
+                        params: { name: "none" }
+                    },
+                    {
+                        title: 'Учтите, что все полученые награды распротраняются на членов которые в данный момент состоят в семье',
+                        type: 1,
+                        params: { name: "none" }
+                    },
+                ],
+            },
+            {
+                title: 'Уровень 2',
+                umenu: [
+                    {
+                        title: 'Прирост к зарплатам разнорабочего и садовника на 30%',
+                        text: 'Для выполнения вам необходимо выполнить 2000 меток садовника или разнорабочего.',
+                        type: 1,
+                        params: { name: "none" }
+                    },
+                    {
+                        title: 'Доп. награда при получении уровня',
+                        text: '$500.000 на счёт семьи',
+                        type: 1,
+                        params: { name: "none" }
+                    },
+                ],
+            },
+            {
+                title: 'Уровень 3',
+                umenu: [
+                    {
+                        title: 'Прирост к зарплатам водителя автобуса на 30%',
+                        text: 'Для выполнения вам необходимо выполнить 1000 рейсов на любом из автобусов.',
+                        type: 1,
+                        params: { name: "none" }
+                    },
+                    {
+                        title: 'Доп. награда при получении уровня',
+                        text: '$750.000 на счёт семьи',
+                        type: 1,
+                        params: { name: "none" }
+                    },
+                ],
+            },
+            {
+                title: 'Уровень 4',
+                umenu: [
+                    {
+                        title: 'Прирост к зарплате фотографа на 30%',
+                        text: 'Для выполнения вам необходимо выполнить 2500 меток фотографов.',
+                        type: 1,
+                        params: { name: "none" }
+                    },
+                    {
+                        title: 'Доп. награда при получении уровня',
+                        text: '$1.000.000 на счёт семьи',
+                        type: 1,
+                        params: { name: "none" }
+                    },
+                ],
+            },
+            {
+                title: 'Уровень 5',
+                umenu: [
+                    {
+                        title: 'Прирост к зарплате инкассатора на 30%',
+                        text: 'Для выполнения вам необходимо выполнить 2500 меток инкассаторов.',
+                        type: 1,
+                        params: { name: "none" }
+                    },
+                    {
+                        title: 'Доп. награда при получении уровня',
+                        text: '$1.500.000 на счёт семьи',
+                        type: 1,
+                        params: { name: "none" }
+                    },
+                ],
+            },
+            {
+                title: 'Уровень 6',
+                umenu: [
+                    {
+                        title: 'Со зарплат на работах садовник, разнорабочий, инкассатор, водитель автобуса в общак семьи поступает 30% сверху от выручки',
+                        text: 'Продать 100.000 единиц рыбы',
+                        type: 1,
+                        params: { name: "none" }
+                    },
+                    {
+                        title: 'Доп. награда при получении уровня',
+                        text: '$20.000.000 на счёт семьи',
+                        type: 1,
+                        params: { name: "none" }
+                    },
+                ],
+            }
+        ]
+    };
+    phone.showMenu(menu);
+};
+
 phone.showAppFractionUpgrade2 = async function() {
 
     let fData = await fraction.getData(user.getCache('fraction_id2'));
@@ -3989,6 +4116,7 @@ phone.consoleCallback = async function(command) {
                 phone.addConsoleCommand('apt-get install [package]');
             }
             else if (args[0] === 'update') {
+                quest.gang(false, -1, 5);
                 if (user.getCache('stats_darknet') > 0) {
                     phone.addConsoleCommand('Reading package lists... Done');
                     await methods.sleep(1000 + methods.getRandomInt(1, 500));
@@ -4692,6 +4820,7 @@ phone.consoleCallback = async function(command) {
                 phone.addConsoleCommand('Number: ' + user.getCache('crypto_card'));
             }
             else if (args[0] === '-balance') {
+                quest.gang(false, -1, 7);
                 phone.addConsoleCommand('Balance: ' + methods.cryptoFormat(user.getCryptoMoney()));
             }
             else if (args[0] === '-coin') {
@@ -4709,6 +4838,7 @@ phone.consoleCallback = async function(command) {
                         phone.addConsoleCommand('Error: You have not bank card');
                         return;
                     }
+                    quest.gang(false, -1, 8);
                     phone.addConsoleCommand('Transfer success');
                     user.removeCryptoMoney(sum, 'Обмен E-Coin');
                     user.addBankMoney(sum * 500, 'Обмен E-Coin');
@@ -5644,7 +5774,7 @@ phone.callBackModalInput = async function(paramsJson, text) {
                 user.sendSmsBankOperation('Ошибка транзакции', 'Ошибка');
                 return;
             }
-            if (sum > await fraction.getMoney(user.getCache('family_id'))) {
+            if (sum > await family.getMoney(user.getCache('family_id'))) {
                 user.sendSmsBankOperation('У Вас недостаточно средств', 'Ошибка');
                 return;
             }
@@ -6243,6 +6373,8 @@ phone.callBackButton = async function(menu, id, ...args) {
         if (menu == 'family') {
             if (params.name == 'hierarchy')
                 phone.showAppFractionHierarchyF();
+            if (params.name == 'avhive')
+                phone.showAppFractionAchiveF();
             else if (params.name == 'list') {
                 mp.events.callRemote('server:phone:fractionListF');
                 phone.showLoad();

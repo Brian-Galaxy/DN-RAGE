@@ -16,6 +16,7 @@ import './betternotifs';
 //import './voice';
 
 import business from "./property/business";
+import "./property/vehicles";
 
 import ui from "./modules/ui";
 import methods from "./modules/methods";

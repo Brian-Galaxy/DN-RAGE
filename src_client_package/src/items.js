@@ -161,7 +161,7 @@ items.getAmmoCount = function(itemId) {
         case 281:
             return 240;
         case 282:
-            return 220;
+            return 500;
         case 283:
         case 284:
             return 480;

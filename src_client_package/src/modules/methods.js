@@ -630,6 +630,16 @@ methods.phoneFormat = function (phoneNumber) {
     return phoneNumberString;
 };
 
+methods.procColorFormat = function (currentMoney) {
+    if (currentMoney < 20)
+        return '~r~' + currentMoney;
+    if (currentMoney < 40)
+        return '~o~' + currentMoney;
+    if (currentMoney < 60)
+        return '~y~' + currentMoney;
+    return '~g~' + currentMoney;
+};
+
 methods.capitalizeFirstLetter  = function (string) {
     return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
 };

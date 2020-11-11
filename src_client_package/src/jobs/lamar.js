@@ -5,6 +5,8 @@ import user from '../user';
 import jobPoint from '../manager/jobPoint';
 import vehicles from "../property/vehicles";
 import fraction from "../property/fraction";
+import quest from "../manager/quest";
+import ui from "../modules/ui";
 
 let lamar = {};
 
@@ -235,6 +237,8 @@ lamar.finish = async function() {
 
         user.set('st_order_lamar_f', user.getCache('st_order_lamar_f') + 1);
         user.set('st_order_lamar_d', user.getCache('st_order_lamar_d') + 1);
+
+        quest.gang(false, -1, 1);
 
         setTimeout(function () {
             mp.events.callRemote('server:rent:buy', -1842748181, 0.1, 0);

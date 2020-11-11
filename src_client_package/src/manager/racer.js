@@ -7,11 +7,8 @@ import inventory from "../inventory";
 import phone from "../phone";
 import menuList from "../menuList";
 import user from "../user";
-import UIMenu from "../modules/menu";
-import hosp from "./hosp";
-import ui from "../modules/ui";
-import Container from "../modules/data";
-import timer from "./timer";
+
+import quest from "./quest";
 
 let racer = {};
 
@@ -165,6 +162,7 @@ mp.events.add("playerEnterCheckpoint", (checkpoint) => {
             mp.events.callRemote('server:race:finish');
             inRace = false;
             methods.blockKeys(false);
+            quest.standart(false, -1, 10);
         }
         else {
             racer.nextCpDestroy();

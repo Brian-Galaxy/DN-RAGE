@@ -51,6 +51,7 @@ import lamar from "./jobs/lamar";
 import trucker from "./jobs/trucker";
 import taxi from "./jobs/taxi";
 import npc from "./manager/npc";
+import family from "./property/family";
 
 let menuList = {};
 
@@ -775,6 +776,10 @@ menuList.showStockLabOfferMenu = function(h, type) {
                 mp.game.ui.notifications.show("~r~Сумма не может быть меньше 1$");
                 return;
             }
+            if (money > 10000) {
+                mp.game.ui.notifications.show("~r~Сумма не может быть больше 10000$");
+                return;
+            }
             if (user.getBankMoney() < money + 500) {
                 mp.game.ui.notifications.show("~r~У вас нет столько денег на банковском счету");
                 return;
@@ -789,6 +794,10 @@ menuList.showStockLabOfferMenu = function(h, type) {
                 mp.game.ui.notifications.show("~r~Сумма не может быть меньше 1$");
                 return;
             }
+            if (money > 10000) {
+                mp.game.ui.notifications.show("~r~Сумма не может быть больше 10000$");
+                return;
+            }
             if (user.getBankMoney() < money + 900) {
                 mp.game.ui.notifications.show("~r~У вас нет столько денег на банковском счету");
                 return;
@@ -801,6 +810,10 @@ menuList.showStockLabOfferMenu = function(h, type) {
             let money = methods.parseFloat(await UIMenu.Menu.GetUserInput("Сумма", "", 9));
             if (money < 1) {
                 mp.game.ui.notifications.show("~r~Сумма не может быть меньше 1$");
+                return;
+            }
+            if (money > 10000) {
+                mp.game.ui.notifications.show("~r~Сумма не может быть больше 10000$");
                 return;
             }
             if (user.getBankMoney() < money + 1800) {
@@ -958,6 +971,10 @@ menuList.showStockBunkOfferMenu = function(h, type) {
                 mp.game.ui.notifications.show("~r~Сумма не может быть меньше 1$");
                 return;
             }
+            if (money > 10000) {
+                mp.game.ui.notifications.show("~r~Сумма не может быть больше 10000$");
+                return;
+            }
             if (user.getBankMoney() < money + 500) {
                 mp.game.ui.notifications.show("~r~У вас нет столько денег на банковском счету");
                 return;
@@ -972,6 +989,10 @@ menuList.showStockBunkOfferMenu = function(h, type) {
                 mp.game.ui.notifications.show("~r~Сумма не может быть меньше 1$");
                 return;
             }
+            if (money > 10000) {
+                mp.game.ui.notifications.show("~r~Сумма не может быть больше 10000$");
+                return;
+            }
             if (user.getBankMoney() < money + 900) {
                 mp.game.ui.notifications.show("~r~У вас нет столько денег на банковском счету");
                 return;
@@ -984,6 +1005,10 @@ menuList.showStockBunkOfferMenu = function(h, type) {
             let money = methods.parseFloat(await UIMenu.Menu.GetUserInput("Сумма", "", 9));
             if (money < 1) {
                 mp.game.ui.notifications.show("~r~Сумма не может быть меньше 1$");
+                return;
+            }
+            if (money > 10000) {
+                mp.game.ui.notifications.show("~r~Сумма не может быть больше 10000$");
                 return;
             }
             if (user.getBankMoney() < money + 1800) {
@@ -2237,6 +2262,7 @@ menuList.showBusinessMenu = async function(data) {
             let text = await UIMenu.Menu.GetUserInput("Введите название транзакции", "", 30);
             if (text === '')
                 return ;
+            quest.gang(false, -1, 13);
             mp.events.callRemote('server:sellMoneyBusiness', data.get('id'), text);
         }
         if (item.doName == 'log') {
@@ -3280,8 +3306,9 @@ menuList.showMeriaJobListMenu = function() {
                 chat.sendLocal(`Ваша возможности практически безграничны, а на некоторых можно и заработать. Например у вас в церкве доступно функционально женить и разводить людей. А еще вы можете делать РП смерть.`);
             }
 
+            user.setWaypoint(enums.jobList[item.jobName][1], enums.jobList[item.jobName][2]);
             user.set('job', item.jobName);
-            mp.game.ui.notifications.show("~g~Вы устроились на новую работу");
+            mp.game.ui.notifications.show("~g~Вы устроились на новую работу, местоположение рабочего транспорта указано на карте");
             quest.standart();
         }
     });
@@ -5808,7 +5835,7 @@ menuList.showVehicleMenu = async function(data) {
                 mp.game.ui.notifications.show('~y~Ты точно понимаешь адекватность этого поступка?');
                 return;
             }
-
+            quest.standart(false, -1, 9);
             mp.events.callRemote(item.eventName);
         }
         else if (item.eventName == 'server:vehicle:parkFraction') {
@@ -5997,6 +6024,10 @@ menuList.showVehicleDoMenu = function() {
             listIndex = index;
 
             if (item.doName == 'light') {
+                if (vehicles.currentData && vehicles.currentData.get('s_elec') < 20) {
+                    mp.game.ui.notifications.show('~r~Свет в салоне не работает из-за повреждений в электроннике');
+                    return;
+                }
                 vehicles.setInteriorLightState(listIndex == 1);
             }
             if (item.doName == 'hood') {
@@ -6006,6 +6037,10 @@ menuList.showVehicleDoMenu = function() {
                 vehicles.setTrunkState(listIndex == 1);
             }
             if (item.doName == 'twoIndicator') {
+                if (vehicles.currentData && vehicles.currentData.get('s_elec') < 20) {
+                    mp.game.ui.notifications.show('~r~Аварийка не работает из-за повреждений в электроннике');
+                    return;
+                }
                 vehicles.setIndicatorLeftState(listIndex == 1);
                 vehicles.setIndicatorRightState(listIndex == 1);
             }
@@ -6067,10 +6102,21 @@ menuList.showVehicleStatsMenu = async function(veh) {
 
     if (veh.getVariable('user_id') > 0) {
         let car = await vehicles.getData(veh.getVariable('container'));
+        let vClass = veh.getClass();
+
+        UIMenu.Menu.AddMenuItem("~y~Состояние: ", "", {}, ``);
+        UIMenu.Menu.AddMenuItem("~b~Пробег: ", "", {}, `${methods.parseFloat(car.get('s_km') + (timer.distInVehicle / 1000)).toFixed(2)}км`);
+
+        if (vClass < 13 || vClass > 16) {
+            UIMenu.Menu.AddMenuItem("~b~Двигатель: ", "При поломке может глохнуть и уменьшается максимальная скорость", {}, `${methods.procColorFormat(car.get('s_eng'))}%`);
+            UIMenu.Menu.AddMenuItem("~b~Трансмиссия: ", "Уменьшается максимальная скорость", {}, `${methods.procColorFormat(car.get('s_trans'))}%`);
+            UIMenu.Menu.AddMenuItem("~b~Шины: ", "Может лопнуть колесо", {}, `${methods.procColorFormat(car.get('s_whel'))}%`);
+            UIMenu.Menu.AddMenuItem("~b~Электроника: ", "При поломке, не работает  электроника", {}, `${methods.procColorFormat(car.get('s_elec'))}%`);
+            UIMenu.Menu.AddMenuItem("~b~Топливная система: ", "При поломке больший расход топлива", {}, `${methods.procColorFormat(car.get('s_fuel'))}%`);
+            UIMenu.Menu.AddMenuItem("~b~Тормозная система: ", "При поломке могут не сработать тормоза", {}, `${methods.procColorFormat(car.get('s_break'))}%`);
+        }
 
         UIMenu.Menu.AddMenuItem("~y~Разное: ", "", {}, ``);
-
-        UIMenu.Menu.AddMenuItem("~b~Пробег: ", "", {}, `${methods.parseFloat(car.get('s_km')).toFixed(2)}км`);
         UIMenu.Menu.AddMenuItem("~b~Спец. покрышки: ", "", {}, `${car.get('is_tyre') ? '~y~Установлено' : '~r~Отсутствует'}`);
         UIMenu.Menu.AddMenuItem("~b~Цветные фары: ", "", {}, `${car.get('colorl') >= 0 ? '~y~Установлено' : '~r~Отсутствует'}`);
         UIMenu.Menu.AddMenuItem("~b~Неон: ", "", {}, `${car.get('is_neon') ? '~y~Установлено' : '~r~Отсутствует'}`);
@@ -6090,7 +6136,7 @@ menuList.showVehicleStatsMenu = async function(veh) {
                 let val = methods.parseInt(value);
                 if (mod >= 100) {
                     if (value >= 0)
-                        UIMenu.Menu.AddMenuItem(`~b~${enums.lscSNames[mod - 100][0]}: `, "", {}, `${value}`);
+                        UIMenu.Menu.AddMenuItem(`~b~${enums.lscSNames[mod - 100][0]}: `, "Нажмите Enter чтобы сбросить настройки", {resetIdx: mod - 100}, `${value}`);
                 }
                 else if (val >= 0) {
                     let label = mp.game.ui.getLabelText(veh.getModTextLabel(mod, val));
@@ -6107,6 +6153,13 @@ menuList.showVehicleStatsMenu = async function(veh) {
 
     UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
     UIMenu.Menu.Draw();
+
+    UIMenu.Menu.OnSelect.Add(async (item, index) => {
+        UIMenu.Menu.HideMenu();
+        if (item.resetIdx >= 0) {
+            mp.events.callRemote('server:lsc:resetSTun', item.resetIdx);
+        }
+    });
 };
 
 menuList.showSpawnJobCarMenu = function(price, x, y, z, heading, name, job) {
@@ -6535,6 +6588,7 @@ menuList.showSellFishMenu = async function(data, shopId) {
         UIMenu.Menu.Create('Скупка', `~b~Доля владельца: ${procent}%`);
 
         let priceAll = 0;
+        let countFish = 0;
 
         data.forEach((item, idx) => {
 
@@ -6545,6 +6599,7 @@ menuList.showSellFishMenu = async function(data, shopId) {
             });
 
             priceAll = priceAll + price;
+            countFish++;
 
             let formatItem = items.getItemFormat(item);
             let desc = formatItem.desc;
@@ -6552,7 +6607,7 @@ menuList.showSellFishMenu = async function(data, shopId) {
             UIMenu.Menu.AddMenuItem(`${itemName}`, `${desc}~br~Цена: ~g~${methods.moneyFormat(price)}~br~~c~Без учёта процента`, {price: price, id: item.id});
         });
 
-        UIMenu.Menu.AddMenuItem(`~y~Продать всю рыбу`, `Цена: ~g~${methods.moneyFormat(priceAll)}~br~~c~Без учёта процента`, {price: priceAll, sellAll: true});
+        UIMenu.Menu.AddMenuItem(`~y~Продать всю рыбу`, `Цена: ~g~${methods.moneyFormat(priceAll)}~br~~c~Без учёта процента`, {price: priceAll, countFish: countFish, sellAll: true});
 
         UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
         UIMenu.Menu.Draw();
@@ -6572,6 +6627,19 @@ menuList.showSellFishMenu = async function(data, shopId) {
                     user.addMoney(item.price - (item.price / procent), 'Продажа рыбы');
                     inventory.deleteItem(item.id);
                     mp.game.ui.notifications.show(`~b~Вы продали рыбу по цене: ~s~${methods.moneyFormat(item.price - (item.price / procent))}`);
+
+                    let fId = user.getCache('family_id');
+                    if (fId > 0) {
+                        let fData = await family.getData(fId);
+                        if (fData.get('level') === 5) {
+                            if (fData.get('exp') > 100000) {
+                                family.addMoney(fId, 20000000, 'Премия за достижения 6 уровня');
+                                family.set(fId, 'level', 6);
+                            }
+                            else
+                                family.set(fId, 'exp', fData.get('exp') + 1);
+                        }
+                    }
                 }
                 catch (e) {
                     methods.debug(e);
@@ -6588,6 +6656,19 @@ menuList.showSellFishMenu = async function(data, shopId) {
                     user.addMoney(item.price, 'Продажа всей рыбы');
                     inventory.deleteItemsRange(487, 536);
                     mp.game.ui.notifications.show(`~b~Вы продали рыбу по цене: ~s~${methods.moneyFormat(item.price)}`);
+
+                    let fId = user.getCache('family_id');
+                    if (fId > 0) {
+                        let fData = await family.getData(fId);
+                        if (fData.get('level') === 5) {
+                            if (fData.get('exp') > 100000) {
+                                family.addMoney(fId, 20000000, 'Премия за достижения 6 уровня');
+                                family.set(fId, 'level', 6);
+                            }
+                            else
+                                family.set(fId, 'exp', fData.get('exp') + item.countFish);
+                        }
+                    }
                 }
                 catch (e) {
                     methods.debug(e);
@@ -8663,10 +8744,11 @@ menuList.showMazeBankLobbyMenu = function(inGame, weapon, raceCount, raceName, r
         UIMenu.Menu.HideMenu();
         if(item.doName == 'start') {
             mp.events.callRemote('server:race:toLobby');
-            quest.standart(false, -1, 7);
         }
-        if(item.doName == 'startGangZone')
+        if(item.doName == 'startGangZone') {
+            quest.standart(false, -1, 12);
             mp.events.callRemote('server:gangZone:toLobby');
+        }
         if(item.doName == 'rating')
             mp.events.callRemote('server:race:rating');
         if(item.doName == 'drating')
@@ -9123,7 +9205,8 @@ menuList.showLscMenu = function(shopId, price = 1)
     list.push({name: `Ремонт`, price: '', sale: sale, params: {type: 'lsc:repair', price: price, shop: shopId}});
     if (shopId === 145 || shopId === 146) {
         list.push({name: `Внутренний тюнинг`, price: '', sale: sale, params: {type: 'lsc:setTunning2', price: price, shop: shopId}});
-        list.push({name: `Ходовые настройки`, price: '', sale: sale, params: {type: 'lsc:setS2Tunning', price: price, shop: shopId}});
+        list.push({name: `Детальный ремонт`, price: '', sale: sale, params: {type: 'lsc:setS3Tunning', price: price, shop: shopId}});
+        //list.push({name: `Ходовые настройки`, price: '', sale: sale, params: {type: 'lsc:setS2Tunning', price: price, shop: shopId}});
     }
     else {
         list.push({name: `Визуальный тюнинг`, price: '', sale: sale, params: {type: 'lsc:setTunning', price: price, shop: shopId}});
@@ -9240,6 +9323,79 @@ menuList.showLscS2TunningMenu = async function(shopId, price) {
         list.push({name: enums.lscSNames[i][0], price: methods.moneyFormat(enums.lscSNames[i][1]), desc: enums.lscSNames[i][3], sale: 0, params: {type: 'lsc:s:mod', idx: i, price: price, shop: shopId}});
     }
     shopMenu.updateShop2(list, shopMenu.getLastSettings().banner, shopMenu.getLastSettings().bg, 0, 'Специальный тюнинг');
+};
+
+menuList.showLscS3TunningMenu = async function(shopId, price) {
+
+    let veh = mp.players.local.vehicle;
+
+    if (!veh || !veh.getVariable('user_id')) {
+        mp.game.ui.notifications.show(`~r~Необходимо находиться в личном транспорте`);
+        return;
+    }
+
+    let vehInfo = methods.getVehicleInfo(veh.model);
+    let car = await vehicles.getData(veh.getVariable('container'));
+
+    let defaultPrice = price;
+    price = price - 1;
+
+    if (vehInfo.price >= 8000 && vehInfo.price < 15000)
+        price += 1;
+    else if (vehInfo.price >= 15000 && vehInfo.price < 30000)
+        price += 1.2;
+    else if (vehInfo.price >= 30000 && vehInfo.price < 45000)
+        price += 1.5;
+    else if (vehInfo.price >= 45000 && vehInfo.price < 60000)
+        price += 1.8;
+    else if (vehInfo.price >= 60000 && vehInfo.price < 75000)
+        price += 2;
+    else if (vehInfo.price >= 90000 && vehInfo.price < 105000)
+        price += 2.2;
+    else if (vehInfo.price >= 105000 && vehInfo.price < 120000)
+        price += 2.4;
+    else if (vehInfo.price >= 120000 && vehInfo.price < 135000)
+        price += 2.6;
+    else if (vehInfo.price >= 135000 && vehInfo.price < 150000)
+        price += 2.8;
+    else if (vehInfo.price >= 150000 && vehInfo.price < 200000)
+        price += 3;
+    else if (vehInfo.price >= 200000 && vehInfo.price < 240000)
+        price += 3.3;
+    else if (vehInfo.price >= 240000 && vehInfo.price < 280000)
+        price += 3.6;
+    else if (vehInfo.price >= 280000 && vehInfo.price < 320000)
+        price += 4;
+    else if (vehInfo.price >= 320000 && vehInfo.price < 380000)
+        price += 4.4;
+    else if (vehInfo.price >= 380000 && vehInfo.price < 500000)
+        price += 5;
+    else if (vehInfo.price >= 500000 && vehInfo.price < 600000)
+        price += 5.5;
+    else if (vehInfo.price >= 600000 && vehInfo.price < 700000)
+        price += 6;
+    else if (vehInfo.price >= 700000 && vehInfo.price < 800000)
+        price += 6.5;
+    else if (vehInfo.price >= 800000)
+        price += 7;
+    else
+        price += 0.5;
+
+    let sale = business.getSale(defaultPrice);
+    let list = [];
+    list.push({name: `Двигатель - ${car.get('s_eng')}%`, price: methods.moneyFormat(25 * price * (101 - car.get('s_eng'))), desc: '', sale: sale, params: {type: 'lsc:s:fix', idx: 's_eng', fixName: 'Двигатель', price: 25 * price * (101 - car.get('s_eng')), shop: shopId}});
+
+    list.push({name: `Трансмиссия - ${car.get('s_trans')}%`, price: methods.moneyFormat(25 * price * (101 - car.get('s_trans'))), desc: '', sale: sale, params: {type: 'lsc:s:fix', idx: 's_trans', fixName: 'Трансмиссия', price: 25 * price * (101 - car.get('s_trans')), shop: shopId}});
+
+    list.push({name: `Колёса - ${car.get('s_whel')}%`, price: methods.moneyFormat(5 * price * (101 - car.get('s_whel'))), desc: '', sale: sale, params: {type: 'lsc:s:fix', idx: 's_whel', fixName: 'Колёса', price: 5 * price * (101 - car.get('s_whel')), shop: shopId}});
+
+    list.push({name: `Электроника - ${car.get('s_elec')}%`, price: methods.moneyFormat(5 * price * (101 - car.get('s_elec'))), desc: '', sale: sale, params: {type: 'lsc:s:fix', idx: 's_elec', fixName: 'Электроника', price: 5 * price * (101 - car.get('s_elec')), shop: shopId}});
+
+    list.push({name: `Тормозная система - ${car.get('s_break')}%`, price: methods.moneyFormat(10 * price * (101 - car.get('s_break'))), desc: '', sale: sale, params: {type: 'lsc:s:fix', idx: 's_break', fixName: 'Тормозная система', price: 10 * price * (101 - car.get('s_break')), shop: shopId}});
+
+    list.push({name: `Топливная система - ${car.get('s_fuel')}%`, price: methods.moneyFormat(15 * price * (101 - car.get('s_fuel'))), desc: '', sale: sale, params: {type: 'lsc:s:fix', idx: 's_fuel', fixName: 'Топливная система', price: 15 * price * (101 - car.get('s_fuel')), shop: shopId}});
+
+    shopMenu.updateShop2(list, shopMenu.getLastSettings().banner, shopMenu.getLastSettings().bg, 1, 'Детальный ремонт');
 };
 
 menuList.showLscS2MoreTunningMenu = async function(shopId, idx, price) {
@@ -12445,7 +12601,8 @@ menuList.showBotQuestGangMenu = function()
             }
         );
     }
-    else {
+    if (user.getQuestCount('gang') > 0)
+    {
         btn.push(
             {
                 text: 'Задание на перевозку',

@@ -153,7 +153,6 @@ vehicles.loadUserVehicleByRow = (row) => {
     vehicles.set(row['id'], 'number', row['number']);
     vehicles.set(row['id'], 'number_type', row['number_type']);
     vehicles.set(row['id'], 'is_special', row['is_special']);
-    vehicles.set(row['id'], 's_mp', row['s_mp']);
     vehicles.set(row['id'], 'x', parkPos.x);
     vehicles.set(row['id'], 'y', parkPos.y);
     vehicles.set(row['id'], 'z', parkPos.z);
@@ -161,6 +160,12 @@ vehicles.loadUserVehicleByRow = (row) => {
     vehicles.set(row['id'], 'dimension', row['dimension']);
     vehicles.set(row['id'], 'upgrade', row['upgrade']);
     vehicles.set(row['id'], 's_km', row['s_km']);
+    vehicles.set(row['id'], 's_eng', row['s_eng']);
+    vehicles.set(row['id'], 's_trans', row['s_trans']);
+    vehicles.set(row['id'], 's_fuel', row['s_fuel']);
+    vehicles.set(row['id'], 's_whel', row['s_whel']);
+    vehicles.set(row['id'], 's_elec', row['s_elec']);
+    vehicles.set(row['id'], 's_break', row['s_break']);
     vehicles.set(row['id'], 'sell_price', row['sell_price']);
     vehicles.set(row['id'], 'is_cop_park', row['is_cop_park']);
     vehicles.set(row['id'], 'cop_park_name', row['cop_park_name']);
@@ -698,11 +703,16 @@ vehicles.save = (id) => {
         sql = sql + ", number_type = '" + methods.removeQuotes(vehicles.get(id, "number_type")) + "'";
         sql = sql + ", is_cop_park = '" + methods.parseInt(vehicles.get(id, "is_cop_park")) + "'";
         sql = sql + ", cop_park_name = '" + vehicles.get(id, "cop_park_name") + "'";
-        sql = sql + ", s_mp = '" + methods.parseFloat(vehicles.get(id, "s_mp")) + "'";
         sql = sql + ", livery = '" + methods.parseInt(vehicles.get(id, "livery")) + "'";
         sql = sql + ", extra = '" + methods.parseInt(vehicles.get(id, "extra")) + "'";
         sql = sql + ", dimension = '" + methods.parseInt(vehicles.get(id, "dimension")) + "'";
         sql = sql + ", s_km = '" + methods.parseInt(vehicles.get(id, "s_km")) + "'";
+        sql = sql + ", s_eng = '" + methods.parseInt(vehicles.get(id, "s_eng")) + "'";
+        sql = sql + ", s_trans = '" + methods.parseInt(vehicles.get(id, "s_trans")) + "'";
+        sql = sql + ", s_fuel = '" + methods.parseInt(vehicles.get(id, "s_fuel")) + "'";
+        sql = sql + ", s_whel = '" + methods.parseInt(vehicles.get(id, "s_whel")) + "'";
+        sql = sql + ", s_elec = '" + methods.parseInt(vehicles.get(id, "s_elec")) + "'";
+        sql = sql + ", s_break = '" + methods.parseInt(vehicles.get(id, "s_break")) + "'";
         sql = sql + ", sell_price = '" + methods.parseInt(vehicles.get(id, "sell_price")) + "'";
         /*sql = sql + ", x = '" + methods.parseFloat(vehicles.get(id, "x")) + "'";
         sql = sql + ", y = '" + methods.parseFloat(vehicles.get(id, "y")) + "'";
@@ -1054,10 +1064,14 @@ vehicles.checkVehiclesFuel = () => {
 
         if (fuel <= 0) {
             vehicles.setFuel(veh, 0);
-            methods.debug('checkVehiclesFuel');
             vSync.setEngineState(veh, false);
             return;
         }
+
+        if (vehicles.get(veh.getVariable('container'), 's_fuel') < 40)
+            fuelMinute = fuelMinute + 3;
+        else if (vehicles.get(veh.getVariable('container'), 's_fuel') < 20)
+            fuelMinute = fuelMinute + 6;
 
         if (speedMph < 1)
         {
@@ -1124,7 +1138,7 @@ vehicles.updateOwnerInfo = function (id, userId, userName) {
 
     if (userId == 0) {
         vehicles.park(id, 0, 0, 0, 0);
-        mysql.executeQuery("UPDATE cars SET user_name = '" + userName + "', user_id = '" + userId + "', number = '" + vehicles.generateNumber() + "', tax_money = '0', s_mp = '0', is_neon = '0', neon_r = '0', neon_g = '0', neon_b = '0', extra = '0', cop_park_name = '', is_cop_park = '0', sell_price = '0', s_km = '0', upgrade = '{\"18\":-1}' where id = '" + id + "'");
+        mysql.executeQuery("UPDATE cars SET user_name = '" + userName + "', user_id = '" + userId + "', number = '" + vehicles.generateNumber() + "', tax_money = '0', is_neon = '0', neon_r = '0', neon_g = '0', neon_b = '0', extra = '0', cop_park_name = '', is_cop_park = '0', sell_price = '0', s_km = '0', s_eng = '100', s_trans = '100', s_fuel = '100', s_whel = '100', s_elec = '100', s_break = '100', upgrade = '{\"18\":-1}' where id = '" + id + "'");
 
         try {
             let vehInfo = methods.getVehicleInfo(vehicles.get(id, 'name'));
@@ -1524,7 +1538,7 @@ vehicles.lockStatus = (player, vehicle) => {
     }
 };
 
-vehicles.engineStatus = (player, vehicle) => {
+vehicles.engineStatus = (player, vehicle, status = null) => {
     methods.debug('vehicles.engineStatus');
     if (!user.isLogin(player))
         return;
@@ -1545,6 +1559,17 @@ vehicles.engineStatus = (player, vehicle) => {
         }
         //vehicle.engine = !vehicle.engine;
         let eStatus = !vSync.getEngineState(vehicle);
+
+        if (status === false)
+            eStatus = false;
+
+        let s_elec = vehicles.get(vehicle.getVariable('container'), 's_elec');
+        if (eStatus && s_elec && s_elec < 30) {
+            if (methods.getRandomInt(0, 10) < 5) {
+                player.notify('~r~Двигатель незавелся, из-за повреждений в электронике, попробуйте еще раз');
+                return;
+            }
+        }
         vSync.setEngineState(vehicle, eStatus);
         if (eStatus)
             player.notify('Вы ~g~запустили~s~ двигатель');

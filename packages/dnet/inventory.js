@@ -1793,6 +1793,8 @@ inventory.useItem = function(player, id, itemId, isTargetable = false) {
                             inventory.addItem(141, 1, inventory.types.Player, user.getId(player), methods.parseInt(methods.getRandomInt(6000, 8000) * 1.5), 0, "{}", 2);
                         }
 
+                        player.call('client:quest:gang:14');
+
                         user.blockKeys(player, false);
                         player.notify(`~y~Осталось ячеек ~s~${count - 1}`);
 

@@ -3,6 +3,7 @@ import methods from '../modules/methods';
 import user from '../user';
 
 import jobPoint from '../manager/jobPoint';
+import family from "../property/family";
 
 let bus = {};
 
@@ -232,7 +233,6 @@ bus.nextCheckpoint = function() {
                         }
 
                         if (_currentId >= bus.markers1.length) {
-                            user.giveJobMoney(530);
                             user.giveJobSkill();
                             mp.game.ui.notifications.show('~g~Вы закончили свой рейс');
                             user.addRep(10);
@@ -241,7 +241,7 @@ bus.nextCheckpoint = function() {
                             _isBus1 = false;
                             _currentId = 0;
                             _checkpointId = -1;
-                            bus.stop(false);
+                            bus.stop(530, false);
                             break;
                         }
 
@@ -257,7 +257,6 @@ bus.nextCheckpoint = function() {
                         }
 
                         if (_currentId >= bus.markers2.length) {
-                            user.giveJobMoney(216);
                             user.giveJobSkill();
                             mp.game.ui.notifications.show('~g~Вы закончили свой рейс');
                             user.addRep(5);
@@ -266,7 +265,7 @@ bus.nextCheckpoint = function() {
                             _isBus2 = false;
                             _currentId = 0;
                             _checkpointId = -1;
-                            bus.stop(false);
+                            bus.stop(216, false);
                             break;
                         }
 
@@ -282,7 +281,6 @@ bus.nextCheckpoint = function() {
                         }
 
                         if (_currentId >= bus.markers3.length) {
-                            user.giveJobMoney(1300);
                             user.giveJobSkill();
                             mp.game.ui.notifications.show('~g~Вы закончили свой рейс');
                             user.addRep(25);
@@ -291,7 +289,7 @@ bus.nextCheckpoint = function() {
                             _isBus3 = false;
                             _currentId = 0;
                             _checkpointId = -1;
-                            bus.stop(false);
+                            bus.stop(1300, false);
                             break;
                         }
 
@@ -315,7 +313,7 @@ bus.nextCheckpoint = function() {
     }, timeout);
 };
 
-bus.stop = function(isNotify = true) {
+bus.stop = async function(money, isNotify = true) {
     jobPoint.delete();
     mp.players.local.freezePosition(false);
 
@@ -327,6 +325,27 @@ bus.stop = function(isNotify = true) {
 
     if (isNotify)
         mp.game.ui.notifications.show('~r~Ваш рейс досрочно завершен');
+    else {
+        let offset = 0;
+        let fId = user.getCache('family_id');
+        if (fId > 0) {
+            let fData = await family.getData(fId);
+            if (fData.get('level') === 2) {
+                if (fData.get('exp') > 1000) {
+                    family.addMoney(fId, 750000, 'Премия за достижения 3 уровня');
+                    family.set(fId, 'level', 3);
+                }
+                else if (fData.get('level') > 2)
+                    family.set(fId, 'exp', fData.get('exp') + 1);
+            }
+            else
+                offset = money * 0.3;
+            if (fData.get('level') > 5) {
+                family.addMoney(fId, (money + offset) * 0.3, 'Зачисление от работы автобуса');
+            }
+        }
+        user.giveJobMoney(money + offset);
+    }
 };
 
 mp.events.add("playerEnterCheckpoint", (checkpoint) => {

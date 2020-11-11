@@ -293,6 +293,9 @@ mp.events.add('client:shopMenu:changeSelect2', async function(json) {
         if (params.type === 'lsc:setS2Tunning') {
             menuList.showLscS2TunningMenu(params.shop, params.price);
         }
+        if (params.type === 'lsc:setS3Tunning') {
+            menuList.showLscS3TunningMenu(params.shop, params.price);
+        }
         if (params.type === 'lsc:s:mod') {
             menuList.showLscS2MoreTunningMenu(params.shop, params.idx, params.price);
         }
@@ -593,7 +596,11 @@ mp.events.add('client:shopMenu:buyCash2', async function(json) {
             else
                 mp.events.callRemote('server:lsc:buySTun', params.mod, params.idx / 10, params.price, params.shop, enums.lscSNames[params.mod][0], 0);
         }
+        if(params.type == 'lsc:s:fix') {
+            mp.events.callRemote('server:lsc:buySFix', params.idx, params.price, params.shop, params.fixName, 0);
+        }
         if (params.type === 'mask:buy') {
+            quest.gang(false, -1, 4);
             cloth.buyMask(params.maskPrice, params.idxFull, params.shop, 0);
         }
         if(params.type == 'b:show') {
@@ -611,11 +618,12 @@ mp.events.add('client:shopMenu:buyCash2', async function(json) {
             user.save();
         }
         if(params.type == 'c:buy') {
-            quest.standart(false, -1, 5);
+            quest.standart(false, -1, 6);
+            quest.gang(false, -1, 3);
             cloth.buy(params.id8, params.id1, params.id2, params.id, params.id4, params.id5, params.id6, params.id7, params.itemName + ' #' + (params.id + 1), params.shop, false, 0);
         }
         if(params.type == 'p:buy') {
-            quest.standart(false, -1, 5);
+            quest.standart(false, -1, 6);
             cloth.buyProp(params.id4, params.id1, params.id2, params.idx, params.itemName, params.shop, false, 0);
         }
     }
@@ -670,7 +678,11 @@ mp.events.add('client:shopMenu:buyCard2', async function(json) {
             else
                 mp.events.callRemote('server:lsc:buySTun', params.mod, params.idx / 10, params.price, params.shop, enums.lscSNames[params.mod][0], 1);
         }
+        if(params.type == 'lsc:s:fix') {
+            mp.events.callRemote('server:lsc:buySFix', params.idx, params.price, params.shop, params.fixName, 1);
+        }
         if (params.type === 'mask:buy') {
+            quest.gang(false, -1, 4);
             cloth.buyMask(params.maskPrice, params.idxFull, params.shop, 1);
         }
         if(params.type == 'b:show') {
@@ -689,11 +701,12 @@ mp.events.add('client:shopMenu:buyCard2', async function(json) {
         }
 
         if(params.type == 'c:buy') {
-            quest.standart(false, -1, 5);
+            quest.standart(false, -1, 6);
+            quest.gang(false, -1, 3);
             cloth.buy(params.id8, params.id1, params.id2, params.id, params.id4, params.id5, params.id6, params.id7, params.itemName + ' #' + (params.id + 1), params.shop, false, 1);
         }
         if(params.type == 'p:buy') {
-            quest.standart(false, -1, 5);
+            quest.standart(false, -1, 6);
             cloth.buyProp(params.id4, params.id1, params.id2, params.idx, params.itemName, params.shop, false, 1);
         }
     }
@@ -706,7 +719,7 @@ mp.events.add('client:shopMenu:buyCard2', async function(json) {
 mp.events.add('client:carRent:buyCash', async function(name, json) {
     try {
         let params = JSON.parse(json);
-        methods.debug(json);
+        quest.standart(false, -1, 2);
         mp.events.callRemote('server:rent:buy', params.hash, params.price, params.shop, 0);
         shopMenu.hideCarRent();
     }
@@ -723,7 +736,7 @@ mp.events.add('client:carRent:buyCard', async function(name, json) {
     }
     try {
         let params = JSON.parse(json);
-        methods.debug(json);
+        quest.standart(false, -1, 2);
         mp.events.callRemote('server:rent:buy', params.hash, params.price, params.shop, 1);
         shopMenu.hideCarRent();
     }
@@ -873,7 +886,7 @@ mp.events.add('client:shopMenu:buyCash', async function(json) {
                 if (params.id === 251)
                     quest.fish(false, -1, 1);
                 else
-                    quest.standart(false, -1, 4);
+                    quest.standart(false, -1, 5);
 
                 mp.events.callRemote('server:shop:buy', params.id, params.price, params.shop);
             }
@@ -1024,7 +1037,7 @@ mp.events.add('client:shopMenu:buyCard', async function(json) {
                 if (params.id === 251)
                     quest.fish(false, -1, 1);
                 else
-                    quest.standart(false, -1, 4);
+                    quest.standart(false, -1, 5);
                 mp.events.callRemote('server:shop:buyCard', params.id, params.price, params.shop);
             }
         }

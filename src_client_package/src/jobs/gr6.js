@@ -4,6 +4,8 @@ import jobPoint from '../manager/jobPoint';
 import weather from '../manager/weather';
 import user from '../user';
 import photo from "./photo";
+import family from "../property/family";
+import ui from "../modules/ui";
 
 let gr6 = {};
 
@@ -198,9 +200,16 @@ mp.events.add("client:createGr6Checkpoint", (x, y, z) => {
     _checkpointId = jobPoint.create(pos, true);
 });
 
-mp.events.add("playerEnterVehicle", function (vehicle, seat) {
+mp.events.add("playerEnterVehicle", async function (vehicle, seat) {
 
     try {
+
+        if(user.isLogin()) {
+            if (user.getCache("online_time") < 169) {
+                mp.game.ui.notifications.show('~r~Подсказка!\n~g~Чтобы запустить двигатель, нажмите ~s~2\n\nНажмите ~g~L~s~ чтобы открыть или закрыть ТС');
+            }
+        }
+
         mp.events.call('client:setNewMaxSpeed', 0);
         mp.events.call('client:setNewMaxSpeedServer', 0);
 
@@ -217,6 +226,19 @@ mp.events.add("playerEnterVehicle", function (vehicle, seat) {
                 Container.Data.ResetLocally(0, 'gr6MoneyBag');
                 mp.game.ui.notifications.show('~g~Вы загрузили деньги в транспорт');
                 user.giveJobSkill();
+
+                let fId = user.getCache('family_id');
+                if (fId > 0) {
+                    let fData = await family.getData(fId);
+                    if (fData.get('level') === 4) {
+                        if (fData.get('exp') > 2500) {
+                            family.addMoney(fId, 1500000, 'Премия за достижения 5 уровня');
+                            family.set(fId, 'level', 5);
+                        }
+                        else
+                            family.set(fId, 'exp', fData.get('exp') + 1);
+                    }
+                }
             }
         }
         else if (Container.Data.HasLocally(0, 'gr6Money') && Container.Data.HasLocally(0, 'gr6MoneyBag')) {

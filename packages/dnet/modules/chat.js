@@ -99,6 +99,12 @@ chat.send = function(player, text) {
     }
 };
 
+chat.sendToPlayer = function(player, text) {
+    if (user.isLogin(player)) {
+        player.outputChatBoxNew(`[${chat.getTime()}] ${text}`);
+    }
+};
+
 chat.sendPos = function(pos, range, sender, text, color = '2196F3') {
 
     mp.players.forEach(p => {

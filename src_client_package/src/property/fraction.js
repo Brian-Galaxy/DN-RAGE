@@ -5,6 +5,7 @@ import vehicles from "./vehicles";
 import ui from "../modules/ui";
 import fuel from "../business/fuel";
 import menuList from "../menuList";
+import quest from "../manager/quest";
 
 let fraction = {};
 
@@ -82,6 +83,7 @@ fraction.unloadCargoVehTimer = async function(id, cargoId) {
         menuList.hide();
         mp.events.callRemote('server:vehicle:cargoUnload', id);
         //mp.game.ui.notifications.show(`~g~Транспорт был разгружен`);
+        quest.gang(false, -1, 11);
         isUnload = false;
         try {
             mp.players.local.vehicle.freezePosition(false);

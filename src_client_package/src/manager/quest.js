@@ -9,6 +9,7 @@ import weather from "./weather";
 
 import vehicles from "../property/vehicles";
 import methods from "../modules/methods";
+import photo from "../jobs/photo";
 
 let quest = {};
 
@@ -24,8 +25,6 @@ let questNames = [
 
 let gangTakeBoxPos = new mp.Vector3(10.247762680053711, -1902.8265380859375, 21.602693557739258);
 let gangPutBoxPos = new mp.Vector3(-119.17330932617188, -1769.6900634765625, 28.85245704650879);
-let isBoxTake = false;
-let isBoxPut = false;
 
 let _checkpointId = -1;
 let _currentCheckpointId = 0;
@@ -33,11 +32,11 @@ let _currentCheckpointId = 0;
 let isLamar = false;
 
 let questLamarShop = [
-    new mp.Vector3(-50.390804290771484, -1756.2313232421875, 28.421005249023438),
-    new mp.Vector3(-46.387550354003906, -1754.6119384765625, 28.421005249023438),
-    new mp.Vector3(-51.22553253173828, -1748.652587890625, 28.421005249023438),
-    new mp.Vector3(-55.16693115234375, -1751.56396484375, 28.421005249023438),
-    new mp.Vector3(-119.17330932617188, -1769.6900634765625, 28.85245704650879),
+    new mp.Vector3(-182.99929809570312, -1694.6654052734375, 31.857234954833984),
+    new mp.Vector3(-14.589057922363281, -1832.5186767578125, 24.252771377563477),
+    new mp.Vector3(435.4407043457031, -2027.0235595703125, 22.212621688842773),
+    new mp.Vector3(816.9234008789062, -2444.7568359375, 23.11887550354004),
+    new mp.Vector3(1328.7283935546875, -1629.90087890625, 51.09795379638672),
 ];
 
 let questList = {
@@ -49,7 +48,7 @@ let questList = {
         pos: new mp.Vector3(-415.9264831542969, -2645.4287109375, 6.000219345092773),
         tasks: [
             ["Подработка", "Перенесите 20 ящиков", "$200", -415, -2645],
-            ["Work ID", "Получить Work ID в здании правительства", "Work ID 2 уровня", -1290, -571],
+            ["Правительство", "Приехать в здание правительства и получить права категории B", "Work ID 2 уровня", -1290, -571],
         ],
         canSee: () => { return user.getCache('role') === 0 }
     },
@@ -61,13 +60,19 @@ let questList = {
         pos: new mp.Vector3(-1288.153, -561.6686, 31.71216),
         tasks: [
             ["Лицензия", "Купить лицензию категории B", "$100", -1290, -571],
-            ["Work ID", "Получить Work ID в здании правительства", "$200", -1290, -571],
             ["Первая работа", "Устроиться на работу садовника или разнорабочего в здании правительства", "$200", -1290, -571],
-            ["Банк", "Получить банковскую карту в любом из доступных банков", "$200", 0, 99],
-            ["Урчащий животик", "Купить еду и воду в магазине 24/7", "$200", 0, 98],
-            ["Приодеться", "Купить любую одежду", "$200", 0, 97],
-            ["Первый транспорт", "Купить любой транспорт", "$500", 1661, 3820],
-            ["Кчау", "Поучаствовать в гонках на Maze Bank Arena", "$1500", -255, -2026],
+            ["Аренда", "Арендуйте транспорт", "$250", -1261, -608],
+            ["Первые деньги", "Заработайте первые деньги", "$500", -1585, -234],
+            ["Банковская карта", "Оформите банковскую карту в любом из доступных банков", "$200", 0, 99],
+            ["Урчащий животик", "Купить еду и воду в палатке или магазине", "$200", 0, 98],
+            ["Приодеться", "Купить любую одежду", "$500", -817, -1079],
+            ["Швейный завод", "Для того, чтобы получить бинты, необходимо обменять любую одежду на ткань в швейной фабрике, после чего через инвентарь будет возможность их скрафтить", "Рецепт малой аптечки", 718, -977],
+            ["Ламар", "Познакомиться с Ламаром", "Автомобиль", -218, -1368],
+            ["Бричка", "Найти и припарковать свой транспорт (Найти можно через телефон в приложении UVeh)", "$500", -218, -1368],
+            ["Кчау", "Примите участие в гонках на Maze Bank Arena", "$2000", -255, -2026],
+            ["Сила револьвера", "Примите участие в дуэли", "$2000", -255, -2026],
+            ["Время пострелять", "Примите участие в GunZone", "$2000", -255, -2026],
+            ["По карьерной лестнице", "Устроиться на работу в Правительство/LSPD/BCSD/Армию/Службу новостей, на ваш выбор", "$20,000", 0, 0],
         ],
         canSee: () => { return true }
     },
@@ -78,13 +83,21 @@ let questList = {
         anim: "WORLD_HUMAN_SMOKING",
         pos: new mp.Vector3(-218.75608825683594, -1368.4576416015625, 31.25823402404785),
         tasks: [
-            ["E-Coin", "Найти Ламара и получить доступ к консоли", "Доступ к консоли в телефоне", -218, -1368],
-            ["Помощь", "Все подробности узнайте у Ламара", "$200", -218, -1368],
-            ["Разведка", "Все подробности узнайте у Ламара", "$100", -218, -1368],
-            ["Перевозка", "Все подробности узнайте у Ламара", "$500", -218, -1368],
-            ["Вопросы", "Узнайте что происходит", "Доступ к криминальным возможностям ECorp", -218, -1368],
-            /*["Первое дело", "Угоните транспорт", "$150"],
-            ["Только ночью", "Получите наводку у Ламара", "$150"],*/
+            ["Знакомство", "Найти Ламара и поговорить с ним", "Доступ к консоли в телефоне", -218, -1368],
+            ["Фургоны", "Перевезите фургон у Ламара и заработайте свои первые E-Coin", "$200", -218, -1368],
+            ["Криминальный мир", "Познакомьтесь с криминальными организациями штата", "$500", -218, -1368],
+            ["Купите сумку", "Купите сумку в охотничьем магазине в Paleto Bay", "$500", -680, 5832],
+            ["Купите маску", "Купите маску в магазине масок на пляже Del Pierro", "$1000", -1338, -1278],
+            ["Console v1", "Обновите пакеты в консоли через команду apt-get update", "1ec", -218, -1368],
+            ["Угон", "Угоните транспорт любым доступным способом и продайте его через консоль введя команду ecorp -car -getpos", "1ec", -218, -1368],
+            ["ECoin", "Узнайте ваш баланс ECoin с помощью команды ecorp -balance", "1ec", -218, -1368],
+            ["Вывод", "Выведите ECoin на вашу карту с помощью команды ecorp -coin -toBankCard [Сумма]", "1ec",-218, -1368],
+            ["Организация", "Вступите в любую криминальную организацию", "10ec", -218, -1368],
+            ["Стволы", "Купите любое оружие и экипируйте его", "10ec", -218, -1368],
+            ["Разгрузка", "Разгрузите фургон с войны за грузы", "20ec", -218, -1368],
+            ["Кассы", "Взломайте кассу и ограбьте магазин", "50ec", -218, -1368],
+            ["Отмыв", "Отмойте вашу выручку любым доступным способом например через ecorp -money -clear", "50ec", -218, -1368],
+            ["Ограбление банка", "Ограбьте ячейку в банке", "100ec", -218, -1368],
         ],
         canSee: () => { return true }
     },
@@ -186,13 +199,19 @@ quest.loadAllBlip = function() {
     });
 };
 
-quest.gang = function(isBot = false, start = -1) {
+quest.notify = function(title, award) {
+    mp.game.ui.notifications.showWithPicture(title, '~g~Задание выполнено', `Вы получили награду ~g~${award}`, "CHAR_ACTING_UP", 1);
+};
+
+quest.gang = function(isBot = false, start = -1, done = 0) {
 
     try {
-        if (weather.getHour() < 22 && weather.getHour() > 4) {
-            ui.showDialog('Приходи ночью, с 22 до 4 утра', 'Ламар');
+        if (weather.getHour() < 21 && weather.getHour() > 8) {
+            ui.showDialog('Приходи ночью, с 21 до 8 утра', 'Ламар');
             return;
         }
+
+        quest.standart(false, -1, 8);
 
         let qName = 'gang';
 
@@ -215,31 +234,21 @@ quest.gang = function(isBot = false, start = -1) {
                 setTimeout(function () {
                     mp.events.callRemote('server:user:generateCryptoCard');
                 }, 500);
-                ui.showDialog('Ватсап друг, вот держи ссылку, теперь у тебя есть доступ к приложению E-Corp, мы все сейчас через него работаем, крутая штука. Если подробнее, то открой консоль в телефоне и впиши команду ecorp', 'Ламар');
+                ui.showDialog('Ватсап друг, вот держи ссылку, теперь у тебя есть доступ к приложению E-Corp, мы все сейчас через него работаем, крутая штука. Если подробнее, то открой консоль в телефоне и впиши команду ecorp. В общем, вся криминальная жизнь проходит через приложение E-Corp. Люди сами выбирают как будет выглядеть их организация и чем она будет заниматься, но чтобы ты смог в неё попасть или создать свою, тебе необходимо иметь соответсвующую репутацию. Все наводки от меня, у тебя доступны в приложении E-Corp, я буду тебе всё присылать.', 'Ламар');
                 break;
             }
             case 1: {
-
-                if (isBoxPut) {
-                    user.setQuest(qName, 2);
-                    user.addCashMoney(200, 'Помощь Ламару');
-
-                    isBoxPut = false;
-                    jobPoint.delete();
-
-                    mp.game.ui.notifications.show(`~b~Вы выполнили квест ~s~"${quest.getQuestLineName(qName, start)}"~b~, вы получили награду ~s~${quest.getQuestLinePrize(qName, start)}`);
-
-                    mp.attachmentMngr.removeLocal('loader');
-                    user.stopAllAnimation();
+                if (done === start) {
+                    quest.notify(quest.getQuestLineName(qName, start), quest.getQuestLinePrize(qName, start));
+                    user.setQuest(qName, start + 1);
+                    user.addCashMoney(200);
+                    quest.gang();
+                    ui.showDialog('Теперь вам доступны перевозки фургона Ламара, как дополнительный доход. Для того, чтобы продолжить квестовое задание, езжайте к Ламару', 'Информация');
                     return;
                 }
-
                 if (!isBot)
                     return;
-                isBoxTake = true;
-                ui.showDialog('У друга лежит коробка на заднем дворе, мне надо чтобы ты помог её забрать, принесешь сюда, я тебе заплачу', 'Ламар');
-
-                _checkpointId = jobPoint.create(gangTakeBoxPos);
+                ui.showDialog(quest.getQuestLineInfo(qName, start), 'Ламар');
                 break;
             }
             case 2: {
@@ -250,42 +259,116 @@ quest.gang = function(isBot = false, start = -1) {
 
                     user.setQuest(qName, 3);
                     user.addCashMoney(100, 'Помощь Ламару');
-                    mp.game.ui.notifications.show(`~b~Вы выполнили квест ~s~"${quest.getQuestLineName(qName, start)}"~b~, вы получили награду ~s~${quest.getQuestLinePrize(qName, start)}`);
+                    quest.notify(quest.getQuestLineName(qName, start), quest.getQuestLinePrize(qName, start));
                     return;
                 }
 
                 if (!isBot)
                     return;
                 isLamar = true;
-                ui.showDialog('Слушай, можешь зайти в магазин, посмотреть, спит ли продавец', 'Ламар');
-                _checkpointId = jobPoint.create(questLamarShop[_currentCheckpointId]);
+                ui.showDialog('Так, я хочу рассказать что у нас есть большое количество различных группировок, с частью из них я познакомлю тебя прямо сейчас, координаты дам тебе в GPS, отправляйся туда и освойся, но будь аккуратен, ребята не очень любят когда долго чужаки тусят на их районе', 'Ламар');
+                _checkpointId = jobPoint.create(questLamarShop[_currentCheckpointId], true, 3);
                 break;
             }
             case 3: {
-
-                if (isLamar) {
-                    isLamar = false;
-                    jobPoint.delete();
-
-                    vehicles.destroy();
-
-                    user.setQuest(qName, 4);
-                    user.addCashMoney(500, 'Помощь Ламару');
-                    mp.game.ui.notifications.show(`~b~Вы выполнили квест ~s~"${quest.getQuestLineName(qName, start)}"~b~, вы получили награду ~s~${quest.getQuestLinePrize(qName, start)}`);
+                if (done === start) {
+                    quest.notify(quest.getQuestLineName(qName, start), quest.getQuestLinePrize(qName, start));
+                    user.setQuest(qName, start + 1);
+                    user.addCashMoney(500);
+                    quest.gang();
                     return;
                 }
-
                 if (!isBot)
                     return;
-                isLamar = true;
-                ui.showDialog('Мне надо чтобы ты отвёз фургон до точки, вот ключи', 'Ламар');
-                _checkpointId = jobPoint.create(new mp.Vector3(330.46771240234375, 2615.75439453125, 43.49345016479492), true, 3);
-                vehicles.spawnJobCar(-216.03062438964844, -1363.7830810546875, 31.010269165039062, 29.823272705078125, "Speedo4", 0);
+                ui.showDialog(quest.getQuestLineInfo(qName, start), 'Ламар');
                 break;
             }
             case 4: {
-                user.setQuest(qName, 5);
-                ui.showDialog('В общем, вся криминальная жизнь проходит через приложение E-Corp. Люди сами выбирают как будет выглядеть их организация и чем она будет заниматься, но чтобы ты смог в неё попасть или создать свою, тебе необходимо иметь соответсвующую репутацию. Все наводки от меня, у тебя доступны в приложении E-Corp, я буду тебе всё присылать.', 'Ламар');
+                if (done === start) {
+                    quest.notify(quest.getQuestLineName(qName, start), quest.getQuestLinePrize(qName, start));
+                    user.setQuest(qName, start + 1);
+                    user.addCashMoney(1000);
+                    quest.gang();
+                    return;
+                }
+                if (!isBot)
+                    return;
+                ui.showDialog(quest.getQuestLineInfo(qName, start), 'Ламар');
+                break;
+            }
+            case 5:
+            case 6:
+            case 7:
+            case 8:
+            {
+                if (done === start) {
+                    quest.notify(quest.getQuestLineName(qName, start), quest.getQuestLinePrize(qName, start));
+                    user.setQuest(qName, start + 1);
+                    user.addCryptoMoney(1);
+                    quest.gang();
+                    return;
+                }
+                if (!isBot)
+                    return;
+                ui.showDialog(quest.getQuestLineInfo(qName, start), 'Ламар');
+                break;
+            }
+            case 9:
+            case 10:
+            {
+                if (done === start) {
+                    quest.notify(quest.getQuestLineName(qName, start), quest.getQuestLinePrize(qName, start));
+                    user.setQuest(qName, start + 1);
+                    user.addCryptoMoney(10);
+                    quest.gang();
+                    return;
+                }
+                if (!isBot)
+                    return;
+                ui.showDialog(quest.getQuestLineInfo(qName, start), 'Ламар');
+                break;
+            }
+            case 11:
+            {
+                if (done === start) {
+                    quest.notify(quest.getQuestLineName(qName, start), quest.getQuestLinePrize(qName, start));
+                    user.setQuest(qName, start + 1);
+                    user.addCryptoMoney(20);
+                    quest.gang();
+                    return;
+                }
+                if (!isBot)
+                    return;
+                ui.showDialog(quest.getQuestLineInfo(qName, start), 'Ламар');
+                break;
+            }
+            case 12:
+            case 13:
+            {
+                if (done === start) {
+                    quest.notify(quest.getQuestLineName(qName, start), quest.getQuestLinePrize(qName, start));
+                    user.setQuest(qName, start + 1);
+                    user.addCryptoMoney(50);
+                    quest.gang();
+                    return;
+                }
+                if (!isBot)
+                    return;
+                ui.showDialog(quest.getQuestLineInfo(qName, start), 'Ламар');
+                break;
+            }
+            case 14:
+            {
+                if (done === start) {
+                    quest.notify(quest.getQuestLineName(qName, start), quest.getQuestLinePrize(qName, start));
+                    user.setQuest(qName, start + 1);
+                    user.addCryptoMoney(100);
+                    quest.gang();
+                    return;
+                }
+                if (!isBot)
+                    return;
+                ui.showDialog(quest.getQuestLineInfo(qName, start), 'Ламар');
                 break;
             }
         }
@@ -319,14 +402,14 @@ quest.role0 = function(isBot = false, start = -1) {
             }
             case 1: {
                 if(user.getCache('work_lic') != '') {
-                    mp.game.ui.notifications.show(`~b~Вы выполнили квест ~s~"${quest.getQuestLineName(qName, start)}"~b~, вы получили награду ~s~${quest.getQuestLinePrize(qName, start)}`);
+                    quest.notify(quest.getQuestLineName(qName, start), quest.getQuestLinePrize(qName, start));
                     user.set('work_lvl', user.getCache('work_lic') + 1);
                     user.setQuest(qName, 2);
                     return;
                 }
                 if (!isBot)
                     return;
-                ui.showDialog('Ты не плохо справился, езжай теперь к зданию правительства, подойди к стойке регистрации и тебе помогут оформить Word ID', 'Каспер');
+                ui.showDialog('Ты не плохо справился, езжай теперь к зданию правительства, там можешь поговорить с Сюзанной', 'Каспер');
                 user.setWaypoint(-1379.659, -499.748);
                 break;
             }
@@ -352,7 +435,7 @@ quest.standart = function(isBot = false, start = -1, done = 0) {
             case 0: {
 
                 if(user.getCache('b_lic')) {
-                    mp.game.ui.notifications.show(`~b~Вы выполнили квест ~s~"${quest.getQuestLineName(qName, start)}"~b~, вы получили награду ~s~${quest.getQuestLinePrize(qName, start)}`);
+                    quest.notify(quest.getQuestLineName(qName, start), quest.getQuestLinePrize(qName, start));
                     user.setQuest(qName, start + 1);
                     user.addCashMoney(100);
                     quest.standart();
@@ -362,25 +445,12 @@ quest.standart = function(isBot = false, start = -1, done = 0) {
                 if (!isBot)
                     return;
                 user.showCustomNotify('Список ваших квестов можно посмотреть через M -> Квесты', 0, 5, 20000);
-                ui.showDialog('Привет, тебе необходимо сейчас в здании правительства, которое находиться позади меня, оформить лицензию категории B, заодно можешь получить WorkID. И да, не забудь экипировать телефон, он у тебя в инвентаре.', 'Сюзанна');
+                ui.showDialog('Привет, тебе необходимо сейчас в здании правительства, которое находиться позади меня, оформить лицензию категории B. И да, не забудь экипировать телефон, он у тебя в инвентаре.', 'Сюзанна');
                 break;
             }
             case 1: {
-                if(user.getCache('work_lic') != '') {
-                    mp.game.ui.notifications.show(`~b~Вы выполнили квест ~s~"${quest.getQuestLineName(qName, start)}"~b~, вы получили награду ~s~${quest.getQuestLinePrize(qName, start)}`);
-                    user.setQuest(qName, start + 1);
-                    user.addCashMoney(200);
-                    quest.standart();
-                    return;
-                }
-                if (!isBot)
-                    return;
-                ui.showDialog('Теперь тебе необходимо оформить Work ID в здании правительства', 'Сюзанна');
-                break;
-            }
-            case 2: {
                 if(user.getCache('job') > 0) {
-                    mp.game.ui.notifications.show(`~b~Вы выполнили квест ~s~"${quest.getQuestLineName(qName, start)}"~b~, вы получили награду ~s~${quest.getQuestLinePrize(qName, start)}`);
+                    quest.notify(quest.getQuestLineName(qName, start), quest.getQuestLinePrize(qName, start));
                     user.setQuest(qName, start + 1);
                     user.addCashMoney(200);
                     quest.standart();
@@ -391,23 +461,38 @@ quest.standart = function(isBot = false, start = -1, done = 0) {
                 ui.showDialog('Устройся на работу садовника или разнорабочего, чтобы заработать свои первые деньги', 'Сюзанна');
                 break;
             }
-            case 3: {
-                if(user.getCache('bank_card') > 0) {
-                    mp.game.ui.notifications.show(`~b~Вы выполнили квест ~s~"${quest.getQuestLineName(qName, start)}"~b~, вы получили награду ~s~${quest.getQuestLinePrize(qName, start)}`);
+            case 2: {
+                if (done === start) {
+                    quest.notify(quest.getQuestLineName(qName, start), quest.getQuestLinePrize(qName, start));
                     user.setQuest(qName, start + 1);
-                    user.addCashMoney(200);
+                    user.addCashMoney(250);
                     quest.standart();
                     return;
                 }
                 if (!isBot)
                     return;
-                ui.showDialog('Оформи банковскую карту в любом из выбранных тобой банка', 'Сюзанна');
+                ui.showDialog(quest.getQuestLineInfo(qName, start), 'Сюзанна');
+                break;
+            }
+            case 3: {
+                if (done === start) {
+                    quest.notify(quest.getQuestLineName(qName, start), quest.getQuestLinePrize(qName, start));
+                    user.setQuest(qName, start + 1);
+                    user.addCashMoney(500);
+                    quest.standart();
+                    return;
+                }
+                if (!isBot)
+                    return;
+                ui.showDialog(quest.getQuestLineInfo(qName, start), 'Сюзанна');
                 break;
             }
             case 4:
-            case 5: {
+            case 5:
+            case 6:
+            {
                 if (done === start) {
-                    mp.game.ui.notifications.show(`~b~Вы выполнили квест ~s~"${quest.getQuestLineName(qName, start)}"~b~, вы получили награду в ~s~${quest.getQuestLinePrize(qName, start)}`);
+                    quest.notify(quest.getQuestLineName(qName, start), quest.getQuestLinePrize(qName, start));
                     user.setQuest(qName, start + 1);
                     user.addCashMoney(200);
                     quest.standart();
@@ -418,25 +503,71 @@ quest.standart = function(isBot = false, start = -1, done = 0) {
                 ui.showDialog(quest.getQuestLineInfo(qName, start), 'Сюзанна');
                 break;
             }
-            case 6: {
-                if(user.getCache('car_id1') > 0 || user.getCache('car_id2') > 0 || user.getCache('car_id3') > 0) {
-                    mp.game.ui.notifications.show(`~b~Вы выполнили квест ~s~"${quest.getQuestLineName(qName, start)}"~b~, вы получили награду в ~s~${quest.getQuestLinePrize(qName, start)}`);
+            case 7: {
+                if (done === start) {
+                    quest.notify(quest.getQuestLineName(qName, start), quest.getQuestLinePrize(qName, start));
                     user.setQuest(qName, start + 1);
-                    user.addCashMoney(500);
+                    inventory.addItem(474, 1, 1, user.getCache('id'), 1, 0, JSON.stringify({id:1}));
                     quest.standart();
+                    ui.showDialog('На проекте есть рецепты для крафта различных компонентов, некоторые вы получаете игровым путем, рецепт на большую аптечку можно купить у сотрудников EMS, также некоторые предметы имеют свойство ломаться, например оружие и бронежилеты, их необходимо чинить на специальных зонах для крафта, которые находятся в складах или в подвалах у банд', 'Информация');
                     return;
                 }
                 if (!isBot)
                     return;
-                ui.showDialog('Осталось тебе купить транспорт и дело в шляпе!', 'Сюзанна');
+                ui.showDialog(quest.getQuestLineInfo(qName, start), 'Сюзанна');
                 break;
             }
-            case 7: {
+            case 8: {
                 if (done === start) {
-                    mp.game.ui.notifications.show(`~b~Вы выполнили квест ~s~"${quest.getQuestLineName(qName, start)}"~b~, вы получили награду в ~s~${quest.getQuestLinePrize(qName, start)}`);
+                    quest.notify(quest.getQuestLineName(qName, start), quest.getQuestLinePrize(qName, start));
                     user.setQuest(qName, start + 1);
-                    user.addCashMoney(1500);
                     quest.standart();
+                    let vehList = ['Emperor2', 'Tornado3', 'Tornado4', 'Rebel', 'Voodoo2'];
+                    user.giveVehicle(vehList[methods.getRandomInt(0, vehList.length)], 1, false, '', true);
+                    return;
+                }
+                if (!isBot)
+                    return;
+                ui.showDialog(quest.getQuestLineInfo(qName, start), 'Сюзанна');
+                break;
+            }
+            case 9: {
+                if (done === start) {
+                    quest.notify(quest.getQuestLineName(qName, start), quest.getQuestLinePrize(qName, start));
+                    user.setQuest(qName, start + 1);
+                    quest.standart();
+                    user.addCashMoney(500);
+                    ui.showDialog('У каждого транспорта есть свои уникальные характеристики, их можно посмотреть через панель транспорта нажав кнопку 2, открыв вкладку характеристики. Учтите, транспорт при авариях может повреждаться и из-за этого его ходовые качества будут изменяться', 'Информация');
+                    return;
+                }
+                if (!isBot)
+                    return;
+                ui.showDialog(quest.getQuestLineInfo(qName, start), 'Сюзанна');
+                break;
+            }
+            case 10:
+            case 11:
+            case 12:
+            {
+                if (done === start) {
+                    quest.notify(quest.getQuestLineName(qName, start), quest.getQuestLinePrize(qName, start));
+                    user.setQuest(qName, start + 1);
+                    quest.standart();
+                    user.addCashMoney(2000);
+                    return;
+                }
+                if (!isBot)
+                    return;
+                ui.showDialog(quest.getQuestLineInfo(qName, start), 'Сюзанна');
+                break;
+            }
+            case 13:
+            {
+                if (done === start) {
+                    quest.notify(quest.getQuestLineName(qName, start), quest.getQuestLinePrize(qName, start));
+                    user.setQuest(qName, start + 1);
+                    quest.standart();
+                    user.addCashMoney(20000);
                     return;
                 }
                 if (!isBot)
@@ -465,7 +596,7 @@ quest.fish = function(isBot = false, start = -1, done = 0) {
         switch (start) {
             case 0: {
                 if(user.getCache('fish_lic')) {
-                    mp.game.ui.notifications.show(`~b~Вы выполнили квест ~s~"${quest.getQuestLineName(qName, start)}"~b~, вы получили награду ~s~${quest.getQuestLinePrize(qName, start)}`);
+                    quest.notify(quest.getQuestLineName(qName, start), quest.getQuestLinePrize(qName, start));
                     user.setQuest(qName, start + 1);
                     user.addCashMoney(500);
                     return;
@@ -474,7 +605,7 @@ quest.fish = function(isBot = false, start = -1, done = 0) {
             }
             case 1: {
                 if(done === start) {
-                    mp.game.ui.notifications.show(`~b~Вы выполнили квест ~s~"${quest.getQuestLineName(qName, start)}"~b~, вы получили награду ~s~${quest.getQuestLinePrize(qName, start)}`);
+                    quest.notify(quest.getQuestLineName(qName, start), quest.getQuestLinePrize(qName, start));
                     user.setQuest(qName, start + 1);
                     user.addCashMoney(100);
                     return;
@@ -485,7 +616,7 @@ quest.fish = function(isBot = false, start = -1, done = 0) {
                 if(done === start) {
                     let qParams = user.getQuestParams(qName);
                     if (methods.parseInt(qParams[0]) === 10) {
-                        mp.game.ui.notifications.show(`~b~Вы выполнили квест ~s~"${quest.getQuestLineName(qName, start)}"~b~, вы получили награду ~s~${quest.getQuestLinePrize(qName, start)}`);
+                        quest.notify(quest.getQuestLineName(qName, start), quest.getQuestLinePrize(qName, start));
                         user.setQuest(qName, start + 1);
                         user.addCashMoney(200);
                     }
@@ -500,7 +631,7 @@ quest.fish = function(isBot = false, start = -1, done = 0) {
             }
             case 3: {
                 if(done === start) {
-                    mp.game.ui.notifications.show(`~b~Вы выполнили квест ~s~"${quest.getQuestLineName(qName, start)}"~b~, вы получили награду ~s~${quest.getQuestLinePrize(qName, start)}`);
+                    quest.notify(quest.getQuestLineName(qName, start), quest.getQuestLinePrize(qName, start));
                     user.setQuest(qName, start + 1);
                     user.addCashMoney(200);
                     return;
@@ -511,7 +642,7 @@ quest.fish = function(isBot = false, start = -1, done = 0) {
                 if(done === start) {
                     let qParams = user.getQuestParams(qName);
                     if (methods.parseInt(qParams[1]) === 25) {
-                        mp.game.ui.notifications.show(`~b~Вы выполнили квест ~s~"${quest.getQuestLineName(qName, start)}"~b~, вы получили награду ~s~${quest.getQuestLinePrize(qName, start)}`);
+                        quest.notify(quest.getQuestLineName(qName, start), quest.getQuestLinePrize(qName, start));
                         user.setQuest(qName, start + 1);
                         user.addCashMoney(1000);
                         inventory.addItem(474, 1, 1, user.getCache('id'), 1, 0, JSON.stringify({id:3}));
@@ -527,7 +658,7 @@ quest.fish = function(isBot = false, start = -1, done = 0) {
             }
             case 5: {
                 if(done === start) {
-                    mp.game.ui.notifications.show(`~b~Вы выполнили квест ~s~"${quest.getQuestLineName(qName, start)}"~b~, вы получили награду ~s~${quest.getQuestLinePrize(qName, start)}`);
+                    quest.notify(quest.getQuestLineName(qName, start), quest.getQuestLinePrize(qName, start));
                     user.setQuest(qName, start + 1);
                     user.addCashMoney(250);
                     return;
@@ -537,28 +668,28 @@ quest.fish = function(isBot = false, start = -1, done = 0) {
             case 6: {
                 let qParams = user.getQuestParams(qName);
                 if (methods.parseInt(qParams[2]) === 5) {
-                    mp.game.ui.notifications.show(`~b~Вы выполнили квест ~s~"${quest.getQuestLineName(qName, start)}"~b~, вы получили награду ~s~${quest.getQuestLinePrize(qName, start)}`);
+                    quest.notify(quest.getQuestLineName(qName, start), quest.getQuestLinePrize(qName, start));
                     user.setQuest(qName, start + 1);
                     user.addCashMoney(1500);
                 }
                 else {
                     qParams[2] = methods.parseInt(qParams[2]) + 1;
                     user.setQuest(qName, start, qParams);
-                    mp.game.ui.notifications.show(`Квест\n~b~Вы поймали: ${qParams[2]}шт американская палии`);
+                    mp.game.ui.notifications.show(`Квест\n~b~Вы поймали: ${qParams[2]}шт рыбы`);
                 }
                 break;
             }
             case 7: {
                 let qParams = user.getQuestParams(qName);
                 if (methods.parseInt(qParams[3]) === 5) {
-                    mp.game.ui.notifications.show(`~b~Вы выполнили квест ~s~"${quest.getQuestLineName(qName, start)}"~b~, вы получили награду ~s~${quest.getQuestLinePrize(qName, start)}`);
+                    quest.notify(quest.getQuestLineName(qName, start), quest.getQuestLinePrize(qName, start));
                     user.setQuest(qName, start + 1);
                     user.addCashMoney(5000);
                 }
                 else {
                     qParams[3] = methods.parseInt(qParams[3]) + 1;
                     user.setQuest(qName, start, qParams);
-                    mp.game.ui.notifications.show(`Квест\n~b~Вы поймали: ${qParams[3]}шт американская палии`);
+                    mp.game.ui.notifications.show(`Квест\n~b~Вы поймали: ${qParams[3]}шт рыбы`);
                 }
                 break;
             }
@@ -583,7 +714,7 @@ quest.business = function(isBot = false, start = -1, done = 0) {
         switch (start) {
             case 0: {
                 if(user.getCache('biz_lic')) {
-                    mp.game.ui.notifications.show(`~b~Вы выполнили квест ~s~"${quest.getQuestLineName(qName, start)}"~b~, вы получили награду ~s~${quest.getQuestLinePrize(qName, start)}`);
+                    quest.notify(quest.getQuestLineName(qName, start), quest.getQuestLinePrize(qName, start));
                     user.setQuest(qName, start + 1);
                     user.addCashMoney(500);
                     return;
@@ -592,7 +723,7 @@ quest.business = function(isBot = false, start = -1, done = 0) {
             }
             case 1: {
                 if(user.getCache('business_id') > 0) {
-                    mp.game.ui.notifications.show(`~b~Вы выполнили квест ~s~"${quest.getQuestLineName(qName, start)}"~b~, вы получили награду ~s~${quest.getQuestLinePrize(qName, start)}`);
+                    quest.notify(quest.getQuestLineName(qName, start), quest.getQuestLinePrize(qName, start));
                     user.setQuest(qName, start + 1);
                     user.addCashMoney(500);
                     return;
@@ -601,7 +732,7 @@ quest.business = function(isBot = false, start = -1, done = 0) {
             }
             case 2: {
                 if(done === start) {
-                    mp.game.ui.notifications.show(`~b~Вы выполнили квест ~s~"${quest.getQuestLineName(qName, start)}"~b~, вы получили награду ~s~${quest.getQuestLinePrize(qName, start)}`);
+                    quest.notify(quest.getQuestLineName(qName, start), quest.getQuestLinePrize(qName, start));
                     user.setQuest(qName, start + 1);
                     user.addCashMoney(5000);
                     return;
@@ -692,31 +823,26 @@ mp.events.add("playerEnterCheckpoint", (checkpoint) => {
         if (_checkpointId == -1 || _checkpointId == undefined)
             return;
         if (checkpoint.id == _checkpointId) {
-            if (isBoxTake) {
-                isBoxTake = false;
-                isBoxPut = true;
-                _checkpointId = jobPoint.create(gangPutBoxPos);
 
-                mp.attachmentMngr.addLocal('loader');
-                user.playAnimation("anim@heists@box_carry@", "idle", 49);
-                mp.game.ui.notifications.show(`~b~Отнестие коробку Ламару`);
-            }
-            else if (isBoxPut) {
-                quest.gang();
-            }
-            else if (isLamar) {
+            if (isLamar) {
 
-                if (mp.players.local.vehicle) {
-                    quest.gang();
-                    return;
-                }
+                if (_currentCheckpointId === 0)
+                    ui.showDialog('Это банда The Ballas Gang, этническая состовляющая - Афроамериканцы. Баллас одеты в цвета баскетбольной команды Los Santos Panic и бейсбольной команды Los Santos Boars. Фиолетовые в общем.', 'Информация');
+                if (_currentCheckpointId === 1)
+                    ui.showDialog('Это банда The Families, этническая состовляющая - Афроамериканцы. Банда не едина, и поэтому по контролируемой территории кенты делятся на отдельные группировки, называемые сэтами.', 'Информация');
+                if (_currentCheckpointId === 2)
+                    ui.showDialog('Это банда Los Santos Vagos, этническая состовляющая - Латиноамериканцы. По слухам — самая многочисленная мексиканская уличная банда в Лос-Сантосе.', 'Информация');
+                if (_currentCheckpointId === 3)
+                    ui.showDialog('Это банда The Bloods, этническая состовляющая - Афроамериканцы. Предводитель этой банды Mathew Fox, заняли себе самое сочное место в промозоне, потому что именно здесь хранятся огромное количество нелегала', 'Информация');
+                if (_currentCheckpointId === 4)
+                    ui.showDialog('Это банда Marabunta Grande, этническая состовляющая - Латиноамериканцы. Членов банды легко идентифицировать по многочисленным татуировкам, в том числе и на лицах.', 'Информация');
 
                 _currentCheckpointId++;
                 if (_currentCheckpointId >= questLamarShop.length) {
                     quest.gang();
                     return;
                 }
-                _checkpointId = jobPoint.create(questLamarShop[_currentCheckpointId]);
+                _checkpointId = jobPoint.create(questLamarShop[_currentCheckpointId], true, 3);
             }
         }
     }

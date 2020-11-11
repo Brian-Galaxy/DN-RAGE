@@ -1536,6 +1536,10 @@ user.getRepColorName = function() {
         return '~r~Наихудшая';
 };
 
+user.giveVehicle = function(vName, withDelete = 1, withChat = false, desc = '', isBroke = false) {
+    mp.events.callRemote('server:user:giveVehicle', vName, withDelete, withChat, desc, isBroke);
+};
+
 user.giveJobSkill = function() {
     //mp.events.callRemote('server:user:giveJobSkill'); TODO
 };
@@ -1554,6 +1558,8 @@ user.giveJobMoney = function(money) {
         desc = '\n~y~Прибавка VIP HARD 10% от зарплаты';
         money = money * 1.1;
     }
+
+    quest.standart(false, -1, 3);
 
     if (user.getCache('bank_card') == 0) {
         user.addCashMoney(money, 'Зарплата');

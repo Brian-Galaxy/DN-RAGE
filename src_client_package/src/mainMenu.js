@@ -602,8 +602,6 @@ mp.events.add('client:mainMenu:settings:btn', async function(btn) {
     if (btn.toLowerCase().slice(0, 5) === "keys:") {
         try {
             let key = btn.toLowerCase().replace('keys:', '');
-
-
             mp.game.ui.notifications.show(`~g~Нажмите на любую кнопку, для смены клавиши`);
 
             await bind.getChangeKey(key);

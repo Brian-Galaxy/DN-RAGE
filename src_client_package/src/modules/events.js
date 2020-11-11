@@ -931,6 +931,7 @@ mp.events.add('client:duel:start', () => {
         inventory.hide();
     menuList.hide();
     mp.players.local.removeAllWeapons();
+    quest.standart(false, -1, 11);
 });
 
 mp.events.add('client:duel:giveWeapon', () => {
@@ -2481,6 +2482,9 @@ mp.events.add('client:inventory:craft', function(id) {
     if (itemId === 252)
         count = 100;
 
+    if (id === 2)
+        quest.standart(false, -1, 7);
+
     mp.events.callRemote('server:inventory:craft', id, itemId, countItems, count, JSON.stringify(params));
     /*inventory.addItem(itemId, countItems, inventory.types.Player, user.getCache('id'), count, 0, JSON.stringify(params));
     setTimeout(function () {
@@ -2559,7 +2563,11 @@ mp.events.add('client:inventory:usePlayer', function(id, itemId) {
     inventory.usePlayerItem(id, itemId);
 });
 
-mp.events.add('client:inventory:moveTo', async function(id, itemId, ownerId, ownerType) {
+mp.events.add('client:inventory:moveTo', async function(id, itemId, ownerId, ownerType, count) {
+    if (itemId === 50 && count > 10) {
+        mp.game.ui.notifications.show("~r~На банковской карте не должно быть средств, чтобы ее передать");
+        return;
+    }
     if (ownerType === 0) {
         if (mp.players.local.dimension > 0) {
             mp.game.ui.notifications.show("~r~Нельзя выбрасывать предметы в интерьере");
@@ -2623,7 +2631,11 @@ mp.events.add('client:inventory:moveToAll', function(ownerId, ownerType) {
     inventory.updateOwnerAll(user.getCache('id'), inventory.types.Player, methods.parseInt(ownerId), ownerType);
 });
 
-mp.events.add('client:inventory:giveItem', function(id, itemId, playerId) {
+mp.events.add('client:inventory:giveItem', function(id, itemId, playerId, count) {
+    if (itemId === 50 && count > 10) {
+        mp.game.ui.notifications.show("~r~На банковской карте не должно быть средств, чтобы ее передать");
+        return;
+    }
     inventory.giveItem(id, itemId, playerId)
 });
 
@@ -2643,7 +2655,7 @@ mp.events.add('client:inventory:moveFrom', function(id, itemId, ownerType) {
     inventory.updateOwnerId(id, user.getCache('id'), inventory.types.Player);
 });
 
-mp.events.add('client:inventory:drop', function(id, itemId) {
+mp.events.add('client:inventory:drop', function(id, itemId, count) {
     if (mp.players.local.dimension > 0) {
         mp.game.ui.notifications.show("~r~Нельзя выкидывать предметы в интерьере");
         inventory.getItemList(inventory.types.Player, user.getCache('id'));
@@ -2652,6 +2664,10 @@ mp.events.add('client:inventory:drop', function(id, itemId) {
     if (ui.isGreenZone()) {
         mp.game.ui.notifications.show("~r~Нельзя выбрасывать предметы в зелёной зоне");
         inventory.getItemList(inventory.types.Player, user.getCache('id'));
+        return;
+    }
+    if (itemId === 50 && count > 10) {
+        mp.game.ui.notifications.show("~r~На банковской карте не должно быть средств, чтобы ее передать");
         return;
     }
     inventory.dropItem(id, itemId, mp.players.local.position, mp.players.local.getRotation(0));
@@ -3008,20 +3024,23 @@ mp.events.add('client:inventory:unEquip', function(id, itemId) {
 });
 
 mp.events.add('client:inventory:equip', function(id, itemId, count, aparams) {
-    setTimeout(function () {
-        try {
-            if (itemId === 50)
-                quest.standart();
-        }
-        catch (e) {
-
-        }
-    }, 5000);
+    if (itemId === 50)
+        quest.standart(false, -1, 4);
+    if (items.isWeapon(itemId))
+        quest.gang(false, -1, 10);
     mp.events.callRemote('server:inventory:equip', id, itemId, count, aparams);
 });
 
 mp.events.add('client:ui:debug', function(file, error, errorInfo) {
     methods.saveFile('ui', `[${user.getCache('social')}] [${file}] ${error} | ${errorInfo}`);
+});
+
+mp.events.add('client:quest:gang:12', function() {
+    quest.gang(false, -1, 12);
+});
+
+mp.events.add('client:quest:gang:14', function() {
+    quest.gang(false, -1, 14);
 });
 
 mp.events.add('client:carshop:changeCar', function(carName) {
@@ -3061,9 +3080,6 @@ mp.events.add('client:carshop:buyCar', function(carName, count) {
         setTimeout(function () {
             mp.events.callRemote('server:vShop:buy', carName, cl1 , cl2, shopId);
         }, 1000);
-        setTimeout(function () {
-            quest.standart();
-        }, 20000);
     }
     catch (e) {
         methods.debug(e);
@@ -3232,34 +3248,16 @@ mp.events.add("client:vehicle:checker", async function () {
                 maxSpeed = 350;
 
             try {
-                if (isSetHandling < 50) {
-                    isSetHandling++;
-                    
-                    if (vehicle.getVariable('container') != undefined && vehicle.getVariable('user_id') > 0) {
-                        let car = await vehicles.getData(vehicle.getVariable('container'));
-                        if (car.has('upgrade')) {
-                            let upgrade = JSON.parse(car.get('upgrade'));
-                            for (let tune in upgrade) {
-                                try {
-                                    let modType = methods.parseInt(tune);
-                                    if (modType >= 100) {
-                                        if (methods.parseInt(upgrade[modType]) < 0) {
-                                            vehicle.setHandling(vehicles.getSpecialModName(modType), vehicles.getSpecialModDefault(modType).toString());
-                                            continue;
-                                        }
-                                        vehicle.setHandling(vehicles.getSpecialModName(modType), upgrade[modType].toString());
-                                    }
-                                }
-                                catch (e) {
-                                    methods.debug(e);
-                                    methods.saveFile('chip', e.toString());
-                                }
-                            }
-                        }
+                if (vehicle.getVariable('container') != undefined && vehicle.getVariable('user_id') > 0) {
+                    let car = vehicles.currentData;
+                    let s_break = car.get('s_break');
+                    if (s_break < 20) {
+                        vehicle.setHandling('fBrakeForce', '0.3');
                     }
-                    
-                    try {
-                        vehicles.setHandling(vehicle);
+                    else if (s_break < 40) {
+                        vehicle.setHandling('fBrakeForce', '0.6');
+                    }
+                    else {
                         if (vehicle.getMod(12) === 0)
                             vehicle.setHandling('fBrakeForce', '1.3');
                         if (vehicle.getMod(12) === 1)
@@ -3267,7 +3265,20 @@ mp.events.add("client:vehicle:checker", async function () {
                         if (vehicle.getMod(12) === 2)
                             vehicle.setHandling('fBrakeForce', '1.9');
                     }
-                    catch (e) {}
+                    let s_eng = car.get('s_eng');
+                    if (s_eng < 20) {
+                        if (methods.getRandomInt(0, 10) < 4) {
+                            vehicles.engineVehicle(false);
+                        }
+                        newMaxSpeedServer = maxSpeed * 0.5;
+                    }
+                    else if (s_eng < 40)
+                        newMaxSpeedServer = maxSpeed * 0.7;
+                    let s_trans = car.get('s_trans');
+                    if (s_trans < 20)
+                        newMaxSpeedServer = maxSpeed * 0.4;
+                    else if (s_trans < 40)
+                        newMaxSpeedServer = maxSpeed * 0.6;
                 }
             }
             catch (e) {
@@ -3368,9 +3379,7 @@ mp.events.add("playerLeaveVehicle", async function (entity) {
     try {
         if (vehicle.getVariable('container') != undefined && vehicle.getVariable('user_id') > 0) { //TODO
             let car = await vehicles.getData(vehicle.getVariable('container'));
-
-            if (car.has('s_km'))
-                vehicles.set(vehicle.getVariable('container'), 's_km', car.get('s_km') + timer.distInVehicle);
+            vehicles.setSync(vehicle.getVariable('container'), 's_km', methods.parseFloat(car.get('s_km')) + timer.distInVehicle / 1000);
             timer.distInVehicle = 0;
 
             if (car.has('upgrade')) {
@@ -3787,6 +3796,7 @@ mp.events.add('server:generateToken', () => {
 mp.events.add("playerEnterCheckpoint", (checkpoint) => {
     try {
         if (user.hasCache('isSellCar')) {
+            quest.gang(false, -1, 6);
             mp.events.callRemote('server:sellVeh');
             user.reset('isSellCar');
             jobPoint.delete();
@@ -3824,6 +3834,7 @@ mp.events.add("playerEnterCheckpoint", (checkpoint) => {
             jobPoint.delete();
         }
         if (user.hasCache('isSellMoney')) {
+            quest.gang(false, -1, 13);
             mp.events.callRemote('server:sellMoney');
             user.reset('isSellMoney');
             jobPoint.delete();
@@ -4227,7 +4238,7 @@ mp.events.add("playerCommand", async (command) => {
 mp.events.add('render', () => {
     if(user.isLogin()) {
         if (user.getCache("online_time") < 169) {
-            ui.drawText('M - Меню | N - Голосовой чат | I - Инвентарь | O - Телефон', 0.5, 0.97, 0.3, 255, 255, 255, 180, 0, 1, false, false);
+            ui.drawText('M - Меню | N - Голосовой чат | I - Инвентарь | O - Телефон', 0.5, 0.97, 0.3, 255, 255, 255, 200, 0, 1, false, false);
         }
     }
 });

@@ -4,6 +4,7 @@ import user from '../user';
 
 import jobPoint from '../manager/jobPoint';
 import builder from "./builder";
+import family from "../property/family";
 
 let photo = {};
 
@@ -307,28 +308,48 @@ photo.workProcess = function() { //TODO
 
             user.playScenario("WORLD_HUMAN_PAPARAZZI");
 
-            setTimeout(function () {
+            setTimeout(async function () {
                 isProcess = false;
                 methods.blockKeys(false);
                 mp.players.local.freezePosition(false);
                 user.stopScenario();
+                let money = 0;
 
                 if (pointPos === playerPos) {
                     mp.game.ui.notifications.showWithPicture('Life Invader', "Начальник", `Отличный кадр, за него ты получишь премию!`, "CHAR_LIFEINVADER", 1);
-                    user.giveJobMoney(methods.getRandomInt(180, 200) + price);
+                    money = methods.getRandomInt(180, 200) + price;
                     user.addWorkExp(25);
                 }
                 else if (playerPos.indexOf(pointPos) >= 0 || pointPos.indexOf(playerPos) >= 0) {
                     mp.game.ui.notifications.showWithPicture('Life Invader', "Начальник", `Не плохой кадр, но можно и лучше`, "CHAR_LIFEINVADER", 1);
-                    user.giveJobMoney(methods.getRandomInt(70, 110) + price);
+                    money = methods.getRandomInt(70, 110) + price;
                     user.addWorkExp(10);
                 }
                 else {
                     mp.game.ui.notifications.showWithPicture('Life Invader', "Начальник", `Я промолчу... Вот твои деньги`, "CHAR_LIFEINVADER", 1);
-                    user.giveJobMoney(price);
+                    money = price;
                     user.addWorkExp(5);
                 }
 
+                let offset = 0;
+                let fId = user.getCache('family_id');
+                if (fId > 0) {
+                    let fData = await family.getData(fId);
+                    if (fData.get('level') === 3) {
+                        if (fData.get('exp') > 1000) {
+                            family.addMoney(fId, 1000000, 'Премия за достижения 4 уровня');
+                            family.set(fId, 'level', 4);
+                        }
+                        else
+                            family.set(fId, 'exp', fData.get('exp') + 1);
+                    }
+                    else if (fData.get('level') > 3)
+                        offset = money * 0.3;
+                    if (fData.get('level') > 5) {
+                        family.addMoney(fId, (money + offset) * 0.3, 'Зачисление от работы фотографа');
+                    }
+                }
+                user.giveJobMoney(money + offset);
                 user.addRep(5);
                 user.giveJobSkill();
                 price = 0;

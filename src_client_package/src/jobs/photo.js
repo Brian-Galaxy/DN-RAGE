@@ -339,6 +339,7 @@ photo.workProcess = function() { //TODO
                         if (fData.get('exp') > 1000) {
                             family.addMoney(fId, 1000000, 'Премия за достижения 4 уровня');
                             family.set(fId, 'level', 4);
+                            family.set(fId, 'exp', 0);
                         }
                         else
                             family.set(fId, 'exp', fData.get('exp') + 1);

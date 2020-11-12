@@ -128,6 +128,7 @@ mp.events.add('client:user:auth:register', function(mail, login, passwordReg, pa
         Container.Data.SetLocally(mp.players.local.remoteId, "isRegTimeout", true);
 
         mp.events.callRemote('server:user:createAccount', login, passwordReg, mail);
+        mp.game.graphics.transitionFromBlurred(0);
 
         setTimeout(function () {
             Container.Data.ResetLocally(mp.players.local.remoteId, "isRegTimeout");
@@ -177,6 +178,7 @@ mp.events.add('client:user:auth:login', function(login, password) {
 
         //user.showCustomNotify('Пожалуйста подождите...');
         mp.events.callRemote('server:user:loginAccount', login, password, usingEmail);
+        mp.game.graphics.transitionFromBlurred(0);
 
         setTimeout(function () {
             Container.Data.ResetLocally(mp.players.local.remoteId, "isLoginTimeout");
@@ -731,7 +733,7 @@ mp.events.add('client:events:custom:register', function(name, surname, age, prom
 mp.events.add('client:events:loginUser:finalCreate', function() {
     try {
         if (user.isLogin()) {
-            user.init2();
+            user.initCustom();
             mp.players.local.position = new mp.Vector3(9.66692, 528.34783, 170.63504);
             mp.players.local.setRotation(0, 0, 123.53768, 0, true);
         }
@@ -808,7 +810,7 @@ mp.events.add('client:events:loginUser:success', async function() {
             methods.displayTypeAllBlipById(565, enums.blipDisplayIds[user.getCache('s_map_spawns')]);
         }
         catch (e) {
-            methods.debug(e);
+            methods.error('client:events:loginUser:success', e);
         }
         antiCheat.load();
 
@@ -3580,6 +3582,13 @@ mp.keys.bind(0x45, true, function() {
 
 //M
 mp.keys.bind(0x4D, true, function() {
+
+    methods.debug('LOGIN', user.isLogin());
+    methods.debug('isShowInput', methods.isShowInput());
+    methods.debug('isHide', phone.isHide());
+    methods.debug('isHide', inventory.isHide());
+    methods.debug('isHide', mp.gui.chat.enabled);
+
     if (!user.isLogin())
         return;
     if (!methods.isShowInput() && phone.isHide() && inventory.isHide())

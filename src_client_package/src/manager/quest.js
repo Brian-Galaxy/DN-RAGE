@@ -206,9 +206,11 @@ quest.notify = function(title, award) {
 quest.gang = function(isBot = false, start = -1, done = 0) {
 
     try {
-        if (weather.getHour() < 21 && weather.getHour() > 8) {
-            ui.showDialog('Приходи ночью, с 21 до 8 утра', 'Ламар');
-            return;
+        if (done === 0) {
+            if (weather.getHour() < 21 && weather.getHour() > 8) {
+                ui.showDialog('Приходи ночью, с 21 до 8 утра', 'Ламар');
+                return;
+            }
         }
 
         quest.standart(false, -1, 8);
@@ -289,6 +291,7 @@ quest.gang = function(isBot = false, start = -1, done = 0) {
                     user.setQuest(qName, start + 1);
                     user.addCashMoney(1000);
                     quest.gang();
+                    user.save();
                     return;
                 }
                 if (!isBot)
@@ -364,6 +367,7 @@ quest.gang = function(isBot = false, start = -1, done = 0) {
                     user.setQuest(qName, start + 1);
                     user.addCryptoMoney(100);
                     quest.gang();
+                    user.save();
                     return;
                 }
                 if (!isBot)
@@ -467,6 +471,7 @@ quest.standart = function(isBot = false, start = -1, done = 0) {
                     user.setQuest(qName, start + 1);
                     user.addCashMoney(250);
                     quest.standart();
+                    user.save();
                     return;
                 }
                 if (!isBot)
@@ -509,6 +514,7 @@ quest.standart = function(isBot = false, start = -1, done = 0) {
                     user.setQuest(qName, start + 1);
                     inventory.addItem(474, 1, 1, user.getCache('id'), 1, 0, JSON.stringify({id:1}));
                     quest.standart();
+                    user.save();
                     ui.showDialog('На проекте есть рецепты для крафта различных компонентов, некоторые вы получаете игровым путем, рецепт на большую аптечку можно купить у сотрудников EMS, также некоторые предметы имеют свойство ломаться, например оружие и бронежилеты, их необходимо чинить на специальных зонах для крафта, которые находятся в складах или в подвалах у банд', 'Информация');
                     return;
                 }
@@ -537,6 +543,7 @@ quest.standart = function(isBot = false, start = -1, done = 0) {
                     user.setQuest(qName, start + 1);
                     quest.standart();
                     user.addCashMoney(500);
+                    user.save();
                     ui.showDialog('У каждого транспорта есть свои уникальные характеристики, их можно посмотреть через панель транспорта нажав кнопку 2, открыв вкладку характеристики. Учтите, транспорт при авариях может повреждаться и из-за этого его ходовые качества будут изменяться', 'Информация');
                     return;
                 }
@@ -568,6 +575,7 @@ quest.standart = function(isBot = false, start = -1, done = 0) {
                     user.setQuest(qName, start + 1);
                     quest.standart();
                     user.addCashMoney(20000);
+                    user.save();
                     return;
                 }
                 if (!isBot)

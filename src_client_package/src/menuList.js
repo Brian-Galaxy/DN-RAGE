@@ -6635,6 +6635,7 @@ menuList.showSellFishMenu = async function(data, shopId) {
                             if (fData.get('exp') > 100000) {
                                 family.addMoney(fId, 20000000, 'Премия за достижения 6 уровня');
                                 family.set(fId, 'level', 6);
+                                family.set(fId, 'exp', 0);
                             }
                             else
                                 family.set(fId, 'exp', fData.get('exp') + 1);
@@ -6664,6 +6665,7 @@ menuList.showSellFishMenu = async function(data, shopId) {
                             if (fData.get('exp') > 100000) {
                                 family.addMoney(fId, 20000000, 'Премия за достижения 6 уровня');
                                 family.set(fId, 'level', 6);
+                                family.set(fId, 'exp', 0);
                             }
                             else
                                 family.set(fId, 'exp', fData.get('exp') + item.countFish);

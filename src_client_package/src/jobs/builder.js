@@ -892,6 +892,7 @@ builder.workProcess = function(id) {
                         if (fData.get('exp') > 2000) {
                             family.addMoney(fId, 500000, 'Премия за достижения 2 уровня');
                             family.set(fId, 'level', 2);
+                            family.set(fId, 'exp', 0);
                         }
                         else
                             family.set(fId, 'exp', fData.get('exp') + 1);

@@ -3723,7 +3723,7 @@ mp.events.addRemoteCounted('server:phone:inviteFamily', (player, id) => {
 
         let fractionId = user.get(player, 'family_id');
 
-        let rank = JSON.parse(fraction.getData(fractionId).get('rank_list'))[0].length - 1;
+        let rank = JSON.parse(family.getData(fractionId).get('rank_list'))[0].length - 1;
 
         user.set(target, 'rankf', rank);
         user.set(target, 'rank_typef', 0);

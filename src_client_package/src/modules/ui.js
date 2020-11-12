@@ -57,6 +57,9 @@ mp.events.add('guiReady', () => {
             try {
                 if (mp.storage.data.login)
                     ui.callCef('authMain:2', JSON.stringify({type:'login', login: mp.storage.data.login}));
+
+                chat.show(false);
+                chat.activate(false);
             }
             catch (e) {}
         }
@@ -420,7 +423,7 @@ ui.updateValues = function() {
 
             data = {
                 type: 'updateQuest', //TODO доделать
-                showQuest: user.getQuestCount('standart') < 11,
+                showQuest: user.getQuestCount('standart') < 10,
                 questTitle: 'Квестовое задание',
                 questText: quest.getQuestLineInfo('standart', user.getQuestCount('standart')),
             };

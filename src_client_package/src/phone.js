@@ -1164,7 +1164,7 @@ phone.showAppFraction2 = async function() {
     };
     menu.items.push(titleMenu1);
 
-    if (!user.isLeader2() && !user.isSubLeader2()) {
+    if (!user.isLeader2()) {
         if (!user.isMafia()) {
             let titleMenu2 = {
                 title: 'Покинуть организацию',
@@ -1447,7 +1447,7 @@ phone.showAppFamily = async function() {
     };
     menu.items.push(titleMenu1);
 
-    if (!user.isLeaderF() && !user.isSubLeaderF()) {
+    if (!user.isLeaderF()) {
         let titleMenu2 = {
             title: 'Покинуть семью',
             umenu: [
@@ -5269,11 +5269,11 @@ phone.callBackRadio = function(checked, id, ...args) {
             mp.events.callRemote('server:user:newDep2', params.memberId, params.depId);
             phone.showAppFraction2();
         }
-        if (params.name == 'memberNewRank2') {
+        if (params.name == 'memberNewRankF') {
             mp.events.callRemote('server:user:newRankF', params.memberId, params.rankId);
             phone.showAppFamily();
         }
-        if (params.name == 'memberNewDep2') {
+        if (params.name == 'memberNewDepF') {
             mp.events.callRemote('server:user:newDepF', params.memberId, params.depId);
             phone.showAppFamily();
         }

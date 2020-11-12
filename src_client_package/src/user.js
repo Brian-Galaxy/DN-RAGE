@@ -646,7 +646,7 @@ user.init = function() {
 
     try {
         mp.nametags.enabled = false;
-        mp.game.graphics.transitionFromBlurred(false);
+        mp.game.graphics.transitionFromBlurred(0);
 
         timer.createInterval('user.timerRayCast', user.timerRayCast, 200);
         timer.createInterval('user.timer1sec', user.timer1sec, 1000);
@@ -656,7 +656,7 @@ user.init = function() {
         user.clearChat();
         user.setAlpha(255);
 
-        user.init2();
+        setTimeout(user.initCustom, 500); //TODO STATE
     }
     catch (e) {
         methods.debug(e);
@@ -664,6 +664,43 @@ user.init = function() {
 };
 
 user.init2 = function() {
+
+    try {
+
+        let idx = methods.getRandomInt(0, enums.initCams.length);
+
+        /*cam.pointAtCoord(9.66692, 528.34783, 171.2);
+        cam.setActive(true);*/
+
+        /*cameraRotator.start(cam, vPos, vPos, new mp.Vector3(0, 3, 0), 120);
+        cameraRotator.setXBound(-360, 360);
+        cameraRotator.setOffsetBound(0.4, 1.5);
+        cameraRotator.setZUpMultipler(1);*/
+
+        mp.game.graphics.transitionToBlurred(100);
+
+        user.setVirtualWorld(mp.players.local.remoteId + 1);
+        mp.players.local.position = new mp.Vector3(enums.initCams[idx][0], enums.initCams[idx][1], enums.initCams[idx][2] + 20);
+        mp.players.local.setRotation(0, 0, 123.53768, 0, true);
+        mp.players.local.freezePosition(true);
+        mp.players.local.setVisible(true, false);
+        mp.players.local.setCollision(false, false);
+
+        mp.game.ui.displayRadar(false);
+        mp.gui.chat.activate(false);
+
+        cam = mp.cameras.new('customization');
+        cam.shake("HAND_SHAKE", 0.3);
+        cam.setCoord(enums.initCams[idx][0], enums.initCams[idx][1], enums.initCams[idx][2]);
+        cam.pointAtCoord(enums.initCams[idx][3], enums.initCams[idx][4], enums.initCams[idx][5]);
+        mp.game.cam.renderScriptCams(true, false, 0, false, false);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+};
+
+user.initCustom = function() {
 
     try {
 
@@ -874,8 +911,12 @@ user.login = function(name, spawnName) {
         try {
             ui.callCef('authMain','{"type": "hide"}');
             ui.callCef('customization','{"type": "hide"}');
-
+            user.destroyCam();
             user.setLogin(true);
+
+            methods.blockKeys(false);
+            methods.disableAllControls(false);
+            methods.disableDefaultControls(false);
 
             mp.events.callRemote('server:user:loginUser', name, spawnName);
         }
@@ -1171,6 +1212,8 @@ user.stopAllScreenEffect = function() {
 
     mp.game.graphics.setNoiseoveride(false);
     mp.game.graphics.setNoisinessoveride(0);
+
+    mp.game.graphics.transitionFromBlurred(0);
 
     user.setDrugLevel(0, 0);
     user.setDrugLevel(1, 0);

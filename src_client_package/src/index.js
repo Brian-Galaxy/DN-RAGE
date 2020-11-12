@@ -65,9 +65,9 @@ try {
         mp.gui.chat.push('Добро пожаловать на DEDNET 💀');
         mp.gui.chat.push('Подождите пожалуйста, выполняется загрузка всех необходимых пакетов для комфортной игры. Это займет меньше минуты.');
 
+
         chat.show(false);
         chat.activate(false);
-
         /*enums.customIpl.forEach(item => {
             object.createIpl(item[0], new mp.Vector3(item[1], item[2], item[3]), item[4]);
         });*/

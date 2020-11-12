@@ -234,6 +234,7 @@ mp.events.add("playerEnterVehicle", async function (vehicle, seat) {
                         if (fData.get('exp') > 2500) {
                             family.addMoney(fId, 1500000, 'Премия за достижения 5 уровня');
                             family.set(fId, 'level', 5);
+                            family.set(fId, 'exp', 0);
                         }
                         else
                             family.set(fId, 'exp', fData.get('exp') + 1);

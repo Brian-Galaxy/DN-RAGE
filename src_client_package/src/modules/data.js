@@ -151,10 +151,10 @@ class Data {
 
             //dataSetterList.push({id: id, key: key, value: value, isInt: isInt});
             mp.events.callRemote('modules:server:data:Set', id, key, value, isInt);
-            /*for (let i = 1; i <= 50; i++) mp.events.callRemote('modules:server:data:Set', 800000 + i, 'orderLamarM', 100, true);
-            for (let i = 1; i <= 50; i++) mp.events.callRemote('modules:server:data:Set', 800000 + i, 'orderLamar', 100, true);
-            for (let i = 1; i <= 50; i++) mp.events.callRemote('modules:server:data:Set', 800000 + i, 'orderDrug', 100, true);
-            for (let i = 1; i <= 50; i++) mp.events.callRemote('modules:server:data:Set', 800000 + i, 'orderAtm', 6, true);*/
+            /*for (let i = 1; i <= 50; i++) mp.events.callRemote('modules:server:data:Set', 800000 + i, 'orderLamarM', 190, true);
+            for (let i = 1; i <= 50; i++) mp.events.callRemote('modules:server:data:Set', 800000 + i, 'orderLamar', 140, true);
+            for (let i = 1; i <= 50; i++) mp.events.callRemote('modules:server:data:Set', 800000 + i, 'orderDrug', 190, true);
+            for (let i = 1; i <= 50; i++) mp.events.callRemote('modules:server:data:Set', 800000 + i, 'orderAtm', 9, true);*/
 
             /*
             WORLD_HUMAN_UMBRELLA

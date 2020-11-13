@@ -421,13 +421,28 @@ ui.updateValues = function() {
             };
             ui.callCef('hudl', JSON.stringify(data));
 
-            data = {
-                type: 'updateQuest', //TODO доделать
-                showQuest: user.getQuestCount('standart') < 10,
-                questTitle: 'Квестовое задание',
-                questText: quest.getQuestLineInfo('standart', user.getQuestCount('standart')),
-            };
-            ui.callCef('hudl', JSON.stringify(data));
+            if (user.getCache('quests') && user.getCache('s_hud_quest')) {
+
+                if (user.getQuestCount('standart') < 10)
+                {
+                    data = {
+                        type: 'updateQuest',
+                        showQuest: true,
+                        questTitle: 'Квестовое задание',
+                        questText: quest.getQuestLineInfo('standart', user.getQuestCount('standart')),
+                    };
+                    ui.callCef('hudl', JSON.stringify(data));
+                }
+                else if (user.getCache('online_wheel') < 999) {
+                    data = {
+                        type: 'updateQuest',
+                        showQuest: true,
+                        questTitle: 'Колесо удачи',
+                        questText: `Отыграв 3 часа на сервере, у вас есть возможность прокрутить колесо удачи и один из главных призов это дорогой автомобиль, маска или VIP HARD. Вам осталось: ${((21 - user.getCache( 'online_wheel')) * 8.5).toFixed(1)} мин.`,
+                    };
+                    ui.callCef('hudl', JSON.stringify(data));
+                }
+            }
         }
         catch (e) {
             methods.debug(e);

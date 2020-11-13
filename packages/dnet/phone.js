@@ -272,6 +272,18 @@ phone.getUserInfo = function(player, text) {
                 { name: 'none' },
             ));
 
+            label = 'Отсутствует';
+            if (row['marg_lic'])
+            {
+                label = `С ${row['marg_lic_create']} по ${row['marg_lic_end']}`;
+            }
+
+            subItems.push(phone.getMenuItemButton(
+                'Разрешение на употребление марихуаны',
+                label,
+                { name: 'none' },
+            ));
+
             items.push(phone.getMenuMainItem('Лицензии', subItems));
 
             phone.showMenu(player, 'userInfo', 'База данных', items);

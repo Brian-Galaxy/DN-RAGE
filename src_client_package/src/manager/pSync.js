@@ -193,6 +193,7 @@ mp.events.add('client:syncAnimation', async (playerId, dict, anim, flag) => {
                 dict == 'anim@amb@office@seating@female@var_c@base@' ||
                 dict == 'anim@amb@facility@briefing_room@seating@male@var_e@' ||
                 dict == 'anim@amb@office@boardroom@crew@male@var_c@base_r@' ||
+                dict == 'amb@world_human_seat_steps@male@hands_in_lap@base' ||
                 dict == 'anim@amb@clubhouse@seating@male@var_c@base@'
             )
             {

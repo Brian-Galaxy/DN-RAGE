@@ -259,6 +259,9 @@ gangWar.timer = function() {
                     defC++;
                 if (currentAttack === fId)
                     attC++;
+
+                if (p.ping > 300)
+                    user.kickAntiCheat(p, `Ping: ${p.ping}ms`);
             }
         });
 

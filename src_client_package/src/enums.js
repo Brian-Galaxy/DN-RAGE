@@ -2921,6 +2921,7 @@ enums.animActions = [
     ["Сидеть на заборе", "anim@amb@facility@briefing_room@seating@male@var_e@", "base",9],
     ["Сидеть сложа руки - 1", "anim@amb@office@boardroom@crew@male@var_c@base_r@", "base",9],
     ["Сидеть сложа руки - 2", "anim@amb@clubhouse@seating@male@var_c@base@", "base",9],
+    ["Сидеть сложа руки - 3", "amb@world_human_seat_steps@male@hands_in_lap@base", "base",9],
     ["Свистнуть", "taxi_hail", "fp_hail_taxi", 8],
     ["Выполнить воинское приветствие", "anim@mp_player_intincarsalutestd@ds@", "idle_a", 8],
     ["Показать пальцем", "gestures@m@standing@casual", "gesture_point", 8],
@@ -2971,7 +2972,8 @@ enums.animActions = [
     ["Механик", "amb@world_human_vechicle_mechanic@male@base", "base", 9],
     ["Печатать на компьютере", "anim@amb@board_room@stenographer@computer@", "base_right_amy_skater_01", 9],
     ["Рассуждать - 1", "anim@amb@board_room@diagram_blueprints@", "idle_01_amy_skater_01", 9],
-    ["Рассуждать - 2", "anim@amb@board_room@diagram_blueprints@", "look_around_02_amy_skater_01", 9]
+    ["Рассуждать - 2", "anim@amb@board_room@diagram_blueprints@", "look_around_02_amy_skater_01", 9],
+    ["Механик", "amb@world_human_vehicle_mechanic@male@base", "base", 9],
 ];
 enums.animPose = [
     ["Руки вверх", "anim@move_hostages@male", "male_idle", 9],
@@ -3013,8 +3015,9 @@ enums.animPose = [
     ["Сидеть на земле - 2", "anim@amb@business@bgen@bgen_no_work@", "sit_phone_phoneputdown_idle_nowork", 9],
     ["Лежать на земле", "amb@world_human_sunbathe@male@back@base", "base", 9],
     ["Прислонится к стене - 1", "amb@world_human_leaning@male@wall@back@foot_up@idle_b", "idle_d", 9],
-    ["Прислонится к стене - 2", "amb@world_human_leaning@male@wall@back@legs_crossed@idle_a", "idle_a", 9]
-    //["Лежать на лежаке", "amb@prop_human_seat_sunlounge@male@base", "base", 9],
+    ["Прислонится к стене - 2", "amb@world_human_leaning@male@wall@back@legs_crossed@idle_a", "idle_a", 9],
+    ["Сидеть с поднятым коленом", "amb@world_human_seat_steps@male@elbows_on_knees@base", "base", 9],
+    ["Лежать на лежаке", "amb@prop_human_seat_sunlounger@male@base", "base", 9],
 ];
 enums.animPositive = [
     ["Радоваться-1", "missmic_4premiere", "movie_prem_01_f_a", 8],
@@ -3036,7 +3039,7 @@ enums.animPositive = [
     ["Уважение", "anim@mp_player_intcelebrationfemale@bro_love", "bro_love", 8],
     ["Победа!", "anim@arena@celeb@flat@solo@no_props@", "slide_a_player_a", 8],
     ["Сальто назад", "anim@arena@celeb@flat@solo@no_props@", "flip_a_player_a", 8],
-    ["Вертушка", "anim@arena@celeb@flat@solo@no_props@", "cap_a_player_a", 8]
+    ["Вертушка", "anim@arena@celeb@flat@solo@no_props@", "cap_a_player_a", 8],
     //["Перфекто!", "anim@mp_player__incelebrationmale@finger_kiss", "finger_kiss", 8]
 ];
 enums.animNegative = [
@@ -3058,7 +3061,8 @@ enums.animNegative = [
     ["Перезвоните", "anim@mp_player_intcelebrationmale@call_me", "call_me", 8],
     ["В недоразумении", "anim@arena@celeb@flat@solo@no_props@", "wow_b_player_b", 8],
     //["Показать Фак - 1", "anim@mp_player_incelebrationmale@finger", "finger", 8],
-    ["Показать Фак", "anim@mp_player_intupperfinger", "idle_a_fp", 8]
+    ["Показать Фак - 1", "anim@mp_player_intupperfinger", "idle_a_fp", 8],
+    ["Показать Фак - 2", "anim@mp_player_intcelebrationmale@finger", "finger", 8]
 ];
 enums.animDance = [
     ["DJ - 1", "anim@mp_player_intcelebrationfemale@dj", "dj", 8],

@@ -793,9 +793,9 @@ mp.events.add('client:events:loginUser:success', async function() {
             /*chat.sendLocal('  ');
             chat.sendLocal(`!{${chat.clBlue}}На сервере действует конкурс`);
             chat.sendLocal(`Конкурс очень крутой, на 50 призовых мест и у тебя есть шанс победить, все подробности на сайте!`);*/
-            chat.sendLocal('  ');
+            /*chat.sendLocal('  ');
             chat.sendLocal(`!{${chat.clBlue}}Колесо удачи`);
-            chat.sendLocal(`Отыграв 3 часа на сервере, у вас есть возможность прокрутить колесо удачи и один из главных призов это дорогой автомобиль, маска или VIP HARD.`);
+            chat.sendLocal(`Отыграв 3 часа на сервере, у вас есть возможность прокрутить колесо удачи и один из главных призов это дорогой автомобиль, маска или VIP HARD.`);*/
             chat.updateSettings();
             ui.updateMenuSettings();
 
@@ -3582,13 +3582,6 @@ mp.keys.bind(0x45, true, function() {
 
 //M
 mp.keys.bind(0x4D, true, function() {
-
-    methods.debug('LOGIN', user.isLogin());
-    methods.debug('isShowInput', methods.isShowInput());
-    methods.debug('isHide', phone.isHide());
-    methods.debug('isHide', inventory.isHide());
-    methods.debug('isHide', mp.gui.chat.enabled);
-
     if (!user.isLogin())
         return;
     if (!methods.isShowInput() && phone.isHide() && inventory.isHide())

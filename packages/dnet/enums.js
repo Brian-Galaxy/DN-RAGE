@@ -214,6 +214,9 @@ enums.userData = [
     "med_lic",
     "med_lic_create",
     "med_lic_end",
+    "marg_lic",
+    "marg_lic_create",
+    "marg_lic_end",
     "biz_lic",
     "biz_lic_create",
     "biz_lic_end",
@@ -246,6 +249,7 @@ enums.userData = [
     "s_hud_restart",
     "s_hud_cursor",
     "s_hud_notify",
+    "s_hud_quest",
     "s_voice_vol",
     "s_clipset",
 

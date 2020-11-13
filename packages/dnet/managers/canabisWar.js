@@ -220,6 +220,9 @@ canabisWar.timer = function() {
                     defC++;
                 if (currentAttack === fId)
                     attC++;
+
+                if (p.ping > 300)
+                    user.kickAntiCheat(p, `Ping: ${p.ping}ms`);
             }
         });
 
@@ -367,7 +370,8 @@ canabisWar.timer = function() {
 canabisWar.timerMoney = function() {
 
     let moneyToUser = new Map();
-    for (let i = 1; i <= gangList.length; i++) {
+    gangList.forEach(item => {
+        let i = item.id;
         if (canabisWar.get(i, 'fraction_id') > 0) {
 
             let money = methods.getRandomInt(200, 300) / 1000;
@@ -388,7 +392,7 @@ canabisWar.timerMoney = function() {
             let id = coffer.getIdByFraction(4);
             coffer.setMoney(id, coffer.getMoney(id) + methods.parseFloat(money));
         }
-    }
+    });
 
     mp.players.forEach(p => {
         if (user.isLogin(p) && user.get(p, 'fraction_id2') > 0) {
@@ -408,10 +412,10 @@ canabisWar.timerMoney = function() {
 
 canabisWar.getCountZones = function(fractionId = -1) {
     let count = 0;
-    for (let i = 1; i <= gangList.length; i++) {
-        if (canabisWar.get(i, 'fraction_id') === fractionId)
+    gangList.forEach(item => {
+        if (canabisWar.get(item.id, 'fraction_id') === fractionId)
             count++;
-    }
+    });
     return count;
 };
 

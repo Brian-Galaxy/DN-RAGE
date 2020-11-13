@@ -478,6 +478,9 @@ methods.getLicName = function (lic) {
         case 'fish_lic':
             licName = 'Разрешение на рыболовство';
             break;
+        case 'marg_lic':
+            licName = 'Разрешенип на марихуану';
+            break;
         case 'med_lic':
             licName = 'Мед. страховка';
             break;

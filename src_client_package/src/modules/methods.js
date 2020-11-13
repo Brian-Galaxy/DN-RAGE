@@ -733,6 +733,74 @@ methods.iplArenaModDefault = function () {
     mp.game.interior.refreshInterior(interiorId);
 };
 
+methods.iplYanktonLoad = function () {
+    mp.game.streaming.requestIpl('prologue01');
+    mp.game.streaming.requestIpl('prologue01c');
+    mp.game.streaming.requestIpl('prologue01d');
+    mp.game.streaming.requestIpl('prologue01e');
+    mp.game.streaming.requestIpl('prologue01f');
+    mp.game.streaming.requestIpl('prologue01g');
+    mp.game.streaming.requestIpl('prologue01h');
+    mp.game.streaming.requestIpl('prologue01i');
+    mp.game.streaming.requestIpl('prologue01j');
+    mp.game.streaming.requestIpl('prologue01k');
+    mp.game.streaming.requestIpl('prologue01z');
+    mp.game.streaming.requestIpl('prologue02');
+    mp.game.streaming.requestIpl('prologue03');
+    mp.game.streaming.requestIpl('prologue03b');
+    mp.game.streaming.requestIpl('prologue03_grv_dug');
+    mp.game.streaming.requestIpl('prologue_grv_torch');
+    mp.game.streaming.requestIpl('prologue04');
+    mp.game.streaming.requestIpl('prologue04b');
+    mp.game.streaming.requestIpl('prologue04_cover');
+    mp.game.streaming.requestIpl('des_protree_end');
+    mp.game.streaming.requestIpl('des_protree_start');
+    mp.game.streaming.requestIpl('prologue05');
+    mp.game.streaming.requestIpl('prologue05b');
+    mp.game.streaming.requestIpl('prologue06');
+    mp.game.streaming.requestIpl('prologue06b');
+    mp.game.streaming.requestIpl('prologue06_int');
+    mp.game.streaming.requestIpl('prologue06_pannel');
+    mp.game.streaming.requestIpl('plg_occl_00');
+    mp.game.streaming.requestIpl('prologue_occl');
+    mp.game.streaming.requestIpl('prologuerd');
+    mp.game.streaming.requestIpl('prologuerdb');
+};
+
+methods.iplYanktonUnload = function () {
+    mp.game.streaming.requestIpl('prologue01');
+    mp.game.streaming.requestIpl('prologue01c');
+    mp.game.streaming.requestIpl('prologue01d');
+    mp.game.streaming.requestIpl('prologue01e');
+    mp.game.streaming.requestIpl('prologue01f');
+    mp.game.streaming.requestIpl('prologue01g');
+    mp.game.streaming.requestIpl('prologue01h');
+    mp.game.streaming.requestIpl('prologue01i');
+    mp.game.streaming.requestIpl('prologue01j');
+    mp.game.streaming.requestIpl('prologue01k');
+    mp.game.streaming.requestIpl('prologue01z');
+    mp.game.streaming.requestIpl('prologue02');
+    mp.game.streaming.requestIpl('prologue03');
+    mp.game.streaming.requestIpl('prologue03b');
+    mp.game.streaming.requestIpl('prologue03_grv_dug');
+    mp.game.streaming.requestIpl('prologue_grv_torch');
+    mp.game.streaming.requestIpl('prologue04');
+    mp.game.streaming.requestIpl('prologue04b');
+    mp.game.streaming.requestIpl('prologue04_cover');
+    mp.game.streaming.requestIpl('des_protree_end');
+    mp.game.streaming.requestIpl('des_protree_start');
+    mp.game.streaming.requestIpl('prologue05');
+    mp.game.streaming.requestIpl('prologue05b');
+    mp.game.streaming.requestIpl('prologue06');
+    mp.game.streaming.requestIpl('prologue06b');
+    mp.game.streaming.requestIpl('prologue06_int');
+    mp.game.streaming.requestIpl('prologue06_pannel');
+    mp.game.streaming.requestIpl('plg_occl_00');
+    mp.game.streaming.requestIpl('prologue_occl');
+    mp.game.streaming.requestIpl('prologuerd');
+    mp.game.streaming.requestIpl('prologuerdb');
+};
+
 methods.iplArenaModDefaultRefresh = function () {
     let interiorId = mp.game.interior.getInteriorAtCoords(205.000, 5180.000, -90.000);
     mp.game.interior.refreshInterior(interiorId);

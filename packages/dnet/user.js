@@ -2745,6 +2745,9 @@ user.giveLic = function (player, lic, monthEnd = 12, desc = '') {
         case 'fish_lic':
             licName = 'на рыбаловство';
             break;
+        case 'marg_lic':
+            licName = 'на употребление марихуаны';
+            break;
     }
 
     if (lic == 'med_lic') {

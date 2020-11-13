@@ -3239,11 +3239,6 @@ menuList.showMeriaJobListMenu = function() {
         }
         if (item.jobName) {
 
-            if (user.getCache('fraction_id') > 0) {
-                mp.game.ui.notifications.show("~r~Вы состоите в гос фракции.");
-                return;
-            }
-
             if (user.getCache('work_lic').trim() === '') {
                 mp.game.ui.notifications.show("~r~Для начала оформите Work ID");
                 return;
@@ -4203,6 +4198,7 @@ menuList.showSettingsHudMenu = function() {
 
     UIMenu.Menu.AddMenuItemList("Курсор в меню", ['Выкл', 'Вкл'], "", {doName: "crus"}, user.getCache('s_hud_cursor') ? 1 : 0);
     UIMenu.Menu.AddMenuItemList("Уведомления над картой", ['Выкл', 'Вкл'], "", {doName: "notify"}, user.getCache('s_hud_notify') ? 1 : 0);
+    UIMenu.Menu.AddMenuItemList("Подсказка с квестами", ['Выкл', 'Вкл'], "", {doName: "quests"}, user.getCache('s_hud_quest') ? 1 : 0);
 
     UIMenu.Menu.AddMenuItemList("Авто. перезагрузка интерфейса", ['Выкл', 'Вкл'], "В случае если у вас он завис~br~или не работает", {doName: "restart"}, user.getCache('s_hud_restart') ? 1 : 0);
 
@@ -4251,6 +4247,10 @@ menuList.showSettingsHudMenu = function() {
         }
         if (item.doName === 'notify') {
             user.set('s_hud_notify', index === 1);
+            mp.game.ui.notifications.show('~b~Настройки были сохранены');
+        }
+        if (item.doName === 'quests') {
+            user.set('s_hud_quest', index === 1);
             mp.game.ui.notifications.show('~b~Настройки были сохранены');
         }
         if (item.doName == 'bg') {
@@ -4826,6 +4826,8 @@ menuList.showPlayerDocMenu = function(playerId) {
     UIMenu.Menu.AddMenuItem("Лицензия на предпринимательство", "~c~Чтобы можно было иметь бизнес", {doName: "biz_lic"});
 
     UIMenu.Menu.AddMenuItem("Разрешение на рыболовство", "~c~Можно рыбачить, как-бы", {doName: "fish_lic"});
+
+    UIMenu.Menu.AddMenuItem("Разрешение на употребление марихуаны", "~c~Можно употреблять, как-бы", {doName: "marg_lic"});
 
     UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
     UIMenu.Menu.Draw();
@@ -10512,6 +10514,7 @@ menuList.showFractionInfoMenu = function() {
     }
     if (user.isEms()) {
         UIMenu.Menu.AddMenuItem(`Выдать мед. страховку`, "Стоимость: ~g~$20,000", {licName: "med_lic"});
+        UIMenu.Menu.AddMenuItem(`Выдать разрешение на марихуану`, "Стоимость: ~g~$5,000", {licName: "marg_lic"});
     }
 
     UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
@@ -10536,6 +10539,8 @@ menuList.showFractionInfoMenu = function() {
                 mp.events.callRemote('server:user:askSellLic', id, item.licName, 20000);
             if (item.licName == 'med_lic')
                 mp.events.callRemote('server:user:askSellLic', id, item.licName, 20000);
+            if (item.licName == 'marg_lic')
+                mp.events.callRemote('server:user:askSellLic', id, item.licName, 5000);
             if (item.licName == 'fish_lic')
                 mp.events.callRemote('server:user:askSellLic', id, item.licName, 10000);
         }

@@ -1249,6 +1249,10 @@ mp.events.addRemoteCounted('server:user:showLic', (player, lic, playerId) => {
                         licName = 'Мед. страховка';
                         licPref = 'M';
                         break;
+                    case 'marg_lic':
+                        licName = 'На употребление марихуаны';
+                        licPref = 'M';
+                        break;
                 }
 
                 if (user.get(player, lic)) {
@@ -2021,7 +2025,7 @@ mp.events.addRemoteCounted('server:sendReport', (player, message) => {
     mp.players.forEach(function (p) {
         if (!user.isLogin(p))
             return;
-        if (user.isAdmin(p)) {
+        if (user.isAdmin(p) && !user.get(p, 'status_rp')) {
             if (user.get(player, 'status_media') > 0)
                 p.outputChatBoxNew(`!{#3F51B5}[MEDIA] Жалоба от ${user.getRpName(player)} (${player.id}):!{#FFFFFF} ${message}`);
             else
@@ -6643,6 +6647,9 @@ mp.events.addRemoteCounted('server:user:askSellLic', (player, id, lic, price) =>
             case 'fish_lic':
                 licName = 'Разрешение на рыбаловство';
                 break;
+            case 'marg_lic':
+                licName = 'Разрешение на употребление марихуаны';
+                break;
             case 'med_lic':
                 licName = 'Мед. страховка';
                 break;
@@ -8009,8 +8016,8 @@ mp.events.addRemoteCounted('server:vehicle:radarCheck', (player, ticketSpeed, ti
         let driver = user.getVehicleDriver(mp.vehicles.at(vid));
         if (user.isLogin(driver)) {
             user.addMoney(driver, ticketPrice / 2, 'Установка радара');
-            player.notify("~y~Транспорт ~s~" + number + "~y~ заметила камера за превышением скорости на ~s~" + ticketSpeed + "км/ч~y~, транспорту был выписан штраф в размере ~s~" + methods.moneyFormat(ticketPrice));
-            player.notify("~y~Вам зачислена премия в размере ~s~" + methods.moneyFormat(ticketPrice / 2));
+            driver.notify("~y~Транспорт ~s~" + number + "~y~ заметила камера за превышением скорости на ~s~" + ticketSpeed + "км/ч~y~, транспорту был выписан штраф в размере ~s~" + methods.moneyFormat(ticketPrice));
+            driver.notify("~y~Вам зачислена премия в размере ~s~" + methods.moneyFormat(ticketPrice / 2));
         }
     }
     catch (e) {

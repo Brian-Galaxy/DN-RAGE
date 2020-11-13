@@ -2117,7 +2117,7 @@ user.setQuest = function(name, num, params = null) {
         qAll[name] = qItem;
         user.set('quests', JSON.stringify(qAll));
     } catch (e) {
-        methods.debug(e);
+        methods.debug('user.setQuest', e.toString());
     }
 };
 

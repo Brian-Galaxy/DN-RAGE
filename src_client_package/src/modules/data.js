@@ -159,7 +159,10 @@ class Data {
             /*
             WORLD_HUMAN_UMBRELLA
 
-            mp.events.callRemote('modules:server:data:Set', 700000 + 44, 'bunk_1_count', 0, true);
+            mp.events.callRemote('modules:server:data:Set', 860000 + 23, 'level', 2, true); mp.events.callRemote('modules:server:data:Set', 860000 + 23, 'exp', 5, true);
+            mp.events.callRemote('modules:server:data:Set', 860000 + 24, 'level', 2, true); mp.events.callRemote('modules:server:data:Set', 860000 + 24, 'exp', 5, true);
+            mp.events.callRemote('modules:server:data:Set', 860000 + 46, 'level', 2, true); mp.events.callRemote('modules:server:data:Set', 860000 + 46, 'exp', 5, true);
+
             mp.events.callRemote('modules:server:data:Set', 700000 + 44, 'bunk_2_count', 0, true);
             mp.events.callRemote('modules:server:data:Set', 700000 + 44, 'bunk_3_count', 0, true);
             mp.events.callRemote('modules:server:data:Set', 700000 + 44, 'bunk_4_count', 0, true);

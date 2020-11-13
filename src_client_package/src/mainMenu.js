@@ -151,6 +151,7 @@ mainMenu.updateInfoSettings = function(tab = 0, keyName = '') {
                         {type: 1, name: 'Прозрачность худа', params: 'ui:bg', active: methods.parseInt(user.getCache('s_hud_bg') * 10), listmenu:["0%", "10%", "20%", "30%", "40%", "50%", "60%", "70%", "80%", "90%", "100%"]},
                         {type: 0, name: 'Курсор в обычном меню', params: 'ui:curs', active: user.getCache('s_hud_cursor') ? 1 : 0},
                         {type: 0, name: 'Уведомления над картой', params: 'ui:notify', active: user.getCache('s_hud_notify') ? 1 : 0},
+                        {type: 0, name: 'Подсказка с квестами', params: 'ui:quest', active: user.getCache('s_hud_quest') ? 1 : 0},
                         {type: 0, name: 'Авто. перезагрузка интерфейса', params: 'ui:autoreload', active: user.getCache('s_hud_restart') ? 1 : 0},
                         {type: 2, name: 'Перезапуск интерфейса', params: 'ui:reload', btntext: "Применить"},
                         {type: 2, name: 'Установить настройки позиции интерфейса по умолчанию', params: 'ui:default', btntext: "Применить"},
@@ -678,6 +679,10 @@ mp.events.add('client:mainMenu:settings:updateCheckbox', async function(btn, act
     }
     else if (btn === "ui:notify") {
         user.set('s_hud_notify', active);
+        mp.game.ui.notifications.show('~b~Настройки были сохранены');
+    }
+    else if (btn === "ui:quest") {
+        user.set('s_hud_quest', active);
         mp.game.ui.notifications.show('~b~Настройки были сохранены');
     }
     else if (btn === "ui:autoreload") {

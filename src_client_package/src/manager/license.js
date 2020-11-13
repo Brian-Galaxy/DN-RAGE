@@ -13,6 +13,7 @@ let licenseList = [
     "gun_lic",
     "law_lic",
     "med_lic",
+    "marg_lic",
     "biz_lic",
     "fish_lic"
 ];
@@ -58,6 +59,9 @@ license.checker = function() {
                         break;
                     case 'fish_lic':
                         licName = 'на рыбаловство';
+                        break;
+                    case 'marg_lic':
+                        licName = 'на употребление марихуаны';
                         break;
                 }
 

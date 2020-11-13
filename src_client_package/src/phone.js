@@ -3016,7 +3016,7 @@ phone.showAppFractionHierarchyF = async function() {
     let fractionItemRanks = JSON.parse(fractionItem.get('rank_list'));
     let fractionItemDep = JSON.parse(fractionItem.get('rank_type_list'));
 
-    if (user.isLeader2()) {
+    if (user.isLeaderF()) {
         try {
             let menu = {
                 UUID: 'fraction_hierarchyf',

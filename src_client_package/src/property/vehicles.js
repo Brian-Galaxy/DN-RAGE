@@ -287,6 +287,13 @@ vehicles.isVehicleSirenValid = function (model) {
         case 'Intcept2':
         case 'Intcept3':
         case 'Intcept4':
+        case 'Lspdcara':
+        case 'Lspdcara2':
+        case 'Hwaycoq4':
+        case 'Lssheriffcoq4':
+        case 'Lssheriffcoq42':
+        case 'Policecoq4':
+        case 'Policecoq42':
             return true;
     }
     return false;
@@ -315,6 +322,12 @@ vehicles.getSirenSound = function (model, state) {
         case 'Hwaybullet':
         case 'Sherbullet':
         case 'Shergauntlet':
+        case 'Hwaycoq4':
+        case 'Hwaycoq42':
+        case 'Lssheriffcoq4':
+        case 'Lssheriffcoq42':
+        case 'Policecoq4':
+        case 'Policecoq42':
         {
             if (state == 2)
                 return 'RESIDENT_VEHICLES_SIREN_WAIL_03';
@@ -339,6 +352,8 @@ vehicles.getSirenSound = function (model, state) {
         case 'Police4':
         case 'Lguard':
         case 'PoliceT':
+        case 'Lspdcara':
+        case 'Lspdcara2':
         {
             if (state == 2)
                 return 'RESIDENT_VEHICLES_SIREN_WAIL_02';

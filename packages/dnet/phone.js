@@ -1522,8 +1522,8 @@ phone.fractionListF = function(player, showStats = false) {
         let depList = [];
         let depPrev = -1;
 
-        let isLeader = user.isLeader2(player);
-        let isSubLeader = user.isSubLeader2(player);
+        let isLeader = user.isLeaderF(player);
+        let isSubLeader = user.isSubLeaderF(player);
 
         let fractionItem = family.getData(fractionId);
         let fractionItemRanks = JSON.parse(fractionItem.get('rank_list'));

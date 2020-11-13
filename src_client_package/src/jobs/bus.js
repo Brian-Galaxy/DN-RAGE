@@ -336,7 +336,7 @@ bus.stop = async function(money, isNotify = true) {
                     family.set(fId, 'level', 3);
                     family.set(fId, 'exp', 0);
                 }
-                else if (fData.get('level') > 2)
+                else
                     family.set(fId, 'exp', fData.get('exp') + 1);
             }
             else

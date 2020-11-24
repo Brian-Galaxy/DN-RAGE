@@ -870,6 +870,66 @@ phone.fractionVehicleAction = function(player, id) {
     phone.showMenu(player, 'fraction', 'Действия', [phone.getMenuMainItem(`${veh.name} | ${veh.number}`, items)]);
 };
 
+phone.fractionVehicleAction2 = function(player, id) {
+    if (!user.isLogin(player))
+        return;
+
+    methods.debug('phone.fractionVehicleAction');
+    let fractionId = user.get(player, 'fraction_id2');
+
+    let items = [];
+
+    let veh = vehicles.getFractionVehicleInfo(id);
+
+    items.push(phone.getMenuItemImg(
+        undefined,
+        { name: "none" },
+        enums.getVehicleImg(veh.name)
+    ));
+
+    /*let rankList = [];
+    fractionItem.rankList[veh.rank_type].forEach((item, id) => {
+        if (id == veh.rank)
+            rankList.push({title: item, checked: true, params: { name: 'vehicleNewRank', memberId: veh.id, rankId: id }});
+        else
+            rankList.push({title: item, params: { name: 'vehicleNewRank', memberId: veh.id, rankId: id }});
+    });
+
+    items.push(phone.getMenuItemRadio(
+        'Изменить доступ',
+        'Текущий доступ: ' + fractionItem.rankList[veh.rank_type][veh.rank],
+        'Выберите доступ',
+        rankList,
+        { name: 'none' },
+        '',
+        true
+    ));*/
+
+    items.push(phone.getMenuItemButton(
+        'Найти транспорт',
+        '',
+        { name: 'fractionVehicleFind2', vehId: veh.id },
+        '',
+        true
+    ));
+
+    if (user.isLeader2(player)) {
+        items.push(phone.getMenuItemModal(
+            'Продать',
+            'По цене: ' + methods.moneyFormat(methods.getVehicleInfo(veh.name).price / 2),
+            'Продажа',
+            `Вы точно хотите продать ${veh.name}?`,
+            'Продать',
+            'Отмена',
+            { name: 'fractionVehicleSell2', vehId: veh.id, price: veh.price / 2 },
+            '',
+            true
+        ));
+    }
+
+    phone.showMenu(player, 'fraction2', 'Действия', [phone.getMenuMainItem(`${veh.name} | ${veh.number}`, items)]);
+};
+
 phone.fractionMoney = function(player) {
     if (!user.isLogin(player))
         return;
@@ -882,6 +942,43 @@ phone.fractionMoney = function(player) {
     items.push(phone.getMenuItemButton(
         'Текущее состояние бюджета',
         '' + methods.moneyFormat(coffer.getMoney(cofferId)),
+    ));
+
+    if (user.isGos(player))
+    {
+        items.push(phone.getMenuItemButton(
+            `Оружие: ${coffer.get(cofferId, 'stock_gun')}ед.`,
+            '',
+        ));
+        items.push(phone.getMenuItemButton(
+            `Модули: ${coffer.get(cofferId, 'stock_gunm')}ед.`,
+            '',
+        ));
+        items.push(phone.getMenuItemButton(
+            `Патроны: ${coffer.get(cofferId, 'stock_ammo')}ед.`,
+            '',
+        ));
+        items.push(phone.getMenuItemButton(
+            `Бронежилеты: ${coffer.get(cofferId, 'stock_armour')}ед.`,
+            '',
+        ));
+        items.push(phone.getMenuItemButton(
+            `Медицина: ${coffer.get(cofferId, 'stock_med')}ед.`,
+            '',
+        ));
+        items.push(phone.getMenuItemButton(
+            `Сухпайки: ${coffer.get(cofferId, 'stock_eat')}ед.`,
+            '',
+        ));
+        items.push(phone.getMenuItemButton(
+            `Разное: ${coffer.get(cofferId, 'stock_other')}ед.`,
+            '',
+        ));
+    }
+
+    items.push(phone.getMenuItemButton(
+        'Лог организации',
+        '',
         { name: 'log' },
         '',
         true
@@ -911,7 +1008,7 @@ phone.fractionMoney = function(player) {
         true
     ));
 
-    phone.showMenu(player, 'fractionMoney', 'Управление бюджетом', [phone.getMenuMainItem(`Основной раздел`, items)]);
+    phone.showMenu(player, 'fraction', 'Управление бюджетом', [phone.getMenuMainItem(`Основной раздел`, items)]);
 };
 
 phone.fractionLog = function(player) {
@@ -1708,6 +1805,69 @@ phone.fractionVehicles = function(player) {
     });
 };
 
+phone.fractionVehicles2 = function(player) {
+    if (!user.isLogin(player))
+        return;
+    methods.debug('phone.fractionList');
+
+    let fractionId = user.get(player, 'fraction_id2');
+
+    let items = [];
+    let depList = [];
+    let depPrev = -1;
+
+    let canEdit = user.isLeader2(player);
+
+    if (canEdit) {
+        items.push(phone.getMenuMainItem(`Основной раздел`, [
+            phone.getMenuItemButton(
+                'Покупка транспорта',
+                '',
+                { name: 'vehicleBuyList' },
+                '',
+                true,
+            )
+        ]));
+    }
+
+    mysql.executeQuery(`SELECT * FROM cars_fraction WHERE fraction_id = '${fractionId * -1}' AND is_buy = '1' ORDER BY rank_type ASC, rank DESC, name ASC`, (err, rows, fields) => {
+        rows.forEach(veh => {
+            if (depPrev != veh['rank_type']) {
+                if (depList.length > 0)
+                    items.push(phone.getMenuMainItem(`Список транспорта`, depList));
+                depList = [];
+            }
+
+            if (canEdit) {
+                let item = phone.getMenuItemTitle(
+                    `${veh['name']} | ${veh['number']}`,
+                    ``,
+                    { name: 'fractionVehicleAction2', vehId: veh['id'] },
+                    enums.getVehicleImg(veh['name']),
+                    true,
+                );
+                depList.push(item);
+            }
+            else {
+                let item = phone.getMenuItemTitle(
+                    `${veh['name']} | ${veh['number']}`,
+                    ``,
+                    { name: 'none' },
+                    enums.getVehicleImg(veh['name'])
+                );
+                depList.push(item);
+            }
+
+            depPrev = veh['rank_type'];
+        });
+
+        if (depList.length > 0)
+            items.push(phone.getMenuMainItem(`Список транспорта - ${depList.length} шт.`, depList));
+
+        phone.showMenu(player, 'fraction2', `Автопарк организации`, items);
+    });
+};
+
 phone.fractionVehiclesBuyList = function(player) {
     if (!user.isLogin(player))
         return;
@@ -1754,6 +1914,54 @@ phone.fractionVehiclesBuyList = function(player) {
         }
 
         phone.showMenu(player, 'fraction', `Покупка транспорта`, items);
+    });
+};
+
+phone.fractionVehiclesBuyList2 = function(player) {
+    if (!user.isLogin(player))
+        return;
+    methods.debug('phone.fractionVehiclesBuyList');
+
+    mysql.executeQuery(`SELECT * FROM cars_fraction WHERE fraction_id = '0' AND is_buy = '0' ORDER BY name ASC, price ASC`, (err, rows, fields) => {
+
+        let items = [];
+
+        if (rows.length > 0) {
+            let subItems = [];
+            let name = '';
+
+            rows.forEach(row => {
+
+                if (name != row['name']) {
+                    if (subItems.length > 0)
+                        items.push(phone.getMenuMainItem(`${name} | ${subItems.length} шт.`, subItems));
+                    name = row['name'];
+                    subItems = [];
+                }
+
+                let item = phone.getMenuItemTitle(
+                    `${row['name']} | ${row['number']}`,
+                    `Цена: ${methods.moneyFormat(row['price'], 1)}`,
+                    { name: 'fractionVehicleBuyInfo', id: row['id'] },
+                    enums.getVehicleImg(row['name']),
+                    true,
+                );
+                subItems.push(item);
+            });
+
+            if (subItems.length > 0)
+                items.push(phone.getMenuMainItem(`${name} | ${subItems.length} шт.`, subItems));
+        }
+        else {
+            items.push(phone.getMenuMainItem(`Список пуст`, [
+                phone.getMenuItemButton(
+                    `Нет доступных вариантов`,
+                    ``
+                )
+            ]));
+        }
+
+        phone.showMenu(player, 'fraction2', `Покупка транспорта`, items);
     });
 };
 
@@ -2120,7 +2328,7 @@ phone.createFraction = function(player) {
 
                 let item = phone.getMenuItemButton(
                     `Слот свободен`,
-                    `Взнос 100₠`,
+                    `Взнос 500₠`,
                     { name: 'buyFraction', id: row['id'] },
                     '',
                     true,
@@ -2326,6 +2534,58 @@ phone.fractionVehicleBuyInfo = function(player, id) {
 
         items.push(phone.getMenuMainItem(`${name}`, subItems));
         phone.showMenu(player, 'fraction', `Покупка транспорта`, items);
+    });
+};
+
+phone.fractionVehicleBuyInfo2 = function(player, id) {
+    if (!user.isLogin(player))
+        return;
+    methods.debug('phone.fractionVehicleBuyInfo');
+
+    mysql.executeQuery(`SELECT * FROM cars_fraction WHERE id = '${id}'`, (err, rows, fields) => {
+        let items = [];
+        let subItems = [];
+        let name = '';
+
+        rows.forEach(row => {
+
+            let vInfo = methods.getVehicleInfo(row['name']);
+
+            let item = phone.getMenuItemImg(
+                undefined,
+                { name: 'none' },
+                enums.getVehicleImg(row['name']),
+            );
+            subItems.push(item);
+
+            item = phone.getMenuItemButton(
+                vInfo.display_name,
+                row['number'],
+            );
+            subItems.push(item);
+
+            item = phone.getMenuItemButton(
+                'Топливо',
+                `${vehicles.getFuelLabel(vInfo.fuel_type)}/${vInfo.fuel_min}${vehicles.getFuelPostfix(vInfo.fuel_type)}/${vInfo.fuel_full}${vehicles.getFuelPostfix(vInfo.fuel_type)}`,
+            );
+            subItems.push(item);
+
+            item = phone.getMenuItemModal(
+                'Купить',
+                `Цена: ${methods.moneyFormat(vInfo.price)}`,
+                'Покупка',
+                `Вы точно хотите купить ${vInfo.display_name}?`,
+                'Купить',
+                'Отмена',
+                { name: 'fractionVehicleBuy2', vehId: row['id'], price: vInfo.price },
+                '',
+                true
+            );
+            subItems.push(item);
+        });
+
+        items.push(phone.getMenuMainItem(`${name}`, subItems));
+        phone.showMenu(player, 'fraction2', `Покупка транспорта`, items);
     });
 };
 

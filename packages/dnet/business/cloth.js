@@ -277,6 +277,15 @@ cloth.buy = function (player, price, body, cloth, color, torso, torsoColor, para
             params = `{"name": "${itemName}", "sex": ${user.getSex(player)}, "leg": ${cloth}, "leg_color": ${color}}`;
             inventory.addItem(266, 1, inventory.types.Player, user.getId(player), 1, 1, params, 100);
             break;
+        case 3:
+            inventory.updateItemsEquipByItemId(275, user.getId(player), inventory.types.Player, 0);
+
+            user.set(player, 'gloves', cloth);
+            user.set(player, 'gloves_color', color);
+
+            params = `{"name": "${itemName}", "sex": ${user.getSex(player)}, "gloves": ${cloth}, "gloves_color": ${color}}`;
+            inventory.addItem(275, 1, inventory.types.Player, user.getId(player), 1, 1, params, 100);
+            break;
         case 5:
             inventory.updateItemsEquipByItemId(264, user.getId(player), inventory.types.Player, 0);
 
@@ -357,6 +366,7 @@ cloth.buy = function (player, price, body, cloth, color, torso, torsoColor, para
 
     user.updateCharacterCloth(player);
     user.setComponentVariation(player, body, cloth, color);
+    user.updateClientCache(player);
     user.save(player);
 };
 

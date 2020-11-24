@@ -981,6 +981,7 @@ phone.showAppFraction2 = async function() {
     try {
         if (await fraction.has(user.getCache('fraction_id2'), 'grabBankFleeca')) {
 
+            let type = await fraction.get(user.getCache('fraction_id2'), 'grabBankFleeca');
             let car = await fraction.get(user.getCache('fraction_id2'), 'grabBankFleecaCar');
             let pt = await fraction.get(user.getCache('fraction_id2'), 'grabBankFleecaPt');
             let hp = await fraction.get(user.getCache('fraction_id2'), 'grabBankFleecaHp');
@@ -993,7 +994,7 @@ phone.showAppFraction2 = async function() {
                     umenu: [
                         {
                             title: "Задание завершено",
-                            text: "Теперь езжайте к любому Fleeca банку и начинайте ограбление",
+                            text: `Теперь езжайте к ${type === 2 ? 'Pacific' : 'любому Fleeca'} банку и начинайте ограбление`,
                             type: 1,
                             clickable: false,
                             params: { name: "none" }
@@ -1252,8 +1253,8 @@ phone.showAppFraction2 = async function() {
         menu.items.push(titleMenu);
     }
 
-    if (user.isLeader2() || user.isSubLeader2()) {
-        if ((fData.get('is_mafia') || fData.get('is_war')) && fData.get('is_shop')) {
+    /*if (user.isLeader2() || user.isSubLeader2()) {
+        if (fData.get('is_shop')) {
             let titleMenu = {
                 title: 'Ограбление магазинов',
                 umenu: [
@@ -1268,7 +1269,7 @@ phone.showAppFraction2 = async function() {
             };
             menu.items.push(titleMenu);
         }
-    }
+    }*/
 
     if (fData.get('is_mafia') && (user.isLeader2() || user.isSubLeader2() || user.isDepLeader2() || user.isDepSubLeader2())) {
         let titleMenu = {
@@ -1282,6 +1283,15 @@ phone.showAppFraction2 = async function() {
                     type: 8,
                     clickable: true,
                     params: { name: "mafiaClearWanted" }
+                },
+                {
+                    title: "Выдать наводку на магазин",
+                    text: "",
+                    modalTitle: 'Введите ID',
+                    modalButton: ['Отмена', 'Принять'],
+                    type: 8,
+                    clickable: true,
+                    params: { name: "mafiaGiveShop" }
                 },
             ],
         };
@@ -1329,6 +1339,18 @@ phone.showAppFraction2 = async function() {
                 },
             ],
         };
+
+        if (fData.get('spawn_x') !== 0) {
+            titleMenu.umenu.push(
+                {
+                    title: "Управление автопарком",
+                    type: 1,
+                    clickable: true,
+                    params: { name: "vehicles" }
+                },
+            );
+        }
+
         menu.items.push(titleMenu);
     }
     else if ((user.isDepLeader2() || user.isDepSubLeader2()) && user.getCache('rank_type') === 0) {
@@ -3257,7 +3279,7 @@ phone.showAppFractionAchiveF = async function() {
                     },
                     {
                         title: 'Доп. награда при получении уровня',
-                        text: '$500.000 на счёт семьи',
+                        text: '$250.000 на счёт семьи',
                         type: 1,
                         params: { name: "none" }
                     },
@@ -3274,7 +3296,7 @@ phone.showAppFractionAchiveF = async function() {
                     },
                     {
                         title: 'Доп. награда при получении уровня',
-                        text: '$750.000 на счёт семьи',
+                        text: '$500.000 на счёт семьи',
                         type: 1,
                         params: { name: "none" }
                     },
@@ -3291,7 +3313,7 @@ phone.showAppFractionAchiveF = async function() {
                     },
                     {
                         title: 'Доп. награда при получении уровня',
-                        text: '$1.000.000 на счёт семьи',
+                        text: '$750.000 на счёт семьи',
                         type: 1,
                         params: { name: "none" }
                     },
@@ -3325,7 +3347,7 @@ phone.showAppFractionAchiveF = async function() {
                     },
                     {
                         title: 'Доп. награда при получении уровня',
-                        text: '$20.000.000 на счёт семьи',
+                        text: '$7.500.000 на счёт семьи',
                         type: 1,
                         params: { name: "none" }
                     },
@@ -3346,7 +3368,7 @@ phone.showAppFractionUpgrade2 = async function() {
         items: []
     };
 
-    if (!fData.get('is_war')) {
+    if (!fData.get('is_war') && !fData.get('is_mafia')) {
         if (fData.get('spawn_x') !== 0) {
             menu.items.push(
                 {
@@ -5006,7 +5028,7 @@ phone.consoleCallback = async function(command) {
                     let posId2 = methods.getRandomInt(0, tree.markers[posId].list.length);
                     let pos = new mp.Vector3(tree.markers[posId].list[posId2][0], tree.markers[posId].list[posId2][1], tree.markers[posId].list[posId2][2] - 1);
 
-                    let price = methods.distanceToPos(pos, mp.players.local.position) / 20;
+                    let price = methods.distanceToPos(pos, mp.players.local.position) / 18;
                     if (price > 550)
                         price = 550 + methods.getRandomInt(0, 50);
 
@@ -5342,9 +5364,17 @@ phone.callBackModal = function(paramsJson) {
             mp.events.callRemote('server:fraction:vehicleBuy', params.vehId, params.price);
             phone.showAppFraction();
         }
+        if (params.name == 'fractionVehicleBuy2') {
+            mp.events.callRemote('server:fraction:vehicleBuy2', params.vehId, params.price);
+            phone.showAppFraction2();
+        }
         if (params.name == 'fractionVehicleSell') {
             mp.events.callRemote('server:fraction:vehicleSell', params.vehId, params.price);
             phone.showAppFraction();
+        }
+        if (params.name == 'fractionVehicleSell2') {
+            mp.events.callRemote('server:fraction:vehicleSell2', params.vehId, params.price);
+            phone.showAppFraction2();
         }
         if (params.name == 'deleteFractionDep') {
             mp.events.callRemote('server:phone:deleteFractionDep', params.depId);
@@ -5418,6 +5448,9 @@ phone.callBackModalInput = async function(paramsJson, text) {
         }
         if (params.name == 'mafiaClearWanted') {
             mp.events.callRemote('server:phone:mafiaClearWanted', methods.parseInt(text));
+        }
+        if (params.name == 'mafiaGiveShop') {
+            mp.events.callRemote('server:phone:mafiaGiveShop', methods.parseInt(text));
         }
         if (params.name == 'destroyFraction') {
             if (text.toLowerCase() === 'да')
@@ -5684,7 +5717,7 @@ phone.callBackModalInput = async function(paramsJson, text) {
                 return;
             }
             let money = methods.parseInt(sum * (100 - tax) / 100);
-            user.removePayDayMoney(money);
+            user.removePayDayMoney(sum);
             user.addBankMoney(money, 'Перевод с зарплатного счёта');
             user.sendSmsBankOperation(`Вы перевели ~g~${methods.moneyFormat(money)}~s~ на ваш банковский счёт\nНалог: ~y~${tax}%`, 'Зарплата');
 
@@ -6087,6 +6120,26 @@ phone.callBackButton = async function(menu, id, ...args) {
                 phone.showAppFractionHierarchy2();
             else if (params.name == 'upgrade')
                 phone.showAppFractionUpgrade2();
+            else if (params.name == 'vehicles') {
+                mp.events.callRemote('server:phone:fractionVehicles2');
+                phone.showLoad();
+            }
+            else if (params.name == 'fractionVehicleBuyInfo') {
+                mp.events.callRemote('server:phone:fractionVehicleBuyInfo2', params.id);
+                phone.showLoad();
+            }
+            else if (params.name == 'vehicleBuyList') {
+                mp.events.callRemote('server:phone:fractionVehiclesBuyList2');
+                phone.showLoad();
+            }
+            else if (params.name == 'fractionVehicleAction2') {
+                mp.events.callRemote('server:phone:fractionVehicleAction2', params.vehId);
+                phone.showLoad();
+            }
+            else if (params.name == 'fractionVehicleFind2') {
+                mp.events.callRemote('server:fraction:vehicleFind2', params.vehId);
+                phone.showAppFraction2();
+            }
             else if (params.name == 'list') {
                 mp.events.callRemote('server:phone:fractionList2');
                 phone.showLoad();

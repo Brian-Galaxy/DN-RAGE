@@ -31,11 +31,6 @@ user.createAccount = function(player, login, pass, email) {
     if (!mp.players.exists(player))
         return;
 
-    /*if (!enums.whiteList.includes(player.socialClub)) {
-        user.showCustomNotify(player, 'Регистрация аккаунтов запрещена', 1);
-        return;
-    }*/
-
     user.doesExistAccount(login, email, player.socialClub, function (cb) {
         if (cb == 1) {
             user.showCustomNotify(player, 'Аккаунт с такими SocialClub уже существует', 1);
@@ -124,7 +119,7 @@ user.createUser = function(player, name, surname, age, promocode, referer, natio
             if (rows.length >= 1) {
 
                 let paramsStart = JSON.parse(rows[0]["start"]);
-                let money = methods.getRandomInt(500, 999) / 100;
+                let money = 0;
                 let vipTime = 0;
                 let vipType = 0;
                 if (promocode !== '') {
@@ -170,62 +165,75 @@ user.loginAccount = function(player, login, pass) {
             let players = [];
 
             mysql.executeQuery(`SELECT skin, fraction_id2, fraction_id, pos_x, house_id, condo_id, apartment_id, yacht_id, stock_id, name, online_time, money, money_bank, login_date FROM users WHERE social = ? LIMIT 3`, player.accSocial, function (err, rows, fields) {
-                if (!mp.players.exists(player))
-                    return;
-                if (err) {
-                    player.call('client:events:loginAccount:success', [JSON.stringify(players)]);
-                    methods.debug(err);
+                try {
+                    if (!mp.players.exists(player))
+                        return;
+                    if (err) {
+                        player.call('client:events:loginAccount:success', [JSON.stringify(players)]);
+                        methods.debug(err);
+                    }
+                    else {
+
+                        try {
+                            methods.saveLog('log_connect',
+                                ['type', 'social', 'serial', 'address', 'game_id', 'account_id'],
+                                ['LOGIN_ACC', player.socialClub, player.serial, player.ip, player.id, user.getId(player)]
+                            );
+                        }
+                        catch (e) {
+
+                        }
+
+                        rows.forEach(row => {
+                            try {
+                                let sex = 'm';
+                                try {
+                                    sex = methods.parseInt(JSON.parse(row['skin'])['SKIN_SEX']) == 0 ? "m" : "w"
+                                }
+                                catch (e) {}
+
+                                let spawnList = [];
+
+                                if (row['pos_x'] !== 0)
+                                    spawnList.push('Точка выхода');
+
+                                if (row['house_id'])
+                                    spawnList.push('Дом');
+
+                                if (row['condo_id'])
+                                    spawnList.push('Квартира');
+
+                                if (row['apartment_id'])
+                                    spawnList.push('Апартаменты');
+
+                                if (row['yacht_id'])
+                                    spawnList.push('Яхта');
+
+                                if (row['stock_id']) {
+                                    if (stocks.get(row['stock_id'], 'upgrade_g'))
+                                        spawnList.push('Склад');
+                                }
+
+                                if (fraction.canSpawn(row['fraction_id2']) && row['fraction_id2'] > 0)
+                                    spawnList.push('Спавн организации');
+                                if (row['fraction_id'] === 4) {
+                                    spawnList.push('Спавн в казарме');
+                                    spawnList.push('Спавн на авианосце');
+                                }
+
+                                spawnList.push('Стандарт');
+
+                                players.push({name: row['name'], age: methods.parseFloat(row['online_time'] * 8.5 / 60).toFixed(1), money: row['money'] + row['money_bank'], sex: sex, spawnList: spawnList, lastLogin: methods.unixTimeStampToDate(row['login_date'])})
+                            }
+                            catch (e) {
+                                methods.debug(e);
+                            }
+                        });
+                        player.call('client:events:loginAccount:success', [JSON.stringify(players)]);
+                    }
                 }
-                else {
-
-                    try {
-                        methods.saveLog('log_connect',
-                            ['type', 'social', 'serial', 'address', 'game_id', 'account_id'],
-                            ['LOGIN_ACC', player.socialClub, player.serial, player.ip, player.id, user.getId(player)]
-                        );
-                    }
-                    catch (e) {
-                        
-                    }
-
-                    rows.forEach(row => {
-                        let sex = methods.parseInt(JSON.parse(row['skin'])['SKIN_SEX']) == 0 ? "m" : "w";
-
-                        let spawnList = [];
-
-                        if (row['pos_x'] !== 0)
-                            spawnList.push('Точка выхода');
-
-                        if (row['house_id'])
-                            spawnList.push('Дом');
-
-                        if (row['condo_id'])
-                            spawnList.push('Квартира');
-
-                        if (row['apartment_id'])
-                            spawnList.push('Апартаменты');
-
-                        if (row['yacht_id'])
-                            spawnList.push('Яхта');
-
-                        if (row['stock_id']) {
-                            if (stocks.get(row['stock_id'], 'upgrade_g'))
-                                spawnList.push('Склад');
-                        }
-
-                        if (fraction.canSpawn(row['fraction_id2']) && row['fraction_id2'] > 0)
-                            spawnList.push('Спавн организации');
-                        if (row['fraction_id'] === 4) {
-                            spawnList.push('Спавн в казарме');
-                            spawnList.push('Спавн на авианосце');
-                        }
-
-                        spawnList.push('Стандарт');
-
-                        players.push({name: row['name'], age: methods.parseFloat(row['online_time'] * 8.5 / 60).toFixed(1), money: row['money'] + row['money_bank'], sex: sex, spawnList: spawnList, lastLogin: methods.unixTimeStampToDate(row['login_date'])})
-                    });
-
-                    player.call('client:events:loginAccount:success', [JSON.stringify(players)]);
+                catch (e) {
+                    methods.debug('ERROR: ' + player.socialClub, e);
                 }
             });
         }
@@ -403,7 +411,7 @@ user.loadUser = function(player, name, spawn = 'Стандарт') {
             }
             catch (e) {
 
-                methods.saveFile('customError', `${player.socialClub}: ${e}`);
+                methods.saveFile('customError', `${player.socialClub}: ${e} | ${user.get(player, 'skin')}`);
 
                 user.resetAll(player);
                 //user.showCustomNotify(player, 'Аккаунт забанен до: ' + methods.unixTimeStampToDateTime(user.get(player, 'date_ban')), 1);
@@ -986,6 +994,8 @@ user.updateCharacterCloth = function(player) {
 
         cloth_data.torso = user.get(player, 'torso');
         cloth_data.torso_color = user.get(player, 'torso_color');
+        cloth_data.gloves = user.get(player, 'gloves');
+        cloth_data.gloves_color = user.get(player, 'gloves_color');
         cloth_data.leg = user.get(player, 'leg');
         cloth_data.leg_color = user.get(player, 'leg_color');
         cloth_data.hand = user.get(player, 'hand');
@@ -1022,7 +1032,6 @@ user.updateCharacterCloth = function(player) {
         user.setComponentVariation(player, 1, 0, 0, 2);
 
         if (!user.has(player, 'uniform')) {
-            user.setComponentVariation(player, 3, cloth_data['torso'], cloth_data['torso_color'], 2);
             user.setComponentVariation(player, 4, cloth_data['leg'], cloth_data['leg_color'], 2);
             user.setComponentVariation(player, 5, cloth_data['hand'], cloth_data['hand_color'], 2);
             user.setComponentVariation(player, 6, cloth_data['foot'], cloth_data['foot_color'], 2);
@@ -1031,6 +1040,14 @@ user.updateCharacterCloth = function(player) {
             user.setComponentVariation(player, 9, cloth_data['armor'], cloth_data['armor_color'], 2);
             user.setComponentVariation(player, 10, cloth_data['decal'], cloth_data['decal_color'], 2);
             user.setComponentVariation(player, 11, cloth_data['body'], cloth_data['body_color'], 2);
+
+            if (cloth_data['gloves'] > 0) {
+                let glovesOffset = user.getGlovesOffset(player, cloth_data['torso']);
+                if (glovesOffset >= 0)
+                    user.setComponentVariation(player, 3, cloth_data['gloves'] + glovesOffset, cloth_data['gloves_color'], 2);
+            }
+            else
+                user.setComponentVariation(player, 3, cloth_data['torso'], cloth_data['torso_color'], 2);
         }
 
         setTimeout(function () {
@@ -1243,6 +1260,54 @@ user.clearAllProp = function(player) {
             p.call('client:user:clearAllProp', [player.id]);
     });
     //mp.players.call('client:user:clearAllProp', [player.id]);
+};
+
+user.getGlovesOffset = function(player, handId) {
+    if (user.isLogin(player)) {
+        if (user.getSex(player) === 1) {
+            switch (handId) {
+                case 0:
+                case 2:
+                    return 2;
+                case 1:
+                    return 1;
+                case 3:
+                case 5:
+                case 6:
+                case 7:
+                    return 7;
+                case 4:
+                    return 10;
+                case 15:
+                    return 12;
+                case 9:
+                    return 8;
+            }
+        }
+        else {
+            switch (handId) {
+                case 0:
+                    return 0;
+                case 2:
+                    return 2;
+                case 5:
+                    return 4;
+                case 1:
+                case 4:
+                case 6:
+                case 12:
+                case 14:
+                    return 5;
+                case 8:
+                    return 6;
+                case 11:
+                    return 7;
+                case 15:
+                    return 10;
+            }
+        }
+    }
+    return -1;
 };
 
 user.setComponentVariation = function(player, component, drawableId, textureId) {
@@ -1569,24 +1634,27 @@ user.getSexName = function(player) {
 user.ready = function(player) {
     if (!mp.players.exists(player))
         return false;
-
-    weather.setPlayerCurrentWeather(player);
-    user.updateVehicleInfo(player);
-
-    if (ctos.isBlackout())
-        player.call('client:ctos:setBlackout', [true]);
-    if (ctos.isDisableNetwork())
-        player.call('client:ctos:setNoNetwork', [true]);
-
-    player.dimension = player.id + 1;
     try {
-        user.resetAll(player);
+        weather.setPlayerCurrentWeather(player);
+        user.updateVehicleInfo(player);
+
+        if (ctos.isBlackout())
+            player.call('client:ctos:setBlackout', [true]);
+        if (ctos.isDisableNetwork())
+            player.call('client:ctos:setNoNetwork', [true]);
+
+        player.dimension = player.id + 1;
+        try {
+            user.resetAll(player);
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+        player.call('playerReadyDone');
     }
     catch (e) {
-        methods.debug(e);
+        methods.debug('READY_ERROR', e.toString(), player.socialClub);
     }
-
-    player.call('playerReadyDone');
 };
 
 user.updateVehicleInfo = function(player) {
@@ -1805,12 +1873,12 @@ user.getMoney = function(player, payType = 0) {
 };
 
 user.addCashMoney = function(player, money, text = 'Финансовая операция') {
-    user.addCashHistory(player, text, methods.parseFloat(money));
+    user.addCashHistory(player, text, methods.parseFloat(money), user.getCashMoney(player));
     user.setCashMoney(player, user.getCashMoney(player) + methods.parseFloat(money));
 };
 
 user.removeCashMoney = function(player, money, text = 'Финансовая операция') {
-    user.addCashHistory(player, text, methods.parseFloat(money) * -1);
+    user.addCashHistory(player, text, methods.parseFloat(money) * -1, user.getCashMoney(player));
     user.setCashMoney(player, user.getCashMoney(player) - methods.parseFloat(money));
 };
 
@@ -1826,12 +1894,12 @@ user.getCashMoney = function(player) {
 };
 
 user.addCryptoMoney = function(player, money, text = 'Финансовая операция') {
-    user.addCryptoHistory(player, text, methods.parseFloat(money));
+    user.addCryptoHistory(player, text, methods.parseFloat(money), user.getCryptoMoney(player));
     user.setCryptoMoney(player, user.getCryptoMoney(player) + methods.parseFloat(money));
 };
 
 user.removeCryptoMoney = function(player, money, text = 'Финансовая операция') {
-    user.addCryptoHistory(player, text, methods.parseFloat(money) * -1);
+    user.addCryptoHistory(player, text, methods.parseFloat(money) * -1, user.getCryptoMoney(player));
     user.setCryptoMoney(player, user.getCryptoMoney(player) - methods.parseFloat(money));
 };
 
@@ -1847,12 +1915,12 @@ user.getCryptoMoney = function(player) {
 };
 
 user.addBankMoney = function(player, money, text = "Операция со счетом") {
-    user.addBankHistory(player, text, methods.parseFloat(money));
+    user.addBankHistory(player, text, methods.parseFloat(money), user.getBankMoney(player));
     user.setBankMoney(player, user.getBankMoney(player) + methods.parseFloat(money));
 };
 
 user.removeBankMoney = function(player, money, text = "Операция со счетом") {
-    user.addBankHistory(player, text, methods.parseFloat(money) * -1);
+    user.addBankHistory(player, text, methods.parseFloat(money) * -1, user.getBankMoney(player));
     user.setBankMoney(player, user.getBankMoney(player) - methods.parseFloat(money));
 };
 
@@ -1961,7 +2029,7 @@ user.getBankCardPrefix = function(player, bankCard = 0) {
     return methods.parseInt(bankCard.toString().substring(0, 4));
 };
 
-user.addBankHistory = function(player, text, price) {
+user.addBankHistory = function(player, text, price, was = 0) {
     if (!user.isLogin(player))
         return;
 
@@ -1977,10 +2045,10 @@ user.addBankHistory = function(player, text, price) {
     let rpDateTime = weather.getRpDateTime();
     let timestamp = methods.getTimeStamp();
 
-    mysql.executeQuery(`INSERT INTO log_bank_user (user_id, card, text, price, timestamp, rp_datetime) VALUES ('${userId}', '${card}', '${text}', '${price}', '${timestamp}', '${rpDateTime}')`);
+    mysql.executeQuery(`INSERT INTO log_bank_user (user_id, card, text, price, was, timestamp, rp_datetime) VALUES ('${userId}', '${card}', '${text}', '${price}', '${was}', '${timestamp}', '${rpDateTime}')`);
 };
 
-user.addCashHistory = function(player, text, price) {
+user.addCashHistory = function(player, text, price, was = 0) {
     if (!user.isLogin(player))
         return;
 
@@ -1992,10 +2060,10 @@ user.addCashHistory = function(player, text, price) {
     let rpDateTime = weather.getRpDateTime();
     let timestamp = methods.getTimeStamp();
 
-    mysql.executeQuery(`INSERT INTO log_cash_user (user_id, text, price, timestamp, rp_datetime) VALUES ('${userId}', '${text}', '${price}', '${timestamp}', '${rpDateTime}')`);
+    mysql.executeQuery(`INSERT INTO log_cash_user (user_id, text, price, was, timestamp, rp_datetime) VALUES ('${userId}', '${text}', '${price}', '${was}', '${timestamp}', '${rpDateTime}')`);
 };
 
-user.addCryptoHistory = function(player, text, price) {
+user.addCryptoHistory = function(player, text, price, was = 0) {
     if (!user.isLogin(player))
         return;
 
@@ -2007,7 +2075,7 @@ user.addCryptoHistory = function(player, text, price) {
     let rpDateTime = weather.getRpDateTime();
     let timestamp = methods.getTimeStamp();
 
-    mysql.executeQuery(`INSERT INTO log_crypto_user (user_id, text, price, timestamp, rp_datetime) VALUES ('${userId}', '${text}', '${price}', '${timestamp}', '${rpDateTime}')`);
+    mysql.executeQuery(`INSERT INTO log_crypto_user (user_id, text, price, was, timestamp, rp_datetime) VALUES ('${userId}', '${text}', '${was}', '${price}', '${timestamp}', '${rpDateTime}')`);
 };
 
 user.addHistory = function(player, type, reason) {
@@ -2619,26 +2687,65 @@ user.removeAllWeapons = function(player) {
     player.call('client:user:removeAllWeapons');
 };
 
-user.giveJobSkill = function(player) {
+user.giveJobSkill = function(player, name = '') {
+    if (user.isLogin(player)) {
+        let job = user.get(player, 'job');
+        if (name !== '')
+            job = name;
+
+        let skillCount = enums.jobList[job][5];
+        let skillWin = enums.jobList[job][6];
+        let skillPostfix = enums.jobList[job][4];
+
+        if (user.has(player, 'job_' + skillPostfix)) {
+            let currentSkill = user.get(player, 'job_' + skillPostfix);
+            if (currentSkill >= skillCount)
+                return;
+
+            if (currentSkill == skillCount - 1) {
+                user.set(player, 'job_' + skillPostfix, skillCount);
+                chat.sendToAll('Новости штата', `${user.getRpName(player)} !{${chat.clBlue}} стал одним из лучших работников штата San Andreas, получив вознаграждение ${methods.moneyFormat(skillWin)}`, chat.clBlue);
+                user.addMoney(player, skillWin);
+                user.save(player);
+            }
+            else {
+                user.set(player, 'job_' + skillPostfix, currentSkill + 1);
+                player.notify('~g~Навык вашей профессии был повышен');
+            }
+        }
+    }
 };
 
-user.giveJobMoney = function(player, money) {
+user.giveJobMoney = function(player, money, jobId = 0) {
     if (!user.isLogin(player))
         return;
+
+    let desc = '';
+    try {
+        let jobItem = enums.jobList[user.get(player, 'job')];
+        if (jobId > 0)
+            jobItem = enums.jobList[jobId];
+        if (jobItem[5] > 0 && user.get(player, 'job_' + jobItem[4]) > 0) {
+            money = money * (1 + user.get(player, 'job_' + jobItem[4]) / jobItem[5]);
+            desc = `\n~y~Прибавка ${methods.parseFloat((user.get(player, 'job_' + jobItem[4]) / jobItem[5]) * 100).toFixed(2)}% от зарплаты за прокаченный навык`
+        }
+    }
+    catch (e) {}
+
     money = methods.parseFloat(money);
     if (user.get(player, 'bank_card') < 1) {
         user.addCashMoney(player, money);
-        player.notify('Вы заработали: ~g~' + methods.moneyFormat(money));
+        player.notify('Вы заработали: ~g~' + methods.moneyFormat(money) + desc);
     }
     else {
         user.addBankMoney(player, money);
-        user.sendSmsBankOperation(player, `Зачисление средств: ~g~${methods.moneyFormat(money)}`);
+        user.sendSmsBankOperation(player, `Зачисление средств: ~g~${methods.moneyFormat(money)}` + desc);
     }
     coffer.removeMoney(1, money);
 };
 
 
-user.jail = function(player, sec, withIzol = false) {
+user.jail = function(player, sec, withIzol = 0) {
     methods.debug('user.jail');
     if (!user.isLogin(player))
         return false;
@@ -2812,9 +2919,9 @@ user.revive = function(player, hp = 20) {
     player.call('client:user:revive', [hp]);
 };
 
-//42 - 6 Часов
+//28 - 4 Часа
 //169 - 24 Часа
-user.toLspdSafe = function(player, time = 42, target = null) {
+user.toLspdSafe = function(player, time = 28, target = null) {
     if (!mp.players.exists(player))
         return false;
     user.showCustomNotify(player, 'Ваше оружие лежит в сейфе LSPD/BCSD');
@@ -2949,7 +3056,7 @@ user.payDay = async function (player) {
 
     if (user.get(player, 'warns') > 0) {
         user.set(player, 'online_warn', user.get(player, 'online_warn') + 1);
-        if (user.get(player, 'online_warn') >= 339) {
+        if (user.get(player, 'online_warn') >= 508) {
             user.set(player, 'warns', user.get(player, 'warns') - 1);
             user.set(player, 'online_warn', 0);
             player.notify(`~g~Сервер вам снял 1 предупреждение`);
@@ -2966,7 +3073,7 @@ user.payDay = async function (player) {
         user.set(player, 'exp_age', user.get(player, 'exp_age') + 1);*/
 
     if (user.get(player, 'online_cont') === 56) {
-        /*user.giveRandomMask(player, 30, true);
+        //user.giveRandomMask(player, 30, true);
         user.addCashMoney(player, 30000, 'Бонус от государства');
         player.notify(`~g~Вы получили $30,000 отыграв 8 часов на сервере`);
         user.set(player, 'online_cont', user.get(player, 'online_cont') + 1);
@@ -3043,6 +3150,9 @@ user.payDay = async function (player) {
         user.addWorkExp(player, 20);
         player.notify('~g~Вы получили 20 опыта рабочего стажа, связи с тем, что у вас VIP HARD');
     }
+
+    user.addWorkExp(player, 20);
+    player.notify('~g~Вы получили 20 опыта рабочего стажа, связи с бонусом');
 
     if (user.get(player, 'bank_card') > 0) {
 
@@ -3391,14 +3501,12 @@ user.warn = function(player, count, reason, notify = true) {
     else {
         mysql.executeQuery(`INSERT INTO ban_list (ban_from, ban_to, count, datetime, reason) VALUES ('Server', '${user.getRpName(player)}', 'Предупреждение', '${methods.getTimeStamp()}', '${reason}')`);
 
-        user.jail(player, 180 * 60);
-
         if (user.get(player, 'warns') < 2) {
             user.set(player, 'warns', user.get(player, 'warns') + 1);
         }
         else {
             user.set(player, 'warns', 0);
-            user.ban(player, 5, 'Был забанен (3 предупреждения)')
+            user.ban(player, 6, 'Был забанен (3 предупреждения)')
         }
     }
 };

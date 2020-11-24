@@ -3,10 +3,11 @@ import methods from '../modules/methods';
 import Container from "../modules/data";
 
 import enums from "../enums";
+import user from "../user";
 
 import racer from "../manager/racer";
-import user from "../user";
 import vSync from "../manager/vSync";
+import prolog from "../manager/prolog";
 
 let vehicles = {};
 
@@ -51,6 +52,14 @@ vehicles.getSync = async function(id, key) {
 
 vehicles.hasSync = async function(id, key) {
     return await Container.Data.Has(offset + id, key);
+};
+
+vehicles.setVariable = function(key, value) {
+    mp.events.callRemote('server:vehicle:serVariable', key, value);
+};
+
+vehicles.attach = function(key, isRemove = false) {
+    mp.events.callRemote('server:vehicle:attach', key, isRemove);
 };
 
 vehicles.setInteriorColor = function(color) {
@@ -537,6 +546,7 @@ vehicles.findVehicleByNumber = (number) => {
 
 vehicles.engineVehicle = function(status = null) {
     if (mp.players.local.vehicle) {
+        prolog.next();
         let vInfo = methods.getVehicleInfo(mp.players.local.vehicle.model);
         if (vInfo.class_name != 'Cycles')
             mp.events.callRemote('server:vehicle:engineStatus', status);

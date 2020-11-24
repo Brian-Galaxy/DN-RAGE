@@ -45,8 +45,20 @@ items.isWeapon = function(itemId) {
     return itemId >= 54 && itemId <= 138 || itemId == 146 || itemId == 147;
 };
 
+items.isWeaponComponent = function(itemId) {
+    return itemId >= 293 && itemId <= 473;
+};
+
 items.isAmmo = function(itemId) {
     return itemId >= 279 && itemId <= 292;
+};
+
+items.isMed = function(itemId) {
+    return itemId >= 204 && itemId <= 222 || itemId >= 31 && itemId <= 39 || itemId == 277 || itemId == 278;
+};
+
+items.isEat = function(itemId) {
+    return itemId >= 11 && itemId <= 26;
 };
 
 items.isDrug = function(itemId) {
@@ -54,11 +66,11 @@ items.isDrug = function(itemId) {
 };
 
 items.isTradeBeachInvalid = function(itemId) {
-    return items.isWeapon(itemId) || items.isAmmo(itemId) || items.isDrug(itemId) || itemId === 50 || itemId === 140 || itemId === 141 || itemId === 252;
+    return items.isWeapon(itemId) || items.isAmmo(itemId) || items.isWeaponComponent(itemId) || items.isDrug(itemId) || itemId === 50 || itemId === 140 || itemId === 141 || itemId === 252;
 };
 
 items.isTradeBlackInvalid = function(itemId) {
-    return !items.isWeapon(itemId) && !items.isAmmo(itemId) && !items.isDrug(itemId) || itemId === 50 || itemId === 140 || itemId === 141;
+    return !items.isWeapon(itemId) && !items.isAmmo(itemId) && !items.isWeaponComponent(itemId) && !items.isDrug(itemId) || itemId === 50 || itemId === 140 || itemId === 141;
 };
 
 items.getItemFormat = function(item) {
@@ -116,7 +128,7 @@ items.getItemFormat = function(item) {
         else
             desc = `Количество патрон: ${item.count}шт.`;
     }
-    else if (item.item_id <= 273 && item.item_id >= 265) {
+    else if (item.item_id <= 273 && item.item_id >= 265 || item.item_id === 275) {
         itemName = params.name;
         desc = params.sex === 1 ? 'Женская одежда' : 'Мужская одежда';
     }

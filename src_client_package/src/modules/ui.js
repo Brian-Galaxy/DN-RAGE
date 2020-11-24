@@ -10,6 +10,7 @@ import enums from "../enums";
 import weather from "../manager/weather";
 import shoot from "../manager/shoot";
 import quest from "../manager/quest";
+import prolog from "../manager/prolog";
 
 import vehicles from "../property/vehicles";
 import phone from "../phone";
@@ -423,7 +424,17 @@ ui.updateValues = function() {
 
             if (user.getCache('quests') && user.getCache('s_hud_quest')) {
 
-                if (user.getQuestCount('standart') < 10)
+                if (user.getCache('startProlog') < 10)
+                {
+                    data = {
+                        type: 'updateQuest',
+                        showQuest: true,
+                        questTitle: 'Пролог',
+                        questText: prolog.getCurrentTask(),
+                    };
+                    ui.callCef('hudl', JSON.stringify(data));
+                }
+                else if (user.getQuestCount('standart') < 10)
                 {
                     data = {
                         type: 'updateQuest',
@@ -434,13 +445,25 @@ ui.updateValues = function() {
                     ui.callCef('hudl', JSON.stringify(data));
                 }
                 else if (user.getCache('online_wheel') < 999) {
-                    data = {
-                        type: 'updateQuest',
-                        showQuest: true,
-                        questTitle: 'Колесо удачи',
-                        questText: `Отыграв 3 часа на сервере, у вас есть возможность прокрутить колесо удачи и один из главных призов это дорогой автомобиль, маска или VIP HARD. Вам осталось: ${((21 - user.getCache( 'online_wheel')) * 8.5).toFixed(1)} мин.`,
-                    };
-                    ui.callCef('hudl', JSON.stringify(data));
+
+                    if (user.getCache( 'online_wheel') >= 21) {
+                        data = {
+                            type: 'updateQuest',
+                            showQuest: true,
+                            questTitle: 'Колесо удачи',
+                            questText: `Теперь вам доступно прокрутить колесо удаччи в казино Diamond!`,
+                        };
+                        ui.callCef('hudl', JSON.stringify(data));
+                    }
+                    else {
+                        data = {
+                            type: 'updateQuest',
+                            showQuest: true,
+                            questTitle: 'Колесо удачи',
+                            questText: `Отыграв 3 часа на сервере, у вас есть возможность прокрутить колесо удачи и один из главных призов это дорогой автомобиль, маска или VIP HARD. Вам осталось: ${((21 - user.getCache( 'online_wheel')) * 8.5).toFixed(1)} мин.`,
+                        };
+                        ui.callCef('hudl', JSON.stringify(data));
+                    }
                 }
             }
         }

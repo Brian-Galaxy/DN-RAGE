@@ -224,7 +224,8 @@ taxi.checkPos = function() {
                         mp.game.ui.notifications.showWithPicture('Заказ завершен', "Диспетчер", `Клиент оценил поездку в ~y~${rating}зв.`, 'CHAR_TAXI', 1);
                     }
 
-                    user.giveJobMoney(price);
+                    user.giveJobMoney(price, 9);
+                    user.giveJobSkill('taxi');
                     user.addWorkExp(15);
 
                     setTimeout(function () {
@@ -269,11 +270,11 @@ taxi.checkPos = function() {
 taxi.getTaxiDistPrice = function(pos1, pos2) {
     let typePrice = 17;
     let distance = methods.distanceToPos(pos1, pos2);
-    let price = methods.parseInt(distance / typePrice) + 50;
-    if (price > 1000)
-        price = 1000;
+    let price = methods.parseInt(distance / typePrice) + 40;
+    if (price > 800)
+        price = 800;
 
-    return methods.parseInt(price / 2);
+    return methods.parseInt(price);
 };
 
 taxi.loadAll = function() {

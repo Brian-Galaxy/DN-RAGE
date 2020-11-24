@@ -307,13 +307,28 @@ weather.timeSyncTimer = function() {
                 try {
                     let player = methods.getRandomPlayer();
                     if (user.isLogin(player)) {
-                        //user.giveVehicle(player, enums.vehWinList[methods.getRandomInt(0, enums.vehWinList.length)], 1, true);
-                        user.giveVip(player, methods.getRandomInt(1, 8), 2, true);
+                        user.giveVehicle(player, enums.vehWinList[methods.getRandomInt(0, enums.vehWinList.length)], 1, true);
+                        //user.giveVip(player, methods.getRandomInt(1, 8), 2, true);
                     }
                     player = methods.getRandomPlayer();
                     if (user.isLogin(player)) {
-                        //user.giveVehicle(player, enums.vehWinList[methods.getRandomInt(0, enums.vehWinList.length)], 1, true);
-                        user.giveRandomMask(player, 0, true);
+                        user.giveVehicle(player, enums.vehWinList[methods.getRandomInt(0, enums.vehWinList.length)], 1, true);
+                        //user.giveRandomMask(player, 0, true);
+                    }
+                    player = methods.getRandomPlayer();
+                    if (user.isLogin(player)) {
+                        user.giveVehicle(player, enums.vehWinList[methods.getRandomInt(0, enums.vehWinList.length)], 1, true);
+                        //user.giveRandomMask(player, 0, true);
+                    }
+                    player = methods.getRandomPlayer();
+                    if (user.isLogin(player)) {
+                        user.giveVehicle(player, enums.vehWinList[methods.getRandomInt(0, enums.vehWinList.length)], 1, true);
+                        //user.giveRandomMask(player, 0, true);
+                    }
+                    player = methods.getRandomPlayer();
+                    if (user.isLogin(player)) {
+                        user.giveVehicle(player, enums.vehWinList[methods.getRandomInt(0, enums.vehWinList.length)], 1, true);
+                        //user.giveRandomMask(player, 0, true);
                     }
                 }
                 catch (e) {
@@ -331,7 +346,7 @@ weather.timeSyncTimer = function() {
                 mafiaWar.startWar(3);
         }
 
-        if (dateTime.getDate() % 4 === 0) {
+        if (dateTime.getDay() === 7) {
             if (dateTime.getHours() === 20 && dateTime.getMinutes() === 0) {
                 inventory.deleteItemsByItemId(49);
                 fraction.createCargoBigWar();

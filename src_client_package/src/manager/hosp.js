@@ -48,7 +48,7 @@ hosp.timer = function() {
                 if (user.getCache('jail_time') > 0) {
                     user.set('med_time', 0);
                     prvTime = 0;
-                    jail.toJail(user.getCache('jail_time'));
+                    jail.toJail(user.getCache('jail_time'), user.getCache('jail_type'));
                     return;
                 }
 
@@ -199,7 +199,7 @@ hosp.toHosp = function() {
         if (user.getCache('jail_time') > 0) {
             user.set('med_time', 0);
             prvTime = 0;
-            jail.toJail(user.getCache('jail_time'));
+            jail.toJail(user.getCache('jail_time'), user.getCache('jail_type'));
             return;
         }
 

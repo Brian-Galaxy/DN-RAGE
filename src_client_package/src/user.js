@@ -37,10 +37,11 @@ user.godmode = false;
 user.currentId = 0;
 user.targetEntity = undefined;
 user.socialClub = 'socialclub';
-user.btnCamera = 238;
+//user.btnCamera = 238;
+user.btnCamera = 237;
 
 user.camOffsetLeft = 0;
-user.camOffsetRight = 0;
+user.camOffsetRight = 1;
 
 let currentCamDist = 0.2;
 let currentCamRot = -2;
@@ -538,15 +539,10 @@ user.teleportVehV = function(pos, rot) {
             mp.game.streaming.requestCollisionAtCoord(pos.x, pos.y, pos.z);
             mp.game.invoke(methods.SET_FOLLOW_VEHICLE_CAM_VIEW_MODE, 4);
             if (mp.players.local.vehicle) {
-                //mp.players.local.vehicle.freezePosition(true);
+                mp.players.local.vehicle.freezePosition(true);
                 mp.players.local.vehicle.position = pos;
                 if (rot != undefined)
                     mp.players.local.vehicle.setRotation(0, 0, methods.parseInt(rot), 0, true);
-                setTimeout(function () {
-                    //mp.players.local.vehicle.freezePosition(false);
-                    if (mp.players.local.dimension === 0)
-                        mp.players.local.vehicle.setOnGroundProperly();
-                }, 200);
             }
             else {
                 if (rot != undefined)
@@ -559,11 +555,16 @@ user.teleportVehV = function(pos, rot) {
         }
         //methods.wait(500);
         setTimeout(function () {
+
+            mp.players.local.vehicle.freezePosition(false);
+            //if (mp.players.local.dimension === 0)
+            mp.players.local.vehicle.setOnGroundProperly();
+
             object.process();
             mp.attachmentMngr.initFor(mp.players.local);
             mp.game.invoke(methods.SET_FOLLOW_VEHICLE_CAM_VIEW_MODE, camMode);
             user.hideLoadDisplay(500);
-        }, 500);
+        }, 1000);
     }, 500);
 };
 
@@ -1583,16 +1584,24 @@ user.giveVehicle = function(vName, withDelete = 1, withChat = false, desc = '', 
     mp.events.callRemote('server:user:giveVehicle', vName, withDelete, withChat, desc, isBroke);
 };
 
-user.giveJobSkill = function() {
-    //mp.events.callRemote('server:user:giveJobSkill'); TODO
+user.giveJobSkill = function(name = '') {
+    mp.events.callRemote('server:user:giveJobSkill', name);
 };
 
-user.giveJobMoney = function(money) {
-
-    //if (user.getCache('skill_' + user.getCache('job')) >= 500)
-    //    money = methods.parseInt(money * 1.5);
+user.giveJobMoney = function(money, jobId = 0) {
 
     let desc = '';
+    try {
+        let jobItem = enums.jobList[user.getCache('job')];
+        if (jobId > 0)
+            jobItem = enums.jobList[jobId];
+        if (jobItem[5] > 0 && user.getCache('job_' + jobItem[4]) > 0) {
+            money = money * (1 + user.getCache('job_' + jobItem[4]) / jobItem[5]);
+            desc = `'\n~y~Прибавка ${methods.parseFloat((user.getCache('job_' + jobItem[4]) / jobItem[5]) * 100).toFixed(2)}% от зарплаты за прокаченный навык';`
+        }
+    }
+    catch (e) {}
+
     if (user.getCache('vip_type') === 1) {
         desc = '\n~y~Прибавка VIP LIGHT 5% от зарплаты';
         money = money * 1.05;
@@ -2143,7 +2152,7 @@ mp.events.add("render", () => {
 
         //ui.drawText(`${currentPoint.x} | ${currentPoint.y} | ${x} | ${y}`, 0, 0, 1, 255,255,255, 255,1);
 
-        if (x > user.camOffsetLeft) {
+        if (x > user.camOffsetLeft && x < user.camOffsetRight) {
             cameraRotator.setPoint(x, y);
 
             if (mp.game.controls.isDisabledControlPressed(2, user.btnCamera)) {

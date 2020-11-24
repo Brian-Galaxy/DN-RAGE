@@ -242,7 +242,6 @@ jobPoint.delete = function() {
                         marker.destroy();
                 }
                 catch (e) {
-                    methods.debug(e);
                 }
             });
         }
@@ -255,7 +254,6 @@ jobPoint.delete = function() {
                     marker.destroy();
             }
             catch (e) {
-                methods.debug(e);
             }
         });
     }

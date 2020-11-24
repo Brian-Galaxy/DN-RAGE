@@ -241,7 +241,7 @@ bus.nextCheckpoint = function() {
                             _isBus1 = false;
                             _currentId = 0;
                             _checkpointId = -1;
-                            bus.stop(530, false);
+                            bus.stop(530 * 0.7, false);
                             break;
                         }
 
@@ -265,7 +265,7 @@ bus.nextCheckpoint = function() {
                             _isBus2 = false;
                             _currentId = 0;
                             _checkpointId = -1;
-                            bus.stop(216, false);
+                            bus.stop(216 * 0.7, false);
                             break;
                         }
 
@@ -289,7 +289,7 @@ bus.nextCheckpoint = function() {
                             _isBus3 = false;
                             _currentId = 0;
                             _checkpointId = -1;
-                            bus.stop(1300, false);
+                            bus.stop(1700 * 0.7, false);
                             break;
                         }
 
@@ -332,7 +332,7 @@ bus.stop = async function(money, isNotify = true) {
             let fData = await family.getData(fId);
             if (fData.get('level') === 2) {
                 if (fData.get('exp') > 300) {
-                    family.addMoney(fId, 750000, 'Премия за достижения 3 уровня');
+                    family.addMoney(fId, 500000, 'Премия за достижения 3 уровня');
                     family.set(fId, 'level', 3);
                     family.set(fId, 'exp', 0);
                 }

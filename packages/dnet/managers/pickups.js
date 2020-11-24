@@ -41,6 +41,12 @@ pickups.BotRole0 = new mp.Vector3(-414.9725036621094, -2644.56201171875, 5.00021
 pickups.BotRoleAll = new mp.Vector3(-1287.615, -561.1155, 30.71216);
 pickups.QuestBotGang = new mp.Vector3(-219.3651123046875, -1367.4730224609375, 30.25823402404785);
 
+pickups.BotJail = new mp.Vector3(1746.68994140625, 2503.901123046875, 44.56498336791992);
+pickups.BotYankt = new mp.Vector3(3200.11669921875, -4833.86474609375, 110.81522369384766);
+
+pickups.PrologHouse1 = new mp.Vector3(265.1008605957031, -1000.889892578125, -100.0086441040039);
+pickups.PrologHouse2 = new mp.Vector3(3557.9091796875, -4683.9677734375, 113.5896987915039);
+
 pickups.BotLspd1 = new mp.Vector3(441.0574, -981.1564, 29.68959);
 pickups.BotLspd2 = new mp.Vector3(-1098.981, -841.2241, 18.00159);
 pickups.BotLspd3 = new mp.Vector3(1854.152, 3687.976, 33.26706);
@@ -65,6 +71,8 @@ pickups.SellVehicle = new mp.Vector3(-1654.048583984375, -947.2221069335938, 6.7
 pickups.FixWeapon1 = new mp.Vector3(2710.799560546875, -354.3301696777344, -56.18671798706055);
 pickups.FixWeapon2 = new mp.Vector3(203.61666870117188, 5192.0439453125, -89.5973129272461);
 pickups.FixWeapon3 = new mp.Vector3(896.9457397460938, -3217.528076171875, -99.22711944580078);
+
+pickups.ColorWeapon1 = new mp.Vector3(204.73875427246094, 5192.43115234375, -89.5972671508789);
 
 pickups.StockLab = new mp.Vector3(1087.520751953125, -3194.3583984375, -39.99346160888672);
 pickups.StockBunk = new mp.Vector3(905.8906860351562, -3230.52001953125, -99.29435729980469);
@@ -425,6 +433,9 @@ pickups.checkPressLAlt = function(player) {
     methods.checkTeleport(player, pickups.InvaderPos2, pickups.InvaderPos1);
     methods.checkTeleport(player, pickups.InvaderPos22, pickups.InvaderPos11);
 
+    if (player.dimension >= 20000000 && user.get(player, 'startProlog'))
+        methods.checkTeleport(player, pickups.PrologHouse1, pickups.PrologHouse2);
+
     methods.checkTeleport(player, pickups.UsmcPickupPos1, pickups.UsmcPickupPos2);
     methods.checkTeleport(player, pickups.UsmcPickupPos11, pickups.UsmcPickupPos12);
     methods.checkTeleport(player, pickups.EmsPickupPos1, pickups.EmsPickupPos2);
@@ -646,6 +657,10 @@ pickups.checkPressE = function(player) {
         player.call('client:menuList:showBotQuestRoleAllMenu');
     if (methods.distanceToPos(pickups.QuestBotGang, playerPos) < distanceCheck)
         player.call('client:menuList:showBotQuestGangMenu');
+    if (methods.distanceToPos(pickups.BotJail, playerPos) < distanceCheck)
+        player.call('client:menuList:showBotJailMenu');
+    if (methods.distanceToPos(pickups.BotYankt, playerPos) < distanceCheck)
+        player.call('client:menuList:showBotYankMenu');
     if (methods.distanceToPos(pickups.BotSellGun, playerPos) < distanceCheck)
         inventory.getItemListGunTranferSell(player);
     if (methods.distanceToPos(pickups.BotSellCloth, playerPos) < distanceCheck)
@@ -653,8 +668,19 @@ pickups.checkPressE = function(player) {
     if (methods.distanceToPos(pickups.FixWeapon1, playerPos) < distanceCheck || methods.distanceToPos(pickups.FixWeapon2, playerPos) < distanceCheck || methods.distanceToPos(pickups.FixWeapon3, playerPos) < distanceCheck)
         inventory.getItemListGunFix(player);
 
+    if (methods.distanceToPos(pickups.ColorWeapon1, playerPos) < distanceCheck) {
+        if (user.get(player, 'fraction_id2') > 0 && !user.isMafia(player) && !user.isGang(player))
+            inventory.getItemListGunColor(player);
+        else
+            player.notify('~r~Доступно только для неофициальных организаций');
+    }
+
     if (methods.distanceToPos(pickups.StockLab, playerPos) < distanceCheck) {
         try {
+            if (user.get(player, 'fraction_id2') === 0) {
+                player.notify('~r~Доступно только для крайм организаций');
+                return;
+            }
             let houseData = stocks.getData(player.dimension - enums.offsets.stock);
             player.call('client:showStockLabMenu', [Array.from(houseData)]);
         }
@@ -662,6 +688,10 @@ pickups.checkPressE = function(player) {
     }
     if (methods.distanceToPos(pickups.StockBunk, playerPos) < distanceCheck) {
         try {
+            if (user.get(player, 'fraction_id2') === 0) {
+                player.notify('~r~Доступно только для крайм организаций');
+                return;
+            }
             let houseData = stocks.getData(player.dimension - enums.offsets.stock);
             player.call('client:showStockBunkMenu', [Array.from(houseData)]);
         }
@@ -950,6 +980,7 @@ pickups.createAll = function() {
     methods.createCpVector(pickups.BotRole0, 'Нажмите ~g~E~s~ чтобы взаимодействовать с NPC', 1, -1, pickups.Yellow);
     methods.createCpVector(pickups.BotRoleAll, 'Нажмите ~g~E~s~ чтобы взаимодействовать с NPC', 1, -1, pickups.Yellow);
     methods.createCpVector(pickups.QuestBotGang, 'Нажмите ~g~E~s~ чтобы взаимодействовать с NPC', 1, -1, pickups.Yellow);
+    methods.createCpVector(pickups.BotJail, 'Нажмите ~g~E~s~ чтобы взаимодействовать с NPC', 1, -1, pickups.Yellow);
 
     methods.createCpVector(pickups.BotLspd1, 'Нажмите ~g~E~s~ чтобы взаимодействовать с NPC', 1, -1, pickups.Yellow);
     methods.createCpVector(pickups.BotLspd2, 'Нажмите ~g~E~s~ чтобы взаимодействовать с NPC', 1, -1, pickups.Yellow);
@@ -977,6 +1008,7 @@ pickups.createAll = function() {
     methods.createCpVector(pickups.UsmcBotPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Yellow);
     methods.createCpVector(pickups.SellVehicle, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
 
+    methods.createCpVector(pickups.ColorWeapon1, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
     methods.createCpVector(pickups.FixWeapon1, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
     methods.createCpVector(pickups.FixWeapon2, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
     methods.createCpVector(pickups.FixWeapon3, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);

@@ -31,7 +31,7 @@ loader.startOrEnd = function() {
                 user.setQuest('role_0', 1);
             }
 
-            user.addCashMoney(count, 'Работа от Каспера');
+            user.addCashMoney(count * 2, 'Работа от Каспера');
             jobPoint.delete();
             user.updateCharacterCloth();
 

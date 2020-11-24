@@ -33,6 +33,7 @@ import weather from "./manager/weather";
 import hosp from "./manager/hosp";
 import jail from "./manager/jail";
 import policeRadar from "./manager/policeRadar";
+import prolog from "./manager/prolog";
 
 import wheel from "./casino/wheel";
 
@@ -48,6 +49,7 @@ import "./shopMenu";
 
 import trucker from "./jobs/trucker";
 import taxi from "./jobs/taxi";
+import prolog from "./manager/prolog";
 
 try {
 
@@ -63,7 +65,8 @@ try {
     }
     else {
         mp.gui.chat.push('Добро пожаловать на DEDNET 💀');
-        mp.gui.chat.push('Подождите пожалуйста, выполняется загрузка всех необходимых пакетов для комфортной игры. Это займет меньше минуты.');
+        //mp.gui.chat.push('Подождите пожалуйста, выполняется загрузка всех необходимых пакетов для комфортной игры. Это займет меньше минуты.'); //TODO 24 NOV
+        mp.gui.chat.push('Сервер находится на реконструкции, заходите 24 ноября, всех ждем <3'); //TODO 24 NOV
 
 
         chat.show(false);
@@ -82,6 +85,7 @@ try {
 
         timer.createInterval('hosp.timer', hosp.timer, 1000);
         timer.createInterval('jail.timer', jail.timer, 1000);
+        timer.createInterval('prolog.timer', prolog.timer, 500);
         timer.createInterval('voiceRage.timer', voiceRage.timer, 5);
 
         user.init();

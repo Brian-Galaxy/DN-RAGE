@@ -317,12 +317,12 @@ photo.workProcess = function() { //TODO
 
                 if (pointPos === playerPos) {
                     mp.game.ui.notifications.showWithPicture('Life Invader', "Начальник", `Отличный кадр, за него ты получишь премию!`, "CHAR_LIFEINVADER", 1);
-                    money = methods.getRandomInt(180, 200) + price;
+                    money = methods.getRandomInt(100, 140) + price;
                     user.addWorkExp(25);
                 }
                 else if (playerPos.indexOf(pointPos) >= 0 || pointPos.indexOf(playerPos) >= 0) {
                     mp.game.ui.notifications.showWithPicture('Life Invader', "Начальник", `Не плохой кадр, но можно и лучше`, "CHAR_LIFEINVADER", 1);
-                    money = methods.getRandomInt(70, 110) + price;
+                    money = methods.getRandomInt(50, 80) + price;
                     user.addWorkExp(10);
                 }
                 else {
@@ -337,7 +337,7 @@ photo.workProcess = function() { //TODO
                     let fData = await family.getData(fId);
                     if (fData.get('level') === 3) {
                         if (fData.get('exp') > 1000) {
-                            family.addMoney(fId, 1000000, 'Премия за достижения 4 уровня');
+                            family.addMoney(fId, 750000, 'Премия за достижения 4 уровня');
                             family.set(fId, 'level', 4);
                             family.set(fId, 'exp', 0);
                         }

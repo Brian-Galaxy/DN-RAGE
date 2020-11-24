@@ -16,6 +16,14 @@ coffer.setMoney = function(id, money) {
     mp.events.callRemote('server:coffer:setMoney', id, money);
 };
 
+coffer.get = async function(id, key) {
+    return methods.parseFloat(await Container.Data.Get(containerId + id, key));
+};
+
+coffer.set = function(id, key, value) {
+    Container.Data.Set(containerId + id, key, value);
+};
+
 coffer.getMoney = async function(id = 1) {
     return methods.parseFloat(await Container.Data.Get(containerId + id, 'cofferMoney'));
 };

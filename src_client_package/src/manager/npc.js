@@ -35,6 +35,9 @@ npc.loadAll = function() {
 
 */
     // Полицейский на ресепшане Misson Row
+    npc.create(mp.game.joaat("s_m_m_prisguard_01"), new mp.Vector3(1746.4307861328125, 2502.748046875, 45.56498336791992), 350.29193115234375, false, "WORLD_HUMAN_TOURIST_MOBILE");
+
+    // Полицейский на ресепшане Misson Row
     npc.create(mp.game.joaat("s_m_y_cop_01"), new mp.Vector3(441.0511, -978.8251, 30.68959), 179.4316, false, "WORLD_HUMAN_CLIPBOARD");
 // Полицейский на ресепшане Vespucci
     npc.create(mp.game.joaat("s_f_y_cop_01"), new mp.Vector3(-1097.457, -839.9836, 19.00159), 122.9423, false, "CODE_HUMAN_MEDIC_TIME_OF_DEATH");
@@ -395,7 +398,7 @@ npc.timer = function() {
 
             try {
                 if (mp.game.streaming.hasModelLoaded(item.model)) {
-                    item.ped = mp.peds.new(item.model, item.pos, item.heading);
+                    item.ped = mp.peds.new(item.model, item.pos, item.heading, -1);
                     item.handle = item.ped.handle;
                     if (item.scenario != "")
                         mp.game.invoke(methods.TASK_START_SCENARIO_IN_PLACE, item.handle, item.scenario, 0, true);

@@ -438,7 +438,7 @@ admin.jail = function(player, type, id, min, reason) {
                 player.notify('~r~Игрок не найден на сервере.');
                 return;
             }
-            user.jail(target, min * 60);
+            user.jail(target, min * 60, 1);
             chat.sendToAll(`Администратор ${user.getRpName(player)}`, `${user.getRpName(target)}!{${chat.clRed}} был посажен в тюрьму на ${min}мин. с причиной!{${chat.clWhite}} ${reason}`, chat.clRed);
 
             mysql.executeQuery(`INSERT INTO ban_list (ban_from, ban_to, count, datetime, reason) VALUES ('${user.getRpName(player)}', '${user.getRpName(target)}', 'Тюрьма ${min}мин.', '${methods.getTimeStamp()}', '${reason}')`);
@@ -454,7 +454,7 @@ admin.jail = function(player, type, id, min, reason) {
             mysql.executeQuery(`SELECT * FROM users WHERE id = '${methods.parseInt(id)}'`, (err, rows, fields) => {
                 rows.forEach(row => {
                     mysql.executeQuery(`INSERT INTO ban_list (ban_from, ban_to, count, datetime, reason) VALUES ('${user.getRpName(player)}', '${row['name']}', Тюрьма ${min}мин.', '${methods.getTimeStamp()}', '${reason}')`);
-                    mysql.executeQuery(`UPDATE users SET jail_time = '${min * 60}' WHERE id = '${id}'`);
+                    mysql.executeQuery(`UPDATE users SET jail_time = '${min * 60}', jail_type = '1' WHERE id = '${id}'`);
                     chat.sendToAll(`Администратор ${user.getRpName(player)}`, `${row['name']}!{${chat.clRed}} был посажен в тюрьму на ${min}мин. с причиной!{${chat.clWhite}} ${reason}`, chat.clRed);
                     discord.sendDeadList(row['name'], 'Посажен в тюрьму', reason, user.getRpName(player), discord.socialClub + player.socialClub.toLowerCase(), "#FF9800");
                 })

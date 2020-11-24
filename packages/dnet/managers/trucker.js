@@ -1352,7 +1352,7 @@ trucker.generateOffer = function (type) {
 
                     let price = methods.parseInt(methods.getRandomInt(item[8], item[9]));
 
-                    let dist = methods.distanceToPos(new mp.Vector3(item[2], item[3], item[4]), new mp.Vector3(item[5], item[6], item[7])) / 14;
+                    let dist = methods.distanceToPos(new mp.Vector3(item[2], item[3], item[4]), new mp.Vector3(item[5], item[6], item[7])) / 15;
                     if (dist > 800)
                         dist = 800;
                     price = dist + price;
@@ -1367,7 +1367,7 @@ trucker.generateOffer = function (type) {
 
                     let price = methods.parseInt(methods.getRandomInt(item[8], item[9]) * 0.8);
 
-                    let dist = methods.distanceToPos(new mp.Vector3(item[2], item[3], item[4]), new mp.Vector3(item[5], item[6], item[7])) / 9;
+                    let dist = methods.distanceToPos(new mp.Vector3(item[2], item[3], item[4]), new mp.Vector3(item[5], item[6], item[7])) / 10;
                     if (dist > 1200)
                         dist = 1200;
                     price = dist + price;
@@ -1382,7 +1382,7 @@ trucker.generateOffer = function (type) {
 
                     let price = methods.parseInt(methods.getRandomInt(item[13], item[14]) * 0.8);
 
-                    let dist = methods.distanceToPos(new mp.Vector3(item[6], item[7], item[8]), new mp.Vector3(item[10], item[11], item[12])) / 4;
+                    let dist = methods.distanceToPos(new mp.Vector3(item[6], item[7], item[8]), new mp.Vector3(item[10], item[11], item[12])) / 5;
                     if (dist > 1800)
                         dist = 1800;
                     price = dist + price;
@@ -1513,8 +1513,8 @@ trucker.doneOffer = function (player, offerId) {
     user.reset(player, 'isStartTrucker');
     if (offer.length == 10) {
         trucker.notify(player, `Вы доставили груз и заработали ~g~${methods.moneyFormat(price)}`, 'Доставка');
-        user.giveJobSkill(player);
-        user.giveJobMoney(player, price);
+        user.giveJobSkill(player, 'truck');
+        user.giveJobMoney(player, price, 11);
         user.addWorkExp(player, 25 + price / 50);
 
         try {
@@ -1591,8 +1591,8 @@ trucker.doneOffer = function (player, offerId) {
             player.notify(`~y~Штраф: ~s~${methods.moneyFormat(price - (price * heal))}`);
         user.addWorkExp(player, 40 + price / 50);
         vehicles.respawn(trailer);
-        user.giveJobSkill(player);
-        user.giveJobMoney(player, price * heal);
+        user.giveJobSkill(player, 'truck');
+        user.giveJobMoney(player, price * heal, 11);
 
         try {
             let offer = trucker.getOffer(offerId);

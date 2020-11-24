@@ -137,9 +137,6 @@ inventory.openInventoryByEntity = async function(entity) {
     }
     else if (entity.getType() == 3) {
         try {
-
-            methods.debug(entity.getType());
-
             if (entity.getVariable('isDrop'))
                 inventory.takeItem(entity.getVariable('isDrop'), entity.getVariable('itemId'));
             else if (entity.getVariable('emsType') !== undefined && entity.getVariable('emsType') !== null) {
@@ -291,19 +288,92 @@ inventory.takeNewWeaponItem = async function(itemId, params, text = 'Получ�
             mp.game.ui.notifications.show("~r~Инвентарь заполнен");
             return;
         }
+
+        let fId = coffer.getIdByFraction(user.getCache('fraction_id'));
+        let cofferData = await coffer.getAllData(fId);
+        let endItem = 0;
+        if (items.isWeaponComponent(itemId)) {
+            if (cofferData.get('stock_gunm') < 1)
+            {
+                mp.game.ui.notifications.show("~r~На складе недостаточно модулей");
+                return;
+            }
+            endItem = cofferData.get('stock_gunm') - 1;
+            coffer.set(fId, 'stock_gunm', endItem);
+        }
+        else if (items.isWeapon(itemId)) {
+            if (cofferData.get('stock_gun') < 1)
+            {
+                mp.game.ui.notifications.show("~r~На складе недостаточно оружия");
+                return;
+            }
+            endItem = cofferData.get('stock_gun') - 1;
+            coffer.set(fId, 'stock_gun', endItem);
+        }
+        else if (items.isAmmo(itemId) || itemId === 40) {
+            if (cofferData.get('stock_ammo') < 1)
+            {
+                mp.game.ui.notifications.show("~r~На складе недостаточно патрон");
+                return;
+            }
+            endItem = cofferData.get('stock_ammo') - 1;
+            coffer.set(fId, 'stock_ammo', endItem);
+        }
+        else if (itemId === 252) {
+            if (cofferData.get('stock_armour') < 1)
+            {
+                mp.game.ui.notifications.show("~r~На складе недостаточно бронежилетов");
+                return;
+            }
+            endItem = cofferData.get('stock_armour') - 1;
+            coffer.set(fId, 'stock_armour', endItem);
+            count = 100;
+            try {
+                let paramsObj = JSON.parse(params);
+                paramsObj.name = 'Тактический бронежилет';
+                paramsObj.armor_color = 9;
+                paramsObj.armor_color = 9;
+                params = JSON.stringify(paramsObj);
+            }
+            catch (e) {}
+        }
+        else if (items.isMed(itemId)) {
+            if (cofferData.get('stock_med') < 1)
+            {
+                mp.game.ui.notifications.show("~r~На складе недостаточно медикаментов");
+                return;
+            }
+            endItem = cofferData.get('stock_med') - 1;
+            coffer.set(fId, 'stock_med', endItem);
+        }
+        else if (items.isEat(itemId)) {
+            if (cofferData.get('stock_eat') < 1)
+            {
+                mp.game.ui.notifications.show("~r~На складе недостаточно еды");
+                return;
+            }
+            endItem = cofferData.get('stock_eat') - 1;
+            coffer.set(fId, 'stock_eat', endItem);
+        }
+        else {
+            if (cofferData.get('stock_other') < 1)
+            {
+                mp.game.ui.notifications.show("~r~На складе недостаточно ресурсов");
+                return;
+            }
+            endItem = cofferData.get('stock_other') - 1;
+            coffer.set(fId, 'stock_other', endItem);
+        }
+
         inventory.addPlayerWeaponItem(itemId, 1, inventory.types.Player, user_id, count, 0, params, text, 1);
         inventory.updateAmount(user_id, inventory.types.Player);
         mp.game.ui.notifications.show(`~b~Вы взяли \"${items.getItemNameById(itemId)}\"`);
         chat.sendMeCommand(`взял \"${items.getItemNameById(itemId)}\"`);
 
-        let itemPrice = items.getItemPrice(itemId);
-
-        coffer.removeMoney(coffer.getIdByFraction(user.getCache('fraction_id')), itemPrice);
-
         methods.saveFractionLog(
             user.getCache('name'),
             `Взял ${items.getItemNameById(itemId)}`,
-            `Потрачено из бюджета: ${methods.moneyFormat(itemPrice)}`,
+            `Осталось: ${endItem}ед.`,
             user.getCache('fraction_id')
         );
     }

@@ -20,8 +20,8 @@ let emsList = {
         {
             title: 'Упал вертолёт',
             desc: 'Срочно, всем сотрудникам EMS, упал вертолет в районе Дель-Перро. Координаты у вас в телефоне.',
-            moneyToUser: 5000,
-            moneyToFraction: 300000,
+            moneyToUser: 8000,
+            moneyToFraction: 400000,
             pos: new mp.Vector3(-1176.001, -649.4301, 21.94),
             preLoadEffects: () => {
 
@@ -113,8 +113,8 @@ let emsList = {
         {
             title: 'Автокатастрофа',
             desc: 'Срочно, всем сотрудникам EMS, случилась автокатастрофа на Пиллбокс-Хилл. Координаты у вас в телефоне.',
-            moneyToUser: 5000,
-            moneyToFraction: 200000,
+            moneyToUser: 8000,
+            moneyToFraction: 400000,
             pos: new mp.Vector3(-41.03588, -936.4863, 28.2),
             preLoadEffects: () => {
 
@@ -207,8 +207,8 @@ let emsList = {
         {
             title: 'Автокатастрофа',
             desc: 'Срочно, всем сотрудникам EMS, случилась автокатастрофа на Строуберри. Координаты у вас в телефоне.',
-            moneyToUser: 5000,
-            moneyToFraction: 200000,
+            moneyToUser: 8000,
+            moneyToFraction: 400000,
             pos: new mp.Vector3(158.1577, -1399.097, 28.15),
             preLoadEffects: () => {
 
@@ -297,8 +297,8 @@ let emsList = {
         {
             title: 'Автокатастрофа',
             desc: 'Срочно, всем сотрудникам EMS, случилась автокатастрофа в Центральном Вайнвуде. Координаты у вас в телефоне.',
-            moneyToUser: 5000,
-            moneyToFraction: 200000,
+            moneyToUser: 8000,
+            moneyToFraction: 400000,
             pos: new mp.Vector3(361.2756, 148.5948, 101.92),
             preLoadEffects: () => {
 
@@ -386,8 +386,8 @@ let emsList = {
         {
             title: 'Автокатастрофа',
             desc: 'Срочно, всем сотрудникам EMS, случилась автокатастрофа на Рокфорд-Хиллз. Координаты у вас в телефоне.',
-            moneyToUser: 5000,
-            moneyToFraction: 200000,
+            moneyToUser: 8000,
+            moneyToFraction: 400000,
             pos: new mp.Vector3(-796.1234, -75.70213, 36.67),
             preLoadEffects: () => {
 
@@ -480,8 +480,8 @@ let emsList = {
         {
             title: 'Автокатастрофа',
             desc: 'Срочно, всем сотрудникам EMS, случилась автокатастрофа на Дель-Перро. Координаты у вас в телефоне.',
-            moneyToUser: 5000,
-            moneyToFraction: 200000,
+            moneyToUser: 8000,
+            moneyToFraction: 400000,
             pos: new mp.Vector3(-1288.761, -928.6729, 10.22),
             preLoadEffects: () => {
 
@@ -573,8 +573,8 @@ let emsList = {
         {
             title: 'Автокатастрофа',
             desc: 'Срочно, всем сотрудникам EMS, случилась автокатастрофа в Ла-Меса. Координаты у вас в телефоне.',
-            moneyToUser: 5000,
-            moneyToFraction: 200000,
+            moneyToUser: 8000,
+            moneyToFraction: 400000,
             pos: new mp.Vector3(776.9846, -998.8997, 24.99),
             preLoadEffects: () => {
 
@@ -673,8 +673,8 @@ let emsList = {
         {
             title: 'Автокатастрофа',
             desc: 'Срочно, всем сотрудникам EMS, случилась автокатастрофа в Восточном Вайнвуде. Координаты у вас в телефоне.',
-            moneyToUser: 5000,
-            moneyToFraction: 200000,
+            moneyToUser: 8000,
+            moneyToFraction: 400000,
             pos: new mp.Vector3(1019.292, -190.638, 69.01),
             preLoadEffects: () => {
 

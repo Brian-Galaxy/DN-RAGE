@@ -15,6 +15,7 @@ import dispatcher from "./manager/dispatcher";
 import drone from "./manager/drone";
 import timer from "./manager/timer";
 import policeRadar from "./manager/policeRadar";
+import prolog from "./manager/prolog";
 
 import user from './user';
 import admin from './admin';
@@ -34,6 +35,7 @@ import business from './property/business';
 import vehicles from "./property/vehicles";
 import yachts from "./property/yachts";
 import fraction from "./property/fraction";
+import family from "./property/family";
 
 import cloth from './business/cloth';
 import vShop from "./business/vShop";
@@ -50,8 +52,6 @@ import loader from "./jobs/loader";
 import lamar from "./jobs/lamar";
 import trucker from "./jobs/trucker";
 import taxi from "./jobs/taxi";
-import npc from "./manager/npc";
-import family from "./property/family";
 
 let menuList = {};
 
@@ -1029,11 +1029,21 @@ menuList.showStockPanelUpgradeMenu = function(h) {
     if (h.get('interior') > 1 && !h.get('upgrade_g'))
         UIMenu.Menu.AddMenuItem(`~y~Расширенный гараж и жилой офис`, "Стоимость: ~g~$2.500.000~s~~br~Благодаря этому лучшению, вы можете сделать ваш склад спавном для вашей организации~br~Бонусом выступает, что в гараже можно хранить грузовики и больой транспорт", {buyGarage: true});
 
-    if (h.get('interior') > 1 && !h.get('upgrade_b'))
-        UIMenu.Menu.AddMenuItem(`~y~Бункер`, "Стоимость: ~g~$50.000.000~s~~br~Благодаря этому лучшению, вы можете заниматся изготовкой оружия~br~Бонусом выступает, что в гараже можно хранить грузовики и больой транспорт", {buyBunker: true});
 
-    if (h.get('interior') > 0 && !h.get('upgrade_l'))
-        UIMenu.Menu.AddMenuItem(`~y~Лаборатория`, "Стоимость: ~g~$5.000.000~s~~br~Благодаря этому лучшению, вы можете заниматся изготовкой наркотиков", {buyLab: true});
+    if (user.getCache('fraction_id2') > 0) {
+        if (h.get('interior') > 1 && !h.get('upgrade_b'))
+            UIMenu.Menu.AddMenuItem(`~y~Бункер`, "Стоимость: ~g~$50.000.000~s~~br~Благодаря этому лучшению, вы можете заниматся изготовкой оружия~br~Бонусом выступает, что в гараже можно хранить грузовики и больой транспорт", {buyBunker: true});
+
+        if (h.get('interior') > 0 && !h.get('upgrade_l'))
+            UIMenu.Menu.AddMenuItem(`~y~Лаборатория`, "Стоимость: ~g~$5.000.000~s~~br~Благодаря этому лучшению, вы можете заниматся изготовкой наркотиков", {buyLab: true});
+    }
+    else {
+        if (h.get('interior') > 1 && !h.get('upgrade_b'))
+            UIMenu.Menu.AddMenuItem(`~y~Бункер`, "~r~Доступно в улучшении и использовании только для крайм организаций", {none: 'none'});
+
+        if (h.get('interior') > 0 && !h.get('upgrade_l'))
+            UIMenu.Menu.AddMenuItem(`~y~Лаборатория`, "~r~Доступно в улучшении и использовании только для крайм организаций", {none: 'none'});
+    }
 
     if (h.get('interior') > 1 && !h.get('upgrade_n'))
         UIMenu.Menu.AddMenuItem(`~y~Снятие номеров`, "Стоимость: ~g~$1.000.000~s~~br~Благодаря этому лучшению, вы можете снимать номера с автомобилей", {buyNumber: true});
@@ -1305,7 +1315,7 @@ menuList.showStockPanelBoxInfoMoreMenu = function(h, item, slot, price, boxId) {
 
     UIMenu.Menu.Create(` `, `~b~${item[0]}`, 'hm', false, false, 'h1');
 
-    if (boxId === 3 || boxId === 4 || boxId === 38 || boxId === 39 || boxId === 50 || boxId === 51 || boxId === 52)
+    if (boxId === 3 || boxId === 4 || boxId === 38 || boxId === 39 || boxId === 50 || boxId === 51 || boxId === 52 || boxId === 53)
         UIMenu.Menu.AddMenuItem(`~g~Открыть ящик`, "", {isOpen: true});
 
     if (item[7] < 0)
@@ -1721,7 +1731,8 @@ menuList.showBusinessTeleportMenu = function() {
     UIMenu.Menu.Create(` `, `~b~Бизнес центр`, 'showBusinessTeleportMenu', false, false, 'arcadius');
 
     business.typeList.forEach(function (item, i, arr) {
-        UIMenu.Menu.AddMenuItem(`${item}`, "", {typeId: i});
+        if (i !== 2)
+            UIMenu.Menu.AddMenuItem(`${item}`, "", {typeId: i});
     });
 
     UIMenu.Menu.AddMenuItem("~g~Улица", "", {teleportPos: business.BusinessStreetPos});
@@ -4578,9 +4589,14 @@ menuList.showVehicleDoInvMenu = async function(vehId) {
 
     UIMenu.Menu.Create(`Транспорт`, `~b~Взаимодействие с транспортом`);
 
+    UIMenu.Menu.AddMenuItem("~g~Открыть~s~/~r~Закрыть~s~ транспорт", "", {doName: "openVeh"});
+
     if (vInfo.stock > 0) {
         UIMenu.Menu.AddMenuItem("Открыть багажник", "", {doName: "openInv"});
         UIMenu.Menu.AddMenuItem("Закрыть багажник", "", {doName: "close"});
+        
+        UIMenu.Menu.AddMenuItem("Открыть капот", "", {doName: "openC"});
+        UIMenu.Menu.AddMenuItem("Закрыть капот", "", {doName: "closeC"});
     }
 
     UIMenu.Menu.AddMenuItem("Выкинуть человека", "", {doName: "eject"});
@@ -4646,6 +4662,9 @@ menuList.showVehicleDoInvMenu = async function(vehId) {
 
     UIMenu.Menu.OnSelect.Add(async (item, index) => {
         UIMenu.Menu.HideMenu();
+        if (item.doName == 'openVeh') {
+            mp.events.callRemote('server:vehicle:lockStatus');
+        }
         if (item.doName == 'takeCam') {
             mp.attachmentMngr.addLocal('cam');
             user.playAnimation('missfinale_c2mcs_1', 'fin_c2_mcs_1_camman', 49);
@@ -4706,6 +4725,12 @@ menuList.showVehicleDoInvMenu = async function(vehId) {
 
             inventory.getItemList(inventory.types.Vehicle, mp.game.joaat(vehicles.getNumberPlate(vehicle).trim()));
             vehicles.setTrunkStateById(vehicle.remoteId, true);
+        }
+        if (item.doName == 'openC') {
+            vehicles.setHoodStateById(vehicle.remoteId, true);
+        }
+        if (item.doName == 'closeC') {
+            vehicles.setHoodStateById(vehicle.remoteId, false);
         }
         if (item.doName == 'eject') {
 
@@ -5258,7 +5283,7 @@ menuList.showVehicleMenu = async function(data) {
         }
     }
 
-    if (user.getCache('fraction_id2') > 0) {
+    if (user.getCache('fraction_id2') > 0 || user.isGos()) {
         if (veh.getVariable('cargoId') !== null && veh.getVariable('cargoId') !== undefined) {
             if (veh.getVariable('isMafia')) {
                 if (user.isMafia()) {
@@ -5277,6 +5302,21 @@ menuList.showVehicleMenu = async function(data) {
                 });
             }
             //UIMenu.Menu.AddMenuItem(`~y~Разгрузить весь груз`, 'Доступно только внутри склада').cargoUnloadAll = true;
+        }
+        if ((user.isUsmc() || user.isAdmin()) && (vInfo.display_name === 'Cargobob' || vInfo.display_name === 'Cargobob3' || vInfo.display_name === 'Cargobob4')) {
+            UIMenu.Menu.AddMenuItem(`~b~Загрузить вертолёт (всем ниже перечилсенным)`, 'Одна партия обходиться в $400,000 из бюджета Армии', {cargoLoadAll: true});
+            UIMenu.Menu.AddMenuItem(`~b~Загрузить вертолёт оружием и бронежилетами`, 'Одна партия обходиться в $200,000 из бюджета Армии', {cargoLoadGun: true});
+            UIMenu.Menu.AddMenuItem(`~b~Загрузить вертолёт сухпайками`, 'Одна партия обходиться в $100,000 из бюджета Армии', {cargoLoadEat: true});
+            UIMenu.Menu.AddMenuItem(`~b~Загрузить вертолёт конусами и огорождениями`, 'Одна партия обходиться в $100,000 из бюджета Армии', {cargoLoadOth: true});
+        }
+        if ((user.isUsmc() || user.isAdmin()) && (vInfo.display_name === 'Kamacho')) {
+            //UIMenu.Menu.AddMenuItem(`~y~Загрузить транспорт медикаментами`, 'Загрузиться сразу 2 ящика', {cargoLoadMed1: true});
+            UIMenu.Menu.AddMenuItem(`~b~Загрузить транспорт оружием и бронежилетами`, 'Загрузиться сразу 2 ящика', {cargoLoadGun1: true});
+            UIMenu.Menu.AddMenuItem(`~b~Загрузить транспорт сухпайками`, 'Загрузиться сразу 2 ящика', {cargoLoadEat1: true});
+            UIMenu.Menu.AddMenuItem(`~b~Загрузить транспорт конусами и огорождениями`, 'Загрузиться сразу 2 ящика', {cargoLoadOth1: true});
+        }
+        if ((user.isEms() || user.isAdmin()) && (vInfo.display_name === 'Nspeedo')) {
+            UIMenu.Menu.AddMenuItem(`~y~Загрузить транспорт медикаментами`, 'Одна партия обходиться в $100,000 из бюджета EMS', {cargoLoadMed: true});
         }
     }
     else {
@@ -5324,9 +5364,9 @@ menuList.showVehicleMenu = async function(data) {
         }
     }
 
-    /*if (veh.getVariable('fraction_id') === user.getCache('fraction_id') && user.isLeader()) {
+    if (veh.getVariable('fraction_id') === (user.getCache('fraction_id2') * -1) && user.isLeader2()) {
         UIMenu.Menu.AddMenuItem("Припарковать", "Транспорт будет спавниться на этом месте, если вы ее припаркуете", {eventName: "server:vehicle:parkFraction"});
-    }*/
+    }
 
     if (vInfo.class_name !== 'Boats' && vInfo.class_name !== 'Helicopters' && vInfo.class_name !== 'Planes' && (veh.getVariable('fraction_id') === 2 || veh.getVariable('fraction_id') === 3 || veh.getVariable('fraction_id') === 5)) {
         UIMenu.Menu.AddMenuItem("Радар", "Вкл/Выкл радар", {doName: "police:radar"});
@@ -5864,7 +5904,283 @@ menuList.showVehicleMenu = async function(data) {
             UIMenu.Menu.HideMenu();
             fraction.unloadCargoVehTimer(item.cargoUnloadId, item.cargoId);
         }
-        /*else if (item.cargoUnloadAll) {
+        else if (item.cargoLoadAll) {
+            UIMenu.Menu.HideMenu();
+
+            if (methods.distanceToPos(new mp.Vector3(3042.36767578125, -4740.39013671875, 14.26130485534668), mp.players.local.position) > 10) {
+                mp.game.ui.notifications.show('~y~Вы слишком далеко от места загрузки');
+                user.setWaypoint(3042.36767578125, -4740.39013671875);
+                return;
+            }
+
+            let money = await coffer.getMoney(7);
+            if (money < 400000) {
+                mp.game.ui.notifications.show('~y~В бюджете организации недостаточно средств');
+                return;
+            }
+
+            coffer.removeMoney(7, 400000);
+            vehicles.setVariable('cargoId', 999);
+            vehicles.setVariable('box', JSON.stringify([50,2,1]));
+
+            mp.game.ui.notifications.show('~y~Вы совершили погрузку, теперь разгрузитесь на базе');
+            user.setWaypoint(477.9193420410156, -3300.276123046875);
+
+            methods.saveFractionLog(
+                user.getCache('name'),
+                `Выполнил загрузку (Cargobob)`,
+                `Потрачено из бюджета ${methods.moneyFormat(400000)}.`,
+                user.getCache('fraction_id')
+            );
+        }
+        else if (item.cargoLoadMed) {
+            UIMenu.Menu.HideMenu();
+
+            if (methods.distanceToPos(new mp.Vector3(3581.2109375, 3663.407958984375, 32.89536666870117), mp.players.local.position) > 10) {
+                mp.game.ui.notifications.show('~y~Вы слишком далеко от места загрузки');
+                user.setWaypoint(3581.2109375, 3663.407958984375);
+                return;
+            }
+
+            let money = await coffer.getMoney(6);
+            if (money < 100000) {
+                mp.game.ui.notifications.show('~y~В бюджете организации недостаточно средств');
+                return;
+            }
+
+            coffer.removeMoney(6, 100000);
+            vehicles.setVariable('cargoId', 999);
+            vehicles.setVariable('box', JSON.stringify([13, 13]));
+            vehicles.attach('stock_13');
+
+            mp.game.ui.notifications.show('~y~Вы совершили погрузку, теперь разгрузитесь на любой из гос. фракции');
+
+            methods.saveFractionLog(
+                user.getCache('name'),
+                `Медикаменты (Nspeedo)`,
+                `Потрачено из бюджета ${methods.moneyFormat(100000)}.`,
+                user.getCache('fraction_id')
+            );
+        }
+        else if (item.cargoLoadGun) {
+            UIMenu.Menu.HideMenu();
+
+            if (methods.distanceToPos(new mp.Vector3(3042.36767578125, -4740.39013671875, 14.26130485534668), mp.players.local.position) > 10) {
+                mp.game.ui.notifications.show('~y~Вы слишком далеко от места загрузки');
+                user.setWaypoint(3042.36767578125, -4740.39013671875);
+                return;
+            }
+
+            let money = await coffer.getMoney(7);
+            if (money < 100000) {
+                mp.game.ui.notifications.show('~y~В бюджете организации недостаточно средств');
+                return;
+            }
+
+            coffer.removeMoney(7, 100000);
+            vehicles.setVariable('cargoId', 999);
+            vehicles.setVariable('box', JSON.stringify([50]));
+
+            mp.game.ui.notifications.show('~y~Вы совершили погрузку, теперь разгрузитесь на базе');
+            user.setWaypoint(477.9193420410156, -3300.276123046875);
+
+            methods.saveFractionLog(
+                user.getCache('name'),
+                `Оружие (Cargobob)`,
+                `Потрачено из бюджета ${methods.moneyFormat(100000)}.`,
+                user.getCache('fraction_id')
+            );
+        }
+        else if (item.cargoLoadEat) {
+            UIMenu.Menu.HideMenu();
+
+            if (methods.distanceToPos(new mp.Vector3(3042.36767578125, -4740.39013671875, 14.26130485534668), mp.players.local.position) > 10) {
+                mp.game.ui.notifications.show('~y~Вы слишком далеко от места загрузки');
+                user.setWaypoint(3042.36767578125, -4740.39013671875);
+                return;
+            }
+
+            let money = await coffer.getMoney(7);
+            if (money < 100000) {
+                mp.game.ui.notifications.show('~y~В бюджете организации недостаточно средств');
+                return;
+            }
+
+            coffer.removeMoney(7, 100000);
+            vehicles.setVariable('cargoId', 999);
+            vehicles.setVariable('box', JSON.stringify([1]));
+
+            mp.game.ui.notifications.show('~y~Вы совершили погрузку, теперь разгрузитесь на базе');
+            user.setWaypoint(477.9193420410156, -3300.276123046875);
+
+            methods.saveFractionLog(
+                user.getCache('name'),
+                `Еда (Cargobob)`,
+                `Потрачено из бюджета ${methods.moneyFormat(100000)}.`,
+                user.getCache('fraction_id')
+            );
+        }
+        else if (item.cargoLoadOth) {
+            UIMenu.Menu.HideMenu();
+
+            if (methods.distanceToPos(new mp.Vector3(3042.36767578125, -4740.39013671875, 14.26130485534668), mp.players.local.position) > 10) {
+                mp.game.ui.notifications.show('~y~Вы слишком далеко от места загрузки');
+                user.setWaypoint(3042.36767578125, -4740.39013671875);
+                return;
+            }
+
+            let money = await coffer.getMoney(7);
+            if (money < 100000) {
+                mp.game.ui.notifications.show('~y~В бюджете организации недостаточно средств');
+                return;
+            }
+
+            coffer.removeMoney(7, 100000);
+            vehicles.setVariable('cargoId', 999);
+            vehicles.setVariable('box', JSON.stringify([2]));
+
+            mp.game.ui.notifications.show('~y~Вы совершили погрузку, теперь разгрузитесь на базе');
+            user.setWaypoint(477.9193420410156, -3300.276123046875);
+
+            methods.saveFractionLog(
+                user.getCache('name'),
+                `Огорожденя (Cargobob)`,
+                `Потрачено из бюджета ${methods.moneyFormat(100000)}.`,
+                user.getCache('fraction_id')
+            );
+        }
+        else if (item.cargoLoadMed1) {
+            UIMenu.Menu.HideMenu();
+
+            if (methods.distanceToPos(new mp.Vector3(504.80950927734375, -3127.914306640625, 5.069790840148926), mp.players.local.position) > 10) {
+                mp.game.ui.notifications.show('~y~Вы слишком далеко от места загрузки');
+                user.setWaypoint(504.80950927734375, -3127.914306640625);
+                return;
+            }
+
+            let stockData = await coffer.getAllData(7);
+            if (stockData.get('stock_med') < 200) {
+                mp.game.ui.notifications.show('~y~На складе недостаточно лекарств');
+                return;
+            }
+            if (stockData.get('stock_eat') < 200) {
+                mp.game.ui.notifications.show('~y~На складе недостаточно еды');
+                return;
+            }
+            vehicles.setVariable('cargoId', 999);
+            vehicles.setVariable('box', JSON.stringify([13, 13]));
+            vehicles.attach('stock_13');
+            coffer.set(7, 'stock_med', stockData.get('stock_med') - 200);
+            coffer.set(7, 'stock_eat', stockData.get('stock_eat') - 200);
+            mp.game.ui.notifications.show('~y~Вы совершили погрузку, теперь разгрузите у любой из доступных гос. организаций');
+
+
+            methods.saveFractionLog(
+                user.getCache('name'),
+                `Медикаменты (Kamacho)`,
+                `Медикаменты ${stockData.get('stock_med') - 200}ед. / Еда ${stockData.get('stock_eat') - 200}`,
+                user.getCache('fraction_id')
+            );
+        }
+        else if (item.cargoLoadGun1) {
+            UIMenu.Menu.HideMenu();
+
+            if (methods.distanceToPos(new mp.Vector3(504.80950927734375, -3127.914306640625, 5.069790840148926), mp.players.local.position) > 10) {
+                mp.game.ui.notifications.show('~y~Вы слишком далеко от места загрузки');
+                user.setWaypoint(504.80950927734375, -3127.914306640625);
+                return;
+            }
+
+            let stockData = await coffer.getAllData(7);
+            if (stockData.get('stock_gun') < 40) {
+                mp.game.ui.notifications.show('~y~На складе недостаточно оружия');
+                return;
+            }
+            if (stockData.get('stock_gunm') < 160) {
+                mp.game.ui.notifications.show('~y~На складе недостаточно модулей');
+                return;
+            }
+            if (stockData.get('stock_ammo') < 500) {
+                mp.game.ui.notifications.show('~y~На складе недостаточно патрон');
+                return;
+            }
+            if (stockData.get('stock_armour') < 500) {
+                mp.game.ui.notifications.show('~y~На складе недостаточно бронежилетов');
+                return;
+            }
+            vehicles.setVariable('cargoId', 999);
+            vehicles.setVariable('box', JSON.stringify([50, 50]));
+            vehicles.attach('stock_50');
+            coffer.set(7, 'stock_gun', stockData.get('stock_gun') - 40);
+            coffer.set(7, 'stock_gunm', stockData.get('stock_gunm') - 160);
+            coffer.set(7, 'stock_ammo', stockData.get('stock_ammo') - 500);
+            coffer.set(7, 'stock_armour', stockData.get('stock_armour') - 500);
+            mp.game.ui.notifications.show('~y~Вы совершили погрузку, теперь разгрузите у любой из доступных гос. организаций');
+
+            methods.saveFractionLog(
+                user.getCache('name'),
+                `Оружие (Kamacho)`,
+                `G ${stockData.get('stock_gun') - 40}ед. / M ${stockData.get('stock_gunm') - 160} / A ${stockData.get('stock_ammo') - 500} / Arm ${stockData.get('stock_armour') - 500}`,
+                user.getCache('fraction_id')
+            );
+        }
+        else if (item.cargoLoadEat1) {
+            UIMenu.Menu.HideMenu();
+
+            if (methods.distanceToPos(new mp.Vector3(504.80950927734375, -3127.914306640625, 5.069790840148926), mp.players.local.position) > 10) {
+                mp.game.ui.notifications.show('~y~Вы слишком далеко от места загрузки');
+                user.setWaypoint(504.80950927734375, -3127.914306640625);
+                return;
+            }
+
+            let stockData = await coffer.getAllData(7);
+            if (stockData.get('stock_eat') < 200) {
+                mp.game.ui.notifications.show('~y~На складе недостаточно еды');
+                return;
+            }
+            vehicles.setVariable('cargoId', 999);
+            vehicles.setVariable('box', JSON.stringify([1, 1]));
+            vehicles.attach('stock_1');
+            coffer.set(7, 'stock_eat', stockData.get('stock_eat') - 200);
+            mp.game.ui.notifications.show('~y~Вы совершили погрузку, теперь разгрузите у любой из доступных гос. организаций');
+
+            methods.saveFractionLog(
+                user.getCache('name'),
+                `Еда (Kamacho)`,
+                `Осталось ${stockData.get('stock_eat') - 40}ед.`,
+                user.getCache('fraction_id')
+            );
+        }
+        else if (item.cargoLoadOth1) {
+            UIMenu.Menu.HideMenu();
+
+            if (methods.distanceToPos(new mp.Vector3(504.80950927734375, -3127.914306640625, 5.069790840148926), mp.players.local.position) > 10) {
+                mp.game.ui.notifications.show('~y~Вы слишком далеко от места загрузки');
+                user.setWaypoint(504.80950927734375, -3127.914306640625);
+                return;
+            }
+
+            let stockData = await coffer.getAllData(7);
+            if (stockData.get('stock_other') < 10) {
+                mp.game.ui.notifications.show('~y~На складе недостаточно конусов и огорождений');
+                return;
+            }
+            vehicles.setVariable('cargoId', 999);
+            vehicles.setVariable('box', JSON.stringify([2, 2]));
+            vehicles.attach('stock_2');
+            coffer.set(7, 'stock_other', stockData.get('stock_other') - 10);
+            mp.game.ui.notifications.show('~y~Вы совершили погрузку, теперь разгрузите у любой из доступных гос. организаций');
+
+            methods.saveFractionLog(
+                user.getCache('name'),
+                `Огорождения (Kamacho)`,
+                `Осталось ${stockData.get('stock_other') - 40}ед.`,
+                user.getCache('fraction_id')
+            );
+        }
+
+        /*
+        else if (item.cargoUnloadAll) {
             UIMenu.Menu.HideMenu();
             try {
                 if (user.getCache('fraction_id2') > 0) {
@@ -6250,7 +6566,7 @@ menuList.showSpawnJobGr6Menu = function() {
             mp.game.ui.notifications.show("~g~Вы купили MP5 и взяли в аренду бронежилет.");
         }*/
         if (item.doName == 'stopDuty') {
-            user.updateCharacterCloth();
+            user.giveUniform(0);
             user.setArmour(0);
             mp.game.ui.notifications.show("~y~Вы закончили дежурство и сдали бронежилет.");
             Container.Data.ResetLocally(0, 'is6Duty');
@@ -6507,6 +6823,74 @@ menuList.showFixGunMenu = function(data) {
     }
 };
 
+menuList.showColorGunMenu = function(data) {
+
+    try {
+        UIMenu.Menu.Create('Покраска', `~b~Покраска оружия`);
+
+        data.forEach((item, idx) => {
+            let formatItem = items.getItemFormat(item);
+            let desc = formatItem.desc;
+            let itemName = formatItem.name;
+            UIMenu.Menu.AddMenuItem(`${itemName}`, `${desc}~br~~c~Необходим балончик - 5шт.`, {id: item.id, itemName: itemName, itemId: item.item_id});
+        });
+
+        UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
+        UIMenu.Menu.Draw();
+
+        UIMenu.Menu.OnSelect.Add(async (item, index) => {
+            UIMenu.Menu.HideMenu();
+            if (item.id >= 0) {
+                menuList.showColorGunAcceptMenu(item.id, item.itemName, item.itemId)
+            }
+        });
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+};
+
+menuList.showColorGunAcceptMenu = function(id, name, itemId) {
+
+    try {
+        UIMenu.Menu.Create('Покраска', `~b~Покраска оружия`);
+
+        let wpName = items.getItemNameHashById(itemId);
+        let componentList = weapons.getWeaponComponentList(wpName);
+
+        UIMenu.Menu.AddMenuItemList(`${name}`, weapons.getTintList(wpName), `Необходим балончик - 5шт.`, {id: id, superTint: 0 });
+
+        componentList.forEach((item, idx) => {
+            if (item[3] == 0) {
+                UIMenu.Menu.AddMenuItemList(`${name} ${item[1]}`, weapons.getTintList(wpName), `Необходим балончик - 10шт.`, {id: id, superTint: item[2].toString() });
+            }
+        });
+
+        UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
+        UIMenu.Menu.Draw();
+
+        let listIndex = 0;
+        UIMenu.Menu.OnList.Add((item, index) => {
+            listIndex = index;
+        });
+
+        UIMenu.Menu.OnSelect.Add(async (item, index) => {
+            UIMenu.Menu.HideMenu();
+            if (item.id >= 0) {
+                try {
+                    mp.events.callRemote('server:inventory:colorGunItem', item.id, listIndex, item.superTint)
+                }
+                catch (e) {
+                    methods.debug(e);
+                }
+            }
+        });
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+};
+
 menuList.showFixGunFreeMenu = function(data) {
 
     try {
@@ -6635,7 +7019,7 @@ menuList.showSellFishMenu = async function(data, shopId) {
                         let fData = await family.getData(fId);
                         if (fData.get('level') === 5) {
                             if (fData.get('exp') > 100000) {
-                                family.addMoney(fId, 20000000, 'Премия за достижения 6 уровня');
+                                family.addMoney(fId, 7500000, 'Премия за достижения 6 уровня');
                                 family.set(fId, 'level', 6);
                                 family.set(fId, 'exp', 0);
                             }
@@ -6665,7 +7049,7 @@ menuList.showSellFishMenu = async function(data, shopId) {
                         let fData = await family.getData(fId);
                         if (fData.get('level') === 5) {
                             if (fData.get('exp') > 100000) {
-                                family.addMoney(fId, 20000000, 'Премия за достижения 6 уровня');
+                                family.addMoney(fId, 7500000, 'Премия за достижения 6 уровня');
                                 family.set(fId, 'level', 6);
                                 family.set(fId, 'exp', 0);
                             }
@@ -8241,7 +8625,10 @@ menuList.showShopClothMenu = function (shopId, type, menuType, price = 1) {
             for (let i = 0; i < cloth.length; i++) {
                 let id = i;
 
-                if (cloth[id][1] != menuType) continue;
+                if (menuType === 7) {
+                    if (cloth[id][1] != 7 && cloth[id][1] != 3) continue;
+                }
+                else if (cloth[id][1] != menuType) continue;
                 if (cloth[id][0] != type) continue;
 
                 let pr = cloth[i][8] * price;
@@ -8261,7 +8648,7 @@ menuList.showShopClothMenu = function (shopId, type, menuType, price = 1) {
                 menuListItem.mt = menuType;
                 menuListItem.type = 'c:show';
                 menuListItem.itemName = cloth[id][9].toString();
-                list.push({name: methods.removeQuotesAll(cloth[i][9].toString()), desc: `Термостойкость до ${cloth[i][10]}°`, price: '', sale: sale, params: menuListItem});
+                list.push({name: methods.removeQuotesAll(cloth[i][9].toString()), desc: `Цена: ${methods.moneyFormat(pr)}`, price: '', sale: sale, params: menuListItem});
             }
         }
 
@@ -8300,7 +8687,10 @@ menuList.showShopClothMoreMenu = function (title, color, shopId, type, menuType,
             menuListItem.id = i;
             menuListItem.shop = shopId;
             menuListItem.itemName = itemName;
-            list.push({name: methods.removeQuotesAll(`${itemName} #${(i + 1)}`), desc: `Термостойкость до ${id10}°`, price: methods.moneyFormat(id8), sale: sale, params: menuListItem});
+            let desc = `Термостойкость до ${id10}°`;
+            if (id10 < -90)
+                desc = '';
+            list.push({name: methods.removeQuotesAll(`${itemName} #${(i + 1)}`), desc: desc, price: methods.moneyFormat(id8), sale: sale, params: menuListItem});
         }
 
         //shopMenu.showShop2();
@@ -8531,7 +8921,7 @@ menuList.showShopPropMenu = function (shopId, type, menuType, price) {
         menuListItem.mt = menuType;
         menuListItem.type = 'p:show';
 
-        list.push({name: methods.removeQuotesAll(clothList[i][5].toString()), price: '', sale: sale, params: menuListItem});
+        list.push({name: methods.removeQuotesAll(clothList[i][5].toString()), desc: `Цена: ${methods.moneyFormat(pr)}`, price: '', sale: sale, params: menuListItem});
     }
 
     if (list.length === 0)
@@ -8683,14 +9073,16 @@ menuList.showPrintShopMenu = function()
 
     for (let i = 0; i < printList.length; i++) {
 
-        let price = 1999.90;
+        let price = 3999;
+        if (i < 25)
+            price = 39999;
         if (user.getSex() == 1 && printList[i][2] != "") {
             let menuListItem = {};
             menuListItem.doName = 'show';
             menuListItem.price = price;
             menuListItem.tatto1 = printList[i][0];
             menuListItem.tatto2 = printList[i][2];
-            UIMenu.Menu.AddMenuItem('Принт #' + i, `Цена: ~g~${methods.moneyFormat(price)}`, menuListItem);
+            UIMenu.Menu.AddMenuItem('Принт #' + i, `Цена: ~g~${methods.moneyFormat(price, 0)}`, menuListItem);
 
             list.push(menuListItem);
         }
@@ -8700,7 +9092,7 @@ menuList.showPrintShopMenu = function()
             menuListItem.price = price;
             menuListItem.tatto1 = printList[i][0];
             menuListItem.tatto2 = printList[i][1];
-            UIMenu.Menu.AddMenuItem('Принт #' + i, `Цена: ~g~${methods.moneyFormat(price)}`, menuListItem);
+            UIMenu.Menu.AddMenuItem('Принт #' + i, `Цена: ~g~${methods.moneyFormat(price, 0)}`, menuListItem);
 
             list.push(menuListItem);
         }
@@ -10012,7 +10404,7 @@ menuList.showGunShopMenu = function(shopId, price = 1)
     let sale = business.getSale(price);
 
     let list = [];
-    let gunList = [54, 63, 64, 65, 69, 77, 80, 71, 87, 90, 91, 94, 99, 103, 104];
+    let gunList = [54, 55, 63, 64, 65, 69, 77, 80, 81, 71, 87, 90, 91, 94, 99, 103, 104, 112, 108];
 
     if (user.isAdmin(5)) {
         gunList = [];
@@ -10170,8 +10562,8 @@ menuList.showGunShopMenu = function(shopId, price = 1)
             desc2t: '',
             sale: 0,
             img: `Item_252.png`,
-            price: methods.moneyFormat(500),
-            params: {doName: 'armour', price: 500, count: 30, shop: shopId}
+            price: methods.moneyFormat(500 * price),
+            params: {doName: 'armour', price: 500 * price, count: 30, shop: shopId}
         }, { //Если кликаем сюда, то открывается меню справа (Там где покупка)
             title: 'Средний бронежилет',
             desc: 'Помимо защиты от пуль, в нем можно хранить вещи',
@@ -10179,8 +10571,8 @@ menuList.showGunShopMenu = function(shopId, price = 1)
             desc2t: '',
             sale: 0,
             img: `Item_252.png`,
-            price: methods.moneyFormat(1000),
-            params: {doName: 'armour', price: 1000, count: 60, shop: shopId}
+            price: methods.moneyFormat(1000 * price),
+            params: {doName: 'armour', price: 1000 * price, count: 60, shop: shopId}
         }]
     });
 
@@ -10983,7 +11375,7 @@ menuList.showGovGarderobMenu = function() {
         UIMenu.Menu.AddMenuItem("Коробка патронов 9mm", "", {itemId: 280});
     }
 
-    UIMenu.Menu.AddMenuItem("Бронежилет", "", {armor: 100});
+    UIMenu.Menu.AddMenuItem("Бронежилет", "", {itemId: 252});
 
     let list = ["Default", "Type #1", "Type #2"];
     UIMenu.Menu.AddMenuItemList("Галстук", list);
@@ -11005,18 +11397,7 @@ menuList.showGovGarderobMenu = function() {
 
     UIMenu.Menu.OnSelect.Add(async item => {
         UIMenu.Menu.HideMenu();
-        if (item.armor) {
-            user.setArmour(100);
-            mp.game.ui.notifications.show("~b~Вы взяли броню");
-        }
         if (item.itemId) {
-            let moneyFraction = await coffer.getMoney(coffer.getIdByFraction(user.getCache('fraction_id')));
-            let itemPrice = items.getItemPrice(item.itemId);
-
-            if (moneyFraction < itemPrice) {
-                mp.game.ui.notifications.show(`~r~В бюджете организации не достаточно средств`);
-                return;
-            }
             if (items.isWeapon(item.itemId))
                 inventory.takeNewWeaponItem(item.itemId, `{"owner": "Правительство", "userName": "${user.getCache('name')}"}`, 'Выдано оружие').then();
             else
@@ -11092,18 +11473,7 @@ menuList.showEmsArsenalMenu = function() {
     UIMenu.Menu.OnSelect.Add(async item => {
         UIMenu.Menu.HideMenu();
         if (item.itemId) {
-            let moneyFraction = await coffer.getMoney(coffer.getIdByFraction(user.getCache('fraction_id')));
-            let itemPrice = items.getItemPrice(item.itemId);
-
-            if (moneyFraction < itemPrice) {
-                mp.game.ui.notifications.show(`~r~В бюджете организации не достаточно средств`);
-                return;
-            }
-
-            if (items.isWeapon(item.itemId))
-                inventory.takeNewWeaponItem(item.itemId, `{"owner": "EMS", "userName": "${user.getCache('name')}"}`, 'Выдано оружие').then();
-            else
-                inventory.takeNewWeaponItem(item.itemId, `{"owner": "EMS", "userName": "${user.getCache('name')}"}`, 'Выдан предмет').then();
+            inventory.takeNewWeaponItem(item.itemId, `{"owner": "EMS", "userName": "${user.getCache('name')}"}`, 'Выдано оружие').then();
         }
         if (item.recHealB) {
             inventory.takeNewWeaponItem(474, `{"owner": "EMS", "userName": "${user.getCache('name')}", "id":0}`, 'Выдан рецепт').then();
@@ -11203,14 +11573,6 @@ menuList.showSheriffArsenalMenu = function() {
             mp.events.callRemote('server:inventory:fixItemFreeMenu');
         }
         if (item.itemId) {
-            let moneyFraction = await coffer.getMoney(coffer.getIdByFraction(user.getCache('fraction_id')));
-            let itemPrice = items.getItemPrice(item.itemId);
-
-            if (moneyFraction < itemPrice) {
-                mp.game.ui.notifications.show(`~r~В бюджете организации не достаточно средств`);
-                return;
-            }
-
             if (items.isWeapon(item.itemId))
                 inventory.takeNewWeaponItem(item.itemId, `{"owner": "BCSD", "userName": "${user.getCache('name')}", "tint": 4}`, 'Выдано оружие').then();
             else
@@ -11267,26 +11629,14 @@ menuList.showSheriffArsenalGunMenu = function() {
         UIMenu.Menu.AddMenuItem("Коробка патронов 7.62mm", "", {itemId: 282});
     }
 
-    UIMenu.Menu.AddMenuItem("Бронежилет", "", {armor: 100});
+    UIMenu.Menu.AddMenuItem("Бронежилет", "", {itemId: 252});
 
     UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
     UIMenu.Menu.Draw();
 
     UIMenu.Menu.OnSelect.Add(async item => {
         UIMenu.Menu.HideMenu();
-        if (item.armor) {
-            user.setArmour(100);
-            mp.game.ui.notifications.show("~b~Вы взяли броню");
-        }
         if (item.itemId) {
-            let moneyFraction = await coffer.getMoney(coffer.getIdByFraction(user.getCache('fraction_id')));
-            let itemPrice = items.getItemPrice(item.itemId);
-
-            if (moneyFraction < itemPrice) {
-                mp.game.ui.notifications.show(`~r~В бюджете организации не достаточно средств`);
-                return;
-            }
-
             if (items.isWeapon(item.itemId))
                 inventory.takeNewWeaponItem(item.itemId, `{"owner": "BCSD", "userName": "${user.getCache('name')}", "tint": 4}`, 'Выдано оружие').then();
             else
@@ -11377,14 +11727,6 @@ menuList.showSheriffArsenalGunModMenu = function() {
     UIMenu.Menu.OnSelect.Add(async item => {
         UIMenu.Menu.HideMenu();
         if (item.itemId) {
-            let moneyFraction = await coffer.getMoney(coffer.getIdByFraction(user.getCache('fraction_id')));
-            let itemPrice = items.getItemPrice(item.itemId);
-
-            if (moneyFraction < itemPrice) {
-                mp.game.ui.notifications.show(`~r~В бюджете организации не достаточно средств`);
-                return;
-            }
-
             if (items.isWeapon(item.itemId))
                 inventory.takeNewWeaponItem(item.itemId, `{"owner": "BCSD", "userName": "${user.getCache('name')}", "tint": 4}`, 'Выдано оружие').then();
             else
@@ -11586,10 +11928,6 @@ menuList.showSapdArsenalMenu = function() {
 
     UIMenu.Menu.OnSelect.Add(async item => {
         UIMenu.Menu.HideMenu();
-        if (item.armor) {
-            user.setArmour(100);
-            mp.game.ui.notifications.show("~b~Вы взяли броню");
-        }
         if (item.showGun) {
             menuList.showSapdArsenalGunMenu();
         }
@@ -11606,14 +11944,6 @@ menuList.showSapdArsenalMenu = function() {
             mp.events.callRemote('server:sellMoneyPolice');
         }
         if (item.itemId) {
-            let moneyFraction = await coffer.getMoney(coffer.getIdByFraction(user.getCache('fraction_id')));
-            let itemPrice = items.getItemPrice(item.itemId);
-
-            if (moneyFraction < itemPrice) {
-                mp.game.ui.notifications.show(`~r~В бюджете организации не достаточно средств`);
-                return;
-            }
-
             if (items.isWeapon(item.itemId))
                 inventory.takeNewWeaponItem(item.itemId, `{"owner": "LSPD", "userName": "${user.getCache('name')}", "tint": 5}`, 'Выдано оружие').then();
             else
@@ -11671,26 +12001,14 @@ menuList.showSapdArsenalGunMenu = function() {
         UIMenu.Menu.AddMenuItem("Коробка патронов 7.62mm", "", {itemId: 282});
     }
 
-    UIMenu.Menu.AddMenuItem("Бронежилет", "", {armor: 100});
+    UIMenu.Menu.AddMenuItem("Бронежилет", "", {itemId: 252});
 
     UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
     UIMenu.Menu.Draw();
 
     UIMenu.Menu.OnSelect.Add(async item => {
         UIMenu.Menu.HideMenu();
-        if (item.armor) {
-            user.setArmour(100);
-            mp.game.ui.notifications.show("~b~Вы взяли броню");
-        }
         if (item.itemId) {
-            let moneyFraction = await coffer.getMoney(coffer.getIdByFraction(user.getCache('fraction_id')));
-            let itemPrice = items.getItemPrice(item.itemId);
-
-            if (moneyFraction < itemPrice) {
-                mp.game.ui.notifications.show(`~r~В бюджете организации не достаточно средств`);
-                return;
-            }
-
             if (items.isWeapon(item.itemId))
                 inventory.takeNewWeaponItem(item.itemId, `{"owner": "LSPD", "userName": "${user.getCache('name')}", "tint": 5}`, 'Выдано оружие').then();
             else
@@ -11781,14 +12099,6 @@ menuList.showSapdArsenalGunModMenu = function() {
     UIMenu.Menu.OnSelect.Add(async item => {
         UIMenu.Menu.HideMenu();
         if (item.itemId) {
-            let moneyFraction = await coffer.getMoney(coffer.getIdByFraction(user.getCache('fraction_id')));
-            let itemPrice = items.getItemPrice(item.itemId);
-
-            if (moneyFraction < itemPrice) {
-                mp.game.ui.notifications.show(`~r~В бюджете организации не достаточно средств`);
-                return;
-            }
-
             if (items.isWeapon(item.itemId))
                 inventory.takeNewWeaponItem(item.itemId, `{"owner": "LSPD", "userName": "${user.getCache('name')}", "tint": 5}`, 'Выдано оружие').then();
             else
@@ -11819,10 +12129,6 @@ menuList.showUsmcArsenalMenu = function() {
 
     UIMenu.Menu.OnSelect.Add(async item => {
         UIMenu.Menu.HideMenu();
-        if (item.armor) {
-            user.setArmour(100);
-            mp.game.ui.notifications.show("~b~Вы взяли броню");
-        }
         if (item.showGarderob) {
             menuList.showUsmcGarderobMenu();
         }
@@ -11839,14 +12145,6 @@ menuList.showUsmcArsenalMenu = function() {
             menuList.showUsmcArsenalGunModMenu();
         }
         if (item.itemId) {
-            let moneyFraction = await coffer.getMoney(coffer.getIdByFraction(user.getCache('fraction_id')));
-            let itemPrice = items.getItemPrice(item.itemId);
-
-            if (moneyFraction < itemPrice) {
-                mp.game.ui.notifications.show(`~r~В бюджете организации не достаточно средств`);
-                return;
-            }
-
             if (items.isWeapon(item.itemId))
                 inventory.takeNewWeaponItem(item.itemId, `{"owner": "USMC", "userName": "${user.getCache('name')}", "tint": 4}`, 'Выдано оружие').then();
             else
@@ -11901,26 +12199,14 @@ menuList.showUsmcArsenalGunMenu = function() {
         UIMenu.Menu.AddMenuItem("Коробка патронов .44 Magnum", "", {itemId: 287});
     }
 
-    UIMenu.Menu.AddMenuItem("Бронежилет", "", {armor: 100});
+    UIMenu.Menu.AddMenuItem("Бронежилет", "", {itemId: 252});
 
     UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
     UIMenu.Menu.Draw();
 
     UIMenu.Menu.OnSelect.Add(async item => {
         UIMenu.Menu.HideMenu();
-        if (item.armor) {
-            user.setArmour(100);
-            mp.game.ui.notifications.show("~b~Вы взяли броню");
-        }
         if (item.itemId) {
-            let moneyFraction = await coffer.getMoney(coffer.getIdByFraction(user.getCache('fraction_id')));
-            let itemPrice = items.getItemPrice(item.itemId);
-
-            if (moneyFraction < itemPrice) {
-                mp.game.ui.notifications.show(`~r~В бюджете организации не достаточно средств`);
-                return;
-            }
-
             if (items.isWeapon(item.itemId))
                 inventory.takeNewWeaponItem(item.itemId, `{"owner": "USMC", "userName": "${user.getCache('name')}", "tint": 4}`, 'Выдано оружие').then();
             else
@@ -12011,14 +12297,6 @@ menuList.showUsmcArsenalGunModMenu = function() {
     UIMenu.Menu.OnSelect.Add(async item => {
         UIMenu.Menu.HideMenu();
         if (item.itemId) {
-            let moneyFraction = await coffer.getMoney(coffer.getIdByFraction(user.getCache('fraction_id')));
-            let itemPrice = items.getItemPrice(item.itemId);
-
-            if (moneyFraction < itemPrice) {
-                mp.game.ui.notifications.show(`~r~В бюджете организации не достаточно средств`);
-                return;
-            }
-
             if (items.isWeapon(item.itemId))
                 inventory.takeNewWeaponItem(item.itemId, `{"owner": "USMC", "userName": "${user.getCache('name')}", "tint": 4}`, 'Выдано оружие').then();
             else
@@ -12066,10 +12344,6 @@ menuList.showFibArsenalMenu = function() {
 
     UIMenu.Menu.OnSelect.Add(async item => {
         UIMenu.Menu.HideMenu();
-        if (item.armor) {
-            user.setArmour(100);
-            mp.game.ui.notifications.show("~b~Вы взяли броню");
-        }
         if (item.gunFix) {
             mp.events.callRemote('server:inventory:fixItemFreeMenu');
         }
@@ -12083,14 +12357,6 @@ menuList.showFibArsenalMenu = function() {
             menuList.showFibArsenalGunModMenu();
         }
         if (item.itemId) {
-            let moneyFraction = await coffer.getMoney(coffer.getIdByFraction(user.getCache('fraction_id')));
-            let itemPrice = items.getItemPrice(item.itemId);
-
-            if (moneyFraction < itemPrice) {
-                mp.game.ui.notifications.show(`~r~В бюджете организации не достаточно средств`);
-                return;
-            }
-
             if (items.isWeapon(item.itemId))
                 inventory.takeNewWeaponItem(item.itemId, `{"owner": "FIB", "userName": "${user.getCache('name')}"}`, 'Выдано оружие').then();
             else
@@ -12126,26 +12392,14 @@ menuList.showFibArsenalGunMenu = function() {
         UIMenu.Menu.AddMenuItem("Коробка патронов 5.56mm", "", {itemId: 284});
     }
 
-    UIMenu.Menu.AddMenuItem("Бронежилет", "", {armor: 100});
+    UIMenu.Menu.AddMenuItem("Бронежилет", "", {itemId: 252});
 
     UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
     UIMenu.Menu.Draw();
 
     UIMenu.Menu.OnSelect.Add(async item => {
         UIMenu.Menu.HideMenu();
-        if (item.armor) {
-            user.setArmour(100);
-            mp.game.ui.notifications.show("~b~Вы взяли броню");
-        }
         if (item.itemId) {
-            let moneyFraction = await coffer.getMoney(coffer.getIdByFraction(user.getCache('fraction_id')));
-            let itemPrice = items.getItemPrice(item.itemId);
-
-            if (moneyFraction < itemPrice) {
-                mp.game.ui.notifications.show(`~r~В бюджете организации не достаточно средств`);
-                return;
-            }
-
             if (items.isWeapon(item.itemId))
                 inventory.takeNewWeaponItem(item.itemId, `{"owner": "FIB", "userName": "${user.getCache('name')}"}`, 'Выдано оружие').then();
             else
@@ -12199,14 +12453,6 @@ menuList.showFibArsenalGunModMenu = function() {
     UIMenu.Menu.OnSelect.Add(async item => {
         UIMenu.Menu.HideMenu();
         if (item.itemId) {
-            let moneyFraction = await coffer.getMoney(coffer.getIdByFraction(user.getCache('fraction_id')));
-            let itemPrice = items.getItemPrice(item.itemId);
-
-            if (moneyFraction < itemPrice) {
-                mp.game.ui.notifications.show(`~r~В бюджете организации не достаточно средств`);
-                return;
-            }
-
             if (items.isWeapon(item.itemId))
                 inventory.takeNewWeaponItem(item.itemId, `{"owner": "FIB", "userName": "${user.getCache('name')}"}`, 'Выдано оружие').then();
             else
@@ -12498,7 +12744,7 @@ menuList.showBotLspdCarMen = function(array, idx, x, y, z, rot)
 
 menuList.showBotQuestRole0Menu = function()
 {
-    if (user.getCache('role') !== 0) {
+    if (user.getCache('role') !== 1) {
         mp.game.ui.notifications.show('~r~Доступно только для иммигрантов');
         return;
     }
@@ -12617,13 +12863,13 @@ menuList.showBotQuestGangMenu = function()
                 params: {doName: 'lamar:car'}
             }
         );
-        btn.push(
+        /*btn.push(
             {
                 text: 'Купить спец. отмычку (Цена: 0.2ec)',
                 bgcolor: '',
                 params: {doName: 'lamar:buy'}
             }
-        );
+        );*/
     }
 
     btn.push(
@@ -12636,6 +12882,54 @@ menuList.showBotQuestGangMenu = function()
 
     shopMenu.showDialog(new mp.Vector3(-218.75608825683594, -1368.4576416015625, 31.25823402404785 + 0.6), 43.398406982421875);
     shopMenu.updateDialog(btn, 'Ламар', 'Друг', 'Васт ап, хоуми, чем я могу помочь?')
+};
+
+menuList.showBotJailMenu = function()
+{
+    let btn = [];
+
+    btn.push(
+        {
+            text: 'Получить задание',
+            bgcolor: '',
+            params: {doName: 'jail:work'}
+        }
+    );
+
+    btn.push(
+        {
+            text: 'Закрыть',
+            bgcolor: 'rgba(244,67,54,0.7)',
+            params: {doName: 'close'}
+        }
+    );
+
+    shopMenu.showDialog(new mp.Vector3(1746.4307861328125, 2502.748046875, 45.56498336791992 + 0.6), 350.29193115234375);
+    shopMenu.updateDialog(btn, 'Джейк', 'Сотрудник тюрьмы', 'Привет, чем я могу помочь?')
+};
+
+menuList.showBotYankMenu = function()
+{
+    let btn = [];
+
+    btn.push(
+        {
+            text: 'Что произошло?',
+            bgcolor: '',
+            params: {doName: 'yank:ask'}
+        }
+    );
+
+    btn.push(
+        {
+            text: 'Закрыть',
+            bgcolor: 'rgba(244,67,54,0.7)',
+            params: {doName: 'close'}
+        }
+    );
+
+    shopMenu.showDialog(new mp.Vector3(3198.975341796875, -4833.72998046875, 111.81517791748047 + 0.6), 263.877197265625);
+    shopMenu.updateDialog(btn, 'Риксон', 'Сотрудник YPD', 'Здравствуйте, чем я могу вам помочь?')
 };
 
 menuList.showGangZoneAttackMenu = function(zone, count = 5) {
@@ -12788,6 +13082,9 @@ menuList.showAdminMenu = function() {
             UIMenu.Menu.AddMenuItem("~y~Выключить админку", "", {doName: "disableAdmin"});
             UIMenu.Menu.AddMenuItem("~y~Ответить на жалобу", "", {doName: "askReport"});
 
+            if (user.isAdmin(4)) {
+                UIMenu.Menu.AddMenuItem("Выдача оружия", "", {doName: "gunMenu"});
+            }
             if (user.isAdmin(5)) {
                 UIMenu.Menu.AddMenuItem("Для разработчика", "", {doName: "developerMenu"});
             }
@@ -12902,6 +13199,8 @@ menuList.showAdminMenu = function() {
             menuList.showAdminEventMenu();
         if (item.doName == 'developerMenu')
             menuList.showAdminDevMenu();
+        if (item.doName == 'gunMenu')
+            menuList.showGunShopMenu(0, 2);
         if (item.doName == 'vehicleMenu')
             menuList.showAdminVehicleMenu();
         if (item.doName == 'teleportMenu')
@@ -13308,6 +13607,8 @@ menuList.showAdminDevMenu = function() {
     UIMenu.Menu.AddMenuItem("Добавить на счета орг.", "", {doName: "addFraction2"});
     UIMenu.Menu.AddMenuItem("Списать со счета орг.", "", {doName: "removeFraction2"});
 
+    UIMenu.Menu.AddMenuItem("prolog.start", "", {doName: "prolog.start"});
+
     UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
     UIMenu.Menu.Draw();
 
@@ -13324,6 +13625,16 @@ menuList.showAdminDevMenu = function() {
         }
         if (item.doName == 'interior') {
             menuList.showAdminInteriorMenu();
+        }
+        if (item.doName == 'prolog.start') {
+            try {
+                prolog.start();
+            }
+            catch (e) {
+                methods.debug('Error', e.toString());
+                methods.debug(e);
+                methods.debug(JSON.stringify(e));
+            }
         }
         if (item.doName == 'debug') {
             menuList.showAdminDebugMenu();

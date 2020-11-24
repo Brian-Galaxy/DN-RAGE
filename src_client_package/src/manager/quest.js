@@ -50,7 +50,7 @@ let questList = {
             ["Подработка", "Перенесите 20 ящиков", "$200", -415, -2645],
             ["Правительство", "Приехать в здание правительства и получить права категории B", "Work ID 2 уровня", -1290, -571],
         ],
-        canSee: () => { return user.getCache('role') === 0 }
+        canSee: () => { return user.getCache('role') === 1 }
     },
     standart: {
         name: "Первые шаги",
@@ -59,7 +59,7 @@ let questList = {
         anim: "WORLD_HUMAN_CLIPBOARD",
         pos: new mp.Vector3(-1288.153, -561.6686, 31.71216),
         tasks: [
-            ["Лицензия", "Купить лицензию категории B", "$100", -1290, -571],
+            ["Лицензия", "Купить лицензию категории B (Доп. информация в М - Квесты)", "$100 + Лицензия категории А", -1290, -571],
             ["Первая работа", "Устроиться на работу садовника или разнорабочего в здании правительства", "$200", -1290, -571],
             ["Аренда", "Арендуйте транспорт", "$250", -1261, -608],
             ["Первые деньги", "Заработайте первые деньги", "$500", -1585, -234],
@@ -442,6 +442,7 @@ quest.standart = function(isBot = false, start = -1, done = 0) {
                     quest.notify(quest.getQuestLineName(qName, start), quest.getQuestLinePrize(qName, start));
                     user.setQuest(qName, start + 1);
                     user.addCashMoney(100);
+                    user.buyLicense('a_lic', 0.10);
                     quest.standart();
                     return;
                 }

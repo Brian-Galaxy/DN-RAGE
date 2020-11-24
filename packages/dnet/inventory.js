@@ -319,6 +319,55 @@ inventory.getItemListGunFix = function(player) {
     }, 1000);
 };
 
+inventory.getItemListGunColor = function(player) {
+    setTimeout(function () {
+        if (!user.isLogin(player))
+            return;
+        try {
+
+            let data = [];
+            //let data2 = new Map();
+
+            let sql = `SELECT * FROM items WHERE owner_id = '${user.getId(player)}' AND owner_type = '1' AND is_equip = 0 AND (item_id > 69 AND item_id < 127 OR item_id = 146 OR item_id = 147) ORDER BY item_id DESC LIMIT 400`;
+
+            mysql.executeQuery(sql, function (err, rows, fields) {
+                rows.forEach(row => {
+
+                    let label = "";
+
+                    if (row['prefix'] > 0 && row['number'] > 0 && row['key_id'] <= 0) {
+                        label = row['prefix'] + "-" + row['number'];
+                    } else if (row['key_id'] > 0) {
+
+                        if (row['item_id'] >= 265 && row['item_id'] <= 268) {
+
+                            if (row['prefix'] == 1)
+                                label = enums.clothF[row['key_id']][9];
+                            else
+                                label = enums.clothM[row['key_id']][9];
+                        }
+                        else if (row['item_id'] >= 269 && row['item_id'] <= 273) {
+                            if (row['prefix'] == 1)
+                                label = enums.propF[row['key_id']][5];
+                            else
+                                label = enums.propM[row['key_id']][5];
+                        }
+                        else {
+                            label = "#" + row['key_id'];
+                        }
+                    }
+
+                    data.push({id: row['id'], label: label, item_id: row['item_id'], count: row['count'], is_equip: row['is_equip'], params: row['params']});
+                });
+
+                player.call('client:showColorGunMenu', [data]);
+            });
+        } catch(e) {
+            methods.debug(e);
+        }
+    }, 1000);
+};
+
 inventory.getItemListGunFixFree = function(player) {
     setTimeout(function () {
         if (!user.isLogin(player))
@@ -576,6 +625,49 @@ inventory.fixItem = function(player, id) {
     }
 };
 
+inventory.colorItem = function(player, id, tint, sTint) {
+    if (!user.isLogin(player))
+        return;
+    try {
+        let count = 5;
+        if (methods.parseInt(sTint) !== 0)
+            count = 10;
+        let sql = `SELECT * FROM items WHERE item_id = 477 AND owner_id = ${user.getId(player)} AND owner_type = ${inventory.types.Player}`;
+        mysql.executeQuery(sql, function (err, rows, fields) {
+            if (rows.length < count) {
+                player.notify(`~r~У вас столько балончиков. Необходимо: ${count}шт.`);
+                return;
+            }
+
+            mysql.executeQuery(`SELECT params FROM items WHERE id = ${id} LIMIT 1`, function (err, rows2, fields) {
+                if (rows2.length === 0) {
+                    player.notify('~r~Оружие не было найдено');
+                    return;
+                }
+                try {
+                    let params = JSON.parse(rows2[0]['params']);
+                    params.tint = tint;
+                    if (sTint !== 0)
+                        params.superTint = methods.parseInt(sTint);
+                    inventory.updateItemParams(id, JSON.stringify(params));
+
+                    rows.forEach((row, idx) => {
+                        if (count > idx)
+                            inventory.deleteItem(row['id']);
+                    });
+
+                    player.notify('~g~Вы выполнили покраску');
+                }
+                catch (e) {
+                    player.notify('~y~Произошла ошибка покраски');
+                }
+            });
+        });
+    } catch (e) {
+
+    }
+};
+
 inventory.fixItemFree = function(player, id) {
     if (!user.isLogin(player))
         return;
@@ -739,6 +831,17 @@ inventory.equip = function(player, id, itemId, count, aparams) {
                 user.set(player, "hand_color", params.hand_color);
                 user.updateCharacterCloth(player);
                 user.save(player);
+            }
+            else if (itemId == 275) {
+
+                if (params.sex !== user.getSex(player)) {
+                    player.notify("~r~Одежда подходит только для противоположного");
+                    return;
+                }
+                inventory.updateItemsEquipByItemId(itemId, user.getId(player), inventory.types.Player, 0);
+                user.set(player, "gloves", params.gloves);
+                user.set(player, "gloves_color", params.gloves_color);
+                user.updateCharacterCloth(player);
             }
             else if (itemId == 265) {
 
@@ -1087,7 +1190,7 @@ inventory.dropItemJust = function(id, itemId, posX, posY, posZ, rotX, rotY, rotZ
         rotZ = rot.z;
 
         props.set(id.toString(), obj);
-        mysql.executeQuery(`UPDATE items SET item_id = ${itemId}, owner_type = 0, owner_id = 0, is_equip = 0, pos_x = ${posX}, pos_y = ${posY}, pos_z = ${posZ}, rot_x = ${rotX}, rot_y = ${rotY}, rot_z = ${rotZ}, timestamp_update = ${methods.getTimeStamp()} where id = ${id}`);
+        mysql.executeQuery(`UPDATE items SET owner_type = 0, owner_id = 0, is_equip = 0, pos_x = ${posX}, pos_y = ${posY}, pos_z = ${posZ}, rot_x = ${rotX}, rot_y = ${rotY}, rot_z = ${rotZ}, timestamp_update = ${methods.getTimeStamp()} where id = ${id}`);
 
     } catch(e) {
         methods.debug(e);
@@ -1293,9 +1396,9 @@ inventory.dropWeaponItem = function(player, itemId, posx, posy, posz, rotx, roty
         if (!user.isLogin(player))
             return;
 
-        mysql.executeQuery(`SELECT id FROM items WHERE owner_type='1' AND owner_id='${user.getId(player)}' AND item_id='${itemId}' AND is_equip='1' ORDER BY item_id DESC`, function (err, rows, fields) {
+        mysql.executeQuery(`SELECT id, item_id FROM items WHERE owner_type='1' AND owner_id='${user.getId(player)}' AND id='${itemId}' AND is_equip='1'`, function (err, rows, fields) {
             rows.forEach(row => {
-                inventory.dropItem(player, row['id'], itemId, posx, posy, posz, rotx, roty, rotz);
+                inventory.dropItem(player, row['id'], row['item_id'], posx, posy, posz, rotx, roty, rotz);
             });
         });
     })
@@ -1420,6 +1523,7 @@ inventory.useItem = function(player, id, itemId, isTargetable = false) {
                         player.notify("~y~Вы связали игрока");
                         chat.sendMeCommand(player, "связал человека рядом");
                         inventory.deleteItem(id);
+                        chat.sendMeCommand(player, "использовал стяжки");
                     }
                     break;
                 }
@@ -1603,12 +1707,21 @@ inventory.useItem = function(player, id, itemId, isTargetable = false) {
                     }
 
                     try {
-                        fraction.set(user.get(player,'fraction_id2'), 'grabBankFleeca', true);
-                        fraction.set(user.get(player,'fraction_id2'), 'grabBankFleecaCar', 2);
-                        fraction.set(user.get(player,'fraction_id2'), 'grabBankFleecaPt', 2);
-                        fraction.set(user.get(player,'fraction_id2'), 'grabBankFleecaHp', 2);
-                        fraction.set(user.get(player,'fraction_id2'), 'grabBankFleecaOt', 2);
+                        if (params.type === 2 && !user.isMafia(player)) {
+                            player.notify('~r~Подготовка доступна только для мафии');
+                            return;
+                        }
+
+                        let count = 2;
+                        if (params.type === 2)
+                            count = 3;
+                        fraction.set(user.get(player,'fraction_id2'), 'grabBankFleeca', params.type);
+                        fraction.set(user.get(player,'fraction_id2'), 'grabBankFleecaCar', count);
+                        fraction.set(user.get(player,'fraction_id2'), 'grabBankFleecaPt', count);
+                        fraction.set(user.get(player,'fraction_id2'), 'grabBankFleecaHp', count);
+                        fraction.set(user.get(player,'fraction_id2'), 'grabBankFleecaOt', count);
                         fraction.set(user.get(player,'fraction_id2'), 'grabBankFleecaTimer', 60);
+
                         player.notify('~g~Подготовка к ограблению началась');
                         inventory.deleteItem(id);
                     }
@@ -1637,6 +1750,14 @@ inventory.useItem = function(player, id, itemId, isTargetable = false) {
                 }
                 case 4:
                 {
+
+                    let pickId = bank.getLockPickDoorInRadius(player.position, 3);
+                    if (pickId >= 0) {
+                        bank.lockPickDoor(player, 3);
+                        inventory.deleteItem(id);
+                        return;
+                    }
+
                     let veh = methods.getNearestVehicleWithCoords(player.position, 10);
                     if (!vehicles.exists(veh))
                     {
@@ -1723,7 +1844,7 @@ inventory.useItem = function(player, id, itemId, isTargetable = false) {
                     }
 
                     let grabId2 = bank.getBombInRadius(player.position, 30);
-                    if (grabId2 === -1) {
+                    if (grabId2.idx === -1) {
                         fraction.startGrabShopGang(player, id);
                         return;
                     }
@@ -1745,7 +1866,7 @@ inventory.useItem = function(player, id, itemId, isTargetable = false) {
                         return;
                     }
 
-                    if (fraction.get(frId, 'bankGrabId') !== grabId2) {
+                    if (fraction.get(frId, 'bankGrabId') !== grabId2.idx) {
                         player.notify("~r~Вы не можете этот грабить банк");
                         return;
                     }
@@ -1790,9 +1911,10 @@ inventory.useItem = function(player, id, itemId, isTargetable = false) {
                             player.notify(`~y~Ячейка оказалась пуста`);
                         }
                         else {
-                            inventory.addItem(141, 1, inventory.types.Player, user.getId(player), methods.parseInt(methods.getRandomInt(6000, 8000) * 1.5), 0, "{}", 2);
+                            inventory.addItem(141, 1, inventory.types.Player, user.getId(player), methods.parseInt(methods.getRandomInt(3000, 5000)), 0, "{}", 2);
                         }
 
+                        dispatcher.sendPos("Код 0", "В банке сработала сигнализация", player.position);
                         player.call('client:quest:gang:14');
 
                         user.blockKeys(player, false);
@@ -1817,7 +1939,7 @@ inventory.useItem = function(player, id, itemId, isTargetable = false) {
                     }
 
                     let grabId = bank.getBombInRadius(player.position);
-                    if (grabId === -1) {
+                    if (grabId.idx === -1) {
                         player.notify('~r~Вы слишком далеко от двери');
                         return;
                     }
@@ -1830,6 +1952,11 @@ inventory.useItem = function(player, id, itemId, isTargetable = false) {
 
                     if (!fraction.has(frId, 'grabBankFleecaDone')) {
                         player.notify("~r~Вы не выполнили задание, чтобы совершить ограбление");
+                        return;
+                    }
+
+                    if (grabId.type != fraction.get(frId, 'grabBankFleeca')) {
+                        player.notify("~r~Вы не можете ограбить этот банк");
                         return;
                     }
 
@@ -1849,7 +1976,7 @@ inventory.useItem = function(player, id, itemId, isTargetable = false) {
                         return;
                     }
 
-                    fraction.set(frId, 'bankGrabId', grabId);
+                    fraction.set(frId, 'bankGrabId', grabId.idx);
 
                     inventory.deleteItem(id);
                     user.playAnimation(player, "mp_arresting", "a_uncuff", 8);
@@ -1872,8 +1999,8 @@ inventory.useItem = function(player, id, itemId, isTargetable = false) {
                         setTimeout(function () {
                             try {
                                 dispatcher.sendPos("Код 0", "В банке сработала сигнализация", player.position);
-                                methods.explodeObject(bank.doorPos[grabId][1], bank.doorPos[grabId][2], bank.doorPos[grabId][3]);
-                                methods.deleteObject(bank.doorPos[grabId][1], bank.doorPos[grabId][2], bank.doorPos[grabId][3], bank.doorPos[grabId][0]);
+                                methods.explodeObject(bank.doorPos[grabId.idx][1], bank.doorPos[grabId.idx][2], bank.doorPos[grabId.idx][3]);
+                                methods.deleteObject(bank.doorPos[grabId.idx][1], bank.doorPos[grabId.idx][2], bank.doorPos[grabId.idx][3], bank.doorPos[grabId.idx][0]);
                             }
                             catch (e) {
                                 methods.debug(e);
@@ -1890,8 +2017,8 @@ inventory.useItem = function(player, id, itemId, isTargetable = false) {
                         player.notify("~r~Вы должны находиться около открытого капота");
                         return;
                     }
-                    let veh = methods.getNearestVehicleWithCoords(player.position, 10);
-                    if (veh == null)
+                    let veh = methods.getNearestVehicleWithCoords(player.position, 10, player.dimension);
+                    if (!vehicles.exists(veh))
                     {
                         player.notify("~r~Нужно быть рядом с машиной");
                         return;
@@ -1909,6 +2036,15 @@ inventory.useItem = function(player, id, itemId, isTargetable = false) {
                         player.notify("~r~Необходимо открыть капот");
                         return;
                     }
+
+                    if (veh.broke) {
+                        player.notify("~g~Вы успешно починили авто, теперь можете сесть в него и отправиться в аэропорт");
+                        veh.broke = false;
+                        inventory.deleteItem(id);
+                        user.playAnimation(player, "amb@medic@standing@kneel@enter", "enter", 8);
+                        return;
+                    }
+
                     if (veh.engineHealth >= 999)
                     {
                         player.notify("~r~Автомобиль не поврежден");
@@ -1917,6 +2053,7 @@ inventory.useItem = function(player, id, itemId, isTargetable = false) {
 
                     veh.engineHealth = 1000.0;
 
+                    user.playAnimation(player, "amb@medic@standing@kneel@enter", "enter", 8);
                     player.notify("~g~Вы успешно починили авто");
                     inventory.deleteItem(id);
                     break;
@@ -1928,6 +2065,7 @@ inventory.useItem = function(player, id, itemId, isTargetable = false) {
                         player.notify("~r~Вы должны находиться около транспорта");
                         return;
                     }
+
                     let veh = methods.getNearestVehicleWithCoords(player.position, 10, player.dimension);
                     if (!vehicles.exists(veh))
                     {
@@ -1943,15 +2081,12 @@ inventory.useItem = function(player, id, itemId, isTargetable = false) {
                     }
 
                     let currentFuel = vehicles.getFuel(veh);
-
                     if (vehInfo.fuel_full < currentFuel + 10)
                     {
                         player.notify("~r~В транспорте полный бак");
                         return;
                     }
-
                     vehicles.setFuel(veh, currentFuel + 10);
-
                     player.notify("~g~Вы заправили транспорт на 10л.");
                     inventory.deleteItem(id);
                     break;
@@ -1963,7 +2098,7 @@ inventory.useItem = function(player, id, itemId, isTargetable = false) {
                         player.notify("~r~Вы должны находиться около транспорта");
                         return;
                     }
-                    let veh = methods.getNearestVehicleWithCoords(player.position, 10);
+                    let veh = methods.getNearestVehicleWithCoords(player.position, 10, player.dimension);
                     if (!vehicles.exists(veh))
                     {
                         player.notify("~r~Нужно быть рядом с машиной");
@@ -1986,7 +2121,10 @@ inventory.useItem = function(player, id, itemId, isTargetable = false) {
                         return;
                     }
 
-                    vehicles.setFuel(veh, currentFuel + 10);
+                    if (veh.prolog)
+                        vehicles.setFuel(veh, currentFuel + 40);
+                    else
+                        vehicles.setFuel(veh, currentFuel + 10);
 
                     player.notify("~g~Вы заправили транспорт на 10л.");
                     inventory.deleteItem(id);
@@ -1999,7 +2137,7 @@ inventory.useItem = function(player, id, itemId, isTargetable = false) {
                         player.notify("~r~Вы должны находиться около транспорта");
                         return;
                     }
-                    let veh = methods.getNearestVehicleWithCoords(player.position, 10);
+                    let veh = methods.getNearestVehicleWithCoords(player.position, 10, player.dimension);
                     if (!vehicles.exists(veh))
                     {
                         player.notify("~r~Нужно быть рядом с машиной");
@@ -2246,6 +2384,7 @@ inventory.useItem = function(player, id, itemId, isTargetable = false) {
 
                     user.heading(target, player.heading);
                     user.cuff(target);
+                    chat.sendMeCommand(player, "использовал наручники");
 
                     setTimeout(function () {
                         user.playAnimation(target, 'mp_arrest_paired', 'crook_p2_back_right', 8);

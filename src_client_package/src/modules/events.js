@@ -35,6 +35,8 @@ import jail from "../manager/jail";
 import object from "../manager/object";
 import hosp from "../manager/hosp";
 import edu from "../manager/edu";
+import heliCam from "../manager/heliCam";
+import prolog from "../manager/prolog";
 
 import vehicles from "../property/vehicles";
 import business from "../property/business";
@@ -42,7 +44,6 @@ import fraction from "../property/fraction";
 
 import gr6 from "../jobs/gr6";
 import trucker from "../jobs/trucker";
-import heliCam from "../manager/heliCam";
 
 
 mp.gui.chat.enabled = false;
@@ -567,20 +568,20 @@ mp.events.add('client:events:custom:choiceRole', function(roleIndex) {
             for (let i = 0; i < clothList.length; i++) {
                 if (clothList[i][1] != 11) continue;
                 if (clothList[i][0] != 0) continue;
-                if (clothList[i][10] > weather.getWeatherTemp() + 5) continue;
+                if (clothList[i][10] > -5) continue;
                 listTorso.push(i);
             }
             for (let i = 0; i < clothList.length; i++) {
                 if (clothList[i][1] != 4) continue;
                 if (clothList[i][0] != 0) continue;
-                if (clothList[i][10] > weather.getWeatherTemp() + 5) continue;
+                if (clothList[i][10] > -5) continue;
                 listLeg.push(i);
             }
 
             for (let i = 0; i < clothList.length; i++) {
                 if (clothList[i][1] != 6) continue;
                 if (clothList[i][0] != 0) continue;
-                if (clothList[i][10] > weather.getWeatherTemp() + 5) continue;
+                if (clothList[i][10] > -5) continue;
                 listFoot.push(i);
             }
 
@@ -642,20 +643,16 @@ mp.events.add('client:events:custom:choiceRole', function(roleIndex) {
                     inventory.takeNewItemJust(15, "{}", 2);
                     inventory.takeNewItemJust(242, "{}", 4);
 
-                    user.showCustomNotify('Телефон находится в инвентаре, экипируйте его', 0, 5, 10000);
-                    mp.events.callRemote('server:shop:buy', 29, 0, 0);
+                    //user.showCustomNotify('Телефон находится в инвентаре, экипируйте его', 0, 5, 10000);
+                    //mp.events.callRemote('server:shop:buy', 29, 0, 0);
                     break;
                 case 1:
-                    inventory.takeNewItemJust(242, "{}", 1);
-
-
-                    user.set('reg_status', 2);
-                    user.addHistory(0, 'Получил гражданство');
-
-                    user.addCashMoney(methods.getRandomInt(900, 1100));
-                    user.showCustomNotify('Телефон находится в инвентаре, экипируйте его', 0, 5, 10000);
-
-                    mp.events.callRemote('server:shop:buy', 29, 0, 0);
+                    //inventory.takeNewItemJust(242, "{}", 1);
+                    user.set('reg_status', 1);
+                    user.addHistory(0, 'Получил регистрацию');
+                    user.addCashMoney(methods.getRandomInt(100, 500));
+                    //user.showCustomNotify('Телефон находится в инвентаре, экипируйте его', 0, 5, 10000);
+                    //mp.events.callRemote('server:shop:buy', 29, 0, 0);
                     break;
                 case 2:
                     inventory.takeNewItemJust(242, "{}", 2);
@@ -669,11 +666,9 @@ mp.events.add('client:events:custom:choiceRole', function(roleIndex) {
             user.setLogin(true);
             user.save();
 
-            user.teleport(enums.spawnByRole[roleIndex][0], enums.spawnByRole[roleIndex][1], enums.spawnByRole[roleIndex][2], enums.spawnByRole[roleIndex][3]);
+            prolog.start();
 
-            setTimeout(function () {
-                menuList.showEduAskMenu();
-            }, 10000)
+            //user.teleport(enums.spawnByRole[roleIndex][0], enums.spawnByRole[roleIndex][1], enums.spawnByRole[roleIndex][2], enums.spawnByRole[roleIndex][3]);
         }
         catch (e) {
             methods.debug(e);
@@ -720,10 +715,23 @@ mp.events.add('client:events:custom:register', function(name, surname, age, prom
             user.showCustomNotify('Фамилия не может быть больше 32 символов', 1);
             return;
         }
+
+        if (Container.Data.HasLocally(mp.players.local.remoteId, "isRegCharTimeout"))
+        {
+            user.showCustomNotify('Нельзя нажимать так часто');
+            return;
+        }
+        Container.Data.SetLocally(mp.players.local.remoteId, "isRegCharTimeout", true);
+
+
         if (promocode.trim() === '') {
             promocode = 'REGISTER';
         }
         mp.events.callRemote('server:user:createUser', methods.capitalizeFirstLetter(name.trim()), methods.capitalizeFirstLetter(surname.trim()), age, promocode, referer, national);
+
+        setTimeout(function () {
+            Container.Data.ResetLocally(mp.players.local.remoteId, "isRegCharTimeout");
+        }, 5000);
     }
     catch (e) {
         methods.debug(e);
@@ -733,7 +741,7 @@ mp.events.add('client:events:custom:register', function(name, surname, age, prom
 mp.events.add('client:events:loginUser:finalCreate', function() {
     try {
         if (user.isLogin()) {
-            user.initCustom();
+            user.init2();
             mp.players.local.position = new mp.Vector3(9.66692, 528.34783, 170.63504);
             mp.players.local.setRotation(0, 0, 123.53768, 0, true);
         }
@@ -784,12 +792,12 @@ mp.events.add('client:events:loginUser:success', async function() {
             quest.loadAllBlip();
             chat.sendLocal('Добро пожаловать на DEDNET 💀');
             chat.sendLocal('Желаем приятной игры ;]');
-            /*chat.sendLocal(' ');
+            chat.sendLocal(' ');
             chat.sendLocal(`!{${chat.clBlue}}На сервере действует конкурс`);
             chat.sendLocal(`!{${chat.clBlue}}1. !{${chat.clWhite}}Каждый час разыгрывается VIP HARD на рандомное количество дней.`);
             chat.sendLocal(`!{${chat.clBlue}}2. !{${chat.clWhite}}Каждые два часа игры на сервере разыгрывается редкая Маска.`);
-            //chat.sendLocal(`!{${chat.clBlue}}3. !{${chat.clWhite}}Каждые 24 часа В 20:00 по МСК вы сможете выиграть транспорт.`);
-            chat.sendLocal(`!{${chat.clBlue}}3. !{${chat.clWhite}}Отыграв 8 часов на сервере, вы получите $30.000 и редкую маску, но 1 раз в сутки.`);*/
+            chat.sendLocal(`!{${chat.clBlue}}3. !{${chat.clWhite}}Каждые 24 часа В 20:00 по МСК разыгрывается 5 транспортных средств.`);
+            chat.sendLocal(`!{${chat.clBlue}}3. !{${chat.clWhite}}Отыграв 8 часов на сервере, вы получите $30.000, но 1 раз в сутки.`);
             /*chat.sendLocal('  ');
             chat.sendLocal(`!{${chat.clBlue}}На сервере действует конкурс`);
             chat.sendLocal(`Конкурс очень крутой, на 50 призовых мест и у тебя есть шанс победить, все подробности на сайте!`);*/
@@ -1296,7 +1304,7 @@ mp.events.add('client:showStockInVMenu', (item) => {
 
 mp.events.add('client:menuList:showShopClothMenu', (shopId, type, menuType, price) => {
     try {
-        methods.debug('Event: client:menuList:showShopClothMenu');
+        methods.debug('Event: client:menuList:showShopClothMenu', shopId, type, menuType, price);
         menuList.showShopClothMenu(shopId, type, menuType, price);
     }
     catch (e) {
@@ -1584,6 +1592,26 @@ mp.events.add('client:menuList:showBotQuestGangMenu', () => {
     }
 });
 
+mp.events.add('client:menuList:showBotJailMenu', () => {
+    try {
+        methods.debug('Event: client:menuList:showBotJailMenu');
+        menuList.showBotJailMenu();
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.add('client:menuList:showBotYankMenu', () => {
+    try {
+        methods.debug('Event: client:menuList:showBotYankMenu');
+        menuList.showBotYankMenu();
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
 mp.events.add('client:showToPlayerItemListMenu', (data, ownerType, ownerId, isFrisk) => {
     try {
         methods.debug('Event: client:showToPlayerItemListMenu');
@@ -1638,6 +1666,16 @@ mp.events.add('client:showFixGunMenu', (data) => {
     try {
         methods.debug('Event: client:showFixGunMenu');
         menuList.showFixGunMenu(data)
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.add('client:showColorGunMenu', (data) => {
+    try {
+        methods.debug('Event: client:showColorGunMenu');
+        menuList.showColorGunMenu(data)
     }
     catch (e) {
         methods.debug(e);
@@ -1969,7 +2007,7 @@ mp.events.add('client:user:sendPhoneNotify', (sender, title, message, pic) => {
 
 mp.events.add('client:jail:jailPlayer', (sec, withIzol) => {
     methods.debug('Event: client:jail:toJail' + sec);
-    jail.toJail(sec);
+    jail.toJail(sec, withIzol);
 });
 
 mp.events.add('client:user:askDatingToPlayerId', (playerId, nick) => {
@@ -2526,6 +2564,10 @@ mp.events.add('client:inventory:use', async function(id, itemId) {
         }
     }
 
+    if (itemId === 6) {
+        prolog.next();
+    }
+
     if (itemId === 253) {
         inventory.hide();
         let id = methods.parseInt(await menuList.getUserInput("Введите ID игрока", "", 5));
@@ -2911,6 +2953,12 @@ mp.events.add('client:inventory:unEquip', function(id, itemId) {
     else if (itemId == 264 || itemId == 263) {
         user.set("hand", 0);
         user.set("hand_color", 0);
+        user.updateCharacterCloth();
+        user.save();
+    }
+    else if (itemId == 275) {
+        user.set("gloves", 0);
+        user.set("gloves_color", 0);
         user.updateCharacterCloth();
         user.save();
     }
@@ -3694,9 +3742,9 @@ mp.keys.bind(0x4E, true, function() {
             return;
         }
 
-        let time = 120;
-        if (user.getCache('online_time') < 169)
-            time = 60;
+        let time = 180;
+        //if (user.getCache('online_time') < 169)
+        //    time = 120;
 
         if (timer.getDeathTimer() > time)
             timer.setDeathTimer(time);
@@ -3869,7 +3917,7 @@ mp.events.add("playerReadyDone", () => {
         }, 1000);
     }
     catch (e) {
-
+        methods.error('playerReadyDone', e.toString())
     }
 });
 
@@ -3935,8 +3983,8 @@ mp.events.add('playerMaybeTakeShot', (shootEntityId) => {
 
 mp.events.add("playerDeath", async function (player, reason, killer) {
 
-    try {
-        if (mp.players.local.dimension === 0) {
+    /*try {
+        if (mp.players.local.dimension === 0 && !ui.isGreenZone()) {
             user.getInvEquipWeapon().forEach(item => {
                 weapons.getMapList().forEach(wpItem => {
                     try {
@@ -3952,7 +4000,7 @@ mp.events.add("playerDeath", async function (player, reason, killer) {
             });
         }
     }
-    catch (e) {}
+    catch (e) {}*/
 
     mp.game.gameplay.disableAutomaticRespawn(true);
     mp.game.gameplay.ignoreNextRestart(true);
@@ -3971,38 +4019,13 @@ mp.events.add("playerDeath", async function (player, reason, killer) {
     phone.hide();
     mainMenu.hide();
 
-    /*if (mp.players.local.dimension === 0) {
-        weapons.getMapList().forEach(item => {
-            try {
-                if (user.getLastWeapon() == item[1] / 2) {
-
-                    let itemId = items.getWeaponIdByName(item[0]);
-                    let wpName = items.getItemNameHashById(itemId);
-                    let wpHash = weapons.getHashByName(wpName);
-                    let slot = weapons.getGunSlotIdByItem(itemId);
-
-                    let ammoId = weapons.getGunAmmoNameByItemId(itemId);
-                    if (ammoId >= 0) {
-                        if (user.getAmmoByHash(wpHash) > 0)
-                            inventory.addWorldItem(ammoId, 1, user.getAmmoByHash(wpHash), mp.players.local.position, mp.players.local.getRotation(0));
-                    }
-
-                    user.setAmmo(wpName, 0);
-                    mp.game.invoke(methods.REMOVE_WEAPON_FROM_PED, mp.players.local.handle, wpHash);
-
-                    user.set('weapon_' + slot, '');
-                    user.set('weapon_' + slot + '_ammo', -1);
-
-                    mp.attachmentMngr.removeLocal('WDSP_' + wpName.toUpperCase());
-
-                    inventory.dropWeaponItem(itemId, mp.players.local.position, mp.players.local.getRotation(0));
-                }
-            }
-            catch (e) {
-                methods.debug(e);
-            }
+    if (mp.players.local.dimension === 0 && !ui.isGreenZone()) {
+        user.getInvEquipWeapon().forEach(item => {
+            inventory.dropWeaponItem(item.id, mp.players.local.position, mp.players.local.getRotation(0));
         });
-    }*/
+        user.setInvEquipWeapon([]);
+        user.removeAllWeapons();
+    }
 
     hosp.reset();
     user.setTeleport(true);
@@ -4017,7 +4040,7 @@ mp.events.add("playerDeath", async function (player, reason, killer) {
     Container.Data.ResetLocally(0, "canRun");
 
     mp.game.graphics.startScreenEffect('DeathFailMPDark', 0, true);
-    timer.setDeathTimer(300);
+    timer.setDeathTimer(600);
     if (mp.players.local.getVariable('enableAdmin'))
         timer.setDeathTimer(10);
     else {

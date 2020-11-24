@@ -1,4 +1,5 @@
 import methods from '../modules/methods';
+import stocks from '../property/stocks';
 
 let attachItems = {};
 
@@ -32,6 +33,14 @@ attachItems.registerAttaches = function () {
         mp.attachmentMngr.register("ems_322493792", 322493792, 'bodyshell', new mp.Vector3(0, -2.5, 0.4), new mp.Vector3(0, 0, 0)); // Разбитое авто 12
         mp.attachmentMngr.register("ems_10106915", 10106915, 'bodyshell', new mp.Vector3(0, -2.5, 0.4), new mp.Vector3(0, 0, 0)); // Разбитое авто 13
         mp.attachmentMngr.register("ems_1120812170", 1120812170, 'bodyshell', new mp.Vector3(0, -2.5, 0.4), new mp.Vector3(0, 0, 0)); // Разбитое авто 14
+
+
+        stocks.boxList.forEach((item, idx) => {
+            if (idx === 2)
+                mp.attachmentMngr.register("stock_" + idx, item[1], 'bodyshell', new mp.Vector3(0, -1.8, 0.2), new mp.Vector3(0, 0, 90));
+            else
+                mp.attachmentMngr.register("stock_" + idx, item[1], 'bodyshell', new mp.Vector3(0, -1.9, 0.2), new mp.Vector3(0, 0, 0));
+        });
 
         mp.attachmentMngr.register(`loader`, mp.game.joaat("prop_cardbordbox_02a"), 28422, new mp.Vector3(0, -0.18, -0.18), new mp.Vector3(0, 0, 0));
 

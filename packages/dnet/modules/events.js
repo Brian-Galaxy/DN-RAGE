@@ -543,9 +543,29 @@ mp.events.addRemoteCounted('server:user:arrest', (player) => {
 
 mp.events.addRemoteCounted('server:user:serVariable', (player, key, val) => {
     try {
-        methods.debug('server:user:serVariable', key, val);
+        //methods.debug('server:user:serVariable', key, val);
         if (mp.players.exists(player))
             player.setVariable(key, val);
+    } catch (e) {
+        console.log(e);
+    }
+});
+
+mp.events.addRemoteCounted('server:vehicle:serVariable', (player, key, val) => {
+    try {
+        //methods.debug('server:vehicle:serVariable', key, val);
+        if (mp.players.exists(player) && mp.vehicles.exists(player.vehicle))
+            player.vehicle.setVariable(key, val);
+    } catch (e) {
+        console.log(e);
+    }
+});
+
+mp.events.addRemoteCounted('server:vehicle:attach', (player, key, isRemove) => {
+    try {
+        //methods.debug('server:vehicle:serVariable', key, val);
+        if (mp.players.exists(player) && mp.vehicles.exists(player.vehicle))
+            player.vehicle.addAttachment(key, isRemove);
     } catch (e) {
         console.log(e);
     }
@@ -863,6 +883,12 @@ mp.events.addRemoteCounted('server:user:addHistory', (player, type, reason) => {
     if (!user.isLogin(player))
         return;
     user.addHistory(player, type, reason);
+});
+
+mp.events.addRemoteCounted('server:user:giveJobSkill', (player, name) => {
+    if (!user.isLogin(player))
+        return;
+    user.giveJobSkill(player, name);
 });
 
 mp.events.addRemoteCounted('server:user:giveTicket', (player, id, price, reason) => {
@@ -1403,6 +1429,7 @@ mp.events.addRemoteCounted('server:user:unCuffById', (player, targetId) => {
             user.playAnimation(player, "mp_arresting", "a_uncuff", 8);
             user.playAnimation(target, 'mp_arresting', 'b_uncuff', 8);
             inventory.addItem(40, 1, inventory.types.Player, user.getId(player), 1, 0, "{}", 10);
+            chat.sendMeCommand(player, 'снял наручники');
         }
 
         setTimeout(function () {
@@ -1490,6 +1517,7 @@ mp.events.addRemoteCounted('server:user:unTieById', (player, targetId) => {
             user.stopAnimation(target);
             user.playAnimation(player, "mp_arresting", "a_uncuff", 8);
             inventory.addItem(0, 1, inventory.types.Player, user.getId(player), 1, 0, "{}", 10);
+            chat.sendMeCommand(player, 'снял стяжки');
         }
 
         user.unTie(target);
@@ -1820,7 +1848,7 @@ mp.events.addRemoteCounted('server:user:giveMoneyToPlayerId', (player, playerRem
 
         methods.saveLog('log_give_money',
             ['type', 'user_from', 'user_to', 'sum'],
-            ['CASH', `${user.getRpName(player)} (${user.getId(player)})`, `${user.getRpName(remotePlayer)} (${user.getId(remotePlayer)})`, methods.moneyFormat(money)],
+            ['CASH', `${user.getRpName(player)} (${user.getId(player)})`, `${user.getRpName(remotePlayer)} (${user.getId(remotePlayer)})`, money],
         );
     }
 });
@@ -3209,6 +3237,33 @@ mp.events.addRemoteCounted('server:vehicles:spawnJobCar', (player, x, y, z, head
     }, 500);
 });
 
+mp.events.addRemoteCounted('server:prolog:spawnVehicle', (player, name) => {
+    try {
+        vehicles.spawnJobCar(veh => {
+            if (!vehicles.exists(veh))
+                return;
+            try {
+                vehicles.set(veh.getVariable('container'), 'owner_id', user.getId(player));
+                veh.setVariable('owner_id', user.getId(player));
+                veh.prolog = true;
+                veh.broke = true;
+                veh.numberPlateType = 5;
+                vehicles.setFuel(veh, 0);
+                veh.dimension = player.id + 20000000;
+            }
+            catch (e) {}
+        }, new mp.Vector3(3531.277587890625, -4672.951171875, 113.76799774169922), 251.60354614257812, name, 0);
+    }
+    catch (e) {}
+});
+
+mp.events.addRemoteCounted('server:prolog:deleteVehicle', (player) => {
+    try {
+        player.vehicle.destroy();
+    }
+    catch (e) {}
+});
+
 mp.events.addRemoteCounted('server:vehicles:spawnLamarCar', (player, x, y, z, heading, name) => {
 
     user.showLoadDisplay(player);
@@ -3271,7 +3326,10 @@ mp.events.addRemoteCounted('server:vehicles:addNew', (player, model, count) => {
 mp.events.addRemoteCounted('server:vehicles:addNewFraction', (player, model, count, fractionId) => {
     if (user.isAdmin(player)) {
         let pos = player.vehicle.position;
-        vehicles.addNewFraction(model, count, fractionId, pos.x, pos.y, pos.z, player.vehicle.heading);
+        if (fractionId === 0)
+            vehicles.addNewFraction(model, count, fractionId, 0, 0, 0, 0);
+        else
+            vehicles.addNewFraction(model, count, fractionId, pos.x, pos.y, pos.z, player.vehicle.heading);
         player.notify('~g~Транспорт на авторынок был добавлен. Кол-во: ~s~' + count)
     }
 });
@@ -3555,6 +3613,24 @@ mp.events.addRemoteCounted('server:phone:fractionVehiclesBuyList', (player) => {
     phone.fractionVehiclesBuyList(player);
 });
 
+mp.events.addRemoteCounted('server:phone:fractionVehicles2', (player) => {
+    if (!user.isLogin(player))
+        return;
+    phone.fractionVehicles2(player);
+});
+
+mp.events.addRemoteCounted('server:phone:fractionVehiclesBuyList2', (player) => {
+    if (!user.isLogin(player))
+        return;
+    phone.fractionVehiclesBuyList2(player);
+});
+
+mp.events.addRemoteCounted('server:phone:fractionVehicleBuyInfo2', (player, id) => {
+    if (!user.isLogin(player))
+        return;
+    phone.fractionVehicleBuyInfo2(player, id);
+});
+
 mp.events.addRemoteCounted('server:phone:userVehicleAppMenu', (player) => {
     if (!user.isLogin(player))
         return;
@@ -3777,6 +3853,27 @@ mp.events.addRemoteCounted('server:phone:mafiaClearWanted', (player, id) => {
     }
 });
 
+mp.events.addRemoteCounted('server:phone:mafiaGiveShop', (player, id) => {
+    if (!user.isLogin(player))
+        return;
+
+    id = methods.parseInt(id);
+    let target = mp.players.at(id);
+    if (user.isLogin(target)) {
+
+        if (methods.distanceToPos(target.position, player.position) > 5) {
+            player.notify('~r~Вы слишком далеко друг от друга');
+            return;
+        }
+
+        fraction.getShopGang(target);
+        player.notify('~g~Вы выдали наводку');
+    }
+    else {
+        player.notify('~r~Игрок не найден');
+    }
+});
+
 mp.events.addRemoteCounted('server:user:clearByMafia', (player, id, price) => {
     if (!user.isLogin(player))
         return;
@@ -3938,6 +4035,12 @@ mp.events.addRemoteCounted('server:phone:fractionVehicleAction', (player, id) =>
     phone.fractionVehicleAction(player, id);
 });
 
+mp.events.addRemoteCounted('server:phone:fractionVehicleAction2', (player, id) => {
+    if (!user.isLogin(player))
+        return;
+    phone.fractionVehicleAction2(player, id);
+});
+
 mp.events.addRemoteCounted('server:phone:userRespawnById', (player, id, price) => {
     if (!user.isLogin(player))
         return;
@@ -4078,6 +4181,12 @@ mp.events.addRemoteCounted('server:inventory:fixItem', (player, id) => {
     if (!user.isLogin(player))
         return;
     inventory.fixItem(player, id);
+});
+
+mp.events.addRemoteCounted('server:inventory:colorGunItem', (player, id, tint, sTint) => {
+    if (!user.isLogin(player))
+        return;
+    inventory.colorItem(player, id, tint, sTint);
 });
 
 mp.events.addRemoteCounted('server:inventory:fixItemFree', (player, id) => {
@@ -4348,6 +4457,8 @@ mp.events.addRemoteCounted("server:vehicle:lockStatus", (player) => {
                 )
                     vehicles.lockStatus(player, vehicle);
                 else if (vehicle.getVariable('fraction_id') == user.get(player, 'fraction_id') && (user.isLeader(player) || user.isSubLeader(player)))
+                    vehicles.lockStatus(player, vehicle);
+                else if ((vehicle.getVariable('fraction_id') * -1) == user.get(player, 'fraction_id2'))
                     vehicles.lockStatus(player, vehicle);
                 else
                     player.notify('~r~У Вас нет ключей от транспорта');
@@ -6391,7 +6502,7 @@ mp.events.addRemoteCounted('server:fraction:vehicleBuy', (player, id, price) => 
                 id: item['id'],
                 x: item['x'], y: item['y'], z: item['z'], rot: item['rot'],
                 name: item['name'], hash: item['hash'], price: item['price'],
-                number: item['number'], is_default: item['is_default'],
+                number: item['number'], is_default: item['is_default'], color: item['color'],
                 rank_type: item['rank_type'], rank: item['rank'], fraction_id: item['fraction_id']
             };
             vehicles.fractionList.push(v);
@@ -6450,6 +6561,89 @@ mp.events.addRemoteCounted('server:fraction:vehicleSell', (player, id, price) =>
 
     mysql.executeQuery(`UPDATE cars_fraction SET is_buy = '0' where id = '${id}'`);
     player.notify(`~b~Вы продали транспорт организации по цене ${methods.moneyFormat(price)}`);
+});
+
+mp.events.addRemoteCounted('server:fraction:vehicleBuy2', (player, id, price) => {
+
+    if (!user.isLogin(player))
+        return;
+
+    id = methods.parseInt(id);
+    price = methods.parseInt(price);
+    let fractionId = user.get(player, 'fraction_id2');
+
+    if (user.getBankMoney(player) < price) {
+        player.notify('~r~У вас недостаточно средств на банковском счету');
+        return;
+    }
+
+    mysql.executeQuery(`SELECT * FROM cars_fraction WHERE fraction_id = '${fractionId * -1}'`, function (err, rows2, fields) {
+        if (rows2.length > 4) {
+            player.notify('~r~Доступно только 5 транспортных средств');
+            return;
+        }
+
+        mysql.executeQuery(`SELECT * FROM cars_fraction WHERE id = '${id}'`, function (err, rows, fields) {
+            rows.forEach(function (item) {
+
+                let v = {
+                    id: item['id'],
+                    x: item['x'], y: item['y'], z: item['z'], rot: item['rot'],
+                    name: item['name'], hash: item['hash'], price: item['price'],
+                    number: item['number'], is_default: item['is_default'], color: item['color'],
+                    rank_type: item['rank_type'], rank: item['rank'], fraction_id: fractionId * -1
+                };
+                vehicles.fractionList.push(v);
+                player.notify(`~b~Вы купили ${item['name']} для организации по цене ${methods.moneyFormat(item['price'])}`);
+
+                vehicles.spawnFractionCar(item['id']);
+
+                user.removeBankMoney(player, price, 'Купил транспорт для организации');
+                coffer.addMoney(1, price);
+
+                mysql.executeQuery(`UPDATE cars_fraction SET is_buy = '1', fraction_id = '${fractionId * -1}' where id = '${id}'`);
+            });
+        });
+    });
+});
+
+mp.events.addRemoteCounted('server:fraction:vehicleSell2', (player, id, price) => {
+
+    if (!user.isLogin(player))
+        return;
+
+    id = methods.parseInt(id);
+    price = methods.parseInt(price);
+    let fractionId = user.get(player, 'fraction_id');
+
+    user.addMoney(fractionId, price, 'Продал транспорт организации');
+    coffer.removeMoney(1, price);
+
+    vehicles.fractionList = vehicles.fractionList.filter(item => item.id !== id);
+
+    mp.vehicles.forEach(veh => {
+        try {
+            if (veh.getVariable('veh_id') == id)
+                veh.destroy();
+        }
+        catch (e) {}
+    });
+
+    mysql.executeQuery(`UPDATE cars_fraction SET is_buy = '0', fraction_id = '0', x = '0', y = '0', z = '0', rot = '0', color = '0' where id = '${id}'`);
+    player.notify(`~b~Вы продали транспорт организации по цене ${methods.moneyFormat(price)}`);
+});
+
+mp.events.addRemoteCounted('server:fraction:vehicleFind2', (player, id) => {
+    if (!user.isLogin(player))
+        return;
+    id = methods.parseInt(id);
+    mp.vehicles.forEach(veh => {
+        try {
+            if (veh.getVariable('veh_id') == id)
+                user.setWaypoint(player, veh.position.x, veh.position.y)
+        }
+        catch (e) {}
+    });
 });
 
 mp.events.addRemoteCounted('server:vehicle:spawnFractionCar', (player, id) => {
@@ -7912,13 +8106,21 @@ mp.events.addRemoteCounted('server:vehicle:parkFraction', (player) => {
         if (veh) {
 
             if (veh.dimension > 0) {
-                player.notify('~b~Запрещено припарковывать транспорт в интерьере');
+                player.notify('~r~Запрещено припарковывать транспорт в интерьере');
+                return;
+            }
+            
+            let fData = fraction.getData(user.get(player, 'fraction_id2'));
+            let spawnPos = new mp.Vector3(fData.get('spawn_x'), fData.get('spawn_y'), fData.get('spawn_z'));
+            
+            if (methods.distanceToPos(spawnPos, player.position) > 100) {
+                player.notify('~r~Вы слишком далеко от вашего спавна');
                 return;
             }
 
             let pos = veh.position;
-            vehicles.parkFraction(veh.getVariable('veh_id'), pos.x, pos.y, pos.z, veh.heading, veh.dimension);
-            player.notify('~b~Вы припарковали свой транспорт');
+            vehicles.parkFraction(veh.getVariable('veh_id'), pos.x, pos.y, pos.z, veh.heading);
+            player.notify('~b~Вы припарковали транспорт');
         }
     }
     catch (e) {
@@ -8332,6 +8534,14 @@ mp.events.add("__ragemp_cheat_detected", (player,  cheatCode) => {
 });
 
 mp.events.add('playerJoin', player => {
+
+
+    if (!enums.whiteList.includes(player.socialClub)) { //TODO Убрать 24 ноября
+        player.outputChatBox("Сервер будет доступен 24 Ноября");
+        player.kick();
+        return;
+    }
+
     player.dimension = player.id + 1;
 
     player.countedTriggers = 0;

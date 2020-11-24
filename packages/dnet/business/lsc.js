@@ -763,8 +763,14 @@ lsc.showColor1 = function(player, idx) {
     let veh = player.vehicle;
     if (!vehicles.exists(veh))
         return;
+
+    if (veh.getVariable('fraction_id') < 0) {
+        veh.setColor(idx, idx);
+        return;
+    }
+
     if (veh.getVariable('user_id') < 1) {
-        user.showCustomNotify(player, 'Транспорт должен быть личный', 1, 9);
+        user.showCustomNotify(player, 'Транспорт должен быть личный или фракционный', 1, 9);
         return;
     }
     veh.setColor(idx, veh.getColor(1));
@@ -852,6 +858,24 @@ lsc.buyColor1 = function(player, idx, price, shopId, itemName, payType) {
 
     if (!vehicles.exists(veh))
         return;
+
+    if (veh.getVariable('fraction_id') < 0) {
+        try {
+            veh.setColor(idx, idx);
+
+            user.removeMoney(player, price, 'Цвет транспорта ' + itemName, payType);
+            business.addMoney(shopId, price, itemName);
+            business.removeMoneyTax(shopId, price / business.getPrice(shopId));
+
+            user.showCustomNotify(player, 'Вы изменили цвет транспорта', 2, 9);
+
+            vehicles.setColorFraction(veh.getVariable('veh_id'));
+        }
+        catch (e) {
+            
+        }
+        return;
+    }
 
     if (veh.getVariable('user_id') < 1) {
         user.showCustomNotify(player, 'Транспорт должен быть личный', 1, 9);

@@ -890,7 +890,7 @@ builder.workProcess = function(id) {
                     let fData = await family.getData(fId);
                     if (fData.get('level') === 1) {
                         if (fData.get('exp') > 2000) {
-                            family.addMoney(fId, 500000, 'Премия за достижения 2 уровня');
+                            family.addMoney(fId, 250000, 'Премия за достижения 2 уровня');
                             family.set(fId, 'level', 2);
                             family.set(fId, 'exp', 0);
                         }
@@ -900,10 +900,10 @@ builder.workProcess = function(id) {
                     else
                         offset = 5;
                     if (fData.get('level') > 5) {
-                        family.addMoney(fId, (methods.getRandomInt(15, 20) + offset) * 0.3, 'Зачисление от работы разнорабочего');
+                        family.addMoney(fId, (methods.getRandomInt(10, 14) + offset), 'Зачисление от работы разнорабочего');
                     }
                 }
-                user.giveJobMoney(methods.getRandomInt(15, 20) + methods.getRandomFloat() + offset);
+                user.giveJobMoney(methods.getRandomInt(10, 14) + methods.getRandomFloat() + offset);
             }, 10000);
         }
         else

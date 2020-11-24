@@ -159,7 +159,7 @@ antiCheat.secTimer = function() {
             if (mp.game.invoke(methods.HAS_PED_GOT_WEAPON, mp.players.local.handle, (item[1] / 2), false)) {
                 if (isKick)
                     return;
-                if (!Container.Data.HasLocally(0, (item[1] / 2).toString()) && item[0] != 'weapon_unarmed') {
+                if (!Container.Data.HasLocally(0, (item[1] / 2).toString()) && item[0] != 'weapon_unarmed' && item[0] != 'weapon_petrolcan') {
                     user.kickAntiCheat(`Gun: ${item[0]}`);
                     isKick = true;
                 }

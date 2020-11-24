@@ -512,6 +512,11 @@ mainMenu.updateInfoGeneral = function() {
     data.push({title: 'Дистанция вождения', subtitle: `${methods.parseInt(user.getCache('st_drive'))}м.`});
     data.push({title: 'Дистанция полёта', subtitle: `${methods.parseInt(user.getCache('st_fly'))}м.`});
 
+    enums.jobList.forEach(item => {
+        if (item[5] > 0)
+            data.push({title: item[0], subtitle: `${methods.parseFloat((user.getCache('job_' + item[4]) / item[5]) * 100).toFixed(2)}%`});
+    });
+
     let sendData = {
         type: 'updateInfoGeneral',
         generalList: data,

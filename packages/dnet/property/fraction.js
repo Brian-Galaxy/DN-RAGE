@@ -565,6 +565,9 @@ fraction.loadAll = function() {
                 let color = enums.fractionColor[item['id']];
                 methods.createBlip(new mp.Vector3(item['spawn_x'], item['spawn_y'], item['spawn_z']), 310, color, 0.6, 'Титульная тер.');
             }
+            else if (item['is_war']) {
+                //SKIP
+            }
             else if (item['spawn_x'] !== 0) {
                 methods.createBlip(new mp.Vector3(item['spawn_x'], item['spawn_y'], item['spawn_z']), 565, 37, 0.6, 'Spawn орг.');
             }
@@ -1083,9 +1086,9 @@ fraction.createCargoBigWar = function() {
         try {
             veh.locked = false;
             veh.setColor(0, 0);
-            let boxes = [51];
+            let boxes = [53];
 
-            for (let i = 0; i < 20; i++) {
+            for (let i = 0; i < 30; i++) {
                 let rare = 0;
                 if (methods.getRandomInt(0, 100) < 40)
                     rare = 1;
@@ -1551,6 +1554,11 @@ fraction.getShopGang = function(player) {
         return;
     }
 
+    if (!fraction.get(frId, 'is_shop')) {
+        player.notify('~r~У вас нет улучшения на ограбление магазина');
+        return;
+    }
+
     if (fraction.get(frId, 'cantGrab2')) {
         player.notify('~r~Вы уже сегодня совершали ограбление');
         return;
@@ -1702,7 +1710,7 @@ fraction.startGrabShopGang = function(player, itemId = 0) {
                     }
 
                     if (methods.getRandomInt(0, 100) < 40) {
-                        inventory.addItem(141, 1, inventory.types.Player, user.getId(player), methods.getRandomInt(shopItem.sumMax, shopItem.sumMin) * 2, 0, "{}", 2);
+                        inventory.addItem(141, 1, inventory.types.Player, user.getId(player), methods.getRandomInt(shopItem.sumMax, shopItem.sumMin), 0, "{}", 2);
                         mp.players.forEach(p => {
                             if (user.isLogin(p) && user.get(p, 'fraction_id2') === frId) {
                                 user.deleteBlip(p, i + 1000);
@@ -2068,7 +2076,7 @@ fraction.create = function (player, id) {
         player.notify('~r~У организации уже есть владелец');
         return;
     }
-    if (user.getCryptoMoney(player) < 100) {
+    if (user.getCryptoMoney(player) < 500) {
         player.notify('~r~У Вас не достаточно валюты E-COIN для создания организации');
         return;
     }
@@ -2076,11 +2084,11 @@ fraction.create = function (player, id) {
     user.set(player, 'fraction_id2', id);
     user.set(player, 'is_leader2', true);
 
-    fraction.setMoney(id, 100);
+    fraction.setMoney(id, 500);
     fraction.addHistory(user.getRpName(player), 'Создал организацию', '', id);
     fraction.updateOwnerInfo(id, user.getId(player));
     fraction.set(id, "name", 'Группировка');
-    user.removeCryptoMoney(player, 100, 'Создание организации');
+    user.removeCryptoMoney(player, 500, 'Создание организации');
 
     setTimeout(function () {
         if (!user.isLogin(player))

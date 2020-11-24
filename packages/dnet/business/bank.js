@@ -82,16 +82,23 @@ bank.grabPos = [
     [-1205.712646484375, -336.59283447265625, 36.759334564208984, 296.6121826171875, 50], //6 Fleeca
     [-1206.6063232421875, -338.58599853515625, 36.759334564208984, 206.62356567382812, 50], //6 Fleeca
     [-1208.793212890625, -338.1792907714844, 36.759273529052734, 117.29550170898438, 50], //6 Fleeca
+
+    [259.3692932128906, 217.5097198486328, 100.6834487915039, 341.1952209472656, 100],//7 Pacific
+    [258.5928955078125, 214.7200164794922, 100.6834487915039, 160.33938598632812, 100],//7 Pacific
+    [264.3625793457031, 215.42630004882812, 100.6834487915039, 334.478515625, 100],//7 Pacific
+    [265.24407958984375, 213.91961669921875, 100.6834487915039, 244.39437866210938, 100],//7 Pacific
+    [263.771484375, 212.95953369140625, 100.6834487915039, 143.15187072753906, 100],//7 Pacific
 ];
 
 bank.doorPos = [
     //[961976194, 255.2283, 223.976, 102.3932],
-    [2121050683, 148.0266, -1044.364, 29.506930], //1 Fleeca
-    [2121050683, 312.358, -282.7301, 54.30365], //2 Fleeca
-    [2121050683, -352.7365, -53.57248, 49.17543], //3 Fleeca
-    [-63539571, -2958.539, 482.2706, 15.83594], //4 Fleeca
-    [2121050683, 1175.542, 2710.861, 38.22689], //5 Fleeca
-    [2121050683, -1211.4628, -334.9701, 36.7809], //6 Fleeca
+    [2121050683, 148.0266, -1044.364, 29.506930, 1], //1 Fleeca
+    [2121050683, 312.358, -282.7301, 54.30365, 1], //2 Fleeca
+    [2121050683, -352.7365, -53.57248, 49.17543, 1], //3 Fleeca
+    [-63539571, -2958.539, 482.2706, 15.83594, 1], //4 Fleeca
+    [2121050683, 1175.542, 2710.861, 38.22689, 1], //5 Fleeca
+    [2121050683, -1211.4628, -334.9701, 36.7809, 1], //6 Fleeca
+    [961976194, 255.2283, 223.976, 102.3932, 2], //7 Pacific
 ];
 
 bank.doorPos2 = [
@@ -101,6 +108,7 @@ bank.doorPos2 = [
     [-2957.24072265625, 483.4284362792969, 14.675286293029785, 267.50872802734375], //4 Fleeca
     [1174.3895263671875, 2712.03759765625, 37.06624984741211, 2.002439260482788], //5 Fleeca
     [-1209.6844482421875, -335.0898742675781, 36.75924301147461, 202.06007385253906], //6 Fleeca
+    [256.7321472167969, 219.4569091796875, 105.28642272949219, 340.9010009765625], //7 Pacific
 ];
 
 bank.doorPosExplode = [
@@ -110,6 +118,14 @@ bank.doorPosExplode = [
     [-2956.116, 485.4206, 15.99531], //4 Fleeca
     [1172.291, 2713.146, 38.38625], //5 Fleeca
     [-1207.328, -335.1289, 38.07925], //6 Fleeca
+    [256.3116, 220.6579, 106.4296], //7 Pacific
+];
+
+bank.doorPosLockPick = [
+    [237.7704, 227.87, 106.426], //1 Pacific
+    [266.3624, 217.5697, 110.4328], //2 Pacific
+    [256.6172, 206.1522, 110.4328], //3 Pacific
+    [236.5488, 228.3147, 110.4328], //4 Pacific
 ];
 
 bank.loadAll = function() {
@@ -138,6 +154,11 @@ bank.loadAll = function() {
     bank.doorPos2.forEach(function (item) {
         let bankPos = new mp.Vector3(item[0], item[1], item[2]);
         methods.createCpVector(bankPos, "~y~Нажмите ~s~E~y~ чтобы воспользоваться панелью", 1, -1, [0,0,0,0]);
+    });
+
+    bank.doorPosLockPick.forEach(function (item) {
+        let bankPos = new mp.Vector3(item[0], item[1], item[2]);
+        methods.createCpVector(bankPos, "~y~Используйте отмычку чтобы взломать дверь", 1, -1, [0,0,0,0]);
     });
 
     let idx = 0;
@@ -198,7 +219,7 @@ bank.transferMoney = function(player, bankNumber, money) {
 
     methods.saveLog('log_give_money',
         ['type', 'user_from', 'user_to', 'sum'],
-        ['BANK', user.get(player, 'bank_card'), bankNumber, methods.moneyFormat(money)],
+        ['BANK', user.get(player, 'bank_card'), bankNumber, money],
     );
 
     mp.players.forEach((pl) => {
@@ -292,7 +313,7 @@ bank.transferCryptoMoney = function(player, bankNumber, money) {
 
     methods.saveLog('log_give_money',
         ['type', 'user_from', 'user_to', 'sum'],
-        ['CRYPTO', user.get(player, 'crypto_card'), bankNumber, methods.cryptoFormat(money)],
+        ['CRYPTO', user.get(player, 'crypto_card'), bankNumber, money],
     );
 
     mp.players.forEach((pl) => {
@@ -585,11 +606,17 @@ bank.getGrabInRadius = function(pos, radius = 1.7) {
 
 bank.getBombInRadius = function(pos, radius = 1.7) {
     let idx = 0;
-    let result = -1;
+    let result = {
+        idx: -1,
+        type: -1,
+    };
     bank.doorPos.forEach(function (item) {
         let fuelStationShopPos = new mp.Vector3(item[1], item[2], item[3]);
         if (methods.distanceToPos(pos, fuelStationShopPos) < radius)
-            result = idx;
+        {
+            result.idx = idx;
+            result.type = item[4];
+        }
         idx++;
     });
     return result;
@@ -599,6 +626,18 @@ bank.getHackDoorInRadius = function(pos, radius = 1.2) {
     let idx = 0;
     let result = -1;
     bank.doorPos2.forEach(function (item) {
+        let fuelStationShopPos = new mp.Vector3(item[0], item[1], item[2]);
+        if (methods.distanceToPos(pos, fuelStationShopPos) < radius)
+            result = idx;
+        idx++;
+    });
+    return result;
+};
+
+bank.getLockPickDoorInRadius = function(pos, radius = 1.2) {
+    let idx = 0;
+    let result = -1;
+    bank.doorPosLockPick.forEach(function (item) {
         let fuelStationShopPos = new mp.Vector3(item[0], item[1], item[2]);
         if (methods.distanceToPos(pos, fuelStationShopPos) < radius)
             result = idx;
@@ -634,6 +673,7 @@ bank.hackFleecaDoor = function(player) {
                 user.blockKeys(player, false);
                 player.addAttachment('laptop', true);
 
+                dispatcher.sendPos("Код 0", "В банке сработала сигнализация", player.position);
                 methods.explodeObject(pos2[0], pos2[1], pos2[2] - 0.5, 200, 18, 0.1, false, 0);
                 methods.explodeObject(pos2[0], pos2[1], pos2[2] + 0.5, 200, 18, 0.1, false, 0);
                 methods.explodeObject(pos2[0], pos2[1], pos2[2], 200, 18, 0.1, false, 0);
@@ -641,6 +681,29 @@ bank.hackFleecaDoor = function(player) {
                 methods.openObject(pos2[0], pos2[1], pos2[2], false, 5);
             }, 30000);
         }, 7500);
+    }
+};
+
+bank.lockPickDoor = function(player, radius = 3) {
+    if (!user.isLogin(player))
+        return;
+
+    let doorId = bank.getLockPickDoorInRadius(player.position, radius);
+    if (doorId >= 0) {
+
+        let pos = bank.doorPosLockPick[doorId];
+
+        user.blockKeys(player, true);
+        user.playAnimation(player, "mp_arresting", "a_uncuff", 8);
+        setTimeout(function () {
+            if (!user.isLogin(player))
+                return;
+            user.stopAnimation(player);
+            user.blockKeys(player, false);
+            methods.openObject(pos[0], pos[1], pos[2], false, 5);
+            player.notify('~g~Вы взломали дверь');
+            dispatcher.sendPos("Код 0", "В банке сработала сигнализация", player.position);
+        }, 5000);
     }
 };
 

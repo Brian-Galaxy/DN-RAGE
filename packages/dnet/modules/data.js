@@ -139,6 +139,7 @@ class Container {
             }
             player.call('modules:client:data:GetAll', [promiseId, Array.from(this.GetAll(id))]);
         } catch (e) {
+            player.call('modules:client:data:GetAll', [promiseId, null]);
             methods.debug(`SRV: [GET ALL CLIENT] ERR: ${e}`);
         }
     }
@@ -151,6 +152,7 @@ class Container {
             }
             player.call('modules:client:data:Get', [promiseId, this.Get(id, key)]);
         } catch (e) {
+            player.call('modules:client:data:Get', [promiseId, null]);
             methods.debug(`SRV: [GETCLIENT] ERR: ${e}`);
         }
     }

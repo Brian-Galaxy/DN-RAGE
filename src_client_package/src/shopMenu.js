@@ -9,6 +9,7 @@ import vehicles from "./property/vehicles";
 import quest from "./manager/quest";
 import edu from "./manager/edu";
 import hosp from "./manager/hosp";
+import prolog from "./manager/prolog";
 
 import loader from "./jobs/loader";
 import lamar from "./jobs/lamar";
@@ -20,6 +21,7 @@ import user from "./user";
 import items from "./items";
 import menuList from "./menuList";
 import enums from "./enums";
+import jailer from "./jobs/jailer";
 
 let shopMenu = {};
 
@@ -164,6 +166,7 @@ shopMenu.setControl2 = function(pos = null, rot = null, zUp = 1, offsetMin = 0.4
         user.createCam(pos, rot, zUp, offsetMin, offsetMax, offsetZMin, offsetZMax, shake);
     user.btnCamera = 237;
     user.camOffsetLeft = 0.23;
+    user.camOffsetRight = 1;
 };
 
 shopMenu.resetControl2 = function() {
@@ -171,7 +174,9 @@ shopMenu.resetControl2 = function() {
     hidden = true;
     ui.showHud();
     user.destroyCam();
-    user.btnCamera = 238;
+    user.camOffsetLeft = 0;
+    user.camOffsetRight = 0.8;
+    //user.btnCamera = 238;
 };
 
 shopMenu.hideAll = function() {
@@ -1155,6 +1160,18 @@ mp.events.add('client:dialog:btn', async function(json) {
         if (params.doName === 'lamar:car') {
             shopMenu.hideDialog();
             lamar.start();
+        }
+        if (params.doName === 'jail:work') {
+            shopMenu.hideDialog();
+            if (user.getCache('jail_time') > 0)
+                jailer.start();
+            else
+                ui.showDialog('Тебе необходимо отбывать наказание, чтобы была доступна подработка', 'Джейк');
+        }
+        if (params.doName === 'yank:ask') {
+            shopMenu.hideDialog();
+            ui.showDialog('В общем, тут машина попала в ДТП и сгорела, поэтому дорога закрыта будет еще минимум на часа 3, езжай в объезд. Приятной дороги!', 'Риксон');
+            prolog.next();
         }
         if (params.doName === 'lamar:buy') {
             if (user.getCryptoMoney() < 0.2) {

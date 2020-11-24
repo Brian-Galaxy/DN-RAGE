@@ -13,7 +13,7 @@ mail.sendMail = function(houseId) {
                 Container.Data.SetLocally(mp.players.local.remoteId, 'mail', Container.Data.GetLocally(mp.players.local.remoteId, 'mail') - 1);
                 mp.game.ui.notifications.show(`~g~Вы отнесли почту ${Container.Data.GetLocally(mp.players.local.remoteId, 'mail')}/25`);
                 user.giveJobSkill();
-                user.giveJobMoney(methods.getRandomInt(20, 25) + methods.getRandomFloat());
+                user.giveJobMoney(methods.getRandomInt(18, 24) + methods.getRandomFloat());
                 user.addRep(1);
                 user.addWorkExp(1);
                 return;

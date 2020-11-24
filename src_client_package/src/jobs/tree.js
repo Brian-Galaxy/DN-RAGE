@@ -1281,10 +1281,10 @@ tree.workProcess = function(id) {
                     else
                         offset = 5;
                     if (fData.get('level') > 5) {
-                        family.addMoney(fId, (methods.getRandomInt(15, 20) + offset) * 0.3, 'Зачисление от работы садовника');
+                        family.addMoney(fId, (methods.getRandomInt(10, 14) + offset), 'Зачисление от работы садовника');
                     }
                 }
-                user.giveJobMoney(methods.getRandomInt(15, 20) + methods.getRandomFloat() + offset);
+                user.giveJobMoney(methods.getRandomInt(10, 14) + methods.getRandomFloat() + offset);
             }, 10000);
         }
         else

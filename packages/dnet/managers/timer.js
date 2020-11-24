@@ -189,15 +189,20 @@ timer.min60Timer = function() {
 };
 
 timer.min59Timer = function() {
-    /*try {
+    try {
         let player = methods.getRandomPlayer();
         if (user.isLogin(player)) {
-            user.giveVip(player, methods.getRandomInt(1, 8), 2, true);
+            user.giveVip(player, methods.getRandomInt(1, 5), 2, true);
+        }
+
+        player = methods.getRandomPlayer();
+        if (user.isLogin(player)) {
+            user.giveRandomMask(player, 0, true);
         }
     }
     catch (e) {
         
-    }*/
+    }
     setTimeout(timer.min59Timer, 1000 * 60 * 59);
 };
 
@@ -283,7 +288,7 @@ timer.sec10Timer = function() {
         if (vehicles.exists(v)) {
 
             try {
-                if (v.getVariable('fraction_id') || v.getVariable('user_id') || v.getVariable('useless') || v.getOccupants().length > 0)
+                if (v.getVariable('fraction_id') || v.getVariable('user_id') || v.getVariable('useless') || v.prolog || v.getOccupants().length > 0)
                     return;
 
                 if (vehicles.has(v.id, 'afkLastPos')) {

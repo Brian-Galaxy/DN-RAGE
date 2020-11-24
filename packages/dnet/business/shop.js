@@ -49,7 +49,6 @@ shop.list = [
 
     [318.2640, -1076.7376, 28.4785, 125, 6],
     [92.8906, -229.4265, 53.6636, 126, 6],
-    [301.4576, -733.25683, 28.37248, 127, 6],
     [-252.5419, 6335.4926, 31.4260, 0, 6],
 
     [-1599.7724, 5202.06640625, 3.397307, 128, 7], //FISH
@@ -223,7 +222,7 @@ shop.buy = function(player, itemId, price, shopId) {
         business.addMoney(shopId, price, items.getItemNameById(itemId));
         business.removeMoneyTax(shopId, price / business.getPrice(shopId));
     }
-    else {
+    else if (price > 0) {
         player.notify('~g~Вы купили ' + items.getItemNameById(itemId) +  '. Цена за 1 ед. товара: ~s~' + methods.moneyFormat(price));
         user.removeMoney(player, price, 'Покупка ' + items.getItemNameById(itemId));
     }

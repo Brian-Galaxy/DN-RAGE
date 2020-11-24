@@ -309,17 +309,16 @@ vehicles.loadAllFractionVehicles = () => {
                 id: item['id'],
                 x: item['x'], y: item['y'], z: item['z'], rot: item['rot'],
                 name: item['name'], hash: item['hash'], price: item['price'],
-                number: item['number'], fuel: item['fuel'], is_default: item['is_default'],
+                number: item['number'], fuel: item['fuel'], is_default: item['is_default'], color: item['color'],
                 rank_type: item['rank_type'], rank: item['rank'], fraction_id: item['fraction_id']
             };
             vehicles.fractionList.push(v);
 
-            if (item['is_default'] == 1)
+            if (item['is_default'] == 1 || item['fraction_id'] < 0)
                 vehicles.spawnFractionCar(item['id']);
         });
     });
 };
-
 
 vehicles.getFractionAllowCarList = function(fractionId, rankType) {
     let carAllowList = [];
@@ -373,7 +372,6 @@ vehicles.updateFractionVehicleInfo = (id, newItem) => {
 vehicles.spawnFractionCar = (id) => {
 
     let info = vehicles.getFractionVehicleInfo(id);
-
     if (info === undefined)
         return;
 
@@ -528,6 +526,13 @@ vehicles.spawnFractionCar = (id) => {
                 }
                 else if (model == 353883353)
                     livery = 1;
+
+                if (info.name === 'Nspeedo')
+                {
+                    color1 = 0;
+                    color2 = 0;
+                    livery = 1;
+                }
                 break;
             }
             case 7:
@@ -573,6 +578,26 @@ vehicles.spawnFractionCar = (id) => {
                     spawnRot = methods.parseFloat(165.04827880859375);
                     break;
             }
+            if (fractionId < 0) {
+                try {
+                    let parkInfo = vehicles.getParkPosition('Default');
+                    spawnPos = parkInfo.pos;
+                    spawnRot = parkInfo.rot;
+                }
+                catch (e) {
+                    methods.debug('ERROR', e);
+                }
+            }
+        }
+
+        try {
+            if (fractionId < 0) {
+                color1 = info.color;
+                color2 = info.color;
+            }
+        }
+        catch (e) {
+
         }
 
         vehicles.spawnCarCb(veh => {
@@ -794,27 +819,29 @@ vehicles.park = function(id, x, y, z, rot, dimension) {
     mysql.executeQuery("UPDATE cars SET x = '" + methods.parseFloat(x) + "', y = '" + methods.parseFloat(y) + "', z = '" + methods.parseFloat(z) + "', rot = '" + methods.parseFloat(rot) + "', dimension = '" + methods.parseInt(dimension) + "' where id = '" + methods.parseInt(id) + "'");
 };
 
-/*vehicles.parkFraction = function(id, x, y, z, rot, dimension) {
+vehicles.parkFraction = function(id, x, y, z, rot) {
     methods.debug('vehicles.parkFraction');
-    rot = methods.parseFloat(rot);
-    vehicles.set(id, 'x', methods.parseFloat(x));
-    vehicles.set(id, 'y', methods.parseFloat(y));
-    vehicles.set(id, 'z', methods.parseFloat(z));
-    vehicles.set(id, 'rot', methods.parseFloat(rot));
-    vehicles.set(id, 'dimension', methods.parseInt(dimension));
-
-    mysql.executeQuery("UPDATE cars_fraction SET x = '" + methods.parseFloat(x) + "', y = '" + methods.parseFloat(y) + "', z = '" + methods.parseFloat(z) + "', rot = '" + methods.parseFloat(rot) + "', dimension = '" + methods.parseInt(dimension) + "' where id = '" + methods.parseInt(id) + "'");
+     mysql.executeQuery("UPDATE cars_fraction SET x = '" + methods.parseFloat(x) + "', y = '" + methods.parseFloat(y) + "', z = '" + methods.parseFloat(z) + "', rot = '" + methods.parseFloat(rot) + "' where id = '" + methods.parseInt(id) + "'");
 
     vehicles.fractionList.forEach((item, i) => {
         if (item.id == id) {
-            vehicles.fractionList[i].rank_type = dep;
-            vehicles.fractionList[i].rank = rank;
+            vehicles.fractionList[i].x = x;
+            vehicles.fractionList[i].y = y;
+            vehicles.fractionList[i].z = z;
+            vehicles.fractionList[i].rot = rot;
         }
     });
+};
 
-    mysql.executeQuery(`UPDATE cars_fraction SET rank = '${rank}', rank_type = '${dep}' where id = '${id}'`);
-    player.notify('~b~Вы перевели транспорт в другой отдел');
-};*/
+vehicles.setColorFraction = function(id, color) {
+    methods.debug('vehicles.parkFraction');
+     mysql.executeQuery("UPDATE cars_fraction SET color = '" + methods.parseInt(color) + "' where id = '" + methods.parseInt(id) + "'");
+    vehicles.fractionList.forEach((item, i) => {
+        if (item.id == id) {
+            vehicles.fractionList[i].color = color;
+        }
+    });
+};
 
 vehicles.updatePrice = function(id, newPrice) {
     try {
@@ -863,9 +890,9 @@ vehicles.respawn = (vehicle) => {
                if (containerId != undefined && vehicle.getVariable('user_id') > 0)
                    vehicles.spawnPlayerCar(containerId);
                let fractionId = vehicle.getVariable('fraction_id');
-               if (fractionId > 0) {
+               if (fractionId) {
                    let info = vehicles.getFractionVehicleInfo(vehicle.getVariable('veh_id'));
-                   if (info.is_default)
+                   if (info.is_default || info.fraction_id < 0)
                        vehicles.spawnFractionCar(info.id);
                }
                vehicle.destroy();
@@ -1549,14 +1576,20 @@ vehicles.engineStatus = (player, vehicle, status = null) => {
 
             let vInfo = methods.getVehicleInfo(vehicle.model);
             if (vInfo.fuel_type !== 3) {
-                player.notify('~r~В транспорте закончилось топливо');
-                player.notify('~b~Метка на заправку установлена');
+                player.notify('~r~В транспорте закончилось топливо\nМетка на заправку установлена');
                 let pos = fuel.findNearest(player.position);
                 user.setWaypoint(player, pos.x, pos.y);
                 vSync.setEngineState(vehicle, false);
                 return;
             }
         }
+
+
+        if (vehicle.broke) {
+            player.notify('~r~Двигатель у транспорта не запускаеться, посмотрите в чем может быть дело');
+            return;
+        }
+
         //vehicle.engine = !vehicle.engine;
         let eStatus = !vSync.getEngineState(vehicle);
 

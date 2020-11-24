@@ -870,13 +870,13 @@ methods.getFractionPayDay = function (fractionId, rank, rankType) {
     return methods.parseInt(frItem.rankPayDay[rankType][rank]) + coffer.getBenefit(coffer.getIdByFraction(fractionId));
 };
 
-methods.getNearestVehicleWithCoords = function(pos, r, dim = 0) {
+methods.getNearestVehicleWithCoords = function(pos, r, dimension = 0) {
     let nearest = undefined, dist;
     let min = r;
     methods.getListOfVehicleInRadius(pos, r).forEach(vehicle => {
         dist = methods.distanceToPos(pos, vehicle.position);
         if (dist < min) {
-            if (dim == vehicle.dimension) {
+            if (dimension == vehicle.dimension) {
                 nearest = vehicle;
                 min = dist;
             }
@@ -971,6 +971,7 @@ methods.loadAllBlips = function () {
 
     methods.createBlip(new mp.Vector3(-759.5448608398438, -709.0863037109375, 29.0616512298584), 305, 60, 0.6, 'Церковь');
     //methods.createBlip(new mp.Vector3(-1682.297607421875, -279.4432678222656, 50.8623161315918), 305, 60, 0.6, 'Церковь');
+    methods.createBlip(new mp.Vector3(-1729.024169921875, -193.2869415283203, 57.51728820800781), 675, 60, 0.6, 'Memorial');
 
     methods.createBlip(new mp.Vector3(-1081.0628662109375, -251.57298278808594, 37.763275146484375), 744, 0, 0.8, 'Life Invader');
 

@@ -20,6 +20,14 @@ coffer.load = function() {
             Container.Data.Set(containerId + item['id'], 'cofferTaxIntermediate', item['tax_intermediate']);
             Container.Data.Set(containerId + item['id'], 'cofferBenefit', item['benefit']);
 
+            Container.Data.Set(containerId + item['id'], 'stock_med', item['stock_med']);
+            Container.Data.Set(containerId + item['id'], 'stock_eat', item['stock_eat']);
+            Container.Data.Set(containerId + item['id'], 'stock_gun', item['stock_gun']);
+            Container.Data.Set(containerId + item['id'], 'stock_gunm', item['stock_gunm']);
+            Container.Data.Set(containerId + item['id'], 'stock_ammo', item['stock_ammo']);
+            Container.Data.Set(containerId + item['id'], 'stock_armour', item['stock_armour']);
+            Container.Data.Set(containerId + item['id'], 'stock_other', item['stock_other']);
+
             methods.debug(`Coffer loaded: ${methods.moneyFormat(item['money'])} | ${item['name']} | ${item['score']}`);
         });
     });
@@ -42,7 +50,7 @@ coffer.save = function (id) {
     let cofferBenefit = coffer.getBenefit(id);
 
     mysql.executeQuery("UPDATE official_bank SET  money = '" + cofferMoney + "', tax_pay_day = '" +
-        cofferTaxPayDay + "', tax_business = '" + cofferTaxBusiness + "', tax_property = '" + cofferTaxProperty + "', tax_intermediate = '" + cofferIntermediate + "', benefit = '" + cofferBenefit + "' WHERE id = '" + id + "'");
+        cofferTaxPayDay + "', tax_business = '" + cofferTaxBusiness + "', tax_property = '" + cofferTaxProperty + "', tax_intermediate = '" + cofferIntermediate + "', benefit = '" + cofferBenefit + "', stock_med = '" + methods.parseInt(coffer.get(id, 'stock_med')) + "', stock_eat = '" + methods.parseInt(coffer.get(id, 'stock_eat')) + "', stock_gun = '" + methods.parseInt(coffer.get(id, 'stock_gun')) + "', stock_gunm = '" + methods.parseInt(coffer.get(id, 'stock_gunm')) + "', stock_ammo = '" + methods.parseInt(coffer.get(id, 'stock_ammo')) + "', stock_armour = '" + methods.parseInt(coffer.get(id, 'stock_armour')) + "', stock_other = '" + methods.parseInt(coffer.get(id, 'stock_other')) + "' WHERE id = '" + id + "'");
 };
 
 coffer.saveAll = function () {
@@ -53,6 +61,10 @@ coffer.saveAll = function () {
 
 coffer.get = function(id, key) {
     return Container.Data.Get(containerId + id, key);
+};
+
+coffer.set = function(id, key, value) {
+    return Container.Data.Set(containerId + id, key, value);
 };
 
 coffer.addMoney = function(id, money) {

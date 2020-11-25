@@ -8328,7 +8328,8 @@ menuList.showBarMenu = function(shopId, price = 2)
                     return;
                 }
 
-                business.addMoney(shopId, item.price, item.label2);
+                if (await business.isOpen(shopId))
+                    business.addMoney(shopId, item.price, item.label2);
                 user.removeMoney(item.price, 'Выпил ' + item.label + ' в баре');
 
                 if (mp.players.local.getHealth() < 90)

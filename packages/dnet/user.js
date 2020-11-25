@@ -1268,18 +1268,24 @@ user.getGlovesOffset = function(player, handId) {
             switch (handId) {
                 case 0:
                 case 2:
+                case 14:
+                case 6:
                     return 2;
                 case 1:
                     return 1;
                 case 3:
+                    return 3;
                 case 5:
-                case 6:
+                    return 0;
                 case 7:
                     return 7;
-                case 4:
-                    return 10;
+                /*case 4:
+                    return 10;*/
                 case 15:
                     return 12;
+                case 11:
+                case 4:
+                    return 4;
                 case 9:
                     return 8;
             }
@@ -2687,32 +2693,35 @@ user.removeAllWeapons = function(player) {
     player.call('client:user:removeAllWeapons');
 };
 
-user.giveJobSkill = function(player, name = '') {
+user.giveJobSkill = function(player, jobNew = 0) {
     if (user.isLogin(player)) {
-        let job = user.get(player, 'job');
-        if (name !== '')
-            job = name;
+        try {
+            let job = user.get(player, 'job');
+            if (job > 0)
+                job = jobNew;
 
-        let skillCount = enums.jobList[job][5];
-        let skillWin = enums.jobList[job][6];
-        let skillPostfix = enums.jobList[job][4];
+            let skillCount = enums.jobList[job][5];
+            let skillWin = enums.jobList[job][6];
+            let skillPostfix = enums.jobList[job][4];
 
-        if (user.has(player, 'job_' + skillPostfix)) {
-            let currentSkill = user.get(player, 'job_' + skillPostfix);
-            if (currentSkill >= skillCount)
-                return;
+            if (user.has(player, 'job_' + skillPostfix)) {
+                let currentSkill = user.get(player, 'job_' + skillPostfix);
+                if (currentSkill >= skillCount)
+                    return;
 
-            if (currentSkill == skillCount - 1) {
-                user.set(player, 'job_' + skillPostfix, skillCount);
-                chat.sendToAll('Новости штата', `${user.getRpName(player)} !{${chat.clBlue}} стал одним из лучших работников штата San Andreas, получив вознаграждение ${methods.moneyFormat(skillWin)}`, chat.clBlue);
-                user.addMoney(player, skillWin);
-                user.save(player);
-            }
-            else {
-                user.set(player, 'job_' + skillPostfix, currentSkill + 1);
-                player.notify('~g~Навык вашей профессии был повышен');
+                if (currentSkill == skillCount - 1) {
+                    user.set(player, 'job_' + skillPostfix, skillCount);
+                    chat.sendToAll('Новости штата', `${user.getRpName(player)} !{${chat.clBlue}} стал одним из лучших работников штата San Andreas, получив вознаграждение ${methods.moneyFormat(skillWin)}`, chat.clBlue);
+                    user.addMoney(player, skillWin);
+                    user.save(player);
+                }
+                else {
+                    user.set(player, 'job_' + skillPostfix, currentSkill + 1);
+                    player.notify('~g~Навык вашей профессии был повышен');
+                }
             }
         }
+        catch (e) {}
     }
 };
 
@@ -3577,7 +3586,7 @@ user.giveVehicle = function(player, vName, withDelete = 1, withChat = false, des
     if (user.get(player, 'car_id10') === 0 && vInfo.display_name !== 'Unknown') {
 
         if (isBroke)
-            mysql.executeQuery(`INSERT INTO cars (user_id, user_name, name, class, price, fuel, number, with_delete, s_km, s_eng, s_trans, s_fuel, s_whel, s_elec, s_break) VALUES ('${user.getId(player)}', '${user.getRpName(player)}', '${vInfo.display_name}', '${vInfo.class_name}', '${vInfo.price}', '${vInfo.fuel_full}', '${vehicles.generateNumber()}', '${withDelete}', '${methods.getRandomInt(140000, 200000)}', '${methods.getRandomInt(0, 40)}', '${methods.getRandomInt(0, 40)}', '${methods.getRandomInt(0, 40)}', '${methods.getRandomInt(0, 40)}', '${methods.getRandomInt(0, 40)}', '${methods.getRandomInt(0, 40)}')`);
+            mysql.executeQuery(`INSERT INTO cars (user_id, user_name, name, class, price, fuel, number, with_delete, s_km, s_eng, s_trans, s_fuel, s_whel, s_elec, s_break) VALUES ('${user.getId(player)}', '${user.getRpName(player)}', '${vInfo.display_name}', '${vInfo.class_name}', '${vInfo.price}', '${vInfo.fuel_full}', '${vehicles.generateNumber()}', '${withDelete}', '${methods.getRandomInt(140000, 200000)}', '${methods.getRandomInt(0, 90)}', '${methods.getRandomInt(0, 90)}', '${methods.getRandomInt(0, 90)}', '${methods.getRandomInt(0, 90)}', '${methods.getRandomInt(0, 90)}', '${methods.getRandomInt(0, 90)}')`);
         else
             mysql.executeQuery(`INSERT INTO cars (user_id, user_name, name, class, price, fuel, number, with_delete) VALUES ('${user.getId(player)}', '${user.getRpName(player)}', '${vInfo.display_name}', '${vInfo.class_name}', '${vInfo.price}', '${vInfo.fuel_full}', '${vehicles.generateNumber()}', '${withDelete}')`);
 

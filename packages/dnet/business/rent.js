@@ -69,10 +69,10 @@ rent.checkPosForOpenMenu = function(player) {
         let shopId = rent.getBikeInRadius(playerPos, 2);
         if (shopId == -1)
             return;
-        if (!business.isOpen(shopId)) {
+        /*if (!business.isOpen(shopId)) {
             player.notify('~r~К сожалению аренда сейчас не работает');
             return;
-        }
+        }*/
         player.call('client:menuList:showRentBikeMenu', [shopId, business.getPrice(shopId)]);
     }
     catch (e) {
@@ -186,8 +186,11 @@ rent.buy = function(player, hash, price, shopId, payType) {
         user.removeBankMoney(player, price, 'Аренда ТС ' + vInfo.display_name);
     else
         user.removeCashMoney(player, price, 'Аренда ТС ' + vInfo.display_name);
-    business.addMoney(shopId, price, 'Аренда ' + vInfo.display_name);
-    business.removeMoneyTax(shopId, price / business.getPrice(shopId));
+
+    if (business.isOpen(shopId)) {
+        business.addMoney(shopId, price, 'Аренда ' + vInfo.display_name);
+        business.removeMoneyTax(shopId, price / business.getPrice(shopId));
+    }
 
     user.showCustomNotify(player, 'Для того чтобы запустить двигатель нажмите 2 -> Вкл/Выкл двигатель', 0, 9, 15000);
     user.showCustomNotify(player, 'Для того чтобы его закрыть, нажмите L', 0, 9, 15000);

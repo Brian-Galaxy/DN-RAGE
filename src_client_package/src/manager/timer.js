@@ -233,6 +233,10 @@ timer.ms100Timer = function() {
 let warning = 0;
 let isSetSpeed = false;
 
+timer.fourSecTimer = function() {
+    mp.events.call('client:vehicle:checker2');
+};
+
 timer.twoSecTimer = function() {
     
     try {
@@ -848,6 +852,12 @@ timer.loadAll = function () {
     }
     catch (e) {
         
+    }
+    try {
+        timer.createInterval('timer.fourSecTimer', timer.fourSecTimer, 4000);
+    }
+    catch (e) {
+
     }
     try {
         timer.createInterval('timer.tenSecTimer', timer.tenSecTimer, 10000);

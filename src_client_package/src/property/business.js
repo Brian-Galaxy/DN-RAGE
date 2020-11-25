@@ -143,6 +143,11 @@ business.save = function(id) {
     mp.events.callRemote('server:business:save', id);
 };
 
+business.isOpen = async function(id, minPrice = 0) {
+    let data = await business.getData(id);
+    return data.get('user_id') === 0 || (data.get('user_id') > 0 && data.get('bank_tax') > minPrice);
+};
+
 business.loadInterior = function(id, timeout = 0) {
     id = methods.parseInt(id);
     setTimeout(function () {

@@ -616,7 +616,9 @@ mp.events.add('client:shopMenu:buyCash2', async function(json) {
             }
 
             user.removeCashMoney(methods.parseInt(params.price), 'Услуги барбершопа ' + params.name);
-            business.addMoney(params.shop, methods.parseInt(params.price), params.name);
+
+            if (await business.isOpen(params.shop))
+                business.addMoney(params.shop, methods.parseInt(params.price), params.name);
             user.set(params.zone, params.id);
             user.showCustomNotify("Вы изменили внешность по цене: $" + methods.parseInt(params.price), 0, 9);
             user.updateCharacterFace();
@@ -698,7 +700,8 @@ mp.events.add('client:shopMenu:buyCard2', async function(json) {
             }
 
             user.removeBankMoney(methods.parseInt(params.price), 'Услуги барбершопа ' + params.name);
-            business.addMoney(params.shop, methods.parseInt(params.price), params.name);
+            if (await business.isOpen(params.shop))
+                business.addMoney(params.shop, methods.parseInt(params.price), params.name);
             user.set(params.zone, params.id);
             user.showCustomNotify("Вы изменили внешность по цене: $" + methods.parseInt(params.price), 0, 9);
             user.updateCharacterFace();

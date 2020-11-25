@@ -2004,7 +2004,7 @@ phone.showAppGps = function() {
                         text: "",
                         type: 1,
                         clickable: true,
-                        params: {x: -1202, y: -733}
+                        params: {x: -1583, y: -234}
                     },
                     {
                         title: "Фотограф",

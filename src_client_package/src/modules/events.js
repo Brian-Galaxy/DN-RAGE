@@ -741,7 +741,7 @@ mp.events.add('client:events:custom:register', function(name, surname, age, prom
 mp.events.add('client:events:loginUser:finalCreate', function() {
     try {
         if (user.isLogin()) {
-            user.init2();
+            user.initCustom();
             mp.players.local.position = new mp.Vector3(9.66692, 528.34783, 170.63504);
             mp.players.local.setRotation(0, 0, 123.53768, 0, true);
         }
@@ -1846,8 +1846,10 @@ mp.events.add('client:handcuffs', (value) => {
             handcuffTimerId = setInterval(function() {
                 try {
                     if ((user.isCuff() || user.isTie()) && mp.players.local.isPlayingAnim("mp_arresting", "idle", 3) == 0)
+                    {
                         mp.players.local.clearTasks();
-                    user.playAnimation("mp_arresting", "idle", 49);
+                        user.playAnimation("mp_arresting", "idle", 49);
+                    }
                 }
                 catch (e) {
 
@@ -2683,11 +2685,21 @@ mp.events.add('client:inventory:giveItem', function(id, itemId, playerId, count)
     inventory.giveItem(id, itemId, playerId)
 });
 
-mp.events.add('client:inventory:moveFrom', function(id, itemId, ownerType) {
+mp.events.add('client:inventory:moveFrom', function(id, itemId, ownerType, desc) {
 
     if (ownerType == 0) {
         inventory.deleteItemProp(id);
         user.playAnimation("pickup_object","pickup_low", 8);
+
+        if (items.isWeapon(itemId) && user.getCache('uniform'))
+        {
+            methods.saveFractionLog(
+                user.getCache('name'),
+                `Подобрал оружие`,
+                `${items.getItemNameById(itemId)} ${desc}`,
+                user.getCache('fraction_id')
+            );
+        }
     }
     else if (ownerType == inventory.types.Vehicle) {
         chat.sendMeCommand(`взял "${items.getItemNameById(itemId)}" из багажника транспорта`)
@@ -3297,6 +3309,8 @@ mp.events.add("client:vehicle:checker", async function () {
             if (maxSpeed == 1)
                 maxSpeed = 350;
 
+            let locSpeed = vehicles.getSpeedMax(vehicle.model);
+
             try {
                 if (vehicle.getVariable('container') != undefined && vehicle.getVariable('user_id') > 0) {
                     let car = vehicles.currentData;
@@ -3320,15 +3334,15 @@ mp.events.add("client:vehicle:checker", async function () {
                         if (methods.getRandomInt(0, 10) < 4) {
                             vehicles.engineVehicle(false);
                         }
-                        newMaxSpeedServer = maxSpeed * 0.5;
+                        newMaxSpeedServer = locSpeed * 0.5;
                     }
                     else if (s_eng < 40)
-                        newMaxSpeedServer = maxSpeed * 0.7;
+                        newMaxSpeedServer = locSpeed * 0.7;
                     let s_trans = car.get('s_trans');
                     if (s_trans < 20)
-                        newMaxSpeedServer = maxSpeed * 0.4;
+                        newMaxSpeedServer = locSpeed * 0.4;
                     else if (s_trans < 40)
-                        newMaxSpeedServer = maxSpeed * 0.6;
+                        newMaxSpeedServer = locSpeed * 0.6;
                 }
             }
             catch (e) {

@@ -40,10 +40,10 @@ tattoo.checkPosForOpenMenu = function(player) {
         let shopId = tattoo.getInRadius(playerPos, 2);
         if (shopId == -1)
             return;
-        if (!business.isOpen(shopId)) {
+        /*if (!business.isOpen(shopId)) {
             player.notify('~r~К сожалению тату салон сейчас не работает');
             return;
-        }
+        }*/
         switch (shopId)
         {
             case 37:
@@ -119,10 +119,11 @@ tattoo.buy = function(player, collection, overlay, zone, price, itemName, shopId
         user.removeBankMoney(player, price, 'Татуировка: ' + itemName);
     else
         user.removeCashMoney(player, price, 'Татуировка: ' + itemName);
-    business.addMoney(shopId, price, itemName);
 
-    business.removeMoneyTax(shopId, price / business.getPrice(shopId));
-
+    if (business.isOpen(shopId)) {
+        business.addMoney(shopId, price, itemName);
+        business.removeMoneyTax(shopId, price / business.getPrice(shopId));
+    }
     user.showCustomNotify(player, 'Вы набили татуировку', 2, 9);
     user.updateTattoo(player);
     user.save(player);

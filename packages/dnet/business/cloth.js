@@ -66,29 +66,29 @@ cloth.checkPosForOpenMenu = function (player) {
         let playerPos = player.position;
 
         if (methods.distanceToPos(cloth.maskShop, playerPos) < 2) {
-            if (!business.isOpen(69)) {
+            /*if (!business.isOpen(69)) {
                 player.notify('~r~К сожалению магазин сейчас не работает');
                 return;
-            }
+            }*/
             player.call('client:menuList:showShopMaskMenu', [69]);
             return;
         }
 
         if (methods.distanceToPos(cloth.printShopPos, playerPos) < 2) {
-            if (!business.isOpen(70)) {
+            /*if (!business.isOpen(70)) {
                 player.notify('~r~К сожалению магазин сейчас не работает');
                 return;
-            }
+            }*/
             player.call('client:menuList:showPrintShopMenu');
             return;
         }
 
         for (let i = 0; i < shopList.length; i++){
             if(methods.distanceToPos(playerPos, new mp.Vector3(shopList[i][3], shopList[i][4], shopList[i][5])) < 2.0){
-                if (!business.isOpen(shopList[i][1])) {
+                /*if (!business.isOpen(shopList[i][1])) {
                     player.notify('~r~К сожалению магазин сейчас не работает');
                     return;
-                }
+                }*/
                 player.call('client:menuList:showShopClothMenu', [shopList[i][1], shopList[i][0], shopList[i][2], business.getPrice(shopList[i][1])]);
                 return;
             }
@@ -201,8 +201,11 @@ cloth.buyProp = function (player, price, body, clothId, color, itemName, shopId,
             user.removeBankMoney(player, price, 'Покупка аксессуара ' + itemName);
         else
             user.removeCashMoney(player, price, 'Покупка аксессуара ' + itemName);
-        business.addMoney(shopId, price, itemName);
-        business.removeMoneyTax(shopId, price / business.getPrice(shopId));
+
+        if (business.isOpen(shopId)) {
+            business.addMoney(shopId, price, itemName);
+            business.removeMoneyTax(shopId, price / business.getPrice(shopId));
+        }
 
         user.showCustomNotify(player, 'Вы купили аксессуар', 2, 9);
     }
@@ -359,8 +362,11 @@ cloth.buy = function (player, price, body, cloth, color, torso, torsoColor, para
             user.removeBankMoney(player, price, 'Покупка одежды ' + itemName);
         else
             user.removeCashMoney(player, price, 'Покупка одежды ' + itemName);
-        business.addMoney(shopId, price, itemName);
-        business.removeMoneyTax(shopId, price / business.getPrice(shopId));
+
+        if (business.isOpen(shopId)) {
+            business.addMoney(shopId, price, itemName);
+            business.removeMoneyTax(shopId, price / business.getPrice(shopId));
+        }
         user.showCustomNotify(player, 'Вы купили одежду, старая одежда находится в инвентаре', 2, 9);
     }
 
@@ -408,8 +414,11 @@ cloth.buyMask = function (player, price, maskId, shopId, payType = 0) {
     if (shopId == 0)
         return;
     user.removeMoney(player, price, 'Покупка маски ' + itemName, payType);
-    business.addMoney(shopId, price, itemName);
-    business.removeMoneyTax(shopId, price / business.getPrice(shopId));
+
+    if (business.isOpen(shopId)) {
+        business.addMoney(shopId, price, itemName);
+        business.removeMoneyTax(shopId, price / business.getPrice(shopId));
+    }
     user.showCustomNotify(player, 'Вы купили маску', 2, 9);
     user.save(player);
 };
@@ -436,8 +445,10 @@ cloth.buyPrint = function(player, collection, overlay, price) {
     user.set(player, "tprint_o", overlay);
 
     user.removeMoney(player, price, 'Принт на одежду');
-    business.addMoney(70, price, 'Покупка принта');
-    business.removeMoneyTax(70, price / business.getPrice(70));
+    if (business.isOpen(70)) {
+        business.addMoney(70, price, 'Покупка принта');
+        business.removeMoneyTax(70, price / business.getPrice(70));
+    }
     user.showCustomNotify(player, 'Вы купили принт', 2, 9);
     user.updateTattoo(player);
 

@@ -153,11 +153,6 @@ shop.checkPosForOpenMenu = function(player) {
             return;
         let shopId = shopItem[3];
 
-        if (!business.isOpen(shopId) && shopId > 0) {
-            player.notify('~r~К сожалению магазин сейчас не работает');
-            return;
-        }
-
         switch (shopItem[4]) {
             case 0:
             case 4:
@@ -219,8 +214,10 @@ shop.buy = function(player, itemId, price, shopId) {
     if (shopId > 0) {
         player.notify('~g~Вы купили ' + items.getItemNameById(itemId) +  '. Цена за 1 ед. товара: ~s~' + methods.moneyFormat(price));
         user.removeMoney(player, price, 'Покупка ' + items.getItemNameById(itemId));
-        business.addMoney(shopId, price, items.getItemNameById(itemId));
-        business.removeMoneyTax(shopId, price / business.getPrice(shopId));
+        if (business.isOpen(shopId)) {
+            business.addMoney(shopId, price, items.getItemNameById(itemId));
+            business.removeMoneyTax(shopId, price / business.getPrice(shopId));
+        }
     }
     else if (price > 0) {
         player.notify('~g~Вы купили ' + items.getItemNameById(itemId) +  '. Цена за 1 ед. товара: ~s~' + methods.moneyFormat(price));
@@ -258,8 +255,10 @@ shop.buyCard = function(player, itemId, price, shopId) {
     if (shopId > 0) {
         player.notify('~g~Вы купили ' + items.getItemNameById(itemId) +  '. Цена за 1 ед. товара: ~s~' + methods.moneyFormat(price));
         user.removeBankMoney(player, price, 'Покупка ' + items.getItemNameById(itemId));
-        business.addMoney(shopId, price, items.getItemNameById(itemId));
-        business.removeMoneyTax(shopId, price / business.getPrice(shopId));
+        if (business.isOpen(shopId)) {
+            business.addMoney(shopId, price, items.getItemNameById(itemId));
+            business.removeMoneyTax(shopId, price / business.getPrice(shopId));
+        }
     }
     else {
         player.notify('~g~Вы купили ' + items.getItemNameById(itemId) +  '. Цена за 1 ед. товара: ~s~' + methods.moneyFormat(price));

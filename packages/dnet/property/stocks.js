@@ -767,6 +767,8 @@ stocks.cargoUnload = function(player, bid = 1) {
             let fraction = 7;
             if (methods.distanceToPos(player.position, new mp.Vector3(477.9193420410156, -3300.276123046875, 6.909423828125)) < 10)
                 fraction = 7;
+            if (methods.distanceToPos(player.position, new mp.Vector3( 504.80950927734375, -3127.914306640625, 5.069790840148926)) < 10)
+                fraction = 7;
             if (methods.distanceToPos(player.position, new mp.Vector3( 329.8642272949219, -557.3507690429688, 27.743440628051758)) < 10)
                 fraction = 6;
             if (methods.distanceToPos(player.position, new mp.Vector3( 137.56112670898438, -741.5675659179688, 32.13323211669922)) < 10)
@@ -793,7 +795,7 @@ stocks.cargoUnload = function(player, bid = 1) {
 
             if (box === 13)
             {
-                coffer.set(fraction, 'stock_med', coffer.get(7, 'stock_med') + 100 * count);
+                coffer.set(fraction, 'stock_med', coffer.get(7, 'stock_med') + 250 * count);
                 coffer.set(fraction, 'stock_eat', coffer.get(7, 'stock_eat') + 100 * count);
             }
             if (box === 50)

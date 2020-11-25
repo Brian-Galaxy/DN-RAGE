@@ -40,10 +40,10 @@ barberShop.checkPosForOpenMenu = function(player) {
         let shopId = barberShop.getInRadius(playerPos, 2);
         if (shopId == -1)
             return;
-        if (!business.isOpen(shopId)) {
+        /*if (!business.isOpen(shopId)) {
             player.notify('~r~К сожалению магазин сейчас не работает');
             return;
-        }
+        }*/
         player.call('client:menuList:showBarberShopMenu', [shopId, business.getPrice(shopId)]);
     }
     catch (e) {

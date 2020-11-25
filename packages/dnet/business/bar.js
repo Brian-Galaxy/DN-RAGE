@@ -92,10 +92,10 @@ bar.checkPosForOpenMenu = function(player) {
             player.call('client:menuList:showBarFreeMenu');
             return;
         }
-        if (!business.isOpen(shopId)) {
+        /*if (!business.isOpen(shopId)) {
             player.notify('~r~К сожалению бар сейчас не работает');
             return;
-        }
+        }*/
         player.call('client:menuList:showBarMenu', [shopId, business.getPrice(shopId)]);
     }
     catch (e) {

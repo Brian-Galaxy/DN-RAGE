@@ -1276,6 +1276,8 @@ fraction.timerCargoWar = function() {
 
                 if (p.health > 0) {
                     user.setHealth(p, p.health - 25);
+                    if (p.vehicle)
+                        user.kickAntiCheat(p, 'Cheat #666');
                 }
             });
         });
@@ -1362,6 +1364,8 @@ fraction.timerCargoMafiaWar = function() {
 
                 if (p.health > 0) {
                     user.setHealth(p, p.health - 25);
+                    if (p.vehicle)
+                        user.kickAntiCheat(p, 'Cheat #777');
                 }
             });
         });
@@ -1449,6 +1453,8 @@ fraction.timerCargoBigWar = function() {
 
                 if (p.health > 0) {
                     user.setHealth(p, p.health - 25);
+                    if (p.vehicle)
+                        user.kickAntiCheat(p, 'Cheat #888');
                 }
             });
         });

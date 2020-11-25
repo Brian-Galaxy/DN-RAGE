@@ -1271,7 +1271,7 @@ tree.workProcess = function(id) {
                     let fData = await family.getData(fId);
                     if (fData.get('level') === 1) {
                         if (fData.get('exp') > 2000) {
-                            family.addMoney(fId, 500000, 'Премия за достижения 2 уровня');
+                            family.addMoney(fId, 250000, 'Премия за достижения 2 уровня');
                             family.set(fId, 'level', 2);
                             family.set(fId, 'exp', 0);
                         }

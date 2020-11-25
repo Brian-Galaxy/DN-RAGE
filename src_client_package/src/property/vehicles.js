@@ -575,10 +575,10 @@ mp.events.add("playerLeaveVehicle", function () {
     vehicles.currentData = null;
 });
 
-mp.events.add("client:vehicle:checker", async function () {
+mp.events.add("client:vehicle:checker2", async function () {
     try {
         let vehicle = mp.players.local.vehicle;
-        if (vehicle && vehicles.currentData) {
+        if (vehicle) {
 
             let vClass = vehicle.getClass();
 
@@ -587,55 +587,81 @@ mp.events.add("client:vehicle:checker", async function () {
                 let currentEngHpNew = vehicle.getEngineHealth();
                 let currentFuelHpNew = vehicle.getPetrolTankHealth();
 
-                let s_eng = vehicles.currentData.get('s_eng');
-                let s_trans = vehicles.currentData.get('s_trans');
-                let s_fuel = vehicles.currentData.get('s_fuel');
-                let s_whel = vehicles.currentData.get('s_whel');
-                let s_elec = vehicles.currentData.get('s_elec');
-                let s_break = vehicles.currentData.get('s_break');
-
                 if (currentBodyHp - currentBodyHpNew > 100) {
-                    if (methods.getRandomInt(0, 100) < 50) {
+                    user.removeHealth(10);
+
+                    mp.game.cam.shakeGameplayCam("ROAD_VIBRATION_SHAKE", 1.5);
+                    setTimeout(function () {
+                        mp.game.cam.stopGameplayCamShaking(false);
+                    }, 7000);
+                }
+                else if (currentBodyHp - currentBodyHpNew > 50) {
+                    user.removeHealth(5);
+                    mp.game.cam.shakeGameplayCam("ROAD_VIBRATION_SHAKE", 1.5);
+                    setTimeout(function () {
+                        mp.game.cam.stopGameplayCamShaking(false);
+                    }, 3000);
+                }
+                else if (currentBodyHp - currentBodyHpNew > 20) {
+                    user.removeHealth(2);
+                    mp.game.cam.shakeGameplayCam("ROAD_VIBRATION_SHAKE", 1.5);
+                    setTimeout(function () {
+                        mp.game.cam.stopGameplayCamShaking(false);
+                    }, 1000);
+                }
+
+                if (vehicles.currentData) {
+                    let s_eng = vehicles.currentData.get('s_eng');
+                    let s_trans = vehicles.currentData.get('s_trans');
+                    let s_fuel = vehicles.currentData.get('s_fuel');
+                    let s_whel = vehicles.currentData.get('s_whel');
+                    let s_elec = vehicles.currentData.get('s_elec');
+                    let s_break = vehicles.currentData.get('s_break');
+
+                    if (currentBodyHp - currentBodyHpNew > 100) {
+
+                        if (methods.getRandomInt(0, 100) < 50) {
+                            if (s_eng > 1) {
+                                vehicles.setSync(vehicle.getVariable('container'), 's_eng', s_eng - 1);
+                                vehicles.currentData.set('s_eng', s_eng - 1);
+                            }
+                        }
+                        if (methods.getRandomInt(0, 100) < 50) {
+                            if (s_trans > 1) {
+                                vehicles.setSync(vehicle.getVariable('container'), 's_trans', s_trans - 1);
+                                vehicles.currentData.set('s_trans', s_trans - 1);
+                            }
+                        }
+                        if (methods.getRandomInt(0, 100) < 50) {
+                            if (s_whel > 1) {
+                                vehicles.setSync(vehicle.getVariable('container'), 's_whel', s_whel - 1);
+                                vehicles.currentData.set('s_whel', s_whel - 1);
+                            }
+                        }
+                        if (methods.getRandomInt(0, 100) < 50) {
+                            if (s_elec > 1) {
+                                vehicles.setSync(vehicle.getVariable('container'), 's_elec', s_elec - 1);
+                                vehicles.currentData.set('s_elec', s_elec - 1);
+                            }
+                        }
+                        if (methods.getRandomInt(0, 100) < 50) {
+                            if (s_break > 1) {
+                                vehicles.setSync(vehicle.getVariable('container'), 's_break', s_break - 1);
+                                vehicles.currentData.set('s_break', s_break - 1);
+                            }
+                        }
+                    }
+                    if (currentEngHp - currentEngHpNew > 100) {
                         if (s_eng > 1) {
                             vehicles.setSync(vehicle.getVariable('container'), 's_eng', s_eng - 1);
                             vehicles.currentData.set('s_eng', s_eng - 1);
                         }
                     }
-                    if (methods.getRandomInt(0, 100) < 50) {
-                        if (s_trans > 1) {
-                            vehicles.setSync(vehicle.getVariable('container'), 's_trans', s_trans - 1);
-                            vehicles.currentData.set('s_trans', s_trans - 1);
+                    if (currentFuelHp - currentFuelHpNew > 100) {
+                        if (s_fuel > 1) {
+                            vehicles.setSync(vehicle.getVariable('container'), 's_fuel', s_fuel - 1);
+                            vehicles.currentData.set('s_fuel', s_fuel - 1);
                         }
-                    }
-                    if (methods.getRandomInt(0, 100) < 50) {
-                        if (s_whel > 1) {
-                            vehicles.setSync(vehicle.getVariable('container'), 's_whel', s_whel - 1);
-                            vehicles.currentData.set('s_whel', s_whel - 1);
-                        }
-                    }
-                    if (methods.getRandomInt(0, 100) < 50) {
-                        if (s_elec > 1) {
-                            vehicles.setSync(vehicle.getVariable('container'), 's_elec', s_elec - 1);
-                            vehicles.currentData.set('s_elec', s_elec - 1);
-                        }
-                    }
-                    if (methods.getRandomInt(0, 100) < 50) {
-                        if (s_break > 1) {
-                            vehicles.setSync(vehicle.getVariable('container'), 's_break', s_break - 1);
-                            vehicles.currentData.set('s_break', s_break - 1);
-                        }
-                    }
-                }
-                if (currentEngHp - currentEngHpNew > 100) {
-                    if (s_eng > 1) {
-                        vehicles.setSync(vehicle.getVariable('container'), 's_eng', s_eng - 1);
-                        vehicles.currentData.set('s_eng', s_eng - 1);
-                    }
-                }
-                if (currentFuelHp - currentFuelHpNew > 100) {
-                    if (s_fuel > 1) {
-                        vehicles.setSync(vehicle.getVariable('container'), 's_fuel', s_fuel - 1);
-                        vehicles.currentData.set('s_fuel', s_fuel - 1);
                     }
                 }
 
@@ -646,7 +672,7 @@ mp.events.add("client:vehicle:checker", async function () {
         }
     }
     catch (e) {
-        
+        methods.error(e);
     }
 });
 

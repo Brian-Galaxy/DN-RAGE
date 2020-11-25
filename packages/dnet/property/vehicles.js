@@ -531,7 +531,7 @@ vehicles.spawnFractionCar = (id) => {
                 {
                     color1 = 0;
                     color2 = 0;
-                    livery = 1;
+                    livery = 6;
                 }
                 break;
             }

@@ -556,14 +556,21 @@ user.teleportVehV = function(pos, rot) {
         //methods.wait(500);
         setTimeout(function () {
 
-            mp.players.local.vehicle.freezePosition(false);
-            //if (mp.players.local.dimension === 0)
-            mp.players.local.vehicle.setOnGroundProperly();
+            try {
+                //if (mp.players.local.dimension === 0)
+                if (mp.players.local.vehicle) {
+                    mp.players.local.vehicle.freezePosition(false);
+                    mp.players.local.vehicle.setOnGroundProperly();
+                }
 
-            object.process();
-            mp.attachmentMngr.initFor(mp.players.local);
-            mp.game.invoke(methods.SET_FOLLOW_VEHICLE_CAM_VIEW_MODE, camMode);
-            user.hideLoadDisplay(500);
+                object.process();
+                mp.attachmentMngr.initFor(mp.players.local);
+                mp.game.invoke(methods.SET_FOLLOW_VEHICLE_CAM_VIEW_MODE, camMode);
+                user.hideLoadDisplay(500);
+            }
+            catch (e) {
+                methods.debug(e);
+            }
         }, 1000);
     }, 500);
 };
@@ -847,6 +854,11 @@ user.setHealth = function(level) {
     if (level === 0)
         level = -1;
     mp.players.local.setHealth(level + 100);
+};
+
+user.removeHealth = function(level) {
+    isHeal = true;
+    mp.players.local.setHealth(100 + (mp.players.local.getHealth() - level));
 };
 
 user.setArmour = function(level) {

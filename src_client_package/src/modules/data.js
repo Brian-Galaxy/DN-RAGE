@@ -165,7 +165,7 @@ class Data {
 
             mp.events.callRemote('modules:server:data:Set', 700000 + 44, 'bunk_2_count', 0, true);
             mp.events.callRemote('modules:server:data:Set', 700000 + 44, 'bunk_3_count', 0, true);
-            mp.events.callRemote('modules:server:data:Set', 700000 + 44, 'bunk_4_count', 0, true);
+            log_bank_user
             */
 
             /*mp.events.callRemote('modules:server:data:Set', 800000 + 1, 'spawn_x', -1501.6224365234375, true);

@@ -514,10 +514,10 @@ bank.openCard = function(player, bankId, price) {
         return;
     }
 
-    if (!business.isOpen(bankId)) {
+    /*if (!business.isOpen(bankId)) {
         player.notify('~r~К сожалению у банка сейчас нет возможности выдать Вам карту.');
         return;
-    }
+    }*/
 
     if (price < 0)
         return;
@@ -545,8 +545,11 @@ bank.openCard = function(player, bankId, price) {
     //methods.saveLog('BuyCardNumber', `${user.getRpName(player)} (${user.getId(player)}): ${number}`);
 
     user.removeCashMoney(player, price, 'Смена номера карты');
-    business.addMoney(bankId, price);
-    business.removeMoneyTax(bankId, price / business.getPrice(bankId));
+
+    if (business.isOpen(bankId)) {
+        business.addMoney(bankId, price);
+        business.removeMoneyTax(bankId, price / business.getPrice(bankId));
+    }
 
     bank.sendSmsBankOpenOperation(player, bankPrefix);
     bank.addBankHistory(user.getId(player), number, 'Открытие счёта на имя ' + user.getRpName(player), price * -1);

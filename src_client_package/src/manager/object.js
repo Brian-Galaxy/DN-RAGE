@@ -1941,30 +1941,33 @@ object.openDoor = function (hash, x, y, z, isClose = false) {
 
 object.changeDoor = function (x, y, z, isClose = false, distChecker = 10) {
 
-    let door = {};
-    let id = -1;
-    doorList.forEach((item, idx) => {
-        let dist = methods.distanceToPos(mp.players.local.position, new mp.Vector3(item.x, item.y, item.z));
-        if (dist < distChecker) {
-            door = item;
-            id = idx;
-        }
-    });
+    try {
+        let door = {};
+        let id = -1;
+        doorList.forEach((item, idx) => {
+            let dist = methods.distanceToPos(mp.players.local.position, new mp.Vector3(item.x, item.y, item.z));
+            if (dist < distChecker) {
+                door = item;
+                id = idx;
+            }
+        });
 
-    if (door && id >= 0) {
-        door.x = x;
-        door.y = y;
-        door.z = z;
-        door.isClose = isClose;
-        door.isLoad = false;
-        doorList[id] = door;
+        if (door && id >= 0) {
+            door.x = x;
+            door.y = y;
+            door.z = z;
+            door.isClose = isClose;
+            door.isLoad = false;
+            doorList[id] = door;
 
-        if (methods.distanceToPos(mp.players.local.position, new mp.Vector3(x, y, z)) < distChecker) {
-            mp.game.object.doorControl(door.hash, x, y, z, isClose, 0.0, 50.0, 0);
-            if (isClose)
-                mp.game.invoke(methods.FREEZE_ENTITY_POSITION, mp.game.object.getClosestObjectOfType(x, y, z, distChecker, door.hash, false, false, false));
+            if (methods.distanceToPos(mp.players.local.position, new mp.Vector3(x, y, z)) < distChecker) {
+                mp.game.object.doorControl(door.hash, x, y, z, isClose, 0.0, 50.0, 0);
+                if (isClose)
+                    mp.game.invoke(methods.FREEZE_ENTITY_POSITION, mp.game.object.getClosestObjectOfType(x, y, z, distChecker, door.hash, false, false, false));
+            }
         }
     }
+    catch (e) {}
 };
 
 object.process = function () {
@@ -1972,136 +1975,139 @@ object.process = function () {
     if (!user.isLogin())
         return;
 
-    let playerPos = mp.players.local.position;
+    try {
+        let playerPos = mp.players.local.position;
 
-    objectDelList.forEach(item => {
-        try {
-            let dist = methods.distanceToPos(playerPos, new mp.Vector3(item.x, item.y, item.z));
-            if (dist < loadDist && !item.isDelete) {
-                mp.game.entity.createModelHide(item.x, item.y, item.z, 2, item.model, true);
-                item.isDelete = true;
-            }
-            else if (dist > loadDist + 50 && item.isDelete) {
-                item.isDelete = false;
-            }
-        }
-        catch (e) {
-            methods.debug(e);
-        }
-    });
-
-    iplList.forEach(item => {
-        try {
-            let dist = methods.distanceToPos(playerPos, item.pos);
-            let radius = item.radius;
-            if (dist < radius && !item.isLoad) {
-                mp.game.streaming.requestIpl(item.ipl);
-                item.isLoad = true;
-            }
-            else if (dist > radius + 50 && item.isLoad) {
-                mp.game.streaming.removeIpl(item.ipl);
-                item.isLoad = false;
-            }
-        }
-        catch (e) {
-            methods.debug(e);
-        }
-    });
-
-    emitterList.forEach(item => {
-        try {
-            let dist = methods.distanceToPos(playerPos, item.pos);
-            let radius = 100;
-            if (dist < radius && !item.isLoad) {
-                item.handle = mp.objects.new(mp.game.joaat('prop_boombox_01'), item.pos,
-                    {
-                        rotation: new mp.Vector3(0,0,0),
-                        alpha: 0,
-                        dimension: -1
-                    });
-                mp.game.invoke('0x651D3228960D08AF', "SE_Script_Placed_Prop_Emitter_Boombox", item.handle.handle);
-                mp.game.audio.setEmitterRadioStation("SE_Script_Placed_Prop_Emitter_Boombox", mp.game.audio.getRadioStationName(1));
-                mp.game.audio.setStaticEmitterEnabled("SE_Script_Placed_Prop_Emitter_Boombox", true);
-
-                item.isLoad = true;
-            }
-            else if (dist > radius + 50 && item.isLoad) {
-                if (mp.objects.exists(item.handle)) {
-                    item.handle.destroy();
-                    item.handle = -1;
-                }
-                item.isLoad = false;
-            }
-        }
-        catch (e) {
-            methods.debug(e);
-        }
-    });
-
-    doorList.forEach(item => {
-        try {
-            let dist = methods.distanceToPos(playerPos, new mp.Vector3(item.x, item.y, item.z));
-            if (dist < 20 && !item.isLoad) {
-                mp.game.object.doorControl(item.hash, item.x, item.y, item.z, item.isClose, 0.0, 50.0, 0);
-                if (item.isClose)
-                    mp.game.invoke(methods.FREEZE_ENTITY_POSITION, mp.game.object.getClosestObjectOfType(item.x, item.y, item.z, 1, item.hash, false, false, false));
-                item.isLoad = true;
-            }
-            else if (dist > 30 && item.isLoad) {
-                item.isLoad = false;
-            }
-        }
-        catch (e) {
-            methods.debug(e);
-        }
-    });
-
-    objectList.forEach(async function(item) {
-        let dist = methods.distanceToPos2D(playerPos, item.pos);
-        if (dist < loadDist && !item.isCreate) {
+        objectDelList.forEach(item => {
             try {
-                if (mp.game.streaming.hasModelLoaded(item.model)) {
-                    item.handle = mp.objects.new(item.model, item.pos,
+                let dist = methods.distanceToPos(playerPos, new mp.Vector3(item.x, item.y, item.z));
+                if (dist < loadDist && !item.isDelete) {
+                    mp.game.entity.createModelHide(item.x, item.y, item.z, 2, item.model, true);
+                    item.isDelete = true;
+                }
+                else if (dist > loadDist + 50 && item.isDelete) {
+                    item.isDelete = false;
+                }
+            }
+            catch (e) {
+                methods.debug(e);
+            }
+        });
+
+        iplList.forEach(item => {
+            try {
+                let dist = methods.distanceToPos(playerPos, item.pos);
+                let radius = item.radius;
+                if (dist < radius && !item.isLoad) {
+                    mp.game.streaming.requestIpl(item.ipl);
+                    item.isLoad = true;
+                }
+                else if (dist > radius + 50 && item.isLoad) {
+                    mp.game.streaming.removeIpl(item.ipl);
+                    item.isLoad = false;
+                }
+            }
+            catch (e) {
+                methods.debug(e);
+            }
+        });
+
+        emitterList.forEach(item => {
+            try {
+                let dist = methods.distanceToPos(playerPos, item.pos);
+                let radius = 100;
+                if (dist < radius && !item.isLoad) {
+                    item.handle = mp.objects.new(mp.game.joaat('prop_boombox_01'), item.pos,
                         {
-                            rotation: item.rotation,
-                            alpha: 255,
+                            rotation: new mp.Vector3(0,0,0),
+                            alpha: 0,
                             dimension: -1
                         });
-                    if (item.invType > 0)
-                        item.handle.invType = item.invType;
-                    if (item.safe > 0)
-                        item.handle.safe = item.safe;
-                    item.isCreate = true;
-                }
-                else if(item.didRequest !== true) {
-                    item.didRequest = true;
-                    mp.game.streaming.requestModel(item.model);
-                }
-            }
-            catch (e) {
-                methods.debug(`Exeption: objectList.forEach.create`);
-                methods.debug(e);
-            }
-        }
-        else if (dist > loadDist + 50 && item.isCreate) {
-            try {
-                if (mp.objects.exists(item.handle)) {
-                    item.handle.destroy();
-                    item.handle = -1;
-                    item.isCreate = false;
-                }
+                    mp.game.invoke('0x651D3228960D08AF', "SE_Script_Placed_Prop_Emitter_Boombox", item.handle.handle);
+                    mp.game.audio.setEmitterRadioStation("SE_Script_Placed_Prop_Emitter_Boombox", mp.game.audio.getRadioStationName(1));
+                    mp.game.audio.setStaticEmitterEnabled("SE_Script_Placed_Prop_Emitter_Boombox", true);
 
-                if(item.didRequest === true) {
-                    item.didRequest = false;
-                    mp.game.streaming.setModelAsNoLongerNeeded(item.model);
+                    item.isLoad = true;
+                }
+                else if (dist > radius + 50 && item.isLoad) {
+                    if (mp.objects.exists(item.handle)) {
+                        item.handle.destroy();
+                        item.handle = -1;
+                    }
+                    item.isLoad = false;
                 }
             }
             catch (e) {
-                methods.debug(`Exeption: objectList.forEach.destroy`);
                 methods.debug(e);
             }
-        }
-    });
+        });
+
+        doorList.forEach(item => {
+            try {
+                let dist = methods.distanceToPos(playerPos, new mp.Vector3(item.x, item.y, item.z));
+                if (dist < 20 && !item.isLoad) {
+                    mp.game.object.doorControl(item.hash, item.x, item.y, item.z, item.isClose, 0.0, 50.0, 0);
+                    if (item.isClose)
+                        mp.game.invoke(methods.FREEZE_ENTITY_POSITION, mp.game.object.getClosestObjectOfType(item.x, item.y, item.z, 1, item.hash, false, false, false));
+                    item.isLoad = true;
+                }
+                else if (dist > 30 && item.isLoad) {
+                    item.isLoad = false;
+                }
+            }
+            catch (e) {
+                methods.debug(e);
+            }
+        });
+
+        objectList.forEach(async function(item) {
+            let dist = methods.distanceToPos2D(playerPos, item.pos);
+            if (dist < loadDist && !item.isCreate) {
+                try {
+                    if (mp.game.streaming.hasModelLoaded(item.model)) {
+                        item.handle = mp.objects.new(item.model, item.pos,
+                            {
+                                rotation: item.rotation,
+                                alpha: 255,
+                                dimension: -1
+                            });
+                        if (item.invType > 0)
+                            item.handle.invType = item.invType;
+                        if (item.safe > 0)
+                            item.handle.safe = item.safe;
+                        item.isCreate = true;
+                    }
+                    else if(item.didRequest !== true) {
+                        item.didRequest = true;
+                        mp.game.streaming.requestModel(item.model);
+                    }
+                }
+                catch (e) {
+                    methods.debug(`Exeption: objectList.forEach.create`);
+                    methods.debug(e);
+                }
+            }
+            else if (dist > loadDist + 50 && item.isCreate) {
+                try {
+                    if (mp.objects.exists(item.handle)) {
+                        item.handle.destroy();
+                        item.handle = -1;
+                        item.isCreate = false;
+                    }
+
+                    if(item.didRequest === true) {
+                        item.didRequest = false;
+                        mp.game.streaming.setModelAsNoLongerNeeded(item.model);
+                    }
+                }
+                catch (e) {
+                    methods.debug(`Exeption: objectList.forEach.destroy`);
+                    methods.debug(e);
+                }
+            }
+        });
+    }
+    catch (e) {}
 };
 
 export default object;

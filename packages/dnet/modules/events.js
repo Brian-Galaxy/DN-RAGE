@@ -3239,20 +3239,33 @@ mp.events.addRemoteCounted('server:vehicles:spawnJobCar', (player, x, y, z, head
 
 mp.events.addRemoteCounted('server:prolog:spawnVehicle', (player, name) => {
     try {
-        vehicles.spawnJobCar(veh => {
-            if (!vehicles.exists(veh))
-                return;
+
+        mp.vehicles.forEachInDimension(player.id + 20000000, v => {
             try {
-                vehicles.set(veh.getVariable('container'), 'owner_id', user.getId(player));
-                veh.setVariable('owner_id', user.getId(player));
-                veh.prolog = true;
-                veh.broke = true;
-                veh.numberPlateType = 5;
-                vehicles.setFuel(veh, 0);
-                veh.dimension = player.id + 20000000;
+                v.destroy();
             }
             catch (e) {}
-        }, new mp.Vector3(3531.277587890625, -4672.951171875, 113.76799774169922), 251.60354614257812, name, 0);
+        });
+
+        setTimeout(function () {
+            try {
+                vehicles.spawnJobCar(veh => {
+                    if (!vehicles.exists(veh))
+                        return;
+                    try {
+                        vehicles.set(veh.getVariable('container'), 'owner_id', user.getId(player));
+                        veh.setVariable('owner_id', user.getId(player));
+                        veh.prolog = true;
+                        veh.broke = true;
+                        veh.numberPlateType = 5;
+                        vehicles.setFuel(veh, 0);
+                        veh.dimension = player.id + 20000000;
+                    }
+                    catch (e) {}
+                }, new mp.Vector3(3531.277587890625, -4672.951171875, 113.76799774169922), 251.60354614257812, name, 0);
+            }
+            catch (e) {}
+        }, 100);
     }
     catch (e) {}
 });
@@ -6578,8 +6591,8 @@ mp.events.addRemoteCounted('server:fraction:vehicleBuy2', (player, id, price) =>
     }
 
     mysql.executeQuery(`SELECT * FROM cars_fraction WHERE fraction_id = '${fractionId * -1}'`, function (err, rows2, fields) {
-        if (rows2.length > 4) {
-            player.notify('~r~Доступно только 5 транспортных средств');
+        if (rows2.length > 11) {
+            player.notify('~r~Доступно только 10 транспортных средств');
             return;
         }
 
@@ -8536,11 +8549,11 @@ mp.events.add("__ragemp_cheat_detected", (player,  cheatCode) => {
 mp.events.add('playerJoin', player => {
 
 
-    if (!enums.whiteList.includes(player.socialClub)) { //TODO Убрать 24 ноября
+    /*if (!enums.whiteList.includes(player.socialClub)) { //TODO Убрать 24 ноября
         player.outputChatBox("Сервер будет доступен 24 Ноября");
         player.kick();
         return;
-    }
+    }*/
 
     player.dimension = player.id + 1;
 
@@ -8832,11 +8845,11 @@ mp.events.addRemoteCounted("playerDeathDone", (player) => {
             player.dimension = 0;
         }
         catch (e) {}
-        if (user.has(player, 'killerInJail') && user.get(player, 'killerInJail')) {
+        /*if (user.has(player, 'killerInJail') && user.get(player, 'killerInJail')) {
             user.jail(player, user.get(player, 'wanted_level') * 120);
             player.outputChatBoxNew('!{#FFC107}Вас привезли в больницу с огнестрельным ранением и у врачей возникли подозрения, поэтому они сделали запрос в SAPD и сотрудники SAPD выяснили, что у вас есть розыск. После лечения вы отправились в тюрьму.');
             user.toLspdSafe(player);
-        }
+        }*/
     }
 });
 

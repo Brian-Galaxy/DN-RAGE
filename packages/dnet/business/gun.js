@@ -50,10 +50,10 @@ gun.checkPosForOpenMenu = function(player) {
         let shopId = gun.getInRadius(playerPos, 2);
         if (shopId == -1)
             return;
-        if (!business.isOpen(shopId)) {
+        /*if (!business.isOpen(shopId)) {
             player.notify('~r~К сожалению магазин сейчас не работает');
             return;
-        }
+        }*/
         player.call('client:menuList:showGunShopMenu', [shopId, business.getPrice(shopId)]);
     }
     catch (e) {
@@ -122,7 +122,9 @@ gun.buy = function(player, itemId, price, count, superTint, tint, shopId, payTyp
     else {
         user.removeCashMoney(player, price, `Покупка оружия ${items.getItemNameById(itemId)} (${serial})`);
     }
-    business.addMoney(shopId, price, items.getItemNameById(itemId));
-    business.removeMoneyTax(shopId, price / business.getPrice(shopId));
+    if (business.isOpen(shopId)) {
+        business.addMoney(shopId, price, items.getItemNameById(itemId));
+        business.removeMoneyTax(shopId, price / business.getPrice(shopId));
+    }
     inventory.updateAmount(player, user.getId(player), 1);
 };

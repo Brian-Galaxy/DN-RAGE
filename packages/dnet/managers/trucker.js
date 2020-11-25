@@ -1513,7 +1513,7 @@ trucker.doneOffer = function (player, offerId) {
     user.reset(player, 'isStartTrucker');
     if (offer.length == 10) {
         trucker.notify(player, `Вы доставили груз и заработали ~g~${methods.moneyFormat(price)}`, 'Доставка');
-        user.giveJobSkill(player, 'truck');
+        user.giveJobSkill(player, 11);
         user.giveJobMoney(player, price, 11);
         user.addWorkExp(player, 25 + price / 50);
 
@@ -1591,7 +1591,7 @@ trucker.doneOffer = function (player, offerId) {
             player.notify(`~y~Штраф: ~s~${methods.moneyFormat(price - (price * heal))}`);
         user.addWorkExp(player, 40 + price / 50);
         vehicles.respawn(trailer);
-        user.giveJobSkill(player, 'truck');
+        user.giveJobSkill(player, 11);
         user.giveJobMoney(player, price * heal, 11);
 
         try {

@@ -2363,8 +2363,7 @@ menuList.showBusinessMenu = async function(data) {
                 return;
             }
 
-            business.addMoney(data.get('bank_id'), money * (bankTarif / 100));
-
+            business.addMoney(data.get('bank_id'), money * (bankTarif / 100), 'Прибыль с ' + data.get('name'));
             business.removeMoney(data.get('id'), money, 'Вывод средств на карту ' + methods.bankFormat(user.getCache('bank_card')));
             business.save(data.get('id'));
             user.addBankMoney(money * (100 - nalog) / 100, 'Вывод со счета бизнеса ' + data.get('name'));
@@ -13063,6 +13062,7 @@ menuList.showAdminMenu = function() {
 
             UIMenu.Menu.AddMenuItem("Режим невидимки", "", {doName: "invise"});
             UIMenu.Menu.AddMenuItem("Прогрузка ID", "", {doName: "idDist"});
+            UIMenu.Menu.AddMenuItem("Список игроков", "", {doName: "playerList"});
 
             if (user.isAdmin(3))
                 UIMenu.Menu.AddMenuItem("Выбор одежды", "", {doName: "clothMenu"});
@@ -13191,6 +13191,15 @@ menuList.showAdminMenu = function() {
         {
             try {
                 menuList.showAdminPlayerMenu(mp.players.local.remoteId);
+            }
+            catch (e) {
+                methods.debug(e);
+            }
+        }
+        if (item.doName == 'playerList')
+        {
+            try {
+                menuList.showAdminPlayerListMenu();
             }
             catch (e) {
                 methods.debug(e);
@@ -13357,6 +13366,33 @@ menuList.showAdminPlayerMenu = function(id) {
                 if (id < 0)
                     id = mp.players.local.remoteId;
                 menuList.showAdminPlayerMenu(id);
+            }
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    });
+};
+
+menuList.showAdminPlayerListMenu = function() {
+    UIMenu.Menu.Create(`ADMIN`, `~b~Список игроков`);
+
+    mp.players.forEach(p => {
+        let label = '';
+        let name = '~b~' + p.remoteId + '~s~. ' + p.getVariable('name') + ' (' + p.getVariable('idLabel') + ')';
+        if (p.getVariable('enableAdmin') && p.getVariable('adminRole'))
+            label = '(' + p.getVariable('adminRole') + ')';
+        UIMenu.Menu.AddMenuItem(name, "", {doName: 'info', pid:  p.remoteId }, p.getVariable('isAfk') ? '~r~AFK ' + label : '~r~' + label);
+    });
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
+    UIMenu.Menu.Draw();
+
+    UIMenu.Menu.OnSelect.Add(async item => {
+
+        try {
+            if (item.doName === 'info') {
+                menuList.showAdminPlayerMenu(item.pid);
             }
         }
         catch (e) {

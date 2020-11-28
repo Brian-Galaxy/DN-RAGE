@@ -3694,8 +3694,12 @@ mp.keys.bind(0x1B, true, function() {
         return;
 
     if (mp.players.local.dimension === 99999 && mp.players.local.getVariable('blockDeath')) {
+        mp.game.ui.notifications.show('~b~Через 5 секунд вы покините GunZone, ожидайте');
         user.removeAllWeapons();
-        mp.events.callRemote('server:gangZone:exitLobby');
+        setTimeout(function () {
+            user.removeAllWeapons();
+            mp.events.callRemote('server:gangZone:exitLobby');
+        }, 5000);
     }
 
     ui.callCef('license', JSON.stringify({type: 'hide'}));
@@ -4033,7 +4037,7 @@ mp.events.add("playerDeath", async function (player, reason, killer) {
     phone.hide();
     mainMenu.hide();
 
-    if (mp.players.local.dimension === 0 && !ui.isGreenZone()) {
+    if (mp.players.local.dimension === 0 && !ui.isGreenZone() && !mp.players.local.isInAnyVehicle(false)) {
         user.getInvEquipWeapon().forEach(item => {
             inventory.dropWeaponItem(item.id, mp.players.local.position, mp.players.local.getRotation(0));
         });

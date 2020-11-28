@@ -587,7 +587,7 @@ mp.events.add("client:vehicle:checker2", async function () {
                 let currentEngHpNew = vehicle.getEngineHealth();
                 let currentFuelHpNew = vehicle.getPetrolTankHealth();
 
-                if (currentBodyHp - currentBodyHpNew > 100) {
+                /*if (currentBodyHp - currentBodyHpNew > 100) {
                     user.removeHealth(10);
 
                     mp.game.cam.shakeGameplayCam("ROAD_VIBRATION_SHAKE", 1.5);
@@ -608,7 +608,7 @@ mp.events.add("client:vehicle:checker2", async function () {
                     setTimeout(function () {
                         mp.game.cam.stopGameplayCamShaking(false);
                     }, 1000);
-                }
+                }*/
 
                 if (vehicles.currentData) {
                     let s_eng = vehicles.currentData.get('s_eng');

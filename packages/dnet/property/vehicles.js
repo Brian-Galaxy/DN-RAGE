@@ -540,6 +540,13 @@ vehicles.spawnFractionCar = (id) => {
                 color1 = 149;
                 color2 = 149;
                 numberStyle = 0;
+
+                if (info.name === 'Nspeedo')
+                {
+                    color1 = 0;
+                    color2 = 0;
+                    livery = 4;
+                }
                 break;
             }
         }
@@ -1546,7 +1553,7 @@ vehicles.lockStatus = (player, vehicle) => {
             player.notify('Вы ~r~закрыли~s~ транспорт');
 
         if (!player.vehicle) {
-            //user.playAnimation(player, "anim@mp_player_intmenu@key_fob@", "fob_click", 48);
+            user.playAnimation(player, "anim@mp_player_intmenu@key_fob@", "fob_click", 48);
             player.addAttachment('pickPick');
             setTimeout(function () {
                 try {

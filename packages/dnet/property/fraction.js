@@ -664,7 +664,7 @@ fraction.createCargoWar = function(count = 3) {
         mp.players.forEach(p => {
             if (!user.isLogin(p))
                 return;
-            if (user.get(p, 'fraction_id2') > 0 && user.has(p, 'isCargo') || user.isAdmin(p)) {
+            if (user.get(p, 'fraction_id2') > 0 && user.has(p, 'isCargo') || user.isAdmin(p) || user.isPolice(p)) {
                 user.createBlip(p, b1, posVeh.x, posVeh.y, posVeh.z, 637, i + 1);
                 user.createBlipByRadius(p, b2, posVeh.x, posVeh.y, posVeh.z, radius1, 9, 1);
                 user.createBlipByRadius(p, b3, posVeh.x, posVeh.y, posVeh.z, radius2, 9, 3);
@@ -1003,7 +1003,7 @@ fraction.createCargoMafiaWar = function() {
         mp.players.forEach(p => {
             if (!user.isLogin(p))
                 return;
-            if (enums.mafiaAllows.includes(user.get(p, 'fraction_id2')) && user.has(p, 'isCargo') || user.isAdmin(p)) {
+            if (enums.mafiaAllows.includes(user.get(p, 'fraction_id2')) && user.has(p, 'isCargo') || user.isAdmin(p) || user.isPolice(p)) {
                 if (i === 1)
                 {
                     user.createBlip(p, b1, posVeh.x, posVeh.y, posVeh.z, 636, 25);
@@ -1071,7 +1071,7 @@ fraction.createCargoBigWar = function() {
     mp.players.forEach(p => {
         if (!user.isLogin(p))
             return;
-        if (user.get(p, 'fraction_id2') > 0 && user.has(p, 'isCargo') || user.isAdmin(p)) {
+        if (user.get(p, 'fraction_id2') > 0 && user.has(p, 'isCargo') || user.isAdmin(p) || user.isPolice(p)) {
             user.createBlip(p, b1, posVeh.x, posVeh.y, posVeh.z, 635, 7);
 
             user.createBlipByRadius(p, b2, posVeh.x, posVeh.y, posVeh.z, radiusBig1, 9, 1);
@@ -1135,7 +1135,7 @@ fraction.stopCargoWar = function() {
         if (!user.isLogin(p))
             return;
 
-        if (user.get(p, 'fraction_id2') > 0 && user.has(p, 'isCargo') || user.isAdmin(p)) {
+        if (user.get(p, 'fraction_id2') > 0 && user.has(p, 'isCargo') || user.isAdmin(p) || user.isPolice(p)) {
             currentWarPos.forEach((item, i) => {
 
                 if (!item.isActive)
@@ -1170,7 +1170,7 @@ fraction.stopCargoMafiaWar = function() {
         if (!user.isLogin(p))
             return;
 
-        if (user.get(p, 'fraction_id2') > 0 && user.has(p, 'isCargo') || user.isAdmin(p)) {
+        if (user.get(p, 'fraction_id2') > 0 && user.has(p, 'isCargo') || user.isAdmin(p) || user.isPolice(p)) {
             currentWarPos.forEach((item, i) => {
 
                 if (!item.isActive)
@@ -1204,7 +1204,7 @@ fraction.stopCargoBigWar = function() {
         if (!user.isLogin(p))
             return;
 
-        if (user.get(p, 'fraction_id2') > 0 && user.has(p, 'isCargo') || user.isAdmin(p)) {
+        if (user.get(p, 'fraction_id2') > 0 && user.has(p, 'isCargo') || user.isAdmin(p) || user.isPolice(p)) {
             currentWarPos.forEach((item, i) => {
 
                 if (!item.isActive)
@@ -1236,7 +1236,7 @@ fraction.stopCargoArmyWar = function() {
         if (!user.isLogin(p))
             return;
 
-        if (user.get(p, 'fraction_id2') > 0 && user.has(p, 'isCargo') || user.isAdmin(p) || user.isAdmin(p)) {
+        if (user.get(p, 'fraction_id2') > 0 && user.has(p, 'isCargo') || user.isAdmin(p) || user.isPolice(p)) {
             user.deleteBlip(p, 99999);
             user.deleteBlip(p, 99998);
         }
@@ -1252,7 +1252,7 @@ fraction.timerCargoWar = function() {
             if (!user.isLogin(p))
                 return;
 
-            if (user.get(p, 'fraction_id2') > 0 && user.has(p, 'isCargo') || user.isAdmin(p)) {
+            if (user.get(p, 'fraction_id2') > 0 && user.has(p, 'isCargo') || user.isAdmin(p) || user.isPolice(p)) {
                 currentWarPos.forEach((item, i) => {
                     if (!item.isActive || item.type !== 0)
                         return;
@@ -1340,7 +1340,7 @@ fraction.timerCargoMafiaWar = function() {
             if (!user.isLogin(p))
                 return;
 
-            if (enums.mafiaAllows.includes(user.get(p, 'fraction_id2')) && user.has(p, 'isCargo') || user.isAdmin(p)) {
+            if (enums.mafiaAllows.includes(user.get(p, 'fraction_id2')) && user.has(p, 'isCargo') || user.isAdmin(p) || user.isPolice(p)) {
                 currentWarPos.forEach((item, i) => {
                     if (!item.isActive || item.type !== 1)
                         return;
@@ -1429,7 +1429,7 @@ fraction.timerCargoBigWar = function() {
             if (!user.isLogin(p))
                 return;
 
-            if (user.get(p, 'fraction_id2') > 0 && user.has(p, 'isCargo') || user.isAdmin(p)) {
+            if (user.get(p, 'fraction_id2') > 0 && user.has(p, 'isCargo') || user.isAdmin(p) || user.isPolice(p)) {
                 currentWarPos.forEach((item, i) => {
                     if (!item.isActive || item.type !== 2)
                         return;
@@ -1533,7 +1533,7 @@ fraction.timerCargoArmyWar = function() {
             if (!user.isLogin(p))
                 return;
 
-            if (user.get(p, 'fraction_id2') > 0 && user.has(p, 'isCargo') || user.isAdmin(p) || user.isAdmin(p)) {
+            if (user.get(p, 'fraction_id2') > 0 && user.has(p, 'isCargo') || user.isAdmin(p) || user.isPolice(p)) {
                 if (pos1)
                     user.createBlip(p, 99999, pos1.x, pos1.y, pos1.z, 636, 52);
                 if (pos2)

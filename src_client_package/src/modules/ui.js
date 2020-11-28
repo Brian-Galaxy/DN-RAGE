@@ -451,7 +451,7 @@ ui.updateValues = function() {
                             type: 'updateQuest',
                             showQuest: true,
                             questTitle: 'Колесо удачи',
-                            questText: `Теперь вам доступно прокрутить колесо удаччи в казино Diamond!`,
+                            questText: `Теперь вам доступно прокрутить колесо удачи в казино Diamond!`,
                         };
                         ui.callCef('hudl', JSON.stringify(data));
                     }

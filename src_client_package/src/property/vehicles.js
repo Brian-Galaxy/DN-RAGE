@@ -87,6 +87,11 @@ vehicles.setExtraState = function(state) {
         mp.events.callRemote('s:vSync:setExtraState', mp.players.local.vehicle.remoteId, state);
 };
 
+vehicles.setWindowState = function(idx, state) {
+    if (mp.players.local.vehicle)
+        mp.events.callRemote('s:vSync:setWindowDataIdx', mp.players.local.vehicle.remoteId, idx, state);
+};
+
 vehicles.setInteriorLightState = function(state) {
     if (mp.players.local.vehicle)
         mp.events.callRemote('s:vSync:setInteriorLightState', mp.players.local.vehicle.remoteId, state);

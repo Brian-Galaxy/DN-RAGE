@@ -13,25 +13,11 @@ let coffer = require('../coffer');
 
 let vShop = exports;
 
-vShop.list = [
-    [22.08832, -1106.986, 29.79703, 71],
-    [252.17,-50.08245,69.94106,72],
-    [842.2239,-1033.294,28.19486,73],
-    [-661.947,-935.6796,21.82924,74],
-    [-1305.899,-394.5485,36.69577,75],
-    [809.9118,-2157.209,28.61901,76],
-    [2567.651,294.4759,107.7349,77],
-    [-3171.98,1087.908,19.83874,78],
-    [-1117.679,2698.744,17.55415,79],
-    [1693.555,3759.9,33.70533,80],
-    [-330.36,6083.885,30.45477,81]
-];
-
 vShop.loadAllShop = () => {
     enums.carShopList.forEach(item => {
         if (item.id == 0)
             return;
-        let blip = methods.createBlip(new mp.Vector3(item.buyPos[0], item.buyPos[1], item.buyPos[2]), item.blipId, item.blipColor, 0.9, item.name);
+        let blip = methods.createBlip(new mp.Vector3(item.buyPos[0], item.buyPos[1], item.buyPos[2]), item.blipId, item.blipColor, 0.9, 'Shop');
         methods.createCp(blip.position.x, blip.position.y, blip.position.z - 1, "Нажмите ~g~Е~s~ чтобы открыть меню");
     });
 };
@@ -41,13 +27,28 @@ vShop.loadAllShopVehicles = () => {
         vehicles.spawnCarCb(veh => {
             if (!vehicles.exists(veh))
                 return;
+            let vInfo = methods.getVehicleInfo(item[0]);
+
+            let fuelSpeed = 20;
+            let fuel = vInfo.fuel_min / fuelSpeed * 100;
+            if (fuel > 100)
+                fuel = 100;
+
+            let st = vInfo.stock / 7000000 * 100;
+            if (st > 100)
+                st = 100;
+
             veh.locked = true;
             veh.engine = false;
             veh.setVariable('useless', true);
+            veh.setVariable('s_name', item[0]);
+            veh.setVariable('s_price', vInfo.price);
+            veh.setVariable('s_fuel', fuel);
+            veh.setVariable('s_stock', st);
         }, new mp.Vector3(item[1], item[2], item[3]), item[4], item[0]);
 
-        if (item[0] !== ' ')
-            methods.createCp(item[1], item[2], item[3], `~b~Название:~s~ ${item[0]}\n~b~Цена: ~g~${methods.moneyFormat(methods.getVehicleInfo(item[0]).price)}`, 5, -1, [0, 0, 0, 0]);
+        /*if (item[0] !== ' ')
+            methods.createCp(item[1], item[2], item[3], `~b~Название:~s~ ${item[0]}\n~b~Цена: ~g~${methods.moneyFormat(methods.getVehicleInfo(item[0]).price)}`, 5, -1, [0, 0, 0, 0]);*/
     });
 
     enums.carTacoVehicleList.forEach(item => {
@@ -86,7 +87,7 @@ vShop.checkPosForOpenMenu = function(player) {
         let vList = [];
         let where = '';
         enums.vehicleInfo.forEach(item => {
-            if (shopId != item.type)
+            if (enums.carShopList[shopId].auto != item.type)
                 return;
             where += ` OR name = '${item.display_name}'`
         });
@@ -101,6 +102,7 @@ vShop.checkPosForOpenMenu = function(player) {
 
             player.call('client:menuList:showVehShopMenu', [
                 enums.carShopList[shopId].id,
+                enums.carShopList[shopId].auto,
                 JSON.stringify(enums.carShopList[shopId].carPos),
                 JSON.stringify(enums.carShopList[shopId].buyPos),
                 Array.from(mapList),
@@ -123,14 +125,14 @@ vShop.findNearest = function(pos) {
     return prevPos;
 };
 
-vShop.buy = function(player, model, color1, color2, shopId) {
+vShop.buy = function(player, model, color1, color2, shopId, payType) {
     if (!user.isLogin(player))
         return;
 
     let vInfo = methods.getVehicleInfo(model);
     let price = vInfo.price;
 
-    if (user.getMoney(player) < price)
+    if (user.getMoney(player, payType) < price)
     {
         player.notify('~r~У Вас недостаточно средств');
         return;
@@ -232,7 +234,7 @@ vShop.buy = function(player, model, color1, color2, shopId) {
                 vehicles.save(id);
 
                 user.addHistory(player, 3, 'Покупка транспорта ' + model);
-                user.removeMoney(player, price, 'Покупка транспорта ' + model);
+                user.removeMoney(player, price, 'Покупка транспорта ' + model, payType);
                 coffer.addMoney(1, price);
 
                 setTimeout(function () {

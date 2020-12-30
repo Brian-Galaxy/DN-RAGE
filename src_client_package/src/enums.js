@@ -96,7 +96,7 @@ enums.updateVehicleInfo = function(idx, data) {
     catch (e) {}
 };
 
-enums.fontList = ["Roboto", "Arial", "Century Gothic", "HACKED", "Choujikuu", "RobotoLight"];
+enums.fontList = ["Roboto", "Arial", "Century Gothic", "HACKED", "Choujikuu", "RobotoLight", "Gotham Pro Regular", "Gotham Pro Medium"];
 
 enums.offsets = { //TODO
     house: 100000,
@@ -151,7 +151,7 @@ enums.dispatchMarkedList = [ //http://www.lapdonline.org/lapd_manual/volume_4.ht
 enums.jobList = [
     ["Нет работы", 0, 0, 0, 'none', 0, 0], //0
     ["Садовник", -1585.625, -234.0653, 53.35091, 'three', 2000, 10000], //1
-    ["Разнорабочий", -1585.625, -234.0653, 53.35091, 'build', 2000, 10000], //2
+    ["Строитель", -1585.625, -234.0653, 53.35091, 'build', 2000, 10000], //2
     ["Фотограф", -1083.074, -248.3521, 36.76329, 'photo', 2000, 25000], //3
     ["Почтальон", 78.78807067871094, 111.90670013427734, 80.16815948486328, 'mail', 3000, 25000], //4
     ["Механик", 548.5404052734375, -172.61703491210938, 53.4813346862793, 'none', 1500, 0], //5
@@ -250,17 +250,30 @@ enums.networkList = [
     [3459.178, 3659.834, 51.19159],
     [3615.938, 3642.95, 51.19159],
     [3091.4990234375, -4710.97509765625, 51.57867431640625],
+
+    [5265.67626953125, -5428.75927734375, 90.25672912597656],
+
+    /*[4877.7734375, -4488.46728515625, 29.901750564575195],
+    [5032.94921875, -4630.8095703125, 24.64546012878418],
+    [5154.0361328125, -4932.81005859375, 33.8529167175293],
+    [5148.56103515625, -5053.39599609375, 23.3504238128662],
+    [5043.5908203125, -5114.935546875, 25.8974552154541],
+    [4887.5390625, -5457.15478515625, 50.503665924072266],
+    [5125.07177734375, -5526.17919921875, 73.94277954101562],
+    [5360.1064453125, -5436.76025390625, 69.14659881591797],
+    [5465.67529296875, -5236.16845703125, 46.94190979003906],*/
 ];
 
 enums.spawnByRole = [
-    [-415.363037109375, -2630.680419921875, 8.761142730712891, 224.08807373046875],
     [-1291.0419921875, -555.138427734375, 30.712167739868164, 217.45919799804688],
+    [4996.4716796875, -5762.4541015625, 18.88021469116211, 336.8935852050781],
     //[-1042.025, -2744.718, 20.3594, 327.3454], //AERO
     [2046.785, 3566.849, 39.19671, 243.1456],
 ];
 
 enums.initCams = [
     [-1261.7191162109375, 37.95313262939453, 55.06220245361328, -1222.6278076171875, 67.4974136352539, 64.42452239990234],
+    [-1149.80126953125, 99.1491470336914, 63.30760192871094, -1121.502685546875, 75.1594009399414, 63.30622100830078],
     [-457.9690246582031, 290.82781982421875, 260.7830810546875, -303.7551574707031, 395.1709289550781, 260.7580261230469],
     [-336.3420715332031, 605.7385864257812, 273.8386535644531, -360.4897766113281, 737.925537109375, 287.6802062988281],
     [-433.2561340332031, 1265.82177734375, 352.0660705566406, -426.1554870605469, 1166.322265625, 348.3792419433594],
@@ -502,6 +515,152 @@ enums.screenEffectList = [
     'BeastIntroScene','BeastLaunch','BeastTransition','BikerFilter','BikerFilterOut','BikerFormation','BikerFormationOut','CamPushInFranklin','CamPushInMichael','CamPushInNeutral','CamPushInTrevor','ChopVision','CrossLine','CrossLineOut','DeadlineNeon','DeathFailFranklinIn','DeathFailMichaelIn','DeathFailMPDark','DeathFailMPIn','DeathFailNeutralIn','DeathFailOut','DeathFailTrevorIn','DefaultFlash','DMT_flight','DMT_flight_intro','Dont_tazeme_bro','DrugsDrivingIn','DrugsDrivingOut','DrugsMichaelAliensFight','DrugsMichaelAliensFightIn','DrugsMichaelAliensFightOut','DrugsTrevorClownsFight','DrugsTrevorClownsFightIn','DrugsTrevorClownsFightOut','ExplosionJosh3','FocusIn','FocusOut','HeistCelebEnd','HeistCelebPass','HeistCelebPassBW','HeistCelebToast','HeistLocate','HeistTripSkipFade','InchOrange','InchOrangeOut','InchPickup','InchPickupOut','InchPurple','InchPurpleOut','LostTimeDay','LostTimeNight','MenuMGHeistIn','MenuMGHeistIntro','MenuMGHeistOut','MenuMGHeistTint','MenuMGIn','MenuMGSelectionIn','MenuMGSelectionTint','MenuMGTournamentIn','MenuMGTournamentTint','MinigameEndFranklin','MinigameEndMichael','MinigameEndNeutral','MinigameEndTrevor','MinigameTransitionIn','MinigameTransitionOut','MP_Bull_tost','MP_Bull_tost_Out','MP_Celeb_Lose','MP_Celeb_Lose_Out','MP_Celeb_Preload','MP_Celeb_Preload_Fade','MP_Celeb_Win','MP_Celeb_Win_Out','MP_corona_switch','MP_intro_logo','MP_job_load','MP_Killstreak','MP_Killstreak_Out','MP_Loser_Streak_Out','MP_OrbitalCannon','MP_Powerplay','MP_Powerplay_Out','MP_race_crash','MP_SmugglerCheckpoint','MP_TransformRaceFlash','MP_WarpCheckpoint','PauseMenuOut','pennedIn','PennedInOut','PeyoteEndIn','PeyoteEndOut','PeyoteIn','PeyoteOut','PPFilter','PPFilterOut','PPGreen','PPGreenOut','PPOrange','PPOrangeOut','PPPink','PPPinkOut','PPPurple','PPPurpleOut','RaceTurbo','Rampage','RampageOut','SniperOverlay','SuccessFranklin','SuccessMichael','SuccessNeutral','SuccessTrevor','switch_cam_1','switch_cam_2','SwitchHUDFranklinIn','SwitchHUDFranklinOut','SwitchHUDIn','SwitchHUDMichaelIn','SwitchHUDMichaelOut','SwitchHUDOut','SwitchHUDTrevorIn','SwitchHUDTrevorOut','SwitchOpenFranklin','SwitchOpenFranklinIn','SwitchOpenFranklinOut','SwitchOpenMichaelIn','SwitchOpenMichaelMid','SwitchOpenMichaelOut','SwitchOpenNeutralFIB5','SwitchOpenNeutralOutHeist','SwitchOpenTrevorIn','SwitchOpenTrevorOut','SwitchSceneFranklin','SwitchSceneMichael','SwitchSceneNeutral','SwitchSceneTrevor','SwitchShortFranklinIn','SwitchShortFranklinMid','SwitchShortMichaelIn','SwitchShortMichaelMid','SwitchShortNeutralIn','SwitchShortNeutralMid','SwitchShortTrevorIn','SwitchShortTrevorMid','TinyRacerGreen','TinyRacerGreenOut','TinyRacerIntroCam','TinyRacerPink','TinyRacerPinkOut','WeaponUpgrade'
 ];
 
+enums.hairMale = [
+    ['Лысый', 0],
+    ['Короткая стрижка', 1],
+    ['Вверх', 2],
+    ['Назад', 3],
+    ['Дед', 4],
+    ['Дед', 5],
+    ['Дед', 6],
+    ['Дед', 7],
+    ['Дед', 8],
+    ['Дед', 9],
+    ['Дед', 10],
+    ['Дед', 11],
+    ['Дед', 12],
+    ['Дед', 13],
+    ['Дед', 14],
+    ['Дед', 15],
+    ['Дед', 16],
+    ['Дед', 17],
+    ['Дед', 18],
+    ['Дед', 19],
+    ['Дед', 20],
+    ['Дед', 21],
+    ['Дед', 22],
+    ['Дед', 24],
+    ['Дед', 25],
+    ['Дед', 26],
+    ['Дед', 27],
+    ['Дед', 28],
+    ['Дед', 29],
+    ['Дед', 30],
+    ['Дед', 31],
+    ['Дед', 32],
+    ['Дед', 33],
+    ['Дед', 34],
+    ['Дед', 35],
+    ['Дед', 36],
+    ['Дед', 38],
+    ['Дед', 39],
+    ['Дед', 40],
+    ['Дед', 41],
+    ['Дед', 42],
+    ['Дед', 43],
+    ['Дед', 44],
+    ['Дед', 45],
+    ['Дед', 46],
+    ['Дед', 47],
+    ['Дед', 48],
+    ['Дед', 49],
+    ['Дед', 50],
+    ['Дед', 52],
+    ['Дед', 53],
+    ['Дед', 54],
+    ['Дед', 111],
+];
+
+enums.hairFemale = [
+    ['', 0],
+    ['', 1],
+    ['', 2],
+    ['', 3],
+    ['', 4],
+    ['', 5],
+    ['', 6],
+    ['', 7],
+    ['', 8],
+    ['', 9],
+    ['', 10],
+    ['', 11],
+    ['', 12],
+    ['', 13],
+    ['', 14],
+    ['', 15],
+    ['', 16],
+    ['', 17],
+    ['', 18],
+    ['', 19],
+    ['', 20],
+    ['', 21],
+    ['', 22],
+    ['', 23],
+    ['', 25],
+    ['', 26],
+    ['', 27],
+    ['', 28],
+    ['', 29],
+    ['', 30],
+    ['', 31],
+    ['', 32],
+    ['', 33],
+    ['', 34],
+    ['', 35],
+    ['', 36],
+    ['', 37],
+    ['', 38],
+    ['', 39],
+    ['', 40],
+    ['', 41],
+    ['', 42],
+    ['', 43],
+    ['', 44],
+    ['', 45],
+    ['', 46],
+    ['', 47],
+    ['', 48],
+    ['', 49],
+    ['', 50],
+    ['', 51],
+    ['', 52],
+    ['', 53],
+    ['', 54],
+    ['', 55],
+    ['', 56],
+    ['', 57],
+    ['', 58],
+    ['', 59],
+    ['', 60],
+    ['', 61],
+    ['', 66],
+    ['', 67],
+    ['', 68],
+    ['', 69],
+    ['', 76],
+    ['', 77],
+    ['', 79],
+    ['', 80],
+    ['', 116],
+    ['', 117],
+];
+
+enums.swtichMaleHair = [
+    [7, 15],
+    [11, 12],
+    [38, 80],
+    [32, 33],
+];
+
+enums.swtichFemaleHair = [
+    [42, 43],
+    [11, 12],
+    [15, 54],
+
+    [4, 47],
+    [48, 49],
+];
+
 enums.swtichMaleCloth = [
     [69, 68],
     [205, 202],
@@ -632,6 +791,18 @@ enums.shopItems = {
             ]
         },
         {
+            title: 'Медикаменты',
+            list: [
+                215, 221, 216
+            ]
+        },
+        {
+            title: 'Техника',
+            list: [
+                29, 47
+            ]
+        },
+        {
             title: 'Остальное',
             list: [
                 26, 4, 6, 253, 477, 484
@@ -644,13 +815,19 @@ enums.shopItems = {
             list: [
                 280, 281, 282, 283, 284, 285, 286, 287
             ]
+        },
+        {
+            title: 'Медикаменты',
+            list: [
+                215, 221, 242, 216
+            ]
         }
     ],
     alc: [
         {
             title: 'Еда и напитки',
             list: [
-                11, 241, 242
+                11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 241, 242
             ]
         },
         {
@@ -730,7 +907,49 @@ enums.shopHuntItems = [
     0, /*1, */59, 63, 241, 242, 11, 13, 26, 4, 6, 477, 484, /*485, 486, */482
 ];
 
+enums.zoneIslandList = [
+    new mp.Vector3(3326.365, -4240.541, 0),
+    new mp.Vector3(5072.705, -3550.056, 0),
+    new mp.Vector3(6269.617, -6009.813, 0),
+    new mp.Vector3(4297.188,  -6994.53, 0),
+];
+
 enums.zoneGreenList = [
+
+    //Island Правительство
+    [
+        0, 35, [
+        new mp.Vector3(4956.3583984375, -5791.052734375, 19.834875106811523),
+        new mp.Vector3(4960.90966796875, -5783.32373046875, 19.838956832885742),
+        new mp.Vector3(4958.626953125, -5760.693359375, 19.789627075195312),
+        new mp.Vector3(4961.56005859375, -5752.6650390625, 19.173267364501953),
+        new mp.Vector3(4953.81396484375, -5748.76025390625, 19.051076889038086),
+        new mp.Vector3(4969.9541015625, -5716.88916015625, 18.806787490844727),
+        new mp.Vector3(4974.4658203125, -5719.03564453125, 18.886964797973633),
+        new mp.Vector3(4987.61328125, -5704.46630859375, 18.886960983276367),
+        new mp.Vector3(4991.14697265625, -5707.06201171875, 18.88693618774414),
+        new mp.Vector3(5020.2314453125, -5675.39404296875, 18.892471313476562),
+        new mp.Vector3(5043.29736328125, -5694.50439453125, 16.50752067565918),
+        new mp.Vector3(5045.62158203125, -5697.59814453125, 15.823867797851562),
+        new mp.Vector3(5052.7646484375, -5692.98291015625, 15.526529312133789),
+        new mp.Vector3(5057.79638671875, -5700.75634765625, 14.869780540466309),
+        new mp.Vector3(5077.939453125, -5718.21728515625, 14.77320480346679),
+        new mp.Vector3(5072.60791015625, -5725.4775390625, 14.77198314666748),
+        new mp.Vector3(5078.5908203125, -5730.103515625, 14.772071838378906),
+        new mp.Vector3(5080.08740234375, -5728.44775390625, 14.772438049316406),
+        new mp.Vector3(5088.06884765625, -5734.0498046875, 14.7725391387939458),
+        new mp.Vector3(5086.2890625, -5736.98486328125, 14.772130966186523),
+        new mp.Vector3(5097.57470703125, -5746.30419921875, 14.280386924743652),
+        new mp.Vector3(5080.443359375, -5769.91259765625, 14.477163314819336),
+        new mp.Vector3(5059.64453125, -5791.556640625, 14.601887702941895),
+        new mp.Vector3(5055.806640625, -5789.8515625, 14.541444778442383),
+        new mp.Vector3(5015.15869140625, -5817.72998046875, 16.918930053710938),
+        new mp.Vector3(4999.75439453125, -5805.1240234375, 19.925405502319336),
+        new mp.Vector3(4997.328125, -5810.06103515625, 19.791866302490234),
+        new mp.Vector3(4967.56884765625, -5795.57763671875, 19.875619888305664),
+        new mp.Vector3(4967.01416015625, -5796.6220703125, 19.871463775634766),
+    ]],
+
     // Здание правительства
     //[30, 120, [new mp.Vector3(-1458.354, -482.1525, 33.83649), new mp.Vector3(-1473.014, -486.7639, 34.49873), new mp.Vector3(-1479.305, -488.3301, 34.65393), new mp.Vector3(-1511.517, -508.8132, 34.64656), new mp.Vector3(-1496.209, -532.0956, 31.80686), new mp.Vector3(-1456.212, -508.1354, 33.81332), new mp.Vector3(-1447.513, -509.2115, 33.72978), new mp.Vector3(-1413.384, -561.9651, 29.36239), new mp.Vector3(-1455.403, -585.3876, 29.87299), new mp.Vector3(-1436.013, -615.7529, 29.82655), new mp.Vector3(-1376.067, -579.6342, 29.00549), new mp.Vector3(-1300.922, -526.1674, 31.89371), new mp.Vector3(-1317.765, -502.3608, 32.08424), new mp.Vector3(-1315.253, -500.1213, 32.1539), new mp.Vector3(-1326.14, -485.6933, 32.42014), new mp.Vector3(-1369.412, -424.5184, 35.33494)]],
 // LSPD Mission Row
@@ -751,7 +970,7 @@ enums.zoneGreenList = [
     [20, 55, [new mp.Vector3(1821.327, 3628.368, 33.14044), new mp.Vector3(1768.489, 3715.866, 33.26465), new mp.Vector3(1806.595, 3737.293, 32.60347), new mp.Vector3(1822.161, 3707.794, 32.76721), new mp.Vector3(1855.999, 3727.437, 32.15569), new mp.Vector3(1890.263, 3668.417, 32.52061)]],
 // Работа Садовника
     [45, 65, [new mp.Vector3(-1598.402, -251.5294, 52.64164), new mp.Vector3(-1571.596, -257.0536, 47.33077), new 	mp.Vector3(-1560.044, -237.0236, 48.48338), new mp.Vector3(-1584.334, -221.7773, 53.55089)]],
-// Работа Разнорабочего
+// Работа Строителя
     [15, 25, [new mp.Vector3(-1167.702, -737.7407, 18.90504), new mp.Vector3(-1133.28, -781.2115, 16.5181), new mp.Vector3(-1109.011, -759.9724, 18.28605), new mp.Vector3(-1144.947, -718.6096, 20.15723)]],
 // Здание LieInvader
     [30, 60, [new mp.Vector3(-1006.919, -235.0893, 36.81467), new mp.Vector3(-1078.68, -271.9474, 36.77748), new mp.Vector3(-1075.695, -277.9284, 36.60832), new mp.Vector3(-1080.889, -328.7039, 36.82367), new mp.Vector3(-1134.289, -323.649, 36.67346), new mp.Vector3(-1142.79, -316.7318, 36.80247), new mp.Vector3(-1151.203, -302.7088, 36.67006), new mp.Vector3(-1123.325, -298.676, 36.88678), new mp.Vector3(-1128.819, -286.0749, 36.83587), new mp.Vector3(-1137.418, -277.7528, 36.69696), new mp.Vector3(-1138.751, -270.4866, 36.76296), new mp.Vector3(-1137.094, -263.996, 36.83725), new mp.Vector3(-1134.565, -260.8945, 36.85229), new mp.Vector3(-1107.118, -236.9137, 36.78324), new mp.Vector3(-1037.855, -201.9907, 36.92809), new mp.Vector3(-1007.519, -217.4253, 36.91697)]],
@@ -1087,7 +1306,7 @@ enums.maskClasses = [
 ];
 
 enums.fractionColor = [
-    16, //USMC
+    0, //USMC
     1,
     77, //Mara
     3,
@@ -1565,6 +1784,13 @@ enums.emitters = [
     [-1710.4791259765625, -743.2738037109375, 9.190360069274902],
     [-1702.24072265625, -764.5348510742188, 9.189990997314453],
     [-1642.3565673828125, -804.6913452148438, 9.21811294555664],
+    [-1397.462158203125, -603.5821533203125, 31.416263580322266], //Bahama
+    [-1387.96044921875, -625.13525390625, 31.000022888183594],
+    [-1393.2747802734375, -610.1653442382812, 31.282066345214844],
+    [-1376.1719970703125, -627.5267333984375, 30.920618057250977],
+    [-1389.679931640625, -599.5130615234375, 30.740081787109375],
+    [-1383.1651611328125, -615.6648559570312, 31.675304412841797],
+    [4891.2421875, -4925.5546875, 5.227933406829834], //Клуб на острове
 ];
 
 enums.customIpl = [
@@ -4821,7 +5047,7 @@ enums.radarList = [
 ];
 
 enums.getVehicleImg = (name) => {
-    return 'https://dednet.ru/client/images/cars/' + name + '_1.jpg';
+    return 'https://state-99.com/client/images/carsv/640/' + name.toLowerCase() + '.jpg';
 };
 
 enums.loadCloth = function () {

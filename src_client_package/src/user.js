@@ -24,6 +24,9 @@ import stocks from "./property/stocks";
 import condos from "./property/condos";
 import vehicles from "./property/vehicles";
 import yachts from "./property/yachts";
+import npc from "./manager/npc";
+import cutscene from "./manager/cutscene";
+
 
 let user = {};
 
@@ -42,6 +45,8 @@ user.btnCamera = 237;
 
 user.camOffsetLeft = 0;
 user.camOffsetRight = 1;
+user.currentStation = -1;
+user.isCustom = false;
 
 let currentCamDist = 0.2;
 let currentCamRot = -2;
@@ -64,16 +69,41 @@ let currentScenario = '';
 4 - First Person
 * */
 
+let currentScale = 0;
+let pulse = false;
+let currentKey = 'G';
+let scaleForm = mp.game.graphics.requestScaleformMovie("mp_car_stats_01");
+let vehicleInfo = null;
+let vehicleData = null;
+
 mp.events.add('render', () => {
+    let entity = user.getTargetEntityValidate();
     try {
-        let entity = user.getTargetEntityValidate();
         if (user.isLogin() && entity && entity.getAlpha() > 0) {
             if (user.getCache('s_hud_raycast')) {
                 let pos = entity.position;
-                ui.drawText3D(`•`, pos.x, pos.y, pos.z, 0.7);
+                //ui.drawText3D(`•`, pos.x, pos.y, pos.z, 1.3);
+                if (currentScale >= 0.1)
+                    pulse = false;
+                if (currentScale <= 0)
+                    pulse = true;
+                if (pulse)
+                    currentScale = currentScale + 0.003;
+                else
+                    currentScale = currentScale - 0.003;
+                ui.drawText3D(currentKey, pos.x, pos.y, pos.z, 0.3 + currentScale);
             }
             else
                 ui.drawText(`•`, 0.5, 0.5, 0.3, 255, 255, 255, 200, 0, 1, false, true);
+        }
+    }
+    catch (e) {}
+
+    try {
+        if (entity && vehicleInfo && vehicleData) {
+            let tRot = entity.getRotation(0);
+            let offset = entity.getOffsetFromInWorldCoords(3.5, 1, 0);
+            mp.game.graphics.drawScaleformMovie3d(scaleForm,offset.x, offset.y, entity.position.z + 6 + (currentScale / 6), 0, 180, tRot.z, 0.0, 1.0, 0.0, 7.0, 5, 7.0, 0);
         }
     }
     catch (e) {
@@ -81,7 +111,7 @@ mp.events.add('render', () => {
     }
 });
 
-user.timerRayCast = function() {
+user.timerRayCast = async function() {
 
     try {
         if (!mp.players.local.isSittingInAnyVehicle()) {
@@ -109,8 +139,67 @@ user.timerRayCast = function() {
             }
 
             let target = user.getTargetEntityValidate();
-            if (target && target != targetEntityPrev)
-                mp.game.ui.notifications.show(`Нажмите ~g~${bind.getKeyName(user.getCache('s_bind_do'))}~s~ для взаимодействия`);
+            /*if (target && target != targetEntityPrev)
+                mp.game.ui.notifications.show(`Нажмите ~g~${bind.getKeyName(user.getCache('s_bind_do'))}~s~ для взаимодействия`);*/
+
+            try {
+                if (target && target != targetEntityPrev) {
+
+                    if (target.getVariable('useless') === true && target.getVariable('user_id') > 0) {
+                        vehicleInfo = methods.getVehicleInfo(target.model);
+                        vehicleData = await vehicles.getData(target.getVariable('container'));
+
+                        let maxSpeed = 450;
+                        let fuelSpeed = 20;
+
+                        let speed = vehicles.getSpeedMax(target.model) / maxSpeed * 100;
+                        if (speed > 100)
+                            speed = 100;
+
+                        let fuel = vehicleInfo.fuel_min / fuelSpeed * 100;
+                        if (fuel > 100)
+                            fuel = 100;
+
+                        let priceMore = (vehicleData.get('sell_price') / (vehicleInfo.price) * 100) - 100;
+                        if (priceMore > 100)
+                            priceMore = 100;
+                        if (priceMore < 0)
+                            priceMore = 0;
+
+                        let countSeat = target.getMaxNumberOfPassengers() * 10;
+                        if (countSeat > 100)
+                            countSeat = 100;
+
+                        mp.game.graphics.pushScaleformMovieFunction(scaleForm, 'SET_VEHICLE_INFOR_AND_STATS');
+                        mp.game.graphics.pushScaleformMovieFunctionParameterString(vehicleInfo.display_name);
+                        mp.game.graphics.pushScaleformMovieFunctionParameterString(`${methods.moneyFormat(vehicleData.get('sell_price'))}`);
+                        mp.game.graphics.pushScaleformMovieFunctionParameterString('CHAR_FRANKLIN');
+                        mp.game.graphics.pushScaleformMovieFunctionParameterString('CHAR_FRANKLIN');
+                        mp.game.graphics.pushScaleformMovieFunctionParameterString('Скорость');
+                        mp.game.graphics.pushScaleformMovieFunctionParameterString('Расход');
+                        mp.game.graphics.pushScaleformMovieFunctionParameterString('Наценка');
+                        mp.game.graphics.pushScaleformMovieFunctionParameterString('Вместимость');
+                        mp.game.graphics.pushScaleformMovieFunctionParameterInt(methods.parseInt(speed));
+                        mp.game.graphics.pushScaleformMovieFunctionParameterInt(methods.parseInt(fuel));
+                        mp.game.graphics.pushScaleformMovieFunctionParameterInt(methods.parseInt(priceMore));
+                        mp.game.graphics.pushScaleformMovieFunctionParameterInt(methods.parseInt(countSeat));
+                        mp.game.graphics.popScaleformMovieFunctionVoid();
+                    }
+                    else {
+                        vehicleInfo = null;
+                        vehicleData = null;
+                    }
+                }
+                else {
+                    /*vehicleInfo = null;
+                    vehicleData = null;*/
+                }
+            }
+            catch (e) {
+                /*vehicleInfo = null;
+                vehicleData = null;*/
+            }
+
             targetEntityPrev = target;
         }
         else
@@ -122,6 +211,12 @@ user.timerRayCast = function() {
 };
 
 user.timer1sec = function() {
+
+    try {
+        if (user.isLogin())
+            currentKey = bind.getKeyName(user.getCache('s_bind_do'));
+    }
+    catch (e) {}
 
     try {
         ui.updateZoneAndStreet();
@@ -519,6 +614,8 @@ user.teleportv = function(pos, rot, isHud = true) {
         setTimeout(function () {
             object.process();
             mp.attachmentMngr.initFor(mp.players.local);
+            if (user.currentStation >= 0)
+                mp.game.audio.setEmitterRadioStation("SE_Script_Placed_Prop_Emitter_Boombox", mp.game.audio.getRadioStationName(user.currentStation));
             user.hideLoadDisplay(500, isHud);
         }, 1000);
     }, 500);
@@ -565,6 +662,8 @@ user.teleportVehV = function(pos, rot) {
 
                 object.process();
                 mp.attachmentMngr.initFor(mp.players.local);
+                if (user.currentStation >= 0)
+                    mp.game.audio.setEmitterRadioStation("SE_Script_Placed_Prop_Emitter_Boombox", mp.game.audio.getRadioStationName(user.currentStation));
                 mp.game.invoke(methods.SET_FOLLOW_VEHICLE_CAM_VIEW_MODE, camMode);
                 user.hideLoadDisplay(500);
             }
@@ -664,7 +763,7 @@ user.init = function() {
         user.clearChat();
         user.setAlpha(255);
 
-        setTimeout(user.initCustom, 500); //TODO STATE
+        setTimeout(user.initFlyCam, 500);
     }
     catch (e) {
         methods.debug(e);
@@ -708,26 +807,27 @@ user.init2 = function() {
     }
 };
 
-user.initCustom = function() {
+user.initFlyCam = function() {
 
     try {
 
-        let vPos = new mp.Vector3(9.66692, 528.34783, 171.3);
-        let vRot = 180;
+        cutscene.loadAuthRandom();
 
-        cam = mp.cameras.new('customization');
+        //let idx = methods.getRandomInt(0, enums.initCams.length);
+
         /*cam.pointAtCoord(9.66692, 528.34783, 171.2);
         cam.setActive(true);*/
 
-        cameraRotator.start(cam, vPos, vPos, new mp.Vector3(0, 3, 0), 120);
+        /*cameraRotator.start(cam, vPos, vPos, new mp.Vector3(0, 3, 0), 120);
         cameraRotator.setXBound(-360, 360);
         cameraRotator.setOffsetBound(0.4, 1.5);
-        cameraRotator.setZUpMultipler(1);
+        cameraRotator.setZUpMultipler(1);*/
 
-        mp.game.cam.renderScriptCams(true, false, 0, false, false);
+        //mp.game.graphics.transitionToBlurred(100);
 
-        user.setVirtualWorld(mp.players.local.remoteId + 1);
-        mp.players.local.position = new mp.Vector3(9.66692, 528.34783, 170.63504 + 10);
+        /*user.setVirtualWorld(mp.players.local.remoteId + 1);
+        //mp.players.local.position = new mp.Vector3(enums.initCams[idx][0], enums.initCams[idx][1], enums.initCams[idx][2] + 20);
+        mp.players.local.position = new mp.Vector3(4859.0341796875, -4926.43212890625, 5.304588317871094 + 20);
         mp.players.local.setRotation(0, 0, 123.53768, 0, true);
         mp.players.local.freezePosition(true);
         mp.players.local.setVisible(true, false);
@@ -735,26 +835,130 @@ user.initCustom = function() {
 
         mp.game.ui.displayRadar(false);
         mp.gui.chat.activate(false);
+
+        cam = mp.cameras.new('customization');
+        cam.shake("HAND_SHAKE", 0.3);
+        //cam.setCoord(enums.initCams[idx][0], enums.initCams[idx][1], enums.initCams[idx][2]);
+        //cam.pointAtCoord(enums.initCams[idx][3], enums.initCams[idx][4], enums.initCams[idx][5]);
+        cam.setCoord(4859.0341796875, -4926.43212890625, 5.304588317871094);
+        cam.setRot(-1.8375024795532227, 5.338830533219152e-8, -114.02210998535156, 2);
+        mp.game.cam.renderScriptCams(true, false, 0, false, false);*/
+
+
     }
     catch (e) {
         methods.debug(e);
     }
 };
 
+user.initCharCam = function(playerList) {
+
+    try {
+        user.setVirtualWorld(mp.players.local.remoteId + 1);
+        mp.players.local.position = new mp.Vector3(405.4717712402344, -974.6879272460938, -100.00418090820312 + 10);
+        //mp.players.local.position = new mp.Vector3(-460.69805908203125, -688.9095458984375, 71.20377349853516 + 10);
+        mp.players.local.freezePosition(true);
+        mp.players.local.setVisible(true, false);
+        mp.players.local.setCollision(false, false);
+
+        let posNpcList = [
+            [new mp.Vector3(405.368408203125, -970.7139282226562, -99.00418090820312), 178.55345153808594],
+            [new mp.Vector3(402.9247131347656, -969.4664306640625, -99.00418090820312), 179.53414916992188],
+            [new mp.Vector3(407.9364318847656, -969.3421020507812, -99.00418090820312), 181.44131469726562],
+        ];
+        playerList.forEach(async (p, idx) => {
+            try {
+
+                await methods.sleep(500);
+
+                let scenarios = [
+                    'WORLD_HUMAN_SMOKING',
+                    'WORLD_HUMAN_BUM_FREEWAY',
+                    'WORLD_HUMAN_AA_COFFEE',
+                    'CODE_HUMAN_MEDIC_TIME_OF_DEATH',
+                    'WORLD_HUMAN_DRINKING',
+                ];
+
+                let model = 'mp_m_freemode_01';
+                if (p.sex === 'w')
+                    model = 'mp_f_freemode_01';
+
+                let localNpc = await npc.createPedLocally(mp.game.joaat(model), posNpcList[idx][0], posNpcList[idx][1]);
+                setTimeout(function () {
+                    try {
+                        npc.updateNpcFace(localNpc, p.skin);
+                        npc.updateNpcTattoo(localNpc, p.tattoo);
+                        npc.updateNpcCloth(localNpc, p.cloth, p.sex === 'w' ? 1 : 0);
+                        mp.game.invoke(methods.TASK_START_SCENARIO_IN_PLACE, localNpc.handle, scenarios[methods.getRandomInt(0, scenarios.length)], 0, true);
+                    }
+                    catch (e) {
+                        methods.error(e);
+                    }
+                }, 500);
+            }
+            catch (e) {
+                methods.error(e);
+            }
+        });
+        mp.game.ui.displayRadar(false);
+        mp.gui.chat.activate(false);
+
+        cam = mp.cameras.new('customization');
+        cam.shake("HAND_SHAKE", 0.3);
+        /*cam.setCoord(-460.69805908203125, -688.9095458984375, 71.20377349853516);
+        cam.setRot(-1.9855390787124634, 0, -88.49031066894531, 2);*/
+        cam.setCoord(405.368408203125, -972.6879272460938, -99.00418090820312);
+        cam.pointAtCoord(405.368408203125, -970.7139282226562, -99.00418090820312);
+        mp.game.cam.renderScriptCams(true, false, 0, false, false);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+};
+
+user.initCustom = function() {
+
+    try {
+        user.setVirtualWorld(mp.players.local.remoteId + 1);
+
+        mp.players.local.position = new mp.Vector3(9.66692, 528.34783, 170.63504);
+        mp.players.local.setRotation(0, 0, 123.53768, 0, true);
+
+        mp.players.local.freezePosition(true);
+        mp.players.local.setVisible(true, false);
+        mp.players.local.setCollision(false, false);
+
+        mp.game.ui.displayRadar(false);
+        mp.gui.chat.activate(false);
+
+        user.createCam(new mp.Vector3(9.66692, 528.34783, 171.3), 120);
+        user.camOffsetRight = 0.65;
+
+        user.isCustom = true;
+    }
+    catch (e) {
+        methods.error(e);
+    }
+};
+
 user.destroyCam = function() {
     try {
         user.camOffsetLeft = 0;
-        user.camOffsetRight = 0;
+        user.camOffsetRight = 1;
 
-        cameraRotator.stop();
-        cameraRotator.reset();
+        user.isCustom = false;
+
+        if (cameraRotator.isCamera()) {
+            cameraRotator.stop();
+            cameraRotator.reset();
+        }
         if (cam) {
             cam.destroy();
             cam = null;
         }
     }
     catch (e) {
-        methods.debug(e);
+        methods.error(e);
     }
 
     mp.game.cam.renderScriptCams(false, true, 500, true, true);
@@ -764,7 +968,6 @@ user.createCam = function(vPos, vRot, zUp = 1, offsetMin = 0.4, offsetMax = 1.5,
     try {
         if (cam)
             user.destroyCam();
-
         cam = mp.cameras.new('customization');
         cameraRotator.start(cam, vPos, vPos, new mp.Vector3(0, 3, 0), vRot);
         cameraRotator.setXBound(-360, 360);
@@ -773,16 +976,19 @@ user.createCam = function(vPos, vRot, zUp = 1, offsetMin = 0.4, offsetMax = 1.5,
         cameraRotator.setZUpMultipler(zUp);
         //if (shake)
             cam.shake("HAND_SHAKE", 0.3);
-
         mp.game.cam.renderScriptCams(true, false, 500, false, false);
     }
     catch (e) {
-        methods.debug(e);
+        methods.error(e);
     }
 };
 
 user.getCam = function() {
     return cam;
+};
+
+user.setCam = function(camera) {
+    cam = camera;
 };
 
 user.cameraBlockRotator = function(enable) {
@@ -1600,7 +1806,12 @@ user.giveJobSkill = function(name = '') {
     mp.events.callRemote('server:user:giveJobSkill', name);
 };
 
-user.giveJobMoney = function(money, jobId = 0) {
+user.giveJobMoney = async function(money, jobId = 0) {
+
+    if (await user.has('uniform')) {
+        mp.game.ui.notifications.show('~r~Нельзя работать в форме');
+        return;
+    }
 
     let desc = '';
     try {
@@ -1724,11 +1935,20 @@ user.playAnimationWithUser = function(toId, animType) {
     mp.events.callRemote('server:playAnimationWithUser', toId, animType);
 };
 
+user.lastAnim = {
+    a: '',
+    d: '',
+    f: 0,
+};
 let lastFlag = 0;
 user.playAnimation = function(dict, anim, flag = 49, sendEventToServer = true) {
     if (mp.players.local.getVariable("isBlockAnimation") || mp.players.local.isInAnyVehicle(false) || user.isDead()) return;
     lastFlag = flag;
+
     mp.events.callRemote('server:playAnimation', dict, anim, methods.parseInt(flag));
+    user.lastAnim.d = dict;
+    user.lastAnim.a = anim;
+    user.lastAnim.f = flag;
     /*
         8 = нормально играть
         9 = цикл
@@ -1948,6 +2168,10 @@ user.isNews = function() {
     return user.isLogin() && user.getCache('fraction_id') == 7;
 };
 
+user.isCartel = function() {
+    return user.isLogin() && user.getCache('fraction_id') == 8;
+};
+
 user.isLeader = function() {
     return user.isLogin() && user.getCache('is_leader');
 };
@@ -2162,7 +2386,7 @@ mp.events.add("render", () => {
         const dX = currentPoint.x - x;
         const dY = currentPoint.y - y;
 
-        //ui.drawText(`${currentPoint.x} | ${currentPoint.y} | ${x} | ${y}`, 0, 0, 1, 255,255,255, 255,1);
+        //ui.drawText(`${currentPoint.x.toFixed(2)} | ${currentPoint.y.toFixed(2)} | ${x.toFixed(2)} | ${y.toFixed(2)} | ${cameraRotator.isPointEmpty()}`, 0, 0, 1, 255,255,255, 255,1);
 
         if (x > user.camOffsetLeft && x < user.camOffsetRight) {
             cameraRotator.setPoint(x, y);
@@ -2175,6 +2399,7 @@ mp.events.add("render", () => {
         }
     }
     catch (e) {
+        methods.debug(e);
     }
 });
 

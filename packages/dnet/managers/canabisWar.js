@@ -14,7 +14,7 @@ let fraction = require('../property/fraction');
 
 let canabisWar = exports;
 
-let zoneRadius = 75;
+let zoneRadius = 50;
 let offset = 600000;
 let blipOffset = 10000;
 let keyPrefix = 'canabisWar';
@@ -109,7 +109,7 @@ canabisWar.startWar = function(zoneId, attack, def, isArmor, count) {
             user.flashBlipByRadius(p, blipOffset + currentZone, true);
     });
 
-    methods.notifyWithPictureToCanabisWar('Улица под угрозой', `ВНИМАНИЕ!`, 'Начался захват улицы ~y~#' + zoneId, 'CHAR_DEFAULT', def);
+    methods.notifyWithPictureToCanabisWar('Аванпост под угрозой', `ВНИМАНИЕ!`, 'Начался захват улицы ~y~#' + zoneId, 'CHAR_DEFAULT', def);
 
     for (let i = 1; i <= fraction.getCount(); i++) {
         if (def == i) continue;
@@ -177,7 +177,7 @@ canabisWar.addWar = function(player, zoneId, count, armorIndex, gunIndex, timeIn
 
     warPool.set(timeIndex.toString(), data);
 
-    methods.notifyWithPictureToCanabisWar('Улица под угрозой', `ВНИМАНИЕ!`, `Захват ~y~#${zoneId}~s~ начнется в ${timeLabel[timeIndex]} (( ООС МСК ))`, 'CHAR_DEFAULT', ownerId);
+    methods.notifyWithPictureToCanabisWar('Аванпост под угрозой', `ВНИМАНИЕ!`, `Захват ~y~#${zoneId}~s~ начнется в ${timeLabel[timeIndex]} (( ООС МСК ))`, 'CHAR_DEFAULT', ownerId);
     methods.notifyWithPictureToCanabisWar('Война за улицу', `ВНИМАНИЕ!`, `Захват ~y~#${zoneId}~s~ начнется в ${timeLabel[timeIndex]} (( ООС МСК ))`, 'CHAR_DEFAULT', user.get(player, 'fraction_id2'));
 };
 
@@ -211,7 +211,7 @@ canabisWar.timer = function() {
             if (user.isAdmin(p))
                 return;
             let fId = methods.parseInt(user.get(p, 'fraction_id2'));
-            if (fId === 0 && !user.isUsmc(p) && !user.isAdmin(p))
+            if (fId === 0 && !user.isAdmin(p))
                 return;
             if (canabisWar.isInZone(p, currentZone)) {
                 if (p.health <= 0) return;
@@ -235,14 +235,14 @@ canabisWar.timer = function() {
             canabisWar.save(zoneId, ownerId, fractionName);
             canabisWar.set(zoneId, 'canWar', false);
 
-            methods.notifyWithPictureToCanabisWar('Досрочное завершение', `Улица #${currentZone}`, 'Территория под контролем ' + fractionName + '\nСвязи с нарушением количества людей в территории', 'CHAR_DEFAULT', currentDef);
-            methods.notifyWithPictureToCanabisWar('Досрочное завершение', `Улица #${currentZone}`, 'Территория под контролем ' + fractionName + '\nСвязи с нарушением количества людей в территории', 'CHAR_DEFAULT', currentAttack);
+            methods.notifyWithPictureToCanabisWar('Досрочное завершение', `Аванпост #${currentZone}`, 'Территория под контролем ' + fractionName + '\nСвязи с нарушением количества людей в территории', 'CHAR_DEFAULT', currentDef);
+            methods.notifyWithPictureToCanabisWar('Досрочное завершение', `Аванпост #${currentZone}`, 'Территория под контролем ' + fractionName + '\nСвязи с нарушением количества людей в территории', 'CHAR_DEFAULT', currentAttack);
             canabisWar.changeZoneColor(currentZone, ownerId);
             mp.players.forEachInRange(warPos, 400, p => {
                 if (!user.isLogin(p))
                     return;
                 let fId = methods.parseInt(user.get(p, 'fraction_id2'));
-                if (fId === 0 && !user.isUsmc(p) && !user.isAdmin(p))
+                if (fId === 0 && !user.isAdmin(p))
                     return;
                 if (currentDef === fId || currentAttack === fId || user.isAdmin(p)) {
                     if (p.dimension > 0) {
@@ -270,15 +270,15 @@ canabisWar.timer = function() {
             canabisWar.save(zoneId, ownerId, fractionName);
             canabisWar.set(zoneId, 'canWar', false);
 
-            methods.notifyWithPictureToCanabisWar('Досрочное завершение', `Улица #${currentZone}`, 'Территория под контролем ' + fractionName + '\nСвязи с нарушением количества людей в территории', 'CHAR_DEFAULT', currentDef);
-            methods.notifyWithPictureToCanabisWar('Досрочное завершение', `Улица #${currentZone}`, 'Территория под контролем ' + fractionName + '\nСвязи с нарушением количества людей в территории', 'CHAR_DEFAULT', currentAttack);
+            methods.notifyWithPictureToCanabisWar('Досрочное завершение', `Аванпост #${currentZone}`, 'Территория под контролем ' + fractionName + '\nСвязи с нарушением количества людей в территории', 'CHAR_DEFAULT', currentDef);
+            methods.notifyWithPictureToCanabisWar('Досрочное завершение', `Аванпост #${currentZone}`, 'Территория под контролем ' + fractionName + '\nСвязи с нарушением количества людей в территории', 'CHAR_DEFAULT', currentAttack);
 
             canabisWar.changeZoneColor(currentZone, ownerId);
             mp.players.forEachInRange(warPos, 400, p => {
                 if (!user.isLogin(p))
                     return;
                 let fId = methods.parseInt(user.get(p, 'fraction_id2'));
-                if (fId === 0 && !user.isUsmc(p) && !user.isAdmin(p))
+                if (fId === 0 && !user.isAdmin(p))
                     return;
                 if (currentDef === fId || currentAttack === fId || user.isAdmin(p)) {
                     if (p.dimension > 0) {
@@ -302,7 +302,7 @@ canabisWar.timer = function() {
                 if (!user.isLogin(p))
                     return;
                 let fId = methods.parseInt(user.get(p, 'fraction_id2'));
-                if (fId === 0 && !user.isUsmc(p) && !user.isAdmin(p))
+                if (fId === 0 && !user.isAdmin(p))
                     return;
                 try {
                     if (user.isAdmin(p) || currentDef === fId || currentAttack === fId)
@@ -335,15 +335,15 @@ canabisWar.timer = function() {
                 canabisWar.save(zoneId, ownerId, fractionName);
                 canabisWar.set(zoneId, 'canWar', false);
 
-                methods.notifyWithPictureToCanabisWar('Итоги войны', `Улица #${currentZone}`, 'Территория под контролем ' + fractionName, 'CHAR_DEFAULT', currentDef);
-                methods.notifyWithPictureToCanabisWar('Итоги войны', `Улица #${currentZone}`, 'Территория под контролем ' + fractionName, 'CHAR_DEFAULT', currentAttack);
+                methods.notifyWithPictureToCanabisWar('Итоги войны', `Аванпост #${currentZone}`, 'Территория под контролем ' + fractionName, 'CHAR_DEFAULT', currentDef);
+                methods.notifyWithPictureToCanabisWar('Итоги войны', `Аванпост #${currentZone}`, 'Территория под контролем ' + fractionName, 'CHAR_DEFAULT', currentAttack);
 
                 canabisWar.changeZoneColor(currentZone, ownerId);
                 mp.players.forEachInRange(warPos, 400, p => {
                     if (!user.isLogin(p))
                         return;
                     let fId = methods.parseInt(user.get(p, 'fraction_id2'));
-                    if (fId === 0 && !user.isUsmc(p) && !user.isAdmin(p))
+                    if (fId === 0 && !user.isAdmin(p))
                         return;
                     if (currentDef === fId || currentAttack === fId || user.isAdmin(p)) {
                         if (p.dimension > 0) {
@@ -456,9 +456,9 @@ canabisWar.getPos = function(id) {
 mp.events.add("playerDeath", (player, reason, killer) => {
     if (!isStartTimer)
         return;
-    if (user.isLogin(killer) && (user.isMafia(player) || user.isUsmc(player))) {
+    if (user.isLogin(killer) && (user.isMafia(player))) {
         mp.players.forEachInRange(warPos, 400, p => {
-            if (!user.isUsmc(p) && !user.isMafia(p) && !user.isAdmin(p))
+            if (!user.isMafia(p) && !user.isAdmin(p))
                 return;
             if (canabisWar.isInZone(p, currentZone)) {
                 p.outputChatBoxNew(`[${chat.getTime()}] !{${chat.clBlue}}${user.getRpName(killer)} (${killer.id}) !{${chat.clWhite}}убил игрока !{${chat.clBlue}}${user.getRpName(player)} (${player.id})`);
@@ -500,7 +500,7 @@ canabisWar.changeZoneColor = function(id, fractionId) {
         try {
             if (!user.isLogin(p))
                 return;
-            user.createBlipByRadius(p, blipOffset + id, _warPos.x, _warPos.y, _warPos.z, 75, 5, enums.fractionColor[fractionId]);
+            user.createBlip(p, blipOffset + id, _warPos.x, _warPos.y, _warPos.z, 767, enums.fractionColor[fractionId], false, false, '', 0, 0.6);
         }
         catch (e) {}
     });

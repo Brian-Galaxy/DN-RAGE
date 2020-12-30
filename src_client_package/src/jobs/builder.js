@@ -900,10 +900,10 @@ builder.workProcess = function(id) {
                     else
                         offset = 5;
                     if (fData.get('level') > 5) {
-                        family.addMoney(fId, (methods.getRandomInt(10, 14) + offset), 'Зачисление от работы разнорабочего');
+                        family.addMoney(fId, (methods.getRandomInt(12, 15) + offset), 'Зачисление от работы строителя');
                     }
                 }
-                user.giveJobMoney(methods.getRandomInt(10, 14) + methods.getRandomFloat() + offset);
+                user.giveJobMoney(methods.getRandomInt(12, 15) + methods.getRandomFloat() + offset);
             }, 10000);
         }
         else

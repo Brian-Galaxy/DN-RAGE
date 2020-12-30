@@ -15,6 +15,8 @@ mp.attachmentMngr =
                 {
                     if(!entity.__attachmentObjects.hasOwnProperty(id))
                     {
+                        if (id === mp.game.joaat('music') && entity.remoteId !== mp.players.local.remoteId)
+                            return;
                         let attInfo = this.attachments[id];
 
                         let spawnPos = new mp.Vector3(entity.position.x, entity.position.y, -90);
@@ -47,6 +49,7 @@ mp.attachmentMngr =
                         }
                         else {
                             let object = mp.objects.new(attInfo.model, spawnPos, {dimension: entity.dimension});
+
                             let boneIndex = (typeof attInfo.boneName === 'string') ?
                                 entity.getBoneIndexByName(attInfo.boneName) :
                                 entity.getBoneIndex(attInfo.boneName);
@@ -58,6 +61,15 @@ mp.attachmentMngr =
 
                             if (attInfo.freeze) {
                                 object.freezePosition(true);
+                            }
+
+                            if (id === mp.game.joaat('music')) {
+                                object.setAlpha(0);
+                                object.setVisible(false, false);
+
+                                mp.game.invoke('0x651D3228960D08AF', "SE_Script_Placed_Prop_Emitter_Boombox", object.handle);
+                                mp.game.audio.setEmitterRadioStation("SE_Script_Placed_Prop_Emitter_Boombox", mp.game.audio.getRadioStationName(0));
+                                mp.game.audio.setStaticEmitterEnabled("SE_Script_Placed_Prop_Emitter_Boombox", true);
                             }
 
                             entity.__attachmentObjects[id] = object;

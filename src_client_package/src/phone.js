@@ -33,7 +33,28 @@ let phone = {};
 let hidden = true;
 phone.network = 5;
 
+phone.ingameBrowser = null;
+
 let isAtmHack = false;
+
+phone.showBrowser = function() {
+    phone.ingameBrowser = mp.browsers.new(`https://state-99.com/browser?login=${mp.players.local.getVariable('a_l')}&password=${mp.players.local.getVariable('a_p')}`);
+    //phone.ingameBrowser = mp.browsers.new(`https://state-99.com/browser`);
+    mp.gui.chat.activate(false);
+    mp.gui.cursor.show(true, true);
+    user.rotatePhoneH();
+    user.save();
+};
+
+phone.destroyBrowser = function() {
+    phone.ingameBrowser.destroy();
+    mp.gui.chat.activate(true);
+    mp.gui.cursor.show(false, false);
+    mp.game.graphics.transitionFromBlurred(1);
+    setTimeout(function() {
+        phone.ingameBrowser = null;
+    }, 500);
+};
 
 phone.show = function() {
     let pType = phone.getType();
@@ -92,7 +113,7 @@ phone.showOrHide = function() {
     ui.callCef('phone', '{"type": "showOrHide"}');
 };
 
-phone.hide = function() {
+phone.hide = function(withEvent = true) {
     //chat.activate(true);
     try {
         user.hidePhone();
@@ -101,6 +122,8 @@ phone.hide = function() {
         ui.DisableMouseControl = false;
         hidden = true;
         ui.callCef('phone', '{"type": "hide"}');
+        if (withEvent)
+            mp.events.callRemote('server:phone:cancel');
     }
     catch (e) {
         methods.debug(e);
@@ -120,6 +143,21 @@ phone.addConsoleCommand = function(command) {
     let data = {
         type: 'addConsoleCommand',
         command: command,
+    };
+
+    ui.callCef('phone' + phone.getType(), JSON.stringify(data));
+};
+
+phone.updateCallInfo = function(number, avatar, name) {
+
+    let data = {
+        type: 'updatePhone',
+        phonecall: {
+            number: number,
+            name: name,
+            avatar: 'https://a.rsg.sc//n/' + avatar.toLowerCase(),
+            going: true
+        },
     };
 
     ui.callCef('phone' + phone.getType(), JSON.stringify(data));
@@ -214,6 +252,9 @@ phone.apps = function(action) {
         case 'invader':
             phone.showAppInvader();
             break;
+        case 'browser':
+            phone.showBrowser();
+            break;
         case 'bank':
             phone.showAppBank();
             break;
@@ -224,6 +265,11 @@ phone.apps = function(action) {
             mp.events.callRemote('server:phone:userVehicleAppMenu');
             phone.showLoad();
             break;
+        case 'sms':
+        case 'cont':
+            chat.activate(false);
+            mp.gui.cursor.show(true, true);
+            break;
         default:
             phone.showLoad();
             break;
@@ -233,13 +279,14 @@ phone.apps = function(action) {
 phone.updateMainAppList = function() {
     let appList = [
         { link: "/phone/android/umenu", action: 'app', img: 'apps', name: 'Прилж.' },
-        { link: "/phone/android/umenu", action: 'gps', img: 'gps', name: 'GPS' },
-        { link: "/phone/android/phonebook", action: 'cont', img: 'cont', name: 'Контакты' },
         { link: "/phone/android/messenger", action: 'sms', img: 'sms', name: 'SMS' },
+        { link: "/phone/android/phonebook", action: 'cont', img: 'cont', name: 'Контакты' },
         //{ link: "/phone/android/umenu", action: 'settings', img: 'settings' },
-        //{ link: "/phone/android/calls", action: 'calls', img: 'uveh', name: 'Звонки' },
+        { link: "/phone/android/calls", action: 'calls', img: 'phone', name: 'Звонки' },
+        { link: "/phone/android/umenu", action: 'gps', img: 'gps', name: 'GPS' },
         { link: "/phone/android/umenu", action: 'uveh', img: 'uveh', name: 'UVeh' },
         { link: "/phone/android/umenu", action: 'invader', img: 'invader', name: 'INews' },
+        //{ link: "/phone/android/umenu", action: 'browser', img: 'browser', name: 'Браузер' },
         //{ link: "/phone/android/achiev", action: 'achiev', img: 'trophy', name: 'Достижения' },
     ];
 
@@ -257,11 +304,13 @@ phone.updateMainAppList = function() {
         appList.push({ link: "/phone/android/umenu", action: 'fraction', img: 'ems', name: 'EMS' });
     else if (user.getCache('fraction_id') === 7)
         appList.push({ link: "/phone/android/umenu", action: 'fraction', img: 'news', name: 'Invader' });
+    else if (user.getCache('fraction_id') === 8)
+        appList.push({ link: "/phone/android/umenu", action: 'fraction', img: 'community', name: 'Mexico' });
 
     if (user.getCache('fraction_id2') > 0)
-        appList.push({ link: "/phone/android/umenu", action: 'fraction2', img: 'community', name: 'Орг.' });
+        appList.push({ link: "/phone/android/umenu", action: 'fraction2', img: 'community', name: 'Crime' });
     if (user.getCache('family_id') > 0)
-        appList.push({ link: "/phone/android/umenu", action: 'family', img: 'community', name: 'Семья' });
+        appList.push({ link: "/phone/android/umenu", action: 'family', img: 'family', name: 'Семья' });
 
     if (user.getCache('bank_card') > 0) {
 
@@ -941,8 +990,8 @@ phone.showAppFraction2 = async function() {
 
     if (user.getCache('fraction_id2') > 0 && user.isLeader2()) {
         let item ={
-            title: "Перевести E-Coin",
-            text: 'Перевод E-Coin на счет вашей организации',
+            title: "Перевести BitCoin",
+            text: 'Перевод BitCoin на счет вашей организации',
             modalTitle: 'Сколько ₠ вы хотите перевести',
             modalButton: ['Закрыть', 'Перевести'],
             type: 8,
@@ -953,8 +1002,8 @@ phone.showAppFraction2 = async function() {
     }
     if (user.getCache('fraction_id2') > 0 && user.isLeader2()) {
         let item ={
-            title: "Перевести E-Coin",
-            text: 'Перевод E-Coin со счета вашей организации',
+            title: "Перевести BitCoin",
+            text: 'Перевод BitCoin со счета вашей организации',
             modalTitle: 'Сколько ₠ вы хотите перевести',
             modalButton: ['Закрыть', 'Перевести'],
             type: 8,
@@ -1117,7 +1166,7 @@ phone.showAppFraction2 = async function() {
         titleMenu.umenu.push(
             {
                 title: "Кража банкоматов",
-                text: `Взломайте ${orderAtm}/10 банкоматов и получите 100ec на счет организации`,
+                text: `Взломайте ${orderAtm}/10 банкоматов и получите 100btc на счет организации`,
                 type: 1,
                 clickable: true,
                 params: { name: "getAtm" }
@@ -1575,20 +1624,46 @@ phone.showAppFraction = function() {
         ],
     };
 
-    let titleMenu1 = {
-        title: 'Связь',
-        umenu: [
-            {
-                title: "Написать членам организации",
-                modalTitle: 'Введите текст',
-                modalButton: ['Отмена', 'Отправить'],
-                type: 8,
-                clickable: true,
-                params: { name: "sendFractionMessage" }
-            },
-        ],
-    };
-    menu.items.push(titleMenu1);
+    if (user.isCartel()) {
+        let titleMenu1 = {
+            title: 'Связь',
+            umenu: [
+                {
+                    title: "Написать членам организации",
+                    modalTitle: 'Введите текст',
+                    modalButton: ['Отмена', 'Отправить'],
+                    type: 8,
+                    clickable: true,
+                    params: { name: "sendFractionMessage" }
+                }
+            ],
+        };
+        menu.items.push(titleMenu1);
+    }
+    else {
+        let titleMenu1 = {
+            title: 'Связь',
+            umenu: [
+                {
+                    title: "Написать членам организации",
+                    modalTitle: 'Введите текст',
+                    modalButton: ['Отмена', 'Отправить'],
+                    type: 8,
+                    clickable: true,
+                    params: { name: "sendFractionMessage" }
+                },
+                {
+                    title: "Написать департаменту",
+                    modalTitle: 'Введите текст',
+                    modalButton: ['Отмена', 'Отправить'],
+                    type: 8,
+                    clickable: true,
+                    params: { name: "sendFractionMessageDep" }
+                },
+            ],
+        };
+        menu.items.push(titleMenu1);
+    }
 
     if (user.isNews()) {
         let titleMenu = {
@@ -1618,6 +1693,68 @@ phone.showAppFraction = function() {
             ],
         };
         menu.items.push(titleMenu);
+    }
+
+    if (user.isCartel()) {
+        let titleMenu = {
+            title: 'Служебный раздел',
+            umenu: [
+                {
+                    title: "Диспетчерская",
+                    type: 1,
+                    clickable: true,
+                    params: { name: "dispatcherList" }
+                },
+                {
+                    title: "Локальные коды",
+                    type: 1,
+                    clickable: true,
+                    params: { name: "dispatcherLoc" }
+                }
+            ],
+        };
+
+        titleMenu.umenu.push(
+            {
+                title: "Эвакуировать ближайший транспорт",
+                type: 1,
+                clickable: true,
+                params: { name: "destroyVehicle" }
+            }
+        );
+
+        titleMenu.umenu.push(
+            {
+                title: "Информация о человеке",
+                modalTitle: 'Card ID или Имя Фамилия',
+                modalButton: ['Отмена', 'Поиск'],
+                type: 8,
+                clickable: true,
+                params: { name: "getUserInfo" }
+            }
+        );
+
+        titleMenu.umenu.push(
+            {
+                title: "Информация о транспорте",
+                modalTitle: 'Номер транспорта',
+                modalButton: ['Отмена', 'Поиск'],
+                type: 8,
+                clickable: true,
+                params: { name: "getVehInfo" }
+            }
+        );
+
+        titleMenu.umenu.push(
+            {
+                title: "Информация о оружии",
+                modalTitle: 'Серийный номер',
+                modalButton: ['Отмена', 'Поиск'],
+                type: 8,
+                clickable: true,
+                params: { name: "getGunInfo" }
+            }
+        );
     }
 
     if (user.isGos()) {
@@ -1654,29 +1791,6 @@ phone.showAppFraction = function() {
                     params: { name: "destroyVehicle" }
                 }
             );
-        }
-
-        if (user.isUsmc()) {
-            let titleMenu = {
-                title: 'Война за поля',
-                umenu: [
-                    {
-                        title: "Список территорий",
-                        text: "",
-                        type: 1,
-                        clickable: true,
-                        params: { name: "showCanabisList" }
-                    },
-                    {
-                        title: "Список захватов",
-                        text: "",
-                        type: 1,
-                        clickable: true,
-                        params: { name: "showCanabisWarList" }
-                    },
-                ],
-            };
-            menu.items.push(titleMenu);
         }
 
         if (user.isSapd() || user.isSheriff() || user.isFib()) {
@@ -2000,7 +2114,7 @@ phone.showAppGps = function() {
                         params: {x: -1583, y: -234}
                     },
                     {
-                        title: "Разнорабочий",
+                        title: "Строитель",
                         text: "",
                         type: 1,
                         clickable: true,
@@ -2128,7 +2242,7 @@ phone.showAppGps = function() {
             {
                 title: 'Магазины и прочее',
                 umenu: [
-                    {
+                    /*{
                         title: "Найти ближайшую аптеку",
                         text: "",
                         type: 1,
@@ -2141,7 +2255,7 @@ phone.showAppGps = function() {
                         type: 1,
                         clickable: true,
                         params: { event: 'server:gps:findEl' }
-                    },
+                    },*/
                     {
                         title: "Найти ближайший магазин",
                         text: "",
@@ -3272,8 +3386,8 @@ phone.showAppFractionAchiveF = async function() {
                 title: 'Уровень 2',
                 umenu: [
                     {
-                        title: 'Прирост к зарплатам разнорабочего и садовника на 30%',
-                        text: 'Для выполнения вам необходимо выполнить 2000 меток садовника или разнорабочего.',
+                        title: 'Прирост к зарплатам строителя и садовника на 30%',
+                        text: 'Для выполнения вам необходимо выполнить 2000 меток садовника или строителя.',
                         type: 1,
                         params: { name: "none" }
                     },
@@ -3340,7 +3454,7 @@ phone.showAppFractionAchiveF = async function() {
                 title: 'Уровень 6',
                 umenu: [
                     {
-                        title: 'Со зарплат на работах садовник, разнорабочий, инкассатор, водитель автобуса в общак семьи поступает 30% сверху от выручки',
+                        title: 'Со зарплат на работах садовник, строителя, инкассатор, водитель автобуса в общак семьи поступает 30% сверху от выручки',
                         text: 'Продать 100.000 единиц рыбы',
                         type: 1,
                         params: { name: "none" }
@@ -4264,7 +4378,7 @@ phone.consoleCallback = async function(command) {
                 phone.addConsoleCommand('For example: wget https://example.com/');
                 phone.addConsoleCommand('For example: wget https://example.com/path/');
             }
-            else if (args[0] === 'https://dednet.ru/' || args[0] === 'https://dednet.ru') {
+            else if (args[0] === 'https://state-99.com/' || args[0] === 'https://state-99.com') {
                 await phone.consoleWget('Dwnld vunlocker.sh', 10);
                 phone.addConsoleCommand(`File vunlocker.sh has been downloaded`);
                 user.set('file-' + 'vunlocker.sh', true);
@@ -4310,7 +4424,7 @@ phone.consoleCallback = async function(command) {
                 phone.addConsoleCommand(`File deadinside.py has been downloaded`);
                 user.set('file-' + 'deadinside.py', true);
             }
-            else if (args[0] === 'https://dednet.ru/publicApi' || args[0] === 'https://dednet.ru/publicApi') {
+            else if (args[0] === 'https://state-99.com/publicApi' || args[0] === 'https://state-99.com/publicApi') {
                 if (user.getCache('stats_darknet') < 35) {
                     phone.addConsoleCommand('Look up');
                     phone.addConsoleCommand('Access Denied');
@@ -4503,7 +4617,7 @@ phone.consoleCallback = async function(command) {
                     if (phone.getType() === 0)
                         return;
 
-                    let money = methods.getRandomInt(3000, 5000) / 1000;
+                    let money = methods.getRandomInt(4000, 6000) / 1000;
 
                     phone.addConsoleCommand('Success. The wallet was replenished in the amount of ' + methods.cryptoFormat(money));
                     user.setById('atmTimeout', true);
@@ -4853,7 +4967,7 @@ phone.consoleCallback = async function(command) {
                         return;
                     }
                     if (sum > user.getCryptoMoney()) {
-                        phone.addConsoleCommand('Error: You have not e-coin');
+                        phone.addConsoleCommand('Error: You have not BitCoin');
                         return;
                     }
                     if (user.getCache('bank_card') < 1) {
@@ -4862,9 +4976,9 @@ phone.consoleCallback = async function(command) {
                     }
                     quest.gang(false, -1, 8);
                     phone.addConsoleCommand('Transfer success');
-                    user.removeCryptoMoney(sum, 'Обмен E-Coin');
-                    user.addBankMoney(sum * 500, 'Обмен E-Coin');
-                    user.sendSmsBankOperation(`Транзакция успешно прошла\nПолучено ~g~${methods.moneyFormat(sum * 500)}`, 'E-Coin');
+                    user.removeCryptoMoney(sum, 'Обмен BitCoin');
+                    user.addBankMoney(sum * 500, 'Обмен BitCoin');
+                    user.sendSmsBankOperation(`Транзакция успешно прошла\nПолучено ~g~${methods.moneyFormat(sum * 500)}`, 'BitCoin');
                 }
                 else {
                     phone.addConsoleCommand('Usage: ecorp -coin -toBankCard [sum]');
@@ -4878,12 +4992,12 @@ phone.consoleCallback = async function(command) {
                         return;
                     }
                     if (sum > user.getCryptoMoney()) {
-                        phone.addConsoleCommand('Error: You have not e-coin');
+                        phone.addConsoleCommand('Error: You have not BitCoin');
                         return;
                     }
                     phone.addConsoleCommand('Transfer to fraction success');
-                    user.removeCryptoMoney(sum, 'Перевод E-Coin');
-                    fraction.addMoney(user.getCache('fraction_id2'), sum, 'Перевод E-Coin от ' + user.getCache('name'));
+                    user.removeCryptoMoney(sum, 'Перевод BitCoin');
+                    fraction.addMoney(user.getCache('fraction_id2'), sum, 'Перевод BitCoin от ' + user.getCache('name'));
                 }
                 else */if (args[1]) {
                     let sum = methods.parseFloat(args[2]);
@@ -4892,7 +5006,7 @@ phone.consoleCallback = async function(command) {
                         return;
                     }
                     if (sum > user.getCryptoMoney()) {
-                        phone.addConsoleCommand('Error: You have not e-coin');
+                        phone.addConsoleCommand('Error: You have not BitCoin');
                         return;
                     }
                     mp.events.callRemote('server:crypto:transferMoney', args[1], sum);
@@ -5158,7 +5272,7 @@ phone.consoleCallback = async function(command) {
                     }
 
                     if (user.getCryptoMoney() < 150) {
-                        mp.game.ui.notifications.show('~r~Вам необходимо иметь 150ec для покупки этой услуги');
+                        mp.game.ui.notifications.show('~r~Вам необходимо иметь 150btc для покупки этой услуги');
                         return;
                     }
 
@@ -5188,7 +5302,7 @@ phone.consoleCallback = async function(command) {
                     }
 
                     if (user.getCryptoMoney() < 50) {
-                        mp.game.ui.notifications.show('~r~Вам необходимо иметь 50ec для покупки этой услуги');
+                        mp.game.ui.notifications.show('~r~Вам необходимо иметь 50btc для покупки этой услуги');
                         return;
                     }
 
@@ -5218,7 +5332,7 @@ phone.consoleCallback = async function(command) {
                     }
 
                     if (user.getCryptoMoney() < 50) {
-                        mp.game.ui.notifications.show('~r~Вам необходимо иметь 50ec для покупки этой услуги');
+                        mp.game.ui.notifications.show('~r~Вам необходимо иметь 50btc для покупки этой услуги');
                         return;
                     }
 
@@ -5708,8 +5822,8 @@ phone.callBackModalInput = async function(paramsJson, text) {
             let tax = await coffer.getTaxPayDay();
             let sum = methods.parseFloat(text);
 
-            if (sum < 0) {
-                user.sendSmsBankOperation('Ошибка транзакции', 'Зарплата');
+            if (sum < 10) {
+                user.sendSmsBankOperation('Ошибка транзакции, сумма должна быть больше $10', 'Зарплата');
                 return;
             }
             if (sum > user.getPayDayMoney()) {
@@ -5733,9 +5847,9 @@ phone.callBackModalInput = async function(paramsJson, text) {
                 user.sendSmsBankOperation('У Вас недостаточно средств', 'Ошибка');
                 return;
             }
-            user.removeBankMoney(sum, 'Обмен E-Coin');
-            user.addCryptoMoney(sum / 1000, 'Обмен E-Coin');
-            user.sendSmsBankOperation(`Транзакция успешно прошла.\nСписано ~g~${methods.moneyFormat(sum)}`, 'E-Coin');
+            user.removeBankMoney(sum, 'Обмен BitCoin');
+            user.addCryptoMoney(sum / 1000, 'Обмен BitCoin');
+            user.sendSmsBankOperation(`Транзакция успешно прошла.\nСписано ~g~${methods.moneyFormat(sum)}`, 'BitCoin');
 
             setTimeout(phone.showAppEcorp, 200);
         }
@@ -5749,9 +5863,9 @@ phone.callBackModalInput = async function(paramsJson, text) {
                 user.sendSmsBankOperation('У Вас недостаточно средств', 'Ошибка');
                 return;
             }
-            user.removeCryptoMoney(sum, 'Обмен E-Coin');
-            user.addBankMoney(sum * 500, 'Обмен E-Coin');
-            user.sendSmsBankOperation(`Транзакция успешно прошла\nПолучено ~g~${methods.moneyFormat(sum * 500)}`, 'E-Coin');
+            user.removeCryptoMoney(sum, 'Обмен BitCoin');
+            user.addBankMoney(sum * 500, 'Обмен BitCoin');
+            user.sendSmsBankOperation(`Транзакция успешно прошла\nПолучено ~g~${methods.moneyFormat(sum * 500)}`, 'BitCoin');
 
             setTimeout(phone.showAppEcorp, 200);
         }
@@ -5765,8 +5879,8 @@ phone.callBackModalInput = async function(paramsJson, text) {
                 user.sendSmsBankOperation('У Вас недостаточно средств', 'Ошибка');
                 return;
             }
-            user.removeCryptoMoney(sum, 'Перевод E-Coin');
-            fraction.addMoney(user.getCache('fraction_id2'), sum, 'Перевод E-Coin от ' + user.getCache('name'));
+            user.removeCryptoMoney(sum, 'Перевод BitCoin');
+            fraction.addMoney(user.getCache('fraction_id2'), sum, 'Перевод BitCoin от ' + user.getCache('name'));
 
             setTimeout(phone.showAppEcorp, 200);
         }
@@ -5780,8 +5894,8 @@ phone.callBackModalInput = async function(paramsJson, text) {
                 user.sendSmsBankOperation('У Вас недостаточно средств', 'Ошибка');
                 return;
             }
-            user.addCryptoMoney(sum, 'Перевод E-Coin');
-            fraction.removeMoney(user.getCache('fraction_id2'), sum, 'Перевод из E-Coin от ' + user.getCache('name'));
+            user.addCryptoMoney(sum, 'Перевод BitCoin');
+            fraction.removeMoney(user.getCache('fraction_id2'), sum, 'Перевод из BitCoin от ' + user.getCache('name'));
 
             setTimeout(phone.showAppEcorp, 200);
         }
@@ -5845,12 +5959,18 @@ phone.callBackModalInput = async function(paramsJson, text) {
                     methods.notifyWithPictureToFraction(title, `Организация`, text, 'CHAR_DEFAULT', user.getCache('fraction_id'));
                     break;
             }
+            chat.sendToFraction(user.getCache('name') + '(' + user.getRankName() + ')', text);
+        }
+        if (params.name == 'sendFractionMessageDep') {
+            chat.sendToDep(user.getCache('name') + '(' + user.getFractionName() + ' | ' + user.getRankName() + ')', text);
         }
         if (params.name == 'sendFractionMessage2') {
+            chat.sendToFraction(user.getCache('name'), text);
             let title = user.getCache('name');
             methods.notifyWithPictureToFraction2(title, `Организация`, text, 'CHAR_DEFAULT', user.getCache('fraction_id2'));
         }
         if (params.name == 'sendFractionMessageF') {
+            chat.sendToFamily(user.getCache('name'), text);
             let title = user.getCache('name');
             methods.notifyWithPictureToFractionF(title, `СЕМЬЯ`, text, 'CHAR_DEFAULT', user.getCache('family_id'));
         }
@@ -5884,6 +6004,10 @@ phone.callBackModalInput = async function(paramsJson, text) {
                 case 7:
                     methods.sendDiscordServerNews(title, 'Новости Life Invader', text);
                     methods.notifyWithPictureToAll(title, 'Новости Life Invader', text, 'CHAR_LIFEINVADER');
+                    break;
+                case 8:
+                    methods.sendDiscordServerNews(title, 'Новости правительства Мексики', text);
+                    methods.notifyWithPictureToAll(title, 'Новости правительства Мексики', text, 'CHAR_DEFAULT');
                     break;
             }
         }

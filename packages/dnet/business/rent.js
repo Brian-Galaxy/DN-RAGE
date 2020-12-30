@@ -40,13 +40,18 @@ rent.listBike = [
     [185.8911, -2030.377, 17.24509, 141], // Rancho
     [2562.396, 393.7982, 107.6204, 142], // Tataviam Mountains
     [965.0702, 124.2517, 79.99068, 143], // Vinewood Racetrack
+
+    [4974.10791015625, -5716.90771484375, 18.886945724487305, 0], // Island
+    [5117.43017578125, -5171.6875, 1.2867627143859863, 0], // Island
+    [5079.74267578125, -4624.48779296875, 1.4512028694152832, 0], // Island
+    [4491.64404296875, -4514.6396484375, 3.0112814903259277, 0], // Island
 ];
 
 rent.loadAll = function() {
     methods.debug('rent.loadAll');
     rent.listBike.forEach(function (item) {
         let shopPos = new mp.Vector3(item[0], item[1], item[2]);
-        methods.createBlip(shopPos, 226, 0, 0.6, 'Bike Rent');
+        methods.createBlip(shopPos, 226, 0, 0.6, 'Rent');
         methods.createCp(shopPos.x, shopPos.y, shopPos.z, "Нажмите ~g~Е~s~ чтобы открыть меню", 0.8, -1, [33, 150, 243, 100], 0.3);
     });
 };
@@ -161,7 +166,7 @@ rent.buy = function(player, hash, price, shopId, payType) {
             }
             break;
         case 'Motorcycles':
-            if (hash != -1842748181 && !user.get(player, 'a_lic')) {
+            if (!user.get(player, 'a_lic')) {
                 player.notify('~r~У Вас нет лицензии категории А');
                 return;
             }

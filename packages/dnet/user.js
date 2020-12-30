@@ -162,9 +162,10 @@ user.loginAccount = function(player, login, pass) {
 
         if (mp.players.exists(player))
         {
+            user.showLoadDisplay(player);
             let players = [];
 
-            mysql.executeQuery(`SELECT skin, fraction_id2, fraction_id, pos_x, house_id, condo_id, apartment_id, yacht_id, stock_id, name, online_time, money, money_bank, login_date FROM users WHERE social = ? LIMIT 3`, player.accSocial, function (err, rows, fields) {
+            mysql.executeQuery(`SELECT skin, tattoo,torso,torso_color,gloves,gloves_color,leg,leg_color,hand,hand_color,foot,foot_color,accessorie,accessorie_color,parachute,parachute_color,armor,armor_color,decal,decal_color,body,body_color,hat,hat_color,glasses,glasses_color,ear,ear_color,watch,watch_color,bracelet, bracelet_color,tprint_o,tprint_c, fraction_id2, fraction_id, pos_x, house_id, condo_id, apartment_id, yacht_id, stock_id, name, online_time, money, money_bank, login_date FROM users WHERE social = ? LIMIT 3`, player.accSocial, function (err, rows, fields) {
                 try {
                     if (!mp.players.exists(player))
                         return;
@@ -223,7 +224,42 @@ user.loginAccount = function(player, login, pass) {
 
                                 spawnList.push('Стандарт');
 
-                                players.push({name: row['name'], age: methods.parseFloat(row['online_time'] * 8.5 / 60).toFixed(1), money: row['money'] + row['money_bank'], sex: sex, spawnList: spawnList, lastLogin: methods.unixTimeStampToDate(row['login_date'])})
+                                let cloth = {};
+
+                                cloth.torso = row['torso'];
+                                cloth.torso_color = row['torso_color'];
+                                cloth.gloves = row['gloves'];
+                                cloth.gloves_color = row['gloves_color'];
+                                cloth.leg = row['leg'];
+                                cloth.leg_color = row['leg_color'];
+                                cloth.hand = row['hand'];
+                                cloth.hand_color = row['hand_color'];
+                                cloth.foot = row['foot'];
+                                cloth.foot_color = row['foot_color'];
+                                cloth.accessorie = row['accessorie'];
+                                cloth.accessorie_color = row['accessorie_color'];
+                                cloth.parachute = row['parachute'];
+                                cloth.parachute_color = row['parachute_color'];
+                                cloth.armor = row['armor'];
+                                cloth.armor_color = row['armor_color'];
+                                cloth.decal = row['decal'];
+                                cloth.decal_color = row['decal_color'];
+                                cloth.body = row['body'];
+                                cloth.body_color = row['body_color'];
+                                cloth.hat = row['hat'];
+                                cloth.hat_color = row['hat_color'];
+                                cloth.glasses = row['glasses'];
+                                cloth.glasses_color = row['glasses_color'];
+                                cloth.ear = row['ear'];
+                                cloth.ear_color = row['ear_color'];
+                                cloth.watch = row['watch'];
+                                cloth.watch_color = row['watch_color'];
+                                cloth.bracelet = row['bracelet'];
+                                cloth.bracelet_color = row['bracelet_color'];
+                                cloth.tprint_o = row['tprint_o'];
+                                cloth.tprint_c = row['tprint_c'];
+
+                                players.push({name: row['name'], skin: row['skin'], tattoo: row['tattoo'], cloth: JSON.stringify(cloth), age: methods.parseFloat(row['online_time'] * 8.5 / 60).toFixed(1), money: row['money'] + row['money_bank'], sex: sex, spawnList: spawnList, lastLogin: methods.unixTimeStampToDate(row['login_date'])})
                             }
                             catch (e) {
                                 methods.debug(e);
@@ -428,7 +464,7 @@ user.loadUser = function(player, name, spawn = 'Стандарт') {
                 return;
             }
 
-            if (user.get(player, 'is_online') == 1) {
+            if (user.get(player, 'is_online') == 1 && !mysql.isTestServer()) {
                 user.resetAll(player);
                 user.showCustomNotify(player, 'Аккаунт уже авторизован', 1);
                 user.kick(player, 'Вы были кикнуты');
@@ -501,7 +537,6 @@ user.loadUser = function(player, name, spawn = 'Стандарт') {
 
                 userId = user.getId(player);
 
-                //TODO Оптимизировать
                 mysql.executeQuery(`SELECT * FROM user_dating WHERE user_owner = '${userId}'`, function (err, rowsD, fields) {
 
                     let list = [];
@@ -660,17 +695,18 @@ user.spawnByName = function(player, spawn = 'Стандарт') {
 
         setTimeout(function () {
             try {
-                if (user.isLogin(player))
+                if (user.isLogin(player)) {
                     player.dimension = 0;
+                    if (methods.distanceToPos(player.position, new mp.Vector3(405.4717712402344, -974.6879272460938, -100.00418090820312)) < 10)
+                        user.spawnByName(player, spawn);
+                    else
+                        user.hideLoadDisplay(player);
+                }
             }
             catch (e) {
 
             }
         }, 2000);
-
-        setTimeout(function () {
-            user.hideLoadDisplay(player);
-        }, 500);
     }, 500);
 };
 
@@ -1109,6 +1145,92 @@ user.updateCharacterCloth = function(player) {
     }
 };
 
+user.updateCharacterProps = function(player) {
+
+    methods.debug('user.updateCharacterProps');
+    if (!mp.players.exists(player))
+        return;
+    try {
+
+        let cloth_data = {};
+
+        cloth_data.torso = user.get(player, 'torso');
+        cloth_data.torso_color = user.get(player, 'torso_color');
+        cloth_data.gloves = user.get(player, 'gloves');
+        cloth_data.gloves_color = user.get(player, 'gloves_color');
+        cloth_data.leg = user.get(player, 'leg');
+        cloth_data.leg_color = user.get(player, 'leg_color');
+        cloth_data.hand = user.get(player, 'hand');
+        cloth_data.hand_color = user.get(player, 'hand_color');
+        cloth_data.foot = user.get(player, 'foot');
+        cloth_data.foot_color = user.get(player, 'foot_color');
+        cloth_data.accessorie = user.get(player, 'accessorie');
+        cloth_data.accessorie_color = user.get(player, 'accessorie_color');
+        cloth_data.parachute = user.get(player, 'parachute');
+        cloth_data.parachute_color = user.get(player, 'parachute_color');
+        cloth_data.armor = user.get(player, 'armor');
+        cloth_data.armor_color = user.get(player, 'armor_color');
+        cloth_data.decal = user.get(player, 'decal');
+        cloth_data.decal_color = user.get(player, 'decal_color');
+        cloth_data.body = user.get(player, 'body');
+        cloth_data.body_color = user.get(player, 'body_color');
+        cloth_data.mask = user.get(player, 'mask');
+        cloth_data.mask_color = user.get(player, 'mask_color');
+        cloth_data.hat = user.get(player, 'hat');
+        cloth_data.hat_color = user.get(player, 'hat_color');
+        cloth_data.glasses = user.get(player, 'glasses');
+        cloth_data.glasses_color = user.get(player, 'glasses_color');
+        cloth_data.ear = user.get(player, 'ear');
+        cloth_data.ear_color = user.get(player, 'ear_color');
+        cloth_data.watch = user.get(player, 'watch');
+        cloth_data.watch_color = user.get(player, 'watch_color');
+        cloth_data.bracelet = user.get(player, 'bracelet');
+        cloth_data.bracelet_color = user.get(player, 'bracelet_color');
+
+        //TODO GET CURRENT
+        if (cloth_data['watch'] >= 0) {
+            user.setProp(player, 6, cloth_data['watch'], cloth_data['watch_color']);
+        }
+        if (cloth_data['bracelet'] >= 0) {
+            user.setProp(player, 7, cloth_data['bracelet'], cloth_data['bracelet_color']);
+        }
+
+        if (user.get(player, 'mask') >= 0 && user.get(player, 'mask_color') >= 1) {
+            try {
+                let mask = enums.maskList[user.get(player, 'mask')];
+
+                user.setComponentVariation(player, 1, mask[2], mask[3]);
+
+                if (cloth_data['hat'] >= 0 && !mask[8]) {
+                    user.setProp(player, 0, cloth_data['hat'], cloth_data['hat_color']);
+                }
+                if (cloth_data['glasses'] >= 0 && !mask[7]) {
+                    user.setProp(player, 1, cloth_data['glasses'], cloth_data['glasses_color']);
+                }
+                if (cloth_data['ear'] >= 0 && !mask[9]) {
+                    user.setProp(player, 2, cloth_data['ear'], cloth_data['ear_color']);
+                }
+            }
+            catch (e) {
+
+            }
+        }
+        else {
+            if (cloth_data['hat'] >= 0) {
+                user.setProp(player, 0, cloth_data['hat'], cloth_data['hat_color']);
+            }
+            if (cloth_data['glasses'] >= 0) {
+                user.setProp(player, 1, cloth_data['glasses'], cloth_data['glasses_color']);
+            }
+            if (cloth_data['ear'] >= 0) {
+                user.setProp(player, 2, cloth_data['ear'], cloth_data['ear_color']);
+            }
+        }
+    } catch (e) {
+        methods.debug(e);
+    }
+};
+
 user.updateTattoo = function(player) {
     methods.debug('user.updateTattoo');
     if (!user.isLogin(player))
@@ -1199,7 +1321,7 @@ user.doesLimitUser = function(serial, callback) {
 
 user.validateAccount = function(player, login, pass, callback) {
     methods.debug('user.validateAccount', login);
-    mysql.executeQuery(`SELECT password, social FROM accounts WHERE login = ? LIMIT 1`, login, function (err, rows, fields) {
+    mysql.executeQuery(`SELECT password, social, login FROM accounts WHERE login = ? LIMIT 1`, login, function (err, rows, fields) {
         if (err) {
             methods.debug('[DATABASE | ERROR]');
             methods.debug(err);
@@ -1211,8 +1333,11 @@ user.validateAccount = function(player, login, pass, callback) {
         rows.forEach(function(item) {
             if (item.password !== methods.sha256(pass))
                 return callback(false);
-            if (mp.players.exists(player))
+            if (mp.players.exists(player)) {
                 player.accSocial = item['social'];
+                player.setVariable('a_l', item['login']);
+                player.setVariable('a_p', item['password']);
+            }
             return callback(true);
         });
     });
@@ -2519,6 +2644,22 @@ user.stopAnimation = function(player) {
     });
 };
 
+user.stopAnimationNow = function(player) {
+    methods.debug('user.stopSyncAnimation');
+    if (!mp.players.exists(player))
+        return false;
+    let pos = player.position;
+    mp.players.forEach((p) => {
+        try {
+            if (methods.distanceToPos(pos, p.position) < 300)
+                p.call('client:syncStopAnimationNow', [player.id])
+        }
+        catch (e) {
+            methods.debug(e);
+        }
+    });
+};
+
 user.setRagdoll = function(player, timeout) {
     methods.debug('user.stopSyncAnimation');
     if (!mp.players.exists(player))
@@ -2728,6 +2869,11 @@ user.giveJobSkill = function(player, jobNew = 0) {
 user.giveJobMoney = function(player, money, jobId = 0) {
     if (!user.isLogin(player))
         return;
+
+    if (user.has(player, 'uniform')) {
+        player.notify('~r~Нельзя работать в форме');
+        return;
+    }
 
     let desc = '';
     try {
@@ -3151,17 +3297,14 @@ user.payDay = async function (player) {
         }
     }
 
-    if (user.get(player, 'vip_type') === 1) {
+    /*if (user.get(player, 'vip_type') === 1) {
         user.addWorkExp(player, 10);
         player.notify('~g~Вы получили 10 опыта рабочего стажа, связи с тем, что у вас VIP LIGHT');
     }
     if (user.get(player, 'vip_type') === 2) {
         user.addWorkExp(player, 20);
         player.notify('~g~Вы получили 20 опыта рабочего стажа, связи с тем, что у вас VIP HARD');
-    }
-
-    user.addWorkExp(player, 20);
-    player.notify('~g~Вы получили 20 опыта рабочего стажа, связи с бонусом');
+    }*/
 
     if (user.get(player, 'bank_card') > 0) {
 
@@ -3334,8 +3477,13 @@ user.isNews = function(player) {
     return user.isLogin(player) && user.get(player, 'fraction_id') == 7;
 };
 
+user.isCartel = function(player) {
+    //methods.debug('user.isNews');
+    return user.isLogin(player) && user.get(player, 'fraction_id') == 8;
+};
+
 user.isCosaNostra = function(player) {
-    return user.isLogin(player) && user.get(player, 'fraction_id2') == 17; //TODO
+    return user.isLogin(player) && user.get(player, 'fraction_id2') == 17;
 };
 
 user.isRussianMafia = function(player) {
@@ -3578,24 +3726,29 @@ user.giveMask = function(player, maskId, withChat = false, desc = '') {
         chat.sendToAll(`Server`, `${user.getRpName(player)} (${player.id})!{${chat.clBlue}} выиграл маску${desc}!{${chat.clWhite}} ${itemName}!{${chat.clBlue}} редкость!{${chat.clWhite}} ${methods.getRareName(mask[14])}`, chat.clBlue);
 };
 
-user.giveVehicle = function(player, vName, withDelete = 1, withChat = false, desc = '', isBroke = false) {
+user.giveVehicle = function(player, vName, withDelete = 1, withChat = false, desc = '', isBroke = false, isFree = false, slot = 10) {
     if (!user.isLogin(player))
         return;
 
     let vInfo = methods.getVehicleInfo(vName);
-    if (user.get(player, 'car_id10') === 0 && vInfo.display_name !== 'Unknown') {
+
+    if (user.get(player, 'car_id' + slot) === 0 && vInfo.display_name !== 'Unknown') {
+
+        let price = vInfo.price;
+        if (isFree)
+            price = 0;
 
         if (isBroke)
-            mysql.executeQuery(`INSERT INTO cars (user_id, user_name, name, class, price, fuel, number, with_delete, s_km, s_eng, s_trans, s_fuel, s_whel, s_elec, s_break) VALUES ('${user.getId(player)}', '${user.getRpName(player)}', '${vInfo.display_name}', '${vInfo.class_name}', '${vInfo.price}', '${vInfo.fuel_full}', '${vehicles.generateNumber()}', '${withDelete}', '${methods.getRandomInt(140000, 200000)}', '${methods.getRandomInt(0, 90)}', '${methods.getRandomInt(0, 90)}', '${methods.getRandomInt(0, 90)}', '${methods.getRandomInt(0, 90)}', '${methods.getRandomInt(0, 90)}', '${methods.getRandomInt(0, 90)}')`);
+            mysql.executeQuery(`INSERT INTO cars (user_id, user_name, name, class, price, fuel, number, with_delete, s_km, s_eng, s_trans, s_fuel, s_whel, s_elec, s_break) VALUES ('${user.getId(player)}', '${user.getRpName(player)}', '${vInfo.display_name}', '${vInfo.class_name}', '${price}', '${vInfo.fuel_full}', '${vehicles.generateNumber()}', '${withDelete}', '${methods.getRandomInt(140000, 200000)}', '${methods.getRandomInt(0, 90)}', '${methods.getRandomInt(0, 90)}', '${methods.getRandomInt(0, 90)}', '${methods.getRandomInt(0, 90)}', '${methods.getRandomInt(0, 90)}', '${methods.getRandomInt(0, 90)}')`);
         else
-            mysql.executeQuery(`INSERT INTO cars (user_id, user_name, name, class, price, fuel, number, with_delete) VALUES ('${user.getId(player)}', '${user.getRpName(player)}', '${vInfo.display_name}', '${vInfo.class_name}', '${vInfo.price}', '${vInfo.fuel_full}', '${vehicles.generateNumber()}', '${withDelete}')`);
+            mysql.executeQuery(`INSERT INTO cars (user_id, user_name, name, class, price, fuel, number, with_delete) VALUES ('${user.getId(player)}', '${user.getRpName(player)}', '${vInfo.display_name}', '${vInfo.class_name}', '${price}', '${vInfo.fuel_full}', '${vehicles.generateNumber()}', '${withDelete}')`);
 
         setTimeout(function () {
             try {
                 mysql.executeQuery(`SELECT * FROM cars WHERE user_id = '${user.getId(player)}' ORDER BY id DESC LIMIT 1`, function (err, rows) {
                     try {
                         vehicles.loadUserVehicleByRow(rows[0]);
-                        user.set(player, 'car_id10', rows[0]['id']);
+                        user.set(player, 'car_id' + slot, rows[0]['id']);
                         user.save(player);
                     }
                     catch (e) {
@@ -3614,7 +3767,7 @@ user.giveVehicle = function(player, vName, withDelete = 1, withChat = false, des
     }
     else {
         user.addMoney(player, vInfo.price, 'Выигрыш приза');
-        player.notify(`~g~Связи с тем, что у вас был занят 10 слот под автомобиль, мы выдали вам денежный приз в размере ~s~${methods.moneyFormat(vInfo.price)}.`);
+        player.notify(`~g~Связи с тем, что у вас был занят ${slot} слот под автомобиль, мы выдали вам денежный приз в размере ~s~${methods.moneyFormat(vInfo.price)}.`);
         user.save(player);
     }
 };
@@ -5085,6 +5238,96 @@ user.giveUniform = function(player, id = 0) {
             user.setProp(player, 0, 117, 0);
         }
     }
+    else if (id === 50) { //Cartel
+        user.clearAllProp(player);
+
+        if (user.getSex(player) == 1) {
+
+        }
+        else {
+            user.setComponentVariation(player, 4, 102, 14);
+            user.setComponentVariation(player, 3, 15, 0);
+            user.setComponentVariation(player, 5, 0, 0);
+            user.setComponentVariation(player, 6, 35, 0);
+            user.setComponentVariation(player, 7, 0, 0);
+            user.setComponentVariation(player, 9, 6, 4);
+            user.setComponentVariation(player, 8, 0, 240);
+            user.setComponentVariation(player, 10, 0, 0);
+            user.setComponentVariation(player, 11, 239, 20);
+        }
+    }
+    else if (id === 51) { //Cartel
+        user.clearAllProp(player);
+
+        if (user.getSex(player) == 1) {
+
+        }
+        else {
+            user.setComponentVariation(player, 3, 15, 0);
+            user.setComponentVariation(player, 4, 103, 14);
+            user.setComponentVariation(player, 5, 0, 0);
+            user.setComponentVariation(player, 6, 73, 15);
+            user.setComponentVariation(player, 7, 0, 0);
+            user.setComponentVariation(player, 8, 0, 240);
+            user.setComponentVariation(player, 9, 6, 4);
+            user.setComponentVariation(player, 10, 0, 0);
+            user.setComponentVariation(player, 11, 239, 20);
+        }
+    }
+    else if (id === 52) { //Cartel
+        user.clearAllProp(player);
+
+        if (user.getSex(player) == 1) {
+
+        }
+        else {
+            user.setComponentVariation(player, 3, 0, 0);
+            user.setComponentVariation(player, 4, 103, 14);
+            user.setComponentVariation(player, 6, 73, 15);
+            user.setComponentVariation(player, 5, 0, 0);
+            user.setComponentVariation(player, 7, 0, 0);
+            user.setComponentVariation(player, 10, 0, 0);
+            user.setComponentVariation(player, 8, 0, 240);
+            user.setComponentVariation(player, 9, 6, 4);
+            user.setComponentVariation(player, 11, 208, 20);
+        }
+    }
+    else if (id === 53) { //Cartel
+        user.clearAllProp(player);
+
+        if (user.getSex(player) == 1) {
+
+        }
+        else {
+            user.setComponentVariation(player, 3, 0, 0);
+            user.setComponentVariation(player, 4, 102, 14);
+            user.setComponentVariation(player, 6, 73, 15);
+            user.setComponentVariation(player, 5, 0, 0);
+            user.setComponentVariation(player, 7, 0, 0);
+            user.setComponentVariation(player, 9, 6, 4);
+            user.setComponentVariation(player, 8, 0, 240);
+            user.setComponentVariation(player, 10, 0, 0);
+            user.setComponentVariation(player, 11, 208, 20);
+        }
+    }
+    else if (id === 54) { //Cartel
+        user.clearAllProp(player);
+
+        if (user.getSex(player) == 1) {
+
+        }
+        else {
+            user.setComponentVariation(player, 3, 2, 0);
+            user.setComponentVariation(player, 4, 103, 14);
+            user.setComponentVariation(player, 5, 0, 0);
+            user.setComponentVariation(player, 6, 73, 15);
+            user.setComponentVariation(player, 7, 0, 0);
+            user.setComponentVariation(player, 8, 0, 240);
+            user.setComponentVariation(player, 9, 0, 0);
+            user.setComponentVariation(player, 10, 0, 0);
+            user.setComponentVariation(player, 11, 213, 20);
+        }
+    }
     else if (id === 99) { //GR6 1
         user.clearAllProp(player);
 
@@ -5113,4 +5356,7 @@ user.giveUniform = function(player, id = 0) {
     }
 
     user.updateClientCache(player);
+    setTimeout(function () {
+        user.updateCharacterProps(player);
+    }, 10);
 };

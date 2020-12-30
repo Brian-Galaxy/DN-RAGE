@@ -133,6 +133,8 @@ mp.events.add("playerEnterCheckpoint", (checkpoint) => {
 
     currentCpId++;
 
+    mp.game.audio.playSound(-1, "CHECKPOINT_PERFECT", "HUD_MINI_GAME_SOUNDSET", false, 0, true);
+
     try {
         user.setHealth(100);
     }

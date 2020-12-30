@@ -86,6 +86,23 @@ mp.events.add('client:syncComponentVariation', (playerId, component, drawableId,
     }
 });
 
+mp.events.add('client:syncTaskEnter', (playerId, vehRemoteId, seat) => {
+    setTimeout(function () {
+        try {
+            let remotePlayer = mp.players.atRemoteId(playerId);
+            let vehicle = mp.vehicles.atRemoteId(vehRemoteId);
+            if (remotePlayer && mp.players.exists(remotePlayer) && vehicle && mp.vehicles.exists(vehicle)) {
+                remotePlayer.clearTasks();
+                remotePlayer.taskEnterVehicle(vehicle.handle, 5000, seat, 2, 1, 0);
+            }
+        }
+        catch (e) {
+            methods.debug('Exception: client:syncTaskEnter');
+            methods.debug(e);
+        }
+    }, 100)
+});
+
 mp.events.add('client:pSync:alpha', (playerId, alpha) => {
     try {
         let remotePlayer = mp.players.atRemoteId(playerId);
@@ -194,6 +211,8 @@ mp.events.add('client:syncAnimation', async (playerId, dict, anim, flag) => {
                 dict == 'anim@amb@facility@briefing_room@seating@male@var_e@' ||
                 dict == 'anim@amb@office@boardroom@crew@male@var_c@base_r@' ||
                 dict == 'amb@world_human_seat_steps@male@hands_in_lap@base' ||
+                dict == 'amb@prop_human_seat_sunlounger@male@base' ||
+                dict == 'amb@world_human_seat_steps@male@elbows_on_knees@base' ||
                 dict == 'anim@amb@clubhouse@seating@male@var_c@base@'
             )
             {
@@ -271,6 +290,30 @@ mp.events.add('client:syncStopAnimation', (playerId) => {
     }
     catch (e) {
         methods.debug('Exception: client:syncAnimation');
+        methods.debug(e);
+    }
+});
+
+mp.events.add('client:syncStopAnimationNow', (playerId) => {
+    //if (mp.players.local.remoteId == playerId || mp.players.local.id == playerId)
+    try {
+        methods.debug('client:syncStopAnimationNow', playerId);
+        let remotePlayer = mp.players.atRemoteId(playerId);
+        if (remotePlayer && mp.players.exists(remotePlayer)) {
+
+            if (Container.Data.HasLocally(remotePlayer.remoteId, 'hasSeat')) {
+                remotePlayer.freezePosition(false);
+                remotePlayer.setCollision(true, true);
+                remotePlayer.position = new mp.Vector3(remotePlayer.position.x, remotePlayer.position.y, remotePlayer.position.z + 0.95);
+                Container.Data.ResetLocally(remotePlayer.remoteId, 'hasSeat');
+            }
+
+            remotePlayer.clearTasks();
+            remotePlayer.clearTasksImmediately();
+        }
+    }
+    catch (e) {
+        methods.debug('Exception: client:syncStopAnimationNow');
         methods.debug(e);
     }
 });

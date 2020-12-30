@@ -44,12 +44,12 @@ shop.list = [
     [-1821.729, 793.7563, 137.1204, 108, 4],
     [-1820.643, 792.3428, 137.117, 108, 4],
 
-    [-657.087, -857.313, 23.490, 123, 5],
+    /*[-657.087, -857.313, 23.490, 123, 5],
     [1133.0963, -472.6430, 65.7651, 124, 5],
 
     [318.2640, -1076.7376, 28.4785, 125, 6],
     [92.8906, -229.4265, 53.6636, 126, 6],
-    [-252.5419, 6335.4926, 31.4260, 0, 6],
+    [-252.5419, 6335.4926, 31.4260, 0, 6],*/
 
     [-1599.7724, 5202.06640625, 3.397307, 128, 7], //FISH
     [-675.4125366210938, 5836.44140625, 16.34016227722168, 129, 8], //Охота
@@ -60,6 +60,11 @@ shop.list = [
     [-1692.13232421875, -745.8652954101562, 9.189972877502441, 0, 0],
     [-1657.715576171875, -785.521728515625, 9.21198558807373, 0, 0],
     [-1637.555419921875, -794.213134765625, 9.309758186340332, 0, 0],
+
+    [5028.7333984375, -5735.27001953125, 16.865581512451172, 154, 0], //24/7
+    [4519.4638671875, -4506.63671875, 3.2414326667785645, 155, 0], //TACO
+    [4973.12890625, -5154.48828125, 1.4928948879241943, 156, 0], //TACO
+    [5054.7275390625, -4641.595703125, 1.4069066047668457, 157, 0], //TACO
 ];
 
 shop.loadAll = function() {
@@ -185,13 +190,13 @@ shop.checkPosForOpenMenu = function(player) {
     }
 };
 
-shop.buy = function(player, itemId, price, shopId) {
+shop.buy = function(player, itemId, price, shopId, payType = 0) {
     methods.debug('shop.buy');
 
     if (!user.isLogin(player))
         return;
 
-    if (user.getMoney(player) < price) {
+    if (user.getMoney(player, payType) < price) {
         user.showCustomNotify(player, 'У вас недостаточно средств', 1, 9);
         return;
     }
@@ -212,57 +217,16 @@ shop.buy = function(player, itemId, price, shopId) {
     inventory.addItem(itemId, 1, 1, user.getId(player), 1, 0, JSON.stringify(params), 1);
 
     if (shopId > 0) {
-        player.notify('~g~Вы купили ' + items.getItemNameById(itemId) +  '. Цена за 1 ед. товара: ~s~' + methods.moneyFormat(price));
-        user.removeMoney(player, price, 'Покупка ' + items.getItemNameById(itemId));
+        user.showCustomNotify(player, 'Вы купили ' + items.getItemNameById(itemId) +  ' по цене: ' + methods.moneyFormat(price), 2, 9);
+        user.removeMoney(player, price, 'Покупка ' + items.getItemNameById(itemId), payType);
         if (business.isOpen(shopId)) {
             business.addMoney(shopId, price, items.getItemNameById(itemId));
             business.removeMoneyTax(shopId, price / business.getPrice(shopId));
         }
     }
     else if (price > 0) {
-        player.notify('~g~Вы купили ' + items.getItemNameById(itemId) +  '. Цена за 1 ед. товара: ~s~' + methods.moneyFormat(price));
-        user.removeMoney(player, price, 'Покупка ' + items.getItemNameById(itemId));
-    }
-    inventory.updateAmount(player, user.getId(player), 1);
-};
-
-shop.buyCard = function(player, itemId, price, shopId) {
-    methods.debug('shop.buyCard');
-
-    if (!user.isLogin(player))
-        return;
-
-    if (user.getBankMoney(player) < price) {
-        user.showCustomNotify(player, 'У вас недостаточно средств', 1, 9);
-        return;
-    }
-
-    if (price < 0)
-        return;
-
-    let amount = inventory.getInvAmount(player, user.getId(player), 1);
-    if (amount + items.getItemAmountById(itemId) > inventory.getPlayerInvAmountMax(player)) {
-        player.notify('~r~В инвентаре нет места');
-        return;
-    }
-
-    let params = { userName: user.getRpName(player) };
-    if (itemId >= 27 && itemId <= 30)
-        params = { userName: user.getRpName(player), type: itemId - 26, number: methods.getRandomPhone(), bg: 'https://i.imgur.com/v4aju8F.jpg' };
-
-    inventory.addItem(itemId, 1, 1, user.getId(player), 1, 0, JSON.stringify(params), 1);
-
-    if (shopId > 0) {
-        player.notify('~g~Вы купили ' + items.getItemNameById(itemId) +  '. Цена за 1 ед. товара: ~s~' + methods.moneyFormat(price));
-        user.removeBankMoney(player, price, 'Покупка ' + items.getItemNameById(itemId));
-        if (business.isOpen(shopId)) {
-            business.addMoney(shopId, price, items.getItemNameById(itemId));
-            business.removeMoneyTax(shopId, price / business.getPrice(shopId));
-        }
-    }
-    else {
-        player.notify('~g~Вы купили ' + items.getItemNameById(itemId) +  '. Цена за 1 ед. товара: ~s~' + methods.moneyFormat(price));
-        user.removeBankMoney(player, price, 'Покупка ' + items.getItemNameById(itemId));
+        user.showCustomNotify(player, 'Вы купили ' + items.getItemNameById(itemId) +  ' по цене: ' + methods.moneyFormat(price), 2, 9);
+        user.removeMoney(player, price, 'Покупка ' + items.getItemNameById(itemId), payType);
     }
     inventory.updateAmount(player, user.getId(player), 1);
 };

@@ -31,6 +31,8 @@ vSync.VehicleSyncData = {
     Hood: false,
     Trunk: false,
 
+    Window: [0,0,0,0],
+
     SmokeR: 255,
     SmokeG: 255,
     SmokeB: 255,
@@ -544,6 +546,13 @@ mp.events.add('s:vSync:setWindowData', (player, vId, w1, w2, w3, w4) => {
         vSync.setVehicleWindowState(veh, 1, w2);
         vSync.setVehicleWindowState(veh, 2, w3);
         vSync.setVehicleWindowState(veh, 3, w4);
+    }
+});
+
+mp.events.add('s:vSync:setWindowDataIdx', (player, vId, idx, w) => {
+    let veh = mp.vehicles.at(vId);
+    if (mp.players.exists(player) && vehicles.exists(veh)) {
+        vSync.setVehicleWindowState(veh, idx, w);
     }
 });
 

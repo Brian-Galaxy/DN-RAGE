@@ -234,13 +234,16 @@ mp.events.add("render", () => {
         const dX = currentPoint.x - x;
         const dY = currentPoint.y - y;
 
-        cameraRotator.setPoint(x, y);
+        if (x > 0.2) {
+            cameraRotator.setPoint(x, y);
 
-        if (mp.game.controls.isDisabledControlPressed(2, 237)) {
-            cameraRotator.onMouseMove(dX, dY);
+            if (mp.game.controls.isDisabledControlPressed(2, 237)) {
+                cameraRotator.onMouseMove(dX, dY);
+            }
+
+            cameraRotator.onMouseScroll(su, sd);
         }
 
-        cameraRotator.onMouseScroll(su, sd);
     }
     catch (e) {
     }

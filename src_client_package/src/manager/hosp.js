@@ -14,6 +14,7 @@ let hosp = {};
 hosp.pos1 = new mp.Vector3(320.7169494628906, -584.0098876953125, 42.28400802612305);
 hosp.pos2 = new mp.Vector3(-259.3686218261719, 6327.6416015625, 31.420677185058594);
 hosp.pos3 = new mp.Vector3(1827.4207763671875, 3676.67138671875, 33.27007293701172);
+hosp.pos4 = new mp.Vector3(4961.6123046875, -5790.55078125, 25.26630401611328);
 
 hosp.posArmy = new mp.Vector3(556.9434204101562, -3125.037841796875, 17.76858139038086);
 
@@ -21,6 +22,7 @@ let hospList = [
     hosp.pos1,
     hosp.pos2,
     hosp.pos3,
+    hosp.pos4,
 ];
 
 let prvTime = 0;
@@ -79,6 +81,12 @@ hosp.timer = function() {
                         user.teleportv(hosp.posArmy);
                     }
                 }
+                else if (user.getCache('med_type') === 4) {
+                    if (methods.distanceToPos(mp.players.local.position, hosp.pos4) > 15) {
+                        mp.game.ui.notifications.show("~r~Вам необходимо проходить лечение");
+                        user.teleportv(hosp.pos4);
+                    }
+                }
                 else {
                     if (methods.distanceToPos(mp.players.local.position, hosp.pos1) > 40) {
                         mp.game.ui.notifications.show("~r~Вам необходимо проходить лечение");
@@ -108,25 +116,27 @@ hosp.freePlayer = function() {
     user.setWaterLevel(500);
     user.setEatLevel(500);
 
-    if (user.getCache('med_lic'))
-    {
-        user.removeMoney(100, 'Лечение в больнице');
-        coffer.addMoney(6, 100);
-        mp.game.ui.notifications.show("~g~Стоимость лечения со страховкой ~s~$100");
-    }
-    else
-    {
-        if (user.getCache('online_time') < 300) {
-            user.removeMoney(50);
-            coffer.addMoney(6, 50, 'Лечение в больнице');
-            mp.game.ui.notifications.show("~g~Стоимость лечения ~s~$50");
+    setTimeout(function () {
+        if (user.getCache('med_lic'))
+        {
+            user.removeMoney(100, 'Лечение в больнице');
+            coffer.addMoney(6, 100);
+            mp.game.ui.notifications.show("~g~Стоимость лечения со страховкой ~s~$100");
         }
-        else {
-            user.removeMoney(300, 'Лечение в больнице');
-            coffer.addMoney(6,300);
-            mp.game.ui.notifications.show("~g~Стоимость лечения ~s~$300");
+        else
+        {
+            if (user.getCache('online_time') < 300) {
+                user.removeMoney(50);
+                coffer.addMoney(6, 50, 'Лечение в больнице');
+                mp.game.ui.notifications.show("~g~Стоимость лечения ~s~$50");
+            }
+            else {
+                user.removeMoney(300, 'Лечение в больнице');
+                coffer.addMoney(6,300);
+                mp.game.ui.notifications.show("~g~Стоимость лечения ~s~$300");
+            }
         }
-    }
+    }, 500);
 };
 
 hosp.reset = function() {
@@ -144,6 +154,9 @@ hosp.toHospCache = function() {
         }
         else if (user.getCache('med_type') === 3) {
             user.respawn(hosp.posArmy.x, hosp.posArmy.y, hosp.posArmy.z);
+        }
+        else if (user.getCache('med_type') === 4) {
+            user.respawn(hosp.pos4.x, hosp.pos4.y, hosp.pos4.z);
         }
         else {
             user.set('med_type', 0);
@@ -175,6 +188,10 @@ hosp.toHosp = function() {
             else if (methods.distanceToPos(pos, hosp.posArmy) < 50) {
                 user.set('med_type', 3);
                 user.respawn(hosp.posArmy.x, hosp.posArmy.y, hosp.posArmy.z);
+            }
+            else if (methods.distanceToPos(pos, hosp.pos4) < 50) {
+                user.set('med_type', 4);
+                user.respawn(hosp.pos4.x, hosp.pos4.y, hosp.pos4.z);
             }
             else {
                 user.set('med_type', 0);

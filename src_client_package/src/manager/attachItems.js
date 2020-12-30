@@ -5,9 +5,11 @@ let attachItems = {};
 
 attachItems.registerAttaches = function () {
     try {
-        mp.attachmentMngr.register("phone1", -1038739674, 28422, new mp.Vector3(0, 0, 0), new mp.Vector3(0, 0, 0));
-        mp.attachmentMngr.register("phone2", 1907022252, 28422, new mp.Vector3(0, 0, 0), new mp.Vector3(0, 0, 0));
-        mp.attachmentMngr.register("phone3", -2017357667, 28422, new mp.Vector3(0, 0, 0), new mp.Vector3(0, 0, 0));
+        mp.attachmentMngr.register("phone3", -1038739674, 28422, new mp.Vector3(0, 0, 0), new mp.Vector3(0, 0, 0)); //Android
+        mp.attachmentMngr.register("phone2", 1907022252, 28422, new mp.Vector3(0, 0, 0), new mp.Vector3(0, 0, 0)); //WinPhone
+        mp.attachmentMngr.register("phone1", -2017357667, 28422, new mp.Vector3(0, 0, 0), new mp.Vector3(0, 0, 0)); //IPhone
+
+        mp.attachmentMngr.register("music", -2017357667, 28422, new mp.Vector3(0, 0, 0), new mp.Vector3(0, 0, 0)); //IPhone
 
         mp.attachmentMngr.register("mic", mp.game.joaat("p_ing_microphonel_01"), 60309, new mp.Vector3(0.055, 0.05, 0.0), new mp.Vector3(240.0, 0.0, 0.0));
         mp.attachmentMngr.register("cam", mp.game.joaat("prop_v_cam_01"), 28422, new mp.Vector3(0.0, 0.0, 0.0), new mp.Vector3(0.0, 0.0, 0.0));

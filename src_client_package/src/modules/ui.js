@@ -46,6 +46,8 @@ let canEdit = false;
 let showHud = true;
 let showMenu = false;
 let isGreenZone = false;
+let isIslandZone = false;
+let isIslandLoad = false;
 let isYellowZone = false;
 
 let maxStringLength = 50;
@@ -307,6 +309,15 @@ ui.isGreenZone = function() {
     return isGreenZone;
 };
 
+ui.isIslandZone = function() {
+    return isIslandZone;
+};
+
+ui.unloadIslandMinimap = function() {
+    isIslandLoad = false;
+    mp.game.invoke("0x5E1460624D194A38", isIslandLoad);
+};
+
 ui.isGreenZoneByPos = function(pos) {
     let isZone = false;
     enums.zoneGreenList.forEach(item => {
@@ -327,6 +338,7 @@ ui.isYellowZone = function() {
 };
 
 let speed = false;
+let questPrev = '';
 
 ui.updateValues = function() {
     //return; //TODO ВАЖНО
@@ -344,6 +356,12 @@ ui.updateValues = function() {
                 }
                 catch (e) {}
             });
+
+            if (isIslandZone !== isIslandLoad) {
+                isIslandLoad = isIslandZone;
+                mp.game.invoke("0x5E1460624D194A38", isIslandLoad); //LOAD_ISLAND_MINIMAP
+                mp.game.invoke("0xF74B1FFA4A15FBEA", isIslandLoad); //LOAD_ISLAND_PATHNODE (MINIMAP GPS)
+            }
 
             if (mp.players.local.dimension === 0) {
                 if (isGreenZone) {
@@ -367,7 +385,7 @@ ui.updateValues = function() {
 
             let data = {
                 type: 'updateValues',
-                isShow: user.getCache("is_clock"),
+                isShow: true,
                 temp: weather.getWeatherTempFormat(),
                 date: weather.getFullRpDate(),
                 time: weather.getFullRpTime(),
@@ -379,7 +397,7 @@ ui.updateValues = function() {
 
             data = {
                 type: 'updateValues',
-                isShow: user.getCache("is_clock"),
+                isShow: true,
                 district: ui.getCurrentZone(),
                 street: ui.getCurrentStreet(),
                 background: user.getCache('s_hud_bg'),
@@ -426,22 +444,44 @@ ui.updateValues = function() {
 
                 if (user.getCache('startProlog') < 10)
                 {
+                    let currentTask = prolog.getCurrentTask();
                     data = {
                         type: 'updateQuest',
                         showQuest: true,
                         questTitle: 'Пролог',
-                        questText: prolog.getCurrentTask(),
+                        questText: currentTask,
                     };
                     ui.callCef('hudl', JSON.stringify(data));
+                    if (currentTask !== questPrev) {
+                        mp.game.audio.playSound(-1, "Mission_Pass_Notify", "DLC_HEISTS_GENERAL_FRONTEND_SOUNDS", false, 0, true);
+                        data = {
+                            type: 'updateQuestAnim',
+                            questAnim: ui.getQuestAnim(),
+                        };
+                        ui.callCef('hudl', JSON.stringify(data));
+                    }
+                    questPrev = currentTask;
                 }
                 else if (user.getQuestCount('standart') < 10)
                 {
+                    let currentTask = quest.getQuestLineInfo('standart', user.getQuestCount('standart'));
                     data = {
                         type: 'updateQuest',
                         showQuest: true,
                         questTitle: 'Квестовое задание',
-                        questText: quest.getQuestLineInfo('standart', user.getQuestCount('standart')),
+                        questText: currentTask,
                     };
+
+                    if (currentTask !== questPrev) {
+                        mp.game.audio.playSound(-1, "Mission_Pass_Notify", "DLC_HEISTS_GENERAL_FRONTEND_SOUNDS", false, 0, true);
+                        data = {
+                            type: 'updateQuestAnim',
+                            questAnim: ui.getQuestAnim(),
+                        };
+                        ui.callCef('hudl', JSON.stringify(data));
+                    }
+                    questPrev = currentTask;
+
                     ui.callCef('hudl', JSON.stringify(data));
                 }
                 else if (user.getCache('online_wheel') < 999) {
@@ -474,6 +514,9 @@ ui.updateValues = function() {
 };
 
 let prevCarState = false;
+let vPrevInfo = {};
+let vPrevModel = 0;
+
 ui.updateVehValues = function() {
     //return; //TODO ВАЖНО
     if (uiBrowser && user.isLogin()) {
@@ -486,6 +529,7 @@ ui.updateVehValues = function() {
             let isShowLight = false;
             let isShowEngine = false;
             let isShowLock = false;
+            let vName = '';
 
             let veh = mp.players.local.vehicle;
 
@@ -501,12 +545,15 @@ ui.updateVehValues = function() {
 
                 isShowEngine = veh.getIsEngineRunning();
                 isShowLock = veh.getDoorLockStatus() !== 1;
-                let vInfo = methods.getVehicleInfo(veh.model);
-                if (vInfo.fuel_type > 0) {
+                if (veh.model !== vPrevModel)
+                    vPrevInfo = methods.getVehicleInfo(veh.model);
+                vPrevModel = veh.model;
+                if (vPrevInfo.fuel_type > 0) {
                     fuelLevel = methods.parseInt(veh.getVariable('fuel'));
-                    fuelPostfix = vehicles.getFuelPostfix(vInfo.fuel_type);
-                    fuelMax = vInfo.fuel_full;
+                    fuelPostfix = vehicles.getFuelPostfix(vPrevInfo.fuel_type);
+                    fuelMax = vPrevInfo.fuel_full;
                 }
+                vName = vPrevInfo.display_name;
             }
 
             let vSpeed = methods.getCurrentSpeed();
@@ -524,6 +571,7 @@ ui.updateVehValues = function() {
                 speed: vSpeed,
                 speedLabel: user.getCache('s_hud_speed_type') ? 'KM/H' : 'MP/H',
                 background: user.getCache('s_hud_bg'),
+                carname: vName,
             };
             ui.callCef('hudc', JSON.stringify(data));
 
@@ -547,16 +595,57 @@ ui.updateZoneAndStreet = function() {
             _zone = 'Нет сети';
         }
         else {
+            let zone = mp.game.zone.getNameOfZone(local.position.x, local.position.y, local.position.z);
             let getStreet = mp.game.pathfind.getStreetNameAtCoord(local.position.x, local.position.y, local.position.z, 0, 0);
             _street = mp.game.ui.getStreetNameFromHashKey(getStreet.streetName); // Return string, if exist
-            _zone = mp.game.ui.getLabelText(mp.game.zone.getNameOfZone(local.position.x, local.position.y, local.position.z));
+            _zone = mp.game.ui.getLabelText(zone);
             if (getStreet.crossingRoad != 0)
                 _street += ' / ' + mp.game.ui.getStreetNameFromHashKey(getStreet.crossingRoad);
+
+            if (!prolog.isActive()) {
+                if (zone === 'PROL' || methods.isInPoint(local.position, enums.zoneIslandList)) {
+                    _zone = 'Мексика';
+                    _street = 'Кайо-Перико';
+                    isIslandZone = true;
+                }
+                else
+                    isIslandZone = false;
+            }
         }
     }
     catch (e) {
         methods.debug(e);
     }
+};
+
+ui.getZoneName = function(pos) {
+    try {
+        let zone = mp.game.zone.getNameOfZone(pos.x, pos.y, pos.z);
+        if (zone === 'PROL' || methods.isInPoint(pos, enums.zoneIslandList))
+            return 'Мексика';
+        return mp.game.ui.getLabelText(zone);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+    return 'Сан Андреас';
+};
+
+ui.getStreetName = function(pos) {
+    try {
+        let zone = mp.game.zone.getNameOfZone(pos.x, pos.y, pos.z);
+        if (zone === 'PROL' || methods.isInPoint(pos, enums.zoneIslandList))
+            return 'Мексика';
+        let getStreet = mp.game.pathfind.getStreetNameAtCoord(pos.x, pos.y, pos.z, 0, 0);
+        let street = mp.game.ui.getStreetNameFromHashKey(getStreet.streetName); // Return string, if exist
+        if (getStreet.crossingRoad != 0)
+             street += ' / ' + mp.game.ui.getStreetNameFromHashKey(getStreet.crossingRoad);
+        return street;
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+    return '';
 };
 
 ui.updateDirectionText = function() {
@@ -584,6 +673,7 @@ ui.updateDirectionText = function() {
 };
 
 ui.getCurrentZone = function() {
+
     return _zone;
 };
 
@@ -672,6 +762,12 @@ ui.drawText3DRage = function(caption, x, y, z) {
     if (!mp.game.ui.isHudComponentActive(0))
         return false;
     mp.game.graphics.drawText(caption, [x, y, z + 0.5], { font: 0, color: [255, 255, 255, 255], scale: [0.3, 0.3], outline: true, centre: true });
+};
+
+// Эвенты на cef только через эту функцию
+ui.getQuestAnim = function() {
+    let animList = ['swing', 'tada', 'pulse', 'rubberBand', 'headShake', 'wobble', 'jello'];
+    return animList[methods.getRandomInt(0, animList.length)];
 };
 
 // Передача на cef с сервера

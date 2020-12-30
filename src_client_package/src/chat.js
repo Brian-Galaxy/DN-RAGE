@@ -114,4 +114,16 @@ chat.sendToAll = function(sender, text, color = '2196F3') {
     mp.events.callRemote('server:chat:sendToAll', sender, text, color);
 };
 
+chat.sendToDep = function(sender, text, color = undefined) {
+    mp.events.callRemote('server:chat:sendToDep', sender, text, color);
+};
+
+chat.sendToFraction = function(sender, text, color = undefined) {
+    mp.events.callRemote('server:chat:sendToFraction', sender, text, color);
+};
+
+chat.sendToFamily = function(sender, text, color = undefined) {
+    mp.events.callRemote('server:chat:sendToFamily', sender, text, color);
+};
+
 export default chat;

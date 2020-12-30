@@ -149,6 +149,8 @@ coffer.getIdByFraction = function(fractionId) {
             return 6;
         case 7:
             return 8;
+        case 8:
+            return 9;
     }
     return 1;
 };

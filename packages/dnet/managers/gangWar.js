@@ -410,7 +410,7 @@ gangWar.timerMoney = function() {
 
             if (moneyToUser.has(gangWar.get(i, 'fraction_id').toString())) {
                 let cMoney = moneyToUser.get(gangWar.get(i, 'fraction_id').toString());
-                cMoney += methods.getRandomInt(12, 25) / 1000;
+                cMoney += methods.getRandomInt(12, 24) / 1000;
                 moneyToUser.set(gangWar.get(i, 'fraction_id').toString(), cMoney);
             }
             else {

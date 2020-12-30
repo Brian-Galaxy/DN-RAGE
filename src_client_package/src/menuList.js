@@ -52,8 +52,11 @@ import loader from "./jobs/loader";
 import lamar from "./jobs/lamar";
 import trucker from "./jobs/trucker";
 import taxi from "./jobs/taxi";
+import npc from "./manager/npc";
 
 let menuList = {};
+
+menuList.isShowPlayerMenu = false;
 
 menuList.showHouseBuyMenu = async function(h) {
 
@@ -1032,7 +1035,7 @@ menuList.showStockPanelUpgradeMenu = function(h) {
 
     if (user.getCache('fraction_id2') > 0) {
         if (h.get('interior') > 1 && !h.get('upgrade_b'))
-            UIMenu.Menu.AddMenuItem(`~y~Бункер`, "Стоимость: ~g~$50.000.000~s~~br~Благодаря этому лучшению, вы можете заниматся изготовкой оружия~br~Бонусом выступает, что в гараже можно хранить грузовики и больой транспорт", {buyBunker: true});
+            UIMenu.Menu.AddMenuItem(`~y~Бункер`, "Стоимость: ~g~$30.000.000~s~~br~Благодаря этому лучшению, вы можете заниматся изготовкой оружия~br~Бонусом выступает, что в гараже можно хранить грузовики и больой транспорт", {buyBunker: true});
 
         if (h.get('interior') > 0 && !h.get('upgrade_l'))
             UIMenu.Menu.AddMenuItem(`~y~Лаборатория`, "Стоимость: ~g~$5.000.000~s~~br~Благодаря этому лучшению, вы можете заниматся изготовкой наркотиков", {buyLab: true});
@@ -1172,7 +1175,7 @@ menuList.showStockPanelUpgradeBuyBunkerMenu = function(h) {
     try {
         UIMenu.Menu.Create(` `, `~b~Улучшение бункера`, 'hm', false, false, 'h1');
 
-        UIMenu.Menu.AddMenuItem("Купить за ~g~$50.000.000", "", {doName: 'yes'});
+        UIMenu.Menu.AddMenuItem("Купить за ~g~$30.000.000", "", {doName: 'yes'});
 
         UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: 'closeMenu'});
         UIMenu.Menu.Draw();
@@ -1184,11 +1187,11 @@ menuList.showStockPanelUpgradeBuyBunkerMenu = function(h) {
                     mp.game.ui.notifications.show('~r~У вас нет офиса для того, чтобы вы могли поставить это улучшение');
                     return;
                 }
-                if (user.getBankMoney() < 50000000) {
+                if (user.getBankMoney() < 30000000) {
                     mp.game.ui.notifications.show('~r~На вашем банковском счету не хватает средств');
                     return;
                 }
-                user.removeBankMoney(50000000, 'Улучшение для склада #' + h.get('id'));
+                user.removeBankMoney(30000000, 'Улучшение для склада #' + h.get('id'));
                 stocks.upgradeBunker(h.get('id'));
                 mp.game.ui.notifications.show('~g~Поздравляем с покупкой улучшения, теперь вы можете крафить оружие');
             }
@@ -1731,8 +1734,7 @@ menuList.showBusinessTeleportMenu = function() {
     UIMenu.Menu.Create(` `, `~b~Бизнес центр`, 'showBusinessTeleportMenu', false, false, 'arcadius');
 
     business.typeList.forEach(function (item, i, arr) {
-        if (i !== 2)
-            UIMenu.Menu.AddMenuItem(`${item}`, "", {typeId: i});
+        UIMenu.Menu.AddMenuItem(`${item}`, "", {typeId: i});
     });
 
     UIMenu.Menu.AddMenuItem("~g~Улица", "", {teleportPos: business.BusinessStreetPos});
@@ -2732,6 +2734,158 @@ menuList.showMeriaMainMenu = function() {
     });
 };
 
+menuList.showMeriaIslandMainMenu = function() {
+
+    if (methods.isBlackout()) {
+        mp.game.ui.notifications.show(`~r~В городе отсутствует свет`);
+        return;
+    }
+
+    UIMenu.Menu.Create(` `, `~b~Секретарь правительства`, 'gov', false, false, 'gov');
+
+    if (user.getCache('work_lic') == '')
+        UIMenu.Menu.AddMenuItem("Оформить WorkID", "", {doName: 'getWorkId'});
+
+    if (user.getCache('reg_status') === 0) {
+        if (user.getCache('online_time') < 169)
+            UIMenu.Menu.AddMenuItem("Оформить регистрацию", 'Стоимость: ~g~Бесплатно', {doName: 'getRegisterFree'});
+        else
+            UIMenu.Menu.AddMenuItem("Оформить регистрацию", 'Стоимость: ~g~$1,000', {doName: 'getRegister'});
+    }
+
+    if (user.getCache('reg_status') === 1)
+        UIMenu.Menu.AddMenuItem("Оформить гражданство", 'Стоимость: ~g~$10,000', {doName: 'getFullRegister'});
+
+    UIMenu.Menu.AddMenuItem("Работа", "", {doName: 'showMeriaJobListMenu'});
+    UIMenu.Menu.AddMenuItem("Лицензионный центр", "", {doName: 'showLicBuyMenu'});
+
+    UIMenu.Menu.AddMenuItem("Имущество", "Операции с вашим имуществом", {doName: 'showMeriaSellHvbMenu'});
+    UIMenu.Menu.AddMenuItem("Налоговый кабинет", "", {doName: 'showMeriaTaxMenu'});
+
+    if (user.getCache('house_id') > 0)
+        UIMenu.Menu.AddMenuItem("Подселение", "", {doName: 'showMeriaHousePeopleMenu'});
+
+    UIMenu.Menu.AddMenuItem("Экономика штата", "", {doName: 'showMeriaInfoMenu'});
+    //UIMenu.Menu.AddMenuItem("Подать заявление на стажировку", "", {doName: 'govWork'});
+    UIMenu.Menu.AddMenuItem("Банк", "", {doName: 'bank'});
+
+    UIMenu.Menu.AddMenuItem("~y~Создать семью по цене $500,000", "", {doName: 'createFamily'});
+
+    UIMenu.Menu.AddMenuItem("~y~Оплата штрафов", "", {doName: 'showMeriaTicketMenu'});
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: 'closeMenu'});
+    UIMenu.Menu.Draw();
+
+    UIMenu.Menu.OnSelect.Add(async (item, index) => {
+        UIMenu.Menu.HideMenu();
+
+        if (item.doName == 'govWork')
+        {
+            let discord = await menuList.getUserInput('Введите ваш DISCORD', '', 30);
+            let text = await menuList.getUserInput('Почему вы хотите тут работать?', '', 100);
+            mp.game.ui.notifications.show(`~g~Заявление было отправлено, скоро с вами свяжуться в дискорде`);
+            mp.events.callRemote('server:discord:sendWorkGov', discord, text);
+        }
+        if (item.doName == 'bank')
+        {
+            menuList.showBankMenu(2, 2)
+        }
+        if (item.doName == 'createFamily')
+        {
+            let text = await menuList.getUserInput('Введите название семьи', '', 30);
+            if (text === '')
+                return;
+            mp.events.callRemote('server:family:create', text);
+        }
+        if (item.doName == 'showMeriaSellHvbMenu')
+            menuList.showMeriaSellHvbMenu(await coffer.getAllData());
+        if (item.doName == 'showMeriaTaxMenu')
+            menuList.showMeriaTaxMenu();
+        if (item.doName == 'showMeriaInfoMenu')
+            menuList.showMeriaInfoMenu(await coffer.getAllData());
+        if (item.doName == 'showMeriaJobListMenu')
+            menuList.showMeriaJobListMenu(true);
+        if (item.doName == 'showMeriaHousePeopleMenu')
+            menuList.showMazeBankHousePeopleMenu();
+        if (item.doName == 'showMeriaTicketMenu')
+            mp.events.callRemote('server:showMeriaTicketMenu');
+        if (item.doName == 'showLicBuyMenu')
+            menuList.showLicBuyMenu();
+        if (item.doName == 'getRegister') {
+            if (user.getBankMoney() < 1000) {
+                mp.game.ui.notifications.show("~r~У Вас недостаточно средств на банковском счету");
+                return;
+            }
+            if (user.getCache('reg_status') > 0) {
+                mp.game.ui.notifications.show("~r~Вам не нужна регистрация");
+                return;
+            }
+            user.removeCashMoney(1000, 'Получение регистрации');
+            user.set('reg_status', 1);
+            mp.game.ui.notifications.show("~g~Поздравялем, вы получили регистрацию!");
+            user.addHistory(0, 'Получил регистрацию');
+            user.save();
+        }
+        if (item.doName == 'getRegisterFree') {
+            if (user.getCache('reg_status') > 0) {
+                mp.game.ui.notifications.show("~r~Вам не нужна регистрация");
+                return;
+            }
+            user.set('reg_status', 1);
+            mp.game.ui.notifications.show("~g~Поздравялем, вы получили регистрацию!");
+            user.addHistory(0, 'Получил регистрацию');
+            user.save();
+        }
+        if (item.doName == 'getFullRegister') {
+            if (user.getCache('reg_status') > 1) {
+                mp.game.ui.notifications.show("~r~У Вас уже есть гражданство");
+                return;
+            }
+            if (user.getBankMoney() < 10000) {
+                mp.game.ui.notifications.show("~r~У Вас недостаточно средств на банковском счету");
+                return;
+            }
+            if (user.getCache('work_lvl') < 4) {
+                mp.game.ui.notifications.show("~r~Рабочий стаж должен быть 4 уровня");
+                return;
+            }
+            if (user.getCache('reg_status') < 1) {
+                mp.game.ui.notifications.show("~r~Вам необходима регистрация");
+                return;
+            }
+            user.removeCashMoney(10000, 'Получение гражданства');
+            user.set('reg_status', 2);
+            mp.game.ui.notifications.show("~g~Поздравялем, вы получили регистрацию!");
+            user.addHistory(0, 'Получил гражданство');
+            user.save();
+        }
+        if (item.doName == 'getWorkId') {
+
+            if (user.getCache('work_lic') != '') {
+                mp.game.ui.notifications.show("~r~У Вас уже есть WorkID");
+                return;
+            }
+            if (user.getCache('reg_status') == 0) {
+                mp.game.ui.notifications.show("~r~У Вас нет регистрации или гражданства");
+                return;
+            }
+            try {
+                user.set('work_lic', methods.getRandomWorkID());
+                user.set('work_date', weather.getFullRpDate());
+                mp.game.ui.notifications.show("~g~Поздравялем, вы получили WorkID!");
+                user.addHistory(0, 'Получил WorkID');
+                user.save();
+
+                quest.role0();
+                quest.standart();
+            }
+            catch (e) {
+                methods.error(e);
+            }
+        }
+    });
+};
+
 menuList.showMeriaTicketMenu = function(data) {
     UIMenu.Menu.Create(` `, `~b~Нажмите ~s~Enter~b~ чтобы оплатить`, 'gov', false, false, 'gov');
 
@@ -3205,24 +3359,30 @@ menuList.showLicBuyMenu = function()
     });
 };
 
-menuList.showMeriaJobListMenu = function() {
+menuList.showMeriaJobListMenu = function(isIsland = false) {
 
     UIMenu.Menu.Create(` `, `~b~Трудовая биржа`, 'gov', false, false, 'gov');
 
-    UIMenu.Menu.AddMenuItem("Садовник", "", {jobName: 1});
-    UIMenu.Menu.AddMenuItem("Разнорабочий", "", {jobName: 2});
+    if (isIsland) {
+        UIMenu.Menu.AddMenuItem("Грузчик", "", {doName: 'gr'});
+        UIMenu.Menu.AddMenuItem("Садовник", "", {jobName: 1});
+    }
+    else {
+        UIMenu.Menu.AddMenuItem("Садовник", "", {jobName: 1});
+        UIMenu.Menu.AddMenuItem("Строитель", "", {jobName: 2});
 
-    UIMenu.Menu.AddMenuItem("Водитель автобуса-1", "Городской автобус", {jobName: 6});
-    UIMenu.Menu.AddMenuItem("Водитель автобуса-2", "Трансферный автобус", {jobName: 7});
-    UIMenu.Menu.AddMenuItem("Водитель автобуса-3", "Рейсовый автобус", {jobName: 8});
-    
-    UIMenu.Menu.AddMenuItem("Механик", "", {jobName: 5});
-    //UIMenu.Menu.AddMenuItem("Священник", "", {jobName: 12});
+        UIMenu.Menu.AddMenuItem("Водитель автобуса-1", "Городской автобус", {jobName: 6});
+        UIMenu.Menu.AddMenuItem("Водитель автобуса-2", "Трансферный автобус", {jobName: 7});
+        UIMenu.Menu.AddMenuItem("Водитель автобуса-3", "Рейсовый автобус", {jobName: 8});
 
-    UIMenu.Menu.AddMenuItem("Фотограф", "", {jobName: 3});
-    UIMenu.Menu.AddMenuItem("Почтальон", "", {jobName: 4});
+        UIMenu.Menu.AddMenuItem("Механик", "", {jobName: 5});
+        //UIMenu.Menu.AddMenuItem("Священник", "", {jobName: 12});
 
-    UIMenu.Menu.AddMenuItem("Инкассатор", "", {jobName: 10});
+        UIMenu.Menu.AddMenuItem("Фотограф", "", {jobName: 3});
+        UIMenu.Menu.AddMenuItem("Почтальон", "", {jobName: 4});
+
+        UIMenu.Menu.AddMenuItem("Инкассатор", "", {jobName: 10});
+    }
 
     /*UIMenu.Menu.AddMenuItem("Таксист", "Компания: ~y~DownTown Cab Co.").jobName = 9;
 
@@ -3241,11 +3401,23 @@ menuList.showMeriaJobListMenu = function() {
             jobPoint.delete();
             builder.stop();
             tree.stop();
-            bus.stop(false);
+            bus.stop(0,false);
             photo.stop();
             gr6.stop();
             user.set('job', 0);
             mp.game.ui.notifications.show("~y~Вы уволились с работы");
+        }
+        if (item.doName == 'gr') {
+            jobPoint.delete();
+            builder.stop();
+            tree.stop();
+            bus.stop(0,false);
+            photo.stop();
+            gr6.stop();
+            user.set('job', 0);
+            user.setWaypoint(5106.7861328125, -5161.85791015625);
+            quest.standart();
+            mp.game.ui.notifications.show("~g~Вы устроились на новую работу, местоположение рабочего транспорта указано на карте");
         }
         if (item.jobName) {
 
@@ -3280,9 +3452,9 @@ menuList.showMeriaJobListMenu = function() {
                 chat.sendLocal(`Чтобы найти работу садовника, откройте телефон (По стандарту кнопка O, далее откройте GPS и найдите там работу садовника).`);
             }
             if (item.jobName === 2) {
-                chat.sendLocal(`!{${chat.clBlue}}Справка по работе Разнорабочий`);
+                chat.sendLocal(`!{${chat.clBlue}}Справка по работе Строитель`);
                 chat.sendLocal(`Для начала Вам необходимо арендовать транспорт. Затем откройте меню транспорта и нажмите Получить задание, а далее думаю и так понятно.`);
-                chat.sendLocal(`Чтобы найти работу разнорабочего, откройте телефон (По стандарту кнопка O, далее откройте GPS и найдите там работу разнорабочего).`);
+                chat.sendLocal(`Чтобы найти работу строителя, откройте телефон (По стандарту кнопка O, далее откройте GPS и найдите там работу строителя).`);
             }
             if (item.jobName === 3) {
                 chat.sendLocal(`!{${chat.clBlue}}Справка по работе Фотограф`);
@@ -3311,7 +3483,10 @@ menuList.showMeriaJobListMenu = function() {
                 chat.sendLocal(`Ваша возможности практически безграничны, а на некоторых можно и заработать. Например у вас в церкве доступно функционально женить и разводить людей. А еще вы можете делать РП смерть.`);
             }
 
-            user.setWaypoint(enums.jobList[item.jobName][1], enums.jobList[item.jobName][2]);
+            if (ui.isIslandZone())
+                user.setWaypoint(5398.75634765625, -5173.14111328125);
+            else
+                user.setWaypoint(enums.jobList[item.jobName][1], enums.jobList[item.jobName][2]);
             user.set('job', item.jobName);
             mp.game.ui.notifications.show("~g~Вы устроились на новую работу, местоположение рабочего транспорта указано на карте");
             quest.standart();
@@ -3798,25 +3973,45 @@ menuList.showPlayerMenu = function() {
 
         UIMenu.Menu.AddMenuItem("Статистика", "", {doName: 'showPlayerStatsMenu'});
 
+        if (!user.getCache('is_take_vehicle')) {
+            UIMenu.Menu.AddMenuItem("~y~Получить BMW 760i", "", {doName: 'takeBMW'});
+            UIMenu.Menu.AddMenuItem("~y~Получить Audi A8", "", {doName: 'takeAUDI'});
+            UIMenu.Menu.AddMenuItem("~y~Получить Mercedes 600", "", {doName: 'takeMERC'});
+        }
+
+        UIMenu.Menu.AddMenuItem("Взаимодействовать с причёской", "", {doName: 'changeHair'});
+        UIMenu.Menu.AddMenuItemList("Наушники", ['~r~Выкл', '~g~Вкл'], "", {doName: 'changeMusic'}, user.currentStation >= 0 ? 1 : 0);
+        UIMenu.Menu.AddMenuItem("Предыдущая радиостанция", "", {doName: 'changeMusicPrev'});
+        UIMenu.Menu.AddMenuItem("Следующая радиостанция", "", {doName: 'changeMusicNext'});
+
         let list = [];
+        let list2 = [];
+        let clipsetIdx = 0;
+        let clipsetWIdx = 0;
+
         if (user.getSex() === 1) {
-            enums.clopsetFemale.forEach(item => {
+            enums.clopsetFemale.forEach((item, idx) => {
                 list.push(item[0]);
+                if (user.getCache('clipset') === item[1])
+                    clipsetIdx = idx;
             })
         }
         else {
-            enums.clopsetMale.forEach(item => {
+            enums.clopsetMale.forEach((item, idx) => {
                 list.push(item[0]);
+                if (user.getCache('clipset') === item[1])
+                    clipsetIdx = idx;
             })
         }
 
-        let clipsetIdx = 0;
-        if (user.getCache('clipset') !== '')
-            clipsetIdx = list.indexOf(user.getCache('clipset'));
-        if (clipsetIdx <= 0)
-            clipsetIdx = 0;
+        enums.clipsetW.forEach((item, idx) => {
+            list2.push(item[0]);
+            if (user.getCache('clipsetw') === item[1])
+                clipsetWIdx = idx;
+        });
 
         UIMenu.Menu.AddMenuItemList("Походка", list, "", {doName: 'clipset'}, clipsetIdx);
+        UIMenu.Menu.AddMenuItemList("Стиль стрельбы", list2, "", {doName: 'clipsetw'}, clipsetWIdx);
 
         UIMenu.Menu.AddMenuItem("Посмотреть документы", "", {doName: 'showPlayerDoсMenu'});
         UIMenu.Menu.AddMenuItem("Анимации", "", {doName: 'showAnimationTypeListMenu'});
@@ -3838,6 +4033,29 @@ menuList.showPlayerMenu = function() {
                 }
                 mp.game.ui.notifications.show('~b~Настройки были сохранены');
             }
+            if (item.doName === 'clipsetw') {
+                user.set('clipsetw', enums.clipsetW[index][1]);
+                user.setClipsetW(enums.clipsetW[index][1]);
+                mp.game.ui.notifications.show('~b~Настройки были сохранены');
+            }
+            if (item.doName === 'changeMusic') {
+                if (mp.players.local.getPropIndex(0) !== 15) {
+                    mp.game.ui.notifications.show('~r~Для начала необходимо купить и надеть наушники');
+                    return ;
+                }
+                user.playAnimation("clothingtie", "check_out_a", 48);
+                setTimeout(function () {
+                    if (index === 0) {
+                        user.currentStation = -1;
+                        mp.attachmentMngr.removeLocal('music');
+                        mp.game.audio.setEmitterRadioStation("SE_Script_Placed_Prop_Emitter_Boombox", mp.game.audio.getRadioStationName(18));
+                    }
+                    {
+                        user.currentStation = 0;
+                        mp.attachmentMngr.addLocal('music');
+                    }
+                }, 2000);
+            }
         });
 
         UIMenu.Menu.OnSelect.Add(async (item, index) => {
@@ -3849,7 +4067,91 @@ menuList.showPlayerMenu = function() {
                 mp.events.callRemote('server:user:showPlayerHistory');
             else if (item.doName == 'showPlayerDoсMenu')
                 menuList.showPlayerDocMenu(mp.players.local.remoteId);
+            else if (item.doName == 'takeBMW')
+                mp.events.callRemote('server:cont:vehicle', 'bmw');
+            else if (item.doName == 'takeAUDI')
+                mp.events.callRemote('server:cont:vehicle', 'audi');
+            else if (item.doName == 'takeMERC')
+                mp.events.callRemote('server:cont:vehicle', 'merc');
+            else if (item.doName == 'changeMusicPrev')
+            {
+                if (user.currentStation === -1)
+                    return ;
+                user.currentStation--;
+                if (user.currentStation < 0)
+                    user.currentStation = 18;
+                user.playAnimation("clothingtie", "check_out_a", 48);
+                setTimeout(function () {
+                    mp.game.audio.setEmitterRadioStation("SE_Script_Placed_Prop_Emitter_Boombox", mp.game.audio.getRadioStationName(user.currentStation));
+                }, 2000)
+            }
+            else if (item.doName == 'changeMusicNext')
+            {
+                if (user.currentStation === -1)
+                    return ;
+                user.currentStation++;
+                if (user.currentStation > 18)
+                    user.currentStation = 0;
+                user.playAnimation("clothingtie", "check_out_a", 48);
+                setTimeout(function () {
+                    mp.game.audio.setEmitterRadioStation("SE_Script_Placed_Prop_Emitter_Boombox", mp.game.audio.getRadioStationName(user.currentStation));
+                }, 2000)
+            }
+            else if (item.doName == 'changeHair')
+            {
+                if (mp.game.player.isFreeAiming()) {
+                    return;
+                }
+
+                let allowIdx = -1;
+                let drawId = mp.players.local.getDrawableVariation(2);
+                let colorId = mp.players.local.getTextureVariation(2);
+
+                if (user.getSex() == 1) {
+                    enums.swtichFemaleHair.forEach((item, idx) => {
+                        if (item[0] === drawId || item[1] === drawId)
+                            allowIdx = idx;
+                    });
+                    if (allowIdx >= 0) {
+                        let item = enums.swtichFemaleHair[allowIdx];
+                        let newDraw = item[1];
+                        if (item[1] === drawId) {
+                            newDraw = item[0];
+                        }
+                        user.playAnimation("clothingtie", "check_out_a", 48);
+
+                        setTimeout(function () {
+                            user.setComponentVariation(2, newDraw, colorId);
+                        }, 2000);
+                    }
+                    else {
+                        mp.game.ui.notifications.show("~r~С этой прической нельзя взаимодействовать");
+                    }
+                }
+                else {
+                    enums.swtichMaleHair.forEach((item, idx) => {
+                        if (item[0] === drawId || item[1] === drawId)
+                            allowIdx = idx;
+                    });
+                    if (allowIdx >= 0) {
+                        let item = enums.swtichMaleHair[allowIdx];
+                        let newDraw = item[1];
+                        if (item[1] === drawId) {
+                            newDraw = item[0];
+                        }
+                        user.playAnimation("clothingtie", "check_out_a", 48);
+
+                        setTimeout(function () {
+                            user.setComponentVariation(2, newDraw, colorId);
+                        }, 2000);
+                    }
+                    else {
+                        mp.game.ui.notifications.show("~r~С этой прической нельзя взаимодействовать");
+                    }
+                }
+            }
         });
+        menuList.isShowPlayerMenu = true;
     }
     catch (e) {
         methods.debug(e);
@@ -3903,7 +4205,7 @@ menuList.showHelpMenu = function() {
 
     mItem = {};
     mItem.textTitle = 'Своя организация';
-    mItem.text = 'Для начала вам необходимо иметь низкую репутацию, далее необходимо иметь достаточную сумму в e-coins вы сможете создать свою организацию в консоли телефона через команду ecorp. Учтите, что слоты фракций на сервере ограничены';
+    mItem.text = 'Для начала вам необходимо иметь низкую репутацию, далее необходимо иметь достаточную сумму в BitCoins вы сможете создать свою организацию в консоли телефона через команду ecorp. Учтите, что слоты фракций на сервере ограничены';
     UIMenu.Menu.AddMenuItem("Как создать свою организацию?", "", mItem);
     
     /*mItem = UIMenu.Menu.AddMenuItem("Где мой прицел?");
@@ -4395,11 +4697,11 @@ menuList.showSettingsMenuMenu = function() {
         width.push(`${350 + (i * 10)}px`);
 
     UIMenu.Menu.AddMenuItemList("Шрифт", enums.fontList, "", {doName: "font"}, enums.fontList.indexOf(user.getCache('s_menu_font')));
-    UIMenu.Menu.AddMenuItemList("Прозрачность фона", bgOpacity, "", {doName: "bgOpacity"}, methods.parseInt(user.getCache('s_menu_opacity') * 10));
-    UIMenu.Menu.AddMenuItemList("Цвет фона", enums.rgbNamesB, "", {doName: "bgColor"}, methods.parseInt(user.getCache('s_menu_color')));
+    //UIMenu.Menu.AddMenuItemList("Прозрачность фона", bgOpacity, "", {doName: "bgOpacity"}, methods.parseInt(user.getCache('s_menu_opacity') * 10));
+    //UIMenu.Menu.AddMenuItemList("Цвет фона", enums.rgbNamesB, "", {doName: "bgColor"}, methods.parseInt(user.getCache('s_menu_color')));
     UIMenu.Menu.AddMenuItemList("Ширина", width, "", {doName: "width"}, methods.parseInt((user.getCache('s_menu_width') - 350) / 10));
     //UIMenu.Menu.AddMenuItemList("Максимальная высота", bgOpacity, "", {doName: "height"}, methods.parseInt(user.getCache('s_chat_height') / 10));
-    UIMenu.Menu.AddMenuItemList("Закругление краёв", border, "", {doName: "border"}, methods.parseInt(user.getCache('s_menu_border')));
+    //UIMenu.Menu.AddMenuItemList("Закругление краёв", border, "", {doName: "border"}, methods.parseInt(user.getCache('s_menu_border')));
     UIMenu.Menu.AddMenuItemList("Звук", ['Выкл', 'Вкл'], "", {doName: "sound"}, user.getCache('s_menu_sound'));
 
     UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
@@ -4575,7 +4877,7 @@ menuList.showPlayerDoMenu = function(playerId) {
     });
 };
 
-menuList.showVehicleDoInvMenu = async function(vehId) {
+menuList.showVehicleDoInvMenu = async function(vehId, onlyLock = false) {
 
     let vehicle = mp.vehicles.atRemoteId(vehId);
 
@@ -4590,71 +4892,73 @@ menuList.showVehicleDoInvMenu = async function(vehId) {
 
     UIMenu.Menu.AddMenuItem("~g~Открыть~s~/~r~Закрыть~s~ транспорт", "", {doName: "openVeh"});
 
-    if (vInfo.stock > 0) {
-        UIMenu.Menu.AddMenuItem("Открыть багажник", "", {doName: "openInv"});
-        UIMenu.Menu.AddMenuItem("Закрыть багажник", "", {doName: "close"});
-        
-        UIMenu.Menu.AddMenuItem("Открыть капот", "", {doName: "openC"});
-        UIMenu.Menu.AddMenuItem("Закрыть капот", "", {doName: "closeC"});
-    }
+    if (!onlyLock) {
+        if (vInfo.stock > 0) {
+            UIMenu.Menu.AddMenuItem("Открыть багажник", "", {doName: "openInv"});
+            UIMenu.Menu.AddMenuItem("Закрыть багажник", "", {doName: "close"});
 
-    UIMenu.Menu.AddMenuItem("Выкинуть человека", "", {doName: "eject"});
-
-    if (vehicle.getVariable('fraction_id') === 7 && user.isNews()) {
-        UIMenu.Menu.AddMenuItem("~g~Взять камеру", "", {doName: "takeCam"});
-        UIMenu.Menu.AddMenuItem("~y~Положить камеру", "", {doName: "putCam"});
-
-        UIMenu.Menu.AddMenuItem("~g~Взять микрофон", "", {doName: "takeMic"});
-        UIMenu.Menu.AddMenuItem("~y~Положить микрофон", "", {doName: "putMic"});
-    }
-    if (vehicle.getVariable('fraction_id') === 2 && user.isSapd() && vInfo.display_name === 'Riot') {
-        UIMenu.Menu.AddMenuItem("~g~Войти в режим дрона", "", {doName: "drone"});
-    }
-    if (vehicle.getVariable('fraction_id') === 5 && user.isSheriff() && vInfo.display_name === 'Insurgent2') {
-        UIMenu.Menu.AddMenuItem("~g~Войти в режим дрона", "", {doName: "drone"});
-    }
-    if (vehicle.getVariable('fraction_id') === 3 && user.isFib() && vInfo.display_name === 'FBI2') {
-        UIMenu.Menu.AddMenuItem("~g~Войти в режим дрона", "", {doName: "drone"});
-    }
-    if (vehicle.getVariable('fraction_id') === 7 && user.isNews() && vInfo.display_name === 'Rumpo') {
-        UIMenu.Menu.AddMenuItem("~g~Войти в режим дрона", "", {doName: "drone2"});
-    }
-
-    if (user.getCache('job') == vehicle.getVariable('jobId')) {
-        switch (vehicle.getVariable('jobId')) {
-            case 1:
-                UIMenu.Menu.AddMenuItem("~b~Инструменты (Красный маркер)", "", {doName: "tree:take0"});
-                UIMenu.Menu.AddMenuItem("~b~Инструменты (Зеленый маркер)", "", {doName: "tree:take1"});
-                UIMenu.Menu.AddMenuItem("~b~Инструменты (Синий маркер)", "", {doName: "tree:take2"});
-                break;
-            case 2:
-                UIMenu.Menu.AddMenuItem("~b~Инструменты (Красный маркер)", "", {doName: "builder:take0"});
-                UIMenu.Menu.AddMenuItem("~b~Инструменты (Зеленый маркер)", "", {doName: "builder:take1"});
-                UIMenu.Menu.AddMenuItem("~b~Инструменты (Синий маркер)", "", {doName: "builder:take2"});
-                break;
-            case 3:
-                UIMenu.Menu.AddMenuItem("~g~Напомнить задание", "", {doName: "photo:ask"});
-                break;
-            case 4:
-                UIMenu.Menu.AddMenuItem("~g~Взять почту из транспорта", "", {doName: "mail:take"});
-                break;
+            UIMenu.Menu.AddMenuItem("Открыть капот", "", {doName: "openC"});
+            UIMenu.Menu.AddMenuItem("Закрыть капот", "", {doName: "closeC"});
         }
-    }
 
-    UIMenu.Menu.AddMenuItem("Перевернуть транспорт", "", {doName: "flip"});
+        UIMenu.Menu.AddMenuItem("Выкинуть человека", "", {doName: "eject"});
 
-    try {
-        if (mp.players.local.dimension > enums.offsets.stock) {
-            let stockId = mp.players.local.dimension - enums.offsets.stock;
-            let stockData = await stocks.getData(stockId);
-            if (stockData.get('upgrade_n')) {
-                UIMenu.Menu.AddMenuItem("~y~Снять номера с транспорта", "Стоимость ~g~$10.000~s~~br~~y~Номера снимаются до респавна транспорта", {doName: "removeNumber"});
+        if (vehicle.getVariable('fraction_id') === 7 && user.isNews()) {
+            UIMenu.Menu.AddMenuItem("~g~Взять камеру", "", {doName: "takeCam"});
+            UIMenu.Menu.AddMenuItem("~y~Положить камеру", "", {doName: "putCam"});
+
+            UIMenu.Menu.AddMenuItem("~g~Взять микрофон", "", {doName: "takeMic"});
+            UIMenu.Menu.AddMenuItem("~y~Положить микрофон", "", {doName: "putMic"});
+        }
+        if (vehicle.getVariable('fraction_id') === 2 && user.isSapd() && vInfo.display_name === 'Riot') {
+            UIMenu.Menu.AddMenuItem("~g~Войти в режим дрона", "", {doName: "drone"});
+        }
+        if (vehicle.getVariable('fraction_id') === 5 && user.isSheriff() && vInfo.display_name === 'Insurgent2') {
+            UIMenu.Menu.AddMenuItem("~g~Войти в режим дрона", "", {doName: "drone"});
+        }
+        if (vehicle.getVariable('fraction_id') === 3 && user.isFib() && vInfo.display_name === 'FBI2') {
+            UIMenu.Menu.AddMenuItem("~g~Войти в режим дрона", "", {doName: "drone"});
+        }
+        if (vehicle.getVariable('fraction_id') === 7 && user.isNews() && (vInfo.display_name === 'Rumpo' || vInfo.display_name === 'Nspeedo')) {
+            UIMenu.Menu.AddMenuItem("~g~Войти в режим дрона", "", {doName: "drone2"});
+        }
+
+        if (user.getCache('job') == vehicle.getVariable('jobId')) {
+            switch (vehicle.getVariable('jobId')) {
+                case 1:
+                    UIMenu.Menu.AddMenuItem("~b~Инструменты (Красный маркер)", "", {doName: "tree:take0"});
+                    UIMenu.Menu.AddMenuItem("~b~Инструменты (Зеленый маркер)", "", {doName: "tree:take1"});
+                    UIMenu.Menu.AddMenuItem("~b~Инструменты (Синий маркер)", "", {doName: "tree:take2"});
+                    break;
+                case 2:
+                    UIMenu.Menu.AddMenuItem("~b~Инструменты (Красный маркер)", "", {doName: "builder:take0"});
+                    UIMenu.Menu.AddMenuItem("~b~Инструменты (Зеленый маркер)", "", {doName: "builder:take1"});
+                    UIMenu.Menu.AddMenuItem("~b~Инструменты (Синий маркер)", "", {doName: "builder:take2"});
+                    break;
+                case 3:
+                    UIMenu.Menu.AddMenuItem("~g~Напомнить задание", "", {doName: "photo:ask"});
+                    break;
+                case 4:
+                    UIMenu.Menu.AddMenuItem("~g~Взять почту из транспорта", "", {doName: "mail:take"});
+                    break;
             }
         }
+
+
+        try {
+            if (mp.players.local.dimension > enums.offsets.stock) {
+                let stockId = mp.players.local.dimension - enums.offsets.stock;
+                let stockData = await stocks.getData(stockId);
+                if (stockData.get('upgrade_n')) {
+                    UIMenu.Menu.AddMenuItem("~y~Снять номера с транспорта", "Стоимость ~g~$10.000~s~~br~~y~Номера снимаются до респавна транспорта", {doName: "removeNumber"});
+                }
+            }
+        }
+        catch (e) {
+            methods.debug(e);
+        }
     }
-    catch (e) {
-        methods.debug(e);
-    }
+    UIMenu.Menu.AddMenuItem("Перевернуть транспорт", "", {doName: "flip"});
 
     UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
     UIMenu.Menu.Draw();
@@ -5099,7 +5403,7 @@ menuList.showTruckerOffersMenu = function(menuData) {
                 if (dist2 > 10000)
                     dist2 = methods.parseInt(methods.distanceToPos(new mp.Vector3(x, y, z), playerPos));
 
-                UIMenu.Menu.AddMenuItem(`~b~#${item[0]}.~s~ ${item[1]}`, `~y~До загрузки: ~s~${dist2}m~br~~y~Расстояние маршрута: ~s~${dist}m~br~~y~Место загрузки: ~s~${mp.game.ui.getLabelText(mp.game.zone.getNameOfZone(x, y, z))}`, {offerId: idx}, `~g~${methods.moneyFormat(item[item.length - 1])}`);
+                UIMenu.Menu.AddMenuItem(`~b~#${item[0]}.~s~ ${item[1]}`, `~y~До загрузки: ~s~${dist2}m~br~~y~Расстояние маршрута: ~s~${dist}m~br~~y~Место загрузки: ~s~${ui.getZoneName(new mp.Vector3(x, y, z))}`, {offerId: idx}, `~g~${methods.moneyFormat(item[item.length - 1])}`);
             }
             catch (e) {
                 methods.debug(e);
@@ -5230,8 +5534,8 @@ menuList.showTruckerOfferInfoMenu = function(idx) {
     UIMenu.Menu.AddMenuItem("~y~Груз:~s~", '', {}, `${item[1]}`);
     UIMenu.Menu.AddMenuItem("~y~Компания:~s~", '', {}, `${item[2]}`);
     UIMenu.Menu.AddMenuItem("~y~Стоимость:~s~", '', {}, `${methods.moneyFormat(item[item.length - 1])}`);
-    UIMenu.Menu.AddMenuItem("~y~Место загрузки:~s~", '', {}, `${mp.game.ui.getLabelText(mp.game.zone.getNameOfZone(x, y, z))}`);
-    UIMenu.Menu.AddMenuItem("~y~Место разгрузки:~s~", '', {}, `${mp.game.ui.getLabelText(mp.game.zone.getNameOfZone(tx, ty, tz))}`);
+    UIMenu.Menu.AddMenuItem("~y~Место загрузки:~s~", '', {}, `${ui.getZoneName(new mp.Vector3(x, y, z))}`);
+    UIMenu.Menu.AddMenuItem("~y~Место разгрузки:~s~", '', {}, `${ui.getZoneName(new mp.Vector3(tx, ty, tz))}`);
     UIMenu.Menu.AddMenuItem("~y~Расстояние:~s~", '', {}, `${dist}m`);
     UIMenu.Menu.AddMenuItem("~g~Принять заказ", '', {accept: item[0]});
 
@@ -5282,7 +5586,7 @@ menuList.showVehicleMenu = async function(data) {
         }
     }
 
-    if (user.getCache('fraction_id2') > 0 || user.isGos()) {
+    if (user.getCache('fraction_id2') > 0 || user.isGos() || user.isCartel()) {
         if (veh.getVariable('cargoId') !== null && veh.getVariable('cargoId') !== undefined) {
             if (veh.getVariable('isMafia')) {
                 if (user.isMafia()) {
@@ -5315,7 +5619,13 @@ menuList.showVehicleMenu = async function(data) {
             UIMenu.Menu.AddMenuItem(`~b~Загрузить транспорт конусами и огорождениями`, 'Загрузиться сразу 2 ящика', {cargoLoadOth1: true});
         }
         if ((user.isEms() || user.isAdmin()) && (vInfo.display_name === 'Nspeedo')) {
-            UIMenu.Menu.AddMenuItem(`~y~Загрузить транспорт медикаментами`, 'Одна партия обходиться в $100,000 из бюджета EMS', {cargoLoadMed: true});
+            UIMenu.Menu.AddMenuItem(`~b~Загрузить транспорт медикаментами`, 'Одна партия обходиться в $100,000 из бюджета EMS', {cargoLoadMed: true});
+        }
+
+        if ((user.isCartel() || user.isAdmin()) && (vInfo.display_name === 'Youga3' || vInfo.display_name === 'Rumpo3')) {
+            UIMenu.Menu.AddMenuItem(`~b~Загрузить транспорт оружием и бронежилетами`, 'Одна партия обходиться в $200,000 из бюджета', {cargoLoadGun2: true});
+            UIMenu.Menu.AddMenuItem(`~b~Загрузить транспорт сухпайками`, 'Одна партия обходиться в $100,000 из бюджета', {cargoLoadEat2: true});
+            UIMenu.Menu.AddMenuItem(`~b~Загрузить транспорт медикаментами`, 'Одна партия обходиться в $100,000 из бюджета', {cargoLoadMed2: true});
         }
     }
     else {
@@ -5408,6 +5718,34 @@ menuList.showVehicleMenu = async function(data) {
             UIMenu.Menu.AddMenuItem("~r~Чтобы работать на этом автомобиле дальнобойщиком, необходимо иметь навык рабочего от 12 уровня");
         }
     }
+    if (vInfo.class_name === 'Planes') {
+        if (vInfo.display_name === 'Mammatus' ||
+            vInfo.display_name === 'Cuban800' ||
+            vInfo.display_name === 'Dodo' ||
+            vInfo.display_name === 'Duster' ||
+            vInfo.display_name === 'Miljet' ||
+            vInfo.display_name === 'Nimbus' ||
+            vInfo.display_name === 'Seabreeze' ||
+            vInfo.display_name === 'Shamal' ||
+            vInfo.display_name === 'Velum' ||
+            vInfo.display_name === 'Velum2' ||
+            vInfo.display_name === 'Vestra' ||
+            vInfo.display_name === 'Luxor' ||
+            vInfo.display_name === 'Luxor2') {
+            if (user.getCache('work_lvl') >= 8) {
+                UIMenu.Menu.AddMenuItem("~g~Список заказов", "", {doName: "trucker:getList4"});
+                UIMenu.Menu.AddMenuItem("~b~Частота рации:~s~ ", '', {}, '300.004');
+                if (trucker.isProcess())
+                    UIMenu.Menu.AddMenuItem("~r~Завершить досрочно рейс", 'Штраф ~r~$500', {doName: "trucker:stop"});
+            }
+            else {
+                UIMenu.Menu.AddMenuItem("~r~Чтобы работать на этом транспорте пилотом, необходимо иметь навык рабочего от 8 уровня");
+            }
+        }
+        else {
+            UIMenu.Menu.AddMenuItem("~r~Чтобы работать на пилотом, необходимо иметь самолеты: Cuban800, Dodo, Duster, Miljet, Mammatus, Nimbus, Luxor, Luxor2, Shamal, Velum, Velum2, Vestra");
+        }
+    }
 
     if (user.getCache('job') == veh.getVariable('jobId')) {
         switch (veh.getVariable('jobId')) {
@@ -5484,6 +5822,7 @@ menuList.showVehicleMenu = async function(data) {
         }
         else if (user.getCache('taxi_lic') && !veh.getVariable('jobId') && !veh.getVariable('fraction_id') && !veh.getVariable('cargoId')) {
             if (user.getCache('isTaxi')) {
+                UIMenu.Menu.AddMenuItem("~g~Получить заказ", "На перевозку NPC", {doName: "taxi:take"});
                 UIMenu.Menu.AddMenuItem("~g~Диспетчерская", "", {doName: "taxi:dispatch"});
                 UIMenu.Menu.AddMenuItem("~y~Закончить принимать заказы", "", {doName: "taxi:stop"});
             }
@@ -5734,6 +6073,8 @@ menuList.showVehicleMenu = async function(data) {
             mp.events.callRemote('server:trucker:showMenu', 1);
         else if (item.doName == 'trucker:getList2')
             mp.events.callRemote('server:trucker:showMenu', 2);
+        else if (item.doName == 'trucker:getList4')
+            mp.events.callRemote('server:trucker:showMenu', 4);
         else if (item.doName == 'trucker:stop')
             trucker.stop();
         else if (item.doName == 'stopRent') {
@@ -5935,7 +6276,7 @@ menuList.showVehicleMenu = async function(data) {
         else if (item.cargoLoadMed) {
             UIMenu.Menu.HideMenu();
 
-            if (methods.distanceToPos(new mp.Vector3(3581.2109375, 3663.407958984375, 32.89536666870117), mp.players.local.position) > 10) {
+            if (methods.distanceToPos(new mp.Vector3(5077.5576171875, -4633.783203125, 32.89536666870117), mp.players.local.position) > 10) {
                 mp.game.ui.notifications.show('~y~Вы слишком далеко от места загрузки');
                 user.setWaypoint(3581.2109375, 3663.407958984375);
                 return;
@@ -6177,6 +6518,123 @@ menuList.showVehicleMenu = async function(data) {
                 user.getCache('fraction_id')
             );
         }
+        else if (item.cargoLoadMed2) {
+            UIMenu.Menu.HideMenu();
+
+            if (methods.distanceToPos(new mp.Vector3(5077.5576171875, -4633.783203125, 1.2534267902374268), mp.players.local.position) > 10) {
+                mp.game.ui.notifications.show('~y~Вы слишком далеко от места загрузки');
+                user.setWaypoint(5077.5576171875, -4633.783203125);
+                return;
+            }
+
+            let money = await coffer.getMoney(9);
+            if (money < 100000) {
+                mp.game.ui.notifications.show('~y~В бюджете организации недостаточно средств');
+                return;
+            }
+
+            coffer.removeMoney(9, 100000);
+            vehicles.setVariable('cargoId', 999);
+            vehicles.setVariable('box', JSON.stringify([13, 13]));
+            vehicles.attach('stock_13');
+
+            mp.game.ui.notifications.show('~y~Вы совершили погрузку, теперь разгрузитесь на складе');
+            user.setWaypoint(4990.25537109375, -5738.73486328125);
+
+            methods.saveFractionLog(
+                user.getCache('name'),
+                `Медикаменты`,
+                `Потрачено из бюджета ${methods.moneyFormat(100000)}.`,
+                user.getCache('fraction_id')
+            );
+        }
+        else if (item.cargoLoadGun2) {
+            UIMenu.Menu.HideMenu();
+
+            if (methods.distanceToPos(new mp.Vector3(5077.5576171875, -4633.783203125, 1.2534267902374268), mp.players.local.position) > 10) {
+                mp.game.ui.notifications.show('~y~Вы слишком далеко от места загрузки');
+                user.setWaypoint(5077.5576171875, -4633.783203125);
+                return;
+            }
+
+            let money = await coffer.getMoney(9);
+            if (money < 100000) {
+                mp.game.ui.notifications.show('~y~В бюджете организации недостаточно средств');
+                return;
+            }
+
+            coffer.removeMoney(9, 100000);
+            vehicles.setVariable('cargoId', 999);
+            vehicles.setVariable('box', JSON.stringify([50, 50]));
+
+            mp.game.ui.notifications.show('~y~Вы совершили погрузку, теперь разгрузитесь на складе');
+            user.setWaypoint(4990.25537109375, -5738.73486328125);
+
+            methods.saveFractionLog(
+                user.getCache('name'),
+                `Оружие (Cargobob)`,
+                `Потрачено из бюджета ${methods.moneyFormat(100000)}.`,
+                user.getCache('fraction_id')
+            );
+        }
+        else if (item.cargoLoadEat2) {
+            UIMenu.Menu.HideMenu();
+
+            if (methods.distanceToPos(new mp.Vector3(5077.5576171875, -4633.783203125, 1.2534267902374268), mp.players.local.position) > 10) {
+                mp.game.ui.notifications.show('~y~Вы слишком далеко от места загрузки');
+                user.setWaypoint(5077.5576171875, -4633.783203125);
+                return;
+            }
+
+            let money = await coffer.getMoney(9);
+            if (money < 100000) {
+                mp.game.ui.notifications.show('~y~В бюджете организации недостаточно средств');
+                return;
+            }
+
+            coffer.removeMoney(9, 100000);
+            vehicles.setVariable('cargoId', 999);
+            vehicles.setVariable('box', JSON.stringify([1, 1]));
+
+            mp.game.ui.notifications.show('~y~Вы совершили погрузку, теперь разгрузитесь на складе');
+            user.setWaypoint(4990.25537109375, -5738.73486328125);
+
+            methods.saveFractionLog(
+                user.getCache('name'),
+                `Еда`,
+                `Потрачено из бюджета ${methods.moneyFormat(100000)}.`,
+                user.getCache('fraction_id')
+            );
+        }
+        else if (item.cargoLoadOth2) {
+            UIMenu.Menu.HideMenu();
+
+            if (methods.distanceToPos(new mp.Vector3(5077.5576171875, -4633.783203125, 1.2534267902374268), mp.players.local.position) > 10) {
+                mp.game.ui.notifications.show('~y~Вы слишком далеко от места загрузки');
+                user.setWaypoint(5077.5576171875, -4633.783203125);
+                return;
+            }
+
+            let money = await coffer.getMoney(9);
+            if (money < 100000) {
+                mp.game.ui.notifications.show('~y~В бюджете организации недостаточно средств');
+                return;
+            }
+
+            coffer.removeMoney(9, 100000);
+            vehicles.setVariable('cargoId', 999);
+            vehicles.setVariable('box', JSON.stringify([2, 2]));
+
+            mp.game.ui.notifications.show('~y~Вы совершили погрузку, теперь разгрузитесь на складе');
+            user.setWaypoint(4990.25537109375, -5738.73486328125);
+
+            methods.saveFractionLog(
+                user.getCache('name'),
+                `Огорожденя`,
+                `Потрачено из бюджета ${methods.moneyFormat(100000)}.`,
+                user.getCache('fraction_id')
+            );
+        }
 
         /*
         else if (item.cargoUnloadAll) {
@@ -6311,10 +6769,13 @@ menuList.showVehicleDoMenu = function() {
 
         let listEn = ["~r~Выкл", "~g~Вкл"];
         let listOp = ["~r~Закрыт", "~g~Открыт"];
+        let listWin = ["~r~Закрыто", "~g~Открыто"];
 
         let actualData = mp.players.local.vehicle.getVariable('vehicleSyncData');
 
         UIMenu.Menu.AddMenuItemList("Аварийка", listEn, "Поворотники включаются на ~b~[~s~ и ~b~]", {doName: "twoIndicator"}, actualData.IndicatorRightToggle === true && actualData.IndicatorLeftToggle === true ? 1 : 0);
+
+
         UIMenu.Menu.AddMenuItemList("Свет в салоне", listEn, "Днём очень плохо видно", {doName: "light"}, actualData.InteriorLight === true ? 1 : 0);
         UIMenu.Menu.AddMenuItemList("Капот", listOp, "", {doName: "hood"}, actualData.Hood === true ? 1 : 0);
         UIMenu.Menu.AddMenuItemList("Багажник", listOp, "", {doName: "trunk"}, actualData.Trunk === true ? 1 : 0);
@@ -6330,6 +6791,13 @@ menuList.showVehicleDoMenu = function() {
         ) {
         }
         else {
+
+            try {
+                UIMenu.Menu.AddMenuItemList("Левое окно", listWin, "", {doName: "windowLeft"}, actualData.Window[0] ? 1 : 0);
+                UIMenu.Menu.AddMenuItemList("Правое окно", listWin, "", {doName: "windowRight"}, actualData.Window[1] ? 1 : 0);
+            }
+            catch (e) {}
+
             UIMenu.Menu.AddMenuItem("Лимит контроль", "Введите значение", {doName: "cruise"});
         }
 
@@ -6352,6 +6820,12 @@ menuList.showVehicleDoMenu = function() {
             }
             if (item.doName == 'trunk') {
                 vehicles.setTrunkState(listIndex == 1);
+            }
+            if (item.doName == 'windowLeft') {
+                vehicles.setWindowState(0, listIndex);
+            }
+            if (item.doName == 'windowRight') {
+                vehicles.setWindowState(1, listIndex);
             }
             if (item.doName == 'twoIndicator') {
                 if (vehicles.currentData && vehicles.currentData.get('s_elec') < 20) {
@@ -6723,7 +7197,78 @@ menuList.showSellItemsMenu = function(data) {
 menuList.showTradeMenu = function(data, ownerId, ownerType) {
 
     try {
-        UIMenu.Menu.Create(' ', `~b~Торговая площадка`, 'hm', false, false, 'h1');
+
+        let list = [];
+
+        ['Оружие', 'Модули на оружие', 'Патроны', 'Наркотики', 'Медикаменты', 'Еда и напитки', 'Маски', 'Одежда', 'Рыба', 'Остальное'].forEach((cat, i) => {
+            let fullItem = {
+                title: cat,
+                items: []
+            };
+            data.forEach(item => {
+
+                try { //Скидка от обычной цены
+
+                    if (!items.isWeapon(item.item_id) && i === 0) return;
+                    else if (!items.isWeaponComponent(item.item_id) && i === 1) return;
+                    else if (!items.isAmmo(item.item_id) && i === 2) return;
+                    else if (!items.isDrug(item.item_id) && i === 3) return;
+                    else if (!items.isMed(item.item_id) && i === 4) return;
+                    else if (!items.isEat(item.item_id) && i === 5) return;
+                    else if (!items.isMask(item.item_id) && i === 6) return;
+                    else if (!items.isCloth(item.item_id) && i === 7) return;
+                    else if (!items.isFish(item.item_id) && i === 8) return;
+                    else if (
+                        (items.isWeapon(item.item_id) ||
+                        items.isWeaponComponent(item.item_id) ||
+                        items.isAmmo(item.item_id) ||
+                        items.isDrug(item.item_id) ||
+                        items.isMed(item.item_id) ||
+                        items.isEat(item.item_id) ||
+                        items.isMask(item.item_id) ||
+                        items.isCloth(item.item_id) ||
+                        items.isFish(item.item_id)) &&
+                        i === 9) return;
+
+                    let formatItem = items.getItemFormat(item);
+                    let itemPrice = items.getItemPrice(item.item_id) * 2;
+                    let sale = item.price / itemPrice * 100;
+                    sale = methods.parseInt(100 - sale);
+                    if (itemPrice === 222222)
+                        sale = 0;
+                    if (sale < 0)
+                        sale = 0;
+                    if (sale > 100)
+                        sale = 100;
+                    let itemName = formatItem.name;
+                    let price = item.price;
+                    fullItem.items.push({ //Если кликаем сюда, то открывается меню справа (Там где покупка)
+                        title: methods.removeQuotesAll(itemName),
+                        desc: formatItem.desc,
+                        desc2: '',
+                        desc2t: '',
+                        sale: sale,
+                        img: `Item_${item.item_id}.png`,
+                        price: methods.moneyFormat(price),
+                        params: {t: 'tm', id: item.id, price: price, name: itemName, ownerId: ownerId}
+                    })
+
+                    methods.debug(cat, itemName)
+                }
+                catch (e) {
+
+                    methods.debug(e)
+                }
+
+            });
+            if (fullItem.items.length > 0)
+                list.push(fullItem);
+        });
+
+        shopMenu.showShop();
+        shopMenu.updateShop(list, 'h1', '#071300');
+
+        /*UIMenu.Menu.Create(' ', `~b~Торговая площадка`, 'hm', false, false, 'h1');
 
         data.forEach((item, idx) => {
             let formatItem = items.getItemFormat(item);
@@ -6741,7 +7286,7 @@ menuList.showTradeMenu = function(data, ownerId, ownerType) {
             if (item.itemId >= 0) {
                 mp.events.callRemote('server:tradeMarket:buy', item.id, item.price, item.name, ownerId);
             }
-        });
+        });*/
     }
     catch (e) {
         methods.debug(e);
@@ -7037,8 +7582,10 @@ menuList.showSellFishMenu = async function(data, shopId) {
                     return;
                 }
                 try {
+
+                    mp.events.callRemote('server:user:sellFish');
                     quest.fish(false, -1, 3);
-                    business.addMoney(shopId, item.price / 10, 'Доля с продажи рыбы');
+                    /*business.addMoney(shopId, item.price / 10, 'Доля с продажи рыбы');
                     user.addMoney(item.price, 'Продажа всей рыбы');
                     inventory.deleteItemsRange(487, 536);
                     mp.game.ui.notifications.show(`~b~Вы продали рыбу по цене: ~s~${methods.moneyFormat(item.price)}`);
@@ -7055,7 +7602,7 @@ menuList.showSellFishMenu = async function(data, shopId) {
                             else
                                 family.set(fId, 'exp', fData.get('exp') + item.countFish);
                         }
-                    }
+                    }*/
                 }
                 catch (e) {
                     methods.debug(e);
@@ -7782,8 +8329,32 @@ menuList.showBarberShopMoreMenu = async function (title, color, shop, price, nam
     if (isNone)
         list.push({name: `Убрать`, price: methods.moneyFormat(price / 2), sale: sale, params: {type: 'b:show', id: -1, none: false, name: `${name}`, price: price / 2, zone: zone, shop: shop}});
 
-    for (let i = 0; i < count; i++)
-        list.push({name: `${name} #${i + 1}`, price: methods.moneyFormat(price), sale: sale, params: {type: 'b:show', id: i, none: isNone, name: `${name} #${i + 1}`, price: price, zone: zone, shop: shop}});
+    if (zone == 'SKIN_HAIR') {
+        if (user.getSex() === 1) {
+            enums.hairFemale.forEach((item, i) => {
+                let desc = '';
+                enums.swtichFemaleHair.forEach(interactive => {
+                    if (item[1] === interactive[0] || item[1] === interactive[1])
+                        desc = 'Интерактивная';
+                });
+                list.push({name: `${name} #${i + 1}`, price: methods.moneyFormat(price), sale: sale, desc: desc, params: {type: 'b:show', id: item[1], none: isNone, name: `${name} #${i + 1}`, price: price, zone: zone, shop: shop}});
+            });
+        }
+        else {
+            enums.hairMale.forEach((item, i) => {
+                let desc = '';
+                enums.swtichMaleHair.forEach(interactive => {
+                    if (item[1] === interactive[0] || item[1] === interactive[1])
+                        desc = 'Интерактивная';
+                });
+                list.push({name: `${name} #${i + 1}`, price: methods.moneyFormat(price), sale: sale, desc: desc, params: {type: 'b:show', id: item[1], none: isNone, name: `${name} #${i + 1}`, price: price, zone: zone, shop: shop}});
+            });
+        }
+    }
+    else {
+        for (let i = 0; i < count; i++)
+            list.push({name: `${name} #${i + 1}`, price: methods.moneyFormat(price), sale: sale, params: {type: 'b:show', id: i, none: isNone, name: `${name} #${i + 1}`, price: price, zone: zone, shop: shop}});
+    }
 
     //let pos = new mp.Vector3(mp.players.local.position.x, mp.players.local.position.y, mp.players.local.position.z + 0.75);
     //shopMenu.showShop2(pos, mp.players.local.getRotation(0).z, 0.8, 0.4, 1.2);
@@ -7838,7 +8409,7 @@ menuList.showBarberShopMenu = function (shopId, price) {
     list.push({name: 'Веснушки', price: '', sale: sale, params: {type: 'b', name: 'Веснушки', price: 250 * price, none: true, count: 10, zone: "SKIN_OVERLAY_9", shop: shopId}});
 
     if (user.getSex() === 0) {
-        list.push({name: 'Борода', price: '', sale: sale, params: {type: 'b', name: 'Борода', price: 500 * price, none: true, count: 30, zone: "SKIN_OVERLAY_1", shop: shopId}});
+        list.push({name: 'Борода', price: '', sale: sale, params: {type: 'b', name: 'Борода', price: 500 * price, none: true, count: 29, zone: "SKIN_OVERLAY_1", shop: shopId}});
         list.push({name: 'Цвет бороды', price: '', sale: sale, params: {type: 'b', name: 'Цвет бороды', price: 100 * price, count: 64, zone: "SKIN_OVERLAY_COLOR_1", shop: shopId}});
 
         list.push({name: 'Волосы на груди', price: '', sale: sale, params: {type: 'b', name: 'Волосы на груди', price: 250 * price, none: true, count: mp.game.ped.getNumHeadOverlayValues(10) + 1, zone: "SKIN_OVERLAY_10", shop: shopId}});
@@ -7851,7 +8422,7 @@ menuList.showBarberShopMenu = function (shopId, price) {
     list.push({name: 'Румянец', price: '', sale: sale, params: {type: 'b', name: 'Румянец', price: 250 * price, none: true, count: 7, zone: "SKIN_OVERLAY_5", shop: shopId}});
     list.push({name: 'Цвет румянца', price: '', sale: sale, params: {type: 'b', name: 'Цвет румянца', price: 110 * price, count: 60, zone: "SKIN_OVERLAY_COLOR_5", shop: shopId}});
 
-    list.push({name: 'Макияж', price: '', sale: sale, params: {type: 'b', name: 'Макияж', price: 1500 * price, none: true, count: mp.game.ped.getNumHeadOverlayValues(4) + 1, zone: "SKIN_OVERLAY_4", shop: shopId}});
+    list.push({name: 'Макияж', price: '', sale: sale, params: {type: 'b', name: 'Макияж', price: 1500 * price, none: true, count: mp.game.ped.getNumHeadOverlayValues(4), zone: "SKIN_OVERLAY_4", shop: shopId}});
 
     let pos = new mp.Vector3(mp.players.local.position.x, mp.players.local.position.y, mp.players.local.position.z + 0.75);
     shopMenu.showShop2(pos, mp.players.local.getRotation(0).z, 0.8, 0.4, 1.2);
@@ -7896,6 +8467,19 @@ menuList.showShopMenu = function(shopId, price = 2, type = 0)
             })
         });
 
+        fullItem.items.push(
+            { //Если кликаем сюда, то открывается меню справа (Там где покупка)
+                title: 'Рация',
+                desc: ``,
+                desc2: '',
+                desc2t: '',
+                sale: 0,
+                img: `walkie.png`,
+                price: methods.moneyFormat(5000),
+                params: {doName: 'radio', price: 5000, shop: shopId}
+            }
+        );
+
         list.push(fullItem);
         //UIMenu.Menu.AddMenuItemList(items.getItemNameById(itemId), list, `Цена: ~g~${methods.moneyFormat(itemPrice)}${saleLabel}`, menuItem, '', (sale > 0) ? 'sale' : '')
     });
@@ -7911,6 +8495,52 @@ menuList.showShopMenu = function(shopId, price = 2, type = 0)
             img: `fish.png`,
             price: '',
             params: {doName: 'sellFish', shop: shopId}
+        }]
+    });
+
+    list.push({
+        title: 'Для дома',
+        items: [{ //Если кликаем сюда, то открывается меню справа (Там где покупка)
+            title: 'Дверь с пинкодом',
+            desc: `Пинкод можно установить в виде цифр и поменять в любой момент абсолютно бесплатно`,
+            desc2: '',
+            desc2t: '',
+            sale: 0,
+            img: `pincode.png`,
+            price: methods.moneyFormat(7500),
+            params: {doName: 'hPin', price: 7500, shop: shopId}
+        }, { //Если кликаем сюда, то открывается меню справа (Там где покупка)
+            title: 'Сейф',
+            desc: `Позволяет хранить в защищеном месте всё что ваша душа пожелает ;)`,
+            desc2: '',
+            desc2t: '',
+            sale: 0,
+            img: `safe.png`,
+            price: methods.moneyFormat(25000),
+            params: {doName: 'hSafe', price: 25000, shop: shopId}
+        }]
+    });
+
+    list.push({
+        title: 'Для квартиры',
+        items: [{ //Если кликаем сюда, то открывается меню справа (Там где покупка)
+            title: 'Дверь с пинкодом',
+            desc: `Пинкод можно установить в виде цифр и поменять в любой момент абсолютно бесплатно`,
+            desc2: '',
+            desc2t: '',
+            sale: 0,
+            img: `pincode.png`,
+            price: methods.moneyFormat(7500),
+            params: {doName: 'cPin', price: 7500, shop: shopId}
+        }, { //Если кликаем сюда, то открывается меню справа (Там где покупка)
+            title: 'Сейф',
+            desc: `Позволяет хранить в защищеном месте всё что ваша душа пожелает ;)`,
+            desc2: '',
+            desc2t: '',
+            sale: 0,
+            img: `safe.png`,
+            price: methods.moneyFormat(25000),
+            params: {doName: 'cSafe', price: 25000, shop: shopId}
         }]
     });
 
@@ -8530,12 +9160,14 @@ menuList.showRentBikeMenu = function(shopId, price = 2)
         ["Faggio", 60 * price, -1842748181],
         ["Faggio2", 55 * price, 55628203],
         ["Faggio3", 50 * price, -1289178744],
+        ["Blazer", 150 * price, mp.game.joaat('blazer')],
+        ["Verus", 150 * price, mp.game.joaat('verus')],
     ].forEach(item => {
         list.push({
             price: methods.moneyFormat(item[1]),
             name: item[0],
             sale: sale,
-            params: {shop: shopId, hash: item[2], price: item[1]}
+            params: {shop: shopId, hash: item[0], price: item[1]}
         });
     });
 
@@ -8595,19 +9227,31 @@ menuList.showShopClothMenu = function (shopId, type, menuType, price = 1) {
             list.push({name: 'Серьги', price: '', sale: sale, params: {type: 'c', t: type, p: price, mt: menuType, name: 'earring', shop: shopId}});
             list.push({name: 'Левая рука', price: '', sale: sale, params: {type: 'c', t: type, p: price, mt: menuType, name: 'leftHand', shop: shopId}});
             list.push({name: 'Правая рука', price: '', sale: sale, params: {type: 'c', t: type, p: price, mt: menuType, name: 'rightHand', shop: shopId}});
+        } else if (menuType == -1) {
+            list.push({name: 'Торс', price: '', sale: sale, params: {type: 'c', t: type, p: price, mt: menuType, name: 'body', shop: shopId}});
+            list.push({name: 'Ноги', price: '', sale: sale, params: {type: 'c', t: type, p: price, mt: menuType, name: 'legs', shop: shopId}});
+            list.push({name: 'Обувь', price: '', sale: sale, params: {type: 'c', t: type, p: price, mt: menuType, name: 'shoes', shop: shopId}});
+            list.push({name: 'Аксессуары и перчатки', price: '', sale: sale, params: {type: 'c', t: type, p: price, mt: menuType, name: 'acess', shop: shopId}});
+            //=======================================
+            list.push({name: 'Головные уборы', price: '', sale: sale, params: {type: 'c', t: type, p: price, mt: menuType, name: 'head', shop: shopId}});
+            list.push({name: 'Очки', price: '', sale: sale, params: {type: 'c', t: type, p: price, mt: menuType, name: 'glasses', shop: shopId}});
+            list.push({name: 'Серьги', price: '', sale: sale, params: {type: 'c', t: type, p: price, mt: menuType, name: 'earring', shop: shopId}});
+            list.push({name: 'Левая рука', price: '', sale: sale, params: {type: 'c', t: type, p: price, mt: menuType, name: 'leftHand', shop: shopId}});
+            list.push({name: 'Правая рука', price: '', sale: sale, params: {type: 'c', t: type, p: price, mt: menuType, name: 'rightHand', shop: shopId}});
+            //=======================================
             list.push({name: 'Сумки и рюкзаки', price: '', sale: sale, params: {type: 'c', t: type, p: price, mt: menuType, name: 'openBag', shop: shopId}});
-            //UIMenu.Menu.AddMenuItem("~y~Ограбить").doName = 'grab';
-
-            /*if (type == 5) {
-                let menuItem = {};
-                menuItem.price = 349.99;
-                menuItem.itemId = 55;
-                menuItem.itemName = "Бита";
-                UIMenu.Menu.AddMenuItem("Бита", `Цена: ~g~$349.99`, menuItem);
-            }*/
-
-            //UIMenu.Menu.AddMenuItem('~b~Сумки и рюкзаки', "", {doName: "openBag"});
-
+        } else if (menuType == -2) {
+            list.push({name: 'Головные уборы', price: '', sale: sale, params: {type: 'c', t: type, p: price, mt: menuType, name: 'head', shop: shopId}});
+            list.push({name: 'Очки', price: '', sale: sale, params: {type: 'c', t: type, p: price, mt: menuType, name: 'glasses', shop: shopId}});
+            list.push({name: 'Серьги', price: '', sale: sale, params: {type: 'c', t: type, p: price, mt: menuType, name: 'earring', shop: shopId}});
+            list.push({name: 'Левая рука', price: '', sale: sale, params: {type: 'c', t: type, p: price, mt: menuType, name: 'leftHand', shop: shopId}});
+            list.push({name: 'Правая рука', price: '', sale: sale, params: {type: 'c', t: type, p: price, mt: menuType, name: 'rightHand', shop: shopId}});
+            //=======================================
+            list.push({name: 'Торс', price: '', sale: sale, params: {type: 'c', t: type, p: price, mt: menuType, name: 'body', shop: shopId}});
+            list.push({name: 'Ноги', price: '', sale: sale, params: {type: 'c', t: type, p: price, mt: menuType, name: 'legs', shop: shopId}});
+            list.push({name: 'Обувь', price: '', sale: sale, params: {type: 'c', t: type, p: price, mt: menuType, name: 'shoes', shop: shopId}});
+            //=======================================
+            list.push({name: 'Сумки и рюкзаки', price: '', sale: sale, params: {type: 'c', t: type, p: price, mt: menuType, name: 'openBag', shop: shopId}});
         } else if (menuType == 1) {
             list.push({name: 'Головные уборы', price: '', sale: sale, params: {type: 'c', t: type, p: price, mt: menuType, name: 'head', shop: shopId}});
             list.push({name: 'Очки', price: '', sale: sale, params: {type: 'c', t: type, p: price, mt: menuType, name: 'glasses', shop: shopId}});
@@ -8620,8 +9264,7 @@ menuList.showShopClothMenu = function (shopId, type, menuType, price = 1) {
             if (type == 11)
                 user.updateTattoo(true, true, false, true);
 
-            let skin = JSON.parse(user.getCache('skin'));
-            let cloth = skin.SKIN_SEX == 1 ? JSON.parse(enums.clothF) : JSON.parse(enums.clothM);
+            let cloth = user.getSex() == 1 ? JSON.parse(enums.clothF) : JSON.parse(enums.clothM);
             for (let i = 0; i < cloth.length; i++) {
                 let id = i;
 
@@ -8633,6 +9276,30 @@ menuList.showShopClothMenu = function (shopId, type, menuType, price = 1) {
 
                 let pr = cloth[i][8] * price;
                 let menuListItem = {};
+                let desc = '';
+
+                if (menuType === 11) {
+                    if (user.getSex() === 1) {
+                        enums.swtichFemaleCloth.forEach(interactive => {
+                            if (interactive[0] == cloth[id][2] || interactive[1] == cloth[id][2])
+                                desc = ' | Интерактивная';
+                        });
+                        enums.swtichFemaleCloth2.forEach(interactive => {
+                            if (interactive[0] == cloth[id][2] || interactive[1] == cloth[id][2])
+                                desc = ' | Интерактивная';
+                        });
+                    }
+                    else {
+                        enums.swtichMaleCloth.forEach(interactive => {
+                            if (interactive[0] == cloth[id][2] || interactive[1] == cloth[id][2])
+                                desc = ' | Интерактивная';
+                        });
+                        enums.swtichMaleCloth2.forEach(interactive => {
+                            if (interactive[0] == cloth[id][2] || interactive[1] == cloth[id][2])
+                                desc = ' | Интерактивная';
+                        });
+                    }
+                }
 
                 menuListItem.id1 = cloth[id][1];
                 menuListItem.id2 = cloth[id][2];
@@ -8648,7 +9315,7 @@ menuList.showShopClothMenu = function (shopId, type, menuType, price = 1) {
                 menuListItem.mt = menuType;
                 menuListItem.type = 'c:show';
                 menuListItem.itemName = cloth[id][9].toString();
-                list.push({name: methods.removeQuotesAll(cloth[i][9].toString()), desc: `Цена: ${methods.moneyFormat(pr)}`, price: '', sale: sale, params: menuListItem});
+                list.push({name: methods.removeQuotesAll(cloth[i][9].toString()), desc: `Цена: ${methods.moneyFormat(pr)}${desc}`, price: '', sale: sale, params: menuListItem});
             }
         }
 
@@ -8721,12 +9388,27 @@ menuList.showShopClothBagMenu = function (shopId, type, menuType) {
                 menuListItem.id5 = 0;
                 menuListItem.id6 = 0;
                 menuListItem.id7 = 0;
-                menuListItem.id8 = 2500;
+                menuListItem.id8 = 5000;
                 menuListItem.type = 'c:buy';
                 menuListItem.id = idx;
                 menuListItem.shop = shopId;
                 menuListItem.itemName = `Спортивная сумка (${item})`;
-                list.push({name: methods.removeQuotesAll(menuListItem.itemName), price: methods.moneyFormat(2500), sale: 0, params: menuListItem});
+                list.push({name: methods.removeQuotesAll(menuListItem.itemName), price: methods.moneyFormat(5000), sale: 0, params: menuListItem});
+            });
+            ['Белая Adidas', 'Черная Adidas', 'Синяя Adidas', 'Черная Converse', 'Синяя Converse', 'Белая Kappa', 'Черная Kappa', 'Розовая Kappa', 'Белая Nike', 'Черная Nike', 'Голубая Nike', 'Черная PlayBoy', 'Рзовая PlayBoy', 'Красная Puma', 'Черная Puma', 'Белая Puma', 'Желтая Reebok', 'Черная Reebok', 'Синяя Reebok', 'Белая Reebok'].forEach((item, idx) => {
+                let menuListItem = {};
+                menuListItem.id1 = 5;
+                menuListItem.id2 = 23;
+                menuListItem.id4 = 0;
+                menuListItem.id5 = 0;
+                menuListItem.id6 = 0;
+                menuListItem.id7 = 0;
+                menuListItem.id8 = 10000;
+                menuListItem.type = 'c:buy';
+                menuListItem.id = idx;
+                menuListItem.shop = shopId;
+                menuListItem.itemName = `Спортивная сумка (${item})`;
+                list.push({name: methods.removeQuotesAll(menuListItem.itemName), price: methods.moneyFormat(10000), sale: 0, params: menuListItem});
             });
             ['Классическая #1'].forEach((item, idx) => {
                 let menuListItem = {};
@@ -9448,7 +10130,7 @@ menuList.showTattooShopShortMenu = function(title1, title2, zone, shopId, price)
     shopMenu.updateShop2(list, title1, title2, 1, 'Список татуировок');
 };
 
-menuList.showVehShopMenu = function(shopId, carPos, buyPos, carList)
+menuList.showVehShopMenu = function(shopId, autoId, carPos, buyPos, carList)
 {
     methods.getVehicleInfo(shopId);
 
@@ -9468,13 +10150,13 @@ menuList.showVehShopMenu = function(shopId, carPos, buyPos, carList)
         {
             vShop.goToInside(shopId, carPos[0], carPos[1], carPos[2], carPos[3], buyPos[0], buyPos[1], buyPos[2], carList);
             setTimeout(function () {
-                menuList.showVehShopListMenu(shopId, carList);
+                menuList.showVehShopListMenu(shopId, autoId, carList);
             }, 2000);
         }
     });
 };
 
-menuList.showVehShopListMenu = function(shopId, carList)
+menuList.showVehShopListMenu = function(shopId, autoId, carList)
 {
     UIMenu.Menu.HideMenu();
 
@@ -9489,7 +10171,7 @@ menuList.showVehShopListMenu = function(shopId, carList)
     let vehicleInfo = enums.vehicleInfo;
 
     vehicleInfo.forEach(item => {
-        if (shopId != item.type)
+        if (autoId != item.type)
             return;
 
         /*let label = `~c~${item.display_name} (0 шт.)`;
@@ -9511,7 +10193,6 @@ menuList.showVehShopListMenu = function(shopId, carList)
                 count = methods.parseInt(carList.get(item.display_name));
 
             let carInfo = [];
-
             carInfo.push({title: 'Класс', info: item.class_name});
             if (user.getCache('s_hud_speed_type'))
                 carInfo.push({title: 'Макс. скорость', info: `~${vehicles.getSpeedMax(mp.game.joaat(item.display_name))} KM/H`});
@@ -9595,6 +10276,7 @@ menuList.showLscMenu = function(shopId, price = 1)
     }
 
     let sale = business.getSale(price);
+    let vInfo = methods.getVehicleInfo(veh.model);
 
     let list = [];
 
@@ -9605,10 +10287,15 @@ menuList.showLscMenu = function(shopId, price = 1)
         //list.push({name: `Ходовые настройки`, price: '', sale: sale, params: {type: 'lsc:setS2Tunning', price: price, shop: shopId}});
     }
     else {
-        list.push({name: `Визуальный тюнинг`, price: '', sale: sale, params: {type: 'lsc:setTunning', price: price, shop: shopId}});
+        if (vInfo.class_name !== 'Helicopters')
+            list.push({name: `Визуальный тюнинг`, price: '', sale: sale, params: {type: 'lsc:setTunning', price: price, shop: shopId}});
+        if (vInfo.display_name === 'Havok')
+            list.push({name: `Визуальный тюнинг`, price: '', sale: sale, params: {type: 'lsc:setTunning', price: price, shop: shopId}});
         list.push({name: `Покраска транспорта`, price: '', sale: sale, params: {type: 'lsc:setColor', price: price, shop: shopId}});
         list.push({name: `Установка модулей`, price: '', sale: sale, params: {type: 'lsc:setSTunning', price: price, shop: shopId}});
-        list.push({name: `Сменить номер`, price: '', sale: sale, params: {type: 'lsc:setNumber', price: price, shop: shopId}});
+
+        if (vInfo.class_name !== 'Boats' && vInfo.class_name !== 'Planes' && vInfo.class_name !== 'Helicopters')
+            list.push({name: `Сменить номер`, price: '', sale: sale, params: {type: 'lsc:setNumber', price: price, shop: shopId}});
     }
 
     shopMenu.showShop2(veh.position, veh.getRotation(0).z, 3.5, 3, 8, 0, 2);
@@ -9660,12 +10347,27 @@ menuList.showLscColorMenu = function(shopId, price) {
 
     let sale = business.getSale(price);
     let list = [];
-    list.push({name: `Основной цвет`, price: '', sale: sale, params: {type: 'lsc:color:1', price: price, shop: shopId}});
-    list.push({name: `Дополнительный цвет`, price: '', sale: sale, params: {type: 'lsc:color:2', price: price, shop: shopId}});
-    list.push({name: `Перламутровый цвет`, price: '', sale: sale, params: {type: 'lsc:color:3', price: price, shop: shopId}});
-    list.push({name: `Цвет колёс`, price: '', sale: sale, params: {type: 'lsc:color:4', price: price, shop: shopId}});
-    list.push({name: `Цвет приборной панели`, price: '', desc: 'Не на всех ТС доступна смена цвета салона', sale: sale, params: {type: 'lsc:color:5', price: price, shop: shopId}});
-    list.push({name: `Цвет салона`, price: '', desc: 'Не на всех ТС доступна смена цвета салона', sale: sale, params: {type: 'lsc:color:6', price: price, shop: shopId}});
+
+    let vInfo = methods.getVehicleInfo(veh.model);
+
+    if (vInfo.class_name === 'Boats') {
+        list.push({name: `Цвет №1`, price: '', sale: sale, params: {type: 'lsc:color:1', price: price, shop: shopId}});
+        list.push({name: `Цвет №2`, price: '', sale: sale, params: {type: 'lsc:color:2', price: price, shop: shopId}});
+        list.push({name: `Цвет №2`, price: '', sale: sale, params: {type: 'lsc:color:3', price: price, shop: shopId}});
+        list.push({name: `Цвет №4`, price: '', sale: sale, params: {type: 'lsc:color:4', price: price, shop: shopId}});
+        list.push({name: `Цвет №5`, price: '', sale: sale, params: {type: 'lsc:color:5', price: price, shop: shopId}});
+        list.push({name: `Цвет №6`, price: '', sale: sale, params: {type: 'lsc:color:6', price: price, shop: shopId}});
+    }
+    else {
+        list.push({name: `Основной цвет`, price: '', sale: sale, params: {type: 'lsc:color:1', price: price, shop: shopId}});
+        list.push({name: `Дополнительный цвет`, price: '', sale: sale, params: {type: 'lsc:color:2', price: price, shop: shopId}});
+        list.push({name: `Перламутровый цвет`, price: '', sale: sale, params: {type: 'lsc:color:3', price: price, shop: shopId}});
+        if (vInfo.class_name !== 'Planes' && vInfo.class_name !== 'Helicopters') {
+            list.push({name: `Цвет колёс`, price: '', sale: sale, params: {type: 'lsc:color:4', price: price, shop: shopId}});
+            list.push({name: `Цвет приборной панели`, price: '', desc: 'Не на всех ТС доступна смена цвета салона', sale: sale, params: {type: 'lsc:color:5', price: price, shop: shopId}});
+            list.push({name: `Цвет салона`, price: '', desc: 'Не на всех ТС доступна смена цвета салона', sale: sale, params: {type: 'lsc:color:6', price: price, shop: shopId}});
+        }
+    }
     shopMenu.updateShop2(list, shopMenu.getLastSettings().banner, shopMenu.getLastSettings().bg, 0, 'Выбор цвета');
 };
 
@@ -9953,6 +10655,14 @@ menuList.showLscTunningMenu = function(shopId, price) {
             if (veh.getNumMods(i) == 0) continue;
             if (i == 23) continue;
 
+            if (
+                vehInfo.display_name == '600sel' ||
+                vehInfo.display_name == 'w210' ||
+                vehInfo.display_name == 'SV' ||
+                vehInfo.display_name == 'Lc100'
+            )
+                continue;
+
             if (i == 1 || i == 10) {
                 if (vehInfo.display_name == 'Havok' ||
                     vehInfo.display_name == 'Microlight' ||
@@ -10027,6 +10737,8 @@ menuList.showLscTunningMenu = function(shopId, price) {
     }
 
     list.push({name: `Тонировка`, price: '', sale: sale, params: {type: 'lsc:list:show', modType: 69, shop: shopId}});
+    if (vehInfo.class_name !== 'Boats' && vehInfo.class_name !== 'Planes' && vehInfo.class_name !== 'Helicopters')
+     list.push({name: `Высота подвески`, price: '', sale: sale, params: {type: 'lsc:list:show', modType: 15, shop: shopId}});
     //list.push({name: `Турбо`, price: '', sale: sale, params: {type: 'lsc:list:show', modType: 18, shop: shopId}});
     if (veh.getLiveryCount() > 1)
         list.push({name: `Специальная покраска`, price: '', sale: sale, params: {type: 'lsc:list:show', modType: 76, shop: shopId}});
@@ -10037,10 +10749,10 @@ menuList.showLscTunningMenu = function(shopId, price) {
             isExtra = true;
     }
 
-    if (isExtra)
+    if (isExtra && vehInfo.class_name !== 'Planes' && vehInfo.class_name !== 'Helicopters')
         list.push({name: `Экстра тюнинг`, price: '', sale: sale, params: {type: 'lsc:list:show', modType: 80, shop: shopId}});
 
-    if (vehInfo.class_name !== 'Motorcycles')
+    if (vehInfo.class_name !== 'Motorcycles' && vehInfo.class_name !== 'Boats' && vehInfo.class_name !== 'Planes' && vehInfo.class_name !== 'Helicopters')
         list.push({name: `Колёса`, price: '', sale: sale, params: {type: 'lsc:list:show', modType: 78, shop: shopId}});
 
     shopMenu.updateShop2(list, shopMenu.getLastSettings().banner, shopMenu.getLastSettings().bg, 0, 'Тюнинг');
@@ -10414,13 +11126,16 @@ menuList.showGunShopMenu = function(shopId, price = 1)
 
     gunList.forEach(itemId => {
         let itemPrice = items.getItemPrice(itemId) * price;
-
+        let ammoId = weapons.getGunAmmoNameByItemId(itemId);
+        let desc = `Оружие ${methods.removeQuotesAll(items.getItemNameById(itemId))}`;
+        if (ammoId > 0)
+            desc = `Оружие ${methods.removeQuotesAll(items.getItemNameById(itemId))} использует патроны ${methods.removeQuotesAll(items.getItemNameById(ammoId))}`;
         let shopItem = {
             title: methods.removeQuotesAll(items.getItemNameById(itemId)),
             items: [
                 { //Если кликаем сюда, то открывается меню справа (Там где покупка)
                     title: methods.removeQuotesAll(items.getItemNameById(itemId)),
-                    desc: '',
+                    desc: desc,
                     desc2: '',
                     desc2t: '',
                     sale: sale,
@@ -10431,7 +11146,6 @@ menuList.showGunShopMenu = function(shopId, price = 1)
             ]
         };
 
-        let ammoId = weapons.getGunAmmoNameByItemId(itemId);
         if (ammoId > 0) {
             itemPrice = items.getItemPrice(ammoId) * price;
             shopItem.items.push(
@@ -10456,9 +11170,9 @@ menuList.showGunShopMenu = function(shopId, price = 1)
                         let itemPrice = items.getItemPrice(itemId) * price * 2;
                         shopItem.items.push(
                             { //Если кликаем сюда, то открывается меню справа (Там где покупка)
-                                title: methods.removeQuotesAll(`${items.getItemNameById(itemId)} ${item}`),
+                                title: methods.removeQuotesAll(`${items.getItemNameById(itemId)}`),
                                 desc: '',
-                                desc2: '',
+                                desc2: item,
                                 desc2t: '',
                                 sale: sale,
                                 img: `Item_${itemId}.png`,
@@ -10480,9 +11194,9 @@ menuList.showGunShopMenu = function(shopId, price = 1)
 
                         shopItem.items.push(
                             { //Если кликаем сюда, то открывается меню справа (Там где покупка)
-                                title: methods.removeQuotesAll(`${items.getItemNameById(itemId)} ${item[1]}`),
+                                title: methods.removeQuotesAll(`${items.getItemNameById(itemId)}`),
                                 desc: '',
-                                desc2: '',
+                                desc2: item[1],
                                 desc2t: '',
                                 sale: sale,
                                 img: `Item_${itemId}.png`,
@@ -10503,13 +11217,13 @@ menuList.showGunShopMenu = function(shopId, price = 1)
                     let itemName = items.getItemNameById(wpcId);
                     if (itemName == 'UNKNOWN') return;
 
-                    let img = 'grip'; //Рукоятка
+                    /*let img = 'grip'; //Рукоятка
                     if (item[3] === 1) //Надульник
                         img = 'supressor';
                     if (item[3] === 2) //Фонарик
                         img = 'flashlight';
                     if (item[3] === 3) //Прицел
-                        img = 'scope';
+                        img = 'scope';*/
 
                     shopItem.items.push(
                         { //Если кликаем сюда, то открывается меню справа (Там где покупка)
@@ -10518,7 +11232,7 @@ menuList.showGunShopMenu = function(shopId, price = 1)
                             desc2: '',
                             desc2t: '',
                             sale: sale,
-                            img: `${img}.png`,
+                            img: `Item_${wpcId}.png`,
                             price: methods.moneyFormat(itemPrice),
                             params: {id: wpcId, price: itemPrice, shop: shopId}
                         }
@@ -10747,7 +11461,10 @@ menuList.showAnimationListMenu = function(subtitle, array) {
         menuItem.anim1 = item[1];
         menuItem.anim2 = item[2];
         menuItem.animFlag = item[3];
-        UIMenu.Menu.AddMenuItem(`${item[0]}`, '', menuItem);
+        if (subtitle === 'Танцы')
+            UIMenu.Menu.AddMenuItem(`${item[0]}`, '', menuItem);
+        else
+            UIMenu.Menu.AddMenuItem(`${item[0]}`, '', menuItem, '', item[1] + '_' + item[2]);
     });
 
     UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
@@ -10783,7 +11500,7 @@ menuList.showAnimationOtherListMenu = function() {
     UIMenu.Menu.Create(`Анимации`, `~b~Остальные анимации`);
 
     enums.scenarios.forEach(function (item, i, arr) {
-        UIMenu.Menu.AddMenuItem(`${item[0]}`, '', {scenario: item[1]});
+        UIMenu.Menu.AddMenuItem(`${item[0]}`, '', {scenario: item[1]}, '', item[1]);
     });
 
     enums.animRemain.forEach(function (item, i, arr) {
@@ -10791,7 +11508,7 @@ menuList.showAnimationOtherListMenu = function() {
         menuItem.anim1 = item[1];
         menuItem.anim2 = item[2];
         menuItem.animFlag = item[3];
-        UIMenu.Menu.AddMenuItem(`${item[0]}`, '', menuItem);
+        UIMenu.Menu.AddMenuItem(`${item[0]}`, '', menuItem, '', item[1] + '_' + item[2]);
     });
 
     UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
@@ -10888,7 +11605,7 @@ menuList.showFractionInfoMenu = function() {
         UIMenu.Menu.AddMenuItem(`Забрать лицензию категории C`, "", {licRName: "c_lic"});
         UIMenu.Menu.AddMenuItem(`Забрать лицензию пилота`, "", {licRName: "air_lic"});
         UIMenu.Menu.AddMenuItem(`Забрать лицензию на водный ТС`, "", {licRName: "ship_lic"});
-        UIMenu.Menu.AddMenuItem(`Забрать лицензию на перевозку пассажиров`, "Купив эту лицензию, у вас появляется возможность работать в такси (Достаточно иметь транспорт)", {licRName: "taxi_lic"});
+        UIMenu.Menu.AddMenuItem(`Забрать лицензию на перевозку пассажиров`, {licRName: "taxi_lic"});
         UIMenu.Menu.AddMenuItem(`Забрать лицензию на оружие`, "", {licRName: "gun_lic"});
     }
     if (user.isGov()) {
@@ -10905,6 +11622,13 @@ menuList.showFractionInfoMenu = function() {
         UIMenu.Menu.AddMenuItem(`Забрать лицензию на рыбаловство`, "", {licRName: "fish_lic"});
     }
     if (user.isEms()) {
+        UIMenu.Menu.AddMenuItem(`Выдать мед. страховку`, "Стоимость: ~g~$20,000", {licName: "med_lic"});
+        UIMenu.Menu.AddMenuItem(`Выдать разрешение на марихуану`, "Стоимость: ~g~$5,000", {licName: "marg_lic"});
+    }
+    if (user.isCartel()) {
+        UIMenu.Menu.AddMenuItem(`Выдать разрешение на рыбаловство`, "Стоимость: ~g~$10,000", {licName: "fish_lic"});
+        UIMenu.Menu.AddMenuItem(`Забрать лицензию на рыбаловство`, "", {licRName: "fish_lic"});
+
         UIMenu.Menu.AddMenuItem(`Выдать мед. страховку`, "Стоимость: ~g~$20,000", {licName: "med_lic"});
         UIMenu.Menu.AddMenuItem(`Выдать разрешение на марихуану`, "Стоимость: ~g~$5,000", {licName: "marg_lic"});
     }
@@ -12461,6 +13185,167 @@ menuList.showFibArsenalGunModMenu = function() {
     });
 };
 
+menuList.showCartelArsenalMenu = function() {
+    UIMenu.Menu.Create(`Арсенал`, `~b~Арсенал`);
+
+    UIMenu.Menu.AddMenuItem("Сухпаёк", "", {itemId: 32});
+    if (user.getCache('rank_type') !== 0 || user.isLeader() || user.isSubLeader() || user.isDepLeader() || user.isSubLeader()) {
+        UIMenu.Menu.AddMenuItem("Большая Аптечка", "", {itemId: 278});
+        UIMenu.Menu.AddMenuItem("Полицейское огорождение", "", {itemId: 199});
+        UIMenu.Menu.AddMenuItem("Полосатый конус", "", {itemId: 201});
+        UIMenu.Menu.AddMenuItem("Красный конус", "", {itemId: 202});
+        UIMenu.Menu.AddMenuItem("~b~Починка оружия", "", {gunFix: true});
+    }
+
+    UIMenu.Menu.AddMenuItem("~b~Сдача конфиската", "", {sellItems: true});
+    UIMenu.Menu.AddMenuItem("~b~Оружие", "", {showGun: true});
+    UIMenu.Menu.AddMenuItem("~b~Модули на оружие", "", {showGunMod: true});
+
+    UIMenu.Menu.AddMenuItemList("Форма", ["Стандарт", "Форма #1", "Форма #2", "Форма #3", "Форма #4", "Форма #5"]);
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
+    UIMenu.Menu.Draw();
+
+    UIMenu.Menu.OnList.Add((item, index) => {
+        if (index == 0) {
+            user.giveUniform(0);
+        }
+        else if (index == 1) {
+            user.giveUniform(50);
+        }
+        else if (index == 2) {
+            user.giveUniform(51);
+        }
+        else if (index == 3) {
+            user.giveUniform(52);
+        }
+        else if (index == 4) {
+            user.giveUniform(53);
+        }
+        else if (index == 5) {
+            user.giveUniform(54);
+        }
+    });
+
+    UIMenu.Menu.OnSelect.Add(async item => {
+        UIMenu.Menu.HideMenu();
+        if (item.gunFix) {
+            mp.events.callRemote('server:inventory:fixItemFreeMenu');
+        }
+        if (item.showGun) {
+            menuList.showCartelArsenalGunMenu();
+        }
+        if (item.sellItems) {
+            inventory.getItemListSell();
+        }
+        if (item.showGunMod) {
+            menuList.showCartelArsenalGunModMenu();
+        }
+        if (item.itemId) {
+            if (items.isWeapon(item.itemId))
+                inventory.takeNewWeaponItem(item.itemId, `{"owner": "Mexico", "userName": "${user.getCache('name')}"}`, 'Выдано оружие').then();
+            else
+                inventory.takeNewWeaponItem(item.itemId, `{"owner": "Mexico", "userName": "${user.getCache('name')}"}`, 'Выдан предмет').then();
+        }
+    });
+};
+
+menuList.showCartelArsenalGunMenu = function() {
+    UIMenu.Menu.Create(`Арсенал`, `~b~Оружие`);
+
+    UIMenu.Menu.AddMenuItem("Наручники", "", {itemId: 40});
+    UIMenu.Menu.AddMenuItem("Фонарик", "", {itemId: 59});
+    UIMenu.Menu.AddMenuItem("Полицейская дубинка", "", {itemId: 66});
+    UIMenu.Menu.AddMenuItem("Электрошокер", "", {itemId: 82});
+
+    if (user.getCache('rank_type') === 0) {
+        UIMenu.Menu.AddMenuItem("Beretta 90Two", "", {itemId: 78});
+        UIMenu.Menu.AddMenuItem("Коробка патронов 9mm", "", {itemId: 280});
+    }
+    if (user.getCache('rank_type') > 0 || user.isLeader() || user.isSubLeader() || user.isDepLeader() || user.isDepSubLeader()) {
+        UIMenu.Menu.AddMenuItem("Taurus PT92", "", {itemId: 77});
+        UIMenu.Menu.AddMenuItem("Desert Eagle", "", {itemId: 79});
+        UIMenu.Menu.AddMenuItem("Benelli M3", "", {itemId: 90});
+        UIMenu.Menu.AddMenuItem("Benelli M4", "", {itemId: 91});
+        UIMenu.Menu.AddMenuItem("AK-102", "", {itemId: 106});
+        UIMenu.Menu.AddMenuItem("AK-103", "", {itemId: 107});
+
+        UIMenu.Menu.AddMenuItem("P-90", "", {itemId: 94});
+
+        UIMenu.Menu.AddMenuItem("Коробка патронов 9mm", "", {itemId: 280});
+        UIMenu.Menu.AddMenuItem("Коробка патронов 12 калибра", "", {itemId: 281});
+        UIMenu.Menu.AddMenuItem("Коробка патронов 5.56mm", "", {itemId: 284});
+        UIMenu.Menu.AddMenuItem("Коробка патронов .45 ACP", "", {itemId: 286});
+    }
+
+    UIMenu.Menu.AddMenuItem("Бронежилет", "", {itemId: 252});
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
+    UIMenu.Menu.Draw();
+
+    UIMenu.Menu.OnSelect.Add(async item => {
+        UIMenu.Menu.HideMenu();
+        if (item.itemId) {
+            if (items.isWeapon(item.itemId))
+                inventory.takeNewWeaponItem(item.itemId, `{"owner": "Mexico", "userName": "${user.getCache('name')}"}`, 'Выдано оружие').then();
+            else
+                inventory.takeNewWeaponItem(item.itemId, `{"owner": "Mexico", "userName": "${user.getCache('name')}"}`, 'Выдан предмет').then();
+        }
+    });
+};
+
+menuList.showCartelArsenalGunModMenu = function() {
+    UIMenu.Menu.Create(`Арсенал`, `~b~Модули на оружие`);
+    if (user.getCache('rank_type') > 0 || user.isLeader() || user.isSubLeader() || user.isDepLeader() || user.isDepSubLeader()) {
+        UIMenu.Menu.AddMenuItem("Фонарик Taurus PT92", "", {itemId: 293});
+        UIMenu.Menu.AddMenuItem("Глушитель Taurus PT92", "", {itemId: 294});
+
+        UIMenu.Menu.AddMenuItem(" ");
+        UIMenu.Menu.AddMenuItem("Фонарик Taurus PT92", "", {itemId: 299});
+        UIMenu.Menu.AddMenuItem("Глушитель Taurus PT92", "", {itemId: 300});
+
+        UIMenu.Menu.AddMenuItem(" ");
+        UIMenu.Menu.AddMenuItem("Фонарик Benelli M3", "", {itemId: 341});
+        UIMenu.Menu.AddMenuItem("Глушитель Benelli M3", "", {itemId: 342});
+
+        UIMenu.Menu.AddMenuItem(" ");
+        UIMenu.Menu.AddMenuItem("Голографический прицел Benelli M4", "", {itemId: 349});
+        UIMenu.Menu.AddMenuItem("Прицел малой кратности Benelli M4", "", {itemId: 350});
+        UIMenu.Menu.AddMenuItem("Прицел средней кратности Benelli M4", "", {itemId: 351});
+        UIMenu.Menu.AddMenuItem("Фонарик Benelli M4", "", {itemId: 352});
+        UIMenu.Menu.AddMenuItem("Глушитель Benelli M4", "", {itemId: 353});
+        UIMenu.Menu.AddMenuItem("Дульный тормоз Benelli M4", "", {itemId: 354});
+
+        UIMenu.Menu.AddMenuItem(" ");
+        UIMenu.Menu.AddMenuItem("Фонарик AK-102", "", {itemId: 358});
+        UIMenu.Menu.AddMenuItem("Рукоятка AK-102", "", {itemId: 359});
+        UIMenu.Menu.AddMenuItem("Глушитель AK-102", "", {itemId: 360});
+        UIMenu.Menu.AddMenuItem("Прицел AK-102", "", {itemId: 361});
+
+        UIMenu.Menu.AddMenuItem(" ");
+        UIMenu.Menu.AddMenuItem("Фонарик AK-103", "", {itemId: 403});
+        UIMenu.Menu.AddMenuItem("Голографический прицел AK-103", "", {itemId: 404});
+        UIMenu.Menu.AddMenuItem("Прицел малой кратности AK-103", "", {itemId: 405});
+        UIMenu.Menu.AddMenuItem("Прицел большой кратности AK-103", "", {itemId: 406});
+        UIMenu.Menu.AddMenuItem("Глушитель AK-103", "", {itemId: 407});
+        UIMenu.Menu.AddMenuItem("Тактический дульный тормоз AK-103", "", {itemId: 409});
+        UIMenu.Menu.AddMenuItem("Рукоятка AK-103", "", {itemId: 415});
+    }
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
+    UIMenu.Menu.Draw();
+
+    UIMenu.Menu.OnSelect.Add(async item => {
+        UIMenu.Menu.HideMenu();
+        if (item.itemId) {
+            if (items.isWeapon(item.itemId))
+                inventory.takeNewWeaponItem(item.itemId, `{"owner": "Mexico", "userName": "${user.getCache('name')}"}`, 'Выдано оружие').then();
+            else
+                inventory.takeNewWeaponItem(item.itemId, `{"owner": "Mexico", "userName": "${user.getCache('name')}"}`, 'Выдан предмет').then();
+        }
+    });
+};
+
 menuList.showEduAskMenu = function() {
 
     UIMenu.Menu.Create("Обучение", "~b~Вы хотите посмотреть обучение?");
@@ -12542,17 +13427,7 @@ menuList.showInvaderShopMenu = function() {
             params: {doName: 'inv:wantWork'}
         }
     );
-
-    btn.push(
-        {
-            text: 'Закрыть',
-            bgcolor: 'rgba(244,67,54,0.7)',
-            params: {doName: 'close'}
-        }
-    );
-
-    shopMenu.showDialog(new mp.Vector3(-1083.9874267578125, -246.1114044189453, 37.763267517089844 + 0.6), 198.80426025390625);
-    shopMenu.updateDialog(btn, 'Секретарь', 'Сотрудник InvaderNews', 'Здравствуйте, чем помочь?')
+    npc.showDialogInvader('Здравствуйте, чем я могу вам помочь?', btn);
 };
 
 menuList.showBotUsmcMenu = function() {
@@ -12566,16 +13441,7 @@ menuList.showBotUsmcMenu = function() {
         }
     );
 
-    btn.push(
-        {
-            text: 'Закрыть',
-            bgcolor: 'rgba(244,67,54,0.7)',
-            params: {doName: 'close'}
-        }
-    );
-
-    shopMenu.showDialog(new mp.Vector3(486.37030029296875, -3027.28515625, 6.014427661895752 + 0.6), 275.48919677734375);
-    shopMenu.updateDialog(btn, 'Офицер', 'Офицер USMC', 'Здравствуйте, чем помочь?')
+    npc.showDialogUsmc('Здравствуйте, чем я могу вам помочь?', btn);
 };
 
 menuList.showBotEmsMenu = function(idx, canFree) {
@@ -12619,21 +13485,13 @@ menuList.showBotEmsMenu = function(idx, canFree) {
         );
     }
 
-    btn.push(
-        {
-            text: 'Закрыть',
-            bgcolor: 'rgba(244,67,54,0.7)',
-            params: {doName: 'close'}
-        }
-    );
-
     let listPos = [
         [309.55218505859375, -593.9552612304688, 43.28400802612305, 21.91470718383789],
         [1838.4437255859375, 3682.33544921875, 34.27005386352539, 162.76380920410156],
         [-246.97201538085938, 6320.427734375, 32.420734405517578, 312.1958923339844],
     ];
-    shopMenu.showDialog(new mp.Vector3(listPos[idx][0], listPos[idx][1], listPos[idx][2] + 0.6), listPos[idx][3]);
-    shopMenu.updateDialog(btn, 'Врач', 'Сотрудник EMS', 'Здравствуйте, чем помочь? Хочу вам напомнить что, при наличии мед. страховки стоимость услуг намного ниже')
+
+    npc.getDialog(new mp.Vector3(listPos[idx][0], listPos[idx][1], listPos[idx][2] + 0.6), listPos[idx][3], 'Врач', 'Сотрудник EMS', 'Здравствуйте, чем помочь? Хочу вам напомнить что, при наличии мед. страховки стоимость услуг намного ниже', btn);
 };
 
 menuList.showBotLspdMenu = function(idx = 0)
@@ -12675,22 +13533,13 @@ menuList.showBotLspdMenu = function(idx = 0)
         );
     }
 
-    btn.push(
-        {
-            text: 'Закрыть',
-            bgcolor: 'rgba(244,67,54,0.7)',
-            params: {doName: 'close'}
-        }
-    );
-
     let listPos = [
         [441.0511, -978.8251, 30.68959, 179.4316],
         [-1097.457, -839.9836, 19.00159, 122.9423],
         [1853.438, 3689.164, 34.26706, -145.6209],
         [-448.6529, 6012.937, 31.71638, -45.47421],
     ];
-    shopMenu.showDialog(new mp.Vector3(listPos[idx][0], listPos[idx][1], listPos[idx][2] + 0.6), listPos[idx][3]);
-    shopMenu.updateDialog(btn, 'Офицер', 'Сотрудник департамента', 'Здравствуйте, чем помочь?')
+    npc.getDialog(new mp.Vector3(listPos[idx][0], listPos[idx][1], listPos[idx][2] + 0.6), listPos[idx][3], 'Офицер', 'Сотрудник департамента', 'Здравствуйте, чем помочь?', btn);
 };
 
 menuList.showBotLspdCarMen = function(array, idx, x, y, z, rot)
@@ -12717,14 +13566,6 @@ menuList.showBotLspdCarMen = function(array, idx, x, y, z, rot)
         );
     }
 
-    btn.push(
-        {
-            text: 'Закрыть',
-            bgcolor: 'rgba(244,67,54,0.7)',
-            params: {doName: 'close'}
-        }
-    );
-
     let listPos = [
         [392.0566, -1637.983, 29.29352, -83.97862], // Davis
         [846.9775, -1319.681, 26.40563, -33.86766], // La Mesa
@@ -12738,29 +13579,12 @@ menuList.showBotLspdCarMen = function(array, idx, x, y, z, rot)
         [-1856.256, -3119.711, 13.94436, 156.0192], // Helicopters
         [-1071.75, -3457.185, 14.14418, -150.9734], // Plane
     ];
-    shopMenu.showDialog(new mp.Vector3(listPos[idx][0], listPos[idx][1], listPos[idx][2] + 0.6), listPos[idx][3]);
-    shopMenu.updateDialog(btn, 'Офицер', 'Сотрудник департамента транспорта', 'Здравствуйте, чем помочь?')
+    npc.getDialog(new mp.Vector3(listPos[idx][0], listPos[idx][1], listPos[idx][2] + 0.6), listPos[idx][3], 'Офицер', 'Сотрудник департамента транспорта', 'Здравствуйте, чем помочь?', btn);
 };
 
 menuList.showBotQuestRole0Menu = function()
 {
-    if (user.getCache('role') !== 1) {
-        mp.game.ui.notifications.show('~r~Доступно только для иммигрантов');
-        return;
-    }
-
     let btn = [];
-    if (user.getQuestCount('role_0') < quest.getQuestLineMax('role_0'))
-    {
-        btn.push(
-            {
-                text: 'Квестовое задание',
-                bgcolor: '',
-                params: {doName: 'quest:noob'}
-            }
-        );
-    }
-
     btn.push(
         {
             text: 'Начать или закончить рабочий день',
@@ -12768,30 +13592,7 @@ menuList.showBotQuestRole0Menu = function()
             params: {doName: 'noob:startStop'}
         }
     );
-    btn.push(
-        {
-            text: 'Посмотреть обучение',
-            bgcolor: '',
-            params: {doName: 'edu:all'}
-        }
-    );
-    btn.push(
-        {
-            text: 'Посмотреть все фишки проекта',
-            bgcolor: '',
-            params: {doName: 'edu:sml'}
-        }
-    );
-    btn.push(
-        {
-            text: 'Закрыть',
-            bgcolor: 'rgba(244,67,54,0.7)',
-            params: {doName: 'close'}
-        }
-    );
-
-    shopMenu.showDialog(new mp.Vector3(-415.9264831542969, -2645.4287109375, 6.000219345092773 + 0.6), 316.27508544921875);
-    shopMenu.updateDialog(btn, 'Каспер', 'Прораб', 'Привет дружище, чем я могу тебе помочь?')
+    npc.showDialogLoader('Привет дружище, чем я могу тебе помочь?', btn);
 };
 
 menuList.showBotQuestRoleAllMenu = function()
@@ -12807,7 +13608,6 @@ menuList.showBotQuestRoleAllMenu = function()
             }
         );
     }
-
     btn.push(
         {
             text: 'Как устроиться на работу?',
@@ -12829,16 +13629,44 @@ menuList.showBotQuestRoleAllMenu = function()
             params: {doName: 'edu:sml'}
         }
     );
+    npc.showDialogStandart('Здравствуйте, чем я могу вам помочь?', btn);
+};
+
+menuList.showBotQuestRoleAll1Menu = function()
+{
+    let btn = [];
+    if (user.getQuestCount('standart') < quest.getQuestLineMax('standart'))
+    {
+        btn.push(
+            {
+                text: 'Квестовое задание',
+                bgcolor: '',
+                params: {doName: 'quest:all'}
+            }
+        );
+    }
     btn.push(
         {
-            text: 'Закрыть',
-            bgcolor: 'rgba(244,67,54,0.7)',
-            params: {doName: 'close'}
+            text: 'Как устроиться на работу?',
+            bgcolor: '',
+            params: {doName: 'work'}
         }
     );
-
-    shopMenu.showDialog(new mp.Vector3(-1288.153, -561.6686, 31.71216 + 0.6), -46.52558);
-    shopMenu.updateDialog(btn, 'Сюзанна', 'Сотрудник правительства', 'Здравствуйте, чем я могу вам помочь?')
+    btn.push(
+        {
+            text: 'Посмотреть обучение',
+            bgcolor: '',
+            params: {doName: 'edu:all'}
+        }
+    );
+    btn.push(
+        {
+            text: 'Посмотреть все фишки проекта',
+            bgcolor: '',
+            params: {doName: 'edu:sml'}
+        }
+    );
+    npc.showDialogStandartIsland('Здравствуйте, чем я могу вам помочь?', btn);
 };
 
 menuList.showBotQuestGangMenu = function()
@@ -12871,17 +13699,7 @@ menuList.showBotQuestGangMenu = function()
             }
         );*/
     }
-
-    btn.push(
-        {
-            text: 'Закрыть',
-            bgcolor: 'rgba(244,67,54,0.7)',
-            params: {doName: 'close'}
-        }
-    );
-
-    shopMenu.showDialog(new mp.Vector3(-218.75608825683594, -1368.4576416015625, 31.25823402404785 + 0.6), 43.398406982421875);
-    shopMenu.updateDialog(btn, 'Ламар', 'Друг', 'Васт ап, хоуми, чем я могу помочь?')
+    npc.showDialogLamar('Васт ап, хоуми, чем я могу помочь?', btn);
 };
 
 menuList.showBotJailMenu = function()
@@ -12890,22 +13708,12 @@ menuList.showBotJailMenu = function()
 
     btn.push(
         {
-            text: 'Получить задание',
+            text: 'Получить работу',
             bgcolor: '',
             params: {doName: 'jail:work'}
         }
     );
-
-    btn.push(
-        {
-            text: 'Закрыть',
-            bgcolor: 'rgba(244,67,54,0.7)',
-            params: {doName: 'close'}
-        }
-    );
-
-    shopMenu.showDialog(new mp.Vector3(1746.4307861328125, 2502.748046875, 45.56498336791992 + 0.6), 350.29193115234375);
-    shopMenu.updateDialog(btn, 'Джейк', 'Сотрудник тюрьмы', 'Привет, чем я могу помочь?')
+    npc.showDialogJail('Привет, чем я могу помочь?', btn);
 };
 
 menuList.showBotYankMenu = function()
@@ -12919,17 +13727,7 @@ menuList.showBotYankMenu = function()
             params: {doName: 'yank:ask'}
         }
     );
-
-    btn.push(
-        {
-            text: 'Закрыть',
-            bgcolor: 'rgba(244,67,54,0.7)',
-            params: {doName: 'close'}
-        }
-    );
-
-    shopMenu.showDialog(new mp.Vector3(3198.975341796875, -4833.72998046875, 111.81517791748047 + 0.6), 263.877197265625);
-    shopMenu.updateDialog(btn, 'Риксон', 'Сотрудник YPD', 'Здравствуйте, чем я могу вам помочь?')
+    npc.showDialogYpd('Здравствуйте, чем я могу вам помочь?', btn);
 };
 
 menuList.showGangZoneAttackMenu = function(zone, count = 5) {
@@ -13078,6 +13876,7 @@ menuList.showAdminMenu = function() {
             if (user.isAdmin(3) && !user.isAdminRp()) {
                 UIMenu.Menu.AddMenuItem("Управление ганг. зонами", "", {doName: "gangZone"});
                 UIMenu.Menu.AddMenuItem("Управление канабис зонами", "", {doName: "canabisZone"});
+                UIMenu.Menu.AddMenuItemList("Погода", ["EXTRASUNNY", "CLEAR", "CLOUDS", "SMOG", "FOGGY", "OVERCAST", "RAIN", "THUNDER", "CLEARING", "XMAS"], "", {doName: "changeWeather"});
             }
 
             UIMenu.Menu.AddMenuItem("~y~Выключить админку", "", {doName: "disableAdmin"});
@@ -13102,6 +13901,11 @@ menuList.showAdminMenu = function() {
     UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
     UIMenu.Menu.Draw();
 
+    let wIdx = 0;
+    UIMenu.Menu.OnList.Add((item, index) => {
+        wIdx = index;
+    });
+
     UIMenu.Menu.OnSelect.Add(async item => {
         UIMenu.Menu.HideMenu();
         if (item.doName == 'enableAdmin') {
@@ -13123,6 +13927,10 @@ menuList.showAdminMenu = function() {
             admin.godmode(false);
             mp.events.call('client:idDist', 15);
             user.setVariable('enableAdmin', false);
+        }
+        if (item.doName == 'changeWeather') {
+            let wList = ["EXTRASUNNY", "CLEAR", "CLOUDS", "SMOG", "FOGGY", "OVERCAST", "RAIN", "THUNDER", "CLEARING", "XMAS"];
+            mp.events.callRemote('server:admin:changeWeather', wList[wIdx]);
         }
         if (item.doName == 'askReport') {
             let id = await UIMenu.Menu.GetUserInput("ID", "", 5);
@@ -13256,7 +14064,7 @@ menuList.showAdminPlayerMenu = function(id) {
     UIMenu.Menu.AddMenuItem("Выписать из больницы", "", {doName: "freeHospById"});
 
     if (user.isAdmin(4) && !user.isAdminRp())
-        UIMenu.Menu.AddMenuItemList("Лидер организации", ["None", "Gov", "LSPD", "FIB", "USMC", "BCSD", "EMS", "News"], "", {doName: "giveLeader"});
+        UIMenu.Menu.AddMenuItemList("Лидер организации", ["None", "Gov", "LSPD", "FIB", "USMC", "BCSD", "EMS", "News", "Cartel"], "", {doName: "giveLeader"});
 
     if (!user.isAdminRp()) {
         UIMenu.Menu.AddMenuItem("Посадить в тюрьму", "", {doName: "jail"});
@@ -13637,7 +14445,9 @@ menuList.showAdminDevMenu = function() {
 
     UIMenu.Menu.AddMenuItem("Debug", "", {doName: "debug"});
     UIMenu.Menu.AddMenuItem("Debug2", "", {doName: "debug2"});
+    UIMenu.Menu.AddMenuItem("КоордыCam", "", {doName: "server:user:getCamera"});
     UIMenu.Menu.AddMenuItem("КоордыVeh", "", {doName: "server:user:getVehPos"});
+    UIMenu.Menu.AddMenuItem("КоордыNpc", "", {doName: "server:user:getPlayerPosNpc"});
     UIMenu.Menu.AddMenuItem("Коорды", "", {doName: "server:user:getPlayerPos"});
     UIMenu.Menu.AddMenuItem("Коорды2", "", {doName: "server:user:getPlayerPos2"});
 
@@ -13678,6 +14488,15 @@ menuList.showAdminDevMenu = function() {
         }
         if (item.doName == 'server:user:getPlayerPos') {
             mp.events.callRemote('server:user:getPlayerPos');
+        }
+        if (item.doName == 'server:user:getPlayerPosNpc') {
+            mp.events.callRemote('server:user:getPlayerPosNpc', user.lastAnim.d, user.lastAnim.a, user.lastAnim.f);
+        }
+        if (item.doName == 'server:user:getCamera') {
+            let pos = admin.getCameraPos();
+            let rot = admin.getCameraRot();
+            if (pos && rot)
+                methods.saveFile('camera', `new mp.Vector3(${pos.x}, ${pos.y}, ${pos.z}), new mp.Vector3(${rot.x}, ${rot.y}, ${rot.z})`)
         }
         if (item.doName == 'saveAllAcc') {
             mp.events.callRemote('server:saveAllAcc');
@@ -13898,52 +14717,64 @@ menuList.showAdminInteriorInfoMenu = function(ipl) {
 menuList.showAdminClothMenu = function() {
     UIMenu.Menu.Create(`Admin`, `~b~Одежда`);
 
-    let list = [];
-    for (let j = 0; j < 500; j++)
-        list.push(j + '');
-
-    let listColor = [];
-    for (let j = 0; j < 100; j++)
-        listColor.push(j + '');
-
     let id = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ];
     let idColor = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ];
 
     let id1 = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ];
     let idColor1 = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ];
 
-    for (let i = 0; i < 12; i++) {
+    for (let i = 3; i < 12; i++) {
+        let list = [];
+        for (let j = 0; j <= mp.players.local.getNumberOfDrawableVariations(i); j++)
+            list.push(j + '');
+
+        let listColor = [];
+        for (let j = 0; j <= 50; j++)
+            listColor.push(j + '');
+
         let list1Item = {};
         list1Item.slotId = i;
         list1Item.type = 0;
-        UIMenu.Menu.AddMenuItemList("Слот " + i, list, "", list1Item);
+        UIMenu.Menu.AddMenuItemList("Слот " + i, list, "", list1Item, mp.players.local.getDrawableVariation(i));
 
         let list2Item = {};
         list2Item.slotId = i;
         list2Item.type = 1;
-        UIMenu.Menu.AddMenuItemList("Цвет " + i, list, "", list2Item);
+        UIMenu.Menu.AddMenuItemList("Цвет " + i, listColor, "", list2Item, mp.players.local.getTextureVariation(i));
 
         UIMenu.Menu.AddMenuItem(" ");
     }
 
     for (let i = 0; i < 8; i++) {
+        if (i === 3) continue;
+        if (i === 4) continue;
+        if (i === 5) continue;
+
+        let list = [];
+        for (let j = -1; j <= mp.players.local.getNumberOfPropDrawableVariations(i); j++)
+            list.push(j + '');
+
+        let listColor = [];
+        for (let j = -1; j <= mp.players.local.getNumberOfPropTextureVariations(i, mp.players.local.getPropIndex(i)); j++)
+            listColor.push(j + '');
+
         let list1Item = {};
         list1Item.slotId = i;
         list1Item.type = 2;
-        UIMenu.Menu.AddMenuItemList("ПСлот " + i, list, "", list1Item);
+        UIMenu.Menu.AddMenuItemList("ПСлот " + i, list, "", list1Item, mp.players.local.getPropIndex(i) + 1);
 
         let list2Item = {};
         list2Item.slotId = i;
         list2Item.type = 3;
-        UIMenu.Menu.AddMenuItemList("ПЦвет " + i, list, "", list2Item);
+        UIMenu.Menu.AddMenuItemList("ПЦвет " + i, listColor, "", list2Item, mp.players.local.getPropTextureIndex(i) + 1);
 
         UIMenu.Menu.AddMenuItem(" ");
     }
+    UIMenu.Menu.AddMenuItem("~y~Сохранить", "", {doName: "save"});
     UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
     UIMenu.Menu.Draw();
 
-    UIMenu.Menu.OnList.Add((item, index) => {
-
+    UIMenu.Menu.OnList.Add(async (item, index) => {
         switch (item.type) {
             case 0:
                 id[item.slotId] = index;
@@ -13961,6 +14792,30 @@ menuList.showAdminClothMenu = function() {
                 idColor1[item.slotId] = index;
                 user.setProp(item.slotId, id1[item.slotId], idColor1[item.slotId]);
                 break;
+        }
+    });
+    UIMenu.Menu.OnSelect.Add(async (item, index) => {
+        if(item.doName === 'save') {
+            let name = await UIMenu.Menu.GetUserInput("Имя", "", 200);
+            if (name === '')
+                return ;
+
+            UIMenu.Menu.HideMenu();
+            methods.saveFile('cloth', '//' + name);
+
+            for (let i = 3; i < 12; i++) {
+                await methods.sleep(50);
+                methods.saveFile('cloth', `user.setComponentVariation(player, ${i}, ${mp.players.local.getDrawableVariation(i)}, ${mp.players.local.getTextureVariation(i)});`);
+            }
+            for (let i = 0; i < 8; i++) {
+                if (i === 3) continue;
+                if (i === 4) continue;
+                if (i === 5) continue;
+                await methods.sleep(50);
+                if (mp.players.local.getPropIndex(i) >= 0)
+                    methods.saveFile('cloth', `user.setProp(player, ${i}, ${mp.players.local.getPropIndex(i)}, ${mp.players.local.getPropTextureIndex(i)});`);
+            }
+            mp.game.ui.notifications.show('Одежда была сохранена');
         }
     });
 };

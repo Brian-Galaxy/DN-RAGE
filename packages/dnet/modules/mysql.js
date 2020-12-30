@@ -26,7 +26,7 @@ const pool = mysql2.createPool({
     waitForConnections: true,
     connectionLimit: 500,
     queueLimit: 0,
-    timeout: 300000
+    timeout: 600000
 });
 
 pool.on('connection', function (connection) {
@@ -63,6 +63,10 @@ setInterval(function() {
 mysql.getTime = function() {
     let dateTime = new Date();
     return `${methods.digitFormat(dateTime.getHours())}:${methods.digitFormat(dateTime.getMinutes())}:${methods.digitFormat(dateTime.getSeconds())}`;
+};
+
+mysql.isTestServer = function() {
+    return host === '54.37.128.202';
 };
 
 mysql.isConnected = function () {

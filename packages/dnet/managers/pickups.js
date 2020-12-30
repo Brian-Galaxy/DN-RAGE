@@ -37,8 +37,9 @@ pickups.Blue100 = [187, 222, 251, 100];
 pickups.White = [255, 255, 255, 100];
 pickups.Tranparent = [255, 255, 255, 0];
 
-pickups.BotRole0 = new mp.Vector3(-414.9725036621094, -2644.56201171875, 5.000218868255615);
+pickups.BotRole0 = new mp.Vector3(5106.7861328125, -5161.85791015625, 1.049942970275879);
 pickups.BotRoleAll = new mp.Vector3(-1287.615, -561.1155, 30.71216);
+pickups.BotRoleAll1 = new mp.Vector3(5002.47607421875, -5752.8994140625, 18.880245208740234);
 pickups.QuestBotGang = new mp.Vector3(-219.3651123046875, -1367.4730224609375, 30.25823402404785);
 
 pickups.BotJail = new mp.Vector3(1746.68994140625, 2503.901123046875, 44.56498336791992);
@@ -65,6 +66,9 @@ pickups.BotLspdPlane = new mp.Vector3(-1071.382, -3457.909, 13.14841);
 
 pickups.BotSellGun = new mp.Vector3(1073.064453125, -2008.584228515625, 31.08465576171875);
 pickups.BotSellCloth = new mp.Vector3(707.1924438476562, -966.2482299804688, 29.412853240966797);
+
+pickups.BotSellGun1 = new mp.Vector3(5066.890625, -4592.302734375, 1.8557219505310059);
+pickups.BotSellCloth1 = new mp.Vector3(5063.931640625, -4591.32763671875, 1.8555278778076172);
 
 pickups.SellVehicle = new mp.Vector3(-1654.048583984375, -947.2221069335938, 6.747209548950195);
 
@@ -128,6 +132,9 @@ pickups.UsmcPickupPos12 = new mp.Vector3(581.3219604492188, -3120.65625, 17.7685
 pickups.EmsPickupPos1 = new mp.Vector3(321.07550048828125, -558.7384033203125, 27.743440628051758);
 pickups.EmsPickupPos2 = new mp.Vector3(329.96148681640625, -600.9091796875, 42.284019470214844);
 
+pickups.CartelPickupPos1 = new mp.Vector3(5012.4287109375, -5748.9794921875, 27.945148468017578);
+pickups.CartelPickupPos2 = new mp.Vector3(5012.4775390625, -5746.83056640625, 14.484434127807617);
+
 pickups.LifeInvaderShopPos = new mp.Vector3(-1083.074, -248.3521, 36.76329);
 pickups.EmsBotPos1 = new mp.Vector3(308.7605895996094, -592.1345825195312, 42.28398895263672);
 pickups.EmsBotPos2 = new mp.Vector3(1837.709716796875, 3680.10400390625, 33.27006912231445);
@@ -141,6 +148,7 @@ pickups.MeriaGarPos = new mp.Vector3(-1360.679, -471.8841, 30.59572);
 pickups.MeriaGarderobPos = new mp.Vector3(-1300.886, -555.9606, 29.56678);
 pickups.MeriaClearPos = new mp.Vector3(-1291.0059814453125, -574.3822631835938, 29.572912216186523);
 pickups.MeriaHelpPos = new mp.Vector3(-1290.544, -571.1852, 29.57288);
+pickups.MeriaHelpIslandPos = new mp.Vector3(5011.931640625, -5754.16259765625, 27.900148391723633);
 //pickups.MeriaKeyPos = new mp.Vector3(-1381.507, -466.2556, 71.04215);
 
 pickups.FibArsenalPos = new mp.Vector3(130.9275665283203, -762.3977661132812, 241.15185546875);
@@ -218,6 +226,8 @@ pickups.EmsArsenalPos3 = new mp.Vector3(1206.7628173828125, -1478.664794921875, 
 pickups.EmsArsenalPos4 = new mp.Vector3(1822.641357421875, 3676.248046875, 33.270057678222656);
 pickups.EmsArsenalPos5 = new mp.Vector3(-377.16534423828125, 6110.66552734375, 30.44953155517578);
 
+pickups.CartelArsenalPos = new mp.Vector3(5011.41455078125, -5742.89453125, 14.484437942504883);
+
 /*Keys*/
 pickups.GovKeyPos = new mp.Vector3(-1312.9268798828125, -550.072265625, 19.802770614624023);
 pickups.SapdKeyPos = new mp.Vector3(-1078.491943359375, -856.7177734375, 4.042818546295166);
@@ -226,12 +236,14 @@ pickups.InvaderKeyPos = new mp.Vector3(-1095.8746337890625, -254.6504669189453, 
 pickups.EmsKeyPos = new mp.Vector3(319.167236328125, -559.7047119140625, 27.743427276611328);
 pickups.UsmcKeyPos = new mp.Vector3(468.67388916015625, -3205.725830078125, 5.069557189941406);
 pickups.FibKeyPos = new mp.Vector3(127.6114273071289, -742.7451782226562, 32.133235931396484);
+pickups.CartelKeyPos = new mp.Vector3(4976.3662109375, -5723.76611328125, 18.88021469116211);
 
 /*Info*/
 
 pickups.GovInfoPos1 = new mp.Vector3(-1301.586, -572.8552, 40.18815);
 pickups.GovInfoPos2 = new mp.Vector3(-1287.264, -590.3502, 40.18817);
 pickups.GovInfoPos3 = new mp.Vector3(-1298.756, -572.7356, 33.37488);
+pickups.CartelInfoPos = new mp.Vector3(5013.83349609375, -5754.810546875, 27.900144577026367);
 pickups.SapdInfoPos = new mp.Vector3(447.4615783691406, -973.3896484375, 29.689332962036133);
 pickups.SapdInfoPos2 = new mp.Vector3(-1617.1435546875, -1017.6526489257812, 12.145439147949219);
 pickups.SapdInfoPos3 = new mp.Vector3( -1084.4210205078125, -822.102294921875, 18.03700828552246);
@@ -346,6 +358,7 @@ pickups.Bus3Pos = new mp.Vector3(466.4013671875, -576.0244140625, 27.49979400634
 pickups.Mech3Pos = new mp.Vector3(548.5404052734375, -172.61703491210938, 53.4813346862793);
 pickups.TaxiPos = new mp.Vector3(895.2080078125, -179.82662963867188, 73.69615936279297);
 pickups.TreePos = new mp.Vector3(-1585.625, -234.0653, 53.35091);
+pickups.Tree1Pos = new mp.Vector3(5398.75634765625, -5173.14111328125, 30.353927612304688);
 pickups.AvePos = new mp.Vector3(-785.4522094726562, -708.9448852539062, 29.33340835571289);
 pickups.AveVehPos = new mp.Vector3(-1665.1044921875, -281.63458251953125, 50.85293197631836);
 pickups.BuilderPos = new mp.Vector3(-1585.625, -234.0653, 53.35091);
@@ -439,6 +452,9 @@ pickups.checkPressLAlt = function(player) {
     methods.checkTeleport(player, pickups.UsmcPickupPos1, pickups.UsmcPickupPos2);
     methods.checkTeleport(player, pickups.UsmcPickupPos11, pickups.UsmcPickupPos12);
     methods.checkTeleport(player, pickups.EmsPickupPos1, pickups.EmsPickupPos2);
+
+    if (user.isCartel(player))
+        methods.checkTeleport(player, pickups.CartelPickupPos1, pickups.CartelPickupPos2);
 
     methods.checkTeleport(player, pickups.SapdFromInterrogationPos, pickups.SapdToInterrogationPos);
     methods.checkTeleport(player, pickups.SapdToVespucci1Pos, pickups.SapdToVespucci2Pos);
@@ -655,6 +671,8 @@ pickups.checkPressE = function(player) {
         player.call('client:menuList:showBotQuestRole0Menu');
     if (methods.distanceToPos(pickups.BotRoleAll, playerPos) < distanceCheck)
         player.call('client:menuList:showBotQuestRoleAllMenu');
+    if (methods.distanceToPos(pickups.BotRoleAll1, playerPos) < distanceCheck)
+        player.call('client:menuList:showBotQuestRoleAll1Menu');
     if (methods.distanceToPos(pickups.QuestBotGang, playerPos) < distanceCheck)
         player.call('client:menuList:showBotQuestGangMenu');
     if (methods.distanceToPos(pickups.BotJail, playerPos) < distanceCheck)
@@ -664,6 +682,10 @@ pickups.checkPressE = function(player) {
     if (methods.distanceToPos(pickups.BotSellGun, playerPos) < distanceCheck)
         inventory.getItemListGunTranferSell(player);
     if (methods.distanceToPos(pickups.BotSellCloth, playerPos) < distanceCheck)
+        inventory.getItemListClothTranferSell(player);
+    if (methods.distanceToPos(pickups.BotSellGun1, playerPos) < distanceCheck)
+        inventory.getItemListGunTranferSell(player);
+    if (methods.distanceToPos(pickups.BotSellCloth1, playerPos) < distanceCheck)
         inventory.getItemListClothTranferSell(player);
     if (methods.distanceToPos(pickups.FixWeapon1, playerPos) < distanceCheck || methods.distanceToPos(pickups.FixWeapon2, playerPos) < distanceCheck || methods.distanceToPos(pickups.FixWeapon3, playerPos) < distanceCheck)
         inventory.getItemListGunFix(player);
@@ -704,6 +726,8 @@ pickups.checkPressE = function(player) {
         player.call('client:menuList:showMazeOfficeMenu');
     if (methods.distanceToPos(pickups.MeriaHelpPos, playerPos) < distanceCheck)
         player.call('client:menuList:showMeriaMainMenu');
+    if (methods.distanceToPos(pickups.MeriaHelpIslandPos, playerPos) < distanceCheck)
+        player.call('client:menuList:showMeriaIslandMainMenu');
 
     if (user.isLeader(player) || user.isSubLeader(player) || user.isDepLeader(player) || user.isDepSubLeader(player)) {
         if (methods.distanceToPos(pickups.GovInfoPos1, playerPos) < distanceCheck)
@@ -711,6 +735,8 @@ pickups.checkPressE = function(player) {
         if (methods.distanceToPos(pickups.GovInfoPos2, playerPos) < distanceCheck)
             player.call('client:menuList:showFractionInfoMenu');
         if (methods.distanceToPos(pickups.GovInfoPos3, playerPos) < distanceCheck)
+            player.call('client:menuList:showFractionInfoMenu');
+        if (methods.distanceToPos(pickups.CartelInfoPos, playerPos) < distanceCheck)
             player.call('client:menuList:showFractionInfoMenu');
         if (methods.distanceToPos(pickups.SapdInfoPos, playerPos) < distanceCheck)
             player.call('client:menuList:showFractionInfoMenu');
@@ -762,6 +788,9 @@ pickups.checkPressE = function(player) {
 
     else if (methods.distanceToPos(pickups.FibKeyPos, playerPos) < distanceCheck && user.isFib(player))
         player.call('client:menuList:showFractionKeyMenu', [vehicles.getFractionAllowCarList(3, user.isLeader(player) || user.isSubLeader(player) || user.isDepLeader(player) || user.isSubLeader(player) ? -1 : user.get(player, 'rank_type'))]);
+
+    else if (methods.distanceToPos(pickups.CartelKeyPos, playerPos) < distanceCheck && user.isCartel(player))
+        player.call('client:menuList:showFractionKeyMenu', [vehicles.getFractionAllowCarList(8, user.isLeader(player) || user.isSubLeader(player) || user.isDepLeader(player) || user.isSubLeader(player) ? -1 : user.get(player, 'rank_type'))]);
 
     else if (methods.distanceToPos(pickups.InvaderKeyPos, playerPos) < distanceCheck && user.isNews(player))
         player.call('client:menuList:showFractionKeyMenu', [vehicles.getFractionAllowCarList(7, user.isLeader(player) || user.isSubLeader(player) || user.isDepLeader(player) || user.isSubLeader(player) ? -1 : user.get(player, 'rank_type'))]);
@@ -882,28 +911,104 @@ pickups.checkPressE = function(player) {
         if (methods.distanceToPos(pickups.FibArsenalPos, playerPos) < distanceCheck)
             player.call('client:menuList:showFibArsenalMenu');
     }
+    if (user.isCartel(player)) {
+        if (methods.distanceToPos(pickups.CartelArsenalPos, playerPos) < distanceCheck)
+            player.call('client:menuList:showCartelArsenalMenu');
+    }
 
     try {
-        if (user.isJobMail(player) && methods.distanceToPos(pickups.MailPos, playerPos) < distanceCheck)
-            player.call('client:menuList:showSpawnJobCarMailMenu');
+
+        //user.showCustomNotify(player, 'Ваше оружие лежит в сейфе LSPD/BCSD');
+
         if (methods.distanceToPos(pickups.TaxiPos, playerPos) < distanceCheck)
             player.call('client:menuList:showSpawnJobCarTaxiMenu');
-        if (user.isJobGr6(player) && methods.distanceToPos(pickups.Gr6Pos, playerPos) < distanceCheck)
-            player.call('client:menuList:showSpawnJobGr6Menu');
-        if (user.isJobMech(player) && methods.distanceToPos(pickups.Mech3Pos, playerPos) < distanceCheck)
-            player.call('client:menuList:showSpawnJobCarMenu', [150, 534.3485107421875, -170.06861877441406, 54.39955139160156, 180.3535614013672, 'Sadler', 5]);
-        if (user.isJobBus1(player) && methods.distanceToPos(pickups.Bus1Pos, playerPos) < distanceCheck)
-            player.call('client:menuList:showSpawnJobCarMenu', [150, 459.72247314453125, -582.0006103515625, 28.495769500732422, 170.3814697265625, 'Bus', 6]);
-        if (user.isJobBus2(player) && methods.distanceToPos(pickups.Bus2Pos, playerPos) < distanceCheck)
-            player.call('client:menuList:showSpawnJobCarMenu', [100, 471.0755920410156, -583.989501953125, 28.49574089050293, 173.3385009765625, 'Airbus', 7]);
-        if (user.isJobBus3(player) && methods.distanceToPos(pickups.Bus3Pos, playerPos) < distanceCheck)
-            player.call('client:menuList:showSpawnJobCarMenu', [200, 465.9425048828125, -582.1303100585938, 29.325841903686523, 173.46160888671875, 'Coach', 8]);
-        if (user.isJobTree(player) && methods.distanceToPos(pickups.TreePos, playerPos) < distanceCheck)
-            player.call('client:menuList:showSpawnJobCarMenu', [100, -1590.850341796875, -230.34060668945312, 53.86422348022461, 330.6097412109375, 'Bison3', 1]);
-        if (user.isJobAve(player) && methods.distanceToPos(pickups.AveVehPos, playerPos) < distanceCheck)
-            player.call('client:menuList:showSpawnJobCarMenu', [100, -1656.8006591796875, -289.6989440917969, 51.106414794921875, 229.14739990234375, 'Romero', 12]);
-        if (user.isJobBuilder(player) && methods.distanceToPos(pickups.BuilderPos, playerPos) < distanceCheck)
-            player.call('client:menuList:showSpawnJobCarMenu', [100, -1590.850341796875, -230.34060668945312, 53.86422348022461, 330.6097412109375, 'Bison2', 2]);
+
+        if (methods.distanceToPos(pickups.MailPos, playerPos) < distanceCheck) {
+            if (user.isJobMail(player))
+                player.call('client:menuList:showSpawnJobCarMailMenu');
+            else
+                user.showCustomNotify(player, 'Для того, чтобы работать почтальоном, для начала необходимо устроиться в здании правительства');
+        }
+        if (methods.distanceToPos(pickups.Gr6Pos, playerPos) < distanceCheck) {
+            if (user.isJobGr6(player))
+                player.call('client:menuList:showSpawnJobGr6Menu');
+            else
+                user.showCustomNotify(player, 'Для того, чтобы работать инкассатором, для начала необходимо устроиться в здании правительства');
+        }
+        if (methods.distanceToPos(pickups.Mech3Pos, playerPos) < distanceCheck) {
+            if (user.isJobMech(player))
+                player.call('client:menuList:showSpawnJobCarMenu', [150, 534.3485107421875, -170.06861877441406, 54.39955139160156, 180.3535614013672, 'Sadler', 5]);
+            else
+                user.showCustomNotify(player, 'Для того, чтобы работать механиком, для начала необходимо устроиться в здании правительства');
+        }
+        if (methods.distanceToPos(pickups.Bus1Pos, playerPos) < distanceCheck) {
+            if (user.isJobBus1(player))
+                player.call('client:menuList:showSpawnJobCarMenu', [150, 459.72247314453125, -582.0006103515625, 28.495769500732422, 170.3814697265625, 'Bus', 6]);
+            else
+                user.showCustomNotify(player, 'Для того, чтобы работать водителем автобуса #1, для начала необходимо устроиться в здании правительства');
+        }
+        if (methods.distanceToPos(pickups.Bus2Pos, playerPos) < distanceCheck) {
+            if (user.isJobBus2(player))
+                player.call('client:menuList:showSpawnJobCarMenu', [100, 471.0755920410156, -583.989501953125, 28.49574089050293, 173.3385009765625, 'Airbus', 7]);
+            else
+                user.showCustomNotify(player, 'Для того, чтобы работать водителем автобуса #2, для начала необходимо устроиться в здании правительства');
+        }
+        if (methods.distanceToPos(pickups.Bus3Pos, playerPos) < distanceCheck) {
+            if (user.isJobBus3(player))
+                player.call('client:menuList:showSpawnJobCarMenu', [200, 465.9425048828125, -582.1303100585938, 29.325841903686523, 173.46160888671875, 'Coach', 8]);
+            else
+                user.showCustomNotify(player, 'Для того, чтобы работать водителем автобуса #3, для начала необходимо устроиться в здании правительства');
+        }
+        if (methods.distanceToPos(pickups.TreePos, playerPos) < distanceCheck) {
+            if (user.isJobTree(player)) {
+                let posList = [
+                    ["Bison3", -1601.2161865234375, -258.4930114746094, 52.97713851928711, 348.54620361328125],
+                    ["Bison3", -1598.6859130859375, -248.64605712890625, 53.306610107421875, 343.7889099121094],
+                    ["Bison3", -1596.3330078125, -242.10557556152344, 53.51053237915039, 336.5408935546875],
+                    ["Bison3", -1593.1514892578125, -234.62106323242188, 53.739479064941406, 337.3990783691406],
+                    ["Bison3", -1589.1431884765625, -226.88870239257812, 53.963104248046875, 327.8424377441406],
+                    ["Bison3", -1584.376708984375, -220.37022399902344, 54.16216278076172, 320.16143798828125],
+                    ["Bison3", -1577.48828125, -212.1693115234375, 54.44027328491211, 319.6659851074219],
+                ];
+                let posIdx = methods.getRandomInt(0, posList.length);
+                player.call('client:menuList:showSpawnJobCarMenu', [100, posList[posIdx][1], posList[posIdx][2], posList[posIdx][3], posList[posIdx][4], posList[posIdx][0], 1]);
+            }
+            else
+                user.showCustomNotify(player, 'Для того, чтобы работать садовником, для начала необходимо устроиться в здании правительства');
+        }
+        if (methods.distanceToPos(pickups.Tree1Pos, playerPos) < distanceCheck) {
+            if (user.isJobTree(player)) {
+                let posList = [
+                    ["Rebel", 5408.982421875, -5192.43017578125, 32.20787048339844, 39.7760009765625],
+                    ["Rebel", 5405.74609375, -5195.1923828125, 32.185882568359375, 37.427825927734375],
+                    ["Rebel", 5398.134765625, -5185.6650390625, 31.23284912109375, 44.9051513671875],
+                    ["Rebel", 5387.8505859375, -5186.23974609375, 30.774194717407227, 124.21197509765625],
+                    ["Rebel", 5387.86376953125, -5178.88037109375, 30.718246459960938, 116.20599365234375],
+                    ["Rebel", 5405.048828125, -5183.02685546875, 31.307374954223633, 105.50552368164062],
+                ];
+                let posIdx = methods.getRandomInt(0, posList.length);
+                player.call('client:menuList:showSpawnJobCarMenu', [100, posList[posIdx][1], posList[posIdx][2], posList[posIdx][3], posList[posIdx][4], posList[posIdx][0], 1]);
+            }
+            else
+                user.showCustomNotify(player, 'Для того, чтобы работать садовником, для начала необходимо устроиться в здании правительства');
+        }
+        if (methods.distanceToPos(pickups.BuilderPos, playerPos) < distanceCheck) {
+            if (user.isJobBuilder(player)) {
+                let posList = [
+                    ["Bison2", -1601.2161865234375, -258.4930114746094, 52.97713851928711, 348.54620361328125],
+                    ["Bison2", -1598.6859130859375, -248.64605712890625, 53.306610107421875, 343.7889099121094],
+                    ["Bison2", -1596.3330078125, -242.10557556152344, 53.51053237915039, 336.5408935546875],
+                    ["Bison2", -1593.1514892578125, -234.62106323242188, 53.739479064941406, 337.3990783691406],
+                    ["Bison2", -1589.1431884765625, -226.88870239257812, 53.963104248046875, 327.8424377441406],
+                    ["Bison2", -1584.376708984375, -220.37022399902344, 54.16216278076172, 320.16143798828125],
+                    ["Bison2", -1577.48828125, -212.1693115234375, 54.44027328491211, 319.6659851074219],
+                ];
+                let posIdx = methods.getRandomInt(0, posList.length);
+                player.call('client:menuList:showSpawnJobCarMenu', [100, posList[posIdx][1], posList[posIdx][2], posList[posIdx][3], posList[posIdx][4], posList[posIdx][0], 2]);
+            }
+            else
+                user.showCustomNotify(player, 'Для того, чтобы работать строителем, для начала необходимо устроиться в здании правительства');
+        }
 
         if (methods.distanceToPos(pickups.AvePos, playerPos) < distanceCheck)
             player.call('client:menuList:showAveMenu');
@@ -955,6 +1060,7 @@ pickups.createAll = function() {
     methods.createCpVector(pickups.EmsKeyPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
     methods.createCpVector(pickups.GovKeyPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
     methods.createCpVector(pickups.UsmcKeyPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.CartelKeyPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
 
     methods.createCpVector(pickups.FibInfoPos, 'Нажмите ~g~E~s~ чтобы открыть меню руководства', 1, -1, pickups.Blue);
     methods.createCpVector(pickups.UsmcInfoPos, 'Нажмите ~g~E~s~ чтобы открыть меню руководства', 1, -1, pickups.Blue);
@@ -977,8 +1083,11 @@ pickups.createAll = function() {
 
     methods.createCpVector(pickups.BotSellGun, 'Нажмите ~g~E~s~ чтобы взаимодействовать с NPC', 1, -1, pickups.Yellow);
     methods.createCpVector(pickups.BotSellCloth, 'Нажмите ~g~E~s~ чтобы взаимодействовать с NPC', 1, -1, pickups.Yellow);
+    methods.createCpVector(pickups.BotSellGun1, 'Нажмите ~g~E~s~ чтобы взаимодействовать с NPC', 1, -1, pickups.Yellow);
+    methods.createCpVector(pickups.BotSellCloth1, 'Нажмите ~g~E~s~ чтобы взаимодействовать с NPC', 1, -1, pickups.Yellow);
     methods.createCpVector(pickups.BotRole0, 'Нажмите ~g~E~s~ чтобы взаимодействовать с NPC', 1, -1, pickups.Yellow);
     methods.createCpVector(pickups.BotRoleAll, 'Нажмите ~g~E~s~ чтобы взаимодействовать с NPC', 1, -1, pickups.Yellow);
+    methods.createCpVector(pickups.BotRoleAll1, 'Нажмите ~g~E~s~ чтобы взаимодействовать с NPC', 1, -1, pickups.Yellow);
     methods.createCpVector(pickups.QuestBotGang, 'Нажмите ~g~E~s~ чтобы взаимодействовать с NPC', 1, -1, pickups.Yellow);
     methods.createCpVector(pickups.BotJail, 'Нажмите ~g~E~s~ чтобы взаимодействовать с NPC', 1, -1, pickups.Yellow);
 
@@ -1057,6 +1166,9 @@ pickups.createAll = function() {
     methods.createCpVector(pickups.EmsPickupPos1, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
     methods.createCpVector(pickups.EmsPickupPos2, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
 
+    methods.createCpVector(pickups.CartelPickupPos1, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
+    methods.createCpVector(pickups.CartelPickupPos2, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
+
     methods.createCpVector(pickups.Garage11Pos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться лифтом', 3, -1, pickups.Tranparent);
     methods.createCpVector(pickups.Garage12Pos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться лифтом', 3, -1, pickups.Tranparent);
     methods.createCpVector(pickups.Garage13Pos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться лифтом', 3, -1, pickups.Tranparent);
@@ -1072,12 +1184,15 @@ pickups.createAll = function() {
     methods.createCpVector(pickups.FibLift4StationPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
     methods.createCpVector(pickups.FibArsenalPos, 'Нажмите ~g~E~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue);
 
+    methods.createCpVector(pickups.CartelArsenalPos, 'Нажмите ~g~E~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue);
+
     methods.createCpVector(pickups.MeriaUpPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
     methods.createCpVector(pickups.MeriaDownPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
     methods.createCpVector(pickups.MeriaRoofPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
     methods.createCpVector(pickups.MeriaGarPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
     methods.createCpVector(pickups.MeriaGarderobPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
     methods.createCpVector(pickups.MeriaHelpPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.MeriaHelpIslandPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
 
     methods.createCpVector(pickups.SapdStockPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
     methods.createCpVector(pickups.SapdStockPos2, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
@@ -1162,8 +1277,9 @@ pickups.createAll = function() {
     methods.createCpVector(pickups.Bus1Pos, 'Нажмите ~g~E~s~ чтобы открыть меню городского маршрута', 1, -1, pickups.Blue);
     methods.createCpVector(pickups.Bus2Pos, 'Нажмите ~g~E~s~ чтобы открыть меню трансферного маршрута', 1, -1, pickups.Blue);
     methods.createCpVector(pickups.Bus3Pos, 'Нажмите ~g~E~s~ чтобы открыть меню рейсового маршрута', 1, -1, pickups.Blue);
-    methods.createCpVector(pickups.TreePos, 'Нажмите ~g~E~s~ чтобы открыть меню садовника/разнорабочего', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.TreePos, 'Нажмите ~g~E~s~ чтобы открыть меню садовника/строителя', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.Tree1Pos, 'Нажмите ~g~E~s~ чтобы открыть меню садовника/строителя', 1, -1, pickups.Blue);
     methods.createCpVector(pickups.AvePos, 'Нажмите ~g~E~s~ чтобы открыть меню священника', 1, -1, pickups.Yellow);
     //methods.createCpVector(pickups.AveVehPos, 'Нажмите ~g~E~s~ чтобы открыть меню священника', 1, -1, pickups.Blue);
-    //methods.createCpVector(pickups.BuilderPos, 'Нажмите ~g~E~s~ чтобы открыть меню разнорабочего', 1, -1, pickups.Blue);
+    //methods.createCpVector(pickups.BuilderPos, 'Нажмите ~g~E~s~ чтобы открыть меню строителя', 1, -1, pickups.Blue);
 };

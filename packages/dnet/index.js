@@ -55,7 +55,6 @@ let racer = require('./managers/racer');
 let trucker = require('./managers/trucker');
 let graffiti = require('./managers/graffiti');
 let fishing = require('./managers/fishing');
-let memorial = require('./managers/memorial');
 
 let coffer = require('./coffer');
 let inventory = require('./inventory');
@@ -74,7 +73,6 @@ function init() {
         ctos.loadAll();
         graffiti.loadAll();
         fishing.loadAll();
-        memorial.loadAll();
 
         houses.loadAll();
         yachts.loadAll();
@@ -86,7 +84,7 @@ function init() {
         family.loadAll();
         gangWar.loadAll();
         canabisWar.loadAll();
-        mafiaWar.loadAll();
+        //mafiaWar.loadAll();
         timer.loadAll();
         tax.loadAll();
 

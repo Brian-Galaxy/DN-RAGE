@@ -79,7 +79,8 @@ vSync.updateValues = function(entity, byEnter = false) {
                 //ntity.setEngineOn(actualData.Engine, true, false);
                 mp.game.invoke(methods.SET_VEHICLE_UNDRIVEABLE, entity.handle, true);
 
-                entity.setDirtLevel(actualData.Dirt);
+                if (!byEnter)
+                    entity.setDirtLevel(actualData.Dirt);
                 entity.setIndicatorLights(1, actualData.IndicatorLeftToggle);
                 entity.setIndicatorLights(0, actualData.IndicatorRightToggle);
 
@@ -119,6 +120,17 @@ vSync.updateValues = function(entity, byEnter = false) {
                             for(let i = 0; i < 10; i++)
                                 entity.setExtra(i, 1);
                             entity.setExtra(actualData.Extra, 0);
+                        }
+
+                        for(let i = 0; i < 4; i++)
+                        {
+                            if (actualData.Window[i]) {
+                                entity.rollDownWindow(i);
+                            }
+                            else {
+                                entity.fixWindow(i);
+                                entity.rollUpWindow(i);
+                            }
                         }
                     }
                 }
@@ -278,12 +290,9 @@ mp.events.add("vSync:setVehicleWindowStatus", (vehId, windw, state) => {
             if (state === 1) {
                 veh.rollDownWindow(windw);
             }
-            else if (state === 0) {
+            else {
                 veh.fixWindow(windw);
                 veh.rollUpWindow(windw);
-            }
-            else {
-                veh.smashWindow(windw);
             }
         }
     }

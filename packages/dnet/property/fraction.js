@@ -66,8 +66,8 @@ fraction.shopList = [
     {
         bId: 104,
         name: "LTD Gasoline Davis",
-        sumMax: 128000,
-        sumMin: 112000,
+        sumMax: 80000,
+        sumMin: 60000,
         pos: [
             [-47.89329, -1759.359, 28.42101, 87.38793],
             [-46.6761, -1758.042, 28.42101, 58.77755],
@@ -76,8 +76,8 @@ fraction.shopList = [
     {
         bId: 64,
         name: "Discount Store Strawberry",
-        sumMax: 120000,
-        sumMin: 80000,
+        sumMax: 60000,
+        sumMin: 40000,
         pos: [
             [73.85292, -1392.154, 28.37614, 283.6447],
             [74.91823, -1387.565, 28.37614, 185.8019],
@@ -87,8 +87,8 @@ fraction.shopList = [
     {
         bId: 89,
         name: "24/7 Strawberry",
-        sumMax: 128000,
-        sumMin: 112000,
+        sumMax: 80000,
+        sumMin: 60000,
         pos: [
             [24.31314, -1347.342, 28.49703, 274.6689],
             [24.29523, -1345, 28.49703, 271.7999],
@@ -115,8 +115,8 @@ fraction.shopList = [
     {
         bId: 67,
         name: "Binco Vespucci Canals",
-        sumMax: 120000,
-        sumMin: 80000,
+        sumMax: 60000,
+        sumMin: 40000,
         pos: [
             [-822.4609, -1071.843, 10.32811, 216.5726],
             [-817.9464, -1070.503, 10.32811, 120.5435],
@@ -135,8 +135,8 @@ fraction.shopList = [
     {
         bId: 106,
         name: "LTD Gasoline Little Seoul",
-        sumMax: 128000,
-        sumMin: 112000,
+        sumMax: 80000,
+        sumMin: 60000,
         pos: [
             [-706.0416, -915.4315, 18.2156, 121.0112],
             [-705.9542, -913.6546, 18.2156, 91.24891],
@@ -163,8 +163,8 @@ fraction.shopList = [
     {
         bId: 82,
         name: "24/7 Banham Canyon",
-        sumMax: 128000,
-        sumMin: 112000,
+        sumMax: 80000,
+        sumMin: 60000,
         pos: [
             [-3039.08, 584.3269, 6.908932, 358.8096],
             [-3041.149, 583.6489, 6.908932, 22.88623],
@@ -173,8 +173,8 @@ fraction.shopList = [
     {
         bId: 83,
         name: "24/7 Chumash",
-        sumMax: 128000,
-        sumMin: 112000,
+        sumMax: 80000,
+        sumMin: 60000,
         pos: [
             [-3244.603, 1000.006, 11.83071, 355.5228],
             [-3242.168, 999.9278, 11.83075, 359.23],
@@ -183,8 +183,8 @@ fraction.shopList = [
     {
         bId: 58,
         name: "Suburban Chumash",
-        sumMax: 120000,
-        sumMin: 80000,
+        sumMax: 60000,
+        sumMin: 40000,
         pos: [
             [-3170.013, 1041.548, 19.86322, 75.12622],
             [-3169.305, 1043.154, 19.86322, 74.92207],
@@ -212,8 +212,8 @@ fraction.shopList = [
     {
         bId: 108,
         name: "LTD Gasoline Richman Glen",
-        sumMax: 128000,
-        sumMin: 112000,
+        sumMax: 80000,
+        sumMin: 60000,
         pos: [
             [-1818.927, 792.9451, 137.0822, 169.9128],
             [-1820.002, 794.2521, 137.0863, 134.8464],
@@ -231,8 +231,8 @@ fraction.shopList = [
     {
         bId: 65,
         name: "Discount Store Great Chaparral",
-        sumMax: 120000,
-        sumMin: 80000,
+        sumMax: 60000,
+        sumMin: 40000,
         pos: [
             [-1101.912, 2712.19, 18.10786, 229.5424],
             [-1097.746, 2714.485, 18.10786, 138.8698],
@@ -242,8 +242,8 @@ fraction.shopList = [
     {
         bId: 86,
         name: "24/7 Harmony",
-        sumMax: 128000,
-        sumMin: 112000,
+        sumMax: 80000,
+        sumMin: 60000,
         pos: [
             [549.2157, 2671.359, 41.15651, 100.8311],
             [549.5192, 2669.066, 41.15651, 100.3135],
@@ -252,8 +252,8 @@ fraction.shopList = [
     {
         bId: 60,
         name: "Suburban Harmony",
-        sumMax: 120000,
-        sumMin: 80000,
+        sumMax: 60000,
+        sumMin: 40000,
         pos: [
             [612.6832, 2764.496, 41.08812, 276.5388],
             [612.8069, 2762.66, 41.08812, 283.3486],
@@ -272,8 +272,8 @@ fraction.shopList = [
     /*{
         bId: 61,
         name: "Discount Store Grand Senora Desert",
-        sumMax: 120000,
-        sumMin: 80000,
+        sumMax: 60000,
+        sumMin: 40000,
         pos: [
             [1197.434, 2711.755, 37.22262, 188.5901],
             [1202.03, 2710.732, 37.22262, 101.2999],
@@ -292,8 +292,8 @@ fraction.shopList = [
     {
         bId: 90,
         name: "24/7 Tataviam Mountains",
-        sumMax: 128000,
-        sumMin: 112000,
+        sumMax: 80000,
+        sumMin: 60000,
         pos: [
             [2554.851, 380.7508, 107.623, 358.886],
             [2557.135, 380.7416, 107.623, 357.6542],
@@ -302,8 +302,8 @@ fraction.shopList = [
     {
         bId: 85,
         name: "24/7 Grand Senora Desert",
-        sumMax: 128000,
-        sumMin: 112000,
+        sumMax: 80000,
+        sumMin: 60000,
         pos: [
             [2675.927, 3280.391, 54.24115, 332.3407],
             [2677.966, 3279.257, 54.24115, 333.0592],
@@ -312,8 +312,8 @@ fraction.shopList = [
     {
         bId: 62,
         name: "Discount Store Grapeseed",
-        sumMax: 120000,
-        sumMin: 80000,
+        sumMax: 60000,
+        sumMin: 40000,
         pos: [
             [1695.544, 4822.227, 41.0631, 106.2861],
             [1695.11, 4817.554, 41.0631, 13.15722],
@@ -323,8 +323,8 @@ fraction.shopList = [
     {
         bId: 105,
         name: "LTD Gasoline Grapeseed",
-        sumMax: 128000,
-        sumMin: 112000,
+        sumMax: 80000,
+        sumMin: 60000,
         pos: [
             [1696.593, 4923.86, 41.06366, 6.185347],
             [1697.936, 4922.814, 41.06366, 327.2919],
@@ -333,8 +333,8 @@ fraction.shopList = [
     {
         bId: 87,
         name: "24/7 Mount Chiliad",
-        sumMax: 128000,
-        sumMin: 112000,
+        sumMax: 80000,
+        sumMin: 60000,
         pos: [
             [1728.755, 6417.411, 34.03724, 245.723],
             [1727.664, 6415.288, 34.03724, 245.5537],
@@ -1086,7 +1086,7 @@ fraction.createCargoBigWar = function() {
         try {
             veh.locked = false;
             veh.setColor(0, 0);
-            let boxes = [53];
+            let boxes = [53,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50];
 
             for (let i = 0; i < 30; i++) {
                 let rare = 0;
@@ -1104,7 +1104,6 @@ fraction.createCargoBigWar = function() {
                 boxes.push(methods.getRandomInt(38, 40));
 
             veh.setVariable('box', JSON.stringify(boxes));
-
             veh.setVariable('cargoId', b1);
         }
         catch (e) {
@@ -1687,7 +1686,7 @@ fraction.startGrabShopGang = function(player, itemId = 0) {
             player.heading = pos[3];
 
             user.playAnimation(player, "missheistfbisetup1", "unlock_loop_janitor", 9);
-            //user.blockKeys(player, true);
+            user.blockKeys(player, true);
 
             fraction.set(frId, 'currentGrabShopActive' + i, true);
 
@@ -1699,7 +1698,7 @@ fraction.startGrabShopGang = function(player, itemId = 0) {
                     return;
 
                 try {
-                    //user.blockKeys(player, false);
+                    user.blockKeys(player, false);
                     user.stopAnimation(player);
 
                     if (player.vehicle) {
@@ -2083,7 +2082,7 @@ fraction.create = function (player, id) {
         return;
     }
     if (user.getCryptoMoney(player) < 500) {
-        player.notify('~r~У Вас не достаточно валюты E-COIN для создания организации');
+        player.notify('~r~У Вас не достаточно валюты BitCoin для создания организации');
         return;
     }
 

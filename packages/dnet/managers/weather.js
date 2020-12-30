@@ -47,8 +47,11 @@ weather.loadAll = function() {
         _year = rows[0]["year"];
         _month = rows[0]["month"];
         _day = rows[0]["day"];
-        _hour = rows[0]["hour"];
-        _minute = rows[0]["minute"];
+        /*_hour = rows[0]["hour"]; //TODO
+        _minute = rows[0]["minute"];*/
+
+        _hour = 7;
+        _minute = 0;
 
         methods.debug('WEATHER', rows[0]);
 
@@ -199,7 +202,7 @@ weather.timeSyncTimer = function() {
         if (_minute === 30) {
             gangWar.timerMoney();
             canabisWar.timerMoney();
-            mafiaWar.timerMoney();
+            //mafiaWar.timerMoney();
         }
 
         if (_minute > 59)
@@ -320,16 +323,6 @@ weather.timeSyncTimer = function() {
                         user.giveVehicle(player, enums.vehWinList[methods.getRandomInt(0, enums.vehWinList.length)], 1, true);
                         //user.giveRandomMask(player, 0, true);
                     }
-                    player = methods.getRandomPlayer();
-                    if (user.isLogin(player)) {
-                        user.giveVehicle(player, enums.vehWinList[methods.getRandomInt(0, enums.vehWinList.length)], 1, true);
-                        //user.giveRandomMask(player, 0, true);
-                    }
-                    player = methods.getRandomPlayer();
-                    if (user.isLogin(player)) {
-                        user.giveVehicle(player, enums.vehWinList[methods.getRandomInt(0, enums.vehWinList.length)], 1, true);
-                        //user.giveRandomMask(player, 0, true);
-                    }
                 }
                 catch (e) {
 
@@ -337,14 +330,14 @@ weather.timeSyncTimer = function() {
             }
         }
 
-        if (dateTime.getDay() === 6) {
+        /*if (dateTime.getDay() === 6) {
             if (dateTime.getHours() === 20 && dateTime.getMinutes() === 0)
                 mafiaWar.startWar(1);
             if (dateTime.getHours() === 20 && dateTime.getMinutes() === 1)
                 mafiaWar.startWar(2);
             if (dateTime.getHours() === 20 && dateTime.getMinutes() === 2)
                 mafiaWar.startWar(3);
-        }
+        }*/
 
         if (dateTime.getDay() === 7) {
             if (dateTime.getHours() === 20 && dateTime.getMinutes() === 0) {
@@ -361,10 +354,10 @@ weather.timeSyncTimer = function() {
             if (dateTime.getHours() === 19 && dateTime.getMinutes() === 0)
                 fraction.createCargoArmyWar();
         }
-        if (dateTime.getHours() === 20 && dateTime.getMinutes() === 30)
+        /*if (dateTime.getHours() === 20 && dateTime.getMinutes() === 30)
             fraction.createCargoMafiaWar();
         if (dateTime.getHours() === 21 && dateTime.getMinutes() === 0)
-            fraction.createCargoMafiaWar();
+            fraction.createCargoMafiaWar();*/
 
         if (dateTime.getHours() === 17 && dateTime.getMinutes() === 1 && gangWar.hasWar(0)) {
             let war = gangWar.getWar(0);
@@ -944,4 +937,16 @@ weather.nextRandomWeatherByType = function(weatherType) {
         1
     );
     mp.players.call('client:managers:weather:nextWeather', [weather.getWeather(), methods.getRandomInt(150, 300)]);
+};
+
+weather.changeWeather = function(name = "EXTRASUNNY") {
+    weather.setWeather(name);
+    methods.notifyWithPictureToAll(
+        `Life Invader [${weather.getFullRpTime()}]`,
+        "~y~Новости погоды",
+        `Погода: ~y~${weather.getWeatherName(weather.getWeather())}~s~\nТемпература: ~y~${Math.round(_tempNew)}°C\n~s~Ветер: ~y~${methods.parseFloat(_windSpeed * 1.4).toFixed(1)}m/s\n~c~${weather.getWeatherDesc(weather.getWeather())}`,
+        "CHAR_TANISHA",
+        1
+    );
+    mp.players.call('client:managers:weather:nextWeather', [weather.getWeather(), 10]);
 };

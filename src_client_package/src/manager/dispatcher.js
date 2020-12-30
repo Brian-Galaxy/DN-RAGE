@@ -1,5 +1,6 @@
 import user from '../user';
 import methods from '../modules/methods';
+import ui from '../modules/ui';
 
 let dispatcher = {};
 
@@ -96,28 +97,34 @@ dispatcher.codeLocal = function (code, name, withCoord = true) {
 };
 
 dispatcher.addDispatcherList = function (title, desc, time, x, y, z, withCoord, phone) {
-    let getStreet = mp.game.pathfind.getStreetNameAtCoord(x, y, z, 0, 0);
-    let street1 = mp.game.ui.getLabelText(mp.game.zone.getNameOfZone(x, y, z));
-    let street2 = mp.game.ui.getStreetNameFromHashKey(getStreet.streetName);
+    try {
+        let street1 = ui.getZoneName(new mp.Vector3(x, y, z));
+        let street2 = ui.getStreetName(new mp.Vector3(x, y, z));
 
-    itemList.push({title: title, desc: desc, street1: street1, street2: street2, time: time, x: x, y: y, z: z,  withCoord: withCoord, phone: phone});
+        itemList.push({title: title, desc: desc, street1: street1, street2: street2, time: time, x: x, y: y, z: z,  withCoord: withCoord, phone: phone});
 
-    let subLabel = `\n~y~Район:~s~ ${street1}\n~y~Улица:~s~ ${street2}`;
-    user.sendPhoneNotify(`Диспетчер [${time}]`, title, desc + subLabel, "CHAR_CALL911");
+        let subLabel = `\n~y~Район:~s~ ${street1}\n~y~Улица:~s~ ${street2}`;
+        user.sendPhoneNotify(`Диспетчер [${time}]`, title, desc + subLabel, "CHAR_CALL911");
+    }
+    catch (e) {}
 };
 
 dispatcher.addDispatcherTaxiList = function (count, title, desc, time, price, x, y, z) {
-    let getStreet = mp.game.pathfind.getStreetNameAtCoord(x, y, z, 0, 0);
-    let street1 = mp.game.ui.getLabelText(mp.game.zone.getNameOfZone(x, y, z));
-    let street2 = mp.game.ui.getStreetNameFromHashKey(getStreet.streetName);
-    user.sendPhoneNotify(`Диспетчер [#${count}]`, title, desc + `\n~y~Район:~s~ ${street1}\n~y~Улица:~s~ ${street2}`, 'CHAR_TAXI');
+    try {
+        let street1 = ui.getZoneName(new mp.Vector3(x, y, z));
+        let street2 = ui.getStreetName(new mp.Vector3(x, y, z));
+        user.sendPhoneNotify(`Диспетчер [#${count}]`, title, desc + `\n~y~Район:~s~ ${street1}\n~y~Улица:~s~ ${street2}`, 'CHAR_TAXI');
+    }
+    catch (e) {}
 };
 
 dispatcher.addDispatcherMechList = function (count, title, desc, time, price, x, y, z) {
-    let getStreet = mp.game.pathfind.getStreetNameAtCoord(x, y, z, 0, 0);
-    let street1 = mp.game.ui.getLabelText(mp.game.zone.getNameOfZone(x, y, z));
-    let street2 = mp.game.ui.getStreetNameFromHashKey(getStreet.streetName);
-    user.sendPhoneNotify(`Диспетчер [#${count}]`, title, desc + `\n~y~Район:~s~ ${street1}\n~y~Улица:~s~ ${street2}`, 'CHAR_LS_CUSTOMS');
+    try {
+        let street1 = ui.getZoneName(new mp.Vector3(x, y, z));
+        let street2 = ui.getStreetName(new mp.Vector3(x, y, z));
+        user.sendPhoneNotify(`Диспетчер [#${count}]`, title, desc + `\n~y~Район:~s~ ${street1}\n~y~Улица:~s~ ${street2}`, 'CHAR_LS_CUSTOMS');
+    }
+    catch (e) {}
 };
 
 dispatcher.sendNotification = function (title, desc, desc2, desc3) {

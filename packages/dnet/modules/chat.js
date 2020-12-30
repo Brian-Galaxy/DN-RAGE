@@ -126,6 +126,43 @@ chat.sendToAll = function(sender, text, color = '2196F3') {
     //mp.players.broadcast(`[${chat.getTime()}] !{${color}} ${sender}:!{FFFFFF} ${text}`);
 };
 
+chat.sendToDep = function(sender, text, color = '#D81B60') {
+
+    mp.players.forEach(p => {
+        if (user.isLogin(p) && (user.isGos(p) || user.isNews(p)))
+            p.outputChatBoxNew(`[${chat.getTime()}] !{${color}} ${sender}:!{FFFFFF} ${text}`);
+    });
+
+    methods.saveLog('log_chat', ['text'], [`DEP: ${methods.removeQuotes(methods.removeQuotes2(text))}`]);
+    //mp.players.broadcast(`[${chat.getTime()}] !{${color}} ${sender}:!{FFFFFF} ${text}`);
+};
+
+chat.sendToFraction = function(player, sender, text, color = '#1E88E5') {
+
+    mp.players.forEach(p => {
+        if (user.isLogin(p)) {
+            if (user.get(player, 'fraction_id') > 0 && user.get(player, 'fraction_id') == user.get(p, 'fraction_id'))
+                p.outputChatBoxNew(`[${chat.getTime()}] !{${color}} ${sender}:!{FFFFFF} ${text}`);
+            else if (user.get(player, 'fraction_id2') > 0 && user.get(player, 'fraction_id2') == user.get(p, 'fraction_id2'))
+                p.outputChatBoxNew(`[${chat.getTime()}] !{${color}} ${sender}:!{FFFFFF} ${text}`);
+        }
+    });
+
+    methods.saveLog('log_chat', ['text'], [`FRACTION (${user.get(player, 'fraction_id')} | ${user.get(player, 'fraction_id2')}): ${methods.removeQuotes(methods.removeQuotes2(text))}`]);
+    //mp.players.broadcast(`[${chat.getTime()}] !{${color}} ${sender}:!{FFFFFF} ${text}`);
+};
+
+chat.sendToFamily = function(player, sender, text, color = '#009688') {
+
+    mp.players.forEach(p => {
+        if (user.isLogin(p) && user.get(player, 'family_id') === user.get(p, 'family_id'))
+            p.outputChatBoxNew(`[${chat.getTime()}] !{${color}} ${sender}:!{FFFFFF} ${text}`);
+    });
+
+    methods.saveLog('log_chat', ['text'], [`FAM (${user.get(player, 'family_id')}): ${methods.removeQuotes(methods.removeQuotes2(text))}`]);
+    //mp.players.broadcast(`[${chat.getTime()}] !{${color}} ${sender}:!{FFFFFF} ${text}`);
+};
+
 chat.getTime = function() {
     let dateTime = new Date();
     return `${methods.digitFormat(dateTime.getHours())}:${methods.digitFormat(dateTime.getMinutes())}:${methods.digitFormat(dateTime.getSeconds())}`;
@@ -159,6 +196,18 @@ mp.events.add("server:chat:sendToAll", function (player, sender, text, color) {
     chat.sendToAll(sender, text, color);
 });
 
+mp.events.add("server:chat:sendToDep", function (player, sender, text, color) {
+    chat.sendToDep(sender, text, color);
+});
+
+mp.events.add("server:chat:sendToFraction", function (player, sender, text, color) {
+    chat.sendToFraction(player, sender, text, color);
+});
+
+mp.events.add("server:chat:sendToFamily", function (player, sender, text, color) {
+    chat.sendToFamily(player, sender, text, color);
+});
+
 mp.events.add("playerChat", function (player, text) {
     chat.send(player, text);
 });
@@ -179,9 +228,29 @@ mp.events.add('playerCommand', (player, command) => {
         else if (command.toLowerCase().slice(0, 2) === "b ") {
             chat.sendBCommand(player, command.substring(2));
         }
-        else if (command.toLowerCase().slice(0, 2) === "z ") {
-            console.log(gangWar.isInZone(player, methods.parseInt(command.substring(2))));
+        else if (command.toLowerCase().slice(0, 2) === "f ") {
+            if (user.get(player, 'family_id') > 0)
+                chat.sendToFamily(player, user.getRpName(player), command.substring(2));
+            else
+                player.notify('~r~Необходимо состоять в семье')
         }
+        else if (command.toLowerCase().slice(0, 2) === "r ") {
+            if (user.get(player, 'fraction_id') > 0)
+                chat.sendToFraction(player, `${user.getRpName(player)} (${user.getRankName(player)})`, command.substring(2));
+            else if (user.get(player, 'fraction_id2') > 0)
+                chat.sendToFraction(player, `${user.getRpName(player)}`, command.substring(2));
+            else
+                player.notify('~r~Необходимо состоять в гос. организации или крайм. организации')
+        }
+        else if (command.toLowerCase().slice(0, 2) === "d ") {
+            if (user.isGos(player) || user.isNews(player))
+                chat.sendToDep(`${user.getRpName(player)} (${user.getFractionName(player)} | ${user.getRankName(player)})`, command.substring(2));
+            else
+                player.notify('~r~Необходимо состоять в гос. организации')
+        }
+        /*else if (command.toLowerCase().slice(0, 2) === "z ") {
+            console.log(gangWar.isInZone(player, methods.parseInt(command.substring(2))));
+        }*/
         else if (command.toLowerCase() === "p" || command.toLowerCase() === "netstat") {
             player.notify("~g~Ping: " + player.ping + "ms\n~g~PacketLoss: " + player.packetLoss + "ms");
         }
@@ -281,7 +350,7 @@ mp.events.add('playerCommand', (player, command) => {
             }
         }
         else {
-            // TODO player.outputChatBoxNew(`!{FFC107}На сервере нет команд, кроме: /me, /do, /try, /b. Используйте меню на кнопку M`);
+            player.outputChatBoxNew(`!{FFC107}На сервере нет команд, кроме: /me, /do, /try, /b, /f, /r, /d, /report, /help. Используйте меню на кнопку M`);
         }
     }
     catch (e) {

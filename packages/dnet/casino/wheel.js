@@ -49,12 +49,12 @@ mp.events.add('server:casino:wheel:doRoll', (player) => {
             userWin = 7;
         else if (methods.getRandomInt(0, 50) < 1)
             userWin = 5;
-        else if (methods.getRandomInt(0, 15) < 1)
-            userWin = 4;
-        else if (methods.getRandomInt(0, 5) < 1)
-            userWin = 3;
         else if (methods.getRandomInt(0, 50) < 1)
             userWin = 9;
+        else if (methods.getRandomInt(0, 3) < 1)
+            userWin = 4;
+        else if (methods.getRandomInt(0, 2) < 1)
+            userWin = 3;
 
         user.set(player, 'wheelWin', userWin);
         mp.players.callInRange(player.position, 100, 'client:casino:wheel:doRoll', [userWin, player.id]);

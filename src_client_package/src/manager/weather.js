@@ -1,4 +1,5 @@
 import methods from '../modules/methods';
+import ui from "../modules/ui";
 import user from '../user';
 
 let weather = {};
@@ -227,7 +228,8 @@ weather.syncWeatherWind = function(windSpeed, windDir) {
 
     if (
         methods.distanceToPos(new mp.Vector3(580.6460571289062, -3118.20849609375, 17.76861572265625), mp.players.local.position) < 150 ||
-        methods.distanceToPos(new mp.Vector3(3095.786865234375, -4701.69873046875, 11.244027137756348), mp.players.local.position) < 150
+        methods.distanceToPos(new mp.Vector3(3095.786865234375, -4701.69873046875, 11.244027137756348), mp.players.local.position) < 150 ||
+        ui.isIslandZone()
     ) {
         mp.game.water.setWavesIntensity(0);
     }

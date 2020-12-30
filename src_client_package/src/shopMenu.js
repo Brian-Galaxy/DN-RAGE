@@ -10,6 +10,7 @@ import quest from "./manager/quest";
 import edu from "./manager/edu";
 import hosp from "./manager/hosp";
 import prolog from "./manager/prolog";
+import npc from "./manager/npc";
 
 import loader from "./jobs/loader";
 import lamar from "./jobs/lamar";
@@ -57,6 +58,8 @@ shopMenu.hideShop2 = function() {
 
     user.updateCharacterFace();
     user.updateCharacterCloth();
+    user.setVirtualWorld(0);
+    user.stopAllAnimation();
 
     shopMenu.resetControl2();
     hidden = true;
@@ -153,7 +156,7 @@ shopMenu.resetControl = function() {
     mp.game.graphics.transitionFromBlurred(100);
 };
 
-shopMenu.setControl2 = function(pos = null, rot = null, zUp = 1, offsetMin = 0.4, offsetMax = 1.5, offsetZMin = -0.8, offsetZMax = 1, shake = false) {
+shopMenu.setControl2 = function(pos = null, rot = null, zUp = 1, offsetMin = 1, offsetMax = 2.2, offsetZMin = -0.8, offsetZMax = 1.2, shake = false) {
     mp.gui.cursor.show(true, true);
     hidden = false;
     ui.hideHud();
@@ -198,6 +201,9 @@ shopMenu.hideAll = function() {
 
         user.updateCharacterFace();
         user.updateCharacterCloth();
+
+        user.setVirtualWorld(0);
+        user.stopAllAnimation();
     }
     hidden = false;
 };
@@ -226,6 +232,8 @@ mp.events.add('client:shopMenu:hideLeft', function() {
     }
     user.updateCharacterFace();
     user.updateCharacterCloth();
+    user.setVirtualWorld(0);
+    user.stopAllAnimation();
 });
 
 let skin = {};
@@ -286,11 +294,11 @@ mp.events.add('client:shopMenu:changeSelect2', async function(json) {
                     mp.events.callRemote('server:lsc:showTun', params.modType, params.id);
                 }
                 catch (e) {
-                    mp.events.callRemote('server:lsc:showTun', params.modType, params.id);
                 }
             }
-            else
+            else {
                 mp.events.callRemote('server:lsc:showTun', params.modType, params.id);
+            }
         }
         if (params.type === 'lsc:setSTunning') {
             menuList.showLscSTunningMenu(params.shop, params.price);
@@ -308,15 +316,15 @@ mp.events.add('client:shopMenu:changeSelect2', async function(json) {
             menuList.showLscColorMenu(params.shop, params.price);
         }
         if (params.type == 'lsc:color:1')
-            menuList.showLscColorChoiseMenu(params.shop, params.price, 'Основной цвет', '1', 3000, 'color1');
+            menuList.showLscColorChoiseMenu(params.shop, params.price, 'Основной цвет', '1', 1000, 'color1');
         if (params.type == 'lsc:color:2')
-            menuList.showLscColorChoiseMenu(params.shop, params.price, 'Дополнительный цвет', '2', 1000, 'color2');
+            menuList.showLscColorChoiseMenu(params.shop, params.price, 'Дополнительный цвет', '2', 500, 'color2');
         if (params.type == 'lsc:color:3')
             menuList.showLscColorChoiseMenu(params.shop, params.price, 'Перламутровый цвет', '3', 5000, 'color3');
         if (params.type == 'lsc:color:4')
-            menuList.showLscColorChoiseMenu(params.shop, params.price, 'Цвет колес', '4', 1500, 'colorwheel');
+            menuList.showLscColorChoiseMenu(params.shop, params.price, 'Цвет колес', '4', 1000, 'colorwheel');
         if (params.type == 'lsc:color:5')
-            menuList.showLscColorChoiseMenu(params.shop, params.price, 'Цвет приборной панели', '5', 800, 'colord');
+            menuList.showLscColorChoiseMenu(params.shop, params.price, 'Цвет приборной панели', '5', 500, 'colord');
         if (params.type == 'lsc:color:6')
             menuList.showLscColorChoiseMenu(params.shop, params.price, 'Цвет салона', '6', 5000, 'colori');
         if(params.type == 'lsc:color:buy') {
@@ -405,13 +413,16 @@ mp.events.add('client:shopMenu:changeSelect2', async function(json) {
                 menuList.showShopPropMenu(params.shop, type, 1, price);
             }
             if (params.name == "body") {
-                menuList.showShopClothMenu(params.shop, 3, 11, price);
+                menuList.showShopClothMenu(params.shop, type, 11, price);
             }
             if (params.name == "legs") {
-                menuList.showShopClothMenu(params.shop, 3, 4, price);
+                menuList.showShopClothMenu(params.shop, type, 4, price);
             }
             if (params.name == "shoes") {
-                menuList.showShopClothMenu(params.shop, 3, 6, price);
+                menuList.showShopClothMenu(params.shop, type, 6, price);
+            }
+            if (params.name == "acess") {
+                menuList.showShopClothMenu(params.shop, type, 7, price);
             }
         }
         if (params.type === 'c:buy') {
@@ -427,11 +438,7 @@ mp.events.add('client:shopMenu:changeSelect2', async function(json) {
 
             switch (params.zone) {
                 case 'SKIN_HAIR':
-
-                    if (index == 23 || index == 24)
-                        skin.SKIN_HAIR = 1;
-                    else
-                        skin.SKIN_HAIR = index;
+                    skin.SKIN_HAIR = index;
                     mp.players.local.setComponentVariation(2, skin.SKIN_HAIR, 0, 2);
                     mp.players.local.setHairColor(skin.SKIN_HAIR_COLOR, skin.SKIN_HAIR_COLOR_2);
 
@@ -443,7 +450,7 @@ mp.events.add('client:shopMenu:changeSelect2', async function(json) {
                     }
 
                     let data2 = JSON.parse(enums.overlays)[user.getSex()][skin.SKIN_HAIR_3];
-                    user.setDecoration(data[0], data[1], true);
+                    user.setDecoration(data2[0], data2[1], true);
                     break;
                 /*case 'SKIN_HAIR_2':
                     user.removeMoney(methods.parseInt(item.price), 'Услуги барбершопа ' + item.label);
@@ -882,6 +889,10 @@ mp.events.add('client:shopMenu:buyCash', async function(json) {
             business.addMoney(params.shop, params.price, 'Бронежилет');
             inventory.updateAmount(user.getCache('id'), 1);
         }
+
+        else if (params.t === 'tm') {
+            mp.events.callRemote('server:tradeMarket:buy', params.id, params.price, params.name, params.ownerId, 1);
+        }
         else {
             if (items.isWeapon(params.id)) {
                 if (!user.getCache('gun_lic')) {
@@ -1033,6 +1044,9 @@ mp.events.add('client:shopMenu:buyCard', async function(json) {
             business.addMoney(params.shop, params.price, 'Бронежилет');
             inventory.updateAmount(user.getCache('id'), 1);
         }
+        else if (params.t === 'tm') {
+            mp.events.callRemote('server:tradeMarket:buy', params.id, params.price, params.name, params.ownerId, 1);
+        }
         else {
             if (items.isWeapon(params.id)) {
                 if (!user.getCache('gun_lic')) {
@@ -1172,13 +1186,12 @@ mp.events.add('client:dialog:btn', async function(json) {
                 ui.showDialog('Тебе необходимо отбывать наказание, чтобы была доступна подработка', 'Джейк');
         }
         if (params.doName === 'yank:ask') {
-            shopMenu.hideDialog();
-            ui.showDialog('В общем, тут машина попала в ДТП и сгорела, поэтому дорога закрыта будет еще минимум на часа 3, езжай в объезд. Приятной дороги!', 'Риксон');
+            npc.showDialogYpd('В общем, тут машина попала в ДТП и сгорела, поэтому дорога перекрыта будет еще минимум на часа 3, езжай в объезд. Приятной дороги!');
             prolog.next();
         }
         if (params.doName === 'lamar:buy') {
             if (user.getCryptoMoney() < 0.2) {
-                mp.game.ui.notifications.show(`~r~На счету ECOIN нет столько денег`);
+                mp.game.ui.notifications.show(`~r~На счету BitCoin нет столько денег`);
                 return;
             }
 
@@ -1209,17 +1222,7 @@ mp.events.add('client:dialog:btn', async function(json) {
             mp.events.callRemote('server:user:askNoAve', id);
         }
         if (params.doName === 'work') {
-            let btn = [];
-            btn.push(
-                {
-                    text: 'Закрыть',
-                    bgcolor: 'rgba(244,67,54,0.7)',
-                    params: {doName: 'close'}
-                }
-            );
-
-            shopMenu.showDialog(new mp.Vector3(-1288.153, -561.6686, 31.71216 + 0.6), -46.52558);
-            shopMenu.updateDialog(btn, 'Сюзанна', 'Сотрудник правительства', 'Тебе необходимо сходить в здание правительства, получить лицензию категории B, а далее устроиться на работу садовника или разнорабочего')
+            npc.showDialogStandart('Тебе необходимо сходить в здание правительства, получить лицензию категории B, а далее устроиться на работу садовника или строителя');
         }
     }
     catch (e) {

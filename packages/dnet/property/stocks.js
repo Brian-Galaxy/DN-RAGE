@@ -247,7 +247,7 @@ stocks.boxList = [
     ['Золотой Minigun', 1557324266, 34, 0, false, 40000, 'Уникальный груз', 2 ], //35
     ['Большой ящик фальшивых купюр', -80652213, 35, 0, false, 15000, 'Контрафактные товары', 1 ], //36
     ['Малый ящик фальшивых купюр', -1155316904, 36, 0, false, 5000, 'Контрафактные товары', 0 ], //37
-    ['Большой ящик наркотиков', 1016837103, 37, 0, false, 60000, 'Наркотики', 1 ], //38
+    ['Большой ящик наркотиков', 1016837103, 37, 0, false, 40000, 'Наркотики', 1 ], //38
     ['Малый ящик наркотиков', 1863514296, 38, 0, false, 20000, 'Наркотики', 0 ], //39
     ['Яйцо фаберже', 562429577, 39, 0, false, 35000, 'Уникальный груз', 2 ], //40
     ['Большой ящик лекарств', 1914690987, 40, -0.12, false, 15000, 'Медикаменты', 1 ], //41
@@ -768,6 +768,7 @@ stocks.cargoUnload = function(player, bid = 1) {
             methods.distanceToPos(player.position, new mp.Vector3(329.8642272949219, -557.3507690429688, 27.743440628051758)) < 10 ||
             methods.distanceToPos(player.position, new mp.Vector3(-1070.80419921875, -853.8217163085938, 3.8680715560913086)) < 10 ||
             methods.distanceToPos(player.position, new mp.Vector3(-1314.7291259765625, -590.8836669921875, 27.772537231445312)) < 10 ||
+            methods.distanceToPos(player.position, new mp.Vector3(4990.25537109375, -5738.73486328125, 18.8813133239746)) < 10 ||
             methods.distanceToPos(player.position, new mp.Vector3( -460.87451171875, 6009.25830078125, 30.340526580810547)) < 10
         )
         {
@@ -788,6 +789,8 @@ stocks.cargoUnload = function(player, bid = 1) {
                 fraction = 3;
             if (methods.distanceToPos(player.position, new mp.Vector3( -1314.7291259765625, -590.8836669921875, 27.772537231445312)) < 10)
                 fraction = 2;
+            if (methods.distanceToPos(player.position, new mp.Vector3( 4990.25537109375, -5738.73486328125, 18.88131332397461)) < 10)
+                fraction = 8;
 
             let box = boxes[bid];
             boxes[bid] = -1;
@@ -921,11 +924,11 @@ stocks.sellBySlot = function (player, slot) {
         if (user.get(player, 'fraction_id2') > 0) {
             user.addCryptoMoney(player, boxPrice / 2, 'Продажа ' + stocks.boxList[box][0]);
             fraction.addMoney(user.get(player, 'fraction_id2'), boxPrice / 2, 'Продажа груза от ' + user.getRpName(player));
-            player.notify(`~g~Вы продали ${stocks.boxList[box][0]}. Деньги были зачислены на ваш E-Coin кошелёк. 50% зачислено в общак организации`);
+            player.notify(`~g~Вы продали ${stocks.boxList[box][0]}. Деньги были зачислены на ваш BitCoin кошелёк. 50% зачислено в общак организации`);
         }
         else {
             user.addCryptoMoney(player, boxPrice, 'Продажа ' + stocks.boxList[box][0]);
-            player.notify(`~g~Вы продали ${stocks.boxList[box][0]}. Деньги были зачислены на ваш E-Coin кошелёк`);
+            player.notify(`~g~Вы продали ${stocks.boxList[box][0]}. Деньги были зачислены на ваш BitCoin кошелёк`);
         }
     }
 };
@@ -1019,11 +1022,11 @@ stocks.sellAllByClass = function (player, className, price) {
     if (user.get(player, 'fraction_id2') > 0) {
         user.addCryptoMoney(player, price / 2, 'Продажа ' + className);
         fraction.addMoney(user.get(player, 'fraction_id2'), price / 2, 'Продажа груза от ' + user.getRpName(player));
-        player.notify(`~g~Вы продали ${className}. Деньги были зачислены на ваш E-Coin кошелёк. 50% зачислено в общак организации`);
+        player.notify(`~g~Вы продали ${className}. Деньги были зачислены на ваш BitCoin кошелёк. 50% зачислено в общак организации`);
     }
     else {
         user.addCryptoMoney(player, price, 'Продажа ' + className);
-        player.notify(`~g~Вы продали ${className}. Деньги были зачислены на ваш E-Coin кошелёк`);
+        player.notify(`~g~Вы продали ${className}. Деньги были зачислены на ваш BitCoin кошелёк`);
     }
 };
 

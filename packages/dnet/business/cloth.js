@@ -12,47 +12,57 @@ let shopList = enums.shopList;
 let cloth = exports;
 
 cloth.maskShop = new mp.Vector3(-1337.255, -1277.948, 3.872962);
+cloth.maskShop2 = new mp.Vector3(5081.2587890625, -5755.23486328125, 14.829644203186035);
 cloth.printShopPos = new mp.Vector3(-1339.9146728515625, -1268.3306884765625, 3.8951973915100098);
 
 cloth.loadAll = function(){
     methods.debug('barberShop.loadAll');
 
-    methods.createBlip(cloth.printShopPos, 72, 0, 0.8, 'Vespucci Print Shop');
+    methods.createBlip(cloth.printShopPos, 72, 0, 0.8, 'Print Shop');
     methods.createCpVector(cloth.printShopPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, [33, 150, 243, 100]);
 
-    methods.createBlip(cloth.maskShop, 437, 0, 0.8, 'Vespucci Movie Masks');
+    methods.createBlip(cloth.maskShop, 437, 0, 0.8, 'Movie Masks');
     methods.createCp(cloth.maskShop.x, cloth.maskShop.y, cloth.maskShop.z, "Нажмите ~g~E~s~ чтобы открыть меню магазина", 0.8, -1, [33, 150, 243, 100], 0.3);
 
+    methods.createBlip(cloth.maskShop2, 437, 0, 0.8, 'Movie Masks');
+    methods.createCp(cloth.maskShop2.x, cloth.maskShop2.y, cloth.maskShop2.z, "Нажмите ~g~E~s~ чтобы открыть меню магазина", 0.8, -1, [33, 150, 243, 100], 0.3);
+
+    methods.createBlip(new mp.Vector3(-619.8532104492188, -233.54541015625, 37.0570182800293), 617, 0, 0.8, 'Vangelico');
     try {
         for (let i = 0; i < shopList.length; i++) {
             let pos = new mp.Vector3(shopList[i][3], shopList[i][4], shopList[i][5]);
             let shopType = shopList[i][0];
-            let type = shopList[i][2];
 
-            if (type == 0) {
+            if (shopList[i][6] === 0) {
                 switch (shopType) {
                     case 0:
-                        methods.createBlip(pos, 73, 68, 0.8, 'Discount Store');
+                        methods.createBlip(pos, 73, 68, 0.8);
                         break;
                     case 1:
-                        methods.createBlip(pos, 73, 0, 0.8, 'Suburban');
+                        methods.createBlip(pos, 73, 0, 0.8);
                         break;
                     case 2:
-                        methods.createBlip(pos, 73, 21, 0.8, 'Ponsonbys');
+                        methods.createBlip(pos, 73, 21, 0.8);
                         break;
                     case 3:
-                        methods.createBlip(pos, 73, 73, 0.8, 'AmmoNation');
+                        methods.createBlip(pos, 73, 73, 0.8);
                         break;
-                    case 4:
-                        methods.createBlip(pos, 617, 0, 0.8, 'Vangelico');
-                        break;
+                    /*case 4:
+                        methods.createBlip(pos, 617, 0, 0.8);
+                        break;*/
                     case 5:
-                        methods.createBlip(pos, 73, 81, 0.8, 'Binco');
+                        methods.createBlip(pos, 73, 81, 0.8);
                         break;
                 }
+                methods.createCp(pos.x, pos.y, pos.z, "Нажмите ~g~E~s~ чтобы открыть меню магазина", 0.8, -1, [33, 150, 243, 100], 0.3);
             }
 
-            methods.createCp(pos.x, pos.y, pos.z, "Нажмите ~g~E~s~ чтобы открыть меню магазина", 0.8, -1, [33, 150, 243, 100], 0.3);
+            if (shopType === 3 || shopType === 999)
+                methods.createCp(pos.x, pos.y, pos.z, "Нажмите ~g~E~s~ чтобы открыть меню магазина", 0.8, -1, [33, 150, 243, 100], 0.3);
+            if (shopType === 4) {
+                methods.createCp(pos.x, pos.y, pos.z, "Нажмите ~g~E~s~ чтобы открыть меню магазина", 0.8, -1, [33, 150, 243, 100], 0.3);
+            }
+
         }
     } catch (e) {
         console.log(e);
@@ -73,6 +83,14 @@ cloth.checkPosForOpenMenu = function (player) {
             player.call('client:menuList:showShopMaskMenu', [69]);
             return;
         }
+        if (methods.distanceToPos(cloth.maskShop2, playerPos) < 2) {
+            /*if (!business.isOpen(69)) {
+                player.notify('~r~К сожалению магазин сейчас не работает');
+                return;
+            }*/
+            player.call('client:menuList:showShopMaskMenu', [166]);
+            return;
+        }
 
         if (methods.distanceToPos(cloth.printShopPos, playerPos) < 2) {
             /*if (!business.isOpen(70)) {
@@ -84,12 +102,57 @@ cloth.checkPosForOpenMenu = function (player) {
         }
 
         for (let i = 0; i < shopList.length; i++){
-            if(methods.distanceToPos(playerPos, new mp.Vector3(shopList[i][3], shopList[i][4], shopList[i][5])) < 2.0){
+            if(methods.distanceToPos(playerPos, new mp.Vector3(shopList[i][3], shopList[i][4], shopList[i][5])) < 1.2){
                 /*if (!business.isOpen(shopList[i][1])) {
                     player.notify('~r~К сожалению магазин сейчас не работает');
                     return;
                 }*/
-                player.call('client:menuList:showShopClothMenu', [shopList[i][1], shopList[i][0], shopList[i][2], business.getPrice(shopList[i][1])]);
+
+                let shopType = shopList[i][0];
+                let animList = [
+                    ["Сесть 1","amb@prop_human_seat_chair@male@generic@base", "base",9],
+                    ["Сесть 2","amb@prop_human_seat_chair@male@elbows_on_knees@base", "base",9],
+                    ["Сесть 3","amb@prop_human_seat_chair@male@left_elbow_on_knee@base", "base",9],
+                    ["Сесть 4","amb@prop_human_seat_chair@male@right_foot_out@base", "base",9],
+                    ["Сидеть расслаблено - 2", "anim@amb@office@seating@male@var_e@base@", "base",9],
+                    ["Сидеть расслаблено - 3", "anim@amb@office@seating@male@var_d@base@", "base",9],
+                    ["Сидеть расслаблено - 4", "anim@amb@office@seating@female@var_d@base@", "base",9],
+                    ["Сидеть расслаблено - 5", "anim@amb@office@seating@female@var_c@base@", "base",9],
+                    ["Сидеть сложа руки - 3", "amb@world_human_seat_steps@male@hands_in_lap@base", "base",9],
+                ];
+                let animId = methods.getRandomInt(0, animList.length);
+
+                if (player.dimension === 0)
+                    user.stopAnimationNow(player);
+
+                if (shopType === 3 || shopType === 4 || shopType === 999) {
+
+                    player.position = new mp.Vector3(shopList[i][3], shopList[i][4], shopList[i][5] + 1);
+                    user.heading(player, shopList[i][6]);
+                }
+                else {
+                    let offset = 0;
+                    if (shopList[i][6] === 0)
+                        offset = 1;
+
+                    if (player.dimension === 0 && offset === 0)
+                        player.position = new mp.Vector3(shopList[i + offset][3], shopList[i + offset][4], shopList[i + offset][5] + 1);
+                    else if (offset === 0)
+                        player.position = new mp.Vector3(shopList[i + offset][3], shopList[i + offset][4], shopList[i + offset][5]);
+                    else
+                        player.position = new mp.Vector3(shopList[i + offset][3], shopList[i + offset][4], shopList[i + offset][5] + 1);
+                    user.heading(player, shopList[i + offset][6]);
+                }
+
+                player.dimension = player.id + 1;
+                setTimeout(function () {
+                    try {
+                        if (shopType !== 3 && shopType !== 4 && shopType !== 999)
+                            user.playAnimation(player, animList[animId][1], animList[animId][2], animList[animId][3]);
+                        player.call('client:menuList:showShopClothMenu', [shopList[i][1], shopList[i][0], shopList[i][2], business.getPrice(shopList[i][1])]);
+                    }
+                    catch (e) {}
+                }, 200);
                 return;
             }
         }
@@ -302,7 +365,7 @@ cloth.buy = function (player, price, body, cloth, color, torso, torsoColor, para
                 params = `{"name": "${itemName} (${names[color]})", "sex": ${user.getSex(player)}, "hand": ${cloth}, "hand_color": ${color}}`;
             }*/
 
-            if (cloth == 41 || cloth == 45 || cloth == 82 || cloth == 22)
+            if (cloth == 41 || cloth == 45 || cloth == 82 || cloth == 22 || cloth == 23)
                 inventory.addItem(264, 1, inventory.types.Player, user.getId(player), 1, 1, params, 100);
             else
                 inventory.addItem(263, 1, inventory.types.Player, user.getId(player), 1, 1, params, 100);

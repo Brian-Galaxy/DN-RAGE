@@ -5,6 +5,7 @@ import user from '../user';
 import chat from '../chat';
 import ui from './ui';
 import cefMenu from "./cefMenu";
+import menuList from "../menuList";
 
 let _isShowInput;
 let menuItem = null;
@@ -171,7 +172,10 @@ class Menu {
 
             _title = title;
             _subtitle = subtitle;
-            _banner = banner;
+            if (methods.state && banner === '')
+                _banner = 'default';
+            else
+                _banner = banner;
             _menuName = menuName;
 
             menuItem = [];
@@ -245,6 +249,7 @@ class Menu {
     }
 
     static HideMenu() {
+        menuList.isShowPlayerMenu = false;
         if (menuItem != null) {
 
             /*try {

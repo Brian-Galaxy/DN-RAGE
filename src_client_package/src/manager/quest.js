@@ -10,6 +10,7 @@ import weather from "./weather";
 import vehicles from "../property/vehicles";
 import methods from "../modules/methods";
 import photo from "../jobs/photo";
+import npc from "./npc";
 
 let quest = {};
 
@@ -41,26 +42,14 @@ let questLamarShop = [
 
 let questList = {
     role_0: {
-        name: "Иммигрант",
-        skin: "s_m_y_dockwork_01",
-        skinRot: 316.27508544921875,
-        anim: "WORLD_HUMAN_CLIPBOARD",
-        pos: new mp.Vector3(-415.9264831542969, -2645.4287109375, 6.000219345092773),
-        tasks: [
-            ["Подработка", "Перенесите 20 ящиков", "$200", -415, -2645],
-            ["Правительство", "Приехать в здание правительства и получить права категории B", "Work ID 2 уровня", -1290, -571],
-        ],
-        canSee: () => { return user.getCache('role') === 1 }
-    },
-    standart: {
         name: "Первые шаги",
-        skin: "a_f_y_business_02",
-        skinRot: -46.52558,
+        skin: "s_f_y_beachbarstaff_01",
+        skinRot: 147.77825927734375,
         anim: "WORLD_HUMAN_CLIPBOARD",
-        pos: new mp.Vector3(-1288.153, -561.6686, 31.71216),
+        pos: new mp.Vector3(5002.990234375, -5752.30419921875, 19.880247116088867),
         tasks: [
-            ["Лицензия", "Купить лицензию категории B (Доп. информация в М - Квесты)", "$100 + Лицензия категории А", -1290, -571],
-            ["Первая работа", "Устроиться на работу садовника или разнорабочего в здании правительства", "$200", -1290, -571],
+            ["Лицензия", "Купить лицензию категории B (Доп. информация в М - Квесты)", "$100 + Лицензия категории А", 5011, -5750],
+            ["Первая работа", "Устроиться на работу садовника или строителя в здании правительства", "$200", 5011, -5750],
             ["Аренда", "Арендуйте транспорт", "$250", -1261, -608],
             ["Первые деньги", "Заработайте первые деньги", "$500", -1585, -234],
             ["Банковская карта", "Оформите банковскую карту в любом из доступных банков", "$200", 0, 99],
@@ -74,7 +63,52 @@ let questList = {
             ["Время пострелять", "Примите участие в GunZone", "$2000", -255, -2026],
             ["По карьерной лестнице", "Устроиться на работу в Правительство/LSPD/BCSD/Армию/Службу новостей, на ваш выбор", "$20,000", 0, 0],
         ],
-        canSee: () => { return true }
+        canSee: () => { return false }
+    },
+    standart: {
+        name: "Первые шаги",
+        skin: "a_f_y_business_02",
+        skinRot: -46.52558,
+        anim: "WORLD_HUMAN_CLIPBOARD",
+        pos: new mp.Vector3(-1288.153, -561.6686, 31.71216),
+        tasks: [
+            ["Лицензия", "Купить лицензию категории B (Доп. информация в М - Квесты)", "$100 + Лицензия категории А", -1290, -571],
+            ["Первая работа", "Устроиться на работу садовника или строителя в здании правительства", "$200", -1290, -571],
+            ["Аренда", "Арендуйте транспорт", "$250", -1261, -608],
+            ["Первые деньги", "Заработайте первые деньги", "$500", -1585, -234],
+            ["Банковская карта", "Оформите банковскую карту в любом из доступных банков", "$200", 0, 99],
+            ["Урчащий животик", "Купить еду и воду в палатке или магазине", "$200", 0, 98],
+            ["Приодеться", "Купить любую одежду", "$500", -817, -1079],
+            ["Швейный завод", "Для того, чтобы получить бинты, необходимо обменять любую одежду на ткань в швейной фабрике, после чего через инвентарь будет возможность их скрафтить", "Рецепт малой аптечки", 718, -977],
+            ["Ламар", "Познакомиться с Ламаром", "Автомобиль", -218, -1368],
+            ["Бричка", "Найти и припарковать свой транспорт (Найти можно через телефон в приложении UVeh)", "$500", -218, -1368],
+            ["Кчау", "Примите участие в гонках на Maze Bank Arena", "$2000", -255, -2026],
+            ["Сила револьвера", "Примите участие в дуэли", "$2000", -255, -2026],
+            ["Время пострелять", "Примите участие в GunZone", "$2000", -255, -2026],
+            ["По карьерной лестнице", "Устроиться на работу в Правительство/LSPD/BCSD/Армию/Службу новостей, на ваш выбор", "$20,000", 0, 0],
+        ],
+        canSee: () => {
+            if (user.getCache('role') === 2) {
+                questList.standart.tasks = [
+                    ["Лицензия", "Купить лицензию категории B (Доп. информация в М - Квесты)", "$100 + Лицензия категории А", 5011, -5750],
+                    ["Первая работа", "Устроиться на работу садовника или строителя в здании правительства", "$200", 5399, -5172],
+                    ["Аренда", "Арендуйте транспорт", "$250", 4974, -5716],
+                    ["Первые деньги", "Заработайте первые деньги", "$500", 4974, -5716],
+                    ["Банковская карта", "Оформите банковскую карту в местном банке", "$200", 5011, -5750],
+                    ["Урчащий животик", "Купить еду и воду в палатке или магазине", "$200", 0, 98],
+                    ["Приодеться", "Купить любую одежду", "$500", 5007, -5786],
+                    ["Швейный завод", "Для того, чтобы получить бинты, необходимо обменять любую одежду на ткань в швейной фабрике, после чего через инвентарь будет возможность их скрафтить", "Рецепт малой аптечки", 4999, -5163],
+                    ["Ламар", "Познакомиться с Ламаром", "Автомобиль", -218, -1368],
+                    ["Бричка", "Найти и припарковать свой транспорт (Найти можно через телефон в приложении UVeh)", "$500", -218, -1368],
+                    ["Кчау", "Примите участие в гонках на Maze Bank Arena", "$2000", -255, -2026],
+                    ["Сила револьвера", "Примите участие в дуэли", "$2000", -255, -2026],
+                    ["Время пострелять", "Примите участие в GunZone", "$2000", -255, -2026],
+                    ["По карьерной лестнице", "Устроиться на работу в Правительство/LSPD/BCSD/Армию/Службу новостей, на ваш выбор", "$20,000", 0, 0],
+                ]
+            }
+
+            return true
+        }
     },
     gang: {
         name: "Тёмная сторона",
@@ -84,14 +118,14 @@ let questList = {
         pos: new mp.Vector3(-218.75608825683594, -1368.4576416015625, 31.25823402404785),
         tasks: [
             ["Знакомство", "Найти Ламара и поговорить с ним", "Доступ к консоли в телефоне", -218, -1368],
-            ["Фургоны", "Перевезите фургон у Ламара и заработайте свои первые E-Coin", "$200", -218, -1368],
+            ["Фургоны", "Перевезите фургон у Ламара и заработайте свои первые BitCoin", "$200", -218, -1368],
             ["Криминальный мир", "Познакомьтесь с криминальными организациями штата", "$500", -218, -1368],
             ["Купите сумку", "Купите сумку в охотничьем магазине в Paleto Bay", "$500", -680, 5832],
             ["Купите маску", "Купите маску в магазине масок на пляже Del Pierro", "$1000", -1338, -1278],
             ["Console v1", "Обновите пакеты в консоли через команду apt-get update", "1ec", -218, -1368],
             ["Угон", "Угоните транспорт любым доступным способом и продайте его через консоль введя команду ecorp -car -getpos", "1ec", -218, -1368],
-            ["ECoin", "Узнайте ваш баланс ECoin с помощью команды ecorp -balance", "1ec", -218, -1368],
-            ["Вывод", "Выведите ECoin на вашу карту с помощью команды ecorp -coin -toBankCard [Сумма]", "1ec",-218, -1368],
+            ["BitCoin", "Узнайте ваш баланс BitCoin с помощью команды ecorp -balance", "1ec", -218, -1368],
+            ["Вывод", "Выведите BitCoin на вашу карту с помощью команды ecorp -coin -toBankCard [Сумма]", "1ec",-218, -1368],
             ["Организация", "Вступите в любую криминальную организацию", "10ec", -218, -1368],
             ["Стволы", "Купите любое оружие и экипируйте его", "10ec", -218, -1368],
             ["Разгрузка", "Разгрузите фургон с войны за грузы", "20ec", -218, -1368],
@@ -169,7 +203,7 @@ quest.loadAllBlip = function() {
             if (user.getQuestCount(item) >= quest.getQuestLineMax(item))
                 return;
 
-            if (questList[item].skin === '')
+            if (questList[item].skin === '' || item === 'standart')
                 return;
 
             if (user.getQuestCount(item) > 0) {
@@ -206,13 +240,6 @@ quest.notify = function(title, award) {
 quest.gang = function(isBot = false, start = -1, done = 0) {
 
     try {
-        if (done === 0) {
-            if (weather.getHour() < 21 && weather.getHour() > 8) {
-                ui.showDialog('Приходи ночью, с 21 до 8 утра', 'Ламар');
-                return;
-            }
-        }
-
         quest.standart(false, -1, 8);
 
         let qName = 'gang';
@@ -236,7 +263,8 @@ quest.gang = function(isBot = false, start = -1, done = 0) {
                 setTimeout(function () {
                     mp.events.callRemote('server:user:generateCryptoCard');
                 }, 500);
-                ui.showDialog('Ватсап друг, вот держи ссылку, теперь у тебя есть доступ к приложению E-Corp, мы все сейчас через него работаем, крутая штука. Если подробнее, то открой консоль в телефоне и впиши команду ecorp. В общем, вся криминальная жизнь проходит через приложение E-Corp. Люди сами выбирают как будет выглядеть их организация и чем она будет заниматься, но чтобы ты смог в неё попасть или создать свою, тебе необходимо иметь соответсвующую репутацию. Все наводки от меня, у тебя доступны в приложении E-Corp, я буду тебе всё присылать.', 'Ламар');
+
+                npc.showDialogLamar('Ватсап друг, вот держи ссылку, теперь у тебя есть доступ к приложению E-Corp, мы все сейчас через него работаем, крутая штука. Если подробнее, то открой консоль в телефоне и впиши команду ecorp. В общем, вся криминальная жизнь проходит через приложение E-Corp. Люди сами выбирают как будет выглядеть их организация и чем она будет заниматься, но чтобы ты смог в неё попасть или создать свою, тебе необходимо иметь соответсвующую репутацию. Все наводки от меня, у тебя доступны в приложении E-Corp, я буду тебе всё присылать.');
                 break;
             }
             case 1: {
@@ -250,7 +278,7 @@ quest.gang = function(isBot = false, start = -1, done = 0) {
                 }
                 if (!isBot)
                     return;
-                ui.showDialog(quest.getQuestLineInfo(qName, start), 'Ламар');
+                npc.showDialogLamar(quest.getQuestLineInfo(qName, start));
                 break;
             }
             case 2: {
@@ -268,7 +296,7 @@ quest.gang = function(isBot = false, start = -1, done = 0) {
                 if (!isBot)
                     return;
                 isLamar = true;
-                ui.showDialog('Так, я хочу рассказать что у нас есть большое количество различных группировок, с частью из них я познакомлю тебя прямо сейчас, координаты дам тебе в GPS, отправляйся туда и освойся, но будь аккуратен, ребята не очень любят когда долго чужаки тусят на их районе', 'Ламар');
+                npc.showDialogLamar('Так, я хочу рассказать что у нас есть большое количество различных группировок, с частью из них я познакомлю тебя прямо сейчас, координаты дам тебе в GPS, отправляйся туда и освойся, но будь аккуратен, ребята не очень любят когда долго чужаки тусят на их районе');
                 _checkpointId = jobPoint.create(questLamarShop[_currentCheckpointId], true, 3);
                 break;
             }
@@ -282,7 +310,7 @@ quest.gang = function(isBot = false, start = -1, done = 0) {
                 }
                 if (!isBot)
                     return;
-                ui.showDialog(quest.getQuestLineInfo(qName, start), 'Ламар');
+                npc.showDialogLamar(quest.getQuestLineInfo(qName, start));
                 break;
             }
             case 4: {
@@ -296,7 +324,7 @@ quest.gang = function(isBot = false, start = -1, done = 0) {
                 }
                 if (!isBot)
                     return;
-                ui.showDialog(quest.getQuestLineInfo(qName, start), 'Ламар');
+                npc.showDialogLamar(quest.getQuestLineInfo(qName, start));
                 break;
             }
             case 5:
@@ -313,7 +341,7 @@ quest.gang = function(isBot = false, start = -1, done = 0) {
                 }
                 if (!isBot)
                     return;
-                ui.showDialog(quest.getQuestLineInfo(qName, start), 'Ламар');
+                npc.showDialogLamar(quest.getQuestLineInfo(qName, start));
                 break;
             }
             case 9:
@@ -328,7 +356,7 @@ quest.gang = function(isBot = false, start = -1, done = 0) {
                 }
                 if (!isBot)
                     return;
-                ui.showDialog(quest.getQuestLineInfo(qName, start), 'Ламар');
+                npc.showDialogLamar(quest.getQuestLineInfo(qName, start));
                 break;
             }
             case 11:
@@ -342,7 +370,7 @@ quest.gang = function(isBot = false, start = -1, done = 0) {
                 }
                 if (!isBot)
                     return;
-                ui.showDialog(quest.getQuestLineInfo(qName, start), 'Ламар');
+                npc.showDialogLamar(quest.getQuestLineInfo(qName, start));
                 break;
             }
             case 12:
@@ -357,7 +385,7 @@ quest.gang = function(isBot = false, start = -1, done = 0) {
                 }
                 if (!isBot)
                     return;
-                ui.showDialog(quest.getQuestLineInfo(qName, start), 'Ламар');
+                npc.showDialogLamar(quest.getQuestLineInfo(qName, start));
                 break;
             }
             case 14:
@@ -372,7 +400,7 @@ quest.gang = function(isBot = false, start = -1, done = 0) {
                 }
                 if (!isBot)
                     return;
-                ui.showDialog(quest.getQuestLineInfo(qName, start), 'Ламар');
+                npc.showDialogLamar(quest.getQuestLineInfo(qName, start));
                 break;
             }
         }
@@ -385,8 +413,9 @@ quest.gang = function(isBot = false, start = -1, done = 0) {
 quest.role0 = function(isBot = false, start = -1) {
 
     try {
-        if (user.getCache('role') !== 0)
-            return;
+        return;
+        /*if (user.getCache('role') !== 0)
+            return;*/
 
         let qName = 'role_0';
 
@@ -450,7 +479,10 @@ quest.standart = function(isBot = false, start = -1, done = 0) {
                 if (!isBot)
                     return;
                 user.showCustomNotify('Список ваших квестов можно посмотреть через M -> Квесты', 0, 5, 20000);
-                ui.showDialog('Привет, тебе необходимо сейчас в здании правительства, которое находиться позади меня, оформить лицензию категории B. И да, не забудь экипировать телефон, он у тебя в инвентаре.', 'Сюзанна');
+                if (ui.isIslandZone())
+                    npc.showDialogStandartIsland('Привет, тебе необходимо сейчас в здании правительства, которое находиться позади меня, оформить лицензию категории B. И да, не забудь экипировать телефон, он у тебя в инвентаре.');
+                else
+                    npc.showDialogStandart('Привет, тебе необходимо сейчас в здании правительства, которое находиться позади меня, оформить лицензию категории B. И да, не забудь экипировать телефон, он у тебя в инвентаре.');
                 break;
             }
             case 1: {
@@ -463,7 +495,10 @@ quest.standart = function(isBot = false, start = -1, done = 0) {
                 }
                 if (!isBot)
                     return;
-                ui.showDialog('Устройся на работу садовника или разнорабочего, чтобы заработать свои первые деньги', 'Сюзанна');
+                if (ui.isIslandZone())
+                    npc.showDialogStandartIsland('Устройся на работу садовника или строителя, чтобы заработать свои первые деньги');
+                else
+                    npc.showDialogStandart('Устройся на работу садовника или строителя, чтобы заработать свои первые деньги');
                 break;
             }
             case 2: {
@@ -477,7 +512,10 @@ quest.standart = function(isBot = false, start = -1, done = 0) {
                 }
                 if (!isBot)
                     return;
-                ui.showDialog(quest.getQuestLineInfo(qName, start), 'Сюзанна');
+                if (ui.isIslandZone())
+                    npc.showDialogStandartIsland(quest.getQuestLineInfo(qName, start));
+                else
+                    npc.showDialogStandart(quest.getQuestLineInfo(qName, start));
                 break;
             }
             case 3: {
@@ -490,7 +528,10 @@ quest.standart = function(isBot = false, start = -1, done = 0) {
                 }
                 if (!isBot)
                     return;
-                ui.showDialog(quest.getQuestLineInfo(qName, start), 'Сюзанна');
+                if (ui.isIslandZone())
+                    npc.showDialogStandartIsland(quest.getQuestLineInfo(qName, start));
+                else
+                    npc.showDialogStandart(quest.getQuestLineInfo(qName, start));
                 break;
             }
             case 4:
@@ -506,7 +547,10 @@ quest.standart = function(isBot = false, start = -1, done = 0) {
                 }
                 if (!isBot)
                     return;
-                ui.showDialog(quest.getQuestLineInfo(qName, start), 'Сюзанна');
+                if (ui.isIslandZone())
+                    npc.showDialogStandartIsland(quest.getQuestLineInfo(qName, start));
+                else
+                    npc.showDialogStandart(quest.getQuestLineInfo(qName, start));
                 break;
             }
             case 7: {
@@ -522,7 +566,10 @@ quest.standart = function(isBot = false, start = -1, done = 0) {
                 }
                 if (!isBot)
                     return;
-                ui.showDialog(quest.getQuestLineInfo(qName, start), 'Сюзанна');
+                if (ui.isIslandZone())
+                    npc.showDialogStandartIsland(quest.getQuestLineInfo(qName, start));
+                else
+                    npc.showDialogStandart(quest.getQuestLineInfo(qName, start));
                 break;
             }
             case 8: {
@@ -536,7 +583,10 @@ quest.standart = function(isBot = false, start = -1, done = 0) {
                 }
                 if (!isBot)
                     return;
-                ui.showDialog(quest.getQuestLineInfo(qName, start), 'Сюзанна');
+                if (ui.isIslandZone())
+                    npc.showDialogStandartIsland(quest.getQuestLineInfo(qName, start));
+                else
+                    npc.showDialogStandart(quest.getQuestLineInfo(qName, start));
                 break;
             }
             case 9: {
@@ -551,7 +601,10 @@ quest.standart = function(isBot = false, start = -1, done = 0) {
                 }
                 if (!isBot)
                     return;
-                ui.showDialog(quest.getQuestLineInfo(qName, start), 'Сюзанна');
+                if (ui.isIslandZone())
+                    npc.showDialogStandartIsland(quest.getQuestLineInfo(qName, start));
+                else
+                    npc.showDialogStandart(quest.getQuestLineInfo(qName, start));
                 break;
             }
             case 10:
@@ -567,7 +620,10 @@ quest.standart = function(isBot = false, start = -1, done = 0) {
                 }
                 if (!isBot)
                     return;
-                ui.showDialog(quest.getQuestLineInfo(qName, start), 'Сюзанна');
+                if (ui.isIslandZone())
+                    npc.showDialogStandartIsland(quest.getQuestLineInfo(qName, start));
+                else
+                    npc.showDialogStandart(quest.getQuestLineInfo(qName, start));
                 break;
             }
             case 13:
@@ -582,7 +638,10 @@ quest.standart = function(isBot = false, start = -1, done = 0) {
                 }
                 if (!isBot)
                     return;
-                ui.showDialog(quest.getQuestLineInfo(qName, start), 'Сюзанна');
+                if (ui.isIslandZone())
+                    npc.showDialogStandartIsland(quest.getQuestLineInfo(qName, start));
+                else
+                    npc.showDialogStandart(quest.getQuestLineInfo(qName, start));
                 break;
             }
         }
@@ -859,14 +918,6 @@ mp.events.add("playerEnterCheckpoint", (checkpoint) => {
     catch (e) {
         
     }
-});
-
-mp.events.add('client:events:dialog:onClose', function () {
-
-});
-
-mp.events.add('client:events:dialog:click', function () {
-
 });
 
 export default quest;

@@ -281,7 +281,7 @@ photo.isProcess = function() {
     return isProcess;
 };
 
-photo.workProcess = function() { //TODO
+photo.workProcess = function() {
 
     methods.debug('photo.work');
 

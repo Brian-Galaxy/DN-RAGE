@@ -1296,6 +1296,62 @@ trucker.w3 = [
     ['Автомобили', 'Luxory Autos', 'tr4', -1, 105, 105, -889.3263, -2737.592, 14.07842, -17.63494, -766.8812, -245.1683, 36.24875, 330, 400, 1],
 ];
 
+trucker.w4 = [
+    ['Ванилин', '1966 Digestive co.', 1176.739, -3272.887, 4.842545, 694.0635, -833.3184, 23.39188, 150, 200, 1],
+];
+
+trucker.w5 = [
+    ['Фрукты', 'Go Postal', 4450.39892578125, -4488.74560546875, 3.214756965637207, -1138.728271484375, -3392.787109375, 12.945047378540039, 150, 200, 0],
+    ['Фрукты', 'Go Postal', 4450.39892578125, -4488.74560546875, 3.214756965637207, 1697.2073974609375, 3267.4365234375, 40.05021667480469, 150, 200, 0],
+    ['Фрукты', 'Go Postal', 4450.39892578125, -4488.74560546875, 3.214756965637207, 2128.916259765625, 4794.1953125, 40.125003814697266, 150, 200, 0],
+    ['Ткань', 'Go Postal', 4450.39892578125, -4488.74560546875, 3.214756965637207, -1138.728271484375, -3392.787109375, 12.945047378540039, 150, 200, 0],
+    ['Ткань', 'Go Postal', 4450.39892578125, -4488.74560546875, 3.214756965637207, 1697.2073974609375, 3267.4365234375, 40.05021667480469, 150, 200, 0],
+    ['Ткань', 'Go Postal', 4450.39892578125, -4488.74560546875, 3.214756965637207, 2128.916259765625, 4794.1953125, 40.125003814697266, 150, 200, 0],
+    ['Сырье', 'Go Postal', 4450.39892578125, -4488.74560546875, 3.214756965637207, -1138.728271484375, -3392.787109375, 12.945047378540039, 150, 200, 0],
+    ['Сырье', 'Go Postal', 4450.39892578125, -4488.74560546875, 3.214756965637207, 1697.2073974609375, 3267.4365234375, 40.05021667480469, 150, 200, 0],
+    ['Сырье', 'Go Postal', 4450.39892578125, -4488.74560546875, 3.214756965637207, 2128.916259765625, 4794.1953125, 40.125003814697266, 150, 200, 0],
+    ['Фасоль и бобы', 'Go Postal', 4450.39892578125, -4488.74560546875, 3.214756965637207, -1138.728271484375, -3392.787109375, 12.945047378540039, 150, 200, 0],
+    ['Фасоль и бобы', 'Go Postal', 4450.39892578125, -4488.74560546875, 3.214756965637207, 1697.2073974609375, 3267.4365234375, 40.05021667480469, 150, 200, 0],
+    ['Фасоль и бобы', 'Go Postal', 4450.39892578125, -4488.74560546875, 3.214756965637207, 2128.916259765625, 4794.1953125, 40.125003814697266, 150, 200, 0],
+    ['Семена', 'Go Postal', 4450.39892578125, -4488.74560546875, 3.214756965637207, -1138.728271484375, -3392.787109375, 12.945047378540039, 150, 200, 0],
+    ['Семена', 'Go Postal', 4450.39892578125, -4488.74560546875, 3.214756965637207, 1697.2073974609375, 3267.4365234375, 40.05021667480469, 150, 200, 0],
+    ['Семена', 'Go Postal', 4450.39892578125, -4488.74560546875, 3.214756965637207, 2128.916259765625, 4794.1953125, 40.125003814697266, 150, 200, 0],
+
+    ['Бытовая техника', 'Go Postal', -1138.728271484375, -3392.787109375, 12.945047378540039, 4450.39892578125, -4488.74560546875, 3.214756965637207, 150, 200, 0],
+    ['Кофе и чай', 'Go Postal', -1138.728271484375, -3392.787109375, 12.945047378540039, 4450.39892578125, -4488.74560546875, 3.214756965637207, 150, 200, 0],
+    ['Запчасти', 'Go Postal', -1138.728271484375, -3392.787109375, 12.945047378540039, 4450.39892578125, -4488.74560546875, 3.214756965637207, 150, 200, 0],
+    ['Швейные машинки', 'Go Postal', -1138.728271484375, -3392.787109375, 12.945047378540039, 4450.39892578125, -4488.74560546875, 3.214756965637207, 150, 200, 0],
+    ['Продукты', 'Go Postal', -1138.728271484375, -3392.787109375, 12.945047378540039, 4450.39892578125, -4488.74560546875, 3.214756965637207, 150, 200, 0],
+    ['Одежда', 'Go Postal', -1138.728271484375, -3392.787109375, 12.945047378540039, 4450.39892578125, -4488.74560546875, 3.214756965637207, 150, 200, 0],
+    ['Ткань', 'Go Postal', -1138.728271484375, -3392.787109375, 12.945047378540039, 4450.39892578125, -4488.74560546875, 3.214756965637207, 150, 200, 0],
+    ['Медикаменты', 'Go Postal', -1138.728271484375, -3392.787109375, 12.945047378540039, 4450.39892578125, -4488.74560546875, 3.214756965637207, 150, 200, 0],
+    ['Напитки', 'Go Postal', -1138.728271484375, -3392.787109375, 12.945047378540039, 4450.39892578125, -4488.74560546875, 3.214756965637207, 150, 200, 0],
+
+    ['Овощи', 'Go Postal', 1697.2073974609375, 3267.4365234375, 40.05021667480469, 4450.39892578125, -4488.74560546875, 3.214756965637207, 150, 200, 0],
+    ['Ягоды', 'Go Postal', 1697.2073974609375, 3267.4365234375, 40.05021667480469, 4450.39892578125, -4488.74560546875, 3.214756965637207, 150, 200, 0],
+    ['Мясо', 'Go Postal', 1697.2073974609375, 3267.4365234375, 40.05021667480469, 4450.39892578125, -4488.74560546875, 3.214756965637207, 150, 200, 0],
+    ['Зелень', 'Go Postal', 1697.2073974609375, 3267.4365234375, 40.05021667480469, 4450.39892578125, -4488.74560546875, 3.214756965637207, 150, 200, 0],
+    ['Напитки', 'Go Postal', 1697.2073974609375, 3267.4365234375, 40.05021667480469, 4450.39892578125, -4488.74560546875, 3.214756965637207, 150, 200, 0],
+
+    ['Овощи', 'Go Postal', 2128.916259765625, 4794.1953125, 40.125003814697266, 4450.39892578125, -4488.74560546875, 3.214756965637207, 150, 200, 0],
+    ['Ягоды', 'Go Postal', 2128.916259765625, 4794.1953125, 40.125003814697266, 4450.39892578125, -4488.74560546875, 3.214756965637207, 150, 200, 0],
+    ['Мясо', 'Go Postal', 2128.916259765625, 4794.1953125, 40.125003814697266, 4450.39892578125, -4488.74560546875, 3.214756965637207, 150, 200, 0],
+    ['Зелень', 'Go Postal', 2128.916259765625, 4794.1953125, 40.125003814697266, 4450.39892578125, -4488.74560546875, 3.214756965637207, 150, 200, 0],
+    ['Напитки', 'Go Postal', 2128.916259765625, 4794.1953125, 40.125003814697266, 4450.39892578125, -4488.74560546875, 3.214756965637207, 150, 200, 0],
+];
+
+trucker.wi1 = [
+    ['Ванилин', '1966 Digestive co.', 1176.739, -3272.887, 4.842545, 694.0635, -833.3184, 23.39188, 150, 200, 1],
+];
+
+trucker.wi2 = [
+    ['Ванилин', '1966 Digestive co.', 1176.739, -3272.887, 4.842545, 694.0635, -833.3184, 23.39188, 150, 200, 1],
+];
+
+trucker.wi3 = [
+    ['Ванилин', '1966 Digestive co.', 1176.739, -3272.887, 4.842545, 694.0635, -833.3184, 23.39188, 150, 200, 1],
+];
+
 /*
 0 - частое
 1 - среднее
@@ -1303,9 +1359,11 @@ trucker.w3 = [
 3 - криминальное
 */
 
-trucker.offersPool1 = [];
-trucker.offersPool2 = [];
-trucker.offersPool3 = [];
+trucker.offersPool1 = []; //Small
+trucker.offersPool2 = []; //Medium
+trucker.offersPool3 = []; //Large
+trucker.offersPool4 = []; //Boat
+trucker.offersPool5 = []; //Planes
 
 trucker.generateOffer = function (type) {
     try {
@@ -1324,6 +1382,14 @@ trucker.generateOffer = function (type) {
                 offers = trucker.w3;
                 offersForRandom = trucker.w3;
                 break;
+            case 4:
+                offers = trucker.w4;
+                offersForRandom = trucker.w4;
+                break;
+            case 5:
+                offers = trucker.w5;
+                offersForRandom = trucker.w5;
+                break;
         }
         let rare = 0;
         if (methods.getRandomInt(0, 100) < 30)
@@ -1335,6 +1401,8 @@ trucker.generateOffer = function (type) {
             switch (type) {
                 case 1:
                 case 2:
+                case 4:
+                case 5:
                     return item[10] == rare;
                 case 3:
                     return item[15] == rare;
@@ -1388,6 +1456,36 @@ trucker.generateOffer = function (type) {
                     price = dist + price;
 
                     trucker.offersPool3.push([count, item[0], item[1], item[2], item[3], item[4], item[5], item[6], item[7], item[8], item[9], item[10], item[11], item[12], price]);
+                    break;
+                }
+                case 4:
+                {
+                    if (trucker.offersPool4.length > 80)
+                        return;
+
+                    let price = methods.parseInt(methods.getRandomInt(item[8], item[9]));
+
+                    let dist = methods.distanceToPos(new mp.Vector3(item[2], item[3], item[4]), new mp.Vector3(item[5], item[6], item[7])) / 10;
+                    if (dist > 800)
+                        dist = 800;
+                    price = dist + price;
+
+                    trucker.offersPool4.push([count, item[0], item[1], item[2], item[3], item[4], item[5], item[6], item[7], price]);
+                    break;
+                }
+                case 5:
+                {
+                    if (trucker.offersPool5.length > 80)
+                        return;
+
+                    let price = methods.parseInt(methods.getRandomInt(item[8], item[9]));
+
+                    let dist = methods.distanceToPos(new mp.Vector3(item[2], item[3], item[4]), new mp.Vector3(item[5], item[6], item[7])) / 10;
+                    if (dist > 800)
+                        dist = 800;
+                    price = dist + price;
+
+                    trucker.offersPool5.push([count, item[0], item[1], item[2], item[3], item[4], item[5], item[6], item[7], price]);
                     break;
                 }
             }
@@ -1519,9 +1617,14 @@ trucker.doneOffer = function (player, offerId) {
 
         try {
             let offer = trucker.getOffer(offerId);
-            if (offer[2] === 'Частная организация') {
+            let vInfo = methods.getVehicleInfo(player.vehicle.model);
 
-                let vInfo = methods.getVehicleInfo(player.vehicle.model);
+            if (vInfo.class_name === 'Planes' || vInfo.class_name === 'Boats')
+            {
+                coffer.addMoney(9, price);
+            }
+
+            if (offer[2] === 'Частная организация') {
 
                 let stockId = 0;
                 let pos = new mp.Vector3(offer[6], offer[7], offer[8]);
@@ -1719,6 +1822,12 @@ trucker.removeOffer = function (offerId) {
     trucker.offersPool3 = trucker.offersPool3.filter((item) => {
         return item[0] != offerId;
     });
+    trucker.offersPool4 = trucker.offersPool4.filter((item) => {
+        return item[0] != offerId;
+    });
+    trucker.offersPool5 = trucker.offersPool5.filter((item) => {
+        return item[0] != offerId;
+    });
 };
 
 trucker.getOffer = function (offerId) {
@@ -1731,6 +1840,12 @@ trucker.getOffer = function (offerId) {
     let result3 = trucker.offersPool3.find((item) => {
         return item[0] == offerId;
     });
+    let result4 = trucker.offersPool4.find((item) => {
+        return item[0] == offerId;
+    });
+    let result5 = trucker.offersPool5.find((item) => {
+        return item[0] == offerId;
+    });
 
     if (result1 !== undefined)
         return result1;
@@ -1738,6 +1853,10 @@ trucker.getOffer = function (offerId) {
         return result2;
     if (result3 !== undefined)
         return result3;
+    if (result4 !== undefined)
+        return result4;
+    if (result5 !== undefined)
+        return result5;
     return null;
 };
 
@@ -1749,6 +1868,10 @@ trucker.generateOfferStart = function (count = 10) {
             trucker.generateOffer(2);
         for (let i = 0; i < count; i++)
             trucker.generateOffer(3);
+        for (let i = 0; i < count; i++)
+            trucker.generateOffer(4);
+        for (let i = 0; i < count; i++)
+            trucker.generateOffer(5);
     }
     catch (e) {
         methods.debug(e);
@@ -1779,6 +1902,14 @@ trucker.loadAll = function () {
     });
     trucker.w3.forEach(item => {
         if (item.length != 16)
+            console.log('w3', item);
+    });
+    trucker.w4.forEach(item => {
+        if (item.length != 11)
+            console.log('w3', item);
+    });
+    trucker.w5.forEach(item => {
+        if (item.length != 11)
             console.log('w3', item);
     });
 
@@ -1816,6 +1947,24 @@ trucker.poolCleaner = function () {
         }
     });
     trucker.offersPool3 = trucker.offersPool3.filter((item) => {
+        try {
+            return trucker.has('accept' + item[0]);
+        }
+        catch (e) {
+            methods.debug(e);
+            return false;
+        }
+    });
+    trucker.offersPool4 = trucker.offersPool4.filter((item) => {
+        try {
+            return trucker.has('accept' + item[0]);
+        }
+        catch (e) {
+            methods.debug(e);
+            return false;
+        }
+    });
+    trucker.offersPool5 = trucker.offersPool5.filter((item) => {
         try {
             return trucker.has('accept' + item[0]);
         }
@@ -1879,6 +2028,38 @@ trucker.showMenu = function(player, offersId) {
             player.call('client:menuList:showTruckerOffersMenu', [tr3]);
 
             if (tr3.length < 20)
+                trucker.generateOfferByType(40, 3);
+            break;
+        case 3:
+
+            let tr4 = trucker.offersPool4.filter((item) => {
+                try {
+                    return !trucker.has('accept' + item[0]);
+                }
+                catch (e) {
+                    return false;
+                }
+            });
+
+            player.call('client:menuList:showTruckerOffersMenu', [tr4]);
+
+            if (tr4.length < 20)
+                trucker.generateOfferByType(40, 3);
+            break;
+        case 4:
+
+            let tr5 = trucker.offersPool5.filter((item) => {
+                try {
+                    return !trucker.has('accept' + item[0]);
+                }
+                catch (e) {
+                    return false;
+                }
+            });
+
+            player.call('client:menuList:showTruckerOffersMenu', [tr5]);
+
+            if (tr5.length < 20)
                 trucker.generateOfferByType(40, 3);
             break;
     }

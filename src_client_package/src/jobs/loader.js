@@ -1,8 +1,9 @@
-import Container from '../modules/data';
 import methods from '../modules/methods';
 import jobPoint from '../manager/jobPoint';
+import quest from "../manager/quest";
 import user from '../user';
-import photo from "./photo";
+import coffer from '../coffer';
+import ui from "../modules/ui";
 
 let loader = {};
 
@@ -11,25 +12,16 @@ let isProcess = false;
 let count = 0;
 let _checkpointId = -1;
 
-let takePos = new mp.Vector3(-422.5669250488281, -2635.786376953125, 7.761137008666992);
-let putPos = new mp.Vector3(-402.14495849609375, -2638.96044921875, 5.000218868255615);
+let putPos = new mp.Vector3(5117.23779296875, -5190.828125, 1.389782428741455);
+let takePos = new mp.Vector3(5106.8408203125, -5158.7060546875, 0.964495062828064);
 
 loader.startOrEnd = function() {
     try {
         methods.debug('Execute: builder.startOrEnd');
 
-        if (user.getCache('job') > 0) {
-            mp.game.ui.notifications.show('~r~Для начала необходимо уволиться с работы в здании правительства');
-            return;
-        }
-
         if (isStart) {
 
-            if (count >= 20 && user.getQuestCount('role_0') === 0) {
-                mp.game.ui.notifications.show('~b~Вы выполнили задание от Каспера, в награду получили $200');
-                user.addCashMoney(200, 'Работа от Каспера');
-                user.setQuest('role_0', 1);
-            }
+            quest.standart(false, -1, 3);
 
             user.addCashMoney(count * 2, 'Работа от Каспера');
             jobPoint.delete();
@@ -41,6 +33,9 @@ loader.startOrEnd = function() {
             isProcess = false;
             count = 0;
             _checkpointId = -1;
+
+            if (ui.isIslandZone())
+                coffer.addMoney(9, count * 2);
         }
         else {
 

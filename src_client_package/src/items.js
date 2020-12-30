@@ -34,6 +34,9 @@ let ItemList = [];
 items.updateItems = function(data)
 {
     ItemList = data;
+    /*ItemList.forEach((item, idx) => {
+        mp.attachmentMngr.register(`item_${idx}`, item[3], 28422, new mp.Vector3(0, 0, 0), new mp.Vector3(0, 0, 0));
+    })*/
 };
 
 items.updateCraft = function(data)
@@ -57,8 +60,20 @@ items.isMed = function(itemId) {
     return itemId >= 204 && itemId <= 222 || itemId >= 31 && itemId <= 39 || itemId == 277 || itemId == 278;
 };
 
+items.isCloth = function(itemId) {
+    return itemId >= 263 && itemId <= 273 || itemId === 275;
+};
+
+items.isFish = function(itemId) {
+    return itemId >= 487 && itemId <= 536;
+};
+
 items.isEat = function(itemId) {
-    return itemId >= 11 && itemId <= 26;
+    return itemId >= 11 && itemId <= 26 || itemId >= 241 && itemId <= 250;
+};
+
+items.isMask = function(itemId) {
+    return itemId === 274;
 };
 
 items.isDrug = function(itemId) {

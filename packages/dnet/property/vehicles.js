@@ -549,6 +549,13 @@ vehicles.spawnFractionCar = (id) => {
                 }
                 break;
             }
+            case 8:
+            {
+                color1 = 59;
+                color2 = 59;
+                numberStyle = 1;
+                break;
+            }
         }
 
         let spawnPos = new mp.Vector3(methods.parseFloat(info.x), methods.parseFloat(info.y), methods.parseFloat(info.z));
@@ -583,6 +590,10 @@ vehicles.spawnFractionCar = (id) => {
                 case 7:
                     spawnPos = new mp.Vector3(-1100.1817626953125, -260.07623291015625, 37.33765411376953);
                     spawnRot = methods.parseFloat(165.04827880859375);
+                    break;
+                case 8:
+                    spawnPos = new mp.Vector3(4976.51904296875, -5731.0263671875, 19.539995193481445);
+                    spawnRot = methods.parseFloat(245.2508087158203);
                     break;
             }
             if (fractionId < 0) {
@@ -1176,7 +1187,7 @@ vehicles.updateOwnerInfo = function (id, userId, userName) {
 
         try {
             let vehInfo = methods.getVehicleInfo(vehicles.get(id, 'name'));
-            discord.sendMarketVehicles(`${vehInfo.display_name}`, `Гос. стоимость: ${methods.moneyFormat(vehInfo.price)}\nМакс. скорость: ~${vehInfo.sm}км/ч\nКласс: ${vehInfo.class_name}`, `https://dednet.ru/client/images/carssm/${vehInfo.display_name}_1.jpg`);
+            discord.sendMarketVehicles(`${vehInfo.display_name}`, `Гос. стоимость: ${methods.moneyFormat(vehInfo.price)}\nМакс. скорость: ~${vehInfo.sm}км/ч\nКласс: ${vehInfo.class_name}`, `https://state-99.com/client/images/carsv/640/${vehInfo.display_name}.jpg`);
         }
         catch (e) {}
     }
@@ -1349,7 +1360,7 @@ vehicles.addNew = (model, count) => {
         mysql.executeQuery(`INSERT INTO cars (name, class, price, fuel, number) VALUES ('${vInfo.display_name}', '${vInfo.class_name}', '${vInfo.price}', '${vInfo.fuel_full}', '${vehicles.generateNumber()}')`);
     }
 
-    discord.sendMarketVehicles(`${vInfo.display_name}`, `Гос. стоимость: ${methods.moneyFormat(vInfo.price)}\nМакс. скорость: ~${vInfo.sm}км/ч\nКласс: ${vInfo.class_name}`, `https://dednet.ru/client/images/carssm/${vInfo.display_name}_1.jpg`);
+    discord.sendMarketVehicles(`${vInfo.display_name}`, `Гос. стоимость: ${methods.moneyFormat(vInfo.price)}\nМакс. скорость: ~${vInfo.sm}км/ч\nКласс: ${vInfo.class_name}`, `https://state-99.com/client/images/carsv/640/${vInfo.display_name}.jpg`);
 };
 
 vehicles.addNewFraction = (model, count, fractionId, x = 0, y = 0, z = 0, rot = 0) => {
@@ -1593,7 +1604,7 @@ vehicles.engineStatus = (player, vehicle, status = null) => {
 
 
         if (vehicle.broke) {
-            player.notify('~r~Двигатель у транспорта не запускаеться, посмотрите в чем может быть дело');
+            player.notify('~r~Двигатель у транспорта не запускается, посмотрите в чем может быть дело');
             return;
         }
 

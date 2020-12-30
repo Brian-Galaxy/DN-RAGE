@@ -19,6 +19,8 @@ import walkie from "../walkie";
 import pSync from "./pSync";
 import heliCam from "./heliCam";
 import drone from "./drone";
+import radialMenu from "../radialMenu";
+import shopMenu from "../shopMenu";
 
 let bind = {};
 
@@ -206,7 +208,7 @@ bind.allowKeyList = [
     ['Меню транспорта', 's_bind_veh_menu'],
     ['Меню персонажа', 's_bind_player_menu'],
     ['Скрыть/Показать худ', 's_bind_show_hud'],
-    ['Изменить позицию элементов интерфейса', 's_bind_hud_pos'],
+    //['Изменить позицию элементов интерфейса', 's_bind_hud_pos'],
 
     ['Инвентарь', 's_bind_inv'],
     ['Предметы рядом', 's_bind_inv_world'],
@@ -291,6 +293,9 @@ for(let code in keyCodes) {
         if (mp.gui.chat.enabled)
             return;
 
+        if (user.isCustom)
+            return;
+
         if (user.getCache('s_bind_voice') == parseInt(code)) {
             voiceRage.enableMic();
         }
@@ -333,6 +338,12 @@ for(let code in keyCodes) {
                 if (targetEntity) {
                     inventory.openInventoryByEntity(targetEntity);
                 }
+                else {
+                    if (!menuList.isShowPlayerMenu)
+                        menuList.showPlayerMenu();
+                    else
+                        menuList.hide();
+                }
             }
         }
         if (user.getCache('s_bind_inv') == parseInt(code)) {
@@ -340,6 +351,10 @@ for(let code in keyCodes) {
                 mp.game.ui.notifications.show("~r~Вы связаны или в наручниках");
                 return;
             }
+
+            if (!shopMenu.isHide())
+                return;
+
             if (user.getCache('jail_time') > 0) {
                 mp.game.ui.notifications.show("~r~Нельзя пользоваться инвентарем, в тюрьме");
                 return;
@@ -608,8 +623,14 @@ for(let code in keyCodes) {
         }
         if (user.getCache('s_bind_belt') == parseInt(code)) {
             if (!methods.isBlockKeys() && mp.players.local.vehicle) {
-                mp.players.local.setConfigFlag(32, false);
-                mp.game.ui.notifications.show('~g~Вы пристегнули ремень безопасности');
+                if (mp.players.local.vehicle.getClass() !== 8 &&
+                    mp.players.local.vehicle.getClass() !== 21 &&
+                    mp.players.local.vehicle.getClass() !== 14 &&
+                    mp.players.local.vehicle.getClass() !== 13
+                ) {
+                    mp.players.local.setConfigFlag(32, false);
+                    mp.game.ui.notifications.show('~g~Вы пристегнули ремень безопасности');
+                }
             }
         }
         if (user.getCache('s_bind_pnv') == parseInt(code)) {
@@ -796,25 +817,19 @@ for(let code in keyCodes) {
 
             if (Container.Data.HasLocally(mp.players.local.remoteId, "isSeatTimeout"))
             {
-                mp.game.ui.notifications.show("~r~Таймаут на действие 2 секунды");
+                mp.game.ui.notifications.show("~r~Таймаут на действие 1 секунду");
                 return;
             }
             Container.Data.SetLocally(mp.players.local.remoteId, "isSeatTimeout", true);
             if (user.getClipset() === 'move_ped_crouched') {
-                user.playAnimation("amb@medic@standing@tendtodead@exit", "exit", 8);
-                await methods.sleep(200);
-                await methods.sleep(mp.players.local.getAnimTotalTime("amb@medic@standing@tendtodead@enter", "enter") - 200);
                 user.setClipset(user.getCache('clipset'));
             }
             else {
-                user.playAnimation("amb@medic@standing@tendtodead@enter", "enter", 8);
-                await methods.sleep(200);
-                await methods.sleep(mp.players.local.getAnimTotalTime("amb@medic@standing@tendtodead@exit", "exit") - 200);
                 user.setClipset('move_ped_crouched');
             }
             setTimeout(function () {
                 Container.Data.ResetLocally(mp.players.local.remoteId, "isSeatTimeout");
-            }, 2000);
+            }, 1000);
         }
         if (user.getCache('s_bind_firemod') == parseInt(code)) {
             mp.events.call('client:changeFireMod');

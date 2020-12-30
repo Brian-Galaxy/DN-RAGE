@@ -69,7 +69,7 @@ inventory.getItemList = function(player, ownerType, ownerId, isFrisk = false, is
             addWhere = ' AND (item_id <> 50 AND item_id <> 27 AND item_id <> 28 AND item_id <> 29 AND item_id <> 30 AND item_id <> 265 AND item_id <> 266 AND item_id <> 267 AND item_id <> 268 AND item_id <> 269 AND item_id <> 270 AND item_id <> 271 AND item_id <> 272 AND item_id <> 273 AND item_id <> 274)';*/
 
         //SELECT * FROM items WHERE owner_id = '1' AND owner_type = '1' ORDER BY is_equip DESC, item_id DESC LIMIT 400
-        let sql = `SELECT * FROM items WHERE owner_id = '${ownerId}' AND owner_type = '${ownerType}'${addWhere} ORDER BY is_equip DESC, item_id DESC`; //TODO сортировку, сначала эквип
+        let sql = `SELECT * FROM items WHERE owner_id = '${ownerId}' AND owner_type = '${ownerType}'${addWhere} ORDER BY is_equip DESC, item_id DESC`;
         if (ownerType === 1 && ownerId === user.getId(player))
             sql = `SELECT * FROM items WHERE owner_id = '${ownerId}' AND owner_type = '${ownerType}'${addWhere} ORDER BY is_equip DESC, item_id DESC LIMIT 400`;
         if (ownerId == 0 && ownerType == 0)
@@ -212,8 +212,11 @@ inventory.getItemListTrade = function(player, ownerId, ownerType) {
 
                     data.push({id: row['id'], label: label, item_id: row['item_id'], count: row['count'], price: row['price'], params: row['params']});
                 });
-
-                player.call('client:showTradeMenu', [data, ownerId, ownerType]);
+                
+                if (data.length > 0)
+                    player.call('client:showTradeMenu', [data, ownerId, ownerType]);
+                else 
+                    player.notify('~r~В данный момент нет товаров')
             });
         } catch(e) {
             methods.debug(e);

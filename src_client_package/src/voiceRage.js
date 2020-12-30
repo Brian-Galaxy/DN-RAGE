@@ -249,6 +249,11 @@ voiceRage.timer = () => {
                             return;
                         }
 
+                        if (player.getVariable('callId') === localPlayer.remoteId) {
+                            voiceRage.add(player);
+                            return;
+                        }
+
                         if (player.handle === 0)
                             return;
 
@@ -284,6 +289,8 @@ voiceRage.timer = () => {
                         if (walk === localPlayer.getVariable('walkie') && user.getCache('walkie_buy') && player.getVariable('walkieBuy')) {
                             return;
                         }
+                        if (player.getVariable('callId') === localPlayer.remoteId)
+                            return;
                         voiceRage.remove(player, true);
                     }
                     else if(dist > MaxRange)
@@ -298,6 +305,10 @@ voiceRage.timer = () => {
 
                         if (player.isWalkieTalking) {
                             //player.voiceVolume = 1;
+                            return;
+                        }
+                        if (player.getVariable('voiceMic') && player.getVariable('callId') === localPlayer.remoteId) {
+                            player.voiceVolume = 1;
                             return;
                         }
 
@@ -318,6 +329,11 @@ voiceRage.timer = () => {
                         let walk = player.getVariable('walkie');
                         if (walk === localPlayer.getVariable('walkie') && user.getCache('walkie_buy') && player.getVariable('walkieBuy')) {
                             if (!player.isWalkieTalking)
+                                player.voiceVolume = 0;
+                            return;
+                        }
+                        if (player.getVariable('callId') === localPlayer.remoteId) {
+                            if (!player.getVariable('voiceMic'))
                                 player.voiceVolume = 0;
                             return;
                         }
@@ -358,6 +374,11 @@ mp.events.add('voice.toggleMicrophone', async (playerId, isEnabled) => {
         await methods.debug(10);
 
     if (player && mp.players.exists(player)) {
+
+        if (player.getVariable('callId') === mp.players.local.remoteId) {
+            player.voiceVolume = isEnabled ? 1 : 0;
+        }
+
         if (isEnabled)
             player.playFacialAnim("mic_chatter", "mp_facial");
         else

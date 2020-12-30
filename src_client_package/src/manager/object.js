@@ -23,6 +23,234 @@ object.load = function () {
         object.createEmitter(new mp.Vector3(item[0], item[1], item[2]));
     });
 
+    //Island Flags
+    object.create(-1207959739, new mp.Vector3(4995.672, -5756.384, 18.35521), new mp.Vector3(0, 0, 0), false, false);
+    object.create(-1207959739, new mp.Vector3(5001.14, -5753.695, 31.8577), new mp.Vector3(0, 0, 0), false, false);
+    object.create(-1419002455, new mp.Vector3(5001.071, -5753.72, 38.17886), new mp.Vector3(0, 0, 0), false, false);
+    object.create(11846651, new mp.Vector3(4995.68, -5756.458, 24.68), new mp.Vector3(0, 0, 0), false, false);
+    object.create(-686248546, new mp.Vector3(4980.165, -5703.311, 18.88695), new mp.Vector3(0, 0, 0), false, false);
+    object.create(-686248546, new mp.Vector3(4974.584, -5709.297, 18.88695), new mp.Vector3(0, 0, 0), false, false);
+    object.create(-716201733, new mp.Vector3(4974.48, -5709.284, 27.51553), new mp.Vector3(0, 0, 0), false, false);
+    object.create(-716201733, new mp.Vector3(4980.06, -5703.31, 27.3733), new mp.Vector3(0, 0, 0), false, false);
+    object.create(-1207959739, new mp.Vector3(4976.202, -5607.503, 23.93197), new mp.Vector3(0, 0, 0), false, false);
+    object.create(11846651, new mp.Vector3(4976.169, -5607.437, 29.81887), new mp.Vector3(0, 0, 0), false, false);
+    object.create(-1207959739, new mp.Vector3(5136.644, -4942.788, 13.76766), new mp.Vector3(0, 0, 0), false, false);
+    object.create(11846651, new mp.Vector3(5136.615, -4942.72, 19.82611), new mp.Vector3(0, 0, 0), false, false);
+    object.create(-1207959739, new mp.Vector3(4367.801, -4576.191, 18.9678), new mp.Vector3(0, 0, 0), false, false);
+    object.create(-716201733, new mp.Vector3(4367.815, -4576.119, 24.81057), new mp.Vector3(0, 0, 0), false, false);
+    object.create(-1207959739, new mp.Vector3(5028.898, -4620.816, 2.996087), new mp.Vector3(0, 0, 0), false, false);
+    object.create(-716201733, new mp.Vector3(5028.889, -4620.743, 8.898414), new mp.Vector3(0, 0, 0), false, false);
+    object.create(-1207959739, new mp.Vector3(5008.206, -5163.938, 13.5064), new mp.Vector3(0, 0, 0), false, false);
+    object.create(-716201733, new mp.Vector3(5008.136, -5163.962, 19.30302), new mp.Vector3(0, 0, 0), false, false);
+
+
+//Island Market
+    object.create(-1184096195, new mp.Vector3(5071.319, -4601.176, 2.29), new mp.Vector3(-4.462359E-05, 2.23118E-05, -23), false, false);
+    object.create(-1184096195, new mp.Vector3(5069.569, -4600.409, 2.29), new mp.Vector3(-4.462359E-05, 2.23118E-05, -23), false, false);
+    object.create(-1184096195, new mp.Vector3(5067.767, -4599.629, 2.29), new mp.Vector3(-4.462359E-05, 2.23118E-05, -23), false, false);
+    object.create(-1184096195, new mp.Vector3(5065.592, -4598.685, 2.29), new mp.Vector3(-4.462359E-05, 2.23118E-05, -23), false, false);
+    object.create(-1184096195, new mp.Vector3(5063.252, -4597.795, 2.29), new mp.Vector3(-4.462359E-05, 2.23118E-05, -23), false, false);
+    object.create(-1184096195, new mp.Vector3(5060.733, -4596.791, 2.29), new mp.Vector3(-4.462359E-05, 2.23118E-05, -23), false, false);
+    object.create(-1184096195, new mp.Vector3(5058.086, -4595.743, 2.29), new mp.Vector3(-4.462468E-05, -0.07494948, -19.84949), false, false);
+    object.create(-1184096195, new mp.Vector3(5055.809, -4594.952, 2.29), new mp.Vector3(-4.462468E-05, -0.07494948, -19.84949), false, false);
+    object.create(-1184096195, new mp.Vector3(5052.184, -4590.992, 2.29), new mp.Vector3(1.574951, -5.017816E-06, 66.39991), false, false);
+    object.create(-1184096195, new mp.Vector3(5051.262, -4593.122, 2.29), new mp.Vector3(1.574951, -4.804292E-06, 66.39989), false, false);
+    object.create(-1184096195, new mp.Vector3(5054.419, -4589.825, 2.29), new mp.Vector3(1.574943, -4.911054E-06, 159.8982), false, false);
+    object.create(-1184096195, new mp.Vector3(5058.152, -4589.025, 2.29), new mp.Vector3(1.574943, -4.911054E-06, 159.8982), false, false);
+    object.create(-1184096195, new mp.Vector3(5060.256, -4589.745, 2.29), new mp.Vector3(1.574943, -4.911054E-06, 159.8982), false, false);
+    object.create(-1184096195, new mp.Vector3(5069.907, -4595.168, 2.29), new mp.Vector3(1.574943, -4.911054E-06, 159.8982), false, false);
+    object.create(-1184096195, new mp.Vector3(5072.198, -4596, 2.29), new mp.Vector3(1.574943, -4.911054E-06, 159.8982), false, false);
+    object.create(-1184096195, new mp.Vector3(5074.832, -4598.938, 2.29), new mp.Vector3(1.574943, -4.911054E-06, 159.8982), false, false);
+    object.create(-1184096195, new mp.Vector3(5077.178, -4599.892, 2.29), new mp.Vector3(1.574943, -4.911054E-06, 159.8982), false, false);
+    object.create(-565489442, new mp.Vector3(5075.589, -4605.053, 1.834077), new mp.Vector3(0, 0, -14.99998), false, false);
+    object.create(-565489442, new mp.Vector3(5072.811, -4604.169, 1.838017), new mp.Vector3(0, 0, -25.99995), false, false);
+    object.create(-565489442, new mp.Vector3(5051.111, -4595.586, 1.904237), new mp.Vector3(0, 0, -17.99998), false, false);
+
+    object.deleteMapEditor(5061.75, -4589.056, 2.818717, 1, 1343261146, 0);
+    object.deleteMapEditor(5061.08, -4590.327, 1.90803, 1, 1948359883, 0);
+    object.deleteMapEditor(5059.158, -4589.358, 1.922903, 1, -191836989, 0);
+    object.deleteMapEditor(5059.86, -4587.98, 1.935988, 1, 1370563384, 0);
+    object.deleteMapEditor(5059.922, -4589.056, 2.33478, 1, 1474888937, 0);
+    object.deleteMapEditor(5060.395, -4588.927, 1.917055, 1, -13720938, 0);
+    object.deleteMapEditor(5057.586, -4589.268, 2.244055, 1, -2073573168, 0);
+    object.deleteMapEditor(5058.045, -4587.659, 1.937828, 1, 1615800919, 0);
+    object.deleteMapEditor(5056.174, -4588.975, 1.902013, 1, 897494494, 0);
+    object.deleteMapEditor(5054.388, -4588.731, 1.906381, 1, 1935071027, 0);
+    object.deleteMapEditor(5051.747, -4590.146, 1.895035, 1, 895484294, 0);
+    object.deleteMapEditor(5062.199, -4592.222, 2.438402, 1, 1138020438, 0);
+    object.deleteMapEditor(5061.704, -4591.966, 1.883105, 1, -1438964996, 0);
+    object.deleteMapEditor(5061.629, -4591.94, 2.789317, 1, 247892203, 0);
+    object.deleteMapEditor(5071.256, -4595.093, 2.812273, 1, 1343261146, 0);
+    object.deleteMapEditor(5072.488, -4595.063, 2.653174, 1, 300547451, 0);
+    object.deleteMapEditor(5072.183, -4596.313, 1.836475, 1, 282166596, 0);
+    object.deleteMapEditor(5073.416, -4597.11, 1.865145, 1, 2005215959, 0);
+    object.deleteMapEditor(5074.043, -4598.187, 1.851134, 1, -921781850, 0);
+    object.deleteMapEditor(5074.769, -4597.704, 2.146525, 1, 1652026494, 0);
+    object.deleteMapEditor(5075.48, -4598.976, 1.879523, 1, 396412624, 0);
+    object.deleteMapEditor(5077.658, -4599.108, 1.915225, 1, 1935071027, 0);
+    object.deleteMapEditor(5074.318, -4598.614, 1.850677, 1, 786272259, 0);
+    object.deleteMapEditor(5077.183, -4600.122, 1.91257, 1, 702767871, 0);
+    object.deleteMapEditor(5077.771, -4600.595, 1.927475, 1, -1438964996, 0);
+    object.deleteMapEditor(5077.159, -4601.109, 1.9228, 1, -566369276, 0);
+    object.deleteMapEditor(5067.123, -4599.368, 1.878296, 1, -371004270, 0);
+    object.deleteMapEditor(5065.561, -4599.405, 1.849507, 1, 1615800919, 0);
+    object.deleteMapEditor(5066.883, -4600.181, 1.853649, 1, 1165008631, 0);
+    object.deleteMapEditor(5068.104, -4600.733, 2.024274, 1, 437765445, 0);
+    object.deleteMapEditor(5063.291, -4598.634, 1.856762, 1, 1370563384, 0);
+    object.deleteMapEditor(5062.277, -4597.829, 1.940358, 1, -566369276, 0);
+    object.deleteMapEditor(5064.319, -4598.808, 1.859117, 1, -130812911, 0);
+    object.deleteMapEditor(5060.533, -4598.292, 2.760238, 1, 1343261146, 0);
+
+//Island Cloth
+    object.create(-297318917, new mp.Vector3(5006.402, -5785.698, 17.98), new mp.Vector3(0, 0, 35.89992), false, false);
+    object.create(-1251029815, new mp.Vector3(5008.29, -5790.62, 16.85), new mp.Vector3(-1.500009, -5.071018E-06, 123.5), false, false);
+    object.create(-429845122, new mp.Vector3(5009.3, -5788.096, 17.98555), new mp.Vector3(0, 0, -55.99982), false, false);
+    object.create(-88789715, new mp.Vector3(5005.966, -5785.952, 17.79131), new mp.Vector3(0, 0, 123.3994), false, false);
+    object.create(-962367694, new mp.Vector3(5012.502, -5788.643, 17.79131), new mp.Vector3(0, 0, -145.999), false, false);
+    object.create(-1973732036, new mp.Vector3(5009.923, -5789.609, 16.8317), new mp.Vector3(0, 0, -59.1), false, false);
+    object.create(-131638424, new mp.Vector3(5007.34, -5789.72, 17.9314), new mp.Vector3(0, 0, 122.9995), false, false);
+
+
+    object.deleteMapEditor(5009.42, -5788.615, 16.83161, 1, 452859308, 0);
+    object.deleteMapEditor(5009.629, -5788.755, 16.83161, 1, -244465020, 0);
+    object.deleteMapEditor(5010.445, -5790.091, 16.83161, 1, 120581640, 0);
+    object.deleteMapEditor(5007.445, -5789.441, 16.83161, 1, -1387569492, 0);
+
+//Island 24/7
+    object.create(-2146133119, new mp.Vector3(5029.39, -5736.08, 16.86559), new mp.Vector3(0, 0, 47.99991), false, false);
+    object.create(-297318917, new mp.Vector3(5029.192, -5736.371, 18.06), new mp.Vector3(1.001791E-05, 2.23118E-05, 47.99999), false, false);
+    object.create(-844425980, new mp.Vector3(5024.008, -5736.291, 19), new mp.Vector3(0, 0, -131.0984), false, false);
+    object.create(1421582485, new mp.Vector3(5032.362, -5736.671, 17.79), new mp.Vector3(-4.458299E-05, -0.2999223, -130.439), false, false);
+    object.create(1437777724, new mp.Vector3(5025.81, -5737.4, 17.56), new mp.Vector3(1.001791E-05, 2.23118E-05, 138.5), false, false);
+    object.create(643522702, new mp.Vector3(5027.18, -5735.85, 17.56), new mp.Vector3(0, 0, 138.4991), false, false);
+    object.create(-54719154, new mp.Vector3(5031.737, -5737.971, 17.5406), new mp.Vector3(0, 0, -41.0999), false, false);
+    object.create(-870868698, new mp.Vector3(5028.01, -5732.681, 16.86559), new mp.Vector3(0, 0, -39.39994), false, false);
+    object.create(-54719154, new mp.Vector3(5025.9, -5737.49, 17.57669), new mp.Vector3(6.106665E-13, -5.008956E-06, 138.5), false, false);
+    object.create(-220235377, new mp.Vector3(5027.272, -5735.932, 17.56), new mp.Vector3(1.00179E-05, 5.008955E-06, 138.6491), false, false);
+    object.create(548760764, new mp.Vector3(5030.461, -5739.33, 19.95), new mp.Vector3(0, 0, 170.8974), false, false);
+    object.create(548760764, new mp.Vector3(5025.627, -5739.747, 17.12717), new mp.Vector3(0, 0, 0), false, false);
+    object.create(1262567554, new mp.Vector3(5026.7, -5739.13, 17.97), new mp.Vector3(4.07111E-13, -5.008956E-06, -132.3243), false, false);
+    object.create(1262567554, new mp.Vector3(5027.72, -5738, 17.97), new mp.Vector3(0, -5.008956E-06, -132.3243), false, false);
+    object.create(-304627501, new mp.Vector3(5029.407, -5736.095, 16.86559), new mp.Vector3(0, 0, 47.80083), false, false);
+    object.create(-304627501, new mp.Vector3(5029.699, -5737.859, 16.86559), new mp.Vector3(0, 0, 137.8002), false, false);
+    object.create(-1720674274, new mp.Vector3(5029.051, -5733.619, 16.86559), new mp.Vector3(0, 0, -42.99991), false, false);
+    object.create(18704222, new mp.Vector3(5029.708, -5734.269, 16.86559), new mp.Vector3(0, 0, -41.19988), false, false);
+
+    object.deleteMapEditor(5027.595, -5737.441, 16.8655, 1, -244465020, 0);
+    object.deleteMapEditor(5027.688, -5737.207, 16.8655, 1, 452859308, 0);
+    object.deleteMapEditor(5027.832, -5736.853, 16.8655, 1, -1387569492, 0);
+
+    //Island Gas
+    object.create(-478519537, new mp.Vector3(5154.589, -5136.641, 5.9), new mp.Vector3(0, 0, 0), false, false);
+    object.create(1339433404, new mp.Vector3(5158.693, -5134.595, 1.355109), new mp.Vector3(0, 0, 89.49966), false, false);
+    object.create(1339433404, new mp.Vector3(5153.424, -5134.496, 1.300192), new mp.Vector3(0, 0, 89.49965), false, false);
+
+    object.deleteMapEditor(5152.524, -5134.814, 2.189874, 1, 1343261146, 0);
+
+
+//Island Mask
+    object.create(-297318917, new mp.Vector3(5082.836, -5758.652, 15.97), new mp.Vector3(0, 0, 141.9992), false, false);
+    object.create(-1619952456, new mp.Vector3(5083.006, -5758.6, 15.1), new mp.Vector3(0, 0, -36.99992), false, false);
+    object.create(1064067787, new mp.Vector3(5082.317, -5757.146, 14.82965), new mp.Vector3(0, 0, 52.99987), false, false);
+    object.create(1841479543, new mp.Vector3(5081.933, -5756.834, 14.82965), new mp.Vector3(0, 0, -38.99991), false, false);
+    object.create(146536570, new mp.Vector3(5083.63, -5755.742, 15.59), new mp.Vector3(0, 0, 48.99991), false, false);
+
+
+//Island Houses
+    object.create(-332287871, new mp.Vector3(4794.793, -4310.277, 3.407761), new mp.Vector3(-2.001032E-08, -0.3000451, -113.8241), false, false);
+    object.create(22143489, new mp.Vector3(4788.483, -4294.286, 3.769139), new mp.Vector3(-0.8250495, -5.069806E-06, 63.50023), false, false);
+    object.create(1465091378, new mp.Vector3(4811.075, -4293.696, 4.114414), new mp.Vector3(1.001789E-05, -5.008956E-06, 170.7735), false, false);
+    object.create(1465091378, new mp.Vector3(4826.479, -4300.778, 4.106608), new mp.Vector3(0, 0, 141.9995), false, false);
+    object.create(-332287871, new mp.Vector3(5100.862, -4668.468, 1.278735), new mp.Vector3(-1.067217E-07, -0.3000444, 78.07652), false, false);
+    object.create(-332287871, new mp.Vector3(5119.956, -4702.775, 1.531165), new mp.Vector3(-2.334537E-07, -0.3000441, -17.92485), false, false);
+    object.create(-332287871, new mp.Vector3(5077.463, -4548.335, 3.668827), new mp.Vector3(-4.702425E-07, -0.3000441, 81.07547), false, false);
+    object.create(1465091378, new mp.Vector3(5126.806, -4703.344, 1.649491), new mp.Vector3(0, 0, -107.0007), false, false);
+    object.create(1465091378, new mp.Vector3(5169.68, -4628.033, 1.665529), new mp.Vector3(0, 0, 137.9993), false, false);
+    object.create(-332287871, new mp.Vector3(5174.86, -4693.084, 0.9811068), new mp.Vector3(-2.334537E-07, -0.3000439, 11.07516), false, false);
+    object.create(2122660754, new mp.Vector3(5156.372, -4684.466, 1.2131), new mp.Vector3(1.011188E-05, -0.1500542, 117.1492), false, false);
+    object.create(-964112964, new mp.Vector3(5489.316, -5820.506, 17.89), new mp.Vector3(-0.1655264, -4.995931E-06, -45.65923), false, false);
+    object.create(-1634847635, new mp.Vector3(5161.015, -4680.834, 1.345085), new mp.Vector3(0, 0, -67.39983), false, false);
+    object.create(-1634847635, new mp.Vector3(5161.838, -4682.633, 1.331546), new mp.Vector3(0, 0, -67.39983), false, false);
+    object.create(-1634847635, new mp.Vector3(5162.36, -4683.727, 1.385056), new mp.Vector3(0, 0, -66.3995), false, false);
+    object.create(-1634847635, new mp.Vector3(5161.722, -4685.278, 1.306129), new mp.Vector3(0, 0, -143.399), false, false);
+    object.create(-1634847635, new mp.Vector3(5159.521, -4689.218, 1.254595), new mp.Vector3(0, 0, -59.39843), false, false);
+    object.create(-1634847635, new mp.Vector3(5159.503, -4691.395, 1.229115), new mp.Vector3(0, 0, -124.3981), false, false);
+    object.create(-1147503786, new mp.Vector3(5163.226, -4689.572, 1.266059), new mp.Vector3(0, 0, -85.99974), false, false);
+    object.create(1465091378, new mp.Vector3(5126.591, -4693.958, 0.9636217), new mp.Vector3(0, 0, -18.0003), false, false);
+    object.create(1465091378, new mp.Vector3(5182.086, -4658.252, 1.382018), new mp.Vector3(1.001791E-05, -5.008955E-06, -102.3752), false, false);
+    object.create(-332287871, new mp.Vector3(5498.851, -5834.521, 17.79531), new mp.Vector3(-2.668042E-07, -0.3000439, 38.07512), false, false);
+    object.create(-332287871, new mp.Vector3(5498.851, -5834.521, 17.79531), new mp.Vector3(-2.668042E-07, -0.3000439, 38.07512), false, false);
+    object.create(1465091378, new mp.Vector3(5485.312, -5869.082, 18.17778), new mp.Vector3(-1.155822, 4.990254E-06, 20.2797), false, false);
+    object.create(1465091378, new mp.Vector3(5459.293, -5837.586, 18.4736), new mp.Vector3(-1.155823, 4.883512E-06, -113.7199), false, false);
+    object.create(1465091378, new mp.Vector3(5457.648, -5854.761, 18.42572), new mp.Vector3(-1.155823, 4.483223E-06, -62.71957), false, false);
+    object.create(1465091378, new mp.Vector3(5467.908, -5866.778, 18.49146), new mp.Vector3(-1.155823, 5.070312E-06, -28.11938), false, false);
+    object.create(22143489, new mp.Vector3(5478.242, -5851.755, 18.5459), new mp.Vector3(-0.8250495, -5.069806E-06, 63.50023), false, false);
+    object.create(22143489, new mp.Vector3(5477.426, -5841.385, 17.92194), new mp.Vector3(-0.8250495, 4.989757E-06, -116.724), false, false);
+    object.create(1465091378, new mp.Vector3(5480.002, -5834.122, 18.14531), new mp.Vector3(-1.155822, 4.963568E-06, -26.91949), false, false);
+    object.create(1465091378, new mp.Vector3(5473.691, -5857.524, 18.87201), new mp.Vector3(-1.155823, 5.070313E-06, 154.8804), false, false);
+    object.create(-332287871, new mp.Vector3(5124.059, -5074.823, 0.956337), new mp.Vector3(-5.502837E-07, -0.3000436, 81.07392), false, false);
+    object.create(1465091378, new mp.Vector3(5015.409, -5113.882, 1.479272), new mp.Vector3(0, 0, -143.001), false, false);
+    object.create(1465091378, new mp.Vector3(5007.448, -5127.7, 1.520102), new mp.Vector3(0, 0, -107.0006), false, false);
+    object.create(1465091378, new mp.Vector3(4953.598, -5117.606, 1.777725), new mp.Vector3(0, 0, -23.00007), false, false);
+    object.create(1465091378, new mp.Vector3(4916.253, -5199.64, 1.448806), new mp.Vector3(0, 0, 122), false, false);
+    object.create(1465091378, new mp.Vector3(4489.521, -4515.363, 2.845903), new mp.Vector3(1.001787E-05, -5.008952E-06, 18.77373), false, false);
+    object.create(1465091378, new mp.Vector3(4531.188, -4498.097, 3.104432), new mp.Vector3(1.001787E-05, -5.008952E-06, 18.77374), false, false);
+    object.create(1465091378, new mp.Vector3(4473.169, -4538.459, 3.269044), new mp.Vector3(1.001786E-05, -5.008936E-06, -75.22583), false, false);
+    object.create(1465091378, new mp.Vector3(4479.965, -4554.271, 4.096382), new mp.Vector3(1.001783E-05, 5.008956E-06, -60.74984), false, false);
+
+    //Island Angar
+    object.create(-1683613150, new mp.Vector3(4445.623, -4478.575, 1.17), new mp.Vector3(0, 0, -69.49982), false, false);
+    object.create(-1683613150, new mp.Vector3(4432.814, -4466.47, 10.6), new mp.Vector3(1.067217E-06, -78.96844, -160.117), false, false);
+
+//Island Hosp
+    object.create(-1091386327, new mp.Vector3(4964.996, -5789.086, 25.76), new mp.Vector3(0, 0, -26.99996), false, false);
+    object.create(1020863041, new mp.Vector3(4962.18, -5788.13, 25.17), new mp.Vector3(0, 0, -117.0004), false, false);
+    object.create(813074696, new mp.Vector3(4959.077, -5789.117, 26.07437), new mp.Vector3(0, 0, 153.6991), false, false);
+    object.create(705176663, new mp.Vector3(4959.602, -5787.934, 26.07437), new mp.Vector3(0, 0, 61.99985), false, false);
+    object.create(-509973344, new mp.Vector3(4961.307, -5783.889, 26.802), new mp.Vector3(0, 0, 62.79993), false, false);
+    object.create(333086378, new mp.Vector3(4960.351, -5786.538, 26.07417), new mp.Vector3(0, 0, 58.99983), false, false);
+    object.create(-246597232, new mp.Vector3(4960.713, -5785.942, 26.07417), new mp.Vector3(0, 0, 69.99981), false, false);
+    object.create(-1963803813, new mp.Vector3(4962.928, -5787.229, 25.66), new mp.Vector3(1.250002, -4.856994E-06, 154.7486), false, false);
+    object.create(851362411, new mp.Vector3(4960.894, -5785.458, 26.07417), new mp.Vector3(0, 0, 27.99997), false, false);
+    object.create(388753871, new mp.Vector3(4959.421, -5788.595, 26.07421), new mp.Vector3(0, 0, 63.99984), false, false);
+    object.create(79058805, new mp.Vector3(4959.151, -5788.465, 26.07437), new mp.Vector3(0, 0, -119.0004), false, false);
+    object.create(886033073, new mp.Vector3(4958.594, -5789.95, 25.42), new mp.Vector3(0, 0, 63.99994), false, false);
+    object.create(-502202673, new mp.Vector3(4958.868, -5788.902, 25.27131), new mp.Vector3(0, 0, 60.99979), false, false);
+    object.create(-1091386327, new mp.Vector3(4962.491, -5792.693, 25.76), new mp.Vector3(1.001778E-05, 5.008956E-06, 62.99969), false, false);
+    object.create(-1091386327, new mp.Vector3(4960.312, -5791.499, 25.76), new mp.Vector3(1.001778E-05, 5.008956E-06, 62.99969), false, false);
+    object.create(1020863041, new mp.Vector3(4962.84, -5788.46, 25.17), new mp.Vector3(1.001783E-05, 5.008956E-06, 63.29964), false, false);
+    object.create(-128924068, new mp.Vector3(4964.5, -5785.018, 25.64), new mp.Vector3(0, 0, -116.9995), false, false);
+    object.create(-2146133119, new mp.Vector3(4962.655, -5784.749, 25.27131), new mp.Vector3(0, 0, 63.99974), false, false);
+    object.create(2109346928, new mp.Vector3(4962.684, -5784.781, 26.25), new mp.Vector3(0, 0, -115.9995), false, false);
+    object.create(1830344521, new mp.Vector3(4962.382, -5784.995, 26.27255), new mp.Vector3(0, 0, -137.9994), false, false);
+    object.create(1151364435, new mp.Vector3(4962.758, -5784.389, 26.28), new mp.Vector3(0, 0, 0), false, false);
+    object.create(-606800174, new mp.Vector3(4962.312, -5784.012, 25.27131), new mp.Vector3(0, 0, -8.000059), false, false);
+    object.create(-1842407088, new mp.Vector3(4966.465, -5794.646, 28.93669), new mp.Vector3(0, 0, 0), false, false);
+
+    object.deleteMapEditor(4962.833, -5788.261, 26.21429, 1, -755359081, 0);
+    object.deleteMapEditor(4962.713, -5789.669, 25.20009, 1, -1761659350, 0);
+    object.deleteMapEditor(4963.12, -5788.663, 26.02156, 1, 996113921, 0);
+    object.deleteMapEditor(4962.458, -5787.452, 25.19645, 1, -1761659350, 0);
+    object.deleteMapEditor(4963.32, -5792.228, 25.19949, 1, 1883518564, 0);
+    object.deleteMapEditor(4963.266, -5793.073, 25.5316, 1, 1909201504, 0);
+    object.deleteMapEditor(4963.676, -5792.532, 25.19333, 1, 640567599, 0);
+    object.deleteMapEditor(4963.255, -5792.891, 25.59501, 1, -1387569492, 0);
+    object.deleteMapEditor(4959.46, -5789.381, 25.21374, 1, 640567599, 0);
+    object.deleteMapEditor(4959.064, -5788.866, 26.06205, 1, 518175384, 0);
+    object.deleteMapEditor(4959.048, -5789.199, 26.08577, 1, -1387569492, 0);
+    object.deleteMapEditor(4959.22, -5788.394, 26.06205, 1, 1526872603, 0);
+    object.deleteMapEditor(4959.29, -5788.7, 26.07371, 1, 14583253, 0);
+    object.deleteMapEditor(4960.948, -5785.841, 26.07934, 1, 518175384, 0);
+    object.deleteMapEditor(4960.522, -5785.747, 26.07371, 1, -244465020, 0);
+    object.deleteMapEditor(4961.068, -5785.469, 26.07371, 1, 14583253, 0);
+    object.deleteMapEditor(4960.899, -5785.129, 26.07934, 1, 41845200, 0);
+    object.deleteMapEditor(4961.096, -5785.463, 25.19335, 1, 452859308, 0);
+    object.deleteMapEditor(4961.442, -5784.669, 25.20721, 1, -1387569492, 0);
+    object.deleteMapEditor(4961.78, -5784.102, 25.20569, 1, 119729119, 0);
+    object.deleteMapEditor(4962.18, -5784.298, 25.24935, 1, -1737949350, 0);
+    object.deleteMapEditor(4962.413, -5784.079, 25.41332, 1, -755359081, 0);
+    object.deleteMapEditor(4962.694, -5788.428, 25.59979, 1, 702477265, 0);
+
     //LifeInvader интерьер
     object.create(1355733718, new mp.Vector3(-1079.415, -251.3165, 43.99629), new mp.Vector3(1.001787E-05, 5.008957E-06, -119.4992), false, false);
     object.create(1355733718, new mp.Vector3(-1079.247, -247.1402, 43.99629), new mp.Vector3(0, 0, -66.49946), false, false);
@@ -1469,6 +1697,9 @@ object.load = function () {
     object.delete(267648181, -72.77863, -682.169, 34.5284); // UnionDepository
     //object.delete(3717863426, 25.06954, -664.5161, 30.98253); // UnionDepository
 
+    object.delete(1215477734, 4987.587, -5718.635, 20.78103); // Ворота Острова Виллы
+    object.delete(2720815722, 4990.681, -5715.106, 20.78103); // Ворота Острова Виллы
+
     // Правительство (Экстерьер)
     object.delete(-2008643115, -1415.269, -532.4758, 30.4776);
     object.delete(-1940238623, -1413.75, -534.4888, 30.38552);
@@ -1925,6 +2156,10 @@ object.delete = function (model, x, y, z) {
     objectDelList.push({model: model, x: x, y: y, z: z, isDelete: false});
 };
 
+object.deleteMapEditor = function (x, y, z, empty, model, empty2) {
+    objectDelList.push({model: model, x: x, y: y, z: z, isDelete: false});
+};
+
 object.openDoor = function (hash, x, y, z, isClose = false) {
     doorList.push({hash: hash, x: x, y: y, z: z, isClose: isClose, isLoad: false});
     /*try {
@@ -2024,8 +2259,12 @@ object.process = function () {
                             dimension: -1
                         });
                     mp.game.invoke('0x651D3228960D08AF', "SE_Script_Placed_Prop_Emitter_Boombox", item.handle.handle);
-                    mp.game.audio.setEmitterRadioStation("SE_Script_Placed_Prop_Emitter_Boombox", mp.game.audio.getRadioStationName(1));
+                    mp.game.audio.setEmitterRadioStation("SE_Script_Placed_Prop_Emitter_Boombox", mp.game.audio.getRadioStationName(20)); //TODO 18
                     mp.game.audio.setStaticEmitterEnabled("SE_Script_Placed_Prop_Emitter_Boombox", true);
+
+                    /*mp.game.invoke('0x651D3228960D08AF', "SE_Script_Placed_Prop_Emitter_Boombox", mp.players.local.handle);
+                    mp.game.audio.setEmitterRadioStation("SE_Script_Placed_Prop_Emitter_Boombox", mp.game.audio.getRadioStationName(1));
+                    mp.game.audio.setStaticEmitterEnabled("SE_Script_Placed_Prop_Emitter_Boombox", true);*/
 
                     item.isLoad = true;
                 }

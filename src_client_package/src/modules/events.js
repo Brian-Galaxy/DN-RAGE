@@ -35,8 +35,9 @@ import jail from "../manager/jail";
 import object from "../manager/object";
 import hosp from "../manager/hosp";
 import edu from "../manager/edu";
-import heliCam from "../manager/heliCam";
 import prolog from "../manager/prolog";
+import npc from "../manager/npc";
+import cutscene from "../manager/cutscene";
 
 import vehicles from "../property/vehicles";
 import business from "../property/business";
@@ -44,6 +45,7 @@ import fraction from "../property/fraction";
 
 import gr6 from "../jobs/gr6";
 import trucker from "../jobs/trucker";
+import bind from "../manager/bind";
 
 
 mp.gui.chat.enabled = false;
@@ -83,14 +85,6 @@ mp.events.add('client:events:disableAllControls', function (disable) {
 
 mp.events.add('client:events:disableDefaultControls', function (disable) {
     _playerDisableDefaultControls = disable;
-});
-
-mp.events.add('client:events:dialog:onClose', function () {
-
-});
-
-mp.events.add('client:events:dialog:click', function () {
-
 });
 
 mp.events.add('client:user:auth:register', function(mail, login, passwordReg, passwordRegCheck, acceptRules) {
@@ -177,9 +171,10 @@ mp.events.add('client:user:auth:login', function(login, password) {
         mp.storage.data.login = login;
         mp.storage.flush();
 
-        //user.showCustomNotify('Пожалуйста подождите...');
-        mp.events.callRemote('server:user:loginAccount', login, password, usingEmail);
-        mp.game.graphics.transitionFromBlurred(0);
+        setTimeout(function () {
+            mp.events.callRemote('server:user:loginAccount', login, password, usingEmail);
+            mp.game.graphics.transitionFromBlurred(0);
+        }, 500);
 
         setTimeout(function () {
             Container.Data.ResetLocally(mp.players.local.remoteId, "isLoginTimeout");
@@ -194,6 +189,8 @@ mp.events.add('client:events:loginAccount:success', function(data) {
     try {
         //user.clearChat();
 
+        cutscene.destroyVehicles();
+
         user.setVirtualWorld(mp.players.local.remoteId + 1);
         ui.callCef('authMain','{"type": "showCreatePage"}');
 
@@ -204,7 +201,6 @@ mp.events.add('client:events:loginAccount:success', function(data) {
         let isShow3 = false;
 
         let players = [];
-
         if (playerList.length >= 1) {
             isShow1 = true;
             players.push({
@@ -250,8 +246,8 @@ mp.events.add('client:events:loginAccount:success', function(data) {
 
         ui.callCef('ChangePlayer','{"type": "updatePlayers", "isShow1": ' + isShow1 + ', "isShow2": ' +  isShow2 + ', "isShow3": ' + isShow3 + ', "players": ' + JSON.stringify(players) + '}');
 
-        mp.players.local.position = new mp.Vector3(9.66692, 528.34783, 170.63504);
-        mp.players.local.setRotation(0, 0, 123.53768, 0, true);
+        user.initCharCam(playerList);
+        setTimeout(user.hideLoadDisplay, 1000);
     }
     catch (e) {
         methods.debug(e);
@@ -271,6 +267,8 @@ mp.events.add('client:events:createNewPlayer', function() {
         user.set('SKIN_SEX', 0);
         user.setPlayerModel('mp_m_freemode_01');
         ui.hideHud();
+
+        user.initCustom();
     }
     catch (e) {
         methods.debug(e);
@@ -632,6 +630,8 @@ mp.events.add('client:events:custom:choiceRole', function(roleIndex) {
                 return;
             }
 
+            methods.iplYanktonUnload();
+
             setTimeout(function () {
                 user.set('work_lic', methods.getRandomWorkID());
                 user.set('work_date', weather.getFullRpDate());
@@ -740,13 +740,10 @@ mp.events.add('client:events:custom:register', function(name, surname, age, prom
 
 mp.events.add('client:events:loginUser:finalCreate', function() {
     try {
-        if (user.isLogin()) {
-            user.initCustom();
-            mp.players.local.position = new mp.Vector3(9.66692, 528.34783, 170.63504);
-            mp.players.local.setRotation(0, 0, 123.53768, 0, true);
-        }
         user.hideLoadDisplay();
         setTimeout(ui.hideHud, 500);
+
+        user.initCustom();
 
         user.setLogin(true);
         ui.callCef('authMain','{"type": "hide"}');
@@ -778,8 +775,6 @@ mp.events.add('client:events:loginUser:success', async function() {
         mp.game.ui.displayRadar(true);
     }
 
-    //user.showCustomNotify('Если у Вас не работает управление, нажмите ALT+TAB', 0, 5, 15000);
-
     setTimeout(async function () {
 
         try {
@@ -790,14 +785,14 @@ mp.events.add('client:events:loginUser:success', async function() {
 
             inventory.getItemList(inventory.types.Player, await user.get('id'));
             quest.loadAllBlip();
-            chat.sendLocal('Добро пожаловать на DEDNET 💀');
-            chat.sendLocal('Желаем приятной игры ;]');
-            chat.sendLocal(' ');
+            chat.sendLocal('Добро пожаловать на State 99 🌎');
+            chat.sendLocal('Желаем приятной игры 🧡');
+            /*chat.sendLocal(' ');
             chat.sendLocal(`!{${chat.clBlue}}На сервере действует конкурс`);
             chat.sendLocal(`!{${chat.clBlue}}1. !{${chat.clWhite}}Каждый час разыгрывается VIP HARD на рандомное количество дней.`);
             chat.sendLocal(`!{${chat.clBlue}}2. !{${chat.clWhite}}Каждые два часа игры на сервере разыгрывается редкая Маска.`);
             chat.sendLocal(`!{${chat.clBlue}}3. !{${chat.clWhite}}Каждые 24 часа В 20:00 по МСК разыгрывается 5 транспортных средств.`);
-            chat.sendLocal(`!{${chat.clBlue}}3. !{${chat.clWhite}}Отыграв 8 часов на сервере, вы получите $30.000, но 1 раз в сутки.`);
+            chat.sendLocal(`!{${chat.clBlue}}3. !{${chat.clWhite}}Отыграв 8 часов на сервере, вы получите $30.000, но 1 раз в сутки.`);*/
             /*chat.sendLocal('  ');
             chat.sendLocal(`!{${chat.clBlue}}На сервере действует конкурс`);
             chat.sendLocal(`Конкурс очень крутой, на 50 призовых мест и у тебя есть шанс победить, все подробности на сайте!`);*/
@@ -806,6 +801,7 @@ mp.events.add('client:events:loginUser:success', async function() {
             chat.sendLocal(`Отыграв 3 часа на сервере, у вас есть возможность прокрутить колесо удачи и один из главных призов это дорогой автомобиль, маска или VIP HARD.`);*/
             chat.updateSettings();
             ui.updateMenuSettings();
+            ui.unloadIslandMinimap();
 
             methods.displayTypeAllBlipById(40, enums.blipDisplayIds[user.getCache('s_map_house_b')], 59);
             methods.displayTypeAllBlipById(492, enums.blipDisplayIds[user.getCache('s_map_house_b')], 59);
@@ -1382,10 +1378,10 @@ mp.events.add('client:menuList:showLscMenu', (shopId, price) => {
     }
 });
 
-mp.events.add('client:menuList:showVehShopMenu', (shopId, carPos, buyPos, carList) => {
+mp.events.add('client:menuList:showVehShopMenu', (shopId, autoId, carPos, buyPos, carList) => {
     try {
         methods.debug('Event: client:menuList:showVehShopMenu');
-        menuList.showVehShopMenu(shopId, JSON.parse(carPos), JSON.parse(buyPos), new Map(carList));
+        menuList.showVehShopMenu(shopId, autoId, JSON.parse(carPos), JSON.parse(buyPos), new Map(carList));
     }
     catch (e) {
         methods.debug(e);
@@ -1576,6 +1572,16 @@ mp.events.add('client:menuList:showBotQuestRoleAllMenu', () => {
     try {
         methods.debug('Event: client:menuList:showBotQuestRoleAllMenu');
         menuList.showBotQuestRoleAllMenu();
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.add('client:menuList:showBotQuestRoleAll1Menu', () => {
+    try {
+        methods.debug('Event: client:menuList:showBotQuestRoleAll1Menu');
+        menuList.showBotQuestRoleAll1Menu();
     }
     catch (e) {
         methods.debug(e);
@@ -1969,7 +1975,7 @@ mp.events.add('client:addCanabisZoneBlip', (json) => {
     setTimeout(function () {
         try {
             JSON.parse(json).forEach(item => {
-                jobPoint.createBlipByRadius(10000 + item.id, new mp.Vector3(item.x, item.y, item.z), 75, 5, enums.fractionColor[item.fid], false);
+                jobPoint.createBlipById(10000 + item.id, new mp.Vector3(item.x, item.y, item.z), 767, enums.fractionColor[item.fid], false, true, '', 0, 0.6);
             })
         }
         catch (e) {
@@ -2218,6 +2224,11 @@ mp.events.add('client:menuList:showMeriaMainMenu', () => {
     menuList.showMeriaMainMenu();
 });
 
+mp.events.add('client:menuList:showMeriaIslandMainMenu', () => {
+    methods.debug('Event: client:menuList:showMeriaIslandMainMenu');
+    menuList.showMeriaIslandMainMenu();
+});
+
 mp.events.add('client:menuList:showMazeOfficeMenu', async () => {
     methods.debug('Event: client:menuList:showMazeOfficeMenu');
     menuList.showBankMenu(1, await business.getPrice(1));
@@ -2261,6 +2272,11 @@ mp.events.add('client:menuList:showUsmcArsenalMenu', () => {
 mp.events.add('client:menuList:showFibArsenalMenu', () => {
     methods.debug('Event: client:menuList:showFibArsenalMenu');
     menuList.showFibArsenalMenu();
+});
+
+mp.events.add('client:menuList:showCartelArsenalMenu', () => {
+    methods.debug('Event: client:menuList:showCartelArsenalMenu');
+    menuList.showCartelArsenalMenu();
 });
 
 mp.events.add('client:menuList:showSapdArrestMenu', () => {
@@ -2566,8 +2582,9 @@ mp.events.add('client:inventory:use', async function(id, itemId) {
         }
     }
 
-    if (itemId === 6) {
+    if (itemId === 6 || itemId === 9) {
         prolog.next();
+        mp.players.local.removeAllWeapons();
     }
 
     if (itemId === 253) {
@@ -2637,9 +2654,9 @@ mp.events.add('client:inventory:moveTo', async function(id, itemId, ownerId, own
     else if (ownerType === inventory.types.TradeBeach && items.isTradeBeachInvalid(itemId)) {
         mp.game.ui.notifications.show("~r~Вы не можете выставить на продажу этот предмет");
     }
-    else if (ownerType === inventory.types.TradeBlack && items.isTradeBlackInvalid(itemId)) {
+    /*else if (ownerType === inventory.types.TradeBlack && items.isTradeBlackInvalid(itemId)) {
         mp.game.ui.notifications.show("~r~Вы не можете выставить на продажу этот предмет");
-    }
+    }*/
     else if (ownerType === inventory.types.Bag && (itemId === 141 || itemId === 140)) {
         mp.game.ui.notifications.show("~r~Пачку денег нельзя сюда переложить");
     }
@@ -3126,7 +3143,7 @@ mp.events.add('client:carshop:changeColor', function(type, color) {
     }
 });
 
-mp.events.add('client:carshop:buyCar', function(carName, count) {
+mp.events.add('client:carshop:buyCar', function(carName, count, payType) {
     try {
 
         if (count === 0) {
@@ -3140,7 +3157,7 @@ mp.events.add('client:carshop:buyCar', function(carName, count) {
 
         vShop.exit();
         setTimeout(function () {
-            mp.events.callRemote('server:vShop:buy', carName, cl1 , cl2, shopId);
+            mp.events.callRemote('server:vShop:buy', carName, cl1 , cl2, shopId, payType);
         }, 1000);
     }
     catch (e) {
@@ -3183,6 +3200,66 @@ mp.events.add('client:phone:showMenu', function(data) {
     }
 });
 
+mp.events.add('client:phone:call:setCall', function(number) {
+    try {
+        mp.events.callRemote('server:phone:call', number);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.add('client:phone:call:setCallByServer', function(number, avatar) {
+    try {
+        phone.show();
+        phone.toPage('/phone/android/callScreen');
+        phone.updateCallInfo(number, avatar, 'Входящий вызов');
+
+        chat.activate(false);
+        mp.gui.cursor.show(false, true);
+        ui.DisableMouseControl = true;
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.add('client:phone:toCallPos', function() {
+    try {
+        user.callPhone();
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.add('client:phone:hide', function() {
+    try {
+        if (!phone.isHide())
+            phone.hide(false);
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.add('client:phone:call:accept', function() {
+    try {
+        mp.events.callRemote('server:phone:accept');
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
+
+mp.events.add('client:phone:call:cancel', function() {
+    try {
+        mp.events.callRemote('server:phone:cancel');
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+});
 
 mp.events.add('client:phone:inputModal', function(state) {
     chat.show(!state);
@@ -3589,6 +3666,28 @@ mp.events.add('render', () => {
 
 
 //KEYS
+mp.keys.bind(87, true, function() {
+    if (!user.isLogin())
+        return;
+    if (!methods.isBlockKeys() && mp.players.local.vehicle) {
+        if (mp.players.local.vehicle.getPedInSeat(-1) === mp.players.local.handle) {
+            if (!mp.players.local.vehicle.getIsEngineRunning())
+                vehicles.engineVehicle(true);
+        }
+    }
+});
+
+mp.keys.bind(114, true, function() {
+    if (!user.isLogin())
+        return;
+    if (!user.isAdmin())
+        return;
+    if (!methods.isBlockKeys()) {
+        mp.events.callRemote('server:user:getPlayerPosNpc', user.lastAnim.d, user.lastAnim.a, user.lastAnim.f);
+        npc.create(mp.game.joaat("s_m_m_security_01"), mp.players.local.position, mp.players.local.getRotation(0).z, 0, '', user.lastAnim.d, user.lastAnim.a, user.lastAnim.f);
+    }
+});
+
 mp.keys.bind(0xDB, true, function() {
     if (!user.isLogin())
         return;
@@ -3645,6 +3744,8 @@ mp.keys.bind(0x45, true, function() {
 //M
 mp.keys.bind(0x4D, true, function() {
     if (!user.isLogin())
+        return;
+    if (user.isCustom)
         return;
     if (!methods.isShowInput() && phone.isHide() && inventory.isHide())
         mainMenu.showOrHide();
@@ -3719,17 +3820,22 @@ mp.keys.bind(0x1B, true, function() {
     if (!shopMenu.isHide())
         shopMenu.hideAll();
 
+    if (vShop.isInside())
+        vShop.exit();
+
     if (methods.isBlockKeys())
         return;
 
     if (!phone.isHide())
         phone.hide();
 
+    if (phone.ingameBrowser) {
+        phone.destroyBrowser();
+        mp.gui.cursor.show(false, false);
+    }
+
     if (!inventory.isHide())
         inventory.hide();
-
-    if (vShop.isInside())
-        vShop.exit();
 });
 
 //BACKSPACE
@@ -3857,7 +3963,7 @@ mp.events.add('client:ui:saveHudDefault', (id) => {
 });
 
 mp.events.add('server:generateToken', () => {
-    mp.storage.data.token = methods.md5('dednet');
+    mp.storage.data.token = methods.md5('state99');
     mp.storage.flush();
 });
 
@@ -3870,6 +3976,10 @@ mp.events.add("playerEnterCheckpoint", (checkpoint) => {
             jobPoint.delete();
         }
         if (user.hasCache('isSellDrug')) {
+
+            if (mp.players.local.isInAnyVehicle(true))
+                return;
+
             mp.players.local.freezePosition(true);
             methods.blockKeys(true);
             user.playScenario("WORLD_HUMAN_GARDENER_PLANT");
@@ -4252,38 +4362,67 @@ mp.events.add("playerCommand", async (command) => {
 *
 * */
 
-/*mp.events.add('render', () => //TODO Посадка ТС
+let timePress = 0;
+mp.events.add('render', () => //TODO Посадка ТС
 {
     const controls = mp.game.controls;
 
-    controls.enableControlAction(0, 23, true);
-    controls.disableControlAction(0, 58, true);
+    //controls.enableControlAction(0, 23, true); //F
+    //controls.disableControlAction(0, 58, true); //G
+    controls.disableControlAction(0, 23, true);
 
-    if(controls.isDisabledControlJustPressed(0, 58))
-    {
-        let position = mp.players.local.position;
-        let vehHandle = mp.game.vehicle.getClosestVehicle(position.x, position.y, position.z, 5, 0, 70);
+    //ui.drawText(`${timePress} | ${controls.isDisabledControlPressed(0, 23)}`, 0,0,1,255,255,255, 255,1)
 
-        let vehicle = mp.vehicles.atHandle(vehHandle);
-
-        if(vehicle
-            && vehicle.isAnySeatEmpty()
-            && vehicle.getSpeed() < 5)
+    try {
+        if(controls.isDisabledControlPressed(0, 23))
         {
-            for (let i = 0; i < 8; i++) {
-                if (vehicle.isSeatFree(i))
-                    mp.players.local.taskEnterVehicle(vehicle.handle, 5000, i, 2, 1, 0);
+            if (mp.players.local.isInAnyVehicle(true))
+                return;
+            timePress++;
+            if (timePress === 100) {
+                let position = mp.players.local.position;
+                let vehicle = methods.getNearestVehicleWithCoords(position, 6);
+
+                if(vehicle && mp.vehicles.exists(vehicle)
+                    && vehicle.isAnySeatEmpty()
+                    && vehicle.getSpeed() < 5)
+                {
+                    for (let i = 0; i < 8; i++) {
+                        if (vehicle.isSeatFree(i)) {
+                            mp.players.local.taskEnterVehicle(vehicle.handle, 5000, i, 2, 1, 0);
+                            //mp.events.callRemote('server:syncTaskEnter', vehicle.remoteId, i);
+                            return;
+                        }
+                    }
+                }
             }
         }
-    }
-});*/
+        else if (!controls.isDisabledControlPressed(0, 23) && timePress > 0 && timePress < 100)
+        {
+            if (mp.players.local.isInAnyVehicle(true))
+                return;
+            timePress = 0;
 
-mp.events.add('render', () => {
-    if(user.isLogin()) {
-        if (user.getCache("online_time") < 169) {
-            ui.drawText('M - Меню | N - Голосовой чат | I - Инвентарь | O - Телефон', 0.5, 0.97, 0.3, 255, 255, 255, 200, 0, 1, false, false);
+            let position = mp.players.local.position;
+            let vehicle = methods.getNearestVehicleWithCoords(position, 6);
+
+            if(vehicle && mp.vehicles.exists(vehicle)
+                && vehicle.isAnySeatEmpty()
+                && vehicle.getSpeed() < 5)
+            {
+                for (let i = -1; i < 8; i++) {
+                    if (vehicle.isSeatFree(i)) {
+                        mp.players.local.taskEnterVehicle(vehicle.handle, 5000, i, 2, 1, 0);
+                        //mp.events.callRemote('server:syncTaskEnter', vehicle.remoteId, i);
+                        return;
+                    }
+                }
+            }
         }
+        else
+            timePress = 0;
     }
+    catch (e) {}
 });
 
 mp.events.add('render', () => {

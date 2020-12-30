@@ -3,7 +3,7 @@ import user from '../user';
 let discord = {};
 
 discord.checker = function() {
-    let label = 'DEDNET ROLE PLAY';
+    let label = 'STATE 99 ROLE PLAY';
     try {
         if (user.isLogin()) {
             if (mp.players.local.isDiving())
@@ -27,14 +27,14 @@ discord.checker = function() {
             else if (mp.players.local.getVariable('isAfk') === true)
                 label = 'Чиллит';
             else
-                label = 'DEDNET ROLE PLAY';
+                label = 'STATE 99 ROLE PLAY';
         }
         else
             label = 'В меню авторизации';
     }
     catch (e) {
     }
-    mp.discord.update(label, 'dednet.ru');
+    mp.discord.update(label, 'state-99.com');
 };
 
 export default discord;

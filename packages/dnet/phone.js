@@ -32,7 +32,7 @@ phone.getUserInfo = function(player, text) {
 
             subItems.push(phone.getMenuItem(
                 row['name'],
-                'ID: ' + row['id'],
+                'CardID: ' + row['id'],
                 { name: 'none' },
                 0,
                 '',
@@ -1778,7 +1778,8 @@ phone.fractionVehicles = function(player) {
             if (isDepLeader && veh['rank_type'] == rankType || canEdit) {
                 let item = phone.getMenuItemTitle(
                     `${veh['name']} | ${veh['number']}`,
-                    `Доступно с ${rankName}`,
+                    //`Доступно с ${rankName}`,
+                    ``,
                     { name: 'fractionVehicleAction', vehId: veh['id'] },
                     enums.getVehicleImg(veh['name']),
                     true,
@@ -1788,7 +1789,8 @@ phone.fractionVehicles = function(player) {
             else {
                 let item = phone.getMenuItemTitle(
                     `${veh['name']} | ${veh['number']}`,
-                    `Доступно с ${rankName}`,
+                    //`Доступно с ${rankName}`,
+                    ``,
                     { name: 'none' },
                     enums.getVehicleImg(veh['name'])
                 );

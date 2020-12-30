@@ -118,6 +118,7 @@ admin.startFreeCam = function() {
     var camRot = mp.game.cam.getGameplayCamRot(2);
     noClipCamera = mp.cameras.new('default', camPos, camRot, 45);
     noClipCamera.setActive(true);
+    noClipCamera.setFov(45); //45 DEFAULT
     mp.game.cam.renderScriptCams(true, false, 0, true, false);
     localPlayer.freezePosition(true);
     localPlayer.setInvincible(true);
@@ -130,6 +131,18 @@ admin.startFreeCam = function() {
 admin.setPos = function(x, y, z) {
     if (noClipCamera)
         noClipCamera.setCoord(x, y, z);
+};
+
+admin.getCameraPos = function() {
+    if (noClipCamera)
+        return noClipCamera.getCoord();
+    return null;
+};
+
+admin.getCameraRot = function() {
+    if (noClipCamera)
+        return noClipCamera.getRot(2);
+    return null;
 };
 
 admin.stopFreeCam = function() {
@@ -161,7 +174,7 @@ mp.events.add('render', function() {
     if (shiftModifier) {
         fastMult = 3;
     } else if (controlModifier) {
-        slowMult = 0.5;
+        slowMult = 0.2;
     }
     var rightAxisX = mp.game.controls.getDisabledControlNormal(0, 220);
     var rightAxisY = mp.game.controls.getDisabledControlNormal(0, 221);

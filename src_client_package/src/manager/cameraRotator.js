@@ -1,5 +1,3 @@
-import methods from '../modules/methods';
-
 let cameraRotator = {};
 
 cameraRotator.isChange = false;
@@ -72,6 +70,10 @@ class CameraRotator {
         /* this.camera.setActive(state);
         mp.game.cam.renderScriptCams(state, false, 3000, true, false); */
         this.isActive = state;
+    }
+
+    isCamera() {
+        return this.camera;
     }
 
     onMouseMove(dX, dY) {

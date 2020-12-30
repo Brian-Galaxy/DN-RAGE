@@ -26,7 +26,7 @@ trucker.loadAll = function() {
 
 trucker.acceptOffer1 = function(id, name, company, x, y, z, px, py, pz, price) {
     type = 1;
-    _checkpointId = jobPoint.create(new mp.Vector3(x, y, z), true, 5);
+    _checkpointId = jobPoint.create(new mp.Vector3(x, y, z), true, 6);
 
     offerId = id;
     toPosX = px;
@@ -36,7 +36,7 @@ trucker.acceptOffer1 = function(id, name, company, x, y, z, px, py, pz, price) {
 
 trucker.acceptOffer2 = function(id, name, company, trName, cl1, cl2, liv, x, y, z, rot, px, py, pz, price) {
     type = 2;
-    _checkpointId = jobPoint.create(new mp.Vector3(x, y, z - 3), true, 5);
+    _checkpointId = jobPoint.create(new mp.Vector3(x, y, z - 3), true, 6);
 
     offerId = id;
     fromPosX = x;
@@ -161,7 +161,7 @@ mp.events.add("playerEnterCheckpoint", (checkpoint) => {
     let veh = mp.players.local.vehicle;
     if (veh && mp.vehicles.exists(veh)) {
         let vInfo = methods.getVehicleInfo(veh.model);
-        if (vInfo.class_name === 'Vans' || vInfo.class_name === 'Commercials')
+        if (vInfo.class_name === 'Vans' || vInfo.class_name === 'Commercials' || vInfo.class_name === 'Planes' || vInfo.class_name === 'Boats')
             if (checkpoint.id === _checkpointId) {
                 if (isProcess) {
                     trucker.doneOffer();

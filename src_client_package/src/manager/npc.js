@@ -5,6 +5,8 @@ import checkpoint from "./checkpoint";
 import quest from "./quest";
 
 import user from "../user";
+import enums from "../enums";
+import shopMenu from "../shopMenu";
 
 let npc = {};
 
@@ -346,8 +348,8 @@ npc.loadAll = function() {
     npc.create(mp.game.joaat("a_f_y_business_04"), new mp.Vector3(-72.27431, -814.5317, 243.3859), 162.9991, false, "WORLD_HUMAN_STAND_IMPATIENT");
 // Работодатель на Садовнике
     npc.create(mp.game.joaat("s_m_m_gardener_01"), new mp.Vector3(-1585.051, -234.8312, 54.33006), 43.62775, false, "WORLD_HUMAN_CLIPBOARD");
-// Работодатель на Разнорабочем
-    npc.create(mp.game.joaat("s_m_y_construct_02"), new mp.Vector3(-1159.267, -739.1121, 19.88993), -171.2985, false, "WORLD_HUMAN_CLIPBOARD");
+// Работодатель на Строителе
+   // npc.create(mp.game.joaat("s_m_y_construct_02"), new mp.Vector3(-1159.267, -739.1121, 19.88993), -171.2985, false, "WORLD_HUMAN_CLIPBOARD");
 // Работодатель на Фотографе LifeInvader
     npc.create(mp.game.joaat("a_m_m_prolhost_01"), new mp.Vector3(-1083.9874267578125, -246.1114044189453, 37.763267517089844), 198.80426025390625, false, "WORLD_HUMAN_CLIPBOARD");
 // Работодатель на Почте GoPostal
@@ -378,11 +380,42 @@ npc.loadAll = function() {
     npc.create(mp.game.joaat("s_m_m_security_01"), new mp.Vector3(-1856.256, -3119.711, 13.94436), 156.0192, false, "WORLD_HUMAN_CLIPBOARD"); // Helicopters
     npc.create(mp.game.joaat("s_m_m_security_01"), new mp.Vector3(-1071.75, -3457.185, 14.14418), -150.9734, false, "WORLD_HUMAN_CLIPBOARD"); // Plane
 
-// House 532
-    npc.create(mp.game.joaat("s_m_m_highsec_01"), new mp.Vector3(-632.0056, 398.0607, 101.2304), 16.52335, false, "WORLD_HUMAN_GUARD_STAND");
-    npc.create(mp.game.joaat("s_m_m_highsec_02"), new mp.Vector3(-624.1522, 398.4064, 101.2321), 10.33697, false, "WORLD_HUMAN_GUARD_STAND");
+    //Island 24/7
+    npc.create(mp.game.joaat("mp_m_shopkeep_01"), new mp.Vector3(5030.078125, -5736.40625, 17.86558723449707), 56.664554595947266, 0);
 
-    timer.createInterval('npc.timer', npc.timer, 5000);
+    //Island Mask
+    npc.create(mp.game.joaat("a_m_y_hipster_01"), new mp.Vector3(5080.4921875, -5754.88427734375, 15.829647064208984), 230.79171752929688, 0);
+
+    //Island Cloth
+    npc.create(mp.game.joaat("a_m_y_hipster_02"), new mp.Vector3(5006.0595703125, -5786.671875, 17.831689834594727), 267.9640808105469, 0);
+
+    //Island
+    npc.create(mp.game.joaat("g_m_m_cartelguards_01"), new mp.Vector3(5067.16845703125, -5779.23193359375, 16.277233123779297), 135.2989044189453, -1, '', 'amb@world_human_leaning@male@wall@back@foot_up@idle_b', 'idle_d', 9);
+    npc.create(mp.game.joaat("g_m_m_cartelguards_02"), new mp.Vector3(5042.38720703125, -5791.75537109375, 17.47629165649414), 211.3693084716797, 0, '', 'anim@amb@business@bgen@bgen_no_work@', 'stand_phone_phoneputdown_idle_nowork', 9, 0);
+    npc.create(mp.game.joaat("g_m_m_cartelguards_01"), new mp.Vector3(4991.701171875, -5714.61083984375, 19.88020896911621), 218.4535369873047, 0, '', 'rcmme_amanda1', 'stand_loop_cop', 9, 0);
+    npc.create(mp.game.joaat("g_m_m_cartelguards_02"), new mp.Vector3(4984.28271484375, -5708.33154296875, 19.88694190979004), 47.818546295166016, 0, '', 'missfbi4mcs_2', 'loop_sec_b', 9, 0);
+    npc.create(mp.game.joaat("g_m_m_cartelguards_01"), new mp.Vector3(4973.08447265625, -5762.38671875, 20.87825584411621), 251.14370727539062, 0, '', 'amb@world_human_leaning@male@wall@back@legs_crossed@idle_a', 'idle_a', 9, 0);
+    npc.create(mp.game.joaat("g_m_m_cartelguards_02"), new mp.Vector3(4964.71044921875, -5785.697265625, 20.877727508544922), 244.8719940185547, 0, '', 'amb@world_human_leaning@male@wall@back@foot_up@idle_b', 'idle_d', 9, 0);
+    npc.create(mp.game.joaat("g_m_m_cartelguards_01"), new mp.Vector3(4993.03271484375, -5757.26953125, 15.893156051635742), 138.25697326660156, 0, '', 'missfbi4mcs_2', 'loop_sec_b', 9, 0);
+    npc.create(mp.game.joaat("g_m_m_cartelguards_02"), new mp.Vector3(5005.9658203125, -5733.02099609375, 15.840614318847656), 297.55267333984375, 0, '', 'missfbi4mcs_2', 'loop_sec_b', 9, 0);
+    npc.create(mp.game.joaat("g_m_m_cartelguards_01"), new mp.Vector3(5002.04150390625, -5752.07958984375, 28.68232536315918), 61.704280853271484, 0, '', 'rcmme_amanda1', 'stand_loop_cop', 9, 0);
+    npc.create(mp.game.joaat("g_m_m_cartelguards_02"), new mp.Vector3(4976.9638671875, -5607.8916015625, 23.770776748657227), 336.3785705566406, 0, '', 'missfbi4mcs_2', 'loop_sec_b', 9, 0);
+    npc.create(mp.game.joaat("g_m_m_cartelguards_01"), new mp.Vector3(4971.1962890625, -5600.3017578125, 23.69247817993164), 237.45590209960938, 0, '', 'anim@amb@business@bgen@bgen_no_work@', 'stand_phone_phoneputdown_idle_nowork', 9, 0);
+    npc.create(mp.game.joaat("g_m_m_cartelguards_02"), new mp.Vector3(5135.5537109375, -4948.22607421875, 14.762690544128418), 323.735107421875, 0, '', 'rcmme_amanda1', 'stand_loop_cop', 9, 0);
+    npc.create(mp.game.joaat("g_m_m_cartelguards_01"), new mp.Vector3(5154.53955078125, -4946.18017578125, 14.155532836914062), 136.00308227539062, 0, '', 'anim@amb@business@bgen@bgen_no_work@', 'stand_phone_phoneputdown_idle_nowork', 9, 0);
+    npc.create(mp.game.joaat("s_f_y_clubbar_02"), new mp.Vector3(5014.1689453125, -5755.82666015625, 28.900148391723633), 58.45914077758789, 0, '', 'anim@amb@business@bgen@bgen_no_work@', 'stand_phone_phoneputdown_idle_nowork', 9);
+
+    //Island Fabric
+    npc.create(mp.game.joaat("s_m_y_dockwork_01"), new mp.Vector3(5064.33837890625, -4590.23681640625, 2.856423854827881), 164.00926208496094, 0, '', 'anim@amb@business@bgen@bgen_no_work@', 'stand_phone_phoneputdown_idle_nowork', 9, 0);
+    npc.create(mp.game.joaat("u_m_m_doa_01"), new mp.Vector3(5067.25048828125, -4591.36474609375, 2.856661319732666), 158.07778930664062, 0, '', 'amb@world_human_leaning@male@wall@back@legs_crossed@idle_a', 'idle_a', 9, 0);
+
+    //Island Работа грузчика
+    npc.create(mp.game.joaat("g_m_y_strpunk_02"), new mp.Vector3(5106.8076171875, -5162.783203125, 2.05600905418396), 353.6639404296875, 0, 'WORLD_HUMAN_CLIPBOARD');
+    //Island Работа садовника
+    npc.create(mp.game.joaat("s_m_m_gaffer_01"), new mp.Vector3(5399.09619140625, -5172.28369140625, 31.35650634765625), 160.55970764160156, 0, 'WORLD_HUMAN_CLIPBOARD');
+
+
+    timer.createInterval('npc.timer', npc.timer, 2500);
     timer.createInterval('npc.timer500', npc.timer500, 500);
 };
 
@@ -398,20 +431,34 @@ npc.timer = function() {
 
             try {
                 if (mp.game.streaming.hasModelLoaded(item.model)) {
-                    item.ped = mp.peds.new(item.model, item.pos, item.heading, -1);
+                    item.ped = mp.peds.new(item.model, item.pos, item.heading, methods.parseInt(item.dim));
                     item.handle = item.ped.handle;
+                    item.isCreate = true;
+
+                    //if (item.dim > 0) {
+                        item.ped.setRandomComponentVariation(true);
+                        item.ped.setRandomProps();
+                    //}
+
                     if (item.scenario != "")
                         mp.game.invoke(methods.TASK_START_SCENARIO_IN_PLACE, item.handle, item.scenario, 0, true);
 
                     if (item.animation1 != "") {
+
                         mp.game.streaming.requestAnimDict(item.animation1);
+                        if (!mp.game.streaming.hasAnimDictLoaded(item.animation1)) {
+                            mp.game.streaming.requestAnimDict(item.animation1);
+                            while (!mp.game.streaming.hasAnimDictLoaded(item.animation1))
+                                await methods.sleep(10);
+                        }
+                        item.ped.taskPlayAnim(item.animation1, item.animation2, 8, -8, -1, item.flag, 0.0, false, false, false);
+
+                        /*mp.game.streaming.requestAnimDict(item.animation1);
                         setTimeout(function () {
                             if (mp.game.streaming.hasAnimDictLoaded(item.animation1))
                                 mp.game.invoke(methods.TASK_PLAY_ANIM, item.handle, item.animation1, item.animation2, 9, -8, -1, item.flag, 0, false, false, false);
-                        }, 5000);
+                        }, 5000);*/
                     }
-
-                    item.isCreate = true;
                 }
                 else if(item.didRequest !== true) {
                     item.didRequest = true;
@@ -461,6 +508,7 @@ npc.timer500 = function() {
         _npcList.forEach(async function(item) {
 
             try {
+                if (item.speechRadius < 1) return;
                 let dist = methods.distanceToPos(playerPos, item.pos);
 
                 if (dist <= item.speechRadius && item.isCreate && !item.isSpeech) {
@@ -486,15 +534,15 @@ npc.timer500 = function() {
     }
 };
 
-npc.create = function(model, pos, heading, empty = false, scenario = "", animation1 = "", animation2 = "", flag = 9, speechRadius = 5, speech1 = 'GENERIC_HI', speech2 = 'GENERIC_BYE') {
+npc.create = function(model, pos, heading, dim = 0, scenario = "", animation1 = "", animation2 = "", flag = 9, speechRadius = 5, speech1 = 'GENERIC_HI', speech2 = 'GENERIC_BYE') {
 
     if (typeof model == "string")
         model = mp.game.joaat(model);
 
-    _npcList.push({model: model, pos: pos, heading: heading, ped: null, scenario: scenario, animation1: animation1, animation2: animation2, flag: flag, speechRadius: speechRadius, speech1: speech1, speech2: speech2, isSpeech: false, isCreate: false, handle: 0});
+    _npcList.push({model: model, pos: pos, heading: heading, ped: null, dim: dim, scenario: scenario, animation1: animation1, animation2: animation2, flag: flag, speechRadius: speechRadius, speech1: speech1, speech2: speech2, isSpeech: false, isCreate: false, handle: 0});
 };
 
-npc.createPedLocally = function(model, pos, heading) {
+npc.createPedLocallyNative = function(model, pos, heading) {
     try {
         if (mp.game.streaming.isModelValid(model)) {
             mp.game.streaming.requestModel(model);
@@ -506,6 +554,266 @@ npc.createPedLocally = function(model, pos, heading) {
         methods.debug(e);
     }
     return 0;
+};
+
+npc.createPedLocally = async function(model, pos, heading) {
+    if (mp.game.streaming.isModelValid(model))
+    {
+        mp.game.streaming.requestModel(model);
+        while (!mp.game.streaming.hasModelLoaded(model))
+            await methods.sleep(10);
+        return mp.peds.new(model, pos, heading, -1);
+    }
+    return null;
+};
+
+
+npc.getDialog = function(pos, rot, name, subtitle, question, btn = []) {
+    btn.push(
+        {
+            text: 'Закрыть',
+            bgcolor: 'rgba(244,67,54,0.7)',
+            params: {doName: 'close'}
+        }
+    );
+    shopMenu.showDialog(pos, rot);
+    shopMenu.updateDialog(btn, name, subtitle, question)
+};
+
+npc.showDialogStandart = function(question, btn = []) {
+    npc.getDialog(new mp.Vector3(-1288.153, -561.6686, 31.71216 + 0.6), -46.52558, 'Сюзанна', 'Сотрудник правительства', question, btn)
+};
+
+npc.showDialogStandartIsland = function(question, btn = []) {
+    npc.getDialog(new mp.Vector3(5002.990234375, -5752.30419921875, 19.880247116088867 + 0.6),  147.77825927734375, 'Сюзанна', 'Сотрудник правительства', question, btn)
+};
+
+npc.showDialogLamar = function(question, btn = []) {
+    npc.getDialog(new mp.Vector3(-218.75608825683594, -1368.4576416015625, 31.25823402404785 + 0.6), 43.398406982421875, 'Ламар', 'Друг', question, btn)
+};
+
+npc.showDialogJail = function(question, btn = []) {
+    npc.getDialog(new mp.Vector3(1746.4307861328125, 2502.748046875, 45.56498336791992 + 0.6), 350.29193115234375, 'Джейк', 'Сотрудник тюрьмы', question, btn)
+};
+
+npc.showDialogYpd = function(question, btn = []) {
+    npc.getDialog(new mp.Vector3(3198.975341796875, -4833.72998046875, 111.81517791748047 + 0.6), 263.87719726562, 'Риксон', 'Сотрудник YPD', question, btn)
+};
+
+npc.showDialogInvader = function(question, btn = []) {
+    npc.getDialog(new mp.Vector3(-1083.9874267578125, -246.1114044189453, 37.763267517089844 + 0.6), 198.80426025390625, 'Секретарь', 'Сотрудник InvaderNews', question, btn)
+};
+
+npc.showDialogUsmc = function(question, btn = []) {
+    npc.getDialog(new mp.Vector3(-1288.153, -561.6686, 31.71216 + 0.6), -46.52558, 'Офицер', 'Офицер USMC', question, btn)
+};
+
+npc.showDialogLoader = function(question, btn = []) {
+    npc.getDialog(new mp.Vector3(5106.8076171875, -5162.783203125, 2.05600905418396 + 0.6), 353.27508544921875, 'Каспер', 'Прораб', question, btn)
+};
+
+npc.updateNpcFace = function(localNpc, data) {
+    try {
+        let skin = JSON.parse(data);
+        localNpc.setHeadBlendData(
+            skin['SKIN_MOTHER_FACE'],
+            skin['SKIN_FATHER_FACE'],
+            0,
+            skin['SKIN_MOTHER_SKIN'],
+            skin['SKIN_FATHER_SKIN'],
+            0,
+            skin['SKIN_PARENT_FACE_MIX'],
+            skin['SKIN_PARENT_SKIN_MIX'],
+            0,
+            true
+        );
+
+        let specifications = skin['SKIN_FACE_SPECIFICATIONS'];
+        if (specifications) {
+            try {
+                JSON.parse(specifications).forEach((item, i) => {
+                    localNpc.setFaceFeature(i, item);
+                })
+            } catch(e) {
+                methods.debug(e);
+                methods.debug(specifications);
+            }
+        }
+
+        localNpc.setComponentVariation(2, skin['SKIN_HAIR'], 0, 2);
+        localNpc.setHeadOverlay(2, skin['SKIN_EYEBROWS'], 1.0, skin['SKIN_EYEBROWS_COLOR'], 0);
+
+        localNpc.setHairColor(skin['SKIN_HAIR_COLOR'], skin['SKIN_HAIR_COLOR_2']);
+        localNpc.setEyeColor(skin['SKIN_EYE_COLOR']);
+        localNpc.setHeadOverlayColor(2, 1, skin['SKIN_EYEBROWS_COLOR'], 0);
+
+        localNpc.setHeadOverlay(9, skin['SKIN_OVERLAY_9'], 1.0, skin['SKIN_OVERLAY_COLOR_9'], 0);
+
+        try {
+            if (skin['SKIN_HAIR_2']) {
+                let data = JSON.parse(enums.overlays)[skin['SKIN_SEX']][skin[ "SKIN_HAIR"]];
+                localNpc.setDecoration(mp.game.joaat(data[0]), mp.game.joaat(data[1]));
+            }
+
+            let data = JSON.parse(enums.overlays)[skin['SKIN_SEX']][methods.parseInt(skin[ "SKIN_HAIR_3"])];
+            localNpc.setDecoration(mp.game.joaat(data[0]), mp.game.joaat(data[1]));
+        }
+        catch (e) {
+            methods.error('setDecoration.SKIN_HAIR_2', e.toString());
+        }
+
+        try {
+            if (skin['SKIN_SEX'] == 0) {
+                localNpc.setHeadOverlay(10, skin['SKIN_OVERLAY_10'], 1.0, skin['SKIN_OVERLAY_COLOR_10'], 0);
+                localNpc.setHeadOverlay(1, skin['SKIN_OVERLAY_1'], 1.0, skin['SKIN_OVERLAY_COLOR_1'], 0);
+            }
+            else if (skin['SKIN_SEX'] == 1) {
+                localNpc.setHeadOverlay(4, skin['SKIN_OVERLAY_4'], 1.0, skin['SKIN_OVERLAY_COLOR_4'], 0);
+                localNpc.setHeadOverlay(5, skin['SKIN_OVERLAY_5'], 1.0, skin['SKIN_OVERLAY_COLOR_5'], 0);
+                localNpc.setHeadOverlay(8, skin['SKIN_OVERLAY_8'], 1.0, skin['SKIN_OVERLAY_COLOR_8'], 0);
+            }
+        }
+        catch (e) {
+            methods.error('user.updateCharacterFaceLocal', e.toString());
+        }
+    } catch(e) {
+        methods.error('updateCharacterFace', e.toString());
+    }
+};
+
+npc.updateNpcCloth = function(localNpc, data, sex) {
+    try {
+
+        let cloth_data = JSON.parse(data);
+
+        //localNpc.setDecoration(mp.game.joaat(cloth_data['tprint_c']), mp.game.joaat(cloth_data['tprint_o']));
+
+        localNpc.setComponentVariation(1, 0, 0, 2);
+        localNpc.setComponentVariation(4, cloth_data['leg'], cloth_data['leg_color'], 2);
+        localNpc.setComponentVariation(5, cloth_data['hand'], cloth_data['hand_color'], 2);
+        localNpc.setComponentVariation(6, cloth_data['foot'], cloth_data['foot_color'], 2);
+        localNpc.setComponentVariation(7, cloth_data['accessorie'], cloth_data['accessorie_color'], 2);
+        localNpc.setComponentVariation(8, cloth_data['parachute'], cloth_data['parachute_color'], 2);
+        localNpc.setComponentVariation(9, cloth_data['armor'], cloth_data['armor_color'], 2);
+        localNpc.setComponentVariation(10, cloth_data['decal'], cloth_data['decal_color'], 2);
+        localNpc.setComponentVariation(11, cloth_data['body'], cloth_data['body_color'], 2);
+
+        if (cloth_data['gloves'] > 0) {
+            let glovesOffset = npc.getGlovesOffset(sex, cloth_data['torso']);
+            if (glovesOffset >= 0)
+                localNpc.setComponentVariation(3, cloth_data['gloves'] + glovesOffset, cloth_data['gloves_color'], 2);
+        }
+        else
+            localNpc.setComponentVariation(3, cloth_data['torso'], cloth_data['torso_color'], 2);
+
+        if (cloth_data['watch'] >= 0) {
+            localNpc.setPropIndex(6, cloth_data['watch'], cloth_data['watch_color'], true);
+        }
+        if (cloth_data['bracelet'] >= 0) {
+            localNpc.setPropIndex(7, cloth_data['bracelet'], cloth_data['bracelet_color'], true);
+        }
+        if (cloth_data['hat'] >= 0) {
+            localNpc.setPropIndex(0, cloth_data['hat'], cloth_data['hat_color'], true);
+        }
+        if (cloth_data['glasses'] >= 0) {
+            localNpc.setPropIndex(1, cloth_data['glasses'], cloth_data['glasses_color'], true);
+        }
+        if (cloth_data['ear'] >= 0) {
+            localNpc.setPropIndex(2, cloth_data['ear'], cloth_data['ear_color'], true);
+        }
+
+    } catch (e) {
+        methods.debug(e);
+    }
+};
+
+npc.updateNpcTattoo = function(localNpc, data) {
+    try {
+        let tattooList = JSON.parse(data);
+        if (tattooList != null) {
+            try {
+                tattooList.forEach(function (item) {
+                    /*if (user.getCache('tprint_c') != "" && item[2] == 'ZONE_TORSO')
+                        return;*/
+                    localNpc.setDecoration(mp.game.joaat(item[0]), mp.game.joaat(item[1]));
+                });
+            }
+            catch (e) {
+                methods.debug(e);
+            }
+        }
+
+        /*if (updateHair) {
+            if (user.getCache('SKIN_HAIR_2')) {
+                let data = JSON.parse(enums.overlays)[user.getSex()][user.getCache( "SKIN_HAIR")];
+                user.setDecoration(data[0], data[1], true);
+            }
+
+            let data = JSON.parse(enums.overlays)[user.getSex()][methods.parseInt(user.getCache( "SKIN_HAIR_3"))];
+            user.setDecoration(data[0], data[1], true);
+        }
+
+        if (updatePrint) {
+            if (user.getCache('tprint_c') != "" && user.getCache( 'tprint_o') != "")
+                user.setDecoration( user.getCache( 'tprint_c'), user.getCache( 'tprint_o'), true);
+        }*/
+    }
+    catch (e) {
+
+    }
+};
+
+
+npc.getGlovesOffset = function(sex, handId) {
+    if (sex === 1) {
+        switch (handId) {
+            case 0:
+            case 2:
+            case 14:
+            case 6:
+                return 2;
+            case 1:
+                return 1;
+            case 3:
+                return 3;
+            case 5:
+                return 0;
+            case 7:
+                return 7;
+            /*case 4:
+                return 10;*/
+            case 15:
+                return 12;
+            case 11:
+            case 4:
+                return 4;
+            case 9:
+                return 8;
+        }
+    }
+    else {
+        switch (handId) {
+            case 0:
+                return 0;
+            case 2:
+                return 2;
+            case 5:
+                return 4;
+            case 1:
+            case 4:
+            case 6:
+            case 12:
+            case 14:
+                return 5;
+            case 8:
+                return 6;
+            case 11:
+                return 7;
+            case 15:
+                return 10;
+        }
+    }
+    return -1;
 };
 
 export default npc;

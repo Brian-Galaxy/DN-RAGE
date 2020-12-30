@@ -9,6 +9,8 @@ import user from './user';
 import enums from './enums';
 import menuList from "./menuList";
 import phone from "./phone";
+import shopMenu from "./shopMenu";
+import coffer from "./coffer";
 
 import vehicles from "./property/vehicles";
 import stocks from "./property/stocks";
@@ -16,7 +18,6 @@ import houses from "./property/houses";
 import condos from "./property/condos";
 
 import bind from "./manager/bind";
-import coffer from "./coffer";
 import weather from "./manager/weather";
 import quest from "./manager/quest";
 
@@ -120,7 +121,7 @@ inventory.openInventoryByEntity = async function(entity) {
             if (entity.isDead()) {
                 mp.game.ui.notifications.show("~r~Транспорт уничтожен");
             } else if (entity.getDoorLockStatus() !== 1) {
-                mp.game.ui.notifications.show("~r~Транспорт закрыт");
+                menuList.showVehicleDoInvMenu(entity.remoteId, true);
             } else if (mp.players.local.isInAnyVehicle(false)) {
                 mp.game.ui.notifications.show("~g~Вы должны находиться около багажника");
             } else if (entity.getVariable('useless') === true) {
@@ -255,6 +256,7 @@ inventory.takeNewItem = async function(itemId, params = "{}", count = 1) { //TOD
         let amount = await inventory.getInvAmount(user_id, inventory.types.Player);
         let amountMax = await inventory.getInvAmountMax(user_id, inventory.types.Player);
         if (items.getItemAmountById(itemId) + amount > amountMax) {
+            inventory.updateAmount(user_id, inventory.types.Player);
             mp.game.ui.notifications.show("~r~Инвентарь заполнен");
             return;
         }
@@ -285,6 +287,7 @@ inventory.takeNewWeaponItem = async function(itemId, params, text = 'Получ�
         let amount = await inventory.getInvAmount(user_id, inventory.types.Player);
         let amountMax = await inventory.getInvAmountMax(user_id, inventory.types.Player);
         if (items.getItemAmountById(itemId) + amount > amountMax) {
+            inventory.updateAmount(user_id, inventory.types.Player);
             mp.game.ui.notifications.show("~r~Инвентарь заполнен");
             return;
         }
@@ -389,6 +392,7 @@ inventory.takeItem = async function(id, itemId, notify = true) {
         let amountMax = await inventory.getInvAmountMax(user_id, inventory.types.Player);
         //console.log(amount, amountMax, "amounts");
         if (items.getItemAmountById(itemId) + amount > amountMax) {
+            inventory.updateAmount(user_id, inventory.types.Player);
             mp.game.ui.notifications.show("~r~Инвентарь заполнен");
             return;
         }
@@ -421,7 +425,8 @@ inventory.giveItem = async function(id, itemId, playerId, notify = true) {
         let amount = await inventory.getInvAmount(targetId, inventory.types.Player);
         let amountMax = await inventory.getInvAmountMax(targetId, inventory.types.Player);
         if (items.getItemAmountById(itemId) + amount > amountMax) {
-            mp.game.ui.notifications.show("~r~Инвентарь заполнен");
+            inventory.updateAmount(targetId, inventory.types.Player);
+            mp.game.ui.notifications.show("~r~Инвентарь игрока заполнен");
             return;
         }
 

@@ -102,7 +102,7 @@ mainMenu.updateInfoSettings = function(tab = 0, keyName = '') {
 
         enums.clipsetW.forEach(item => {
             cllistw.push(item[0]);
-        })
+        });
 
         let clipsetIdx = 0;
         let clipsetwIdx = 0;
@@ -144,29 +144,18 @@ mainMenu.updateInfoSettings = function(tab = 0, keyName = '') {
                 {
                     name: 'Интерфейс',
                     settings: [
-                        {type: 1, name: 'Вид спидометра', params: 'ui:speedtype', active: user.getCache('s_hud_speed') ? 1 : 0, listmenu: ['Стандартный', 'Цифровой']},
+                        //{type: 1, name: 'Вид спидометра', params: 'ui:speedtype', active: user.getCache('s_hud_speed') ? 1 : 0, listmenu: ['Стандартный', 'Цифровой']},
                         {type: 1, name: 'Скорость', params: 'ui:speed', active: user.getCache('s_hud_speed_type') ? 1 : 0, listmenu: ['MP/H', 'KM/H']},
                         {type: 1, name: 'Температура', params: 'ui:temp', active: user.getCache('s_hud_temp') ? 1 : 0, listmenu: ['°C', '°F']},
                         {type: 1, name: 'Индикатор взаимодействия', params: 'ui:indicator', active: user.getCache('s_hud_raycast') ? 1 : 0, listmenu:['В центре', 'Над объектом']},
-                        {type: 1, name: 'Прозрачность худа', params: 'ui:bg', active: methods.parseInt(user.getCache('s_hud_bg') * 10), listmenu:["0%", "10%", "20%", "30%", "40%", "50%", "60%", "70%", "80%", "90%", "100%"]},
+                        //{type: 1, name: 'Прозрачность худа', params: 'ui:bg', active: methods.parseInt(user.getCache('s_hud_bg') * 10), listmenu:["0%", "10%", "20%", "30%", "40%", "50%", "60%", "70%", "80%", "90%", "100%"]},
                         {type: 0, name: 'Курсор в обычном меню', params: 'ui:curs', active: user.getCache('s_hud_cursor') ? 1 : 0},
                         {type: 0, name: 'Уведомления над картой', params: 'ui:notify', active: user.getCache('s_hud_notify') ? 1 : 0},
                         {type: 0, name: 'Подсказка с квестами', params: 'ui:quest', active: user.getCache('s_hud_quest') ? 1 : 0},
+                        {type: 0, name: 'Подсказка с клавишами', params: 'ui:keys', active: user.getCache('s_hud_keys') ? 1 : 0},
                         {type: 0, name: 'Авто. перезагрузка интерфейса', params: 'ui:autoreload', active: user.getCache('s_hud_restart') ? 1 : 0},
                         {type: 2, name: 'Перезапуск интерфейса', params: 'ui:reload', btntext: "Применить"},
-                        {type: 2, name: 'Установить настройки позиции интерфейса по умолчанию', params: 'ui:default', btntext: "Применить"},
-                    ]
-                },
-                {
-                    name: 'Карта',
-                    settings: [
-                        {type: 1, name: 'Иконки купленных домов', params: 'map:s_map_house_b', active: user.getCache('s_map_house_b'), listmenu: mapSetting},
-                        {type: 1, name: 'Иконки свободных домов', params: 'map:s_map_house_f', active: user.getCache('s_map_house_f'), listmenu: mapSetting},
-                        {type: 1, name: 'Иконки квартир', params: 'map:s_map_condo', active: user.getCache('s_map_condo'), listmenu: mapSetting},
-                        {type: 1, name: 'Иконки яхт', params: 'map:s_map_yacht', active: user.getCache('s_map_yacht'), listmenu: mapSetting},
-                        {type: 1, name: 'Титульные территории', params: 'map:s_map_tt', active: user.getCache('s_map_tt'), listmenu: mapSetting},
-                        {type: 1, name: 'Территории гетто банд', params: 'map:s_map_ghetto', active: user.getCache('s_map_ghetto'), listmenu: mapSetting},
-                        {type: 1, name: 'Убежища криминальных организаций', params: 'map:s_map_spawns', active: user.getCache('s_map_spawns'), listmenu: mapSetting},
+                        //{type: 2, name: 'Установить настройки позиции интерфейса по умолчанию', params: 'ui:default', btntext: "Применить"},
                     ]
                 },
                 {
@@ -204,6 +193,18 @@ mainMenu.updateInfoSettings = function(tab = 0, keyName = '') {
                     name: 'Назначение клавиш',
                     desc: 'Для того, чтобы перезанзначить клавишу, нажмите на синюю кнопку, а потом на желаемую клавишу',
                     settings: keys
+                },
+                {
+                    name: 'Карта',
+                    settings: [
+                        {type: 1, name: 'Иконки купленных домов', params: 'map:s_map_house_b', active: user.getCache('s_map_house_b'), listmenu: mapSetting},
+                        {type: 1, name: 'Иконки свободных домов', params: 'map:s_map_house_f', active: user.getCache('s_map_house_f'), listmenu: mapSetting},
+                        {type: 1, name: 'Иконки квартир', params: 'map:s_map_condo', active: user.getCache('s_map_condo'), listmenu: mapSetting},
+                        {type: 1, name: 'Иконки яхт', params: 'map:s_map_yacht', active: user.getCache('s_map_yacht'), listmenu: mapSetting},
+                        {type: 1, name: 'Титульные территории', params: 'map:s_map_tt', active: user.getCache('s_map_tt'), listmenu: mapSetting},
+                        {type: 1, name: 'Территории гетто банд', params: 'map:s_map_ghetto', active: user.getCache('s_map_ghetto'), listmenu: mapSetting},
+                        {type: 1, name: 'Убежища криминальных организаций', params: 'map:s_map_spawns', active: user.getCache('s_map_spawns'), listmenu: mapSetting},
+                    ]
                 },
             ],
             settingsActive: tab
@@ -300,7 +301,7 @@ mainMenu.updateInfoProperty = async function() {
                     doors: `${methods.moneyFormat(data.get('tax_money') * -1, 0)}`,
                     x: -158,
                     y: -605,
-                    img: 'https://dednet.ru/client/images/mmenu/office.jpg'
+                    img: 'https://state-99.com/client/images/mmenu/office.jpg'
                 },
             )
         }
@@ -315,7 +316,7 @@ mainMenu.updateInfoProperty = async function() {
                     doors: `${methods.moneyFormat(data.get('tax_money') * -1, 0)}`,
                     x: data.get('x'),
                     y: data.get('y'),
-                    img: 'https://dednet.ru/client/images/mmenu/stock.jpg'
+                    img: 'https://state-99.com/client/images/mmenu/stock.jpg'
                 },
             )
         }
@@ -330,7 +331,7 @@ mainMenu.updateInfoProperty = async function() {
                     doors: `${methods.moneyFormat(data.get('tax_money') * -1, 0)}`,
                     x: data.get('x'),
                     y: data.get('y'),
-                    img: 'https://dednet.ru/client/images/mmenu/condo.jpg'
+                    img: 'https://state-99.com/client/images/mmenu/condo.jpg'
                 },
             )
         }
@@ -345,7 +346,7 @@ mainMenu.updateInfoProperty = async function() {
                     doors: `${methods.moneyFormat(data.get('tax_money') * -1, 0)}`,
                     x: data.get('x'),
                     y: data.get('y'),
-                    img: 'https://dednet.ru/client/images/mmenu/yacht.jpg'
+                    img: 'https://state-99.com/client/images/mmenu/yacht.jpg'
                 },
             )
         }
@@ -688,6 +689,10 @@ mp.events.add('client:mainMenu:settings:updateCheckbox', async function(btn, act
     }
     else if (btn === "ui:quest") {
         user.set('s_hud_quest', active);
+        mp.game.ui.notifications.show('~b~Настройки были сохранены');
+    }
+    else if (btn === "ui:keys") {
+        user.set('s_hud_keys', active);
         mp.game.ui.notifications.show('~b~Настройки были сохранены');
     }
     else if (btn === "ui:autoreload") {

@@ -131,14 +131,14 @@ bank.doorPosLockPick = [
 bank.loadAll = function() {
     methods.debug('bank.loadAll');
 
-    methods.createBlip(bank.pacificPos, 500, 65, 0.9, 'Bank - Pacific Standard');
-    methods.createBlip(bank.blainePos, 500, 67, 0.9, 'Bank - Blaine County Savings');
-    methods.createBlip(bank.mazePos1, 500, 59, 0.9, 'Bank - Maze');
-    methods.createBlip(bank.mazePos2, 500, 59, 0.9, 'Bank - Maze');
+    methods.createBlip(bank.pacificPos, 500, 65, 0.9, 'Bank Pacific');
+    methods.createBlip(bank.blainePos, 500, 67, 0.9, 'Bank Blaine');
+    methods.createBlip(bank.mazePos1, 500, 59, 0.9, 'Bank Maze');
+    methods.createBlip(bank.mazePos2, 500, 59, 0.9, 'Bank Maze');
 
     bank.fleecaMarkers.forEach(function (item) {
         let bankPos = new mp.Vector3(item[0], item[1], item[2]);
-        methods.createBlip(bankPos, 500, 69, 0.9, 'Bank - Fleeca');
+        methods.createBlip(bankPos, 500, 69, 0.9, 'Bank Fleeca');
     });
 
     bank.markers.forEach(function (item) {
@@ -672,16 +672,19 @@ bank.hackFleecaDoor = function(player) {
             setTimeout(function () {
                 if (!user.isLogin(player))
                     return;
-                user.stopAnimation(player);
-                user.blockKeys(player, false);
-                player.addAttachment('laptop', true);
+                try {
+                    user.stopAnimation(player);
+                    user.blockKeys(player, false);
+                    player.addAttachment('laptop', true);
 
-                dispatcher.sendPos("Код 0", "В банке сработала сигнализация", player.position);
-                methods.explodeObject(pos2[0], pos2[1], pos2[2] - 0.5, 200, 18, 0.1, false, 0);
-                methods.explodeObject(pos2[0], pos2[1], pos2[2] + 0.5, 200, 18, 0.1, false, 0);
-                methods.explodeObject(pos2[0], pos2[1], pos2[2], 200, 18, 0.1, false, 0);
+                    dispatcher.sendPos("Код 0", "В банке сработала сигнализация", player.position);
+                    methods.explodeObject(pos2[0], pos2[1], pos2[2] - 0.5, 200, 18, 0.1, false, 0);
+                    methods.explodeObject(pos2[0], pos2[1], pos2[2] + 0.5, 200, 18, 0.1, false, 0);
+                    methods.explodeObject(pos2[0], pos2[1], pos2[2], 200, 18, 0.1, false, 0);
 
-                methods.openObject(pos2[0], pos2[1], pos2[2], false, 5);
+                    methods.openObject(pos2[0], pos2[1], pos2[2], false, 5);
+                }
+                catch (e) {}
             }, 30000);
         }, 7500);
     }

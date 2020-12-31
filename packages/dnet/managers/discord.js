@@ -13,16 +13,16 @@ discord.invaderAd2 = "https://discordapp.com/api/webhooks/724169171025395743/tcU
 discord.invaderNews = "https://discordapp.com/api/webhooks/749837863985610853/8TJa5mtY2hdq1_2NWXoJEiiXT9o4BsDaUgrTungw5xJ5l3BNBVclgXMIiQo8Pf1L1Dkj";
 discord.fractionNews = "https://discordapp.com/api/webhooks/682956739792076838/xnKY61UPcvyakdcRkMIFEsaFCMGKuK9u4wT7KK4lN_Spo1EdA_ySlzMOSLtfyW44QWMb";
 
-discord.workBcsd = "https://discordapp.com/api/webhooks/756863874031943772/ALxfZpn9UAbEpjMCmUGO9p5r3-iJbmVeohTflbUcnzTRNdfDCNWvmLhhzCaZZbkri50Q";
-discord.workLspd = "https://discordapp.com/api/webhooks/756864901296947342/ooy7wIUlXMIVerUjnptPR356BXqM3-56cg7A0SljbCh8iSSaBEL0QcYlrY-JmYK6LkU-";
-discord.workUsmc = "https://discordapp.com/api/webhooks/782991767065722971/qDG8cFm1zqcyGGCZqSsjYhvGugFWC-K2tQGpGOZCH3qKRtrK8DD03LihTaUAYOD6EHtm";
-discord.workNews = "https://discordapp.com/api/webhooks/756864274034589708/hrJQzkZvcLAmW9D_AQ1aeWc3q8dJ7pB0k5oAytMJQ15Cz9MN07Icb0CfGNz6Yhc23BhC";
-discord.workEms = "https://discordapp.com/api/webhooks/756864424148729868/dvE9bel8EEuLr_w8lhor6FWDRQLTqF1JBZb1nq_-DonbPTUd5AMmWVac9GZpETGfciXZ";
+discord.workBcsd = "https://discord.com/api/webhooks/793982959157248030/RPNJVWyyqk8LrqVkzmEo-7wrke_OPKiouBa0FepwEMj3tdOFIPUYdydirNRzcfv-2xy3";
+discord.workLspd = "https://discord.com/api/webhooks/793982785542946846/6YZb1qRNvw03bV8rQkr-uhDeEbasw9LeUiFLLENNJE4s6-2rTUeWKOrR7_fNcqLGAfrG";
+discord.workUsmc = "https://discord.com/api/webhooks/793982506390913065/7irBRWrmVfiXlJg3_RVKv3W_4YInkEzYEON55Ucn5sHSBtXHczT9t7FxhRPSCQXSpzNO";
+discord.workNews = "https://discord.com/api/webhooks/793982310009012244/AC6aL2bazUf0G2t1g28rYWLx0b8M6z5R38Jp59KK20rb47yEQVo5kLI3y5XvOuJC6lm5";
+discord.workEms = "https://discord.com/api/webhooks/793982662549307403/u3zvwVQfmOJ6qOyiK4bnSGZcel9wKSVFR8JMT3-vRPWIYH95RgePHDKYjATEwGzVvb4M";
 discord.workGov = "https://discordapp.com/api/webhooks/756864667233812531/KgEtvxABddRxRW7ppLql2kTy4ZPFhFx5cCpvsSVlfdtKmj6i-1A5cJ4LFya9g-xVwbUw";
 
-discord.marketProperty = "https://discordapp.com/api/webhooks/749763956205289622/Vj0e4iqTtJzNGRb3Pb8SUJ5vURW_CoWa2acTUIZ-2JcaDwVYDeL50IDDTQq5uBKjJ5DG";
-discord.marketBusiness = "https://discordapp.com/api/webhooks/749764058487455885/iAB-r3YOUVZ0WTrf5XDwua1l1uPhTtocyycFy4MQ3k63n565N5ZovZFFOfG9qTBMJQek";
-discord.marketVehicles = "https://discordapp.com/api/webhooks/749764141102923795/qMNyKmk58CkC6WfeivGdMan_Q332zs_ISFeutjhLtwRF2yyWOthHVp_ss92t_7WdOuez";
+discord.marketProperty = "https://discord.com/api/webhooks/793983974397181962/x5MReHfl4s02-C2HI5Q6xOBjWdIAY9-gkeW-_aMqrXugJ_yXC9u1EFDCQL6gXl7MSDvg";
+discord.marketBusiness = "https://discord.com/api/webhooks/793983974397181962/x5MReHfl4s02-C2HI5Q6xOBjWdIAY9-gkeW-_aMqrXugJ_yXC9u1EFDCQL6gXl7MSDvg";
+discord.marketVehicles = "https://discord.com/api/webhooks/793983974397181962/x5MReHfl4s02-C2HI5Q6xOBjWdIAY9-gkeW-_aMqrXugJ_yXC9u1EFDCQL6gXl7MSDvg";
 
 discord.dednetImg = "https://i.imgur.com/WhubVMp.png";
 discord.socialClub = "https://a.rsg.sc//n/";
@@ -170,7 +170,7 @@ discord.sendMarketProperty = function (title, text) {
 discord.sendMarketBusiness = function (title, text) {
     const Hook = new webhook.Webhook(discord.marketBusiness);
     const msg = new webhook.MessageBuilder()
-        .setName('Новости имущества')
+        .setName('Новости бизнеса')
         .setTitle(title)
         .setDescription(`\`\`\`ml\n${text}\`\`\``)
         .setFooter('Правительство', discord.imgGov)
@@ -182,7 +182,7 @@ discord.sendMarketBusiness = function (title, text) {
 discord.sendMarketVehicles = function (title, text, imgUrl) {
     const Hook = new webhook.Webhook(discord.marketVehicles);
     const msg = new webhook.MessageBuilder()
-        .setName('Новости имущества')
+        .setName('Новости транспорта')
         .setTitle(title)
         .setDescription(`\`\`\`ml\n${text}\`\`\``)
         .setImage(imgUrl)

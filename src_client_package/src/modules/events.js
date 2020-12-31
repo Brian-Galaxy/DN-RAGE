@@ -168,7 +168,7 @@ mp.events.add('client:user:auth:login', function(login, password) {
         }
         Container.Data.SetLocally(mp.players.local.remoteId, "isLoginTimeout", true);
 
-        mp.storage.data.login = login;
+        mp.storage.data.name = login;
         mp.storage.flush();
 
         setTimeout(function () {
@@ -3411,15 +3411,15 @@ mp.events.add("client:vehicle:checker", async function () {
                         if (methods.getRandomInt(0, 10) < 4) {
                             vehicles.engineVehicle(false);
                         }
-                        newMaxSpeedServer = locSpeed * 0.5;
+                        maxSpeed = locSpeed * 0.5;
                     }
                     else if (s_eng < 40)
-                        newMaxSpeedServer = locSpeed * 0.7;
+                        maxSpeed = locSpeed * 0.7;
                     let s_trans = car.get('s_trans');
                     if (s_trans < 20)
-                        newMaxSpeedServer = locSpeed * 0.4;
+                        maxSpeed = locSpeed * 0.4;
                     else if (s_trans < 40)
-                        newMaxSpeedServer = locSpeed * 0.6;
+                        maxSpeed = locSpeed * 0.6;
                 }
             }
             catch (e) {
@@ -4365,6 +4365,8 @@ mp.events.add("playerCommand", async (command) => {
 let timePress = 0;
 mp.events.add('render', () => //TODO Посадка ТС
 {
+    if (methods.isBlockKeys())
+        return;
     const controls = mp.game.controls;
 
     //controls.enableControlAction(0, 23, true); //F

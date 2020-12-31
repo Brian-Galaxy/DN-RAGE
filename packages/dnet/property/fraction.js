@@ -565,7 +565,7 @@ fraction.loadAll = function() {
                 let color = enums.fractionColor[item['id']];
                 methods.createBlip(new mp.Vector3(item['spawn_x'], item['spawn_y'], item['spawn_z']), 310, color, 0.6, 'Титульная тер.');
             }
-            else if (item['is_war']) {
+            else if (item['is_mafia']) {
                 //SKIP
             }
             else if (item['spawn_x'] !== 0) {
@@ -917,7 +917,7 @@ fraction.spawnNearCanabis = function(player) {
             veh.locked = true;
             veh.setColor(color, color);
             veh.windowTint = 1;
-            inventory.addItem(3, countZones * 2, inventory.types.Vehicle, mp.joaat(vehicles.getNumberPlate(veh)), 1, 0, "{}");
+            inventory.addItem(3, countZones * 6, inventory.types.Vehicle, mp.joaat(vehicles.getNumberPlate(veh)), 1, 0, "{}");
         }
         catch (e) {
             methods.debug(e);

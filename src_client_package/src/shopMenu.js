@@ -1127,35 +1127,35 @@ mp.events.add('client:dialog:btn', async function(json) {
             shopMenu.hideDialog();
             let discord = await menuList.getUserInput('Введите ваш DISCORD', '', 30);
             let text = await menuList.getUserInput('Почему вы хотите тут работать?', '', 100);
-            mp.game.ui.notifications.show(`~g~Заявление было отправлено, скоро с вами свяжуться в дискорде`);
+            mp.game.ui.notifications.show(`~g~Заявление было отправлено, скоро с вами свяжутся в дискорде`);
             mp.events.callRemote('server:discord:sendWorkNews', discord, text);
         }
         if (params.doName === 'lspd:wantWork') {
             shopMenu.hideDialog();
             let discord = await menuList.getUserInput('Введите ваш DISCORD', '', 30);
             let text = await menuList.getUserInput('Почему вы хотите тут работать?', '', 100);
-            mp.game.ui.notifications.show(`~g~Заявление было отправлено, скоро с вами свяжуться в дискорде`);
+            mp.game.ui.notifications.show(`~g~Заявление было отправлено, скоро с вами свяжутся в дискорде`);
             mp.events.callRemote('server:discord:sendWorkLspd', discord, text);
         }
         if (params.doName === 'bcsd:wantWork') {
             shopMenu.hideDialog();
             let discord = await menuList.getUserInput('Введите ваш DISCORD', '', 30);
             let text = await menuList.getUserInput('Почему вы хотите тут работать?', '', 100);
-            mp.game.ui.notifications.show(`~g~Заявление было отправлено, скоро с вами свяжуться в дискорде`);
+            mp.game.ui.notifications.show(`~g~Заявление было отправлено, скоро с вами свяжутся в дискорде`);
             mp.events.callRemote('server:discord:sendWorkBcsd', discord, text);
         }
         if (params.doName === 'usmc:wantWork') {
             shopMenu.hideDialog();
             let discord = await menuList.getUserInput('Введите ваш DISCORD', '', 30);
             let text = await menuList.getUserInput('Почему вы хотите тут служить?', '', 100);
-            mp.game.ui.notifications.show(`~g~Заявление было отправлено, скоро с вами свяжуться в дискорде`);
+            mp.game.ui.notifications.show(`~g~Заявление было отправлено, скоро с вами свяжутся в дискорде`);
             mp.events.callRemote('server:discord:sendWorkUsmc', discord, text);
         }
         if (params.doName === 'ems:wantWork') {
             shopMenu.hideDialog();
             let discord = await menuList.getUserInput('Введите ваш DISCORD', '', 30);
             let text = await menuList.getUserInput('Почему вы хотите тут работать?', '', 100);
-            mp.game.ui.notifications.show(`~g~Заявление было отправлено, скоро с вами свяжуться в дискорде`);
+            mp.game.ui.notifications.show(`~g~Заявление было отправлено, скоро с вами свяжутся в дискорде`);
             mp.events.callRemote('server:discord:sendWorkEms', discord, text);
         }
         if (params.doName === 'ems:free') {

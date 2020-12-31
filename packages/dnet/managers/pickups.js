@@ -530,7 +530,7 @@ pickups.checkPressLAlt = function(player) {
         user.teleport(player, pickups.ClubUserPos.x, pickups.ClubUserPos.y, pickups.ClubUserPos.z + 1);
     }
 
-    if (methods.distanceToPos(pickups.ClubVPos, playerPos) < distanceCheck && player.dimension === 49) {
+    /*if (methods.distanceToPos(pickups.ClubVPos, playerPos) < distanceCheck && player.dimension === 49) {
         player.dimension = 0;
         if (player.vehicle)
             player.vehicle.dimension = 0;
@@ -566,7 +566,7 @@ pickups.checkPressLAlt = function(player) {
         if (player.vehicle)
             player.vehicle.dimension = 130;
         user.teleportVeh(player, pickups.ClubVPos.x, pickups.ClubVPos.y, pickups.ClubVPos.z + 1, pickups.ClubVPos.rot);
-    }
+    }*/
 
     //gr6
     methods.checkTeleport(player, new mp.Vector3(486.0731, -1075.497, 28.00087), new mp.Vector3(486.0519, -1078.475, 28.19953));

@@ -58,8 +58,8 @@ mp.events.add('guiReady', () => {
             ui.hideHud();
 
             try {
-                if (mp.storage.data.login)
-                    ui.callCef('authMain:2', JSON.stringify({type:'login', login: mp.storage.data.login}));
+                if (mp.storage.data.name)
+                    ui.callCef('authMain:2', JSON.stringify({type:'login', login: mp.storage.data.name}));
 
                 chat.show(false);
                 chat.activate(false);

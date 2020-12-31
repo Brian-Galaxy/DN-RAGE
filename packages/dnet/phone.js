@@ -944,7 +944,7 @@ phone.fractionMoney = function(player) {
         '' + methods.moneyFormat(coffer.getMoney(cofferId)),
     ));
 
-    if (user.isGos(player))
+    if (user.isGos(player) || user.isCartel(player))
     {
         items.push(phone.getMenuItemButton(
             `Оружие: ${coffer.get(cofferId, 'stock_gun')}ед.`,

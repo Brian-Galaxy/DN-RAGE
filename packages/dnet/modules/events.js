@@ -8758,11 +8758,11 @@ mp.events.add("__ragemp_cheat_detected", (player,  cheatCode) => {
 mp.events.add('playerJoin', player => {
 
 
-    if (!enums.whiteList.includes(player.socialClub)) { //TODO Убрать на открытии
-        player.outputChatBox("Сервер не доступен");
+    /*if (!enums.whiteList.includes(player.socialClub)) { //TODO Убрать на открытии
+        player.outputChatBox("Сервер будет доступен в 17:00 По МСК");
         player.kick();
         return;
-    }
+    }*/
 
     player.dimension = player.id + 1;
 

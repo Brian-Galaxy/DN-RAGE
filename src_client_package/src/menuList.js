@@ -2635,7 +2635,7 @@ menuList.showMeriaMainMenu = function() {
         {
             let discord = await menuList.getUserInput('Введите ваш DISCORD', '', 30);
             let text = await menuList.getUserInput('Почему вы хотите тут работать?', '', 100);
-            mp.game.ui.notifications.show(`~g~Заявление было отправлено, скоро с вами свяжуться в дискорде`);
+            mp.game.ui.notifications.show(`~g~Заявление было отправлено, скоро с вами свяжутся в дискорде`);
             mp.events.callRemote('server:discord:sendWorkGov', discord, text);
         }
         if (item.doName == 'createFamily')
@@ -2783,7 +2783,7 @@ menuList.showMeriaIslandMainMenu = function() {
         {
             let discord = await menuList.getUserInput('Введите ваш DISCORD', '', 30);
             let text = await menuList.getUserInput('Почему вы хотите тут работать?', '', 100);
-            mp.game.ui.notifications.show(`~g~Заявление было отправлено, скоро с вами свяжуться в дискорде`);
+            mp.game.ui.notifications.show(`~g~Заявление было отправлено, скоро с вами свяжутся в дискорде`);
             mp.events.callRemote('server:discord:sendWorkGov', discord, text);
         }
         if (item.doName == 'bank')

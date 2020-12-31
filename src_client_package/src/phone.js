@@ -286,7 +286,7 @@ phone.updateMainAppList = function() {
         { link: "/phone/android/umenu", action: 'gps', img: 'gps', name: 'GPS' },
         { link: "/phone/android/umenu", action: 'uveh', img: 'uveh', name: 'UVeh' },
         { link: "/phone/android/umenu", action: 'invader', img: 'invader', name: 'INews' },
-        //{ link: "/phone/android/umenu", action: 'browser', img: 'browser', name: 'Браузер' },
+        { link: "/phone/android/umenu", action: 'browser', img: 'browser', name: 'Браузер' },
         //{ link: "/phone/android/achiev", action: 'achiev', img: 'trophy', name: 'Достижения' },
     ];
 

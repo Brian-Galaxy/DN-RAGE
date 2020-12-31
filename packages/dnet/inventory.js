@@ -2048,12 +2048,10 @@ inventory.useItem = function(player, id, itemId, isTargetable = false) {
                         return;
                     }
 
-                    if (veh.engineHealth >= 999)
-                    {
-                        player.notify("~r~Автомобиль не поврежден");
-                        return;
+                    try {
+                        vehicles.set(veh.getVariable('container'), 's_eng', 100);
                     }
-
+                    catch (e) {}
                     veh.engineHealth = 1000.0;
 
                     user.playAnimation(player, "amb@medic@standing@kneel@enter", "enter", 8);

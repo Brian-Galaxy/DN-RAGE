@@ -10,6 +10,7 @@ import items from "./items";
 import phone from "./phone";
 import inventory from "./inventory";
 import chat from "./chat";
+import menuList from "./menuList";
 
 import quest from "./manager/quest";
 import bind from "./manager/bind";
@@ -600,6 +601,7 @@ user.respawn = function(x, y, z) {
 };
 
 user.teleportv = function(pos, rot, isHud = true) {
+    menuList.hide();
     isTeleport = true;
     mp.game.streaming.requestCollisionAtCoord(pos.x, pos.y, pos.z);
     user.showLoadDisplay(500, isHud);
@@ -622,6 +624,7 @@ user.teleportv = function(pos, rot, isHud = true) {
 };
 
 user.teleportVehV = function(pos, rot) {
+    menuList.hide();
     isTeleport = true;
     mp.game.streaming.requestAdditionalCollisionAtCoord(pos.x, pos.y, pos.z);
     mp.game.streaming.requestCollisionAtCoord(pos.x, pos.y, pos.z);

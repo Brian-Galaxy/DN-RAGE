@@ -7,6 +7,7 @@ let fraction = require('../property/fraction');
 
 let gangWar = require('../managers/gangWar');
 let mafiaWar = require('../managers/mafiaWar');
+let canabisWar = require('../managers/canabisWar');
 let racer = require('../managers/racer');
 let graffiti = require('../managers/graffiti');
 
@@ -264,11 +265,11 @@ mp.events.add('playerCommand', (player, command) => {
                 return;
             graffiti.createWar();
         }
-        else if (command.toLowerCase() === "gwar") {
-            if (!user.isAdmin(player))
-                return;
-            let war = gangWar.getWar(0);
-            gangWar.startWar(war.zoneId, war.attack, war.def, war.armor === 0, war.count);
+        else if (command.toLowerCase() === "capture") {
+            if (user.isGang(player))
+                player.call('client:menuList:showGangZoneAttackMenu', [gangWar.getNearZoneId(player.position)]);
+            if (user.isMafia(player))
+                player.call('client:menuList:showMafiaZoneAttackMenu', [canabisWar.getNearZoneId(player.position)]);
         }
         else if (command.toLowerCase() === "crimemwar") {
             if (!user.isAdmin(player))

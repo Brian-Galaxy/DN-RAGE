@@ -87,6 +87,19 @@ gangWar.getZoneList = function() {
     return list;
 };
 
+gangWar.getNearZoneId = function(pos) {
+    let zoneId = -1;
+    let prevPos = new mp.Vector3(9999, 9999, 9999);
+    gangList.forEach(item => {
+        let zPos = new mp.Vector3(item.x, item.y, item.z);
+        if (methods.distanceToPos(zPos, pos) < methods.distanceToPos(prevPos, pos)) {
+            prevPos = zPos;
+            zoneId = item.id;
+        }
+    });
+    return zoneId;
+};
+
 gangWar.getZoneWarList = function() {
     return warPool;
 };

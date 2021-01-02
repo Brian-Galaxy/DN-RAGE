@@ -183,29 +183,34 @@ shopMenu.resetControl2 = function() {
 };
 
 shopMenu.hideAll = function() {
-    ui.callCef('gunshop', '{"type": "hide"}');
-    ui.callCef('tattooshop', '{"type": "hide"}');
-    ui.callCef('carrent', '{"type": "hide"}');
-    ui.callCef('ndialog', '{"type": "hide"}');
+    try {
+        ui.callCef('gunshop', '{"type": "hide"}');
+        ui.callCef('tattooshop', '{"type": "hide"}');
+        ui.callCef('carrent', '{"type": "hide"}');
+        ui.callCef('ndialog', '{"type": "hide"}');
+    } catch (e) {}
 
     mp.players.local.setVisible(true, true);
 
-    shopMenu.resetControl();
-    shopMenu.resetControl2();
+    try {shopMenu.resetControl();} catch (e) {}
+    try {shopMenu.resetControl2();} catch (e) {}
     if (hidden) {
-        if (user.hasCache('seeMask')) {
-            user.reset('seeMask');
-            user.set('mask', -1);
-            user.set('mask_color', 0);
+        try {
+            if (user.hasCache('seeMask')) {
+                user.reset('seeMask');
+                user.set('mask', -1);
+                user.set('mask_color', 0);
+            }
+
+            user.updateCharacterFace();
+            user.updateCharacterCloth();
+
+            user.setVirtualWorld(0);
+            user.stopAllAnimation();
         }
-
-        user.updateCharacterFace();
-        user.updateCharacterCloth();
-
-        user.setVirtualWorld(0);
-        user.stopAllAnimation();
+        catch (e) {}
     }
-    hidden = false;
+    hidden = true;
 };
 
 shopMenu.getLastSettings = function() {

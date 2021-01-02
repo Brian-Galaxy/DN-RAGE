@@ -1187,7 +1187,7 @@ vehicles.updateOwnerInfo = function (id, userId, userName) {
 
         try {
             let vehInfo = methods.getVehicleInfo(vehicles.get(id, 'name'));
-            discord.sendMarketVehicles(`${vehInfo.display_name}`, `Гос. стоимость: ${methods.moneyFormat(vehInfo.price)}\nМакс. скорость: ~${vehInfo.sm}км/ч\nКласс: ${vehInfo.class_name}`, `https://state-99.com/client/images/carsv/640/${vehInfo.display_name}.jpg`);
+            discord.sendMarketVehicles(`${vehInfo.display_name}`, `Гос. стоимость: ${methods.moneyFormat(vehInfo.price)}\nМакс. скорость: ~${vehInfo.sm}км/ч\nКласс: ${vehInfo.class_name}`, `https://state-99.com/client/images/carsv/640/${vehInfo.display_name.toLowerCase()}.jpg`);
         }
         catch (e) {}
     }
@@ -1360,7 +1360,7 @@ vehicles.addNew = (model, count) => {
         mysql.executeQuery(`INSERT INTO cars (name, class, price, fuel, number) VALUES ('${vInfo.display_name}', '${vInfo.class_name}', '${vInfo.price}', '${vInfo.fuel_full}', '${vehicles.generateNumber()}')`);
     }
 
-    discord.sendMarketVehicles(`${vInfo.display_name}`, `Гос. стоимость: ${methods.moneyFormat(vInfo.price)}\nМакс. скорость: ~${vInfo.sm}км/ч\nКласс: ${vInfo.class_name}`, `https://state-99.com/client/images/carsv/640/${vInfo.display_name}.jpg`);
+    discord.sendMarketVehicles(`${vInfo.display_name}`, `Гос. стоимость: ${methods.moneyFormat(vInfo.price)}\nМакс. скорость: ~${vInfo.sm}км/ч\nКласс: ${vInfo.class_name}`, `https://state-99.com/client/images/carsv/640/${vInfo.display_name.toLowerCase()}.jpg`);
 };
 
 vehicles.addNewFraction = (model, count, fractionId, x = 0, y = 0, z = 0, rot = 0) => {

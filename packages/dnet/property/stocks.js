@@ -790,7 +790,7 @@ stocks.cargoUnload = function(player, bid = 1) {
             if (methods.distanceToPos(player.position, new mp.Vector3( -1314.7291259765625, -590.8836669921875, 27.772537231445312)) < 10)
                 fraction = 2;
             if (methods.distanceToPos(player.position, new mp.Vector3( 4990.25537109375, -5738.73486328125, 18.88131332397461)) < 10)
-                fraction = 6;
+                fraction = 9;
 
             let box = boxes[bid];
             boxes[bid] = -1;

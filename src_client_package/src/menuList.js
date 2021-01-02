@@ -6276,9 +6276,9 @@ menuList.showVehicleMenu = async function(data) {
         else if (item.cargoLoadMed) {
             UIMenu.Menu.HideMenu();
 
-            if (methods.distanceToPos(new mp.Vector3(5077.5576171875, -4633.783203125, 32.89536666870117), mp.players.local.position) > 10) {
+            if (methods.distanceToPos(new mp.Vector3(3579.362548828125, 3667.729736328125, 32.88863754272461), mp.players.local.position) > 10) {
                 mp.game.ui.notifications.show('~y~Вы слишком далеко от места загрузки');
-                user.setWaypoint(3581.2109375, 3663.407958984375);
+                user.setWaypoint(3579.362548828125, 3667.729736328125);
                 return;
             }
 

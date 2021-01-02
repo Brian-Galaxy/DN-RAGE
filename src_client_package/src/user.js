@@ -858,7 +858,7 @@ user.initCharCam = function(playerList) {
 
     try {
         user.setVirtualWorld(mp.players.local.remoteId + 1);
-        mp.players.local.position = new mp.Vector3(405.4717712402344, -974.6879272460938, -100.00418090820312 + 10);
+        mp.players.local.position = new mp.Vector3(425.4717712402344, -970.6879272460938, -100.00418090820312 + 10);
         //mp.players.local.position = new mp.Vector3(-460.69805908203125, -688.9095458984375, 71.20377349853516 + 10);
         mp.players.local.freezePosition(true);
         mp.players.local.setVisible(true, false);

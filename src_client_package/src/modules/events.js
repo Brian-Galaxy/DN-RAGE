@@ -1057,6 +1057,14 @@ mp.events.add('client:menuList:showAcceptClearWantedMenu', (id, price) => {
     menuList.showAcceptClearWantedMenu(id, price);
 });
 
+mp.events.add('client:menuList:showGangZoneAttackMenu', (id) => {
+    menuList.showGangZoneAttackMenu(id);
+});
+
+mp.events.add('client:menuList:showMafiaZoneAttackMenu', (id) => {
+    menuList.showCanabisZoneAttackMenu(id);
+});
+
 mp.events.add('client:menuList:showMechanicAcceptFuelMenu', (id, count, price) => {
     menuList.showMechanicAcceptFuelMenu(id, count, price);
 });
@@ -3811,6 +3819,7 @@ mp.keys.bind(0x1B, true, function() {
 
     if (edu.isShort() || edu.isLong())
         edu.stopAll();
+
     if (!ui.isShowHud())
         ui.showHud();
 
@@ -4481,6 +4490,9 @@ mp.events.add('render', () => {
 mp.events.add('render', () => {
 
     try {
+        if (mp.gui.cursor.visible || !shopMenu.isHide() || !phone.isHide() || !inventory.isHide() || !mainMenu.isHide() || cefMenu.isShow())
+            mp.game.controls.disableControlAction(0,200,true); // disable ESC
+
         if(_playerDisableAllControls) {
             mp.game.controls.disableAllControlActions(0);
             mp.game.controls.disableAllControlActions(1);

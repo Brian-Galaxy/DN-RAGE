@@ -458,8 +458,8 @@ user.loadUser = function(player, name, spawn = 'Стандарт') {
 
             if (user.get(player, 'date_ban') > methods.getTimeStamp()) {
                 user.resetAll(player);
-                //user.showCustomNotify(player, 'Аккаунт забанен до: ' + methods.unixTimeStampToDateTime(user.get(player, 'date_ban')), 1);
-                user.showCustomNotify(player, 'Вы забанены, подробности смотреть в дискорде, канал #dead-list', 1);
+                user.showCustomNotify(player, 'Аккаунт забанен до: ' + methods.unixTimeStampToDateTime(user.get(player, 'date_ban')), 1, 5, 60000);
+                //user.showCustomNotify(player, 'Вы забанены, подробности смотреть в дискорде, канал #dead-list', 1);
                 user.kick(player, 'Вы забанены');
                 return;
             }

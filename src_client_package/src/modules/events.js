@@ -3599,10 +3599,10 @@ mp.events.add('render', () => {
                     /*const isConnected = voice.getVoiceInfo(player, 'stateConnection') === 'connected';
                     const isEnable = voice.getVoiceInfo(player, 'enabled');*/
                     let indicatorColor = '~m~•';
-                    /*if (isConnected && !isEnable)
-                        indicatorColor = '~m~•';*/
                     if (player.getVariable('voiceMic'))
                         indicatorColor = '~w~•';
+                    if (player.localMute || !voiceRage.isEnableVoice())
+                        indicatorColor = '~r~•';
                     const headPosition = player.getBoneCoords(12844, 0, 0, 0);
 
                     let typingLabel = '';
@@ -4374,6 +4374,7 @@ mp.events.add("playerCommand", async (command) => {
 let timePress = 0;
 mp.events.add('render', () => //TODO Посадка ТС
 {
+
     if (methods.isBlockKeys())
         return;
     const controls = mp.game.controls;
@@ -4390,7 +4391,7 @@ mp.events.add('render', () => //TODO Посадка ТС
             if (mp.players.local.isInAnyVehicle(true))
                 return;
             timePress++;
-            if (timePress === 100) {
+            if (timePress === 150) {
                 let position = mp.players.local.position;
                 let vehicle = methods.getNearestVehicleWithCoords(position, 6);
 
@@ -4488,10 +4489,15 @@ mp.events.add('render', () => {
 });*/
 
 mp.events.add('render', () => {
+    try {
+        if (mp.gui.cursor.visible || !shopMenu.isHide() || !phone.isHide() || !inventory.isHide() || !mainMenu.isHide() || cefMenu.isShow() || UIMenu.Menu.IsShowInput())
+            mp.game.controls.disableControlAction(0, 200, true); // disable ESC
+    } catch (e) {}
+});
+
+mp.events.add('render', () => {
 
     try {
-        if (mp.gui.cursor.visible || !shopMenu.isHide() || !phone.isHide() || !inventory.isHide() || !mainMenu.isHide() || cefMenu.isShow())
-            mp.game.controls.disableControlAction(0,200,true); // disable ESC
 
         if(_playerDisableAllControls) {
             mp.game.controls.disableAllControlActions(0);

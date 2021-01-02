@@ -710,14 +710,7 @@ mp.events.addRemoteCounted('server:user:kickAntiCheat', (player, reason) => {
 });
 
 mp.events.addRemoteCounted('server:user:warnAntiCheat', (player, reason) => {
-    if (user.isLogin(player)) {
-        mp.players.forEach(function (p) {
-            if (!user.isLogin(p))
-                return;
-            if (user.isAdmin(p))
-                p.outputChatBoxNew(`!{#f44336}Подозрение в читерстве ${user.getRpName(player)} (${player.id}):!{#FFFFFF} ${reason}`);
-        });
-    }
+    chat.sendToAdmin(`Подозрение в читерстве ${user.getRpName(player)} (${player.id})`, reason);
 });
 
 mp.events.addRemoteCounted('server:user:banAntiCheat', (player, type, reason) => {
@@ -2094,12 +2087,12 @@ mp.events.addRemoteCounted('server:sendAsk', (player, message) => {
         return;
     if (message === undefined || message === 'undefined')
         return;
-    player.outputChatBoxNew(`!{#FFC107}Вопрос ${user.getRpName(player)} (${player.id}):!{#FFFFFF} ${message}`);
+    player.outputChatBoxNew(`[${chat.getTime()}] !{#FFC107}Вопрос ${user.getRpName(player)} (${player.id}):!{#FFFFFF} ${message}`);
     mp.players.forEach(function (p) {
         if (!user.isLogin(p))
             return;
         if (user.isHelper(p))
-            p.outputChatBoxNew(`!{#FFC107}Вопрос от ${user.getRpName(player)} (${player.id}):!{#FFFFFF} ${message}`);
+            p.outputChatBoxNew(`[${chat.getTime()}] !{#FFC107}Вопрос от ${user.getRpName(player)} (${player.id}):!{#FFFFFF} ${message}`);
     });
     methods.saveLog('log_chat', ['text'], [`HELPER: ${user.getRpName(player)} (${user.getId(player)}): ${methods.removeQuotes(methods.removeQuotes2(message))}`]);
 });
@@ -2111,15 +2104,15 @@ mp.events.addRemoteCounted('server:sendReport', (player, message) => {
     if (message === undefined || message === 'undefined')
         return;
 
-    player.outputChatBoxNew(`!{#f44336}Жалоба ${user.getRpName(player)} (${player.id}):!{#FFFFFF} ${message}`);
+    player.outputChatBoxNew(`[${chat.getTime()}] !{#f44336}Жалоба ${user.getRpName(player)} (${player.id}):!{#FFFFFF} ${message}`);
     mp.players.forEach(function (p) {
         if (!user.isLogin(p))
             return;
         if (user.isAdmin(p) && !user.get(p, 'status_rp')) {
             if (user.get(player, 'status_media') > 0)
-                p.outputChatBoxNew(`!{#3F51B5}[MEDIA] Жалоба от ${user.getRpName(player)} (${player.id}):!{#FFFFFF} ${message}`);
+                p.outputChatBoxNew(`[${chat.getTime()}] !{#3F51B5}[MEDIA] Жалоба от ${user.getRpName(player)} (${player.id}):!{#FFFFFF} ${message}`);
             else
-                p.outputChatBoxNew(`!{#f44336}Жалоба от ${user.getRpName(player)} (${player.id}):!{#FFFFFF} ${message}`);
+                p.outputChatBoxNew(`[${chat.getTime()}] !{#f44336}Жалоба от ${user.getRpName(player)} (${player.id}):!{#FFFFFF} ${message}`);
         }
     });
     methods.saveLog('log_chat', ['text'], [`REPORT: ${user.getRpName(player)} (${user.getId(player)}): ${methods.removeQuotes(methods.removeQuotes2(message))}`]);
@@ -2134,10 +2127,10 @@ mp.events.addRemoteCounted('server:sendAnswerAsk', (player, id, msg) => {
         if (!user.isLogin(p))
             return;
         if (user.isHelper(p))
-            p.outputChatBoxNew(`!{#FFC107}Ответ от хелпера ${user.getRpName(player)} игроку ${id}:!{#FFFFFF} ${msg}`);
+            p.outputChatBoxNew(`[${chat.getTime()}] !{#FBC02D}Ответ от хелпера ${user.getRpName(player)} игроку ${id}:!{#FFFFFF} ${msg}`);
         if (p.id != id)
             return;
-        p.outputChatBoxNew(`!{#FFC107}Ответ от хелпера ${user.getRpName(player)}:!{#FFFFFF} ${msg}`);
+        p.outputChatBoxNew(`[${chat.getTime()}] !{#FFC107}Ответ от хелпера ${user.getRpName(player)}:!{#FFFFFF} ${msg}`);
         //methods.saveLog('AnswerAsk', `${user.getRpName(player)} (${user.getId(player)}) to ${id}: ${msg}`);
         user.set(player, 'count_hask', user.get(player, 'count_hask') + 1);
 
@@ -2159,11 +2152,11 @@ mp.events.addRemoteCounted('server:sendAnswerReport', (player, id, msg) => {
         if (!user.isLogin(p))
             return;
         if (user.isAdmin(p))
-            p.outputChatBoxNew(`!{#f44336}Ответ от администратора ${user.getRpName(player)} игроку ${id}:!{#FFFFFF} ${msg}`);
+            p.outputChatBoxNew(`[${chat.getTime()}] !{#d32f2f}Ответ от администратора ${user.getRpName(player)} игроку ${id}:!{#FFFFFF} ${msg}`);
         if (p.id != id)
             return;
         p.call('client:mainMenu:addReport', [msg, `${user.getRpName(player)} (${player.id})`]);
-        p.outputChatBoxNew(`!{#f44336}Ответ от администратора ${user.getRpName(player)}:!{#FFFFFF} ${msg}`);
+        p.outputChatBoxNew(`[${chat.getTime()}] !{#f44336}Ответ от администратора ${user.getRpName(player)}:!{#FFFFFF} ${msg}`);
         //methods.saveLog('AnswerReport', `${user.getRpName(player)} (${user.getId(player)}) to ${id}: ${msg}`);
         user.set(player, 'count_aask', user.get(player, 'count_aask') + 1);
         methods.saveLog('log_chat', ['text'], [`REPORT ASK: ${user.getRpName(player)} (${user.getId(player)}) to ${user.getRpName(p)} (${user.getId(p)}): ${methods.removeQuotes(methods.removeQuotes2(msg))}`]);
@@ -5212,6 +5205,10 @@ mp.events.addRemoteCounted('server:mechanic:flip:accept', (player, id, price) =>
 
 mp.events.addRemoteCounted('server:tax:payTax', (player, type, score, sum) => {
     tax.payTax(player, type, sum, score);
+});
+
+mp.events.addRemoteCounted('server:tax:payTaxAll', (player, type, sum) => {
+    tax.payTaxAll(player, type, sum);
 });
 
 //Houses
@@ -8743,12 +8740,7 @@ mp.events.add("__ragemp_cheat_detected", (player,  cheatCode) => {
 
     if (cheatCode != 7 && cheatCode != 10 && cheatCode != 11 && cheatCode != 14 && cheatCode != 0 && cheatCode != 1) {
         if (user.isLogin(player)) {
-            mp.players.forEach(function (p) {
-                if (!user.isLogin(p))
-                    return;
-                if (user.isAdmin(p))
-                    p.outputChatBoxNew(`!{#f44336}Подозрение в читерстве ${user.getRpName(player)} (${player.id}):!{#FFFFFF} ${cheatName} #${cheatCode}`);
-            });
+            chat.sendToAdmin(`Подозрение в читерстве ${user.getRpName(player)} (${player.id})`, `${cheatName} #${cheatCode}`);
         }
     }
 

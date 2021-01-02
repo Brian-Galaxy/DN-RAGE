@@ -384,6 +384,41 @@ tax.payTax = function(player, type, sum, score) {
     });
 };
 
+tax.payTaxAll = function(player, type, sum) {
+    methods.debug('tax.payTax');
+    if (!user.isLogin(player))
+        return;
+
+    if (type == 0) {
+        if (user.getCashMoney(player) < sum) {
+            player.notify(`~r~У вас недостаточно средств`);
+            return;
+        }
+    }
+    else {
+        if (user.getBankMoney(player) < sum) {
+            player.notify(`~r~У вас недостаточно средств`);
+            return;
+        }
+    }
+
+    if (type == 0)
+        user.removeCashMoney(player, sum, 'Оплата налогов');
+    else
+        user.removeBankMoney(player, sum, 'Оплата налогов');
+
+    let uId = user.getId(player);
+    mysql.executeQuery("UPDATE houses SET tax_money = 0 WHERE user_id = " + uId);
+    mysql.executeQuery("UPDATE condos SET tax_money = 0 WHERE user_id = " + uId);
+    mysql.executeQuery("UPDATE yachts SET tax_money = 0 WHERE user_id = " + uId);
+    //mysql.executeQuery("UPDATE apartment SET tax_money = 0 WHERE user_id = " + uId);
+    mysql.executeQuery("UPDATE business SET tax_money = 0 WHERE user_id = " + uId);
+    mysql.executeQuery("UPDATE stocks SET tax_money = 0 WHERE user_id = " + uId);
+    mysql.executeQuery("UPDATE cars SET tax_money = 0 WHERE user_id = " + uId);
+    setTimeout(tax.updateTax, 1000);
+    player.notify(`~g~Вы оплатили все налоги`);
+};
+
 tax.removeTax = function() {
     methods.debug('tax.removeTax');
 

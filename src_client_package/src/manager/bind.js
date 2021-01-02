@@ -217,6 +217,7 @@ bind.allowKeyList = [
     ['Походка сидя', 's_bind_seat'],
     ['Голосовой чат', 's_bind_voice'],
     ['Перезагрузить голосовой чат', 's_bind_voice_reload'],
+    ['Вкл/Выкл голосовой чат', 's_bind_voice_en'],
     ['Управление рацией', 's_bind_voice_walkie'],
     ['Говорить в рацию', 's_bind_voice_radio'],
     ['Запуск двигателя', 's_bind_engine'],
@@ -311,6 +312,16 @@ for(let code in keyCodes) {
         if (user.getCache('s_bind_voice_reload') == parseInt(code)) {
             mp.voiceChat.cleanupAndReload(true, true, true);
             mp.game.ui.notifications.show('~b~Голосовой чат был перезагружен');
+        }
+        if (user.getCache('s_bind_voice_en') == parseInt(code)) {
+            if (voiceRage.isEnableVoice()) {
+                voiceRage.disableAllVoice();
+                mp.game.ui.notifications.show('~r~Голосовой чат был выключен');
+            }
+            else {
+                voiceRage.enableAllVoice();
+                mp.game.ui.notifications.show('~g~Голосовой чат был включен');
+            }
         }
 
         if (user.getCache('s_bind_helicam_vision') == parseInt(code)) {

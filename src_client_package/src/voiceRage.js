@@ -8,6 +8,8 @@ const MaxRange = 50.0;
 
 let voiceRage = {};
 
+let enableVoice = true;
+
 //0x4E
 let __CONFIG__ = {
     defaultDistance: 25, // default proximity distance
@@ -53,6 +55,25 @@ voiceRage.isEnable = function() {
     return !mp.voiceChat.muted;
 };
 
+voiceRage.isEnableVoice = function() {
+    return enableVoice;
+};
+
+voiceRage.enableAllVoice = function() {
+    enableVoice = true;
+};
+
+voiceRage.disableAllVoice = function() {
+    enableVoice = false;
+    //voiceRage.removeAllListeners();
+};
+
+voiceRage.removeAllListeners = function() {
+    voiceRage.listeners.forEach(p => {
+        voiceRage.remove(p, true);
+    })
+};
+
 voiceRage.clamp = (min, max, value) => {
     return Math.min(Math.max(min, value), max);
 };
@@ -96,8 +117,17 @@ voiceRage.generateVolume = (localPlayerPosition, targetPlayer, voiceDistance, di
 
     if (!user.isLogin())
         return 0;
+    if (!enableVoice)
+        return 0;
     if (targetPlayer.handle === 0)
         return 0;
+
+    if (targetPlayer.getVariable('work_lvl') < user.getCache('s_mute_lvl')) {
+        targetPlayer.localMute = true;
+        return 0;
+    }
+
+    targetPlayer.localMute = false;
 
     const calcVoiceDistance = voiceDistance * voiceDistance;
     const calcDublDist = distanceToPlayer * distanceToPlayer;

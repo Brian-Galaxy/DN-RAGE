@@ -166,6 +166,7 @@ mainMenu.updateInfoSettings = function(tab = 0, keyName = '') {
                         {type: 2, name: 'Перезагрузка #3', params: 'voice:reload:3', btntext: "Применить"},
                         {type: 2, name: 'Полная перезагрузка', params: 'voice:reload:4', btntext: "Применить"},
                         {type: 1, name: 'Громкость', params: 'voice:vol', active: methods.parseInt(user.getCache('s_voice_vol') * 10), listmenu: bgOpacity},
+                        {type: 1, name: 'Слышать игроков только', params: 'voice:work', active: methods.parseInt(user.getCache('s_mute_lvl')), listmenu: ['Всех', 'С 1 LVL', 'С 2 LVL']},
                     ]
                 },
                 {
@@ -742,6 +743,10 @@ mp.events.add('client:mainMenu:settings:updateList', async function(btn, index) 
     else if (btn === "voice:vol") {
         let voiceVol = index / 10;
         user.set('s_voice_vol', voiceVol);
+        mp.game.ui.notifications.show('~b~Настройки были сохранены');
+    }
+    else if (btn === "voice:work") {
+        user.set('s_mute_lvl', index);
         mp.game.ui.notifications.show('~b~Настройки были сохранены');
     }
     else if (btn === "chat:font") {

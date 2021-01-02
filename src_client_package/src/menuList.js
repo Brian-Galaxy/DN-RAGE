@@ -2953,6 +2953,10 @@ menuList.showMeriaTaxMenu = function() {
             }
         }
 
+        if (user.getCache('vip_type') || user.getCache('status_media')) {
+            UIMenu.Menu.AddMenuItem("~b~Оплатить все налоги", "", {allTax: true});
+        }
+
         UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: 'closeMenu'});
         UIMenu.Menu.Draw();
 
@@ -2971,7 +2975,69 @@ menuList.showMeriaTaxMenu = function() {
             if (item.itemId) {
                 menuList.showMeriaTaxInfoMenu(item.type, item.itemId);
             }
+            if (item.allTax) {
+                menuList.showMeriaTaxInfoAllMenu();
+            }
         });
+    });
+};
+
+menuList.showMeriaTaxInfoAllMenu = async function() {
+    let tax = 0;
+
+    if (user.getCache('house_id') > 0)
+        tax = tax + await houses.get(user.getCache('house_id'), 'tax_money');
+
+    if (user.getCache('condo_id') > 0)
+        tax = tax + await condos.get(user.getCache('condo_id'), 'tax_money');
+
+    /*if (user.getCache('apartment_id') > 0)
+        tax = tax + await condos.get(id, 'tax_money');*/
+
+    if (user.getCache('business_id') > 0)
+        tax = tax + await business.get(user.getCache('business_id'), 'tax_money');
+
+    if (user.getCache('stock_id') > 0)
+        tax = tax + await stocks.get(user.getCache('stock_id'), 'tax_money');
+
+    if (user.getCache('yacht_id') > 0)
+        tax = tax + await yachts.get(user.getCache('yacht_id'), 'tax_money');
+
+    for (let i = 1; i < 11; i++) {
+        if (user.getCache('car_id' + i) > 0) {
+            tax = tax + await vehicles.get(user.getCache('car_id' + i), 'tax_money');
+        }
+    }
+
+    UIMenu.Menu.Create(` `, `~b~` + name, 'gov', false, false, 'gov');
+
+    UIMenu.Menu.AddMenuItem(`~b~Ваша задолженность:~s~ ~r~${(tax == 0 ? "~g~Отсутствует" : `${methods.moneyFormat(tax)}`)}`);
+
+    UIMenu.Menu.AddMenuItem("Оплатить наличкой", "", {payTaxType: 0});
+    UIMenu.Menu.AddMenuItem("Оплатить картой", "", {payTaxType: 1});
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: 'closeMenu'});
+    UIMenu.Menu.Draw();
+
+    UIMenu.Menu.OnSelect.Add(async (item, index) => {
+        UIMenu.Menu.HideMenu();
+
+        if (item.payTaxType >= 0) {
+            let sum = methods.parseInt(await UIMenu.Menu.GetUserInput("Сумма", "", 9));
+            if (sum == 0)
+                return;
+
+            if (item.payTaxType === 0 && user.getCashMoney() < sum) {
+                mp.game.ui.notifications.show("~r~У Вас нет такой суммы на руках");
+                return;
+            }
+            if (item.payTaxType === 1 && user.getBankMoney() < sum) {
+                mp.game.ui.notifications.show("~r~У Вас нет такой суммы в банке");
+                return;
+            }
+
+            mp.events.callRemote('server:tax:payTaxAll', item.payTaxType, sum);
+        }
     });
 };
 
@@ -5185,7 +5251,7 @@ menuList.showPlayerStatsMenu = function() {
 
     UIMenu.Menu.AddMenuItem("~b~Вы играли:~r~", "", {}, `${methods.parseFloat(user.getCache('online_time') * 8.5 / 60).toFixed(1)}ч.`);
     UIMenu.Menu.AddMenuItem("~b~Вы играли сегодня:~r~", "", {}, `${methods.parseFloat(user.getCache('online_cont') * 8.5 / 60).toFixed(1)}ч.`);
-    UIMenu.Menu.AddMenuItem("~b~Вы играли (Конкурс):~r~", "", {}, `${methods.parseFloat(user.getCache('online_contall') * 8.5 / 60).toFixed(1)}ч.`);
+    //UIMenu.Menu.AddMenuItem("~b~Вы играли (Конкурс):~r~", "", {}, `${methods.parseFloat(user.getCache('online_contall') * 8.5 / 60).toFixed(1)}ч.`);
 
     if (user.getCache('vip_type') === 1)
         UIMenu.Menu.AddMenuItem("~b~VIP:", "", {}, `LIGHT`);
@@ -13197,7 +13263,7 @@ menuList.showCartelArsenalMenu = function() {
         UIMenu.Menu.AddMenuItem("~b~Починка оружия", "", {gunFix: true});
     }
 
-    UIMenu.Menu.AddMenuItem("~b~Сдача конфиската", "", {sellItems: true});
+    //UIMenu.Menu.AddMenuItem("~b~Сдача конфиската", "", {sellItems: true});
     UIMenu.Menu.AddMenuItem("~b~Оружие", "", {showGun: true});
     UIMenu.Menu.AddMenuItem("~b~Модули на оружие", "", {showGunMod: true});
 

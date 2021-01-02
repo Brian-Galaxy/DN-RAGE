@@ -2121,6 +2121,7 @@ user.setWorkExp = function(player, rep) {
     if (rep >= user.getWorkLvl(player) * 500) {
         user.set(player, 'work_exp', 0);
         user.set(player, 'work_lvl', user.getWorkLvl(player) + 1);
+        player.setVariable('work_lvl', user.getWorkLvl(player));
         try {
             let sum = user.getWorkLvl(player) * 1000;
             user.addMoney(player, sum);
@@ -2134,6 +2135,10 @@ user.setWorkExp = function(player, rep) {
         user.set(player, 'work_exp', 0);
     else
         user.set(player, 'work_exp', methods.parseInt(rep));
+
+    if (!player.getVariable('work_lvl'))
+        player.setVariable('work_lvl', user.getWorkLvl(player));
+
     user.updateClientCache(player);
 };
 
@@ -3228,10 +3233,11 @@ user.payDay = async function (player) {
         user.set(player, 'exp_age', user.get(player, 'exp_age') + 1);*/
 
     if (user.get(player, 'online_cont') === 56) {
-        //user.giveRandomMask(player, 30, true);
+        /*user.giveRandomMask(player, 30, true);
         user.addCashMoney(player, 30000, 'Бонус от государства');
         player.notify(`~g~Вы получили $30,000 отыграв 8 часов на сервере`);
-        user.set(player, 'online_cont', user.get(player, 'online_cont') + 1);
+        user.set(player, 'online_cont', user.get(player, 'online_cont') + 1);*/
+
         //user.set(player, 'online_cont', 999);*/
 
         /*let caseId = 1;

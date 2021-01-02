@@ -281,6 +281,7 @@ enums.userData = [
     "s_bind_voice_radio",
     "s_bind_voice_walkie",
     "s_bind_voice_reload",
+    "s_bind_voice_en",
     "s_bind_pnv",
     "s_bind_cloth",
     "s_bind_cloth2",
@@ -315,6 +316,7 @@ enums.userData = [
     "s_show_id",
     "s_show_v_id",
     "s_load_model",
+    "s_mute_lvl",
 
     "s_menu_sound",
     "s_menu_font",

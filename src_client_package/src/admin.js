@@ -162,6 +162,12 @@ admin.stopFreeCam = function() {
     user.setAlpha(255);
 };
 
+admin.teleportCamera = function(newPos) {
+    if (noClipCamera) {
+        noClipCamera.setCoord(newPos.x, newPos.y, newPos.z);
+    }
+};
+
 mp.events.add('render', function() {
     if (!noClipCamera || mp.gui.cursor.visible) {
         return;

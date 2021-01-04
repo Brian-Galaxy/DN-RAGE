@@ -45,6 +45,7 @@ enums.userData = [
     "id",
     "social",
     "name",
+    "name_dating",
     "age",
     "national",
     "money",

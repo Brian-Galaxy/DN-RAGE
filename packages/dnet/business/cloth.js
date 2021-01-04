@@ -127,7 +127,7 @@ cloth.checkPosForOpenMenu = function (player) {
 
                 if (shopType === 3 || shopType === 4 || shopType === 999) {
 
-                    player.position = new mp.Vector3(shopList[i][3], shopList[i][4], shopList[i][5] + 1);
+                    player.position = new mp.Vector3(shopList[i][3], shopList[i][4], shopList[i][5] + 1.05);
                     user.heading(player, shopList[i][6]);
                 }
                 else {
@@ -136,11 +136,11 @@ cloth.checkPosForOpenMenu = function (player) {
                         offset = 1;
 
                     if (player.dimension === 0 && offset === 0)
-                        player.position = new mp.Vector3(shopList[i + offset][3], shopList[i + offset][4], shopList[i + offset][5] + 1);
+                        player.position = new mp.Vector3(shopList[i + offset][3], shopList[i + offset][4], shopList[i + offset][5] + 1.05);
                     else if (offset === 0)
                         player.position = new mp.Vector3(shopList[i + offset][3], shopList[i + offset][4], shopList[i + offset][5]);
                     else
-                        player.position = new mp.Vector3(shopList[i + offset][3], shopList[i + offset][4], shopList[i + offset][5] + 1);
+                        player.position = new mp.Vector3(shopList[i + offset][3], shopList[i + offset][4], shopList[i + offset][5] + 1.05);
                     user.heading(player, shopList[i + offset][6]);
                 }
 

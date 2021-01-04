@@ -27,6 +27,7 @@ import vehicles from "./property/vehicles";
 import yachts from "./property/yachts";
 import npc from "./manager/npc";
 import cutscene from "./manager/cutscene";
+import admin from "./admin";
 
 
 let user = {};
@@ -610,6 +611,7 @@ user.teleportv = function(pos, rot, isHud = true) {
         isTeleport = true;
         mp.attachmentMngr.shutdownFor(mp.players.local);
         mp.players.local.position = pos;
+        admin.teleportCamera(pos);
         if (rot != undefined)
             mp.players.local.setRotation(0, 0, methods.parseInt(rot), 0, true);
         //methods.wait(500);
@@ -648,6 +650,7 @@ user.teleportVehV = function(pos, rot) {
                 if (rot != undefined)
                     mp.players.local.setRotation(0, 0, methods.parseInt(rot), 0, true);
                 mp.players.local.position = pos;
+                admin.teleportCamera(pos);
             }
         }
         catch (e) {
@@ -700,6 +703,9 @@ user.tpToWaypoint = function() { //TODO машина
             try {
                 mp.game.streaming.requestCollisionAtCoord(pos.x, pos.y, pos.z);
                 entity.position = new mp.Vector3(pos.x, pos.y, entity.position.z + 20);
+
+                admin.teleportCamera(pos);
+
                 let zPos = mp.game.gameplay.getGroundZFor3dCoord(mp.players.local.position.x, mp.players.local.position.y, mp.players.local.position.z, 0, false);
                 if (entity.position.z > 1000 || zPos != 0) {
                     entity.position = new mp.Vector3(pos.x, pos.y, zPos + 2);

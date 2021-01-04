@@ -39,6 +39,11 @@ items.updateItems = function(data)
     })*/
 };
 
+items.getItemList = function()
+{
+    return ItemList;
+};
+
 items.updateCraft = function(data)
 {
     items.recipes = data;

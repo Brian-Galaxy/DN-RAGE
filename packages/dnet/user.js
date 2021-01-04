@@ -508,7 +508,13 @@ user.loadUser = function(player, name, spawn = 'Стандарт') {
                 player.setVariable('name', user.get(player, 'name'));
                 player.setVariable('walkie', user.get(player, 'walkie_' + (user.get(player, 'walkie_current') + 1)));
                 player.setVariable('walkieBuy', user.get(player, 'walkie_buy'));
+                player.setVariable('status_media', user.get(player, 'status_media'));
                 player.dimension = 0;
+
+                user.setFractionId(player, user.get(player, 'fraction_id'));
+                user.setFractionId2(player, user.get(player, 'fraction_id2'));
+                user.setFamilyId(player, user.get(player, 'family_id'));
+                //user.setDatingName(player, user.get(player, 'name_dating'));
 
                 methods.loadDeleteObject(player);
 
@@ -2148,6 +2154,48 @@ user.getWorkExp = function(player) {
     return 0;
 };
 
+user.setFractionId = function(player, id) {
+    if (!user.isLogin(player))
+        return;
+    id = methods.parseInt(id);
+    user.set(player, 'fraction_id', id);
+    player.setVariable('fraction_id', id);
+};
+
+user.setFractionId2 = function(player, id) {
+    if (!user.isLogin(player))
+        return;
+    id = methods.parseInt(id);
+    user.set(player, 'fraction_id2', id);
+    player.setVariable('fraction_id2', id);
+};
+
+user.setFamilyId = function(player, id) {
+    if (!user.isLogin(player))
+        return;
+    id = methods.parseInt(id);
+    user.set(player, 'family_id', id);
+    player.setVariable('family_id', id);
+};
+
+user.setDatingName = function(player, value) {
+    if (!user.isLogin(player))
+        return;
+    value = methods.removeSpecialChars(value);
+
+    if (value.trim() === '')
+        value = user.getRpName(player);
+
+    user.set(player, 'name_dating', value);
+    player.setVariable('name_dating', value);
+};
+
+user.getWorkExp = function(player) {
+    if (user.has(player, 'work_exp'))
+        return methods.parseInt(user.get(player, 'work_exp'));
+    return 0;
+};
+
 user.getWorkLvl = function(player) {
     if (user.has(player, 'work_lvl'))
         return methods.parseInt(user.get(player, 'work_lvl'));
@@ -3233,10 +3281,10 @@ user.payDay = async function (player) {
         user.set(player, 'exp_age', user.get(player, 'exp_age') + 1);*/
 
     if (user.get(player, 'online_cont') === 56) {
-        /*user.giveRandomMask(player, 30, true);
+        user.giveRandomMask(player, 30, true);
         user.addCashMoney(player, 30000, 'Бонус от государства');
         player.notify(`~g~Вы получили $30,000 отыграв 8 часов на сервере`);
-        user.set(player, 'online_cont', user.get(player, 'online_cont') + 1);*/
+        user.set(player, 'online_cont', user.get(player, 'online_cont') + 1);
 
         //user.set(player, 'online_cont', 999);*/
 

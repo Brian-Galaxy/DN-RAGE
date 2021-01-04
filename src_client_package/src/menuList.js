@@ -4039,16 +4039,18 @@ menuList.showPlayerMenu = function() {
 
         UIMenu.Menu.AddMenuItem("Статистика", "", {doName: 'showPlayerStatsMenu'});
 
-        if (!user.getCache('is_take_vehicle')) {
+        /*if (!user.getCache('is_take_vehicle')) {
             UIMenu.Menu.AddMenuItem("~y~Получить BMW 760i", "", {doName: 'takeBMW'});
             UIMenu.Menu.AddMenuItem("~y~Получить Audi A8", "", {doName: 'takeAUDI'});
             UIMenu.Menu.AddMenuItem("~y~Получить Mercedes 600", "", {doName: 'takeMERC'});
-        }
+        }*/
 
         UIMenu.Menu.AddMenuItem("Взаимодействовать с причёской", "", {doName: 'changeHair'});
         UIMenu.Menu.AddMenuItemList("Наушники", ['~r~Выкл', '~g~Вкл'], "", {doName: 'changeMusic'}, user.currentStation >= 0 ? 1 : 0);
         UIMenu.Menu.AddMenuItem("Предыдущая радиостанция", "", {doName: 'changeMusicPrev'});
         UIMenu.Menu.AddMenuItem("Следующая радиостанция", "", {doName: 'changeMusicNext'});
+
+        //UIMenu.Menu.AddMenuItem("~b~Сменить имя", "Имя будет отображаться в организациях, в которой вы состоите", {doName: 'changeMusicNext'}, user.getCache('name_dating'));
 
         let list = [];
         let list2 = [];
@@ -12977,7 +12979,7 @@ menuList.showUsmcArsenalGunMenu = function() {
     if (user.getCache('rank_type') === 4 || user.isLeader() || user.isSubLeader() || user.isDepLeader() || user.isDepSubLeader()) {
         UIMenu.Menu.AddMenuItem("Beretta 90Two", "", {itemId: 78});
         UIMenu.Menu.AddMenuItem("Glock 17", "", {itemId: 146});
-        UIMenu.Menu.AddMenuItem("Raging Bull", "", {itemId: 74});
+        //UIMenu.Menu.AddMenuItem("Raging Bull", "", {itemId: 74});
         UIMenu.Menu.AddMenuItem("Benelli M3", "", {itemId: 90});
         UIMenu.Menu.AddMenuItem("Benelli M4", "", {itemId: 91});
         UIMenu.Menu.AddMenuItem("HK-416", "", {itemId: 110});
@@ -12986,7 +12988,7 @@ menuList.showUsmcArsenalGunMenu = function() {
         UIMenu.Menu.AddMenuItem("Коробка патронов 9mm", "", {itemId: 280});
         UIMenu.Menu.AddMenuItem("Коробка патронов 12 калибра", "", {itemId: 281});
         UIMenu.Menu.AddMenuItem("Коробка патронов 5.56mm", "", {itemId: 284});
-        UIMenu.Menu.AddMenuItem("Коробка патронов .44 Magnum", "", {itemId: 287});
+        //UIMenu.Menu.AddMenuItem("Коробка патронов .44 Magnum", "", {itemId: 287});
     }
 
     UIMenu.Menu.AddMenuItem("Бронежилет", "", {itemId: 252});
@@ -13932,6 +13934,8 @@ menuList.showAdminMenu = function() {
                 UIMenu.Menu.AddMenuItem("Выбор одежды", "", {doName: "clothMenu"});
             if (user.isAdmin(5))
                 UIMenu.Menu.AddMenuItem("Выбор масок", "", {doName: "maskMenu"});
+            if (user.isAdmin(4))
+                UIMenu.Menu.AddMenuItem("Выдача предмета", "", {doName: "giveItem"});
             if (user.isAdmin(2) && !user.isAdminRp())
                 UIMenu.Menu.AddMenuItem("Уведомление", "", {doName: "notify"});
             if (user.isAdmin(2) && !user.isAdminRp())
@@ -13985,8 +13989,9 @@ menuList.showAdminMenu = function() {
             else if (user.getCache('admin_level') === 5)
                 user.setVariable('adminRole', 'Main Admin');
             else if (user.getCache('admin_level') === 6)
-                user.setVariable('adminRole', 'Developer');
+                user.setVariable('adminRole', 'Admin');
             admin.godmode(true);
+            mp.events.call('client:idDist', 100);
         }
         if (item.doName == 'disableAdmin') {
             user.setAlpha(255);
@@ -14061,6 +14066,8 @@ menuList.showAdminMenu = function() {
             menuList.showAdminClothMenu();
         if (item.doName == 'maskMenu')
             menuList.showAdminMaskMenu();
+        if (item.doName == 'giveItem')
+            menuList.showAdminGiveItemMenu();
         if (item.doName == 'playerMenu')
         {
             try {
@@ -14882,6 +14889,36 @@ menuList.showAdminClothMenu = function() {
                     methods.saveFile('cloth', `user.setProp(player, ${i}, ${mp.players.local.getPropIndex(i)}, ${mp.players.local.getPropTextureIndex(i)});`);
             }
             mp.game.ui.notifications.show('Одежда была сохранена');
+        }
+    });
+};
+
+menuList.showAdminGiveItemMenu = function() {
+    UIMenu.Menu.Create(`Admin`, `~b~Список предметов`);
+
+    UIMenu.Menu.AddMenuItem("~b~Выдать предмет по ID", "", {doName: "all"});
+    let itemList = items.getItemList();
+    for (let i = 0; i < itemList.length; i++) {
+        if (!items.isCloth(i) && !items.isMask(i))
+            UIMenu.Menu.AddMenuItem(`~b~${i}.~s~ ${itemList[i][0]}`, '', {slotId: i});
+    }
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
+    UIMenu.Menu.Draw();
+
+    UIMenu.Menu.OnSelect.Add(async item => {
+        UIMenu.Menu.HideMenu();
+        if (item.slotId >= 0) {
+            inventory.takeNewItemJust(item.slotId, JSON.stringify({admin: user.getCache('id')}));
+            methods.saveLog('log_admin', ['name', 'type', 'do'], [`${user.getCache('name')}`, 'TAKE_ITEM', `${itemList[item.slotId][0]} | ${item.slotId}`]);
+        }
+        if (item.doName === 'all') {
+            let id = await UIMenu.Menu.GetUserInput("ID предмета", "", 5);
+            if (id === '')
+                return;
+            id = methods.parseInt(id);
+            inventory.takeNewItemJust(id, JSON.stringify({admin: user.getCache('id')}));
+            methods.saveLog('log_admin', ['name', 'type', 'do'], [`${user.getCache('name')}`, 'TAKE_ITEM', `${itemList[id][0]} | ${id}`]);
         }
     });
 };

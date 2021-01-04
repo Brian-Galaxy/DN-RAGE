@@ -5511,6 +5511,7 @@ phone.callBackModal = function(paramsJson) {
 
 phone.callBackModalInput = async function(paramsJson, text) {
     try {
+        mp.events.call('client:phone:inputModal', false);
         methods.debug(text);
         let params = JSON.parse(paramsJson);
         if (params.name == 'giveWanted') {
@@ -5959,18 +5960,18 @@ phone.callBackModalInput = async function(paramsJson, text) {
                     methods.notifyWithPictureToFraction(title, `Организация`, text, 'CHAR_DEFAULT', user.getCache('fraction_id'));
                     break;
             }
-            chat.sendToFraction(user.getCache('name') + '(' + user.getRankName() + ')', text);
+            chat.sendToFraction(`[${user.getRankName()}] ${user.getCache('name')} (${mp.players.local.remoteId})`, text);
         }
         if (params.name == 'sendFractionMessageDep') {
-            chat.sendToDep(user.getCache('name') + '(' + user.getFractionName() + ' | ' + user.getRankName() + ')', text);
+            chat.sendToDep(`[${user.getFractionName()} | ${user.getRankName()}] ${user.getCache('name')} (${mp.players.local.remoteId})`, text);
         }
         if (params.name == 'sendFractionMessage2') {
-            chat.sendToFraction(user.getCache('name'), text);
+            chat.sendToFraction(`${user.getCache('name')} (${mp.players.local.remoteId})`, text);
             let title = user.getCache('name');
             methods.notifyWithPictureToFraction2(title, `Организация`, text, 'CHAR_DEFAULT', user.getCache('fraction_id2'));
         }
         if (params.name == 'sendFractionMessageF') {
-            chat.sendToFamily(user.getCache('name'), text);
+            chat.sendToFamily(`${user.getCache('name')} (${mp.players.local.remoteId})`, text);
             let title = user.getCache('name');
             methods.notifyWithPictureToFractionF(title, `СЕМЬЯ`, text, 'CHAR_DEFAULT', user.getCache('family_id'));
         }
@@ -6325,6 +6326,7 @@ phone.callBackButton = async function(menu, id, ...args) {
                 user.set('fraction_id2', 0);
                 user.set('rank2', 0);
                 user.set('rank_type2', 0);
+                user.setVariable('fraction_id2', 0);
                 mp.game.ui.notifications.show(`~g~Вы покинули организацию`);
             }
             else if (params.name == 'unsetWar') {
@@ -6574,6 +6576,7 @@ phone.callBackButton = async function(menu, id, ...args) {
                 user.set('family_id', 0);
                 user.set('rankf', 0);
                 user.set('rank_typef', 0);
+                user.setVariable('family_id', 0);
                 mp.game.ui.notifications.show(`~g~Вы покинули семью`);
             }
         }

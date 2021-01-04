@@ -46,6 +46,7 @@ import fraction from "../property/fraction";
 import gr6 from "../jobs/gr6";
 import trucker from "../jobs/trucker";
 import bind from "../manager/bind";
+import admin from "../admin";
 
 
 mp.gui.chat.enabled = false;
@@ -812,6 +813,19 @@ mp.events.add('client:events:loginUser:success', async function() {
             methods.displayTypeAllBlipById(310, enums.blipDisplayIds[user.getCache('s_map_tt')]);
             methods.displayTypeAllBlipById(5, enums.blipDisplayIds[user.getCache('s_map_ghetto')]);
             methods.displayTypeAllBlipById(565, enums.blipDisplayIds[user.getCache('s_map_spawns')]);
+
+            if (user.isGos()) {
+                try {
+                    mp.blips.new(50, new mp.Vector3(585.6728515625, 2790.1337890625, 41.18254470825195),
+                        {
+                            name: 'Склад',
+                            color: 3,
+                            scale: 0.6,
+                            shortRange: true,
+                        });
+                }
+                catch (e) {}
+            }
         }
         catch (e) {
             methods.error('client:events:loginUser:success', e);
@@ -1057,12 +1071,12 @@ mp.events.add('client:menuList:showAcceptClearWantedMenu', (id, price) => {
     menuList.showAcceptClearWantedMenu(id, price);
 });
 
-mp.events.add('client:menuList:showGangZoneAttackMenu', (id) => {
-    menuList.showGangZoneAttackMenu(id);
+mp.events.add('client:menuList:showGangZoneAttackMenu', async (id) => {
+    menuList.showGangZoneAttackMenu(await Container.Data.GetAll(600000 + methods.parseInt(id)));
 });
 
-mp.events.add('client:menuList:showMafiaZoneAttackMenu', (id) => {
-    menuList.showCanabisZoneAttackMenu(id);
+mp.events.add('client:menuList:showMafiaZoneAttackMenu', async (id) => {
+    menuList.showCanabisZoneAttackMenu(await Container.Data.GetAll(600000 + methods.parseInt(id)));
 });
 
 mp.events.add('client:menuList:showMechanicAcceptFuelMenu', (id, count, price) => {
@@ -3609,6 +3623,8 @@ mp.events.add('render', () => {
                     let pref = '';
                     if (player.getVariable('enableAdmin'))
                         pref = '~r~';
+                    if (player.getVariable('status_media') && user.isAdmin())
+                        pref = '~p~';
                     if (player.getVariable('isTyping'))
                         typingLabel += '\n~b~Печатает...';
                     if (player.getVariable('isAfk'))
@@ -3618,6 +3634,13 @@ mp.events.add('render', () => {
                         pref = '~m~';
 
                     let name = 'Игрок | ';
+                    if (
+                        player.getVariable('fraction_id') === mp.players.local.getVariable('fraction_id') ||
+                        player.getVariable('fraction_id2') === mp.players.local.getVariable('fraction_id2') ||
+                        player.getVariable('family_id') === mp.players.local.getVariable('family_id')
+                    )
+                        name = player.getVariable('name') + ' | ';
+
                     if (user.hasDating(player.getVariable('idLabel')))
                         name = user.getDating(player.getVariable('idLabel')) + ' | ';
                     if (player.getVariable('enableAdmin') && player.getVariable('adminRole'))
@@ -3725,6 +3748,18 @@ mp.keys.bind(0x38, true, function() {
         return;
     if (!methods.isBlockInputKeys())
         menuList.showAdminMenu();
+});
+
+mp.keys.bind(116, true, function() {
+    if (!user.isLogin() || !user.isAdmin())
+        return;
+    if (!methods.isBlockInputKeys() && mp.players.local.getVariable('enableAdmin') === true)
+    {
+        if (!admin.isFreeCam())
+            admin.startFreeCam();
+        else
+            admin.stopFreeCam();
+    }
 });
 
 mp.keys.bind(0x12, true, function() {
@@ -4208,7 +4243,31 @@ mp.events.add("playerCommand", async (command) => {
             if (!user.isLogin() || !user.isAdmin())
                 return;
             let args = command.toLowerCase().split(' ');
-            user.teleport(parseFloat(args[1]), parseFloat(args[2]), parseFloat(args[3]));
+            if (args.length > 2)
+                user.teleport(parseFloat(args[1]), parseFloat(args[2]), parseFloat(args[3]));
+            else
+                mp.events.callRemote('server:admin:tptoid', 0, methods.parseInt(args[1]));
+        }
+        else if (command.toLowerCase().slice(0, 2) === "gh" || command.toLowerCase().slice(0, 3) === "tpm") {
+            if (!user.isLogin() || !user.isAdmin())
+                return;
+            let args = command.toLowerCase().split(' ');
+            mp.events.callRemote('server:admin:tptome', 0, methods.parseInt(args[1]));
+        }
+        else if (command.toLowerCase().slice(0, 6) === "getcar" || command.toLowerCase().slice(0, 3) === "tpv") {
+            if (!user.isLogin() || !user.isAdmin())
+                return;
+            let args = command.toLowerCase().split(' ');
+            mp.events.callRemote('server:admin:tptov', 0, methods.parseInt(args[1]));
+        }
+        else if (command.toLowerCase().slice(0, 8) === "spawncar" || command.toLowerCase().slice(0, 3) === "veh") {
+            if (!user.isLogin() || !user.isAdmin())
+                return;
+            let args = command.toLowerCase().split(' ');
+            let vName = args[1];
+            mp.events.callRemote('server:admin:spawnVeh', vName);
+            let pos = mp.players.local.position;
+            methods.saveLog('log_admin', ['name', 'type', 'do'], [`${user.getCache('name')}`, 'VEH_SPAWN', `${vName} | ${methods.parseInt(pos.x)} | ${methods.parseInt(pos.y)} | ${methods.parseInt(pos.z)}`]);
         }
         else if (command.toLowerCase().slice(0, 5) === "help ") {
             if (!user.isLogin())
@@ -4222,25 +4281,13 @@ mp.events.add("playerCommand", async (command) => {
             mp.events.callRemote('server:sendReport', command.substring(7));
             mp.events.callRemote('client:mainMenu:addReport', command.substring(7));
         }
-        else if (command.toLowerCase().slice(0, 4) === "help") {
-            if (!user.isLogin())
-                return;
-            chat.sendLocal(`!{FFC107}Помощь`);
-            chat.sendLocal('Для того чтобы получить справку по серверу, вы можете задать вопрос через М - Обращения или воспользоваться FAQ через М - FAQ');
-        }
-        else if (command.toLowerCase().slice(0, 1) === "a") {
-            if (!user.isLogin() || !user.isAdmin())
-                return;
-            let args = command.toLowerCase().split(' ');
-            user.playAnimation(args[1], args[2], args[3]);
-        }
-        else if (command.toLowerCase().slice(0, 2) === "h ") {
+        else if (command.toLowerCase().slice(0, 3) === "hi ") {
             if (!user.isLogin() || !user.isAdmin(5))
                 return;
             let args = command.split(' ');
             if (args.length != 4) {
                 chat.sendLocal(`Не верно введено кол-во параметров `);
-                chat.sendLocal(`/h [ID Интерьера] [№ Дома] [Цена] `);
+                chat.sendLocal(`/hi [ID Интерьера] [№ Дома] [Цена] `);
                 return;
             }
             mp.events.callRemote('server:houses:insert', args[1], args[2], args[3], ui.getCurrentZone(), ui.getCurrentStreet())

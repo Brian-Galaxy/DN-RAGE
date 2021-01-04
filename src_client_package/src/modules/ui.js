@@ -440,6 +440,10 @@ ui.updateValues = function() {
             };
             ui.callCef('hudl', JSON.stringify(data));
 
+            let questDesc = '';
+            if (user.getCache( 'online_cont') < 56)
+                questDesc = `На сервере действует акция, отыграй 8 часов за 1 день и получи $30.000 и редкую маску! Вам осталось: ${((56 - user.getCache( 'online_cont')) * 8.5).toFixed(1)} мин.`;
+
             if (user.getCache('quests') && user.getCache('s_hud_quest')) {
 
                 if (user.getCache('startProlog') < 10)
@@ -470,6 +474,7 @@ ui.updateValues = function() {
                         showQuest: true,
                         questTitle: 'Квестовое задание',
                         questText: currentTask,
+                        questDesc: questDesc,
                     };
 
                     if (currentTask !== questPrev) {
@@ -492,6 +497,7 @@ ui.updateValues = function() {
                             showQuest: true,
                             questTitle: 'Колесо удачи',
                             questText: `Теперь вам доступно прокрутить колесо удачи в казино Diamond!`,
+                            questDesc: questDesc,
                         };
                         ui.callCef('hudl', JSON.stringify(data));
                     }
@@ -501,6 +507,7 @@ ui.updateValues = function() {
                             showQuest: true,
                             questTitle: 'Колесо удачи',
                             questText: `Отыграв 3 часа на сервере, у вас есть возможность прокрутить колесо удачи и один из главных призов это дорогой автомобиль, маска или VIP HARD. Вам осталось: ${((21 - user.getCache( 'online_wheel')) * 8.5).toFixed(1)} мин.`,
+                            questDesc: questDesc,
                         };
                         ui.callCef('hudl', JSON.stringify(data));
                     }

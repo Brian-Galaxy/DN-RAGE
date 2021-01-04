@@ -3947,6 +3947,8 @@ mp.events.addRemoteCounted('server:phone:inviteFraction2', (player, id) => {
         user.set(target, 'is_leader2', false);
         user.set(target, 'is_sub_leader2', false);
 
+        user.setFractionId2(target, fractionId);
+
         target.notify('~g~Вас приняли в организацию');
         player.notify('~b~Вы приняли: ~s~' + user.getRpName(target));
 
@@ -3989,6 +3991,8 @@ mp.events.addRemoteCounted('server:phone:inviteFamily', (player, id) => {
         user.set(target, 'family_id', fractionId);
         user.set(target, 'is_leaderf', false);
         user.set(target, 'is_sub_leaderf', false);
+
+        user.setFamilyId(target, fractionId);
 
         target.notify('~g~Вас приняли в семью');
         player.notify('~b~Вы приняли: ~s~' + user.getRpName(target));
@@ -6894,6 +6898,8 @@ mp.events.addRemoteCounted('server:user:uninvite', (player, id) => {
         user.set(target, 'is_leader', false);
         user.set(target, 'is_sub_leader', false);
 
+        user.setFractionId(target, 0);
+
         target.notify('~r~Вас уволили из организации');
         player.notify('~b~Вы уволили сотрудника: ~s~' + user.getRpName(target));
 
@@ -6926,6 +6932,8 @@ mp.events.addRemoteCounted('server:user:uninvite2', (player, id) => {
         user.set(target, 'is_leader2', false);
         user.set(target, 'is_sub_leader2', false);
 
+        user.setFractionId2(target, 0);
+
         target.notify('~r~Вас уволили из организации');
         player.notify('~b~Вы уволили сотрудника: ~s~' + user.getRpName(target));
 
@@ -6956,6 +6964,8 @@ mp.events.addRemoteCounted('server:user:uninviteF', (player, id) => {
         user.set(target, 'family_id', 0);
         user.set(target, 'is_leaderf', false);
         user.set(target, 'is_sub_leaderf', false);
+
+        user.setFamilyId(target, 0);
 
         target.notify('~r~Вас выгнали из семьи');
         player.notify('~b~Вы уволили: ~s~' + user.getRpName(target));
@@ -6995,13 +7005,16 @@ mp.events.addRemoteCounted('server:user:invite', (player, id) => {
         user.addHistory(target, 0, 'Был принят в организацию ' + user.getFractionName(player) + '. Принял: ' + user.getRpName(player));
 
         let rank = enums.fractionListId[user.get(player, 'fraction_id')].rankList[0].length - 1;
+        let fractionId = user.get(player, 'fraction_id');
 
         user.set(target, 'rank', rank);
         user.set(target, 'rank_type', 0);
-        user.set(target, 'fraction_id', user.get(player, 'fraction_id'));
+        user.set(target, 'fraction_id', fractionId);
         user.set(target, 'is_leader', false);
         user.set(target, 'is_sub_leader', false);
         user.set(target, 'job', 0);
+
+        user.setFractionId(target, fractionId);
 
         target.notify('~g~Вас приняли в организацию ' + user.getFractionName(player));
         player.notify('~b~Вы приняли сотрудника: ~s~' + user.getRpName(target));

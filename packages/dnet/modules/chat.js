@@ -254,35 +254,37 @@ mp.events.add('playerCommand', (player, command) => {
         else if (command.toLowerCase().slice(0, 2) === "f ") {
             if (user.get(player, 'family_id') > 0)
                 chat.sendToFamily(player, `${user.getRpName(player)} (${player.id})`, command.substring(2));
+            else if(user.get(player, 'fraction_id') > 0 || user.get(player, 'fraction_id2') > 0)
+                player.notify('~r~Необходимо состоять в семье, используйте /r чтобы писать во фракционный чат');
             else
-                player.notify('~r~Необходимо состоять в семье')
+                player.notify('~r~Необходимо состоять в семье');
         }
         else if (command.toLowerCase().slice(0, 2) === "r ") {
             if (user.get(player, 'fraction_id') > 0)
-                chat.sendToFraction(player, `${user.getRpName(player)} [${user.getRankName(player)}] (${player.id})`, command.substring(2));
+                chat.sendToFraction(player, `[${user.getRankName(player)}] ${user.getRpName(player)} (${player.id})`, command.substring(2));
             else if (user.get(player, 'fraction_id2') > 0)
                 chat.sendToFraction(player, `${user.getRpName(player)} (${player.id})`, command.substring(2));
             else
-                player.notify('~r~Необходимо состоять в гос. организации или крайм. организации')
+                player.notify('~r~Необходимо состоять в организации')
         }
         else if (command.toLowerCase().slice(0, 2) === "d ") {
             if (user.isGos(player) || user.isNews(player))
-                chat.sendToDep(`${user.getRpName(player)} [${user.getFractionName(player)} | ${user.getRankName(player)}] (${player.id})`, command.substring(2));
+                chat.sendToDep(`[${user.getFractionName(player)} | ${user.getRankName(player)}] ${user.getRpName(player)} (${player.id})`, command.substring(2));
             else
                 player.notify('~r~Необходимо состоять в гос. организации')
         }
         else if (command.toLowerCase().slice(0, 2) === "a ") {
             if (user.isAdmin(player))
-                chat.sendToAdmin(`${user.getRpName(player)} [LVL: ${user.get(player, 'admin_level')}] (${player.id})`, command.substring(2), '#4CAF50');
+                chat.sendToAdmin(`[Admin LVL: ${user.get(player, 'admin_level')}] ${user.getRpName(player)} (${player.id})`, command.substring(2), '#4CAF50');
         }
         else if (command.toLowerCase().slice(0, 2) === "h ") {
             if (user.isHelper(player))
-                chat.sendToAdmin(`${user.getRpName(player)} [LVL: ${user.get(player, 'helper_level')}] (${player.id})`, command.substring(2));
+                chat.sendToHelper(`[Helper LVL: ${user.get(player, 'helper_level')}] ${user.getRpName(player)} (${player.id})`, command.substring(2));
         }
         /*else if (command.toLowerCase().slice(0, 2) === "z ") {
             console.log(gangWar.isInZone(player, methods.parseInt(command.substring(2))));
         }*/
-        else if (command.toLowerCase() === "p" || command.toLowerCase() === "netstat") {
+        else if (command.toLowerCase() === "ping" || command.toLowerCase() === "netstat") {
             player.notify("~g~Ping: " + player.ping + "ms\n~g~PacketLoss: " + player.packetLoss + "ms");
         }
         else if (command.toLowerCase() === "crimewar" || command.toLowerCase().slice(0, 9) === "crimewar ") {
@@ -296,10 +298,13 @@ mp.events.add('playerCommand', (player, command) => {
             graffiti.createWar();
         }
         else if (command.toLowerCase() === "capture") {
-            if (user.isGang(player))
-                player.call('client:menuList:showGangZoneAttackMenu', [gangWar.getNearZoneId(player.position)]);
-            if (user.isMafia(player))
-                player.call('client:menuList:showMafiaZoneAttackMenu', [canabisWar.getNearZoneId(player.position)]);
+            try {
+                if (user.isGang(player))
+                    player.call('client:menuList:showGangZoneAttackMenu', [gangWar.getNearZoneId(player.position)]);
+                if (user.isMafia(player))
+                    player.call('client:menuList:showMafiaZoneAttackMenu', [canabisWar.getNearZoneId(player.position)]);
+            }
+            catch (e) {}
         }
         else if (command.toLowerCase() === "crimemwar") {
             if (!user.isAdmin(player))
@@ -382,8 +387,14 @@ mp.events.add('playerCommand', (player, command) => {
         }
         else if (command.slice(0, 6) === "report ") {}
         else if (command.slice(0, 6) === "help ") {}
+        else if (command.toLowerCase() === "help") {
+            player.outputChatBoxNew(`!{FFC107}Список доступных команд`);
+            player.outputChatBoxNew(`!{FFC107}Чаты:!{FFFFFF} /d - Департамент, /r - Фракционный, /f - Семейный`);
+            player.outputChatBoxNew(`!{FFC107}РП процесс:!{FFFFFF} /me - Действия от 1 лица, /do - Действие от 3 лица, /try - Рандомайзер, /b ООС чат`);
+            player.outputChatBoxNew(`!{FFC107}Разное:!{FFFFFF} /help [текст] - Вопрос у хелперов, /report [текст] - жалоба, /ping - Узнать свой пинг`);
+        }
         else {
-            player.outputChatBoxNew(`!{FFC107}На сервере нет команд, кроме: /me, /do, /try, /b, /f, /r, /d, /report, /help. Используйте меню на кнопку M`);
+           // player.outputChatBoxNew(`!{FFC107}На сервере нет команд, кроме: /me, /do, /try, /b, /f, /r, /d, /report, /help. Используйте меню на кнопку M`);
         }
     }
     catch (e) {

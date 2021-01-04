@@ -298,6 +298,12 @@ pickups.ElShopPos2 = new mp.Vector3(-658.6975, -854.5909, 23.50342);
 pickups.ElShopPos11 = new mp.Vector3(1137.675, -470.7754, 65.66285);
 pickups.ElShopPos12 = new mp.Vector3(1136.156, -470.4759, 65.70986);
 
+//Island
+pickups.IslandPos1 = new mp.Vector3(-341.480224609375, -2777.105712890625, 4.000120162963867);
+pickups.IslandPos1.rot = 1;
+pickups.IslandPos2 = new mp.Vector3(5076.19287109375, -4648.87451171875, 1.310251235961914);
+pickups.IslandPos2.rot = 57;
+
 /*Club*/
 pickups.ClubUserPos = new mp.Vector3(-1569.33, -3016.98, -75.40616);
 pickups.ClubTehUserPos = new mp.Vector3(4.723007, 220.3487, 106.7251);
@@ -567,6 +573,11 @@ pickups.checkPressLAlt = function(player) {
             player.vehicle.dimension = 130;
         user.teleportVeh(player, pickups.ClubVPos.x, pickups.ClubVPos.y, pickups.ClubVPos.z + 1, pickups.ClubVPos.rot);
     }*/
+
+    if (methods.distanceToPos(pickups.IslandPos1, playerPos) < distanceCheck)
+        user.teleportVeh(player, pickups.IslandPos2.x, pickups.IslandPos2.y, pickups.IslandPos2.z + 1, pickups.IslandPos2.rot);
+    if (methods.distanceToPos(pickups.IslandPos2, playerPos) < distanceCheck)
+        user.teleportVeh(player, pickups.IslandPos1.x, pickups.IslandPos1.y, pickups.IslandPos1.z + 1, pickups.IslandPos1.rot);
 
     //gr6
     methods.checkTeleport(player, new mp.Vector3(486.0731, -1075.497, 28.00087), new mp.Vector3(486.0519, -1078.475, 28.19953));
@@ -1249,9 +1260,12 @@ pickups.createAll = function() {
     methods.createCpVector(pickups.ClubTehUserPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
     methods.createCpVector(pickups.ClubGalaxyUserPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
     methods.createCpVector(pickups.ClubUserPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
-    methods.createCpVector(pickups.ClubGalaxyVPos, "Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом", 4, -1, pickups.Blue100, 0.3);
-    methods.createCpVector(pickups.ClubTehVPos, "Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом", 4, -1, pickups.Blue100, 0.3);
-    methods.createCpVector(pickups.ClubLsVPos, "Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом", 4, -1, pickups.Blue100, 0.3);
+    //methods.createCpVector(pickups.ClubGalaxyVPos, "Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом", 4, -1, pickups.Blue100, 0.3);
+    //methods.createCpVector(pickups.ClubTehVPos, "Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом", 4, -1, pickups.Blue100, 0.3);
+    //methods.createCpVector(pickups.ClubLsVPos, "Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом", 4, -1, pickups.Blue100, 0.3);
+
+    methods.createCpVector(pickups.IslandPos1, "Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом", 4, -1, pickups.Blue100, 0.3);
+    methods.createCpVector(pickups.IslandPos2, "Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом", 4, -1, pickups.Blue100, 0.3);
 
     methods.createCpVector(business.BusinessOfficePos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);
     methods.createCpVector(business.BusinessStreetPos, 'Нажмите ~g~Left Alt~s~ чтобы воспользоваться пикапом', 1, -1, pickups.Blue100);

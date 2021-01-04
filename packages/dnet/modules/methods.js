@@ -992,11 +992,14 @@ methods.loadAllBlips = function () {
     methods.createBlip(new mp.Vector3(-1654.792236328125, -948.4613037109375, 7.716407775878906), 225, 2, 0.8, 'Б/У Авторынок');
     methods.createBlip(new mp.Vector3(903.91162109375, -165.71511840820312, 73.09003448486328), 198, 5, 0.8, 'Таксопарк');
 
-    methods.createBlip(pickups.BotSellGun, 728, 5, 0.8, 'Литейный Завод');
+    methods.createBlip(pickups.BotSellGun, 728, 5, 0.6, 'Литейный Завод');
     methods.createBlip(pickups.BotSellCloth, 728, 3, 0.6, 'Швейная Фабрика');
 
-    methods.createBlip(pickups.BotSellGun1, 728, 5, 0.8, 'Литейный Завод');
+    methods.createBlip(pickups.BotSellGun1, 728, 5, 0.6, 'Литейный Завод');
     methods.createBlip(pickups.BotSellCloth1, 728, 3, 0.6, 'Швейная Фабрика');
+
+    methods.createBlip(pickups.IslandPos1, 404, 0, 0.8, 'Переправа');
+    methods.createBlip(pickups.IslandPos2, 404, 0, 0.8, 'Переправа');
 
     methods.createBlip(new mp.Vector3(742.2985229492188, -925.4149780273438, 23.978235244750977), 728, 39, 0.6, 'Black Market');
     methods.createBlip(new mp.Vector3(-1685.0235595703125, -763.0075073242188, 9.18997859954834), 728, 0, 0.6, 'Market');

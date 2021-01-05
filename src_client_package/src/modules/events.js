@@ -65,9 +65,6 @@ mp.events.add('chatEnabled', (isEnabled) => {
     methods.disableAllControls(isEnabled);
 });
 
-let maxSpeed = 500;
-let newMaxSpeed = 0;
-let newMaxSpeedServer = 0;
 let _playerDisableAllControls = false;
 let _playerDisableDefaultControls = false;
 
@@ -3404,9 +3401,9 @@ mp.events.add("client:vehicle:checker", async function () {
 
             boost = boost + vehicles.getSpeedBoost(vehicle.model);
 
-            maxSpeed = vehicles.getSpeedMax(vehicle.model);
-            if (maxSpeed == 1)
-                maxSpeed = 350;
+            timer.maxSpeed = vehicles.getSpeedMax(vehicle.model);
+            if (timer.maxSpeed == 1)
+                timer.maxSpeed = 350;
 
             let locSpeed = vehicles.getSpeedMax(vehicle.model);
 
@@ -3433,15 +3430,15 @@ mp.events.add("client:vehicle:checker", async function () {
                         if (methods.getRandomInt(0, 10) < 4) {
                             vehicles.engineVehicle(false);
                         }
-                        maxSpeed = locSpeed * 0.5;
+                        timer.maxSpeed = locSpeed * 0.5;
                     }
                     else if (s_eng < 40)
-                        maxSpeed = locSpeed * 0.7;
+                        timer.maxSpeed = locSpeed * 0.7;
                     let s_trans = car.get('s_trans');
                     if (s_trans < 20)
-                        maxSpeed = locSpeed * 0.4;
+                        timer.maxSpeed = locSpeed * 0.4;
                     else if (s_trans < 40)
-                        maxSpeed = locSpeed * 0.6;
+                        timer.maxSpeed = locSpeed * 0.6;
                 }
             }
             catch (e) {
@@ -3455,37 +3452,37 @@ mp.events.add("client:vehicle:checker", async function () {
             /*for (let i = 0; i < 5; i++) {
                 if (vehicle.getMod(11) === i) {
                     boost = boost + (i + 1);
-                    maxSpeed = maxSpeed + 5 * (i + 1);
+                    timer.maxSpeed = timer.maxSpeed + 5 * (i + 1);
                 }
             }*/
 
             if (vehicle.getMod(11) === 0) {
-                maxSpeed = maxSpeed + 8;
+                timer.maxSpeed = timer.maxSpeed + 8;
                 boost = boost + 2;
             }
             else if (vehicle.getMod(11) === 1) {
-                maxSpeed = maxSpeed + 14;
+                timer.maxSpeed = timer.maxSpeed + 14;
                 boost = boost + 3;
             }
             else if (vehicle.getMod(11) === 2) {
-                maxSpeed = maxSpeed + 18;
+                timer.maxSpeed = timer.maxSpeed + 18;
                 boost = boost + 4;
             }
             else if (vehicle.getMod(11) === 3 || vehicle.getMod(11) === 4) {
-                maxSpeed = maxSpeed + 20;
+                timer.maxSpeed = timer.maxSpeed + 20;
                 boost = boost + 5;
             }
 
             if (vehicle.getMod(13) === 0) {
-                maxSpeed = maxSpeed + 5;
+                timer.maxSpeed = timer.maxSpeed + 5;
                 boost = boost + 2;
             }
             else if (vehicle.getMod(13) === 1) {
-                maxSpeed = maxSpeed + 8;
+                timer.maxSpeed = timer.maxSpeed + 8;
                 boost = boost + 3;
             }
             else if (vehicle.getMod(13) === 2 || vehicle.getMod(11) === 3) {
-                maxSpeed = maxSpeed + 10;
+                timer.maxSpeed = timer.maxSpeed + 10;
                 boost = boost + 4;
             }
 
@@ -3494,10 +3491,10 @@ mp.events.add("client:vehicle:checker", async function () {
             else if (boost > 1)
                 vehicle.setEnginePowerMultiplier(boost);
 
-            if (newMaxSpeed > 0)
-                maxSpeed = newMaxSpeed;
-            if (newMaxSpeedServer > 0)
-                maxSpeed = newMaxSpeedServer;
+            if (timer.newMaxSpeed > 0)
+                timer.maxSpeed = timer.newMaxSpeed;
+            if (timer.newMaxSpeedServer > 0)
+                timer.maxSpeed = timer.newMaxSpeedServer;
         }
         else
             isSetHandling = 0;
@@ -3509,9 +3506,9 @@ mp.events.add("client:vehicle:checker", async function () {
 
 mp.events.add("client:setNewMaxSpeed", function (speed) {
     try {
-        newMaxSpeed = speed;
-        if (newMaxSpeed < 10 && newMaxSpeed > 0)
-            newMaxSpeed = 10;
+        timer.newMaxSpeed = speed;
+        if (timer.newMaxSpeed < 10 && timer.newMaxSpeed > 0)
+            timer.newMaxSpeed = 10;
 
         mp.events.call('client:vehicle:checker');
     }
@@ -3522,9 +3519,9 @@ mp.events.add("client:setNewMaxSpeed", function (speed) {
 
 mp.events.add("client:setNewMaxSpeedServer", function (speed) {
     try {
-        newMaxSpeedServer = speed;
-        if (newMaxSpeedServer < 10 && newMaxSpeedServer > 0)
-            newMaxSpeedServer = 10;
+        timer.newMaxSpeedServer = speed;
+        if (timer.newMaxSpeedServer < 10 && timer.newMaxSpeedServer > 0)
+            timer.newMaxSpeedServer = 10;
 
         mp.events.call('client:vehicle:checker');
     }
@@ -3534,8 +3531,8 @@ mp.events.add("client:setNewMaxSpeedServer", function (speed) {
 });
 
 mp.events.add("playerLeaveVehicle", async function (entity) {
-    newMaxSpeed = 0;
-    newMaxSpeedServer = 0;
+    timer.newMaxSpeed = 0;
+    timer.newMaxSpeedServer = 0;
     isSetHandling = 0;
 
     let vehicle =  mp.players.local.vehicle;
@@ -3635,9 +3632,9 @@ mp.events.add('render', () => {
 
                     let name = 'Игрок | ';
                     if (
-                        player.getVariable('fraction_id') === mp.players.local.getVariable('fraction_id') ||
-                        player.getVariable('fraction_id2') === mp.players.local.getVariable('fraction_id2') ||
-                        player.getVariable('family_id') === mp.players.local.getVariable('family_id')
+                        player.getVariable('fraction_id') === mp.players.local.getVariable('fraction_id') && mp.players.local.getVariable('fraction_id') > 0 ||
+                        player.getVariable('fraction_id2') === mp.players.local.getVariable('fraction_id2') && mp.players.local.getVariable('fraction_id2') > 0 ||
+                        player.getVariable('family_id') === mp.players.local.getVariable('family_id') && mp.players.local.getVariable('family_id') > 0
                     )
                         name = player.getVariable('name') + ' | ';
 
@@ -4632,33 +4629,6 @@ mp.events.add('render', () => {
             mp.game.controls.disableControlAction(0, 5, true);
             mp.game.controls.disableControlAction(0, 6, true);
         }
-
-        //Колесо оружия
-        mp.game.controls.disableControlAction(0, 12, true);
-        mp.game.controls.disableControlAction(0, 14, true);
-        mp.game.controls.disableControlAction(0, 15, true);
-        mp.game.controls.disableControlAction(0, 16, true);
-        mp.game.controls.disableControlAction(0, 17, true);
-        mp.game.controls.disableControlAction(0, 37, true);
-        mp.game.controls.disableControlAction(0, 53, true);
-        mp.game.controls.disableControlAction(0, 54, true);
-        mp.game.controls.disableControlAction(0, 56, true);
-        mp.game.controls.disableControlAction(0, 99, true);
-        mp.game.controls.disableControlAction(0, 115, true); //FLY WEAP
-        mp.game.controls.disableControlAction(0, 116, true); //FLY WEAP
-        mp.game.controls.disableControlAction(0, 157, true);
-        mp.game.controls.disableControlAction(0, 158, true);
-        mp.game.controls.disableControlAction(0, 159, true);
-        mp.game.controls.disableControlAction(0, 160, true);
-        mp.game.controls.disableControlAction(0, 161, true);
-        mp.game.controls.disableControlAction(0, 162, true);
-        mp.game.controls.disableControlAction(0, 163, true);
-        mp.game.controls.disableControlAction(0, 164, true);
-        mp.game.controls.disableControlAction(0, 165, true);
-        mp.game.controls.disableControlAction(0, 261, true);
-        mp.game.controls.disableControlAction(0, 262, true);
-        mp.game.controls.disableControlAction(0, 99, true);
-        mp.game.controls.disableControlAction(0, 100, true);
     }
     catch (e) {
         
@@ -4843,24 +4813,6 @@ mp.events.add('render', () => {
     //TODO
     //if (user.isLogin() && user.getCache('mp0_shooting_ability') < 70)
     //    mp.game.ui.hideHudComponentThisFrame(14);
-});
-
-mp.events.add('render', () => {
-    try {
-        let vehicle = mp.players.local.vehicle;
-        if (mp.vehicles.exists(vehicle) && mp.players.local.isInAnyVehicle(false)) {
-            // And fix max speed
-            vehicle.setMaxSpeed(maxSpeed / 3.6); // fix max speed
-            if (vehicle.getVariable('boost') > 0) {
-                vehicle.setEngineTorqueMultiplier(vehicle.getVariable('boost'));
-            }
-            else
-                vehicle.setEngineTorqueMultiplier(1.3);
-        }
-    }
-    catch (e) {
-
-    }
 });
 
 mp.events.add('render', () => {

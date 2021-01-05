@@ -9105,9 +9105,9 @@ mp.events.add('playerReady', player => {
     };
 });
 
-process.on('exit', (code) => {
+/*process.on('exit', (code) => {
     methods.debug(code);
-});
+});*/
 
 /*process.on('SIGINT', shutdownProcess);  // Runs when you Ctrl + C in console
 process.on('SIGHUP', shutdownProcess);  // Runs when you press the 'Close' button on your server.exe window
@@ -9116,10 +9116,10 @@ function shutdownProcess(){
     process.exit(0);
 }*/
 
-process
+/*process
     .on('unhandledRejection', (reason, p) => {
         console.error(reason, 'Unhandled Rejection at Promise', p);
     })
     .on('uncaughtException', err => {
         console.error(err, 'Uncaught Exception thrown');
-    });
+    });*/

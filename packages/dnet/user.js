@@ -515,6 +515,7 @@ user.loadUser = function(player, name, spawn = 'Стандарт') {
                 user.setFractionId2(player, user.get(player, 'fraction_id2'));
                 user.setFamilyId(player, user.get(player, 'family_id'));
                 //user.setDatingName(player, user.get(player, 'name_dating'));
+                player.setVariable('work_lvl', user.getWorkLvl(player));
 
                 methods.loadDeleteObject(player);
 

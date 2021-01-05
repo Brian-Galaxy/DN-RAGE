@@ -165,13 +165,32 @@ class Data {
 
             mp.events.callRemote('modules:server:data:Set', 400000 + 5382, 's_fuel', 0, true);
             mp.events.callRemote('modules:server:data:Set',0, 'stats_endurance', 0, true);
+            mp.events.callRemote('modules:server:data:Set',5, 'house_id', 0, true);
             log_bank_user
             */
 
-            /*mp.events.callRemote('modules:server:data:Set', 600000 + 1, 'spawn_x', -1501.6224365234375, true);
-            mp.events.callRemote('modules:server:data:Set', 800000 + 1, 'spawn_y', 857.4970703125, true);
-            mp.events.callRemote('modules:server:data:Set', 800000 + 1, 'spawn_z', 180.59469604492188, true);
-            mp.events.callRemote('modules:server:data:Set', 800000 + 1, 'spawn_rot', 27.865131378173828, true);*/
+            /*mp.events.callRemote('modules:server:data:Set', 800000 + 16, 'spawn_x', 1391.58837890625, true);
+            mp.events.callRemote('modules:server:data:Set', 800000 + 16, 'spawn_y', 1138.05615234375, true);
+            mp.events.callRemote('modules:server:data:Set', 800000 + 16, 'spawn_z', 113.44335174560547, true);
+            mp.events.callRemote('modules:server:data:Set', 800000 + 16, 'spawn_rot', 91.1656265258789, true);
+
+
+            mp.events.callRemote('modules:server:data:Set', 800000 + 17, 'spawn_x', -1520.3663330078125, true);
+            mp.events.callRemote('modules:server:data:Set', 800000 + 17, 'spawn_y',  852.3690795898438, true);
+            mp.events.callRemote('modules:server:data:Set', 800000 + 17, 'spawn_z', 180.59475708007812, true);
+            mp.events.callRemote('modules:server:data:Set', 800000 + 17, 'spawn_rot', 26.737918853759766, true);
+
+            mp.events.callRemote('modules:server:data:Set', 800000 + 18, 'spawn_x', -115.00753021240234, true);
+            mp.events.callRemote('modules:server:data:Set', 800000 + 18, 'spawn_y', 987.402099609375, true);
+            mp.events.callRemote('modules:server:data:Set', 800000 + 18, 'spawn_z', 234.75180053710938, true);
+            mp.events.callRemote('modules:server:data:Set', 800000 + 18, 'spawn_rot', 107.83210754394531, true);
+
+            */
+
+            /*RespMaf1, 1391.58837890625, 1138.05615234375, 113.44335174560547, 91.1656265258789
+            RespMaf2, -115.00753021240234, 987.402099609375, 234.75180053710938, 107.83210754394531
+            RespMaf3, -1520.3663330078125, 852.3690795898438, 180.59475708007812, 26.737918853759766*/
+
 
         } catch (e) {
             methods.debug(`CLNT: [SET] ERR: ${e}`);

@@ -426,6 +426,9 @@ bank.withdraw = function(player, money, procent = 0) {
         return;
     }
 
+    if (user.get(player, 'bank_card') < 1)
+        return;
+
     if (user.getBankMoney(player) < money) {
         player.notify('~r~У Вас недостаточно средств');
         return;
@@ -433,8 +436,10 @@ bank.withdraw = function(player, money, procent = 0) {
 
     if (procent == 0) {
         user.sendSmsBankOperation(player, 'Вывод: ~g~$' + methods.numberFormat(money));
-        user.addCashMoney(player, money, 'Вывод средств через отделение банка');
         user.removeBankMoney(player, money, 'Вывод средств через отделение банка');
+        user.addCashMoney(player, money, 'Вывод средств через отделение банка');
+
+        inventory.updateItemCountByItemId(50, user.getBankMoney(player), user.getId(player));
     }
     else {
         let sum = methods.parseInt(money * ((100 - procent) / 100));
@@ -442,8 +447,10 @@ bank.withdraw = function(player, money, procent = 0) {
 
         user.sendSmsBankOperation(player, 'Вывод: ~g~$' + methods.numberFormat(sum));
         bank.addBusinessBankMoneyByCard(user.getBankCardPrefix(player), sumBank);
-        user.addCashMoney(player, sum, 'Вывод средств через банкомат');
         user.removeBankMoney(player, money, 'Вывод средств через банкомат');
+        user.addCashMoney(player, sum, 'Вывод средств через банкомат');
+
+        inventory.updateItemCountByItemId(50, user.getBankMoney(player), user.getId(player));
     }
     user.save(player);
     //}, 1500);
@@ -465,10 +472,15 @@ bank.deposit = function(player, money, procent = 0) {
         return;
     }
 
+    if (user.get(player, 'bank_card') < 1)
+        return;
+
     if (procent == 0) {
         user.sendSmsBankOperation(player, 'Зачисление: ~g~$' + methods.numberFormat(money));
-        user.addBankMoney(player, money, 'Зачисление в отделении банка');
         user.removeCashMoney(player, money, 'Зачисление в отделении банка');
+        user.addBankMoney(player, money, 'Зачисление в отделении банка');
+
+        inventory.updateItemCountByItemId(50, user.getBankMoney(player), user.getId(player));
     }
     else {
         let sum = methods.parseInt(money * ((100 - procent) / 100));
@@ -476,8 +488,10 @@ bank.deposit = function(player, money, procent = 0) {
 
         user.sendSmsBankOperation(player, 'Зачисление: ~g~$' + methods.numberFormat(sum));
         bank.addBusinessBankMoneyByCard(user.getBankCardPrefix(player), sumBank);
-        user.addBankMoney(player, sum, 'Зачисление через банкомат');
         user.removeCashMoney(player, money, 'Зачисление через банкомат');
+        user.addBankMoney(player, sum, 'Зачисление через банкомат');
+
+        inventory.updateItemCountByItemId(50, user.getBankMoney(player), user.getId(player));
     }
     user.save(player);
 };

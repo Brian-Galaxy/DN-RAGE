@@ -822,11 +822,6 @@ inventory.equip = function(player, id, itemId, count, aparams) {
                 }
                 catch (e) {
                     methods.debug(e);
-                    methods.debug(e);
-                    methods.debug(e);
-                    methods.debug(e);
-                    methods.debug(e);
-                    methods.debug(e);
                 }
             }
             else if (itemId == 264 || itemId == 263) {
@@ -1077,6 +1072,19 @@ inventory.updateItemCount = function(id, count) {
         methods.saveLog('log_inventory',
             ['type', 'text'],
             ['UPDATE_COUNT', `id:${id}, count:${count}`],
+        );
+    } catch(e) {
+        methods.debug(e);
+    }
+};
+
+inventory.updateItemCountByItemId = function(itemId, count, ownerId, ownerType = 1, isEquip = 1) {
+    try {
+        mysql.executeQuery(`UPDATE items SET count = '${count}', timestamp_update = '${methods.getTimeStamp()}' where item_id = '${itemId}' AND is_equip = '${isEquip}' AND owner_id = '${ownerId}' AND owner_type = '${ownerType}'`);
+
+        methods.saveLog('log_inventory',
+            ['type', 'text'],
+            ['UPDATE_COUNT', `itemId:${itemId}, ownerType:${ownerType}, ownerId:${ownerId}, count:${count}`],
         );
     } catch(e) {
         methods.debug(e);

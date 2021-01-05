@@ -8167,6 +8167,8 @@ menuList.showBankMenu = async function(bankId, price) {
                     if (mStr == '')
                         return;
                     let money = methods.parseFloat(mStr);
+                    if (money < 1)
+                        return;
                     if (user.getBankMoney() > money)
                         user.setCache('money_bank', user.getBankMoney() - methods.parseFloat(money));
                     mp.events.callRemote(item.eventName, money, 0);
@@ -8176,6 +8178,8 @@ menuList.showBankMenu = async function(bankId, price) {
                     if (mStr == '')
                         return;
                     let money = methods.parseFloat(mStr);
+                    if (money < 1)
+                        return;
                     mp.events.callRemote(item.eventName, money, 0);
                 }
                 else if (item.eventName == 'server:bank:transferMoney') {
@@ -8272,12 +8276,16 @@ menuList.showAtmMenu = async function() {
         UIMenu.Menu.HideMenu();
         if (item.eventName == 'server:bank:withdraw') {
             let money = methods.parseFloat(await UIMenu.Menu.GetUserInput("Сумма снятия", "", 11));
+            if (money < 1)
+                return;
             if (user.getBankMoney() > money)
                 user.setCache('money_bank', user.getBankMoney() - methods.parseFloat(money));
             mp.events.callRemote(item.eventName, money, 1);
         }
         else if (item.eventName == 'server:bank:deposit') {
             let money = methods.parseFloat(await UIMenu.Menu.GetUserInput("Сумма внесения", "", 11));
+            if (money < 1)
+                return;
             mp.events.callRemote(item.eventName, money, 1);
         }
         else if (item.eventName == 'server:bank:transferMoney') {

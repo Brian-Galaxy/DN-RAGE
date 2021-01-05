@@ -42,6 +42,11 @@ let timer = {};
 
 let intervalMap = new Map();
 
+
+timer.maxSpeed = 500;
+timer.newMaxSpeed = 0;
+timer.newMaxSpeedServer = 0;
+
 timer.createInterval = function(key, func, delay) {
     if (intervalMap.has(key))
         return null;
@@ -912,59 +917,107 @@ timer.loadAll = function () {
     }
 
     timer.createInterval('event.renderControl', function () {
-        mp.game.controls.disableControlAction(0,36,true); //LEFT CONTROL
+        try {
+            mp.game.controls.disableControlAction(0,36,true); //LEFT CONTROL
 
-        mp.game.controls.disableControlAction(0,68,true); //ATTACK VEHICLE
-        mp.game.controls.disableControlAction(0,114,true); //ATTACK FLY
-        mp.game.controls.disableControlAction(0,331,true); //ATTACK FLY
-        mp.game.controls.disableControlAction(0,350,true); //E JUMP
+            mp.game.controls.disableControlAction(0,68,true); //ATTACK VEHICLE
+            mp.game.controls.disableControlAction(0,114,true); //ATTACK FLY
+            mp.game.controls.disableControlAction(0,331,true); //ATTACK FLY
+            mp.game.controls.disableControlAction(0,350,true); //E JUMP
 
-        mp.game.controls.disableControlAction(0,243,true);
+            mp.game.controls.disableControlAction(0,243,true);
 
-        mp.game.controls.disableControlAction(0,44,true); //Q укрытие
+            mp.game.controls.disableControlAction(0,44,true); //Q укрытие
 
-        mp.game.controls.disableControlAction(0,53,true); //Фонарик на оружие
-        mp.game.controls.disableControlAction(0,54,true);
+            mp.game.controls.disableControlAction(0,53,true); //Фонарик на оружие
+            mp.game.controls.disableControlAction(0,54,true);
 
-        //DELUXO FIX
-        mp.game.controls.disableControlAction(0,357,true);
+            //DELUXO FIX
+            mp.game.controls.disableControlAction(0,357,true);
 
-        if (isDisableControl) {
-            mp.game.controls.disableControlAction(0, 21, true); //disable sprint
-            mp.game.controls.disableControlAction(0, 24, true); //disable attack
-            mp.game.controls.disableControlAction(0, 25, true); //disable aim
-            mp.game.controls.disableControlAction(0, 47, true); //disable weapon
-            mp.game.controls.disableControlAction(0, 58, true); //disable weapon
-            mp.game.controls.disableControlAction(0, 263, true); //disable melee
-            mp.game.controls.disableControlAction(0, 264, true); //disable melee
-            mp.game.controls.disableControlAction(0, 257, true); //disable melee
-            mp.game.controls.disableControlAction(0, 140, true); //disable melee
-            mp.game.controls.disableControlAction(0, 141, true); //disable melee
-            mp.game.controls.disableControlAction(0, 142, true); //disable melee
-            mp.game.controls.disableControlAction(0, 143, true); //disable melee
-            //mp.game.controls.disableControlAction(0, 75, true); //disable exit vehicle
-            //mp.game.controls.disableControlAction(27, 75, true); //disable exit vehicle
-            mp.game.controls.disableControlAction(0, 32, true); //move (w)
-            mp.game.controls.disableControlAction(0, 34, true); //move (a)
-            mp.game.controls.disableControlAction(0, 33, true); //move (s)
-            mp.game.controls.disableControlAction(0, 35, true); //move (d)
-            mp.game.controls.disableControlAction(0, 59, true);
-            mp.game.controls.disableControlAction(0, 60, true);
+            //Колесо оружия
+            mp.game.controls.disableControlAction(0, 12, true);
+            mp.game.controls.disableControlAction(0, 14, true);
+            mp.game.controls.disableControlAction(0, 15, true);
+            mp.game.controls.disableControlAction(0, 16, true);
+            mp.game.controls.disableControlAction(0, 17, true);
+            mp.game.controls.disableControlAction(0, 37, true);
+            mp.game.controls.disableControlAction(0, 53, true);
+            mp.game.controls.disableControlAction(0, 54, true);
+            mp.game.controls.disableControlAction(0, 56, true);
+            mp.game.controls.disableControlAction(0, 99, true);
+            mp.game.controls.disableControlAction(0, 115, true); //FLY WEAP
+            mp.game.controls.disableControlAction(0, 116, true); //FLY WEAP
+            mp.game.controls.disableControlAction(0, 157, true);
+            mp.game.controls.disableControlAction(0, 158, true);
+            mp.game.controls.disableControlAction(0, 159, true);
+            mp.game.controls.disableControlAction(0, 160, true);
+            mp.game.controls.disableControlAction(0, 161, true);
+            mp.game.controls.disableControlAction(0, 162, true);
+            mp.game.controls.disableControlAction(0, 163, true);
+            mp.game.controls.disableControlAction(0, 164, true);
+            mp.game.controls.disableControlAction(0, 165, true);
+            mp.game.controls.disableControlAction(0, 261, true);
+            mp.game.controls.disableControlAction(0, 262, true);
+            mp.game.controls.disableControlAction(0, 99, true);
+            mp.game.controls.disableControlAction(0, 100, true);
+
+            if (isDisableControl) {
+                mp.game.controls.disableControlAction(0, 21, true); //disable sprint
+                mp.game.controls.disableControlAction(0, 24, true); //disable attack
+                mp.game.controls.disableControlAction(0, 25, true); //disable aim
+                mp.game.controls.disableControlAction(0, 47, true); //disable weapon
+                mp.game.controls.disableControlAction(0, 58, true); //disable weapon
+                mp.game.controls.disableControlAction(0, 263, true); //disable melee
+                mp.game.controls.disableControlAction(0, 264, true); //disable melee
+                mp.game.controls.disableControlAction(0, 257, true); //disable melee
+                mp.game.controls.disableControlAction(0, 140, true); //disable melee
+                mp.game.controls.disableControlAction(0, 141, true); //disable melee
+                mp.game.controls.disableControlAction(0, 142, true); //disable melee
+                mp.game.controls.disableControlAction(0, 143, true); //disable melee
+                //mp.game.controls.disableControlAction(0, 75, true); //disable exit vehicle
+                //mp.game.controls.disableControlAction(27, 75, true); //disable exit vehicle
+                mp.game.controls.disableControlAction(0, 32, true); //move (w)
+                mp.game.controls.disableControlAction(0, 34, true); //move (a)
+                mp.game.controls.disableControlAction(0, 33, true); //move (s)
+                mp.game.controls.disableControlAction(0, 35, true); //move (d)
+                mp.game.controls.disableControlAction(0, 59, true);
+                mp.game.controls.disableControlAction(0, 60, true);
+            }
+
+            if(ui.isGreenZone() && !user.isPolice() && !user.isGov()) {
+                mp.game.controls.disableControlAction(2, 24, true);
+                mp.game.controls.disableControlAction(2, 25, true);
+                mp.game.controls.disableControlAction(2, 66, true);
+                mp.game.controls.disableControlAction(2, 67, true);
+                mp.game.controls.disableControlAction(2, 69, true);
+                mp.game.controls.disableControlAction(2, 70, true);
+                mp.game.controls.disableControlAction(2, 140, true);
+                mp.game.controls.disableControlAction(2, 141, true);
+                mp.game.controls.disableControlAction(2, 142, true);
+                mp.game.controls.disableControlAction(2, 143, true);
+                mp.game.controls.disableControlAction(2, 257, true);
+                mp.game.controls.disableControlAction(2, 263, true);
+            }
         }
+        catch (e) {}
+    }, 5);
 
-        if(ui.isGreenZone() && !user.isPolice() && !user.isGov()) {
-            mp.game.controls.disableControlAction(2, 24, true);
-            mp.game.controls.disableControlAction(2, 25, true);
-            mp.game.controls.disableControlAction(2, 66, true);
-            mp.game.controls.disableControlAction(2, 67, true);
-            mp.game.controls.disableControlAction(2, 69, true);
-            mp.game.controls.disableControlAction(2, 70, true);
-            mp.game.controls.disableControlAction(2, 140, true);
-            mp.game.controls.disableControlAction(2, 141, true);
-            mp.game.controls.disableControlAction(2, 142, true);
-            mp.game.controls.disableControlAction(2, 143, true);
-            mp.game.controls.disableControlAction(2, 257, true);
-            mp.game.controls.disableControlAction(2, 263, true);
+    timer.createInterval('event.renderSpeed', function () {
+        try {
+            let vehicle = mp.players.local.vehicle;
+            if (mp.vehicles.exists(vehicle) && mp.players.local.isInAnyVehicle(false)) {
+                // And fix max speed
+                vehicle.setMaxSpeed(timer.maxSpeed / 3.6); // fix max speed
+                if (vehicle.getVariable('boost') > 0) {
+                    vehicle.setEngineTorqueMultiplier(vehicle.getVariable('boost'));
+                }
+                else
+                    vehicle.setEngineTorqueMultiplier(1.3);
+            }
+        }
+        catch (e) {
+
         }
     }, 5);
 };

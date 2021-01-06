@@ -53,7 +53,7 @@ inventory.deleteWorldItems = function() {
     });
 };
 
-inventory.getItemList = function(player, ownerType, ownerId, isFrisk = false, isTie = false) {
+inventory.getItemList = function(player, ownerType, ownerId, isFrisk = false, justUpdate = false) {
 
     ownerId = methods.parseInt(ownerId);
 
@@ -111,7 +111,7 @@ inventory.getItemList = function(player, ownerType, ownerId, isFrisk = false, is
 
             for (let i = 0; i < methods.parseInt(data.length / 300) + 1; i++) {
                 if (i === 0)
-                    player.call('client:showToPlayerItemListMenu', [data.slice(i * 300, i * 300 + 299), ownerType, ownerId.toString(), isFrisk]);
+                    player.call('client:showToPlayerItemListMenu', [data.slice(i * 300, i * 300 + 299), ownerType, ownerId.toString(), isFrisk, justUpdate]);
                 else
                     player.call('client:showToPlayerItemListAddMenu', [data.slice(i * 300, i * 300 + 299), ownerType, ownerId.toString(), isFrisk]);
             }
@@ -1711,11 +1711,11 @@ inventory.useItem = function(player, id, itemId, isTargetable = false) {
                         return;
                     }
 
-                    let dateTime = new Date();
+                    /*let dateTime = new Date();
                     if (dateTime.getHours() < 18 || dateTime.getHours() > 19) {
                         player.notify('~r~Доступно только с 18 до 19 вечера ООС времени');
                         return;
-                    }
+                    }*/
 
                     try {
                         if (params.type === 2 && !user.isMafia(player)) {

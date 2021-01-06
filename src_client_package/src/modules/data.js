@@ -169,21 +169,27 @@ class Data {
             log_bank_user
             */
 
-            /*mp.events.callRemote('modules:server:data:Set', 800000 + 16, 'spawn_x', 1391.58837890625, true);
-            mp.events.callRemote('modules:server:data:Set', 800000 + 16, 'spawn_y', 1138.05615234375, true);
-            mp.events.callRemote('modules:server:data:Set', 800000 + 16, 'spawn_z', 113.44335174560547, true);
-            mp.events.callRemote('modules:server:data:Set', 800000 + 16, 'spawn_rot', 91.1656265258789, true);
+            /*
+            mp.events.callRemote('modules:server:data:Set', 100000 + 535, 'user_name', 'Russian Mafia', false);
+            mp.events.callRemote('modules:server:data:Set', 100000 + 839, 'user_name', 'La Cosa Nostra', false);
+            mp.events.callRemote('modules:server:data:Set', 100000 + 845, 'user_name', 'Yakuza', false);
+
+             */
+            /*mp.events.callRemote('modules:server:data:Set', 800000 + 17, 'spawn_x', 1391.58837890625, true);
+            mp.events.callRemote('modules:server:data:Set', 800000 + 17, 'spawn_y', 1138.05615234375, true);
+            mp.events.callRemote('modules:server:data:Set', 800000 + 17, 'spawn_z', 113.44335174560547, true);
+            mp.events.callRemote('modules:server:data:Set', 800000 + 17, 'spawn_rot', 91.1656265258789, true);
 
 
-            mp.events.callRemote('modules:server:data:Set', 800000 + 17, 'spawn_x', -1520.3663330078125, true);
-            mp.events.callRemote('modules:server:data:Set', 800000 + 17, 'spawn_y',  852.3690795898438, true);
-            mp.events.callRemote('modules:server:data:Set', 800000 + 17, 'spawn_z', 180.59475708007812, true);
-            mp.events.callRemote('modules:server:data:Set', 800000 + 17, 'spawn_rot', 26.737918853759766, true);
+            mp.events.callRemote('modules:server:data:Set', 800000 + 18, 'spawn_x', -1520.3663330078125, true);
+            mp.events.callRemote('modules:server:data:Set', 800000 + 18, 'spawn_y',  852.3690795898438, true);
+            mp.events.callRemote('modules:server:data:Set', 800000 + 18, 'spawn_z', 180.59475708007812, true);
+            mp.events.callRemote('modules:server:data:Set', 800000 + 18, 'spawn_rot', 26.737918853759766, true);
 
-            mp.events.callRemote('modules:server:data:Set', 800000 + 18, 'spawn_x', -115.00753021240234, true);
-            mp.events.callRemote('modules:server:data:Set', 800000 + 18, 'spawn_y', 987.402099609375, true);
-            mp.events.callRemote('modules:server:data:Set', 800000 + 18, 'spawn_z', 234.75180053710938, true);
-            mp.events.callRemote('modules:server:data:Set', 800000 + 18, 'spawn_rot', 107.83210754394531, true);
+            mp.events.callRemote('modules:server:data:Set', 800000 + 16, 'spawn_x', -115.00753021240234, true);
+            mp.events.callRemote('modules:server:data:Set', 800000 + 16, 'spawn_y', 987.402099609375, true);
+            mp.events.callRemote('modules:server:data:Set', 800000 + 16, 'spawn_z', 234.75180053710938, true);
+            mp.events.callRemote('modules:server:data:Set', 800000 + 16, 'spawn_rot', 107.83210754394531, true);
 
             */
 

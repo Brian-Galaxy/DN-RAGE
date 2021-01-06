@@ -690,9 +690,9 @@ phone.showAppEcorp= function() {
 
     if (user.getCache('bank_card') > 0) {
         /*let item ={
-                title: "Обменять $ на ₠",
-                text: 'Курс: $1,000 = 1₠',
-                modalTitle: 'Сколько ₠ вы хотите купить',
+                title: "Обменять $ на ₿",
+                text: 'Курс: $1,000 = 1₿',
+                modalTitle: 'Сколько ₿ вы хотите купить',
                 modalButton: ['Закрыть', 'Перевести'],
                 type: 8,
                 clickable: true,
@@ -701,9 +701,9 @@ phone.showAppEcorp= function() {
         menu.items[0].umenu.push(item);*/
 
         let item ={
-                title: "Обменять ₠ на $",
-                text: 'Курс: 1₠ = $500',
-                modalTitle: 'Сколько ₠ вы хотите обменять',
+                title: "Обменять ₿ на $",
+                text: 'Курс: 1₿ = $500',
+                modalTitle: 'Сколько ₿ вы хотите обменять',
                 modalButton: ['Закрыть', 'Перевести'],
                 type: 8,
                 clickable: true,
@@ -992,7 +992,7 @@ phone.showAppFraction2 = async function() {
         let item ={
             title: "Перевести BitCoin",
             text: 'Перевод BitCoin на счет вашей организации',
-            modalTitle: 'Сколько ₠ вы хотите перевести',
+            modalTitle: 'Сколько ₿ вы хотите перевести',
             modalButton: ['Закрыть', 'Перевести'],
             type: 8,
             clickable: true,
@@ -1004,7 +1004,7 @@ phone.showAppFraction2 = async function() {
         let item ={
             title: "Перевести BitCoin",
             text: 'Перевод BitCoin со счета вашей организации',
-            modalTitle: 'Сколько ₠ вы хотите перевести',
+            modalTitle: 'Сколько ₿ вы хотите перевести',
             modalButton: ['Закрыть', 'Перевести'],
             type: 8,
             clickable: true,

@@ -5,6 +5,7 @@ let mysql = require('../modules/mysql');
 let business = require('../property/business');
 
 let weather = require('../managers/weather');
+let dispatcher = require('../managers/dispatcher');
 
 let user = require('../user');
 let coffer = require('../coffer');
@@ -429,30 +430,39 @@ bank.withdraw = function(player, money, procent = 0) {
     if (user.get(player, 'bank_card') < 1)
         return;
 
-    if (user.getBankMoney(player) < money) {
-        player.notify('~r~У Вас недостаточно средств');
-        return;
-    }
+    mysql.executeQuery(`SELECT * FROM items WHERE owner_id = '${user.getId(player)}' AND owner_type = '1' AND item_id = 50 AND is_equip = 1`, function (err, rows, fields) {
+        if (!user.isLogin(player))
+            return;
+        if (rows.length < 1) {
+            player.notify('~r~Ваша банковская карта не экипирована');
+            return;
+        }
 
-    if (procent == 0) {
-        user.sendSmsBankOperation(player, 'Вывод: ~g~$' + methods.numberFormat(money));
-        user.removeBankMoney(player, money, 'Вывод средств через отделение банка');
-        user.addCashMoney(player, money, 'Вывод средств через отделение банка');
+        if (user.getBankMoney(player) < money) {
+            player.notify('~r~У Вас недостаточно средств');
+            return;
+        }
 
-        inventory.updateItemCountByItemId(50, user.getBankMoney(player), user.getId(player));
-    }
-    else {
-        let sum = methods.parseInt(money * ((100 - procent) / 100));
-        let sumBank = methods.parseInt(money * (procent / 100));
+        if (procent == 0) {
+            user.sendSmsBankOperation(player, 'Вывод: ~g~$' + methods.numberFormat(money));
+            user.removeBankMoney(player, money, 'Вывод средств через отделение банка');
+            user.addCashMoney(player, money, 'Вывод средств через отделение банка');
 
-        user.sendSmsBankOperation(player, 'Вывод: ~g~$' + methods.numberFormat(sum));
-        bank.addBusinessBankMoneyByCard(user.getBankCardPrefix(player), sumBank);
-        user.removeBankMoney(player, money, 'Вывод средств через банкомат');
-        user.addCashMoney(player, sum, 'Вывод средств через банкомат');
+            inventory.updateItemCountByItemId(50, user.getBankMoney(player), user.getId(player));
+        }
+        else {
+            let sum = methods.parseInt(money * ((100 - procent) / 100));
+            let sumBank = methods.parseInt(money * (procent / 100));
 
-        inventory.updateItemCountByItemId(50, user.getBankMoney(player), user.getId(player));
-    }
-    user.save(player);
+            user.sendSmsBankOperation(player, 'Вывод: ~g~$' + methods.numberFormat(sum));
+            bank.addBusinessBankMoneyByCard(user.getBankCardPrefix(player), sumBank);
+            user.removeBankMoney(player, money, 'Вывод средств через банкомат');
+            user.addCashMoney(player, sum, 'Вывод средств через банкомат');
+
+            inventory.updateItemCountByItemId(50, user.getBankMoney(player), user.getId(player));
+        }
+        user.save(player);
+    });
     //}, 1500);
 };
 
@@ -475,25 +485,34 @@ bank.deposit = function(player, money, procent = 0) {
     if (user.get(player, 'bank_card') < 1)
         return;
 
-    if (procent == 0) {
-        user.sendSmsBankOperation(player, 'Зачисление: ~g~$' + methods.numberFormat(money));
-        user.removeCashMoney(player, money, 'Зачисление в отделении банка');
-        user.addBankMoney(player, money, 'Зачисление в отделении банка');
+    mysql.executeQuery(`SELECT * FROM items WHERE owner_id = '${user.getId(player)}' AND owner_type = '1' AND item_id = 50 AND is_equip = 1`, function (err, rows, fields) {
+        if (!user.isLogin(player))
+            return;
+        if (rows.length < 1) {
+            player.notify('~r~Ваша банковская карта не экипирована');
+            return;
+        }
 
-        inventory.updateItemCountByItemId(50, user.getBankMoney(player), user.getId(player));
-    }
-    else {
-        let sum = methods.parseInt(money * ((100 - procent) / 100));
-        let sumBank = methods.parseInt(money * (procent / 100));
+        if (procent == 0) {
+            user.sendSmsBankOperation(player, 'Зачисление: ~g~$' + methods.numberFormat(money));
+            user.removeCashMoney(player, money, 'Зачисление в отделении банка');
+            user.addBankMoney(player, money, 'Зачисление в отделении банка');
 
-        user.sendSmsBankOperation(player, 'Зачисление: ~g~$' + methods.numberFormat(sum));
-        bank.addBusinessBankMoneyByCard(user.getBankCardPrefix(player), sumBank);
-        user.removeCashMoney(player, money, 'Зачисление через банкомат');
-        user.addBankMoney(player, sum, 'Зачисление через банкомат');
+            inventory.updateItemCountByItemId(50, user.getBankMoney(player), user.getId(player));
+        }
+        else {
+            let sum = methods.parseInt(money * ((100 - procent) / 100));
+            let sumBank = methods.parseInt(money * (procent / 100));
 
-        inventory.updateItemCountByItemId(50, user.getBankMoney(player), user.getId(player));
-    }
-    user.save(player);
+            user.sendSmsBankOperation(player, 'Зачисление: ~g~$' + methods.numberFormat(sum));
+            bank.addBusinessBankMoneyByCard(user.getBankCardPrefix(player), sumBank);
+            user.removeCashMoney(player, money, 'Зачисление через банкомат');
+            user.addBankMoney(player, sum, 'Зачисление через банкомат');
+
+            inventory.updateItemCountByItemId(50, user.getBankMoney(player), user.getId(player));
+        }
+        user.save(player);
+    });
 };
 
 bank.addBusinessBankMoneyByCard = function(prefix, money) {
@@ -716,13 +735,16 @@ bank.lockPickDoor = function(player, radius = 3) {
         user.blockKeys(player, true);
         user.playAnimation(player, "mp_arresting", "a_uncuff", 8);
         setTimeout(function () {
-            if (!user.isLogin(player))
-                return;
-            user.stopAnimation(player);
-            user.blockKeys(player, false);
-            methods.openObject(pos[0], pos[1], pos[2], false, 5);
-            player.notify('~g~Вы взломали дверь');
-            dispatcher.sendPos("Код 0", "В банке сработала сигнализация", player.position);
+            try {
+                if (!user.isLogin(player))
+                    return;
+                user.stopAnimation(player);
+                user.blockKeys(player, false);
+                methods.openObject(pos[0], pos[1], pos[2], false, 5);
+                player.notify('~g~Вы взломали дверь');
+                dispatcher.sendPos("Код 0", "В банке сработала сигнализация", player.position);
+            }
+            catch (e) {}
         }, 5000);
     }
 };

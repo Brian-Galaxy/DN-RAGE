@@ -2330,7 +2330,7 @@ phone.createFraction = function(player) {
 
                 let item = phone.getMenuItemButton(
                     `Слот свободен`,
-                    `Взнос 500₠`,
+                    `Взнос 500₿`,
                     { name: 'buyFraction', id: row['id'] },
                     '',
                     true,

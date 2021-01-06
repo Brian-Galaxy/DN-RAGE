@@ -331,7 +331,7 @@ bus.stop = async function(money, isNotify = true) {
         if (fId > 0) {
             let fData = await family.getData(fId);
             if (fData.get('level') === 2) {
-                if (fData.get('exp') > 300) {
+                if (fData.get('exp') >= 299) {
                     family.addMoney(fId, 500000, 'Премия за достижения 3 уровня');
                     family.set(fId, 'level', 3);
                     family.set(fId, 'exp', 0);

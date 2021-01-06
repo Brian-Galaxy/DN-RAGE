@@ -114,7 +114,11 @@ menuList.showHouseInMenu = function(h) {
 
     UIMenu.Menu.Create(` `, `~b~Адрес: ~s~${h.get('address')} ${h.get('number')}`, 'hm', false, false, 'h1');
 
-    if (h.get('user_id') == user.getCache('id')) {
+    if (h.get('user_id') == user.getCache('id') ||
+        (h.get('id') === 845 && user.isYakuza() && (user.isSubLeader() || user.isLeader())) ||
+        (h.get('id') === 535 && user.isRussianMafia() && (user.isSubLeader() || user.isLeader())) ||
+        (h.get('id') === 839 && user.isCosaNostra() && (user.isSubLeader() || user.isLeader()))
+    ) {
         if (h.get('pin') > 0)
             UIMenu.Menu.AddMenuItem("~y~Сменить пинкод", "", {doName: 'setPin'});
         else {
@@ -2985,60 +2989,67 @@ menuList.showMeriaTaxMenu = function() {
 menuList.showMeriaTaxInfoAllMenu = async function() {
     let tax = 0;
 
-    if (user.getCache('house_id') > 0)
-        tax = tax + await houses.get(user.getCache('house_id'), 'tax_money');
+    try {
+        if (user.getCache('house_id') > 0)
+            tax = tax + methods.parseInt(await houses.get(user.getCache('house_id'), 'tax_money'));
 
-    if (user.getCache('condo_id') > 0)
-        tax = tax + await condos.get(user.getCache('condo_id'), 'tax_money');
+        if (user.getCache('condo_id') > 0)
+            tax = tax + methods.parseInt(await condos.get(user.getCache('condo_id'), 'tax_money'));
 
-    /*if (user.getCache('apartment_id') > 0)
-        tax = tax + await condos.get(id, 'tax_money');*/
+        /*if (user.getCache('apartment_id') > 0)
+            tax = tax + await condos.get(id, 'tax_money');*/
 
-    if (user.getCache('business_id') > 0)
-        tax = tax + await business.get(user.getCache('business_id'), 'tax_money');
+        if (user.getCache('business_id') > 0)
+            tax = tax + methods.parseInt(await business.get(user.getCache('business_id'), 'tax_money'));
 
-    if (user.getCache('stock_id') > 0)
-        tax = tax + await stocks.get(user.getCache('stock_id'), 'tax_money');
+        if (user.getCache('stock_id') > 0)
+            tax = tax + methods.parseInt(await stocks.get(user.getCache('stock_id'), 'tax_money'));
 
-    if (user.getCache('yacht_id') > 0)
-        tax = tax + await yachts.get(user.getCache('yacht_id'), 'tax_money');
+        if (user.getCache('yacht_id') > 0)
+            tax = tax + methods.parseInt(await yachts.get(user.getCache('yacht_id'), 'tax_money'));
 
-    for (let i = 1; i < 11; i++) {
-        if (user.getCache('car_id' + i) > 0) {
-            tax = tax + await vehicles.get(user.getCache('car_id' + i), 'tax_money');
+        for (let i = 1; i < 11; i++) {
+            if (user.getCache('car_id' + i) > 0) {
+                tax = tax + methods.parseInt(await vehicles.get(user.getCache('car_id' + i), 'tax_money'));
+            }
         }
+
+        UIMenu.Menu.Create(` `, `~b~Оплата всех налогов`, 'gov', false, false, 'gov');
+
+        UIMenu.Menu.AddMenuItem(`~b~Ваша задолженность:~s~ ~r~${(tax == 0 ? "~g~Отсутствует" : `${methods.moneyFormat(tax)}`)}`);
+
+        UIMenu.Menu.AddMenuItem("Оплатить наличкой", "", {payTaxType: 0});
+        UIMenu.Menu.AddMenuItem("Оплатить картой", "", {payTaxType: 1});
+
+        UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: 'closeMenu'});
+        UIMenu.Menu.Draw();
+
+        UIMenu.Menu.OnSelect.Add(async (item, index) => {
+            UIMenu.Menu.HideMenu();
+
+            if (item.payTaxType >= 0) {
+                let sum = tax * -1;
+                if (sum > 0) {
+                    mp.game.ui.notifications.show("~r~Задолжность должна быть больше нуля");
+                    return;
+                }
+
+                if (item.payTaxType === 0 && user.getCashMoney() < sum) {
+                    mp.game.ui.notifications.show("~r~У Вас нет такой суммы на руках");
+                    return;
+                }
+                if (item.payTaxType === 1 && user.getBankMoney() < sum) {
+                    mp.game.ui.notifications.show("~r~У Вас нет такой суммы в банке");
+                    return;
+                }
+
+                mp.events.callRemote('server:tax:payTaxAll', item.payTaxType, sum);
+            }
+        });
     }
-
-    UIMenu.Menu.Create(` `, `~b~` + name, 'gov', false, false, 'gov');
-
-    UIMenu.Menu.AddMenuItem(`~b~Ваша задолженность:~s~ ~r~${(tax == 0 ? "~g~Отсутствует" : `${methods.moneyFormat(tax)}`)}`);
-
-    UIMenu.Menu.AddMenuItem("Оплатить наличкой", "", {payTaxType: 0});
-    UIMenu.Menu.AddMenuItem("Оплатить картой", "", {payTaxType: 1});
-
-    UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: 'closeMenu'});
-    UIMenu.Menu.Draw();
-
-    UIMenu.Menu.OnSelect.Add(async (item, index) => {
-        UIMenu.Menu.HideMenu();
-
-        if (item.payTaxType >= 0) {
-            let sum = methods.parseInt(await UIMenu.Menu.GetUserInput("Сумма", "", 9));
-            if (sum == 0)
-                return;
-
-            if (item.payTaxType === 0 && user.getCashMoney() < sum) {
-                mp.game.ui.notifications.show("~r~У Вас нет такой суммы на руках");
-                return;
-            }
-            if (item.payTaxType === 1 && user.getBankMoney() < sum) {
-                mp.game.ui.notifications.show("~r~У Вас нет такой суммы в банке");
-                return;
-            }
-
-            mp.events.callRemote('server:tax:payTaxAll', item.payTaxType, sum);
-        }
-    });
+    catch (e) {
+        methods.debug(e);
+    }
 };
 
 menuList.showMeriaTaxInfoMenu = async function(type, id) {
@@ -4883,7 +4894,9 @@ menuList.showPlayerDoMenu = function(playerId) {
     }
     UIMenu.Menu.AddMenuItem("Снять стяжки", "", {eventName: "server:user:unTieById"});
 
-    UIMenu.Menu.AddMenuItem("Вырубить", "Чем больше у Вас сила, тем больше шанс", {eventName: "server:user:knockById"});
+    UIMenu.Menu.AddMenuItem("Вырубить", "После того, как вы выруите человека, вы сможете его похитить и продать через команду ~b~ecorp -user -getpos~s~, получив выручку в ~g~50%~s~ от его наличного счета, но не более ~g~$50.000~s~ или ограбить на месте через кнопку ~y~Ограбить~s~, но при этом вы получите всего ~g~5%~s~ от наличного счета, но не более ~g~$25.000", {eventName: "server:user:knockById"});
+
+    UIMenu.Menu.AddMenuItem("~y~Ограбить", "Вы получите ~g~5%~s~ от наличного счета, но не более ~g~$25.000", {eventName: "server:user:grabById"});
 
     UIMenu.Menu.AddMenuItem("Затащить в ближайшее авто", "", {eventName: "server:user:inCarById"});
     //UIMenu.Menu.AddMenuItem("Вытащить из тс").eventName = 'server:user:removeCarById';
@@ -4912,12 +4925,12 @@ menuList.showPlayerDoMenu = function(playerId) {
                 return;
             }
         }
-        if (ui.isYellowZone()) {
+        /*if (ui.isYellowZone()) {
             if (item.eventName === 'server:user:knockById') {
                 mp.game.ui.notifications.show("~r~Днём, в городах данное действие запрещено (Только в гетто и за городом)");
                 return;
             }
-        }
+        }*/
 
         if (item.doName == 'giveMoney') {
             let money = methods.parseFloat(await UIMenu.Menu.GetUserInput("Сумма", "", 9));
@@ -7683,7 +7696,7 @@ menuList.showSellFishMenu = async function(data, shopId) {
     }
 };
 
-menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId, isFrisk) {
+menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId, isFrisk, justUpdate = false) {
 
     if (user.isDead()) {
         mp.game.ui.notifications.show("~r~Нельзя использовать инвентарь будучи мёртвым");
@@ -7693,10 +7706,12 @@ menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId, isF
     /*if (user.getCache('jail_time') > 0) { //TODO
         mp.game.ui.notifications.show("~r~В тюрьме нельзя этим пользоваться");
         return;
-    }
-   */
+    }*/
 
     ownerId = methods.parseInt(ownerId);
+
+    if (justUpdate && inventory.ownerId !== ownerId && inventory.ownerType !== ownerType)
+        return;
 
     try {
         //let invAmountMax = await inventory.getInvAmountMax(ownerId, ownerType);
@@ -7928,10 +7943,15 @@ menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId, isF
                     sum: sum,
                 };
                 ui.callCef('inventory', JSON.stringify(dataSend));
-                inventory.show();
-                mp.gui.cursor.show(true, true);
-
+                if (!justUpdate)
+                {
+                    inventory.show();
+                    mp.gui.cursor.show(true, true);
+                }
                 ui.callCef('inventory', JSON.stringify({type: "updateSubMax", maxSum: await inventory.getInvAmountMax(ownerId, ownerType)}));
+
+                inventory.ownerId = ownerId;
+                inventory.ownerType = ownerType;
             }
         }
 
@@ -9733,7 +9753,7 @@ menuList.showShopMaskMenu = function (shopId) {
     user.set('seeMask', true);
 
     for (let i = 0; i < enums.maskClasses.length; i++) {
-        if (methods.getCountMask(i, shopId) > 0) {
+        if (methods.getCountMask(i, 69) > 0) { //TODO Если захотим разбить маски по разным магазам
             let name = methods.removeQuotesAll(enums.maskClasses[i]);
             if (i === 4) {
                 if (weather.getMonth() === 2)
@@ -11194,7 +11214,7 @@ menuList.showGunShopMenu = function(shopId, price = 1)
     let list = [];
     let gunList = [54, 55, 63, 64, 65, 69, 77, 80, 81, 71, 87, 90, 91, 94, 99, 103, 104, 112, 108];
 
-    if (user.isAdmin(5)) {
+    if (user.isAdmin(5) && mp.players.local.getVariable('enableAdmin') === true) {
         gunList = [];
         for (let i = 54; i <= 126; i++)
             gunList.push(i);
@@ -11240,7 +11260,7 @@ menuList.showGunShopMenu = function(shopId, price = 1)
             let wpName = items.getItemNameHashById(itemId);
             let componentList = weapons.getWeaponComponentList(wpName);
 
-            if (user.isAdmin(5)) {
+            if (user.isAdmin(5) && mp.players.local.getVariable('enableAdmin') === true) {
                 weapons.getTintList(wpName).forEach((item, idx) => {
                     if (idx > 0) {
                         let itemPrice = items.getItemPrice(itemId) * price * 2;
@@ -11352,8 +11372,8 @@ menuList.showGunShopMenu = function(shopId, price = 1)
             desc2t: '',
             sale: 0,
             img: `Item_252.png`,
-            price: methods.moneyFormat(500 * price),
-            params: {doName: 'armour', price: 500 * price, count: 30, shop: shopId}
+            price: methods.moneyFormat(400 * price),
+            params: {doName: 'armour', price: 400 * price, count: 30, shop: shopId}
         }, { //Если кликаем сюда, то открывается меню справа (Там где покупка)
             title: 'Средний бронежилет',
             desc: 'Помимо защиты от пуль, в нем можно хранить вещи',
@@ -11361,8 +11381,8 @@ menuList.showGunShopMenu = function(shopId, price = 1)
             desc2t: '',
             sale: 0,
             img: `Item_252.png`,
-            price: methods.moneyFormat(1000 * price),
-            params: {doName: 'armour', price: 1000 * price, count: 60, shop: shopId}
+            price: methods.moneyFormat(800 * price),
+            params: {doName: 'armour', price: 800 * price, count: 60, shop: shopId}
         }]
     });
 

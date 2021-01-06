@@ -135,6 +135,10 @@ stocks.getData = async function(id) {
     return await Container.Data.GetAll(enums.offsets.stock + methods.parseInt(id));
 };
 
+stocks.get = async function(id, key) {
+    return await Container.Data.Get(enums.offsets.stock + methods.parseInt(id), key);
+};
+
 stocks.buy = function (id) {
     if (user.getCacheData().get('stock_id') > 0) {
         mp.game.ui.notifications.show('~r~У Вас уже есть склад');

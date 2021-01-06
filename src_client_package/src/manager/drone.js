@@ -59,6 +59,10 @@ drone.startOrEndLspd = function() {
         drone.enterLspd();
 };
 
+drone.isDrone = function() {
+    return isInDrone;
+};
+
 drone.calculateDegSec = function(input, rcRate, gRate, expo) {
     let RPY_useRates = 1.0 - Math.abs(input) * gRate;
     let input2 = ((input*input*input)*expo + input*(1 - expo));
@@ -136,6 +140,16 @@ mp.keys.bind(0x1B, true, function() {
         else
             drone.exit();
     }
+});
+
+mp.events.add('playerLeaveVehicle', () => {
+    if (!isInDrone)
+        return;
+    isInDrone = false;
+    isLspd = false;
+    vision_state = 0;
+    methods.blockKeys(false);
+    user.stopAllScreenEffect();
 });
 
 mp.events.add('render', () => {

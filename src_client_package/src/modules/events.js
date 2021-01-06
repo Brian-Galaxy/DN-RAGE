@@ -38,6 +38,7 @@ import edu from "../manager/edu";
 import prolog from "../manager/prolog";
 import npc from "../manager/npc";
 import cutscene from "../manager/cutscene";
+import drone from "../manager/drone";
 
 import vehicles from "../property/vehicles";
 import business from "../property/business";
@@ -1637,10 +1638,10 @@ mp.events.add('client:menuList:showBotYankMenu', () => {
     }
 });
 
-mp.events.add('client:showToPlayerItemListMenu', (data, ownerType, ownerId, isFrisk) => {
+mp.events.add('client:showToPlayerItemListMenu', (data, ownerType, ownerId, isFrisk, justUpdate) => {
     try {
         methods.debug('Event: client:showToPlayerItemListMenu');
-        menuList.showToPlayerItemListMenu(data, ownerType, ownerId, isFrisk).then();
+        menuList.showToPlayerItemListMenu(data, ownerType, ownerId, isFrisk, justUpdate).then();
     }
     catch (e) {
         methods.debug(e);
@@ -2654,11 +2655,19 @@ mp.events.add('client:inventory:moveTo', async function(id, itemId, ownerId, own
         if (mp.players.local.dimension > 0) {
             mp.game.ui.notifications.show("~r~Нельзя выбрасывать предметы в интерьере");
             inventory.getItemList(inventory.types.Player, user.getCache('id'));
+            inventory.updateSubInvRadius(inventory.ownerId, inventory.ownerType, true);
+            return;
+        }
+        if (mp.players.local.isInAnyVehicle(true)) {
+            mp.game.ui.notifications.show("~r~Нельзя выбрасывать предметы в транспорте");
+            inventory.getItemList(inventory.types.Player, user.getCache('id'));
+            inventory.updateSubInvRadius(inventory.ownerId, inventory.ownerType, true);
             return;
         }
         if (ui.isGreenZone()) {
             mp.game.ui.notifications.show("~r~Нельзя выбрасывать предметы в зелёной зоне");
             inventory.getItemList(inventory.types.Player, user.getCache('id'));
+            inventory.updateSubInvRadius(inventory.ownerId, inventory.ownerType, true);
             return;
         }
 
@@ -2667,8 +2676,8 @@ mp.events.add('client:inventory:moveTo', async function(id, itemId, ownerId, own
             mp.game.ui.notifications.show("~r~Пачка была удалена");
             return;
         }*/
-
         inventory.dropItem(id, itemId, mp.players.local.position, mp.players.local.getRotation(0));
+        inventory.updateSubInvRadius(0, 0);
     }
     else if (ownerType === inventory.types.TradeBeach && items.isTradeBeachInvalid(itemId)) {
         mp.game.ui.notifications.show("~r~Вы не можете выставить на продажу этот предмет");
@@ -2744,6 +2753,7 @@ mp.events.add('client:inventory:moveFrom', function(id, itemId, ownerType, desc)
         chat.sendMeCommand(`взял "${items.getItemNameById(itemId)}"`)
     }
 
+    inventory.updateSubInvRadius(inventory.ownerId, inventory.ownerId);
     inventory.updateOwnerId(id, user.getCache('id'), inventory.types.Player);
 });
 
@@ -2751,11 +2761,19 @@ mp.events.add('client:inventory:drop', function(id, itemId, count) {
     if (mp.players.local.dimension > 0) {
         mp.game.ui.notifications.show("~r~Нельзя выкидывать предметы в интерьере");
         inventory.getItemList(inventory.types.Player, user.getCache('id'));
+        inventory.updateSubInvRadius(inventory.ownerId, inventory.ownerType, true);
         return;
     }
     if (ui.isGreenZone()) {
         mp.game.ui.notifications.show("~r~Нельзя выбрасывать предметы в зелёной зоне");
         inventory.getItemList(inventory.types.Player, user.getCache('id'));
+        inventory.updateSubInvRadius(inventory.ownerId, inventory.ownerType, true);
+        return;
+    }
+    if (mp.players.local.isInAnyVehicle(true)) {
+        mp.game.ui.notifications.show("~r~Нельзя выбрасывать предметы в транспорте");
+        inventory.getItemList(inventory.types.Player, user.getCache('id'));
+        inventory.updateSubInvRadius(inventory.ownerId, inventory.ownerType, true);
         return;
     }
     if (itemId === 50 && count > 10) {
@@ -2763,6 +2781,7 @@ mp.events.add('client:inventory:drop', function(id, itemId, count) {
         return;
     }
     inventory.dropItem(id, itemId, mp.players.local.position, mp.players.local.getRotation(0));
+    inventory.updateSubInvRadius(0, 0);
 });
 
 mp.events.add('client:inventory:openBag', function(id, itemId) {
@@ -3787,6 +3806,8 @@ mp.keys.bind(0x4D, true, function() {
         return;
     if (user.isCustom)
         return;
+    if (drone.isDrone())
+        return;
     if (!methods.isShowInput() && phone.isHide() && inventory.isHide())
         mainMenu.showOrHide();
 });
@@ -4235,6 +4256,11 @@ mp.events.add("playerCommand", async (command) => {
                 return;
             let args = command.toLowerCase().split(' ');
             mp.events.callRemote('server:houses:teleport', args[1]);
+        }
+        if (command.toLowerCase().slice(0, 3) === "ttt") {
+            if (!user.isLogin() || !user.isAdmin())
+                return;
+            menuList.showPlayerDoMenu(mp.players.local.remoteId);
         }
         else if (command.toLowerCase().slice(0, 2) === "tp") {
             if (!user.isLogin() || !user.isAdmin())

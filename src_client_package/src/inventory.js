@@ -24,6 +24,8 @@ import quest from "./manager/quest";
 let inventory = {};
 
 inventory.currentItem = -1;
+inventory.ownerId = -1;
+inventory.ownerType = -1;
 
 let hidden = true;
 
@@ -59,6 +61,9 @@ inventory.hide = function() {
         hidden = true;
         ui.showHud();
         mp.game.graphics.transitionFromBlurred(100);
+
+        inventory.ownerId = -1;
+        inventory.ownerType = -1;
     }
     catch (e) {
         methods.debug(e);
@@ -83,17 +88,20 @@ inventory.updateItemsEquipByItemId = function(itemId, ownerId, ownerType, equip,
 
 inventory.updateOwnerId = function(id, ownerId, ownerType) {
     ownerId = ownerId.toString();
+    inventory.updateSubInvRadius(ownerId, ownerType);
     mp.events.callRemote('server:inventory:updateOwnerId', id, ownerId, ownerType);
 };
 
 inventory.updateOwnerIdWithPrice = function(id, ownerId, ownerType, price = 0) {
     ownerId = ownerId.toString();
+    inventory.updateSubInvRadius(ownerId, ownerType);
     mp.events.callRemote('server:inventory:updateOwnerIdWithPrice', id, ownerId, ownerType, price);
 };
 
 inventory.updateOwnerAll = function(oldOwnerId, oldOwnerType, ownerId, ownerType) {
     ownerId = ownerId.toString();
     oldOwnerId = oldOwnerId.toString();
+    inventory.updateSubInvRadius(ownerId, ownerType);
     mp.events.callRemote('server:inventory:updateOwnerAll', oldOwnerId, oldOwnerType, ownerId, ownerType);
 };
 
@@ -658,6 +666,16 @@ inventory.sendToPlayerItemListUpdateAmountMenu = function(data, ownerType, owner
 
 inventory.updateAmount = function(id, type) {
     mp.events.callRemote('server:inventory:updateAmount', id, type); //TODO
+};
+
+inventory.updateSubInvRadius = function(ownerId, ownerType, withMe = false) {
+    setTimeout(function () {
+        if (methods.parseInt(ownerId === user.getCache('id')) && ownerType === inventory.types.Player)
+            return;
+        if (ownerId < 0)
+            return;
+        mp.events.callRemote('server:inventory:updateSubInvRadius', ownerId.toString(), ownerType, withMe);
+    }, 100)
 };
 
 inventory.addItem = function(itemId, count, ownerType, ownerId, countItems, isEquip = 0, params = "{}", timeout = 10) {

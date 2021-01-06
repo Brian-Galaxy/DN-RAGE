@@ -387,13 +387,13 @@ canabisWar.timerMoney = function() {
         let i = item.id;
         if (canabisWar.get(i, 'fraction_id') > 0) {
 
-            let money = methods.getRandomInt(200, 300) / 1000;
+            let money = methods.getRandomInt(100, 150) / 1000;
             let id = methods.parseInt(canabisWar.get(i, 'fraction_id'));
             fraction.setMoney(id, fraction.getMoney(id) + methods.parseFloat(money));
 
             if (moneyToUser.has(canabisWar.get(i, 'fraction_id').toString())) {
                 let cMoney = moneyToUser.get(canabisWar.get(i, 'fraction_id').toString());
-                cMoney += methods.getRandomInt(13, 26) / 1000;
+                cMoney += methods.getRandomInt(6, 13) / 1000;
                 moneyToUser.set(canabisWar.get(i, 'fraction_id').toString(), cMoney);
             }
             else {
@@ -401,7 +401,7 @@ canabisWar.timerMoney = function() {
             }
         }
         else {
-            let money = methods.getRandomInt(200, 300);
+            let money = methods.getRandomInt(100, 150);
             let id = coffer.getIdByFraction(4);
             coffer.setMoney(id, coffer.getMoney(id) + methods.parseFloat(money));
         }

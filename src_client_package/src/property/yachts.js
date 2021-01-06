@@ -2,11 +2,16 @@ import user from '../user';
 import Container from '../modules/data';
 import methods from '../modules/methods';
 import enums from '../enums';
+import stocks from "./stocks";
 
 let yachts = {};
 
 yachts.getData = async function(id) {
     return await Container.Data.GetAll(enums.offsets.yacht + methods.parseInt(id));
+};
+
+yachts.get = async function(id, key) {
+    return await Container.Data.Get(enums.offsets.yacht + methods.parseInt(id), key);
 };
 
 yachts.buy = function (id) {

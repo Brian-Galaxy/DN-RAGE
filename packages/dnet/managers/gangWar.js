@@ -417,17 +417,17 @@ gangWar.timerMoney = function() {
     for (let i = 1; i <= gangList.length; i++) {
         if (gangWar.get(i, 'fraction_id') > 0) {
 
-            let money = methods.getRandomInt(200, 300) / 1000;
+            let money = methods.getRandomInt(100, 150) / 1000;
             let id = methods.parseInt(gangWar.get(i, 'fraction_id'));
             fraction.setMoney(id, fraction.getMoney(id) + methods.parseFloat(money));
 
             if (moneyToUser.has(gangWar.get(i, 'fraction_id').toString())) {
                 let cMoney = moneyToUser.get(gangWar.get(i, 'fraction_id').toString());
-                cMoney += methods.getRandomInt(12, 24) / 1000;
+                cMoney += methods.getRandomInt(6, 12) / 1000;
                 moneyToUser.set(gangWar.get(i, 'fraction_id').toString(), cMoney);
             }
             else {
-                moneyToUser.set(gangWar.get(i, 'fraction_id').toString(), methods.getRandomInt(300, 600) / 1000);
+                moneyToUser.set(gangWar.get(i, 'fraction_id').toString(), methods.getRandomInt(150, 300) / 1000);
             }
         }
     }

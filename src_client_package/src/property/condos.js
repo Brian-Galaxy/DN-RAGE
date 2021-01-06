@@ -2,6 +2,7 @@ import user from '../user';
 import Container from '../modules/data';
 import methods from '../modules/methods';
 import enums from '../enums';
+import houses from "./houses";
 
 let condos = {};
 
@@ -16,6 +17,10 @@ condos.exit = function (x, y, z, rot) {
 
 condos.getData = async function(id) {
     return await Container.Data.GetAll(enums.offsets.condo + methods.parseInt(id));
+};
+
+condos.get = async function(id, key) {
+    return await Container.Data.Get(enums.offsets.condo + methods.parseInt(id), key);
 };
 
 condos.buy = function (id) {

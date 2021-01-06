@@ -1629,7 +1629,7 @@ mp.events.addRemoteCounted('server:user:knockById', (player, targetId) => { //TO
             }
         }, 120000);
 
-        if (random < 20) {
+        if (random < 50) {
             user.set(target, 'isKnockout', true);
             target.setVariable('isKnockout', true);
             user.playAnimation(target, "amb@world_human_bum_slumped@male@laying_on_right_side@base", "base", 9);
@@ -1649,6 +1649,48 @@ mp.events.addRemoteCounted('server:user:knockById', (player, targetId) => { //TO
         else {
             chat.sendMeCommand(player, "замахнулся кулаком и ударил человека напротив");
         }
+    }
+    else
+        player.notify('~r~Рядом с вами никого нет');
+});
+
+mp.events.addRemoteCounted('server:user:grabById', (player, targetId) => {
+    if (!user.isLogin(player))
+        return;
+
+    let target = mp.players.at(targetId);
+    if (mp.players.exists(target)) {
+        if (methods.distanceToPos(target.position, player.position) > 3) {
+            player.notify('~r~Вы слишком далеко');
+            return;
+        }
+
+        if (target.health == 0) {
+            player.notify("~r~Нельзя грабить человека в коме");
+            return;
+        }
+
+        if (!user.get(target, 'isKnockout'))
+        {
+            player.notify("~r~Игрок должен быть в нокауте");
+            return;
+        }
+
+        if (user.hasById(user.getId(p), 'sellUser')) {
+            player.notify('~r~Игрок недавно был ограблен');
+            return;
+        }
+
+        let money = user.getCashMoney(target) / 20;
+        if (money > 25000)
+            money = 25000;
+        user.removeCashMoney(target, money);
+        user.addCashMoney(player, money);
+
+        target.notify('~r~Вас ограбили на сумму ~s~' + methods.moneyFormat(money));
+        player.notify('~r~Вы ограбили на сумму ~s~' + methods.moneyFormat(money));
+
+        user.setById(user.getId(target), 'sellUser', true);
     }
     else
         player.notify('~r~Рядом с вами никого нет');
@@ -4336,6 +4378,21 @@ mp.events.addRemoteCounted('server:inventory:getItemList', (player, ownerType, o
     inventory.getItemList(player, ownerType, ownerId);
 });
 
+mp.events.addRemoteCounted('server:inventory:updateSubInvRadius', (player, ownerId, ownerType, withMe = false) => {
+    if (!user.isLogin(player))
+        return;
+    methods.getListOfPlayerInRadius(player.position, 10).forEach(p => {
+        try {
+            if (!user.isLogin(p))
+                return;
+            if (p.id === player.id && !withMe)
+                return;
+            inventory.getItemList(player, ownerType, methods.parseInt(ownerId), false, true);
+        }
+        catch (e) {}
+    })
+});
+
 mp.events.addRemoteCounted('server:inventory:getItemListSell', (player) => {
     if (!user.isLogin(player))
         return;
@@ -4731,7 +4788,7 @@ mp.events.addRemoteCounted("onKeyPress:E", (player) => {
             let houseData = houses.getHouseData(key);
             if (houseData.get('user_id') == 0)
                 player.call('client:showHouseBuyMenu', [Array.from(houseData)]);
-            else {
+            else if (houseData.get('user_id') == 0) {
                 player.call('client:showHouseOutMenu', [Array.from(houseData)]);
             }
         }
@@ -8027,8 +8084,8 @@ mp.events.addRemoteCounted('server:sellUser', (player) => {
                 }
 
                 let money = user.getCashMoney(p) / 2;
-                if (money > 25000)
-                    money = 25000;
+                if (money > 50000)
+                    money = 50000;
                 user.removeCashMoney(p, money);
                 p.removeFromVehicle();
 

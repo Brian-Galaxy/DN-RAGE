@@ -655,9 +655,14 @@ timer.secTimer = function() {
             if (/*player === localPlayer || */!mp.players.exists(player) || i > 50)
                 return false;
             try {
-                player.iSeeYou = mp.players.local.hasClearLosTo(player.handle, 17);
                 if (mp.players.local.getVariable('enableAdmin'))
                     player.iSeeYou = true;
+                else
+                    player.iSeeYou = mp.players.local.hasClearLosTo(player.handle, 17);
+                try {
+                    player.hasMask = player.getDrawableVariation(1) > 0;
+                }
+                catch (e) {}
             }
             catch (e) {
 

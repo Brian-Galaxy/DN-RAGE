@@ -7710,6 +7710,8 @@ menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId, isF
 
     ownerId = methods.parseInt(ownerId);
 
+    methods.debug('showToPlayerItemListMenu', ownerType, ownerId, justUpdate, inventory.ownerType, inventory.ownerId)
+
     if (justUpdate && inventory.ownerId !== ownerId && inventory.ownerType !== ownerType)
         return;
 
@@ -7947,11 +7949,10 @@ menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId, isF
                 {
                     inventory.show();
                     mp.gui.cursor.show(true, true);
+                    inventory.ownerId = ownerId;
+                    inventory.ownerType = ownerType;
                 }
                 ui.callCef('inventory', JSON.stringify({type: "updateSubMax", maxSum: await inventory.getInvAmountMax(ownerId, ownerType)}));
-
-                inventory.ownerId = ownerId;
-                inventory.ownerType = ownerType;
             }
         }
 

@@ -133,7 +133,7 @@ mainMenu.updateInfoSettings = function(tab = 0, keyName = '') {
                 {
                     name: 'Основное',
                     settings: [
-                        {type: 2, name: 'Чит-код', params: 'main:promocode', btntext: "Ввести чит-код"},
+                        {type: 2, name: 'Чит-код', params: 'main:promocode', btntext: "Ввести бонус-код"},
                         {type: 1, name: 'Походка', params: 'main:clipset', active: clipsetIdx, listmenu: cllist},
                         {type: 1, name: 'Стиль стрельбы', params: 'main:clipsetw', active: clipsetwIdx, listmenu: cllistw},
                         {type: 0, name: 'Доп. прогрузка моделей', params: 'main:loadmodel', active: user.getCache('s_load_model') ? 1 : 0},

@@ -1676,7 +1676,7 @@ mp.events.addRemoteCounted('server:user:grabById', (player, targetId) => {
             return;
         }
 
-        if (user.hasById(user.getId(p), 'sellUser')) {
+        if (user.hasById(user.getId(target), 'sellUser')) {
             player.notify('~r~Игрок недавно был ограблен');
             return;
         }
@@ -2780,8 +2780,8 @@ mp.events.addRemoteCounted('server:invader:sendAd', (player, id, title, name, te
     mysql.executeQuery(`DELETE FROM rp_inv_ad_temp WHERE id = ${methods.parseInt(id)}`);
     mysql.executeQuery(`INSERT INTO rp_inv_ad (title, name, text, phone, editor, timestamp, rp_datetime) VALUES ('${title}', '${name}', '${textRemove}', '${phone}', '${editor}', '${timestamp}', '${rpDateTime}')`);
 
-    user.addPayDayMoney(player, 100, 'Отредактировал объявление');
-    player.notify('~g~Вы получили премию в $100 за отредактированное объявление');
+    user.addPayDayMoney(player, 300, 'Отредактировал объявление');
+    player.notify('~g~Вы получили премию в $300 за отредактированное объявление');
 
     discord.sendAd(title, name, textRemove, methods.phoneFormat(phone), editor, player.socialClub);
 
@@ -2847,11 +2847,11 @@ mp.events.addRemoteCounted('server:invader:sendAdTemp', (player, text) => {
     text = methods.removeSpecialChars(text);
 
     user.removeBankMoney(player, 500, 'Подача объявления');
-    coffer.addMoney(8, 400);
+    coffer.addMoney(8, 200);
     methods.saveFractionLog(
         'Система',
         `Рекламное объявление`,
-        `Пополнение бюджета: ${methods.moneyFormat(400)}`,
+        `Пополнение бюджета: ${methods.moneyFormat(200)}`,
         7
     );
 
@@ -4381,13 +4381,18 @@ mp.events.addRemoteCounted('server:inventory:getItemList', (player, ownerType, o
 mp.events.addRemoteCounted('server:inventory:updateSubInvRadius', (player, ownerId, ownerType, withMe = false) => {
     if (!user.isLogin(player))
         return;
+
+    methods.debug('updateSubInvRadius', player.id, ownerId, ownerType, withMe);
     methods.getListOfPlayerInRadius(player.position, 10).forEach(p => {
         try {
             if (!user.isLogin(p))
                 return;
-            if (p.id === player.id && !withMe)
-                return;
-            inventory.getItemList(player, ownerType, methods.parseInt(ownerId), false, true);
+            if (p.id === player.id) {
+                if (withMe)
+                    inventory.getItemList(p, ownerType, methods.parseInt(ownerId), false, true);
+            }
+            else
+                inventory.getItemList(p, ownerType, methods.parseInt(ownerId), false, true);
         }
         catch (e) {}
     })
@@ -7325,9 +7330,9 @@ mp.events.addRemoteCounted('server:med:free', (player, id) => {
                 return;
             }
 
-            coffer.addMoney(coffer.getIdByFraction(user.get(player, 'fraction_id'), 500));
-            user.addMoney(player, 100, 'Премия');
-            player.notify('~g~Вы выписали игрока. Премия: ~s~$100');
+            coffer.addMoney(coffer.getIdByFraction(user.get(player, 'fraction_id'), 400));
+            user.addMoney(player, 400, 'Премия');
+            player.notify('~g~Вы выписали игрока. Премия: ~s~$400');
 
             p.call('client:hosp:free');
         }

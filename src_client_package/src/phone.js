@@ -820,7 +820,7 @@ phone.showAppSettings = function() {
         ],
     };
 
-    let imgList = [
+    /*let imgList = [
         'https://i.imgur.com/v4aju8F.jpg',
         'https://i.imgur.com/1AaJHAC.jpg',
         'https://i.imgur.com/Z1udZP3.jpg',
@@ -830,14 +830,105 @@ phone.showAppSettings = function() {
         'https://i.imgur.com/aPQR0hE.jpg',
         'https://i.imgur.com/RmYDFxw.png',
         'https://i.imgur.com/u5MfuvP.png',
+    ];*/
+
+    let imageList = [
+        {
+            title: 'GTA',
+            list: [
+                'https://i.imgur.com/v4aju8F.jpg',
+                'https://i.imgur.com/1AaJHAC.jpg',
+                'https://i.imgur.com/Z1udZP3.jpg',
+                'https://i.imgur.com/Kv46Oye.jpg',
+                'https://i.imgur.com/6TRT27j.jpg',
+                'https://i.imgur.com/8lOLNXr.jpg',
+                'https://i.imgur.com/aPQR0hE.jpg',
+                'https://i.imgur.com/RmYDFxw.png',
+                'https://i.imgur.com/u5MfuvP.png',
+            ]
+        },
+        {
+            title: 'Игры',
+            list: [
+                'https://i.imgur.com/uKJglK8.png',
+                'https://i.imgur.com/DqkZFPW.png',
+                'https://i.imgur.com/acKl6Yz.png',
+                'https://i.imgur.com/jtfnBek.png',
+                'https://i.imgur.com/iUO6Lv5.png',
+                'https://i.imgur.com/QHnhYxI.png',
+                'https://i.imgur.com/k8Ca1Vf.png',
+                'https://i.imgur.com/bJigd6i.png',
+                'https://i.imgur.com/0za6rHp.png',
+            ]
+        },
+        {
+            title: 'Retro Wave',
+            list: [
+                'https://i.imgur.com/HWEbeCJ.png',
+                'https://i.imgur.com/JJhCG51.jpg',
+                'https://i.imgur.com/6zYRPKe.jpg',
+            ]
+        },
+        {
+            title: 'Города и природа',
+            list: [
+                'https://i.imgur.com/k2oDUbB.png',
+                'https://i.imgur.com/odrB7x2.png',
+                'https://i.imgur.com/APCLbh9.png',
+                'https://i.imgur.com/V89957p.png',
+                'https://i.imgur.com/1IfkBcN.png',
+                'https://i.imgur.com/nolfgkd.png',
+                'https://i.imgur.com/FCXBRe2.png',
+                'https://i.imgur.com/Qo0f9gl.png',
+                'https://i.imgur.com/O9dl2WD.jpg',
+                'https://i.imgur.com/TAYsBle.png',
+                'https://i.imgur.com/T0zctx5.png',
+                'https://i.imgur.com/7SD5jW0.png',
+                'https://i.imgur.com/RjyOPRI.png',
+                'https://i.imgur.com/R5sC7a7.png',
+                'https://i.imgur.com/ZoKQmRC.jpg',
+                'https://i.imgur.com/oCyBuMn.jpg',
+                'https://i.imgur.com/UTCsmU3.jpg',
+                'https://i.imgur.com/6ONFb5i.png',
+                'https://i.imgur.com/12cMZxi.png',
+                'https://i.imgur.com/QJIan1N.jpg',
+            ]
+        },
+        {
+            title: 'Разное',
+            list: [
+                'https://i.imgur.com/wAiqGPb.png',
+                'https://i.imgur.com/sgbkyoR.png',
+                'https://i.imgur.com/7QKXsgd.png',
+                'https://i.imgur.com/Z5awkZE.jpg',
+                'https://i.imgur.com/qCZxooL.png',
+                'https://i.imgur.com/VEwDw0d.png',
+                'https://i.imgur.com/jiW9Dkn.jpg',
+                'https://i.imgur.com/BeDTT5l.png',
+                'https://i.imgur.com/9ZPnRk7.png',
+            ]
+        },
     ];
 
-    imgList.forEach((img, idx) => {
-        menu.items[0].umenu.push(phone.getMenuItemImg(
-            undefined,
-            { name: "changeBg", img: img },
-            img
-        ));
+    //hidden: false,
+
+    imageList.forEach(item => {
+
+        let mItem = {
+            title: item.title,
+            hidden: true,
+            umenu: [],
+        };
+
+        item.list.forEach((img, idx) => {
+            mItem.umenu.push(phone.getMenuItemImg(
+                undefined,
+                { name: "changeBg", img: img },
+                img
+            ));
+        });
+
+        menu.items.push(mItem);
     });
 
     phone.showMenu(menu);
@@ -5634,13 +5725,13 @@ phone.callBackModalInput = async function(paramsJson, text) {
         }
         if (params.name == 'fractionBenefit') {
             let price = methods.parseFloat(text);
-
+О
             if (price < 0) {
                 mp.game.ui.notifications.show(`~r~Значение не может быть меньше нуля`);
                 return;
             }
-            if (price > 250) {
-                mp.game.ui.notifications.show(`~r~Значение не может быть больше 250`);
+            if (price > 300) {
+                mp.game.ui.notifications.show(`~r~Значение не может быть больше 300`);
                 return;
             }
 

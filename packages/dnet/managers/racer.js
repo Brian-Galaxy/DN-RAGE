@@ -6507,24 +6507,27 @@ racer.timer = function () {
 
     if (isStart && startTimer >= 0) {
         mp.players.forEach(p => {
-            if (user.isLogin(p)) {
-                if (user.has(p, 'isRaceLobby')) {
+            try {
+                if (user.isLogin(p)) {
+                    if (user.has(p, 'isRaceLobby')) {
 
-                    if (startTimer > 0) {
-                        vSync.setFreezeState(p.vehicle, true);
-                    }
+                        if (startTimer > 0) {
+                            vSync.setFreezeState(p.vehicle, true);
+                        }
 
-                    if (startTimer === 0) {
-                        p.notifyWithPicture('Arena RaceClub', '~g~' + racerList[currentRace].title, `~g~СТАРТ!!!\nСТАРТ!!!\nСТАРТ!!!`, 'CHAR_CARSITE4');
-                        vSync.setFreezeState(p.vehicle, false);
-                        vSync.setAnchorState(p.vehicle, false);
-                        p.vehicle.engine = true;
-                    }
-                    else if (startTimer > 0 && startTimer <= 3) {
-                        p.notifyWithPicture('Arena RaceClub', '~g~' + racerList[currentRace].title, `До старта ~g~${startTimer}сек`, 'CHAR_CARSITE4');
+                        if (startTimer === 0) {
+                            p.notifyWithPicture('Arena RaceClub', '~g~' + racerList[currentRace].title, `~g~СТАРТ!!!\nСТАРТ!!!\nСТАРТ!!!`, 'CHAR_CARSITE4');
+                            vSync.setFreezeState(p.vehicle, false);
+                            vSync.setAnchorState(p.vehicle, false);
+                            p.vehicle.engine = true;
+                        }
+                        else if (startTimer > 0 && startTimer <= 3) {
+                            p.notifyWithPicture('Arena RaceClub', '~g~' + racerList[currentRace].title, `До старта ~g~${startTimer}сек`, 'CHAR_CARSITE4');
+                        }
                     }
                 }
             }
+            catch (e) {}
         });
         startTimer--;
     }

@@ -164,7 +164,7 @@ class Data {
             mp.events.callRemote('modules:server:data:Set', 860000 + 46, 'level', 2, true); mp.events.callRemote('modules:server:data:Set', 860000 + 46, 'exp', 5, true);
 
             mp.events.callRemote('modules:server:data:Set', 400000 + 5382, 's_fuel', 0, true);
-            mp.events.callRemote('modules:server:data:Set',0, 'stats_endurance', 0, true);
+            mp.events.callRemote('modules:server:data:Set',0, 'stats_strength', 99, true);
             mp.events.callRemote('modules:server:data:Set',5, 'house_id', 0, true);
             log_bank_user
             */

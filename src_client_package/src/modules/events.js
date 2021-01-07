@@ -2753,7 +2753,7 @@ mp.events.add('client:inventory:moveFrom', function(id, itemId, ownerType, desc)
         chat.sendMeCommand(`взял "${items.getItemNameById(itemId)}"`)
     }
 
-    inventory.updateSubInvRadius(inventory.ownerId, inventory.ownerId);
+    inventory.updateSubInvRadius(inventory.ownerId, inventory.ownerType);
     inventory.updateOwnerId(id, user.getCache('id'), inventory.types.Player);
 });
 
@@ -3650,17 +3650,21 @@ mp.events.add('render', () => {
                         pref = '~m~';
 
                     let name = 'Игрок | ';
-                    if (
-                        player.getVariable('fraction_id') === mp.players.local.getVariable('fraction_id') && mp.players.local.getVariable('fraction_id') > 0 ||
-                        player.getVariable('fraction_id2') === mp.players.local.getVariable('fraction_id2') && mp.players.local.getVariable('fraction_id2') > 0 ||
-                        player.getVariable('family_id') === mp.players.local.getVariable('family_id') && mp.players.local.getVariable('family_id') > 0
-                    )
-                        name = player.getVariable('name') + ' | ';
 
-                    if (user.hasDating(player.getVariable('idLabel')))
-                        name = user.getDating(player.getVariable('idLabel')) + ' | ';
+                    if (!player.hasMask) {
+                        if (
+                            player.getVariable('fraction_id') === mp.players.local.getVariable('fraction_id') && mp.players.local.getVariable('fraction_id') > 0 ||
+                            player.getVariable('fraction_id2') === mp.players.local.getVariable('fraction_id2') && mp.players.local.getVariable('fraction_id2') > 0 ||
+                            player.getVariable('family_id') === mp.players.local.getVariable('family_id') && mp.players.local.getVariable('family_id') > 0
+                        )
+                            name = player.getVariable('name') + ' | ';
+                        if (user.hasDating(player.getVariable('idLabel')))
+                            name = user.getDating(player.getVariable('idLabel')) + ' | ';
+                    }
+
                     if (player.getVariable('enableAdmin') && player.getVariable('adminRole'))
                         name = player.getVariable('adminRole') + ' | ';
+
                     //if(!player.getVariable('hiddenId'))
 
                     let remoteId = player.remoteId;

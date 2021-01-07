@@ -672,7 +672,7 @@ inventory.updateSubInvRadius = function(ownerId, ownerType, withMe = false) {
     setTimeout(function () {
         if (methods.parseInt(ownerId === user.getCache('id')) && ownerType === inventory.types.Player)
             return;
-        if (ownerId < 0)
+        if (ownerType < 0 || ownerType === 1)
             return;
         mp.events.callRemote('server:inventory:updateSubInvRadius', ownerId.toString(), ownerType, withMe);
     }, 100)

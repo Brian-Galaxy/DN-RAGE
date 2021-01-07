@@ -1434,19 +1434,44 @@ inventory.usePlayerItem = function(player, id, itemId) {
 
     switch (itemId) {
         case 277: {
-            let target = methods.getNearestPlayerWithPlayer(player, 4);
-            if (!user.isLogin(target)) {
-                player.notify("~r~Рядом с вами никого нет");
-                return;
-            }
+            try {
+                let target = methods.getNearestPlayerWithPlayer(player, 4);
+                if (!user.isLogin(target)) {
+                    player.notify("~r~Рядом с вами никого нет");
+                    return;
+                }
 
-            if (!user.isEms(player)) {
-                player.notify("~y~У Вас нет навыка для использования этой приблуды");
-                return;
-            }
+                if (!user.isEms(player)) {
+                    player.notify("~y~У Вас нет навыка для использования этой приблуды");
+                    return;
+                }
 
-            chat.sendMeCommand(player, "использовал дефибриллятор");
-            user.useAdrenaline(target);
+                if (target.health > 0) {
+                    player.notify("~r~Игрок должен быть в коме");
+                    return;
+                }
+
+                let targetId = user.getId(target);
+                if (user.hasById(targetId, 'adrenaline')) {
+                    player.notify("~r~Нельзя так часто использовать адреналин на игрока");
+                    return;
+                }
+
+                user.setById(targetId, 'adrenaline', true);
+                coffer.addMoney(coffer.getIdByFraction(user.get(player, 'fraction_id'), 100));
+                user.addMoney(player, 200, 'Использование дефибриллятора');
+
+                chat.sendMeCommand(player, "использовал дефибриллятор");
+                user.useAdrenaline(target);
+            }
+            catch (e) {}
+
+            setTimeout(function () {
+                try {
+                    user.resetById(targetId, 'adrenaline');
+                }
+                catch (e) {}
+            }, 1000 * 60 * 5);
             break;
         }
         default:

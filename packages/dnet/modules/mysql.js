@@ -101,9 +101,9 @@ mysql.executeQuery = async function (query, values, callback) {
             }
         });
     } catch (e) {
-        setTimeout(function () {
+        /*setTimeout(function () {
             mysql.executeQuery(query, values, callback);
-        }, 2000);
+        }, 2000);*/
         console.log('DBERROR', e);
     }
 };

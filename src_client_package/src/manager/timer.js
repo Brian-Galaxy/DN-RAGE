@@ -379,7 +379,7 @@ timer.twoSecTimer = function() {
                 catch (e) {}
             }
 
-            if (!user.hasCache('uniform') && user.hasCache('id')) {
+            if (user.hasCache('id')) {
                 if (mp.players.local.getArmour() > 0 && mp.players.local.getDrawableVariation(9) === 0) {
                     user.set('armor', 12);
                     user.set('armor_color', 1);
@@ -990,7 +990,7 @@ timer.loadAll = function () {
                 mp.game.controls.disableControlAction(0, 60, true);
             }
 
-            if(ui.isGreenZone() && !user.isPolice() && !user.isGov()) {
+            if(ui.isGreenZone() && !user.isPolice() && !user.isGov() && !user.isCartel()) {
                 mp.game.controls.disableControlAction(2, 24, true);
                 mp.game.controls.disableControlAction(2, 25, true);
                 mp.game.controls.disableControlAction(2, 66, true);

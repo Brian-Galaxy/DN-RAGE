@@ -17,6 +17,10 @@ fishing.loadAll = function () {
     fishing.trade();
 };
 
+fishing.getPrices = function () {
+    return prices;
+};
+
 fishing.trade = function () {
     prices.forEach((item, idx) => {
         if (item[4] > items.getItemPrice(item[0]) * 3) {

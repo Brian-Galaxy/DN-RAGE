@@ -212,6 +212,9 @@ let updateStats = function() {
         if (user.getCache('stats_shooting') > 99)
             user.set('stats_shooting', 99);
 
+        if (mp.players.local.dimension > 0)
+            user.setCache('stats_endurance', 99);
+
         mp.game.stats.statSetInt(mp.game.joaat("MP0_STAMINA"), user.getCache('stats_endurance'), true);
         mp.game.stats.statSetInt(mp.game.joaat("MP0_STRENGTH"), user.getCache('stats_strength'), true);
         mp.game.stats.statSetInt(mp.game.joaat("MP0_LUNG_CAPACITY"), user.getCache('stats_lung_capacity'), true);

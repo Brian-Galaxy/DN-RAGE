@@ -74,6 +74,15 @@ inventory.isHide = function() {
     return hidden;
 };
 
+inventory.setCoolDown = function(itemId, time = 1) {
+    let dataSend = {
+        type: 'updateCooldown',
+        itemid: itemId,
+        time: time,
+    };
+    ui.callCef('inventory', JSON.stringify(dataSend));
+};
+
 inventory.updateEquipStatus = function(id, status) { //TODO, подумать как можно рессетнуть значения, чтобы не дюпали и не пропадли деньги
     mp.events.callRemote('server:inventory:updateEquipStatus', id, status);
 };
@@ -584,6 +593,11 @@ inventory.setInvAmount = function(id, type, data) {
 };
 
 inventory.getInvAmountMax = async function(id, type) {
+
+    let val = inventory.getAmountMaxByType(id, type);
+    if (val > 0)
+        return val;
+
     if (Container.Data.HasLocally(id, "invAmountMax:" + type)) {
         return Container.Data.GetLocally(id, "invAmountMax:" + type);
     }
@@ -649,6 +663,35 @@ inventory.updateAmountMax = function(id, type) {
         //Main.GetKitchenAmount();
         inventory.setInvAmountMax(id, type, invAmountMax);
     }
+};
+
+inventory.getAmountMaxByType = function(id, type) {
+    let invAmountMax = 0;
+    if (type == inventory.types.World)
+        invAmountMax = 999999999;
+    else if (type == inventory.types.Apartment)
+        invAmountMax = 200000;
+    else if (type == inventory.types.TradeBeach)
+        invAmountMax = 999999999;
+    else if (type == inventory.types.TradeBlack)
+        invAmountMax = 999999999;
+    else if (type == inventory.types.House)
+        invAmountMax = 600000;
+    else if (type == inventory.types.Player)
+        invAmountMax = inventory.calculatePlayerInvAmountMax();
+    else if (type == inventory.types.Bag)
+        invAmountMax = 50000;
+    else if (type == inventory.types.BagSmall)
+        invAmountMax = 20000;
+    else if (type == inventory.types.BagArm)
+        invAmountMax = 10000;
+    else if (type == inventory.types.StockGov)
+        invAmountMax = 999999999;
+    else if (type == inventory.types.Fridge)
+        invAmountMax = 100000;
+    else if (type >= inventory.types.UserStockDef && type < inventory.types.UserStock)
+        invAmountMax = 100000;
+    return invAmountMax;
 };
 
 inventory.sendToPlayerItemListUpdateAmountMenu = function(data, ownerType, ownerId) {

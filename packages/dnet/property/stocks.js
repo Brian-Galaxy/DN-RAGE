@@ -196,7 +196,7 @@ stocks.openCase = {
         [119, 282, 282, 443, 444],
     ],
     51: [
-        [49],
+        [49, 474],
     ],
     53: [
         [49, 474],
@@ -260,7 +260,7 @@ stocks.boxList = [
     ['Малый ящик слоновых бивней', 588496643, 47, -0.12, false, 5000, 'Трофеи браконьеров', 0 ], //48
     ['Бриллиант 64 карата', 926762619, 48, 0, false, 50000, 'Уникальный груз', 2 ], //49
     ['Оружейный ящик MerryWeather', -994309865, 49, 0, false, 100000, 'Оружие и патроны', 2 ], //50
-    ['Ящик с документами банков Fleeca', -994309865, 50, 0, false, 100000, 'Уникальный груз', 2 ], //51
+    ['Ящик с документами банков Fleeca', -994309865, 50, 0, false, 100000, 'Уникальный груз', 3 ], //51
     ['Ящик с C4', -1853019218, 51, 0, false, 200000, 'Оружие и патроны', 3 ], //52
     ['Ящик с документами банка Pacific', -994309865, 50, 0, false, 200000, 'Уникальный груз', 3 ], //53
 ];
@@ -774,23 +774,23 @@ stocks.cargoUnload = function(player, bid = 1) {
         {
             let vInfo = methods.getVehicleInfo(player.vehicle.model);
 
-            let fraction = 7;
+            let fractionId = 7;
             if (methods.distanceToPos(player.position, new mp.Vector3(477.9193420410156, -3300.276123046875, 6.909423828125)) < 10)
-                fraction = 7;
+                fractionId = 7;
             if (methods.distanceToPos(player.position, new mp.Vector3( 504.80950927734375, -3127.914306640625, 5.069790840148926)) < 10)
-                fraction = 7;
+                fractionId = 7;
             if (methods.distanceToPos(player.position, new mp.Vector3( 329.8642272949219, -557.3507690429688, 27.743440628051758)) < 10)
-                fraction = 6;
+                fractionId = 6;
             if (methods.distanceToPos(player.position, new mp.Vector3( 137.56112670898438, -741.5675659179688, 32.13323211669922)) < 10)
-                fraction = 5;
+                fractionId = 5;
             if (methods.distanceToPos(player.position, new mp.Vector3( -460.87451171875, 6009.25830078125, 30.340526580810547)) < 10)
-                fraction = 4;
+                fractionId = 4;
             if (methods.distanceToPos(player.position, new mp.Vector3( -1070.80419921875, -853.8217163085938, 3.8680715560913086)) < 10)
-                fraction = 3;
+                fractionId = 3;
             if (methods.distanceToPos(player.position, new mp.Vector3( -1314.7291259765625, -590.8836669921875, 27.772537231445312)) < 10)
-                fraction = 2;
+                fractionId = 2;
             if (methods.distanceToPos(player.position, new mp.Vector3( 4990.25537109375, -5738.73486328125, 18.88131332397461)) < 10)
-                fraction = 9;
+                fractionId = 9;
 
             let box = boxes[bid];
             boxes[bid] = -1;
@@ -802,28 +802,28 @@ stocks.cargoUnload = function(player, bid = 1) {
             catch (e) {}
 
             let count = 1;
-            if (vInfo.display_name === 'Cargobob' || vInfo.display_name === 'Cargobob3' || vInfo.display_name === 'Cargobob4' && fraction === 7)
+            if (vInfo.display_name === 'Cargobob' || vInfo.display_name === 'Cargobob3' || vInfo.display_name === 'Cargobob4' && fractionId === 7)
                 count = 20;
 
             if (box === 13)
             {
-                coffer.set(fraction, 'stock_med', coffer.get(7, 'stock_med') + 250 * count);
-                coffer.set(fraction, 'stock_eat', coffer.get(7, 'stock_eat') + 100 * count);
+                coffer.set(fractionId, 'stock_med', coffer.get(fractionId, 'stock_med') + 250 * count);
+                coffer.set(fractionId, 'stock_eat', coffer.get(fractionId, 'stock_eat') + 100 * count);
             }
             if (box === 50)
             {
-                coffer.set(fraction, 'stock_gun', coffer.get(7, 'stock_gun') + 20 * count);
-                coffer.set(fraction, 'stock_gunm', coffer.get(7, 'stock_gunm') + 80 * count);
-                coffer.set(fraction, 'stock_ammo', coffer.get(7, 'stock_ammo') + 250 * count);
-                coffer.set(fraction, 'stock_armour', coffer.get(7, 'stock_armour') + 250 * count);
+                coffer.set(fractionId, 'stock_gun', coffer.get(fractionId, 'stock_gun') + 20 * count);
+                coffer.set(fractionId, 'stock_gunm', coffer.get(fractionId, 'stock_gunm') + 80 * count);
+                coffer.set(fractionId, 'stock_ammo', coffer.get(fractionId, 'stock_ammo') + 250 * count);
+                coffer.set(fractionId, 'stock_armour', coffer.get(fractionId, 'stock_armour') + 250 * count);
             }
             if (box === 2)
             {
-                coffer.set(fraction, 'stock_other', coffer.get(7, 'stock_other') + 10 * count);
+                coffer.set(fractionId, 'stock_other', coffer.get(fractionId, 'stock_other') + 10 * count);
             }
             if (box === 1)
             {
-                coffer.set(fraction, 'stock_eat', coffer.get(7, 'stock_eat') + 100 * count);
+                coffer.set(fractionId, 'stock_eat', coffer.get(fractionId, 'stock_eat') + 100 * count);
             }
 
             player.notify(`~g~Вы разгрузили ящик`);

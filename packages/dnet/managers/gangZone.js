@@ -212,7 +212,7 @@ gangZone.generateLobby = function() {
 gangZone.playerToLobby = function(player) {
     methods.debug('gangZone.playerToLobby');
     if (user.isLogin(player)) {
-        if (user.has(player, 'uniform')) {
+        if (user.hasById(user.getId(player), 'uniform')) {
             player.notify('~r~В форме запрещено учавствовать в GangZone');
             return;
         }
@@ -243,11 +243,6 @@ gangZone.playerToLobby = function(player) {
 gangZone.playerExitLobby = function(player) {
     methods.debug('gangZone.playerToLobby');
     if (user.isLogin(player)) {
-        if (user.has(player, 'uniform')) {
-            player.notify('~r~В форме запрещено учавствовать в GangZone');
-            return;
-        }
-
         user.blockKeys(player, false);
 
         user.removeAllWeapons(player);

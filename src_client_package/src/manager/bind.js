@@ -372,6 +372,11 @@ for(let code in keyCodes) {
             }
             if (!methods.isBlockKeys() && phone.isHide() && mainMenu.isHide()) {
 
+                if (mp.players.local.getVariable('blockDeath')) {
+                    mp.game.ui.notifications.show("~r~Данное действие сейчас запрещено");
+                    return;
+                }
+
                 if (Container.Data.HasLocally(mp.players.local.remoteId, "isInventoryTimeout"))
                 {
                     mp.game.ui.notifications.show("~r~Таймаут на действие 1 секунду");
@@ -395,6 +400,12 @@ for(let code in keyCodes) {
                 return;
             }
             if (!methods.isBlockKeys() && phone.isHide() && mainMenu.isHide()) {
+
+                if (mp.players.local.getVariable('blockDeath')) {
+                    mp.game.ui.notifications.show("~r~Данное действие сейчас запрещено");
+                    return;
+                }
+
                 if (ui.isGreenZone() || mp.players.local.dimension > 0 || mp.players.local.isInAnyVehicle(true))
                     ui.callCef('inventory', '{"type": "showOrHide"}');
                 else

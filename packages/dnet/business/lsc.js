@@ -908,7 +908,7 @@ lsc.buyColor1 = function(player, idx, price, shopId, itemName, payType) {
 
             user.showCustomNotify(player, 'Вы изменили цвет транспорта', 2, 9);
 
-            vehicles.setColorFraction(veh.getVariable('veh_id'));
+            vehicles.setColorFraction(veh.getVariable('veh_id'), idx);
         }
         catch (e) {
             

@@ -1451,27 +1451,28 @@ inventory.usePlayerItem = function(player, id, itemId) {
                     return;
                 }
 
-                let targetId = user.getId(target);
-                if (user.hasById(targetId, 'adrenaline')) {
-                    player.notify("~r~Нельзя так часто использовать адреналин на игрока");
-                    return;
-                }
-
-                user.setById(targetId, 'adrenaline', true);
-                coffer.addMoney(coffer.getIdByFraction(user.get(player, 'fraction_id'), 100));
-                user.addMoney(player, 200, 'Использование дефибриллятора');
-
                 chat.sendMeCommand(player, "использовал дефибриллятор");
                 user.useAdrenaline(target);
+
+                let targetId = user.getId(target);
+                if (user.hasById(targetId, 'adrenaline')) {
+                    player.notify("~r~На игрока недавно был использован дефибриллятор, поэтому премию вы не получите");
+                    return;
+                }
+                user.setById(targetId, 'adrenaline', true);
+
+                coffer.addMoney(coffer.getIdByFraction(user.get(player, 'fraction_id'), 100));
+                user.addMoney(player, 200, 'Использование дефибриллятора');
+                player.notify("~g~Вам была выдана премия в $200");
+                
+                setTimeout(function () {
+                    try {
+                        user.resetById(targetId, 'adrenaline');
+                    }
+                    catch (e) {}
+                }, 1000 * 60 * 10);
             }
             catch (e) {}
-
-            setTimeout(function () {
-                try {
-                    user.resetById(targetId, 'adrenaline');
-                }
-                catch (e) {}
-            }, 1000 * 60 * 5);
             break;
         }
         default:

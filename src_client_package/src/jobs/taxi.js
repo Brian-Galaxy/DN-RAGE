@@ -168,7 +168,7 @@ taxi.take = async function() {
         return;
     }
 
-    if (await user.has('uniform')) {
+    if (await user.hasById('uniform')) {
         mp.game.ui.notifications.show('~r~Нельзя работать в форме');
         return;
     }

@@ -1817,7 +1817,7 @@ user.giveJobSkill = function(name = '') {
 
 user.giveJobMoney = async function(money, jobId = 0) {
 
-    if (await user.has('uniform')) {
+    if (await user.hasById('uniform')) {
         mp.game.ui.notifications.show('~r~Нельзя работать в форме');
         return;
     }

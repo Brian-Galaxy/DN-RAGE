@@ -852,8 +852,8 @@ vehicles.parkFraction = function(id, x, y, z, rot) {
 };
 
 vehicles.setColorFraction = function(id, color) {
-    methods.debug('vehicles.parkFraction');
-     mysql.executeQuery("UPDATE cars_fraction SET color = '" + methods.parseInt(color) + "' where id = '" + methods.parseInt(id) + "'");
+    methods.debug('vehicles.setColorFraction');
+    mysql.executeQuery("UPDATE cars_fraction SET color = '" + methods.parseInt(color) + "' where id = '" + methods.parseInt(id) + "'");
     vehicles.fractionList.forEach((item, i) => {
         if (item.id == id) {
             vehicles.fractionList[i].color = color;

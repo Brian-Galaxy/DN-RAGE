@@ -339,7 +339,7 @@ weather.timeSyncTimer = function() {
                 mafiaWar.startWar(3);
         }*/
 
-        if (dateTime.getDay() === 7) {
+        if (dateTime.getDay() === 7 || dateTime.getDay() === 0) {
             if (dateTime.getHours() === 20 && dateTime.getMinutes() === 0) {
                 inventory.deleteItemsByItemId(49);
                 fraction.createCargoBigWar();
@@ -353,6 +353,10 @@ weather.timeSyncTimer = function() {
         if (dateTime.getDay() === 1 || dateTime.getDay() === 3 || dateTime.getDay() === 6) {
             if (dateTime.getHours() === 19 && dateTime.getMinutes() === 0)
                 fraction.createCargoArmyWar();
+        }
+        else {
+            if (dateTime.getHours() === 19 && dateTime.getMinutes() === 0)
+                fraction.createCargoMafiaWar();
         }
         /*if (dateTime.getHours() === 20 && dateTime.getMinutes() === 30)
             fraction.createCargoMafiaWar();

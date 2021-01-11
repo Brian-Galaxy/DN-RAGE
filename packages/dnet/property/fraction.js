@@ -425,6 +425,14 @@ fraction.warVehPos = [
     [564.9754, 2278.31, 60.52063, -1.453646],  // West BC
 ];
 
+fraction.warVehPosGhetto = [
+    [143.3848114013672, -1691.2716064453125, 29.623870849609375, 45.9788818359375],
+    [158.39117431640625, -1507.834716796875, 29.376426696777344, 96.02655029296875],
+    [38.62564468383789, -1743.2216796875, 29.537214279174805, 51.138397216796875],
+    [484.70574951171875, -1973.9261474609375, 24.856245040893555, 56.667816162109375],
+    [236.68455505371094, -1775.2017822265625, 28.902326583862305, 221.2811737060547],
+];
+
 fraction.spawnSellCar = [
     [890.7494, -887.1849, 25.84651],
     [766.4, -1260.555, 25.37186],
@@ -980,20 +988,19 @@ fraction.createCargoMafiaWar = function() {
     if (isCargoMafia)
         return;
 
-    for (let i = 0; i < enums.mafiaAllows.length; i++)
-        methods.notifyWithPictureToFraction2('Борьба за груз', `~r~МАФИИ!`, 'Началась война за груз, груз отмечен на карте', 'CHAR_DEFAULT', enums.mafiaAllows[i]);
+    methods.notifyWithPictureToFractions2('Борьба за груз', `~r~ВНИМАНИЕ!`, 'Началась война за груз, груз отмечен на карте');
 
     isCargoMafia = true;
 
     //currentWarPos = [];
     let spawnList = [];
-    spawnList.push(methods.getRandomInt(0, fraction.warVehPos.length));
+    spawnList.push(methods.getRandomInt(0, fraction.warVehPosGhetto.length));
     //spawnList.push(methods.getRandomInt(0, fraction.warVehPos.length));
 
     timerMafia = 600;
 
     spawnList.forEach((item, i) => {
-        let posVeh = new mp.Vector3(fraction.warVehPos[item][0], fraction.warVehPos[item][1], fraction.warVehPos[item][2]);
+        let posVeh = new mp.Vector3(fraction.warVehPosGhetto[item][0], fraction.warVehPosGhetto[item][1], fraction.warVehPosGhetto[item][2]);
 
         let b1 = methods.getRandomInt(1000, 20000);
         let b2 = methods.getRandomInt(1000, 20000);
@@ -1035,7 +1042,7 @@ fraction.createCargoMafiaWar = function() {
                 let color = methods.getRandomInt(0, 150);
                 veh.locked = false;
                 veh.setColor(color, color);
-                let boxes = [50, 50, 50, 50, 50, 50, 50, 50, 50, 50];
+                let boxes = [50, 50, 50, 50, 50, 50, 50, 50, 51];
                 veh.setVariable('box', JSON.stringify(boxes));
                 veh.setVariable('cargoId', b1);
                 veh.setVariable('isMafia', true);
@@ -1044,7 +1051,7 @@ fraction.createCargoMafiaWar = function() {
                 methods.debug(e);
             }
 
-        }, posVeh, fraction.warVehPos[item][3], 'Mule4');
+        }, posVeh, fraction.warVehPosGhetto[item][3], 'Mule4');
     });
 
     setTimeout(fraction.timerCargoMafiaWar, 1000);

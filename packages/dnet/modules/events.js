@@ -49,6 +49,7 @@ let racer = require('../managers/racer');
 let gangZone = require('../managers/gangZone');
 let trucker = require('../managers/trucker');
 let vSync = require('../managers/vSync');
+let fishing = require('../managers/fishing');
 
 mp.events.__add__ = mp.events.add;
 
@@ -4381,18 +4382,17 @@ mp.events.addRemoteCounted('server:inventory:getItemList', (player, ownerType, o
 mp.events.addRemoteCounted('server:inventory:updateSubInvRadius', (player, ownerId, ownerType, withMe = false) => {
     if (!user.isLogin(player))
         return;
-
-    methods.debug('updateSubInvRadius', player.id, ownerId, ownerType, withMe);
     methods.getListOfPlayerInRadius(player.position, 10).forEach(p => {
         try {
             if (!user.isLogin(p))
                 return;
-            if (p.id === player.id) {
+            /*if (p.id === player.id) {
                 if (withMe)
                     inventory.getItemList(p, ownerType, methods.parseInt(ownerId), false, true);
             }
-            else
-                inventory.getItemList(p, ownerType, methods.parseInt(ownerId), false, true);
+            else*/
+            inventory.getItemList(p, ownerType, methods.parseInt(ownerId), false, true);
+            inventory.getItemList(p, inventory.types.Player, user.getId(p), false, true);
         }
         catch (e) {}
     })
@@ -4422,7 +4422,14 @@ mp.events.addRemoteCounted('server:user:sellFish', (player, shopId) => {
         let price = 0;
         let countFish = rows.length;
         rows.forEach(row => {
-            price += items.getItemPrice(row['item_id']);
+            let localPrice = items.getItemPrice(row['item_id']);
+
+            fishing.getPrices().forEach(fishItem => {
+                if (fishItem[0] === row['item_id'])
+                    localPrice = fishItem[4];
+            });
+
+            price = price + localPrice;
         });
 
         business.addMoney(shopId, price / 10, 'Доля с продажи рыбы');
@@ -4793,9 +4800,8 @@ mp.events.addRemoteCounted("onKeyPress:E", (player) => {
             let houseData = houses.getHouseData(key);
             if (houseData.get('user_id') == 0)
                 player.call('client:showHouseBuyMenu', [Array.from(houseData)]);
-            else if (houseData.get('user_id') == 0) {
+            else if (houseData.get('id') == user.get(player, 'house_id'))
                 player.call('client:showHouseOutMenu', [Array.from(houseData)]);
-            }
         }
         if (methods.distanceToPos(player.position, val.g1.position) < 4 || methods.distanceToPos(player.position, val.g2.position) < 4 || methods.distanceToPos(player.position, val.g3.position) < 4) {
             let houseData = houses.getHouseData(key);
@@ -6750,8 +6756,10 @@ mp.events.addRemoteCounted('server:fraction:vehicleNewDep', (player, id, dep) =>
 
     mp.vehicles.forEach(veh => {
         if (veh.getVariable('veh_id') == id)
+        {
             veh.setVariable('rank_type', dep);
-        veh.setVariable('rank', rank);
+            veh.setVariable('rank', rank);
+        }
     });
 
     vehicles.fractionList.forEach((item, i) => {
@@ -6763,6 +6771,34 @@ mp.events.addRemoteCounted('server:fraction:vehicleNewDep', (player, id, dep) =>
 
     mysql.executeQuery(`UPDATE cars_fraction SET rank = '${rank}', rank_type = '${dep}' where id = '${id}'`);
     player.notify('~b~Вы перевели транспорт в другой отдел');
+});
+
+mp.events.addRemoteCounted('server:fraction:vehicleRespawn', (player, id) => {
+    if (!user.isLogin(player))
+        return;
+    mp.vehicles.forEach(veh => {
+        try {
+            if (veh.getVariable('veh_id') == id)
+                vehicles.respawn(veh)
+        }
+        catch (e) {}
+    });
+    player.notify('~b~Транспорт был зареспавнен');
+});
+
+mp.events.addRemoteCounted('server:fraction:getDrugVans', (player) => {
+    if (!user.isLogin(player))
+        return;
+    let fractionId = 9;
+    let currentMed = coffer.get(fractionId, 'stock_med');
+    if (currentMed < 500) {
+        player.notify('~r~На складе недостаточно медикаментов');
+        return;
+    }
+    coffer.set(fractionId, 'stock_med', coffer.get(fractionId, 'stock_med') - 500);
+    user.setWaypoint(player, 4981.1748046875, -5750.0791015625);
+    fraction.spawnCargo('Youga3', [39], 4981.1748046875, -5750.0791015625, 20.05645751953125, 318.7510070800781);
+    player.notify('~g~Метка на транспорт установлена');
 });
 
 mp.events.addRemoteCounted('server:fraction:vehicleBuy', (player, id, price) => {

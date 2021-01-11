@@ -2651,6 +2651,7 @@ mp.events.add('client:inventory:moveTo', async function(id, itemId, ownerId, own
         mp.game.ui.notifications.show("~r~На банковской карте не должно быть средств, чтобы ее передать");
         return;
     }
+
     if (ownerType === 0) {
         if (mp.players.local.dimension > 0) {
             mp.game.ui.notifications.show("~r~Нельзя выбрасывать предметы в интерьере");
@@ -2730,13 +2731,16 @@ mp.events.add('client:inventory:giveItem', function(id, itemId, playerId, count)
     inventory.giveItem(id, itemId, playerId)
 });
 
-mp.events.add('client:inventory:moveFrom', function(id, itemId, ownerType, desc) {
+mp.events.add('client:inventory:moveFrom', async function(id, itemId, ownerType, desc) {
+
+    if (itemId === 50 || itemId === 252 || items.isAmmo(itemId) || items.isWeapon(itemId))
+        inventory.setCoolDown(itemId);
 
     if (ownerType == 0) {
         inventory.deleteItemProp(id);
         user.playAnimation("pickup_object","pickup_low", 8);
 
-        if (items.isWeapon(itemId) && user.getCache('uniform'))
+        if (items.isWeapon(itemId) && await user.getById('uniform'))
         {
             methods.saveFractionLog(
                 user.getCache('name'),
@@ -2780,6 +2784,7 @@ mp.events.add('client:inventory:drop', function(id, itemId, count) {
         mp.game.ui.notifications.show("~r~На банковской карте не должно быть средств, чтобы ее передать");
         return;
     }
+
     inventory.dropItem(id, itemId, mp.players.local.position, mp.players.local.getRotation(0));
     inventory.updateSubInvRadius(0, 0);
 });
@@ -2803,6 +2808,30 @@ mp.events.add('client:inventory:rename', async function(id, itemId, paramsJson) 
     params.name = newName;
     inventory.updateItemParams(id, JSON.stringify(params));
     mp.game.ui.notifications.show("~g~Вы переименовали сумку");
+});
+
+mp.events.add('client:inventory:split', async function(id, itemId, count) {
+    inventory.hide();
+
+    let countNew = methods.parseInt(await menuList.getUserInput('Введите количество патрон которые хотите отдать', '', 3));
+    if (countNew === 0) {
+        mp.game.ui.notifications.show("~r~Число должно быть больше нуля");
+        return;
+    }
+    
+    if (countNew > count) {
+        mp.game.ui.notifications.show("~r~У вас нет столько патрон в пачке");
+        return;
+    }
+
+    inventory.updateItemCount(id, count - countNew);
+    inventory.addItemSql(itemId, 1, 1, user.getCache('id'), countNew);
+
+    mp.game.ui.notifications.show("~g~Вы разделили пачку");
+
+    setTimeout(function () {
+        inventory.show();
+    }, 200);
 });
 
 mp.events.add('client:inventory:selectWeapon', function(id, itemId, serial) {
@@ -3669,8 +3698,10 @@ mp.events.add('render', () => {
 
                     let remoteId = player.remoteId;
 
-                    if (user.isAdmin() && mp.players.local.getVariable('enableAdmin'))
+                    if (user.isAdmin() && mp.players.local.getVariable('enableAdmin')) {
+                        name = player.getVariable('name') + ' | ';
                         remoteId = `${remoteId} (${player.getVariable('idLabel')} | ~g~${player.getHealth()} ~s~|~b~ ${player.getArmour()}~s~)`;
+                    }
                     if (player.getVariable('duel') || player.getVariable('blockDeath') || gangWarTimeout)
                         remoteId = `${remoteId} (~g~${player.getHealth()} ~s~|~b~ ${player.getArmour()}~s~)`;
 

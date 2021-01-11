@@ -6119,9 +6119,16 @@ phone.callBackButton = async function(menu, id, ...args) {
                 mp.events.callRemote('server:phone:fractionList');
                 phone.showLoad();
             }
+            else if (params.name == 'respawnVeh') {
+                mp.events.callRemote('server:fraction:vehicleRespawn', params.memberId);
+                phone.showAppFraction();
+            }
             else if (params.name == 'log') {
                 mp.events.callRemote('server:phone:fractionLog');
                 phone.showLoad();
+            }
+            else if (params.name == 'getDrugVans') {
+                mp.events.callRemote('server:fraction:getDrugVans');
             }
             else if (params.name == 'money') {
                 mp.events.callRemote('server:phone:fractionMoney');

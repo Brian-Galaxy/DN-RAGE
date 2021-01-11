@@ -852,6 +852,14 @@ phone.fractionVehicleAction = function(player, id) {
             true
         ));
 
+        items.push(phone.getMenuItemButton(
+            `Зареспавнить`,
+            '',
+            {name: 'respawnVeh', memberId: veh.id},
+            '',
+            true
+        ));
+
         if (user.isLeader(player) && !veh.is_default) {
             items.push(phone.getMenuItemModal(
                 'Продать',
@@ -973,6 +981,16 @@ phone.fractionMoney = function(player) {
         items.push(phone.getMenuItemButton(
             `Разное: ${coffer.get(cofferId, 'stock_other')}ед.`,
             '',
+        ));
+    }
+
+    if (user.isCartel(player)) {
+        items.push(phone.getMenuItemButton(
+            'Получить фургон с наркотиками',
+            'Затраты: Медицина 500ед',
+            { name: 'getDrugVans' },
+            '',
+            true
         ));
     }
 

@@ -3029,7 +3029,7 @@ menuList.showMeriaTaxInfoAllMenu = async function() {
 
             if (item.payTaxType >= 0) {
                 let sum = tax * -1;
-                if (sum > 0) {
+                if (sum === 0) {
                     mp.game.ui.notifications.show("~r~Задолжность должна быть больше нуля");
                     return;
                 }
@@ -5626,7 +5626,7 @@ menuList.showTruckerOfferInfoMenu = function(idx) {
     UIMenu.Menu.OnSelect.Add(async (item, index) => {
         UIMenu.Menu.HideMenu();
         if (item.accept) {
-            if (await user.get('uniform')) {
+            if (await user.getById('uniform')) {
                 mp.game.ui.notifications.show('~r~Прежде чем принимать заказы, надо снять форму');
                 return;
             }
@@ -7664,7 +7664,7 @@ menuList.showSellFishMenu = async function(data, shopId) {
                 }
                 try {
 
-                    mp.events.callRemote('server:user:sellFish');
+                    mp.events.callRemote('server:user:sellFish', shopId);
                     quest.fish(false, -1, 3);
                     /*business.addMoney(shopId, item.price / 10, 'Доля с продажи рыбы');
                     user.addMoney(item.price, 'Продажа всей рыбы');
@@ -7710,10 +7710,10 @@ menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId, isF
 
     ownerId = methods.parseInt(ownerId);
 
-    methods.debug('showToPlayerItemListMenu', ownerType, ownerId, justUpdate, inventory.ownerType, inventory.ownerId)
-
-    if (justUpdate && inventory.ownerId !== ownerId && inventory.ownerType !== ownerType)
-        return;
+    if (justUpdate && ownerId !== user.getCache('id')) {
+        if (inventory.ownerId !== ownerId && inventory.ownerType !== ownerType)
+            return;
+    }
 
     try {
         //let invAmountMax = await inventory.getInvAmountMax(ownerId, ownerType);
@@ -7738,6 +7738,10 @@ menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId, isF
 
                 let formatItem = items.getItemFormat(item);
                 let desc = formatItem.desc;
+                if (desc === '')
+                    desc = items.getItemAmountById(item.item_id) + 'см3';
+                else 
+                    desc = desc + ' | ' + items.getItemAmountById(item.item_id) + 'см3';
                 let itemName = formatItem.name;
 
                 if (item.is_equip == 1 && ownerType == 1 && ownerId == user.getCache('id')) {
@@ -14936,12 +14940,12 @@ menuList.showAdminGiveItemMenu = function() {
     UIMenu.Menu.Draw();
 
     UIMenu.Menu.OnSelect.Add(async item => {
-        UIMenu.Menu.HideMenu();
         if (item.slotId >= 0) {
             inventory.takeNewItemJust(item.slotId, JSON.stringify({admin: user.getCache('id')}));
             methods.saveLog('log_admin', ['name', 'type', 'do'], [`${user.getCache('name')}`, 'TAKE_ITEM', `${itemList[item.slotId][0]} | ${item.slotId}`]);
         }
         if (item.doName === 'all') {
+            UIMenu.Menu.HideMenu();
             let id = await UIMenu.Menu.GetUserInput("ID предмета", "", 5);
             if (id === '')
                 return;

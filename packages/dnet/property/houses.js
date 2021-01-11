@@ -590,7 +590,7 @@ houses.enterv = function (player, id) {
         garageId = hInfo.get('ginterior3');
 
     if (garageId == -1) {
-        player.notify('~r~Произошла неизвестная ошибка');
+        player.notify('~r~Вы отошли слишком далеко');
         return;
     }
 
@@ -682,7 +682,7 @@ houses.exitv = function (player, id) {
         garageId = 3;
 
     if (garageId == -1) {
-        player.notify('~r~Произошла неизвестная ошибка');
+        player.notify('~r~Вы отошли слишком далеко');
         return;
     }
 

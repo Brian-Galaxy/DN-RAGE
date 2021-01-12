@@ -3465,14 +3465,6 @@ mp.events.add("client:vehicle:checker", async function () {
                     else if (s_break < 40) {
                         vehicle.setHandling('fBrakeForce', '0.6');
                     }
-                    else {
-                        if (vehicle.getMod(12) === 0)
-                            vehicle.setHandling('fBrakeForce', '1.3');
-                        if (vehicle.getMod(12) === 1)
-                            vehicle.setHandling('fBrakeForce', '1.6');
-                        if (vehicle.getMod(12) === 2)
-                            vehicle.setHandling('fBrakeForce', '1.9');
-                    }
                     let s_eng = car.get('s_eng');
                     if (s_eng < 20) {
                         if (methods.getRandomInt(0, 10) < 4) {
@@ -3490,8 +3482,18 @@ mp.events.add("client:vehicle:checker", async function () {
                 }
             }
             catch (e) {
-                methods.saveFile('chip2', e.toString());
+                //methods.saveFile('chip2', e.toString());
             }
+
+            try {
+                if (vehicle.getMod(12) === 0)
+                    vehicle.setHandling('fBrakeForce', '1.3');
+                if (vehicle.getMod(12) === 1)
+                    vehicle.setHandling('fBrakeForce', '1.6');
+                if (vehicle.getMod(12) === 2)
+                    vehicle.setHandling('fBrakeForce', '1.9');
+            }
+            catch (e) {}
 
             if (vehicle.getMod(18) >= 0 || vehicle.getVariable('boost') > 0) {
                 boost = boost + 2;

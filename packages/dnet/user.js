@@ -1080,7 +1080,12 @@ user.updateCharacterCloth = function(player) {
             user.setComponentVariation(player, 6, cloth_data['foot'], cloth_data['foot_color'], 2);
             user.setComponentVariation(player, 7, cloth_data['accessorie'], cloth_data['accessorie_color'], 2);
             user.setComponentVariation(player, 8, cloth_data['parachute'], cloth_data['parachute_color'], 2);
-            user.setComponentVariation(player, 9, cloth_data['armor'], cloth_data['armor_color'], 2);
+            if (cloth_data['parachute_color'] !== 170 &&
+                cloth_data['parachute_color'] !== 172 &&
+                cloth_data['parachute_color'] !== 207 &&
+                cloth_data['parachute_color'] !== 210
+            )
+                user.setComponentVariation(player, 9, cloth_data['armor'], cloth_data['armor_color'], 2);
             user.setComponentVariation(player, 10, cloth_data['decal'], cloth_data['decal_color'], 2);
             user.setComponentVariation(player, 11, cloth_data['body'], cloth_data['body_color'], 2);
 

@@ -374,14 +374,21 @@ mp.events.add('client:shopMenu:changeSelect2', async function(json) {
             user.setDecoration(params.tatto1, params.tatto2);
         }
         if (params.type === 'c:show') {
-            if (clothLastIdx === params.id2) {
+            if (clothLastIdx === (params.id2 + params.id6 + params.id7)) {
                 menuList.showShopClothMoreMenu(lastSetting2.banner, lastSetting2.bg, params.shop, params.t, params.mt, await business.getPrice(params.shop), params.id1, params.id2, params.id3, params.id4, params.id5, params.id6, params.id7, params.id8, params.id10, params.itemName);
             }
             else {
-                clothLastIdx = params.id2;
-                cloth.change(params.id1, params.id2, 0, params.id4, params.id5, params.id6, params.id7);
-                if (params.id1 == 11)
+                clothLastIdx = params.id2 + params.id6 + params.id7;
+                if (params.id1 === 8) {
+                    cloth.change(11, params.id6, params.id7, params.id4, params.id5, params.id2, 0);
                     user.updateTattoo(true, true, false, true);
+                }
+                else {
+
+                    cloth.change(params.id1, params.id2, 0, params.id4, params.id5, params.id6, params.id7);
+                    if (params.id1 == 11)
+                        user.updateTattoo(true, true, false, true);
+                }
             }
         }
         if (params.type === 'p:show') {
@@ -398,6 +405,14 @@ mp.events.add('client:shopMenu:changeSelect2', async function(json) {
             let type = params.t;
             if (params.name == "openBag") {
                 menuList.showShopClothBagMenu(params.shop, type, params.mt, price);
+            }
+            if (params.name == "openPrint") {
+                if (user.getCache('torso') == 15)
+                {
+                    user.showCustomNotify("~r~Вам необходимо купить вверхнюю одежду в магазине одежды, прежде чем пользоваться услугой наклейки принта");
+                    return;
+                }
+                menuList.showShopClothPrintMenu(params.shop, type, params.mt, price);
             }
             if (params.name == "glasses") {
                 menuList.showShopPropMenu(params.shop, type, 1, price);
@@ -429,14 +444,29 @@ mp.events.add('client:shopMenu:changeSelect2', async function(json) {
             if (params.name == "acess") {
                 menuList.showShopClothMenu(params.shop, type, 7, price);
             }
+            if (params.name == "armor") {
+                menuList.showShopClothMenu(params.shop, type, 8, price);
+            }
         }
         if (params.type === 'c:buy') {
-            cloth.change(params.id1, params.id2, params.id, params.id4, params.id5, params.id6, params.id7);
-            if (params.id1 == 11)
+
+            if (params.id1 === 8) {
+                cloth.change(11, params.id6, params.id7, params.id4, params.id5, params.id2, params.id);
                 user.updateTattoo(true, true, false, true);
+            }
+            else {
+                cloth.change(params.id1, params.id2, params.id, params.id4, params.id5, params.id6, params.id7);
+                if (params.id1 == 11)
+                    user.updateTattoo(true, true, false, true);
+            }
         }
         if (params.type === 'p:buy') {
             cloth.changeProp(params.id1, params.id2, params.idx);
+        }
+        if (params.type === 'print:buy') {
+            user.setCache('tprint_c', ' ');
+            user.updateTattoo(true, true, false, true);
+            user.setDecoration(params.tatto1, params.tatto2, true);
         }
         if (params.type === 'b:show') {
             let index = methods.parseInt(params.id);
@@ -639,11 +669,18 @@ mp.events.add('client:shopMenu:buyCash2', async function(json) {
         if(params.type == 'c:buy') {
             quest.standart(false, -1, 6);
             quest.gang(false, -1, 3);
-            cloth.buy(params.id8, params.id1, params.id2, params.id, params.id4, params.id5, params.id6, params.id7, params.itemName + ' #' + (params.id + 1), params.shop, false, 0);
+
+            if (params.id1 === 8)
+                cloth.buy(params.id8, 11, params.id6, params.id7, params.id4, params.id5, params.id2, params.id, params.itemName + ' #' + (params.id + 1), params.shop, false, 0);
+            else
+                cloth.buy(params.id8, params.id1, params.id2, params.id, params.id4, params.id5, params.id6, params.id7, params.itemName + ' #' + (params.id + 1), params.shop, false, 0);
         }
         if(params.type == 'p:buy') {
             quest.standart(false, -1, 6);
             cloth.buyProp(params.id4, params.id1, params.id2, params.idx, params.itemName, params.shop, false, 0);
+        }
+        if (params.type === 'print:buy') {
+            mp.events.callRemote('server:print:buy', params.tatto1, params.tatto2, params.price, params.shop, 0);
         }
     }
     catch (e) {
@@ -723,11 +760,17 @@ mp.events.add('client:shopMenu:buyCard2', async function(json) {
         if(params.type == 'c:buy') {
             quest.standart(false, -1, 6);
             quest.gang(false, -1, 3);
-            cloth.buy(params.id8, params.id1, params.id2, params.id, params.id4, params.id5, params.id6, params.id7, params.itemName + ' #' + (params.id + 1), params.shop, false, 1);
+            if (params.id1 === 8)
+                cloth.buy(params.id8, 11, params.id6, params.id7, params.id4, params.id5, params.id2, params.id, params.itemName + ' #' + (params.id + 1), params.shop, false, 1);
+            else
+                cloth.buy(params.id8, params.id1, params.id2, params.id, params.id4, params.id5, params.id6, params.id7, params.itemName + ' #' + (params.id + 1), params.shop, false, 1);
         }
         if(params.type == 'p:buy') {
             quest.standart(false, -1, 6);
             cloth.buyProp(params.id4, params.id1, params.id2, params.idx, params.itemName, params.shop, false, 1);
+        }
+        if (params.type === 'print:buy') {
+            mp.events.callRemote('server:print:buy', params.tatto1, params.tatto2, params.price, params.shop, 1);
         }
     }
     catch (e) {

@@ -151,6 +151,10 @@ methods.error = function (message, ...args) {
     }
 };
 
+/*methods.arraySortAlphabet = function (a) {
+    return a => 10 > a ? 2e4 + +a : a.charCodeAt(0);
+};*/
+
 methods.getVehicleInfo = function (model) {
     try {
         let vehInfo = enums.vehicleInfo;

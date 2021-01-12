@@ -975,7 +975,12 @@ inventory.equip = function(player, id, itemId, count, aparams) {
             else if (itemId == 252) {
                 user.set(player, "armor", params.armor);
                 user.set(player, "armor_color", params.armor_color);
-                user.setComponentVariation(player, 9, params.armor, params.armor_color);
+                if (user.get(player, 'parachute_color') !== 170 &&
+                    user.get(player, 'parachute_color') !== 172 &&
+                    user.get(player, 'parachute_color') !== 207 &&
+                    user.get(player, 'parachute_color') !== 210
+                )
+                    user.setComponentVariation(player, 9, params.armor, params.armor_color);
                 user.setArmour(player, methods.parseInt(rows[0]['count']));
             }
             else {
@@ -1461,8 +1466,7 @@ inventory.usePlayerItem = function(player, id, itemId) {
                 }
                 user.setById(targetId, 'adrenaline', true);
 
-                coffer.addMoney(coffer.getIdByFraction(user.get(player, 'fraction_id'), 100));
-                user.addMoney(player, 200, 'Использование дефибриллятора');
+                user.addCashMoney(player, 200, 'Использование дефибриллятора');
                 player.notify("~g~Вам была выдана премия в $200");
                 
                 setTimeout(function () {

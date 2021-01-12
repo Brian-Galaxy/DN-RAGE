@@ -46,11 +46,21 @@ mp.events.add('client:enums:updateCloth', (requestID, overlays, clothM, cloth, p
 });
 
 // должно быть тут, иначе никак
-mp.events.add('client:enums:updateCloth1', (requestID, tattooList, printList, fractionList) => {
+mp.events.add('client:enums:updateCloth1', (requestID, printList, fractionList) => {
     try {
         if (pendingRequests[requestID]) {
-            pendingRequests[requestID]([tattooList, printList, fractionList]);
+            pendingRequests[requestID]([printList, fractionList]);
         }
+    } catch (e) {
+        console.log(e);
+        throw e;
+    }
+});
+
+// должно быть тут, иначе никак
+mp.events.add('client:enums:updateTattoo', (tattooList) => {
+    try {
+        enums.tattooList = enums.tattooList.concat(tattooList);
     } catch (e) {
         console.log(e);
         throw e;
@@ -676,6 +686,8 @@ enums.swtichMaleCloth = [
     [301, 302],
     [305, 306],
     [330, 331],
+    [352, 353],
+    //[354, 355],
 ];
 
 enums.swtichFemaleCloth = [
@@ -692,6 +704,8 @@ enums.swtichFemaleCloth = [
     [312, 313],
     [316, 317],
     [345, 346],
+    [370, 371],
+    [372, 373],
 ];
 
 // Действие с одеждой на Мужском персонаже
@@ -5068,11 +5082,10 @@ enums.loadCloth = function () {
         try {
             updateTattoo().then( (returnCloth) => {
                 try {
-                    enums.tattooList = returnCloth[0];
-                    enums.tprint = returnCloth[1];
-                    enums.fractionListId = JSON.parse(returnCloth[2]);
+                    enums.tprint = returnCloth[0];
+                    enums.fractionListId = JSON.parse(returnCloth[1]);
                 } catch (e) {
-                    console.log(e);
+                    methods.debug(e);
                     throw e;
                 }
             });

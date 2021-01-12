@@ -728,7 +728,7 @@ mp.events.addRemoteCounted('server:enums:getCloth', (player, requestID) => {
 
 mp.events.addRemoteCounted('server:enums:getCloth1', (player, requestID) => {
     try {
-        player.call('client:enums:updateCloth1', [requestID, JSON.stringify(enums.tattooList), JSON.stringify(enums.printList), JSON.stringify(enums.fractionListId)]);
+        player.call('client:enums:updateCloth1', [requestID, JSON.stringify(enums.printList), JSON.stringify(enums.fractionListId)]);
     } catch (e) {
         methods.debug(e);
     }
@@ -746,6 +746,9 @@ mp.events.addRemoteCounted('server:enums:getCloth1', (player, requestID) => {
         try {
             for (let i = 0; i < methods.parseInt(enums.maskList.length / 500) + 1; i++)
                 player.call('client:enums:updateMask', [enums.maskList.slice(i * 500, i * 500 + 500)]);
+
+            for (let i = 0; i < methods.parseInt(enums.tattooList.length / 250) + 1; i++)
+                player.call('client:enums:updateTattoo', [enums.tattooList.slice(i * 250, i * 250 + 250)]);
         }
         catch (e) {
             methods.debug(e);
@@ -893,10 +896,10 @@ mp.events.addRemoteCounted('server:business:cloth:buyProp', (player, price, body
     cloth.buyProp(player, price, body, clothId, color, itemName, shopId, isFree, payType);
 });
 
-mp.events.addRemoteCounted('server:print:buy', (player, slot, type, price) => {
+mp.events.addRemoteCounted('server:print:buy', (player, slot, type, price, shopId, payType) => {
     if (!user.isLogin(player))
         return;
-    cloth.buyPrint(player, slot, type, price);
+    cloth.buyPrint(player, slot, type, price, shopId, payType);
 });
 
 mp.events.addRemoteCounted('server:tattoo:buy', (player, slot, type, zone, price, itemName, shopId, payType) => {
@@ -2896,6 +2899,7 @@ mp.events.addRemoteCounted('server:events:showTypeListMenu', (player, type) => {
             let resultData2 = new Map();
             let resultData3 = new Map();
             rows.forEach(function(item) {
+                if (item['price'] < 1) return;
                 resultData1.set(methods.parseInt(item['id']), item['user_name']);
                 resultData2.set(methods.parseInt(item['id']), item['name']);
                 resultData3.set(methods.parseInt(item['id']), [item['interior'], item['sc_font'], item['sc_color'], item['sc_alpha']]);

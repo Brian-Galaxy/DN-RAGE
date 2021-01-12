@@ -486,11 +486,11 @@ cloth.buyMask = function (player, price, maskId, shopId, payType = 0) {
     user.save(player);
 };
 
-cloth.buyPrint = function(player, collection, overlay, price) {
+cloth.buyPrint = function(player, collection, overlay, price, shopId, payType) {
     if (!user.isLogin(player))
         return;
 
-    if (user.getMoney(player) < price) {
+    if (user.getMoney(player, payType) < price) {
         user.showCustomNotify(player, 'У вас недостаточно средств', 1, 9);
         return;
     }
@@ -498,19 +498,13 @@ cloth.buyPrint = function(player, collection, overlay, price) {
     if (price < 0)
         return;
 
-    if (user.get(player, 'tprint_c').toString().trim() != '') {
-        user.showCustomNotify(player, 'На данном предмете одежды уже есть принт', 1, 9);
-        user.updateTattoo(player);
-        return;
-    }
-
     user.set(player, "tprint_c", collection);
     user.set(player, "tprint_o", overlay);
 
-    user.removeMoney(player, price, 'Принт на одежду');
-    if (business.isOpen(70)) {
-        business.addMoney(70, price, 'Покупка принта');
-        business.removeMoneyTax(70, price / business.getPrice(70));
+    user.removeMoney(player, price, 'Принт на одежду', payType);
+    if (business.isOpen(shopId)) {
+        business.addMoney(shopId, price, 'Покупка принта');
+        business.removeMoneyTax(shopId, price / business.getPrice(shopId));
     }
     user.showCustomNotify(player, 'Вы купили принт', 2, 9);
     user.updateTattoo(player);

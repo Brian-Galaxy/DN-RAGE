@@ -380,7 +380,14 @@ timer.twoSecTimer = function() {
             }
 
             if (user.hasCache('id')) {
-                if (mp.players.local.getArmour() > 0 && mp.players.local.getDrawableVariation(9) === 0) {
+                let isVisualArmour = false;
+
+                if (user.getSex() === 0)
+                    isVisualArmour = (mp.players.local.getDrawableVariation(8) === 170 || mp.players.local.getDrawableVariation(8) === 172);
+                if (user.getSex() === 1)
+                    isVisualArmour = (mp.players.local.getDrawableVariation(8) === 207 || mp.players.local.getDrawableVariation(8) === 209);
+
+                if (mp.players.local.getArmour() > 0 && mp.players.local.getDrawableVariation(9) === 0 && !isVisualArmour) {
                     user.set('armor', 12);
                     user.set('armor_color', 1);
                     user.setComponentVariation( 9, 12, 1);

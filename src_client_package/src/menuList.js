@@ -1738,6 +1738,7 @@ menuList.showBusinessTeleportMenu = function() {
     UIMenu.Menu.Create(` `, `~b~Бизнес центр`, 'showBusinessTeleportMenu', false, false, 'arcadius');
 
     business.typeList.forEach(function (item, i, arr) {
+        if (i === 7 || i === 8) return;
         UIMenu.Menu.AddMenuItem(`${item}`, "", {typeId: i});
     });
 
@@ -4888,7 +4889,7 @@ menuList.showPlayerDoMenu = function(playerId) {
 
     UIMenu.Menu.AddMenuItem("Передать деньги", "", {doName: "giveMoney"});
     UIMenu.Menu.AddMenuItem("Познакомиться", "", {doName: "dating"});
-    if (user.isPolice() || user.isGov()) {
+    if (user.isPolice() || user.isGov() || user.isCartel()) {
         UIMenu.Menu.AddMenuItem("Надеть наручники", "", {eventName: "server:user:cuffItemById"});
         UIMenu.Menu.AddMenuItem("Снять наручники", "", {eventName: "server:user:unCuffById"});
     }
@@ -9332,6 +9333,8 @@ menuList.showShopClothMenu = function (shopId, type, menuType, price = 1) {
             list.push({name: 'Торс', price: '', sale: sale, params: {type: 'c', t: type, p: price, mt: menuType, name: 'body', shop: shopId}});
             list.push({name: 'Ноги', price: '', sale: sale, params: {type: 'c', t: type, p: price, mt: menuType, name: 'legs', shop: shopId}});
             list.push({name: 'Обувь', price: '', sale: sale, params: {type: 'c', t: type, p: price, mt: menuType, name: 'shoes', shop: shopId}});
+            if (type === 1)
+                list.push({name: 'Бронежилеты', price: '', sale: sale, params: {type: 'c', t: type, p: price, mt: menuType, name: 'armor', shop: shopId}});
             list.push({name: 'Аксессуары и перчатки', price: '', sale: sale, params: {type: 'c', t: type, p: price, mt: menuType, name: 'acess', shop: shopId}});
             //=======================================
             list.push({name: 'Головные уборы', price: '', sale: sale, params: {type: 'c', t: type, p: price, mt: menuType, name: 'head', shop: shopId}});
@@ -9339,6 +9342,8 @@ menuList.showShopClothMenu = function (shopId, type, menuType, price = 1) {
             list.push({name: 'Серьги', price: '', sale: sale, params: {type: 'c', t: type, p: price, mt: menuType, name: 'earring', shop: shopId}});
             list.push({name: 'Левая рука', price: '', sale: sale, params: {type: 'c', t: type, p: price, mt: menuType, name: 'leftHand', shop: shopId}});
             list.push({name: 'Правая рука', price: '', sale: sale, params: {type: 'c', t: type, p: price, mt: menuType, name: 'rightHand', shop: shopId}});
+            //=======================================
+            list.push({name: 'Принты', price: '', sale: sale, params: {type: 'c', t: type, p: price, mt: menuType, name: 'openPrint', shop: shopId}});
             //=======================================
             list.push({name: 'Сумки и рюкзаки', price: '', sale: sale, params: {type: 'c', t: type, p: price, mt: menuType, name: 'openBag', shop: shopId}});
         } else if (menuType == -2) {
@@ -9366,6 +9371,7 @@ menuList.showShopClothMenu = function (shopId, type, menuType, price = 1) {
                 user.updateTattoo(true, true, false, true);
 
             let cloth = user.getSex() == 1 ? JSON.parse(enums.clothF) : JSON.parse(enums.clothM);
+
             for (let i = 0; i < cloth.length; i++) {
                 let id = i;
 
@@ -9463,6 +9469,97 @@ menuList.showShopClothMoreMenu = function (title, color, shopId, type, menuType,
 
         //shopMenu.showShop2();
         shopMenu.updateShop2(list, title, color, 1, methods.removeQuotesAll(itemName));
+    } catch (e) {
+        methods.debug('Exception: menuList.showShopClothMenu');
+        methods.debug(e);
+    }
+};
+
+menuList.showShopClothPrintMenu = function (shopId, type, menuType, priceSale) {
+    try {
+        methods.debug('Execute: menuList.showShopClothMenu');
+
+        if (methods.isBlackout()) {
+            mp.game.ui.notifications.show(`~r~В городе отсутствует свет`);
+            return;
+        }
+
+        let sale = business.getSale(priceSale);
+        let list = [];
+
+        let printList = JSON.parse(enums.tprint);
+        let idx = 0;
+        for (let i = 0; i < printList.length; i++) {
+
+            let price = 1999 * priceSale;
+
+            if (type === 0) {
+                if (printList[i][0] !== 'mpsum_overlays' &&
+                    printList[i][0] !== 'mpgunrunning_overlays' &&
+                    printList[i][0] !== 'multiplayer_overlays' &&
+                    printList[i][0] !== 'mpbattle_overlays' &&
+                    printList[i][0] !== 'mpheist4_overlays'
+                )
+                    continue;
+                price = 99 * priceSale;
+            }
+            else if (type === 1) {
+                if (printList[i][0] !== 'mphalloween_overlays' &&
+                    printList[i][0] !== 'mpvinewood_overlays' &&
+                    printList[i][0] !== 'mpgunrunning_overlays' &&
+                    printList[i][0] !== 'mplowrider_overlays' &&
+                    printList[i][0] !== 'mplowrider2_overlays' &&
+                    printList[i][0] !== 'mpluxe_overlays' &&
+                    printList[i][0] !== 'mpluxe2_overlays' &&
+                    printList[i][0] !== 'mpsmuggler_overlays' &&
+                    printList[i][0] !== 'mpheist3_overlays'
+                )
+                    continue;
+                price = 599 * priceSale;
+            }
+            else if (type === 5) {
+                if (printList[i][0] !== 'mpsum_overlays' &&
+                    printList[i][0] !== 'mpgunrunning_overlays' &&
+                    printList[i][0] !== 'multiplayer_overlays' &&
+                    printList[i][0] !== 'mpchristmas2018_overlays' &&
+                    printList[i][0] !== 'mpexecutive_overlays'
+                )
+                    continue;
+                price = 99 * priceSale;
+            }
+            else if (printList[i][0] !== 'mpgunrunning_overlays')
+                continue;
+
+            if (i < 25)
+                price = 499 * priceSale;
+
+            idx++;
+
+            if (user.getSex() == 1 && printList[i][2] != "") {
+                let menuListItem = {};
+                menuListItem.price = price;
+                menuListItem.type = 'print:buy';
+                menuListItem.tatto1 = printList[i][0];
+                menuListItem.tatto2 = printList[i][2];
+                menuListItem.shop = shopId;
+                menuListItem.itemName = `Принт #${idx}`;
+
+                list.push({name: methods.removeQuotesAll(menuListItem.itemName), price: methods.moneyFormat(price), sale: sale, params: menuListItem});
+            }
+            else if (user.getSex() == 0 && printList[i][1] != "") {
+                let menuListItem = {};
+                menuListItem.price = price;
+                menuListItem.type = 'print:buy';
+                menuListItem.tatto1 = printList[i][0];
+                menuListItem.tatto2 = printList[i][1];
+                menuListItem.shop = shopId;
+                menuListItem.itemName = `Принт #${idx}`;
+                list.push({name: methods.removeQuotesAll(menuListItem.itemName), price: methods.moneyFormat(price), sale: sale, params: menuListItem});
+            }
+        }
+
+        //shopMenu.showShop2();
+        shopMenu.updateShop2(list, shopMenu.getLastSettings().banner, shopMenu.getLastSettings().bg, 1, 'Принты');
     } catch (e) {
         methods.debug('Exception: menuList.showShopClothMenu');
         methods.debug(e);
@@ -9809,7 +9906,7 @@ menuList.showMaskListMenu = function (slot, shopId) {
             let maskItem = enums.maskList[i];
             if (maskItem[0] !== slot)
                 continue;
-            if (maskItem[13] !== shopId)
+            if (maskItem[13] !== 69)
                 continue;
 
             let mItem = {};
@@ -9865,7 +9962,7 @@ menuList.showPrintShopMenu = function()
             menuListItem.price = price;
             menuListItem.tatto1 = printList[i][0];
             menuListItem.tatto2 = printList[i][2];
-            UIMenu.Menu.AddMenuItem('Принт #' + i, `Цена: ~g~${methods.moneyFormat(price, 0)}`, menuListItem);
+            UIMenu.Menu.AddMenuItem('Принт #' + i + ' ' + printList[i][0], `Цена: ~g~${methods.moneyFormat(price, 0)}`, menuListItem);
 
             list.push(menuListItem);
         }
@@ -9875,7 +9972,7 @@ menuList.showPrintShopMenu = function()
             menuListItem.price = price;
             menuListItem.tatto1 = printList[i][0];
             menuListItem.tatto2 = printList[i][1];
-            UIMenu.Menu.AddMenuItem('Принт #' + i, `Цена: ~g~${methods.moneyFormat(price, 0)}`, menuListItem);
+            UIMenu.Menu.AddMenuItem('Принт #' + i + ' ' + printList[i][0], `Цена: ~g~${methods.moneyFormat(price, 0)}`, menuListItem);
 
             list.push(menuListItem);
         }
@@ -10038,7 +10135,7 @@ menuList.showTattooShopShortMenu = function(title1, title2, zone, shopId, price)
     }
 
     let list = [];
-    let tattooList = JSON.parse(enums.tattooList);
+    let tattooList = enums.tattooList;
 
     for (let i = 0; i < tattooList.length; i++) {
 

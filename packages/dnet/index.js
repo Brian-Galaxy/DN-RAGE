@@ -59,6 +59,7 @@ let fishing = require('./managers/fishing');
 let coffer = require('./coffer');
 let inventory = require('./inventory');
 let weapons = require('./weapons');
+let enums = require('./enums');
 
 function init() {
     try {
@@ -116,6 +117,16 @@ function init() {
         inventory.loadAll();
 
         vShop.loadAllShop();
+
+        let c = a => 10 > a ? 2e4 + +a : a.charCodeAt(0);
+
+        enums.clothM = enums.clothM.sort((a, b) => c(a[9][0] + a[9][1]) - c(b[9][0] + b[9][1]));
+        enums.clothF = enums.clothF.sort((a, b) => c(a[9][0] + a[9][1]) - c(b[9][0] + b[9][1]));
+
+        enums.propM = enums.propM.sort((a, b) => c(a[5][0] + a[5][1]) - c(b[5][0] + b[5][1]));
+        enums.propF = enums.propF.sort((a, b) => c(a[5][0] + a[5][1]) - c(b[5][0] + b[5][1]));
+
+        enums.tattooList = enums.tattooList.sort((a, b) => c(a[0]) - c(b[0]));
 
         setInterval(methods.saveAllAnother, 15 * 1000 * 60);
 

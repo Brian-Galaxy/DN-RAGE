@@ -397,7 +397,8 @@ phone.showAppList = function() {
                         clickable: true
                     },
                     {
-                        title: 'Настройки',
+                        title: 'Фон',
+                        text: `Выберите фон или загрузите свой`,
                         type: 1,
                         params: { name: 'settings' },
                         clickable: true
@@ -867,6 +868,26 @@ phone.showAppSettings = function() {
                 'https://i.imgur.com/HWEbeCJ.png',
                 'https://i.imgur.com/JJhCG51.jpg',
                 'https://i.imgur.com/6zYRPKe.jpg',
+            ]
+        },
+        {
+            title: 'Retro Wave',
+            list: [
+                'https://i.imgur.com/HWEbeCJ.png',
+                'https://i.imgur.com/JJhCG51.jpg',
+                'https://i.imgur.com/6zYRPKe.jpg',
+            ]
+        },
+        {
+            title: 'GIF',
+            list: [
+                'https://media.giphy.com/media/S7epLBP7DbtnMczTNd/giphy.gif',
+                'https://i.imgur.com/ELED01s.gif',
+                'https://media.tenor.com/images/efcec2f79cb3dd54383084d693539dbe/tenor.gif',
+                'https://media1.tenor.com/images/46cf8801a50fe43770acaf78ef760c64/tenor.gif',
+                'https://media1.tenor.com/images/134212ba34a8099c993e07a686345f84/tenor.gif',
+                'https://media1.tenor.com/images/2bb4fa47040dfbee1c622be1fa6daad6/tenor.gif',
+                'https://media1.tenor.com/images/81df5e907f81dad1721f398ed7408deb/tenor.gif',
             ]
         },
         {

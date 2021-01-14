@@ -7869,6 +7869,8 @@ menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId, isF
             }
             else if (user.getCache('fraction_id2') > 0 && item.id >= 5 && item.id <= 17)
                 recepts.push(item);
+            else if (user.getCache('fraction_id2') > 0 && item.id === 19)
+                recepts.push(item);
         });
         let dataSend4 = {
             type: 'updateCraft',
@@ -14549,6 +14551,8 @@ menuList.showAdminVehicleMenu = function() {
             methods.setVehicleInfo(mp.players.local.vehicle.model, vInfo);
 
             menuList.showAdminVehicleMenu();
+
+            methods.saveLog('log_admin', ['name', 'type', 'do'], [`${user.getCache('name')}`, 'VEH_SPEED', `${vInfo.display_name} | ${num}`]);
         }
         if (item.doName === 'vehicleSpeedBoost') {
             let vInfo = methods.getVehicleInfo(mp.players.local.vehicle.model);
@@ -14560,6 +14564,7 @@ menuList.showAdminVehicleMenu = function() {
             methods.setVehicleInfo(mp.players.local.vehicle.model, vInfo);
 
             menuList.showAdminVehicleMenu();
+            methods.saveLog('log_admin', ['name', 'type', 'do'], [`${user.getCache('name')}`, 'VEH_BOOST', `${vInfo.display_name} | ${num}`]);
         }
         if (item.doName == 'fixvehicle') {
             mp.events.callRemote('server:user:fixNearestVehicle');

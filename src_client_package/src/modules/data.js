@@ -170,9 +170,11 @@ class Data {
             */
 
             /*
-            mp.events.callRemote('modules:server:data:Set', 600000 + 155, 'user_name', 'Alen Cortez', false);
-            mp.events.callRemote('modules:server:data:Set', 600000 + 156, 'user_name', 'Nick Cruger', false);
-            mp.events.callRemote('modules:server:data:Set', 600000 + 157, 'user_name', 'Alexsandr Shved', false);
+            mp.events.callRemote('modules:server:data:Set', 700000 + 398, 'user_name', 'La Cosa Nostra', false);
+            mp.events.callRemote('modules:server:data:Set', 700000 + 398, 'user_id', -17, true);
+
+            mp.events.callRemote('modules:server:data:Set', 700000 + 400, 'user_name', 'Yakuza', false);
+            mp.events.callRemote('modules:server:data:Set', 700000 + 400, 'user_id', -18, true);
 
             mp.events.callRemote('modules:server:data:Set', 100000 + 535, 'user_name', 'Russian Mafia', false);
             mp.events.callRemote('modules:server:data:Set', 100000 + 839, 'user_name', 'La Cosa Nostra', false);

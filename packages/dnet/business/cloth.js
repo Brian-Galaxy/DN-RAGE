@@ -18,8 +18,8 @@ cloth.printShopPos = new mp.Vector3(-1339.9146728515625, -1268.3306884765625, 3.
 cloth.loadAll = function(){
     methods.debug('barberShop.loadAll');
 
-    methods.createBlip(cloth.printShopPos, 72, 0, 0.8, 'Print Shop');
-    methods.createCpVector(cloth.printShopPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, [33, 150, 243, 100]);
+    /*methods.createBlip(cloth.printShopPos, 72, 0, 0.8, 'Print Shop');
+    methods.createCpVector(cloth.printShopPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, [33, 150, 243, 100]);*/
 
     methods.createBlip(cloth.maskShop, 437, 0, 0.8, 'Movie Masks');
     methods.createCp(cloth.maskShop.x, cloth.maskShop.y, cloth.maskShop.z, "Нажмите ~g~E~s~ чтобы открыть меню магазина", 0.8, -1, [33, 150, 243, 100], 0.3);
@@ -92,14 +92,14 @@ cloth.checkPosForOpenMenu = function (player) {
             return;
         }
 
-        if (methods.distanceToPos(cloth.printShopPos, playerPos) < 2) {
-            /*if (!business.isOpen(70)) {
+        /*if (methods.distanceToPos(cloth.printShopPos, playerPos) < 2) {
+            if (!business.isOpen(70)) {
                 player.notify('~r~К сожалению магазин сейчас не работает');
                 return;
-            }*/
+            }
             player.call('client:menuList:showPrintShopMenu');
             return;
-        }
+        }*/
 
         for (let i = 0; i < shopList.length; i++){
             if(methods.distanceToPos(playerPos, new mp.Vector3(shopList[i][3], shopList[i][4], shopList[i][5])) < 1.2){

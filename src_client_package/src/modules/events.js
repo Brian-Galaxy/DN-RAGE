@@ -3761,17 +3761,6 @@ mp.keys.bind(87, true, function() {
     }
 });
 
-mp.keys.bind(114, true, function() {
-    if (!user.isLogin())
-        return;
-    if (!user.isAdmin())
-        return;
-    if (!methods.isBlockKeys()) {
-        mp.events.callRemote('server:user:getPlayerPosNpc', user.lastAnim.d, user.lastAnim.a, user.lastAnim.f);
-        npc.create(mp.game.joaat("s_m_m_security_01"), mp.players.local.position, mp.players.local.getRotation(0).z, 0, '', user.lastAnim.d, user.lastAnim.a, user.lastAnim.f);
-    }
-});
-
 mp.keys.bind(0xDB, true, function() {
     if (!user.isLogin())
         return;
@@ -4024,9 +4013,7 @@ mp.events.add('client:ui:checker', () => {
             ui.fixInterface();
         }, 10000);
     }
-    catch (e) {
-        ui.fixInterface();
-    }
+    catch (e) {}
 });
 
 mp.events.add('client:ui:saveHudDrag', (id, x, y) => {

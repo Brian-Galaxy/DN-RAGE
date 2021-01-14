@@ -77,6 +77,10 @@ items.recipes = [
         id: 18, name: "Raging Bull Mk II", desc: `Ресурсы для создания: Raging Bull 2шт, Стальная пластина 4шт`,
         craft: ['476', '476', '476', '476', '74', '74'], craft_time: 10000
     },
+    {
+        id: 19, name: "Raging Bull Mk I", desc: `Ресурсы для создания: Стальная пластина 6шт`,
+        craft: ['476', '476', '476', '476', '476', '476'], craft_time: 10000
+    },
 ];
 
 items.itemList = [

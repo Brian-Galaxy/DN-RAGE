@@ -204,6 +204,7 @@ pickups.Bcsd1StockPos = new mp.Vector3(-439.0313720703125, 6010.5322265625, 26.9
 pickups.Bcsd2StockPos = new mp.Vector3(1855.5472412109375, 3699.1943359375, 33.267086029052734);
 pickups.UsmcStockPos = new mp.Vector3(467.45806884765625, -3220.532958984375, 6.056998252868652);
 pickups.FibStockPos = new mp.Vector3(127.0777587890625, -761.8219604492188, 241.15211486816406);
+pickups.CartelStockPos = new mp.Vector3(5016.29052734375, -5745.9619140625, 14.4844331741333);
 
 pickups.SheriffGarderobPos = new mp.Vector3(-452.945, 6013.818, 30.716);
 pickups.SheriffGarderobPos2 = new mp.Vector3(1849.775390625, 3695.501953125, 33.26706314086914);
@@ -823,6 +824,7 @@ pickups.checkPressE = function(player) {
         methods.distanceToPos(pickups.SapdStockPos3, playerPos) < distanceCheck ||
         methods.distanceToPos(pickups.UsmcStockPos, playerPos) < distanceCheck ||
         methods.distanceToPos(pickups.FibStockPos, playerPos) < distanceCheck ||
+        methods.distanceToPos(pickups.CartelStockPos, playerPos) < distanceCheck ||
         methods.distanceToPos(pickups.Bcsd1StockPos, playerPos) < distanceCheck ||
         methods.distanceToPos(pickups.Bcsd2StockPos, playerPos) < distanceCheck
     )
@@ -1210,6 +1212,7 @@ pickups.createAll = function() {
     methods.createCpVector(pickups.SapdStockPos3, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
     methods.createCpVector(pickups.UsmcStockPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
     methods.createCpVector(pickups.FibStockPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
+    methods.createCpVector(pickups.CartelStockPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
     methods.createCpVector(pickups.SapdGarderobPos, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
     methods.createCpVector(pickups.SapdGarderobPos2, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);
     methods.createCpVector(pickups.SapdGarderobPos3, 'Нажмите ~g~E~s~ чтобы открыть меню', 1, -1, pickups.Blue);

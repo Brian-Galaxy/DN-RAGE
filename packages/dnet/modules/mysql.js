@@ -210,7 +210,7 @@ mysql.isConnected = function () {
 mysql.executeQuery = async function (query, values, callback) {
 
     try {
-        if (query.indexOf('DELETE') === 0 /*|| query.indexOf('UPDATE') === 0*/ || query.indexOf('INSERT') === 0) {
+        if (query.indexOf('DELETE') === 0 /*|| query.indexOf('UPDATE') === 0*/ || query.indexOf('INSERT') === 0 || query.indexOf('SELECT') === 0) {
             mysql.executeQueryOld(query, values, function (err, rows, fields) {
                 try {
                     if (callback)

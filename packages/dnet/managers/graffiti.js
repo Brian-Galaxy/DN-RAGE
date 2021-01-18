@@ -251,6 +251,10 @@ graffiti.changeGraffiti = function(player) {
         player.notify('~r~Вы сидите в ТС');
         return;
     }
+    if (player.dimension > 0) {
+        player.notify('~r~Вы в виртуальном мире');
+        return;
+    }
 
     let isFind = false;
     graffitiList.forEach((obj, idx) => {

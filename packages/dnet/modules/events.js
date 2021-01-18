@@ -1474,7 +1474,7 @@ mp.events.addRemoteCounted('server:user:unCuffById', (player, targetId) => {
             player.notify('~r~Вы слишком далеко');
             return;
         }
-        if (!user.isPolice(player) && !user.isGov(player)) {
+        if (!user.isPolice(player) && !user.isGov(player) && !user.isCartel(player)) {
             player.notify('~r~Вам данное действие запрещено');
             return;
         }
@@ -1505,7 +1505,7 @@ mp.events.addRemoteCounted('server:user:cuffItemById', (player, targetId) => {
             player.notify('~r~Вы слишком далеко');
             return;
         }
-        if (!user.isPolice(player) && !user.isGov(player)) {
+        if (!user.isPolice(player) && !user.isGov(player) && !user.isCartel(player)) {
             player.notify('~r~Вам данное действие запрещено');
             return;
         }
@@ -7268,6 +7268,19 @@ mp.events.addRemoteCounted('server:user:giveVehicle', (player, vName, withDelete
     if (!user.isLogin(player))
         return;
     user.giveVehicle(player, vName, withDelete, withChat, desc, isBroke);
+});
+
+mp.events.addRemoteCounted('server:user:spawnToFraction', (player) => {
+    if (!user.isLogin(player))
+        return;
+    try {
+        let fData = fraction.getData(user.get(player, 'fraction_id2'));
+        player.spawn(new mp.Vector3(fData.get('spawn_x'), fData.get('spawn_y'), fData.get('spawn_z')));
+        player.heading = fData.get('spawn_rot');
+    }
+    catch (e) {
+        player.spawn(320.7169494628906, -584.0098876953125, 42.28400802612305);
+    }
 });
 
 mp.events.addRemoteCounted('server:user:giveWanted', (player, id, level, reason) => {

@@ -363,104 +363,152 @@ weather.timeSyncTimer = function() {
         if (dateTime.getHours() === 21 && dateTime.getMinutes() === 0)
             fraction.createCargoMafiaWar();*/
 
-        if (dateTime.getHours() === 17 && dateTime.getMinutes() === 1 && gangWar.hasWar(0)) {
+        if (dateTime.getHours() === 14 && dateTime.getMinutes() === 1 && gangWar.hasWar(0)) {
             let war = gangWar.getWar(0);
             gangWar.startWar(war.zoneId, war.attack, war.def, war.armor === 0, war.count);
         }
-        if (dateTime.getHours() === 17 && dateTime.getMinutes() === 16 && gangWar.hasWar(1)) {
+        if (dateTime.getHours() === 14 && dateTime.getMinutes() === 16 && gangWar.hasWar(1)) {
             let war = gangWar.getWar(1);
             gangWar.startWar(war.zoneId, war.attack, war.def, war.armor === 0, war.count);
         }
-        if (dateTime.getHours() === 17 && dateTime.getMinutes() === 31 && gangWar.hasWar(2)) {
+        if (dateTime.getHours() === 14 && dateTime.getMinutes() === 31 && gangWar.hasWar(2)) {
             let war = gangWar.getWar(2);
             gangWar.startWar(war.zoneId, war.attack, war.def, war.armor === 0, war.count);
         }
-        if (dateTime.getHours() === 17 && dateTime.getMinutes() === 46 && gangWar.hasWar(3)) {
+        if (dateTime.getHours() === 14 && dateTime.getMinutes() === 46 && gangWar.hasWar(3)) {
             let war = gangWar.getWar(3);
             gangWar.startWar(war.zoneId, war.attack, war.def, war.armor === 0, war.count);
         }
-        if (dateTime.getHours() === 18 && dateTime.getMinutes() === 1 && gangWar.hasWar(4)) {
+        if (dateTime.getHours() === 15 && dateTime.getMinutes() === 1 && gangWar.hasWar(4)) {
             let war = gangWar.getWar(4);
             gangWar.startWar(war.zoneId, war.attack, war.def, war.armor === 0, war.count);
         }
-        if (dateTime.getHours() === 18 && dateTime.getMinutes() === 16 && gangWar.hasWar(5)) {
+        if (dateTime.getHours() === 15 && dateTime.getMinutes() === 16 && gangWar.hasWar(5)) {
             let war = gangWar.getWar(5);
             gangWar.startWar(war.zoneId, war.attack, war.def, war.armor === 0, war.count);
         }
-        if (dateTime.getHours() === 18 && dateTime.getMinutes() === 31 && gangWar.hasWar(6)) {
+        if (dateTime.getHours() === 15 && dateTime.getMinutes() === 31 && gangWar.hasWar(6)) {
             let war = gangWar.getWar(6);
             gangWar.startWar(war.zoneId, war.attack, war.def, war.armor === 0, war.count);
         }
-        if (dateTime.getHours() === 18 && dateTime.getMinutes() === 46 && gangWar.hasWar(7)) {
+        if (dateTime.getHours() === 15 && dateTime.getMinutes() === 46 && gangWar.hasWar(7)) {
             let war = gangWar.getWar(7);
             gangWar.startWar(war.zoneId, war.attack, war.def, war.armor === 0, war.count);
         }
-        if (dateTime.getHours() === 19 && dateTime.getMinutes() === 1 && gangWar.hasWar(8)) {
+        if (dateTime.getHours() === 16 && dateTime.getMinutes() === 1 && gangWar.hasWar(8)) {
             let war = gangWar.getWar(8);
             gangWar.startWar(war.zoneId, war.attack, war.def, war.armor === 0, war.count);
         }
-        if (dateTime.getHours() === 19 && dateTime.getMinutes() === 16 && gangWar.hasWar(9)) {
+        if (dateTime.getHours() === 16 && dateTime.getMinutes() === 16 && gangWar.hasWar(9)) {
             let war = gangWar.getWar(9);
             gangWar.startWar(war.zoneId, war.attack, war.def, war.armor === 0, war.count);
         }
-        if (dateTime.getHours() === 19 && dateTime.getMinutes() === 31 && gangWar.hasWar(10)) {
+        if (dateTime.getHours() === 16 && dateTime.getMinutes() === 31 && gangWar.hasWar(10)) {
             let war = gangWar.getWar(10);
             gangWar.startWar(war.zoneId, war.attack, war.def, war.armor === 0, war.count);
         }
-        if (dateTime.getHours() === 19 && dateTime.getMinutes() === 46 && gangWar.hasWar(11)) {
+        if (dateTime.getHours() === 16 && dateTime.getMinutes() === 46 && gangWar.hasWar(11)) {
             let war = gangWar.getWar(11);
             gangWar.startWar(war.zoneId, war.attack, war.def, war.armor === 0, war.count);
         }
-        if (dateTime.getHours() === 20 && dateTime.getMinutes() === 1 && gangWar.hasWar(12)) {
+        if (dateTime.getHours() === 17 && dateTime.getMinutes() === 1 && gangWar.hasWar(12)) {
             let war = gangWar.getWar(12);
             gangWar.startWar(war.zoneId, war.attack, war.def, war.armor === 0, war.count);
         }
-        if (dateTime.getHours() === 20 && dateTime.getMinutes() === 16 && gangWar.hasWar(13)) {
+        if (dateTime.getHours() === 17 && dateTime.getMinutes() === 16 && gangWar.hasWar(13)) {
             let war = gangWar.getWar(13);
             gangWar.startWar(war.zoneId, war.attack, war.def, war.armor === 0, war.count);
         }
-        if (dateTime.getHours() === 20 && dateTime.getMinutes() === 31 && gangWar.hasWar(14)) {
+        if (dateTime.getHours() === 17 && dateTime.getMinutes() === 31 && gangWar.hasWar(14)) {
             let war = gangWar.getWar(14);
             gangWar.startWar(war.zoneId, war.attack, war.def, war.armor === 0, war.count);
         }
-        if (dateTime.getHours() === 20 && dateTime.getMinutes() === 46 && gangWar.hasWar(15)) {
+        if (dateTime.getHours() === 17 && dateTime.getMinutes() === 46 && gangWar.hasWar(15)) {
             let war = gangWar.getWar(15);
             gangWar.startWar(war.zoneId, war.attack, war.def, war.armor === 0, war.count);
         }
-        if (dateTime.getHours() === 21 && dateTime.getMinutes() === 1 && gangWar.hasWar(16)) {
+        if (dateTime.getHours() === 18 && dateTime.getMinutes() === 1 && gangWar.hasWar(16)) {
             let war = gangWar.getWar(16);
             gangWar.startWar(war.zoneId, war.attack, war.def, war.armor === 0, war.count);
         }
-        if (dateTime.getHours() === 21 && dateTime.getMinutes() === 16 && gangWar.hasWar(17)) {
+        if (dateTime.getHours() === 18 && dateTime.getMinutes() === 16 && gangWar.hasWar(17)) {
             let war = gangWar.getWar(17);
             gangWar.startWar(war.zoneId, war.attack, war.def, war.armor === 0, war.count);
         }
-        if (dateTime.getHours() === 21 && dateTime.getMinutes() === 31 && gangWar.hasWar(18)) {
+        if (dateTime.getHours() === 18 && dateTime.getMinutes() === 31 && gangWar.hasWar(18)) {
             let war = gangWar.getWar(18);
             gangWar.startWar(war.zoneId, war.attack, war.def, war.armor === 0, war.count);
         }
-        if (dateTime.getHours() === 21 && dateTime.getMinutes() === 46 && gangWar.hasWar(19)) {
+        if (dateTime.getHours() === 18 && dateTime.getMinutes() === 46 && gangWar.hasWar(19)) {
             let war = gangWar.getWar(19);
             gangWar.startWar(war.zoneId, war.attack, war.def, war.armor === 0, war.count);
         }
-        if (dateTime.getHours() === 22 && dateTime.getMinutes() === 1 && gangWar.hasWar(20)) {
+        if (dateTime.getHours() === 19 && dateTime.getMinutes() === 1 && gangWar.hasWar(20)) {
             let war = gangWar.getWar(20);
             gangWar.startWar(war.zoneId, war.attack, war.def, war.armor === 0, war.count);
         }
-        if (dateTime.getHours() === 22 && dateTime.getMinutes() === 16 && gangWar.hasWar(21)) {
+        if (dateTime.getHours() === 19 && dateTime.getMinutes() === 16 && gangWar.hasWar(21)) {
             let war = gangWar.getWar(21);
             gangWar.startWar(war.zoneId, war.attack, war.def, war.armor === 0, war.count);
         }
-        if (dateTime.getHours() === 22 && dateTime.getMinutes() === 31 && gangWar.hasWar(22)) {
+        if (dateTime.getHours() === 19 && dateTime.getMinutes() === 31 && gangWar.hasWar(22)) {
             let war = gangWar.getWar(22);
             gangWar.startWar(war.zoneId, war.attack, war.def, war.armor === 0, war.count);
         }
-        if (dateTime.getHours() === 22 && dateTime.getMinutes() === 46 && gangWar.hasWar(23)) {
+        if (dateTime.getHours() === 19 && dateTime.getMinutes() === 46 && gangWar.hasWar(23)) {
             let war = gangWar.getWar(23);
             gangWar.startWar(war.zoneId, war.attack, war.def, war.armor === 0, war.count);
         }
-        if (dateTime.getHours() === 23 && dateTime.getMinutes() === 1 && gangWar.hasWar(24)) {
+        if (dateTime.getHours() === 20 && dateTime.getMinutes() === 1 && gangWar.hasWar(24)) {
             let war = gangWar.getWar(24);
+            gangWar.startWar(war.zoneId, war.attack, war.def, war.armor === 0, war.count);
+        }
+        if (dateTime.getHours() === 20 && dateTime.getMinutes() === 16 && gangWar.hasWar(25)) {
+            let war = gangWar.getWar(25);
+            gangWar.startWar(war.zoneId, war.attack, war.def, war.armor === 0, war.count);
+        }
+        if (dateTime.getHours() === 20 && dateTime.getMinutes() === 31 && gangWar.hasWar(26)) {
+            let war = gangWar.getWar(26);
+            gangWar.startWar(war.zoneId, war.attack, war.def, war.armor === 0, war.count);
+        }
+        if (dateTime.getHours() === 20 && dateTime.getMinutes() === 46 && gangWar.hasWar(27)) {
+            let war = gangWar.getWar(27);
+            gangWar.startWar(war.zoneId, war.attack, war.def, war.armor === 0, war.count);
+        }
+        if (dateTime.getHours() === 21 && dateTime.getMinutes() === 1 && gangWar.hasWar(28)) {
+            let war = gangWar.getWar(28);
+            gangWar.startWar(war.zoneId, war.attack, war.def, war.armor === 0, war.count);
+        }
+        if (dateTime.getHours() === 21 && dateTime.getMinutes() === 16 && gangWar.hasWar(29)) {
+            let war = gangWar.getWar(29);
+            gangWar.startWar(war.zoneId, war.attack, war.def, war.armor === 0, war.count);
+        }
+        if (dateTime.getHours() === 21 && dateTime.getMinutes() === 31 && gangWar.hasWar(30)) {
+            let war = gangWar.getWar(30);
+            gangWar.startWar(war.zoneId, war.attack, war.def, war.armor === 0, war.count);
+        }
+        if (dateTime.getHours() === 21 && dateTime.getMinutes() === 46 && gangWar.hasWar(31)) {
+            let war = gangWar.getWar(31);
+            gangWar.startWar(war.zoneId, war.attack, war.def, war.armor === 0, war.count);
+        }
+        if (dateTime.getHours() === 22 && dateTime.getMinutes() === 1 && gangWar.hasWar(32)) {
+            let war = gangWar.getWar(32);
+            gangWar.startWar(war.zoneId, war.attack, war.def, war.armor === 0, war.count);
+        }
+        if (dateTime.getHours() === 22 && dateTime.getMinutes() === 16 && gangWar.hasWar(33)) {
+            let war = gangWar.getWar(33);
+            gangWar.startWar(war.zoneId, war.attack, war.def, war.armor === 0, war.count);
+        }
+        if (dateTime.getHours() === 22 && dateTime.getMinutes() === 31 && gangWar.hasWar(34)) {
+            let war = gangWar.getWar(34);
+            gangWar.startWar(war.zoneId, war.attack, war.def, war.armor === 0, war.count);
+        }
+        if (dateTime.getHours() === 22 && dateTime.getMinutes() === 46 && gangWar.hasWar(35)) {
+            let war = gangWar.getWar(35);
+            gangWar.startWar(war.zoneId, war.attack, war.def, war.armor === 0, war.count);
+        }
+        if (dateTime.getHours() === 23 && dateTime.getMinutes() === 1 && gangWar.hasWar(36)) {
+            let war = gangWar.getWar(36);
             gangWar.startWar(war.zoneId, war.attack, war.def, war.armor === 0, war.count);
         }
 

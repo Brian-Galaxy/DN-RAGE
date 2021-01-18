@@ -8,6 +8,8 @@ mp.attachmentMngr =
     {
         attachments: {},
 
+        ///eval JSON.stringify(mp.players.local.__attachmentObjects["3376878207"]);
+
         addFor: async function(entity, id)
         {
             try {

@@ -365,7 +365,7 @@ cloth.buy = function (player, price, body, cloth, color, torso, torsoColor, para
                 params = `{"name": "${itemName} (${names[color]})", "sex": ${user.getSex(player)}, "hand": ${cloth}, "hand_color": ${color}}`;
             }*/
 
-            if (cloth == 41 || cloth == 45 || cloth == 82 || cloth == 22 || cloth == 23)
+            if (cloth == 41 || cloth == 45 || cloth == 82 || cloth == 86 || cloth == 22 || cloth == 23)
                 inventory.addItem(264, 1, inventory.types.Player, user.getId(player), 1, 1, params, 100);
             else
                 inventory.addItem(263, 1, inventory.types.Player, user.getId(player), 1, 1, params, 100);

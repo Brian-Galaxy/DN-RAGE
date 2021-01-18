@@ -983,9 +983,6 @@ inventory.equip = function(player, id, itemId, count, aparams) {
                     user.setComponentVariation(player, 9, params.armor, params.armor_color);
                 user.setArmour(player, methods.parseInt(rows[0]['count']));
             }
-            else {
-                return;
-            }
 
             user.updateClientCache(player);
             setTimeout(function () {

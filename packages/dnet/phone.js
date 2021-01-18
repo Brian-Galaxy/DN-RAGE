@@ -921,6 +921,14 @@ phone.fractionVehicleAction2 = function(player, id) {
         true
     ));
 
+    items.push(phone.getMenuItemButton(
+        `Зареспавнить`,
+        '',
+        {name: 'respawnVeh', memberId: veh.id},
+        '',
+        true
+    ));
+
     if (user.isLeader2(player)) {
         items.push(phone.getMenuItemModal(
             'Продать',

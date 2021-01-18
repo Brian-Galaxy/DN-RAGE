@@ -107,7 +107,7 @@ hosp.timer = function() {
 };
 
 
-hosp.freePlayer = function() {
+hosp.freePlayer = function(isBuy = false) {
 
     user.set('med_time', 0);
     prvTime = 0;
@@ -115,8 +115,22 @@ hosp.freePlayer = function() {
 
     user.setWaterLevel(500);
     user.setEatLevel(500);
+    user.set('med_time', 0);
+
+    if (isBuy) {
+        setTimeout(function () {
+            user.set('med_time', 0);
+            prvTime = 0;
+        }, 500);
+        setTimeout(function () {
+            user.set('med_time', 0);
+            prvTime = 0;
+        }, 1000);
+        return;
+    }
 
     setTimeout(function () {
+
         if (user.getCache('med_lic'))
         {
             user.removeMoney(100, 'Лечение в больнице');

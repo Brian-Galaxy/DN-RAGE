@@ -7,9 +7,8 @@ let user = require('../user');
 let discord = exports;
 
 discord.report = "https://discordapp.com/api/webhooks/682573681415028740/l0tkdhaVqlCLa_JZQ6xnAE1lE2aZejqq8Zj_x8QvUlAH8hoIB6frc6uZpUPfx3C7K8Ah";
-discord.deadlist = "https://discordapp.com/api/webhooks/682680284789211162/OicTpLvtwIVENmFJxs_bOl7fVmiRCPwqOdQvDc34D_6yDFVZZ4Cps-67fbtrj--NYeyQ";
-discord.invaderAd = "https://discordapp.com/api/webhooks/710593652170424380/u3gR3RERbhHso4uionfo8gW99rlOYM87VMFTrGQ1InKhYynJUaswQAiMgdZun1Fa9ore";
-discord.invaderAd2 = "https://discordapp.com/api/webhooks/724169171025395743/tcUiRFj776_KxogjYDjlJNGxqIkGjMzMmDe5Rk5ypOCwDNJBbG5J_4g-K9T5CwhtzVH4";
+discord.deadlist = "https://discord.com/api/webhooks/800625907323633676/6i7L7D9R0_WnwyNZdzZJHrkT3ZqUltCrOdu-UFzZzxg7N4jbJ-iP40UGBAUeYTSniKYB";
+discord.invaderAd = "https://discord.com/api/webhooks/800626231351312425/No7GOZ8TxubI-CbIX9ylGQmRoNv3sxG2ONJSSY2bwIrGdjwdILeulTYqgnedvl36-GPc";
 discord.invaderNews = "https://discordapp.com/api/webhooks/749837863985610853/8TJa5mtY2hdq1_2NWXoJEiiXT9o4BsDaUgrTungw5xJ5l3BNBVclgXMIiQo8Pf1L1Dkj";
 discord.fractionNews = "https://discordapp.com/api/webhooks/682956739792076838/xnKY61UPcvyakdcRkMIFEsaFCMGKuK9u4wT7KK4lN_Spo1EdA_ySlzMOSLtfyW44QWMb";
 
@@ -75,7 +74,6 @@ discord.sendDeadList = function (target, desc, reason, sender = 'Server', sender
 
 discord.sendAd = function (title, name, text, phone, editor, editorImg) {
     const Hook = new webhook.Webhook(discord.invaderAd);
-    const Hook2 = new webhook.Webhook(discord.invaderAd2);
 
     let color = "#607D8B";
     if (title === 'Покупка')
@@ -97,7 +95,6 @@ discord.sendAd = function (title, name, text, phone, editor, editorImg) {
         .setTime();
 
     Hook.send(msg);
-    Hook2.send(msg);
 };
 
 discord.sendNews = function (title, text, editor, editorImg) {

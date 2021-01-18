@@ -3,8 +3,43 @@ import stocks from '../property/stocks';
 
 let attachItems = {};
 
+let itemAttach = [
+    [254, -422877666, 0.07, -0.01, -0.02, -70, 0, 0], //254
+    [255, -463441113, 0.07, -0.01, -0.02, -70, 0, 0], //255
+    [256, -731262150, 0.07, -0.01, -0.02, -70, 0, 0], //256
+    [257, -1980613044, 0.07, -0.01, -0.02, -70, 0, 0], //257
+    [258, 2009373169, 0.07, -0.01, -0.02, -70, 0, 0], //258
+    [259, -1921596075, 0.07, -0.01, -0.02, -70, 0, 0], //259
+    [260, 1333481871, 0.07, -0.02, -0.08, -70, 0, 0], //260
+];
+
+attachItems.canTakeHand = function (itemId) {
+    let result = false;
+    itemAttach.forEach(item => {
+        if (itemId === item[0])
+            result = true;
+    });
+    return result;
+};
+
 attachItems.registerAttaches = function () {
     try {
+
+        /*
+        ['Маленький розовый член', '', 0, -422877666, 250, 195, 850], //254
+        ['Красный вибратор ', '', 0, -463441113, 450, 440, 1000], //255
+        ['Фиолетовый член', '', 0, -731262150, 330, 290, 1000], //256
+        ['Кожаный член', '', 0, -1980613044, 320, 285, 1500], //257
+        ['Позолоченный член', '', 0, 2009373169, 390, 180, 3000], //258
+        ['Металлический член', '', 0, -1921596075, 390, 180, 2000], //259
+        ['Большой резиновый член', '', 0, 1333481871, 950, 2100, 2000], //260
+        ['Анальная смазка', '', 0, 1553232197, 250, 540, 800], //261
+        * */
+
+        itemAttach.forEach(item => {
+            mp.attachmentMngr.register("item_" + item[0], item[1], 28422, new mp.Vector3(item[2], item[3], item[4]), new mp.Vector3(item[5], item[6], item[7]));
+        });
+
         mp.attachmentMngr.register("phone3", -1038739674, 28422, new mp.Vector3(0, 0, 0), new mp.Vector3(0, 0, 0)); //Android
         mp.attachmentMngr.register("phone2", 1907022252, 28422, new mp.Vector3(0, 0, 0), new mp.Vector3(0, 0, 0)); //WinPhone
         mp.attachmentMngr.register("phone1", -2017357667, 28422, new mp.Vector3(0, 0, 0), new mp.Vector3(0, 0, 0)); //IPhone

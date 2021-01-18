@@ -48,6 +48,7 @@ import gr6 from "../jobs/gr6";
 import trucker from "../jobs/trucker";
 import bind from "../manager/bind";
 import admin from "../admin";
+import attachItems from "../manager/attachItems";
 
 
 mp.gui.chat.enabled = false;
@@ -872,7 +873,7 @@ mp.events.add('client:gangWar:sendInfo', (atC, defC, timerCounter) => {
         gangWarTimeout = setTimeout(function () {
             ui.hideGangInfo();
             gangWarTimeout = null;
-        }, 3000);
+        }, 5000);
     }
     catch (e) {
         methods.debug(e);
@@ -889,6 +890,10 @@ mp.events.add('client:mafiaWar:sendInfo', (top1, top2, top3, timerCounter) => {
     try {
         ui.showMafiaInfo();
         ui.updateMafiaInfo(top1, top2, top3, timerCounter);
+
+        if (mp.game.invoke(methods.GET_FOLLOW_PED_CAM_VIEW_MODE) === 4)
+            mp.game.invoke(methods.SET_FOLLOW_PED_CAM_VIEW_MODE, 2);
+
         mafiaWarTimeout = setTimeout(function () {
             ui.hideMafiaInfo();
         }, 3000);
@@ -908,7 +913,7 @@ mp.events.add('client:gangWar:sendArray', (array) => {
         gangArray = JSON.parse(array);
         gangWarTimeout2 = setTimeout(function () {
             gangArray = [];
-        }, 3000);
+        }, 5000);
     }
     catch (e) {
         methods.debug('client:gangWar:sendArray', e, array);
@@ -2075,7 +2080,7 @@ mp.events.add('client:user:updateDating', (datingList) => {
 });
 
 mp.events.add('client:hosp:free', () => {
-    hosp.freePlayer();
+    hosp.freePlayer(true);
 });
 
 mp.events.add('client:menuList:showMenu', (title, desc, menuData) => {
@@ -3007,6 +3012,9 @@ mp.events.add('client:inventory:unEquip', function(id, itemId) {
     if (itemId == 50) {
         mp.events.callRemote('server:inventory:unEquip', id, itemId);
     }
+    else if (attachItems.canTakeHand(itemId)) {
+        mp.attachmentMngr.removeLocal('item_' + itemId);
+    }
     else if (itemId >= 27 && itemId <= 30) {
         user.set('phone_type', 0);
         user.set('phone_bg', 'https://i.imgur.com/v4aju8F.jpg');
@@ -3174,6 +3182,8 @@ mp.events.add('client:inventory:equip', function(id, itemId, count, aparams) {
         quest.standart(false, -1, 4);
     if (items.isWeapon(itemId))
         quest.gang(false, -1, 10);
+    if (attachItems.canTakeHand(itemId))
+        mp.attachmentMngr.addLocal('item_' + itemId);
     mp.events.callRemote('server:inventory:equip', id, itemId, count, aparams);
 });
 
@@ -4222,6 +4232,11 @@ mp.events.add("playerDeath", async function (player, reason, killer) {
     mp.game.gameplay.setFadeOutAfterDeath(false);
 
     user.stopAllScreenEffect();
+
+    if (gangWarTimeout) {
+        mp.events.callRemote('server:user:spawnToFraction');
+        return;
+    }
 
     if (mp.players.local.getVariable('duel'))
         return;

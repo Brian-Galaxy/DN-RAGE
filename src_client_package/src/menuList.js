@@ -7911,6 +7911,8 @@ menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId, isF
                 }
             }
 
+            methods.debug(JSON.stringify(equipItems));
+
             user.setInvEquipWeapon(equipWeapons);
 
             equipItems.forEach(item => {
@@ -9579,88 +9581,101 @@ menuList.showShopClothBagMenu = function (shopId, type, menuType) {
 
         let list = [];
 
-        if (shopId == 129) {
-            ['Чёрная', 'Синяя', 'Желтая', 'Розовая', 'Зелёная', 'Оранжевая', 'Фиолетовая', 'Светло-розовая', 'Красно-синяя', 'Голубая', 'Цифра', 'Флора', 'Синяя флора', 'Узор', 'Пустынная', 'Камо', 'Белая'].forEach((item, idx) => {
-                let menuListItem = {};
-                menuListItem.id1 = 5;
-                menuListItem.id2 = 82;
-                menuListItem.id4 = 0;
-                menuListItem.id5 = 0;
-                menuListItem.id6 = 0;
-                menuListItem.id7 = 0;
-                menuListItem.id8 = 5000;
-                menuListItem.type = 'c:buy';
-                menuListItem.id = idx;
-                menuListItem.shop = shopId;
-                menuListItem.itemName = `Спортивная сумка (${item})`;
-                list.push({name: methods.removeQuotesAll(menuListItem.itemName), price: methods.moneyFormat(5000), sale: 0, params: menuListItem});
-            });
-            ['Белая Adidas', 'Черная Adidas', 'Синяя Adidas', 'Черная Converse', 'Синяя Converse', 'Белая Kappa', 'Черная Kappa', 'Розовая Kappa', 'Белая Nike', 'Черная Nike', 'Голубая Nike', 'Черная PlayBoy', 'Рзовая PlayBoy', 'Красная Puma', 'Черная Puma', 'Белая Puma', 'Желтая Reebok', 'Черная Reebok', 'Синяя Reebok', 'Белая Reebok'].forEach((item, idx) => {
-                let menuListItem = {};
-                menuListItem.id1 = 5;
-                menuListItem.id2 = 23;
-                menuListItem.id4 = 0;
-                menuListItem.id5 = 0;
-                menuListItem.id6 = 0;
-                menuListItem.id7 = 0;
-                menuListItem.id8 = 10000;
-                menuListItem.type = 'c:buy';
-                menuListItem.id = idx;
-                menuListItem.shop = shopId;
-                menuListItem.itemName = `Спортивная сумка (${item})`;
-                list.push({name: methods.removeQuotesAll(menuListItem.itemName), price: methods.moneyFormat(10000), sale: 0, params: menuListItem});
-            });
-            ['Классическая #1'].forEach((item, idx) => {
-                let menuListItem = {};
-                menuListItem.id1 = 5;
-                menuListItem.id2 = 41;
-                menuListItem.id4 = 0;
-                menuListItem.id5 = 0;
-                menuListItem.id6 = 0;
-                menuListItem.id7 = 0;
-                menuListItem.id8 = 1500;
-                menuListItem.type = 'c:buy';
-                menuListItem.id = idx;
-                menuListItem.shop = shopId;
-                menuListItem.itemName = `Спортивная сумка (${item})`;
-                list.push({name: methods.removeQuotesAll(menuListItem.itemName), price: methods.moneyFormat(1500), sale: 0, params: menuListItem});
-            });
-            ['Классическая #2'].forEach((item, idx) => {
-                let menuListItem = {};
-                menuListItem.id1 = 5;
-                menuListItem.id2 = 45;
-                menuListItem.id4 = 0;
-                menuListItem.id5 = 0;
-                menuListItem.id6 = 0;
-                menuListItem.id7 = 0;
-                menuListItem.id8 = 1500;
-                menuListItem.type = 'c:buy';
-                menuListItem.id = idx;
-                menuListItem.shop = shopId;
-                menuListItem.itemName = `Спортивная сумка (${item})`;
-                list.push({name: methods.removeQuotesAll(menuListItem.itemName), price: methods.moneyFormat(1500), sale: 0, params: menuListItem});
-            });
+        ['Чёрная', 'Синяя', 'Желтая', 'Розовая', 'Зелёная', 'Оранжевая', 'Фиолетовая', 'Светло-розовая', 'Красно-синяя', 'Голубая', 'Цифра', 'Флора', 'Синяя флора', 'Узор', 'Пустынная', 'Камо', 'Белая'].forEach((item, idx) => {
+            let menuListItem = {};
+            menuListItem.id1 = 5;
+            menuListItem.id2 = 82;
+            menuListItem.id4 = 0;
+            menuListItem.id5 = 0;
+            menuListItem.id6 = 0;
+            menuListItem.id7 = 0;
+            menuListItem.id8 = 10000;
+            menuListItem.type = 'c:buy';
+            menuListItem.id = idx;
+            menuListItem.shop = shopId;
+            menuListItem.itemName = `Спортивная сумка (${item})`;
+            list.push({name: methods.removeQuotesAll(menuListItem.itemName), price: methods.moneyFormat(5000), sale: 0, params: menuListItem});
+        });
+        ['Белая Bigness', 'Красная Bigness', 'Фиолетовая Bigness', 'Бежевая Guffy', 'Розовая Guffy', 'Узор Guffy', 'Серый узор Guffy', 'Розовая JK', 'Голубая JK', 'Черная ProLaps', 'Голубая ProLaps', 'Фиолетовая ProLaps', 'Красная ProLaps', 'Розовая ProLaps', 'Бирюзовая ProLaps', 'Бирюзовая ProLaps', 'Серая ProLaps', 'Розовая ProLaps', 'Серая SC', 'Голубая SC', 'Камо SC', 'Люкс SC', 'Золотая Broker', 'Sessanta Nove', 'Белая Sessanta Nove'].forEach((item, idx) => {
+            let menuListItem = {};
+            menuListItem.id1 = 5;
+            menuListItem.id2 = 86;
+            menuListItem.id4 = 0;
+            menuListItem.id5 = 0;
+            menuListItem.id6 = 0;
+            menuListItem.id7 = 0;
+            menuListItem.id8 = 10000;
+            menuListItem.type = 'c:buy';
+            menuListItem.id = idx;
+            menuListItem.shop = shopId;
+            menuListItem.itemName = `Спортивная сумка (${item})`;
+            list.push({name: methods.removeQuotesAll(menuListItem.itemName), price: methods.moneyFormat(5000), sale: 0, params: menuListItem});
+        });
+        ['Белая Adidas', 'Черная Adidas', 'Синяя Adidas', 'Черная Converse', 'Синяя Converse', 'Белая Kappa', 'Черная Kappa', 'Розовая Kappa', 'Белая Nike', 'Черная Nike', 'Голубая Nike', 'Черная PlayBoy', 'Рзовая PlayBoy', 'Красная Puma', 'Черная Puma', 'Белая Puma', 'Желтая Reebok', 'Черная Reebok', 'Синяя Reebok', 'Белая Reebok'].forEach((item, idx) => {
+            let menuListItem = {};
+            menuListItem.id1 = 5;
+            menuListItem.id2 = 23;
+            menuListItem.id4 = 0;
+            menuListItem.id5 = 0;
+            menuListItem.id6 = 0;
+            menuListItem.id7 = 0;
+            menuListItem.id8 = 20000;
+            menuListItem.type = 'c:buy';
+            menuListItem.id = idx;
+            menuListItem.shop = shopId;
+            menuListItem.itemName = `Спортивная сумка (${item})`;
+            list.push({name: methods.removeQuotesAll(menuListItem.itemName), price: methods.moneyFormat(10000), sale: 0, params: menuListItem});
+        });
+        ['Классическая #1'].forEach((item, idx) => {
+            let menuListItem = {};
+            menuListItem.id1 = 5;
+            menuListItem.id2 = 41;
+            menuListItem.id4 = 0;
+            menuListItem.id5 = 0;
+            menuListItem.id6 = 0;
+            menuListItem.id7 = 0;
+            menuListItem.id8 = 1500;
+            menuListItem.type = 'c:buy';
+            menuListItem.id = idx;
+            menuListItem.shop = shopId;
+            menuListItem.itemName = `Спортивная сумка (${item})`;
+            list.push({name: methods.removeQuotesAll(menuListItem.itemName), price: methods.moneyFormat(1500), sale: 0, params: menuListItem});
+        });
+        ['Классическая #2'].forEach((item, idx) => {
+            let menuListItem = {};
+            menuListItem.id1 = 5;
+            menuListItem.id2 = 45;
+            menuListItem.id4 = 0;
+            menuListItem.id5 = 0;
+            menuListItem.id6 = 0;
+            menuListItem.id7 = 0;
+            menuListItem.id8 = 1500;
+            menuListItem.type = 'c:buy';
+            menuListItem.id = idx;
+            menuListItem.shop = shopId;
+            menuListItem.itemName = `Спортивная сумка (${item})`;
+            list.push({name: methods.removeQuotesAll(menuListItem.itemName), price: methods.moneyFormat(1500), sale: 0, params: menuListItem});
+        });
 
-            let alist = [];
-            for (let j = 0; j <= 25; j++) {
-                alist.push('Узор #' + (j + 1));
-            }
-            alist.forEach((item, idx) => {
-                let menuListItem = {};
-                menuListItem.id1 = 5;
-                menuListItem.id2 = 22;
-                menuListItem.id4 = 0;
-                menuListItem.id5 = 0;
-                menuListItem.id6 = 0;
-                menuListItem.id7 = 0;
-                menuListItem.id8 = 5000;
-                menuListItem.type = 'c:buy';
-                menuListItem.id = idx;
-                menuListItem.shop = shopId;
-                menuListItem.itemName = `Спортивная сумка (${item})`;
-                list.push({name: methods.removeQuotesAll(menuListItem.itemName), price: methods.moneyFormat(5000), sale: 0, params: menuListItem});
-            });
+        let alist = [];
+        for (let j = 0; j <= 25; j++) {
+            alist.push('Узор #' + (j + 1));
         }
+        alist.forEach((item, idx) => {
+            let menuListItem = {};
+            menuListItem.id1 = 5;
+            menuListItem.id2 = 22;
+            menuListItem.id4 = 0;
+            menuListItem.id5 = 0;
+            menuListItem.id6 = 0;
+            menuListItem.id7 = 0;
+            menuListItem.id8 = 5000;
+            menuListItem.type = 'c:buy';
+            menuListItem.id = idx;
+            menuListItem.shop = shopId;
+            menuListItem.itemName = `Спортивная сумка (${item})`;
+            list.push({name: methods.removeQuotesAll(menuListItem.itemName), price: methods.moneyFormat(5000), sale: 0, params: menuListItem});
+        });
 
         [''].forEach((item, idx) => {
             let menuListItem = {};
@@ -9678,7 +9693,7 @@ menuList.showShopClothBagMenu = function (shopId, type, menuType) {
             list.push({name: methods.removeQuotesAll(menuListItem.itemName), price: methods.moneyFormat(500), sale: 0, params: menuListItem});
         });
 
-        let alist = [];
+        alist = [];
         for (let j = 0; j <= 25; j++) {
             alist.push('Флаг #' + (j + 1));
         }
@@ -13940,7 +13955,7 @@ menuList.showGangZoneAttackMenu = function(zone, count = 5) {
     UIMenu.Menu.AddMenuItem(`~b~Кол-во:~s~ ${count}vs${count}`, "", {doName: "count"});
     UIMenu.Menu.AddMenuItemList("~b~Броня~s~", ['~g~Да', '~r~Нет'], "", {doName: "armor"});
     UIMenu.Menu.AddMenuItemList("~b~Оружие~s~", ['Любое', 'Пистолеты', 'Дробовики', 'SMG', 'Автоматы'], "", {doName: "gun"});
-    UIMenu.Menu.AddMenuItemList("~b~Время~s~", ['17:00', '17:15', '17:30', '17:45', '18:00', '18:15', '18:30', '18:45', '19:00', '19:15', '19:30', '19:45', '20:00', '20:15', '20:30', '20:45', '21:00', '21:15', '21:30', '21:45', '22:00', '22:15', '22:30', '22:45', '23:00'], "", {doName: "time"});
+    UIMenu.Menu.AddMenuItemList("~b~Время~s~", ['14:00', '14:15', '14:30', '14:45', '15:00', '15:15', '15:30', '15:45', '16:00', '16:15', '16:30', '16:45', '17:00', '17:15', '17:30', '17:45', '18:00', '18:15', '18:30', '18:45', '19:00', '19:15', '19:30', '19:45', '20:00', '20:15', '20:30', '20:45', '21:00', '21:15', '21:30', '21:45', '22:00', '22:15', '22:30', '22:45', '23:00'], "", {doName: "time"});
     UIMenu.Menu.AddMenuItem(`~g~Объявить захват`, "", {doName: "start"});
 
     UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
@@ -14650,6 +14665,7 @@ menuList.showAdminDevMenu = function() {
     UIMenu.Menu.AddMenuItem("Сохранить всё", "", {doName: "saveAll"});
 
     UIMenu.Menu.AddMenuItem("Interior Manager", "", {doName: "interior"});
+    UIMenu.Menu.AddMenuItem("Attach Manager", "", {doName: "attach"});
 
     UIMenu.Menu.AddMenuItem("Debug", "", {doName: "debug"});
     UIMenu.Menu.AddMenuItem("Debug2", "", {doName: "debug2"});
@@ -14680,6 +14696,9 @@ menuList.showAdminDevMenu = function() {
         }
         if (item.doName == 'interior') {
             menuList.showAdminInteriorMenu();
+        }
+        if (item.doName == 'attach') {
+            menuList.showAdminAttachMenu();
         }
         if (item.doName == 'prolog.start') {
             try {
@@ -14849,6 +14868,137 @@ menuList.showAdminTunningMenu = function() {
     });
     UIMenu.Menu.OnSelect.Add(item => {
         UIMenu.Menu.HideMenu();
+    });
+};
+
+menuList.showAdminAttachMenu = function() {
+    UIMenu.Menu.Create(`Admin`, `~b~Attach`);
+
+    for (const [key, value] of Object.entries(mp.players.local.__attachmentObjects)) {
+        UIMenu.Menu.AddMenuItem(key, '', {key: key});
+    }
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
+    UIMenu.Menu.Draw();
+
+    UIMenu.Menu.OnSelect.Add(item => {
+        UIMenu.Menu.HideMenu();
+        if (item.key)
+            menuList.showAdminAttachInfoMenu(item.key);
+    });
+};
+
+menuList.showAdminAttachInfoMenu = function(id) {
+    UIMenu.Menu.Create(`Admin`, `~b~Attach`);
+
+    let attInfo = mp.attachmentMngr.attachments[id];
+
+    let list = ['-0.01', '0', '0.01'];
+
+    UIMenu.Menu.AddMenuItem('BONE ' + attInfo.boneName, '', {edit: 'bone'});
+    UIMenu.Menu.AddMenuItem('MODEL ' + attInfo.model, '', {edit: 'model'});
+    UIMenu.Menu.AddMenuItemList('X ' + attInfo.offset.x, list, '', {edit: 'x'});
+    UIMenu.Menu.AddMenuItemList('Y ' + attInfo.offset.y, list, '', {edit: 'y'});
+    UIMenu.Menu.AddMenuItemList('Z ' + attInfo.offset.z, list, '', {edit: 'z'});
+    UIMenu.Menu.AddMenuItemList('RotX ' + attInfo.rotation.x, list, '', {edit: 'rotx'});
+    UIMenu.Menu.AddMenuItemList('RotY ' + attInfo.rotation.y, list, '', {edit: 'roty'});
+    UIMenu.Menu.AddMenuItemList('RotZ ' + attInfo.rotation.z, list, '', {edit: 'rotz'});
+
+    UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
+    UIMenu.Menu.Draw();
+
+    UIMenu.Menu.OnList.Add((item, idx) => {
+        let offset = 0;
+        if (idx === 0)
+            offset = -0.01;
+        if (idx === 2)
+            offset = 0.01;
+        if (item.edit === 'x') {
+            mp.attachmentMngr.attachments[id].offset.x += offset;
+        }
+        if (item.edit === 'y') {
+            mp.attachmentMngr.attachments[id].offset.y += offset;
+        }
+        if (item.edit === 'z') {
+            mp.attachmentMngr.attachments[id].offset.z += offset;
+        }
+        if (item.edit === 'rotx') {
+            mp.attachmentMngr.attachments[id].rotation.x += offset * 100;
+        }
+        if (item.edit === 'roty') {
+            mp.attachmentMngr.attachments[id].rotation.y += offset * 100;
+        }
+        if (item.edit === 'rotz') {
+            mp.attachmentMngr.attachments[id].rotation.z += offset * 100;
+        }
+        mp.attachmentMngr.removeLocal(methods.parseInt(id));
+        setTimeout(function () {
+            mp.attachmentMngr.addLocal(methods.parseInt(id));
+        }, 100)
+    });
+
+    UIMenu.Menu.OnSelect.Add(async item => {
+        UIMenu.Menu.HideMenu();
+        if (item.edit === 'bone') {
+            let name = await UIMenu.Menu.GetUserInput("bone", "", 50);
+            if (name === '')
+                return ;
+            mp.attachmentMngr.attachments[id].boneName = name;
+            menuList.showAdminAttachInfoMenu(id);
+        }
+        if (item.edit === 'model') {
+            let name = await UIMenu.Menu.GetUserInput("model", "", 20);
+            if (name === '')
+                return ;
+            mp.attachmentMngr.attachments[id].model = methods.parseInt(name);
+            menuList.showAdminAttachInfoMenu(id);
+        }
+        if (item.edit === 'x') {
+            let name = await UIMenu.Menu.GetUserInput("x", "", 20);
+            if (name === '')
+                return ;
+            mp.attachmentMngr.attachments[id].offset.x = methods.parseFloat(name);
+            menuList.showAdminAttachInfoMenu(id);
+        }
+        if (item.edit === 'y') {
+            let name = await UIMenu.Menu.GetUserInput("y", "", 20);
+            if (name === '')
+                return ;
+            mp.attachmentMngr.attachments[id].offset.y = methods.parseFloat(name);
+            menuList.showAdminAttachInfoMenu(id);
+        }
+        if (item.edit === 'z') {
+            let name = await UIMenu.Menu.GetUserInput("z", "", 20);
+            if (name === '')
+                return ;
+            mp.attachmentMngr.attachments[id].offset.z = methods.parseFloat(name);
+            menuList.showAdminAttachInfoMenu(id);
+        }
+        if (item.edit === 'rotx') {
+            let name = await UIMenu.Menu.GetUserInput("x", "", 20);
+            if (name === '')
+                return ;
+            mp.attachmentMngr.attachments[id].rotation.x = methods.parseFloat(name);
+            menuList.showAdminAttachInfoMenu(id);
+        }
+        if (item.edit === 'roty') {
+            let name = await UIMenu.Menu.GetUserInput("y", "", 20);
+            if (name === '')
+                return ;
+            mp.attachmentMngr.attachments[id].rotation.y = methods.parseFloat(name);
+            menuList.showAdminAttachInfoMenu(id);
+        }
+        if (item.edit === 'rotz') {
+            let name = await UIMenu.Menu.GetUserInput("z", "", 20);
+            if (name === '')
+                return ;
+            mp.attachmentMngr.attachments[id].rotation.z = methods.parseFloat(name);
+            menuList.showAdminAttachInfoMenu(id);
+        }
+        mp.attachmentMngr.removeLocal(methods.parseInt(id));
+        setTimeout(function () {
+            mp.attachmentMngr.addLocal(methods.parseInt(id));
+        }, 100)
     });
 };
 

@@ -1216,7 +1216,7 @@ mp.events.add('client:dialog:btn', async function(json) {
                 return ;
             }
             user.removeCashMoney(price, 'Выписка из больницы');
-            hosp.freePlayer();
+            hosp.freePlayer(true);
         }
         if (params.doName === 'lspd:toJail') {
             shopMenu.hideDialog();

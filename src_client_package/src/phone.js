@@ -6384,6 +6384,10 @@ phone.callBackButton = async function(menu, id, ...args) {
                 mp.events.callRemote('server:fraction:vehicleFind2', params.vehId);
                 phone.showAppFraction2();
             }
+            else if (params.name == 'respawnVeh') {
+                mp.events.callRemote('server:fraction:vehicleRespawn', params.memberId);
+                phone.showAppFraction();
+            }
             else if (params.name == 'list') {
                 mp.events.callRemote('server:phone:fractionList2');
                 phone.showLoad();

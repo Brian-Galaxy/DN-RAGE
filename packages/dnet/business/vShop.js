@@ -237,6 +237,8 @@ vShop.buy = function(player, model, color1, color2, shopId, payType) {
                 user.removeMoney(player, price, 'Покупка транспорта ' + model, payType);
                 coffer.addMoney(1, price);
 
+                user.achiveDoneAllById(player, 30);
+
                 setTimeout(function () {
                     if (user.isLogin(player)) {
                         if (vInfo.fuel_type == 3)

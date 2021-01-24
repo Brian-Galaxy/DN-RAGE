@@ -7,6 +7,7 @@ import timer from "./timer";
 import user from '../user';
 
 import jailer from "../jobs/jailer";
+import achievement from "./achievement";
 
 let jail = {};
 
@@ -75,6 +76,8 @@ jail.freePlayer = function() {
     prvTime = 0;
     mp.game.ui.notifications.show("~g~Вы отсидели в тюрьме, теперь вы свободны!");
     user.updateCharacterCloth();
+
+    achievement.doneDailyById(2);
 };
 
 jail.setOffsetTimeThisSec = function(time) {

@@ -50,6 +50,8 @@ carWash.checkPosForOpenMenu = function(player) {
                 player.notify('~g~Ваш транспорт теперь чист');
                 player.notify('~g~Стоимость услуги:~s~ $99.90');
 
+                user.achiveDoneDailyById(player, 5);
+
                 setTimeout(function () {
                     user.hideLoadDisplay(player);
                 }, 500);

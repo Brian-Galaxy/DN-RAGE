@@ -85,6 +85,8 @@ chat.sendDiceCommandNumber = function(player, dice = 1) {
                 p.outputChatBoxNew(`[${chat.getTime()}] !{FF9800}[Игра в кости] !{C2A2DA}${user.getSvId(player)} бросил кости !{FF9800}(( Выпало ${dice} ))`);
         });
 
+        user.achiveDoneDailyById(player, 11);
+
         methods.saveLog('log_chat', ['text'], [`/dice ${user.getRpName(player)} (${user.getId(player)}): Выпало ${dice}`]);
     }
 };

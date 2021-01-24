@@ -164,6 +164,8 @@ mp.events.add('server:casino:wheel:finalRoll', (player) => {
             user.addCashMoney(player, 2000, 'Колесо удачи');
             player.notifyWithPicture('Diamond Casino', '~g~Колесо Удачи', `Вы выиграли ~g~$2,000`, 'CHAR_CASINO');
         }*/
+
+        user.achiveDoneDailyById(player, 10);
     }
     catch (e) {
         methods.debug(e);

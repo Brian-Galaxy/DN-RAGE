@@ -510,6 +510,9 @@ houses.buy = function (player, id) {
         return false;
     }
 
+    if (hInfo.get('price') >= 5000000)
+        user.achiveDoneAllById(player, 31);
+
     user.set(player, 'house_id', id);
 
     houses.updateOwnerInfo(id, user.get(player, 'id'), user.get(player, 'name'));

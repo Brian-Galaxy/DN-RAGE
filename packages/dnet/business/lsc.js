@@ -239,6 +239,7 @@ lsc.buyNeon = function(player, price, shopId, payType) {
         business.removeMoneyTax(shopId, price / business.getPrice(shopId));
     }
 
+    user.achiveDoneAllById(player, 18);
     user.showCustomNotify(player, 'Вы установили неон, теперь можете открыть меню транспорта (2) и воспользоваться им', 2, 9);
 
     user.save(player);
@@ -270,6 +271,7 @@ lsc.buyTyreColor = function(player, price, idx, shopId, payType) {
         return;
     }
 
+    user.achiveDoneAllById(player, 18);
     user.removeMoney(player, price, 'Установка спец. покрышек', payType);
 
     if (price > 475000)
@@ -328,6 +330,7 @@ lsc.buyLight = function(player, price, shopId, payType) {
 
     veh.data.headlightColor = 0;
 
+    user.achiveDoneAllById(player, 18);
     user.removeMoney(player, price, 'Цветные фары', payType);
     price = price - 725000;
     if (business.isOpen(shopId)) {
@@ -370,6 +373,7 @@ lsc.buySpecial = function(player, price, shopId, payType) {
         return;
     }
 
+    user.achiveDoneAllById(player, 18);
     vehicles.set(veh.getVariable('container'), 'is_special', 1);
     user.removeMoney(player, price, 'Дистанционное управление', payType);
     if (business.isOpen(shopId)) {
@@ -496,6 +500,7 @@ lsc.buyNumber = function(player, shopId, newNumber, payType) {
                     vehicles.set(veh.getVariable('container'), 'number', newNumber);
                     vehicles.setNumberPlate(veh, newNumber);
 
+                    user.achiveDoneAllById(player, 18);
                     user.save(player);
                     vehicles.save(veh.getVariable('container'));
 
@@ -597,6 +602,7 @@ lsc.buySTun = function(player, modType, idx, price, shopId, itemName, payType) {
     let upgrade = JSON.parse(car.get('upgrade'));
     upgrade[modType.toString()] = idx;
     vehicles.set(veh.getVariable('container'), 'upgrade', JSON.stringify(upgrade));
+    user.achiveDoneAllById(player, 18);
     if (business.isOpen(shopId)) {
         business.addMoney(shopId, price, itemName);
         business.removeMoneyTax(shopId, price / business.getPrice(shopId));
@@ -641,6 +647,7 @@ lsc.buySFix = function(player, idx, price, shopId, itemName, payType) {
     player.call('client:setNewMaxSpeedServer', [0]);
     user.removeMoney(player, price, itemName, payType);
     vehicles.set(veh.getVariable('container'), idx, 100);
+    user.achiveDoneAllById(player, 18);
     if (business.isOpen(shopId)) {
         business.addMoney(shopId, price, itemName);
         business.removeMoneyTax(shopId, price / business.getPrice(shopId));
@@ -739,6 +746,7 @@ lsc.buyTun = function(player, modType, idx, price, shopId, itemName, payType) {
         //veh.setMod(modType, -1);
     }
 
+    user.achiveDoneAllById(player, 18);
     //vehicles.setTunning(veh);
     vehicles.save(veh.getVariable('container'));
 };

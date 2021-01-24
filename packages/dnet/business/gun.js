@@ -109,6 +109,8 @@ gun.buy = function(player, itemId, price, count, superTint, tint, shopId, payTyp
         tint: tint,
     };
 
+    user.achiveDoneDailyById(player, 7);
+
     if (items.isWeapon(itemId))
         inventory.addItemSql(itemId, 1, 1, user.getId(player), 100, 0, JSON.stringify(paramsObject), 1);
     else

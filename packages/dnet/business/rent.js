@@ -218,4 +218,6 @@ rent.buy = function(player, hash, price, shopId, payType) {
         user.putInVehicle(player, veh, -1);
 
     }, player.position, player.heading, hash);
+
+    user.achiveDoneDailyById(player, 12);
 };

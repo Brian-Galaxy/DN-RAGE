@@ -398,9 +398,11 @@ enums.userData = [
 
     "quests",
     "recepts",
+    "achiv",
 
     "is_custom",
     "is_take_vehicle",
+    "is_take_vehicle_2",
     "is_online",
 ];
 

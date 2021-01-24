@@ -277,6 +277,8 @@ mp.events.add("playerDeath", (player, reason, killer) => {
                 }
 
                 if (kills >= 25) {
+
+                    user.achiveDoneAllById(player, 2);
                     gangZone.generateLobby();
                     user.addMoney(killer, 2000, 'Награда за 1 место GangZone');
                     mp.players.forEach(p => {

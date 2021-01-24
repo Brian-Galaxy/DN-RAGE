@@ -18,9 +18,10 @@ import hosp from './hosp';
 import discord from "./discord";
 import checkpoint from "./checkpoint";
 import dispatcher from "./dispatcher";
+import bind from "./bind";
+import achievement from "./achievement";
 
 import fuel from "../business/fuel";
-import bind from "./bind";
 
 //import dispatcher from "./dispatcher";
 
@@ -595,8 +596,10 @@ timer.secTimer = function() {
     try {
         if (user.isLogin()) {
 
-            if (mp.game.player.getSprintStaminaRemaining() > 90)
+            if (mp.game.player.getSprintStaminaRemaining() > 90) {
+                achievement.doneDailyById(9);
                 isDisableShift = true;
+            }
             if (mp.game.player.getSprintStaminaRemaining() < 10)
                 isDisableShift = false;
             mp.game.invoke(methods.SET_PLAYER_SPRINT, mp.players.local, !isDisableShift);
@@ -733,6 +736,7 @@ timer.secTimer = function() {
             if (user.getDrugLevel(drugId) > 1000) {
                 chat.sendLocal(`!{03A9F4}Вы в коме от передозировки`);
                 user.setHealth(-1);
+                achievement.doneAllById(16);
             }
 
             if (!mp.game.graphics.getScreenEffectIsActive("DrugsMichaelAliensFightIn"))
@@ -754,6 +758,7 @@ timer.secTimer = function() {
             if (user.getDrugLevel(drugId) > 1000) {
                 chat.sendLocal(`!{03A9F4}Вы в коме от передозировки`);
                 user.setHealth(-1);
+                achievement.doneAllById(16);
             }
 
             if (!mp.game.graphics.getScreenEffectIsActive("DrugsTrevorClownsFightIn"))
@@ -775,6 +780,7 @@ timer.secTimer = function() {
             if (user.getDrugLevel(drugId) > 1000) {
                 chat.sendLocal(`!{03A9F4}Вы в коме от передозировки`);
                 user.setHealth(-1);
+                achievement.doneAllById(16);
             }
 
             if (!mp.game.graphics.getScreenEffectIsActive("DMT_flight"))
@@ -792,6 +798,7 @@ timer.secTimer = function() {
             if (user.getDrugLevel(drugId) > 1000) {
                 chat.sendLocal(`!{03A9F4}Вы в коме от передозировки`);
                 user.setHealth(-1);
+                achievement.doneAllById(16);
             }
 
             if (!mp.game.graphics.getScreenEffectIsActive("Rampage"))
@@ -809,6 +816,7 @@ timer.secTimer = function() {
             if (user.getDrugLevel(drugId) > 1000) {
                 chat.sendLocal(`!{03A9F4}Вы в коме от передозировки`);
                 user.setHealth(-1);
+                achievement.doneAllById(16);
             }
 
             if (!mp.game.graphics.getScreenEffectIsActive("DrugsDrivingIn"))
@@ -830,6 +838,7 @@ timer.secTimer = function() {
             if (user.getDrugLevel(drugId) > 1000) {
                 chat.sendLocal(`!{03A9F4}Вы в коме от передозировки`);
                 user.setHealth(-1);
+                achievement.doneAllById(16);
             }
 
             if (!mp.game.graphics.getScreenEffectIsActive("PeyoteEndIn"))
@@ -851,6 +860,7 @@ timer.secTimer = function() {
             if (user.getDrugLevel(drugId) > 1500) {
                 chat.sendLocal(`!{03A9F4}Вы в коме от передозировки`);
                 user.setHealth(-1);
+                achievement.doneAllById(16);
             }
 
             if (!mp.game.graphics.getScreenEffectIsActive("ChopVision"))

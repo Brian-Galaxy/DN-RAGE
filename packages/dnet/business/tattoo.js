@@ -128,6 +128,7 @@ tattoo.buy = function(player, collection, overlay, zone, price, itemName, shopId
     user.showCustomNotify(player, 'Вы набили татуировку', 2, 9);
     user.updateTattoo(player);
     user.save(player);
+    user.achiveDoneDailyById(player, 17);
 };
 
 tattoo.destroy = function(player, collection, overlay, zone, price, itemName, shopId, payType) {

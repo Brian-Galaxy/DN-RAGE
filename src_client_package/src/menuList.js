@@ -16,6 +16,7 @@ import drone from "./manager/drone";
 import timer from "./manager/timer";
 import policeRadar from "./manager/policeRadar";
 import prolog from "./manager/prolog";
+import achievement from "./manager/achievement";
 
 import user from './user';
 import admin from './admin';
@@ -710,6 +711,7 @@ menuList.showStockLabGetMenu = function(h) {
             }
             mp.events.callRemote('server:stocks:labStart', h.get('id'), 1, minCount);
             mp.game.ui.notifications.show("~g~Партия начала свое произвосдство");
+            achievement.doneAllById(21);
         }
         if (item.doName == 'createParty2') {
             let minCount = 6250;
@@ -731,6 +733,7 @@ menuList.showStockLabGetMenu = function(h) {
             }
             mp.events.callRemote('server:stocks:labStart', h.get('id'), 2, minCount);
             mp.game.ui.notifications.show("~g~Партия начала свое произвосдство");
+            achievement.doneAllById(21);
         }
         if (item.doName == 'createParty3') {
             let minCount = 12500;
@@ -752,6 +755,7 @@ menuList.showStockLabGetMenu = function(h) {
             }
             mp.events.callRemote('server:stocks:labStart', h.get('id'), 3, minCount);
             mp.game.ui.notifications.show("~g~Партия начала свое произвосдство");
+            achievement.doneAllById(21);
         }
     });
 };
@@ -2282,6 +2286,7 @@ menuList.showBusinessMenu = async function(data) {
                 return ;
             quest.gang(false, -1, 13);
             mp.events.callRemote('server:sellMoneyBusiness', data.get('id'), text);
+            achievement.doneAllById(22);
         }
         if (item.doName == 'log') {
             mp.events.callRemote('server:business:log', data.get('id'));
@@ -3434,6 +3439,9 @@ menuList.showLicBuyMenu = function()
             }
             user.buyLicense('taxi_lic', 10000);
         }
+
+        setTimeout(quest.fish, 5000);
+        setTimeout(quest.business, 5000);
     });
 };
 
@@ -4051,11 +4059,17 @@ menuList.showPlayerMenu = function() {
 
         UIMenu.Menu.AddMenuItem("Статистика", "", {doName: 'showPlayerStatsMenu'});
 
-        /*if (!user.getCache('is_take_vehicle')) {
+        if (!user.getCache('is_take_vehicle')) {
             UIMenu.Menu.AddMenuItem("~y~Получить BMW 760i", "", {doName: 'takeBMW'});
             UIMenu.Menu.AddMenuItem("~y~Получить Audi A8", "", {doName: 'takeAUDI'});
             UIMenu.Menu.AddMenuItem("~y~Получить Mercedes 600", "", {doName: 'takeMERC'});
-        }*/
+        }
+
+        if (!user.getCache('is_take_vehicle_2')) {
+            UIMenu.Menu.AddMenuItem("~b~Получить Cadilac Escalade", "", {doName: 'takeCAD2'});
+            UIMenu.Menu.AddMenuItem("~b~Получить BMW X6M", "", {doName: 'takeBMW2'});
+            UIMenu.Menu.AddMenuItem("~b~Получить Mercedes GLE", "", {doName: 'takeMERC2'});
+        }
 
         UIMenu.Menu.AddMenuItem("Взаимодействовать с причёской", "", {doName: 'changeHair'});
         UIMenu.Menu.AddMenuItemList("Наушники", ['~r~Выкл', '~g~Вкл'], "", {doName: 'changeMusic'}, user.currentStation >= 0 ? 1 : 0);
@@ -4153,6 +4167,12 @@ menuList.showPlayerMenu = function() {
                 mp.events.callRemote('server:cont:vehicle', 'audi');
             else if (item.doName == 'takeMERC')
                 mp.events.callRemote('server:cont:vehicle', 'merc');
+            else if (item.doName == 'takeBMW2')
+                mp.events.callRemote('server:cont:vehicle2', 'bmw');
+            else if (item.doName == 'takeCAD2')
+                mp.events.callRemote('server:cont:vehicle2', 'cad');
+            else if (item.doName == 'takeMERC2')
+                mp.events.callRemote('server:cont:vehicle2', 'merc');
             else if (item.doName == 'changeMusicPrev')
             {
                 if (user.currentStation === -1)
@@ -5267,7 +5287,7 @@ menuList.showPlayerStatsMenu = function() {
 
     UIMenu.Menu.AddMenuItem("~b~Вы играли:~r~", "", {}, `${methods.parseFloat(user.getCache('online_time') * 8.5 / 60).toFixed(1)}ч.`);
     UIMenu.Menu.AddMenuItem("~b~Вы играли сегодня:~r~", "", {}, `${methods.parseFloat(user.getCache('online_cont') * 8.5 / 60).toFixed(1)}ч.`);
-    //UIMenu.Menu.AddMenuItem("~b~Вы играли (Конкурс):~r~", "", {}, `${methods.parseFloat(user.getCache('online_contall') * 8.5 / 60).toFixed(1)}ч.`);
+    UIMenu.Menu.AddMenuItem("~b~Вы играли (Конкурс):~r~", "", {}, `${methods.parseFloat(user.getCache('online_contall') * 8.5 / 60).toFixed(1)}ч.`);
 
     if (user.getCache('vip_type') === 1)
         UIMenu.Menu.AddMenuItem("~b~VIP:", "", {}, `LIGHT`);
@@ -7711,9 +7731,13 @@ menuList.showToPlayerItemListMenu = async function(data, ownerType, ownerId, isF
 
     ownerId = methods.parseInt(ownerId);
 
-    if (justUpdate && ownerId !== user.getCache('id')) {
+    if (justUpdate) {
         if (inventory.ownerId !== ownerId && inventory.ownerType !== ownerType)
             return;
+        /*if (ownerId !== user.getCache('id') && inventory.ownerType !== inventory.types.Player) {
+            if (inventory.ownerId !== ownerId && inventory.ownerType !== ownerType)
+                return;
+        }*/
     }
 
     try {
@@ -9589,7 +9613,7 @@ menuList.showShopClothBagMenu = function (shopId, type, menuType) {
             menuListItem.id5 = 0;
             menuListItem.id6 = 0;
             menuListItem.id7 = 0;
-            menuListItem.id8 = 10000;
+            menuListItem.id8 = 5000;
             menuListItem.type = 'c:buy';
             menuListItem.id = idx;
             menuListItem.shop = shopId;
@@ -9609,7 +9633,7 @@ menuList.showShopClothBagMenu = function (shopId, type, menuType) {
             menuListItem.id = idx;
             menuListItem.shop = shopId;
             menuListItem.itemName = `Спортивная сумка (${item})`;
-            list.push({name: methods.removeQuotesAll(menuListItem.itemName), price: methods.moneyFormat(5000), sale: 0, params: menuListItem});
+            list.push({name: methods.removeQuotesAll(menuListItem.itemName), price: methods.moneyFormat(10000), sale: 0, params: menuListItem});
         });
         ['Белая Adidas', 'Черная Adidas', 'Синяя Adidas', 'Черная Converse', 'Синяя Converse', 'Белая Kappa', 'Черная Kappa', 'Розовая Kappa', 'Белая Nike', 'Черная Nike', 'Голубая Nike', 'Черная PlayBoy', 'Рзовая PlayBoy', 'Красная Puma', 'Черная Puma', 'Белая Puma', 'Желтая Reebok', 'Черная Reebok', 'Синяя Reebok', 'Белая Reebok'].forEach((item, idx) => {
             let menuListItem = {};
@@ -9624,7 +9648,7 @@ menuList.showShopClothBagMenu = function (shopId, type, menuType) {
             menuListItem.id = idx;
             menuListItem.shop = shopId;
             menuListItem.itemName = `Спортивная сумка (${item})`;
-            list.push({name: methods.removeQuotesAll(menuListItem.itemName), price: methods.moneyFormat(10000), sale: 0, params: menuListItem});
+            list.push({name: methods.removeQuotesAll(menuListItem.itemName), price: methods.moneyFormat(20000), sale: 0, params: menuListItem});
         });
         ['Классическая #1'].forEach((item, idx) => {
             let menuListItem = {};
@@ -11750,8 +11774,8 @@ menuList.showAnimationSyncListMenu = function() {
     UIMenu.Menu.AddMenuItem(`Поздороваться 2`, "", {animId: 2});
     UIMenu.Menu.AddMenuItem(`Дать пять`, "", {animId: 1});
     UIMenu.Menu.AddMenuItem(`Поцелуй`, "", {animId: 3});
-    //UIMenu.Menu.AddMenuItem(`Минет`).animId = 4;
-    //UIMenu.Menu.AddMenuItem(`Секс`).animId = 5;
+    UIMenu.Menu.AddMenuItem(`Минет`, "", {animId: 4});
+    UIMenu.Menu.AddMenuItem(`Секс`, "", {animId: 5});
 
     UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
     UIMenu.Menu.Draw();
@@ -11767,7 +11791,8 @@ menuList.showAnimationSyncListMenu = function() {
             mp.game.ui.notifications.show("~r~ID Игркоа не может быть меньше нуля");
             return;
         }
-        user.playAnimationWithUser(playerId, item.animId);
+        mp.events.callRemote('server:user:askAnim', playerId, item.animId)
+        //user.playAnimationWithUser(playerId, item.animId);
     });
 };
 
@@ -12285,6 +12310,66 @@ menuList.showAskBuyLicMenu = function(playerId, lic, licName, price) {
             setTimeout(quest.fish, 5000);
             setTimeout(quest.business, 5000);
             mp.events.callRemote('server:user:buyLicensePlayer', playerId, lic, price);
+        }
+    });
+};
+
+menuList.showAskInviteMenu = function(playerId, desc) {
+
+    UIMenu.Menu.Create(`Инвайт`, `~b~${desc}`);
+    UIMenu.Menu.AddMenuItem(`~g~Согласиться`, "", {isAccept: true});
+    UIMenu.Menu.AddMenuItem("~r~Отказаться", "", {doName: "closeMenu"});
+    UIMenu.Menu.Draw();
+
+    UIMenu.Menu.OnSelect.Add(async (item, index) => {
+        UIMenu.Menu.HideMenu();
+        if (item.isAccept) {
+            mp.events.callRemote('server:user:invite:accept', playerId);
+        }
+    });
+};
+
+menuList.showAskInvite2Menu = function(playerId, desc) {
+
+    UIMenu.Menu.Create(`Инвайт`, `~b~${desc}`);
+    UIMenu.Menu.AddMenuItem(`~g~Согласиться`, "", {isAccept: true});
+    UIMenu.Menu.AddMenuItem("~r~Отказаться", "", {doName: "closeMenu"});
+    UIMenu.Menu.Draw();
+
+    UIMenu.Menu.OnSelect.Add(async (item, index) => {
+        UIMenu.Menu.HideMenu();
+        if (item.isAccept) {
+            mp.events.callRemote('server:user:invite2:accept', playerId);
+        }
+    });
+};
+
+menuList.showAskInvitefMenu = function(playerId, desc) {
+
+    UIMenu.Menu.Create(`Инвайт`, `~b~${desc}`);
+    UIMenu.Menu.AddMenuItem(`~g~Согласиться`, "", {isAccept: true});
+    UIMenu.Menu.AddMenuItem("~r~Отказаться", "", {doName: "closeMenu"});
+    UIMenu.Menu.Draw();
+
+    UIMenu.Menu.OnSelect.Add(async (item, index) => {
+        UIMenu.Menu.HideMenu();
+        if (item.isAccept) {
+            mp.events.callRemote('server:user:invitef:accept', playerId);
+        }
+    });
+};
+
+menuList.showAskAnimMenu = function(playerId, desc, animId) {
+
+    UIMenu.Menu.Create(`Анимация`, `~b~${desc}`);
+    UIMenu.Menu.AddMenuItem(`~g~Согласиться`, "", {isAccept: true});
+    UIMenu.Menu.AddMenuItem("~r~Отказаться", "", {doName: "closeMenu"});
+    UIMenu.Menu.Draw();
+
+    UIMenu.Menu.OnSelect.Add(async (item, index) => {
+        UIMenu.Menu.HideMenu();
+        if (item.isAccept) {
+            mp.events.callRemote('server:user:anim:accept', playerId, animId);
         }
     });
 };

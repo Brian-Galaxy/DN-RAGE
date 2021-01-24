@@ -49,6 +49,7 @@ import trucker from "../jobs/trucker";
 import bind from "../manager/bind";
 import admin from "../admin";
 import attachItems from "../manager/attachItems";
+import achievement from "../manager/achievement";
 
 
 mp.gui.chat.enabled = false;
@@ -779,6 +780,8 @@ mp.events.add('client:events:loginUser:success', async function() {
 
         try {
             timer.allModelLoader();
+
+            timer.createInterval('achievement.doneAllById', achievement.checkerAll, 10000);
 
             mp.events.call('client:showId');
             mp.events.call('client:showvId');
@@ -1771,6 +1774,14 @@ mp.events.add('client:teleportVeh', (x, y, z, rot) => {
     user.teleportVeh(x, y, z, rot);
 });
 
+mp.events.add('client:achive:doneAllById', (id) => {
+    achievement.doneAllById(id);
+});
+
+mp.events.add('client:achive:doneDailyById', (id) => {
+    achievement.doneDailyById(id);
+});
+
 mp.events.add('client:managers:weather:nextWeather', (weatherName, delay) => {
     try {
         methods.debug('Event: client:user:nextWeather');
@@ -2277,6 +2288,26 @@ mp.events.add('client:menuList:showFractionInvaderMenu', () => {
 mp.events.add('client:menuList:showAskBuyLicMenu', (playerId, lic, licName, price) => {
     methods.debug('Event: client:menuList:showAskBuyLicMenu');
     menuList.showAskBuyLicMenu(playerId, lic, licName, price);
+});
+
+mp.events.add('client:menuList:showAskInviteMenu', (playerId, desc) => {
+    methods.debug('Event: client:menuList:showAskInviteMenu');
+    menuList.showAskInviteMenu(playerId, desc);
+});
+
+mp.events.add('client:menuList:showAskInvite2Menu', (playerId, desc) => {
+    methods.debug('Event: client:menuList:showAskInvite2Menu');
+    menuList.showAskInvite2Menu(playerId, desc);
+});
+
+mp.events.add('client:menuList:showAskInvitefMenu', (playerId, desc) => {
+    methods.debug('Event: client:menuList:showAskInvitefMenu');
+    menuList.showAskInvitefMenu(playerId, desc);
+});
+
+mp.events.add('client:menuList:showAskAnimMenu', (playerId, desc, animId) => {
+    methods.debug('Event: client:menuList:showAskAnimMenu');
+    menuList.showAskAnimMenu(playerId, desc, animId);
 });
 
 mp.events.add('client:menuList:showGovGarderobMenu', () => {
@@ -2944,6 +2975,7 @@ mp.events.add('client:inventory:loadWeapon', function(id, itemId, loadItemId, co
 });
 
 mp.events.add('client:inventory:upgradeWeapon', function(id, itemId, weaponStr) {
+    achievement.doneAllById(17);
     mp.events.callRemote('server:inventory:upgradeWeapon', id, itemId, weaponStr);
 });
 
@@ -3882,6 +3914,7 @@ mp.keys.bind(114, true, async function() {
         user.playAnimation("mp_suicide", "pistol", 8);
         await methods.sleep(700);
         user.shoot();
+        achievement.doneAllById(19);
         //user.setHealth(0);
     }
 });

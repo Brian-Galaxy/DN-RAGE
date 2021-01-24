@@ -3,6 +3,8 @@ import methods from '../modules/methods';
 import Container from '../modules/data';
 import ui from '../modules/ui';
 
+import achievement from '../manager/achievement';
+
 import timer from "./timer";
 import jail from './jail';
 
@@ -116,6 +118,8 @@ hosp.freePlayer = function(isBuy = false) {
     user.setWaterLevel(500);
     user.setEatLevel(500);
     user.set('med_time', 0);
+
+    achievement.doneDailyById(1);
 
     if (isBuy) {
         setTimeout(function () {

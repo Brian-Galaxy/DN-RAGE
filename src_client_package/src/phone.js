@@ -15,10 +15,12 @@ import weather from "./manager/weather";
 import dispatcher from "./manager/dispatcher";
 import bind from "./manager/bind";
 import jobPoint from "./manager/jobPoint";
+import quest from "./manager/quest";
+import achievement from "./manager/achievement";
+import timer from "./manager/timer";
 
 import fraction from "./property/fraction";
 import family from "./property/family";
-import timer from "./manager/timer";
 
 import tree from "./jobs/tree";
 import builder from "./jobs/builder";
@@ -26,7 +28,6 @@ import photo from "./jobs/photo";
 import loader from "./jobs/loader";
 
 import stocks from "./property/stocks";
-import quest from "./manager/quest";
 
 let phone = {};
 
@@ -70,9 +71,6 @@ phone.show = function() {
     //chat.activate(false);
     try {
         user.openPhone(pType);
-
-        mp.events.callRemote('server:phone:updateContactList');
-        mp.events.callRemote('server:phone:updateDialogList');
 
         chat.activate(false);
         mp.gui.cursor.show(false, true);
@@ -184,6 +182,13 @@ phone.toPage = function(page) {
     ui.callCef('phone' + phone.getType(), JSON.stringify(data));
 };
 
+phone.updateAppAchiev = function(value = []) {
+    if (value.length === 0)
+        value = [{title: 'Загрузка', achiev_map: []}]
+    let data = { type: 'updateAchiev', achiev: value };
+    ui.callCef('phone' + phone.getType(), JSON.stringify(data));
+};
+
 phone.timer = function() {
     let pType = phone.getType();
     if (!hidden && pType == 0) {
@@ -228,6 +233,13 @@ phone.timer = function() {
 
 phone.apps = function(action) {
 
+    if (action === 'achiev') {
+        phone.updateAppAchiev();
+        user.updateCache().then(() => {
+            achievement.update();
+        });
+    }
+
     if (phone.network == 0) {
         phone.showNoNetwork();
         return;
@@ -255,6 +267,8 @@ phone.apps = function(action) {
         case 'browser':
             phone.showBrowser();
             break;
+        case 'achiev':
+            break;
         case 'bank':
             phone.showAppBank();
             break;
@@ -266,7 +280,12 @@ phone.apps = function(action) {
             phone.showLoad();
             break;
         case 'sms':
+            mp.events.callRemote('server:phone:updateDialogList');
+            chat.activate(false);
+            mp.gui.cursor.show(true, true);
+            break;
         case 'cont':
+            mp.events.callRemote('server:phone:updateContactList');
             chat.activate(false);
             mp.gui.cursor.show(true, true);
             break;
@@ -287,7 +306,7 @@ phone.updateMainAppList = function() {
         { link: "/phone/android/umenu", action: 'uveh', img: 'uveh', name: 'UVeh' },
         { link: "/phone/android/umenu", action: 'invader', img: 'invader', name: 'INews' },
         { link: "/phone/android/umenu", action: 'browser', img: 'browser', name: 'Браузер' },
-        //{ link: "/phone/android/achiev", action: 'achiev', img: 'trophy', name: 'Достижения' },
+        { link: "/phone/android/achiev", action: 'achiev', img: 'trophy', name: 'Достижения' },
     ];
 
     if (user.getCache('fraction_id') === 1)
@@ -860,14 +879,6 @@ phone.showAppSettings = function() {
                 'https://i.imgur.com/k8Ca1Vf.png',
                 'https://i.imgur.com/bJigd6i.png',
                 'https://i.imgur.com/0za6rHp.png',
-            ]
-        },
-        {
-            title: 'Retro Wave',
-            list: [
-                'https://i.imgur.com/HWEbeCJ.png',
-                'https://i.imgur.com/JJhCG51.jpg',
-                'https://i.imgur.com/6zYRPKe.jpg',
             ]
         },
         {
@@ -6386,7 +6397,7 @@ phone.callBackButton = async function(menu, id, ...args) {
             }
             else if (params.name == 'respawnVeh') {
                 mp.events.callRemote('server:fraction:vehicleRespawn', params.memberId);
-                phone.showAppFraction();
+                phone.showAppFraction2();
             }
             else if (params.name == 'list') {
                 mp.events.callRemote('server:phone:fractionList2');

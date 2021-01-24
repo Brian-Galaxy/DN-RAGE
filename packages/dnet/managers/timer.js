@@ -186,7 +186,7 @@ timer.min59Timer = function() {
 
     coffer.addMoney(9, 50000);
 
-    /*try {
+    try {
         let player = methods.getRandomPlayer();
         if (user.isLogin(player)) {
             user.giveVip(player, methods.getRandomInt(1, 5), 2, true);
@@ -196,10 +196,15 @@ timer.min59Timer = function() {
         if (user.isLogin(player)) {
             user.giveRandomMask(player, 0, true);
         }
+
+        player = methods.getRandomPlayer();
+        if (user.isLogin(player)) {
+            user.giveRandomMask(player, 0, true);
+        }
     }
     catch (e) {
         
-    }*/
+    }
     setTimeout(timer.min59Timer, 1000 * 60 * 59);
 };
 

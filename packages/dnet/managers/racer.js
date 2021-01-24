@@ -1,4 +1,3 @@
-
 let user = require('../user');
 
 let weather = require('./weather');
@@ -6288,7 +6287,14 @@ racer.finish = function (player) {
 
             user.set(player, 'rating_racer_count', user.get(player, 'rating_racer_count') + 1);
 
+            user.achiveDoneAllById(player, 0);
+
+            if (finishNumber >= 5) {
+                user.achiveDoneDailyById(player, 4);
+            }
+
             if (finishNumber === 1) {
+                user.achiveDoneAllById(player, 1);
                 let money = currentPrize * 0.2;
                 methods.notifyWithPictureToAll('Arena RaceClub', '~g~' + racerList[currentRace].title, `~g~${user.getRpName(player)}~s~ занял ~g~1-ое~s~ место и выиграл ~g~${methods.moneyFormat(money)}`, 'CHAR_CARSITE4');
                 user.addCashMoney(player, money, finishNumber + ' место в гонке ' + racerList[currentRace].title);

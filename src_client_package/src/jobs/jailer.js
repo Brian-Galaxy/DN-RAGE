@@ -6,6 +6,7 @@ import user from '../user';
 
 import jobPoint from '../manager/jobPoint';
 import jail from "../manager/jail";
+import achievement from "../manager/achievement";
 
 let jailer = {};
 
@@ -94,6 +95,7 @@ jailer.start = function() {
         mp.game.ui.notifications.show('~r~В интерьерах данное действие запрещено');
         return;
     }
+    achievement.doneAllById(26);
     jailer.findRandomPickup();
 };
 

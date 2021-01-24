@@ -1,9 +1,7 @@
 import methods from '../modules/methods';
 import user from '../user';
-import business from '../property/business';
-import coffer from '../coffer';
-import tree from "./tree";
-import phone from "../phone";
+
+import achievement from "../manager/achievement";
 
 let taxi = {};
 
@@ -223,6 +221,8 @@ taxi.checkPos = function() {
                     else {
                         mp.game.ui.notifications.showWithPicture('Заказ завершен', "Диспетчер", `Клиент оценил поездку в ~y~${rating}зв.`, 'CHAR_TAXI', 1);
                     }
+                    achievement.doneAllById(5);
+                    achievement.doneDailyById(3);
 
                     user.giveJobMoney(price, 9);
                     user.giveJobSkill('taxi');

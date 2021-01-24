@@ -817,6 +817,7 @@ ems.removeObject = function (id) {
 
             mp.players.forEach(p => {
                 if (user.isEms(p)) {
+                    user.achiveDoneAllById(p, 7);
                     user.addMoney(p, emsList.small[currentIndex].moneyToUser);
                     user.sendSmsBankOperation(p, `Зачисление премии ${methods.moneyFormat(emsList.small[currentIndex].moneyToUser)}`);
                 }

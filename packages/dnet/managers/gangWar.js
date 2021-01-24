@@ -414,6 +414,8 @@ gangWar.timer = function() {
 gangWar.timerMoney = function() {
 
     let moneyToUser = new Map();
+    let countToUser = new Map();
+
     for (let i = 1; i <= gangList.length; i++) {
         if (gangWar.get(i, 'fraction_id') > 0) {
 
@@ -429,6 +431,15 @@ gangWar.timerMoney = function() {
             else {
                 moneyToUser.set(gangWar.get(i, 'fraction_id').toString(), methods.getRandomInt(150, 300) / 1000);
             }
+
+            if (countToUser.has(gangWar.get(i, 'fraction_id').toString())) {
+                let cMoney = countToUser.get(gangWar.get(i, 'fraction_id').toString());
+                cMoney++;
+                countToUser.set(gangWar.get(i, 'fraction_id').toString(), cMoney);
+            }
+            else {
+                countToUser.set(gangWar.get(i, 'fraction_id').toString(), 1);
+            }
         }
     }
 
@@ -440,8 +451,12 @@ gangWar.timerMoney = function() {
                 }
                 else {
                     let cMoney = moneyToUser.get(user.get(p, 'fraction_id2').toString());
+                    let cCount = countToUser.get(user.get(p, 'fraction_id2').toString());
                     p.notify(`~g~Вы получили ${methods.cryptoFormat(cMoney)} за ваши захваченные территории`);
                     user.addCryptoMoney(p, cMoney, 'Прибыль с территорий');
+
+                    if (cCount > 58)
+                        user.achiveDoneAllById(p, 27);
                 }
             }
         }
@@ -486,6 +501,9 @@ mp.events.add("playerDeath", (player, reason, killer) => {
     if (!isStartTimer)
         return;
     if (user.isLogin(killer) && user.isGang(player)) {
+
+        user.achiveDoneAllById(killer, 23);
+
         mp.players.forEachInRange(warPos, 400, p => {
             if (!user.isGang(p) && !user.isAdmin(p))
                 return;

@@ -1,4 +1,6 @@
 "use strict";
+import UIMenu from "../../../src_client_package/src/modules/menu";
+
 let user = require('../user');
 let enums = require('../enums');
 let coffer = require('../coffer');
@@ -638,7 +640,7 @@ mp.events.addRemoteCounted('server:cont:vehicle', (player, veh) => {
         return;
     try {
         if (user.get(player, 'online_time') < 70) {
-            player.notify('~r~Вы еще не отыграли 10 часов');
+            player.notify(`~r~Вам осталось отыграть ${methods.parseFloat((70 - user.get(player, 'online_time')) * 8.5 / 60).toFixed(1)}`);
             return;
         }
         if (user.get(player, 'is_take_vehicle')) {
@@ -661,6 +663,39 @@ mp.events.addRemoteCounted('server:cont:vehicle', (player, veh) => {
             user.giveVehicle(player, 'A8Audi', 1, false, '', false, true, slot);
         else
             user.giveVehicle(player, '600sel', 1, false, '', false, true, slot);
+        player.notify('~g~Вы получили транспорт');
+    }
+    catch (e) {}
+});
+
+mp.events.addRemoteCounted('server:cont:vehicle2', (player, veh) => {
+    if (!user.isLogin(player))
+        return;
+    try {
+        if (user.get(player, 'online_contall') < 494) {
+            player.notify(`~r~Вам осталось отыграть ${methods.parseFloat((494 - user.get(player, 'online_contall')) * 8.5 / 60).toFixed(1)}`);
+            return;
+        }
+        if (user.get(player, 'is_take_vehicle_2')) {
+            player.notify('~r~Вы уже получили транспорт');
+            return;
+        }
+
+        let slot = 10;
+        for (let i = 2; i <= 10; i++) {
+            if (user.get(player, 'car_id' + i) === 0) {
+                slot = i;
+                break;
+            }
+        }
+
+        user.set(player, 'is_take_vehicle_2', true);
+        if (veh === 'bmw')
+            user.giveVehicle(player, 'Bmwx6m', 1, false, '', false, true, slot);
+        else if (veh === 'cad')
+            user.giveVehicle(player, 'Gmt900escalade', 1, false, '', false, true, slot);
+        else
+            user.giveVehicle(player, 'mercgle', 1, false, '', false, true, slot);
         player.notify('~g~Вы получили транспорт');
     }
     catch (e) {}
@@ -1691,6 +1726,8 @@ mp.events.addRemoteCounted('server:user:grabById', (player, targetId) => {
         user.removeCashMoney(target, money);
         user.addCashMoney(player, money);
 
+        user.achiveDoneAllById(player, 24);
+
         target.notify('~r~Вас ограбили на сумму ~s~' + methods.moneyFormat(money));
         player.notify('~r~Вы ограбили на сумму ~s~' + methods.moneyFormat(money));
 
@@ -1990,6 +2027,12 @@ mp.events.addRemoteCounted('server:user:askDatingToPlayerIdYes', (player, player
 
         mysql.executeQuery(`DELETE FROM user_dating WHERE user_id = '${user.getId(player)}' AND user_owner = '${user.getId(remotePlayer)}'`);
         mysql.executeQuery(`DELETE FROM user_dating WHERE user_id = '${user.getId(remotePlayer)}' AND user_owner = '${user.getId(player)}'`);
+
+        user.achiveDoneAllById(player, 10);
+        user.achiveDoneAllById(remotePlayer, 10);
+
+        user.achiveDoneDailyById(player, 13);
+        user.achiveDoneDailyById(remotePlayer, 13);
 
         setTimeout(function () {
             if (!user.isLogin(remotePlayer) || !user.isLogin(player))
@@ -2849,6 +2892,8 @@ mp.events.addRemoteCounted('server:invader:sendAdTemp', (player, text) => {
 
     text = methods.replaceAllGtaSymb(text);
     text = methods.removeSpecialChars(text);
+
+    user.achiveDoneAllById(player, 9);
 
     user.removeBankMoney(player, 500, 'Подача объявления');
     coffer.addMoney(8, 200);
@@ -3957,6 +4002,126 @@ mp.events.addRemoteCounted('server:phone:getGunInfo', (player, text) => {
     phone.getGunInfo(player, text);
 });
 
+mp.events.addRemoteCounted('server:user:askAnim', (player, id, animId) => {
+
+    if (!user.isLogin(player))
+        return;
+
+    id = methods.parseInt(id);
+    let target = mp.players.at(id);
+    if (user.isLogin(target)) {
+        if (target.id == player.id) {
+            player.notify('~r~Ошибка');
+            return;
+        }
+
+        if (methods.distanceToPos(target.position, player.position) > 5) {
+            player.notify('~r~Вы слишком далеко друг от друга');
+            return;
+        }
+        let desc = [
+            'Игрок хочет поздороваться',
+            'Игрок хочет поздороваться',
+            'Игрок хочет дать пять',
+            'Игрок хочет поцеловвать',
+            'Игрок хочет минет',
+            'Игрок хочет секс',
+        ];
+        target.call('client:menuList:showAskAnimMenu', [player.id, desc[animId], animId])
+    }
+    else {
+        player.notify('~r~Игрок не найден');
+    }
+});
+
+mp.events.addRemoteCounted('server:user:anim:accept', (player, id, animId) => {
+
+    if (!user.isLogin(player))
+        return;
+
+    id = methods.parseInt(id);
+    let target = mp.players.at(id);
+    if (user.isLogin(target)) {
+
+        if (methods.distanceToPos(target.position, player.position) > 5) {
+            player.notify('~r~Вы слишком далеко друг от друга');
+            return;
+        }
+        user.playAnimationWithUser(target, player, animId);
+    }
+    else {
+        player.notify('~r~Игрок не найден');
+    }
+});
+
+
+mp.events.addRemoteCounted('server:user:invite', (player, id) => {
+
+    if (!user.isLogin(player))
+        return;
+
+    id = methods.parseInt(id);
+    let target = mp.players.at(id);
+    if (user.isLogin(target)) {
+        if (target.id == player.id) {
+            player.notify('~r~Здравствуйте, я хотел вставить сюда шутку, но я ее не придумал, в общем, как ты собрался самого себя принять в организацию в которой ты уже состоишь?');
+            return;
+        }
+
+        if (methods.distanceToPos(target.position, player.position) > 5) {
+            player.notify('~r~Вы слишком далеко друг от друга');
+            return;
+        }
+
+        if (user.get(target, 'fraction_id') > 0 || user.get(target, 'fraction_id2') > 0) {
+            player.notify('~r~Игрок уже состоит в организации');
+            return;
+        }
+
+        target.call('client:menuList:showAskInviteMenu', [player.id, user.getFractionName(player)])
+    }
+    else {
+        player.notify('~r~Игрок не найден');
+    }
+});
+
+mp.events.addRemoteCounted('server:user:invite:accept', (player, id) => {
+
+    if (!user.isLogin(player))
+        return;
+
+    id = methods.parseInt(id);
+    let inviter = mp.players.at(id);
+    if (user.isLogin(inviter)) {
+        if (methods.distanceToPos(player.position, inviter.position) > 5) {
+            inviter.notify('~r~Вы слишком далеко друг от друга');
+            return;
+        }
+
+        user.addHistory(player, 0, 'Был принят в организацию ' + user.getFractionName(inviter) + '. Принял: ' + user.getRpName(inviter));
+
+        let rank = enums.fractionListId[user.get(inviter, 'fraction_id')].rankList[0].length - 1;
+        let fractionId = user.get(inviter, 'fraction_id');
+
+        user.set(player, 'rank', rank);
+        user.set(player, 'rank_type', 0);
+        user.set(player, 'fraction_id', fractionId);
+        user.set(player, 'is_leader', false);
+        user.set(player, 'is_sub_leader', false);
+        user.set(player, 'job', 0);
+
+        user.setFractionId(player, fractionId);
+
+        player.notify('~g~Вас приняли в организацию ' + user.getFractionName(inviter));
+        inviter.notify('~b~Вы приняли сотрудника: ~s~' + user.getRpName(player));
+
+        user.save(player);
+    }
+    else {
+        player.notify('~r~Игрок не найден');
+    }
+});
+
 mp.events.addRemoteCounted('server:phone:inviteFraction2', (player, id) => {
     if (!user.isLogin(player))
         return;
@@ -3975,29 +4140,44 @@ mp.events.addRemoteCounted('server:phone:inviteFraction2', (player, id) => {
             return;
         }
 
-        if (user.get(target, 'fraction_id') > 0) {
-            player.notify('~r~Игрок уже состоит в организации');
-            return;
-        }
-        if (user.get(target, 'fraction_id2') > 0) {
+        if (user.get(target, 'fraction_id') > 0 || user.get(target, 'fraction_id2') > 0) {
             player.notify('~r~Игрок уже состоит в организации');
             return;
         }
 
-        let fractionId = user.get(player, 'fraction_id2');
+        target.call('client:menuList:showAskInvite2Menu', [player.id, user.getFractionName2(player)])
+    }
+    else {
+        player.notify('~r~Игрок не найден');
+    }
+});
+
+mp.events.addRemoteCounted('server:phone:invite2:accept', (player, id) => {
+    if (!user.isLogin(player))
+        return;
+
+    id = methods.parseInt(id);
+    let inviter = mp.players.at(id);
+    if (user.isLogin(inviter)) {
+
+        if (methods.distanceToPos(player.position, inviter.position) > 5) {
+            inviter.notify('~r~Вы слишком далеко друг от друга');
+            return;
+        }
+        let fractionId = user.get(inviter, 'fraction_id2');
 
         let rank = JSON.parse(fraction.getData(fractionId).get('rank_list'))[0].length - 1;
 
-        user.set(target, 'rank2', rank);
-        user.set(target, 'rank_type2', 0);
-        user.set(target, 'fraction_id2', fractionId);
-        user.set(target, 'is_leader2', false);
-        user.set(target, 'is_sub_leader2', false);
+        user.set(player, 'rank2', rank);
+        user.set(player, 'rank_type2', 0);
+        user.set(player, 'fraction_id2', fractionId);
+        user.set(player, 'is_leader2', false);
+        user.set(player, 'is_sub_leader2', false);
 
-        user.setFractionId2(target, fractionId);
+        user.setFractionId2(player, fractionId);
 
-        target.notify('~g~Вас приняли в организацию');
-        player.notify('~b~Вы приняли: ~s~' + user.getRpName(target));
+        player.notify('~g~Вас приняли в организацию');
+        inviter.notify('~b~Вы приняли: ~s~' + user.getRpName(player));
 
         user.save(target);
     }
@@ -4029,20 +4209,39 @@ mp.events.addRemoteCounted('server:phone:inviteFamily', (player, id) => {
             return;
         }
 
-        let fractionId = user.get(player, 'family_id');
+        target.call('client:menuList:showAskInvitefMenu', [player.id, user.getFamilyName(player)])
+    }
+    else {
+        player.notify('~r~Игрок не найден');
+    }
+});
+
+mp.events.addRemoteCounted('server:phone:invitef:accept', (player, id) => {
+    if (!user.isLogin(player))
+        return;
+
+    id = methods.parseInt(id);
+    let inviter = mp.players.at(id);
+    if (user.isLogin(inviter)) {
+
+        if (methods.distanceToPos(player.position, inviter.position) > 5) {
+            inviter.notify('~r~Вы слишком далеко друг от друга');
+            return;
+        }
+        let fractionId = user.get(inviter, 'family_id');
 
         let rank = JSON.parse(family.getData(fractionId).get('rank_list'))[0].length - 1;
 
-        user.set(target, 'rankf', rank);
-        user.set(target, 'rank_typef', 0);
-        user.set(target, 'family_id', fractionId);
-        user.set(target, 'is_leaderf', false);
-        user.set(target, 'is_sub_leaderf', false);
+        user.set(player, 'rankf', rank);
+        user.set(player, 'rank_typef', 0);
+        user.set(player, 'family_id', fractionId);
+        user.set(player, 'is_leaderf', false);
+        user.set(player, 'is_sub_leaderf', false);
 
-        user.setFamilyId(target, fractionId);
+        user.setFamilyId(player, fractionId);
 
-        target.notify('~g~Вас приняли в семью');
-        player.notify('~b~Вы приняли: ~s~' + user.getRpName(target));
+        player.notify('~g~Вас приняли в семью');
+        inviter.notify('~b~Вы приняли: ~s~' + user.getRpName(player));
 
         user.save(target);
     }
@@ -5052,6 +5251,9 @@ mp.events.addRemoteCounted('server:ave:accept', (player, id) => {
         user.save(player);
         user.save(target);
         chat.sendToAll('Священник', `Поздравляем! Новую ячейку общества образовала пара ${user.getRpName(target)} и ${user.getRpName(player)}`,  chat.clGreen);
+
+        user.achiveDoneAllById(player, 12);
+        user.achiveDoneAllById(target, 12);
 
         let surname = methods.removeQuotes(user.getRpName(target).split(' ')[1]);
         let name = methods.removeQuotes(user.getRpName(player).split(' ')[0]);
@@ -6196,6 +6398,8 @@ mp.events.addRemoteCounted('server:business:sellToPlayer:accept', (player, house
             return;
         }
 
+        user.achiveDoneAllById(seller, 28);
+
         let hInfo = business.getData(hId);
 
         business.updateOwnerInfo(hId, user.getId(player), user.getRpName(player));
@@ -7080,54 +7284,6 @@ mp.events.addRemoteCounted('server:user:uninviteF', (player, id) => {
     }
 });
 
-mp.events.addRemoteCounted('server:user:invite', (player, id) => {
-
-    if (!user.isLogin(player))
-        return;
-
-    id = methods.parseInt(id);
-    let target = mp.players.at(id);
-    if (user.isLogin(target)) {
-
-        if (target.id == player.id) {
-            player.notify('~r~Здравствуйте, я хотел вставить сюда шутку, но я ее не придумал, в общем, как ты собрался самого себя принять в организацию в которой ты уже состоишь?');
-            return;
-        }
-
-        if (methods.distanceToPos(target.position, player.position) > 5) {
-            player.notify('~r~Вы слишком далеко друг от друга');
-            return;
-        }
-
-        if (user.get(target, 'fraction_id') > 0 || user.get(target, 'fraction_id2') > 0) {
-            player.notify('~r~Игрок уже состоит в организации');
-            return;
-        }
-
-        user.addHistory(target, 0, 'Был принят в организацию ' + user.getFractionName(player) + '. Принял: ' + user.getRpName(player));
-
-        let rank = enums.fractionListId[user.get(player, 'fraction_id')].rankList[0].length - 1;
-        let fractionId = user.get(player, 'fraction_id');
-
-        user.set(target, 'rank', rank);
-        user.set(target, 'rank_type', 0);
-        user.set(target, 'fraction_id', fractionId);
-        user.set(target, 'is_leader', false);
-        user.set(target, 'is_sub_leader', false);
-        user.set(target, 'job', 0);
-
-        user.setFractionId(target, fractionId);
-
-        target.notify('~g~Вас приняли в организацию ' + user.getFractionName(player));
-        player.notify('~b~Вы приняли сотрудника: ~s~' + user.getRpName(target));
-
-        user.save(target);
-    }
-    else {
-        player.notify('~r~Игрок не найден');
-    }
-});
-
 mp.events.addRemoteCounted('server:user:askSellLic', (player, id, lic, price) => {
 
     if (!user.isLogin(player))
@@ -7270,15 +7426,23 @@ mp.events.addRemoteCounted('server:user:giveVehicle', (player, vName, withDelete
     user.giveVehicle(player, vName, withDelete, withChat, desc, isBroke);
 });
 
+mp.events.addRemoteCounted('server:user:giveRandomMask', (player) => {
+    if (!user.isLogin(player))
+        return;
+    user.giveRandomMask(player);
+});
+
 mp.events.addRemoteCounted('server:user:spawnToFraction', (player) => {
     if (!user.isLogin(player))
         return;
     try {
+        user.setHealth(player, 100);
         let fData = fraction.getData(user.get(player, 'fraction_id2'));
         player.spawn(new mp.Vector3(fData.get('spawn_x'), fData.get('spawn_y'), fData.get('spawn_z')));
         player.heading = fData.get('spawn_rot');
     }
     catch (e) {
+        user.setHealth(player, 100);
         player.spawn(320.7169494628906, -584.0098876953125, 42.28400802612305);
     }
 });
@@ -8038,6 +8202,8 @@ mp.events.addRemoteCounted('server:cityDestroy', (player) => {
         ctos.setBlackout(true);
         ctos.setNoNetwork(true);
         ctos.set('cantBlackout', true);
+
+        user.achiveDoneAllById(player, 14);
     }
     else
         player.notify('~r~Hacking attempt');
@@ -9066,6 +9232,8 @@ mp.events.add("playerDeath", (player, reason, killer) => {
 
                             user.blockKeys(target, false);
                             target.outputChatBoxNew(`!{#4CAF50}ВЫ ВЫИГРАЛИ ДУЭЛЬ`);
+
+                            user.achiveDoneAllById(target, 3);
 
                             let rating = methods.parseInt((100 - ((user.get(target, 'rating_duel_mmr') - user.get(player, 'rating_duel_mmr')) * 0.1)) / 10);
                             if (rating > 0)

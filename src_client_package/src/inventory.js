@@ -723,7 +723,7 @@ inventory.updateSubInvRadius = function(ownerId, ownerType, withMe = false) {
     timeOut = setTimeout(function () {
         if (methods.parseInt(ownerId === user.getCache('id')) && ownerType === inventory.types.Player)
             return;
-        if (ownerType < 0 || ownerType === 1)
+        if (ownerType < 0 || ownerType === 1/* || ownerType === 7 || ownerType === 2*/)
             return;
         mp.events.callRemote('server:inventory:updateSubInvRadius', ownerId.toString(), ownerType, withMe);
         timeOut = null;

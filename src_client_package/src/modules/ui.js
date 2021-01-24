@@ -422,13 +422,13 @@ ui.updateValues = function() {
                 dateLabel = 'AFK | ';
 
             if (user.getCache('med_time') > 1)
-                dateLabel = `Время лечения ${user.getCache('med_time')} сек.`;
+                dateLabel = `Время лечения ${user.getCache('med_time')} сек. | `;
             if (user.getCache('jail_time') > 1)
-                dateLabel = `Время в тюрьме ${user.getCache('jail_time')} сек.`;
+                dateLabel = `Время в тюрьме ${user.getCache('jail_time')} сек. | `;
 
             data = {
                 type: 'updateValues',
-                date: dateLabel + weather.getRealDate(),
+                date: dateLabel + ` LVL: ${user.getCache('work_lvl')}, EXP: ${user.getCache('work_exp')}/${user.getCache('work_lvl') * 500} | ` + weather.getRealDate(),
                 time: weather.getRealTime(),
                 online: mp.players.length,
                 max_player: "1000",

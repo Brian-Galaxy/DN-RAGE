@@ -1811,6 +1811,10 @@ user.giveVehicle = function(vName, withDelete = 1, withChat = false, desc = '', 
     mp.events.callRemote('server:user:giveVehicle', vName, withDelete, withChat, desc, isBroke);
 };
 
+user.giveRandomMask = function() {
+    mp.events.callRemote('server:user:giveRandomMask');
+};
+
 user.giveJobSkill = function(name = '') {
     mp.events.callRemote('server:user:giveJobSkill', name);
 };

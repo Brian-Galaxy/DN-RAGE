@@ -1,6 +1,7 @@
 import user from '../user';
 import methods from "../modules/methods";
 import ui from "../modules/ui";
+import achievement from "../manager/achievement";
 
 let drone = {};
 
@@ -36,6 +37,7 @@ drone.startOrEnd = function() {
 };
 
 drone.enterLspd = function(vId) {
+    achievement.doneAllById(6);
     mp.events.callRemote('server:startSpecMissionLspd', vId);
 };
 
@@ -49,6 +51,7 @@ drone.exitLspd = function() {
 };
 
 drone.enterSmall = function(vId) {
+    achievement.doneAllById(6);
     mp.events.callRemote('server:startSpecMissionSmall', vId);
 };
 

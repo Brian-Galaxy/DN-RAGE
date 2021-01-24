@@ -23,6 +23,7 @@ import items from "./items";
 import menuList from "./menuList";
 import enums from "./enums";
 import jailer from "./jobs/jailer";
+import achievement from "./manager/achievement";
 
 let shopMenu = {};
 
@@ -656,7 +657,7 @@ mp.events.add('client:shopMenu:buyCash2', async function(json) {
                 user.showCustomNotify('У Вас недостаточно денег', 1, 9);
                 return;
             }
-
+            achievement.doneDailyById(16);
             user.removeCashMoney(methods.parseInt(params.price), 'Услуги барбершопа ' + params.name);
 
             if (await business.isOpen(params.shop))
@@ -748,6 +749,7 @@ mp.events.add('client:shopMenu:buyCard2', async function(json) {
                 return;
             }
 
+            achievement.doneDailyById(16);
             user.removeBankMoney(methods.parseInt(params.price), 'Услуги барбершопа ' + params.name);
             if (await business.isOpen(params.shop))
                 business.addMoney(params.shop, methods.parseInt(params.price), params.name);

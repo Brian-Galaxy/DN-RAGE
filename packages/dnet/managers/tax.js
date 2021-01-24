@@ -371,6 +371,7 @@ tax.payTax = function(player, type, sum, score) {
                 user.removeCashMoney(player, sum, 'Оплата налогов');
             else
                 user.removeBankMoney(player, sum, 'Оплата налогов');
+            user.achiveDoneDailyById(player, 14);
 
             mysql.executeQuery("UPDATE " + table + " SET tax_money = '" + (methods.parseInt(row["tax_money"]) + sum) + "' WHERE tax_score = '" + score + "'");
 
@@ -406,6 +407,8 @@ tax.payTaxAll = function(player, type, sum) {
         user.removeCashMoney(player, sum, 'Оплата налогов');
     else
         user.removeBankMoney(player, sum, 'Оплата налогов');
+
+    user.achiveDoneDailyById(player, 14);
 
     let uId = user.getId(player);
     mysql.executeQuery("UPDATE houses SET tax_money = 0 WHERE user_id = " + uId);

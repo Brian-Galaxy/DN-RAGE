@@ -19,6 +19,7 @@ let vehicles = require('./property/vehicles');
 let houses = require('./property/houses');
 let condos = require('./property/condos');
 let fraction = require('./property/fraction');
+let family = require('./property/family');
 let stocks = require('./property/stocks');
 let yachts = require('./property/yachts');
 
@@ -129,12 +130,22 @@ user.createUser = function(player, name, surname, age, promocode, referer, natio
                         vipTime = methods.parseInt(paramsStart.vip * 86400) + methods.getTimeStamp();
                 }
 
+                try {
+                    referer = referer.toString().replace('_', ' ');
+                }
+                catch (e) {}
+
                 user.showCustomNotify(player, 'Пожалуйста подожите...');
                 let newAge = `${methods.digitFormat(weather.getDay())}.${methods.digitFormat(weather.getMonth())}.${(weather.getFullYear() - age)}`;
 
                 let sql = "INSERT INTO users (name, age, social, national, money, promocode, referer, skin, parachute, parachute_color, body_color, leg_color, foot_color, body, leg, foot, login_ip, login_date, reg_ip, reg_timestamp, vip_type, vip_time) VALUES ('" + name + ' ' + surname +
                     "', '" + newAge + "', '" + player.socialClub + "', '" + national + "', '" + money + "', '" + promocode + "', '" + referer + "', '" + JSON.stringify(skin) + "', '0', '44', '" + methods.getRandomInt(0, 5) + "', '" + methods.getRandomInt(0, 15) + "', '" + methods.getRandomInt(0, 15) + "', '0', '1', '1', '" + player.ip + "', '" + methods.getTimeStamp() + "', '" + player.ip + "', '" + methods.getTimeStamp() + "', '" + vipType + "', '" + vipTime + "')";
                 mysql.executeQuery(sql);
+
+                if (referer && referer !== '' && referer !== ' ') {
+                    mysql.executeQuery(`UPDATE users SET money_donate = money_donate + '100' WHERE name ='${referer}'`);
+                    mysql.executeQuery(`INSERT INTO log_referrer (name, referrer, money, timestamp) VALUES ('${name + ' ' + surname}', '${referer}', '100', '${methods.getTimeStamp()}')`);
+                }
 
                 setTimeout(function () {
                     user.loginUser(player, name + ' ' + surname);
@@ -518,6 +529,17 @@ user.loadUser = function(player, name, spawn = 'Стандарт') {
                 player.setVariable('work_lvl', user.getWorkLvl(player));
 
                 methods.loadDeleteObject(player);
+
+                if (!user.hasById(user.getId(player), 'dailyAchiv')) {
+                    let list = [];
+                    let listAllow = [];
+                    for (let i = 0; i < 18; i++)
+                        list.push(0);
+                    for (let i = 0; i < 5; i++)
+                        listAllow.push(methods.getRandomInt(0, 18));
+                    user.setById(user.getId(player), 'dailyAchiv', JSON.stringify(list));
+                    user.setById(user.getId(player), 'dailyAchivAllow', JSON.stringify(listAllow));
+                }
 
                 inventory.updateItemsEquipByItemId(252, user.getId(player), 1, 0);
 
@@ -1724,6 +1746,30 @@ user.getFractionName = function(player) {
     return 'Отсуствует';
 };
 
+user.getFractionName2 = function(player) {
+    try {
+        if (!user.isLogin(player))
+            return 'Отсуствует';
+        return fraction.getName(user.get(player, 'fraction_id2'));
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+    return 'Отсуствует';
+};
+
+user.getFamilyName = function(player) {
+    try {
+        if (!user.isLogin(player))
+            return 'Отсуствует';
+        return family.getName(user.get(player, 'family_id'));
+    }
+    catch (e) {
+        methods.debug(e);
+    }
+    return 'Отсуствует';
+};
+
 user.getDepartmentName = function(player) {
     try {
         if (!user.isLogin(player))
@@ -2158,6 +2204,16 @@ user.getWorkExp = function(player) {
     if (user.has(player, 'work_exp'))
         return methods.parseInt(user.get(player, 'work_exp'));
     return 0;
+};
+
+user.achiveDoneAllById = function(player, id) {
+    if (user.isLogin(player))
+        player.call('client:achive:doneAllById', [id]);
+};
+
+user.achiveDoneDailyById = function(player, id) {
+    if (user.isLogin(player))
+        player.call('client:achive:doneDailyById', [id]);
 };
 
 user.setFractionId = function(player, id) {
@@ -2656,6 +2712,9 @@ user.playAnimationWithUser = function(player, target, animId) {
         user.headingToTarget(target, player.id);
         user.headingToTarget(player, target.id);
 
+        if (animId === 3)
+            user.achiveDoneDailyById(player, 15);
+
         setTimeout(function () {
             try {
                 user.playAnimation(player, enums.animTarget[animId][1], enums.animTarget[animId][2], 8);
@@ -2964,6 +3023,7 @@ user.jail = function(player, sec, withIzol = 0) {
     if (!user.isLogin(player))
         return false;
     user.set(player, 'jail_time', sec);
+    user.achiveDoneAllById(player, 25);
     player.call('client:jail:jailPlayer', [sec, withIzol]);
 };
 
@@ -3265,6 +3325,8 @@ user.payDay = async function (player) {
     user.set(player, 'online_time', user.get(player, 'online_time') + 1);
     user.set(player, 'online_wheel', user.get(player, 'online_wheel') + 1);
     user.set(player, 'online_cont', user.get(player, 'online_cont') + 1);
+    user.set(player, 'online_contall', user.get(player, 'online_contall') + 1);
+
     if (user.get(player, 'online_lspd') >= 0)
         user.set(player, 'online_lspd', user.get(player, 'online_lspd') - 1);
 
@@ -3313,11 +3375,11 @@ user.payDay = async function (player) {
     if (user.get(player, 'online_time') === 169) {
         if (user.get(player, 'referer') !== "") {
 
-            user.addCashMoney(player, 12000, 'Бонус от государства');
-            player.notify(`~g~Вы получили $12,000 по реферальной системе`);
-            player.notify(`~g~Пригласивший ${user.get(player, 'referer')} получил 200nc на личный счёт`);
-            mysql.executeQuery(`UPDATE users SET money_donate = money_donate + '200' WHERE name ='${user.get(player, 'referer')}'`);
-            mysql.executeQuery(`INSERT INTO log_referrer (name, referrer, money, timestamp) VALUES ('${user.getRpName(player)}', '${user.get(player, 'referer')}', '200', '${methods.getTimeStamp()}')`);
+            user.addCashMoney(player, 20000, 'Бонус от государства');
+            player.notify(`~g~Вы получили $20,000 по реферальной системе`);
+            player.notify(`~g~Пригласивший ${user.get(player, 'referer')} получил 500bp на личный счёт`);
+            mysql.executeQuery(`UPDATE users SET money_donate = money_donate + '500' WHERE name ='${user.get(player, 'referer')}'`);
+            mysql.executeQuery(`INSERT INTO log_referrer (name, referrer, money, timestamp) VALUES ('${user.getRpName(player)}', '${user.get(player, 'referer')}', '500', '${methods.getTimeStamp()}')`);
         }
 
         if (user.get(player, 'promocode') !== "") {

@@ -1993,7 +1993,7 @@ trucker.showMenu = function(player, offersId) {
                 }
             });
 
-            player.call('client:menuList:showTruckerOffersMenu', [tr1]);
+            player.call('client:menuList:showTruckerOffersMenu', [tr1.reverse().slice(0, 80)]);
 
             if (tr1.length < 20)
                 trucker.generateOfferByType(40, 1);
@@ -2009,7 +2009,7 @@ trucker.showMenu = function(player, offersId) {
                 }
             });
 
-            player.call('client:menuList:showTruckerOffersMenu', [tr2]);
+            player.call('client:menuList:showTruckerOffersMenu', [tr2.reverse().slice(0, 80)]);
 
             if (tr2.length < 20)
                 trucker.generateOfferByType(40, 2);
@@ -2025,7 +2025,7 @@ trucker.showMenu = function(player, offersId) {
                 }
             });
 
-            player.call('client:menuList:showTruckerOffersMenu', [tr3]);
+            player.call('client:menuList:showTruckerOffersMenu', [tr3.reverse().slice(0, 80)]);
 
             if (tr3.length < 20)
                 trucker.generateOfferByType(40, 3);
@@ -2041,7 +2041,7 @@ trucker.showMenu = function(player, offersId) {
                 }
             });
 
-            player.call('client:menuList:showTruckerOffersMenu', [tr4]);
+            player.call('client:menuList:showTruckerOffersMenu', [tr4.reverse().slice(0, 80)]);
 
             if (tr4.length < 20)
                 trucker.generateOfferByType(40, 3);
@@ -2057,7 +2057,7 @@ trucker.showMenu = function(player, offersId) {
                 }
             });
 
-            player.call('client:menuList:showTruckerOffersMenu', [tr5]);
+            player.call('client:menuList:showTruckerOffersMenu', [tr5.reverse().slice(0, 80)]);
 
             if (tr5.length < 20)
                 trucker.generateOfferByType(40, 3);

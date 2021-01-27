@@ -1,5 +1,4 @@
 "use strict";
-import UIMenu from "../../../src_client_package/src/modules/menu";
 
 let user = require('../user');
 let enums = require('../enums');
@@ -3089,6 +3088,10 @@ mp.events.addRemoteCounted('server:user:setPayDayMoney', (player, money) => {
     user.setPayDayMoney(player, money);
 });
 
+mp.events.addRemoteCounted('server:user:addBonusMoney', (player, money) => {
+    user.addBonusMoney(player, money);
+});
+
 mp.events.addRemoteCounted('server:user:addRep', (player, rep) => {
     user.addRep(player, rep);
 });
@@ -4152,7 +4155,7 @@ mp.events.addRemoteCounted('server:phone:inviteFraction2', (player, id) => {
     }
 });
 
-mp.events.addRemoteCounted('server:phone:invite2:accept', (player, id) => {
+mp.events.addRemoteCounted('server:user:invite2:accept', (player, id) => {
     if (!user.isLogin(player))
         return;
 
@@ -4216,7 +4219,7 @@ mp.events.addRemoteCounted('server:phone:inviteFamily', (player, id) => {
     }
 });
 
-mp.events.addRemoteCounted('server:phone:invitef:accept', (player, id) => {
+mp.events.addRemoteCounted('server:user:invitef:accept', (player, id) => {
     if (!user.isLogin(player))
         return;
 

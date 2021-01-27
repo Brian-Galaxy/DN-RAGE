@@ -1010,7 +1010,7 @@ fraction.createCargoMafiaWar = function() {
         mp.players.forEach(p => {
             if (!user.isLogin(p))
                 return;
-            if (enums.mafiaAllows.includes(user.get(p, 'fraction_id2')) && user.has(p, 'isCargo') || user.isAdmin(p) || user.isPolice(p)) {
+            if (user.get(p, 'fraction_id2') > 0 && user.has(p, 'isCargo') || user.isAdmin(p) || user.isPolice(p)) {
                 if (i === 1)
                 {
                     user.createBlip(p, b1, posVeh.x, posVeh.y, posVeh.z, 636, 25);
@@ -1346,7 +1346,7 @@ fraction.timerCargoMafiaWar = function() {
             if (!user.isLogin(p))
                 return;
 
-            if (enums.mafiaAllows.includes(user.get(p, 'fraction_id2')) && user.has(p, 'isCargo') || user.isAdmin(p) || user.isPolice(p)) {
+            if (user.get(p, 'fraction_id2') > 0 && user.has(p, 'isCargo') || user.isAdmin(p) || user.isPolice(p)) {
                 currentWarPos.forEach((item, i) => {
                     if (!item.isActive || item.type !== 1)
                         return;

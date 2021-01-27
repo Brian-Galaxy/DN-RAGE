@@ -85,6 +85,7 @@ mainMenu.updateInfoSettings = function(tab = 0, keyName = '') {
         let lineSizeList = ['10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30'];
         let bgStateList = ['Выкл', 'Вкл', 'Всегда вкл'];
         let bgOpacity = ["0%", "10%", "20%", "30%", "40%", "50%", "60%", "70%", "80%", "90%", "100%"];
+        let bgOpacity2 = ["0%", "5%", "10%", "15%", "20%", "25%", "30%", "35%", "40%", "45%", "50%", "55%", "60%", "65%", "70%", "75%", "80%", "85%", "90%", "95%", "100%"];
         let timeoutList = ['1s', '3s', '5s', '10s', '15s', '20s', '30s', 'Никогда'];
 
         let cllist = [];
@@ -179,8 +180,8 @@ mainMenu.updateInfoSettings = function(tab = 0, keyName = '') {
                         {type: 1, name: 'Тип фона', params: 'chat:bgtype', active: user.getCache('s_chat_bg_s'), listmenu: bgStateList},
                         {type: 1, name: 'Прозрачность фона', params: 'chat:bgopacity', active: methods.parseInt(user.getCache('s_chat_bg_o') * 10), listmenu: bgOpacity},
                         {type: 1, name: 'Прозрачность чата', params: 'chat:opacity', active: methods.parseInt(user.getCache('s_chat_opacity') * 10), listmenu: bgOpacity},
-                        {type: 1, name: 'Ширина', params: 'chat:width', active: methods.parseInt(user.getCache('s_chat_width') / 10), listmenu: bgOpacity},
-                        {type: 1, name: 'Высота', params: 'chat:height', active: methods.parseInt(user.getCache('s_chat_height') / 10), listmenu: bgOpacity},
+                        {type: 1, name: 'Ширина', params: 'chat:width', active: methods.parseInt(user.getCache('s_chat_width') / 5), listmenu: bgOpacity2},
+                        {type: 1, name: 'Высота', params: 'chat:height', active: methods.parseInt(user.getCache('s_chat_height') / 5), listmenu: bgOpacity2},
                         {type: 1, name: 'Закрыть по таймауту', params: 'chat:timeout', active: user.getCache('s_chat_timeout'), listmenu: timeoutList},
                     ]
                 },
@@ -778,12 +779,12 @@ mp.events.add('client:mainMenu:settings:updateList', async function(btn, index) 
         mp.game.ui.notifications.show('~b~Настройки были сохранены');
     }
     else if (btn === "chat:width") {
-        let num = index * 10;
+        let num = index * 5;
         user.set('s_chat_width', num);
         mp.game.ui.notifications.show('~b~Настройки были сохранены');
     }
     else if (btn === "chat:height") {
-        let num = index * 10;
+        let num = index * 5;
         user.set('s_chat_height', num);
         mp.game.ui.notifications.show('~b~Настройки были сохранены');
     }

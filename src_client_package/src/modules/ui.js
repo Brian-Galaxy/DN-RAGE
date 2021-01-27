@@ -441,8 +441,10 @@ ui.updateValues = function() {
             ui.callCef('hudl', JSON.stringify(data));
 
             let questDesc = '';
-            /*if (user.getCache( 'online_cont') < 56)
-                questDesc = `На сервере действует акция, отыграй 8 часов за 1 день и получи $30.000 и редкую маску! Вам осталось: ${((56 - user.getCache( 'online_cont')) * 8.5).toFixed(1)} мин.`;*/
+            if (user.getCache( 'online_time') < 70)
+                questDesc = `На сервере действует акция, отыграй 10 часов и получи на выбор Mercedes 600, BMW I760 или Audi A6!`;
+            else if (user.getCache( 'online_contall') < 494)
+                questDesc = `На сервере действует акция, отыграй 70 часов и получи на выбор Cadilac, BMW X6M или Mercedes GLE! Вам осталось: ${((494 - user.getCache( 'online_contall')) * 8.5).toFixed(1)} мин.`;
 
             if (user.getCache('quests') && user.getCache('s_hud_quest')) {
 

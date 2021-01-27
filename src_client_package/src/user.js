@@ -1570,6 +1570,10 @@ user.getPayDayMoney = function() {
     return methods.parseFloat(user.getCache('money_payday'));
 };
 
+user.addBonusMoney = function(money) {
+    mp.events.callRemote('server:user:addBonusMoney', money, text);
+};
+
 user.addRep = function(rep) {
     mp.events.callRemote('server:user:addRep', rep);
 };

@@ -6,6 +6,7 @@ import methods from "../modules/methods";
 import ui from "../modules/ui";
 
 import quest from "./quest";
+import inventory from "../inventory";
 
 let achievement = {};
 
@@ -247,126 +248,126 @@ let dailyList = [
     { //0
         title: 'Плавец',
         desc: 'Поплавайте в любом водоеме',
-        win: '$1,000',
+        win: '10 BP',
         img: 'https://i.imgur.com/wUPNooZ.png',
         value: 1,
     },
     { //1
         title: 'Уиу-уиу',
         desc: 'Пройдите лечение в больнице 5 раз',
-        win: '$5,000',
+        win: '50 BP',
         img: 'https://i.imgur.com/4OITo3M.png',
         value: 5,
     },
     { //2
         title: 'Сповинной',
         desc: 'Сдайтесь полиции и отсидите в тюрьме',
-        win: '$1,000',
+        win: '50 BP',
         img: 'https://i.imgur.com/jI5qiFy.png',
         value: 1,
     },
     { //3
         title: 'Убер',
         desc: 'Выполните 10 заказов в такси',
-        win: '$1,000',
+        win: '50 BP',
         img: 'https://i.imgur.com/eMnZ2fo.png',
         value: 10,
     },
     { //4
         title: 'Гонщик',
         desc: 'Войдите в топ 5 на гонках',
-        win: '$1,000',
+        win: '25 BP',
         img: 'https://i.imgur.com/bLNTaQV.png',
         value: 1,
     },
     { //5
         title: 'Чисто',
         desc: 'Помой транспорт в автомойке',
-        win: '$1,000',
+        win: '10 BP',
         img: 'https://i.imgur.com/9dZT2g5.png',
         value: 1,
     },
     { //6
         title: 'Полёт нормальный',
         desc: 'Полетайте на вертолете',
-        win: '$1,000',
+        win: '10 BP',
         img: 'https://i.imgur.com/gOjpBiQ.png',
         value: 1,
     },
     { //7
         title: 'Карты, деньги, два ствола',
         desc: 'Купите оружие в оружейном магазине',
-        win: '$1,000',
+        win: '25 BP',
         img: 'https://i.imgur.com/fvWDShX.png',
         value: 1,
     },
     { //8
         title: 'Чиллиад',
         desc: 'Заберитесь на гору Чиллиад',
-        win: '$1,000',
+        win: '10 BP',
         img: 'https://i.imgur.com/EXxFQqi.png',
         value: 1,
     },
     { //9
         title: 'Пробежка',
         desc: 'Бегите до тех пор, пока не устанет ваш персонаж',
-        win: '$1,000',
+        win: '10 BP',
         img: 'https://i.imgur.com/pgrxNRE.png',
         value: 1,
     },
     { //10
         title: 'Удача',
         desc: 'Покрутие колесо удачи в казино Diamond',
-        win: '$1,000',
+        win: '100 BP',
         img: 'https://i.imgur.com/c4UE3JC.png',
         value: 1,
     },
     { //11
         title: 'Азарт',
         desc: 'Сыграйте с кем-то в кости',
-        win: '$1,000',
+        win: '10 BP',
         img: 'https://i.imgur.com/BwpacV2.png',
         value: 1,
     },
     { //12
-        title: 'Удача',
+        title: 'Аренда',
         desc: 'Арендовать велосипед',
-        win: '$500',
+        win: '10 BP',
         img: 'https://i.imgur.com/gqWKeKP.png',
         value: 1,
     },
     { //13
         title: 'Новые знакомства',
         desc: 'С кем-то познакомиться',
-        win: '$500',
+        win: '10 BP',
         img: 'https://i.imgur.com/QAgIlRS.png',
         value: 1,
     },
     { //14
         title: 'Налоги',
         desc: 'Оплатите налоги',
-        win: '$500',
+        win: '10 BP',
         img: 'https://i.imgur.com/8eAHl7q.png',
         value: 1,
     },
     { //15
         title: 'Страсть',
         desc: 'Поцелуйтесь с кем-либо',
-        win: '$500',
+        win: '10 BP',
         img: 'https://i.imgur.com/6lgnAZs.png',
         value: 1,
     },
     { //16
         title: 'Прическа',
         desc: 'Смените причёску',
-        win: '$500',
+        win: '10 BP',
         img: 'https://i.imgur.com/QAgIlRS.png',
         value: 1,
     },
     { //17
         title: 'Тату',
         desc: 'Набейте татуировку',
-        win: '$500',
+        win: '10 BP',
         img: 'https://i.imgur.com/222LuVj.png',
         value: 1,
     }
@@ -464,10 +465,10 @@ achievement.checkerAll = function() {
         }
 
         let workLvl = methods.parseInt(user.getCache('work_lvl'));
-        if (workLvl === 14) {
+        if (workLvl === 14 && data[13] !== 15) {
             achievement.doneAllById(13);
         }
-        else if (workLvl < 299) {
+        else if (workLvl < 14) {
             if (data[13] !== workLvl) {
                 data[13] = workLvl;
                 user.set('achiv', JSON.stringify(data));
@@ -478,9 +479,9 @@ achievement.checkerAll = function() {
         if (flyLvl === 99) {
             achievement.doneAllById(15);
         }
-        else if (workLvl < 99) {
-            if (data[15] !== workLvl) {
-                data[15] = workLvl;
+        else if (flyLvl < 99) {
+            if (data[15] !== flyLvl) {
+                data[15] = flyLvl;
                 user.set('achiv', JSON.stringify(data));
             }
         }
@@ -489,10 +490,11 @@ achievement.checkerAll = function() {
         if (moneyLvl >= 999999 && data[29] !== 1000000) {
             data[29] = 1000000;
             user.set('achiv', JSON.stringify(data));
-            user.addCashMoney(1000000, 'Выполнено достижение: ' + achievList[29].title);
+            user.addCashMoney(100000, 'Выполнено достижение: ' + achievList[29].title);
             achievement.notify(achievList[29].title, achievList[29].win);
+            user.save();
         }
-        else if (moneyLvl < 999999) {
+        else if (moneyLvl < 999999 && data[29] !== 1000000) {
             if (data[29] < moneyLvl) {
                 data[29] = moneyLvl;
                 user.set('achiv', JSON.stringify(data));
@@ -551,13 +553,13 @@ achievement.doneAllById = function(id) {
                 if (id === 19)
                     user.giveRandomMask();
                 if (id === 20)
-                    user.takeNewItemJust(74, JSON.stringify({superTint: 384708672}));
+                    inventory.takeNewItemJust(74, JSON.stringify({superTint: 384708672}));
                 if (id === 21)
-                    user.takeNewItemJust(83, JSON.stringify({tint: 2}));
+                    inventory.takeNewItemJust(83, JSON.stringify({tint: 2}));
                 if (id === 23)
-                    user.takeNewItemJust(79, JSON.stringify({tint: 2}));
+                    inventory.takeNewItemJust(79, JSON.stringify({tint: 2}));
                 if (id === 27)
-                    user.takeNewItemJust(89, JSON.stringify({tint: 2}));
+                    inventory.takeNewItemJust(89, JSON.stringify({tint: 2}));
 
                 achievement.notify(achievList[id].title, achievList[id].win);
             }
@@ -589,12 +591,14 @@ achievement.doneDailyById = async function(id) {
             user.setById('dailyAchiv', JSON.stringify(data));
 
             if (data[id] === dailyList[id].value) {
-                if (id === 0 || id >= 2 && id <= 11)
-                    user.addCashMoney(1000, 'Выполнено достижение: ' + dailyList[id].title);
-                if (id >= 12)
-                    user.addCashMoney(500, 'Выполнено достижение: ' + dailyList[id].title);
-                if (id === 1)
-                    user.addCashMoney(5000, 'Выполнено достижение: ' + dailyList[id].title);
+                if (id === 0 || id === 5 || id === 6 || id === 8 || id === 9 || id >= 11)
+                    user.addBonusMoney(10, 'Выполнено достижение: ' + dailyList[id].title);
+                if (id === 4 || id === 7)
+                    user.addBonusMoney(25, 'Выполнено достижение: ' + dailyList[id].title);
+                if (id === 1 || id === 2 || id === 3)
+                    user.addBonusMoney(50, 'Выполнено достижение: ' + dailyList[id].title);
+                if (id === 10)
+                    user.addBonusMoney(100, 'Выполнено достижение: ' + dailyList[id].title);
 
 
                 achievement.notify(dailyList[id].title, dailyList[id].win);

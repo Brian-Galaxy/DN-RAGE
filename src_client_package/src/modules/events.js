@@ -781,7 +781,8 @@ mp.events.add('client:events:loginUser:success', async function() {
         try {
             timer.allModelLoader();
 
-            timer.createInterval('achievement.doneAllById', achievement.checkerAll, 10000);
+            timer.createInterval('achievement.checkerAll', achievement.checkerAll, 10000);
+            timer.createInterval('achievement.checkerDaily', achievement.checkerDaily, 10000);
 
             mp.events.call('client:showId');
             mp.events.call('client:showvId');

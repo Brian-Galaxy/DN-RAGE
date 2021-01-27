@@ -2143,6 +2143,12 @@ user.getPayDayMoney = function(player) {
     return 0;
 };
 
+user.addBonusMoney = function(player, money) {
+    if (user.isLogin(player)) {
+        mysql.executeQuery(`UPDATE users SET money_donate = money_donate + '${money}' WHERE id = '${user.getId(player)}'`);
+    }
+};
+
 user.addRep = function(player, rep) {
     user.setRep(player, user.getRep(player) + methods.parseInt(rep));
 };

@@ -259,6 +259,7 @@ timer.twoSecTimer = function() {
                     {key: bind.getKeyName(user.getCache('s_bind_phone')), text: 'Телефон'},
                     {key: bind.getKeyName(user.getCache('s_bind_inv')), text: 'Инвентарь'},
                     {key: bind.getKeyName(user.getCache('s_bind_inv_world')), text: 'Предметы рядом'},
+                    {key: bind.getKeyName(user.getCache('s_bind_voice')), text: 'Голосовой чат'},
                 ]
             };
             ui.callCef('hudk', JSON.stringify(data));

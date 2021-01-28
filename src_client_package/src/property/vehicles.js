@@ -8,6 +8,7 @@ import user from "../user";
 import racer from "../manager/racer";
 import vSync from "../manager/vSync";
 import prolog from "../manager/prolog";
+import UIMenu from "../modules/menu";
 
 let vehicles = {};
 
@@ -555,6 +556,24 @@ vehicles.engineVehicle = function(status = null) {
         let vInfo = methods.getVehicleInfo(mp.players.local.vehicle.model);
         if (vInfo.class_name != 'Cycles')
             mp.events.callRemote('server:vehicle:engineStatus', status);
+    }
+};
+
+vehicles.setRandomTunning = function() {
+    if (mp.players.local.vehicle) {
+        let veh = mp.players.local.vehicle;
+        for (let i = 0; i < 100; i++) {
+            try {
+                if (i === 18 || i === 11 || i === 12 || i === 13) continue;
+                if (veh.getNumMods(i) === 0) continue;
+                if (veh.getNumMods(i) > 0 && enums.lscNames[i][1] > 0) {
+                    mp.events.callRemote('server:lsc:showTun', i, methods.getRandomInt(0, veh.getNumMods(i)));
+                }
+            }
+            catch (e) {
+                methods.debug(e);
+            }
+        }
     }
 };
 

@@ -9,6 +9,7 @@ import './manager/heliCam';
 import './manager/attachWeapons';
 import './manager/cameraRotator';
 import './manager/racer';
+import './manager/copsRacer';
 import './manager/jobPoint';
 //import './manager/seats';
 import "./manager/prolog";

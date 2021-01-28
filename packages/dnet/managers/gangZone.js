@@ -226,6 +226,7 @@ gangZone.playerToLobby = function(player) {
         user.set(player, 'gangZoneDeath', 0);
 
         player.outputChatBoxNew(`Кнопка !{2196F3}ESC!{FFFFFF} выйти из лобби`);
+        player.notify(`Кнопка ~g~ESC~s~ выйти из лобби`);
 
         setTimeout(function () {
             try {
@@ -248,11 +249,12 @@ gangZone.playerExitLobby = function(player) {
         user.removeAllWeapons(player);
         player.dimension = 0;
         player.setVariable('blockDeath', undefined);
+
         user.reset(player, 'gangZoneKills');
         user.reset(player, 'gangZoneDeath');
 
-        user.teleport(player, -253.9224, -1993.057, 30.14611);
         user.setHealth(player, 100);
+        player.spawn(new mp.Vector3(-253.9224, -1993.057, 30.14611));
     }
 };
 

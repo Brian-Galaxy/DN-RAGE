@@ -113,6 +113,10 @@ mp.events.add("client:raceUpdate", (json) => {
         let posNext = currentRace.posList[currentCpId + 1];
 
         racer.createCurrentCp(0, new mp.Vector3(posCurrent[0], posCurrent[1], posCurrent[2] + currentRace.offsetZ), new mp.Vector3(posNext[0], posNext[1], posNext[2]));
+
+        setTimeout(function () {
+            vehicles.setRandomTunning();
+        }, methods.getRandomInt(500, 5000))
     } catch (e) {
 
         inRace = false;

@@ -1571,7 +1571,7 @@ user.getPayDayMoney = function() {
 };
 
 user.addBonusMoney = function(money) {
-    mp.events.callRemote('server:user:addBonusMoney', money, text);
+    mp.events.callRemote('server:user:addBonusMoney', money);
 };
 
 user.addRep = function(rep) {

@@ -576,7 +576,7 @@ achievement.checkerDaily = function() {
     if (mp.players.local.isInAnyHeli() && mp.players.local.vehicle.isInAir())
         achievement.doneDailyById(6);
     if (methods.distanceToPos(mp.players.local.position, new mp.Vector3(501.81573486328125, 5604.61181640625, 796.9110717773438)) < 50)
-        achievement.doneDailyById(6);
+        achievement.doneDailyById(8);
 };
 
 achievement.doneDailyById = async function(id) {

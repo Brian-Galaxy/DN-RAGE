@@ -46,6 +46,7 @@ let pickups = require('./managers/pickups');
 let gangWar = require('./managers/gangWar');
 let canabisWar = require('./managers/canabisWar');
 let gangZone = require('./managers/gangZone');
+let copsRacer = require('./managers/copsRacer');
 let mafiaWar = require('./managers/mafiaWar');
 let timer = require('./managers/timer');
 let ems = require('./managers/ems');
@@ -94,6 +95,7 @@ function init() {
         weather.loadAll();
         racer.loadAll();
         gangZone.loadAll();
+        copsRacer.loadAll();
 
         carWash.loadAll();
         rent.loadAll();

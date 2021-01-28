@@ -884,7 +884,7 @@ admin.inviteMp = function(player) {
         let pos = player.position;
         mp.players.forEach(p => {
             if (user.isLogin(p) && !user.isCuff(p) && !user.isTie(p)) {
-                p.call('client:menuList:showInviteMpMenu', [pos.x, pos.y, pos.z]);
+                p.call('client:menuList:showInviteMpMenu', [pos.x, pos.y, pos.z, player.dimension]);
             }
         });
 

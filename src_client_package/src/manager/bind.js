@@ -215,6 +215,7 @@ bind.allowKeyList = [
     ['Взаимодействие', 's_bind_do'],
     ['Телефон', 's_bind_phone'],
     ['Походка сидя', 's_bind_seat'],
+    ['Сесть на пассажирское сиденье', 's_bind_passanger'],
     ['Голосовой чат', 's_bind_voice'],
     ['Перезагрузить голосовой чат', 's_bind_voice_reload'],
     ['Вкл/Выкл голосовой чат', 's_bind_voice_en'],
@@ -852,6 +853,20 @@ for(let code in keyCodes) {
             setTimeout(function () {
                 Container.Data.ResetLocally(mp.players.local.remoteId, "isSeatTimeout");
             }, 1000);
+        }
+        if (user.getCache('s_bind_passanger') == parseInt(code)) {
+            if (!user.isLogin())
+                return;
+            let player = mp.players.local;
+            if (player.isInAnyVehicle(true) || methods.isBlockKeys() || mp.gui.cursor.visible)
+                return;
+            let position = mp.players.local.position;
+            let vehicle = methods.getNearestVehicleWithCoords(position, 6);
+            if (vehicle && mp.vehicles.exists(vehicle) && 5 > vehicle.getSpeed()) {
+                for (let i = 0; i < vehicle.getMaxNumberOfPassengers(); i++)
+                    if (vehicle.isSeatFree(i))
+                        return void player.taskEnterVehicle(vehicle.handle, 5000, i, 1, 1, 0)
+            }
         }
         if (user.getCache('s_bind_firemod') == parseInt(code)) {
             mp.events.call('client:changeFireMod');

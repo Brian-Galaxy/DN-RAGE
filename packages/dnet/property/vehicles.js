@@ -1375,7 +1375,7 @@ vehicles.setHeading = (vid, rot = 0) => {
 };
 
 let CountAllCars = 0;
-vehicles.spawnCar = (position, heading, nameOrModel, number = undefined) => {
+vehicles.spawnCar = (position, heading, nameOrModel, number = undefined, dim = 0) => {
     methods.debug('vehicles.spawnCar ' + nameOrModel);
     if (typeof nameOrModel == 'string')
         nameOrModel = mp.joaat(nameOrModel);
@@ -1388,7 +1388,7 @@ vehicles.spawnCar = (position, heading, nameOrModel, number = undefined) => {
     if (number === undefined)
         number = vehicles.generateNumber();
 
-    let veh = mp.vehicles.new(model, position, {heading: parseFloat(heading), numberPlate: number, engine: false, dimension: 0});
+    let veh = mp.vehicles.new(model, position, {heading: parseFloat(heading), numberPlate: number, engine: false, dimension: dim});
     let vInfo = methods.getVehicleInfo(model);
 
     attach.initFunctions(veh);

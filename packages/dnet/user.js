@@ -5488,6 +5488,92 @@ user.giveUniform = function(player, id = 0) {
             user.setComponentVariation(player, 11, 213, 20);
         }
     }
+    else if (id === 60) { //Gov
+        user.clearAllProp(player);
+
+        if (user.getSex(player) == 1) {
+            user.setComponentVariation(player, 3, 7, 0);
+            user.setComponentVariation(player, 4, 6, 0);
+            user.setComponentVariation(player, 5, 0, 0);
+            user.setComponentVariation(player, 6, 6, 0);
+            user.setComponentVariation(player, 7, 86, 1);
+            user.setComponentVariation(player, 8, 38, 0);
+            user.setComponentVariation(player, 9, 0, 0);
+            user.setComponentVariation(player, 10, 0, 0);
+            user.setComponentVariation(player, 11, 25, 7);
+        }
+        else {
+            user.setComponentVariation(player, 3, 11, 0);
+            user.setComponentVariation(player, 4, 13, 0);
+            user.setComponentVariation(player, 5, 0, 0);
+            user.setComponentVariation(player, 6, 10, 0);
+            user.setComponentVariation(player, 7, 115, 1);
+            user.setComponentVariation(player, 8, 0, 240);
+            user.setComponentVariation(player, 9, 0, 0);
+            user.setComponentVariation(player, 10, 0, 0);
+            user.setComponentVariation(player, 11, 13, 0);
+        }
+    }
+    else if (id === 61) { //Gov
+        user.clearAllProp(player);
+
+        if (user.getSex(player) == 1) {
+            user.setComponentVariation(player, 3, 7, 0);
+            user.setComponentVariation(player, 4, 6, 0);
+            user.setComponentVariation(player, 5, 0, 0);
+            user.setComponentVariation(player, 6, 29, 0);
+            user.setComponentVariation(player, 7, 28, 13);
+            user.setComponentVariation(player, 8, 196, 0);
+            user.setComponentVariation(player, 9, 0, 0);
+            user.setComponentVariation(player, 10, 0, 0);
+            user.setComponentVariation(player, 11, 7, 0);
+            user.setProp(player, 2, 2, 0);
+        }
+        else {
+            user.setComponentVariation(player, 3, 12, 0);
+            user.setComponentVariation(player, 4, 25, 0);
+            user.setComponentVariation(player, 5, 0, 0);
+            user.setComponentVariation(player, 6, 10, 0);
+            user.setComponentVariation(player, 7, 20, 0);
+            user.setComponentVariation(player, 8, 162, 0);
+            user.setComponentVariation(player, 9, 0, 0);
+            user.setComponentVariation(player, 10, 0, 0);
+            user.setComponentVariation(player, 11, 10, 0);
+            user.setProp(player, 0, 121, 0);
+            user.setProp(player, 1, 0, 0);
+            user.setProp(player, 2, 0, 0);
+        }
+    }
+    else if (id === 62) { //Gov
+        user.clearAllProp(player);
+
+        if (user.getSex(player) == 1) {
+            user.setComponentVariation(player, 3, 9, 0);
+            user.setComponentVariation(player, 4, 6, 0);
+            user.setComponentVariation(player, 5, 0, 0);
+            user.setComponentVariation(player, 6, 29, 0);
+            user.setComponentVariation(player, 7, 28, 13);
+            user.setComponentVariation(player, 8, 196, 0);
+            user.setComponentVariation(player, 9, 0, 0);
+            user.setComponentVariation(player, 10, 0, 0);
+            user.setComponentVariation(player, 11, 64, 1);
+            user.setProp(player, 2, 2, 0);
+        }
+        else {
+            user.setComponentVariation(player, 3, 12, 0);
+            user.setComponentVariation(player, 4, 25, 0);
+            user.setComponentVariation(player, 5, 0, 0);
+            user.setComponentVariation(player, 6, 25, 0);
+            user.setComponentVariation(player, 7, 20, 0);
+            user.setComponentVariation(player, 8, 160, 0);
+            user.setComponentVariation(player, 9, 0, 0);
+            user.setComponentVariation(player, 10, 0, 0);
+            user.setComponentVariation(player, 11, 142, 0);
+            user.setProp(player, 0, 121, 0);
+            user.setProp(player, 1, 0, 0);
+            user.setProp(player, 2, 0, 0);
+        }
+    }
     else if (id === 99) { //GR6 1
         user.clearAllProp(player);
 

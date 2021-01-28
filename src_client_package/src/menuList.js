@@ -783,12 +783,12 @@ menuList.showStockLabOfferMenu = function(h, type) {
         UIMenu.Menu.HideMenu();
         if (item.doName == 'giveOffer1') {
             let money = methods.parseFloat(await UIMenu.Menu.GetUserInput("Сумма", "", 9));
-            if (money < 1) {
-                mp.game.ui.notifications.show("~r~Сумма не может быть меньше 1$");
+            if (money < 100) {
+                mp.game.ui.notifications.show("~r~Сумма не может быть меньше 100$");
                 return;
             }
-            if (money > 10000) {
-                mp.game.ui.notifications.show("~r~Сумма не может быть больше 10000$");
+            if (money > 1000) {
+                mp.game.ui.notifications.show("~r~Сумма не может быть больше 1000$");
                 return;
             }
             if (user.getBankMoney() < money + 500) {
@@ -801,12 +801,12 @@ menuList.showStockLabOfferMenu = function(h, type) {
         }
         if (item.doName == 'giveOffer2') {
             let money = methods.parseFloat(await UIMenu.Menu.GetUserInput("Сумма", "", 9));
-            if (money < 1) {
-                mp.game.ui.notifications.show("~r~Сумма не может быть меньше 1$");
+            if (money < 200) {
+                mp.game.ui.notifications.show("~r~Сумма не может быть меньше 200$");
                 return;
             }
-            if (money > 10000) {
-                mp.game.ui.notifications.show("~r~Сумма не может быть больше 10000$");
+            if (money > 2500) {
+                mp.game.ui.notifications.show("~r~Сумма не может быть больше 2500$");
                 return;
             }
             if (user.getBankMoney() < money + 900) {
@@ -819,12 +819,12 @@ menuList.showStockLabOfferMenu = function(h, type) {
         }
         if (item.doName == 'giveOffer3') {
             let money = methods.parseFloat(await UIMenu.Menu.GetUserInput("Сумма", "", 9));
-            if (money < 1) {
-                mp.game.ui.notifications.show("~r~Сумма не может быть меньше 1$");
+            if (money < 300) {
+                mp.game.ui.notifications.show("~r~Сумма не может быть меньше 300$");
                 return;
             }
-            if (money > 10000) {
-                mp.game.ui.notifications.show("~r~Сумма не может быть больше 10000$");
+            if (money > 5000) {
+                mp.game.ui.notifications.show("~r~Сумма не может быть больше 5000$");
                 return;
             }
             if (user.getBankMoney() < money + 1800) {
@@ -978,12 +978,12 @@ menuList.showStockBunkOfferMenu = function(h, type) {
         UIMenu.Menu.HideMenu();
         if (item.doName == 'giveOffer1') {
             let money = methods.parseFloat(await UIMenu.Menu.GetUserInput("Сумма", "", 9));
-            if (money < 1) {
-                mp.game.ui.notifications.show("~r~Сумма не может быть меньше 1$");
+            if (money < 100) {
+                mp.game.ui.notifications.show("~r~Сумма не может быть меньше 100$");
                 return;
             }
-            if (money > 10000) {
-                mp.game.ui.notifications.show("~r~Сумма не может быть больше 10000$");
+            if (money > 2500) {
+                mp.game.ui.notifications.show("~r~Сумма не может быть больше 2500$");
                 return;
             }
             if (user.getBankMoney() < money + 500) {
@@ -996,12 +996,12 @@ menuList.showStockBunkOfferMenu = function(h, type) {
         }
         if (item.doName == 'giveOffer2') {
             let money = methods.parseFloat(await UIMenu.Menu.GetUserInput("Сумма", "", 9));
-            if (money < 1) {
-                mp.game.ui.notifications.show("~r~Сумма не может быть меньше 1$");
+            if (money < 200) {
+                mp.game.ui.notifications.show("~r~Сумма не может быть меньше 200$");
                 return;
             }
-            if (money > 10000) {
-                mp.game.ui.notifications.show("~r~Сумма не может быть больше 10000$");
+            if (money > 5000) {
+                mp.game.ui.notifications.show("~r~Сумма не может быть больше 5000$");
                 return;
             }
             if (user.getBankMoney() < money + 900) {
@@ -1014,12 +1014,12 @@ menuList.showStockBunkOfferMenu = function(h, type) {
         }
         if (item.doName == 'giveOffer3') {
             let money = methods.parseFloat(await UIMenu.Menu.GetUserInput("Сумма", "", 9));
-            if (money < 1) {
-                mp.game.ui.notifications.show("~r~Сумма не может быть меньше 1$");
+            if (money < 300) {
+                mp.game.ui.notifications.show("~r~Сумма не может быть меньше 300$");
                 return;
             }
-            if (money > 10000) {
-                mp.game.ui.notifications.show("~r~Сумма не может быть больше 10000$");
+            if (money > 5000) {
+                mp.game.ui.notifications.show("~r~Сумма не может быть больше 5000$");
                 return;
             }
             if (user.getBankMoney() < money + 1800) {
@@ -5003,7 +5003,7 @@ menuList.showVehicleDoInvMenu = async function(vehId, onlyLock = false) {
             UIMenu.Menu.AddMenuItem("Закрыть капот", "", {doName: "closeC"});
         }
 
-        UIMenu.Menu.AddMenuItem("Выкинуть человека", "", {doName: "eject"});
+        UIMenu.Menu.AddMenuItem("~y~Выкинуть человека", "", {doName: "eject"});
 
         if (vehicle.getVariable('fraction_id') === 7 && user.isNews()) {
             UIMenu.Menu.AddMenuItem("~g~Взять камеру", "", {doName: "takeCam"});
@@ -5427,7 +5427,7 @@ menuList.showPlayerDiceAskMenu = function(playerId, sum) {
     }
 };
 
-menuList.showInviteMpMenu = function(x, y, z) {
+menuList.showInviteMpMenu = function(x, y, z, dim) {
 
     UIMenu.Menu.Create(`Мероприятие`, `~b~Приглашение от админстратора`);
 
@@ -5439,7 +5439,7 @@ menuList.showInviteMpMenu = function(x, y, z) {
     UIMenu.Menu.OnSelect.Add(async (item, index) => {
         UIMenu.Menu.HideMenu();
         if (item.doName === 'yes') {
-            user.setVirtualWorld(0);
+            user.setVirtualWorld(dim);
             user.teleport(x, y, z);
         }
     });
@@ -10049,8 +10049,11 @@ menuList.showMazeBankLobbyMenu = function(inGame, weapon, raceCount, raceName, r
     UIMenu.Menu.Create(" ", "~b~MazeBank Arena", 'arena', false, false, 'mba');
 
     UIMenu.Menu.AddMenuItem('~g~Принять участие в гонке', `Взнос: ~g~$1,000~s~~br~Игроков в лобби: ~g~${raceCount}~s~~br~Транспорт: ~g~${raceVeh}~s~~br~Название: ~g~${raceName}`, {doName: "start"});
+    UIMenu.Menu.AddMenuItem('~g~Принять участие в GunZone', `Игроков в игре: ~g~${inGame}~s~~br~Оружие: ~g~${weapon}`, {doName: "startGangZone"});
+    //UIMenu.Menu.AddMenuItem('~g~Принять участие в Cops & Racer', `Игроков в игре: ~g~${inGame}`, {doName: "startCopsAndRacer"});
+
     UIMenu.Menu.AddMenuItem('~g~Пригласить на дуэль', 'Взнос: ~g~$250', {doName: "duel"});
-    UIMenu.Menu.AddMenuItem('~g~Принять участие в GunZone', `Игроков в лобби: ~g~${inGame}~s~~br~Оружие: ~g~${weapon}`, {doName: "startGangZone"});
+
     UIMenu.Menu.AddMenuItem('Таблица рейтинга гонок', "", {doName: "rating"});
     UIMenu.Menu.AddMenuItem('Таблица рейтинга дуэлей', "", {doName: "drating"});
 
@@ -10065,6 +10068,9 @@ menuList.showMazeBankLobbyMenu = function(inGame, weapon, raceCount, raceName, r
         if(item.doName == 'startGangZone') {
             quest.standart(false, -1, 12);
             mp.events.callRemote('server:gangZone:toLobby');
+        }
+        if(item.doName == 'startCopsAndRacer') {
+            mp.events.callRemote('server:copsRacer:toLobby');
         }
         if(item.doName == 'rating')
             mp.events.callRemote('server:race:rating');
@@ -12401,8 +12407,8 @@ menuList.showGovGarderobMenu = function() {
 
     UIMenu.Menu.AddMenuItem("Бронежилет", "", {itemId: 252});
 
-    let list = ["Default", "Type #1", "Type #2"];
-    UIMenu.Menu.AddMenuItemList("Галстук", list);
+    let list = ["Default", "Галстук #1", "Галстук #2", "Рабочая", "Рабочая SASS (Летняя)", "Рабочая SASS (Зимняя)"];
+    UIMenu.Menu.AddMenuItemList("Форма", list);
 
     UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
     UIMenu.Menu.Draw();
@@ -12416,6 +12422,15 @@ menuList.showGovGarderobMenu = function() {
         }
         else if (index == 2) {
             user.giveUniform(37);
+        }
+        else if (index == 3) {
+            user.giveUniform(60);
+        }
+        else if (index == 4) {
+            user.giveUniform(61);
+        }
+        else if (index == 5) {
+            user.giveUniform(62);
         }
     });
 
@@ -14944,6 +14959,8 @@ menuList.showAdminTunningMenu = function() {
         }
     }
 
+    if (user.isAdmin(5))
+        UIMenu.Menu.AddMenuItem("~y~Random", "", {doName: "rand"});
     UIMenu.Menu.AddMenuItem("~r~Закрыть", "", {doName: "closeMenu"});
     UIMenu.Menu.Draw();
 
@@ -14952,7 +14969,10 @@ menuList.showAdminTunningMenu = function() {
             mp.events.callRemote('server:lsc:showTun', item.modType, idx - 1);
     });
     UIMenu.Menu.OnSelect.Add(item => {
-        UIMenu.Menu.HideMenu();
+        if (item.doName === 'rand')
+            vehicles.setRandomTunning();
+        else
+            UIMenu.Menu.HideMenu();
     });
 };
 

@@ -188,7 +188,7 @@ taxi.checkPos = function() {
     if (!isProcess)
         return;
 
-    if (mp.players.local.vehicle && mp.players.local.vehicle.getVariable('taxi')) {
+    if (mp.players.local.vehicle) {
 
         if (isStart) {
             if (posEnd.x != 0 && methods.distanceToPos(posEnd, mp.players.local.position) < 50) {

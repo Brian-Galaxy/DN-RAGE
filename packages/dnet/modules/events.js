@@ -48,6 +48,7 @@ let tax = require('../managers/tax');
 let discord = require('../managers/discord');
 let racer = require('../managers/racer');
 let gangZone = require('../managers/gangZone');
+let copsRacer = require('../managers/copsRacer');
 let trucker = require('../managers/trucker');
 let vSync = require('../managers/vSync');
 let fishing = require('../managers/fishing');
@@ -292,6 +293,22 @@ mp.events.addRemoteCounted('server:gangZone:toLobby', (player) => {
 mp.events.addRemoteCounted('server:gangZone:exitLobby', (player) => {
     try {
         gangZone.playerExitLobby(player);
+    } catch (e) {
+        console.log(e);
+    }
+});
+
+mp.events.addRemoteCounted('server:copsRacer:toLobby', (player) => {
+    try {
+        copsRacer.playerToLobby(player);
+    } catch (e) {
+        console.log(e);
+    }
+});
+
+mp.events.addRemoteCounted('server:copsRacer:exitLobby', (player) => {
+    try {
+        copsRacer.playerExitLobby(player);
     } catch (e) {
         console.log(e);
     }
@@ -2254,7 +2271,7 @@ mp.events.addRemoteCounted('server:sendAnswerReport', (player, id, msg) => {
 mp.events.addRemoteCounted('server:admin:spawnVeh', (player, vName) => {
     try {
         if (user.isAdmin(player)) {
-            let v = vehicles.spawnCar(player.position, player.heading, vName);
+            let v = vehicles.spawnCar(player.position, player.heading, vName, undefined, player.dimension);
             user.putInVehicle(player, v, -1);
             v.setVariable('isAdmin', true);
         }
@@ -8025,7 +8042,7 @@ mp.events.addRemoteCounted('server:user:newDepF', (player, id, dep) => {
 mp.events.addRemoteCounted('server:user:fixNearestVehicle', (player) => {
     if (!user.isLogin(player))
         return;
-    let veh = methods.getNearestVehicleWithCoords(player.position, 10.0);
+    let veh = methods.getNearestVehicleWithCoords(player.position, 10.0, player.dimension);
     if (vehicles.exists(veh))
         veh.repair();
 });

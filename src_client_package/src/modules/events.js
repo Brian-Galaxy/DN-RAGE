@@ -2386,9 +2386,9 @@ mp.events.add('client:menuList:showSheriffArsenalMenu', () => {
     menuList.showSheriffArsenalMenu();
 });
 
-mp.events.add('client:menuList:showInviteMpMenu', (x, y, z) => {
+mp.events.add('client:menuList:showInviteMpMenu', (x, y, z, dim) => {
     methods.debug('Event: client:menuList:showInviteMpMenu');
-    menuList.showInviteMpMenu(x, y, z);
+    menuList.showInviteMpMenu(x, y, z, dim);
 });
 
 /*mp.events.add('client:menuList:showFibArsenalMenu', () => {
@@ -3934,6 +3934,11 @@ mp.keys.bind(0x1B, true, function() {
         }, 5000);
     }
 
+    if (mp.players.local.dimension === 99998 && mp.players.local.getVariable('blockDeath')) {
+        user.removeAllWeapons();
+        mp.events.callRemote('server:copsRacer:exitLobby');
+    }
+
     ui.callCef('license', JSON.stringify({type: 'hide'}));
     ui.callCef('certificate', JSON.stringify({type: 'hide'}));
     ui.callCef('dialog', JSON.stringify({type: 'hide'}));
@@ -4267,8 +4272,10 @@ mp.events.add("playerDeath", async function (player, reason, killer) {
 
     user.stopAllScreenEffect();
 
-    if (gangWarTimeout) {
-        mp.events.callRemote('server:user:spawnToFraction');
+    if (gangWarTimeout || gangWarTimeout2) {
+        setTimeout(function () {
+            mp.events.callRemote('server:user:spawnToFraction');
+        }, 300000);
         return;
     }
 
@@ -4515,6 +4522,29 @@ mp.events.add("playerCommand", async (command) => {
 * */
 
 let timePress = 0;
+mp.game.controls.useDefaultVehicleEntering = false;
+
+//Посадка ТС
+mp.keys.bind(70, true, function() {
+    if (!user.isLogin())
+        return;
+    let player = mp.players.local;
+    if (player.isInAnyVehicle(true) || methods.isBlockKeys() || mp.gui.cursor.visible)
+        return;
+
+    let position = mp.players.local.position;
+    let vehicle = methods.getNearestVehicleWithCoords(position, 6);
+
+    if (vehicle && mp.vehicles.exists(vehicle) && 5 > vehicle.getSpeed()) {
+        if (vehicle.isSeatFree(-1) || vehicle.getPedInSeat(-1) === player.handle || 0 === vehicle.getPedInSeat(-1))
+            return void player.taskEnterVehicle(vehicle.handle, 2500, -1, 1, 1, 0);
+
+        for (let i = 0; i < vehicle.getMaxNumberOfPassengers(); i++)
+            if (vehicle.isSeatFree(i))
+                return void player.taskEnterVehicle(vehicle.handle, 5000, i, 1, 1, 0)
+    }
+});
+
 mp.events.add('render', () => //TODO Посадка ТС
 {
 
@@ -4523,12 +4553,12 @@ mp.events.add('render', () => //TODO Посадка ТС
     const controls = mp.game.controls;
 
     //controls.enableControlAction(0, 23, true); //F
-    //controls.disableControlAction(0, 58, true); //G
+    controls.disableControlAction(0, 58, true); //G
     controls.disableControlAction(0, 23, true);
 
     //ui.drawText(`${timePress} | ${controls.isDisabledControlPressed(0, 23)}`, 0,0,1,255,255,255, 255,1)
 
-    try {
+    /*try {
         if(controls.isDisabledControlPressed(0, 23))
         {
             if (mp.players.local.isInAnyVehicle(true))
@@ -4577,7 +4607,7 @@ mp.events.add('render', () => //TODO Посадка ТС
         else
             timePress = 0;
     }
-    catch (e) {}
+    catch (e) {}*/
 });
 
 mp.events.add('render', () => {
